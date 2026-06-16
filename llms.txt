@@ -61,6 +61,29 @@
 - [Tech in Plain English](https://365techies.co.uk/plain-english/): Common IT terms and services explained simply, with no jargon.
 - [Get-Ready Checklists](https://365techies.co.uk/pre-call-checklists/): Print-friendly checklists to help you feel prepared before contacting us.
 - [IT Jargon Buster](https://365techies.co.uk/it-jargon-buster/): A plain-English A–Z glossary of IT, accessibility and AI terms.
+- [Password Strength Checker](https://365techies.co.uk/password-strength-checker/): A private, in-browser tool to test a password's strength and generate a memorable three-random-words passphrase. Nothing is sent or stored.
+- [Repair or Replace Advisor](https://365techies.co.uk/repair-or-replace-advisor/): Answer four questions for an honest verdict on whether an ageing computer is worth repairing or replacing.
+- [Which Microsoft 365 Plan?](https://365techies.co.uk/which-microsoft-365-plan/): A quick picker that recommends the right Microsoft 365 plan (Personal, Family, Business Basic, Standard or Premium).
+- [Online Safety hub](https://365techies.co.uk/online-safety/): A reassurance-led hub to stay safe online — common threats, a scam quiz, simple habits and where to report scams.
+- [Emergency IT Help](https://365techies.co.uk/emergency-it-help/): A quick-action hub for IT emergencies (scams, hacked accounts, lost phones, ransomware, dead computers) with the most important first step for each.
+- [I've Been Scammed — what to do now](https://365techies.co.uk/ive-been-scammed-what-to-do/): A calm, step-by-step UK emergency guide (call 159, report to Action Fraud, secure accounts).
+- [I Think I've Been Hacked](https://365techies.co.uk/i-think-ive-been-hacked/): How to take back control of compromised accounts, in the right order (email first).
+- [How to set up two-factor authentication (2FA)](https://365techies.co.uk/how-to-set-up-two-factor-authentication/): Plain-English guide to turning on 2FA for Microsoft, Google, Apple, Facebook, banking and WhatsApp.
+- [Lost or Stolen Phone — what to do](https://365techies.co.uk/lost-or-stolen-phone-what-to-do/): First-15-minutes steps to lock or erase a phone, bar the SIM and protect your accounts.
+- [Windows Accessibility Features guide](https://365techies.co.uk/windows-accessibility-features-guide/): How to switch on the free accessibility features built into Windows (larger text, Magnifier, Narrator, captions, voice typing).
+- [How to Choose a Laptop or Desktop](https://365techies.co.uk/how-to-choose-a-laptop/): An impartial, plain-English buyer's guide — the five specs that matter, with no sales pitch.
+- [How to Wipe & Recycle an Old Computer](https://365techies.co.uk/how-to-wipe-and-recycle-old-computer/): Safely erase your data and recycle responsibly (UK WEEE, Recycle Now).
+- [Safe Online Banking for Beginners](https://365techies.co.uk/safe-online-banking-for-beginners/): A reassuring guide to banking online confidently and the golden rules to avoid scams.
+- [Avoiding Tech Overwhelm](https://365techies.co.uk/avoiding-tech-overwhelm/): A gentle guide to feeling calmer and more in control of technology.
+- [Your First 6-Weekly Service](https://365techies.co.uk/your-first-6-weekly-service/): Exactly what to expect on your first included computer service — the call first, watching on screen, nothing for you to do.
+- [How We Price](https://365techies.co.uk/how-we-price/): An honest explanation of what shapes the cost of IT support and why cheapest isn't always best.
+- [What Would You Lose?](https://365techies.co.uk/what-would-you-lose/): A 20-second check of how safe your photos, documents and records really are, and how to protect them.
+- [Computer Help for Seniors](https://365techies.co.uk/computer-help-for-seniors/): A friendly hub of patient, plain-English guides and help for older people — a 365 Techies specialism since 1995.
+- [How to Choose Antivirus](https://365techies.co.uk/how-to-choose-antivirus/): A plain-English guide to choosing antivirus and online protection — what matters, free vs paid, and whether you need a VPN.
+- [How to Choose Broadband](https://365techies.co.uk/how-to-choose-broadband/): The connection types explained (full fibre, part-fibre, 4G/5G, Starlink), how much speed you need, and what to watch for.
+- [Setting Up a Computer for an Older Relative](https://365techies.co.uk/setting-up-a-computer-for-an-older-relative/): How to set up a device kindly, safely and simply for an older relative.
+- [Helping a Relative With Their Computer Remotely](https://365techies.co.uk/helping-a-relative-with-their-computer/): How to help family from a distance safely, and the remote-access scam to avoid.
+- [Confident Video Calling](https://365techies.co.uk/confident-video-calling/): A gentle beginner's guide to making video calls on any device, to see the family on screen.
 - The site includes a built-in accessibility toolbar (text resize, high contrast, readable font, reduce motion and read-aloud), reflecting 365 Techies' specialism in supporting retired and disabled users.
 
 ## Offers

@@ -70,6 +70,8 @@ IC = {
  "gift": '<rect x="3" y="9" width="18" height="12" rx="1"/><path d="M3 13h18M12 9v12"/><path d="M8.5 9a2.5 2.5 0 1 1 3.5-2.3C12 8 10 9 8.5 9zM15.5 9a2.5 2.5 0 1 0-3.5-2.3C12 8 14 9 15.5 9z"/>',
  "heart": '<path d="M12 21s-7-4.5-9.5-9A5 5 0 0 1 12 6a5 5 0 0 1 9.5 3c0 4.5-9.5 12-9.5 12z"/>',
  "handshake": '<path d="M8 13l2 2 3-3 3 3 2-2M2 12l4-4 4 2 4-2 4 4M6 8V6h4M18 8V6h-4"/>',
+ "bell": '<path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6z"/><path d="M10 20a2 2 0 0 0 4 0"/>',
+ "phone": '<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>',
 }
 def ico(name, cls="tile__ico"):
     return f'<svg class="{cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{IC[name]}</svg>'
@@ -106,6 +108,7 @@ HEADER = '''  <header class="site-header">
             <a href="/family-it-support/">Families</a>
             <a href="/it-support-for-retired-users/">Retired Users</a>
             <a href="/it-support-for-disabled-people/">Disabled People</a>
+            <a href="/computer-help-for-seniors/">Help for Seniors</a>
             <a href="/it-support-for-home-workers/">Home Workers</a>
             <a href="/it-support-for-digital-nomads/">Digital Nomads</a>
           </div>
@@ -165,9 +168,13 @@ HEADER = '''  <header class="site-header">
             <a href="/coverage-checker/">Coverage Checker</a>
             <a href="/spot-the-scam/">Spot the Scam Quiz</a>
             <a href="/computer-fault-checker/">Computer Fault Checker</a>
+            <a href="/repair-or-replace-advisor/">Repair or Replace?</a>
+            <a href="/password-strength-checker/">Password Checker</a>
             <a href="/quick-quote/">Quick Quote</a>
             <a href="/free-it-health-check/">Free IT Health Check</a>
             <a href="/switching-it-provider/">Switching to Us</a>
+            <a href="/online-safety/">Online Safety</a>
+            <a href="/emergency-it-help/">Emergency IT Help</a>
             <a href="/resources/">Resources &amp; Guides</a>
             <a href="/it-advice/">IT Advice</a>
             <a href="/faqs/">FAQs</a>
@@ -227,6 +234,7 @@ HEADER = '''  <header class="site-header">
           <a href="/family-it-support/">Families</a>
           <a href="/it-support-for-retired-users/">Retired Users</a>
           <a href="/it-support-for-disabled-people/">Disabled People</a>
+          <a href="/computer-help-for-seniors/">Help for Seniors</a>
           <a href="/it-support-for-home-workers/">Home Workers</a>
           <a href="/it-support-for-digital-nomads/">Digital Nomads</a>
         </div>
@@ -295,9 +303,13 @@ HEADER = '''  <header class="site-header">
           <a href="/coverage-checker/">Coverage Checker</a>
           <a href="/spot-the-scam/">Spot the Scam Quiz</a>
           <a href="/computer-fault-checker/">Computer Fault Checker</a>
+          <a href="/repair-or-replace-advisor/">Repair or Replace?</a>
+          <a href="/password-strength-checker/">Password Checker</a>
           <a href="/quick-quote/">Quick Quote</a>
           <a href="/free-it-health-check/">Free IT Health Check</a>
           <a href="/switching-it-provider/">Switching to Us</a>
+          <a href="/online-safety/">Online Safety</a>
+          <a href="/emergency-it-help/">Emergency IT Help</a>
         </div>
       </details>
       <details class="m-group">
@@ -416,6 +428,12 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/coverage-checker/">Coverage Checker</a>
         <a href="/spot-the-scam/">Spot the Scam Quiz</a>
         <a href="/computer-fault-checker/">Computer Fault Checker</a>
+        <a href="/repair-or-replace-advisor/">Repair or Replace?</a>
+        <a href="/password-strength-checker/">Password Checker</a>
+        <a href="/which-microsoft-365-plan/">Which Microsoft 365 Plan?</a>
+        <a href="/what-would-you-lose/">What Would You Lose?</a>
+        <a href="/emergency-it-help/">Emergency IT Help</a>
+        <a href="/online-safety/">Online Safety</a>
         <a href="/free-it-health-check/">Free IT Health Check</a>
         <a href="/switching-it-provider/">Switching to Us</a>
         <a href="/it-support-cost-guide/">IT Cost Guide</a>
@@ -454,6 +472,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/family-it-support/">Families</a>
         <a href="/it-support-for-retired-users/">Retired Users</a>
         <a href="/it-support-for-disabled-people/">Disabled People</a>
+        <a href="/computer-help-for-seniors/">Help for Seniors</a>
         <a href="/it-support-for-home-workers/">Home Workers</a>
         <a href="/it-support-for-digital-nomads/">Digital Nomads</a>
         <a href="/it-support-for-sole-traders/">Sole Traders</a>
@@ -481,6 +500,22 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/choosing-it-support/">How to Choose IT Support</a>
         <a href="/independent-it-support/">Local vs the Alternatives</a>
         <a href="/it-cost-worksheet/">IT Quote Worksheet</a>
+        <a href="/how-we-price/">How We Price</a>
+        <a href="/your-first-6-weekly-service/">Your First Service</a>
+        <a href="/how-to-set-up-two-factor-authentication/">Set Up 2FA</a>
+        <a href="/ive-been-scammed-what-to-do/">I&rsquo;ve Been Scammed</a>
+        <a href="/i-think-ive-been-hacked/">If You&rsquo;ve Been Hacked</a>
+        <a href="/lost-or-stolen-phone-what-to-do/">Lost or Stolen Phone</a>
+        <a href="/how-to-choose-a-laptop/">How to Choose a Laptop</a>
+        <a href="/how-to-wipe-and-recycle-old-computer/">Wipe &amp; Recycle a PC</a>
+        <a href="/safe-online-banking-for-beginners/">Safe Online Banking</a>
+        <a href="/windows-accessibility-features-guide/">Windows Accessibility</a>
+        <a href="/avoiding-tech-overwhelm/">Avoiding Tech Overwhelm</a>
+        <a href="/how-to-choose-antivirus/">How to Choose Antivirus</a>
+        <a href="/how-to-choose-broadband/">How to Choose Broadband</a>
+        <a href="/setting-up-a-computer-for-an-older-relative/">Computer for an Older Relative</a>
+        <a href="/helping-a-relative-with-their-computer/">Helping a Relative Remotely</a>
+        <a href="/confident-video-calling/">Confident Video Calling</a>
         <a href="/resources/">Resources &amp; Guides</a>
         <a href="/faqs/">FAQs</a>
         <a href="/it-advice/">IT Advice</a>
@@ -745,6 +780,32 @@ def reviews_block(revs):
       </div>
     </section>'''
 
+# ---- Service-promise touches (the human extras, reused across pages) ----
+# Keep wording consistent here so the reassurance never drifts or over-claims.
+PROMISE_CALL = ("We call before we connect",
+  "Before any remote session or full computer service, we phone you first to check you&rsquo;re ready &mdash; we never connect out of the blue.")
+PROMISE_ETA = ("We call when we&rsquo;re on our way",
+  "For home and business visits we phone ahead to say we&rsquo;re on our way and give you an estimated arrival time &mdash; so you know exactly when to expect us.")
+PROMISE_SMS = ("Backup reminders by text",
+  "If you&rsquo;d like, we can send you a scheduled text message when your backup is due, reminding you to plug in your backup drive.")
+PROMISE_PEOPLE = ("The same friendly faces",
+  "Because we&rsquo;re a family team, you deal with people who get to know you &mdash; we remember how you like your computer set up, especially as we service it every six weeks.")
+
+def promise_strip(items=None, alt=False, title="Looked after at every step"):
+    its = items if items is not None else [PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE]
+    cls = "section section--alt" if alt else "section"
+    return f'''    <section class="{cls}" aria-label="How we look after you">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// HOW WE LOOK AFTER YOU</p>
+          <h2 class="section-title section-title--center" data-title>{title}<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ul class="security-grid" data-stagger>
+{grid_cards(its)}
+        </ul>
+      </div>
+    </section>'''
+
 PAGES = []
 def add(**kw):
     PAGES.append(kw)
@@ -763,6 +824,7 @@ add(
      ("How much does monthly IT support cost?", "Home plans start at £15.95/month and business plans from £21.15/month. Every plan includes a full computer service every six weeks."),
      ("Can I cancel my plan?", "Yes. Plans are monthly and cancel-anytime with no lock-in contract."),
      ("Do you support homes and businesses?", "Yes — we support home users, home workers, sole traders and small businesses across Bournemouth, Poole and Dorset."),
+     ("What is it like dealing with you day to day?", "Friendly and unhurried. We phone before we connect for a remote session or a full computer service, we call ahead with an estimated arrival time when we're visiting you, and if you'd like, we can send you a text reminder when your backup is due. Because we're a family team, you deal with the same familiar people who get to know how you like things set up."),
    ]),
  ]),
  content="\n".join([
@@ -801,7 +863,7 @@ add(
           <h2 class="section-title section-title--center" data-title>What&rsquo;s included every month<span class="title-underline title-underline--center"></span></h2>
         </div>
         <ul class="security-grid" data-stagger>
-{grid_cards([("Regular maintenance","A full computer service every six weeks to keep devices fast, clean and healthy."),("Unlimited remote support","Secure help over Splashtop SOS, usually within minutes during opening hours."),("Security &amp; protection","Antivirus, web protection, patching and a real human to ask &lsquo;is this email safe?&rsquo;"),("Microsoft 365 help","Outlook, Teams, OneDrive and licensing — set up and kept working for you."),("Backup checks","Backups verified regularly, because a backup you&rsquo;ve never tested isn&rsquo;t a backup."),("Friendly advice","Plain-English guidance on new devices, software and staying safe online.")])}
+{grid_cards([("Regular maintenance","A full computer service every six weeks to keep devices fast, clean and healthy."),("Unlimited remote support","Secure help over Splashtop SOS, usually within minutes during opening hours."),("Security &amp; protection","Antivirus, web protection, patching and a real human to ask &lsquo;is this email safe?&rsquo;"),("Microsoft 365 help","Outlook, Teams, OneDrive and licensing — set up and kept working for you."),("Backup checks","Backups verified regularly &mdash; and we can text you a reminder to plug in your backup drive when one&rsquo;s due."),("Friendly advice","Plain-English guidance on new devices, software and staying safe online.")])}
         </ul>
         <p class="mono" style="text-align:center;margin-top:1.6rem"><a href="/preventative-maintenance/" style="color:var(--cyan)">See exactly what our 6-weekly preventative maintenance includes &#8594;</a></p>
       </div>
@@ -864,15 +926,17 @@ add(
         <p class="eyebrow eyebrow--center mono" data-reveal>/06 — HOW IT WORKS</p>
         <h2 class="section-title section-title--center" data-title>Up and running in 15 minutes<span class="title-underline title-underline--center"></span></h2>
         <ol class="how__steps">
-{steps([("Pick your plan","Choose a home or business plan. Monthly rolling, no contracts, cancel anytime."),("We connect securely","A quick, encrypted remote setup via Splashtop SOS — you watch everything on screen."),("Covered every month","Maintenance, protection and a friendly techie on hand, every single month.")])}
+{steps([("Pick your plan","Choose a home or business plan. Monthly rolling, no contracts, cancel anytime."),("We call, then connect","We phone to check you&rsquo;re ready, then connect securely via Splashtop SOS &mdash; you watch everything on screen."),("Covered every month","Maintenance, protection and a friendly techie on hand, every single month.")])}
         </ol>
       </div>
     </section>''',
+   promise_strip(),
    faq_html([
      ("What is monthly IT support?", "Monthly IT support is a subscription that gives you ongoing help, regular maintenance, security checks and priority response for one predictable monthly cost — instead of paying per repair when something breaks."),
      ("How much does it cost?", "Home plans start at &pound;15.95/month and business plans from &pound;21.15/month. Every plan includes a full computer service every six weeks."),
      ("Can I cancel my plan?", "Yes — plans are monthly and cancel-anytime with no lock-in contract."),
      ("Do you support both homes and businesses?", "Yes. We support home users, home workers, sole traders and small businesses across Bournemouth, Poole and the rest of Dorset."),
+     ("What is it like dealing with you day to day?", "Friendly and unhurried. We phone before we connect for a remote session or a full computer service, we call ahead with an estimated arrival time when we&rsquo;re visiting, and if you&rsquo;d like, we can text you a reminder when your backup&rsquo;s due. Because we&rsquo;re a family team, you deal with the same familiar people who get to know how you like things set up."),
    ]),
    cta("Start your monthly support plan", "Join the Dorset homes and businesses who never worry about IT. Pick a plan, or talk to a friendly techie first.",
        primary=("View Home Plans", "/home-it-support-plans/"), secondary=("View Business Plans", "/business-it-support-plans/")),
@@ -1176,6 +1240,7 @@ add(
      ("Is remote support safe?", "Yes. Sessions run over Splashtop SOS — an encrypted, industry-standard remote support tool. You watch everything on screen and access ends the moment the session is over."),
      ("What can be fixed remotely?", "Most things — email problems, software issues, Microsoft 365, slow computers, printer setup, Windows updates and general troubleshooting for home and business users."),
      ("How fast is remote support?", "Most remote sessions start within minutes during opening hours (Mon–Fri, 9am–5pm), and subscribers always jump the queue."),
+     ("Will you connect to my computer without warning?", "No. We always phone you first to say we're ready and to check you're ready before we connect. We never connect out of the blue, and a remote session can only start when you click our secure link to begin an encrypted Splashtop SOS session."),
    ]),
  ]),
  content="\n".join([
@@ -1202,7 +1267,7 @@ add(
         <p class="eyebrow eyebrow--center mono" data-reveal>/02 — THREE STEPS</p>
         <h2 class="section-title section-title--center" data-title>From stuck to sorted<span class="title-underline title-underline--center"></span></h2>
         <ol class="how__steps">
-{steps([("Tell us what&rsquo;s wrong","Call or message and describe the problem in plain English."),("Connect securely","Click our secure link to start an encrypted Splashtop SOS session."),("Watch it get fixed","We solve it on your screen, explain what happened, and access ends.")])}
+{steps([("Tell us what&rsquo;s wrong","Call or message and describe the problem in plain English."),("We phone first","We call to say we&rsquo;re ready and check it&rsquo;s a good time &mdash; a session only ever starts when you&rsquo;re expecting it."),("Connect securely","Click our secure link to start an encrypted Splashtop SOS session."),("Watch it get fixed","We solve it on your screen, explain what happened, and access ends.")])}
         </ol>
       </div>
     </section>''',
@@ -1210,8 +1275,10 @@ add(
      ("Is remote support safe?", "Yes. Sessions run over Splashtop SOS — an encrypted, industry-standard remote support tool. You watch everything on screen and access ends the moment the session is over."),
      ("What can be fixed remotely?", "Most things — email problems, software issues, Microsoft 365, slow computers, printer setup, Windows updates and general troubleshooting for home and business users."),
      ("How fast is it?", "Most remote sessions start within minutes during opening hours (Mon&ndash;Fri, 9am&ndash;5pm). Subscribers always jump the queue."),
+     ("Will you connect to my computer without warning?", "No &mdash; we always phone you first to say we&rsquo;re ready and to check you&rsquo;re ready before we connect. We never connect out of the blue, and a session can only start when you click our secure link."),
      ("What if it can&rsquo;t be fixed remotely?", "Occasionally hardware needs hands-on attention — we&rsquo;ll arrange a repair or on-site visit across Bournemouth, Poole and Dorset."),
    ]),
+   promise_strip(items=[PROMISE_CALL, PROMISE_PEOPLE, PROMISE_ETA]),
    cta("Need help right now?", "Start a secure remote session, or join a monthly plan so help is always one message away.",
        primary=("Get Remote Support", "/contact/"), secondary=("View Monthly Plans", "/monthly-it-support/")),
  ]),

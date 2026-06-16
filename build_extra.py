@@ -7,7 +7,8 @@ import build_pages as bp
 import build_local  # registers the 12 local/customer pages on import
 from build_pages import (add, graph, crumb, webpage, service, faqpage,
                          faq_html, cta, hero, bc, tiles, grid_cards, checklist,
-                         steps, reviews_block, ico, SITE, write_all)
+                         steps, reviews_block, ico, SITE, write_all,
+                         promise_strip, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
 from build_local import make_customer
 
 # ===================================================== SPECIALIST SERVICE PAGES
@@ -246,6 +247,7 @@ def book_service():
       ("Can I reschedule or cancel my appointment?", "Yes — when you book you'll get a confirmation with a link to manage, reschedule or cancel your appointment online. You can also sign in to the booking system at any time."),
       ("What can I book online?", "Computer and laptop servicing, repairs, new device setup, security checks and on-site visits across Bournemouth, Poole and Dorset. Not sure what you need? Call us on 01202 775566."),
       ("Do I need an account to book?", "No — you can book as a guest in under a minute. Returning customers can sign in to see and manage their appointments."),
+      ("Will I know when you're coming?", "Yes — for on-site visits we phone you when we're on our way and give you an estimated arrival time, so you know exactly when to expect us. For remote sessions we call before we connect to check you're ready, and we never connect out of the blue."),
     ]
     content = "\n".join([
       hero(bc("Book a Service"), "// ONLINE BOOKING",
@@ -269,12 +271,13 @@ def book_service():
       f'''    <section class="how" aria-label="How booking works">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// HOW IT WORKS</p>
-        <h2 class="section-title section-title--center" data-title>Booking in three steps<span class="title-underline title-underline--center"></span></h2>
+        <h2 class="section-title section-title--center" data-title>Booking in four simple steps<span class="title-underline title-underline--center"></span></h2>
         <ol class="how__steps">
-{steps([("Choose a service","Pick the type of appointment and a time that works for you."),("Confirm your details","Book as a guest in under a minute, or sign in if you're a returning customer."),("Manage it anytime","Get a confirmation with a link to reschedule or cancel whenever you need.")])}
+{steps([("Choose a service","Pick the type of appointment and a time that works for you."),("Confirm your details","Book as a guest in under a minute, or sign in if you're a returning customer."),("Manage it anytime","Get a confirmation with a link to reschedule or cancel whenever you need."),("We call ahead","For on-site visits we phone to say we&rsquo;re on our way and give you an ETA &mdash; and for remote sessions we call before we connect.")])}
         </ol>
       </div>
     </section>''',
+      promise_strip(items=[PROMISE_ETA, PROMISE_CALL, PROMISE_PEOPLE], alt=True),
       faq_html(faqs),
       cta("Not sure what you need?",
           "Call us on 01202 775566 or start a live chat and a friendly techie will help you book the right appointment.",
@@ -953,6 +956,7 @@ def spot_the_scam():
       ("Who is the quiz for?", "Everyone &mdash; but it&rsquo;s especially helpful for older or less-confident users who are targeted most. It&rsquo;s friendly, quick and there&rsquo;s no sign-up."),
       ("Are the examples real scams?", "They&rsquo;re realistic, illustrative versions of the most common scams we see &mdash; phishing emails, smishing texts, pop-ups and phone scams &mdash; so you learn the tell-tale signs safely."),
       ("Can you protect us from scams for real?", "Yes &mdash; our <a href=\"/cybersecurity-support/\">managed cybersecurity</a> adds layered protection, email filtering and a real human to ask &lsquo;is this safe?&rsquo; whenever you&rsquo;re unsure."),
+      ("How do I know it&rsquo;s really 365 Techies, not a scammer?", "Because we always phone you first to say we&rsquo;re ready, and a remote session can only start when you click our secure link or read us a one-time code. We never connect out of the blue, and we&rsquo;d never ask for remote access through an unexpected pop-up or a cold call &mdash; that&rsquo;s always a scam. A genuine session with us is one you already arranged and are expecting, and you watch everything on screen the whole time."),
     ]
     content = "\n".join([
       hero(bc("Spot the Scam"), "// FREE QUIZ &middot; 2 MINUTES",
@@ -1706,6 +1710,7 @@ def backup_recovery():
       ("Are your backups safe from ransomware?", "Yes &mdash; we use protected, versioned and off-site backups so that even if ransomware hits, your clean copies can&rsquo;t be encrypted or deleted, and we can roll back to before the attack. It pairs with our <a href=\"/cybersecurity-support/\">cybersecurity</a> protection."),
       ("How often are backups checked?", "On a monthly plan we monitor and verify your backups regularly &mdash; because an untested backup isn&rsquo;t a backup. You&rsquo;ll know it will actually restore when it matters."),
       ("Can you back up our whole business?", "Yes &mdash; computers, servers, Microsoft 365, email and shared files, all backed up, monitored and recoverable, as part of a business support plan."),
+      ("Will you remind me to do my backup?", "Yes &mdash; if you&rsquo;d like, we offer a scheduled text-message service that reminds you to plug in your backup drive when your backup is due, so it&rsquo;s one less thing to remember. Just let us know and we&rsquo;ll set it up for you."),
     ]
     content = "\n".join([
       hero(bc("Backup &amp; Recovery"), "// BACKUP &amp; RECOVERY",
@@ -1745,7 +1750,7 @@ def backup_recovery():
           <h2 class="section-title section-title--center" data-title>Everything that matters<span class="title-underline title-underline--center"></span></h2>
         </div>
         <div class="tile-grid" data-stagger>
-{tiles([("home","Photos &amp; memories","Irreplaceable family photos and videos, safely backed up off-site."),("mail","Email &amp; Microsoft 365","Outlook, Exchange Online, OneDrive and SharePoint &mdash; backed up properly."),("monitor","Whole computers","Full system images so a dead PC can be rebuilt exactly as it was."),("briefcase","Business data","Records, accounts, shared files and servers &mdash; protected and recoverable."),("shield","Ransomware-safe copies","Versioned, protected backups that ransomware can&rsquo;t encrypt or delete."),("cloud","Secure cloud storage","Encrypted off-site copies you can restore from anywhere.")])}
+{tiles([("home","Photos &amp; memories","Irreplaceable family photos and videos, safely backed up off-site."),("mail","Email &amp; Microsoft 365","Outlook, Exchange Online, OneDrive and SharePoint &mdash; backed up properly."),("monitor","Whole computers","Full system images so a dead PC can be rebuilt exactly as it was."),("briefcase","Business data","Records, accounts, shared files and servers &mdash; protected and recoverable."),("shield","Ransomware-safe copies","Versioned, protected backups that ransomware can&rsquo;t encrypt or delete."),("cloud","Secure cloud storage","Encrypted off-site copies you can restore from anywhere."),("bell","Reminders by text","If a backup needs a drive plugged in, we can text you when it&rsquo;s due &mdash; just let us know and we&rsquo;ll set it up.")])}
         </div>
       </div>
     </section>''',
@@ -1760,7 +1765,7 @@ def backup_recovery():
             <h3>Backup for your home</h3>
             <p style="color:var(--muted);margin:0 0 1.1rem">Protect a lifetime of photos, documents and memories. We set up automatic backups across your computers and devices and quietly keep an eye on them for you.</p>
             <ul class="checklist">
-{checklist(["Automatic photo &amp; file backup","Secure off-site cloud copies","Microsoft 365 &amp; email included","Easy recovery when you need it"])}
+{checklist(["Automatic photo &amp; file backup","Secure off-site cloud copies","Microsoft 365 &amp; email included","Optional text reminders when a backup&rsquo;s due","Easy recovery when you need it"])}
             </ul>
           </div>
           <div class="tile" data-reveal>
@@ -1782,6 +1787,7 @@ def backup_recovery():
         </ol>
       </div>
     </section>''',
+      promise_strip(items=[PROMISE_SMS, PROMISE_CALL, PROMISE_ETA, PROMISE_PEOPLE]),
       faq_html(faqs),
       cta("Protect what you can&rsquo;t replace",
           "Get automatic, verified, ransomware-safe backups set up and monitored by your local team &mdash; included in every monthly plan.",
@@ -2848,7 +2854,7 @@ info_page(
       ]) + '''
         </ul>
       </div>
-    </section>''',
+    </section>''' + promise_strip(items=[PROMISE_CALL, PROMISE_ETA, PROMISE_PEOPLE], title="The little things, every time"),
   inner="""          <h2>Backed by three decades</h2>
           <p>We&rsquo;ve been looking after Dorset homes and businesses since 1995. These guarantees aren&rsquo;t marketing &mdash; they&rsquo;re simply how we&rsquo;ve always worked, and why our customers stay with us for years.</p>
           <p>If something isn&rsquo;t right, tell us and we&rsquo;ll put it right. That&rsquo;s our promise.</p>""",
@@ -2867,6 +2873,7 @@ info_page(
           <p>365 Techies has been a family-run business since 1995. Over three decades, the same friendly, no-nonsense approach has driven everything we do &mdash; and many of our customers have been with us for fifteen or twenty years.</p>
           <h2>Real people, real help</h2>
           <p>When you call us, you reach a real, familiar person who knows your setup &mdash; not a call centre or a script. We&rsquo;re patient, we explain things in plain English, and there&rsquo;s no such thing as a silly question.</p>
+          <p>Because we&rsquo;re a small family team, you see the same faces year after year. We remember how you like your computer set up and get to know you really well &mdash; and that bond only grows as we look after and service your computer every six weeks.</p>
           <p>Today we&rsquo;re Dell hardware specialists, Microsoft partners, certified Microsoft Office Specialists and a Malwarebytes Partner &mdash; but what our customers value most is simply that we genuinely care about getting it right.</p>
           <h2>Here when you need us</h2>
           <p>From our base in Bournemouth, our team supports homes, families, retired and disabled people, sole traders and small businesses right across Dorset &mdash; and remotely across the UK and Europe.</p>
@@ -3429,6 +3436,29 @@ info_page(
           <a class="post-card" href="/it-cost-worksheet/"><p class="post-card__cat">Worksheet</p><h3>IT Quote Worksheet</h3><p>The 5 numbers to work out before you ask anyone for a quote.</p><span class="post-card__more">Get ready &#8594;</span></a>
           <a class="post-card" href="/free-it-health-check/"><p class="post-card__cat">Free</p><h3>Free IT Health Check</h3><p>A free, no-obligation review of your security, backups, updates and performance.</p><span class="post-card__more">Book a check &#8594;</span></a>
           <a class="post-card" href="/switching-it-provider/"><p class="post-card__cat">Switching</p><h3>Switching to Us</h3><p>How easy it is to move your IT support to 365 Techies &mdash; with no downtime.</p><span class="post-card__more">How it works &#8594;</span></a>
+          <a class="post-card" href="/password-strength-checker/"><p class="post-card__cat">Tool</p><h3>Password Strength Checker</h3><p>Test your password and get a strong, memorable one &mdash; privately, in your browser.</p><span class="post-card__more">Check it &#8594;</span></a>
+          <a class="post-card" href="/repair-or-replace-advisor/"><p class="post-card__cat">Tool</p><h3>Repair or Replace?</h3><p>Answer four questions for an honest verdict on your ageing computer.</p><span class="post-card__more">Get advice &#8594;</span></a>
+          <a class="post-card" href="/which-microsoft-365-plan/"><p class="post-card__cat">Tool</p><h3>Which Microsoft 365 Plan?</h3><p>Personal, Family or Business? Find the right one in 30 seconds.</p><span class="post-card__more">Find your plan &#8594;</span></a>
+          <a class="post-card" href="/online-safety/"><p class="post-card__cat">Hub</p><h3>Online Safety Hub</h3><p>Stay safe online &mdash; threats, quizzes and simple habits in one place.</p><span class="post-card__more">Stay safe &#8594;</span></a>
+          <a class="post-card" href="/emergency-it-help/"><p class="post-card__cat">Emergency</p><h3>Emergency IT Help</h3><p>Something gone wrong? The first thing to do for each kind of problem.</p><span class="post-card__more">Start here &#8594;</span></a>
+          <a class="post-card" href="/ive-been-scammed-what-to-do/"><p class="post-card__cat">Emergency</p><h3>I&rsquo;ve Been Scammed</h3><p>Calm, step-by-step actions for the crucial first hour.</p><span class="post-card__more">What to do &#8594;</span></a>
+          <a class="post-card" href="/i-think-ive-been-hacked/"><p class="post-card__cat">Emergency</p><h3>I Think I&rsquo;ve Been Hacked</h3><p>Take back control of your accounts, in the right order.</p><span class="post-card__more">Recover &#8594;</span></a>
+          <a class="post-card" href="/how-to-set-up-two-factor-authentication/"><p class="post-card__cat">Security</p><h3>How to Set Up 2FA</h3><p>Two-factor authentication explained and switched on, in plain English.</p><span class="post-card__more">How to &#8594;</span></a>
+          <a class="post-card" href="/lost-or-stolen-phone-what-to-do/"><p class="post-card__cat">Emergency</p><h3>Lost or Stolen Phone</h3><p>Lock it, bar the SIM and protect your accounts &mdash; fast.</p><span class="post-card__more">Do these now &#8594;</span></a>
+          <a class="post-card" href="/windows-accessibility-features-guide/"><p class="post-card__cat">Accessibility</p><h3>Windows Accessibility Features</h3><p>Bigger text, magnifier, read-aloud and more &mdash; free and built in.</p><span class="post-card__more">Turn them on &#8594;</span></a>
+          <a class="post-card" href="/how-to-choose-a-laptop/"><p class="post-card__cat">Buyer&rsquo;s guide</p><h3>How to Choose a Laptop</h3><p>The five things that actually matter &mdash; no jargon, no sales pitch.</p><span class="post-card__more">Read the guide &#8594;</span></a>
+          <a class="post-card" href="/how-to-wipe-and-recycle-old-computer/"><p class="post-card__cat">Guide</p><h3>Wipe &amp; Recycle a Computer</h3><p>Get your data off safely, then recycle the old machine responsibly.</p><span class="post-card__more">How to &#8594;</span></a>
+          <a class="post-card" href="/safe-online-banking-for-beginners/"><p class="post-card__cat">Guide</p><h3>Safe Online Banking</h3><p>Bank online with confidence &mdash; the golden rules, simply explained.</p><span class="post-card__more">Read the guide &#8594;</span></a>
+          <a class="post-card" href="/avoiding-tech-overwhelm/"><p class="post-card__cat">Wellbeing</p><h3>Avoiding Tech Overwhelm</h3><p>A gentle guide to feeling calmer and more in control of technology.</p><span class="post-card__more">Read the guide &#8594;</span></a>
+          <a class="post-card" href="/your-first-6-weekly-service/"><p class="post-card__cat">What to expect</p><h3>Your First 6-Weekly Service</h3><p>Exactly what happens &mdash; so there are no surprises.</p><span class="post-card__more">See what happens &#8594;</span></a>
+          <a class="post-card" href="/how-we-price/"><p class="post-card__cat">Pricing</p><h3>How We Price</h3><p>What shapes the cost &mdash; and why cheapest isn&rsquo;t always best.</p><span class="post-card__more">Read more &#8594;</span></a>
+          <a class="post-card" href="/what-would-you-lose/"><p class="post-card__cat">Tool</p><h3>What Would You Lose?</h3><p>A 20-second check of how safe your photos, files and records really are.</p><span class="post-card__more">Check now &#8594;</span></a>
+          <a class="post-card" href="/computer-help-for-seniors/"><p class="post-card__cat">Hub</p><h3>Computer Help for Seniors</h3><p>Friendly, patient guides and help for older people, all in one place.</p><span class="post-card__more">Start here &#8594;</span></a>
+          <a class="post-card" href="/how-to-choose-antivirus/"><p class="post-card__cat">Buyer&rsquo;s guide</p><h3>How to Choose Antivirus</h3><p>What good protection really includes &mdash; and what&rsquo;s a waste of money.</p><span class="post-card__more">Read the guide &#8594;</span></a>
+          <a class="post-card" href="/how-to-choose-broadband/"><p class="post-card__cat">Buyer&rsquo;s guide</p><h3>How to Choose Broadband</h3><p>Fibre, 4G/5G or Starlink? Pick the right connection, in plain English.</p><span class="post-card__more">Read the guide &#8594;</span></a>
+          <a class="post-card" href="/setting-up-a-computer-for-an-older-relative/"><p class="post-card__cat">For family</p><h3>Setting Up for an Older Relative</h3><p>Set up a device kindly, safely and simply &mdash; and save the worried calls.</p><span class="post-card__more">Read the guide &#8594;</span></a>
+          <a class="post-card" href="/helping-a-relative-with-their-computer/"><p class="post-card__cat">For family</p><h3>Helping a Relative Remotely</h3><p>Help from afar safely &mdash; and the remote-access scam to avoid.</p><span class="post-card__more">Read the guide &#8594;</span></a>
+          <a class="post-card" href="/confident-video-calling/"><p class="post-card__cat">Guide</p><h3>Confident Video Calling</h3><p>See the family on screen, on any device &mdash; a gentle beginner&rsquo;s guide.</p><span class="post-card__more">Read the guide &#8594;</span></a>
         </div>
       </div>
     </section>''',
@@ -3513,6 +3543,7 @@ info_page(
             <li>Note any error messages &mdash; a photo on your phone is perfect.</li>
             <li>Keep your phone nearby so we can talk you through it.</li>
             <li>Don&rsquo;t worry about tidying up or fixing it first &mdash; we&rsquo;ll take it from here.</li>
+            <li>We&rsquo;ll phone you before we connect to check you&rsquo;re ready &mdash; so the session never starts unexpectedly.</li>
           </ul>
           <h2>Getting ready to book a repair</h2>
           <ul>
@@ -3796,7 +3827,7 @@ info_page(
       </div>
     </section>''',
   inner="""          <h2>Is it safe?</h2>
-          <p>Yes. Sessions run over encrypted Splashtop SOS, you watch everything on screen the whole time, and we can only connect when you give us the one-time code. Access ends as soon as the session does &mdash; we can&rsquo;t reconnect without a new code.</p>
+          <p>Yes. Sessions run over encrypted Splashtop SOS, you watch everything on screen the whole time, and we can only connect when you give us the one-time code. Access ends as soon as the session does &mdash; we can&rsquo;t reconnect without a new code. And for a planned service we always phone you first, so a session never begins out of the blue.</p>
           <h2>What we can fix remotely</h2>
           <p>Most things! Slow computers, email problems, software setup, updates, printer and Wi-Fi issues, security checks and much more &mdash; all without us leaving the office or you leaving home.</p>
           <h2>Which devices?</h2>
@@ -3966,6 +3997,1407 @@ def cyber_threats_hub():
     add(slug=slug, title="Cyber Threats Explained | Stay Safe Online | 365 Techies",
         desc=desc, og_title="Cyber Threats Explained | 365 Techies", schema=schema, content=content)
 cyber_threats_hub()
+
+# ============================================================ TOOL: PASSWORD STRENGTH CHECKER
+PASSWORD_WIDGET = '''    <section class="section" aria-label="Password strength checker">
+      <div class="wrap">
+        <div class="quiz" style="max-width:640px">
+          <label for="pw-in" class="quiz__q" style="font-size:1.3rem;display:block">Type a password to test it</label>
+          <p class="mono" style="color:var(--faint);text-align:center;margin:.2rem 0 1rem">Runs entirely in your browser &mdash; nothing is sent, saved or seen by us.</p>
+          <div class="cov-row">
+            <input id="pw-in" type="password" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Try one out" aria-label="Password to test" />
+            <button type="button" class="button secondary" id="pw-toggle" aria-pressed="false">Show</button>
+          </div>
+          <div style="height:14px;background:rgba(255,255,255,.08);border-radius:8px;overflow:hidden;margin:1.2rem 0 .6rem">
+            <div id="pw-bar" style="height:100%;width:0%;background:#e2654a;transition:width .25s,background .25s"></div>
+          </div>
+          <div class="quiz__result" id="pw-result" aria-live="polite" style="display:block;text-align:left">
+            <p class="hc-bandlabel hc--good" id="pw-band">Type a password above</p>
+            <ul id="pw-tips" style="margin:.6rem 0 0;padding-left:1.1rem;color:var(--muted)"></ul>
+          </div>
+          <hr style="border:none;border-top:1px solid rgba(255,255,255,.1);margin:1.8rem 0" />
+          <h3 style="text-align:center;margin:0 0 .3rem">Need a strong one you can actually remember?</h3>
+          <p class="mono" style="color:var(--faint);text-align:center;margin:0 0 1rem">Three random words &mdash; the method recommended by the UK&rsquo;s National Cyber Security Centre.</p>
+          <div class="cov-row">
+            <input id="pw-gen-out" type="text" readonly aria-label="Suggested passphrase" placeholder="Tap generate" style="text-align:center;font-weight:700" />
+            <button type="button" class="button primary" id="pw-gen">Generate</button>
+          </div>
+          <p style="text-align:center;margin:.7rem 0 0"><button type="button" class="button secondary" id="pw-copy" disabled>Copy</button></p>
+          <p class="hc-disclaimer" style="margin-top:1.4rem">This is a guide, not a guarantee. Never reuse a password across important accounts, and turn on two-factor authentication wherever you can.</p>
+        </div>
+      </div>
+      <script>
+      (function(){
+        var inp=document.getElementById('pw-in'); if(!inp) return;
+        var bar=document.getElementById('pw-bar'), band=document.getElementById('pw-band'), tips=document.getElementById('pw-tips');
+        var common=['password','passw0rd','123456','12345678','qwerty','letmein','welcome','admin','iloveyou','monkey','football','dragon','abc123','111111','000000','princess','sunshine','login','liverpool','arsenal','charlie'];
+        function score(p){
+          var s=0, t=[];
+          if(!p){ return {s:0,band:'Type a password above',cls:'hc--good',tips:[],empty:true}; }
+          s += Math.min(p.length*5, 50);
+          if(/[a-z]/.test(p)) s+=8;
+          if(/[A-Z]/.test(p)) s+=10;
+          if(/[0-9]/.test(p)) s+=10;
+          if(/[^A-Za-z0-9]/.test(p)) s+=14;
+          if(p.length>=16) s+=12;
+          var lower=p.toLowerCase();
+          var isCommon=false; for(var i=0;i<common.length;i++){ if(lower.indexOf(common[i])>=0){ isCommon=true; break; } }
+          if(isCommon){ s=Math.min(s,20); t.push('This contains a very common password a computer guesses almost instantly.'); }
+          if(/(.)\\1\\1/.test(p)){ s-=15; t.push('Avoid repeating the same character (like aaa or 111).'); }
+          if(/(0123|1234|2345|3456|4567|5678|6789|abcd|qwer|asdf|zxcv)/i.test(p)){ s-=15; t.push('Avoid keyboard runs and number sequences (like 1234 or qwerty).'); }
+          if(p.length<12){ t.push('Make it longer &mdash; aim for at least 12 characters. Length matters more than symbols.'); }
+          if(/^[a-z]+$/.test(p)){ t.push('All lowercase letters are easy to guess on their own &mdash; mix in length, words or numbers.'); }
+          s=Math.max(0,Math.min(100,s));
+          var bd,cls;
+          if(s<35){ bd='Weak'; cls='hc--risk'; }
+          else if(s<60){ bd='Fair'; cls='hc--good'; }
+          else if(s<80){ bd='Strong'; cls='hc--good'; }
+          else { bd='Excellent'; cls='hc--strong'; }
+          if(t.length===0) t.push('Nice &mdash; this looks long and hard to guess. Just keep it unique to one account.');
+          return {s:s,band:bd,cls:cls,tips:t};
+        }
+        var colors={'hc--risk':'#e2654a','hc--good':'#e2b34a','hc--strong':'#3fae6b'};
+        function render(){
+          var r=score(inp.value);
+          bar.style.width=r.s+'%';
+          bar.style.background=colors[r.cls]||'#e2654a';
+          band.className='hc-bandlabel '+r.cls;
+          band.textContent=r.empty? r.band : (r.band+' password');
+          tips.innerHTML=r.tips.map(function(x){return '<li>'+x+'</li>';}).join('');
+        }
+        inp.addEventListener('input',render); render();
+        var tog=document.getElementById('pw-toggle');
+        tog.addEventListener('click',function(){
+          var showit=inp.type==='password'; inp.type=showit?'text':'password';
+          tog.textContent=showit?'Hide':'Show'; tog.setAttribute('aria-pressed',showit?'true':'false'); inp.focus();
+        });
+        var WORDS=['anchor','apple','arrow','autumn','badger','basket','beacon','bramble','breeze','bridge','bucket','candle','canvas','castle','cedar','cherry','clover','cobweb','copper','cottage','crayon','crimson','crystal','daisy','dolphin','duvet','ember','falcon','feather','ferry','garden','ginger','glacier','granite','harbour','hazel','heather','hedge','hollow','jacket','jigsaw','jumper','kettle','kingdom','ladder','lantern','lemon','lily','lobster','maple','marble','meadow','mitten','nettle','orchard','otter','paddle','pebble','penguin','pepper','pewter','pigeon','pillow','plum','pocket','puffin','pumpkin','quilt','rabbit','raincoat','raven','ribbon','river','robin','rocket','saddle','salmon','satchel','scarf','seagull','shamrock','shovel','silver','slipper','sparrow','spruce','squirrel','staircase','starling','sunset','teapot','thistle','thunder','timber','toffee','tractor','trumpet','tulip','umbrella','velvet','village','violet','walnut','wagon','waterfall','wellington','whisker','willow','windmill','winter','yarn'];
+        function rand(n){ var x=new Uint32Array(1); (window.crypto||window.msCrypto).getRandomValues(x); return x[0]%n; }
+        var out=document.getElementById('pw-gen-out'), copy=document.getElementById('pw-copy');
+        function gen(){
+          var w=[]; for(var i=0;i<3;i++){ var x=WORDS[rand(WORDS.length)]; w.push(x.charAt(0).toUpperCase()+x.slice(1)); }
+          var num=rand(90)+10;
+          out.value=w.join('-')+num;
+          copy.disabled=false;
+        }
+        document.getElementById('pw-gen').addEventListener('click',gen);
+        copy.addEventListener('click',function(){
+          if(!out.value) return;
+          out.removeAttribute('readonly'); out.select(); try{ out.setSelectionRange(0,99); }catch(e){}
+          try{ if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(out.value); } else { document.execCommand('copy'); } copy.textContent='Copied!'; setTimeout(function(){copy.textContent='Copy';},1500); }catch(e){}
+          out.setAttribute('readonly','readonly');
+        });
+      })();
+      </script>
+    </section>'''
+def password_strength_checker():
+    slug="password-strength-checker"
+    desc="Free, private password strength checker and three-word passphrase generator. Test how strong your password is and get a memorable, secure one - all in your browser, nothing sent or stored. From 365 Techies, Dorset."
+    faqs=[
+      ("Is it safe to type my password here?","Yes. The check runs entirely in your browser &mdash; your password is never sent over the internet, saved, or seen by us or anyone else. If you&rsquo;d still rather not type a real one, test something with the same length and style."),
+      ("What actually makes a password strong?","Length, mostly. A long password or a few random words is far harder to crack than a short one full of symbols. Avoid real words on their own, names, dates, and anything you&rsquo;ve used elsewhere."),
+      ("Why three random words?","The UK&rsquo;s National Cyber Security Centre recommends three random words because they make a password that&rsquo;s long, strong and &mdash; crucially &mdash; easy to remember. Add a number or symbol for extra strength."),
+      ("Should I use a password manager?","For most people, yes &mdash; it remembers strong, unique passwords so you don&rsquo;t have to. We can help you set one up safely; just ask. See our <a href=\"/cybersecurity-support/\">cybersecurity support</a>."),
+    ]
+    content="\n".join([
+      hero(bc("Password Strength Checker"), "// FREE &middot; PRIVATE",
+           'Is your password <em class="grad grad--cyan">strong enough?</em>',
+           "Test your password and get a memorable, secure one to use instead. It all happens in your browser &mdash; nothing is sent, saved or seen by us.",
+           cta1=("Get Protected","/cybersecurity-support/"), cta2=("Security Checklist","/cybersecurity-checklist/"),
+           chips=["100% in your browser","Nothing stored","NCSC three-word method"]),
+      PASSWORD_WIDGET,
+      f'''    <section class="section section--alt" aria-label="Why length matters">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">/ WHY LENGTH BEATS SYMBOLS</p>
+          <h2 class="section-title" data-title>A longer password is a stronger password<span class="title-underline"></span></h2>
+          <p>It feels like the secret to a good password is cramming in symbols and capital letters. In truth, <strong>length is what defeats the computers that try to guess them</strong> &mdash; every extra character multiplies the time it would take.</p>
+          <p>That&rsquo;s why three random words &mdash; like the generator above &mdash; beats something like <em>P@ss1!</em>. It&rsquo;s longer, stronger, and you can actually remember it.</p>
+        </div>
+        <ul class="checklist" data-stagger>
+{checklist(["Use at least 12 characters","Three random words is ideal","Never reuse important passwords","Turn on two-factor authentication","Let a password manager remember them","Change a password the moment it&rsquo;s leaked"])}
+        </ul>
+      </div>
+    </section>''',
+      faq_html(faqs),
+      cta("Want help locking down your accounts?",
+          "We&rsquo;ll set up strong passwords, a password manager and two-factor authentication with you &mdash; patiently, over a secure session, and we always call before we connect.",
+          primary=("Talk to a Techie","/contact/"), secondary=("How to set up 2FA","/how-to-set-up-two-factor-authentication/")),
+    ])
+    def schema(s,_d=desc,_f=faqs):
+        return graph([crumb(s,"Password Strength Checker"), webpage(s,"Password Strength Checker",_d),
+                      faqpage(s,_f),
+                      {"@type":"WebApplication","name":"365 Techies Password Strength Checker","applicationCategory":"SecurityApplication","operatingSystem":"Web (all browsers)","url":SITE+"/password-strength-checker/","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},"provider":{"@id":SITE+"/#business"}}])
+    add(slug=slug, title="Free Password Strength Checker & Passphrase Generator (Private) | 365 Techies",
+        desc=desc, og_title="Password Strength Checker | 365 Techies", schema=schema, content=content)
+password_strength_checker()
+
+# ============================================================ TOOL: REPAIR OR REPLACE ADVISOR
+REPAIR_REPLACE_WIDGET = '''    <section class="section section--alt" aria-label="Repair or replace advisor">
+      <div class="wrap">
+        <div class="quiz" id="rr">
+          <div class="quiz__step is-active" data-step="type">
+            <p class="quiz__count mono">STEP 1 OF 4</p>
+            <h2 class="quiz__q">What kind of computer is it?</h2>
+            <div class="quiz__opts">
+              <button type="button" class="quiz__opt" data-set="type:laptop">Laptop</button>
+              <button type="button" class="quiz__opt" data-set="type:desktop">Desktop / tower</button>
+              <button type="button" class="quiz__opt" data-set="type:aio">All-in-one</button>
+            </div>
+          </div>
+          <div class="quiz__step" data-step="age">
+            <p class="quiz__count mono">STEP 2 OF 4</p>
+            <h2 class="quiz__q">Roughly how old is it?</h2>
+            <div class="quiz__opts">
+              <button type="button" class="quiz__opt" data-set="age:0">Under 3 years</button>
+              <button type="button" class="quiz__opt" data-set="age:1">3 to 5 years</button>
+              <button type="button" class="quiz__opt" data-set="age:2">6 to 8 years</button>
+              <button type="button" class="quiz__opt" data-set="age:3">Older, or not sure</button>
+            </div>
+          </div>
+          <div class="quiz__step" data-step="issue">
+            <p class="quiz__count mono">STEP 3 OF 4</p>
+            <h2 class="quiz__q">What&rsquo;s the main problem?</h2>
+            <div class="quiz__opts">
+              <button type="button" class="quiz__opt" data-set="issue:slow">It&rsquo;s very slow</button>
+              <button type="button" class="quiz__opt" data-set="issue:virus">Virus, pop-ups or software trouble</button>
+              <button type="button" class="quiz__opt" data-set="issue:battery">Battery won&rsquo;t hold charge</button>
+              <button type="button" class="quiz__opt" data-set="issue:screen">Cracked or faulty screen</button>
+              <button type="button" class="quiz__opt" data-set="issue:boot">Won&rsquo;t turn on or keeps crashing</button>
+              <button type="button" class="quiz__opt" data-set="issue:liquid">Dropped or had a spill</button>
+              <button type="button" class="quiz__opt" data-set="issue:drive">Strange noises or losing files</button>
+            </div>
+          </div>
+          <div class="quiz__step" data-step="cost">
+            <p class="quiz__count mono">LAST ONE</p>
+            <h2 class="quiz__q">Have you been quoted to fix it?</h2>
+            <div class="quiz__opts">
+              <button type="button" class="quiz__opt" data-set="cost:low">Under &pound;100</button>
+              <button type="button" class="quiz__opt" data-set="cost:mid">&pound;100 to &pound;200</button>
+              <button type="button" class="quiz__opt" data-set="cost:high">More than &pound;200</button>
+              <button type="button" class="quiz__opt" data-set="cost:no">Not yet</button>
+            </div>
+          </div>
+          <div class="quiz__step" data-step="result"><div class="quiz__result" id="rr-result" aria-live="polite"></div></div>
+          <div class="quiz__back"><button type="button" id="rr-restart">&larr; Start again</button></div>
+        </div>
+      </div>
+      <script>
+      (function(){
+        var quiz=document.getElementById('rr'); if(!quiz) return;
+        var a={};
+        function show(step){ var s=quiz.querySelectorAll('.quiz__step'); for(var i=0;i<s.length;i++) s[i].classList.toggle('is-active', s[i].getAttribute('data-step')===step); }
+        function result(){
+          var lean=parseInt(a.age,10)||0;
+          if(a.issue==='slow'||a.issue==='virus') lean-=1;
+          if(a.issue==='screen'||a.issue==='boot') lean+=1;
+          if(a.issue==='liquid') lean+=2;
+          if(a.cost==='low') lean-=1; else if(a.cost==='high') lean+=2;
+          var head,body,cls;
+          if(lean<=0){ cls='hc--strong'; head='Worth repairing'; body='Going on what you&rsquo;ve told us, this one is very likely worth fixing &mdash; the type of problem and the age both point that way. We&rsquo;ll always tell you straight, and our diagnosis is no-fix-no-fee.'; }
+          else if(lean<=2){ cls='hc--good'; head='Borderline &mdash; worth getting checked'; body='It could go either way. The honest answer depends on exactly what&rsquo;s wrong inside, which is why we look first and tell you straight before any work &mdash; no-fix-no-fee, with a 12-month warranty on repairs.'; }
+          else { cls='hc--risk'; head='It may be time to replace it'; body='Given its age and the problem, a repair may cost more than it&rsquo;s worth. A common rule of thumb is that if a fix would cost more than about half the price of a replacement, replacing is usually better value. We&rsquo;ll still check it honestly first &mdash; sometimes it&rsquo;s an easy fix.'; }
+          if(a.issue==='drive'){ body+=' <strong>Important:</strong> losing files or strange noises can mean a failing hard drive &mdash; please back up anything precious right now, before anything else.'; }
+          var acts='<div class="quiz__actions"><a href="/book-a-collection/" class="button primary">Book a free check</a><a href="/computer-repairs/" class="button secondary">About repairs</a></div>';
+          if(cls==='hc--risk'){ acts='<div class="quiz__actions"><a href="/backup-support/" class="button primary">Back up first</a><a href="/new-computer-setup/" class="button secondary">New computer setup</a></div>'; }
+          document.getElementById('rr-result').innerHTML='<p class="hc-bandlabel '+cls+'">'+head+'</p><p>'+body+'</p>'+acts+'<p class="hc-disclaimer">This is friendly guidance, not a quote. The only way to be sure is to look &mdash; which we&rsquo;ll do honestly, and free on diagnosis. Not sure what&rsquo;s actually wrong? Try our <a href="/computer-fault-checker/">computer fault checker</a>.</p>';
+        }
+        quiz.addEventListener('click',function(e){ var o=e.target.closest('.quiz__opt'); if(!o) return; var kv=o.getAttribute('data-set').split(':'); a[kv[0]]=kv[1];
+          if(kv[0]==='type') show('age');
+          else if(kv[0]==='age') show('issue');
+          else if(kv[0]==='issue') show('cost');
+          else if(kv[0]==='cost'){ result(); show('result'); }
+        });
+        document.getElementById('rr-restart').addEventListener('click',function(){ a={}; show('type'); });
+      })();
+      </script>
+    </section>'''
+def repair_or_replace_advisor():
+    slug="repair-or-replace-advisor"
+    desc="Repair or replace your computer? Answer four quick questions for an honest, no-nonsense recommendation - based on the age, the problem and any repair quote you've been given. Free guidance from 365 Techies, Dorset."
+    faqs=[
+      ("How do you decide whether to repair or replace?","We weigh up the computer&rsquo;s age, the type of fault, and what a repair would cost against a replacement. A common rule of thumb is that if a repair costs more than about half the price of a new one, replacing is usually better value &mdash; but we always check honestly first."),
+      ("Is the recommendation a quote?","No &mdash; it&rsquo;s friendly guidance to point you in the right direction. The only way to know for sure is to look, which we do free on diagnosis (no-fix-no-fee), with a 12-month warranty on any repair."),
+      ("My computer is losing files &mdash; what should I do first?","Back up anything precious straight away. Strange noises or disappearing files can mean a failing drive, and acting fast gives the best chance of saving your data. See our <a href=\"/backup-support/\">backup &amp; recovery</a> page, then get in touch."),
+      ("Can you move my files to a new computer?","Yes &mdash; if replacing is the better option, we&rsquo;ll move your files, photos, email and programs across and set it all up. See <a href=\"/new-computer-setup/\">new computer setup</a>."),
+    ]
+    content="\n".join([
+      hero(bc("Repair or Replace?"), "// HONEST ADVISOR",
+           'Repair or replace? <em class="grad grad--green">Get an honest answer.</em>',
+           "Answer four quick questions and we&rsquo;ll give you a straight, no-pressure recommendation &mdash; based on the age, the fault and any quote you&rsquo;ve been given. We&rsquo;ll never push a sale.",
+           cta1=("Book a Free Check","/book-a-collection/"), cta2=("About Repairs","/computer-repairs/"),
+           chips=["No-fix-no-fee","We&rsquo;ll tell you straight","Free guidance"]),
+      REPAIR_REPLACE_WIDGET,
+      faq_html(faqs),
+      cta("Rather we just took a look?",
+          "Book a free, no-obligation diagnosis with free local collection. We&rsquo;ll tell you honestly whether it&rsquo;s worth repairing &mdash; and only ever recommend what&rsquo;s right for you.",
+          primary=("Book a Collection","/book-a-collection/"), secondary=("Our Guarantees","/our-guarantees/")),
+    ])
+    def schema(s,_d=desc,_f=faqs):
+        return graph([crumb(s,"Repair or Replace Advisor"), webpage(s,"Repair or Replace Advisor",_d),
+                      faqpage(s,_f),
+                      {"@type":"WebApplication","name":"365 Techies Repair or Replace Advisor","applicationCategory":"UtilitiesApplication","operatingSystem":"Web (all browsers)","url":SITE+"/repair-or-replace-advisor/","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},"provider":{"@id":SITE+"/#business"}}])
+    add(slug=slug, title="Repair or Replace Your Computer? Honest Free Advisor | 365 Techies",
+        desc=desc, og_title="Repair or Replace Advisor | 365 Techies", schema=schema, content=content)
+repair_or_replace_advisor()
+
+# ============================================================ TOOL: WHICH MICROSOFT 365 PLAN
+M365_WIDGET = '''    <section class="section section--alt" aria-label="Which Microsoft 365 plan do you need?">
+      <div class="wrap">
+        <div class="quiz" id="m365sel">
+          <div class="quiz__step is-active" data-step="who">
+            <p class="quiz__count mono">QUICK PICKER &middot; 30 SECONDS</p>
+            <h2 class="quiz__q">Who is it for?</h2>
+            <div class="quiz__opts">
+              <button type="button" class="quiz__opt" data-set="who:home">Me or my household</button>
+              <button type="button" class="quiz__opt" data-set="who:biz">My business or team</button>
+            </div>
+          </div>
+          <div class="quiz__step" data-step="home">
+            <p class="quiz__count mono">ONE MORE</p>
+            <h2 class="quiz__q">How many people will use it?</h2>
+            <div class="quiz__opts">
+              <button type="button" class="quiz__opt" data-set="home:me">Just me</button>
+              <button type="button" class="quiz__opt" data-set="home:family">Several people at home</button>
+            </div>
+          </div>
+          <div class="quiz__step" data-step="apps">
+            <p class="quiz__count mono">QUESTION 2 OF 3</p>
+            <h2 class="quiz__q">Do you need the Office apps installed on your computers?</h2>
+            <div class="quiz__opts">
+              <button type="button" class="quiz__opt" data-set="apps:installed">Yes &mdash; full Word, Excel &amp; Outlook on the PC</button>
+              <button type="button" class="quiz__opt" data-set="apps:web">Web and mobile versions are fine</button>
+            </div>
+          </div>
+          <div class="quiz__step" data-step="sec">
+            <p class="quiz__count mono">LAST ONE</p>
+            <h2 class="quiz__q">Do you need advanced security and device management?</h2>
+            <div class="quiz__opts">
+              <button type="button" class="quiz__opt" data-set="sec:yes">Yes &mdash; we handle sensitive data or managed devices</button>
+              <button type="button" class="quiz__opt" data-set="sec:no">No, or not sure</button>
+            </div>
+          </div>
+          <div class="quiz__step" data-step="result"><div class="quiz__result" id="m365-result" aria-live="polite"></div></div>
+          <div class="quiz__back"><button type="button" id="m365-restart">&larr; Start again</button></div>
+        </div>
+      </div>
+      <script>
+      (function(){
+        var quiz=document.getElementById('m365sel'); if(!quiz) return;
+        var a={};
+        function show(step){ var s=quiz.querySelectorAll('.quiz__step'); for(var i=0;i<s.length;i++) s[i].classList.toggle('is-active', s[i].getAttribute('data-step')===step); }
+        function out(name,desc){
+          document.getElementById('m365-result').innerHTML='<p class="hc-bandlabel hc--strong">'+name+'</p><p>'+desc+'</p>'+
+            '<div class="quiz__actions"><a href="/microsoft-365-support/" class="button primary">We&rsquo;ll set it up for you</a><a href="https://www.microsoft.com/en-gb/microsoft-365/buy/compare-all-microsoft-365-products" class="button secondary" target="_blank" rel="noopener">Compare on Microsoft</a></div>'+
+            '<p class="hc-disclaimer">A guide to get you in the right area. Microsoft changes its plans and prices from time to time, so we&rsquo;ll confirm the best current option &mdash; and the latest price &mdash; for free before you buy. As Microsoft partners we can set it up, move your email across and support it.</p>';
+        }
+        function result(){
+          if(a.who==='home'){
+            if(a.home==='me') out('Microsoft 365 Personal','For one person: the full Word, Excel, PowerPoint and Outlook on your devices, plus 1TB of OneDrive cloud storage. Ideal if it&rsquo;s just you.');
+            else out('Microsoft 365 Family','Shares with up to six people, each with their own login and 1TB of OneDrive. Usually the best value for a household &mdash; even for two people it can work out similar to Personal.');
+          } else {
+            if(a.sec==='yes') out('Microsoft 365 Business Premium','Everything in Business Standard plus advanced security, device management and extra protection &mdash; the right choice if you handle sensitive data or want managed, secured devices.');
+            else if(a.apps==='installed') out('Microsoft 365 Business Standard','Business email on your own domain, Teams, 1TB OneDrive per person, and the full Office apps installed on your computers. The most popular small-business choice.');
+            else out('Microsoft 365 Business Basic','Business email on your own domain, Teams, 1TB OneDrive per person and the web and mobile versions of the Office apps. Great value if you don&rsquo;t need the apps installed on the PC.');
+          }
+        }
+        quiz.addEventListener('click',function(e){ var o=e.target.closest('.quiz__opt'); if(!o) return; var kv=o.getAttribute('data-set').split(':'); a[kv[0]]=kv[1];
+          if(kv[0]==='who'){ if(kv[1]==='home') show('home'); else show('apps'); }
+          else if(kv[0]==='home'){ result(); show('result'); }
+          else if(kv[0]==='apps') show('sec');
+          else if(kv[0]==='sec'){ result(); show('result'); }
+        });
+        document.getElementById('m365-restart').addEventListener('click',function(){ a={}; show('who'); });
+      })();
+      </script>
+    </section>'''
+def which_microsoft_365_plan():
+    slug="which-microsoft-365-plan"
+    desc="Which Microsoft 365 plan do you actually need? Answer a couple of quick questions - Personal, Family, Business Basic, Standard or Premium - and we'll point you to the right one, in plain English. Free tool from 365 Techies."
+    faqs=[
+      ("What&rsquo;s the difference between Personal and Family?","Microsoft 365 Personal is for one person; Family shares with up to six people, each with their own login and 1TB of cloud storage. Family is often the better value even for a couple."),
+      ("Do I need Business Basic, Standard or Premium?","Basic gives you business email and the online apps; Standard adds the full Office apps installed on your computers; Premium adds advanced security and device management. Our picker above suggests the right fit."),
+      ("Why don&rsquo;t you show prices?","Microsoft changes its plans and prices from time to time, so rather than show a figure that might be out of date, we link Microsoft&rsquo;s own comparison and confirm the current best-value option with you for free."),
+      ("Can you set it all up for us?","Yes &mdash; as Microsoft partners we handle licensing, set-up, email migration and ongoing support. See <a href=\"/microsoft-365-support/\">Microsoft 365 support</a>."),
+    ]
+    content="\n".join([
+      hero(bc("Which Microsoft 365 Plan?"), "// FREE PICKER",
+           'Which Microsoft 365 plan do you <em class="grad grad--cyan">actually need?</em>',
+           "Personal, Family, Business Basic, Standard or Premium? Answer a couple of quick questions and we&rsquo;ll point you to the right one &mdash; in plain English, with no jargon and no upselling.",
+           cta1=("Microsoft 365 Support","/microsoft-365-support/"), cta2=("Talk to a Techie","/contact/"),
+           chips=["Microsoft partners","Plain English","No upselling"]),
+      M365_WIDGET,
+      faq_html(faqs),
+      cta("Let us set up Microsoft 365 properly",
+          "As Microsoft partners and certified Office Specialists, we choose the right licences, set everything up, migrate your email with nothing lost, and support it for you.",
+          primary=("Microsoft 365 Support","/microsoft-365-support/"), secondary=("Compare Plans on Microsoft","https://www.microsoft.com/en-gb/microsoft-365/buy/compare-all-microsoft-365-products")),
+    ])
+    def schema(s,_d=desc,_f=faqs):
+        return graph([crumb(s,"Which Microsoft 365 Plan"), webpage(s,"Which Microsoft 365 Plan Do You Need?",_d),
+                      faqpage(s,_f),
+                      {"@type":"WebApplication","name":"365 Techies Microsoft 365 Plan Picker","applicationCategory":"BusinessApplication","operatingSystem":"Web (all browsers)","url":SITE+"/which-microsoft-365-plan/","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},"provider":{"@id":SITE+"/#business"}}])
+    add(slug=slug, title="Which Microsoft 365 Plan Do You Need? Free Picker | 365 Techies",
+        desc=desc, og_title="Which Microsoft 365 Plan? | 365 Techies", schema=schema, content=content)
+which_microsoft_365_plan()
+
+# ============================================================ GUIDE: I'VE BEEN SCAMMED
+info_page(
+  slug="ive-been-scammed-what-to-do", crumb_name="I&rsquo;ve Been Scammed", eyebrow="// EMERGENCY STEPS",
+  h1='You&rsquo;ve been scammed &mdash; <em class="grad grad--green">here&rsquo;s what to do now</em>',
+  lede="Take a breath. Scams catch out clever, careful people every day &mdash; it&rsquo;s not your fault. Acting quickly is what matters most, so work through these steps in order.",
+  desc="Scammed? Here's exactly what to do right now, in order: contact your bank on 159, report to Action Fraud, secure your accounts and check your computer. A calm, plain-English emergency guide from 365 Techies.",
+  title="I've Been Scammed - What To Do Right Now (UK Steps) | 365 Techies",
+  og_title="I've Been Scammed - What To Do Now | 365 Techies",
+  chips=["Calm, step-by-step","Trusted UK numbers","We&rsquo;re here to help"],
+  pre=f'''    <section class="section section--alt" aria-label="Do this first">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// DO THIS FIRST</p>
+          <h2 class="section-title section-title--center" data-title>The first hour matters most<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ol class="how__steps">
+{steps([("Contact your bank straight away","If any money or card details are involved, call <strong>159</strong> to reach your bank safely (the trusted Stop Scams UK number), or the number on the back of your card. Ask them to stop payments and protect your accounts."),("Report it to Action Fraud","In England, Wales or Northern Ireland, report to <strong>Action Fraud on 0300 123 2040</strong> or at <a href=\"https://www.actionfraud.police.uk/\" target=\"_blank\" rel=\"noopener\">actionfraud.police.uk</a>, and keep the crime reference. In Scotland, call <strong>Police Scotland on 101</strong>."),("Change your passwords","From a different, trusted device, change the password on any affected account &mdash; starting with your email &mdash; and turn on <a href=\"/how-to-set-up-two-factor-authentication/\">two-factor authentication</a>. Never reuse a password."),("If you gave remote access, disconnect","If you let someone control your screen or installed something they asked you to, disconnect the computer from the internet and call us. Don&rsquo;t use online banking on it again until it&rsquo;s been checked.")])}
+        </ol>
+      </div>
+    </section>
+    <section class="section" aria-label="What kind of scam was it">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// WHAT KIND OF SCAM WAS IT?</p>
+          <h2 class="section-title section-title--center" data-title>Your next step, by type of scam<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ul class="security-grid" data-stagger>
+{grid_cards([("Bank transfer / &lsquo;safe account&rsquo;","Call 159 now. Banks must consider reimbursing many authorised push-payment scams &mdash; report it and ask about their refund process."),("Card payment","Contact your card provider to stop the card and dispute the payment. You may be protected under chargeback or Section 75."),("Refund or &lsquo;tech support&rsquo; (remote access)","Disconnect the computer, change passwords from another device, and have it checked &mdash; they may have left something behind."),("Romance / online friend","Stop contact and stop sending money. It&rsquo;s painful but common &mdash; report it and tell someone you trust. There&rsquo;s no shame in it."),("Investment / crypto","Report to Action Fraud and the FCA. Don&rsquo;t pay any &lsquo;release fee&rsquo; to get money back &mdash; that&rsquo;s a second scam."),("Gift cards / vouchers","Keep the cards and receipts and report it &mdash; sometimes funds can be frozen if you act very fast.")])}
+        </ul>
+      </div>
+    </section>''',
+  inner="""          <h2>Will I get my money back?</h2>
+          <p>Often, you can &mdash; especially if you act fast. Banks signed up to the industry code, and new rules on authorised push-payment scams, mean many victims are reimbursed. Report it to your bank straight away and ask exactly how their process works. For independent help, <a href="https://www.citizensadvice.org.uk/consumer/scams/check-if-something-might-be-a-scam/" target="_blank" rel="noopener">Citizens Advice</a> (consumer helpline 0808 223 1133) and <a href="https://www.which.co.uk/consumer-rights/advice/how-to-get-your-money-back-after-a-scam" target="_blank" rel="noopener">Which?</a> have clear, free guidance.</p>
+          <h2>In the first week</h2>
+          <ul class="checklist">
+            <li>Check your bank and card statements for anything you don&rsquo;t recognise.</li>
+            <li>Get a free credit report to spot accounts opened in your name.</li>
+            <li>Consider CIFAS Protective Registration if you think your identity is at risk.</li>
+            <li>Warn family and friends &mdash; scammers often target your contacts next.</li>
+            <li>Forward scam texts to <strong>7726</strong> and scam emails to <strong>report@phishing.gov.uk</strong>.</li>
+          </ul>
+          <h2>How we help afterwards</h2>
+          <p>If a scammer had access to your computer, we&rsquo;ll check it over on a secure remote session &mdash; remove anything they left, secure your accounts and set up <a href="/how-to-set-up-two-factor-authentication/">two-factor authentication</a> so it can&rsquo;t happen again. Remember: <strong>we always phone you before we connect, and a genuine technician never cold-calls demanding access.</strong> Test yourself anytime with our <a href="/spot-the-scam/">Spot the Scam</a> quiz.</p>""",
+  faqs=[
+    ("Should I keep talking to the scammer?","No &mdash; stop all contact. Don&rsquo;t reply, don&rsquo;t click anything, and never pay a &lsquo;fee&rsquo; to get your money back, as that&rsquo;s a second scam. Keep any messages as evidence, then report them."),
+    ("They had remote access to my screen &mdash; what now?","Disconnect the computer from the internet, change your important passwords from a different device, and don&rsquo;t use online banking on it until it&rsquo;s been checked. We can review it securely &mdash; and we always call before we connect."),
+    ("Can the police get my money back?","Reporting to Action Fraud helps build the bigger picture and is sometimes needed for a refund, but your bank is usually the fastest route to recovering money. Report to both."),
+    ("I&rsquo;m not in Bournemouth &mdash; can you still help?","Yes. We help across the UK and Europe with fast, secure remote support, so we can check your computer and secure your accounts wherever you are."),
+  ],
+  cta_args=("Worried your computer&rsquo;s been compromised?","Let a friendly, local techie check it over and lock everything down &mdash; securely, patiently, and we always call before we connect.",
+            ("Talk to a Techie","/contact/"), ("Stay Safe Online","/online-safety/")),
+)
+
+# ============================================================ GUIDE: HOW TO SET UP 2FA
+info_page(
+  slug="how-to-set-up-two-factor-authentication", crumb_name="Set Up Two-Factor Authentication", eyebrow="// PLAIN-ENGLISH HOW-TO",
+  h1='How to set up <em class="grad grad--cyan">two-factor authentication</em>',
+  lede="Two-factor authentication (2FA) is the single best thing you can do to keep your accounts safe &mdash; even if someone learns your password. Here&rsquo;s how it works, and how to switch it on, in plain English.",
+  desc="A plain-English guide to two-factor authentication (2FA): what it is, the best methods (passkeys, authenticator apps, SMS), and how to turn it on for Microsoft, Google, Apple, Facebook, banking and WhatsApp. From 365 Techies.",
+  title="How to Set Up Two-Factor Authentication (2FA) - Plain English | 365 Techies",
+  og_title="How to Set Up Two-Factor Authentication | 365 Techies",
+  chips=["What 2FA is","Best methods ranked","We can set it up with you"],
+  pre=f'''    <section class="section section--alt" aria-label="Types of two-factor authentication">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// THE BEST METHODS, RANKED</p>
+          <h2 class="section-title section-title--center" data-title>Some 2FA is stronger than others<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Any 2FA is far better than none. If you have the choice, this is the order we&rsquo;d pick.</p>
+        </div>
+        <div class="tile-grid" data-stagger>
+{tiles([("check","1. Passkeys","The newest and safest &mdash; your fingerprint, face or device PIN replaces the password entirely. Nothing to type, nothing to steal."),("phone","2. Authenticator app","A free app (like Microsoft or Google Authenticator) shows a 6-digit code that changes every 30 seconds. Strong and easy."),("bell","3. Hardware key","A small physical key you tap or plug in. Excellent for high-value accounts."),("mail","4. Text-message code","A code sent by SMS. Better than nothing, but can be intercepted &mdash; use a stronger method where you can.")])}
+        </div>
+      </div>
+    </section>
+    <section class="section" aria-label="Five steps to turn on 2FA">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// 5 STEPS FOR ANY ACCOUNT</p>
+          <h2 class="section-title section-title--center" data-title>Turning it on, step by step<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ol class="how__steps">
+{steps([("Open your account&rsquo;s security settings","Sign in, then look for &lsquo;Security&rsquo;, &lsquo;Password &amp; security&rsquo; or &lsquo;Sign-in&rsquo;. The wording varies slightly by service."),("Find &lsquo;two-step&rsquo; or &lsquo;two-factor&rsquo;","Look for &lsquo;Two-step verification&rsquo;, &lsquo;2-Step Verification&rsquo; or &lsquo;Two-factor authentication&rsquo; and choose to turn it on."),("Pick your method","Choose a passkey or authenticator app if offered; otherwise a text code. Follow the prompts to link it."),("Save your backup codes","You&rsquo;ll be given recovery codes &mdash; print them or write them down and keep them somewhere safe. They get you back in if you lose your phone."),("Add a second method","Set up a backup (a second method or a trusted device) so you&rsquo;re never locked out.")])}
+        </ol>
+      </div>
+    </section>''',
+  inner="""          <h2>Turn it on for the accounts that matter</h2>
+          <p>Start with your <strong>email</strong> &mdash; it&rsquo;s the master key to everything else &mdash; then your bank, then social media. Here are the official pages:</p>
+          <ul class="checklist">
+            <li><strong>Microsoft / Microsoft 365:</strong> <a href="https://account.microsoft.com/security" target="_blank" rel="noopener">account.microsoft.com/security</a> (see also our <a href="/how-to-secure-your-microsoft-365-account/">Microsoft 365 security guide</a>).</li>
+            <li><strong>Google / Gmail:</strong> <a href="https://myaccount.google.com/security" target="_blank" rel="noopener">myaccount.google.com/security</a> &rarr; 2-Step Verification.</li>
+            <li><strong>Apple ID:</strong> Settings &rarr; your name &rarr; Sign-In &amp; Security &rarr; Two-Factor Authentication.</li>
+            <li><strong>Facebook &amp; Instagram:</strong> Settings &rarr; Accounts Centre &rarr; Password and security.</li>
+            <li><strong>Online banking:</strong> in your banking app or website&rsquo;s security settings &mdash; most banks now build this in.</li>
+            <li><strong>WhatsApp:</strong> Settings &rarr; Account &rarr; Two-step verification.</li>
+          </ul>
+          <p>For more, the UK&rsquo;s National Cyber Security Centre has clear advice on <a href="https://www.ncsc.gov.uk/guidance/setting-up-two-factor-authentication-2fa" target="_blank" rel="noopener">setting up 2FA</a>.</p>
+          <h2>Don&rsquo;t get locked out</h2>
+          <ul class="checklist">
+            <li>Save your backup/recovery codes somewhere safe.</li>
+            <li>Add a second method or trusted device.</li>
+            <li>When you change phones, move your authenticator app across first (see our guide to a <a href="/lost-or-stolen-phone-what-to-do/">lost or stolen phone</a>).</li>
+          </ul>
+          <p>Prefer a hand? We&rsquo;ll set 2FA up with you over a secure remote session &mdash; patiently, and we always call before we connect.</p>""",
+  faqs=[
+    ("Is text-message 2FA safe?","It&rsquo;s much safer than no 2FA, but text codes can occasionally be intercepted (for example through &lsquo;SIM-swap&rsquo; fraud &mdash; see our <a href=\"/smishing-and-vishing/\">smishing &amp; vishing</a> page). Use a passkey or authenticator app where you can."),
+    ("What&rsquo;s a passkey?","A passkey lets you sign in with your fingerprint, face or device PIN instead of a password. There&rsquo;s nothing to remember and nothing for a scammer to steal &mdash; it&rsquo;s the safest option where it&rsquo;s offered."),
+    ("What if I lose the phone with my authenticator app?","That&rsquo;s what your backup codes and second method are for. Keep recovery codes safe, and ideally add a trusted device. We can help you get back in."),
+    ("Is two-factor authentication free?","Yes &mdash; it&rsquo;s a free feature built into almost every major account. Authenticator apps are free too."),
+  ],
+  cta_args=("Rather we set it up with you?","We&rsquo;ll switch on 2FA across your important accounts together &mdash; calmly, in plain English, over a secure session.",
+            ("Talk to a Techie","/contact/"), ("Explore Cybersecurity","/cybersecurity-support/")),
+)
+
+# ============================================================ GUIDE: I THINK I'VE BEEN HACKED
+info_page(
+  slug="i-think-ive-been-hacked", crumb_name="I Think I&rsquo;ve Been Hacked", eyebrow="// TAKE BACK CONTROL",
+  h1='I think I&rsquo;ve been hacked &mdash; <em class="grad grad--green">how to take back control</em>',
+  lede="First: don&rsquo;t panic. Most account hacks can be undone if you act quickly and in the right order. Here&rsquo;s exactly what to do, starting with the account that matters most.",
+  desc="Think you've been hacked? A calm, step-by-step recovery guide: secure your email first, reset key passwords, revoke unknown sign-ins, scan for malware and report it. Plain-English help from 365 Techies.",
+  title="I Think I've Been Hacked - How To Take Back Control | 365 Techies",
+  og_title="I Think I've Been Hacked | 365 Techies",
+  chips=["Email first","Step-by-step","We can do it with you"],
+  pre=f'''    <section class="section section--alt" aria-label="Signs you have been hacked">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// SIGNS IT&rsquo;S REALLY A HACK</p>
+          <h2 class="section-title section-title--center" data-title>What being hacked looks like<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="tile-grid" data-stagger>
+{tiles([("lock","Your password stopped working","You&rsquo;re suddenly locked out of an account you didn&rsquo;t change."),("mail","Messages you didn&rsquo;t send","Friends mention emails or posts &lsquo;from you&rsquo; that you never sent."),("eye","Logins from strange places","Alerts about sign-ins from places or devices you don&rsquo;t recognise."),("shield","Security turned off","Your antivirus or settings have been disabled without you doing it."),("bolt","Ransom or threat pop-ups","A message demands payment or claims to have &lsquo;locked&rsquo; your files."),("user","New accounts or rules","Unfamiliar email forwarding rules, or accounts opened in your name.")])}
+        </div>
+      </div>
+    </section>
+    <section class="section" aria-label="Recovery steps in order">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// DO THESE IN ORDER</p>
+          <h2 class="section-title section-title--center" data-title>Take back control, step by step<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ol class="how__steps">
+{steps([("Secure your email first","Your email is the master key &mdash; resets for everything else go there. Reset its password from a clean device, turn on <a href=\"/how-to-set-up-two-factor-authentication/\">2FA</a>, and check for sneaky forwarding rules or a changed recovery address."),("Reset other key passwords","Change passwords on your bank, Microsoft/Google and social accounts &mdash; especially anything that shared the old password. Use a <a href=\"/password-strength-checker/\">strong, unique one</a> for each."),("Sign out everywhere","In each account&rsquo;s security settings, look for &lsquo;where you&rsquo;re signed in&rsquo; and remove any device you don&rsquo;t recognise."),("Scan the device","Run a full antivirus scan to remove anything left behind. We can do this for you on a secure session."),("Tell people &amp; report it","Warn your contacts not to act on messages &lsquo;from you&rsquo;, and report it to Action Fraud (0300 123 2040) and the platform.")])}
+        </ol>
+      </div>
+    </section>''',
+  inner="""          <h2>Official recovery pages</h2>
+          <p>Go straight to the source for the account that&rsquo;s affected:</p>
+          <ul class="checklist">
+            <li><strong>Microsoft:</strong> <a href="https://account.microsoft.com/security" target="_blank" rel="noopener">account.microsoft.com/security</a></li>
+            <li><strong>Google:</strong> <a href="https://myaccount.google.com/security" target="_blank" rel="noopener">myaccount.google.com/security</a></li>
+            <li><strong>Apple ID:</strong> <a href="https://support.apple.com/en-gb/HT201355" target="_blank" rel="noopener">Apple ID security</a></li>
+            <li><strong>Facebook / Instagram:</strong> <a href="https://www.facebook.com/hacked" target="_blank" rel="noopener">facebook.com/hacked</a></li>
+            <li><strong>National Cyber Security Centre:</strong> <a href="https://www.ncsc.gov.uk/guidance/recovering-a-hacked-account" target="_blank" rel="noopener">Recovering a hacked account</a></li>
+          </ul>
+          <h2>Check if your details have leaked</h2>
+          <p>You can check whether your email has appeared in a known data breach at <a href="https://haveibeenpwned.com/" target="_blank" rel="noopener">haveibeenpwned.com</a> &mdash; it&rsquo;s free and trusted. If it has, change that password (and anywhere you reused it) straight away.</p>
+          <h2>Lock it down for good</h2>
+          <ul class="checklist">
+            <li>Use a unique password for every important account &mdash; a password manager makes this easy.</li>
+            <li>Turn on <a href="/how-to-set-up-two-factor-authentication/">two-factor authentication</a> everywhere it&rsquo;s offered.</li>
+            <li>Keep your devices and apps updated.</li>
+          </ul>""",
+  faqs=[
+    ("They changed my recovery email &mdash; am I locked out forever?","Not necessarily. Each provider has an account-recovery process for exactly this (see the official links above). It can take patience, but it&rsquo;s often recoverable &mdash; and we can help you work through it."),
+    ("Do I need a brand-new email address?","Usually not. Once you&rsquo;ve regained control, secured it with 2FA and removed any forwarding rules, your existing address is normally fine to keep."),
+    ("How did they get in?","Most often a reused or leaked password, or a convincing phishing message. That&rsquo;s why unique passwords and 2FA matter so much &mdash; see our <a href=\"/cybersecurity-support/\">cybersecurity</a> help."),
+    ("Can you do this for me remotely?","Yes &mdash; we&rsquo;ll secure your accounts and check your device on a safe remote session. We always phone first and you watch everything on screen."),
+  ],
+  cta_args=("Let&rsquo;s get you back in control","A friendly techie can secure your accounts and check your device with you &mdash; calmly and securely.",
+            ("Get Help Now","/contact/"), ("Explore Cybersecurity","/cybersecurity-support/")),
+)
+
+# ============================================================ GUIDE: LOST OR STOLEN PHONE
+info_page(
+  slug="lost-or-stolen-phone-what-to-do", crumb_name="Lost or Stolen Phone", eyebrow="// DO THESE NOW",
+  h1='Lost or stolen phone? <em class="grad grad--green">Do these things now</em>',
+  lede="Your phone holds your photos, email, banking and security codes &mdash; so a lost or stolen one feels frightening. Work calmly through these steps and you&rsquo;ll protect what matters.",
+  desc="Lost or stolen phone? Step-by-step: use Find My to lock or erase it, bar the SIM and block the handset, change key passwords, and report it. Plus how to handle 2FA codes. Plain-English help from 365 Techies.",
+  title="Lost or Stolen Phone? Do These Things Now (UK Guide) | 365 Techies",
+  og_title="Lost or Stolen Phone? Do These Now | 365 Techies",
+  chips=["First 15 minutes","Find My &amp; SIM block","The 2FA problem solved"],
+  pre=f'''    <section class="section section--alt" aria-label="First fifteen minutes">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// THE FIRST 15 MINUTES</p>
+          <h2 class="section-title section-title--center" data-title>Act fast, in this order<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ol class="how__steps">
+{steps([("Find, ring or lock it","From another device, use Find My &mdash; <a href=\"https://www.icloud.com/find\" target=\"_blank\" rel=\"noopener\">iCloud Find My</a> for iPhone or <a href=\"https://www.google.com/android/find\" target=\"_blank\" rel=\"noopener\">Google Find My Device</a> for Android. Ring it, see it on a map, then mark it as Lost (this locks it and shows a message)."),("If it&rsquo;s gone, lock or erase","If it&rsquo;s clearly stolen or unrecoverable, remotely lock it &mdash; and consider Erase to wipe your data. (Erasing usually stops you tracking it, so weigh it up.)"),("Bar the SIM &amp; block the handset","Call your mobile provider to bar the SIM and block the phone by its IMEI number, so it can&rsquo;t be used or sold."),("Change key passwords","From another device, change passwords for email, banking and anything the phone was signed into."),("Report it","Report a theft to the police (101 or online) for insurance, and to Action Fraud if any accounts or money are misused.")])}
+        </ol>
+      </div>
+    </section>''',
+  inner="""          <h2>The 2FA problem &mdash; getting back in</h2>
+          <p>If your two-factor codes lived on that phone, you may be locked out of your own accounts. This is where your <strong>backup/recovery codes</strong> save the day &mdash; use them, or each provider&rsquo;s account-recovery process, to get back in and move 2FA to your new phone. Our guides to <a href="/how-to-set-up-two-factor-authentication/">2FA</a> and being <a href="/i-think-ive-been-hacked/">hacked</a> walk you through it.</p>
+          <h2>iPhone vs Android &mdash; quick reference</h2>
+          <ul class="checklist">
+            <li><strong>iPhone:</strong> Find My at <a href="https://www.icloud.com/find" target="_blank" rel="noopener">icloud.com/find</a> &mdash; Play Sound, Lost Mode, or Erase.</li>
+            <li><strong>Android:</strong> Find My Device at <a href="https://www.google.com/android/find" target="_blank" rel="noopener">google.com/android/find</a> &mdash; Secure Device or Erase.</li>
+          </ul>
+          <h2>Set this up before it ever happens</h2>
+          <ul class="checklist">
+            <li>Turn on Find My iPhone or Find My Device today.</li>
+            <li>Set a screen lock (PIN, fingerprint or face).</li>
+            <li>Turn on automatic cloud backup so your photos are safe &mdash; see <a href="/backup-support/">backup &amp; recovery</a>.</li>
+            <li>Note your phone&rsquo;s IMEI number (dial *#06# to see it) and keep it somewhere safe.</li>
+          </ul>""",
+  faqs=[
+    ("Can the police find my phone?","They occasionally can, but don&rsquo;t go looking for it yourself. Report it, mark it as lost via Find My, and let your provider block it by IMEI."),
+    ("They have my SIM &mdash; can they get my bank codes?","Possibly, which is why you should bar the SIM quickly and change banking passwords from another device. Where you can, use an authenticator app rather than text codes."),
+    ("Should I erase it or wait?","If there&rsquo;s sensitive data and little chance of getting it back, erase it. If it might simply be lost nearby, Lost Mode locks it while you keep tracking. There&rsquo;s no wrong choice made in good faith."),
+    ("Can you help me set up my new phone?","Yes &mdash; we help with mobiles and tablets, moving your data, email and apps across. See <a href=\"/mobile-tablet-support/\">mobile &amp; tablet support</a>."),
+  ],
+  cta_args=("Need a hand sorting it out?","We&rsquo;ll help you secure your accounts and set up a new phone &mdash; calmly and in plain English.",
+            ("Talk to a Techie","/contact/"), ("Mobile &amp; Tablet Support","/mobile-tablet-support/")),
+)
+
+PRINT_BTN = '''          <p class="no-print" style="text-align:center;margin-top:1.8rem"><button type="button" class="button secondary" onclick="window.print()">Print / Save as PDF</button></p>'''
+
+# ============================================================ GUIDE: WINDOWS ACCESSIBILITY FEATURES
+info_page(
+  slug="windows-accessibility-features-guide", crumb_name="Windows Accessibility Features", eyebrow="// PLAIN-ENGLISH HOW-TO",
+  h1='Turn on Windows <em class="grad grad--cyan">accessibility features</em>',
+  lede="Your computer has a whole set of free tools to make it easier to see, hear and use &mdash; and they&rsquo;re already built in. Here&rsquo;s how to switch on the ones that help, in plain English.",
+  desc="A plain-English guide to the free accessibility features built into Windows - larger text, Magnifier, high contrast, Narrator, voice typing, captions and more - with simple steps. From 365 Techies, accessibility specialists.",
+  title="Turn On Windows Accessibility Features - Plain English Guide | 365 Techies",
+  og_title="Windows Accessibility Features Guide | 365 Techies",
+  chips=["Free &amp; already there","Step by step","We can set it up for you"],
+  pre=f'''    <section class="section section--alt" aria-label="Accessibility areas">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// WHAT&rsquo;S BUILT IN</p>
+          <h2 class="section-title section-title--center" data-title>Free help, already on your computer<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="tile-grid" data-stagger>
+{tiles([("eye","Easier to see","Bigger text, a magnifier, larger mouse pointer and high-contrast colours."),("monitor","Easier to hear","Live captions for videos and calls, and mono audio for one-ear listening."),("robot","Without keyboard or mouse","Narrator reads the screen aloud, and voice typing lets you dictate."),("leaf","A calmer screen","Turn off distracting animations and reduce on-screen clutter.")])}
+        </div>
+      </div>
+    </section>''',
+  inner="""          <p>These features are free and already on your computer. You&rsquo;ll find them under <strong>Start &rarr; Settings &rarr; Accessibility</strong> (the wording can vary a little depending on your version of Windows). Here are the ones people find most useful.</p>
+          <h2>Making things easier to see</h2>
+          <ul>
+            <li><strong>Bigger text:</strong> Settings &rarr; Accessibility &rarr; Text size &mdash; drag the slider until it&rsquo;s comfortable, then Apply.</li>
+            <li><strong>Magnifier:</strong> hold the <em>Windows</em> key and press <em>+</em> to zoom in; <em>Windows</em> and <em>Esc</em> turns it off.</li>
+            <li><strong>Larger mouse pointer:</strong> Settings &rarr; Accessibility &rarr; Mouse pointer and touch &mdash; make it bigger or change its colour.</li>
+            <li><strong>High contrast / colour themes:</strong> Settings &rarr; Accessibility &rarr; Contrast themes &mdash; easier on tired eyes.</li>
+          </ul>
+          <h2>Making things easier to hear</h2>
+          <ul>
+            <li><strong>Live Captions:</strong> turns speech in videos and calls into on-screen text (a newer Windows 11 feature). Settings &rarr; Accessibility &rarr; Captions.</li>
+            <li><strong>Mono audio:</strong> sends all sound to both ears equally &mdash; handy if you hear better in one ear. Settings &rarr; Accessibility &rarr; Audio.</li>
+          </ul>
+          <h2>Using your computer without a keyboard or mouse</h2>
+          <ul>
+            <li><strong>Narrator:</strong> reads aloud what&rsquo;s on screen. Turn it on with <em>Windows</em> + <em>Ctrl</em> + <em>Enter</em>.</li>
+            <li><strong>Voice typing / dictation:</strong> press <em>Windows</em> + <em>H</em> and simply talk &mdash; your words appear as text. (Voice access, for controlling the whole PC by voice, is available on newer Windows 11 PCs.)</li>
+          </ul>
+          <h2>Making the screen calmer</h2>
+          <ul>
+            <li><strong>Reduce animations:</strong> Settings &rarr; Accessibility &rarr; Visual effects &mdash; turn off movement that can feel distracting.</li>
+          </ul>
+          <p>For more, see <a href="https://www.microsoft.com/en-gb/accessibility" target="_blank" rel="noopener">Microsoft Accessibility</a> and the charity <a href="https://abilitynet.org.uk/" target="_blank" rel="noopener">AbilityNet</a>, which offers free advice. A quick note: we support Windows and Android devices remotely, but not Apple Macs, iPhones or iPads.</p>""" + PRINT_BTN,
+  faqs=[
+    ("Are these features free?","Completely &mdash; they&rsquo;re built into Windows at no extra cost. There&rsquo;s nothing to buy or download."),
+    ("Will I break anything by turning them on?","No. Every setting can be turned straight back off, and nothing here changes your files or programs."),
+    ("Can you set them up for me?","Yes &mdash; this is a specialism of ours. We&rsquo;ll set up the right features for you, patiently and at your pace. See our <a href=\"/it-support-for-disabled-people/\">accessible IT support</a>."),
+  ],
+  cta_args=("Prefer we set it up for you?","Helping retired and disabled people get comfortable with technology is what we do best &mdash; patiently, kindly and never rushed.",
+            ("Accessible IT Support","/it-support-for-disabled-people/"), ("Talk to a Techie","/contact/")),
+)
+
+# ============================================================ GUIDE: HOW TO CHOOSE A LAPTOP
+info_page(
+  slug="how-to-choose-a-laptop", crumb_name="How to Choose a Laptop", eyebrow="// BUYER&rsquo;S GUIDE",
+  h1='How to choose a <em class="grad grad--cyan">laptop or desktop</em>',
+  lede="You don&rsquo;t need to understand the jargon to choose well &mdash; you just need to know how you&rsquo;ll use it. Here&rsquo;s a plain-English buyer&rsquo;s guide, with no sales pitch.",
+  desc="A plain-English guide to choosing a laptop or desktop: the five things that actually matter (processor, RAM, SSD, screen, battery), laptop vs desktop vs all-in-one, and Windows 11 readiness. Impartial advice from 365 Techies.",
+  title="How to Choose a Laptop or Desktop (Plain-English Guide) | 365 Techies",
+  og_title="How to Choose a Laptop or Desktop | 365 Techies",
+  chips=["Plain English","No sales pitch","Print-friendly"],
+  pre=f'''    <section class="section section--alt" aria-label="Five things that matter">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// THE FIVE THINGS THAT MATTER</p>
+          <h2 class="section-title section-title--center" data-title>Ignore the jargon &mdash; focus on these<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ol class="how__steps">
+{steps([("Processor (the engine)","For everyday email, web and shopping, a modern entry-level processor is plenty. Only heavy photo, video or design work needs something faster."),("Memory / RAM (room to work)","Aim for 16GB if you can &mdash; 8GB is a workable minimum. More memory means smoother running with lots of tabs and apps open."),("Storage (an SSD, not a hard drive)","Insist on an SSD &mdash; it&rsquo;s the single biggest thing that makes a computer feel fast. 256GB is fine for most; 512GB if you keep lots of photos."),("Screen (size &amp; quality)","A 14&ndash;15&Prime; screen suits most people; bigger is easier to read but heavier to carry. &lsquo;Full HD&rsquo; (1080p) or better is worth it."),("Battery &amp; weight","If you&rsquo;ll carry it around, look for all-day battery and a lighter build. If it lives on a desk, these matter far less.")])}
+        </ol>
+      </div>
+    </section>
+    <section class="section" aria-label="Laptop vs desktop vs all-in-one">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// WHICH SHAPE?</p>
+          <h2 class="section-title section-title--center" data-title>Laptop, desktop or all-in-one?<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ul class="security-grid" data-stagger>
+{grid_cards([("Laptop","Best if you want to move around or save space. Choose this for most homes and home workers."),("Desktop / tower","Best value power and the easiest to upgrade or repair. Great for a fixed desk and heavier work."),("All-in-one","A tidy screen-and-computer in one. Lovely and neat, though less easy to upgrade later.")])}
+        </ul>
+      </div>
+    </section>''',
+  inner="""          <h2>Make sure it&rsquo;s ready for Windows 11</h2>
+          <p>Buying new? It should come with Windows 11. If you&rsquo;re considering something second-hand, check it can run Windows 11, as Windows 10 support has ended &mdash; see our <a href="/windows-10-end-of-life/">Windows 10 end-of-life</a> guide and <a href="/windows-11-support/">Windows 11 support</a>.</p>
+          <h2>Avoid these common mistakes</h2>
+          <ul class="checklist">
+            <li>Buying too little memory &mdash; 8GB is the floor, 16GB is better.</li>
+            <li>Accepting an old-style spinning hard drive instead of an SSD.</li>
+            <li>Paying for gaming-level power you&rsquo;ll never use for email and the web.</li>
+            <li>Forgetting the extras &mdash; a case, a bigger screen, or moving your files across.</li>
+          </ul>
+          <p>The independent experts at <a href="https://www.which.co.uk/reviews/laptops/article/how-to-buy-the-best-laptop-aMOVk6X8zdSL" target="_blank" rel="noopener">Which?</a> have detailed buying advice too. When you&rsquo;re ready, we can recommend the right machine, supply genuine <a href="/dell-hardware/">Dell hardware</a> or a <a href="/custom-pc-builds/">custom build</a>, and set it all up with your files moved across &mdash; see <a href="/new-computer-setup/">new computer setup</a>.</p>""" + PRINT_BTN,
+  faqs=[
+    ("How much RAM do I really need?","For everyday use, 16GB is the comfortable sweet spot and 8GB is a workable minimum. Only heavy photo, video or design work benefits from more."),
+    ("Is a Mac or a Windows PC better for me?","Both are capable &mdash; it often comes down to what you&rsquo;re used to and what your family uses. Do note that we support Windows and Android, but not Apple Macs, iPhones or iPads."),
+    ("Should I buy refurbished?","A good refurbished machine from a reputable seller can be excellent value &mdash; just check it has an SSD, enough memory and can run Windows 11. We&rsquo;re happy to advise."),
+    ("How do I recycle my old laptop?","Back up and wipe it first, then recycle it responsibly &mdash; see our guide to <a href=\"/how-to-wipe-and-recycle-old-computer/\">wiping and recycling an old computer</a>."),
+  ],
+  cta_args=("Want a hand choosing?","Tell us how you&rsquo;ll use it and your budget, and we&rsquo;ll recommend the right computer &mdash; honestly, with no upselling &mdash; and set it all up for you.",
+            ("New Computer Setup","/new-computer-setup/"), ("Talk to a Techie","/contact/")),
+)
+
+# ============================================================ GUIDE: WIPE & RECYCLE AN OLD COMPUTER
+info_page(
+  slug="how-to-wipe-and-recycle-old-computer", crumb_name="Wipe &amp; Recycle an Old Computer", eyebrow="// DATA + RECYCLING",
+  h1='How to safely <em class="grad grad--green">wipe &amp; recycle</em> an old computer',
+  lede="Before that old laptop leaves the house, get your data off it properly &mdash; then pass it on responsibly. Here&rsquo;s how to do both, simply and safely.",
+  desc="How to safely wipe an old computer before selling or recycling it (Windows reset, why delete isn't enough, SSD vs hard drive) and where to recycle it responsibly in the UK (WEEE, Recycle Now). From 365 Techies.",
+  title="How to Safely Wipe & Recycle an Old Computer (UK) | 365 Techies",
+  og_title="How to Wipe & Recycle an Old Computer | 365 Techies",
+  chips=["Protect your data","Then recycle right","We can wipe it for you"],
+  pre=f'''    <section class="section section--alt" aria-label="How to wipe it">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// GET YOUR DATA OFF FIRST</p>
+          <h2 class="section-title section-title--center" data-title>Wiping it properly, step by step<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Back up anything you want to keep first &mdash; see our <a href="/backup-support/">backup guide</a> and <a href="/what-to-do-before-replacing-old-computer/">what to do before replacing a computer</a>.</p>
+        </div>
+        <ol class="how__steps">
+{steps([("Sign out and deauthorise","Sign out of your Microsoft account, turn off Find My / iCloud, and sign out of browsers and any licensed software, so the device isn&rsquo;t tied to you."),("Reset Windows and remove your data","Settings &rarr; System &rarr; Recovery &rarr; Reset this PC &rarr; <strong>Remove everything</strong>, and choose the option to clean the drive. This does far more than simply deleting files."),("Know why &lsquo;delete&rsquo; isn&rsquo;t enough","Dragging files to the bin doesn&rsquo;t truly remove them &mdash; they can often be recovered. A proper reset or secure erase is what makes data unrecoverable."),("Decide what to do with the drive","On modern computers a built-in reset is enough for most people. For maximum peace of mind &mdash; or a faulty machine that won&rsquo;t reset &mdash; the drive can be removed and securely erased or destroyed.")])}
+        </ol>
+      </div>
+    </section>''',
+  inner="""          <h2>Recycle or reuse it responsibly</h2>
+          <p>Old electricals should never go in the bin &mdash; they contain materials worth recovering, and it&rsquo;s covered by UK WEEE rules. Good options:</p>
+          <ul class="checklist">
+            <li>Your local recycling centre &mdash; find one via <a href="https://www.recyclenow.com/" target="_blank" rel="noopener">Recycle Now</a>.</li>
+            <li>Retailer take-back schemes when you buy a replacement (a WEEE duty for many sellers).</li>
+            <li>Manufacturer recycling, such as <a href="https://www.dell.com/en-uk/dt/corporate/social-impact/advancing-sustainability/how-to-recycle.htm" target="_blank" rel="noopener">Dell&rsquo;s recycling programme</a>.</li>
+            <li>Donate working machines to a reuse charity so someone else benefits.</li>
+          </ul>
+          <h2>For businesses: it&rsquo;s a data-protection duty</h2>
+          <p>Disposing of old computers securely is part of GDPR compliance &mdash; the ICO expects personal data to be properly destroyed. We can erase business devices securely and advise on safe disposal; see <a href="/gdpr-it-compliance/">GDPR &amp; IT compliance</a>.</p>
+          <h2>Rather we did it for you?</h2>
+          <p>We can securely erase your old computer so your data can&rsquo;t be recovered before you sell, donate or recycle it &mdash; and move everything to your new one. Just book a <a href="/book-a-collection/">free local collection</a>.</p>""" + PRINT_BTN,
+  faqs=[
+    ("Is &lsquo;Reset this PC&rsquo; enough to wipe my data?","For most people, yes &mdash; choosing &lsquo;Remove everything&rsquo; and cleaning the drive makes your data very difficult to recover. For highly sensitive data, a dedicated secure erase or physically destroying the drive gives complete certainty."),
+    ("Does it matter if it&rsquo;s an SSD or a hard drive?","A little. On modern SSDs the built-in reset is effective. On older spinning hard drives, a secure-erase tool &mdash; or removing the drive &mdash; gives extra assurance. We can advise or do it for you."),
+    ("Can I just take the hard drive out?","Yes &mdash; keeping or destroying the drive is the surest way to protect your data, and you can still recycle the rest of the machine. We&rsquo;re happy to remove it for you."),
+    ("Where can I recycle a computer near me?","Use the <a href=\"https://www.recyclenow.com/\" target=\"_blank\" rel=\"noopener\">Recycle Now</a> locator for your nearest centre, or ask the retailer you&rsquo;re buying a replacement from about take-back."),
+  ],
+  cta_args=("Let us wipe and recycle it safely","We&rsquo;ll securely erase your old computer, move your files to the new one, and make sure the old machine is disposed of responsibly.",
+            ("Book a Collection","/book-a-collection/"), ("New Computer Setup","/new-computer-setup/")),
+)
+
+# ============================================================ GUIDE: SAFE ONLINE BANKING FOR BEGINNERS
+info_page(
+  slug="safe-online-banking-for-beginners", crumb_name="Safe Online Banking", eyebrow="// CONFIDENCE GUIDE",
+  h1='Safe online banking <em class="grad grad--green">for beginners</em>',
+  lede="Online banking is genuinely safe when you follow a few simple habits &mdash; and it can make life much easier. Here&rsquo;s how to bank online with confidence, written for people who&rsquo;d rather be careful.",
+  desc="Is online banking safe? Yes - here's how to do it confidently: set up safely, the golden rules every time, how to spot a banking scam, and what to do if something feels wrong. A reassuring beginner's guide from 365 Techies.",
+  title="Safe Online Banking for Beginners (Plain-English Guide) | 365 Techies",
+  og_title="Safe Online Banking for Beginners | 365 Techies",
+  chips=["Reassuring &amp; simple","The golden rules","Someone to ask"],
+  pre=f'''    <section class="section section--alt" aria-label="Golden rules">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// THE GOLDEN RULES</p>
+          <h2 class="section-title section-title--center" data-title>Four habits that keep you safe<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="tile-grid" data-stagger>
+{tiles([("shield","Your bank will never ask you to move money","No genuine bank, or the police, will ever ask you to move money to a &lsquo;safe account&rsquo; or read out a full passcode. That&rsquo;s always a scam. This is the big one to remember."),("lock","Always go to the bank yourself","Open your banking app, or type the bank&rsquo;s address in yourself. Never log in through a link in a text or email."),("wifi","Use your own connection","Bank on your home Wi-Fi or mobile data &mdash; not public Wi-Fi in a caf&eacute; or library."),("check","Lock your devices","A PIN, fingerprint or face unlock on your phone and computer keeps your banking private if they&rsquo;re lost.")])}
+        </div>
+      </div>
+    </section>''',
+  inner="""          <h2>Getting set up safely</h2>
+          <ul class="checklist">
+            <li>Download your bank&rsquo;s official app from the official app store (or type the bank&rsquo;s web address yourself).</li>
+            <li>Use a strong, unique password that&rsquo;s different from your email &mdash; try our <a href="/password-strength-checker/">password checker</a>.</li>
+            <li>Turn on the bank&rsquo;s app login with your fingerprint or face, and any two-step verification &mdash; see our <a href="/how-to-set-up-two-factor-authentication/">2FA guide</a>.</li>
+          </ul>
+          <h2>Spotting a banking scam</h2>
+          <p>Be on guard if you get an unexpected call, text or email that:</p>
+          <ul class="checklist">
+            <li>creates panic or urgency (&lsquo;your account is at risk, act now&rsquo;);</li>
+            <li>asks you to move money, share a passcode, or install software;</li>
+            <li>contains a link to &lsquo;log in&rsquo; or &lsquo;verify&rsquo; your details.</li>
+          </ul>
+          <p>See our pages on <a href="/smishing-and-vishing/">scam texts &amp; calls</a> and try the <a href="/spot-the-scam/">Spot the Scam</a> quiz.</p>
+          <h2>If something feels wrong</h2>
+          <p>Stop. Hang up or close the message. Then contact your bank yourself using <strong>159</strong> or the number on the back of your card. Forward scam texts to <strong>7726</strong> and report fraud to <strong>Action Fraud on 0300 123 2040</strong>. If money has gone, follow our guide on <a href="/ive-been-scammed-what-to-do/">what to do if you&rsquo;ve been scammed</a>.</p>
+          <p>Trusted free advice: <a href="https://www.takefive-stopfraud.org.uk/" target="_blank" rel="noopener">Take Five to Stop Fraud</a> and the FCA&rsquo;s <a href="https://www.fca.org.uk/scamsmart" target="_blank" rel="noopener">ScamSmart</a>. <em>This is general IT and security guidance, not financial advice &mdash; always use your bank&rsquo;s official app or website.</em>""" + PRINT_BTN,
+  faqs=[
+    ("Is online banking actually safe?","Yes &mdash; banks invest heavily in security, and following a few simple habits makes it very safe. The biggest risk isn&rsquo;t the bank being hacked; it&rsquo;s being tricked into handing details over, which the golden rules above prevent."),
+    ("Will my bank ever phone and ask me to move money?","Never. No genuine bank or police officer will ask you to move money to a &lsquo;safe account&rsquo; or read out a full code. If someone does, it&rsquo;s a scam &mdash; hang up and call 159."),
+    ("Is it safe to bank on my phone?","Yes &mdash; the official banking app is one of the safest ways to bank, as long as your phone has a screen lock and you keep it updated."),
+    ("Can you help me get set up?","Of course &mdash; we&rsquo;ll help you install your banking app safely and set up secure login, patiently and at your pace. Just <a href=\"/contact/\">get in touch</a>."),
+  ],
+  cta_args=("Want a friendly hand getting started?","We&rsquo;ll help you set up online banking safely and confidently &mdash; and you&rsquo;ll always have a real person to ask &lsquo;is this safe?&rsquo;",
+            ("Talk to a Techie","/contact/"), ("Stay Safe Online","/online-safety/")),
+)
+
+# ============================================================ GUIDE: AVOIDING TECH OVERWHELM
+info_page(
+  slug="avoiding-tech-overwhelm", crumb_name="Avoiding Tech Overwhelm", eyebrow="// A GENTLE GUIDE",
+  h1='Avoiding tech overwhelm &mdash; <em class="grad grad--cyan">feeling in control</em>',
+  lede="If technology sometimes makes you feel anxious, behind, or as though everyone else got a manual you didn&rsquo;t &mdash; you are not alone, and you are not too old or &lsquo;not clever enough&rsquo;. Here are some gentle, practical ways to feel calmer and more in control.",
+  desc="Feeling overwhelmed by technology? A warm, reassuring guide with small, practical habits to feel calmer and more in control - for anyone who finds tech stressful. From 365 Techies, patient IT support since 1995.",
+  title="Avoiding Tech Overwhelm - A Gentle Guide to Feeling in Control | 365 Techies",
+  og_title="Avoiding Tech Overwhelm | 365 Techies",
+  chips=["You&rsquo;re not behind","Small, calm steps","No silly questions"],
+  inner="""          <h2>You&rsquo;re not behind, and you&rsquo;re not alone</h2>
+          <p>Lots of capable, intelligent people feel out of their depth with technology &mdash; including people who ran businesses, raised families and learned far harder things. Feeling overwhelmed isn&rsquo;t a sign you can&rsquo;t do it. It&rsquo;s a sign the technology was poorly explained.</p>
+          <h2>Why it feels overwhelming (and why that&rsquo;s normal)</h2>
+          <p>It changes constantly, it&rsquo;s designed to keep adding features, and it&rsquo;s full of jargon that quietly leaves people out. None of that is your fault. When something is confusing, the problem is usually the design &mdash; not you. Our <a href="/plain-english/">plain-English guide</a> and <a href="/it-jargon-buster/">jargon buster</a> are there to help.</p>
+          <h2>Small habits that put you back in control</h2>
+          <ul class="checklist">
+            <li>Learn one thing at a time &mdash; there&rsquo;s no prize for rushing.</li>
+            <li>You don&rsquo;t need every feature. Ignore the ones you&rsquo;ll never use.</li>
+            <li>It&rsquo;s almost impossible to truly break it &mdash; explore without fear.</li>
+            <li>Keep a simple notebook of the steps that work for you.</li>
+            <li>Turn off notifications you don&rsquo;t need &mdash; less noise, less stress.</li>
+            <li>Ignore &lsquo;update now&rsquo; nagging until you&rsquo;re ready to do it calmly.</li>
+          </ul>
+          <h2>Permission to ask for help</h2>
+          <p>There is genuinely no such thing as a silly question. Our whole approach &mdash; and a real specialism of ours &mdash; is patient, unhurried help for people who find tech daunting. We never make anyone feel small. See how we support <a href="/it-support-for-retired-users/">retired users</a> and <a href="/it-support-for-disabled-people/">disabled people</a>.</p>
+          <h2>Free places to get unhurried help</h2>
+          <ul class="checklist">
+            <li><a href="https://abilitynet.org.uk/" target="_blank" rel="noopener">AbilityNet</a> &mdash; free advice and volunteers for older and disabled people.</li>
+            <li><a href="https://www.ageuk.org.uk/services/in-your-area/it-training/" target="_blank" rel="noopener">Age UK</a> &mdash; friendly digital skills sessions.</li>
+            <li>Your local library &mdash; many run free, relaxed digital help sessions.</li>
+          </ul>""" + PRINT_BTN,
+  faqs=[
+    ("Am I too old to learn this?","Not at all. People learn new technology at every age &mdash; the trick is going at your own pace, one small step at a time, with someone patient to ask."),
+    ("I&rsquo;m scared I&rsquo;ll break something. Will I?","It&rsquo;s very hard to truly break a computer just by exploring or tapping the wrong thing. And if something does go awry, it can almost always be put right."),
+    ("Can someone just show me, kindly and without rushing?","Yes &mdash; that&rsquo;s exactly what we do. Patient, jargon-free help at your pace, at home or remotely. <a href=\"/contact/\">Get in touch</a> whenever you&rsquo;re ready."),
+  ],
+  cta_args=("Help that never makes you feel silly","Talk to a friendly, patient techie who&rsquo;ll explain things kindly, at your pace &mdash; a real person, never rushed.",
+            ("Talk to a Techie","/contact/"), ("Support for Retired Users","/it-support-for-retired-users/")),
+)
+
+# ============================================================ TRUST: YOUR FIRST 6-WEEKLY SERVICE
+info_page(
+  slug="your-first-6-weekly-service", crumb_name="Your First 6-Weekly Service", eyebrow="// WHAT TO EXPECT",
+  h1='What happens on your <em class="grad grad--green">first 6-weekly service</em>',
+  lede="Nervous about someone connecting to your computer? That&rsquo;s completely understandable. Here&rsquo;s exactly what your first included service feels like &mdash; so there are no surprises, and you&rsquo;re always in control.",
+  desc="A step-by-step walkthrough of what your first 6-weekly computer service with 365 Techies actually feels like - the friendly call first, watching everything on screen, and nothing for you to do. Reassuring and honest.",
+  title="What Happens on Your First 6-Weekly Service | 365 Techies",
+  og_title="Your First 6-Weekly Service | 365 Techies",
+  chips=["You&rsquo;re always in control","Nothing for you to do","The same friendly team"],
+  pre=f'''    <section class="section section--alt" aria-label="What happens, step by step">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// STEP BY STEP</p>
+          <h2 class="section-title section-title--center" data-title>From first call to all done<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ol class="how__steps">
+{steps([("A friendly call first","We phone to say we&rsquo;re ready and check it&rsquo;s a good time for you. We never connect out of the blue &mdash; nothing happens until you&rsquo;re expecting us."),("You let us in &mdash; and watch the whole time","You start a secure, encrypted session and can see everything we do on your screen. Access ends the moment we finish, and we can&rsquo;t reconnect without you."),("We give your computer a full service","A proper tune-up, updates, driver and security checks and a backup check &mdash; see exactly what&rsquo;s included on our <a href=\"/preventative-maintenance/\">preventative maintenance</a> page."),("We check your backup is really working","Not just assumed &mdash; checked. And if you&rsquo;d like, we can text you a reminder when it&rsquo;s time to plug in your backup drive."),("We tell you what we did, in plain English","A friendly summary of what we found and sorted &mdash; no jargon, no upselling."),("Then again every six weeks","With the same friendly team who get to know you and how you like things set up.")])}
+        </ol>
+      </div>
+    </section>
+    <section class="section" aria-label="Your worries, answered">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// YOUR WORRIES, ANSWERED</p>
+          <h2 class="section-title section-title--center" data-title>The questions people ask first<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ul class="security-grid" data-stagger>
+{grid_cards([("&lsquo;Will you connect without telling me?&rsquo;","No. We always phone first and you start the session &mdash; we never appear on your screen unannounced."),("&lsquo;Can you see my passwords?&rsquo;","You stay in control and watch the whole session on screen. It&rsquo;s encrypted, and access ends the moment we&rsquo;re done."),("&lsquo;Do I need to be technical?&rsquo;","Not at all. There&rsquo;s nothing for you to do &mdash; we handle it, and explain anything you&rsquo;d like to know in plain English."),("&lsquo;What about Apple devices?&rsquo;","We service Windows computers and Android devices remotely. We can&rsquo;t remotely connect to Apple Macs, iPhones or iPads.")])}
+        </ul>
+      </div>
+    </section>''',
+  inner="""          <h2>Why it&rsquo;s done this way</h2>
+          <p>Everything about the service is built around one idea: you should always feel safe and in control. That&rsquo;s why we call before we connect, why you watch the whole session, and why the same familiar people look after you each time. It&rsquo;s included in every <a href="/monthly-it-support/">monthly plan</a>, and for the full list of what each service covers, see <a href="/preventative-maintenance/">preventative maintenance</a>.</p>""",
+  faqs=[
+    ("How long does the first service take?","It varies depending on your computer, and it runs quietly in the background &mdash; there&rsquo;s nothing you need to sit and watch unless you&rsquo;d like to. We&rsquo;ll always fit around what suits you."),
+    ("Do I have to be at the computer the whole time?","You&rsquo;re welcome to watch, but you don&rsquo;t have to hover. You start the session, and you can stop it at any point &mdash; you&rsquo;re always in control."),
+    ("What if I&rsquo;m not very confident with computers?","That&rsquo;s exactly who we look after best. We&rsquo;re patient, we never rush, and there&rsquo;s no such thing as a silly question. See our <a href=\"/it-support-for-retired-users/\">support for retired users</a>."),
+    ("Is it really included in the plan?","Yes &mdash; a full service every six weeks is part of every home and business monthly plan, at no extra cost."),
+  ],
+  cta_args=("Ready to never worry about IT again?","Join a friendly monthly plan and we&rsquo;ll keep your computers healthy &mdash; a full service every six weeks, with the same team who get to know you.",
+            ("View Monthly Plans","/monthly-it-support/"), ("Talk to a Techie","/contact/")),
+)
+
+# ============================================================ TRUST: HOW WE PRICE
+info_page(
+  slug="how-we-price", crumb_name="How We Price", eyebrow="// HOW WE PRICE",
+  h1='How we price &mdash; and why <em class="grad grad--cyan">cheapest isn&rsquo;t always best</em>',
+  lede="Good IT support should be easy to understand and easy to budget for. Here&rsquo;s an honest look at what shapes the price &mdash; and why the cheapest quote often ends up costing more.",
+  desc="An honest, plain-English explanation of how 365 Techies prices IT support: one predictable monthly fee, what drives the cost, what's always included, and why the cheapest quote can cost more in the long run.",
+  title="How We Price IT Support (and Why Cheapest Isn't Best) | 365 Techies",
+  og_title="How We Price | 365 Techies",
+  chips=["No hidden fees","No upselling","Cancel anytime"],
+  pre=f'''    <section class="section section--alt" aria-label="What drives the price">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// WHAT ACTUALLY DRIVES THE PRICE</p>
+          <h2 class="section-title section-title--center" data-title>No mystery, no surprises<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>A few simple things shape your monthly price. For the actual figures, see our <a href="/pricing/">pricing page</a>.</p>
+        </div>
+        <div class="tile-grid" data-stagger>
+{tiles([("monitor","How many devices &amp; people","More computers and users to look after means a little more work &mdash; so pricing scales gently with what you actually have."),("briefcase","Home or business cover","Business cover adds things like Microsoft 365 management, security and backups, so it sits a little above home plans."),("cloud","Whether you need Microsoft 365","Email and Microsoft 365 management can be included where you need it &mdash; or left out if you don&rsquo;t."),("wrench","Hardware &amp; licences (quoted separately)","Any equipment or software is quoted up front and separately, so there are never surprises buried in your bill.")])}
+        </div>
+      </div>
+    </section>''',
+  inner="""          <h2>Our pricing philosophy</h2>
+          <p>One predictable monthly fee, prevention rather than just repair, and you should always understand exactly what you&rsquo;re paying for. No clever tricks, no upselling, no &lsquo;sorry, that&rsquo;s extra&rsquo; surprises.</p>
+          <h2>Why the cheapest quote can cost more</h2>
+          <p>It&rsquo;s tempting to pick the lowest number &mdash; but cheap IT support often means missed security updates, backups that were never tested, and a bill for every little fix that quietly adds up. Worst of all, there&rsquo;s usually no-one who actually knows you or your setup. Good support prevents the expensive emergencies in the first place. See our honest comparison of <a href="/independent-it-support/">local vs the alternatives</a> and <a href="/our-values/">how we work</a>.</p>
+          <h2>No surprises, ever</h2>
+          <ul class="checklist">
+            <li>Rolling monthly plans &mdash; cancel anytime, no lock-in.</li>
+            <li>No call-out fee for remote help on a plan.</li>
+            <li>No-fix-no-fee on diagnosis, and a 12-month warranty on repairs.</li>
+            <li>Any one-off work is quoted and agreed before we start.</li>
+          </ul>
+          <p>Want to see where you&rsquo;d land? Try the <a href="/plan-finder/">plan finder</a> or get a <a href="/quick-quote/">quick quote</a>.</p>""",
+  faqs=[
+    ("Why isn&rsquo;t there a really cheap plan?","Because genuinely looking after your technology &mdash; preventing problems, testing backups, keeping security tight &mdash; takes real care. We&rsquo;d rather do it properly at a fair, honest price than cut corners you&rsquo;d pay for later."),
+    ("Will you try to upsell me?","No. We recommend what&rsquo;s right for you and nothing more. If you don&rsquo;t need something, we&rsquo;ll say so."),
+    ("What might cost extra?","Hardware and software licences, and any one-off project work, are quoted separately and agreed up front &mdash; never slipped into your bill as a surprise."),
+    ("Can I really cancel anytime?","Yes &mdash; every plan is rolling and cancel-anytime. We want you to stay because you&rsquo;re happy, not because you&rsquo;re tied in."),
+  ],
+  cta_args=("See exactly what you&rsquo;d pay","Clear, honest pricing with no hidden fees. Find your plan, or get a no-obligation quote in under a minute.",
+            ("View Pricing","/pricing/"), ("Get a Quick Quote","/quick-quote/")),
+)
+
+# ============================================================ HUB: EMERGENCY IT HELP
+def emergency_it_help():
+    slug="emergency-it-help"
+    desc="Something gone wrong? Start here. Quick-action help for IT emergencies - scams, hacked accounts, lost phones, ransomware, viruses and dead computers - with the one most important first step for each. From 365 Techies, Dorset."
+    items=[
+      ("Money / scam","I&rsquo;ve been scammed","Call 159 first to reach your bank safely, then follow the steps.","/ive-been-scammed-what-to-do/","What to do now"),
+      ("Accounts","I think I&rsquo;ve been hacked","Secure your email first &mdash; it&rsquo;s the key to everything else.","/i-think-ive-been-hacked/","Take back control"),
+      ("Phone","Lost or stolen phone","Use Find My to lock or erase it, then bar the SIM.","/lost-or-stolen-phone-what-to-do/","Do these now"),
+      ("Files locked","Ransomware / files locked","Don&rsquo;t pay. Disconnect from the internet and get help.","/ransomware/","How to respond"),
+      ("Computer","Won&rsquo;t start or very slow","Tell us the symptoms and get the likely cause &amp; next step.","/computer-fault-checker/","Diagnose it"),
+      ("Suspicious message","Scam email, text or call","Don&rsquo;t click. Check the tell-tale signs first.","/spot-the-scam/","Spot the scam"),
+      ("Business data","A data breach at work","Contain it, then mind your GDPR duties.","/data-breaches/","What to do"),
+      ("Not sure","Repair or replace?","Get an honest answer before you spend anything.","/repair-or-replace-advisor/","Get advice"),
+    ]
+    cards="\n".join(f'          <a class="post-card" href="{href}"><p class="post-card__cat">{cat}</p><h3>{t}</h3><p>{d}</p><span class="post-card__more">{more} &#8594;</span></a>' for cat,t,d,href,more in items)
+    content="\n".join([
+      hero(bc("Emergency IT Help"), "// EMERGENCY HELP",
+           'Something&rsquo;s gone wrong? <em class="grad grad--green">Start here.</em>',
+           "Pick what&rsquo;s happening below for the one most important first step &mdash; then the full guide. We&rsquo;re open Mon&ndash;Fri, 9am&ndash;5pm, and the key UK helplines below are there around the clock.",
+           cta1=("Call 01202 775566","tel:+441202775566"), cta2=("Start Remote Support","/remote-support/"),
+           chips=["First action for each","Trusted UK numbers","We call before we connect"]),
+      f'''    <section class="section section--alt" aria-label="Pick your emergency">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// PICK YOUR EMERGENCY</p>
+          <h2 class="section-title section-title--center" data-title>What&rsquo;s happening right now?<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="blog-grid" data-stagger>
+{cards}
+        </div>
+      </div>
+    </section>''',
+      f'''    <section class="section" aria-label="When to unplug">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">/ WHEN TO UNPLUG</p>
+          <h2 class="section-title" data-title>When to disconnect from the internet<span class="title-underline"></span></h2>
+          <p>Two moments when pulling the plug helps: if <strong>ransomware</strong> has locked your files (it stops it spreading), or if a <strong>&lsquo;tech support&rsquo; scammer</strong> is controlling your screen right now. Turn off Wi-Fi or unplug the cable, then call us.</p>
+          <p>Otherwise, leave things as they are &mdash; and never pay a ransom or a &lsquo;fee&rsquo; to get money back.</p>
+        </div>
+        <ul class="checklist" data-stagger>
+{checklist(["Ransomware / files locked &mdash; disconnect","Someone&rsquo;s remotely controlling your screen &mdash; disconnect","Lost money &mdash; call your bank on 159","Otherwise, leave it and call us"])}
+        </ul>
+      </div>
+    </section>''',
+      f'''    <section class="section section--alt" aria-label="Out of hours numbers">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// USEFUL ANY TIME</p>
+          <h2 class="section-title section-title--center" data-title>Key UK helplines, day or night<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ul class="security-grid" data-stagger>
+{grid_cards([("Your bank &mdash; call 159","A free, trusted number that connects you safely to your own bank to stop fraud."),("Action Fraud &mdash; 0300 123 2040","Report fraud and cybercrime in England, Wales &amp; NI. In Scotland, call Police Scotland on 101."),("Report scams","Forward scam texts to 7726 and scam emails to report@phishing.gov.uk."),("Emergencies","Always dial 999 if you feel threatened or in immediate danger.")])}
+        </ul>
+      </div>
+    </section>''',
+      faq_html([
+        ("It&rsquo;s the weekend &mdash; what can I do now?","Use the steps in the guides above straight away, and the 24-hour UK helplines (159 for your bank, Action Fraud, 7726 for scam texts). Then reach us on the next working day &mdash; Mon&ndash;Fri, 9am&ndash;5pm &mdash; and remote help is often same-day."),
+        ("Should I turn the computer off?","If ransomware has locked your files, or someone is remotely controlling your screen, disconnect it from the internet. Otherwise it&rsquo;s usually fine to leave it as-is until we can look."),
+        ("Do I have to be a customer already?","No &mdash; we help new customers in a fix too. Get in touch and we&rsquo;ll do our best to help quickly."),
+        ("How do I get the soonest slot?","Call us on 01202 775566, or start a secure <a href=\"/remote-support/\">remote session</a>. Subscribers always jump the queue."),
+      ]),
+      cta("Need a real person, fast?","Call us, start a secure remote session, or book the soonest slot. We&rsquo;ll help you calmly &mdash; and we always phone before we connect.",
+          primary=("Call 01202 775566","tel:+441202775566"), secondary=("Book a Service","/book-service/")),
+    ])
+    def schema(s,_d=desc,_it=[{"@type":"ListItem","position":i+1,"name":t,"url":SITE+href} for i,(cat,t,d,href,more) in enumerate(items)]):
+        return graph([crumb(s,"Emergency IT Help"), webpage(s,"Emergency IT Help",_d,"CollectionPage"),
+                      {"@type":"ItemList","@id":SITE+"/emergency-it-help/#list","itemListElement":_it}])
+    add(slug=slug, title="Emergency IT Help - What To Do First | 365 Techies",
+        desc=desc, og_title="Emergency IT Help | 365 Techies", schema=schema, content=content)
+emergency_it_help()
+
+# ============================================================ HUB: ONLINE SAFETY
+def online_safety():
+    slug="online-safety"
+    desc="Staying safe online, made simple. Learn the common threats, test yourself, and pick up easy habits that keep you and your family safe - plus where to get help and report scams. A friendly online safety hub from 365 Techies."
+    threats=[
+      ("Phishing","Phishing emails","The fake emails that try to hook you &mdash; and how to spot them.","/phishing/"),
+      ("Scam texts &amp; calls","Smishing &amp; vishing","Scam texts and phone calls, and the tell-tale signs.","/smishing-and-vishing/"),
+      ("Scams","Online scams","The most common online scams and how to avoid them.","/online-scams/"),
+      ("Ransomware","Ransomware","What it is, and how to protect your files from being held to ransom.","/ransomware/"),
+      ("Viruses","Malware &amp; viruses","How devices get infected &mdash; and how to stay clean.","/malware-and-viruses/"),
+      ("Identity","Identity theft","How your identity gets stolen, and how to protect it.","/identity-theft/"),
+    ]
+    actions=[
+      ("Quiz","Spot the Scam","Can you tell a scam from the real thing? Take the 6-round quiz.","/spot-the-scam/","Take the quiz"),
+      ("Tool","Password checker","Test your password and get a strong, memorable one &mdash; privately.","/password-strength-checker/","Check it"),
+      ("Guide","Set up 2FA","Turn on two-factor authentication, in plain English.","/how-to-set-up-two-factor-authentication/","How to"),
+      ("Checklist","Cybersecurity checklist","Ten practical steps to protect yourself &mdash; print it out.","/cybersecurity-checklist/","Get the list"),
+      ("Tool","IT Health Check","Get an instant security score and action plan &mdash; no sign-up.","/it-health-check-tool/","Check your score"),
+      ("Guide","Using AI safely","Get value from AI tools without the risks.","/using-ai-safely/","Read the guide"),
+    ]
+    tcards="\n".join(f'          <a class="post-card" href="{href}"><p class="post-card__cat">{cat}</p><h3>{t}</h3><p>{d}</p><span class="post-card__more">Learn more &#8594;</span></a>' for cat,t,d,href in threats)
+    acards="\n".join(f'          <a class="post-card" href="{href}"><p class="post-card__cat">{cat}</p><h3>{t}</h3><p>{d}</p><span class="post-card__more">{more} &#8594;</span></a>' for cat,t,d,href,more in actions)
+    content="\n".join([
+      hero(bc("Online Safety"), "// ONLINE SAFETY",
+           'Staying safe online, <em class="grad grad--green">made simple</em>',
+           "You don&rsquo;t need to be technical to stay safe online &mdash; just a few good habits and somewhere friendly to turn. Learn the threats, test yourself, and pick up the simple wins below.",
+           cta1=("Take the Scam Quiz","/spot-the-scam/"), cta2=("Get Protected","/cybersecurity-support/"),
+           chips=["Plain English","For all ages","Where to get help"]),
+      f'''    <section class="section section--alt" aria-label="Learn the threats">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// LEARN THE THREATS</p>
+          <h2 class="section-title section-title--center" data-title>Know what to look out for<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>A quick, calm explanation of each &mdash; see them all on our <a href="/cyber-threats/">cyber threats</a> page.</p>
+        </div>
+        <div class="blog-grid" data-stagger>
+{tcards}
+        </div>
+      </div>
+    </section>''',
+      f'''    <section class="section" aria-label="Test yourself and take action">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// TEST YOURSELF &amp; TAKE ACTION</p>
+          <h2 class="section-title section-title--center" data-title>Simple things you can do today<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="blog-grid" data-stagger>
+{acards}
+        </div>
+      </div>
+    </section>''',
+      f'''    <section class="section section--alt" aria-label="Quick wins">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">/ QUICK WINS</p>
+          <h2 class="section-title" data-title>The habits that keep you safe<span class="title-underline"></span></h2>
+          <p>You don&rsquo;t have to do everything at once. Even a couple of these makes you much harder to catch out.</p>
+        </div>
+        <ul class="checklist" data-stagger>
+{checklist(["Use strong, unique passwords (or three random words)","Turn on two-factor authentication","Keep your devices and apps updated","Back up anything precious","Think before you click links or attachments","When in doubt, ask us &mdash; &lsquo;is this safe?&rsquo;"])}
+        </ul>
+      </div>
+    </section>''',
+      f'''    <section class="section" aria-label="Where to get help and report">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// HELP &amp; WHERE TO REPORT</p>
+          <h2 class="section-title section-title--center" data-title>Trusted help, any time<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ul class="security-grid" data-stagger>
+{grid_cards([("Already been caught out?","Follow our calm, step-by-step guide on <a href=\"/ive-been-scammed-what-to-do/\">what to do if you&rsquo;ve been scammed</a>."),("Report a scam","Forward scam texts to 7726, scam emails to report@phishing.gov.uk, and report fraud to Action Fraud on 0300 123 2040."),("Trusted advice","The UK&rsquo;s <a href=\"https://www.ncsc.gov.uk/section/information-for/individuals-families\" target=\"_blank\" rel=\"noopener\">NCSC</a> and <a href=\"https://www.getsafeonline.org/\" target=\"_blank\" rel=\"noopener\">Get Safe Online</a> have free, plain-English help.")])}
+        </ul>
+      </div>
+    </section>''',
+      faq_html([
+        ("How do I stay safe online?","The basics go a long way: strong unique passwords, two-factor authentication, keeping devices updated, backing up your data, and pausing before you click. Our quick-wins above and <a href=\"/cybersecurity-checklist/\">checklist</a> walk you through it."),
+        ("What should I do if I think I&rsquo;ve been scammed?","Don&rsquo;t panic &mdash; act fast. Call your bank on 159, report it, and secure your accounts. Our <a href=\"/ive-been-scammed-what-to-do/\">step-by-step guide</a> covers exactly what to do."),
+        ("Is antivirus enough on its own?","It&rsquo;s an important layer, but not the whole answer. Strong passwords, 2FA, updates, backups and a healthy dose of caution matter just as much. We bring it all together in <a href=\"/cybersecurity-support/\">managed cybersecurity</a>."),
+      ]),
+      cta("Want a friendly expert in your corner?","We keep Dorset families and businesses safe online every day &mdash; with real protection, Malwarebytes Premium and a real person to ask whenever you&rsquo;re unsure.",
+          primary=("Explore Cybersecurity","/cybersecurity-support/"), secondary=("Malwarebytes Premium","/malwarebytes-premium/")),
+    ])
+    def schema(s,_d=desc,_it=[{"@type":"ListItem","position":i+1,"name":t,"url":SITE+href} for i,(cat,t,d,href) in enumerate(threats)]):
+        return graph([crumb(s,"Online Safety"), webpage(s,"Online Safety",_d,"CollectionPage"),
+                      {"@type":"ItemList","@id":SITE+"/online-safety/#list","itemListElement":_it}])
+    add(slug=slug, title="Online Safety Hub - Stay Safe Online (Plain English) | 365 Techies",
+        desc=desc, og_title="Online Safety | 365 Techies", schema=schema, content=content)
+online_safety()
+
+# ============================================================ TOOL: WHAT WOULD YOU LOSE? (BACKUP CHECK)
+WHATLOSE_WIDGET = '''    <section class="section section--alt" aria-label="What would you lose?">
+      <div class="wrap">
+        <div class="quiz" id="wl">
+          <div class="quiz__step is-active" data-step="what">
+            <p class="quiz__count mono">QUICK CHECK &middot; 20 SECONDS</p>
+            <h2 class="quiz__q">If your computer or phone died today, what would hurt most to lose?</h2>
+            <div class="quiz__opts">
+              <button type="button" class="quiz__opt" data-set="what:photos">Photos &amp; memories</button>
+              <button type="button" class="quiz__opt" data-set="what:docs">Documents &amp; emails</button>
+              <button type="button" class="quiz__opt" data-set="what:biz">Business records &amp; accounts</button>
+              <button type="button" class="quiz__opt" data-set="what:all">Honestly&hellip; everything</button>
+            </div>
+          </div>
+          <div class="quiz__step" data-step="backed">
+            <p class="quiz__count mono">ONE MORE</p>
+            <h2 class="quiz__q">Is it safely backed up somewhere separate?</h2>
+            <div class="quiz__opts">
+              <button type="button" class="quiz__opt" data-set="backed:yes">Yes &mdash; and I&rsquo;ve checked it works</button>
+              <button type="button" class="quiz__opt" data-set="backed:think">I think so</button>
+              <button type="button" class="quiz__opt" data-set="backed:no">No</button>
+              <button type="button" class="quiz__opt" data-set="backed:unsure">I&rsquo;m not sure</button>
+            </div>
+          </div>
+          <div class="quiz__step" data-step="result"><div class="quiz__result" id="wl-result" aria-live="polite"></div></div>
+          <div class="quiz__back"><button type="button" id="wl-restart">&larr; Start again</button></div>
+        </div>
+      </div>
+      <script>
+      (function(){
+        var quiz=document.getElementById('wl'); if(!quiz) return;
+        var a={};
+        var names={photos:'your photos and memories',docs:'your documents and emails',biz:'your business records',all:'everything you keep'};
+        function show(step){ var s=quiz.querySelectorAll('.quiz__step'); for(var i=0;i<s.length;i++) s[i].classList.toggle('is-active', s[i].getAttribute('data-step')===step); }
+        function result(){
+          var what=names[a.what]||'your files';
+          var head,body,cls;
+          if(a.backed==='yes'){ cls='hc--strong'; head='You&rsquo;re in good shape'; body='Brilliant &mdash; a checked, separate backup is exactly what keeps '+what+' safe. The only thing worth adding is peace of mind that it keeps running; that&rsquo;s included in every plan, and we can even text you a reminder when a backup&rsquo;s due.'; }
+          else if(a.backed==='no'){ cls='hc--risk'; head='This is worth sorting today'; body='Right now '+what+' could be lost in an instant to a failed drive, theft or ransomware &mdash; and once it&rsquo;s gone, it&rsquo;s usually gone for good. The good news: a proper, automatic backup is quick to set up and then looks after itself.'; }
+          else { cls='hc--good'; head='Let&rsquo;s make sure'; body='&ldquo;I think so&rdquo; is the riskiest answer of all &mdash; a backup you&rsquo;ve never tested isn&rsquo;t really a backup. It&rsquo;s worth five minutes to be certain '+what+' would actually come back. We&rsquo;re happy to check it for you.'; }
+          document.getElementById('wl-result').innerHTML='<p class="hc-bandlabel '+cls+'">'+head+'</p><p>'+body+'</p>'+
+            '<div class="quiz__actions"><a href="/backup-support/" class="button primary">Protect my data</a><a href="/contact/" class="button secondary">Talk to a techie</a></div>'+
+            '<p class="hc-disclaimer">Backups are included in every monthly plan &mdash; set up, verified and quietly kept an eye on. See <a href="/backup-support/">backup &amp; recovery</a>.</p>';
+        }
+        quiz.addEventListener('click',function(e){ var o=e.target.closest('.quiz__opt'); if(!o) return; var kv=o.getAttribute('data-set').split(':'); a[kv[0]]=kv[1];
+          if(kv[0]==='what') show('backed');
+          else if(kv[0]==='backed'){ result(); show('result'); }
+        });
+        document.getElementById('wl-restart').addEventListener('click',function(){ a={}; show('what'); });
+      })();
+      </script>
+    </section>'''
+def what_would_you_lose():
+    slug="what-would-you-lose"
+    desc="What would you lose if your computer or phone died today? A quick, friendly check of how safe your photos, documents and records really are - and how to protect them. From 365 Techies, Dorset."
+    faqs=[
+      ("Isn&rsquo;t OneDrive or iCloud a backup?","Not quite. Cloud sync copies changes everywhere &mdash; so if a file is deleted or encrypted by ransomware, that change syncs too. A proper, separate backup keeps older, safe versions. See <a href=\"/backup-support/\">backup &amp; recovery</a>."),
+      ("How often should I back up?","Ideally automatically, in the background, so you never have to remember. On a plan we set that up, verify it regularly, and can text you a reminder if your backup needs a drive plugged in."),
+      ("What&rsquo;s the 3-2-1 rule?","Three copies of your data, on two types of media, with one kept off-site &mdash; the gold standard we set up so a single failure, theft or ransomware can never wipe everything."),
+    ]
+    content="\n".join([
+      hero(bc("What Would You Lose?"), "// 20-SECOND CHECK",
+           'What would you lose <em class="grad grad--green">if it died today?</em>',
+           "A failed hard drive, a lost laptop or a moment&rsquo;s ransomware can take everything in an instant. Take 20 seconds to see how safe your photos, documents and records really are.",
+           cta1=("Protect My Data","/backup-support/"), cta2=("Talk to a Techie","/contact/"),
+           chips=["Takes 20 seconds","No sign-up","Honest answer"]),
+      WHATLOSE_WIDGET,
+      faq_html(faqs),
+      cta("Never lose a thing, ever",
+          "We set up automatic, verified, ransomware-safe backups and quietly keep an eye on them &mdash; included in every monthly plan.",
+          primary=("Backup &amp; Recovery","/backup-support/"), secondary=("View Monthly Plans","/monthly-it-support/")),
+    ])
+    def schema(s,_d=desc,_f=faqs):
+        return graph([crumb(s,"What Would You Lose?"), webpage(s,"What Would You Lose?",_d),
+                      faqpage(s,_f),
+                      {"@type":"WebApplication","name":"365 Techies Backup Risk Check","applicationCategory":"UtilitiesApplication","operatingSystem":"Web (all browsers)","url":SITE+"/what-would-you-lose/","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},"provider":{"@id":SITE+"/#business"}}])
+    add(slug=slug, title="What Would You Lose If Your Computer Died Today? Free Check | 365 Techies",
+        desc=desc, og_title="What Would You Lose? | 365 Techies", schema=schema, content=content)
+what_would_you_lose()
+
+# ============================================================ GUIDE: HOW TO CHOOSE ANTIVIRUS
+info_page(
+  slug="how-to-choose-antivirus", crumb_name="How to Choose Antivirus", eyebrow="// BUYER&rsquo;S GUIDE",
+  h1='How to choose <em class="grad grad--green">antivirus &amp; online protection</em>',
+  lede="There are dozens of security products all claiming to be the best. Here&rsquo;s a plain-English guide to what actually matters &mdash; and what&rsquo;s a waste of money &mdash; so you can choose with confidence.",
+  desc="A plain-English guide to choosing antivirus and online protection: what good security really includes, free vs paid, whether you need a VPN, and the features that matter. Impartial advice from 365 Techies.",
+  title="How to Choose Antivirus & Online Protection (Plain English) | 365 Techies",
+  og_title="How to Choose Antivirus | 365 Techies",
+  chips=["Plain English","What actually matters","No scare tactics"],
+  pre=f'''    <section class="section section--alt" aria-label="What good protection includes">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// WHAT GOOD PROTECTION INCLUDES</p>
+          <h2 class="section-title section-title--center" data-title>Look for these, ignore the rest<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="tile-grid" data-stagger>
+{tiles([("bug","Real-time malware protection","Stops viruses, ransomware and spyware as they try to land &mdash; the core job of any security product."),("globe","Web &amp; scam-site blocking","Warns you off dangerous and fake websites before they can do harm."),("mail","Email &amp; phishing filtering","Catches dodgy links and attachments &mdash; where most attacks actually start."),("lock","A VPN (sometimes)","Useful on public Wi-Fi for private browsing. Handy, but not essential for everyone.")])}
+        </div>
+      </div>
+    </section>''',
+  inner="""          <h2>Free vs paid &mdash; what&rsquo;s the difference?</h2>
+          <p>Windows comes with Microsoft Defender built in, and for a careful user it&rsquo;s a decent baseline. Paid products add stronger web and scam protection, better support, and bring everything into one place. For most people &mdash; especially anyone who banks, shops or emails a lot &mdash; a good paid product is worth it for the extra layers and peace of mind.</p>
+          <h2>Do I need a VPN?</h2>
+          <p>A VPN keeps your browsing private, which is genuinely useful on public Wi-Fi in cafes, hotels and airports. At home on your own connection it matters less. Some security bundles include one, which is a nice bonus.</p>
+          <h2>What we recommend &mdash; and why</h2>
+          <p>As a Malwarebytes Partner we supply, set up and manage <a href="/malwarebytes-premium/">Malwarebytes Premium with VPN</a> &mdash; award-winning protection against malware, ransomware and scam sites, with a private VPN built in. The real value isn&rsquo;t just the software, though: it&rsquo;s having it set up properly, kept updated, and a real person to ask &lsquo;is this safe?&rsquo; The independent experts at <a href="https://www.which.co.uk/reviews/antivirus-software-packages/article/best-antivirus-software-aMDh67g7Cmws" target="_blank" rel="noopener">Which?</a> and the UK&rsquo;s <a href="https://www.ncsc.gov.uk/" target="_blank" rel="noopener">NCSC</a> have good independent guidance too.</p>
+          <h2>Avoid these traps</h2>
+          <ul class="checklist">
+            <li>Scary pop-ups claiming you&rsquo;re &lsquo;infected&rsquo; &mdash; those are usually the scam (see <a href="/spot-the-scam/">Spot the Scam</a>).</li>
+            <li>Paying for several overlapping products &mdash; one good suite is plenty.</li>
+            <li>Free tools from names you don&rsquo;t recognise &mdash; stick to reputable brands.</li>
+            <li>Forgetting that software is only one layer &mdash; strong passwords, <a href="/how-to-set-up-two-factor-authentication/">2FA</a> and backups matter just as much.</li>
+          </ul>""" + PRINT_BTN,
+  faqs=[
+    ("Is Windows Defender enough on its own?","For a careful, well-updated user it&rsquo;s a reasonable baseline. A good paid product adds stronger scam-site and phishing protection and brings everything together &mdash; worth it for most people, especially if you bank and shop online."),
+    ("Do I really need to pay for antivirus?","Not always, but paid protection adds layers that matter &mdash; and the real value is having it set up and managed properly so it actually protects you."),
+    ("Will antivirus slow my computer down?","Modern security is light on resources. If a computer feels slow, it&rsquo;s more often clutter or age &mdash; try our <a href=\"/computer-fault-checker/\">fault checker</a>."),
+    ("Can you sort all this out for me?","Yes &mdash; we supply and manage <a href=\"/malwarebytes-premium/\">Malwarebytes Premium</a> and layered <a href=\"/cybersecurity-support/\">cybersecurity</a>, all kept updated and looked after."),
+  ],
+  cta_args=("Let us handle your protection","Award-winning protection, set up and managed by your local team &mdash; with a real person to ask whenever you&rsquo;re unsure.",
+            ("Malwarebytes Premium","/malwarebytes-premium/"), ("Explore Cybersecurity","/cybersecurity-support/")),
+)
+
+# ============================================================ GUIDE: HOW TO CHOOSE BROADBAND
+info_page(
+  slug="how-to-choose-broadband", crumb_name="How to Choose Broadband", eyebrow="// BUYER&rsquo;S GUIDE",
+  h1='How to choose <em class="grad grad--cyan">broadband</em>',
+  lede="Fibre, part-fibre, mobile or satellite &mdash; broadband has more options than ever, and the adverts don&rsquo;t make it clearer. Here&rsquo;s how to pick the right one for your home or business, in plain English.",
+  desc="A plain-English guide to choosing broadband: the connection types explained (FTTP full fibre, FTTC, 4G/5G, Starlink), how much speed you really need, and what to watch for. Impartial advice from 365 Techies, Dorset.",
+  title="How to Choose Broadband (Fibre, 4G/5G & Starlink Explained) | 365 Techies",
+  og_title="How to Choose Broadband | 365 Techies",
+  chips=["Plain English","Rural options too","Check your speed"],
+  pre=f'''    <section class="section section--alt" aria-label="Connection types">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// THE OPTIONS, EXPLAINED</p>
+          <h2 class="section-title section-title--center" data-title>The main types of broadband<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="tile-grid" data-stagger>
+{tiles([("bolt","Full fibre (FTTP)","Fibre all the way to your home &mdash; the fastest and most reliable. Choose it if you can get it."),("wifi","Part-fibre (FTTC)","Fibre to the street cabinet, then copper to you. Common, fine for most, but slower the further you are."),("globe","Mobile (4G / 5G)","Broadband over the mobile network &mdash; handy where fixed lines are poor, if the signal&rsquo;s good."),("sun","Satellite (Starlink)","Fast internet almost anywhere, ideal for rural not-spots, boats and off-grid &mdash; see our <a href=\"/starlink-internet/\">Starlink</a> page.")])}
+        </div>
+      </div>
+    </section>''',
+  inner="""          <h2>How much speed do you actually need?</h2>
+          <p>It&rsquo;s easy to overpay for speed you&rsquo;ll never use. A couple browsing and emailing needs far less than a busy family all streaming and gaming at once, or a business on video calls. The honest way to know is to check &mdash; try our <a href="/broadband-speed-checker/">broadband speed checker</a> for a recommended speed for your household.</p>
+          <h2>What to watch for</h2>
+          <ul class="checklist">
+            <li><strong>Upload as well as download:</strong> matters for video calls, working from home and backups.</li>
+            <li><strong>The contract:</strong> check the length, the price after any intro offer, and early-exit fees.</li>
+            <li><strong>Reliability over headline speed:</strong> a steady connection beats a fast-but-flaky one.</li>
+            <li><strong>The router:</strong> a better router, or mesh Wi-Fi, often fixes &lsquo;slow internet&rsquo; that isn&rsquo;t the line&rsquo;s fault &mdash; see <a href="/wifi-support/">Wi-Fi support</a>.</li>
+          </ul>
+          <h2>Rural, remote or a not-spot?</h2>
+          <p>If fixed broadband is slow or unavailable where you are &mdash; common across rural Dorset and the New Forest &mdash; <a href="/starlink-internet/">Starlink satellite internet</a> can deliver fast, reliable broadband almost anywhere, and we supply, install and support it. It also makes a great backup connection for businesses that can&rsquo;t afford to go offline.</p>
+          <p>You can compare availability and providers independently via <a href="https://www.ofcom.org.uk/phones-and-broadband/" target="_blank" rel="noopener">Ofcom</a>.</p>""" + PRINT_BTN,
+  faqs=[
+    ("What broadband speed do I really need?","It depends how many people do what at once. A light household is fine on a modest package; a busy family or a business needs more. Our <a href=\"/broadband-speed-checker/\">speed checker</a> gives you a personal recommendation in 30 seconds."),
+    ("My internet is slow &mdash; is it the line or the Wi-Fi?","Often it&rsquo;s the Wi-Fi inside the house, not the broadband line itself. A better router or mesh setup frequently fixes it &mdash; we can advise. See <a href=\"/wifi-support/\">Wi-Fi support</a>."),
+    ("What can I do if I can&rsquo;t get fast broadband?","Mobile (4G/5G) or <a href=\"/starlink-internet/\">Starlink satellite</a> are excellent options for rural and not-spot areas &mdash; we install and support both."),
+    ("Can you set it all up for me?","Yes &mdash; we help choose, set up and get the most from your connection and Wi-Fi, at home or for your business. Just <a href=\"/contact/\">get in touch</a>."),
+  ],
+  cta_args=("Slow or unreliable internet?","We&rsquo;ll help you choose the right connection, sort your Wi-Fi, or install Starlink where broadband won&rsquo;t reach.",
+            ("Check Your Speed","/broadband-speed-checker/"), ("Starlink Internet","/starlink-internet/")),
+)
+
+# ============================================================ GUIDE: SETTING UP A COMPUTER FOR AN OLDER RELATIVE
+info_page(
+  slug="setting-up-a-computer-for-an-older-relative", crumb_name="Computer for an Older Relative", eyebrow="// A KIND HEAD-START",
+  h1='Setting up a computer or tablet for <em class="grad grad--cyan">an older relative</em>',
+  lede="A little thought at the start saves a lot of worried phone calls later. Here&rsquo;s how to set up a computer or tablet so an older relative can use it happily, safely and with confidence.",
+  desc="How to set up a computer or tablet for an older relative: choosing a simple device, making it easy to see and use, keeping it safe from scams, and arranging help. A warm, practical guide from 365 Techies.",
+  title="Setting Up a Computer or Tablet for an Older Relative | 365 Techies",
+  og_title="Setting Up a Computer for an Older Relative | 365 Techies",
+  chips=["Kind &amp; practical","Safe from scams","We can help"],
+  pre=f'''    <section class="section section--alt" aria-label="How to set it up well">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// GET IT RIGHT FROM THE START</p>
+          <h2 class="section-title section-title--center" data-title>Five things that make all the difference<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ol class="how__steps">
+{steps([("Choose the right device","Simpler is kinder. A tablet suits many people; a laptop suits others. Our <a href=\"/how-to-choose-a-laptop/\">buyer&rsquo;s guide</a> helps you pick without the jargon."),("Make it easy to see and use","Turn on bigger text, a larger pointer and good contrast, and tidy the screen to just the apps they need &mdash; see our <a href=\"/windows-accessibility-features-guide/\">accessibility guide</a>."),("Set up the essentials cleanly","Email, video calling with the family, photos and a couple of favourites &mdash; signed in and working, with passwords saved safely."),("Make it safe","Strong passwords, <a href=\"/how-to-set-up-two-factor-authentication/\">two-factor authentication</a>, automatic updates and good protection &mdash; so a wrong click is far less likely to cause harm."),("Arrange help in advance","Agree how you&rsquo;ll lend a hand, and set up safe remote support so you (or we) can help without driving over &mdash; see <a href=\"/helping-a-relative-with-their-computer/\">helping a relative remotely</a>.")])}
+        </ol>
+      </div>
+    </section>''',
+  inner="""          <h2>Keep it simple &mdash; that&rsquo;s the kindest thing</h2>
+          <p>The biggest favour you can do is to remove clutter. A clean desktop with large icons for the few things they actually use &mdash; email, video calls, the web, photos &mdash; is far less daunting than a screen full of things they&rsquo;ll never touch. Write a simple one-page note of how to do their favourite tasks, in their words.</p>
+          <h2>Protect against scams from day one</h2>
+          <p>Older people are targeted most, so a little protection goes a long way: good security software, a chat about never giving anyone remote access who phones out of the blue, and our <a href="/spot-the-scam/">Spot the Scam</a> quiz to practise together. Remind them: <strong>a genuine technician calls first and is someone you arranged &mdash; we never cold-call demanding access.</strong></p>
+          <h2>You don&rsquo;t have to be the IT department</h2>
+          <p>If you&rsquo;d rather not be on call forever, we&rsquo;re glad to be the patient, friendly help at the end of the phone &mdash; that&rsquo;s a real specialism of ours. See how we support <a href="/it-support-for-retired-users/">retired users</a> and <a href="/family-it-support/">families</a>, and our <a href="/refer-a-friend/">refer a friend</a> offer if you&rsquo;re already with us.</p>""" + PRINT_BTN,
+  faqs=[
+    ("Tablet or laptop &mdash; which is better for an older person?","It depends on what they want to do. Tablets are simpler for browsing, video calls and photos; laptops are better for typing and documents. We&rsquo;re happy to advise &mdash; see our <a href=\"/how-to-choose-a-laptop/\">buyer&rsquo;s guide</a>."),
+    ("How do I stop them being scammed?","Good protection, automatic updates, two-factor authentication, and a simple rule: never give remote access or money to anyone who contacts you unexpectedly. Practise spotting scams together with our <a href=\"/spot-the-scam/\">quiz</a>."),
+    ("Can you set it all up so it&rsquo;s ready to go?","Yes &mdash; we can set up a new device simply and safely, move photos and contacts across, and make it easy to use. See <a href=\"/new-computer-setup/\">new computer setup</a>."),
+    ("Can you be their ongoing help instead of me?","Gladly. Patient, jargon-free support for older users is what we do best &mdash; at home or remotely, and we always call before we connect."),
+  ],
+  cta_args=("Want us to set it up beautifully?","We&rsquo;ll set up a device that&rsquo;s simple, safe and a joy to use &mdash; and be the friendly help at the end of the phone.",
+            ("New Computer Setup","/new-computer-setup/"), ("Support for Retired Users","/it-support-for-retired-users/")),
+)
+
+# ============================================================ GUIDE: HELPING A RELATIVE REMOTELY
+info_page(
+  slug="helping-a-relative-with-their-computer", crumb_name="Helping a Relative Remotely", eyebrow="// FROM A DISTANCE",
+  h1='Helping a relative with their computer <em class="grad grad--green">from a distance</em>',
+  lede="When family live far away, helping with their computer can feel impossible &mdash; and there&rsquo;s a scam to watch for too. Here&rsquo;s how to help safely, and when to call in a patient professional.",
+  desc="How to safely help an older relative with their computer remotely - the right tools, what to watch for, and the remote-access scam to avoid. Plus when to let a patient professional help. From 365 Techies.",
+  title="Helping a Relative With Their Computer Remotely (Safely) | 365 Techies",
+  og_title="Helping a Relative Remotely | 365 Techies",
+  chips=["Help from afar","Avoid the scam trap","Patient pro on call"],
+  pre=f'''    <section class="section section--alt" aria-label="The remote-access scam warning">
+      <div class="wrap">
+        <div class="prose" data-reveal style="text-align:center;max-width:760px;margin:0 auto">
+          <p class="eyebrow eyebrow--center mono">// READ THIS FIRST</p>
+          <h2 class="section-title section-title--center" data-title>The remote-access scam to know<span class="title-underline title-underline--center"></span></h2>
+          <p>The most important thing to teach a relative: <strong>never let anyone connect to their computer because of an unexpected call, text or pop-up</strong> &mdash; even if the caller claims to be from their bank, Microsoft, BT or &lsquo;tech support&rsquo;. That is how remote-access scams work. Genuine help is always something <em>you</em> arranged. Make sure they know to hang up and check with you &mdash; see <a href="/smishing-and-vishing/">scam calls</a> and <a href="/ive-been-scammed-what-to-do/">what to do if it&rsquo;s happened</a>.</p>
+        </div>
+      </div>
+    </section>
+    <section class="section" aria-label="How to help safely">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// HOW TO HELP SAFELY</p>
+          <h2 class="section-title section-title--center" data-title>Helping, the right way<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ol class="how__steps">
+{steps([("Agree how you&rsquo;ll help","Decide together when and how you&rsquo;ll lend a hand, so a call for help is normal and a surprise &lsquo;technician&rsquo; is not."),("Use a proper remote tool","Use trusted remote-support software you set up together in advance &mdash; not whatever a stranger on the phone tells them to install."),("Talk them through it gently","Go slowly, one step at a time, and let them do the clicking so they learn &mdash; patience beats taking over."),("Write down what worked","A simple note of the steps means they may not need to call next time &mdash; and confidence grows."),("Know when to call a pro","Some things are quicker and safer left to someone experienced &mdash; that&rsquo;s exactly what we&rsquo;re here for.")])}
+        </ol>
+      </div>
+    </section>''',
+  inner="""          <h2>When to let us help instead</h2>
+          <p>Helping family is lovely &mdash; but it can be stressful for both of you, especially over the phone. If something&rsquo;s fiddly, security-related, or simply wearing you both out, we&rsquo;re glad to step in as the patient, friendly expert. We support people right across the UK and Europe with secure <a href="/remote-it-support/">remote help</a>, and crucially, <strong>we always phone first and they watch everything on screen</strong> &mdash; the safe opposite of a scam.</p>
+          <h2>Set them up to need less help</h2>
+          <p>A simple, tidy setup with the <a href="/windows-accessibility-features-guide/">accessibility features</a> turned on, good <a href="/cybersecurity-support/">protection</a>, and a little confidence-building (our <a href="/avoiding-tech-overwhelm/">gentle guide</a> helps) means fewer worried calls for everyone.</p>""" + PRINT_BTN,
+  faqs=[
+    ("What&rsquo;s the safest way to access their computer remotely?","Use a trusted remote-support tool you set up together in advance, and only ever connect when you&rsquo;ve arranged it between you. Never let them act on an unexpected call or pop-up asking for access."),
+    ("They were asked to install something by someone on the phone &mdash; is that a scam?","Almost certainly yes. Genuine companies don&rsquo;t cold-call asking to connect to your computer. Tell them to hang up &mdash; see <a href=\"/ive-been-scammed-what-to-do/\">what to do if you&rsquo;ve been scammed</a>."),
+    ("Can you be their support so I don&rsquo;t have to be?","Absolutely &mdash; patient, remote help for less-confident users is a specialism of ours, and we always call before we connect."),
+    ("Do you help if they&rsquo;re not local to Dorset?","Yes &mdash; we provide secure remote support across the UK and Europe, so we can help wherever your relative lives."),
+  ],
+  cta_args=("Let us be their friendly help","Patient, secure remote support from a real person who gets to know them &mdash; and always calls before connecting.",
+            ("Remote IT Support","/remote-it-support/"), ("Talk to a Techie","/contact/")),
+)
+
+# ============================================================ GUIDE: CONFIDENT VIDEO CALLING
+info_page(
+  slug="confident-video-calling", crumb_name="Confident Video Calling", eyebrow="// SEE THE FAMILY",
+  h1='Confident <em class="grad grad--cyan">video calling</em>',
+  lede="Seeing the family on screen is one of the loveliest things technology does &mdash; and it&rsquo;s easier than it looks. Here&rsquo;s a gentle guide to making video calls with confidence, on whatever device you have.",
+  desc="A plain-English guide to video calling for beginners: which app to use, how to make and answer a call, and simple tips for a good call. Warm, jargon-free help from 365 Techies, Dorset.",
+  title="Confident Video Calling - A Beginner's Guide | 365 Techies",
+  og_title="Confident Video Calling | 365 Techies",
+  chips=["For beginners","Any device","No jargon"],
+  pre=f'''    <section class="section section--alt" aria-label="Which app to use">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// WHICH APP?</p>
+          <h2 class="section-title section-title--center" data-title>The easiest is the one they use<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Don&rsquo;t overthink it &mdash; the best app is simply the one your family already use, so ask them first.</p>
+        </div>
+        <div class="tile-grid" data-stagger>
+{tiles([("phone","WhatsApp","Very popular with families, free over Wi-Fi, and simple once it&rsquo;s set up. Great on a phone or tablet."),("users","Zoom","Easy for group calls and chatting to several people at once. Works on phones, tablets and computers."),("briefcase","Microsoft Teams","Common for work and clubs &mdash; we set this up and support it as part of <a href=\"/microsoft-365-support/\">Microsoft 365</a>."),("heart","FaceTime","Lovely and simple between Apple devices. (Note: we support Windows and Android, not Apple remotely.)")])}
+        </div>
+      </div>
+    </section>''',
+  inner="""          <h2>Making a call, step by step</h2>
+          <p>Every app is a little different, but they all follow the same friendly pattern:</p>
+          <ul class="checklist">
+            <li>Open the app and find the person&rsquo;s name in your contacts or chats.</li>
+            <li>Tap the little video-camera icon to start the call.</li>
+            <li>Allow the app to use your camera and microphone if it asks (that&rsquo;s normal and safe).</li>
+            <li>To answer a call, tap the green button; to finish, tap the red one.</li>
+          </ul>
+          <h2>Simple tips for a lovely call</h2>
+          <ul class="checklist">
+            <li>Sit with a window or light <em>in front</em> of you, not behind, so they can see your face.</li>
+            <li>Prop the phone or tablet up so you don&rsquo;t have to hold it &mdash; a stand or a stack of books works.</li>
+            <li>Use Wi-Fi where you can, for a clearer picture and no data worries.</li>
+            <li>If the sound&rsquo;s tricky, headphones or earbuds often make a big difference.</li>
+          </ul>
+          <p>Worried about getting it wrong? You won&rsquo;t break anything by trying &mdash; and our <a href="/avoiding-tech-overwhelm/">gentle guide</a> may help. We&rsquo;re always happy to set it up and do a friendly practice call with you.</p>""" + PRINT_BTN,
+  faqs=[
+    ("Which video-calling app should I use?","The one your family already use, so ask them first. WhatsApp and Zoom are both popular and beginner-friendly, and work on phones, tablets and computers."),
+    ("Is video calling free?","The apps are free to use over Wi-Fi or your home internet. On mobile data they use your allowance, so Wi-Fi is best where you can."),
+    ("Do I need a special camera?","No &mdash; phones, tablets and most laptops have a camera and microphone built in. For an older desktop, a simple plug-in webcam does the job, and we can help you choose one."),
+    ("Can you help me set it up and practise?","Of course &mdash; we&rsquo;ll set up the app, add your family&rsquo;s contacts and do a relaxed practice call with you, at your pace. <a href=\"/contact/\">Get in touch</a>."),
+  ],
+  cta_args=("Want a hand getting started?","We&rsquo;ll set up video calling and do a friendly practice run with you &mdash; patiently, and never rushed.",
+            ("Talk to a Techie","/contact/"), ("Support for Retired Users","/it-support-for-retired-users/")),
+)
+
+# ============================================================ HUB: COMPUTER HELP FOR SENIORS
+def computer_help_for_seniors():
+    slug="computer-help-for-seniors"
+    desc="Friendly, patient computer help for older people - in one place. Plain-English guides on staying safe, accessibility, video calling, online banking and feeling confident with technology. From 365 Techies, a specialism since 1995."
+    guides=[
+      ("Get confident","Avoiding tech overwhelm","Feel calmer and more in control of technology &mdash; a gentle guide.","/avoiding-tech-overwhelm/"),
+      ("Easier to use","Windows accessibility features","Bigger text, magnifier and read-aloud &mdash; free and built in.","/windows-accessibility-features-guide/"),
+      ("Stay in touch","Confident video calling","See the family on screen, on any device &mdash; for beginners.","/confident-video-calling/"),
+      ("Stay safe","Safe online banking","Bank online with confidence and avoid the scams.","/safe-online-banking-for-beginners/"),
+      ("Stay safe","Spot the Scam quiz","Practise telling scams from the real thing &mdash; no sign-up.","/spot-the-scam/"),
+      ("No jargon","Tech in plain English","The terms and services people ask about most, explained simply.","/plain-english/"),
+    ]
+    support=[
+      ("For you","Support for retired users","Patient, unhurried, jargon-free IT support &mdash; our specialism.","/it-support-for-retired-users/"),
+      ("Accessibility","Support for disabled people","Accessible IT support, assistive tech and simplified setups.","/it-support-for-disabled-people/"),
+      ("For family","Setting up for an older relative","How to set up a device kindly, safely and simply.","/setting-up-a-computer-for-an-older-relative/"),
+      ("For family","Helping a relative remotely","Help from afar safely &mdash; and the scam to avoid.","/helping-a-relative-with-their-computer/"),
+    ]
+    gcards="\n".join(f'          <a class="post-card" href="{href}"><p class="post-card__cat">{cat}</p><h3>{t}</h3><p>{d}</p><span class="post-card__more">Read more &#8594;</span></a>' for cat,t,d,href in guides)
+    scards="\n".join(f'          <a class="post-card" href="{href}"><p class="post-card__cat">{cat}</p><h3>{t}</h3><p>{d}</p><span class="post-card__more">Find out more &#8594;</span></a>' for cat,t,d,href in support)
+    content="\n".join([
+      hero(bc("Computer Help for Seniors"), "// FOR OLDER USERS",
+           'Friendly computer help <em class="grad grad--cyan">for older people</em>',
+           "Helping older and less-confident people enjoy their technology has been a specialism of ours since 1995. Here&rsquo;s a calm, friendly place to start &mdash; patient guides, and a real person whenever you&rsquo;d like one.",
+           cta1=("Talk to a Techie","/contact/"), cta2=("Support for Retired Users","/it-support-for-retired-users/"),
+           chips=["Patient &amp; unhurried","No silly questions","Help at home or remotely"]),
+      f'''    <section class="section section--alt" aria-label="Friendly guides">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// FRIENDLY GUIDES</p>
+          <h2 class="section-title section-title--center" data-title>Gentle, plain-English guides<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="blog-grid" data-stagger>
+{gcards}
+        </div>
+      </div>
+    </section>''',
+      f'''    <section class="section" aria-label="Help when you want it">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// HELP WHEN YOU WANT IT</p>
+          <h2 class="section-title section-title--center" data-title>A patient hand, whenever you need one<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="blog-grid" data-stagger>
+{scards}
+        </div>
+      </div>
+    </section>''',
+      f'''    <section class="section section--alt" aria-label="Why people trust us">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">/ WHY OLDER CUSTOMERS STAY WITH US</p>
+          <h2 class="section-title" data-title>Kind, patient, and never rushed<span class="title-underline"></span></h2>
+          <p>We&rsquo;re a family business, so you deal with the same friendly people who get to know you and how you like things set up. We explain everything in plain English, we never make anyone feel silly, and there&rsquo;s genuinely no such thing as a daft question.</p>
+          <p>And we always phone before we connect &mdash; so you&rsquo;re never surprised, and you can always tell us apart from a scammer.</p>
+        </div>
+        <ul class="checklist" data-stagger>
+{checklist(["Patient, unhurried help at your pace","The same friendly faces each time","Plain English, never jargon","We come to you, or help remotely","We always call before we connect","A real person to ask &lsquo;is this safe?&rsquo;"])}
+        </ul>
+      </div>
+    </section>''',
+      cta("Help that treats you like family","Friendly, patient IT support for older people across Dorset and beyond &mdash; at home or remotely, always at your pace.",
+          primary=("Talk to a Techie","/contact/"), secondary=("View Monthly Plans","/monthly-it-support/")),
+    ])
+    allitems=guides+support
+    def schema(s,_d=desc,_it=[{"@type":"ListItem","position":i+1,"name":t,"url":SITE+href} for i,(cat,t,d,href) in enumerate(allitems)]):
+        return graph([crumb(s,"Computer Help for Seniors"), webpage(s,"Computer Help for Seniors",_d,"CollectionPage"),
+                      {"@type":"ItemList","@id":SITE+"/computer-help-for-seniors/#list","itemListElement":_it}])
+    add(slug=slug, title="Computer Help for Seniors & Older People (Patient & Plain English) | 365 Techies",
+        desc=desc, og_title="Computer Help for Seniors | 365 Techies", schema=schema, content=content)
+computer_help_for_seniors()
 
 if __name__ == "__main__":
     w = write_all()
