@@ -1,0 +1,92 @@
+# ============================================================
+# 365 Techies — .htaccess (Apache). Place in the web root.
+# Handles: HTTPS + non-www canonical, custom 404, 301 redirects
+# from the old WordPress URLs, gzip compression and caching.
+# ============================================================
+
+Options -Indexes
+DirectoryIndex index.html
+
+RewriteEngine On
+
+# --- Force HTTPS and non-www (canonical: https://365techies.co.uk) ---
+RewriteCond %{HTTPS} off [OR]
+RewriteCond %{HTTP_HOST} ^www\. [NC]
+RewriteRule ^ https://365techies.co.uk%{REQUEST_URI} [L,R=301]
+
+# ============================================================
+# 301 REDIRECTS — old WordPress pages -> new pages
+# ============================================================
+
+# --- Company / core ---
+RewriteRule ^about-us/?$                                      /about/ [R=301,L]
+RewriteRule ^terms-of-service/?$                              /terms/ [R=301,L]
+RewriteRule ^privacy/?$                                       /privacy-policy/ [R=301,L]
+RewriteRule ^f-?a-?q/?$                                       /faqs/ [R=301,L]
+RewriteRule ^(prices|products)/?$                             /pricing/ [R=301,L]
+RewriteRule ^services-2/?$                                    /services/ [R=301,L]
+RewriteRule ^book-now/?$                                      /book-service/ [R=301,L]
+
+# --- Home / support ---
+RewriteRule ^(support|home-computer-support|home-computer-servicing-and-support)/?$ /home-it-support-subscriptions/ [R=301,L]
+RewriteRule ^computer-support-bournemouth/?$                  /it-support-bournemouth/ [R=301,L]
+RewriteRule ^it-support-near-me-computer-repair-support-and-servicing/?$ /services/ [R=301,L]
+
+# --- Repairs ---
+RewriteRule ^(computer-repair|repairs|computer-help-near-me|computer-repair-near-me-service-support)/?$ /computer-repairs/ [R=301,L]
+
+# --- Specific service pages ---
+RewriteRule ^(windows-11-upgrades-dell-bournemouth|windows-11-upgrade-dell|how-to-upgrade-to-windows-11-without-waiting-in-line)/?$ /windows-11-support/ [R=301,L]
+RewriteRule ^(email-hosting|website-email-hosting)/?$        /web-design-hosting/ [R=301,L]
+RewriteRule ^microsoft-office-support/?$                      /microsoft-365-support/ [R=301,L]
+
+# --- Town location pages with a direct new equivalent ---
+RewriteRule ^computer-repair-near-me-service-support-poole/?$            /it-support-poole/ [R=301,L]
+RewriteRule ^computer-repair-near-me-service-support-bournemouth/?$      /it-support-bournemouth/ [R=301,L]
+RewriteRule ^computer-repair-near-me-service-support-boscombe/?$         /it-support-bournemouth/ [R=301,L]
+RewriteRule ^computer-repair-near-me-service-support-canford-heath/?$    /it-support-poole/ [R=301,L]
+RewriteRule ^computer-repair-near-me-service-support-christchurch/?$     /it-support-christchurch/ [R=301,L]
+RewriteRule ^computer-repair-near-me-service-support-ferndown/?$         /it-support-ferndown/ [R=301,L]
+RewriteRule ^computer-repair-near-me-service-support-wimborne-minster/?$ /it-support-wimborne/ [R=301,L]
+RewriteRule ^computer-repair-near-me-service-support-verwood/?$          /it-support-verwood/ [R=301,L]
+RewriteRule ^computer-repair-near-me-service-support-wareham/?$          /it-support-wareham/ [R=301,L]
+
+# --- All other "computer-repair-near-me..." town pages -> Areas Covered ---
+RewriteRule ^computer-repair-near-me                          /areas-covered/ [R=301,L]
+
+# --- Blog / articles -> nearest new page ---
+RewriteRule ^blog/?$                                          /it-advice/ [R=301,L]
+RewriteRule ^top-20-advantages-of-remote-computer-support/?$ /remote-it-support/ [R=301,L]
+RewriteRule ^avoid-temptation-to-turn-off-your-wifi-at-night-to-try-and-save-on-energy-bills/?$ /wifi-support/ [R=301,L]
+RewriteRule ^impacts-of-remote-work/?$                        /it-support-for-home-workers/ [R=301,L]
+RewriteRule ^(7-reasons-to-buy-a-refurbished-laptop|refurbishing-a-laptop|ten-side-hustle-ideas-to-help-you-make-some-extra-cash|stolen-laptop-recovered)/?$ /it-advice/ [R=301,L]
+
+# --- Old WordPress sitemaps -> new sitemap ---
+RewriteRule ^(sitemap_index\.xml|page-sitemap\.xml|post-sitemap\.xml|wp-sitemap\.xml)$ /sitemap.xml [R=301,L]
+
+# ============================================================
+# Custom 404
+# ============================================================
+ErrorDocument 404 /404.html
+
+# ============================================================
+# Performance: gzip compression
+# ============================================================
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml application/javascript application/json image/svg+xml
+</IfModule>
+
+# ============================================================
+# Performance: browser caching
+# ============================================================
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/x-icon "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType text/html "access plus 0 seconds"
+</IfModule>

@@ -1,0 +1,374 @@
+# -*- coding: utf-8 -*-
+"""IT Advice Hub + blog posts for 365 Techies.
+Imports shared chrome/helpers, registers all prior pages, adds the hub + 25 posts, writes everything.
+Run: python build_blog.py
+"""
+import build_pages as bp
+import build_local      # registers 12 local/customer pages
+import build_extra      # registers 9 specialist/trust pages
+from build_pages import (add, graph, crumb, webpage, faqpage, faq_html, cta,
+                         hero, SITE, write_all)
+
+def bc3(title):
+    return (f'<a href="/">Home</a> <span>/</span> '
+            f'<a href="/it-advice/">IT Advice</a> <span>/</span> '
+            f'<span aria-current="page">{title}</span>')
+
+def post_crumb(slug, title):
+    return {"@type": "BreadcrumbList", "@id": f"{SITE}/{slug}/#breadcrumb", "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": SITE + "/"},
+        {"@type": "ListItem", "position": 2, "name": "IT Advice", "item": SITE + "/it-advice/"},
+        {"@type": "ListItem", "position": 3, "name": title, "item": f"{SITE}/{slug}/"}]}
+
+def blogposting(slug, title, desc, cat, dt="2026-06-15"):
+    return {"@type": "BlogPosting", "@id": f"{SITE}/{slug}/#article",
+            "headline": title, "description": desc, "articleSection": cat, "inLanguage": "en-GB",
+            "datePublished": dt, "dateModified": dt,
+            "author": {"@type": "Organization", "name": "365 Techies", "url": SITE + "/"},
+            "publisher": {"@id": SITE + "/#business"}, "image": SITE + "/og-image.jpg",
+            "mainEntityOfPage": {"@id": f"{SITE}/{slug}/#webpage"}, "url": f"{SITE}/{slug}/"}
+
+CALLOUT = ('<div class="article__callout"><p><strong>Prefer to let us handle it?</strong> '
+           'Our monthly IT support plans include this and much more, from &pound;15.95/month — '
+           'with a friendly techie on hand whenever you need one. Call <a href="tel:+441202775566">01202 775566</a> '
+           'or <a href="/monthly-it-support/">view our plans</a>.</p></div>')
+
+def make_post(slug, cat, title, lede, body, points, related, faqs=None, dt="2026-06-15", dt_pretty="June 2026"):
+    desc = lede
+    points_html = "\n".join(f"          <li>{p}</li>" for p in points)
+    related_html = "\n".join(f'          <a href="{h}">{l}</a>' for l, h in related)
+    nodes = [post_crumb(slug, title), webpage(slug, title, desc), blogposting(slug, title, desc, cat, dt)]
+    if title.lower().startswith("how to"):
+        nodes.append({"@type": "HowTo", "@id": f"{SITE}/{slug}/#howto", "name": title, "description": desc,
+                      "step": [{"@type": "HowToStep", "position": i + 1, "name": p, "text": p}
+                               for i, p in enumerate(points)]})
+    if faqs:
+        nodes.append(faqpage(slug, faqs))
+    content = "\n".join([
+      hero(bc3(title), f"// {cat.upper()}", title, lede,
+           cta1=("Read more advice", "/it-advice/"), cta2=("View Monthly Plans", "/monthly-it-support/")),
+      f'''    <section class="section" aria-label="Article">
+      <article class="article">
+        <p class="mono" style="color:var(--muted);font-size:.8rem;margin:0 0 1.6rem">Published {dt_pretty} &middot; {cat} &middot; by 365 Techies</p>
+{body}
+        <h2>Key points</h2>
+        <ul>
+{points_html}
+        </ul>
+        {CALLOUT}
+      </article>
+      <div class="related">
+        <p class="related__head">Related advice and services</p>
+        <div class="related__links">
+{related_html}
+        </div>
+      </div>
+    </section>''',
+      faq_html(faqs) if faqs else "",
+      cta("Reliable IT support, every month",
+          "Stop firefighting tech problems. Get friendly monthly IT support for your home or business across Dorset.",
+          primary=("View Monthly Plans", "/monthly-it-support/"), secondary=("Call 01202 775566", "tel:+441202775566")),
+    ])
+    def schema(s, _nodes=nodes):
+        return graph(_nodes)
+    add(slug=slug, title=f"{title} | 365 Techies IT Advice", desc=desc, og_title=title, schema=schema, content=content)
+
+CATS = ["Monthly Support", "Home Users", "Business IT", "Microsoft 365", "Windows"]
+POSTS = [
+ # ---------------- Monthly Support ----------------
+ dict(slug="why-monthly-it-support-beats-per-repair", cat="Monthly Support",
+   title="Why Monthly IT Support Is Better Than Paying Per Repair",
+   lede="Paying per repair feels cheaper — until something breaks at the worst possible moment. Here is why a monthly IT support plan usually works out better value, and far less stressful.",
+   body="<p>When you only call for help after something goes wrong, you are always on the back foot. The problem is urgent, the fix is reactive, and the bill is unpredictable. Monthly IT support flips that around.</p><h2>Prevention costs less than cure</h2><p>Most serious IT problems give warning signs — a failing drive, missed updates, a creeping virus. With regular maintenance we catch these early, before they turn into expensive emergencies or lost data.</p><h2>Predictable cost, faster help</h2><p>A monthly plan means one known cost instead of nasty surprises, and subscribers jump the queue for support. You also stop paying the hidden price of downtime, lost work and stress.</p>",
+   points=["Problems are caught early, before they cost you","No surprise call-out fees or hourly bills","Priority response for subscribers","Devices last longer with regular care"],
+   related=[("Monthly IT Support","/monthly-it-support/"),("Home Support Plans","/home-it-support-plans/"),("Business Support Plans","/business-it-support-plans/")]),
+ dict(slug="whats-included-home-it-support-subscription", cat="Monthly Support",
+   title="What Is Included in a Home IT Support Subscription?",
+   lede="A home IT support subscription is more than someone to call when things break. Here is exactly what you get every month with a 365 Techies home plan.",
+   body="<p>Home IT support is designed to keep your computers, devices and accounts running smoothly all year — not just to react when something goes wrong.</p><h2>Everyday help, whenever you need it</h2><p>You get unlimited remote support for the everyday things: slow laptops, email trouble, printers, Wi-Fi, passwords and Microsoft 365. Most issues are fixed in minutes without anyone leaving home.</p><h2>Maintenance and protection in the background</h2><p>Every plan includes a full computer service every six weeks, antivirus and web protection, software updates and backup checks — quietly keeping everything fast and safe.</p>",
+   points=["Unlimited remote support","Full computer service every 6 weeks","Antivirus, updates and backup checks","Help with Wi-Fi, printers, email and Microsoft 365"],
+   related=[("Home IT Support","/home-it-support-subscriptions/"),("Home Support Plans","/home-it-support-plans/"),("Cybersecurity","/cybersecurity-support/")]),
+ dict(slug="whats-included-business-it-support-plan", cat="Monthly Support",
+   title="What Is Included in a Business IT Support Plan?",
+   lede="A business IT support plan gives you an outsourced IT department for a flat monthly fee. Here is what is included and how it keeps your team productive and protected.",
+   body="<p>For most small businesses, employing full-time IT staff is overkill — but going without support is risky. A monthly plan bridges that gap.</p><h2>Support for your whole team</h2><p>You get priority remote and on-site support for every user and device, Microsoft 365 administration, and help onboarding new starters or securing accounts when people leave.</p><h2>Security, backups and peace of mind</h2><p>Plans include cybersecurity monitoring and patching, daily verified backups, and regular maintenance — plus technology advice and Dell hardware supply as you grow.</p>",
+   points=["Priority support for every user and device","Microsoft 365 management","Cybersecurity, patching and verified backups","New starter onboarding and leaver checks"],
+   related=[("Business IT Support","/business-it-support-subscriptions/"),("Business Support Plans","/business-it-support-plans/"),("Cybersecurity","/cybersecurity-support/")]),
+ dict(slug="how-monthly-it-support-saves-time", cat="Monthly Support",
+   title="How Monthly IT Support Helps Small Businesses Save Time",
+   lede="Every hour your team spends fighting technology is an hour not spent on the business. Here is how monthly IT support quietly hands that time back.",
+   body="<p>Small IT problems add up. A printer that won't connect, a slow PC, an email that bounces — individually minor, but together they drain hours every week.</p><h2>Someone else owns the problem</h2><p>With a monthly plan, your team simply reports the issue and gets back to work while we fix it. No more huddling around a screen trying to solve it yourselves.</p><h2>Fewer problems in the first place</h2><p>Proactive maintenance, updates and monitoring mean many problems never happen — and the ones that do are caught before they spread.</p>",
+   points=["Staff report issues and get straight back to work","Proactive maintenance prevents many problems","Faster fixes with priority response","Less downtime, more productivity"],
+   related=[("Business IT Support","/business-it-support-subscriptions/"),("Small Business IT Support","/small-business-it-support/"),("Remote IT Support","/remote-it-support/")]),
+ dict(slug="why-home-users-need-regular-maintenance", cat="Monthly Support",
+   title="Why Home Users Should Have Regular Computer Maintenance",
+   lede="Computers, like cars, run best with a regular service. Here is why home users benefit from regular maintenance — and what happens without it.",
+   body="<p>Left alone, computers gradually slow down, fall behind on security updates and fill up with clutter. By the time most people notice, the problem is already well advanced.</p><h2>What regular maintenance does</h2><p>A regular service clears out the clutter, installs important updates, checks security and antivirus, and verifies your backups — keeping the machine fast, safe and reliable.</p><h2>It saves money too</h2><p>Well-maintained computers last longer and suffer fewer failures, so you replace them less often and avoid emergency repair bills.</p>",
+   points=["Keeps your computer fast and responsive","Stays on top of security updates","Catches problems before they grow","Helps devices last longer"],
+   related=[("Home IT Support","/home-it-support-subscriptions/"),("Home Support Plans","/home-it-support-plans/"),("Why is my computer slow?","/why-is-my-computer-slow/")]),
+ dict(slug="break-fix-vs-monthly-vs-in-house-it-support", cat="Monthly Support",
+   title="Break-Fix vs Monthly IT Support vs In-House: Which Is Right for You?",
+   lede="Should you pay per problem, take out a monthly plan, or hire someone in-house? Here is a plain-English comparison of the three ways to get IT support — and who each one suits.",
+   body="<p>There are really only three ways to get IT support: call someone when things break (break-fix), pay a fixed monthly fee for ongoing cover (managed/monthly support), or employ your own IT person (in-house). Each has its place &mdash; the trick is matching the model to your situation.</p><h2>Break-fix (pay per problem)</h2><p>You only pay when something goes wrong. It feels cheap, but it is reactive: help is slower, costs are unpredictable, and nothing is being done to prevent the next problem. It can suit a single home computer you rarely rely on &mdash; but for anything important, one bad week can cost more than a year of cover.</p><h2>Monthly IT support (managed)</h2><p>A fixed monthly fee covers unlimited support plus the proactive work that stops problems happening &mdash; maintenance, updates, security and backups. Costs are predictable, help is prioritised, and someone is genuinely looking after your technology. For most homes and small businesses this is the sweet spot on cost and peace of mind.</p><h2>In-house IT</h2><p>Hiring your own IT staff gives you someone on-site full time, but it is expensive (salary, holiday, training, cover) and one person can rarely cover every skill. It only starts to make sense for larger organisations &mdash; and even then, many pair an in-house person with an outside team like us.</p><h2>So which should you choose?</h2><p>If you rely on your tech at all, monthly support almost always wins on value and stress. Break-fix suits the occasional, non-critical fix; in-house suits larger teams with constant, complex needs. Still unsure? Our <a href=\"/plan-finder/\">Plan Finder</a> and free <a href=\"/it-health-check-tool/\">IT Health Check</a> will point you the right way.</p>",
+   points=["Break-fix is cheapest upfront but reactive and unpredictable","Monthly support adds prevention, priority and a fixed cost","In-house only pays off for larger teams","For most homes and small businesses, monthly support is best value"],
+   related=[("Monthly IT Support","/monthly-it-support/"),("Pricing &amp; Plans","/pricing/"),("Get a Quick Quote","/quick-quote/"),("Business IT Support","/business-it-support-subscriptions/")],
+   faqs=[
+     ("Is monthly IT support more expensive than break-fix?","On paper the monthly fee looks like more, but it includes prevention and unlimited help. Break-fix often costs more overall once you add up emergency call-outs, downtime and lost data."),
+     ("When does in-house IT make sense?","Usually once you have enough users and complexity to keep someone busy full time &mdash; often 30+ staff. Below that, monthly support gives you a whole team for less than one salary."),
+     ("Can I start with break-fix and switch later?","Absolutely. Many customers call us for a one-off fix, then move onto a plan to avoid the next emergency. Switching is easy and there are no long contracts."),
+   ]),
+ dict(slug="how-much-does-it-support-cost-uk-2026", cat="Monthly Support",
+   title="How Much Should IT Support Cost in the UK? (2026 Guide)",
+   lede="A clear, honest guide to what IT support costs in the UK in 2026 — typical price ranges for homes and businesses, what drives the price, and how to make sure you are getting fair value.",
+   body="<p>IT support pricing in the UK varies widely, and many providers keep their prices hidden &mdash; which makes it hard to know if you are getting a fair deal. Here is a straight answer.</p><h2>Typical price ranges</h2><p>For <strong>home users</strong>, monthly support typically runs from around &pound;15 to &pound;30 per month depending on how many devices you have. For <strong>small businesses</strong>, support is usually priced per user (or per device) and commonly falls somewhere around &pound;20 to &pound;60 per user per month, depending on the level of security, backups and management included. One-off repairs are normally quoted on the work involved.</p><h2>What drives the price</h2><ul><li>Home or business, and how many users and devices.</li><li>Monthly plan vs pay-per-problem.</li><li>How much is included &mdash; basic help vs fully managed security, backups and Microsoft 365.</li><li>Remote (cheaper, faster) vs on-site support.</li></ul><h2>Watch for hidden costs</h2><p>The headline price is not the whole story. Ask what is <em>not</em> included: call-out fees, &lsquo;out of hours&rsquo; charges, project work, and long lock-in contracts can all add up. We publish our prices, keep plans rolling and agree any extra cost with you up front.</p><h2>What we charge</h2><p>To keep things simple and transparent: home plans from <strong>&pound;15.95/month</strong> and business plans from <strong>&pound;21.15/user/month</strong>, with no contracts and no hidden fees. See our <a href=\"/pricing/\">pricing page</a> for the full comparison, or get a tailored <a href=\"/quick-quote/\">quick quote</a>.</p>",
+   points=["Home support is typically ~&pound;15&ndash;&pound;30/month","Business support is usually priced per user per month","What is included matters as much as the headline price","Watch for call-out fees, out-of-hours charges and lock-in contracts"],
+   related=[("Pricing &amp; Plans","/pricing/"),("IT Cost Guide","/it-support-cost-guide/"),("Get a Quick Quote","/quick-quote/"),("Plan Finder","/plan-finder/")],
+   faqs=[
+     ("Why do so few IT companies show their prices?","Many price case-by-case to maximise margin. We think that is unhelpful, so we publish clear starting prices and explain exactly what is included."),
+     ("Is cheaper IT support worse?","Not always &mdash; but very low prices often exclude the proactive work (monitoring, patching, backups) that actually prevents problems. Compare what is included, not just the headline figure."),
+     ("How can I get an accurate price for my setup?","Tell us a little about your home or business and we will give you an honest, tailored quote &mdash; try our under-a-minute Quick Quote."),
+   ]),
+ # ---------------- Home Users ----------------
+ dict(slug="why-is-my-computer-slow", cat="Home Users",
+   title="Why Is My Computer Running Slowly?",
+   lede="A slow computer is one of the most common frustrations we fix. Here are the usual causes — and what you can do about them.",
+   body="<p>Computers slow down for all sorts of reasons, and it is rarely a sign you need a new one. Most slowdowns are fixable.</p><h2>The usual suspects</h2><p>Too many programs starting up, a full hard drive, pending updates, a tired hard disk, or background malware are the most common culprits. A traditional hard drive is often the biggest bottleneck — upgrading to an SSD can make an old laptop feel new.</p><h2>What you can try first</h2><p>Restart properly, install pending updates, uninstall programs you no longer use, and run a full antivirus scan. If it is still sluggish, it is worth having it checked.</p>",
+   points=["Reduce startup programs and free up disk space","Install pending Windows and app updates","An SSD upgrade transforms older machines","Rule out viruses with a full scan"],
+   related=[("Computer Repairs","/computer-repairs/"),("Windows 11 Support","/windows-11-support/"),("How to know if your computer has a virus","/how-to-know-if-computer-has-virus/")]),
+ dict(slug="how-to-stay-safe-from-online-scams", cat="Home Users",
+   title="How to Stay Safe From Online Scams",
+   lede="Online scams are more convincing than ever. Here is how to spot them and protect yourself, your money and your accounts.",
+   body="<p>Scammers rely on urgency and fear — a fake delivery, a bank alert, a too-good-to-be-true offer. The best defence is to slow down and check.</p><h2>The warning signs</h2><p>Unexpected messages, pressure to act now, requests for passwords or payment, slightly wrong web addresses, and poor spelling are all red flags. Banks and genuine companies never ask for your full password or PIN.</p><h2>Simple habits that protect you</h2><p>Never click links in unexpected messages — go to the website directly. Use strong, unique passwords and turn on two-factor authentication. And if you are ever unsure, ask before you click.</p>",
+   points=["Be suspicious of urgency and unexpected messages","Never share full passwords, PINs or codes","Go to websites directly, not via links","Turn on two-factor authentication"],
+   related=[("Cybersecurity","/cybersecurity-support/"),("How to keep your home computer secure","/how-to-keep-home-computer-secure/"),("Home IT Support","/home-it-support-subscriptions/")]),
+ dict(slug="how-to-know-if-computer-has-virus", cat="Home Users",
+   title="How to Know If Your Computer Has a Virus",
+   lede="Worried your computer might be infected? Here are the tell-tale signs of a virus or malware, and what to do next.",
+   body="<p>Modern malware often tries to stay hidden, but it usually leaves clues. Spotting them early limits the damage.</p><h2>Common symptoms</h2><p>Sudden slowness, pop-ups and adverts, programs you did not install, your browser homepage changing, files you cannot open, or friends receiving odd messages from you can all point to an infection.</p><h2>What to do</h2><p>Disconnect from the internet, avoid logging into banking, and run a full antivirus scan. If anything looks serious — especially ransomware demanding payment — get expert help straight away rather than risking your data.</p>",
+   points=["Watch for pop-ups, slowness and strange programs","Disconnect and avoid logging into sensitive accounts","Run a full antivirus scan","Get help fast if you suspect ransomware"],
+   related=[("Cybersecurity","/cybersecurity-support/"),("Computer Repairs","/computer-repairs/"),("Backup and Recovery","/backup-support/")]),
+ dict(slug="why-does-my-printer-keep-disconnecting", cat="Home Users",
+   title="Why Does My Printer Keep Disconnecting?",
+   lede="Few things are as annoying as a printer that drops offline just when you need it. Here is why it happens and how to fix it for good.",
+   body="<p>Most printer disconnections come down to the wireless connection or the way the printer talks to your computer — not a broken printer.</p><h2>Common causes</h2><p>A weak Wi-Fi signal, the printer going to sleep, an out-of-date driver, or the computer picking the wrong printer all cause the dreaded offline status. Printers on the far side of the house are especially prone to dropping out.</p><h2>How to fix it</h2><p>Move the printer closer to the router or add a Wi-Fi booster, update the printer driver, and set it as the default. For a permanent fix, we can configure reliable wireless printing across all your devices.</p>",
+   points=["Weak Wi-Fi is the most common cause","Keep printer drivers up to date","Set the correct default printer","We can set up reliable wireless printing"],
+   related=[("Printer Support","/printer-support/"),("Wi-Fi Support","/wifi-support/"),("Home IT Support","/home-it-support-subscriptions/")]),
+ dict(slug="how-to-keep-home-computer-secure", cat="Home Users",
+   title="How to Keep Your Home Computer Secure",
+   lede="You do not need to be a tech expert to keep your home computer safe. These simple habits cover the vast majority of risks.",
+   body="<p>Good security at home is mostly about a few sensible habits, kept up consistently — not expensive software.</p><h2>The essentials</h2><p>Keep Windows and your apps updated, run reputable antivirus, use strong and unique passwords with a password manager, and turn on two-factor authentication for important accounts like email and banking.</p><h2>Do not forget backups</h2><p>Security is not just about keeping threats out — it is about recovering if the worst happens. Regular, tested backups mean ransomware or a failed drive never costs you your photos and documents.</p>",
+   points=["Keep Windows and apps updated","Use strong, unique passwords and a password manager","Turn on two-factor authentication","Back up your important files regularly"],
+   related=[("Cybersecurity","/cybersecurity-support/"),("Backup and Recovery","/backup-support/"),("How to stay safe from online scams","/how-to-stay-safe-from-online-scams/")]),
+ # ---------------- Business IT ----------------
+ dict(slug="it-checklist-for-small-businesses", cat="Business IT",
+   title="IT Checklist for Small Businesses",
+   lede="Not sure if your business IT is in good shape? Work through this practical checklist to spot the gaps before they cause problems.",
+   body="<p>Good business IT is not complicated, but it is easy to let things slip. This checklist covers the fundamentals every small business should have in place.</p><h2>The basics to get right</h2><p>Verified daily backups, up-to-date antivirus and patching, strong passwords with multi-factor authentication, properly licensed Microsoft 365, and a clear process for setting up and removing staff accounts.</p><h2>Plan ahead</h2><p>Keep a simple inventory of your devices and software, know how you would recover from a disaster, and budget for replacing ageing equipment before it fails.</p>",
+   points=["Daily, verified backups in place","Antivirus, patching and MFA enabled","Microsoft 365 licensed and secured","A process for staff onboarding and offboarding"],
+   related=[("Business IT Support","/business-it-support-subscriptions/"),("Cybersecurity","/cybersecurity-support/"),("Backup and Recovery","/backup-support/")]),
+ dict(slug="why-small-businesses-need-cybersecurity", cat="Business IT",
+   title="Why Small Businesses Need Cybersecurity",
+   lede="Many small businesses assume they are too small to be a target. In reality, that is exactly why criminals go after them.",
+   body="<p>Cybercriminals increasingly target small businesses because they often have valuable data but weaker defences than large companies.</p><h2>The real risks</h2><p>A single phishing email or ransomware attack can lock you out of your systems, expose customer data, and cost days of downtime — sometimes enough to put a small business under.</p><h2>Practical protection</h2><p>The good news is that strong protection is affordable: monitoring and patching, email filtering, multi-factor authentication, staff awareness and tested backups together stop the vast majority of attacks.</p>",
+   points=["Small businesses are common, easy targets","One attack can cause serious downtime and cost","MFA and email filtering stop most attacks","Tested backups are your safety net"],
+   related=[("Cybersecurity","/cybersecurity-support/"),("Business IT Support","/business-it-support-subscriptions/"),("How to protect your business email","/how-to-protect-your-business-email/")]),
+ dict(slug="how-to-protect-your-business-email", cat="Business IT",
+   title="How to Protect Your Business Email",
+   lede="Email is the front door to your business — and the number one target for attackers. Here is how to lock it down.",
+   body="<p>Business email accounts hold the keys to everything, which is why securing them is the single most valuable thing most businesses can do.</p><h2>Start with the fundamentals</h2><p>Turn on multi-factor authentication for every account, use strong unique passwords, and switch on the phishing and spam protection built into Microsoft 365.</p><h2>Watch for impersonation</h2><p>Many attacks pretend to be the boss or a supplier asking for payment or details. Train staff to verify unusual requests, and consider rules that flag external or spoofed messages.</p>",
+   points=["Enable multi-factor authentication everywhere","Use strong, unique passwords","Switch on Microsoft 365 phishing protection","Verify unusual payment or detail requests"],
+   related=[("Microsoft 365 Support","/microsoft-365-support/"),("Email Support","/email-support/"),("Cybersecurity","/cybersecurity-support/")]),
+ dict(slug="what-to-do-when-an-employee-leaves", cat="Business IT",
+   title="What to Do When an Employee Leaves Your Business",
+   lede="When someone leaves, their access does not disappear on its own. Here is a simple offboarding checklist to keep your business secure.",
+   body="<p>Former staff accounts that stay active are a real security risk — and a common one. A clear leaver process closes that gap.</p><h2>Secure the accounts</h2><p>Disable the user's sign-in, reset passwords, and remove access to email, files and apps. With Microsoft 365 you can block access instantly while keeping their mailbox and files for the business.</p><h2>Preserve and hand over</h2><p>Forward or delegate their email, transfer ownership of important files, and reclaim the software licence. Recovering company devices and wiping personal ones completes the process.</p>",
+   points=["Disable sign-in and reset passwords immediately","Keep the mailbox and files for the business","Reassign or forward their email","Reclaim licences and devices"],
+   related=[("Business IT Support","/business-it-support-subscriptions/"),("Microsoft 365 Support","/microsoft-365-support/"),("Cybersecurity","/cybersecurity-support/")]),
+ dict(slug="why-backups-are-essential-for-small-businesses", cat="Business IT",
+   title="Why Backups Are Essential for Small Businesses",
+   lede="Hardware fails, mistakes happen and ransomware is everywhere. For a small business, a good backup is the difference between a hiccup and a disaster.",
+   body="<p>Your business data — accounts, customer records, emails, documents — is irreplaceable. Yet backups are the thing most often neglected until it is too late.</p><h2>What a good backup looks like</h2><p>It is automatic, off-site or in the cloud, covers your Microsoft 365 data too, and — crucially — is tested regularly so you know it will actually restore.</p><h2>Why cloud sync is not enough</h2><p>OneDrive and similar services sync changes everywhere, so a deleted or ransomware-encrypted file is lost on every device. A proper backup keeps recoverable history, separate from the live data.</p>",
+   points=["Automatic, off-site and regularly tested","Covers Microsoft 365 data, not just devices","Cloud sync alone is not a backup","Protects against ransomware and mistakes"],
+   related=[("Backup and Recovery","/backup-support/"),("Microsoft 365 Backup: do you need it?","/microsoft-365-backup-do-you-need-it/"),("Business IT Support","/business-it-support-subscriptions/")]),
+ # ---------------- Microsoft 365 ----------------
+ dict(slug="common-outlook-problems-and-fixes", cat="Microsoft 365",
+   title="Common Outlook Problems and How to Fix Them",
+   lede="Outlook is brilliant when it works — and maddening when it does not. Here are the most common Outlook problems and how to fix them.",
+   body="<p>Most Outlook issues fall into a few familiar categories, and most are quick to resolve once you know where to look.</p><h2>Not sending or receiving</h2><p>This is usually a connection, password or large-attachment issue. Check you are online, that your password has not changed, and that your mailbox is not full.</p><h2>Crashing, freezing or slow</h2><p>An oversized mailbox, a faulty add-in or a corrupted profile are the usual causes. Archiving old mail, disabling add-ins or rebuilding the profile normally sorts it.</p>",
+   points=["Send/receive errors are often password or connection issues","Keep your mailbox from getting too full","Disable faulty add-ins if Outlook crashes","A profile rebuild fixes many stubborn problems"],
+   related=[("Email Support","/email-support/"),("Microsoft 365 Support","/microsoft-365-support/"),("How to secure your Microsoft 365 account","/how-to-secure-your-microsoft-365-account/")]),
+ dict(slug="microsoft-365-vs-gmail-for-small-businesses", cat="Microsoft 365",
+   title="Microsoft 365 vs Gmail for Small Businesses",
+   lede="Microsoft 365 or Google Workspace? Both are capable, but for many small businesses one is a clearer fit. Here is how they compare.",
+   body="<p>Both platforms offer professional email, cloud storage and online apps. The right choice usually comes down to how you work and what you already use.</p><h2>Where Microsoft 365 wins</h2><p>If your team relies on the full desktop versions of Word, Excel and Outlook, works with documents heavily, or uses Teams, Microsoft 365 tends to feel more familiar and capable.</p><h2>Where Google fits</h2><p>If you work almost entirely in the browser and value simplicity and easy collaboration, Google Workspace can be a great fit. Either way, the setup and security matter more than the badge.</p>",
+   points=["Microsoft 365 suits heavy document and Office users","Google Workspace suits browser-first teams","Teams vs Meet often decides it","Good setup and security matter most"],
+   related=[("Microsoft 365 Support","/microsoft-365-support/"),("Business IT Support","/business-it-support-subscriptions/"),("Email Support","/email-support/")]),
+ dict(slug="how-to-secure-your-microsoft-365-account", cat="Microsoft 365",
+   title="How to Secure Your Microsoft 365 Account",
+   lede="Microsoft 365 holds your email, files and contacts — so securing it properly is essential. Here are the key steps.",
+   body="<p>A compromised Microsoft 365 account can expose everything, so a few security settings are well worth the effort.</p><h2>Turn on multi-factor authentication</h2><p>MFA is the single most effective step — it stops the vast majority of account takeovers even if your password is stolen. We can roll it out across your team painlessly.</p><h2>Tidy up access and rules</h2><p>Use strong unique passwords, review who has access to what, switch on built-in threat protection, and check no sneaky mail-forwarding rules have been added by an attacker.</p>",
+   points=["Enable multi-factor authentication for everyone","Use strong, unique passwords","Review account access regularly","Check for unauthorised forwarding rules"],
+   related=[("Microsoft 365 Support","/microsoft-365-support/"),("Cybersecurity","/cybersecurity-support/"),("How to protect your business email","/how-to-protect-your-business-email/")]),
+ dict(slug="onedrive-sharepoint-teams-explained", cat="Microsoft 365",
+   title="OneDrive, SharePoint and Teams Explained",
+   lede="OneDrive, SharePoint and Teams overlap enough to be confusing. Here is a plain-English guide to what each is for.",
+   body="<p>These three Microsoft 365 tools work together, but each has a clear job once you know the difference.</p><h2>OneDrive vs SharePoint</h2><p>OneDrive is your personal work drive — files only you need. SharePoint is shared team storage — documents the whole team or business works on. Saving shared files in SharePoint, not personal OneDrive, avoids losing access when someone leaves.</p><h2>Where Teams fits</h2><p>Teams is the front door for chat, calls and meetings — and it actually stores its shared files in SharePoint behind the scenes. Used well together, they keep your team organised and your files in the right place.</p>",
+   points=["OneDrive = your personal work files","SharePoint = shared team and business files","Teams = chat, calls and meetings","Keep shared files in SharePoint, not personal OneDrive"],
+   related=[("Microsoft 365 Support","/microsoft-365-support/"),("Business IT Support","/business-it-support-subscriptions/"),("Microsoft 365 Backup: do you need it?","/microsoft-365-backup-do-you-need-it/")]),
+ dict(slug="microsoft-365-backup-do-you-need-it", cat="Microsoft 365",
+   title="Microsoft 365 Backup: Do You Need It?",
+   lede="Microsoft keeps your service running — but protecting your data is your responsibility. Here is why a Microsoft 365 backup matters.",
+   body="<p>It is a common and risky misconception that data in Microsoft 365 is automatically backed up. Microsoft runs the platform; recovering your lost data is down to you.</p><h2>The gaps to know about</h2><p>Deleted emails and files are only kept for a limited time. After that, accidental deletion, a departing employee, or ransomware can mean permanent loss — and Microsoft's standard retention will not save you.</p><h2>The fix</h2><p>A dedicated Microsoft 365 backup keeps independent, recoverable copies of your email, OneDrive, SharePoint and Teams data, so you can restore exactly what you need, whenever you need it.</p>",
+   points=["Microsoft does not back up your data for you","Standard retention is limited and time-bound","Protects against deletion, leavers and ransomware","Restore email, OneDrive, SharePoint and Teams"],
+   related=[("Backup and Recovery","/backup-support/"),("Microsoft 365 Support","/microsoft-365-support/"),("Why backups are essential for small businesses","/why-backups-are-essential-for-small-businesses/")]),
+ # ---------------- Windows ----------------
+ dict(slug="should-you-upgrade-to-windows-11", cat="Windows",
+   title="Should You Upgrade to Windows 11?",
+   lede="Wondering whether to move to Windows 11? Here is a straightforward look at who should upgrade, who should wait, and how to do it safely.",
+   body="<p>Windows 11 is the current, fully supported version of Windows — but whether to upgrade depends on your PC and your needs.</p><h2>Should you upgrade?</h2><p>If your computer is compatible, upgrading keeps you secure and supported. With Windows 10 support ending, staying current matters more than ever. If your PC is not compatible, it may be time to consider a replacement.</p><h2>Do it safely</h2><p>Always back up first, check compatibility, and set aside time for the upgrade. We can check your PC, handle the upgrade and make sure everything still works afterwards.</p>",
+   points=["Windows 11 keeps you secure and supported","Check your PC is compatible first","Always back up before upgrading","Incompatible PCs may be due for replacement"],
+   related=[("Windows 11 Support","/windows-11-support/"),("New Computer Setup","/new-computer-setup/"),("How to prepare your business for Windows 11","/how-to-prepare-business-for-windows-11/")]),
+ dict(slug="how-to-prepare-business-for-windows-11", cat="Windows",
+   title="How to Prepare Your Business for Windows 11",
+   lede="Moving a whole team to Windows 11 needs a little planning. Here is how to do it smoothly, with no nasty surprises.",
+   body="<p>A business upgrade is about more than clicking 'update' — a little preparation avoids downtime and frustration.</p><h2>Check and plan</h2><p>Start by checking which machines are compatible and which need replacing. Confirm your key business software works on Windows 11, and schedule upgrades outside busy periods.</p><h2>Back up and roll out</h2><p>Back up everything first, upgrade in stages rather than all at once, and have support on hand for the first few days. We can plan and manage the whole rollout for you.</p>",
+   points=["Check device compatibility across the team","Confirm key software works on Windows 11","Back up before you start","Roll out in stages, not all at once"],
+   related=[("Windows 11 Support","/windows-11-support/"),("Business IT Support","/business-it-support-subscriptions/"),("Backup and Recovery","/backup-support/")]),
+ dict(slug="why-windows-updates-break-things", cat="Windows",
+   title="Why Windows Updates Sometimes Break Things",
+   lede="Updates are essential for security — but occasionally one causes trouble. Here is why it happens and how to stay safe without the headaches.",
+   body="<p>Windows updates fix security holes and bugs, so skipping them is risky. Just occasionally, though, an update clashes with hardware or software.</p><h2>Why it happens</h2><p>With endless combinations of PCs, drivers and software, Microsoft cannot test every setup. Now and then an update conflicts with an old driver or app, causing glitches.</p><h2>How to stay safe</h2><p>Do not turn updates off — instead, keep backups, install updates promptly but not always on day one for critical machines, and get help quickly if one causes problems. Most issues are easily rolled back.</p>",
+   points=["Updates are essential — do not disable them","Conflicts usually involve old drivers or apps","Keep backups so you can roll back","Problem updates can usually be reversed"],
+   related=[("Windows 11 Support","/windows-11-support/"),("Computer Repairs","/computer-repairs/"),("Home IT Support","/home-it-support-subscriptions/")]),
+ dict(slug="how-to-set-up-a-new-windows-computer", cat="Windows",
+   title="How to Set Up a New Windows Computer Properly",
+   lede="A new PC is a fresh start — if you set it up right. Here is how to get a new Windows computer ready the proper way.",
+   body="<p>Spending a little time setting up a new computer properly saves a lot of frustration later.</p><h2>The essentials first</h2><p>Install updates, remove the pre-installed bloatware, set up a Microsoft account, and configure security and antivirus before you do anything else.</p><h2>Bring across your life</h2><p>Transfer your files, photos, email and bookmarks from the old machine, install the software you actually use, connect your printer and Wi-Fi, and set up a backup. Then securely wipe the old computer before selling or recycling it.</p>",
+   points=["Update Windows and remove bloatware","Set up security and antivirus first","Transfer files, email and software","Set up backups and wipe the old PC"],
+   related=[("New Computer Setup","/new-computer-setup/"),("Windows 11 Support","/windows-11-support/"),("Backup and Recovery","/backup-support/")]),
+ dict(slug="what-to-do-before-replacing-old-computer", cat="Windows",
+   title="What to Do Before Replacing Your Old Computer",
+   lede="Before you retire an old computer, a few steps protect your data and your privacy. Here is your pre-replacement checklist.",
+   body="<p>It is tempting to just unplug the old machine and move on — but a little care protects your files and your personal information.</p><h2>Rescue your data</h2><p>Back up everything, and make a note of the software and licences you will need again. Do not forget browser bookmarks, saved passwords and email — and check whether your photos are truly backed up.</p><h2>Wipe before you let go</h2><p>A simple delete or factory reset is not always enough. Securely wipe the drive so your personal and financial data cannot be recovered before you sell, donate or recycle the machine.</p>",
+   points=["Back up all your files and photos first","Note the software and licences you will need","Securely wipe the drive — not just delete","Then sell, donate or recycle safely"],
+   related=[("New Computer Setup","/new-computer-setup/"),("Backup and Recovery","/backup-support/"),("Computer Repairs","/computer-repairs/")]),
+]
+
+import datetime as _dt
+_MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August",
+           "September", "October", "November", "December"]
+_BASE = _dt.date(2026, 5, 20)
+for _i, p in enumerate(POSTS):
+    _d = _BASE - _dt.timedelta(days=_i * 12)
+    make_post(dt=_d.isoformat(), dt_pretty=f"{_d.day} {_MONTHS[_d.month - 1]} {_d.year}", **p)
+
+# ---------------- THE HUB ----------------
+def hub():
+    slug = "it-advice"
+    desc = "Practical IT advice from 365 Techies — helpful guides on monthly support, home computers, business IT, Microsoft 365, cybersecurity and Windows, for homes and businesses across Dorset."
+    groups = ""
+    for c in CATS:
+        cards = ""
+        for p in POSTS:
+            if p["cat"] != c:
+                continue
+            cards += f'''          <a class="post-card" href="/{p["slug"]}/">
+            <p class="post-card__cat">{c}</p>
+            <h3>{p["title"]}</h3>
+            <p>{p["lede"]}</p>
+            <span class="post-card__more">Read article &#8594;</span>
+          </a>\n'''
+        groups += f'''      <div class="blog-cat" data-cat="{c}">
+        <div class="blog-cat-head" data-reveal><h2>{c}</h2></div>
+        <div class="blog-grid" data-stagger>
+{cards}        </div>
+      </div>\n'''
+    chips_html = "".join(f'          <button type="button" class="hub-chip" data-filter="{c}">{c}</button>\n' for c in CATS)
+    content = "\n".join([
+      hero(f'<a href="/">Home</a> <span>/</span> <span aria-current="page">IT Advice</span>',
+           "// IT ADVICE HUB", 'IT advice <em class="grad grad--cyan">that actually helps</em>',
+           "Helpful, jargon-free guides on getting the most from your technology — monthly support, home computers, business IT, Microsoft 365, cybersecurity and Windows.",
+           cta1=("View Monthly Plans", "/monthly-it-support/"), cta2=("Contact Us", "/contact/"),
+           chips=["Plain English", "Practical tips", "Updated regularly"]),
+      f'''    <section class="section" style="padding-bottom:0" aria-label="Filter advice">
+      <div class="wrap">
+        <div class="hub-filter" id="advice-filter">
+          <button type="button" class="hub-chip is-active" data-filter="all">All</button>
+{chips_html}        </div>
+      </div>
+    </section>''',
+      f'''    <section class="blog-section" aria-label="Advice articles">
+      <div class="wrap">
+{groups}      </div>
+    </section>''',
+      '''    <script>
+    (function(){
+      var f=document.getElementById('advice-filter'); if(!f) return;
+      var cats=[].slice.call(document.querySelectorAll('.blog-cat'));
+      f.addEventListener('click',function(e){
+        var b=e.target.closest('.hub-chip'); if(!b) return;
+        var v=b.getAttribute('data-filter');
+        f.querySelectorAll('.hub-chip').forEach(function(x){x.classList.toggle('is-active',x===b);});
+        cats.forEach(function(c){ c.style.display=(v==='all'||c.getAttribute('data-cat')===v)?'':'none'; });
+      });
+    })();
+    </script>''',
+      cta("Rather we just sorted it?",
+          "Every guide here is something we handle for our customers every day. Get friendly monthly IT support for your home or business.",
+          primary=("View Monthly Plans", "/monthly-it-support/"), secondary=("Call 01202 775566", "tel:+441202775566")),
+    ])
+    def schema(s, _desc=desc):
+        return graph([crumb(s, "IT Advice"), webpage(s, "IT Advice Hub", _desc, "CollectionPage")])
+    add(slug=slug, title="IT Advice Hub | Helpful IT Guides | 365 Techies",
+        desc=desc, og_title="IT Advice Hub | 365 Techies", schema=schema, content=content)
+hub()
+
+w = write_all()
+print("Wrote %d pages total:" % len(w))
+print("  ... including IT Advice Hub + %d posts" % len(POSTS))
+
+# ---------------- regenerate sitemap.xml with every page ----------------
+import os
+LM = "2026-06-15"
+urls = ['''  <url>
+    <loc>https://365techies.co.uk/</loc>
+    <lastmod>%s</lastmod>
+    <image:image><image:loc>https://365techies.co.uk/og-image.jpg</image:loc><image:title>365 Techies — Monthly IT Support for Homes &amp; Businesses</image:title></image:image>
+    <image:image><image:loc>https://365techies.co.uk/logo.jpg</image:loc><image:title>365 Techies logo</image:title></image:image>
+  </url>''' % LM]
+for p in bp.PAGES:
+    urls.append('  <url><loc>https://365techies.co.uk/%s/</loc><lastmod>%s</lastmod></url>' % (p["slug"], LM))
+sm = ('<?xml version="1.0" encoding="UTF-8"?>\n'
+      '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
+      'xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n'
+      + "\n".join(urls) + "\n</urlset>\n")
+with open(os.path.join(bp.BASE, "sitemap.xml"), "w", encoding="utf-8") as f:
+    f.write(sm)
+print("Wrote sitemap.xml with %d URLs" % (len(bp.PAGES) + 1))
+
+# ---------------- custom 404 page ----------------
+_404_cards = "".join(
+    f'          <a class="post-card" href="{h}"><h3>{l}</h3><span class="post-card__more">Go &#8594;</span></a>\n'
+    for l, h in [("Home", "/"), ("All Services", "/services/"), ("Monthly IT Support", "/monthly-it-support/"),
+                 ("Book a Service", "/book-service/"), ("IT Advice", "/it-advice/"), ("Contact Us", "/contact/")])
+content_404 = "\n".join([
+    hero('<a href="/">Home</a> <span>/</span> <span aria-current="page">Page not found</span>',
+         "// ERROR 404", 'Page <em class="grad grad--cyan">not found</em>',
+         "Sorry &mdash; we couldn&rsquo;t find that page. It may have moved or no longer exist. Here are some helpful places to go instead.",
+         cta1=("Back to Home", "/"), cta2=("Contact Us", "/contact/"), chips=["Error 404"]),
+    f'''    <section class="section"><div class="wrap">
+        <div class="blog-grid" data-stagger>
+{_404_cards}        </div>
+      </div></section>''',
+    cta("Can&rsquo;t find what you need?",
+        "Give us a call or drop us a message and a friendly techie will point you the right way.",
+        primary=("Contact Us", "/contact/"), secondary=("Call 01202 775566", "tel:+441202775566")),
+])
+html_404 = bp.page("404", "Page Not Found | 365 Techies",
+                   "Sorry, we couldn't find that page. Browse our IT support services or get in touch with 365 Techies.",
+                   "Page Not Found | 365 Techies",
+                   graph([webpage("404", "Page Not Found", "Sorry, that page could not be found.")]),
+                   content_404).replace("index, follow", "noindex, follow")
+with open(os.path.join(bp.BASE, "404.html"), "w", encoding="utf-8") as f:
+    f.write(html_404)
+print("Wrote 404.html")

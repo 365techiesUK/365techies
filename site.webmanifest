@@ -1,0 +1,16 @@
+{
+  "name": "365 Techies — Monthly IT Support",
+  "short_name": "365 Techies",
+  "description": "Monthly IT support for homes and businesses across Bournemouth, Poole and Dorset.",
+  "lang": "en-GB",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#070d22",
+  "theme_color": "#070d22",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "/logo.jpg", "sizes": "512x512", "type": "image/jpeg", "purpose": "any" }
+  ]
+}

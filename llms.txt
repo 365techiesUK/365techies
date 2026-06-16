@@ -1,0 +1,67 @@
+# 365 Techies
+
+> 365 Techies (365 Techies Limited) is a family-run, leading Managed Service Provider (MSP) and IT support company established in 1995, providing monthly IT support subscriptions and one-off computer repairs for homes and small businesses across Bournemouth, Poole and the rest of Dorset, UK. Dell hardware specialists, Microsoft partners, certified Microsoft Office Specialists and a Malwarebytes Partner. They specialise in patient, accessible IT support for retired and disabled people. Rated 4.9/5 from 51 Google reviews. Phone: 01202 775566.
+
+365 Techies offers fixed monthly IT support plans starting at £15.95/month. Every plan includes a full computer service every six weeks, priority remote support via Splashtop SOS, antivirus and web protection, and help with Wi-Fi, printers, email and Microsoft 365. Business plans add Microsoft 365 management, network security and patching, verified backups, Dell hardware supply and IT strategy & planning. One-off computer and laptop repairs are also available with no subscription. 365 Techies is based in Bournemouth and serves homes and small businesses across Dorset, remotely and on-site.
+
+## Key facts
+- Company: 365 Techies Limited (registered in England & Wales, company number 11073501)
+- Established: 1995 — a family-run business
+- Accreditations: Dell hardware specialists, Microsoft partners, certified Microsoft Office Specialists, Malwarebytes Partner
+- Phone: 01202 775566 (+44 1202 775566)
+- Email: help@365techies.co.uk
+- Location: Bournemouth, Dorset, United Kingdom
+- Opening hours: Monday to Friday, 9am–5pm
+- Rating: 4.9 out of 5 from 51 Google reviews
+- Remote support tool: Splashtop SOS (encrypted)
+- Service area: On-site across Bournemouth, Poole, Christchurch, Ferndown, Wimborne, Verwood, Wareham, Swanage, Dorchester, Weymouth, the rest of Dorset and the New Forest (including Lymington and New Milton); fast, secure remote IT support and managed monthly plans across the whole of the UK and Europe, including digital nomads working anywhere in the world.
+
+## Monthly support plans
+- [Home Priority Support — £15.95/month](https://365techies.co.uk/#plans): Monthly home IT support with a full computer service every 6 weeks, priority remote support (Mon–Fri), Wi-Fi/printer/email help, and antivirus & web protection.
+- [Home + Office 365 — £19.95/month](https://365techies.co.uk/#plans): Everything in Home Priority Support, plus Microsoft 365 included.
+- [Business + Office 365 — £21.15/month](https://365techies.co.uk/#plans): Monthly business IT support with Microsoft 365 management, network security & patching, verified backups, Dell hardware supply, and IT strategy & planning.
+
+## Services
+- [Home IT Support](https://365techies.co.uk/#home-support): Friendly monthly computer support for homes, families, retired users and home workers — laptops, PCs, printers, Wi-Fi, email and security.
+- [Business IT Support](https://365techies.co.uk/#business-support): Monthly IT support for sole traders and small businesses — staff devices, Microsoft 365, security, backups and IT planning.
+- [Microsoft 365 Support](https://365techies.co.uk/#m365): Setup, migration, licensing, troubleshooting and training for Microsoft 365 (Outlook, Teams, OneDrive, SharePoint and more).
+- [Cybersecurity](https://365techies.co.uk/#security): Always-on protection — threat monitoring, patch management, email/phishing security, backup checks, passwords & MFA, and monthly security reports.
+- [Malwarebytes Premium & VPN](https://365techies.co.uk/malwarebytes-premium/): As a Malwarebytes Partner, 365 Techies supplies, sets up and manages Malwarebytes Premium with VPN for homes and businesses — award-winning protection against malware, ransomware, scam websites and online threats, with a private VPN for safe browsing, keeping customers safe online 24/7.
+- [Dell Latitude Laptops & OptiPlex Desktops](https://365techies.co.uk/dell-hardware/): Dell specialists supplying and supporting genuine Dell Latitude laptops and OptiPlex desktops for homes and businesses, fully set up and looked after on a support plan.
+- [Computer & Laptop Repairs](https://365techies.co.uk/computer-repairs/): One-off Windows laptop and PC repairs across Bournemouth, Poole and Dorset with no subscription required — no-fix-no-fee on diagnosis and a 12-month warranty on every repair, with free local collection.
+- [Book a Collection or Drop-off](https://365techies.co.uk/book-a-collection/): Book a convenient local collection or drop your device off for repair; we diagnose (no-fix-no-fee), repair and return it with a 12-month warranty.
+- [Support Portal](https://365techies.co.uk/support-portal/): Raise a support ticket, start secure remote support or call us; subscribers get priority.
+- [Disaster Recovery & Business Continuity](https://365techies.co.uk/disaster-recovery/): Verified off-site backups, ransomware rollback, rapid recovery, cloud failover and a tested business-continuity plan to keep your business running after ransomware, hardware failure, fire or flood.
+- [GDPR & IT Compliance](https://365techies.co.uk/gdpr-it-compliance/): The practical IT side of data-protection compliance — data security, access control, MFA, encryption, verified backups, breach readiness, staff awareness and Microsoft 365 policies, ideal for regulated sectors (not a substitute for legal/DPO advice).
+- [VoIP Business Phone Systems](https://365techies.co.uk/voip-business-phones/): Business phone systems powered by Voipfone (a multi-award-winning, UK-based VoIP provider), set up and supported by 365 Techies — crystal-clear calls over broadband, number porting, call routing/menus/queues, voicemail to email, call recording, free softphone app, virtual receptionist (Voipfone PA), no contract, and ready for the 2027 BT landline switch-off.
+- [Custom-Built PCs](https://365techies.co.uk/custom-pc-builds/): Bespoke desktop PCs built to spec for home, gaming, creative and business use — quality named components, fully set up, tested and supported, with warranty.
+- [IT Support for Schools & Education](https://365techies.co.uk/it-support-for-education/): Reliable, safe IT for schools, nurseries and colleges — classroom devices, site-wide networks and Wi-Fi, Microsoft 365 Education, online safety and web filtering, backups and security.
+- [IT Support for Retired & Disabled People](https://365techies.co.uk/it-support-for-disabled-people/): A specialism of 365 Techies — patient, accessible IT support for retired and disabled people, including accessibility features (screen readers, magnification, larger text, high contrast), voice control and dictation, assistive technology, simplified setups, and unhurried, jargon-free help at home or remotely.
+- [IT Support Across the UK & Europe](https://365techies.co.uk/it-support-uk-europe/): Fast, secure remote IT support and fully managed monthly plans for homes, remote/hybrid teams and businesses anywhere in the UK and Europe — encrypted remote support via Splashtop SOS, Microsoft 365, cybersecurity and cloud backups, with time-zone-friendly help. Dorset-based and family-run since 1995, with borderless remote reach.
+- [IT Support for Digital Nomads](https://365techies.co.uk/it-support-for-digital-nomads/): Remote IT support for digital nomads and location-independent workers — secure laptop and device setup, Microsoft 365 and cloud anywhere, VPN for safe public Wi-Fi, automatic cloud backups, travel-ready security and fast encrypted help across every time zone, anywhere in the world.
+- [Content Creator PCs & Laptops](https://365techies.co.uk/content-creator-pcs/): 365 Techies supplies and supports content creator PCs and laptops with NVIDIA Studio GeForce RTX graphics — for video editing, photography, graphic design, music production and 3D/motion — custom-built by Scan 3XS, colour-accurate, set up with your creative apps and supported locally.
+- [Home Cinema & Entertainment Systems](https://365techies.co.uk/home-cinema-entertainment/): As a Richer Sounds Bournemouth partner, 365 Techies supplies, installs and supports home entertainment systems — 4K projectors and screens, Dolby surround sound and Dolby Atmos, smart TVs and multi-room/whole-home audio — designed, installed neatly, calibrated and supported across Dorset.
+- [Starlink Satellite Internet](https://365techies.co.uk/starlink-internet/): 365 Techies supplies, installs and supports Starlink satellite broadband — residential and roaming — for homes, rural properties, businesses, campervans, motorhomes, boats and remote sites across Dorset, the New Forest and beyond. Ideal for slow-broadband not-spots and off-grid living, and pairs with off-grid Victron energy systems. Includes backup/failover internet.
+- [Gaming PCs](https://365techies.co.uk/gaming-pcs/): As an NVIDIA partner, 365 Techies supplies and supports custom gaming PCs powered by NVIDIA GeForce RTX graphics — built to your games and budget by Scan's award-winning 3XS, with ray tracing and DLSS, set up, optimised and supported locally. Also fits upgrades to existing gaming PCs.
+- [AMD Threadripper Workstations](https://365techies.co.uk/threadripper-workstations/): As a Scan partner, 365 Techies supplies and supports high-end AMD Threadripper and Threadripper PRO workstations, custom-built by Scan's award-winning 3XS Systems (UK builder since 1987, 200+ awards, 3-year warranty), for video editing and grading, 3D rendering and animation, CAD/CAE/BIM, AI and deep learning, simulation and professional audio — specced, set up and supported locally.
+- [Unitree Robots](https://365techies.co.uk/unitree-robots/): As a Scan partner, 365 Techies supplies, sets up and supports the full Unitree range of advanced robots — quadruped "robot dogs" (Go2, Go2-W, B2, B2-W, A2, AS2) and humanoid robots (R1, G1, H1, H1-2, H2) — for research, universities, education/STEM, industrial inspection, security, healthcare and developers, with model advice, SDK/dev-environment setup and ongoing local support.
+- [Agentic AI Systems](https://365techies.co.uk/agentic-ai-systems/): 365 Techies custom-builds agentic AI operating systems for companies — bespoke, intelligent AI agents that run business-specific processes end to end, automating repetitive multi-step work, integrating with existing tools (Microsoft 365, CRM, email, line-of-business apps), with human-in-the-loop oversight and security by design. Used to streamline sales and quoting, customer service, admin and operations, finance and invoicing, onboarding and document workflows.
+- [How it works](https://365techies.co.uk/#how): Pick a plan, connect securely in under 15 minutes, then stay covered every month.
+
+## Offers
+- [Refer a Friend](https://365techies.co.uk/refer-a-friend/): Refer a friend, family member or business to 365 Techies and when they join a monthly home or business support plan, you both get a free month. No limit on the number of referrals.
+
+## Reviews
+- [365 Techies on Google — 4.9/5 from 51 reviews](https://search.google.com/local/reviews?placeid=ChIJlTb8YRuic0gRCRczduB8OFI): Read all verified Google reviews.
+
+## Contact
+- [Call 01202 775566](tel:+441202775566): Mon–Fri, 9am–5pm.
+- [Email help@365techies.co.uk](mailto:help@365techies.co.uk): General enquiries and support.
+- [SOS remote support (Splashtop)](https://sos.splashtop.com/en/sos-download): Download the secure remote-support tool for an emergency session.
+- [Facebook](https://www.facebook.com/365techies): Latest news and updates.
+
+## Frequently asked questions
+- How fast can you help? Most remote sessions start within minutes during opening hours (Mon–Fri, 9am–5pm); subscribers jump the queue, and on-site visits cover Bournemouth, Poole and the rest of Dorset.
+- Which devices do you support? Windows computers and laptops, Android phones and tablets, printers, routers and most smart-home devices. Note: 365 Techies does not currently offer remote support for Apple Macs, iPhones or iPads (our remote support tool, Splashtop, cannot connect to Apple devices).
+- Is remote support safe? Yes — sessions run over Splashtop SOS, an encrypted industry-standard tool; you watch everything on screen and access ends when the session does.
+- Can you support a whole business? Yes — business plans include Microsoft 365 management, network security, verified backups, on-site support across Dorset, Dell hardware supply and IT strategy & planning.

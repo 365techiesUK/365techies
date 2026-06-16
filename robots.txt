@@ -1,0 +1,95 @@
+# robots.txt — 365 Techies (https://365techies.co.uk/)
+# Goal: maximum visibility for search engines AND AI answer engines.
+# Everything is allowed; AI crawlers are explicitly welcomed below.
+
+User-agent: *
+Allow: /
+Disallow: /node_modules/
+Disallow: /src/
+Disallow: /out/
+Disallow: /index-classic.html
+Disallow: /open-in-edge.bat
+
+# ── AI / answer-engine crawlers — explicitly allowed so we can be cited ──
+# (Each named group repeats "Allow: /" so it never overrides the wildcard
+#  with anything more restrictive.)
+
+# OpenAI / ChatGPT
+User-agent: GPTBot
+Allow: /
+User-agent: ChatGPT-User
+Allow: /
+User-agent: OAI-SearchBot
+Allow: /
+
+# Anthropic / Claude  (anthropic-ai & Claude-Web are legacy but harmless)
+User-agent: ClaudeBot
+Allow: /
+User-agent: Claude-User
+Allow: /
+User-agent: Claude-SearchBot
+Allow: /
+User-agent: anthropic-ai
+Allow: /
+User-agent: Claude-Web
+Allow: /
+
+# Perplexity
+User-agent: PerplexityBot
+Allow: /
+User-agent: Perplexity-User
+Allow: /
+
+# Google  (Google-Extended opts in to Gemini / AI Overviews grounding)
+User-agent: Googlebot
+Allow: /
+User-agent: Google-Extended
+Allow: /
+User-agent: GoogleOther
+Allow: /
+
+# Microsoft / Bing  (also powers Copilot)
+User-agent: Bingbot
+Allow: /
+
+# Apple  (Applebot-Extended opts in to Apple Intelligence)
+User-agent: Applebot
+Allow: /
+User-agent: Applebot-Extended
+Allow: /
+
+# Common Crawl  (open corpus used by many LLMs)
+User-agent: CCBot
+Allow: /
+
+# Amazon
+User-agent: Amazonbot
+Allow: /
+
+# Meta / Llama
+User-agent: Meta-ExternalAgent
+Allow: /
+User-agent: FacebookBot
+Allow: /
+
+# Others
+User-agent: Bytespider
+Allow: /
+User-agent: DuckAssistBot
+Allow: /
+User-agent: MistralAI-User
+Allow: /
+User-agent: MistralAI-Index
+Allow: /
+User-agent: YouBot
+Allow: /
+User-agent: cohere-ai
+Allow: /
+User-agent: Diffbot
+Allow: /
+User-agent: Timpibot
+Allow: /
+User-agent: PetalBot
+Allow: /
+
+Sitemap: https://365techies.co.uk/sitemap.xml
