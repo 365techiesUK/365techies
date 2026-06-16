@@ -7,6 +7,46 @@ The site is plain static HTML/CSS/JS — no database, PHP or Node needed on the 
 
 ---
 
+## How hosting works here (read this first)
+
+Two **separate** jobs — keep them apart:
+
+| Job | Where | Why |
+|---|---|---|
+| **Version control + backup** (your source & history) | **GitHub — private repo** *(recommended)* | Off-machine backup, full change history, free, and independent of your web host |
+| **Serving the live website** | **SiteGround** | Where visitors actually load `365techies.co.uk` |
+
+> **Where should the git repo live? → GitHub (private).** Do **not** make SiteGround your only repo:
+> shared-hosting git is limited and you'd lose your history if you ever change hosts. Keep GitHub as
+> the single source of truth; SiteGround just serves a *copy* of the built files.
+
+**The normal update workflow once everything is set up:**
+1. Edit the Python build files → run `python build_blog.py` (regenerates all pages + sitemap + 404).
+2. `git add -A && git commit -m "…"` → `git push` (history saved to GitHub).
+3. Get the changed static files onto SiteGround (manual upload, or auto-deploy) → **flush SiteGround cache**.
+
+---
+
+## A. Version control — push to GitHub (one-time)
+
+This repo is already initialised with an initial commit (192 files). You just need to add a remote
+and push. `gh` (GitHub CLI) isn't installed and there's no SSH key, but **Git Credential Manager is
+configured**, so an HTTPS push uses your saved GitHub login (or shows a one-time sign-in window).
+
+1. [ ] **github.com → New repository**: name it (e.g. `365techies-website`), choose **Private**, and
+       **do NOT** tick *Add a README / .gitignore / licence* — it must be **empty**.
+2. [ ] Copy the repo URL, then from `C:\claude\365-techies` run:
+       ```bash
+       git remote add origin https://github.com/<your-username>/365techies-website.git
+       git push -u origin master
+       ```
+       *(If a sign-in window appears, complete it — that authorises the push. Nothing else needed.)*
+3. [ ] Day-to-day after that: `git add -A && git commit -m "…"` then `git push`.
+
+> Prefer GitLab/Bitbucket? Same idea — create an empty private repo there and use its URL in step 2.
+
+---
+
 ## 0. Before you start
 - [ ] **Back up the current site** — Site Tools → *Security → Backups* → Create Backup.
 - [ ] Confirm you can log into **SiteGround Site Tools** and have **FTP/File Manager** access.
@@ -18,7 +58,7 @@ The site is plain static HTML/CSS/JS — no database, PHP or Node needed on the 
 ## 1. Upload — what TO upload (to the web root, usually `public_html/`)
 The site uses absolute paths (`/css/…`, `/js/…`), so it must sit at the domain root.
 - [ ] `index.html` and `404.html`
-- [ ] **All page folders** (~130 `slug/index.html` folders — e.g. `cybersecurity-support/`,
+- [ ] **All page folders** (~155 `slug/index.html` folders — e.g. `cybersecurity-support/`,
       `gaming-pcs/`, `it-support-new-forest/`, `starlink-internet/`, …)
 - [ ] `css/` and `js/` folders
 - [ ] `sitemap.xml`, `robots.txt`, `llms.txt`, `site.webmanifest`
@@ -29,7 +69,11 @@ The site uses absolute paths (`/css/…`, `/js/…`), so it must sit at the doma
 - [ ] Generators: `build_pages.py`, `build_local.py`, `build_extra.py`, `build_blog.py`
 - [ ] Tooling: `package.json`, `package-lock.json`, `eslint.config.mjs`, `tsconfig.json`,
       `remotion.config.ts`, `.prettierrc`, `.gitignore`, `README.md`, this `GO-LIVE.md`
-- [ ] `index-classic.html`, `open-in-edge.bat`, `logo-original.webp`, any `node_modules/`
+- [ ] Repo/dev folders: `.git/`, `.github/`, `.claude/`, `__pycache__/`, `node_modules/`, `src/`
+- [ ] `index-classic.html`, `open-in-edge.bat`, `logo-original.webp`
+
+> Tip: only the **public site files** in section 1 belong on SiteGround. The build scripts and the
+> (unrelated) `src/` Remotion scaffold are dev-only — harmless if left in the repo, but never upload them.
 
 ---
 
@@ -47,6 +91,63 @@ The site uses absolute paths (`/css/…`, `/js/…`), so it must sit at the doma
        WP (clears the unused database). Only after a confirmed backup + working new site.
 
 > Remember: **flush the SiteGround cache after every future update** you upload.
+
+---
+
+## 2b. Faster / automated deployment (optional)
+
+Section 2 uses **File Manager** — zero setup, fine for occasional updates. Two upgrades:
+
+**SFTP (quicker re-uploads).** In Site Tools → *Devs → FTP Accounts*, create an account, then connect
+with **FileZilla** (`sftp://…`, your FTP user + password, the port shown in Site Tools) and drag the
+section-1 files into `public_html`. Best if you update often.
+
+**SiteGround Git deploy (GrowBig / GoGeek / Cloud plans).** If your plan includes SSH, Site Tools →
+*Devs → Git* can host a repo on the server that deploys to `public_html` on push. Treat it as a
+*deploy target only* — keep GitHub as your source of truth and push to both (or mirror to it).
+
+**Auto-deploy on every push (advanced, "set & forget").** Commit the workflow below as
+`.github/workflows/deploy.yml`, then in GitHub → *Settings → Secrets and variables → Actions* add
+`DEPLOY_SERVER`, `DEPLOY_USER`, `DEPLOY_PASSWORD` from your SiteGround FTP account. Every push to
+`master` then uploads only the public files automatically:
+
+```yaml
+name: Deploy to SiteGround
+on:
+  push:
+    branches: [master]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          protocol: ftps          # use the protocol your SiteGround account supports (ftps or sftp)
+          server: ${{ secrets.DEPLOY_SERVER }}
+          username: ${{ secrets.DEPLOY_USER }}
+          password: ${{ secrets.DEPLOY_PASSWORD }}
+          # port: 21              # set if your account needs a non-default port
+          server-dir: public_html/
+          exclude: |
+            **/.git*
+            **/.github/**
+            **/__pycache__/**
+            **/node_modules/**
+            src/**
+            "*.py"
+            package*.json
+            "*.config.*"
+            tsconfig.json
+            .prettierrc
+            README.md
+            GO-LIVE.md
+            index-classic.html
+            open-in-edge.bat
+```
+
+> Confirm your SiteGround protocol/port (SFTP vs FTPS) in Site Tools and match the `protocol` line.
+> The `exclude` list keeps dev/source off the server. After a deploy, still **flush the cache**.
 
 ---
 
@@ -112,6 +213,6 @@ equivalent and correctly fall through to the branded **404** — Google drops th
 
 ---
 
-*Built as a static site generated by the Python build scripts. To update content later:
-edit the build files, run `python build_blog.py`, then re-upload the changed files and
-flush the SiteGround cache.*
+*Built as a static site generated by the Python build scripts. To update later: edit the build
+files → `python build_blog.py` → `git add -A && git commit -m "…" && git push` → re-upload the
+changed files to SiteGround (or let auto-deploy handle it) → flush the SiteGround cache.*
