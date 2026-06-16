@@ -164,6 +164,7 @@ HEADER = '''  <header class="site-header">
             <a href="/broadband-speed-checker/">Broadband Speed Checker</a>
             <a href="/coverage-checker/">Coverage Checker</a>
             <a href="/spot-the-scam/">Spot the Scam Quiz</a>
+            <a href="/computer-fault-checker/">Computer Fault Checker</a>
             <a href="/quick-quote/">Quick Quote</a>
             <a href="/free-it-health-check/">Free IT Health Check</a>
             <a href="/switching-it-provider/">Switching to Us</a>
@@ -179,6 +180,7 @@ HEADER = '''  <header class="site-header">
           </a>
           <div class="dropdown">
             <a href="/about/">About</a>
+            <a href="/our-values/">Our Values</a>
             <a href="/meet-the-team/">Meet the Team</a>
             <a href="/why-choose-365-techies/">Why Choose Us</a>
             <a href="/our-guarantees/">Our Guarantees</a>
@@ -292,6 +294,7 @@ HEADER = '''  <header class="site-header">
           <a href="/broadband-speed-checker/">Broadband Speed Checker</a>
           <a href="/coverage-checker/">Coverage Checker</a>
           <a href="/spot-the-scam/">Spot the Scam Quiz</a>
+          <a href="/computer-fault-checker/">Computer Fault Checker</a>
           <a href="/quick-quote/">Quick Quote</a>
           <a href="/free-it-health-check/">Free IT Health Check</a>
           <a href="/switching-it-provider/">Switching to Us</a>
@@ -301,6 +304,7 @@ HEADER = '''  <header class="site-header">
         <summary>About &amp; Trust</summary>
         <div class="m-group__links">
           <a href="/about/">About</a>
+          <a href="/our-values/">Our Values</a>
           <a href="/meet-the-team/">Meet the Team</a>
           <a href="/why-choose-365-techies/">Why Choose Us</a>
           <a href="/our-guarantees/">Our Guarantees</a>
@@ -411,6 +415,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/broadband-speed-checker/">Broadband Speed Checker</a>
         <a href="/coverage-checker/">Coverage Checker</a>
         <a href="/spot-the-scam/">Spot the Scam Quiz</a>
+        <a href="/computer-fault-checker/">Computer Fault Checker</a>
         <a href="/free-it-health-check/">Free IT Health Check</a>
         <a href="/switching-it-provider/">Switching to Us</a>
         <a href="/it-support-cost-guide/">IT Cost Guide</a>
@@ -472,6 +477,8 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/plain-english/">Tech in Plain English</a>
         <a href="/using-ai-safely/">Using AI Safely</a>
         <a href="/pre-call-checklists/">Get-Ready Checklists</a>
+        <a href="/our-values/">Our Values &amp; Promises</a>
+        <a href="/choosing-it-support/">How to Choose IT Support</a>
         <a href="/resources/">Resources &amp; Guides</a>
         <a href="/faqs/">FAQs</a>
         <a href="/it-advice/">IT Advice</a>

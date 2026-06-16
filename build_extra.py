@@ -1033,6 +1033,92 @@ def coverage_checker():
         desc=desc, og_title="Coverage Checker | 365 Techies", schema=schema, content=content)
 coverage_checker()
 
+# ===================================================== FAULT CHECKER (repair triage)
+FAULT_WIDGET = '''    <section class="section section--alt" aria-label="Computer fault checker">
+      <div class="wrap">
+        <div class="quiz" id="ff">
+          <div class="quiz__step is-active" data-step="device">
+            <p class="quiz__count mono">STEP 1 OF 2</p>
+            <h2 class="quiz__q">What&rsquo;s playing up?</h2>
+            <div class="quiz__opts">
+              <button type="button" class="quiz__opt" data-next="symptom" data-set="device:Laptop">Laptop</button>
+              <button type="button" class="quiz__opt" data-next="symptom" data-set="device:Desktop PC">Desktop PC</button>
+              <button type="button" class="quiz__opt" data-next="symptom" data-set="device:Phone or tablet">Phone or tablet</button>
+              <button type="button" class="quiz__opt" data-next="symptom" data-set="device:Printer">Printer</button>
+              <button type="button" class="quiz__opt" data-next="symptom" data-set="device:Wi-Fi or internet">Wi-Fi / internet</button>
+            </div>
+          </div>
+          <div class="quiz__step" data-step="symptom">
+            <p class="quiz__count mono">STEP 2 OF 2</p>
+            <h2 class="quiz__q">What&rsquo;s happening?</h2>
+            <div class="quiz__opts">
+              <button type="button" class="quiz__opt" data-next="result" data-set="sym:won">Won&rsquo;t turn on / no power</button>
+              <button type="button" class="quiz__opt" data-next="result" data-set="sym:slow">Very slow</button>
+              <button type="button" class="quiz__opt" data-next="result" data-set="sym:crash">Freezing or crashing</button>
+              <button type="button" class="quiz__opt" data-next="result" data-set="sym:screen">Broken or cracked screen</button>
+              <button type="button" class="quiz__opt" data-next="result" data-set="sym:net">Won&rsquo;t connect to the internet</button>
+              <button type="button" class="quiz__opt" data-next="result" data-set="sym:virus">Pop-ups, viruses or a scam</button>
+              <button type="button" class="quiz__opt" data-next="result" data-set="sym:files">Lost or deleted files</button>
+              <button type="button" class="quiz__opt" data-next="result" data-set="sym:other">Something else</button>
+            </div>
+          </div>
+          <div class="quiz__step" data-step="result"><div class="quiz__result" id="ff-result"></div></div>
+          <div class="quiz__back"><button type="button" id="ff-restart">&larr; Start again</button></div>
+        </div>
+      </div>
+      <script>
+      (function () {
+        var q = document.getElementById('ff'); if (!q) return;
+        var a = {};
+        function show(s){ var st=q.querySelectorAll('.quiz__step'); for(var i=0;i<st.length;i++) st[i].classList.toggle('is-active', st[i].getAttribute('data-step')===s); }
+        var MAP = {
+          won:{t:'Worth a proper diagnosis', a:'No power can be a charger, a battery or a hardware fault &mdash; often fixable, occasionally not, but a quick check tells you for sure. Diagnosis is free and it&rsquo;s no-fix-no-fee.', p:['Book a free collection','/book-a-collection/'], s:['Computer repairs','/computer-repairs/']},
+          slow:{t:'Usually very fixable &mdash; rarely a new PC', a:'Slowness is normally clutter, pending updates or an ageing hard drive. Switching to an SSD can make an old laptop feel brand new. We&rsquo;ll tune it up, often remotely.', p:['Start remote support','/remote-support/'], s:['Why is my PC slow?','/why-is-my-computer-slow/']},
+          crash:{t:'Let&rsquo;s pin down the cause', a:'Freezing and crashing can be software or failing hardware &mdash; a proper diagnosis finds which, so you don&rsquo;t replace a machine that just needed a fix.', p:['Book a repair','/computer-repairs/'], s:['Start remote support','/remote-support/']},
+          screen:{t:'Cracked screens are very repairable', a:'A broken screen rarely means a new device. We&rsquo;ll quote the repair up front, with no-fix-no-fee and a 12-month warranty.', p:['Book a collection','/book-a-collection/'], s:['Computer repairs','/computer-repairs/']},
+          net:{t:'Often the Wi-Fi, not the computer', a:'Connection problems are frequently the router or Wi-Fi rather than your device &mdash; and we can usually sort it remotely in minutes.', p:['Start remote support','/remote-support/'], s:['Wi-Fi support','/wifi-support/']},
+          virus:{t:'Don&rsquo;t pay any pop-up &mdash; we&rsquo;ll sort it safely', a:'Never call a number in a pop-up or pay a &ldquo;fix&rdquo; fee. We&rsquo;ll safely remove the malware, check nothing was stolen and protect you against the next one.', p:['Get protected','/cybersecurity-support/'], s:['Start remote support','/remote-support/']},
+          files:{t:'Act fast for the best recovery', a:'If files are lost, stop using the device &mdash; the sooner we look, the better the chance of getting them back. We&rsquo;ll attempt recovery and set up backups so it can&rsquo;t happen again.', p:['Book urgent help','/book-a-collection/'], s:['Backup &amp; recovery','/backup-support/']},
+          other:{t:'Tell us what&rsquo;s up', a:'Whatever it is, a friendly local techie will take a look &mdash; no problem is too small, and the diagnosis is always free.', p:['Book a service','/book-service/'], s:['Contact us','/contact/']}
+        };
+        function result(){
+          var r=MAP[a.sym]||MAP.other; var dev=a.device?(' with your '+a.device.toLowerCase()):'';
+          document.getElementById('ff-result').innerHTML='<p class="tag">What we&rsquo;d suggest</p><h3>'+r.t+'</h3><p>The trouble'+dev+': '+r.a+'</p><div class="quiz__actions"><a href="'+r.p[1]+'" class="button primary">'+r.p[0]+'</a><a href="'+r.s[1]+'" class="button secondary">'+r.s[0]+'</a></div><p class="hc-disclaimer">We always diagnose first and quote before any work &mdash; no-fix-no-fee, a 12-month warranty on repairs, and we&rsquo;ll honestly tell you when a repair isn&rsquo;t worth it.</p>';
+        }
+        q.addEventListener('click',function(e){ var o=e.target.closest('.quiz__opt'); if(!o) return; var set=o.getAttribute('data-set').split(':'); a[set[0]]=set[1]; var n=o.getAttribute('data-next'); if(n==='result') result(); show(n); });
+        document.getElementById('ff-restart').addEventListener('click',function(){ a={}; show('device'); });
+      })();
+      </script>
+    </section>'''
+
+def fault_checker():
+    slug = "computer-fault-checker"
+    desc = "Computer not working? Use our free fault checker — pick what's playing up and we'll tell you the likely cause, whether it's worth repairing, and the best next step. No-fix-no-fee, with honest repair-or-replace advice."
+    faqs = [
+      ("Is the fault checker free?", "Yes &mdash; it&rsquo;s a free, instant guide. And if you bring or send us the device, the diagnosis is free too, on a no-fix-no-fee basis."),
+      ("Will you push me to replace a working device?", "Never. We&rsquo;ll always tell you honestly when a repair makes sense and when it doesn&rsquo;t &mdash; we&rsquo;d rather keep your trust than sell you a new machine you don&rsquo;t need."),
+      ("Do you guarantee repairs?", "Yes &mdash; computer and laptop repairs come with a 12-month warranty, and there&rsquo;s no fee if we can&rsquo;t fix it. <a href=\"/our-guarantees/\">See our guarantees</a>."),
+    ]
+    content = "\n".join([
+      hero(bc("Fault Checker"), "// FREE &middot; 20 SECONDS",
+           'Computer playing up? <em class="grad grad--cyan">Let&rsquo;s diagnose it</em>',
+           "Tell us what&rsquo;s happening and we&rsquo;ll point you to the likely cause, whether it&rsquo;s worth fixing, and the easiest next step &mdash; honestly, with no jargon and no pressure.",
+           cta1=("Book a Collection", "/book-a-collection/"), cta2=("Computer Repairs", "/computer-repairs/"),
+           chips=["No-fix-no-fee", "12-month warranty", "Honest advice"]),
+      FAULT_WIDGET,
+      faq_html(faqs),
+      cta("Rather we just took a look?",
+          "Pop it in, post it, or let us connect remotely &mdash; a friendly local techie will diagnose it free and quote before any work.",
+          primary=("Book a Collection", "/book-a-collection/"), secondary=("Start Remote Support", "/remote-support/")),
+    ])
+    def schema(s, _d=desc, _f=faqs):
+        return graph([crumb(s, "Fault Checker"), webpage(s, "Computer Fault Checker", _d), faqpage(s, _f),
+                      {"@type": "WebApplication", "name": "365 Techies Computer Fault Checker", "applicationCategory": "UtilitiesApplication",
+                       "operatingSystem": "Web", "url": SITE + "/computer-fault-checker/", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "GBP"}, "provider": {"@id": SITE + "/#business"}}])
+    add(slug=slug, title="Computer Fault Checker — Diagnose Your PC, Laptop or Phone | 365 Techies",
+        desc=desc, og_title="Computer Fault Checker | 365 Techies", schema=schema, content=content)
+fault_checker()
+
 # ===================================================== CASE STUDIES
 def case_studies():
     slug = "case-studies"
@@ -3337,6 +3423,8 @@ info_page(
           <a class="post-card" href="/using-ai-safely/"><p class="post-card__cat">Guide</p><h3>Using AI Safely</h3><p>Get value from Copilot &amp; ChatGPT without the risks &mdash; in plain English.</p><span class="post-card__more">Read the guide &#8594;</span></a>
           <a class="post-card" href="/plain-english/"><p class="post-card__cat">Guide</p><h3>Tech in Plain English</h3><p>The tech terms and services people ask about most, explained simply.</p><span class="post-card__more">No jargon &#8594;</span></a>
           <a class="post-card" href="/pre-call-checklists/"><p class="post-card__cat">Checklist</p><h3>Get-Ready Checklists</h3><p>Feel prepared before you call, book a repair or set up a new PC.</p><span class="post-card__more">Get ready &#8594;</span></a>
+          <a class="post-card" href="/computer-fault-checker/"><p class="post-card__cat">Tool</p><h3>Computer Fault Checker</h3><p>Tell us what&rsquo;s playing up and get the likely cause &amp; best next step.</p><span class="post-card__more">Diagnose it &#8594;</span></a>
+          <a class="post-card" href="/choosing-it-support/"><p class="post-card__cat">Guide</p><h3>How to Choose IT Support</h3><p>10 questions to ask any IT company before you commit.</p><span class="post-card__more">Read the guide &#8594;</span></a>
           <a class="post-card" href="/free-it-health-check/"><p class="post-card__cat">Free</p><h3>Free IT Health Check</h3><p>A free, no-obligation review of your security, backups, updates and performance.</p><span class="post-card__more">Book a check &#8594;</span></a>
           <a class="post-card" href="/switching-it-provider/"><p class="post-card__cat">Switching</p><h3>Switching to Us</h3><p>How easy it is to move your IT support to 365 Techies &mdash; with no downtime.</p><span class="post-card__more">How it works &#8594;</span></a>
         </div>
@@ -3447,6 +3535,62 @@ info_page(
           </ul>""",
   cta_args=("Ready when you are", "However you&rsquo;d like to get started, we&rsquo;ll make it easy and stress-free.",
             ("Book a Service", "/book-service/"), ("Call 01202 775566", "tel:+441202775566")),
+)
+
+# ---- Our values / how we work
+info_page(
+  slug="our-values", crumb_name="Our Values", eyebrow="// HOW WE WORK",
+  h1='How we work &amp; <em class="grad grad--green">what we promise</em>',
+  lede="We&rsquo;re a family-run team, not a faceless call-centre &mdash; and we&rsquo;ve looked after Dorset&rsquo;s homes and businesses since 1995. Here&rsquo;s how we work, and the promises behind it.",
+  desc="The values behind 365 Techies — how our family-run Dorset IT team works (The 365 Way) and our promises: no upsell, honest independent advice, repair before replace, no problem too small, and plain English always.",
+  chips=["Family-run since 1995", "No upsell, ever", "Plain English"],
+  inner="""          <h2>The 365 Way</h2>
+          <ol>
+            <li><strong>Listen, in plain English.</strong> We start by understanding you and the problem &mdash; no jargon, no judgement, and no question is ever too small.</li>
+            <li><strong>Fix it properly.</strong> We solve the real cause, not just the symptom &mdash; and we tell you honestly when a repair is (or isn&rsquo;t) worth it.</li>
+            <li><strong>Protect &amp; look after.</strong> We keep you secure, updated and backed up &mdash; quietly, in the background, so problems are prevented.</li>
+            <li><strong>Check back in.</strong> We don&rsquo;t disappear once it&rsquo;s working. We&rsquo;re here whenever you need us, and we keep an eye on things in between.</li>
+          </ol>
+          <h2>Our promises to you</h2>
+          <ul>
+            <li><strong>No upsell, ever.</strong> We recommend what&rsquo;s genuinely right for you &mdash; never what earns us the most. If you don&rsquo;t need it, we&rsquo;ll say so.</li>
+            <li><strong>Honest, independent advice.</strong> We&rsquo;re not here to push one brand&rsquo;s products &mdash; we suggest the best fit for your needs and budget.</li>
+            <li><strong>Repair before replace.</strong> Where it makes sense, we&rsquo;ll fix what you have rather than sell you something new.</li>
+            <li><strong>No problem too small.</strong> Whether it&rsquo;s ransomware or how to attach a photo, you&rsquo;ll always get patient, friendly help.</li>
+            <li><strong>Plain English, always.</strong> We explain things clearly and never make you feel daft for asking.</li>
+            <li><strong>Your data, treated with care.</strong> We handle your information responsibly and keep it secure.</li>
+          </ul>
+          <p>It&rsquo;s why so many customers have stayed with us for years &mdash; and why we proudly specialise in supporting <a href="/it-support-for-retired-users/">retired</a> and <a href="/it-support-for-disabled-people/">disabled</a> people who deserve patient, respectful help.</p>""",
+  cta_args=("Experience the difference", "Friendly, honest IT support from people who genuinely care.",
+            ("View Monthly Plans", "/monthly-it-support/"), ("Talk to a Techie", "/contact/")),
+)
+
+# ---- Buyer's guide: choosing an IT support company
+info_page(
+  slug="choosing-it-support", crumb_name="How to Choose IT Support", eyebrow="// BUYER&rsquo;S GUIDE",
+  h1='How to choose an <em class="grad grad--cyan">IT support company</em>',
+  lede="Choosing who looks after your technology is a big decision &mdash; they&rsquo;ll have access to your devices, data and accounts. Here are the questions worth asking any firm before you commit (and, honestly, how we answer them).",
+  desc="A free buyer's guide from 365 Techies: 10 questions to ask before choosing an IT support company in Dorset — contracts, response times, who helps you, upselling, what's included, backups, security, guarantees and switching.",
+  chips=["10 key questions", "Print-friendly", "No pressure"],
+  inner="""          <p class="no-print"><button type="button" class="button secondary" onclick="window.print()">&#128424; Print / Save as PDF</button></p>
+          <p>Use this as a checklist with any IT company you&rsquo;re considering. If they can&rsquo;t answer these clearly, that tells you something &mdash; we&rsquo;re always happy to.</p>
+          <h2>10 questions to ask any IT support company</h2>
+          <ol>
+            <li><strong>Are you tied into a long contract?</strong> Look for rolling, cancel-anytime plans. <em>(Ours roll monthly &mdash; no lock-in.)</em></li>
+            <li><strong>How quickly do you respond, and how?</strong> Ask about remote vs on-site and realistic times. <em>(See our <a href="/service-level-agreement/">SLA</a>.)</em></li>
+            <li><strong>Who actually helps me &mdash; a real, local person?</strong> Beware overseas call centres and ever-changing faces. <em>(You get a friendly local Dorset team.)</em></li>
+            <li><strong>Will you try to upsell me things I don&rsquo;t need?</strong> Ask directly. <em>(We have a <a href="/our-values/">no-upsell promise</a>.)</em></li>
+            <li><strong>What&rsquo;s included, and what costs extra?</strong> Get it in plain English up front. <em>(See our <a href="/pricing/">transparent pricing</a> and what&rsquo;s included.)</em></li>
+            <li><strong>Do you back up my data &mdash; and do you test it?</strong> An untested backup isn&rsquo;t a backup. <em>(We verify backups regularly.)</em></li>
+            <li><strong>How do you keep me secure?</strong> Look for protection, updates, MFA and a human to ask. <em>(See <a href="/cybersecurity-support/">cybersecurity</a>.)</em></li>
+            <li><strong>What happens if it can&rsquo;t be fixed?</strong> Look for no-fix-no-fee and a warranty. <em>(Ours: no-fix-no-fee + a 12-month repair warranty.)</em></li>
+            <li><strong>How easy is it to switch to you &mdash; or leave later?</strong> A good firm makes both painless. <em>(See <a href="/switching-it-provider/">switching</a>.)</em></li>
+            <li><strong>Will you explain things in plain English?</strong> You should never feel talked down to. <em>(It&rsquo;s one of our core <a href="/our-values/">promises</a>.)</em></li>
+          </ol>
+          <h2>Not sure where to start?</h2>
+          <p>Try our 30-second <a href="/plan-finder/">Plan Finder</a>, get a <a href="/quick-quote/">quick quote</a>, or just <a href="/contact/">ask us anything</a> &mdash; no pressure, no jargon.</p>""",
+  cta_args=("Put us to the test", "Ask us every one of these questions &mdash; we&rsquo;ll answer them all, honestly.",
+            ("Talk to a Techie", "/contact/"), ("Why Choose Us", "/why-choose-365-techies/")),
 )
 
 # ---- Disaster Recovery & Business Continuity
