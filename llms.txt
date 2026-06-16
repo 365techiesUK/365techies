@@ -49,6 +49,20 @@
 - [Agentic AI Systems](https://365techies.co.uk/agentic-ai-systems/): 365 Techies custom-builds agentic AI operating systems for companies — bespoke, intelligent AI agents that run business-specific processes end to end, automating repetitive multi-step work, integrating with existing tools (Microsoft 365, CRM, email, line-of-business apps), with human-in-the-loop oversight and security by design. Used to streamline sales and quoting, customer service, admin and operations, finance and invoicing, onboarding and document workflows.
 - [How it works](https://365techies.co.uk/#how): Pick a plan, connect securely in under 15 minutes, then stay covered every month.
 
+## Free tools & guides
+- [IT & Security Health Check tool](https://365techies.co.uk/it-health-check-tool/): Free, instant on-screen IT & security score out of 100 with a personalised action plan, for home and business — no sign-up.
+- [Broadband Speed Checker](https://365techies.co.uk/broadband-speed-checker/): Find out in 30 seconds whether your broadband is fast enough for your household, with advice (including Starlink for rural areas).
+- [Spot the Scam quiz](https://365techies.co.uk/spot-the-scam/): A free 6-round quiz to learn to recognise scam emails, texts, pop-ups and phone calls, with plain-English explanations.
+- [Coverage Checker](https://365techies.co.uk/coverage-checker/): Enter your postcode to see if we cover your area on-site (Dorset, New Forest, Hampshire) or remotely across the UK & Europe.
+- [Quick Quote](https://365techies.co.uk/quick-quote/): Get a free, no-obligation IT support quote or cost comparison in under a minute.
+- [Plan Finder](https://365techies.co.uk/plan-finder/): Answer three quick questions to find the right home or business support plan.
+- [Windows 10 End of Life hub](https://365techies.co.uk/windows-10-end-of-life/): What the October 2025 end of support means and your options, with a free Windows 11 upgrade check.
+- [Using AI Safely](https://365techies.co.uk/using-ai-safely/): A beginner-friendly, plain-English guide to using Copilot, ChatGPT, Gemini and Claude safely.
+- [Tech in Plain English](https://365techies.co.uk/plain-english/): Common IT terms and services explained simply, with no jargon.
+- [Get-Ready Checklists](https://365techies.co.uk/pre-call-checklists/): Print-friendly checklists to help you feel prepared before contacting us.
+- [IT Jargon Buster](https://365techies.co.uk/it-jargon-buster/): A plain-English A–Z glossary of IT, accessibility and AI terms.
+- The site includes a built-in accessibility toolbar (text resize, high contrast, readable font, reduce motion and read-aloud), reflecting 365 Techies' specialism in supporting retired and disabled users.
+
 ## Offers
 - [Refer a Friend](https://365techies.co.uk/refer-a-friend/): Refer a friend, family member or business to 365 Techies and when they join a monthly home or business support plan, you both get a free month. No limit on the number of referrals.
 

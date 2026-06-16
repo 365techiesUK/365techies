@@ -41,7 +41,7 @@
     <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=clash-display@500,600,700&display=swap" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.css?v=33" />
+  <link rel="stylesheet" href="/css/styles.css?v=34" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -187,6 +187,9 @@
             <a href="/support-portal/">Support Portal</a>
             <a href="/plan-finder/">Plan Finder</a>
             <a href="/it-health-check-tool/">IT Health Check Tool</a>
+            <a href="/broadband-speed-checker/">Broadband Speed Checker</a>
+            <a href="/coverage-checker/">Coverage Checker</a>
+            <a href="/spot-the-scam/">Spot the Scam Quiz</a>
             <a href="/quick-quote/">Quick Quote</a>
             <a href="/free-it-health-check/">Free IT Health Check</a>
             <a href="/switching-it-provider/">Switching to Us</a>
@@ -312,6 +315,9 @@
           <a href="/support-portal/">Support Portal</a>
           <a href="/plan-finder/">Plan Finder</a>
           <a href="/it-health-check-tool/">IT Health Check Tool</a>
+          <a href="/broadband-speed-checker/">Broadband Speed Checker</a>
+          <a href="/coverage-checker/">Coverage Checker</a>
+          <a href="/spot-the-scam/">Spot the Scam Quiz</a>
           <a href="/quick-quote/">Quick Quote</a>
           <a href="/free-it-health-check/">Free IT Health Check</a>
           <a href="/switching-it-provider/">Switching to Us</a>
@@ -482,6 +488,9 @@
         <a href="/pricing/">Pricing</a>
         <a href="/quick-quote/">Quick Quote</a>
         <a href="/it-health-check-tool/">IT Health Check Tool</a>
+        <a href="/broadband-speed-checker/">Broadband Speed Checker</a>
+        <a href="/coverage-checker/">Coverage Checker</a>
+        <a href="/spot-the-scam/">Spot the Scam Quiz</a>
         <a href="/free-it-health-check/">Free IT Health Check</a>
         <a href="/switching-it-provider/">Switching to Us</a>
         <a href="/it-support-cost-guide/">IT Cost Guide</a>
@@ -540,6 +549,9 @@
         <a href="/cyber-threats/">Cyber Threats Explained</a>
         <a href="/it-jargon-buster/">IT Jargon Buster</a>
         <a href="/cybersecurity-checklist/">Cybersecurity Checklist</a>
+        <a href="/plain-english/">Tech in Plain English</a>
+        <a href="/using-ai-safely/">Using AI Safely</a>
+        <a href="/pre-call-checklists/">Get-Ready Checklists</a>
         <a href="/resources/">Resources &amp; Guides</a>
         <a href="/faqs/">FAQs</a>
         <a href="/it-advice/">IT Advice</a>
@@ -564,7 +576,22 @@
     <a href="/book-service/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v3M17 3v3M4 8h16M5 6h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z"/></svg>Book</a>
     <a href="#" data-open-chat><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.5 7.5L3 21l2-5.5A8.5 8.5 0 1 1 21 11.5z"/></svg>Chat</a>
   </nav>
+  <div class="a11y" id="a11y">
+    <button type="button" class="a11y__toggle" id="a11y-toggle" aria-expanded="false" aria-controls="a11y-panel" aria-label="Accessibility tools" title="Accessibility tools">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="3.6" r="1.6"/><path d="M3.5 8h17M12 8v6m0 0-3.2 6.4M12 14l3.2 6.4"/></svg>
+    </button>
+    <div class="a11y__panel" id="a11y-panel" role="region" aria-label="Accessibility options" hidden>
+      <p class="a11y__title mono">Accessibility</p>
+      <div class="a11y__rowsize"><span>Text size</span><span class="a11y__btns"><button type="button" data-a11y="text-down" aria-label="Decrease text size">A&minus;</button><button type="button" data-a11y="text-up" aria-label="Increase text size">A+</button></span></div>
+      <button type="button" class="a11y__opt" data-a11y="contrast" aria-pressed="false">High contrast</button>
+      <button type="button" class="a11y__opt" data-a11y="readable" aria-pressed="false">Readable font</button>
+      <button type="button" class="a11y__opt" data-a11y="reduce" aria-pressed="false">Reduce motion</button>
+      <button type="button" class="a11y__opt" data-a11y="read" aria-pressed="false">Read this page aloud</button>
+      <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
+    </div>
+  </div>
   <script type="module" src="/js/interior.js?v=14"></script>
+  <script src="/js/a11y.js?v=1" defer></script>
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
     <p>We use cookies to power our live chat and understand how the site is used. See our <a href="/cookie-policy/">cookie policy</a>.</p>
     <div class="cookie-banner__actions">

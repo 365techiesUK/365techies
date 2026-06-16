@@ -814,6 +814,225 @@ def quick_quote():
         desc=desc, og_title="Get a Quick IT Support Quote | 365 Techies", schema=schema, content=content)
 quick_quote()
 
+# ===================================================== BROADBAND SPEED ADVISOR
+BROADBAND_WIDGET = '''    <section class="section section--alt" aria-label="Broadband speed checker">
+      <div class="wrap">
+        <div class="quiz" id="bb">
+          <div class="quiz__step is-active" data-step="hh">
+            <p class="quiz__count mono">STEP 1 OF 3</p>
+            <h2 class="quiz__q">How many people use the internet at once?</h2>
+            <div class="quiz__opts">
+              <button type="button" class="quiz__opt" data-next="use" data-set="hh:one">Just me / one at a time</button>
+              <button type="button" class="quiz__opt" data-next="use" data-set="hh:few">2&ndash;3 of us</button>
+              <button type="button" class="quiz__opt" data-next="use" data-set="hh:many">4 or more / a busy household</button>
+            </div>
+          </div>
+          <div class="quiz__step" data-step="use">
+            <p class="quiz__count mono">STEP 2 OF 3</p>
+            <h2 class="quiz__q">What do you mostly do online?</h2>
+            <div class="quiz__opts">
+              <button type="button" class="quiz__opt" data-next="speed" data-set="use:browse">Browsing, email &amp; shopping</button>
+              <button type="button" class="quiz__opt" data-next="speed" data-set="use:stream">Streaming TV &amp; video calls</button>
+              <button type="button" class="quiz__opt" data-next="speed" data-set="use:game">Gaming &amp; big downloads</button>
+              <button type="button" class="quiz__opt" data-next="speed" data-set="use:heavy">Lots of 4K + serious home working</button>
+            </div>
+          </div>
+          <div class="quiz__step" data-step="speed">
+            <p class="quiz__count mono">STEP 3 OF 3</p>
+            <h2 class="quiz__q">Roughly what download speed do you get now?</h2>
+            <div class="quiz__opts">
+              <button type="button" class="quiz__opt" data-next="result" data-set="speed:s5">Under 10 Mbps</button>
+              <button type="button" class="quiz__opt" data-next="result" data-set="speed:s20">10&ndash;30 Mbps</button>
+              <button type="button" class="quiz__opt" data-next="result" data-set="speed:s50">30&ndash;70 Mbps</button>
+              <button type="button" class="quiz__opt" data-next="result" data-set="speed:s100">70+ Mbps</button>
+              <button type="button" class="quiz__opt" data-next="result" data-set="speed:unsure">Not sure</button>
+            </div>
+          </div>
+          <div class="quiz__step" data-step="result"><div class="quiz__result" id="bb-result"></div></div>
+          <div class="quiz__back"><button type="button" id="bb-restart">&larr; Start again</button></div>
+        </div>
+      </div>
+      <script>
+      (function () {
+        var q = document.getElementById('bb'); if (!q) return;
+        var a = {};
+        function show(s){ var st=q.querySelectorAll('.quiz__step'); for(var i=0;i<st.length;i++) st[i].classList.toggle('is-active', st[i].getAttribute('data-step')===s); }
+        var USE={browse:15,stream:40,game:80,heavy:150}, HH={one:1,few:1.3,many:1.7}, SPEED={s5:5,s20:20,s50:50,s100:100,unsure:null};
+        function result(){
+          var rec=Math.round((USE[a.use]||40)*(HH[a.hh]||1)/5)*5;
+          var cur=SPEED[a.speed], band, cls, msg;
+          if(cur===null){ band='Worth a quick check'; cls='hc--good'; msg='Run a free speed test (search &ldquo;speed test&rdquo; on Google) and you&rsquo;ll see your number &mdash; or we can check it for you.'; }
+          else { var r=cur/rec;
+            if(r>=1){ band='Looks plenty'; cls='hc--strong'; msg='Your connection should comfortably handle this. If it still feels slow, the culprit is more likely your computer or Wi-Fi &mdash; which we can fix.'; }
+            else if(r>=0.6){ band='Borderline'; cls='hc--good'; msg='You&rsquo;re close, but busy moments may buffer. A faster package, better Wi-Fi, or (in rural spots) Starlink could help.'; }
+            else { band='Likely not enough'; cls='hc--risk'; msg='Your speed looks low for this much use. A faster package would help &mdash; and where fast fibre isn&rsquo;t available, Starlink is often the answer.'; } }
+          var second=(a.speed==='s5'||a.speed==='s20') ? '<a href="/starlink-internet/" class="button secondary">Explore Starlink</a>' : '<a href="/wifi-support/" class="button secondary">Wi-Fi &amp; speed help</a>';
+          document.getElementById('bb-result').innerHTML='<p class="tag">Recommended speed</p><div class="hc-score '+cls+'"><span class="hc-score__num">'+rec+'</span><span class="hc-score__den">Mbps</span></div><p class="hc-bandlabel '+cls+'">'+band+'</p><p>'+msg+'</p><div class="quiz__actions"><a href="/book-service/" class="button primary">Get free advice</a>'+second+'</div><p class="hc-disclaimer">A rough guide based on typical needs &mdash; we&rsquo;re happy to advise properly, for free.</p>';
+        }
+        q.addEventListener('click',function(e){ var o=e.target.closest('.quiz__opt'); if(!o) return; var set=o.getAttribute('data-set').split(':'); a[set[0]]=set[1]; var n=o.getAttribute('data-next'); if(n==='result') result(); show(n); });
+        document.getElementById('bb-restart').addEventListener('click',function(){ a={}; show('hh'); });
+      })();
+      </script>
+    </section>'''
+
+def broadband_advisor():
+    slug = "broadband-speed-checker"
+    desc = "Is your broadband fast enough? Use our free 30-second checker — answer 3 quick questions and get a plain-English recommended speed for your home, plus what to do if it's too slow (including Starlink for rural Dorset)."
+    faqs = [
+      ("How do I find my current broadband speed?", "Search &ldquo;speed test&rdquo; on Google and click Run Speed Test, or use fast.com &mdash; the download number (in Mbps) is what to enter. We can also check it for you."),
+      ("Is slow internet the same as a slow computer?", "Not always &mdash; a slow computer or weak Wi-Fi often gets blamed on the broadband. Our free <a href=\"/it-health-check-tool/\">health check</a> and a quick look can tell which it is."),
+      ("What if fast fibre isn&rsquo;t available where I live?", "In rural parts of Dorset and the New Forest, <a href=\"/starlink-internet/\">Starlink satellite internet</a> is often the best option &mdash; we supply, install and support it."),
+    ]
+    content = "\n".join([
+      hero(bc("Broadband Speed Checker"), "// FREE &middot; 30 SECONDS",
+           'Is your broadband <em class="grad grad--cyan">fast enough?</em>',
+           "Answer three quick questions and we&rsquo;ll tell you the broadband speed your home really needs &mdash; and exactly what to do if you&rsquo;re falling short.",
+           cta1=("Get Free Advice", "/book-service/"), cta2=("Starlink for Rural Areas", "/starlink-internet/"),
+           chips=["Takes 30 seconds", "Plain English", "No sign-up"]),
+      BROADBAND_WIDGET,
+      faq_html(faqs),
+      cta("Still buffering and slow?",
+          "Let a friendly local techie sort your broadband, Wi-Fi and devices so everything just works.",
+          primary=("Book a Free Chat", "/book-service/"), secondary=("Wi-Fi Support", "/wifi-support/")),
+    ])
+    def schema(s, _d=desc, _f=faqs):
+        return graph([crumb(s, "Broadband Speed Checker"), webpage(s, "Broadband Speed Checker", _d), faqpage(s, _f),
+                      {"@type": "WebApplication", "name": "365 Techies Broadband Speed Checker", "applicationCategory": "UtilitiesApplication",
+                       "operatingSystem": "Web", "url": SITE + "/broadband-speed-checker/", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "GBP"}, "provider": {"@id": SITE + "/#business"}}])
+    add(slug=slug, title="Broadband Speed Checker — Is Your Internet Fast Enough? | 365 Techies",
+        desc=desc, og_title="Broadband Speed Checker | 365 Techies", schema=schema, content=content)
+broadband_advisor()
+
+# ===================================================== SPOT THE SCAM QUIZ
+SCAM_WIDGET = '''    <section class="section section--alt" aria-label="Spot the scam quiz">
+      <div class="wrap">
+        <div class="quiz" id="sc">
+          <div class="quiz__step is-active" data-step="q">
+            <p class="quiz__count mono" id="sc-count"></p>
+            <h2 class="quiz__q" id="sc-q"></h2>
+            <div class="quiz__opts" id="sc-opts">
+              <button type="button" class="quiz__opt" data-said="scam">It&rsquo;s a scam</button>
+              <button type="button" class="quiz__opt" data-said="safe">Looks genuine</button>
+            </div>
+            <div class="quiz__result" id="sc-fb" style="margin-top:1.2rem"></div>
+            <div class="quiz__actions" style="margin-top:1rem"><button type="button" class="button primary" id="sc-next" style="display:none">Next &rarr;</button></div>
+          </div>
+          <div class="quiz__step" data-step="result"><div class="quiz__result" id="sc-result"></div></div>
+          <div class="quiz__back"><button type="button" id="sc-restart">&larr; Play again</button></div>
+        </div>
+      </div>
+      <script>
+      (function () {
+        var root = document.getElementById('sc'); if (!root) return;
+        var R = [
+          {s:'An email says: &ldquo;You&rsquo;ve won a &pound;1,000 Amazon voucher &mdash; click here to claim within 24 hours.&rdquo;', scam:true, e:'Scam. Unexpected prizes, a ticking clock and a &ldquo;click here&rdquo; link are classic phishing. Real prizes don&rsquo;t arrive out of the blue.'},
+          {s:'A text from &ldquo;ROYAL MAIL&rdquo;: &ldquo;Your parcel is held &mdash; pay a &pound;2.99 redelivery fee at this link.&rdquo;', scam:true, e:'Scam (smishing). Couriers don&rsquo;t ask for fees via a text link. Go to the official website directly instead.'},
+          {s:'A full-screen pop-up: &ldquo;WARNING! Your PC is infected. Call Microsoft now on 0800&hellip;&rdquo;', scam:true, e:'Scam (tech-support scam). Microsoft never puts a phone number in a pop-up. Close the browser &mdash; never call.'},
+          {s:'A colleague you were expecting a file from shares a document via your company Microsoft 365.', scam:false, e:'Genuine &mdash; expected, from a known person, on your real Microsoft 365. It&rsquo;s still fine to double-check if anything feels off.'},
+          {s:'A caller claims to be your bank&rsquo;s fraud team and asks you to read your full PIN and move money to a &ldquo;safe account&rdquo;.', scam:true, e:'Scam. Banks NEVER ask for your full PIN or tell you to move money to a &ldquo;safe account&rdquo;. Hang up and call the number on your card.'},
+          {s:'You click &ldquo;forgot password&rdquo; on a website and immediately receive a reset email from that site.', scam:false, e:'Genuine &mdash; you requested it and it arrived right away from the real site. (If you ever get one you did NOT request, ignore it.)'}
+        ];
+        var i=0, score=0;
+        function show(step){ var s=root.querySelectorAll('.quiz__step'); for(var j=0;j<s.length;j++) s[j].classList.toggle('is-active', s[j].getAttribute('data-step')===step); }
+        function render(){ var r=R[i]; document.getElementById('sc-count').textContent='ROUND '+(i+1)+' OF '+R.length; document.getElementById('sc-q').innerHTML=r.s; document.getElementById('sc-fb').innerHTML=''; document.getElementById('sc-opts').style.display='grid'; document.getElementById('sc-next').style.display='none'; }
+        function answer(saidScam){ var r=R[i]; var ok=(saidScam===r.scam); if(ok) score++; document.getElementById('sc-opts').style.display='none'; document.getElementById('sc-fb').innerHTML='<p class="hc-bandlabel '+(ok?'hc--strong':'hc--risk')+'">'+(ok?'Correct':'Careful!')+'</p><p>'+r.e+'</p>'; var nx=document.getElementById('sc-next'); nx.style.display='inline-flex'; nx.innerHTML=(i<R.length-1)?'Next &rarr;':'See my score'; }
+        function next(){ i++; if(i<R.length){ render(); } else { results(); show('result'); } }
+        function results(){ var cls=score>=5?'hc--strong':score>=3?'hc--good':'hc--risk'; var band=score>=5?'Scam-savvy!':score>=3?'Not bad &mdash; stay sharp':'Worth brushing up'; document.getElementById('sc-result').innerHTML='<p class="tag">Your score</p><div class="hc-score '+cls+'"><span class="hc-score__num">'+score+'</span><span class="hc-score__den">/'+R.length+'</span></div><p class="hc-bandlabel '+cls+'">'+band+'</p><p>Scams are getting cleverer &mdash; when in doubt, stop and check. We protect our customers from this every day.</p><ul class="hc-actions"><li><a href="/cybersecurity-support/">Get protected with managed security &#8594;</a></li><li><a href="/phishing/">Learn the signs of phishing &#8594;</a></li><li><a href="/cybersecurity-checklist/">Our 10-step security checklist &#8594;</a></li></ul><div class="quiz__actions"><a href="/book-service/" class="button primary">Talk to us</a><a href="/it-health-check-tool/" class="button secondary">Free security health check</a></div>'; }
+        document.getElementById('sc-opts').addEventListener('click',function(e){ var b=e.target.closest('[data-said]'); if(!b) return; answer(b.getAttribute('data-said')==='scam'); });
+        document.getElementById('sc-next').addEventListener('click', next);
+        document.getElementById('sc-restart').addEventListener('click',function(){ i=0; score=0; render(); show('q'); });
+        render();
+      })();
+      </script>
+    </section>'''
+
+def spot_the_scam():
+    slug = "spot-the-scam"
+    desc = "Could you spot a scam? Take our free 6-round Spot the Scam quiz — real-looking emails, texts, pop-ups and calls — with instant plain-English explanations. Great for staying safe online, especially for older and less-confident users."
+    faqs = [
+      ("Who is the quiz for?", "Everyone &mdash; but it&rsquo;s especially helpful for older or less-confident users who are targeted most. It&rsquo;s friendly, quick and there&rsquo;s no sign-up."),
+      ("Are the examples real scams?", "They&rsquo;re realistic, illustrative versions of the most common scams we see &mdash; phishing emails, smishing texts, pop-ups and phone scams &mdash; so you learn the tell-tale signs safely."),
+      ("Can you protect us from scams for real?", "Yes &mdash; our <a href=\"/cybersecurity-support/\">managed cybersecurity</a> adds layered protection, email filtering and a real human to ask &lsquo;is this safe?&rsquo; whenever you&rsquo;re unsure."),
+    ]
+    content = "\n".join([
+      hero(bc("Spot the Scam"), "// FREE QUIZ &middot; 2 MINUTES",
+           'Could you <em class="grad grad--green">spot a scam?</em>',
+           "Six real-looking emails, texts, pop-ups and phone calls &mdash; can you tell the scams from the genuine? Instant, friendly explanations after every round.",
+           cta1=("Get Protected", "/cybersecurity-support/"), cta2=("Security Checklist", "/cybersecurity-checklist/"),
+           chips=["No sign-up", "Plain English", "Great for all ages"]),
+      SCAM_WIDGET,
+      faq_html(faqs),
+      cta("Worried about scams?",
+          "We keep Dorset families and businesses safe online every day &mdash; with real protection and a friendly techie to ask.",
+          primary=("Talk to a Techie", "/contact/"), secondary=("Free Health Check", "/it-health-check-tool/")),
+    ])
+    def schema(s, _d=desc, _f=faqs):
+        return graph([crumb(s, "Spot the Scam"), webpage(s, "Spot the Scam Quiz", _d), faqpage(s, _f),
+                      {"@type": "WebApplication", "name": "365 Techies Spot the Scam Quiz", "applicationCategory": "EducationalApplication",
+                       "operatingSystem": "Web", "url": SITE + "/spot-the-scam/", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "GBP"}, "provider": {"@id": SITE + "/#business"}}])
+    add(slug=slug, title="Spot the Scam Quiz — Can You Tell a Scam From the Real Thing? | 365 Techies",
+        desc=desc, og_title="Spot the Scam Quiz | 365 Techies", schema=schema, content=content)
+spot_the_scam()
+
+# ===================================================== COVERAGE CHECKER
+COVERAGE_WIDGET = '''    <section class="section section--alt" aria-label="Coverage checker">
+      <div class="wrap">
+        <div class="quiz" style="max-width:560px">
+          <form id="cov" class="cov-form" novalidate>
+            <label for="cov-in" class="quiz__q" style="font-size:1.3rem">Enter your postcode</label>
+            <p class="mono" style="color:var(--faint);text-align:center;margin:.2rem 0 1rem">Just the first part is fine &mdash; e.g. BH9, DT1, SO40</p>
+            <div class="cov-row">
+              <input id="cov-in" name="postcode" type="text" autocomplete="postal-code" placeholder="Your postcode" aria-label="Postcode" />
+              <button type="submit" class="button primary">Check</button>
+            </div>
+          </form>
+          <div class="quiz__result" id="cov-result" style="margin-top:1.4rem;display:none"></div>
+        </div>
+      </div>
+      <script>
+      (function () {
+        var f = document.getElementById('cov'); if (!f) return;
+        var ON = {BH:'Bournemouth, Poole &amp; Christchurch', DT:'Dorchester, Weymouth &amp; west Dorset', SO:'Southampton &amp; the New Forest', SP:'Salisbury &amp; Fordingbridge', BA:'the north Somerset / Bath edge'};
+        var AREA = {BH:'/it-support-bournemouth/', DT:'/it-support-dorchester/', SO:'/it-support-southampton/', SP:'/it-support-fordingbridge/'};
+        function check(){
+          var m=(document.getElementById('cov-in').value||'').toUpperCase().match(/[A-Z]{1,2}/);
+          var pre=m?m[0]:'';
+          var res=document.getElementById('cov-result'); res.style.display='block';
+          if(!pre){ res.innerHTML='<p class="hc-bandlabel hc--good">Pop in your postcode</p><p>Enter the first part of your postcode (e.g. BH9, DT1, SO40) and we&rsquo;ll check.</p>'; return; }
+          if(ON[pre]){ res.innerHTML='<p class="hc-bandlabel hc--strong">Yes &mdash; we cover you!</p><p>We provide on-site <strong>and</strong> remote IT support across '+ON[pre]+'. '+(AREA[pre]?'<a href="'+AREA[pre]+'">See local support &#8594;</a>':'')+'</p><div class="quiz__actions"><a href="/book-service/" class="button primary">Book a visit</a><a href="/contact/" class="button secondary">Contact us</a></div>'; }
+          else { res.innerHTML='<p class="hc-bandlabel hc--good">We&rsquo;ve got you covered remotely</p><p>You&rsquo;re outside our on-site area, but we provide fast, secure <a href="/remote-it-support/">remote IT support</a> and fully managed plans right across the UK &amp; Europe &mdash; with the same friendly local team.</p><div class="quiz__actions"><a href="/remote-support/" class="button primary">Start remote support</a><a href="/it-support-uk-europe/" class="button secondary">UK &amp; Europe support</a></div>'; }
+        }
+        f.addEventListener('submit',function(e){ e.preventDefault(); check(); });
+      })();
+      </script>
+    </section>'''
+
+def coverage_checker():
+    slug = "coverage-checker"
+    desc = "Do we cover your area? Enter your postcode and instantly see whether 365 Techies offers on-site IT support near you across Dorset, the New Forest and Hampshire — plus full remote support everywhere else in the UK & Europe."
+    faqs = [
+      ("Which areas do you cover on-site?", "We cover Bournemouth, Poole, Christchurch and across Dorset, the New Forest and parts of Hampshire on-site. See our <a href=\"/areas-covered/\">areas covered</a> page for the full list."),
+      ("What if I&rsquo;m outside your area?", "No problem &mdash; we provide fast, secure <a href=\"/remote-it-support/\">remote IT support</a> and fully managed monthly plans <a href=\"/it-support-uk-europe/\">across the UK and Europe</a>."),
+      ("Is remote support as good as on-site?", "For most issues, yes &mdash; most problems are fixed remotely in minutes. We arrange on-site visits when hands-on help is genuinely needed."),
+    ]
+    content = "\n".join([
+      hero(bc("Coverage Checker"), "// DO WE COVER YOU?",
+           'Do we cover <em class="grad grad--cyan">your area?</em>',
+           "Pop in your postcode to see instantly whether we offer on-site IT support near you &mdash; and rest assured we support homes and businesses remotely right across the UK and Europe too.",
+           cta1=("See Areas Covered", "/areas-covered/"), cta2=("Remote Support", "/remote-it-support/"),
+           chips=["Dorset &amp; New Forest", "Hampshire", "UK &amp; Europe remote"]),
+      COVERAGE_WIDGET,
+      faq_html(faqs),
+      cta("Wherever you are, we can help",
+          "On your doorstep or on the other side of the country &mdash; friendly, expert IT support is one click away.",
+          primary=("Book a Service", "/book-service/"), secondary=("Contact Us", "/contact/")),
+    ])
+    def schema(s, _d=desc, _f=faqs):
+        return graph([crumb(s, "Coverage Checker"), webpage(s, "Coverage Checker", _d), faqpage(s, _f)])
+    add(slug=slug, title="Coverage Checker — Do We Cover Your Area? | 365 Techies",
+        desc=desc, og_title="Coverage Checker | 365 Techies", schema=schema, content=content)
+coverage_checker()
+
 # ===================================================== CASE STUDIES
 def case_studies():
     slug = "case-studies"
@@ -2830,20 +3049,34 @@ def it_jargon_buster():
       ("Wi-Fi", "Wireless internet access within your home or office."),
       ("Zero-day", "A brand-new security flaw that&rsquo;s being exploited before a fix exists."),
     ]
+    EXTRA = [
+      ("AI hallucination", "When an AI confidently gives an answer that&rsquo;s actually wrong or made up &mdash; always check anything important."),
+      ("Business continuity", "Planning so your business keeps running, or recovers fast, if IT, premises or staff are disrupted."),
+      ("Copilot", "Microsoft&rsquo;s built-in AI assistant in Windows and Microsoft 365 that helps you write, summarise and get things done."),
+      ("Dictation / voice control", "Typing or controlling your computer by speaking, instead of using a keyboard or mouse."),
+      ("High contrast", "A display mode with strong colour differences (such as white on black) that&rsquo;s easier to read."),
+      ("LLM", "Large Language Model &mdash; the kind of AI behind tools like ChatGPT and Copilot that understands and writes text."),
+      ("Magnification", "Built-in tools that enlarge part of the screen to make it easier to see."),
+      ("Prompt", "The instruction or question you type into an AI tool to tell it what you want."),
+      ("RTO / RPO", "Recovery Time / Recovery Point Objective &mdash; how fast you need to be back up, and how much data you can afford to lose, after a disaster."),
+      ("Screen reader", "Software that reads what&rsquo;s on screen aloud, helping people with little or no sight use a computer."),
+    ]
     rows = "".join(f"          <h3>{t}</h3>\n          <p>{d}</p>\n" for t, d in TERMS)
+    rows2 = "".join(f"          <h3>{t}</h3>\n          <p>{d}</p>\n" for t, d in EXTRA)
     inner = ('          <h2>An A&ndash;Z of common IT terms</h2>\n' + rows +
+             '          <h2>Accessibility &amp; AI terms</h2>\n' + rows2 +
              '          <p class="lede-note">Come across a term we haven&rsquo;t covered? <a href="/contact/">Ask us</a> &mdash; we love explaining things in plain English.</p>')
     content = "\n".join([
       hero(bc("IT Jargon Buster"), "// A&ndash;Z GLOSSARY",
            'IT <em class="grad grad--cyan">jargon buster</em>',
            "Confused by tech speak? Our plain-English A&ndash;Z glossary explains the common IT terms you&rsquo;ll come across &mdash; no jargon, no nonsense.",
            cta1=("Contact Us", "/contact/"), cta2=("Read our IT Advice", "/it-advice/"),
-           chips=["Plain English","A&ndash;Z of tech","35+ terms"]),
+           chips=["Plain English","A&ndash;Z of tech","45+ terms"]),
       _prose(inner),
       cta("Still got questions?", "No jargon, no silly questions &mdash; just friendly, clear help whenever you need it.",
           primary=("Contact Us", "/contact/"), secondary=("Read our IT Advice", "/it-advice/")),
     ])
-    def schema(s, _d=desc, _t=TERMS):
+    def schema(s, _d=desc, _t=TERMS + EXTRA):
         return graph([crumb(s, "IT Jargon Buster"), webpage(s, "IT Jargon Buster", _d, "CollectionPage"),
                       {"@type": "DefinedTermSet", "@id": SITE + "/" + s + "/#glossary", "name": "IT Jargon Buster",
                        "description": _d,
@@ -3098,6 +3331,12 @@ info_page(
           <a class="post-card" href="/it-health-check-tool/"><p class="post-card__cat">Tool</p><h3>IT Health Check Tool</h3><p>Get an instant IT &amp; security score out of 100, plus a plain-English action plan &mdash; no sign-up.</p><span class="post-card__more">Check your score &#8594;</span></a>
           <a class="post-card" href="/windows-10-end-of-life/"><p class="post-card__cat">Act now</p><h3>Windows 10 End of Life</h3><p>Support ended in October 2025. Find out in 30 seconds if you&rsquo;re affected &mdash; and your options.</p><span class="post-card__more">Are you affected? &#8594;</span></a>
           <a class="post-card" href="/quick-quote/"><p class="post-card__cat">Tool</p><h3>Quick Quote</h3><p>Get a free, no-obligation quote or cost comparison in under a minute.</p><span class="post-card__more">Get a quote &#8594;</span></a>
+          <a class="post-card" href="/broadband-speed-checker/"><p class="post-card__cat">Tool</p><h3>Broadband Speed Checker</h3><p>Is your internet fast enough? Get a recommended speed in 30 seconds.</p><span class="post-card__more">Check your speed &#8594;</span></a>
+          <a class="post-card" href="/spot-the-scam/"><p class="post-card__cat">Quiz</p><h3>Spot the Scam</h3><p>Can you tell a scam from the real thing? Take the free 6-round quiz.</p><span class="post-card__more">Take the quiz &#8594;</span></a>
+          <a class="post-card" href="/coverage-checker/"><p class="post-card__cat">Tool</p><h3>Coverage Checker</h3><p>Pop in your postcode to see if we cover your area on-site.</p><span class="post-card__more">Check coverage &#8594;</span></a>
+          <a class="post-card" href="/using-ai-safely/"><p class="post-card__cat">Guide</p><h3>Using AI Safely</h3><p>Get value from Copilot &amp; ChatGPT without the risks &mdash; in plain English.</p><span class="post-card__more">Read the guide &#8594;</span></a>
+          <a class="post-card" href="/plain-english/"><p class="post-card__cat">Guide</p><h3>Tech in Plain English</h3><p>The tech terms and services people ask about most, explained simply.</p><span class="post-card__more">No jargon &#8594;</span></a>
+          <a class="post-card" href="/pre-call-checklists/"><p class="post-card__cat">Checklist</p><h3>Get-Ready Checklists</h3><p>Feel prepared before you call, book a repair or set up a new PC.</p><span class="post-card__more">Get ready &#8594;</span></a>
           <a class="post-card" href="/free-it-health-check/"><p class="post-card__cat">Free</p><h3>Free IT Health Check</h3><p>A free, no-obligation review of your security, backups, updates and performance.</p><span class="post-card__more">Book a check &#8594;</span></a>
           <a class="post-card" href="/switching-it-provider/"><p class="post-card__cat">Switching</p><h3>Switching to Us</h3><p>How easy it is to move your IT support to 365 Techies &mdash; with no downtime.</p><span class="post-card__more">How it works &#8594;</span></a>
         </div>
@@ -3107,6 +3346,107 @@ info_page(
           <p>Every guide and tool here is something we handle for our customers every day. If you&rsquo;d rather we just sorted it, get friendly monthly IT support for your home or business &mdash; or book a free IT health check.</p>""",
   cta_args=("Rather we just sorted it?", "Get friendly, proactive IT support from your local team &mdash; or start with a free health check.",
             ("View Monthly Plans", "/monthly-it-support/"), ("Free IT Health Check", "/free-it-health-check/")),
+)
+
+# ---- Using AI Safely (beginner guide)
+info_page(
+  slug="using-ai-safely", crumb_name="Using AI Safely", eyebrow="// EVERYDAY AI",
+  h1='Using AI <em class="grad grad--cyan">safely</em>',
+  lede="AI tools like Copilot, ChatGPT, Gemini and Claude can save you hours &mdash; if you use them wisely. Here&rsquo;s a friendly, plain-English guide to getting real value from AI without putting your data or yourself at risk.",
+  desc="A beginner-friendly, plain-English guide to using AI (Microsoft Copilot, ChatGPT, Gemini, Claude) safely — what it can and can't do, the golden rules, AI scams to watch for, and when to use it. From 365 Techies.",
+  chips=["Plain English", "Stay safe", "Home &amp; business"],
+  inner="""          <h2>What everyday AI can (and can&rsquo;t) do</h2>
+          <p>Tools like Microsoft Copilot, ChatGPT, Google Gemini and Claude are brilliant at drafting emails, summarising long documents, explaining things simply and sparking ideas. They are <strong>not</strong> always right, though &mdash; they can sound confident while being completely wrong (this is called a &ldquo;hallucination&rdquo;), so always sanity-check anything important.</p>
+          <h2>The golden rules for staying safe</h2>
+          <ul>
+            <li><strong>Never paste private or sensitive information</strong> &mdash; passwords, bank details, customer data or anything confidential &mdash; into a public AI tool.</li>
+            <li><strong>Check before you trust</strong> &mdash; treat AI answers as a helpful first draft, not gospel, especially for money, health, legal or technical decisions.</li>
+            <li><strong>Watch for AI-powered scams</strong> &mdash; criminals use AI to write convincing phishing emails and even clone voices. Stay sceptical of urgent or unexpected requests.</li>
+            <li><strong>Use the business-grade versions</strong> &mdash; Microsoft 365 Copilot keeps your data inside your secure tenancy, unlike free public tools.</li>
+          </ul>
+          <h2>&ldquo;Should I use AI for this?&rdquo;</h2>
+          <ul>
+            <li><strong>Great for:</strong> drafting and rewording, summarising, explaining jargon, brainstorming and first drafts.</li>
+            <li><strong>Be careful with:</strong> anything factual you can&rsquo;t verify, or that affects money or safety.</li>
+            <li><strong>Avoid:</strong> pasting in anything private, confidential or regulated.</li>
+          </ul>
+          <h2>We&rsquo;ll help you use it well</h2>
+          <p>We help homes and businesses adopt AI confidently and safely &mdash; see our <a href="/ai-training/">AI training &amp; adoption</a> service, or our <a href="/agentic-ai-systems/">custom agentic AI systems</a> that automate real business tasks.</p>""",
+  faqs=[
+    ("Is ChatGPT safe to use?", "Yes for everyday drafting and learning &mdash; as long as you never paste in private, confidential or sensitive information and you check important answers. For business data, use a business-grade tool like Microsoft 365 Copilot."),
+    ("What is an AI &ldquo;hallucination&rdquo;?", "It&rsquo;s when an AI gives a confident answer that&rsquo;s actually wrong or made up. Always verify anything that matters before relying on it."),
+    ("Can AI be used to scam me?", "Yes &mdash; criminals use AI to write convincing scam emails and even imitate voices, so be extra wary of urgent or unexpected requests. Our <a href=\"/spot-the-scam/\">Spot the Scam quiz</a> helps you practise spotting them."),
+    ("Can you train our team to use AI safely?", "Absolutely &mdash; that&rsquo;s exactly what our <a href=\"/ai-training/\">AI training</a> service does, tailored to how your team works."),
+  ],
+  cta_args=("Want to use AI with confidence?", "We&rsquo;ll show you and your team how to get real value from AI, safely.",
+            ("Explore AI Training", "/ai-training/"), ("Talk to a Techie", "/contact/")),
+)
+
+# ---- Plain-English hub
+info_page(
+  slug="plain-english", crumb_name="Tech in Plain English", eyebrow="// NO JARGON",
+  h1='Tech in <em class="grad grad--green">plain English</em>',
+  lede="Technology shouldn&rsquo;t need a dictionary. Here are the things people ask us about most, explained simply &mdash; no jargon, just what it means and why it matters for you.",
+  desc="The most common IT terms and services explained in plain English by 365 Techies — backups, online security, Microsoft 365, remote support, monthly support and the cloud, with no jargon.",
+  chips=["No jargon", "Written for you", "Just ask"],
+  inner="""          <p>We&rsquo;re famous for being patient and jargon-free. Here are the things we&rsquo;re asked about most &mdash; in everyday language.</p>
+          <h2>Backups</h2>
+          <p>A backup is simply a spare copy of your files and photos, kept somewhere safe, so you can get them back if your device is lost, broken or attacked. <a href="/backup-support/">How we handle backups &#8594;</a></p>
+          <h2>Online security</h2>
+          <p>Good security is mostly a few sensible habits &mdash; strong passwords, a second login step, and keeping things updated &mdash; plus protection working quietly in the background. <a href="/cybersecurity-support/">How we keep you safe &#8594;</a></p>
+          <h2>Microsoft 365</h2>
+          <p>Microsoft 365 is the modern version of Office &mdash; your email (Outlook), Word, Excel, Teams and online storage (OneDrive), all kept up to date for a monthly fee. <a href="/microsoft-365-support/">Microsoft 365 support &#8594;</a></p>
+          <h2>Remote support</h2>
+          <p>Remote support means we securely connect to your computer over the internet (only when you let us) to fix things &mdash; usually in minutes, with no-one needing to visit. <a href="/remote-it-support/">How remote support works &#8594;</a></p>
+          <h2>Monthly IT support</h2>
+          <p>Instead of paying every time something breaks, you pay one small monthly fee and we look after everything &mdash; fixing problems and preventing them. <a href="/monthly-it-support/">What&rsquo;s included &#8594;</a></p>
+          <h2>The cloud</h2>
+          <p>&ldquo;The cloud&rdquo; just means storing your files and email on secure internet servers instead of only on your device &mdash; so you can reach them anywhere and they&rsquo;re safer if your device fails. <a href="/cloud-migration/">Moving to the cloud &#8594;</a></p>
+          <h2>Still unsure about a word?</h2>
+          <p>Our <a href="/it-jargon-buster/">A&ndash;Z jargon buster</a> explains the rest &mdash; or just ask us. We never talk down to anyone.</p>""",
+  cta_args=("Prefer a real person to explain?", "We&rsquo;re patient, friendly and jargon-free &mdash; ask us anything, no question is too small.",
+            ("Talk to a Techie", "/contact/"), ("View Plans", "/monthly-it-support/")),
+)
+
+# ---- Pre-call / get-ready checklists (print-friendly)
+info_page(
+  slug="pre-call-checklists", crumb_name="Get-Ready Checklists", eyebrow="// FEEL PREPARED",
+  h1='Get-ready <em class="grad grad--cyan">checklists</em>',
+  lede="Getting in touch can feel daunting if tech isn&rsquo;t your thing. These quick checklists help you feel prepared and get sorted faster &mdash; print them or keep them handy.",
+  desc="Friendly, print-friendly checklists from 365 Techies to help you prepare before calling for remote support, booking a repair, sorting Microsoft 365 or setting up a new computer.",
+  chips=["Feel prepared", "Print-friendly", "No pressure"],
+  inner="""          <p>However you like to get started, these help you feel ready. There&rsquo;s no wrong way to ask for help &mdash; but a little prep makes everything quicker and calmer.</p>
+          <h2>Before you call for remote support</h2>
+          <ul>
+            <li>Make sure the device is switched on and connected to the internet.</li>
+            <li>Have a rough description ready: what&rsquo;s happening, and roughly when it started.</li>
+            <li>Note any error messages &mdash; a photo on your phone is perfect.</li>
+            <li>Keep your phone nearby so we can talk you through it.</li>
+            <li>Don&rsquo;t worry about tidying up or fixing it first &mdash; we&rsquo;ll take it from here.</li>
+          </ul>
+          <h2>Getting ready to book a repair</h2>
+          <ul>
+            <li>Note the make and model if you know it (don&rsquo;t worry if you don&rsquo;t).</li>
+            <li>Back up anything precious if you can &mdash; or tell us and we&rsquo;ll help.</li>
+            <li>Jot down exactly what the problem is and when it happens.</li>
+            <li>Have your contact details and address handy for collection.</li>
+          </ul>
+          <h2>Questions worth asking about Microsoft 365</h2>
+          <ul>
+            <li>Which plan is right for just me, my family, or my business?</li>
+            <li>Is my email and data backed up? (Microsoft doesn&rsquo;t fully do this for you.)</li>
+            <li>Is two-step login switched on to keep my account safe?</li>
+            <li>Can you move my old emails and files across with nothing lost?</li>
+          </ul>
+          <h2>New computer? Have these ready</h2>
+          <ul>
+            <li>Your email address and password (or let us help you recover them).</li>
+            <li>A list of the programs you use regularly.</li>
+            <li>Your old computer, so we can move your files and photos across.</li>
+            <li>Any printer or device you&rsquo;d like it to work with.</li>
+          </ul>""",
+  cta_args=("Ready when you are", "However you&rsquo;d like to get started, we&rsquo;ll make it easy and stress-free.",
+            ("Book a Service", "/book-service/"), ("Call 01202 775566", "tel:+441202775566")),
 )
 
 # ---- Disaster Recovery & Business Continuity
