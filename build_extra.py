@@ -1485,6 +1485,11 @@ def services_overview():
         ("Financial Advisers &amp; IFAs", "/it-support-for-financial-advisers/", "Secure, confidential IT that supports your record-keeping obligations."),
         ("Recruitment Agencies", "/it-support-for-recruitment-agencies/", "Fast, reliable ATS, email and phones so you keep placing."),
         ("Garages &amp; Automotive", "/it-support-for-garages-automotive/", "Reliable garage software, MOT connection and workshop networks."),
+        ("Gyms &amp; Fitness", "/it-support-for-gyms-fitness/", "Membership software, 24/7 access control and payments for gyms."),
+        ("E-commerce &amp; Online Retail", "/it-support-for-ecommerce/", "Order, payment and email systems kept reliable, so you keep selling."),
+        ("Property Management", "/it-support-for-property-management/", "Management software, tenant data and secure remote working for agents."),
+        ("Manufacturing &amp; Engineering", "/it-support-for-manufacturing/", "CAD workstations, networks and design-data security for makers."),
+        ("Churches &amp; Faith Groups", "/it-support-for-churches-faith/", "AV, livestreaming and member data, with volunteer-friendly help."),
       ]),
     ]
     sections = ""
@@ -3472,6 +3477,8 @@ info_page(
           <a class="post-card" href="/spring-clean-your-computer/"><p class="post-card__cat">Seasonal</p><h3>Spring-Clean Your Computer</h3><p>Quick wins for a faster, safer, tidier computer.</p><span class="post-card__more">Get started &#8594;</span></a>
           <a class="post-card" href="/how-onboarding-works/"><p class="post-card__cat">Getting started</p><h3>How Onboarding Works</h3><p>What happens when you join us &mdash; spoiler: almost nothing for you to do.</p><span class="post-card__more">See how &#8594;</span></a>
           <a class="post-card" href="/sustainability/"><p class="post-card__cat">About</p><h3>Sustainability</h3><p>Greener IT in Dorset &mdash; repair before replace, and responsible recycling.</p><span class="post-card__more">Read more &#8594;</span></a>
+          <a class="post-card" href="/cloud-vs-on-premise/"><p class="post-card__cat">Compare</p><h3>Cloud vs On-Premise</h3><p>Cloud, a server, or a mix? A clear side-by-side for your business.</p><span class="post-card__more">Compare &#8594;</span></a>
+          <a class="post-card" href="/back-to-school-it/"><p class="post-card__cat">Seasonal</p><h3>Back-to-School IT</h3><p>Choosing a laptop, online safety and setup &mdash; sorted for families.</p><span class="post-card__more">Get ready &#8594;</span></a>
         </div>
       </div>
     </section>''',
@@ -5793,6 +5800,93 @@ def spring_clean_hub():
     add(slug=slug, title="Spring-Clean Your Computer - Quick Wins for a Faster PC | 365 Techies",
         desc=desc, og_title="Spring-Clean Your Computer | 365 Techies", schema=schema, content=content)
 spring_clean_hub()
+
+# ============================================================ COMPARISON: CLOUD VS ON-PREMISE
+info_page(
+  slug="cloud-vs-on-premise", crumb_name="Cloud vs On-Premise", eyebrow="// DECISION GUIDE",
+  h1='Cloud vs <em class="grad grad--cyan">on-premise server</em>',
+  lede="Should your business run on the cloud, a server in the office, or a mix of both? Here&rsquo;s a clear, plain-English comparison to help you weigh it up &mdash; with no jargon and no agenda.",
+  desc="Cloud vs on-premise server compared for small businesses: upfront and ongoing cost, remote access, maintenance, scaling and control - to help you choose. Plain-English guide from 365 Techies, Dorset.",
+  title="Cloud vs On-Premise Server: Which Is Right for Your Business? | 365 Techies",
+  og_title="Cloud vs On-Premise | 365 Techies",
+  chips=["Side by side","Plain English","Often a hybrid"],
+  pre='''    <section class="section section--alt" aria-label="Cloud vs on-premise">
+      <div class="wrap">
+        <p class="eyebrow eyebrow--center mono" data-reveal>// SIDE BY SIDE</p>
+        <h2 class="section-title section-title--center" data-title>The honest comparison<span class="title-underline title-underline--center"></span></h2>
+        <div class="cmp-wrap" data-reveal>
+          <table class="cmp-table cmp-table--vs">
+            <thead><tr><th>&nbsp;</th><th>Cloud (e.g. Microsoft 365)</th><th>On-premise server</th></tr></thead>
+            <tbody>
+              <tr><th>Upfront cost</th><td class="hi">Low &mdash; pay monthly per user</td><td>Higher &mdash; buy the hardware</td></tr>
+              <tr><th>Ongoing cost</th><td>Predictable monthly subscription</td><td>Maintenance, power and eventual replacement</td></tr>
+              <tr><th>Access from anywhere</th><td class="yes hi">&#10003; built in</td><td>Needs extra setup</td></tr>
+              <tr><th>Who maintains it</th><td class="hi">Handled by the provider</td><td>You (or we) look after it</td></tr>
+              <tr><th>Scaling up or down</th><td class="hi">Easy &mdash; add or remove users</td><td>Buy more capacity when needed</td></tr>
+              <tr><th>Works without internet</th><td>Needs a connection</td><td class="hi">Works on the local network</td></tr>
+              <tr><th>Best for</th><td class="hi">Flexible, remote-friendly teams</td><td>Specialist software &amp; large local files</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="cmp-foot mono" data-reveal>Not sure? Try our <a href="/server-or-cloud-picker/">server-or-cloud picker</a> for a quick steer.</p>
+      </div>
+    </section>''',
+  inner="""          <h2>Which is right for you?</h2>
+          <p>For most small businesses today, <strong>the cloud</strong> wins on cost, flexibility and simplicity &mdash; there&rsquo;s no server to buy or maintain, your team can work from anywhere, and you pay a predictable monthly fee. An <strong>on-premise server</strong> still makes sense when you run specialist software that needs one, handle very large local files, or have specific control or compliance reasons to keep data in the building.</p>
+          <h2>The best answer is often a hybrid</h2>
+          <p>Plenty of businesses we look after use a sensible mix &mdash; the cloud for email, files and collaboration, with just enough local kit for the things that genuinely need it. There&rsquo;s no one-size-fits-all, and we&rsquo;ll give you a straight recommendation. For a quick steer, try the <a href="/server-or-cloud-picker/">server-or-cloud picker</a>; when you&rsquo;re ready, see <a href="/cloud-migration/">cloud migration</a> or <a href="/server-network-support/">server &amp; network support</a>.</p>""",
+  faqs=[
+    ("Is the cloud cheaper than a server?","Usually it has a lower upfront cost and predictable monthly fees, with no hardware to buy or maintain. A server can work out better for specialist needs &mdash; it depends on your situation."),
+    ("Is the cloud secure?","Yes &mdash; reputable cloud services are very secure, often more so than an unmaintained office server. The key is setting it up properly with strong passwords, MFA and backups, which we handle."),
+    ("Can we use both?","Absolutely &mdash; a hybrid of cloud and a local server is common and often ideal. We&rsquo;ll help you get the balance right for how you work."),
+    ("Can you move us to the cloud?","Yes &mdash; we plan and handle <a href=\"/cloud-migration/\">cloud migrations</a> with minimal disruption, and support servers and networks where they&rsquo;re the better fit."),
+  ],
+  cta_args=("Not sure which way to go?","Tell us how your business works and we&rsquo;ll give you a straight, no-pressure recommendation &mdash; cloud, server or hybrid.",
+            ("Try the Picker","/server-or-cloud-picker/"), ("Talk to a Techie","/contact/")),
+)
+
+# ============================================================ HUB: BACK-TO-SCHOOL IT
+def back_to_school_hub():
+    slug="back-to-school-it"
+    desc="Getting set for the new school year? A friendly hub to help families choose a laptop, keep children safe online, set up devices and support learning - from 365 Techies, Dorset."
+    items=[
+      ("Buying","How to choose a laptop","Pick the right laptop for school or college, jargon-free.","/how-to-choose-a-laptop/"),
+      ("Safety","Keep children safe online","Set up free parental controls, step by step.","/how-to-keep-children-safe-online/"),
+      ("Setup","New computer setup","We set up a new device properly, with files moved across.","/new-computer-setup/"),
+      ("Family","Family IT support","Friendly help for the whole household&rsquo;s technology.","/family-it-support/"),
+      ("Online safety","Online safety hub","Threats, a scam quiz and simple habits in one place.","/online-safety/"),
+      ("Access","Windows accessibility features","Make a device easier to see, hear and use.","/windows-accessibility-features-guide/"),
+      ("AI","Using AI safely","Help students use AI tools sensibly and honestly.","/using-ai-safely/"),
+      ("Schools","IT support for education","Reliable, safe IT for schools, nurseries and colleges.","/it-support-for-education/"),
+    ]
+    cards="\n".join(f'          <a class="post-card" href="{href}"><p class="post-card__cat">{cat}</p><h3>{t}</h3><p>{d}</p><span class="post-card__more">Read more &#8594;</span></a>' for cat,t,d,href in items)
+    content="\n".join([
+      hero(bc("Back-to-School IT"), "// SEASONAL",
+           'Back-to-school <em class="grad grad--green">IT made easy</em>',
+           "New school year on the horizon? Here&rsquo;s a friendly place to get sorted &mdash; choosing the right device, keeping children safe online, and getting everything set up without the stress.",
+           cta1=("Talk to a Techie","/contact/"), cta2=("New Computer Setup","/new-computer-setup/"),
+           chips=["For families","Plain English","Safe &amp; sorted"]),
+      f'''    <section class="section section--alt" aria-label="Back to school checklist">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// GET SET FOR THE NEW TERM</p>
+          <h2 class="section-title section-title--center" data-title>Everything you need, in one place<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="blog-grid" data-stagger>
+{cards}
+        </div>
+      </div>
+    </section>''',
+      cta("Need a hand getting ready?",
+          "From choosing a laptop to setting it up safely for the kids, we&rsquo;ll make back-to-school tech simple &mdash; patiently and in plain English.",
+          primary=("Talk to a Techie","/contact/"), secondary=("Family IT Support","/family-it-support/")),
+    ])
+    def schema(s,_d=desc,_it=[{"@type":"ListItem","position":i+1,"name":t,"url":SITE+href} for i,(cat,t,d,href) in enumerate(items)]):
+        return graph([crumb(s,"Back-to-School IT"), webpage(s,"Back-to-School IT",_d,"CollectionPage"),
+                      {"@type":"ItemList","@id":SITE+"/back-to-school-it/#list","itemListElement":_it}])
+    add(slug=slug, title="Back-to-School IT - Laptops, Online Safety & Setup for Families | 365 Techies",
+        desc=desc, og_title="Back-to-School IT | 365 Techies", schema=schema, content=content)
+back_to_school_hub()
 
 if __name__ == "__main__":
     w = write_all()

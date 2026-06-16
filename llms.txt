@@ -106,6 +106,19 @@
 - [Financial Advisers & IFAs](https://365techies.co.uk/it-support-for-financial-advisers/): Secure, confidential IT that supports your FCA record-keeping and data-protection obligations.
 - [Recruitment Agencies](https://365techies.co.uk/it-support-for-recruitment-agencies/): Reliable ATS/CRM, high-volume email, VoIP phones and candidate-data security.
 - [Garages & Automotive](https://365techies.co.uk/it-support-for-garages-automotive/): Garage-management software, reliable MOT connection, diagnostic PCs and workshop networks.
+- [Gyms & Fitness Studios](https://365techies.co.uk/it-support-for-gyms-fitness/): Membership and booking software, 24/7 door access, payments and member-data security.
+- [E-commerce & Online Retailers](https://365techies.co.uk/it-support-for-ecommerce/): Order, stock and payment systems, reliable email and resilient connectivity so you keep selling.
+- [Property & Block Management](https://365techies.co.uk/it-support-for-property-management/): Management software, tenant and leaseholder data security, and secure remote working.
+- [Manufacturing & Engineering](https://365techies.co.uk/it-support-for-manufacturing/): CAD workstations, stock/ERP systems, office and shop-floor networks, and design-data security.
+- [Churches & Faith Groups](https://365techies.co.uk/it-support-for-churches-faith/): AV and livestreaming, member and giving data, with volunteer-friendly, charity-minded help.
+
+## More guides, tools & comparisons
+- [Cloud vs On-Premise](https://365techies.co.uk/cloud-vs-on-premise/): A plain-English comparison of running on the cloud versus an on-premise server, for small businesses.
+- [Back-to-School IT](https://365techies.co.uk/back-to-school-it/): A family hub for choosing a laptop, online safety and device setup for the new school year.
+- [How to Recover Deleted Files](https://365techies.co.uk/how-to-recover-deleted-files/): Where to look and what to do to get accidentally deleted files back.
+- [How to Set Up a Printer](https://365techies.co.uk/how-to-set-up-a-printer/): A simple step-by-step guide to getting a new printer working from Windows.
+- [How to Spot a Fake Website](https://365techies.co.uk/how-to-spot-a-fake-website/): The real red flags of a scam website - and why the padlock does not mean safe.
+- [How to Update Windows Safely](https://365techies.co.uk/how-to-update-windows-safely/): How to install Windows updates on your terms, without disruption.
 - The site includes a built-in accessibility toolbar (text resize, high contrast, readable font, reduce motion and read-aloud), reflecting 365 Techies' specialism in supporting retired and disabled users.
 
 ## Offers
