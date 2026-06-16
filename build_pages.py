@@ -128,6 +128,7 @@ HEADER = '''  <header class="site-header">
           </a>
           <div class="dropdown">
             <a href="/services/">All Services</a>
+            <a href="/preventative-maintenance/">Preventative Maintenance</a>
             <a href="/remote-it-support/">Remote IT Support</a>
             <a href="/microsoft-365-support/">Microsoft 365</a>
             <a href="/cybersecurity-support/">Cybersecurity</a>
@@ -239,6 +240,7 @@ HEADER = '''  <header class="site-header">
         <summary>Services</summary>
         <div class="m-group__links">
           <a href="/services/">All Services</a>
+          <a href="/preventative-maintenance/">Preventative Maintenance</a>
           <a href="/remote-it-support/">Remote IT Support</a>
           <a href="/microsoft-365-support/">Microsoft 365</a>
           <a href="/cybersecurity-support/">Cybersecurity</a>
@@ -407,6 +409,7 @@ FOOTER = '''  <footer class="site-footer">
       <nav aria-label="Services links">
         <p class="site-footer__head mono">SERVICES</p>
         <a href="/services/">All Services</a>
+        <a href="/preventative-maintenance/">Preventative Maintenance</a>
         <a href="/remote-it-support/">Remote IT Support</a>
         <a href="/microsoft-365-support/">Microsoft 365</a>
         <a href="/cybersecurity-support/">Cybersecurity</a>
@@ -764,6 +767,7 @@ add(
         <ul class="security-grid" data-stagger>
 {grid_cards([("Regular maintenance","A full computer service every six weeks to keep devices fast, clean and healthy."),("Unlimited remote support","Secure help over Splashtop SOS, usually within minutes during opening hours."),("Security &amp; protection","Antivirus, web protection, patching and a real human to ask &lsquo;is this email safe?&rsquo;"),("Microsoft 365 help","Outlook, Teams, OneDrive and licensing — set up and kept working for you."),("Backup checks","Backups verified regularly, because a backup you&rsquo;ve never tested isn&rsquo;t a backup."),("Friendly advice","Plain-English guidance on new devices, software and staying safe online.")])}
         </ul>
+        <p class="mono" style="text-align:center;margin-top:1.6rem"><a href="/preventative-maintenance/" style="color:var(--cyan)">See exactly what our 6-weekly preventative maintenance includes &#8594;</a></p>
       </div>
     </section>''',
    f'''    <section class="section section--alt" aria-label="Home or business">
@@ -878,7 +882,7 @@ add(
           <p class="eyebrow mono">/02 — WHAT WE HELP WITH</p>
           <h2 class="section-title" data-title>Everyday tech, sorted<span class="title-underline"></span></h2>
           <p>From a slow laptop to a printer that won&rsquo;t connect, we handle the everyday technology headaches so you don&rsquo;t have to. Most things are fixed remotely in minutes.</p>
-          <p><strong>Every plan includes a full computer service every six weeks</strong> — updates, clean-up, security and health checks — so your devices stay in great shape all year round.</p>
+          <p><strong>Every plan includes a <a href="/preventative-maintenance/">full computer service every six weeks</a></strong> — updates, clean-up, security and health checks — so your devices stay in great shape all year round.</p>
         </div>
         <ul class="checklist" data-stagger>
 {checklist(["Remote computer support","Laptop &amp; desktop help","Email setup &amp; repair","Printer troubleshooting","Wi-Fi help","Microsoft 365 support","Windows updates","Security checks","Slow computer fixes","Backup advice","New device setup","Scam &amp; fraud prevention"])}

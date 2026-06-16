@@ -1115,6 +1115,7 @@ def services_overview():
     groups = [
       ("Monthly IT support", [
         ("Monthly IT Support", "/monthly-it-support/", "Subscription IT support with regular maintenance, security checks and unlimited remote help."),
+        ("Preventative Maintenance", "/preventative-maintenance/", "A full computer service every 6 weeks &mdash; tune-up, software &amp; driver updates, security and backup checks."),
         ("Home IT Support", "/home-it-support-subscriptions/", "Friendly monthly computer support for homes, families and home workers."),
         ("Business IT Support", "/business-it-support-subscriptions/", "Reliable monthly IT support for sole traders and small businesses."),
         ("Home Support Plans", "/home-it-support-plans/", "Essential, Family and Premium home plans from &pound;15.95/month."),
