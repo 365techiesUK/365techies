@@ -27,7 +27,7 @@ const header = document.querySelector(".site-header");
 const menuButton = document.querySelector(".mobile-menu-button");
 const mobileMenu = document.querySelector(".mobile-menu");
 const menuBackdrop = document.querySelector(".menu-backdrop");
-const mobileLinks = mobileMenu.querySelectorAll(".mobile-menu__nav a");
+const mobileLinks = mobileMenu.querySelectorAll(".mobile-menu__nav > a, .mobile-menu__nav > .m-group > summary");
 const mobilePlanButtons = mobileMenu.querySelectorAll(".mobile-menu__plans .button");
 
 let menuOpen = false;
@@ -73,6 +73,8 @@ function setMenu(open) {
     menuBackdrop.style.visibility = open ? "visible" : "hidden";
     menuBackdrop.style.opacity = open ? "1" : "0";
   }
+  if (open) { const f = mobileMenu.querySelector("a, button"); if (f) { try { f.focus(); } catch (e) {} } }
+  else if (document.activeElement && mobileMenu.contains(document.activeElement)) { try { menuButton.focus(); } catch (e) {} }
 }
 
 menuButton.addEventListener("click", () => setMenu(!menuOpen));
@@ -241,7 +243,7 @@ async function initBackground() {
     return;
   }
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile() ? 1.5 : 2));
 
   const scene = new THREE.Scene();
   scene.fog = new THREE.FogExp2(0x070d22, 0.035);
@@ -639,7 +641,7 @@ async function initBackground() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile() ? 1.5 : 2));
     placeGroups();
   });
 }

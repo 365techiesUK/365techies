@@ -25,7 +25,7 @@ let menuOpen = false;
 let menuTl = null;
 
 if (mobileMenu && HAS_GSAP && !REDUCED) {
-  const links = mobileMenu.querySelectorAll(".mobile-menu__nav a");
+  const links = mobileMenu.querySelectorAll(".mobile-menu__nav > a, .mobile-menu__nav > .m-group > summary");
   const btns = mobileMenu.querySelectorAll(".mobile-menu__plans .button");
   menuTl = gsap.timeline({
     paused: true,
@@ -54,6 +54,8 @@ function setMenu(open) {
     menuBackdrop.style.visibility = open ? "visible" : "hidden";
     menuBackdrop.style.opacity = open ? "1" : "0";
   }
+  if (open) { const f = mobileMenu.querySelector("a, button"); if (f) { try { f.focus(); } catch (e) {} } }
+  else if (document.activeElement && mobileMenu.contains(document.activeElement)) { try { menuButton.focus(); } catch (e) {} }
 }
 
 if (menuButton) menuButton.addEventListener("click", () => setMenu(!menuOpen));
@@ -146,7 +148,7 @@ async function initBackground() {
   try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true }); }
   catch { canvas.remove(); return; }
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile() ? 1.5 : 2));
 
   const scene = new THREE.Scene();
   scene.fog = new THREE.FogExp2(0x070d22, 0.04);
@@ -240,7 +242,7 @@ async function initBackground() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile() ? 1.5 : 2));
   });
 }
 
