@@ -547,6 +547,115 @@
         </ol>
       </div>
     </section>
+    <section class="section" aria-label="See an agent in action">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/05 &mdash; SEE IT IN ACTION</p>
+          <h2 class="section-title section-title--center" data-title>Watch an agent handle an enquiry<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>A quick, illustrative walkthrough of how a custom agent could handle a real task &mdash; step by step, with you in control.</p>
+        </div>
+        <div class="quiz" id="agentdemo" style="max-width:660px">
+          <div style="border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:1rem 1.2rem;margin-bottom:1.3rem;background:rgba(255,255,255,.03)">
+            <p class="mono" style="color:var(--faint);font-size:.68rem;letter-spacing:.12em;margin:0 0 .5rem">NEW ENQUIRY &middot; CONTACT FORM</p>
+            <p style="margin:0"><strong>From:</strong> Sam &mdash; The Quay Caf&eacute;, Poole</p>
+            <p style="margin:.4rem 0 0;color:var(--muted)">&ldquo;Our Wi-Fi keeps dropping out during the lunch rush and the card machine goes down with it. Can someone call me back today?&rdquo;</p>
+          </div>
+          <div id="agentdemo-steps" aria-live="polite"></div>
+          <p style="text-align:center;margin:1.2rem 0 0"><button type="button" id="agentdemo-run" class="button primary">Run the demo</button></p>
+          <p class="hc-disclaimer" style="margin-top:1.3rem">This is an illustrative, scripted demonstration to show the idea &mdash; not a live AI. A real agent we build for you connects securely to your own tools and data, follows your rules, and never acts without the oversight you choose.</p>
+        </div>
+      </div>
+      <script>
+      (function(){
+        var btn=document.getElementById('agentdemo-run'); if(!btn) return;
+        var box=document.getElementById('agentdemo-steps');
+        var steps=[
+          {t:'Reading the enquiry',d:'Understood &mdash; a Poole caf&eacute; whose Wi-Fi keeps dropping at lunchtime, taking the card machine down with it. Wants a callback today.'},
+          {t:'Categorising',d:'Business &middot; Connectivity &middot; Payments affected &middot; Priority: high'},
+          {t:'Checking your calendar &amp; knowledge base',d:'Two callback slots free this afternoon. Relevant help on file: business Wi-Fi and Starlink for busy sites.'},
+          {t:'Drafting a reply',d:'&ldquo;Hi Sam, sorry the Wi-Fi&rsquo;s playing up &mdash; that&rsquo;s usually quick to sort, and we&rsquo;ll make sure your card machine stays up. Could we call you at 2pm or 4pm today?&rdquo;'},
+          {t:'Handing to a human',d:'Flagged for the team to review and send &mdash; nothing goes out without your approval. Logged against the customer record.'}
+        ];
+        function run(){
+          btn.disabled=true; btn.textContent='Working\u2026'; box.innerHTML='';
+          var i=0;
+          (function next(){
+            if(i>=steps.length){ btn.disabled=false; btn.textContent='Run it again'; return; }
+            var s=steps[i];
+            var row=document.createElement('div');
+            row.style.cssText='display:flex;gap:.8rem;align-items:flex-start;opacity:0;transition:opacity .45s;margin:.6rem 0';
+            row.innerHTML='<span class="mono" style="flex:0 0 auto;width:1.8rem;height:1.8rem;border-radius:50%;background:#37c2c2;color:#021;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem">'+(i+1)+'</span><div><strong>'+s.t+'&hellip;</strong><p style="margin:.15rem 0 0;color:var(--muted)">'+s.d+'</p></div>';
+            box.appendChild(row);
+            requestAnimationFrame(function(){ row.style.opacity='1'; });
+            i++;
+            setTimeout(next,950);
+          })();
+        }
+        btn.addEventListener('click',run);
+      })();
+      </script>
+    </section>
+    <section class="section section--alt" aria-label="What could an agent do for you?">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/06 &mdash; WHAT COULD IT DO FOR YOU?</p>
+          <h2 class="section-title section-title--center" data-title>Where would an agent save you most?<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="quiz" id="agentpick">
+          <div class="quiz__step is-active" data-step="area">
+            <p class="quiz__count mono">PICK YOUR BIGGEST TIME-DRAIN</p>
+            <h2 class="quiz__q">Where does your team lose the most time?</h2>
+            <div class="quiz__opts">
+              <button type="button" class="quiz__opt" data-set="area:enquiries">Answering enquiries &amp; quoting</button>
+              <button type="button" class="quiz__opt" data-set="area:service">Customer service</button>
+              <button type="button" class="quiz__opt" data-set="area:admin">Admin &amp; data entry</button>
+              <button type="button" class="quiz__opt" data-set="area:finance">Invoicing &amp; finance</button>
+              <button type="button" class="quiz__opt" data-set="area:onboarding">Onboarding customers or staff</button>
+              <button type="button" class="quiz__opt" data-set="area:docs">Reading &amp; filing documents</button>
+            </div>
+          </div>
+          <div class="quiz__step" data-step="result"><div class="quiz__result" id="agentpick-result" aria-live="polite"></div></div>
+          <div class="quiz__back"><button type="button" id="agentpick-restart">&larr; Start again</button></div>
+        </div>
+      </div>
+      <script>
+      (function(){
+        var quiz=document.getElementById('agentpick'); if(!quiz) return;
+        function show(step){ var s=quiz.querySelectorAll('.quiz__step'); for(var i=0;i<s.length;i++) s[i].classList.toggle('is-active', s[i].getAttribute('data-step')===step); }
+        var R={
+          enquiries:{h:'An enquiry &amp; quoting agent',b:'It reads each new enquiry, works out what&rsquo;s needed, drafts a friendly reply and a first-pass quote from your price list, and logs it in your CRM &mdash; ready for you to check and send.'},
+          service:{h:'A customer-service agent',b:'It triages incoming messages, drafts helpful replies from your own knowledge base, logs the ticket and escalates anything tricky straight to a person.'},
+          admin:{h:'An admin agent',b:'It takes on the repetitive data entry, scheduling and report-building that quietly eats hours &mdash; with your approval at the points that matter.'},
+          finance:{h:'An invoicing agent',b:'It politely chases overdue invoices, reconciles your records and prepares finance reports, flagging anything unusual for you to look at.'},
+          onboarding:{h:'An onboarding agent',b:'It sets up every new customer or staff member consistently, following your exact checklist, so nothing ever slips through the cracks.'},
+          docs:{h:'A document agent',b:'It reads, summarises, pulls out the key details and files documents at a speed no team can match &mdash; turning a pile of paperwork into something useful.'}
+        };
+        quiz.addEventListener('click',function(e){ var o=e.target.closest('.quiz__opt'); if(!o) return; var v=o.getAttribute('data-set').split(':')[1]; var r=R[v]; if(!r) return;
+          document.getElementById('agentpick-result').innerHTML='<p class="hc-bandlabel hc--strong">'+r.h+'</p><p>'+r.b+'</p><p style="color:var(--muted)">That&rsquo;s just an example &mdash; we&rsquo;d build yours around your actual process, tools and rules, with you in control throughout.</p><div class="quiz__actions"><a href="/contact/" class="button primary">Book a discovery call</a><a href="/cybersecurity-support/" class="button secondary">How we keep it secure</a></div>';
+          show('result');
+        });
+        document.getElementById('agentpick-restart').addEventListener('click',function(){ show('area'); });
+      })();
+      </script>
+    </section>
+    <section class="section" aria-label="The payoff">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">/07 &mdash; THE PAYOFF</p>
+          <h2 class="section-title" data-title>Hours back, every week<span class="title-underline"></span></h2>
+          <p>Take a simple enquiry. <strong>Before:</strong> someone reads it, looks up the details, writes a reply, builds a quote and updates the system &mdash; a few minutes each, dozens of times a week. <strong>After:</strong> the agent does the legwork in seconds and hands you a ready-to-send draft to approve.</p>
+          <p>It&rsquo;s not about replacing your team &mdash; it&rsquo;s about giving them their time back for the work that genuinely needs a human. We start small, prove it on one real process, and grow from there.</p>
+        </div>
+        <ul class="checklist" data-stagger>
+          <li>Less time lost to repetitive admin</li>
+          <li>Faster, more consistent replies</li>
+          <li>Fewer things slipping through the cracks</li>
+          <li>It runs day and night</li>
+          <li>Your team freed for real work</li>
+          <li>You stay firmly in control</li>
+        </ul>
+      </div>
+    </section>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
