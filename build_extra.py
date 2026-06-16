@@ -1479,6 +1479,12 @@ def services_overview():
         ("Retail &amp; Hospitality", "/it-support-for-retail-hospitality/", "EPOS, payments, Wi-Fi and bookings kept running."),
         ("Tradespeople", "/it-support-for-tradespeople/", "Mobile-first IT for trades and construction."),
         ("Schools &amp; Education", "/it-support-for-education/", "Safe, reliable IT for schools, nurseries and colleges."),
+        ("Hotels &amp; Holiday Lets", "/it-support-for-hotels-holiday-lets/", "Booking systems, guest Wi-Fi and rural connectivity for hospitality."),
+        ("Veterinary Practices", "/it-support-for-vets/", "Reliable clinical systems, imaging networks and secure records for vets."),
+        ("Salons &amp; Beauty", "/it-support-for-salons-beauty/", "Booking software, payments and friendly, jargon-free help."),
+        ("Financial Advisers &amp; IFAs", "/it-support-for-financial-advisers/", "Secure, confidential IT that supports your record-keeping obligations."),
+        ("Recruitment Agencies", "/it-support-for-recruitment-agencies/", "Fast, reliable ATS, email and phones so you keep placing."),
+        ("Garages &amp; Automotive", "/it-support-for-garages-automotive/", "Reliable garage software, MOT connection and workshop networks."),
       ]),
     ]
     sections = ""
@@ -3459,6 +3465,13 @@ info_page(
           <a class="post-card" href="/setting-up-a-computer-for-an-older-relative/"><p class="post-card__cat">For family</p><h3>Setting Up for an Older Relative</h3><p>Set up a device kindly, safely and simply &mdash; and save the worried calls.</p><span class="post-card__more">Read the guide &#8594;</span></a>
           <a class="post-card" href="/helping-a-relative-with-their-computer/"><p class="post-card__cat">For family</p><h3>Helping a Relative Remotely</h3><p>Help from afar safely &mdash; and the remote-access scam to avoid.</p><span class="post-card__more">Read the guide &#8594;</span></a>
           <a class="post-card" href="/confident-video-calling/"><p class="post-card__cat">Guide</p><h3>Confident Video Calling</h3><p>See the family on screen, on any device &mdash; a gentle beginner&rsquo;s guide.</p><span class="post-card__more">Read the guide &#8594;</span></a>
+          <a class="post-card" href="/downtime-cost-calculator/"><p class="post-card__cat">Tool</p><h3>Downtime Cost Calculator</h3><p>See what IT downtime could be costing your business &mdash; from your own numbers.</p><span class="post-card__more">Work it out &#8594;</span></a>
+          <a class="post-card" href="/server-or-cloud-picker/"><p class="post-card__cat">Tool</p><h3>Server or Cloud?</h3><p>Get a clear, jargon-free steer on the right setup for your business.</p><span class="post-card__more">Find out &#8594;</span></a>
+          <a class="post-card" href="/microsoft-365-vs-google-workspace/"><p class="post-card__cat">Compare</p><h3>Microsoft 365 vs Google Workspace</h3><p>An even-handed comparison to help you choose &mdash; we support both.</p><span class="post-card__more">Compare &#8594;</span></a>
+          <a class="post-card" href="/break-fix-vs-managed-it/"><p class="post-card__cat">Compare</p><h3>Break-Fix vs Managed IT</h3><p>Pay per repair or a monthly plan? A clear side-by-side.</p><span class="post-card__more">Compare &#8594;</span></a>
+          <a class="post-card" href="/spring-clean-your-computer/"><p class="post-card__cat">Seasonal</p><h3>Spring-Clean Your Computer</h3><p>Quick wins for a faster, safer, tidier computer.</p><span class="post-card__more">Get started &#8594;</span></a>
+          <a class="post-card" href="/how-onboarding-works/"><p class="post-card__cat">Getting started</p><h3>How Onboarding Works</h3><p>What happens when you join us &mdash; spoiler: almost nothing for you to do.</p><span class="post-card__more">See how &#8594;</span></a>
+          <a class="post-card" href="/sustainability/"><p class="post-card__cat">About</p><h3>Sustainability</h3><p>Greener IT in Dorset &mdash; repair before replace, and responsible recycling.</p><span class="post-card__more">Read more &#8594;</span></a>
         </div>
       </div>
     </section>''',
@@ -5398,6 +5411,388 @@ def computer_help_for_seniors():
     add(slug=slug, title="Computer Help for Seniors & Older People (Patient & Plain English) | 365 Techies",
         desc=desc, og_title="Computer Help for Seniors | 365 Techies", schema=schema, content=content)
 computer_help_for_seniors()
+
+# ============================================================ TRUST: SUSTAINABILITY
+info_page(
+  slug="sustainability", crumb_name="Sustainability", eyebrow="// SUSTAINABILITY",
+  h1='Greener IT, the <em class="grad grad--green">Dorset</em> way',
+  lede="Good IT support and looking after the planet pull in the same direction: keep technology working longer, waste less, and dispose of it responsibly. As a Sustainable Dorset member, that&rsquo;s simply how we work.",
+  desc="How 365 Techies works more sustainably - repair before replace, extending the life of computers, secure wiping and responsible recycling, and Sustainable Dorset membership. Greener IT support in Dorset.",
+  title="Our Commitment to Sustainability - Greener IT in Dorset | 365 Techies",
+  og_title="Sustainability | 365 Techies",
+  chips=["Sustainable Dorset member","Repair before replace","Responsible recycling"],
+  pre=f'''    <section class="section section--alt" aria-label="How we work more sustainably">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// SMALL CHOICES, REAL DIFFERENCE</p>
+          <h2 class="section-title section-title--center" data-title>How we keep IT greener<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="tile-grid" data-stagger>
+{tiles([("wrench","Repair before replace","The greenest computer is the one you already own. We fix and upgrade where it makes sense, rather than reaching for a new box."),("clock","Longer device life","A full service every six weeks keeps machines healthy and working for years longer &mdash; less waste, better value."),("leaf","Responsible recycling","When a device really is past it, we help you wipe it securely and recycle it the right way."),("shield","Backed by a warranty","Every repair carries a 12-month warranty, so a fix is a fix &mdash; not a quick patch that lands back in the bin.")])}
+        </div>
+      </div>
+    </section>''',
+  inner="""          <h2>The greenest computer is the one you already own</h2>
+          <p>A huge share of a device&rsquo;s environmental footprint is in making it in the first place. So the single most sustainable thing we can do is help your existing computers last longer &mdash; through regular <a href="/preventative-maintenance/">maintenance</a>, sensible upgrades and honest <a href="/repair-or-replace-advisor/">repair-or-replace</a> advice. We&rsquo;ll never push a new machine you don&rsquo;t need.</p>
+          <h2>When it&rsquo;s time to let go, do it right</h2>
+          <p>Old electricals should never go in the bin. We help you securely wipe your data and recycle responsibly under the UK&rsquo;s WEEE rules &mdash; see our guide to <a href="/how-to-wipe-and-recycle-old-computer/">wiping and recycling an old computer</a>, and find your nearest centre via <a href="https://www.recyclenow.com/" target="_blank" rel="noopener">Recycle Now</a> and the <a href="https://www.gov.uk/electricalwaste-producer-supplier-responsibilities" target="_blank" rel="noopener">gov.uk WEEE guidance</a>.</p>
+          <h2>A proud Sustainable Dorset member</h2>
+          <p>We&rsquo;re a member of <a href="https://www.sustainabledorset.org/" target="_blank" rel="noopener">Sustainable Dorset</a>, a community working towards a greener, fairer county. Being a local, family-run business since 1995, looking after Dorset for the long term comes naturally to us &mdash; and we&rsquo;re always looking for ways to do a little better.</p>""",
+  faqs=[
+    ("Is it really greener to repair than replace?","Usually, yes &mdash; most of a computer&rsquo;s environmental impact comes from manufacturing it, so keeping a working machine going longer beats replacing it. We&rsquo;ll always advise honestly when a repair genuinely is worth it."),
+    ("What do you do with old computers?","We help you wipe them securely so your data can&rsquo;t be recovered, then recycle or pass them on responsibly under WEEE rules &mdash; never to landfill."),
+    ("What is Sustainable Dorset?","It&rsquo;s a local community and network working towards a more sustainable Dorset. We&rsquo;re a member, and it reflects how we like to do business locally."),
+  ],
+  cta_args=("Make your tech last longer","Friendly, proactive IT support that keeps your computers healthy for years &mdash; better for you, and kinder to the planet.",
+            ("View Monthly Plans","/monthly-it-support/"), ("Talk to a Techie","/contact/")),
+)
+
+# ============================================================ COMPARISON: MICROSOFT 365 VS GOOGLE WORKSPACE
+info_page(
+  slug="microsoft-365-vs-google-workspace", crumb_name="Microsoft 365 vs Google Workspace", eyebrow="// EVEN-HANDED COMPARISON",
+  h1='Microsoft 365 vs <em class="grad grad--cyan">Google Workspace</em>',
+  lede="Which email and office suite is right for your business? Here&rsquo;s a fair, plain-English comparison of Microsoft 365 and Google Workspace &mdash; and we genuinely support both, so we&rsquo;ve no axe to grind.",
+  desc="An even-handed comparison of Microsoft 365 vs Google Workspace for business - desktop apps, offline working, email, video, storage and security - to help you choose. From 365 Techies, who support both.",
+  title="Microsoft 365 vs Google Workspace for Business (Even-Handed) | 365 Techies",
+  og_title="Microsoft 365 vs Google Workspace | 365 Techies",
+  chips=["Even-handed","Plain English","We support both"],
+  pre='''    <section class="section section--alt" aria-label="Microsoft 365 vs Google Workspace">
+      <div class="wrap">
+        <p class="eyebrow eyebrow--center mono" data-reveal>// SIDE BY SIDE</p>
+        <h2 class="section-title section-title--center" data-title>The honest comparison<span class="title-underline title-underline--center"></span></h2>
+        <div class="cmp-wrap" data-reveal>
+          <table class="cmp-table cmp-table--vs">
+            <thead><tr><th>&nbsp;</th><th>Microsoft 365</th><th>Google Workspace</th></tr></thead>
+            <tbody>
+              <tr><th>Installable desktop apps</th><td class="hi">Full Word, Excel, Outlook on your PC</td><td>Browser-first (Docs, Sheets, Gmail)</td></tr>
+              <tr><th>Works offline</th><td class="hi">Full offline working in the apps</td><td>Limited offline in the browser</td></tr>
+              <tr><th>Familiar to Windows users</th><td class="hi">Very &mdash; the apps most people grew up on</td><td>Web-native, clean and simple</td></tr>
+              <tr><th>Email</th><td>Outlook &amp; Exchange</td><td>Gmail</td></tr>
+              <tr><th>Video &amp; chat</th><td>Teams</td><td>Google Meet &amp; Chat</td></tr>
+              <tr><th>Cloud storage</th><td>OneDrive &amp; SharePoint</td><td>Google Drive</td></tr>
+              <tr><th>Admin &amp; security</th><td class="yes">Strong, granular controls</td><td class="yes">Strong, simple controls</td></tr>
+              <tr><th>Best for</th><td class="hi">Businesses wanting installed Office &amp; Windows fit</td><td>Browser-first, collaboration-led teams</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="cmp-foot mono" data-reveal>A fair, general comparison &mdash; check the latest features and prices on <a href="https://www.microsoft.com/en-gb/microsoft-365/business" target="_blank" rel="noopener">Microsoft</a> and <a href="https://workspace.google.com/" target="_blank" rel="noopener">Google</a>.</p>
+      </div>
+    </section>''',
+  inner="""          <h2>Which is right for you?</h2>
+          <p>There&rsquo;s no single winner &mdash; it depends on how you work. <strong>Microsoft 365</strong> tends to suit businesses that want the full Office apps installed on their computers, work offline, deal with complex spreadsheets and documents, or simply prefer what their team already knows. <strong>Google Workspace</strong> suits teams that live in the browser, collaborate on shared documents in real time, and like things clean and simple.</p>
+          <p>Honestly? Most small businesses we look after are well served by either &mdash; the bigger wins come from setting it up properly, securing it and actually using it well. We&rsquo;re Microsoft partners, but we set up and support both, and we&rsquo;ll give you a straight recommendation for your situation. Prefer a quick steer on Microsoft licensing? Try our <a href="/which-microsoft-365-plan/">Microsoft 365 plan picker</a>, or read our <a href="/microsoft-365-vs-gmail-for-small-businesses/">Microsoft 365 vs Gmail</a> guide.</p>""",
+  faqs=[
+    ("Can you move us from one to the other?","Yes &mdash; we migrate email, contacts, calendars and files between Microsoft 365 and Google Workspace with minimal disruption and nothing lost. See <a href=\"/cloud-migration/\">cloud migration</a>."),
+    ("Which is cheaper?","Both have similar tiers, and prices change, so we&rsquo;d rather point you to each vendor&rsquo;s current pricing and confirm the best-value option for you for free than quote a figure that might be out of date."),
+    ("Do you support both?","Yes &mdash; we set up, secure and support <a href=\"/microsoft-365-support/\">Microsoft 365</a> and <a href=\"/google-workspace-support/\">Google Workspace</a>, so our advice is genuinely even-handed."),
+  ],
+  cta_args=("Not sure which to choose?","Tell us how your team works and we&rsquo;ll give you a straight, no-pressure recommendation &mdash; then set it up and support it.",
+            ("Microsoft 365 Support","/microsoft-365-support/"), ("Google Workspace Support","/google-workspace-support/")),
+)
+
+# ============================================================ COMPARISON: BREAK-FIX VS MANAGED IT
+info_page(
+  slug="break-fix-vs-managed-it", crumb_name="Break-Fix vs Managed IT", eyebrow="// DECISION GUIDE",
+  h1='Break-fix vs <em class="grad grad--green">managed IT support</em>',
+  lede="Pay per repair, or a fixed monthly fee for ongoing cover? Here&rsquo;s a clear, side-by-side look at break-fix versus managed IT support &mdash; so you can see which genuinely fits.",
+  desc="Break-fix vs managed IT support compared: when you call, cost predictability, prevention and monitoring, security upkeep and which suits you. A clear, plain-English decision guide from 365 Techies.",
+  title="Break-Fix vs Managed IT Support: Which Is Right for You? | 365 Techies",
+  og_title="Break-Fix vs Managed IT Support | 365 Techies",
+  chips=["Side by side","Plain English","No lock-in either way"],
+  pre='''    <section class="section section--alt" aria-label="Break-fix vs managed IT">
+      <div class="wrap">
+        <p class="eyebrow eyebrow--center mono" data-reveal>// SIDE BY SIDE</p>
+        <h2 class="section-title section-title--center" data-title>Two ways to get IT support<span class="title-underline title-underline--center"></span></h2>
+        <div class="cmp-wrap" data-reveal>
+          <table class="cmp-table cmp-table--vs">
+            <thead><tr><th>&nbsp;</th><th>Break-fix (pay per repair)</th><th>Managed / monthly plan</th></tr></thead>
+            <tbody>
+              <tr><th>When you get help</th><td>After something breaks</td><td class="hi">Before and after &mdash; problems are caught early</td></tr>
+              <tr><th>Cost</th><td>Unpredictable, per job</td><td class="hi">One fixed monthly fee, from &pound;15.95</td></tr>
+              <tr><th>Prevention &amp; monitoring</th><td class="no">&ndash;</td><td class="yes hi">&#10003; included</td></tr>
+              <tr><th>Knows your setup</th><td>Starts fresh each time</td><td class="hi">The same team who know you</td></tr>
+              <tr><th>Security &amp; backups kept up</th><td class="no">Only if you ask</td><td class="yes hi">&#10003; looked after for you</td></tr>
+              <tr><th>Best for</th><td>The occasional, non-critical fix</td><td class="hi">Anyone who relies on their tech</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="cmp-foot mono" data-reveal>Both are cancel-anytime with no lock-in. <a href="/break-fix-vs-monthly-vs-in-house-it-support/">See the three-way comparison</a> &middot; <a href="/why-monthly-it-support-beats-per-repair/">Why monthly wins</a></p>
+      </div>
+    </section>''',
+  inner="""          <h2>What&rsquo;s actually the difference?</h2>
+          <p><strong>Break-fix</strong> means you pay each time something goes wrong &mdash; like calling a plumber for a leak. It feels cheap because you only pay when you need it, but nothing is being done to stop the next problem, and help is reactive. <strong>Managed support</strong> (a monthly plan) means a fixed fee covers unlimited help <em>plus</em> the quiet work that prevents problems &mdash; maintenance, updates, security and backups &mdash; with the same team who know your setup.</p>
+          <h2>So which costs more?</h2>
+          <p>On paper the monthly fee looks like the bigger number. But once you add up emergency call-outs, the hours lost to downtime, and the cost of data you didn&rsquo;t back up, break-fix often works out dearer &mdash; and far more stressful. For anyone who genuinely relies on their computers, managed support usually wins on both cost and peace of mind. If you only have a single, non-critical machine, break-fix can be fine. Still unsure? Our <a href="/plan-finder/">Plan Finder</a> points you the right way.</p>""",
+  faqs=[
+    ("Which costs more over a year?","It varies, but break-fix often costs more once you total emergency call-outs, downtime and any lost data. A monthly plan spreads the cost predictably and prevents many problems happening at all."),
+    ("Can I start with break-fix and move to a plan later?","Yes &mdash; lots of customers call us for a one-off repair, then join a plan to avoid the next emergency. There are no long contracts either way."),
+    ("Do I have to sign a long contract for managed support?","No &mdash; our plans are rolling and cancel-anytime. You stay because it&rsquo;s working, not because you&rsquo;re locked in."),
+  ],
+  cta_args=("Ready to stop firefighting?","Get predictable, proactive IT support that prevents problems instead of just reacting to them &mdash; from &pound;15.95/month, cancel anytime.",
+            ("View Monthly Plans","/monthly-it-support/"), ("Get a Quick Quote","/quick-quote/")),
+)
+
+# ============================================================ TOOL: DOWNTIME COST CALCULATOR
+DOWNTIME_WIDGET = '''    <section class="section section--alt" aria-label="Downtime cost calculator">
+      <div class="wrap">
+        <div class="quiz" id="dt">
+          <div class="quiz__step is-active" data-step="people">
+            <p class="quiz__count mono">STEP 1 OF 4</p>
+            <h2 class="quiz__q">When IT goes down, how many people stop working?</h2>
+            <div class="quiz__opts">
+              <button type="button" class="quiz__opt" data-set="people:one">Just one</button>
+              <button type="button" class="quiz__opt" data-set="people:few">A few (around 3)</button>
+              <button type="button" class="quiz__opt" data-set="people:team">The whole team (8+)</button>
+            </div>
+          </div>
+          <div class="quiz__step" data-step="value">
+            <p class="quiz__count mono">STEP 2 OF 4</p>
+            <h2 class="quiz__q">Roughly what is an hour of their time worth?</h2>
+            <div class="quiz__opts">
+              <button type="button" class="quiz__opt" data-set="value:low">Under &pound;15/hour</button>
+              <button type="button" class="quiz__opt" data-set="value:mid">&pound;15&ndash;&pound;30/hour</button>
+              <button type="button" class="quiz__opt" data-set="value:high">&pound;30+/hour</button>
+            </div>
+          </div>
+          <div class="quiz__step" data-step="hours">
+            <p class="quiz__count mono">STEP 3 OF 4</p>
+            <h2 class="quiz__q">How long does a typical IT problem stop you?</h2>
+            <div class="quiz__opts">
+              <button type="button" class="quiz__opt" data-set="hours:short">About an hour</button>
+              <button type="button" class="quiz__opt" data-set="hours:half">Half a day</button>
+              <button type="button" class="quiz__opt" data-set="hours:full">A full day or more</button>
+            </div>
+          </div>
+          <div class="quiz__step" data-step="freq">
+            <p class="quiz__count mono">LAST ONE</p>
+            <h2 class="quiz__q">How often does that happen?</h2>
+            <div class="quiz__opts">
+              <button type="button" class="quiz__opt" data-set="freq:rare">A couple of times a year</button>
+              <button type="button" class="quiz__opt" data-set="freq:some">Every few months</button>
+              <button type="button" class="quiz__opt" data-set="freq:often">Most months</button>
+            </div>
+          </div>
+          <div class="quiz__step" data-step="result"><div class="quiz__result" id="dt-result" aria-live="polite"></div></div>
+          <div class="quiz__back"><button type="button" id="dt-restart">&larr; Start again</button></div>
+        </div>
+      </div>
+      <script>
+      (function(){
+        var quiz=document.getElementById('dt'); if(!quiz) return;
+        var a={};
+        var PEOPLE={one:1,few:3,team:8}, VALUE={low:12,mid:22,high:40}, HOURS={short:1,half:4,full:8}, FREQ={rare:1.5,some:4,often:8};
+        function show(step){ var s=quiz.querySelectorAll('.quiz__step'); for(var i=0;i<s.length;i++) s[i].classList.toggle('is-active', s[i].getAttribute('data-step')===step); }
+        function result(){
+          var annual=PEOPLE[a.people]*VALUE[a.value]*HOURS[a.hours]*FREQ[a.freq];
+          annual = annual<500 ? Math.round(annual/10)*10 : Math.round(annual/50)*50;
+          var cls = annual<500?'hc--good':(annual<2000?'hc--good':'hc--risk');
+          var times=Math.round(annual/191);
+          var ctx = times>=2 ? ' That is around <strong>'+times+' times</strong> the annual cost of our home support plan &mdash; and preventing downtime is exactly what a plan is for.' : ' A monthly plan (from &pound;15.95/month) is built to prevent exactly this kind of lost time.';
+          document.getElementById('dt-result').innerHTML=
+            '<p class="hc-bandlabel '+cls+'">About &pound;'+annual.toLocaleString()+' a year in lost time</p>'+
+            '<p>Based on your own numbers, IT downtime could be costing your business roughly <strong>&pound;'+annual.toLocaleString()+' a year</strong> in lost working time alone &mdash; before counting lost data, missed deadlines or stress.'+ctx+'</p>'+
+            '<div class="quiz__actions"><a href="/monthly-it-support/" class="button primary">Prevent downtime</a><a href="/quick-quote/" class="button secondary">Get a quick quote</a></div>'+
+            '<p class="hc-disclaimer">A friendly estimate from your own figures, not a quote &mdash; real costs vary. For context on the wider cost of IT problems, the UK&rsquo;s <a href="https://www.ncsc.gov.uk/section/information-for/small-medium-sized-organisations" target="_blank" rel="noopener">NCSC</a> has useful guidance.</p>';
+        }
+        quiz.addEventListener('click',function(e){ var o=e.target.closest('.quiz__opt'); if(!o) return; var kv=o.getAttribute('data-set').split(':'); a[kv[0]]=kv[1];
+          if(kv[0]==='people') show('value');
+          else if(kv[0]==='value') show('hours');
+          else if(kv[0]==='hours') show('freq');
+          else if(kv[0]==='freq'){ result(); show('result'); }
+        });
+        document.getElementById('dt-restart').addEventListener('click',function(){ a={}; show('people'); });
+      })();
+      </script>
+    </section>'''
+def downtime_cost_calculator():
+    slug="downtime-cost-calculator"
+    desc="What could IT downtime be costing your business? Answer four quick questions for a friendly estimate based on your own numbers - and see why preventing problems pays. Free tool from 365 Techies."
+    faqs=[
+      ("How is the estimate worked out?","It&rsquo;s simple arithmetic on the numbers you choose &mdash; how many people stop working, what their time is worth, how long problems last and how often. Nothing is sent or stored, and it&rsquo;s an estimate, not a quote."),
+      ("Why does downtime cost more than it looks?","Lost working hours are just the start &mdash; there&rsquo;s also missed deadlines, lost or unbacked-up data, frustrated customers and the stress of it all. The visible bill is only part of the picture."),
+      ("How does a support plan help?","Managed support prevents many problems happening at all &mdash; with monitoring, maintenance, updates and verified backups &mdash; and gets you help fast when something does go wrong. See <a href=\"/monthly-it-support/\">monthly IT support</a>."),
+    ]
+    content="\n".join([
+      hero(bc("Downtime Cost Calculator"), "// FREE BUSINESS TOOL",
+           'What is IT downtime <em class="grad grad--green">costing you?</em>',
+           "When systems go down, the meter is running &mdash; in lost hours, missed work and stress. Answer four quick questions for a friendly estimate based on your own numbers.",
+           cta1=("Prevent Downtime","/monthly-it-support/"), cta2=("Get a Quick Quote","/quick-quote/"),
+           chips=["Your own numbers","Takes 30 seconds","Nothing stored"]),
+      DOWNTIME_WIDGET,
+      faq_html(faqs),
+      cta("Stop downtime before it starts",
+          "Proactive, monitored IT support that prevents problems and gets you back up fast when something does go wrong &mdash; from &pound;21.15/user/month.",
+          primary=("Business IT Support","/business-it-support-subscriptions/"), secondary=("Talk to a Techie","/contact/")),
+    ])
+    def schema(s,_d=desc,_f=faqs):
+        return graph([crumb(s,"Downtime Cost Calculator"), webpage(s,"Business Downtime Cost Calculator",_d),
+                      faqpage(s,_f),
+                      {"@type":"WebApplication","name":"365 Techies Downtime Cost Calculator","applicationCategory":"BusinessApplication","operatingSystem":"Web (all browsers)","url":SITE+"/downtime-cost-calculator/","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},"provider":{"@id":SITE+"/#business"}}])
+    add(slug=slug, title="Business Downtime Cost Calculator (Free) | 365 Techies",
+        desc=desc, og_title="Downtime Cost Calculator | 365 Techies", schema=schema, content=content)
+downtime_cost_calculator()
+
+# ============================================================ TOOL: SERVER OR CLOUD PICKER
+SERVERCLOUD_WIDGET = '''    <section class="section section--alt" aria-label="Do I need a server or the cloud?">
+      <div class="wrap">
+        <div class="quiz" id="sc">
+          <div class="quiz__step is-active" data-step="work">
+            <p class="quiz__count mono">STEP 1 OF 3</p>
+            <h2 class="quiz__q">How does your team mostly work?</h2>
+            <div class="quiz__opts">
+              <button type="button" class="quiz__opt" data-set="work:office">Mostly in one office</button>
+              <button type="button" class="quiz__opt" data-set="work:remote">Lots of remote &amp; hybrid working</button>
+              <button type="button" class="quiz__opt" data-set="work:mix">A real mix of both</button>
+            </div>
+          </div>
+          <div class="quiz__step" data-step="app">
+            <p class="quiz__count mono">STEP 2 OF 3</p>
+            <h2 class="quiz__q">Do you run specialist software that needs a local server?</h2>
+            <div class="quiz__opts">
+              <button type="button" class="quiz__opt" data-set="app:localserver">Yes &mdash; older or specialist software</button>
+              <button type="button" class="quiz__opt" data-set="app:none">No &mdash; mostly email, Office and web apps</button>
+              <button type="button" class="quiz__opt" data-set="app:unsure">I&rsquo;m not sure</button>
+            </div>
+          </div>
+          <div class="quiz__step" data-step="data">
+            <p class="quiz__count mono">LAST ONE</p>
+            <h2 class="quiz__q">Do you have very large shared files or specific compliance rules?</h2>
+            <div class="quiz__opts">
+              <button type="button" class="quiz__opt" data-set="data:yes">Yes</button>
+              <button type="button" class="quiz__opt" data-set="data:no">No, or not sure</button>
+            </div>
+          </div>
+          <div class="quiz__step" data-step="result"><div class="quiz__result" id="sc-result" aria-live="polite"></div></div>
+          <div class="quiz__back"><button type="button" id="sc-restart">&larr; Start again</button></div>
+        </div>
+      </div>
+      <script>
+      (function(){
+        var quiz=document.getElementById('sc'); if(!quiz) return;
+        var a={};
+        function show(step){ var s=quiz.querySelectorAll('.quiz__step'); for(var i=0;i<s.length;i++) s[i].classList.toggle('is-active', s[i].getAttribute('data-step')===step); }
+        function out(head,body,primHref,primLabel){
+          document.getElementById('sc-result').innerHTML='<p class="hc-bandlabel hc--strong">'+head+'</p><p>'+body+'</p>'+
+            '<div class="quiz__actions"><a href="'+primHref+'" class="button primary">'+primLabel+'</a><a href="/contact/" class="button secondary">Talk it through</a></div>'+
+            '<p class="hc-disclaimer">A starting point, not a final answer &mdash; a quick, free chat confirms the right fit for you. See also <a href="/onedrive-sharepoint-teams-explained/">OneDrive &amp; the cloud explained</a>.</p>';
+        }
+        function result(){
+          if(a.app==='localserver'||a.data==='yes'){ out('A server (or hybrid) may suit you','Because you run specialist software or have large shared files or compliance needs, a local server &mdash; or a hybrid of server and cloud &mdash; is often the better fit. We can design and look after it.','/server-network-support/','Server &amp; network support'); }
+          else if(a.work==='mix'){ out('A hybrid setup could be ideal','With a real mix of office and remote working, a blend of cloud services and just-enough local kit often works best. We&rsquo;ll help you get the balance right.','/cloud-migration/','Explore the cloud'); }
+          else { out('The cloud is likely your best fit','With flexible working and mainstream software, moving to the cloud (Microsoft 365) usually means less to maintain, easy remote access and lower upfront cost. We can move you across smoothly.','/cloud-migration/','Explore cloud migration'); }
+        }
+        quiz.addEventListener('click',function(e){ var o=e.target.closest('.quiz__opt'); if(!o) return; var kv=o.getAttribute('data-set').split(':'); a[kv[0]]=kv[1];
+          if(kv[0]==='work') show('app');
+          else if(kv[0]==='app') show('data');
+          else if(kv[0]==='data'){ result(); show('result'); }
+        });
+        document.getElementById('sc-restart').addEventListener('click',function(){ a={}; show('work'); });
+      })();
+      </script>
+    </section>'''
+def server_or_cloud_picker():
+    slug="server-or-cloud-picker"
+    desc="Do you need a server or the cloud? Answer three quick questions and get a clear, jargon-free steer on whether cloud, a local server or a hybrid setup suits your business. Free tool from 365 Techies."
+    faqs=[
+      ("What&rsquo;s the difference between a server and the cloud?","A server is a powerful computer kept at your premises; the cloud means using services hosted online (like Microsoft 365). Many businesses use a mix. We&rsquo;ll help you choose what fits."),
+      ("Is the cloud always cheaper?","Not always, but it usually means less upfront cost, less to maintain and easy remote access. A local server can suit specialist software or very large files. The picker above gives a steer."),
+      ("Can you move us to the cloud?","Yes &mdash; we plan and handle <a href=\"/cloud-migration/\">cloud migrations</a> with minimal disruption, and we also design and support <a href=\"/server-network-support/\">servers and networks</a> where they&rsquo;re the better choice."),
+    ]
+    content="\n".join([
+      hero(bc("Server or Cloud?"), "// FREE BUSINESS TOOL",
+           'Do I need a <em class="grad grad--cyan">server or the cloud?</em>',
+           "It&rsquo;s one of the most confusing business IT decisions &mdash; so let&rsquo;s make it simple. Answer three quick questions for a clear, jargon-free steer.",
+           cta1=("Cloud Migration","/cloud-migration/"), cta2=("Server &amp; Network Support","/server-network-support/"),
+           chips=["Plain English","30 seconds","No pressure"]),
+      SERVERCLOUD_WIDGET,
+      faq_html(faqs),
+      cta("Let&rsquo;s find the right setup together",
+          "Whether it&rsquo;s cloud, a server or a hybrid, we&rsquo;ll design something that fits how you work &mdash; and look after it for you.",
+          primary=("Talk to a Techie","/contact/"), secondary=("Business IT Support","/business-it-support-subscriptions/")),
+    ])
+    def schema(s,_d=desc,_f=faqs):
+        return graph([crumb(s,"Server or Cloud Picker"), webpage(s,"Do I Need a Server or the Cloud?",_d),
+                      faqpage(s,_f),
+                      {"@type":"WebApplication","name":"365 Techies Server or Cloud Picker","applicationCategory":"BusinessApplication","operatingSystem":"Web (all browsers)","url":SITE+"/server-or-cloud-picker/","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},"provider":{"@id":SITE+"/#business"}}])
+    add(slug=slug, title="Do I Need a Server or the Cloud? Free Picker | 365 Techies",
+        desc=desc, og_title="Server or Cloud? | 365 Techies", schema=schema, content=content)
+server_or_cloud_picker()
+
+# ============================================================ TRUST: HOW ONBOARDING WORKS
+info_page(
+  slug="how-onboarding-works", crumb_name="How Onboarding Works", eyebrow="// GETTING STARTED",
+  h1='How it works when you <em class="grad grad--cyan">join us</em>',
+  lede="Wondering what actually happens when you sign up &mdash; and what you&rsquo;ll have to do? Almost nothing, as it turns out. Here&rsquo;s the friendly, no-surprises journey from hello to settled in.",
+  desc="What happens when you become a 365 Techies customer - from your first hello to settling into the 6-weekly rhythm. A calm, no-jargon walkthrough of onboarding, with nothing technical for you to do.",
+  title="How Onboarding Works - Your First Few Weeks With Us | 365 Techies",
+  og_title="How Onboarding Works | 365 Techies",
+  chips=["Nothing technical to do","We always call first","No contracts"],
+  pre=f'''    <section class="section section--alt" aria-label="Your first few weeks">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// FROM HELLO TO SETTLED IN</p>
+          <h2 class="section-title section-title--center" data-title>Getting started is easy<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ol class="how__steps">
+{steps([("Say hello","Call us or drop us a message. We&rsquo;ll have a friendly chat about what you need &mdash; no pressure, no jargon."),("Pick the right plan together","We&rsquo;ll recommend the plan that genuinely fits &mdash; or you can try our <a href=\"/plan-finder/\">Plan Finder</a>. Rolling monthly, cancel anytime."),("We set things up securely","We get you set up for secure remote support over encrypted Splashtop SOS &mdash; and you watch everything on screen. We always phone before we connect."),("Your first friendly service","We give your computers a once-over, sort any niggles, and explain what we did in plain English. Nothing for you to do."),("Settling into the rhythm","From then on it&rsquo;s a full service every six weeks with the same friendly team who get to know you &mdash; see <a href=\"/your-first-6-weekly-service/\">what to expect</a>.")])}
+        </ol>
+      </div>
+    </section>''',
+  inner="""          <h2>What will you actually have to do?</h2>
+          <p>Honestly, very little. You don&rsquo;t need to be technical, you don&rsquo;t need to prepare anything, and you&rsquo;ll never be left to figure something out alone. We do the setup, we explain anything you&rsquo;d like to understand, and we&rsquo;re a phone call away whenever you need us. If you&rsquo;re moving from another provider, we make <a href="/switching-it-provider/">switching</a> smooth and handle it with no downtime.</p>
+          <p>And because we&rsquo;re a family team, you&rsquo;ll deal with the same familiar people who remember how you like things &mdash; not a call centre or a different stranger each time.</p>""",
+  faqs=[
+    ("Do I need to be technical to join?","Not at all &mdash; quite the opposite. We handle the technical side and explain everything in plain English. Helping non-technical people is what we do best."),
+    ("What do I actually have to do to get started?","Just get in touch. We&rsquo;ll guide you through the rest, set everything up, and there&rsquo;s nothing technical for you to prepare or do."),
+    ("How quickly can I get started?","Usually within the same week &mdash; often sooner for remote setup. We&rsquo;ll always work around what suits you."),
+    ("Am I tied into a contract?","No &mdash; every plan is rolling and cancel-anytime. You stay because you&rsquo;re happy, not because you&rsquo;re locked in."),
+  ],
+  cta_args=("Ready to say hello?","Join the Dorset homes and businesses who never worry about IT &mdash; friendly, patient help from a team that gets to know you.",
+            ("Talk to a Techie","/contact/"), ("Find Your Plan","/plan-finder/")),
+)
+
+# ============================================================ HUB: SPRING-CLEAN YOUR COMPUTER
+def spring_clean_hub():
+    slug="spring-clean-your-computer"
+    desc="Give your computer a refresh. A friendly seasonal hub of quick wins - speed it up, free up space, back up your photos, check your security and clear out what you don't need. From 365 Techies, Dorset."
+    items=[
+      ("Speed","Speed up a slow computer","Simple steps to get your machine feeling quick again.","/how-to-speed-up-a-slow-computer/"),
+      ("Space","Free up storage space","Clear out the clutter safely and reclaim room on a full drive.","/how-to-free-up-storage-space/"),
+      ("Protect","Back up your photos","Make sure your irreplaceable photos are safely copied.","/how-to-back-up-your-photos/"),
+      ("Check","What would you lose?","A 20-second check of how safe your files really are.","/what-would-you-lose/"),
+      ("Declutter","Wipe &amp; recycle old kit","Safely clear and recycle that old laptop gathering dust.","/how-to-wipe-and-recycle-old-computer/"),
+      ("Decide","Repair or replace?","Get an honest verdict on an ageing computer.","/repair-or-replace-advisor/"),
+      ("Health","Free IT health check tool","Get an instant score and a plain-English action plan.","/it-health-check-tool/"),
+      ("Maintain","Preventative maintenance","How a 6-weekly service keeps it healthy all year.","/preventative-maintenance/"),
+    ]
+    cards="\n".join(f'          <a class="post-card" href="{href}"><p class="post-card__cat">{cat}</p><h3>{t}</h3><p>{d}</p><span class="post-card__more">Get started &#8594;</span></a>' for cat,t,d,href in items)
+    content="\n".join([
+      hero(bc("Spring-Clean Your Computer"), "// SEASONAL",
+           'Give your computer a <em class="grad grad--green">spring clean</em>',
+           "A little tidy-up makes everyday computing faster, safer and calmer. Here are the quick wins &mdash; do one, or work through them all at your own pace.",
+           cta1=("Free IT Health Check","/free-it-health-check/"), cta2=("Talk to a Techie","/contact/"),
+           chips=["Quick wins","Plain English","Do it at your pace"]),
+      f'''    <section class="section section--alt" aria-label="Spring-clean checklist">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// YOUR REFRESH CHECKLIST</p>
+          <h2 class="section-title section-title--center" data-title>Eight quick wins<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="blog-grid" data-stagger>
+{cards}
+        </div>
+      </div>
+    </section>''',
+      cta("Rather we did the spring clean?",
+          "Join a monthly plan and we&rsquo;ll keep your computers fast, safe and tidy all year &mdash; with a full service every six weeks.",
+          primary=("View Monthly Plans","/monthly-it-support/"), secondary=("Free IT Health Check","/free-it-health-check/")),
+    ])
+    def schema(s,_d=desc,_it=[{"@type":"ListItem","position":i+1,"name":t,"url":SITE+href} for i,(cat,t,d,href) in enumerate(items)]):
+        return graph([crumb(s,"Spring-Clean Your Computer"), webpage(s,"Spring-Clean Your Computer",_d,"CollectionPage"),
+                      {"@type":"ItemList","@id":SITE+"/spring-clean-your-computer/#list","itemListElement":_it}])
+    add(slug=slug, title="Spring-Clean Your Computer - Quick Wins for a Faster PC | 365 Techies",
+        desc=desc, og_title="Spring-Clean Your Computer | 365 Techies", schema=schema, content=content)
+spring_clean_hub()
 
 if __name__ == "__main__":
     w = write_all()

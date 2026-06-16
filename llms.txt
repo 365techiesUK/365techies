@@ -84,6 +84,28 @@
 - [Setting Up a Computer for an Older Relative](https://365techies.co.uk/setting-up-a-computer-for-an-older-relative/): How to set up a device kindly, safely and simply for an older relative.
 - [Helping a Relative With Their Computer Remotely](https://365techies.co.uk/helping-a-relative-with-their-computer/): How to help family from a distance safely, and the remote-access scam to avoid.
 - [Confident Video Calling](https://365techies.co.uk/confident-video-calling/): A gentle beginner's guide to making video calls on any device, to see the family on screen.
+- [Downtime Cost Calculator](https://365techies.co.uk/downtime-cost-calculator/): A free business tool that estimates what IT downtime is costing you, from your own numbers.
+- [Server or Cloud Picker](https://365techies.co.uk/server-or-cloud-picker/): A quick, jargon-free tool to see whether cloud, a local server or a hybrid setup suits your business.
+- [Microsoft 365 vs Google Workspace](https://365techies.co.uk/microsoft-365-vs-google-workspace/): An even-handed comparison of the two main business email and office suites - 365 Techies supports both.
+- [Break-Fix vs Managed IT](https://365techies.co.uk/break-fix-vs-managed-it/): A clear side-by-side comparison of paying per repair versus a monthly managed support plan.
+- [How to Speed Up a Slow Computer](https://365techies.co.uk/how-to-speed-up-a-slow-computer/): A step-by-step fix walkthrough for a sluggish Windows PC.
+- [How to Free Up Storage Space](https://365techies.co.uk/how-to-free-up-storage-space/): Reclaim space on a full computer safely, using built-in Windows tools.
+- [How to Back Up Your Photos](https://365techies.co.uk/how-to-back-up-your-photos/): A simple step-by-step guide to keeping your photos safe for good.
+- [How to Use a Password Manager](https://365techies.co.uk/how-to-use-a-password-manager/): A beginner's guide to adopting a password manager.
+- [How to Stop Spam and Junk Emails](https://365techies.co.uk/how-to-stop-spam-emails/): How to cut junk email dramatically and tell spam from a scam.
+- [How to Keep Children Safe Online](https://365techies.co.uk/how-to-keep-children-safe-online/): A step-by-step parental-controls setup guide using free built-in tools.
+- [How to Transfer Files to a New Computer](https://365techies.co.uk/how-to-transfer-files-to-a-new-computer/): A calm walkthrough of moving everything from an old PC to a new one.
+- [How Onboarding Works](https://365techies.co.uk/how-onboarding-works/): What happens when you become a customer - from first hello to settled in.
+- [Spring-Clean Your Computer](https://365techies.co.uk/spring-clean-your-computer/): A seasonal hub of quick wins for a faster, safer, tidier computer.
+- [Sustainability](https://365techies.co.uk/sustainability/): How 365 Techies works more sustainably - repair before replace, longer device life and responsible recycling, as a Sustainable Dorset member.
+
+## IT support by industry
+- [Hotels, B&Bs & Holiday Lets](https://365techies.co.uk/it-support-for-hotels-holiday-lets/): Booking systems, guest Wi-Fi, keyless entry, card payments and rural Starlink connectivity for Dorset & New Forest hospitality.
+- [Veterinary Practices](https://365techies.co.uk/it-support-for-vets/): Reliable practice-management systems, imaging/lab networking and secure client & animal records for vets.
+- [Salons, Spas & Beauty](https://365techies.co.uk/it-support-for-salons-beauty/): Booking software, card payments, client-data security and friendly, jargon-free help.
+- [Financial Advisers & IFAs](https://365techies.co.uk/it-support-for-financial-advisers/): Secure, confidential IT that supports your FCA record-keeping and data-protection obligations.
+- [Recruitment Agencies](https://365techies.co.uk/it-support-for-recruitment-agencies/): Reliable ATS/CRM, high-volume email, VoIP phones and candidate-data security.
+- [Garages & Automotive](https://365techies.co.uk/it-support-for-garages-automotive/): Garage-management software, reliable MOT connection, diagnostic PCs and workshop networks.
 - The site includes a built-in accessibility toolbar (text resize, high contrast, readable font, reduce motion and read-aloud), reflecting 365 Techies' specialism in supporting retired and disabled users.
 
 ## Offers
