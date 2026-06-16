@@ -119,6 +119,13 @@
 - [How to Set Up a Printer](https://365techies.co.uk/how-to-set-up-a-printer/): A simple step-by-step guide to getting a new printer working from Windows.
 - [How to Spot a Fake Website](https://365techies.co.uk/how-to-spot-a-fake-website/): The real red flags of a scam website - and why the padlock does not mean safe.
 - [How to Update Windows Safely](https://365techies.co.uk/how-to-update-windows-safely/): How to install Windows updates on your terms, without disruption.
+- [How to Use Microsoft Teams](https://365techies.co.uk/how-to-use-microsoft-teams/): A beginner's guide to chatting, calling and joining meetings in Teams.
+- [How to Set Up Email on Your Phone](https://365techies.co.uk/how-to-set-up-email-on-your-phone/): A simple step-by-step guide to getting your email on any phone.
+- [How to Scan a Document](https://365techies.co.uk/how-to-scan-a-document/): How to scan and save a document as a PDF, with a scanner or your phone.
+- [How to Make Your Laptop Battery Last Longer](https://365techies.co.uk/how-to-make-your-laptop-battery-last-longer/): Simple changes to stretch each charge and keep the battery healthy.
+- [How to Take a Screenshot](https://365techies.co.uk/how-to-take-a-screenshot/): How to capture and share what is on your Windows screen.
+- [How to Block Nuisance Calls and Texts](https://365techies.co.uk/how-to-block-nuisance-calls-and-texts/): Cut nuisance calls and spam texts, and report the worst offenders.
+- [How to Set Up a Second Monitor](https://365techies.co.uk/how-to-set-up-a-second-monitor/): A step-by-step guide to adding and arranging a second screen on Windows.
 - The site includes a built-in accessibility toolbar (text resize, high contrast, readable font, reduce motion and read-aloud), reflecting 365 Techies' specialism in supporting retired and disabled users.
 
 ## Offers
