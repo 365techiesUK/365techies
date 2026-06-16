@@ -7,7 +7,7 @@ import os, json
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://365techies.co.uk"
-CSSV = "34"
+CSSV = "36"
 HUBSPOT_ID = "148562638"
 
 # GoCardless Direct Debit subscription links (paste the hosted payment-link URL
@@ -479,6 +479,8 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/pre-call-checklists/">Get-Ready Checklists</a>
         <a href="/our-values/">Our Values &amp; Promises</a>
         <a href="/choosing-it-support/">How to Choose IT Support</a>
+        <a href="/independent-it-support/">Local vs the Alternatives</a>
+        <a href="/it-cost-worksheet/">IT Quote Worksheet</a>
         <a href="/resources/">Resources &amp; Guides</a>
         <a href="/faqs/">FAQs</a>
         <a href="/it-advice/">IT Advice</a>

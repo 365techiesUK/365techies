@@ -3425,6 +3425,8 @@ info_page(
           <a class="post-card" href="/pre-call-checklists/"><p class="post-card__cat">Checklist</p><h3>Get-Ready Checklists</h3><p>Feel prepared before you call, book a repair or set up a new PC.</p><span class="post-card__more">Get ready &#8594;</span></a>
           <a class="post-card" href="/computer-fault-checker/"><p class="post-card__cat">Tool</p><h3>Computer Fault Checker</h3><p>Tell us what&rsquo;s playing up and get the likely cause &amp; best next step.</p><span class="post-card__more">Diagnose it &#8594;</span></a>
           <a class="post-card" href="/choosing-it-support/"><p class="post-card__cat">Guide</p><h3>How to Choose IT Support</h3><p>10 questions to ask any IT company before you commit.</p><span class="post-card__more">Read the guide &#8594;</span></a>
+          <a class="post-card" href="/independent-it-support/"><p class="post-card__cat">Compare</p><h3>Local vs the Alternatives</h3><p>Local independent vs big-box vs DIY &mdash; an honest comparison.</p><span class="post-card__more">Compare &#8594;</span></a>
+          <a class="post-card" href="/it-cost-worksheet/"><p class="post-card__cat">Worksheet</p><h3>IT Quote Worksheet</h3><p>The 5 numbers to work out before you ask anyone for a quote.</p><span class="post-card__more">Get ready &#8594;</span></a>
           <a class="post-card" href="/free-it-health-check/"><p class="post-card__cat">Free</p><h3>Free IT Health Check</h3><p>A free, no-obligation review of your security, backups, updates and performance.</p><span class="post-card__more">Book a check &#8594;</span></a>
           <a class="post-card" href="/switching-it-provider/"><p class="post-card__cat">Switching</p><h3>Switching to Us</h3><p>How easy it is to move your IT support to 365 Techies &mdash; with no downtime.</p><span class="post-card__more">How it works &#8594;</span></a>
         </div>
@@ -3591,6 +3593,82 @@ info_page(
           <p>Try our 30-second <a href="/plan-finder/">Plan Finder</a>, get a <a href="/quick-quote/">quick quote</a>, or just <a href="/contact/">ask us anything</a> &mdash; no pressure, no jargon.</p>""",
   cta_args=("Put us to the test", "Ask us every one of these questions &mdash; we&rsquo;ll answer them all, honestly.",
             ("Talk to a Techie", "/contact/"), ("Why Choose Us", "/why-choose-365-techies/")),
+)
+
+# ---- Category comparison: local vs big-box vs DIY
+info_page(
+  slug="independent-it-support", crumb_name="Local vs the Alternatives", eyebrow="// HONEST COMPARISON",
+  h1='Local IT support vs <em class="grad grad--cyan">the alternatives</em>',
+  lede="Should you use a local independent IT firm, a big-box repair desk, or just muddle through with DIY tools? Here&rsquo;s an honest, plain-English comparison so you can choose what&rsquo;s genuinely right for you.",
+  desc="An honest comparison of local independent IT support vs big-box repair desks vs DIY remote tools — who helps you, speed, repair-vs-replace honesty, prevention and cost — plus the signs your current IT setup is letting you down.",
+  chips=["Honest &amp; neutral", "No jargon", "Choose what fits"],
+  pre='''    <section class="section" aria-label="Compare your options">
+      <div class="wrap">
+        <p class="eyebrow eyebrow--center mono" data-reveal>// YOUR OPTIONS, COMPARED</p>
+        <h2 class="section-title section-title--center" data-title>Local, big-box, or do-it-yourself?<span class="title-underline title-underline--center"></span></h2>
+        <div class="cmp-wrap" data-reveal>
+          <table class="cmp-table cmp-table--vs">
+            <thead><tr><th>&nbsp;</th><th>Local independent (us)</th><th>Big-box repair desk</th><th>DIY / remote tools</th></tr></thead>
+            <tbody>
+              <tr><th>Who actually helps you</th><td class="hi">A named, local person who knows you</td><td>Whoever&rsquo;s on the desk that day</td><td>You and a search engine</td></tr>
+              <tr><th>Knows your setup &amp; history</th><td class="yes hi">&#10003;</td><td class="no">&ndash;</td><td class="no">&ndash;</td></tr>
+              <tr><th>Home visits &amp; local collection</th><td class="yes hi">&#10003;</td><td>Sometimes</td><td class="no">&ndash;</td></tr>
+              <tr><th>Honest repair-vs-replace advice</th><td class="hi">Always &mdash; we fix where sensible</td><td>May steer you to new kit</td><td>N/A</td></tr>
+              <tr><th>Ongoing prevention &amp; monitoring</th><td class="yes hi">&#10003; on a plan</td><td class="no">&ndash;</td><td class="no">&ndash;</td></tr>
+              <tr><th>Plain-English, patient help</th><td class="yes hi">&#10003;</td><td>Varies</td><td class="no">&ndash;</td></tr>
+              <tr><th>Typical cost</th><td class="hi">Clear monthly or one-off, no surprises</td><td>Per job &mdash; it adds up</td><td>Free, but your time &amp; risk</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="cmp-foot mono" data-reveal>A fair, general comparison &mdash; every situation differs. <a href="/why-choose-365-techies/">Why choose us</a> &middot; <a href="/pricing/">See pricing</a></p>
+      </div>
+    </section>
+    <section class="section section--alt" aria-label="Signs your IT is letting you down">
+      <div class="wrap">
+        <p class="eyebrow eyebrow--center mono" data-reveal>// TIME FOR A CHANGE?</p>
+        <h2 class="section-title section-title--center" data-title>Signs your current IT setup is letting you down<span class="title-underline title-underline--center"></span></h2>
+        <ul class="check-grid" data-stagger>
+          <li>You dread phoning for help, or wait days for a callback.</li>
+          <li>You&rsquo;re not sure whether your data is actually backed up.</li>
+          <li>The same problems keep coming back.</li>
+          <li>You get jargon and pressure instead of plain answers.</li>
+          <li>You&rsquo;re paying per fix and it keeps adding up.</li>
+          <li>No-one is keeping your security and updates in check.</li>
+        </ul>
+      </div>
+    </section>''',
+  inner="""          <h2>So which is right for you?</h2>
+          <p>If your technology matters to you &mdash; for work, for staying connected, or just for peace of mind &mdash; a local independent team that knows you usually wins on value and stress. A big-box desk can suit a quick one-off; DIY suits the very confident. Either way, we&rsquo;ll always give you an honest steer &mdash; even if that&rsquo;s &ldquo;you don&rsquo;t need us for this&rdquo;.</p>
+          <p>Not sure? Try our 30-second <a href="/plan-finder/">Plan Finder</a>, get a <a href="/quick-quote/">quick quote</a>, or read <a href="/choosing-it-support/">how to choose an IT company</a>.</p>""",
+  cta_args=("Talk it through, no pressure", "A friendly local techie will give you honest advice &mdash; whatever you decide.",
+            ("Talk to a Techie", "/contact/"), ("View Monthly Plans", "/monthly-it-support/")),
+)
+
+# ---- Pre-quote cost worksheet
+info_page(
+  slug="it-cost-worksheet", crumb_name="IT Quote Worksheet", eyebrow="// BEFORE YOU ASK",
+  h1='Work out 5 numbers <em class="grad grad--green">before you get an IT quote</em>',
+  lede="Before you ask any IT company for a quote, it helps to know a few basics about your setup. Jot these down (or print this page) and you&rsquo;ll get a faster, fairer quote from anyone &mdash; us included.",
+  desc="A free, print-friendly worksheet from 365 Techies: the 5 numbers to work out before asking any IT company for a quote — devices, users, what you rely on, current spend and your biggest worry.",
+  chips=["Print-friendly", "Vendor-neutral", "2 minutes"],
+  inner="""          <p class="no-print"><button type="button" class="button secondary" onclick="window.print()">&#128424; Print / Save as PDF</button></p>
+          <p>Knowing these makes any quote quicker and more accurate &mdash; and helps you compare companies fairly.</p>
+          <h2>The 5 numbers to work out</h2>
+          <ol>
+            <li><strong>How many devices?</strong> Count the computers, laptops, tablets and phones you&rsquo;d want covered. &mdash;&nbsp;__________</li>
+            <li><strong>How many people?</strong> Just you, the family, or a team. &mdash;&nbsp;__________</li>
+            <li><strong>What do you rely on most?</strong> e.g. email, Microsoft 365, accounts software, a website. &mdash;&nbsp;__________</li>
+            <li><strong>What do you spend on IT now?</strong> Roughly, per month or per year (repairs, software, support). &mdash;&nbsp;__________</li>
+            <li><strong>What&rsquo;s your biggest worry?</strong> e.g. losing data, scams, slow computers, downtime. &mdash;&nbsp;__________</li>
+          </ol>
+          <h2>Two more worth knowing</h2>
+          <ul>
+            <li><strong>Do you have working, tested backups?</strong> &mdash; Yes / No / Not sure</li>
+            <li><strong>Are you tied into a contract now?</strong> &mdash; and when does it end?</li>
+          </ul>
+          <p>That&rsquo;s it &mdash; with those, anyone can give you a sensible quote. When you&rsquo;re ready, get a free <a href="/quick-quote/">quick quote</a> or try the <a href="/plan-finder/">Plan Finder</a>.</p>""",
+  cta_args=("Got your numbers?", "Send them over for a free, no-obligation quote &mdash; or let us help you work them out.",
+            ("Get a Quick Quote", "/quick-quote/"), ("Talk to a Techie", "/contact/")),
 )
 
 # ---- Disaster Recovery & Business Continuity
