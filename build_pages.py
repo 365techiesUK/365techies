@@ -153,6 +153,8 @@ HEADER = '''  <header class="site-header">
             <a href="/content-creator-pcs/">Content Creator PCs</a>
             <a href="/home-cinema-entertainment/">Home Cinema &amp; AV</a>
             <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
+            <a href="/lithium-battery-installs-dorset/">Leisure &amp; Marine Batteries</a>
+            <a href="/rural-and-farm-wifi-dorset/">Rural &amp; Farm Wi-Fi</a>
             <a href="/starlink-internet/">Starlink Internet</a>
             <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
             <a href="/agentic-ai-systems/">Agentic AI Systems</a>
@@ -282,6 +284,8 @@ HEADER = '''  <header class="site-header">
           <a href="/content-creator-pcs/">Content Creator PCs</a>
           <a href="/home-cinema-entertainment/">Home Cinema &amp; AV</a>
           <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
+          <a href="/lithium-battery-installs-dorset/">Leisure &amp; Marine Batteries</a>
+          <a href="/rural-and-farm-wifi-dorset/">Rural &amp; Farm Wi-Fi</a>
           <a href="/starlink-internet/">Starlink Internet</a>
           <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
           <a href="/agentic-ai-systems/">Agentic AI Systems</a>
@@ -488,6 +492,8 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/content-creator-pcs/">Content Creator PCs</a>
         <a href="/home-cinema-entertainment/">Home Cinema &amp; AV</a>
         <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
+        <a href="/lithium-battery-installs-dorset/">Leisure &amp; Marine Batteries</a>
+        <a href="/rural-and-farm-wifi-dorset/">Rural &amp; Farm Wi-Fi</a>
         <a href="/starlink-internet/">Starlink Internet</a>
         <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
         <a href="/agentic-ai-systems/">Agentic AI Systems</a>

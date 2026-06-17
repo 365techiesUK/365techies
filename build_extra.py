@@ -1514,6 +1514,8 @@ def services_overview():
         ("CCTV &amp; Smart Home", "/cctv-smart-home/", "CCTV, video doorbells, smart lighting and home automation, set up and secured."),
         ("Home Cinema &amp; Entertainment", "/home-cinema-entertainment/", "Richer Sounds partner &mdash; 4K projectors, Dolby sound, smart TVs and multi-room audio."),
         ("Starlink Internet", "/starlink-internet/", "Residential &amp; roaming Starlink satellite broadband &mdash; fast internet anywhere, supplied &amp; installed."),
+        ("Leisure &amp; Marine Batteries", "/lithium-battery-installs-dorset/", "Victron lithium (LiFePO4) power upgrades for motorhomes, campervans and boats &mdash; free survey."),
+        ("Rural &amp; Farm Wi-Fi", "/rural-and-farm-wifi-dorset/", "Wi-Fi &amp; internet for farms, glamping sites and rural businesses &mdash; Starlink, 4G/5G and site surveys."),
         ("Unitree Robots", "/unitree-robots/", "As a Scan partner, we supply &amp; support Unitree quadruped and humanoid robots."),
       ]),
       ("IT support by industry", [
@@ -3639,6 +3641,154 @@ def repair_pages():
         add(slug=slug, title=f"Computer & Laptop Repair {town} | No Call-Out Fee | 365 Techies",
             desc=desc, og_title=f"Computer & Laptop Repair {town} | 365 Techies", schema=schema, content=content)
 repair_pages()
+
+# ===================================================== LEISURE & MARINE LITHIUM BATTERIES
+def battery_installs():
+    slug = "lithium-battery-installs-dorset"
+    desc = "Lithium (LiFePO4) battery & power upgrades for motorhomes, campervans and boats across Dorset — Victron-based battery banks, solar & DC-DC charging, inverters and monitoring, designed, fitted and supported. Free survey, clear quote."
+    faqs = [
+      ("Do you fit lithium batteries in motorhomes and campervans?", "Yes &mdash; we design and fit LiFePO4 lithium systems for motorhomes, campervans and conversions, built on Victron Energy, with solar, DC-DC charging, inverters and monitoring."),
+      ("Can you upgrade a boat to lithium?", "Yes &mdash; we fit marine 12/24V lithium banks, inverter/chargers and monitoring for boats around Poole Harbour and the Dorset coast, designed for the marine environment."),
+      ("Why switch to lithium (LiFePO4)?", "Lithium gives you far more usable power, much lighter weight, faster charging and a far longer lifespan than lead-acid &mdash; ideal for living or working off-grid in a van or on the water."),
+      ("Can I monitor it from my phone?", "Yes &mdash; we set up Victron monitoring so you can see your battery, solar and usage from your phone, or in our <a href=\"/365-ai-os/\">365 AI OS</a> off-grid dashboard."),
+      ("How much does it cost?", "It depends on how much power you need and what you already have &mdash; we survey it and give you a clear, fixed quote first, with no surprises."),
+    ]
+    content = "\n".join([
+      hero(bc("Leisure &amp; Marine Batteries"), "// LITHIUM POWER UPGRADES",
+           'Lithium power for <em class="grad grad--green">vans &amp; boats</em>',
+           "More usable power, less weight and years more life &mdash; we design and fit Victron lithium (LiFePO4) systems for motorhomes, campervans and boats across Dorset, with solar, smart charging, inverters and monitoring. Free survey, clear quote, properly supported.",
+           cta1=("Get a Free Survey", "/contact/"), cta2=("Off-Grid Energy", "/off-grid-victron-energy/"),
+           chips=["Victron LiFePO4","Vans, motorhomes &amp; boats","Free survey &amp; quote"]),
+      f'''    <section class="section" aria-label="What it is">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">/01 &mdash; WHY LITHIUM</p>
+          <h2 class="section-title" data-title>Power that goes the distance<span class="title-underline"></span></h2>
+          <p>Old lead-acid leisure batteries are heavy, slow to charge, and you can only safely use about half their capacity before you risk damaging them. Lithium (LiFePO4) changes all of that.</p>
+          <p>We build every system on <strong>Victron Energy</strong> &mdash; the gold standard for mobile and marine power &mdash; and set up monitoring so you can see exactly what&rsquo;s going on, wherever you are.</p>
+        </div>
+        <ul class="checklist" data-stagger>
+{checklist(["Far more usable power","Much lighter than lead-acid","Faster charging from solar &amp; engine","Thousands of charge cycles","Built on Victron Energy","Monitored from your phone","Designed around your real usage","Fitted &amp; supported by us"])}
+        </ul>
+      </div>
+    </section>''',
+      f'''    <section class="section section--alt" aria-label="What we fit">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/02 &mdash; WHAT WE FIT</p>
+          <h2 class="section-title section-title--center" data-title>A complete power system<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="tile-grid" data-stagger>
+{tiles([("battery","Lithium battery banks","Right-sized LiFePO4 banks for how you actually use power."),("sun","Solar &amp; charging","Roof solar, MPPT controllers and charging that tops up as you go."),("bolt","Inverters","Run 230V appliances &mdash; from a coffee machine to power tools."),("van","DC-DC &amp; engine charging","Safely charge your leisure bank from the engine while you travel."),("globe","Battery monitoring","See charge, solar and usage live, on a screen or your phone (Victron VRM)."),("shield","Marine-grade installs","Boat 12/24V systems built for the damp, demanding marine environment.")])}
+        </div>
+      </div>
+    </section>''',
+      f'''    <section class="section" aria-label="Who it's for">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/03 &mdash; WHO IT&rsquo;S FOR</p>
+          <h2 class="section-title section-title--center" data-title>Built for life off the mains<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ul class="security-grid" data-stagger>
+{grid_cards([("Motorhomes","Dependable power for everything you run on the road &mdash; weekends away or full-time travel."),("Campervans","Silent power for the fridge, lights, devices and even an induction hob in a conversion."),("Boats &mdash; Poole Harbour &amp; coast","Reliable house power afloat, with proper monitoring so you always know your state of charge."),("Off-grid &amp; overlanding","Go further off the beaten track with power you can genuinely rely on."),("Upgrades &amp; rescues","Replacing tired lead-acid, or fixing a system that never quite worked? We&rsquo;ll sort it."),("Pairs with off-grid","The same Victron expertise behind our <a href=\"/off-grid-victron-energy/\">off-grid &amp; home energy</a> work.")])}
+        </ul>
+      </div>
+    </section>''',
+      f'''    <section class="how section--alt" aria-label="How it works">
+      <div class="wrap">
+        <p class="eyebrow eyebrow--center mono" data-reveal>/04 &mdash; HOW IT WORKS</p>
+        <h2 class="section-title section-title--center" data-title>From survey to switched-on<span class="title-underline title-underline--center"></span></h2>
+        <ol class="how__steps">
+{steps([("Free survey","Tell us how you travel and what you run; we work out the power you really need."),("Design &amp; quote","We design the right Victron system and give you a clear, fixed price."),("Fit &amp; commission","We install it properly, test it thoroughly and set up monitoring."),("Off you go","Enjoy your power &mdash; with support and remote monitoring whenever you want it.")])}
+        </ol>
+      </div>
+    </section>''',
+      faq_html(faqs),
+      cta("Power your adventures",
+          "Tell us how you travel or sail and we&rsquo;ll design the right lithium system &mdash; free survey, clear quote, no obligation.",
+          primary=("Get a Free Survey", "/contact/"), secondary=("Off-Grid &amp; Victron Energy", "/off-grid-victron-energy/")),
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        return graph([crumb(s, "Leisure & Marine Batteries"), webpage(s, "Lithium Battery Installs — Motorhomes, Campervans & Boats", _desc),
+                      service(s, "Lithium Battery & Power Installs", "Victron lithium (LiFePO4) battery, solar, inverter and monitoring installs for motorhomes, campervans and boats across Dorset.", "Leisure and marine power installation"),
+                      faqpage(s, _faqs)])
+    add(slug=slug, title="Lithium Battery Installs Dorset | Motorhome, Campervan & Boat Power | 365 Techies",
+        desc=desc, og_title="Lithium Battery Installs Dorset | 365 Techies", schema=schema, content=content)
+battery_installs()
+
+# ===================================================== RURAL / FARM / GLAMPING WI-FI
+def rural_wifi():
+    slug = "rural-and-farm-wifi-dorset"
+    desc = "Wi-Fi & internet for farms, glamping sites, holiday lets and rural businesses across Dorset — site surveys, long-range outdoor Wi-Fi, Starlink and 4G/5G, guest Wi-Fi and point-to-point links to outbuildings. Free survey, clear quote."
+    faqs = [
+      ("Can you get Wi-Fi to a farm or field?", "Yes &mdash; we survey the site and use long-range outdoor Wi-Fi, point-to-point links and Starlink or 4G/5G to bring reliable internet to barns, fields, glamping pods and outbuildings the usual networks don&rsquo;t reach."),
+      ("Do you set up guest Wi-Fi for a glamping or camp site?", "Yes &mdash; secure guest Wi-Fi with its own login, fair-use limits and your branding, kept separate from your business network."),
+      ("What if there&rsquo;s no broadband at the site?", "That&rsquo;s our speciality &mdash; we use Starlink satellite and 4G/5G (with failover) so you get fast, reliable internet even with no fixed line. See our <a href=\"/starlink-internet/\">Starlink</a> page."),
+      ("Can you power it off-grid too?", "Yes &mdash; we can pair connectivity with <a href=\"/off-grid-victron-energy/\">off-grid solar and battery power</a> for genuinely remote sites with no mains."),
+      ("How much does it cost?", "Every site is different, so we survey it first and give you a clear, fixed quote &mdash; no guesswork."),
+    ]
+    content = "\n".join([
+      hero(bc("Rural &amp; Farm Wi-Fi"), "// RURAL CONNECTIVITY",
+           'Reliable Wi-Fi <em class="grad grad--cyan">anywhere</em> in rural Dorset',
+           "Farms, glamping sites, holiday lets and rural businesses shouldn&rsquo;t have to put up with no signal. We survey your site and bring fast, reliable Wi-Fi and internet to every corner &mdash; with long-range Wi-Fi, Starlink, 4G/5G and guest networks, designed, installed and supported.",
+           cta1=("Get a Free Survey", "/contact/"), cta2=("Starlink Internet", "/starlink-internet/"),
+           chips=["Site surveys","Starlink, 4G/5G &amp; long-range Wi-Fi","Guest Wi-Fi for sites"]),
+      f'''    <section class="section" aria-label="What it is">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">/01 &mdash; THE PROBLEM, SOLVED</p>
+          <h2 class="section-title" data-title>Connectivity where others can&rsquo;t reach<span class="title-underline"></span></h2>
+          <p>Rural Dorset is beautiful &mdash; and notorious for patchy broadband and Wi-Fi that stops at the farmhouse door. Guests expect Wi-Fi, card machines need a signal, and a business can&rsquo;t run on &lsquo;one bar in the yard&rsquo;.</p>
+          <p><strong>We fix that with the right mix of technology for your site</strong> &mdash; a proper survey first, then long-range Wi-Fi, Starlink or 4G/5G, and secure guest networks, all installed and looked after by your local team.</p>
+        </div>
+        <ul class="checklist" data-stagger>
+{checklist(["Full site survey first","Long-range &amp; outdoor Wi-Fi","Starlink &amp; 4G/5G where there&rsquo;s no line","Links to barns &amp; outbuildings","Secure guest / glamping Wi-Fi","Failover so you&rsquo;re never offline","Can run off-grid","Installed &amp; supported locally"])}
+        </ul>
+      </div>
+    </section>''',
+      f'''    <section class="section section--alt" aria-label="What we do">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/02 &mdash; WHAT WE DO</p>
+          <h2 class="section-title section-title--center" data-title>The whole site, connected<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="tile-grid" data-stagger>
+{tiles([("wifi","Site Wi-Fi surveys","We map your signal and dead spots, then design coverage that actually works."),("globe","Starlink &amp; 4G/5G","Fast internet with no fixed line &mdash; ideal for remote farms and sites."),("server","Point-to-point links","Beam a connection across the yard to barns, pods and outbuildings."),("users","Guest &amp; glamping Wi-Fi","Secure, branded guest Wi-Fi with logins, kept apart from your own network."),("shield","Resilient &amp; failover","Back-up connectivity so card machines and bookings never go down."),("sun","Off-grid ready","Pair it with solar &amp; battery power for genuinely off-grid sites.")])}
+        </div>
+      </div>
+    </section>''',
+      f'''    <section class="section" aria-label="Who it's for">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/03 &mdash; WHO IT&rsquo;S FOR</p>
+          <h2 class="section-title section-title--center" data-title>Built for rural Dorset<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ul class="security-grid" data-stagger>
+{grid_cards([("Farms &amp; estates","Connect the farmhouse, yard, barns and fields &mdash; for business and for living."),("Glamping &amp; camp sites","Guest Wi-Fi that keeps visitors happy and your reviews high."),("Holiday lets &amp; B&amp;Bs","Reliable Wi-Fi guests now expect, wherever the property is."),("Equestrian &amp; rural business","Yards, stables and workshops brought online and kept connected."),("Remote offices &amp; studios","Work from the countryside without fighting the connection."),("Events &amp; pop-ups","Temporary connectivity for shows, weddings and seasonal sites.")])}
+        </ul>
+      </div>
+    </section>''',
+      f'''    <section class="how section--alt" aria-label="How it works">
+      <div class="wrap">
+        <p class="eyebrow eyebrow--center mono" data-reveal>/04 &mdash; HOW IT WORKS</p>
+        <h2 class="section-title section-title--center" data-title>From not-spot to fully connected<span class="title-underline title-underline--center"></span></h2>
+        <ol class="how__steps">
+{steps([("Free site survey","We visit, test the signal and map exactly where you need coverage."),("Design &amp; quote","We design the right mix &mdash; Wi-Fi, Starlink, 4G/5G &mdash; and give a clear, fixed price."),("Install","We install and configure it all, including secure guest networks."),("Support","We keep it running, with monitoring and help whenever you need it.")])}
+        </ol>
+      </div>
+    </section>''',
+      faq_html(faqs),
+      cta("Get your site connected",
+          "Tell us about your farm, site or rural business and we&rsquo;ll design connectivity that finally works &mdash; free survey, clear quote, no obligation.",
+          primary=("Get a Free Survey", "/contact/"), secondary=("Starlink Internet", "/starlink-internet/")),
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        return graph([crumb(s, "Rural & Farm Wi-Fi"), webpage(s, "Rural, Farm & Glamping Wi-Fi in Dorset", _desc),
+                      service(s, "Rural & Farm Wi-Fi", "Wi-Fi and internet for farms, glamping sites, holiday lets and rural businesses across Dorset — surveys, long-range Wi-Fi, Starlink, 4G/5G and guest networks.", "Rural Wi-Fi and connectivity"),
+                      faqpage(s, _faqs)])
+    add(slug=slug, title="Rural, Farm & Glamping Wi-Fi Dorset | Starlink & Site Wi-Fi | 365 Techies",
+        desc=desc, og_title="Rural & Farm Wi-Fi Dorset | 365 Techies", schema=schema, content=content)
+rural_wifi()
 
 # ===================================================== INFO / LEGAL / RESOURCE PAGES
 def _prose(inner):
