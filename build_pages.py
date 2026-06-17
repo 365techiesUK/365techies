@@ -1276,7 +1276,7 @@ def service_page(slug, crumb_name, eyebrow, h1_html, lede, title, desc, og_title
 # ============================================================ REMOTE IT SUPPORT
 add(
  slug="remote-it-support",
- title="Remote IT Support UK | Fast Online Computer Help | 365 Techies",
+ title="Remote IT Support Dorset & UK | Fast Online Computer Help | 365 Techies",
  desc="Fast, secure remote IT support for homes and businesses. Most computer problems fixed online in minutes via Splashtop SOS — no waiting for an engineer visit. Bournemouth, Poole & Dorset.",
  og_title="Remote IT Support | Fast Online Computer Help",
  schema=lambda s: graph([
@@ -1322,6 +1322,7 @@ add(
      ("What can be fixed remotely?", "Most things — email problems, software issues, Microsoft 365, slow computers, printer setup, Windows updates and general troubleshooting for home and business users."),
      ("How fast is it?", "Most remote sessions start within minutes during opening hours (Mon&ndash;Fri, 9am&ndash;5pm). Subscribers always jump the queue."),
      ("Will you connect to my computer without warning?", "No &mdash; we always phone you first to say we&rsquo;re ready and to check you&rsquo;re ready before we connect. We never connect out of the blue, and a session can only start when you click our secure link."),
+     ("Should I let someone remote into my computer?", "Only when you trust them and <em>you</em> started it &mdash; a genuine session (like ours over Splashtop SOS) only begins when you click a link you asked for, and we always phone first to check you&rsquo;re ready. If someone rings out of the blue claiming to be Microsoft, BT or your bank and asks for remote access, hang up &mdash; that&rsquo;s a scam. See our <a href=\"/spot-the-scam/\">Spot the Scam</a> guide."),
      ("What if it can&rsquo;t be fixed remotely?", "Occasionally hardware needs hands-on attention — we&rsquo;ll arrange a repair or on-site visit across Bournemouth, Poole and Dorset."),
    ]),
    promise_strip(items=[PROMISE_CALL, PROMISE_PEOPLE, PROMISE_ETA]),
@@ -1338,6 +1339,7 @@ M365_FAQS = [
   ("Do you help secure Microsoft 365?", "Yes &mdash; multi-factor authentication, secure sign-in, mailbox protection, email filtering and sensible security policies. We can also back up Microsoft 365, which Microsoft doesn&rsquo;t do for you. See our <a href=\"/cybersecurity-support/\">cybersecurity</a> and <a href=\"/backup-support/\">backup</a> pages."),
   ("Can you train us to use it?", "Absolutely &mdash; friendly, plain-English help with Outlook, Teams, OneDrive and SharePoint, so you and your team actually get the most out of it."),
   ("Do you support home users too?", "Definitely &mdash; from a single personal mailbox to family setups, we make Microsoft 365 simple at home as well as at work."),
+  ("Do you support Microsoft 365 for Dorset businesses?", "Yes &mdash; we set up, migrate, secure and support Microsoft 365 for businesses right across Dorset, Bournemouth and Poole, from a single mailbox to a whole team, with friendly, plain-English help."),
 ]
 add(
  slug="microsoft-365-support",
