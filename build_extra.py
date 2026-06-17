@@ -1319,7 +1319,7 @@ def off_grid():
       f'''    <section class="section section--alt" aria-label="Monitor with the 365 AI OS">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
-          <p class="eyebrow mono">// MANAGE IT WITH THE 365 AI OS</p>
+          <p class="eyebrow mono">// MONITOR IT WITH THE 365 AI OS</p>
           <h2 class="section-title" data-title>See your off-grid power in your <em class="grad grad--cyan">365 AI OS</em><span class="title-underline"></span></h2>
           <p>Because we&rsquo;re an IT and monitoring company at heart, your off-grid system doesn&rsquo;t just sit in a cupboard. Our <a href="/365-ai-os/">365 AI OS</a> includes a live <strong>Off-Grid dashboard</strong> that reads your Victron VRM data &mdash; battery charge, solar input, power draw, inverter state and even your water tanks &mdash; from any browser, on any device.</p>
           <p>It&rsquo;s the same picture we use to keep your system healthy: spot a low battery, a tank that needs filling or a fault before it becomes a problem. Sign in and open it &mdash; or just ask the built-in assistant to &lsquo;open off-grid&rsquo;.</p>
@@ -2869,7 +2869,7 @@ def ai_os():
       hero(bc("365 AI OS"), "// 365 AI OS",
            'Your own <em class="grad grad--cyan">AI desktop</em>',
            "The 365 AI OS is a real desktop that lives in your browser &mdash; sign in to your own profile and meet a built-in AI assistant that doesn&rsquo;t just chat, but actually takes notes, manages your tasks and runs your desktop for you.",
-           cta1=(("Launch the Live Demo", live) if live else ("Book a Discovery Call", "/contact/")), cta2=("See Agentic AI", "/agentic-ai-systems/"),
+           cta1=("Book a Discovery Call", "/contact/"), cta2=("See Agentic AI", "/agentic-ai-systems/"),
            chips=["Runs in your browser","Your own AI assistant","Built in Dorset"]),
       launch_band,
       f'''    <section class="section" aria-label="What it is">
