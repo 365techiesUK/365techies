@@ -1375,7 +1375,7 @@ def off_grid():
         return graph([crumb(s, "Off-Grid & Victron Energy"), webpage(s, "Off-Grid & Victron Energy Solutions", _desc),
                       service(s, "Off-Grid & Victron Energy Solutions", "Off-grid and backup power — solar, battery storage, inverters and remote monitoring built on Victron Energy for homes, businesses, campervans and motorhomes.", "Off-grid power and solar"),
                       faqpage(s, _faqs)])
-    add(slug=slug, title="Off-Grid & Victron Energy Solutions | Homes, Business, Vans & Boats | 365 Techies",
+    add(slug=slug, title="Off-Grid & Victron Energy Installer Dorset | Homes, Business, Vans & Boats | 365 Techies",
         desc=desc, og_title="Off-Grid & Victron Energy Solutions | 365 Techies", schema=schema, content=content)
 off_grid()
 
@@ -2077,7 +2077,7 @@ def agentic_systems():
         return graph([crumb(s, "Agentic AI Systems"), webpage(s, "Custom Agentic AI Operating Systems", _desc),
                       service(s, "Agentic AI Systems", "Custom-built agentic AI operating systems that automate and streamline business-specific processes for companies.", "Agentic AI systems and business automation"),
                       faqpage(s, _faqs)])
-    add(slug=slug, title="Agentic AI Systems | Custom-Built Agentic Operating Systems | 365 Techies",
+    add(slug=slug, title="Agentic AI Systems & AI Automation Agency Dorset | 365 Techies",
         desc=desc, og_title="Custom Agentic AI Systems | 365 Techies", schema=schema, content=content)
 agentic_systems()
 
@@ -3324,7 +3324,7 @@ def ai_voice():
         return graph([crumb(s, "AI Voice Agents"), webpage(s, "AI Voice Agents & Phone Answering", _desc),
                       service(s, "AI Voice Agents", "AI voice receptionist and phone-answering agents that answer calls, capture enquiries and book callbacks 24/7 for small businesses.", "AI voice agents and phone answering"),
                       faqpage(s, _faqs)])
-    add(slug=slug, title="AI Voice Agents & Phone Answering | Never Miss a Call | 365 Techies",
+    add(slug=slug, title="AI Voice Agents, Phone Answering & AI Receptionist Dorset | 365 Techies",
         desc=desc, og_title="AI Voice Agents & Phone Answering | 365 Techies", schema=schema, content=content)
 ai_voice()
 
