@@ -2995,7 +2995,7 @@ def cost_calculator():
       ("Are these the exact prices I&rsquo;ll pay?", "They&rsquo;re accurate guide prices taken straight from our published plans, so what you see is what you&rsquo;d expect to pay. We always confirm the exact figure with you before anything starts &mdash; no hidden call-out fees, no surprises."),
       ("What&rsquo;s included in every plan?", "Every monthly plan includes a full computer service every six weeks, remote help, regular maintenance and security checks. We also call before we connect, call ahead with an ETA for visits, and you deal with the same friendly faces. See <a href=\"/monthly-it-support/\">monthly IT support</a>."),
       ("How is business support priced?", "Business support is &pound;21.15 per user, per month for 1&ndash;3 users. For larger teams we tailor a plan to how you actually work &mdash; the calculator shows an indicative figure, then we give you a clear fixed quote."),
-      ("How are Microsoft 365 licences priced?", "We help you choose the right Microsoft 365 licences (Personal, Family, or Business Basic, Standard or Premium) and include the cost in your quote &mdash; only what you actually need, with no upselling. Not sure which? Try our <a href=\"/which-microsoft-365-plan/\">Microsoft 365 plan picker</a>."),
+      ("How much is Microsoft 365?", "Microsoft 365 is &pound;4.85 per user, per month, added to your plan for the people who need it &mdash; and we help you choose the right licence with no upselling. Not sure which? Try our <a href=\"/which-microsoft-365-plan/\">Microsoft 365 plan picker</a>."),
       ("Do I have to commit to a contract?", "No &mdash; every plan is monthly and cancel-anytime. There&rsquo;s no long lock-in."),
     ]
     calc = r'''    <section class="section" aria-label="Cost calculator">
@@ -3082,13 +3082,9 @@ def cost_calculator():
           {key:'family',name:'Family Home',price:19.95,blurb:'Several computers & people'},
           {key:'premium',name:'Premium Home',price:24.95,blurb:'Multiple devices, priority'}
         ];
-        /* Microsoft 365 — per-licence price/month supplied by 365 Techies. null = "on quote" until provided. */
+        /* Microsoft 365 — per-user price/month supplied by 365 Techies. */
         var M365=[
-          {key:'personal',name:'Microsoft 365 Personal',price:null},
-          {key:'family',name:'Microsoft 365 Family',price:null},
-          {key:'basic',name:'Microsoft 365 Business Basic',price:null},
-          {key:'standard',name:'Microsoft 365 Business Standard',price:null},
-          {key:'premium',name:'Microsoft 365 Business Premium',price:null}
+          {key:'m365',name:'Microsoft 365 (per user)',price:4.85}
         ];
         var state={mode:'home',people:1,comp:1,users:1,plan:null,manual:false,m365:{}};
         M365.forEach(function(m){state.m365[m.key]=0;});
