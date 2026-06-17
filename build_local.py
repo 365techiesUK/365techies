@@ -21,7 +21,7 @@ REVPOOL = [
 def local_services(town):
     return tiles([
       ("home", "Home IT support", f"Monthly plans and one-off help for {town} homes and families."),
-      ("briefcase", "Business IT support", f"Reliable IT for {town} sole traders and small businesses."),
+      ("briefcase", "Business IT support &amp; services", f"Reliable IT services and IT solutions for {town} sole traders and small businesses."),
       ("wrench", "Computer repairs", "Laptop and PC repairs, virus removal, upgrades and setup."),
       ("cloud", "Microsoft 365", "Outlook, Teams, OneDrive and licensing — set up and supported."),
       ("shield", "Cybersecurity", "Protection from scams, malware and phishing."),
@@ -55,14 +55,17 @@ def make_local(i, slug, town, region, lede, intro_para, nearby):
     repair_slug = ("computer-repair-" + slug[len("it-support-"):]) if slug.startswith("it-support-") else ""
     repair_link = (f'\n          <p>Just need a one-off fix rather than a plan? See our <a href="/{repair_slug}/">computer &amp; laptop repair in {town}</a> &mdash; home visits, fast remote help and no call-out fee.</p>'
                    if repair_slug in REPAIR_SLUGS else "")
-    desc = (f"Local IT support in {town} for homes and businesses — monthly support plans, "
-            f"computer repairs, Microsoft 365, cybersecurity and fast remote help across {town} and the wider {region} area.")
+    desc = (f"Local IT support and IT services in {town} for homes and businesses — monthly support plans, "
+            f"computer &amp; laptop repairs, Microsoft 365, cybersecurity and fast remote help. Your friendly local "
+            f"IT company covering {town} and the wider {region} area.")
     faqs = [
       (f"Do you provide IT support in {town}?", f"Yes — 365 Techies provides remote and on-site IT support for homes and businesses in {town} and the wider {region} area, with monthly plans from £15.95."),
       (f"Can you visit me in {town}?", f"Yes. Most issues are fixed remotely in minutes, and we provide on-site visits across {town} and the wider {region} when hands-on help is needed."),
       ("What does monthly IT support cost?", "Home plans start at £15.95/month and business plans from £21.15/month, with one-off repairs also available."),
       ("Is remote support secure?", "Yes — sessions run over encrypted Splashtop SOS, you watch everything on screen, and access ends the moment the session does."),
       (f"What can you help {town} customers with?", "Computers and laptops, email, Microsoft 365, Wi-Fi, printers, security, backups, new device setup, virus removal and slow-computer fixes — for homes and businesses alike."),
+      (f"Are you a local IT company in {town}?", f"Yes — 365 Techies is a family-run local IT company, established in 1995, providing IT support, IT services and computer &amp; laptop repairs for homes and businesses across {town} and the wider {region} area."),
+      (f"Do you provide business IT services and Microsoft 365 support in {town}?", f"Yes — we provide managed business IT services and IT solutions for {town} businesses, including Microsoft 365 setup, migration and support, cybersecurity, backups, and fast remote and on-site help."),
     ]
     nearby_li = "\n".join(f'          <li><a href="{h}">{l}</a></li>' for l, h in nearby)
     revs = [REVPOOL[i % len(REVPOOL)], REVPOOL[(i + 2) % len(REVPOOL)]]
@@ -76,6 +79,7 @@ def make_local(i, slug, town, region, lede, intro_para, nearby):
           <p class="eyebrow mono">/01 — LOCAL &amp; FRIENDLY</p>
           <h2 class="section-title" data-title>Your local {town} techies<span class="title-underline"></span></h2>
           <p>{intro_para}</p>
+          <p>As your local IT company, we cover it all &mdash; IT support and business IT services, computer and laptop repairs, Microsoft 365, cybersecurity and practical IT solutions for {town} homes and businesses.</p>
           <p><strong>Most problems are solved remotely in minutes</strong> — and when you need someone in person, we&rsquo;re close by. Local knowledge, no call-centres, no jargon.</p>{repair_link}
         </div>
         <ul class="checklist" data-stagger>
@@ -153,7 +157,7 @@ def make_local(i, slug, town, region, lede, intro_para, nearby):
             nodes.append({"@type": "Place", "@id": f"{SITE}/{s}/#place", "name": _town,
                           "geo": {"@type": "GeoCoordinates", "latitude": _co[0], "longitude": _co[1]}})
         return graph(nodes)
-    add(slug=slug, title=f"IT Support {town} | Home & Business Computer Support",
+    add(slug=slug, title=f"IT Support & IT Services {town} | Business Computer Support",
         desc=desc, og_title=f"IT Support {town} | 365 Techies", schema=schema, content=content)
 
 LOCAL = [

@@ -1392,7 +1392,7 @@ M365_FAQS = [
 add(
  slug="microsoft-365-support",
  title="Microsoft 365 Support Bournemouth | Outlook, Teams & OneDrive Help",
- desc="Complete Microsoft 365 support for homes and businesses in Dorset — Outlook, Teams, OneDrive, SharePoint, Exchange Online, licensing, migration, security and training. Set up, migrated and managed by your local team.",
+ desc="Microsoft 365 and Office 365 support for homes and businesses across Bournemouth, Poole and Dorset — setup, installation, migration, Outlook, Teams, OneDrive, SharePoint, licensing and security. Set up and managed by your local team.",
  og_title="Microsoft 365 Support | Outlook, Teams & OneDrive Help",
  schema=lambda s: graph([
    crumb(s, "Microsoft 365"), webpage(s, "Microsoft 365 Support", "Complete Microsoft 365 support — Outlook, Teams, OneDrive, SharePoint, licensing, migration and security."),
@@ -1472,6 +1472,15 @@ add(
         <ol class="how__steps">
 {steps([("We plan","We check your current setup, recommend the right licences and plan the migration around you."),("We migrate","We move email, contacts, calendars and files to Microsoft 365 &mdash; usually overnight, with no downtime."),("We support","We configure every device, secure it with MFA, and keep it running on your support plan.")])}
         </ol>
+      </div>
+    </section>''',
+   f'''    <section class="section section--alt" aria-label="Microsoft 365 support across Dorset">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/06 &mdash; LOCAL MICROSOFT 365 HELP</p>
+          <h2 class="section-title section-title--center" data-title>Microsoft 365 &amp; Office 365 support across Dorset<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Need someone local to install, set up or fix Microsoft 365? We provide Microsoft 365 and Office 365 support, installation and migration for homes and businesses across <a href="/it-support-bournemouth/">Bournemouth</a>, <a href="/it-support-poole/">Poole</a>, <a href="/it-support-christchurch/">Christchurch</a>, <a href="/it-support-dorchester/">Dorchester</a>, <a href="/it-support-weymouth/">Weymouth</a>, <a href="/it-support-ferndown/">Ferndown</a>, <a href="/it-support-gillingham/">Gillingham</a> and the rest of <a href="/it-support-dorset/">Dorset</a> &mdash; remotely anywhere, and on-site when you need a hands-on Office 365 installer.</p>
+        </div>
       </div>
     </section>''',
    faq_html(M365_FAQS),
@@ -1694,11 +1703,25 @@ add(
         </div>
       </div>
     </section>''',
+   f'''    <section class="section" aria-label="Laptop repairs">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">// LAPTOP REPAIR</p>
+          <h2 class="section-title" data-title>Laptop repair, done locally<span class="title-underline"></span></h2>
+          <p>Most of what we fix is laptops &mdash; and most laptop problems are well worth repairing rather than replacing. From a slow laptop or a cracked screen to a worn-out battery or a dead charging port, we&rsquo;ll diagnose it, quote clearly, and get it sorted.</p>
+          <p><strong>No-fix-no-fee and a 12-month warranty</strong> on every laptop repair, with free local collection across Bournemouth, Poole and Dorset.</p>
+        </div>
+        <ul class="checklist" data-stagger>
+{checklist(["Slow laptop speed-ups &amp; SSD upgrades","Cracked or dim screen replacement","Battery &amp; charging-port repair","Keyboard &amp; trackpad fixes","Liquid-damage &amp; no-power diagnosis","Virus removal &amp; data recovery"])}
+        </ul>
+      </div>
+    </section>''',
    repair_town_links(),
    faq_html([
      ("Do you offer no-fix-no-fee?", "Yes &mdash; if we can&rsquo;t fix your device, you don&rsquo;t pay for the diagnosis. We always quote clearly before any chargeable work."),
      ("Is there a warranty on repairs?", "Yes &mdash; every repair is backed by a full 12-month warranty."),
      ("Do you repair both laptops and desktops?", "Yes — Windows laptops and desktop PCs, plus common upgrades like SSDs and more memory."),
+     ("Can you replace a laptop screen or battery?", "Yes — cracked or dim laptop screens, worn-out batteries, charging ports, keyboards and trackpads are all common laptop repairs we carry out, with a clear quote first and a 12-month warranty."),
      ("Can you remove a virus?", "Yes — we remove viruses and malware, clean up your system and set up protection so it doesn&rsquo;t come back."),
      ("Do I have to take out a subscription?", "No — we offer one-off repairs with no subscription. Many customers then move to a monthly plan to avoid future problems."),
      ("Can you recover my files?", "In most cases, yes. Bring it to us before doing anything else and we&rsquo;ll give you the best chance of recovering your data."),
@@ -1774,21 +1797,24 @@ add(
 # ============================================================ IT SUPPORT BOURNEMOUTH (local)
 add(
  slug="it-support-bournemouth",
- title="IT Support Bournemouth | Home & Business Computer Support",
- desc="Local IT support in Bournemouth for homes and businesses — monthly support plans, computer repairs, Microsoft 365, cybersecurity and fast remote help. Friendly, Bournemouth-based techies.",
- og_title="IT Support Bournemouth | 365 Techies",
+ title="IT Support & IT Services Bournemouth | Business Computer Support",
+ desc="Local IT support and IT services in Bournemouth for homes and businesses — monthly support plans, computer & laptop repairs, Microsoft 365, cybersecurity and fast remote help. Your friendly Bournemouth-based IT company and IT solutions provider.",
+ og_title="IT Support & IT Services Bournemouth | 365 Techies",
  schema=lambda s: graph([
    crumb(s, "IT Support Bournemouth"), webpage(s, "IT Support Bournemouth", "Local IT support in Bournemouth for homes and businesses."),
    service(s, "IT Support Bournemouth", "Monthly IT support, computer repairs, Microsoft 365 and cybersecurity for Bournemouth homes and businesses.", "IT support"),
    faqpage(s, [
-     ("Are you based in Bournemouth?", "Yes — 365 Techies is based in Bournemouth and supports homes and businesses across the town and the wider Dorset area."),
+     ("Are you a local IT company in Bournemouth?", "Yes — 365 Techies is a family-run Bournemouth IT company, established in 1995, providing IT support, IT services and computer and laptop repairs for homes and businesses across the town and the wider Dorset area."),
+     ("Do you provide business IT services and IT solutions in Bournemouth?", "Yes — alongside home IT support we provide managed business IT services and IT solutions for Bournemouth companies: Microsoft 365, cybersecurity, backups, servers and networks, and day-to-day support for your team."),
+     ("Do you offer computer support in Bournemouth?", "Yes — computer and laptop support and repairs for Bournemouth homes and businesses, including slow computers, virus removal, upgrades, setup and data transfer, with no call-out fee."),
      ("Do you offer on-site IT support in Bournemouth?", "Yes — fast remote help plus on-site visits across Bournemouth and Poole when hands-on support is needed."),
+     ("What does it cost?", "Home plans start at £15.95/month and business plans from £21.15/month, with one-off repairs also available."),
    ]),
  ]),
  content="\n".join([
    hero(bc("IT Support Bournemouth"), "// BOURNEMOUTH &middot; DORSET",
         'IT support in <em class="grad grad--cyan">Bournemouth</em>',
-        "Friendly, local IT support for Bournemouth homes and businesses — monthly support plans, computer repairs, Microsoft 365, cybersecurity and fast remote help, from a team right on your doorstep.",
+        "Friendly, local IT support and IT services for Bournemouth homes and businesses — monthly plans, computer &amp; laptop repairs, Microsoft 365, cybersecurity and fast remote help, from a Bournemouth IT company right on your doorstep.",
         chips=["Bournemouth-based", "Homes &amp; businesses", "Remote &amp; on-site"]),
    f'''    <section class="section" aria-label="Local support">
       <div class="wrap split-2">
@@ -1796,6 +1822,7 @@ add(
           <p class="eyebrow mono">/01 — LOCAL &amp; FRIENDLY</p>
           <h2 class="section-title" data-title>Your local Bournemouth techies<span class="title-underline"></span></h2>
           <p>We&rsquo;re based right here in Bournemouth, supporting home users, families, sole traders and small businesses across the town and the wider Dorset area.</p>
+          <p>As a local Bournemouth IT company, we cover everything from home computer support to fully managed business IT services and IT solutions &mdash; IT support, computer and laptop repairs, Microsoft 365, cybersecurity, servers and networks.</p>
           <p><strong>Most problems are solved remotely in minutes</strong> — and when you need someone in person, we&rsquo;re just down the road. Local knowledge, no call-centres, no jargon.</p>
         </div>
         <ul class="checklist" data-stagger>
@@ -1828,7 +1855,9 @@ add(
     </section>''',
    reviews_block([("My laptop died the night before a deadline. One message to 365 Techies and it was running again first thing next morning. Absolutely unreal.", "Maria L."),("Your service and support are unbeatable and delivered with patience and a smile.", "John Holloway")]),
    faq_html([
-     ("Are you based in Bournemouth?", "Yes — 365 Techies is based in Bournemouth and supports homes and businesses across the town and the wider Dorset area."),
+     ("Are you a local IT company in Bournemouth?", "Yes — 365 Techies is a family-run Bournemouth IT company, established in 1995, providing IT support, IT services and computer &amp; laptop repairs for homes and businesses across the town and the wider Dorset area."),
+     ("Do you provide business IT services and IT solutions in Bournemouth?", "Yes — alongside home IT support we provide managed business IT services and IT solutions for Bournemouth companies: Microsoft 365, cybersecurity, backups, servers and networks, and day-to-day support for your team."),
+     ("Do you offer computer support in Bournemouth?", "Yes — computer and laptop support and repairs for Bournemouth homes and businesses, including slow computers, virus removal, upgrades, setup and data transfer, with no call-out fee."),
      ("Do you offer on-site IT support in Bournemouth?", "Yes — fast remote help plus on-site visits across Bournemouth and Poole when hands-on support is needed."),
      ("What does it cost?", "Home plans start at &pound;15.95/month and business plans from &pound;21.15/month, with one-off repairs also available."),
    ]),
