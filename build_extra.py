@@ -2987,6 +2987,194 @@ def ai_os():
         desc=desc, og_title="365 AI OS | 365 Techies", schema=schema, content=content)
 ai_os()
 
+# ===================================================== COST CALCULATOR (interactive)
+def cost_calculator():
+    slug = "cost-calculator"
+    desc = "Work out your monthly IT support cost in seconds. A live calculator for home, family and business plans — set the number of people, computers/laptops and Microsoft 365 licences and see a clear total. 365 Techies, Dorset."
+    faqs = [
+      ("Are these the exact prices I&rsquo;ll pay?", "They&rsquo;re accurate guide prices taken straight from our published plans, so what you see is what you&rsquo;d expect to pay. We always confirm the exact figure with you before anything starts &mdash; no hidden call-out fees, no surprises."),
+      ("What&rsquo;s included in every plan?", "Every monthly plan includes a full computer service every six weeks, remote help, regular maintenance and security checks. We also call before we connect, call ahead with an ETA for visits, and you deal with the same friendly faces. See <a href=\"/monthly-it-support/\">monthly IT support</a>."),
+      ("How is business support priced?", "Business support is &pound;21.15 per user, per month for 1&ndash;3 users. For larger teams we tailor a plan to how you actually work &mdash; the calculator shows an indicative figure, then we give you a clear fixed quote."),
+      ("How are Microsoft 365 licences priced?", "We help you choose the right Microsoft 365 licences (Personal, Family, or Business Basic, Standard or Premium) and include the cost in your quote &mdash; only what you actually need, with no upselling. Not sure which? Try our <a href=\"/which-microsoft-365-plan/\">Microsoft 365 plan picker</a>."),
+      ("Do I have to commit to a contract?", "No &mdash; every plan is monthly and cancel-anytime. There&rsquo;s no long lock-in."),
+    ]
+    calc = r'''    <section class="section" aria-label="Cost calculator">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// LIVE CALCULATOR</p>
+          <h2 class="section-title section-title--center" data-title>Build your plan, see the cost<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Slide to match your setup &mdash; the monthly total updates as you go.</p>
+        </div>
+        <div id="costcalc" data-reveal>
+          <div class="cc-tabs" role="tablist">
+            <button type="button" data-mode="home" class="is-active" role="tab">Home &amp; Family</button>
+            <button type="button" data-mode="business" role="tab">Business</button>
+          </div>
+          <div class="cc-grid">
+            <div class="cc-controls">
+              <div id="cc-home-fields">
+                <div class="cc-field"><label>People who use the computers <output id="cc-people">1</output></label><input type="range" id="cc-people-r" min="1" max="8" value="1" aria-label="People who use the computers"></div>
+                <div class="cc-field"><label>Computers / laptops <output id="cc-comp">1</output></label><input type="range" id="cc-comp-r" min="1" max="10" value="1" aria-label="Computers or laptops"></div>
+              </div>
+              <div id="cc-biz-fields" hidden>
+                <div class="cc-field"><label>Users (people needing support) <output id="cc-users">1</output></label><input type="range" id="cc-users-r" min="1" max="25" value="1" aria-label="Users needing support"></div>
+                <p class="cc-note">Business support is priced per user &mdash; all of each person&rsquo;s devices are covered.</p>
+              </div>
+              <div id="cc-plans-wrap">
+                <p class="cc-label">Recommended plan <span>(tap to change)</span></p>
+                <div class="cc-plans" id="cc-plans"></div>
+              </div>
+              <div>
+                <p class="cc-label">Microsoft 365 licences <span>(optional)</span></p>
+                <div id="cc-m365"></div>
+              </div>
+            </div>
+            <aside class="cc-summary">
+              <div><p class="cc-summary__cap">Estimated monthly cost</p><p class="cc-big"><span id="cc-total">&pound;15.95</span><i>/month</i></p></div>
+              <ul class="cc-lines" id="cc-lines"></ul>
+              <a class="button primary" id="cc-cta" href="/home-it-support-plans/">Get started</a>
+              <p class="cc-note" id="cc-note"></p>
+            </aside>
+          </div>
+        </div>
+      </div>
+      <style>
+      #costcalc{max-width:980px;margin:0 auto;border:1px solid rgba(255,255,255,.12);border-radius:18px;background:rgba(255,255,255,.03);overflow:hidden}
+      #costcalc .cc-tabs{display:flex;gap:.4rem;padding:.6rem;border-bottom:1px solid rgba(255,255,255,.1)}
+      #costcalc .cc-tabs button{flex:1;font:inherit;font-weight:600;padding:.7rem 1rem;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:transparent;color:inherit;cursor:pointer;transition:.15s}
+      #costcalc .cc-tabs button.is-active{background:var(--cyan,#37c2c2);color:#04161a;border-color:var(--cyan,#37c2c2)}
+      #costcalc .cc-grid{display:grid;grid-template-columns:1.25fr 1fr}
+      #costcalc .cc-controls{padding:1.4rem 1.5rem;display:flex;flex-direction:column;gap:1.25rem}
+      #costcalc .cc-field label{display:flex;justify-content:space-between;font-size:.9rem;margin-bottom:.5rem}
+      #costcalc .cc-field output{font-weight:700;color:var(--cyan,#37c2c2);font-variant-numeric:tabular-nums}
+      #costcalc input[type=range]{width:100%;accent-color:var(--cyan,#37c2c2);cursor:pointer}
+      #costcalc .cc-field{margin-bottom:1rem}
+      #costcalc .cc-label{font-size:.82rem;color:var(--muted,#9aa6c2);margin:.2rem 0 .5rem}
+      #costcalc .cc-label span{opacity:.7}
+      #costcalc .cc-plans{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem}
+      #costcalc .cc-plan{font:inherit;text-align:left;padding:.6rem .7rem;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:transparent;color:inherit;cursor:pointer;transition:.15s}
+      #costcalc .cc-plan.is-on{border-color:var(--cyan,#37c2c2);background:rgba(55,194,194,.12)}
+      #costcalc .cc-plan b{display:block;font-size:.85rem;margin-bottom:.15rem}
+      #costcalc .cc-plan span{font-size:.74rem;color:var(--muted,#9aa6c2)}
+      #costcalc .cc-step{display:flex;align-items:center;justify-content:space-between;gap:.5rem;padding:.45rem 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:.88rem}
+      #costcalc .cc-step:last-child{border-bottom:none}
+      #costcalc .cc-stepctr{display:flex;align-items:center;gap:.5rem}
+      #costcalc .cc-step button{width:30px;height:30px;border-radius:8px;border:1px solid rgba(255,255,255,.18);background:transparent;color:inherit;font-size:1.1rem;line-height:1;cursor:pointer}
+      #costcalc .cc-step button:hover{background:rgba(255,255,255,.08)}
+      #costcalc .cc-step b{min-width:1.3rem;text-align:center;font-variant-numeric:tabular-nums}
+      #costcalc .cc-summary{background:rgba(0,0,0,.28);padding:1.4rem 1.5rem;display:flex;flex-direction:column;gap:1rem}
+      #costcalc .cc-summary__cap{font-size:.78rem;color:var(--muted,#9aa6c2);margin:0 0 .2rem}
+      #costcalc .cc-big{margin:0;font-size:2.7rem;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+      #costcalc .cc-big i{font-size:1rem;color:var(--muted,#9aa6c2);font-style:normal;font-weight:600;margin-left:.2rem}
+      #costcalc .cc-lines{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.5rem}
+      #costcalc .cc-lines li{display:flex;justify-content:space-between;gap:1rem;font-size:.88rem;color:var(--muted,#9aa6c2)}
+      #costcalc .cc-lines li b{color:inherit;font-variant-numeric:tabular-nums;white-space:nowrap}
+      #costcalc .cc-cta,#costcalc .button{align-self:flex-start}
+      #costcalc .cc-note{font-size:.74rem;color:var(--muted,#9aa6c2);line-height:1.5;margin:.2rem 0 0}
+      @media(max-width:720px){#costcalc .cc-grid{grid-template-columns:1fr}#costcalc .cc-plans{grid-template-columns:1fr}}
+      </style>
+      <script>
+      (function(){
+        var root=document.getElementById('costcalc'); if(!root) return;
+        var P={bizPerUser:21.15,bizFlatMax:3};
+        var HOME=[
+          {key:'essential',name:'Essential Home',price:15.95,blurb:'1 person, 1 main computer'},
+          {key:'family',name:'Family Home',price:19.95,blurb:'Several computers & people'},
+          {key:'premium',name:'Premium Home',price:24.95,blurb:'Multiple devices, priority'}
+        ];
+        /* Microsoft 365 — per-licence price/month supplied by 365 Techies. null = "on quote" until provided. */
+        var M365=[
+          {key:'personal',name:'Microsoft 365 Personal',price:null},
+          {key:'family',name:'Microsoft 365 Family',price:null},
+          {key:'basic',name:'Microsoft 365 Business Basic',price:null},
+          {key:'standard',name:'Microsoft 365 Business Standard',price:null},
+          {key:'premium',name:'Microsoft 365 Business Premium',price:null}
+        ];
+        var state={mode:'home',people:1,comp:1,users:1,plan:null,manual:false,m365:{}};
+        M365.forEach(function(m){state.m365[m.key]=0;});
+        function money(n){return '£'+n.toFixed(2);}
+        var m365box=root.querySelector('#cc-m365');
+        M365.forEach(function(m){
+          var row=document.createElement('div'); row.className='cc-step';
+          var lab=document.createElement('span'); lab.textContent=m.name+(m.price==null?' (on quote)':' · '+money(m.price)+'/mo');
+          var ctr=document.createElement('span'); ctr.className='cc-stepctr';
+          var minus=document.createElement('button'); minus.type='button'; minus.textContent='−'; minus.setAttribute('aria-label','Fewer '+m.name);
+          var val=document.createElement('b'); val.textContent='0';
+          var plus=document.createElement('button'); plus.type='button'; plus.textContent='+'; plus.setAttribute('aria-label','More '+m.name);
+          minus.onclick=function(){state.m365[m.key]=Math.max(0,state.m365[m.key]-1);val.textContent=state.m365[m.key];render();};
+          plus.onclick=function(){state.m365[m.key]=Math.min(50,state.m365[m.key]+1);val.textContent=state.m365[m.key];render();};
+          ctr.appendChild(minus); ctr.appendChild(val); ctr.appendChild(plus);
+          row.appendChild(lab); row.appendChild(ctr); m365box.appendChild(row);
+        });
+        var plansBox=root.querySelector('#cc-plans');
+        HOME.forEach(function(p){
+          var b=document.createElement('button'); b.type='button'; b.className='cc-plan'; b.setAttribute('data-k',p.key);
+          b.innerHTML='<b>'+p.name+'</b><span>'+money(p.price)+'/mo · '+p.blurb+'</span>';
+          b.onclick=function(){state.plan=p.key;state.manual=true;render();};
+          plansBox.appendChild(b);
+        });
+        function bind(id,prop,outId){var r=root.querySelector(id);var o=root.querySelector(outId);r.addEventListener('input',function(){state[prop]=+r.value;if(o)o.textContent=r.value;if(prop==='people'||prop==='comp')state.manual=false;render();});}
+        bind('#cc-people-r','people','#cc-people');
+        bind('#cc-comp-r','comp','#cc-comp');
+        bind('#cc-users-r','users','#cc-users');
+        root.querySelectorAll('.cc-tabs button').forEach(function(t){t.onclick=function(){
+          state.mode=t.getAttribute('data-mode'); state.manual=false;
+          root.querySelectorAll('.cc-tabs button').forEach(function(x){x.classList.toggle('is-active',x===t);x.setAttribute('aria-selected',x===t);});
+          root.querySelector('#cc-home-fields').hidden=(state.mode!=='home');
+          root.querySelector('#cc-biz-fields').hidden=(state.mode!=='business');
+          root.querySelector('#cc-plans-wrap').hidden=(state.mode!=='home');
+          render();
+        };});
+        function recommendHome(people,comp){if(people<=1&&comp<=1)return 'essential';if(comp<=4&&people<=5)return 'family';return 'premium';}
+        function render(){
+          var lines=[],total=0,fromFlag=false,m365pending=false,ctaLabel='Get started',ctaHref='/home-it-support-plans/';
+          if(state.mode==='home'){
+            var key=(state.manual&&state.plan)?state.plan:recommendHome(state.people,state.comp);
+            var p=HOME.filter(function(x){return x.key===key;})[0];
+            plansBox.querySelectorAll('.cc-plan').forEach(function(b){b.classList.toggle('is-on',b.getAttribute('data-k')===key);});
+            total+=p.price; lines.push({l:p.name+(state.manual?'':' (recommended)'),v:money(p.price)});
+          } else {
+            var users=state.users;
+            if(users<=P.bizFlatMax){var bt=P.bizPerUser*users;total+=bt;lines.push({l:'Business support · '+users+' user'+(users>1?'s':''),v:money(bt)});ctaHref='/business-it-support-plans/';}
+            else {fromFlag=true;var bt2=P.bizPerUser*users;total+=bt2;lines.push({l:'Business support · '+users+' users',v:'from '+money(bt2)});ctaLabel='Get a tailored quote';ctaHref='/contact/';}
+          }
+          M365.forEach(function(m){var c=state.m365[m.key];if(c>0){if(m.price==null){m365pending=true;lines.push({l:m.name+' × '+c,v:'on quote'});}else{var mt=m.price*c;total+=mt;lines.push({l:m.name+' × '+c,v:money(mt)});}}});
+          if(m365pending){ctaLabel='Get a tailored quote';ctaHref='/contact/';}
+          var prefix=(fromFlag||m365pending)?'from ':'';
+          root.querySelector('#cc-total').textContent=prefix+money(total);
+          var ul=root.querySelector('#cc-lines'); ul.innerHTML='';
+          lines.forEach(function(li){var el=document.createElement('li');var s=document.createElement('span');s.textContent=li.l;var b=document.createElement('b');b.textContent=li.v;el.appendChild(s);el.appendChild(b);ul.appendChild(el);});
+          var tl=document.createElement('li'); tl.style.cssText='border-top:1px solid rgba(255,255,255,.12);margin-top:.35rem;padding-top:.55rem;font-size:1rem';
+          var ts=document.createElement('span');ts.innerHTML='<b>Total per month</b>';var tb=document.createElement('b');tb.textContent=prefix+money(total);tl.appendChild(ts);tl.appendChild(tb);ul.appendChild(tl);
+          var cta=root.querySelector('#cc-cta'); cta.textContent=ctaLabel; cta.href=ctaHref;
+          var msgs=['Guide prices from our published plans &mdash; we always confirm your exact figure before anything starts. Every plan includes a full service every 6 weeks and is cancel-anytime.'];
+          if(fromFlag) msgs.push('Teams of 4+ are tailored to how you work, so the figure above is a starting guide.');
+          if(m365pending) msgs.push('Microsoft 365 licences are added at the right price for what you need, confirmed on your quote.');
+          root.querySelector('#cc-note').innerHTML=msgs.join(' ');
+        }
+        render();
+      })();
+      </script>
+    </section>'''
+    content = "\n".join([
+      hero(bc("Cost Calculator"), "// COST CALCULATOR",
+           'See your monthly cost in <em class="grad grad--cyan">seconds</em>',
+           "Move the sliders to match your home or business &mdash; how many people, how many computers, and any Microsoft 365 licences &mdash; and watch a clear monthly total appear. Guide prices straight from our published plans, with no obligation.",
+           cta1=("View Plans", "/monthly-it-support/"), cta2=("Talk to Us", "/contact/"),
+           chips=["Live sliders","Guide prices from real plans","Cancel anytime"]),
+      calc,
+      promise_strip(items=[PROMISE_CALL, PROMISE_ETA, PROMISE_PEOPLE], alt=True, title="What every plan includes"),
+      faq_html(faqs),
+      cta("See your exact price",
+          "Pick a plan or get a tailored quote &mdash; a friendly techie will confirm everything, with no obligation.",
+          primary=("View Monthly Plans", "/monthly-it-support/"), secondary=("Get a Quote", "/contact/")),
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        return graph([crumb(s, "Cost Calculator"), webpage(s, "IT Support Cost Calculator", _desc), faqpage(s, _faqs)])
+    add(slug=slug, title="IT Support Cost Calculator | Home, Family & Business | 365 Techies",
+        desc=desc, og_title="IT Support Cost Calculator | 365 Techies", schema=schema, content=content)
+cost_calculator()
+
 # ===================================================== INFO / LEGAL / RESOURCE PAGES
 def _prose(inner):
     return f'    <section class="section">\n      <div class="wrap">\n        <div class="prose" data-reveal>\n{inner}\n        </div>\n      </div>\n    </section>'

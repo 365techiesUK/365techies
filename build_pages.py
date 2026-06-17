@@ -167,6 +167,7 @@ HEADER = '''  <header class="site-header">
             <a href="/remote-support/">Start Remote Support</a>
             <a href="/support-portal/">Support Portal</a>
             <a href="/plan-finder/">Plan Finder</a>
+            <a href="/cost-calculator/">Cost Calculator</a>
             <a href="/it-health-check-tool/">IT Health Check Tool</a>
             <a href="/broadband-speed-checker/">Broadband Speed Checker</a>
             <a href="/coverage-checker/">Coverage Checker</a>
@@ -305,6 +306,7 @@ HEADER = '''  <header class="site-header">
           <a href="/remote-support/">Start Remote Support</a>
           <a href="/support-portal/">Support Portal</a>
           <a href="/plan-finder/">Plan Finder</a>
+          <a href="/cost-calculator/">Cost Calculator</a>
           <a href="/it-health-check-tool/">IT Health Check Tool</a>
           <a href="/broadband-speed-checker/">Broadband Speed Checker</a>
           <a href="/coverage-checker/">Coverage Checker</a>
@@ -432,6 +434,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/computer-repairs/">Computer Repairs</a>
         <a href="/pricing/">Pricing</a>
         <a href="/quick-quote/">Quick Quote</a>
+        <a href="/cost-calculator/">Cost Calculator</a>
         <a href="/it-health-check-tool/">IT Health Check Tool</a>
         <a href="/broadband-speed-checker/">Broadband Speed Checker</a>
         <a href="/coverage-checker/">Coverage Checker</a>
