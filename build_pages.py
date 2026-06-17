@@ -711,8 +711,27 @@ def page(slug, title, desc, og_title, schema_json, content):
 '''
 
 # ---- schema helpers ----
+BUSINESS_NODE = {
+    "@type": ["LocalBusiness", "ProfessionalService"], "@id": SITE + "/#business",
+    "name": "365 Techies", "legalName": "365 Techies Limited", "url": SITE + "/",
+    "telephone": "+441202775566", "email": "help@365techies.co.uk", "foundingDate": "1995",
+    "image": SITE + "/og-image.jpg", "logo": SITE + "/favicon.svg", "priceRange": "££",
+    "address": {"@type": "PostalAddress", "addressLocality": "Bournemouth", "addressRegion": "Dorset", "addressCountry": "GB"},
+    "geo": {"@type": "GeoCoordinates", "latitude": 50.7192, "longitude": -1.8808},
+    "areaServed": [{"@type": "AdministrativeArea", "name": "Dorset"},
+                   {"@type": "AdministrativeArea", "name": "Bournemouth, Christchurch and Poole"},
+                   {"@type": "AdministrativeArea", "name": "New Forest"}],
+    "openingHoursSpecification": {"@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], "opens": "09:00", "closes": "17:00"},
+    "aggregateRating": {"@type": "AggregateRating", "ratingValue": "4.9", "reviewCount": "51", "bestRating": "5"},
+}
+WEBSITE_NODE = {"@type": "WebSite", "@id": SITE + "/#website", "url": SITE + "/",
+                "name": "365 Techies", "inLanguage": "en-GB", "publisher": {"@id": SITE + "/#business"}}
+
 def graph(nodes):
-    return json.dumps({"@context": "https://schema.org", "@graph": nodes}, indent=2, ensure_ascii=False)
+    ids = {n["@id"] for n in nodes if isinstance(n, dict) and n.get("@id")}
+    head = [x for x in (WEBSITE_NODE, BUSINESS_NODE) if x["@id"] not in ids]
+    return json.dumps({"@context": "https://schema.org", "@graph": head + list(nodes)}, indent=2, ensure_ascii=False)
 
 def crumb(slug, name):
     items = [{"@type": "ListItem", "position": 1, "name": "Home", "item": SITE + "/"}]

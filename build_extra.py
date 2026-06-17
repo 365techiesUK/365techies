@@ -1475,6 +1475,9 @@ def services_overview():
         ("Cybersecurity", "/cybersecurity-support/", "Protection from scams, malware, ransomware and phishing."),
         ("Malwarebytes Premium &amp; VPN", "/malwarebytes-premium/", "Award-winning Malwarebytes Premium with VPN, set up and managed by us &mdash; safe online 24/7."),
         ("Computer Repairs", "/computer-repairs/", "Laptop and PC repairs, virus removal, upgrades and setup."),
+        ("Computer Repair Bournemouth", "/computer-repair-bournemouth/", "Local PC &amp; laptop repair in Bournemouth &mdash; home visits, remote help, no call-out fee."),
+        ("Computer Repair Poole", "/computer-repair-poole/", "Local PC &amp; laptop repair in Poole &mdash; home visits, remote help, no call-out fee."),
+        ("Computer Repair Christchurch", "/computer-repair-christchurch/", "Local PC &amp; laptop repair in Christchurch &mdash; home visits, remote help, no call-out fee."),
         ("Dell Laptops &amp; Desktops", "/dell-hardware/", "Genuine Dell Latitude laptops and OptiPlex desktops, supplied, set up and supported."),
         ("Custom-Built PCs", "/custom-pc-builds/", "Bespoke desktops for home, gaming, creative and business &mdash; built, tested and supported."),
         ("AMD Threadripper Workstations", "/threadripper-workstations/", "High-end Scan 3XS Threadripper workstations for video, 3D, CAD and AI &mdash; supplied &amp; supported."),
@@ -3564,6 +3567,74 @@ def broadband_checker():
     add(slug=slug, title="Dorset Broadband Checker | Who Serves Your Postcode & Switch to Save | 365 Techies",
         desc=desc, og_title="Dorset Broadband Checker | 365 Techies", schema=schema, content=content)
 broadband_checker()
+
+# ===================================================== PER-TOWN COMPUTER REPAIR (consumer intent)
+def repair_pages():
+    REPAIRS = [
+      ("Bournemouth", "computer-repair-bournemouth", "Boscombe, Winton, Charminster, Southbourne and across the BH postcodes"),
+      ("Poole", "computer-repair-poole", "Parkstone, Canford Heath, Broadstone and across Poole"),
+      ("Christchurch", "computer-repair-christchurch", "Highcliffe, Mudeford, Burton and the surrounding area"),
+    ]
+    for town, slug, nearby in REPAIRS:
+        desc = f"Fast, friendly computer & laptop repair in {town} from 365 Techies — virus removal, slow-PC fixes, upgrades, data transfer and setup, with home visits, remote help and no call-out fee. Family-run since 1995, rated 4.9 on Google."
+        faqs = [
+          (f"Do you repair computers and laptops in {town}?", f"Yes &mdash; we repair PCs and laptops for homes and businesses across {town} and the surrounding area ({nearby}). We can help remotely, visit you at home, or collect the machine."),
+          ("How much does a computer repair cost?", "It depends on the problem &mdash; we diagnose it and give you a clear price before any work, with no call-out fee and no surprise bills. Many issues are fixed quickly and remotely."),
+          ("Is it worth repairing or replacing my computer?", "We&rsquo;ll tell you honestly &mdash; sometimes a small upgrade like an SSD gives an old machine years more life; sometimes a replacement is better value. Try our <a href=\"/repair-or-replace-advisor/\">repair or replace advisor</a>."),
+          ("Why is my computer so slow?", "Usually clutter, too many start-up programs, low disk space, missed updates or a failing drive. We&rsquo;ll find the cause and speed it up &mdash; and a <a href=\"/monthly-it-support/\">monthly plan</a> keeps it fast with a full service every six weeks."),
+          (f"Can you come to my home in {town}?", f"Yes &mdash; we offer home visits across {town}, and for any visit we phone ahead with an estimated arrival time so you know exactly when to expect us. We can also fix many things remotely."),
+          ("Will I lose my files?", "We take care to protect your data, and we can transfer or recover your files &mdash; we&rsquo;ll always talk you through it first."),
+        ]
+        content = "\n".join([
+          hero(bc(f"Computer Repair {town}"), "// COMPUTER &amp; LAPTOP REPAIR",
+               f'Computer &amp; laptop repair in <em class="grad grad--cyan">{town}</em>',
+               f"Slow, broken or playing up? We fix PCs and laptops for homes and businesses across {town} &mdash; virus removal, speed-ups, upgrades, data transfer and setup &mdash; with home visits, fast remote help and no call-out fee. Friendly, local and family-run since 1995.",
+               cta1=("Book a Repair", "/book-a-collection/"), cta2=("Call 01202 775566", "tel:+441202775566"),
+               chips=["No call-out fee", "Home visits &amp; remote", "Rated 4.9 on Google"]),
+          f'''    <section class="section" aria-label="What we fix">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/01 &mdash; WHAT WE FIX</p>
+          <h2 class="section-title section-title--center" data-title>Common repairs, sorted<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="tile-grid" data-stagger>
+{tiles([("bolt","Slow computers","Speed-ups, clean-ups and SSD/memory upgrades to make an old machine feel new again."),("shield","Virus &amp; malware removal","Pop-ups, scams and infections cleared &mdash; and protection set up so it stays clean."),("wrench","Won&rsquo;t start or crashing","Boot problems, blue screens, overheating and crashes diagnosed and fixed."),("cpu","Upgrades","More memory, a fast SSD or a fresh Windows install to extend your computer&rsquo;s life."),("cloud","Data transfer &amp; recovery","Move your files to a new machine, or recover what matters from a failing one."),("monitor","New computer setup","A new PC or laptop set up properly, with your files, email and software moved across.")])}
+        </div>
+      </div>
+    </section>''',
+          f'''    <section class="section section--alt" aria-label="How we help">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/02 &mdash; HOW WE HELP</p>
+          <h2 class="section-title section-title--center" data-title>Remote, at home, or collected<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ul class="security-grid" data-stagger>
+{grid_cards([("Remote help","Many problems are fixed in minutes over a secure remote session &mdash; and we always phone first."),("Home visits","Prefer someone to come to you? We visit homes and businesses locally and call ahead with an ETA."),("Collection &amp; return","We can collect your computer, fix it in the workshop and bring it back &mdash; <a href=\"/book-a-collection/\">book a collection</a>.")])}
+        </ul>
+      </div>
+    </section>''',
+          f'''    <section class="how" aria-label="How it works">
+      <div class="wrap">
+        <p class="eyebrow eyebrow--center mono" data-reveal>/03 &mdash; HOW IT WORKS</p>
+        <h2 class="section-title section-title--center" data-title>From broken to brilliant<span class="title-underline title-underline--center"></span></h2>
+        <ol class="how__steps">
+{steps([("Tell us what&rsquo;s wrong","Call or message and describe the problem in plain English &mdash; no jargon needed."),("We diagnose it","Remotely, at your home or in our workshop &mdash; and we phone before we connect or set off."),("We fix &amp; explain","We sort it, tell you what happened and how to avoid it, and give a clear price up front."),("Back up and running","You&rsquo;re sorted &mdash; and we&rsquo;re here whenever you need us again.")])}
+        </ol>
+      </div>
+    </section>''',
+          promise_strip(items=[PROMISE_ETA, PROMISE_PEOPLE, PROMISE_CALL], title=f"Looked after in {town}"),
+          faq_html(faqs),
+          cta(f"Need a computer repair in {town}?",
+              "Tell us what&rsquo;s wrong and we&rsquo;ll get you sorted &mdash; remotely, at home or by collection, with no call-out fee and a clear price first.",
+              primary=("Book a Repair", "/book-a-collection/"), secondary=("View Monthly Plans", "/monthly-it-support/")),
+        ])
+        def schema(s, _desc=desc, _faqs=faqs, _town=town):
+            return graph([crumb(s, f"Computer Repair {_town}"), webpage(s, f"Computer & Laptop Repair {_town}", _desc),
+                          service(s, f"Computer Repair {_town}", f"Computer and laptop repair for homes and businesses in {_town}, Dorset.", "Computer repair"),
+                          faqpage(s, _faqs)])
+        add(slug=slug, title=f"Computer & Laptop Repair {town} | No Call-Out Fee | 365 Techies",
+            desc=desc, og_title=f"Computer & Laptop Repair {town} | 365 Techies", schema=schema, content=content)
+repair_pages()
 
 # ===================================================== INFO / LEGAL / RESOURCE PAGES
 def _prose(inner):
