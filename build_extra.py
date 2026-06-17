@@ -3578,12 +3578,8 @@ broadband_checker()
 
 # ===================================================== PER-TOWN COMPUTER REPAIR (consumer intent)
 def repair_pages():
-    REPAIRS = [
-      ("Bournemouth", "computer-repair-bournemouth", "Boscombe, Winton, Charminster, Southbourne and across the BH postcodes"),
-      ("Poole", "computer-repair-poole", "Parkstone, Canford Heath, Broadstone and across Poole"),
-      ("Christchurch", "computer-repair-christchurch", "Highcliffe, Mudeford, Burton and the surrounding area"),
-    ]
-    for town, slug, nearby in REPAIRS:
+    REPAIRS = bp.REPAIR_TOWNS  # single source of truth — defined in build_pages.py
+    for town, slug, nearby, it_slug in REPAIRS:
         desc = f"Fast, friendly computer & laptop repair in {town} from 365 Techies — virus removal, slow-PC fixes, upgrades, data transfer and setup, with home visits, remote help and no call-out fee. Family-run since 1995, rated 4.9 on Google."
         faqs = [
           (f"Do you repair computers and laptops in {town}?", f"Yes &mdash; we repair PCs and laptops for homes and businesses across {town} and the surrounding area ({nearby}). We can help remotely, visit you at home, or collect the machine."),
@@ -3631,6 +3627,13 @@ def repair_pages():
       </div>
     </section>''',
           promise_strip(items=[PROMISE_ETA, PROMISE_PEOPLE, PROMISE_CALL], title=f"Looked after in {town}"),
+          f'''    <section class="section" aria-label="Ongoing IT support">
+      <div class="wrap">
+        <div class="prose" data-reveal style="text-align:center;max-width:64ch;margin:0 auto">
+          <p>Want more than a one-off fix? Our <a href="/{it_slug}/">monthly IT support in {town}</a> keeps your computers fast and protected all year &mdash; regular maintenance, security checks and unlimited remote help from &pound;15.95 a month.</p>
+        </div>
+      </div>
+    </section>''',
           faq_html(faqs),
           cta(f"Need a computer repair in {town}?",
               "Tell us what&rsquo;s wrong and we&rsquo;ll get you sorted &mdash; remotely, at home or by collection, with no call-out fee and a clear price first.",

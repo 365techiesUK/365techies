@@ -48,8 +48,13 @@ COORDS = {
  "it-support-hythe": [50.8680, -1.3990],
 }
 
+REPAIR_SLUGS = {s for _t, s, _n, _it in bp.REPAIR_TOWNS}  # towns that have a computer-repair page
+
 def make_local(i, slug, town, region, lede, intro_para, nearby):
     crumb_name = f"IT Support {town}"
+    repair_slug = ("computer-repair-" + slug[len("it-support-"):]) if slug.startswith("it-support-") else ""
+    repair_link = (f'\n          <p>Just need a one-off fix rather than a plan? See our <a href="/{repair_slug}/">computer &amp; laptop repair in {town}</a> &mdash; home visits, fast remote help and no call-out fee.</p>'
+                   if repair_slug in REPAIR_SLUGS else "")
     desc = (f"Local IT support in {town} for homes and businesses — monthly support plans, "
             f"computer repairs, Microsoft 365, cybersecurity and fast remote help across {town} and the wider {region} area.")
     faqs = [
@@ -71,7 +76,7 @@ def make_local(i, slug, town, region, lede, intro_para, nearby):
           <p class="eyebrow mono">/01 — LOCAL &amp; FRIENDLY</p>
           <h2 class="section-title" data-title>Your local {town} techies<span class="title-underline"></span></h2>
           <p>{intro_para}</p>
-          <p><strong>Most problems are solved remotely in minutes</strong> — and when you need someone in person, we&rsquo;re close by. Local knowledge, no call-centres, no jargon.</p>
+          <p><strong>Most problems are solved remotely in minutes</strong> — and when you need someone in person, we&rsquo;re close by. Local knowledge, no call-centres, no jargon.</p>{repair_link}
         </div>
         <ul class="checklist" data-stagger>
 {checklist(["Monthly IT support plans","Computer &amp; laptop repairs","Microsoft 365 support","Cybersecurity &amp; backups","Wi-Fi, printer &amp; email help","Remote &amp; on-site support"])}

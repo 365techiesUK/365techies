@@ -1570,6 +1570,48 @@ add(
 )
 
 # ============================================================ COMPUTER REPAIRS
+# Town computer/laptop-repair pages — single source of truth, shared with build_extra.repair_pages()
+# and the hub-page link grid below. Town list driven by real Google Search Console rankings on the
+# old /computer-repair-near-me-service-support-*/ URLs (see MIGRATION-redirects.csv).
+# (Town, slug, nearby areas, matching IT-support town page)
+REPAIR_TOWNS = [
+  ("Bournemouth", "computer-repair-bournemouth", "Boscombe, Winton, Charminster, Southbourne and across the BH postcodes", "it-support-bournemouth"),
+  ("Poole", "computer-repair-poole", "Parkstone, Canford Heath, Broadstone and across Poole", "it-support-poole"),
+  ("Christchurch", "computer-repair-christchurch", "Highcliffe, Mudeford, Burton and the surrounding area", "it-support-christchurch"),
+  ("Blandford Forum", "computer-repair-blandford-forum", "Blandford St Mary, Pimperne, Bryanston, Charlton Marshall and the surrounding villages", "it-support-blandford-forum"),
+  ("Weymouth", "computer-repair-weymouth", "Wyke Regis, Chickerell, Preston, Littlemoor and the surrounding area", "it-support-weymouth"),
+  ("Gillingham", "computer-repair-gillingham", "Bourton, Milton on Stour, Wyke and the surrounding villages", "it-support-gillingham"),
+  ("Dorchester", "computer-repair-dorchester", "Poundbury, Charminster, Broadmayne and the surrounding villages", "it-support-dorchester"),
+  ("Ferndown", "computer-repair-ferndown", "West Parley, West Moors, Wimborne and the surrounding area", "it-support-ferndown"),
+  ("Verwood", "computer-repair-verwood", "Three Legged Cross, West Moors, Cranborne and the surrounding villages", "it-support-verwood"),
+  ("Wareham", "computer-repair-wareham", "Sandford, Wool, Stoborough, Bere Regis and the surrounding area", "it-support-wareham"),
+  ("Sherborne", "computer-repair-sherborne", "Yetminster, Milborne Port, Bradford Abbas and the surrounding villages", "it-support-sherborne"),
+  ("Bridport", "computer-repair-bridport", "West Bay, Beaminster, Charmouth and the surrounding area", "it-support-bridport"),
+  ("Swanage", "computer-repair-swanage", "Studland, Corfe Castle, Langton Matravers and the Isle of Purbeck", "it-support-swanage"),
+  ("Lyme Regis", "computer-repair-lyme-regis", "Charmouth, Uplyme, Axminster and the surrounding area", "it-support-lyme-regis"),
+  ("Shaftesbury", "computer-repair-shaftesbury", "Motcombe, Fontmell Magna, Gillingham and the surrounding villages", "it-support-shaftesbury"),
+  ("Portland", "computer-repair-portland", "Fortuneswell, Easton, Weymouth and the surrounding area", "it-support-portland"),
+  ("Wimborne", "computer-repair-wimborne", "Colehill, Corfe Mullen, Wimborne Minster and the surrounding villages", "it-support-wimborne"),
+  ("Sturminster Newton", "computer-repair-sturminster-newton", "Stalbridge, Marnhull, Hazelbury Bryan and the surrounding villages", "it-support-sturminster-newton"),
+  ("West Moors", "computer-repair-west-moors", "Ferndown, Verwood, St Leonards and the surrounding area", "it-support-west-moors"),
+  ("Corfe Mullen", "computer-repair-corfe-mullen", "Broadstone, Wimborne, Lytchett Matravers and the surrounding area", "it-support-corfe-mullen"),
+  ("Upton", "computer-repair-upton", "Lytchett Minster, Hamworthy, Poole and the surrounding area", "it-support-upton"),
+]
+def repair_town_links():
+    items = "\n".join(f'          <li><a href="/{slug}/">Computer Repair {town}</a></li>'
+                      for town, slug, _n, _it in REPAIR_TOWNS)
+    return f'''    <section class="section section--alt" aria-label="Computer repair by town">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/03 &mdash; COMPUTER REPAIR NEAR YOU</p>
+          <h2 class="section-title section-title--center" data-title>Local computer &amp; laptop repair across Dorset<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ul class="areas-grid" data-stagger>
+{items}
+        </ul>
+      </div>
+    </section>'''
+
 add(
  slug="computer-repairs",
  title="Computer Repairs Bournemouth | Laptop & PC Repairs | 365 Techies",
@@ -1629,6 +1671,7 @@ add(
         </div>
       </div>
     </section>''',
+   repair_town_links(),
    faq_html([
      ("Do you offer no-fix-no-fee?", "Yes &mdash; if we can&rsquo;t fix your device, you don&rsquo;t pay for the diagnosis. We always quote clearly before any chargeable work."),
      ("Is there a warranty on repairs?", "Yes &mdash; every repair is backed by a full 12-month warranty."),
