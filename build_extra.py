@@ -3419,6 +3419,138 @@ def ai_roi():
         desc=desc, og_title="AI ROI Calculator | 365 Techies", schema=schema, content=content)
 ai_roi()
 
+# ===================================================== DORSET BROADBAND CHECKER (interactive, signposting)
+def broadband_checker():
+    slug = "broadband-checker"
+    desc = "Free Dorset broadband checker — enter your postcode and current provider to see which broadband providers serve your area (Openreach, Virgin Media, Wessex Internet, full-fibre altnets), check live prices on official checkers, or let 365 Techies do a free impartial review for you."
+    faqs = [
+      ("Which broadband providers are available in Dorset?", "Across most of Dorset you can get the national ISPs on the Openreach network &mdash; BT, Sky, TalkTalk, EE, Vodafone, Plusnet, Zen and NOW. In urban Bournemouth, Christchurch &amp; Poole you&rsquo;ll often also have Virgin Media cable and full-fibre altnets like toob/CityFibre. In rural Dorset, the Dorset-based <strong>Wessex Internet</strong> fills many of the gaps. Exact availability is postcode-specific, so always check your address."),
+      ("Can you tell me the exact price for my address?", "Broadband prices are address-specific and change almost weekly, with introductory deals that rise mid-contract &mdash; so we don&rsquo;t quote a figure we can&rsquo;t stand behind. Use the official/live checkers we link to for today&rsquo;s prices, or let us do a free impartial review for your exact postcode."),
+      ("Is switching broadband a hassle?", "Not any more &mdash; under &lsquo;One Touch Switch&rsquo; your new provider arranges the switch and cancels the old line for you. We can guide you through it and make sure your Wi-Fi and email keep working."),
+      ("I&rsquo;m out of contract &mdash; am I overpaying?", "Very possibly. Out-of-contract customers usually pay more than new-customer prices, and old slow lines can now cost more than full fibre. It&rsquo;s well worth a check."),
+      ("Do you sell broadband?", "We&rsquo;re independent &mdash; we help you find and switch to the best deal for your address, then make sure it&rsquo;s all set up and your Wi-Fi works properly. Honest advice, no commission-chasing."),
+    ]
+    checker = r'''    <section class="section" aria-label="Broadband checker">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// CHECK YOUR POSTCODE</p>
+          <h2 class="section-title section-title--center" data-title>Who can you get &mdash; and is it time to switch?<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div id="bbcheck" data-reveal>
+          <div class="bb-form">
+            <div class="bb-field"><label for="bb-pc">Your postcode</label><input id="bb-pc" type="text" autocomplete="postal-code" placeholder="e.g. BH1 1AA" maxlength="9"></div>
+            <div class="bb-field"><label for="bb-prov">Current provider</label><select id="bb-prov"></select></div>
+            <div class="bb-field"><label for="bb-type">For</label><select id="bb-type"><option value="home">My home</option><option value="business">My business</option></select></div>
+            <button type="button" class="button primary" id="bb-go">Check my area</button>
+          </div>
+          <div id="bb-result" hidden></div>
+        </div>
+      </div>
+      <style>
+      #bbcheck{max-width:980px;margin:0 auto;border:1px solid rgba(255,255,255,.12);border-radius:18px;background:rgba(255,255,255,.03);padding:1.4rem 1.5rem}
+      #bbcheck .bb-form{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:.8rem;align-items:end}
+      #bbcheck .bb-field{display:flex;flex-direction:column}
+      #bbcheck .bb-field label{font-size:.82rem;color:var(--muted,#9aa6c2);margin-bottom:.35rem}
+      #bbcheck input,#bbcheck select{font:inherit;padding:.7rem .8rem;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:rgba(0,0,0,.25);color:inherit}
+      #bbcheck input:focus,#bbcheck select:focus{outline:none;border-color:var(--cyan,#37c2c2)}
+      #bbcheck #bb-go{white-space:nowrap}
+      #bbcheck .bb-result{margin-top:1.4rem;border-top:1px solid rgba(255,255,255,.12);padding-top:1.3rem;display:flex;flex-direction:column;gap:1.1rem}
+      #bbcheck .bb-hint{background:rgba(55,194,194,.1);border:1px solid rgba(55,194,194,.3);border-radius:12px;padding:.9rem 1rem;font-size:.95rem;line-height:1.5}
+      #bbcheck h3{margin:0 0 .5rem;font-size:1rem}
+      #bbcheck .bb-links{display:flex;flex-wrap:wrap;gap:.6rem}
+      #bbcheck .bb-links a{font:inherit;font-size:.86rem;padding:.55rem .8rem;border-radius:10px;border:1px solid rgba(255,255,255,.16);color:inherit;text-decoration:none;background:rgba(255,255,255,.04)}
+      #bbcheck .bb-links a:hover{border-color:var(--cyan,#37c2c2)}
+      #bbcheck .bb-note{font-size:.74rem;color:var(--muted,#9aa6c2);line-height:1.5;margin:0}
+      #bbcheck .bb-err{color:#ffb9a6;font-size:.85rem;margin:.4rem 0 0}
+      @media(max-width:720px){#bbcheck .bb-form{grid-template-columns:1fr}}
+      </style>
+      <script>
+      (function(){
+        var R=document.getElementById('bbcheck'); if(!R) return;
+        var provs=["BT","Sky","TalkTalk","EE","Vodafone","Plusnet","Zen Internet","NOW Broadband","Virgin Media","toob","Wessex Internet","Onestream","Another provider","I'm not sure"];
+        var sel=R.querySelector('#bb-prov');
+        provs.forEach(function(p){var o=document.createElement('option');o.value=p;o.textContent=p;sel.appendChild(o);});
+        function esc(s){var d=document.createElement('div');d.textContent=String(s==null?'':s);return d.innerHTML;}
+        function area(pc){var m=pc.toUpperCase().replace(/[^A-Z0-9]/g,'').match(/^([A-Z]{1,2})/);return m?m[1]:'';}
+        function hintFor(a){
+          if(a==='BH') return "That looks like the <strong>Bournemouth, Christchurch &amp; Poole</strong> area &mdash; usually the most choice in Dorset: Openreach full fibre, <strong>Virgin Media</strong> cable, and full-fibre altnets like <strong>toob/CityFibre</strong>. Confirm the exact street below.";
+          if(a==='DT') return "That looks like <strong>central or west Dorset</strong> (Dorchester, Weymouth, Bridport, Sherborne…) &mdash; Openreach (full or part fibre) is the mainstay, with <strong>Wessex Internet</strong> and ex-Jurassic full fibre in some towns. Confirm the exact street below.";
+          if(a==='SP'||a==='BA') return "That looks like <strong>rural North Dorset</strong> &mdash; <strong>Wessex Internet</strong> and Openreach/Project Gigabit are the likely options, with full fibre arriving area by area. Confirm the exact street below.";
+          return "We cover all of Dorset &mdash; check the live options for your exact postcode below.";
+        }
+        R.querySelector('#bb-go').addEventListener('click',function(){
+          var pc=R.querySelector('#bb-pc').value.trim();
+          var prov=sel.value, type=R.querySelector('#bb-type').value;
+          var box=R.querySelector('#bb-result');
+          if(!/^[A-Za-z]{1,2}\d[A-Za-z\d]?\s*\d?[A-Za-z]{0,2}$/.test(pc)){
+            box.hidden=false; box.className='bb-result'; box.innerHTML='<p class="bb-err">Please enter a valid UK postcode (e.g. BH1 1AA) so we can point you to the right checks.</p>'; return;
+          }
+          var a=area(pc);
+          var review='/contact/';
+          box.hidden=false; box.className='bb-result';
+          box.innerHTML=
+            '<div class="bb-hint">'+hintFor(a)+'</div>'+
+            '<div><h3>1 &middot; Check live prices for '+esc(pc.toUpperCase())+'</h3>'+
+            '<p class="bb-note" style="margin-bottom:.6rem">Prices change weekly and depend on your exact address, so check today&rsquo;s deals on an official or Ofcom-accredited tool:</p>'+
+            '<div class="bb-links">'+
+            '<a href="https://checker.ofcom.org.uk/" target="_blank" rel="noopener">Ofcom official checker &#8599;</a>'+
+            '<a href="https://www.openreach.com/fibre-checker" target="_blank" rel="noopener">Openreach full-fibre &#8599;</a>'+
+            '<a href="https://www.virginmedia.com/" target="_blank" rel="noopener">Virgin Media &#8599;</a>'+
+            '<a href="https://www.wessexinternet.com/" target="_blank" rel="noopener">Wessex Internet (rural) &#8599;</a>'+
+            '<a href="https://www.uswitch.com/broadband/" target="_blank" rel="noopener">Compare deals &#8599;</a>'+
+            '</div></div>'+
+            '<div><h3>2 &middot; Or let us do it for you &mdash; free</h3>'+
+            '<p class="bb-note" style="margin-bottom:.6rem">We&rsquo;ll run an impartial check of what genuinely serves '+esc(pc.toUpperCase())+(prov && prov!=="I'm not sure" && prov!=="Another provider"?' (you&rsquo;re with '+esc(prov)+' now)':'')+', find the best '+(type==='business'?'business':'home')+' option, and &mdash; if you switch &mdash; make sure your Wi-Fi, email and devices all keep working.</p>'+
+            '<a href="'+review+'" class="button primary">Book a free broadband review</a></div>'+
+            '<p class="bb-note">We don&rsquo;t quote prices ourselves because they&rsquo;re address-specific and change constantly &mdash; the checkers above show today&rsquo;s live deals, and our free review confirms the best one for you. Discontinued brands (e.g. John Lewis, Shell Energy) are not shown.</p>';
+          box.scrollIntoView({block:'nearest'});
+        });
+      })();
+      </script>
+    </section>'''
+    content = "\n".join([
+      hero(bc("Broadband Checker"), "// DORSET BROADBAND CHECKER",
+           'Who serves your postcode &mdash; and could you <em class="grad grad--cyan">do better?</em>',
+           "Enter your postcode and current provider to see which broadband options genuinely reach your part of Dorset, jump straight to the live price checkers, or let us run a free, impartial review and handle the switch for you.",
+           cta1=("Book a Free Review", "/contact/"), cta2=("Speed Test", "/broadband-speed-checker/"),
+           chips=["Every Dorset provider","Live, official prices","Free impartial review"]),
+      checker,
+      f'''    <section class="section section--alt" aria-label="Who serves Dorset">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// WHO SERVES DORSET</p>
+          <h2 class="section-title section-title--center" data-title>Your broadband options, honestly mapped<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Who you can actually get depends on your exact street &mdash; here&rsquo;s the real Dorset landscape.</p>
+        </div>
+        <ul class="security-grid" data-stagger>
+{grid_cards([("National providers (everywhere)","BT, Sky, TalkTalk, EE, Vodafone, Plusnet, Zen &amp; NOW &mdash; on the Openreach network across Dorset, as full fibre (FTTP) or older part-fibre (FTTC) depending on your line."),("Virgin Media (urban cable)","Its own cable network covers most of urban Bournemouth, Christchurch &amp; Poole with gigabit speeds &mdash; little rural coverage. Check your exact postcode."),("Full-fibre altnets (BCP)","toob and others on the CityFibre network bring symmetrical full fibre to parts of BCP &mdash; availability varies street by street."),("Wessex Internet (rural Dorset)","Dorset-based and rural-focused &mdash; full fibre and fixed wireless reaching villages the big networks don&rsquo;t, including Project Gigabit areas."),("Dorset towns full fibre","Weymouth, Bridport, Sherborne &amp; Dorchester have ex-Jurassic full fibre (reopening to new orders via Brillband from mid-2026) and growing Openreach FTTP."),("New-build estates","Newer developments (e.g. parts of Gillingham) are often on dedicated full-fibre networks &mdash; we&rsquo;ll check if yours is.")])}
+        </ul>
+        <p class="lede lede--center" data-reveal style="margin-top:1.3rem">Slow old lines can now cost <em>more</em> than full fibre (Ofcom, 2025) &mdash; so switching up can genuinely save money as well as speed.</p>
+      </div>
+    </section>''',
+      f'''    <section class="section" aria-label="What to watch for">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// SWITCH SMART</p>
+          <h2 class="section-title section-title--center" data-title>What to watch when you switch<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ul class="security-grid" data-stagger>
+{grid_cards([("Out of contract = overpaying","Once your deal ends, the price usually jumps. If you&rsquo;re past your minimum term, you can almost always do better."),("&lsquo;From&rsquo; prices are intro rates","Headline deals are introductory and rise mid-contract &mdash; check what you&rsquo;ll pay over the whole term, not just month one."),("Mid-contract price rises","Most big providers raise prices each spring (often around &pound;3&ndash;4/month). A few, like Zen, don&rsquo;t &mdash; worth comparing like for like."),("Full fibre vs part fibre","&lsquo;Fibre&rsquo; isn&rsquo;t always full fibre. FTTP (to your home) is faster and more reliable than older FTTC &mdash; check which you&rsquo;d get."),("One Touch Switch","Switching is easier now &mdash; your new provider sorts it and cancels the old line. No double-billing, minimal downtime."),("Keep your email &amp; Wi-Fi working","The bit people forget &mdash; we make sure your email, devices and Wi-Fi all keep working after a switch.")])}
+        </ul>
+      </div>
+    </section>''',
+      promise_strip(items=[PROMISE_CALL, PROMISE_ETA, PROMISE_PEOPLE], alt=True, title="Looked after through the switch"),
+      faq_html(faqs),
+      cta("Let&rsquo;s find your best broadband",
+          "Tell us your postcode and who you&rsquo;re with now &mdash; we&rsquo;ll run a free, impartial check and, if it&rsquo;s worth switching, handle it so your Wi-Fi never misses a beat.",
+          primary=("Book a Free Review", "/contact/"), secondary=("Call 01202 775566", "tel:+441202775566")),
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        return graph([crumb(s, "Broadband Checker"), webpage(s, "Dorset Broadband Checker", _desc), faqpage(s, _faqs)])
+    add(slug=slug, title="Dorset Broadband Checker | Who Serves Your Postcode & Switch to Save | 365 Techies",
+        desc=desc, og_title="Dorset Broadband Checker | 365 Techies", schema=schema, content=content)
+broadband_checker()
+
 # ===================================================== INFO / LEGAL / RESOURCE PAGES
 def _prose(inner):
     return f'    <section class="section">\n      <div class="wrap">\n        <div class="prose" data-reveal>\n{inner}\n        </div>\n      </div>\n    </section>'
