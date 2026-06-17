@@ -2013,6 +2013,32 @@ def agentic_systems():
         </ul>
       </div>
     </section>''',
+      f'''    <section class="section section--alt" aria-label="Why not just use Copilot or ChatGPT">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/08 &mdash; &ldquo;WHY NOT JUST USE COPILOT OR CHATGPT?&rdquo;</p>
+          <h2 class="section-title section-title--center" data-title>Great tools &mdash; we make them yours<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Copilot and ChatGPT are brilliant general assistants. The difference is what happens next: an off-the-shelf chatbot waits for you to prompt it &mdash; a 365 Techies agentic system is built into <em>your</em> tools and quietly does the work.</p>
+        </div>
+        <ul class="security-grid" data-stagger>
+{grid_cards([("Built around your business","A custom agent knows your process, your price list and your tools &mdash; not just general answers in a chat window."),("It does, not just chats","It reads, decides and takes multi-step actions across your systems, then hands you the result to approve."),("No runaway meters","One clear arrangement &mdash; not pay-per-credit or per-token pricing that can quietly balloon the more you use it."),("A real person sets it up","We build, connect and support it for you &mdash; you don&rsquo;t assemble a toolkit or manage prompts yourself."),("With Microsoft, not against it","As a Microsoft Partner we help your team get real value from the Copilot you already pay for &mdash; and build the bespoke parts it can&rsquo;t."),("You own it","Your system is yours, built around your tools, with no lock-in to someone else&rsquo;s platform or framework.")])}
+        </ul>
+      </div>
+    </section>''',
+      f'''    <section class="section" aria-label="Why 365 Techies">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">/09 &mdash; WHY 365 TECHIES</p>
+          <h2 class="section-title" data-title>AI on a foundation you can trust<span class="title-underline"></span></h2>
+          <p>We&rsquo;re not an AI-only startup. We&rsquo;re a family-run IT company that has looked after Dorset homes and businesses <strong>since 1995</strong>, rated <strong>4.9 on Google</strong> &mdash; so your agentic system sits on genuine <a href="/cybersecurity-support/">IT support and cybersecurity</a>, from the same people, under one roof.</p>
+          <p>Your data stays <strong>under your control</strong>, handled the UK&nbsp;/&nbsp;GDPR way (see <a href="/gdpr-it-compliance/">GDPR &amp; compliance</a>). We explain everything in plain English, we phone before we ever connect, and we never upsell.</p>
+          <p><strong>How we work:</strong> a no-obligation discovery call, then we start small and prove it on one real process with a clear, fixed scope &mdash; no surprise bills &mdash; before growing from there.</p>
+        </div>
+        <ul class="checklist" data-stagger>
+{checklist(["Family-run &amp; local since 1995","4.9 on Google","Genuine IT support &amp; cybersecurity behind it","UK / GDPR-aware data handling","Human-in-the-loop &mdash; you stay in control","Start small, fixed scope, no runaway costs","We call before we connect","You own what we build"])}
+        </ul>
+      </div>
+    </section>''',
       faq_html(faqs),
       cta("Build your agentic operating system",
           "Tell us about a process that&rsquo;s eating your team&rsquo;s time, and we&rsquo;ll show you what a custom agentic system could do for your business.",
@@ -2870,7 +2896,7 @@ def ai_os():
            'Your own <em class="grad grad--cyan">AI desktop</em>',
            "The 365 AI OS is a real desktop that lives in your browser &mdash; sign in to your own profile and meet a built-in AI assistant that doesn&rsquo;t just chat, but actually takes notes, manages your tasks and runs your desktop for you.",
            cta1=("Book a Discovery Call", "/contact/"), cta2=("See Agentic AI", "/agentic-ai-systems/"),
-           chips=["Runs in your browser","Your own AI assistant","Built in Dorset"]),
+           chips=["Runs in your browser","Powered by Claude","Built in Dorset"]),
       launch_band,
       f'''    <section class="section" aria-label="What it is">
       <div class="wrap split-2">
@@ -2968,6 +2994,7 @@ def ai_os():
           <p class="eyebrow mono">/06 &mdash; BUILT IN-HOUSE</p>
           <h2 class="section-title" data-title>A genuine product, not a mock-up<span class="title-underline"></span></h2>
           <p>The 365 AI OS is something we&rsquo;ve actually built &mdash; a working prototype that shows what a modern, AI-powered workspace can be: sign-in, your own saved profile, real apps, and an assistant that does the work rather than just talking about it.</p>
+          <p>When others say &lsquo;AI OS&rsquo; they usually mean a chatbot or a rebranded web app. This is a <strong>genuine desktop you sign into</strong>, with a <strong>Claude-powered</strong> assistant that operates it &mdash; built and hosted in-house in Dorset, not aspirational branding.</p>
           <p>It&rsquo;s also a living demonstration of the <a href="/agentic-ai-systems/">custom agentic AI systems</a> we design and build for businesses, and it pairs naturally with our <a href="/ai-training/">AI training &amp; adoption</a> service. As with everything we do, it&rsquo;s built with security first &mdash; in line with our <a href="/cybersecurity-support/">cybersecurity</a> approach &mdash; and explained in plain English.</p>
           <p>It even includes a live <a href="/off-grid-victron-energy/">off-grid power dashboard</a> &mdash; read your Victron solar and battery system (charge, solar, loads and tank levels) from any browser, ideal for off-grid homes, campervans, motorhomes and boats.</p>
           <p>Want a version shaped around your business &mdash; your apps, your data, your brand? <a href="/contact/">Get in touch</a> and we&rsquo;ll show you what&rsquo;s possible.</p>
