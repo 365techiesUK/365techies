@@ -1596,6 +1596,14 @@ REPAIR_TOWNS = [
   ("West Moors", "computer-repair-west-moors", "Ferndown, Verwood, St Leonards and the surrounding area", "it-support-west-moors"),
   ("Corfe Mullen", "computer-repair-corfe-mullen", "Broadstone, Wimborne, Lytchett Matravers and the surrounding area", "it-support-corfe-mullen"),
   ("Upton", "computer-repair-upton", "Lytchett Minster, Hamworthy, Poole and the surrounding area", "it-support-upton"),
+  # Recognisable places with real GSC demand but no dedicated IT-support page — twin points to the nearest IT-support town.
+  ("St Ives", "computer-repair-st-ives", "Ashley Heath, St Leonards, Ringwood and the surrounding area", "it-support-ringwood"),
+  ("Beaminster", "computer-repair-beaminster", "Broadwindsor, Netherbury, Bridport and the surrounding villages", "it-support-bridport"),
+  ("Boscombe", "computer-repair-boscombe", "Springbourne, Pokesdown, Southbourne and east Bournemouth", "it-support-bournemouth"),
+  ("Canford Heath", "computer-repair-canford-heath", "Creekmoor, Broadstone, Bearwood and across Poole", "it-support-poole"),
+  ("Wyke Regis", "computer-repair-wyke-regis", "Rodwell, Chickerell, Weymouth and the surrounding area", "it-support-weymouth"),
+  ("Wool", "computer-repair-wool", "Bovington, East Lulworth, Wareham and the surrounding villages", "it-support-wareham"),
+  ("West Parley", "computer-repair-west-parley", "Longham, Hampreston, Ferndown and the surrounding area", "it-support-ferndown"),
 ]
 def repair_town_links():
     items = "\n".join(f'          <li><a href="/{slug}/">Computer Repair {town}</a></li>'
