@@ -153,6 +153,7 @@ HEADER = '''  <header class="site-header">
             <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
             <a href="/agentic-ai-systems/">Agentic AI Systems</a>
             <a href="/365-ai-os/">365 AI OS</a>
+            <a href="/ai-voice-agents/">AI Voice Agents</a>
             <a href="/unitree-robots/">Unitree Robots</a>
           </div>
         </div>
@@ -168,6 +169,7 @@ HEADER = '''  <header class="site-header">
             <a href="/support-portal/">Support Portal</a>
             <a href="/plan-finder/">Plan Finder</a>
             <a href="/cost-calculator/">Cost Calculator</a>
+            <a href="/ai-roi-calculator/">AI ROI Calculator</a>
             <a href="/it-health-check-tool/">IT Health Check Tool</a>
             <a href="/broadband-speed-checker/">Broadband Speed Checker</a>
             <a href="/coverage-checker/">Coverage Checker</a>
@@ -279,6 +281,7 @@ HEADER = '''  <header class="site-header">
           <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
           <a href="/agentic-ai-systems/">Agentic AI Systems</a>
           <a href="/365-ai-os/">365 AI OS</a>
+          <a href="/ai-voice-agents/">AI Voice Agents</a>
           <a href="/unitree-robots/">Unitree Robots</a>
           <a href="/mobile-tablet-support/">Mobile &amp; Tablet Support</a>
           <a href="/voip-business-phones/">VoIP Business Phones</a>
@@ -307,6 +310,7 @@ HEADER = '''  <header class="site-header">
           <a href="/support-portal/">Support Portal</a>
           <a href="/plan-finder/">Plan Finder</a>
           <a href="/cost-calculator/">Cost Calculator</a>
+          <a href="/ai-roi-calculator/">AI ROI Calculator</a>
           <a href="/it-health-check-tool/">IT Health Check Tool</a>
           <a href="/broadband-speed-checker/">Broadband Speed Checker</a>
           <a href="/coverage-checker/">Coverage Checker</a>
@@ -435,6 +439,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/pricing/">Pricing</a>
         <a href="/quick-quote/">Quick Quote</a>
         <a href="/cost-calculator/">Cost Calculator</a>
+        <a href="/ai-roi-calculator/">AI ROI Calculator</a>
         <a href="/it-health-check-tool/">IT Health Check Tool</a>
         <a href="/broadband-speed-checker/">Broadband Speed Checker</a>
         <a href="/coverage-checker/">Coverage Checker</a>
@@ -480,6 +485,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
         <a href="/agentic-ai-systems/">Agentic AI Systems</a>
         <a href="/365-ai-os/">365 AI OS</a>
+        <a href="/ai-voice-agents/">AI Voice Agents</a>
         <a href="/unitree-robots/">Unitree Robots</a>
         <a href="/it-support-for-hotels-holiday-lets/">Hotels &amp; Holiday Lets</a>
         <a href="/it-support-for-vets/">Veterinary Practices</a>

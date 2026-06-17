@@ -11,6 +11,10 @@ from build_pages import (add, graph, crumb, webpage, service, faqpage,
                          promise_strip, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
 from build_local import make_customer
 
+# ── Competitive prices for the new AI offerings (owner-approved 2026-06-17; edit here) ──
+AI_VOICE_FROM = "95"   # AI voice receptionist agent, £/month
+AI_PILOT_FROM = "495"  # AI Starter pilot, one-off £
+
 # ===================================================== SPECIALIST SERVICE PAGES
 SPECIALIST = [
  dict(slug="windows-11-support", crumb_name="Windows 11 Support",
@@ -1497,6 +1501,7 @@ def services_overview():
         ("Website Design &amp; Hosting", "/web-design-hosting/", "Premium websites, fast managed hosting and business email."),
         ("Agentic AI Systems", "/agentic-ai-systems/", "Custom-built agentic AI operating systems that automate and streamline your business-specific processes."),
         ("365 AI OS", "/365-ai-os/", "A real browser desktop with a built-in AI assistant that takes action &mdash; a working demo of the custom systems we build."),
+        ("AI Voice Agents", "/ai-voice-agents/", "An AI receptionist that answers calls 24/7, captures enquiries and books callbacks &mdash; from &pound;95/month."),
         ("AI Training &amp; Adoption", "/ai-training/", "Practical training to get safe, real value from Copilot, ChatGPT and AI tools."),
         ("VoIP Business Phones", "/voip-business-phones/", "Business phone systems powered by Voipfone &mdash; lower bills, work-from-anywhere calls, set up &amp; supported."),
         ("CCTV &amp; Smart Home", "/cctv-smart-home/", "CCTV, video doorbells, smart lighting and home automation, set up and secured."),
@@ -2036,6 +2041,30 @@ def agentic_systems():
         </div>
         <ul class="checklist" data-stagger>
 {checklist(["Family-run &amp; local since 1995","4.9 on Google","Genuine IT support &amp; cybersecurity behind it","UK / GDPR-aware data handling","Human-in-the-loop &mdash; you stay in control","Start small, fixed scope, no runaway costs","We call before we connect","You own what we build"])}
+        </ul>
+      </div>
+    </section>''',
+      f'''    <section class="section section--alt" aria-label="Ways to start">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/10 &mdash; WAYS TO START</p>
+          <h2 class="section-title section-title--center" data-title>Start small, with no risk<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>You don&rsquo;t commit to a big project. Begin with a free look at where AI would help most, then prove it on one real process.</p>
+        </div>
+        <ul class="security-grid" data-stagger>
+{grid_cards([("1 &middot; Free AI opportunity review","A no-obligation chat where we map your most time-consuming process and give you an honest estimate of the time and money it could save. Free."),("2 &middot; AI Starter pilot &mdash; from &pound;" + AI_PILOT_FROM,"A fixed-price first project: we automate one real process end to end, with light training, so you see it working on your own business before going further."),("3 &middot; Full custom build","Once you&rsquo;ve seen the value, we build out your wider agentic system around your tools and processes &mdash; scoped clearly with a tailored quote, no runaway costs.")])}
+        </ul>
+        <p class="lede lede--center" data-reveal style="margin-top:1.4rem">Curious what you&rsquo;d save? Try our <a href="/ai-roi-calculator/">AI ROI calculator</a>.</p>
+      </div>
+    </section>''',
+      f'''    <section class="section" aria-label="Agents for your industry">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/11 &mdash; FOR YOUR INDUSTRY</p>
+          <h2 class="section-title section-title--center" data-title>Agents built for your line of work<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ul class="security-grid" data-stagger>
+{grid_cards([("Trades &amp; services","An enquiry-to-quote agent that captures the job, drafts a quote from your price list and books it in. See <a href=\"/it-support-for-tradespeople/\">trades IT</a>."),("Salons, clinics &amp; vets","A booking &amp; reminder agent that handles appointment requests and cuts no-shows. See <a href=\"/it-support-for-salons-beauty/\">salons</a> &amp; <a href=\"/it-support-for-vets/\">vets</a>."),("Accountants &amp; advisers","A document &amp; chasing agent that gathers client paperwork and chases what&rsquo;s missing. See <a href=\"/it-support-for-accountants/\">accountants</a>."),("Estate &amp; letting agents","An enquiry agent that qualifies leads and books viewings around the clock. See <a href=\"/it-support-for-estate-agents/\">estate agents</a>."),("Retail &amp; hospitality","A first-line agent for orders, bookings and FAQs across phone and web."),("Your line of work","Whatever you do, we build the agent around your real process &mdash; never a template.")])}
         </ul>
       </div>
     </section>''',
@@ -3001,6 +3030,20 @@ def ai_os():
         </div>
       </div>
     </section>''',
+      f'''    <section class="section section--alt" aria-label="For your business">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">// FOR YOUR BUSINESS</p>
+          <h2 class="section-title" data-title>Your own branded AI OS for your team<span class="title-underline"></span></h2>
+          <p>Beyond the demo, we can host a private, <strong>branded version of the 365 AI OS for your business</strong> &mdash; your logo and colours, your team&rsquo;s own logins, and an AI assistant set up around your tools and ways of working.</p>
+          <p>It&rsquo;s built on the same secure foundation as everything we do, hosted and supported by your local team. We scope it to your needs with a clear, tailored quote after a free review &mdash; no per-credit surprises.</p>
+          <p style="margin-top:1.1rem"><a href="/contact/" class="button secondary">Book a free review &#8594;</a></p>
+        </div>
+        <ul class="checklist" data-stagger>
+{checklist(["Your branding &amp; your team&rsquo;s logins","An assistant set up around your tools","Hosted &amp; supported locally","Secure &amp; UK / GDPR-aware","Your data stays yours","Tailored quote &mdash; no credit meters"])}
+        </ul>
+      </div>
+    </section>''',
       faq_html(faqs),
       cta("Want your own AI desktop?",
           "See the working prototype and let&rsquo;s talk about a version built around your business.",
@@ -3197,6 +3240,184 @@ def cost_calculator():
     add(slug=slug, title="IT Support Cost Calculator | Home, Family & Business | 365 Techies",
         desc=desc, og_title="IT Support Cost Calculator | 365 Techies", schema=schema, content=content)
 cost_calculator()
+
+# ===================================================== AI VOICE AGENTS (new offering)
+def ai_voice():
+    slug = "ai-voice-agents"
+    desc = f"AI voice agents & phone answering for Dorset businesses — never miss a call. An AI receptionist answers, captures the enquiry, answers common questions and books a callback 24/7, then hands to your team. From £{AI_VOICE_FROM}/month, set up and supported by 365 Techies."
+    faqs = [
+      ("What does an AI voice agent do?", "It answers your phone in a natural voice, greets callers in your business&rsquo;s name, answers common questions, takes the caller&rsquo;s details and reason for calling, and books a callback or appointment &mdash; then logs it and notifies your team. It works after hours, at weekends, or when you&rsquo;re already on the phone."),
+      ("Will callers know it&rsquo;s AI?", "We set it up to be honest and helpful &mdash; a friendly assistant, not a pretend human. It handles the routine, and anything that needs a person is passed straight to your team. You decide exactly what it can and can&rsquo;t do."),
+      ("Is it only for missed calls?", "No &mdash; it&rsquo;s ideal for after-hours and overflow (when every line&rsquo;s busy), but it can also handle first-line questions, bookings and message-taking during the day so your team isn&rsquo;t constantly interrupted."),
+      ("How much does it cost?", f"From &pound;{AI_VOICE_FROM} per month, depending on your call volumes and what you&rsquo;d like it to handle. We give you a clear price after a quick chat &mdash; no surprise per-minute bills."),
+      ("Does it work with my current number?", "In most cases yes &mdash; we route your existing number (or a new one) to the agent for all calls, after-hours only, or just when you&rsquo;re busy. It pairs neatly with our <a href=\"/voip-business-phones/\">VoIP business phones</a>."),
+      ("Can it book callbacks and send me the details?", "Yes &mdash; it captures the caller&rsquo;s details and reason, offers and books a callback slot, and sends the message to you by email or text, so you never lose an enquiry."),
+    ]
+    content = "\n".join([
+      hero(bc("AI Voice Agents"), "// AI VOICE &amp; PHONE ANSWERING",
+           'Never miss a call &mdash; your <em class="grad grad--cyan">AI receptionist</em>',
+           "An AI voice agent answers your phone day and night &mdash; greeting callers in your name, answering the routine questions, taking details and booking callbacks &mdash; then hands anything that needs a person to your team. Set up, secured and supported by your local Dorset IT team.",
+           cta1=("Book a Free Demo Call", "/contact/"), cta2=("Call 01202 775566", "tel:+441202775566"),
+           chips=[f"From &pound;{AI_VOICE_FROM}/month", "Answers 24/7", "You stay in control"]),
+      f'''    <section class="section" aria-label="What it is">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">/01 &mdash; WHAT IT IS</p>
+          <h2 class="section-title" data-title>A friendly voice that always answers<span class="title-underline"></span></h2>
+          <p>Every missed call can be a missed customer. An AI voice agent picks up when you can&rsquo;t &mdash; after hours, at weekends, or when every line is busy &mdash; and handles the call naturally, in your business&rsquo;s name.</p>
+          <p><strong>It takes the details, answers the routine questions and books a callback</strong>, then sends it straight to your team. Anything that needs a human, it hands over &mdash; you decide exactly what it can and can&rsquo;t do.</p>
+        </div>
+        <ul class="checklist" data-stagger>
+{checklist(["Answers 24/7, even out of hours","Greets callers in your business name","Captures the caller&rsquo;s details &amp; reason","Answers your common questions","Books callbacks &amp; appointments","Texts or emails you every message","Hands tricky calls to a person","You set what it can do"])}
+        </ul>
+      </div>
+    </section>''',
+      f'''    <section class="section section--alt" aria-label="What it handles">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/02 &mdash; WHAT IT HANDLES</p>
+          <h2 class="section-title section-title--center" data-title>The calls that slip through<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="tile-grid" data-stagger>
+{tiles([("bell","After-hours answering","Evenings, weekends and holidays &mdash; callers reach a helpful voice, not a dead line."),("phone","Overflow at busy times","When every line&rsquo;s engaged, the agent picks up the rest so nobody waits."),("user","Capture every enquiry","Name, number and reason for calling &mdash; logged and sent to you instantly."),("clock","Book callbacks","It offers a callback slot or appointment and books it into your day."),("check","Answer FAQs","Opening hours, location, services, prices &mdash; the routine questions, handled."),("handshake","Warm handover","Anything that needs a person is passed to your team, with the context.")])}
+        </div>
+      </div>
+    </section>''',
+      f'''    <section class="section" aria-label="Who it's for">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/03 &mdash; WHO IT&rsquo;S FOR</p>
+          <h2 class="section-title section-title--center" data-title>Perfect for busy small businesses<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ul class="security-grid" data-stagger>
+{grid_cards([("Trades &amp; on-site teams","You&rsquo;re up a ladder or under a sink &mdash; the agent answers and books the job."),("Salons, clinics &amp; vets","Take booking requests and messages while you&rsquo;re with a client."),("Shops &amp; hospitality","Handle the rush of calls without leaving customers on hold."),("Sole traders","Sound bigger and never miss work while you&rsquo;re busy earning."),("Out-of-hours cover","Give customers a real response at 9pm or on a Sunday."),("Seasonal spikes","Soak up busy-period call volume without hiring temporary staff.")])}
+        </ul>
+      </div>
+    </section>''',
+      f'''    <section class="how section--alt" aria-label="How it works">
+      <div class="wrap">
+        <p class="eyebrow eyebrow--center mono" data-reveal>/04 &mdash; HOW IT WORKS</p>
+        <h2 class="section-title section-title--center" data-title>Live in days, not months<span class="title-underline title-underline--center"></span></h2>
+        <ol class="how__steps">
+{steps([("We learn your business","What you do, your common questions, and how you want calls handled."),("We build &amp; set the rules","We script the agent in your voice and brand, with clear limits and a human handover."),("We route your calls","All calls, after-hours only, or overflow &mdash; alongside your phone system."),("You get every message","Calls answered, callbacks booked, details sent to you &mdash; and we tune it as you go.")])}
+        </ol>
+      </div>
+    </section>''',
+      f'''    <section class="section" aria-label="Pricing">
+      <div class="wrap wrap--narrow" style="text-align:center">
+        <p class="eyebrow eyebrow--center mono" data-reveal>// SIMPLE PRICING</p>
+        <h2 class="section-title section-title--center" data-title>From &pound;{AI_VOICE_FROM} a month<span class="title-underline title-underline--center"></span></h2>
+        <p class="lede lede--center" data-reveal>A clear monthly price based on your call volumes and what you&rsquo;d like the agent to handle &mdash; set up and supported by your local team, with no surprise per-minute bills. We&rsquo;ll confirm your exact price after a quick chat.</p>
+        <div class="hero-buttons hero-buttons--center" data-reveal style="margin-top:1.4rem">
+          <a href="/contact/" class="button primary button--lg">Book a Free Demo Call</a>
+          <a href="/cost-calculator/" class="button secondary button--lg">Cost Calculator</a>
+        </div>
+      </div>
+    </section>''',
+      promise_strip(items=[PROMISE_CALL, PROMISE_PEOPLE], alt=True, title="Set up and looked after, locally"),
+      faq_html(faqs),
+      cta("Stop missing calls",
+          "Let&rsquo;s set up an AI voice agent that answers every call, captures every enquiry and books the work &mdash; while you get on with the job.",
+          primary=("Book a Free Demo Call", "/contact/"), secondary=("See Agentic AI", "/agentic-ai-systems/")),
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        return graph([crumb(s, "AI Voice Agents"), webpage(s, "AI Voice Agents & Phone Answering", _desc),
+                      service(s, "AI Voice Agents", "AI voice receptionist and phone-answering agents that answer calls, capture enquiries and book callbacks 24/7 for small businesses.", "AI voice agents and phone answering"),
+                      faqpage(s, _faqs)])
+    add(slug=slug, title="AI Voice Agents & Phone Answering | Never Miss a Call | 365 Techies",
+        desc=desc, og_title="AI Voice Agents & Phone Answering | 365 Techies", schema=schema, content=content)
+ai_voice()
+
+# ===================================================== AI ROI CALCULATOR (interactive)
+def ai_roi():
+    slug = "ai-roi-calculator"
+    desc = "Free AI ROI calculator — estimate the hours and money an AI agent could save your business by taking on a repetitive task. Set your team size, hours spent and hourly cost and see your potential yearly saving. 365 Techies, Dorset."
+    faqs = [
+      ("How accurate is this estimate?", "It&rsquo;s a guide to show the scale of the opportunity, based on the numbers you put in. The real figure depends on your exact process &mdash; which is what our free AI opportunity review works out properly, with no obligation."),
+      ("What counts as a repetitive task?", "Anything your team does over and over: answering similar enquiries, copying data between systems, chasing invoices, booking appointments, filing documents. These are exactly what an agent handles well."),
+      ("Will AI replace my staff?", "No &mdash; the goal is to give your team their time back from repetitive work so they can focus on what genuinely needs a human. You stay in control, with a person approving anything that matters."),
+      ("What do I do with the result?", "Book a free AI opportunity review and we&rsquo;ll confirm a realistic saving and show you exactly how an agent would do it &mdash; see <a href=\"/agentic-ai-systems/\">agentic AI systems</a>."),
+    ]
+    roi = r'''    <section class="section" aria-label="ROI calculator">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// ESTIMATE YOUR SAVING</p>
+          <h2 class="section-title section-title--center" data-title>Your time-back estimate<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Put rough numbers on a repetitive task your team does each week.</p>
+        </div>
+        <div id="roicalc" data-reveal>
+          <div class="cc-grid">
+            <div class="cc-controls">
+              <div class="cc-field"><label>People doing the task <output id="r-people-o">3</output></label><input type="range" id="r-people" min="1" max="20" value="3" aria-label="People doing the task"></div>
+              <div class="cc-field"><label>Hours each spends on it / week <output id="r-hours-o">6</output></label><input type="range" id="r-hours" min="1" max="40" value="6" aria-label="Hours per week each"></div>
+              <div class="cc-field"><label>Average hourly cost <output id="r-rate-o">&pound;18</output></label><input type="range" id="r-rate" min="11" max="60" value="18" aria-label="Average hourly cost"></div>
+              <div class="cc-field"><label>How much an agent could take on <output id="r-pct-o">60%</output></label><input type="range" id="r-pct" min="20" max="90" value="60" aria-label="Share an agent could take on"></div>
+            </div>
+            <aside class="cc-summary">
+              <p class="cc-summary__cap">Estimated saving</p>
+              <p class="cc-big"><span id="r-year">&pound;0</span><i>/year</i></p>
+              <ul class="cc-lines" id="r-lines"></ul>
+              <a class="button primary" href="/contact/">Book a free review</a>
+              <p class="cc-note">A guide based on your numbers, to show the opportunity. We confirm a realistic figure &mdash; with no obligation &mdash; in a free AI opportunity review.</p>
+            </aside>
+          </div>
+        </div>
+      </div>
+      <style>
+      #roicalc{max-width:980px;margin:0 auto;border:1px solid rgba(255,255,255,.12);border-radius:18px;background:rgba(255,255,255,.03);overflow:hidden}
+      #roicalc .cc-grid{display:grid;grid-template-columns:1.25fr 1fr}
+      #roicalc .cc-controls{padding:1.4rem 1.5rem;display:flex;flex-direction:column;gap:1.25rem}
+      #roicalc .cc-field label{display:flex;justify-content:space-between;font-size:.9rem;margin-bottom:.5rem}
+      #roicalc .cc-field output{font-weight:700;color:var(--cyan,#37c2c2);font-variant-numeric:tabular-nums}
+      #roicalc input[type=range]{width:100%;accent-color:var(--cyan,#37c2c2);cursor:pointer}
+      #roicalc .cc-summary{background:rgba(0,0,0,.28);padding:1.4rem 1.5rem;display:flex;flex-direction:column;gap:1rem}
+      #roicalc .cc-summary__cap{font-size:.78rem;color:var(--muted,#9aa6c2);margin:0}
+      #roicalc .cc-big{margin:0;font-size:2.7rem;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+      #roicalc .cc-big i{font-size:1rem;color:var(--muted,#9aa6c2);font-style:normal;font-weight:600;margin-left:.2rem}
+      #roicalc .cc-lines{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.5rem}
+      #roicalc .cc-lines li{display:flex;justify-content:space-between;gap:1rem;font-size:.88rem;color:var(--muted,#9aa6c2)}
+      #roicalc .cc-lines li b{font-variant-numeric:tabular-nums}
+      #roicalc .cc-note{font-size:.74rem;color:var(--muted,#9aa6c2);line-height:1.5;margin:0}
+      #roicalc .button{align-self:flex-start}
+      @media(max-width:720px){#roicalc .cc-grid{grid-template-columns:1fr}}
+      </style>
+      <script>
+      (function(){
+        var R=document.getElementById('roicalc'); if(!R) return;
+        function $(s){return R.querySelector(s);}
+        var els={people:$('#r-people'),hours:$('#r-hours'),rate:$('#r-rate'),pct:$('#r-pct')};
+        function money(n){return '£'+Math.round(n).toLocaleString('en-GB');}
+        function render(){
+          var people=+els.people.value,hours=+els.hours.value,rate=+els.rate.value,pct=+els.pct.value;
+          $('#r-people-o').textContent=people; $('#r-hours-o').textContent=hours; $('#r-rate-o').textContent='£'+rate; $('#r-pct-o').textContent=pct+'%';
+          var hwk=people*hours*(pct/100), mo=hwk*4.33*rate, yr=mo*12;
+          $('#r-year').textContent=money(yr);
+          var rows=[['Hours saved / week',(Math.round(hwk*10)/10)+' h'],['Saved / month',money(mo)],['Saved / year',money(yr)]];
+          var ul=$('#r-lines'); ul.innerHTML='';
+          rows.forEach(function(p){var li=document.createElement('li');var a=document.createElement('span');a.textContent=p[0];var b=document.createElement('b');b.textContent=p[1];li.appendChild(a);li.appendChild(b);ul.appendChild(li);});
+        }
+        Object.keys(els).forEach(function(k){els[k].addEventListener('input',render);});
+        render();
+      })();
+      </script>
+    </section>'''
+    content = "\n".join([
+      hero(bc("AI ROI Calculator"), "// AI ROI CALCULATOR",
+           'What could AI <em class="grad grad--cyan">save you?</em>',
+           "Put rough numbers on a repetitive task your team does every week, and see the hours and money an AI agent could give you back. A free, no-obligation estimate &mdash; we confirm the real figure in a friendly review.",
+           cta1=("Book a Free Review", "/contact/"), cta2=("See Agentic AI", "/agentic-ai-systems/"),
+           chips=["Free estimate","No obligation","Confirmed in a free review"]),
+      roi,
+      faq_html(faqs),
+      cta("See what AI could save you",
+          "Book a free AI opportunity review &mdash; we&rsquo;ll map your biggest time-drain and show you a realistic, honest saving.",
+          primary=("Book a Free Review", "/contact/"), secondary=("Agentic AI Systems", "/agentic-ai-systems/")),
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        return graph([crumb(s, "AI ROI Calculator"), webpage(s, "AI ROI Calculator", _desc), faqpage(s, _faqs)])
+    add(slug=slug, title="AI ROI Calculator | What Could AI Save Your Business? | 365 Techies",
+        desc=desc, og_title="AI ROI Calculator | 365 Techies", schema=schema, content=content)
+ai_roi()
 
 # ===================================================== INFO / LEGAL / RESOURCE PAGES
 def _prose(inner):
