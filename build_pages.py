@@ -16,6 +16,17 @@ AI_OS_URL = ""
 # /api/broadband endpoint). When set, the broadband checker shows live Ofcom
 # coverage for the entered postcode. Leave empty ("") for signposting only.
 BROADBAND_API = ""
+# WhatsApp click-to-chat. Set WHATSAPP_NUMBER to international digits ONLY
+# (no +, spaces or 0, e.g. "447520615332") once the shared WhatsApp Business
+# number is live and verified; leave "" to hide every WhatsApp link site-wide
+# (so no dead link is ever published). NOTE: also hand-edit index.html (static
+# homepage) to add WhatsApp when you flip this on — see homepage-is-static.
+WHATSAPP_NUMBER = ""
+WHATSAPP_LINK = ("https://wa.me/" + WHATSAPP_NUMBER) if WHATSAPP_NUMBER else ""
+# Ready-made footer/menu snippets — render to "" when no number is set.
+WA_FOOTER = (f'<br /><a href="{WHATSAPP_LINK}" target="_blank" rel="noopener">WhatsApp us</a>') if WHATSAPP_NUMBER else ""
+WA_MENU = (f'<br /><a href="{WHATSAPP_LINK}" target="_blank" rel="noopener">WhatsApp us</a>') if WHATSAPP_NUMBER else ""
+WA_CONTACT_ROW = (f'<li><span class="k">WhatsApp</span><span class="v"><a href="{WHATSAPP_LINK}" target="_blank" rel="noopener">Chat on WhatsApp &#8594;</a></span></li>') if WHATSAPP_NUMBER else ""
 
 # GoCardless Direct Debit subscription links (paste the hosted payment-link URL
 # from your GoCardless dashboard for each plan; empty = route to /contact/).
@@ -378,7 +389,7 @@ HEADER = '''  <header class="site-header">
       <a class="button secondary" href="/home-it-support-plans/">Home Plans</a>
       <a class="button secondary" href="/business-it-support-plans/">Business Plans</a>
     </div>
-    <p class="mobile-menu__foot mono"><a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a><br /><a href="tel:+441202775566">01202 775566</a><br /><a href="sms:+447520615332">Text only: 07520 615332</a></p>
+    <p class="mobile-menu__foot mono"><a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a><br /><a href="tel:+441202775566">01202 775566</a><br /><a href="sms:+447520615332">Text only: 07520 615332</a>''' + WA_MENU + '''</p>
   </aside>
 '''
 
@@ -576,7 +587,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/faqs/">FAQs</a>
         <a href="/it-advice/">IT Advice</a>
         <a href="/contact/">Contact</a>
-        <p class="site-footer__contact" style="margin-top:1.1rem"><a href="tel:+441202775566">01202 775566</a><br /><a href="sms:+447520615332">Text only: 07520 615332</a><br /><a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a><br />Mon&ndash;Fri, 9am&ndash;5pm<br />Bournemouth, Dorset</p>
+        <p class="site-footer__contact" style="margin-top:1.1rem"><a href="tel:+441202775566">01202 775566</a><br /><a href="sms:+447520615332">Text only: 07520 615332</a><br /><a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a>''' + WA_FOOTER + '''<br />Mon&ndash;Fri, 9am&ndash;5pm<br />Bournemouth, Dorset</p>
       </nav>
     </div>
     <nav class="site-footer__legal-links mono" aria-label="Legal and policies">
@@ -1924,6 +1935,7 @@ add(
           <ul class="contact-info">
             <li><span class="k">Phone</span><span class="v"><a href="tel:+441202775566">01202 775566</a></span></li>
             <li><span class="k">Text only</span><span class="v"><a href="sms:+447520615332">07520 615332</a> &middot; <span style="color:var(--muted)">prefer to text? message us anytime</span></span></li>
+            {WA_CONTACT_ROW}
             <li><span class="k">Email</span><span class="v"><a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a></span></li>
             <li><span class="k">Hours</span><span class="v">Monday&ndash;Friday, 9am&ndash;5pm</span></li>
             <li><span class="k">Based in</span><span class="v">Bournemouth, Dorset</span></li>

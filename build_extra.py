@@ -3579,6 +3579,7 @@ broadband_checker()
 # ===================================================== PER-TOWN COMPUTER REPAIR (consumer intent)
 def repair_pages():
     REPAIRS = bp.REPAIR_TOWNS  # single source of truth — defined in build_pages.py
+    wa_repair = (f' You can also <a href="{bp.WHATSAPP_LINK}" target="_blank" rel="noopener">send it on WhatsApp</a>.') if bp.WHATSAPP_NUMBER else ""
     for town, slug, nearby, it_slug in REPAIRS:
         desc = f"Fast, friendly computer & laptop repair in {town} from 365 Techies — virus removal, slow-PC fixes, upgrades, data transfer and setup, with home visits, remote help and no call-out fee. Family-run since 1995, rated 4.9 on Google."
         faqs = [
@@ -3598,7 +3599,7 @@ def repair_pages():
           f'''    <section class="section" aria-label="Text us a photo">
       <div class="wrap">
         <div class="prose" data-reveal style="text-align:center;max-width:64ch;margin:0 auto">
-          <p><strong>Not sure what&rsquo;s wrong?</strong> Text a photo of the error message or your laptop or PC to <a href="{bp.TEXT_SMS}">{bp.TEXT_DISPLAY}</a> and we&rsquo;ll tell you what&rsquo;s likely up and what it&rsquo;ll take to fix &mdash; text only, no call needed.</p>
+          <p><strong>Not sure what&rsquo;s wrong?</strong> Text a photo of the error message or your laptop or PC to <a href="{bp.TEXT_SMS}">{bp.TEXT_DISPLAY}</a> and we&rsquo;ll tell you what&rsquo;s likely up and what it&rsquo;ll take to fix &mdash; text only, no call needed.{wa_repair}</p>
         </div>
       </div>
     </section>''',
