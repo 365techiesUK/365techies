@@ -3430,7 +3430,7 @@ def broadband_checker():
       ("I&rsquo;m out of contract &mdash; am I overpaying?", "Very possibly. Out-of-contract customers usually pay more than new-customer prices, and old slow lines can now cost more than full fibre. It&rsquo;s well worth a check."),
       ("Do you sell broadband?", "We&rsquo;re independent &mdash; we help you find and switch to the best deal for your address, then make sure it&rsquo;s all set up and your Wi-Fi works properly. Honest advice, no commission-chasing."),
     ]
-    checker = r'''    <section class="section" aria-label="Broadband checker">
+    checker = f'    <script>window.BROADBAND_API="{bp.BROADBAND_API}";</script>\n' + r'''    <section class="section" aria-label="Broadband checker">
       <div class="wrap">
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>// CHECK YOUR POSTCODE</p>
@@ -3503,6 +3503,20 @@ def broadband_checker():
             '<p class="bb-note" style="margin-bottom:.6rem">We&rsquo;ll run an impartial check of what genuinely serves '+esc(pc.toUpperCase())+(prov && prov!=="I'm not sure" && prov!=="Another provider"?' (you&rsquo;re with '+esc(prov)+' now)':'')+', find the best '+(type==='business'?'business':'home')+' option, and &mdash; if you switch &mdash; make sure your Wi-Fi, email and devices all keep working.</p>'+
             '<a href="'+review+'" class="button primary">Book a free broadband review</a></div>'+
             '<p class="bb-note">We don&rsquo;t quote prices ourselves because they&rsquo;re address-specific and change constantly &mdash; the checkers above show today&rsquo;s live deals, and our free review confirms the best one for you. Discontinued brands (e.g. John Lewis, Shell Energy) are not shown.</p>';
+          var API=(window.BROADBAND_API||'').trim();
+          if(API){
+            var live=document.createElement('div'); live.className='bb-hint'; live.textContent='Checking live Ofcom coverage…';
+            box.insertBefore(live, box.firstChild);
+            fetch(API+'?postcode='+encodeURIComponent(pc)).then(function(r){return r.json();}).then(function(j){
+              var d=j&&j.data; if(!d){ live.remove(); return; }
+              var bits=[];
+              if(d.fttp) bits.push('Full fibre (FTTP) available');
+              else if(d.ultrafast) bits.push('Ultrafast broadband available');
+              else if(d.superfast) bits.push('Superfast fibre available');
+              if(d.maxDownMbps!=null) bits.push('up to ~'+Math.round(d.maxDownMbps)+' Mbps download');
+              live.innerHTML='<strong>Live Ofcom coverage for '+esc(pc.toUpperCase())+':</strong> '+(bits.length?bits.join(' &middot; '):'coverage data found for your area')+'. <span style="opacity:.85">Source: Ofcom. Exact deals still depend on your address &mdash; check below.</span>';
+            }).catch(function(){ live.remove(); });
+          }
           box.scrollIntoView({block:'nearest'});
         });
       })();

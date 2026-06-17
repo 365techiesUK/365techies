@@ -12,6 +12,10 @@ HUBSPOT_ID = "148562638"
 # Public URL of the deployed 365 AI OS. When set, the /365-ai-os/ page shows a
 # prominent "Launch the live demo" button. Leave empty ("") to hide it.
 AI_OS_URL = ""
+# Public URL of the deployed broadband-coverage proxy (the AI OS server's
+# /api/broadband endpoint). When set, the broadband checker shows live Ofcom
+# coverage for the entered postcode. Leave empty ("") for signposting only.
+BROADBAND_API = ""
 
 # GoCardless Direct Debit subscription links (paste the hosted payment-link URL
 # from your GoCardless dashboard for each plan; empty = route to /contact/).
