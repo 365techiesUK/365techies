@@ -378,9 +378,13 @@ HEADER = '''  <header class="site-header">
       <a class="button secondary" href="/home-it-support-plans/">Home Plans</a>
       <a class="button secondary" href="/business-it-support-plans/">Business Plans</a>
     </div>
-    <p class="mobile-menu__foot mono">help@365techies.co.uk<br />01202 775566</p>
+    <p class="mobile-menu__foot mono"><a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a><br /><a href="tel:+441202775566">01202 775566</a><br /><a href="sms:+447520615332">Text only: 07520 615332</a></p>
   </aside>
 '''
+
+# Text-only SMS number (TextMagic) — customers can text but not call this line. See memory text-number.md.
+TEXT_DISPLAY = "07520 615332"
+TEXT_SMS = "sms:+447520615332"
 
 FOOTER = '''  <footer class="site-footer">
     <div class="footer-areas">
@@ -572,7 +576,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/faqs/">FAQs</a>
         <a href="/it-advice/">IT Advice</a>
         <a href="/contact/">Contact</a>
-        <p class="site-footer__contact" style="margin-top:1.1rem"><a href="tel:+441202775566">01202 775566</a><br /><a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a><br />Mon&ndash;Fri, 9am&ndash;5pm<br />Bournemouth, Dorset</p>
+        <p class="site-footer__contact" style="margin-top:1.1rem"><a href="tel:+441202775566">01202 775566</a><br /><a href="sms:+447520615332">Text only: 07520 615332</a><br /><a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a><br />Mon&ndash;Fri, 9am&ndash;5pm<br />Bournemouth, Dorset</p>
       </nav>
     </div>
     <nav class="site-footer__legal-links mono" aria-label="Legal and policies">
@@ -1881,15 +1885,18 @@ add(
    crumb(s, "Contact"), webpage(s, "Contact 365 Techies", "Contact 365 Techies for IT support in Bournemouth, Poole and Dorset.", "ContactPage"),
    {"@type": "Organization", "@id": SITE + "/#business-ref", "name": "365 Techies Limited",
     "telephone": "+441202775566", "email": "help@365techies.co.uk",
-    "contactPoint": {"@type": "ContactPoint", "telephone": "+441202775566", "email": "help@365techies.co.uk",
-      "contactType": "customer support", "areaServed": "GB", "availableLanguage": "en-GB"}},
+    "contactPoint": [
+      {"@type": "ContactPoint", "telephone": "+441202775566", "email": "help@365techies.co.uk",
+       "contactType": "customer support", "areaServed": "GB", "availableLanguage": "en-GB"},
+      {"@type": "ContactPoint", "telephone": "+447520615332", "name": "Text only (SMS)",
+       "contactType": "customer support", "areaServed": "GB", "availableLanguage": "en-GB"}]},
  ]),
  content="\n".join([
    hero(bc("Contact"), "// GET IN TOUCH",
         'Ask about <em class="grad grad--cyan">monthly IT support</em>',
         "Tell us what you need help with and we&rsquo;ll point you to the right plan or get a repair booked in. Friendly, no-pressure, no jargon.",
-        cta1=("Call 01202 775566", "tel:+441202775566"), cta2=("SOS Remote Support", "https://sos.splashtop.com/en/sos-download"),
-        chips=["Mon&ndash;Fri 9am&ndash;5pm", "Bournemouth, Dorset", "Remote &amp; on-site"]),
+        cta1=("Call 01202 775566", "tel:+441202775566"), cta2=("Text us a message", "sms:+447520615332"),
+        chips=["Mon&ndash;Fri 9am&ndash;5pm", "Text only: 07520 615332", "Remote &amp; on-site"]),
    f'''    <section class="section" aria-label="Contact details and form">
       <div class="wrap contact-grid">
         <form class="contact-form" data-reveal action="mailto:help@365techies.co.uk" method="post" enctype="text/plain">
@@ -1916,6 +1923,7 @@ add(
           <h2 class="section-title" data-title>Talk to a techie<span class="title-underline"></span></h2>
           <ul class="contact-info">
             <li><span class="k">Phone</span><span class="v"><a href="tel:+441202775566">01202 775566</a></span></li>
+            <li><span class="k">Text only</span><span class="v"><a href="sms:+447520615332">07520 615332</a> &middot; <span style="color:var(--muted)">prefer to text? message us anytime</span></span></li>
             <li><span class="k">Email</span><span class="v"><a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a></span></li>
             <li><span class="k">Hours</span><span class="v">Monday&ndash;Friday, 9am&ndash;5pm</span></li>
             <li><span class="k">Based in</span><span class="v">Bournemouth, Dorset</span></li>

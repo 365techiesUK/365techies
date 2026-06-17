@@ -3595,6 +3595,13 @@ def repair_pages():
                f"Slow, broken or playing up? We fix PCs and laptops for homes and businesses across {town} &mdash; virus removal, speed-ups, upgrades, data transfer and setup &mdash; with home visits, fast remote help and no call-out fee. Friendly, local and family-run since 1995.",
                cta1=("Book a Repair", "/book-a-collection/"), cta2=("Call 01202 775566", "tel:+441202775566"),
                chips=["No call-out fee", "Home visits &amp; remote", "Rated 4.9 on Google"]),
+          f'''    <section class="section" aria-label="Text us a photo">
+      <div class="wrap">
+        <div class="prose" data-reveal style="text-align:center;max-width:64ch;margin:0 auto">
+          <p><strong>Not sure what&rsquo;s wrong?</strong> Text a photo of the error message or your laptop or PC to <a href="{bp.TEXT_SMS}">{bp.TEXT_DISPLAY}</a> and we&rsquo;ll tell you what&rsquo;s likely up and what it&rsquo;ll take to fix &mdash; text only, no call needed.</p>
+        </div>
+      </div>
+    </section>''',
           f'''    <section class="section" aria-label="What we fix">
       <div class="wrap">
         <div class="section-head">
