@@ -1259,11 +1259,13 @@ case_studies()
 # ===================================================== OFF-GRID & VICTRON ENERGY
 def off_grid():
     slug = "off-grid-victron-energy"
-    desc = "Off-grid and backup power built on Victron Energy — design, supply, install and remote monitoring of solar, battery storage and inverters for homes, businesses, campervans and motorhomes across Dorset."
+    desc = "Off-grid and backup power built on Victron Energy — design, supply, install and remote monitoring of solar, battery storage and inverters for homes, businesses, campervans, motorhomes and boats across Dorset, with live monitoring you can see in the 365 AI OS."
     faqs = [
       ("Do you install campervan and motorhome power systems?", "Yes — we design, supply and fit 12V solar, lithium batteries, inverters and DC-DC charging for campervans and motorhomes, all built on Victron Energy equipment."),
+      ("Do you fit boat and marine power systems?", "Yes — reliable 12/24V lithium power, inverter/chargers, solar and proper battery monitoring for boats, built on Victron and kept an eye on remotely so you always know your state of charge."),
       ("What is Victron Energy?", "Victron Energy is a leading manufacturer of off-grid and mobile power equipment — inverters, solar charge controllers, batteries and monitoring — trusted worldwide for reliability."),
       ("Can I monitor my system remotely?", "Yes. We set up Victron's VRM remote monitoring so you and we can check performance, battery levels and faults from anywhere — a natural fit for an IT and monitoring company."),
+      ("Can I see my off-grid power in the 365 AI OS?", "Yes — our <a href=\"/365-ai-os/\">365 AI OS</a> includes a live Off-Grid dashboard that reads your Victron VRM data (battery charge, solar, power draw, inverter state and tank levels) from any browser. Just sign in and open it, or ask the built-in assistant to &lsquo;open off-grid&rsquo;."),
       ("Do you cover homes and businesses, not just vehicles?", "Absolutely — from whole-home off-grid and backup power to business energy resilience and garden-office power, as well as campervans, motorhomes and boats."),
     ]
     content = "\n".join([
@@ -1294,6 +1296,38 @@ def off_grid():
         <div class="tile-grid" data-stagger>
 {tiles([("home","Homes","Off-grid living, or whole-home backup for when the grid goes down."),("briefcase","Businesses","Energy resilience and backup power that keeps you trading — and cuts bills."),("van","Campervans","12V solar, lithium and inverter systems built for van life."),("van","Motorhomes","Dependable power for everything you run on the road."),("server","Garden offices &amp; outbuildings","Power where there&rsquo;s no mains — studios, cabins and sheds."),("shield","Boats &amp; marine","Reliable, well-monitored power out on the water.")])}
         </div>
+      </div>
+    </section>''',
+      f'''    <section class="section" aria-label="Off-grid power in detail">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// IN DETAIL</p>
+          <h2 class="section-title section-title--center" data-title>Power built for how you live &amp; work<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ul class="security-grid" data-stagger>
+{grid_cards([
+  ("Off-grid &amp; backup power for homes","Whole-home off-grid living, or seamless backup when the grid fails &mdash; solar, a lithium battery bank and a Victron inverter/charger that switches over in milliseconds. Run the essentials (or everything) on your own stored, clean energy, and see it all on VRM."),
+  ("Energy resilience for businesses","Keep tills, broadband, servers and fridges running through power cuts, and trim bills by storing solar or off-peak energy for busy times. We size resilient Victron systems to your real load, with remote monitoring so problems are caught before they cost you."),
+  ("Campervans &mdash; built for van life","Proper 12V systems for weekend trips or full-time travel &mdash; roof solar, a lithium leisure battery, a Victron MPPT and inverter, and DC-DC charging that tops up from the engine as you drive. Silent power for the fridge, lights, devices and induction hob, watched from your phone."),
+  ("Motorhomes &amp; overlanding","Dependable power for everything you run on the road &mdash; larger battery banks, inverters for 230V appliances, solar and smart charging, all built on Victron and set up so a screen (or the VRM app) shows charge, solar and usage at a glance."),
+  ("Boats &amp; marine","Reliable, well-monitored power afloat &mdash; 12/24V lithium banks, inverter/chargers for shore power and underway, solar and marine-grade battery monitoring. Always know your state of charge, so you&rsquo;re never caught out away from the pontoon."),
+  ("Garden offices, cabins &amp; sites","Power where there&rsquo;s no easy mains run &mdash; studios, home offices, shepherd&rsquo;s huts, glamping and remote sites. Solar, storage and inverters sized to the job, with remote monitoring so you can keep an eye from afar."),
+])}
+        </ul>
+      </div>
+    </section>''',
+      f'''    <section class="section section--alt" aria-label="Monitor with the 365 AI OS">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">// MANAGE IT WITH THE 365 AI OS</p>
+          <h2 class="section-title" data-title>See your off-grid power in your <em class="grad grad--cyan">365 AI OS</em><span class="title-underline"></span></h2>
+          <p>Because we&rsquo;re an IT and monitoring company at heart, your off-grid system doesn&rsquo;t just sit in a cupboard. Our <a href="/365-ai-os/">365 AI OS</a> includes a live <strong>Off-Grid dashboard</strong> that reads your Victron VRM data &mdash; battery charge, solar input, power draw, inverter state and even your water tanks &mdash; from any browser, on any device.</p>
+          <p>It&rsquo;s the same picture we use to keep your system healthy: spot a low battery, a tank that needs filling or a fault before it becomes a problem. Sign in and open it &mdash; or just ask the built-in assistant to &lsquo;open off-grid&rsquo;.</p>
+          <p style="margin-top:1.1rem"><a href="/365-ai-os/" class="button secondary">Explore the 365 AI OS &#8594;</a></p>
+        </div>
+        <ul class="checklist" data-stagger>
+{checklist(["Battery charge &amp; time-to-go","Solar &amp; DC power, live","AC loads &amp; inverter state","Fresh &amp; waste tank levels","Works in any browser","Built on Victron VRM monitoring"])}
+        </ul>
       </div>
     </section>''',
       f'''    <section class="section" aria-label="What we do">
@@ -1337,7 +1371,7 @@ def off_grid():
         return graph([crumb(s, "Off-Grid & Victron Energy"), webpage(s, "Off-Grid & Victron Energy Solutions", _desc),
                       service(s, "Off-Grid & Victron Energy Solutions", "Off-grid and backup power — solar, battery storage, inverters and remote monitoring built on Victron Energy for homes, businesses, campervans and motorhomes.", "Off-grid power and solar"),
                       faqpage(s, _faqs)])
-    add(slug=slug, title="Off-Grid & Victron Energy Solutions | Homes, Business & Campervans | 365 Techies",
+    add(slug=slug, title="Off-Grid & Victron Energy Solutions | Homes, Business, Vans & Boats | 365 Techies",
         desc=desc, og_title="Off-Grid & Victron Energy Solutions | 365 Techies", schema=schema, content=content)
 off_grid()
 
@@ -1462,6 +1496,7 @@ def services_overview():
         ("Off-Grid &amp; Victron Energy", "/off-grid-victron-energy/", "Solar, battery storage and inverters for homes, businesses, campervans and motorhomes."),
         ("Website Design &amp; Hosting", "/web-design-hosting/", "Premium websites, fast managed hosting and business email."),
         ("Agentic AI Systems", "/agentic-ai-systems/", "Custom-built agentic AI operating systems that automate and streamline your business-specific processes."),
+        ("365 AI OS", "/365-ai-os/", "A real browser desktop with a built-in AI assistant that takes action &mdash; a working demo of the custom systems we build."),
         ("AI Training &amp; Adoption", "/ai-training/", "Practical training to get safe, real value from Copilot, ChatGPT and AI tools."),
         ("VoIP Business Phones", "/voip-business-phones/", "Business phone systems powered by Voipfone &mdash; lower bills, work-from-anywhere calls, set up &amp; supported."),
         ("CCTV &amp; Smart Home", "/cctv-smart-home/", "CCTV, video doorbells, smart lighting and home automation, set up and secured."),
@@ -2810,6 +2845,147 @@ def uk_europe():
     add(slug=slug, title="IT Support Across the UK & Europe | Remote & Managed | 365 Techies",
         desc=desc, og_title="IT Support Across the UK & Europe | 365 Techies", schema=schema, content=content)
 uk_europe()
+
+# ===================================================== 365 AI OS (flagship product page)
+def ai_os():
+    slug = "365-ai-os"
+    desc = "The 365 AI OS is a real, browser-based desktop with a built-in agentic AI assistant — sign in to your own profile, take notes, manage tasks, and let the assistant do the work. Built in-house by 365 Techies in Bournemouth, Dorset."
+    faqs = [
+      ("What is the 365 AI OS?", "It&rsquo;s a desktop that runs in your web browser. You sign in to your own profile and get windows, apps, a taskbar and a built-in AI assistant &mdash; everything saved to your account and ready on any device."),
+      ("Is it a real product or just a concept?", "It&rsquo;s a real, working prototype we&rsquo;ve built in-house. It also demonstrates the kind of <a href=\"/agentic-ai-systems/\">custom agentic AI systems</a> we build for businesses."),
+      ("Do I need to install anything?", "No &mdash; it runs in any modern web browser on a computer, tablet or phone. There&rsquo;s nothing to download."),
+      ("What can the AI assistant actually do?", "It can take notes, add and complete to-do tasks, open apps and change your settings &mdash; not just answer questions. Every action is shown to you, and it only ever works on your own desktop."),
+      ("Is my data private and secure?", "Yes. You sign in to your own private profile and your information stays yours. It&rsquo;s built with security first, in line with our <a href=\"/cybersecurity-support/\">cybersecurity</a> approach."),
+      ("Can you build one for my business?", "Absolutely &mdash; that&rsquo;s the idea. We can shape a custom version around your apps, your data and your brand. Start with a <a href=\"/contact/\">discovery call</a>."),
+    ]
+    live = bp.AI_OS_URL.strip()
+    launch_band = (f'''    <section class="section" aria-label="Try the live demo">
+      <div class="wrap" style="text-align:center">
+        <a href="{live}" target="_blank" rel="noopener" class="button primary button--lg">Launch the live demo &#8599;</a>
+        <p class="mono" style="margin-top:.9rem;color:var(--muted);font-size:.8rem">Opens the real 365 AI OS in a new tab &mdash; create a free account and try it yourself.</p>
+      </div>
+    </section>''' if live else "")
+    content = "\n".join([p for p in [
+      hero(bc("365 AI OS"), "// 365 AI OS",
+           'Your own <em class="grad grad--cyan">AI desktop</em>',
+           "The 365 AI OS is a real desktop that lives in your browser &mdash; sign in to your own profile and meet a built-in AI assistant that doesn&rsquo;t just chat, but actually takes notes, manages your tasks and runs your desktop for you.",
+           cta1=(("Launch the Live Demo", live) if live else ("Book a Discovery Call", "/contact/")), cta2=("See Agentic AI", "/agentic-ai-systems/"),
+           chips=["Runs in your browser","Your own AI assistant","Built in Dorset"]),
+      launch_band,
+      f'''    <section class="section" aria-label="What it is">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">/01 &mdash; WHAT IT IS</p>
+          <h2 class="section-title" data-title>A desktop that lives in your browser<span class="title-underline"></span></h2>
+          <p>The 365 AI OS is a real, working &lsquo;operating system&rsquo; that runs in your web browser. You sign in and get your own desktop &mdash; with draggable windows, a taskbar, a Start menu and your own saved profile.</p>
+          <p><strong>At its heart is a built-in AI assistant that does things</strong> &mdash; it takes notes, manages your to-do list, opens apps and personalises your desktop, all from a simple message. Everything you change is saved to your account and waiting for you next time.</p>
+        </div>
+        <ul class="checklist" data-stagger>
+{checklist(["Sign in to your own private profile","Runs in any modern browser &mdash; nothing to install","Notes, tasks &amp; settings saved automatically","An AI assistant that takes real actions","Windows, taskbar &amp; a Ctrl/&#8984;+K command palette","Built in-house by 365 Techies in Dorset"])}
+        </ul>
+      </div>
+    </section>''',
+      f'''    <section class="section section--alt" aria-label="What's inside">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/02 &mdash; WHAT&rsquo;S INSIDE</p>
+          <h2 class="section-title section-title--center" data-title>Everything in one tidy place<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="tile-grid" data-stagger>
+{tiles([("robot","Built-in AI assistant","Ask it anything &mdash; or tell it to do something. It can take notes, manage tasks and change your settings for you."),("monitor","A real desktop","Draggable, resizable windows, a taskbar and a Start menu &mdash; open and arrange apps just like a computer."),("check","Notes &amp; tasks","Jot things down and keep a to-do list, saved to your account and ready on any device."),("cpu","Handy built-in apps","A calculator, an image viewer and more &mdash; with new apps on the way."),("battery","Off-Grid power monitor","See a Victron solar &amp; battery system live &mdash; charge, solar, loads and tank levels &mdash; right inside your desktop."),("lock","Your private profile","Your wallpaper, colour, notes and tasks are saved securely and restored when you sign back in."),("bolt","Command palette","Press Ctrl/&#8984;&#8201;+&#8201;K to jump to anything in a single keystroke.")])}
+        </div>
+      </div>
+    </section>''',
+      f'''    <section class="section" aria-label="The assistant that does things">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/03 &mdash; NOT JUST CHAT</p>
+          <h2 class="section-title section-title--center" data-title>An assistant that takes action<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ul class="security-grid" data-stagger>
+{grid_cards([("Takes notes &amp; saves them","Tell it what to jot down and it writes it straight to your Notes."),("Manages your to-do list","Add tasks or tick them off just by asking."),("Personalises your desktop","Change your accent colour, wallpaper and display name by request."),("Opens &amp; arranges apps","&lsquo;Open my tasks&rsquo; &mdash; and it does."),("Always in your control","Every action is shown to you, and it only ever works on your own desktop."),("Powered by Claude","Built on the latest Claude AI, with a clearly-labelled demo mode when there&rsquo;s no live connection.")])}
+        </ul>
+      </div>
+    </section>''',
+      f'''    <section class="how section--alt" aria-label="For your business">
+      <div class="wrap">
+        <p class="eyebrow eyebrow--center mono" data-reveal>/04 &mdash; FOR YOUR BUSINESS</p>
+        <h2 class="section-title section-title--center" data-title>Your own, built around you<span class="title-underline title-underline--center"></span></h2>
+        <ol class="how__steps">
+{steps([("See the prototype","Take a look at the working version and tell us what your world needs."),("Designed around you","We shape the apps, the data and the assistant around your people and brand."),("Built &amp; integrated","We build it securely and connect it to the tools you already use."),("Hosted &amp; supported","We host, maintain and improve it &mdash; all explained in plain English.")])}
+        </ol>
+      </div>
+    </section>''',
+      '''    <section class="section" aria-label="See it in action">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/05 &mdash; SEE IT IN ACTION</p>
+          <h2 class="section-title section-title--center" data-title>Tell it what you need<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>A short, illustrative taste of the built-in assistant &mdash; press play and watch it act on the desktop.</p>
+        </div>
+        <div class="quiz" id="aiosdemo" style="max-width:640px">
+          <div id="aiosdemo-log" aria-live="polite" style="display:flex;flex-direction:column;gap:.6rem;min-height:90px"></div>
+          <p style="text-align:center;margin:1.3rem 0 0"><button type="button" id="aiosdemo-run" class="button primary">Run the demo</button></p>
+          <p class="hc-disclaimer" style="margin-top:1.3rem">This is a short scripted demonstration of the idea. The real 365 AI OS is a working app with a live, Claude-powered assistant &mdash; <a href="/contact/">ask us for a hands-on demo</a>.</p>
+        </div>
+      </div>
+      <script>
+      (function(){
+        var btn=document.getElementById('aiosdemo-run'); if(!btn) return;
+        var log=document.getElementById('aiosdemo-log');
+        var convo=[
+          {u:'Add a task to call the plumber',a:'Done \\u2014 added \\u201cCall the plumber\\u201d to your Tasks.',chip:'\\u2713 Task added'},
+          {u:'Set my accent colour to purple',a:'Your desktop accent is now purple.',chip:'\\u2713 Accent changed'},
+          {u:'Open Notes and save the meter reading: 48213',a:'Opened Notes and saved your reading.',chip:'\\u2713 Note saved'}
+        ];
+        function bubble(side,text){
+          var b=document.createElement('div');
+          b.style.cssText='max-width:85%;padding:.55rem .8rem;border-radius:12px;font-size:.92rem;line-height:1.45;'+(side==='u'?'align-self:flex-end;background:#37c2c2;color:#021;border-bottom-right-radius:4px':'align-self:flex-start;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-bottom-left-radius:4px');
+          b.textContent=text; log.appendChild(b); log.scrollTop=log.scrollHeight;
+        }
+        function chip(text){
+          var c=document.createElement('span');
+          c.style.cssText='align-self:flex-start;font-size:.72rem;background:rgba(63,174,107,.16);border:1px solid rgba(63,174,107,.45);color:#8fdcad;border-radius:999px;padding:.2rem .6rem';
+          c.textContent=text; log.appendChild(c); log.scrollTop=log.scrollHeight;
+        }
+        function run(){
+          btn.disabled=true; btn.textContent='Working\\u2026'; log.innerHTML='';
+          var i=0;
+          (function step(){
+            if(i>=convo.length){ btn.disabled=false; btn.textContent='Run it again'; return; }
+            var c=convo[i];
+            bubble('u',c.u);
+            setTimeout(function(){ bubble('a',c.a); chip(c.chip); i++; setTimeout(step,900); },650);
+          })();
+        }
+        btn.addEventListener('click',run);
+      })();
+      </script>
+    </section>''',
+      '''    <section class="section section--alt" aria-label="Built in-house">
+      <div class="wrap wrap--narrow">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">/06 &mdash; BUILT IN-HOUSE</p>
+          <h2 class="section-title" data-title>A genuine product, not a mock-up<span class="title-underline"></span></h2>
+          <p>The 365 AI OS is something we&rsquo;ve actually built &mdash; a working prototype that shows what a modern, AI-powered workspace can be: sign-in, your own saved profile, real apps, and an assistant that does the work rather than just talking about it.</p>
+          <p>It&rsquo;s also a living demonstration of the <a href="/agentic-ai-systems/">custom agentic AI systems</a> we design and build for businesses, and it pairs naturally with our <a href="/ai-training/">AI training &amp; adoption</a> service. As with everything we do, it&rsquo;s built with security first &mdash; in line with our <a href="/cybersecurity-support/">cybersecurity</a> approach &mdash; and explained in plain English.</p>
+          <p>It even includes a live <a href="/off-grid-victron-energy/">off-grid power dashboard</a> &mdash; read your Victron solar and battery system (charge, solar, loads and tank levels) from any browser, ideal for off-grid homes, campervans, motorhomes and boats.</p>
+          <p>Want a version shaped around your business &mdash; your apps, your data, your brand? <a href="/contact/">Get in touch</a> and we&rsquo;ll show you what&rsquo;s possible.</p>
+        </div>
+      </div>
+    </section>''',
+      faq_html(faqs),
+      cta("Want your own AI desktop?",
+          "See the working prototype and let&rsquo;s talk about a version built around your business.",
+          primary=("Book a Discovery Call", "/contact/"), secondary=("Agentic AI Systems", "/agentic-ai-systems/")),
+    ] if p])
+    def schema(s, _desc=desc, _faqs=faqs):
+        return graph([crumb(s, "365 AI OS"), webpage(s, "365 AI OS — Your Own AI Desktop", _desc),
+                      service(s, "365 AI OS", "A real, browser-based AI desktop with a built-in agentic assistant, built in-house by 365 Techies.", "Agentic AI software"),
+                      faqpage(s, _faqs)])
+    add(slug="365-ai-os", title="365 AI OS — Your Own AI Desktop with a Built-in Assistant | 365 Techies",
+        desc=desc, og_title="365 AI OS | 365 Techies", schema=schema, content=content)
+ai_os()
 
 # ===================================================== INFO / LEGAL / RESOURCE PAGES
 def _prose(inner):

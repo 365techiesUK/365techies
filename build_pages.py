@@ -9,6 +9,9 @@ BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://365techies.co.uk"
 CSSV = "36"
 HUBSPOT_ID = "148562638"
+# Public URL of the deployed 365 AI OS. When set, the /365-ai-os/ page shows a
+# prominent "Launch the live demo" button. Leave empty ("") to hide it.
+AI_OS_URL = ""
 
 # GoCardless Direct Debit subscription links (paste the hosted payment-link URL
 # from your GoCardless dashboard for each plan; empty = route to /contact/).
@@ -149,6 +152,7 @@ HEADER = '''  <header class="site-header">
             <a href="/starlink-internet/">Starlink Internet</a>
             <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
             <a href="/agentic-ai-systems/">Agentic AI Systems</a>
+            <a href="/365-ai-os/">365 AI OS</a>
             <a href="/unitree-robots/">Unitree Robots</a>
           </div>
         </div>
@@ -273,6 +277,7 @@ HEADER = '''  <header class="site-header">
           <a href="/starlink-internet/">Starlink Internet</a>
           <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
           <a href="/agentic-ai-systems/">Agentic AI Systems</a>
+          <a href="/365-ai-os/">365 AI OS</a>
           <a href="/unitree-robots/">Unitree Robots</a>
           <a href="/mobile-tablet-support/">Mobile &amp; Tablet Support</a>
           <a href="/voip-business-phones/">VoIP Business Phones</a>
@@ -471,6 +476,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/starlink-internet/">Starlink Internet</a>
         <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
         <a href="/agentic-ai-systems/">Agentic AI Systems</a>
+        <a href="/365-ai-os/">365 AI OS</a>
         <a href="/unitree-robots/">Unitree Robots</a>
         <a href="/it-support-for-hotels-holiday-lets/">Hotels &amp; Holiday Lets</a>
         <a href="/it-support-for-vets/">Veterinary Practices</a>
