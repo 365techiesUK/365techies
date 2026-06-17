@@ -179,6 +179,8 @@ def reviews_page():
         return graph([crumb(s, _cn), webpage(s, "Customer Reviews", _desc),
                       {"@type": "LocalBusiness", "@id": SITE + "/#business", "name": "365 Techies",
                        "image": SITE + "/og-image.jpg", "url": SITE + "/",
+                       "hasMap": "https://www.google.com/maps?cid=5924622613303465737",
+                       "sameAs": ["https://www.google.com/maps?cid=5924622613303465737"],
                        "aggregateRating": {"@type": "AggregateRating", "ratingValue": "4.9", "reviewCount": "51", "bestRating": "5", "worstRating": "1"},
                        "review": _rev}])
     add(slug=slug, title="Customer Reviews | 365 Techies — Rated 4.9 on Google",
