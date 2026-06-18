@@ -70,7 +70,7 @@ def make_local(i, slug, town, region, lede, intro_para, nearby):
     revs = [REVPOOL[i % len(REVPOOL)], REVPOOL[(i + 2) % len(REVPOOL)]]
     content = "\n".join([
       hero(bc(crumb_name), f"// {town.upper()} &middot; {region.upper()}",
-           f'IT support in <em class="grad grad--cyan">{town}</em>', lede,
+           f'IT support in <em class="grad grad--cyan">{town}</em>', bp.hero_trust(lede),
            chips=["Remote &amp; on-site", "Homes &amp; businesses", "Plans from &pound;15.95/mo"]),
       f'''    <section class="section" aria-label="Local support">
       <div class="wrap split-2">
@@ -306,7 +306,7 @@ def make_customer(i, slug, crumb_name, eyebrow, h1, lede, intro_head, intro_para
     def num():
         v = "/%02d" % n[0]; n[0] += 1; return v
     sections = [
-      hero(bc(crumb_name), eyebrow, h1, lede, chips=chips),
+      hero(bc(crumb_name), eyebrow, h1, bp.hero_trust(lede), chips=chips),
       f'''    <section class="section" aria-label="Overview">
       <div class="wrap split-2">
         <div class="prose" data-reveal>

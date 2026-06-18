@@ -3601,7 +3601,7 @@ def repair_pages():
         content = "\n".join([
           hero(bc(f"Computer Repair {town}"), "// COMPUTER &amp; LAPTOP REPAIR",
                f'Computer &amp; laptop repair in <em class="grad grad--cyan">{town}</em>',
-               f"Slow, broken or playing up? We fix PCs and laptops for homes and businesses across {town} &mdash; virus removal, speed-ups, upgrades, data transfer and setup &mdash; with home visits, fast remote help and no call-out fee. Friendly, local and family-run since 1995.",
+               bp.hero_trust(f"Slow, broken or playing up? We fix PCs and laptops for homes and businesses across {town} &mdash; virus removal, speed-ups, upgrades, data transfer and setup &mdash; with home visits, fast remote help and no call-out fee. Friendly, local and family-run since 1995."),
                cta1=("Book a Repair", "/book-a-collection/"), cta2=("Call 01202 775566", "tel:+441202775566"),
                chips=["No call-out fee", "Home visits &amp; remote", "Rated 4.9 on Google"]),
           f'''    <section class="section" aria-label="Text us a photo">
@@ -3815,7 +3815,7 @@ rural_wifi()
 def gap_service(c):
     why = "\n".join(f'          <p>{p}</p>' for p in c["why_paras"])
     content = "\n".join([
-      hero(bc(c["crumb"]), c["eyebrow"], c["h1"], c["lede"], cta1=c["cta1"], cta2=c["cta2"], chips=c["chips"]),
+      hero(bc(c["crumb"]), c["eyebrow"], c["h1"], bp.hero_trust(c["lede"]), cta1=c["cta1"], cta2=c["cta2"], chips=c["chips"]),
       f'''    <section class="section" aria-label="Overview">
       <div class="wrap split-2">
         <div class="prose" data-reveal>

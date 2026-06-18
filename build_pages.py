@@ -812,6 +812,11 @@ def cta(title, text, primary=("View Monthly Plans", "/monthly-it-support/"), sec
       </div>
     </section>'''
 
+def hero_trust(lede):
+    """Append a '4.9 on Google' trust hook to a hero subtext unless one is already present.
+    Used by landing-page heroes (service/town/customer pages) — NOT info/legal/tool pages."""
+    return lede if "4.9" in lede else lede.rstrip() + " Rated 4.9 on Google."
+
 def hero(crumbs_html, eyebrow, h1_html, lede, cta1=("View Monthly Plans", "/monthly-it-support/"),
          cta2=("Get Support Today", "/contact/"), chips=None):
     chips_html = ""
@@ -924,7 +929,7 @@ add(
  content="\n".join([
    hero(bc("Monthly IT Support"), "// MONTHLY SUBSCRIPTIONS",
         'Monthly IT support <em class="grad grad--cyan">subscriptions</em>',
-        "Reliable monthly IT support for homes and businesses — remote help, regular maintenance, security checks and friendly technical support whenever you need it. From £15.95 a month, cancel anytime.",
+        hero_trust("Reliable monthly IT support for homes and businesses — remote help, regular maintenance, security checks and friendly technical support whenever you need it. From £15.95 a month, cancel anytime."),
         chips=["Plans from &pound;15.95/mo", "Full service every 6 weeks", "Cancel anytime"]),
    f'''    <section class="section" aria-label="What is monthly IT support">
       <div class="wrap split-2">
@@ -1341,7 +1346,7 @@ add(
  content="\n".join([
    hero(bc("Remote IT Support"), "// REMOTE SUPPORT",
         'Remote IT support, <em class="grad grad--cyan">in minutes</em>',
-        "Most computer problems can be fixed remotely — no waiting in for an engineer. We connect securely over Splashtop SOS, you watch everything happen on screen, and access ends the moment we&rsquo;re done.",
+        hero_trust("Most computer problems can be fixed remotely — no waiting in for an engineer. We connect securely over Splashtop SOS, you watch everything happen on screen, and access ends the moment we&rsquo;re done."),
         cta1=("Get Remote Support", "/contact/"), cta2=("SOS Emergency Session", "https://sos.splashtop.com/en/sos-download"),
         chips=["Encrypted Splashtop SOS", "You stay in control", "Usually within minutes"]),
    f'''    <section class="section" aria-label="Overview">
@@ -1403,7 +1408,7 @@ add(
  content="\n".join([
    hero(bc("Microsoft 365"), "// MICROSOFT PARTNER",
         'Microsoft 365, <em class="grad grad--cyan">done properly</em>',
-        "As Microsoft partners and certified Office Specialists, we set up, migrate, secure and support Microsoft 365 &mdash; from a single mailbox at home to a whole team in the cloud. Email, Teams, files and security, all working together and managed for you.",
+        hero_trust("As Microsoft partners and certified Office Specialists, we set up, migrate, secure and support Microsoft 365 &mdash; from a single mailbox at home to a whole team in the cloud. Email, Teams, files and security, all working together and managed for you."),
         cta1=("Get Microsoft 365 Support", "/contact/"), cta2=("View Plans", "/monthly-it-support/"),
         chips=["Microsoft Partner", "Office Specialists", "Setup, migration &amp; security"]),
    f'''    <section class="section" aria-label="Overview">
@@ -1513,7 +1518,7 @@ add(
  content="\n".join([
    hero(bc("Cybersecurity"), "// THE ULTIMATE SECURITY",
         'The ultimate <em class="grad grad--green">cyber protection</em>',
-        "Ransomware, scams and phishing don&rsquo;t care whether you&rsquo;re a family or a business &mdash; they just look for the easy way in. We close every door with layered, always-on protection that&rsquo;s set up, managed and watched over by us, keeping you safe online 24/7.",
+        hero_trust("Ransomware, scams and phishing don&rsquo;t care whether you&rsquo;re a family or a business &mdash; they just look for the easy way in. We close every door with layered, always-on protection that&rsquo;s set up, managed and watched over by us, keeping you safe online 24/7."),
         cta1=("Get Protected", "/contact/"), cta2=("Free IT Health Check", "/contact/"),
         chips=["Malwarebytes Partner", "Layered defence", "Monitored 24/7"]),
    f'''    <section class="section" aria-label="Why it matters">
@@ -1664,7 +1669,7 @@ add(
  content="\n".join([
    hero(bc("Computer Repairs"), "// ONE-OFF FIXES",
         'Computer &amp; laptop <em class="grad grad--cyan">repairs</em>',
-        "Slow laptop, virus clean-up, dead Wi-Fi or a PC that just won&rsquo;t start? Book a one-off computer or laptop repair in Bournemouth, Poole or anywhere in Dorset — no subscription required.",
+        hero_trust("Slow laptop, virus clean-up, dead Wi-Fi or a PC that just won&rsquo;t start? Book a one-off computer or laptop repair in Bournemouth, Poole or anywhere in Dorset — no subscription required."),
         cta1=("Book a Computer Repair", "/book-a-collection/"), cta2=("Avoid Future Problems", "/monthly-it-support/"),
         chips=["No-fix-no-fee", "12-month warranty", "Remote or on-site"]),
    f'''    <section class="section" aria-label="Overview">
@@ -1815,7 +1820,7 @@ add(
  content="\n".join([
    hero(bc("IT Support Bournemouth"), "// BOURNEMOUTH &middot; DORSET",
         'IT support in <em class="grad grad--cyan">Bournemouth</em>',
-        "Friendly, local IT support and IT services for Bournemouth homes and businesses — monthly plans, computer &amp; laptop repairs, Microsoft 365, cybersecurity and fast remote help, from a Bournemouth IT company right on your doorstep.",
+        hero_trust("Friendly, local IT support and IT services for Bournemouth homes and businesses — monthly plans, computer &amp; laptop repairs, Microsoft 365, cybersecurity and fast remote help, from a Bournemouth IT company right on your doorstep."),
         chips=["Bournemouth-based", "Homes &amp; businesses", "Remote &amp; on-site"]),
    f'''    <section class="section" aria-label="Local support">
       <div class="wrap split-2">
