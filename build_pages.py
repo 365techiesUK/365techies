@@ -653,15 +653,11 @@ def page(slug, title, desc, og_title, schema_json, content):
   <script type="application/ld+json">
 {schema_json}
   </script>
-  <script type="importmap">
-    {IMPORTMAP}
-  </script>
   <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 </head>
 <body id="top">
   <a class="skip-link" href="#main">Skip to content</a>
-  <canvas id="tech-background" aria-hidden="true"></canvas>
   <div class="grid-overlay" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
 {HEADER}
@@ -688,7 +684,7 @@ def page(slug, title, desc, og_title, schema_json, content):
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.js?v=14"></script>
+  <script type="module" src="/js/interior.js?v=15"></script>
   <script src="/js/a11y.js?v=1" defer></script>
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
     <p>We use cookies to power our live chat and understand how the site is used. See our <a href="/cookie-policy/">cookie policy</a>.</p>
@@ -985,7 +981,7 @@ add(
               <li>Wi-Fi, printer &amp; email help</li>
               <li>Microsoft 365 &amp; security</li>
             </ul>
-            <a href="/home-it-support-plans/" class="button primary plan-card__cta">Set up Direct Debit</a>
+            <a href="/home-it-support-plans/" class="button primary plan-card__cta">See Home Plans</a>
             <p class="mono" style="text-align:center;margin-top:.7rem;color:var(--faint);font-size:.6rem;letter-spacing:.12em">DIRECT DEBIT BY GOCARDLESS &middot; CANCEL ANYTIME</p>
           </article>
           <article class="plan-card plan-card--business" data-reveal>
@@ -1000,7 +996,7 @@ add(
               <li>Cybersecurity &amp; backups</li>
               <li>Staff onboarding &amp; advice</li>
             </ul>
-            <a href="/business-it-support-plans/" class="button primary plan-card__cta">Set up Direct Debit</a>
+            <a href="/business-it-support-plans/" class="button primary plan-card__cta">See Business Plans</a>
             <p class="mono" style="text-align:center;margin-top:.7rem;color:var(--faint);font-size:.6rem;letter-spacing:.12em">DIRECT DEBIT BY GOCARDLESS &middot; CANCEL ANYTIME</p>
           </article>
         </div>
@@ -1180,6 +1176,10 @@ add(
 # ============================================================ HOME IT SUPPORT PLANS
 def plan_card(variant, badge, tag, name, desc, price, per, feats, cta_label, cta_href):
     badge_html = f'\n            <p class="plan-card__badge mono">{badge}</p>' if badge else ""
+    # Only promise "Set up Direct Debit" when there's a real GoCardless link; otherwise the button
+    # routes to /contact/ to choose/start the plan, so label it honestly.
+    if not str(cta_href).startswith("http"):
+        cta_label = "Choose this plan"
     feats_html = "\n".join(f"              <li>{f}</li>" for f in feats)
     return f'''          <article class="plan-card plan-card--{variant}" data-reveal>{badge_html}
             <p class="plan-card__tag mono">{tag}</p>

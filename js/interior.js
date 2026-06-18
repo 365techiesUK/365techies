@@ -246,27 +246,50 @@ async function initBackground() {
   });
 }
 
-/* ---------------- contact form → email help@365techies.co.uk ---------------- */
-const contactForm = document.querySelector(".contact-form");
-if (contactForm) {
-  contactForm.addEventListener("submit", (e) => {
+/* ---------------- web forms → HubSpot Forms API (real lead capture, no server needed) ---------------- */
+/* Submits straight to HubSpot's public forms endpoint from the browser, shows an on-page
+   success state, and falls back to phone/text/email if anything goes wrong. Binds EVERY form. */
+const HS_ENDPOINT = "https://api-eu1.hsforms.com/submissions/v3/integration/submit/148562638/7563b461-a18e-4193-9938-b505d05fcbad";
+const FALLBACK = 'call <a href="tel:+441202775566">01202&nbsp;775566</a>, text <a href="sms:+447520615332">07520&nbsp;615332</a> or email <a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a>';
+document.querySelectorAll(".contact-form").forEach((form) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const data = new FormData(contactForm);
-    const v = (k) => (data.get(k) || "").toString().trim();
-    const name = v("name"), email = v("email"), phone = v("phone"), topic = v("topic"), message = v("message");
-    const subject = `Website enquiry: ${topic || "IT support"}${name ? " — " + name : ""}`;
-    const body =
-      `Name:  ${name}\n` +
-      `Email: ${email}\n` +
-      `Phone: ${phone || "(not given)"}\n` +
-      `Topic: ${topic}\n\n` +
-      `${message}\n\n— Sent from 365techies.co.uk contact form`;
-    window.location.href =
-      `mailto:help@365techies.co.uk?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    const note = contactForm.querySelector(".form-status");
-    if (note) note.textContent = "Opening your email app to send to help@365techies.co.uk…";
+    const data = new FormData(form);
+    if ((data.get("company_website") || "").toString().trim()) return; // honeypot: silently drop bots
+    const get = (k) => (data.get(k) || "").toString().trim();
+    const email = get("email"), name = get("name"), phone = get("phone");
+    const extras = [];
+    for (const [k, val] of data.entries()) {
+      if (["name", "email", "phone", "company_website"].includes(k)) continue;
+      const s = (val || "").toString().trim();
+      if (s) extras.push(`${k}: ${s}`);
+    }
+    const fields = [];
+    if (email) fields.push({ name: "email", value: email });
+    if (name) fields.push({ name: "firstname", value: name });
+    if (phone) fields.push({ name: "phone", value: phone });
+    if (extras.length) fields.push({ name: "message", value: extras.join("\n") });
+    const status = form.querySelector(".form-status");
+    const btn = form.querySelector('button[type="submit"], button:not([type])');
+    if (btn) { btn.disabled = true; btn.dataset.label = btn.textContent; btn.textContent = "Sending…"; }
+    try {
+      const res = await fetch(HS_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fields, context: { pageUri: location.href, pageName: document.title } }),
+      });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      form.innerHTML =
+        '<div class="form-success" role="status" aria-live="polite">' +
+        "<h3>Thank you &mdash; we&rsquo;ve got your message.</h3>" +
+        "<p>We reply within one working day (Mon&ndash;Fri, 9am&ndash;5pm). Need help sooner? " +
+        'Call <a href="tel:+441202775566">01202 775566</a> or text <a href="sms:+447520615332">07520 615332</a>.</p></div>';
+    } catch (err) {
+      if (btn) { btn.disabled = false; if (btn.dataset.label) btn.textContent = btn.dataset.label; }
+      if (status) status.innerHTML = "Sorry &mdash; we couldn&rsquo;t send that just now. Please " + FALLBACK + ".";
+    }
   });
-}
+});
 
 /* ---------------- open HubSpot chat from [data-open-chat] ---------------- */
 document.addEventListener("click", (e) => {
@@ -284,5 +307,8 @@ document.addEventListener("click", (e) => {
 /* ---------------- boot ---------------- */
 initCounters();
 if (HAS_GSAP && !REDUCED) initUI();
-if (!REDUCED && !LOW_POWER) initBackground();
-else { const c = document.querySelector("#tech-background"); if (c) c.remove(); }
+// WebGL background only runs where a #tech-background canvas exists (homepage only now);
+// interior/landing pages use the lightweight static CSS background — no Three.js fetch.
+const bgCanvas = document.querySelector("#tech-background");
+if (bgCanvas && !REDUCED && !LOW_POWER) initBackground();
+else if (bgCanvas) bgCanvas.remove();
