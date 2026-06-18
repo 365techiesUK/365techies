@@ -1144,6 +1144,7 @@ add(
           <h2 class="section-title" data-title>Your outsourced IT department<span class="title-underline"></span></h2>
           <p>As your Managed Service Provider, we look after the technology so you can get on with running your business. From onboarding a new starter to locking down security, it&rsquo;s all proactively managed for you.</p>
           <p><strong>Microsoft 365, security and backups — managed, monitored and maintained</strong> — with a real techie on the end of the phone whenever your team needs one.</p>
+          <p>Need a steer on the bigger decisions? Our <a href="/business-it-consultancy/">business IT consultancy</a> gives you a virtual IT manager and a clear, plain-English technology plan.</p>
         </div>
         <ul class="checklist" data-stagger>
 {checklist(["Remote IT support","Staff support","Microsoft 365 administration","Outlook &amp; email help","Teams, OneDrive &amp; SharePoint","Cybersecurity checks","Windows updates","Backup checks","New PC setup","User onboarding","Leaver account checks","Printer &amp; network support"])}
@@ -1571,7 +1572,7 @@ add(
             <h3>Security for your business</h3>
             <p style="color:var(--muted);margin:0 0 1.1rem">Protect your team, your data and your reputation &mdash; without an in-house IT department. We roll out and centrally manage your whole security stack and report on it.</p>
             <ul class="checklist">
-{checklist(["Centrally managed endpoint protection","Microsoft 365 security &amp; email filtering","MFA, access control &amp; leaver checks","Verified backups &amp; security reviews"])}
+{checklist(["Centrally managed endpoint protection","Microsoft 365 security &amp; email filtering","MFA, access control &amp; leaver checks","Verified backups &amp; security reviews",'<a href="/security-awareness-training/">Staff security awareness training &amp; phishing simulation</a>'])}
             </ul>
           </div>
         </div>
