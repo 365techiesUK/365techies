@@ -9,8 +9,8 @@
   --bg: #070d22;
   --bg-2: #0c1430;
   --ink: #eaf4ff;
-  --muted: #93aac9;
-  --faint: #869fc6;
+  --muted: #9fb5d3;
+  --faint: #a6b9d6;
   --cyan: #1d97e3;
   --cyan-soft: #6cc4f5;
   --green: #00ce1b;
@@ -78,11 +78,15 @@ a, button, .button, .quiz__opt, .hub-chip, summary, .nav-cta, .nav-sos, .nav-boo
 
 .mono {
   font-family: var(--font-mono);
-  font-size: 0.74rem;
+  font-size: 0.8rem;
   font-weight: 500;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   color: var(--faint);
 }
+/* Form success state (shown after a successful HubSpot submit) */
+.form-success { text-align: center; padding: 1.6rem 1.2rem; border: 1px solid rgba(0, 206, 27, 0.35); border-radius: 14px; background: rgba(0, 206, 27, 0.07); }
+.form-success h3 { margin: 0 0 0.5rem; color: var(--ink); }
+.form-success p { margin: 0; color: var(--muted); }
 
 /* ==========================================================================
    BACKGROUND LAYERS
@@ -267,7 +271,6 @@ body.menu-open .site-header { z-index: 70; }
   display: inline-block; width: 8px; height: 8px; border-radius: 50%;
   background: #fff; flex: none;
   box-shadow: 0 0 8px rgba(255, 255, 255, 0.9);
-  animation: blink 1.2s steps(2, start) infinite;
 }
 
 .button.sos {
@@ -1239,9 +1242,8 @@ body.menu-open { overflow: hidden; }
 .nav-phone svg { width: 15px; height: 15px; color: var(--cyan); flex: none; }
 .nav-phone:hover { border-color: var(--cyan); color: #fff; box-shadow: 0 0 22px rgba(29, 151, 227, 0.25); }
 @media (max-width: 480px) { .nav-phone { display: none; } }
-/* on desktop the nav is full + Book + SOS, so the phone pill hides here
-   (the number stays in the ticker, footer and Contact page) */
-@media (min-width: 1201px) { .nav-phone { display: none; } }
+/* Keep a visible, tappable phone number in the header on tablet + desktop
+   (older/less-confident visitors want to phone — the mobile bottom bar covers <480px). */
 
 /* header "Book a Service" button */
 .nav-book {

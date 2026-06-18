@@ -297,7 +297,7 @@ for i, row in enumerate(LOCAL):
     make_local(i, *row)
 
 # ======================================================= CUSTOMER-TYPE PAGES
-def make_customer(i, slug, crumb_name, eyebrow, h1, lede, intro_head, intro_paras, feats, tile_items, faqs, chips, cta_title=None, cta_text=None, accent="cyan", split=None, split_title=None, split_eyebrow="HOME &amp; BUSINESS", steps_title=None, step_items=None):
+def make_customer(i, slug, crumb_name, eyebrow, h1, lede, intro_head, intro_paras, feats, tile_items, faqs, chips, cta_title=None, cta_text=None, accent="cyan", split=None, split_title=None, split_eyebrow="HOME &amp; BUSINESS", steps_title=None, step_items=None, hero_cta1=None, hero_cta2=None):
     cta_title = cta_title or "Let&rsquo;s sort your IT"
     cta_text = cta_text or "Join the Dorset homes and businesses who never worry about technology. Pick a plan or say hello."
     desc = lede.replace("&rsquo;", "'").replace("&amp;", "and")
@@ -306,7 +306,9 @@ def make_customer(i, slug, crumb_name, eyebrow, h1, lede, intro_head, intro_para
     def num():
         v = "/%02d" % n[0]; n[0] += 1; return v
     sections = [
-      hero(bc(crumb_name), eyebrow, h1, bp.hero_trust(lede), chips=chips),
+      hero(bc(crumb_name), eyebrow, h1, bp.hero_trust(lede), chips=chips,
+           cta1=hero_cta1 or ("View Monthly Plans", "/monthly-it-support/"),
+           cta2=hero_cta2 or ("Get Support Today", "/contact/")),
       f'''    <section class="section" aria-label="Overview">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
@@ -405,7 +407,7 @@ CUSTOMERS = [
    split=[("Your team &amp; devices","Every user supported on every device, with new starters onboarded and leavers handled securely.",["Support for every user","New-starter onboarding","Secure leaver checks","Remote &amp; on-site help"]),("Your systems &amp; data","Microsoft 365, security and backups fully managed, monitored and planned around your business.",["Microsoft 365 management","Cybersecurity &amp; patching","Daily verified backups","Technology planning"])],
    steps_title="Your IT, handled in three steps",
    step_items=[("We review","We map your setup, users and where the risks are."),("We manage","We take over Microsoft 365, security, backups and support."),("We plan ahead","Regular check-ins and technology planning as you grow.")]),
- dict(slug="it-support-for-retired-users", crumb_name="IT Support for Retired Users",
+ dict(slug="it-support-for-retired-users", crumb_name="IT Support for Retired Users", hero_cta1=("Call 01202 775566", "tel:+441202775566"), hero_cta2=("Or message us", "/contact/"),
    eyebrow="// FOR RETIRED USERS", h1='IT support for <em class="grad grad--cyan">retired users</em>',
    lede="Friendly, patient computer help for retired users — unhurried support with laptops, email, printers, online accounts, photos, video calls, security and scam awareness.",
    intro_head="Patient help, with no silly questions",
@@ -418,7 +420,7 @@ CUSTOMERS = [
    split=[("Everyday help","Patient, unhurried help with your laptop, email, photos and online accounts &mdash; explained in plain English.",["Slow laptop fixes","Email &amp; passwords sorted","Photos &amp; video calls","Printer &amp; device help"]),("Safe &amp; protected","Sensible security and a real person to ask before you click, so you can stay safe from scams and fraud.",["Scam &amp; fraud awareness","Antivirus &amp; protection","Backups for peace of mind","Someone to ask, anytime"])],
    steps_title="Friendly help in three steps",
    step_items=[("Give us a call","Tell us what&rsquo;s puzzling you &mdash; no question is too small."),("We help, patiently","We fix it remotely and explain it clearly, never rushing you."),("We stay in touch","Help as often as you need it, from a team you know.")]),
- dict(slug="it-support-for-disabled-people", crumb_name="IT Support for Disabled People",
+ dict(slug="it-support-for-disabled-people", crumb_name="IT Support for Disabled People", hero_cta1=("Call 01202 775566", "tel:+441202775566"), hero_cta2=("Or message us", "/contact/"),
    eyebrow="// ACCESSIBLE IT SUPPORT", h1='Accessible IT support for <em class="grad grad--cyan">disabled people</em>',
    lede="Patient, accessible IT support for disabled people across Dorset — we set up and support computers, tablets and phones around your needs, with accessibility features, assistive technology and friendly help whenever you need it.",
    intro_head="Technology that works for you",

@@ -6709,7 +6709,7 @@ def computer_help_for_seniors():
       hero(bc("Computer Help for Seniors"), "// FOR OLDER USERS",
            'Friendly computer help <em class="grad grad--cyan">for older people</em>',
            "Helping older and less-confident people enjoy their technology has been a specialism of ours since 1995. Here&rsquo;s a calm, friendly place to start &mdash; patient guides, and a real person whenever you&rsquo;d like one.",
-           cta1=("Talk to a Techie","/contact/"), cta2=("Support for Retired Users","/it-support-for-retired-users/"),
+           cta1=("Call 01202 775566","tel:+441202775566"), cta2=("Support for Retired Users","/it-support-for-retired-users/"),
            chips=["Patient &amp; unhurried","No silly questions","Help at home or remotely"]),
       f'''    <section class="section section--alt" aria-label="Friendly guides">
       <div class="wrap">
