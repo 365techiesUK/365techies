@@ -5196,6 +5196,7 @@ info_page(
 
 # ===================================================== CYBER THREATS EXPLAINED
 def make_threat(slug, name, h1, lede, desc, what_html, signs, protect, ifhit, faqs):
+    related = "\n".join(f'          <li><a href="/{t["slug"]}/">{t["name"]}</a></li>' for t in THREATS if t["slug"] != slug)
     content = "\n".join([
       hero(f'<a href="/">Home</a> <span>/</span> <a href="/cyber-threats/">Cyber Threats</a> <span>/</span> <span aria-current="page">{name}</span>',
            "// CYBER THREAT", h1, lede,
@@ -5231,6 +5232,18 @@ def make_threat(slug, name, h1, lede, desc, what_html, signs, protect, ifhit, fa
         <ol class="how__steps">
 {steps(ifhit)}
         </ol>
+      </div>
+    </section>''',
+      f'''    <section class="section section--alt" aria-label="Other cyber threats">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// MORE THREATS EXPLAINED</p>
+          <h2 class="section-title section-title--center" data-title>Know the other scams too<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ul class="areas-grid" data-stagger>
+{related}
+          <li><a href="/cybersecurity-support/">All-round cybersecurity</a></li>
+        </ul>
       </div>
     </section>''',
       faq_html(faqs),
