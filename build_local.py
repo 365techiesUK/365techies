@@ -55,8 +55,8 @@ def make_local(i, slug, town, region, lede, intro_para, nearby):
     repair_slug = ("computer-repair-" + slug[len("it-support-"):]) if slug.startswith("it-support-") else ""
     repair_link = (f'\n          <p>Just need a one-off fix rather than a plan? See our <a href="/{repair_slug}/">computer &amp; laptop repair in {town}</a> &mdash; home visits, fast remote help and no call-out fee.</p>'
                    if repair_slug in REPAIR_SLUGS else "")
-    desc = (f"IT support, IT services and computer repairs in {town} — rated 4.9 on Google, no call-out fee, "
-            f"family-run since 1995. Homes and businesses, remote and on-site. Call or text us.")
+    desc = (f"IT support, IT services and computer repairs in {town} — rated 4.9 on Google, "
+            f"no call-out fee, family-run since 1995. Homes and businesses.")
     faqs = [
       (f"Do you provide IT support in {town}?", f"Yes — 365 Techies provides remote and on-site IT support for homes and businesses in {town} and the wider {region} area, with monthly plans from £15.95."),
       (f"Can you visit me in {town}?", f"Yes. Most issues are fixed remotely in minutes, and we provide on-site visits across {town} and the wider {region} when hands-on help is needed."),

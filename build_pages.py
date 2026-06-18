@@ -3,7 +3,8 @@
 Holds the shared header/footer/head once; each PAGE supplies unique content + SEO + schema.
 Run: python build_pages.py  (writes <slug>/index.html for every page)
 """
-import os, json
+import os, json, datetime
+TODAY = datetime.date.today().isoformat()  # build date — used for dateModified / sitemap lastmod (freshness)
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://365techies.co.uk"
@@ -765,7 +766,7 @@ def webpage(slug, title, desc, wtype="WebPage"):
             "isPartOf": {"@id": SITE + "/#website"}, "about": {"@id": SITE + "/#business"},
             "breadcrumb": {"@id": f"{SITE}/{slug}/#breadcrumb"},
             "primaryImageOfPage": {"@type": "ImageObject", "url": SITE + "/og-image.jpg"},
-            "datePublished": "2026-06-12", "dateModified": "2026-06-15"}
+            "datePublished": "2026-06-12", "dateModified": TODAY}
 
 def service(slug, name, desc, stype=None):
     n = {"@type": "Service", "@id": f"{SITE}/{slug}/#service", "name": name, "description": desc,

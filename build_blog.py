@@ -23,7 +23,7 @@ def post_crumb(slug, title):
 def blogposting(slug, title, desc, cat, dt="2026-06-15"):
     return {"@type": "BlogPosting", "@id": f"{SITE}/{slug}/#article",
             "headline": title, "description": desc, "articleSection": cat, "inLanguage": "en-GB",
-            "datePublished": dt, "dateModified": dt,
+            "datePublished": dt, "dateModified": bp.TODAY,
             "author": {"@type": "Organization", "name": "365 Techies", "url": SITE + "/"},
             "publisher": {"@id": SITE + "/#business"}, "image": SITE + "/og-image.jpg",
             "mainEntityOfPage": {"@id": f"{SITE}/{slug}/#webpage"}, "url": f"{SITE}/{slug}/"}
@@ -71,7 +71,7 @@ def make_post(slug, cat, title, lede, body, points, related, faqs=None, dt="2026
     ])
     def schema(s, _nodes=nodes):
         return graph(_nodes)
-    add(slug=slug, title=f"{title} | 365 Techies IT Advice", desc=desc, og_title=title, schema=schema, content=content)
+    add(slug=slug, title=f"{title} | 365 Techies", desc=desc, og_title=title, schema=schema, content=content)
 
 CATS = ["Monthly Support", "Home Users", "Business IT", "Microsoft 365", "Windows"]
 POSTS = [
@@ -456,7 +456,7 @@ print("  ... including IT Advice Hub + %d posts" % len(POSTS))
 
 # ---------------- regenerate sitemap.xml with every page ----------------
 import os
-LM = "2026-06-15"
+LM = bp.TODAY  # sitemap lastmod = build date (freshness signal)
 urls = ['''  <url>
     <loc>https://365techies.co.uk/</loc>
     <lastmod>%s</lastmod>

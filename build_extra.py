@@ -3589,7 +3589,7 @@ def repair_pages():
     REPAIRS = bp.REPAIR_TOWNS  # single source of truth — defined in build_pages.py
     wa_repair = (f' You can also <a href="{bp.WHATSAPP_LINK}" target="_blank" rel="noopener">send it on WhatsApp</a>.') if bp.WHATSAPP_NUMBER else ""
     for town, slug, nearby, it_slug in REPAIRS:
-        desc = f"Computer and laptop repair in {town} — no call-out fee, no-fix-no-fee, 12-month warranty. Virus removal, speed-ups and upgrades. Rated 4.9 on Google, since 1995."
+        desc = f"Computer and laptop repair in {town} — no call-out fee, no-fix-no-fee, 12-month warranty. Virus removal and upgrades. Rated 4.9 on Google."
         faqs = [
           (f"Do you repair computers and laptops in {town}?", f"Yes &mdash; we repair PCs and laptops for homes and businesses across {town} and the surrounding area ({nearby}). We can help remotely, visit you at home, or collect the machine."),
           ("How much does a computer repair cost?", "It depends on the problem &mdash; we diagnose it and give you a clear price before any work, with no call-out fee and no surprise bills. Many issues are fixed quickly and remotely."),
