@@ -1756,6 +1756,16 @@ def malwarebytes():
         </ol>
       </div>
     </section>''',
+      f'''    <section class="section section--alt" aria-label="Prefer to buy it yourself">
+      <div class="wrap">
+        <div class="prose" data-reveal style="text-align:center;max-width:62ch;margin:0 auto">
+          <p class="eyebrow eyebrow--center mono">// PREFER TO DO IT YOURSELF?</p>
+          <h2 class="section-title section-title--center" data-title>Rather buy it direct?<span class="title-underline title-underline--center"></span></h2>
+          <p>Most of our customers love having us set it up and look after it for them &mdash; but if you&rsquo;d rather buy and install Malwarebytes Premium yourself, you can get it straight from Malwarebytes:</p>
+        </div>
+{bp.affiliate_block("1101l99806", 728, 90)}
+      </div>
+    </section>''',
       faq_html(faqs),
       cta("Stay safe online with Malwarebytes",
           "Talk to your local Malwarebytes Partner about Premium &amp; VPN protection for your home or business.",
@@ -5238,6 +5248,7 @@ def make_threat(slug, name, h1, lede, desc, what_html, signs, protect, ifhit, fa
         </ul>
       </div>
     </section>''',
+      bp.affiliate_block("1011l100231", 728, 90, lead="Our partner Malwarebytes Premium blocks threats like this in real time &mdash; prefer to protect your own device?"),
       f'''    <section class="how" aria-label="If you have been hit">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>/03 — IF YOU&rsquo;VE BEEN HIT</p>

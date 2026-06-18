@@ -16,7 +16,7 @@ except Exception:
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://365techies.co.uk"
-CSSV = "38"
+CSSV = "39"
 HUBSPOT_ID = "148562638"
 # Public URL of the deployed 365 AI OS. When set, the /365-ai-os/ page shows a
 # prominent "Launch the live demo" button. Leave empty ("") to hide it.
@@ -405,6 +405,19 @@ HEADER = '''  <header class="site-header">
 # Text-only SMS number (TextMagic) — customers can text but not call this line. See memory text-number.md.
 TEXT_DISPLAY = "07520 615332"
 TEXT_SMS = "sms:+447520615332"
+
+# Malwarebytes affiliate (Partnerize). camref = campaign ref. Links MUST be rel="sponsored"
+# (Google requirement) and accompanied by an affiliate disclosure (UK ASA). Banners are
+# lazy-loaded and responsive so they don't slow pages or overflow on mobile.
+MB_CAMREF = "1110lwBPw"
+def mb_affiliate(creative_id, w, h, alt="Malwarebytes Premium &mdash; trusted protection"):
+    return (f'<a class="affiliate-banner" href="https://prf.hn/click/camref:{MB_CAMREF}/creativeref:{creative_id}" '
+            f'target="_blank" rel="sponsored noopener"><img src="https://creative.prf.hn/source/camref:{MB_CAMREF}/creativeref:{creative_id}" '
+            f'width="{w}" height="{h}" loading="lazy" decoding="async" alt="{alt}" /></a>')
+def affiliate_block(creative_id, w, h, lead=""):
+    lead_html = f'<p class="affiliate-lead">{lead}</p>' if lead else ""
+    return (f'    <div class="affiliate-cta" data-reveal>{lead_html}{mb_affiliate(creative_id, w, h)}'
+            f'<p class="affiliate-note mono">Affiliate link &mdash; we may earn a small commission if you buy through it, at no extra cost to you.</p></div>')
 
 FOOTER = '''  <footer class="site-footer">
     <div class="footer-areas">
