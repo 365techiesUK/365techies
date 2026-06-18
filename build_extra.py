@@ -1505,6 +1505,14 @@ def services_overview():
         ("Cloud Migration", "/cloud-migration/", "Move email, files and systems to the cloud with no downtime."),
         ("Google Workspace", "/google-workspace-support/", "Gmail, Drive, Docs and Meet, set up, secured and supported."),
       ]),
+      ("Business IT services", [
+        ("Business IT Consultancy", "/business-it-consultancy/", "Plain-English IT strategy and a virtual IT manager for growing businesses."),
+        ("Security Awareness Training", "/security-awareness-training/", "Staff phishing training, simulations and dark-web monitoring for small teams."),
+        ("Office Moves &amp; IT Relocation", "/office-moves-it-relocation/", "Move your IT safely with minimal downtime &mdash; up and running day one."),
+        ("Business Broadband &amp; Connectivity", "/business-broadband-connectivity/", "Full-fibre, leased lines and failover, arranged, set up and managed for you."),
+        ("Cloud &amp; Hosted Desktops", "/cloud-hosted-desktops/", "Secure work-from-anywhere desktops on Windows 365 / Azure Virtual Desktop."),
+        ("Secure IT Disposal", "/secure-it-disposal/", "Certified data wiping, destruction and responsible recycling of old kit."),
+      ]),
       ("Beyond IT support", [
         ("Off-Grid &amp; Victron Energy", "/off-grid-victron-energy/", "Solar, battery storage and inverters for homes, businesses, campervans and motorhomes."),
         ("Website Design &amp; Hosting", "/web-design-hosting/", "Premium websites, fast managed hosting and business email."),
@@ -3802,6 +3810,240 @@ def rural_wifi():
     add(slug=slug, title="Rural, Farm & Glamping Wi-Fi Dorset | Starlink & Site Wi-Fi | 365 Techies",
         desc=desc, og_title="Rural & Farm Wi-Fi Dorset | 365 Techies", schema=schema, content=content)
 rural_wifi()
+
+# ===================================================== B2B SERVICE PAGES (content-gap; GSC + competitor analysis 2026-06-18)
+def gap_service(c):
+    why = "\n".join(f'          <p>{p}</p>' for p in c["why_paras"])
+    content = "\n".join([
+      hero(bc(c["crumb"]), c["eyebrow"], c["h1"], c["lede"], cta1=c["cta1"], cta2=c["cta2"], chips=c["chips"]),
+      f'''    <section class="section" aria-label="Overview">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">/01 &mdash; {c["why_eyebrow"]}</p>
+          <h2 class="section-title" data-title>{c["why_title"]}<span class="title-underline"></span></h2>
+{why}
+        </div>
+        <ul class="checklist" data-stagger>
+{checklist(c["why_checklist"])}
+        </ul>
+      </div>
+    </section>''',
+      f'''    <section class="section section--alt" aria-label="What we do">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/02 &mdash; {c["do_eyebrow"]}</p>
+          <h2 class="section-title section-title--center" data-title>{c["do_title"]}<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="tile-grid" data-stagger>
+{tiles(c["do_tiles"])}
+        </div>
+      </div>
+    </section>''',
+      f'''    <section class="section" aria-label="Who it is for">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/03 &mdash; {c["who_eyebrow"]}</p>
+          <h2 class="section-title section-title--center" data-title>{c["who_title"]}<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ul class="security-grid" data-stagger>
+{grid_cards(c["who_cards"])}
+        </ul>
+      </div>
+    </section>''',
+      f'''    <section class="how section--alt" aria-label="How it works">
+      <div class="wrap">
+        <p class="eyebrow eyebrow--center mono" data-reveal>/04 &mdash; HOW IT WORKS</p>
+        <h2 class="section-title section-title--center" data-title>{c["how_title"]}<span class="title-underline title-underline--center"></span></h2>
+        <ol class="how__steps">
+{steps(c["how_steps"])}
+        </ol>
+      </div>
+    </section>''',
+      faq_html(c["faqs"]),
+      cta(c["cta_title"], c["cta_text"], primary=c["cta1"], secondary=c["cta2"]),
+    ])
+    def schema(s, _d=c["desc"], _cn=c["crumb"], _f=c["faqs"], _sn=c["svc_name"], _sd=c["svc_desc"], _st=c["svc_type"]):
+        return graph([crumb(s, _cn), webpage(s, _cn, _d), service(s, _sn, _sd, _st), faqpage(s, _f)])
+    add(slug=c["slug"], title=c["title"], desc=c["desc"], og_title=c.get("og_title", c["title"]), schema=schema, content=content)
+
+GAP_SERVICES = [
+ {
+  "slug": "business-it-consultancy", "crumb": "IT Consultancy",
+  "eyebrow": "// IT CONSULTANCY &amp; STRATEGY",
+  "h1": 'Business IT <em class="grad grad--cyan">consultancy</em>',
+  "lede": "Plain-English IT advice and a clear technology plan for your business &mdash; like having your own IT director, without the salary. We help Dorset small businesses choose the right systems, budget sensibly and stop firefighting.",
+  "chips": ["Plain-English advice", "Your virtual IT manager", "No jargon, no pressure"],
+  "cta1": ("Book a Free IT Review", "/contact/"), "cta2": ("Business IT Support", "/business-it-support-subscriptions/"),
+  "why_eyebrow": "WHY IT MATTERS", "why_title": "Technology that fits your business",
+  "why_paras": [
+    "Most small businesses don&rsquo;t need a full-time IT manager &mdash; but they do need someone who understands the business and can make sensible technology decisions. That&rsquo;s where we come in.",
+    "We act as your <strong>virtual IT manager</strong>: an outside expert who knows your setup, plans ahead, keeps your spending sensible and translates the tech into plain English so you can make confident decisions."],
+  "why_checklist": ["An IT plan that matches your goals", "Sensible, predictable IT budgeting", "Independent, no-pressure advice", "Someone who knows your setup", "Reviews before you spend", "Plain-English explanations", "Vendor &amp; licence guidance", "A roadmap, not just firefighting"],
+  "do_eyebrow": "WHAT WE ADVISE ON", "do_title": "Guidance across your whole setup",
+  "do_tiles": [("briefcase", "IT strategy &amp; roadmap", "A simple, prioritised plan for the next 12&ndash;24 months &mdash; no surprises."), ("cloud", "Cloud &amp; Microsoft 365", "The right mix of cloud, Microsoft 365 and on-site, sized to your team."), ("shield", "Security &amp; compliance", "Practical security and a path to Cyber Essentials, without overspending."), ("cpu", "Hardware &amp; budgeting", "When to upgrade, when to replace, and how to plan the cost."), ("server", "Growth &amp; new offices", "Scaling your IT as you hire, grow or move premises."), ("users", "Supplier &amp; licence reviews", "An independent check that you&rsquo;re on the right plans and not overpaying.")],
+  "who_eyebrow": "WHO IT&rsquo;S FOR", "who_title": "A virtual IT director for growing businesses",
+  "who_cards": [("Small businesses without IT staff", "Get senior IT thinking without the cost of hiring."), ("Businesses that are growing", "Plan systems, security and budgets before problems appear."), ("Anyone tired of firefighting", "Swap reactive fixes for a proper plan."), ("Offices moving or expanding", "Get the IT right around the change &mdash; see <a href=\"/office-moves-it-relocation/\">office moves &amp; IT relocation</a>."), ("Owners who want clarity", "Clear advice you can actually act on."), ("Pairs with managed support", "Best alongside our <a href=\"/business-it-support-subscriptions/\">business IT support</a>.")],
+  "how_title": "From review to roadmap",
+  "how_steps": [("Free IT review", "We learn your business, your goals and your current setup."), ("Findings &amp; priorities", "We show you what&rsquo;s working, what&rsquo;s at risk and what to do first."), ("A clear roadmap", "A simple, costed plan you can follow at your own pace."), ("Ongoing guidance", "Regular check-ins as your virtual IT manager &mdash; we keep you on track.")],
+  "faqs": [
+    ("What is a virtual IT manager?", "It&rsquo;s an outside IT expert who acts as your part-time IT director &mdash; planning, advising and overseeing your technology &mdash; for a fraction of the cost of hiring someone full time."),
+    ("Do I have to be a support customer?", "No &mdash; we offer standalone IT consultancy and reviews. Many businesses start with a review, then move onto a support plan."),
+    ("Is the advice independent?", "Yes &mdash; we recommend what&rsquo;s right for you, in plain English, with no pressure. We&rsquo;ll happily tell you when you don&rsquo;t need to spend."),
+    ("How much does it cost?", "An initial IT review is free and no-obligation. Ongoing consultancy is quoted clearly up front to suit how much help you want.")],
+  "cta_title": "Let&rsquo;s make sense of your IT", "cta_text": "Book a free, no-obligation IT review and we&rsquo;ll give you a clear, plain-English plan &mdash; no jargon, no pressure.",
+  "svc_name": "Business IT Consultancy", "svc_desc": "IT strategy, planning and virtual IT manager services for small businesses across Dorset — independent, plain-English advice.", "svc_type": "IT consultancy",
+  "title": "Business IT Consultancy & Virtual IT Manager | Dorset | 365 Techies",
+  "og_title": "Business IT Consultancy | 365 Techies",
+  "desc": "Independent, plain-English business IT consultancy across Bournemouth, Poole and Dorset — IT strategy, planning and a virtual IT manager for small businesses. Free, no-obligation IT review.",
+ },
+ {
+  "slug": "office-moves-it-relocation", "crumb": "Office Moves & IT Relocation",
+  "eyebrow": "// OFFICE MOVES &amp; IT RELOCATION",
+  "h1": 'Office moves &amp; <em class="grad grad--cyan">IT relocation</em>',
+  "lede": "Moving office? We move your IT safely and switch it back on with no drama &mdash; computers, servers, network, phones and broadband &mdash; so your team is up and running on day one, across Bournemouth, Poole and Dorset.",
+  "chips": ["Minimal downtime", "Planned around you", "Up and running day one"],
+  "cta1": ("Plan Your Office Move", "/contact/"), "cta2": ("Business IT Support", "/business-it-support-subscriptions/"),
+  "why_eyebrow": "WHY IT MATTERS", "why_title": "The part of a move that goes wrong",
+  "why_paras": [
+    "An office move is stressful enough without your IT failing on the first morning in the new place. Unplugging it is easy; getting it all working again &mdash; network, internet, phones, servers, printers &mdash; is where moves come unstuck.",
+    "We plan and handle the IT side end to end, so the kit arrives safely, the new office is wired and ready, and your team sits down and just gets back to work."],
+  "why_checklist": ["A planned, checklisted move", "Broadband &amp; phones ready in advance", "Network &amp; Wi-Fi set up properly", "Servers moved or migrated safely", "Computers reconnected &amp; tested", "Out-of-hours moves to avoid downtime", "One team for the whole IT side", "Support on day one and after"],
+  "do_eyebrow": "WHAT WE HANDLE", "do_title": "The whole IT side of your move",
+  "do_tiles": [("server", "Servers &amp; data", "Safely move (or migrate to the cloud) your servers and data &mdash; nothing lost."), ("globe", "Broadband &amp; connectivity", "Order and set up internet at the new office ahead of the move &mdash; see <a href=\"/business-broadband-connectivity/\">business connectivity</a>."), ("bolt", "Network &amp; Wi-Fi", "Cabling, switches, firewall and whole-office Wi-Fi, set up and tested."), ("monitor", "Computers &amp; printers", "Disconnected, transported, reconnected and tested at the new desk."), ("mail", "Phones &amp; VoIP", "Move your numbers and <a href=\"/voip-business-phones/\">VoIP phones</a> with no loss of service."), ("shield", "Security &amp; backups", "Checked and working before you go live &mdash; and verified afterwards.")],
+  "who_eyebrow": "WHEN WE HELP", "who_title": "Moves of every size",
+  "who_cards": [("Small office moves", "A handful of desks moved cleanly, with no lost time."), ("Growing into bigger premises", "Plan the IT for more people and more space."), ("Brand-new offices", "From empty room to fully working, wired and secure."), ("Merging or splitting sites", "Combine or separate IT setups without the headache."), ("Home-to-office (or back)", "Set up a new business space, or move IT home."), ("Pairs with consultancy", "Plan it properly with our <a href=\"/business-it-consultancy/\">IT consultancy</a>.")],
+  "how_title": "A move with no nasty surprises",
+  "how_steps": [("Survey &amp; plan", "We visit both sites, plan the move and order connectivity early."), ("Prepare the new office", "Cabling, network, Wi-Fi and internet ready before moving day."), ("Move &amp; reconnect", "Often out of hours &mdash; we move, reconnect and test everything."), ("Day-one support", "We&rsquo;re on hand as your team settles in, and after.")],
+  "faqs": [
+    ("Can you move our IT out of hours or at a weekend?", "Yes &mdash; we often move IT in the evening or at a weekend so your team walks into a working office with no lost working time."),
+    ("Will we lose internet or phones during the move?", "We plan connectivity and phones ahead so there&rsquo;s no gap &mdash; numbers and broadband are ready at the new office before you arrive."),
+    ("Can you move our server, or should we go cloud?", "Either &mdash; we&rsquo;ll move your server safely, or use the move as the moment to migrate to the cloud. We&rsquo;ll advise what&rsquo;s best."),
+    ("Do you cover our area?", "Yes &mdash; office moves and IT relocation across Bournemouth, Poole, Christchurch and the whole of Dorset.")],
+  "cta_title": "Moving office? Let&rsquo;s plan the IT", "cta_text": "Tell us about your move and we&rsquo;ll handle the whole IT side &mdash; so your team is up and running on day one.",
+  "svc_name": "Office Moves & IT Relocation", "svc_desc": "End-to-end IT relocation for office moves across Dorset — servers, network, computers, phones and broadband, planned and reconnected with minimal downtime.", "svc_type": "IT relocation",
+  "title": "Office Moves & IT Relocation Dorset | Minimal Downtime | 365 Techies",
+  "og_title": "Office Moves & IT Relocation | 365 Techies",
+  "desc": "Moving office in Bournemouth, Poole or Dorset? We handle the whole IT relocation — servers, network, computers, phones and broadband — planned for minimal downtime, up and running day one.",
+ },
+ {
+  "slug": "security-awareness-training", "crumb": "Security Awareness Training",
+  "eyebrow": "// SECURITY AWARENESS TRAINING",
+  "h1": 'Turn your team into a <em class="grad grad--green">human firewall</em>',
+  "lede": "Most cyber attacks start with someone clicking the wrong thing. We train your staff to spot scams and phishing, run safe practice phishing tests, and watch the dark web for your leaked passwords &mdash; friendly, jargon-free and built for small businesses.",
+  "chips": ["Phishing simulation", "Dark-web monitoring", "Plain-English, no fear"],
+  "cta1": ("Protect Your Team", "/contact/"), "cta2": ("Cybersecurity", "/cybersecurity-support/"),
+  "why_eyebrow": "WHY IT MATTERS", "why_title": "Your people are the front line",
+  "why_paras": [
+    "The best firewall in the world won&rsquo;t help if someone clicks a convincing fake email and hands over a password. The vast majority of breaches start with human error &mdash; which is exactly where a little training pays off hugely.",
+    "We make it friendly and practical (no scare tactics), so your team actually learns to pause, spot the signs and check before they click &mdash; turning your biggest risk into your best defence."],
+  "why_checklist": ["Bite-size, friendly training", "Safe, simulated phishing tests", "Reports on who needs help", "Dark-web breach monitoring", "Help meeting Cyber Essentials", "Guidance for new starters", "Real, current scam examples", "Suits non-technical teams"],
+  "do_eyebrow": "WHAT&rsquo;S INCLUDED", "do_title": "A complete human-risk programme",
+  "do_tiles": [("users", "Awareness training", "Short, friendly online lessons that teach staff to spot scams &mdash; no jargon."), ("mail", "Phishing simulation", "Safe, realistic test emails that show who&rsquo;s ready and who needs a hand."), ("globe", "Dark-web monitoring", "We watch for your company emails and passwords appearing in breaches."), ("lock", "Password &amp; MFA habits", "Practical help with strong passwords, a password manager and MFA."), ("shield", "Scam awareness", "Real, current scams explained &mdash; backed by our <a href=\"/spot-the-scam/\">Spot the Scam</a> guide."), ("check", "Reporting &amp; progress", "Simple reports so you can see your team&rsquo;s risk going down over time.")],
+  "who_eyebrow": "WHO IT&rsquo;S FOR", "who_title": "Built for small Dorset businesses",
+  "who_cards": [("Small teams", "Affordable training that doesn&rsquo;t need an IT department to run."), ("Finance &amp; admin staff", "Extra protection for the people scammers target for payments."), ("Anyone handling customer data", "Reduce the risk of a costly breach and reputational damage."), ("Businesses chasing Cyber Essentials", "Staff awareness that supports your <a href=\"/cyber-essentials/\">certification</a>."), ("New starters", "Get every new hire security-aware from day one."), ("Pairs with cybersecurity", "Layers on top of our <a href=\"/cybersecurity-support/\">cyber protection</a>.")],
+  "how_title": "Up and running in days",
+  "how_steps": [("Quick setup", "We enrol your team and set a sensible baseline &mdash; no hassle for you."), ("Train &amp; test", "Short lessons plus safe simulated phishing to see how it lands."), ("Monitor &amp; report", "We watch the dark web and report progress in plain English."), ("Keep improving", "Ongoing little-and-often training keeps everyone sharp.")],
+  "faqs": [
+    ("What is phishing simulation?", "We send your team safe, realistic fake scam emails. Anyone who clicks gets a friendly heads-up and a quick lesson &mdash; no blame, just practice that works."),
+    ("Will this scare or annoy my staff?", "No &mdash; we keep it friendly and supportive, not a test to catch people out. The goal is confidence, not fear."),
+    ("What is dark-web monitoring?", "We watch the parts of the web where stolen data is traded, and alert you if your company&rsquo;s emails or passwords show up in a breach so you can change them fast."),
+    ("Does this help with Cyber Essentials?", "Yes &mdash; staff awareness is part of good security and supports your <a href=\"/cyber-essentials/\">Cyber Essentials</a> work.")],
+  "cta_title": "Make your team your best defence", "cta_text": "Friendly, practical security training, phishing tests and dark-web monitoring &mdash; built for small Dorset businesses.",
+  "svc_name": "Security Awareness Training", "svc_desc": "Security awareness training, phishing simulation and dark-web monitoring for small businesses across Dorset — friendly, plain-English staff cyber training.", "svc_type": "Security awareness training",
+  "title": "Security Awareness Training & Phishing Simulation | Dorset | 365 Techies",
+  "og_title": "Security Awareness Training | 365 Techies",
+  "desc": "Friendly security awareness training, phishing simulation and dark-web monitoring for small businesses in Bournemouth, Poole and Dorset — turn your staff into your strongest defence.",
+ },
+ {
+  "slug": "business-broadband-connectivity", "crumb": "Business Broadband & Connectivity",
+  "eyebrow": "// BUSINESS CONNECTIVITY",
+  "h1": 'Business broadband &amp; <em class="grad grad--cyan">connectivity</em>',
+  "lede": "The right internet for your business &mdash; fast, reliable and properly supported. We advise on, arrange and set up full-fibre, leased lines and backup connections across Dorset, and manage it all so you&rsquo;ve got one number to call when it matters.",
+  "chips": ["Full-fibre &amp; leased lines", "Backup &amp; failover", "One supplier to call"],
+  "cta1": ("Check Your Options", "/contact/"), "cta2": ("Broadband Checker", "/broadband-checker/"),
+  "why_eyebrow": "WHY IT MATTERS", "why_title": "When the internet stops, work stops",
+  "why_paras": [
+    "Your business runs on its connection &mdash; cloud apps, email, card payments, phones. Slow or unreliable internet costs you time and money every single day, and chasing a faceless ISP when it breaks is its own nightmare.",
+    "We sort it properly: we work out what you actually need, arrange the right connection (and a backup if you can&rsquo;t afford downtime), set it up, and manage it &mdash; so you call us, not a call centre."],
+  "why_checklist": ["The right speed for your team", "Full-fibre (FTTP) &amp; leased lines", "Backup / 4G-5G failover", "Business-grade reliability", "We deal with the providers", "Set up &amp; configured for you", "One point of contact", "Works with your network &amp; Wi-Fi"],
+  "do_eyebrow": "WHAT WE ARRANGE", "do_title": "Connectivity, sorted end to end",
+  "do_tiles": [("globe", "Full-fibre (FTTP)", "Fast, reliable full-fibre broadband for offices, sized to your team."), ("bolt", "Leased lines", "Dedicated, guaranteed-speed connections where uptime is critical."), ("shield", "Backup &amp; failover", "A second line or 4G/5G that takes over automatically if the main one drops."), ("server", "Networking &amp; firewall", "The router, firewall and switches behind it, set up securely."), ("home", "Rural &amp; hard-to-reach", "Starlink, 4G/5G and long-range options &mdash; see <a href=\"/rural-and-farm-wifi-dorset/\">rural &amp; farm Wi-Fi</a>."), ("users", "Guest &amp; staff Wi-Fi", "Separate, secure Wi-Fi for your team and your visitors.")],
+  "who_eyebrow": "WHO IT&rsquo;S FOR", "who_title": "Connectivity for every business",
+  "who_cards": [("Offices upgrading broadband", "Move to full-fibre and feel the difference."), ("Businesses that can&rsquo;t afford downtime", "Add a backup line so you never go dark."), ("New offices &amp; moves", "Get connectivity ordered early &mdash; part of our <a href=\"/office-moves-it-relocation/\">office moves</a>."), ("Rural &amp; farm businesses", "Real internet where the cables don&rsquo;t reach."), ("Card-payment &amp; cloud-reliant firms", "Keep payments and cloud apps running."), ("Anyone tired of their ISP", "Let us deal with the provider on your behalf.")],
+  "how_title": "From check to connected",
+  "how_steps": [("Check &amp; advise", "We check what&rsquo;s available at your address and what you actually need."), ("Arrange the right line", "We source and order the best option &mdash; and a backup if needed."), ("Set up &amp; secure", "We configure the router, firewall and network around it."), ("Manage it for you", "One number to call &mdash; we handle the provider if anything goes wrong.")],
+  "faqs": [
+    ("Do you supply the broadband yourselves?", "We arrange and manage business connectivity through trusted providers, then set it up and support it &mdash; so you get the right line and a local team to call, instead of an ISP call centre."),
+    ("What&rsquo;s a leased line, and do I need one?", "A leased line is a dedicated connection with guaranteed speeds and uptime. It&rsquo;s worth it if downtime would seriously hurt your business &mdash; we&rsquo;ll tell you honestly whether you need one."),
+    ("Can you stop our internet going down?", "We can add automatic failover &mdash; a second connection (or 4G/5G) that takes over instantly if your main line drops, so your team keeps working."),
+    ("Can you help in rural areas?", "Yes &mdash; for farms and rural sites we use Starlink, 4G/5G and long-range Wi-Fi. See our <a href=\"/rural-and-farm-wifi-dorset/\">rural &amp; farm Wi-Fi</a> page.")],
+  "cta_title": "Sort your business internet", "cta_text": "Tell us what you need and we&rsquo;ll find, set up and manage the right connection &mdash; with one local team to call.",
+  "svc_name": "Business Broadband & Connectivity", "svc_desc": "Business broadband, full-fibre, leased lines and failover connectivity arranged, set up and managed for businesses across Dorset.", "svc_type": "Business connectivity",
+  "title": "Business Broadband & Connectivity Dorset | Full-Fibre & Leased Lines | 365 Techies",
+  "og_title": "Business Broadband & Connectivity | 365 Techies",
+  "desc": "Business broadband and connectivity across Bournemouth, Poole and Dorset — full-fibre, leased lines and automatic failover, arranged, set up and managed by your local IT team.",
+ },
+ {
+  "slug": "secure-it-disposal", "crumb": "Secure IT Disposal",
+  "eyebrow": "// SECURE IT DISPOSAL &amp; RECYCLING",
+  "h1": 'Secure IT disposal &amp; <em class="grad grad--green">data destruction</em>',
+  "lede": "Old computers are a data leak waiting to happen. We securely wipe (or destroy) your old devices, give you a certificate to prove it, and recycle the kit responsibly &mdash; for homes and businesses across Dorset.",
+  "chips": ["Certified data wiping", "Responsible recycling", "Homes &amp; businesses"],
+  "cta1": ("Arrange Collection", "/contact/"), "cta2": ("New Computer Setup", "/new-computer-setup/"),
+  "why_eyebrow": "WHY IT MATTERS", "why_title": "Deleting isn&rsquo;t the same as gone",
+  "why_paras": [
+    "A factory reset or a quick delete doesn&rsquo;t truly remove your data &mdash; it can often be recovered. Old laptops, PCs, phones and hard drives sold, binned or donated without proper wiping are a real risk to your privacy and, for businesses, your GDPR obligations.",
+    "We make it safe and simple: we securely erase every device to recognised standards (or physically destroy the drive if you prefer), certify it, and recycle the hardware responsibly &mdash; keeping it out of landfill."],
+  "why_checklist": ["Certified secure data wiping", "Physical drive destruction option", "Certificate of data destruction", "GDPR-friendly for businesses", "Responsible WEEE recycling", "Laptops, PCs, phones &amp; drives", "Collection across Dorset", "Kept out of landfill"],
+  "do_eyebrow": "WHAT WE DO", "do_title": "From your old kit to safely gone",
+  "do_tiles": [("shield", "Certified data wiping", "Every device securely erased to recognised standards &mdash; not just deleted."), ("wrench", "Drive destruction", "Prefer it gone for good? We physically destroy the hard drive on request."), ("check", "Certificate of destruction", "Proof your data was wiped &mdash; important for GDPR and peace of mind."), ("cloud", "Data transfer first", "We move anything you still need before wiping &mdash; nothing lost."), ("globe", "Responsible recycling", "Old hardware recycled properly under WEEE rules, not dumped."), ("home", "Homes &amp; businesses", "From a single old laptop to a full office clear-out.")],
+  "who_eyebrow": "WHO IT&rsquo;S FOR", "who_title": "For anyone retiring old kit",
+  "who_cards": [("Businesses replacing computers", "Dispose of old fleet kit safely and prove the data&rsquo;s gone."), ("GDPR-conscious firms", "A certificate of destruction for your records."), ("Home users &amp; families", "Sell, donate or recycle an old computer without risking your data."), ("Retired &amp; less-confident users", "We handle it all for you &mdash; safely and patiently."), ("Office clear-outs &amp; moves", "Pairs with <a href=\"/office-moves-it-relocation/\">office moves</a> and upgrades."), ("Eco-minded customers", "Responsible recycling in line with our <a href=\"/sustainability/\">sustainability</a> commitment.")],
+  "how_title": "Safe, simple and certified",
+  "how_steps": [("Tell us what you&rsquo;ve got", "One laptop or a room full &mdash; we&rsquo;ll arrange collection or drop-off."), ("Rescue your data", "We move anything you still need to your new device first."), ("Wipe or destroy", "Certified secure erasure &mdash; or physical destruction if you prefer."), ("Certify &amp; recycle", "You get a certificate, and the hardware is recycled responsibly.")],
+  "faqs": [
+    ("Is a factory reset enough?", "Not always &mdash; data can often still be recovered after a reset. Proper secure wiping (or physically destroying the drive) is the only way to be certain it&rsquo;s gone."),
+    ("Do I get proof the data was destroyed?", "Yes &mdash; we provide a certificate of data destruction, which is important for GDPR and your own peace of mind."),
+    ("What happens to the old hardware?", "It&rsquo;s recycled responsibly under WEEE regulations &mdash; kept out of landfill wherever possible, in line with our sustainability commitment."),
+    ("Can you move my files before wiping?", "Absolutely &mdash; we transfer anything you still need to your new device first, then wipe the old one. See <a href=\"/new-computer-setup/\">new computer setup</a>.")],
+  "cta_title": "Retire old kit safely", "cta_text": "Arrange secure data wiping, certified destruction and responsible recycling &mdash; for one device or a whole office.",
+  "svc_name": "Secure IT Disposal & Data Destruction", "svc_desc": "Certified secure data wiping, drive destruction and responsible recycling of old computers, laptops, phones and drives for homes and businesses across Dorset.", "svc_type": "Secure IT disposal",
+  "title": "Secure IT Disposal & Data Destruction Dorset | Certified Wiping | 365 Techies",
+  "og_title": "Secure IT Disposal & Data Destruction | 365 Techies",
+  "desc": "Certified secure IT disposal and data destruction across Bournemouth, Poole and Dorset — securely wipe or destroy old computers, laptops, phones and drives, with a certificate and responsible recycling.",
+ },
+ {
+  "slug": "cloud-hosted-desktops", "crumb": "Cloud & Hosted Desktops",
+  "eyebrow": "// CLOUD &amp; HOSTED DESKTOPS",
+  "h1": 'Work from anywhere with a <em class="grad grad--cyan">cloud desktop</em>',
+  "lede": "Your whole desktop &mdash; apps, files and all &mdash; running securely in the cloud, so your team can work from the office, home or anywhere, on any device. Set up and managed for small businesses across Dorset.",
+  "chips": ["Work from anywhere", "Any device", "Secure &amp; managed"],
+  "cta1": ("Explore Cloud Desktops", "/contact/"), "cta2": ("Cloud Migration", "/cloud-migration/"),
+  "why_eyebrow": "WHY IT MATTERS", "why_title": "Your office, wherever you are",
+  "why_paras": [
+    "Hybrid and remote working only work well if everyone can reach the same apps and files securely, from wherever they are &mdash; without juggling VPNs, slow remote connections or files scattered across devices.",
+    "A cloud (hosted) desktop puts your whole working environment in the cloud. Staff log in from any device and get the same secure desktop every time &mdash; ideal for home working, hot-desking, new starters and keeping company data off personal laptops."],
+  "why_checklist": ["The same desktop on any device", "Secure home &amp; hybrid working", "Data stays in the cloud, not on laptops", "Fast to add new starters", "Built on Microsoft (Windows 365 / Azure)", "Backed up &amp; protected", "Scales up and down easily", "Set up &amp; managed by us"],
+  "do_eyebrow": "WHAT WE DO", "do_title": "A complete cloud workplace",
+  "do_tiles": [("cloud", "Hosted desktops", "Windows 365 / Azure Virtual Desktop &mdash; your desktop, in the cloud."), ("lock", "Secure access", "MFA and security so only the right people get in, from any device."), ("server", "Apps &amp; files", "Your business apps, files and printers, available wherever you log in."), ("users", "Home &amp; hybrid working", "Give your team a proper, secure setup for working anywhere."), ("bolt", "Fast onboarding", "Give a new starter a working desktop in minutes, not days."), ("shield", "Backed up &amp; managed", "Backup, updates and monitoring handled for you on your plan.")],
+  "who_eyebrow": "WHO IT&rsquo;S FOR", "who_title": "Made for flexible teams",
+  "who_cards": [("Home &amp; hybrid teams", "One secure desktop everyone reaches from anywhere."), ("Ditching an old server", "Move to the cloud instead of buying another server &mdash; see <a href=\"/cloud-migration/\">cloud migration</a>."), ("Fast-growing firms", "Add and remove users in minutes as you change."), ("Hot-desking offices", "Any desk, any device, same desktop."), ("Security-conscious businesses", "Keep company data in the cloud, off personal devices."), ("Seasonal &amp; remote workers", "Spin up access when you need it, switch it off when you don&rsquo;t.")],
+  "how_title": "Into the cloud, smoothly",
+  "how_steps": [("Assess &amp; plan", "We check your apps and team and design the right cloud-desktop setup."), ("Build &amp; secure", "We set it up on Microsoft&rsquo;s cloud, with security and backups."), ("Roll out", "We move your team across with training and no lost work."), ("Manage &amp; support", "We run it day to day &mdash; updates, security and support on your plan.")],
+  "faqs": [
+    ("What is a hosted / cloud desktop?", "It&rsquo;s your whole Windows desktop &mdash; apps, files and settings &mdash; running in the cloud (Microsoft Windows 365 or Azure Virtual Desktop). You log in from any device and get the same desktop every time."),
+    ("Do we still need a server in the office?", "Often not &mdash; a cloud desktop can replace an ageing on-site server, with no hardware to maintain. We&rsquo;ll advise whether it&rsquo;s right for you."),
+    ("Is it secure for home working?", "Yes &mdash; data stays in the cloud (not on personal laptops), protected with MFA and security policies, and backed up. It&rsquo;s safer than files scattered across home devices."),
+    ("Will our software work on it?", "Most business software runs on a cloud desktop. We check your apps first and confirm before you commit.")],
+  "cta_title": "Work securely from anywhere", "cta_text": "Give your team one secure desktop they can reach from any device &mdash; set up and managed by us.",
+  "svc_name": "Cloud & Hosted Desktops", "svc_desc": "Cloud and hosted desktops (Windows 365 / Azure Virtual Desktop) set up and managed for small businesses across Dorset — secure work-from-anywhere for hybrid teams.", "svc_type": "Hosted desktop",
+  "title": "Cloud & Hosted Desktops Dorset | Work From Anywhere | 365 Techies",
+  "og_title": "Cloud & Hosted Desktops | 365 Techies",
+  "desc": "Cloud and hosted desktops for small businesses across Bournemouth, Poole and Dorset — Windows 365 / Azure Virtual Desktop, set up and managed for secure work-from-anywhere.",
+ },
+]
+for _c in GAP_SERVICES:
+    gap_service(_c)
 
 # ===================================================== INFO / LEGAL / RESOURCE PAGES
 def _prose(inner):
