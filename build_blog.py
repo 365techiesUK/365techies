@@ -473,6 +473,35 @@ with open(os.path.join(bp.BASE, "sitemap.xml"), "w", encoding="utf-8") as f:
     f.write(sm)
 print("Wrote sitemap.xml with %d URLs" % (len(bp.PAGES) + 1))
 
+# ---------------- regenerate llms.txt (AI grounding) from the live pages — never drifts ----------------
+import html as _html
+def _clean(s): return _html.unescape((s or "")).replace("\n", " ").strip()
+LLMS_HEADER = """# 365 Techies
+
+> 365 Techies (365 Techies Limited) is a family-run IT support company and managed service provider, established in 1995, providing monthly IT support and one-off computer & laptop repairs for homes, retired & disabled people, sole traders and small businesses across Bournemouth, Poole and the rest of Dorset, UK. Dell specialists, Microsoft Partner, certified Microsoft Office Specialists and Malwarebytes Partner. Rated 4.9/5 from 51 Google reviews. Phone: 01202 775566. Text (SMS only): 07520 615332.
+
+## Key facts
+- Company: 365 Techies Limited, registered in England & Wales, company number 11073501
+- Phone: 01202 775566 — Text (SMS only): 07520 615332 — Email: help@365techies.co.uk
+- Hours: Monday–Friday, 9am–5pm
+- Based in Bournemouth; serves homes and small businesses across Dorset, the New Forest and Hampshire — remotely and on-site
+- Rated 4.9/5 from 51 Google reviews; family-run since 1995; no call-out fee, no contracts, cancel anytime
+
+## Plans & prices
+- Home IT support: Essential £15.95/month, Family £19.95/month, Premium £24.95/month
+- Business IT support: from £21.15 per user/month
+- One-off computer & laptop repairs: no subscription — free diagnosis, no-fix-no-fee, 12-month warranty, no call-out fee
+- Microsoft 365: £4.85 per user/month
+- AI voice receptionist: from £95/month — AI Starter pilot: from £495 one-off
+"""
+llms_lines = [LLMS_HEADER, "## Pages\n",
+              "- [365 Techies — IT Support & Computer Repair, Bournemouth & Dorset](https://365techies.co.uk/): Friendly IT support and computer repairs for homes and businesses across Bournemouth, Poole and Dorset — rated 4.9 on Google, family-run since 1995."]
+for _p in bp.PAGES:
+    llms_lines.append("- [%s](https://365techies.co.uk/%s/): %s" % (_clean(_p["title"]), _p["slug"], _clean(_p.get("desc", ""))))
+with open(os.path.join(bp.BASE, "llms.txt"), "w", encoding="utf-8") as f:
+    f.write("\n".join(llms_lines) + "\n")
+print("Wrote llms.txt with %d pages" % (len(bp.PAGES) + 1))
+
 # ---------------- custom 404 page ----------------
 _404_cards = "".join(
     f'          <a class="post-card" href="{h}"><h3>{l}</h3><span class="post-card__more">Go &#8594;</span></a>\n'

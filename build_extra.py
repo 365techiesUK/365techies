@@ -3667,9 +3667,11 @@ def repair_pages():
               primary=("Book a Repair", "/book-a-collection/"), secondary=("View Monthly Plans", "/monthly-it-support/")),
         ])
         def schema(s, _desc=desc, _faqs=faqs, _town=town):
+            svc = service(s, f"Computer Repair {_town}", f"Computer and laptop repair for homes and businesses in {_town}, Dorset.", "Computer repair")
+            svc["offers"] = {"@type": "Offer", "priceCurrency": "GBP", "availability": "https://schema.org/InStock",
+                             "description": "Free diagnosis, then a clear fixed quote. No call-out fee, no-fix-no-fee, and a 12-month warranty on every repair. Free local collection across Dorset."}
             return graph([crumb(s, f"Computer Repair {_town}"), webpage(s, f"Computer & Laptop Repair {_town}", _desc),
-                          service(s, f"Computer Repair {_town}", f"Computer and laptop repair for homes and businesses in {_town}, Dorset.", "Computer repair"),
-                          faqpage(s, _faqs)])
+                          svc, faqpage(s, _faqs)])
         add(slug=slug, title=f"Computer & Laptop Repair {town} | 365 Techies",
             desc=desc, og_title=f"Computer & Laptop Repair {town} | 365 Techies", schema=schema, content=content)
 repair_pages()
