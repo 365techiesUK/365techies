@@ -1521,6 +1521,7 @@ add(
 CYBER_FAQS = [
   ("What makes this &lsquo;the ultimate&rsquo; security?", "It&rsquo;s layered. Instead of relying on one tool, we stack multiple defences &mdash; endpoint protection, email filtering, patching, multi-factor authentication, backups and monitoring &mdash; all set up, managed and watched by us. If one layer is bypassed, the next one catches it."),
   ("Do you use Malwarebytes?", "Yes &mdash; as a Malwarebytes Partner we deploy Malwarebytes Premium with VPN as the endpoint layer of your security stack, set up and managed by us. See our <a href=\"/malwarebytes-premium/\">Malwarebytes Premium &amp; VPN</a> page."),
+  ("What does the VPN add to my security?", "The VPN (Malwarebytes Privacy VPN) encrypts your internet connection so your browsing stays private &mdash; vital on public Wi-Fi, where others on the network could otherwise snoop. It also hides your location and even lets you choose which country you appear to browse from. Antivirus protects your <em>device</em>; the VPN protects your <em>data</em> as it travels &mdash; the two work hand in hand. See our <a href=\"/malwarebytes-premium/\">Privacy VPN guide</a>."),
   ("How do you protect against scams and viruses?", "We set up endpoint protection and web filtering, keep everything patched, filter phishing email, and give you a real human to ask whether a message is safe before you click."),
   ("Do you offer multi-factor authentication?", "Yes &mdash; we set up multi-factor authentication (MFA) and password managers the painless way, for home and business accounts, so a stolen password isn&rsquo;t enough to get in."),
   ("Can you review our business security?", "Yes &mdash; we provide plain-English business security reviews covering devices, email, backups, passwords, access and staff awareness, with clear recommendations."),
@@ -1569,10 +1570,24 @@ add(
         <p style="text-align:center;margin-top:1.8rem" data-reveal><a class="button secondary" href="/malwarebytes-premium/">Explore Malwarebytes Premium &amp; VPN &#8594;</a></p>
       </div>
     </section>''',
-   f'''    <section class="section" aria-label="Threats we stop">
+   f'''    <section class="section" aria-label="Privacy and VPN">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>/03 — THREATS WE STOP</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>/03 — PRIVACY &amp; VPN</p>
+          <h2 class="section-title section-title--center" data-title>Private browsing, wherever you are<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Antivirus protects your <strong>device</strong>; a VPN protects your <strong>data</strong> as it travels. The two work hand in hand &mdash; so we include <strong>Malwarebytes Privacy VPN</strong> as the privacy layer of your security stack, set up and managed by us.</p>
+        </div>
+        <div class="tile-grid" data-stagger>
+{tiles([("wifi","Safe on public Wi-Fi","Caf&eacute;, hotel and airport Wi-Fi is wide open. The VPN scrambles your connection so nobody on the network can snoop on what you&rsquo;re doing."),("eye","Browsing kept private","Even your own broadband provider can normally see the sites you visit &mdash; with the VPN on, where you go and what you do stays private."),("lock","Bank-grade encryption","Modern WireGuard&reg; encryption (256-bit ChaCha20) keeps everything you send scrambled and unreadable while it&rsquo;s in transit."),("pin","Choose your location","Pick from 150+ servers across 60+ locations worldwide (the UK included) to mask your IP and reach your own accounts when you&rsquo;re travelling."),("shield","Built-in kill switch","On Windows and Mac, if the VPN ever drops it can cut your connection rather than quietly leave you exposed."),("check","No-logs, independently audited","A strict no-logs policy &mdash; independently audited in 2026, with no evidence of user-activity logging found.")])}
+        </div>
+        <p class="mono" style="text-align:center;max-width:64ch;margin:1.8rem auto 0;color:var(--muted)" data-reveal>Honest note: a VPN protects your data, not your device &mdash; it works alongside antivirus, and we&rsquo;d never promise it unblocks streaming services like Netflix or BBC iPlayer.</p>
+        <p style="text-align:center;margin-top:1.4rem" data-reveal><a class="button secondary" href="/malwarebytes-premium/">See the full Privacy VPN guide &#8594;</a></p>
+      </div>
+    </section>''',
+   f'''    <section class="section section--alt" aria-label="Threats we stop">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/04 — THREATS WE STOP</p>
           <h2 class="section-title section-title--center" data-title>What we&rsquo;re protecting you from<span class="title-underline title-underline--center"></span></h2>
         </div>
         <ul class="security-grid" data-stagger>
@@ -1581,10 +1596,10 @@ add(
         <p style="text-align:center;margin-top:1.8rem" data-reveal><a class="button secondary" href="/cyber-threats/">Cyber Threats Explained &#8594;</a></p>
       </div>
     </section>''',
-   f'''    <section class="section section--alt" aria-label="Home and business security">
+   f'''    <section class="section" aria-label="Home and business security">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>/04 — HOME &amp; BUSINESS</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>/05 — HOME &amp; BUSINESS</p>
           <h2 class="section-title section-title--center" data-title>The right protection for your world<span class="title-underline title-underline--center"></span></h2>
         </div>
         <div class="split-2">
@@ -1607,7 +1622,7 @@ add(
     </section>''',
    f'''    <section class="how" aria-label="If the worst happens">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>/05 — IF THE WORST HAPPENS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>/06 — IF THE WORST HAPPENS</p>
         <h2 class="section-title section-title--center" data-title>Hacked or hit? We&rsquo;re on it<span class="title-underline title-underline--center"></span></h2>
         <ol class="how__steps">
 {steps([("Call us straight away","Ring 01202 775566 or jump on remote support &mdash; subscribers always jump the queue."),("We contain it","We lock down accounts, isolate affected devices and stop the threat spreading."),("We recover &amp; rebuild","We clean up, restore from verified backups, and harden everything so it can&rsquo;t happen again.")])}
