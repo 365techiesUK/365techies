@@ -1689,9 +1689,12 @@ def malwarebytes():
     faqs = [
       ("Are you really a Malwarebytes partner?", "Yes — 365 Techies is a Malwarebytes Partner, so we can supply, set up and manage Malwarebytes Premium for our home and business customers and look after it on your support plan."),
       ("What does Malwarebytes Premium actually protect against?", "Malware, ransomware, viruses, spyware, malicious and scam websites, and zero-day exploits. It works alongside Windows to stop threats before they take hold, with real-time protection running quietly in the background."),
-      ("What is the VPN for?", "The VPN encrypts your internet connection so your browsing stays private — especially important on public Wi-Fi in cafés, hotels and airports. It hides your activity from prying eyes and helps keep your data and identity safe."),
+      ("What is the VPN for?", "The VPN (Malwarebytes Privacy VPN) encrypts your internet connection so your browsing stays private &mdash; especially on public Wi-Fi in caf&eacute;s, hotels and airports, where others on the network could otherwise see what you&rsquo;re doing. It hides both what you look at and where you go online, masks your location, and even lets you choose which country you appear to browse from. Think of it as privacy for your data &mdash; the perfect partner to the antivirus that protects your device."),
+      ("Is the VPN the same as antivirus &mdash; do I still need both?", "They&rsquo;re different, and they work best together. The VPN protects your data as it travels across the internet, but it won&rsquo;t stop viruses, ransomware or scam downloads. Malwarebytes itself recommends using the VPN alongside proper antivirus &mdash; so the VPN looks after your data and the security software looks after your device."),
+      ("Will it let me watch Netflix or BBC iPlayer from abroad?", "We can&rsquo;t promise that, and we wouldn&rsquo;t advertise it. Streaming services like Netflix actively detect and block VPNs, and using one to get around their regional rules can breach their terms. BBC iPlayer is UK-only and a VPN doesn&rsquo;t change the TV Licence position. Please think of changing your location as a privacy feature, not a streaming unlocker."),
+      ("Does the VPN keep a record of what I do online?", "Malwarebytes states it doesn&rsquo;t track, log or store your activity, and its servers run in memory with no hard disks. This was checked by an independent third-party audit in 2026, which found no evidence of user-activity logging. The only logs are local diagnostic ones that stay on your device unless you choose to share them with support."),
       ("Do you set it up and keep an eye on it?", "Yes — we install and configure Malwarebytes Premium on your devices, make sure it&rsquo;s working correctly, and monitor and maintain it as part of your monthly support plan, so you&rsquo;re protected 24/7 without lifting a finger."),
-      ("Can I protect the whole family or team?", "Absolutely — we can protect multiple devices across your household or business, including Windows computers, laptops and Android devices, all managed by us."),
+      ("Can I protect the whole family or team?", "Absolutely. Depending on the plan, Malwarebytes can cover multiple devices across your household or business &mdash; Windows PCs, Macs, Android phones and tablets, and iPhones and iPads &mdash; all set up and looked after by us."),
     ]
     content = "\n".join([
       hero(bc("Malwarebytes Premium"), "// MALWAREBYTES PARTNER",
@@ -1723,10 +1726,48 @@ def malwarebytes():
         </div>
       </div>
     </section>''',
+      f'''    <section class="section" aria-label="Your private VPN explained">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/03 — YOUR PRIVATE VPN</p>
+          <h2 class="section-title section-title--center" data-title>What the VPN does, in plain English<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="prose" data-reveal style="max-width:74ch;margin:0 auto 2.4rem">
+          <p>A VPN &mdash; short for <strong>Virtual Private Network</strong> &mdash; is a simple piece of software that creates a private, scrambled tunnel between your device and the internet. When it&rsquo;s switched on, everything you do online is encrypted on your device before it travels anywhere, so the network you&rsquo;re using (and anyone snooping on it) sees only a jumble of unreadable code instead of what you&rsquo;re actually doing. Malwarebytes Privacy VPN does exactly this, and it&rsquo;s easy to use on a Windows PC, a Mac, an Android phone or tablet, or an iPhone or iPad.</p>
+          <p>Why does it matter? Whenever you use free Wi-Fi at a caf&eacute;, hotel, airport or library, other people sharing that network could otherwise see what you&rsquo;re up to. Even at home, your broadband provider can see which websites you visit. A VPN puts a stop to that snooping by hiding both the content and the destinations of your browsing &mdash; the same kind of protection big businesses have used for years, now made friendly and affordable for everyday use. As a Malwarebytes Partner, we can set it up and look after it for you &mdash; or you can buy it yourself and we&rsquo;ll happily point you in the right direction.</p>
+        </div>
+        <div class="tile-grid" data-stagger>
+{tiles([("wifi","Safer on public Wi-Fi","On free Wi-Fi at a caf&eacute;, hotel or airport, it scrambles everything your device sends, so others on the network can&rsquo;t snoop on what you&rsquo;re doing."),("eye","Your broadband provider can&rsquo;t watch","Even at home, your internet provider can normally see the sites you visit. With the VPN on, it can no longer see where you go or what you do there."),("lock","Strong, modern encryption","It uses the modern WireGuard&reg; protocol with 256-bit ChaCha20 encryption to keep your data unreadable to anyone trying to intercept it."),("pin","Hides your IP &amp; rough location","Websites see the VPN server instead of you, masking your IP address and your general area &mdash; city or region level, never your street."),("shield","Built-in kill switch","On Windows and Mac, if the VPN ever drops, the kill switch can block your connection rather than quietly leaving you exposed."),("check","Independently audited no-logs","Malwarebytes says it doesn&rsquo;t track, log or store your activity &mdash; and an independent 2026 audit found no evidence of user-activity logging.")])}
+        </div>
+      </div>
+    </section>''',
+      f'''    <section class="section section--alt" aria-label="Changing your country">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/04 — CHANGE YOUR COUNTRY</p>
+          <h2 class="section-title section-title--center" data-title>Choose where you appear online<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="split-2">
+          <div class="prose" data-reveal>
+            <p>When the VPN is on, websites see the location of the VPN server you&rsquo;ve chosen rather than your own. So if you pick a server in another country, sites generally behave as if you&rsquo;re browsing from there. Malwarebytes Privacy VPN lets you choose from <strong>150+ servers across 60+ locations</strong> worldwide &mdash; and the United Kingdom (London) is one of them.</p>
+            <p>A real, everyday example: if you&rsquo;re a retired traveller or a sole trader working away from home and one of your own UK accounts gets fussy about a login from abroad, connecting back to a UK server can sometimes help it recognise you as if you were home.</p>
+            <aside style="margin-top:1.4rem;padding:1.05rem 1.25rem;border-left:3px solid var(--cyan);background:var(--bg-2);border-radius:0 10px 10px 0">
+              <p style="margin:0;color:var(--muted)"><strong style="color:var(--ink)">An honest word.</strong> Changing your location isn&rsquo;t magic. Some websites can still spot a VPN, and some banks and shops treat a new, unfamiliar location as a possible fraud signal &mdash; so it can occasionally trigger an extra security check rather than smooth things over. We&rsquo;d never promise it unblocks streaming services like Netflix or BBC iPlayer (they actively block VPNs, and it can breach their terms). Think of changing your location as a privacy feature, not a way around the rules.</p>
+            </aside>
+          </div>
+          <div class="tile" data-reveal>
+            <h3>Malwarebytes Privacy VPN at a glance</h3>
+            <ul class="checklist">
+{checklist(["Modern WireGuard&reg; protocol with 256-bit ChaCha20 encryption","Works on Windows, Mac, Android and iPhone/iPad","150+ servers across 60+ locations, including the UK","Strict no-logs policy &mdash; independently audited in 2026","Private, diskless servers that run in memory only","Built-in kill switch on Windows &amp; Mac","Can switch on automatically when you join public Wi-Fi","Set up &amp; managed by us &mdash; or buy it yourself"])}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>''',
       f'''    <section class="section" aria-label="Home and business protection">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>/03 — HOME &amp; BUSINESS</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>/05 — HOME &amp; BUSINESS</p>
           <h2 class="section-title section-title--center" data-title>Keeping everyone safe online<span class="title-underline title-underline--center"></span></h2>
         </div>
         <div class="split-2">
@@ -1749,7 +1790,7 @@ def malwarebytes():
     </section>''',
       f'''    <section class="how" aria-label="How it works">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>/04 — HOW IT WORKS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>/06 — HOW IT WORKS</p>
         <h2 class="section-title section-title--center" data-title>Protected in three simple steps<span class="title-underline title-underline--center"></span></h2>
         <ol class="how__steps">
 {steps([("We set it up","We supply Malwarebytes Premium &amp; VPN and install it correctly on all your devices."),("We protect you","Real-time protection and the VPN keep your devices and browsing safe, day and night."),("We keep watch","We monitor and maintain it on your support plan, so you stay protected 24/7.")])}

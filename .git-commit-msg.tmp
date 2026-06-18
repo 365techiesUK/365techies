@@ -1,0 +1,26 @@
+Expand Malwarebytes page with in-depth Privacy VPN content
+
+Adds two new sections to /malwarebytes-premium/ answering "what does
+the VPN actually do, and what does changing your country mean":
+
+- /03 YOUR PRIVATE VPN: plain-English explainer + 6 benefit tiles
+  (public Wi-Fi safety, ISP can't watch, WireGuard 256-bit ChaCha20
+  encryption, hides IP/rough location, kill switch, audited no-logs).
+- /04 CHANGE YOUR COUNTRY: how choosing a server location works, an
+  honest everyday example (reaching your own UK accounts abroad), an
+  "An honest word" callout (VPNs aren't magic, banks may flag a new
+  location, we won't promise it unblocks Netflix/iPlayer), plus a
+  "Privacy VPN at a glance" spec checklist.
+- 3 new FAQs (VPN vs antivirus, streaming honesty, no-logs) + richer
+  "what is the VPN for" and device/platform answers; these flow into
+  the FAQPage schema automatically.
+
+All facts verified via a research+adversarial-verify pass against
+official Malwarebytes sources (WireGuard-only, 256-bit ChaCha20,
+150+ servers / 60+ locations incl. UK London, Windows/Mac/Android/iOS,
+strict no-logs independently audited by X41 D-Sec in 2026, desktop-only
+kill switch). Uses the accurate product name "Malwarebytes Privacy VPN".
+Honest caveats baked in: no streaming-unblock promises (Netflix/iPlayer
+T&Cs), VPN is not antivirus, location-change isn't guaranteed.
+
+Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
