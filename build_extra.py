@@ -3590,6 +3590,14 @@ def repair_pages():
     wa_repair = (f' You can also <a href="{bp.WHATSAPP_LINK}" target="_blank" rel="noopener">send it on WhatsApp</a>.') if bp.WHATSAPP_NUMBER else ""
     for town, slug, nearby, it_slug in REPAIRS:
         desc = f"Computer and laptop repair in {town} — no call-out fee, no-fix-no-fee, 12-month warranty. Virus removal and upgrades. Rated 4.9 on Google."
+        loc = bp.LOCAL_CONTENT.get(town, {})
+        local_section = (f'''    <section class="section" aria-label="Local computer repair in {town}">
+      <div class="wrap">
+        <div class="prose" data-reveal style="text-align:center;max-width:66ch;margin:0 auto">
+          <p>{loc.get("intro", "")}</p>
+        </div>
+      </div>
+    </section>''') if loc.get("intro") else ""
         faqs = [
           (f"Do you repair computers and laptops in {town}?", f"Yes &mdash; we repair PCs and laptops for homes and businesses across {town} and the surrounding area ({nearby}). We can help remotely, visit you at home, or collect the machine."),
           ("How much does a computer repair cost?", "It depends on the problem &mdash; we diagnose it and give you a clear price before any work, with no call-out fee and no surprise bills. Many issues are fixed quickly and remotely."),
@@ -3598,12 +3606,15 @@ def repair_pages():
           (f"Can you come to my home in {town}?", f"Yes &mdash; we offer home visits across {town}, and for any visit we phone ahead with an estimated arrival time so you know exactly when to expect us. We can also fix many things remotely."),
           ("Will I lose my files?", "We take care to protect your data, and we can transfer or recover your files &mdash; we&rsquo;ll always talk you through it first."),
         ]
+        if loc.get("faq_q"):
+            faqs.append((loc["faq_q"], loc["faq_a"]))
         content = "\n".join([
           hero(bc(f"Computer Repair {town}"), "// COMPUTER &amp; LAPTOP REPAIR",
                f'Computer &amp; laptop repair in <em class="grad grad--cyan">{town}</em>',
                bp.hero_trust(f"Slow, broken or playing up? We fix PCs and laptops for homes and businesses across {town} &mdash; virus removal, speed-ups, upgrades, data transfer and setup &mdash; with home visits, fast remote help and no call-out fee. Friendly, local and family-run since 1995."),
                cta1=("Book a Repair", "/book-a-collection/"), cta2=("Call 01202 775566", "tel:+441202775566"),
                chips=["No call-out fee", "Home visits &amp; remote", "Rated 4.9 on Google"]),
+          local_section,
           f'''    <section class="section" aria-label="Text us a photo">
       <div class="wrap">
         <div class="prose" data-reveal style="text-align:center;max-width:64ch;margin:0 auto">

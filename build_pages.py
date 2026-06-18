@@ -5,6 +5,14 @@ Run: python build_pages.py  (writes <slug>/index.html for every page)
 """
 import os, json, datetime
 TODAY = datetime.date.today().isoformat()  # build date — used for dateModified / sitemap lastmod (freshness)
+# Per-town UNIQUE researched local content (keyed by town name) — injected into repair/town
+# pages so each is genuinely distinct (kills doorway/duplicate-content risk). Built by the
+# town-local-content workflow into local_content.json.
+try:
+    with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "local_content.json"), encoding="utf-8") as _lcf:
+        LOCAL_CONTENT = json.load(_lcf)
+except Exception:
+    LOCAL_CONTENT = {}
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://365techies.co.uk"
