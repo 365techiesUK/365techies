@@ -58,9 +58,9 @@ def make_local(i, slug, town, region, lede, intro_para, nearby):
     desc = (f"IT support, IT services and computer repairs in {town} — rated 4.9 on Google, "
             f"no call-out fee, family-run since 1995. Homes and businesses.")
     faqs = [
-      (f"Do you provide IT support in {town}?", f"Yes — 365 Techies provides remote and on-site IT support for homes and businesses in {town} and the wider {region} area, with monthly plans from £15.95."),
+      (f"Do you provide IT support in {town}?", f"Yes — 365 Techies provides remote and on-site IT support for homes and businesses in {town} and the wider {region} area, with monthly plans from £18.25 per computer."),
       (f"Can you visit me in {town}?", f"Yes. Most issues are fixed remotely in minutes, and we provide on-site visits across {town} and the wider {region} when hands-on help is needed."),
-      ("What does monthly IT support cost?", "Home plans start at £15.95/month and business plans from £21.15/month, with one-off repairs also available."),
+      ("What does monthly IT support cost?", "Home support is £18.25/month per computer and business support from £24.38/month per computer, with Microsoft 365 at £4.85/month per user and one-off repairs also available."),
       ("Is remote support secure?", "Yes — sessions run over encrypted Splashtop SOS, you watch everything on screen, and access ends the moment the session does."),
       (f"What can you help {town} customers with?", "Computers and laptops, email, Microsoft 365, Wi-Fi, printers, security, backups, new device setup, virus removal and slow-computer fixes — for homes and businesses alike."),
       (f"Are you a local IT company in {town}?", f"Yes — 365 Techies is a family-run local IT company, established in 1995, providing IT support, IT services and computer &amp; laptop repairs for homes and businesses across {town} and the wider {region} area."),
@@ -71,7 +71,7 @@ def make_local(i, slug, town, region, lede, intro_para, nearby):
     content = "\n".join([
       hero(bc(crumb_name), f"// {town.upper()} &middot; {region.upper()}",
            f'IT support in <em class="grad grad--cyan">{town}</em>', bp.hero_trust(lede),
-           chips=["Remote &amp; on-site", "Homes &amp; businesses", "Plans from &pound;15.95/mo"]),
+           chips=["Remote &amp; on-site", "Homes &amp; businesses", "&pound;18.25/mo per computer"]),
       f'''    <section class="section" aria-label="Local support">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
@@ -375,7 +375,7 @@ CUSTOMERS = [
    intro_paras="<p>When your office is your home, downtime is on you. A dropped connection, a Teams call that won&rsquo;t start or an email outage can cost you a whole morning.</p><p><strong>We keep your home-working setup reliable and secure</strong> — so the technology just works and you can get on with the job.</p>",
    feats=["Microsoft 365 &amp; Outlook","Teams &amp; video calls","Wi-Fi &amp; home network","Printers &amp; scanners","Secure file backup","Remote access &amp; VPN","Antivirus &amp; security","Fast remote help"],
    tile_items=[("cloud","Microsoft 365","Outlook, Teams, OneDrive and SharePoint set up and supported."),("wifi","Wi-Fi &amp; network","A fast, reliable connection across your whole home office."),("shield","Security","Protection and backups so your work is always safe."),("monitor","Devices","Laptops, desktops and screens kept fast and healthy."),("mail","Email","Email that sends, receives and stays out of spam."),("bolt","Remote help","One message away when something stops working.")],
-   faqs=[("Can you help me set up a home office?","Yes — we set up your computer, Microsoft 365, email, Wi-Fi, printers and secure backups so your home office runs smoothly from day one."),("Do you support Teams and video calls?","Yes, we sort out Teams, Zoom, cameras, microphones and connectivity so your calls are reliable."),("What does it cost?","Home plans start at £15.95/month, with everything you need for home working included.")],
+   faqs=[("Can you help me set up a home office?","Yes — we set up your computer, Microsoft 365, email, Wi-Fi, printers and secure backups so your home office runs smoothly from day one."),("Do you support Teams and video calls?","Yes, we sort out Teams, Zoom, cameras, microphones and connectivity so your calls are reliable."),("What does it cost?","Home support is £18.25/month per computer, with everything you need for home working included. Add Microsoft 365 for £4.85/month per user.")],
    chips=["Microsoft 365", "Teams &amp; Wi-Fi", "Secure backups"],
    split_eyebrow="WHAT WE COVER", split_title="Everything your home office needs",
    split=[("Your devices &amp; connection","Laptops, screens, Wi-Fi and home network kept fast and reliable, so a dropout never costs you a morning.",["Laptop &amp; desktop support","Fast, reliable home Wi-Fi","Remote access &amp; VPN","Screens, docks &amp; peripherals"]),("Your apps &amp; data","Microsoft 365, Teams, email and files set up, secured and backed up so you can work from anywhere.",["Microsoft 365 &amp; Teams","Email that just works","Secure file backup","Antivirus &amp; protection"])],

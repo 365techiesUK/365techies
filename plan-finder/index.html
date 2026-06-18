@@ -173,8 +173,8 @@
   <header class="site-header">
     <div class="status-ticker" aria-hidden="true">
       <div class="status-ticker__track">
-        <span>&#9679; CALL 01202 775566&ensp;//&ensp;FAMILY BUSINESS SINCE 1995&ensp;//&ensp;DELL SPECIALISTS&ensp;//&ensp;MICROSOFT PARTNER &amp; OFFICE SPECIALISTS&ensp;//&ensp;MALWAREBYTES PARTNER&ensp;//&ensp;NVIDIA &amp; SCAN PARTNER&ensp;//&ensp;RICHER SOUNDS PARTNER&ensp;//&ensp;BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;//&ensp;PLANS FROM &pound;15.95/MO&ensp;//&ensp;MON&ndash;FRI 9AM&ndash;5PM&ensp;//&ensp;</span>
-        <span>&#9679; CALL 01202 775566&ensp;//&ensp;FAMILY BUSINESS SINCE 1995&ensp;//&ensp;DELL SPECIALISTS&ensp;//&ensp;MICROSOFT PARTNER &amp; OFFICE SPECIALISTS&ensp;//&ensp;MALWAREBYTES PARTNER&ensp;//&ensp;NVIDIA &amp; SCAN PARTNER&ensp;//&ensp;RICHER SOUNDS PARTNER&ensp;//&ensp;BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;//&ensp;PLANS FROM &pound;15.95/MO&ensp;//&ensp;MON&ndash;FRI 9AM&ndash;5PM&ensp;//&ensp;</span>
+        <span>&#9679; CALL 01202 775566&ensp;//&ensp;FAMILY BUSINESS SINCE 1995&ensp;//&ensp;DELL SPECIALISTS&ensp;//&ensp;MICROSOFT PARTNER &amp; OFFICE SPECIALISTS&ensp;//&ensp;MALWAREBYTES PARTNER&ensp;//&ensp;NVIDIA &amp; SCAN PARTNER&ensp;//&ensp;RICHER SOUNDS PARTNER&ensp;//&ensp;BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;//&ensp;PLANS FROM &pound;18.25/MO&ensp;//&ensp;MON&ndash;FRI 9AM&ndash;5PM&ensp;//&ensp;</span>
+        <span>&#9679; CALL 01202 775566&ensp;//&ensp;FAMILY BUSINESS SINCE 1995&ensp;//&ensp;DELL SPECIALISTS&ensp;//&ensp;MICROSOFT PARTNER &amp; OFFICE SPECIALISTS&ensp;//&ensp;MALWAREBYTES PARTNER&ensp;//&ensp;NVIDIA &amp; SCAN PARTNER&ensp;//&ensp;RICHER SOUNDS PARTNER&ensp;//&ensp;BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;//&ensp;PLANS FROM &pound;18.25/MO&ensp;//&ensp;MON&ndash;FRI 9AM&ndash;5PM&ensp;//&ensp;</span>
       </div>
     </div>
     <div class="header-bar">
@@ -536,30 +536,23 @@
           }
         }
         var PLANS = {
-          'home-essential': {name:'Essential Home', price:'&pound;15.95', per:'/month', desc:'Friendly cover for one computer &mdash; remote support, a full service every 6 weeks and security advice.', href:'/home-it-support-plans/'},
-          'home-365': {name:'Home + Office 365', price:'&pound;19.95', per:'/month', desc:'Everything in Essential, plus Microsoft 365 set up and supported.', href:'/home-it-support-plans/'},
-          'home-family': {name:'Family Home', price:'&pound;19.95', per:'/month', desc:'Cover for several computers and devices, Wi-Fi, printers and Microsoft 365.', href:'/home-it-support-plans/'},
-          'home-premium': {name:'Premium Home', price:'&pound;24.95', per:'/month', desc:'Priority support and advanced help for the multiple devices you rely on.', href:'/home-it-support-plans/'},
-          'business-starter': {name:'Business Starter', price:'&pound;21.15', per:'/user / month', desc:'Remote support, email and Microsoft 365 for 1 to 3 users.', href:'/business-it-support-plans/'},
-          'business-standard': {name:'Business Standard', price:'Custom', per:'', desc:'Full Microsoft 365 management, security and backups for a small team.', href:'/business-it-support-plans/'},
-          'business-premium': {name:'Business Premium', price:'Custom', per:'', desc:'Priority support, security planning and onboarding for a company that runs on IT.', href:'/business-it-support-plans/'}
+          'home-support': {name:'Home IT Support', price:'&pound;18.25', per:'/mo per computer', desc:'Friendly cover for your computer &mdash; remote support, a full service every 6 weeks and security checks.', href:'/home-it-support-plans/'},
+          'home-support-365': {name:'Home Support + Microsoft 365', price:'&pound;23.10', per:'/mo per computer', desc:'Everything in Home IT Support, plus Microsoft 365 set up and looked after for you.', href:'/home-it-support-plans/'},
+          'business': {name:'Business IT Support', price:'from &pound;24.38', per:'/mo per computer', desc:'Per-computer support for sole traders and small teams &mdash; remote help, Microsoft 365 and security.', href:'/business-it-support-plans/'},
+          'business-larger': {name:'Business IT Support', price:'Custom', per:'', desc:'A tailored plan for a larger team &mdash; Microsoft 365 management, security, backups and onboarding.', href:'/business-it-support-plans/'}
         };
         function recommend() {
           var key;
           if (answers.who === 'home') {
-            if (answers.size === 'power') key = 'home-premium';
-            else if (answers.size === 'family') key = 'home-family';
-            else key = (answers.m365 === 'yes') ? 'home-365' : 'home-essential';
+            key = (answers.m365 === 'yes') ? 'home-support-365' : 'home-support';
           } else {
-            if (answers.size === 'company') key = 'business-premium';
-            else if (answers.size === 'team') key = 'business-standard';
-            else key = 'business-starter';
+            key = (answers.size === 'company') ? 'business-larger' : 'business';
           }
           var p = PLANS[key];
           var custom = (p.price === 'Custom');
           var primary = custom
             ? '<a href="/contact/" class="button primary">Get a Quote</a>'
-            : '<a href="' + p.href + '" class="button primary">Set up Direct Debit</a>';
+            : '<a href="' + p.href + '" class="button primary">See this plan</a>';
           document.getElementById('quiz-result').innerHTML =
             '<p class="tag">Recommended for you</p>' +
             '<h3>' + p.name + '</h3>' +

@@ -29,7 +29,7 @@ def blogposting(slug, title, desc, cat, dt="2026-06-15"):
             "mainEntityOfPage": {"@id": f"{SITE}/{slug}/#webpage"}, "url": f"{SITE}/{slug}/"}
 
 CALLOUT = ('<div class="article__callout"><p><strong>Prefer to let us handle it?</strong> '
-           'Our monthly IT support plans include this and much more, from &pound;15.95/month — '
+           'Our monthly IT support plans include this and much more, from &pound;18.25/month per computer — '
            'with a friendly techie on hand whenever you need one. Call <a href="tel:+441202775566">01202 775566</a> '
            'or <a href="/monthly-it-support/">view our plans</a>.</p></div>')
 
@@ -120,7 +120,7 @@ POSTS = [
  dict(slug="how-much-does-it-support-cost-uk-2026", cat="Monthly Support",
    title="How Much Should IT Support Cost in the UK? (2026 Guide)",
    lede="A clear, honest guide to what IT support costs in the UK in 2026 — typical price ranges for homes and businesses, what drives the price, and how to make sure you are getting fair value.",
-   body="<p>IT support pricing in the UK varies widely, and many providers keep their prices hidden &mdash; which makes it hard to know if you are getting a fair deal. Here is a straight answer.</p><h2>Typical price ranges</h2><p>For <strong>home users</strong>, monthly support typically runs from around &pound;15 to &pound;30 per month depending on how many devices you have. For <strong>small businesses</strong>, support is usually priced per user (or per device) and commonly falls somewhere around &pound;20 to &pound;60 per user per month, depending on the level of security, backups and management included. One-off repairs are normally quoted on the work involved.</p><h2>What drives the price</h2><ul><li>Home or business, and how many users and devices.</li><li>Monthly plan vs pay-per-problem.</li><li>How much is included &mdash; basic help vs fully managed security, backups and Microsoft 365.</li><li>Remote (cheaper, faster) vs on-site support.</li></ul><h2>Watch for hidden costs</h2><p>The headline price is not the whole story. Ask what is <em>not</em> included: call-out fees, &lsquo;out of hours&rsquo; charges, project work, and long lock-in contracts can all add up. We publish our prices, keep plans rolling and agree any extra cost with you up front.</p><h2>What we charge</h2><p>To keep things simple and transparent: home plans from <strong>&pound;15.95/month</strong> and business plans from <strong>&pound;21.15/user/month</strong>, with no contracts and no hidden fees. See our <a href=\"/pricing/\">pricing page</a> for the full comparison, or get a tailored <a href=\"/quick-quote/\">quick quote</a>.</p>",
+   body="<p>IT support pricing in the UK varies widely, and many providers keep their prices hidden &mdash; which makes it hard to know if you are getting a fair deal. Here is a straight answer.</p><h2>Typical price ranges</h2><p>For <strong>home users</strong>, monthly support typically runs from around &pound;15 to &pound;30 per month depending on how many devices you have. For <strong>small businesses</strong>, support is usually priced per user (or per device) and commonly falls somewhere around &pound;20 to &pound;60 per user per month, depending on the level of security, backups and management included. One-off repairs are normally quoted on the work involved.</p><h2>What drives the price</h2><ul><li>Home or business, and how many users and devices.</li><li>Monthly plan vs pay-per-problem.</li><li>How much is included &mdash; basic help vs fully managed security, backups and Microsoft 365.</li><li>Remote (cheaper, faster) vs on-site support.</li></ul><h2>Watch for hidden costs</h2><p>The headline price is not the whole story. Ask what is <em>not</em> included: call-out fees, &lsquo;out of hours&rsquo; charges, project work, and long lock-in contracts can all add up. We publish our prices, keep plans rolling and agree any extra cost with you up front.</p><h2>What we charge</h2><p>To keep things simple and transparent: home support from <strong>&pound;18.25/month per computer</strong> and business support from <strong>&pound;24.38/month per computer</strong>, plus Microsoft 365 at <strong>&pound;4.85/month per user</strong>, with no contracts and no hidden fees. See our <a href=\"/pricing/\">pricing page</a> for the full comparison, or get a tailored <a href=\"/quick-quote/\">quick quote</a>.</p>",
    points=["Home support is typically ~&pound;15&ndash;&pound;30/month","Business support is usually priced per user per month","What is included matters as much as the headline price","Watch for call-out fees, out-of-hours charges and lock-in contracts"],
    related=[("Pricing &amp; Plans","/pricing/"),("IT Cost Guide","/it-support-cost-guide/"),("Get a Quick Quote","/quick-quote/"),("Plan Finder","/plan-finder/")],
    faqs=[
@@ -488,8 +488,8 @@ LLMS_HEADER = """# 365 Techies
 - Rated 4.9/5 from 51 Google reviews; family-run since 1995; no call-out fee, no contracts, cancel anytime
 
 ## Plans & prices
-- Home IT support: Essential £15.95/month, Family £19.95/month, Premium £24.95/month
-- Business IT support: from £21.15 per user/month
+- Home IT support: £18.25/month per computer; add Microsoft 365 for £4.85/month per user
+- Business IT support: from £24.38/month per computer (tailored to the team)
 - One-off computer & laptop repairs: no subscription — free diagnosis, no-fix-no-fee, 12-month warranty, no call-out fee
 - Microsoft 365: £4.85 per user/month
 - AI voice receptionist: from £95/month — AI Starter pilot: from £495 one-off

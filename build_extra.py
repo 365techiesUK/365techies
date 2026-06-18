@@ -203,7 +203,7 @@ def faqs_page():
       ("Can you help with cybersecurity?", "Yes — protection from scams, malware, ransomware and phishing, plus antivirus, multi-factor authentication, password security and backup checks."),
       ("Can you help with printers?", "Yes — printer setup, Wi-Fi printing, offline errors, drivers and scanning, for homes and offices."),
       ("Can you help with slow computers?", "Yes — slow computers are one of the most common things we fix, usually remotely. A monthly plan keeps them fast with regular maintenance."),
-      ("How much does it cost?", "Home plans start at £15.95/month and business plans from £21.15/month. One-off repairs are also available with no subscription."),
+      ("How much does it cost?", "Home support is £18.25/month per computer and business support from £24.38/month per computer. Microsoft 365 can be added for £4.85/month per user. One-off repairs are also available with no subscription."),
       ("How quickly can you help?", "Most remote sessions start within minutes during opening hours, Monday to Friday, 9am to 5pm. Subscribers always jump the queue."),
     ]
     content = "\n".join([
@@ -354,30 +354,23 @@ PLAN_FINDER_WIDGET = '''    <section class="section section--alt" aria-label="Pl
           }
         }
         var PLANS = {
-          'home-essential': {name:'Essential Home', price:'&pound;15.95', per:'/month', desc:'Friendly cover for one computer &mdash; remote support, a full service every 6 weeks and security advice.', href:'/home-it-support-plans/'},
-          'home-365': {name:'Home + Office 365', price:'&pound;19.95', per:'/month', desc:'Everything in Essential, plus Microsoft 365 set up and supported.', href:'/home-it-support-plans/'},
-          'home-family': {name:'Family Home', price:'&pound;19.95', per:'/month', desc:'Cover for several computers and devices, Wi-Fi, printers and Microsoft 365.', href:'/home-it-support-plans/'},
-          'home-premium': {name:'Premium Home', price:'&pound;24.95', per:'/month', desc:'Priority support and advanced help for the multiple devices you rely on.', href:'/home-it-support-plans/'},
-          'business-starter': {name:'Business Starter', price:'&pound;21.15', per:'/user / month', desc:'Remote support, email and Microsoft 365 for 1 to 3 users.', href:'/business-it-support-plans/'},
-          'business-standard': {name:'Business Standard', price:'Custom', per:'', desc:'Full Microsoft 365 management, security and backups for a small team.', href:'/business-it-support-plans/'},
-          'business-premium': {name:'Business Premium', price:'Custom', per:'', desc:'Priority support, security planning and onboarding for a company that runs on IT.', href:'/business-it-support-plans/'}
+          'home-support': {name:'Home IT Support', price:'&pound;18.25', per:'/mo per computer', desc:'Friendly cover for your computer &mdash; remote support, a full service every 6 weeks and security checks.', href:'/home-it-support-plans/'},
+          'home-support-365': {name:'Home Support + Microsoft 365', price:'&pound;23.10', per:'/mo per computer', desc:'Everything in Home IT Support, plus Microsoft 365 set up and looked after for you.', href:'/home-it-support-plans/'},
+          'business': {name:'Business IT Support', price:'from &pound;24.38', per:'/mo per computer', desc:'Per-computer support for sole traders and small teams &mdash; remote help, Microsoft 365 and security.', href:'/business-it-support-plans/'},
+          'business-larger': {name:'Business IT Support', price:'Custom', per:'', desc:'A tailored plan for a larger team &mdash; Microsoft 365 management, security, backups and onboarding.', href:'/business-it-support-plans/'}
         };
         function recommend() {
           var key;
           if (answers.who === 'home') {
-            if (answers.size === 'power') key = 'home-premium';
-            else if (answers.size === 'family') key = 'home-family';
-            else key = (answers.m365 === 'yes') ? 'home-365' : 'home-essential';
+            key = (answers.m365 === 'yes') ? 'home-support-365' : 'home-support';
           } else {
-            if (answers.size === 'company') key = 'business-premium';
-            else if (answers.size === 'team') key = 'business-standard';
-            else key = 'business-starter';
+            key = (answers.size === 'company') ? 'business-larger' : 'business';
           }
           var p = PLANS[key];
           var custom = (p.price === 'Custom');
           var primary = custom
             ? '<a href="/contact/" class="button primary">Get a Quote</a>'
-            : '<a href="' + p.href + '" class="button primary">Set up Direct Debit</a>';
+            : '<a href="' + p.href + '" class="button primary">See this plan</a>';
           document.getElementById('quiz-result').innerHTML =
             '<p class="tag">Recommended for you</p>' +
             '<h3>' + p.name + '</h3>' +
@@ -1471,8 +1464,8 @@ def services_overview():
         ("Preventative Maintenance", "/preventative-maintenance/", "A full computer service every 6 weeks &mdash; tune-up, software &amp; driver updates, security and backup checks."),
         ("Home IT Support", "/home-it-support-subscriptions/", "Friendly monthly computer support for homes, families and home workers."),
         ("Business IT Support", "/business-it-support-subscriptions/", "Reliable monthly IT support for sole traders and small businesses."),
-        ("Home Support Plans", "/home-it-support-plans/", "Essential, Family and Premium home plans from &pound;15.95/month."),
-        ("Business Support Plans", "/business-it-support-plans/", "Starter, Standard and Premium plans that scale with your team."),
+        ("Home Support Plans", "/home-it-support-plans/", "Home IT support at &pound;18.25/month per computer, with Microsoft 365 from &pound;4.85/month per user."),
+        ("Business Support Plans", "/business-it-support-plans/", "Business IT support from &pound;24.38/month per computer, scaling with your team."),
         ("Plan Finder", "/plan-finder/", "Answer three quick questions and we&rsquo;ll recommend the right plan."),
       ]),
       ("Core IT services", [
@@ -3130,11 +3123,11 @@ ai_os()
 # ===================================================== COST CALCULATOR (interactive)
 def cost_calculator():
     slug = "cost-calculator"
-    desc = "Work out your monthly IT support cost in seconds. A live calculator for home, family and business plans — set the number of people, computers/laptops and Microsoft 365 licences and see a clear total. 365 Techies, Dorset."
+    desc = "Work out your monthly IT support cost in seconds. A live calculator for home and business IT support — set the number of computers and Microsoft 365 licences and see a clear monthly total. 365 Techies, Dorset."
     faqs = [
       ("Are these the exact prices I&rsquo;ll pay?", "They&rsquo;re accurate guide prices taken straight from our published plans, so what you see is what you&rsquo;d expect to pay. We always confirm the exact figure with you before anything starts &mdash; no hidden call-out fees, no surprises."),
       ("What&rsquo;s included in every plan?", "Every monthly plan includes a full computer service every six weeks, remote help, regular maintenance and security checks. We also call before we connect, call ahead with an ETA for visits, and you deal with the same friendly faces. See <a href=\"/monthly-it-support/\">monthly IT support</a>."),
-      ("How is business support priced?", "Business support is &pound;21.15 per user, per month for 1&ndash;3 users. For larger teams we tailor a plan to how you actually work &mdash; the calculator shows an indicative figure, then we give you a clear fixed quote."),
+      ("How is business support priced?", "Business support is priced per computer, from &pound;24.38 per computer, per month. For larger teams we tailor a plan to how you actually work (email, hosting, users) &mdash; the calculator shows an indicative figure, then we give you a clear fixed quote."),
       ("How much is Microsoft 365?", "Microsoft 365 is &pound;4.85 per user, per month, added to your plan for the people who need it &mdash; and we help you choose the right licence with no upselling. Not sure which? Try our <a href=\"/which-microsoft-365-plan/\">Microsoft 365 plan picker</a>."),
       ("Do I have to commit to a contract?", "No &mdash; every plan is monthly and cancel-anytime. There&rsquo;s no long lock-in."),
     ]
@@ -3153,16 +3146,12 @@ def cost_calculator():
           <div class="cc-grid">
             <div class="cc-controls">
               <div id="cc-home-fields">
-                <div class="cc-field"><label>People who use the computers <output id="cc-people">1</output></label><input type="range" id="cc-people-r" min="1" max="8" value="1" aria-label="People who use the computers"></div>
                 <div class="cc-field"><label>Computers / laptops <output id="cc-comp">1</output></label><input type="range" id="cc-comp-r" min="1" max="10" value="1" aria-label="Computers or laptops"></div>
+                <p class="cc-note">Home support is &pound;18.25/month per computer. Add Microsoft 365 below for the people who need it.</p>
               </div>
               <div id="cc-biz-fields" hidden>
-                <div class="cc-field"><label>Users (people needing support) <output id="cc-users">1</output></label><input type="range" id="cc-users-r" min="1" max="25" value="1" aria-label="Users needing support"></div>
-                <p class="cc-note">Business support is priced per user &mdash; all of each person&rsquo;s devices are covered.</p>
-              </div>
-              <div id="cc-plans-wrap">
-                <p class="cc-label">Recommended plan <span>(tap to change)</span></p>
-                <div class="cc-plans" id="cc-plans"></div>
+                <div class="cc-field"><label>Computers / laptops <output id="cc-users">1</output></label><input type="range" id="cc-users-r" min="1" max="25" value="1" aria-label="Computers needing support"></div>
+                <p class="cc-note">Business support is priced per computer (from &pound;24.38/month) &mdash; tailored to how your team works.</p>
               </div>
               <div>
                 <p class="cc-label">Microsoft 365 licences <span>(optional)</span></p>
@@ -3170,7 +3159,7 @@ def cost_calculator():
               </div>
             </div>
             <aside class="cc-summary">
-              <div><p class="cc-summary__cap">Estimated monthly cost</p><p class="cc-big"><span id="cc-total">&pound;15.95</span><i>/month</i></p></div>
+              <div><p class="cc-summary__cap">Estimated monthly cost</p><p class="cc-big"><span id="cc-total">&pound;18.25</span><i>/month</i></p></div>
               <ul class="cc-lines" id="cc-lines"></ul>
               <a class="button primary" id="cc-cta" href="/home-it-support-plans/">Get started</a>
               <p class="cc-note" id="cc-note"></p>
@@ -3216,76 +3205,53 @@ def cost_calculator():
       <script>
       (function(){
         var root=document.getElementById('costcalc'); if(!root) return;
-        var P={bizPerUser:21.15,bizFlatMax:3};
-        var HOME=[
-          {key:'essential',name:'Essential Home',price:15.95,blurb:'1 person, 1 main computer'},
-          {key:'family',name:'Family Home',price:19.95,blurb:'Several computers & people'},
-          {key:'premium',name:'Premium Home',price:24.95,blurb:'Multiple devices, priority'}
-        ];
-        /* Microsoft 365 — per-user price/month supplied by 365 Techies. */
-        var M365=[
-          {key:'m365',name:'Microsoft 365 (per user)',price:4.85}
-        ];
-        var state={mode:'home',people:1,comp:1,users:1,plan:null,manual:false,m365:{}};
-        M365.forEach(function(m){state.m365[m.key]=0;});
+        var HOME_PER=18.25, BIZ_PER=24.38, M365_PER=4.85;
+        var state={mode:'home',comp:1,users:1,m365:0};
         function money(n){return '£'+n.toFixed(2);}
         var m365box=root.querySelector('#cc-m365');
-        M365.forEach(function(m){
+        (function(){
           var row=document.createElement('div'); row.className='cc-step';
-          var lab=document.createElement('span'); lab.textContent=m.name+(m.price==null?' (on quote)':' · '+money(m.price)+'/mo');
+          var lab=document.createElement('span'); lab.textContent='Microsoft 365 (per user) · '+money(M365_PER)+'/mo';
           var ctr=document.createElement('span'); ctr.className='cc-stepctr';
-          var minus=document.createElement('button'); minus.type='button'; minus.textContent='−'; minus.setAttribute('aria-label','Fewer '+m.name);
+          var minus=document.createElement('button'); minus.type='button'; minus.textContent='−'; minus.setAttribute('aria-label','Fewer Microsoft 365 licences');
           var val=document.createElement('b'); val.textContent='0';
-          var plus=document.createElement('button'); plus.type='button'; plus.textContent='+'; plus.setAttribute('aria-label','More '+m.name);
-          minus.onclick=function(){state.m365[m.key]=Math.max(0,state.m365[m.key]-1);val.textContent=state.m365[m.key];render();};
-          plus.onclick=function(){state.m365[m.key]=Math.min(50,state.m365[m.key]+1);val.textContent=state.m365[m.key];render();};
+          var plus=document.createElement('button'); plus.type='button'; plus.textContent='+'; plus.setAttribute('aria-label','More Microsoft 365 licences');
+          minus.onclick=function(){state.m365=Math.max(0,state.m365-1);val.textContent=state.m365;render();};
+          plus.onclick=function(){state.m365=Math.min(50,state.m365+1);val.textContent=state.m365;render();};
           ctr.appendChild(minus); ctr.appendChild(val); ctr.appendChild(plus);
           row.appendChild(lab); row.appendChild(ctr); m365box.appendChild(row);
-        });
-        var plansBox=root.querySelector('#cc-plans');
-        HOME.forEach(function(p){
-          var b=document.createElement('button'); b.type='button'; b.className='cc-plan'; b.setAttribute('data-k',p.key);
-          b.innerHTML='<b>'+p.name+'</b><span>'+money(p.price)+'/mo · '+p.blurb+'</span>';
-          b.onclick=function(){state.plan=p.key;state.manual=true;render();};
-          plansBox.appendChild(b);
-        });
-        function bind(id,prop,outId){var r=root.querySelector(id);var o=root.querySelector(outId);r.addEventListener('input',function(){state[prop]=+r.value;if(o)o.textContent=r.value;if(prop==='people'||prop==='comp')state.manual=false;render();});}
-        bind('#cc-people-r','people','#cc-people');
+        })();
+        function bind(id,prop,outId){var r=root.querySelector(id);var o=root.querySelector(outId);if(!r)return;r.addEventListener('input',function(){state[prop]=+r.value;if(o)o.textContent=r.value;render();});}
         bind('#cc-comp-r','comp','#cc-comp');
         bind('#cc-users-r','users','#cc-users');
         root.querySelectorAll('.cc-tabs button').forEach(function(t){t.onclick=function(){
-          state.mode=t.getAttribute('data-mode'); state.manual=false;
+          state.mode=t.getAttribute('data-mode');
           root.querySelectorAll('.cc-tabs button').forEach(function(x){x.classList.toggle('is-active',x===t);x.setAttribute('aria-selected',x===t);});
           root.querySelector('#cc-home-fields').hidden=(state.mode!=='home');
           root.querySelector('#cc-biz-fields').hidden=(state.mode!=='business');
-          root.querySelector('#cc-plans-wrap').hidden=(state.mode!=='home');
           render();
         };});
-        function recommendHome(people,comp){if(people<=1&&comp<=1)return 'essential';if(comp<=4&&people<=5)return 'family';return 'premium';}
         function render(){
-          var lines=[],total=0,fromFlag=false,m365pending=false,ctaLabel='Get started',ctaHref='/home-it-support-plans/';
+          var lines=[],total=0,fromFlag=false,ctaLabel='Get started',ctaHref='/home-it-support-plans/';
           if(state.mode==='home'){
-            var key=(state.manual&&state.plan)?state.plan:recommendHome(state.people,state.comp);
-            var p=HOME.filter(function(x){return x.key===key;})[0];
-            plansBox.querySelectorAll('.cc-plan').forEach(function(b){b.classList.toggle('is-on',b.getAttribute('data-k')===key);});
-            total+=p.price; lines.push({l:p.name+(state.manual?'':' (recommended)'),v:money(p.price)});
+            var ht=HOME_PER*state.comp;total+=ht;
+            lines.push({l:'Home support · '+state.comp+' computer'+(state.comp>1?'s':''),v:money(ht)});
           } else {
-            var users=state.users;
-            if(users<=P.bizFlatMax){var bt=P.bizPerUser*users;total+=bt;lines.push({l:'Business support · '+users+' user'+(users>1?'s':''),v:money(bt)});ctaHref='/business-it-support-plans/';}
-            else {fromFlag=true;var bt2=P.bizPerUser*users;total+=bt2;lines.push({l:'Business support · '+users+' users',v:'from '+money(bt2)});ctaLabel='Get a tailored quote';ctaHref='/contact/';}
+            fromFlag=true;
+            var bt=BIZ_PER*state.users;total+=bt;
+            lines.push({l:'Business support · '+state.users+' computer'+(state.users>1?'s':''),v:'from '+money(bt)});
+            ctaLabel='Get a tailored quote';ctaHref='/contact/';
           }
-          M365.forEach(function(m){var c=state.m365[m.key];if(c>0){if(m.price==null){m365pending=true;lines.push({l:m.name+' × '+c,v:'on quote'});}else{var mt=m.price*c;total+=mt;lines.push({l:m.name+' × '+c,v:money(mt)});}}});
-          if(m365pending){ctaLabel='Get a tailored quote';ctaHref='/contact/';}
-          var prefix=(fromFlag||m365pending)?'from ':'';
+          if(state.m365>0){var mt=M365_PER*state.m365;total+=mt;lines.push({l:'Microsoft 365 × '+state.m365,v:money(mt)});}
+          var prefix=fromFlag?'from ':'';
           root.querySelector('#cc-total').textContent=prefix+money(total);
           var ul=root.querySelector('#cc-lines'); ul.innerHTML='';
           lines.forEach(function(li){var el=document.createElement('li');var s=document.createElement('span');s.textContent=li.l;var b=document.createElement('b');b.textContent=li.v;el.appendChild(s);el.appendChild(b);ul.appendChild(el);});
           var tl=document.createElement('li'); tl.style.cssText='border-top:1px solid rgba(255,255,255,.12);margin-top:.35rem;padding-top:.55rem;font-size:1rem';
           var ts=document.createElement('span');ts.innerHTML='<b>Total per month</b>';var tb=document.createElement('b');tb.textContent=prefix+money(total);tl.appendChild(ts);tl.appendChild(tb);ul.appendChild(tl);
           var cta=root.querySelector('#cc-cta'); cta.textContent=ctaLabel; cta.href=ctaHref;
-          var msgs=['Guide prices from our published plans &mdash; we always confirm your exact figure before anything starts. Every plan includes a full service every 6 weeks and is cancel-anytime.'];
-          if(fromFlag) msgs.push('Teams of 4+ are tailored to how you work, so the figure above is a starting guide.');
-          if(m365pending) msgs.push('Microsoft 365 licences are added at the right price for what you need, confirmed on your quote.');
+          var msgs=['Real prices from our live plans &mdash; &pound;18.25/mo per computer for home, from &pound;24.38/mo per computer for business, plus &pound;4.85/mo per Microsoft 365 user. We confirm your exact figure before anything starts; every plan includes a full service every 6 weeks and is cancel-anytime.'];
+          if(fromFlag) msgs.push('Business plans are tailored to how you work (email, hosting, users), so the figure above is a starting guide.');
           root.querySelector('#cc-note').innerHTML=msgs.join(' ');
         }
         render();
@@ -3295,7 +3261,7 @@ def cost_calculator():
     content = "\n".join([
       hero(bc("Cost Calculator"), "// COST CALCULATOR",
            'See your monthly cost in <em class="grad grad--cyan">seconds</em>',
-           "Move the sliders to match your home or business &mdash; how many people, how many computers, and any Microsoft 365 licences &mdash; and watch a clear monthly total appear. Guide prices straight from our published plans, with no obligation.",
+           "Move the sliders to match your home or business &mdash; how many computers, and any Microsoft 365 licences &mdash; and watch a clear monthly total appear. Real prices straight from our live plans, with no obligation.",
            cta1=("View Plans", "/monthly-it-support/"), cta2=("Talk to Us", "/contact/"),
            chips=["Live sliders","Guide prices from real plans","Cancel anytime"]),
       calc,
@@ -3708,7 +3674,7 @@ def repair_pages():
           f'''    <section class="section" aria-label="Ongoing IT support">
       <div class="wrap">
         <div class="prose" data-reveal style="text-align:center;max-width:64ch;margin:0 auto">
-          <p>Want more than a one-off fix? Our <a href="/{it_slug}/">monthly IT support in {town}</a> keeps your computers fast and protected all year &mdash; regular maintenance, security checks and unlimited remote help from &pound;15.95 a month.</p>
+          <p>Want more than a one-off fix? Our <a href="/{it_slug}/">monthly IT support in {town}</a> keeps your computers fast and protected all year &mdash; regular maintenance, security checks and unlimited remote help from &pound;18.25 a month per computer.</p>
         </div>
       </div>
     </section>''',
@@ -4257,7 +4223,7 @@ info_page(
         <ul class="security-grid" data-stagger>
 ''' + grid_cards([
         ("Fast response","Most remote sessions start within minutes in opening hours &mdash; subscribers always jump the queue."),
-        ("Clear, honest pricing","Fixed monthly prices shown up front, from &pound;15.95/month. No hidden fees, no surprise bills."),
+        ("Clear, honest pricing","Fixed monthly prices shown up front, from &pound;18.25/month per computer. No hidden fees, no surprise bills."),
         ("No contracts","Every plan is rolling and cancel-anytime. Stay because you want to, not because you&rsquo;re locked in."),
         ("Plain English, always","We explain what&rsquo;s wrong and how we&rsquo;ll fix it &mdash; patiently, and never make you feel silly."),
         ("Secure by default","Encrypted remote support, protection and verified backups built into everything we do."),
@@ -4335,9 +4301,9 @@ info_page(
 info_page(
   slug="pricing", crumb_name="Pricing", eyebrow="// PRICING",
   h1='Simple, honest <em class="grad grad--green">pricing</em>',
-  lede="Clear monthly pricing with no hidden fees and no long contracts. Plans for homes from £15.95/month and businesses from £21.15/month, plus one-off help when you need it.",
-  desc="365 Techies pricing — transparent monthly IT support plans for homes from £15.95/month and businesses from £21.15/month, with no contracts. One-off repairs quoted up front.",
-  chips=["From &pound;15.95/mo","No contracts","No hidden fees"],
+  lede="Clear monthly pricing with no hidden fees and no long contracts. Home support is £18.25/month per computer and business support from £24.38/month per computer, with Microsoft 365 at £4.85/month per user — plus one-off help when you need it.",
+  desc="365 Techies pricing — transparent monthly IT support: homes £18.25/month per computer, business from £24.38/month per computer, Microsoft 365 £4.85/month per user. No contracts; one-off repairs quoted up front.",
+  chips=["&pound;18.25/mo per computer","No contracts","No hidden fees"],
   pre='''    <section class="stats" aria-label="By the numbers">
       <div class="stats__grid">
         <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="4.9" data-decimals="1">0</span></p><p class="stat__label mono">GOOGLE RATING</p></div>
@@ -4353,18 +4319,17 @@ info_page(
         <h2 class="section-title section-title--center" data-title>What&rsquo;s included, at a glance<span class="title-underline title-underline--center"></span></h2>
         <div class="cmp-wrap" data-reveal>
           <table class="cmp-table">
-            <thead><tr><th>Feature</th><th>Home Essential</th><th>Home Premium</th><th>Business</th></tr></thead>
+            <thead><tr><th>Feature</th><th>Home Support</th><th>Home + Microsoft 365</th><th>Business</th></tr></thead>
             <tbody>
               <tr><th>Friendly remote support</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
               <tr><th>Full service every 6 weeks</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td>Ongoing</td></tr>
-              <tr><th>Security advice &amp; setup</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
-              <tr><th>Microsoft 365 support</th><td class="no">&ndash;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
-              <tr><th>Multiple devices / users</th><td class="no">&ndash;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
-              <tr><th>Priority response</th><td class="no">&ndash;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
-              <tr><th>Proactive monitoring</th><td class="no">&ndash;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
+              <tr><th>Security &amp; backup checks</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
+              <tr><th>Wi-Fi, printer &amp; email help</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
+              <tr><th>Microsoft 365 (Outlook &amp; Office apps)</th><td class="no">&ndash;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
+              <tr><th>Priced per computer</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
+              <tr><th>Cybersecurity &amp; backups managed</th><td>Advice</td><td>Advice</td><td class="yes">&#10003;</td></tr>
               <tr><th>On-site help (Dorset)</th><td>On request</td><td>On request</td><td class="yes">&#10003;</td></tr>
-              <tr><th>Response &amp; service level</th><td>Business hours</td><td>Priority queue</td><td>Priority business</td></tr>
-              <tr class="cmp-price"><th>From</th><td>&pound;15.95<span>/mo</span></td><td>&pound;24.95<span>/mo</span></td><td>&pound;21.15<span>/user/mo</span></td></tr>
+              <tr class="cmp-price"><th>From</th><td>&pound;18.25<span>/mo per computer</span></td><td>&pound;23.10<span>/mo per computer</span></td><td>from &pound;24.38<span>/mo per computer</span></td></tr>
               <tr class="cmp-cta"><th></th><td><a href="/home-it-support-plans/">Home plans</a></td><td><a href="/home-it-support-plans/">Home plans</a></td><td><a href="/business-it-support-plans/">Business plans</a></td></tr>
             </tbody>
           </table>
@@ -4409,7 +4374,7 @@ info_page(
           <table class="cmp-table cmp-table--vs">
             <thead><tr><th>&nbsp;</th><th>Pay-per-fix</th><th>Typical national MSP</th><th>365 Techies</th></tr></thead>
             <tbody>
-              <tr><th>Cost</th><td>&pound;0 until it breaks &mdash; then big bills</td><td>Premium + long contracts</td><td class="hi">From &pound;15.95/mo, no contract</td></tr>
+              <tr><th>Cost</th><td>&pound;0 until it breaks &mdash; then big bills</td><td>Premium + long contracts</td><td class="hi">From &pound;18.25/mo, no contract</td></tr>
               <tr><th>Proactive maintenance</th><td class="no">&ndash;</td><td class="yes">&#10003;</td><td class="yes hi">&#10003;</td></tr>
               <tr><th>Local &amp; on-site in Dorset</th><td>Sometimes</td><td>Often remote-only</td><td class="hi">Yes &mdash; local team</td></tr>
               <tr><th>Contract</th><td>None</td><td>12&ndash;36 months typical</td><td class="hi">Rolling, cancel anytime</td></tr>
@@ -4423,9 +4388,9 @@ info_page(
       </div>
     </section>''',
   inner="""          <h2>Monthly home plans</h2>
-          <p>Friendly monthly support for homes and families, with Essential, Family and Premium options from <strong>&pound;15.95/month</strong>. See the full breakdown on our <a href="/home-it-support-plans/">home support plans</a> page.</p>
+          <p>Friendly monthly support for homes and families at <strong>&pound;18.25/month per computer</strong>, with Microsoft 365 available for <strong>&pound;4.85/month per user</strong>. See the full breakdown on our <a href="/home-it-support-plans/">home support plans</a> page.</p>
           <h2>Monthly business plans</h2>
-          <p>Reliable support for sole traders and small businesses, with Starter, Standard and Premium options from <strong>&pound;21.15/month</strong>. See our <a href="/business-it-support-plans/">business support plans</a> page.</p>
+          <p>Reliable support for sole traders and small businesses from <strong>&pound;24.38/month per computer</strong>, tailored to your team. See our <a href="/business-it-support-plans/">business support plans</a> page.</p>
           <h2>One-off help</h2>
           <p>Need a one-off repair or project with no subscription? We&rsquo;ll quote it clearly and fairly before we start &mdash; just ask.</p>
           <h2>Not sure what you need?</h2>
@@ -4504,7 +4469,7 @@ info_page(
           <h2>Typical price ranges</h2>
           <p>For homes, monthly support typically starts around &pound;15&ndash;&pound;25 per month. For small businesses it&rsquo;s usually priced per user or per device, scaling with your team. One-off repairs are quoted based on the work involved.</p>
           <h2>Our pricing</h2>
-          <p>We keep it simple: home plans from <strong>&pound;15.95/month</strong>, business plans from <strong>&pound;21.15/month</strong>, no contracts and no hidden fees. See our <a href="/pricing/">pricing</a> page or try the <a href="/plan-finder/">Plan Finder</a>.</p>""",
+          <p>We keep it simple: home support from <strong>&pound;18.25/month per computer</strong>, business support from <strong>&pound;24.38/month per computer</strong>, plus Microsoft 365 at <strong>&pound;4.85/month per user</strong> &mdash; no contracts and no hidden fees. See our <a href="/pricing/">pricing</a> page or try the <a href="/plan-finder/">Plan Finder</a>.</p>""",
   faqs=[
     ("Is monthly IT support worth it?","For most people, yes &mdash; it spreads the cost, includes regular maintenance and catches problems before they become expensive emergencies."),
     ("Do you charge call-out fees?","Most support is remote with no call-out fee. On-site visits across Dorset are arranged when hands-on help is needed."),
@@ -6931,7 +6896,7 @@ info_page(
             <thead><tr><th>&nbsp;</th><th>Break-fix (pay per repair)</th><th>Managed / monthly plan</th></tr></thead>
             <tbody>
               <tr><th>When you get help</th><td>After something breaks</td><td class="hi">Before and after &mdash; problems are caught early</td></tr>
-              <tr><th>Cost</th><td>Unpredictable, per job</td><td class="hi">One fixed monthly fee, from &pound;15.95</td></tr>
+              <tr><th>Cost</th><td>Unpredictable, per job</td><td class="hi">One fixed monthly fee, from &pound;18.25 per computer</td></tr>
               <tr><th>Prevention &amp; monitoring</th><td class="no">&ndash;</td><td class="yes hi">&#10003; included</td></tr>
               <tr><th>Knows your setup</th><td>Starts fresh each time</td><td class="hi">The same team who know you</td></tr>
               <tr><th>Security &amp; backups kept up</th><td class="no">Only if you ask</td><td class="yes hi">&#10003; looked after for you</td></tr>
@@ -6951,7 +6916,7 @@ info_page(
     ("Can I start with break-fix and move to a plan later?","Yes &mdash; lots of customers call us for a one-off repair, then join a plan to avoid the next emergency. There are no long contracts either way."),
     ("Do I have to sign a long contract for managed support?","No &mdash; our plans are rolling and cancel-anytime. You stay because it&rsquo;s working, not because you&rsquo;re locked in."),
   ],
-  cta_args=("Ready to stop firefighting?","Get predictable, proactive IT support that prevents problems instead of just reacting to them &mdash; from &pound;15.95/month, cancel anytime.",
+  cta_args=("Ready to stop firefighting?","Get predictable, proactive IT support that prevents problems instead of just reacting to them &mdash; from &pound;18.25/month per computer, cancel anytime.",
             ("View Monthly Plans","/monthly-it-support/"), ("Get a Quick Quote","/quick-quote/")),
 )
 
@@ -7009,8 +6974,8 @@ DOWNTIME_WIDGET = '''    <section class="section section--alt" aria-label="Downt
           var annual=PEOPLE[a.people]*VALUE[a.value]*HOURS[a.hours]*FREQ[a.freq];
           annual = annual<500 ? Math.round(annual/10)*10 : Math.round(annual/50)*50;
           var cls = annual<500?'hc--good':(annual<2000?'hc--good':'hc--risk');
-          var times=Math.round(annual/191);
-          var ctx = times>=2 ? ' That is around <strong>'+times+' times</strong> the annual cost of our home support plan &mdash; and preventing downtime is exactly what a plan is for.' : ' A monthly plan (from &pound;15.95/month) is built to prevent exactly this kind of lost time.';
+          var times=Math.round(annual/219);
+          var ctx = times>=2 ? ' That is around <strong>'+times+' times</strong> the annual cost of our home support plan &mdash; and preventing downtime is exactly what a plan is for.' : ' A monthly plan (from &pound;18.25/month per computer) is built to prevent exactly this kind of lost time.';
           document.getElementById('dt-result').innerHTML=
             '<p class="hc-bandlabel '+cls+'">About &pound;'+annual.toLocaleString()+' a year in lost time</p>'+
             '<p>Based on your own numbers, IT downtime could be costing your business roughly <strong>&pound;'+annual.toLocaleString()+' a year</strong> in lost working time alone &mdash; before counting lost data, missed deadlines or stress.'+ctx+'</p>'+
@@ -7044,7 +7009,7 @@ def downtime_cost_calculator():
       DOWNTIME_WIDGET,
       faq_html(faqs),
       cta("Stop downtime before it starts",
-          "Proactive, monitored IT support that prevents problems and gets you back up fast when something does go wrong &mdash; from &pound;21.15/user/month.",
+          "Proactive, monitored IT support that prevents problems and gets you back up fast when something does go wrong &mdash; from &pound;24.38/month per computer.",
           primary=("Business IT Support","/business-it-support-subscriptions/"), secondary=("Talk to a Techie","/contact/")),
     ])
     def schema(s,_d=desc,_f=faqs):

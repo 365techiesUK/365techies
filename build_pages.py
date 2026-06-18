@@ -107,8 +107,8 @@ def ico(name, cls="tile__ico"):
 HEADER = '''  <header class="site-header">
     <div class="status-ticker" aria-hidden="true">
       <div class="status-ticker__track">
-        <span>&#9679; CALL 01202 775566&ensp;//&ensp;FAMILY BUSINESS SINCE 1995&ensp;//&ensp;DELL SPECIALISTS&ensp;//&ensp;MICROSOFT PARTNER &amp; OFFICE SPECIALISTS&ensp;//&ensp;MALWAREBYTES PARTNER&ensp;//&ensp;NVIDIA &amp; SCAN PARTNER&ensp;//&ensp;RICHER SOUNDS PARTNER&ensp;//&ensp;BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;//&ensp;PLANS FROM &pound;15.95/MO&ensp;//&ensp;MON&ndash;FRI 9AM&ndash;5PM&ensp;//&ensp;</span>
-        <span>&#9679; CALL 01202 775566&ensp;//&ensp;FAMILY BUSINESS SINCE 1995&ensp;//&ensp;DELL SPECIALISTS&ensp;//&ensp;MICROSOFT PARTNER &amp; OFFICE SPECIALISTS&ensp;//&ensp;MALWAREBYTES PARTNER&ensp;//&ensp;NVIDIA &amp; SCAN PARTNER&ensp;//&ensp;RICHER SOUNDS PARTNER&ensp;//&ensp;BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;//&ensp;PLANS FROM &pound;15.95/MO&ensp;//&ensp;MON&ndash;FRI 9AM&ndash;5PM&ensp;//&ensp;</span>
+        <span>&#9679; CALL 01202 775566&ensp;//&ensp;FAMILY BUSINESS SINCE 1995&ensp;//&ensp;DELL SPECIALISTS&ensp;//&ensp;MICROSOFT PARTNER &amp; OFFICE SPECIALISTS&ensp;//&ensp;MALWAREBYTES PARTNER&ensp;//&ensp;NVIDIA &amp; SCAN PARTNER&ensp;//&ensp;RICHER SOUNDS PARTNER&ensp;//&ensp;BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;//&ensp;PLANS FROM &pound;18.25/MO&ensp;//&ensp;MON&ndash;FRI 9AM&ndash;5PM&ensp;//&ensp;</span>
+        <span>&#9679; CALL 01202 775566&ensp;//&ensp;FAMILY BUSINESS SINCE 1995&ensp;//&ensp;DELL SPECIALISTS&ensp;//&ensp;MICROSOFT PARTNER &amp; OFFICE SPECIALISTS&ensp;//&ensp;MALWAREBYTES PARTNER&ensp;//&ensp;NVIDIA &amp; SCAN PARTNER&ensp;//&ensp;RICHER SOUNDS PARTNER&ensp;//&ensp;BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;//&ensp;PLANS FROM &pound;18.25/MO&ensp;//&ensp;MON&ndash;FRI 9AM&ndash;5PM&ensp;//&ensp;</span>
       </div>
     </div>
     <div class="header-bar">
@@ -931,14 +931,14 @@ def add(**kw):
 add(
  slug="monthly-it-support",
  title="Monthly IT Support Subscriptions | 365 Techies",
- desc="Monthly IT support for homes and businesses across Dorset — from £15.95/month, cancel anytime, no call-out fee. Rated 4.9 on Google, friendly and family-run since 1995.",
+ desc="Monthly IT support for homes and businesses across Dorset — £18.25/month per computer, cancel anytime, no call-out fee. Rated 4.9 on Google, friendly and family-run since 1995.",
  og_title="Monthly IT Support Subscriptions | 365 Techies",
  schema=lambda s: graph([
    crumb(s, "Monthly IT Support"), webpage(s, "Monthly IT Support Subscriptions", "Monthly IT support subscriptions for homes and small businesses across Dorset."),
    service(s, "Monthly IT Support", "Subscription IT support with regular maintenance, security checks and unlimited remote help.", "IT support subscription"),
    faqpage(s, [
      ("What is monthly IT support?", "Monthly IT support is a subscription that gives you ongoing help, regular maintenance, security checks and priority response for one predictable monthly cost — instead of paying per repair when something breaks."),
-     ("How much does monthly IT support cost?", "Home plans start at £15.95/month and business plans from £21.15/month. Every plan includes a full computer service every six weeks."),
+     ("How much does monthly IT support cost?", "Home support is £18.25/month per computer, and business support starts from £24.38/month per computer. Microsoft 365 can be added for £4.85/month per user. Every plan includes a full computer service every six weeks."),
      ("Can I cancel my plan?", "Yes. Plans are monthly and cancel-anytime with no lock-in contract."),
      ("Do you support homes and businesses?", "Yes — we support home users, home workers, sole traders and small businesses across Bournemouth, Poole and Dorset."),
      ("What is it like dealing with you day to day?", "Friendly and unhurried. We phone before we connect for a remote session or a full computer service, we call ahead with an estimated arrival time when we're visiting you, and if you'd like, we can send you a text reminder when your backup is due. Because we're a family team, you deal with the same familiar people who get to know how you like things set up."),
@@ -947,8 +947,8 @@ add(
  content="\n".join([
    hero(bc("Monthly IT Support"), "// MONTHLY SUBSCRIPTIONS",
         'Monthly IT support <em class="grad grad--cyan">subscriptions</em>',
-        hero_trust("Reliable monthly IT support for homes and businesses — remote help, regular maintenance, security checks and friendly technical support whenever you need it. From £15.95 a month, cancel anytime."),
-        chips=["Plans from &pound;15.95/mo", "Full service every 6 weeks", "Cancel anytime"]),
+        hero_trust("Reliable monthly IT support for homes and businesses — remote help, regular maintenance, security checks and friendly technical support whenever you need it. £18.25 a month per computer, cancel anytime."),
+        chips=["&pound;18.25/mo per computer", "Full service every 6 weeks", "Cancel anytime"]),
    f'''    <section class="section" aria-label="What is monthly IT support">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
@@ -996,7 +996,7 @@ add(
             <p class="plan-card__tag mono">FOR HOMES</p>
             <h3>Home IT Support</h3>
             <p class="plan-card__desc">Friendly monthly computer support for homes, families, home workers and retired users.</p>
-            <p class="plan-card__price"><span class="from mono">FROM</span> &pound;15.95<span class="per">/month</span></p>
+            <p class="plan-card__price">&pound;18.25<span class="per">/mo per computer</span></p>
             <ul class="plan-card__features">
               <li>Unlimited remote support</li>
               <li>Full service every 6 weeks</li>
@@ -1011,7 +1011,7 @@ add(
             <p class="plan-card__tag mono">FOR BUSINESS</p>
             <h3>Business IT Support</h3>
             <p class="plan-card__desc">Reliable monthly IT support for sole traders and small businesses across Dorset.</p>
-            <p class="plan-card__price"><span class="from mono">FROM</span> &pound;21.15<span class="per">/month</span></p>
+            <p class="plan-card__price"><span class="from mono">FROM</span> &pound;24.38<span class="per">/mo per computer</span></p>
             <ul class="plan-card__features">
               <li>Priority response</li>
               <li>Microsoft 365 management</li>
@@ -1050,7 +1050,7 @@ add(
    promise_strip(),
    faq_html([
      ("What is monthly IT support?", "Monthly IT support is a subscription that gives you ongoing help, regular maintenance, security checks and priority response for one predictable monthly cost — instead of paying per repair when something breaks."),
-     ("How much does it cost?", "Home plans start at &pound;15.95/month and business plans from &pound;21.15/month. Every plan includes a full computer service every six weeks."),
+     ("How much does it cost?", "Home support is &pound;18.25/month per computer, and business support starts from &pound;24.38/month per computer. Microsoft 365 can be added for &pound;4.85/month per user. Every plan includes a full computer service every six weeks."),
      ("Can I cancel my plan?", "Yes — plans are monthly and cancel-anytime with no lock-in contract."),
      ("Do you support both homes and businesses?", "Yes. We support home users, home workers, sole traders and small businesses across Bournemouth, Poole and the rest of Dorset."),
      ("What is it like dealing with you day to day?", "Friendly and unhurried. We phone before we connect for a remote session or a full computer service, we call ahead with an estimated arrival time when we&rsquo;re visiting, and if you&rsquo;d like, we can text you a reminder when your backup&rsquo;s due. Because we&rsquo;re a family team, you deal with the same familiar people who get to know how you like things set up."),
@@ -1064,7 +1064,7 @@ add(
 add(
  slug="home-it-support-subscriptions",
  title="Home IT Support Subscriptions | Monthly Computer Support",
- desc="Monthly home IT support subscriptions for home users, families, home workers and retired users in Dorset. Help with computers, laptops, printers, email, Wi-Fi, Microsoft 365 and security from £15.95/month.",
+ desc="Monthly home IT support subscriptions for home users, families, home workers and retired users in Dorset. Help with computers, laptops, printers, email, Wi-Fi, Microsoft 365 and security — £18.25/month per computer.",
  og_title="Home IT Support Subscriptions | 365 Techies",
  schema=lambda s: graph([
    crumb(s, "Home IT Support"), webpage(s, "Home IT Support Subscriptions", "Monthly home IT support for home users, families and home workers in Dorset."),
@@ -1080,7 +1080,7 @@ add(
         'Home IT support <em class="grad grad--cyan">subscriptions</em>',
         "Friendly monthly computer support for your home. Help with computers, laptops, printers, email, Wi-Fi, Microsoft 365, online accounts and security — patient, jargon-free and one message away.",
         cta1=("Get Monthly Home IT Support", "/home-it-support-plans/"), cta2=("Talk to a techie", "/contact/"),
-        chips=["From &pound;15.95/mo", "Patient, jargon-free help", "Full service every 6 weeks"]),
+        chips=["&pound;18.25/mo per computer", "Patient, jargon-free help", "Full service every 6 weeks"]),
    f'''    <section class="section" aria-label="Who it is for">
       <div class="wrap">
         <div class="section-head">
@@ -1111,7 +1111,7 @@ add(
         <p class="eyebrow eyebrow--center mono" data-reveal>/03 — GETTING STARTED</p>
         <h2 class="section-title section-title--center" data-title>Help in three simple steps<span class="title-underline title-underline--center"></span></h2>
         <ol class="how__steps">
-{steps([("Pick a home plan","Choose Essential, Family or Premium. Monthly, no contract, cancel anytime."),("We get you set up","A quick secure connection and a friendly welcome — usually within minutes."),("Relax — you&rsquo;re covered","Message us any time you&rsquo;re stuck, and we&rsquo;ll keep everything healthy each month.")])}
+{steps([("Tell us your setup","Each computer is &pound;18.25/mo, with Microsoft 365 available for &pound;4.85/mo per user. Monthly, no contract, cancel anytime."),("We get you set up","A quick secure connection and a friendly welcome — usually within minutes."),("Relax — you&rsquo;re covered","Message us any time you&rsquo;re stuck, and we&rsquo;ll keep everything healthy each month.")])}
         </ol>
       </div>
     </section>''',
@@ -1147,7 +1147,7 @@ add(
         'Business IT support <em class="grad grad--green">subscriptions</em>',
         "Reliable monthly IT support for sole traders and small businesses — Microsoft 365, cybersecurity, backups and staff support, all proactively managed for you. Like having your own IT department, without the cost of employing one. Rated 4.9 on Google, family-run since 1995.",
         cta1=("Choose a Business Plan", "/business-it-support-plans/"), cta2=("Book a chat", "/contact/"),
-        chips=["Your outsourced IT team", "From &pound;21.15/mo", "Remote &amp; on-site across Dorset"]),
+        chips=["Your outsourced IT team", "From &pound;24.38/mo per computer", "Remote &amp; on-site across Dorset"]),
    f'''    <section class="section" aria-label="Who it is for">
       <div class="wrap">
         <div class="section-head">
@@ -1217,11 +1217,11 @@ def plan_card(variant, badge, tag, name, desc, price, per, feats, cta_label, cta
 add(
  slug="home-it-support-plans",
  title="Home IT Support Plans | Monthly Computer Support Packages",
- desc="Simple monthly home IT support plans — Essential, Family and Premium. Remote support, regular maintenance, Microsoft 365, security and backups for home users and families in Dorset.",
+ desc="Simple monthly home IT support — £18.25/month per computer, with Microsoft 365 available for £4.85/month per user. Remote support, regular maintenance, security and backups for home users and families in Dorset.",
  og_title="Home IT Support Plans | 365 Techies",
  schema=lambda s: graph([
    crumb(s, "Home Support Plans"), webpage(s, "Home IT Support Plans", "Monthly home IT support packages for home users and families."),
-   service(s, "Home IT Support Plans", "Essential, Family and Premium monthly home IT support packages.", "Home IT support"),
+   service(s, "Home IT Support Plans", "Monthly home IT support at £18.25 per computer, with optional Microsoft 365 at £4.85 per user.", "Home IT support"),
  ]),
  content="\n".join([
    hero(bc("Home Support Plans"), "// HOME PLANS",
@@ -1230,31 +1230,30 @@ add(
         cta1=("Get Started", "/contact/"), cta2=("Compare Plans", "#compare"),
         chips=["No contracts", "Cancel anytime", "Full service every 6 weeks"]),
    f'''    <section class="support-options" aria-label="Home support plans">
-      <div class="plan-grid plan-grid--3">
-{plan_card("home", None, "ESSENTIAL", "Essential Home", "For one person who needs occasional help and peace of mind.", "&pound;15.95", ("FROM","/mo"), ["Support for one main computer","Email help","Basic Windows support","Security advice","Monthly health check","Remote support"], "Set up Direct Debit", subscribe_href("home-essential"))}
-{plan_card("business", "&#9733; MOST POPULAR", "FAMILY", "Family Home", "For homes with several devices and people to look after.", "&pound;19.95", ("FROM","/mo"), ["Support for several computers","Printer &amp; Wi-Fi help","Email &amp; Microsoft 365","Security checks","Backup guidance","Remote family support"], "Set up Direct Debit", subscribe_href("home-family"))}
-{plan_card("home", None, "PREMIUM", "Premium Home", "For people who rely heavily on their technology.", "&pound;24.95", ("FROM","/mo"), ["Priority support","Multiple device support","Microsoft 365 help","Advanced troubleshooting","Regular maintenance","New device setup &amp; backups"], "Set up Direct Debit", subscribe_href("home-premium"))}
+      <div class="plan-grid">
+{plan_card("home", None, "HOME SUPPORT", "Home IT Support", "Friendly cover for your computer &mdash; remote help, regular maintenance and security, all year round.", "&pound;18.25", ("","/mo per computer"), ["Support for your computer","Unlimited remote support","Full service every 6 weeks","Security &amp; backup checks","Wi-Fi, printer &amp; email help","Patient, jargon-free help"], "Set up Direct Debit", subscribe_href("home-support"))}
+{plan_card("business", "&#9733; MOST POPULAR", "+ MICROSOFT 365", "Home Support + Microsoft 365", "Everything in Home IT Support, plus Microsoft 365 set up and looked after for you.", "&pound;23.10", ("","/mo per computer"), ["Everything in Home IT Support","Microsoft 365 set up &amp; supported","Outlook email &amp; Office apps","OneDrive backup help","One Microsoft 365 licence included","Extra licences &pound;4.85/mo each"], "Set up Direct Debit", subscribe_href("home-support-365"))}
       </div>
-      <p class="plans-note mono" data-reveal>// PRICES ARE GUIDE PRICES &middot; NO LOCK-IN &middot; ASK US FOR THE RIGHT FIT</p>
+      <p class="plans-note mono" data-reveal>// &pound;18.25/MO PER COMPUTER &middot; ADD MICROSOFT 365 FOR &pound;4.85/MO PER USER &middot; MORE THAN ONE COMPUTER? JUST TELL US</p>
     </section>''',
-   f'''    <section class="section section--alt" id="compare" aria-label="Compare home plans">
+   f'''    <section class="section section--alt" id="compare" aria-label="What's included">
       <div class="wrap">
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>// COMPARE</p>
-          <h2 class="section-title section-title--center" data-title>Compare home plans<span class="title-underline title-underline--center"></span></h2>
+          <h2 class="section-title section-title--center" data-title>What&rsquo;s included<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Every home plan covers one computer for &pound;18.25/month &mdash; add Microsoft 365 for &pound;4.85/month per user. Got several computers? Each is covered at the same price; just tell us your setup.</p>
         </div>
         <div class="price-table-wrap" data-reveal>
           <table class="price-table">
-            <thead><tr><th scope="col">Feature</th><th scope="col">Essential<span class="price">&pound;15.95</span><span class="per">/month</span></th><th scope="col" class="pop">Family<span class="price">&pound;19.95</span><span class="per">/month</span></th><th scope="col">Premium<span class="price">&pound;24.95</span><span class="per">/month</span></th></tr></thead>
+            <thead><tr><th scope="col">Feature</th><th scope="col">Home Support<span class="price">&pound;18.25</span><span class="per">/mo per computer</span></th><th scope="col" class="pop">+ Microsoft 365<span class="price">&pound;23.10</span><span class="per">/mo per computer</span></th></tr></thead>
             <tbody>
-              <tr><th scope="row">Devices covered</th><td>1 computer</td><td>Several</td><td>Multiple</td></tr>
-              <tr><th scope="row">Unlimited remote support</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
-              <tr><th scope="row">Full service every 6 weeks</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
-              <tr><th scope="row">Email &amp; Microsoft 365 help</th><td>Email</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
-              <tr><th scope="row">Printer &amp; Wi-Fi help</th><td class="no">&ndash;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
-              <tr><th scope="row">Security &amp; backup checks</th><td>Advice</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
-              <tr><th scope="row">Priority support</th><td class="no">&ndash;</td><td class="no">&ndash;</td><td class="yes">&#10003;</td></tr>
-              <tr><th scope="row">New device setup</th><td class="no">&ndash;</td><td>Guidance</td><td class="yes">&#10003;</td></tr>
+              <tr><th scope="row">Unlimited remote support</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
+              <tr><th scope="row">Full service every 6 weeks</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
+              <tr><th scope="row">Wi-Fi, printer &amp; email help</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
+              <tr><th scope="row">Security &amp; backup checks</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
+              <tr><th scope="row">New device setup help</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
+              <tr><th scope="row">Microsoft 365 (Outlook &amp; Office apps)</th><td class="no">&ndash;</td><td class="yes">&#10003;</td></tr>
+              <tr><th scope="row">OneDrive backup help</th><td>Advice</td><td class="yes">&#10003;</td></tr>
             </tbody>
           </table>
         </div>
@@ -1281,14 +1280,14 @@ add(
         'Business IT support <em class="grad grad--green">plans</em>',
         "Scalable monthly packages for sole traders and small businesses. From a single user to a busy team — choose the cover that fits, and grow when you&rsquo;re ready.",
         cta1=("Get a Recommendation", "/contact/"), cta2=("Compare Plans", "#compare"),
-        chips=["Per-user pricing", "Microsoft 365 managed", "Remote &amp; on-site options"]),
+        chips=["From &pound;24.38/mo per computer", "Microsoft 365 managed", "Remote &amp; on-site options"]),
    f'''    <section class="support-options" aria-label="Business support plans">
       <div class="plan-grid plan-grid--3">
-{plan_card("business", None, "STARTER", "Business Starter", "For sole traders and very small businesses.", "&pound;21.15", ("FROM","/user/mo"), ["Support for 1&ndash;3 users","Remote IT support","Email support","Microsoft 365 help","Basic security checks","Computer maintenance &amp; buying advice"], "Set up Direct Debit", subscribe_href("business-starter"))}
+{plan_card("business", None, "STARTER", "Business Starter", "For sole traders and very small businesses.", "&pound;24.38", ("FROM","/mo per computer"), ["Support for 1&ndash;3 computers","Remote IT support","Email support","Microsoft 365 help","Basic security checks","Computer maintenance &amp; buying advice"], "Set up Direct Debit", subscribe_href("business-starter"))}
 {plan_card("business", "&#9733; MOST POPULAR", "STANDARD", "Business Standard", "For small businesses needing regular IT support.", "Custom", ("FROM",""), ["Support for multiple users","Microsoft 365 administration","Outlook, Teams &amp; OneDrive","Backup checks","Cybersecurity guidance","Monthly maintenance &amp; new user setup"], "Get a Quote", "/contact/")}
 {plan_card("business", None, "PREMIUM", "Business Premium", "For businesses that rely on IT every day.", "Custom", ("FROM",""), ["Priority support","Remote &amp; on-site options","Microsoft 365 management","Cybersecurity &amp; backup planning","Staff onboarding &amp; offboarding","Device setup &amp; technology planning"], "Get a Quote", "/contact/")}
       </div>
-      <p class="plans-note mono" data-reveal>// PRICED PER USER &middot; NO LOCK-IN &middot; TELL US YOUR TEAM SIZE FOR A QUOTE</p>
+      <p class="plans-note mono" data-reveal>// FROM &pound;24.38/MO PER COMPUTER &middot; NO LOCK-IN &middot; TELL US YOUR SETUP FOR A QUOTE</p>
     </section>''',
    f'''    <section class="section section--alt" id="compare" aria-label="Compare business plans">
       <div class="wrap">
@@ -1300,7 +1299,7 @@ add(
           <table class="price-table">
             <thead><tr><th scope="col">Feature</th><th scope="col">Starter</th><th scope="col" class="pop">Standard</th><th scope="col">Premium</th></tr></thead>
             <tbody>
-              <tr><th scope="row">Users</th><td>1&ndash;3</td><td>Multiple</td><td>Multiple</td></tr>
+              <tr><th scope="row">Computers</th><td>1&ndash;3</td><td>Multiple</td><td>Multiple</td></tr>
               <tr><th scope="row">Remote support</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
               <tr><th scope="row">Microsoft 365</th><td>Help</td><td>Administration</td><td>Full management</td></tr>
               <tr><th scope="row">Cybersecurity</th><td>Basic checks</td><td>Guidance</td><td>Planning</td></tr>
@@ -1740,7 +1739,7 @@ add(
           <div>
             <p class="eyebrow mono">// PREVENTION BEATS REPAIR</p>
             <h2 class="repairs__title">Avoid future problems with monthly support</h2>
-            <p class="lede">One-off repairs fix today&rsquo;s problem. A monthly plan stops tomorrow&rsquo;s — with regular maintenance, security and a techie on hand, from &pound;15.95/month.</p>
+            <p class="lede">One-off repairs fix today&rsquo;s problem. A monthly plan stops tomorrow&rsquo;s — with regular maintenance, security and a techie on hand, from &pound;18.25/month per computer.</p>
           </div>
           <a href="/monthly-it-support/" class="button primary">View Monthly Plans</a>
         </div>
@@ -1851,7 +1850,7 @@ add(
      ("Do you provide business IT services and IT solutions in Bournemouth?", "Yes — alongside home IT support we provide managed business IT services and IT solutions for Bournemouth companies: Microsoft 365, cybersecurity, backups, servers and networks, and day-to-day support for your team."),
      ("Do you offer computer support in Bournemouth?", "Yes — computer and laptop support and repairs for Bournemouth homes and businesses, including slow computers, virus removal, upgrades, setup and data transfer, with no call-out fee."),
      ("Do you offer on-site IT support in Bournemouth?", "Yes — fast remote help plus on-site visits across Bournemouth and Poole when hands-on support is needed."),
-     ("What does it cost?", "Home plans start at £15.95/month and business plans from £21.15/month, with one-off repairs also available."),
+     ("What does it cost?", "Home support is £18.25/month per computer and business support from £24.38/month per computer, with one-off repairs also available."),
    ]),
  ]),
  content="\n".join([
@@ -1902,7 +1901,7 @@ add(
      ("Do you provide business IT services and IT solutions in Bournemouth?", "Yes — alongside home IT support we provide managed business IT services and IT solutions for Bournemouth companies: Microsoft 365, cybersecurity, backups, servers and networks, and day-to-day support for your team."),
      ("Do you offer computer support in Bournemouth?", "Yes — computer and laptop support and repairs for Bournemouth homes and businesses, including slow computers, virus removal, upgrades, setup and data transfer, with no call-out fee."),
      ("Do you offer on-site IT support in Bournemouth?", "Yes — fast remote help plus on-site visits across Bournemouth and Poole when hands-on support is needed."),
-     ("What does it cost?", "Home plans start at &pound;15.95/month and business plans from &pound;21.15/month, with one-off repairs also available."),
+     ("What does it cost?", "Home support is &pound;18.25/month per computer and business support from &pound;24.38/month per computer, with one-off repairs also available."),
    ]),
    cta("Local IT support, sorted", "Join the Bournemouth homes and businesses who never worry about IT. Pick a plan or say hello.",
        primary=("View Monthly Plans", "/monthly-it-support/"), secondary=("Contact Us", "/contact/")),
