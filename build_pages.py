@@ -1120,11 +1120,11 @@ add(
    ]),
  ]),
  content="\n".join([
-   hero(bc("Business IT Support"), "// LEADING MSP &middot; FOR BUSINESS",
+   hero(bc("Business IT Support"), "// BUSINESS IT SUPPORT &middot; BOURNEMOUTH &amp; DORSET",
         'Business IT support <em class="grad grad--green">subscriptions</em>',
-        "As a leading Managed Service Provider (MSP), we deliver reliable monthly IT support for sole traders and small businesses — Microsoft 365, cybersecurity, backups and staff support, proactively managed. Like having your own IT department, without the cost of employing one.",
+        "Reliable monthly IT support for sole traders and small businesses — Microsoft 365, cybersecurity, backups and staff support, all proactively managed for you. Like having your own IT department, without the cost of employing one. Rated 4.9 on Google, family-run since 1995.",
         cta1=("Choose a Business Plan", "/business-it-support-plans/"), cta2=("Book a chat", "/contact/"),
-        chips=["Leading local MSP", "From &pound;21.15/mo", "Remote &amp; on-site across Dorset"]),
+        chips=["Your outsourced IT team", "From &pound;21.15/mo", "Remote &amp; on-site across Dorset"]),
    f'''    <section class="section" aria-label="Who it is for">
       <div class="wrap">
         <div class="section-head">
