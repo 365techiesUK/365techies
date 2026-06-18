@@ -736,7 +736,7 @@ BUSINESS_NODE = {
     "@type": ["LocalBusiness", "ProfessionalService"], "@id": SITE + "/#business",
     "name": "365 Techies", "legalName": "365 Techies Limited", "url": SITE + "/",
     "telephone": "+441202775566", "email": "help@365techies.co.uk", "foundingDate": "1995",
-    "image": SITE + "/og-image.jpg", "logo": SITE + "/favicon.svg", "priceRange": "££",
+    "image": SITE + "/og-image.jpg", "logo": SITE + "/logo.jpg", "priceRange": "££",
     "address": {"@type": "PostalAddress", "addressLocality": "Bournemouth", "addressRegion": "Dorset", "addressCountry": "GB"},
     "geo": {"@type": "GeoCoordinates", "latitude": 50.7192, "longitude": -1.8808},
     "areaServed": [{"@type": "AdministrativeArea", "name": "Dorset"},
@@ -908,7 +908,7 @@ def add(**kw):
 add(
  slug="monthly-it-support",
  title="Monthly IT Support Subscriptions | 365 Techies",
- desc="Monthly IT support subscriptions for homes and small businesses across Bournemouth, Poole and Dorset. Regular maintenance, security checks, remote help and Microsoft 365 support from £15.95/month.",
+ desc="Monthly IT support for homes and businesses across Dorset — from £15.95/month, cancel anytime, no call-out fee. Rated 4.9 on Google, friendly and family-run since 1995.",
  og_title="Monthly IT Support Subscriptions | 365 Techies",
  schema=lambda s: graph([
    crumb(s, "Monthly IT Support"), webpage(s, "Monthly IT Support Subscriptions", "Monthly IT support subscriptions for homes and small businesses across Dorset."),
@@ -1393,7 +1393,7 @@ M365_FAQS = [
 add(
  slug="microsoft-365-support",
  title="Microsoft 365 Support Bournemouth | Outlook, Teams & OneDrive Help",
- desc="Microsoft 365 and Office 365 support for homes and businesses across Bournemouth, Poole and Dorset — setup, installation, migration, Outlook, Teams, OneDrive, SharePoint, licensing and security. Set up and managed by your local team.",
+ desc="Microsoft 365 and Office 365 support across Bournemouth, Poole and Dorset — setup, migration and installation. Microsoft Partner, rated 4.9 on Google, family-run since 1995.",
  og_title="Microsoft 365 Support | Outlook, Teams & OneDrive Help",
  schema=lambda s: graph([
    crumb(s, "Microsoft 365"), webpage(s, "Microsoft 365 Support", "Complete Microsoft 365 support — Outlook, Teams, OneDrive, SharePoint, licensing, migration and security."),
@@ -1503,7 +1503,7 @@ CYBER_FAQS = [
 add(
  slug="cybersecurity-support",
  title="The Ultimate Cybersecurity for Homes & Businesses | 365 Techies",
- desc="The ultimate cybersecurity for homes and small businesses across Dorset — layered, always-on protection against ransomware, phishing, scams and malware. Malwarebytes Partner, Microsoft security, MFA, verified backups, 24/7 monitoring and a real human to ask.",
+ desc="Cybersecurity for Dorset homes and businesses — protection from ransomware, phishing, scams and malware, with MFA and verified backups. Rated 4.9 on Google, family-run since 1995.",
  og_title="The Ultimate Cybersecurity | 365 Techies",
  schema=lambda s: graph([
    crumb(s, "Cybersecurity"), webpage(s, "Cybersecurity Support", "The ultimate layered cybersecurity for homes and small businesses across Dorset."),
@@ -1648,7 +1648,7 @@ def repair_town_links():
 add(
  slug="computer-repairs",
  title="Computer Repairs Bournemouth | Laptop & PC Repairs | 365 Techies",
- desc="Computer and laptop repairs in Bournemouth, Poole and Dorset — no-fix-no-fee and a 12-month warranty. Slow computer fixes, virus removal, Windows problems, SSD upgrades, data recovery and new computer setup, with free local collection.",
+ desc="Computer and laptop repairs in Bournemouth, Poole and Dorset — no-fix-no-fee, 12-month warranty, no call-out fee. Free local collection. Rated 4.9 on Google, since 1995.",
  og_title="Computer Repairs Bournemouth | Laptop & PC Repairs",
  schema=lambda s: graph([
    crumb(s, "Computer Repairs"), webpage(s, "Computer Repairs", "Computer and laptop repairs in Bournemouth, Poole and Dorset."),
@@ -1798,8 +1798,8 @@ add(
 # ============================================================ IT SUPPORT BOURNEMOUTH (local)
 add(
  slug="it-support-bournemouth",
- title="IT Support & IT Services Bournemouth | Business Computer Support",
- desc="Local IT support and IT services in Bournemouth for homes and businesses — monthly support plans, computer & laptop repairs, Microsoft 365, cybersecurity and fast remote help. Your friendly Bournemouth-based IT company and IT solutions provider.",
+ title="IT Support & IT Services Bournemouth | 365 Techies",
+ desc="IT support, IT services and computer repairs in Bournemouth — rated 4.9 on Google, no call-out fee, family-run since 1995. Homes and businesses, remote and on-site. Call or text us.",
  og_title="IT Support & IT Services Bournemouth | 365 Techies",
  schema=lambda s: graph([
    crumb(s, "IT Support Bournemouth"), webpage(s, "IT Support Bournemouth", "Local IT support in Bournemouth for homes and businesses."),
