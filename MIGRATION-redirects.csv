@@ -43,3 +43,4 @@ old_url,new_url,clicks_3mo,impressions_3mo,old_position,note
 /category/tech/,/it-advice/,0,1,7,old blog category -> advice hub
 /contact/,/contact/,0,46,12.78,unchanged - keep
 /reviews/,/reviews/,0,49,9.29,unchanged - keep
+https://365-computers.com/* (OLD BRAND DOMAIN),https://365techies.co.uk/ (keep existing 301s),,,,KEEP LIVE AFTER LAUNCH - old domain 301-redirects ~70 URLs to 365techies.co.uk and still carries citations (misterwhat/ticari/quotebank/attracta/urlm). Do not break this cross-domain redirect when moving hosts.
