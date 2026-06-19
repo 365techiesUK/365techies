@@ -150,7 +150,7 @@ def reviews_page():
     figs = "\n".join(f'''        <figure class="review" data-reveal>
           <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;{t}&rdquo;</blockquote>
-          <figcaption><strong>{n}</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
+          <figcaption data-initial="{n.strip()[0]}"><strong>{n}</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>''' for n, t in REVIEWS)
     content = "\n".join([
       hero(bc(crumb_name), "// GOOGLE REVIEWS",

@@ -16,7 +16,7 @@ except Exception:
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://365techies.co.uk"
-CSSV = "42"
+CSSV = "43"
 HUBSPOT_ID = "148562638"
 # Public URL of the deployed 365 AI OS. When set, the /365-ai-os/ page shows a
 # prominent "Launch the live demo" button. Leave empty ("") to hide it.
@@ -908,7 +908,7 @@ def reviews_block(revs):
     figs = "\n".join(f'''        <figure class="review" data-reveal>
           <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;{q}&rdquo;</blockquote>
-          <figcaption><strong>{who}</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
+          <figcaption data-initial="{who.strip()[0]}"><strong>{who}</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>''' for q, who in revs)
     return f'''    <section class="reviews" aria-label="Customer reviews">
       <p class="eyebrow eyebrow--center mono" data-reveal>// GOOGLE REVIEWS</p>
