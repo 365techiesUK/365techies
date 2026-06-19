@@ -1798,6 +1798,61 @@ def dell_hardware():
         desc=desc, og_title="Refurbished Dell Latitude & OptiPlex | 365 Techies", schema=schema, content=content)
 dell_hardware()
 
+# ===================================================== REFURBISHED LAPTOPS — LOCAL LANDING
+def refurbished_local():
+    slug = "refurbished-laptops-dorset"
+    desc = "Refurbished Dell Latitude laptops & OptiPlex PCs in Bournemouth, Poole & across Dorset — tested, fitted with a new Samsung Pro SSD, set up, supported and guaranteed by a local family firm since 1995."
+    faqs = [
+      ("Where can I buy a refurbished laptop near me in Dorset?", "365 Techies supplies refurbished Dell business laptops and PCs right across Bournemouth, Poole, Christchurch and the wider Dorset area &mdash; set up and supported locally. Tell us what you need and we&rsquo;ll match you one."),
+      ("Do you deliver, or do I collect?", "Whatever suits &mdash; collect locally, or we can deliver and set it up across Dorset. Much of the setup we can even do remotely once you&rsquo;re up and running."),
+      ("Are they new or refurbished?", "Professionally refurbished, tested ex-business Dell &mdash; each with a brand-new Samsung Pro SSD, graded A, B or C, and backed by a Dell next-business-day warranty plus our own 5-year guarantee. See our <a href=\"/dell-hardware/\">refurbished Dell page</a> for the full detail."),
+      ("Which areas do you cover?", "Bournemouth, Poole, Christchurch, Ferndown, Wimborne, Wareham, Dorchester, Weymouth and across Dorset &mdash; remotely and on-site."),
+    ]
+    content = "\n".join([
+      hero(bc("Refurbished Laptops in Dorset"), "// BOURNEMOUTH &middot; POOLE &middot; DORSET",
+           'Refurbished laptops &amp; PCs in <em class="grad grad--cyan">Bournemouth, Poole &amp; Dorset</em>',
+           "Affordable, reliable refurbished Dell business laptops and desktops &mdash; tested, fitted with a new Samsung Pro SSD, set up and supported by your local family firm, here since 1995. Kind on your wallet and the planet.",
+           cta1=("Find me a refurbished Dell", "/dell-hardware/#match"), cta2=("Call 01202 775566", "tel:+441202775566"),
+           chips=["Local since 1995","New Samsung Pro SSD","5-year guarantee"]),
+      f'''    <section class="section" aria-label="Local refurbished Dell">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">/01 — LOCAL &amp; TRUSTED</p>
+          <h2 class="section-title" data-title>Your local refurbished Dell specialists<span class="title-underline"></span></h2>
+          <p>For over 30 years we&rsquo;ve supplied refurbished Dell business laptops and PCs to homes and businesses across Dorset &mdash; proper business-grade Latitude laptops and OptiPlex desktops for a fraction of the price of new.</p>
+          <p>Unlike a faceless online seller, we&rsquo;re a real local family firm: we recommend the right machine, fit a brand-new Samsung Pro SSD, set it up, move your data across and support it for years &mdash; and you can phone us or pop in. See the full detail on our <a href="/dell-hardware/">refurbished Dell page</a>.</p>
+        </div>
+        <ul class="checklist" data-stagger>
+{checklist(["Tested ex-business Dell Latitude &amp; OptiPlex","Brand-new Samsung Pro SSD (5-year guarantee)","Dell warranty + our own 5-year guarantee","Graded A, B or C &mdash; you know what you&rsquo;re getting","Set up, data moved across &amp; fully supported","Full repair service if you ever break it"])}
+        </ul>
+      </div>
+    </section>''',
+      f'''    <section class="section section--alt" aria-label="Areas we cover">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/02 — ACROSS DORSET</p>
+          <h2 class="section-title section-title--center" data-title>Refurbished computers, supplied locally<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>We supply, set up and support refurbished Dell laptops and PCs right across the area &mdash; collect locally, or we&rsquo;ll deliver and set up for you.</p>
+        </div>
+        <ul class="security-grid" data-stagger>
+{grid_cards([("Bournemouth &amp; Poole","Refurbished Dell laptops and PCs supplied and set up across Bournemouth, Poole and Christchurch."),("Across Dorset","Ferndown, Wimborne, Wareham, Dorchester, Weymouth and the surrounding towns and villages."),("Set up &amp; supported","We configure everything and can support it remotely, wherever you are in Dorset."),("Trade in your old one","We&rsquo;ll move your data across, then securely wipe and recycle your old machine &mdash; see <a href=\"/secure-it-disposal/\">secure IT disposal</a>.")])}
+        </ul>
+        <p style="text-align:center;margin-top:1.8rem" data-reveal><a class="button secondary" href="/dell-hardware/">See all the detail on our refurbished Dell page &#8594;</a></p>
+      </div>
+    </section>''',
+      faq_html(faqs),
+      cta("Find your refurbished Dell",
+          "Tell us what you need and we&rsquo;ll match you a tested, refurbished Dell &mdash; set up, supported and guaranteed, right here in Dorset.",
+          primary=("Find me a refurbished Dell", "/dell-hardware/#match"), secondary=("Call 01202 775566", "tel:+441202775566")),
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        return graph([crumb(s, "Refurbished Laptops in Dorset"), webpage(s, "Refurbished Laptops & PCs in Bournemouth, Poole & Dorset", _desc),
+                      service(s, "Refurbished Dell Laptops & PCs in Dorset", "Refurbished, tested ex-business Dell Latitude laptops and OptiPlex desktops, supplied, set up and supported across Bournemouth, Poole and Dorset, with a new Samsung Pro SSD and our own warranty.", "Refurbished computer supply"),
+                      faqpage(s, _faqs)])
+    add(slug=slug, title="Refurbished Laptops & PCs in Bournemouth, Poole & Dorset | 365 Techies",
+        desc=desc, og_title="Refurbished Laptops in Bournemouth, Poole & Dorset | 365 Techies", schema=schema, content=content)
+refurbished_local()
+
 # ===================================================== MALWAREBYTES
 def malwarebytes():
     slug = "malwarebytes-premium"
