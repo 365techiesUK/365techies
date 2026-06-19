@@ -9,7 +9,7 @@ from build_pages import (add, graph, crumb, webpage, service, faqpage,
                          steps, reviews_block, SITE, write_all)
 
 REVPOOL = [
- ("My laptop died the night before a deadline. One message to 365 Techies and it was running again first thing next morning. Absolutely unreal.", "Maria L."),
+ ("Can&rsquo;t fault the skill and attention the 365 guys give. Confidence that things keep ticking over with their regular maintenance checks.", "Rob Hazell"),
  ("Your service and support are unbeatable and delivered with patience and a smile.", "John Holloway"),
  ("A friendly team, there to help when needed. Nice to know our laptops are kept up to date and virus free. Worth the monthly fee.", "Alan Bevis"),
  ("The service I get with 365 techies is amazing — always on the other end of the phone.", "Vince Jones"),

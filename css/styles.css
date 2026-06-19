@@ -265,8 +265,7 @@ body.menu-open .site-header { z-index: 70; }
   font-family: var(--font-mono);
   font-size: 0.72rem; font-weight: 500; letter-spacing: 0.14em;
   white-space: nowrap;
-  animation: sosPulse 1.9s ease-in-out infinite;
-  will-change: transform;
+  box-shadow: 0 0 18px rgba(255, 59, 48, 0.45);
 }
 .nav-sos:hover { background: linear-gradient(135deg, #f53541, #d31424); }
 @keyframes sosPulse {
@@ -286,7 +285,7 @@ body.menu-open .site-header { z-index: 70; }
   color: #fff;
   justify-content: center;
   gap: 0.6rem;
-  animation: sosPulse 1.9s ease-in-out infinite;
+  box-shadow: 0 0 18px rgba(255, 59, 48, 0.4);
 }
 
 @media (max-width: 1380px) { .nav-sos__long { display: none; } }
@@ -661,7 +660,7 @@ body.menu-open { overflow: hidden; }
   background:
     linear-gradient(165deg, rgba(13, 27, 52, 0.86), rgba(7, 15, 32, 0.92)) padding-box,
     linear-gradient(135deg, rgba(29, 151, 227, 0.85), rgba(0, 206, 27, 0.85), rgba(29, 151, 227, 0.85)) border-box;
-  animation: featuredGlow 3.4s ease-in-out infinite;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35), 0 0 32px rgba(29, 151, 227, 0.2);
 }
 @keyframes featuredGlow {
   0%, 100% { box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35), 0 0 32px rgba(29, 151, 227, 0.18); }

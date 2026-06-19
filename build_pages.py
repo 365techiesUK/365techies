@@ -16,7 +16,7 @@ except Exception:
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://365techies.co.uk"
-CSSV = "39"
+CSSV = "40"
 HUBSPOT_ID = "148562638"
 # Public URL of the deployed 365 AI OS. When set, the /365-ai-os/ page shows a
 # prominent "Launch the live demo" button. Leave empty ("") to hide it.
@@ -52,7 +52,7 @@ GC_NOTE = '''    <section class="section section--alt" aria-label="Direct Debit 
       <div class="wrap wrap--narrow" style="text-align:center">
         <p class="eyebrow eyebrow--center mono" data-reveal>// SIMPLE MONTHLY PAYMENTS</p>
         <h2 class="section-title section-title--center" data-title>Pay monthly by Direct Debit<span class="title-underline title-underline--center"></span></h2>
-        <p class="lede lede--center" data-reveal>Set up your plan in minutes with secure Direct Debit, powered by GoCardless. No card to re-enter each month, no contract — change or cancel anytime.</p>
+        <p class="lede lede--center" data-reveal>Pay monthly by secure Direct Debit, powered by GoCardless. Tell us your setup and we&rsquo;ll send your secure sign-up link the same working day — no card to re-enter each month, no contract, change or cancel anytime.</p>
         <div class="partner-badges" style="justify-content:center;margin-top:1.6rem" data-reveal>
           <span class="partner-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg>Direct Debit by GoCardless</span>
           <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>Secure &amp; FCA-regulated</span>
@@ -755,6 +755,14 @@ BUSINESS_NODE = {
     "name": "365 Techies", "legalName": "365 Techies Limited", "url": SITE + "/",
     "telephone": "+441202775566", "email": "help@365techies.co.uk", "foundingDate": "1995",
     "image": SITE + "/og-image.jpg", "logo": SITE + "/logo.jpg", "priceRange": "££",
+    "alternateName": "365 Techies Ltd",
+    "slogan": "The IT support experts",
+    "description": "Family-run, leading Managed Service Provider (MSP) established in 1995 — Dell hardware specialists, Microsoft partners and certified Microsoft Office Specialists. Fully managed monthly IT support, cybersecurity, backups and cloud, plus one-off computer repairs and refurbished Dell hardware, for homes and small businesses across Bournemouth, Poole and Dorset.",
+    "currenciesAccepted": "GBP",
+    "paymentAccepted": "Direct Debit (GoCardless), Bank Transfer, Credit Card, Debit Card",
+    "identifier": {"@type": "PropertyValue", "name": "Company registration number", "value": "11073501"},
+    "memberOf": {"@type": "Organization", "name": "Sustainable Dorset", "url": "https://www.sustainabledorset.org/"},
+    "knowsAbout": ["IT support", "Computer repair", "Laptop repair", "Microsoft 365", "Cybersecurity", "Data backup", "Network security", "Wi-Fi", "Remote support", "Dell hardware", "Dell Latitude laptops", "Dell OptiPlex desktops", "Refurbished computers", "Malwarebytes Premium", "VPN", "Online safety", "Accessible IT support", "IT support for retired people", "IT support for disabled people", "Website design", "Web hosting", "Business email", "Managed service provider", "Managed IT services", "MSP", "New Forest IT support"],
     "address": {"@type": "PostalAddress", "addressLocality": "Bournemouth", "addressRegion": "Dorset", "addressCountry": "GB"},
     "geo": {"@type": "GeoCoordinates", "latitude": 50.7192, "longitude": -1.8808},
     "areaServed": [{"@type": "AdministrativeArea", "name": "Dorset"},
@@ -762,11 +770,15 @@ BUSINESS_NODE = {
                    {"@type": "AdministrativeArea", "name": "New Forest"}],
     "openingHoursSpecification": {"@type": "OpeningHoursSpecification",
         "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], "opens": "09:00", "closes": "17:00"},
-    "aggregateRating": {"@type": "AggregateRating", "ratingValue": "4.9", "reviewCount": "51", "bestRating": "5"},
-    # Verified Google Business Profile (CID 5924622613303465737 / Place ID ChIJlTb8YRuic0gRCRczduB8OFI)
+    # No sitewide aggregateRating: star ratings live only where real Review nodes back them
+    # (the /reviews/ page and the homepage), per Google's review-snippet guidelines — a self-serving
+    # sitewide rating with no per-page reviews is structured-data spam.
+    # Verified Google Business Profile (Place ID ChIJlTb8YRuic0gRCRczduB8OFI / CID 5924622613303465737)
     # links the site's business entity to the official Google listing for local-SEO entity confirmation.
-    "hasMap": "https://www.google.com/maps?cid=5924622613303465737",
-    "sameAs": ["https://www.google.com/maps?cid=5924622613303465737"],
+    "hasMap": "https://www.google.com/maps/place/?q=place_id:ChIJlTb8YRuic0gRCRczduB8OFI",
+    "sameAs": ["https://www.facebook.com/365techies",
+               "https://www.google.com/maps/place/?q=place_id:ChIJlTb8YRuic0gRCRczduB8OFI",
+               "https://find-and-update.company-information.service.gov.uk/company/11073501"],
 }
 WEBSITE_NODE = {"@type": "WebSite", "@id": SITE + "/#website", "url": SITE + "/",
                 "name": "365 Techies", "inLanguage": "en-GB", "publisher": {"@id": SITE + "/#business"}}
@@ -1895,7 +1907,7 @@ add(
         </div>
       </div>
     </section>''',
-   reviews_block([("My laptop died the night before a deadline. One message to 365 Techies and it was running again first thing next morning. Absolutely unreal.", "Maria L."),("Your service and support are unbeatable and delivered with patience and a smile.", "John Holloway")]),
+   reviews_block([("I have benefited from the help of the guys at 365 for most of twenty years. They have helped me on so many occasions I can not remember. A fully inclusive service.", "David Hagner"),("Your service and support are unbeatable and delivered with patience and a smile.", "John Holloway")]),
    faq_html([
      ("Are you a local IT company in Bournemouth?", "Yes — 365 Techies is a family-run Bournemouth IT company, established in 1995, providing IT support, IT services and computer &amp; laptop repairs for homes and businesses across the town and the wider Dorset area."),
      ("Do you provide business IT services and IT solutions in Bournemouth?", "Yes — alongside home IT support we provide managed business IT services and IT solutions for Bournemouth companies: Microsoft 365, cybersecurity, backups, servers and networks, and day-to-day support for your team."),
