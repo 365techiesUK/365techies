@@ -1585,9 +1585,10 @@ def dell_hardware():
       ("Are these new or refurbished?", "They&rsquo;re professionally refurbished &mdash; genuine ex-business Dell Latitude laptops and OptiPlex desktops that we test, securely wipe, clean, grade and set up before they go out. Not new, and we&rsquo;d never pretend otherwise &mdash; that&rsquo;s rather the point: proper business-grade kit for a lot less."),
       ("Are refurbished business laptops any good?", "Genuinely, yes. Business-grade Dell Latitudes and OptiPlexes are built to work hard for years &mdash; tougher materials and, for Latitude laptops, tested to military-standard durability methods. A well-refurbished one often outlasts a brand-new budget laptop that was built down to a price."),
       ("Is it safe to buy refurbished?", "From us, yes. Every machine is fully tested and securely wiped, you buy from a real local firm you can phone or visit, and you&rsquo;re covered by our own warranty plus your Consumer Rights Act protection &mdash; very different from an untested bargain off a marketplace."),
-      ("What do the condition grades mean?", "A grade describes how a machine <em>looks</em> &mdash; light marks versus near-mint &mdash; not how it works; every one we sell is fully working and tested. We&rsquo;ll tell you the exact grade before you buy. (Ask us for our current grading key.)"),
-      ("What about the battery?", "Laptop batteries wear with use, so we check each one and tell you its condition up front &mdash; no surprises. If you&rsquo;d like a fresh battery, just ask before you buy."),
-      ("What warranty and returns do I get?", "Every machine comes with our own warranty, and because you&rsquo;re buying from a UK business you also have full Consumer Rights Act protection &mdash; including a 30-day right to reject if something&rsquo;s faulty. Ask us for the exact warranty length and our returns process."),
+      ("What do the condition grades mean?", "We grade Dell Latitude laptops <strong>A, B or C</strong> by how they <em>look</em> &mdash; A is near-mint, B has light cosmetic wear, C has more visible marks &mdash; not by how they work. Every grade is fully tested and working, and we tell you the exact grade before you buy."),
+      ("What about the storage and battery?", "Every machine is fitted with a <strong>brand-new Samsung Pro SSD</strong> (with a 5-year guarantee) for speed and reliability. Laptop batteries wear with use, so we check each one and tell you its condition up front &mdash; and can fit a fresh battery if you&rsquo;d like."),
+      ("What warranty do I get?", "Plenty of cover: a <strong>Dell next-business-day worldwide warranty</strong> (extendable if you need it), our own <strong>365 Techies 5-year guarantee</strong>, and the new Samsung Pro SSD&rsquo;s 5-year guarantee &mdash; plus full support on any of our plans and a full repair service if you ever break it. As a UK buyer you&rsquo;re also covered by the Consumer Rights Act, including a 30-day right to reject if something&rsquo;s faulty."),
+      ("Can you supply screens, webcams and other accessories?", "Yes &mdash; we&rsquo;ll supply and set up whatever you need alongside your Dell: monitors, webcams, backup drives, speakers, keyboards, mice and more, all configured and ready to use."),
       ("Can you wipe and recycle my old computer?", "Yes &mdash; we can move your files across to your new Dell, then securely wipe (with a certificate) and responsibly recycle your old machine. See our <a href=\"/secure-it-disposal/\">secure IT disposal</a> page."),
       ("Do you set it up and support it too?", "Always. Every Dell we supply is set up ready to use &mdash; Windows, Microsoft 365, security, backups and your data moved across &mdash; and you can keep it looked after on a <a href=\"/home-it-support-plans/\">home</a> or <a href=\"/business-it-support-plans/\">business</a> support plan."),
     ]
@@ -1596,17 +1597,17 @@ def dell_hardware():
            'Refurbished Dell Latitude laptops &amp; <em class="grad grad--cyan">OptiPlex desktops</em>',
            "Professionally refurbished, tested ex-business Dell &mdash; proper business-grade computers for a fraction of the price of new, set up and supported by a real local firm you can phone or pop in to see. Kinder on your wallet and the planet.",
            cta1=("Find me a refurbished Dell", "#match"), cta2=("Call 01202 775566", "tel:+441202775566"),
-           chips=["Tested &amp; refurbished","Our own warranty","Set up &amp; supported locally"]),
+           chips=["New Samsung Pro SSD","5-year guarantee","Set up &amp; fully supported"]),
       f'''    <section class="section" aria-label="Why refurbished business Dell">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/01 — WHY REFURBISHED DELL</p>
           <h2 class="section-title" data-title>Proper grown-up kit, for a lot less<span class="title-underline"></span></h2>
           <p>There&rsquo;s a world of difference between a cheap new high-street laptop and a Dell Latitude or OptiPlex. The business range is built to work hard for years &mdash; tougher materials, better components and stronger security &mdash; and Dell&rsquo;s Latitude laptops are tested to military-standard durability methods.</p>
-          <p>Bought refurbished, that quality costs <strong>far less than new</strong> &mdash; often around 30&ndash;50% less &mdash; while still doing everything most homes and small businesses need. <strong>We test, refurbish, set up and support every one</strong>, so you get a dependable computer without paying new-laptop prices.</p>
+          <p>Bought refurbished, that quality costs <strong>far less than new</strong> &mdash; often around 30&ndash;50% less &mdash; while still doing everything most homes and small businesses need. We&rsquo;ve been supplying refurbished Dell business laptops and PCs for <strong>over 30 years</strong>: we recommend the right model, spec, memory and storage, fit a <strong>brand-new Samsung Pro SSD</strong>, supply any accessories you need, set it all up and support it for years.</p>
         </div>
         <ul class="checklist" data-stagger>
-{checklist(["Genuine ex-business Dell Latitude &amp; OptiPlex","Built to last years, not months","Often around 30&ndash;50% less than new","Fully tested &amp; securely wiped","Backed by our own warranty","Set up &amp; supported by your local team","Kinder on the planet &mdash; less e-waste","We tell you exactly what you&rsquo;re getting"])}
+{checklist(["Genuine ex-business Dell Latitude &amp; OptiPlex","Brand-new Samsung Pro SSD &mdash; 5-year guarantee","Dell next-business-day warranty + our 5-year guarantee","Often around 30&ndash;50% less than new","We recommend the right spec &amp; supply the accessories","Set up &amp; fully supported by your local team","Supplying refurbished Dell business kit for 30+ years","Full repair service if you ever break it"])}
         </ul>
       </div>
     </section>''',
@@ -1618,7 +1619,7 @@ def dell_hardware():
           <p class="lede lede--center" data-reveal>No mystery boxes. Every machine goes through the same honest process before it reaches you &mdash; and we tell you exactly what you&rsquo;re getting.</p>
         </div>
         <div class="tile-grid" data-stagger>
-{tiles([("shield","Fully tested","Every machine is checked over and run through full diagnostics &mdash; if it&rsquo;s not right, it doesn&rsquo;t go out."),("lock","Securely wiped","The previous owner&rsquo;s data is securely erased and a clean copy of Windows installed."),("eye","Honestly graded","We grade how each machine looks (a grade is about looks, not how it works) and tell you the grade before you buy."),("battery","Battery checked","Laptop batteries wear with use, so we check each one and tell you its condition up front."),("monitor","Set up &amp; ready","Windows, Microsoft 365, security and backups configured, and your data moved across."),("check","Nothing hidden","We tell you the model, age, spec, grade and battery condition &mdash; no vague listings, no nasty surprises.")])}
+{tiles([("shield","Fully tested","Every machine is checked over and run through full diagnostics &mdash; if it&rsquo;s not right, it doesn&rsquo;t go out."),("bolt","Brand-new Samsung Pro SSD","We fit a new Samsung Pro solid-state drive in every machine &mdash; faster, more reliable, and covered by a 5-year guarantee."),("lock","Securely wiped","Any previous data is securely erased and a clean copy of Windows installed."),("eye","Graded A, B or C","We grade how each machine looks &mdash; A (near-mint), B (light wear) or C (more visible marks) &mdash; and tell you which before you buy. Every grade is fully working."),("battery","Battery checked","Laptop batteries wear with use, so we check each one and tell you its condition up front."),("monitor","Set up &amp; ready","Windows, Microsoft 365, security and backups configured, your data moved across, and any accessories set up too.")])}
         </div>
         <p class="mono" style="text-align:center;max-width:64ch;margin:1.8rem auto 0;color:var(--muted)" data-reveal>Being straight with you: refurbished business machines usually run an earlier processor generation and batteries vary &mdash; so we match you a machine that&rsquo;s right for what you actually do, and stock of any one spec is limited.</p>
       </div>
@@ -1631,15 +1632,15 @@ def dell_hardware():
         </div>
         <div class="split-2">
           <div class="tile" data-reveal>
-            <h3>Our own warranty</h3>
-            <p style="color:var(--muted);margin:0 0 1.1rem">Every machine comes with <strong>our own warranty</strong> and a local team who actually answer the phone. If something isn&rsquo;t right, you talk to us &mdash; not a faceless seller. (Ask us for the current warranty length and exactly what it covers.)</p>
+            <h3>Covered every which way</h3>
+            <p style="color:var(--muted);margin:0 0 1.1rem">These aren&rsquo;t marketplace gambles &mdash; every machine is protected several times over. And if you ever manage to break it, we run a full repair service too.</p>
             <ul class="checklist">
-{checklist(["Backed by 365 Techies, your local firm","One number to call if anything&rsquo;s wrong","Set up &amp; ongoing support available","Family business, here since 1995"])}
+{checklist(["<strong>Dell next-business-day worldwide warranty</strong> &mdash; extendable if you need it","<strong>365 Techies 5-year guarantee</strong>","New Samsung Pro SSD &mdash; 5-year guarantee","Full repair service if you break it","Full support on any of our support plans","Family firm, here since 1995"])}
             </ul>
           </div>
           <div class="tile" data-reveal>
-            <h3>Your legal protection</h3>
-            <p style="color:var(--muted);margin:0 0 1.1rem">Because you&rsquo;re buying from a UK business, you&rsquo;re also covered by the <strong>Consumer Rights Act 2015</strong> &mdash; protection you simply don&rsquo;t get buying privately or off a marketplace.</p>
+            <h3>Your legal protection too</h3>
+            <p style="color:var(--muted);margin:0 0 1.1rem">On top of all that, because you&rsquo;re buying from a UK business you&rsquo;re covered by the <strong>Consumer Rights Act 2015</strong> &mdash; protection you simply don&rsquo;t get buying privately or off a marketplace.</p>
             <ul class="checklist">
 {checklist(["30-day right to reject if it&rsquo;s faulty","Repair or replacement if a fault appears","Faults in the first 6 months assumed present at sale","You always know where we are"])}
             </ul>
@@ -1706,12 +1707,36 @@ def dell_hardware():
         </div>
       </div>
     </section>''',
+      f'''    <section class="section" aria-label="Business-grade versus consumer">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/07 — BUSINESS vs CONSUMER</p>
+          <h2 class="section-title section-title--center" data-title>Why a business-grade Dell beats a cheap new machine<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Latitude laptops and OptiPlex PCs were built for offices that can&rsquo;t afford downtime &mdash; not built down to a price for a shop shelf. Here&rsquo;s the difference you actually feel.</p>
+        </div>
+        <div class="split-2">
+          <div class="tile" data-reveal>
+            <h3>Business-grade Dell (what we supply)</h3>
+            <ul class="checklist">
+{checklist(["Tougher build &mdash; metal frames, spill-resistant keyboards; Latitudes tested to military-standard durability methods","Built to run all day, for years &mdash; not months","Stronger security built in (TPM chip, encryption)","Designed to be opened, serviced and upgraded","Quality components chosen for reliability, not the lowest price","Plus our new Samsung Pro SSD, warranties and local support"])}
+            </ul>
+          </div>
+          <div class="tile" data-reveal>
+            <h3>A typical new consumer laptop or PC</h3>
+            <ul class="checklist">
+{checklist(["Often plastic, built down to a price point","Tends to slow down and wear out sooner","Basic security, more bloatware to slow it down","Frequently sealed shut &mdash; hard to repair or upgrade","Cheapest components that meet the price","A box on a shelf &mdash; no one local behind it"])}
+            </ul>
+          </div>
+        </div>
+        <p class="mono" style="text-align:center;max-width:64ch;margin:1.8rem auto 0;color:var(--muted)" data-reveal>The upshot: a refurbished business Dell often outlives &mdash; and outperforms &mdash; a brand-new budget machine that costs about the same.</p>
+      </div>
+    </section>''',
       f'''    <section class="how" aria-label="How it works">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>/07 — HOW IT WORKS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>/08 — HOW IT WORKS</p>
         <h2 class="section-title section-title--center" data-title>From &lsquo;help me choose&rsquo; to fully set up<span class="title-underline title-underline--center"></span></h2>
         <ol class="how__steps">
-{steps([("Tell us what you need","A quick chat about what you&rsquo;ll use it for and your rough budget &mdash; and we&rsquo;ll match you the right refurbished Dell."),("We refurbish &amp; set it up","Tested, securely wiped and set up with Windows, Microsoft 365, security, backups and your data moved across."),("We support it","Collect it ready to go, with our warranty &mdash; and keep it looked after on a support plan if you&rsquo;d like.")])}
+{steps([("We recommend","Tell us what you&rsquo;ll use it for and your budget, and we&rsquo;ll recommend the right model, spec, memory and storage &mdash; laptop or desktop &mdash; plus any accessories (webcams, screens, backup drives, keyboards, mice and more)."),("We refurbish &amp; set up","Tested, fitted with a new Samsung Pro SSD, securely wiped, then set up with Windows, Microsoft 365, security, backups, your data moved across and your accessories ready to go."),("We support it &mdash; for years","Collect it ready to use, covered by the Dell and our 5-year guarantees, with a full repair service and ongoing support on any plan if you&rsquo;d like.")])}
         </ol>
       </div>
     </section>''',
