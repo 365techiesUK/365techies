@@ -1477,7 +1477,7 @@ def services_overview():
         ("Computer Repair Bournemouth", "/computer-repair-bournemouth/", "Local PC &amp; laptop repair in Bournemouth &mdash; home visits, remote help, no call-out fee."),
         ("Computer Repair Poole", "/computer-repair-poole/", "Local PC &amp; laptop repair in Poole &mdash; home visits, remote help, no call-out fee."),
         ("Computer Repair Christchurch", "/computer-repair-christchurch/", "Local PC &amp; laptop repair in Christchurch &mdash; home visits, remote help, no call-out fee."),
-        ("Dell Laptops &amp; Desktops", "/dell-hardware/", "Genuine Dell Latitude laptops and OptiPlex desktops, supplied, set up and supported."),
+        ("Dell Laptops &amp; Desktops", "/dell-hardware/", "Refurbished, tested ex-business Dell Latitude laptops and OptiPlex desktops, supplied, set up and supported."),
         ("Custom-Built PCs", "/custom-pc-builds/", "Bespoke desktops for home, gaming, creative and business &mdash; built, tested and supported."),
         ("AMD Threadripper Workstations", "/threadripper-workstations/", "High-end Scan 3XS Threadripper workstations for video, 3D, CAD and AI &mdash; supplied &amp; supported."),
         ("Gaming PCs", "/gaming-pcs/", "As an NVIDIA partner, custom GeForce RTX gaming PCs &mdash; built, set up &amp; supported."),
@@ -1580,99 +1580,197 @@ services_overview()
 # ===================================================== DELL HARDWARE
 def dell_hardware():
     slug = "dell-hardware"
-    desc = "Dell specialists supplying and supporting genuine Dell Latitude laptops and OptiPlex desktops for homes and businesses across Dorset — expertly specced, fully set up and looked after on a support plan."
+    desc = "Refurbished, tested ex-business Dell Latitude laptops & OptiPlex desktops — supplied, set up and supported across Bournemouth, Poole and Dorset, with our own warranty. Affordable, reliable and lower-waste."
     faqs = [
-      ("Do you supply Dell to home users as well as businesses?", "Yes — we supply and support Dell Latitude laptops and OptiPlex desktops for both home users and businesses across Bournemouth, Poole and Dorset."),
-      ("Why Dell Latitude and OptiPlex rather than a cheaper laptop?", "They're business-grade — better built, more reliable, more secure and longer-lasting than typical consumer machines, with proper warranties. We spec the right one so you don't overpay or under-buy."),
-      ("Do you set the computer up for me?", "Yes — every machine we supply is fully set up: Windows, Microsoft 365, security, backups and your data transferred, ready to use from day one."),
-      ("Do you handle the warranty and ongoing support?", "Yes — we look after Dell warranty matters and keep your machine running on a monthly support plan, with remote monitoring and maintenance."),
+      ("Are these new or refurbished?", "They&rsquo;re professionally refurbished &mdash; genuine ex-business Dell Latitude laptops and OptiPlex desktops that we test, securely wipe, clean, grade and set up before they go out. Not new, and we&rsquo;d never pretend otherwise &mdash; that&rsquo;s rather the point: proper business-grade kit for a lot less."),
+      ("Are refurbished business laptops any good?", "Genuinely, yes. Business-grade Dell Latitudes and OptiPlexes are built to work hard for years &mdash; tougher materials and, for Latitude laptops, tested to military-standard durability methods. A well-refurbished one often outlasts a brand-new budget laptop that was built down to a price."),
+      ("Is it safe to buy refurbished?", "From us, yes. Every machine is fully tested and securely wiped, you buy from a real local firm you can phone or visit, and you&rsquo;re covered by our own warranty plus your Consumer Rights Act protection &mdash; very different from an untested bargain off a marketplace."),
+      ("What do the condition grades mean?", "A grade describes how a machine <em>looks</em> &mdash; light marks versus near-mint &mdash; not how it works; every one we sell is fully working and tested. We&rsquo;ll tell you the exact grade before you buy. (Ask us for our current grading key.)"),
+      ("What about the battery?", "Laptop batteries wear with use, so we check each one and tell you its condition up front &mdash; no surprises. If you&rsquo;d like a fresh battery, just ask before you buy."),
+      ("What warranty and returns do I get?", "Every machine comes with our own warranty, and because you&rsquo;re buying from a UK business you also have full Consumer Rights Act protection &mdash; including a 30-day right to reject if something&rsquo;s faulty. Ask us for the exact warranty length and our returns process."),
+      ("Can you wipe and recycle my old computer?", "Yes &mdash; we can move your files across to your new Dell, then securely wipe (with a certificate) and responsibly recycle your old machine. See our <a href=\"/secure-it-disposal/\">secure IT disposal</a> page."),
+      ("Do you set it up and support it too?", "Always. Every Dell we supply is set up ready to use &mdash; Windows, Microsoft 365, security, backups and your data moved across &mdash; and you can keep it looked after on a <a href=\"/home-it-support-plans/\">home</a> or <a href=\"/business-it-support-plans/\">business</a> support plan."),
     ]
     content = "\n".join([
-      hero(bc("Dell Hardware"), "// DELL SPECIALISTS",
-           'Dell Latitude laptops &amp; <em class="grad grad--cyan">OptiPlex desktops</em>',
-           "We specialise in supplying and supporting genuine Dell business-grade computers — Latitude laptops and OptiPlex desktops — for homes and businesses across Dorset. Expertly specced, fully set up, and looked after on a support plan.",
-           cta1=("Get a Dell Quote", "/contact/"), cta2=("Call 01202 775566", "tel:+441202775566"),
-           chips=["Dell Latitude laptops","Dell OptiPlex desktops","Supplied, set up &amp; supported"]),
-      f'''    <section class="section" aria-label="Why Dell">
+      hero(bc("Refurbished Dell"), "// REFURBISHED &middot; BUSINESS-GRADE",
+           'Refurbished Dell Latitude laptops &amp; <em class="grad grad--cyan">OptiPlex desktops</em>',
+           "Professionally refurbished, tested ex-business Dell &mdash; proper business-grade computers for a fraction of the price of new, set up and supported by a real local firm you can phone or pop in to see. Kinder on your wallet and the planet.",
+           cta1=("Find me a refurbished Dell", "#match"), cta2=("Call 01202 775566", "tel:+441202775566"),
+           chips=["Tested &amp; refurbished","Our own warranty","Set up &amp; supported locally"]),
+      f'''    <section class="section" aria-label="Why refurbished business Dell">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
-          <p class="eyebrow mono">/01 — WHY DELL</p>
-          <h2 class="section-title" data-title>Business-grade Dell, done properly<span class="title-underline"></span></h2>
-          <p>There&rsquo;s a world of difference between a throwaway high-street laptop and a Dell Latitude or OptiPlex. The business range is built to work hard for years — better components, stronger security and proper warranties.</p>
-          <p><strong>As Dell specialists, we spec the right machine for the job</strong>, supply it, set it up properly and keep it running — so you get exactly what you need and nothing you don&rsquo;t.</p>
+          <p class="eyebrow mono">/01 — WHY REFURBISHED DELL</p>
+          <h2 class="section-title" data-title>Proper grown-up kit, for a lot less<span class="title-underline"></span></h2>
+          <p>There&rsquo;s a world of difference between a cheap new high-street laptop and a Dell Latitude or OptiPlex. The business range is built to work hard for years &mdash; tougher materials, better components and stronger security &mdash; and Dell&rsquo;s Latitude laptops are tested to military-standard durability methods.</p>
+          <p>Bought refurbished, that quality costs <strong>far less than new</strong> &mdash; often around 30&ndash;50% less &mdash; while still doing everything most homes and small businesses need. <strong>We test, refurbish, set up and support every one</strong>, so you get a dependable computer without paying new-laptop prices.</p>
         </div>
         <ul class="checklist" data-stagger>
-{checklist(["Business-grade build quality","Reliable for years, not months","Strong manufacturer warranty","Better security (TPM, encryption)","Consistent, standardised models","Genuine Dell from specialists","Spec&rsquo;d for your real needs","Fully set up and supported"])}
+{checklist(["Genuine ex-business Dell Latitude &amp; OptiPlex","Built to last years, not months","Often around 30&ndash;50% less than new","Fully tested &amp; securely wiped","Backed by our own warranty","Set up &amp; supported by your local team","Kinder on the planet &mdash; less e-waste","We tell you exactly what you&rsquo;re getting"])}
         </ul>
       </div>
     </section>''',
-      f'''    <section class="section section--alt" aria-label="What we supply">
+      f'''    <section class="section section--alt" aria-label="How we refurbish">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>/02 — WHAT WE SUPPLY</p>
-          <h2 class="section-title section-title--center" data-title>Dell, and everything around it<span class="title-underline title-underline--center"></span></h2>
+          <p class="eyebrow eyebrow--center mono" data-reveal>/02 — TESTED, REFURBISHED &amp; READY</p>
+          <h2 class="section-title section-title--center" data-title>What &lsquo;refurbished&rsquo; means here<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>No mystery boxes. Every machine goes through the same honest process before it reaches you &mdash; and we tell you exactly what you&rsquo;re getting.</p>
         </div>
         <div class="tile-grid" data-stagger>
-{tiles([("monitor","Dell Latitude laptops","Premium business laptops — light, tough, secure and reliable for work anywhere."),("server","Dell OptiPlex desktops","Dependable business desktops for the home office or the whole team."),("battery","Monitors, docks &amp; accessories","Dell monitors, docking stations and accessories for the perfect setup."),("shield","Warranty &amp; protection","We handle warranties and add the security and backups that matter."),("home","Home setups","The right Dell machine for home, set up properly and ready to go."),("briefcase","Business fleets","Standardised Latitude and OptiPlex fleets, onboarded and managed.")])}
+{tiles([("shield","Fully tested","Every machine is checked over and run through full diagnostics &mdash; if it&rsquo;s not right, it doesn&rsquo;t go out."),("lock","Securely wiped","The previous owner&rsquo;s data is securely erased and a clean copy of Windows installed."),("eye","Honestly graded","We grade how each machine looks (a grade is about looks, not how it works) and tell you the grade before you buy."),("battery","Battery checked","Laptop batteries wear with use, so we check each one and tell you its condition up front."),("monitor","Set up &amp; ready","Windows, Microsoft 365, security and backups configured, and your data moved across."),("check","Nothing hidden","We tell you the model, age, spec, grade and battery condition &mdash; no vague listings, no nasty surprises.")])}
         </div>
+        <p class="mono" style="text-align:center;max-width:64ch;margin:1.8rem auto 0;color:var(--muted)" data-reveal>Being straight with you: refurbished business machines usually run an earlier processor generation and batteries vary &mdash; so we match you a machine that&rsquo;s right for what you actually do, and stock of any one spec is limited.</p>
       </div>
     </section>''',
-      f'''    <section class="section" aria-label="Home and business solutions">
+      f'''    <section class="section" aria-label="Warranty and your rights">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>/03 — HOME &amp; BUSINESS</p>
-          <h2 class="section-title section-title--center" data-title>The right Dell, whoever you are<span class="title-underline title-underline--center"></span></h2>
+          <p class="eyebrow eyebrow--center mono" data-reveal>/03 — PEACE OF MIND</p>
+          <h2 class="section-title section-title--center" data-title>Warranty &amp; your rights<span class="title-underline title-underline--center"></span></h2>
         </div>
         <div class="split-2">
           <div class="tile" data-reveal>
-            <h3>Dell for your home</h3>
-            <p style="color:var(--muted);margin:0 0 1.1rem">A Latitude laptop for the kitchen table or an OptiPlex desktop for the study — we help you choose the right Dell, set it up with everything you need and support it on a home plan.</p>
+            <h3>Our own warranty</h3>
+            <p style="color:var(--muted);margin:0 0 1.1rem">Every machine comes with <strong>our own warranty</strong> and a local team who actually answer the phone. If something isn&rsquo;t right, you talk to us &mdash; not a faceless seller. (Ask us for the current warranty length and exactly what it covers.)</p>
             <ul class="checklist">
-{checklist(["Expert advice on the right model","Files &amp; email moved across","Microsoft 365, security &amp; backups","Ongoing home support plan"])}
+{checklist(["Backed by 365 Techies, your local firm","One number to call if anything&rsquo;s wrong","Set up &amp; ongoing support available","Family business, here since 1995"])}
             </ul>
           </div>
           <div class="tile" data-reveal>
-            <h3>Dell for your business</h3>
-            <p style="color:var(--muted);margin:0 0 1.1rem">From a single workstation to a whole team, we supply standardised Dell Latitude and OptiPlex setups, onboard new starters, and manage and support them under a business plan.</p>
+            <h3>Your legal protection</h3>
+            <p style="color:var(--muted);margin:0 0 1.1rem">Because you&rsquo;re buying from a UK business, you&rsquo;re also covered by the <strong>Consumer Rights Act 2015</strong> &mdash; protection you simply don&rsquo;t get buying privately or off a marketplace.</p>
             <ul class="checklist">
-{checklist(["Standardised business-grade fleet","New-starter setups &amp; onboarding","Microsoft 365, security &amp; backups","Managed &amp; monitored on a plan"])}
+{checklist(["30-day right to reject if it&rsquo;s faulty","Repair or replacement if a fault appears","Faults in the first 6 months assumed present at sale","You always know where we are"])}
             </ul>
           </div>
         </div>
       </div>
     </section>''',
-      f'''    <section class="section section--alt" aria-label="The ultimate setup">
+      f'''    <section class="section section--alt" aria-label="Why buy from us">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>/04 — THE ULTIMATE SETUP</p>
-          <h2 class="section-title section-title--center" data-title>Every Dell we supply comes fully sorted<span class="title-underline title-underline--center"></span></h2>
+          <p class="eyebrow eyebrow--center mono" data-reveal>/04 — WHY BUY FROM US</p>
+          <h2 class="section-title section-title--center" data-title>A real local firm, not a marketplace gamble<span class="title-underline title-underline--center"></span></h2>
         </div>
-        <ul class="security-grid" data-stagger>
-{grid_cards([("Properly configured","Windows, drivers and updates set up right from day one."),("Microsoft 365 ready","Email, Teams and OneDrive configured and signed in."),("Secured","Antivirus, encryption and sensible security switched on."),("Backed up","Automatic, verified backups so your data is safe."),("Data transferred","Files, photos and settings moved from your old machine."),("Monitored &amp; supported","Looked after under a monthly plan — we watch it remotely.")])}
-        </ul>
+        <div class="split-2">
+          <div class="tile" data-reveal>
+            <h3>Buying from 365 Techies</h3>
+            <ul class="checklist">
+{checklist(["Tested, graded &amp; securely wiped","Our own warranty &amp; Consumer Rights Act cover","Set up, with your data moved across","We call before we connect &amp; give you an ETA","The same friendly faces, year after year","Phone us, or pop in &mdash; we&rsquo;re local"])}
+            </ul>
+          </div>
+          <div class="tile" data-reveal>
+            <h3>Buying off a marketplace</h3>
+            <p style="color:var(--muted);margin:0 0 1.1rem">A bargain that looks too cheap can mean an untested machine, a worn-out battery, unlicensed software, a warranty already void &mdash; or a seller who vanishes the moment you&rsquo;ve paid.</p>
+            <ul class="checklist">
+{checklist(["Often untested &amp; vaguely described","No real warranty or recourse","You set it up &amp; fix it yourself","No one local to call"])}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>''',
+      f'''    <section class="section" aria-label="Home and business">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/05 — HOME &amp; BUSINESS</p>
+          <h2 class="section-title section-title--center" data-title>The right refurbished Dell, whoever you are<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="split-2">
+          <div class="tile" data-reveal>
+            <h3>For your home</h3>
+            <p style="color:var(--muted);margin:0 0 1.1rem">A refurbished Latitude for the kitchen table or an OptiPlex for the study &mdash; we&rsquo;ll match you the right one, set it up, move your photos and email across, and show you how to use it. We can even set up larger text and accessibility options before you collect it.</p>
+            <ul class="checklist">
+{checklist(["Matched to what you actually do","Files, photos &amp; email moved across","Set up with security &amp; backups",'Patient, jargon-free help &mdash; <a href="/home-it-support-plans/">home plans from &pound;18.25/mo</a>'])}
+            </ul>
+          </div>
+          <div class="tile" data-reveal>
+            <h3>For your business</h3>
+            <p style="color:var(--muted);margin:0 0 1.1rem">Business-grade reliability at refurbished prices &mdash; ideal for sole traders and small teams. We supply matching Latitude and OptiPlex machines, onboard new starters and keep them running, with a tidy lower-e-waste story for your customers too.</p>
+            <ul class="checklist">
+{checklist(["Affordable business-grade machines","Microsoft 365, security &amp; backups","New-starter setups &amp; onboarding",'Managed on a <a href="/business-it-support-plans/">business plan from &pound;24.38/mo</a>'])}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>''',
+      f'''    <section class="section section--alt" aria-label="Good for the planet">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/06 — POCKET &amp; PLANET</p>
+          <h2 class="section-title section-title--center" data-title>Good for your wallet, good for the planet<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="prose" data-reveal style="max-width:72ch;margin:0 auto;text-align:center">
+          <p>Most of a computer&rsquo;s carbon footprint comes from <em>making</em> it, not using it. Choosing refurbished gives a perfectly good Dell a second life instead of sending it to landfill &mdash; and the UK is the second-worst country in the world for e-waste per person, so it genuinely matters.</p>
+          <p>An independent Cranfield University study (2023, with Circular Computing) found a professionally remanufactured laptop produced only about <strong>6% of the carbon</strong> of building a brand-new one. Choosing refurbished is one of the easiest green wins there is &mdash; more on our <a href="/sustainability/">sustainability</a> page.</p>
+        </div>
       </div>
     </section>''',
       f'''    <section class="how" aria-label="How it works">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>/05 — HOW IT WORKS</p>
-        <h2 class="section-title section-title--center" data-title>From advice to fully supported<span class="title-underline title-underline--center"></span></h2>
+        <p class="eyebrow eyebrow--center mono" data-reveal>/07 — HOW IT WORKS</p>
+        <h2 class="section-title section-title--center" data-title>From &lsquo;help me choose&rsquo; to fully set up<span class="title-underline title-underline--center"></span></h2>
         <ol class="how__steps">
-{steps([("We advise","Tell us how you work and we&rsquo;ll recommend the right Dell Latitude or OptiPlex."),("We supply &amp; set up","We source genuine Dell and configure it fully — Microsoft 365, security and backups."),("We support","Your Dell is looked after on a support plan, monitored and maintained remotely.")])}
+{steps([("Tell us what you need","A quick chat about what you&rsquo;ll use it for and your rough budget &mdash; and we&rsquo;ll match you the right refurbished Dell."),("We refurbish &amp; set it up","Tested, securely wiped and set up with Windows, Microsoft 365, security, backups and your data moved across."),("We support it","Collect it ready to go, with our warranty &mdash; and keep it looked after on a support plan if you&rsquo;d like.")])}
         </ol>
       </div>
     </section>''',
+      f'''    <section class="section" id="match" aria-label="Find me a refurbished Dell">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// FIND ME A DELL</p>
+          <h2 class="section-title section-title--center" data-title>Tell us what you need &mdash; we&rsquo;ll match you a Dell<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Stock changes all the time, so rather than a fixed list, tell us a little about what you&rsquo;re after and we&rsquo;ll find the right refurbished Dell &mdash; or let you know the moment a match comes in. No obligation.</p>
+        </div>
+        <form class="contact-form" data-reveal action="mailto:help@365techies.co.uk" method="post" enctype="text/plain" style="max-width:640px;margin:0 auto">
+          <input type="text" name="company_website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" />
+          <label class="field"><span>Your name</span><input type="text" name="name" autocomplete="name" required /></label>
+          <label class="field"><span>Email</span><input type="email" name="email" autocomplete="email" required /></label>
+          <label class="field"><span>Phone (optional)</span><input type="tel" name="phone" autocomplete="tel" /></label>
+          <label class="field"><span>What are you after?</span>
+            <select name="looking_for">
+              <option>A refurbished laptop (Dell Latitude)</option>
+              <option>A refurbished desktop (Dell OptiPlex)</option>
+              <option>Not sure &mdash; help me choose</option>
+              <option>Several machines for my business</option>
+            </select>
+          </label>
+          <label class="field"><span>Mainly for</span>
+            <select name="mainly_for">
+              <option>Everyday home use (email, web, photos)</option>
+              <option>Working from home</option>
+              <option>Running my business</option>
+              <option>Schoolwork or study</option>
+              <option>Something specific (tell us below)</option>
+            </select>
+          </label>
+          <label class="field"><span>Rough budget (optional)</span>
+            <select name="budget">
+              <option>Not sure yet &mdash; advise me</option>
+              <option>Under &pound;250</option>
+              <option>&pound;250&ndash;&pound;400</option>
+              <option>&pound;400&ndash;&pound;600</option>
+              <option>&pound;600+</option>
+            </select>
+          </label>
+          <label class="field"><span>Anything else?</span><textarea name="message" placeholder="The kind of work you do, screen size, must-haves, or an old machine to trade in&hellip;"></textarea></label>
+          <button type="submit" class="button primary button--lg" style="width:100%">Find me a refurbished Dell</button>
+          <p class="form-status mono" role="status" style="margin-top:1rem;color:var(--faint);font-size:.7rem">// NO OBLIGATION &middot; WE REPLY WITHIN ONE WORKING DAY (MON&ndash;FRI) &middot; OR CALL 01202 775566</p>
+        </form>
+      </div>
+    </section>''',
       faq_html(faqs),
-      cta("Get the right Dell, set up right",
-          "Talk to your local Dell specialists about Latitude laptops and OptiPlex desktops for your home or business.",
-          primary=("Get a Dell Quote", "/contact/"), secondary=("Call 01202 775566", "tel:+441202775566")),
+      cta("Find your next computer the easy way",
+          "Tell us what you need and we&rsquo;ll match you a tested, refurbished Dell &mdash; set up, supported and backed by our own warranty.",
+          primary=("Find me a refurbished Dell", "#match"), secondary=("Call 01202 775566", "tel:+441202775566")),
     ])
     def schema(s, _desc=desc, _faqs=faqs):
-        return graph([crumb(s, "Dell Hardware"), webpage(s, "Dell Latitude Laptops & OptiPlex Desktops", _desc),
-                      service(s, "Dell Hardware Supply & Support", "Supply, setup and support of genuine Dell Latitude laptops and OptiPlex desktops for homes and businesses across Dorset.", "Dell hardware supply and support"),
-                      {"@type": "Product", "@id": SITE + "/" + s + "/#product", "name": "Dell Latitude Laptops & OptiPlex Desktops", "description": "Genuine Dell business-grade laptops and desktops, supplied, configured and supported by 365 Techies.", "brand": {"@type": "Brand", "name": "Dell"}, "category": "Computer hardware", "image": SITE + "/og-image.jpg", "url": SITE + "/" + s + "/"},
+        return graph([crumb(s, "Refurbished Dell"), webpage(s, "Refurbished Dell Latitude Laptops & OptiPlex Desktops", _desc),
+                      service(s, "Refurbished Dell Supply & Support", "Professionally refurbished, tested ex-business Dell Latitude laptops and OptiPlex desktops, supplied, set up and supported by 365 Techies across Dorset, with our own warranty.", "Refurbished computer supply and support"),
+                      {"@type": "Product", "@id": SITE + "/" + s + "/#product", "name": "Refurbished Dell Latitude Laptops & OptiPlex Desktops", "description": "Professionally refurbished, tested ex-business Dell Latitude laptops and OptiPlex desktops, supplied, set up and supported by 365 Techies with our own warranty.", "brand": {"@type": "Brand", "name": "Dell"}, "itemCondition": "https://schema.org/RefurbishedCondition", "category": "Refurbished computer hardware", "image": SITE + "/og-image.jpg", "url": SITE + "/" + s + "/"},
                       faqpage(s, _faqs)])
-    add(slug=slug, title="Dell Latitude Laptops & OptiPlex Desktops | Supply & Support | 365 Techies",
-        desc=desc, og_title="Dell Latitude & OptiPlex | 365 Techies", schema=schema, content=content)
+    add(slug=slug, title="Refurbished Dell Latitude Laptops & OptiPlex PCs | Dorset | 365 Techies",
+        desc=desc, og_title="Refurbished Dell Latitude & OptiPlex | 365 Techies", schema=schema, content=content)
 dell_hardware()
 
 # ===================================================== MALWAREBYTES
@@ -4277,7 +4375,7 @@ info_page(
         <div class="tile-grid" data-stagger>
 ''' + tiles([
         ("windows","Microsoft Partner","Microsoft partners and certified Microsoft Office Specialists &mdash; deep, daily Microsoft 365 expertise."),
-        ("monitor","Dell Specialists","Specialists in supplying and supporting genuine Dell Latitude laptops and OptiPlex desktops."),
+        ("monitor","Dell Specialists","Refurbished, business-grade Dell Latitude laptops and OptiPlex desktops, supplied, set up and supported."),
         ("shield","Malwarebytes Partner","An official Malwarebytes Partner, delivering award-winning protection with VPN."),
         ("leaf","Sustainable Dorset Member","Proud members of Sustainable Dorset, committed to greener business."),
         ("battery","GoCardless &amp; SiteGround","We build on trusted, FCA-regulated Direct Debit and premium managed hosting."),
@@ -6054,7 +6152,7 @@ info_page(
   faqs=[
     ("How much RAM do I really need?","For everyday use, 16GB is the comfortable sweet spot and 8GB is a workable minimum. Only heavy photo, video or design work benefits from more."),
     ("Is a Mac or a Windows PC better for me?","Both are capable &mdash; it often comes down to what you&rsquo;re used to and what your family uses. Do note that we support Windows and Android, but not Apple Macs, iPhones or iPads."),
-    ("Should I buy refurbished?","A good refurbished machine from a reputable seller can be excellent value &mdash; just check it has an SSD, enough memory and can run Windows 11. We&rsquo;re happy to advise."),
+    ("Should I buy refurbished?","A good refurbished machine from a reputable seller can be excellent value &mdash; just check it has an SSD, enough memory and can run Windows 11. We actually supply <a href=\"/dell-hardware/\">refurbished, business-grade Dell laptops &amp; PCs</a> &mdash; tested, set up and backed by our own warranty &mdash; so we&rsquo;re happy to advise or match you one."),
     ("How do I recycle my old laptop?","Back up and wipe it first, then recycle it responsibly &mdash; see our guide to <a href=\"/how-to-wipe-and-recycle-old-computer/\">wiping and recycling an old computer</a>."),
   ],
   cta_args=("Want a hand choosing?","Tell us how you&rsquo;ll use it and your budget, and we&rsquo;ll recommend the right computer &mdash; honestly, with no upselling &mdash; and set it all up for you.",
