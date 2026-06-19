@@ -16,7 +16,7 @@ except Exception:
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://365techies.co.uk"
-CSSV = "40"
+CSSV = "41"
 HUBSPOT_ID = "148562638"
 # Public URL of the deployed 365 AI OS. When set, the /365-ai-os/ page shows a
 # prominent "Launch the live demo" button. Leave empty ("") to hide it.
@@ -625,16 +625,30 @@ FOOTER = '''  <footer class="site-footer">
   </footer>
 '''
 
+def _meta_desc(d, limit=158):
+    """Trim the meta description to ~limit chars at a word boundary for clean SERP snippets;
+    og:/twitter: descriptions keep the full text. Avoids cutting mid-word or mid-entity."""
+    d = " ".join(d.split())
+    if len(d) <= limit:
+        return d
+    cut = d[:limit]
+    if " " in cut:
+        cut = cut[:cut.rfind(" ")]
+    if cut.rfind("&") > cut.rfind(";"):   # drop a dangling partial HTML entity
+        cut = cut[:cut.rfind("&")]
+    return cut.rstrip(" ,.;:&-—") + "&hellip;"
+
 def page(slug, title, desc, og_title, schema_json, content):
     canon = f"{SITE}/{slug}/"
     og_type = "article" if '"BlogPosting"' in schema_json else "website"
+    meta_desc = _meta_desc(desc)
     return f'''<!DOCTYPE html>
 <html lang="en-GB">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{title}</title>
-  <meta name="description" content="{desc}" />
+  <meta name="description" content="{meta_desc}" />
   <link rel="canonical" href="{canon}" />
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
   <meta name="author" content="365 Techies Limited" />
@@ -1247,6 +1261,18 @@ add(
 {plan_card("business", "&#9733; MOST POPULAR", "+ MICROSOFT 365", "Home Support + Microsoft 365", "Everything in Home IT Support, plus Microsoft 365 set up and looked after for you.", "&pound;23.10", ("","/mo per computer"), ["Everything in Home IT Support","Microsoft 365 set up &amp; supported","Outlook email &amp; Office apps","OneDrive backup help","One Microsoft 365 licence included","Extra licences &pound;4.85/mo each"], "Set up Direct Debit", subscribe_href("home-support-365"))}
       </div>
       <p class="plans-note mono" data-reveal>// &pound;18.25/MO PER COMPUTER &middot; ADD MICROSOFT 365 FOR &pound;4.85/MO PER USER &middot; MORE THAN ONE COMPUTER? JUST TELL US</p>
+      <p class="plans-note mono" data-reveal style="margin-top:.5rem"><a href="/our-guarantees/" style="color:var(--cyan)">&#10003; Cancel anytime, no contract &middot; No call-out fee for remote help &middot; Family-run since 1995 &mdash; see our guarantees</a></p>
+    </section>''',
+   f'''    <section class="section" aria-label="Popular add-ons">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// POPULAR ADD-ONS</p>
+          <h2 class="section-title section-title--center" data-title>Add extra protection any time<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="tile-grid" data-stagger>
+{tiles([("globe","Malwarebytes Premium &amp; VPN","Award-winning protection with a private VPN, set up &amp; managed by us. <a href=\"/malwarebytes-premium/\">See Malwarebytes &amp; VPN &#8594;</a>"),("shield","Managed cybersecurity","Layered, monitored protection &mdash; security, backups and peace of mind. <a href=\"/cybersecurity-support/\">See cybersecurity &#8594;</a>"),("monitor","Need a computer too?","Refurbished, business-grade Dell laptops &amp; PCs, set up and supported. <a href=\"/dell-hardware/\">See refurbished Dell &#8594;</a>")])}
+        </div>
+      </div>
     </section>''',
    f'''    <section class="section section--alt" id="compare" aria-label="What's included">
       <div class="wrap">
@@ -1300,6 +1326,18 @@ add(
 {plan_card("business", None, "PREMIUM", "Business Premium", "For businesses that rely on IT every day.", "Custom", ("FROM",""), ["Priority support","Remote &amp; on-site options","Microsoft 365 management","Cybersecurity &amp; backup planning","Staff onboarding &amp; offboarding","Device setup &amp; technology planning"], "Get a Quote", "/contact/")}
       </div>
       <p class="plans-note mono" data-reveal>// FROM &pound;24.38/MO PER COMPUTER &middot; NO LOCK-IN &middot; TELL US YOUR SETUP FOR A QUOTE</p>
+      <p class="plans-note mono" data-reveal style="margin-top:.5rem"><a href="/our-guarantees/" style="color:var(--cyan)">&#10003; No lock-in, cancel anytime &middot; No-fix-no-fee repairs &middot; Family-run since 1995 &mdash; see our guarantees</a></p>
+    </section>''',
+   f'''    <section class="section" aria-label="Popular add-ons">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// POPULAR ADD-ONS</p>
+          <h2 class="section-title section-title--center" data-title>Add extra protection any time<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="tile-grid" data-stagger>
+{tiles([("cloud","Microsoft 365","Email, Office apps &amp; OneDrive &mdash; &pound;4.85/mo per user, set up &amp; supported. <a href=\"/microsoft-365-support/\">See Microsoft 365 &#8594;</a>"),("shield","Managed cybersecurity","Layered, monitored protection &mdash; MFA, patching &amp; verified backups. <a href=\"/cybersecurity-support/\">See cybersecurity &#8594;</a>"),("globe","Malwarebytes Premium &amp; VPN","Endpoint protection with a VPN for staff on the move. <a href=\"/malwarebytes-premium/\">See Malwarebytes &amp; VPN &#8594;</a>")])}
+        </div>
+      </div>
     </section>''',
    f'''    <section class="section section--alt" id="compare" aria-label="Compare business plans">
       <div class="wrap">
