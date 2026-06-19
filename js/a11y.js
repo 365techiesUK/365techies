@@ -116,6 +116,13 @@
     var used = {};
     var scopes = document.querySelectorAll(".prose");
     if (!scopes.length) return;
+    var JID = 0;
+    function closeTips() {
+      var open = document.querySelectorAll(".jterm.is-open");
+      for (var o = 0; o < open.length; o++) { open[o].classList.remove("is-open"); open[o].setAttribute("aria-expanded", "false"); }
+    }
+    document.addEventListener("click", closeTips);
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeTips(); });
     var SKIP = { A: 1, BUTTON: 1, H1: 1, H2: 1, H3: 1, H4: 1, SUMMARY: 1, CODE: 1, ABBR: 1 };
     function esc(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
     for (var s = 0; s < scopes.length; s++) {
@@ -138,10 +145,23 @@
           var matchNode = after.splitText(m[0].length);
           var span = document.createElement("span");
           span.className = "jterm"; span.setAttribute("tabindex", "0");
+          span.setAttribute("role", "button");
+          span.setAttribute("aria-expanded", "false");
           span.textContent = m[0];
           var tip = document.createElement("span");
           tip.className = "jtip"; tip.setAttribute("role", "tooltip");
+          tip.id = "jtip-" + (++JID);
           tip.textContent = TERMS[term];
+          span.setAttribute("aria-describedby", tip.id);
+          span.addEventListener("click", function (e) {
+            e.stopPropagation();
+            var willOpen = !this.classList.contains("is-open");
+            closeTips();
+            if (willOpen) { this.classList.add("is-open"); this.setAttribute("aria-expanded", "true"); }
+          });
+          span.addEventListener("keydown", function (e) {
+            if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") { e.preventDefault(); this.click(); }
+          });
           span.appendChild(tip);
           after.parentNode.replaceChild(span, after);
           break; // one term wrap per text node
