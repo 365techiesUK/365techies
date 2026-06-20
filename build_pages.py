@@ -923,6 +923,66 @@ def reviews_block(revs):
       </div>
     </section>'''
 
+# ---- Animated "live view" network map (signature motif, reusable on any page) ----
+_NETMAP_N = 0
+_NM_ICONS = {
+ "monitor": '<rect x="-11" y="-8" width="22" height="14" rx="1.5"/><path d="M-4 10 H4 M0 6 V10"/>',
+ "laptop": '<rect x="-10" y="-7" width="20" height="12" rx="1.5"/><path d="M-13 8 H13"/>',
+ "phone": '<rect x="-6" y="-10" width="12" height="20" rx="2.5"/><path d="M-2 7 H2"/>',
+ "printer": '<rect x="-9" y="-2" width="18" height="9" rx="1.5"/><path d="M-5 -2 V-8 H5 V-2"/><path d="M-5 7 H5 V11 H-5 Z"/>',
+ "tablet": '<rect x="-8" y="-10" width="16" height="20" rx="2"/><path d="M-2 7 H2"/>',
+ "server": '<rect x="-10" y="-9" width="20" height="8" rx="1.5"/><rect x="-10" y="1" width="20" height="8" rx="1.5"/><circle cx="-5" cy="-5" r="1" fill="#86b6e8" stroke="none"/><circle cx="-5" cy="5" r="1" fill="#86b6e8" stroke="none"/>',
+ "pc": '<rect x="-6" y="-10" width="12" height="20" rx="1.5"/><circle cx="0" cy="-6" r="1.2" fill="#86b6e8" stroke="none"/><path d="M-3 5 H3"/>',
+}
+_NM_VARIANTS = {"home": ["monitor","laptop","phone","printer","tablet"],
+                "business": ["server","pc","monitor","laptop","printer"]}
+_NM_POS = [(200,52),(86,120),(314,120),(124,230),(276,230)]
+_NM_LINKS = ('<path class="nm-link" d="M200 148 L200 60"/><path class="nm-link" d="M200 148 L86 120"/>'
+             '<path class="nm-link" d="M200 148 L314 120"/><path class="nm-link" d="M200 148 L124 230"/>'
+             '<path class="nm-link" d="M200 148 L276 230"/>')
+
+def net_map(variant="home", label="LIVE VIEW &mdash; NETWORK"):
+    """Self-contained framed animated network map (unique gradient ids so several can share a page)."""
+    global _NETMAP_N
+    _NETMAP_N += 1
+    lg, hg = f"nmLink{_NETMAP_N}", f"nmHub{_NETMAP_N}"
+    devs = _NM_VARIANTS.get(variant, _NM_VARIANTS["home"])
+    delays = ["0s", ".5s", "1s", "1.5s", "2s"]
+    nodes = "".join(
+        f'<g class="nm-node" style="--d:{d}" transform="translate({x},{y})">'
+        f'<circle r="19" fill="#0b1d3a" stroke="rgba(125,170,220,.35)" stroke-width="1.2"/>{_NM_ICONS[dev]}'
+        f'<circle class="nm-dot" cx="13" cy="-13" r="3" fill="#00ce1b" stroke="none"/></g>'
+        for (x, y), dev, d in zip(_NM_POS, devs, delays))
+    return f'''        <div class="scene-frame" data-reveal>
+          <svg class="net-map" viewBox="0 0 400 310" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
+            <defs>
+              <linearGradient id="{lg}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1d97e3"/><stop offset="1" stop-color="#00ce1b"/></linearGradient>
+              <radialGradient id="{hg}" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#123a66"/><stop offset="1" stop-color="#0a1f3d"/></radialGradient>
+            </defs>
+            <g fill="none" stroke="url(#{lg})" stroke-width="1.6" stroke-linecap="round">{_NM_LINKS}</g>
+            <circle class="nm-scan" cx="200" cy="148" r="22"/><circle class="nm-scan nm-scan--b" cx="200" cy="148" r="22"/>
+            <g fill="none" stroke="#86b6e8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">{nodes}</g>
+            <g class="nm-hub" transform="translate(200,148)"><circle r="28" fill="url(#{hg})" stroke="#1d97e3" stroke-width="1.5"/><path d="M0 -14 L12 -9 V1 C12 9 6 13 0 16 C-6 13 -12 9 -12 1 V-9 Z" fill="rgba(0,206,27,.16)" stroke="#00ce1b" stroke-width="1.6"/><path d="M-5 0 L-1.5 4 L5.5 -4.5" fill="none" stroke="#00ce1b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g>
+          </svg>
+          <span class="scene-frame__corner tl"></span><span class="scene-frame__corner tr"></span>
+          <span class="scene-frame__corner bl"></span><span class="scene-frame__corner br"></span>
+          <p class="scene-frame__label mono"><span class="rec-dot"></span> {label}</p>
+        </div>'''
+
+def net_map_section(eyebrow, heading, blurb_html, variant="home", label="LIVE VIEW &mdash; NETWORK", alt=False):
+    """A split-2 band: text on the left, the animated network map on the right. Non-numbered eyebrow."""
+    cls = "section section--alt" if alt else "section"
+    return f'''    <section class="{cls}" aria-label="{heading}">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">{eyebrow}</p>
+          <h2 class="section-title" data-title>{heading}<span class="title-underline"></span></h2>
+{blurb_html}
+        </div>
+{net_map(variant, label)}
+      </div>
+    </section>'''
+
 # ---- Service-promise touches (the human extras, reused across pages) ----
 # Keep wording consistent here so the reassurance never drifts or over-claims.
 PROMISE_CALL = ("We call before we connect",
@@ -1442,6 +1502,9 @@ add(
         </ol>
       </div>
     </section>''',
+   net_map_section("// HOW WE CONNECT", "Every device, looked after from here",
+       "          <p>Whether your computers are at home, in the office or out on the road, we connect securely and look after them all from one place &mdash; updates, security and quick fixes, with no-one needing to visit.</p>\n          <p>You stay in control: every session is one <em>you</em> start, over an encrypted connection, and we always phone first.</p>",
+       variant="home", label="LIVE VIEW &mdash; CONNECTED DEVICES"),
    faq_html([
      ("Is remote support safe?", "Yes. Sessions run over Splashtop SOS — an encrypted, industry-standard remote support tool. You watch everything on screen and access ends the moment the session is over."),
      ("What can be fixed remotely?", "Most things — email problems, software issues, Microsoft 365, slow computers, printer setup, Windows updates and general troubleshooting for home and business users."),
@@ -1678,6 +1741,9 @@ add(
         </ol>
       </div>
     </section>''',
+   net_map_section("// ALWAYS WATCHING", "Your whole network, watched over",
+       "          <p>Behind every plan sits proactive, always-on protection &mdash; antivirus, patching, backups and monitoring working together across every device, watched over by us day and night.</p>\n          <p>If something looks wrong, we usually catch it early &mdash; often before you&rsquo;d ever notice.</p>",
+       variant="business", label="LIVE VIEW &mdash; YOUR NETWORK"),
    faq_html(CYBER_FAQS),
    cta("Get the ultimate protection",
        "Layered, always-on security &mdash; set up, managed and monitored by your local team, and included in every monthly plan.",
