@@ -1527,6 +1527,9 @@ def services_overview():
         ("Property Management", "/it-support-for-property-management/", "Management software, tenant data and secure remote working for agents."),
         ("Manufacturing &amp; Engineering", "/it-support-for-manufacturing/", "CAD workstations, networks and design-data security for makers."),
         ("Churches &amp; Faith Groups", "/it-support-for-churches-faith/", "AV, livestreaming and member data, with volunteer-friendly help."),
+        ("Web &amp; Creative Agencies", "/it-support-for-creative-agencies/", "Reliable IT, big files and backups for web, design and marketing agencies."),
+        ("Architects &amp; Surveyors", "/it-support-for-architects/", "CAD workstations, big drawings and project data, kept fast and safe."),
+        ("Opticians &amp; Eyecare", "/it-support-for-opticians/", "Practice and imaging systems, patient data and reliable everyday IT."),
       ]),
     ]
     sections = ""
@@ -7611,12 +7614,15 @@ for _ind in INDUSTRIES:
 def industry_hub():
     slug = "it-support-by-industry"
     desc = "Specialist IT support by industry across Bournemouth, Poole & Dorset - accountants, financial advisers, solicitors, dental, care homes, manufacturers, creative agencies and more, from a family firm since 1995."
+    ALL_IND = build_local.INDUSTRIES + INDUSTRIES
+    def _ind_name(d):
+        return (d.get("crumbName") or d.get("crumb_name", "")).replace("IT Support for ", "").replace("IT support for ", "")
     def card(d):
-        blurb = d["lede"].split("&mdash;")[0].strip()
+        blurb = d.get("lede", "").split("&mdash;")[0].strip()
         if len(blurb) > 118:
             blurb = blurb[:115].rsplit(" ", 1)[0] + "&hellip;"
-        return f'          <a class="post-card" href="/{d["slug"]}/"><p class="post-card__cat">Industry</p><h3>{d["crumbName"]}</h3><p>{blurb}</p><span class="post-card__more">How we help &#8594;</span></a>'
-    cards = "\n".join(card(d) for d in INDUSTRIES)
+        return f'          <a class="post-card" href="/{d["slug"]}/"><p class="post-card__cat">Industry</p><h3>{_ind_name(d)}</h3><p>{blurb}</p><span class="post-card__more">How we help &#8594;</span></a>'
+    cards = "\n".join(card(d) for d in ALL_IND)
     content = "\n".join([
       hero(bc("IT Support by Industry"), "// BY INDUSTRY",
            'IT support for <em class="grad grad--cyan">your line of work</em>',
@@ -7639,7 +7645,7 @@ def industry_hub():
           "Tell us what you do and the software you rely on, and we&rsquo;ll tailor your IT support to suit &mdash; in plain English, from a real local team.",
           primary=("Get a Recommendation", "/contact/"), secondary=("Call 01202 775566", "tel:+441202775566")),
     ])
-    def schema(s, _d=desc, _it=[{"@type": "ListItem", "position": i + 1, "name": "IT Support for " + x["crumbName"].replace("&amp;", "&"), "url": SITE + "/" + x["slug"] + "/"} for i, x in enumerate(INDUSTRIES)]):
+    def schema(s, _d=desc, _it=[{"@type": "ListItem", "position": i + 1, "name": "IT Support for " + _ind_name(x).replace("&amp;", "&"), "url": SITE + "/" + x["slug"] + "/"} for i, x in enumerate(ALL_IND)]):
         return graph([crumb(s, "IT Support by Industry"), webpage(s, "IT Support by Industry", _d, "CollectionPage"),
                       {"@type": "ItemList", "@id": SITE + "/it-support-by-industry/#list", "itemListElement": _it}])
     add(slug=slug, title="IT Support by Industry | Bournemouth, Poole &amp; Dorset | 365 Techies",
