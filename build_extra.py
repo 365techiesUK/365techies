@@ -1618,7 +1618,7 @@ def dell_hardware():
             <figcaption class="mono">Our old high-street shop &mdash; same number we use today &middot; Moordown, 2008&ndash;2017</figcaption>
           </figure>
         </div>
-        <p class="mono" style="text-align:center;max-width:66ch;margin:1.8rem auto 0;color:var(--muted)" data-reveal>These are heritage photos, not current stock &mdash; the Moordown shop closed in 2017, and today we work remotely and locally across Dorset. Tell us what you need and we&rsquo;ll <a href="#match">match you a tested Dell</a>.</p>
+        <p class="mono" style="text-align:center;max-width:66ch;margin:1.8rem auto 0;color:var(--muted)" data-reveal>These are heritage photos, not current stock &mdash; we moved on from the high-street shop in 2017 (we&rsquo;re now based at the Kinson Community Centre) and supply, set up and support your Dell remotely and locally across Dorset. Tell us what you need and we&rsquo;ll <a href="#match">match you a tested Dell</a>.</p>
       </div>
     </section>''',
       f'''    <section class="section section--alt" aria-label="How we refurbish">
