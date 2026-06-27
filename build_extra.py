@@ -5025,6 +5025,7 @@ info_page(
           <a class="post-card" href="/i-think-ive-been-hacked/"><p class="post-card__cat">Emergency</p><h3>I Think I&rsquo;ve Been Hacked</h3><p>Take back control of your accounts, in the right order.</p><span class="post-card__more">Recover &#8594;</span></a>
           <a class="post-card" href="/how-to-set-up-two-factor-authentication/"><p class="post-card__cat">Security</p><h3>How to Set Up 2FA</h3><p>Two-factor authentication explained and switched on, in plain English.</p><span class="post-card__more">How to &#8594;</span></a>
           <a class="post-card" href="/lost-or-stolen-phone-what-to-do/"><p class="post-card__cat">Emergency</p><h3>Lost or Stolen Phone</h3><p>Lock it, bar the SIM and protect your accounts &mdash; fast.</p><span class="post-card__more">Do these now &#8594;</span></a>
+          <a class="post-card" href="/lost-or-stolen-laptop-what-to-do/"><p class="post-card__cat">Emergency</p><h3>Lost or Stolen Laptop</h3><p>Lock it, report it and protect your data &mdash; plus a real recovery story.</p><span class="post-card__more">Do these now &#8594;</span></a>
           <a class="post-card" href="/windows-accessibility-features-guide/"><p class="post-card__cat">Accessibility</p><h3>Windows Accessibility Features</h3><p>Bigger text, magnifier, read-aloud and more &mdash; free and built in.</p><span class="post-card__more">Turn them on &#8594;</span></a>
           <a class="post-card" href="/how-to-choose-a-laptop/"><p class="post-card__cat">Buyer&rsquo;s guide</p><h3>How to Choose a Laptop</h3><p>The five things that actually matter &mdash; no jargon, no sales pitch.</p><span class="post-card__more">Read the guide &#8594;</span></a>
           <a class="post-card" href="/how-to-wipe-and-recycle-old-computer/"><p class="post-card__cat">Guide</p><h3>Wipe &amp; Recycle a Computer</h3><p>Get your data off safely, then recycle the old machine responsibly.</p><span class="post-card__more">How to &#8594;</span></a>
@@ -6160,6 +6161,56 @@ info_page(
 
 PRINT_BTN = '''          <p class="no-print" style="text-align:center;margin-top:1.8rem"><button type="button" class="button secondary" onclick="window.print()">Print / Save as PDF</button></p>'''
 
+# ============================================================ GUIDE: LOST OR STOLEN LAPTOP
+info_page(
+  slug="lost-or-stolen-laptop-what-to-do", crumb_name="Lost or Stolen Laptop", eyebrow="// DO THESE NOW",
+  h1='Lost or stolen laptop? <em class="grad grad--green">Do these things now</em>',
+  lede="Your laptop holds your photos, email, banking and work &mdash; so losing it, or having it stolen, feels awful. Work calmly through these steps to protect what matters. And don&rsquo;t lose hope: sometimes, as one of our customers found, you even get it back.",
+  desc="Lost or stolen laptop? Step-by-step UK help: lock it with Find my device, change your key passwords, report it to the police for a crime reference, and protect your data. Plain-English help from 365 Techies, Dorset.",
+  title="Lost or Stolen Laptop? Do These Things Now (UK Guide) | 365 Techies",
+  og_title="Lost or Stolen Laptop? Do These Now | 365 Techies",
+  chips=["First 15 minutes","Lock &amp; report","A real recovery story"],
+  pre=f'''    <section class="section section--alt" aria-label="First fifteen minutes">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// THE FIRST 15 MINUTES</p>
+          <h2 class="section-title section-title--center" data-title>Act calmly, in this order<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ol class="how__steps">
+{steps([("Lock it remotely (if you can)","From another device, sign in at <a href=\"https://account.microsoft.com/devices\" target=\"_blank\" rel=\"noopener\">account.microsoft.com/devices</a>. If you had <strong>Find my device</strong> switched on, you can see its last location and <strong>Lock</strong> it &mdash; that signs everyone out and shows a message. A work laptop? Tell your IT team or employer straight away &mdash; they can often lock or wipe it for you."),("Change your important passwords","From another device, change your passwords &mdash; <strong>email first</strong> (it&rsquo;s the key to everything else), then banking, then anything the laptop was signed into. Sign out of those sessions while you&rsquo;re there."),("Report it to the police","Report the theft to the police (101 or online) and get a <strong>crime reference number</strong> for your insurance. Give them anything useful &mdash; the make, model and serial number, and any tracking details. Report to <a href=\"https://www.actionfraud.police.uk/\" target=\"_blank\" rel=\"noopener\">Action Fraud</a> too if any accounts or money are misused."),("Protect your accounts","Turn on two-factor authentication where you can, so a stolen password isn&rsquo;t enough on its own &mdash; see our <a href=\"/how-to-set-up-two-factor-authentication/\">2FA guide</a>. If you think someone has got into an account, follow <a href=\"/i-think-ive-been-hacked/\">I think I&rsquo;ve been hacked</a>."),("Check your backup &mdash; and breathe","If your files were backed up to the cloud, you haven&rsquo;t lost them &mdash; they&rsquo;ll be waiting on your next computer. Not sure? We can help you check. See <a href=\"/backup-support/\">backup &amp; recovery</a>.")])}
+        </ol>
+      </div>
+    </section>''',
+  inner="""          <h2>It&rsquo;s not always the end of the story</h2>
+          <p>Back in 2011, one of our own customers had their laptop stolen from their car. Because we&rsquo;d set it up with the same kind of <strong>remote-support software we still use today</strong>, we could see it was being used &mdash; and the internet address it was connecting from. We passed the details to <strong>Dorset Police</strong>, who located the address and recovered the laptop. The <em>Bournemouth Echo</em> ran the story &mdash; you can read more <a href="/about/">about us and that day</a>. Recovery is never guaranteed, but it does happen, so report it and hand the police anything useful.</p>
+          <h2>Windows: how to find or lock it</h2>
+          <ul>
+            <li><strong>Find my device</strong> only works if you switched it on beforehand, signed in with a Microsoft account, and the laptop is turned on and online. If so, sign in at <a href="https://account.microsoft.com/devices" target="_blank" rel="noopener">account.microsoft.com/devices</a> to see its last location and lock it.</li>
+            <li><strong>No simple remote-wipe.</strong> Unlike phones, a personal Windows laptop can&rsquo;t be erased remotely &mdash; which is exactly why a strong login password and encryption matter (below).</li>
+            <li><strong>Work laptops</strong> managed by an IT team can usually be located, locked or wiped remotely &mdash; so tell them immediately.</li>
+          </ul>
+          <h2>Will someone be able to read my files?</h2>
+          <p>If your laptop had a <strong>strong login password</strong> and <strong>device encryption (BitLocker)</strong> switched on, your files are well protected even in the wrong hands. If it booted straight to your desktop with no password, assume someone could see your files &mdash; so change your passwords quickly and sign out of your accounts. Not sure whether encryption was on? <a href="/contact/">Ask us</a> and we&rsquo;ll help you check.</p>
+          <h2>Set this up before it ever happens</h2>
+          <ul class="checklist">
+            <li>Turn on <strong>Find my device</strong> (Settings &rarr; Privacy &amp; security &rarr; Find my device).</li>
+            <li>Set a <strong>strong password or PIN</strong>, and have the screen lock automatically when you step away.</li>
+            <li>Turn on <strong>device encryption / BitLocker</strong> so your data is unreadable if the laptop is stolen.</li>
+            <li>Back up to the cloud, so a lost laptop never means lost files &mdash; see <a href="/backup-support/">backup &amp; recovery</a>.</li>
+            <li>Write down the <strong>make, model and serial number</strong> and keep them somewhere safe.</li>
+            <li>Out and about, never leave a laptop on show in a car &mdash; most are taken from vehicles and homes.</li>
+          </ul>
+          <p>Want a hand setting any of this up, or replacing a stolen machine? We can recover your data from your backup and set up a tested <a href="/dell-hardware/">refurbished Dell from &pound;299</a>, ready to go.</p>""" + PRINT_BTN,
+  faqs=[
+    ("Can the police find my stolen laptop?","Sometimes. Report it for a crime reference number and give them anything useful &mdash; the serial number, or any tracking information. We&rsquo;ve seen it work: in 2011 we helped Dorset Police trace and recover a customer&rsquo;s stolen laptop. But recovery is never guaranteed, so protect your accounts and data straight away."),
+    ("Can I wipe my laptop remotely like a phone?","Personal Windows laptops don&rsquo;t have the simple remote-erase that phones do. You can lock it with Find my device (if it was switched on) and sign out of your accounts. Work laptops managed by an IT team can usually be wiped remotely."),
+    ("Will whoever took it get into my accounts?","Not if you act quickly. Change your email and banking passwords from another device, turn on two-factor authentication, and sign out of your accounts. Device encryption and a strong password make it much harder for them."),
+    ("Can you help me set up a replacement?","Yes &mdash; we&rsquo;ll recover your files from your backup, set everything up securely, and can supply a tested <a href=\"/dell-hardware/\">refurbished Dell from &pound;299</a>. Calm, plain-English help from a real local firm."),
+  ],
+  cta_args=("Lost a laptop, or want to be ready?","We&rsquo;ll help you secure your accounts, recover your files from backup and set up a replacement &mdash; calmly and in plain English.",
+            ("Talk to a Techie","/contact/"), ("Backup &amp; Recovery","/backup-support/")),
+)
+
 # ============================================================ GUIDE: WINDOWS ACCESSIBILITY FEATURES
 info_page(
   slug="windows-accessibility-features-guide", crumb_name="Windows Accessibility Features", eyebrow="// PLAIN-ENGLISH HOW-TO",
@@ -6486,6 +6537,7 @@ def emergency_it_help():
       ("Money / scam","I&rsquo;ve been scammed","Call 159 first to reach your bank safely, then follow the steps.","/ive-been-scammed-what-to-do/","What to do now"),
       ("Accounts","I think I&rsquo;ve been hacked","Secure your email first &mdash; it&rsquo;s the key to everything else.","/i-think-ive-been-hacked/","Take back control"),
       ("Phone","Lost or stolen phone","Use Find My to lock or erase it, then bar the SIM.","/lost-or-stolen-phone-what-to-do/","Do these now"),
+      ("Laptop","Lost or stolen laptop","Lock it with Find my device, change passwords and report it.","/lost-or-stolen-laptop-what-to-do/","Do these now"),
       ("Files locked","Ransomware / files locked","Don&rsquo;t pay. Disconnect from the internet and get help.","/ransomware/","How to respond"),
       ("Computer","Won&rsquo;t start or very slow","Tell us the symptoms and get the likely cause &amp; next step.","/computer-fault-checker/","Diagnose it"),
       ("Suspicious message","Scam email, text or call","Don&rsquo;t click. Check the tell-tale signs first.","/spot-the-scam/","Spot the scam"),
