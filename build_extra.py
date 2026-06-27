@@ -3,6 +3,7 @@
 Imports shared chrome/helpers from build_pages and build_local, appends pages, writes everything.
 Run: python build_extra.py
 """
+import re
 import build_pages as bp
 import build_local  # registers the 12 local/customer pages on import
 from build_pages import (add, graph, crumb, webpage, service, faqpage,
@@ -1532,6 +1533,14 @@ def services_overview():
         ("Opticians &amp; Eyecare", "/it-support-for-opticians/", "Practice and imaging systems, patient data and reliable everyday IT."),
       ]),
     ]
+    from services_data import SERVICE_PAGES as _SP
+    def _svc_card(p):
+        b = p["lede"].split("&mdash;")[0].strip()
+        if len(b) > 100: b = b[:97].rsplit(" ", 1)[0] + "&hellip;"
+        return (p["crumbName"], "/" + p["slug"] + "/", b)
+    _REPAIR = {"data-recovery", "virus-removal", "laptop-repair", "laptop-screen-repair", "slow-computer-repair", "computer-tune-up", "ransomware-recovery", "hard-drive-upgrade", "windows-reinstall"}
+    groups.append(("Repairs, recovery &amp; speed", [_svc_card(p) for p in _SP if p["slug"] in _REPAIR]))
+    groups.append(("Setup, networks &amp; migration", [_svc_card(p) for p in _SP if p["slug"] not in _REPAIR]))
     sections = ""
     items = []
     pos = 1
@@ -4743,12 +4752,30 @@ def it_jargon_buster():
     inner = ('          <h2>An A&ndash;Z of common IT terms</h2>\n' + rows +
              '          <h2>Accessibility &amp; AI terms</h2>\n' + rows2 +
              '          <p class="lede-note">Come across a term we haven&rsquo;t covered? <a href="/contact/">Ask us</a> &mdash; we love explaining things in plain English.</p>')
+    from glossary_data import GLOSSARY_PAGES as _GP
+    def _gblurb(g):
+        t = g["plainEnglish"].replace("<p>", "").split("&mdash;")[0].split(".")[0].strip()
+        return (t[:93].rsplit(" ", 1)[0] + "&hellip;") if len(t) > 96 else t
+    _gcards = "\n".join(f'          <a class="post-card" href="/it-jargon-buster/{g["slug"]}/"><p class="post-card__cat">Explained</p><h3>{g["term"]}</h3><p>{_gblurb(g)}</p><span class="post-card__more">Read &#8594;</span></a>' for g in _GP)
+    _GLOSS_SECTION = f'''    <section class="section section--alt" aria-label="Explained in depth">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// EXPLAINED IN DEPTH</p>
+          <h2 class="section-title section-title--center" data-title>Popular terms, explained properly<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Our most-asked terms now have their own plain-English guide.</p>
+        </div>
+        <div class="blog-grid" data-stagger>
+{_gcards}
+        </div>
+      </div>
+    </section>'''
     content = "\n".join([
       hero(bc("IT Jargon Buster"), "// A&ndash;Z GLOSSARY",
            'IT <em class="grad grad--cyan">jargon buster</em>',
            "Confused by tech speak? Our plain-English A&ndash;Z glossary explains the common IT terms you&rsquo;ll come across &mdash; no jargon, no nonsense.",
            cta1=("Contact Us", "/contact/"), cta2=("Read our IT Advice", "/it-advice/"),
            chips=["Plain English","A&ndash;Z of tech","45+ terms"]),
+      _GLOSS_SECTION,
       _prose(inner),
       cta("Still got questions?", "No jargon, no silly questions &mdash; just friendly, clear help whenever you need it.",
           primary=("Contact Us", "/contact/"), secondary=("Read our IT Advice", "/it-advice/")),
@@ -7774,6 +7801,122 @@ def remote_access_page():
     add(slug=slug, title="Remote Access - Work From Anywhere on Your Own PC | 365 Techies",
         desc=desc, og_title="Remote Access - Work From Anywhere | 365 Techies", schema=schema, content=content)
 remote_access_page()
+
+# ============================================================ FLAGSHIP SERVICE PAGES (wave 2)
+from services_data import SERVICE_PAGES
+from glossary_data import GLOSSARY_PAGES
+
+_SVC_LABELS = {"monthly-it-support":"Monthly IT Support","business-it-support-plans":"Business Plans","home-it-support-plans":"Home Plans","remote-support":"Remote Support","remote-it-support":"Remote IT Support","computer-repairs":"Computer Repairs","backup-support":"Backup &amp; Recovery","wifi-support":"Wi-Fi Support","printer-support":"Printer Support","cybersecurity-support":"Cybersecurity","microsoft-365-support":"Microsoft 365","email-support":"Email Support","windows-11-support":"Windows 11","new-computer-setup":"New Computer Setup","disaster-recovery":"Disaster Recovery","dell-hardware":"Refurbished Dell","ransomware":"Ransomware","secure-it-disposal":"Secure IT Disposal","it-support-by-industry":"IT Support by Industry","gdpr-it-compliance":"GDPR &amp; Compliance","malwarebytes-premium":"Malwarebytes Premium","contact":"Contact Us","book-service":"Book a Service","pricing":"Pricing","areas-covered":"Areas Covered","remote-access":"Remote Access"}
+def _svc_label(s):
+    return _SVC_LABELS.get(s, s.replace("-", " ").title())
+
+def service_parent_page(d):
+    slug = d["slug"]; cn = d["crumbName"]
+    cn_schema = cn.replace("&amp;", "&").replace("&rsquo;", "'")
+    feats = [((f["icon"] if f["icon"] in _IND_ICONS else "wrench"), f["title"], f["body"]) for f in d["features"]]
+    faqs = [(f["q"], f["a"]) for f in d["faqs"]]
+    rel = [r for r in d.get("relatedSlugs", []) if r]
+    rel_html = ""
+    if rel:
+        links = " &middot; ".join(f'<a href="/{r}/">{_svc_label(r)}</a>' for r in rel)
+        rel_html = f'<p class="mono" style="text-align:center;max-width:64ch;margin:1.6rem auto 0;color:var(--muted)" data-reveal>Related: {links}</p>'
+    content = "\n".join([
+      hero(bc(cn), d["eyebrow"], d["h1"], hero_trust(d["lede"]),
+           cta1=("Get a Quote", "/contact/"), cta2=("Call 01202 775566", "tel:+441202775566"), chips=d["chips"]),
+      f'''    <section class="section" aria-label="Overview">
+      <div class="wrap"><div class="prose" data-reveal style="max-width:780px;margin:0 auto">
+{d["intro"]}
+      </div></div>
+    </section>''',
+      f'''    <section class="section section--alt" aria-label="What we cover">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// WHAT WE COVER</p>
+          <h2 class="section-title section-title--center" data-title>{cn} that just works<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="tile-grid" data-stagger>
+{tiles(feats)}
+        </div>
+      </div>
+    </section>''',
+      f'''    <section class="how" aria-label="How it works">
+      <div class="wrap">
+        <p class="eyebrow eyebrow--center mono" data-reveal>// HOW IT WORKS</p>
+        <h2 class="section-title section-title--center" data-title>Simple, honest, sorted<span class="title-underline title-underline--center"></span></h2>
+        <ol class="how__steps">
+{steps([(s["title"], s["desc"]) for s in d["howItWorks"]])}
+        </ol>
+      </div>
+    </section>''',
+      f'''    <section class="section" aria-label="What we do">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">// THE DETAIL</p>
+          <h2 class="section-title" data-title>What we&rsquo;ll do for you<span class="title-underline"></span></h2>
+          <p>Friendly, plain-English help from a real local team &mdash; no jargon, no pressure, and a clear quote before any chargeable work.</p>
+        </div>
+        <ul class="checklist" data-stagger>
+{checklist(d["whatWeDo"])}
+        </ul>
+      </div>
+    </section>''',
+      (f'''    <section class="section section--alt" aria-label="Related">
+      <div class="wrap">{rel_html}</div>
+    </section>''' if rel_html else ""),
+      faq_html(faqs),
+      cta(d["ctaHead"], d["ctaSub"],
+          primary=("Get a Quote", "/contact/"), secondary=("See Monthly IT Support", "/monthly-it-support/")),
+    ])
+    def schema(s, _cn=cn_schema, _desc=d["metaDesc"], _faqs=faqs):
+        return graph([crumb(s, _cn), webpage(s, _cn, _desc),
+                      service(s, _cn, _desc, _cn), faqpage(s, _faqs)])
+    add(slug=slug, title=f"{cn} in Bournemouth &amp; Dorset | 365 Techies",
+        desc=d["metaDesc"], og_title=f"{cn} | 365 Techies", schema=schema, content=content)
+
+for _svc in SERVICE_PAGES:
+    service_parent_page(_svc)
+
+# ---- Glossary spokes (hub-and-spoke under /it-jargon-buster/) ----
+def _crumb3(slug, l3):
+    return {"@type": "BreadcrumbList", "@id": f"{SITE}/{slug}/#breadcrumb", "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": SITE + "/"},
+        {"@type": "ListItem", "position": 2, "name": "IT Jargon Buster", "item": SITE + "/it-jargon-buster/"},
+        {"@type": "ListItem", "position": 3, "name": l3, "item": f"{SITE}/{slug}/"}]}
+
+def glossary_spoke_page(d):
+    term = d["term"]
+    slug = "it-jargon-buster/" + d["slug"]
+    plain_desc = re.sub(r"<[^>]+>", "", d["plainEnglish"]).replace("&mdash;", "-").replace("&rsquo;", "'").replace("&amp;", "and").strip()[:300]
+    rel = d.get("relatedTerms", [])
+    rel_html = ""
+    if rel:
+        links = " &middot; ".join(f'<a href="/it-jargon-buster/{r["slug"]}/">{r["label"]}</a>' for r in rel)
+        rel_html = f'<p class="lede-note">Related: {links} &mdash; or browse the full <a href="/it-jargon-buster/">A&ndash;Z jargon buster</a>.</p>'
+    bcrumb = f'<a href="/">Home</a> <span>/</span> <a href="/it-jargon-buster/">IT Jargon Buster</a> <span>/</span> <span aria-current="page">{term}</span>'
+    inner = (f'          <h2>In plain English</h2>\n{d["plainEnglish"]}\n'
+             f'          <h2>Why it matters</h2>\n{d["whyItMatters"]}\n'
+             f'          <h2>What to do</h2>\n{d["whatToDo"]}\n'
+             f'          <h2>How 365 Techies can help</h2>\n{d["how365Helps"]}\n'
+             f'          {rel_html}')
+    content = "\n".join([
+      hero(bcrumb, "// JARGON BUSTER", f'What is <em class="grad grad--cyan">{term}</em>?',
+           f"{term}, explained in plain English &mdash; what it means, why it matters, and what to do about it. No jargon, from a friendly local team.",
+           cta1=("Read our IT advice", "/it-advice/"), cta2=("Contact Us", "/contact/"),
+           chips=["Plain English", "No jargon", "Friendly help"]),
+      _prose(inner),
+      cta("Confused by a tech term?", "No jargon, no silly questions &mdash; just friendly, clear help whenever you need it.",
+          primary=("Contact Us", "/contact/"), secondary=("Full Jargon Buster", "/it-jargon-buster/")),
+    ])
+    def schema(s, _t=term, _desc=d["metaDesc"], _pd=plain_desc, _q=d["faqQ"], _a=d["faqA"]):
+        return graph([_crumb3(s, _t), webpage(s, f"What is {_t}?", _desc),
+                      {"@type": "DefinedTerm", "@id": f"{SITE}/{s}/#term", "name": _t, "description": _pd,
+                       "inDefinedTermSet": SITE + "/it-jargon-buster/#glossary", "url": f"{SITE}/{s}/"},
+                      faqpage(s, [(_q, _a)])])
+    add(slug=slug, title=f"What is {term}? Plain-English Meaning | 365 Techies",
+        desc=d["metaDesc"], og_title=f"What is {term}? | 365 Techies", schema=schema, content=content)
+
+for _g in GLOSSARY_PAGES:
+    glossary_spoke_page(_g)
 
 if __name__ == "__main__":
     w = write_all()
