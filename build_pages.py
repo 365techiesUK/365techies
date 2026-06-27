@@ -1424,6 +1424,7 @@ add(
       </div>
       <p class="plans-note mono" data-reveal>// FROM &pound;24.38/MO PER COMPUTER &middot; NO LOCK-IN &middot; TELL US YOUR SETUP FOR A QUOTE</p>
       <p class="plans-note mono" data-reveal style="margin-top:.5rem"><a href="/our-guarantees/" style="color:var(--cyan)">&#10003; No lock-in, cancel anytime &middot; No-fix-no-fee repairs &middot; Family-run since 1995 &mdash; see our guarantees</a></p>
+      <p data-reveal style="text-align:center;max-width:62ch;margin:1.4rem auto 0;color:var(--muted)">From a home office to a supercar workshop: since 2016 we&rsquo;ve looked after <a href="https://www.emblemsportscars.com/" target="_blank" rel="noopener">Emblem Sports Cars</a>, Poole&rsquo;s Ferrari, Maserati &amp; Lamborghini specialists &mdash; diagnostic systems and all.</p>
     </section>''',
    f'''    <section class="section" aria-label="Popular add-ons">
       <div class="wrap">
@@ -2109,6 +2110,15 @@ add(
         <div class="prose" data-reveal style="max-width:74ch;margin:0 auto">
           <p>Back when we traded as <strong>365 Computers</strong> on the Moordown high street, a customer&rsquo;s laptop was stolen from his car in Poole, back in 2011. Because we&rsquo;d set his machine up with the same kind of <strong>remote-support software we still use to look after customers today</strong>, our team could see it was being used &mdash; and the internet (IP) address it was connecting from. We passed the details to <strong>Dorset Police</strong>, who located the address and recovered the laptop.</p>
           <p>Our own <strong>David Bridgewater</strong> was quoted in the <strong>Bournemouth Echo</strong>, which ran the story under the headline <a href="https://www.bournemouthecho.co.uk/news/9427325.laptop-retrieved-thanks-to-software/" target="_blank" rel="noopener">&ldquo;Laptop retrieved thanks to software&rdquo;</a>. All these years on, the same care &mdash; and much of the same technology &mdash; still looks after our customers every day.</p>
+        </div>
+      </div>
+    </section>''',
+   f'''    <section class="section" aria-label="Trusted by local businesses">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// NOT JUST HOMES &amp; OFFICES</p>
+          <h2 class="section-title section-title--center" data-title>Serious businesses rely on us too<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>We look after all sorts &mdash; including some demanding, specialist setups. Since <strong>2016</strong> we&rsquo;ve supported <a href="https://www.emblemsportscars.com/" target="_blank" rel="noopener">Emblem Sports Cars</a> in Poole, the South Coast&rsquo;s independent <strong>Ferrari, Maserati and Lamborghini</strong> specialists &mdash; right down to the <strong>car diagnostic systems</strong> that keep those supercars running. Decades earlier, we were the south-coast IT partner for Mercedes-Benz Pentagon. From a single laptop to a workshop full of diagnostic kit, it&rsquo;s the same careful, reliable support.</p>
         </div>
       </div>
     </section>''',
