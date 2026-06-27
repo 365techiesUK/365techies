@@ -986,6 +986,7 @@ def net_map_section(eyebrow, heading, blurb_html, variant="home", label="LIVE VI
 # ---- Heritage gallery (real certification plaques; self-activates when /images/ files exist) ----
 HERITAGE_IMAGES = [
  ("heritage-05.jpg", "The door of our Microsoft Education Resource Centre in Winton, Bournemouth", "Our MERC door &middot; Winton"),
+ ("heritage-07.jpg", "Inside our Microsoft training centre &mdash; rows of computers and the wall of certifications", "Inside the training centre"),
  ("heritage-02.jpg", "Microsoft Office User Specialist Training &amp; Certification plaque &mdash; MEC Centre, 2002 to 2003", "MEC Centre &middot; 2002&ndash;03"),
  ("heritage-03.jpg", "IC3 Internet and Computing Core Certification Authorised Testing Centre plaque, 2003", "IC&sup3; Testing Centre &middot; 2003"),
  ("heritage-01.jpg", "Microsoft Office Specialist Authorised Testing Centre plaque, 2004", "Office Specialist Centre &middot; 2004"),
