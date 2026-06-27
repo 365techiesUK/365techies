@@ -520,7 +520,7 @@ LLMS_HEADER = """# 365 Techies
 - Hours: Monday–Friday, 9am–5pm
 - Based in Bournemouth; serves homes and small businesses across Dorset, the New Forest and Hampshire — remotely and on-site
 - Rated 4.9/5 from 51 Google reviews; family-run since 1995; no call-out fee, no contracts, cancel anytime
-- Heritage: built and ran the Dorset Microsoft Education Resource Centre (a training centre in Winton, Bournemouth, on their own computer network) from 1998 to 2008; some customers from that era are still supported today
+- Heritage: built and ran the Dorset Microsoft Education Resource Centre (a training centre in Winton, Bournemouth, on their own computer network) from 1998 to 2008; then ran a computer sales, service and support centre in Moordown, Winton from 2008 to 2017; some customers from that era are still supported today
 
 ## Plans & prices
 - Home IT support: £18.25/month per computer; add Microsoft 365 for £4.85/month per user
