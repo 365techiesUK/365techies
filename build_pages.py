@@ -2118,8 +2118,12 @@ add(
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>// NOT JUST HOMES &amp; OFFICES</p>
           <h2 class="section-title section-title--center" data-title>Serious businesses rely on us too<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>We look after all sorts &mdash; including some demanding, specialist setups. Since <strong>2016</strong> we&rsquo;ve supported <a href="https://www.emblemsportscars.com/" target="_blank" rel="noopener">Emblem Sports Cars</a> in Poole, the South Coast&rsquo;s independent <strong>Ferrari, Maserati and Lamborghini</strong> specialists &mdash; right down to the <strong>car diagnostic systems</strong> that keep those supercars running. Decades earlier, we were the south-coast IT partner for Mercedes-Benz Pentagon. From a single laptop to a workshop full of diagnostic kit, it&rsquo;s the same careful, reliable support.</p>
+          <p class="lede lede--center" data-reveal>From a single home laptop to demanding, specialist business setups, we&rsquo;ve been a trusted local name for decades. A few we&rsquo;re proud to have looked after:</p>
         </div>
+        <ul class="checklist" data-stagger style="max-width:820px;margin:0 auto">
+{checklist(['<strong><a href="https://www.emblemsportscars.com/" target="_blank" rel="noopener">Emblem Sports Cars</a></strong>, Poole &mdash; the South Coast&rsquo;s independent Ferrari, Maserati &amp; Lamborghini specialists. We look after their systems, right down to the car diagnostic kit. <em>Since 2016.</em>', '<strong>Mercedes-Benz Pentagon</strong> &mdash; we were the IT support partner for their garages right across the south coast. <em>1998&ndash;2008.</em>', '<strong>David F Green &amp; Associates</strong>, later the Poole financial advisers <strong><a href="https://www.pfmassociates.co.uk/" target="_blank" rel="noopener">PFM Associates</a></strong> &mdash; we stayed with the firm through its 2003 acquisition, handling the IT migration and office relocation, with IT sales and support throughout. <em>1997&ndash;2016.</em>'])}
+        </ul>
+        <p class="lede lede--center" data-reveal style="margin-top:1.6rem">From a single laptop to a workshop full of diagnostic kit, it&rsquo;s the same careful, reliable support &mdash; and most of these relationships have lasted a decade or more.</p>
       </div>
     </section>''',
    f'''    <section class="stats section--alt" aria-label="By the numbers">
