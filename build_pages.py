@@ -991,6 +991,9 @@ HERITAGE_IMAGES = [
  ("heritage-03.jpg", "IC3 Internet and Computing Core Certification Authorised Testing Centre plaque, 2003", "IC&sup3; Testing Centre &middot; 2003"),
  ("heritage-01.jpg", "Microsoft Office Specialist Authorised Testing Centre plaque, 2004", "Office Specialist Centre &middot; 2004"),
  ("heritage-04.jpg", "Certiport Approved Testing Centre plaque, 2006", "Certiport Centre &middot; 2006"),
+ ("heritage-storefront.jpg", "The shopfront of our computer sales and service centre in Moordown, Winton &mdash; Dell laptops and computers for home and business", "Our shopfront &middot; Moordown"),
+ ("heritage-moordown.jpg", "Inside our computer sales and service centre in Moordown, Winton &mdash; the wall of Dell laptops and the bench of PCs", "Inside the shop &middot; Moordown"),
+ ("heritage-stock.jpg", "Refurbished Dell laptops and PCs lined up, set up and tested in our Moordown centre", "Set up &amp; tested &middot; Moordown"),
 ]
 def heritage_gallery():
     """Returns the heritage plaque gallery only for images that actually exist in /images/ — so the
@@ -1007,8 +1010,8 @@ def heritage_gallery():
       <div class="wrap">
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>// OUR HERITAGE</p>
-          <h2 class="section-title section-title--center" data-title>Our Microsoft training heritage<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>From 1998 to 2008 we ran the Dorset Microsoft Education Resource Centre in Winton, Bournemouth &mdash; an official Microsoft training and testing centre. We&rsquo;ve kept the certification plaques ever since.</p>
+          <h2 class="section-title section-title--center" data-title>Our Dorset computing heritage<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>From the Dorset Microsoft Education Resource Centre (1998&ndash;2008) to our computer sales &amp; service centre in Moordown (2008&ndash;2017), we&rsquo;ve been a familiar local face in computing for decades. These are the real plaques &mdash; and the places.</p>
         </div>
         <div class="heritage-grid" data-stagger>
 {figs}
