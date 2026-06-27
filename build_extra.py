@@ -1618,7 +1618,7 @@ def dell_hardware():
             <figcaption class="mono">Our old high-street shop &mdash; same number we use today &middot; Moordown, 2008&ndash;2017</figcaption>
           </figure>
         </div>
-        <p class="mono" style="text-align:center;max-width:66ch;margin:1.8rem auto 0;color:var(--muted)" data-reveal>These are heritage photos, not current stock &mdash; we moved on from the high-street shop in 2017 (we&rsquo;re now based at the Kinson Community Centre) and supply, set up and support your Dell remotely and locally across Dorset. Tell us what you need and we&rsquo;ll <a href="#match">match you a tested Dell</a>.</p>
+        <p class="mono" style="text-align:center;max-width:66ch;margin:1.8rem auto 0;color:var(--muted)" data-reveal>These are heritage photos, not current stock &mdash; we moved on from the high-street shop in 2017 (we&rsquo;re now based at the Kinson Community Centre) and supply, set up and support your Dell remotely and locally across Dorset. Our work has even made the local press &mdash; the <em>Bournemouth Echo</em> once covered how we <a href="/lost-or-stolen-laptop-what-to-do/">helped police recover a customer&rsquo;s stolen laptop</a>. Tell us what you need and we&rsquo;ll <a href="#match">match you a tested Dell</a>.</p>
       </div>
     </section>''',
       f'''    <section class="section section--alt" aria-label="How we refurbish">
@@ -5421,7 +5421,9 @@ info_page(
           <h2>What we can fix remotely</h2>
           <p>Most things! Slow computers, email problems, software setup, updates, printer and Wi-Fi issues, security checks and much more &mdash; all without us leaving the office or you leaving home.</p>
           <h2>Which devices?</h2>
-          <p>Remote support works on <strong>Windows computers and laptops and Android devices</strong>. Please note we can&rsquo;t remotely connect to Apple Macs, iPhones or iPads. For on-site help across Dorset, just <a href="/contact/">get in touch</a>.</p>""",
+          <p>Remote support works on <strong>Windows computers and laptops and Android devices</strong>. Please note we can&rsquo;t remotely connect to Apple Macs, iPhones or iPads. For on-site help across Dorset, just <a href="/contact/">get in touch</a>.</p>
+          <h2>It once helped recover a stolen laptop</h2>
+          <p>Remote support has even done something we never expected. Back in 2011, when a customer&rsquo;s laptop was stolen, the remote-support software we&rsquo;d set up meant we could see it was being used &mdash; and the internet address it was connecting from. We passed the details to Dorset Police, who recovered it, and the <em>Bournemouth Echo</em> <a href="https://www.bournemouthecho.co.uk/news/9427325.laptop-retrieved-thanks-to-software/" target="_blank" rel="noopener">ran the story</a>. (If the worst ever happens to you, here&rsquo;s <a href="/lost-or-stolen-laptop-what-to-do/">what to do if your laptop is lost or stolen</a>.)</p>""",
   cta_args=("Prefer to book ahead?", "Not an emergency? Book a convenient time and we&rsquo;ll call you.",
             ("Book a Service", "/book-service/"), ("Call 01202 775566", "tel:+441202775566")),
 )
