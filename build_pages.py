@@ -16,7 +16,7 @@ except Exception:
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://365techies.co.uk"
-CSSV = "44"
+CSSV = "45"
 HUBSPOT_ID = "148562638"
 # Public URL of the deployed 365 AI OS. When set, the /365-ai-os/ page shows a
 # prominent "Launch the live demo" button. Leave empty ("") to hide it.
@@ -980,6 +980,39 @@ def net_map_section(eyebrow, heading, blurb_html, variant="home", label="LIVE VI
 {blurb_html}
         </div>
 {net_map(variant, label)}
+      </div>
+    </section>'''
+
+# ---- Heritage gallery (real certification plaques; self-activates when /images/ files exist) ----
+HERITAGE_IMAGES = [
+ ("heritage-05.jpg", "The door of our Microsoft Education Resource Centre in Winton, Bournemouth", "Our MERC door &middot; Winton"),
+ ("heritage-07.jpg", "Inside our Microsoft training centre &mdash; rows of computers and a wall of certifications", "Inside the training centre"),
+ ("heritage-02.jpg", "Microsoft Office User Specialist Training &amp; Certification plaque &mdash; MEC Centre, 2002 to 2003", "MEC Centre &middot; 2002&ndash;03"),
+ ("heritage-03.jpg", "IC3 Internet and Computing Core Certification Authorised Testing Centre plaque, 2003", "IC&sup3; Testing Centre &middot; 2003"),
+ ("heritage-01.jpg", "Microsoft Office Specialist Authorised Testing Centre plaque, 2004", "Office Specialist Centre &middot; 2004"),
+ ("heritage-04.jpg", "Certiport Approved Testing Centre plaque, 2006", "Certiport Centre &middot; 2006"),
+]
+def heritage_gallery():
+    """Returns the heritage plaque gallery only for images that actually exist in /images/ — so the
+    build never emits broken <img>s. Drop the files in (see images/README-heritage.txt) and rebuild."""
+    items = [x for x in HERITAGE_IMAGES if os.path.exists("images/" + x[0])]
+    if not items:
+        return ""
+    figs = "\n".join(
+        f'''          <figure class="heritage-card" data-reveal>
+            <img src="/images/{f}" alt="{alt}" loading="lazy" decoding="async" />
+            <figcaption class="mono">{cap}</figcaption>
+          </figure>''' for (f, alt, cap) in items)
+    return f'''    <section class="section section--alt" aria-label="Our heritage">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// PROOF ON THE WALL</p>
+          <h2 class="section-title section-title--center" data-title>Three decades, still on the wall<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>From 1998 to 2008 we ran the Dorset Microsoft Education Resource Centre in Winton, Bournemouth &mdash; an official Microsoft training and testing centre. These are the real plaques, still on our wall.</p>
+        </div>
+        <div class="heritage-grid" data-stagger>
+{figs}
+        </div>
       </div>
     </section>'''
 
@@ -2050,6 +2083,7 @@ add(
         <p><strong>Our customers stay with us for years</strong> — many for over a decade — because we&rsquo;re reliable, we explain things clearly, and we genuinely care about getting it right.</p>
       </div>
     </section>''',
+   heritage_gallery(),
    f'''    <section class="stats section--alt" aria-label="By the numbers">
       <div class="stats__grid">
         <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="4.9" data-decimals="1">0</span></p><p class="stat__label mono">GOOGLE RATING</p></div>
