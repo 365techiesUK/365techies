@@ -1454,6 +1454,7 @@ def services_overview():
       ]),
       ("Core IT services", [
         ("Remote IT Support", "/remote-it-support/", "Fast, secure online help &mdash; most problems fixed in minutes."),
+        ("Remote Access", "/remote-access/", "Reach your own laptop or PC from anywhere with secure, fast Splashtop Business remote access."),
         ("Microsoft 365", "/microsoft-365-support/", "Outlook, Teams, OneDrive, SharePoint, licensing and migration."),
         ("Cybersecurity", "/cybersecurity-support/", "Protection from scams, malware, ransomware and phishing."),
         ("Malwarebytes Premium &amp; VPN", "/malwarebytes-premium/", "Award-winning Malwarebytes Premium with VPN, set up and managed by us &mdash; safe online 24/7."),
@@ -5422,6 +5423,7 @@ info_page(
           <p>Most things! Slow computers, email problems, software setup, updates, printer and Wi-Fi issues, security checks and much more &mdash; all without us leaving the office or you leaving home.</p>
           <h2>Which devices?</h2>
           <p>Remote support works on <strong>Windows computers and laptops and Android devices</strong>. Please note we can&rsquo;t remotely connect to Apple Macs, iPhones or iPads. For on-site help across Dorset, just <a href="/contact/">get in touch</a>.</p>
+          <p>Want to reach your <strong>own</strong> computer from anywhere &mdash; your work PC from home, say &mdash; rather than get support? That&rsquo;s <a href="/remote-access/">remote access</a>, and we set that up too.</p>
           <h2>We&rsquo;ve done this for over 20 years</h2>
           <p>Remote support isn&rsquo;t new to us. We started connecting to customers&rsquo; computers remotely back in <strong>2001</strong>, when we were the IT support partner for <strong>Mercedes-Benz Pentagon</strong> across the south coast. With so many garages to keep running, reaching them securely over the internet was the only sensible way &mdash; and we&rsquo;ve been refining it ever since.</p>
           <h2>It once helped recover a stolen laptop</h2>
@@ -7643,6 +7645,129 @@ def industry_hub():
     add(slug=slug, title="IT Support by Industry | Bournemouth, Poole &amp; Dorset | 365 Techies",
         desc=desc, og_title="IT Support by Industry | 365 Techies", schema=schema, content=content)
 industry_hub()
+
+# ============================================================ REMOTE ACCESS (work from anywhere - Splashtop Business)
+def remote_access_page():
+    slug = "remote-access"
+    desc = "We set home and business users up to securely reach their own laptop or PC from anywhere with Splashtop Business - fully encrypted, super fast, and ready for emergency working from home. Bournemouth, Poole & Dorset."
+    faqs = [
+      ("What&rsquo;s the difference between this and your remote support?", "Two different things, and we set up both. <a href=\"/remote-support/\">Remote support</a> is when <em>we</em> securely connect to your computer to fix a problem while you watch. Remote <em>access</em> is when <em>you</em> connect to your own computer &mdash; your work PC from home, say &mdash; to get on with your day. This page is about the second one."),
+      ("Is it secure?", "Yes. Splashtop Business protects every session with TLS and 256-bit AES encryption, device authentication and two-step login, so only you get in. Crucially, your files never leave the host computer &mdash; only an encrypted picture of the screen travels &mdash; so nothing sensitive ends up on the device you&rsquo;re sitting at."),
+      ("Will it be fast enough for real work?", "Yes. It&rsquo;s smooth and responsive even with large files and design work &mdash; most people quickly forget they&rsquo;re not sat at the machine. Real-world speed depends on the internet connection at both ends, which we&rsquo;ll check and help you get right."),
+      ("Can I connect from a phone, tablet or someone else&rsquo;s laptop?", "Yes &mdash; you can connect <em>from</em> almost any device (laptop, tablet or phone) to your own Windows computer, using the free Splashtop app. When you log off, nothing is left behind on the device you borrowed."),
+      ("Does my computer have to be left switched on?", "The computer you&rsquo;re reaching does need to be on, or set to wake up on demand &mdash; we&rsquo;ll configure that for you so it&rsquo;s ready when you need it, on the lowest sensible power so it isn&rsquo;t wasting energy."),
+      ("How much does it cost?", "It&rsquo;s a small, sensible add-on that we set up, secure and look after for you. We&rsquo;ll quote it alongside your support plan &mdash; just <a href=\"/contact/\">ask us</a> and we&rsquo;ll keep it simple."),
+    ]
+    content = "\n".join([
+      hero(bc("Remote Access"), "// REMOTE ACCESS",
+           'Reach your own computer <em class="grad grad--cyan">from anywhere</em>',
+           hero_trust("We set you up to securely log in to your own laptop or PC &mdash; at home or at work &mdash; from any other device, anywhere. Same screen, same files, same software as if you were sat right in front of it. Powered by Splashtop Business: fully encrypted, and fast enough that you forget you&rsquo;re not there."),
+           cta1=("Set me up to work anywhere", "/contact/"), cta2=("Call 01202 775566", "tel:+441202775566"),
+           chips=["Fully encrypted", "Super fast", "Work from anywhere"]),
+      '''    <section class="section" aria-label="What it is">
+      <div class="wrap"><div class="prose" data-reveal style="max-width:780px;margin:0 auto;text-align:center">
+        <p>There&rsquo;s a big difference between <a href="/remote-support/">us connecting to fix your computer</a> and <strong>you reaching your own computer to get on with work</strong>. This is the second one. We set home users and businesses up with <strong>Splashtop Business</strong> so you can sit at any device &mdash; a laptop at the kitchen table, a tablet on a client&rsquo;s site, a PC abroad &mdash; and be on your <em>actual</em> machine in seconds, with everything exactly where you left it.</p>
+      </div></div>
+    </section>''',
+      '''    <section class="section section--alt" aria-label="Why it helps">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// WHY PEOPLE LOVE IT</p>
+          <h2 class="section-title section-title--center" data-title>One login, and you&rsquo;re there<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="tile-grid" data-stagger>
+''' + tiles([
+        ("flow","A real productivity boost","Pick up exactly where you left off, on the machine that already has all your files and software set up. No emailing things to yourself, no &ldquo;it&rsquo;s on my other computer&rdquo;."),
+        ("home","Work from anywhere","Your office PC from home, a second home, a hotel or another country &mdash; and your home PC while you&rsquo;re out. One secure login and you&rsquo;re sat at it."),
+        ("shield","Emergency working from home","Ill, snowed in, a transport strike, or caring for someone? Carry on exactly as normal from home, with no scramble and no lost day."),
+        ("leaf","Kinder to the planet &amp; your pocket","Commuting is one of the biggest carbon costs in most people&rsquo;s week. Every trip you skip is fuel, time and carbon saved &mdash; and one computer can do the work of two."),
+        ("lock","Properly secure","Protected by TLS and 256-bit AES encryption, device authentication and two-step login. Your files stay put &mdash; only an encrypted image of the screen ever travels."),
+        ("bolt","Genuinely fast","Smooth and responsive even for big files and design work. Most people forget they&rsquo;re not sat at the machine."),
+      ]) + '''
+        </div>
+      </div>
+    </section>''',
+      '''    <section class="section" aria-label="The old way versus remote access">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// THE OLD WAY vs WORKING REMOTELY</p>
+          <h2 class="section-title section-title--center" data-title>The difference it makes, side by side<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="split-2">
+          <div class="tile" data-reveal>
+            <h3>Without remote access (the old way)</h3>
+            <ul class="checklist">
+''' + checklist([
+              "Drive in for anything you forgot &mdash; even a single file",
+              "Email files back and forth to yourself, and lose track of the latest version",
+              "Buy, licence and update a <strong>second computer</strong> to mirror your work setup",
+              "Stuck and unproductive at home if you&rsquo;re ill, snowed in or can&rsquo;t travel",
+              "A commute each way, every day &mdash; fuel, time and carbon",
+              "Sensitive files copied onto USB sticks and personal laptops",
+            ]) + '''
+            </ul>
+          </div>
+          <div class="tile" data-reveal>
+            <h3>With remote access (the modern way)</h3>
+            <ul class="checklist">
+''' + checklist([
+              "Open any device and you&rsquo;re on your actual work PC in seconds",
+              "<strong>One</strong> set of files and software &mdash; always the latest, nothing duplicated",
+              "No second machine to buy, licence or keep updated",
+              "Work straight through illness, weather or travel disruption",
+              "Skip the commute when you can &mdash; save the time, fuel and carbon",
+              "Files stay on the host PC; only an encrypted picture of the screen travels",
+            ]) + '''
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>''',
+      '''    <section class="section section--alt" aria-label="A tale of two Mondays">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// A TALE OF TWO MONDAYS</p>
+          <h2 class="section-title section-title--center" data-title>The same morning, two different weeks<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Here&rsquo;s the kind of difference it makes for a typical small business or home worker in Dorset.</p>
+        </div>
+        <div class="split-2">
+          <div class="tile" data-reveal>
+            <h3>Monday, the old way</h3>
+            <p style="color:var(--muted)">You wake up streaming with a cold. The quote a client needs today is on the office PC &mdash; so it&rsquo;ll have to wait, or you drag yourself in and infect the team. Half your morning goes on the round trip. The file you actually needed turns out to be on the <em>other</em> machine. By the time you&rsquo;re set up at home with a half-remembered copy, it&rsquo;s lunchtime and the client has gone quiet.</p>
+          </div>
+          <div class="tile" data-reveal>
+            <h3>Monday, with remote access</h3>
+            <p style="color:var(--muted)">You wake up streaming with a cold. You open the laptop in bed, log in, and you&rsquo;re on your office PC &mdash; the real one, with the quote already open where you left it on Friday. You finish it, send it before nine, and the client replies by ten. No commute, no second machine, no infecting the team, no lost day. You rest up in the afternoon, and the work still got done.</p>
+          </div>
+        </div>
+        <p class="mono" style="text-align:center;max-width:64ch;margin:1.8rem auto 0;color:var(--muted)" data-reveal>An illustration, not a specific customer &mdash; but it&rsquo;s the everyday difference our customers tell us about. More on the green side on our <a href="/sustainability/">sustainability</a> page.</p>
+      </div>
+    </section>''',
+      '''    <section class="how" aria-label="How it works">
+      <div class="wrap">
+        <p class="eyebrow eyebrow--center mono" data-reveal>// HOW IT WORKS</p>
+        <h2 class="section-title section-title--center" data-title>Set up properly, in three steps<span class="title-underline title-underline--center"></span></h2>
+        <ol class="how__steps">
+''' + steps([
+        ("We set it up","We install and configure Splashtop Business on the computer you want to reach, lock it down with encryption and two-step login, set it to wake on demand, and test it end to end."),
+        ("You sign in","From any laptop, desktop, tablet or phone, you log in securely with your own details and a second-step check &mdash; nobody else can get in."),
+        ("You&rsquo;re there","Your own desktop appears, exactly as you left it. Work away at full speed, then log off &mdash; and nothing is left behind on the device you used."),
+      ]) + '''
+        </ol>
+      </div>
+    </section>''',
+      faq_html(faqs),
+      cta("Set up to work from anywhere",
+          "Whether it&rsquo;s one home laptop or a whole team, we&rsquo;ll set up fast, fully-encrypted remote access and look after it for you &mdash; in plain English, from a real local team.",
+          primary=("Talk to us about remote access", "/contact/"), secondary=("See Business Plans", "/business-it-support-plans/")),
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        return graph([crumb(s, "Remote Access"), webpage(s, "Remote Access - Work From Anywhere", _desc),
+                      service(s, "Remote Access Setup", "Secure remote access to your own computer from anywhere with Splashtop Business, set up and supported by 365 Techies across Dorset.", "Remote access setup"),
+                      faqpage(s, _faqs)])
+    add(slug=slug, title="Remote Access - Work From Anywhere on Your Own PC | 365 Techies",
+        desc=desc, og_title="Remote Access - Work From Anywhere | 365 Techies", schema=schema, content=content)
+remote_access_page()
 
 if __name__ == "__main__":
     w = write_all()
