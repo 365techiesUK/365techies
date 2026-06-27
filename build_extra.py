@@ -1564,9 +1564,10 @@ services_overview()
 # ===================================================== DELL HARDWARE
 def dell_hardware():
     slug = "dell-hardware"
-    desc = "Refurbished, tested ex-business Dell Latitude laptops & OptiPlex desktops — supplied, set up and supported across Bournemouth, Poole & Dorset, with our own 5-year guarantee. Affordable, reliable, lower-waste."
+    desc = "Refurbished, tested ex-business Dell Latitude laptops & OptiPlex desktops from £299 — supplied, set up and supported across Bournemouth, Poole & Dorset, with our own 5-year guarantee. Reliable, lower-waste."
     faqs = [
       ("Are these new or refurbished?", "They&rsquo;re professionally refurbished &mdash; genuine ex-business Dell Latitude laptops and OptiPlex desktops that we test, securely wipe, clean, grade and set up before they go out. Not new, and we&rsquo;d never pretend otherwise &mdash; that&rsquo;s rather the point: proper business-grade kit for a lot less."),
+      ("How much do refurbished Dells cost?", "Our refurbished Dell Latitude laptops and OptiPlex desktops <strong>start from &pound;299</strong>, with the exact price depending on the model, spec and condition grade you choose. Tell us your budget and what you&rsquo;ll use it for, and we&rsquo;ll match you the best machine for the money &mdash; every one tested, set up, supported and backed by our warranties."),
       ("I&rsquo;m not very confident with technology &mdash; is this still for me?", "Absolutely &mdash; you don&rsquo;t need to know any of the technical words, that&rsquo;s our job, not yours. We help plenty of people who&rsquo;d rather not deal with the technical side. We choose the right computer for you, set it all up, and can make it easier to use with larger text and other accessibility options. And there&rsquo;s always a real local person to phone if you ever get stuck &mdash; the same friendly faces, year after year, on a number that&rsquo;s been ours for years (01202 775566)."),
       ("Are refurbished business laptops any good?", "Genuinely, yes. Business-grade Dell Latitudes and OptiPlexes are built to work hard for years &mdash; tougher materials and, for Latitude laptops, tested to military-standard durability methods. A well-refurbished one often outlasts a brand-new budget laptop that was built down to a price."),
       ("Is it safe to buy refurbished?", "From us, yes. Every machine is fully tested and securely wiped, you&rsquo;re buying from a real local firm &mdash; a Dorset family business you can phone, text or email, here since 1995 &mdash; and you&rsquo;re covered by our own warranty plus your Consumer Rights Act protection, very different from an untested bargain off a marketplace."),
@@ -1582,7 +1583,7 @@ def dell_hardware():
            'Refurbished Dell Latitude laptops &amp; <em class="grad grad--cyan">OptiPlex desktops</em>',
            "Professionally refurbished, tested ex-business Dell &mdash; proper business-grade computers for a fraction of the price of new, set up and supported by a real local firm you can phone, text or email &mdash; and that comes to you. Kinder on your wallet and the planet.",
            cta1=("Find me a refurbished Dell", "#match"), cta2=("Call 01202 775566", "tel:+441202775566"),
-           chips=["New Samsung Pro SSD","5-year guarantee","Set up &amp; fully supported"]),
+           chips=["From &pound;299","New Samsung Pro SSD","5-year guarantee","Set up &amp; fully supported"]),
       f'''    <section class="section" aria-label="Why refurbished business Dell">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
@@ -1592,7 +1593,7 @@ def dell_hardware():
           <p>Bought refurbished, that quality costs <strong>far less than new</strong> &mdash; often around 30&ndash;50% less &mdash; while still doing everything most homes and small businesses need. We&rsquo;ve been supplying refurbished Dell business laptops and PCs for <strong>over 30 years</strong>: we recommend the right model, spec, memory and storage, fit a <strong>brand-new Samsung Pro SSD</strong>, supply any accessories you need, set it all up and support it for years.</p>
         </div>
         <ul class="checklist" data-stagger>
-{checklist(["Genuine ex-business Dell Latitude &amp; OptiPlex","Brand-new Samsung Pro SSD &mdash; 5-year guarantee","Dell next-business-day warranty + our 5-year guarantee","Often around 30&ndash;50% less than new","We recommend the right spec &amp; supply the accessories","Set up &amp; fully supported by your local team","Supplying refurbished Dell business kit for 30+ years","Full repair service if you ever break it"])}
+{checklist(["Genuine ex-business Dell Latitude &amp; OptiPlex","Brand-new Samsung Pro SSD &mdash; 5-year guarantee","Dell next-business-day warranty + our 5-year guarantee","From &pound;299 &mdash; often 30&ndash;50% less than new","We recommend the right spec &amp; supply the accessories","Set up &amp; fully supported by your local team","Supplying refurbished Dell business kit for 30+ years","Full repair service if you ever break it"])}
         </ul>
       </div>
     </section>''',
@@ -1794,10 +1795,10 @@ def dell_hardware():
           <label class="field"><span>Rough budget (optional)</span>
             <select name="budget">
               <option>Not sure yet &mdash; advise me</option>
-              <option>Under &pound;250</option>
-              <option>&pound;250&ndash;&pound;400</option>
-              <option>&pound;400&ndash;&pound;600</option>
-              <option>&pound;600+</option>
+              <option>Around &pound;299 (our entry price)</option>
+              <option>&pound;300&ndash;&pound;450</option>
+              <option>&pound;450&ndash;&pound;650</option>
+              <option>&pound;650+</option>
             </select>
           </label>
           <label class="field"><span>Anything else?</span><textarea name="message" placeholder="The kind of work you do, screen size, must-haves, or an old machine to trade in&hellip;"></textarea></label>
@@ -1809,13 +1810,13 @@ def dell_hardware():
     </section>''',
       faq_html(faqs),
       cta("Find your next computer the easy way",
-          "Tell us what you need and we&rsquo;ll match you a tested, refurbished Dell &mdash; set up, supported and backed by our own warranty.",
+          "Tell us what you need and we&rsquo;ll match you a tested, refurbished Dell from &pound;299 &mdash; set up, supported and backed by our own warranty.",
           primary=("Find me a refurbished Dell", "#match"), secondary=("Call 01202 775566", "tel:+441202775566")),
     ])
     def schema(s, _desc=desc, _faqs=faqs):
         return graph([crumb(s, "Refurbished Dell"), webpage(s, "Refurbished Dell Latitude Laptops & OptiPlex Desktops", _desc),
                       service(s, "Refurbished Dell Supply & Support", "Professionally refurbished, tested ex-business Dell Latitude laptops and OptiPlex desktops, supplied, set up and supported by 365 Techies across Dorset, with our own warranty.", "Refurbished computer supply and support"),
-                      {"@type": "Product", "@id": SITE + "/" + s + "/#product", "name": "Refurbished Dell Latitude Laptops & OptiPlex Desktops", "description": "Professionally refurbished, tested ex-business Dell Latitude laptops and OptiPlex desktops, supplied, set up and supported by 365 Techies with our own warranty.", "brand": {"@type": "Brand", "name": "Dell"}, "itemCondition": "https://schema.org/RefurbishedCondition", "category": "Refurbished computer hardware", "additionalProperty": [{"@type": "PropertyValue", "name": "Storage", "value": "New Samsung Pro SSD (5-year guarantee)"}, {"@type": "PropertyValue", "name": "Condition grading", "value": "Graded A, B or C by appearance; every grade fully tested"}, {"@type": "PropertyValue", "name": "Warranty", "value": "Dell next-business-day warranty plus 365 Techies 5-year guarantee"}], "image": SITE + "/og-image.jpg", "url": SITE + "/" + s + "/"},
+                      {"@type": "Product", "@id": SITE + "/" + s + "/#product", "name": "Refurbished Dell Latitude Laptops & OptiPlex Desktops", "description": "Professionally refurbished, tested ex-business Dell Latitude laptops and OptiPlex desktops, supplied, set up and supported by 365 Techies with our own warranty.", "brand": {"@type": "Brand", "name": "Dell"}, "itemCondition": "https://schema.org/RefurbishedCondition", "category": "Refurbished computer hardware", "additionalProperty": [{"@type": "PropertyValue", "name": "Storage", "value": "New Samsung Pro SSD (5-year guarantee)"}, {"@type": "PropertyValue", "name": "Condition grading", "value": "Graded A, B or C by appearance; every grade fully tested"}, {"@type": "PropertyValue", "name": "Warranty", "value": "Dell next-business-day warranty plus 365 Techies 5-year guarantee"}], "offers": {"@type": "AggregateOffer", "priceCurrency": "GBP", "lowPrice": "299", "availability": "https://schema.org/InStock", "url": SITE + "/" + s + "/#match", "seller": {"@type": "Organization", "name": "365 Techies"}}, "image": SITE + "/og-image.jpg", "url": SITE + "/" + s + "/"},
                       faqpage(s, _faqs)])
     add(slug=slug, title="Refurbished Dell Latitude Laptops & OptiPlex PCs | Dorset | 365 Techies",
         desc=desc, og_title="Refurbished Dell Latitude & OptiPlex | 365 Techies", schema=schema, content=content)
