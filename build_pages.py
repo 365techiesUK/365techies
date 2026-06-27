@@ -2088,6 +2088,30 @@ add(
       </div>
     </section>''',
    heritage_gallery(),
+   f'''    <section class="section" aria-label="Community IT support and group training">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// IN PERSON, WHEN IT&rsquo;S NEEDED</p>
+          <h2 class="section-title section-title--center" data-title>Community IT support &amp; group training<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Not everything is best sorted down the phone. From our base at the <strong>Kinson Community Centre</strong>, we offer community IT support and friendly group training classes in person &mdash; for anyone who&rsquo;d rather learn face to face, at their own pace, when it can&rsquo;t be done remotely.</p>
+        </div>
+        <div class="tile-grid" data-stagger>
+{tiles([("users","Group training classes","Learn the essentials in a small, friendly group &mdash; in plain English, with no question too daft to ask."),("handshake","In-person help","When a problem &mdash; or a person &mdash; is better helped face to face than over a remote connection, we&rsquo;re here for that too."),("heart","Patient &amp; accessible","Ideal if you&rsquo;re retired, less confident with technology, or you simply prefer someone sitting alongside you."),("pin","A real local base","The Kinson Community Centre in Bournemouth &mdash; part of the community, and our home since 2017.")])}
+        </div>
+      </div>
+    </section>''',
+   f'''    <section class="section section--alt" aria-label="In the local press">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// IN THE LOCAL PRESS</p>
+          <h2 class="section-title section-title--center" data-title>The time our software helped recover a stolen laptop<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="prose" data-reveal style="max-width:74ch;margin:0 auto">
+          <p>Back when we traded as <strong>365 Computers</strong> on the Moordown high street, a customer&rsquo;s laptop was stolen from his car in Poole, back in 2011. Because we&rsquo;d set his machine up with the same kind of <strong>remote-support software we still use to look after customers today</strong>, our team could see it was being used &mdash; and the internet (IP) address it was connecting from. We passed the details to <strong>Dorset Police</strong>, who located the address and recovered the laptop.</p>
+          <p>Our own <strong>David Bridgewater</strong> was quoted in the <strong>Bournemouth Echo</strong>, which ran the story under the headline <a href="https://www.bournemouthecho.co.uk/news/9427325.laptop-retrieved-thanks-to-software/" target="_blank" rel="noopener">&ldquo;Laptop retrieved thanks to software&rdquo;</a>. All these years on, the same care &mdash; and much of the same technology &mdash; still looks after our customers every day.</p>
+        </div>
+      </div>
+    </section>''',
    f'''    <section class="stats section--alt" aria-label="By the numbers">
       <div class="stats__grid">
         <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="4.9" data-decimals="1">0</span></p><p class="stat__label mono">GOOGLE RATING</p></div>
