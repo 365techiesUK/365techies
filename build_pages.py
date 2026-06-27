@@ -986,7 +986,6 @@ def net_map_section(eyebrow, heading, blurb_html, variant="home", label="LIVE VI
 # ---- Heritage gallery (real certification plaques; self-activates when /images/ files exist) ----
 HERITAGE_IMAGES = [
  ("heritage-05.jpg", "The door of our Microsoft Education Resource Centre in Winton, Bournemouth", "Our MERC door &middot; Winton"),
- ("heritage-07.jpg", "Inside our Microsoft training centre &mdash; rows of computers and a wall of certifications", "Inside the training centre"),
  ("heritage-02.jpg", "Microsoft Office User Specialist Training &amp; Certification plaque &mdash; MEC Centre, 2002 to 2003", "MEC Centre &middot; 2002&ndash;03"),
  ("heritage-03.jpg", "IC3 Internet and Computing Core Certification Authorised Testing Centre plaque, 2003", "IC&sup3; Testing Centre &middot; 2003"),
  ("heritage-01.jpg", "Microsoft Office Specialist Authorised Testing Centre plaque, 2004", "Office Specialist Centre &middot; 2004"),
@@ -1006,9 +1005,9 @@ def heritage_gallery():
     return f'''    <section class="section section--alt" aria-label="Our heritage">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// PROOF ON THE WALL</p>
-          <h2 class="section-title section-title--center" data-title>Three decades, still on the wall<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>From 1998 to 2008 we ran the Dorset Microsoft Education Resource Centre in Winton, Bournemouth &mdash; an official Microsoft training and testing centre. These are the real plaques, still on our wall.</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>// OUR HERITAGE</p>
+          <h2 class="section-title section-title--center" data-title>Our Microsoft training heritage<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>From 1998 to 2008 we ran the Dorset Microsoft Education Resource Centre in Winton, Bournemouth &mdash; an official Microsoft training and testing centre. We&rsquo;ve kept the certification plaques ever since.</p>
         </div>
         <div class="heritage-grid" data-stagger>
 {figs}
