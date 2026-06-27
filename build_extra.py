@@ -6,7 +6,7 @@ Run: python build_extra.py
 import build_pages as bp
 import build_local  # registers the 12 local/customer pages on import
 from build_pages import (add, graph, crumb, webpage, service, faqpage,
-                         faq_html, cta, hero, bc, tiles, grid_cards, checklist,
+                         faq_html, cta, hero, hero_trust, bc, tiles, grid_cards, checklist,
                          steps, reviews_block, ico, SITE, write_all,
                          promise_strip, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
 from build_local import make_customer
@@ -7526,6 +7526,123 @@ def back_to_school_hub():
     add(slug=slug, title="Back-to-School IT - Laptops, Online Safety & Setup for Families | 365 Techies",
         desc=desc, og_title="Back-to-School IT | 365 Techies", schema=schema, content=content)
 back_to_school_hub()
+
+# ============================================================ INDUSTRY PAGES (deep-dive expansion, wave 1)
+from industries_data import INDUSTRIES
+
+_IND_ICONS = {"home","briefcase","user","users","shield","cloud","wrench","lock","mail","wifi","server","bolt","clock","check","monitor","pin","windows","battery","sun","leaf","van","globe","eye","bug","robot","cpu","flow","spark","gift","heart","handshake","bell","phone"}
+
+def industry_page(d):
+    slug = d["slug"]; cn = d["crumbName"]
+    cn_schema = cn.replace("&amp;", "&").replace("&rsquo;", "'")
+    pains = [((p["icon"] if p["icon"] in _IND_ICONS else "shield"), p["title"], p["body"]) for p in d["painPoints"]]
+    faqs = [(f["q"], f["a"]) for f in d["faqs"]]
+    tie = (d.get("clientTie") or "").strip()
+    tie_html = ""
+    if tie:
+        tie_html = f'''    <section class="section" aria-label="A firm like yours">
+      <div class="wrap"><div class="section-head">
+        <p class="eyebrow eyebrow--center mono" data-reveal>// WE KNOW YOUR WORLD</p>
+        <p class="lede lede--center" data-reveal>{tie}</p>
+      </div></div>
+    </section>'''
+    content = "\n".join([
+      hero(bc(cn), d["eyebrow"], d["h1"], hero_trust(d["lede"]),
+           cta1=("Get a Recommendation", "/contact/"), cta2=("Call 01202 775566", "tel:+441202775566"),
+           chips=d["chips"]),
+      f'''    <section class="section" aria-label="Introduction">
+      <div class="wrap"><div class="prose" data-reveal style="max-width:780px;margin:0 auto">
+{d["intro"]}
+      </div></div>
+    </section>''',
+      f'''    <section class="section section--alt" aria-label="The IT headaches we take away">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// THE IT HEADACHES WE TAKE AWAY</p>
+          <h2 class="section-title section-title--center" data-title>Built around how you really work<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="tile-grid" data-stagger>
+{tiles(pains)}
+        </div>
+      </div>
+    </section>''',
+      f'''    <section class="section" aria-label="What we look after">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">// WHAT WE LOOK AFTER</p>
+          <h2 class="section-title" data-title>Your whole IT, handled<span class="title-underline"></span></h2>
+          <p>From the everyday to the business-critical, we keep your technology working so you can get on with the job &mdash; with a real local person on the end of the phone whenever you need one.</p>
+        </div>
+        <ul class="checklist" data-stagger>
+{checklist(d["whatWeDo"])}
+        </ul>
+      </div>
+    </section>''',
+      tie_html,
+      f'''    <section class="section section--alt" aria-label="Why choose us">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// WHY CHOOSE 365 TECHIES</p>
+          <h2 class="section-title section-title--center" data-title>A local team you can actually reach<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ul class="checklist" data-stagger style="max-width:780px;margin:0 auto">
+{checklist(d["whyUs"])}
+        </ul>
+        <p class="mono" style="text-align:center;max-width:66ch;margin:1.6rem auto 0;color:var(--muted)" data-reveal>We support <a href="/it-support-by-industry/">businesses of every kind across Dorset</a> &mdash; see our <a href="/business-it-support-plans/">business support plans</a>.</p>
+      </div>
+    </section>''',
+      faq_html(faqs),
+      cta(d["ctaHead"], d["ctaSub"],
+          primary=("Get a Recommendation", "/contact/"), secondary=("Business Support Plans", "/business-it-support-plans/")),
+    ])
+    def schema(s, _cn=cn_schema, _desc=d["metaDesc"], _faqs=faqs):
+        return graph([crumb(s, f"IT Support for {_cn}"),
+                      webpage(s, f"IT Support for {_cn}", _desc),
+                      service(s, f"IT Support for {_cn}", _desc, "Industry IT support"),
+                      faqpage(s, _faqs)])
+    add(slug=slug, title=f"IT Support for {cn} in Bournemouth &amp; Dorset | 365 Techies",
+        desc=d["metaDesc"], og_title=f"IT Support for {cn} | 365 Techies", schema=schema, content=content)
+
+for _ind in INDUSTRIES:
+    industry_page(_ind)
+
+def industry_hub():
+    slug = "it-support-by-industry"
+    desc = "Specialist IT support by industry across Bournemouth, Poole & Dorset - accountants, financial advisers, solicitors, dental, care homes, manufacturers, creative agencies and more, from a family firm since 1995."
+    def card(d):
+        blurb = d["lede"].split("&mdash;")[0].strip()
+        if len(blurb) > 118:
+            blurb = blurb[:115].rsplit(" ", 1)[0] + "&hellip;"
+        return f'          <a class="post-card" href="/{d["slug"]}/"><p class="post-card__cat">Industry</p><h3>{d["crumbName"]}</h3><p>{blurb}</p><span class="post-card__more">How we help &#8594;</span></a>'
+    cards = "\n".join(card(d) for d in INDUSTRIES)
+    content = "\n".join([
+      hero(bc("IT Support by Industry"), "// BY INDUSTRY",
+           'IT support for <em class="grad grad--cyan">your line of work</em>',
+           hero_trust("Every trade has its own software, its own rules and its own headaches. We tailor IT support to how your business actually runs &mdash; across Bournemouth, Poole and Dorset."),
+           cta1=("Get a Recommendation", "/contact/"), cta2=("Business Plans", "/business-it-support-plans/"),
+           chips=["Specialist by sector", "Compliance-aware", "Real local family firm"]),
+      f'''    <section class="section" aria-label="Industries we support">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// PICK YOUR SECTOR</p>
+          <h2 class="section-title section-title--center" data-title>Industries we look after<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Don&rsquo;t see yours? We support all sorts &mdash; <a href="/contact/">just ask</a>.</p>
+        </div>
+        <div class="blog-grid" data-stagger>
+{cards}
+        </div>
+      </div>
+    </section>''',
+      cta("Whatever your trade, we&rsquo;ll keep it running",
+          "Tell us what you do and the software you rely on, and we&rsquo;ll tailor your IT support to suit &mdash; in plain English, from a real local team.",
+          primary=("Get a Recommendation", "/contact/"), secondary=("Call 01202 775566", "tel:+441202775566")),
+    ])
+    def schema(s, _d=desc, _it=[{"@type": "ListItem", "position": i + 1, "name": "IT Support for " + x["crumbName"].replace("&amp;", "&"), "url": SITE + "/" + x["slug"] + "/"} for i, x in enumerate(INDUSTRIES)]):
+        return graph([crumb(s, "IT Support by Industry"), webpage(s, "IT Support by Industry", _d, "CollectionPage"),
+                      {"@type": "ItemList", "@id": SITE + "/it-support-by-industry/#list", "itemListElement": _it}])
+    add(slug=slug, title="IT Support by Industry | Bournemouth, Poole &amp; Dorset | 365 Techies",
+        desc=desc, og_title="IT Support by Industry | 365 Techies", schema=schema, content=content)
+industry_hub()
 
 if __name__ == "__main__":
     w = write_all()
