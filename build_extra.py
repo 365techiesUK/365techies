@@ -16,6 +16,11 @@ from build_local import make_customer
 AI_VOICE_FROM = "95"   # AI voice receptionist agent, £/month
 AI_PILOT_FROM = "495"  # AI Starter pilot, one-off £
 
+# ── Victron VRM public "Share your site" embed (off-grid page). PASTE the iframe src
+# URL from VRM Portal -> Share -> Embed here to show the live VRM dashboard. Leave ""
+# to hide the panel (the custom widget still shows its sample). No token goes here. ──
+VRM_EMBED_URL = ""
+
 # ===================================================== SPECIALIST SERVICE PAGES
 SPECIALIST = [
  dict(slug="windows-11-support", crumb_name="Windows 11 Support",
@@ -1430,6 +1435,19 @@ def off_grid():
       tick(); setInterval(tick, 1000);
     })();
     </script>''',
+      (f'''    <section class="section" aria-label="Live Victron VRM dashboard">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// STRAIGHT FROM VICTRON VRM</p>
+          <h2 class="section-title section-title--center" data-title>The full dashboard, live<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>The complete real-time view from our 365 Crafter, straight from Victron&rsquo;s VRM portal.</p>
+        </div>
+        <div style="position:relative;max-width:960px;margin:1.4rem auto 0;border:1px solid rgba(255,255,255,.09);border-radius:18px;overflow:hidden;box-shadow:0 14px 50px rgba(0,0,0,.30)">
+          <iframe src="{VRM_EMBED_URL}" title="Live Victron VRM dashboard for the 365 Crafter off-grid support van" loading="lazy" style="display:block;width:100%;height:760px;border:0;background:#0b1220" allowfullscreen></iframe>
+        </div>
+        <p class="mono" data-reveal style="text-align:center;font-size:.72rem;color:#7f8ea0;margin:.9rem 0 0">Live from Victron VRM &middot; updates at our GX logging interval.</p>
+      </div>
+    </section>''' if VRM_EMBED_URL else ""),
       f'''    <section class="section section--alt" aria-label="Clean, mobile, off-grid">
       <div class="wrap">
         <div class="section-head">
