@@ -1,0 +1,16 @@
+# Cloudflare Worker config for the Victron VRM live proxy.
+# Deploy with the Wrangler CLI:
+#   npx wrangler deploy
+#   npx wrangler secret put VRM_TOKEN     # paste a FRESH read-capable VRM token
+#   npx wrangler secret put VRM_SITE_ID   # enter: 458482
+# Then copy the deployed Worker URL into the PROXY constant in both live widgets
+# (off-grid `vlive` and lithium `vmini`) in build_extra.py, and rebuild.
+#
+# (Or skip the CLI entirely and use the Cloudflare dashboard — see DEPLOY-VICTRON-LIVE.md.)
+
+name = "victron-vrm-proxy"
+main = "victron-vrm-proxy.js"
+compatibility_date = "2026-06-01"
+
+# Secrets (VRM_TOKEN, VRM_SITE_ID) are NOT stored here — they are set with
+# `wrangler secret put` so the token never lands in the repo or the website.
