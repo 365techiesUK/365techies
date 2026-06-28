@@ -4284,7 +4284,20 @@ def rural_wifi():
         </div>
       </div>
     </section>''',
-      f'''    <section class="section" aria-label="Who it's for">
+      f'''    <section class="section" aria-label="Case study: Environment Agency wireless link at Knapp Mill">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/CASE STUDY &mdash; ENVIRONMENT AGENCY</p>
+          <h2 class="section-title section-title--center" data-title>A wireless link across the River Avon<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="prose" data-reveal style="max-width:760px;margin:0 auto;text-align:center">
+          <p>In 2015 the <strong>Environment Agency</strong> asked us to design, install and support a <strong>point-to-point wireless link spanning the River Avon</strong> at <strong>Knapp Mill in Christchurch</strong> &mdash; carrying data from the riverside fish-monitoring station to a building on the far bank, so counts from the Avon&rsquo;s salmon-counter flow reliably across the water.</p>
+          <p>We designed it, installed it and <strong>still support it today</strong> &mdash; a decade of keeping a real piece of environmental monitoring online. You can see the live counts at <a href="http://www.knappmill.co.uk/" target="_blank" rel="noopener">knappmill.co.uk</a>.</p>
+          <p class="mono" style="font-size:.8rem;color:#9fb0c3">The same point-to-point know-how we use to connect barns, pods and outbuildings across a yard &mdash; here, just across a river.</p>
+        </div>
+      </div>
+    </section>''',
+      f'''    <section class="section section--alt" aria-label="Who it's for">
       <div class="wrap">
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>/03 &mdash; WHO IT&rsquo;S FOR</p>
