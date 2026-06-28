@@ -1607,6 +1607,17 @@ def web_design():
         </ol>
       </div>
     </section>''',
+      f'''    <section class="section" aria-label="A site we look after">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// A SITE WE LOOK AFTER</p>
+          <h2 class="section-title section-title--center" data-title>Designed, hosted &amp; cared for since 2014<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="prose" data-reveal style="max-width:720px;margin:0 auto;text-align:center">
+          <p>We design, host and look after the website for <strong><a href="https://www.colinclarkbuilders.co.uk/" target="_blank" rel="noopener">Colin Clark Builders</a></strong> &mdash; East Dorset&rsquo;s traditional and heritage-property building specialists &mdash; right alongside their IT support. <strong>The same local team since 2014:</strong> one number for the website, the email and the computers.</p>
+        </div>
+      </div>
+    </section>''',
       faq_html(faqs),
       cta("Ready for a website that works as hard as you do?",
           "Get a friendly, no-obligation quote for website design, hosting and business email — all looked after by your local IT team.",
