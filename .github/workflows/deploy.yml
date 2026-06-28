@@ -4,8 +4,8 @@
 #   FTP_HOST      e.g. ftp.365techies.co.uk  (or the SiteGround server hostname)
 #   FTP_USER      the FTP account username
 #   FTP_PASSWORD  the FTP account password
-#   FTP_PATH      web-root path, MUST end in "/". Use "./" if the FTP account
-#                 already opens inside the web root, else e.g. "public_html/"
+#   (The FTP account's home directory is set to public_html in SiteGround — i.e. the
+#    web root — so files deploy straight into it. No path secret needed.)
 #
 # Trigger: manual only (Actions tab -> Deploy to SiteGround -> Run workflow).
 # The "dry_run" input defaults to TRUE: the first run only tests the connection and
@@ -40,7 +40,7 @@ jobs:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: ${{ secrets.FTP_PATH }}
+          server-dir: ./
           protocol: ftps
           dry-run: ${{ inputs.dry_run }}
           # Upload the built website only - never the source/dev files.
