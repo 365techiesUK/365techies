@@ -9,10 +9,16 @@ DirectoryIndex index.html
 
 RewriteEngine On
 
-# --- Force HTTPS and non-www (canonical: https://365techies.co.uk) ---
-RewriteCond %{HTTPS} off [OR]
+# --- Force non-www, then HTTPS (loop-safe behind SiteGround/Cloudflare) ---
 RewriteCond %{HTTP_HOST} ^www\. [NC]
 RewriteRule ^ https://365techies.co.uk%{REQUEST_URI} [L,R=301]
+RewriteCond %{HTTPS} off
+RewriteCond %{HTTP:X-Forwarded-Proto} !https [NC]
+RewriteRule ^ https://365techies.co.uk%{REQUEST_URI} [L,R=301]
+
+# --- 410 Gone: dead WordPress / WooCommerce / BuddyPress system pages ---
+RewriteRule ^(members|members-2|activity|activity-2|groups|forums|register|register-2|activate|profile|moderation|messages|notifications|videos|documents|photos|password-reset|password-recover|external-link|sidebar|gutenberg|remote-jobs|365live|my-account|my-account-2|cart|checkout|checkout-2|shop-2)/?$ - [G]
+RewriteRule ^shop/?$ /dell-hardware/ [R=301,L]
 
 # ============================================================
 # 301 REDIRECTS — old WordPress pages -> new pages
@@ -40,18 +46,10 @@ RewriteRule ^(windows-11-upgrades-dell-bournemouth|windows-11-upgrade-dell|how-t
 RewriteRule ^(email-hosting|website-email-hosting)/?$        /web-design-hosting/ [R=301,L]
 RewriteRule ^microsoft-office-support/?$                      /microsoft-365-support/ [R=301,L]
 
-# --- Town location pages with a direct new equivalent ---
-RewriteRule ^computer-repair-near-me-service-support-poole/?$            /it-support-poole/ [R=301,L]
-RewriteRule ^computer-repair-near-me-service-support-bournemouth/?$      /it-support-bournemouth/ [R=301,L]
-RewriteRule ^computer-repair-near-me-service-support-boscombe/?$         /it-support-bournemouth/ [R=301,L]
-RewriteRule ^computer-repair-near-me-service-support-canford-heath/?$    /it-support-poole/ [R=301,L]
-RewriteRule ^computer-repair-near-me-service-support-christchurch/?$     /it-support-christchurch/ [R=301,L]
-RewriteRule ^computer-repair-near-me-service-support-ferndown/?$         /it-support-ferndown/ [R=301,L]
-RewriteRule ^computer-repair-near-me-service-support-wimborne-minster/?$ /it-support-wimborne/ [R=301,L]
-RewriteRule ^computer-repair-near-me-service-support-verwood/?$          /it-support-verwood/ [R=301,L]
-RewriteRule ^computer-repair-near-me-service-support-wareham/?$          /it-support-wareham/ [R=301,L]
-
-# --- All other "computer-repair-near-me..." town pages -> Areas Covered ---
+# --- Town pages: old "computer-repair-near-me-service-support-TOWN" -> new computer-repair-TOWN ---
+RewriteRule ^computer-repair-near-me-service-support-(beaminster|blandford-forum|boscombe|bournemouth|bridport|canford-heath|christchurch|corfe-mullen|dorchester|ferndown|gillingham|lyme-regis|poole|portland|shaftesbury|sherborne|st-ives|sturminster-newton|swanage|upton|verwood|wareham|west-moors|west-parley|weymouth|wool|wyke-regis)/?$ /computer-repair-$1/ [R=301,L]
+RewriteRule ^computer-repair-near-me-service-support-wimborne-minster/?$ /computer-repair-wimborne/ [R=301,L]
+# Any other old town / doorway page (villages without a page + non-Dorset junk) -> Areas Covered
 RewriteRule ^computer-repair-near-me                          /areas-covered/ [R=301,L]
 
 # --- Blog / articles -> nearest new page ---
@@ -59,7 +57,9 @@ RewriteRule ^blog/?$                                          /it-advice/ [R=301
 RewriteRule ^top-20-advantages-of-remote-computer-support/?$ /remote-it-support/ [R=301,L]
 RewriteRule ^avoid-temptation-to-turn-off-your-wifi-at-night-to-try-and-save-on-energy-bills/?$ /wifi-support/ [R=301,L]
 RewriteRule ^impacts-of-remote-work/?$                        /it-support-for-home-workers/ [R=301,L]
-RewriteRule ^(7-reasons-to-buy-a-refurbished-laptop|refurbishing-a-laptop|ten-side-hustle-ideas-to-help-you-make-some-extra-cash|stolen-laptop-recovered)/?$ /it-advice/ [R=301,L]
+RewriteRule ^stolen-laptop-recovered/?$                       /lost-or-stolen-laptop-what-to-do/ [R=301,L]
+RewriteRule ^(7-reasons-to-buy-a-refurbished-laptop|refurbishing-a-laptop)/?$ /are-refurbished-laptops-any-good/ [R=301,L]
+RewriteRule ^ten-side-hustle-ideas-to-help-you-make-some-extra-cash/?$ /it-advice/ [R=301,L]
 
 # --- Old WordPress sitemaps -> new sitemap ---
 RewriteRule ^(sitemap_index\.xml|page-sitemap\.xml|post-sitemap\.xml|wp-sitemap\.xml)$ /sitemap.xml [R=301,L]
