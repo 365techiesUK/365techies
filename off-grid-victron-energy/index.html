@@ -597,32 +597,35 @@
           <p class="lede lede--center" data-reveal>No stock photos. These are the real, live readings from our <strong>365 Crafter</strong> &mdash; our mobile support centre, running entirely on Victron solar and battery power. We design and monitor systems exactly like this for you.</p>
         </div>
         <style>
-        .vlive{max-width:920px;margin:0 auto;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.09);border-radius:20px;padding:1.4rem 1.4rem 1.2rem;box-shadow:0 12px 44px rgba(0,0,0,.28)}
-        .vlive__bar{display:flex;align-items:center;gap:.7rem;font:600 .72rem/1 ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;color:#9fb0c3;margin-bottom:1.3rem;flex-wrap:wrap}
+        .vlive{max-width:940px;margin:0 auto;background:radial-gradient(120% 150% at 50% -25%,rgba(57,211,83,.07),rgba(255,255,255,.02) 55%);border:1px solid rgba(255,255,255,.09);border-radius:22px;padding:1.4rem 1.4rem 1.25rem;box-shadow:0 14px 50px rgba(0,0,0,.30)}
+        .vlive__bar{display:flex;align-items:center;gap:.7rem;font:600 .72rem/1 ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;color:#9fb0c3;margin-bottom:.4rem;flex-wrap:wrap}
         .vlive__live{display:inline-flex;align-items:center;gap:.45rem;color:#39d353}
         .vlive__dot{width:9px;height:9px;border-radius:50%;background:#39d353;animation:vpulse 2s infinite}
         @keyframes vpulse{0%{box-shadow:0 0 0 0 rgba(57,211,83,.5)}70%{box-shadow:0 0 0 9px rgba(57,211,83,0)}100%{box-shadow:0 0 0 0 rgba(57,211,83,0)}}
         .vlive__site{flex:1}.vlive__upd{opacity:.85}
-        .vlive__grid{display:grid;grid-template-columns:auto 1fr;gap:1.6rem;align-items:center}
-        .vlive__soc{position:relative;width:160px;height:160px;flex:none;margin:0 auto}
-        .vlive__ring{width:160px;height:160px;transform:rotate(-90deg)}
-        .vlive__ringbg{fill:none;stroke:rgba(255,255,255,.08);stroke-width:9}
-        .vlive__ringfg{fill:none;stroke:#39d353;stroke-width:9;stroke-linecap:round;stroke-dasharray:326.7;stroke-dashoffset:326.7;transition:stroke-dashoffset 1.1s ease,stroke .6s}
-        .vlive__socinner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-        .vlive__socval{font:800 2.2rem/1 inherit;color:#fff}
-        .vlive__socstate{font:600 .66rem/1 ui-monospace,monospace;letter-spacing:.09em;text-transform:uppercase;color:#9fb0c3;margin-top:.45rem}
-        .vlive__metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:.65rem}
-        .vlive__m{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:.8rem .55rem;text-align:center}
-        .vlive__mv{display:block;font:800 1.15rem/1.1 inherit;color:#fff}
-        .vlive__ml{display:block;font:600 .6rem/1.2 ui-monospace,monospace;letter-spacing:.05em;text-transform:uppercase;color:#9fb0c3;margin-top:.4rem}
-        .vlive__tanks{display:flex;gap:1.1rem;margin-top:1.2rem;flex-wrap:wrap}
+        .vflowwrap svg{width:100%;height:auto;display:block;overflow:visible}
+        .vflow{fill:none;stroke-width:3;stroke-linecap:round}
+        .vflow-base{stroke:rgba(255,255,255,.10)}
+        .vflow-dash{stroke-dasharray:.5 13;animation:vflowmove 1s linear infinite}
+        @keyframes vflowmove{to{stroke-dashoffset:-13.5}}
+        .vflow-off{opacity:.12;animation-play-state:paused}
+        .vlive__socval{font:800 30px/1 inherit}
+        .vlive__socstate{font:600 11px/1 ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase}
+        .vnval{font:800 17px/1 inherit;fill:#fff}
+        .vnlabel{font:600 11px/1 ui-monospace,monospace;letter-spacing:.05em;text-transform:uppercase;fill:#9fb0c3}
+        .vglow{transition:opacity .6s ease}
+        .vlive__metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem;margin-top:.5rem}
+        .vlive__m{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:.75rem .5rem;text-align:center}
+        .vlive__mv{display:block;font:800 1.1rem/1.1 inherit;color:#fff}
+        .vlive__ml{display:block;font:600 .58rem/1.2 ui-monospace,monospace;letter-spacing:.05em;text-transform:uppercase;color:#9fb0c3;margin-top:.35rem}
+        .vlive__tanks{display:flex;gap:1.1rem;margin-top:1.1rem;flex-wrap:wrap}
         .vlive__tank{flex:1;min-width:140px}
         .vlive__tankhead{display:flex;justify-content:space-between;font:600 .64rem/1 ui-monospace,monospace;letter-spacing:.04em;text-transform:uppercase;color:#9fb0c3;margin-bottom:.35rem}
         .vlive__tankbar{height:8px;border-radius:6px;background:rgba(255,255,255,.08);overflow:hidden}
-        .vlive__tankfill{height:100%;border-radius:6px;background:linear-gradient(90deg,#2aa9e0,#39d353);transition:width 1.1s ease}
-        .vlive__note{font:600 .7rem/1.5 ui-monospace,monospace;color:#9fb0c3;text-align:center;margin:1.2rem 0 0}
+        .vlive__tankfill{height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,#2aa9e0,#39d353);transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+        .vlive__note{font:600 .7rem/1.5 ui-monospace,monospace;color:#9fb0c3;text-align:center;margin:1.1rem 0 0}
         .vlive--sample .vlive__live{color:#e0b341}.vlive--sample .vlive__dot{background:#e0b341;animation:none}
-        @media(max-width:560px){.vlive__grid{grid-template-columns:1fr}.vlive__metrics{grid-template-columns:repeat(2,1fr)}}
+        @media(max-width:560px){.vlive__metrics{grid-template-columns:repeat(2,1fr)}}
         </style>
         <div class="vlive" id="vlive" data-reveal>
           <div class="vlive__bar">
@@ -630,19 +633,42 @@
             <span class="vlive__site">365 Crafter &middot; off-grid</span>
             <span class="vlive__upd" data-updated>&mdash;</span>
           </div>
-          <div class="vlive__grid">
-            <div class="vlive__soc">
-              <svg viewBox="0 0 160 160" class="vlive__ring" aria-hidden="true"><circle cx="80" cy="80" r="52" class="vlive__ringbg"></circle><circle cx="80" cy="80" r="52" class="vlive__ringfg" data-ring></circle></svg>
-              <div class="vlive__socinner"><span class="vlive__socval" data-soc>&mdash;</span><span class="vlive__socstate" data-state>&mdash;</span></div>
-            </div>
-            <div class="vlive__metrics">
-              <div class="vlive__m"><span class="vlive__mv" data-pv>&mdash;</span><span class="vlive__ml">Solar now</span></div>
-              <div class="vlive__m"><span class="vlive__mv" data-bw>&mdash;</span><span class="vlive__ml">Battery power</span></div>
-              <div class="vlive__m"><span class="vlive__mv" data-yield>&mdash;</span><span class="vlive__ml">Solar today</span></div>
-              <div class="vlive__m"><span class="vlive__mv" data-ttg>&mdash;</span><span class="vlive__ml">Time to go</span></div>
-              <div class="vlive__m"><span class="vlive__mv" data-bv>&mdash;</span><span class="vlive__ml">Battery volts</span></div>
-              <div class="vlive__m"><span class="vlive__mv" data-ba>&mdash;</span><span class="vlive__ml">Battery amps</span></div>
-            </div>
+          <div class="vflowwrap">
+            <svg viewBox="0 0 620 160" role="img" aria-label="Live energy flow from solar to battery to loads">
+              <defs><filter id="vblur" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="10"></feGaussianBlur></filter></defs>
+              <path class="vflow vflow-base" d="M126 78 H250"></path>
+              <path class="vflow vflow-base" d="M372 78 H502"></path>
+              <path class="vflow vflow-dash" data-flow-solar style="stroke:#39d353" d="M126 78 H250"></path>
+              <path class="vflow vflow-dash" data-flow-load style="stroke:#2aa9e0" d="M372 78 H502"></path>
+              <g transform="translate(92,78)">
+                <circle class="vglow" data-glow-sun r="40" fill="#e0b341" opacity="0" filter="url(#vblur)"></circle>
+                <circle r="24" fill="rgba(224,179,65,.12)" stroke="#e0b341" stroke-width="2"></circle>
+                <circle r="8" fill="#e0b341"></circle>
+                <g stroke="#e0b341" stroke-width="2" stroke-linecap="round"><line y1="-14" y2="-19"></line><line y1="14" y2="19"></line><line x1="-14" x2="-19"></line><line x1="14" x2="19"></line><line x1="-10" y1="-10" x2="-14" y2="-14"></line><line x1="10" y1="10" x2="14" y2="14"></line><line x1="10" y1="-10" x2="14" y2="-14"></line><line x1="-10" y1="10" x2="-14" y2="14"></line></g>
+                <text class="vnval" data-pv text-anchor="middle" y="54">&mdash;</text>
+                <text class="vnlabel" text-anchor="middle" y="69">Solar</text>
+              </g>
+              <g transform="translate(310,78)">
+                <circle class="vglow" data-glow-batt r="66" fill="#39d353" opacity="0" filter="url(#vblur)"></circle>
+                <circle r="56" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="9"></circle>
+                <circle data-ring r="56" fill="none" stroke="#39d353" stroke-width="9" stroke-linecap="round" stroke-dasharray="351.9" stroke-dashoffset="351.9" transform="rotate(-90)" style="transition:stroke-dashoffset 1.1s ease,stroke .6s"></circle>
+                <text class="vlive__socval" data-soc text-anchor="middle" y="7" fill="#fff">&mdash;</text>
+                <text class="vlive__socstate" data-state text-anchor="middle" y="28" fill="#9fb0c3">&mdash;</text>
+              </g>
+              <g transform="translate(528,78)">
+                <circle class="vglow" data-glow-load r="40" fill="#2aa9e0" opacity="0" filter="url(#vblur)"></circle>
+                <circle r="24" fill="rgba(42,169,224,.12)" stroke="#2aa9e0" stroke-width="2"></circle>
+                <path d="M3 -13 L-7 3 H0 L-3 13 L8 -3 H1 Z" fill="#2aa9e0"></path>
+                <text class="vnval" data-load text-anchor="middle" y="54">&mdash;</text>
+                <text class="vnlabel" text-anchor="middle" y="69">Loads</text>
+              </g>
+            </svg>
+          </div>
+          <div class="vlive__metrics">
+            <div class="vlive__m"><span class="vlive__mv" data-bw>&mdash;</span><span class="vlive__ml">Battery power</span></div>
+            <div class="vlive__m"><span class="vlive__mv" data-yield>&mdash;</span><span class="vlive__ml">Solar today</span></div>
+            <div class="vlive__m"><span class="vlive__mv" data-ttg>&mdash;</span><span class="vlive__ml">Time to go</span></div>
+            <div class="vlive__m"><span class="vlive__mv" data-bv>&mdash;</span><span class="vlive__ml">Battery volts</span></div>
           </div>
           <div class="vlive__tanks" data-tanks></div>
           <p class="vlive__note" data-note></p>
@@ -654,28 +680,51 @@
       var PROXY=""; /* After deploying the Cloudflare Worker (victron-vrm-proxy.js), paste its URL here to go live. */
       var SAMPLE={sample:true,soc:97,battState:"charging",battV:13.38,battA:2.3,battW:31,timeToGo:null,pvW:114,yieldToday:1.86,tanks:[{type:"Fresh water",level:56},{type:"Waste water",level:0}],updated:Math.floor(Date.now()/1000)};
       var el=document.getElementById("vlive"); if(!el) return;
-      var C=326.7;
-      function n(v,d){return (v==null||isNaN(v))?"—":Number(v).toFixed(d||0);}
+      var RC=351.9, reduce=false;
+      try{ reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
+      var cur={}, tanksBuilt=false;
+      function q(s){return el.querySelector(s);}
       function ago(ts){ if(!ts) return ""; var s=Math.max(0,Math.floor(Date.now()/1000)-ts); if(s<60) return "just now"; if(s<3600) return Math.floor(s/60)+"m ago"; return Math.floor(s/3600)+"h ago"; }
-      function set(sel,txt){var x=el.querySelector(sel); if(x) x.textContent=txt;}
+      function tween(sel,key,to,fmt){
+        var node=q(sel); if(!node) return;
+        if(to==null){ cur[key]=null; node.textContent="—"; return; }
+        var from=(cur[key]==null?to:cur[key]); cur[key]=to;
+        if(reduce||from===to){ node.textContent=fmt(to); return; }
+        var t0=null, dur=750;
+        function step(ts){ if(t0===null)t0=ts; var p=Math.min(1,(ts-t0)/dur); var e=1-Math.pow(1-p,3); node.textContent=fmt(from+(to-from)*e); if(p<1)requestAnimationFrame(step); }
+        requestAnimationFrame(step);
+      }
+      function flow(sel,glowSel,watts){
+        var p=q(sel), g=q(glowSel); var on=(watts!=null&&watts>5);
+        if(p){ p.classList.toggle("vflow-off",!on); if(on) p.style.animationDuration=Math.max(.45,Math.min(2,2-watts/280)).toFixed(2)+"s"; }
+        if(g) g.style.opacity=on?"0.5":"0";
+      }
       function render(s){
-        var charging = s.battState==="charging" || (s.battW!=null && s.battW>3);
-        var idle = (s.battW!=null && Math.abs(s.battW)<=3);
-        var stateLabel = idle?"Resting":(charging?"Charging":"Discharging");
-        var col = (s.soc>=70)?"#39d353":((s.soc>=40)?"#e0b341":"#e06a4a");
-        set("[data-soc]", n(s.soc)+"%"); set("[data-state]", stateLabel);
-        set("[data-pv]", n(s.pvW)+" W"); set("[data-bw]", ((s.battW>0)?"+":"")+n(s.battW)+" W");
-        set("[data-yield]", n(s.yieldToday,2)+" kWh");
-        set("[data-ttg]", (s.timeToGo==null||s.timeToGo>240)?"∞":n(s.timeToGo)+" h");
-        set("[data-bv]", n(s.battV,2)+" V"); set("[data-ba]", n(s.battA,1)+" A");
-        set("[data-updated]", s.sample?"sample reading":("updated "+ago(s.updated)));
-        var ring=el.querySelector("[data-ring]");
-        if(ring){ var soc=Math.max(0,Math.min(100,s.soc||0)); ring.style.strokeDashoffset=(C*(1-soc/100)).toFixed(1); ring.style.stroke=col; }
-        var tanks=el.querySelector("[data-tanks]");
-        if(tanks){ tanks.innerHTML=(s.tanks||[]).map(function(t){var lv=Math.max(0,Math.min(100,t.level||0));return '<div class="vlive__tank"><div class="vlive__tankhead"><span>'+t.type+'</span><span>'+lv+'%</span></div><div class="vlive__tankbar"><div class="vlive__tankfill" style="width:'+lv+'%"></div></div></div>';}).join(""); }
-        var note=el.querySelector("[data-note]");
-        if(note){ note.textContent = s.sample ? "Sample reading — the live feed switches on once our VRM link is connected." : "Live from our 365 Crafter, running clean on Victron solar."; }
-        el.classList.toggle("vlive--sample", !!s.sample);
+        var loadW=(s.pvW!=null&&s.battW!=null)?Math.max(0,Math.round(s.pvW-s.battW)):null;
+        var charging=s.battState==="charging"||(s.battW!=null&&s.battW>3);
+        var idle=(s.battW!=null&&Math.abs(s.battW)<=3);
+        var stateLabel=idle?"Resting":(charging?"Charging":"Discharging");
+        var col=(s.soc>=70)?"#39d353":((s.soc>=40)?"#e0b341":"#e06a4a");
+        tween("[data-soc]","soc",s.soc,function(v){return Math.round(v)+"%";});
+        var st=q("[data-state]"); if(st)st.textContent=stateLabel;
+        tween("[data-pv]","pv",s.pvW,function(v){return Math.round(v)+" W";});
+        tween("[data-load]","load",loadW,function(v){return Math.round(v)+" W";});
+        tween("[data-bw]","bw",s.battW,function(v){return (v>0?"+":"")+Math.round(v)+" W";});
+        tween("[data-yield]","yield",s.yieldToday,function(v){return v.toFixed(2)+" kWh";});
+        tween("[data-bv]","bv",s.battV,function(v){return v.toFixed(2)+" V";});
+        var ttg=q("[data-ttg]"); if(ttg)ttg.textContent=(s.timeToGo==null||s.timeToGo>240)?"∞":Math.round(s.timeToGo)+" h";
+        var upd=q("[data-updated]"); if(upd)upd.textContent=s.sample?"sample reading":("updated "+ago(s.updated));
+        var ring=q("[data-ring]"); if(ring){ var soc=Math.max(0,Math.min(100,s.soc||0)); ring.style.strokeDashoffset=(RC*(1-soc/100)).toFixed(1); ring.style.stroke=col; }
+        var gb=q("[data-glow-batt]"); if(gb){ gb.setAttribute("fill",col); gb.style.opacity=charging?"0.45":"0"; }
+        flow("[data-flow-solar]","[data-glow-sun]",s.pvW);
+        flow("[data-flow-load]","[data-glow-load]",loadW);
+        var tw=q("[data-tanks]");
+        if(tw){
+          if(!tanksBuilt){ tw.innerHTML=(s.tanks||[]).map(function(t,i){return '<div class="vlive__tank" data-ti="'+i+'"><div class="vlive__tankhead"><span>'+t.type+'</span><span class="vlive__tpct">0%</span></div><div class="vlive__tankbar"><div class="vlive__tankfill"></div></div></div>';}).join(""); tanksBuilt=true; }
+          (s.tanks||[]).forEach(function(t,i){ var lv=Math.max(0,Math.min(100,t.level||0)); var row=tw.querySelector('[data-ti="'+i+'"]'); if(row){ var f=row.querySelector(".vlive__tankfill"); if(f)setTimeout(function(){f.style.width=lv+"%";},reduce?0:80); var pc=row.querySelector(".vlive__tpct"); if(pc)pc.textContent=Math.round(lv)+"%"; } });
+        }
+        var note=q("[data-note]"); if(note)note.textContent=s.sample?"Sample reading — the live feed switches on once our VRM link is connected.":"Live from our 365 Crafter, running clean on Victron solar.";
+        el.classList.toggle("vlive--sample",!!s.sample);
       }
       function tick(){ if(!PROXY){ render(SAMPLE); return; } fetch(PROXY,{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){ render((j&&j.ok)?j:SAMPLE); }).catch(function(){ render(SAMPLE); }); }
       tick(); setInterval(tick, 30000);
