@@ -656,8 +656,16 @@ if (HAS_GSAP && !REDUCED) {
   initUI();
 }
 
-if (!REDUCED && !LOW_POWER) {
-  initBackground();
+// Desktop only: the Three.js background is ~1.2MB, so skip it on mobile/tablet,
+// reduced-motion and Data Saver, and defer the load to idle so it never competes
+// with first paint or interactivity. Phones/tablets just get the CSS background.
+const WANT_BG = !REDUCED && !LOW_POWER
+  && window.innerWidth >= 920
+  && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+if (WANT_BG) {
+  const startBg = () => initBackground();
+  if ("requestIdleCallback" in window) requestIdleCallback(startBg, { timeout: 3000 });
+  else window.addEventListener("load", () => setTimeout(startBg, 250));
 } else {
   const canvas = document.querySelector("#tech-background");
   if (canvas) canvas.remove();

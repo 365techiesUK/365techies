@@ -310,5 +310,11 @@ if (HAS_GSAP && !REDUCED) initUI();
 // WebGL background only runs where a #tech-background canvas exists (homepage only now);
 // interior/landing pages use the lightweight static CSS background — no Three.js fetch.
 const bgCanvas = document.querySelector("#tech-background");
-if (bgCanvas && !REDUCED && !LOW_POWER) initBackground();
-else if (bgCanvas) bgCanvas.remove();
+// Desktop only + deferred to idle (the Three.js background is ~1.2MB).
+const WANT_BG = bgCanvas && !REDUCED && !LOW_POWER
+  && window.innerWidth >= 920
+  && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+if (WANT_BG) {
+  if ("requestIdleCallback" in window) requestIdleCallback(() => initBackground(), { timeout: 3000 });
+  else window.addEventListener("load", () => setTimeout(initBackground, 250));
+} else if (bgCanvas) bgCanvas.remove();
