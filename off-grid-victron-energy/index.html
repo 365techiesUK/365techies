@@ -625,7 +625,17 @@
         .vlive__tankfill{height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,#2aa9e0,#39d353);transition:width 1.2s cubic-bezier(.4,0,.2,1)}
         .vlive__note{font:600 .7rem/1.5 ui-monospace,monospace;color:#9fb0c3;text-align:center;margin:1.1rem 0 0}
         .vlive--sample .vlive__live{color:#e0b341}.vlive--sample .vlive__dot{background:#e0b341;animation:none}
-        @media(max-width:560px){.vlive__metrics{grid-template-columns:repeat(2,1fr)}}
+        .vlive__save{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem;margin-top:1rem}
+        .vlive__savebox{background:linear-gradient(160deg,rgba(57,211,83,.10),rgba(255,255,255,.02));border:1px solid rgba(57,211,83,.18);border-radius:14px;padding:.85rem .5rem;text-align:center}
+        .vlive__savebig{display:block;font:800 1.45rem/1 inherit;color:#39d353}
+        .vlive__savelbl{display:block;font:600 .56rem/1.25 ui-monospace,monospace;letter-spacing:.05em;text-transform:uppercase;color:#9fb0c3;margin-top:.4rem}
+        .vlive__histwrap{margin-top:1.1rem}
+        .vlive__histhead{display:flex;justify-content:space-between;align-items:baseline;font:600 .62rem/1 ui-monospace,monospace;letter-spacing:.04em;text-transform:uppercase;color:#9fb0c3;margin-bottom:.5rem}
+        .vlive__histtot{color:#39d353}
+        .vlive__hist{display:flex;align-items:flex-end;gap:2px;height:54px}
+        .vlive__bar2{flex:1 1 0;background:linear-gradient(180deg,#39d353,#2aa9e0);border-radius:2px 2px 0 0;min-height:2px;opacity:.85}
+        .vlive__rate{font:600 .6rem/1.4 ui-monospace,monospace;color:#8497a8;text-align:center;margin:.7rem 0 0;letter-spacing:.04em;text-transform:uppercase}
+        @media(max-width:560px){.vlive__metrics{grid-template-columns:repeat(2,1fr)}.vlive__save{grid-template-columns:1fr}}
         </style>
         <div class="vlive" id="vlive" data-reveal>
           <div class="vlive__bar">
@@ -670,19 +680,30 @@
             <div class="vlive__m"><span class="vlive__mv" data-ttg>&mdash;</span><span class="vlive__ml">Time to go</span></div>
             <div class="vlive__m"><span class="vlive__mv" data-bv>&mdash;</span><span class="vlive__ml">Battery volts</span></div>
           </div>
+          <div class="vlive__save">
+            <div class="vlive__savebox"><span class="vlive__savebig" data-save-today>&pound;0.00</span><span class="vlive__savelbl">Saved today</span></div>
+            <div class="vlive__savebox"><span class="vlive__savebig" data-save-life>&pound;0.00</span><span class="vlive__savelbl">Saved all-time</span></div>
+            <div class="vlive__savebox"><span class="vlive__savebig" data-gen-life>&mdash;</span><span class="vlive__savelbl">Clean energy generated</span></div>
+          </div>
+          <div class="vlive__histwrap">
+            <div class="vlive__histhead"><span>Solar &mdash; last 30 days</span><span class="vlive__histtot" data-hist-total>&mdash;</span></div>
+            <div class="vlive__hist" data-hist></div>
+          </div>
           <div class="vlive__tanks" data-tanks></div>
           <p class="vlive__note" data-note></p>
+          <p class="vlive__rate" data-rate>Savings estimated at 20p per kWh of solar generated.</p>
         </div>
       </div>
     </section>
     <script>
     (function(){
       var PROXY=""; /* After deploying the Cloudflare Worker (victron-vrm-proxy.js), paste its URL here to go live. */
-      var SAMPLE={sample:true,soc:97,battState:"charging",battV:13.38,battA:2.3,battW:31,timeToGo:null,pvW:114,yieldToday:1.86,tanks:[{type:"Fresh water",level:56},{type:"Waste water",level:0}],updated:Math.floor(Date.now()/1000)};
+      var RATE=0.20, HIST=[]; for(var hi=0;hi<30;hi++){HIST.push({kwh:Math.round((1.1+Math.sin(hi/2.5)*0.55+(hi%4)*0.16)*100)/100});}
+      var SAMPLE={sample:true,soc:97,battState:"charging",battV:13.38,battA:2.3,battW:31,timeToGo:null,pvW:114,yieldToday:1.86,yieldYesterday:1.66,yieldLifetime:489.9,tanks:[{type:"Fresh water",level:56},{type:"Waste water",level:0}],history:HIST,updated:Math.floor(Date.now()/1000)};
       var el=document.getElementById("vlive"); if(!el) return;
       var RC=351.9, reduce=false;
       try{ reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
-      var cur={}, tanksBuilt=false;
+      var cur={}, tanksBuilt=false, histBuilt=false;
       function q(s){return el.querySelector(s);}
       function ago(ts){ if(!ts) return ""; var s=Math.max(0,Math.floor(Date.now()/1000)-ts); if(s<60) return "just now"; if(s<3600) return Math.floor(s/60)+"m ago"; return Math.floor(s/3600)+"h ago"; }
       function tween(sel,key,to,fmt){
@@ -699,6 +720,7 @@
         if(p){ p.classList.toggle("vflow-off",!on); if(on) p.style.animationDuration=Math.max(.45,Math.min(2,2-watts/280)).toFixed(2)+"s"; }
         if(g) g.style.opacity=on?"0.5":"0";
       }
+      function hist(arr){ if(histBuilt||!arr) return; var h=q("[data-hist]"); if(!h) return; var max=1; arr.forEach(function(d){var v=(d&&d.kwh!=null)?d.kwh:0; if(v>max)max=v;}); h.innerHTML=arr.map(function(d){var v=(d&&d.kwh!=null)?d.kwh:0; var ht=Math.max(2,Math.round(v/max*52)); return '<span class="vlive__bar2" style="height:'+ht+'px" title="'+v.toFixed(2)+' kWh"></span>';}).join(""); var tot=arr.reduce(function(a,d){return a+((d&&d.kwh)||0);},0); var t2=q("[data-hist-total]"); if(t2)t2.textContent=tot.toFixed(1)+" kWh"; histBuilt=true; }
       function render(s){
         var loadW=(s.pvW!=null&&s.battW!=null)?Math.max(0,Math.round(s.pvW-s.battW)):null;
         var charging=s.battState==="charging"||(s.battW!=null&&s.battW>3);
@@ -718,6 +740,11 @@
         var gb=q("[data-glow-batt]"); if(gb){ gb.setAttribute("fill",col); gb.style.opacity=charging?"0.45":"0"; }
         flow("[data-flow-solar]","[data-glow-sun]",s.pvW);
         flow("[data-flow-load]","[data-glow-load]",loadW);
+        tween("[data-save-today]","stoday",(s.yieldToday!=null)?s.yieldToday*RATE:null,function(v){return "£"+v.toFixed(2);});
+        tween("[data-save-life]","slife",(s.yieldLifetime!=null)?s.yieldLifetime*RATE:null,function(v){return "£"+v.toFixed(2);});
+        tween("[data-gen-life]","glife",s.yieldLifetime,function(v){return v.toFixed(1)+" kWh";});
+        var rt=q("[data-rate]"); if(rt){ var ph=(s.pvW!=null)?(s.pvW/1000*RATE*100):0; rt.innerHTML=(s.pvW>5?("Generating now &middot; saving ~"+ph.toFixed(1)+"p/hour"):"Resting now")+" &middot; at 20p per kWh"; }
+        if(s.history) hist(s.history);
         var tw=q("[data-tanks]");
         if(tw){
           if(!tanksBuilt){ tw.innerHTML=(s.tanks||[]).map(function(t,i){return '<div class="vlive__tank" data-ti="'+i+'"><div class="vlive__tankhead"><span>'+t.type+'</span><span class="vlive__tpct">0%</span></div><div class="vlive__tankbar"><div class="vlive__tankfill"></div></div></div>';}).join(""); tanksBuilt=true; }
@@ -727,7 +754,7 @@
         el.classList.toggle("vlive--sample",!!s.sample);
       }
       function tick(){ if(!PROXY){ render(SAMPLE); return; } fetch(PROXY,{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){ render((j&&j.ok)?j:SAMPLE); }).catch(function(){ render(SAMPLE); }); }
-      tick(); setInterval(tick, 30000);
+      tick(); setInterval(tick, 1000);
     })();
     </script>
     <section class="section section--alt" aria-label="Clean, mobile, off-grid">

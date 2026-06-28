@@ -617,6 +617,86 @@
         </div>
       </div>
     </section>
+    <section class="section section--alt" aria-label="Our own Victron lithium system, live">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/LIVE &mdash; WE RUN ONE OURSELVES</p>
+          <h2 class="section-title section-title--center" data-title>Our van&rsquo;s lithium battery &mdash; live right now<span class="title-underline title-underline--center"></span></h2>
+          <p class="section-sub" data-reveal style="text-align:center;max-width:620px;margin:.6rem auto 0">This is the Victron LiFePO4 system in our own off-grid support van, reporting live &mdash; the same kit, design and monitoring we&rsquo;d build for you.</p>
+        </div>
+        <style>
+        @keyframes vpulse{0%{box-shadow:0 0 0 0 rgba(57,211,83,.5)}70%{box-shadow:0 0 0 9px rgba(57,211,83,0)}100%{box-shadow:0 0 0 0 rgba(57,211,83,0)}}
+        .vmini{max-width:680px;margin:1.4rem auto 0;background:radial-gradient(120% 150% at 50% -25%,rgba(57,211,83,.07),rgba(255,255,255,.02) 55%);border:1px solid rgba(255,255,255,.09);border-radius:20px;padding:1.3rem;box-shadow:0 12px 44px rgba(0,0,0,.26)}
+        .vmini__bar{display:flex;gap:.6rem;align-items:center;font:600 .68rem/1 ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;color:#9fb0c3;margin-bottom:1rem;flex-wrap:wrap}
+        .vmini__live{display:inline-flex;align-items:center;gap:.4rem;color:#39d353}
+        .vmini__dot{width:8px;height:8px;border-radius:50%;background:#39d353;animation:vpulse 2s infinite}
+        .vmini__site{flex:1}
+        .vmini__body{display:flex;align-items:center;gap:1.6rem;flex-wrap:wrap;justify-content:center}
+        .vmini__ring{position:relative;width:140px;height:140px;flex:none}
+        .vmini__ring svg{width:140px;height:140px;transform:rotate(-90deg)}
+        .vmini__rbg{fill:none;stroke:rgba(255,255,255,.08);stroke-width:9}
+        .vmini__rfg{fill:none;stroke:#39d353;stroke-width:9;stroke-linecap:round;transition:stroke-dashoffset 1s ease,stroke .6s}
+        .vmini__rc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+        .vmini__soc{font:800 2rem/1 inherit;color:#fff}
+        .vmini__state{font:600 .58rem/1 ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:#9fb0c3;margin-top:.4rem}
+        .vmini__stats{display:flex;flex-direction:column;gap:.55rem;min-width:190px}
+        .vmini__s{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;border-bottom:1px solid rgba(255,255,255,.07);padding-bottom:.5rem}
+        .vmini__sv{font:800 1.15rem/1 inherit;color:#fff}
+        .vmini__sv--save{color:#39d353}
+        .vmini__sl{font:600 .56rem/1 ui-monospace,monospace;letter-spacing:.05em;text-transform:uppercase;color:#9fb0c3}
+        .vmini__note{font:600 .66rem/1.5 ui-monospace,monospace;color:#9fb0c3;text-align:center;margin:1.1rem 0 0}
+        .vmini__cta{text-align:center;margin:.55rem 0 0;font-size:.82rem}
+        .vmini--sample .vmini__live{color:#e0b341}.vmini--sample .vmini__dot{background:#e0b341;animation:none}
+        </style>
+        <div class="vmini" id="vmini" data-reveal>
+          <div class="vmini__bar">
+            <span class="vmini__live"><span class="vmini__dot"></span> Live</span>
+            <span class="vmini__site">365 Crafter &middot; Victron LiFePO4</span>
+            <span data-m-upd>&mdash;</span>
+          </div>
+          <div class="vmini__body">
+            <div class="vmini__ring">
+              <svg viewBox="0 0 140 140" aria-hidden="true"><circle cx="70" cy="70" r="56" class="vmini__rbg"></circle><circle cx="70" cy="70" r="56" class="vmini__rfg" data-m-ring stroke-dasharray="351.9" stroke-dashoffset="351.9"></circle></svg>
+              <div class="vmini__rc"><span class="vmini__soc" data-m-soc>&mdash;</span><span class="vmini__state" data-m-state>&mdash;</span></div>
+            </div>
+            <div class="vmini__stats">
+              <div class="vmini__s"><span class="vmini__sv" data-m-pv>&mdash;</span><span class="vmini__sl">Solar now</span></div>
+              <div class="vmini__s"><span class="vmini__sv" data-m-bw>&mdash;</span><span class="vmini__sl">Battery power</span></div>
+              <div class="vmini__s"><span class="vmini__sv vmini__sv--save" data-m-save>&mdash;</span><span class="vmini__sl">Saved all-time</span></div>
+            </div>
+          </div>
+          <p class="vmini__note" data-m-note></p>
+          <p class="vmini__cta"><a href="/off-grid-victron-energy/">See the full live dashboard &mdash; solar flow, savings &amp; 30-day history &rarr;</a></p>
+        </div>
+        <script>
+        (function(){
+          var PROXY=""; /* paste the same Cloudflare Worker URL as the off-grid page to go live */
+          var RATE=0.20;
+          var SAMPLE={sample:true,soc:97,battState:"charging",battW:31,pvW:114,yieldLifetime:489.9};
+          var el=document.getElementById("vmini"); if(!el) return;
+          var RC=351.9, cur={}, reduce=false; try{ reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
+          function q(s){return el.querySelector(s);}
+          function tw(sel,key,to,fmt){ var n=q(sel); if(!n) return; if(to==null){n.textContent="—";return;} var f=(cur[key]==null?to:cur[key]); cur[key]=to; if(reduce||f===to){n.textContent=fmt(to);return;} var t0=null; function st(ts){if(t0===null)t0=ts;var p=Math.min(1,(ts-t0)/700);var e=1-Math.pow(1-p,3);n.textContent=fmt(f+(to-f)*e);if(p<1)requestAnimationFrame(st);} requestAnimationFrame(st); }
+          function render(s){
+            var charging=s.battState==="charging"||(s.battW!=null&&s.battW>3);
+            var idle=(s.battW!=null&&Math.abs(s.battW)<=3);
+            var col=(s.soc>=70)?"#39d353":((s.soc>=40)?"#e0b341":"#e06a4a");
+            tw("[data-m-soc]","soc",s.soc,function(v){return Math.round(v)+"%";});
+            var stt=q("[data-m-state]"); if(stt)stt.textContent=idle?"Resting":(charging?"Charging":"Discharging");
+            tw("[data-m-pv]","pv",s.pvW,function(v){return Math.round(v)+" W";});
+            tw("[data-m-bw]","bw",s.battW,function(v){return (v>0?"+":"")+Math.round(v)+" W";});
+            tw("[data-m-save]","sv",(s.yieldLifetime!=null)?s.yieldLifetime*RATE:null,function(v){return "£"+v.toFixed(2);});
+            var r=q("[data-m-ring]"); if(r){ var soc=Math.max(0,Math.min(100,s.soc||0)); r.style.strokeDashoffset=(RC*(1-soc/100)).toFixed(1); r.style.stroke=col; }
+            var nt=q("[data-m-note]"); if(nt)nt.textContent=s.sample?"Sample reading — the live feed switches on once our VRM link is connected.":"Live from our 365 Crafter’s Victron lithium system.";
+            var up=q("[data-m-upd]"); if(up)up.textContent=s.sample?"sample reading":"updated just now";
+            el.classList.toggle("vmini--sample",!!s.sample);
+          }
+          function tick(){ if(!PROXY){ render(SAMPLE); return; } fetch(PROXY,{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){ render((j&&j.ok)?j:SAMPLE); }).catch(function(){ render(SAMPLE); }); }
+          tick(); setInterval(tick, 1000);
+        })();
+        </script>
+      </div>
+    </section>
     <section class="section" aria-label="Who it's for">
       <div class="wrap">
         <div class="section-head">

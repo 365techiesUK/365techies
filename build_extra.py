@@ -1298,7 +1298,17 @@ def off_grid():
         .vlive__tankfill{height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,#2aa9e0,#39d353);transition:width 1.2s cubic-bezier(.4,0,.2,1)}
         .vlive__note{font:600 .7rem/1.5 ui-monospace,monospace;color:#9fb0c3;text-align:center;margin:1.1rem 0 0}
         .vlive--sample .vlive__live{color:#e0b341}.vlive--sample .vlive__dot{background:#e0b341;animation:none}
-        @media(max-width:560px){.vlive__metrics{grid-template-columns:repeat(2,1fr)}}
+        .vlive__save{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem;margin-top:1rem}
+        .vlive__savebox{background:linear-gradient(160deg,rgba(57,211,83,.10),rgba(255,255,255,.02));border:1px solid rgba(57,211,83,.18);border-radius:14px;padding:.85rem .5rem;text-align:center}
+        .vlive__savebig{display:block;font:800 1.45rem/1 inherit;color:#39d353}
+        .vlive__savelbl{display:block;font:600 .56rem/1.25 ui-monospace,monospace;letter-spacing:.05em;text-transform:uppercase;color:#9fb0c3;margin-top:.4rem}
+        .vlive__histwrap{margin-top:1.1rem}
+        .vlive__histhead{display:flex;justify-content:space-between;align-items:baseline;font:600 .62rem/1 ui-monospace,monospace;letter-spacing:.04em;text-transform:uppercase;color:#9fb0c3;margin-bottom:.5rem}
+        .vlive__histtot{color:#39d353}
+        .vlive__hist{display:flex;align-items:flex-end;gap:2px;height:54px}
+        .vlive__bar2{flex:1 1 0;background:linear-gradient(180deg,#39d353,#2aa9e0);border-radius:2px 2px 0 0;min-height:2px;opacity:.85}
+        .vlive__rate{font:600 .6rem/1.4 ui-monospace,monospace;color:#8497a8;text-align:center;margin:.7rem 0 0;letter-spacing:.04em;text-transform:uppercase}
+        @media(max-width:560px){.vlive__metrics{grid-template-columns:repeat(2,1fr)}.vlive__save{grid-template-columns:1fr}}
         </style>
         <div class="vlive" id="vlive" data-reveal>
           <div class="vlive__bar">
@@ -1343,19 +1353,30 @@ def off_grid():
             <div class="vlive__m"><span class="vlive__mv" data-ttg>&mdash;</span><span class="vlive__ml">Time to go</span></div>
             <div class="vlive__m"><span class="vlive__mv" data-bv>&mdash;</span><span class="vlive__ml">Battery volts</span></div>
           </div>
+          <div class="vlive__save">
+            <div class="vlive__savebox"><span class="vlive__savebig" data-save-today>&pound;0.00</span><span class="vlive__savelbl">Saved today</span></div>
+            <div class="vlive__savebox"><span class="vlive__savebig" data-save-life>&pound;0.00</span><span class="vlive__savelbl">Saved all-time</span></div>
+            <div class="vlive__savebox"><span class="vlive__savebig" data-gen-life>&mdash;</span><span class="vlive__savelbl">Clean energy generated</span></div>
+          </div>
+          <div class="vlive__histwrap">
+            <div class="vlive__histhead"><span>Solar &mdash; last 30 days</span><span class="vlive__histtot" data-hist-total>&mdash;</span></div>
+            <div class="vlive__hist" data-hist></div>
+          </div>
           <div class="vlive__tanks" data-tanks></div>
           <p class="vlive__note" data-note></p>
+          <p class="vlive__rate" data-rate>Savings estimated at 20p per kWh of solar generated.</p>
         </div>
       </div>
     </section>
     <script>
     (function(){
       var PROXY=""; /* After deploying the Cloudflare Worker (victron-vrm-proxy.js), paste its URL here to go live. */
-      var SAMPLE={sample:true,soc:97,battState:"charging",battV:13.38,battA:2.3,battW:31,timeToGo:null,pvW:114,yieldToday:1.86,tanks:[{type:"Fresh water",level:56},{type:"Waste water",level:0}],updated:Math.floor(Date.now()/1000)};
+      var RATE=0.20, HIST=[]; for(var hi=0;hi<30;hi++){HIST.push({kwh:Math.round((1.1+Math.sin(hi/2.5)*0.55+(hi%4)*0.16)*100)/100});}
+      var SAMPLE={sample:true,soc:97,battState:"charging",battV:13.38,battA:2.3,battW:31,timeToGo:null,pvW:114,yieldToday:1.86,yieldYesterday:1.66,yieldLifetime:489.9,tanks:[{type:"Fresh water",level:56},{type:"Waste water",level:0}],history:HIST,updated:Math.floor(Date.now()/1000)};
       var el=document.getElementById("vlive"); if(!el) return;
       var RC=351.9, reduce=false;
       try{ reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
-      var cur={}, tanksBuilt=false;
+      var cur={}, tanksBuilt=false, histBuilt=false;
       function q(s){return el.querySelector(s);}
       function ago(ts){ if(!ts) return ""; var s=Math.max(0,Math.floor(Date.now()/1000)-ts); if(s<60) return "just now"; if(s<3600) return Math.floor(s/60)+"m ago"; return Math.floor(s/3600)+"h ago"; }
       function tween(sel,key,to,fmt){
@@ -1372,6 +1393,7 @@ def off_grid():
         if(p){ p.classList.toggle("vflow-off",!on); if(on) p.style.animationDuration=Math.max(.45,Math.min(2,2-watts/280)).toFixed(2)+"s"; }
         if(g) g.style.opacity=on?"0.5":"0";
       }
+      function hist(arr){ if(histBuilt||!arr) return; var h=q("[data-hist]"); if(!h) return; var max=1; arr.forEach(function(d){var v=(d&&d.kwh!=null)?d.kwh:0; if(v>max)max=v;}); h.innerHTML=arr.map(function(d){var v=(d&&d.kwh!=null)?d.kwh:0; var ht=Math.max(2,Math.round(v/max*52)); return '<span class="vlive__bar2" style="height:'+ht+'px" title="'+v.toFixed(2)+' kWh"></span>';}).join(""); var tot=arr.reduce(function(a,d){return a+((d&&d.kwh)||0);},0); var t2=q("[data-hist-total]"); if(t2)t2.textContent=tot.toFixed(1)+" kWh"; histBuilt=true; }
       function render(s){
         var loadW=(s.pvW!=null&&s.battW!=null)?Math.max(0,Math.round(s.pvW-s.battW)):null;
         var charging=s.battState==="charging"||(s.battW!=null&&s.battW>3);
@@ -1391,6 +1413,11 @@ def off_grid():
         var gb=q("[data-glow-batt]"); if(gb){ gb.setAttribute("fill",col); gb.style.opacity=charging?"0.45":"0"; }
         flow("[data-flow-solar]","[data-glow-sun]",s.pvW);
         flow("[data-flow-load]","[data-glow-load]",loadW);
+        tween("[data-save-today]","stoday",(s.yieldToday!=null)?s.yieldToday*RATE:null,function(v){return "£"+v.toFixed(2);});
+        tween("[data-save-life]","slife",(s.yieldLifetime!=null)?s.yieldLifetime*RATE:null,function(v){return "£"+v.toFixed(2);});
+        tween("[data-gen-life]","glife",s.yieldLifetime,function(v){return v.toFixed(1)+" kWh";});
+        var rt=q("[data-rate]"); if(rt){ var ph=(s.pvW!=null)?(s.pvW/1000*RATE*100):0; rt.innerHTML=(s.pvW>5?("Generating now &middot; saving ~"+ph.toFixed(1)+"p/hour"):"Resting now")+" &middot; at 20p per kWh"; }
+        if(s.history) hist(s.history);
         var tw=q("[data-tanks]");
         if(tw){
           if(!tanksBuilt){ tw.innerHTML=(s.tanks||[]).map(function(t,i){return '<div class="vlive__tank" data-ti="'+i+'"><div class="vlive__tankhead"><span>'+t.type+'</span><span class="vlive__tpct">0%</span></div><div class="vlive__tankbar"><div class="vlive__tankfill"></div></div></div>';}).join(""); tanksBuilt=true; }
@@ -1400,7 +1427,7 @@ def off_grid():
         el.classList.toggle("vlive--sample",!!s.sample);
       }
       function tick(){ if(!PROXY){ render(SAMPLE); return; } fetch(PROXY,{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){ render((j&&j.ok)?j:SAMPLE); }).catch(function(){ render(SAMPLE); }); }
-      tick(); setInterval(tick, 30000);
+      tick(); setInterval(tick, 1000);
     })();
     </script>''',
       f'''    <section class="section section--alt" aria-label="Clean, mobile, off-grid">
@@ -4101,6 +4128,86 @@ def battery_installs():
         <div class="tile-grid" data-stagger>
 {tiles([("battery","Lithium battery banks","Right-sized LiFePO4 banks for how you actually use power."),("sun","Solar &amp; charging","Roof solar, MPPT controllers and charging that tops up as you go."),("bolt","Inverters","Run 230V appliances &mdash; from a coffee machine to power tools."),("van","DC-DC &amp; engine charging","Safely charge your leisure bank from the engine while you travel."),("globe","Battery monitoring","See charge, solar and usage live, on a screen or your phone (Victron VRM)."),("shield","Marine-grade installs","Boat 12/24V systems built for the damp, demanding marine environment.")])}
         </div>
+      </div>
+    </section>''',
+      r'''    <section class="section section--alt" aria-label="Our own Victron lithium system, live">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/LIVE &mdash; WE RUN ONE OURSELVES</p>
+          <h2 class="section-title section-title--center" data-title>Our van&rsquo;s lithium battery &mdash; live right now<span class="title-underline title-underline--center"></span></h2>
+          <p class="section-sub" data-reveal style="text-align:center;max-width:620px;margin:.6rem auto 0">This is the Victron LiFePO4 system in our own off-grid support van, reporting live &mdash; the same kit, design and monitoring we&rsquo;d build for you.</p>
+        </div>
+        <style>
+        @keyframes vpulse{0%{box-shadow:0 0 0 0 rgba(57,211,83,.5)}70%{box-shadow:0 0 0 9px rgba(57,211,83,0)}100%{box-shadow:0 0 0 0 rgba(57,211,83,0)}}
+        .vmini{max-width:680px;margin:1.4rem auto 0;background:radial-gradient(120% 150% at 50% -25%,rgba(57,211,83,.07),rgba(255,255,255,.02) 55%);border:1px solid rgba(255,255,255,.09);border-radius:20px;padding:1.3rem;box-shadow:0 12px 44px rgba(0,0,0,.26)}
+        .vmini__bar{display:flex;gap:.6rem;align-items:center;font:600 .68rem/1 ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;color:#9fb0c3;margin-bottom:1rem;flex-wrap:wrap}
+        .vmini__live{display:inline-flex;align-items:center;gap:.4rem;color:#39d353}
+        .vmini__dot{width:8px;height:8px;border-radius:50%;background:#39d353;animation:vpulse 2s infinite}
+        .vmini__site{flex:1}
+        .vmini__body{display:flex;align-items:center;gap:1.6rem;flex-wrap:wrap;justify-content:center}
+        .vmini__ring{position:relative;width:140px;height:140px;flex:none}
+        .vmini__ring svg{width:140px;height:140px;transform:rotate(-90deg)}
+        .vmini__rbg{fill:none;stroke:rgba(255,255,255,.08);stroke-width:9}
+        .vmini__rfg{fill:none;stroke:#39d353;stroke-width:9;stroke-linecap:round;transition:stroke-dashoffset 1s ease,stroke .6s}
+        .vmini__rc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+        .vmini__soc{font:800 2rem/1 inherit;color:#fff}
+        .vmini__state{font:600 .58rem/1 ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:#9fb0c3;margin-top:.4rem}
+        .vmini__stats{display:flex;flex-direction:column;gap:.55rem;min-width:190px}
+        .vmini__s{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;border-bottom:1px solid rgba(255,255,255,.07);padding-bottom:.5rem}
+        .vmini__sv{font:800 1.15rem/1 inherit;color:#fff}
+        .vmini__sv--save{color:#39d353}
+        .vmini__sl{font:600 .56rem/1 ui-monospace,monospace;letter-spacing:.05em;text-transform:uppercase;color:#9fb0c3}
+        .vmini__note{font:600 .66rem/1.5 ui-monospace,monospace;color:#9fb0c3;text-align:center;margin:1.1rem 0 0}
+        .vmini__cta{text-align:center;margin:.55rem 0 0;font-size:.82rem}
+        .vmini--sample .vmini__live{color:#e0b341}.vmini--sample .vmini__dot{background:#e0b341;animation:none}
+        </style>
+        <div class="vmini" id="vmini" data-reveal>
+          <div class="vmini__bar">
+            <span class="vmini__live"><span class="vmini__dot"></span> Live</span>
+            <span class="vmini__site">365 Crafter &middot; Victron LiFePO4</span>
+            <span data-m-upd>&mdash;</span>
+          </div>
+          <div class="vmini__body">
+            <div class="vmini__ring">
+              <svg viewBox="0 0 140 140" aria-hidden="true"><circle cx="70" cy="70" r="56" class="vmini__rbg"></circle><circle cx="70" cy="70" r="56" class="vmini__rfg" data-m-ring stroke-dasharray="351.9" stroke-dashoffset="351.9"></circle></svg>
+              <div class="vmini__rc"><span class="vmini__soc" data-m-soc>&mdash;</span><span class="vmini__state" data-m-state>&mdash;</span></div>
+            </div>
+            <div class="vmini__stats">
+              <div class="vmini__s"><span class="vmini__sv" data-m-pv>&mdash;</span><span class="vmini__sl">Solar now</span></div>
+              <div class="vmini__s"><span class="vmini__sv" data-m-bw>&mdash;</span><span class="vmini__sl">Battery power</span></div>
+              <div class="vmini__s"><span class="vmini__sv vmini__sv--save" data-m-save>&mdash;</span><span class="vmini__sl">Saved all-time</span></div>
+            </div>
+          </div>
+          <p class="vmini__note" data-m-note></p>
+          <p class="vmini__cta"><a href="/off-grid-victron-energy/">See the full live dashboard &mdash; solar flow, savings &amp; 30-day history &rarr;</a></p>
+        </div>
+        <script>
+        (function(){
+          var PROXY=""; /* paste the same Cloudflare Worker URL as the off-grid page to go live */
+          var RATE=0.20;
+          var SAMPLE={sample:true,soc:97,battState:"charging",battW:31,pvW:114,yieldLifetime:489.9};
+          var el=document.getElementById("vmini"); if(!el) return;
+          var RC=351.9, cur={}, reduce=false; try{ reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
+          function q(s){return el.querySelector(s);}
+          function tw(sel,key,to,fmt){ var n=q(sel); if(!n) return; if(to==null){n.textContent="—";return;} var f=(cur[key]==null?to:cur[key]); cur[key]=to; if(reduce||f===to){n.textContent=fmt(to);return;} var t0=null; function st(ts){if(t0===null)t0=ts;var p=Math.min(1,(ts-t0)/700);var e=1-Math.pow(1-p,3);n.textContent=fmt(f+(to-f)*e);if(p<1)requestAnimationFrame(st);} requestAnimationFrame(st); }
+          function render(s){
+            var charging=s.battState==="charging"||(s.battW!=null&&s.battW>3);
+            var idle=(s.battW!=null&&Math.abs(s.battW)<=3);
+            var col=(s.soc>=70)?"#39d353":((s.soc>=40)?"#e0b341":"#e06a4a");
+            tw("[data-m-soc]","soc",s.soc,function(v){return Math.round(v)+"%";});
+            var stt=q("[data-m-state]"); if(stt)stt.textContent=idle?"Resting":(charging?"Charging":"Discharging");
+            tw("[data-m-pv]","pv",s.pvW,function(v){return Math.round(v)+" W";});
+            tw("[data-m-bw]","bw",s.battW,function(v){return (v>0?"+":"")+Math.round(v)+" W";});
+            tw("[data-m-save]","sv",(s.yieldLifetime!=null)?s.yieldLifetime*RATE:null,function(v){return "£"+v.toFixed(2);});
+            var r=q("[data-m-ring]"); if(r){ var soc=Math.max(0,Math.min(100,s.soc||0)); r.style.strokeDashoffset=(RC*(1-soc/100)).toFixed(1); r.style.stroke=col; }
+            var nt=q("[data-m-note]"); if(nt)nt.textContent=s.sample?"Sample reading — the live feed switches on once our VRM link is connected.":"Live from our 365 Crafter’s Victron lithium system.";
+            var up=q("[data-m-upd]"); if(up)up.textContent=s.sample?"sample reading":"updated just now";
+            el.classList.toggle("vmini--sample",!!s.sample);
+          }
+          function tick(){ if(!PROXY){ render(SAMPLE); return; } fetch(PROXY,{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){ render((j&&j.ok)?j:SAMPLE); }).catch(function(){ render(SAMPLE); }); }
+          tick(); setInterval(tick, 1000);
+        })();
+        </script>
       </div>
     </section>''',
       f'''    <section class="section" aria-label="Who it's for">
