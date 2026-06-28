@@ -16,6 +16,8 @@
 name: Deploy to SiteGround
 
 on:
+  push:
+    branches: [master]
   workflow_dispatch:
     inputs:
       dry_run:
@@ -42,7 +44,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: ./
           protocol: ftps
-          dry-run: ${{ inputs.dry_run }}
+          dry-run: ${{ inputs.dry_run || false }}
           # Upload the built website only - never the source/dev files.
           exclude: |
             **/.git*
