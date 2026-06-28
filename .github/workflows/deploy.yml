@@ -1,0 +1,56 @@
+# Deploys the static site to SiteGround over FTPS.
+#
+# Secrets required (repo -> Settings -> Secrets and variables -> Actions):
+#   FTP_HOST      e.g. ftp.365techies.co.uk  (or the SiteGround server hostname)
+#   FTP_USER      the FTP account username
+#   FTP_PASSWORD  the FTP account password
+#   FTP_PATH      web-root path, MUST end in "/". Use "./" if the FTP account
+#                 already opens inside the web root, else e.g. "public_html/"
+#
+# Trigger: manual only (Actions tab -> Deploy to SiteGround -> Run workflow).
+# The "dry_run" input defaults to TRUE: the first run only tests the connection and
+# logs what it WOULD upload, touching nothing on the server. Set it to false to do a
+# real deploy. This is deliberate so a push can't blast the static site onto the LIVE
+# WordPress site before redirects + the contact form are ready. After cutover we add
+# "on: push" so every edit I push goes live automatically.
+name: Deploy to SiteGround
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (test connection only, upload nothing)"
+        type: boolean
+        default: true
+
+concurrency:
+  group: deploy-siteground
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy via FTPS
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ${{ secrets.FTP_PATH }}
+          protocol: ftps
+          dry-run: ${{ inputs.dry_run }}
+          # Upload the built website only - never the source/dev files.
+          exclude: |
+            **/.git*
+            **/.git*/**
+            .github/**
+            **/*.py
+            **/*.md
+            wrangler.toml
+            victron-vrm-proxy.js
+            LICENSE*
+            .gitignore
