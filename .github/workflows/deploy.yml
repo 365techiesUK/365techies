@@ -56,3 +56,6 @@ jobs:
             victron-vrm-proxy.js
             LICENSE*
             .gitignore
+            src/**
+            *.bat
+            index-classic.html

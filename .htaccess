@@ -70,6 +70,13 @@ RewriteRule ^(sitemap_index\.xml|page-sitemap\.xml|post-sitemap\.xml|wp-sitemap\
 ErrorDocument 404 /404.html
 
 # ============================================================
+# Don't serve the FTP deploy state file or any stray source files
+# ============================================================
+<FilesMatch "(\.ftp-deploy-sync-state\.json|\.py|\.toml|\.ya?ml)$">
+  Require all denied
+</FilesMatch>
+
+# ============================================================
 # Performance: compression (Brotli preferred, gzip fallback)
 # ============================================================
 <IfModule mod_brotli.c>
