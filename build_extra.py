@@ -4029,6 +4029,19 @@ broadband_checker()
 # ===================================================== PER-TOWN COMPUTER REPAIR (consumer intent)
 def repair_pages():
     REPAIRS = bp.REPAIR_TOWNS  # single source of truth — defined in build_pages.py
+    # --- nearby-town links (local silo): rank the other repair towns by real distance ---
+    _SUPP = {"it-support-bournemouth": [50.7192, -1.8808]}  # Bournemouth isn't in COORDS
+    def _rcoord(its):
+        return build_local.COORDS.get(its) or _SUPP.get(its)
+    _RPTS = [(s, t, _rcoord(its)) for t, s, _n, its in REPAIRS]
+    def _nearby_repairs(self_slug, self_coord, n=5):
+        if not self_coord: return []
+        scored = []
+        for s, t, c in _RPTS:
+            if s == self_slug or not c: continue
+            scored.append(((c[0]-self_coord[0])**2 + ((c[1]-self_coord[1])*0.63)**2, t, s))
+        scored.sort()
+        return [(t, s) for _d, t, s in scored[:n]]
     wa_repair = (f' You can also <a href="{bp.WHATSAPP_LINK}" target="_blank" rel="noopener">send it on WhatsApp</a>.') if bp.WHATSAPP_NUMBER else ""
     for town, slug, nearby, it_slug in REPAIRS:
         desc = f"Computer and laptop repair in {town} — no call-out fee, no-fix-no-fee, 12-month warranty. Virus removal and upgrades. Rated 4.9 on Google."
@@ -4050,6 +4063,19 @@ def repair_pages():
         ]
         if loc.get("faq_q"):
             faqs.append((loc["faq_q"], loc["faq_a"]))
+        _nb = _nearby_repairs(slug, _rcoord(it_slug))
+        nearby_section = ('''    <section class="section section--alt" aria-label="Nearby computer repair">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// NEARBY</p>
+          <h2 class="section-title section-title--center" data-title>We also repair computers nearby<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ul class="areas-grid" data-stagger>
+''' + "\n".join(f'          <li><a href="/{s}/">Computer Repair {t}</a></li>' for t, s in _nb) + '''
+          <li><a href="/areas-covered/">All areas we cover &rarr;</a></li>
+        </ul>
+      </div>
+    </section>''') if _nb else ""
         content = "\n".join([
           hero(bc(f"Computer Repair {town}"), "// COMPUTER &amp; LAPTOP REPAIR",
                f'Computer &amp; laptop repair in <em class="grad grad--cyan">{town}</em>',
@@ -4103,6 +4129,7 @@ def repair_pages():
         </div>
       </div>
     </section>''',
+          nearby_section,
           faq_html(faqs),
           cta(f"Need a computer repair in {town}?",
               "Tell us what&rsquo;s wrong and we&rsquo;ll get you sorted &mdash; remotely, at home or by collection, with no call-out fee and a clear price first.",
