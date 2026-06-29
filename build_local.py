@@ -5,7 +5,7 @@ Run: python build_local.py
 """
 import build_pages as bp
 from build_pages import (add, graph, crumb, webpage, service, faqpage,
-                         faq_html, cta, hero, bc, tiles, grid_cards, checklist,
+                         faq_html, cta, hero, bc, bc_sub, crumb_sub, tiles, grid_cards, checklist,
                          steps, reviews_block, SITE, write_all)
 
 REVPOOL = [
@@ -69,7 +69,7 @@ def make_local(i, slug, town, region, lede, intro_para, nearby):
     nearby_li = "\n".join(f'          <li><a href="{h}">{l}</a></li>' for l, h in nearby)
     revs = [REVPOOL[i % len(REVPOOL)], REVPOOL[(i + 2) % len(REVPOOL)]]
     content = "\n".join([
-      hero(bc(crumb_name), f"// {town.upper()} &middot; {region.upper()}",
+      hero(bc_sub("IT Support Dorset", "/it-support-dorset/", crumb_name), f"// {town.upper()} &middot; {region.upper()}",
            f'IT support in <em class="grad grad--cyan">{town}</em>', bp.hero_trust(lede),
            chips=["Remote &amp; on-site", "Homes &amp; businesses", "&pound;18.25/mo per computer"]),
       f'''    <section class="section" aria-label="Local support">
@@ -150,7 +150,7 @@ def make_local(i, slug, town, region, lede, intro_para, nearby):
     def schema(s, _desc=desc, _cn=crumb_name, _faqs=faqs, _town=town, _region=region):
         svc = service(s, f"IT Support {_town}", f"Monthly IT support, computer repairs, Microsoft 365 and cybersecurity for {_town} homes and businesses.", "IT support")
         svc["areaServed"] = {"@type": "City", "name": _town, "containedInPlace": {"@type": "AdministrativeArea", "name": _region}}
-        nodes = [crumb(s, _cn), webpage(s, f"IT Support {_town}", _desc), svc, faqpage(s, _faqs)]
+        nodes = [crumb_sub(s, "IT Support Dorset", "it-support-dorset", _cn), webpage(s, f"IT Support {_town}", _desc), svc, faqpage(s, _faqs)]
         _co = COORDS.get(s)
         if _co:
             nodes.append({"@type": "Place", "@id": f"{SITE}/{s}/#place", "name": _town,

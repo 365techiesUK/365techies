@@ -809,6 +809,15 @@ def crumb(slug, name):
     items.append({"@type": "ListItem", "position": 2, "name": name, "item": f"{SITE}/{slug}/"})
     return {"@type": "BreadcrumbList", "@id": f"{SITE}/{slug}/#breadcrumb", "itemListElement": items}
 
+def crumb_sub(slug, parent_name, parent_slug, name):
+    """3-level breadcrumb schema: Home > parent > this page (builds a silo)."""
+    items = [
+      {"@type": "ListItem", "position": 1, "name": "Home", "item": SITE + "/"},
+      {"@type": "ListItem", "position": 2, "name": parent_name, "item": f"{SITE}/{parent_slug}/"},
+      {"@type": "ListItem", "position": 3, "name": name, "item": f"{SITE}/{slug}/"},
+    ]
+    return {"@type": "BreadcrumbList", "@id": f"{SITE}/{slug}/#breadcrumb", "itemListElement": items}
+
 def webpage(slug, title, desc, wtype="WebPage"):
     return {"@type": wtype, "@id": f"{SITE}/{slug}/#webpage", "url": f"{SITE}/{slug}/",
             "name": title, "description": desc, "inLanguage": "en-GB",
@@ -884,6 +893,9 @@ def hero(crumbs_html, eyebrow, h1_html, lede, cta1=("View Monthly Plans", "/mont
 
 def bc(name):
     return f'<a href="/">Home</a> <span>/</span> <span aria-current="page">{name}</span>'
+
+def bc_sub(parent_name, parent_href, name):
+    return f'<a href="/">Home</a> <span>/</span> <a href="{parent_href}">{parent_name}</a> <span>/</span> <span aria-current="page">{name}</span>'
 
 def tiles(items):
     cells = "\n".join(
@@ -1844,7 +1856,7 @@ def repair_town_links():
 
 add(
  slug="computer-repairs",
- title="Computer Repairs Bournemouth | Laptop & PC Repairs | 365 Techies",
+ title="Computer Repair in Bournemouth, Poole & Dorset | 365 Techies",
  desc="Computer and laptop repairs in Bournemouth, Poole and Dorset — no-fix-no-fee, 12-month warranty, no call-out fee. Free local collection. Rated 4.9 on Google, since 1995.",
  og_title="Computer Repairs Bournemouth | Laptop & PC Repairs",
  schema=lambda s: graph([

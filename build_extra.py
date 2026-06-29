@@ -7,7 +7,7 @@ import re
 import build_pages as bp
 import build_local  # registers the 12 local/customer pages on import
 from build_pages import (add, graph, crumb, webpage, service, faqpage,
-                         faq_html, cta, hero, hero_trust, bc, tiles, grid_cards, checklist,
+                         faq_html, cta, hero, hero_trust, bc, bc_sub, crumb_sub, tiles, grid_cards, checklist,
                          steps, reviews_block, ico, SITE, write_all,
                          promise_strip, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
 from build_local import make_customer
@@ -4077,7 +4077,7 @@ def repair_pages():
       </div>
     </section>''') if _nb else ""
         content = "\n".join([
-          hero(bc(f"Computer Repair {town}"), "// COMPUTER &amp; LAPTOP REPAIR",
+          hero(bc_sub("Computer Repairs", "/computer-repairs/", f"Computer Repair {town}"), "// COMPUTER &amp; LAPTOP REPAIR",
                f'Computer &amp; laptop repair in <em class="grad grad--cyan">{town}</em>',
                bp.hero_trust(f"Slow, broken or playing up? We fix PCs and laptops for homes and businesses across {town} &mdash; virus removal, speed-ups, upgrades, data transfer and setup &mdash; with home visits, fast remote help and no call-out fee. Friendly, local and family-run since 1995."),
                cta1=("Book a Repair", "/book-a-collection/"), cta2=("Call 01202 775566", "tel:+441202775566"),
@@ -4139,7 +4139,7 @@ def repair_pages():
             svc = service(s, f"Computer Repair {_town}", f"Computer and laptop repair for homes and businesses in {_town}, Dorset.", "Computer repair")
             svc["offers"] = {"@type": "Offer", "priceCurrency": "GBP", "availability": "https://schema.org/InStock",
                              "description": "Free diagnosis, then a clear fixed quote. No call-out fee, no-fix-no-fee, and a 12-month warranty on every repair. Free local collection across Dorset."}
-            return graph([crumb(s, f"Computer Repair {_town}"), webpage(s, f"Computer & Laptop Repair {_town}", _desc),
+            return graph([crumb_sub(s, "Computer Repairs", "computer-repairs", f"Computer Repair {_town}"), webpage(s, f"Computer & Laptop Repair {_town}", _desc),
                           svc, faqpage(s, _faqs)])
         add(slug=slug, title=f"Computer & Laptop Repair {town} | 365 Techies",
             desc=desc, og_title=f"Computer & Laptop Repair {town} | 365 Techies", schema=schema, content=content)
