@@ -610,7 +610,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/faqs/">FAQs</a>
         <a href="/it-advice/">IT Advice</a>
         <a href="/contact/">Contact</a>
-        <p class="site-footer__contact" style="margin-top:1.1rem"><a href="tel:+441202775566">01202 775566</a><br /><a href="sms:+447520615332">Text only: 07520 615332</a><br /><a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a>''' + WA_FOOTER + '''<br />Mon&ndash;Fri, 9am&ndash;5pm<br />Bournemouth, Dorset</p>
+        <p class="site-footer__contact" style="margin-top:1.1rem"><a href="tel:+441202775566">01202 775566</a><br /><a href="sms:+447520615332">Text only: 07520 615332</a><br /><a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a>''' + WA_FOOTER + '''<br />Mon&ndash;Fri, 9am&ndash;5pm<br />Bournemouth, Dorset<br /><a href="https://www.facebook.com/365computersuk/" target="_blank" rel="noopener me">Find us on Facebook</a></p>
       </nav>
     </div>
     <nav class="site-footer__legal-links mono" aria-label="Legal and policies">
@@ -676,15 +676,15 @@ def page(slug, title, desc, og_title, schema_json, content):
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <link rel="manifest" href="/site.webmanifest" />
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://fonts.bunny.net" />
+  <link rel="preconnect" href="https://fonts.bunny.net" crossorigin />
   <link rel="preconnect" href="https://api.fontshare.com" />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
   <link rel="stylesheet" media="print" onload="this.media='all'" href="https://api.fontshare.com/v2/css?f[]=clash-display@500,600,700&display=swap" />
-  <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
+  <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   <noscript>
     <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=clash-display@500,600,700&display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
+    <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
   <link rel="stylesheet" href="/css/styles.css?v={CSSV}" />
   <script type="application/ld+json">
@@ -792,7 +792,7 @@ BUSINESS_NODE = {
     # Verified Google Business Profile (Place ID ChIJlTb8YRuic0gRCRczduB8OFI / CID 5924622613303465737)
     # links the site's business entity to the official Google listing for local-SEO entity confirmation.
     "hasMap": "https://www.google.com/maps/place/?q=place_id:ChIJlTb8YRuic0gRCRczduB8OFI",
-    "sameAs": ["https://www.facebook.com/365techies",
+    "sameAs": ["https://www.facebook.com/365computersuk",
                "https://www.google.com/maps/place/?q=place_id:ChIJlTb8YRuic0gRCRczduB8OFI",
                "https://find-and-update.company-information.service.gov.uk/company/11073501"],
 }
