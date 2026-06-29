@@ -4740,7 +4740,7 @@ info_page(
         </div>
         <ul class="security-grid" data-stagger>
 ''' + grid_cards([
-        ("Fast response","Most remote sessions start within minutes in opening hours &mdash; subscribers always jump the queue."),
+        ("Same-day response","We respond the same day &mdash; and for remote help it&rsquo;s usually within minutes during opening hours. Subscribers always jump the queue."),
         ("Clear, honest pricing","Fixed monthly prices shown up front, from &pound;18.25/month per computer. No hidden fees, no surprise bills."),
         ("No contracts","Every plan is rolling and cancel-anytime. Stay because you want to, not because you&rsquo;re locked in."),
         ("Plain English, always","We explain what&rsquo;s wrong and how we&rsquo;ll fix it &mdash; patiently, and never make you feel silly."),
@@ -4748,6 +4748,7 @@ info_page(
         ("Genuine care","A family business since 1995 &mdash; many customers have been with us for over a decade."),
         ("No-fix-no-fee","If we can&rsquo;t fix your device, you don&rsquo;t pay for the diagnosis. Simple as that."),
         ("12-month repair warranty","Every repair is backed by a full 12-month warranty for your peace of mind."),
+        ("Windows &amp; Android specialists","We focus on Windows PCs and Android &mdash; the platforms most Dorset homes and businesses actually run &mdash; so you get deep, focused expertise, not a jack-of-all-trades."),
       ]) + '''
         </ul>
       </div>
@@ -4822,7 +4823,16 @@ info_page(
   lede="Clear monthly pricing with no hidden fees and no long contracts. Home support is £18.25/month per computer and business support from £24.38/month per computer, with Microsoft 365 at £4.85/month per user — plus one-off help when you need it.",
   desc="365 Techies pricing — transparent monthly IT support: homes £18.25/month per computer, business from £24.38/month per computer, Microsoft 365 £4.85/month per user. No contracts; one-off repairs quoted up front.",
   chips=["&pound;18.25/mo per computer","No contracts","No hidden fees"],
-  pre='''    <section class="stats" aria-label="By the numbers">
+  pre='''    <section class="section" aria-label="Transparent pricing">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// NO &ldquo;REQUEST A QUOTE&rdquo;</p>
+          <h2 class="section-title section-title--center" data-title>We publish our prices. Most don&rsquo;t.<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Ring round local IT firms and you&rsquo;ll mostly get &ldquo;request a quote.&rdquo; We think that&rsquo;s backwards. Our prices are right here &mdash; <strong>&pound;18.25/month per computer</strong> for homes, <strong>from &pound;24.38</strong> for business and <strong>&pound;4.85/user</strong> for Microsoft 365 &mdash; so you can decide in your own time, with no sales call and no pressure.</p>
+        </div>
+      </div>
+    </section>
+    <section class="stats" aria-label="By the numbers">
       <div class="stats__grid">
         <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="4.9" data-decimals="1">0</span></p><p class="stat__label mono">GOOGLE RATING</p></div>
         <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="51">0</span><span class="stat__suffix">+</span></p><p class="stat__label mono">GOOGLE REVIEWS</p></div>
