@@ -313,7 +313,7 @@ const bgCanvas = document.querySelector("#tech-background");
 // Desktop only + deferred to idle (the Three.js background is ~1.2MB).
 const WANT_BG = bgCanvas && !REDUCED && !LOW_POWER
   && window.innerWidth >= 920
-  && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  && window.matchMedia("(hover: hover)").matches;
 if (WANT_BG) {
   if ("requestIdleCallback" in window) requestIdleCallback(() => initBackground(), { timeout: 3000 });
   else window.addEventListener("load", () => setTimeout(initBackground, 250));

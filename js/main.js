@@ -631,10 +631,20 @@ async function initBackground() {
       render();
     }
   });
+  // Deep down the page, gracefully FADE the background out (so it never freezes on a
+  // stuck frame), then pause the loop to save GPU. Fade back in + resume on the way up.
   window.addEventListener("scroll", () => {
     const past = window.scrollY > window.innerHeight * 3;
-    if (past && !_bgPaused) { _bgPaused = true; if (rafId) { cancelAnimationFrame(rafId); rafId = null; } }
-    else if (!past && _bgPaused) { _bgPaused = false; if (!rafId && !document.hidden) { clock.getDelta(); render(); } }
+    if (past && !_bgPaused) {
+      _bgPaused = true;
+      canvas.style.transition = "opacity .7s ease";
+      canvas.style.opacity = "0";
+      setTimeout(() => { if (_bgPaused && rafId) { cancelAnimationFrame(rafId); rafId = null; } }, 720);
+    } else if (!past && _bgPaused) {
+      _bgPaused = false;
+      canvas.style.opacity = "1";
+      if (!rafId && !document.hidden) { clock.getDelta(); render(); }
+    }
   }, { passive: true });
 
   window.addEventListener("resize", () => {
@@ -661,7 +671,7 @@ if (HAS_GSAP && !REDUCED) {
 // with first paint or interactivity. Phones/tablets just get the CSS background.
 const WANT_BG = !REDUCED && !LOW_POWER
   && window.innerWidth >= 920
-  && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  && window.matchMedia("(hover: hover)").matches;
 if (WANT_BG) {
   const startBg = () => initBackground();
   if ("requestIdleCallback" in window) requestIdleCallback(startBg, { timeout: 3000 });
