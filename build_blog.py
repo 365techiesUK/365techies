@@ -49,7 +49,7 @@ def make_post(slug, cat, title, lede, body, points, related, faqs=None, dt="2026
            cta1=("Read more advice", "/it-advice/"), cta2=("View Monthly Plans", "/monthly-it-support/")),
       f'''    <section class="section" aria-label="Article">
       <article class="article">
-        <p class="mono" style="color:var(--muted);font-size:.8rem;margin:0 0 1.6rem">Published {dt_pretty} &middot; {cat} &middot; by 365 Techies</p>
+        <p class="mono" style="color:var(--muted);font-size:.8rem;margin:0 0 1.6rem">Published {dt_pretty} &middot; {cat} &middot; by the <a href="/meet-the-team/" style="color:var(--cyan)">365 Techies team</a> &mdash; Microsoft Partners &amp; Dell specialists, looking after Dorset since 1995</p>
 {body}
         <h2>Key points</h2>
         <ul>
