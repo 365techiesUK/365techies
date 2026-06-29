@@ -538,7 +538,7 @@ async function initBackground() {
 
     /* tunnel drift — strongest in the hero, eases off as you scroll */
     const heroBoost = Math.max(0, 1 - window.scrollY / Math.max(window.innerHeight, 1));
-    zDrift += dt * (0.22 + heroBoost * 1.1);
+    zDrift += dt * (0.4 + heroBoost * 0.95);
 
     const split = fx.split;
     const conv = fx.converge;
@@ -631,21 +631,9 @@ async function initBackground() {
       render();
     }
   });
-  // Deep down the page, gracefully FADE the background out (so it never freezes on a
-  // stuck frame), then pause the loop to save GPU. Fade back in + resume on the way up.
-  window.addEventListener("scroll", () => {
-    const past = window.scrollY > window.innerHeight * 3;
-    if (past && !_bgPaused) {
-      _bgPaused = true;
-      canvas.style.transition = "opacity .7s ease";
-      canvas.style.opacity = "0";
-      setTimeout(() => { if (_bgPaused && rafId) { cancelAnimationFrame(rafId); rafId = null; } }, 720);
-    } else if (!past && _bgPaused) {
-      _bgPaused = false;
-      canvas.style.opacity = "1";
-      if (!rafId && !document.hidden) { clock.getDelta(); render(); }
-    }
-  }, { passive: true });
+  // Background animates the FULL length of the page on desktop (it's desktop-only and
+  // deferred to idle). It only pauses when the browser tab is hidden (handled above),
+  // so there's no frozen frame and no "stops half-way down" effect.
 
   window.addEventListener("resize", () => {
     camera.aspect = window.innerWidth / window.innerHeight;
