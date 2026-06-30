@@ -1523,13 +1523,14 @@ def service_page(slug, crumb_name, eyebrow, h1_html, lede, title, desc, og_title
 # ============================================================ REMOTE IT SUPPORT
 add(
  slug="remote-it-support",
- title="Remote IT Support Dorset & UK | Fast Online Computer Help | 365 Techies",
- desc="Fast, secure remote IT support for homes and businesses. Most computer problems fixed online in minutes via Splashtop SOS — no waiting for an engineer visit. Bournemouth, Poole & Dorset.",
+ title="Remote IT Support Across the UK | Fast Online Computer Help | 365 Techies",
+ desc="Fast, secure remote IT support for homes and businesses anywhere in the UK. Most computer problems fixed online in minutes via Splashtop SOS — no waiting for an engineer. Based in Dorset, helping the whole of the UK.",
  og_title="Remote IT Support | Fast Online Computer Help",
  schema=lambda s: graph([
    crumb(s, "Remote IT Support"), webpage(s, "Remote IT Support", "Fast, secure remote IT support for homes and businesses."),
    service(s, "Remote IT Support", "Secure remote computer support via Splashtop SOS, usually within minutes.", "Remote IT support"),
    faqpage(s, [
+     ("Do you provide remote IT support across the whole of the UK?", "Yes. We're based in Dorset, but remote support isn't limited by distance — we help homes and businesses anywhere in the UK over a secure, encrypted connection. Wherever you are, we can usually fix the problem in minutes."),
      ("Is remote support safe?", "Yes. Sessions run over Splashtop SOS — an encrypted, industry-standard remote support tool. You watch everything on screen and access ends the moment the session is over."),
      ("What can be fixed remotely?", "Most things — email problems, software issues, Microsoft 365, slow computers, printer setup, Windows updates and general troubleshooting for home and business users."),
      ("How fast is remote support?", "Most remote sessions start within minutes during opening hours (Mon–Fri, 9am–5pm), and subscribers always jump the queue."),
@@ -1537,11 +1538,11 @@ add(
    ]),
  ]),
  content="\n".join([
-   hero(bc("Remote IT Support"), "// REMOTE SUPPORT",
-        'Remote IT support, <em class="grad grad--cyan">in minutes</em>',
-        hero_trust("Most computer problems can be fixed remotely — no waiting in for an engineer. We connect securely over Splashtop SOS, you watch everything happen on screen, and access ends the moment we&rsquo;re done."),
+   hero(bc("Remote IT Support"), "// UK-WIDE REMOTE SUPPORT",
+        'UK-wide remote IT support, <em class="grad grad--cyan">in minutes</em>',
+        hero_trust("Wherever you are in the UK, most computer problems can be fixed remotely &mdash; no waiting in for an engineer. We connect securely over Splashtop SOS, you watch everything happen on screen, and access ends the moment we&rsquo;re done."),
         cta1=("Get Remote Support", "/contact/"), cta2=("SOS Emergency Session", "https://sos.splashtop.com/en/sos-download"),
-        chips=["Encrypted Splashtop SOS", "You stay in control", "Usually within minutes"]),
+        chips=["Anywhere in the UK", "Encrypted &amp; secure", "Usually within minutes"]),
    f'''    <section class="section" aria-label="Overview">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
@@ -1565,9 +1566,10 @@ add(
       </div>
     </section>''',
    net_map_section("// HOW WE CONNECT", "Every device, looked after from here",
-       "          <p>Whether your computers are at home, in the office or out on the road, we connect securely and look after them all from one place &mdash; updates, security and quick fixes, with no-one needing to visit.</p>\n          <p>You stay in control: every session is one <em>you</em> start, over an encrypted connection, and we always phone first.</p>",
+       "          <p>Whether your computers are at home, in the office or out on the road &mdash; anywhere in the UK &mdash; we connect securely and look after them all from one place &mdash; updates, security and quick fixes, with no-one needing to visit.</p>\n          <p>You stay in control: every session is one <em>you</em> start, over an encrypted connection, and we always phone first.</p>",
        variant="home", label="LIVE VIEW &mdash; CONNECTED DEVICES"),
    faq_html([
+     ("Do you provide remote IT support across the whole of the UK?", "Yes &mdash; we&rsquo;re based in Dorset, but remote support isn&rsquo;t limited by distance. We help homes and businesses <strong>anywhere in the UK</strong> over a secure, encrypted Splashtop SOS connection, and we can usually fix the problem in minutes. For hands-on hardware work we also visit on-site across Bournemouth, Poole and Dorset."),
      ("Is remote support safe?", "Yes. Sessions run over Splashtop SOS — an encrypted, industry-standard remote support tool. You watch everything on screen and access ends the moment the session is over."),
      ("What can be fixed remotely?", "Most things — email problems, software issues, Microsoft 365, slow computers, printer setup, Windows updates and general troubleshooting for home and business users."),
      ("How fast is it?", "Most remote sessions start within minutes during opening hours (Mon&ndash;Fri, 9am&ndash;5pm). Subscribers always jump the queue."),
