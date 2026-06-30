@@ -9,7 +9,7 @@ import build_local  # registers the 12 local/customer pages on import
 from build_pages import (add, graph, crumb, webpage, service, faqpage,
                          faq_html, cta, hero, hero_trust, bc, bc_sub, crumb_sub, tiles, grid_cards, checklist,
                          steps, reviews_block, ico, SITE, write_all,
-                         promise_strip, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
+                         promise_strip, uk_remote_band, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
 from build_local import make_customer
 
 # ── Competitive prices for the new AI offerings (owner-approved 2026-06-17; edit here) ──
@@ -1771,7 +1771,8 @@ def services_overview():
            'Everything <em class="grad grad--cyan">365 Techies</em> does',
            "From monthly IT support for homes and businesses to Microsoft 365, cybersecurity and repairs — plus off-grid Victron energy and premium website design, hosting and email. One friendly, local team for it all.",
            cta1=("View Monthly Plans", "/monthly-it-support/"), cta2=("Book a Service", "/book-service/"),
-           chips=["Homes &amp; businesses","Across Dorset","One trusted team"]),
+           chips=["Homes &amp; businesses","UK-wide remote support","One trusted team"]),
+      uk_remote_band(alt=True),
       f'''    <section class="blog-section" aria-label="All services">
       <div class="wrap">
 {sections}      </div>

@@ -610,7 +610,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/faqs/">FAQs</a>
         <a href="/it-advice/">IT Advice</a>
         <a href="/contact/">Contact</a>
-        <p class="site-footer__contact" style="margin-top:1.1rem"><a href="tel:+441202775566">01202 775566</a><br /><a href="sms:+447520615332">Text only: 07520 615332</a><br /><a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a>''' + WA_FOOTER + '''<br />Mon&ndash;Fri, 9am&ndash;5pm<br />Bournemouth, Dorset<br /><a href="https://www.facebook.com/365computersuk/" target="_blank" rel="noopener me">Find us on Facebook</a></p>
+        <p class="site-footer__contact" style="margin-top:1.1rem"><a href="tel:+441202775566">01202 775566</a><br /><a href="sms:+447520615332">Text only: 07520 615332</a><br /><a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a>''' + WA_FOOTER + '''<br />Mon&ndash;Fri, 9am&ndash;5pm<br />Bournemouth, Dorset<br />Remote IT support across the whole of the UK<br /><a href="https://www.facebook.com/365computersuk/" target="_blank" rel="noopener me">Find us on Facebook</a></p>
       </nav>
     </div>
     <nav class="site-footer__legal-links mono" aria-label="Legal and policies">
@@ -1070,6 +1070,19 @@ def promise_strip(items=None, alt=False, title="Looked after at every step"):
       </div>
     </section>'''
 
+def uk_remote_band(alt=False):
+    """Slim, reusable trust band: local in Dorset, remote across the whole UK."""
+    cls = "section section--alt" if alt else "section"
+    return f'''    <section class="{cls}" aria-label="UK-wide remote support">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// WHEREVER YOU ARE IN THE UK</p>
+          <h2 class="section-title section-title--center" data-title>Local in Dorset, remote across the whole UK<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Most problems are fixed securely online in minutes, so wherever you are in the UK you get the same friendly, expert help &mdash; usually within minutes. For hands-on work we visit across Bournemouth, Poole and Dorset. <a href="/remote-it-support/">See how remote support works &#8594;</a></p>
+        </div>
+      </div>
+    </section>'''
+
 PAGES = []
 def add(**kw):
     PAGES.append(kw)
@@ -1096,6 +1109,7 @@ add(
         'Monthly IT support <em class="grad grad--cyan">subscriptions</em>',
         hero_trust("Reliable monthly IT support for homes and businesses — remote help, regular maintenance, security checks and friendly technical support whenever you need it. £18.25 a month per computer, cancel anytime."),
         chips=["&pound;18.25/mo per computer", "Full service every 6 weeks", "Cancel anytime"]),
+   uk_remote_band(alt=True),
    f'''    <section class="section" aria-label="What is monthly IT support">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
@@ -1295,6 +1309,7 @@ add(
         "Reliable monthly IT support for sole traders and small businesses — Microsoft 365, cybersecurity, backups and staff support, all proactively managed for you. Like having your own IT department, without the cost of employing one. Rated 4.9 on Google, family-run since 1995.",
         cta1=("Choose a Business Plan", "/business-it-support-plans/"), cta2=("Book a chat", "/contact/"),
         chips=["Your outsourced IT team", "From &pound;24.38/mo per computer", "Remote &amp; on-site across Dorset"]),
+   uk_remote_band(alt=True),
    f'''    <section class="section" aria-label="Who it is for">
       <div class="wrap">
         <div class="section-head">
