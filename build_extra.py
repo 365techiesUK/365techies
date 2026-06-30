@@ -197,9 +197,10 @@ reviews_page()
 def faqs_page():
     slug = "faqs"
     crumb_name = "IT Support FAQs"
-    desc = "Frequently asked questions about 365 Techies monthly IT support — how remote support works, what's included, home and business support, cancelling, on-site visits, Microsoft 365 and security."
+    desc = "Frequently asked questions about 365 Techies IT support — remote support across the whole UK, what's included, home and business support, repairs, on-site visits in Dorset, Microsoft 365 and security."
     FAQS = [
       ("How does remote support work?", "When you need help, we send you a secure link. One click connects us to your screen over Splashtop SOS so we can see what you see and fix it there and then. You watch the whole session, and access ends automatically when we're done."),
+      ("Do you provide remote IT support across the UK?", "Yes. Remote support is what we do best, and it isn't limited to Dorset. Over a secure, encrypted connection we can fix most computer and laptop problems in minutes, for homes and businesses anywhere in the UK. We always phone before we connect, and you watch the whole session on your own screen. For hands-on help we also visit on-site across Bournemouth, Poole and Dorset."),
       ("What is included in monthly IT support?", "Unlimited remote support, a full computer service every six weeks, antivirus and web protection, Windows and software updates, Microsoft 365 help, security and backup checks, and priority response — all for one predictable monthly cost."),
       ("Do you support home users?", "Yes — home users, families, retired users, students and home workers. We pride ourselves on patient, jargon-free help with everyday technology."),
       ("Do you support small businesses?", "Yes — sole traders, home offices and small businesses across Dorset, with Microsoft 365 management, cybersecurity, backups, staff support and more."),
@@ -211,13 +212,15 @@ def faqs_page():
       ("Can you help with slow computers?", "Yes — slow computers are one of the most common things we fix, usually remotely. A monthly plan keeps them fast with regular maintenance."),
       ("How much does it cost?", "Home support is £18.25/month per computer and business support from £24.38/month per computer. Microsoft 365 can be added for £4.85/month per user. One-off repairs are also available with no subscription."),
       ("How quickly can you help?", "Most remote sessions start within minutes during opening hours, Monday to Friday, 9am to 5pm. Subscribers always jump the queue."),
+      ("Do you offer no-fix-no-fee computer repairs?", "Yes. Every computer and laptop repair is no-fix-no-fee, so if we can't fix it you don't pay for the diagnosis, and it's backed by a 12-month warranty. We quote clearly before any chargeable work, with no call-out fee."),
+      ("Do you support Apple Macs?", "We're Windows and Android specialists, the platforms most UK homes and businesses run, so we focus there to give you genuine, in-depth expertise rather than being a jack-of-all-trades. We don't support Apple Macs."),
     ]
     content = "\n".join([
       hero(bc(crumb_name), "// GOOD QUESTIONS",
            'IT support <em class="grad grad--cyan">FAQs</em>',
            "Everything you might want to know about monthly IT support, remote help, what's included and how we work. Still not sure? Just ask.",
            cta1=("Contact Us", "/contact/"), cta2=("View Monthly Plans", "/monthly-it-support/"),
-           chips=["Remote &amp; on-site", "No lock-in", "Homes &amp; businesses"]),
+           chips=["UK-wide remote support", "No lock-in", "Homes &amp; businesses"]),
       faq_html(FAQS),
       cta("Still have a question?", "We're happy to help — no pressure and no jargon. Call, email or send us a message.",
           primary=("Contact Us", "/contact/"), secondary=("Call 01202 775566", "tel:+441202775566")),
