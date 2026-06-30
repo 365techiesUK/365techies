@@ -742,6 +742,16 @@ def page(slug, title, desc, og_title, schema_json, content):
         s.src = "//js-{HUBSPOT_REGION}.hs-scripts.com/{HUBSPOT_ID}.js";
         document.body.appendChild(s);
       }}
+      if (!window.__ga4Loaded) {{
+        window.__ga4Loaded = true;
+        var g = document.createElement("script"); g.async = true;
+        g.src = "https://www.googletagmanager.com/gtag/js?id=G-EBLTJ9WJXZ";
+        document.head.appendChild(g);
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function () {{ window.dataLayer.push(arguments); }};
+        window.gtag("js", new Date());
+        window.gtag("config", "G-EBLTJ9WJXZ");
+      }}
       if (window.ANALYTICS_SRC && !window.__analyticsLoaded) {{
         window.__analyticsLoaded = true;
         var a = document.createElement("script"); a.async = true; a.src = window.ANALYTICS_SRC;
