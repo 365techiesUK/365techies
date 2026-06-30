@@ -27,11 +27,12 @@ on:
 
 concurrency:
   group: deploy-siteground
-  cancel-in-progress: true
+  cancel-in-progress: false   # let each deploy finish (FTPS is slow); don't cancel mid-upload
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Checkout
         uses: actions/checkout@v4
