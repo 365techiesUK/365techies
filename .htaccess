@@ -16,6 +16,14 @@ RewriteCond %{HTTPS} off
 RewriteCond %{HTTP:X-Forwarded-Proto} !https [NC]
 RewriteRule ^ https://365techies.co.uk%{REQUEST_URI} [L,R=301]
 
+# --- Old WordPress AMP URLs (/slug/amp/ or ?amp) -> canonical non-AMP page ---
+# The new static site has no AMP. Strip the AMP path-suffix or query param so old
+# AMP pages still in Google's index resolve to the real page (then through the
+# redirects below) instead of dead-ending on the 404. Runs before the redirect map.
+RewriteRule ^(.+?)/amp/?$ /$1/ [R=301,L,NC]
+RewriteCond %{QUERY_STRING} (^|&)amp(=[^&]*)?(&|$) [NC]
+RewriteRule ^(.*)$ /$1? [R=301,L]
+
 # --- 410 Gone: dead WordPress / WooCommerce / BuddyPress system pages ---
 RewriteRule ^(members|members-2|activity|activity-2|groups|forums|register|register-2|activate|profile|moderation|messages|notifications|videos|documents|photos|password-reset|password-recover|external-link|sidebar|gutenberg|remote-jobs|365live|my-account|my-account-2|cart|checkout|checkout-2|shop-2)/?$ - [G]
 RewriteRule ^shop/?$ /dell-hardware/ [R=301,L]
