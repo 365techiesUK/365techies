@@ -3,6 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Google tag (gtag.js) - Consent Mode v2: denied by default, granted on cookie-accept -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-EBLTJ9WJXZ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', { ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'denied', wait_for_update: 500 });
+    try { if (localStorage.getItem('tt_consent') === 'accepted') gtag('consent', 'update', { ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted', analytics_storage: 'granted' }); } catch (e) {}
+    gtag('js', new Date());
+    gtag('config', 'G-EBLTJ9WJXZ');
+  </script>
   <title>Broadband Speed Checker — Is Your Internet Fast Enough? | 365 Techies</title>
   <meta name="description" content="Is your broadband fast enough? Use our free 30-second checker — answer 3 quick questions and get a plain-English recommended speed for your home, plus what&hellip;" />
   <link rel="canonical" href="https://365techies.co.uk/broadband-speed-checker/" />
@@ -902,16 +912,6 @@
         s.src = "//js-eu1.hs-scripts.com/148562638.js";
         document.body.appendChild(s);
       }
-      if (!window.__ga4Loaded) {
-        window.__ga4Loaded = true;
-        var g = document.createElement("script"); g.async = true;
-        g.src = "https://www.googletagmanager.com/gtag/js?id=G-EBLTJ9WJXZ";
-        document.head.appendChild(g);
-        window.dataLayer = window.dataLayer || [];
-        window.gtag = function () { window.dataLayer.push(arguments); };
-        window.gtag("js", new Date());
-        window.gtag("config", "G-EBLTJ9WJXZ");
-      }
       if (window.ANALYTICS_SRC && !window.__analyticsLoaded) {
         window.__analyticsLoaded = true;
         var a = document.createElement("script"); a.async = true; a.src = window.ANALYTICS_SRC;
@@ -927,7 +927,7 @@
       var v = t.getAttribute("data-cookie") === "accept" ? "accepted" : "declined";
       try { localStorage.setItem(KEY, v); } catch (e) {}
       var b = document.getElementById("cookie-banner"); if (b) b.hidden = true;
-      if (v === "accepted") loadConsented();
+      if (v === "accepted") { if (window.gtag) gtag('consent', 'update', { ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted', analytics_storage: 'granted' }); loadConsented(); }
     });
   })();
   </script>
