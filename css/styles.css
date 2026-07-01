@@ -3,6 +3,11 @@
    Dark navy tech aesthetic · Clash Display / Archivo / IBM Plex Mono
    ========================================================================== */
 
+/* Self-hosted heading font (was Fontshare) — local + preloaded to kill font-swap CLS */
+@font-face { font-family: "Clash Display"; font-style: normal; font-weight: 500; font-display: swap; src: url("/fonts/clash-display-500.woff2") format("woff2"); }
+@font-face { font-family: "Clash Display"; font-style: normal; font-weight: 600; font-display: swap; src: url("/fonts/clash-display-600.woff2") format("woff2"); }
+@font-face { font-family: "Clash Display"; font-style: normal; font-weight: 700; font-display: swap; src: url("/fonts/clash-display-700.woff2") format("woff2"); }
+
 :root {
   /* Brand palette from 365techies.co.uk — logo blue #0b73b5 (lifted for dark
      bg), heading navy #1c244b, steel #324a6d, action green #00ce1b */
