@@ -55,6 +55,7 @@ jobs:
             **/*.md
             wrangler.toml
             victron-vrm-proxy.js
+            website-checker-proxy.js
             LICENSE*
             .gitignore
             src/**
