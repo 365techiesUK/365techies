@@ -196,6 +196,7 @@ HEADER = '''  <header class="site-header">
             <a href="/plan-finder/">Plan Finder</a>
             <a href="/cost-calculator/">Cost Calculator</a>
             <a href="/website-checker/">Website Checker</a>
+            <a href="/email-security-checker/">Email Security Checker</a>
             <a href="/ai-roi-calculator/">AI ROI Calculator</a>
             <a href="/it-health-check-tool/">IT Health Check Tool</a>
             <a href="/broadband-speed-checker/">Broadband Speed Checker</a>
@@ -341,6 +342,7 @@ HEADER = '''  <header class="site-header">
           <a href="/plan-finder/">Plan Finder</a>
           <a href="/cost-calculator/">Cost Calculator</a>
           <a href="/website-checker/">Website Checker</a>
+          <a href="/email-security-checker/">Email Security Checker</a>
           <a href="/ai-roi-calculator/">AI ROI Calculator</a>
           <a href="/it-health-check-tool/">IT Health Check Tool</a>
           <a href="/broadband-speed-checker/">Broadband Speed Checker</a>
@@ -489,6 +491,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/quick-quote/">Quick Quote</a>
         <a href="/cost-calculator/">Cost Calculator</a>
         <a href="/website-checker/">Website Checker</a>
+        <a href="/email-security-checker/">Email Security Checker</a>
         <a href="/ai-roi-calculator/">AI ROI Calculator</a>
         <a href="/it-health-check-tool/">IT Health Check Tool</a>
         <a href="/broadband-speed-checker/">Broadband Speed Checker</a>
@@ -1282,6 +1285,146 @@ WCHECK_TOOL = r'''    <section class="section" aria-label="Free website checker"
           fm.innerHTML=weak.length? ('We spotted room to improve '+listWords(weak)+'. Your local Dorset web &amp; IT team can sort the lot — faster pages, better Google rankings and a site that works beautifully on every device.') : ('Strong scores! If you’d like a second opinion or help keeping it that way, we’re a friendly local Dorset web &amp; IT team and we’re happy to help.');
           elRes.hidden=false;
           requestAnimationFrame(function(){ root.querySelectorAll('.wc-g-val').forEach(function(c){ c.style.strokeDashoffset=c.getAttribute('data-off'); }); });
+          try{ elRes.scrollIntoView({behavior:'smooth',block:'start'}); }catch(e){}
+        }
+      })();
+      </script>
+    </section>'''
+
+# Shared email-security checker tool (SPF/DKIM/DMARC via DNS-over-HTTPS, no key) — embedded on /email-security-checker/
+EMAILSEC_TOOL = r'''    <section class="section" aria-label="Email security checker" id="esectool">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// FREE EMAIL SECURITY CHECK</p>
+          <h2 class="section-title section-title--center" data-title>Can scammers spoof your email?<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Enter your domain and we&rsquo;ll check whether your email is protected against spoofing and impersonation &mdash; the SPF, DKIM and DMARC records that stop scammers sending fake emails in your name.</p>
+        </div>
+        <div id="esec" data-reveal>
+          <form class="es-form" id="es-form" novalidate>
+            <input type="text" id="es-domain" inputmode="url" autocomplete="off" spellcheck="false" placeholder="yourbusiness.co.uk" aria-label="Your domain" required>
+            <button type="submit" class="button primary es-go">Check my email security</button>
+          </form>
+          <p class="es-hint">Free, no sign-up &mdash; just your domain (e.g. 365techies.co.uk), not your email address.</p>
+          <div class="es-loading" id="es-loading" hidden>
+            <div class="es-spinner" aria-hidden="true"></div>
+            <p id="es-loadmsg">Checking your DNS records&hellip;</p>
+          </div>
+          <div class="es-error" id="es-error" hidden></div>
+          <div class="es-results" id="es-results" hidden>
+            <div id="es-verdict"></div>
+            <div class="es-checks" id="es-checks"></div>
+            <div class="es-fix">
+              <h3>Want your email locked down?</h3>
+              <p id="es-fix-msg"></p>
+              <div class="es-fix-cta">
+                <a class="button primary" href="/contact/">Get my email secured &#8594;</a>
+                <a class="button es-ghost" href="/cybersecurity-support/">Our cybersecurity help</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="es-powered">Checks your public DNS records (SPF, DKIM, DMARC) live via DNS-over-HTTPS. Nothing is stored, and we never see your email.</p>
+      </div>
+      <style>
+      #esec{max-width:820px;margin:0 auto}
+      #esec .es-form{display:flex;gap:.6rem;flex-wrap:wrap;align-items:stretch}
+      #esec #es-domain{flex:1 1 260px;min-width:0;padding:.95rem 1.1rem;border-radius:12px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.04);color:inherit;font:inherit}
+      #esec #es-domain:focus{outline:none;border-color:var(--cyan,#37c2c2)}
+      #esec .es-go{white-space:nowrap}
+      #esec .es-hint{font-size:.78rem;color:var(--muted,#9aa6c2);margin:.6rem 0 0}
+      #esec .es-loading{text-align:center;padding:2.4rem 1rem}
+      #esec .es-spinner{width:44px;height:44px;border-radius:50%;border:3px solid rgba(255,255,255,.14);border-top-color:var(--cyan,#37c2c2);margin:0 auto 1rem;animation:es-spin 1s linear infinite}
+      @keyframes es-spin{to{transform:rotate(360deg)}}
+      #esec .es-error{margin-top:1.3rem;padding:1rem 1.2rem;border-radius:12px;border:1px solid rgba(231,76,60,.45);background:rgba(231,76,60,.1);font-size:.92rem;line-height:1.55}
+      #esec .es-error a{color:var(--cyan,#37c2c2)}
+      #esec .es-results{margin-top:1.8rem}
+      #esec .es-verdict-box{text-align:center;padding:1.6rem;border-radius:16px;border:1px solid rgba(255,255,255,.12);margin-bottom:1.4rem}
+      #esec .es-verdict-dom{margin:0;font-size:.85rem;color:var(--muted,#9aa6c2);word-break:break-all}
+      #esec .es-verdict-grade{margin:.2rem 0 .5rem;font-size:1.9rem;font-weight:800}
+      #esec .es-verdict-msg{margin:0 auto;max-width:52ch;font-size:.95rem;line-height:1.6;color:var(--muted,#9aa6c2)}
+      #esec .es-checks{display:grid;gap:.8rem}
+      #esec .es-check{padding:1rem 1.2rem;border-radius:12px;background:rgba(255,255,255,.03);border-left:4px solid var(--muted,#9aa6c2)}
+      #esec .es-check-h{display:flex;align-items:center;gap:.6rem;margin-bottom:.3rem}
+      #esec .es-check-ico{width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:800;color:#04161a;flex:none}
+      #esec .es-check b{font-size:1rem}
+      #esec .es-check p{margin:0;font-size:.9rem;color:var(--muted,#9aa6c2);line-height:1.55}
+      #esec .es-rec{display:block;margin-top:.6rem;font-family:var(--font-mono,monospace);font-size:.72rem;color:var(--faint,#9fb5d3);word-break:break-all;background:rgba(0,0,0,.25);padding:.4rem .6rem;border-radius:7px}
+      #esec .es-check.es-good{border-left-color:#2ecc71}
+      #esec .es-check.es-avg{border-left-color:#f1c40f}
+      #esec .es-check.es-poor{border-left-color:#e74c3c}
+      #esec .es-check.es-good .es-check-ico{background:#2ecc71}
+      #esec .es-check.es-avg .es-check-ico{background:#f1c40f}
+      #esec .es-check.es-poor .es-check-ico{background:#e74c3c}
+      #esec .es-verdict-box.es-good{border-color:rgba(46,204,113,.4);background:rgba(46,204,113,.08)}
+      #esec .es-verdict-box.es-avg{border-color:rgba(241,196,15,.4);background:rgba(241,196,15,.08)}
+      #esec .es-verdict-box.es-poor{border-color:rgba(231,76,60,.4);background:rgba(231,76,60,.08)}
+      #esec .es-verdict-box.es-good .es-verdict-grade{color:#2ecc71}
+      #esec .es-verdict-box.es-avg .es-verdict-grade{color:#f1c40f}
+      #esec .es-verdict-box.es-poor .es-verdict-grade{color:#e74c3c}
+      #esec .es-fix{margin-top:2rem;padding:1.6rem;border-radius:16px;border:1px solid rgba(55,194,194,.35);background:rgba(55,194,194,.07);text-align:center}
+      #esec .es-fix h3{margin:0 0 .5rem;font-size:1.2rem}
+      #esec .es-fix p{margin:0 auto 1.1rem;max-width:48ch;color:var(--muted,#9aa6c2);font-size:.95rem;line-height:1.6}
+      #esec .es-fix-cta{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center}
+      #esec .es-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}
+      #esec .es-powered{text-align:center;font-size:.72rem;color:var(--muted,#9aa6c2);margin:1.4rem 0 0;opacity:.8}
+      @media(max-width:560px){#esec .es-go{flex:1 1 100%}}
+      </style>
+      <script>
+      (function(){
+        var root=document.getElementById('esec'); if(!root) return;
+        var form=root.querySelector('#es-form'), input=root.querySelector('#es-domain');
+        var elLoad=root.querySelector('#es-loading'), elMsg=root.querySelector('#es-loadmsg');
+        var elErr=root.querySelector('#es-error'), elRes=root.querySelector('#es-results');
+        var CTA='<a href="/contact/">get in touch</a>';
+        var SELECTORS=['google','selector1','selector2','default','k1','s1','s2','mail','dkim','smtp','zoho','mandrill','protonmail','fm1','k2','dk'];
+        var loadTimer=null, LOAD=['Looking up your DNS records…','Checking SPF (who can send as you)…','Checking DMARC (anti-spoofing policy)…','Checking DKIM (email signing)…','Working out your result…'];
+        function esc(s){var d=document.createElement('div');d.textContent=(s==null?'':s);return d.innerHTML;}
+        function normDomain(v){ v=(v||'').trim().toLowerCase().replace(/^https?:\/\//,'').replace(/^www\./,'').replace(/[\/?#].*$/,'').replace(/\s+/g,''); if(v.indexOf('@')>=0) v=v.split('@').pop(); return v; }
+        function doh(name,type){ return fetch('https://dns.google/resolve?name='+encodeURIComponent(name)+'&type='+(type||'TXT')).then(function(r){ if(!r.ok) throw new Error('dns'); return r.json(); }); }
+        function txt(name){ return doh(name,'TXT').then(function(d){ if(!d.Answer) return []; return d.Answer.filter(function(a){return a.type===16;}).map(function(a){ return String(a.data).replace(/\\"/g,'"').replace(/^"|"$/g,'').replace(/"\s+"/g,''); }); }).catch(function(){return [];}); }
+        function findFirst(arr,re){ for(var i=0;i<arr.length;i++){ if(re.test(arr[i])) return arr[i]; } return null; }
+        function startLoad(){ var i=0; elMsg.textContent=LOAD[0]; loadTimer=setInterval(function(){ i=(i+1)%LOAD.length; elMsg.textContent=LOAD[i]; },1600); }
+        function stopLoad(){ if(loadTimer){clearInterval(loadTimer);loadTimer=null;} }
+        form.addEventListener('submit',function(e){
+          e.preventDefault();
+          var d=normDomain(input.value); if(!d || d.indexOf('.')<0){ input.focus(); return; }
+          elRes.hidden=true; elErr.hidden=true; elLoad.hidden=false; startLoad();
+          var btn=form.querySelector('.es-go'); btn.disabled=true;
+          Promise.all([ txt(d), txt('_dmarc.'+d), Promise.all(SELECTORS.map(function(s){ return txt(s+'._domainkey.'+d).then(function(t){return {s:s,t:t};}); })) ])
+            .then(function(r){ render(d,r[0],r[1],r[2]); })
+            .catch(function(err){ elErr.innerHTML='We couldn’t look up that domain. Check it’s spelled correctly (just the domain, e.g. yourbusiness.co.uk) and try again — or '+CTA+'.'; elErr.hidden=false; })
+            .then(function(){ stopLoad(); elLoad.hidden=true; btn.disabled=false; });
+        });
+        function render(domain, spfTxts, dmarcTxts, dkimProbes){
+          var spf=findFirst(spfTxts,/^v=spf1/i);
+          var dmarc=findFirst(dmarcTxts,/^v=DMARC1/i);
+          var checks=[], dmarcEnforcing=false;
+          if(!spf) checks.push({s:'poor',t:'SPF',m:'No SPF record found — anyone can send email pretending to be your domain.'});
+          else { var all=(spf.match(/([~\-?+])all\b/)||[])[1];
+            if(all==='-') checks.push({s:'good',t:'SPF',m:'Set up and strict (-all) — only your approved servers can send email as you.',rec:spf});
+            else if(all==='~') checks.push({s:'avg',t:'SPF',m:'Exists, but soft-fail (~all) — spoofed mail is only flagged, not blocked. Ideally end it in -all.',rec:spf});
+            else checks.push({s:'avg',t:'SPF',m:'Exists, but weak — it should end in -all to actually block spoofing.',rec:spf}); }
+          if(!dmarc) checks.push({s:'poor',t:'DMARC',m:'No DMARC record — nothing tells inboxes to reject spoofed email. This is the big gap, and the one scammers exploit.'});
+          else { var p=((dmarc.match(/[;\s]p\s*=\s*(\w+)/i)||[])[1]||'').toLowerCase();
+            if(p==='reject'){ dmarcEnforcing=true; checks.push({s:'good',t:'DMARC',m:'Enforcing (p=reject) — spoofed email is rejected outright. Excellent.',rec:dmarc}); }
+            else if(p==='quarantine'){ dmarcEnforcing=true; checks.push({s:'good',t:'DMARC',m:'Enforcing (p=quarantine) — spoofed email is sent straight to spam.',rec:dmarc}); }
+            else if(p==='none') checks.push({s:'avg',t:'DMARC',m:'Monitor-only (p=none) — it watches but doesn’t yet block spoofing. Move it to quarantine or reject.',rec:dmarc});
+            else checks.push({s:'avg',t:'DMARC',m:'Record found, but the policy isn’t clearly set.',rec:dmarc}); }
+          var hit=null; for(var i=0;i<dkimProbes.length;i++){ if(findFirst(dkimProbes[i].t,/(v=DKIM1|k=rsa|p=[A-Za-z0-9+\/]{20,})/i)){ hit=dkimProbes[i]; break; } }
+          if(hit) checks.push({s:'good',t:'DKIM',m:'Email signing detected (selector “'+esc(hit.s)+'”) — your messages are cryptographically signed.'});
+          else checks.push({s:'avg',t:'DKIM',m:'Not found on common selectors. Your provider may use a custom one — worth confirming your email is DKIM-signed.'});
+          var verdict;
+          if(spf && dmarcEnforcing) verdict={g:'Protected',cls:'good',m:'Your domain is well protected against email spoofing. Nicely done.'};
+          else if(!spf && !dmarc) verdict={g:'Exposed',cls:'poor',m:'Your domain has little or no protection — scammers can send email that looks exactly like it’s from you. This is how invoice fraud and phishing begin.'};
+          else verdict={g:'Partly protected',cls:'avg',m:'You’ve got some protection, but there are gaps a scammer could still exploit. A few tweaks would close them.'};
+          root.querySelector('#es-verdict').innerHTML='<div class="es-verdict-box es-'+verdict.cls+'"><p class="es-verdict-dom">'+esc(domain)+'</p><p class="es-verdict-grade">'+verdict.g+'</p><p class="es-verdict-msg">'+verdict.m+'</p></div>';
+          var ch=''; checks.forEach(function(c){ var icon=c.s==='good'?'✓':(c.s==='avg'?'!':'✗');
+            ch+='<div class="es-check es-'+c.s+'"><div class="es-check-h"><span class="es-check-ico">'+icon+'</span><b>'+c.t+'</b></div><p>'+c.m+'</p>'+(c.rec?'<code class="es-rec">'+esc(c.rec.length>140?c.rec.slice(0,138)+'…':c.rec)+'</code>':'')+'</div>'; });
+          root.querySelector('#es-checks').innerHTML=ch;
+          root.querySelector('#es-fix-msg').innerHTML = verdict.cls==='good'
+            ? 'Your setup looks solid. If you’d like us to keep it that way — or check the rest of your cybersecurity — we’re a friendly local Dorset team.'
+            : 'Email spoofing is how invoice fraud and phishing start. We’ll set up SPF, DKIM and DMARC properly so scammers can’t send email in your name — usually within a day.';
+          elRes.hidden=false;
           try{ elRes.scrollIntoView({behavior:'smooth',block:'start'}); }catch(e){}
         }
       })();

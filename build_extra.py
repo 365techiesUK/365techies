@@ -9,7 +9,7 @@ import build_local  # registers the 12 local/customer pages on import
 from build_pages import (add, graph, crumb, webpage, service, faqpage,
                          faq_html, cta, hero, hero_trust, bc, bc_sub, crumb_sub, tiles, grid_cards, checklist,
                          steps, reviews_block, ico, SITE, write_all,
-                         promise_strip, uk_remote_band, WCHECK_TOOL, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
+                         promise_strip, uk_remote_band, WCHECK_TOOL, EMAILSEC_TOOL, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
 from build_local import make_customer
 
 # ── Competitive prices for the new AI offerings (owner-approved 2026-06-17; edit here) ──
@@ -3751,6 +3751,48 @@ def website_checker():
         desc=desc, og_title="Free Website Checker | 365 Techies", schema=schema, content=content)
 website_checker()
 
+# ===================================================== EMAIL SECURITY CHECKER (SPF/DKIM/DMARC lead-gen tool)
+def email_security_checker():
+    slug = "email-security-checker"
+    desc = "Free email security checker. Enter your domain to see if SPF, DKIM and DMARC are protecting your business email from spoofing and impersonation, with plain-English fixes. From 365 Techies, Bournemouth & Dorset."
+    faqs = [
+      ("What does the email security checker do?", "It looks up your domain&rsquo;s public DNS records &mdash; SPF, DKIM and DMARC &mdash; and tells you, in plain English, whether scammers could send email pretending to be you. It&rsquo;s free, instant, and never sees your actual email."),
+      ("What are SPF, DKIM and DMARC?", "Three DNS records that prove your email is really from you. SPF lists who&rsquo;s allowed to send as your domain, DKIM cryptographically signs your messages, and DMARC tells inboxes what to do with anything that fails &mdash; together they stop spoofing and impersonation."),
+      ("Why does email spoofing matter?", "Without these records, a scammer can send an email that looks exactly like it&rsquo;s from your business &mdash; to your customers, staff or suppliers. It&rsquo;s how invoice fraud, fake &lsquo;CEO&rsquo; requests and phishing attacks start."),
+      ("My domain isn&rsquo;t fully protected &mdash; can you fix it?", "Yes &mdash; setting up SPF, DKIM and DMARC correctly is something we do for businesses regularly, usually within a day and with no disruption to your email. See our <a href=\"/cybersecurity-support/\">cybersecurity support</a> or <a href=\"/contact/\">get in touch</a>."),
+      ("Is it safe to enter my domain?", "Completely &mdash; we only read public DNS records (the same ones every mail server checks). We don&rsquo;t see your email, your inbox or any private data, and nothing is stored."),
+    ]
+    content = "\n".join([
+      hero(bc("Email Security Checker"), "// FREE EMAIL SECURITY CHECK",
+           'Can scammers <em class="grad grad--cyan">spoof your email?</em>',
+           "Find out in seconds. Enter your domain and we&rsquo;ll check whether SPF, DKIM and DMARC are protecting your business email from spoofing and impersonation &mdash; the scams behind invoice fraud and phishing. Free, no sign-up.",
+           cta1=("Check a Domain", "#esectool"), cta2=("Cybersecurity Help", "/cybersecurity-support/"),
+           chips=["SPF &middot; DKIM &middot; DMARC","Instant &amp; free","No email needed"]),
+      EMAILSEC_TOOL,
+      f'''    <section class="section section--alt" aria-label="What we check">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// THE THREE THAT STOP SPOOFING</p>
+          <h2 class="section-title section-title--center" data-title>SPF, DKIM &amp; DMARC, in plain English<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="tile-grid" data-stagger>
+{tiles([("shield","SPF","Lists which servers are allowed to send email for your domain &mdash; so random servers can&rsquo;t."),("lock","DKIM","Cryptographically signs your emails, so inboxes can prove they really came from you and weren&rsquo;t tampered with."),("check","DMARC","Ties it together and tells inboxes what to do with fakes &mdash; report, spam or reject. The one most businesses are missing."),("mail","Why it matters","Without these, a scammer can email your customers or staff as &lsquo;you&rsquo; &mdash; the root of invoice fraud and phishing."),("users","Protects everyone","Your customers, suppliers and team all trust email from your domain &mdash; these records keep that trust safe."),("bolt","Quick to fix","Setting them up is fast and behind-the-scenes &mdash; no disruption to how you send email.")])}
+        </div>
+      </div>
+    </section>''',
+      faq_html(faqs),
+      cta("Not protected? We&rsquo;ll fix it.",
+          "Setting up SPF, DKIM and DMARC properly stops scammers using your name &mdash; and we do it for Dorset businesses all the time, usually within a day.",
+          primary=("Secure My Email", "/contact/"), secondary=("Cybersecurity Support", "/cybersecurity-support/")),
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        return graph([crumb(s, "Email Security Checker"), webpage(s, "Free Email Security Checker", _desc),
+                      {"@type":"WebApplication","name":"365 Techies Email Security Checker","applicationCategory":"SecurityApplication","operatingSystem":"Web (all browsers)","url":SITE+"/email-security-checker/","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},"provider":{"@id":SITE+"/#business"}},
+                      faqpage(s, _faqs)])
+    add(slug=slug, title="Free Email Security Checker | SPF, DKIM & DMARC Test | 365 Techies",
+        desc=desc, og_title="Free Email Security Checker | 365 Techies", schema=schema, content=content)
+email_security_checker()
+
 # ===================================================== AI VOICE AGENTS (new offering)
 def ai_voice():
     slug = "ai-voice-agents"
@@ -5423,6 +5465,7 @@ info_page(
           <a class="post-card" href="/plan-finder/"><p class="post-card__cat">Tool</p><h3>Plan Finder</h3><p>Answer three quick questions and we&rsquo;ll recommend the right plan for you.</p><span class="post-card__more">Find your plan &#8594;</span></a>
           <a class="post-card" href="/it-health-check-tool/"><p class="post-card__cat">Tool</p><h3>IT Health Check Tool</h3><p>Get an instant IT &amp; security score out of 100, plus a plain-English action plan &mdash; no sign-up.</p><span class="post-card__more">Check your score &#8594;</span></a>
           <a class="post-card" href="/website-checker/"><p class="post-card__cat">Tool</p><h3>Free Website Checker</h3><p>Test any site&rsquo;s speed, SEO, security &amp; mobile-friendliness with Google&rsquo;s Lighthouse engine.</p><span class="post-card__more">Check a website &#8594;</span></a>
+          <a class="post-card" href="/email-security-checker/"><p class="post-card__cat">Tool</p><h3>Email Security Checker</h3><p>Enter your domain to see if SPF, DKIM &amp; DMARC are stopping scammers spoofing your business email.</p><span class="post-card__more">Check your domain &#8594;</span></a>
           <a class="post-card" href="/windows-10-end-of-life/"><p class="post-card__cat">Act now</p><h3>Windows 10 End of Life</h3><p>Support ended in October 2025. Find out in 30 seconds if you&rsquo;re affected &mdash; and your options.</p><span class="post-card__more">Are you affected? &#8594;</span></a>
           <a class="post-card" href="/quick-quote/"><p class="post-card__cat">Tool</p><h3>Quick Quote</h3><p>Get a free, no-obligation quote or cost comparison in under a minute.</p><span class="post-card__more">Get a quote &#8594;</span></a>
           <a class="post-card" href="/broadband-speed-checker/"><p class="post-card__cat">Tool</p><h3>Broadband Speed Checker</h3><p>Is your internet fast enough? Get a recommended speed in 30 seconds.</p><span class="post-card__more">Check your speed &#8594;</span></a>
