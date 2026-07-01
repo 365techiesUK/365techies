@@ -1566,6 +1566,209 @@ def off_grid():
 off_grid()
 
 # ===================================================== WEBSITE DESIGN, HOSTING & EMAIL
+# Shared free website-checker tool (embedded on /website-checker/ and /web-design-hosting/)
+WCHECK_TOOL = r'''    <section class="section" aria-label="Free website checker" id="wctool">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// FREE INSTANT CHECK</p>
+          <h2 class="section-title section-title--center" data-title>Check any website in seconds<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Enter a web address and we&rsquo;ll run a full health check &mdash; speed, SEO, accessibility, security and mobile-friendliness &mdash; powered by Google&rsquo;s own Lighthouse engine.</p>
+        </div>
+        <div id="wcheck" data-reveal>
+          <form class="wc-form" id="wc-form" novalidate>
+            <input type="url" id="wc-url" inputmode="url" autocomplete="url" spellcheck="false" placeholder="yourwebsite.co.uk" aria-label="Website address to check" required>
+            <div class="wc-strat" role="tablist" aria-label="Device to test">
+              <button type="button" data-strat="mobile" class="is-active" role="tab">Mobile</button>
+              <button type="button" data-strat="desktop" role="tab">Desktop</button>
+            </div>
+            <button type="submit" class="button primary wc-go">Check website</button>
+          </form>
+          <p class="wc-hint">Free, no sign-up &mdash; check any public website, yours or a competitor&rsquo;s.</p>
+          <div class="wc-loading" id="wc-loading" hidden>
+            <div class="wc-spinner" aria-hidden="true"></div>
+            <p id="wc-loadmsg">Fetching the page&hellip;</p>
+            <p class="wc-note">A full check takes around 15&ndash;30 seconds.</p>
+          </div>
+          <div class="wc-error" id="wc-error" hidden></div>
+          <div class="wc-results" id="wc-results" hidden>
+            <p class="wc-tested">Results for <a id="wc-tested-url" href="#" target="_blank" rel="noopener nofollow"></a> <span id="wc-tested-strat" class="wc-badge"></span></p>
+            <div class="wc-gauges" id="wc-gauges"></div>
+            <div id="wc-cwv"></div>
+            <div id="wc-checks"></div>
+            <div id="wc-issues"></div>
+            <div class="wc-fix">
+              <h3>Want these issues fixed?</h3>
+              <p id="wc-fix-msg"></p>
+              <div class="wc-fix-cta">
+                <a class="button primary" href="/contact/">Get my free fix-it plan &#8594;</a>
+                <a class="button wc-ghost" href="/web-design-hosting/">Our web design &amp; hosting</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="wc-powered">Powered by Google Lighthouse / PageSpeed Insights. Results are a point-in-time snapshot and can vary between runs.</p>
+      </div>
+      <style>
+      #wcheck{max-width:920px;margin:0 auto}
+      #wcheck .wc-form{display:flex;gap:.6rem;flex-wrap:wrap;align-items:stretch}
+      #wcheck #wc-url{flex:1 1 240px;min-width:0;padding:.95rem 1.1rem;border-radius:12px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.04);color:inherit;font:inherit}
+      #wcheck #wc-url:focus{outline:none;border-color:var(--cyan,#37c2c2)}
+      #wcheck .wc-strat{display:flex;gap:.25rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:.25rem}
+      #wcheck .wc-strat button{font:inherit;font-size:.85rem;font-weight:600;padding:.55rem .9rem;border-radius:9px;border:0;background:transparent;color:inherit;cursor:pointer;transition:.15s}
+      #wcheck .wc-strat button.is-active{background:var(--cyan,#37c2c2);color:#04161a}
+      #wcheck .wc-go{white-space:nowrap}
+      #wcheck .wc-hint{font-size:.78rem;color:var(--muted,#9aa6c2);margin:.6rem 0 0}
+      #wcheck .wc-loading{text-align:center;padding:2.5rem 1rem}
+      #wcheck .wc-spinner{width:46px;height:46px;border-radius:50%;border:3px solid rgba(255,255,255,.14);border-top-color:var(--cyan,#37c2c2);margin:0 auto 1rem;animation:wc-spin 1s linear infinite}
+      @keyframes wc-spin{to{transform:rotate(360deg)}}
+      #wcheck .wc-loading p{margin:.2rem 0}
+      #wcheck .wc-loading .wc-note{font-size:.78rem;color:var(--muted,#9aa6c2)}
+      #wcheck .wc-error{margin-top:1.3rem;padding:1rem 1.2rem;border-radius:12px;border:1px solid rgba(231,76,60,.45);background:rgba(231,76,60,.1);font-size:.92rem;line-height:1.55}
+      #wcheck .wc-error a{color:var(--cyan,#37c2c2)}
+      #wcheck .wc-results{margin-top:1.8rem}
+      #wcheck .wc-tested{font-size:.9rem;color:var(--muted,#9aa6c2);text-align:center;margin:0 0 1.4rem;word-break:break-all}
+      #wcheck .wc-tested a{color:var(--cyan,#37c2c2)}
+      #wcheck .wc-badge{display:inline-block;margin-left:.4rem;font-size:.72rem;padding:.12rem .55rem;border:1px solid rgba(255,255,255,.18);border-radius:99px;white-space:nowrap}
+      #wcheck .wc-gauges{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+      #wcheck .wc-gauge{text-align:center}
+      #wcheck .wc-g-ring{position:relative;width:118px;max-width:100%;margin:0 auto;aspect-ratio:1}
+      #wcheck .wc-g-ring svg{width:100%;display:block;transform:rotate(-90deg)}
+      #wcheck .wc-g-track{fill:none;stroke:rgba(255,255,255,.1);stroke-width:9}
+      #wcheck .wc-g-val{fill:none;stroke-width:9;stroke-linecap:round;transition:stroke-dashoffset 1.1s cubic-bezier(.3,.8,.3,1)}
+      #wcheck .wc-g-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:800;font-variant-numeric:tabular-nums}
+      #wcheck .wc-g-lab{margin:.5rem 0 0;font-size:.82rem;color:var(--muted,#9aa6c2)}
+      #wcheck .wc-sub{font-size:.95rem;font-weight:700;margin:2rem 0 .9rem;text-align:center}
+      #wcheck .wc-cwv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.7rem}
+      #wcheck .wc-metric{padding:.9rem 1rem;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);text-align:center;border-left-width:4px}
+      #wcheck .wc-metric-v{margin:0;font-size:1.35rem;font-weight:800;font-variant-numeric:tabular-nums}
+      #wcheck .wc-metric-l{margin:.25rem 0 0;font-size:.74rem;color:var(--muted,#9aa6c2);line-height:1.35}
+      #wcheck .wc-chk-grid{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center}
+      #wcheck .wc-chk{font-size:.82rem;padding:.4rem .75rem;border-radius:99px;border:1px solid rgba(255,255,255,.14)}
+      #wcheck .wc-chk.is-ok{color:#7ee2a8;border-color:rgba(46,204,113,.4);background:rgba(46,204,113,.08)}
+      #wcheck .wc-chk.is-bad{color:#f5a39b;border-color:rgba(231,76,60,.4);background:rgba(231,76,60,.08)}
+      #wcheck .wc-issue-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.6rem}
+      #wcheck .wc-issue-list li{padding:.8rem 1rem;border-radius:10px;background:rgba(255,255,255,.03);border-left:4px solid var(--muted,#9aa6c2)}
+      #wcheck .wc-issue-list li b{display:block;font-size:.92rem;margin-bottom:.15rem}
+      #wcheck .wc-issue-list li span{font-size:.82rem;color:var(--muted,#9aa6c2);line-height:1.5}
+      #wcheck .wc-good .wc-g-val,#wcheck .wc-good.wc-metric{stroke:#2ecc71;border-left-color:#2ecc71}
+      #wcheck .wc-good .wc-g-num{color:#2ecc71}
+      #wcheck .wc-avg .wc-g-val,#wcheck .wc-avg.wc-metric{stroke:#f1c40f;border-left-color:#f1c40f}
+      #wcheck .wc-avg .wc-g-num{color:#f1c40f}
+      #wcheck .wc-poor .wc-g-val,#wcheck .wc-poor.wc-metric{stroke:#e74c3c;border-left-color:#e74c3c}
+      #wcheck .wc-poor .wc-g-num{color:#e74c3c}
+      #wcheck li.wc-poor{border-left-color:#e74c3c}
+      #wcheck li.wc-avg{border-left-color:#f1c40f}
+      #wcheck .wc-fix{margin-top:2.2rem;padding:1.6rem;border-radius:16px;border:1px solid rgba(55,194,194,.35);background:rgba(55,194,194,.07);text-align:center}
+      #wcheck .wc-fix h3{margin:0 0 .5rem;font-size:1.25rem}
+      #wcheck .wc-fix p{margin:0 auto 1.1rem;max-width:46ch;color:var(--muted,#9aa6c2);font-size:.95rem;line-height:1.6}
+      #wcheck .wc-fix-cta{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center}
+      #wcheck .wc-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}
+      #wcheck .wc-powered{text-align:center;font-size:.72rem;color:var(--muted,#9aa6c2);margin:1.4rem 0 0;opacity:.8}
+      @media(max-width:560px){#wcheck .wc-gauges{grid-template-columns:repeat(2,1fr)}#wcheck .wc-go{flex:1 1 100%}}
+      </style>
+      <script>
+      (function(){
+        var root=document.getElementById('wcheck'); if(!root) return;
+        var PSI_ENDPOINT=""; /* optional: your Cloudflare Worker proxy URL (recommended - keeps the API key private). If set, used instead of calling Google directly. */
+        var PSI_KEY="AIzaSyAI4l9ezEtaKw--iiUtI4t24HKibpm1YLg";      /* PageSpeed Insights API key, referrer-locked to 365techies.co.uk in Google Cloud (safe to be public). Used when PSI_ENDPOINT is empty. */
+        var strat='mobile';
+        var form=root.querySelector('#wc-form'), urlInput=root.querySelector('#wc-url');
+        var elLoad=root.querySelector('#wc-loading'), elMsg=root.querySelector('#wc-loadmsg');
+        var elErr=root.querySelector('#wc-error'), elRes=root.querySelector('#wc-results');
+        var CTA='<a href="/contact/">get in touch</a>';
+        var loadTimer=null;
+        root.querySelectorAll('.wc-strat button').forEach(function(b){
+          b.onclick=function(){ strat=b.getAttribute('data-strat');
+            root.querySelectorAll('.wc-strat button').forEach(function(x){x.classList.toggle('is-active',x===b);x.setAttribute('aria-selected',x===b);}); };
+        });
+        function normURL(v){ v=(v||'').trim(); if(!v) return ''; if(!/^https?:\/\//i.test(v)) v='https://'+v; return v; }
+        var LOAD=['Fetching the page…','Measuring load speed…','Checking SEO & meta tags…','Testing mobile-friendliness…','Reviewing accessibility…','Checking security & best practices…','Crunching the results…'];
+        function startLoad(){ var i=0; elMsg.textContent=LOAD[0]; loadTimer=setInterval(function(){ i=(i+1)%LOAD.length; elMsg.textContent=LOAD[i]; },3200); }
+        function stopLoad(){ if(loadTimer){clearInterval(loadTimer);loadTimer=null;} }
+        function api(u){
+          if(PSI_ENDPOINT) return PSI_ENDPOINT+(PSI_ENDPOINT.indexOf('?')<0?'?':'&')+'url='+encodeURIComponent(u)+'&strategy='+strat;
+          var b='https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url='+encodeURIComponent(u)+'&strategy='+strat+'&category=performance&category=seo&category=accessibility&category=best-practices';
+          if(PSI_KEY) b+='&key='+PSI_KEY; return b;
+        }
+        function esc(s){var d=document.createElement('div');d.textContent=(s==null?'':s);return d.innerHTML;}
+        function band(s){ return s>=90?'wc-good':(s>=50?'wc-avg':'wc-poor'); }
+        function listWords(a){ if(a.length===1)return a[0]; return a.slice(0,-1).join(', ')+' and '+a[a.length-1]; }
+        form.addEventListener('submit',function(e){
+          e.preventDefault();
+          var u=normURL(urlInput.value); if(!u){ urlInput.focus(); return; }
+          elRes.hidden=true; elErr.hidden=true; elLoad.hidden=false; startLoad();
+          var btn=form.querySelector('.wc-go'); btn.disabled=true;
+          fetch(api(u)).then(function(r){ if(r.status===429) throw new Error('busy'); if(!r.ok) throw new Error('http'+r.status); return r.json(); })
+          .then(function(d){ if(d.error) throw new Error(d.error.message||'api'); render(d,u); })
+          .catch(function(err){ showErr(err); })
+          .then(function(){ stopLoad(); elLoad.hidden=true; btn.disabled=false; });
+        });
+        function showErr(err){
+          var m=String((err&&err.message)||err), msg;
+          if(m==='busy') msg='Our checker is very busy right now (Google’s free testing limit). Please try again in a minute &mdash; or '+CTA+' and we’ll run a full audit for you.';
+          else if(/lighthouse|unable|fetch|FAILED|DNS|http4|http5|invalid/i.test(m)) msg='We couldn’t analyse that address. Check it’s a full, public website (for example https://example.co.uk) and try again.';
+          else msg='Something went wrong analysing that site. Please check the address and try again — or '+CTA+'.';
+          elErr.innerHTML=msg; elErr.hidden=false;
+        }
+        function gauge(score,label){
+          var c=339.292, off=c*(1-score/100);
+          return '<div class="wc-gauge '+band(score)+'"><div class="wc-g-ring"><svg viewBox="0 0 120 120">'+
+            '<circle class="wc-g-track" cx="60" cy="60" r="54"></circle>'+
+            '<circle class="wc-g-val" cx="60" cy="60" r="54" stroke-dasharray="'+c+'" stroke-dashoffset="'+c+'" data-off="'+off+'"></circle>'+
+            '</svg><span class="wc-g-num">'+score+'</span></div><p class="wc-g-lab">'+label+'</p></div>';
+        }
+        var CHECKS=[['is-on-https','Secure (HTTPS)'],['viewport','Mobile viewport set'],['document-title','Has a page title'],['meta-description','Has a meta description'],['image-alt','Images have alt text'],['is-crawlable','Search engines can index it'],['font-size','Legible font sizes'],['tap-targets','Tap targets sized for touch'],['errors-in-console','No console errors']];
+        var CHECK_KEYS=CHECKS.map(function(c){return c[0];});
+        function cwv(d,lh){
+          var out=[], le=d.loadingExperience&&d.loadingExperience.metrics;
+          function f(k,l,fmt){ if(le&&le[k]) return {l:l,v:fmt(le[k].percentile),c:le[k].category}; return null; }
+          if(le){ [f('LARGEST_CONTENTFUL_PAINT_MS','Largest Contentful Paint',function(p){return (p/1000).toFixed(1)+' s';}),
+                   f('INTERACTION_TO_NEXT_PAINT','Interaction to Next Paint',function(p){return Math.round(p)+' ms';}),
+                   f('CUMULATIVE_LAYOUT_SHIFT_SCORE','Cumulative Layout Shift',function(p){return (p/100).toFixed(2);})
+                 ].forEach(function(x){if(x)out.push(x);}); }
+          if(!out.length&&lh){ function lab(id,l){var a=lh.audits[id]; if(a&&a.displayValue!=null&&a.displayValue!=='') return {l:l,v:a.displayValue,c:(a.score>=0.9?'FAST':(a.score>=0.5?'AVERAGE':'SLOW'))}; return null;}
+            [lab('largest-contentful-paint','Largest Contentful Paint'),lab('total-blocking-time','Total Blocking Time'),lab('cumulative-layout-shift','Cumulative Layout Shift'),lab('speed-index','Speed Index')].forEach(function(x){if(x)out.push(x);}); }
+          return out;
+        }
+        function metricBand(c){ return c==='FAST'?'wc-good':(c==='AVERAGE'?'wc-avg':'wc-poor'); }
+        function render(d,u){
+          var lh=d.lighthouseResult; if(!lh){ showErr(new Error('api')); return; }
+          var cats=lh.categories;
+          function sc(k){ return cats[k]&&cats[k].score!=null?Math.round(cats[k].score*100):null; }
+          var S={performance:sc('performance'),seo:sc('seo'),accessibility:sc('accessibility'),bp:sc('best-practices')};
+          var tu=lh.finalUrl||u, a=root.querySelector('#wc-tested-url'); a.textContent=tu.replace(/^https?:\/\//,''); a.href=tu;
+          root.querySelector('#wc-tested-strat').textContent=(strat==='mobile'?'Mobile':'Desktop');
+          var g='';
+          [['performance','Performance'],['seo','SEO'],['accessibility','Accessibility'],['bp','Best Practices']].forEach(function(p){ if(S[p[0]]!=null) g+=gauge(S[p[0]],p[1]); });
+          root.querySelector('#wc-gauges').innerHTML=g;
+          var cw=cwv(d,lh), ch='';
+          if(cw.length){ ch='<h3 class="wc-sub">Core Web Vitals</h3><div class="wc-cwv-grid">';
+            cw.forEach(function(m){ ch+='<div class="wc-metric '+metricBand(m.c)+'"><p class="wc-metric-v">'+esc(m.v)+'</p><p class="wc-metric-l">'+m.l+'</p></div>'; }); ch+='</div>'; }
+          root.querySelector('#wc-cwv').innerHTML=ch;
+          var ck=CHECKS.map(function(c){ var au=lh.audits[c[0]]; if(!au||au.score===null||au.scoreDisplayMode==='notApplicable') return ''; var ok=au.score>=0.9; return '<span class="wc-chk '+(ok?'is-ok':'is-bad')+'">'+(ok?'✓':'✗')+' '+c[1]+'</span>'; }).join('');
+          root.querySelector('#wc-checks').innerHTML=ck?('<h3 class="wc-sub">Quick checks</h3><div class="wc-chk-grid">'+ck+'</div>'):'';
+          var iss=[];
+          Object.keys(lh.audits).forEach(function(k){ var au=lh.audits[k];
+            if(au.score===null||au.score>=0.9) return;
+            if(['informative','notApplicable','manual'].indexOf(au.scoreDisplayMode)>=0) return;
+            if(CHECK_KEYS.indexOf(k)>=0) return;
+            iss.push({t:au.title,d:(au.description||'').replace(/\[([^\]]+)\]\([^)]+\)/g,'$1').replace(/\s*\(https?:[^)]+\)/g,'').replace(/Learn.*$/i,'').trim(),s:au.score}); });
+          iss.sort(function(x,y){return x.s-y.s;}); iss=iss.slice(0,8);
+          var ih='';
+          if(iss.length){ ih='<h3 class="wc-sub">Top things to improve</h3><ul class="wc-issue-list">';
+            iss.forEach(function(it){ var dd=it.d.length>180?it.d.slice(0,178)+'…':it.d; ih+='<li class="'+(it.s<0.5?'wc-poor':'wc-avg')+'"><b>'+esc(it.t)+'</b>'+(dd?'<span>'+esc(dd)+'</span>':'')+'</li>'; }); ih+='</ul>'; }
+          root.querySelector('#wc-issues').innerHTML=ih;
+          var weak=[]; if(S.performance!=null&&S.performance<90)weak.push('speed'); if(S.seo!=null&&S.seo<90)weak.push('SEO'); if(S.accessibility!=null&&S.accessibility<90)weak.push('accessibility'); if(S.bp!=null&&S.bp<90)weak.push('security &amp; best practices');
+          var fm=root.querySelector('#wc-fix-msg');
+          fm.innerHTML=weak.length? ('We spotted room to improve '+listWords(weak)+'. Your local Dorset web &amp; IT team can sort the lot — faster pages, better Google rankings and a site that works beautifully on every device.') : ('Strong scores! If you’d like a second opinion or help keeping it that way, we’re a friendly local Dorset web &amp; IT team and we’re happy to help.');
+          elRes.hidden=false;
+          requestAnimationFrame(function(){ root.querySelectorAll('.wc-g-val').forEach(function(c){ c.style.strokeDashoffset=c.getAttribute('data-off'); }); });
+          try{ elRes.scrollIntoView({behavior:'smooth',block:'start'}); }catch(e){}
+        }
+      })();
+      </script>
+    </section>'''
+
 def web_design():
     slug = "web-design-hosting"
     desc = "Premium website design, fast managed hosting and professional business email for homes and businesses across Dorset. Hosting powered by SiteGround — free SSL, daily backups, UK data centre and expert support."
@@ -1628,6 +1831,7 @@ def web_design():
         </ol>
       </div>
     </section>''',
+      WCHECK_TOOL,
       f'''    <section class="section" aria-label="A site we look after">
       <div class="wrap">
         <div class="section-head">
@@ -3718,207 +3922,7 @@ def website_checker():
       ("My site scored badly &mdash; can you help?", "Absolutely &mdash; that&rsquo;s what we do. We&rsquo;re a local Dorset web and IT team and we can sort speed, SEO, security and mobile issues for you. See our <a href=\"/web-design-hosting/\">web design &amp; hosting</a> or just <a href=\"/contact/\">get in touch</a> for a free fix-it plan."),
       ("Why did I get a &lsquo;busy&rsquo; or error message?", "The checker uses Google&rsquo;s free testing service, which has a usage limit. If it&rsquo;s busy, wait a minute and try again &mdash; or contact us and we&rsquo;ll run a full audit for you. Errors usually mean the address was mistyped or the site isn&rsquo;t publicly reachable."),
     ]
-    wc = r'''    <section class="section" aria-label="Free website checker" id="wctool">
-      <div class="wrap">
-        <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// FREE INSTANT CHECK</p>
-          <h2 class="section-title section-title--center" data-title>Check any website in seconds<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>Enter a web address and we&rsquo;ll run a full health check &mdash; speed, SEO, accessibility, security and mobile-friendliness &mdash; powered by Google&rsquo;s own Lighthouse engine.</p>
-        </div>
-        <div id="wcheck" data-reveal>
-          <form class="wc-form" id="wc-form" novalidate>
-            <input type="url" id="wc-url" inputmode="url" autocomplete="url" spellcheck="false" placeholder="yourwebsite.co.uk" aria-label="Website address to check" required>
-            <div class="wc-strat" role="tablist" aria-label="Device to test">
-              <button type="button" data-strat="mobile" class="is-active" role="tab">Mobile</button>
-              <button type="button" data-strat="desktop" role="tab">Desktop</button>
-            </div>
-            <button type="submit" class="button primary wc-go">Check website</button>
-          </form>
-          <p class="wc-hint">Free, no sign-up &mdash; check any public website, yours or a competitor&rsquo;s.</p>
-          <div class="wc-loading" id="wc-loading" hidden>
-            <div class="wc-spinner" aria-hidden="true"></div>
-            <p id="wc-loadmsg">Fetching the page&hellip;</p>
-            <p class="wc-note">A full check takes around 15&ndash;30 seconds.</p>
-          </div>
-          <div class="wc-error" id="wc-error" hidden></div>
-          <div class="wc-results" id="wc-results" hidden>
-            <p class="wc-tested">Results for <a id="wc-tested-url" href="#" target="_blank" rel="noopener nofollow"></a> <span id="wc-tested-strat" class="wc-badge"></span></p>
-            <div class="wc-gauges" id="wc-gauges"></div>
-            <div id="wc-cwv"></div>
-            <div id="wc-checks"></div>
-            <div id="wc-issues"></div>
-            <div class="wc-fix">
-              <h3>Want these issues fixed?</h3>
-              <p id="wc-fix-msg"></p>
-              <div class="wc-fix-cta">
-                <a class="button primary" href="/contact/">Get my free fix-it plan &#8594;</a>
-                <a class="button wc-ghost" href="/web-design-hosting/">Our web design &amp; hosting</a>
-              </div>
-            </div>
-          </div>
-        </div>
-        <p class="wc-powered">Powered by Google Lighthouse / PageSpeed Insights. Results are a point-in-time snapshot and can vary between runs.</p>
-      </div>
-      <style>
-      #wcheck{max-width:920px;margin:0 auto}
-      #wcheck .wc-form{display:flex;gap:.6rem;flex-wrap:wrap;align-items:stretch}
-      #wcheck #wc-url{flex:1 1 240px;min-width:0;padding:.95rem 1.1rem;border-radius:12px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.04);color:inherit;font:inherit}
-      #wcheck #wc-url:focus{outline:none;border-color:var(--cyan,#37c2c2)}
-      #wcheck .wc-strat{display:flex;gap:.25rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:.25rem}
-      #wcheck .wc-strat button{font:inherit;font-size:.85rem;font-weight:600;padding:.55rem .9rem;border-radius:9px;border:0;background:transparent;color:inherit;cursor:pointer;transition:.15s}
-      #wcheck .wc-strat button.is-active{background:var(--cyan,#37c2c2);color:#04161a}
-      #wcheck .wc-go{white-space:nowrap}
-      #wcheck .wc-hint{font-size:.78rem;color:var(--muted,#9aa6c2);margin:.6rem 0 0}
-      #wcheck .wc-loading{text-align:center;padding:2.5rem 1rem}
-      #wcheck .wc-spinner{width:46px;height:46px;border-radius:50%;border:3px solid rgba(255,255,255,.14);border-top-color:var(--cyan,#37c2c2);margin:0 auto 1rem;animation:wc-spin 1s linear infinite}
-      @keyframes wc-spin{to{transform:rotate(360deg)}}
-      #wcheck .wc-loading p{margin:.2rem 0}
-      #wcheck .wc-loading .wc-note{font-size:.78rem;color:var(--muted,#9aa6c2)}
-      #wcheck .wc-error{margin-top:1.3rem;padding:1rem 1.2rem;border-radius:12px;border:1px solid rgba(231,76,60,.45);background:rgba(231,76,60,.1);font-size:.92rem;line-height:1.55}
-      #wcheck .wc-error a{color:var(--cyan,#37c2c2)}
-      #wcheck .wc-results{margin-top:1.8rem}
-      #wcheck .wc-tested{font-size:.9rem;color:var(--muted,#9aa6c2);text-align:center;margin:0 0 1.4rem;word-break:break-all}
-      #wcheck .wc-tested a{color:var(--cyan,#37c2c2)}
-      #wcheck .wc-badge{display:inline-block;margin-left:.4rem;font-size:.72rem;padding:.12rem .55rem;border:1px solid rgba(255,255,255,.18);border-radius:99px;white-space:nowrap}
-      #wcheck .wc-gauges{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
-      #wcheck .wc-gauge{text-align:center}
-      #wcheck .wc-g-ring{position:relative;width:118px;max-width:100%;margin:0 auto;aspect-ratio:1}
-      #wcheck .wc-g-ring svg{width:100%;display:block;transform:rotate(-90deg)}
-      #wcheck .wc-g-track{fill:none;stroke:rgba(255,255,255,.1);stroke-width:9}
-      #wcheck .wc-g-val{fill:none;stroke-width:9;stroke-linecap:round;transition:stroke-dashoffset 1.1s cubic-bezier(.3,.8,.3,1)}
-      #wcheck .wc-g-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:800;font-variant-numeric:tabular-nums}
-      #wcheck .wc-g-lab{margin:.5rem 0 0;font-size:.82rem;color:var(--muted,#9aa6c2)}
-      #wcheck .wc-sub{font-size:.95rem;font-weight:700;margin:2rem 0 .9rem;text-align:center}
-      #wcheck .wc-cwv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.7rem}
-      #wcheck .wc-metric{padding:.9rem 1rem;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);text-align:center;border-left-width:4px}
-      #wcheck .wc-metric-v{margin:0;font-size:1.35rem;font-weight:800;font-variant-numeric:tabular-nums}
-      #wcheck .wc-metric-l{margin:.25rem 0 0;font-size:.74rem;color:var(--muted,#9aa6c2);line-height:1.35}
-      #wcheck .wc-chk-grid{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center}
-      #wcheck .wc-chk{font-size:.82rem;padding:.4rem .75rem;border-radius:99px;border:1px solid rgba(255,255,255,.14)}
-      #wcheck .wc-chk.is-ok{color:#7ee2a8;border-color:rgba(46,204,113,.4);background:rgba(46,204,113,.08)}
-      #wcheck .wc-chk.is-bad{color:#f5a39b;border-color:rgba(231,76,60,.4);background:rgba(231,76,60,.08)}
-      #wcheck .wc-issue-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.6rem}
-      #wcheck .wc-issue-list li{padding:.8rem 1rem;border-radius:10px;background:rgba(255,255,255,.03);border-left:4px solid var(--muted,#9aa6c2)}
-      #wcheck .wc-issue-list li b{display:block;font-size:.92rem;margin-bottom:.15rem}
-      #wcheck .wc-issue-list li span{font-size:.82rem;color:var(--muted,#9aa6c2);line-height:1.5}
-      #wcheck .wc-good .wc-g-val,#wcheck .wc-good.wc-metric{stroke:#2ecc71;border-left-color:#2ecc71}
-      #wcheck .wc-good .wc-g-num{color:#2ecc71}
-      #wcheck .wc-avg .wc-g-val,#wcheck .wc-avg.wc-metric{stroke:#f1c40f;border-left-color:#f1c40f}
-      #wcheck .wc-avg .wc-g-num{color:#f1c40f}
-      #wcheck .wc-poor .wc-g-val,#wcheck .wc-poor.wc-metric{stroke:#e74c3c;border-left-color:#e74c3c}
-      #wcheck .wc-poor .wc-g-num{color:#e74c3c}
-      #wcheck li.wc-poor{border-left-color:#e74c3c}
-      #wcheck li.wc-avg{border-left-color:#f1c40f}
-      #wcheck .wc-fix{margin-top:2.2rem;padding:1.6rem;border-radius:16px;border:1px solid rgba(55,194,194,.35);background:rgba(55,194,194,.07);text-align:center}
-      #wcheck .wc-fix h3{margin:0 0 .5rem;font-size:1.25rem}
-      #wcheck .wc-fix p{margin:0 auto 1.1rem;max-width:46ch;color:var(--muted,#9aa6c2);font-size:.95rem;line-height:1.6}
-      #wcheck .wc-fix-cta{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center}
-      #wcheck .wc-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}
-      #wcheck .wc-powered{text-align:center;font-size:.72rem;color:var(--muted,#9aa6c2);margin:1.4rem 0 0;opacity:.8}
-      @media(max-width:560px){#wcheck .wc-gauges{grid-template-columns:repeat(2,1fr)}#wcheck .wc-go{flex:1 1 100%}}
-      </style>
-      <script>
-      (function(){
-        var root=document.getElementById('wcheck'); if(!root) return;
-        var PSI_ENDPOINT=""; /* optional: your Cloudflare Worker proxy URL (recommended - keeps the API key private). If set, used instead of calling Google directly. */
-        var PSI_KEY="AIzaSyAI4l9ezEtaKw--iiUtI4t24HKibpm1YLg";      /* PageSpeed Insights API key, referrer-locked to 365techies.co.uk in Google Cloud (safe to be public). Used when PSI_ENDPOINT is empty. */
-        var strat='mobile';
-        var form=root.querySelector('#wc-form'), urlInput=root.querySelector('#wc-url');
-        var elLoad=root.querySelector('#wc-loading'), elMsg=root.querySelector('#wc-loadmsg');
-        var elErr=root.querySelector('#wc-error'), elRes=root.querySelector('#wc-results');
-        var CTA='<a href="/contact/">get in touch</a>';
-        var loadTimer=null;
-        root.querySelectorAll('.wc-strat button').forEach(function(b){
-          b.onclick=function(){ strat=b.getAttribute('data-strat');
-            root.querySelectorAll('.wc-strat button').forEach(function(x){x.classList.toggle('is-active',x===b);x.setAttribute('aria-selected',x===b);}); };
-        });
-        function normURL(v){ v=(v||'').trim(); if(!v) return ''; if(!/^https?:\/\//i.test(v)) v='https://'+v; return v; }
-        var LOAD=['Fetching the page…','Measuring load speed…','Checking SEO & meta tags…','Testing mobile-friendliness…','Reviewing accessibility…','Checking security & best practices…','Crunching the results…'];
-        function startLoad(){ var i=0; elMsg.textContent=LOAD[0]; loadTimer=setInterval(function(){ i=(i+1)%LOAD.length; elMsg.textContent=LOAD[i]; },3200); }
-        function stopLoad(){ if(loadTimer){clearInterval(loadTimer);loadTimer=null;} }
-        function api(u){
-          if(PSI_ENDPOINT) return PSI_ENDPOINT+(PSI_ENDPOINT.indexOf('?')<0?'?':'&')+'url='+encodeURIComponent(u)+'&strategy='+strat;
-          var b='https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url='+encodeURIComponent(u)+'&strategy='+strat+'&category=performance&category=seo&category=accessibility&category=best-practices';
-          if(PSI_KEY) b+='&key='+PSI_KEY; return b;
-        }
-        function esc(s){var d=document.createElement('div');d.textContent=(s==null?'':s);return d.innerHTML;}
-        function band(s){ return s>=90?'wc-good':(s>=50?'wc-avg':'wc-poor'); }
-        function listWords(a){ if(a.length===1)return a[0]; return a.slice(0,-1).join(', ')+' and '+a[a.length-1]; }
-        form.addEventListener('submit',function(e){
-          e.preventDefault();
-          var u=normURL(urlInput.value); if(!u){ urlInput.focus(); return; }
-          elRes.hidden=true; elErr.hidden=true; elLoad.hidden=false; startLoad();
-          var btn=form.querySelector('.wc-go'); btn.disabled=true;
-          fetch(api(u)).then(function(r){ if(r.status===429) throw new Error('busy'); if(!r.ok) throw new Error('http'+r.status); return r.json(); })
-          .then(function(d){ if(d.error) throw new Error(d.error.message||'api'); render(d,u); })
-          .catch(function(err){ showErr(err); })
-          .then(function(){ stopLoad(); elLoad.hidden=true; btn.disabled=false; });
-        });
-        function showErr(err){
-          var m=String((err&&err.message)||err), msg;
-          if(m==='busy') msg='Our checker is very busy right now (Google’s free testing limit). Please try again in a minute &mdash; or '+CTA+' and we’ll run a full audit for you.';
-          else if(/lighthouse|unable|fetch|FAILED|DNS|http4|http5|invalid/i.test(m)) msg='We couldn’t analyse that address. Check it’s a full, public website (for example https://example.co.uk) and try again.';
-          else msg='Something went wrong analysing that site. Please check the address and try again — or '+CTA+'.';
-          elErr.innerHTML=msg; elErr.hidden=false;
-        }
-        function gauge(score,label){
-          var c=339.292, off=c*(1-score/100);
-          return '<div class="wc-gauge '+band(score)+'"><div class="wc-g-ring"><svg viewBox="0 0 120 120">'+
-            '<circle class="wc-g-track" cx="60" cy="60" r="54"></circle>'+
-            '<circle class="wc-g-val" cx="60" cy="60" r="54" stroke-dasharray="'+c+'" stroke-dashoffset="'+c+'" data-off="'+off+'"></circle>'+
-            '</svg><span class="wc-g-num">'+score+'</span></div><p class="wc-g-lab">'+label+'</p></div>';
-        }
-        var CHECKS=[['is-on-https','Secure (HTTPS)'],['viewport','Mobile viewport set'],['document-title','Has a page title'],['meta-description','Has a meta description'],['image-alt','Images have alt text'],['is-crawlable','Search engines can index it'],['font-size','Legible font sizes'],['tap-targets','Tap targets sized for touch'],['errors-in-console','No console errors']];
-        var CHECK_KEYS=CHECKS.map(function(c){return c[0];});
-        function cwv(d,lh){
-          var out=[], le=d.loadingExperience&&d.loadingExperience.metrics;
-          function f(k,l,fmt){ if(le&&le[k]) return {l:l,v:fmt(le[k].percentile),c:le[k].category}; return null; }
-          if(le){ [f('LARGEST_CONTENTFUL_PAINT_MS','Largest Contentful Paint',function(p){return (p/1000).toFixed(1)+' s';}),
-                   f('INTERACTION_TO_NEXT_PAINT','Interaction to Next Paint',function(p){return Math.round(p)+' ms';}),
-                   f('CUMULATIVE_LAYOUT_SHIFT_SCORE','Cumulative Layout Shift',function(p){return (p/100).toFixed(2);})
-                 ].forEach(function(x){if(x)out.push(x);}); }
-          if(!out.length&&lh){ function lab(id,l){var a=lh.audits[id]; if(a&&a.displayValue!=null&&a.displayValue!=='') return {l:l,v:a.displayValue,c:(a.score>=0.9?'FAST':(a.score>=0.5?'AVERAGE':'SLOW'))}; return null;}
-            [lab('largest-contentful-paint','Largest Contentful Paint'),lab('total-blocking-time','Total Blocking Time'),lab('cumulative-layout-shift','Cumulative Layout Shift'),lab('speed-index','Speed Index')].forEach(function(x){if(x)out.push(x);}); }
-          return out;
-        }
-        function metricBand(c){ return c==='FAST'?'wc-good':(c==='AVERAGE'?'wc-avg':'wc-poor'); }
-        function render(d,u){
-          var lh=d.lighthouseResult; if(!lh){ showErr(new Error('api')); return; }
-          var cats=lh.categories;
-          function sc(k){ return cats[k]&&cats[k].score!=null?Math.round(cats[k].score*100):null; }
-          var S={performance:sc('performance'),seo:sc('seo'),accessibility:sc('accessibility'),bp:sc('best-practices')};
-          var tu=lh.finalUrl||u, a=root.querySelector('#wc-tested-url'); a.textContent=tu.replace(/^https?:\/\//,''); a.href=tu;
-          root.querySelector('#wc-tested-strat').textContent=(strat==='mobile'?'Mobile':'Desktop');
-          var g='';
-          [['performance','Performance'],['seo','SEO'],['accessibility','Accessibility'],['bp','Best Practices']].forEach(function(p){ if(S[p[0]]!=null) g+=gauge(S[p[0]],p[1]); });
-          root.querySelector('#wc-gauges').innerHTML=g;
-          var cw=cwv(d,lh), ch='';
-          if(cw.length){ ch='<h3 class="wc-sub">Core Web Vitals</h3><div class="wc-cwv-grid">';
-            cw.forEach(function(m){ ch+='<div class="wc-metric '+metricBand(m.c)+'"><p class="wc-metric-v">'+esc(m.v)+'</p><p class="wc-metric-l">'+m.l+'</p></div>'; }); ch+='</div>'; }
-          root.querySelector('#wc-cwv').innerHTML=ch;
-          var ck=CHECKS.map(function(c){ var au=lh.audits[c[0]]; if(!au||au.score===null||au.scoreDisplayMode==='notApplicable') return ''; var ok=au.score>=0.9; return '<span class="wc-chk '+(ok?'is-ok':'is-bad')+'">'+(ok?'✓':'✗')+' '+c[1]+'</span>'; }).join('');
-          root.querySelector('#wc-checks').innerHTML=ck?('<h3 class="wc-sub">Quick checks</h3><div class="wc-chk-grid">'+ck+'</div>'):'';
-          var iss=[];
-          Object.keys(lh.audits).forEach(function(k){ var au=lh.audits[k];
-            if(au.score===null||au.score>=0.9) return;
-            if(['informative','notApplicable','manual'].indexOf(au.scoreDisplayMode)>=0) return;
-            if(CHECK_KEYS.indexOf(k)>=0) return;
-            iss.push({t:au.title,d:(au.description||'').replace(/\[([^\]]+)\]\([^)]+\)/g,'$1').replace(/\s*\(https?:[^)]+\)/g,'').replace(/Learn.*$/i,'').trim(),s:au.score}); });
-          iss.sort(function(x,y){return x.s-y.s;}); iss=iss.slice(0,8);
-          var ih='';
-          if(iss.length){ ih='<h3 class="wc-sub">Top things to improve</h3><ul class="wc-issue-list">';
-            iss.forEach(function(it){ var dd=it.d.length>180?it.d.slice(0,178)+'…':it.d; ih+='<li class="'+(it.s<0.5?'wc-poor':'wc-avg')+'"><b>'+esc(it.t)+'</b>'+(dd?'<span>'+esc(dd)+'</span>':'')+'</li>'; }); ih+='</ul>'; }
-          root.querySelector('#wc-issues').innerHTML=ih;
-          var weak=[]; if(S.performance!=null&&S.performance<90)weak.push('speed'); if(S.seo!=null&&S.seo<90)weak.push('SEO'); if(S.accessibility!=null&&S.accessibility<90)weak.push('accessibility'); if(S.bp!=null&&S.bp<90)weak.push('security &amp; best practices');
-          var fm=root.querySelector('#wc-fix-msg');
-          fm.innerHTML=weak.length? ('We spotted room to improve '+listWords(weak)+'. Your local Dorset web &amp; IT team can sort the lot — faster pages, better Google rankings and a site that works beautifully on every device.') : ('Strong scores! If you’d like a second opinion or help keeping it that way, we’re a friendly local Dorset web &amp; IT team and we’re happy to help.');
-          elRes.hidden=false;
-          requestAnimationFrame(function(){ root.querySelectorAll('.wc-g-val').forEach(function(c){ c.style.strokeDashoffset=c.getAttribute('data-off'); }); });
-          try{ elRes.scrollIntoView({behavior:'smooth',block:'start'}); }catch(e){}
-        }
-      })();
-      </script>
-    </section>'''
+    wc = WCHECK_TOOL
     content = "\n".join([
       hero(bc("Website Checker"), "// FREE WEBSITE CHECKER",
            'Free <em class="grad grad--cyan">website health check</em>',
