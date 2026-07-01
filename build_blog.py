@@ -564,3 +564,41 @@ html_404 = bp.page("404", "Page Not Found | 365 Techies",
 with open(os.path.join(bp.BASE, "404.html"), "w", encoding="utf-8") as f:
     f.write(html_404)
 print("Wrote 404.html")
+
+# ---- Minify the render-blocking stylesheet (string-aware, zero-dependency) ----
+# Protects string/url contents; only strips comments + collapses whitespace OUTSIDE
+# strings, so it can't break declarations, calc(), selectors or content values.
+def _minify_css(css):
+    out = []; i = 0; n = len(css); q = None
+    while i < n:
+        c = css[i]
+        if q:                                   # inside a "..." or '...' string
+            out.append(c)
+            if c == "\\" and i + 1 < n:
+                out.append(css[i + 1]); i += 2; continue
+            if c == q: q = None
+            i += 1; continue
+        if c == '"' or c == "'":
+            q = c; out.append(c); i += 1; continue
+        if c == "/" and i + 1 < n and css[i + 1] == "*":   # strip /* comment */
+            j = css.find("*/", i + 2); i = (j + 2) if j != -1 else n; continue
+        if c in " \t\r\n\f":                    # collapse whitespace; drop it next to { } ; , ( )
+            j = i
+            while j < n and css[j] in " \t\r\n\f": j += 1
+            prev = out[-1] if out else ""
+            nxt = css[j] if j < n else ""
+            # keep the space BEFORE "(" so media queries like "and (min-width...)" survive
+            if prev not in "{};,(" and nxt not in "{};,)":
+                out.append(" ")
+            i = j; continue
+        out.append(c); i += 1
+    return "".join(out).strip()
+
+_css_src = os.path.join(bp.BASE, "css", "styles.css")
+if os.path.exists(_css_src):
+    _raw = open(_css_src, encoding="utf-8").read()
+    _min = _minify_css(_raw)
+    with open(os.path.join(bp.BASE, "css", "styles.min.css"), "w", encoding="utf-8") as f:
+        f.write(_min)
+    print("Minified styles.css -> styles.min.css (%dKB -> %dKB)" % (
+        len(_raw.encode("utf-8")) // 1024, len(_min.encode("utf-8")) // 1024))
