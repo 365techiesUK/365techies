@@ -886,20 +886,149 @@ BROADBAND_WIDGET = '''    <section class="section section--alt" aria-label="Broa
       </script>
     </section>'''
 
+# Live animated broadband speed test (Cloudflare speed endpoints, CORS, no key) — on /broadband-speed-checker/
+SPEEDTEST_WIDGET = r'''    <section class="section" aria-label="Live broadband speed test" id="speedtool">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// LIVE SPEED TEST</p>
+          <h2 class="section-title section-title--center" data-title>Test your broadband speed, live<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Check your real download, upload and ping right now &mdash; measured live against Cloudflare&rsquo;s global network. Free, instant, no sign-up.</p>
+        </div>
+        <div id="spd" data-reveal>
+          <div class="spd-gauge">
+            <svg viewBox="0 0 220 128" class="spd-svg" aria-hidden="true">
+              <defs><linearGradient id="spd-grad" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#1d97e3"/><stop offset="1" stop-color="#00ce1b"/></linearGradient></defs>
+              <path class="spd-track" d="M20 115 A 90 90 0 0 1 200 115"/>
+              <path class="spd-arc" id="spd-arc" d="M20 115 A 90 90 0 0 1 200 115"/>
+            </svg>
+            <div class="spd-readout"><span class="spd-num" id="spd-num">0</span><span class="spd-unit">Mbps</span><span class="spd-lab" id="spd-lab">ready</span></div>
+          </div>
+          <p class="spd-phase" id="spd-phase">Press start when you&rsquo;re ready.</p>
+          <div style="text-align:center"><button type="button" class="button primary spd-start" id="spd-start">Start speed test</button></div>
+          <p class="spd-hint">Uses data, like any speed test &mdash; best on Wi-Fi. Nothing is stored.</p>
+          <div class="spd-results" id="spd-results" hidden>
+            <div class="spd-cards">
+              <div class="spd-card"><p class="spd-c-v" id="spd-dl">&mdash;</p><p class="spd-c-l">Download Mbps</p></div>
+              <div class="spd-card"><p class="spd-c-v" id="spd-ul">&mdash;</p><p class="spd-c-l">Upload Mbps</p></div>
+              <div class="spd-card"><p class="spd-c-v" id="spd-ping">&mdash;</p><p class="spd-c-l">Ping ms</p></div>
+            </div>
+            <div id="spd-verdict"></div>
+            <div class="spd-fix">
+              <h3>Slower than you pay for?</h3>
+              <p>If your speed is well below your package &mdash; or keeps dropping &mdash; it&rsquo;s often the Wi-Fi, not the line. We fix Wi-Fi black-spots, set up mesh, and sort broadband for homes and businesses across Dorset (including <a href="/starlink-internet/">Starlink</a> where fibre won&rsquo;t reach).</p>
+              <div class="spd-fix-cta"><a class="button primary" href="/contact/">Get faster internet &#8594;</a><a class="button spd-ghost" href="/wifi-support/">Wi-Fi support</a></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <style>
+      #spd{max-width:560px;margin:0 auto}
+      #spd .spd-gauge{position:relative;max-width:360px;margin:0 auto}
+      #spd .spd-svg{width:100%;display:block;overflow:visible}
+      #spd .spd-track{fill:none;stroke:rgba(255,255,255,.1);stroke-width:14;stroke-linecap:round}
+      #spd .spd-arc{fill:none;stroke:url(#spd-grad);stroke-width:14;stroke-linecap:round;stroke-dasharray:282.743;stroke-dashoffset:282.743;transition:stroke-dashoffset .12s linear}
+      #spd .spd-readout{position:absolute;left:0;right:0;bottom:2px;text-align:center}
+      #spd .spd-num{font-size:3.2rem;font-weight:800;font-variant-numeric:tabular-nums;line-height:1;color:#fff}
+      #spd .spd-unit{font-size:1.05rem;color:var(--muted,#9aa6c2);margin-left:.25rem}
+      #spd .spd-lab{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted,#9aa6c2);margin-top:.35rem}
+      #spd .spd-phase{text-align:center;color:var(--muted,#9aa6c2);font-size:.92rem;margin:1rem 0 1.2rem;min-height:1.2em;line-height:1.5}
+      #spd .spd-hint{text-align:center;font-size:.76rem;color:var(--muted,#9aa6c2);margin:.7rem 0 0}
+      #spd .spd-results{margin-top:1.8rem}
+      #spd .spd-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem}
+      #spd .spd-card{padding:1rem .6rem;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);text-align:center}
+      #spd .spd-c-v{margin:0;font-size:1.5rem;font-weight:800;font-variant-numeric:tabular-nums}
+      #spd .spd-c-l{margin:.2rem 0 0;font-size:.68rem;color:var(--muted,#9aa6c2);text-transform:uppercase;letter-spacing:.04em}
+      #spd .spd-verdict-box{text-align:center;padding:1.3rem;border-radius:14px;border:1px solid rgba(255,255,255,.12);margin:1.2rem 0}
+      #spd .spd-v-g{margin:0 0 .3rem;font-size:1.4rem;font-weight:800}
+      #spd .spd-v-m{margin:0 auto;max-width:46ch;color:var(--muted,#9aa6c2);font-size:.92rem;line-height:1.55}
+      #spd .spd-good{border-color:rgba(46,204,113,.4);background:rgba(46,204,113,.08)}
+      #spd .spd-good .spd-v-g{color:#2ecc71}
+      #spd .spd-avg{border-color:rgba(241,196,15,.4);background:rgba(241,196,15,.08)}
+      #spd .spd-avg .spd-v-g{color:#f1c40f}
+      #spd .spd-poor{border-color:rgba(231,76,60,.4);background:rgba(231,76,60,.1)}
+      #spd .spd-poor .spd-v-g{color:#e74c3c}
+      #spd .spd-fix{margin-top:.5rem;padding:1.6rem;border-radius:16px;border:1px solid rgba(55,194,194,.35);background:rgba(55,194,194,.07);text-align:center}
+      #spd .spd-fix h3{margin:0 0 .5rem;font-size:1.15rem}
+      #spd .spd-fix p{margin:0 auto 1.1rem;max-width:52ch;color:var(--muted,#9aa6c2);font-size:.92rem;line-height:1.6}
+      #spd .spd-fix p a{color:var(--cyan,#37c2c2)}
+      #spd .spd-fix-cta{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center}
+      #spd .spd-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}
+      </style>
+      <script>
+      (function(){
+        var root=document.getElementById('spd'); if(!root) return;
+        var DOWN='https://speed.cloudflare.com/__down?bytes=', UP='https://speed.cloudflare.com/__up', ARC=282.743;
+        var btn=root.querySelector('#spd-start'), arc=root.querySelector('#spd-arc'), num=root.querySelector('#spd-num'), lab=root.querySelector('#spd-lab'), phase=root.querySelector('#spd-phase');
+        var res=root.querySelector('#spd-results'), dlEl=root.querySelector('#spd-dl'), ulEl=root.querySelector('#spd-ul'), pingEl=root.querySelector('#spd-ping'), verdict=root.querySelector('#spd-verdict');
+        var running=false;
+        function fmt(m){ return m>=100?String(Math.round(m)):(m>=10?m.toFixed(1):m.toFixed(2)); }
+        function setGauge(m){ var frac=Math.max(0,Math.min(1,Math.log(Math.max(m,1))/Math.log(1000))); arc.style.strokeDashoffset=(ARC*(1-frac)).toFixed(1); num.textContent=fmt(m); }
+        function rnd(){ return '&r='+Math.random().toString(36).slice(2); }
+        function ping(){ var t=[]; function one(){ var s=performance.now(); return fetch(DOWN+'0'+rnd(),{cache:'no-store'}).then(function(r){return r.arrayBuffer();}).then(function(){ t.push(performance.now()-s); }).catch(function(){}); } return one().then(one).then(one).then(one).then(one).then(function(){ t.sort(function(a,b){return a-b;}); return t.length?t[0]:0; }); }
+        function download(){
+          var STREAMS=4, DUR=8000, CAP=230*1048576, bytes=0, warmB=0, warmT=null, cs=[], stop=false, resolver, done=false;
+          var p=new Promise(function(rs){ resolver=rs; });
+          function end(){ if(done) return; done=true; stop=true; clearInterval(iv); cs.forEach(function(c){try{c.abort();}catch(e){}}); var m=warmT?((bytes-warmB)*8)/((performance.now()-warmT)/1000)/1e6:0; resolver(m); }
+          var iv=setInterval(function(){ if(warmT!==null){ var m=((bytes-warmB)*8)/((performance.now()-warmT)/1000)/1e6; setGauge(m); if(bytes>CAP) end(); } },120);
+          function pull(){ var c=new AbortController(); cs.push(c);
+            function once(){ if(stop) return; return fetch(DOWN+'26214400'+rnd(),{signal:c.signal,cache:'no-store'}).then(function(r){ var rd=r.body.getReader(); return (function read(){ if(stop) return; return rd.read().then(function(x){ if(x.done) return once(); if(stop) return; bytes+=x.value.length; return read(); }); })(); }).catch(function(){}); }
+            return once(); }
+          for(var i=0;i<STREAMS;i++) pull();
+          setTimeout(function(){ warmT=performance.now(); warmB=bytes; },1200);
+          setTimeout(end, DUR);
+          return p;
+        }
+        function upload(){
+          var DUR=6000, bytes=0, warmB=0, warmT=null, stop=false, resolver, done=false, chunk=new Blob([new Uint8Array(2097152)]);
+          var p=new Promise(function(rs){ resolver=rs; });
+          var iv=setInterval(function(){ if(warmT!==null){ var m=((bytes-warmB)*8)/((performance.now()-warmT)/1000)/1e6; setGauge(m); } },120);
+          function send(){ if(stop) return Promise.resolve(); return fetch(UP,{method:'POST',body:chunk,cache:'no-store'}).then(function(){ bytes+=chunk.size; if(!stop) return send(); }).catch(function(){}); }
+          for(var i=0;i<3;i++) send();
+          setTimeout(function(){ warmT=performance.now(); warmB=bytes; },1000);
+          setTimeout(function(){ if(done) return; done=true; stop=true; clearInterval(iv); var m=warmT?((bytes-warmB)*8)/((performance.now()-warmT)/1000)/1e6:0; resolver(m); }, DUR);
+          return p;
+        }
+        function finish(dl,ul,pg){
+          setGauge(dl); num.textContent=fmt(dl); lab.textContent='Download';
+          dlEl.textContent=fmt(dl); ulEl.textContent=fmt(ul); pingEl.textContent=String(Math.round(pg));
+          var v;
+          if(dl>=100) v={g:'Excellent',c:'good',m:'Plenty fast for a busy household &mdash; multiple 4K streams, video calls and gaming all at once.'};
+          else if(dl>=30) v={g:'Good',c:'good',m:'Comfortable for most homes &mdash; HD streaming, video calls and browsing without fuss.'};
+          else if(dl>=10) v={g:'OK',c:'avg',m:'Fine for light use, but it can struggle when several people are online at the same time.'};
+          else v={g:'Slow',c:'poor',m:'Likely to buffer and lag with more than one person online. Worth improving &mdash; and it may be your Wi-Fi, not your line.'};
+          verdict.innerHTML='<div class="spd-verdict-box spd-'+v.c+'"><p class="spd-v-g">'+v.g+'</p><p class="spd-v-m">'+v.m+'</p></div>';
+          res.hidden=false; running=false; btn.disabled=false; btn.textContent='Test again';
+          phase.innerHTML='Done &mdash; this is your device&rsquo;s speed right now (Wi-Fi, distance and other devices all affect it).';
+        }
+        btn.addEventListener('click',function(){
+          if(running) return;
+          if(!(window.fetch&&window.AbortController&&window.ReadableStream)){ phase.textContent='Your browser can’t run the live test — please try a modern browser.'; return; }
+          running=true; btn.disabled=true; res.hidden=true; setGauge(0); lab.textContent='Ping'; phase.innerHTML='Measuring latency&hellip;';
+          var pg=0;
+          ping().then(function(x){ pg=x; lab.textContent='Download'; phase.innerHTML='Testing download speed&hellip;'; setGauge(0); return download(); })
+            .then(function(dl){ setGauge(dl); lab.textContent='Upload'; phase.innerHTML='Testing upload speed&hellip;'; setGauge(0); return upload().then(function(ul){ finish(dl,ul,pg); }); })
+            .catch(function(){ phase.textContent='Something interrupted the test — please try again.'; running=false; btn.disabled=false; });
+        });
+      })();
+      </script>
+    </section>'''
+
 def broadband_advisor():
     slug = "broadband-speed-checker"
-    desc = "Is your broadband fast enough? Use our free 30-second checker — answer 3 quick questions and get a plain-English recommended speed for your home, plus what to do if it's too slow (including Starlink for rural Dorset)."
+    desc = "Test your real broadband speed live — download, upload and ping — free and instant. Plus a plain-English recommendation for the speed your home needs, and what to do if you're falling short (including Starlink for rural Dorset). From 365 Techies."
     faqs = [
-      ("How do I find my current broadband speed?", "Search &ldquo;speed test&rdquo; on Google and click Run Speed Test, or use fast.com &mdash; the download number (in Mbps) is what to enter. We can also check it for you."),
+      ("How do I find my current broadband speed?", "Just use the live speed test at the top of this page &mdash; it measures your real download, upload and ping in a few seconds, for free. The download figure (in Mbps) is the headline number."),
+      ("Why is the test slower than the speed I pay for?", "Usually Wi-Fi. This test measures your <em>device&rsquo;s</em> speed right now, so distance from the router, walls, and other devices all take their toll. Testing next to the router (or on a cable) shows your true line speed &mdash; and if there&rsquo;s a big gap, better Wi-Fi is the fix."),
       ("Is slow internet the same as a slow computer?", "Not always &mdash; a slow computer or weak Wi-Fi often gets blamed on the broadband. Our free <a href=\"/it-health-check-tool/\">health check</a> and a quick look can tell which it is."),
       ("What if fast fibre isn&rsquo;t available where I live?", "In rural parts of Dorset and the New Forest, <a href=\"/starlink-internet/\">Starlink satellite internet</a> is often the best option &mdash; we supply, install and support it."),
     ]
     content = "\n".join([
-      hero(bc("Broadband Speed Checker"), "// FREE &middot; 30 SECONDS",
-           'Is your broadband <em class="grad grad--cyan">fast enough?</em>',
-           "Answer three quick questions and we&rsquo;ll tell you the broadband speed your home really needs &mdash; and exactly what to do if you&rsquo;re falling short.",
-           cta1=("Get Free Advice", "/book-service/"), cta2=("Starlink for Rural Areas", "/starlink-internet/"),
-           chips=["Takes 30 seconds", "Plain English", "No sign-up"]),
+      hero(bc("Broadband Speed Checker"), "// LIVE SPEED TEST &middot; FREE",
+           'Check your <em class="grad grad--cyan">broadband speed</em>, live',
+           "Run a real speed test right here &mdash; your actual download, upload and ping, measured live &mdash; then see the speed your household really needs and what to do if you&rsquo;re falling short.",
+           cta1=("Run the Speed Test", "#speedtool"), cta2=("Starlink for Rural Areas", "/starlink-internet/"),
+           chips=["Real live test", "Download &middot; Upload &middot; Ping", "No sign-up"]),
+      SPEEDTEST_WIDGET,
       BROADBAND_WIDGET,
       faq_html(faqs),
       cta("Still buffering and slow?",
