@@ -9,7 +9,7 @@ import build_local  # registers the 12 local/customer pages on import
 from build_pages import (add, graph, crumb, webpage, service, faqpage,
                          faq_html, cta, hero, hero_trust, bc, bc_sub, crumb_sub, tiles, grid_cards, checklist,
                          steps, reviews_block, ico, SITE, write_all,
-                         promise_strip, uk_remote_band, WCHECK_TOOL, EMAILSEC_TOOL, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
+                         promise_strip, uk_remote_band, WCHECK_TOOL, EMAILSEC_TOOL, PWNED_TOOL, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
 from build_local import make_customer
 
 # ── Competitive prices for the new AI offerings (owner-approved 2026-06-17; edit here) ──
@@ -3793,6 +3793,37 @@ def email_security_checker():
         desc=desc, og_title="Free Email Security Checker | 365 Techies", schema=schema, content=content)
 email_security_checker()
 
+# ===================================================== PASSWORD BREACH CHECKER (HIBP k-anonymity lead-gen tool)
+def password_breach_checker():
+    slug = "password-breach-checker"
+    desc = "Free password breach checker. See if your password has appeared in a data breach — privately and safely; your password never leaves your browser. From 365 Techies, Bournemouth & Dorset."
+    faqs = [
+      ("Is it safe to type my password in here?", "Yes &mdash; completely. Your password is turned into a one-way fingerprint <em>in your browser</em>, and only the first few characters of that fingerprint are ever sent. Your actual password never leaves this page and is never stored &mdash; the same k-anonymity method security professionals use."),
+      ("What does &lsquo;found in a breach&rsquo; mean?", "That exact password has appeared in a real data breach somewhere online, so it&rsquo;s on the lists criminals use to try to break into accounts. Even if it wasn&rsquo;t <em>your</em> account that leaked it, the password is now unsafe to use anywhere."),
+      ("My password was found &mdash; what should I do?", "Stop using it, change it on any account where you use it (or anything similar), use a different password for every login, and switch on two-factor authentication. A password manager makes this easy &mdash; <a href=\"/contact/\">we can set you up</a>."),
+      ("My password wasn&rsquo;t found &mdash; am I safe?", "It&rsquo;s a good sign, but not a guarantee it&rsquo;s <em>strong</em>. A long, unique passphrase you don&rsquo;t reuse anywhere is what really keeps you safe. Try our <a href=\"/password-strength-checker/\">password strength checker</a> too."),
+      ("Where does the data come from?", "From Have I Been Pwned, a respected security service with a database of over 10 billion passwords exposed in data breaches. We check against it without ever sending your actual password."),
+    ]
+    content = "\n".join([
+      hero(bc("Password Breach Checker"), "// FREE BREACH CHECK",
+           'Has your password <em class="grad grad--cyan">been leaked?</em>',
+           "Check any password against billions exposed in real data breaches &mdash; instantly and privately. Your password is hashed in your browser and never sent, so it&rsquo;s completely safe to check.",
+           cta1=("Check a Password", "#pwntool"), cta2=("Cybersecurity Help", "/cybersecurity-support/"),
+           chips=["Private &amp; safe","10+ billion passwords","No sign-up"]),
+      PWNED_TOOL,
+      faq_html(faqs),
+      cta("Let&rsquo;s lock down your accounts",
+          "From password managers and two-factor authentication to a full security check-up, we help Dorset homes and businesses stay safe online &mdash; in plain English, no jargon.",
+          primary=("Get Secure", "/contact/"), secondary=("Cybersecurity Support", "/cybersecurity-support/")),
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        return graph([crumb(s, "Password Breach Checker"), webpage(s, "Free Password Breach Checker", _desc),
+                      {"@type":"WebApplication","name":"365 Techies Password Breach Checker","applicationCategory":"SecurityApplication","operatingSystem":"Web (all browsers)","url":SITE+"/password-breach-checker/","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},"provider":{"@id":SITE+"/#business"}},
+                      faqpage(s, _faqs)])
+    add(slug=slug, title="Free Password Breach Checker | Has Your Password Leaked? | 365 Techies",
+        desc=desc, og_title="Free Password Breach Checker | 365 Techies", schema=schema, content=content)
+password_breach_checker()
+
 # ===================================================== AI VOICE AGENTS (new offering)
 def ai_voice():
     slug = "ai-voice-agents"
@@ -5466,6 +5497,7 @@ info_page(
           <a class="post-card" href="/it-health-check-tool/"><p class="post-card__cat">Tool</p><h3>IT Health Check Tool</h3><p>Get an instant IT &amp; security score out of 100, plus a plain-English action plan &mdash; no sign-up.</p><span class="post-card__more">Check your score &#8594;</span></a>
           <a class="post-card" href="/website-checker/"><p class="post-card__cat">Tool</p><h3>Free Website Checker</h3><p>Test any site&rsquo;s speed, SEO, security &amp; mobile-friendliness with Google&rsquo;s Lighthouse engine.</p><span class="post-card__more">Check a website &#8594;</span></a>
           <a class="post-card" href="/email-security-checker/"><p class="post-card__cat">Tool</p><h3>Email Security Checker</h3><p>Enter your domain to see if SPF, DKIM &amp; DMARC are stopping scammers spoofing your business email.</p><span class="post-card__more">Check your domain &#8594;</span></a>
+          <a class="post-card" href="/password-breach-checker/"><p class="post-card__cat">Tool</p><h3>Password Breach Checker</h3><p>Has your password leaked? Check it privately against billions exposed in real data breaches.</p><span class="post-card__more">Check a password &#8594;</span></a>
           <a class="post-card" href="/windows-10-end-of-life/"><p class="post-card__cat">Act now</p><h3>Windows 10 End of Life</h3><p>Support ended in October 2025. Find out in 30 seconds if you&rsquo;re affected &mdash; and your options.</p><span class="post-card__more">Are you affected? &#8594;</span></a>
           <a class="post-card" href="/quick-quote/"><p class="post-card__cat">Tool</p><h3>Quick Quote</h3><p>Get a free, no-obligation quote or cost comparison in under a minute.</p><span class="post-card__more">Get a quote &#8594;</span></a>
           <a class="post-card" href="/broadband-speed-checker/"><p class="post-card__cat">Tool</p><h3>Broadband Speed Checker</h3><p>Is your internet fast enough? Get a recommended speed in 30 seconds.</p><span class="post-card__more">Check your speed &#8594;</span></a>

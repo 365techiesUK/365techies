@@ -197,6 +197,7 @@ HEADER = '''  <header class="site-header">
             <a href="/cost-calculator/">Cost Calculator</a>
             <a href="/website-checker/">Website Checker</a>
             <a href="/email-security-checker/">Email Security Checker</a>
+            <a href="/password-breach-checker/">Password Breach Checker</a>
             <a href="/ai-roi-calculator/">AI ROI Calculator</a>
             <a href="/it-health-check-tool/">IT Health Check Tool</a>
             <a href="/broadband-speed-checker/">Broadband Speed Checker</a>
@@ -343,6 +344,7 @@ HEADER = '''  <header class="site-header">
           <a href="/cost-calculator/">Cost Calculator</a>
           <a href="/website-checker/">Website Checker</a>
           <a href="/email-security-checker/">Email Security Checker</a>
+          <a href="/password-breach-checker/">Password Breach Checker</a>
           <a href="/ai-roi-calculator/">AI ROI Calculator</a>
           <a href="/it-health-check-tool/">IT Health Check Tool</a>
           <a href="/broadband-speed-checker/">Broadband Speed Checker</a>
@@ -492,6 +494,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/cost-calculator/">Cost Calculator</a>
         <a href="/website-checker/">Website Checker</a>
         <a href="/email-security-checker/">Email Security Checker</a>
+        <a href="/password-breach-checker/">Password Breach Checker</a>
         <a href="/ai-roi-calculator/">AI ROI Calculator</a>
         <a href="/it-health-check-tool/">IT Health Check Tool</a>
         <a href="/broadband-speed-checker/">Broadband Speed Checker</a>
@@ -1424,6 +1427,108 @@ EMAILSEC_TOOL = r'''    <section class="section" aria-label="Email security chec
           root.querySelector('#es-fix-msg').innerHTML = verdict.cls==='good'
             ? 'Your setup looks solid. If you’d like us to keep it that way — or check the rest of your cybersecurity — we’re a friendly local Dorset team.'
             : 'Email spoofing is how invoice fraud and phishing start. We’ll set up SPF, DKIM and DMARC properly so scammers can’t send email in your name — usually within a day.';
+          elRes.hidden=false;
+          try{ elRes.scrollIntoView({behavior:'smooth',block:'start'}); }catch(e){}
+        }
+      })();
+      </script>
+    </section>'''
+
+# Shared password-breach checker (Have I Been Pwned k-anonymity, no key) — embedded on /password-breach-checker/
+PWNED_TOOL = r'''    <section class="section" aria-label="Password breach checker" id="pwntool">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// FREE BREACH CHECK</p>
+          <h2 class="section-title section-title--center" data-title>Has your password been leaked?<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Check any password against billions exposed in real data breaches. <strong>Your password never leaves your browser</strong> &mdash; only a tiny, anonymised fragment of a one-way fingerprint is ever sent.</p>
+        </div>
+        <div id="pwn" data-reveal>
+          <form class="pw-form" id="pw-form" novalidate>
+            <div class="pw-inwrap">
+              <input type="password" id="pw-input" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Enter a password to check" aria-label="Password to check" required>
+              <button type="button" class="pw-eye" id="pw-eye" aria-label="Show or hide password">show</button>
+            </div>
+            <button type="submit" class="button primary pw-go">Check password</button>
+          </form>
+          <p class="pw-hint">&#128274; Privacy-safe: your password is hashed in your browser and never sent &mdash; the same k-anonymity method security professionals trust.</p>
+          <div class="pw-loading" id="pw-loading" hidden><div class="pw-spinner" aria-hidden="true"></div><p>Checking against breached passwords&hellip;</p></div>
+          <div class="pw-error" id="pw-error" hidden></div>
+          <div class="pw-results" id="pw-results" hidden>
+            <div id="pw-verdict"></div>
+            <div class="pw-fix">
+              <h3>What to do next</h3>
+              <p id="pw-fix-msg"></p>
+              <div class="pw-fix-cta">
+                <a class="button primary" href="/contact/">Get help staying secure &#8594;</a>
+                <a class="button pw-ghost" href="/password-strength-checker/">Build a strong password</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="pw-powered">Checked against Have I Been Pwned&rsquo;s corpus of 10+ billion breached passwords using k-anonymity. Your password never leaves this page.</p>
+      </div>
+      <style>
+      #pwn{max-width:680px;margin:0 auto}
+      #pwn .pw-form{display:flex;gap:.6rem;flex-wrap:wrap;align-items:stretch}
+      #pwn .pw-inwrap{position:relative;flex:1 1 260px;min-width:0;display:flex}
+      #pwn #pw-input{flex:1;min-width:0;padding:.95rem 3.4rem .95rem 1.1rem;border-radius:12px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.04);color:inherit;font:inherit}
+      #pwn #pw-input:focus{outline:none;border-color:var(--cyan,#37c2c2)}
+      #pwn .pw-eye{position:absolute;right:.5rem;top:50%;transform:translateY(-50%);background:transparent;border:0;color:var(--muted,#9aa6c2);font:inherit;font-size:.78rem;cursor:pointer;padding:.3rem .5rem}
+      #pwn .pw-go{white-space:nowrap}
+      #pwn .pw-hint{font-size:.78rem;color:var(--muted,#9aa6c2);margin:.6rem 0 0;line-height:1.5}
+      #pwn .pw-loading{text-align:center;padding:2.2rem 1rem}
+      #pwn .pw-spinner{width:44px;height:44px;border-radius:50%;border:3px solid rgba(255,255,255,.14);border-top-color:var(--cyan,#37c2c2);margin:0 auto 1rem;animation:pw-spin 1s linear infinite}
+      @keyframes pw-spin{to{transform:rotate(360deg)}}
+      #pwn .pw-error{margin-top:1.3rem;padding:1rem 1.2rem;border-radius:12px;border:1px solid rgba(231,76,60,.45);background:rgba(231,76,60,.1);font-size:.92rem}
+      #pwn .pw-results{margin-top:1.8rem}
+      #pwn .pw-verdict-box{text-align:center;padding:1.6rem;border-radius:16px;border:1px solid rgba(255,255,255,.12);margin-bottom:1.4rem}
+      #pwn .pw-verdict-grade{margin:0 0 .3rem;font-size:1.3rem;font-weight:800}
+      #pwn .pw-verdict-big{margin:.2rem 0;font-size:2.6rem;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+      #pwn .pw-verdict-msg{margin:.4rem auto 0;max-width:48ch;font-size:.95rem;line-height:1.6;color:var(--muted,#9aa6c2)}
+      #pwn .pw-good{border-color:rgba(46,204,113,.4);background:rgba(46,204,113,.08)}
+      #pwn .pw-good .pw-verdict-grade{color:#2ecc71}
+      #pwn .pw-poor{border-color:rgba(231,76,60,.4);background:rgba(231,76,60,.1)}
+      #pwn .pw-poor .pw-verdict-grade,#pwn .pw-poor .pw-verdict-big{color:#e74c3c}
+      #pwn .pw-fix{margin-top:.4rem;padding:1.6rem;border-radius:16px;border:1px solid rgba(55,194,194,.35);background:rgba(55,194,194,.07);text-align:center}
+      #pwn .pw-fix h3{margin:0 0 .5rem;font-size:1.2rem}
+      #pwn .pw-fix p{margin:0 auto 1.1rem;max-width:48ch;color:var(--muted,#9aa6c2);font-size:.95rem;line-height:1.6}
+      #pwn .pw-fix-cta{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center}
+      #pwn .pw-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}
+      #pwn .pw-powered{text-align:center;font-size:.72rem;color:var(--muted,#9aa6c2);margin:1.4rem 0 0;opacity:.8}
+      @media(max-width:560px){#pwn .pw-go{flex:1 1 100%}}
+      </style>
+      <script>
+      (function(){
+        var root=document.getElementById('pwn'); if(!root) return;
+        var form=root.querySelector('#pw-form'), input=root.querySelector('#pw-input'), eye=root.querySelector('#pw-eye');
+        var elLoad=root.querySelector('#pw-loading'), elErr=root.querySelector('#pw-error'), elRes=root.querySelector('#pw-results');
+        eye.addEventListener('click',function(){ var sh=input.type==='password'; input.type=sh?'text':'password'; eye.textContent=sh?'hide':'show'; input.focus(); });
+        function fmt(n){ return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g,','); }
+        function sha1hex(str){ return crypto.subtle.digest('SHA-1', new TextEncoder().encode(str)).then(function(buf){ return Array.from(new Uint8Array(buf)).map(function(b){return ('0'+b.toString(16)).slice(-2);}).join('').toUpperCase(); }); }
+        form.addEventListener('submit',function(e){
+          e.preventDefault();
+          var pw=input.value; if(!pw){ input.focus(); return; }
+          if(!(window.crypto&&crypto.subtle&&window.TextEncoder)){ elErr.innerHTML='Your browser can&rsquo;t run the secure check (it needs a modern browser over HTTPS).'; elErr.hidden=false; return; }
+          elRes.hidden=true; elErr.hidden=true; elLoad.hidden=false; var btn=form.querySelector('.pw-go'); btn.disabled=true;
+          sha1hex(pw).then(function(hash){
+            var prefix=hash.slice(0,5), suffix=hash.slice(5);
+            return fetch('https://api.pwnedpasswords.com/range/'+prefix).then(function(r){ if(!r.ok) throw new Error('api'); return r.text(); }).then(function(text){
+              var count=0, lines=text.split('\n');
+              for(var i=0;i<lines.length;i++){ var parts=lines[i].trim().split(':'); if(parts[0]===suffix){ count=parseInt(parts[1],10)||0; break; } }
+              render(count);
+            });
+          }).catch(function(){ elErr.innerHTML='We couldn&rsquo;t reach the breach database just now &mdash; please try again in a moment.'; elErr.hidden=false; })
+            .then(function(){ elLoad.hidden=true; btn.disabled=false; });
+        });
+        function render(count){
+          var v=root.querySelector('#pw-verdict'), fm=root.querySelector('#pw-fix-msg');
+          if(count>0){
+            v.innerHTML='<div class="pw-verdict-box pw-poor"><p class="pw-verdict-grade">&#9888;&#65039; Found in data breaches</p><p class="pw-verdict-big">'+fmt(count)+'</p><p class="pw-verdict-msg">This password has appeared <b>'+fmt(count)+' time'+(count===1?'':'s')+'</b> in known breaches. It&rsquo;s on the lists criminals use to break into accounts &mdash; stop using it anywhere.</p></div>';
+            fm.innerHTML='If you use this password (or a close version) on any account, change it now, use a <b>unique</b> password for every login, and switch on two-factor authentication. A password manager makes this effortless &mdash; we can set you up.';
+          } else {
+            v.innerHTML='<div class="pw-verdict-box pw-good"><p class="pw-verdict-grade">&#10003; Not found in known breaches</p><p class="pw-verdict-msg">Good news &mdash; this exact password wasn&rsquo;t in the breach database. That doesn&rsquo;t automatically make it <em>strong</em>, though &mdash; length and never reusing it matter most.</p></div>';
+            fm.innerHTML='Keep it that way: use a long, unique password for every account and never reuse one. Want to test its strength or get set up with a password manager? We&rsquo;re happy to help.';
+          }
           elRes.hidden=false;
           try{ elRes.scrollIntoView({behavior:'smooth',block:'start'}); }catch(e){}
         }
