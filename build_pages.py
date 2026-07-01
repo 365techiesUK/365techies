@@ -198,6 +198,7 @@ HEADER = '''  <header class="site-header">
             <a href="/website-checker/">Website Checker</a>
             <a href="/email-security-checker/">Email Security Checker</a>
             <a href="/password-breach-checker/">Password Breach Checker</a>
+            <a href="/what-websites-know/">Privacy Checker</a>
             <a href="/ai-roi-calculator/">AI ROI Calculator</a>
             <a href="/it-health-check-tool/">IT Health Check Tool</a>
             <a href="/broadband-speed-checker/">Broadband Speed Checker</a>
@@ -345,6 +346,7 @@ HEADER = '''  <header class="site-header">
           <a href="/website-checker/">Website Checker</a>
           <a href="/email-security-checker/">Email Security Checker</a>
           <a href="/password-breach-checker/">Password Breach Checker</a>
+          <a href="/what-websites-know/">Privacy Checker</a>
           <a href="/ai-roi-calculator/">AI ROI Calculator</a>
           <a href="/it-health-check-tool/">IT Health Check Tool</a>
           <a href="/broadband-speed-checker/">Broadband Speed Checker</a>
@@ -495,6 +497,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/website-checker/">Website Checker</a>
         <a href="/email-security-checker/">Email Security Checker</a>
         <a href="/password-breach-checker/">Password Breach Checker</a>
+        <a href="/what-websites-know/">Privacy Checker</a>
         <a href="/ai-roi-calculator/">AI ROI Calculator</a>
         <a href="/it-health-check-tool/">IT Health Check Tool</a>
         <a href="/broadband-speed-checker/">Broadband Speed Checker</a>
@@ -1532,6 +1535,84 @@ PWNED_TOOL = r'''    <section class="section" aria-label="Password breach checke
           elRes.hidden=false;
           try{ elRes.scrollIntoView({behavior:'smooth',block:'start'}); }catch(e){}
         }
+      })();
+      </script>
+    </section>'''
+
+# Shared privacy checker (client-side + free IP lookup, no key) — embedded on /what-websites-know/
+PRIVACY_TOOL = r'''    <section class="section" aria-label="Privacy checker" id="privtool">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// FREE PRIVACY CHECK</p>
+          <h2 class="section-title section-title--center" data-title>What can websites see about you?<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Every website you visit can quietly learn a surprising amount about you &mdash; before you click a thing. Here&rsquo;s exactly what this page can see about your device right now.</p>
+        </div>
+        <div id="priv" data-reveal style="text-align:center">
+          <button type="button" class="button primary priv-go" id="priv-go">Reveal what sites can see &#8594;</button>
+          <div class="priv-loading" id="priv-loading" hidden><div class="priv-spinner" aria-hidden="true"></div><p>Reading what your browser gives away&hellip;</p></div>
+          <div class="priv-results" id="priv-results" hidden>
+            <div class="priv-grid" id="priv-grid"></div>
+            <div class="priv-fix">
+              <h3>Surprised how much shows up?</h3>
+              <p>None of this is stored &mdash; but it shows how much you give away just by browsing. We help Dorset homes and businesses tighten their privacy and stay safe online, in plain English.</p>
+              <div class="priv-fix-cta">
+                <a class="button primary" href="/contact/">Get privacy &amp; security help &#8594;</a>
+                <a class="button priv-ghost" href="/online-safety/">Online safety hub</a>
+              </div>
+            </div>
+          </div>
+          <p class="priv-powered">Everything here is read in your own browser. Your IP and rough location come from a public lookup &mdash; nothing is stored or sent to us.</p>
+        </div>
+      </div>
+      <style>
+      #priv{max-width:820px;margin:0 auto}
+      #priv .priv-loading{padding:2.2rem 1rem}
+      #priv .priv-spinner{width:44px;height:44px;border-radius:50%;border:3px solid rgba(255,255,255,.14);border-top-color:var(--cyan,#37c2c2);margin:0 auto 1rem;animation:priv-spin 1s linear infinite}
+      @keyframes priv-spin{to{transform:rotate(360deg)}}
+      #priv .priv-loading p{color:var(--muted,#9aa6c2)}
+      #priv .priv-results{margin-top:1.8rem;text-align:left}
+      #priv .priv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.7rem}
+      #priv .priv-card{padding:.9rem 1.1rem;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03)}
+      #priv .priv-k{margin:0;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted,#9aa6c2)}
+      #priv .priv-v{margin:.2rem 0 0;font-size:1.02rem;font-weight:700;word-break:break-word}
+      #priv .priv-n{margin:.3rem 0 0;font-size:.74rem;color:var(--muted,#9aa6c2);line-height:1.45}
+      #priv .priv-fix{margin-top:2rem;padding:1.6rem;border-radius:16px;border:1px solid rgba(55,194,194,.35);background:rgba(55,194,194,.07);text-align:center}
+      #priv .priv-fix h3{margin:0 0 .5rem;font-size:1.2rem}
+      #priv .priv-fix p{margin:0 auto 1.1rem;max-width:52ch;color:var(--muted,#9aa6c2);font-size:.95rem;line-height:1.6}
+      #priv .priv-fix-cta{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center}
+      #priv .priv-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}
+      #priv .priv-powered{text-align:center;font-size:.72rem;color:var(--muted,#9aa6c2);margin:1.4rem 0 0;opacity:.8}
+      </style>
+      <script>
+      (function(){
+        var root=document.getElementById('priv'); if(!root) return;
+        var go=root.querySelector('#priv-go'), load=root.querySelector('#priv-loading'), res=root.querySelector('#priv-results'), grid=root.querySelector('#priv-grid');
+        function esc(s){var d=document.createElement('div');d.textContent=(s==null?'':s);return d.innerHTML;}
+        function card(k,v,n){ return '<div class="priv-card"><p class="priv-k">'+k+'</p><p class="priv-v">'+v+'</p>'+(n?'<p class="priv-n">'+n+'</p>':'')+'</div>'; }
+        go.addEventListener('click',function(){
+          go.disabled=true; load.hidden=false; res.hidden=true;
+          var n=navigator, s=screen, ua=n.userAgent||'';
+          var tz=''; try{ tz=Intl.DateTimeFormat().resolvedOptions().timeZone; }catch(e){}
+          var browser=/edg/i.test(ua)?'Microsoft Edge':(/opr|opera/i.test(ua)?'Opera':(/chrome/i.test(ua)?'Chrome':(/firefox/i.test(ua)?'Firefox':(/safari/i.test(ua)?'Safari':'Your browser'))));
+          var os=/windows/i.test(ua)?'Windows':(/android/i.test(ua)?'Android':(/iphone|ipad/i.test(ua)?'iOS':(/mac/i.test(ua)?'macOS':(/linux/i.test(ua)?'Linux':'your device'))));
+          function finish(ip){
+            var out='';
+            out+=card('Your IP address', esc((ip&&ip.ip)||'hidden / unavailable'), 'Identifies your internet connection &mdash; effectively your household.');
+            if(ip&&ip.success!==false&&ip.ip){ var loc=[ip.city,ip.region,ip.country].filter(Boolean).join(', '); out+=card('Rough location', esc(loc||'—'), 'Estimated from your IP &mdash; not GPS, but often close.'); if(ip.connection&&ip.connection.isp) out+=card('Internet provider', esc(ip.connection.isp)); }
+            out+=card('Browser &amp; system', esc(browser+' on '+os));
+            out+=card('Screen', s.width+'&times;'+s.height+' &middot; '+(window.devicePixelRatio||1)+'&times; density');
+            if(tz) out+=card('Time zone', esc(tz), 'Hints at where in the world you are.');
+            out+=card('Language', esc((n.languages&&n.languages.join(', '))||n.language||'—'));
+            out+=card('Cookies', n.cookieEnabled?'Enabled':'Blocked');
+            out+=card('&ldquo;Do Not Track&rdquo;', (n.doNotTrack==='1'||n.doNotTrack==='yes')?'On':'Off / not set', 'Most sites ignore it anyway.');
+            if(n.hardwareConcurrency) out+=card('CPU cores', String(n.hardwareConcurrency));
+            if(n.deviceMemory) out+=card('Device memory', n.deviceMemory+' GB (approx)');
+            if(n.connection&&n.connection.effectiveType) out+=card('Connection', esc(String(n.connection.effectiveType).toUpperCase()));
+            grid.innerHTML=out; load.hidden=true; res.hidden=false; go.disabled=false; go.textContent='Check again';
+            try{ res.scrollIntoView({behavior:'smooth',block:'start'}); }catch(e){}
+          }
+          fetch('https://ipwho.is/').then(function(r){return r.json();}).then(finish).catch(function(){ finish(null); });
+        });
       })();
       </script>
     </section>'''

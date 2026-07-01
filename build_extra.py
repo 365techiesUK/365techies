@@ -9,7 +9,7 @@ import build_local  # registers the 12 local/customer pages on import
 from build_pages import (add, graph, crumb, webpage, service, faqpage,
                          faq_html, cta, hero, hero_trust, bc, bc_sub, crumb_sub, tiles, grid_cards, checklist,
                          steps, reviews_block, ico, SITE, write_all,
-                         promise_strip, uk_remote_band, WCHECK_TOOL, EMAILSEC_TOOL, PWNED_TOOL, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
+                         promise_strip, uk_remote_band, WCHECK_TOOL, EMAILSEC_TOOL, PWNED_TOOL, PRIVACY_TOOL, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
 from build_local import make_customer
 
 # ── Competitive prices for the new AI offerings (owner-approved 2026-06-17; edit here) ──
@@ -3824,6 +3824,36 @@ def password_breach_checker():
         desc=desc, og_title="Free Password Breach Checker | 365 Techies", schema=schema, content=content)
 password_breach_checker()
 
+# ===================================================== PRIVACY CHECKER (what websites know about you)
+def privacy_checker():
+    slug = "what-websites-know"
+    desc = "See what any website can learn about you — your IP, rough location, browser and device — the moment you visit. A free privacy eye-opener from 365 Techies, Bournemouth & Dorset."
+    faqs = [
+      ("How does this work?", "It simply reads the information your browser shares with every website automatically &mdash; things like your IP address, screen size and time zone &mdash; and looks up your rough location from your IP. It all happens in your browser, and nothing is stored."),
+      ("Is any of this being saved?", "No &mdash; nothing is stored or sent to us. Your IP and rough location come from a public lookup service, and everything else is read live in your browser and shown only to you."),
+      ("Should I be worried?", "It&rsquo;s less about worry, more about awareness. This is the baseline every website sees. Advertisers and trackers combine it with other signals to follow you around the web &mdash; and simple steps (a good browser, sensible settings, sometimes a VPN) make a real difference."),
+      ("How do I protect my privacy?", "Use a privacy-respecting browser and search engine, keep everything updated, be careful what you install, and consider a VPN on public Wi-Fi. We can set all of that up and explain it in plain English &mdash; see our <a href=\"/online-safety/\">online safety hub</a> or <a href=\"/contact/\">get in touch</a>."),
+    ]
+    content = "\n".join([
+      hero(bc("What Websites Know"), "// FREE PRIVACY CHECK",
+           'What can websites <em class="grad grad--cyan">see about you?</em>',
+           "You give away more than you think just by browsing. See exactly what any website can learn about your device the moment you land on it &mdash; then find out how to give away less.",
+           cta1=("Reveal It", "#privtool"), cta2=("Online Safety", "/online-safety/"),
+           chips=["Runs in your browser","Nothing stored","Eye-opening"]),
+      PRIVACY_TOOL,
+      faq_html(faqs),
+      cta("Take back your privacy",
+          "From browser settings and VPNs to a full privacy and security check-up, we help Dorset homes and businesses stay private online &mdash; no jargon, no pressure.",
+          primary=("Get Privacy Help", "/contact/"), secondary=("Online Safety Hub", "/online-safety/")),
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        return graph([crumb(s, "What Websites Know About You"), webpage(s, "What Can Websites See About You?", _desc),
+                      {"@type":"WebApplication","name":"365 Techies Privacy Checker","applicationCategory":"SecurityApplication","operatingSystem":"Web (all browsers)","url":SITE+"/what-websites-know/","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},"provider":{"@id":SITE+"/#business"}},
+                      faqpage(s, _faqs)])
+    add(slug=slug, title="What Can Websites See About You? | Free Privacy Checker | 365 Techies",
+        desc=desc, og_title="What Can Websites See About You? | 365 Techies", schema=schema, content=content)
+privacy_checker()
+
 # ===================================================== AI VOICE AGENTS (new offering)
 def ai_voice():
     slug = "ai-voice-agents"
@@ -5498,6 +5528,7 @@ info_page(
           <a class="post-card" href="/website-checker/"><p class="post-card__cat">Tool</p><h3>Free Website Checker</h3><p>Test any site&rsquo;s speed, SEO, security &amp; mobile-friendliness with Google&rsquo;s Lighthouse engine.</p><span class="post-card__more">Check a website &#8594;</span></a>
           <a class="post-card" href="/email-security-checker/"><p class="post-card__cat">Tool</p><h3>Email Security Checker</h3><p>Enter your domain to see if SPF, DKIM &amp; DMARC are stopping scammers spoofing your business email.</p><span class="post-card__more">Check your domain &#8594;</span></a>
           <a class="post-card" href="/password-breach-checker/"><p class="post-card__cat">Tool</p><h3>Password Breach Checker</h3><p>Has your password leaked? Check it privately against billions exposed in real data breaches.</p><span class="post-card__more">Check a password &#8594;</span></a>
+          <a class="post-card" href="/what-websites-know/"><p class="post-card__cat">Tool</p><h3>Privacy Checker</h3><p>See exactly what any website can learn about you &mdash; your IP, location, browser and more.</p><span class="post-card__more">Reveal it &#8594;</span></a>
           <a class="post-card" href="/windows-10-end-of-life/"><p class="post-card__cat">Act now</p><h3>Windows 10 End of Life</h3><p>Support ended in October 2025. Find out in 30 seconds if you&rsquo;re affected &mdash; and your options.</p><span class="post-card__more">Are you affected? &#8594;</span></a>
           <a class="post-card" href="/quick-quote/"><p class="post-card__cat">Tool</p><h3>Quick Quote</h3><p>Get a free, no-obligation quote or cost comparison in under a minute.</p><span class="post-card__more">Get a quote &#8594;</span></a>
           <a class="post-card" href="/broadband-speed-checker/"><p class="post-card__cat">Tool</p><h3>Broadband Speed Checker</h3><p>Is your internet fast enough? Get a recommended speed in 30 seconds.</p><span class="post-card__more">Check your speed &#8594;</span></a>
