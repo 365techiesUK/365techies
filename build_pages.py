@@ -201,6 +201,7 @@ HEADER = '''  <header class="site-header">
             <a href="/what-websites-know/">Privacy Checker</a>
             <a href="/link-safety-checker/">Link Safety Checker</a>
             <a href="/password-generator/">Password Generator</a>
+            <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
             <a href="/ai-roi-calculator/">AI ROI Calculator</a>
             <a href="/it-health-check-tool/">IT Health Check Tool</a>
             <a href="/broadband-speed-checker/">Broadband Speed Checker</a>
@@ -351,6 +352,7 @@ HEADER = '''  <header class="site-header">
           <a href="/what-websites-know/">Privacy Checker</a>
           <a href="/link-safety-checker/">Link Safety Checker</a>
           <a href="/password-generator/">Password Generator</a>
+          <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
           <a href="/ai-roi-calculator/">AI ROI Calculator</a>
           <a href="/it-health-check-tool/">IT Health Check Tool</a>
           <a href="/broadband-speed-checker/">Broadband Speed Checker</a>
@@ -504,6 +506,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/what-websites-know/">Privacy Checker</a>
         <a href="/link-safety-checker/">Link Safety Checker</a>
         <a href="/password-generator/">Password Generator</a>
+        <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
         <a href="/ai-roi-calculator/">AI ROI Calculator</a>
         <a href="/it-health-check-tool/">IT Health Check Tool</a>
         <a href="/broadband-speed-checker/">Broadband Speed Checker</a>
@@ -1858,6 +1861,103 @@ PWGEN_TOOL = r'''    <section class="section" aria-label="Password generator" id
           if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(t).then(ok).catch(function(){}); } else { var ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy'); ok();}catch(e){} document.body.removeChild(ta); } });
         q('#pg-go').addEventListener('click',generate);
         generate();
+      })();
+      </script>
+    </section>'''
+
+# Shared Wi-Fi QR code generator (client-side QR render, password never leaves the browser) — /wifi-qr-code-generator/
+WIFIQR_TOOL = r'''    <section class="section" aria-label="Wi-Fi QR code generator" id="wqtool">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// FREE WI-FI QR CODE</p>
+          <h2 class="section-title section-title--center" data-title>Let guests join your Wi-Fi with a scan<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Make a QR code your guests scan to connect instantly &mdash; no more reading out the password. Perfect for cafés, offices, holiday lets and homes. <strong>Your password never leaves your browser.</strong></p>
+        </div>
+        <div id="wq" data-reveal>
+          <div class="wq-grid">
+            <form class="wq-form" id="wq-form" novalidate>
+              <label class="wq-f"><span>Wi-Fi network name (SSID)</span><input id="wq-ssid" autocomplete="off" spellcheck="false" placeholder="e.g. 365 Techies Guest" required></label>
+              <label class="wq-f" id="wq-pwrap"><span>Wi-Fi password</span><input id="wq-pass" type="text" autocomplete="off" spellcheck="false" placeholder="Your Wi-Fi password"></label>
+              <label class="wq-f"><span>Security</span><select id="wq-sec"><option value="WPA">WPA / WPA2 / WPA3 (most common)</option><option value="WEP">WEP (older networks)</option><option value="nopass">None (open network)</option></select></label>
+              <label class="wq-check"><input type="checkbox" id="wq-hidden"> This is a hidden network</label>
+              <button type="submit" class="button primary wq-go">Create QR code</button>
+            </form>
+            <div class="wq-out">
+              <div class="wq-placeholder" id="wq-ph">Your QR code will appear here &#128241;</div>
+              <div class="wq-card" id="wq-card" hidden>
+                <div class="wq-qr" id="wq-qr"></div>
+                <p class="wq-scan">Scan to join Wi-Fi</p>
+                <p class="wq-ssid" id="wq-ssidlabel"></p>
+              </div>
+              <button type="button" class="button wq-dl" id="wq-dl" hidden>Download as image &#8595;</button>
+            </div>
+          </div>
+          <p class="wq-hint">&#128274; Made entirely in your browser &mdash; your Wi-Fi password is never sent anywhere or stored. Download it, print it, and pop it on the wall.</p>
+        </div>
+        <div class="wq-fix">
+          <h3>Sorting out guest Wi-Fi for a business?</h3>
+          <p>We set up fast, secure guest networks (kept separate from your business systems), fix Wi-Fi black-spots with mesh, and make it all just work &mdash; for cafés, offices and holiday lets across Dorset.</p>
+          <div class="wq-fix-cta"><a class="button primary" href="/contact/">Get better Wi-Fi &#8594;</a><a class="button wq-ghost" href="/wifi-support/">Wi-Fi support</a></div>
+        </div>
+      </div>
+      <style>
+      #wq{max-width:820px;margin:0 auto}
+      #wq .wq-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.6rem;align-items:start}
+      #wq .wq-form{display:flex;flex-direction:column;gap:.9rem}
+      #wq .wq-f{display:flex;flex-direction:column;gap:.35rem;font-size:.88rem}
+      #wq .wq-f input,#wq .wq-f select{font:inherit;padding:.75rem .9rem;border-radius:10px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.04);color:inherit}
+      #wq .wq-f input:focus,#wq .wq-f select:focus{outline:none;border-color:var(--cyan,#37c2c2)}
+      #wq .wq-check{display:flex;align-items:center;gap:.5rem;font-size:.88rem}
+      #wq .wq-check input{accent-color:var(--cyan,#37c2c2);width:1.05rem;height:1.05rem}
+      #wq .wq-go{margin-top:.3rem}
+      #wq .wq-out{display:flex;flex-direction:column;align-items:center;gap:1rem;justify-content:center;min-height:220px}
+      #wq .wq-placeholder{color:var(--muted,#9aa6c2);font-size:.9rem;text-align:center;border:1px dashed rgba(255,255,255,.18);border-radius:14px;padding:2.5rem 1rem;width:100%}
+      #wq .wq-card{background:#fff;border-radius:16px;padding:1.1rem 1.1rem 1.3rem;text-align:center;max-width:260px}
+      #wq .wq-qr svg{display:block;width:100%;height:auto;border-radius:8px}
+      #wq .wq-scan{margin:.7rem 0 .1rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:#5a6b86}
+      #wq .wq-ssid{margin:0;font-weight:700;color:#070d22;word-break:break-word}
+      #wq .wq-dl{background:transparent;border:1px solid var(--cyan,#37c2c2);color:var(--cyan,#37c2c2)}
+      #wq .wq-hint{text-align:center;font-size:.76rem;color:var(--muted,#9aa6c2);margin:1.2rem 0 0;line-height:1.5}
+      #wqtool .wq-fix{max-width:820px;margin:2rem auto 0;padding:1.6rem;border-radius:16px;border:1px solid rgba(55,194,194,.35);background:rgba(55,194,194,.07);text-align:center}
+      #wqtool .wq-fix h3{margin:0 0 .5rem;font-size:1.2rem}
+      #wqtool .wq-fix p{margin:0 auto 1.1rem;max-width:54ch;color:var(--muted,#9aa6c2);font-size:.95rem;line-height:1.6}
+      #wqtool .wq-fix-cta{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center}
+      #wqtool .wq-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}
+      @media(max-width:640px){#wq .wq-grid{grid-template-columns:1fr}}
+      </style>
+      <script>
+      (function(){
+        var root=document.getElementById('wq'); if(!root) return;
+        var LIB='https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js', libp=null;
+        var form=root.querySelector('#wq-form'), ssid=root.querySelector('#wq-ssid'), pass=root.querySelector('#wq-pass'), sec=root.querySelector('#wq-sec'), hid=root.querySelector('#wq-hidden'), pwrap=root.querySelector('#wq-pwrap');
+        var ph=root.querySelector('#wq-ph'), card=root.querySelector('#wq-card'), qrbox=root.querySelector('#wq-qr'), ssidlabel=root.querySelector('#wq-ssidlabel'), dl=root.querySelector('#wq-dl');
+        sec.addEventListener('change',function(){ pwrap.style.display = sec.value==='nopass'?'none':''; });
+        function ensureLib(){ if(window.qrcode) return Promise.resolve(); if(libp) return libp; libp=new Promise(function(res,rej){ var s=document.createElement('script'); s.src=LIB; s.onload=res; s.onerror=rej; document.head.appendChild(s); }); return libp; }
+        function escw(s){ return String(s).replace(/([\\;,":])/g,'\\$1'); }
+        form.addEventListener('submit',function(e){
+          e.preventDefault();
+          var name=ssid.value.trim(); if(!name){ ssid.focus(); return; }
+          var t=sec.value, str='WIFI:T:'+t+';S:'+escw(name)+';';
+          if(t!=='nopass') str+='P:'+escw(pass.value)+';';
+          if(hid.checked) str+='H:true;';
+          str+=';';
+          var btn=form.querySelector('.wq-go'); btn.disabled=true;
+          ensureLib().then(function(){
+            var qr=window.qrcode(0,'M'); qr.addData(str); qr.make();
+            var n=qr.getModuleCount(), cell=8, m=4, size=(n+m*2)*cell;
+            var sv='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+size+' '+size+'" role="img" aria-label="Wi-Fi QR code"><rect width="'+size+'" height="'+size+'" fill="#ffffff"/>';
+            for(var r=0;r<n;r++){ for(var c=0;c<n;c++){ if(qr.isDark(r,c)) sv+='<rect x="'+((c+m)*cell)+'" y="'+((r+m)*cell)+'" width="'+cell+'" height="'+cell+'" fill="#070d22"/>'; } }
+            sv+='</svg>';
+            qrbox.innerHTML=sv; ssidlabel.textContent=name; ph.hidden=true; card.hidden=false; dl.hidden=false; btn.disabled=false;
+          }).catch(function(){ ph.textContent='Couldn’t load the QR generator — please check your connection and try again.'; btn.disabled=false; });
+        });
+        dl.addEventListener('click',function(){
+          var svg=qrbox.querySelector('svg'); if(!svg) return;
+          var xml=new XMLSerializer().serializeToString(svg);
+          var img=new Image();
+          img.onload=function(){ var cv=document.createElement('canvas'); cv.width=640; cv.height=640; var ctx=cv.getContext('2d'); ctx.fillStyle='#fff'; ctx.fillRect(0,0,640,640); ctx.drawImage(img,0,0,640,640); var a=document.createElement('a'); a.download='wifi-qr-code.png'; a.href=cv.toDataURL('image/png'); a.click(); };
+          img.src='data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(xml)));
+        });
       })();
       </script>
     </section>'''

@@ -9,7 +9,7 @@ import build_local  # registers the 12 local/customer pages on import
 from build_pages import (add, graph, crumb, webpage, service, faqpage,
                          faq_html, cta, hero, hero_trust, bc, bc_sub, crumb_sub, tiles, grid_cards, checklist,
                          steps, reviews_block, ico, SITE, write_all,
-                         promise_strip, uk_remote_band, WCHECK_TOOL, EMAILSEC_TOOL, PWNED_TOOL, PRIVACY_TOOL, SCAM_TOOL, PWGEN_TOOL, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
+                         promise_strip, uk_remote_band, WCHECK_TOOL, EMAILSEC_TOOL, PWNED_TOOL, PRIVACY_TOOL, SCAM_TOOL, PWGEN_TOOL, WIFIQR_TOOL, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
 from build_local import make_customer
 
 # ── Competitive prices for the new AI offerings (owner-approved 2026-06-17; edit here) ──
@@ -4045,6 +4045,37 @@ def password_generator():
         desc=desc, og_title="Free Password Generator | 365 Techies", schema=schema, content=content)
 password_generator()
 
+# ===================================================== WI-FI QR CODE GENERATOR
+def wifi_qr_generator():
+    slug = "wifi-qr-code-generator"
+    desc = "Free Wi-Fi QR code generator. Make a QR code guests scan to join your Wi-Fi instantly — no typing the password. Generated in your browser, password never sent. From 365 Techies, Dorset."
+    faqs = [
+      ("How does a Wi-Fi QR code work?", "Guests point their phone camera (or a QR scanner) at the code and it offers to join your Wi-Fi automatically &mdash; no reading out or typing the password. It works on modern iPhones and Android phones."),
+      ("Is it safe to enter my Wi-Fi password?", "Completely &mdash; the QR code is created entirely in your browser, your password is never sent to us or anywhere else, and nothing is stored. You could even disconnect from the internet after the page loads and it would still work."),
+      ("Where should I put it?", "Anywhere guests need it &mdash; a café table, reception desk, meeting room, holiday-let welcome pack, or your kitchen. Download it, print it, and display it."),
+      ("Should guest Wi-Fi be separate from my business network?", "Ideally yes &mdash; a separate guest network keeps visitors off your business systems and devices. We set this up properly for Dorset businesses; <a href=\"/contact/\">ask us</a>."),
+      ("What&rsquo;s WPA, WEP and &lsquo;none&rsquo;?", "It&rsquo;s your network&rsquo;s security type. Almost all modern Wi-Fi is WPA/WPA2/WPA3 (leave it on that). WEP is very old, and &lsquo;none&rsquo; is an open network with no password."),
+    ]
+    content = "\n".join([
+      hero(bc("Wi-Fi QR Code Generator"), "// FREE WI-FI QR CODE",
+           'Guests join your Wi-Fi with a <em class="grad grad--cyan">single scan</em>',
+           "Stop reading out your Wi-Fi password. Make a QR code guests scan to connect instantly &mdash; great for cafés, offices, holiday lets and homes. Free, and your password never leaves your browser.",
+           cta1=("Make a QR Code", "#wqtool"), cta2=("Wi-Fi Support", "/wifi-support/"),
+           chips=["Scan to connect","100% private","Download &amp; print"]),
+      WIFIQR_TOOL,
+      faq_html(faqs),
+      cta("Wi-Fi that just works",
+          "From guest networks and black-spot fixes to whole-building mesh, we sort Wi-Fi for homes and businesses across Dorset &mdash; fast, secure and hassle-free.",
+          primary=("Sort My Wi-Fi", "/contact/"), secondary=("Wi-Fi Support", "/wifi-support/")),
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        return graph([crumb(s, "Wi-Fi QR Code Generator"), webpage(s, "Free Wi-Fi QR Code Generator", _desc),
+                      {"@type":"WebApplication","name":"365 Techies Wi-Fi QR Code Generator","applicationCategory":"UtilitiesApplication","operatingSystem":"Web (all browsers)","url":SITE+"/wifi-qr-code-generator/","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},"provider":{"@id":SITE+"/#business"}},
+                      faqpage(s, _faqs)])
+    add(slug=slug, title="Free Wi-Fi QR Code Generator | Scan to Join Wi-Fi | 365 Techies",
+        desc=desc, og_title="Free Wi-Fi QR Code Generator | 365 Techies", schema=schema, content=content)
+wifi_qr_generator()
+
 # ===================================================== AI VOICE AGENTS (new offering)
 def ai_voice():
     slug = "ai-voice-agents"
@@ -5722,6 +5753,7 @@ info_page(
           <a class="post-card" href="/what-websites-know/"><p class="post-card__cat">Tool</p><h3>Privacy Checker</h3><p>See exactly what any website can learn about you &mdash; your IP, location, browser and more.</p><span class="post-card__more">Reveal it &#8594;</span></a>
           <a class="post-card" href="/link-safety-checker/"><p class="post-card__cat">Tool</p><h3>Link Safety Checker</h3><p>Got a dodgy-looking link in a text or email? Paste it to spot the phishing warning signs &mdash; safely.</p><span class="post-card__more">Check a link &#8594;</span></a>
           <a class="post-card" href="/password-generator/"><p class="post-card__cat">Tool</p><h3>Password Generator</h3><p>Create a strong random password or a memorable passphrase in one click &mdash; securely, in your browser.</p><span class="post-card__more">Generate one &#8594;</span></a>
+          <a class="post-card" href="/wifi-qr-code-generator/"><p class="post-card__cat">Tool</p><h3>Wi-Fi QR Code Generator</h3><p>Make a QR code guests scan to join your Wi-Fi instantly &mdash; no typing the password. Print &amp; stick it up.</p><span class="post-card__more">Make one &#8594;</span></a>
           <a class="post-card" href="/windows-10-end-of-life/"><p class="post-card__cat">Act now</p><h3>Windows 10 End of Life</h3><p>Support ended in October 2025. Find out in 30 seconds if you&rsquo;re affected &mdash; and your options.</p><span class="post-card__more">Are you affected? &#8594;</span></a>
           <a class="post-card" href="/quick-quote/"><p class="post-card__cat">Tool</p><h3>Quick Quote</h3><p>Get a free, no-obligation quote or cost comparison in under a minute.</p><span class="post-card__more">Get a quote &#8594;</span></a>
           <a class="post-card" href="/broadband-speed-checker/"><p class="post-card__cat">Tool</p><h3>Broadband Speed Checker</h3><p>Is your internet fast enough? Get a recommended speed in 30 seconds.</p><span class="post-card__more">Check your speed &#8594;</span></a>
