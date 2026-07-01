@@ -199,6 +199,7 @@ HEADER = '''  <header class="site-header">
             <a href="/email-security-checker/">Email Security Checker</a>
             <a href="/password-breach-checker/">Password Breach Checker</a>
             <a href="/what-websites-know/">Privacy Checker</a>
+            <a href="/link-safety-checker/">Link Safety Checker</a>
             <a href="/ai-roi-calculator/">AI ROI Calculator</a>
             <a href="/it-health-check-tool/">IT Health Check Tool</a>
             <a href="/broadband-speed-checker/">Broadband Speed Checker</a>
@@ -347,6 +348,7 @@ HEADER = '''  <header class="site-header">
           <a href="/email-security-checker/">Email Security Checker</a>
           <a href="/password-breach-checker/">Password Breach Checker</a>
           <a href="/what-websites-know/">Privacy Checker</a>
+          <a href="/link-safety-checker/">Link Safety Checker</a>
           <a href="/ai-roi-calculator/">AI ROI Calculator</a>
           <a href="/it-health-check-tool/">IT Health Check Tool</a>
           <a href="/broadband-speed-checker/">Broadband Speed Checker</a>
@@ -498,6 +500,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/email-security-checker/">Email Security Checker</a>
         <a href="/password-breach-checker/">Password Breach Checker</a>
         <a href="/what-websites-know/">Privacy Checker</a>
+        <a href="/link-safety-checker/">Link Safety Checker</a>
         <a href="/ai-roi-calculator/">AI ROI Calculator</a>
         <a href="/it-health-check-tool/">IT Health Check Tool</a>
         <a href="/broadband-speed-checker/">Broadband Speed Checker</a>
@@ -1613,6 +1616,131 @@ PRIVACY_TOOL = r'''    <section class="section" aria-label="Privacy checker" id=
           }
           fetch('https://ipwho.is/').then(function(r){return r.json();}).then(finish).catch(function(){ finish(null); });
         });
+      })();
+      </script>
+    </section>'''
+
+# Shared scam-link checker (in-browser phishing heuristics + optional Safe Browsing via SB_ENDPOINT Worker) — /link-safety-checker/
+SCAM_TOOL = r'''    <section class="section" aria-label="Link safety checker" id="scamtool">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// FREE LINK SAFETY CHECK</p>
+          <h2 class="section-title section-title--center" data-title>Is that link safe to click?<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Paste a link and we&rsquo;ll check the address for the warning signs scammers use &mdash; <strong>before</strong> you click. Perfect for that &ldquo;is this text or email real?&rdquo; moment.</p>
+        </div>
+        <div id="scam" data-reveal>
+          <form class="sc-form" id="sc-form" novalidate>
+            <input type="text" id="sc-url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="Paste a link, e.g. https://..." aria-label="Link to check" required>
+            <button type="submit" class="button primary sc-go">Check this link</button>
+          </form>
+          <p class="sc-hint">Tip: on a phone, press and hold the link and choose &ldquo;copy link&rdquo; first. We never open the link &mdash; we only examine the address.</p>
+          <div class="sc-loading" id="sc-loading" hidden><div class="sc-spinner" aria-hidden="true"></div><p>Examining the link&hellip;</p></div>
+          <div class="sc-error" id="sc-error" hidden></div>
+          <div class="sc-results" id="sc-results" hidden>
+            <div id="sc-verdict"></div>
+            <div id="sc-flags"></div>
+            <div class="sc-fix">
+              <h3>Not sure about a message?</h3>
+              <p>If a link, text or email feels off, don&rsquo;t click &mdash; check with us first. We help Dorset homes and businesses spot and stop scams, calmly and without judgement.</p>
+              <div class="sc-fix-cta">
+                <a class="button primary" href="/contact/">Ask us about a message &#8594;</a>
+                <a class="button sc-ghost" href="/spot-the-scam/">Take the Spot-the-Scam quiz</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="sc-powered">Checks the link&rsquo;s address for common phishing tells, right in your browser. A clean result isn&rsquo;t a guarantee &mdash; when in doubt, don&rsquo;t click.</p>
+      </div>
+      <style>
+      #scam{max-width:760px;margin:0 auto}
+      #scam .sc-form{display:flex;gap:.6rem;flex-wrap:wrap;align-items:stretch}
+      #scam #sc-url{flex:1 1 260px;min-width:0;padding:.95rem 1.1rem;border-radius:12px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.04);color:inherit;font:inherit}
+      #scam #sc-url:focus{outline:none;border-color:var(--cyan,#37c2c2)}
+      #scam .sc-go{white-space:nowrap}
+      #scam .sc-hint{font-size:.78rem;color:var(--muted,#9aa6c2);margin:.6rem 0 0;line-height:1.5}
+      #scam .sc-loading{text-align:center;padding:2rem 1rem}
+      #scam .sc-spinner{width:44px;height:44px;border-radius:50%;border:3px solid rgba(255,255,255,.14);border-top-color:var(--cyan,#37c2c2);margin:0 auto 1rem;animation:sc-spin 1s linear infinite}
+      @keyframes sc-spin{to{transform:rotate(360deg)}}
+      #scam .sc-error{margin-top:1.3rem;padding:1rem 1.2rem;border-radius:12px;border:1px solid rgba(231,76,60,.45);background:rgba(231,76,60,.1);font-size:.92rem}
+      #scam .sc-results{margin-top:1.8rem}
+      #scam .sc-verdict-box{text-align:center;padding:1.6rem;border-radius:16px;border:1px solid rgba(255,255,255,.12);margin-bottom:1.4rem}
+      #scam .sc-verdict-dom{margin:0;font-size:.85rem;color:var(--muted,#9aa6c2);word-break:break-all}
+      #scam .sc-verdict-grade{margin:.2rem 0 .5rem;font-size:1.7rem;font-weight:800}
+      #scam .sc-verdict-msg{margin:0 auto;max-width:52ch;font-size:.95rem;line-height:1.6;color:var(--muted,#9aa6c2)}
+      #scam .sc-sub{font-size:.95rem;font-weight:700;margin:1.6rem 0 .8rem;text-align:center}
+      #scam .sc-flag{padding:.9rem 1.1rem;border-radius:12px;background:rgba(255,255,255,.03);border-left:4px solid var(--muted,#9aa6c2);margin-bottom:.7rem}
+      #scam .sc-flag-h{display:flex;align-items:center;gap:.6rem;margin-bottom:.25rem}
+      #scam .sc-flag-ico{width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;color:#04161a;flex:none}
+      #scam .sc-flag b{font-size:.95rem}
+      #scam .sc-flag p{margin:0;font-size:.88rem;color:var(--muted,#9aa6c2);line-height:1.55}
+      #scam .sc-good{border-left-color:#2ecc71}
+      #scam .sc-good .sc-flag-ico{background:#2ecc71}
+      #scam .sc-avg{border-left-color:#f1c40f}
+      #scam .sc-avg .sc-flag-ico{background:#f1c40f}
+      #scam .sc-poor{border-left-color:#e74c3c}
+      #scam .sc-poor .sc-flag-ico{background:#e74c3c}
+      #scam .sc-verdict-box.sc-good{border-color:rgba(46,204,113,.4);background:rgba(46,204,113,.08)}
+      #scam .sc-verdict-box.sc-avg{border-color:rgba(241,196,15,.4);background:rgba(241,196,15,.08)}
+      #scam .sc-verdict-box.sc-poor{border-color:rgba(231,76,60,.4);background:rgba(231,76,60,.1)}
+      #scam .sc-verdict-box.sc-good .sc-verdict-grade{color:#2ecc71}
+      #scam .sc-verdict-box.sc-avg .sc-verdict-grade{color:#f1c40f}
+      #scam .sc-verdict-box.sc-poor .sc-verdict-grade{color:#e74c3c}
+      #scam .sc-fix{margin-top:2rem;padding:1.6rem;border-radius:16px;border:1px solid rgba(55,194,194,.35);background:rgba(55,194,194,.07);text-align:center}
+      #scam .sc-fix h3{margin:0 0 .5rem;font-size:1.2rem}
+      #scam .sc-fix p{margin:0 auto 1.1rem;max-width:52ch;color:var(--muted,#9aa6c2);font-size:.95rem;line-height:1.6}
+      #scam .sc-fix-cta{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center}
+      #scam .sc-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}
+      #scam .sc-powered{text-align:center;font-size:.72rem;color:var(--muted,#9aa6c2);margin:1.4rem 0 0;opacity:.8}
+      @media(max-width:560px){#scam .sc-go{flex:1 1 100%}}
+      </style>
+      <script>
+      (function(){
+        var root=document.getElementById('scam'); if(!root) return;
+        var SB_ENDPOINT=""; /* optional: a Cloudflare Worker URL (safe-browsing-proxy.js) that checks Google Safe Browsing. When set, adds a definitive "known dangerous" check on top of the built-in heuristics. */
+        var form=root.querySelector('#sc-form'), input=root.querySelector('#sc-url');
+        var elLoad=root.querySelector('#sc-loading'), elErr=root.querySelector('#sc-error'), elRes=root.querySelector('#sc-results');
+        function esc(s){var d=document.createElement('div');d.textContent=(s==null?'':s);return d.innerHTML;}
+        var SHORT=['bit.ly','tinyurl.com','goo.gl','t.co','ow.ly','is.gd','buff.ly','rebrand.ly','cutt.ly','rb.gy','shorturl.at','tiny.cc','bit.do','soo.gd','t.ly'];
+        var BADTLD=['zip','mov','tk','gq','ml','cf','ga','xyz','top','work','click','link','country','kim','science','review','loan','men','date','stream','gdn'];
+        function analyze(raw){
+          var url=(raw||'').trim(); if(!/^[a-z][a-z0-9+.\-]*:\/\//i.test(url)) url='http://'+url;
+          var u; try{ u=new URL(url); }catch(e){ return null; }
+          var host=u.hostname.toLowerCase(), flags=[];
+          if(u.protocol!=='https:') flags.push({s:'poor',t:'Not a secure (HTTPS) link',m:'This address isn&rsquo;t encrypted &mdash; never enter passwords or card details on it.'});
+          if(/^\d{1,3}(\.\d{1,3}){3}$/.test(host)||host.indexOf(':')>=0) flags.push({s:'poor',t:'Uses an IP address, not a domain',m:'Real businesses use a proper domain name. A raw IP address is a classic phishing sign.'});
+          if(u.username||(raw.split('#')[0]||'').replace(/^[a-z]+:\/\//i,'').indexOf('@')>=0) flags.push({s:'poor',t:'Hides the real destination with &ldquo;@&rdquo;',m:'Anything before an @ in a web address is ignored by browsers &mdash; scammers use it to disguise where a link truly goes.'});
+          if(/(^|\.)xn--/.test(host)) flags.push({s:'poor',t:'Uses disguised (&ldquo;punycode&rdquo;) characters',m:'The address contains encoded letters that can make a fake site look identical to a real one.'});
+          if(SHORT.indexOf(host.replace(/^www\./,''))>=0) flags.push({s:'avg',t:'It&rsquo;s a shortened link',m:'Short links hide their true destination &mdash; you can&rsquo;t see where it actually leads, so take care.'});
+          var labels=host.split('.'); if(labels.length>=5) flags.push({s:'avg',t:'A long chain of subdomains',m:'Lots of dots ('+esc(host)+') is often used to make a scam link look official.'});
+          var tld=labels[labels.length-1]; if(BADTLD.indexOf(tld)>=0) flags.push({s:'avg',t:'Unusual domain ending (.'+esc(tld)+')',m:'This ending is used far more by scam and spam sites than legitimate ones. Not always bad &mdash; just take extra care.'});
+          if(url.length>100) flags.push({s:'avg',t:'A very long web address',m:'Unusually long links can hide the real destination or heavy tracking.'});
+          return {host:host, flags:flags, url:u.href};
+        }
+        form.addEventListener('submit',function(e){
+          e.preventDefault();
+          var raw=input.value; if(!raw.trim()){ input.focus(); return; }
+          var a=analyze(raw);
+          if(!a){ elErr.innerHTML='That doesn&rsquo;t look like a valid web address. Paste the whole link, including the part before the first &ldquo;/&rdquo;.'; elErr.hidden=false; elRes.hidden=true; return; }
+          elErr.hidden=true; elRes.hidden=true; elLoad.hidden=false; var btn=form.querySelector('.sc-go'); btn.disabled=true;
+          var done=function(threat){ render(a,threat); elLoad.hidden=true; btn.disabled=false; };
+          if(SB_ENDPOINT){ fetch(SB_ENDPOINT+(SB_ENDPOINT.indexOf('?')<0?'?':'&')+'url='+encodeURIComponent(a.url)).then(function(r){return r.json();}).then(function(d){ done(d&&d.threat||null); }).catch(function(){ done(null); }); }
+          else { setTimeout(function(){ done(null); }, 250); }
+        });
+        function render(a, threat){
+          var flags=a.flags, hasBad=false; for(var i=0;i<flags.length;i++){ if(flags[i].s==='poor'){ hasBad=true; break; } }
+          var v;
+          if(threat) v={g:'Known dangerous site',cls:'poor',m:'Google Safe Browsing lists this link as '+esc(String(threat).toLowerCase().replace(/_/g,' '))+'. Do not click it, and never enter any details.'};
+          else if(hasBad) v={g:'Looks suspicious',cls:'poor',m:'This link shows warning signs scammers commonly use. Treat it with real caution &mdash; when in doubt, don&rsquo;t click.'};
+          else if(flags.length) v={g:'A few warning signs',cls:'avg',m:'Nothing definite, but a couple of things are worth a second look before you click.'};
+          else v={g:'No obvious red flags',cls:'good',m:'The address doesn&rsquo;t show the usual phishing tells &mdash; reassuring, but not a cast-iron guarantee. Only continue if you were expecting this link.'};
+          root.querySelector('#sc-verdict').innerHTML='<div class="sc-verdict-box sc-'+v.cls+'"><p class="sc-verdict-dom">'+esc(a.host)+'</p><p class="sc-verdict-grade">'+v.g+'</p><p class="sc-verdict-msg">'+v.m+'</p></div>';
+          var f='';
+          if(flags.length){ f='<h3 class="sc-sub">What we spotted</h3>'; flags.forEach(function(c){ var icon=c.s==='poor'?'✗':'!'; f+='<div class="sc-flag sc-'+c.s+'"><div class="sc-flag-h"><span class="sc-flag-ico">'+icon+'</span><b>'+c.t+'</b></div><p>'+c.m+'</p></div>'; }); }
+          else { f='<div class="sc-flag sc-good"><div class="sc-flag-h"><span class="sc-flag-ico">✓</span><b>No common phishing signs found</b></div><p>Secure connection, a normal domain, and no address-disguising tricks.</p></div>'; }
+          root.querySelector('#sc-flags').innerHTML=f;
+          elRes.hidden=false;
+          try{ elRes.scrollIntoView({behavior:'smooth',block:'start'}); }catch(e){}
+        }
       })();
       </script>
     </section>'''

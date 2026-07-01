@@ -9,7 +9,7 @@ import build_local  # registers the 12 local/customer pages on import
 from build_pages import (add, graph, crumb, webpage, service, faqpage,
                          faq_html, cta, hero, hero_trust, bc, bc_sub, crumb_sub, tiles, grid_cards, checklist,
                          steps, reviews_block, ico, SITE, write_all,
-                         promise_strip, uk_remote_band, WCHECK_TOOL, EMAILSEC_TOOL, PWNED_TOOL, PRIVACY_TOOL, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
+                         promise_strip, uk_remote_band, WCHECK_TOOL, EMAILSEC_TOOL, PWNED_TOOL, PRIVACY_TOOL, SCAM_TOOL, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
 from build_local import make_customer
 
 # ── Competitive prices for the new AI offerings (owner-approved 2026-06-17; edit here) ──
@@ -3854,6 +3854,37 @@ def privacy_checker():
         desc=desc, og_title="What Can Websites See About You? | 365 Techies", schema=schema, content=content)
 privacy_checker()
 
+# ===================================================== LINK SAFETY / SCAM-LINK CHECKER (heuristics + optional Safe Browsing)
+def scam_link_checker():
+    slug = "link-safety-checker"
+    desc = "Free link safety checker. Paste a link to spot the phishing warning signs scammers use before you click — is that text or email real? From 365 Techies, Bournemouth & Dorset."
+    faqs = [
+      ("What does the link safety checker do?", "It examines a web address for the tell-tale signs of a phishing or scam link &mdash; things like a missing secure connection, an IP address instead of a domain, disguised characters, or a shortened link that hides where it really goes &mdash; and explains what it finds in plain English."),
+      ("Does it open the link?", "No &mdash; and that&rsquo;s deliberate. We only read and analyse the <em>address</em> in your browser, so it&rsquo;s completely safe to check a link you&rsquo;re unsure about."),
+      ("If it says &lsquo;no red flags&rsquo;, is the link definitely safe?", "It&rsquo;s reassuring, but not a guarantee &mdash; a clean-looking address can still be malicious. Always ask yourself: were you expecting this link? If a message feels off, don&rsquo;t click &mdash; check with us."),
+      ("I&rsquo;ve clicked a bad link &mdash; what now?", "Don&rsquo;t panic. Don&rsquo;t enter any details, close the page, and if you already typed a password, change it straight away. See our <a href=\"/ive-been-scammed-what-to-do/\">I&rsquo;ve been scammed</a> guide, or <a href=\"/contact/\">call us</a> &mdash; we&rsquo;ll help."),
+      ("Where can I learn to spot scams myself?", "Try our free <a href=\"/spot-the-scam/\">Spot the Scam quiz</a> and our <a href=\"/online-safety/\">online safety hub</a> &mdash; both in plain English, no jargon."),
+    ]
+    content = "\n".join([
+      hero(bc("Link Safety Checker"), "// FREE LINK SAFETY CHECK",
+           'Is that link <em class="grad grad--cyan">safe to click?</em>',
+           "Got a link in a text or email and not sure? Paste it here and we&rsquo;ll check the address for the warning signs scammers use &mdash; safely, without ever opening it.",
+           cta1=("Check a Link", "#scamtool"), cta2=("Spot the Scam Quiz", "/spot-the-scam/"),
+           chips=["We never open the link","Instant &amp; free","Plain-English result"]),
+      SCAM_TOOL,
+      faq_html(faqs),
+      cta("Had a suspicious message?",
+          "Forward it, screenshot it, or just describe it &mdash; we&rsquo;ll tell you if it&rsquo;s a scam and what to do, with no judgement. Helping Dorset stay safe online since 1995.",
+          primary=("Ask Us", "/contact/"), secondary=("Online Safety Hub", "/online-safety/")),
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        return graph([crumb(s, "Link Safety Checker"), webpage(s, "Free Link Safety Checker", _desc),
+                      {"@type":"WebApplication","name":"365 Techies Link Safety Checker","applicationCategory":"SecurityApplication","operatingSystem":"Web (all browsers)","url":SITE+"/link-safety-checker/","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},"provider":{"@id":SITE+"/#business"}},
+                      faqpage(s, _faqs)])
+    add(slug=slug, title="Free Link Safety Checker | Is That Link a Scam? | 365 Techies",
+        desc=desc, og_title="Free Link Safety Checker | 365 Techies", schema=schema, content=content)
+scam_link_checker()
+
 # ===================================================== AI VOICE AGENTS (new offering)
 def ai_voice():
     slug = "ai-voice-agents"
@@ -5529,6 +5560,7 @@ info_page(
           <a class="post-card" href="/email-security-checker/"><p class="post-card__cat">Tool</p><h3>Email Security Checker</h3><p>Enter your domain to see if SPF, DKIM &amp; DMARC are stopping scammers spoofing your business email.</p><span class="post-card__more">Check your domain &#8594;</span></a>
           <a class="post-card" href="/password-breach-checker/"><p class="post-card__cat">Tool</p><h3>Password Breach Checker</h3><p>Has your password leaked? Check it privately against billions exposed in real data breaches.</p><span class="post-card__more">Check a password &#8594;</span></a>
           <a class="post-card" href="/what-websites-know/"><p class="post-card__cat">Tool</p><h3>Privacy Checker</h3><p>See exactly what any website can learn about you &mdash; your IP, location, browser and more.</p><span class="post-card__more">Reveal it &#8594;</span></a>
+          <a class="post-card" href="/link-safety-checker/"><p class="post-card__cat">Tool</p><h3>Link Safety Checker</h3><p>Got a dodgy-looking link in a text or email? Paste it to spot the phishing warning signs &mdash; safely.</p><span class="post-card__more">Check a link &#8594;</span></a>
           <a class="post-card" href="/windows-10-end-of-life/"><p class="post-card__cat">Act now</p><h3>Windows 10 End of Life</h3><p>Support ended in October 2025. Find out in 30 seconds if you&rsquo;re affected &mdash; and your options.</p><span class="post-card__more">Are you affected? &#8594;</span></a>
           <a class="post-card" href="/quick-quote/"><p class="post-card__cat">Tool</p><h3>Quick Quote</h3><p>Get a free, no-obligation quote or cost comparison in under a minute.</p><span class="post-card__more">Get a quote &#8594;</span></a>
           <a class="post-card" href="/broadband-speed-checker/"><p class="post-card__cat">Tool</p><h3>Broadband Speed Checker</h3><p>Is your internet fast enough? Get a recommended speed in 30 seconds.</p><span class="post-card__more">Check your speed &#8594;</span></a>
