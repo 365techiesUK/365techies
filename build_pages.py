@@ -200,6 +200,7 @@ HEADER = '''  <header class="site-header">
             <a href="/password-breach-checker/">Password Breach Checker</a>
             <a href="/what-websites-know/">Privacy Checker</a>
             <a href="/link-safety-checker/">Link Safety Checker</a>
+            <a href="/password-generator/">Password Generator</a>
             <a href="/ai-roi-calculator/">AI ROI Calculator</a>
             <a href="/it-health-check-tool/">IT Health Check Tool</a>
             <a href="/broadband-speed-checker/">Broadband Speed Checker</a>
@@ -349,6 +350,7 @@ HEADER = '''  <header class="site-header">
           <a href="/password-breach-checker/">Password Breach Checker</a>
           <a href="/what-websites-know/">Privacy Checker</a>
           <a href="/link-safety-checker/">Link Safety Checker</a>
+          <a href="/password-generator/">Password Generator</a>
           <a href="/ai-roi-calculator/">AI ROI Calculator</a>
           <a href="/it-health-check-tool/">IT Health Check Tool</a>
           <a href="/broadband-speed-checker/">Broadband Speed Checker</a>
@@ -501,6 +503,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/password-breach-checker/">Password Breach Checker</a>
         <a href="/what-websites-know/">Privacy Checker</a>
         <a href="/link-safety-checker/">Link Safety Checker</a>
+        <a href="/password-generator/">Password Generator</a>
         <a href="/ai-roi-calculator/">AI ROI Calculator</a>
         <a href="/it-health-check-tool/">IT Health Check Tool</a>
         <a href="/broadband-speed-checker/">Broadband Speed Checker</a>
@@ -1741,6 +1744,120 @@ SCAM_TOOL = r'''    <section class="section" aria-label="Link safety checker" id
           elRes.hidden=false;
           try{ elRes.scrollIntoView({behavior:'smooth',block:'start'}); }catch(e){}
         }
+      })();
+      </script>
+    </section>'''
+
+# Shared password / passphrase generator (client-side, crypto.getRandomValues, no key) — /password-generator/
+PWGEN_TOOL = r'''    <section class="section" aria-label="Password generator" id="pgtool">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// FREE PASSWORD GENERATOR</p>
+          <h2 class="section-title section-title--center" data-title>Make a strong password in one click<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Create a strong random password &mdash; or a memorable passphrase you can actually remember. Generated securely in your browser and <strong>never sent anywhere</strong>.</p>
+        </div>
+        <div id="pg" data-reveal>
+          <div class="pg-out"><code id="pg-value">Click Generate&hellip;</code><button type="button" class="pg-copy" id="pg-copy">Copy</button></div>
+          <div class="pg-bar-wrap"><div class="pg-bar" id="pg-bar"></div></div>
+          <p class="pg-strlabel" id="pg-strlabel">&nbsp;</p>
+          <div class="pg-tabs" role="tablist">
+            <button type="button" data-mode="random" class="is-active" role="tab">Random password</button>
+            <button type="button" data-mode="phrase" role="tab">Memorable passphrase</button>
+          </div>
+          <div class="pg-controls" id="pg-random">
+            <div class="pg-field"><label>Length <output id="pg-len">16</output></label><input type="range" id="pg-len-r" min="8" max="40" value="16" aria-label="Password length"></div>
+            <div class="pg-opts">
+              <label><input type="checkbox" id="pg-upper" checked> Capitals A&ndash;Z</label>
+              <label><input type="checkbox" id="pg-lower" checked> Letters a&ndash;z</label>
+              <label><input type="checkbox" id="pg-num" checked> Numbers 0&ndash;9</label>
+              <label><input type="checkbox" id="pg-sym" checked> Symbols !@#</label>
+              <label><input type="checkbox" id="pg-ambig"> Avoid look-alikes (0/O, 1/l)</label>
+            </div>
+          </div>
+          <div class="pg-controls" id="pg-phrase" hidden>
+            <div class="pg-field"><label>Words <output id="pg-words">4</output></label><input type="range" id="pg-words-r" min="3" max="6" value="4" aria-label="Number of words"></div>
+            <div class="pg-opts">
+              <label><input type="checkbox" id="pg-cap" checked> Capitalise words</label>
+              <label><input type="checkbox" id="pg-pnum" checked> Add a number</label>
+              <label>Separator <select id="pg-sep"><option value="-">- (dash)</option><option value=".">. (dot)</option><option value="_">_ (underscore)</option><option value=" ">space</option></select></label>
+            </div>
+          </div>
+          <div style="text-align:center;margin-top:1.2rem"><button type="button" class="button primary pg-go" id="pg-go">Generate</button></div>
+          <p class="pg-hint">&#128274; Generated right here in your browser with secure randomness &mdash; never sent anywhere or stored.</p>
+        </div>
+        <div class="pg-fix">
+          <h3>Too many passwords to remember?</h3>
+          <p>That&rsquo;s exactly what a password manager is for &mdash; one strong password unlocks the rest, and it fills them in for you. We set them up for Dorset homes and businesses and show you how to use them, in plain English.</p>
+          <div class="pg-fix-cta"><a class="button primary" href="/contact/">Get a password manager set up &#8594;</a><a class="button pg-ghost" href="/password-breach-checker/">Has yours been leaked?</a></div>
+        </div>
+      </div>
+      <style>
+      #pg{max-width:640px;margin:0 auto}
+      #pg .pg-out{display:flex;gap:.5rem;align-items:stretch;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:.5rem .5rem .5rem .9rem}
+      #pg #pg-value{flex:1;min-width:0;display:flex;align-items:center;font-family:var(--font-mono,monospace);font-size:1.15rem;color:#fff;word-break:break-all;overflow-wrap:anywhere}
+      #pg .pg-copy{white-space:nowrap;font:inherit;font-weight:600;padding:.6rem 1rem;border-radius:9px;border:1px solid var(--cyan,#37c2c2);background:transparent;color:var(--cyan,#37c2c2);cursor:pointer}
+      #pg .pg-copy.done{background:#2ecc71;border-color:#2ecc71;color:#04161a}
+      #pg .pg-bar-wrap{height:7px;border-radius:99px;background:rgba(255,255,255,.1);margin:.9rem 0 .3rem;overflow:hidden}
+      #pg .pg-bar{height:100%;width:0;border-radius:99px;transition:width .3s,background .3s}
+      #pg .pg-strlabel{text-align:right;font-size:.78rem;margin:0 0 1.2rem;min-height:1em;color:var(--muted,#9aa6c2)}
+      #pg .pg-tabs{display:flex;gap:.4rem;margin-bottom:1.1rem}
+      #pg .pg-tabs button{flex:1;font:inherit;font-weight:600;padding:.65rem;border-radius:11px;border:1px solid rgba(255,255,255,.12);background:transparent;color:inherit;cursor:pointer}
+      #pg .pg-tabs button.is-active{background:var(--cyan,#37c2c2);color:#04161a;border-color:var(--cyan,#37c2c2)}
+      #pg .pg-field label{display:flex;justify-content:space-between;font-size:.9rem;margin-bottom:.4rem}
+      #pg .pg-field output{font-weight:700;color:var(--cyan,#37c2c2)}
+      #pg input[type=range]{width:100%;accent-color:var(--cyan,#37c2c2);cursor:pointer;margin-bottom:1rem}
+      #pg .pg-opts{display:flex;flex-direction:column;gap:.55rem;font-size:.92rem}
+      #pg .pg-opts label{display:flex;align-items:center;gap:.5rem}
+      #pg .pg-opts select{font:inherit;margin-left:auto;background:rgba(255,255,255,.06);color:inherit;border:1px solid rgba(255,255,255,.15);border-radius:7px;padding:.25rem .4rem}
+      #pg .pg-opts input[type=checkbox]{accent-color:var(--cyan,#37c2c2);width:1.05rem;height:1.05rem}
+      #pg .pg-hint{text-align:center;font-size:.76rem;color:var(--muted,#9aa6c2);margin:1rem 0 0;line-height:1.5}
+      #pgtool .pg-fix{max-width:640px;margin:2rem auto 0;padding:1.6rem;border-radius:16px;border:1px solid rgba(55,194,194,.35);background:rgba(55,194,194,.07);text-align:center}
+      #pgtool .pg-fix h3{margin:0 0 .5rem;font-size:1.2rem}
+      #pgtool .pg-fix p{margin:0 auto 1.1rem;max-width:52ch;color:var(--muted,#9aa6c2);font-size:.95rem;line-height:1.6}
+      #pgtool .pg-fix-cta{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center}
+      #pgtool .pg-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}
+      </style>
+      <script>
+      (function(){
+        var root=document.getElementById('pg'); if(!root) return;
+        var WORDS=['apple','amber','anchor','apron','arrow','autumn','badge','banana','basket','beacon','blossom','bottle','branch','breeze','bridge','bronze','bubble','button','cabin','cactus','candle','canyon','carbon','castle','cedar','cherry','circle','clover','cobalt','comet','copper','coral','cotton','cricket','crown','crystal','daisy','dolphin','dragon','ember','engine','falcon','feather','ginger','glacier','granite','harbour','hazel','helmet','hollow','ivory','jacket','jasmine','jungle','kettle','lagoon','lantern','lemon','lily','lobster','lotus','magnet','mango','maple','marble','meadow','melon','meteor','mirror','mocha','monsoon','mountain','mushroom','nectar','needle','oasis','ocean','olive','onyx','orbit','otter','oyster','palace','pebble','pepper','pigeon','pillow','pirate','planet','pocket','pumpkin','quartz','rabbit','raccoon','ranch','ribbon','river','rocket','saddle','salmon','sapphire','shadow','shrimp','silver','sparrow','spruce','squirrel','sunset','temple','thunder','tiger','timber','tulip','turtle','velvet','violet','walnut','willow','wombat','zephyr'];
+        var mode='random';
+        var val=root.querySelector('#pg-value'), copy=root.querySelector('#pg-copy'), bar=root.querySelector('#pg-bar'), strlabel=root.querySelector('#pg-strlabel');
+        var lenR=root.querySelector('#pg-len-r'), lenO=root.querySelector('#pg-len'), wordsR=root.querySelector('#pg-words-r'), wordsO=root.querySelector('#pg-words');
+        function q(id){ return root.querySelector(id); }
+        function secRand(max){ var a=new Uint32Array(1); var lim=Math.floor(4294967296/max)*max; do{ crypto.getRandomValues(a); }while(a[0]>=lim); return a[0]%max; }
+        root.querySelectorAll('.pg-tabs button').forEach(function(b){ b.onclick=function(){ mode=b.getAttribute('data-mode'); root.querySelectorAll('.pg-tabs button').forEach(function(x){x.classList.toggle('is-active',x===b);}); q('#pg-random').hidden=(mode!=='random'); q('#pg-phrase').hidden=(mode!=='phrase'); generate(); }; });
+        lenR.addEventListener('input',function(){ lenO.textContent=lenR.value; generate(); });
+        wordsR.addEventListener('input',function(){ wordsO.textContent=wordsR.value; generate(); });
+        root.querySelectorAll('#pg-random input, #pg-phrase input, #pg-phrase select').forEach(function(el){ el.addEventListener('change',generate); });
+        function genRandom(){
+          var U='ABCDEFGHIJKLMNOPQRSTUVWXYZ',L='abcdefghijklmnopqrstuvwxyz',N='0123456789',S='!@#$%^&*-_=+?';
+          if(q('#pg-ambig').checked){ U=U.replace(/[IO]/g,''); L=L.replace(/[lo]/g,''); N=N.replace(/[01]/g,''); }
+          var sets=[]; if(q('#pg-upper').checked)sets.push(U); if(q('#pg-lower').checked)sets.push(L); if(q('#pg-num').checked)sets.push(N); if(q('#pg-sym').checked)sets.push(S);
+          if(!sets.length){ sets.push(L); }
+          var all=sets.join(''), len=+lenR.value, out=[];
+          sets.forEach(function(s){ out.push(s.charAt(secRand(s.length))); });
+          while(out.length<len) out.push(all.charAt(secRand(all.length)));
+          for(var i=out.length-1;i>0;i--){ var j=secRand(i+1); var t=out[i]; out[i]=out[j]; out[j]=t; }
+          return {v:out.join(''), bits:Math.round(len*Math.log(all.length)/Math.log(2))};
+        }
+        function genPhrase(){
+          var n=+wordsR.value, sep=q('#pg-sep').value, cap=q('#pg-cap').checked, out=[];
+          for(var i=0;i<n;i++){ var w=WORDS[secRand(WORDS.length)]; if(cap) w=w.charAt(0).toUpperCase()+w.slice(1); out.push(w); }
+          var s=out.join(sep), bits=Math.round(n*Math.log(WORDS.length)/Math.log(2));
+          if(q('#pg-pnum').checked){ s+=sep+(secRand(90)+10); bits+=6; }
+          return {v:s, bits:bits};
+        }
+        function showStrength(bits){
+          var pct=Math.max(6,Math.min(100,Math.round(bits/1.28))), col, lab;
+          if(bits<40){ col='#e74c3c'; lab='Weak'; } else if(bits<60){ col='#f1c40f'; lab='Fair'; } else if(bits<80){ col='#2ecc71'; lab='Strong'; } else { col='#2ecc71'; lab='Excellent'; }
+          bar.style.width=pct+'%'; bar.style.background=col; strlabel.textContent=lab+' &middot; ~'+bits+' bits'; strlabel.innerHTML=lab+' &middot; ~'+bits+' bits of entropy';
+        }
+        function generate(){ var r=mode==='random'?genRandom():genPhrase(); val.textContent=r.v; showStrength(r.bits); copy.textContent='Copy'; copy.classList.remove('done'); }
+        copy.addEventListener('click',function(){ var t=val.textContent; function ok(){ copy.textContent='Copied!'; copy.classList.add('done'); setTimeout(function(){ copy.textContent='Copy'; copy.classList.remove('done'); },1600); }
+          if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(t).then(ok).catch(function(){}); } else { var ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy'); ok();}catch(e){} document.body.removeChild(ta); } });
+        q('#pg-go').addEventListener('click',generate);
+        generate();
       })();
       </script>
     </section>'''

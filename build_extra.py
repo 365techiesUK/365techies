@@ -9,7 +9,7 @@ import build_local  # registers the 12 local/customer pages on import
 from build_pages import (add, graph, crumb, webpage, service, faqpage,
                          faq_html, cta, hero, hero_trust, bc, bc_sub, crumb_sub, tiles, grid_cards, checklist,
                          steps, reviews_block, ico, SITE, write_all,
-                         promise_strip, uk_remote_band, WCHECK_TOOL, EMAILSEC_TOOL, PWNED_TOOL, PRIVACY_TOOL, SCAM_TOOL, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
+                         promise_strip, uk_remote_band, WCHECK_TOOL, EMAILSEC_TOOL, PWNED_TOOL, PRIVACY_TOOL, SCAM_TOOL, PWGEN_TOOL, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
 from build_local import make_customer
 
 # ── Competitive prices for the new AI offerings (owner-approved 2026-06-17; edit here) ──
@@ -4014,6 +4014,37 @@ def scam_link_checker():
         desc=desc, og_title="Free Link Safety Checker | 365 Techies", schema=schema, content=content)
 scam_link_checker()
 
+# ===================================================== PASSWORD GENERATOR
+def password_generator():
+    slug = "password-generator"
+    desc = "Free password generator. Create a strong random password or a memorable passphrase in one click — generated securely in your browser, never sent anywhere. From 365 Techies, Bournemouth & Dorset."
+    faqs = [
+      ("Is it safe to generate a password here?", "Yes &mdash; completely. The password is created <em>in your browser</em> using secure randomness, and it&rsquo;s never sent to us or anywhere else. Nothing is stored."),
+      ("What makes a strong password?", "Length and unpredictability. A long random password (16+ characters) or a passphrase of several random words is far stronger than a short complicated one &mdash; and the golden rule is a <em>different</em> password for every account."),
+      ("Random password or memorable passphrase?", "A random password is strongest and perfect for a password manager to remember for you. A passphrase (like &lsquo;Otter-Lantern-River-42&rsquo;) is easier to type and recall &mdash; ideal for the few passwords you need to know by heart, such as your password manager itself."),
+      ("How do I keep track of all my passwords?", "A password manager &mdash; it remembers them all behind one strong password and fills them in for you. We set them up for homes and businesses and show you how. <a href=\"/contact/\">Ask us</a>."),
+      ("Should I check if my old passwords are safe?", "Good idea &mdash; try our <a href=\"/password-breach-checker/\">password breach checker</a> to see if any have appeared in a data breach, and change any that have."),
+    ]
+    content = "\n".join([
+      hero(bc("Password Generator"), "// FREE PASSWORD GENERATOR",
+           'Create a <em class="grad grad--cyan">strong password</em> in one click',
+           "Generate a strong random password &mdash; or a passphrase you can actually remember &mdash; instantly and securely. Made in your browser, never sent anywhere.",
+           cta1=("Generate One", "#pgtool"), cta2=("Cybersecurity Help", "/cybersecurity-support/"),
+           chips=["Random or memorable","100% in your browser","No sign-up"]),
+      PWGEN_TOOL,
+      faq_html(faqs),
+      cta("One strong password to rule them all",
+          "A password manager remembers every login for you, behind a single strong password &mdash; we set it up and make it simple, for homes and businesses across Dorset.",
+          primary=("Get Set Up", "/contact/"), secondary=("Cybersecurity Support", "/cybersecurity-support/")),
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        return graph([crumb(s, "Password Generator"), webpage(s, "Free Password Generator", _desc),
+                      {"@type":"WebApplication","name":"365 Techies Password Generator","applicationCategory":"SecurityApplication","operatingSystem":"Web (all browsers)","url":SITE+"/password-generator/","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},"provider":{"@id":SITE+"/#business"}},
+                      faqpage(s, _faqs)])
+    add(slug=slug, title="Free Password Generator | Strong Passwords & Passphrases | 365 Techies",
+        desc=desc, og_title="Free Password Generator | 365 Techies", schema=schema, content=content)
+password_generator()
+
 # ===================================================== AI VOICE AGENTS (new offering)
 def ai_voice():
     slug = "ai-voice-agents"
@@ -5690,6 +5721,7 @@ info_page(
           <a class="post-card" href="/password-breach-checker/"><p class="post-card__cat">Tool</p><h3>Password Breach Checker</h3><p>Has your password leaked? Check it privately against billions exposed in real data breaches.</p><span class="post-card__more">Check a password &#8594;</span></a>
           <a class="post-card" href="/what-websites-know/"><p class="post-card__cat">Tool</p><h3>Privacy Checker</h3><p>See exactly what any website can learn about you &mdash; your IP, location, browser and more.</p><span class="post-card__more">Reveal it &#8594;</span></a>
           <a class="post-card" href="/link-safety-checker/"><p class="post-card__cat">Tool</p><h3>Link Safety Checker</h3><p>Got a dodgy-looking link in a text or email? Paste it to spot the phishing warning signs &mdash; safely.</p><span class="post-card__more">Check a link &#8594;</span></a>
+          <a class="post-card" href="/password-generator/"><p class="post-card__cat">Tool</p><h3>Password Generator</h3><p>Create a strong random password or a memorable passphrase in one click &mdash; securely, in your browser.</p><span class="post-card__more">Generate one &#8594;</span></a>
           <a class="post-card" href="/windows-10-end-of-life/"><p class="post-card__cat">Act now</p><h3>Windows 10 End of Life</h3><p>Support ended in October 2025. Find out in 30 seconds if you&rsquo;re affected &mdash; and your options.</p><span class="post-card__more">Are you affected? &#8594;</span></a>
           <a class="post-card" href="/quick-quote/"><p class="post-card__cat">Tool</p><h3>Quick Quote</h3><p>Get a free, no-obligation quote or cost comparison in under a minute.</p><span class="post-card__more">Get a quote &#8594;</span></a>
           <a class="post-card" href="/broadband-speed-checker/"><p class="post-card__cat">Tool</p><h3>Broadband Speed Checker</h3><p>Is your internet fast enough? Get a recommended speed in 30 seconds.</p><span class="post-card__more">Check your speed &#8594;</span></a>
