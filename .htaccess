@@ -91,6 +91,13 @@ ErrorDocument 404 /404.html
 <Files "vrm-live.php">
   SetEnv no-gzip 1
 </Files>
+# Never serve the Slack webhook config or rate file over HTTP
+<Files "slack-webhook.php">
+  Require all denied
+</Files>
+<Files "slack-rate.json">
+  Require all denied
+</Files>
 
 # ============================================================
 # Performance: compression (Brotli preferred, gzip fallback)

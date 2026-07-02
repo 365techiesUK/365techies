@@ -9,6 +9,8 @@ __pycache__/
 out
 .git-commit-msg.tmp
 
-# VRM live-dashboard secrets/cache — live ONLY on the SiteGround server, never in git (public repo)
+# Server-only secrets/caches — live ONLY on the SiteGround server, never in git (public repo)
 api/vrm-token.php
 api/vrm-cache.json
+api/slack-webhook.php
+api/slack-rate.json

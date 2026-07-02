@@ -1,7 +1,10 @@
-/* 365 Techies — contact forms -> HubSpot Forms API.
+/* 365 Techies — contact forms -> HubSpot Forms API + Slack.
  * Intercepts every <form class="contact-form"> and posts the enquiry straight to
  * HubSpot (creates/updates a contact + records a submission). portalId + formGuid
- * are NOT secrets (they appear in any HubSpot embed code). No token, no server.
+ * are NOT secrets (they appear in any HubSpot embed code).
+ * Also fires a copy to /api/slack-lead.php (server-side relay; webhook stays on the
+ * server) so new leads ping the team's Slack instantly. Fire-and-forget: Slack being
+ * down never affects the visitor or the HubSpot submission.
  * Mirrors the AI OS field mapping so it hits the same form/list.
  */
 (function () {
@@ -44,6 +47,19 @@
       add("phone", val(form, "phone"));
       add("company", val(form, "company"));
       add("message", message);
+
+      /* instant Slack ping (server-side relay) — independent of the HubSpot submission */
+      try {
+        fetch("/api/slack-lead.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: val(form, "name"), email: email, phone: val(form, "phone"),
+            company: val(form, "company"), topic: topic, message: val(form, "message"),
+            page: location.href
+          })
+        }).catch(function () {});
+      } catch (err) {}
 
       var body = { fields: fields, context: { pageUri: location.href, pageName: document.title } };
       if (btn) { btn.disabled = true; btn.textContent = "Sending…"; }
