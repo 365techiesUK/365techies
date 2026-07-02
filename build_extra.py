@@ -9,7 +9,7 @@ import build_local  # registers the 12 local/customer pages on import
 from build_pages import (add, graph, crumb, webpage, service, faqpage,
                          faq_html, cta, hero, hero_trust, bc, bc_sub, crumb_sub, tiles, grid_cards, checklist,
                          steps, reviews_block, ico, SITE, write_all,
-                         promise_strip, uk_remote_band, WCHECK_TOOL, EMAILSEC_TOOL, PWNED_TOOL, PRIVACY_TOOL, SCAM_TOOL, PWGEN_TOOL, WIFIQR_TOOL, DNS_TOOL, PCBENCH_TOOL,
+                         promise_strip, uk_remote_band, WCHECK_TOOL, EMAILSEC_TOOL, PWNED_TOOL, PRIVACY_TOOL, SCAM_TOOL, PWGEN_TOOL, WIFIQR_TOOL, DNS_TOOL, PCBENCH_TOOL, QRGEN_TOOL,
                          TOOLS, tool_cards, tools_strip, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
 from build_local import make_customer
 
@@ -4095,6 +4095,37 @@ def wifi_qr_generator():
         desc=desc, og_title="Free Wi-Fi QR Code Generator | 365 Techies", schema=schema, content=content)
 wifi_qr_generator()
 
+# ===================================================== QR CODE GENERATOR (general)
+def qr_code_generator():
+    slug = "qr-code-generator"
+    desc = "Free QR code generator. Turn any link, text, email or phone number into a scannable QR code in seconds — made in your browser, download as an image. From 365 Techies, Dorset."
+    faqs = [
+      ("What can I make a QR code for?", "A website or link, plain text, an email address (with a subject ready to go), a phone number, or a text message. Point a phone camera at the finished code and it does the rest &mdash; no app needed on most modern phones."),
+      ("Is it really free, with no watermark?", "Yes &mdash; completely free, no sign-up, no watermark, no expiry. The QR code is generated in your browser and yours to use however you like, forever."),
+      ("How do I get more Google reviews with a QR code?", "Print a QR code that links straight to your Google review page and pop it on receipts, invoices, the counter or a thank-you card &mdash; customers scan and leave a review in seconds. Use the &lsquo;review us&rsquo; quick-start above to see ours, or <a href=\"/contact/\">ask us</a> to set one up for your business."),
+      ("Do QR codes expire or stop working?", "The code itself never expires &mdash; it simply contains your link or text. It only stops working if the thing it points to (a web page, say) is taken down. So link it to something permanent."),
+      ("Can you make QR codes part of my marketing?", "Absolutely &mdash; review codes, Wi-Fi codes for guests, menu and booking links, smart posters. We help Dorset businesses use them well and sort the tech behind them. See our <a href=\"/wifi-qr-code-generator/\">Wi-Fi QR generator</a> too."),
+    ]
+    content = "\n".join([
+      hero(bc("QR Code Generator"), "// FREE QR CODE GENERATOR",
+           'Make a <em class="grad grad--cyan">QR code</em> in seconds',
+           "Turn any link, text, email or phone number into a scannable QR code &mdash; perfect for menus, posters, business cards and Google-review links. Free, made in your browser, download as an image.",
+           cta1=("Make a QR Code", "#qgtool"), cta2=("Wi-Fi QR Generator", "/wifi-qr-code-generator/"),
+           chips=["Any link or text","No watermark","Download &amp; print"]),
+      QRGEN_TOOL,
+      faq_html(faqs),
+      cta("QR codes that pull their weight",
+          "Review codes on your receipts, Wi-Fi codes for guests, smart links on your marketing &mdash; we help Dorset businesses use the little things that make a real difference.",
+          primary=("Talk to a Techie", "/contact/"), secondary=("Business IT Support", "/business-it-support-subscriptions/")),
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        return graph([crumb(s, "QR Code Generator"), webpage(s, "Free QR Code Generator", _desc),
+                      {"@type":"WebApplication","name":"365 Techies QR Code Generator","applicationCategory":"UtilitiesApplication","operatingSystem":"Web (all browsers)","url":SITE+"/qr-code-generator/","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},"provider":{"@id":SITE+"/#business"}},
+                      faqpage(s, _faqs)])
+    add(slug=slug, title="Free QR Code Generator — Any Link, Text or Review Link | 365 Techies",
+        desc=desc, og_title="Free QR Code Generator | 365 Techies", schema=schema, content=content)
+qr_code_generator()
+
 # ===================================================== DNS / DOMAIN LOOKUP
 def dns_lookup():
     slug = "dns-lookup"
@@ -4179,7 +4210,7 @@ def free_tools_hub():
       ("Security &amp; privacy", "Check you&rsquo;re safe &mdash; and lock things down.",
        ["emailsec","breach","pwgen","pwstrength","scamlink","privacy","scamquiz","whatlose"]),
       ("Speed &amp; connectivity", "Test your connection and get everyone online.",
-       ["speed","broadbandcheck","wifiqr","coverage"]),
+       ["speed","broadbandcheck","wifiqr","qrgen","coverage"]),
       ("Website &amp; domain", "See how your website and domain really perform.",
        ["website","dns"]),
       ("Your computer", "Test it, diagnose it, and make smart decisions.",
@@ -5909,6 +5940,7 @@ info_page(
           <a class="post-card" href="/link-safety-checker/"><p class="post-card__cat">Tool</p><h3>Link Safety Checker</h3><p>Got a dodgy-looking link in a text or email? Paste it to spot the phishing warning signs &mdash; safely.</p><span class="post-card__more">Check a link &#8594;</span></a>
           <a class="post-card" href="/password-generator/"><p class="post-card__cat">Tool</p><h3>Password Generator</h3><p>Create a strong random password or a memorable passphrase in one click &mdash; securely, in your browser.</p><span class="post-card__more">Generate one &#8594;</span></a>
           <a class="post-card" href="/wifi-qr-code-generator/"><p class="post-card__cat">Tool</p><h3>Wi-Fi QR Code Generator</h3><p>Make a QR code guests scan to join your Wi-Fi instantly &mdash; no typing the password. Print &amp; stick it up.</p><span class="post-card__more">Make one &#8594;</span></a>
+          <a class="post-card" href="/qr-code-generator/"><p class="post-card__cat">Tool</p><h3>QR Code Generator</h3><p>Turn any link, text, email or phone number into a scannable QR code &mdash; including Google-review links.</p><span class="post-card__more">Make one &#8594;</span></a>
           <a class="post-card" href="/dns-lookup/"><p class="post-card__cat">Tool</p><h3>DNS Lookup</h3><p>Check any domain&rsquo;s DNS records &mdash; A, MX, NS, TXT &mdash; the settings behind your website and email.</p><span class="post-card__more">Look it up &#8594;</span></a>
           <a class="post-card" href="/pc-benchmark/"><p class="post-card__cat">Tool</p><h3>PC Benchmark</h3><p>How fast is your computer, really? Test CPU, memory, graphics &amp; storage in 20 seconds.</p><span class="post-card__more">Benchmark it &#8594;</span></a>
           <a class="post-card" href="/windows-10-end-of-life/"><p class="post-card__cat">Act now</p><h3>Windows 10 End of Life</h3><p>Support ended in October 2025. Find out in 30 seconds if you&rsquo;re affected &mdash; and your options.</p><span class="post-card__more">Are you affected? &#8594;</span></a>

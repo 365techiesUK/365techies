@@ -203,6 +203,7 @@ HEADER = '''  <header class="site-header">
             <a href="/link-safety-checker/">Link Safety Checker</a>
             <a href="/password-generator/">Password Generator</a>
             <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
+            <a href="/qr-code-generator/">QR Code Generator</a>
             <a href="/dns-lookup/">DNS Lookup</a>
             <a href="/pc-benchmark/">PC Benchmark</a>
             <a href="/ai-roi-calculator/">AI ROI Calculator</a>
@@ -357,6 +358,7 @@ HEADER = '''  <header class="site-header">
           <a href="/link-safety-checker/">Link Safety Checker</a>
           <a href="/password-generator/">Password Generator</a>
           <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
+          <a href="/qr-code-generator/">QR Code Generator</a>
           <a href="/dns-lookup/">DNS Lookup</a>
           <a href="/pc-benchmark/">PC Benchmark</a>
           <a href="/ai-roi-calculator/">AI ROI Calculator</a>
@@ -514,6 +516,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/link-safety-checker/">Link Safety Checker</a>
         <a href="/password-generator/">Password Generator</a>
         <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
+        <a href="/qr-code-generator/">QR Code Generator</a>
         <a href="/dns-lookup/">DNS Lookup</a>
         <a href="/pc-benchmark/">PC Benchmark</a>
         <a href="/ai-roi-calculator/">AI ROI Calculator</a>
@@ -2066,6 +2069,7 @@ TOOLS = {
   "scamquiz":     ("Spot the Scam Quiz", "/spot-the-scam/", "Can you tell a scam from the real thing? Take the free 6-round quiz."),
   "speed":        ("Live Broadband Speed Test", "/broadband-speed-checker/", "Measure your real download, upload and ping right now on a live animated gauge."),
   "wifiqr":       ("Wi-Fi QR Code Generator", "/wifi-qr-code-generator/", "Make a QR code guests scan to join your Wi-Fi &mdash; no typing the password."),
+  "qrgen":        ("QR Code Generator", "/qr-code-generator/", "Turn any link, text, email or phone number into a scannable QR code &mdash; download &amp; print."),
   "dns":          ("DNS Lookup", "/dns-lookup/", "Check any domain&rsquo;s A, MX, NS &amp; TXT records &mdash; the settings behind your website and email."),
   "pcbench":      ("PC Benchmark", "/pc-benchmark/", "How fast is your computer, really? Six live tests &mdash; CPU, encryption, memory, graphics &amp; storage &mdash; with a score you can share."),
   "healthcheck":  ("IT Health Check Tool", "/it-health-check-tool/", "Get an instant IT &amp; security score out of 100, plus a plain-English action plan."),
@@ -2402,6 +2406,122 @@ PCBENCH_TOOL = r'''    <section class="section" aria-label="PC benchmark" id="be
       })();
       </script>
     </section>'''
+
+# Shared QR code generator (client-side render, any link/text/email/phone/sms, no key) — /qr-code-generator/
+QRGEN_TOOL = r'''    <section class="section" aria-label="QR code generator" id="qgtool">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// FREE QR CODE GENERATOR</p>
+          <h2 class="section-title section-title--center" data-title>Make a QR code in seconds<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Turn any link, text, email or phone number into a scannable QR code &mdash; great for menus, posters, business cards, review links and more. Free, made in your browser, download as an image.</p>
+        </div>
+        <div id="qg" data-reveal>
+          <div class="qg-grid">
+            <form class="qg-form" id="qg-form" novalidate>
+              <label class="qg-f"><span>What should the QR code do?</span>
+                <select id="qg-type">
+                  <option value="url">Open a website / link</option>
+                  <option value="text">Show some text</option>
+                  <option value="email">Start an email</option>
+                  <option value="phone">Dial a phone number</option>
+                  <option value="sms">Send a text message</option>
+                </select>
+              </label>
+              <label class="qg-f" id="qg-main-wrap"><span id="qg-main-label">Website address</span><input id="qg-main" autocomplete="off" spellcheck="false" placeholder="yourbusiness.co.uk"></label>
+              <label class="qg-f" id="qg-extra-wrap" hidden><span id="qg-extra-label">Subject (optional)</span><input id="qg-extra" autocomplete="off" placeholder="Enquiry from your poster"></label>
+              <label class="qg-f qg-colour"><span>QR colour</span><input type="color" id="qg-fg" value="#070d22"></label>
+              <p class="qg-presets">Quick start: <button type="button" class="qg-chip" data-preset="review">&#11088; A &ldquo;review us on Google&rdquo; code</button></p>
+            </form>
+            <div class="qg-out">
+              <div class="qg-placeholder" id="qg-ph">Your QR code appears here &#128241;</div>
+              <div class="qg-card" id="qg-card" hidden><div class="qg-qr" id="qg-qr"></div></div>
+              <button type="button" class="button qg-dl" id="qg-dl" hidden>Download as image &#8595;</button>
+            </div>
+          </div>
+          <p class="qg-hint">&#128274; Made entirely in your browser &mdash; nothing is sent or stored. Tip: print it big enough to scan from where people stand.</p>
+        </div>
+        <div class="qg-fix">
+          <h3>Want QR codes working for your business?</h3>
+          <p>From Google-review codes on your receipts to Wi-Fi codes for guests and smart links on your marketing, we help Dorset businesses use the little things that make a big difference &mdash; and sort the tech behind them.</p>
+          <div class="qg-fix-cta"><a class="button primary" href="/contact/">Talk to a techie &#8594;</a><a class="button qg-ghost" href="/wifi-qr-code-generator/">Wi-Fi QR generator</a></div>
+        </div>
+      </div>
+      <style>
+      #qg{max-width:820px;margin:0 auto}
+      #qg .qg-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.6rem;align-items:start}
+      #qg .qg-form{display:flex;flex-direction:column;gap:.9rem}
+      #qg .qg-f{display:flex;flex-direction:column;gap:.35rem;font-size:.88rem}
+      #qg .qg-f input,#qg .qg-f select{font:inherit;padding:.75rem .9rem;border-radius:10px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.04);color:inherit}
+      #qg .qg-f input:focus,#qg .qg-f select:focus{outline:none;border-color:var(--cyan,#37c2c2)}
+      #qg .qg-colour{flex-direction:row;align-items:center;justify-content:space-between}
+      #qg .qg-colour input[type=color]{width:52px;height:34px;padding:2px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,.2);cursor:pointer}
+      #qg .qg-presets{margin:.2rem 0 0;font-size:.8rem;color:var(--muted,#9aa6c2)}
+      #qg .qg-chip{font:inherit;font-size:.8rem;cursor:pointer;background:rgba(55,194,194,.1);border:1px solid rgba(55,194,194,.35);color:var(--cyan,#37c2c2);border-radius:99px;padding:.3rem .7rem;margin-left:.3rem}
+      #qg .qg-out{display:flex;flex-direction:column;align-items:center;gap:1rem;justify-content:center;min-height:220px}
+      #qg .qg-placeholder{color:var(--muted,#9aa6c2);font-size:.9rem;text-align:center;border:1px dashed rgba(255,255,255,.18);border-radius:14px;padding:2.5rem 1rem;width:100%}
+      #qg .qg-card{background:#fff;border-radius:16px;padding:1.1rem;max-width:260px}
+      #qg .qg-qr svg{display:block;width:100%;height:auto;border-radius:6px}
+      #qg .qg-dl{background:transparent;border:1px solid var(--cyan,#37c2c2);color:var(--cyan,#37c2c2)}
+      #qg .qg-hint{text-align:center;font-size:.76rem;color:var(--muted,#9aa6c2);margin:1.2rem 0 0;line-height:1.5}
+      #qgtool .qg-fix{max-width:820px;margin:2rem auto 0;padding:1.6rem;border-radius:16px;border:1px solid rgba(55,194,194,.35);background:rgba(55,194,194,.07);text-align:center}
+      #qgtool .qg-fix h3{margin:0 0 .5rem;font-size:1.2rem}
+      #qgtool .qg-fix p{margin:0 auto 1.1rem;max-width:54ch;color:var(--muted,#9aa6c2);font-size:.95rem;line-height:1.6}
+      #qgtool .qg-fix-cta{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center}
+      #qgtool .qg-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}
+      @media(max-width:640px){#qg .qg-grid{grid-template-columns:1fr}}
+      </style>
+      <script>
+      (function(){
+        var root=document.getElementById('qg'); if(!root) return;
+        var LIB='https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js', libp=null;
+        var REVIEW='https://search.google.com/local/writereview?placeid=ChIJlTb8YRuic0gRCRczduB8OFI';
+        var typ=root.querySelector('#qg-type'), main=root.querySelector('#qg-main'), mainLbl=root.querySelector('#qg-main-label');
+        var extraWrap=root.querySelector('#qg-extra-wrap'), extra=root.querySelector('#qg-extra'), extraLbl=root.querySelector('#qg-extra-label');
+        var fg=root.querySelector('#qg-fg'), ph=root.querySelector('#qg-ph'), card=root.querySelector('#qg-card'), qrbox=root.querySelector('#qg-qr'), dl=root.querySelector('#qg-dl');
+        var META={ url:{lbl:'Website address',ph:'yourbusiness.co.uk',extra:null},
+          text:{lbl:'Your text',ph:'Anything you like',extra:null},
+          email:{lbl:'Email address',ph:'you@business.co.uk',extra:'Subject (optional)'},
+          phone:{lbl:'Phone number',ph:'01202 775566',extra:null},
+          sms:{lbl:'Phone number',ph:'07520 615332',extra:'Message (optional)'} };
+        function ensureLib(){ if(window.qrcode) return Promise.resolve(); if(libp) return libp; libp=new Promise(function(res,rej){ var s=document.createElement('script'); s.src=LIB; s.onload=res; s.onerror=rej; document.head.appendChild(s); }); return libp; }
+        function build(){
+          var t=typ.value, v=main.value.trim(), x=extra.value.trim(), out='';
+          if(t==='url'){ if(!v) return ''; out=/^[a-z][a-z0-9+.\-]*:\/\//i.test(v)?v:('https://'+v); }
+          else if(t==='text'){ out=main.value; }
+          else if(t==='email'){ if(!v) return ''; out='mailto:'+v+(x?('?subject='+encodeURIComponent(x)):''); }
+          else if(t==='phone'){ if(!v) return ''; out='tel:'+v.replace(/[^\d+]/g,''); }
+          else if(t==='sms'){ if(!v) return ''; out='sms:'+v.replace(/[^\d+]/g,'')+(x?('?body='+encodeURIComponent(x)):''); }
+          return out;
+        }
+        function render(){
+          var data=build();
+          if(!data){ ph.hidden=false; card.hidden=true; dl.hidden=true; ph.textContent='Your QR code appears here 📱'; return; }
+          ensureLib().then(function(){
+            var qr; try{ qr=window.qrcode(0,'M'); qr.addData(data); qr.make(); }
+            catch(e){ for(var t=1;t<=25;t++){ try{ qr=window.qrcode(t,'M'); qr.addData(data); qr.make(); break; }catch(e2){} } }
+            if(!qr){ ph.hidden=false; ph.textContent='That’s a bit too long for one QR code — try a shorter link.'; card.hidden=true; dl.hidden=true; return; }
+            var n=qr.getModuleCount(), cell=8, m=4, size=(n+m*2)*cell, col=fg.value||'#070d22';
+            var sv='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+size+' '+size+'" role="img" aria-label="QR code"><rect width="'+size+'" height="'+size+'" fill="#ffffff"/>';
+            for(var r=0;r<n;r++){ for(var c=0;c<n;c++){ if(qr.isDark(r,c)) sv+='<rect x="'+((c+m)*cell)+'" y="'+((r+m)*cell)+'" width="'+cell+'" height="'+cell+'" fill="'+col+'"/>'; } }
+            sv+='</svg>'; qrbox.innerHTML=sv; ph.hidden=true; card.hidden=false; dl.hidden=false;
+          }).catch(function(){ ph.hidden=false; ph.textContent='Couldn’t load the QR generator — check your connection and try again.'; });
+        }
+        function syncType(){ var t=typ.value, meta=META[t]; mainLbl.textContent=meta.lbl; main.placeholder=meta.ph;
+          if(meta.extra){ extraLbl.textContent=meta.extra; extraWrap.hidden=false; } else { extraWrap.hidden=true; extra.value=''; } render(); }
+        typ.addEventListener('change',syncType);
+        main.addEventListener('input',render); extra.addEventListener('input',render); fg.addEventListener('input',render);
+        root.querySelectorAll('.qg-chip').forEach(function(b){ b.addEventListener('click',function(){ if(b.getAttribute('data-preset')==='review'){ typ.value='url'; syncType(); main.value=REVIEW; render(); } }); });
+        dl.addEventListener('click',function(){
+          var svg=qrbox.querySelector('svg'); if(!svg) return;
+          var xml=new XMLSerializer().serializeToString(svg), img=new Image();
+          img.onload=function(){ var cv=document.createElement('canvas'); cv.width=640; cv.height=640; var ctx=cv.getContext('2d'); ctx.fillStyle='#fff'; ctx.fillRect(0,0,640,640); ctx.drawImage(img,0,0,640,640); var a=document.createElement('a'); a.download='qr-code.png'; a.href=cv.toDataURL('image/png'); a.click(); };
+          img.src='data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(xml)));
+        });
+        syncType();
+      })();
+      </script>
+    </section>'''
+
 PAGES = []
 def add(**kw):
     PAGES.append(kw)
