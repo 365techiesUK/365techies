@@ -9,7 +9,7 @@ import build_local  # registers the 12 local/customer pages on import
 from build_pages import (add, graph, crumb, webpage, service, faqpage,
                          faq_html, cta, hero, hero_trust, bc, bc_sub, crumb_sub, tiles, grid_cards, checklist,
                          steps, reviews_block, ico, SITE, write_all,
-                         promise_strip, uk_remote_band, WCHECK_TOOL, EMAILSEC_TOOL, PWNED_TOOL, PRIVACY_TOOL, SCAM_TOOL, PWGEN_TOOL, WIFIQR_TOOL, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
+                         promise_strip, uk_remote_band, WCHECK_TOOL, EMAILSEC_TOOL, PWNED_TOOL, PRIVACY_TOOL, SCAM_TOOL, PWGEN_TOOL, WIFIQR_TOOL, DNS_TOOL, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
 from build_local import make_customer
 
 # ── Competitive prices for the new AI offerings (owner-approved 2026-06-17; edit here) ──
@@ -4076,6 +4076,37 @@ def wifi_qr_generator():
         desc=desc, og_title="Free Wi-Fi QR Code Generator | 365 Techies", schema=schema, content=content)
 wifi_qr_generator()
 
+# ===================================================== DNS / DOMAIN LOOKUP
+def dns_lookup():
+    slug = "dns-lookup"
+    desc = "Free DNS lookup tool. Check any domain's DNS records — A, MX, NS, TXT and more — live via secure DNS-over-HTTPS. Handy for checking your website and email setup. From 365 Techies, Dorset."
+    faqs = [
+      ("What is DNS?", "DNS is the internet&rsquo;s address book. It turns a domain name (like 365techies.co.uk) into the actual server addresses that make your website load and your email arrive. If DNS is wrong, your site or email can break."),
+      ("What do these records mean?", "In short: <b>A</b>/<b>AAAA</b> point your domain to your website&rsquo;s server; <b>MX</b> point your email to the right mail servers; <b>NS</b> are the nameservers in charge of your DNS; and <b>TXT</b> hold things like SPF and domain-verification records."),
+      ("Is it safe to look up my domain?", "Completely &mdash; DNS records are public (every mail and web server reads them). We only read them, live, and nothing is stored."),
+      ("My records look wrong &mdash; can you help?", "Yes &mdash; DNS mistakes are a common cause of broken email and websites. We set up and fix DNS, move sites, and sort business email for homes and businesses across Dorset. <a href=\"/contact/\">Get in touch</a>."),
+      ("Want to check your email is protected?", "Try our <a href=\"/email-security-checker/\">email security checker</a> &mdash; it reads your SPF, DKIM and DMARC records and tells you, in plain English, whether scammers can spoof your address."),
+    ]
+    content = "\n".join([
+      hero(bc("DNS Lookup"), "// FREE DNS LOOKUP",
+           'Look up any domain&rsquo;s <em class="grad grad--cyan">DNS records</em>',
+           "Check the DNS records behind any domain &mdash; the A, MX, NS and TXT settings that make websites load and email arrive. Free, instant, and read live over a secure connection.",
+           cta1=("Look Up a Domain", "#dnstool"), cta2=("Email Security Check", "/email-security-checker/"),
+           chips=["A &middot; MX &middot; NS &middot; TXT","Live &amp; free","No sign-up"]),
+      DNS_TOOL,
+      faq_html(faqs),
+      cta("DNS or domain giving you grief?",
+          "We set up domains, move websites with no downtime, sort business email and untangle DNS problems &mdash; for homes and businesses across Dorset, in plain English.",
+          primary=("Get Domain Help", "/contact/"), secondary=("Web Design &amp; Hosting", "/web-design-hosting/")),
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        return graph([crumb(s, "DNS Lookup"), webpage(s, "Free DNS Lookup", _desc),
+                      {"@type":"WebApplication","name":"365 Techies DNS Lookup","applicationCategory":"UtilitiesApplication","operatingSystem":"Web (all browsers)","url":SITE+"/dns-lookup/","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},"provider":{"@id":SITE+"/#business"}},
+                      faqpage(s, _faqs)])
+    add(slug=slug, title="Free DNS Lookup | Check A, MX, NS & TXT Records | 365 Techies",
+        desc=desc, og_title="Free DNS Lookup | 365 Techies", schema=schema, content=content)
+dns_lookup()
+
 # ===================================================== AI VOICE AGENTS (new offering)
 def ai_voice():
     slug = "ai-voice-agents"
@@ -5754,6 +5785,7 @@ info_page(
           <a class="post-card" href="/link-safety-checker/"><p class="post-card__cat">Tool</p><h3>Link Safety Checker</h3><p>Got a dodgy-looking link in a text or email? Paste it to spot the phishing warning signs &mdash; safely.</p><span class="post-card__more">Check a link &#8594;</span></a>
           <a class="post-card" href="/password-generator/"><p class="post-card__cat">Tool</p><h3>Password Generator</h3><p>Create a strong random password or a memorable passphrase in one click &mdash; securely, in your browser.</p><span class="post-card__more">Generate one &#8594;</span></a>
           <a class="post-card" href="/wifi-qr-code-generator/"><p class="post-card__cat">Tool</p><h3>Wi-Fi QR Code Generator</h3><p>Make a QR code guests scan to join your Wi-Fi instantly &mdash; no typing the password. Print &amp; stick it up.</p><span class="post-card__more">Make one &#8594;</span></a>
+          <a class="post-card" href="/dns-lookup/"><p class="post-card__cat">Tool</p><h3>DNS Lookup</h3><p>Check any domain&rsquo;s DNS records &mdash; A, MX, NS, TXT &mdash; the settings behind your website and email.</p><span class="post-card__more">Look it up &#8594;</span></a>
           <a class="post-card" href="/windows-10-end-of-life/"><p class="post-card__cat">Act now</p><h3>Windows 10 End of Life</h3><p>Support ended in October 2025. Find out in 30 seconds if you&rsquo;re affected &mdash; and your options.</p><span class="post-card__more">Are you affected? &#8594;</span></a>
           <a class="post-card" href="/quick-quote/"><p class="post-card__cat">Tool</p><h3>Quick Quote</h3><p>Get a free, no-obligation quote or cost comparison in under a minute.</p><span class="post-card__more">Get a quote &#8594;</span></a>
           <a class="post-card" href="/broadband-speed-checker/"><p class="post-card__cat">Tool</p><h3>Broadband Speed Checker</h3><p>Is your internet fast enough? Get a recommended speed in 30 seconds.</p><span class="post-card__more">Check your speed &#8594;</span></a>

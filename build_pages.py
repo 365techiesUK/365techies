@@ -202,6 +202,7 @@ HEADER = '''  <header class="site-header">
             <a href="/link-safety-checker/">Link Safety Checker</a>
             <a href="/password-generator/">Password Generator</a>
             <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
+            <a href="/dns-lookup/">DNS Lookup</a>
             <a href="/ai-roi-calculator/">AI ROI Calculator</a>
             <a href="/it-health-check-tool/">IT Health Check Tool</a>
             <a href="/broadband-speed-checker/">Broadband Speed Checker</a>
@@ -353,6 +354,7 @@ HEADER = '''  <header class="site-header">
           <a href="/link-safety-checker/">Link Safety Checker</a>
           <a href="/password-generator/">Password Generator</a>
           <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
+          <a href="/dns-lookup/">DNS Lookup</a>
           <a href="/ai-roi-calculator/">AI ROI Calculator</a>
           <a href="/it-health-check-tool/">IT Health Check Tool</a>
           <a href="/broadband-speed-checker/">Broadband Speed Checker</a>
@@ -507,6 +509,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/link-safety-checker/">Link Safety Checker</a>
         <a href="/password-generator/">Password Generator</a>
         <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
+        <a href="/dns-lookup/">DNS Lookup</a>
         <a href="/ai-roi-calculator/">AI ROI Calculator</a>
         <a href="/it-health-check-tool/">IT Health Check Tool</a>
         <a href="/broadband-speed-checker/">Broadband Speed Checker</a>
@@ -1957,6 +1960,87 @@ WIFIQR_TOOL = r'''    <section class="section" aria-label="Wi-Fi QR code generat
           var img=new Image();
           img.onload=function(){ var cv=document.createElement('canvas'); cv.width=640; cv.height=640; var ctx=cv.getContext('2d'); ctx.fillStyle='#fff'; ctx.fillRect(0,0,640,640); ctx.drawImage(img,0,0,640,640); var a=document.createElement('a'); a.download='wifi-qr-code.png'; a.href=cv.toDataURL('image/png'); a.click(); };
           img.src='data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(xml)));
+        });
+      })();
+      </script>
+    </section>'''
+
+# Shared DNS / domain lookup (Google DNS-over-HTTPS, no key) — /dns-lookup/
+DNS_TOOL = r'''    <section class="section" aria-label="DNS lookup" id="dnstool">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// FREE DNS LOOKUP</p>
+          <h2 class="section-title section-title--center" data-title>Look up any domain&rsquo;s DNS records<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>See the DNS records behind any domain &mdash; the settings that point your website and email to the right place. Handy for checking your own setup, or troubleshooting.</p>
+        </div>
+        <div id="dns" data-reveal>
+          <form class="dns-form" id="dns-form" novalidate>
+            <input type="text" id="dns-domain" inputmode="url" autocomplete="off" spellcheck="false" placeholder="yourdomain.co.uk" aria-label="Domain to look up" required>
+            <button type="submit" class="button primary dns-go">Look up records</button>
+          </form>
+          <p class="dns-hint">Reads the public DNS records for any domain, live &mdash; nothing is stored.</p>
+          <div class="dns-loading" id="dns-loading" hidden><div class="dns-spinner" aria-hidden="true"></div><p>Looking up DNS records&hellip;</p></div>
+          <div class="dns-error" id="dns-error" hidden></div>
+          <div class="dns-results" id="dns-results" hidden>
+            <p class="dns-for">Records for <span id="dns-dom"></span></p>
+            <div id="dns-cards"></div>
+          </div>
+        </div>
+        <div class="dns-fix">
+          <h3>Website or email pointing to the wrong place?</h3>
+          <p>DNS is the plumbing behind your website and email &mdash; and it&rsquo;s easy to get wrong. We set up domains, move websites, sort business email and fix DNS problems for homes and businesses across Dorset.</p>
+          <div class="dns-fix-cta"><a class="button primary" href="/contact/">Get DNS &amp; domain help &#8594;</a><a class="button dns-ghost" href="/email-security-checker/">Check your email security</a></div>
+        </div>
+      </div>
+      <style>
+      #dns{max-width:720px;margin:0 auto}
+      #dns .dns-form{display:flex;gap:.6rem;flex-wrap:wrap;align-items:stretch}
+      #dns #dns-domain{flex:1 1 240px;min-width:0;padding:.95rem 1.1rem;border-radius:12px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.04);color:inherit;font:inherit}
+      #dns #dns-domain:focus{outline:none;border-color:var(--cyan,#37c2c2)}
+      #dns .dns-go{white-space:nowrap}
+      #dns .dns-hint{font-size:.78rem;color:var(--muted,#9aa6c2);margin:.6rem 0 0}
+      #dns .dns-loading{text-align:center;padding:2rem 1rem}
+      #dns .dns-spinner{width:44px;height:44px;border-radius:50%;border:3px solid rgba(255,255,255,.14);border-top-color:var(--cyan,#37c2c2);margin:0 auto 1rem;animation:dns-spin 1s linear infinite}
+      @keyframes dns-spin{to{transform:rotate(360deg)}}
+      #dns .dns-error{margin-top:1.3rem;padding:1rem 1.2rem;border-radius:12px;border:1px solid rgba(231,76,60,.45);background:rgba(231,76,60,.1);font-size:.92rem}
+      #dns .dns-results{margin-top:1.8rem}
+      #dns .dns-for{text-align:center;color:var(--muted,#9aa6c2);font-size:.9rem;margin:0 0 1.2rem}
+      #dns .dns-for span{color:var(--cyan,#37c2c2);font-weight:700;word-break:break-all}
+      #dns .dns-card{padding:.9rem 1.1rem;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);margin-bottom:.7rem}
+      #dns .dns-k{margin:0 0 .5rem;font-size:.82rem;font-weight:700;color:#fff}
+      #dns .dns-k span{font-family:var(--font-mono,monospace);font-size:.7rem;color:var(--cyan,#37c2c2);border:1px solid rgba(55,194,194,.4);border-radius:5px;padding:.05rem .35rem;margin-left:.4rem}
+      #dns .dns-card ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.35rem}
+      #dns .dns-card li{font-family:var(--font-mono,monospace);font-size:.82rem;color:var(--faint,#9fb5d3);word-break:break-all;background:rgba(0,0,0,.22);padding:.4rem .6rem;border-radius:7px}
+      #dns .dns-none{margin:0;font-size:.82rem;color:var(--muted,#9aa6c2);opacity:.75}
+      #dnstool .dns-fix{max-width:720px;margin:2rem auto 0;padding:1.6rem;border-radius:16px;border:1px solid rgba(55,194,194,.35);background:rgba(55,194,194,.07);text-align:center}
+      #dnstool .dns-fix h3{margin:0 0 .5rem;font-size:1.2rem}
+      #dnstool .dns-fix p{margin:0 auto 1.1rem;max-width:54ch;color:var(--muted,#9aa6c2);font-size:.95rem;line-height:1.6}
+      #dnstool .dns-fix-cta{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center}
+      #dnstool .dns-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}
+      @media(max-width:560px){#dns .dns-go{flex:1 1 100%}}
+      </style>
+      <script>
+      (function(){
+        var root=document.getElementById('dns'); if(!root) return;
+        var form=root.querySelector('#dns-form'), input=root.querySelector('#dns-domain');
+        var load=root.querySelector('#dns-loading'), err=root.querySelector('#dns-error'), res=root.querySelector('#dns-results'), cards=root.querySelector('#dns-cards'), domEl=root.querySelector('#dns-dom');
+        var TMAP={A:1,AAAA:28,CNAME:5,MX:15,NS:2,TXT:16};
+        var LIST=[['A','Website server (IPv4)'],['AAAA','Website server (IPv6)'],['CNAME','Alias (CNAME)'],['MX','Mail servers'],['NS','Nameservers'],['TXT','TXT records (SPF, verification…)']];
+        function esc(s){var d=document.createElement('div');d.textContent=(s==null?'':s);return d.innerHTML;}
+        function norm(v){ v=(v||'').trim().toLowerCase().replace(/^https?:\/\//,'').replace(/^www\./,'').replace(/[\/?#].*$/,'').replace(/\s+/g,''); if(v.indexOf('@')>=0) v=v.split('@').pop(); return v; }
+        function lookup(name,type){ return fetch('https://dns.google/resolve?name='+encodeURIComponent(name)+'&type='+type).then(function(r){return r.json();}).then(function(d){ var num=TMAP[type]; return (d.Answer||[]).filter(function(a){return a.type===num;}).map(function(a){ return String(a.data).replace(/^"|"$/g,'').replace(/"\s+"/g,''); }); }).catch(function(){ return []; }); }
+        form.addEventListener('submit',function(e){
+          e.preventDefault();
+          var d=norm(input.value); if(!d||d.indexOf('.')<0){ input.focus(); return; }
+          res.hidden=true; err.hidden=true; load.hidden=false; var btn=form.querySelector('.dns-go'); btn.disabled=true;
+          Promise.all(LIST.map(function(t){ return lookup(d,t[0]).then(function(v){ return {code:t[0],label:t[1],vals:v}; }); })).then(function(rows){
+            load.hidden=true; btn.disabled=false;
+            if(!rows.some(function(r){return r.vals.length;})){ err.innerHTML='No DNS records found for that domain &mdash; check the spelling and try again.'; err.hidden=false; res.hidden=true; return; }
+            domEl.textContent=d;
+            var h=''; rows.forEach(function(r){ h+='<div class="dns-card"><p class="dns-k">'+r.label+' <span>'+r.code+'</span></p>'; if(r.vals.length){ h+='<ul>'; r.vals.forEach(function(v){ h+='<li>'+esc(v)+'</li>'; }); h+='</ul>'; } else h+='<p class="dns-none">None found</p>'; h+='</div>'; });
+            cards.innerHTML=h; res.hidden=false;
+            try{ res.scrollIntoView({behavior:'smooth',block:'start'}); }catch(e){}
+          }).catch(function(){ load.hidden=true; btn.disabled=false; err.innerHTML='We couldn&rsquo;t reach the DNS service just now &mdash; please try again in a moment.'; err.hidden=false; });
         });
       })();
       </script>
