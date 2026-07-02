@@ -10,7 +10,7 @@ from build_pages import (add, graph, crumb, webpage, service, faqpage,
                          faq_html, cta, hero, hero_trust, bc, bc_sub, crumb_sub, tiles, grid_cards, checklist,
                          steps, reviews_block, ico, SITE, write_all,
                          promise_strip, uk_remote_band, WCHECK_TOOL, EMAILSEC_TOOL, PWNED_TOOL, PRIVACY_TOOL, SCAM_TOOL, PWGEN_TOOL, WIFIQR_TOOL, DNS_TOOL, PCBENCH_TOOL, QRGEN_TOOL,
-                         SIGGEN_TOOL, TOOLS, tool_cards, tools_strip, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
+                         SIGGEN_TOOL, SSLCHECK_TOOL, DOMEXP_TOOL, TOOLS, tool_cards, tools_strip, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
 from build_local import make_customer
 
 # ── Competitive prices for the new AI offerings (owner-approved 2026-06-17; edit here) ──
@@ -1787,7 +1787,7 @@ def web_design():
       </div>
     </section>''',
       faq_html(faqs),
-      tools_strip(["dns", "emailsec"], title="Free website &amp; domain tools", lede_text="Check the plumbing behind your website and email &mdash; free, in seconds.", alt=False),
+      tools_strip(["ssl", "domainexp", "dns"], title="Free website &amp; domain tools", lede_text="Check the plumbing behind your website and email &mdash; free, in seconds.", alt=False),
       cta("Ready for a website that works as hard as you do?",
           "Get a friendly, no-obligation quote for website design, hosting and business email — all looked after by your local IT team.",
           primary=("Get a Website Quote", "/contact/"), secondary=("Call 01202 775566", "tel:+441202775566")),
@@ -4159,6 +4159,70 @@ def email_signature_generator():
         desc=desc, og_title="Free Email Signature Generator | 365 Techies", schema=schema, content=content)
 email_signature_generator()
 
+# ===================================================== SSL CERTIFICATE CHECKER
+def ssl_checker():
+    slug = "ssl-checker"
+    desc = "Free SSL certificate checker. Is your website's padlock valid, who issued it, and when does it expire? Instant plain-English results for any domain. From 365 Techies, Dorset."
+    faqs = [
+      ("What is an SSL certificate?", "It&rsquo;s what puts the padlock in the browser and encrypts everything between your visitors and your website. Browsers loudly warn people away from sites without a valid one &mdash; so an expired certificate effectively takes your site offline."),
+      ("What happens when a certificate expires?", "Every visitor sees a full-screen security warning instead of your website, and most leave immediately. Email and online forms on the same domain can break too. Renewals should be automatic &mdash; but &lsquo;should be&rsquo; is doing a lot of work, which is why it&rsquo;s worth checking."),
+      ("My certificate expires soon &mdash; what do I do?", "If your hosting auto-renews (good hosting does), nothing &mdash; but confirm it rather than assume. If it doesn&rsquo;t, renew via your hosting provider before the date shown. Or move to <a href=\"/web-design-hosting/\">hosting we manage</a> and never think about it again."),
+      ("What does &lsquo;not trusted&rsquo; or &lsquo;self-signed&rsquo; mean?", "The certificate wasn&rsquo;t issued by an authority browsers recognise, so visitors get a warning even though encryption may technically work. It needs replacing with a proper certificate &mdash; free ones (Let&rsquo;s Encrypt) are standard on decent hosting."),
+      ("Is it safe to check my domain here?", "Completely &mdash; we simply read the public certificate your website already shows every visitor. Nothing is stored."),
+    ]
+    content = "\n".join([
+      hero(bc("SSL Certificate Checker"), "// FREE SSL CHECK",
+           'Is your website&rsquo;s <em class="grad grad--cyan">padlock healthy?</em>',
+           "Check any website&rsquo;s SSL certificate in seconds &mdash; valid or not, who issued it, and exactly when it expires. Because an expired certificate scares every visitor away overnight.",
+           cta1=("Check a Certificate", "#ssltool"), cta2=("Managed Hosting", "/web-design-hosting/"),
+           chips=["Instant &amp; free","Expiry countdown","Plain English"]),
+      SSLCHECK_TOOL,
+      faq_html(faqs),
+      tools_strip(["domainexp", "dns", "website"], title="More free website check-ups", alt=False),
+      cta("Hosting that renews itself",
+          "Certificates, backups, updates and speed &mdash; all quietly handled on our managed hosting, with a local team who actually answer the phone.",
+          primary=("See Managed Hosting", "/web-design-hosting/"), secondary=("Contact Us", "/contact/")),
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        return graph([crumb(s, "SSL Certificate Checker"), webpage(s, "Free SSL Certificate Checker", _desc),
+                      {"@type":"WebApplication","name":"365 Techies SSL Certificate Checker","applicationCategory":"UtilitiesApplication","operatingSystem":"Web (all browsers)","url":SITE+"/ssl-checker/","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},"provider":{"@id":SITE+"/#business"}},
+                      faqpage(s, _faqs)])
+    add(slug=slug, title="Free SSL Certificate Checker — Validity & Expiry | 365 Techies",
+        desc=desc, og_title="Free SSL Certificate Checker | 365 Techies", schema=schema, content=content)
+ssl_checker()
+
+# ===================================================== DOMAIN EXPIRY CHECKER
+def domain_expiry_checker():
+    slug = "domain-expiry-checker"
+    desc = "Free domain expiry checker. See exactly when any domain expires, who the registrar is and whether it's transfer-locked — straight from the official registry (RDAP). From 365 Techies, Dorset."
+    faqs = [
+      ("Where does this data come from?", "Straight from the domain registries&rsquo; own official lookup service (RDAP &mdash; the modern successor to WHOIS). It&rsquo;s the same record your registrar works from, so the expiry date is authoritative."),
+      ("What happens if my domain expires?", "Your website goes down, your email stops, and after a short grace period the domain can be auctioned or snapped up by someone else &mdash; sometimes a competitor or a squatter who&rsquo;ll charge dearly to give it back. It&rsquo;s one of the most avoidable disasters in small business IT."),
+      ("How do I make sure it never happens?", "Turn on auto-renew with your registrar, keep the payment card up to date, and make sure the account email is one you still read. Or let us manage the domain for you &mdash; we keep renewals, DNS and ownership records straight for Dorset businesses."),
+      ("The tool says my domain is registered with a company I don&rsquo;t recognise", "Very common &mdash; domains often end up registered through whoever built the website years ago. It matters: whoever controls the registrar account controls your domain. We can help you <a href=\"/contact/\">trace it and get it into your own name</a>."),
+      ("Why is there no expiry date for some domains?", "A few country registries don&rsquo;t publish expiry dates publicly. The lookup still confirms the domain is registered, its status and (usually) the registrar."),
+    ]
+    content = "\n".join([
+      hero(bc("Domain Expiry Checker"), "// FREE DOMAIN CHECK",
+           'When does your <em class="grad grad--cyan">domain expire?</em>',
+           "Check any domain&rsquo;s renewal date, registrar and lock status &mdash; straight from the official registry. Because losing your domain means losing your website and your email, overnight.",
+           cta1=("Check a Domain", "#dxtool"), cta2=("DNS Lookup", "/dns-lookup/"),
+           chips=["Official registry data","Renewal countdown","No sign-up"]),
+      DOMEXP_TOOL,
+      faq_html(faqs),
+      tools_strip(["ssl", "dns", "emailsec"], title="More free domain check-ups", alt=False),
+      cta("Never lose your domain",
+          "We manage domains, DNS and renewals so nothing lapses and nothing is held hostage &mdash; and we&rsquo;ll untangle a domain that&rsquo;s ended up in the wrong hands.",
+          primary=("Look After My Domain", "/contact/"), secondary=("Web Design &amp; Hosting", "/web-design-hosting/")),
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        return graph([crumb(s, "Domain Expiry Checker"), webpage(s, "Free Domain Expiry Checker", _desc),
+                      {"@type":"WebApplication","name":"365 Techies Domain Expiry Checker","applicationCategory":"UtilitiesApplication","operatingSystem":"Web (all browsers)","url":SITE+"/domain-expiry-checker/","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},"provider":{"@id":SITE+"/#business"}},
+                      faqpage(s, _faqs)])
+    add(slug=slug, title="Free Domain Expiry Checker — Official Registry Data | 365 Techies",
+        desc=desc, og_title="Free Domain Expiry Checker | 365 Techies", schema=schema, content=content)
+domain_expiry_checker()
+
 # ===================================================== DNS / DOMAIN LOOKUP
 def dns_lookup():
     slug = "dns-lookup"
@@ -4245,7 +4309,7 @@ def free_tools_hub():
       ("Speed &amp; connectivity", "Test your connection and get everyone online.",
        ["speed","broadbandcheck","wifiqr","qrgen","coverage"]),
       ("Website, domain &amp; email", "See how your website, domain and email really perform.",
-       ["website","dns","emailsig"]),
+       ["website","ssl","domainexp","dns","emailsig"]),
       ("Your computer", "Test it, diagnose it, and make smart decisions.",
        ["pcbench","healthcheck","faultcheck","repairreplace","w10"]),
       ("Costs &amp; planning", "Clear numbers and honest recommendations.",
@@ -5975,6 +6039,8 @@ info_page(
           <a class="post-card" href="/wifi-qr-code-generator/"><p class="post-card__cat">Tool</p><h3>Wi-Fi QR Code Generator</h3><p>Make a QR code guests scan to join your Wi-Fi instantly &mdash; no typing the password. Print &amp; stick it up.</p><span class="post-card__more">Make one &#8594;</span></a>
           <a class="post-card" href="/qr-code-generator/"><p class="post-card__cat">Tool</p><h3>QR Code Generator</h3><p>Turn any link, text, email or phone number into a scannable QR code &mdash; including Google-review links.</p><span class="post-card__more">Make one &#8594;</span></a>
           <a class="post-card" href="/email-signature-generator/"><p class="post-card__cat">Tool</p><h3>Email Signature Generator</h3><p>A professional, email-safe signature with live preview &mdash; copy straight into Outlook or Gmail.</p><span class="post-card__more">Make yours &#8594;</span></a>
+          <a class="post-card" href="/ssl-checker/"><p class="post-card__cat">Tool</p><h3>SSL Certificate Checker</h3><p>Is your website&rsquo;s padlock valid &mdash; and when does it expire? Check any domain in seconds.</p><span class="post-card__more">Check a certificate &#8594;</span></a>
+          <a class="post-card" href="/domain-expiry-checker/"><p class="post-card__cat">Tool</p><h3>Domain Expiry Checker</h3><p>When does your domain expire? Official registry data before it&rsquo;s too late.</p><span class="post-card__more">Check a domain &#8594;</span></a>
           <a class="post-card" href="/dns-lookup/"><p class="post-card__cat">Tool</p><h3>DNS Lookup</h3><p>Check any domain&rsquo;s DNS records &mdash; A, MX, NS, TXT &mdash; the settings behind your website and email.</p><span class="post-card__more">Look it up &#8594;</span></a>
           <a class="post-card" href="/pc-benchmark/"><p class="post-card__cat">Tool</p><h3>PC Benchmark</h3><p>How fast is your computer, really? Test CPU, memory, graphics &amp; storage in 20 seconds.</p><span class="post-card__more">Benchmark it &#8594;</span></a>
           <a class="post-card" href="/windows-10-end-of-life/"><p class="post-card__cat">Act now</p><h3>Windows 10 End of Life</h3><p>Support ended in October 2025. Find out in 30 seconds if you&rsquo;re affected &mdash; and your options.</p><span class="post-card__more">Are you affected? &#8594;</span></a>

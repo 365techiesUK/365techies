@@ -205,6 +205,8 @@ HEADER = '''  <header class="site-header">
             <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
             <a href="/qr-code-generator/">QR Code Generator</a>
             <a href="/email-signature-generator/">Email Signature Generator</a>
+            <a href="/ssl-checker/">SSL Checker</a>
+            <a href="/domain-expiry-checker/">Domain Expiry Checker</a>
             <a href="/dns-lookup/">DNS Lookup</a>
             <a href="/pc-benchmark/">PC Benchmark</a>
             <a href="/ai-roi-calculator/">AI ROI Calculator</a>
@@ -361,6 +363,8 @@ HEADER = '''  <header class="site-header">
           <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
           <a href="/qr-code-generator/">QR Code Generator</a>
           <a href="/email-signature-generator/">Email Signature Generator</a>
+          <a href="/ssl-checker/">SSL Checker</a>
+          <a href="/domain-expiry-checker/">Domain Expiry Checker</a>
           <a href="/dns-lookup/">DNS Lookup</a>
           <a href="/pc-benchmark/">PC Benchmark</a>
           <a href="/ai-roi-calculator/">AI ROI Calculator</a>
@@ -520,6 +524,8 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
         <a href="/qr-code-generator/">QR Code Generator</a>
         <a href="/email-signature-generator/">Email Signature Generator</a>
+        <a href="/ssl-checker/">SSL Checker</a>
+        <a href="/domain-expiry-checker/">Domain Expiry Checker</a>
         <a href="/dns-lookup/">DNS Lookup</a>
         <a href="/pc-benchmark/">PC Benchmark</a>
         <a href="/ai-roi-calculator/">AI ROI Calculator</a>
@@ -2074,6 +2080,8 @@ TOOLS = {
   "wifiqr":       ("Wi-Fi QR Code Generator", "/wifi-qr-code-generator/", "Make a QR code guests scan to join your Wi-Fi &mdash; no typing the password."),
   "qrgen":        ("QR Code Generator", "/qr-code-generator/", "Turn any link, text, email or phone number into a scannable QR code &mdash; download &amp; print."),
   "emailsig":     ("Email Signature Generator", "/email-signature-generator/", "Create a professional email signature in one minute &mdash; live preview, copy straight into Outlook or Gmail."),
+  "ssl":          ("SSL Certificate Checker", "/ssl-checker/", "Is your website&rsquo;s padlock healthy? Check any SSL certificate &mdash; and when it expires."),
+  "domainexp":    ("Domain Expiry Checker", "/domain-expiry-checker/", "When does your domain expire? Check the official registry record before you lose it."),
   "dns":          ("DNS Lookup", "/dns-lookup/", "Check any domain&rsquo;s A, MX, NS &amp; TXT records &mdash; the settings behind your website and email."),
   "pcbench":      ("PC Benchmark", "/pc-benchmark/", "How fast is your computer, really? Six live tests &mdash; CPU, encryption, memory, graphics &amp; storage &mdash; with a score you can share."),
   "healthcheck":  ("IT Health Check Tool", "/it-health-check-tool/", "Get an instant IT &amp; security score out of 100, plus a plain-English action plan."),
@@ -2648,6 +2656,192 @@ SIGGEN_TOOL = r'''    <section class="section" aria-label="Email signature gener
           else{ var ta=document.createElement('textarea'); ta.value=html; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); flash(btn,'Copied!'); }catch(e){} document.body.removeChild(ta); }
         });
         render();
+      })();
+      </script>
+    </section>'''
+
+# Shared SSL certificate checker (server-side lookup via api/ssl-check.php) — /ssl-checker/
+SSLCHECK_TOOL = r'''    <section class="section" aria-label="SSL certificate checker" id="ssltool">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// FREE SSL CHECK</p>
+          <h2 class="section-title section-title--center" data-title>Is your website&rsquo;s padlock healthy?<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Check any website&rsquo;s SSL certificate &mdash; is it valid, who issued it, and crucially <strong>when does it expire</strong>. An expired certificate scares every visitor away overnight.</p>
+        </div>
+        <div id="sslc" data-reveal>
+          <form class="sl-form" id="sl-form" novalidate>
+            <input type="text" id="sl-domain" inputmode="url" autocomplete="off" spellcheck="false" placeholder="yourbusiness.co.uk" aria-label="Domain to check">
+            <button type="submit" class="button primary sl-go">Check certificate</button>
+          </form>
+          <p class="sl-hint">Free and instant &mdash; we read the certificate your site presents to every visitor. Nothing is stored.</p>
+          <div class="sl-loading" id="sl-loading" hidden><div class="sl-spinner" aria-hidden="true"></div><p>Reading the certificate&hellip;</p></div>
+          <div class="sl-error" id="sl-error" hidden></div>
+          <div class="sl-results" id="sl-results" hidden>
+            <div id="sl-verdict"></div>
+            <div class="sl-rows" id="sl-rows"></div>
+            <div class="sl-fix">
+              <h3>Never think about certificates again</h3>
+              <p>Our managed hosting renews certificates automatically and we watch them so you don&rsquo;t have to &mdash; alongside fast hosting, backups and real local support.</p>
+              <div class="sl-fix-cta"><a class="button primary" href="/web-design-hosting/">Managed hosting &#8594;</a><a class="button sl-ghost" href="/contact/">Ask a techie</a></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <style>
+      #sslc{max-width:720px;margin:0 auto}
+      #sslc .sl-form{display:flex;gap:.6rem;flex-wrap:wrap}
+      #sslc #sl-domain{flex:1 1 240px;min-width:0;padding:.95rem 1.1rem;border-radius:12px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.04);color:inherit;font:inherit}
+      #sslc #sl-domain:focus{outline:none;border-color:var(--cyan,#37c2c2)}
+      #sslc .sl-hint{font-size:.78rem;color:var(--muted,#9aa6c2);margin:.6rem 0 0}
+      #sslc .sl-loading{text-align:center;padding:2rem 1rem}
+      #sslc .sl-spinner{width:44px;height:44px;border-radius:50%;border:3px solid rgba(255,255,255,.14);border-top-color:var(--cyan,#37c2c2);margin:0 auto 1rem;animation:sl-spin 1s linear infinite}
+      @keyframes sl-spin{to{transform:rotate(360deg)}}
+      #sslc .sl-error{margin-top:1.3rem;padding:1rem 1.2rem;border-radius:12px;border:1px solid rgba(231,76,60,.45);background:rgba(231,76,60,.1);font-size:.92rem;line-height:1.55}
+      #sslc .sl-results{margin-top:1.8rem}
+      #sslc .sl-verdict-box{text-align:center;padding:1.6rem;border-radius:16px;border:1px solid rgba(255,255,255,.12);margin-bottom:1.2rem}
+      #sslc .sl-v-dom{margin:0;font-size:.85rem;color:var(--muted,#9aa6c2);word-break:break-all}
+      #sslc .sl-v-g{margin:.2rem 0 .4rem;font-size:1.7rem;font-weight:800}
+      #sslc .sl-v-m{margin:0 auto;max-width:52ch;font-size:.94rem;line-height:1.6;color:var(--muted,#9aa6c2)}
+      #sslc .good{border-color:rgba(46,204,113,.4);background:rgba(46,204,113,.08)} #sslc .good .sl-v-g{color:#2ecc71}
+      #sslc .avg{border-color:rgba(241,196,15,.4);background:rgba(241,196,15,.08)} #sslc .avg .sl-v-g{color:#f1c40f}
+      #sslc .poor{border-color:rgba(231,76,60,.4);background:rgba(231,76,60,.1)} #sslc .poor .sl-v-g{color:#e74c3c}
+      #sslc .sl-rows{display:flex;flex-direction:column;gap:.55rem}
+      #sslc .sl-row{display:flex;justify-content:space-between;gap:1rem;padding:.7rem 1rem;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);font-size:.88rem}
+      #sslc .sl-row b{color:#fff;font-weight:600}
+      #sslc .sl-row span{color:var(--muted,#9aa6c2);text-align:right;word-break:break-word}
+      #sslc .sl-fix{margin-top:1.8rem;padding:1.6rem;border-radius:16px;border:1px solid rgba(55,194,194,.35);background:rgba(55,194,194,.07);text-align:center}
+      #sslc .sl-fix h3{margin:0 0 .5rem;font-size:1.2rem}
+      #sslc .sl-fix p{margin:0 auto 1.1rem;max-width:52ch;color:var(--muted,#9aa6c2);font-size:.95rem;line-height:1.6}
+      #sslc .sl-fix-cta{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center}
+      #sslc .sl-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}
+      @media(max-width:560px){#sslc .sl-go{flex:1 1 100%}}
+      </style>
+      <script>
+      (function(){
+        var root=document.getElementById('sslc'); if(!root) return;
+        var form=root.querySelector('#sl-form'), input=root.querySelector('#sl-domain');
+        var load=root.querySelector('#sl-loading'), err=root.querySelector('#sl-error'), res=root.querySelector('#sl-results');
+        function esc(s){ var d=document.createElement('div'); d.textContent=(s==null?'':s); return d.innerHTML; }
+        var ERRS={'bad-domain':'That doesn&rsquo;t look like a valid domain &mdash; just the domain, e.g. yourbusiness.co.uk.','no-dns':'That domain doesn&rsquo;t point anywhere (no DNS record found).','unreachable':'We couldn&rsquo;t reach that site on the secure port (443) &mdash; it may not have HTTPS at all.','rate':'The checker is busy &mdash; try again in a minute.','parse':'We reached the site but couldn&rsquo;t read its certificate.'};
+        form.addEventListener('submit',function(e){
+          e.preventDefault();
+          var v=input.value.trim(); if(!v){ input.focus(); return; }
+          res.hidden=true; err.hidden=true; load.hidden=false; var btn=form.querySelector('.sl-go'); btn.disabled=true;
+          fetch('/api/ssl-check.php?domain='+encodeURIComponent(v),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
+            load.hidden=true; btn.disabled=false;
+            if(!j||!j.ok){ err.innerHTML=ERRS[(j&&j.error)||'']||'Something went wrong &mdash; please try again.'; err.hidden=false; return; }
+            var v2;
+            if(j.expired) v2={g:'Certificate EXPIRED',c:'poor',m:'This certificate expired &mdash; visitors are seeing security warnings instead of the website. This needs fixing today.'};
+            else if(j.notYet) v2={g:'Not yet valid',c:'poor',m:'The certificate&rsquo;s start date is in the future &mdash; usually a server clock or setup problem.'};
+            else if(!j.trusted||j.selfSigned) v2={g:'Not trusted',c:'poor',m:(j.selfSigned?'It&rsquo;s a self-signed certificate':'Browsers don&rsquo;t trust this certificate&rsquo;s chain')+' &mdash; visitors will see a security warning.'};
+            else if(!j.matches) v2={g:'Wrong certificate',c:'avg',m:'The certificate doesn&rsquo;t cover this exact domain name &mdash; some visitors will hit warnings.'};
+            else if(j.daysLeft<=21) v2={g:'Expiring soon &mdash; '+j.daysLeft+' day'+(j.daysLeft===1?'':'s'),c:'avg',m:'Still working, but renewal time. If auto-renewal is set up properly you&rsquo;ll be fine &mdash; worth confirming now, not after it lapses.'};
+            else v2={g:'Valid &amp; trusted',c:'good',m:'The padlock is healthy: trusted issuer, correct domain, and '+j.daysLeft+' days before renewal is due.'};
+            root.querySelector('#sl-verdict').innerHTML='<div class="sl-verdict-box '+v2.c+'"><p class="sl-v-dom">'+esc(j.host)+'</p><p class="sl-v-g">'+v2.g+'</p><p class="sl-v-m">'+v2.m+'</p></div>';
+            function row(k,val){ return '<div class="sl-row"><b>'+k+'</b><span>'+val+'</span></div>'; }
+            root.querySelector('#sl-rows').innerHTML=
+              row('Issued to',esc(j.subject))+
+              row('Issued by',esc(j.issuer))+
+              row('Valid',esc(j.validFrom)+' &#8594; '+esc(j.validTo))+
+              row('Days remaining',(j.daysLeft>=0?j.daysLeft+' days':'expired '+Math.abs(j.daysLeft)+' days ago'))+
+              row('Trusted by browsers',j.trusted?'Yes':'No')+
+              row('Names covered',j.sanCount||1);
+            res.hidden=false;
+            try{ res.scrollIntoView({behavior:'smooth',block:'start'}); }catch(x){}
+          }).catch(function(){ load.hidden=true; btn.disabled=false; err.innerHTML='We couldn&rsquo;t run the check just now &mdash; please try again.'; err.hidden=false; });
+        });
+      })();
+      </script>
+    </section>'''
+
+# Shared domain expiry checker (RDAP via api/domain-check.php) — /domain-expiry-checker/
+DOMEXP_TOOL = r'''    <section class="section" aria-label="Domain expiry checker" id="dxtool">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// FREE DOMAIN CHECK</p>
+          <h2 class="section-title section-title--center" data-title>When does your domain expire?<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Businesses really do lose their domain &mdash; and with it their website and email &mdash; because a renewal slipped by. Check any domain&rsquo;s renewal date straight from the official registry.</p>
+        </div>
+        <div id="dx" data-reveal>
+          <form class="dx-form" id="dx-form" novalidate>
+            <input type="text" id="dx-domain" inputmode="url" autocomplete="off" spellcheck="false" placeholder="yourbusiness.co.uk" aria-label="Domain to check">
+            <button type="submit" class="button primary dx-go">Check expiry date</button>
+          </form>
+          <p class="dx-hint">Live from the registry&rsquo;s official records (RDAP) &mdash; free, nothing stored.</p>
+          <div class="dx-loading" id="dx-loading" hidden><div class="dx-spinner" aria-hidden="true"></div><p>Asking the registry&hellip;</p></div>
+          <div class="dx-error" id="dx-error" hidden></div>
+          <div class="dx-results" id="dx-results" hidden>
+            <div id="dx-verdict"></div>
+            <div class="dx-rows" id="dx-rows"></div>
+            <div class="dx-fix">
+              <h3>Domains, quietly looked after</h3>
+              <p>We manage domains, DNS and renewals for Dorset businesses so nothing ever lapses &mdash; and if your domain is with a registrar you&rsquo;ve lost track of, we&rsquo;ll untangle it.</p>
+              <div class="dx-fix-cta"><a class="button primary" href="/contact/">Look after my domain &#8594;</a><a class="button dx-ghost" href="/dns-lookup/">DNS lookup</a></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <style>
+      #dx{max-width:720px;margin:0 auto}
+      #dx .dx-form{display:flex;gap:.6rem;flex-wrap:wrap}
+      #dx #dx-domain{flex:1 1 240px;min-width:0;padding:.95rem 1.1rem;border-radius:12px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.04);color:inherit;font:inherit}
+      #dx #dx-domain:focus{outline:none;border-color:var(--cyan,#37c2c2)}
+      #dx .dx-hint{font-size:.78rem;color:var(--muted,#9aa6c2);margin:.6rem 0 0}
+      #dx .dx-loading{text-align:center;padding:2rem 1rem}
+      #dx .dx-spinner{width:44px;height:44px;border-radius:50%;border:3px solid rgba(255,255,255,.14);border-top-color:var(--cyan,#37c2c2);margin:0 auto 1rem;animation:dx-spin 1s linear infinite}
+      @keyframes dx-spin{to{transform:rotate(360deg)}}
+      #dx .dx-error{margin-top:1.3rem;padding:1rem 1.2rem;border-radius:12px;border:1px solid rgba(231,76,60,.45);background:rgba(231,76,60,.1);font-size:.92rem;line-height:1.55}
+      #dx .dx-results{margin-top:1.8rem}
+      #dx .dx-verdict-box{text-align:center;padding:1.6rem;border-radius:16px;border:1px solid rgba(255,255,255,.12);margin-bottom:1.2rem}
+      #dx .dx-v-dom{margin:0;font-size:.85rem;color:var(--muted,#9aa6c2);word-break:break-all}
+      #dx .dx-v-g{margin:.2rem 0 .4rem;font-size:1.7rem;font-weight:800}
+      #dx .dx-v-m{margin:0 auto;max-width:52ch;font-size:.94rem;line-height:1.6;color:var(--muted,#9aa6c2)}
+      #dx .good{border-color:rgba(46,204,113,.4);background:rgba(46,204,113,.08)} #dx .good .dx-v-g{color:#2ecc71}
+      #dx .avg{border-color:rgba(241,196,15,.4);background:rgba(241,196,15,.08)} #dx .avg .dx-v-g{color:#f1c40f}
+      #dx .poor{border-color:rgba(231,76,60,.4);background:rgba(231,76,60,.1)} #dx .poor .dx-v-g{color:#e74c3c}
+      #dx .dx-rows{display:flex;flex-direction:column;gap:.55rem}
+      #dx .dx-row{display:flex;justify-content:space-between;gap:1rem;padding:.7rem 1rem;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);font-size:.88rem}
+      #dx .dx-row b{color:#fff;font-weight:600}
+      #dx .dx-row span{color:var(--muted,#9aa6c2);text-align:right;word-break:break-word}
+      #dx .dx-fix{margin-top:1.8rem;padding:1.6rem;border-radius:16px;border:1px solid rgba(55,194,194,.35);background:rgba(55,194,194,.07);text-align:center}
+      #dx .dx-fix h3{margin:0 0 .5rem;font-size:1.2rem}
+      #dx .dx-fix p{margin:0 auto 1.1rem;max-width:52ch;color:var(--muted,#9aa6c2);font-size:.95rem;line-height:1.6}
+      #dx .dx-fix-cta{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center}
+      #dx .dx-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}
+      @media(max-width:560px){#dx .dx-go{flex:1 1 100%}}
+      </style>
+      <script>
+      (function(){
+        var root=document.getElementById('dx'); if(!root) return;
+        var form=root.querySelector('#dx-form'), input=root.querySelector('#dx-domain');
+        var load=root.querySelector('#dx-loading'), err=root.querySelector('#dx-error'), res=root.querySelector('#dx-results');
+        function esc(s){ var d=document.createElement('div'); d.textContent=(s==null?'':s); return d.innerHTML; }
+        var STATUS={ 'client transfer prohibited':'Transfer-locked (good)','clienttransferprohibited':'Transfer-locked (good)','client delete prohibited':'Delete-locked (good)','clientdeleteprohibited':'Delete-locked (good)','client update prohibited':'Update-locked','clientupdateprohibited':'Update-locked','active':'Active','registered until expiry date':'Registered','server hold':'&#9888; On hold','serverhold':'&#9888; On hold' };
+        form.addEventListener('submit',function(e){
+          e.preventDefault();
+          var v=input.value.trim(); if(!v){ input.focus(); return; }
+          res.hidden=true; err.hidden=true; load.hidden=false; var btn=form.querySelector('.dx-go'); btn.disabled=true;
+          fetch('/api/domain-check.php?domain='+encodeURIComponent(v),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
+            load.hidden=true; btn.disabled=false;
+            if(!j||!j.ok){ var m={'bad-domain':'That doesn&rsquo;t look like a valid domain name.','not-found':'The registry has no record of that domain &mdash; check the spelling (some country domains don&rsquo;t publish records).','rate':'The checker is busy &mdash; try again in a minute.'}[(j&&j.error)||'']; err.innerHTML=m||'Something went wrong &mdash; please try again.'; err.hidden=false; return; }
+            var d=j.daysLeft, v2;
+            if(d==null) v2={g:'Registered',c:'good',m:'This registry doesn&rsquo;t publish an expiry date, but the domain is registered'+(j.registrar?(' with '+esc(j.registrar)):'')+'.'};
+            else if(d<0) v2={g:'EXPIRED',c:'poor',m:'This domain&rsquo;s registration has lapsed &mdash; if it&rsquo;s yours, contact the registrar immediately; there&rsquo;s often a short grace period to save it.'};
+            else if(d<30) v2={g:'Renew NOW &mdash; '+d+' days left',c:'poor',m:'Under a month to renewal. If auto-renew isn&rsquo;t on (or the card on file has expired), the website and email on this domain will stop.'};
+            else if(d<60) v2={g:'Renewal coming up &mdash; '+d+' days',c:'avg',m:'Renewal is close. Two minutes now to confirm auto-renew is on saves a very bad week later.'};
+            else v2={g:'Safe &mdash; '+d+' days to renewal',c:'good',m:'No action needed for a while. Still worth having auto-renew on and card details current with your registrar.'};
+            root.querySelector('#dx-verdict').innerHTML='<div class="dx-verdict-box '+v2.c+'"><p class="dx-v-dom">'+esc(j.domain)+'</p><p class="dx-v-g">'+v2.g+'</p><p class="dx-v-m">'+v2.m+'</p></div>';
+            function row(k,val){ return val?('<div class="dx-row"><b>'+k+'</b><span>'+val+'</span></div>'):''; }
+            var sts=(j.statuses||[]).map(function(s){ var k=String(s).toLowerCase(); return STATUS[k]||esc(s); }).join(' &middot; ');
+            root.querySelector('#dx-rows').innerHTML=
+              row('Expires',esc(j.expires))+
+              row('Registrar',esc(j.registrar))+
+              row('Registered since',esc(j.created))+
+              row('Status',sts);
+            res.hidden=false;
+            try{ res.scrollIntoView({behavior:'smooth',block:'start'}); }catch(x){}
+          }).catch(function(){ load.hidden=true; btn.disabled=false; err.innerHTML='We couldn&rsquo;t run the check just now &mdash; please try again.'; err.hidden=false; });
+        });
       })();
       </script>
     </section>'''
