@@ -210,6 +210,7 @@ HEADER = '''  <header class="site-header">
             <a href="/solar-battery-calculator/">Battery &amp; Solar Calculator</a>
             <a href="/webcam-mic-test/">Webcam &amp; Mic Test</a>
             <a href="/victron-system-builder/">Victron System Builder</a>
+            <a href="/custom-pc-builder/">Custom PC Builder</a>
             <a href="/dns-lookup/">DNS Lookup</a>
             <a href="/pc-benchmark/">PC Benchmark</a>
             <a href="/ai-roi-calculator/">AI ROI Calculator</a>
@@ -371,6 +372,7 @@ HEADER = '''  <header class="site-header">
           <a href="/solar-battery-calculator/">Battery &amp; Solar Calculator</a>
           <a href="/webcam-mic-test/">Webcam &amp; Mic Test</a>
           <a href="/victron-system-builder/">Victron System Builder</a>
+          <a href="/custom-pc-builder/">Custom PC Builder</a>
           <a href="/dns-lookup/">DNS Lookup</a>
           <a href="/pc-benchmark/">PC Benchmark</a>
           <a href="/ai-roi-calculator/">AI ROI Calculator</a>
@@ -535,6 +537,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/solar-battery-calculator/">Battery &amp; Solar Calculator</a>
         <a href="/webcam-mic-test/">Webcam &amp; Mic Test</a>
         <a href="/victron-system-builder/">Victron System Builder</a>
+        <a href="/custom-pc-builder/">Custom PC Builder</a>
         <a href="/dns-lookup/">DNS Lookup</a>
         <a href="/pc-benchmark/">PC Benchmark</a>
         <a href="/ai-roi-calculator/">AI ROI Calculator</a>
@@ -2094,6 +2097,7 @@ TOOLS = {
   "solarcalc":    ("Battery &amp; Solar Calculator", "/solar-battery-calculator/", "Campervan, boat or off-grid? Tick what you run and get an honest battery &amp; solar panel sizing."),
   "avtest":       ("Webcam &amp; Mic Test", "/webcam-mic-test/", "Video call in ten minutes? Test your camera, microphone and speakers &mdash; privately, on your device."),
   "vbuilder":     ("Victron System Builder", "/victron-system-builder/", "Four questions &#8594; a complete, honestly-sized Victron kit list with links to buy every part."),
+  "pcbuild":      ("Custom PC Builder", "/custom-pc-builder/", "Your budget, split the way experienced builders do it &mdash; what to spend per part, and live links to buy."),
   "dns":          ("DNS Lookup", "/dns-lookup/", "Check any domain&rsquo;s A, MX, NS &amp; TXT records &mdash; the settings behind your website and email."),
   "pcbench":      ("PC Benchmark", "/pc-benchmark/", "How fast is your computer, really? Six live tests &mdash; CPU, encryption, memory, graphics &amp; storage &mdash; with a score you can share."),
   "healthcheck":  ("IT Health Check Tool", "/it-health-check-tool/", "Get an instant IT &amp; security score out of 100, plus a plain-English action plan."),
@@ -3392,6 +3396,205 @@ VBUILDER_TOOL = r'''    <section class="section" aria-label="Victron system buil
       })();
       </script>
     </section>'''
+
+# Shared custom PC builder (budget-allocation engine — YOUR budget split by build wisdom; live prices come from the
+# retailer links, never hardcoded/scraped — accuracy policy) — /custom-pc-builder/
+PCBUILD_TOOL = r'''    <section class="section" aria-label="Custom PC builder" id="pcbtool">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// FREE PC BUILDER</p>
+          <h2 class="section-title section-title--center" data-title>Plan your custom PC, properly<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Tell us the budget and what it&rsquo;s for, and we&rsquo;ll split your money across the parts the way experienced builders do &mdash; what to spend on each component, what class of part that buys, and a live Scan.co.uk search for each one.</p>
+        </div>
+        <div id="pcb" data-reveal>
+          <div class="pb-q">
+            <p class="pb-q-t">1 &middot; What&rsquo;s this PC for?</p>
+            <div class="pb-chips" id="pb-use">
+              <button type="button" class="pb-chip is-on" data-use="gaming">Gaming</button>
+              <button type="button" class="pb-chip" data-use="creative">Video / photo / streaming</button>
+              <button type="button" class="pb-chip" data-use="office">Office &amp; everyday</button>
+              <button type="button" class="pb-chip" data-use="cad">CAD / 3D / engineering</button>
+            </div>
+          </div>
+          <div class="pb-q">
+            <p class="pb-q-t">2 &middot; Total budget (excluding monitor &amp; peripherals)</p>
+            <div class="pb-chips">
+              <button type="button" class="pb-chip" data-budget="700">~&pound;700 entry</button>
+              <button type="button" class="pb-chip is-on" data-budget="1200">~&pound;1200 sweet spot</button>
+              <button type="button" class="pb-chip" data-budget="2000">&pound;2000 high end</button>
+            </div>
+            <label class="pb-slider"><span>Fine-tune: <output id="pb-b-out">&pound;1200</output></span>
+            <input type="range" id="pb-b" min="500" max="3500" step="50" value="1200"></label>
+          </div>
+          <div class="pb-q">
+            <p class="pb-q-t">3 &middot; Extras</p>
+            <div class="pb-chips">
+              <label class="pb-check"><input type="checkbox" id="pb-win" checked> Include a genuine Windows 11 licence (set aside ~&pound;110)</label>
+              <label class="pb-check"><input type="checkbox" id="pb-wifi"> I need built-in Wi-Fi</label>
+              <label class="pb-check"><input type="checkbox" id="pb-quiet"> Quiet build matters to me</label>
+            </div>
+          </div>
+          <div class="pb-summary" id="pb-summary"></div>
+          <div class="pb-warn" id="pb-warn" hidden></div>
+          <h3 class="pb-sec-t">&#128295; Your build &mdash; where the money goes</h3>
+          <div class="pb-spec" id="pb-spec"></div>
+          <h3 class="pb-sec-t">&#128161; Golden rules of PC building</h3>
+          <ul class="pb-rules">
+            <li><b>Never cheap out on the power supply.</b> A quality 80+ Gold unit from a reputable brand protects every other part &mdash; a bad one can take them with it.</li>
+            <li><b>Balance beats bragging.</b> A monster graphics card with a weak processor (or vice versa) wastes money &mdash; that&rsquo;s exactly what the split above prevents.</li>
+            <li><b>Always two sticks of RAM</b> (dual channel) &mdash; 2&times;16GB beats 1&times;32GB every time.</li>
+            <li><b>Check the three clearances</b> before ordering: graphics-card length, CPU-cooler height, and radiator space &mdash; all listed on the case&rsquo;s spec page.</li>
+            <li><b>Match the platform:</b> AMD Ryzen (AM5 socket) and Intel Core each need their own motherboard, and both are DDR5 now &mdash; the board&rsquo;s spec page is the truth.</li>
+            <li><b>Buy the storage you&rsquo;ll actually need.</b> Migrating a full Windows drive later is a faff &mdash; 1TB minimum, 2TB if you record or edit.</li>
+            <li><b>Airflow before aesthetics.</b> A mesh-front case with two good fans quietly outperforms a pretty glass box that cooks.</li>
+            <li><b>First build? Take your time.</b> Build on the motherboard box, touch the case metal before handling parts, and follow the manual&rsquo;s order. It&rsquo;s Lego with one rule: don&rsquo;t force anything.</li>
+          </ul>
+          <h3 class="pb-sec-t">&#128736;&#65039; Tools (you need less than you think)</h3>
+          <ul class="pb-rules">
+            <li><b>A #2 Phillips screwdriver</b> &mdash; magnetic tip ideally. That&rsquo;s genuinely 95% of it.</li>
+            <li><b>A USB stick (8GB+)</b> for the Windows installer, made with Microsoft&rsquo;s free Media Creation Tool.</li>
+            <li><b>Nice to have:</b> a magnetic parts tray, zip ties for cable tidying, and a torch. Thermal paste comes pre-applied on most coolers.</li>
+          </ul>
+          <p class="pb-links-note" id="pb-links-note"></p>
+          <div class="pb-actions">
+            <button type="button" class="button pb-ghost" id="pb-copy">Copy build plan</button>
+          </div>
+          <p class="pb-note">Honest guidance, not gospel: component generations move fast, so we point you at the right <em>class</em> of part for your money and link to live listings rather than quoting prices that would be stale by Friday. Sales (and GPU price swings!) can move the sweet spots.</p>
+          <div class="pb-fix">
+            <h3>Want a second pair of eyes?</h3>
+            <p>Send us your parts basket before you hit buy and we&rsquo;ll sanity-check it free &mdash; compatibility, balance and honest &ldquo;spend less here, more there&rdquo; advice. And if the budget&rsquo;s tight: our refurbished business-grade Dells from &pound;299 beat most sub-&pound;500 new builds.</p>
+            <div class="pb-fix-cta"><a class="button primary" href="/contact/">Sanity-check my build &#8594;</a><a class="button pb-ghost" href="/dell-hardware/">Refurbished Dells</a></div>
+          </div>
+        </div>
+      </div>
+      <style>
+      #pcb{max-width:860px;margin:0 auto}
+      #pcb .pb-q{margin-bottom:1.3rem}
+      #pcb .pb-q-t{font-size:.95rem;font-weight:700;margin:0 0 .6rem;color:#fff}
+      #pcb .pb-chips{display:flex;gap:.5rem;flex-wrap:wrap}
+      #pcb .pb-chip{font:inherit;font-size:.85rem;cursor:pointer;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.16);color:inherit;border-radius:99px;padding:.5rem 1rem;transition:all .15s}
+      #pcb .pb-chip.is-on{background:rgba(55,194,194,.15);border-color:var(--cyan,#37c2c2);color:var(--cyan,#37c2c2);font-weight:600}
+      #pcb .pb-check{display:flex;align-items:center;gap:.5rem;font-size:.85rem;padding:.4rem .2rem;color:var(--muted,#9aa6c2)}
+      #pcb .pb-check input{accent-color:var(--cyan,#37c2c2);width:1.05rem;height:1.05rem}
+      #pcb .pb-slider{display:block;margin-top:.7rem;font-size:.8rem;color:var(--muted,#9aa6c2)}
+      #pcb .pb-slider output{color:var(--cyan,#37c2c2);font-weight:700}
+      #pcb input[type=range]{width:100%;margin-top:.4rem;accent-color:var(--cyan,#37c2c2);cursor:pointer}
+      #pcb .pb-summary{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin:1.6rem 0 .6rem}
+      #pcb .pb-sum-chip{font-size:.78rem;padding:.4rem .8rem;border-radius:99px;border:1px solid rgba(57,211,83,.35);background:rgba(57,211,83,.08);color:#9fe8b0}
+      #pcb .pb-sum-chip b{color:#39d353}
+      #pcb .pb-warn{margin:.6rem 0 0;padding:.8rem 1rem;border-radius:11px;border:1px solid rgba(241,196,15,.4);background:rgba(241,196,15,.08);font-size:.84rem;color:#f5d97e;line-height:1.5;text-align:center}
+      #pcb .pb-sec-t{font-size:1.05rem;margin:1.8rem 0 .6rem;color:#fff}
+      #pcb .pb-spec{display:flex;flex-direction:column;gap:.7rem}
+      #pcb .pb-item{padding:1rem 1.1rem;border-radius:13px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1)}
+      #pcb .pb-item-top{display:flex;justify-content:space-between;gap:.8rem;align-items:baseline;flex-wrap:wrap}
+      #pcb .pb-item-cat{font-size:.66rem;text-transform:uppercase;letter-spacing:.07em;color:var(--cyan,#37c2c2)}
+      #pcb .pb-item-name{font-size:1rem;font-weight:700;color:#fff;margin:.15rem 0}
+      #pcb .pb-item-spend{font-size:.95rem;font-weight:800;color:#39d353;white-space:nowrap}
+      #pcb .pb-item-why{font-size:.82rem;color:var(--muted,#9aa6c2);line-height:1.55;margin:.2rem 0 .6rem}
+      #pcb .pb-buy{display:flex;gap:.5rem;flex-wrap:wrap}
+      #pcb .pb-buy a{font-size:.78rem;font-weight:600;text-decoration:none;padding:.4rem .85rem;border-radius:9px;border:1px solid rgba(255,255,255,.22);color:inherit;transition:all .15s}
+      #pcb .pb-buy a:hover{border-color:var(--cyan,#37c2c2);color:var(--cyan,#37c2c2)}
+      #pcb .pb-rules{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.55rem}
+      #pcb .pb-rules li{padding:.7rem 1rem .7rem 2.2rem;border-radius:11px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);font-size:.85rem;color:var(--muted,#9aa6c2);line-height:1.55;position:relative}
+      #pcb .pb-rules li::before{content:"\2713";position:absolute;left:.85rem;color:#39d353;font-weight:800}
+      #pcb .pb-rules b{color:#fff}
+      #pcb .pb-links-note{text-align:center;font-size:.72rem;color:var(--muted,#9aa6c2);margin:1.2rem 0 0;opacity:.85}
+      #pcb .pb-actions{display:flex;justify-content:center;margin-top:1rem}
+      #pcb .pb-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}
+      #pcb .pb-ghost.done{border-color:#2ecc71;color:#2ecc71}
+      #pcb .pb-note{margin:1.4rem auto 0;max-width:72ch;text-align:center;font-size:.76rem;color:var(--muted,#9aa6c2);line-height:1.6}
+      #pcbtool .pb-fix{max-width:860px;margin:2rem auto 0;padding:1.6rem;border-radius:16px;border:1px solid rgba(55,194,194,.35);background:rgba(55,194,194,.07);text-align:center}
+      #pcbtool .pb-fix h3{margin:0 0 .5rem;font-size:1.2rem}
+      #pcbtool .pb-fix p{margin:0 auto 1.1rem;max-width:56ch;color:var(--muted,#9aa6c2);font-size:.95rem;line-height:1.6}
+      #pcbtool .pb-fix-cta{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center}
+      </style>
+      <script>
+      (function(){
+        var root=document.getElementById('pcb'); if(!root) return;
+        var AMZN_TAG='';
+        function scan(q){ return 'https://www.scan.co.uk/search?q='+encodeURIComponent(q); }
+        function amzn(q){ return 'https://www.amazon.co.uk/s?k='+encodeURIComponent(q)+(AMZN_TAG?('&tag='+AMZN_TAG):''); }
+        function buy(q){ return '<div class="pb-buy"><a href="'+scan(q)+'" target="_blank" rel="noopener">Scan.co.uk &#8599;</a><a href="'+amzn(q)+'" target="_blank" rel="noopener'+(AMZN_TAG?' sponsored':'')+'">Amazon UK &#8599;</a></div>'; }
+        var state={use:'gaming',b:1200};
+        var PROFILES={
+          gaming:  {gpu:.38,cpu:.18,mobo:.09,ram:.07,ssd:.08,psu:.07,kase:.08,cool:.05},
+          creative:{gpu:.24,cpu:.26,mobo:.09,ram:.12,ssd:.12,psu:.07,kase:.05,cool:.05},
+          office:  {gpu:0,  cpu:.30,mobo:.13,ram:.11,ssd:.16,psu:.11,kase:.12,cool:.07},
+          cad:     {gpu:.28,cpu:.26,mobo:.08,ram:.14,ssd:.10,psu:.06,kase:.04,cool:.04}
+        };
+        var b=root.querySelector('#pb-b'), bOut=root.querySelector('#pb-b-out');
+        root.querySelectorAll('#pb-use .pb-chip').forEach(function(c){ c.addEventListener('click',function(){
+          root.querySelectorAll('#pb-use .pb-chip').forEach(function(x){x.classList.remove('is-on');});
+          c.classList.add('is-on'); state.use=c.getAttribute('data-use'); calc(); }); });
+        root.querySelectorAll('[data-budget]').forEach(function(c){ c.addEventListener('click',function(){
+          root.querySelectorAll('[data-budget]').forEach(function(x){x.classList.remove('is-on');});
+          c.classList.add('is-on'); b.value=c.getAttribute('data-budget'); state.b=+b.value; bOut.textContent='£'+state.b; calc(); }); });
+        b.addEventListener('input',function(){ state.b=+b.value; bOut.textContent='£'+state.b;
+          root.querySelectorAll('[data-budget]').forEach(function(x){x.classList.remove('is-on');}); calc(); });
+        ['#pb-win','#pb-wifi','#pb-quiet'].forEach(function(s){ root.querySelector(s).addEventListener('change',calc); });
+        function r10(x){ return Math.round(x/10)*10; }
+        function gpuAdvice(x){
+          if(x<160) return ['Graphics &mdash; step carefully','At this spend, integrated graphics or the used market often make more sense than a weak new card. Consider shifting budget here from the case, or ask us.','graphics card'];
+          if(x<320) return ['Graphics card &mdash; 1080p class','Entry current-gen gaming class (the xx60 / RX x60 tier). Great 1080p, sensible 1440p on medium.','graphics card'];
+          if(x<560) return ['Graphics card &mdash; 1440p class','The sweet-spot tier (xx60 Ti / xx70 class). Excellent 1440p and strong high-refresh 1080p.','graphics card 16GB'];
+          return ['Graphics card &mdash; 4K / high-refresh class','Upper tier (xx70 Ti / xx80 class). 4K gaming and serious rendering acceleration.','graphics card'];
+        }
+        function cpuAdvice(x,use){
+          if(x<130) return ['Processor &mdash; budget 6-core','Previous-gen Ryzen 5 / Core i5 class keeps things smooth without stealing budget from elsewhere.','Ryzen 5 processor'];
+          if(x<240) return ['Processor &mdash; current 6-core sweet spot','Current-gen Ryzen 5 / Core i5 class: the best value in PC building, gaming or working.','Ryzen 5 9600X'];
+          if(x<380) return [use==='gaming'?'Processor &mdash; gaming 8-core':'Processor &mdash; creator 8-core',use==='gaming'?'Ryzen 7 / Core i7 class; for pure gaming, the X3D gaming-cache variants are the kings.':'8-core Ryzen 7 / Core i7 class chews through exports and multitasking.',use==='gaming'?'Ryzen 7 X3D processor':'Ryzen 7 processor'];
+          return ['Processor &mdash; flagship','Ryzen 9 / Core i9 class (or the top X3D for gaming) — for heavy creative and CAD workloads it pays for itself.','Ryzen 9 processor'];
+        }
+        function calc(){
+          var win=root.querySelector('#pb-win').checked, wifi=root.querySelector('#pb-wifi').checked, quiet=root.querySelector('#pb-quiet').checked;
+          var pool=state.b-(win?110:0);
+          var P=PROFILES[state.use], items=[];
+          var warn=root.querySelector('#pb-warn');
+          if(state.b<600&&state.use!=='office'){ warn.innerHTML='Honestly? Below ~&pound;600 for a gaming/creative build, a <a href="/dell-hardware/" style="color:#f5d97e"><b>refurbished business-grade Dell from &pound;299</b></a> plus a modest graphics card usually beats an all-new build. Worth a chat before you spend.'; warn.hidden=false; }
+          else if(state.use==='office'&&state.b>1200){ warn.innerHTML='For office work, &pound;'+state.b+' is more than you need &mdash; a &pound;700&ndash;&pound;900 build is already superb. Bank the rest or upgrade your monitor (the part you actually look at).'; warn.hidden=false; }
+          else warn.hidden=true;
+          var spend={}; Object.keys(P).forEach(function(k){ spend[k]=r10(pool*P[k]); });
+          if(P.gpu>0){ var g=gpuAdvice(spend.gpu); items.push({cat:'Graphics',name:g[0],sp:spend.gpu,why:g[1],q:g[2]}); }
+          var c=cpuAdvice(spend.cpu,state.use); items.push({cat:'Processor',name:c[0],sp:spend.cpu,why:c[1],q:c[2]});
+          items.push({cat:'Motherboard',name:'Motherboard'+(wifi?' with built-in Wi-Fi':''),sp:spend.mobo,why:'Match the socket to your CPU (AMD AM5 or Intel current socket) — the mid-range B-series chipset boards are the value pick.'+(wifi?' Filter for a &ldquo;WiFi&rdquo; model — cheaper than adding a card.':''),q:wifi?'B650 WiFi motherboard':'B650 motherboard'});
+          var ramBig=(state.use==='creative'||state.use==='cad'||spend.ram>=100);
+          items.push({cat:'Memory',name:ramBig?'32GB DDR5 (2× 16GB)':'16GB DDR5 (2× 8GB)',sp:spend.ram,why:'Always a two-stick kit for dual channel. 6000MT/s is the sweet spot on AMD.'+(ramBig?' 32GB earns its keep in editing, tabs-everywhere and 3D.':''),q:ramBig?'32GB DDR5 6000 kit':'16GB DDR5 6000 kit'});
+          var ssdBig=(state.use==='creative'||spend.ssd>=110);
+          items.push({cat:'Storage',name:ssdBig?'2TB NVMe SSD (Gen4)':'1TB NVMe SSD (Gen4)',sp:spend.ssd,why:'Fast NVMe for Windows, apps and games. Buy the size you&rsquo;ll need &mdash; migrating later is a faff.',q:ssdBig?'2TB NVMe Gen4 SSD':'1TB NVMe Gen4 SSD'});
+          var w=(P.gpu===0)?'550W':(spend.gpu>500?'850W':(spend.gpu>250?'750W':'650W'));
+          items.push({cat:'Power supply',name:w+' 80+ Gold PSU',sp:spend.psu,why:'The one part that protects all the others — quality brand, 80+ Gold, semi/fully modular for tidy cables. Headroom included for upgrades.',q:w+' 80 plus gold modular PSU'});
+          items.push({cat:'Case',name:'Airflow case (mesh front)'+(quiet?' &mdash; quiet-focused':''),sp:spend.kase,why:(quiet?'Look at the quiet-optimised ranges (sound-damped panels, big slow fans). ':'Mesh front + two included fans beats glass-box looks. ')+'Check graphics-card length and cooler-height clearance on the spec page.',q:quiet?'quiet PC case':'airflow mid tower case mesh'});
+          items.push({cat:'CPU cooler',name:(spend.cool>=90?'240mm AIO liquid cooler':(quiet?'Large quiet tower air cooler':'Tower air cooler')),sp:spend.cool,why:(spend.cool>=90?'Liquid cooling for the hotter flagship chips.':'A good tower air cooler is the value king — quieter and more reliable than cheap liquid cooling.')+' Check case clearance.',q:(spend.cool>=90?'240mm AIO CPU cooler':'tower CPU air cooler')});
+          if(win) items.push({cat:'Operating system',name:'Windows 11 Home (genuine licence)',sp:110,why:'Budget ~&pound;110&ndash;&pound;120 for a genuine retail licence — dodgy &pound;3 keys get revoked. Install free via Microsoft&rsquo;s Media Creation Tool, add the key.',q:'Windows 11 Home retail licence'});
+          var total=items.reduce(function(a,i){return a+i.sp;},0);
+          root.querySelector('#pb-summary').innerHTML=
+            '<span class="pb-sum-chip">Budget <b>&pound;'+state.b+'</b></span>'+
+            '<span class="pb-sum-chip">Allocated <b>&pound;'+total+'</b></span>'+
+            '<span class="pb-sum-chip"><b>'+items.length+'</b> parts</span>'+
+            (Math.abs(state.b-total)>30?'<span class="pb-sum-chip">~&pound;'+Math.abs(state.b-total)+' '+(state.b>total?'headroom for sales &amp; shipping':'over — trim the case or cooler')+'</span>':'');
+          root.querySelector('#pb-spec').innerHTML=items.map(function(it){
+            return '<div class="pb-item"><div class="pb-item-top"><div><div class="pb-item-cat">'+it.cat+'</div><div class="pb-item-name">'+it.name+'</div></div><div class="pb-item-spend">~&pound;'+it.sp+'</div></div>'+
+              '<p class="pb-item-why">'+it.why+'</p>'+buy(it.q)+'</div>';
+          }).join('');
+          root.querySelector('#pb-links-note').innerHTML = AMZN_TAG
+            ? 'Buttons open live searches — prices always come from the retailer, never from us. As an Amazon Associate we earn from qualifying purchases; Scan links are not affiliated.'
+            : 'Buttons open live searches on each store — prices always come from the retailer, never from us, and we don&rsquo;t earn anything from these links.';
+          root.__build=items;
+        }
+        root.querySelector('#pb-copy').addEventListener('click',function(){
+          var btn=this, items=root.__build||[];
+          function plain(h){ var d=document.createElement('div'); d.innerHTML=h; return d.textContent; }
+          var txt='My PC build plan — £'+state.b+' '+state.use+' (via 365techies.co.uk/custom-pc-builder/):\n'+
+            items.map(function(it){ return '• '+it.cat+': '+plain(it.name)+' — budget ~£'+it.sp; }).join('\n');
+          function ok(){ btn.textContent='Copied!'; btn.classList.add('done'); setTimeout(function(){ btn.textContent='Copy build plan'; btn.classList.remove('done'); },1800); }
+          if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(ok).catch(function(){}); }
+          else { var ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); ok(); }catch(e){} document.body.removeChild(ta); }
+        });
+        calc();
+      })();
+      </script>
+    </section>'''
+
 PAGES = []
 def add(**kw):
     PAGES.append(kw)

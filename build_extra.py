@@ -10,7 +10,7 @@ from build_pages import (add, graph, crumb, webpage, service, faqpage,
                          faq_html, cta, hero, hero_trust, bc, bc_sub, crumb_sub, tiles, grid_cards, checklist,
                          steps, reviews_block, ico, SITE, write_all,
                          promise_strip, uk_remote_band, WCHECK_TOOL, EMAILSEC_TOOL, PWNED_TOOL, PRIVACY_TOOL, SCAM_TOOL, PWGEN_TOOL, WIFIQR_TOOL, DNS_TOOL, PCBENCH_TOOL, QRGEN_TOOL,
-                         SIGGEN_TOOL, SSLCHECK_TOOL, DOMEXP_TOOL, SOLARCALC_TOOL, AVTEST_TOOL, VBUILDER_TOOL, TOOLS, tool_cards, tools_strip, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
+                         SIGGEN_TOOL, SSLCHECK_TOOL, DOMEXP_TOOL, SOLARCALC_TOOL, AVTEST_TOOL, VBUILDER_TOOL, PCBUILD_TOOL, TOOLS, tool_cards, tools_strip, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
 from build_local import make_customer
 
 # ── Competitive prices for the new AI offerings (owner-approved 2026-06-17; edit here) ──
@@ -4322,6 +4322,39 @@ def victron_system_builder():
         desc=desc, og_title="Free Victron System Builder | 365 Techies", schema=schema, content=content)
 victron_system_builder()
 
+# ===================================================== CUSTOM PC BUILDER
+def custom_pc_builder():
+    slug = "custom-pc-builder"
+    desc = "Free custom PC builder. Set your budget and use — gaming, creative, office or CAD — and get an experienced builder's split of where the money should go, what class of part to buy, and live Scan.co.uk links for every component. From 365 Techies, Dorset."
+    faqs = [
+      ("Why don&rsquo;t you show exact prices?", "Because component prices genuinely change weekly (graphics cards especially), and a stale price is worse than none. Instead we split <em>your</em> budget the way experienced builders do, tell you what class of part that money buys, and link you to the live listing where the real price is. Prices always come from the retailer, never from us."),
+      ("Are the Scan or Amazon links affiliate links?", "No &mdash; they&rsquo;re plain searches and we don&rsquo;t earn anything from them. If that ever changes we&rsquo;ll say so clearly right next to the links."),
+      ("Why do the percentages change with the use case?", "Because the bottleneck moves: games live on the graphics card (~38% of budget), editing and CAD lean on the processor and memory, and an office PC shouldn&rsquo;t buy a graphics card at all. Balance is the whole game &mdash; a monster GPU with a starved CPU wastes money."),
+      ("Can you check my basket before I buy?", "Yes, free &mdash; <a href=\"/contact/\">send it over</a> and we&rsquo;ll sanity-check compatibility (socket, RAM, PSU, clearances) and tell you honestly where to spend less or more."),
+      ("Should I build new or buy refurbished?", "Below about &pound;600 for a general-purpose machine, our <a href=\"/dell-hardware/\">refurbished business-grade Dells from &pound;299</a> usually beat a new budget build on quality and warranty. New custom builds shine from the mid-range up, and for gaming."),
+      ("Can you help if my build won&rsquo;t boot?", "Yes &mdash; bring it in or call. First-build gremlins (RAM not clicked in, panel connectors, missing standoffs) are usually a 20-minute fix for someone who&rsquo;s seen them a hundred times."),
+    ]
+    content = "\n".join([
+      hero(bc("Custom PC Builder"), "// FREE PC BUILDER",
+           'Plan your <em class="grad grad--cyan">custom PC</em> like a pro',
+           "Set your budget and what the machine&rsquo;s for &mdash; we&rsquo;ll split the money across components the way experienced builders do, tell you exactly what class of part to buy, and link every part to live Scan.co.uk listings.",
+           cta1=("Plan My Build", "#pcbtool"), cta2=("Refurbished Dells", "/dell-hardware/"),
+           chips=["Budget split by use","Live retailer prices","Free basket check"]),
+      PCBUILD_TOOL,
+      faq_html(faqs),
+      tools_strip(["pcbench", "repairreplace", "healthcheck"], title="More free computer tools", alt=False),
+      cta("Measure it when it&rsquo;s built",
+          "Run our free PC Benchmark on the finished machine and see your score &mdash; then keep it fast with a plan that includes regular servicing, updates and security.",
+          primary=("Sanity-Check My Build", "/contact/"), secondary=("PC Benchmark", "/pc-benchmark/")),
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        return graph([crumb(s, "Custom PC Builder"), webpage(s, "Free Custom PC Builder", _desc),
+                      {"@type":"WebApplication","name":"365 Techies Custom PC Builder","applicationCategory":"UtilitiesApplication","operatingSystem":"Web (all browsers)","url":SITE+"/custom-pc-builder/","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},"provider":{"@id":SITE+"/#business"}},
+                      faqpage(s, _faqs)])
+    add(slug=slug, title="Free Custom PC Builder — Budget Split, Part Classes & Live Links | 365 Techies",
+        desc=desc, og_title="Free Custom PC Builder | 365 Techies", schema=schema, content=content)
+custom_pc_builder()
+
 # ===================================================== DNS / DOMAIN LOOKUP
 def dns_lookup():
     slug = "dns-lookup"
@@ -4385,7 +4418,7 @@ def pc_benchmark():
       </div>
     </section>''',
       faq_html(faqs),
-      tools_strip(["healthcheck", "faultcheck", "repairreplace"], title="More free computer check-ups", alt=False),
+      tools_strip(["pcbuild", "healthcheck", "repairreplace"], title="More free computer check-ups", alt=False),
       cta("Not happy with your score?",
           "We speed up slow computers every week &mdash; deep tune-ups, SSD and memory upgrades, honest advice, no-fix-no-fee and a 12-month warranty. Or start fresh with a refurbished business-grade Dell from &pound;299.",
           primary=("Make Mine Faster", "/contact/"), secondary=("Refurbished Dells", "/dell-hardware/")),
@@ -4410,7 +4443,7 @@ def free_tools_hub():
       ("Website, domain &amp; email", "See how your website, domain and email really perform.",
        ["website","ssl","domainexp","dns","emailsig"]),
       ("Your computer", "Test it, diagnose it, and make smart decisions.",
-       ["pcbench","avtest","healthcheck","faultcheck","repairreplace","w10"]),
+       ["pcbench","pcbuild","avtest","healthcheck","faultcheck","repairreplace","w10"]),
       ("Costs &amp; planning", "Clear numbers and honest recommendations.",
        ["costcalc","planfinder","quickquote","downtime","m365picker","servercloud","aicalc","solarcalc","vbuilder"]),
     ]
@@ -6143,6 +6176,7 @@ info_page(
           <a class="post-card" href="/solar-battery-calculator/"><p class="post-card__cat">Tool</p><h3>Battery &amp; Solar Calculator</h3><p>Campervan, boat or off-grid? Get an honest battery and solar panel sizing for UK conditions.</p><span class="post-card__more">Size my system &#8594;</span></a>
           <a class="post-card" href="/webcam-mic-test/"><p class="post-card__cat">Tool</p><h3>Webcam &amp; Mic Test</h3><p>Check your camera, microphone and speakers before the video call &mdash; privately, on your device.</p><span class="post-card__more">Test now &#8594;</span></a>
           <a class="post-card" href="/victron-system-builder/"><p class="post-card__cat">Tool</p><h3>Victron System Builder</h3><p>Four questions &#8594; a complete, honestly-sized Victron kit list with buy links for every part.</p><span class="post-card__more">Build a system &#8594;</span></a>
+          <a class="post-card" href="/custom-pc-builder/"><p class="post-card__cat">Tool</p><h3>Custom PC Builder</h3><p>Your budget, split the way experienced builders do it &mdash; part classes, golden rules and live links.</p><span class="post-card__more">Plan a build &#8594;</span></a>
           <a class="post-card" href="/dns-lookup/"><p class="post-card__cat">Tool</p><h3>DNS Lookup</h3><p>Check any domain&rsquo;s DNS records &mdash; A, MX, NS, TXT &mdash; the settings behind your website and email.</p><span class="post-card__more">Look it up &#8594;</span></a>
           <a class="post-card" href="/pc-benchmark/"><p class="post-card__cat">Tool</p><h3>PC Benchmark</h3><p>How fast is your computer, really? Test CPU, memory, graphics &amp; storage in 20 seconds.</p><span class="post-card__more">Benchmark it &#8594;</span></a>
           <a class="post-card" href="/windows-10-end-of-life/"><p class="post-card__cat">Act now</p><h3>Windows 10 End of Life</h3><p>Support ended in October 2025. Find out in 30 seconds if you&rsquo;re affected &mdash; and your options.</p><span class="post-card__more">Are you affected? &#8594;</span></a>
