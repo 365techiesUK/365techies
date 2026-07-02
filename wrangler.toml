@@ -8,7 +8,7 @@
 #
 # (Or skip the CLI entirely and use the Cloudflare dashboard — see DEPLOY-VICTRON-LIVE.md.)
 
-name = "victron-vrm-proxy"
+name = "365techies"
 main = "victron-vrm-proxy.js"
 compatibility_date = "2026-06-01"
 
