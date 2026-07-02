@@ -209,6 +209,7 @@ HEADER = '''  <header class="site-header">
             <a href="/domain-expiry-checker/">Domain Expiry Checker</a>
             <a href="/solar-battery-calculator/">Battery &amp; Solar Calculator</a>
             <a href="/webcam-mic-test/">Webcam &amp; Mic Test</a>
+            <a href="/victron-system-builder/">Victron System Builder</a>
             <a href="/dns-lookup/">DNS Lookup</a>
             <a href="/pc-benchmark/">PC Benchmark</a>
             <a href="/ai-roi-calculator/">AI ROI Calculator</a>
@@ -369,6 +370,7 @@ HEADER = '''  <header class="site-header">
           <a href="/domain-expiry-checker/">Domain Expiry Checker</a>
           <a href="/solar-battery-calculator/">Battery &amp; Solar Calculator</a>
           <a href="/webcam-mic-test/">Webcam &amp; Mic Test</a>
+          <a href="/victron-system-builder/">Victron System Builder</a>
           <a href="/dns-lookup/">DNS Lookup</a>
           <a href="/pc-benchmark/">PC Benchmark</a>
           <a href="/ai-roi-calculator/">AI ROI Calculator</a>
@@ -532,6 +534,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/domain-expiry-checker/">Domain Expiry Checker</a>
         <a href="/solar-battery-calculator/">Battery &amp; Solar Calculator</a>
         <a href="/webcam-mic-test/">Webcam &amp; Mic Test</a>
+        <a href="/victron-system-builder/">Victron System Builder</a>
         <a href="/dns-lookup/">DNS Lookup</a>
         <a href="/pc-benchmark/">PC Benchmark</a>
         <a href="/ai-roi-calculator/">AI ROI Calculator</a>
@@ -2090,6 +2093,7 @@ TOOLS = {
   "domainexp":    ("Domain Expiry Checker", "/domain-expiry-checker/", "When does your domain expire? Check the official registry record before you lose it."),
   "solarcalc":    ("Battery &amp; Solar Calculator", "/solar-battery-calculator/", "Campervan, boat or off-grid? Tick what you run and get an honest battery &amp; solar panel sizing."),
   "avtest":       ("Webcam &amp; Mic Test", "/webcam-mic-test/", "Video call in ten minutes? Test your camera, microphone and speakers &mdash; privately, on your device."),
+  "vbuilder":     ("Victron System Builder", "/victron-system-builder/", "Four questions &#8594; a complete, honestly-sized Victron kit list with links to buy every part."),
   "dns":          ("DNS Lookup", "/dns-lookup/", "Check any domain&rsquo;s A, MX, NS &amp; TXT records &mdash; the settings behind your website and email."),
   "pcbench":      ("PC Benchmark", "/pc-benchmark/", "How fast is your computer, really? Six live tests &mdash; CPU, encryption, memory, graphics &amp; storage &mdash; with a score you can share."),
   "healthcheck":  ("IT Health Check Tool", "/it-health-check-tool/", "Get an instant IT &amp; security score out of 100, plus a plain-English action plan."),
@@ -3109,6 +3113,178 @@ AVTEST_TOOL = r'''    <section class="section" aria-label="Webcam and microphone
           });
         });
         window.addEventListener('pagehide',function(){ try{ if(camStream)camStream.getTracks().forEach(function(t){t.stop();}); if(micStream)micStream.getTracks().forEach(function(t){t.stop();}); }catch(e){} });
+      })();
+      </script>
+    </section>'''
+
+# Shared Victron system builder (client-side sizing engine -> full component spec + retail search links) — /victron-system-builder/
+# Retail links are SEARCH links (never rot). AMZN_TAG empty = plain links + "we don't earn" disclosure; set a tag and the
+# affiliate disclosure swaps in automatically. Bimble pattern is one constant (standard OpenCart search) — easy to fix if needed.
+VBUILDER_TOOL = r'''    <section class="section" aria-label="Victron system builder" id="vbtool">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// FREE SYSTEM BUILDER</p>
+          <h2 class="section-title section-title--center" data-title>Build your Victron system<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Answer four questions and get a <strong>complete, honestly-sized Victron kit list</strong> &mdash; battery, solar, charging, inverter and monitoring &mdash; with links to buy each part, or one button to have us fit the lot.</p>
+        </div>
+        <div id="vb" data-reveal>
+          <div class="vb-q">
+            <p class="vb-q-t">1 &middot; How much energy do you use per day?</p>
+            <div class="vb-chips">
+              <button type="button" class="vb-chip" data-wh="350">Weekender ~350 Wh</button>
+              <button type="button" class="vb-chip is-on" data-wh="800">Regular trips ~800 Wh</button>
+              <button type="button" class="vb-chip" data-wh="1500">Full-timer ~1500 Wh</button>
+            </div>
+            <label class="vb-slider"><span>Fine-tune: <output id="vb-wh-out">800</output> Wh/day &middot; <a href="/solar-battery-calculator/">work yours out &#8594;</a></span>
+            <input type="range" id="vb-wh" min="200" max="3000" step="50" value="800"></label>
+          </div>
+          <div class="vb-q">
+            <p class="vb-q-t">2 &middot; Biggest mains (230V) appliance you&rsquo;ll run?</p>
+            <div class="vb-chips" id="vb-inv">
+              <button type="button" class="vb-chip is-on" data-inv="none">None &mdash; all 12V</button>
+              <button type="button" class="vb-chip" data-inv="small">Laptop / TV (&le;800W)</button>
+              <button type="button" class="vb-chip" data-inv="micro">Microwave (~900W)</button>
+              <button type="button" class="vb-chip" data-inv="kettle">Kettle / induction (2kW+)</button>
+            </div>
+          </div>
+          <div class="vb-q">
+            <p class="vb-q-t">3 &middot; Charge from the engine while driving?</p>
+            <div class="vb-chips" id="vb-b2b">
+              <button type="button" class="vb-chip is-on" data-b2b="yes">Yes &mdash; sensible</button>
+              <button type="button" class="vb-chip" data-b2b="no">No engine / static setup</button>
+            </div>
+          </div>
+          <div class="vb-q">
+            <p class="vb-q-t">4 &middot; Monitoring?</p>
+            <div class="vb-chips" id="vb-mon">
+              <button type="button" class="vb-chip is-on" data-mon="basic">Bluetooth basics</button>
+              <button type="button" class="vb-chip" data-mon="full">Full remote (VRM &mdash; like our van)</button>
+            </div>
+          </div>
+          <div class="vb-summary" id="vb-summary"></div>
+          <div class="vb-spec" id="vb-spec"></div>
+          <p class="vb-links-note" id="vb-links-note"></p>
+          <div class="vb-actions">
+            <button type="button" class="button vb-ghost" id="vb-copy">Copy kit list</button>
+          </div>
+          <p class="vb-note">Indicative starter spec, not a full design &mdash; cable sizing, fusing, alternator limits and ventilation all matter, and every van, boat and building is different. Budget roughly 10&ndash;15% extra for fusing, busbars and cabling. We check everything before we fit anything.</p>
+          <div class="vb-fix">
+            <h3>Or skip the spanner: we design, supply &amp; fit</h3>
+            <p>This is exactly the kit we install &mdash; our own support van runs on it, streaming live on this website right now. Designed properly, fitted safely, monitored remotely, and one local number when you want a hand.</p>
+            <div class="vb-fix-cta"><a class="button primary" href="/contact/">Design &amp; fit mine &#8594;</a><a class="button vb-ghost" href="/off-grid-victron-energy/">See our van live</a></div>
+          </div>
+        </div>
+      </div>
+      <style>
+      #vb{max-width:860px;margin:0 auto}
+      #vb .vb-q{margin-bottom:1.3rem}
+      #vb .vb-q-t{font-size:.95rem;font-weight:700;margin:0 0 .6rem;color:#fff}
+      #vb .vb-chips{display:flex;gap:.5rem;flex-wrap:wrap}
+      #vb .vb-chip{font:inherit;font-size:.85rem;cursor:pointer;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.16);color:inherit;border-radius:99px;padding:.5rem 1rem;transition:all .15s}
+      #vb .vb-chip.is-on{background:rgba(55,194,194,.15);border-color:var(--cyan,#37c2c2);color:var(--cyan,#37c2c2);font-weight:600}
+      #vb .vb-slider{display:block;margin-top:.7rem;font-size:.8rem;color:var(--muted,#9aa6c2)}
+      #vb .vb-slider output{color:var(--cyan,#37c2c2);font-weight:700}
+      #vb .vb-slider a{color:var(--cyan,#37c2c2)}
+      #vb input[type=range]{width:100%;margin-top:.4rem;accent-color:var(--cyan,#37c2c2);cursor:pointer}
+      #vb .vb-summary{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin:1.6rem 0 1rem}
+      #vb .vb-sum-chip{font-size:.78rem;padding:.4rem .8rem;border-radius:99px;border:1px solid rgba(57,211,83,.35);background:rgba(57,211,83,.08);color:#9fe8b0}
+      #vb .vb-sum-chip b{color:#39d353}
+      #vb .vb-spec{display:flex;flex-direction:column;gap:.7rem}
+      #vb .vb-item{padding:1rem 1.1rem;border-radius:13px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1)}
+      #vb .vb-item-h{display:flex;justify-content:space-between;gap:.8rem;align-items:baseline;flex-wrap:wrap}
+      #vb .vb-item-cat{font-size:.66rem;text-transform:uppercase;letter-spacing:.07em;color:var(--cyan,#37c2c2)}
+      #vb .vb-item-name{font-size:1rem;font-weight:700;color:#fff;margin:.15rem 0}
+      #vb .vb-item-why{font-size:.82rem;color:var(--muted,#9aa6c2);line-height:1.5;margin:.2rem 0 .6rem}
+      #vb .vb-buy{display:flex;gap:.5rem;flex-wrap:wrap}
+      #vb .vb-buy a{font-size:.78rem;font-weight:600;text-decoration:none;padding:.4rem .85rem;border-radius:9px;border:1px solid rgba(255,255,255,.22);color:inherit;transition:all .15s}
+      #vb .vb-buy a:hover{border-color:var(--cyan,#37c2c2);color:var(--cyan,#37c2c2)}
+      #vb .vb-links-note{text-align:center;font-size:.72rem;color:var(--muted,#9aa6c2);margin:1rem 0 0;opacity:.85}
+      #vb .vb-actions{display:flex;justify-content:center;margin-top:1rem}
+      #vb .vb-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}
+      #vb .vb-ghost.done{border-color:#2ecc71;color:#2ecc71}
+      #vb .vb-note{margin:1.4rem auto 0;max-width:72ch;text-align:center;font-size:.76rem;color:var(--muted,#9aa6c2);line-height:1.6}
+      #vbtool .vb-fix{max-width:860px;margin:2rem auto 0;padding:1.6rem;border-radius:16px;border:1px solid rgba(55,194,194,.35);background:rgba(55,194,194,.07);text-align:center}
+      #vbtool .vb-fix h3{margin:0 0 .5rem;font-size:1.2rem}
+      #vbtool .vb-fix p{margin:0 auto 1.1rem;max-width:56ch;color:var(--muted,#9aa6c2);font-size:.95rem;line-height:1.6}
+      #vbtool .vb-fix-cta{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center}
+      </style>
+      <script>
+      (function(){
+        var root=document.getElementById('vb'); if(!root) return;
+        var AMZN_TAG='';   /* Amazon Associates tag, e.g. '365techies-21' — leave empty for plain links */
+        function amzn(q){ return 'https://www.amazon.co.uk/s?k='+encodeURIComponent(q)+(AMZN_TAG?('&tag='+AMZN_TAG):''); }
+        function bimble(q){ return 'https://www.bimblesolar.com/index.php?route=product/search&search='+encodeURIComponent(q); }
+        var state={wh:800,inv:'none',b2b:'yes',mon:'basic'};
+        function chipGroup(sel,attr,key){
+          root.querySelectorAll(sel+' .vb-chip').forEach(function(b){
+            b.addEventListener('click',function(){
+              root.querySelectorAll(sel+' .vb-chip').forEach(function(x){x.classList.remove('is-on');});
+              b.classList.add('is-on'); state[key]=b.getAttribute(attr); calc();
+            });
+          });
+        }
+        var whR=root.querySelector('#vb-wh'), whOut=root.querySelector('#vb-wh-out');
+        root.querySelectorAll('[data-wh]').forEach(function(b){
+          b.addEventListener('click',function(){
+            root.querySelectorAll('[data-wh]').forEach(function(x){x.classList.remove('is-on');});
+            b.classList.add('is-on'); whR.value=b.getAttribute('data-wh'); state.wh=+whR.value; whOut.textContent=state.wh; calc();
+          });
+        });
+        whR.addEventListener('input',function(){ state.wh=+whR.value; whOut.textContent=state.wh;
+          root.querySelectorAll('[data-wh]').forEach(function(x){x.classList.remove('is-on');}); calc(); });
+        chipGroup('#vb-inv','data-inv','inv'); chipGroup('#vb-b2b','data-b2b','b2b'); chipGroup('#vb-mon','data-mon','mon');
+        function mppt(w){
+          if(w<=220) return 'Victron SmartSolar MPPT 75/15';
+          if(w<=290) return 'Victron SmartSolar MPPT 100/20';
+          if(w<=440) return 'Victron SmartSolar MPPT 100/30';
+          if(w<=700) return 'Victron SmartSolar MPPT 100/50';
+          if(w<=1000) return 'Victron SmartSolar MPPT 150/70';
+          return null;
+        }
+        function calc(){
+          var whLoss=state.wh*1.15, ahDay=whLoss/12;
+          var liAh=Math.ceil(ahDay*1.5/0.9/10)*10;
+          var pvW=Math.ceil(whLoss/2.5*1.25/10)*10;           // spring/autumn design target
+          var pvSummer=Math.ceil(whLoss/4.2*1.25/10)*10;
+          var panels=Math.max(1,Math.ceil(pvW/175));
+          var items=[];
+          if(liAh<=100) items.push({cat:'Battery',name:'Victron SuperPack 12.8V 100Ah',q:'Victron SuperPack 100Ah lithium',why:'Covers your '+Math.round(ahDay)+' Ah/day with a 1.5-day buffer, using lithium&rsquo;s ~90% usable capacity. Built-in BMS &mdash; the DIY-friendly one.'});
+          else if(liAh<=200) items.push({cat:'Battery',name:'Victron SuperPack 12.8V 200Ah (or 2&times; 100Ah)',q:'Victron SuperPack 200Ah lithium',why:'Covers your '+Math.round(ahDay)+' Ah/day with a 1.5-day buffer. Built-in BMS &mdash; the DIY-friendly one.'});
+          else if(liAh<=400) items.push({cat:'Battery',name:'2&times; Victron SuperPack 12.8V 200Ah',q:'Victron SuperPack 200Ah lithium',why:'You need ~'+liAh+' Ah of lithium for '+Math.round(ahDay)+' Ah/day with buffer &mdash; paired SuperPacks keep it simple.'});
+          else items.push({cat:'Battery',name:'Victron Smart LiFePO4 bank ('+liAh+' Ah) &mdash; talk to us',q:'Victron Smart LiFePO4 330Ah',why:'At this size you&rsquo;re into external-BMS territory with serious fusing &mdash; great systems, but they deserve proper design.'});
+          items.push({cat:'Solar panels',name:panels+'&times; 175W rigid panel ('+(panels*175)+'W total)',q:'175W rigid solar panel',why:'Sized for spring/autumn (~'+pvW+'W needed); summer needs only ~'+pvSummer+'W. UK winter is ~1 sun-hour &mdash; plan on engine or hook-up charging then.'});
+          var m=mppt(panels*175);
+          if(m) items.push({cat:'Solar controller',name:m,q:m,why:'Matched to '+(panels*175)+'W of panels on a 12V system, with Bluetooth built in.'});
+          else items.push({cat:'Solar controller',name:'Dual controllers &mdash; talk to us',q:'Victron SmartSolar MPPT 150/70',why:'Over 1kW of solar on 12V wants splitting across two controllers &mdash; worth designing properly.'});
+          if(state.b2b==='yes') items.push({cat:'Engine charging',name:'Victron Orion XS 12/12-50',q:'Victron Orion XS 12 12 50',why:'Up to 50A into the battery while you drive &mdash; smart-alternator safe, and your reliable winter charger.'});
+          if(state.inv==='small') items.push({cat:'Inverter',name:'Victron Phoenix 12/800',q:'Victron Phoenix inverter 12 800',why:'Clean 230V for laptops, TVs and chargers up to ~650W continuous.'});
+          else if(state.inv==='micro') items.push({cat:'Inverter/charger',name:'Victron MultiPlus 12/2000/80',q:'Victron MultiPlus 12 2000',why:'Runs a ~900W microwave with headroom, and doubles as an 80A mains charger on hook-up.'});
+          else if(state.inv==='kettle') items.push({cat:'Inverter/charger',name:'Victron MultiPlus 12/3000/120',q:'Victron MultiPlus 12 3000',why:'Kettles and induction hobs pull 2&ndash;3kW &mdash; this handles them, and charges at 120A on hook-up.'});
+          if(state.mon==='full'){ items.push({cat:'Monitoring',name:'Victron SmartShunt 500A + Cerbo GX + GX Touch 50',q:'Victron Cerbo GX',why:'The full remote-monitoring stack (VRM) &mdash; the exact setup streaming our own van live on this site.'}); }
+          else items.push({cat:'Monitoring',name:'Victron SmartShunt 500A',q:'Victron SmartShunt 500A',why:'Proper state-of-charge on your phone via Bluetooth &mdash; the gauge every lithium system needs.'});
+          root.querySelector('#vb-summary').innerHTML=
+            '<span class="vb-sum-chip"><b>'+Math.round(whLoss)+'</b> Wh/day (incl. losses)</span>'+
+            '<span class="vb-sum-chip"><b>'+liAh+'</b> Ah lithium</span>'+
+            '<span class="vb-sum-chip"><b>'+(panels*175)+'</b> W solar</span>';
+          root.querySelector('#vb-spec').innerHTML=items.map(function(it){
+            return '<div class="vb-item"><div class="vb-item-h"><div><div class="vb-item-cat">'+it.cat+'</div><div class="vb-item-name">'+it.name+'</div></div></div>'+
+              '<p class="vb-item-why">'+it.why+'</p>'+
+              '<div class="vb-buy"><a href="'+amzn(it.q)+'" target="_blank" rel="noopener'+(AMZN_TAG?' sponsored':'')+'">Amazon UK &#8599;</a>'+
+              '<a href="'+bimble(it.q)+'" target="_blank" rel="noopener">Bimble Solar &#8599;</a></div></div>';
+          }).join('');
+          root.querySelector('#vb-links-note').innerHTML = AMZN_TAG
+            ? 'Retail buttons open live searches. As an Amazon Associate we earn from qualifying purchases &mdash; at no extra cost to you. Bimble Solar links are not affiliated.'
+            : 'Retail buttons open live searches on each store &mdash; we don&rsquo;t earn anything from them; it&rsquo;s simply the kit we rate and fit.';
+          root.__kit=items;
+        }
+        root.querySelector('#vb-copy').addEventListener('click',function(){
+          var btn=this, items=root.__kit||[];
+          var txt='My Victron kit list (via 365techies.co.uk/victron-system-builder/):\n'+items.map(function(it){ var d=document.createElement('div'); d.innerHTML=it.name; return '• '+it.cat+': '+d.textContent; }).join('\n');
+          function ok(){ btn.textContent='Copied!'; btn.classList.add('done'); setTimeout(function(){ btn.textContent='Copy kit list'; btn.classList.remove('done'); },1800); }
+          if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(ok).catch(function(){}); }
+          else { var ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); ok(); }catch(e){} document.body.removeChild(ta); }
+        });
+        calc();
       })();
       </script>
     </section>'''

@@ -10,7 +10,7 @@ from build_pages import (add, graph, crumb, webpage, service, faqpage,
                          faq_html, cta, hero, hero_trust, bc, bc_sub, crumb_sub, tiles, grid_cards, checklist,
                          steps, reviews_block, ico, SITE, write_all,
                          promise_strip, uk_remote_band, WCHECK_TOOL, EMAILSEC_TOOL, PWNED_TOOL, PRIVACY_TOOL, SCAM_TOOL, PWGEN_TOOL, WIFIQR_TOOL, DNS_TOOL, PCBENCH_TOOL, QRGEN_TOOL,
-                         SIGGEN_TOOL, SSLCHECK_TOOL, DOMEXP_TOOL, SOLARCALC_TOOL, AVTEST_TOOL, TOOLS, tool_cards, tools_strip, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
+                         SIGGEN_TOOL, SSLCHECK_TOOL, DOMEXP_TOOL, SOLARCALC_TOOL, AVTEST_TOOL, VBUILDER_TOOL, TOOLS, tool_cards, tools_strip, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
 from build_local import make_customer
 
 # ── Competitive prices for the new AI offerings (owner-approved 2026-06-17; edit here) ──
@@ -4242,7 +4242,7 @@ def solar_battery_calculator():
            chips=["UK sun figures","Lithium &amp; AGM","Victron installers"]),
       SOLARCALC_TOOL,
       faq_html(faqs),
-      tools_strip(["speed", "wifiqr", "coverage"], title="More free tools for life on the road", alt=False),
+      tools_strip(["vbuilder", "speed", "wifiqr"], title="More free tools for life on the road", alt=False),
       cta("Powered by the people who live it",
           "Our own mobile support van runs on the Victron kit we install &mdash; solar, lithium and remote monitoring, streaming live on our website. We&rsquo;ll design yours the same way: properly.",
           primary=("Get a Quote", "/contact/"), secondary=("See It Live", "/off-grid-victron-energy/")),
@@ -4286,6 +4286,39 @@ def webcam_mic_test():
     add(slug=slug, title="Free Webcam, Mic & Speaker Test — Private, On-Device | 365 Techies",
         desc=desc, og_title="Free Webcam & Mic Test | 365 Techies", schema=schema, content=content)
 webcam_mic_test()
+
+# ===================================================== VICTRON SYSTEM BUILDER
+def victron_system_builder():
+    slug = "victron-system-builder"
+    desc = "Free Victron system builder. Answer four questions and get a complete, honestly-sized Victron kit list — lithium battery, solar, MPPT, B2B charging, inverter and monitoring — with links to buy each part on Amazon or Bimble Solar. From 365 Techies, Dorset — Victron installers."
+    faqs = [
+      ("How is the kit sized?", "From your daily energy use: watts &times; hours plus 15% real-world losses, a 1.5-day battery buffer at lithium&rsquo;s ~90% usable capacity, solar sized for UK spring/autumn sun (~2.5 peak hours), and the matching Victron MPPT from the official controller limits. It&rsquo;s an honest starter spec &mdash; a real design also covers cable sizing, fusing and alternator limits."),
+      ("Are the shop links affiliate links?", "No &mdash; the buttons simply open live searches on Amazon UK and Bimble Solar for each part, and we don&rsquo;t earn a penny from them. If that ever changes we&rsquo;ll say so clearly right next to the links. We recommend this kit because we install it and run it ourselves."),
+      ("Why Victron?", "It&rsquo;s the kit we trust with our own van: everything talks to everything (one app for the lot), the build quality is superb, warranties are long, and the remote-monitoring platform (VRM) is genuinely brilliant &mdash; you can watch our own system streaming live on this website."),
+      ("Can I fit it myself?", "Plenty of people do &mdash; 12V systems are DIY-friendly if you&rsquo;re careful, and the SuperPack batteries with built-in protection make it safer. The parts that deserve respect are fusing, cable sizing and anything near the alternator or mains. We&rsquo;re happy to fit kit you&rsquo;ve bought, check over a DIY install, or do the whole job."),
+      ("Will you price-match or supply the kit?", "We&rsquo;ll quote for supply-and-fit with warranty and remote monitoring set up &mdash; and we&rsquo;ll tell you honestly if buying parts yourself and having us fit them works out better for you. No games; <a href=\"/contact/\">just ask</a>."),
+      ("What about winter?", "UK winter gives roughly one hour of usable sun a day &mdash; an eighth of summer &mdash; so winter systems lean on engine charging (the Orion B2B) or hook-up. The builder already assumes that; don&rsquo;t let anyone sell you a roof full of panels as a winter solution."),
+    ]
+    content = "\n".join([
+      hero(bc("Victron System Builder"), "// FREE SYSTEM BUILDER",
+           'Build your <em class="grad grad--green">Victron system</em>',
+           "Four questions &#8594; a complete, honestly-sized kit list: lithium battery, solar, MPPT, engine charging, inverter and monitoring &mdash; with buy links for every part, or one button to have it designed and fitted by the people who run it daily.",
+           cta1=("Build My System", "#vbtool"), cta2=("See Our Van Live", "/off-grid-victron-energy/"),
+           chips=["Honest UK sizing","Buy links per part","Fitted by installers"]),
+      VBUILDER_TOOL,
+      faq_html(faqs),
+      tools_strip(["solarcalc", "speed", "coverage"], title="More free tools for life off-grid", alt=False),
+      cta("The kit we&rsquo;d buy. Because we did.",
+          "Our own support van runs on exactly this equipment &mdash; designed, fitted and monitored by us, streaming live on this website. Whether you buy the parts or we supply them, we&rsquo;ll make sure it&rsquo;s done right.",
+          primary=("Design &amp; Fit Mine", "/contact/"), secondary=("Off-Grid &amp; Victron", "/off-grid-victron-energy/")),
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        return graph([crumb(s, "Victron System Builder"), webpage(s, "Free Victron System Builder", _desc),
+                      {"@type":"WebApplication","name":"365 Techies Victron System Builder","applicationCategory":"UtilitiesApplication","operatingSystem":"Web (all browsers)","url":SITE+"/victron-system-builder/","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},"provider":{"@id":SITE+"/#business"}},
+                      faqpage(s, _faqs)])
+    add(slug=slug, title="Free Victron System Builder — Complete Kit List in 4 Questions | 365 Techies",
+        desc=desc, og_title="Free Victron System Builder | 365 Techies", schema=schema, content=content)
+victron_system_builder()
 
 # ===================================================== DNS / DOMAIN LOOKUP
 def dns_lookup():
@@ -4377,7 +4410,7 @@ def free_tools_hub():
       ("Your computer", "Test it, diagnose it, and make smart decisions.",
        ["pcbench","avtest","healthcheck","faultcheck","repairreplace","w10"]),
       ("Costs &amp; planning", "Clear numbers and honest recommendations.",
-       ["costcalc","planfinder","quickquote","downtime","m365picker","servercloud","aicalc","solarcalc"]),
+       ["costcalc","planfinder","quickquote","downtime","m365picker","servercloud","aicalc","solarcalc","vbuilder"]),
     ]
     sections = ""
     items = []
@@ -6107,6 +6140,7 @@ info_page(
           <a class="post-card" href="/domain-expiry-checker/"><p class="post-card__cat">Tool</p><h3>Domain Expiry Checker</h3><p>When does your domain expire? Official registry data before it&rsquo;s too late.</p><span class="post-card__more">Check a domain &#8594;</span></a>
           <a class="post-card" href="/solar-battery-calculator/"><p class="post-card__cat">Tool</p><h3>Battery &amp; Solar Calculator</h3><p>Campervan, boat or off-grid? Get an honest battery and solar panel sizing for UK conditions.</p><span class="post-card__more">Size my system &#8594;</span></a>
           <a class="post-card" href="/webcam-mic-test/"><p class="post-card__cat">Tool</p><h3>Webcam &amp; Mic Test</h3><p>Check your camera, microphone and speakers before the video call &mdash; privately, on your device.</p><span class="post-card__more">Test now &#8594;</span></a>
+          <a class="post-card" href="/victron-system-builder/"><p class="post-card__cat">Tool</p><h3>Victron System Builder</h3><p>Four questions &#8594; a complete, honestly-sized Victron kit list with buy links for every part.</p><span class="post-card__more">Build a system &#8594;</span></a>
           <a class="post-card" href="/dns-lookup/"><p class="post-card__cat">Tool</p><h3>DNS Lookup</h3><p>Check any domain&rsquo;s DNS records &mdash; A, MX, NS, TXT &mdash; the settings behind your website and email.</p><span class="post-card__more">Look it up &#8594;</span></a>
           <a class="post-card" href="/pc-benchmark/"><p class="post-card__cat">Tool</p><h3>PC Benchmark</h3><p>How fast is your computer, really? Test CPU, memory, graphics &amp; storage in 20 seconds.</p><span class="post-card__more">Benchmark it &#8594;</span></a>
           <a class="post-card" href="/windows-10-end-of-life/"><p class="post-card__cat">Act now</p><h3>Windows 10 End of Life</h3><p>Support ended in October 2025. Find out in 30 seconds if you&rsquo;re affected &mdash; and your options.</p><span class="post-card__more">Are you affected? &#8594;</span></a>
