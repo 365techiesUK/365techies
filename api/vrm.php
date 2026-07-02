@@ -26,8 +26,10 @@ $TOKENF  = __DIR__ . '/vrm-token.php';
 
 if (is_file($CACHE) && (time() - filemtime($CACHE)) < $TTL) { readfile($CACHE); exit; }
 if (!is_file($TOKENF)) { echo json_encode(['ok' => false, 'error' => 'not-configured']); exit; }
-require $TOKENF; // defines $VRM_TOKEN
-if (empty($VRM_TOKEN)) { echo json_encode(['ok' => false, 'error' => 'not-configured']); exit; }
+/* Extract credentials by pattern rather than executing the file — immune to formatting mistakes */
+$cfgsrc = (string)@file_get_contents($TOKENF);
+$VRM_TOKEN = preg_match('/\$VRM_TOKEN\s*=\s*[\'"]([^\'"]+)[\'"]/', $cfgsrc, $mm) ? $mm[1] : '';
+if ($VRM_TOKEN === '') { echo json_encode(['ok' => false, 'error' => 'not-configured']); exit; }
 
 function vrm_get($path, $token) {
     $ch = curl_init('https://vrmapi.victronenergy.com/v2' . $path);

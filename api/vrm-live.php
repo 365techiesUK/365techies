@@ -43,9 +43,12 @@ $HOST = 'mqtt' . ($idx % 128) . '.victronenergy.com';
 function out_json($arr) { header('Content-Type: application/json'); echo json_encode($arr); exit; }
 
 if (!is_file($TOKENF)) { out_json(['ok' => false, 'error' => 'not-configured']); }
-require $TOKENF;
-if (empty($VRM_TOKEN))  { out_json(['ok' => false, 'error' => 'not-configured']); }
-if (empty($VRM_EMAIL))  { out_json(['ok' => false, 'error' => 'no-email']); }
+/* Extract credentials by pattern rather than executing the file — immune to formatting mistakes */
+$cfgsrc = (string)@file_get_contents($TOKENF);
+$VRM_TOKEN = preg_match('/\$VRM_TOKEN\s*=\s*[\'"]([^\'"]+)[\'"]/', $cfgsrc, $mm) ? $mm[1] : '';
+$VRM_EMAIL = preg_match('/\$VRM_EMAIL\s*=\s*[\'"]([^\'"]+)[\'"]/', $cfgsrc, $mm) ? $mm[1] : '';
+if ($VRM_TOKEN === '') { out_json(['ok' => false, 'error' => 'not-configured']); }
+if ($VRM_EMAIL === '') { out_json(['ok' => false, 'error' => 'no-email']); }
 
 /* ---------------- minimal MQTT 3.1.1 ---------------- */
 function mq_str($s) { return pack('n', strlen($s)) . $s; }
