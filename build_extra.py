@@ -2184,6 +2184,18 @@ def dell_hardware():
       </div>
     </section>''',
       faq_html(faqs),
+      f'''    <section class="blog-section" aria-label="Owner's guide">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// INCLUDED WITH EVERY MACHINE</p>
+          <h2 class="section-title section-title--center" data-title>The easy owner&rsquo;s guide<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Every laptop we supply comes with a plain-English guide &mdash; every port explained with an interactive tour, three ways to power it (including the efficient 12V USB-C trick for vans and off-grid), battery care and 60-second fixes.</p>
+        </div>
+        <div class="blog-grid" data-stagger style="max-width:420px;margin:0 auto">
+          <a class="post-card" href="/dell-latitude-3520-guide/"><p class="post-card__cat">Guide</p><h3>Dell Latitude 3520 &mdash; The Easy Guide</h3><p>Interactive port tour &middot; home, desk &amp; off-grid power &middot; battery care &middot; quick fixes.</p><span class="post-card__more">Open the guide &#8594;</span></a>
+        </div>
+      </div>
+    </section>''',
       cta("Find your next computer the easy way",
           "Tell us what you need and we&rsquo;ll match you a tested, refurbished Dell from &pound;299 &mdash; set up, supported and backed by our own warranty.",
           primary=("Find me a refurbished Dell", "#match"), secondary=("Call 01202 775566", "tel:+441202775566")),
@@ -4355,6 +4367,255 @@ def custom_pc_builder():
         desc=desc, og_title="Free Custom PC Builder | 365 Techies", schema=schema, content=content)
 custom_pc_builder()
 
+# ===================================================== DELL LATITUDE 3520 EASY GUIDE (animated owner's guide)
+DELL3520_WIDGET = r'''    <section class="section" aria-label="Interactive port guide" id="d35tool">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// KNOW YOUR PORTS</p>
+          <h2 class="section-title section-title--center" data-title>Every port, explained<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Tap any port to see what it does &mdash; or press <strong>Play tour</strong> and let the guide walk you round the machine.</p>
+        </div>
+        <div id="d35" data-reveal>
+          <div class="d3-edges">
+            <div class="d3-edge-block">
+              <p class="d3-edge-label">&#9664; Left side</p>
+              <svg viewBox="0 0 560 64" class="d3-svg" id="d3-left" role="group" aria-label="Left side ports"></svg>
+            </div>
+            <div class="d3-edge-block">
+              <p class="d3-edge-label">Right side &#9654;</p>
+              <svg viewBox="0 0 560 64" class="d3-svg" id="d3-right" role="group" aria-label="Right side ports"></svg>
+            </div>
+          </div>
+          <div class="d3-detail" id="d3-detail"></div>
+          <div class="d3-controls"><button type="button" class="button primary" id="d3-tour">&#9654; Play tour</button></div>
+          <p class="d3-caption">Layout is approximate and the exact port mix can vary slightly between configurations &mdash; but if the port&rsquo;s on your machine, this is what it does.</p>
+        </div>
+      </div>
+      <style>
+      #d35{max-width:820px;margin:0 auto}
+      #d35 .d3-edges{display:flex;flex-direction:column;gap:1rem}
+      #d35 .d3-edge-label{font:600 .7rem/1 ui-monospace,monospace;letter-spacing:.07em;text-transform:uppercase;color:var(--muted,#9aa6c2);margin:0 0 .35rem}
+      #d35 .d3-svg{width:100%;display:block;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:12px}
+      #d35 .d3-port{cursor:pointer}
+      #d35 .d3-port rect.slot{fill:rgba(255,255,255,.14);stroke:rgba(255,255,255,.35);stroke-width:1;rx:3;transition:all .2s}
+      #d35 .d3-port text{fill:#9aa6c2;font-size:9px;font-family:ui-monospace,monospace;text-anchor:middle;pointer-events:none}
+      #d35 .d3-port.on rect.slot{fill:rgba(55,194,194,.45);stroke:var(--cyan,#37c2c2)}
+      #d35 .d3-port.on text{fill:#fff}
+      #d35 .d3-port circle.pulse{fill:none;stroke:var(--cyan,#37c2c2);stroke-width:2;opacity:0}
+      #d35 .d3-port.on circle.pulse{animation:d3pulse 1.6s ease-out infinite}
+      @keyframes d3pulse{0%{opacity:.9;r:6}100%{opacity:0;r:20}}
+      @media (prefers-reduced-motion: reduce){#d35 .d3-port.on circle.pulse{animation:none;opacity:.5}}
+      #d35 .d3-detail{margin-top:1.1rem;padding:1.1rem 1.2rem;border-radius:13px;background:rgba(55,194,194,.07);border:1px solid rgba(55,194,194,.3);min-height:96px}
+      #d35 .d3-d-name{margin:0 0 .3rem;font-size:1.05rem;font-weight:800;color:#fff}
+      #d35 .d3-d-name span{font-size:.68rem;font-weight:600;color:var(--cyan,#37c2c2);text-transform:uppercase;letter-spacing:.06em;margin-left:.5rem}
+      #d35 .d3-d-desc{margin:0;font-size:.88rem;color:var(--muted,#9aa6c2);line-height:1.6}
+      #d35 .d3-controls{display:flex;justify-content:center;margin-top:1rem}
+      #d35 .d3-caption{text-align:center;font-size:.72rem;color:var(--muted,#9aa6c2);margin:1rem 0 0;opacity:.85}
+      </style>
+      <script>
+      (function(){
+        var root=document.getElementById('d35'); if(!root) return;
+        var PORTS=[
+          {side:'L',tag:'PWR',name:'Power in (round barrel)',where:'Left side',desc:'Where the supplied Dell 65W charger plugs in. A firm push until it seats; the little light on the plug tip means power is flowing. Prefer one cable for everything? The USB-C port charges the laptop too &mdash; see the power section below.'},
+          {side:'L',tag:'HDMI',name:'HDMI &mdash; second screen or TV',where:'Left side',desc:'Connect a monitor, TV or projector. Once plugged in, press Win+P to choose Duplicate (same on both) or Extend (more desk space). If the screen stays black, try Win+P first &mdash; it fixes it nine times out of ten.'},
+          {side:'L',tag:'USB',name:'USB-A 3.2 &mdash; the fast one',where:'Left side',desc:'Full-size USB for memory sticks, external drives and hubs. This is the quick port &mdash; use it for anything that moves files. Any normal USB plug fits (one way up &mdash; if it won&rsquo;t go, flip it).'},
+          {side:'L',tag:'USB-C',name:'USB-C &mdash; the do-everything port',where:'Left side',desc:'The small oval port is the most capable one on the machine: it can CHARGE the laptop (65W USB-C PD), drive a MONITOR (DisplayPort), and connect a dock so one cable does power + screens + network + accessories. It&rsquo;s also the key to efficient off-grid power &mdash; see below.'},
+          {side:'R',tag:'SD',name:'microSD reader (some models)',where:'Right side',desc:'If your configuration has it: pop in a camera or phone memory card to copy photos off. Push until it clicks; push again to release.'},
+          {side:'R',tag:'AUX',name:'Headset jack (3.5mm)',where:'Right side',desc:'Headphones or a headset with mic &mdash; both work in this single combo jack. If people can&rsquo;t hear you on calls after plugging in, check Windows picked the right microphone (click the speaker icon &#8594; sound settings).'},
+          {side:'R',tag:'USB',name:'USB-A 2.0 &mdash; the steady one',where:'Right side',desc:'Perfect for the things that stay plugged in: a mouse or keyboard dongle, a printer cable. Slower than the left-hand USB, which is why the drives go over there.'},
+          {side:'R',tag:'LAN',name:'Wired network (RJ-45)',where:'Right side',desc:'Plug straight into your router or office network for the most stable connection there is &mdash; brilliant for video calls, big downloads and anywhere the Wi-Fi is moody. No setup needed; Windows just uses it.'},
+          {side:'R',tag:'LOCK',name:'Security lock slot',where:'Right side',desc:'The wedge-shaped slot takes a laptop cable lock &mdash; loop the cable round something solid and the machine stays put. Sensible in shops, receptions and shared offices.'}
+        ];
+        var active=-1, tour=null;
+        function draw(svgId,side){
+          var svg=root.querySelector(svgId), ps=PORTS.map(function(p,i){return {p:p,i:i};}).filter(function(x){return x.p.side===side;});
+          var n=ps.length, gap=560/(n+1), h='';
+          ps.forEach(function(x,k){
+            var cx=gap*(k+1);
+            h+='<g class="d3-port" data-i="'+x.i+'" tabindex="0" role="button" aria-label="'+x.p.name.replace(/&mdash;|&amp;/g,'')+'">'+
+               '<circle class="pulse" cx="'+cx+'" cy="26" r="8"></circle>'+
+               '<rect class="slot" x="'+(cx-18)+'" y="18" width="36" height="16" rx="3"></rect>'+
+               '<text x="'+cx+'" y="52">'+x.p.tag+'</text></g>';
+          });
+          svg.innerHTML=h;
+        }
+        draw('#d3-left','L'); draw('#d3-right','R');
+        var detail=root.querySelector('#d3-detail');
+        function show(i){
+          active=i;
+          root.querySelectorAll('.d3-port').forEach(function(g){ g.classList.toggle('on', +g.getAttribute('data-i')===i); });
+          var p=PORTS[i];
+          detail.innerHTML='<p class="d3-d-name">'+p.name+'<span>'+p.where+'</span></p><p class="d3-d-desc">'+p.desc+'</p>';
+        }
+        root.querySelectorAll('.d3-port').forEach(function(g){
+          function go(){ stopTour(); show(+g.getAttribute('data-i')); }
+          g.addEventListener('click',go);
+          g.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go(); } });
+        });
+        var tourBtn=root.querySelector('#d3-tour');
+        function stopTour(){ if(tour){ clearInterval(tour); tour=null; tourBtn.innerHTML='&#9654; Play tour'; } }
+        tourBtn.addEventListener('click',function(){
+          if(tour){ stopTour(); return; }
+          tourBtn.innerHTML='&#9632; Stop tour';
+          var i=(active+1)%PORTS.length; show(i);
+          tour=setInterval(function(){ i=(i+1)%PORTS.length; show(i); if(i===PORTS.length-1){ setTimeout(stopTour,3000); } },3200);
+        });
+        show(3); /* start on the star of the show: USB-C */
+      })();
+      </script>
+    </section>
+
+    <section class="section section--alt" aria-label="Three ways to power it" id="d3ptool">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// THREE WAYS TO POWER IT</p>
+          <h2 class="section-title section-title--center" data-title>Home, desk &amp; off-grid power<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>The Latitude 3520 charges through its barrel jack <em>or</em> its USB-C port &mdash; and choosing the right one saves faff at a desk and real battery power off-grid.</p>
+        </div>
+        <div id="d3p" data-reveal>
+          <div class="dp-tabs">
+            <button type="button" class="dp-tab is-on" data-mode="home">&#127968; At home</button>
+            <button type="button" class="dp-tab" data-mode="desk">&#128188; Business desk</button>
+            <button type="button" class="dp-tab" data-mode="van">&#9889; Off-grid / van</button>
+          </div>
+          <div class="dp-stage">
+            <svg viewBox="0 0 640 120" class="dp-svg" aria-hidden="true">
+              <path class="dp-line" id="dp-line" d="M120 60 H 520"></path>
+              <g id="dp-src"></g>
+              <g id="dp-mid"></g>
+              <g id="dp-dst"><rect x="500" y="34" width="90" height="52" rx="8" fill="rgba(55,194,194,.12)" stroke="#37c2c2"></rect><text x="545" y="58" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">Latitude</text><text x="545" y="74" text-anchor="middle" fill="#9aa6c2" font-size="10">3520</text></g>
+            </svg>
+            <div class="dp-info" id="dp-info"></div>
+          </div>
+        </div>
+      </div>
+      <style>
+      #d3p{max-width:820px;margin:0 auto}
+      #d3p .dp-tabs{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin-bottom:1.1rem}
+      #d3p .dp-tab{font:inherit;font-size:.88rem;cursor:pointer;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.16);color:inherit;border-radius:99px;padding:.55rem 1.1rem;transition:all .15s}
+      #d3p .dp-tab.is-on{background:rgba(55,194,194,.15);border-color:var(--cyan,#37c2c2);color:var(--cyan,#37c2c2);font-weight:600}
+      #d3p .dp-svg{width:100%;display:block;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:14px}
+      #d3p .dp-line{stroke:var(--cyan,#37c2c2);stroke-width:3;fill:none;stroke-dasharray:10 8;animation:dpflow 1.2s linear infinite}
+      @keyframes dpflow{to{stroke-dashoffset:-18}}
+      @media (prefers-reduced-motion: reduce){#d3p .dp-line{animation:none}}
+      #d3p .dp-info{margin-top:1rem;padding:1.1rem 1.2rem;border-radius:13px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1)}
+      #d3p .dp-eff{display:inline-block;font-size:.72rem;font-weight:700;padding:.25rem .7rem;border-radius:99px;margin-bottom:.6rem}
+      #d3p .dp-eff.good{background:rgba(46,204,113,.12);border:1px solid rgba(46,204,113,.4);color:#7ce0a3}
+      #d3p .dp-eff.avg{background:rgba(241,196,15,.1);border:1px solid rgba(241,196,15,.35);color:#f5d97e}
+      #d3p .dp-info p{margin:0;font-size:.88rem;color:var(--muted,#9aa6c2);line-height:1.65}
+      #d3p .dp-info p b{color:#fff}
+      #d3p .dp-buy{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.8rem}
+      #d3p .dp-buy a{font-size:.78rem;font-weight:600;text-decoration:none;padding:.4rem .85rem;border-radius:9px;border:1px solid rgba(255,255,255,.22);color:inherit}
+      #d3p .dp-buy a:hover{border-color:var(--cyan,#37c2c2);color:var(--cyan,#37c2c2)}
+      </style>
+      <script>
+      (function(){
+        var root=document.getElementById('d3p'); if(!root) return;
+        var AMZN_TAG='';
+        function amzn(q){ return 'https://www.amazon.co.uk/s?k='+encodeURIComponent(q)+(AMZN_TAG?('&tag='+AMZN_TAG):''); }
+        function badge(x,y,line1,line2,accent){
+          return '<rect x="'+x+'" y="'+y+'" width="90" height="52" rx="8" fill="rgba(255,255,255,.05)" stroke="'+(accent||'rgba(255,255,255,.3)')+'"></rect>'+
+                 '<text x="'+(x+45)+'" y="'+(y+24)+'" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">'+line1+'</text>'+
+                 '<text x="'+(x+45)+'" y="'+(y+40)+'" text-anchor="middle" fill="#9aa6c2" font-size="10">'+line2+'</text>';
+        }
+        var MODES={
+          home:{src:badge(30,34,'Wall','socket'),mid:badge(265,34,'Dell 65W','charger'),
+            eff:['good','Simple &amp; fine'],
+            info:'<p><b>The everyday setup:</b> the supplied 65W charger into the barrel jack (or a 65W USB-C charger into the USB-C port &mdash; both fully charge it). Keep the charger somewhere ventilated, and there&rsquo;s no need to run at 100% all the time &mdash; see battery care below.</p>',
+            buy:[['Spare 65W USB-C charger','65W USB-C PD GaN charger']]},
+          desk:{src:badge(30,34,'Wall','socket'),mid:badge(265,34,'USB-C dock','or monitor'),
+            eff:['good','One-cable tidy'],
+            info:'<p><b>The pro desk trick:</b> a USB-C dock (or a monitor with USB-C power) means ONE cable into the laptop carries power, screens, wired network, keyboard and mouse. Sit down, plug one plug, everything&rsquo;s connected &mdash; the way modern offices run. We set these up for businesses all the time.</p>',
+            buy:[['USB-C dock (65W+)','USB-C docking station 65W dual monitor'],['USB-C monitor','USB-C monitor power delivery']]},
+          van:{src:badge(30,34,'12V','leisure battery'),mid:badge(265,34,'USB-C PD','12V adapter'),
+            eff:['good','&#9889; Most efficient off-grid'],
+            info:'<p><b>The off-grid win:</b> skip the inverter entirely. A quality <b>65W (or 100W) USB-C PD adapter in a 12V socket</b> feeds the laptop directly &mdash; roughly <b>90%+ efficient</b>, silent, and no inverter idle drain. The inverter route (12V &#8594; 230V &#8594; charger &#8594; laptop) stacks two conversions plus the inverter&rsquo;s own overhead &mdash; noticeably more out of your leisure battery for the same work. On a solar setup like the ones we fit, that&rsquo;s meaningful running time back every day.</p><p style="margin-top:.6rem">Use a decent brand adapter (cheap ones under-deliver and the laptop complains) and a proper <b>100W-rated (5A, e-marked) USB-C cable</b>. For permanent installs we fit fused panel-mount 12V USB-C outlets &mdash; spec&rsquo;d in our <a href="/victron-system-builder/" style="color:var(--cyan)">Victron System Builder</a>.</p>',
+            buy:[['65W USB-C PD 12V adapter','65W USB-C PD car charger'],['100W USB-C cable (5A)','100W USB-C cable 5A e-marked'],['Panel-mount 12V USB-C outlet','12V panel mount USB-C PD socket']]}
+        };
+        var src=root.querySelector('#dp-src'), mid=root.querySelector('#dp-mid'), info=root.querySelector('#dp-info');
+        function set(mode){
+          var m=MODES[mode];
+          src.innerHTML=m.src; mid.innerHTML=m.mid;
+          var buys=m.buy.map(function(b){ return '<a href="'+amzn(b[1])+'" target="_blank" rel="noopener'+(AMZN_TAG?' sponsored':'')+'">'+b[0]+' &#8599;</a>'; }).join('');
+          info.innerHTML='<span class="dp-eff '+m.eff[0]+'">'+m.eff[1]+'</span>'+m.info+'<div class="dp-buy">'+buys+'</div>';
+        }
+        root.querySelectorAll('.dp-tab').forEach(function(t){
+          t.addEventListener('click',function(){
+            root.querySelectorAll('.dp-tab').forEach(function(x){x.classList.remove('is-on');});
+            t.classList.add('is-on'); set(t.getAttribute('data-mode'));
+          });
+        });
+        set('home');
+      })();
+      </script>
+    </section>'''
+
+def dell_3520_guide():
+    slug = "dell-latitude-3520-guide"
+    desc = "The easy, animated owner's guide to the Dell Latitude 3520 — every port explained, three ways to power it (home, one-cable desk, and efficient 12V USB-C off-grid), battery care, keyboard shortcuts and quick fixes. From 365 Techies, Dorset."
+    faqs = [
+      ("Can I charge the Latitude 3520 through USB-C?", "Yes &mdash; alongside the round barrel charger, the USB-C port takes USB-C Power Delivery. A <b>65W PD charger gives full-speed charging</b>; 45W charges more slowly (fine overnight); weak phone chargers may only trickle or prompt a warning. One port, one cable, done."),
+      ("Can I run it in my campervan without an inverter?", "That&rsquo;s the trick this guide is built around: a quality 65W USB-C PD adapter in a 12V socket powers the laptop directly at roughly 90%+ efficiency &mdash; silent, no inverter idle drain, and noticeably more runtime from your leisure battery than the 12V&#8594;230V&#8594;charger route. Pair it with a proper 100W-rated (5A) cable."),
+      ("Can the USB-C port drive a monitor too?", "Yes &mdash; it carries DisplayPort video as well as power and data. A USB-C dock or USB-C monitor gives you the one-cable desk: power, screens, wired network and accessories through a single plug."),
+      ("How do I make the battery last years?", "Heat and living at 100% are what age batteries. Keep it out of direct sun (especially in a van), and if it&rsquo;s plugged in most of the time, set a charge limit (around 80%) in Dell Power Manager &mdash; we set this up on the machines we supply. Storing it for a while? Leave it around half charged."),
+      ("Is this the laptop 365 Techies sells?", "Yes &mdash; the Latitude 3520 is typical of the refurbished business-grade Dells we supply from &pound;299: tested, securely wiped, fitted with a new SSD and covered by a 12-month warranty. This guide comes free with every one. See <a href=\"/dell-hardware/\">refurbished Dells</a>."),
+      ("Something&rsquo;s not working &mdash; what now?", "Try the quick fixes above first (Win+P for screens, the F1 mute key for sound, hold the power button 15 seconds for a frozen machine). Still stuck? That&rsquo;s literally what we do &mdash; <a href=\"/remote-it-support/\">remote support</a>, usually within minutes."),
+    ]
+    content = "\n".join([
+      hero(bc("Dell Latitude 3520 Guide"), "// THE EASY OWNER&rsquo;S GUIDE",
+           'Your Dell Latitude 3520, <em class="grad grad--cyan">made simple</em>',
+           "Every port explained with an interactive tour, three ways to power it &mdash; at home, the one-cable desk, and the efficient 12V USB-C trick for vans and off-grid &mdash; plus battery care, shortcuts and quick fixes. No jargon, promise.",
+           cta1=("Explore the Ports", "#d35tool"), cta2=("Refurbished Dells from &pound;299", "/dell-hardware/"),
+           chips=["Interactive port tour","Home &middot; desk &middot; off-grid","Plain English"]),
+      DELL3520_WIDGET,
+      f'''    <section class="section" aria-label="Battery care">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// BATTERY CARE</p>
+          <h2 class="section-title section-title--center" data-title>Make the battery last years<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ul class="security-grid" data-stagger>
+{grid_cards([("The 20&ndash;80 sweet spot","Batteries age fastest living at 100% or flat. Mostly plugged in? Set a charge limit around 80% in Dell Power Manager &mdash; we preset this on machines we supply."),("Heat is the enemy","Don&rsquo;t leave it in direct sun or a hot parked van &mdash; heat ages the battery more than use does. Charge it somewhere ventilated."),("Storing it a while?","Leave it around half charged and powered off &mdash; not full, not flat. Top it up every couple of months."),("On battery out and about","Lower the screen brightness (F11) and use the Balanced power mode &mdash; the two biggest levers for making a charge last.")])}
+        </ul>
+      </div>
+    </section>''',
+      f'''    <section class="section section--alt" aria-label="Keyboard tips">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// THE KEYS WORTH KNOWING</p>
+          <h2 class="section-title section-title--center" data-title>Function keys &amp; shortcuts<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="tile-grid" data-stagger>
+{tiles([("bolt","F1 &ndash; F3 &middot; Sound","Mute, volume down, volume up. If sound &lsquo;stops working&rsquo;, check F1 first &mdash; it usually did it."),("phone","F4 &middot; Mic mute","Mutes your microphone for calls &mdash; the little light means MUTED. The classic &lsquo;you&rsquo;re on mute&rsquo; key."),("monitor","F8 &middot; Second screen","Same as Win+P: choose Duplicate or Extend when a monitor, TV or projector is plugged in."),("sun","F11 / F12 &middot; Brightness","Screen brightness down / up &mdash; the biggest battery lever there is."),("spark","Fn + Esc &middot; Fn lock","Swaps whether the F-keys do the icons or classic F1&ndash;F12 &mdash; if your F-keys &lsquo;stopped working&rsquo;, this got pressed."),("lock","Win + L &middot; Lock it","Walking away? Win+L locks the screen instantly. Win+P = screens, Win+V = clipboard history &mdash; the three worth memorising.")])}
+        </div>
+        <p class="lede lede--center" style="font-size:.8rem;margin-top:1.2rem" data-reveal>Exact key layouts can vary slightly between configurations &mdash; the icons on the keys themselves are the truth.</p>
+      </div>
+    </section>''',
+      f'''    <section class="section" aria-label="Quick fixes">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// 60-SECOND FIXES</p>
+          <h2 class="section-title section-title--center" data-title>When something misbehaves<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ul class="security-grid" data-stagger>
+{grid_cards([("Frozen or won&rsquo;t wake","Hold the power button for 15 seconds, let go, press it once. Fixes a remarkable amount."),("No sound","F1 (mute) first, then click the speaker icon and check the right output is selected &mdash; plugged-in headphones steal the sound."),("Monitor not showing","Press Win+P and pick Duplicate or Extend. Check both cable ends. Still nothing? Try the other video port."),("Wi-Fi being moody","Restart the router first (honestly), or plug into it with a network cable &mdash; the RJ-45 port needs no setup."),("Running slow","If it&rsquo;s gradual, it&rsquo;s software clutter &mdash; that&rsquo;s a tune-up, not a new laptop. Run our free <a href=\"/pc-benchmark/\">PC Benchmark</a> and see."),("Anything else","That&rsquo;s literally us. Remote support, usually within minutes &mdash; <a href=\"/remote-it-support/\">how it works</a>.")])}
+        </ul>
+      </div>
+    </section>''',
+      faq_html(faqs),
+      tools_strip(["pcbench", "solarcalc", "healthcheck"], title="Free tools for your machine", alt=False),
+      cta("This guide comes with the laptops we sell",
+          "Refurbished business-grade Dell Latitude &amp; OptiPlex from &pound;299 &mdash; tested, new SSD, securely wiped, 12-month warranty, and set up ready to use. Plus a friendly techie on the end of the phone.",
+          primary=("See Refurbished Dells", "/dell-hardware/"), secondary=("Keep It Healthy &mdash; Plans", "/monthly-it-support/")),
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        return graph([crumb(s, "Dell Latitude 3520 Guide"), webpage(s, "Dell Latitude 3520 — The Easy Owner's Guide", _desc),
+                      {"@type":"TechArticle","headline":"Dell Latitude 3520 — The Easy Owner's Guide","about":{"@type":"Product","name":"Dell Latitude 3520","brand":{"@type":"Brand","name":"Dell"}},"author":{"@id":SITE+"/#business"},"url":SITE+"/dell-latitude-3520-guide/"},
+                      faqpage(s, _faqs)])
+    add(slug=slug, title="Dell Latitude 3520 Easy Guide — Ports, Power & Off-Grid USB-C | 365 Techies",
+        desc=desc, og_title="Dell Latitude 3520 — The Easy Guide | 365 Techies", schema=schema, content=content)
+dell_3520_guide()
+
 # ===================================================== DNS / DOMAIN LOOKUP
 def dns_lookup():
     slug = "dns-lookup"
@@ -6177,6 +6438,7 @@ info_page(
           <a class="post-card" href="/webcam-mic-test/"><p class="post-card__cat">Tool</p><h3>Webcam &amp; Mic Test</h3><p>Check your camera, microphone and speakers before the video call &mdash; privately, on your device.</p><span class="post-card__more">Test now &#8594;</span></a>
           <a class="post-card" href="/victron-system-builder/"><p class="post-card__cat">Tool</p><h3>Victron System Builder</h3><p>Four questions &#8594; a complete, honestly-sized Victron kit list with buy links for every part.</p><span class="post-card__more">Build a system &#8594;</span></a>
           <a class="post-card" href="/custom-pc-builder/"><p class="post-card__cat">Tool</p><h3>Custom PC Builder</h3><p>Your budget, split the way experienced builders do it &mdash; part classes, golden rules and live links.</p><span class="post-card__more">Plan a build &#8594;</span></a>
+          <a class="post-card" href="/dell-latitude-3520-guide/"><p class="post-card__cat">Guide</p><h3>Dell Latitude 3520 Easy Guide</h3><p>Interactive port tour, three ways to power it (incl. efficient 12V USB-C off-grid), battery care &amp; quick fixes.</p><span class="post-card__more">Read the guide &#8594;</span></a>
           <a class="post-card" href="/dns-lookup/"><p class="post-card__cat">Tool</p><h3>DNS Lookup</h3><p>Check any domain&rsquo;s DNS records &mdash; A, MX, NS, TXT &mdash; the settings behind your website and email.</p><span class="post-card__more">Look it up &#8594;</span></a>
           <a class="post-card" href="/pc-benchmark/"><p class="post-card__cat">Tool</p><h3>PC Benchmark</h3><p>How fast is your computer, really? Test CPU, memory, graphics &amp; storage in 20 seconds.</p><span class="post-card__more">Benchmark it &#8594;</span></a>
           <a class="post-card" href="/windows-10-end-of-life/"><p class="post-card__cat">Act now</p><h3>Windows 10 End of Life</h3><p>Support ended in October 2025. Find out in 30 seconds if you&rsquo;re affected &mdash; and your options.</p><span class="post-card__more">Are you affected? &#8594;</span></a>
