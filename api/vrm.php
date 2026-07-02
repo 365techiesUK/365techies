@@ -15,6 +15,7 @@
  * (vrm-cache.json) so visitor traffic can never hammer the VRM API.
  */
 error_reporting(0);
+ini_set('serialize_precision', '-1');   // clean float output (78.7, not 78.70000000000000284)
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: public, max-age=30');
 
