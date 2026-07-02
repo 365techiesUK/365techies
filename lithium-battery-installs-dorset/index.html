@@ -699,7 +699,7 @@
         </div>
         <script>
         (function(){
-          var PROXY=""; /* paste the same Cloudflare Worker URL as the off-grid page to go live */
+          var PROXY="/api/vrm.php"; /* same-origin PHP proxy as the off-grid page */
           var RATE=0.20;
           var SAMPLE={sample:true,soc:97,battState:"charging",battW:31,pvW:114,yieldLifetime:489.9};
           var el=document.getElementById("vmini"); if(!el) return;
@@ -721,7 +721,7 @@
             el.classList.toggle("vmini--sample",!!s.sample);
           }
           function tick(){ if(!PROXY){ render(SAMPLE); return; } fetch(PROXY,{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){ render((j&&j.ok)?j:SAMPLE); }).catch(function(){ render(SAMPLE); }); }
-          tick(); setInterval(tick, 1000);
+          tick(); setInterval(tick, 30000);
         })();
         </script>
       </div>

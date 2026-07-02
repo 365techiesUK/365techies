@@ -83,6 +83,10 @@ ErrorDocument 404 /404.html
 <FilesMatch "(\.ftp-deploy-sync-state\.json|\.py|\.toml|\.ya?ml)$">
   Require all denied
 </FilesMatch>
+# Belt-and-braces: never serve the VRM token file over HTTP (PHP include reads it from disk)
+<Files "vrm-token.php">
+  Require all denied
+</Files>
 
 # ============================================================
 # Performance: compression (Brotli preferred, gzip fallback)

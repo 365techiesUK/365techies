@@ -8,3 +8,7 @@ __pycache__/
 # Ignore the output video from Git but not videos you import into src/.
 out
 .git-commit-msg.tmp
+
+# VRM live-dashboard secrets/cache — live ONLY on the SiteGround server, never in git (public repo)
+api/vrm-token.php
+api/vrm-cache.json

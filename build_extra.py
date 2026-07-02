@@ -1511,7 +1511,7 @@ def off_grid():
     </section>
     <script>
     (function(){
-      var PROXY=""; /* After deploying the Cloudflare Worker (victron-vrm-proxy.js), paste its URL here to go live. */
+      var PROXY="/api/vrm.php"; /* Same-origin PHP proxy on SiteGround; token lives server-side in api/vrm-token.php (never in git). */
       var RATE=0.20, HIST=[]; for(var hi=0;hi<30;hi++){HIST.push({kwh:Math.round((1.1+Math.sin(hi/2.5)*0.55+(hi%4)*0.16)*100)/100});}
       var SAMPLE={sample:true,soc:97,battState:"charging",battV:13.38,battA:2.3,battW:31,timeToGo:null,pvW:114,yieldToday:1.86,yieldYesterday:1.66,yieldLifetime:489.9,tanks:[{type:"Fresh water",level:56},{type:"Waste water",level:0}],history:HIST,updated:Math.floor(Date.now()/1000)};
       var el=document.getElementById("vlive"); if(!el) return;
@@ -1568,7 +1568,7 @@ def off_grid():
         el.classList.toggle("vlive--sample",!!s.sample);
       }
       function tick(){ if(!PROXY){ render(SAMPLE); return; } fetch(PROXY,{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){ render((j&&j.ok)?j:SAMPLE); }).catch(function(){ render(SAMPLE); }); }
-      tick(); setInterval(tick, 1000);
+      tick(); setInterval(tick, 30000);
     })();
     </script>''',
       (f'''    <section class="section" aria-label="Live Victron VRM dashboard">
@@ -4742,7 +4742,7 @@ def battery_installs():
         </div>
         <script>
         (function(){
-          var PROXY=""; /* paste the same Cloudflare Worker URL as the off-grid page to go live */
+          var PROXY="/api/vrm.php"; /* same-origin PHP proxy as the off-grid page */
           var RATE=0.20;
           var SAMPLE={sample:true,soc:97,battState:"charging",battW:31,pvW:114,yieldLifetime:489.9};
           var el=document.getElementById("vmini"); if(!el) return;
@@ -4764,7 +4764,7 @@ def battery_installs():
             el.classList.toggle("vmini--sample",!!s.sample);
           }
           function tick(){ if(!PROXY){ render(SAMPLE); return; } fetch(PROXY,{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){ render((j&&j.ok)?j:SAMPLE); }).catch(function(){ render(SAMPLE); }); }
-          tick(); setInterval(tick, 1000);
+          tick(); setInterval(tick, 30000);
         })();
         </script>
       </div>
