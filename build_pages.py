@@ -207,6 +207,8 @@ HEADER = '''  <header class="site-header">
             <a href="/email-signature-generator/">Email Signature Generator</a>
             <a href="/ssl-checker/">SSL Checker</a>
             <a href="/domain-expiry-checker/">Domain Expiry Checker</a>
+            <a href="/solar-battery-calculator/">Battery &amp; Solar Calculator</a>
+            <a href="/webcam-mic-test/">Webcam &amp; Mic Test</a>
             <a href="/dns-lookup/">DNS Lookup</a>
             <a href="/pc-benchmark/">PC Benchmark</a>
             <a href="/ai-roi-calculator/">AI ROI Calculator</a>
@@ -365,6 +367,8 @@ HEADER = '''  <header class="site-header">
           <a href="/email-signature-generator/">Email Signature Generator</a>
           <a href="/ssl-checker/">SSL Checker</a>
           <a href="/domain-expiry-checker/">Domain Expiry Checker</a>
+          <a href="/solar-battery-calculator/">Battery &amp; Solar Calculator</a>
+          <a href="/webcam-mic-test/">Webcam &amp; Mic Test</a>
           <a href="/dns-lookup/">DNS Lookup</a>
           <a href="/pc-benchmark/">PC Benchmark</a>
           <a href="/ai-roi-calculator/">AI ROI Calculator</a>
@@ -526,6 +530,8 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/email-signature-generator/">Email Signature Generator</a>
         <a href="/ssl-checker/">SSL Checker</a>
         <a href="/domain-expiry-checker/">Domain Expiry Checker</a>
+        <a href="/solar-battery-calculator/">Battery &amp; Solar Calculator</a>
+        <a href="/webcam-mic-test/">Webcam &amp; Mic Test</a>
         <a href="/dns-lookup/">DNS Lookup</a>
         <a href="/pc-benchmark/">PC Benchmark</a>
         <a href="/ai-roi-calculator/">AI ROI Calculator</a>
@@ -2082,6 +2088,8 @@ TOOLS = {
   "emailsig":     ("Email Signature Generator", "/email-signature-generator/", "Create a professional email signature in one minute &mdash; live preview, copy straight into Outlook or Gmail."),
   "ssl":          ("SSL Certificate Checker", "/ssl-checker/", "Is your website&rsquo;s padlock healthy? Check any SSL certificate &mdash; and when it expires."),
   "domainexp":    ("Domain Expiry Checker", "/domain-expiry-checker/", "When does your domain expire? Check the official registry record before you lose it."),
+  "solarcalc":    ("Battery &amp; Solar Calculator", "/solar-battery-calculator/", "Campervan, boat or off-grid? Tick what you run and get an honest battery &amp; solar panel sizing."),
+  "avtest":       ("Webcam &amp; Mic Test", "/webcam-mic-test/", "Video call in ten minutes? Test your camera, microphone and speakers &mdash; privately, on your device."),
   "dns":          ("DNS Lookup", "/dns-lookup/", "Check any domain&rsquo;s A, MX, NS &amp; TXT records &mdash; the settings behind your website and email."),
   "pcbench":      ("PC Benchmark", "/pc-benchmark/", "How fast is your computer, really? Six live tests &mdash; CPU, encryption, memory, graphics &amp; storage &mdash; with a score you can share."),
   "healthcheck":  ("IT Health Check Tool", "/it-health-check-tool/", "Get an instant IT &amp; security score out of 100, plus a plain-English action plan."),
@@ -2842,6 +2850,265 @@ DOMEXP_TOOL = r'''    <section class="section" aria-label="Domain expiry checker
             try{ res.scrollIntoView({behavior:'smooth',block:'start'}); }catch(x){}
           }).catch(function(){ load.hidden=true; btn.disabled=false; err.innerHTML='We couldn&rsquo;t run the check just now &mdash; please try again.'; err.hidden=false; });
         });
+      })();
+      </script>
+    </section>'''
+
+# Shared off-grid battery & solar calculator (client-side maths, calibrated & labelled indicative) — /solar-battery-calculator/
+SOLARCALC_TOOL = r'''    <section class="section" aria-label="Battery and solar calculator" id="soltool">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// FREE OFF-GRID CALCULATOR</p>
+          <h2 class="section-title section-title--center" data-title>What battery &amp; solar do you actually need?<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Tick what you run, say how long each day, and get an honest sizing for your leisure battery and solar panels &mdash; for campervans, boats, cabins and off-grid setups.</p>
+        </div>
+        <div id="solc" data-reveal>
+          <div class="so-grid">
+            <div class="so-loads" id="so-loads"></div>
+            <div class="so-side">
+              <label class="so-f"><span>Days of autonomy (cloudy-day buffer) <output id="so-auto-out">1.5</output></span><input type="range" id="so-auto" min="1" max="3" step="0.5" value="1.5"></label>
+              <div class="so-custom">
+                <p class="so-custom-t">Add your own device</p>
+                <div class="so-custom-row"><input id="so-cw" type="number" min="1" max="3000" placeholder="Watts"><input id="so-ch" type="number" min="0.1" max="24" step="0.1" placeholder="Hours/day"><button type="button" class="button so-add" id="so-add">Add</button></div>
+              </div>
+              <div class="so-results" id="so-results">
+                <div class="so-big"><span class="so-big-v" id="so-wh">0</span><span class="so-big-l">Wh per day (incl. 15% system losses)</span></div>
+                <div class="so-row"><b>Daily draw at 12V</b><span id="so-ah">0 Ah</span></div>
+                <div class="so-row"><b>Lithium battery</b><span id="so-li">&mdash;</span></div>
+                <div class="so-row"><b>(AGM equivalent)</b><span id="so-agm">&mdash;</span></div>
+                <div class="so-row"><b>Solar &mdash; summer</b><span id="so-pvs">&mdash;</span></div>
+                <div class="so-row"><b>Solar &mdash; spring/autumn</b><span id="so-pvw">&mdash;</span></div>
+              </div>
+            </div>
+          </div>
+          <p class="so-note">Indicative sizing at 12V with 15% system losses, lithium ~90% / AGM ~50% usable capacity, and UK peak-sun averages (~4.2h summer, ~2.5h spring/autumn). <strong>UK winter sun is closer to 1 hour</strong> &mdash; plan on hook-up or charging from the engine (B2B) if you&rsquo;re out in winter. Every setup is different; we&rsquo;ll size yours properly before anything is fitted.</p>
+          <div class="so-fix">
+            <h3>Sized. Supplied. Fitted. Monitored.</h3>
+            <p>We design and install Victron-based off-grid power &mdash; lithium, solar, B2B charging and remote monitoring &mdash; for campervans, boats and off-grid buildings across Dorset. Our own support van runs on it (watch it live).</p>
+            <div class="so-fix-cta"><a class="button primary" href="/off-grid-victron-energy/">See our off-grid work &#8594;</a><a class="button so-ghost" href="/contact/">Get a quote</a></div>
+          </div>
+        </div>
+      </div>
+      <style>
+      #solc{max-width:920px;margin:0 auto}
+      #solc .so-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:1.6rem;align-items:start}
+      #solc .so-loads{display:flex;flex-direction:column;gap:.5rem}
+      #solc .so-load{display:flex;align-items:center;gap:.7rem;padding:.6rem .9rem;border-radius:11px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08)}
+      #solc .so-load input[type=checkbox]{accent-color:var(--cyan,#37c2c2);width:1.1rem;height:1.1rem;flex:none}
+      #solc .so-load .so-name{flex:1;font-size:.9rem}
+      #solc .so-load .so-w{font-size:.72rem;color:var(--muted,#9aa6c2);white-space:nowrap}
+      #solc .so-load input[type=number]{width:64px;font:inherit;font-size:.85rem;padding:.35rem .5rem;border-radius:8px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.04);color:inherit}
+      #solc .so-load .so-h-l{font-size:.7rem;color:var(--muted,#9aa6c2)}
+      #solc .so-f{display:flex;flex-direction:column;gap:.4rem;font-size:.85rem;margin-bottom:1rem}
+      #solc .so-f span{display:flex;justify-content:space-between}
+      #solc .so-f output{color:var(--cyan,#37c2c2);font-weight:700}
+      #solc input[type=range]{width:100%;accent-color:var(--cyan,#37c2c2);cursor:pointer}
+      #solc .so-custom{padding: .9rem;border-radius:12px;border:1px dashed rgba(255,255,255,.18);margin-bottom:1rem}
+      #solc .so-custom-t{margin:0 0 .5rem;font-size:.78rem;color:var(--muted,#9aa6c2)}
+      #solc .so-custom-row{display:flex;gap:.5rem}
+      #solc .so-custom-row input{flex:1;min-width:0;font:inherit;font-size:.85rem;padding:.5rem .6rem;border-radius:8px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.04);color:inherit}
+      #solc .so-add{padding:.5rem .9rem}
+      #solc .so-results{padding:1.1rem;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1)}
+      #solc .so-big{text-align:center;margin-bottom:.9rem}
+      #solc .so-big-v{display:block;font-size:2.3rem;font-weight:800;color:var(--cyan,#37c2c2);font-variant-numeric:tabular-nums}
+      #solc .so-big-l{display:block;font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted,#9aa6c2);margin-top:.2rem}
+      #solc .so-row{display:flex;justify-content:space-between;gap:.8rem;padding:.55rem 0;border-top:1px solid rgba(255,255,255,.07);font-size:.88rem}
+      #solc .so-row b{color:#fff;font-weight:600}
+      #solc .so-row span{color:var(--muted,#9aa6c2);text-align:right;font-variant-numeric:tabular-nums}
+      #solc .so-note{margin:1.4rem auto 0;max-width:72ch;text-align:center;font-size:.76rem;color:var(--muted,#9aa6c2);line-height:1.6}
+      #soltool .so-fix{max-width:920px;margin:2rem auto 0;padding:1.6rem;border-radius:16px;border:1px solid rgba(55,194,194,.35);background:rgba(55,194,194,.07);text-align:center}
+      #soltool .so-fix h3{margin:0 0 .5rem;font-size:1.2rem}
+      #soltool .so-fix p{margin:0 auto 1.1rem;max-width:56ch;color:var(--muted,#9aa6c2);font-size:.95rem;line-height:1.6}
+      #soltool .so-fix-cta{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center}
+      #soltool .so-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}
+      @media(max-width:700px){#solc .so-grid{grid-template-columns:1fr}}
+      </style>
+      <script>
+      (function(){
+        var root=document.getElementById('solc'); if(!root) return;
+        var PRESETS=[
+          ['Compressor fridge',45,8,true],
+          ['LED lights',10,4,true],
+          ['Phone &amp; tablet charging',15,2,true],
+          ['Laptop',60,3,false],
+          ['TV / monitor',35,3,false],
+          ['Wi-Fi router / 4G',10,12,false],
+          ['Water pump',50,0.3,false],
+          ['Diesel heater (fan &amp; pump)',15,6,false],
+          ['CPAP machine',40,8,false],
+          ['Microwave (via inverter)',800,0.2,false]
+        ];
+        var loadsEl=root.querySelector('#so-loads'), extra=[];
+        function esc(s){ var d=document.createElement('div'); d.innerHTML=s; return d.innerHTML; }
+        loadsEl.innerHTML=PRESETS.map(function(p,i){
+          return '<label class="so-load"><input type="checkbox" data-i="'+i+'"'+(p[3]?' checked':'')+'><span class="so-name">'+p[0]+'</span><span class="so-w">'+p[1]+'W &times;</span><input type="number" data-h="'+i+'" value="'+p[2]+'" min="0" max="24" step="0.1"><span class="so-h-l">h/day</span></label>';
+        }).join('');
+        var auto=root.querySelector('#so-auto'), autoOut=root.querySelector('#so-auto-out');
+        function fmtAh(ah){
+          var sizes=[50,100,150,200,300,400,600,800];
+          for(var i=0;i<sizes.length;i++){ if(ah<=sizes[i]) return ah+' Ah &mdash; e.g. '+(sizes[i]<=200?('1&times; '+sizes[i]+' Ah'):(Math.ceil(sizes[i]/200)+'&times; 200 Ah'))+' ';
+          }
+          return ah+' Ah (serious system &mdash; talk to us)';
+        }
+        function calc(){
+          var wh=0;
+          PRESETS.forEach(function(p,i){
+            var cb=loadsEl.querySelector('[data-i="'+i+'"]'), hEl=loadsEl.querySelector('[data-h="'+i+'"]');
+            if(cb&&cb.checked){ var h=parseFloat(hEl.value)||0; wh+=p[1]*Math.min(24,Math.max(0,h)); }
+          });
+          extra.forEach(function(x){ wh+=x.w*x.h; });
+          var whLoss=wh*1.15, ahDay=whLoss/12, a=parseFloat(auto.value)||1.5;
+          autoOut.textContent=a;
+          root.querySelector('#so-wh').textContent=Math.round(whLoss);
+          root.querySelector('#so-ah').textContent=(Math.round(ahDay*10)/10)+' Ah';
+          if(wh<=0){ ['#so-li','#so-agm','#so-pvs','#so-pvw'].forEach(function(s){ root.querySelector(s).innerHTML='&mdash;'; }); return; }
+          var li=Math.ceil(ahDay*a/0.9), agm=Math.ceil(ahDay*a/0.5);
+          root.querySelector('#so-li').innerHTML=fmtAh(li);
+          root.querySelector('#so-agm').innerHTML=agm+' Ah';
+          root.querySelector('#so-pvs').innerHTML='~'+Math.ceil(whLoss/4.2*1.25)+' W of panels';
+          root.querySelector('#so-pvw').innerHTML='~'+Math.ceil(whLoss/2.5*1.25)+' W of panels';
+        }
+        loadsEl.addEventListener('change',calc); loadsEl.addEventListener('input',calc); auto.addEventListener('input',calc);
+        root.querySelector('#so-add').addEventListener('click',function(){
+          var w=parseFloat(root.querySelector('#so-cw').value), h=parseFloat(root.querySelector('#so-ch').value);
+          if(!(w>0)||!(h>0)) return;
+          extra.push({w:Math.min(3000,w),h:Math.min(24,h)});
+          var div=document.createElement('label'); div.className='so-load';
+          div.innerHTML='<input type="checkbox" checked disabled><span class="so-name">Custom device</span><span class="so-w">'+Math.round(w)+'W &times; '+h+'h</span>';
+          loadsEl.appendChild(div);
+          root.querySelector('#so-cw').value=''; root.querySelector('#so-ch').value='';
+          calc();
+        });
+        calc();
+      })();
+      </script>
+    </section>'''
+
+# Shared webcam / mic / speaker tester (getUserMedia + WebAudio, fully on-device) — /webcam-mic-test/
+AVTEST_TOOL = r'''    <section class="section" aria-label="Webcam and microphone test" id="avtool">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// FREE CAMERA &amp; MIC TEST</p>
+          <h2 class="section-title section-title--center" data-title>Test your webcam, mic &amp; speakers<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Video call in ten minutes and nothing works? Test everything here first. <strong>Everything stays on your device</strong> &mdash; nothing is recorded, streamed or sent anywhere.</p>
+        </div>
+        <div id="av" data-reveal>
+          <div class="av-grid">
+            <div class="av-card">
+              <h3>&#127909; Camera</h3>
+              <video id="av-video" autoplay muted playsinline hidden></video>
+              <p class="av-status" id="av-cam-status">Click to see what your camera sees.</p>
+              <button type="button" class="button primary" id="av-cam-btn">Test my camera</button>
+            </div>
+            <div class="av-card">
+              <h3>&#127908; Microphone</h3>
+              <canvas id="av-meter" width="280" height="56" hidden></canvas>
+              <p class="av-status" id="av-mic-status">Click, then speak normally.</p>
+              <button type="button" class="button primary" id="av-mic-btn">Test my microphone</button>
+            </div>
+            <div class="av-card">
+              <h3>&#128266; Speakers</h3>
+              <p class="av-status" id="av-spk-status">Play a tone through each side.</p>
+              <div class="av-spk-btns">
+                <button type="button" class="button av-ghost" data-pan="-1">&#9664; Left</button>
+                <button type="button" class="button av-ghost" data-pan="0">Both</button>
+                <button type="button" class="button av-ghost" data-pan="1">Right &#9654;</button>
+              </div>
+            </div>
+          </div>
+          <p class="av-note">&#128274; 100% private: the video and audio never leave your computer &mdash; this page has no recording and no uploading. When you leave the page, everything stops.</p>
+          <div class="av-fix">
+            <h3>Still not working in Teams or Zoom?</h3>
+            <p>If it works here but not in your meeting app, it&rsquo;s usually permissions or the wrong device selected &mdash; a five-minute fix. We sort cameras, mics, Teams and Zoom for home workers and businesses every week, remotely.</p>
+            <div class="av-fix-cta"><a class="button primary" href="/contact/">Fix my video calls &#8594;</a><a class="button av-ghost" href="/it-support-for-home-workers/">Home worker IT support</a></div>
+          </div>
+        </div>
+      </div>
+      <style>
+      #av{max-width:920px;margin:0 auto}
+      #av .av-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem}
+      #av .av-card{padding:1.2rem;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);text-align:center;display:flex;flex-direction:column;gap:.8rem;align-items:center}
+      #av .av-card h3{margin:0;font-size:1.05rem}
+      #av #av-video{width:100%;border-radius:10px;background:#000;aspect-ratio:4/3;object-fit:cover}
+      #av #av-meter{width:100%;max-width:280px;border-radius:8px;background:rgba(0,0,0,.3)}
+      #av .av-status{margin:0;font-size:.82rem;color:var(--muted,#9aa6c2);line-height:1.5;min-height:2.4em}
+      #av .av-status.ok{color:#2ecc71}
+      #av .av-status.bad{color:#e74c3c}
+      #av .av-spk-btns{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center}
+      #av .av-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}
+      #av .av-note{margin:1.4rem auto 0;max-width:64ch;text-align:center;font-size:.76rem;color:var(--muted,#9aa6c2);line-height:1.6}
+      #avtool .av-fix{max-width:920px;margin:2rem auto 0;padding:1.6rem;border-radius:16px;border:1px solid rgba(55,194,194,.35);background:rgba(55,194,194,.07);text-align:center}
+      #avtool .av-fix h3{margin:0 0 .5rem;font-size:1.2rem}
+      #avtool .av-fix p{margin:0 auto 1.1rem;max-width:56ch;color:var(--muted,#9aa6c2);font-size:.95rem;line-height:1.6}
+      #avtool .av-fix-cta{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center}
+      </style>
+      <script>
+      (function(){
+        var root=document.getElementById('av'); if(!root) return;
+        var camStream=null, micStream=null, ac=null, raf=null;
+        function errMsg(e){
+          if(e&&(e.name==='NotAllowedError'||e.name==='PermissionDeniedError')) return 'Permission blocked. Click the camera icon in the address bar (or the padlock) and allow access, then try again.';
+          if(e&&(e.name==='NotFoundError'||e.name==='DevicesNotFoundError')) return 'No device found. Check it&rsquo;s plugged in and not disabled in Windows Settings &#8594; Privacy.';
+          if(e&&e.name==='NotReadableError') return 'The device is busy &mdash; another app (Teams? Zoom?) is using it. Close that app and try again.';
+          return 'Couldn&rsquo;t start the device &mdash; try a different browser, or ask us.';
+        }
+        var camBtn=root.querySelector('#av-cam-btn'), vid=root.querySelector('#av-video'), camSt=root.querySelector('#av-cam-status');
+        camBtn.addEventListener('click',function(){
+          if(camStream){ camStream.getTracks().forEach(function(t){t.stop();}); camStream=null; vid.hidden=true; camBtn.textContent='Test my camera'; camSt.textContent='Stopped.'; camSt.className='av-status'; return; }
+          if(!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia)){ camSt.innerHTML='Your browser can&rsquo;t do this test &mdash; try Chrome or Edge.'; camSt.className='av-status bad'; return; }
+          camSt.textContent='Asking for permission…';
+          navigator.mediaDevices.getUserMedia({video:{width:{ideal:1280}}}).then(function(s){
+            camStream=s; vid.srcObject=s; vid.hidden=false; camBtn.textContent='Stop camera';
+            var t=s.getVideoTracks()[0], set=t&&t.getSettings?t.getSettings():{};
+            camSt.innerHTML='&#10003; Camera working'+(set.width?(' &mdash; '+set.width+'&times;'+set.height):'')+'. If you can see yourself, you&rsquo;re meeting-ready.';
+            camSt.className='av-status ok';
+          }).catch(function(e){ camSt.innerHTML=errMsg(e); camSt.className='av-status bad'; });
+        });
+        var micBtn=root.querySelector('#av-mic-btn'), meter=root.querySelector('#av-meter'), micSt=root.querySelector('#av-mic-status');
+        var heard=false;
+        micBtn.addEventListener('click',function(){
+          if(micStream){ micStream.getTracks().forEach(function(t){t.stop();}); micStream=null; if(raf)cancelAnimationFrame(raf); meter.hidden=true; micBtn.textContent='Test my microphone'; micSt.textContent='Stopped.'; micSt.className='av-status'; return; }
+          if(!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia)){ micSt.innerHTML='Your browser can&rsquo;t do this test &mdash; try Chrome or Edge.'; micSt.className='av-status bad'; return; }
+          micSt.textContent='Asking for permission…'; heard=false;
+          navigator.mediaDevices.getUserMedia({audio:true}).then(function(s){
+            micStream=s; meter.hidden=false; micBtn.textContent='Stop microphone';
+            micSt.textContent='Speak normally…';
+            if(!ac) ac=new (window.AudioContext||window.webkitAudioContext)();
+            var src=ac.createMediaStreamSource(s), an=ac.createAnalyser(); an.fftSize=512; src.connect(an);
+            var data=new Uint8Array(an.frequencyBinCount), ctx=meter.getContext('2d');
+            (function draw(){
+              raf=requestAnimationFrame(draw);
+              an.getByteFrequencyData(data);
+              var sum=0; for(var i=0;i<data.length;i++) sum+=data[i];
+              var lvl=sum/data.length/255;
+              ctx.clearRect(0,0,meter.width,meter.height);
+              var bars=24;
+              for(var b=0;b<bars;b++){
+                var on=(b/bars)<lvl*2.2;
+                ctx.fillStyle=on?(b>bars*0.75?'#e74c3c':(b>bars*0.5?'#f1c40f':'#2ecc71')):'rgba(255,255,255,0.12)';
+                ctx.fillRect(b*(meter.width/bars)+2,10,(meter.width/bars)-4,meter.height-20);
+              }
+              if(lvl>0.09&&!heard){ heard=true; micSt.innerHTML='&#10003; We can hear you &mdash; your microphone works.'; micSt.className='av-status ok'; }
+            })();
+          }).catch(function(e){ micSt.innerHTML=errMsg(e); micSt.className='av-status bad'; });
+        });
+        var spkSt=root.querySelector('#av-spk-status');
+        root.querySelectorAll('[data-pan]').forEach(function(b){
+          b.addEventListener('click',function(){
+            try{
+              if(!ac) ac=new (window.AudioContext||window.webkitAudioContext)();
+              if(ac.state==='suspended') ac.resume();
+              var o=ac.createOscillator(), g=ac.createGain(); o.frequency.value=440; g.gain.value=0.15;
+              var pan=parseFloat(b.getAttribute('data-pan')), node=o;
+              if(ac.createStereoPanner){ var p=ac.createStereoPanner(); p.pan.value=pan; o.connect(p); node=p; }
+              node.connect(g); g.connect(ac.destination);
+              o.start(); setTimeout(function(){ o.stop(); },900);
+              spkSt.innerHTML='Playing '+(pan<0?'LEFT':(pan>0?'RIGHT':'BOTH'))+'&hellip; heard it? &#10003;';
+              spkSt.className='av-status ok';
+            }catch(e){ spkSt.textContent='Couldn&rsquo;t play a tone in this browser.'; spkSt.className='av-status bad'; }
+          });
+        });
+        window.addEventListener('pagehide',function(){ try{ if(camStream)camStream.getTracks().forEach(function(t){t.stop();}); if(micStream)micStream.getTracks().forEach(function(t){t.stop();}); }catch(e){} });
       })();
       </script>
     </section>'''

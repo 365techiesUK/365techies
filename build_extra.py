@@ -10,7 +10,7 @@ from build_pages import (add, graph, crumb, webpage, service, faqpage,
                          faq_html, cta, hero, hero_trust, bc, bc_sub, crumb_sub, tiles, grid_cards, checklist,
                          steps, reviews_block, ico, SITE, write_all,
                          promise_strip, uk_remote_band, WCHECK_TOOL, EMAILSEC_TOOL, PWNED_TOOL, PRIVACY_TOOL, SCAM_TOOL, PWGEN_TOOL, WIFIQR_TOOL, DNS_TOOL, PCBENCH_TOOL, QRGEN_TOOL,
-                         SIGGEN_TOOL, SSLCHECK_TOOL, DOMEXP_TOOL, TOOLS, tool_cards, tools_strip, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
+                         SIGGEN_TOOL, SSLCHECK_TOOL, DOMEXP_TOOL, SOLARCALC_TOOL, AVTEST_TOOL, TOOLS, tool_cards, tools_strip, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
 from build_local import make_customer
 
 # ── Competitive prices for the new AI offerings (owner-approved 2026-06-17; edit here) ──
@@ -4223,6 +4223,70 @@ def domain_expiry_checker():
         desc=desc, og_title="Free Domain Expiry Checker | 365 Techies", schema=schema, content=content)
 domain_expiry_checker()
 
+# ===================================================== OFF-GRID BATTERY & SOLAR CALCULATOR
+def solar_battery_calculator():
+    slug = "solar-battery-calculator"
+    desc = "Free campervan & off-grid battery and solar calculator. Tick what you run each day and get an honest lithium battery size and solar panel wattage for UK conditions. From 365 Techies, Dorset — Victron installers."
+    faqs = [
+      ("How accurate is this calculator?", "It&rsquo;s honest, indicative sizing: your devices&rsquo; watts &times; hours, plus 15% real-world system losses, sized against lithium (~90% usable) or AGM (~50% usable) and UK average peak-sun hours. Real installs vary with panel angle, shading, battery age and weather &mdash; which is why we always survey before we fit anything."),
+      ("Why is winter solar so different?", "UK peak-sun drops from roughly 4 hours a day in summer to about 1 in December &mdash; an eighth of the harvest. Winter setups usually pair solar with charging from the engine (a B2B charger) or hook-up, rather than fitting an enormous array."),
+      ("Lithium or AGM leisure battery?", "Lithium costs more upfront but you can use ~90% of its capacity, it charges faster, lasts many times longer and weighs half as much. AGM is cheaper but you should only use ~50% of the label capacity. That&rsquo;s why the AGM equivalent in the results is nearly double the lithium size."),
+      ("What kit do you install?", "We design and fit Victron-based systems &mdash; lithium batteries, MPPT solar controllers, B2B chargers, inverters and remote monitoring &mdash; for campervans, boats and off-grid buildings. Our own support van runs on one; you can <a href=\"/off-grid-victron-energy/\">watch its live dashboard</a>."),
+      ("Can you check my numbers?", "Gladly &mdash; tell us what you run and how you travel, and we&rsquo;ll size it properly (and tell you honestly if a smaller system will do). <a href=\"/contact/\">Get in touch</a>."),
+    ]
+    content = "\n".join([
+      hero(bc("Battery &amp; Solar Calculator"), "// FREE OFF-GRID CALCULATOR",
+           'Size your <em class="grad grad--green">battery &amp; solar</em> honestly',
+           "Campervan, boat, cabin or off-grid build &mdash; tick what you run, and get a realistic lithium battery size and solar panel wattage for UK conditions. No sales inflation, no guesswork.",
+           cta1=("Size My System", "#soltool"), cta2=("Our Off-Grid Work", "/off-grid-victron-energy/"),
+           chips=["UK sun figures","Lithium &amp; AGM","Victron installers"]),
+      SOLARCALC_TOOL,
+      faq_html(faqs),
+      tools_strip(["speed", "wifiqr", "coverage"], title="More free tools for life on the road", alt=False),
+      cta("Powered by the people who live it",
+          "Our own mobile support van runs on the Victron kit we install &mdash; solar, lithium and remote monitoring, streaming live on our website. We&rsquo;ll design yours the same way: properly.",
+          primary=("Get a Quote", "/contact/"), secondary=("See It Live", "/off-grid-victron-energy/")),
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        return graph([crumb(s, "Battery & Solar Calculator"), webpage(s, "Free Battery & Solar Calculator", _desc),
+                      {"@type":"WebApplication","name":"365 Techies Battery & Solar Calculator","applicationCategory":"UtilitiesApplication","operatingSystem":"Web (all browsers)","url":SITE+"/solar-battery-calculator/","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},"provider":{"@id":SITE+"/#business"}},
+                      faqpage(s, _faqs)])
+    add(slug=slug, title="Free Campervan Battery & Solar Calculator (UK) | 365 Techies",
+        desc=desc, og_title="Free Battery & Solar Calculator | 365 Techies", schema=schema, content=content)
+solar_battery_calculator()
+
+# ===================================================== WEBCAM & MIC TEST
+def webcam_mic_test():
+    slug = "webcam-mic-test"
+    desc = "Free webcam, microphone and speaker test. Check your camera and mic work before the video call — everything stays on your device, nothing recorded or sent. From 365 Techies, Dorset."
+    faqs = [
+      ("Is this safe? Can you see my camera?", "No &mdash; and that&rsquo;s the point. The video and audio never leave your device: the test runs entirely in your browser with no recording and no uploading. When you leave the page (or click stop), everything stops."),
+      ("It works here but not in Teams or Zoom &mdash; why?", "Then your hardware is fine and it&rsquo;s a settings problem: usually the meeting app has permission blocked, or it&rsquo;s pointing at the wrong device (very common with laptops + webcams). Check the app&rsquo;s device settings &mdash; or we&rsquo;ll fix it remotely in minutes."),
+      ("My camera shows a black screen", "Close every other app that might be using it (Teams, Zoom, Skype run in the background), check the physical privacy shutter some webcams have, then try again. Still black? The Windows privacy settings may be blocking it &mdash; Settings &#8594; Privacy &amp; security &#8594; Camera."),
+      ("The mic meter barely moves", "Get closer and speak normally &mdash; if it still barely registers, check Windows Settings &#8594; System &#8594; Sound &#8594; Input: right device selected and input volume up. Headset mics often have a physical mute switch too."),
+      ("Can you set up my video calling properly?", "Yes &mdash; cameras, mics, lighting, Teams and Zoom, all working reliably. It&rsquo;s bread and butter for our <a href=\"/it-support-for-home-workers/\">home worker support</a>."),
+    ]
+    content = "\n".join([
+      hero(bc("Webcam &amp; Mic Test"), "// FREE CAMERA &amp; MIC TEST",
+           'Test your <em class="grad grad--cyan">webcam &amp; mic</em> before the call',
+           "Video call in ten minutes? Check your camera, microphone and speakers right now &mdash; privately. Nothing is recorded and nothing leaves your device.",
+           cta1=("Run the Tests", "#avtool"), cta2=("Home Worker Support", "/it-support-for-home-workers/"),
+           chips=["100% on your device","Nothing recorded","Camera &middot; mic &middot; speakers"]),
+      AVTEST_TOOL,
+      faq_html(faqs),
+      tools_strip(["speed", "pcbench", "healthcheck"], title="While you&rsquo;re at it &mdash; more quick checks", alt=False),
+      cta("Never fumble a video call again",
+          "We set up cameras, mics, Teams and Zoom so they just work &mdash; and we&rsquo;re one message away when they don&rsquo;t. Remote fixes for home workers and businesses across the UK.",
+          primary=("Fix My Setup", "/contact/"), secondary=("Remote IT Support", "/remote-it-support/")),
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        return graph([crumb(s, "Webcam & Mic Test"), webpage(s, "Free Webcam, Mic & Speaker Test", _desc),
+                      {"@type":"WebApplication","name":"365 Techies Webcam & Mic Test","applicationCategory":"UtilitiesApplication","operatingSystem":"Web (all browsers)","url":SITE+"/webcam-mic-test/","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},"provider":{"@id":SITE+"/#business"}},
+                      faqpage(s, _faqs)])
+    add(slug=slug, title="Free Webcam, Mic & Speaker Test — Private, On-Device | 365 Techies",
+        desc=desc, og_title="Free Webcam & Mic Test | 365 Techies", schema=schema, content=content)
+webcam_mic_test()
+
 # ===================================================== DNS / DOMAIN LOOKUP
 def dns_lookup():
     slug = "dns-lookup"
@@ -4311,9 +4375,9 @@ def free_tools_hub():
       ("Website, domain &amp; email", "See how your website, domain and email really perform.",
        ["website","ssl","domainexp","dns","emailsig"]),
       ("Your computer", "Test it, diagnose it, and make smart decisions.",
-       ["pcbench","healthcheck","faultcheck","repairreplace","w10"]),
+       ["pcbench","avtest","healthcheck","faultcheck","repairreplace","w10"]),
       ("Costs &amp; planning", "Clear numbers and honest recommendations.",
-       ["costcalc","planfinder","quickquote","downtime","m365picker","servercloud","aicalc"]),
+       ["costcalc","planfinder","quickquote","downtime","m365picker","servercloud","aicalc","solarcalc"]),
     ]
     sections = ""
     items = []
@@ -6041,6 +6105,8 @@ info_page(
           <a class="post-card" href="/email-signature-generator/"><p class="post-card__cat">Tool</p><h3>Email Signature Generator</h3><p>A professional, email-safe signature with live preview &mdash; copy straight into Outlook or Gmail.</p><span class="post-card__more">Make yours &#8594;</span></a>
           <a class="post-card" href="/ssl-checker/"><p class="post-card__cat">Tool</p><h3>SSL Certificate Checker</h3><p>Is your website&rsquo;s padlock valid &mdash; and when does it expire? Check any domain in seconds.</p><span class="post-card__more">Check a certificate &#8594;</span></a>
           <a class="post-card" href="/domain-expiry-checker/"><p class="post-card__cat">Tool</p><h3>Domain Expiry Checker</h3><p>When does your domain expire? Official registry data before it&rsquo;s too late.</p><span class="post-card__more">Check a domain &#8594;</span></a>
+          <a class="post-card" href="/solar-battery-calculator/"><p class="post-card__cat">Tool</p><h3>Battery &amp; Solar Calculator</h3><p>Campervan, boat or off-grid? Get an honest battery and solar panel sizing for UK conditions.</p><span class="post-card__more">Size my system &#8594;</span></a>
+          <a class="post-card" href="/webcam-mic-test/"><p class="post-card__cat">Tool</p><h3>Webcam &amp; Mic Test</h3><p>Check your camera, microphone and speakers before the video call &mdash; privately, on your device.</p><span class="post-card__more">Test now &#8594;</span></a>
           <a class="post-card" href="/dns-lookup/"><p class="post-card__cat">Tool</p><h3>DNS Lookup</h3><p>Check any domain&rsquo;s DNS records &mdash; A, MX, NS, TXT &mdash; the settings behind your website and email.</p><span class="post-card__more">Look it up &#8594;</span></a>
           <a class="post-card" href="/pc-benchmark/"><p class="post-card__cat">Tool</p><h3>PC Benchmark</h3><p>How fast is your computer, really? Test CPU, memory, graphics &amp; storage in 20 seconds.</p><span class="post-card__more">Benchmark it &#8594;</span></a>
           <a class="post-card" href="/windows-10-end-of-life/"><p class="post-card__cat">Act now</p><h3>Windows 10 End of Life</h3><p>Support ended in October 2025. Find out in 30 seconds if you&rsquo;re affected &mdash; and your options.</p><span class="post-card__more">Are you affected? &#8594;</span></a>
