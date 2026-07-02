@@ -4290,7 +4290,7 @@ webcam_mic_test()
 # ===================================================== VICTRON SYSTEM BUILDER
 def victron_system_builder():
     slug = "victron-system-builder"
-    desc = "Free Victron system builder. Answer four questions and get a complete, honestly-sized Victron kit list — lithium battery, solar, MPPT, B2B charging, inverter and monitoring — with links to buy each part on Amazon or Bimble Solar. From 365 Techies, Dorset — Victron installers."
+    desc = "Free Victron system builder. Four questions → the complete build: lithium battery, solar, MPPT, B2B, inverter and monitoring, PLUS the exact cables, lugs and fuses per circuit, the tools you need and the golden rules — with buy links for every part. From 365 Techies, Dorset — Victron installers."
     faqs = [
       ("How is the kit sized?", "From your daily energy use: watts &times; hours plus 15% real-world losses, a 1.5-day battery buffer at lithium&rsquo;s ~90% usable capacity, solar sized for UK spring/autumn sun (~2.5 peak hours), and the matching Victron MPPT from the official controller limits. It&rsquo;s an honest starter spec &mdash; a real design also covers cable sizing, fusing and alternator limits."),
       ("Are the shop links affiliate links?", "No &mdash; the buttons simply open live searches on Amazon UK and Bimble Solar for each part, and we don&rsquo;t earn a penny from them. If that ever changes we&rsquo;ll say so clearly right next to the links. We recommend this kit because we install it and run it ourselves."),
@@ -4298,6 +4298,8 @@ def victron_system_builder():
       ("Can I fit it myself?", "Plenty of people do &mdash; 12V systems are DIY-friendly if you&rsquo;re careful, and the SuperPack batteries with built-in protection make it safer. The parts that deserve respect are fusing, cable sizing and anything near the alternator or mains. We&rsquo;re happy to fit kit you&rsquo;ve bought, check over a DIY install, or do the whole job."),
       ("Will you price-match or supply the kit?", "We&rsquo;ll quote for supply-and-fit with warranty and remote monitoring set up &mdash; and we&rsquo;ll tell you honestly if buying parts yourself and having us fit them works out better for you. No games; <a href=\"/contact/\">just ask</a>."),
       ("What about winter?", "UK winter gives roughly one hour of usable sun a day &mdash; an eighth of summer &mdash; so winter systems lean on engine charging (the Orion B2B) or hook-up. The builder already assumes that; don&rsquo;t let anyone sell you a roof full of panels as a winter solution."),
+      ("Where do the cable and fuse sizes come from?", "From Victron&rsquo;s own manuals and wiring guidance, stated for short runs (&le;3m one way) at 12V. Two rules matter above all: the fuse protects the cable (never fit a bigger fuse than the cable&rsquo;s rating), and longer runs need thicker cable to beat voltage drop. Our design service calculates exact runs for your layout."),
+      ("What tools do I really need?", "The one that matters most is a proper hydraulic lug crimper &mdash; a bad crimp on a 70mm&sup2; inverter cable is a fire risk, a good one lasts decades. The builder lists the essential kit and the nice-to-haves, with links. Or borrow ours: we fit customer-supplied kit too."),
     ]
     content = "\n".join([
       hero(bc("Victron System Builder"), "// FREE SYSTEM BUILDER",
