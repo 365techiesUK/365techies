@@ -9,7 +9,7 @@ import build_local  # registers the 12 local/customer pages on import
 from build_pages import (add, graph, crumb, webpage, service, faqpage,
                          faq_html, cta, hero, hero_trust, bc, bc_sub, crumb_sub, tiles, grid_cards, checklist,
                          steps, reviews_block, ico, SITE, write_all,
-                         promise_strip, uk_remote_band, WCHECK_TOOL, EMAILSEC_TOOL, PWNED_TOOL, PRIVACY_TOOL, SCAM_TOOL, PWGEN_TOOL, WIFIQR_TOOL, DNS_TOOL,
+                         promise_strip, uk_remote_band, WCHECK_TOOL, EMAILSEC_TOOL, PWNED_TOOL, PRIVACY_TOOL, SCAM_TOOL, PWGEN_TOOL, WIFIQR_TOOL, DNS_TOOL, PCBENCH_TOOL,
                          TOOLS, tool_cards, tools_strip, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
 from build_local import make_customer
 
@@ -4113,6 +4113,50 @@ def dns_lookup():
         desc=desc, og_title="Free DNS Lookup | 365 Techies", schema=schema, content=content)
 dns_lookup()
 
+# ===================================================== PC BENCHMARK (in-browser CPU/memory/graphics/storage)
+def pc_benchmark():
+    slug = "pc-benchmark"
+    desc = "Free PC benchmark — test your computer's processor, memory, graphics and storage in about 20 seconds, right in your browser. Get a clear score, honest advice and upgrade suggestions. From 365 Techies, Dorset."
+    faqs = [
+      ("How does a browser benchmark work?", "It runs real workloads in your browser &mdash; heavy maths across all your processor cores (using web workers), large memory copies, a WebGL graphics stress test and browser storage reads and writes &mdash; then scores each one. It&rsquo;s indicative rather than lab-grade, but it gives an honest picture of how your machine is performing."),
+      ("Is it safe? Will it harm my computer?", "Completely safe &mdash; it simply makes your computer work hard for about 20 seconds, like opening a big spreadsheet or playing a game. The fan may spin up briefly; nothing is installed, sent or stored."),
+      ("Why is my score different from other benchmark tools?", "Every benchmark uses its own scale, and ours is a 0&ndash;100 scale of our own &mdash; so don&rsquo;t compare the number with native suites like Geekbench or Cinebench. Compare your machine against our bands, or re-run it after a tune-up to see the difference."),
+      ("My score is low &mdash; what should I do?", "Often a machine benches low for fixable reasons: an old-style hard drive (an SSD upgrade transforms it), too little memory, or years of accumulated clutter. We&rsquo;ll diagnose it honestly &mdash; <a href=\"/contact/\">book a tune-up</a>, or see if it&rsquo;s time for a <a href=\"/repair-or-replace-advisor/\">repair or replacement</a>."),
+      ("Does it work on phones and Macs?", "Yes &mdash; it runs on any modern device, though the scoring is tuned with Windows PCs in mind (we&rsquo;re Windows specialists). It&rsquo;s a fun way to compare your phone with your laptop!"),
+      ("The graphics test says &lsquo;not available&rsquo; &mdash; why?", "Your browser has WebGL disabled or blocked (some strict privacy setups do this). The rest of the benchmark still runs and your overall score simply skips graphics."),
+    ]
+    content = "\n".join([
+      hero(bc("PC Benchmark"), "// FREE PC BENCHMARK",
+           'How fast is your computer, <em class="grad grad--cyan">really?</em>',
+           "Benchmark your processor, memory, graphics and storage in about 20 seconds &mdash; right in your browser. A clear score out of 100, honest advice, and no downloads.",
+           cta1=("Start the Benchmark", "#benchtool"), cta2=("Book a Tune-Up", "/contact/"),
+           chips=["CPU &middot; RAM &middot; GPU &middot; storage","~20 seconds","No downloads"]),
+      PCBENCH_TOOL,
+      f'''    <section class="section section--alt" aria-label="What the scores mean">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// WHAT THE SCORES MEAN</p>
+          <h2 class="section-title section-title--center" data-title>Your score, in plain English<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="tile-grid" data-stagger>
+{tiles([("bolt","80+ &mdash; Blazing fast","Everything should feel instant. If it doesn&rsquo;t, software clutter is the culprit &mdash; and that&rsquo;s fixable."),("check","60&ndash;79 &mdash; Running well","A healthy machine for everyday work. Regular servicing keeps it here for years."),("clock","40&ndash;59 &mdash; Room for improvement","You&rsquo;re waiting on it more than you should. A tune-up or small upgrade makes a big difference."),("wrench","Under 40 &mdash; Struggling","Don&rsquo;t bin it yet: an SSD or memory upgrade often transforms a machine like this for a fraction of the cost of a new one."),("monitor","Storage matters most","A slow disk drags everything down &mdash; the single best upgrade for most slow computers is an SSD."),("shield","Speed isn&rsquo;t everything","A fast but unprotected PC is still a risk &mdash; pair it with our free <a href=\"/it-health-check-tool/\">IT health check</a>.")])}
+        </div>
+      </div>
+    </section>''',
+      faq_html(faqs),
+      tools_strip(["healthcheck", "faultcheck", "repairreplace"], title="More free computer check-ups", alt=False),
+      cta("Not happy with your score?",
+          "We speed up slow computers every week &mdash; deep tune-ups, SSD and memory upgrades, honest advice, no-fix-no-fee and a 12-month warranty. Or start fresh with a refurbished business-grade Dell from &pound;299.",
+          primary=("Make Mine Faster", "/contact/"), secondary=("Refurbished Dells", "/dell-hardware/")),
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        return graph([crumb(s, "PC Benchmark"), webpage(s, "Free PC Benchmark", _desc),
+                      {"@type":"WebApplication","name":"365 Techies PC Benchmark","applicationCategory":"UtilitiesApplication","operatingSystem":"Web (all browsers)","url":SITE+"/pc-benchmark/","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},"provider":{"@id":SITE+"/#business"}},
+                      faqpage(s, _faqs)])
+    add(slug=slug, title="Free PC Benchmark — Test Your Computer's Speed | 365 Techies",
+        desc=desc, og_title="Free PC Benchmark | 365 Techies", schema=schema, content=content)
+pc_benchmark()
+
 # ===================================================== FREE TOOLS HUB (every interactive tool, grouped)
 def free_tools_hub():
     slug = "free-tools"
@@ -4124,8 +4168,8 @@ def free_tools_hub():
        ["speed","broadbandcheck","wifiqr","coverage"]),
       ("Website &amp; domain", "See how your website and domain really perform.",
        ["website","dns"]),
-      ("Your computer", "Diagnose problems and make smart decisions.",
-       ["healthcheck","faultcheck","repairreplace","w10"]),
+      ("Your computer", "Test it, diagnose it, and make smart decisions.",
+       ["pcbench","healthcheck","faultcheck","repairreplace","w10"]),
       ("Costs &amp; planning", "Clear numbers and honest recommendations.",
        ["costcalc","planfinder","quickquote","downtime","m365picker","servercloud","aicalc"]),
     ]
@@ -5840,6 +5884,7 @@ info_page(
           <a class="post-card" href="/password-generator/"><p class="post-card__cat">Tool</p><h3>Password Generator</h3><p>Create a strong random password or a memorable passphrase in one click &mdash; securely, in your browser.</p><span class="post-card__more">Generate one &#8594;</span></a>
           <a class="post-card" href="/wifi-qr-code-generator/"><p class="post-card__cat">Tool</p><h3>Wi-Fi QR Code Generator</h3><p>Make a QR code guests scan to join your Wi-Fi instantly &mdash; no typing the password. Print &amp; stick it up.</p><span class="post-card__more">Make one &#8594;</span></a>
           <a class="post-card" href="/dns-lookup/"><p class="post-card__cat">Tool</p><h3>DNS Lookup</h3><p>Check any domain&rsquo;s DNS records &mdash; A, MX, NS, TXT &mdash; the settings behind your website and email.</p><span class="post-card__more">Look it up &#8594;</span></a>
+          <a class="post-card" href="/pc-benchmark/"><p class="post-card__cat">Tool</p><h3>PC Benchmark</h3><p>How fast is your computer, really? Test CPU, memory, graphics &amp; storage in 20 seconds.</p><span class="post-card__more">Benchmark it &#8594;</span></a>
           <a class="post-card" href="/windows-10-end-of-life/"><p class="post-card__cat">Act now</p><h3>Windows 10 End of Life</h3><p>Support ended in October 2025. Find out in 30 seconds if you&rsquo;re affected &mdash; and your options.</p><span class="post-card__more">Are you affected? &#8594;</span></a>
           <a class="post-card" href="/quick-quote/"><p class="post-card__cat">Tool</p><h3>Quick Quote</h3><p>Get a free, no-obligation quote or cost comparison in under a minute.</p><span class="post-card__more">Get a quote &#8594;</span></a>
           <a class="post-card" href="/broadband-speed-checker/"><p class="post-card__cat">Tool</p><h3>Broadband Speed Checker</h3><p>Is your internet fast enough? Get a recommended speed in 30 seconds.</p><span class="post-card__more">Check your speed &#8594;</span></a>
