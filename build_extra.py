@@ -1496,7 +1496,7 @@ def off_grid():
           </div>
           <div class="vlive__save">
             <div class="vlive__savebox"><span class="vlive__savebig" data-save-today>&pound;0.00</span><span class="vlive__savelbl">Saved today</span></div>
-            <div class="vlive__savebox"><span class="vlive__savebig" data-save-life>&pound;0.00</span><span class="vlive__savelbl">Saved all-time</span></div>
+            <div class="vlive__savebox"><span class="vlive__savebig" data-save-life>&pound;0.00</span><span class="vlive__savelbl">30-day saving</span></div>
             <div class="vlive__savebox"><span class="vlive__savebig" data-gen-life>&mdash;</span><span class="vlive__savelbl">Clean energy generated</span></div>
           </div>
           <div class="vlive__histwrap">
@@ -1555,7 +1555,8 @@ def off_grid():
         flow("[data-flow-solar]","[data-glow-sun]",s.pvW);
         flow("[data-flow-load]","[data-glow-load]",loadW);
         tween("[data-save-today]","stoday",(s.yieldToday!=null)?s.yieldToday*RATE:null,function(v){return "£"+v.toFixed(2);});
-        tween("[data-save-life]","slife",(s.yieldLifetime!=null)?s.yieldLifetime*RATE:null,function(v){return "£"+v.toFixed(2);});
+        var k30=(s.history&&s.history.length)?s.history.reduce(function(a,d){return a+((d&&d.kwh)||0);},0):null;
+        tween("[data-save-life]","slife",(k30!=null)?k30*RATE:null,function(v){return "£"+v.toFixed(2);});
         tween("[data-gen-life]","glife",s.yieldLifetime,function(v){return v.toFixed(1)+" kWh";});
         var rt=q("[data-rate]"); if(rt){ var ph=(s.pvW!=null)?(s.pvW/1000*RATE*100):0; rt.innerHTML=(s.pvW>5?("Generating now &middot; saving ~"+ph.toFixed(1)+"p/hour"):"Resting now")+" &middot; at 20p per kWh"; }
         if(s.history) hist(s.history);
@@ -4746,7 +4747,7 @@ def battery_installs():
             <div class="vmini__stats">
               <div class="vmini__s"><span class="vmini__sv" data-m-pv>&mdash;</span><span class="vmini__sl">Solar now</span></div>
               <div class="vmini__s"><span class="vmini__sv" data-m-bw>&mdash;</span><span class="vmini__sl">Battery power</span></div>
-              <div class="vmini__s"><span class="vmini__sv vmini__sv--save" data-m-save>&mdash;</span><span class="vmini__sl">Saved all-time</span></div>
+              <div class="vmini__s"><span class="vmini__sv vmini__sv--save" data-m-save>&mdash;</span><span class="vmini__sl">30-day saving</span></div>
             </div>
           </div>
           <p class="vmini__note" data-m-note></p>
@@ -4756,7 +4757,7 @@ def battery_installs():
         (function(){
           var PROXY="/api/vrm.php"; /* same-origin PHP proxy as the off-grid page */
           var RATE=0.20;
-          var SAMPLE={sample:true,soc:97,battState:"charging",battW:31,pvW:114,yieldLifetime:489.9};
+          var SAMPLE={sample:true,soc:97,battState:"charging",battW:31,pvW:114,yieldLifetime:489.9,kwh30:49.6};
           var el=document.getElementById("vmini"); if(!el) return;
           var RC=351.9, cur={}, reduce=false; try{ reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
           function q(s){return el.querySelector(s);}
@@ -4769,7 +4770,8 @@ def battery_installs():
             var stt=q("[data-m-state]"); if(stt)stt.textContent=idle?"Resting":(charging?"Charging":"Discharging");
             tw("[data-m-pv]","pv",s.pvW,function(v){return Math.round(v)+" W";});
             tw("[data-m-bw]","bw",s.battW,function(v){return (v>0?"+":"")+Math.round(v)+" W";});
-            tw("[data-m-save]","sv",(s.yieldLifetime!=null)?s.yieldLifetime*RATE:null,function(v){return "£"+v.toFixed(2);});
+            var k30=(s.history&&s.history.length)?s.history.reduce(function(a,d){return a+((d&&d.kwh)||0);},0):(s.kwh30!=null?s.kwh30:null);
+            tw("[data-m-save]","sv",(k30!=null)?k30*RATE:null,function(v){return "£"+v.toFixed(2);});
             var r=q("[data-m-ring]"); if(r){ var soc=Math.max(0,Math.min(100,s.soc||0)); r.style.strokeDashoffset=(RC*(1-soc/100)).toFixed(1); r.style.stroke=col; }
             var nt=q("[data-m-note]"); if(nt)nt.textContent=s.sample?"Sample reading — the live feed switches on once our VRM link is connected.":"Live from our 365 Crafter’s Victron lithium system.";
             var up=q("[data-m-upd]"); if(up)up.textContent=s.sample?"sample reading":"data is live";

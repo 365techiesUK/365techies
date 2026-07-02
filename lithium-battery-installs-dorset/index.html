@@ -691,7 +691,7 @@
             <div class="vmini__stats">
               <div class="vmini__s"><span class="vmini__sv" data-m-pv>&mdash;</span><span class="vmini__sl">Solar now</span></div>
               <div class="vmini__s"><span class="vmini__sv" data-m-bw>&mdash;</span><span class="vmini__sl">Battery power</span></div>
-              <div class="vmini__s"><span class="vmini__sv vmini__sv--save" data-m-save>&mdash;</span><span class="vmini__sl">Saved all-time</span></div>
+              <div class="vmini__s"><span class="vmini__sv vmini__sv--save" data-m-save>&mdash;</span><span class="vmini__sl">30-day saving</span></div>
             </div>
           </div>
           <p class="vmini__note" data-m-note></p>
@@ -701,7 +701,7 @@
         (function(){
           var PROXY="/api/vrm.php"; /* same-origin PHP proxy as the off-grid page */
           var RATE=0.20;
-          var SAMPLE={sample:true,soc:97,battState:"charging",battW:31,pvW:114,yieldLifetime:489.9};
+          var SAMPLE={sample:true,soc:97,battState:"charging",battW:31,pvW:114,yieldLifetime:489.9,kwh30:49.6};
           var el=document.getElementById("vmini"); if(!el) return;
           var RC=351.9, cur={}, reduce=false; try{ reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
           function q(s){return el.querySelector(s);}
@@ -714,7 +714,8 @@
             var stt=q("[data-m-state]"); if(stt)stt.textContent=idle?"Resting":(charging?"Charging":"Discharging");
             tw("[data-m-pv]","pv",s.pvW,function(v){return Math.round(v)+" W";});
             tw("[data-m-bw]","bw",s.battW,function(v){return (v>0?"+":"")+Math.round(v)+" W";});
-            tw("[data-m-save]","sv",(s.yieldLifetime!=null)?s.yieldLifetime*RATE:null,function(v){return "£"+v.toFixed(2);});
+            var k30=(s.history&&s.history.length)?s.history.reduce(function(a,d){return a+((d&&d.kwh)||0);},0):(s.kwh30!=null?s.kwh30:null);
+            tw("[data-m-save]","sv",(k30!=null)?k30*RATE:null,function(v){return "£"+v.toFixed(2);});
             var r=q("[data-m-ring]"); if(r){ var soc=Math.max(0,Math.min(100,s.soc||0)); r.style.strokeDashoffset=(RC*(1-soc/100)).toFixed(1); r.style.stroke=col; }
             var nt=q("[data-m-note]"); if(nt)nt.textContent=s.sample?"Sample reading — the live feed switches on once our VRM link is connected.":"Live from our 365 Crafter’s Victron lithium system.";
             var up=q("[data-m-upd]"); if(up)up.textContent=s.sample?"sample reading":"data is live";
