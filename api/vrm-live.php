@@ -15,7 +15,19 @@
  */
 error_reporting(0);
 ignore_user_abort(false);
-set_time_limit(75);
+@set_time_limit(75);
+
+if (isset($_GET['probe'])) {   // debug mode: surface fatals as JSON so failures are diagnosable remotely
+    error_reporting(E_ALL);
+    @ini_set('display_errors', '1');
+    set_exception_handler(function ($e) { echo json_encode(['ok' => false, 'fatal' => $e->getMessage() . ' @line ' . $e->getLine()]); exit; });
+    register_shutdown_function(function () {
+        $e = error_get_last();
+        if ($e && in_array($e['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR], true)) {
+            echo json_encode(['ok' => false, 'fatal' => $e['message'] . ' @line ' . $e['line']]);
+        }
+    });
+}
 
 $PORTAL = 'c0619ab63a61';
 $TOKENF = __DIR__ . '/vrm-token.php';
