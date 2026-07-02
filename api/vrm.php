@@ -17,10 +17,10 @@
 error_reporting(0);
 ini_set('serialize_precision', '-1');   // clean float output (78.7, not 78.70000000000000284)
 header('Content-Type: application/json; charset=utf-8');
-header('Cache-Control: public, max-age=5');
+header('Cache-Control: no-store');
 
 $SITE_ID = 458482;
-$TTL     = 15;   // widgets poll every 1s; this cache means VRM itself sees at most ~4 calls/min
+$TTL     = 3;    // near-live tail of VRM's database; widgets poll 1s, VRM sees at most ~20 calls/min
 $CACHE   = __DIR__ . '/vrm-cache.json';
 $TOKENF  = __DIR__ . '/vrm-token.php';
 
