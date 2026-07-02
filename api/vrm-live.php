@@ -14,6 +14,7 @@
  * automatically. ?probe=1 returns one-shot JSON diagnostics instead of a stream.
  */
 error_reporting(0);
+@ini_set('serialize_precision', '-1');   // clean float output (78.6, not 78.5999999...)
 ignore_user_abort(false);
 @set_time_limit(75);
 
