@@ -193,6 +193,7 @@ HEADER = '''  <header class="site-header">
             <a href="/book-a-collection/">Book a Collection</a>
             <a href="/remote-support/">Start Remote Support</a>
             <a href="/support-portal/">Support Portal</a>
+            <a href="/free-tools/">Free Tools</a>
             <a href="/plan-finder/">Plan Finder</a>
             <a href="/cost-calculator/">Cost Calculator</a>
             <a href="/website-checker/">Website Checker</a>
@@ -345,6 +346,7 @@ HEADER = '''  <header class="site-header">
           <a href="/book-a-collection/">Book a Collection</a>
           <a href="/remote-support/">Start Remote Support</a>
           <a href="/support-portal/">Support Portal</a>
+          <a href="/free-tools/">Free Tools</a>
           <a href="/plan-finder/">Plan Finder</a>
           <a href="/cost-calculator/">Cost Calculator</a>
           <a href="/website-checker/">Website Checker</a>
@@ -500,6 +502,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/business-it-support-plans/">Business Plans</a>
         <a href="/computer-repairs/">Computer Repairs</a>
         <a href="/pricing/">Pricing</a>
+        <a href="/free-tools/">Free Tools</a>
         <a href="/quick-quote/">Quick Quote</a>
         <a href="/cost-calculator/">Cost Calculator</a>
         <a href="/website-checker/">Website Checker</a>
@@ -2046,6 +2049,60 @@ DNS_TOOL = r'''    <section class="section" aria-label="DNS lookup" id="dnstool"
       </script>
     </section>'''
 
+# ---- Central free-tools registry + contextual strip -------------------------
+# One source of truth for every interactive tool: key -> (name, href, blurb).
+# Used by the /free-tools/ hub and by tools_strip() cross-links on service pages.
+TOOLS = {
+  "website":      ("Website Checker", "/website-checker/", "Test any site&rsquo;s speed, SEO, security &amp; mobile-friendliness with Google&rsquo;s Lighthouse engine."),
+  "emailsec":     ("Email Security Checker", "/email-security-checker/", "Could scammers spoof your email? Check your SPF, DKIM &amp; DMARC in seconds."),
+  "breach":       ("Password Breach Checker", "/password-breach-checker/", "Has your password leaked? Check privately against billions of breached passwords."),
+  "pwgen":        ("Password Generator", "/password-generator/", "Create a strong random password or a memorable passphrase in one click."),
+  "pwstrength":   ("Password Strength Checker", "/password-strength-checker/", "Test a password&rsquo;s strength privately, right in your browser."),
+  "privacy":      ("Privacy Checker", "/what-websites-know/", "See exactly what any website can learn about you the moment you land on it."),
+  "scamlink":     ("Link Safety Checker", "/link-safety-checker/", "Got a dodgy-looking link in a text or email? Paste it to spot the phishing signs &mdash; safely."),
+  "scamquiz":     ("Spot the Scam Quiz", "/spot-the-scam/", "Can you tell a scam from the real thing? Take the free 6-round quiz."),
+  "speed":        ("Live Broadband Speed Test", "/broadband-speed-checker/", "Measure your real download, upload and ping right now on a live animated gauge."),
+  "wifiqr":       ("Wi-Fi QR Code Generator", "/wifi-qr-code-generator/", "Make a QR code guests scan to join your Wi-Fi &mdash; no typing the password."),
+  "dns":          ("DNS Lookup", "/dns-lookup/", "Check any domain&rsquo;s A, MX, NS &amp; TXT records &mdash; the settings behind your website and email."),
+  "healthcheck":  ("IT Health Check Tool", "/it-health-check-tool/", "Get an instant IT &amp; security score out of 100, plus a plain-English action plan."),
+  "faultcheck":   ("Computer Fault Checker", "/computer-fault-checker/", "Tell us what&rsquo;s playing up and get the likely cause and best next step."),
+  "repairreplace":("Repair or Replace?", "/repair-or-replace-advisor/", "Answer four questions for an honest verdict on your ageing computer."),
+  "w10":          ("Windows 10 End of Life", "/windows-10-end-of-life/", "Support has ended &mdash; find out in 30 seconds if you&rsquo;re affected, and your options."),
+  "costcalc":     ("Cost Calculator", "/cost-calculator/", "Build your plan with live sliders and see your monthly IT support cost as you go."),
+  "planfinder":   ("Plan Finder", "/plan-finder/", "Answer three quick questions and we&rsquo;ll recommend the right plan for you."),
+  "quickquote":   ("Quick Quote", "/quick-quote/", "Get a free, no-obligation quote or cost comparison in under a minute."),
+  "downtime":     ("Downtime Cost Calculator", "/downtime-cost-calculator/", "See what IT downtime could really be costing your business &mdash; from your own numbers."),
+  "m365picker":   ("Which Microsoft 365 Plan?", "/which-microsoft-365-plan/", "Personal, Family or Business? Find the right licence in 30 seconds."),
+  "coverage":     ("Coverage Checker", "/coverage-checker/", "Pop in your postcode to see if we cover your area for on-site visits."),
+  "broadbandcheck":("Broadband Switch Checker", "/broadband-checker/", "Could you get faster broadband for less? See what your line can really do."),
+  "whatlose":     ("What Would You Lose?", "/what-would-you-lose/", "A 20-second check of how safe your photos, files and records really are."),
+  "aicalc":       ("AI ROI Calculator", "/ai-roi-calculator/", "Could AI genuinely save your business time and money? Work it out."),
+  "servercloud":  ("Server or Cloud?", "/server-or-cloud-picker/", "Get a clear, jargon-free steer on the right setup for your business."),
+}
+
+def tool_cards(keys):
+    out = ""
+    for k in keys:
+        name, href, blurb = TOOLS[k]
+        out += (f'          <a class="post-card" href="{href}"><p class="post-card__cat">Free tool</p><h3>{name}</h3>'
+                f'<p>{blurb}</p><span class="post-card__more">Try it &#8594;</span></a>\n')
+    return out
+
+def tools_strip(keys, title="Try our free tools", lede_text="No sign-up, no catch — free tools built by our techies.", alt=True):
+    """Compact cross-link band of relevant free tools for service pages."""
+    cls = "blog-section section--alt" if alt else "blog-section"
+    return f'''    <section class="{cls}" aria-label="Free tools">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// FREE TOOLS</p>
+          <h2 class="section-title section-title--center" data-title>{title}<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>{lede_text} <a href="/free-tools/">See all our free tools &#8594;</a></p>
+        </div>
+        <div class="blog-grid" data-stagger>
+{tool_cards(keys)}        </div>
+      </div>
+    </section>'''
+
 PAGES = []
 def add(**kw):
     PAGES.append(kw)
@@ -2556,6 +2613,7 @@ add(
      ("What if it can&rsquo;t be fixed remotely?", "Occasionally hardware needs hands-on attention — we&rsquo;ll arrange a repair or on-site visit across Bournemouth, Poole and Dorset."),
    ]),
    promise_strip(items=[PROMISE_CALL, PROMISE_PEOPLE, PROMISE_ETA]),
+   tools_strip(["speed", "healthcheck", "faultcheck"], title="While you wait &mdash; try our free tools"),
    cta("Need help right now?", "Start a secure remote session, or join a monthly plan so help is always one message away.",
        primary=("Get Remote Support", "/contact/"), secondary=("View Monthly Plans", "/monthly-it-support/")),
  ]),
@@ -2666,6 +2724,7 @@ add(
       </div>
     </section>''',
    faq_html(M365_FAQS),
+   tools_strip(["emailsec", "m365picker", "breach"], title="Free tools while you&rsquo;re here", alt=False),
    cta("Get Microsoft 365 working for you", "Stuck with Outlook, Teams or a migration? Get it sorted by Microsoft partners &mdash; or fold Microsoft 365 into a monthly plan.",
        primary=("Get Microsoft 365 Support", "/contact/"), secondary=("View Monthly Plans", "/monthly-it-support/")),
  ]),
@@ -2787,6 +2846,7 @@ add(
        "          <p>Behind every plan sits proactive, always-on protection &mdash; antivirus, patching, backups and monitoring working together across every device, watched over by us day and night.</p>\n          <p>If something looks wrong, we usually catch it early &mdash; often before you&rsquo;d ever notice.</p>",
        variant="business", label="LIVE VIEW &mdash; YOUR NETWORK"),
    faq_html(CYBER_FAQS),
+   tools_strip(["emailsec", "breach", "scamlink", "pwgen"], title="Check yourself &mdash; free security tools", lede_text="Run our free security checks right now and see where you stand.", alt=False),
    cta("Get the ultimate protection",
        "Layered, always-on security &mdash; set up, managed and monitored by your local team, and included in every monthly plan.",
        primary=("Get Protected", "/contact/"), secondary=("View Monthly Plans", "/monthly-it-support/")),

@@ -297,7 +297,7 @@ for i, row in enumerate(LOCAL):
     make_local(i, *row)
 
 # ======================================================= CUSTOMER-TYPE PAGES
-def make_customer(i, slug, crumb_name, eyebrow, h1, lede, intro_head, intro_paras, feats, tile_items, faqs, chips, cta_title=None, cta_text=None, accent="cyan", split=None, split_title=None, split_eyebrow="HOME &amp; BUSINESS", steps_title=None, step_items=None, hero_cta1=None, hero_cta2=None):
+def make_customer(i, slug, crumb_name, eyebrow, h1, lede, intro_head, intro_paras, feats, tile_items, faqs, chips, cta_title=None, cta_text=None, accent="cyan", split=None, split_title=None, split_eyebrow="HOME &amp; BUSINESS", steps_title=None, step_items=None, hero_cta1=None, hero_cta2=None, tools=None):
     cta_title = cta_title or "Let&rsquo;s sort your IT"
     cta_text = cta_text or "Join the Dorset homes and businesses who never worry about technology. Pick a plan or say hello."
     desc = lede.replace("&rsquo;", "'").replace("&amp;", "and")
@@ -359,7 +359,10 @@ def make_customer(i, slug, crumb_name, eyebrow, h1, lede, intro_head, intro_para
         </ol>
       </div>
     </section>''')
-    sections += [reviews_block(revs), faq_html(faqs), cta(cta_title, cta_text)]
+    sections += [reviews_block(revs), faq_html(faqs)]
+    if tools:
+        sections.append(bp.tools_strip(tools, alt=False))
+    sections.append(cta(cta_title, cta_text))
     content = "\n".join(sections)
     def schema(s, _desc=desc, _cn=crumb_name, _faqs=faqs):
         return graph([crumb(s, _cn), webpage(s, _cn, _desc),

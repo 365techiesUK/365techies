@@ -9,7 +9,8 @@ import build_local  # registers the 12 local/customer pages on import
 from build_pages import (add, graph, crumb, webpage, service, faqpage,
                          faq_html, cta, hero, hero_trust, bc, bc_sub, crumb_sub, tiles, grid_cards, checklist,
                          steps, reviews_block, ico, SITE, write_all,
-                         promise_strip, uk_remote_band, WCHECK_TOOL, EMAILSEC_TOOL, PWNED_TOOL, PRIVACY_TOOL, SCAM_TOOL, PWGEN_TOOL, WIFIQR_TOOL, DNS_TOOL, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
+                         promise_strip, uk_remote_band, WCHECK_TOOL, EMAILSEC_TOOL, PWNED_TOOL, PRIVACY_TOOL, SCAM_TOOL, PWGEN_TOOL, WIFIQR_TOOL, DNS_TOOL,
+                         TOOLS, tool_cards, tools_strip, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
 from build_local import make_customer
 
 # ── Competitive prices for the new AI offerings (owner-approved 2026-06-17; edit here) ──
@@ -48,7 +49,8 @@ SPECIALIST = [
    split_title="Email sorted, however you work",
    split=[("Email at home","Personal and family email sorted across every device &mdash; Outlook, webmail and phone &mdash; with the spam filtered out and the scams spotted.",["Outlook &amp; webmail set up","Email on phone &amp; tablet","Spam &amp; junk filtered","Scam-checking on call"]),("Business email","Professional business email on Microsoft 365 &mdash; shared mailboxes, signatures, security and migration, all managed for your team.",["Microsoft 365 business email","Shared mailboxes &amp; aliases","Email security &amp; filtering","Migration with nothing lost"])],
    steps_title="Email flowing again, fast",
-   step_items=[("We diagnose","We find out exactly why your email isn&rsquo;t behaving &mdash; settings, passwords or server."),("We fix &amp; set up","We get email flowing and configure it properly on every device."),("We protect","We filter spam, block phishing and stay on call to check anything suspicious.")]),
+   step_items=[("We diagnose","We find out exactly why your email isn&rsquo;t behaving &mdash; settings, passwords or server."),("We fix &amp; set up","We get email flowing and configure it properly on every device."),("We protect","We filter spam, block phishing and stay on call to check anything suspicious.")],
+   tools=["emailsec","scamlink","dns"]),
  dict(slug="new-computer-setup", crumb_name="New Computer Setup",
    eyebrow="// NEW DEVICE SETUP", h1='New computer <em class="grad grad--cyan">setup</em>',
    lede="We set up your new computer or laptop properly — transferring files, email and settings, installing software, and getting security and backups in place from day one.",
@@ -87,7 +89,8 @@ SPECIALIST = [
    split_title="Reliable Wi-Fi, everywhere",
    split=[("Wi-Fi at home","Strong, reliable Wi-Fi in every room &mdash; dead zones banished with mesh, the kids&rsquo; devices and smart home connected, all on a secure network.",["Whole-home mesh Wi-Fi","Dead zones fixed","Smart home connected","Secure &amp; guest networks"]),("Office networks","Fast, secure office networks that keep your team online &mdash; reliable Wi-Fi, wired connections and guest access, designed and supported.",["Reliable office Wi-Fi","Wired &amp; wireless networks","Secure staff &amp; guest access","Designed &amp; supported"])],
    steps_title="Full coverage in three steps",
-   step_items=[("We survey","We find your dead zones, bottlenecks and weak spots."),("We set up","We install and configure routers, mesh and extenders for full coverage."),("We secure","We lock down your network and keep it running fast.")]),
+   step_items=[("We survey","We find your dead zones, bottlenecks and weak spots."),("We set up","We install and configure routers, mesh and extenders for full coverage."),("We secure","We lock down your network and keep it running fast.")],
+   tools=["speed","wifiqr","broadbandcheck"]),
 ]
 for i, c in enumerate(SPECIALIST):
     make_customer(40 + i, **c)
@@ -1107,6 +1110,7 @@ def spot_the_scam():
            chips=["No sign-up", "Plain English", "Great for all ages"]),
       SCAM_WIDGET,
       faq_html(faqs),
+      tools_strip(["scamlink", "breach", "privacy"], title="More free scam-busting tools", lede_text="Keep going &mdash; a few more free checks that take seconds.", alt=False),
       cta("Worried about scams?",
           "We keep Dorset families and businesses safe online every day &mdash; with real protection and a friendly techie to ask.",
           primary=("Talk to a Techie", "/contact/"), secondary=("Free Health Check", "/it-health-check-tool/")),
@@ -1770,6 +1774,7 @@ def web_design():
       </div>
     </section>''',
       faq_html(faqs),
+      tools_strip(["dns", "emailsec"], title="Free website &amp; domain tools", lede_text="Check the plumbing behind your website and email &mdash; free, in seconds.", alt=False),
       cta("Ready for a website that works as hard as you do?",
           "Get a friendly, no-obligation quote for website design, hosting and business email — all looked after by your local IT team.",
           primary=("Get a Website Quote", "/contact/"), secondary=("Call 01202 775566", "tel:+441202775566")),
@@ -3372,6 +3377,7 @@ def starlink_internet():
       </div>
     </section>''',
       faq_html(faqs),
+      tools_strip(["speed", "coverage"], title="Check your connection first", lede_text="See what your current setup really delivers before you decide.", alt=False),
       cta("Get connected, anywhere",
           "Slow broadband or none at all? Tell us your location and we&rsquo;ll get you online with Starlink &mdash; supplied, installed and supported locally.",
           primary=("Get Connected", "/contact/"), secondary=("Off-Grid Energy", "/off-grid-victron-energy/")),
@@ -4106,6 +4112,53 @@ def dns_lookup():
     add(slug=slug, title="Free DNS Lookup | Check A, MX, NS & TXT Records | 365 Techies",
         desc=desc, og_title="Free DNS Lookup | 365 Techies", schema=schema, content=content)
 dns_lookup()
+
+# ===================================================== FREE TOOLS HUB (every interactive tool, grouped)
+def free_tools_hub():
+    slug = "free-tools"
+    desc = "All of 365 Techies' free tools in one place — website checker, live broadband speed test, email security check, password tools, Wi-Fi QR codes, DNS lookup, cost calculators and more. No sign-up, no catch."
+    GROUPS = [
+      ("Security &amp; privacy", "Check you&rsquo;re safe &mdash; and lock things down.",
+       ["emailsec","breach","pwgen","pwstrength","scamlink","privacy","scamquiz","whatlose"]),
+      ("Speed &amp; connectivity", "Test your connection and get everyone online.",
+       ["speed","broadbandcheck","wifiqr","coverage"]),
+      ("Website &amp; domain", "See how your website and domain really perform.",
+       ["website","dns"]),
+      ("Your computer", "Diagnose problems and make smart decisions.",
+       ["healthcheck","faultcheck","repairreplace","w10"]),
+      ("Costs &amp; planning", "Clear numbers and honest recommendations.",
+       ["costcalc","planfinder","quickquote","downtime","m365picker","servercloud","aicalc"]),
+    ]
+    sections = ""
+    items = []
+    pos = 1
+    for gtitle, glede, keys in GROUPS:
+        sections += (f'      <div class="blog-cat-head" data-reveal><h2>{gtitle}</h2></div>\n'
+                     f'      <div class="blog-grid" data-stagger>\n{tool_cards(keys)}      </div>\n')
+        for k in keys:
+            name, href, _b = TOOLS[k]
+            items.append({"@type": "ListItem", "position": pos, "name": name.replace("&amp;", "&").replace("&rsquo;", "'"), "url": SITE + href})
+            pos += 1
+    content = "\n".join([
+      hero(bc("Free Tools"), "// FREE TOOLS &amp; CHECKERS",
+           'Free tools, built by <em class="grad grad--cyan">real techies</em>',
+           f"{pos - 1} genuinely useful tools &mdash; check your website, test your broadband live, see if your password has leaked, make a Wi-Fi QR code and more. All free, no sign-up, no catch.",
+           cta1=("Talk to a Techie", "/contact/"), cta2=("View Monthly Plans", "/monthly-it-support/"),
+           chips=["100% free","No sign-up","Built in Dorset"]),
+      f'''    <section class="blog-section" aria-label="All free tools">
+      <div class="wrap">
+{sections}      </div>
+    </section>''',
+      cta("Like the free stuff? The paid stuff is even better.",
+          "These tools give you answers &mdash; our monthly plans give you a friendly techie who sorts the problems for you, from &pound;18.25/month per computer.",
+          primary=("View Monthly Plans", "/monthly-it-support/"), secondary=("Contact Us", "/contact/")),
+    ])
+    def schema(s, _desc=desc, _items=items):
+        return graph([crumb(s, "Free Tools"), webpage(s, "Free IT Tools & Checkers", _desc),
+                      {"@type": "ItemList", "@id": SITE + "/free-tools/#list", "name": "365 Techies free tools", "itemListElement": _items}])
+    add(slug=slug, title="Free IT Tools & Checkers — Speed Test, Security Checks & More | 365 Techies",
+        desc=desc, og_title="Free IT Tools & Checkers | 365 Techies", schema=schema, content=content)
+free_tools_hub()
 
 # ===================================================== AI VOICE AGENTS (new offering)
 def ai_voice():
@@ -5771,6 +5824,7 @@ info_page(
   pre='''    <section class="section section--alt" aria-label="Resources and guides">
       <div class="wrap">
         <div class="blog-grid" data-stagger>
+          <a class="post-card" href="/free-tools/"><p class="post-card__cat">Hub</p><h3>All Free Tools</h3><p>Every free tool in one place &mdash; speed test, security checks, generators, calculators and more.</p><span class="post-card__more">Browse the tools &#8594;</span></a>
           <a class="post-card" href="/it-advice/"><p class="post-card__cat">Guides</p><h3>IT Advice Hub</h3><p>25+ plain-English guides on home and business IT, Microsoft 365, security and Windows.</p><span class="post-card__more">Read the guides &#8594;</span></a>
           <a class="post-card" href="/cyber-threats/"><p class="post-card__cat">Security</p><h3>Cyber Threats Explained</h3><p>Ransomware, phishing, scams and more &mdash; what they are and how to stay safe.</p><span class="post-card__more">Stay safe &#8594;</span></a>
           <a class="post-card" href="/cybersecurity-checklist/"><p class="post-card__cat">Checklist</p><h3>Cybersecurity Checklist</h3><p>Ten practical steps to protect yourself &mdash; print it or save it as a PDF.</p><span class="post-card__more">Get the checklist &#8594;</span></a>
@@ -6513,6 +6567,7 @@ def password_strength_checker():
       </div>
     </section>''',
       faq_html(faqs),
+      tools_strip(["pwgen", "breach"], title="Complete the password check-up", lede_text="Strength is half the story &mdash; generate a better one, and see if yours has leaked.", alt=False),
       cta("Want help locking down your accounts?",
           "We&rsquo;ll set up strong passwords, a password manager and two-factor authentication with you &mdash; patiently, over a secure session, and we always call before we connect.",
           primary=("Talk to a Techie","/contact/"), secondary=("How to set up 2FA","/how-to-set-up-two-factor-authentication/")),
@@ -7470,6 +7525,7 @@ def online_safety():
         ("What should I do if I think I&rsquo;ve been scammed?","Don&rsquo;t panic &mdash; act fast. Call your bank on 159, report it, and secure your accounts. Our <a href=\"/ive-been-scammed-what-to-do/\">step-by-step guide</a> covers exactly what to do."),
         ("Is antivirus enough on its own?","It&rsquo;s an important layer, but not the whole answer. Strong passwords, 2FA, updates, backups and a healthy dose of caution matter just as much. We bring it all together in <a href=\"/cybersecurity-support/\">managed cybersecurity</a>."),
       ]),
+      tools_strip(["scamlink", "breach", "privacy", "pwgen"], title="Free tools to stay safe", lede_text="Quick, free checks you can run right now &mdash; no sign-up.", alt=False),
       cta("Want a friendly expert in your corner?","We keep Dorset families and businesses safe online every day &mdash; with real protection, Malwarebytes Premium and a real person to ask whenever you&rsquo;re unsure.",
           primary=("Explore Cybersecurity","/cybersecurity-support/"), secondary=("Malwarebytes Premium","/malwarebytes-premium/")),
     ])
