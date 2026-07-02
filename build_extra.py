@@ -10,7 +10,7 @@ from build_pages import (add, graph, crumb, webpage, service, faqpage,
                          faq_html, cta, hero, hero_trust, bc, bc_sub, crumb_sub, tiles, grid_cards, checklist,
                          steps, reviews_block, ico, SITE, write_all,
                          promise_strip, uk_remote_band, WCHECK_TOOL, EMAILSEC_TOOL, PWNED_TOOL, PRIVACY_TOOL, SCAM_TOOL, PWGEN_TOOL, WIFIQR_TOOL, DNS_TOOL, PCBENCH_TOOL, QRGEN_TOOL,
-                         TOOLS, tool_cards, tools_strip, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
+                         SIGGEN_TOOL, TOOLS, tool_cards, tools_strip, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
 from build_local import make_customer
 
 # ── Competitive prices for the new AI offerings (owner-approved 2026-06-17; edit here) ──
@@ -50,7 +50,7 @@ SPECIALIST = [
    split=[("Email at home","Personal and family email sorted across every device &mdash; Outlook, webmail and phone &mdash; with the spam filtered out and the scams spotted.",["Outlook &amp; webmail set up","Email on phone &amp; tablet","Spam &amp; junk filtered","Scam-checking on call"]),("Business email","Professional business email on Microsoft 365 &mdash; shared mailboxes, signatures, security and migration, all managed for your team.",["Microsoft 365 business email","Shared mailboxes &amp; aliases","Email security &amp; filtering","Migration with nothing lost"])],
    steps_title="Email flowing again, fast",
    step_items=[("We diagnose","We find out exactly why your email isn&rsquo;t behaving &mdash; settings, passwords or server."),("We fix &amp; set up","We get email flowing and configure it properly on every device."),("We protect","We filter spam, block phishing and stay on call to check anything suspicious.")],
-   tools=["emailsec","scamlink","dns"]),
+   tools=["emailsec","emailsig","scamlink"]),
  dict(slug="new-computer-setup", crumb_name="New Computer Setup",
    eyebrow="// NEW DEVICE SETUP", h1='New computer <em class="grad grad--cyan">setup</em>',
    lede="We set up your new computer or laptop properly — transferring files, email and settings, installing software, and getting security and backups in place from day one.",
@@ -4126,6 +4126,39 @@ def qr_code_generator():
         desc=desc, og_title="Free QR Code Generator | 365 Techies", schema=schema, content=content)
 qr_code_generator()
 
+# ===================================================== EMAIL SIGNATURE GENERATOR
+def email_signature_generator():
+    slug = "email-signature-generator"
+    desc = "Free email signature generator. Create a professional, email-safe HTML signature with a live preview and copy it straight into Outlook, Gmail or Apple Mail — no sign-up, nothing stored. From 365 Techies, Dorset."
+    faqs = [
+      ("How do I add my signature to Outlook?", "In <b>new Outlook / Outlook on the web</b>: Settings &#8594; Account &#8594; Signatures &#8594; paste into the box and save. In <b>classic Outlook</b>: File &#8594; Options &#8594; Mail &#8594; Signatures &#8594; New &#8594; paste. Click &ldquo;Copy signature&rdquo; above first, then paste with Ctrl+V."),
+      ("How do I add it to Gmail?", "Gmail &#8594; Settings (gear) &#8594; See all settings &#8594; General &#8594; scroll to Signature &#8594; Create new &#8594; paste it in, then scroll down and Save Changes."),
+      ("How do I add it to Apple Mail?", "Mail &#8594; Settings &#8594; Signatures &#8594; choose your account &#8594; + &#8594; paste. Untick &ldquo;Always match my default message font&rdquo; so the formatting is kept."),
+      ("Why does my signature look different in some emails?", "Email apps are fussy &mdash; that&rsquo;s why this generator builds signatures the old-school reliable way (tables, inline styles, standard fonts) rather than fancy code that breaks. Keep images out of signatures unless they&rsquo;re hosted properly, and it&rsquo;ll look right everywhere."),
+      ("What should a UK business include in its signature?", "Many UK limited companies include the registered company name, company number and registered office in email footers &mdash; the &ldquo;extra line&rdquo; field is ideal for this. If in doubt, check with your accountant."),
+      ("Can you set up signatures for my whole team?", "Yes &mdash; we roll out consistent, centrally-managed signatures across Microsoft 365 and Google Workspace so every mailbox matches and nobody can break them. <a href=\"/contact/\">Ask us</a>."),
+    ]
+    content = "\n".join([
+      hero(bc("Email Signature Generator"), "// FREE SIGNATURE GENERATOR",
+           'A professional <em class="grad grad--cyan">email signature</em> in a minute',
+           "Type your details, watch the live preview, copy it straight into Outlook, Gmail or Apple Mail. Built with email-safe code so it looks right everywhere &mdash; free, no sign-up, nothing stored.",
+           cta1=("Make My Signature", "#sgtool"), cta2=("Microsoft 365 Support", "/microsoft-365-support/"),
+           chips=["Live preview","Outlook &amp; Gmail ready","No watermark"]),
+      SIGGEN_TOOL,
+      faq_html(faqs),
+      tools_strip(["emailsec", "qrgen", "pwgen"], title="More free business tools", alt=False),
+      cta("Email that looks the business",
+          "From professional signatures to Microsoft 365, shared mailboxes and email security &mdash; we make Dorset businesses look sharp and stay safe in the inbox.",
+          primary=("Sort My Email", "/contact/"), secondary=("Email Support", "/email-support/")),
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        return graph([crumb(s, "Email Signature Generator"), webpage(s, "Free Email Signature Generator", _desc),
+                      {"@type":"WebApplication","name":"365 Techies Email Signature Generator","applicationCategory":"UtilitiesApplication","operatingSystem":"Web (all browsers)","url":SITE+"/email-signature-generator/","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},"provider":{"@id":SITE+"/#business"}},
+                      faqpage(s, _faqs)])
+    add(slug=slug, title="Free Email Signature Generator — Outlook & Gmail Ready | 365 Techies",
+        desc=desc, og_title="Free Email Signature Generator | 365 Techies", schema=schema, content=content)
+email_signature_generator()
+
 # ===================================================== DNS / DOMAIN LOOKUP
 def dns_lookup():
     slug = "dns-lookup"
@@ -4211,8 +4244,8 @@ def free_tools_hub():
        ["emailsec","breach","pwgen","pwstrength","scamlink","privacy","scamquiz","whatlose"]),
       ("Speed &amp; connectivity", "Test your connection and get everyone online.",
        ["speed","broadbandcheck","wifiqr","qrgen","coverage"]),
-      ("Website &amp; domain", "See how your website and domain really perform.",
-       ["website","dns"]),
+      ("Website, domain &amp; email", "See how your website, domain and email really perform.",
+       ["website","dns","emailsig"]),
       ("Your computer", "Test it, diagnose it, and make smart decisions.",
        ["pcbench","healthcheck","faultcheck","repairreplace","w10"]),
       ("Costs &amp; planning", "Clear numbers and honest recommendations.",
@@ -5941,6 +5974,7 @@ info_page(
           <a class="post-card" href="/password-generator/"><p class="post-card__cat">Tool</p><h3>Password Generator</h3><p>Create a strong random password or a memorable passphrase in one click &mdash; securely, in your browser.</p><span class="post-card__more">Generate one &#8594;</span></a>
           <a class="post-card" href="/wifi-qr-code-generator/"><p class="post-card__cat">Tool</p><h3>Wi-Fi QR Code Generator</h3><p>Make a QR code guests scan to join your Wi-Fi instantly &mdash; no typing the password. Print &amp; stick it up.</p><span class="post-card__more">Make one &#8594;</span></a>
           <a class="post-card" href="/qr-code-generator/"><p class="post-card__cat">Tool</p><h3>QR Code Generator</h3><p>Turn any link, text, email or phone number into a scannable QR code &mdash; including Google-review links.</p><span class="post-card__more">Make one &#8594;</span></a>
+          <a class="post-card" href="/email-signature-generator/"><p class="post-card__cat">Tool</p><h3>Email Signature Generator</h3><p>A professional, email-safe signature with live preview &mdash; copy straight into Outlook or Gmail.</p><span class="post-card__more">Make yours &#8594;</span></a>
           <a class="post-card" href="/dns-lookup/"><p class="post-card__cat">Tool</p><h3>DNS Lookup</h3><p>Check any domain&rsquo;s DNS records &mdash; A, MX, NS, TXT &mdash; the settings behind your website and email.</p><span class="post-card__more">Look it up &#8594;</span></a>
           <a class="post-card" href="/pc-benchmark/"><p class="post-card__cat">Tool</p><h3>PC Benchmark</h3><p>How fast is your computer, really? Test CPU, memory, graphics &amp; storage in 20 seconds.</p><span class="post-card__more">Benchmark it &#8594;</span></a>
           <a class="post-card" href="/windows-10-end-of-life/"><p class="post-card__cat">Act now</p><h3>Windows 10 End of Life</h3><p>Support ended in October 2025. Find out in 30 seconds if you&rsquo;re affected &mdash; and your options.</p><span class="post-card__more">Are you affected? &#8594;</span></a>

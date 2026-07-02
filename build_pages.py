@@ -204,6 +204,7 @@ HEADER = '''  <header class="site-header">
             <a href="/password-generator/">Password Generator</a>
             <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
             <a href="/qr-code-generator/">QR Code Generator</a>
+            <a href="/email-signature-generator/">Email Signature Generator</a>
             <a href="/dns-lookup/">DNS Lookup</a>
             <a href="/pc-benchmark/">PC Benchmark</a>
             <a href="/ai-roi-calculator/">AI ROI Calculator</a>
@@ -359,6 +360,7 @@ HEADER = '''  <header class="site-header">
           <a href="/password-generator/">Password Generator</a>
           <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
           <a href="/qr-code-generator/">QR Code Generator</a>
+          <a href="/email-signature-generator/">Email Signature Generator</a>
           <a href="/dns-lookup/">DNS Lookup</a>
           <a href="/pc-benchmark/">PC Benchmark</a>
           <a href="/ai-roi-calculator/">AI ROI Calculator</a>
@@ -517,6 +519,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/password-generator/">Password Generator</a>
         <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
         <a href="/qr-code-generator/">QR Code Generator</a>
+        <a href="/email-signature-generator/">Email Signature Generator</a>
         <a href="/dns-lookup/">DNS Lookup</a>
         <a href="/pc-benchmark/">PC Benchmark</a>
         <a href="/ai-roi-calculator/">AI ROI Calculator</a>
@@ -2070,6 +2073,7 @@ TOOLS = {
   "speed":        ("Live Broadband Speed Test", "/broadband-speed-checker/", "Measure your real download, upload and ping right now on a live animated gauge."),
   "wifiqr":       ("Wi-Fi QR Code Generator", "/wifi-qr-code-generator/", "Make a QR code guests scan to join your Wi-Fi &mdash; no typing the password."),
   "qrgen":        ("QR Code Generator", "/qr-code-generator/", "Turn any link, text, email or phone number into a scannable QR code &mdash; download &amp; print."),
+  "emailsig":     ("Email Signature Generator", "/email-signature-generator/", "Create a professional email signature in one minute &mdash; live preview, copy straight into Outlook or Gmail."),
   "dns":          ("DNS Lookup", "/dns-lookup/", "Check any domain&rsquo;s A, MX, NS &amp; TXT records &mdash; the settings behind your website and email."),
   "pcbench":      ("PC Benchmark", "/pc-benchmark/", "How fast is your computer, really? Six live tests &mdash; CPU, encryption, memory, graphics &amp; storage &mdash; with a score you can share."),
   "healthcheck":  ("IT Health Check Tool", "/it-health-check-tool/", "Get an instant IT &amp; security score out of 100, plus a plain-English action plan."),
@@ -2518,6 +2522,132 @@ QRGEN_TOOL = r'''    <section class="section" aria-label="QR code generator" id=
           img.src='data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(xml)));
         });
         syncType();
+      })();
+      </script>
+    </section>'''
+
+# Shared email signature generator (client-side, table-based email-safe HTML, no key) — /email-signature-generator/
+SIGGEN_TOOL = r'''    <section class="section" aria-label="Email signature generator" id="sgtool">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// FREE SIGNATURE GENERATOR</p>
+          <h2 class="section-title section-title--center" data-title>A professional email signature in one minute<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Fill in your details, watch the live preview, then copy it straight into Outlook, Gmail or Apple Mail. Built the proper way (email-safe HTML), made in your browser, nothing stored.</p>
+        </div>
+        <div id="sg" data-reveal>
+          <div class="sg-grid">
+            <form class="sg-form" id="sg-form" novalidate>
+              <label class="sg-f"><span>Full name</span><input id="sg-name" autocomplete="off" placeholder="Sam Taylor"></label>
+              <label class="sg-f"><span>Job title</span><input id="sg-title" autocomplete="off" placeholder="Office Manager"></label>
+              <label class="sg-f"><span>Company</span><input id="sg-co" autocomplete="off" placeholder="Taylor &amp; Co Ltd"></label>
+              <label class="sg-f"><span>Phone</span><input id="sg-tel" autocomplete="off" placeholder="01202 000000"></label>
+              <label class="sg-f"><span>Mobile (optional)</span><input id="sg-mob" autocomplete="off" placeholder="07000 000000"></label>
+              <label class="sg-f"><span>Email</span><input id="sg-em" autocomplete="off" spellcheck="false" placeholder="sam@taylorco.co.uk"></label>
+              <label class="sg-f"><span>Website (optional)</span><input id="sg-web" autocomplete="off" spellcheck="false" placeholder="taylorco.co.uk"></label>
+              <label class="sg-f"><span>Extra line (optional &mdash; e.g. company no., opening hours)</span><input id="sg-extra" autocomplete="off" placeholder="Registered in England &amp; Wales No. 1234567"></label>
+              <div class="sg-row">
+                <label class="sg-f sg-colour"><span>Accent colour</span><input type="color" id="sg-col" value="#1d6fe3"></label>
+                <label class="sg-f"><span>Style</span><select id="sg-style"><option value="bar">Classic (accent bar)</option><option value="compact">Compact (one-liner)</option></select></label>
+              </div>
+            </form>
+            <div class="sg-out">
+              <p class="sg-out-label">Live preview</p>
+              <div class="sg-card"><div id="sg-preview"></div></div>
+              <div class="sg-btns">
+                <button type="button" class="button primary" id="sg-copy">Copy signature</button>
+                <button type="button" class="button sg-ghost" id="sg-copyhtml">Copy HTML code</button>
+              </div>
+              <p class="sg-hint" id="sg-hint">&#128274; Made in your browser &mdash; nothing is sent or stored. Paste it into your email app&rsquo;s signature settings (guides below).</p>
+            </div>
+          </div>
+        </div>
+        <div class="sg-fix">
+          <h3>Want signatures rolled out for the whole team?</h3>
+          <p>We set up consistent, professional signatures across Microsoft 365 and Google Workspace &mdash; centrally managed so every email leaving your business looks the part, and nobody can break them.</p>
+          <div class="sg-fix-cta"><a class="button primary" href="/contact/">Sort my team&rsquo;s email &#8594;</a><a class="button sg-ghost" href="/microsoft-365-support/">Microsoft 365 support</a></div>
+        </div>
+      </div>
+      <style>
+      #sg{max-width:900px;margin:0 auto}
+      #sg .sg-grid{display:grid;grid-template-columns:1fr 1.15fr;gap:1.6rem;align-items:start}
+      #sg .sg-form{display:flex;flex-direction:column;gap:.7rem}
+      #sg .sg-f{display:flex;flex-direction:column;gap:.3rem;font-size:.85rem}
+      #sg .sg-f input,#sg .sg-f select{font:inherit;padding:.65rem .85rem;border-radius:10px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.04);color:inherit}
+      #sg .sg-f input:focus,#sg .sg-f select:focus{outline:none;border-color:var(--cyan,#37c2c2)}
+      #sg .sg-row{display:flex;gap:.8rem}
+      #sg .sg-row .sg-f{flex:1}
+      #sg .sg-colour input[type=color]{width:100%;height:42px;padding:2px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,.2);cursor:pointer}
+      #sg .sg-out{position:sticky;top:90px}
+      #sg .sg-out-label{font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted,#9aa6c2);margin:0 0 .5rem}
+      #sg .sg-card{background:#fff;border-radius:14px;padding:1.4rem;min-height:140px;overflow-x:auto}
+      #sg .sg-btns{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1rem}
+      #sg .sg-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}
+      #sg .button.done{border-color:#2ecc71;color:#2ecc71}
+      #sg .sg-hint{font-size:.76rem;color:var(--muted,#9aa6c2);margin:.9rem 0 0;line-height:1.5}
+      #sgtool .sg-fix{max-width:900px;margin:2rem auto 0;padding:1.6rem;border-radius:16px;border:1px solid rgba(55,194,194,.35);background:rgba(55,194,194,.07);text-align:center}
+      #sgtool .sg-fix h3{margin:0 0 .5rem;font-size:1.2rem}
+      #sgtool .sg-fix p{margin:0 auto 1.1rem;max-width:56ch;color:var(--muted,#9aa6c2);font-size:.95rem;line-height:1.6}
+      #sgtool .sg-fix-cta{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center}
+      #sgtool .sg-fix .sg-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}
+      @media(max-width:700px){#sg .sg-grid{grid-template-columns:1fr}#sg .sg-out{position:static}}
+      </style>
+      <script>
+      (function(){
+        var root=document.getElementById('sg'); if(!root) return;
+        function q(id){ return root.querySelector(id); }
+        var F={name:q('#sg-name'),title:q('#sg-title'),co:q('#sg-co'),tel:q('#sg-tel'),mob:q('#sg-mob'),em:q('#sg-em'),web:q('#sg-web'),extra:q('#sg-extra'),col:q('#sg-col'),style:q('#sg-style')};
+        var prev=q('#sg-preview');
+        function esc(s){ var d=document.createElement('div'); d.textContent=(s==null?'':s); return d.innerHTML; }
+        function telHref(v){ return 'tel:'+String(v).replace(/[^\d+]/g,''); }
+        function webHref(v){ return /^[a-z][a-z0-9+.\-]*:\/\//i.test(v)?v:('https://'+v); }
+        function webLabel(v){ return String(v).replace(/^https?:\/\//i,'').replace(/\/$/,''); }
+        function build(){
+          var col=F.col.value||'#1d6fe3';
+          var name=esc(F.name.value.trim()), title=esc(F.title.value.trim()), co=esc(F.co.value.trim());
+          var tel=F.tel.value.trim(), mob=F.mob.value.trim(), em=F.em.value.trim(), web=F.web.value.trim(), extra=esc(F.extra.value.trim());
+          if(!name&&!title&&!co&&!tel&&!mob&&!em&&!web) return '';
+          var base='font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#222222;line-height:1.5;';
+          var link='color:'+col+';text-decoration:none;';
+          var bits=[];
+          if(tel) bits.push('<a href="'+telHref(tel)+'" style="'+link+'">'+esc(tel)+'</a>');
+          if(mob) bits.push('<a href="'+telHref(mob)+'" style="'+link+'">'+esc(mob)+'</a>');
+          if(em) bits.push('<a href="mailto:'+esc(em)+'" style="'+link+'">'+esc(em)+'</a>');
+          if(web) bits.push('<a href="'+esc(webHref(web))+'" style="'+link+'">'+esc(webLabel(web))+'</a>');
+          var contact=bits.join('<span style="color:#bbbbbb">&nbsp;&nbsp;&middot;&nbsp;&nbsp;</span>');
+          var roleLine=[title,co].filter(Boolean).join('<span style="color:#bbbbbb">&nbsp;&middot;&nbsp;</span>');
+          if(F.style.value==='compact'){
+            var parts=[];
+            if(name) parts.push('<span style="font-weight:bold;color:'+col+'">'+name+'</span>');
+            if(roleLine) parts.push('<span style="color:#555555">'+roleLine+'</span>');
+            var top=parts.join('<span style="color:#bbbbbb">&nbsp;&nbsp;|&nbsp;&nbsp;</span>');
+            return '<table cellpadding="0" cellspacing="0" border="0" style="'+base+'"><tr><td>'+
+              (top?('<div>'+top+'</div>'):'')+(contact?('<div style="margin-top:2px">'+contact+'</div>'):'')+
+              (extra?('<div style="margin-top:4px;font-size:11px;color:#999999">'+extra+'</div>'):'')+'</td></tr></table>';
+          }
+          return '<table cellpadding="0" cellspacing="0" border="0" style="'+base+'"><tr>'+
+            '<td style="border-left:3px solid '+col+';padding-left:14px">'+
+            (name?('<div style="font-size:16px;font-weight:bold;color:'+col+'">'+name+'</div>'):'')+
+            (roleLine?('<div style="color:#555555">'+roleLine+'</div>'):'')+
+            (contact?('<div style="margin-top:7px">'+contact+'</div>'):'')+
+            (extra?('<div style="margin-top:7px;font-size:11px;color:#999999">'+extra+'</div>'):'')+
+            '</td></tr></table>';
+        }
+        function render(){ prev.innerHTML=build()||'<span style="color:#999">Start typing to see your signature&hellip;</span>'; }
+        Object.keys(F).forEach(function(k){ F[k].addEventListener('input',render); F[k].addEventListener('change',render); });
+        function flash(btn,txt){ var old=btn.textContent; btn.textContent=txt; btn.classList.add('done'); setTimeout(function(){ btn.textContent=old; btn.classList.remove('done'); },1800); }
+        q('#sg-copy').addEventListener('click',function(){
+          var btn=this, html=build(); if(!html) return;
+          function fallback(){ try{ var r=document.createRange(); r.selectNodeContents(prev); var sel=window.getSelection(); sel.removeAllRanges(); sel.addRange(r); document.execCommand('copy'); sel.removeAllRanges(); flash(btn,'Copied!'); }catch(e){} }
+          if(navigator.clipboard&&window.ClipboardItem){
+            try{ navigator.clipboard.write([new ClipboardItem({'text/html':new Blob([html],{type:'text/html'}),'text/plain':new Blob([prev.innerText],{type:'text/plain'})})]).then(function(){ flash(btn,'Copied!'); }).catch(fallback); }catch(e){ fallback(); }
+          } else fallback();
+        });
+        q('#sg-copyhtml').addEventListener('click',function(){
+          var btn=this, html=build(); if(!html) return;
+          if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(html).then(function(){ flash(btn,'Copied!'); }).catch(function(){}); }
+          else{ var ta=document.createElement('textarea'); ta.value=html; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); flash(btn,'Copied!'); }catch(e){} document.body.removeChild(ta); }
+        });
+        render();
       })();
       </script>
     </section>'''
