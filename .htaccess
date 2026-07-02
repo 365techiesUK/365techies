@@ -87,6 +87,10 @@ ErrorDocument 404 /404.html
 <Files "vrm-token.php">
   Require all denied
 </Files>
+# Never compress/buffer the realtime SSE stream
+<Files "vrm-live.php">
+  SetEnv no-gzip 1
+</Files>
 
 # ============================================================
 # Performance: compression (Brotli preferred, gzip fallback)

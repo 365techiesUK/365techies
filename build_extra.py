@@ -1567,8 +1567,20 @@ def off_grid():
         var note=q("[data-note]"); if(note)note.textContent=s.sample?"Sample reading — the live feed switches on once our VRM link is connected.":"Live from our 365 Crafter, running clean on Victron solar.";
         el.classList.toggle("vlive--sample",!!s.sample);
       }
-      function tick(){ if(!PROXY){ render(SAMPLE); return; } fetch(PROXY,{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){ render((j&&j.ok)?j:SAMPLE); }).catch(function(){ render(SAMPLE); }); }
+      var lastJ=null, sseOn=0, lastRest=0;
+      function apply(j){ lastJ=j; render(j); }
+      function tick(){ if(!PROXY){ render(SAMPLE); return; }
+        if(sseOn && Date.now()-lastRest<15000) return; /* SSE carries the hot values; REST tops up yields/tanks/history every 15s */
+        fetch(PROXY,{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){ lastRest=Date.now(); apply((j&&j.ok)?j:SAMPLE); }).catch(function(){ if(!sseOn) apply(SAMPLE); });
+      }
       tick(); setInterval(tick, 1000);
+      /* realtime overlay: same per-second MQTT stream the official Victron apps use, bridged server-side */
+      if(PROXY && window.EventSource){ try{
+        var es=new EventSource(PROXY.replace("vrm.php","vrm-live.php"));
+        es.onmessage=function(ev){ try{ var d=JSON.parse(ev.data); if(!d||!d.live||!lastJ||lastJ.sample) return; sseOn=1;
+          for(var k in d){ if(k!=="live") lastJ[k]=d[k]; } render(lastJ);
+        }catch(e){} };
+      }catch(e){} }
     })();
     </script>''',
       (f'''    <section class="section" aria-label="Live Victron VRM dashboard">
@@ -4763,8 +4775,19 @@ def battery_installs():
             var up=q("[data-m-upd]"); if(up)up.textContent=s.sample?"sample reading":"data is live";
             el.classList.toggle("vmini--sample",!!s.sample);
           }
-          function tick(){ if(!PROXY){ render(SAMPLE); return; } fetch(PROXY,{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){ render((j&&j.ok)?j:SAMPLE); }).catch(function(){ render(SAMPLE); }); }
+          var lastJ=null, sseOn=0, lastRest=0;
+          function apply(j){ lastJ=j; render(j); }
+          function tick(){ if(!PROXY){ render(SAMPLE); return; }
+            if(sseOn && Date.now()-lastRest<15000) return;
+            fetch(PROXY,{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){ lastRest=Date.now(); apply((j&&j.ok)?j:SAMPLE); }).catch(function(){ if(!sseOn) apply(SAMPLE); });
+          }
           tick(); setInterval(tick, 1000);
+          if(PROXY && window.EventSource){ try{
+            var es=new EventSource(PROXY.replace("vrm.php","vrm-live.php"));
+            es.onmessage=function(ev){ try{ var d=JSON.parse(ev.data); if(!d||!d.live||!lastJ||lastJ.sample) return; sseOn=1;
+              for(var k in d){ if(k!=="live") lastJ[k]=d[k]; } render(lastJ);
+            }catch(e){} };
+          }catch(e){} }
         })();
         </script>
       </div>
