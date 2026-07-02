@@ -4116,9 +4116,10 @@ dns_lookup()
 # ===================================================== PC BENCHMARK (in-browser CPU/memory/graphics/storage)
 def pc_benchmark():
     slug = "pc-benchmark"
-    desc = "Free PC benchmark — test your computer's processor, memory, graphics and storage in about 20 seconds, right in your browser. Get a clear score, honest advice and upgrade suggestions. From 365 Techies, Dorset."
+    desc = "Free PC benchmark — six real tests of your computer's processor (single & all cores), encryption, memory, graphics and storage, live in your browser. Clear score out of 100, comparison scale, downloadable score card and honest upgrade advice. From 365 Techies, Dorset."
     faqs = [
-      ("How does a browser benchmark work?", "It runs real workloads in your browser &mdash; heavy maths across all your processor cores (using web workers), large memory copies, a WebGL graphics stress test and browser storage reads and writes &mdash; then scores each one. It&rsquo;s indicative rather than lab-grade, but it gives an honest picture of how your machine is performing."),
+      ("How does a browser benchmark work?", "It runs six real workloads in your browser &mdash; heavy maths on one core and then across all of them (using web workers), hardware-accelerated SHA-256 encryption, large memory copies, a WebGL graphics stress test and browser storage reads and writes &mdash; each with a live readout as it runs. It&rsquo;s indicative rather than lab-grade, but it gives an honest picture of how your machine is performing."),
+      ("Can I share or keep my score?", "Yes &mdash; download your score card as an image to share or keep, or copy your results as text. Your browser also remembers your previous run, so when you benchmark again (say, after a tune-up or an SSD upgrade) you&rsquo;ll see exactly how many points you gained."),
       ("Is it safe? Will it harm my computer?", "Completely safe &mdash; it simply makes your computer work hard for about 20 seconds, like opening a big spreadsheet or playing a game. The fan may spin up briefly; nothing is installed, sent or stored."),
       ("Why is my score different from other benchmark tools?", "Every benchmark uses its own scale, and ours is a 0&ndash;100 scale of our own &mdash; so don&rsquo;t compare the number with native suites like Geekbench or Cinebench. Compare your machine against our bands, or re-run it after a tune-up to see the difference."),
       ("My score is low &mdash; what should I do?", "Often a machine benches low for fixable reasons: an old-style hard drive (an SSD upgrade transforms it), too little memory, or years of accumulated clutter. We&rsquo;ll diagnose it honestly &mdash; <a href=\"/contact/\">book a tune-up</a>, or see if it&rsquo;s time for a <a href=\"/repair-or-replace-advisor/\">repair or replacement</a>."),
@@ -4128,9 +4129,9 @@ def pc_benchmark():
     content = "\n".join([
       hero(bc("PC Benchmark"), "// FREE PC BENCHMARK",
            'How fast is your computer, <em class="grad grad--cyan">really?</em>',
-           "Benchmark your processor, memory, graphics and storage in about 20 seconds &mdash; right in your browser. A clear score out of 100, honest advice, and no downloads.",
+           "Six real tests &mdash; processor, encryption, memory, graphics and storage &mdash; run live in your browser with a clear score out of 100, a comparison scale, and a score card you can download and share. Run it again after a tune-up and watch the score jump.",
            cta1=("Start the Benchmark", "#benchtool"), cta2=("Book a Tune-Up", "/contact/"),
-           chips=["CPU &middot; RAM &middot; GPU &middot; storage","~20 seconds","No downloads"]),
+           chips=["6 real tests","Live readouts","Share your score"]),
       PCBENCH_TOOL,
       f'''    <section class="section section--alt" aria-label="What the scores mean">
       <div class="wrap">

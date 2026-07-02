@@ -2067,7 +2067,7 @@ TOOLS = {
   "speed":        ("Live Broadband Speed Test", "/broadband-speed-checker/", "Measure your real download, upload and ping right now on a live animated gauge."),
   "wifiqr":       ("Wi-Fi QR Code Generator", "/wifi-qr-code-generator/", "Make a QR code guests scan to join your Wi-Fi &mdash; no typing the password."),
   "dns":          ("DNS Lookup", "/dns-lookup/", "Check any domain&rsquo;s A, MX, NS &amp; TXT records &mdash; the settings behind your website and email."),
-  "pcbench":      ("PC Benchmark", "/pc-benchmark/", "How fast is your computer, really? A 20-second test of CPU, memory, graphics &amp; storage with a clear score."),
+  "pcbench":      ("PC Benchmark", "/pc-benchmark/", "How fast is your computer, really? Six live tests &mdash; CPU, encryption, memory, graphics &amp; storage &mdash; with a score you can share."),
   "healthcheck":  ("IT Health Check Tool", "/it-health-check-tool/", "Get an instant IT &amp; security score out of 100, plus a plain-English action plan."),
   "faultcheck":   ("Computer Fault Checker", "/computer-fault-checker/", "Tell us what&rsquo;s playing up and get the likely cause and best next step."),
   "repairreplace":("Repair or Replace?", "/repair-or-replace-advisor/", "Answer four questions for an honest verdict on your ageing computer."),
@@ -2107,21 +2107,23 @@ def tools_strip(keys, title="Try our free tools", lede_text="No sign-up, no catc
       </div>
     </section>'''
 
-# Shared PC benchmark (CPU single/multi via Web Workers, memory, WebGL graphics, Cache-API storage — all in-browser, no key).
-# Score bands calibrated against a real 11th-gen i5-1135G7 (8 threads): 305M iter/s single, 1791M multi, ~11.8GB/s copy ≈ score 70.
+# Shared PC benchmark (ULTIMATE: 6 tests — CPU single/multi via Web Workers, SHA-256 crypto, memory, WebGL graphics, Cache-API storage —
+# with live readouts, comparison spectrum, run history, battery detection and a downloadable share card. All in-browser, no key).
+# Score bands calibrated against a real 11th-gen i5-1135G7 (8 threads): 305M iter/s single, 1791M multi, 911 MB/s SHA-256, ~11.8GB/s copy = score 70.
 PCBENCH_TOOL = r'''    <section class="section" aria-label="PC benchmark" id="benchtool">
       <div class="wrap">
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>// FREE PC BENCHMARK</p>
           <h2 class="section-title section-title--center" data-title>How fast is your computer, really?<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>A 20-second benchmark of your <strong>processor, memory, graphics and storage</strong> &mdash; run right in your browser, with a clear score and honest advice. No downloads, no sign-up.</p>
+          <p class="lede lede--center" data-reveal>Six real tests &mdash; <strong>processor (single &amp; all cores), encryption, memory, graphics and storage</strong> &mdash; run live in your browser with a clear score, honest advice and a share card. No downloads, no sign-up.</p>
         </div>
         <div id="bm" data-reveal>
           <div class="bm-device" id="bm-device"></div>
           <div style="text-align:center"><button type="button" class="button primary bm-start" id="bm-start">Start benchmark</button></div>
-          <p class="bm-hint">Takes about 20 seconds and will make your computer work hard (the fan may spin up briefly) &mdash; that&rsquo;s normal, and it does no harm. Close other heavy programs for the fairest score.</p>
+          <p class="bm-hint">Takes about 20 seconds and will make your computer work hard (the fan may spin up briefly) &mdash; that&rsquo;s normal, and it does no harm. Close other heavy programs, and plug laptops in, for the fairest score.</p>
           <div class="bm-running" id="bm-running" hidden>
             <p class="bm-phase" id="bm-phase">Warming up&hellip;</p>
+            <p class="bm-live mono" id="bm-live">&nbsp;</p>
             <div class="bm-prog-wrap"><div class="bm-prog" id="bm-prog"></div></div>
             <canvas id="bm-canvas" width="640" height="360" hidden></canvas>
           </div>
@@ -2133,8 +2135,23 @@ PCBENCH_TOOL = r'''    <section class="section" aria-label="PC benchmark" id="be
               </div>
               <div class="bm-verdict" id="bm-verdict"></div>
             </div>
+            <div class="bm-scale-wrap">
+              <p class="bm-scale-title">Where you land <span>(indicative reference points)</span></p>
+              <div class="bm-scale"><div class="bm-scale-fill" id="bm-scale-fill"></div><i class="bm-scale-me" id="bm-scale-me"><b>You</b></i></div>
+              <div class="bm-scale-ticks">
+                <span style="left:15%">Older laptop<br>&amp; hard drive</span>
+                <span style="left:50%">Typical office<br>PC (~2017)</span>
+                <span style="left:72%">Modern<br>mid-range</span>
+                <span style="left:95%">High-end<br>desktop</span>
+              </div>
+            </div>
             <div class="bm-rows" id="bm-rows"></div>
+            <div id="bm-history"></div>
             <div id="bm-notes"></div>
+            <div class="bm-actions">
+              <button type="button" class="button bm-ghost" id="bm-dl">Download score card &#8595;</button>
+              <button type="button" class="button bm-ghost" id="bm-copy">Copy my results</button>
+            </div>
             <div class="bm-fix" id="bm-fix"></div>
           </div>
         </div>
@@ -2147,7 +2164,8 @@ PCBENCH_TOOL = r'''    <section class="section" aria-label="PC benchmark" id="be
       #bm .bm-chip b{color:#fff;font-weight:600}
       #bm .bm-hint{text-align:center;font-size:.76rem;color:var(--muted,#9aa6c2);margin:.9rem auto 0;max-width:56ch;line-height:1.5}
       #bm .bm-running{text-align:center;padding:1.6rem 0 0}
-      #bm .bm-phase{font-size:1rem;font-weight:600;margin:0 0 .8rem;min-height:1.3em}
+      #bm .bm-phase{font-size:1rem;font-weight:600;margin:0 0 .2rem;min-height:1.3em}
+      #bm .bm-live{font-size:1.7rem;font-weight:700;color:var(--cyan,#37c2c2);margin:0 0 .9rem;min-height:1.3em;font-variant-numeric:tabular-nums}
       #bm .bm-prog-wrap{height:8px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden;max-width:440px;margin:0 auto 1.2rem}
       #bm .bm-prog{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#1d97e3,#00ce1b);transition:width .5s}
       #bm #bm-canvas{width:100%;max-width:440px;border-radius:12px;border:1px solid rgba(255,255,255,.14);margin:0 auto;display:block}
@@ -2165,6 +2183,15 @@ PCBENCH_TOOL = r'''    <section class="section" aria-label="PC benchmark" id="be
       #bm .bm-verdict-g{margin:0 0 .35rem;font-size:1.45rem;font-weight:800}
       #bm .bm-verdict p{margin:0;color:var(--muted,#9aa6c2);font-size:.93rem;line-height:1.6}
       #bm .bm-good .bm-verdict-g{color:#2ecc71}#bm .bm-avg .bm-verdict-g{color:#f1c40f}#bm .bm-poor .bm-verdict-g{color:#e74c3c}
+      #bm .bm-scale-wrap{margin:0 0 1.8rem;padding:1.1rem 1.2rem 3.1rem;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08)}
+      #bm .bm-scale-title{margin:0 0 .9rem;font-size:.85rem;font-weight:700;color:#fff}
+      #bm .bm-scale-title span{font-weight:400;color:var(--muted,#9aa6c2);font-size:.74rem}
+      #bm .bm-scale{position:relative;height:10px;border-radius:99px;background:linear-gradient(90deg,#e74c3c,#f1c40f 45%,#2ecc71 75%)}
+      #bm .bm-scale-fill{display:none}
+      #bm .bm-scale-me{position:absolute;top:-9px;width:4px;height:28px;background:#fff;border-radius:2px;transform:translateX(-50%);transition:left 1.2s cubic-bezier(.3,.8,.3,1)}
+      #bm .bm-scale-me b{position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:.68rem;color:#fff;letter-spacing:.04em}
+      #bm .bm-scale-ticks{position:relative;height:0}
+      #bm .bm-scale-ticks span{position:absolute;top:14px;transform:translateX(-50%);font-size:.64rem;color:var(--muted,#9aa6c2);text-align:center;line-height:1.35;white-space:nowrap}
       #bm .bm-rows{display:flex;flex-direction:column;gap:.75rem}
       #bm .bm-row{padding:.8rem 1rem;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08)}
       #bm .bm-row-h{display:flex;justify-content:space-between;gap:1rem;font-size:.88rem;margin-bottom:.45rem}
@@ -2175,36 +2202,48 @@ PCBENCH_TOOL = r'''    <section class="section" aria-label="PC benchmark" id="be
       #bm .bm-bar.g{background:#2ecc71}#bm .bm-bar.a{background:#f1c40f}#bm .bm-bar.p{background:#e74c3c}
       #bm .bm-note{margin:.9rem 0 0;padding:.75rem 1rem;border-radius:10px;background:rgba(255,255,255,.03);border-left:4px solid #f1c40f;font-size:.86rem;color:var(--muted,#9aa6c2);line-height:1.55}
       #bm .bm-note b{color:#fff}
-      #bm .bm-fix{margin-top:1.8rem;padding:1.6rem;border-radius:16px;border:1px solid rgba(55,194,194,.35);background:rgba(55,194,194,.07);text-align:center}
+      #bm .bm-note.bm-note-good{border-left-color:#2ecc71}
+      #bm .bm-actions{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center;margin-top:1.6rem}
+      #bm .bm-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}
+      #bm .bm-ghost.done{border-color:#2ecc71;color:#2ecc71}
+      #bm .bm-fix{margin-top:1.6rem;padding:1.6rem;border-radius:16px;border:1px solid rgba(55,194,194,.35);background:rgba(55,194,194,.07);text-align:center}
       #bm .bm-fix h3{margin:0 0 .5rem;font-size:1.2rem}
       #bm .bm-fix p{margin:0 auto 1.1rem;max-width:52ch;color:var(--muted,#9aa6c2);font-size:.95rem;line-height:1.6}
       #bm .bm-fix-cta{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center}
-      #bm .bm-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}
-      #bm .bm-powered{}
       .bm-powered{text-align:center;font-size:.72rem;color:var(--muted,#9aa6c2);margin:1.4rem auto 0;opacity:.8;max-width:64ch;line-height:1.5}
-      @media(max-width:560px){#bm .bm-top{grid-template-columns:1fr}#bm .bm-verdict{text-align:center}}
+      @media(max-width:560px){#bm .bm-top{grid-template-columns:1fr}#bm .bm-verdict{text-align:center}#bm .bm-scale-ticks span{white-space:normal;max-width:70px}}
       </style>
       <script>
       (function(){
         var root=document.getElementById('bm'); if(!root) return;
         var KERNEL="function K(seed,n){var x=seed>>>0,acc=0;for(var i=0;i<n;i++){x^=(x<<13);x=x>>>0;x^=(x>>>17);x^=(x<<5);x=x>>>0;acc+=(x&255);if((i&1023)===0){acc+=Math.sqrt(x%1000)|0;}}return acc>>>0;}";
-        var CPUW=KERNEL+"onmessage=function(e){var t0=performance.now(),it=0;while(performance.now()-t0<e.data){K(12345+it,200000);it+=200000;}postMessage(it/((performance.now()-t0)/1000));};";
-        var MEMW="onmessage=function(){var MB=1048576,src=new Uint8Array(16*MB),dst=new Uint8Array(16*MB),i;for(i=0;i<src.length;i+=4096)src[i]=i&255;var t0=performance.now(),bytes=0,acc=0;while(performance.now()-t0<1400){dst.set(src);bytes+=src.length;for(i=0;i<dst.length;i+=65536)acc+=dst[i];}postMessage((bytes/MB)/((performance.now()-t0)/1000)+(acc&0));};";
-        var startBtn=root.querySelector('#bm-start'), running=root.querySelector('#bm-running'), phaseEl=root.querySelector('#bm-phase'), prog=root.querySelector('#bm-prog');
+        var CPUW=KERNEL+"onmessage=function(e){var ms=e.data,t0=performance.now(),it=0,last=t0;for(;;){K(12345+it,200000);it+=200000;var now=performance.now();if(now-last>140){postMessage({t:0,v:it/((now-t0)/1000)});last=now;}if(now-t0>=ms)break;}postMessage({t:1,v:it/((performance.now()-t0)/1000)});};";
+        var MEMW="onmessage=function(){var MB=1048576,src=new Uint8Array(16*MB),dst=new Uint8Array(16*MB),i;for(i=0;i<src.length;i+=4096)src[i]=i&255;var t0=performance.now(),bytes=0,acc=0,last=t0;for(;;){dst.set(src);bytes+=src.length;for(i=0;i<dst.length;i+=65536)acc+=dst[i];var now=performance.now();if(now-last>160){postMessage({t:0,v:(bytes/MB)/((now-t0)/1000)});last=now;}if(now-t0>=1400)break;}postMessage({t:1,v:(bytes/MB)/((performance.now()-t0)/1000)+(acc&0)});};";
+        var startBtn=root.querySelector('#bm-start'), running=root.querySelector('#bm-running'), phaseEl=root.querySelector('#bm-phase'), liveEl=root.querySelector('#bm-live'), prog=root.querySelector('#bm-prog');
         var results=root.querySelector('#bm-results'), canvas=root.querySelector('#bm-canvas'), busy=false;
-        var cores=navigator.hardwareConcurrency||4;
+        var cores=navigator.hardwareConcurrency||4, LAST={};
         function gpuName(){ try{ var gl=document.createElement('canvas').getContext('webgl'); if(!gl) return null; var ext=gl.getExtension('WEBGL_debug_renderer_info'); return ext?String(gl.getParameter(ext.UNMASKED_RENDERER_WEBGL)):null; }catch(e){ return null; } }
         function osName(){ var u=navigator.userAgent; if(/Windows/i.test(u))return 'Windows'; if(/Android/i.test(u))return 'Android'; if(/iPhone|iPad/i.test(u))return 'iOS'; if(/Mac/i.test(u))return 'macOS'; if(/CrOS/i.test(u))return 'ChromeOS'; if(/Linux/i.test(u))return 'Linux'; return null; }
+        function browserName(){ var u=navigator.userAgent; if(/Edg\//.test(u))return 'Edge'; if(/OPR|Opera/.test(u))return 'Opera'; if(/SamsungBrowser/.test(u))return 'Samsung Internet'; if(/Chrome\//.test(u))return 'Chrome'; if(/Firefox\//.test(u))return 'Firefox'; if(/Safari\//.test(u))return 'Safari'; return null; }
+        var DEVLINE='';
         (function(){ var chips=[]; var os=osName(); if(os)chips.push('<b>'+os+'</b>');
+          var br=browserName(); if(br)chips.push('<b>'+br+'</b>');
           chips.push('<b>'+cores+'</b> CPU threads');
           if(navigator.deviceMemory)chips.push('<b>'+navigator.deviceMemory+'&nbsp;GB+</b> RAM (approx)');
+          if(screen&&screen.width)chips.push('<b>'+screen.width+'&times;'+screen.height+'</b>');
           var g=gpuName(); if(g){ g=g.replace(/ANGLE \(|\)$/g,'').split(',').slice(0,2).join(','); if(g.length>46)g=g.slice(0,44)+'…'; chips.push('<b>'+g.replace(/</g,'&lt;')+'</b>'); }
-          root.querySelector('#bm-device').innerHTML=chips.map(function(c){return '<span class="bm-chip">'+c+'</span>';}).join(''); })();
-        function worker(src,msg,tmo){ return new Promise(function(res,rej){ try{ var u=URL.createObjectURL(new Blob([src],{type:'application/javascript'})); var w=new Worker(u); var t=setTimeout(function(){ try{w.terminate();}catch(e){} rej(new Error('timeout')); },tmo||15000);
-          w.onmessage=function(e){ clearTimeout(t); try{w.terminate();}catch(x){} URL.revokeObjectURL(u); res(e.data); };
+          root.querySelector('#bm-device').innerHTML=chips.map(function(c){return '<span class="bm-chip">'+c+'</span>';}).join('');
+          DEVLINE=[os,br,(cores+' threads'),(navigator.deviceMemory?navigator.deviceMemory+'GB+ RAM':null)].filter(Boolean).join(' · '); })();
+        function worker(src,msg,tmo,onP){ return new Promise(function(res,rej){ try{ var u=URL.createObjectURL(new Blob([src],{type:'application/javascript'})); var w=new Worker(u); var t=setTimeout(function(){ try{w.terminate();}catch(e){} rej(new Error('timeout')); },tmo||20000);
+          w.onmessage=function(e){ var d=e.data; if(d&&d.t===1){ clearTimeout(t); try{w.terminate();}catch(x){} URL.revokeObjectURL(u); res(d.v); } else if(d&&d.t===0){ if(onP)onP(d.v); } };
           w.onerror=function(){ clearTimeout(t); try{w.terminate();}catch(x){} rej(new Error('worker')); };
           w.postMessage(msg); }catch(e){ rej(e); } }); }
-        function gpuTest(){ return new Promise(function(res){ var gl;
+        function cryptoTest(onP){ if(!(window.crypto&&crypto.subtle&&crypto.subtle.digest)) return Promise.resolve(null);
+          var buf=new Uint8Array(8*1048576); for(var i=0;i<buf.length;i+=512)buf[i]=(i*13)&255;
+          var t0=performance.now(), mb=0;
+          function step(){ return crypto.subtle.digest('SHA-256',buf).then(function(){ mb+=8; var el=performance.now()-t0; var rate=mb/(el/1000); if(onP)onP(rate); return el<1200?step():rate; }); }
+          return step().catch(function(){ return null; }); }
+        function gpuTest(onP){ return new Promise(function(res){ var gl;
           try{ gl=canvas.getContext('webgl',{powerPreference:'high-performance'})||canvas.getContext('experimental-webgl'); }catch(e){}
           if(!gl){ res(null); return; }
           function sh(t,s){ var o=gl.createShader(t); gl.shaderSource(o,s); gl.compileShader(o); return gl.getShaderParameter(o,gl.COMPILE_STATUS)?o:null; }
@@ -2219,19 +2258,19 @@ PCBENCH_TOOL = r'''    <section class="section" aria-label="PC benchmark" id="be
           var loc=gl.getAttribLocation(pr,'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
           var uu=gl.getUniformLocation(pr,'u');
           gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
-          var LEVELS=[6,18,48,120], li=0, frames=0, t0=performance.now(), held=0, topFps=0, raf;
+          var LEVELS=[6,18,48,120], li=0, frames=0, t0=performance.now(), held=0, topFps=0, lastP=t0, raf;
           function frame(){ var t=(performance.now()-t0)/1000;
             gl.clearColor(0.03,0.05,0.13,1); gl.clear(gl.COLOR_BUFFER_BIT);
             var n=LEVELS[li];
             for(var i=0;i<n;i++){ gl.uniform1f(uu,t*1.7+i*0.37); gl.drawArrays(gl.TRIANGLES,0,3); }
             frames++;
-            var el=performance.now()-t0;
+            var now=performance.now(), el=now-t0;
+            if(onP&&now-lastP>300&&el>200){ onP('level '+(li+1)+'/4 · '+Math.round(frames/(el/1000))+' fps'); lastP=now; }
             if(el>=1100){ var fps=frames/(el/1000); topFps=fps;
               if(fps>=45){ held++; li++; if(li>=LEVELS.length){ done(); return; } frames=0; t0=performance.now(); }
               else { done(); return; } }
             raf=requestAnimationFrame(frame); }
-          function done(){ try{ cancelAnimationFrame(raf); }catch(e){}
-            res({held:held, fps:topFps}); }
+          function done(){ try{ cancelAnimationFrame(raf); }catch(e){} res({held:held, fps:topFps}); }
           raf=requestAnimationFrame(frame); }); }
         function storeTest(){ if(!('caches' in window)) return Promise.resolve(null);
           var data=new Uint8Array(4*1048576); for(var i=0;i<data.length;i+=1024)data[i]=(i*7)&255;
@@ -2246,35 +2285,39 @@ PCBENCH_TOOL = r'''    <section class="section" aria-label="PC benchmark" id="be
         function band(s){ return s>=60?'g':(s>=40?'a':'p'); }
         function fmtM(v){ return Math.round(v/1e6)+' M ops/s'; }
         function setPhase(txt,pct){ phaseEl.innerHTML=txt; prog.style.width=pct+'%'; }
+        function live(txt){ liveEl.innerHTML=txt||'&nbsp;'; }
         startBtn.addEventListener('click',function(){
           if(busy) return;
           if(!window.Worker||!window.Blob){ phaseEl.textContent='Your browser can’t run the benchmark — please try a modern browser.'; running.hidden=false; return; }
-          busy=true; startBtn.disabled=true; results.hidden=true; running.hidden=false; canvas.hidden=true;
-          var R={single:null,multi:null,mem:null,gpu:null,store:null};
-          setPhase('Testing single-core processor speed&hellip;',6);
-          worker(CPUW,1500).then(function(v){ R.single=v; setPhase('Testing all '+cores+' processor threads&hellip;',24);
-            var n=Math.min(cores,16), jobs=[]; for(var i=0;i<n;i++) jobs.push(worker(CPUW,1500).catch(function(){return 0;}));
+          busy=true; startBtn.disabled=true; results.hidden=true; running.hidden=false; canvas.hidden=true; live('');
+          var R={single:null,multi:null,crypto:null,mem:null,gpu:null,store:null};
+          setPhase('1/6 &mdash; Single-core processor speed',5);
+          worker(CPUW,1500,0,function(v){ live(Math.round(v/1e6)+' M ops/s'); }).then(function(v){ R.single=v;
+            setPhase('2/6 &mdash; All '+cores+' processor threads together',20); live('');
+            var n=Math.min(cores,16), rates=[], jobs=[];
+            for(var i=0;i<n;i++){ (function(i){ rates[i]=0; jobs.push(worker(CPUW,1500,0,function(v){ rates[i]=v; var s=rates.reduce(function(a,b){return a+b;},0); live(Math.round(s/1e6)+' M ops/s combined'); }).catch(function(){return 0;})); })(i); }
             return Promise.all(jobs); }).then(function(arr){ R.multi=arr.reduce(function(a,b){return a+b;},0)||null;
-            setPhase('Testing memory speed&hellip;',46);
-            return worker(MEMW,0,20000).catch(function(){return null;}); }).then(function(m){ R.mem=m;
-            setPhase('Testing graphics&hellip; (enjoy the show)',64); canvas.hidden=false;
-            return gpuTest(); }).then(function(g){ R.gpu=g; canvas.hidden=true;
-            setPhase('Testing storage speed&hellip;',86);
-            return storeTest(); }).then(function(st){ R.store=st; setPhase('Crunching your results&hellip;',100);
+            setPhase('3/6 &mdash; Encryption speed (SHA-256)',38); live('');
+            return cryptoTest(function(v){ live(Math.round(v)+' MB/s hashed'); }); }).then(function(cv){ R.crypto=cv;
+            setPhase('4/6 &mdash; Memory speed',52); live('');
+            return worker(MEMW,0,20000,function(v){ live((v/1000).toFixed(1)+' GB/s'); }).catch(function(){return null;}); }).then(function(m){ R.mem=m;
+            setPhase('5/6 &mdash; Graphics stress test (enjoy the show)',66); live(''); canvas.hidden=false;
+            return gpuTest(function(txt){ live(txt); }); }).then(function(g){ R.gpu=g; canvas.hidden=true;
+            setPhase('6/6 &mdash; Storage speed',88); live('');
+            return storeTest(); }).then(function(st){ R.store=st; setPhase('Crunching your results&hellip;',100); live('');
             setTimeout(function(){ render(R); },400);
           }).catch(function(){ render(R); });
         });
         function render(R){
           running.hidden=true; busy=false; startBtn.disabled=false; startBtn.textContent='Run it again';
-          var sSingle=logScore(R.single,300e6,70,30);
-          var sMulti=logScore(R.multi,1800e6,70,25);
-          var sMem=logScore(R.mem,11000,70,25);
-          var sGpu=R.gpu?Math.max(5,Math.min(100,Math.round(R.gpu.held*22+Math.min(R.gpu.fps,62)/62*12))):null;
-          var sStore=R.store?logScore(0.6*R.store.w+0.4*R.store.r,350,70,20):null;
-          var parts=[[sSingle,0.22],[sMulti,0.23],[sMem,0.15],[sGpu,0.25],[sStore,0.15]].filter(function(p){return p[0]!=null;});
+          var S={ single:logScore(R.single,300e6,70,30), multi:logScore(R.multi,1800e6,70,25), crypto:logScore(R.crypto,900,70,20),
+                  mem:logScore(R.mem,11000,70,25), gpu:(R.gpu?Math.max(5,Math.min(100,Math.round(R.gpu.held*22+Math.min(R.gpu.fps,62)/62*12))):null),
+                  store:(R.store?logScore(0.6*R.store.w+0.4*R.store.r,350,70,20):null) };
+          var parts=[[S.single,0.18],[S.multi,0.20],[S.crypto,0.10],[S.mem,0.12],[S.gpu,0.25],[S.store,0.15]].filter(function(p){return p[0]!=null;});
           if(!parts.length){ root.querySelector('#bm-verdict').innerHTML='<p>The benchmark couldn&rsquo;t run in this browser &mdash; try Chrome or Edge, or <a href="/contact/">ask us</a> to check your computer properly.</p>'; results.hidden=false; return; }
           var tw=parts.reduce(function(a,p){return a+p[1];},0);
           var overall=Math.round(parts.reduce(function(a,p){return a+p[0]*p[1];},0)/tw);
+          LAST={scores:S, overall:overall, raw:R};
           var top=root.querySelector('.bm-top').parentNode;
           top.classList.remove('bm-good','bm-avg','bm-poor');
           top.classList.add(overall>=60?'bm-good':(overall>=40?'bm-avg':'bm-poor'));
@@ -2284,21 +2327,33 @@ PCBENCH_TOOL = r'''    <section class="section" aria-label="PC benchmark" id="be
           else if(overall>=60) v={g:'Running well',m:'A healthy, capable computer for everyday work. Keep it maintained and it&rsquo;ll stay that way.'};
           else if(overall>=40) v={g:'Room for improvement',m:'Usable, but you&rsquo;re waiting on it more than you should be. A tune-up &mdash; and often a simple upgrade &mdash; makes a machine like this feel new again.'};
           else v={g:'Struggling',m:'This machine is holding you back every day. Before you bin it: an SSD or memory upgrade often transforms a slow computer for a fraction of the cost of a new one &mdash; and if it really is time, we supply refurbished business-grade Dells from &pound;299.'};
+          LAST.band=v.g;
           root.querySelector('#bm-verdict').innerHTML='<p class="bm-verdict-g">'+v.g+'</p><p>'+v.m+'</p>';
+          root.querySelector('#bm-scale-me').style.left=Math.max(2,Math.min(98,overall))+'%';
           function row(label,score,stat){ if(score==null) return '<div class="bm-row"><div class="bm-row-h"><b>'+label+'</b><span>not available in this browser</span></div></div>';
             return '<div class="bm-row"><div class="bm-row-h"><b>'+label+'</b><span>'+stat+' &middot; <b style="color:#fff">'+score+'</b>/100</span></div><div class="bm-bar-wrap"><div class="bm-bar '+band(score)+'" data-w="'+score+'"></div></div></div>'; }
           root.querySelector('#bm-rows').innerHTML=
-            row('Single-core CPU',sSingle,R.single?fmtM(R.single):'')+
-            row('Multi-core CPU ('+cores+' threads)',sMulti,R.multi?fmtM(R.multi):'')+
-            row('Memory speed',sMem,R.mem?(Math.round(R.mem/1000*10)/10)+' GB/s':'')+
-            row('Graphics (WebGL)',sGpu,R.gpu?('level '+R.gpu.held+'/4 &middot; '+Math.round(R.gpu.fps)+' fps'):'')+
-            row('Storage (via browser)',sStore,R.store?(Math.round(R.store.w)+' MB/s write'):'');
+            row('Single-core CPU',S.single,R.single?fmtM(R.single):'')+
+            row('Multi-core CPU ('+cores+' threads)',S.multi,R.multi?fmtM(R.multi):'')+
+            row('Encryption (SHA-256)',S.crypto,R.crypto?Math.round(R.crypto)+' MB/s':'')+
+            row('Memory speed',S.mem,R.mem?(Math.round(R.mem/1000*10)/10)+' GB/s':'')+
+            row('Graphics (WebGL)',S.gpu,R.gpu?('level '+R.gpu.held+'/4 &middot; '+Math.round(R.gpu.fps)+' fps'):'')+
+            row('Storage (via browser)',S.store,R.store?(Math.round(R.store.w)+' MB/s write'):'');
+          var histEl=root.querySelector('#bm-history'); histEl.innerHTML='';
+          try{ var hist=JSON.parse(localStorage.getItem('tt_bench_hist')||'[]');
+            if(hist.length){ var prev=hist[hist.length-1]; var diff=overall-prev.s; var when=new Date(prev.d).toLocaleDateString();
+              var cls=diff>=0?' bm-note-good':''; var arrow=diff>0?('up <b>+'+diff+'</b>'):(diff<0?('down <b>'+diff+'</b>'):'<b>unchanged</b>');
+              histEl.innerHTML='<div class="bm-note'+cls+'"><b>Since your last run</b> ('+when+', scored '+prev.s+'): '+arrow+' point'+(Math.abs(diff)===1?'':'s')+'. '+(diff>0?'Nice — whatever changed, it&rsquo;s working.':(diff<0?'If it keeps sliding, something&rsquo;s creeping in — a tune-up will find it.':''))+'</div>'; }
+            hist.push({d:Date.now(), s:overall}); localStorage.setItem('tt_bench_hist',JSON.stringify(hist.slice(-6)));
+          }catch(e){}
           var notes=[];
           if(navigator.deviceMemory&&navigator.deviceMemory<=4) notes.push('<b>Low memory:</b> your machine reports around '+navigator.deviceMemory+'&nbsp;GB of RAM &mdash; a memory upgrade is one of the cheapest, most effective speed boosts.');
           if(cores<=2) notes.push('<b>Ageing processor:</b> only '+cores+' threads &mdash; modern Windows and browsers really want more. Worth weighing a repair against a <a href="/repair-or-replace-advisor/">replacement</a>.');
-          if(sStore!=null&&sStore<40) notes.push('<b>Slow storage:</b> this pattern usually means an old-style hard drive or a tired SSD &mdash; an SSD upgrade is the single biggest upgrade for a slow computer.');
-          if(sGpu==null) notes.push('<b>Graphics test unavailable:</b> your browser blocked WebGL, so graphics weren&rsquo;t scored.');
-          root.querySelector('#bm-notes').innerHTML=notes.map(function(n){return '<div class="bm-note">'+n+'</div>';}).join('');
+          if(S.store!=null&&S.store<40) notes.push('<b>Slow storage:</b> this pattern usually means an old-style hard drive or a tired SSD &mdash; an SSD upgrade is the single biggest upgrade for a slow computer.');
+          if(S.gpu==null) notes.push('<b>Graphics test unavailable:</b> your browser blocked WebGL, so graphics weren&rsquo;t scored.');
+          var notesEl=root.querySelector('#bm-notes');
+          notesEl.innerHTML=notes.map(function(n){return '<div class="bm-note">'+n+'</div>';}).join('');
+          if(navigator.getBattery){ try{ navigator.getBattery().then(function(b){ if(b&&b.charging===false){ var d=document.createElement('div'); d.className='bm-note'; d.innerHTML='<b>On battery power:</b> laptops usually run faster plugged in &mdash; connect the charger and run it again for your best score.'; notesEl.appendChild(d); } }).catch(function(){}); }catch(e){} }
           var fix=root.querySelector('#bm-fix');
           if(overall>=60) fix.innerHTML='<h3>Keep it this way</h3><p>Regular servicing is why our customers&rsquo; computers stay fast for years &mdash; a full service every six weeks, updates, security and backups, all handled for you.</p><div class="bm-fix-cta"><a class="button primary" href="/monthly-it-support/">See monthly plans &#8594;</a><a class="button bm-ghost" href="/contact/">Ask a techie</a></div>';
           else fix.innerHTML='<h3>Don&rsquo;t put up with a slow computer</h3><p>We speed up machines like this every week &mdash; deep tune-ups, SSD and memory upgrades, or an honest &ldquo;it&rsquo;s time&rdquo; and a refurbished business-grade Dell from &pound;299. No-fix-no-fee, 12-month warranty.</p><div class="bm-fix-cta"><a class="button primary" href="/contact/">Make mine faster &#8594;</a><a class="button bm-ghost" href="/dell-hardware/">Refurbished Dells</a></div>';
@@ -2307,10 +2362,46 @@ PCBENCH_TOOL = r'''    <section class="section" aria-label="PC benchmark" id="be
           requestAnimationFrame(function(){ setTimeout(function(){ root.querySelectorAll('.bm-bar').forEach(function(b){ b.style.width=b.getAttribute('data-w')+'%'; }); },60); });
           try{ results.scrollIntoView({behavior:'smooth',block:'start'}); }catch(e){}
         }
+        function bandColor(s){ return s>=60?'#2ecc71':(s>=40?'#f1c40f':'#e74c3c'); }
+        root.querySelector('#bm-dl').addEventListener('click',function(){
+          if(!LAST.scores) return;
+          var cv=document.createElement('canvas'); cv.width=1080; cv.height=760; var x=cv.getContext('2d');
+          x.fillStyle='#070d22'; x.fillRect(0,0,1080,760);
+          x.strokeStyle='rgba(125,170,220,0.25)'; x.lineWidth=2; x.strokeRect(14,14,1052,732);
+          x.fillStyle='#1d97e3'; x.font='700 26px "IBM Plex Mono", Consolas, monospace'; x.fillText('365 TECHIES',60,74);
+          x.fillStyle='#9fb5d3'; x.font='16px "IBM Plex Mono", Consolas, monospace'; x.fillText('// FREE PC BENCHMARK',60,102);
+          x.fillStyle=bandColor(LAST.overall); x.font='800 170px Archivo, Arial, sans-serif'; x.fillText(String(LAST.overall),60,300);
+          x.fillStyle='#9fb5d3'; x.font='600 30px Archivo, Arial, sans-serif'; x.fillText('/100',60+x.measureText('').width+ (String(LAST.overall).length*95),300);
+          x.fillStyle=bandColor(LAST.overall); x.font='800 40px Archivo, Arial, sans-serif'; x.fillText(LAST.band,60,368);
+          x.fillStyle='#9fb5d3'; x.font='19px Archivo, Arial, sans-serif'; x.fillText(DEVLINE.slice(0,52),60,412);
+          x.fillText(new Date().toLocaleDateString(),60,442);
+          var rows=[['Single-core CPU',LAST.scores.single],['Multi-core CPU',LAST.scores.multi],['Encryption',LAST.scores.crypto],['Memory',LAST.scores.mem],['Graphics',LAST.scores.gpu],['Storage',LAST.scores.store]];
+          var y=120;
+          rows.forEach(function(r){ var s=r[1];
+            x.fillStyle='#eaf4ff'; x.font='600 22px Archivo, Arial, sans-serif'; x.fillText(r[0],560,y);
+            if(s==null){ x.fillStyle='#9fb5d3'; x.font='18px Archivo, Arial, sans-serif'; x.fillText('n/a',985,y); }
+            else{ x.fillStyle='rgba(255,255,255,0.12)'; x.fillRect(560,y+12,400,10);
+              x.fillStyle=bandColor(s); x.fillRect(560,y+12,400*s/100,10);
+              x.fillStyle='#eaf4ff'; x.font='700 20px Archivo, Arial, sans-serif'; x.fillText(String(s),985,y+2); }
+            y+=62; });
+          x.fillStyle='#eaf4ff'; x.font='700 26px Archivo, Arial, sans-serif'; x.fillText('How fast is YOUR computer?',60,640);
+          x.fillStyle='#1d97e3'; x.font='700 28px Archivo, Arial, sans-serif'; x.fillText('365techies.co.uk/pc-benchmark',60,680);
+          x.fillStyle='#9fb5d3'; x.font='17px Archivo, Arial, sans-serif'; x.fillText('Free · no downloads · IT support for homes & businesses since 1995',60,714);
+          try{ var a=document.createElement('a'); a.download='365-benchmark-score-'+LAST.overall+'.png'; a.href=cv.toDataURL('image/png'); a.click(); }catch(e){}
+        });
+        root.querySelector('#bm-copy').addEventListener('click',function(){
+          if(!LAST.scores) return; var S=LAST.scores;
+          function p(n,v){ return v==null?'':(n+' '+v+' · '); }
+          var txt='My 365 Techies PC Benchmark score: '+LAST.overall+'/100 ('+LAST.band+')\n'+
+            (p('Single-core',S.single)+p('Multi-core',S.multi)+p('Encryption',S.crypto)+p('Memory',S.mem)+p('Graphics',S.gpu)+p('Storage',S.store)).replace(/ · $/,'')+'\n'+
+            'Test yours free: https://365techies.co.uk/pc-benchmark/';
+          var btn=this; function ok(){ btn.textContent='Copied!'; btn.classList.add('done'); setTimeout(function(){ btn.textContent='Copy my results'; btn.classList.remove('done'); },1800); }
+          if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(ok).catch(function(){}); }
+          else{ var ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); ok(); }catch(e){} document.body.removeChild(ta); }
+        });
       })();
       </script>
     </section>'''
-
 PAGES = []
 def add(**kw):
     PAGES.append(kw)
