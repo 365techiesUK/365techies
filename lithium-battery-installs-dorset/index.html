@@ -717,11 +717,11 @@
             tw("[data-m-save]","sv",(s.yieldLifetime!=null)?s.yieldLifetime*RATE:null,function(v){return "£"+v.toFixed(2);});
             var r=q("[data-m-ring]"); if(r){ var soc=Math.max(0,Math.min(100,s.soc||0)); r.style.strokeDashoffset=(RC*(1-soc/100)).toFixed(1); r.style.stroke=col; }
             var nt=q("[data-m-note]"); if(nt)nt.textContent=s.sample?"Sample reading — the live feed switches on once our VRM link is connected.":"Live from our 365 Crafter’s Victron lithium system.";
-            var up=q("[data-m-upd]"); if(up)up.textContent=s.sample?"sample reading":"updated just now";
+            var up=q("[data-m-upd]"); if(up)up.textContent=s.sample?"sample reading":"data is live";
             el.classList.toggle("vmini--sample",!!s.sample);
           }
           function tick(){ if(!PROXY){ render(SAMPLE); return; } fetch(PROXY,{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){ render((j&&j.ok)?j:SAMPLE); }).catch(function(){ render(SAMPLE); }); }
-          tick(); setInterval(tick, 30000);
+          tick(); setInterval(tick, 1000);
         })();
         </script>
       </div>

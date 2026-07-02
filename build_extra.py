@@ -1549,7 +1549,7 @@ def off_grid():
         tween("[data-yield]","yield",s.yieldToday,function(v){return v.toFixed(2)+" kWh";});
         tween("[data-bv]","bv",s.battV,function(v){return v.toFixed(2)+" V";});
         var ttg=q("[data-ttg]"); if(ttg)ttg.textContent=(s.timeToGo==null||s.timeToGo>240)?"∞":Math.round(s.timeToGo)+" h";
-        var upd=q("[data-updated]"); if(upd)upd.textContent=s.sample?"sample reading":("updated "+ago(s.updated));
+        var upd=q("[data-updated]"); if(upd)upd.textContent=s.sample?"sample reading":"data is live";
         var ring=q("[data-ring]"); if(ring){ var soc=Math.max(0,Math.min(100,s.soc||0)); ring.style.strokeDashoffset=(RC*(1-soc/100)).toFixed(1); ring.style.stroke=col; }
         var gb=q("[data-glow-batt]"); if(gb){ gb.setAttribute("fill",col); gb.style.opacity=charging?"0.45":"0"; }
         flow("[data-flow-solar]","[data-glow-sun]",s.pvW);
@@ -1568,7 +1568,7 @@ def off_grid():
         el.classList.toggle("vlive--sample",!!s.sample);
       }
       function tick(){ if(!PROXY){ render(SAMPLE); return; } fetch(PROXY,{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){ render((j&&j.ok)?j:SAMPLE); }).catch(function(){ render(SAMPLE); }); }
-      tick(); setInterval(tick, 30000);
+      tick(); setInterval(tick, 1000);
     })();
     </script>''',
       (f'''    <section class="section" aria-label="Live Victron VRM dashboard">
@@ -4760,11 +4760,11 @@ def battery_installs():
             tw("[data-m-save]","sv",(s.yieldLifetime!=null)?s.yieldLifetime*RATE:null,function(v){return "£"+v.toFixed(2);});
             var r=q("[data-m-ring]"); if(r){ var soc=Math.max(0,Math.min(100,s.soc||0)); r.style.strokeDashoffset=(RC*(1-soc/100)).toFixed(1); r.style.stroke=col; }
             var nt=q("[data-m-note]"); if(nt)nt.textContent=s.sample?"Sample reading — the live feed switches on once our VRM link is connected.":"Live from our 365 Crafter’s Victron lithium system.";
-            var up=q("[data-m-upd]"); if(up)up.textContent=s.sample?"sample reading":"updated just now";
+            var up=q("[data-m-upd]"); if(up)up.textContent=s.sample?"sample reading":"data is live";
             el.classList.toggle("vmini--sample",!!s.sample);
           }
           function tick(){ if(!PROXY){ render(SAMPLE); return; } fetch(PROXY,{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){ render((j&&j.ok)?j:SAMPLE); }).catch(function(){ render(SAMPLE); }); }
-          tick(); setInterval(tick, 30000);
+          tick(); setInterval(tick, 1000);
         })();
         </script>
       </div>
