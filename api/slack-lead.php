@@ -17,7 +17,8 @@ date_default_timezone_set('Europe/London');
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); echo json_encode(['ok' => false, 'error' => 'method']); exit; }
+$PROBE = isset($_GET['probe']);
+if (!$PROBE && $_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); echo json_encode(['ok' => false, 'error' => 'method']); exit; }
 
 /* soft same-site check: if the browser sent an origin/referer, it must be ours */
 $src = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '');
@@ -37,6 +38,16 @@ if (!is_array($rate) || !isset($rate['min']) || $rate['min'] !== $min) $rate = [
 if ($rate['n'] >= 8) { http_response_code(429); echo json_encode(['ok' => false, 'error' => 'rate']); exit; }
 $rate['n']++;
 @file_put_contents($RATEF, json_encode($rate), LOCK_EX);
+
+if ($PROBE) {  // diagnostic: send a minimal test message and surface Slack's exact response (rate-limited like everything else)
+    $ch = curl_init($HOOK);
+    curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 12, CURLOPT_POST => true,
+        CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
+        CURLOPT_POSTFIELDS => json_encode(['text' => 'Webhook test from 365techies.co.uk — connection working ✓'])]);
+    $res = curl_exec($ch); $code = (int)curl_getinfo($ch, CURLINFO_RESPONSE_CODE); $cerr = curl_error($ch); curl_close($ch);
+    $mask = preg_replace('#(hooks\.slack\.com/[a-z]+/[^/]+/).*#', '$1…', $HOOK);
+    echo json_encode(['ok' => ($code >= 200 && $code < 300), 'slackCode' => $code, 'slackBody' => substr((string)$res, 0, 150), 'curlErr' => $cerr, 'hook' => $mask]); exit;
+}
 
 $in = json_decode((string)file_get_contents('php://input'), true);
 if (!is_array($in)) { echo json_encode(['ok' => false, 'error' => 'bad-json']); exit; }
