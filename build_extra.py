@@ -5109,6 +5109,161 @@ def splashtop_guide():
         desc=desc, og_title="Splashtop Remote Access — The Complete Guide | 365 Techies", schema=schema, content=content)
 splashtop_guide()
 
+# ===================================================== HEATWAVE TECH GUIDE (seasonal evergreen, home + business)
+HEATSIM_WIDGET = r'''    <section class="section" aria-label="How hot is too hot" id="heattool">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// HOW HOT IS TOO HOT?</p>
+          <h2 class="section-title section-title--center" data-title>Slide the temperature, see who suffers<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Most everyday tech is designed for up to about <strong>35&deg;C ambient</strong> &mdash; and it&rsquo;s in trouble well before that if it&rsquo;s in the sun, in a cupboard or on a duvet. Slide to today&rsquo;s temperature and see how your kit is feeling.</p>
+        </div>
+        <div id="heat" data-reveal>
+          <div class="ht-slider-wrap">
+            <p class="ht-read"><output id="ht-out">28</output>&deg;C <span id="ht-mood">&#127780;&#65039;</span></p>
+            <input type="range" id="ht-t" min="18" max="42" step="1" value="28" aria-label="Ambient temperature">
+            <div class="ht-scale"><span>18&deg;</span><span>25&deg;</span><span>30&deg;</span><span>35&deg;</span><span>42&deg;</span></div>
+          </div>
+          <div class="ht-grid" id="ht-grid"></div>
+          <p class="ht-note">Rough guidance for typical consumer kit &mdash; sun through a window, a stuffy cupboard or a blocked vent can add 10&deg;C+ to what the device actually feels.</p>
+        </div>
+      </div>
+      <style>
+      #heat{max-width:860px;margin:0 auto}
+      #heat .ht-slider-wrap{max-width:520px;margin:0 auto 1.6rem;text-align:center}
+      #heat .ht-read{font-size:3rem;font-weight:800;margin:0 0 .3rem;color:#fff;font-variant-numeric:tabular-nums}
+      #heat .ht-read output{color:inherit}
+      #heat input[type=range]{width:100%;accent-color:var(--cyan,#37c2c2);cursor:pointer}
+      #heat .ht-scale{display:flex;justify-content:space-between;font-size:.7rem;color:var(--muted,#9aa6c2);margin-top:.3rem}
+      #heat .ht-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:.8rem}
+      #heat .ht-card{padding:1rem 1.1rem;border-radius:13px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-left:4px solid var(--muted,#9aa6c2);transition:border-color .3s}
+      #heat .ht-card-h{display:flex;justify-content:space-between;align-items:baseline;gap:.6rem}
+      #heat .ht-card-h b{color:#fff;font-size:.95rem}
+      #heat .ht-badge{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:.2rem .6rem;border-radius:99px;white-space:nowrap}
+      #heat .ht-card p{margin:.45rem 0 0;font-size:.8rem;color:var(--muted,#9aa6c2);line-height:1.5}
+      #heat .ht-good{border-left-color:#2ecc71}
+      #heat .ht-good .ht-badge{background:rgba(46,204,113,.15);color:#7ce0a3}
+      #heat .ht-avg{border-left-color:#f1c40f}
+      #heat .ht-avg .ht-badge{background:rgba(241,196,15,.13);color:#f5d97e}
+      #heat .ht-poor{border-left-color:#e74c3c}
+      #heat .ht-poor .ht-badge{background:rgba(231,76,60,.15);color:#f1948a}
+      #heat .ht-note{text-align:center;font-size:.74rem;color:var(--muted,#9aa6c2);margin:1.2rem 0 0;opacity:.85}
+      </style>
+      <script>
+      (function(){
+        var root=document.getElementById('heat'); if(!root) return;
+        var DEVICES=[
+          {icon:'&#128187;',name:'Laptop',bands:[[28,'good','Happy','Perfectly comfortable — just keep the vents clear and off the duvet.'],[33,'avg','Working hard','Fans will spin up. Hard surface, out of the sun, and skip the heavy jobs in the afternoon.'],[99,'poor','Struggling','Beyond most laptops&rsquo; comfort zone — expect slowdowns or shutdowns. Coolest room in the house, lid open, light duties only.']]},
+          {icon:'&#128241;',name:'Phone &amp; tablet',bands:[[30,'good','Happy','Fine — just don&rsquo;t leave it in direct sun; a windowsill cooks a phone on a mild day.'],[35,'avg','Warming up','Keep it shaded, take the case off if it feels hot while charging, and expect the screen to dim to protect itself.'],[99,'poor','Protect mode','Most phones start refusing to charge or shut features down. Shade, airplane mode, and let it cool GRADUALLY — never the fridge.']]},
+          {icon:'&#128421;&#65039;',name:'Desktop PC',bands:[[30,'good','Happy','All fine — a few centimetres of breathing space around the vents is all it asks.'],[35,'avg','Running warm','Move it out of sunlight, check the vents aren&rsquo;t furred with dust, and listen for fans working harder than usual.'],[99,'poor','Thermal-shutdown territory','Random restarts on hot afternoons are the classic sign. Cool the room, dust the vents, ease off the heavy work.']]},
+          {icon:'&#128246;',name:'Router',bands:[[30,'good','Happy','Fine in free air. In a cupboard or TV unit it&rsquo;s already 5&ndash;10&deg;C hotter than this.'],[35,'avg','Getting flaky','Overheating routers drop the Wi-Fi — the great mystery of summer internet. Out of the cupboard, on its feet, nothing stacked on top.'],[99,'poor','Dropout central','If the internet keeps vanishing on hot afternoons, it&rsquo;s probably the router cooking. Shade it, space it, and reboot it once it&rsquo;s cooler.']]},
+          {icon:'&#128421;&#65039;',name:'Server / comms cupboard',bands:[[25,'good','OK — for now','Cupboards run ~10&deg;C hotter than the room. Keep the door ventilated and nothing piled against the kit.'],[30,'avg','Heating up','This is where small-business servers quietly cook. Door open or vented, a fan moving air, and check on it daily in a heatwave.'],[99,'poor','Danger zone','A closed cupboard in this weather can pass 40&deg;C — drive-killing territory. Ventilate NOW, and if it&rsquo;s business-critical, call us about monitoring.']]},
+          {icon:'&#128663;',name:'Parked car',bands:[[22,'avg','Risky already','Even on a mild sunny day a parked car&rsquo;s interior climbs far past the outside temperature. Take devices with you.'],[99,'poor','NEVER leave tech here','On a hot day a parked car&rsquo;s interior can soar past 50&deg;C — battery-wrecking, screen-delaminating heat. No laptops, no phones, not even in the boot &ldquo;for an hour&rdquo;.']]}
+        ];
+        var t=root.querySelector('#ht-t'), out=root.querySelector('#ht-out'), mood=root.querySelector('#ht-mood'), grid=root.querySelector('#ht-grid');
+        function render(){
+          var v=+t.value; out.textContent=v;
+          mood.innerHTML=v<25?'&#127780;&#65039;':(v<30?'&#9728;&#65039;':(v<35?'&#127786;&#65039;':'&#128293;'));
+          grid.innerHTML=DEVICES.map(function(d){
+            var band=null;
+            for(var i=0;i<d.bands.length;i++){ if(v<d.bands[i][0]){ band=d.bands[i]; break; } }
+            if(!band) band=d.bands[d.bands.length-1];
+            return '<div class="ht-card ht-'+band[1]+'"><div class="ht-card-h"><b>'+d.icon+' '+d.name+'</b><span class="ht-badge">'+band[2]+'</span></div><p>'+band[3]+'</p></div>';
+          }).join('');
+        }
+        t.addEventListener('input',render);
+        render();
+      })();
+      </script>
+    </section>'''
+
+def heatwave_guide():
+    slug = "heatwave-tech-guide"
+    desc = "The friendly heatwave survival guide for your tech — how hot is too hot, keeping laptops, phones, PCs, routers and servers safe in the heat, warning signs, myths (no fridges!), and what to do if something's already overheated. For homes and businesses."
+    faqs = [
+      ("How hot is too hot for a laptop or phone?", "Most consumer kit is designed for up to about 35&deg;C ambient &mdash; but that assumes free-flowing air and no sunshine. Direct sun through a window, a stuffy cupboard or a laptop on a duvet can add 10&deg;C+ to what the device actually feels, which is why things struggle on 30&deg;C days."),
+      ("My computer keeps switching itself off in the afternoon &mdash; why?", "That&rsquo;s almost certainly thermal shutdown: the machine protecting itself when it can&rsquo;t shed heat fast enough. Move it out of the sun, clear and dust the vents, cool the room if you can &mdash; and if it keeps happening, the cooling system needs a look (fans and thermal paste age). That&rsquo;s a job we do all the time."),
+      ("Can I put my hot phone in the fridge to cool it down?", "Please don&rsquo;t! Rapid cooling causes condensation inside the device &mdash; and water damage doesn&rsquo;t care that you meant well. Shade, case off, screen off, and let it cool gradually at room temperature."),
+      ("Does heat really damage batteries?", "It&rsquo;s the single biggest battery-ager there is. Lithium batteries hate living hot &mdash; capacity fades faster, and in extreme cases they swell. <b>A swollen battery (bulging case, lifting trackpad or screen) is a stop-everything moment: power off, don&rsquo;t charge it, and call us.</b>"),
+      ("What should businesses do differently in a heatwave?", "Three things: ventilate wherever the servers and network kit live (the &lsquo;server in a cupboard&rsquo; quietly cooks in every heatwave), expect grid wobbles &mdash; heatwaves strain the power network, so a UPS protects against the blips &mdash; and let people work from home on the worst days via proper <a href=\"/splashtop-business-guide/\">remote access</a> rather than cooking in the office."),
+      ("Is it OK to use my laptop in the garden?", "Enjoy the sunshine &mdash; but keep the laptop in the shade. Direct sun heats the case (and especially the screen) astonishingly fast, glare aside. A shaded table beats a sunny lap, and never leave it lying in the sun between uses."),
+      ("Can you check my computer&rsquo;s cooling is healthy?", "Yes &mdash; a service includes cleaning the fans and vents and checking temperatures under load, and our monitored support plans watch for thermal trouble on business machines all year round. <a href=\"/contact/\">Book in before the next heatwave</a> rather than during it!"),
+    ]
+    content = "\n".join([
+      hero(bc("Heatwave Tech Guide"), "// KEEP YOUR COOL",
+           'The heatwave guide for <em class="grad grad--cyan">your tech</em>',
+           "Computers cope with heat worse than we do &mdash; and they can&rsquo;t open a window. The friendly guide to keeping laptops, phones, PCs, routers and servers safe when the temperature climbs: what to do, what to skip, and the myths to ignore.",
+           cta1=("How Hot Is Too Hot?", "#heattool"), cta2=("Book a Cooling Check", "/contact/"),
+           chips=["Home &amp; business","Plain English","No fridge required"]),
+      HEATSIM_WIDGET,
+      f'''    <section class="section section--alt" aria-label="Home and business heat checklists">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// THE HEATWAVE CHECKLISTS</p>
+          <h2 class="section-title section-title--center" data-title>At home &amp; at work<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="split-2">
+          <div class="tile" data-reveal>
+            <h3>&#127968; At home</h3>
+            <p style="color:var(--muted);margin:0 0 1.1rem">Ten minutes of moving things around saves a summer of slowdowns.</p>
+            <ul class="checklist">
+{checklist(["Laptops on hard surfaces &mdash; never duvets, sofas or laps for long sessions","Move kit out of direct sunlight (windowsills are grills)","Router out of the cupboard, standing up, nothing on top","Charge overnight when it&rsquo;s cooler &mdash; charging makes heat","Heavy stuff (gaming, video editing) in the morning or evening","Nothing electronic left in the car &mdash; ever","Dust the vents (a photo-worthy amount lives in there)","Phones: case off if it runs hot while charging"])}
+            </ul>
+          </div>
+          <div class="tile" data-reveal>
+            <h3>&#128188; At work</h3>
+            <p style="color:var(--muted);margin:0 0 1.1rem">Heatwaves find the server cupboard every single year. Get ahead of it.</p>
+            <ul class="checklist">
+{checklist(["Ventilate the server/comms cupboard &mdash; door vented or open, air moving","Check on server &amp; NAS temperatures daily (or let our monitoring do it)","UPS in place &mdash; heatwaves strain the grid and blips follow","Remember heat KILLS UPS batteries too &mdash; test them, don&rsquo;t assume","Blinds down on sun-facing windows near desks &amp; kit","Kit in lofts and portacabins (CCTV, Wi-Fi gear) checked &mdash; lofts are ovens","Let people work from home on the worst days &mdash; remote access makes it painless","Backups verified BEFORE the summer-storm power cuts arrive"])}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>''',
+      f'''    <section class="section" aria-label="Warning signs">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// SPOT THE STRUGGLE</p>
+          <h2 class="section-title section-title--center" data-title>Warning signs your tech is too hot<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ul class="security-grid" data-stagger>
+{grid_cards([("Fans roaring","Fans at full blast for ordinary jobs means the machine can&rsquo;t shed heat &mdash; check for sun, blocked vents and dust."),("Suddenly sluggish","Hot processors deliberately slow down to protect themselves (&lsquo;throttling&rsquo;). If it crawls on hot afternoons but flies in the morning &mdash; that&rsquo;s heat."),("Random shutdowns or restarts","The emergency brake. The machine hit its limit and pulled the plug on itself. Cool it down before anything else."),("Battery draining fast","Heat makes batteries work worse AND age faster &mdash; a double hit. Keep devices cool while charging especially."),("Hot to the touch","Warm is normal; too-hot-to-rest-your-hand isn&rsquo;t. Find where the heat&rsquo;s coming from and give it air."),("&#9888;&#65039; A swollen battery","Bulging case, lifting keyboard or screen? STOP. Power off, don&rsquo;t charge it, keep it somewhere cool and non-flammable, and call us the same day.")])}
+        </ul>
+      </div>
+    </section>''',
+      f'''    <section class="how section--alt" aria-label="Already overheated">
+      <div class="wrap">
+        <p class="eyebrow eyebrow--center mono" data-reveal>// ALREADY TOO HOT?</p>
+        <h2 class="section-title section-title--center" data-title>Overheated? Do this<span class="title-underline title-underline--center"></span></h2>
+        <ol class="how__steps">
+{steps([("Power off &amp; unplug","Stop making heat. Turn it off properly if you can, hold the power button if you can&rsquo;t, and take it off charge."),("Shade &amp; airflow &mdash; gently","Coolest room in the house, out of the sun, case/covers off, stood so air reaches all sides. NO fridges, freezers or ice packs &mdash; condensation kills."),("Wait, then check","Give it a good half hour. If it comes back happy, change whatever cooked it. If it&rsquo;s still misbehaving &mdash; or this keeps happening &mdash; the cooling needs professional attention: that&rsquo;s us.")])}
+        </ol>
+      </div>
+    </section>''',
+      f'''    <section class="section" aria-label="Heat myths">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// MYTH-BUSTING</p>
+          <h2 class="section-title section-title--center" data-title>Summer tech myths, gently retired<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="tile-grid" data-stagger>
+{tiles([("shield","&ldquo;Pop it in the fridge&rdquo;","The most dangerous myth of the lot. Rapid cooling = condensation inside the device = water damage. Gradual, room-temperature cooling only."),("bolt","&ldquo;More charge = better&rdquo;","Charging generates heat, and heat + full batteries is the ageing combo. In a heatwave, charge in the cooler hours and unplug at the top."),("monitor","&ldquo;It&rsquo;s fine, it always feels warm&rdquo;","Warm is fine. But NEW heat behaviour &mdash; louder fans, hotter case, afternoon slowdowns &mdash; is the machine telling you something changed. Usually dust."),("clock","&ldquo;Screens dim because they&rsquo;re broken&rdquo;","Phones dim screens and pause charging deliberately in heat &mdash; it&rsquo;s protection, not a fault. Shade it and it comes back."),("wifi","&ldquo;The internet&rsquo;s always bad in summer&rdquo;","Often it&rsquo;s just the router cooking in a cupboard or sunny corner. Free air and shade fix a remarkable amount of &lsquo;broadband trouble&rsquo;."),("sun","&ldquo;A quick hour in the car is fine&rdquo;","A parked car in summer sun is a slow cooker. Batteries age, screens delaminate, adhesives soften. Take it with you &mdash; every time.")])}
+        </div>
+      </div>
+    </section>''',
+      faq_html(faqs),
+      tools_strip(["pcbench", "healthcheck", "avtest"], title="Check your machine&rsquo;s health &mdash; free", lede_text="A hot summer is hard on tired machines. See how yours is really doing.", alt=False),
+      cta("Beat the heat before it beats your tech",
+          "A service cleans the fans and dust that cause summer meltdowns &mdash; and our monitored plans watch business machines&rsquo; health all year round, so the server cupboard never becomes a surprise.",
+          primary=("Book a Cooling Check", "/contact/"), secondary=("Monitored IT Support", "/monthly-it-support/")),
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        return graph([crumb(s, "Heatwave Tech Guide"), webpage(s, "The Heatwave Guide for Your Tech", _desc),
+                      {"@type":"TechArticle","headline":"The Heatwave Guide for Your Tech","about":{"@type":"Thing","name":"keeping technology safe in hot weather"},"author":{"@id":SITE+"/#business"},"url":SITE+"/heatwave-tech-guide/"},
+                      faqpage(s, _faqs)])
+    add(slug=slug, title="Heatwave Tech Guide — Keep Computers, Phones & Servers Cool | 365 Techies",
+        desc=desc, og_title="The Heatwave Guide for Your Tech | 365 Techies", schema=schema, content=content)
+heatwave_guide()
+
 # ===================================================== DNS / DOMAIN LOOKUP
 def dns_lookup():
     slug = "dns-lookup"
@@ -6934,6 +7089,7 @@ info_page(
           <a class="post-card" href="/dell-latitude-3520-guide/"><p class="post-card__cat">Guide</p><h3>Dell Latitude 3520 Easy Guide</h3><p>Interactive port tour, three ways to power it (incl. efficient 12V USB-C off-grid), battery care &amp; quick fixes.</p><span class="post-card__more">Read the guide &#8594;</span></a>
           <a class="post-card" href="/dell-optiplex-guide/"><p class="post-card__cat">Guide</p><h3>Dell OptiPlex Easy Guide</h3><p>Front &amp; back ports explained, dual monitors, UPS advice, upgrades and 60-second fixes.</p><span class="post-card__more">Read the guide &#8594;</span></a>
           <a class="post-card" href="/splashtop-business-guide/"><p class="post-card__cat">Guide</p><h3>Splashtop Remote Access Guide</h3><p>Connect to your home or work PC from anywhere &mdash; setup, the toolbar tour, speed tips and fixes.</p><span class="post-card__more">Read the guide &#8594;</span></a>
+          <a class="post-card" href="/heatwave-tech-guide/"><p class="post-card__cat">Guide</p><h3>Heatwave Tech Guide</h3><p>How hot is too hot? Keep laptops, phones, routers and servers safe in the heat &mdash; home &amp; business.</p><span class="post-card__more">Keep your cool &#8594;</span></a>
           <a class="post-card" href="/dns-lookup/"><p class="post-card__cat">Tool</p><h3>DNS Lookup</h3><p>Check any domain&rsquo;s DNS records &mdash; A, MX, NS, TXT &mdash; the settings behind your website and email.</p><span class="post-card__more">Look it up &#8594;</span></a>
           <a class="post-card" href="/pc-benchmark/"><p class="post-card__cat">Tool</p><h3>PC Benchmark</h3><p>How fast is your computer, really? Test CPU, memory, graphics &amp; storage in 20 seconds.</p><span class="post-card__more">Benchmark it &#8594;</span></a>
           <a class="post-card" href="/windows-10-end-of-life/"><p class="post-card__cat">Act now</p><h3>Windows 10 End of Life</h3><p>Support ended in October 2025. Find out in 30 seconds if you&rsquo;re affected &mdash; and your options.</p><span class="post-card__more">Are you affected? &#8594;</span></a>
