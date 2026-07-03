@@ -1506,14 +1506,14 @@ def off_grid():
           </div>
           <div class="vlive__tanks" data-tanks></div>
           <p class="vlive__note" data-note></p>
-          <p class="vlive__rate" data-rate>Savings estimated at 20p per kWh of solar generated.</p>
+          <p class="vlive__rate" data-rate>Savings estimated at 40p per kWh of solar generated.</p>
         </div>
       </div>
     </section>
     <script>
     (function(){
       var PROXY="/api/vrm.php"; /* Same-origin PHP proxy on SiteGround; token lives server-side in api/vrm-token.php (never in git). */
-      var RATE=0.20, HIST=[]; for(var hi=0;hi<30;hi++){HIST.push({kwh:Math.round((1.1+Math.sin(hi/2.5)*0.55+(hi%4)*0.16)*100)/100});}
+      var RATE=0.40, HIST=[]; for(var hi=0;hi<30;hi++){HIST.push({kwh:Math.round((1.1+Math.sin(hi/2.5)*0.55+(hi%4)*0.16)*100)/100});}
       var SAMPLE={sample:true,soc:97,battState:"charging",battV:13.38,battA:2.3,battW:31,timeToGo:null,pvW:114,yieldToday:1.86,yieldYesterday:1.66,yieldLifetime:489.9,tanks:[{type:"Fresh water",level:56},{type:"Waste water",level:0}],history:HIST,updated:Math.floor(Date.now()/1000)};
       var el=document.getElementById("vlive"); if(!el) return;
       var RC=351.9, reduce=false;
@@ -1559,7 +1559,7 @@ def off_grid():
         var k30=(s.history&&s.history.length)?s.history.reduce(function(a,d){return a+((d&&d.kwh)||0);},0):null;
         tween("[data-save-life]","slife",(k30!=null)?k30*RATE:null,function(v){return "£"+v.toFixed(2);});
         tween("[data-gen-life]","glife",s.yieldLifetime,function(v){return v.toFixed(1)+" kWh";});
-        var rt=q("[data-rate]"); if(rt){ var ph=(s.pvW!=null)?(s.pvW/1000*RATE*100):0; rt.innerHTML=(s.pvW>5?("Generating now &middot; saving ~"+ph.toFixed(1)+"p/hour"):"Resting now")+" &middot; at 20p per kWh"; }
+        var rt=q("[data-rate]"); if(rt){ var ph=(s.pvW!=null)?(s.pvW/1000*RATE*100):0; rt.innerHTML=(s.pvW>5?("Generating now &middot; saving ~"+ph.toFixed(1)+"p/hour"):"Resting now")+" &middot; at 40p per kWh"; }
         if(s.history) hist(s.history);
         var tw=q("[data-tanks]");
         if(tw){
@@ -6480,7 +6480,7 @@ def battery_installs():
         <script>
         (function(){
           var PROXY="/api/vrm.php"; /* same-origin PHP proxy as the off-grid page */
-          var RATE=0.20;
+          var RATE=0.40;
           var SAMPLE={sample:true,soc:97,battState:"charging",battW:31,pvW:114,yieldLifetime:489.9,kwh30:49.6};
           var el=document.getElementById("vmini"); if(!el) return;
           var RC=351.9, cur={}, reduce=false; try{ reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
