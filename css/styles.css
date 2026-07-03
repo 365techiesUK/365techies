@@ -995,7 +995,7 @@ body.menu-open { overflow: hidden; }
 }
 .site-footer__grid {
   display: grid;
-  grid-template-columns: 300px repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: 280px repeat(auto-fit, minmax(128px, 1fr));
   gap: 2.2rem;
   max-width: 1320px; margin: 0 auto;
 }
