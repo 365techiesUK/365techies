@@ -206,6 +206,8 @@ HEADER = '''  <header class="site-header">
             <a href="/emergency-it-help/">Emergency IT Help</a>
             <a href="/support-portal/">Support Portal</a>
             <a href="/splashtop-business-guide/">Remote Access Guide</a>
+            <a href="/dell-latitude-3520-guide/">Dell Laptop Guide</a>
+            <a href="/dell-optiplex-guide/">Dell Desktop Guide</a>
             <a href="/monthly-it-support/">Monthly IT Support</a>
             <a href="/switching-it-provider/">Switching to Us</a>
             <a href="/plan-finder/">Plan Finder</a>
@@ -333,6 +335,8 @@ HEADER = '''  <header class="site-header">
           <a href="/emergency-it-help/">Emergency IT Help</a>
           <a href="/support-portal/">Support Portal</a>
           <a href="/splashtop-business-guide/">Remote Access Guide</a>
+          <a href="/dell-latitude-3520-guide/">Dell Laptop Guide</a>
+          <a href="/dell-optiplex-guide/">Dell Desktop Guide</a>
           <a href="/monthly-it-support/">Monthly IT Support</a>
           <a href="/switching-it-provider/">Switching to Us</a>
           <a href="/plan-finder/">Plan Finder</a>
@@ -465,6 +469,8 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/emergency-it-help/">Emergency IT Help</a>
         <a href="/support-portal/">Support Portal</a>
         <a href="/splashtop-business-guide/">Remote Access Guide</a>
+        <a href="/dell-latitude-3520-guide/">Dell Laptop Guide</a>
+        <a href="/dell-optiplex-guide/">Dell Desktop Guide</a>
         <a href="/monthly-it-support/">Monthly IT Support</a>
         <a href="/home-it-support-subscriptions/">Home IT Support</a>
         <a href="/business-it-support-subscriptions/">Business IT Support</a>

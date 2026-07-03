@@ -2195,7 +2195,7 @@ def dell_hardware():
       </div>
     </section>''',
       faq_html(faqs),
-      f'''    <section class="blog-section" aria-label="Owner's guide">
+      f'''    <section class="blog-section" aria-label="Owner's guide" id="guides">
       <div class="wrap">
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>// INCLUDED WITH EVERY MACHINE</p>
