@@ -194,6 +194,7 @@ HEADER = '''  <header class="site-header">
             <a href="/victron-system-builder/">Victron System Builder</a>
             <a href="/spot-the-scam/">Spot the Scam Quiz</a>
             <a href="/is-it-down/">Is It Down? Status Checker</a>
+            <a href="/computer-spec-checker/">PC Hardware Checker</a>
           </div>
         </div>
         <div class="nav-item has-dropdown">
@@ -328,6 +329,7 @@ HEADER = '''  <header class="site-header">
           <a href="/victron-system-builder/">Victron System Builder</a>
           <a href="/spot-the-scam/">Spot the Scam Quiz</a>
           <a href="/is-it-down/">Is It Down? Status Checker</a>
+          <a href="/computer-spec-checker/">PC Hardware Checker</a>
         </div>
       </details>
       <details class="m-group">
@@ -506,6 +508,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/plan-finder/">Plan Finder</a>
         <a href="/spot-the-scam/">Spot the Scam Quiz</a>
         <a href="/is-it-down/">Is It Down? Status Checker</a>
+        <a href="/computer-spec-checker/">PC Hardware Checker</a>
       </nav>
       <nav aria-label="Services links">
         <p class="site-footer__head mono">SERVICES</p>
@@ -2063,6 +2066,7 @@ TOOLS = {
   "aicalc":       ("AI ROI Calculator", "/ai-roi-calculator/", "Could AI genuinely save your business time and money? Work it out."),
   "servercloud":  ("Server or Cloud?", "/server-or-cloud-picker/", "Get a clear, jargon-free steer on the right setup for your business."),
   "isitdown":     ("Is It Down?", "/is-it-down/", "Facebook quiet? Email dead? Live status for 30+ big services &mdash; and whether it&rsquo;s them or your connection."),
+  "speccheck":    ("PC Hardware Checker", "/computer-spec-checker/", "What&rsquo;s inside your computer? OS, graphics card, screen, memory and more &mdash; revealed instantly, nothing installed."),
 }
 
 def tool_cards(keys):
