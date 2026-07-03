@@ -16,3 +16,6 @@ api/slack-webhook.php
 api/slack-rate.json
 api/tools-rate.json
 api/domain-cache.json
+api/isitdown-cache.json
+api/isitdown-cache.json.tmp
+api/isitdown-cache.json.lock

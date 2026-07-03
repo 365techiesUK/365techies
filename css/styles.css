@@ -144,7 +144,7 @@ body.menu-open .site-header { z-index: 70; }
 }
 .status-ticker__track {
   display: flex; width: max-content;
-  animation: ticker 110s linear infinite;
+  animation: ticker 120s linear infinite;
 }
 .status-ticker:hover .status-ticker__track { animation-play-state: paused; }
 .status-ticker a { color: inherit; text-decoration: none; }

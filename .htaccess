@@ -98,7 +98,7 @@ ErrorDocument 404 /404.html
 <Files "slack-rate.json">
   Require all denied
 </Files>
-<FilesMatch "^(tools-rate|domain-cache)\.json$">
+<FilesMatch "^(tools-rate|domain-cache|isitdown-cache)\.json(\.tmp|\.lock)?$">
   Require all denied
 </FilesMatch>
 

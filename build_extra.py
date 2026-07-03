@@ -50,7 +50,7 @@ SPECIALIST = [
    split=[("Email at home","Personal and family email sorted across every device &mdash; Outlook, webmail and phone &mdash; with the spam filtered out and the scams spotted.",["Outlook &amp; webmail set up","Email on phone &amp; tablet","Spam &amp; junk filtered","Scam-checking on call"]),("Business email","Professional business email on Microsoft 365 &mdash; shared mailboxes, signatures, security and migration, all managed for your team.",["Microsoft 365 business email","Shared mailboxes &amp; aliases","Email security &amp; filtering","Migration with nothing lost"])],
    steps_title="Email flowing again, fast",
    step_items=[("We diagnose","We find out exactly why your email isn&rsquo;t behaving &mdash; settings, passwords or server."),("We fix &amp; set up","We get email flowing and configure it properly on every device."),("We protect","We filter spam, block phishing and stay on call to check anything suspicious.")],
-   tools=["emailsec","emailsig","scamlink"]),
+   tools=["isitdown","emailsec","emailsig","scamlink"]),
  dict(slug="new-computer-setup", crumb_name="New Computer Setup",
    eyebrow="// NEW DEVICE SETUP", h1='New computer <em class="grad grad--cyan">setup</em>',
    lede="We set up your new computer or laptop properly — transferring files, email and settings, installing software, and getting security and backups in place from day one.",
@@ -90,7 +90,7 @@ SPECIALIST = [
    split=[("Wi-Fi at home","Strong, reliable Wi-Fi in every room &mdash; dead zones banished with mesh, the kids&rsquo; devices and smart home connected, all on a secure network.",["Whole-home mesh Wi-Fi","Dead zones fixed","Smart home connected","Secure &amp; guest networks"]),("Office networks","Fast, secure office networks that keep your team online &mdash; reliable Wi-Fi, wired connections and guest access, designed and supported.",["Reliable office Wi-Fi","Wired &amp; wireless networks","Secure staff &amp; guest access","Designed &amp; supported"])],
    steps_title="Full coverage in three steps",
    step_items=[("We survey","We find your dead zones, bottlenecks and weak spots."),("We set up","We install and configure routers, mesh and extenders for full coverage."),("We secure","We lock down your network and keep it running fast.")],
-   tools=["speed","wifiqr","broadbandcheck"]),
+   tools=["isitdown","speed","wifiqr","broadbandcheck"]),
 ]
 for i, c in enumerate(SPECIALIST):
     make_customer(40 + i, **c)
@@ -1034,6 +1034,7 @@ def broadband_advisor():
       SPEEDTEST_WIDGET,
       BROADBAND_WIDGET,
       faq_html(faqs),
+      tools_strip(["isitdown", "broadbandcheck", "coverage"], title="Slow &mdash; or actually down?", alt=False),
       cta("Still buffering and slow?",
           "Let a friendly local techie sort your broadband, Wi-Fi and devices so everything just works.",
           primary=("Book a Free Chat", "/book-service/"), secondary=("Wi-Fi Support", "/wifi-support/")),
@@ -5264,6 +5265,560 @@ def heatwave_guide():
         desc=desc, og_title="The Heatwave Guide for Your Tech | 365 Techies", schema=schema, content=content)
 heatwave_guide()
 
+# ===================================================== IS IT DOWN? LIVE STATUS CHECKER
+# Live feeds via api/status-check.php (server cache 120s) + reachability checks run
+# in the visitor's own browser — two vantage points = an honest "them or you?" answer.
+ISITDOWN_TOOL = r'''    <section class="section" aria-label="Is it down checker" id="downtool">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// LIVE RIGHT NOW</p>
+          <h2 class="section-title section-title--center" data-title>First: is <em>your</em> connection OK?<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Before blaming Facebook, let&rsquo;s rule you out. Your browser contacts three independent sites and checks DNS &mdash; live, right now, from <strong>your</strong> connection.</p>
+        </div>
+        <div id="iid" data-reveal>
+          <div class="iid-conn checking" id="iid-conn" role="status">
+            <div class="iid-conn-dot"><span class="iid-bigdot pending" id="iid-conn-d"></span></div>
+            <div class="iid-conn-txt">
+              <p class="iid-conn-title" id="iid-conn-title">Testing your connection&hellip;</p>
+              <p class="iid-conn-sub" id="iid-conn-sub">Contacting Google, the BBC and Cloudflare, and checking DNS.</p>
+            </div>
+            <button type="button" class="button iid-ghost iid-again" id="iid-again">Check again</button>
+          </div>
+
+          <div class="iid-sumwrap">
+            <div class="iid-summary" id="iid-summary" role="status"><span class="iid-dot pending"></span><span id="iid-sum-txt">Checking the official status feeds&hellip;</span></div>
+            <p class="iid-updated mono" id="iid-updated"></p>
+          </div>
+          <div class="iid-feednote" id="iid-feednote" hidden>Our live-feed relay didn&rsquo;t answer just now, so the &ldquo;official feed&rdquo; column is paused &mdash; the checks from <strong>your</strong> connection below still work, and every card links to the official status page.</div>
+
+          <div class="iid-controls">
+            <div class="iid-cats" id="iid-cats" role="group" aria-label="Filter by category">
+              <button type="button" class="iid-cat on" data-cat="all" aria-pressed="true">All</button>
+              <button type="button" class="iid-cat" data-cat="social" aria-pressed="false">Social &amp; Messaging</button>
+              <button type="button" class="iid-cat" data-cat="work" aria-pressed="false">Email &amp; Office</button>
+              <button type="button" class="iid-cat" data-cat="net" aria-pressed="false">Internet &amp; Cloud</button>
+              <button type="button" class="iid-cat" data-cat="fun" aria-pressed="false">Entertainment &amp; Gaming</button>
+              <button type="button" class="iid-cat" data-cat="ai" aria-pressed="false">AI Assistants</button>
+            </div>
+            <div class="iid-tools">
+              <input type="search" id="iid-search" placeholder="Search a service&hellip;" aria-label="Search services">
+              <label class="iid-prob"><input type="checkbox" id="iid-problems"> Problems only</label>
+            </div>
+          </div>
+
+          <div class="iid-legend mono">
+            <span><span class="iid-dot ok"></span> No problems</span>
+            <span><span class="iid-dot warn"></span> Issues reported</span>
+            <span><span class="iid-dot down"></span> Major problems</span>
+            <span><span class="iid-dot unknown"></span> Feed unavailable</span>
+          </div>
+
+          <div class="iid-grid" id="iid-grid"></div>
+          <div class="iid-empty" id="iid-empty" hidden>Nothing matches those filters &mdash; if you ticked &ldquo;Problems only&rdquo;, that&rsquo;s good news: nothing is flagged (or the checks are still running).</div>
+          <p class="iid-caveat">Each card shows two honest signals: the service&rsquo;s <strong>official feed</strong> (or the nearest public signal &mdash; it&rsquo;s labelled) and whether the service <strong>answers from your connection</strong>. Browser ad&#8209;blockers can block the social-network checks &mdash; a red &ldquo;you&rdquo; dot with a green feed usually means exactly that. The reachability checks talk to each service directly from your browser; nothing about you is sent to us.</p>
+        </div>
+      </div>
+      <style>
+      #iid{max-width:1100px;margin:0 auto}
+      #iid .iid-dot{width:10px;height:10px;border-radius:50%;display:inline-block;position:relative;flex:none;vertical-align:middle}
+      #iid .iid-dot.ok{background:#2ecc71;color:#2ecc71}
+      #iid .iid-dot.warn{background:#f1c40f;color:#f1c40f}
+      #iid .iid-dot.down{background:#e74c3c;color:#e74c3c}
+      #iid .iid-dot.unknown{background:#7f8c9b;color:#7f8c9b}
+      #iid .iid-dot.pending{background:rgba(255,255,255,.22);color:transparent}
+      #iid .iid-dot.ok::after,#iid .iid-dot.warn::after,#iid .iid-dot.down::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:1px solid currentColor;animation:iid-ping 2.6s ease-out infinite}
+      @keyframes iid-ping{0%{transform:scale(.55);opacity:.85}70%{transform:scale(1.5);opacity:0}100%{transform:scale(1.5);opacity:0}}
+      #iid .iid-conn{display:flex;align-items:center;gap:1.1rem;padding:1.3rem 1.4rem;border-radius:16px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);flex-wrap:wrap}
+      #iid .iid-bigdot{width:22px;height:22px;border-radius:50%;display:block;position:relative}
+      #iid .iid-bigdot.pending{background:rgba(255,255,255,.2);animation:iid-breathe 1.2s ease-in-out infinite alternate}
+      @keyframes iid-breathe{from{opacity:.35}to{opacity:1}}
+      #iid .iid-bigdot.ok{background:#2ecc71;color:#2ecc71}#iid .iid-bigdot.warn{background:#f1c40f;color:#f1c40f}#iid .iid-bigdot.down{background:#e74c3c;color:#e74c3c}
+      #iid .iid-bigdot.ok::after,#iid .iid-bigdot.warn::after,#iid .iid-bigdot.down::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:2px solid currentColor;animation:iid-ping 2.2s ease-out infinite}
+      #iid .iid-conn.ok{border-color:rgba(46,204,113,.45);background:rgba(46,204,113,.07)}
+      #iid .iid-conn.warn{border-color:rgba(241,196,15,.45);background:rgba(241,196,15,.07)}
+      #iid .iid-conn.down{border-color:rgba(231,76,60,.5);background:rgba(231,76,60,.09)}
+      #iid .iid-conn-txt{flex:1 1 320px;min-width:0}
+      #iid .iid-conn-title{margin:0;font-size:1.15rem;font-weight:800}
+      #iid .iid-conn-sub{margin:.25rem 0 0;font-size:.9rem;line-height:1.55;color:var(--muted,#9aa6c2)}
+      #iid .iid-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}
+      #iid .iid-again{flex:none}
+      #iid .iid-sumwrap{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;margin:1.5rem 0 .4rem;flex-wrap:wrap}
+      #iid .iid-summary{display:flex;align-items:center;gap:.55rem;font-weight:700;font-size:1rem}
+      #iid .iid-updated{font-size:.68rem;color:var(--muted,#9aa6c2);margin:0}
+      #iid .iid-feednote{margin:.6rem 0;padding:.8rem 1rem;border-radius:12px;border:1px solid rgba(241,196,15,.4);background:rgba(241,196,15,.08);font-size:.85rem;line-height:1.55}
+      #iid .iid-controls{display:flex;justify-content:space-between;gap:.8rem;margin:.8rem 0;flex-wrap:wrap}
+      #iid .iid-cats{display:flex;gap:.4rem;flex-wrap:wrap}
+      #iid .iid-cat{padding:.4rem .75rem;border-radius:999px;border:1px solid rgba(255,255,255,.16);background:transparent;color:inherit;font-size:.78rem;cursor:pointer}
+      #iid .iid-cat.on{border-color:var(--cyan,#37c2c2);background:rgba(55,194,194,.12)}
+      #iid .iid-tools{display:flex;gap:.7rem;align-items:center;flex-wrap:wrap}
+      #iid #iid-search{padding:.45rem .8rem;border-radius:999px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.04);color:inherit;font:inherit;font-size:.82rem;width:180px}
+      #iid #iid-search:focus{outline:none;border-color:var(--cyan,#37c2c2)}
+      #iid .iid-prob{font-size:.8rem;color:var(--muted,#9aa6c2);display:flex;align-items:center;gap:.35rem;cursor:pointer}
+      #iid .iid-legend{display:flex;gap:1rem;flex-wrap:wrap;font-size:.66rem;color:var(--muted,#9aa6c2);margin:.2rem 0 1rem}
+      #iid .iid-legend span{display:flex;align-items:center;gap:.35rem}
+      #iid .iid-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:.7rem}
+      #iid .iid-card{padding:.95rem 1rem;border-radius:14px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);display:flex;flex-direction:column;gap:.5rem;transition:border-color .3s}
+      #iid .iid-card.has-issue{border-color:rgba(231,76,60,.45)}
+      #iid .iid-card.hide{display:none}
+      #iid .iid-c-top{display:flex;justify-content:space-between;align-items:baseline;gap:.5rem}
+      #iid .iid-c-top b{font-size:.95rem}
+      #iid .iid-kind{font-size:.6rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted,#9aa6c2);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:.12rem .5rem;white-space:nowrap;cursor:help}
+      #iid .iid-srv,#iid .iid-you{display:flex;align-items:center;gap:.5rem;font-size:.82rem;line-height:1.4}
+      #iid .iid-you{font-size:.74rem;color:var(--muted,#9aa6c2)}
+      #iid .iid-s-txt b{font-weight:700}
+      #iid .iid-links{margin-top:auto}
+      #iid .iid-links a{font-size:.72rem;color:var(--cyan,#37c2c2);text-decoration:none}
+      #iid .iid-links a:hover{text-decoration:underline}
+      #iid .iid-note{margin:0;font-size:.68rem;color:var(--muted,#9aa6c2);font-style:italic}
+      #iid .iid-caveat{margin:1.2rem auto 0;max-width:76ch;font-size:.76rem;line-height:1.6;color:var(--muted,#9aa6c2)}
+      #iid .iid-empty{padding:1.6rem;text-align:center;border:1px dashed rgba(255,255,255,.18);border-radius:14px;color:var(--muted,#9aa6c2);font-size:.9rem}
+      #iid .iid-skel{color:transparent!important;border-radius:6px;background:linear-gradient(90deg,rgba(255,255,255,.05),rgba(255,255,255,.13),rgba(255,255,255,.05));background-size:200% 100%;animation:iid-sh 1.4s linear infinite}
+      @keyframes iid-sh{from{background-position:200% 0}to{background-position:-200% 0}}
+      @media(max-width:560px){#iid .iid-conn{padding:1.1rem}#iid .iid-again{width:100%}#iid #iid-search{width:100%;flex:1 1 100%}}
+      @media(prefers-reduced-motion:reduce){#iid *,#iid *::after{animation:none!important;transition:none!important}}
+      </style>
+      <script>
+      (function(){
+        var root=document.getElementById('iid'); if(!root) return;
+        function $(s){return root.querySelector(s);}
+        function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+        var KIND={live:['Official feed','A real status feed published by the service itself — we read it every couple of minutes.'],
+                  signal:['Platform signal','Meta publishes status for its business systems only. Big consumer outages usually show up there too — but it is a signal, not an official consumer feed.'],
+                  probe:['Reachability','No official public status feed exists for this service, so we test whether it answers — from our monitoring server and from your browser.']};
+        /* id, name, category, kind, host probed from YOUR browser, official status page, note */
+        var SVC=[
+          ['facebook','Facebook','social','signal','www.facebook.com','https://metastatus.com',''],
+          ['whatsapp','WhatsApp','social','signal','www.whatsapp.com','https://metastatus.com',''],
+          ['instagram','Instagram','social','signal','www.instagram.com','https://metastatus.com',''],
+          ['messenger','Messenger','social','signal','www.messenger.com','https://metastatus.com',''],
+          ['x','X (Twitter)','social','probe','x.com','','No official status feed exists'],
+          ['tiktok','TikTok','social','probe','www.tiktok.com','',''],
+          ['snapchat','Snapchat','social','probe','www.snapchat.com','',''],
+          ['reddit','Reddit','social','live','www.reddit.com','https://www.redditstatus.com',''],
+          ['discord','Discord','social','live','discord.com','https://discordstatus.com',''],
+          ['m365','Microsoft 365 · Outlook · Teams','work','live','www.office.com','https://status.cloud.microsoft','Official feed reports widespread incidents only'],
+          ['gmail','Gmail','work','live','mail.google.com','https://www.google.com/appsstatus/dashboard/',''],
+          ['gworkspace','Google Drive · Docs · Meet','work','live','drive.google.com','https://www.google.com/appsstatus/dashboard/',''],
+          ['zoom','Zoom','work','live','zoom.us','https://www.zoomstatus.com',''],
+          ['slack','Slack','work','live','slack.com','https://slack-status.com',''],
+          ['dropbox','Dropbox','work','live','www.dropbox.com','https://status.dropbox.com',''],
+          ['canva','Canva','work','live','www.canva.com','https://www.canvastatus.com',''],
+          ['cloudflare','Cloudflare','net','live','www.cloudflare.com','https://www.cloudflarestatus.com','When Cloudflare wobbles, half the web wobbles'],
+          ['azure','Microsoft Azure','net','live','azure.microsoft.com','https://azure.status.microsoft/en-gb/status',''],
+          ['github','GitHub','net','live','github.com','https://www.githubstatus.com',''],
+          ['amazon','Amazon (shopping)','net','probe','www.amazon.co.uk','',''],
+          ['bbc','BBC','net','probe','www.bbc.co.uk','','A good neutral test of UK connectivity'],
+          ['youtube','YouTube','fun','probe','www.youtube.com','',''],
+          ['netflix','Netflix','fun','probe','www.netflix.com','',''],
+          ['spotify','Spotify','fun','live','open.spotify.com','https://spotify.statuspage.io','Official page can lag behind real outages'],
+          ['psn','PlayStation Network','fun','live','www.playstation.com','https://status.playstation.com',''],
+          ['xbox','Xbox Live','fun','live','www.xbox.com','https://support.xbox.com/en-GB/xbox-live-status',''],
+          ['steam','Steam','fun','probe','store.steampowered.com','','Valve publishes no official feed'],
+          ['epic','Epic Games · Fortnite','fun','live','www.epicgames.com','https://status.epicgames.com',''],
+          ['twitch','Twitch','fun','live','www.twitch.tv','https://status.twitch.com',''],
+          ['chatgpt','ChatGPT (OpenAI)','ai','live','chatgpt.com','https://status.openai.com',''],
+          ['claude','Claude (Anthropic)','ai','live','www.anthropic.com','https://status.claude.com','']
+        ];
+        var state={}, grid=$('#iid-grid');
+        var SRVTXT={ok:{live:'No problems reported',signal:'No platform issues flagged',probe:'Responding normally'},
+                    warn:{live:'Issues reported',signal:'Platform issues flagged',probe:'Responding with errors'},
+                    down:{live:'Major problems reported',signal:'Platform problems flagged',probe:'Not responding'},
+                    unknown:{live:'Feed unavailable',signal:'Signal unavailable',probe:'Check unavailable'}};
+        SVC.forEach(function(sv){
+          state[sv[0]]={srv:null,you:'pending'};
+          var kb=KIND[sv[3]];
+          grid.insertAdjacentHTML('beforeend',
+            '<div class="iid-card" data-id="'+sv[0]+'" data-cat="'+sv[2]+'" data-name="'+esc(sv[1].toLowerCase())+'">'+
+              '<div class="iid-c-top"><b>'+esc(sv[1])+'</b><span class="iid-kind" title="'+esc(kb[1])+'">'+kb[0]+'</span></div>'+
+              '<div class="iid-srv"><span class="iid-dot pending"></span><span class="iid-s-txt iid-skel">Checking&hellip;</span></div>'+
+              '<div class="iid-you"><span class="iid-dot pending"></span><span class="iid-y-txt">From your connection&hellip;</span></div>'+
+              (sv[6]?'<p class="iid-note">'+esc(sv[6])+'</p>':'')+
+              (sv[5]?'<div class="iid-links"><a href="'+sv[5]+'" target="_blank" rel="noopener">'+(sv[3]==='signal'?'Meta platform status':'Official status page')+' &#8599;</a></div>':'')+
+            '</div>');
+        });
+        function card(id){return grid.querySelector('[data-id="'+id+'"]');}
+        function paintSrv(sv){
+          var c=card(sv[0]), st=state[sv[0]].srv||{s:'unknown',d:''};
+          if(!Object.prototype.hasOwnProperty.call(SRVTXT,st.s))st={s:'unknown',d:''};
+          var d=c.querySelector('.iid-srv .iid-dot'), t=c.querySelector('.iid-s-txt');
+          d.className='iid-dot '+st.s; t.className='iid-s-txt';
+          var lbl=(SRVTXT[st.s]||SRVTXT.unknown)[sv[3]];
+          t.innerHTML='<b>'+lbl+'</b>'+(st.d?' — '+esc(st.d):'')+(st.stale?' <span style="opacity:.6">(cached)</span>':'');
+          c.classList.toggle('has-issue',st.s==='warn'||st.s==='down');
+          applyFilters();
+        }
+        function paintYou(sv){
+          var c=card(sv[0]), r=state[sv[0]].you;
+          var d=c.querySelector('.iid-you .iid-dot'), t=c.querySelector('.iid-y-txt');
+          if(r==='ok'){d.className='iid-dot ok';t.textContent='Answers from your connection';}
+          else if(r==='down'){d.className='iid-dot down';
+            var srv=state[sv[0]].srv;
+            t.textContent=(srv&&srv.s==='ok')?'Blocked or unreachable from your device (ad-blocker?)':'Not answering from your connection';}
+          else {d.className='iid-dot pending';t.textContent='From your connection…';}
+          applyFilters();
+        }
+        /* reachability: any response counts (no-cors never exposes content) */
+        function probeURL(host,cb){
+          var done=false,at=null,t=setTimeout(function(){fin('down');},6500);
+          function fin(r){if(done)return;done=true;clearTimeout(t);if(at)clearTimeout(at);cb(r);}
+          try{
+            if(window.fetch&&window.AbortController){
+              var ac=new AbortController();
+              at=setTimeout(function(){try{ac.abort();}catch(e){}},6000);
+              fetch('https://'+host+'/',{mode:'no-cors',cache:'no-store',credentials:'omit',signal:ac.signal})
+                .then(function(){fin('ok');},function(){fin('down');});
+            }else{
+              var im=new Image();im.onload=function(){fin('ok');};im.onerror=function(){fin('down');};
+              im.src='https://'+host+'/favicon.ico?_='+(new Date()).getTime();
+            }
+          }catch(e){fin('down');}
+        }
+        var queue=[],active=0,probeGen=0;
+        function pump(){
+          while(active<6&&queue.length){
+            (function(sv,g){active++;probeURL(sv[4],function(r){active--;if(g===probeGen){state[sv[0]].you=r;paintYou(sv);}pump();});})(queue.shift(),probeGen);
+          }
+        }
+        function runProbes(){
+          probeGen++; queue=SVC.slice();
+          SVC.forEach(function(sv){state[sv[0]].you='pending';paintYou(sv);});
+          pump();
+        }
+        /* official feeds via our relay (cached server-side so providers aren't hammered) */
+        var feedGen=0;
+        function loadFeeds(){
+          var g=++feedGen;
+          function failed(){
+            if(g!==feedGen)return;
+            $('#iid-feednote').hidden=false;
+            SVC.forEach(function(sv){ state[sv[0]].srv={s:'unknown',d:''}; paintSrv(sv); });
+            $('#iid-summary .iid-dot').className='iid-dot unknown';
+            $('#iid-sum-txt').textContent='Official feeds unreachable just now — the checks from your connection below still work.';
+            stamp(false);
+          }
+          if(!window.fetch){failed();return;}
+          fetch('/api/status-check.php',{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
+            if(g!==feedGen)return;
+            if(!j||!j.ok||!j.services){failed();return;}
+            $('#iid-feednote').hidden=true;
+            SVC.forEach(function(sv){ state[sv[0]].srv=j.services[sv[0]]||{s:'unknown',d:''}; paintSrv(sv); });
+            summary(); stamp(true);
+          }).catch(function(){failed();});
+        }
+        function summary(){
+          var bad=[];
+          SVC.forEach(function(sv){var st=state[sv[0]].srv;if(st&&(st.s==='down'||st.s==='warn'))bad.push(sv[1]);});
+          var d=$('#iid-summary .iid-dot'), t=$('#iid-sum-txt');
+          if(!bad.length){d.className='iid-dot ok';t.textContent='No major outages showing on the official feeds right now.';}
+          else{d.className='iid-dot '+(bad.length>2?'down':'warn');
+            t.textContent='Issues reported: '+bad.slice(0,6).join(', ')+(bad.length>6?' +'+(bad.length-6)+' more':'')+'.';}
+        }
+        function stamp(okFlag){
+          var n=new Date();
+          $('#iid-updated').textContent=(okFlag?'Updated ':'Last attempt ')+
+            ('0'+n.getHours()).slice(-2)+':'+('0'+n.getMinutes()).slice(-2)+':'+('0'+n.getSeconds()).slice(-2)+
+            ' · feeds refresh every 2 min';
+        }
+        /* filters */
+        var cat='all';
+        function applyFilters(){
+          var q=($('#iid-search').value||'').toLowerCase().trim();
+          var probOnly=$('#iid-problems').checked;
+          var shown=0;
+          SVC.forEach(function(sv){
+            var c=card(sv[0]),st=state[sv[0]];
+            var vis=(cat==='all'||sv[2]===cat);
+            if(vis&&q)vis=c.getAttribute('data-name').indexOf(q)>-1;
+            if(vis&&probOnly)vis=(st.srv&&(st.srv.s==='warn'||st.srv.s==='down'))||st.you==='down';
+            if(vis)shown++;
+            c.classList.toggle('hide',!vis);
+          });
+          $('#iid-empty').hidden=shown>0;
+        }
+        Array.prototype.forEach.call(root.querySelectorAll('.iid-cat'),function(b){
+          b.addEventListener('click',function(){
+            cat=b.getAttribute('data-cat');
+            Array.prototype.forEach.call(root.querySelectorAll('.iid-cat'),function(x){
+              x.classList.toggle('on',x===b);x.setAttribute('aria-pressed',x===b?'true':'false');
+            });
+            applyFilters();
+          });
+        });
+        $('#iid-search').addEventListener('input',applyFilters);
+        $('#iid-problems').addEventListener('change',applyFilters);
+        /* your-connection panel */
+        var connGen=0;
+        function connCheck(){
+          var g=++connGen;
+          var box=$('#iid-conn'),bd=$('#iid-conn-d'),ti=$('#iid-conn-title'),su=$('#iid-conn-sub');
+          box.className='iid-conn checking';bd.className='iid-bigdot pending';
+          ti.textContent='Testing your connection…';
+          su.textContent='Contacting Google, the BBC and Cloudflare, and checking DNS.';
+          var anchors=['www.google.com','www.bbc.co.uk','www.cloudflare.com'];
+          var okc=0,fail=0,best=null,results=0,dnsOK=null;
+          function now(){return (window.performance&&performance.now)?performance.now():(new Date()).getTime();}
+          (function(){
+            var done=false,t=setTimeout(function(){fin(false);},6000);
+            function fin(v){if(done)return;done=true;clearTimeout(t);dnsOK=v;maybe();}
+            try{
+              fetch('https://cloudflare-dns.com/dns-query?name=bbc.co.uk&type=A',{headers:{accept:'application/dns-json'},cache:'no-store'})
+                .then(function(r){return r.json();}).then(function(j){fin(!!(j&&j.Answer&&j.Answer.length));},function(){fin(false);});
+            }catch(e){fin(false);}
+          })();
+          anchors.forEach(function(h){
+            var s=now();
+            probeURL(h,function(r){
+              var e=now()-s;
+              if(r==='ok'){okc++;if(best===null||e<best)best=e;}else fail++;
+              results++;maybe();
+            });
+          });
+          function maybe(){if(results<3||dnsOK===null)return;verdict();}
+          function verdict(){
+            if(g!==connGen)return;
+            var c,v,s;
+            if(okc===0&&!navigator.onLine){c='down';v='You’re offline';
+              s='Your device isn’t connected to any network. Check Wi‑Fi is switched on and you’re joined to the right network — then see the step-by-step help further down this page.';}
+            else if(okc===0&&!dnsOK){c='down';v='Your internet connection looks down';
+              s='None of our three independent test sites answered, and DNS isn’t responding either. This is almost certainly your connection, not the websites — the “Internet completely dead?” steps below will get you going.';}
+            else if(okc===0){c='down';v='Websites aren’t loading from your connection';
+              s='DNS answers but real websites don’t — that often means a router, firewall or provider fault. Try the router restart steps below, and check your provider’s status page further down.';}
+            else if(fail>0||!dnsOK){c='warn';v='Your connection is partly working';
+              s=okc+' of 3 test sites answered'+(dnsOK?'':' and DNS looks shaky')+'. That can mean a flaky line, weak Wi‑Fi or an overloaded router — if a specific service is failing, check its card below before blaming your broadband.';}
+            else{c='ok';v='Your connection is fine';
+              s='Google, the BBC and Cloudflare all answered — quickest reply in about '+Math.round(best)+' ms. If something isn’t working, the problem is almost certainly at <b>their</b> end: find it in the live grid below.';}
+            box.className='iid-conn '+c;bd.className='iid-bigdot '+c;
+            ti.textContent=v;su.innerHTML=s;
+            setTimeout(runProbes,120);
+          }
+        }
+        /* connection test runs first; the grid probes start once its verdict lands so the latency reading stays clean */
+        $('#iid-again').addEventListener('click',function(){connCheck();loadFeeds();});
+        connCheck();loadFeeds();
+        setInterval(loadFeeds,120000);
+      })();
+      </script>
+    </section>
+
+    <section class="section" aria-label="UK broadband and mobile provider status" id="iid-isps">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// BROADBAND &amp; MOBILE</p>
+          <h2 class="section-title section-title--center" data-title>Broadband or mobile playing up? Check your provider<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>UK providers don&rsquo;t publish open live feeds, so here&rsquo;s the fast lane instead: every official outage checker and support line in one place. <strong>Have your postcode and account details ready</strong> &mdash; most checkers ask.</p>
+        </div>
+        <div class="iid-ispgrid" data-reveal>
+          <div class="iid-isp"><h3>BT Broadband</h3>
+            <a class="iid-isp-link" href="https://www.bt.com/help/check-service-status" target="_blank" rel="noopener">Check BT service status &#8599;</a>
+            <p class="iid-isp-tel"><a href="tel:03301234150">0330&nbsp;1234&nbsp;150</a></p>
+            <p class="iid-isp-note">Or text HELP to 61998. The checker can test your own line.</p></div>
+          <div class="iid-isp"><h3>Virgin Media</h3>
+            <a class="iid-isp-link" href="https://www.virginmedia.com/help/service-status" target="_blank" rel="noopener">Check Virgin Media status &#8599;</a>
+            <p class="iid-isp-tel"><a href="tel:03454541111">0345&nbsp;454&nbsp;1111</a></p>
+            <p class="iid-isp-note">Or dial 150 from a Virgin Media landline.</p></div>
+          <div class="iid-isp"><h3>Sky Broadband</h3>
+            <a class="iid-isp-link" href="https://www.sky.com/help/servicestatus/" target="_blank" rel="noopener">Check Sky service status &#8599;</a>
+            <p class="iid-isp-tel iid-isp-tel--none">Sign in to check &amp; contact</p>
+            <p class="iid-isp-note">Sky reveals its numbers after sign-in at sky.com/help.</p></div>
+          <div class="iid-isp"><h3>EE (broadband &amp; mobile)</h3>
+            <a class="iid-isp-link" href="https://ee.co.uk/help/service-status" target="_blank" rel="noopener">Check EE service status &#8599;</a>
+            <p class="iid-isp-tel"><a href="tel:03301231105">0330&nbsp;123&nbsp;1105</a></p>
+            <p class="iid-isp-note">Or dial 150 free from an EE phone.</p></div>
+          <div class="iid-isp"><h3>TalkTalk</h3>
+            <a class="iid-isp-link" href="https://help-centre.talktalk.co.uk/Network_and_connections/Fix_a_problem/Our_Service_Status" target="_blank" rel="noopener">Check TalkTalk status &#8599;</a>
+            <p class="iid-isp-tel"><a href="tel:03451720088">0345&nbsp;172&nbsp;0088</a></p>
+            <p class="iid-isp-note">Status page is open &mdash; no sign-in needed.</p></div>
+          <div class="iid-isp"><h3>Plusnet</h3>
+            <a class="iid-isp-link" href="https://www.plus.net/help/report-a-problem/" target="_blank" rel="noopener">Report a Plusnet problem &#8599;</a>
+            <p class="iid-isp-tel"><a href="tel:03301239123">0330&nbsp;1239&nbsp;123</a></p>
+            <p class="iid-isp-note">Or text HELP to 07800&nbsp;008121.</p></div>
+          <div class="iid-isp"><h3>Vodafone</h3>
+            <a class="iid-isp-link" href="https://www.vodafone.co.uk/network/status-checker" target="_blank" rel="noopener">Vodafone status checker &#8599;</a>
+            <p class="iid-isp-tel"><a href="tel:03333040191">0333&nbsp;304&nbsp;0191</a></p>
+            <p class="iid-isp-note">Or 191 from a Vodafone mobile. Covers broadband &amp; mobile.</p></div>
+          <div class="iid-isp"><h3>Three</h3>
+            <a class="iid-isp-link" href="https://www.three.co.uk/support/network-and-coverage/network-support" target="_blank" rel="noopener">Three network checker &#8599;</a>
+            <p class="iid-isp-tel"><a href="tel:03333381001">0333&nbsp;338&nbsp;1001</a></p>
+            <p class="iid-isp-note">Or 333 from a Three phone. Postcode needed.</p></div>
+          <div class="iid-isp"><h3>O2 (mobile)</h3>
+            <a class="iid-isp-link" href="https://status.o2.co.uk" target="_blank" rel="noopener">O2 network status &#8599;</a>
+            <p class="iid-isp-tel"><a href="tel:03448090202">0344&nbsp;809&nbsp;0202</a></p>
+            <p class="iid-isp-note">Or 202 from an O2 mobile. Postcode-based checker.</p></div>
+          <div class="iid-isp"><h3>NOW Broadband</h3>
+            <a class="iid-isp-link" href="https://www.nowtv.com/check-service-status/" target="_blank" rel="noopener">Check NOW service status &#8599;</a>
+            <p class="iid-isp-tel iid-isp-tel--none">Contact via live chat</p>
+            <p class="iid-isp-note">NOW steers support through its online help &amp; chat.</p></div>
+          <div class="iid-isp"><h3>Zen Internet</h3>
+            <a class="iid-isp-link" href="https://status.zen.co.uk" target="_blank" rel="noopener">Zen status page &#8599;</a>
+            <p class="iid-isp-tel"><a href="tel:01706902000">01706&nbsp;902000</a></p>
+            <p class="iid-isp-note">Open status page &mdash; also lists Openreach network incidents.</p></div>
+          <div class="iid-isp iid-isp--local"><h3>Wessex Internet <span class="iid-local">LOCAL TO DORSET</span></h3>
+            <a class="iid-isp-link" href="https://status.wessexinternet.com/" target="_blank" rel="noopener">Wessex status page &#8599;</a>
+            <p class="iid-isp-tel"><a href="tel:03332407997">0333&nbsp;240&nbsp;7997</a></p>
+            <p class="iid-isp-note">Rural full-fibre across Dorset, Wiltshire &amp; Somerset.</p></div>
+          <div class="iid-isp"><h3>Starlink</h3>
+            <a class="iid-isp-link" href="https://www.starlink.com/support" target="_blank" rel="noopener">Starlink support &#8599;</a>
+            <p class="iid-isp-tel iid-isp-tel--none">No phone support</p>
+            <p class="iid-isp-note">Check the Starlink app &mdash; it shows network status and outage alerts. We <a href="/starlink-internet/">install &amp; support Starlink</a> locally.</p></div>
+          <div class="iid-isp"><h3>Openreach (the physical network)</h3>
+            <a class="iid-isp-link" href="https://www.openreach.com/help-and-support/damage-health-and-safety" target="_blank" rel="noopener">Report damage &#8599;</a>
+            <p class="iid-isp-tel"><a href="tel:08000232023">0800&nbsp;023&nbsp;2023</a></p>
+            <p class="iid-isp-note">Openreach runs the lines behind BT, Sky, TalkTalk, Zen &amp; more &mdash; but faults go via <strong>your provider</strong>. Call Openreach only for dangerous or damaged cables, poles and cabinets.</p></div>
+        </div>
+        <p class="iid-isp-foot" data-reveal>Not sure whether it&rsquo;s widespread? Cross-check on <a href="https://downdetector.co.uk" target="_blank" rel="noopener nofollow">Downdetector</a> (crowd-sourced, unofficial) &mdash; and if it turns out the fault is your kit rather than the network, <a href="/contact/">that&rsquo;s exactly what we fix</a>.</p>
+      </div>
+      <style>
+      #iid-isps .iid-ispgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.8rem;max-width:1100px;margin:0 auto}
+      #iid-isps .iid-isp{padding:1.1rem 1.15rem;border-radius:14px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);display:flex;flex-direction:column;gap:.4rem}
+      #iid-isps .iid-isp h3{margin:0;font-size:1rem}
+      #iid-isps .iid-isp--local{border-color:rgba(55,194,194,.45);background:rgba(55,194,194,.06)}
+      #iid-isps .iid-local{font-size:.55rem;letter-spacing:.08em;color:var(--cyan,#37c2c2);border:1px solid rgba(55,194,194,.5);border-radius:999px;padding:.1rem .45rem;vertical-align:middle;white-space:nowrap}
+      #iid-isps .iid-isp-link{font-size:.8rem;color:var(--cyan,#37c2c2);text-decoration:none}
+      #iid-isps .iid-isp-link:hover{text-decoration:underline}
+      #iid-isps .iid-isp-tel{margin:.1rem 0}
+      #iid-isps .iid-isp-tel a{font-family:var(--font-mono);font-size:1.05rem;font-weight:700;color:#fff;text-decoration:none}
+      #iid-isps .iid-isp-tel a:hover{color:var(--cyan,#37c2c2)}
+      #iid-isps .iid-isp-tel--none{font-size:.8rem;color:var(--muted,#9aa6c2);font-style:italic}
+      #iid-isps .iid-isp-note{margin:0;font-size:.72rem;line-height:1.5;color:var(--muted,#9aa6c2)}
+      #iid-isps .iid-isp-foot{max-width:76ch;margin:1.3rem auto 0;font-size:.82rem;line-height:1.6;color:var(--muted,#9aa6c2);text-align:center}
+      </style>
+    </section>
+
+    <section class="section" aria-label="What to do when something is down" id="iid-help">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// WHAT TO DO NEXT</p>
+          <h2 class="section-title section-title--center" data-title>OK, something IS down. Now what?<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Pick the situation that matches yours &mdash; each one is the exact order we&rsquo;d work through it ourselves.</p>
+        </div>
+        <div class="iid-plays" data-reveal>
+          <details class="iid-play"><summary>Internet completely dead? Start here</summary><div>
+            <ol>
+              <li><strong>Check every device.</strong> If phones on Wi&#8209;Fi are also dead, it&rsquo;s the connection &mdash; not your computer.</li>
+              <li><strong>Look at the router lights.</strong> A red or unlit internet light points at the line or provider. Note what you see &mdash; it helps whoever you call.</li>
+              <li><strong>Power cut nearby?</strong> Street equipment loses power too. Call <a href="tel:105"><strong>105</strong></a> (free) to check and report power cuts.</li>
+              <li><strong>Restart the router properly.</strong> Unplug the power, wait 30 seconds, plug back in, then give it a full 2&ndash;5 minutes to reconnect. <em>Don&rsquo;t</em> press the tiny reset pin &mdash; that factory-wipes your settings.</li>
+              <li><strong>Still dead after 15 minutes?</strong> Check your provider&rsquo;s status page above, then call them &mdash; the numbers are above too.</li>
+              <li><strong>Line fine but your kit won&rsquo;t connect?</strong> That&rsquo;s us: <a href="tel:+441202775566">01202 775566</a> &mdash; same-day help, usually within minutes remotely (once you&rsquo;re back online) or by phone when you&rsquo;re not.</li>
+            </ol>
+          </div></details>
+          <details class="iid-play"><summary>One website or app won&rsquo;t work &mdash; everything else is fine</summary><div>
+            <ol>
+              <li><strong>Check its card in the live grid above.</strong> If the official feed shows problems, it&rsquo;s them &mdash; grab a cuppa and wait it out.</li>
+              <li><strong>The mobile-data trick.</strong> Turn Wi&#8209;Fi off on your phone and try the same site on mobile data. Works on data but not Wi&#8209;Fi? The problem is your broadband or router, not the site.</li>
+              <li><strong>Try a private/incognito window</strong> &mdash; rules out a stale login or a misbehaving extension.</li>
+              <li><strong>Flush DNS</strong> on Windows: press Start, type <code>cmd</code>, run <code>ipconfig /flushdns</code>. Old DNS answers cause exactly this &ldquo;one site won&rsquo;t load&rdquo; weirdness.</li>
+              <li><strong>Still stuck?</strong> If it&rsquo;s just you and just this site, something local is interfering &mdash; we can usually find it in minutes remotely.</li>
+            </ol>
+          </div></details>
+          <details class="iid-play"><summary>Email has stopped working</summary><div>
+            <ol>
+              <li><strong>Try webmail first.</strong> Sign in via the browser (outlook.com, gmail.com). If webmail works, your account is fine &mdash; the problem is the app or device.</li>
+              <li><strong>Check the Microsoft 365 / Gmail cards above</strong> &mdash; big providers do have wobbles.</li>
+              <li><strong>Storage full?</strong> A full mailbox silently stops new mail. Check your quota in webmail settings.</li>
+              <li><strong>Password or security lock?</strong> A forced sign-out on every device usually means a security check &mdash; or someone tried to get in. Change the password from a known-good device.</li>
+              <li><strong>Business email misbehaving is our bread and butter</strong> &mdash; <a href="/email-support/">email support</a> or call <a href="tel:+441202775566">01202 775566</a>.</li>
+            </ol>
+          </div></details>
+          <details class="iid-play"><summary>Everything works but it&rsquo;s painfully slow</summary><div>
+            <ol>
+              <li><strong>Measure, don&rsquo;t guess:</strong> run our <a href="/broadband-speed-checker/">free speed test</a> &mdash; once on Wi&#8209;Fi near the router, once in the slow spot.</li>
+              <li><strong>Who else is on?</strong> One 4K stream or a games console downloading an update can flatten a lot of broadband.</li>
+              <li><strong>Heat matters.</strong> Routers and laptops throttle when hot &mdash; in summer, see our <a href="/heatwave-tech-guide/">heatwave tech guide</a>.</li>
+              <li><strong>Slow on one computer only?</strong> That&rsquo;s the computer, not the broadband &mdash; our <a href="/pc-benchmark/">free benchmark</a> will show where it struggles.</li>
+            </ol>
+          </div></details>
+          <details class="iid-play"><summary>Could it be a cyber attack? (DDoS, hacks and scares)</summary><div>
+            <ol>
+              <li><strong>A big-name outage is almost never &ldquo;hackers&rdquo;.</strong> It&rsquo;s usually a botched update or a broken dependency &mdash; DDoS makes headlines, config errors make outages.</li>
+              <li><strong>Home users can&rsquo;t be &ldquo;DDoSed offline&rdquo; in any meaningful way</strong> &mdash; attacks target services, not your router. If you&rsquo;re offline, work the connection steps above.</li>
+              <li><strong>Received a threat demanding payment to stop an attack?</strong> It&rsquo;s almost always an empty threat. Don&rsquo;t pay &mdash; report it to Action Fraud on <a href="tel:03001232040">0300 123 2040</a>.</li>
+              <li><strong>Run a business website that&rsquo;s genuinely under attack?</strong> Talk to your host about DDoS protection (Cloudflare&rsquo;s free tier stops most of it) &mdash; <a href="/cybersecurity-support/">we can set this up</a>.</li>
+            </ol>
+          </div></details>
+        </div>
+
+        <div class="iid-scam" data-reveal>
+          <h3>&#9888;&#65039; Outages attract scammers</h3>
+          <p>During big outages, fake &ldquo;compensation&rdquo; and &ldquo;refund&rdquo; texts and emails go out within hours. Your provider won&rsquo;t text you a payment link. Forward scam texts free to <strong>7726</strong>, and if in doubt, run the link through our <a href="/link-safety-checker/">free link checker</a> first.</p>
+        </div>
+
+        <div class="iid-emg" data-reveal>
+          <h3>Numbers worth saving</h3>
+          <div class="iid-emg-grid">
+            <div class="iid-emg-row"><span class="iid-emg-num"><a href="tel:105">105</a></span><span class="iid-emg-what"><strong>Power cut?</strong> Free national line (England, Scotland &amp; Wales) &mdash; routes to your local electricity network operator. No power usually means no broadband either.</span></div>
+            <div class="iid-emg-row"><span class="iid-emg-num"><a href="tel:03001232040">0300&nbsp;123&nbsp;2040</a></span><span class="iid-emg-what"><strong>Action Fraud</strong> &mdash; report scams, fraud and cyber attacks (England &amp; Wales; in Scotland call 101).</span></div>
+            <div class="iid-emg-row"><span class="iid-emg-num"><a href="tel:08000232023">0800&nbsp;023&nbsp;2023</a></span><span class="iid-emg-what"><strong>Openreach</strong> &mdash; dangerous or damaged cables, poles and street cabinets only.</span></div>
+            <div class="iid-emg-row iid-emg-row--us"><span class="iid-emg-num"><a href="tel:+441202775566">01202&nbsp;775566</a></span><span class="iid-emg-what"><strong>365 Techies</strong> &mdash; when it&rsquo;s your computer, email, Wi&#8209;Fi or network rather than the provider. Same-day help, usually within minutes remotely. Prefer to text? <a href="sms:+447520615332">07520&nbsp;615332</a>.</span></div>
+          </div>
+        </div>
+      </div>
+      <style>
+      #iid-help .iid-plays{max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:.6rem}
+      #iid-help .iid-play{border:1px solid rgba(255,255,255,.1);border-radius:14px;background:rgba(255,255,255,.03);overflow:hidden}
+      #iid-help .iid-play summary{padding:1rem 1.2rem;cursor:pointer;font-weight:700;font-size:.98rem;list-style:none;position:relative;padding-right:2.6rem}
+      #iid-help .iid-play summary::-webkit-details-marker{display:none}
+      #iid-help .iid-play summary::after{content:"+";position:absolute;right:1.1rem;top:50%;transform:translateY(-50%);font-size:1.3rem;color:var(--cyan,#37c2c2);transition:transform .25s}
+      #iid-help .iid-play[open] summary::after{transform:translateY(-50%) rotate(45deg)}
+      #iid-help .iid-play>div{padding:0 1.2rem 1.1rem}
+      #iid-help .iid-play ol{margin:0;padding-left:1.2rem;display:flex;flex-direction:column;gap:.55rem;font-size:.9rem;line-height:1.6;color:var(--muted,#9aa6c2)}
+      #iid-help .iid-play strong{color:#fff}
+      #iid-help .iid-play code{font-family:var(--font-mono);font-size:.85em;background:rgba(255,255,255,.08);padding:.08rem .35rem;border-radius:6px}
+      #iid-help .iid-scam{max-width:860px;margin:1.4rem auto 0;padding:1.2rem 1.3rem;border-radius:14px;border:1px solid rgba(241,196,15,.4);background:rgba(241,196,15,.07)}
+      #iid-help .iid-scam h3{margin:0 0 .4rem;font-size:1.02rem}
+      #iid-help .iid-scam p{margin:0;font-size:.88rem;line-height:1.6;color:var(--muted,#9aa6c2)}
+      #iid-help .iid-emg{max-width:860px;margin:1.4rem auto 0}
+      #iid-help .iid-emg h3{margin:0 0 .7rem;font-size:1.1rem;text-align:center}
+      #iid-help .iid-emg-grid{display:flex;flex-direction:column;gap:.55rem}
+      #iid-help .iid-emg-row{display:flex;gap:1rem;align-items:center;padding:.8rem 1.1rem;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03)}
+      #iid-help .iid-emg-row--us{border-color:rgba(55,194,194,.45);background:rgba(55,194,194,.06)}
+      #iid-help .iid-emg-num{flex:none;min-width:150px}
+      #iid-help .iid-emg-num a{font-family:var(--font-mono);font-size:1.05rem;font-weight:700;color:#fff;text-decoration:none}
+      #iid-help .iid-emg-num a:hover{color:var(--cyan,#37c2c2)}
+      #iid-help .iid-emg-what{font-size:.84rem;line-height:1.55;color:var(--muted,#9aa6c2)}
+      #iid-help .iid-emg-what strong{color:#fff}
+      @media(max-width:560px){#iid-help .iid-emg-row{flex-direction:column;align-items:flex-start;gap:.3rem}#iid-help .iid-emg-num{min-width:0}}
+      </style>
+    </section>'''
+
+def is_it_down():
+    slug = "is-it-down"
+    desc = "Is it down, or is it just you? Live status for 30+ big services including Facebook, WhatsApp, Microsoft 365, Gmail and PlayStation, an instant check of your own connection, UK broadband provider status lines and honest what-to-do-next advice. Free from 365 Techies."
+    faqs = [
+      ("How can I tell if it&rsquo;s the service or my connection?",
+       "Two signals together answer it. If the connection panel at the top says your connection is fine and a service&rsquo;s official feed shows problems &mdash; it&rsquo;s them. If several unrelated services fail from your connection while their feeds look healthy &mdash; it&rsquo;s you (or your router). The clincher: try the same site on your phone with Wi&#8209;Fi turned off. Works on mobile data? Your broadband is the problem."),
+      ("Why does half the internet go down at once?",
+       "Because much of the web quietly runs on the same shared infrastructure &mdash; Cloudflare, AWS, Azure and a handful of DNS providers. When one of them has a bad day, thousands of unrelated websites break at the same time. That&rsquo;s why Cloudflare and Azure have their own cards on this page: if one of those shows red, the &lsquo;dozens of sites down&rsquo; mystery is solved."),
+      ("What is a DDoS attack?",
+       "A Distributed Denial of Service attack floods a website or service with junk traffic from thousands of hijacked machines until real users can&rsquo;t get through. It targets <em>services</em>, not home users &mdash; nobody is DDoSing your router. If you run a business site and are threatened or attacked, don&rsquo;t pay: report it to Action Fraud on 0300 123 2040 and talk to your host about protection (<a href=\"/cybersecurity-support/\">we can help</a>)."),
+      ("Who do I call when my broadband is down?",
+       "Your provider &mdash; the main UK status checkers and support numbers are listed on this page. Check for a power cut first (call 105, free) and restart the router properly. If the provider says the line is fine but your computer, Wi&#8209;Fi or network still misbehaves, that&rsquo;s exactly what we fix &mdash; call 01202 775566."),
+      ("Does turning the router off and on again actually help?",
+       "Genuinely, yes &mdash; it clears the router&rsquo;s memory and forces a fresh connection to your provider, which fixes a surprising share of faults. Do it properly: unplug the power, wait 30 seconds, plug back in, and give it up to 5 minutes to fully reconnect. Never press the recessed reset pin &mdash; that wipes your settings entirely."),
+      ("How live is this page?",
+       "The official feeds are re-read every couple of minutes through our server (so the providers aren&rsquo;t hammered by every visitor), and the &lsquo;from your connection&rsquo; checks run live in your browser the moment you load or refresh the page. One honest caveat: a service can answer a reachability check yet still have a partial fault &mdash; that&rsquo;s why cards link to the official status pages too."),
+    ]
+    content = "\n".join([
+      hero(bc("Is It Down?"), "// IS IT DOWN, OR IS IT JUST YOU?",
+           'Is it down, or is it <em class="grad grad--cyan">just you?</em>',
+           "Live status for 30+ big services &mdash; Facebook, WhatsApp, Microsoft 365, Gmail, PlayStation and more &mdash; plus an instant test of your own connection, the main UK providers&rsquo; outage lines, and honest advice on what to do next.",
+           cta1=("Check now &mdash; free", "#downtool"), cta2=("Broadband provider lines", "#iid-isps"),
+           chips=["Live official feeds", "Tests YOUR connection", "UK provider numbers"]),
+      ISITDOWN_TOOL,
+      faq_html(faqs),
+      tools_strip(["speed", "dns", "healthcheck"], title="While you&rsquo;re here &mdash; more free checks", alt=False),
+      cta("Still down when everything says it shouldn&rsquo;t be?",
+          "Then it&rsquo;s something local &mdash; the router, the computer, the Wi&#8209;Fi, a setting. That&rsquo;s our home turf: same-day help, usually within minutes remotely, from a friendly Dorset family firm.",
+          primary=("Get Help Now", "/contact/"), secondary=("Monthly IT Support", "/monthly-it-support/")),
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        return graph([crumb(s, "Is It Down?"), webpage(s, "Is It Down? Live Service Status Checker", _desc),
+                      {"@type":"WebApplication","name":"365 Techies Is It Down? Status Checker","applicationCategory":"UtilitiesApplication","operatingSystem":"Web (all browsers)","url":SITE+"/is-it-down/","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},"provider":{"@id":SITE+"/#business"}},
+                      faqpage(s, _faqs)])
+    add(slug=slug, title="Is It Down? Live Service Status & Outage Checker | 365 Techies",
+        desc=desc, og_title="Is It Down, or Is It Just You? Live Status Checker | 365 Techies", schema=schema, content=content)
+is_it_down()
+
 # ===================================================== DNS / DOMAIN LOOKUP
 def dns_lookup():
     slug = "dns-lookup"
@@ -5348,7 +5903,7 @@ def free_tools_hub():
       ("Security &amp; privacy", "Check you&rsquo;re safe &mdash; and lock things down.",
        ["emailsec","breach","pwgen","pwstrength","scamlink","privacy","scamquiz","whatlose"]),
       ("Speed &amp; connectivity", "Test your connection and get everyone online.",
-       ["speed","broadbandcheck","wifiqr","qrgen","coverage"]),
+       ["isitdown","speed","broadbandcheck","wifiqr","qrgen","coverage"]),
       ("Website, domain &amp; email", "See how your website, domain and email really perform.",
        ["website","ssl","domainexp","dns","emailsig"]),
       ("Your computer", "Test it, diagnose it, and make smart decisions.",

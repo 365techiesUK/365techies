@@ -16,7 +16,7 @@ except Exception:
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://365techies.co.uk"
-CSSV = "50"
+CSSV = "51"
 HUBSPOT_ID = "148562638"
 # Public URL of the deployed 365 AI OS. When set, the /365-ai-os/ page shows a
 # prominent "Launch the live demo" button. Leave empty ("") to hide it.
@@ -107,8 +107,8 @@ def ico(name, cls="tile__ico"):
 HEADER = '''  <header class="site-header">
     <div class="status-ticker" aria-hidden="true">
       <div class="status-ticker__track">
-        <span>&#9679; CALL 01202 775566&ensp;//&ensp;FAMILY BUSINESS SINCE 1995&ensp;//&ensp;DORSET MICROSOFT EDUCATION RESOURCE CENTRE 1998&ndash;2008&ensp;//&ensp;IT SUPPORT FOR MERCEDES-BENZ PENTAGON 1998&ndash;2008&ensp;//&ensp;COMPUTER SALES &amp; SERVICE CENTRE 2008&ndash;2017&ensp;//&ensp;KINSON COMMUNITY CENTRE 2017&ndash;NOW&ensp;//&ensp;ENVIRONMENT AGENCY RIVER AVON WIRELESS LINK SINCE 2015&ensp;//&ensp;DELL SPECIALISTS&ensp;//&ensp;WEBSITE DESIGN, HOSTING &amp; EMAIL&ensp;//&ensp;WORK FROM ANYWHERE &mdash; REMOTE PC ACCESS FOR SUPPORT CUSTOMERS&ensp;//&ensp;MICROSOFT PARTNER &amp; OFFICE SPECIALISTS&ensp;//&ensp;WINDOWS &amp; ANDROID SPECIALISTS&ensp;//&ensp;SAME-DAY RESPONSE &middot; USUALLY MINUTES REMOTELY&ensp;//&ensp;<a href="/heatwave-tech-guide/" tabindex="-1">HEATWAVE? KEEP YOUR TECH COOL &mdash; FREE GUIDE</a>&ensp;//&ensp;REMOTE IT SUPPORT ACROSS THE WHOLE UK&ensp;//&ensp;MALWAREBYTES PARTNER&ensp;//&ensp;NVIDIA &amp; SCAN PARTNER&ensp;//&ensp;RICHER SOUNDS PARTNER&ensp;//&ensp;BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;//&ensp;PLANS FROM &pound;18.25/MO&ensp;//&ensp;MON&ndash;FRI 9AM&ndash;5PM&ensp;//&ensp;</span>
-        <span>&#9679; CALL 01202 775566&ensp;//&ensp;FAMILY BUSINESS SINCE 1995&ensp;//&ensp;DORSET MICROSOFT EDUCATION RESOURCE CENTRE 1998&ndash;2008&ensp;//&ensp;IT SUPPORT FOR MERCEDES-BENZ PENTAGON 1998&ndash;2008&ensp;//&ensp;COMPUTER SALES &amp; SERVICE CENTRE 2008&ndash;2017&ensp;//&ensp;KINSON COMMUNITY CENTRE 2017&ndash;NOW&ensp;//&ensp;ENVIRONMENT AGENCY RIVER AVON WIRELESS LINK SINCE 2015&ensp;//&ensp;DELL SPECIALISTS&ensp;//&ensp;WEBSITE DESIGN, HOSTING &amp; EMAIL&ensp;//&ensp;WORK FROM ANYWHERE &mdash; REMOTE PC ACCESS FOR SUPPORT CUSTOMERS&ensp;//&ensp;MICROSOFT PARTNER &amp; OFFICE SPECIALISTS&ensp;//&ensp;WINDOWS &amp; ANDROID SPECIALISTS&ensp;//&ensp;SAME-DAY RESPONSE &middot; USUALLY MINUTES REMOTELY&ensp;//&ensp;<a href="/heatwave-tech-guide/" tabindex="-1">HEATWAVE? KEEP YOUR TECH COOL &mdash; FREE GUIDE</a>&ensp;//&ensp;REMOTE IT SUPPORT ACROSS THE WHOLE UK&ensp;//&ensp;MALWAREBYTES PARTNER&ensp;//&ensp;NVIDIA &amp; SCAN PARTNER&ensp;//&ensp;RICHER SOUNDS PARTNER&ensp;//&ensp;BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;//&ensp;PLANS FROM &pound;18.25/MO&ensp;//&ensp;MON&ndash;FRI 9AM&ndash;5PM&ensp;//&ensp;</span>
+        <span>&#9679; CALL 01202 775566&ensp;//&ensp;FAMILY BUSINESS SINCE 1995&ensp;//&ensp;DORSET MICROSOFT EDUCATION RESOURCE CENTRE 1998&ndash;2008&ensp;//&ensp;IT SUPPORT FOR MERCEDES-BENZ PENTAGON 1998&ndash;2008&ensp;//&ensp;COMPUTER SALES &amp; SERVICE CENTRE 2008&ndash;2017&ensp;//&ensp;KINSON COMMUNITY CENTRE 2017&ndash;NOW&ensp;//&ensp;ENVIRONMENT AGENCY RIVER AVON WIRELESS LINK SINCE 2015&ensp;//&ensp;DELL SPECIALISTS&ensp;//&ensp;WEBSITE DESIGN, HOSTING &amp; EMAIL&ensp;//&ensp;WORK FROM ANYWHERE &mdash; REMOTE PC ACCESS FOR SUPPORT CUSTOMERS&ensp;//&ensp;MICROSOFT PARTNER &amp; OFFICE SPECIALISTS&ensp;//&ensp;WINDOWS &amp; ANDROID SPECIALISTS&ensp;//&ensp;SAME-DAY RESPONSE &middot; USUALLY MINUTES REMOTELY&ensp;//&ensp;<a href="/heatwave-tech-guide/" tabindex="-1">HEATWAVE? KEEP YOUR TECH COOL &mdash; FREE GUIDE</a>&ensp;//&ensp;<a href="/is-it-down/" tabindex="-1">IS IT DOWN, OR IS IT JUST YOU? CHECK LIVE</a>&ensp;//&ensp;REMOTE IT SUPPORT ACROSS THE WHOLE UK&ensp;//&ensp;MALWAREBYTES PARTNER&ensp;//&ensp;NVIDIA &amp; SCAN PARTNER&ensp;//&ensp;RICHER SOUNDS PARTNER&ensp;//&ensp;BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;//&ensp;PLANS FROM &pound;18.25/MO&ensp;//&ensp;MON&ndash;FRI 9AM&ndash;5PM&ensp;//&ensp;</span>
+        <span>&#9679; CALL 01202 775566&ensp;//&ensp;FAMILY BUSINESS SINCE 1995&ensp;//&ensp;DORSET MICROSOFT EDUCATION RESOURCE CENTRE 1998&ndash;2008&ensp;//&ensp;IT SUPPORT FOR MERCEDES-BENZ PENTAGON 1998&ndash;2008&ensp;//&ensp;COMPUTER SALES &amp; SERVICE CENTRE 2008&ndash;2017&ensp;//&ensp;KINSON COMMUNITY CENTRE 2017&ndash;NOW&ensp;//&ensp;ENVIRONMENT AGENCY RIVER AVON WIRELESS LINK SINCE 2015&ensp;//&ensp;DELL SPECIALISTS&ensp;//&ensp;WEBSITE DESIGN, HOSTING &amp; EMAIL&ensp;//&ensp;WORK FROM ANYWHERE &mdash; REMOTE PC ACCESS FOR SUPPORT CUSTOMERS&ensp;//&ensp;MICROSOFT PARTNER &amp; OFFICE SPECIALISTS&ensp;//&ensp;WINDOWS &amp; ANDROID SPECIALISTS&ensp;//&ensp;SAME-DAY RESPONSE &middot; USUALLY MINUTES REMOTELY&ensp;//&ensp;<a href="/heatwave-tech-guide/" tabindex="-1">HEATWAVE? KEEP YOUR TECH COOL &mdash; FREE GUIDE</a>&ensp;//&ensp;<a href="/is-it-down/" tabindex="-1">IS IT DOWN, OR IS IT JUST YOU? CHECK LIVE</a>&ensp;//&ensp;REMOTE IT SUPPORT ACROSS THE WHOLE UK&ensp;//&ensp;MALWAREBYTES PARTNER&ensp;//&ensp;NVIDIA &amp; SCAN PARTNER&ensp;//&ensp;RICHER SOUNDS PARTNER&ensp;//&ensp;BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;//&ensp;PLANS FROM &pound;18.25/MO&ensp;//&ensp;MON&ndash;FRI 9AM&ndash;5PM&ensp;//&ensp;</span>
       </div>
     </div>
     <div class="header-bar">
@@ -193,6 +193,7 @@ HEADER = '''  <header class="site-header">
             <a href="/custom-pc-builder/">Custom PC Builder</a>
             <a href="/victron-system-builder/">Victron System Builder</a>
             <a href="/spot-the-scam/">Spot the Scam Quiz</a>
+            <a href="/is-it-down/">Is It Down? Status Checker</a>
           </div>
         </div>
         <div class="nav-item has-dropdown">
@@ -204,6 +205,7 @@ HEADER = '''  <header class="site-header">
             <a href="/book-a-collection/">Book a Collection</a>
             <a href="/remote-support/">Start Remote Support</a>
             <a href="/emergency-it-help/">Emergency IT Help</a>
+            <a href="/is-it-down/">Is Something Down?</a>
             <a href="/support-portal/">Support Portal</a>
             <a href="/splashtop-business-guide/">Remote Access Guide</a>
             <a href="/dell-latitude-3520-guide/">Dell Laptop Guide</a>
@@ -325,6 +327,7 @@ HEADER = '''  <header class="site-header">
           <a href="/custom-pc-builder/">Custom PC Builder</a>
           <a href="/victron-system-builder/">Victron System Builder</a>
           <a href="/spot-the-scam/">Spot the Scam Quiz</a>
+          <a href="/is-it-down/">Is It Down? Status Checker</a>
         </div>
       </details>
       <details class="m-group">
@@ -334,6 +337,7 @@ HEADER = '''  <header class="site-header">
           <a href="/book-a-collection/">Book a Collection</a>
           <a href="/remote-support/">Start Remote Support</a>
           <a href="/emergency-it-help/">Emergency IT Help</a>
+          <a href="/is-it-down/">Is Something Down?</a>
           <a href="/support-portal/">Support Portal</a>
           <a href="/splashtop-business-guide/">Remote Access Guide</a>
           <a href="/dell-latitude-3520-guide/">Dell Laptop Guide</a>
@@ -469,6 +473,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/book-a-collection/">Book a Collection</a>
         <a href="/remote-support/">Start Remote Support</a>
         <a href="/emergency-it-help/">Emergency IT Help</a>
+        <a href="/is-it-down/">Is Something Down?</a>
         <a href="/support-portal/">Support Portal</a>
         <a href="/splashtop-business-guide/">Remote Access Guide</a>
         <a href="/dell-latitude-3520-guide/">Dell Laptop Guide</a>
@@ -500,6 +505,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/cost-calculator/">Cost Calculator</a>
         <a href="/plan-finder/">Plan Finder</a>
         <a href="/spot-the-scam/">Spot the Scam Quiz</a>
+        <a href="/is-it-down/">Is It Down? Status Checker</a>
       </nav>
       <nav aria-label="Services links">
         <p class="site-footer__head mono">SERVICES</p>
@@ -2056,6 +2062,7 @@ TOOLS = {
   "whatlose":     ("What Would You Lose?", "/what-would-you-lose/", "A 20-second check of how safe your photos, files and records really are."),
   "aicalc":       ("AI ROI Calculator", "/ai-roi-calculator/", "Could AI genuinely save your business time and money? Work it out."),
   "servercloud":  ("Server or Cloud?", "/server-or-cloud-picker/", "Get a clear, jargon-free steer on the right setup for your business."),
+  "isitdown":     ("Is It Down?", "/is-it-down/", "Facebook quiet? Email dead? Live status for 30+ big services &mdash; and whether it&rsquo;s them or your connection."),
 }
 
 def tool_cards(keys):
@@ -4208,7 +4215,7 @@ add(
    ]),
    promise_strip(items=[PROMISE_CALL, PROMISE_PEOPLE, PROMISE_ETA]),
    REMOTE_ACCESS_BAND,
-   tools_strip(["speed", "healthcheck", "faultcheck"], title="While you wait &mdash; try our free tools"),
+   tools_strip(["isitdown", "speed", "healthcheck", "faultcheck"], title="While you wait &mdash; try our free tools"),
    cta("Need help right now?", "Start a secure remote session, or join a monthly plan so help is always one message away.",
        primary=("Get Remote Support", "/contact/"), secondary=("View Monthly Plans", "/monthly-it-support/")),
  ]),
@@ -4319,7 +4326,7 @@ add(
       </div>
     </section>''',
    faq_html(M365_FAQS),
-   tools_strip(["emailsec", "m365picker", "breach"], title="Free tools while you&rsquo;re here", alt=False),
+   tools_strip(["isitdown", "emailsec", "m365picker", "breach"], title="Free tools while you&rsquo;re here", alt=False),
    cta("Get Microsoft 365 working for you", "Stuck with Outlook, Teams or a migration? Get it sorted by Microsoft partners &mdash; or fold Microsoft 365 into a monthly plan.",
        primary=("Get Microsoft 365 Support", "/contact/"), secondary=("View Monthly Plans", "/monthly-it-support/")),
  ]),
