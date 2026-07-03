@@ -1597,6 +1597,17 @@ def off_grid():
         <p class="mono" data-reveal style="text-align:center;font-size:.72rem;color:#7f8ea0;margin:.9rem 0 0">Live from Victron VRM &middot; updates at our GX logging interval.</p>
       </div>
     </section>''' if VRM_EMBED_URL else ""),
+      f'''    <section class="how" aria-label="From watching to owning">
+      <div class="wrap">
+        <p class="eyebrow eyebrow--center mono" data-reveal>// FROM WATCHING TO OWNING</p>
+        <h2 class="section-title section-title--center" data-title>Seen it working? Now build yours<span class="title-underline title-underline--center"></span></h2>
+        <p class="lede lede--center" data-reveal>That dashboard above is our real van, live right now &mdash; nothing staged. Here&rsquo;s the clean path from watching ours to running your own.</p>
+        <ol class="how__steps">
+{steps([("Watch it work","The live feed above is the exact Victron kit we install &mdash; solar coming in, battery breathing, every number real."),("Build your own","Four questions in the builder below and you&rsquo;ll have your complete kit list &mdash; components, cables, fuses, tools and the golden rules."),("We make it real","Have us design, supply and fit it &mdash; or sanity-check your own build. Either way, it ends up monitored on VRM, just like ours.")])}
+        </ol>
+      </div>
+    </section>''',
+      VBUILDER_TOOL,
       f'''    <section class="section section--alt" aria-label="Clean, mobile, off-grid">
       <div class="wrap">
         <div class="section-head">
