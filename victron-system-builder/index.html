@@ -245,6 +245,14 @@
         },
         {
           "@type": "Question",
+          "name": "How accurate are the price guides?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "They&rsquo;re typical UK retail ranges (as of mid-2026) meant for planning a budget, not quoting a job &mdash; Victron prices move with sales and stock, so the live links always show today&rsquo;s real price. Expect the truth to land inside the range most of the time, and add the 10&ndash;15% cabling allowance on top."
+          }
+        },
+        {
+          "@type": "Question",
           "name": "Why Victron?",
           "acceptedAnswer": {
             "@type": "Answer",
@@ -603,7 +611,7 @@
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>// FREE SYSTEM BUILDER</p>
           <h2 class="section-title section-title--center" data-title>Build your Victron system<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>Answer four questions and get the <strong>complete build</strong> &mdash; every Victron component, plus the exact cables, lugs and fuses for each circuit, the tools you&rsquo;ll need, and the golden rules that keep it safe. Links to buy every part, or one button to have us fit the lot.</p>
+          <p class="lede lede--center" data-reveal>Answer four questions and get the <strong>complete build</strong> &mdash; every component with a realistic price guide, the exact cables, lugs and fuses per circuit, the smart order to buy it all in, and a build sheet you can download. Or one button to have us fit the lot.</p>
         </div>
         <div id="vb" data-reveal>
           <div class="vb-q">
@@ -642,9 +650,13 @@
           <div class="vb-summary" id="vb-summary"></div>
           <h3 class="vb-sec-t">&#9889; The kit</h3>
           <div class="vb-spec" id="vb-spec"></div>
+          <p class="vb-price-note">Price guides are typical UK retail as of mid-2026 &mdash; a planning aid, not a quote. The live links always show today&rsquo;s real price, and sales happen.</p>
           <h3 class="vb-sec-t">&#128268; Cables, lugs &amp; fuses &mdash; per circuit</h3>
           <p class="vb-sec-sub">Sized for short runs (&le;3m one way) at 12V &mdash; longer runs need upsizing for voltage drop. Use tinned (marine) cable and adhesive-lined heatshrink on every lug. <strong>A fuse protects its cable</strong> &mdash; never fit a bigger fuse than the cable is rated for.</p>
           <div class="vb-spec" id="vb-wiring"></div>
+          <h3 class="vb-sec-t">&#128176; On a budget? Buy it in this order</h3>
+          <p class="vb-sec-sub">You don&rsquo;t need it all on day one. This is the order that keeps you safe and useful at every stage &mdash; each phase works on its own.</p>
+          <div class="vb-spec" id="vb-phases"></div>
           <h3 class="vb-sec-t">&#128736;&#65039; Tools for the job</h3>
           <div class="vb-tools-grid">
             <div class="vb-tools-col"><p class="vb-tools-h">Essential</p><div id="vb-tools-ess"></div></div>
@@ -663,6 +675,7 @@
           </ul>
           <p class="vb-links-note" id="vb-links-note"></p>
           <div class="vb-actions">
+            <button type="button" class="button primary" id="vb-dl">Download build sheet &#8595;</button>
             <button type="button" class="button vb-ghost" id="vb-copy">Copy full build list</button>
           </div>
           <p class="vb-note">Indicative starter build, not a full design &mdash; battery bank size, alternator limits, run lengths and ventilation all change the answer, and every van, boat and building is different. We check everything before we fit anything.</p>
@@ -689,16 +702,25 @@
       #vb .vb-sum-chip b{color:#39d353}
       #vb .vb-sec-t{font-size:1.05rem;margin:1.8rem 0 .4rem;color:#fff}
       #vb .vb-sec-sub{font-size:.78rem;color:var(--muted,#9aa6c2);line-height:1.55;margin:0 0 .8rem}
+      #vb .vb-price-note{font-size:.72rem;color:var(--muted,#9aa6c2);margin:.7rem 0 0;opacity:.85;text-align:center}
       #vb .vb-spec{display:flex;flex-direction:column;gap:.7rem}
       #vb .vb-item{padding:1rem 1.1rem;border-radius:13px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1)}
+      #vb .vb-item-top{display:flex;justify-content:space-between;gap:.8rem;align-items:baseline;flex-wrap:wrap}
       #vb .vb-item-cat{font-size:.66rem;text-transform:uppercase;letter-spacing:.07em;color:var(--cyan,#37c2c2)}
       #vb .vb-item-name{font-size:1rem;font-weight:700;color:#fff;margin:.15rem 0}
+      #vb .vb-item-price{font-size:.92rem;font-weight:800;color:#39d353;white-space:nowrap}
       #vb .vb-item-why{font-size:.82rem;color:var(--muted,#9aa6c2);line-height:1.5;margin:.2rem 0 .6rem}
       #vb .vb-buy{display:flex;gap:.5rem;flex-wrap:wrap}
       #vb .vb-buy a{font-size:.78rem;font-weight:600;text-decoration:none;padding:.4rem .85rem;border-radius:9px;border:1px solid rgba(255,255,255,.22);color:inherit;transition:all .15s}
       #vb .vb-buy a:hover{border-color:var(--cyan,#37c2c2);color:var(--cyan,#37c2c2)}
       #vb .vb-wire-specs{display:flex;gap:.4rem;flex-wrap:wrap;margin:.4rem 0 .6rem}
       #vb .vb-wire-chip{font-size:.72rem;font-weight:600;padding:.25rem .6rem;border-radius:7px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:#dbe7ff}
+      #vb .vb-phase{display:flex;gap:.9rem;align-items:flex-start;padding:.9rem 1.1rem;border-radius:13px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1)}
+      #vb .vb-phase-n{flex:none;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;background:rgba(57,211,83,.12);border:1px solid rgba(57,211,83,.4);color:#39d353}
+      #vb .vb-phase-b{flex:1}
+      #vb .vb-phase-t{margin:0;font-size:.95rem;font-weight:700;color:#fff}
+      #vb .vb-phase-t span{font-weight:800;color:#39d353;font-size:.85rem;margin-left:.5rem;white-space:nowrap}
+      #vb .vb-phase-d{margin:.2rem 0 0;font-size:.8rem;color:var(--muted,#9aa6c2);line-height:1.5}
       #vb .vb-tools-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
       #vb .vb-tools-col{padding:1rem 1.1rem;border-radius:13px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1)}
       #vb .vb-tools-h{margin:0 0 .6rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--cyan,#37c2c2)}
@@ -712,7 +734,7 @@
       #vb .vb-rules li::before{content:"\2713";position:absolute;left:.85rem;color:#39d353;font-weight:800}
       #vb .vb-rules b{color:#fff}
       #vb .vb-links-note{text-align:center;font-size:.72rem;color:var(--muted,#9aa6c2);margin:1.2rem 0 0;opacity:.85}
-      #vb .vb-actions{display:flex;justify-content:center;margin-top:1rem}
+      #vb .vb-actions{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center;margin-top:1rem}
       #vb .vb-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}
       #vb .vb-ghost.done{border-color:#2ecc71;color:#2ecc71}
       #vb .vb-note{margin:1.4rem auto 0;max-width:72ch;text-align:center;font-size:.76rem;color:var(--muted,#9aa6c2);line-height:1.6}
@@ -729,6 +751,7 @@
         function amzn(q){ return 'https://www.amazon.co.uk/s?k='+encodeURIComponent(q)+(AMZN_TAG?('&tag='+AMZN_TAG):''); }
         function bimble(q){ return 'https://www.bimblesolar.com/index.php?route=product/search&search='+encodeURIComponent(q); }
         function buyBtns(q){ return '<div class="vb-buy"><a href="'+amzn(q)+'" target="_blank" rel="noopener'+(AMZN_TAG?' sponsored':'')+'">Amazon UK &#8599;</a><a href="'+bimble(q)+'" target="_blank" rel="noopener">Bimble Solar &#8599;</a></div>'; }
+        function gb(lo,hi){ return lo==null?null:('&pound;'+lo+'&ndash;&pound;'+hi); }
         var state={wh:800,inv:'none',b2b:'yes',mon:'basic'};
         function chipGroup(sel,attr,key){
           root.querySelectorAll(sel+' .vb-chip').forEach(function(b){
@@ -748,19 +771,20 @@
         whR.addEventListener('input',function(){ state.wh=+whR.value; whOut.textContent=state.wh;
           root.querySelectorAll('[data-wh]').forEach(function(x){x.classList.remove('is-on');}); calc(); });
         chipGroup('#vb-inv','data-inv','inv'); chipGroup('#vb-b2b','data-b2b','b2b'); chipGroup('#vb-mon','data-mon','mon');
+        /* price bands: typical UK retail, mid-2026 — a labelled GUIDE; live links show today's price */
         var MPPTS=[
-          {max:220, name:'Victron SmartSolar MPPT 75/15',  battmm:'6mm&sup2;',  fuse:'20A blade/MIDI', lug:'ferrule (screw terminal)', fq:'20A midi fuse'},
-          {max:290, name:'Victron SmartSolar MPPT 100/20', battmm:'6mm&sup2;',  fuse:'25A MIDI',       lug:'ferrule (screw terminal)', fq:'25A midi fuse'},
-          {max:440, name:'Victron SmartSolar MPPT 100/30', battmm:'10mm&sup2;', fuse:'40A MIDI',       lug:'ferrule (screw terminal)', fq:'40A midi fuse'},
-          {max:700, name:'Victron SmartSolar MPPT 100/50', battmm:'16mm&sup2;', fuse:'60A MIDI',       lug:'ferrule (screw terminal)', fq:'60A midi fuse'},
-          {max:1000,name:'Victron SmartSolar MPPT 150/70', battmm:'25mm&sup2;', fuse:'100A MEGA',      lug:'25mm&sup2; lugs at the fuse/busbar end', fq:'100A mega fuse'}
+          {max:220, name:'Victron SmartSolar MPPT 75/15',  lo:70, hi:95,  battmm:'6mm&sup2;',  fuse:'20A blade/MIDI', lug:'ferrule (screw terminal)', fq:'20A midi fuse'},
+          {max:290, name:'Victron SmartSolar MPPT 100/20', lo:100,hi:130, battmm:'6mm&sup2;',  fuse:'25A MIDI',       lug:'ferrule (screw terminal)', fq:'25A midi fuse'},
+          {max:440, name:'Victron SmartSolar MPPT 100/30', lo:140,hi:180, battmm:'10mm&sup2;', fuse:'40A MIDI',       lug:'ferrule (screw terminal)', fq:'40A midi fuse'},
+          {max:700, name:'Victron SmartSolar MPPT 100/50', lo:200,hi:250, battmm:'16mm&sup2;', fuse:'60A MIDI',       lug:'ferrule (screw terminal)', fq:'60A midi fuse'},
+          {max:1000,name:'Victron SmartSolar MPPT 150/70', lo:380,hi:460, battmm:'25mm&sup2;', fuse:'100A MEGA',      lug:'25mm&sup2; lugs at the fuse/busbar end', fq:'100A mega fuse'}
         ];
         var INV={
-          small:{name:'Victron Phoenix 12/800',q:'Victron Phoenix inverter 12 800',why:'Clean 230V for laptops, TVs and chargers up to ~650W continuous.',
+          small:{name:'Victron Phoenix 12/800',q:'Victron Phoenix inverter 12 800',lo:180,hi:230,why:'Clean 230V for laptops, TVs and chargers up to ~650W continuous.',
                  mm:'25mm&sup2;',fuse:'100A MEGA',lug:'25mm&sup2; M8 lugs',cq:'25mm2 tinned battery cable',lq:'25mm2 M8 copper tube lug',fq:'100A mega fuse'},
-          micro:{name:'Victron MultiPlus 12/2000/80',q:'Victron MultiPlus 12 2000',why:'Runs a ~900W microwave with headroom, and doubles as an 80A mains charger on hook-up.',
+          micro:{name:'Victron MultiPlus 12/2000/80',q:'Victron MultiPlus 12 2000',lo:700,hi:880,why:'Runs a ~900W microwave with headroom, and doubles as an 80A mains charger on hook-up.',
                  mm:'70mm&sup2; (or 2&times; 35mm&sup2;)',fuse:'300A MEGA',lug:'70mm&sup2; M8 lugs',cq:'70mm2 flexible battery cable',lq:'70mm2 M8 copper tube lug',fq:'300A mega fuse'},
-          kettle:{name:'Victron MultiPlus 12/3000/120',q:'Victron MultiPlus 12 3000',why:'Kettles and induction hobs pull 2&ndash;3kW &mdash; this handles them, and charges at 120A on hook-up.',
+          kettle:{name:'Victron MultiPlus 12/3000/120',q:'Victron MultiPlus 12 3000',lo:1000,hi:1250,why:'Kettles and induction hobs pull 2&ndash;3kW &mdash; this handles them, and charges at 120A on hook-up.',
                  mm:'2&times; 70mm&sup2; per pole',fuse:'400A (Class-T with lithium)',lug:'70mm&sup2; M8 lugs',cq:'70mm2 flexible battery cable',lq:'70mm2 M8 copper tube lug',fq:'Class-T fuse 400A'}
         };
         function calc(){
@@ -770,20 +794,24 @@
           var pvSummer=Math.ceil(whLoss/4.2*1.25/10)*10;
           var panels=Math.max(1,Math.ceil(pvW/175)), pvTot=panels*175;
           var items=[], wiring=[];
-          /* ---- kit ---- */
-          if(liAh<=100) items.push({cat:'Battery',name:'Victron SuperPack 12.8V 100Ah',q:'Victron SuperPack 100Ah lithium',why:'Covers your '+Math.round(ahDay)+' Ah/day with a 1.5-day buffer, using lithium&rsquo;s ~90% usable capacity. Built-in BMS &mdash; the DIY-friendly one.'});
-          else if(liAh<=200) items.push({cat:'Battery',name:'Victron SuperPack 12.8V 200Ah (or 2&times; 100Ah)',q:'Victron SuperPack 200Ah lithium',why:'Covers your '+Math.round(ahDay)+' Ah/day with a 1.5-day buffer. Built-in BMS &mdash; the DIY-friendly one.'});
-          else if(liAh<=400) items.push({cat:'Battery',name:'2&times; Victron SuperPack 12.8V 200Ah',q:'Victron SuperPack 200Ah lithium',why:'You need ~'+liAh+' Ah of lithium for '+Math.round(ahDay)+' Ah/day with buffer &mdash; paired SuperPacks keep it simple (equal-length pair leads!).'});
-          else items.push({cat:'Battery',name:'Victron Smart LiFePO4 bank ('+liAh+' Ah) &mdash; talk to us',q:'Victron Smart LiFePO4 330Ah',why:'At this size you&rsquo;re into external-BMS territory with Class-T fusing &mdash; great systems, but they deserve proper design.'});
-          items.push({cat:'Solar panels',name:panels+'&times; 175W rigid panel ('+pvTot+'W total)',q:'175W rigid solar panel',why:'Sized for spring/autumn (~'+pvW+'W needed); summer needs only ~'+pvSummer+'W. UK winter is ~1 sun-hour &mdash; plan on engine or hook-up charging then.'});
+          /* ---- kit (with price bands) ---- */
+          if(liAh<=100) items.push({cat:'Battery',name:'Victron SuperPack 12.8V 100Ah',q:'Victron SuperPack 100Ah lithium',lo:650,hi:850,why:'Covers your '+Math.round(ahDay)+' Ah/day with a 1.5-day buffer, using lithium&rsquo;s ~90% usable capacity. Built-in BMS &mdash; the DIY-friendly one.'});
+          else if(liAh<=200) items.push({cat:'Battery',name:'Victron SuperPack 12.8V 200Ah (or 2&times; 100Ah)',q:'Victron SuperPack 200Ah lithium',lo:1200,hi:1600,why:'Covers your '+Math.round(ahDay)+' Ah/day with a 1.5-day buffer. Built-in BMS &mdash; the DIY-friendly one.'});
+          else if(liAh<=400) items.push({cat:'Battery',name:'2&times; Victron SuperPack 12.8V 200Ah',q:'Victron SuperPack 200Ah lithium',lo:2400,hi:3100,why:'You need ~'+liAh+' Ah of lithium for '+Math.round(ahDay)+' Ah/day with buffer &mdash; paired SuperPacks keep it simple (equal-length pair leads!).'});
+          else items.push({cat:'Battery',name:'Victron Smart LiFePO4 bank ('+liAh+' Ah) &mdash; talk to us',q:'Victron Smart LiFePO4 330Ah',lo:null,hi:null,why:'At this size you&rsquo;re into external-BMS territory with Class-T fusing &mdash; great systems, but they deserve proper design (and a proper quote).'});
+          items.push({cat:'Solar panels',name:panels+'&times; 175W rigid panel ('+pvTot+'W total)',q:'175W rigid solar panel',lo:panels*100,hi:panels*140,why:'Sized for spring/autumn (~'+pvW+'W needed); summer needs only ~'+pvSummer+'W. UK winter is ~1 sun-hour &mdash; plan on engine or hook-up charging then.'});
           var m=null; for(var i=0;i<MPPTS.length;i++){ if(pvTot<=MPPTS[i].max){ m=MPPTS[i]; break; } }
-          if(m) items.push({cat:'Solar controller',name:m.name,q:m.name,why:'Matched to '+pvTot+'W of panels on a 12V system, with Bluetooth built in.'});
-          else items.push({cat:'Solar controller',name:'Dual controllers &mdash; talk to us',q:'Victron SmartSolar MPPT 150/70',why:'Over 1kW of solar on 12V wants splitting across two controllers &mdash; worth designing properly.'});
-          if(state.b2b==='yes') items.push({cat:'Engine charging',name:'Victron Orion XS 12/12-50',q:'Victron Orion XS 12 12 50',why:'Up to 50A into the battery while you drive &mdash; smart-alternator safe, and your reliable winter charger.'});
+          if(m) items.push({cat:'Solar controller',name:m.name,q:m.name,lo:m.lo,hi:m.hi,why:'Matched to '+pvTot+'W of panels on a 12V system, with Bluetooth built in.'});
+          else items.push({cat:'Solar controller',name:'Dual controllers &mdash; talk to us',q:'Victron SmartSolar MPPT 150/70',lo:null,hi:null,why:'Over 1kW of solar on 12V wants splitting across two controllers &mdash; worth designing properly.'});
+          if(state.b2b==='yes') items.push({cat:'Engine charging',name:'Victron Orion XS 12/12-50',q:'Victron Orion XS 12 12 50',lo:180,hi:230,why:'Up to 50A into the battery while you drive &mdash; smart-alternator safe, and your reliable winter charger.'});
           var inv=INV[state.inv]||null;
-          if(inv) items.push({cat:state.inv==='small'?'Inverter':'Inverter/charger',name:inv.name,q:inv.q,why:inv.why});
-          if(state.mon==='full') items.push({cat:'Monitoring',name:'Victron SmartShunt 500A + Cerbo GX + GX Touch 50',q:'Victron Cerbo GX',why:'The full remote-monitoring stack (VRM) &mdash; the exact setup streaming our own van live on this site.'});
-          else items.push({cat:'Monitoring',name:'Victron SmartShunt 500A',q:'Victron SmartShunt 500A',why:'Proper state-of-charge on your phone via Bluetooth &mdash; the gauge every lithium system needs.'});
+          if(inv) items.push({cat:state.inv==='small'?'Inverter':'Inverter/charger',name:inv.name,q:inv.q,lo:inv.lo,hi:inv.hi,why:inv.why});
+          if(state.mon==='full'){ items.push({cat:'Monitoring',name:'Victron SmartShunt 500A + Cerbo GX + GX Touch 50',q:'Victron Cerbo GX',lo:440,hi:560,why:'The full remote-monitoring stack (VRM) &mdash; the exact setup streaming our own van live on this site.'}); }
+          else items.push({cat:'Monitoring',name:'Victron SmartShunt 500A',q:'Victron SmartShunt 500A',lo:90,hi:115,why:'Proper state-of-charge on your phone via Bluetooth &mdash; the gauge every lithium system needs.'});
+          /* ---- totals ---- */
+          var tLo=0,tHi=0,unpriced=false;
+          items.forEach(function(it){ if(it.lo==null){ unpriced=true; } else { tLo+=it.lo; tHi+=it.hi; } });
+          var cabLo=Math.round(tLo*0.10/10)*10, cabHi=Math.round(tHi*0.15/10)*10;
           /* ---- wiring per circuit ---- */
           var mainFuse = inv ? inv.fuse : '100A MEGA';
           var mainFq   = inv ? inv.fq   : '100A mega fuse';
@@ -808,14 +836,24 @@
           wiring.push({cat:'12V distribution',name:'Blade fuse box for the small stuff',specs:['10mm&sup2; feed','40A MIDI feed fuse','12-way fuse box'],
             why:'Lights, pumps, USB and fridge each get their own blade fuse. Label every circuit &mdash; future-you says thanks.',
             links:[['12-way blade fuse box','12 way blade fuse box negative bus'],['Cable: 10mm2','10mm2 tinned cable'],['Feed fuse: 40A MIDI','40A midi fuse']]});
+          /* ---- buy-order phases (only what's in THIS build) ---- */
+          var phases=[];
+          var batt=items[0];
+          phases.push({t:'The backbone: battery, shunt &amp; safety',p:gb(batt.lo?batt.lo+90:null,batt.hi?batt.hi+115:null),d:'Battery + SmartShunt + isolator and main fuse. Storage and an honest gauge come first &mdash; you can charge on hook-up (or your existing charger) while you save for the rest.'});
+          if(state.b2b==='yes') phases.push({t:'Charging while driving',p:gb(180,230),d:'The Orion XS. Pound for pound the most dependable charge you can add &mdash; and it carries you through the UK winter, before solar even enters the chat.'});
+          phases.push({t:'Solar for freedom',p:gb((m?m.lo:0)+panels*100,(m?m.hi:0)+panels*140),d:'Panels + controller. Now you park anywhere and the batteries fill themselves three seasons of the year.'});
+          if(inv) phases.push({t:'230V comfort',p:gb(inv.lo,inv.hi),d:'The inverter'+(state.inv==='small'?'':'/charger')+' is the last of the big buys &mdash; unless mains appliances are the whole point of your build, it can happily wait a season.'});
+          if(state.mon==='full') phases.push({t:'The brain (any time)',p:gb(350,445),d:'Cerbo GX + Touch 50 can join whenever &mdash; the moment they do, your system is watchable from anywhere, like our van on this site.'});
           /* ---- render ---- */
           root.querySelector('#vb-summary').innerHTML=
             '<span class="vb-sum-chip"><b>'+Math.round(whLoss)+'</b> Wh/day (incl. losses)</span>'+
             '<span class="vb-sum-chip"><b>'+liAh+'</b> Ah lithium</span>'+
             '<span class="vb-sum-chip"><b>'+pvTot+'</b> W solar</span>'+
-            '<span class="vb-sum-chip"><b>'+(inv?inv.name.replace('Victron ',''):'no inverter')+'</b></span>';
+            '<span class="vb-sum-chip">Kit guide: <b>'+(unpriced?('from &pound;'+tLo.toLocaleString()):('&pound;'+tLo.toLocaleString()+'&ndash;&pound;'+tHi.toLocaleString()))+'</b></span>'+
+            '<span class="vb-sum-chip">+ <b>&pound;'+cabLo+'&ndash;&pound;'+cabHi+'</b> cabling &amp; fusing</span>';
           root.querySelector('#vb-spec').innerHTML=items.map(function(it){
-            return '<div class="vb-item"><div class="vb-item-cat">'+it.cat+'</div><div class="vb-item-name">'+it.name+'</div>'+
+            var price=gb(it.lo,it.hi);
+            return '<div class="vb-item"><div class="vb-item-top"><div><div class="vb-item-cat">'+it.cat+'</div><div class="vb-item-name">'+it.name+'</div></div>'+(price?('<div class="vb-item-price">~'+price+'</div>'):'')+'</div>'+
               '<p class="vb-item-why">'+it.why+'</p>'+buyBtns(it.q)+'</div>';
           }).join('');
           root.querySelector('#vb-wiring').innerHTML=wiring.map(function(w){
@@ -824,7 +862,11 @@
             return '<div class="vb-item"><div class="vb-item-cat">'+w.cat+'</div><div class="vb-item-name">'+w.name+'</div>'+
               '<div class="vb-wire-specs">'+chips+'</div><p class="vb-item-why">'+w.why+'</p><div class="vb-buy">'+links+'</div></div>';
           }).join('');
-          root.__kit=items; root.__wiring=wiring;
+          root.querySelector('#vb-phases').innerHTML=phases.map(function(p,i){
+            return '<div class="vb-phase"><div class="vb-phase-n">'+(i+1)+'</div><div class="vb-phase-b"><p class="vb-phase-t">'+p.t+(p.p?('<span>~'+p.p+'</span>'):'')+'</p><p class="vb-phase-d">'+p.d+'</p></div></div>';
+          }).join('');
+          root.__kit=items; root.__wiring=wiring; root.__phases=phases;
+          root.__totals={tLo:tLo,tHi:tHi,unpriced:unpriced,cabLo:cabLo,cabHi:cabHi,whLoss:Math.round(whLoss),liAh:liAh,pvTot:pvTot};
         }
         var TOOLS_ESS=[
           ['Hydraulic lug crimper (8&ndash;70mm&sup2;)','One proper crimp beats ten dodgy ones &mdash; the single most important tool for battery cable.','hydraulic crimping tool 8-70mm2'],
@@ -851,14 +893,58 @@
             ? 'Retail buttons open live searches. As an Amazon Associate we earn from qualifying purchases &mdash; at no extra cost to you. Bimble Solar links are not affiliated.'
             : 'Retail buttons open live searches on each store &mdash; we don&rsquo;t earn anything from them; it&rsquo;s simply the kit we rate and fit.';
         }
+        function plain(h){ var d=document.createElement('div'); d.innerHTML=h; return d.textContent; }
+        /* ---- branded downloadable build sheet ---- */
+        root.querySelector('#vb-dl').addEventListener('click',function(){
+          var items=root.__kit||[], wiring=root.__wiring||[], phases=root.__phases||[], T=root.__totals||{};
+          var W=1080, rowH=46, y=0;
+          var H=250 + items.length*rowH + 70 + wiring.length*rowH + 70 + phases.length*rowH + 210;
+          var cv=document.createElement('canvas'); cv.width=W; cv.height=H; var x=cv.getContext('2d');
+          x.fillStyle='#070d22'; x.fillRect(0,0,W,H);
+          x.strokeStyle='rgba(125,170,220,0.25)'; x.lineWidth=2; x.strokeRect(14,14,W-28,H-28);
+          x.fillStyle='#1d97e3'; x.font='700 26px "IBM Plex Mono", Consolas, monospace'; x.fillText('365 TECHIES',60,72);
+          x.fillStyle='#9fb5d3'; x.font='16px "IBM Plex Mono", Consolas, monospace'; x.fillText('// MY VICTRON BUILD SHEET  ·  '+new Date().toLocaleDateString(),60,100);
+          x.fillStyle='#eaf4ff'; x.font='800 40px Archivo, Arial, sans-serif'; x.fillText('Off-grid system plan',60,150);
+          x.fillStyle='#39d353'; x.font='700 20px Archivo, Arial, sans-serif';
+          x.fillText(T.whLoss+' Wh/day  ·  '+T.liAh+' Ah lithium  ·  '+T.pvTot+' W solar  ·  kit '+(T.unpriced?('from £'+T.tLo.toLocaleString()):('£'+T.tLo.toLocaleString()+'–£'+T.tHi.toLocaleString()))+' + £'+T.cabLo+'–£'+T.cabHi+' cabling',60,184);
+          y=230;
+          function section(title){ x.fillStyle='#37c2c2'; x.font='700 17px "IBM Plex Mono", Consolas, monospace'; x.fillText(title,60,y); y+=14; x.strokeStyle='rgba(255,255,255,0.12)'; x.beginPath(); x.moveTo(60,y); x.lineTo(W-60,y); x.stroke(); y+=32; }
+          section('THE KIT');
+          items.forEach(function(it){
+            x.fillStyle='#9fb5d3'; x.font='12px Archivo, Arial, sans-serif'; x.fillText(plain(it.cat).toUpperCase(),60,y-14);
+            x.fillStyle='#eaf4ff'; x.font='600 19px Archivo, Arial, sans-serif'; x.fillText(plain(it.name).slice(0,58),60,y+6);
+            if(it.lo!=null){ x.fillStyle='#39d353'; x.font='700 18px Archivo, Arial, sans-serif'; x.textAlign='right'; x.fillText('~£'+it.lo+'–£'+it.hi,W-60,y+6); x.textAlign='left'; }
+            y+=rowH;
+          });
+          y+=24; section('CABLES, LUGS & FUSES');
+          wiring.forEach(function(w){
+            x.fillStyle='#eaf4ff'; x.font='600 17px Archivo, Arial, sans-serif'; x.fillText(plain(w.cat)+': '+plain(w.name).slice(0,44),60,y-6);
+            x.fillStyle='#9fb5d3'; x.font='14px Archivo, Arial, sans-serif'; x.fillText(w.specs.map(plain).join('  ·  ').slice(0,92),60,y+14);
+            y+=rowH;
+          });
+          y+=24; section('ON A BUDGET — BUY IT IN THIS ORDER');
+          phases.forEach(function(p,i){
+            x.fillStyle='#39d353'; x.font='800 18px Archivo, Arial, sans-serif'; x.fillText((i+1)+'.',60,y);
+            x.fillStyle='#eaf4ff'; x.font='600 17px Archivo, Arial, sans-serif'; x.fillText(plain(p.t).slice(0,54)+(p.p?('   ~'+plain(p.p)):''),88,y);
+            y+=rowH-8;
+          });
+          y+=30;
+          x.fillStyle='#9fb5d3'; x.font='13px Archivo, Arial, sans-serif';
+          x.fillText('Indicative guide (typical UK retail, mid-2026) — not a quote. Fuses protect cables; sizes assume short runs at 12V.',60,y); y+=22;
+          x.fillText('Golden rules: fuse every positive · crimp don’t solder · all negatives through the shunt · 230V = electrician.',60,y); y+=40;
+          x.fillStyle='#eaf4ff'; x.font='700 24px Archivo, Arial, sans-serif'; x.fillText('Designed, supplied & fitted — or we’ll check your build, free.',60,y); y+=32;
+          x.fillStyle='#1d97e3'; x.font='700 24px Archivo, Arial, sans-serif'; x.fillText('365techies.co.uk/victron-system-builder  ·  01202 775566',60,y);
+          try{ var a=document.createElement('a'); a.download='365-victron-build-sheet.png'; a.href=cv.toDataURL('image/png'); a.click(); }catch(e){}
+        });
         root.querySelector('#vb-copy').addEventListener('click',function(){
-          var btn=this, items=root.__kit||[], wiring=root.__wiring||[];
-          function plain(h){ var d=document.createElement('div'); d.innerHTML=h; return d.textContent; }
-          var txt='My Victron build (via 365techies.co.uk/victron-system-builder/):\n\nKIT\n'+
-            items.map(function(it){ return '• '+it.cat+': '+plain(it.name); }).join('\n')+
+          var btn=this, items=root.__kit||[], wiring=root.__wiring||[], phases=root.__phases||[], T=root.__totals||{};
+          var txt='My Victron build (via 365techies.co.uk/victron-system-builder/):\n'+
+            'Kit guide: '+(T.unpriced?('from £'+T.tLo):('£'+T.tLo+'–£'+T.tHi))+' + £'+T.cabLo+'–£'+T.cabHi+' cabling & fusing (typical UK retail — check live prices)\n\nKIT\n'+
+            items.map(function(it){ return '• '+plain(it.cat)+': '+plain(it.name)+(it.lo!=null?(' — ~£'+it.lo+'–£'+it.hi):''); }).join('\n')+
             '\n\nCABLES, LUGS & FUSES\n'+
             wiring.map(function(w){ return '• '+plain(w.cat)+': '+plain(w.name)+' — '+w.specs.map(plain).join(', '); }).join('\n')+
-            '\n\nTOOLS: '+TOOLS_ESS.map(function(t){return plain(t[0]);}).join(', ');
+            '\n\nBUY IT IN THIS ORDER\n'+
+            phases.map(function(p,i){ return (i+1)+'. '+plain(p.t)+(p.p?(' ~'+plain(p.p)):''); }).join('\n');
           function ok(){ btn.textContent='Copied!'; btn.classList.add('done'); setTimeout(function(){ btn.textContent='Copy full build list'; btn.classList.remove('done'); },1800); }
           if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(ok).catch(function(){}); }
           else { var ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); ok(); }catch(e){} document.body.removeChild(ta); }
@@ -880,6 +966,10 @@
         <details class="faq" data-reveal>
           <summary>Are the shop links affiliate links?<span class="faq__icon" aria-hidden="true"></span></summary>
           <div class="faq__ans"><p>No &mdash; the buttons simply open live searches on Amazon UK and Bimble Solar for each part, and we don&rsquo;t earn a penny from them. If that ever changes we&rsquo;ll say so clearly right next to the links. We recommend this kit because we install it and run it ourselves.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>How accurate are the price guides?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>They&rsquo;re typical UK retail ranges (as of mid-2026) meant for planning a budget, not quoting a job &mdash; Victron prices move with sales and stock, so the live links always show today&rsquo;s real price. Expect the truth to land inside the range most of the time, and add the 10&ndash;15% cabling allowance on top.</p></div>
         </details>
         <details class="faq" data-reveal>
           <summary>Why Victron?<span class="faq__icon" aria-hidden="true"></span></summary>

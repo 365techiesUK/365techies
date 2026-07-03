@@ -587,7 +587,7 @@
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>// FREE PC BUILDER</p>
           <h2 class="section-title section-title--center" data-title>Plan your custom PC, properly<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>Tell us the budget and what it&rsquo;s for, and we&rsquo;ll split your money across the parts the way experienced builders do &mdash; what to spend on each component, what class of part that buys, and a live Scan.co.uk search for each one.</p>
+          <p class="lede lede--center" data-reveal>Tell us the budget and what it&rsquo;s for, and we&rsquo;ll split your money across the parts the way experienced builders do &mdash; what to spend on each component, what class of part that buys, a live Scan.co.uk search for each one, and a build sheet to download.</p>
         </div>
         <div id="pcb" data-reveal>
           <div class="pb-q">
@@ -621,6 +621,15 @@
           <div class="pb-warn" id="pb-warn" hidden></div>
           <h3 class="pb-sec-t">&#128295; Your build &mdash; where the money goes</h3>
           <div class="pb-spec" id="pb-spec"></div>
+          <h3 class="pb-sec-t">&#128176; Tight budget? What to buy first &mdash; and what can wait</h3>
+          <ul class="pb-rules">
+            <li><b>The power supply never gets trimmed.</b> Buy the quality 80+ Gold unit on day one &mdash; it protects everything you add later, and a good one outlives two builds.</li>
+            <li><b>Motherboard, CPU, PSU and case first.</b> That&rsquo;s a machine that boots (on integrated graphics if your CPU has them) and a platform you&rsquo;ll never have to rip apart.</li>
+            <li><b>The graphics card can come last.</b> GPU prices swing more than any other part &mdash; bridge with integrated graphics or a cheap used card, then pounce when the sales hit.</li>
+            <li><b>Storage and memory are the easy laters.</b> Start at 1TB and one 2&times;8GB kit if you must &mdash; both drop in later in minutes. Just always buy RAM as a matched pair, never a single stick &ldquo;to add to&rdquo;.</li>
+            <li><b>Case bling and RGB wait at the back of the queue.</b> A &pound;60 mesh case cools as well as a &pound;150 showpiece &mdash; looks are the one upgrade with zero performance.</li>
+            <li><b>Under ~&pound;600 all-in?</b> Be honest with yourself: a <a href="/dell-hardware/">refurbished business-grade Dell from &pound;299</a> plus a graphics card later usually beats a compromised new build.</li>
+          </ul>
           <h3 class="pb-sec-t">&#128161; Golden rules of PC building</h3>
           <ul class="pb-rules">
             <li><b>Never cheap out on the power supply.</b> A quality 80+ Gold unit from a reputable brand protects every other part &mdash; a bad one can take them with it.</li>
@@ -640,6 +649,7 @@
           </ul>
           <p class="pb-links-note" id="pb-links-note"></p>
           <div class="pb-actions">
+            <button type="button" class="button primary" id="pb-dl">Download build sheet &#8595;</button>
             <button type="button" class="button pb-ghost" id="pb-copy">Copy build plan</button>
           </div>
           <p class="pb-note">Honest guidance, not gospel: component generations move fast, so we point you at the right <em>class</em> of part for your money and link to live listings rather than quoting prices that would be stale by Friday. Sales (and GPU price swings!) can move the sweet spots.</p>
@@ -681,8 +691,9 @@
       #pcb .pb-rules li{padding:.7rem 1rem .7rem 2.2rem;border-radius:11px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);font-size:.85rem;color:var(--muted,#9aa6c2);line-height:1.55;position:relative}
       #pcb .pb-rules li::before{content:"\2713";position:absolute;left:.85rem;color:#39d353;font-weight:800}
       #pcb .pb-rules b{color:#fff}
+      #pcb .pb-rules a{color:var(--cyan,#37c2c2)}
       #pcb .pb-links-note{text-align:center;font-size:.72rem;color:var(--muted,#9aa6c2);margin:1.2rem 0 0;opacity:.85}
-      #pcb .pb-actions{display:flex;justify-content:center;margin-top:1rem}
+      #pcb .pb-actions{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center;margin-top:1rem}
       #pcb .pb-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}
       #pcb .pb-ghost.done{border-color:#2ecc71;color:#2ecc71}
       #pcb .pb-note{margin:1.4rem auto 0;max-width:72ch;text-align:center;font-size:.76rem;color:var(--muted,#9aa6c2);line-height:1.6}
@@ -752,7 +763,7 @@
           var total=items.reduce(function(a,i){return a+i.sp;},0);
           root.querySelector('#pb-summary').innerHTML=
             '<span class="pb-sum-chip">Budget <b>&pound;'+state.b+'</b></span>'+
-            '<span class="pb-sum-chip">Allocated <b>&pound;'+total+'</b></span>'+
+            '<span class="pb-sum-chip">Estimated build total <b>~&pound;'+total+'</b></span>'+
             '<span class="pb-sum-chip"><b>'+items.length+'</b> parts</span>'+
             (Math.abs(state.b-total)>30?'<span class="pb-sum-chip">~&pound;'+Math.abs(state.b-total)+' '+(state.b>total?'headroom for sales &amp; shipping':'over — trim the case or cooler')+'</span>':'');
           root.querySelector('#pb-spec').innerHTML=items.map(function(it){
@@ -762,13 +773,59 @@
           root.querySelector('#pb-links-note').innerHTML = AMZN_TAG
             ? 'Buttons open live searches — prices always come from the retailer, never from us. As an Amazon Associate we earn from qualifying purchases; Scan links are not affiliated.'
             : 'Buttons open live searches on each store — prices always come from the retailer, never from us, and we don&rsquo;t earn anything from these links.';
-          root.__build=items;
+          root.__build=items; root.__meta={b:state.b,use:state.use,total:total};
         }
+        function plain(h){ var d=document.createElement('div'); d.innerHTML=h; return d.textContent; }
+        var BUYFIRST=[
+          'PSU quality never gets trimmed — buy it right on day one',
+          'Board + CPU + PSU + case first: a platform you never rip apart',
+          'GPU last — bridge on integrated/used, pounce on the sales',
+          'Storage & RAM drop in later (always matched RAM pairs)',
+          'Case bling and RGB wait at the back of the queue'
+        ];
+        root.querySelector('#pb-dl').addEventListener('click',function(){
+          var items=root.__build||[], M=root.__meta||{};
+          var W=1080, rowH=52;
+          var H=250 + items.length*rowH + 60 + BUYFIRST.length*36 + 190;
+          var cv=document.createElement('canvas'); cv.width=W; cv.height=H; var x=cv.getContext('2d');
+          x.fillStyle='#070d22'; x.fillRect(0,0,W,H);
+          x.strokeStyle='rgba(125,170,220,0.25)'; x.lineWidth=2; x.strokeRect(14,14,W-28,H-28);
+          x.fillStyle='#1d97e3'; x.font='700 26px "IBM Plex Mono", Consolas, monospace'; x.fillText('365 TECHIES',60,72);
+          x.fillStyle='#9fb5d3'; x.font='16px "IBM Plex Mono", Consolas, monospace'; x.fillText('// MY PC BUILD PLAN  ·  '+new Date().toLocaleDateString(),60,100);
+          var useLabel={gaming:'Gaming build',creative:'Creative build',office:'Office build',cad:'CAD / 3D build'}[M.use]||'Custom build';
+          x.fillStyle='#eaf4ff'; x.font='800 40px Archivo, Arial, sans-serif'; x.fillText(useLabel,60,150);
+          x.fillStyle='#39d353'; x.font='700 20px Archivo, Arial, sans-serif';
+          x.fillText('Budget £'+M.b+'  ·  estimated build total ~£'+M.total+'  ·  '+items.length+' parts',60,184);
+          var y=234;
+          x.fillStyle='#37c2c2'; x.font='700 17px "IBM Plex Mono", Consolas, monospace'; x.fillText('THE BUILD',60,y); y+=14;
+          x.strokeStyle='rgba(255,255,255,0.12)'; x.beginPath(); x.moveTo(60,y); x.lineTo(W-60,y); x.stroke(); y+=34;
+          items.forEach(function(it){
+            x.fillStyle='#9fb5d3'; x.font='12px Archivo, Arial, sans-serif'; x.fillText(plain(it.cat).toUpperCase(),60,y-16);
+            x.fillStyle='#eaf4ff'; x.font='600 19px Archivo, Arial, sans-serif'; x.fillText(plain(it.name).slice(0,60),60,y+6);
+            x.fillStyle='#39d353'; x.font='700 19px Archivo, Arial, sans-serif'; x.textAlign='right'; x.fillText('~£'+it.sp,W-60,y+6); x.textAlign='left';
+            y+=rowH;
+          });
+          y+=18;
+          x.fillStyle='#37c2c2'; x.font='700 17px "IBM Plex Mono", Consolas, monospace'; x.fillText('TIGHT BUDGET? BUY IN THIS ORDER',60,y); y+=14;
+          x.strokeStyle='rgba(255,255,255,0.12)'; x.beginPath(); x.moveTo(60,y); x.lineTo(W-60,y); x.stroke(); y+=30;
+          BUYFIRST.forEach(function(r,i){
+            x.fillStyle='#39d353'; x.font='800 17px Archivo, Arial, sans-serif'; x.fillText((i+1)+'.',60,y);
+            x.fillStyle='#dbe7ff'; x.font='15px Archivo, Arial, sans-serif'; x.fillText(r,88,y);
+            y+=36;
+          });
+          y+=18;
+          x.fillStyle='#9fb5d3'; x.font='13px Archivo, Arial, sans-serif';
+          x.fillText('Allocations from your own budget — live prices come from the retailer. Golden rules: PSU quality · 2 RAM sticks · check the 3 clearances.',60,y); y+=38;
+          x.fillStyle='#eaf4ff'; x.font='700 24px Archivo, Arial, sans-serif'; x.fillText('Free basket sanity-check before you buy — just send it over.',60,y); y+=32;
+          x.fillStyle='#1d97e3'; x.font='700 24px Archivo, Arial, sans-serif'; x.fillText('365techies.co.uk/custom-pc-builder  ·  01202 775566',60,y);
+          try{ var a=document.createElement('a'); a.download='365-pc-build-plan.png'; a.href=cv.toDataURL('image/png'); a.click(); }catch(e){}
+        });
         root.querySelector('#pb-copy').addEventListener('click',function(){
-          var btn=this, items=root.__build||[];
-          function plain(h){ var d=document.createElement('div'); d.innerHTML=h; return d.textContent; }
-          var txt='My PC build plan — £'+state.b+' '+state.use+' (via 365techies.co.uk/custom-pc-builder/):\n'+
-            items.map(function(it){ return '• '+it.cat+': '+plain(it.name)+' — budget ~£'+it.sp; }).join('\n');
+          var btn=this, items=root.__build||[], M=root.__meta||{};
+          var txt='My PC build plan — £'+M.b+' '+M.use+' (via 365techies.co.uk/custom-pc-builder/):\n'+
+            'Estimated build total ~£'+M.total+'\n'+
+            items.map(function(it){ return '• '+it.cat+': '+plain(it.name)+' — budget ~£'+it.sp; }).join('\n')+
+            '\n\nBuy-first order: '+BUYFIRST.join(' → ');
           function ok(){ btn.textContent='Copied!'; btn.classList.add('done'); setTimeout(function(){ btn.textContent='Copy build plan'; btn.classList.remove('done'); },1800); }
           if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(ok).catch(function(){}); }
           else { var ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); ok(); }catch(e){} document.body.removeChild(ta); }
