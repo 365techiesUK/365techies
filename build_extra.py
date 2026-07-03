@@ -1541,7 +1541,7 @@ def off_grid():
         var idle=(s.battW!=null&&Math.abs(s.battW)<=3);
         var stateLabel=idle?"Resting":(charging?"Charging":"Discharging");
         var col=(s.soc>=70)?"#39d353":((s.soc>=40)?"#e0b341":"#e06a4a");
-        tween("[data-soc]","soc",s.soc,function(v){return Math.round(v)+"%";});
+        tween("[data-soc]","soc",s.soc,function(v){return v.toFixed(1)+"%";});
         var st=q("[data-state]"); if(st)st.textContent=stateLabel;
         tween("[data-pv]","pv",s.pvW,function(v){return Math.round(v)+" W";});
         tween("[data-load]","load",loadW,function(v){return Math.round(v)+" W";});
@@ -5537,7 +5537,7 @@ def battery_installs():
             var charging=s.battState==="charging"||(s.battW!=null&&s.battW>3);
             var idle=(s.battW!=null&&Math.abs(s.battW)<=3);
             var col=(s.soc>=70)?"#39d353":((s.soc>=40)?"#e0b341":"#e06a4a");
-            tw("[data-m-soc]","soc",s.soc,function(v){return Math.round(v)+"%";});
+            tw("[data-m-soc]","soc",s.soc,function(v){return v.toFixed(1)+"%";});
             var stt=q("[data-m-state]"); if(stt)stt.textContent=idle?"Resting":(charging?"Charging":"Discharging");
             tw("[data-m-pv]","pv",s.pvW,function(v){return Math.round(v)+" W";});
             tw("[data-m-bw]","bw",s.battW,function(v){return (v>0?"+":"")+Math.round(v)+" W";});

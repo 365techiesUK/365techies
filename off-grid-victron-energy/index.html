@@ -720,7 +720,7 @@
         var idle=(s.battW!=null&&Math.abs(s.battW)<=3);
         var stateLabel=idle?"Resting":(charging?"Charging":"Discharging");
         var col=(s.soc>=70)?"#39d353":((s.soc>=40)?"#e0b341":"#e06a4a");
-        tween("[data-soc]","soc",s.soc,function(v){return Math.round(v)+"%";});
+        tween("[data-soc]","soc",s.soc,function(v){return v.toFixed(1)+"%";});
         var st=q("[data-state]"); if(st)st.textContent=stateLabel;
         tween("[data-pv]","pv",s.pvW,function(v){return Math.round(v)+" W";});
         tween("[data-load]","load",loadW,function(v){return Math.round(v)+" W";});
