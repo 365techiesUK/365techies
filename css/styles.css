@@ -995,7 +995,7 @@ body.menu-open { overflow: hidden; }
 }
 .site-footer__grid {
   display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 300px repeat(auto-fit, minmax(150px, 1fr));
   gap: 2.2rem;
   max-width: 1320px; margin: 0 auto;
 }
@@ -1087,9 +1087,9 @@ body.menu-open { overflow: hidden; }
   .hero__console { display: none; }
 }
 
-/* full nav only shows when it comfortably fits; below 1200px use the hamburger
+/* full nav only shows when it comfortably fits; below 1280px use the hamburger
    (placed here, after the base .mobile-menu-button rule, so it wins the cascade) */
-@media (max-width: 1200px) {
+@media (max-width: 1279px) {
   .desktop-nav { display: none; }
   .mobile-menu-button { display: flex; }
 }
