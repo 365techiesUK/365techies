@@ -2191,8 +2191,9 @@ def dell_hardware():
           <h2 class="section-title section-title--center" data-title>The easy owner&rsquo;s guide<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>Every laptop we supply comes with a plain-English guide &mdash; every port explained with an interactive tour, three ways to power it (including the efficient 12V USB-C trick for vans and off-grid), battery care and 60-second fixes.</p>
         </div>
-        <div class="blog-grid" data-stagger style="max-width:420px;margin:0 auto">
-          <a class="post-card" href="/dell-latitude-3520-guide/"><p class="post-card__cat">Guide</p><h3>Dell Latitude 3520 &mdash; The Easy Guide</h3><p>Interactive port tour &middot; home, desk &amp; off-grid power &middot; battery care &middot; quick fixes.</p><span class="post-card__more">Open the guide &#8594;</span></a>
+        <div class="blog-grid" data-stagger style="max-width:760px;margin:0 auto">
+          <a class="post-card" href="/dell-latitude-3520-guide/"><p class="post-card__cat">Laptop guide</p><h3>Dell Latitude 3520 &mdash; The Easy Guide</h3><p>Interactive port tour &middot; home, desk &amp; off-grid power &middot; battery care &middot; quick fixes.</p><span class="post-card__more">Open the guide &#8594;</span></a>
+          <a class="post-card" href="/dell-optiplex-guide/"><p class="post-card__cat">Desktop guide</p><h3>Dell OptiPlex &mdash; The Easy Guide</h3><p>Front &amp; back ports &middot; dual monitors &middot; UPS advice &middot; upgrades &amp; 60-second fixes.</p><span class="post-card__more">Open the guide &#8594;</span></a>
         </div>
       </div>
     </section>''',
@@ -4616,6 +4617,244 @@ def dell_3520_guide():
         desc=desc, og_title="Dell Latitude 3520 — The Easy Guide | 365 Techies", schema=schema, content=content)
 dell_3520_guide()
 
+# ===================================================== DELL OPTIPLEX EASY GUIDE (animated owner's guide)
+DELLOPTI_WIDGET = r'''    <section class="section" aria-label="Interactive port guide" id="dopttool">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// KNOW YOUR PORTS</p>
+          <h2 class="section-title section-title--center" data-title>Front and back, explained<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Tap any port to see what it does &mdash; or press <strong>Play tour</strong> and let the guide walk you round the box.</p>
+        </div>
+        <div id="dop" data-reveal>
+          <div class="do-edges">
+            <div class="do-edge-block">
+              <p class="do-edge-label">Front panel</p>
+              <svg viewBox="0 0 560 64" class="do-svg" id="do-front" role="group" aria-label="Front panel ports"></svg>
+            </div>
+            <div class="do-edge-block">
+              <p class="do-edge-label">Back panel</p>
+              <svg viewBox="0 0 560 64" class="do-svg" id="do-back" role="group" aria-label="Back panel ports"></svg>
+            </div>
+          </div>
+          <div class="do-detail" id="do-detail"></div>
+          <div class="do-controls"><button type="button" class="button primary" id="do-tour">&#9654; Play tour</button></div>
+          <p class="do-caption">Typical OptiPlex small-form-factor layout &mdash; the exact port mix varies by model and generation, but if the port&rsquo;s on your machine, this is what it does.</p>
+        </div>
+      </div>
+      <style>
+      #dop{max-width:820px;margin:0 auto}
+      #dop .do-edges{display:flex;flex-direction:column;gap:1rem}
+      #dop .do-edge-label{font:600 .7rem/1 ui-monospace,monospace;letter-spacing:.07em;text-transform:uppercase;color:var(--muted,#9aa6c2);margin:0 0 .35rem}
+      #dop .do-svg{width:100%;display:block;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:12px}
+      #dop .do-port{cursor:pointer}
+      #dop .do-port rect.slot{fill:rgba(255,255,255,.14);stroke:rgba(255,255,255,.35);stroke-width:1;rx:3;transition:all .2s}
+      #dop .do-port text{fill:#9aa6c2;font-size:9px;font-family:ui-monospace,monospace;text-anchor:middle;pointer-events:none}
+      #dop .do-port.on rect.slot{fill:rgba(55,194,194,.45);stroke:var(--cyan,#37c2c2)}
+      #dop .do-port.on text{fill:#fff}
+      #dop .do-port circle.pulse{fill:none;stroke:var(--cyan,#37c2c2);stroke-width:2;opacity:0}
+      #dop .do-port.on circle.pulse{animation:dopulse 1.6s ease-out infinite}
+      @keyframes dopulse{0%{opacity:.9;r:6}100%{opacity:0;r:20}}
+      @media (prefers-reduced-motion: reduce){#dop .do-port.on circle.pulse{animation:none;opacity:.5}}
+      #dop .do-detail{margin-top:1.1rem;padding:1.1rem 1.2rem;border-radius:13px;background:rgba(55,194,194,.07);border:1px solid rgba(55,194,194,.3);min-height:96px}
+      #dop .do-d-name{margin:0 0 .3rem;font-size:1.05rem;font-weight:800;color:#fff}
+      #dop .do-d-name span{font-size:.68rem;font-weight:600;color:var(--cyan,#37c2c2);text-transform:uppercase;letter-spacing:.06em;margin-left:.5rem}
+      #dop .do-d-desc{margin:0;font-size:.88rem;color:var(--muted,#9aa6c2);line-height:1.6}
+      #dop .do-controls{display:flex;justify-content:center;margin-top:1rem}
+      #dop .do-caption{text-align:center;font-size:.72rem;color:var(--muted,#9aa6c2);margin:1rem 0 0;opacity:.85}
+      </style>
+      <script>
+      (function(){
+        var root=document.getElementById('dop'); if(!root) return;
+        var PORTS=[
+          {side:'F',tag:'PWR',name:'Power button',where:'Front',desc:'One press to start. If the machine misbehaves, holding it for 15 seconds forces a full shutdown &mdash; the desktop version of &ldquo;turn it off and on again&rdquo;. A flashing amber light instead of white is the machine telling us a diagnostic code &mdash; note the blink pattern and call us.'},
+          {side:'F',tag:'USB',name:'Front USB &mdash; the convenient ones',where:'Front',desc:'For things you plug in and out: memory sticks, phone charging, a camera. On most models some front ports are fast (USB 3.x) and some are standard &mdash; if a big file copy feels slow, try another port.'},
+          {side:'F',tag:'AUX',name:'Headset jack',where:'Front',desc:'Headphones or a headset with mic. If sound keeps coming from the wrong place after unplugging, click the speaker icon in Windows and pick the right output.'},
+          {side:'B',tag:'AC',name:'Mains power (kettle lead)',where:'Back',desc:'The standard three-pin &ldquo;kettle lead&rdquo; (C13) &mdash; any replacement from any office will fit. Push it FIRMLY home; a half-seated kettle lead is behind a surprising number of &ldquo;dead computer&rdquo; callouts.'},
+          {side:'B',tag:'DP',name:'DisplayPort &times;2 &mdash; your monitors',where:'Back',desc:'Most OptiPlex machines have TWO DisplayPorts &mdash; dual monitors out of the box, no extra hardware. Monitor only has HDMI? A simple DP-to-HDMI cable sorts it. Plug in, then Win+P to arrange the screens.'},
+          {side:'B',tag:'VID',name:'Extra video port (some models)',where:'Back',desc:'Many configurations add a third video output here &mdash; HDMI or VGA depending on the model. Handy for a third screen or an older monitor.'},
+          {side:'B',tag:'USB',name:'Rear USB &mdash; the permanent ones',where:'Back',desc:'Four or more USB ports for the things that never move: keyboard, mouse, printer, backup drive. These connect straight to the board &mdash; if a front port is playing up, test the device here.'},
+          {side:'B',tag:'LAN',name:'Wired network (RJ-45)',where:'Back',desc:'Plug into your router or office network for the most reliable connection there is &mdash; desktops belong on cable where possible. No setup needed; the little green/amber lights flicker when it&rsquo;s talking.'},
+          {side:'B',tag:'OUT',name:'Line-out audio',where:'Back',desc:'For powered speakers at a desk. Use the front jack for headsets; this rear one is the tidy home for permanent speakers.'}
+        ];
+        var active=-1, tour=null;
+        function draw(svgId,side){
+          var svg=root.querySelector(svgId), ps=PORTS.map(function(p,i){return {p:p,i:i};}).filter(function(x){return x.p.side===side;});
+          var n=ps.length, gap=560/(n+1), h='';
+          ps.forEach(function(x,k){
+            var cx=gap*(k+1);
+            h+='<g class="do-port" data-i="'+x.i+'" tabindex="0" role="button" aria-label="'+x.p.name.replace(/&mdash;|&amp;|&times;/g,'')+'">'+
+               '<circle class="pulse" cx="'+cx+'" cy="26" r="8"></circle>'+
+               '<rect class="slot" x="'+(cx-18)+'" y="18" width="36" height="16" rx="3"></rect>'+
+               '<text x="'+cx+'" y="52">'+x.p.tag+'</text></g>';
+          });
+          svg.innerHTML=h;
+        }
+        draw('#do-front','F'); draw('#do-back','B');
+        var detail=root.querySelector('#do-detail');
+        function show(i){
+          active=i;
+          root.querySelectorAll('.do-port').forEach(function(g){ g.classList.toggle('on', +g.getAttribute('data-i')===i); });
+          var p=PORTS[i];
+          detail.innerHTML='<p class="do-d-name">'+p.name+'<span>'+p.where+'</span></p><p class="do-d-desc">'+p.desc+'</p>';
+        }
+        root.querySelectorAll('.do-port').forEach(function(g){
+          function go(){ stopTour(); show(+g.getAttribute('data-i')); }
+          g.addEventListener('click',go);
+          g.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go(); } });
+        });
+        var tourBtn=root.querySelector('#do-tour');
+        function stopTour(){ if(tour){ clearInterval(tour); tour=null; tourBtn.innerHTML='&#9654; Play tour'; } }
+        tourBtn.addEventListener('click',function(){
+          if(tour){ stopTour(); return; }
+          tourBtn.innerHTML='&#9632; Stop tour';
+          var i=(active+1)%PORTS.length; show(i);
+          tour=setInterval(function(){ i=(i+1)%PORTS.length; show(i); if(i===PORTS.length-1){ setTimeout(stopTour,3000); } },3200);
+        });
+        show(4); /* start on the dual-DisplayPort superpower */
+      })();
+      </script>
+    </section>
+
+    <section class="section section--alt" aria-label="Setups and power" id="dopptool">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// THREE WAYS TO RUN IT</p>
+          <h2 class="section-title section-title--center" data-title>Home, business desk &amp; off-grid<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Desktops are simple to power &mdash; but a couple of choices make them safer, tidier and (if you must) even off-grid-able.</p>
+        </div>
+        <div id="dpp" data-reveal>
+          <div class="do2-tabs">
+            <button type="button" class="do2-tab is-on" data-mode="home">&#127968; At home</button>
+            <button type="button" class="do2-tab" data-mode="desk">&#128188; Business desk</button>
+            <button type="button" class="do2-tab" data-mode="van">&#9889; Off-grid (honestly)</button>
+          </div>
+          <div class="do2-stage">
+            <svg viewBox="0 0 640 120" class="do2-svg" aria-hidden="true">
+              <path class="do2-line" id="do2-line" d="M120 60 H 520"></path>
+              <g id="do2-src"></g>
+              <g id="do2-mid"></g>
+              <g id="do2-dst"><rect x="500" y="34" width="90" height="52" rx="8" fill="rgba(55,194,194,.12)" stroke="#37c2c2"></rect><text x="545" y="58" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">OptiPlex</text><text x="545" y="74" text-anchor="middle" fill="#9aa6c2" font-size="10">desktop</text></g>
+            </svg>
+            <div class="do2-info" id="do2-info"></div>
+          </div>
+        </div>
+      </div>
+      <style>
+      #dpp{max-width:820px;margin:0 auto}
+      #dpp .do2-tabs{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin-bottom:1.1rem}
+      #dpp .do2-tab{font:inherit;font-size:.88rem;cursor:pointer;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.16);color:inherit;border-radius:99px;padding:.55rem 1.1rem;transition:all .15s}
+      #dpp .do2-tab.is-on{background:rgba(55,194,194,.15);border-color:var(--cyan,#37c2c2);color:var(--cyan,#37c2c2);font-weight:600}
+      #dpp .do2-svg{width:100%;display:block;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:14px}
+      #dpp .do2-line{stroke:var(--cyan,#37c2c2);stroke-width:3;fill:none;stroke-dasharray:10 8;animation:do2flow 1.2s linear infinite}
+      @keyframes do2flow{to{stroke-dashoffset:-18}}
+      @media (prefers-reduced-motion: reduce){#dpp .do2-line{animation:none}}
+      #dpp .do2-info{margin-top:1rem;padding:1.1rem 1.2rem;border-radius:13px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1)}
+      #dpp .do2-eff{display:inline-block;font-size:.72rem;font-weight:700;padding:.25rem .7rem;border-radius:99px;margin-bottom:.6rem}
+      #dpp .do2-eff.good{background:rgba(46,204,113,.12);border:1px solid rgba(46,204,113,.4);color:#7ce0a3}
+      #dpp .do2-eff.avg{background:rgba(241,196,15,.1);border:1px solid rgba(241,196,15,.35);color:#f5d97e}
+      #dpp .do2-info p{margin:0;font-size:.88rem;color:var(--muted,#9aa6c2);line-height:1.65}
+      #dpp .do2-info p b{color:#fff}
+      #dpp .do2-info p a{color:var(--cyan,#37c2c2)}
+      #dpp .do2-buy{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.8rem}
+      #dpp .do2-buy a{font-size:.78rem;font-weight:600;text-decoration:none;padding:.4rem .85rem;border-radius:9px;border:1px solid rgba(255,255,255,.22);color:inherit}
+      #dpp .do2-buy a:hover{border-color:var(--cyan,#37c2c2);color:var(--cyan,#37c2c2)}
+      </style>
+      <script>
+      (function(){
+        var root=document.getElementById('dpp'); if(!root) return;
+        var AMZN_TAG='';
+        function amzn(q){ return 'https://www.amazon.co.uk/s?k='+encodeURIComponent(q)+(AMZN_TAG?('&tag='+AMZN_TAG):''); }
+        function badge(x,y,line1,line2,accent){
+          return '<rect x="'+x+'" y="'+y+'" width="90" height="52" rx="8" fill="rgba(255,255,255,.05)" stroke="'+(accent||'rgba(255,255,255,.3)')+'"></rect>'+
+                 '<text x="'+(x+45)+'" y="'+(y+24)+'" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">'+line1+'</text>'+
+                 '<text x="'+(x+45)+'" y="'+(y+40)+'" text-anchor="middle" fill="#9aa6c2" font-size="10">'+line2+'</text>';
+        }
+        var MODES={
+          home:{src:badge(30,34,'Wall','socket'),mid:badge(265,34,'Surge','protector'),
+            eff:['good','Simple &amp; safe'],
+            info:'<p><b>Plug and go:</b> the kettle lead in firmly, ideally through a <b>surge-protected strip</b> &mdash; cheap insurance for the whole setup. Give the vents a few centimetres of breathing room (not shoved against the wall or buried under paper), and let Windows sleep it between uses; a full shutdown once in a while keeps things fresh.</p>',
+            buy:[['Surge-protected extension strip','surge protected extension lead'],['Spare kettle lead (C13)','C13 kettle lead power cable']]},
+          desk:{src:badge(30,34,'Wall','socket'),mid:badge(265,34,'UPS','battery backup'),
+            eff:['good','Business-grade'],
+            info:'<p><b>The proper business setup:</b> both monitors straight into the twin DisplayPorts (Win+P to arrange), the network on cable, and &mdash; for anything that matters &mdash; a small <b>UPS (battery backup)</b> between wall and PC. A power blip mid-invoice loses work and corrupts files; a UPS rides straight through it and gives you minutes to save. We spec and fit these for Dorset businesses.</p>',
+            buy:[['UPS battery backup (700VA+)','UPS 700VA battery backup'],['DP to HDMI cable','DisplayPort to HDMI cable']]},
+          van:{src:badge(30,34,'12V','leisure battery'),mid:badge(265,34,'Pure sine','inverter'),
+            eff:['avg','Possible &mdash; but hear us out'],
+            info:'<p><b>The honest answer:</b> a desktop CAN run off-grid, but it&rsquo;s the thirsty option. A small-form-factor OptiPlex needs a <b>pure sine wave inverter</b> (300W or more, to cover start-up) and drinks meaningfully more from your leisure battery than any laptop &mdash; plus the inverter&rsquo;s own idle drain. The tiny <b>OptiPlex Micro</b> models are the exception: they run from a laptop-style power brick, so a quality DC&ndash;DC adapter can feed them from 12V without an inverter.</p><p style="margin-top:.6rem"><b>Our honest steer for vans and boats:</b> this is exactly what laptops are for &mdash; a <a href="/dell-latitude-3520-guide/">Latitude on 12V USB-C</a> sips power by comparison. Sizing a system either way? Use the <a href="/victron-system-builder/">Victron System Builder</a>.</p>',
+            buy:[['Pure sine inverter 300W','300W pure sine wave inverter 12V'],['12V&#8594;19.5V DC adapter (Micro models)','12V to 19.5V DC adapter Dell']]}
+        };
+        var src=root.querySelector('#do2-src'), mid=root.querySelector('#do2-mid'), info=root.querySelector('#do2-info');
+        function set(mode){
+          var m=MODES[mode];
+          src.innerHTML=m.src; mid.innerHTML=m.mid;
+          var buys=m.buy.map(function(b){ return '<a href="'+amzn(b[1])+'" target="_blank" rel="noopener'+(AMZN_TAG?' sponsored':'')+'">'+b[0]+' &#8599;</a>'; }).join('');
+          info.innerHTML='<span class="do2-eff '+m.eff[0]+'">'+m.eff[1]+'</span>'+m.info+'<div class="do2-buy">'+buys+'</div>';
+        }
+        root.querySelectorAll('.do2-tab').forEach(function(t){
+          t.addEventListener('click',function(){
+            root.querySelectorAll('.do2-tab').forEach(function(x){x.classList.remove('is-on');});
+            t.classList.add('is-on'); set(t.getAttribute('data-mode'));
+          });
+        });
+        set('home');
+      })();
+      </script>
+    </section>'''
+
+def dell_optiplex_guide():
+    slug = "dell-optiplex-guide"
+    desc = "The easy, animated owner's guide to Dell OptiPlex desktops — front and back ports explained, dual monitors, surge & UPS advice, the honest off-grid answer, upgrades, care and 60-second fixes. From 365 Techies, Dorset."
+    faqs = [
+      ("Can the OptiPlex run two monitors?", "Yes &mdash; most have <b>two DisplayPorts on the back</b>, so dual screens work out of the box. Monitor only has HDMI? A simple DisplayPort-to-HDMI cable sorts it. Plug both in, press Win+P, choose Extend, then drag the screens into the right order in Settings &#8594; Display."),
+      ("Can I upgrade it later?", "That&rsquo;s the OptiPlex party trick: the case opens without tools and takes more memory and storage easily. Machines we supply already have a brand-new SSD; adding RAM or a second drive later is a quick job we do all the time."),
+      ("Can I run a desktop in my campervan or off-grid?", "You can &mdash; small-form-factor models need a pure sine wave inverter and drink noticeably more than a laptop, while the tiny OptiPlex Micro can run from 12V via a DC&ndash;DC adapter. Our honest steer: off-grid is laptop territory &mdash; see the <a href=\"/dell-latitude-3520-guide/\">Latitude 3520 guide</a> for the efficient 12V USB-C setup."),
+      ("What&rsquo;s the power lead called if I lose it?", "A &ldquo;kettle lead&rdquo; (properly: an IEC C13). Any office has a drawer full; any replacement fits. Push it in firmly &mdash; a half-seated one is a classic cause of &lsquo;dead&rsquo; computers."),
+      ("The power light is flashing amber &mdash; what does it mean?", "That&rsquo;s the machine blinking a diagnostic code at you. Count the pattern (e.g. two blinks, pause, three blinks) and tell us &mdash; it identifies the fault before we&rsquo;ve even opened the case."),
+      ("Is this the desktop 365 Techies sells?", "Yes &mdash; refurbished business-grade OptiPlex desktops are half of what we supply (alongside Latitude laptops), from &pound;299: tested, securely wiped, new SSD, 12-month warranty, set up ready to use. See <a href=\"/dell-hardware/\">refurbished Dells</a>."),
+    ]
+    content = "\n".join([
+      hero(bc("Dell OptiPlex Guide"), "// THE EASY OWNER&rsquo;S GUIDE",
+           'Your Dell OptiPlex, <em class="grad grad--cyan">made simple</em>',
+           "Front and back ports explained with an interactive tour, dual monitors done right, surge and battery-backup advice for business, the honest off-grid answer &mdash; plus care, upgrades and 60-second fixes. No jargon, promise.",
+           cta1=("Explore the Ports", "#dopttool"), cta2=("Refurbished Dells from &pound;299", "/dell-hardware/"),
+           chips=["Interactive port tour","Dual monitors &amp; UPS","Plain English"]),
+      DELLOPTI_WIDGET,
+      f'''    <section class="section" aria-label="Care and upgrades">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// KEEP IT HEALTHY</p>
+          <h2 class="section-title section-title--center" data-title>Care &amp; upgrades<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ul class="security-grid" data-stagger>
+{grid_cards([("Let it breathe","Vents need a few centimetres of clear space &mdash; not against the wall, not under the desk drift. Heat is what ages electronics."),("Dust it yearly","A can of compressed air through the vents (machine OFF) once a year keeps fans quiet and temperatures down. We do it as part of every service."),("Room to grow","OptiPlex cases open tool-free and take more memory and storage easily &mdash; a &pound;40 RAM stick years from now beats a new PC. That&rsquo;s an upgrade we do all the time."),("Sleep vs shutdown","Day to day, sleep is fine and instant. A proper restart once a week clears the cobwebs &mdash; and lets Windows updates actually finish.")])}
+        </ul>
+      </div>
+    </section>''',
+      f'''    <section class="section section--alt" aria-label="Quick fixes">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// 60-SECOND FIXES</p>
+          <h2 class="section-title section-title--center" data-title>When something misbehaves<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ul class="security-grid" data-stagger>
+{grid_cards([("Screen says &lsquo;no signal&rsquo;","Check the monitor&rsquo;s INPUT button matches the port you used (DP vs HDMI), and both cable ends are firm. Two monitors, one working? Win+P."),("Won&rsquo;t turn on at all","Kettle lead firmly in at BOTH ends, socket switched on, then hold the power button 15 seconds and try again. Flashing amber? Count the blinks and call us &mdash; it&rsquo;s a code."),("No sound","Speaker icon in Windows &#8594; check the right output is selected &mdash; monitors pretend to be speakers. Headset? Use the front jack."),("USB device not working","Try it in a REAR port &mdash; those connect straight to the board. If it works there, the front panel needs a look."),("Running slow","Gradual slowdown is software clutter or an ageing drive &mdash; a tune-up or SSD/RAM upgrade transforms it. Benchmark it free and see."),("Anything else","That&rsquo;s literally us. Remote support, usually within minutes &mdash; <a href=\"/remote-it-support/\">how it works</a>.")])}
+        </ul>
+      </div>
+    </section>''',
+      faq_html(faqs),
+      tools_strip(["pcbench", "pcbuild", "healthcheck"], title="Free tools for your machine", alt=False),
+      cta("This guide comes with the desktops we sell",
+          "Refurbished business-grade Dell OptiPlex &amp; Latitude from &pound;299 &mdash; tested, new SSD, securely wiped, 12-month warranty, and set up ready to use. Plus a friendly techie on the end of the phone.",
+          primary=("See Refurbished Dells", "/dell-hardware/"), secondary=("Keep It Healthy &mdash; Plans", "/monthly-it-support/")),
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        return graph([crumb(s, "Dell OptiPlex Guide"), webpage(s, "Dell OptiPlex — The Easy Owner's Guide", _desc),
+                      {"@type":"TechArticle","headline":"Dell OptiPlex — The Easy Owner's Guide","about":{"@type":"Product","name":"Dell OptiPlex","brand":{"@type":"Brand","name":"Dell"}},"author":{"@id":SITE+"/#business"},"url":SITE+"/dell-optiplex-guide/"},
+                      faqpage(s, _faqs)])
+    add(slug=slug, title="Dell OptiPlex Easy Guide — Ports, Monitors, UPS & Care | 365 Techies",
+        desc=desc, og_title="Dell OptiPlex — The Easy Guide | 365 Techies", schema=schema, content=content)
+dell_optiplex_guide()
+
 # ===================================================== DNS / DOMAIN LOOKUP
 def dns_lookup():
     slug = "dns-lookup"
@@ -6439,6 +6678,7 @@ info_page(
           <a class="post-card" href="/victron-system-builder/"><p class="post-card__cat">Tool</p><h3>Victron System Builder</h3><p>Four questions &#8594; a complete, honestly-sized Victron kit list with buy links for every part.</p><span class="post-card__more">Build a system &#8594;</span></a>
           <a class="post-card" href="/custom-pc-builder/"><p class="post-card__cat">Tool</p><h3>Custom PC Builder</h3><p>Your budget, split the way experienced builders do it &mdash; part classes, golden rules and live links.</p><span class="post-card__more">Plan a build &#8594;</span></a>
           <a class="post-card" href="/dell-latitude-3520-guide/"><p class="post-card__cat">Guide</p><h3>Dell Latitude 3520 Easy Guide</h3><p>Interactive port tour, three ways to power it (incl. efficient 12V USB-C off-grid), battery care &amp; quick fixes.</p><span class="post-card__more">Read the guide &#8594;</span></a>
+          <a class="post-card" href="/dell-optiplex-guide/"><p class="post-card__cat">Guide</p><h3>Dell OptiPlex Easy Guide</h3><p>Front &amp; back ports explained, dual monitors, UPS advice, upgrades and 60-second fixes.</p><span class="post-card__more">Read the guide &#8594;</span></a>
           <a class="post-card" href="/dns-lookup/"><p class="post-card__cat">Tool</p><h3>DNS Lookup</h3><p>Check any domain&rsquo;s DNS records &mdash; A, MX, NS, TXT &mdash; the settings behind your website and email.</p><span class="post-card__more">Look it up &#8594;</span></a>
           <a class="post-card" href="/pc-benchmark/"><p class="post-card__cat">Tool</p><h3>PC Benchmark</h3><p>How fast is your computer, really? Test CPU, memory, graphics &amp; storage in 20 seconds.</p><span class="post-card__more">Benchmark it &#8594;</span></a>
           <a class="post-card" href="/windows-10-end-of-life/"><p class="post-card__cat">Act now</p><h3>Windows 10 End of Life</h3><p>Support ended in October 2025. Find out in 30 seconds if you&rsquo;re affected &mdash; and your options.</p><span class="post-card__more">Are you affected? &#8594;</span></a>
