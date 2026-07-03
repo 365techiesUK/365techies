@@ -4623,7 +4623,7 @@ def dell_3520_guide():
     ])
     def schema(s, _desc=desc, _faqs=faqs):
         return graph([crumb(s, "Dell Latitude 3520 Guide"), webpage(s, "Dell Latitude 3520 — The Easy Owner's Guide", _desc),
-                      {"@type":"TechArticle","headline":"Dell Latitude 3520 — The Easy Owner's Guide","about":{"@type":"Product","name":"Dell Latitude 3520","brand":{"@type":"Brand","name":"Dell"}},"author":{"@id":SITE+"/#business"},"url":SITE+"/dell-latitude-3520-guide/"},
+                      {"@type":"TechArticle","headline":"Dell Latitude 3520 — The Easy Owner's Guide","about":{"@type":"Thing","name":"Dell Latitude 3520 laptop"},"author":{"@id":SITE+"/#business"},"url":SITE+"/dell-latitude-3520-guide/"},
                       faqpage(s, _faqs)])
     add(slug=slug, title="Dell Latitude 3520 Easy Guide — Ports, Power & Off-Grid USB-C | 365 Techies",
         desc=desc, og_title="Dell Latitude 3520 — The Easy Guide | 365 Techies", schema=schema, content=content)
@@ -4861,7 +4861,7 @@ def dell_optiplex_guide():
     ])
     def schema(s, _desc=desc, _faqs=faqs):
         return graph([crumb(s, "Dell OptiPlex Guide"), webpage(s, "Dell OptiPlex — The Easy Owner's Guide", _desc),
-                      {"@type":"TechArticle","headline":"Dell OptiPlex — The Easy Owner's Guide","about":{"@type":"Product","name":"Dell OptiPlex","brand":{"@type":"Brand","name":"Dell"}},"author":{"@id":SITE+"/#business"},"url":SITE+"/dell-optiplex-guide/"},
+                      {"@type":"TechArticle","headline":"Dell OptiPlex — The Easy Owner's Guide","about":{"@type":"Thing","name":"Dell OptiPlex desktop"},"author":{"@id":SITE+"/#business"},"url":SITE+"/dell-optiplex-guide/"},
                       faqpage(s, _faqs)])
     add(slug=slug, title="Dell OptiPlex Easy Guide — Ports, Monitors, UPS & Care | 365 Techies",
         desc=desc, og_title="Dell OptiPlex — The Easy Guide | 365 Techies", schema=schema, content=content)
@@ -5103,7 +5103,7 @@ def splashtop_guide():
     ])
     def schema(s, _desc=desc, _faqs=faqs):
         return graph([crumb(s, "Splashtop Remote Access Guide"), webpage(s, "Splashtop Business — The Complete Remote Access Guide", _desc),
-                      {"@type":"TechArticle","headline":"Splashtop Business — The Complete Remote Access Guide","about":{"@type":"SoftwareApplication","name":"Splashtop Business","operatingSystem":"Windows, macOS, iOS, Android"},"author":{"@id":SITE+"/#business"},"url":SITE+"/splashtop-business-guide/"},
+                      {"@type":"TechArticle","headline":"Splashtop Business — The Complete Remote Access Guide","about":{"@type":"Thing","name":"Splashtop Business remote access"},"author":{"@id":SITE+"/#business"},"url":SITE+"/splashtop-business-guide/"},
                       faqpage(s, _faqs)])
     add(slug=slug, title="Splashtop Business Guide — Connect to Your PC from Anywhere | 365 Techies",
         desc=desc, og_title="Splashtop Remote Access — The Complete Guide | 365 Techies", schema=schema, content=content)
