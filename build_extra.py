@@ -4867,6 +4867,248 @@ def dell_optiplex_guide():
         desc=desc, og_title="Dell OptiPlex — The Easy Guide | 365 Techies", schema=schema, content=content)
 dell_optiplex_guide()
 
+# ===================================================== SPLASHTOP BUSINESS REMOTE-ACCESS GUIDE (for support customers)
+SPLASHTOP_WIDGET = r'''    <section class="section" aria-label="Get connected" id="sptool">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// GET CONNECTED IN MINUTES</p>
+          <h2 class="section-title section-title--center" data-title>Set up on the device you&rsquo;ll connect FROM<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Your work or home PC already has the Splashtop Streamer on it &mdash; we install and configure that for you (including keeping the PC awake). You just need the <strong>Splashtop Business app</strong> on whatever you&rsquo;re connecting from.</p>
+        </div>
+        <div id="sp" data-reveal>
+          <div class="sp-tabs">
+            <button type="button" class="sp-tab is-on" data-dev="pc">&#128187; Windows / Mac</button>
+            <button type="button" class="sp-tab" data-dev="ios">&#128241; iPhone / iPad</button>
+            <button type="button" class="sp-tab" data-dev="android">&#129302; Android / Chromebook</button>
+          </div>
+          <div class="sp-steps" id="sp-steps"></div>
+          <p class="sp-note">&#128273; Your login is the Splashtop account we set up with you (you&rsquo;ll have had an invitation email). Forgotten the password? Reset it at <a href="https://my.splashtop.com" target="_blank" rel="noopener">my.splashtop.com</a> or just call us.</p>
+        </div>
+      </div>
+      <style>
+      #sp{max-width:820px;margin:0 auto}
+      #sp .sp-tabs{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin-bottom:1.2rem}
+      #sp .sp-tab{font:inherit;font-size:.88rem;cursor:pointer;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.16);color:inherit;border-radius:99px;padding:.55rem 1.1rem;transition:all .15s}
+      #sp .sp-tab.is-on{background:rgba(55,194,194,.15);border-color:var(--cyan,#37c2c2);color:var(--cyan,#37c2c2);font-weight:600}
+      #sp .sp-step{display:flex;gap:.9rem;align-items:flex-start;padding:1rem 1.1rem;border-radius:13px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);margin-bottom:.7rem}
+      #sp .sp-step-n{flex:none;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;background:rgba(55,194,194,.12);border:1px solid rgba(55,194,194,.4);color:var(--cyan,#37c2c2)}
+      #sp .sp-step-b{flex:1}
+      #sp .sp-step-t{margin:0;font-size:.98rem;font-weight:700;color:#fff}
+      #sp .sp-step-d{margin:.25rem 0 0;font-size:.84rem;color:var(--muted,#9aa6c2);line-height:1.55}
+      #sp .sp-step-d a{color:var(--cyan,#37c2c2)}
+      #sp .sp-dl{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.6rem}
+      #sp .sp-dl a{font-size:.78rem;font-weight:600;text-decoration:none;padding:.45rem .9rem;border-radius:9px;border:1px solid var(--cyan,#37c2c2);color:var(--cyan,#37c2c2);transition:all .15s}
+      #sp .sp-dl a:hover{background:rgba(55,194,194,.12)}
+      #sp .sp-note{text-align:center;font-size:.78rem;color:var(--muted,#9aa6c2);margin:1rem 0 0;line-height:1.5}
+      #sp .sp-note a{color:var(--cyan,#37c2c2)}
+      </style>
+      <script>
+      (function(){
+        var root=document.getElementById('sp'); if(!root) return;
+        var DL='https://www.splashtop.com/downloads';
+        var STEPS={
+          pc:[
+            ['Install the Splashtop Business app','Grab it from the official downloads page and choose the <b>Business App</b> for Windows or Mac. Two minutes, no reboot.',[['Splashtop downloads &#8599;',DL]]],
+            ['Sign in','Open the app and sign in with your Splashtop account &mdash; the one from your invitation email. If two-factor is on (it should be!), pop in the code from your email or authenticator.',[]],
+            ['Click your computer','Your PC appears in the list with a green dot when it&rsquo;s reachable. Double-click it &mdash; a few seconds later you&rsquo;re looking at your own desktop.',[]],
+            ['Work as if you were there','Full keyboard and mouse, your real applications, your real files. When you&rsquo;re done: the padlock icon disconnects and can lock the PC behind you.',[]]
+          ],
+          ios:[
+            ['Install the Splashtop Business app','On the App Store, search <b>&ldquo;Splashtop Business&rdquo;</b> (the blue one, by Splashtop Inc.) &mdash; or start from the official downloads page.',[['Splashtop downloads &#8599;',DL]]],
+            ['Sign in','Use your Splashtop account from the invitation email, plus the two-factor code if prompted.',[]],
+            ['Tap your computer','Your PC shows in the list &mdash; tap it and your full desktop appears on the iPhone or iPad.',[]],
+            ['Master the gestures','Drag one finger to move the mouse, tap to click, two-finger tap for right-click, pinch to zoom, two fingers to scroll. On iPad, a Bluetooth keyboard and mouse make it feel like a laptop.',[]]
+          ],
+          android:[
+            ['Install the Splashtop Business app','From Google Play &mdash; or start at the official downloads page (Chromebooks use the same Play Store app).',[['Google Play &#8599;','https://play.google.com/store/apps/details?id=com.splashtop.remote.business'],['Splashtop downloads &#8599;',DL]]],
+            ['Sign in','Your Splashtop account from the invitation email + the two-factor code if prompted.',[]],
+            ['Tap your computer','Green dot = ready. Tap it and your desktop streams to your device.',[]],
+            ['Master the gestures','One finger moves the mouse, tap to click, two-finger tap right-clicks, pinch zooms. Rotate the phone landscape for the best view &mdash; and a folding phone or tablet is genuinely brilliant for this.',[]]
+          ]
+        };
+        var box=root.querySelector('#sp-steps');
+        function render(dev){
+          box.innerHTML=STEPS[dev].map(function(s,i){
+            var dl=s[2].length?('<div class="sp-dl">'+s[2].map(function(d){return '<a href="'+d[1]+'" target="_blank" rel="noopener">'+d[0]+'</a>';}).join('')+'</div>'):'';
+            return '<div class="sp-step"><div class="sp-step-n">'+(i+1)+'</div><div class="sp-step-b"><p class="sp-step-t">'+s[0]+'</p><p class="sp-step-d">'+s[1]+'</p>'+dl+'</div></div>';
+          }).join('');
+        }
+        root.querySelectorAll('.sp-tab').forEach(function(t){
+          t.addEventListener('click',function(){
+            root.querySelectorAll('.sp-tab').forEach(function(x){x.classList.remove('is-on');});
+            t.classList.add('is-on'); render(t.getAttribute('data-dev'));
+          });
+        });
+        render('pc');
+      })();
+      </script>
+    </section>
+
+    <section class="section section--alt" aria-label="In-session toolbar" id="spttool">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// ONCE YOU&rsquo;RE IN</p>
+          <h2 class="section-title section-title--center" data-title>The in-session toolbar, explained<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>The little toolbar at the top of your session is where the power lives. Tap any button below &mdash; or press <strong>Play tour</strong>.</p>
+        </div>
+        <div id="spt" data-reveal>
+          <svg viewBox="0 0 640 70" class="st-svg" id="st-bar" role="group" aria-label="Session toolbar"></svg>
+          <div class="st-detail" id="st-detail"></div>
+          <div class="st-controls"><button type="button" class="button primary" id="st-tour">&#9654; Play tour</button></div>
+          <p class="st-caption">Exact icons vary a little between versions and plans &mdash; but these are the ones that matter.</p>
+        </div>
+      </div>
+      <style>
+      #spt{max-width:820px;margin:0 auto}
+      #spt .st-svg{width:100%;display:block;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:12px}
+      #spt .st-btn{cursor:pointer}
+      #spt .st-btn rect.k{fill:rgba(255,255,255,.08);stroke:rgba(255,255,255,.3);stroke-width:1;rx:8;transition:all .2s}
+      #spt .st-btn text{fill:#9aa6c2;font-size:9px;font-family:ui-monospace,monospace;text-anchor:middle;pointer-events:none}
+      #spt .st-btn text.big{font-size:15px;fill:#dbe7ff}
+      #spt .st-btn.on rect.k{fill:rgba(55,194,194,.35);stroke:var(--cyan,#37c2c2)}
+      #spt .st-btn.on text{fill:#fff}
+      #spt .st-btn circle.pulse{fill:none;stroke:var(--cyan,#37c2c2);stroke-width:2;opacity:0}
+      #spt .st-btn.on circle.pulse{animation:stpulse 1.6s ease-out infinite}
+      @keyframes stpulse{0%{opacity:.9;r:10}100%{opacity:0;r:26}}
+      @media (prefers-reduced-motion: reduce){#spt .st-btn.on circle.pulse{animation:none;opacity:.5}}
+      #spt .st-detail{margin-top:1.1rem;padding:1.1rem 1.2rem;border-radius:13px;background:rgba(55,194,194,.07);border:1px solid rgba(55,194,194,.3);min-height:96px}
+      #spt .st-d-name{margin:0 0 .3rem;font-size:1.05rem;font-weight:800;color:#fff}
+      #spt .st-d-desc{margin:0;font-size:.88rem;color:var(--muted,#9aa6c2);line-height:1.6}
+      #spt .st-controls{display:flex;justify-content:center;margin-top:1rem}
+      #spt .st-caption{text-align:center;font-size:.72rem;color:var(--muted,#9aa6c2);margin:1rem 0 0;opacity:.85}
+      </style>
+      <script>
+      (function(){
+        var root=document.getElementById('spt'); if(!root) return;
+        var BTNS=[
+          {ico:'&#128421;',tag:'SCREENS',name:'Multi-monitor',desc:'Got two screens on your work PC? Switch between them, or view them side by side. On a big home monitor, &ldquo;view all&rdquo; gives you the whole desk at once &mdash; the single biggest efficiency win for office workers.'},
+          {ico:'&#128194;',tag:'FILES',name:'File transfer',desc:'Move files between the computer you&rsquo;re on and the one you&rsquo;re connected to &mdash; drag and drop, both directions. No emailing yourself attachments ever again.'},
+          {ico:'&#128424;',tag:'PRINT',name:'Remote print',desc:'Print a document that lives on your work PC straight to the printer next to you at home. Feels like magic the first time.'},
+          {ico:'&#9003;',tag:'CAD',name:'Ctrl + Alt + Del',desc:'Sends the real three-finger salute to the remote PC &mdash; for unlocking, switching user or waking a stubborn login screen. It&rsquo;s in the toolbar because your local keyboard would trigger it on the wrong machine.'},
+          {ico:'&#128065;',tag:'BLANK',name:'Blank the remote screen',desc:'Blacks out the monitor on the PC you&rsquo;re connected to, so nobody in the office can watch what you&rsquo;re doing. Pair it with auto-lock on disconnect for proper privacy.'},
+          {ico:'&#9889;',tag:'SPEED',name:'Quality vs speed',desc:'On slow hotel Wi-Fi or 4G, drop the quality a notch and the session stays silky. On fast broadband, push it up for pixel-perfect sharpness. This one toggle fixes most &ldquo;it feels laggy&rdquo; moments.'},
+          {ico:'&#128274;',tag:'LOCK',name:'Lock &amp; disconnect',desc:'When you&rsquo;re done, disconnect &mdash; and have the remote PC lock itself behind you (we set this as the default). Walk away knowing the office machine isn&rsquo;t sitting there logged in.'}
+        ];
+        var active=-1, tour=null;
+        var svg=root.querySelector('#st-bar'), n=BTNS.length, gap=640/(n+1);
+        svg.innerHTML=BTNS.map(function(b,i){
+          var cx=gap*(i+1);
+          return '<g class="st-btn" data-i="'+i+'" tabindex="0" role="button" aria-label="'+b.name.replace(/&amp;/g,'and')+'">'+
+            '<circle class="pulse" cx="'+cx+'" cy="28" r="12"></circle>'+
+            '<rect class="k" x="'+(cx-22)+'" y="12" width="44" height="32" rx="8"></rect>'+
+            '<text class="big" x="'+cx+'" y="34">'+b.ico+'</text>'+
+            '<text x="'+cx+'" y="60">'+b.tag+'</text></g>';
+        }).join('');
+        var detail=root.querySelector('#st-detail');
+        function show(i){
+          active=i;
+          root.querySelectorAll('.st-btn').forEach(function(g){ g.classList.toggle('on', +g.getAttribute('data-i')===i); });
+          detail.innerHTML='<p class="st-d-name">'+BTNS[i].name+'</p><p class="st-d-desc">'+BTNS[i].desc+'</p>';
+        }
+        root.querySelectorAll('.st-btn').forEach(function(g){
+          function go(){ stopTour(); show(+g.getAttribute('data-i')); }
+          g.addEventListener('click',go);
+          g.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go(); } });
+        });
+        var tourBtn=root.querySelector('#st-tour');
+        function stopTour(){ if(tour){ clearInterval(tour); tour=null; tourBtn.innerHTML='&#9654; Play tour'; } }
+        tourBtn.addEventListener('click',function(){
+          if(tour){ stopTour(); return; }
+          tourBtn.innerHTML='&#9632; Stop tour';
+          var i=(active+1)%BTNS.length; show(i);
+          tour=setInterval(function(){ i=(i+1)%BTNS.length; show(i); if(i===BTNS.length-1){ setTimeout(stopTour,3000); } },3200);
+        });
+        show(0);
+      })();
+      </script>
+    </section>'''
+
+def splashtop_guide():
+    slug = "splashtop-business-guide"
+    desc = "The complete plain-English guide to Splashtop Business — connect to your home or work PC from anywhere, on any device. Setup steps, the in-session toolbar, speed tips, security and quick fixes. For 365 Techies support customers."
+    faqs = [
+      ("What&rsquo;s the difference between this and your SOS support?", "Two different jobs: <b>SOS</b> is when WE connect to help you fix something (you download a small app and read us a code). <b>Splashtop Business</b> is YOUR remote access &mdash; you connecting to your own home or work PC whenever you like. This guide covers the second one."),
+      ("Is it safe?", "Yes &mdash; sessions are fully encrypted (the same TLS and AES-256 grade used in online banking), your account has two-factor authentication, and only devices you&rsquo;ve signed in on can connect. Add the blank-screen and lock-on-disconnect options and nobody at the office sees a thing."),
+      ("Does my PC need to stay switched on?", "It needs power and internet &mdash; a PC that&rsquo;s fully shut down can&rsquo;t answer. When we set you up, we configure the machine to stay awake (or wake up) for connections, so this is handled. If a colleague turns it off at the wall, that beats us all."),
+      ("Can I connect from a Mac to a Windows PC? Phone to PC?", "Yes &mdash; any direction. Windows, Mac, iPhone, iPad, Android and Chromebook can all run the Business app and connect to your PC. Your desktop simply streams to whatever screen you&rsquo;re holding."),
+      ("Will it be fast enough to actually work?", "On normal home broadband it feels near-instant &mdash; smooth enough for email, documents, accounts packages and browsing all day. On slower connections, one tap of the quality/speed toggle keeps it fluid. Genuinely heavy graphics work is the only thing that prefers you in the room."),
+      ("Can I print at home from my work PC?", "Yes &mdash; remote print sends the document from the remote PC to the printer beside you. And file transfer moves the file itself if you&rsquo;d rather have a copy."),
+      ("How do I get set up with Splashtop Business?", "It&rsquo;s something we provide and configure as part of supporting you &mdash; we install the Streamer on your PC, create your account properly (with two-factor), and make sure it all just works. <a href=\"/contact/\">Ask us</a> and you can be working from anywhere this week."),
+    ]
+    content = "\n".join([
+      hero(bc("Splashtop Remote Access Guide"), "// THE COMPLETE GUIDE",
+           'Your PC, <em class="grad grad--cyan">from anywhere</em>',
+           "The plain-English guide to Splashtop Business &mdash; the remote access we set up for our support customers. Connect to your home or work PC from any device, work at full speed, and leave it locked behind you.",
+           cta1=("Get Set Up", "#sptool"), cta2=("Not a customer yet?", "/contact/"),
+           chips=["Any device","Bank-grade encryption","Set up by us"]),
+      f'''    <section class="section" aria-label="Two kinds of remote">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// FIRST, A QUICK DISTINCTION</p>
+          <h2 class="section-title section-title--center" data-title>Two kinds of &ldquo;remote&rdquo; &mdash; know which you need<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="split-2">
+          <div class="tile" data-reveal>
+            <h3>&#127384; SOS &mdash; we help you</h3>
+            <p style="color:var(--muted);margin:0 0 1rem">Something&rsquo;s broken and you want us on it. One click, read us the code, and we&rsquo;re driving while you watch. Nothing to set up in advance.</p>
+            <a class="text-link" href="/remote-support/">Start SOS remote support <span aria-hidden="true">&#8594;</span></a>
+          </div>
+          <div class="tile" data-reveal>
+            <h3>&#128187; Splashtop Business &mdash; you drive</h3>
+            <p style="color:var(--muted);margin:0 0 1rem">YOUR key to YOUR computer. Connect to your own home or work PC from anywhere, any time, on any device &mdash; that&rsquo;s this guide.</p>
+            <a class="text-link" href="#sptool">Get connected below <span aria-hidden="true">&#8595;</span></a>
+          </div>
+        </div>
+      </div>
+    </section>''',
+      SPLASHTOP_WIDGET,
+      f'''    <section class="section" aria-label="Speed and efficiency">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// SPEED &amp; EFFICIENCY</p>
+          <h2 class="section-title section-title--center" data-title>Make it fly<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="tile-grid" data-stagger>
+{tiles([("wifi","Connection first","Wired beats Wi-Fi, strong Wi-Fi beats weak &mdash; at BOTH ends. If the office PC is on cable and you&rsquo;re near your router, it&rsquo;ll feel like sitting at the desk."),("bolt","The speed toggle","Session feeling treacly on hotel Wi-Fi or 4G? Drop the quality one notch in the toolbar &mdash; fluid beats pretty when you&rsquo;re working."),("monitor","Own the monitors","Use the multi-monitor button rather than squinting at both screens shrunk onto one &mdash; switch to the screen you need, full size."),("clock","Leave it ready","Finish the day with the apps you&rsquo;ll need tomorrow still open. Connect in the morning and you&rsquo;re mid-flow in seconds &mdash; the commute-free commute."),("cloud","Files: move or reach?","Working on it all day? Just work on it remotely. Need it locally? File transfer. Emailing yourself attachments is officially retired."),("phone","Phone = emergency console","The phone app isn&rsquo;t for spreadsheets &mdash; it&rsquo;s for the &ldquo;did I send that invoice?&rdquo; moment from the sofa. Two-finger tap right-clicks; pinch zooms. Brilliant for checking, fine for small fixes.")])}
+        </div>
+      </div>
+    </section>''',
+      f'''    <section class="section section--alt" aria-label="Security">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// LOCKED DOWN</p>
+          <h2 class="section-title section-title--center" data-title>Secure by setup<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ul class="security-grid" data-stagger>
+{grid_cards([("Encrypted end to end","Every session runs over TLS with AES-256 encryption &mdash; the same grade protecting your online banking."),("Two-factor sign-in","Your password alone isn&rsquo;t enough &mdash; a second code proves it&rsquo;s really you. We switch this on for everyone we set up."),("Blank screen + auto-lock","Black out the office monitor while you work, and the PC locks itself the moment you disconnect. Nobody sees, nothing&rsquo;s left open."),("You control the keys","Only your account &mdash; on devices you&rsquo;ve signed in on &mdash; can reach your PC. Leaver in the business? We revoke access in minutes.")])}
+        </ul>
+      </div>
+    </section>''',
+      f'''    <section class="section" aria-label="Quick fixes">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// 60-SECOND FIXES</p>
+          <h2 class="section-title section-title--center" data-title>When it won&rsquo;t behave<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ul class="security-grid" data-stagger>
+{grid_cards([("My computer shows offline","The PC is off, asleep when it shouldn&rsquo;t be, or lost its internet. If someone&rsquo;s at that end: check it&rsquo;s on and online. Nobody there? Call us &mdash; that&rsquo;s what we&rsquo;re for."),("Can&rsquo;t sign in","Passwords reset at <a href=\"https://my.splashtop.com\" target=\"_blank\" rel=\"noopener\">my.splashtop.com</a>. Two-factor code not arriving? Check spam, or ring us and we&rsquo;ll sort it while you wait."),("Connected but black screen","Give it a few seconds, then move the mouse or press a key &mdash; the remote monitor may just be waking. Still black? Toolbar &#8594; Ctrl+Alt+Del usually shakes it loose."),("It feels laggy","Quality toggle down one notch, close video streaming on your end, get nearer the router. Laggy everywhere, always? Run our free <a href=\"/broadband-speed-checker/\">speed test</a> at both ends and send us the numbers."),("Typing does odd things","Keyboard shortcuts sometimes land on the wrong machine &mdash; use the toolbar&rsquo;s Ctrl+Alt+Del and on-screen keys for the special stuff, and check Num Lock on both ends for number weirdness."),("Anything else","One message and we&rsquo;re looking at it with you &mdash; usually within minutes. It&rsquo;s literally the business we&rsquo;re in.")])}
+        </ul>
+      </div>
+    </section>''',
+      faq_html(faqs),
+      tools_strip(["avtest", "speed", "pcbench"], title="Check your setup &mdash; free tools", alt=False),
+      cta("Work from anywhere, properly",
+          "We set up Splashtop Business as part of supporting you &mdash; installed, secured with two-factor, and configured so your PC is always reachable. One conversation and you&rsquo;re location-free.",
+          primary=("Set Me Up", "/contact/"), secondary=("Home Worker IT Support", "/it-support-for-home-workers/")),
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        return graph([crumb(s, "Splashtop Remote Access Guide"), webpage(s, "Splashtop Business — The Complete Remote Access Guide", _desc),
+                      {"@type":"TechArticle","headline":"Splashtop Business — The Complete Remote Access Guide","about":{"@type":"SoftwareApplication","name":"Splashtop Business","operatingSystem":"Windows, macOS, iOS, Android"},"author":{"@id":SITE+"/#business"},"url":SITE+"/splashtop-business-guide/"},
+                      faqpage(s, _faqs)])
+    add(slug=slug, title="Splashtop Business Guide — Connect to Your PC from Anywhere | 365 Techies",
+        desc=desc, og_title="Splashtop Remote Access — The Complete Guide | 365 Techies", schema=schema, content=content)
+splashtop_guide()
+
 # ===================================================== DNS / DOMAIN LOOKUP
 def dns_lookup():
     slug = "dns-lookup"
@@ -6691,6 +6933,7 @@ info_page(
           <a class="post-card" href="/custom-pc-builder/"><p class="post-card__cat">Tool</p><h3>Custom PC Builder</h3><p>Your budget, split the way experienced builders do it &mdash; part classes, golden rules and live links.</p><span class="post-card__more">Plan a build &#8594;</span></a>
           <a class="post-card" href="/dell-latitude-3520-guide/"><p class="post-card__cat">Guide</p><h3>Dell Latitude 3520 Easy Guide</h3><p>Interactive port tour, three ways to power it (incl. efficient 12V USB-C off-grid), battery care &amp; quick fixes.</p><span class="post-card__more">Read the guide &#8594;</span></a>
           <a class="post-card" href="/dell-optiplex-guide/"><p class="post-card__cat">Guide</p><h3>Dell OptiPlex Easy Guide</h3><p>Front &amp; back ports explained, dual monitors, UPS advice, upgrades and 60-second fixes.</p><span class="post-card__more">Read the guide &#8594;</span></a>
+          <a class="post-card" href="/splashtop-business-guide/"><p class="post-card__cat">Guide</p><h3>Splashtop Remote Access Guide</h3><p>Connect to your home or work PC from anywhere &mdash; setup, the toolbar tour, speed tips and fixes.</p><span class="post-card__more">Read the guide &#8594;</span></a>
           <a class="post-card" href="/dns-lookup/"><p class="post-card__cat">Tool</p><h3>DNS Lookup</h3><p>Check any domain&rsquo;s DNS records &mdash; A, MX, NS, TXT &mdash; the settings behind your website and email.</p><span class="post-card__more">Look it up &#8594;</span></a>
           <a class="post-card" href="/pc-benchmark/"><p class="post-card__cat">Tool</p><h3>PC Benchmark</h3><p>How fast is your computer, really? Test CPU, memory, graphics &amp; storage in 20 seconds.</p><span class="post-card__more">Benchmark it &#8594;</span></a>
           <a class="post-card" href="/windows-10-end-of-life/"><p class="post-card__cat">Act now</p><h3>Windows 10 End of Life</h3><p>Support ended in October 2025. Find out in 30 seconds if you&rsquo;re affected &mdash; and your options.</p><span class="post-card__more">Are you affected? &#8594;</span></a>
