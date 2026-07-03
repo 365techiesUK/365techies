@@ -107,8 +107,8 @@ def ico(name, cls="tile__ico"):
 HEADER = '''  <header class="site-header">
     <div class="status-ticker" aria-hidden="true">
       <div class="status-ticker__track">
-        <span>&#9679; CALL 01202 775566&ensp;//&ensp;FAMILY BUSINESS SINCE 1995&ensp;//&ensp;DORSET MICROSOFT EDUCATION RESOURCE CENTRE 1998&ndash;2008&ensp;//&ensp;IT SUPPORT FOR MERCEDES-BENZ PENTAGON 1998&ndash;2008&ensp;//&ensp;COMPUTER SALES &amp; SERVICE CENTRE 2008&ndash;2017&ensp;//&ensp;KINSON COMMUNITY CENTRE 2017&ndash;NOW&ensp;//&ensp;ENVIRONMENT AGENCY RIVER AVON WIRELESS LINK SINCE 2015&ensp;//&ensp;DELL SPECIALISTS&ensp;//&ensp;WEBSITE DESIGN, HOSTING &amp; EMAIL&ensp;//&ensp;MICROSOFT PARTNER &amp; OFFICE SPECIALISTS&ensp;//&ensp;MALWAREBYTES PARTNER&ensp;//&ensp;NVIDIA &amp; SCAN PARTNER&ensp;//&ensp;RICHER SOUNDS PARTNER&ensp;//&ensp;BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;//&ensp;PLANS FROM &pound;18.25/MO&ensp;//&ensp;MON&ndash;FRI 9AM&ndash;5PM&ensp;//&ensp;</span>
-        <span>&#9679; CALL 01202 775566&ensp;//&ensp;FAMILY BUSINESS SINCE 1995&ensp;//&ensp;DORSET MICROSOFT EDUCATION RESOURCE CENTRE 1998&ndash;2008&ensp;//&ensp;IT SUPPORT FOR MERCEDES-BENZ PENTAGON 1998&ndash;2008&ensp;//&ensp;COMPUTER SALES &amp; SERVICE CENTRE 2008&ndash;2017&ensp;//&ensp;KINSON COMMUNITY CENTRE 2017&ndash;NOW&ensp;//&ensp;ENVIRONMENT AGENCY RIVER AVON WIRELESS LINK SINCE 2015&ensp;//&ensp;DELL SPECIALISTS&ensp;//&ensp;WEBSITE DESIGN, HOSTING &amp; EMAIL&ensp;//&ensp;MICROSOFT PARTNER &amp; OFFICE SPECIALISTS&ensp;//&ensp;MALWAREBYTES PARTNER&ensp;//&ensp;NVIDIA &amp; SCAN PARTNER&ensp;//&ensp;RICHER SOUNDS PARTNER&ensp;//&ensp;BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;//&ensp;PLANS FROM &pound;18.25/MO&ensp;//&ensp;MON&ndash;FRI 9AM&ndash;5PM&ensp;//&ensp;</span>
+        <span>&#9679; CALL 01202 775566&ensp;//&ensp;FAMILY BUSINESS SINCE 1995&ensp;//&ensp;DORSET MICROSOFT EDUCATION RESOURCE CENTRE 1998&ndash;2008&ensp;//&ensp;IT SUPPORT FOR MERCEDES-BENZ PENTAGON 1998&ndash;2008&ensp;//&ensp;COMPUTER SALES &amp; SERVICE CENTRE 2008&ndash;2017&ensp;//&ensp;KINSON COMMUNITY CENTRE 2017&ndash;NOW&ensp;//&ensp;ENVIRONMENT AGENCY RIVER AVON WIRELESS LINK SINCE 2015&ensp;//&ensp;DELL SPECIALISTS&ensp;//&ensp;WEBSITE DESIGN, HOSTING &amp; EMAIL&ensp;//&ensp;WORK FROM ANYWHERE &mdash; REMOTE PC ACCESS FOR SUPPORT CUSTOMERS&ensp;//&ensp;MICROSOFT PARTNER &amp; OFFICE SPECIALISTS&ensp;//&ensp;WINDOWS &amp; ANDROID SPECIALISTS&ensp;//&ensp;SAME-DAY RESPONSE &middot; USUALLY MINUTES REMOTELY&ensp;//&ensp;REMOTE IT SUPPORT ACROSS THE WHOLE UK&ensp;//&ensp;MALWAREBYTES PARTNER&ensp;//&ensp;NVIDIA &amp; SCAN PARTNER&ensp;//&ensp;RICHER SOUNDS PARTNER&ensp;//&ensp;BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;//&ensp;PLANS FROM &pound;18.25/MO&ensp;//&ensp;MON&ndash;FRI 9AM&ndash;5PM&ensp;//&ensp;</span>
+        <span>&#9679; CALL 01202 775566&ensp;//&ensp;FAMILY BUSINESS SINCE 1995&ensp;//&ensp;DORSET MICROSOFT EDUCATION RESOURCE CENTRE 1998&ndash;2008&ensp;//&ensp;IT SUPPORT FOR MERCEDES-BENZ PENTAGON 1998&ndash;2008&ensp;//&ensp;COMPUTER SALES &amp; SERVICE CENTRE 2008&ndash;2017&ensp;//&ensp;KINSON COMMUNITY CENTRE 2017&ndash;NOW&ensp;//&ensp;ENVIRONMENT AGENCY RIVER AVON WIRELESS LINK SINCE 2015&ensp;//&ensp;DELL SPECIALISTS&ensp;//&ensp;WEBSITE DESIGN, HOSTING &amp; EMAIL&ensp;//&ensp;WORK FROM ANYWHERE &mdash; REMOTE PC ACCESS FOR SUPPORT CUSTOMERS&ensp;//&ensp;MICROSOFT PARTNER &amp; OFFICE SPECIALISTS&ensp;//&ensp;WINDOWS &amp; ANDROID SPECIALISTS&ensp;//&ensp;SAME-DAY RESPONSE &middot; USUALLY MINUTES REMOTELY&ensp;//&ensp;REMOTE IT SUPPORT ACROSS THE WHOLE UK&ensp;//&ensp;MALWAREBYTES PARTNER&ensp;//&ensp;NVIDIA &amp; SCAN PARTNER&ensp;//&ensp;RICHER SOUNDS PARTNER&ensp;//&ensp;BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;//&ensp;PLANS FROM &pound;18.25/MO&ensp;//&ensp;MON&ndash;FRI 9AM&ndash;5PM&ensp;//&ensp;</span>
       </div>
     </div>
     <div class="header-bar">
@@ -3663,6 +3663,26 @@ PCBUILD_TOOL = r'''    <section class="section" aria-label="Custom PC builder" i
       </script>
     </section>'''
 
+# "Your PC, from anywhere" — flagship support-plan feature band (Splashtop Business remote access).
+# Soft claim by design: "we set you up" as part of support — no per-plan inclusion/pricing stated (unconfirmed).
+REMOTE_ACCESS_BAND = f'''    <section class="section" aria-label="Remote access with support">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">// A FLAGSHIP SUPPORT FEATURE</p>
+          <h2 class="section-title" data-title>Your PC, from anywhere<span class="title-underline"></span></h2>
+          <p>As a support customer, we set you up with <strong>secure remote access to your own home or work PC</strong> &mdash; powered by Splashtop Business. Your real desktop, files and programs on any device, from anywhere, encrypted end to end.</p>
+          <p>We install it, secure it with two-factor sign-in, keep your PC reachable and support the lot &mdash; you just tap your computer and you&rsquo;re at your desk.</p>
+          <div class="hero__actions" style="margin-top:1.2rem">
+            <a class="button primary" href="/splashtop-business-guide/">How it works &mdash; the guide &#8594;</a>
+            <a class="button secondary" href="/contact/">Set me up</a>
+          </div>
+        </div>
+        <ul class="checklist" data-stagger>
+{checklist(["Your work or home PC on any device","Bank-grade encryption + two-factor","Multi-monitor, file transfer &amp; remote print","Blanks the screen &amp; locks behind you","Installed, configured &amp; supported by us","Feels like sitting at your own desk"])}
+        </ul>
+      </div>
+    </section>'''
+
 PAGES = []
 def add(**kw):
     PAGES.append(kw)
@@ -3796,6 +3816,7 @@ add(
      ("Do you support both homes and businesses?", "Yes. We support home users, home workers, sole traders and small businesses across Bournemouth, Poole and the rest of Dorset."),
      ("What is it like dealing with you day to day?", "Friendly and unhurried. We phone before we connect for a remote session or a full computer service, we call ahead with an estimated arrival time when we&rsquo;re visiting, and if you&rsquo;d like, we can text you a reminder when your backup&rsquo;s due. Because we&rsquo;re a family team, you deal with the same familiar people who get to know how you like things set up."),
    ]),
+   REMOTE_ACCESS_BAND,
    cta("Start your monthly support plan", "Join the Dorset homes and businesses who never worry about IT. Pick a plan, or talk to a friendly techie first.",
        primary=("View Home Plans", "/home-it-support-plans/"), secondary=("View Business Plans", "/business-it-support-plans/")),
  ]),
@@ -3863,6 +3884,7 @@ add(
      ("How quickly can you help?", "Most remote sessions start within minutes during opening hours (Mon&ndash;Fri, 9am&ndash;5pm), and subscribers always jump the queue."),
      ("Do I need to be good with computers?", "Not at all. We explain everything in plain English and there&rsquo;s no such thing as a silly question."),
    ]),
+   REMOTE_ACCESS_BAND,
    cta("Get monthly home IT support", "Pick a home plan and get friendly, reliable help every month — or talk to a techie first.",
        primary=("Pick a Home Plan", "/home-it-support-plans/"), secondary=("Call 01202 775566", "tel:+441202775566")),
  ]),
@@ -3932,6 +3954,7 @@ add(
      ("Do you offer on-site support?", "Yes — we provide on-site support across Bournemouth, Poole and the rest of Dorset alongside fast remote help."),
      ("Can you support Microsoft 365?", "Absolutely — licensing, migration, security and day-to-day administration of Outlook, Teams, OneDrive, SharePoint and Exchange Online."),
    ]),
+   REMOTE_ACCESS_BAND,
    cta("Choose a business IT support plan", "Give your team reliable, secure IT for one predictable monthly cost. Pick a plan or book a quick chat.",
        primary=("Choose a Business Plan", "/business-it-support-plans/"), secondary=("Book a chat", "/contact/")),
  ]),
@@ -4014,6 +4037,7 @@ add(
       </div>
     </section>''',
    GC_NOTE,
+   REMOTE_ACCESS_BAND,
    cta("Pick a home support plan", "Not sure which plan fits? Tell us a bit about your setup and we&rsquo;ll recommend the right one — no pressure.",
        primary=("Get Started", "/contact/"), secondary=("Call 01202 775566", "tel:+441202775566")),
  ]),
@@ -4080,6 +4104,7 @@ add(
       </div>
     </section>''',
    GC_NOTE,
+   REMOTE_ACCESS_BAND,
    cta("Choose a business plan", "Tell us how many people you need to cover and how you work — we&rsquo;ll put together the right plan and a clear quote.",
        primary=("Get a Quote", "/contact/"), secondary=("Call 01202 775566", "tel:+441202775566")),
  ]),
@@ -4173,6 +4198,7 @@ add(
      ("What if it can&rsquo;t be fixed remotely?", "Occasionally hardware needs hands-on attention — we&rsquo;ll arrange a repair or on-site visit across Bournemouth, Poole and Dorset."),
    ]),
    promise_strip(items=[PROMISE_CALL, PROMISE_PEOPLE, PROMISE_ETA]),
+   REMOTE_ACCESS_BAND,
    tools_strip(["speed", "healthcheck", "faultcheck"], title="While you wait &mdash; try our free tools"),
    cta("Need help right now?", "Start a secure remote session, or join a monthly plan so help is always one message away.",
        primary=("Get Remote Support", "/contact/"), secondary=("View Monthly Plans", "/monthly-it-support/")),
