@@ -676,7 +676,7 @@
         <script>
         (function(){
           var PROXY="/api/vrm.php"; /* same-origin PHP proxy as the off-grid page */
-          var RATE=0.40;
+          var RATE=0.40, STANDING=0.50;
           var SAMPLE={sample:true,soc:97,battState:"charging",battW:31,pvW:114,yieldLifetime:489.9,kwh30:49.6};
           var el=document.getElementById("vmini"); if(!el) return;
           var RC=351.9, cur={}, reduce=false; try{ reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
@@ -691,7 +691,8 @@
             tw("[data-m-pv]","pv",s.pvW,function(v){return Math.round(v)+" W";});
             tw("[data-m-bw]","bw",s.battW,function(v){return (v>0?"+":"")+Math.round(v)+" W";});
             var k30=(s.history&&s.history.length)?s.history.reduce(function(a,d){return a+((d&&d.kwh)||0);},0):(s.kwh30!=null?s.kwh30:null);
-            tw("[data-m-save]","sv",(k30!=null)?k30*RATE:null,function(v){return "£"+v.toFixed(2);});
+            var days30=(s.history&&s.history.length)?s.history.length:30;
+            tw("[data-m-save]","sv",(k30!=null)?(k30*RATE+STANDING*days30):null,function(v){return "£"+v.toFixed(2);});
             var r=q("[data-m-ring]"); if(r){ var soc=Math.max(0,Math.min(100,s.soc||0)); r.style.strokeDashoffset=(RC*(1-soc/100)).toFixed(1); r.style.stroke=col; }
             var nt=q("[data-m-note]"); if(nt)nt.textContent=s.sample?"Sample reading — the live feed switches on once our VRM link is connected.":"Live from our 365 Crafter’s Victron lithium system.";
             var up=q("[data-m-upd]"); if(up)up.textContent=s.sample?"sample reading":"data is live";

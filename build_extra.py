@@ -1506,14 +1506,14 @@ def off_grid():
           </div>
           <div class="vlive__tanks" data-tanks></div>
           <p class="vlive__note" data-note></p>
-          <p class="vlive__rate" data-rate>Savings estimated at 40p per kWh of solar generated.</p>
+          <p class="vlive__rate" data-rate>Savings estimated at 40p per kWh of solar generated, plus 50p/day saved on the standing charge you&rsquo;d pay just for a grid connection.</p>
         </div>
       </div>
     </section>
     <script>
     (function(){
       var PROXY="/api/vrm.php"; /* Same-origin PHP proxy on SiteGround; token lives server-side in api/vrm-token.php (never in git). */
-      var RATE=0.40, HIST=[]; for(var hi=0;hi<30;hi++){HIST.push({kwh:Math.round((1.1+Math.sin(hi/2.5)*0.55+(hi%4)*0.16)*100)/100});}
+      var RATE=0.40, STANDING=0.50, HIST=[]; for(var hi=0;hi<30;hi++){HIST.push({kwh:Math.round((1.1+Math.sin(hi/2.5)*0.55+(hi%4)*0.16)*100)/100});}
       var SAMPLE={sample:true,soc:97,battState:"charging",battV:13.38,battA:2.3,battW:31,timeToGo:null,pvW:114,yieldToday:1.86,yieldYesterday:1.66,yieldLifetime:489.9,tanks:[{type:"Fresh water",level:56},{type:"Waste water",level:0}],history:HIST,updated:Math.floor(Date.now()/1000)};
       var el=document.getElementById("vlive"); if(!el) return;
       var RC=351.9, reduce=false;
@@ -1555,11 +1555,12 @@ def off_grid():
         var gb=q("[data-glow-batt]"); if(gb){ gb.setAttribute("fill",col); gb.style.opacity=charging?"0.45":"0"; }
         flow("[data-flow-solar]","[data-glow-sun]",s.pvW);
         flow("[data-flow-load]","[data-glow-load]",loadW);
-        tween("[data-save-today]","stoday",(s.yieldToday!=null)?s.yieldToday*RATE:null,function(v){return "£"+v.toFixed(2);});
+        tween("[data-save-today]","stoday",(s.yieldToday!=null)?(s.yieldToday*RATE+STANDING):null,function(v){return "£"+v.toFixed(2);});
         var k30=(s.history&&s.history.length)?s.history.reduce(function(a,d){return a+((d&&d.kwh)||0);},0):null;
-        tween("[data-save-life]","slife",(k30!=null)?k30*RATE:null,function(v){return "£"+v.toFixed(2);});
+        var days30=(s.history&&s.history.length)?s.history.length:30;
+        tween("[data-save-life]","slife",(k30!=null)?(k30*RATE+STANDING*days30):null,function(v){return "£"+v.toFixed(2);});
         tween("[data-gen-life]","glife",s.yieldLifetime,function(v){return v.toFixed(1)+" kWh";});
-        var rt=q("[data-rate]"); if(rt){ var ph=(s.pvW!=null)?(s.pvW/1000*RATE*100):0; rt.innerHTML=(s.pvW>5?("Generating now &middot; saving ~"+ph.toFixed(1)+"p/hour"):"Resting now")+" &middot; at 40p per kWh"; }
+        var rt=q("[data-rate]"); if(rt){ var ph=(s.pvW!=null)?(s.pvW/1000*RATE*100):0; rt.innerHTML=(s.pvW>5?("Generating now &middot; saving ~"+ph.toFixed(1)+"p/hour"):"Resting now")+" &middot; 40p/kWh + 50p/day standing charge"; }
         if(s.history) hist(s.history);
         var tw=q("[data-tanks]");
         if(tw){
@@ -6480,7 +6481,7 @@ def battery_installs():
         <script>
         (function(){
           var PROXY="/api/vrm.php"; /* same-origin PHP proxy as the off-grid page */
-          var RATE=0.40;
+          var RATE=0.40, STANDING=0.50;
           var SAMPLE={sample:true,soc:97,battState:"charging",battW:31,pvW:114,yieldLifetime:489.9,kwh30:49.6};
           var el=document.getElementById("vmini"); if(!el) return;
           var RC=351.9, cur={}, reduce=false; try{ reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
@@ -6495,7 +6496,8 @@ def battery_installs():
             tw("[data-m-pv]","pv",s.pvW,function(v){return Math.round(v)+" W";});
             tw("[data-m-bw]","bw",s.battW,function(v){return (v>0?"+":"")+Math.round(v)+" W";});
             var k30=(s.history&&s.history.length)?s.history.reduce(function(a,d){return a+((d&&d.kwh)||0);},0):(s.kwh30!=null?s.kwh30:null);
-            tw("[data-m-save]","sv",(k30!=null)?k30*RATE:null,function(v){return "£"+v.toFixed(2);});
+            var days30=(s.history&&s.history.length)?s.history.length:30;
+            tw("[data-m-save]","sv",(k30!=null)?(k30*RATE+STANDING*days30):null,function(v){return "£"+v.toFixed(2);});
             var r=q("[data-m-ring]"); if(r){ var soc=Math.max(0,Math.min(100,s.soc||0)); r.style.strokeDashoffset=(RC*(1-soc/100)).toFixed(1); r.style.stroke=col; }
             var nt=q("[data-m-note]"); if(nt)nt.textContent=s.sample?"Sample reading — the live feed switches on once our VRM link is connected.":"Live from our 365 Crafter’s Victron lithium system.";
             var up=q("[data-m-upd]"); if(up)up.textContent=s.sample?"sample reading":"data is live";
