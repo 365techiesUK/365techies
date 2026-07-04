@@ -663,10 +663,14 @@
         .vlive__ledger{font:600 .6rem/1.5 ui-monospace,monospace;color:#8497a8;text-align:center;margin:.6rem 0 0;letter-spacing:.04em;text-transform:uppercase}
         .vlive__ledger[hidden]{display:none}
         .vlive__histwrap{margin-top:1.1rem}
-        .vlive__histhead{display:flex;justify-content:space-between;align-items:baseline;font:600 .62rem/1 ui-monospace,monospace;letter-spacing:.04em;text-transform:uppercase;color:#9fb0c3;margin-bottom:.5rem}
+        .vlive__histhead{display:flex;justify-content:space-between;align-items:center;gap:.6rem;font:600 .62rem/1 ui-monospace,monospace;letter-spacing:.04em;text-transform:uppercase;color:#9fb0c3;margin-bottom:.5rem;flex-wrap:wrap}
         .vlive__histtot{color:#39d353}
+        .vlive__htabs{display:flex;gap:.35rem;flex-wrap:wrap}
+        .vlive__htab{font:600 .6rem/1 ui-monospace,monospace;letter-spacing:.05em;text-transform:uppercase;color:#9fb0c3;background:transparent;border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:.35rem .7rem;cursor:pointer}
+        .vlive__htab.on{color:#39d353;border-color:rgba(57,211,83,.5);background:rgba(57,211,83,.08)}
         .vlive__hist{display:flex;align-items:flex-end;gap:2px;height:54px}
-        .vlive__bar2{flex:1 1 0;background:linear-gradient(180deg,#39d353,#2aa9e0);border-radius:2px 2px 0 0;min-height:2px;opacity:.85}
+        .vlive__bar2{flex:1 1 0;background:linear-gradient(180deg,#39d353,#2aa9e0);border-radius:2px 2px 0 0;min-height:2px;opacity:.85;transition:height .7s cubic-bezier(.2,.7,.3,1),background .4s}
+        .vlive__histcap{font:600 .56rem/1.4 ui-monospace,monospace;color:#5d6c7d;text-align:center;margin:.45rem 0 0;letter-spacing:.04em;text-transform:uppercase}
         .vlive__rate{font:600 .6rem/1.4 ui-monospace,monospace;color:#8497a8;text-align:center;margin:.7rem 0 0;letter-spacing:.04em;text-transform:uppercase}
         @media(max-width:560px){.vlive__metrics{grid-template-columns:repeat(2,1fr)}.vlive__save{grid-template-columns:1fr}.vlive__charts{grid-template-columns:1fr}}
         @media(prefers-reduced-motion:reduce){.vlive *{animation:none!important;transition:none!important}}
@@ -760,8 +764,16 @@
           </div>
           <p class="vlive__ledger" data-ledger hidden></p>
           <div class="vlive__histwrap">
-            <div class="vlive__histhead"><span>Solar &mdash; last 30 days</span><span class="vlive__histtot" data-hist-total>&mdash;</span></div>
+            <div class="vlive__histhead">
+              <div class="vlive__htabs" role="group" aria-label="30-day history view">
+                <button type="button" class="vlive__htab on" data-htab="solar" aria-pressed="true">Solar</button>
+                <button type="button" class="vlive__htab" data-htab="used" aria-pressed="false">Energy used</button>
+                <button type="button" class="vlive__htab" data-htab="saved" aria-pressed="false">Saved &pound;</button>
+              </div>
+              <span class="vlive__histtot" data-hist-total>&mdash;</span>
+            </div>
             <div class="vlive__hist" data-hist></div>
+            <p class="vlive__histcap">Last 30 days &middot; hover a bar for the day&rsquo;s figure</p>
           </div>
           <div class="vlive__tanks"><div style="display:contents" data-tanks></div><span class="vlive__pump" data-pump hidden></span></div>
           <p class="vlive__note" data-note></p>
@@ -773,7 +785,7 @@
     (function(){
       var PROXY="/api/vrm.php"; /* Same-origin PHP proxy on SiteGround; token lives server-side in api/vrm-token.php (never in git). */
       var HPROXY="/api/vrm-history.php";
-      var RATE=0.40, STANDING=0.50, HIST=[]; for(var hi=0;hi<30;hi++){HIST.push({kwh:Math.round((1.1+Math.sin(hi/2.5)*0.55+(hi%4)*0.16)*100)/100});}
+      var RATE=0.40, STANDING=0.50, HIST=[]; for(var hi=0;hi<30;hi++){HIST.push({kwh:Math.round((1.1+Math.sin(hi/2.5)*0.55+(hi%4)*0.16)*100)/100,used:Math.round((0.95+Math.cos(hi/3.1)*0.4+(hi%5)*0.12)*100)/100});}
       var SAMPLE={sample:true,soc:97,battState:"charging",battV:13.38,battA:2.3,battW:31,timeToGo:null,pvW:114,yieldToday:1.86,yieldYesterday:1.66,yieldLifetime:489.9,
         tanks:[{type:"Fresh water",level:56,capL:100,remL:56},{type:"Waste water",level:12,capL:50,remL:6}],history:HIST,updated:Math.floor(Date.now()/1000),
         dcW:83,alarms:[],alarmsSeen:false,pump:"off",
@@ -784,7 +796,7 @@
       var el=document.getElementById("vlive"); if(!el) return;
       var RC=351.9, reduce=false;
       try{ reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
-      var cur={}, tanksSig=null, histKind=null;
+      var cur={}, tanksSig=null, histKind=null, histSig=null, histData=null, histMode="solar";
       function q(s){return el.querySelector(s);}
       function esc2(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
       function setTxt(node,txt){ if(node&&node.__t!==txt){ node.__t=txt; node.textContent=txt; } }
@@ -804,7 +816,42 @@
         if(p){ p.classList.toggle("vflow-off",!on); if(on) p.style.animationDuration=Math.max(.45,Math.min(2,2-watts/280)).toFixed(2)+"s"; }
         if(g) g.style.opacity=on?"0.5":"0";
       }
-      function hist(arr,isSample){ if(!arr) return; var kind=isSample?"s":"l"; if(histKind===kind) return; histKind=kind; /* rebuilds when sample flips to live — fake bars never survive a real payload */ var h=q("[data-hist]"); if(!h) return; var max=1; arr.forEach(function(d){var v=(d&&d.kwh!=null)?d.kwh:0; if(v>max)max=v;}); h.innerHTML=arr.map(function(d){var v=(d&&d.kwh!=null)?d.kwh:0; var ht=Math.max(2,Math.round(v/max*52)); return '<span class="vlive__bar2" style="height:'+ht+'px" title="'+v.toFixed(2)+' kWh"></span>';}).join(""); var tot=arr.reduce(function(a,d){return a+((d&&d.kwh)||0);},0); var t2=q("[data-hist-total]"); if(t2)t2.textContent=tot.toFixed(1)+" kWh"; }
+      /* 30-day history: three animated views over the same real daily data */
+      function histSeries(){
+        if(!histData) return null;
+        if(histMode==="used") return histData.map(function(d){return (d&&d.used!=null)?d.used:0;});
+        if(histMode==="saved") return histData.map(function(d){return ((d&&d.kwh)||0)*RATE+STANDING;});
+        return histData.map(function(d){return (d&&d.kwh!=null)?d.kwh:0;});
+      }
+      function histPaint(animateIn){
+        var h=q("[data-hist]"); if(!h||!histData) return;
+        var vals=histSeries(); if(!vals||!vals.length) return;
+        var max=0.001; vals.forEach(function(v){if(v>max)max=v;});
+        if(h.children.length!==vals.length){
+          h.innerHTML=vals.map(function(){return '<span class="vlive__bar2" style="height:2px"></span>';}).join("");
+        }
+        var bg=histMode==="saved"?"linear-gradient(180deg,#39d353,#1f8f3a)":(histMode==="used"?"linear-gradient(180deg,#7b5bd6,#2aa9e0)":"linear-gradient(180deg,#39d353,#2aa9e0)");
+        Array.prototype.forEach.call(h.children,function(b,i){
+          var v=vals[i], ht=Math.max(2,Math.round(v/max*52));
+          b.style.transitionDelay=(reduce?0:i*14)+"ms";
+          b.style.background=bg;
+          b.title=(histMode==="saved"?"£"+v.toFixed(2):v.toFixed(2)+" kWh");
+          if(animateIn&&!reduce){ b.style.height="2px"; (function(bb,hh){setTimeout(function(){bb.style.height=hh+"px";},30);})(b,ht); }
+          else b.style.height=ht+"px";
+        });
+        var tot=0; vals.forEach(function(v){tot+=v;});
+        setTxt(q("[data-hist-total]"),histMode==="saved"?("£"+tot.toFixed(2)+" saved"):(tot.toFixed(1)+" kWh "+(histMode==="used"?"used":"generated")));
+      }
+      function hist(arr,isSample){
+        if(!arr||!arr.length) return;
+        var kind=isSample?"s":"l", sum=0;
+        arr.forEach(function(d){sum+=((d&&d.kwh)||0)+((d&&d.used)||0);});
+        var sig=kind+"|"+arr.length+"|"+sum.toFixed(3);
+        if(sig===histSig){ histData=arr; return; }   /* unchanged data — no repaint churn on the 1/s path */
+        var animate=(histKind!==kind||histSig===null); /* sample->live flip rebuilds — fake bars never survive a real payload */
+        histSig=sig; histKind=kind; histData=arr;
+        histPaint(animate);
+      }
       function render(s){
         var loadW=(s.dcW!=null)?s.dcW:((s.pvW!=null&&s.battW!=null)?Math.max(0,s.pvW-s.battW):null);
         var charging=s.battState==="charging"||(s.battW!=null&&s.battW>3);
@@ -819,7 +866,7 @@
         tween("[data-yield]","yield",s.yieldToday,function(v){return v.toFixed(2)+" kWh";});
         tween("[data-bv]","bv",s.battV,function(v){return v.toFixed(2)+" V";});
         setTxt(q("[data-ttg]"),(s.timeToGo==null||s.timeToGo>=239.9)?"10+ days":(s.timeToGo>48?(s.timeToGo/24).toFixed(1)+" days":Math.round(s.timeToGo)+" h"));
-        setTxt(q("[data-updated]"),s.sample?"sample reading":("live"+(s.updated?" · updated "+ago(s.updated):"")));
+        setTxt(q("[data-updated]"),s.sample?"sample reading":(sseAlive()?"Live · Realtime":("live"+(s.updated?" · updated "+ago(s.updated):""))));
         setTxt(q("[data-live-lbl]"),s.sample?"Sample":"Live");
         var ring=q("[data-ring]"); if(ring){ var soc=Math.max(0,Math.min(100,s.soc||0)); ring.style.strokeDashoffset=(RC*(1-soc/100)).toFixed(1); ring.style.stroke=col; }
         var gb=q("[data-glow-batt]"); if(gb){ gb.setAttribute("fill",col); gb.style.opacity=charging?"0.45":"0"; }
@@ -984,6 +1031,13 @@
           else apply(j);
         }).catch(function(){ busy=false; if(!sseAlive()) apply(SAMPLE); });
       }
+      Array.prototype.forEach.call(el.querySelectorAll(".vlive__htab"),function(b){
+        b.addEventListener("click",function(){
+          histMode=b.getAttribute("data-htab");
+          Array.prototype.forEach.call(el.querySelectorAll(".vlive__htab"),function(x){var on=(x===b);x.classList.toggle("on",on);x.setAttribute("aria-pressed",on?"true":"false");});
+          histPaint(true);
+        });
+      });
       tick(); setInterval(tick, 1000);
       loadHist24(); setInterval(loadHist24, 600000);
       /* realtime overlay: same per-second MQTT stream the official Victron apps use, bridged server-side */

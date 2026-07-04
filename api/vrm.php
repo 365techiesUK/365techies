@@ -168,14 +168,21 @@ $hist = [];
 $end = time(); $start = $end - 31 * 86400;
 $st = vrm_get('/installations/' . $SITE_ID . '/stats?type=kwh&interval=days&start=' . $start . '&end=' . $end, $VRM_TOKEN);
 if ($st && isset($st['records']['Pb']) && is_array($st['records']['Pb'])) {
-    $pc = [];
+    $pc = []; $bc = [];
     if (isset($st['records']['Pc']) && is_array($st['records']['Pc'])) {
         foreach ($st['records']['Pc'] as $p) if (is_array($p) && count($p) >= 2) $pc[(string)$p[0]] = (float)$p[1];
+    }
+    if (isset($st['records']['Bc']) && is_array($st['records']['Bc'])) {
+        foreach ($st['records']['Bc'] as $p) if (is_array($p) && count($p) >= 2) $bc[(string)$p[0]] = (float)$p[1];
     }
     foreach ($st['records']['Pb'] as $p) {
         if (!is_array($p) || count($p) < 2) continue;
         $k = (string)$p[0];
-        $hist[] = ['kwh' => round((float)$p[1] + (isset($pc[$k]) ? $pc[$k] : 0.0), 2)];
+        $pck = isset($pc[$k]) ? $pc[$k] : 0.0;
+        $hist[] = [
+            'kwh'  => round((float)$p[1] + $pck, 2),                        // solar generated = PV->battery + PV->loads
+            'used' => round($pck + (isset($bc[$k]) ? $bc[$k] : 0.0), 2),   // energy used = PV->loads + battery->loads
+        ];
     }
     $hist = array_slice($hist, -30);
 }
