@@ -1610,6 +1610,7 @@ def off_grid():
       function setTxt(node,txt){ if(node&&node.__t!==txt){ node.__t=txt; node.textContent=txt; } }
       function setHTML(node,h){ if(node&&node.__h!==h){ node.__h=h; node.innerHTML=h; } }
       function ago(ts){ if(!ts) return ""; var s=Math.max(0,Math.floor(Date.now()/1000)-ts); if(s<60) return "just now"; if(s<3600) return Math.floor(s/60)+"m ago"; return Math.floor(s/3600)+"h ago"; }
+      function liveClock(){ var n=new Date(); return "Live · "+n.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})+" · "+("0"+n.getHours()).slice(-2)+":"+("0"+n.getMinutes()).slice(-2)+":"+("0"+n.getSeconds()).slice(-2); }
       function tween(sel,key,to,fmt){
         var node=q(sel); if(!node) return;
         if(to==null){ cur[key]=null; node.textContent="—"; return; }
@@ -1674,7 +1675,7 @@ def off_grid():
         tween("[data-yield]","yield",s.yieldToday,function(v){return v.toFixed(2)+" kWh";});
         tween("[data-bv]","bv",s.battV,function(v){return v.toFixed(2)+" V";});
         setTxt(q("[data-ttg]"),(s.timeToGo==null||s.timeToGo>=239.9)?"10+ days":(s.timeToGo>48?(s.timeToGo/24).toFixed(1)+" days":Math.round(s.timeToGo)+" h"));
-        setTxt(q("[data-updated]"),s.sample?"sample reading":(sseAlive()?"Live · Realtime":("live"+(s.updated?" · updated "+ago(s.updated):""))));
+        setTxt(q("[data-updated]"),s.sample?"sample reading":(sseAlive()?liveClock():("live"+(s.updated?" · updated "+ago(s.updated):""))));
         setTxt(q("[data-live-lbl]"),s.sample?"Sample":"Live");
         var ring=q("[data-ring]"); if(ring){ var soc=Math.max(0,Math.min(100,s.soc||0)); ring.style.strokeDashoffset=(RC*(1-soc/100)).toFixed(1); ring.style.stroke=col; }
         var gb=q("[data-glow-batt]"); if(gb){ gb.setAttribute("fill",col); gb.style.opacity=charging?"0.45":"0"; }
@@ -1847,6 +1848,8 @@ def off_grid():
         });
       });
       tick(); setInterval(tick, 1000);
+      /* the badge clock ticks every second while the realtime stream is alive */
+      setInterval(function(){ if(lastJ&&!lastJ.sample&&sseAlive()) setTxt(q("[data-updated]"),liveClock()); },1000);
       loadHist24(); setInterval(loadHist24, 600000);
       /* realtime overlay: same per-second MQTT stream the official Victron apps use, bridged server-side */
       if(PROXY && window.EventSource){ try{
