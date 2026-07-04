@@ -703,7 +703,7 @@
           </div>
           <div class="vlive__alarm" data-alarms hidden></div>
           <div class="vflowwrap">
-            <svg viewBox="0 0 720 292" role="img" aria-label="Live energy flow: solar and engine charging the battery, battery powering the loads, the money being saved right now, and the value stored in the battery bank">
+            <svg viewBox="0 0 720 308" role="img" aria-label="Live energy flow: solar and engine charging the battery, battery powering the loads, the money being saved right now, and the value stored in the battery bank">
               <defs>
                 <filter id="vblur" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="10"></feGaussianBlur></filter>
                 <radialGradient id="vgold" cx="30%" cy="30%" r="80%"><stop offset="0%" stop-color="#ffe98a"></stop><stop offset="60%" stop-color="#e0b341"></stop><stop offset="100%" stop-color="#a8842e"></stop></radialGradient>
@@ -716,6 +716,9 @@
               <path class="vflow vflow-dash" data-flow-eng style="stroke:#e0884a" d="M104 180 C190 180 205 137 242 127"></path>
               <path class="vflow vflow-dash" data-flow-load style="stroke:#2aa9e0" d="M362 120 H479"></path>
               <path class="vflow vflow-dash" data-flow-money style="stroke:#e0b341" d="M531 120 H624"></path>
+              <path class="vflow vflow-base" d="M663 138 C718 160 715 192 652 210"></path>
+              <path class="vflow vflow-dash" data-flow-deposit style="stroke:#39d353" d="M663 138 C718 160 715 192 652 210"></path>
+              <path class="vflow vflow-dash" data-flow-withdraw style="stroke:#e0b341" d="M652 210 C715 192 718 160 663 138"></path>
               <g transform="translate(70,60)">
                 <circle class="vglow" data-glow-sun r="40" fill="#e0b341" opacity="0" filter="url(#vblur)"></circle>
                 <circle r="24" fill="rgba(224,179,65,.12)" stroke="#e0b341" stroke-width="2"></circle>
@@ -757,7 +760,6 @@
               <g transform="translate(648,120)">
                 <text class="vnval" data-sn-rate text-anchor="middle" y="44" style="fill:#39d353">&mdash;</text>
                 <text class="vnlabel" text-anchor="middle" y="59">Saving now</text>
-                <text class="vnlabel" data-sn-sub text-anchor="middle" y="74" style="fill:#e0b341"></text>
               </g>
               <g transform="translate(648,232)">
                 <title>Usable energy sitting in the lithium bank right now, valued at 40p/kWh (12.8V nominal). Glows while the sun or engine is making a deposit.</title>
@@ -769,6 +771,7 @@
                 </g>
                 <text class="vnval" data-bank-val text-anchor="middle" y="34" style="fill:#39d353">&mdash;</text>
                 <text class="vnlabel" text-anchor="middle" y="49">Stored in battery</text>
+                <text class="vnlabel" data-sn-sub text-anchor="middle" y="64" style="fill:#e0b341"></text>
               </g>
             </svg>
           </div>
@@ -943,6 +946,12 @@
           var surp=(s.pvW!=null)?Math.max(0,s.pvW-loadW):0;
           setTxt(q("[data-sn-sub]"),surp>5?("+"+((surp/1000)*RATE*100).toFixed(1)+"p/h banked"):((s.pvW!=null&&s.pvW>5)?"sun covering use":"stored sun"));
         }
+        /* coin<->bank money artery: green flows DOWN into the vault while charging (making money),
+           gold flows UP out of it while discharging (spending stored power) — speed scales with watts */
+        var depW=(s.battW!=null&&s.battW>3)?s.battW:null;
+        var wdrW=(s.battW!=null&&s.battW<-3)?-s.battW:null;
+        flow("[data-flow-deposit]","[data-glow-bank]",depW);
+        flow("[data-flow-withdraw]","[data-glow-nope]",wdrW);
         /* bank node: live value of the energy sitting in the battery (usable Ah x 12.8V lithium nominal) */
         var bcap=(s.batt&&s.batt.capAh!=null)?s.batt.capAh:null;
         var remAh2=null;
@@ -952,7 +961,6 @@
           var storedKwh=remAh2*12.8/1000;
           tween("[data-bank-val]","bankv",storedKwh*RATE,function(v){return "£"+v.toFixed(2)+" · "+(v/RATE).toFixed(1)+" kWh";});
         }
-        var bg2=q("[data-glow-bank]"); if(bg2)bg2.style.opacity=(s.battW!=null&&s.battW>3)?"0.4":"0"; /* glows while a deposit is flowing in */
         /* engine / Orion XS DC-DC charger */
         var o=s.orion||{};
         var engW=(o.inW!=null)?o.inW:null;
