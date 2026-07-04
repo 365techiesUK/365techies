@@ -1162,9 +1162,8 @@
         }
         /* coin<->bank money artery: green flows DOWN into the vault while charging (making money),
            gold flows UP out of it while discharging (spending stored power) — speed scales with watts */
-        /* one direction only (owner): saving flows INTO the charger while charging; still after sundown */
-        var depW=(s.battW!=null&&s.battW>3)?s.battW:null;
-        flow("[data-flow-deposit]","[data-glow-bank]",depW);
+        /* the SOLAR chain: sun -> saving -> charger flows together while the panels produce; dark = still (panels draw nothing at night) */
+        flow("[data-flow-deposit]","[data-glow-bank]",s.pvW);
         /* cost node: LIVE cost rate of what's running right now — jumps the moment the kettle goes on */
         flow("[data-flow-cost]","[data-glow-cost]",loadW);
         flow("[data-flow-costbank]","[data-glow-nope]",loadW);
