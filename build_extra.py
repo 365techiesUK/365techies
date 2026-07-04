@@ -1422,6 +1422,14 @@ def off_grid():
         .vlive__alarm[hidden]{display:none}
         .vlive__alarm--ok{border:1px solid rgba(57,211,83,.35);background:rgba(57,211,83,.08);color:#39d353}
         .vlive__alarm--bad{border:1px solid rgba(224,106,74,.5);background:rgba(224,106,74,.10);color:#e06a4a}
+        .vlive__savenow{display:flex;align-items:center;gap:.7rem;margin:.6rem 0 .8rem;padding:.7rem 1rem;border:1px solid rgba(57,211,83,.3);border-radius:12px;background:linear-gradient(90deg,rgba(57,211,83,.10),rgba(255,255,255,.02));flex-wrap:wrap}
+        .vlive__savenow[hidden]{display:none}
+        .vlive__coin{width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font:800 1rem/1 inherit;color:#0b1020;background:radial-gradient(circle at 30% 30%,#ffe98a,#e0b341 60%,#a8842e);box-shadow:0 0 14px rgba(224,179,65,.45);animation:vcoin 3.2s ease-in-out infinite;flex:none}
+        @keyframes vcoin{0%,55%{transform:rotateY(0)}75%{transform:rotateY(180deg)}100%{transform:rotateY(360deg)}}
+        .vlive__savenow-main{font:600 .8rem/1.3 ui-monospace,monospace;letter-spacing:.05em;text-transform:uppercase;color:#9fb0c3}
+        .vlive__savenow-main b{color:#39d353;font-size:1.05rem}
+        .vlive__savenow-sub{font:600 .62rem/1.4 ui-monospace,monospace;letter-spacing:.04em;text-transform:uppercase;color:#8497a8;flex:1;text-align:right;min-width:180px}
+        @media(max-width:560px){.vlive__savenow-sub{text-align:left}}
         .vflowwrap svg{width:100%;height:auto;display:block;overflow:visible}
         .vflow{fill:none;stroke-width:3;stroke-linecap:round}
         .vflow-base{stroke:rgba(255,255,255,.10)}
@@ -1506,6 +1514,11 @@ def off_grid():
             <span class="vlive__upd" data-updated>&mdash;</span>
           </div>
           <div class="vlive__alarm" data-alarms hidden></div>
+          <div class="vlive__savenow" data-savenow hidden>
+            <span class="vlive__coin" aria-hidden="true">&pound;</span>
+            <span class="vlive__savenow-main">Saving <b data-sn-rate>&mdash;</b> right now</span>
+            <span class="vlive__savenow-sub" data-sn-sub></span>
+          </div>
           <div class="vflowwrap">
             <svg viewBox="0 0 620 258" role="img" aria-label="Live energy flow: solar and engine charging into the battery, battery feeding the van's loads">
               <defs><filter id="vblur" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="10"></feGaussianBlur></filter></defs>
@@ -1708,6 +1721,20 @@ def off_grid():
         var gb=q("[data-glow-batt]"); if(gb){ gb.setAttribute("fill",col); gb.style.opacity=charging?"0.45":"0"; }
         flow("[data-flow-solar]","[data-glow-sun]",s.pvW);
         flow("[data-flow-load]","[data-glow-load]",loadW);
+        /* live saving ticker: what the current usage would cost on grid + the standing charge — works day AND night.
+           Banked surplus sunshine is shown separately and counted when used, so nothing is double-counted. */
+        var sn=q("[data-savenow]");
+        if(sn){
+          if(loadW==null){ sn.hidden=true; }
+          else{
+            sn.hidden=false;
+            var pH=(loadW/1000)*RATE*100+(STANDING/24)*100;
+            tween("[data-sn-rate]","snrate",pH,function(v){return "~"+v.toFixed(1)+"p/hour";});
+            var surp=(s.pvW!=null)?Math.max(0,s.pvW-loadW):0;
+            setTxt(q("[data-sn-sub]"),surp>5?("+ banking ~"+((surp/1000)*RATE*100).toFixed(1)+"p/h of sunshine for tonight"):((s.pvW!=null&&s.pvW>5)?"solar covering the usage right now":"running on stored sunshine — still saving"));
+            sn.title="Usage you'd otherwise be buying: "+((loadW/1000)*RATE*100).toFixed(1)+"p/h, plus the 50p/day standing charge (~2.1p/h). Banked sunshine is counted when it's used — never twice.";
+          }
+        }
         /* engine / Orion XS DC-DC charger */
         var o=s.orion||{};
         var engW=(o.inW!=null)?o.inW:null;
