@@ -1777,7 +1777,7 @@ def off_grid():
               <!-- COIN: the eco readout, top-centre -->
               <g transform="translate(360,40)">
                 <g class="vnpop" style="animation-delay:.24s">
-                  <title>Saving now = what the current usage would cost on grid (40p/kWh) PLUS the standing-charge slice (50p/day &asymp; 2.1p/h) &mdash; which is why it always reads a little above the cost of the load, day and night. Surplus sunshine is banked and counted when used &mdash; never twice.</title>
+                  <title>Saving now = the solar power coming in right now, valued at the 40p/kWh you&rsquo;d otherwise pay for it. It&rsquo;s banked in the battery and counted once &mdash; when it&rsquo;s used. Zero after dark, because the panels only earn while the sun shines.</title>
                   <circle class="vglow" data-glow-coin r="34" fill="#e0b341" opacity="0" filter="url(#vblur)"></circle>
                   <g class="vcoin2">
                     <circle r="21" fill="url(#vgold)" stroke="#a8842e" stroke-width="1.5"></circle>
@@ -1787,7 +1787,6 @@ def off_grid():
                   <text class="vnlabel" text-anchor="end" x="-34" y="12">now</text>
                   <rect class="vplate" x="34" y="-13" width="84" height="26" rx="9" style="stroke:rgba(224,179,65,.35)"></rect>
                   <text class="vnval" data-sn-rate text-anchor="middle" x="76" y="5" style="fill:#39d353">&mdash;</text>
-                  <text class="vnlabel" text-anchor="middle" x="76" y="30">incl. 2.1p/h standing chg</text>
                 </g>
               </g>
             </svg>
@@ -1961,13 +1960,11 @@ def off_grid():
         /* saving-now coin node: current usage at grid rate + standing charge — day AND night.
            Surplus sunshine shows as banked and is counted when used, so nothing is double-counted. */
         flow("[data-flow-money]","[data-glow-coin]",loadW);
-        if(loadW==null){ setTxt(q("[data-sn-rate]"),"—"); setTxt(q("[data-sn-sub]"),""); }
-        else{
-          var pH=(loadW/1000)*RATE*100+(STANDING/24)*100;
-          tween("[data-sn-rate]","snrate",pH,function(v){return "~"+v.toFixed(1)+"p/h";});
-          var surp=(s.pvW!=null)?Math.max(0,s.pvW-loadW):0;
-          setTxt(q("[data-sn-sub]"),surp>5?("+"+((surp/1000)*RATE*100).toFixed(1)+"p/h banked"):((s.pvW!=null&&s.pvW>5)?"sun covering use":"stored sun"));
-        }
+        /* Saving now = the solar coming in RIGHT NOW, valued at grid rate — the sun's earning meter (owner's model) */
+        if(s.pvW==null){ setTxt(q("[data-sn-rate]"),"—"); }
+        else tween("[data-sn-rate]","snrate",(s.pvW/1000)*RATE*100,function(v){return "~"+v.toFixed(1)+"p/h";});
+        var surp=(s.pvW!=null&&loadW!=null)?Math.max(0,s.pvW-loadW):0;
+        setTxt(q("[data-sn-sub]"),(s.pvW==null)?"":(surp>5?("+"+((surp/1000)*RATE*100).toFixed(1)+"p/h banked"):((s.pvW>5)?"sun covering use":"stored sun")));
         /* coin<->bank money artery: green flows DOWN into the vault while charging (making money),
            gold flows UP out of it while discharging (spending stored power) — speed scales with watts */
         /* the SOLAR chain: sun -> saving -> charger flows together while the panels produce; dark = still (panels draw nothing at night) */
