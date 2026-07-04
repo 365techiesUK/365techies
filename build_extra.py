@@ -1661,8 +1661,8 @@ def off_grid():
               <path class="vflow vflow-base" d="M147 258 C200 270 240 280 277 283"></path>
               <path class="vflow vflow-base" d="M441 124 C480 110 520 100 573 95"></path>
               <path class="vflow vflow-base" d="M360 66 V90"></path>
-              <path class="vflow vflow-base" d="M626 111 C672 155 672 200 626 236"></path>
-              <path class="vflow vflow-base" d="M577 262 C520 292 480 292 445 284"></path>
+              <path class="vflow vflow-base" d="M626 236 C672 200 672 155 626 111"></path>
+              <path class="vflow vflow-base" d="M445 284 C480 292 520 292 577 262"></path>
               <path class="vflow-ug" data-ug-solar style="stroke:#39d353" d="M140 74 C210 66 290 62 345 55"></path>
               <path class="vflow-ug" data-ug-eng style="stroke:#e0884a" d="M147 258 C200 270 240 280 277 283"></path>
               <path class="vflow-ug" data-ug-load style="stroke:#2aa9e0" d="M441 124 C480 110 520 100 573 95"></path>
@@ -1671,8 +1671,8 @@ def off_grid():
               <path class="vflow vflow-dash" data-flow-load style="stroke:#2aa9e0" d="M441 124 C480 110 520 100 573 95"></path>
               <path class="vflow vflow-dash" data-flow-deposit style="stroke:#39d353" d="M360 66 V90"></path>
               <path class="vflow vflow-dash" data-flow-withdraw style="stroke:#e0b341" d="M360 90 V66"></path>
-              <path class="vflow vflow-dash" data-flow-cost style="stroke:#e06a4a" d="M626 111 C672 155 672 200 626 236"></path>
-              <path class="vflow vflow-dash" data-flow-costbank style="stroke:#e0b341" d="M577 262 C520 292 480 292 445 284"></path>
+              <path class="vflow vflow-dash" data-flow-cost style="stroke:#e06a4a" d="M626 236 C672 200 672 155 626 111"></path>
+              <path class="vflow vflow-dash" data-flow-costbank style="stroke:#e0b341" d="M445 284 C480 292 520 292 577 262"></path>
               <!-- ===== CENTRAL GAUGE: the battery speedo ===== -->
               <g transform="translate(360,205)">
                 <circle class="vglow" data-glow-batt r="130" fill="#39d353" opacity="0" filter="url(#vblur)"></circle>
