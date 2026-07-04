@@ -141,6 +141,9 @@ $TOPICS = [
     $N . 'solarcharger/277/Pv/V'        => 'pvV',       // panel volts
     $N . 'alternator/279/Dc/In/P'       => 'orionInW',  // engine charge power (Orion XS input)
     $N . 'alternator/279/Dc/In/V'       => 'orionInV',  // starter battery volts
+    /* both null until a probe is wired in — the dashboard shows "no sensor yet" until then */
+    $N . 'temperature/24/Temperature'   => 'battT',     // Cerbo Temperature Input 1 (configured type: Battery)
+    $N . 'battery/279/Dc/0/Temperature' => 'battT',     // SmartShunt aux alternative
 ];
 fwrite($fp, mq_subscribe(array_keys($TOPICS)));
 fwrite($fp, mq_publish('R/' . $PORTAL . '/keepalive', ''));
@@ -159,7 +162,7 @@ if (!$PROBE) {
 $vals = []; $dirty = false; $t0 = microtime(true); $first = null;
 $lastKa = $t0; $lastPing = $t0; $lastEmit = 0;
 $roundmap = ['soc' => 1, 'battV' => 2, 'battA' => 1, 'battW' => 1, 'pvW' => 0,
-             'dcW' => 0, 'ttgS' => 0, 'mpptState' => 0, 'pvV' => 1, 'orionInW' => 0, 'orionInV' => 2];
+             'dcW' => 0, 'ttgS' => 0, 'mpptState' => 0, 'pvV' => 1, 'orionInW' => 0, 'orionInV' => 2, 'battT' => 1];
 
 while (true) {
     $now = microtime(true);

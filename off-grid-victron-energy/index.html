@@ -640,6 +640,8 @@
         .vlive__chip b{color:#fff;font-weight:700}
         .vlive__engine{display:flex;justify-content:space-between;gap:.8rem;flex-wrap:wrap;margin-top:.7rem;padding:.7rem 1rem;border:1px solid rgba(224,136,74,.25);border-radius:12px;background:rgba(224,136,74,.05);font:600 .66rem/1.5 ui-monospace,monospace;letter-spacing:.04em;text-transform:uppercase;color:#9fb0c3}
         .vlive__engine b{color:#e0884a}
+        .vlive__eng-money{flex-basis:100%;border-top:1px dashed rgba(224,136,74,.25);padding-top:.5rem;margin-top:.1rem}
+        .vlive__eng-money[hidden]{display:none}
         .vlive__charts{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-top:1.1rem}
         .vlive__chart{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:.7rem .8rem .5rem}
         .vlive__charthead{display:flex;justify-content:space-between;gap:.6rem;font:600 .58rem/1.3 ui-monospace,monospace;letter-spacing:.05em;text-transform:uppercase;color:#9fb0c3;margin-bottom:.4rem}
@@ -755,9 +757,10 @@
               <span class="vlive__chip"><b data-pass-fulldis>&mdash;</b> full discharges</span>
               <span class="vlive__chip"><b data-pass-eff>&mdash;</b> round-trip efficiency</span>
               <span class="vlive__chip"><b data-pass-chg>&mdash;</b> charged lifetime</span>
+              <span class="vlive__chip">battery temp <b data-pass-temp>no sensor yet</b></span>
             </div>
           </div>
-          <div class="vlive__engine" data-engine hidden><span data-eng-state>&mdash;</span><span data-eng-life>&mdash;</span></div>
+          <div class="vlive__engine" data-engine hidden><span data-eng-state>&mdash;</span><span data-eng-life>&mdash;</span><span class="vlive__eng-money" data-eng-money hidden></span></div>
           <div class="vlive__charts">
             <div class="vlive__chart">
               <div class="vlive__charthead"><span data-ch-soc-title>Battery charge &middot; 24h</span><span data-ch-soc-now>&mdash;</span></div>
@@ -937,6 +940,7 @@
             var eff=(b.disKwh!=null&&b.chgKwh>0)?(b.disKwh/b.chgKwh*100):null;
             tween("[data-pass-eff]","peff",eff,function(v){return v.toFixed(0)+"%";});
             tween("[data-pass-chg]","pchg",b.chgKwh,function(v){return v.toFixed(0)+" kWh";});
+            setTxt(q("[data-pass-temp]"),(s.battT!=null)?s.battT.toFixed(1)+"°C":"no sensor yet");
           }
         }
         /* alarms */
@@ -1023,14 +1027,22 @@
           pv.push([t,Math.round(300*day*(0.8+0.2*Math.sin(i/2.7)))]);
           soc.push([t,Math.round((80+13*Math.sin((i-24)/26))*10)/10]);
         }
-        return {soc:soc,pv:pv};
+        return {soc:soc,pv:pv,engine:{d1:0.4,d7:2.8,d30:9.6}};
+      }
+      function paintEngine(e,isSample){
+        var em=q("[data-eng-money]"); if(!em)return;
+        if(!e||e.d30==null){ em.hidden=true; return; }
+        em.hidden=false;
+        function seg(lbl,v){ return lbl+" <b>~"+v.toFixed(2)+" kWh</b> (≈£"+(v*RATE).toFixed(2)+")"; }
+        setHTML(em,"Engine energy · "+seg("today",e.d1)+" · "+seg("7 days",e.d7)+" · "+seg("30 days",e.d30)+" · grid-equivalent at 40p/kWh, ~13.2V"+(isSample?" · sample":""));
       }
       function loadHist24(){
-        if(!window.fetch){ var s0=sampleSeries(); paintCharts(s0.soc,s0.pv,true); return; }
+        if(!window.fetch){ var s0=sampleSeries(); paintCharts(s0.soc,s0.pv,true); paintEngine(s0.engine,true); return; }
         fetch(HPROXY,{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){
           if(!j||!j.ok||!j.soc||j.soc.length<2)throw 0;
           paintCharts(j.soc,j.pv||[],false);
-        }).catch(function(){ var s1=sampleSeries(); paintCharts(s1.soc,s1.pv,true); });
+          paintEngine(j.engine||null,false);
+        }).catch(function(){ var s1=sampleSeries(); paintCharts(s1.soc,s1.pv,true); paintEngine(s1.engine,true); });
       }
       /* ---- weather + 7-day solar forecast (nearest-town GPS; calibrated to this van's real last 30 days) ---- */
       var WMO={0:["☀️","Clear"],1:["🌤️","Mostly clear"],2:["⛅","Partly cloudy"],3:["☁️","Overcast"],45:["🌫️","Fog"],48:["🌫️","Fog"],51:["🌦️","Drizzle"],53:["🌦️","Drizzle"],55:["🌦️","Drizzle"],56:["🌧️","Icy drizzle"],57:["🌧️","Icy drizzle"],61:["🌧️","Rain"],63:["🌧️","Rain"],65:["🌧️","Heavy rain"],66:["🌧️","Icy rain"],67:["🌧️","Icy rain"],71:["🌨️","Snow"],73:["🌨️","Snow"],75:["🌨️","Heavy snow"],77:["🌨️","Snow"],80:["🌦️","Showers"],81:["🌦️","Showers"],82:["🌧️","Heavy showers"],85:["🌨️","Snow showers"],86:["🌨️","Snow showers"],95:["⛈️","Thunderstorm"],96:["⛈️","Hail"],99:["⛈️","Hail"]};
