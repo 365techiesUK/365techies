@@ -1552,11 +1552,13 @@ def off_grid():
                 <text class="vnval" data-load text-anchor="middle" y="44">&mdash;</text>
                 <text class="vnlabel" text-anchor="middle" y="59">Loads</text>
               </g>
-              <g class="vcoin2" transform="translate(648,120)">
+              <g transform="translate(648,120)">
                 <title>What the van&rsquo;s current usage would cost on grid (40p/kWh) plus the 50p/day standing charge. Surplus sunshine is banked and counted when used &mdash; never twice.</title>
                 <circle class="vglow" data-glow-coin r="36" fill="#e0b341" opacity="0" filter="url(#vblur)"></circle>
-                <circle r="21" fill="url(#vgold)" stroke="#a8842e" stroke-width="1.5"></circle>
-                <text text-anchor="middle" y="7" font-size="20" font-weight="800" fill="#0b1020">&pound;</text>
+                <g class="vcoin2"><!-- flip animation on an inner group: CSS transforms override SVG transform attributes, so position and spin must live on separate elements -->
+                  <circle r="21" fill="url(#vgold)" stroke="#a8842e" stroke-width="1.5"></circle>
+                  <text text-anchor="middle" y="7" font-size="20" font-weight="800" fill="#0b1020">&pound;</text>
+                </g>
               </g>
               <g transform="translate(648,120)">
                 <text class="vnval" data-sn-rate text-anchor="middle" y="44" style="fill:#39d353">&mdash;</text>
