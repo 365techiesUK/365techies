@@ -618,6 +618,7 @@
         @keyframes vcoin{0%,55%{transform:rotateY(0)}75%{transform:rotateY(180deg)}100%{transform:rotateY(360deg)}}
         .vbank{animation:vbankpulse 2.8s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
         .vcost{animation:vbankpulse 2.8s ease-in-out .9s infinite;transform-box:fill-box;transform-origin:center}
+        .vengh{animation:vbankpulse 2.8s ease-in-out .45s infinite;transform-box:fill-box;transform-origin:center}
         @keyframes vbankpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
         .vflowwrap svg{width:100%;height:auto;display:block;overflow:visible}
         .vflow{fill:none;stroke-width:3;stroke-linecap:round}
@@ -704,7 +705,7 @@
           </div>
           <div class="vlive__alarm" data-alarms hidden></div>
           <div class="vflowwrap">
-            <svg viewBox="0 0 720 314" role="img" aria-label="Live energy flow: solar and engine charging the battery, battery powering the loads, the money being saved, the live cost of the load, and the value stored in the battery bank">
+            <svg viewBox="0 0 720 352" role="img" aria-label="Live energy flow: solar and engine charging the battery, battery powering the loads, the money being saved, the live cost of the load, the value stored in the battery bank, and the engine's charging hours and value">
               <defs>
                 <filter id="vblur" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="10"></feGaussianBlur></filter>
                 <radialGradient id="vgold" cx="30%" cy="30%" r="80%"><stop offset="0%" stop-color="#ffe98a"></stop><stop offset="60%" stop-color="#e0b341"></stop><stop offset="100%" stop-color="#a8842e"></stop></radialGradient>
@@ -720,6 +721,8 @@
               <path class="vflow vflow-base" d="M663 138 C718 160 715 192 652 210"></path>
               <path class="vflow vflow-dash" data-flow-deposit style="stroke:#39d353" d="M663 138 C718 160 715 192 652 210"></path>
               <path class="vflow vflow-dash" data-flow-withdraw style="stroke:#e0b341" d="M652 210 C715 192 718 160 663 138"></path>
+              <path class="vflow vflow-base" d="M53 197 C28 220 28 240 53 262"></path>
+              <path class="vflow vflow-dash" data-flow-enghours style="stroke:#e0884a" d="M53 197 C28 220 28 240 53 262"></path>
               <path class="vflow vflow-base" d="M489 137 C455 163 455 190 489 215"></path>
               <path class="vflow vflow-base" d="M537 232 H612"></path>
               <path class="vflow vflow-dash" data-flow-cost style="stroke:#e06a4a" d="M489 137 C455 163 455 190 489 215"></path>
@@ -765,6 +768,20 @@
               <g transform="translate(648,120)">
                 <text class="vnval" data-sn-rate text-anchor="middle" y="44" style="fill:#39d353">&mdash;</text>
                 <text class="vnlabel" text-anchor="middle" y="59">Saving now</text>
+              </g>
+              <g transform="translate(70,270)">
+                <title>Time the engine spent charging the bank (measured from its charge counter moving) and the grid-equivalent value of that power, today and over 30 days.</title>
+                <circle class="vglow" data-glow-engh r="34" fill="#e0884a" opacity="0" filter="url(#vblur)"></circle>
+                <circle r="24" fill="rgba(224,136,74,.12)" stroke="#e0884a" stroke-width="2"></circle>
+                <g class="vengh">
+                  <circle r="10" fill="none" stroke="#e0884a" stroke-width="2"></circle>
+                  <line x1="0" y1="-10" x2="0" y2="-13" stroke="#e0884a" stroke-width="2" stroke-linecap="round"></line>
+                  <line x1="0" y1="0" x2="0" y2="-6" stroke="#e0884a" stroke-width="2" stroke-linecap="round"></line>
+                  <line x1="0" y1="0" x2="4.5" y2="2.5" stroke="#e0884a" stroke-width="2" stroke-linecap="round"></line>
+                </g>
+                <text class="vnval" data-engh-day text-anchor="middle" y="44" style="fill:#e0884a">&mdash;</text>
+                <text class="vnlabel" text-anchor="middle" y="59">Engine hours &amp; value</text>
+                <text class="vnlabel" data-engh-month text-anchor="middle" y="74" style="fill:#e0b341"></text>
               </g>
               <g transform="translate(505,232)">
                 <title>The live running cost of what the van is using right now, at 40p/kWh &mdash; watch it jump when the kettle goes on. The small meter counts up every second while you have this page open.</title>
@@ -988,6 +1005,7 @@
         var o=s.orion||{};
         var engW=(o.inW!=null)?o.inW:null;
         flow("[data-flow-eng]","[data-glow-eng]",engW);
+        flow("[data-flow-enghours]","[data-glow-engh]",engW);   /* hour-meter path runs while the engine charges */
         setTxt(q("[data-eng-w]"),(engW==null)?"—":(engW>5?Math.round(engW)+" W":"Off"));
         var eng=q("[data-engine]");
         if(eng){
@@ -1111,14 +1129,18 @@
           pv.push([t,Math.round(300*day*(0.8+0.2*Math.sin(i/2.7)))]);
           soc.push([t,Math.round((80+13*Math.sin((i-24)/26))*10)/10]);
         }
-        return {soc:soc,pv:pv,engine:{d1:0.4,d7:2.8,d30:9.6}};
+        return {soc:soc,pv:pv,engine:{d1:0.4,d7:2.8,d30:9.6,runH1:0.4,runH30:11.5}};
       }
       function paintEngine(e,isSample){
         var em=q("[data-eng-money]"); if(!em)return;
-        if(!e||e.d30==null){ em.hidden=true; return; }
+        if(!e||e.d30==null){ em.hidden=true; setTxt(q("[data-engh-day]"),"—"); setTxt(q("[data-engh-month]"),""); return; }
         em.hidden=false;
         function seg(lbl,v){ return lbl+" <b>~"+v.toFixed(2)+" kWh</b> (≈£"+(v*RATE).toFixed(2)+")"; }
         setHTML(em,"Engine energy · "+seg("today",e.d1)+" · "+seg("7 days",e.d7)+" · "+seg("30 days",e.d30)+" · grid-equivalent at 40p/kWh, ~13.2V"+(isSample?" · sample":""));
+        /* hour-meter node: charge time + grid-equivalent value, today and 30 days */
+        function fmtH(h){ return (h==null)?"—":(h<1?Math.round(h*60)+"m":h.toFixed(1)+"h"); }
+        setTxt(q("[data-engh-day]"),fmtH(e.runH1)+" · £"+(e.d1*RATE).toFixed(2)+" today"+(isSample?" · sample":""));
+        setTxt(q("[data-engh-month]"),"30 days: "+fmtH(e.runH30)+" · £"+(e.d30*RATE).toFixed(2));
       }
       function loadHist24(){
         if(!window.fetch){ var s0=sampleSeries(); paintCharts(s0.soc,s0.pv,true); paintEngine(s0.engine,true); return; }

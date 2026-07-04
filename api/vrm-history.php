@@ -81,11 +81,24 @@ if ($je && isset($je['records']['data']) && is_array($je['records']['data'])) {
             foreach ($pts as $p) { if ($p[0] <= $cutoff) $best = $p[1]; else break; }
             return $best;
         };
+        /* engine charge time = intervals where the charged-Ah counter was moving
+           (the counter only turns while the engine drives the Orion) */
+        $run1 = 0; $run30 = 0; $n = count($pts);
+        for ($i = 1; $i < $n; $i++) {
+            $dt = $pts[$i][0] - $pts[$i - 1][0];
+            if ($dt <= 0 || $dt > 7200) continue;              // logging gaps don't count
+            if ($pts[$i][1] - $pts[$i - 1][1] > 0.05) {
+                $run30 += $dt;
+                if ($pts[$i][0] > $end - 86400) $run1 += $dt;
+            }
+        }
         $NOMV = 13.2;
         $engine = [
-            'd1'  => round(max(0, $lastV - $at($end - 86400))      * $NOMV / 1000, 2),
-            'd7'  => round(max(0, $lastV - $at($end - 7 * 86400))  * $NOMV / 1000, 2),
-            'd30' => round(max(0, $lastV - $at($end - 30 * 86400)) * $NOMV / 1000, 2),
+            'd1'     => round(max(0, $lastV - $at($end - 86400))      * $NOMV / 1000, 2),
+            'd7'     => round(max(0, $lastV - $at($end - 7 * 86400))  * $NOMV / 1000, 2),
+            'd30'    => round(max(0, $lastV - $at($end - 30 * 86400)) * $NOMV / 1000, 2),
+            'runH1'  => round($run1 / 3600, 1),
+            'runH30' => round($run30 / 3600, 1),
         ];
     }
 }
