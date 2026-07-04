@@ -862,7 +862,6 @@
               <path class="vflow vflow-dash" data-flow-eng style="stroke:#e0884a" d="M147 258 C200 270 240 280 277 283"></path>
               <path class="vflow vflow-dash" data-flow-load style="stroke:#2aa9e0" d="M441 124 C480 110 520 100 573 95"></path>
               <path class="vflow vflow-dash" data-flow-deposit style="stroke:#39d353" d="M360 66 V90"></path>
-              <path class="vflow vflow-dash" data-flow-withdraw style="stroke:#e0b341" d="M360 90 V66"></path>
               <path class="vflow vflow-dash" data-flow-cost style="stroke:#e06a4a" d="M626 236 C672 200 672 155 626 111"></path>
               <path class="vflow vflow-dash" data-flow-costbank style="stroke:#e0b341" d="M445 284 C480 292 520 292 577 262"></path>
               <!-- ===== CENTRAL GAUGE: the battery speedo ===== -->
@@ -970,7 +969,7 @@
               <!-- COIN: the eco readout, top-centre -->
               <g transform="translate(360,40)">
                 <g class="vnpop" style="animation-delay:.24s">
-                  <title>What the van&rsquo;s current usage would cost on grid (40p/kWh) plus the 50p/day standing charge. Surplus sunshine is banked and counted when used &mdash; never twice.</title>
+                  <title>Saving now = what the current usage would cost on grid (40p/kWh) PLUS the standing-charge slice (50p/day &asymp; 2.1p/h) &mdash; which is why it always reads a little above the cost of the load, day and night. Surplus sunshine is banked and counted when used &mdash; never twice.</title>
                   <circle class="vglow" data-glow-coin r="34" fill="#e0b341" opacity="0" filter="url(#vblur)"></circle>
                   <g class="vcoin2">
                     <circle r="21" fill="url(#vgold)" stroke="#a8842e" stroke-width="1.5"></circle>
@@ -980,6 +979,7 @@
                   <text class="vnlabel" text-anchor="end" x="-34" y="12">now</text>
                   <rect class="vplate" x="34" y="-13" width="84" height="26" rx="9" style="stroke:rgba(224,179,65,.35)"></rect>
                   <text class="vnval" data-sn-rate text-anchor="middle" x="76" y="5" style="fill:#39d353">&mdash;</text>
+                  <text class="vnlabel" text-anchor="middle" x="76" y="30">incl. 2.1p/h standing chg</text>
                 </g>
               </g>
             </svg>
@@ -1162,10 +1162,9 @@
         }
         /* coin<->bank money artery: green flows DOWN into the vault while charging (making money),
            gold flows UP out of it while discharging (spending stored power) — speed scales with watts */
+        /* one direction only (owner): saving flows INTO the charger while charging; still after sundown */
         var depW=(s.battW!=null&&s.battW>3)?s.battW:null;
-        var wdrW=(s.battW!=null&&s.battW<-3)?-s.battW:null;
         flow("[data-flow-deposit]","[data-glow-bank]",depW);
-        flow("[data-flow-withdraw]","[data-glow-nope]",wdrW);
         /* cost node: LIVE cost rate of what's running right now — jumps the moment the kettle goes on */
         flow("[data-flow-cost]","[data-glow-cost]",loadW);
         flow("[data-flow-costbank]","[data-glow-nope]",loadW);
