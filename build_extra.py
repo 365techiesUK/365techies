@@ -1455,6 +1455,20 @@ def off_grid():
         .vlive__chart svg{width:100%;height:74px;display:block}
         .vlive__chartaxis{display:flex;justify-content:space-between;font:600 .52rem/1 ui-monospace,monospace;color:#5d6c7d;margin-top:.25rem;letter-spacing:.04em;text-transform:uppercase}
         .vlive__chartnote{font:600 .56rem/1.4 ui-monospace,monospace;color:#5d6c7d;text-align:center;margin:.5rem 0 0;letter-spacing:.04em;text-transform:uppercase}
+        .vlive__wx{margin-top:1.1rem;padding:1rem 1.1rem;border:1px solid rgba(255,255,255,.09);border-radius:14px;background:rgba(255,255,255,.02)}
+        .vlive__wx[hidden]{display:none}
+        .vlive__wxnow{display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap;margin-bottom:.7rem}
+        .vlive__wxico{font-size:1.5rem;line-height:1}
+        .vlive__wxtemp{font:800 1.5rem/1 inherit;color:#fff}
+        .vlive__wxdesc{font:600 .66rem/1.4 ui-monospace,monospace;letter-spacing:.05em;text-transform:uppercase;color:#9fb0c3}
+        .vlive__wxdays{display:flex;gap:.45rem;overflow-x:auto;padding-bottom:.2rem}
+        .vlive__wxday{flex:1 0 72px;text-align:center;padding:.6rem .3rem;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.03);opacity:0;transform:translateY(10px);transition:opacity .5s,transform .5s}
+        .vlive__wxday.in{opacity:1;transform:none}
+        .vlive__wxd-n{display:block;font:600 .58rem/1 ui-monospace,monospace;letter-spacing:.05em;text-transform:uppercase;color:#9fb0c3}
+        .vlive__wxd-i{display:block;font-size:1.15rem;margin:.3rem 0}
+        .vlive__wxd-t{display:block;font:700 .78rem/1 inherit;color:#fff}
+        .vlive__wxd-y{display:block;font:800 .82rem/1.2 inherit;color:#39d353;margin-top:.35rem}
+        .vlive__wxcap{font:600 .56rem/1.5 ui-monospace,monospace;color:#5d6c7d;text-align:center;margin:.7rem 0 0;letter-spacing:.04em;text-transform:uppercase}
         .vlive__tanks{display:flex;gap:1.1rem;margin-top:1.1rem;flex-wrap:wrap;align-items:center}
         .vlive__tank{flex:1;min-width:140px}
         .vlive__tankhead{display:flex;justify-content:space-between;font:600 .64rem/1 ui-monospace,monospace;letter-spacing:.04em;text-transform:uppercase;color:#9fb0c3;margin-bottom:.35rem}
@@ -1565,6 +1579,15 @@ def off_grid():
             </div>
           </div>
           <p class="vlive__chartnote" data-chartnote>&nbsp;</p>
+          <div class="vlive__wx" data-wx hidden>
+            <div class="vlive__wxnow">
+              <span class="vlive__wxico" data-wx-ico>&mdash;</span>
+              <span class="vlive__wxtemp" data-wx-temp>&mdash;</span>
+              <span class="vlive__wxdesc" data-wx-desc></span>
+            </div>
+            <div class="vlive__wxdays" data-wx-days></div>
+            <p class="vlive__wxcap" data-wx-cap></p>
+          </div>
           <div class="vlive__save">
             <div class="vlive__savebox"><span class="vlive__savebig" data-save-today>&pound;0.00</span><span class="vlive__savelbl">Saved today</span></div>
             <div class="vlive__savebox"><span class="vlive__savebig" data-save-life>&pound;0.00</span><span class="vlive__savelbl" data-save-days>30-day saving</span></div>
@@ -1660,6 +1683,7 @@ def off_grid():
         var animate=(histKind!==kind||histSig===null); /* sample->live flip rebuilds — fake bars never survive a real payload */
         histSig=sig; histKind=kind; histData=arr;
         histPaint(animate);
+        if(lastWx)paintWx();   /* recalibrate the solar forecast the moment real history lands */
       }
       function render(s){
         var loadW=(s.dcW!=null)?s.dcW:((s.pvW!=null&&s.battW!=null)?Math.max(0,s.pvW-s.battW):null);
@@ -1816,6 +1840,55 @@ def off_grid():
           paintCharts(j.soc,j.pv||[],false);
         }).catch(function(){ var s1=sampleSeries(); paintCharts(s1.soc,s1.pv,true); });
       }
+      /* ---- weather + 7-day solar forecast (nearest-town GPS; calibrated to this van's real last 30 days) ---- */
+      var WMO={0:["☀️","Clear"],1:["🌤️","Mostly clear"],2:["⛅","Partly cloudy"],3:["☁️","Overcast"],45:["🌫️","Fog"],48:["🌫️","Fog"],51:["🌦️","Drizzle"],53:["🌦️","Drizzle"],55:["🌦️","Drizzle"],56:["🌧️","Icy drizzle"],57:["🌧️","Icy drizzle"],61:["🌧️","Rain"],63:["🌧️","Rain"],65:["🌧️","Heavy rain"],66:["🌧️","Icy rain"],67:["🌧️","Icy rain"],71:["🌨️","Snow"],73:["🌨️","Snow"],75:["🌨️","Heavy snow"],77:["🌨️","Snow"],80:["🌦️","Showers"],81:["🌦️","Showers"],82:["🌧️","Heavy showers"],85:["🌨️","Snow showers"],86:["🌨️","Snow showers"],95:["⛈️","Thunderstorm"],96:["⛈️","Hail"],99:["⛈️","Hail"]};
+      function wmo(c){ return WMO[c]||["🌤️",""]; }
+      function sampleWx(){
+        var days=[],now=new Date();
+        var rads=[24,27,22,18,25,28,26], codes=[1,0,2,3,1,0,2], tms=[24,26,23,21,25,27,26];
+        for(var i=0;i<7;i++){ var d2=new Date(now.getTime()+i*86400000);
+          days.push({d:d2.toISOString().slice(0,10),rad:rads[i],tmax:tms[i],tmin:14,code:codes[i]}); }
+        var past=[]; for(i=0;i<30;i++)past.push(20+Math.round(6*Math.sin(i/4)));
+        return {sample:1,ok:1,town:"Bournemouth",tempC:19.8,wcode:2,isDay:1,days:days,pastRad:past};
+      }
+      var lastWx=null, wxSig=null;
+      function paintWx(){
+        var wx=lastWx, box=q("[data-wx]"); if(!box)return;
+        if(!wx||!wx.ok){ box.hidden=true; return; }
+        var k=null;
+        if(histKind==="l"&&histData&&wx.pastRad&&wx.pastRad.length){
+          var eSum=0,rSum=0;
+          histData.forEach(function(dd){eSum+=((dd&&dd.kwh)||0);});
+          wx.pastRad.forEach(function(r){rSum+=(r||0);});
+          if(rSum>1&&eSum>0)k=eSum/rSum;   /* kWh generated per MJ/m2 — this van's own real-world factor */
+        }
+        if(k==null&&wx.sample)k=0.09;      /* demo calibration, only ever shown with the sample badge */
+        var sig=(wx.t||0)+"|"+(k==null?"nok":k.toFixed(4))+"|"+histKind;
+        if(sig===wxSig)return; wxSig=sig;
+        box.hidden=false;
+        var w=wmo(wx.wcode);
+        setTxt(q("[data-wx-ico]"),w[0]);
+        setTxt(q("[data-wx-temp]"),(wx.tempC!=null)?wx.tempC.toFixed(1)+"°C":"—");
+        setTxt(q("[data-wx-desc]"),(w[1]?w[1]+" ":"")+(wx.town?"in "+wx.town+" right now":"at the van right now"));
+        var wd=q("[data-wx-days]"), names=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"], tot=0, html="";
+        (wx.days||[]).forEach(function(dy){
+          var dn=names[new Date(dy.d+"T12:00:00").getDay()];
+          var wi=wmo(dy.code);
+          var yld=(k!=null&&dy.rad!=null)?k*dy.rad:null; if(yld!=null)tot+=yld;
+          html+='<div class="vlive__wxday"><span class="vlive__wxd-n">'+dn+'</span><span class="vlive__wxd-i">'+wi[0]+'</span><span class="vlive__wxd-t">'+(dy.tmax!=null?dy.tmax+"°":"—")+'</span><span class="vlive__wxd-y">'+(yld!=null?"~"+yld.toFixed(1)+" kWh":"—")+'</span></div>';
+        });
+        setHTML(wd,html);
+        Array.prototype.forEach.call(wd.children,function(c2,i2){ setTimeout(function(){c2.classList.add("in");},60+i2*90); });
+        setTxt(q("[data-wx-cap]"),
+          "7-day solar forecast"+(k!=null?" · predicted ~"+tot.toFixed(1)+" kWh ≈ £"+(tot*RATE).toFixed(2)+" at 40p/kWh":"")+
+          " · calibrated to this van's real last 30 days · Met Office UKMO + ECMWF models via Open-Meteo · nearest town only · estimate, not a promise"+(wx.sample?" · sample":""));
+      }
+      function loadWx(){
+        if(!window.fetch){ lastWx=sampleWx(); paintWx(); return; }
+        fetch("/api/vrm-weather.php",{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){
+          if(!j||!j.ok)throw 0; lastWx=j; paintWx();
+        }).catch(function(){ lastWx=sampleWx(); paintWx(); });
+      }
       var lastJ=null, lastSse=0, lastRest=0, busy=false, sampled=false;
       function sseAlive(){ return lastSse>0 && (Date.now()-lastSse)<20000; } /* self-heals: if the stream dies, REST reclaims all values within 20s */
       var HOT={soc:1,battV:1,battA:1,battW:1,pvW:1,dcW:1,timeToGo:1,updated:1};   /* values owned by the SSE stream while it's alive */
@@ -1851,6 +1924,7 @@ def off_grid():
       /* the badge clock ticks every second while the realtime stream is alive */
       setInterval(function(){ if(lastJ&&!lastJ.sample&&sseAlive()) setTxt(q("[data-updated]"),liveClock()); },1000);
       loadHist24(); setInterval(loadHist24, 600000);
+      loadWx(); setInterval(loadWx, 1800000);
       /* realtime overlay: same per-second MQTT stream the official Victron apps use, bridged server-side */
       if(PROXY && window.EventSource){ try{
         var es=new EventSource(PROXY.replace("vrm.php","vrm-live.php"));

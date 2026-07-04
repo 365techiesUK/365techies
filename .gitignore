@@ -22,3 +22,5 @@ api/isitdown-cache.json.lock
 api/vrm-history-cache.json
 api/vrm-history-cache.json.tmp
 api/vrm-cache.json.tmp
+api/vrm-weather-cache.json
+api/vrm-weather-cache.json.tmp
