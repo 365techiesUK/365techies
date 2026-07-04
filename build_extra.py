@@ -1672,7 +1672,8 @@ def off_grid():
               <path class="vflow vflow-dash" data-flow-cost style="stroke:#e06a4a" d="M489 137 C450 163 450 190 489 215"></path>
               <path class="vflow vflow-dash" data-flow-costbank style="stroke:#e0b341" d="M537 232 H612"></path>
               <!-- SUN -->
-              <g transform="translate(70,60)" class="vnpop">
+              <g transform="translate(70,60)">
+                <g class="vnpop">
                 <circle class="vglow" data-glow-sun r="40" fill="#e0b341" opacity="0" filter="url(#vblur)"></circle>
                 <circle r="27" fill="url(#vgsun)" stroke="rgba(224,179,65,.55)" stroke-width="1.5"></circle>
                 <path d="M-13 -17 A21.5 21.5 0 0 1 13 -17" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.5" stroke-linecap="round"></path>
@@ -1681,9 +1682,11 @@ def off_grid():
                 <rect class="vplate" x="-42" y="36" width="84" height="26" rx="9" style="stroke:rgba(224,179,65,.30)"></rect>
                 <text class="vnval" data-pv text-anchor="middle" y="54">&mdash;</text>
                 <text class="vnlabel" text-anchor="middle" y="78">Solar</text>
+                </g>
               </g>
               <!-- ENGINE -->
-              <g transform="translate(70,180)" class="vnpop" style="animation-delay:.06s">
+              <g transform="translate(70,180)">
+                <g class="vnpop" style="animation-delay:.06s">
                 <circle class="vglow" data-glow-eng r="40" fill="#e0884a" opacity="0" filter="url(#vblur)"></circle>
                 <circle r="27" fill="url(#vgeng)" stroke="rgba(224,136,74,.55)" stroke-width="1.5"></circle>
                 <path d="M-13 -17 A21.5 21.5 0 0 1 13 -17" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.5" stroke-linecap="round"></path>
@@ -1692,9 +1695,11 @@ def off_grid():
                 <rect class="vplate" x="-32" y="36" width="64" height="26" rx="9" style="stroke:rgba(224,136,74,.30)"></rect>
                 <text class="vnval" data-eng-w text-anchor="middle" y="54">&mdash;</text>
                 <text class="vnlabel" text-anchor="middle" y="78">Engine</text>
+                </g>
               </g>
               <!-- ENGINE HOURS -->
-              <g transform="translate(70,270)" class="vnpop" style="animation-delay:.12s">
+              <g transform="translate(70,270)">
+                <g class="vnpop" style="animation-delay:.12s">
                 <title>Time the engine spent charging the bank &mdash; worked out from the energy delivered at the Orion&rsquo;s observed ~44 A charge rate &mdash; and the grid-equivalent value of that power, today and over 30 days.</title>
                 <circle class="vglow" data-glow-engh r="34" fill="#e0884a" opacity="0" filter="url(#vblur)"></circle>
                 <circle r="27" fill="url(#vgeng)" stroke="rgba(224,136,74,.55)" stroke-width="1.5"></circle>
@@ -1709,9 +1714,11 @@ def off_grid():
                 <text class="vnval" data-engh-day text-anchor="middle" y="54" style="fill:#e0884a;font-size:13px">&mdash;</text>
                 <text class="vnlabel" text-anchor="middle" y="78">Engine hours &amp; value</text>
                 <text class="vnlabel" data-engh-month text-anchor="middle" y="92" style="fill:#e0b341"></text>
+                </g>
               </g>
               <!-- BATTERY -->
-              <g transform="translate(300,120)" class="vnpop" style="animation-delay:.18s">
+              <g transform="translate(300,120)">
+                <g class="vnpop" style="animation-delay:.18s">
                 <circle class="vglow" data-glow-batt r="66" fill="#39d353" opacity="0" filter="url(#vblur)"></circle>
                 <circle r="63" fill="none" stroke="rgba(125,170,220,.16)" stroke-width="4" stroke-dasharray="1.8 11.39"></circle>
                 <circle r="47" fill="url(#vgbatt)"></circle>
@@ -1720,9 +1727,11 @@ def off_grid():
                 <text class="vlive__socval" data-soc text-anchor="middle" y="9" fill="#fff">&mdash;</text>
                 <rect class="vplate" x="-36" y="17" width="72" height="17" rx="8" style="stroke:rgba(125,170,220,.20)"></rect>
                 <text class="vlive__socstate" data-state text-anchor="middle" y="29" fill="#93a5bb">&mdash;</text>
+                </g>
               </g>
               <!-- LOADS -->
-              <g transform="translate(505,120)" class="vnpop" style="animation-delay:.24s">
+              <g transform="translate(505,120)">
+                <g class="vnpop" style="animation-delay:.24s">
                 <circle class="vglow" data-glow-load r="40" fill="#2aa9e0" opacity="0" filter="url(#vblur)"></circle>
                 <circle r="27" fill="url(#vgload)" stroke="rgba(42,169,224,.55)" stroke-width="1.5"></circle>
                 <path d="M-13 -17 A21.5 21.5 0 0 1 13 -17" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.5" stroke-linecap="round"></path>
@@ -1730,9 +1739,11 @@ def off_grid():
                 <rect class="vplate" x="-32" y="36" width="64" height="26" rx="9" style="stroke:rgba(42,169,224,.30)"></rect>
                 <text class="vnval" data-load text-anchor="middle" y="54">&mdash;</text>
                 <text class="vnlabel" text-anchor="middle" y="78">Loads</text>
+                </g>
               </g>
               <!-- COST -->
-              <g transform="translate(505,232)" class="vnpop" style="animation-delay:.30s">
+              <g transform="translate(505,232)">
+                <g class="vnpop" style="animation-delay:.30s">
                 <title>The live running cost of what the van is using right now, at 40p/kWh &mdash; watch it jump when the kettle goes on. The small meter counts up every second while you have this page open.</title>
                 <circle class="vglow" data-glow-cost r="36" fill="#e06a4a" opacity="0" filter="url(#vblur)"></circle>
                 <circle r="27" fill="url(#vgcost)" stroke="rgba(224,106,74,.55)" stroke-width="1.5"></circle>
@@ -1745,9 +1756,11 @@ def off_grid():
                 <text class="vnval" data-cost-val text-anchor="middle" y="54" style="fill:#e06a4a">&mdash;</text>
                 <text class="vnlabel" text-anchor="middle" y="78">Cost of load &middot; live</text>
                 <text class="vnlabel" data-cost-sub text-anchor="middle" y="92" style="fill:#e06a4a"></text>
+                </g>
               </g>
               <!-- COIN -->
-              <g transform="translate(648,120)" class="vnpop" style="animation-delay:.36s">
+              <g transform="translate(648,120)">
+                <g class="vnpop" style="animation-delay:.36s">
                 <title>What the van&rsquo;s current usage would cost on grid (40p/kWh) plus the 50p/day standing charge. Surplus sunshine is banked and counted when used &mdash; never twice.</title>
                 <circle class="vglow" data-glow-coin r="36" fill="#e0b341" opacity="0" filter="url(#vblur)"></circle>
                 <g class="vcoin2">
@@ -1757,9 +1770,11 @@ def off_grid():
                 <rect class="vplate" x="-42" y="36" width="84" height="26" rx="9" style="stroke:rgba(224,179,65,.35)"></rect>
                 <text class="vnval" data-sn-rate text-anchor="middle" y="54" style="fill:#39d353">&mdash;</text>
                 <text class="vnlabel" text-anchor="middle" y="78">Saving now</text>
+                </g>
               </g>
               <!-- BANK -->
-              <g transform="translate(648,232)" class="vnpop" style="animation-delay:.42s">
+              <g transform="translate(648,232)">
+                <g class="vnpop" style="animation-delay:.42s">
                 <title>Usable energy sitting in the lithium bank right now, valued at 40p/kWh (12.8V nominal). Glows while the sun or engine is making a deposit.</title>
                 <circle class="vglow" data-glow-bank r="32" fill="#39d353" opacity="0" filter="url(#vblur)"></circle>
                 <circle r="27" fill="url(#vgbank)" stroke="rgba(57,211,83,.55)" stroke-width="1.5"></circle>
@@ -1773,6 +1788,7 @@ def off_grid():
                 <text class="vnval" data-bank-val text-anchor="middle" y="54" style="fill:#39d353;font-size:13px">&mdash;</text>
                 <text class="vnlabel" text-anchor="middle" y="78">Stored in battery</text>
                 <text class="vnlabel" data-sn-sub text-anchor="middle" y="92" style="fill:#e0b341"></text>
+                </g>
               </g>
             </svg>
           </div>
