@@ -1412,104 +1412,221 @@ def off_grid():
           <p class="lede lede--center" data-reveal>No stock photos &mdash; this is the live feed from our <strong>365 Crafter</strong>, our mobile support centre running entirely on Victron solar and battery power. If the link ever drops you&rsquo;ll see a clearly-badged sample, never fake &lsquo;live&rsquo; numbers. We design and monitor systems exactly like this for you.</p>
         </div>
         <style>
-        .vlive{max-width:940px;margin:0 auto;background:radial-gradient(120% 150% at 50% -25%,rgba(57,211,83,.07),rgba(255,255,255,.02) 55%);border:1px solid rgba(255,255,255,.09);border-radius:22px;padding:1.4rem 1.4rem 1.25rem;box-shadow:0 14px 50px rgba(0,0,0,.30)}
-        .vlive__bar{display:flex;align-items:center;gap:.7rem;font:600 .72rem/1 ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;color:#9fb0c3;margin-bottom:.4rem;flex-wrap:wrap}
+        /* ===== shell (layer 0): neutral navy — the SVG scene owns the colour ===== */
+        .vlive{max-width:940px;margin:0 auto;background:linear-gradient(180deg,#0b1330 0%,#081024 100%);border:1px solid rgba(125,170,220,.14);border-radius:20px;padding:1.5rem 1.5rem 1.35rem;box-shadow:0 1px 0 rgba(255,255,255,.05) inset,0 20px 60px rgba(0,0,0,.35),0 2px 8px rgba(0,0,0,.25)}
+        /* ===== header bar = title bar ===== */
+        .vlive__bar{display:flex;align-items:center;gap:.7rem;font:600 .66rem/1.3 ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;color:#a9bacd;padding-bottom:.7rem;margin-bottom:.75rem;border-bottom:1px solid rgba(125,170,220,.10);flex-wrap:wrap}
         .vlive__live{display:inline-flex;align-items:center;gap:.45rem;color:#39d353}
-        .vlive__dot{width:9px;height:9px;border-radius:50%;background:#39d353;animation:vpulse 2s infinite}
-        @keyframes vpulse{0%{box-shadow:0 0 0 0 rgba(57,211,83,.5)}70%{box-shadow:0 0 0 9px rgba(57,211,83,0)}100%{box-shadow:0 0 0 0 rgba(57,211,83,0)}}
-        .vlive__site{flex:1}.vlive__upd{opacity:.85}
-        .vlive__alarm{margin:.4rem 0 .6rem;padding:.55rem .9rem;border-radius:10px;font:600 .68rem/1.4 ui-monospace,monospace;letter-spacing:.05em;text-transform:uppercase;text-align:center}
+        .vlive__dot{width:9px;height:9px;border-radius:50%;background:#39d353;position:relative}
+        .vlive__dot::after{content:"";position:absolute;inset:-2px;border-radius:50%;border:2px solid rgba(57,211,83,.55);animation:vping 2.4s cubic-bezier(0,0,.2,1) infinite}
+        @keyframes vping{0%{transform:scale(.6);opacity:1}75%,100%{transform:scale(2.1);opacity:0}}
+        .vlive__site{flex:1}
+        .vlive__upd{opacity:.9;font-variant-numeric:tabular-nums;display:inline-block;min-width:21ch;text-align:right}
+        .vlive__fsbtn{inline-size:40px;block-size:40px;display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(55,194,194,.35);border-radius:10px;background:rgba(255,255,255,.04);color:#37c2c2;cursor:pointer;flex:0 0 auto;transition:color .18s,border-color .18s,background .18s,transform .12s}
+        .vlive__fsbtn:hover{background:rgba(55,194,194,.10);border-color:rgba(55,194,194,.7)}
+        .vlive__fsbtn:active{transform:scale(.94)}
+        .vlive__fsbtn:focus-visible{outline:2px solid #37c2c2;outline-offset:2px}
+        .vfs-c{display:none}
+        .vlive--fs .vfs-x{display:none}
+        .vlive--fs .vfs-c{display:inline}
+        /* ===== alarm strip ===== */
+        .vlive__alarm{margin:.2rem 0 .55rem;padding:.55rem .9rem;border-radius:10px;font:600 .58rem/1.4 ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;text-align:center}
         .vlive__alarm[hidden]{display:none}
-        .vlive__alarm--ok{border:1px solid rgba(57,211,83,.35);background:rgba(57,211,83,.08);color:#39d353}
+        .vlive__alarm--ok{border:1px solid rgba(57,211,83,.35);background:rgba(57,211,83,.07);color:#39d353}
         .vlive__alarm--bad{border:1px solid rgba(224,106,74,.5);background:rgba(224,106,74,.10);color:#e06a4a}
-        .vcoin2{animation:vcoin 3.2s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
-        @keyframes vcoin{0%,55%{transform:rotateY(0)}75%{transform:rotateY(180deg)}100%{transform:rotateY(360deg)}}
-        .vbank{animation:vbankpulse 2.8s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
-        .vcost{animation:vbankpulse 2.8s ease-in-out .9s infinite;transform-box:fill-box;transform-origin:center}
-        .vengh{animation:vbankpulse 2.8s ease-in-out .45s infinite;transform-box:fill-box;transform-origin:center}
-        @keyframes vbankpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+        /* ===== HERO: recessed instrument well ===== */
+        .vflowwrap{position:relative;margin:.75rem -.6rem 0;padding:1rem 1rem .5rem;border-radius:16px;background:radial-gradient(90% 130% at 50% 0%,rgba(29,151,227,.07),transparent 62%),repeating-linear-gradient(0deg,rgba(125,170,220,.045) 0 1px,transparent 1px 28px),repeating-linear-gradient(90deg,rgba(125,170,220,.045) 0 1px,transparent 1px 28px),#070e20;box-shadow:inset 0 0 0 1px rgba(125,170,220,.10),inset 0 14px 34px rgba(0,0,0,.38)}
+        .vflowwrap::after{content:"";position:absolute;inset:0;border-radius:16px;pointer-events:none;background:radial-gradient(120% 100% at 50% 40%,transparent 55%,rgba(4,8,20,.55) 100%)}
         .vflowwrap svg{width:100%;height:auto;display:block;overflow:visible}
         .vflow{fill:none;stroke-width:3;stroke-linecap:round}
-        .vflow-base{stroke:rgba(255,255,255,.10)}
-        .vflow-dash{stroke-dasharray:.5 13;animation:vflowmove 1s linear infinite}
-        @keyframes vflowmove{to{stroke-dashoffset:-13.5}}
+        .vflow-base{stroke:rgba(148,180,220,.14)}
+        .vflow-dash{stroke-dasharray:1 9 .5 13;animation:vflowmove 1s linear infinite;will-change:stroke-dashoffset}
+        @keyframes vflowmove{to{stroke-dashoffset:-23.5}}
         .vflow-off{opacity:.12;animation-play-state:paused}
-        .vlive__socval{font:800 30px/1 inherit}
-        .vlive__socstate{font:600 11px/1 ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase}
-        .vnval{font:800 17px/1 inherit;fill:#fff}
-        .vnlabel{font:600 11px/1 ui-monospace,monospace;letter-spacing:.05em;text-transform:uppercase;fill:#9fb0c3}
+        .vlive__socval{font:600 34px/1 "Clash Display","Archivo",sans-serif;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+        .vlive__socstate{font:600 11px/1 ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;fill:#93a5bb}
+        .vnval{font:600 17px/1 "Clash Display","Archivo",sans-serif;font-variant-numeric:tabular-nums;fill:#f2f7ff}
+        .vnlabel{font:600 10.5px/1 ui-monospace,monospace;letter-spacing:.07em;text-transform:uppercase;fill:#8fa3bd}
         .vglow{transition:opacity .6s ease}
-        .vlive__metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem;margin-top:.5rem}
-        .vlive__m{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:.75rem .5rem;text-align:center}
-        .vlive__mv{display:block;font:800 1.1rem/1.1 inherit;color:#fff}
-        .vlive__ml{display:block;font:600 .58rem/1.2 ui-monospace,monospace;letter-spacing:.05em;text-transform:uppercase;color:#9fb0c3;margin-top:.35rem}
-        .vlive__pass{margin-top:1.1rem;padding:1rem 1.1rem;border:1px solid rgba(57,211,83,.20);border-radius:14px;background:linear-gradient(160deg,rgba(57,211,83,.06),rgba(255,255,255,.02))}
-        .vlive__passhead{display:flex;justify-content:space-between;gap:.8rem;font:600 .64rem/1.3 ui-monospace,monospace;letter-spacing:.05em;text-transform:uppercase;color:#9fb0c3;margin-bottom:.55rem;flex-wrap:wrap}
+        /* event-driven icon motion: things move only when energy or money moves */
+        .vcoin2{transform-box:fill-box;transform-origin:center}
+        .vcoin2.spin{animation:vcoinspin .9s cubic-bezier(.3,.7,.3,1) 1}
+        @keyframes vcoinspin{to{transform:rotateY(360deg)}}
+        .vbank,.vcost,.vengh{transform-box:fill-box;transform-origin:center}
+        .vlive.is-charging .vbank{animation:vbreathe 4s ease-in-out infinite}
+        .vlive.is-loading .vcost{animation:vbreathe 4s ease-in-out .9s infinite}
+        .vlive.is-engine .vengh{animation:vbreathe 4s ease-in-out .45s infinite}
+        @keyframes vbreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+        .vcost.thump{animation:vthump .45s cubic-bezier(.34,1.56,.64,1) 1}
+        @keyframes vthump{0%{transform:scale(1)}35%{transform:scale(1.18)}100%{transform:scale(1)}}
+        /* ===== metric tiles: one milled instrument cluster ===== */
+        .vlive__metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(125,170,220,.10);border:1px solid rgba(125,170,220,.10);border-radius:14px;overflow:hidden;margin-top:.9rem}
+        .vlive__m{background:#0b1330;padding:.85rem .5rem .7rem;text-align:center;transition:background .15s ease;contain:layout paint}
+        .vlive__m:hover{background:#0e1738}
+        .vlive__mv{display:block;font:600 1.2rem/1.1 "Clash Display","Archivo",sans-serif;font-variant-numeric:tabular-nums;letter-spacing:-.01em;color:#f2f7ff}
+        .vlive__ml{display:block;font:600 .58rem/1.3 ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:#93a5bb;margin-top:.35rem}
+        /* ===== shared layer-1 panel recipe ===== */
+        .vlive__pass,.vlive__engine,.vlive__charts,.vlive__wx,.vlive__save,.vlive__histwrap,.vlive__tanks{background:rgba(148,180,220,.04);border:1px solid rgba(125,170,220,.10);border-radius:14px;margin-top:.9rem}
+        .vlive__pass{border-left:3px solid rgba(57,211,83,.55);padding:1rem 1.1rem}
+        .vlive__engine{border-left:3px solid rgba(224,136,74,.55)}
+        .vlive__save{border-left:3px solid rgba(224,179,65,.55)}
+        /* panel micro-headers */
+        .vlive__passhead,.vlive__charthead,.vlive__histhead{font:600 .66rem/1.3 ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;color:#a9bacd}
+        .vlive__passhead,.vlive__histhead{display:flex;justify-content:space-between;gap:.8rem;flex-wrap:wrap;padding-bottom:.55rem;margin-bottom:.7rem;border-bottom:1px solid rgba(125,170,220,.08)}
+        .vlive__passhead::before{content:"";display:inline-block;width:6px;height:6px;border-radius:2px;background:#39d353;margin-right:.5rem;vertical-align:1px}
         .vlive__passhead b{color:#39d353}
-        .vlive__passbar{position:relative;height:22px;border-radius:8px;background:rgba(255,255,255,.07);overflow:hidden}
-        .vlive__passfill{height:100%;width:0;border-radius:8px;background:linear-gradient(90deg,#2aa9e0,#39d353);transition:width 1.4s cubic-bezier(.4,0,.2,1)}
-        .vlive__passtxt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:700 .72rem/1 ui-monospace,monospace;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.6);letter-spacing:.04em}
+        /* battery passport */
+        .vlive__passbar{position:relative;height:26px;border-radius:8px;background:rgba(8,14,32,.9);box-shadow:inset 0 1px 3px rgba(0,0,0,.5);overflow:hidden;background-image:repeating-linear-gradient(90deg,transparent 0 calc(10% - 1px),rgba(255,255,255,.10) calc(10% - 1px) 10%)}
+        .vlive__passfill{height:100%;width:0;border-radius:8px 0 0 8px;background:#2fbf4c;transition:width 1.4s cubic-bezier(.4,0,.2,1)}
+        .vlive__passtxt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:700 .72rem/1 ui-monospace,monospace;font-variant-numeric:tabular-nums;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.6);letter-spacing:.04em}
         .vlive__chips{display:flex;gap:.45rem;flex-wrap:wrap;margin-top:.65rem}
-        .vlive__chip{font:600 .6rem/1.3 ui-monospace,monospace;letter-spacing:.04em;text-transform:uppercase;color:#9fb0c3;border:1px solid rgba(255,255,255,.10);border-radius:999px;padding:.3rem .65rem}
-        .vlive__chip b{color:#fff;font-weight:700}
-        .vlive__engine{display:flex;justify-content:space-between;gap:.8rem;flex-wrap:wrap;margin-top:.7rem;padding:.7rem 1rem;border:1px solid rgba(224,136,74,.25);border-radius:12px;background:rgba(224,136,74,.05);font:600 .66rem/1.5 ui-monospace,monospace;letter-spacing:.04em;text-transform:uppercase;color:#9fb0c3}
+        .vlive__chip{font:600 .58rem/1.3 ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:#93a5bb;background:rgba(8,14,32,.6);border:1px solid rgba(125,170,220,.12);border-radius:999px;padding:.32rem .7rem}
+        .vlive__chip b{color:#f2f7ff;font-weight:700}
+        /* engine strip */
+        .vlive__engine{display:flex;justify-content:space-between;gap:.8rem;flex-wrap:wrap;padding:.8rem 1.1rem;font:600 .58rem/1.5 ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:#93a5bb}
         .vlive__engine b{color:#e0884a}
-        .vlive__eng-money{flex-basis:100%;border-top:1px dashed rgba(224,136,74,.25);padding-top:.5rem;margin-top:.1rem}
+        .vlive__eng-money{flex-basis:100%;border-top:1px solid rgba(125,170,220,.10);padding-top:.5rem;margin-top:.1rem}
         .vlive__eng-money[hidden]{display:none}
-        .vlive__charts{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-top:1.1rem}
-        .vlive__chart{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:.7rem .8rem .5rem}
-        .vlive__charthead{display:flex;justify-content:space-between;gap:.6rem;font:600 .58rem/1.3 ui-monospace,monospace;letter-spacing:.05em;text-transform:uppercase;color:#9fb0c3;margin-bottom:.4rem}
-        .vlive__charthead span:last-child{color:#fff}
-        .vlive__chart svg{width:100%;height:74px;display:block}
-        .vlive__chartaxis{display:flex;justify-content:space-between;font:600 .52rem/1 ui-monospace,monospace;color:#5d6c7d;margin-top:.25rem;letter-spacing:.04em;text-transform:uppercase}
-        .vlive__chartnote{font:600 .56rem/1.4 ui-monospace,monospace;color:#5d6c7d;text-align:center;margin:.5rem 0 0;letter-spacing:.04em;text-transform:uppercase}
-        .vlive__wx{margin-top:1.1rem;padding:1rem 1.1rem;border:1px solid rgba(255,255,255,.09);border-radius:14px;background:rgba(255,255,255,.02)}
+        /* charts: one panel, internal divider */
+        .vlive__charts{display:grid;grid-template-columns:1fr 1fr;gap:0;padding:.9rem 1rem .6rem}
+        .vlive__chart{background:none;border:0;padding:0;contain:layout paint}
+        .vlive__chart:first-child{padding-right:1rem}
+        .vlive__chart+.vlive__chart{border-left:1px solid rgba(125,170,220,.08);padding-left:1rem}
+        .vlive__charthead{display:flex;justify-content:space-between;gap:.6rem;margin-bottom:.4rem}
+        .vlive__charthead::before{content:"";display:inline-block;width:6px;height:6px;border-radius:2px;background:#2aa9e0;margin-right:.1rem;align-self:center}
+        .vlive__charthead span:last-child{color:#f2f7ff;font-variant-numeric:tabular-nums}
+        .vlive__chart svg{width:100%;height:80px;display:block}
+        .vlive__chartaxis{display:flex;justify-content:space-between;font:600 .58rem/1 ui-monospace,monospace;color:#647893;margin-top:.25rem;letter-spacing:.08em;text-transform:uppercase}
+        .vlive__chartnote{font:600 .58rem/1.5 ui-monospace,monospace;color:#647893;text-align:center;margin:.5rem 0 0;letter-spacing:.08em;text-transform:uppercase}
+        /* weather (contextual — no accent) */
+        .vlive__wx{padding:1rem 1.1rem}
         .vlive__wx[hidden]{display:none}
         .vlive__wxnow{display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap;margin-bottom:.7rem}
         .vlive__wxico{font-size:1.5rem;line-height:1}
-        .vlive__wxtemp{font:800 1.5rem/1 inherit;color:#fff}
-        .vlive__wxdesc{font:600 .66rem/1.4 ui-monospace,monospace;letter-spacing:.05em;text-transform:uppercase;color:#9fb0c3}
-        .vlive__wxdays{display:flex;gap:.45rem;overflow-x:auto;padding-bottom:.2rem}
-        .vlive__wxday{flex:1 0 72px;text-align:center;padding:.6rem .3rem;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.03);opacity:0;transform:translateY(10px);transition:opacity .5s,transform .5s}
+        .vlive__wxtemp{font:600 1.6rem/1 "Clash Display","Archivo",sans-serif;font-variant-numeric:tabular-nums;color:#f2f7ff}
+        .vlive__wxdesc{font:600 .66rem/1.4 ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;color:#a9bacd}
+        .vlive__wxdays{display:flex;gap:.45rem;overflow-x:auto;padding-bottom:.2rem;scrollbar-width:thin;scrollbar-color:rgba(125,170,220,.25) transparent}
+        .vlive__wxday{flex:1 0 72px;text-align:center;padding:.6rem .3rem;background:rgba(8,14,32,.55);border:1px solid rgba(125,170,220,.10);border-radius:10px;opacity:0;transform:translateY(10px);transition:opacity .4s ease,transform .4s ease}
+        .vlive__wxday:nth-child(2){transition-delay:50ms}.vlive__wxday:nth-child(3){transition-delay:100ms}.vlive__wxday:nth-child(4){transition-delay:150ms}.vlive__wxday:nth-child(5){transition-delay:200ms}.vlive__wxday:nth-child(6){transition-delay:250ms}.vlive__wxday:nth-child(7){transition-delay:300ms}
         .vlive__wxday.in{opacity:1;transform:none}
-        .vlive__wxd-n{display:block;font:600 .58rem/1 ui-monospace,monospace;letter-spacing:.05em;text-transform:uppercase;color:#9fb0c3}
+        .vlive__wxd-n{display:block;font:600 .58rem/1 ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:#93a5bb}
         .vlive__wxd-i{display:block;font-size:1.15rem;margin:.3rem 0}
-        .vlive__wxd-t{display:block;font:700 .78rem/1 inherit;color:#fff}
-        .vlive__wxd-y{display:block;font:800 .82rem/1.2 inherit;color:#39d353;margin-top:.35rem}
-        .vlive__wxcap{font:600 .56rem/1.5 ui-monospace,monospace;color:#5d6c7d;text-align:center;margin:.7rem 0 0;letter-spacing:.04em;text-transform:uppercase}
-        .vlive__tanks{display:flex;gap:1.1rem;margin-top:1.1rem;flex-wrap:wrap;align-items:center}
-        .vlive__tank{flex:1;min-width:140px}
-        .vlive__tankhead{display:flex;justify-content:space-between;font:600 .64rem/1 ui-monospace,monospace;letter-spacing:.04em;text-transform:uppercase;color:#9fb0c3;margin-bottom:.35rem}
-        .vlive__tankbar{height:8px;border-radius:6px;background:rgba(255,255,255,.08);overflow:hidden}
-        .vlive__tankfill{height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,#2aa9e0,#39d353);transition:width 1.2s cubic-bezier(.4,0,.2,1)}
-        .vlive__pump{font:600 .6rem/1 ui-monospace,monospace;letter-spacing:.05em;text-transform:uppercase;color:#9fb0c3;border:1px solid rgba(255,255,255,.10);border-radius:999px;padding:.35rem .7rem;white-space:nowrap}
-        .vlive__pump[hidden]{display:none}
-        .vlive__note{font:600 .7rem/1.5 ui-monospace,monospace;color:#9fb0c3;text-align:center;margin:1.1rem 0 0}
-        .vlive--sample .vlive__live{color:#e0b341}.vlive--sample .vlive__dot{background:#e0b341;animation:none}
-        .vlive__save{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem;margin-top:1rem}
-        .vlive__savebox{background:linear-gradient(160deg,rgba(57,211,83,.10),rgba(255,255,255,.02));border:1px solid rgba(57,211,83,.18);border-radius:14px;padding:.85rem .5rem;text-align:center}
-        .vlive__savebig{display:block;font:800 1.45rem/1 inherit;color:#39d353}
-        .vlive__savelbl{display:block;font:600 .56rem/1.25 ui-monospace,monospace;letter-spacing:.05em;text-transform:uppercase;color:#9fb0c3;margin-top:.4rem}
-        .vlive__ledger{font:600 .6rem/1.5 ui-monospace,monospace;color:#8497a8;text-align:center;margin:.6rem 0 0;letter-spacing:.04em;text-transform:uppercase}
+        .vlive__wxd-t{display:block;font:700 .78rem/1 "Archivo",sans-serif;font-variant-numeric:tabular-nums;color:#f2f7ff}
+        .vlive__wxd-y{display:block;font:800 .82rem/1.2 "Archivo",sans-serif;font-variant-numeric:tabular-nums;color:#39d353;margin-top:.35rem}
+        .vlive__wxcap{font:600 .58rem/1.5 ui-monospace,monospace;color:#647893;text-align:center;margin:.7rem 0 0;letter-spacing:.05em;text-transform:uppercase}
+        /* savings: one gold ledger strip */
+        .vlive__save{display:grid;grid-template-columns:repeat(3,1fr);gap:0;padding:.9rem 0}
+        .vlive__savebox{background:none;border:0;padding:.35rem .5rem;text-align:center}
+        .vlive__savebox+.vlive__savebox{border-left:1px solid rgba(125,170,220,.08)}
+        .vlive__savebig{display:block;font:600 1.5rem/1 "Clash Display","Archivo",sans-serif;font-variant-numeric:tabular-nums;letter-spacing:-.01em;color:#e8c35a}
+        .vlive__savelbl{display:block;font:600 .58rem/1.3 ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:#93a5bb;margin-top:.4rem}
+        .vlive__ledger{font:600 .58rem/1.5 ui-monospace,monospace;color:#647893;text-align:center;margin:.65rem 1rem 0;letter-spacing:.08em;text-transform:uppercase}
         .vlive__ledger[hidden]{display:none}
-        .vlive__histwrap{margin-top:1.1rem}
-        .vlive__histhead{display:flex;justify-content:space-between;align-items:center;gap:.6rem;font:600 .62rem/1 ui-monospace,monospace;letter-spacing:.04em;text-transform:uppercase;color:#9fb0c3;margin-bottom:.5rem;flex-wrap:wrap}
-        .vlive__histtot{color:#39d353}
+        /* 30-day history */
+        .vlive__histwrap{padding:1rem 1.1rem}
+        .vlive__histhead::before{content:"";display:inline-block;width:6px;height:6px;border-radius:2px;background:#e0b341;margin-right:.1rem;align-self:center}
+        .vlive__histtot{color:#f2f7ff;font-variant-numeric:tabular-nums}
         .vlive__htabs{display:flex;gap:.35rem;flex-wrap:wrap}
-        .vlive__htab{font:600 .6rem/1 ui-monospace,monospace;letter-spacing:.05em;text-transform:uppercase;color:#9fb0c3;background:transparent;border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:.35rem .7rem;cursor:pointer}
-        .vlive__htab.on{color:#39d353;border-color:rgba(57,211,83,.5);background:rgba(57,211,83,.08)}
-        .vlive__hist{display:flex;align-items:flex-end;gap:2px;height:54px}
-        .vlive__bar2{flex:1 1 0;background:linear-gradient(180deg,#39d353,#2aa9e0);border-radius:2px 2px 0 0;min-height:2px;opacity:.85;transition:height .7s cubic-bezier(.2,.7,.3,1),background .4s}
-        .vlive__histcap{font:600 .56rem/1.4 ui-monospace,monospace;color:#5d6c7d;text-align:center;margin:.45rem 0 0;letter-spacing:.04em;text-transform:uppercase}
-        .vlive__rate{font:600 .6rem/1.4 ui-monospace,monospace;color:#8497a8;text-align:center;margin:.7rem 0 0;letter-spacing:.04em;text-transform:uppercase}
-        @media(max-width:560px){.vlive__metrics{grid-template-columns:repeat(2,1fr)}.vlive__save{grid-template-columns:1fr}.vlive__charts{grid-template-columns:1fr}}
-        @media(prefers-reduced-motion:reduce){.vlive *{animation:none!important;transition:none!important}}
+        .vlive__htab{font:600 .58rem/1 ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:#93a5bb;background:rgba(8,14,32,.6);border:1px solid rgba(125,170,220,.12);border-radius:999px;padding:.38rem .75rem;cursor:pointer;transition:color .18s,border-color .18s,background .18s,transform .18s}
+        .vlive__htab:hover{color:#fff;border-color:rgba(255,255,255,.32);background:rgba(255,255,255,.05);transform:translateY(-1px)}
+        .vlive__htab:active{transform:scale(.95)}
+        .vlive__htab:focus-visible{outline:2px solid #37c2c2;outline-offset:2px}
+        .vlive__htab.on{color:#0b1020;background:#39d353;border-color:#39d353;font-weight:700}
+        .vlive__hist{display:flex;align-items:flex-end;gap:2px;height:64px;border-bottom:1px solid rgba(125,170,220,.14);padding-bottom:1px}
+        .vlive__bar2{flex:1 1 0;border-radius:2px 2px 0 0;min-height:2px;opacity:.9;transition:height .7s cubic-bezier(.2,.7,.3,1),background .4s,opacity .15s,filter .15s;cursor:crosshair}
+        .vlive__bar2:hover{opacity:1;filter:brightness(1.35)}
+        .vlive__histcap{font:600 .58rem/1.4 ui-monospace,monospace;color:#647893;text-align:center;margin:.45rem 0 0;letter-spacing:.08em;text-transform:uppercase}
+        /* tanks: footer utility zone */
+        .vlive__tanks{display:flex;gap:1.1rem;padding:.85rem 1.1rem;flex-wrap:wrap;align-items:center}
+        .vlive__tank{flex:1;min-width:140px}
+        .vlive__tankhead{display:flex;justify-content:space-between;font:600 .66rem/1.3 ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;color:#a9bacd;margin-bottom:.35rem}
+        .vlive__tankbar{height:6px;border-radius:999px;background:rgba(8,14,32,.9);overflow:hidden}
+        .vlive__tankfill{height:100%;width:0;border-radius:999px;background:#2aa9e0;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+        .vlive__pump{font:600 .58rem/1 ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:#93a5bb;background:rgba(8,14,32,.6);border:1px solid rgba(125,170,220,.12);border-radius:999px;padding:.35rem .7rem;white-space:nowrap}
+        .vlive__pump[hidden]{display:none}
+        /* footer honesty captions */
+        .vlive__note{font:600 .62rem/1.6 ui-monospace,monospace;color:#647893;text-align:center;max-width:62ch;margin:.9rem auto 0;letter-spacing:.05em;border-top:1px solid rgba(125,170,220,.08);padding-top:.9rem}
+        .vlive__rate{font:600 .62rem/1.6 ui-monospace,monospace;color:#647893;text-align:center;max-width:62ch;margin:.5rem auto 0;letter-spacing:.05em;text-transform:uppercase}
+        .vlive--sample .vlive__live{color:#e0b341}.vlive--sample .vlive__dot{background:#e0b341}.vlive--sample .vlive__dot::after{border-color:rgba(224,179,65,.5)}
+        /* ===== FULLSCREEN (real API + iPhone fixed-overlay fallback share these rules) ===== */
+        .vlive--fs{position:fixed;inset:0;z-index:9999;max-width:none;border-radius:0;border:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable;background:#070d22;animation:vfsin .45s cubic-bezier(.22,1,.36,1) 1;padding:calc(env(safe-area-inset-top,0px) + .9rem) calc(env(safe-area-inset-right,0px) + 1.25rem) calc(env(safe-area-inset-bottom,0px) + 1.25rem) calc(env(safe-area-inset-left,0px) + 1.25rem)}
+        @keyframes vfsin{from{opacity:.35;transform:scale(.965)}to{opacity:1;transform:none}}
+        html.vlive-lock{overflow:hidden}
+        .vlive--fs .vlive__bar{position:sticky;top:0;z-index:2;background:rgba(7,13,34,.96);margin:-.9rem -1.25rem .4rem;padding:.9rem 1.25rem .7rem;border-bottom:1px solid rgba(125,170,220,.10)}
+        .vlive--fs .vflow-dash{stroke-width:3.5}
+        @media(min-width:1024px){
+          .vlive--fs{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);column-gap:1.5rem;row-gap:0;align-content:start}
+          .vlive--fs>*{min-width:0}
+          .vlive--fs .vlive__bar,.vlive--fs .vlive__alarm,.vlive--fs .vlive__note,.vlive--fs .vlive__rate{grid-column:1/-1}
+          .vlive--fs .vflowwrap,.vlive--fs .vlive__metrics,.vlive--fs .vlive__charts,.vlive--fs .vlive__chartnote,.vlive--fs .vlive__wx{grid-column:1}
+          .vlive--fs .vlive__pass,.vlive--fs .vlive__engine,.vlive--fs .vlive__save,.vlive--fs .vlive__ledger,.vlive--fs .vlive__histwrap,.vlive--fs .vlive__tanks{grid-column:2}
+          .vlive--fs .vflowwrap{margin-left:0;margin-right:0}
+          .vlive--fs .vflowwrap svg{max-height:44vh;width:auto;max-width:100%;margin:0 auto}
+          .vlive--fs .vlive__mv{font-size:1.35rem}
+          .vlive--fs .vlive__savebig{font-size:1.8rem}
+          .vlive--fs .vlive__chart svg{height:110px}
+          .vlive--fs .vlive__hist{height:90px}
+        }
+        /* ===== responsive tiers ===== */
+        @media(max-width:767px){
+          .vflowwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;scroll-snap-type:x proximity;mask-image:linear-gradient(90deg,transparent 0,#000 12px,#000 calc(100% - 12px),transparent 100%);-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 12px,#000 calc(100% - 12px),transparent 100%)}
+          .vflowwrap svg{min-width:560px;scroll-snap-align:start}
+          .vflowwrap::before{content:"\2039 swipe \203A";position:absolute;right:.4rem;bottom:.3rem;z-index:1;font:600 .55rem/1 ui-monospace,monospace;letter-spacing:.06em;color:#93a5bb;padding:.25rem .5rem;border:1px solid rgba(125,170,220,.14);border-radius:999px;background:rgba(7,13,34,.8)}
+        }
+        @media(min-width:640px){.vflowwrap svg{min-width:0}.vflowwrap::before{display:none}}
+        @media(max-width:639px){
+          .vlive__charts{grid-template-columns:1fr}
+          .vlive__chart:first-child{padding-right:0;padding-bottom:.7rem}
+          .vlive__chart+.vlive__chart{border-left:0;border-top:1px solid rgba(125,170,220,.08);padding-left:0;padding-top:.7rem}
+        }
+        @media(max-width:559px){
+          .vlive__save{grid-template-columns:1fr;padding:.4rem 0}
+          .vlive__savebox{display:flex;align-items:center;justify-content:space-between;text-align:left;padding:.7rem .9rem}
+          .vlive__savebox+.vlive__savebox{border-left:0;border-top:1px solid rgba(125,170,220,.08)}
+          .vlive__savebig{font-size:1.2rem}
+          .vlive__savelbl{margin-top:0}
+          .vlive__metrics{grid-template-columns:repeat(2,1fr)}
+        }
+        @media(max-width:479px){
+          .vlive{padding:1rem .85rem .9rem;border-radius:16px}
+          .vlive__bar{font-size:.6rem;gap:.5rem}
+          .vlive__upd{min-width:0}
+          .vflowwrap{margin:.6rem -.5rem 0}
+          .vflowwrap svg{min-width:620px}
+          .vnlabel{font-size:13px}
+          .vnval{font-size:20px}
+          .vlive__socval{font-size:34px}
+          .vglow{display:none}
+          .vlive__mv{font-size:1rem}
+          .vlive__chart svg{height:64px}
+          .vlive__wxdays{scroll-snap-type:x mandatory;scroll-padding-left:.2rem}
+          .vlive__wxday{flex:0 0 64px;scroll-snap-align:start}
+          .vlive__htabs{display:grid;grid-template-columns:repeat(3,1fr);width:100%}
+          .vlive__tanks{flex-direction:column;align-items:stretch}
+          .vlive__tank{min-width:100%}
+          .vlive__pump{align-self:center;min-height:36px;display:inline-flex;align-items:center}
+        }
+        @media(pointer:coarse){
+          .vlive__htab{min-height:44px;padding:.6rem 1rem;font-size:.68rem}
+          .vlive__htabs{gap:.5rem}
+          .vlive__wxday{opacity:1;transform:none;transition:none}
+        }
+        /* ===== reduced motion: honesty without movement ===== */
+        @media(prefers-reduced-motion:reduce){
+          .vlive *,.vlive *::before,.vlive *::after{animation:none!important;transition:none!important}
+          .vlive__dot{box-shadow:0 0 0 3px rgba(57,211,83,.18)}
+          .vlive__dot::after{display:none}
+          .vflow-dash{stroke-dasharray:none;opacity:.35}
+          .vlive__wxday{opacity:1;transform:none}
+          .vflowwrap::before{opacity:.7}
+        }
         </style>
         <div class="vlive" id="vlive" data-reveal>
           <div class="vlive__bar">
             <span class="vlive__live"><span class="vlive__dot"></span> <span data-live-lbl>Live</span></span>
             <span class="vlive__site">365 Crafter &middot; off-grid</span>
             <span class="vlive__upd" data-updated>&mdash;</span>
+            <button type="button" class="vlive__fsbtn" data-fsbtn aria-label="View fullscreen"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="vfs-x" d="M6 2 H2 V6 M10 2 H14 V6 M14 10 V14 H10 M6 14 H2 V10"></path><path class="vfs-c" d="M2 6 H6 V2 M14 6 H10 V2 M10 14 V10 H14 M6 14 V10 H2"></path></svg></button>
           </div>
           <div class="vlive__alarm" data-alarms hidden></div>
           <div class="vflowwrap">
@@ -1526,9 +1643,9 @@ def off_grid():
               <path class="vflow vflow-dash" data-flow-eng style="stroke:#e0884a" d="M104 180 C190 180 205 137 242 127"></path>
               <path class="vflow vflow-dash" data-flow-load style="stroke:#2aa9e0" d="M362 120 H479"></path>
               <path class="vflow vflow-dash" data-flow-money style="stroke:#e0b341" d="M531 120 H624"></path>
-              <path class="vflow vflow-base" d="M663 138 C718 160 715 192 652 210"></path>
-              <path class="vflow vflow-dash" data-flow-deposit style="stroke:#39d353" d="M663 138 C718 160 715 192 652 210"></path>
-              <path class="vflow vflow-dash" data-flow-withdraw style="stroke:#e0b341" d="M652 210 C715 192 718 160 663 138"></path>
+              <path class="vflow vflow-base" d="M665 137 C722 159 719 193 652 210"></path>
+              <path class="vflow vflow-dash" data-flow-deposit style="stroke:#39d353" d="M665 137 C722 159 719 193 652 210"></path>
+              <path class="vflow vflow-dash" data-flow-withdraw style="stroke:#e0b341" d="M652 210 C719 193 722 159 665 137"></path>
               <path class="vflow vflow-base" d="M53 197 C28 220 28 240 53 262"></path>
               <path class="vflow vflow-dash" data-flow-enghours style="stroke:#e0884a" d="M53 197 C28 220 28 240 53 262"></path>
               <path class="vflow vflow-base" d="M489 137 C455 163 455 190 489 215"></path>
@@ -1677,7 +1794,7 @@ def off_grid():
               <span class="vlive__histtot" data-hist-total>&mdash;</span>
             </div>
             <div class="vlive__hist" data-hist></div>
-            <p class="vlive__histcap">Last 30 days &middot; hover a bar for the day&rsquo;s figure</p>
+            <p class="vlive__histcap">Last 30 days &middot; tap or hover a bar for the day&rsquo;s figure</p>
           </div>
           <div class="vlive__tanks"><div style="display:contents" data-tanks></div><span class="vlive__pump" data-pump hidden></span></div>
           <p class="vlive__note" data-note></p>
@@ -1712,7 +1829,9 @@ def off_grid():
         if(to==null){ cur[key]=null; node.textContent="—"; return; }
         var from=(cur[key]==null?to:cur[key]); cur[key]=to;
         if(reduce||from===to){ node.textContent=fmt(to); return; }
-        var t0=null, dur=750;
+        /* snap tiny deltas instead of animating — kills per-second number-scramble */
+        if(Math.abs(to-from)<Math.max(Math.abs(to)*0.005,0.05)){ node.textContent=fmt(to); return; }
+        var t0=null, dur=450;
         function step(ts){ if(t0===null)t0=ts; var p=Math.min(1,(ts-t0)/dur); var e=1-Math.pow(1-p,3); node.textContent=fmt(from+(to-from)*e); if(p<1)requestAnimationFrame(step); }
         requestAnimationFrame(step);
       }
@@ -1735,7 +1854,7 @@ def off_grid():
         if(h.children.length!==vals.length){
           h.innerHTML=vals.map(function(){return '<span class="vlive__bar2" style="height:2px"></span>';}).join("");
         }
-        var bg=histMode==="saved"?"linear-gradient(180deg,#39d353,#1f8f3a)":(histMode==="used"?"linear-gradient(180deg,#7b5bd6,#2aa9e0)":"linear-gradient(180deg,#39d353,#2aa9e0)");
+        var bg=histMode==="saved"?"#e8c35a":(histMode==="used"?"#2aa9e0":"#2fbf4c"); /* flat fills: green=energy, gold=money */
         Array.prototype.forEach.call(h.children,function(b,i){
           var v=vals[i], ht=Math.max(2,Math.round(v/max*52));
           b.style.transitionDelay=(reduce?0:i*14)+"ms";
@@ -1797,6 +1916,11 @@ def off_grid():
         /* cost node: LIVE cost rate of what's running right now — jumps the moment the kettle goes on */
         flow("[data-flow-cost]","[data-glow-cost]",loadW);
         flow("[data-flow-costbank]","[data-glow-nope]",loadW);
+        /* kettle thump: the receipt flinches when a big load switches on */
+        if(!reduce&&lastLoadW!=null&&loadW!=null&&loadW-lastLoadW>150){
+          var ct=el.querySelector(".vcost");
+          if(ct){ ct.classList.remove("thump"); void ct.getBoundingClientRect(); ct.classList.add("thump"); }
+        }
         lastLoadW=loadW;
         if(loadW==null){ setTxt(q("[data-cost-val]"),"—"); }
         else tween("[data-cost-val]","costv",(loadW/1000)*RATE*100,function(v){return v.toFixed(1)+"p/h";});
@@ -1814,6 +1938,10 @@ def off_grid():
         var engW=(o.inW!=null)?o.inW:null;
         flow("[data-flow-eng]","[data-glow-eng]",engW);
         flow("[data-flow-enghours]","[data-glow-engh]",engW);   /* hour-meter path runs while the engine charges */
+        /* icons breathe only while their subsystem is actually working */
+        el.classList.toggle("is-charging",!!charging);
+        el.classList.toggle("is-loading",loadW!=null&&loadW>5);
+        el.classList.toggle("is-engine",engW!=null&&engW>5);
         setTxt(q("[data-eng-w]"),(engW==null)?"—":(engW>5?Math.round(engW)+" W":"Off"));
         var eng=q("[data-engine]");
         if(eng){
@@ -2038,14 +2166,41 @@ def off_grid():
           histPaint(true);
         });
       });
+      /* fullscreen: real API on desktop/iPad/Android; iPhone Safari gets a fixed-overlay fallback */
+      var fsBtn=q("[data-fsbtn]");
+      function fsSync(on){
+        el.classList.toggle("vlive--fs",on);
+        document.documentElement.classList.toggle("vlive-lock",on&&el.classList.contains("vlive--max"));
+        if(fsBtn)fsBtn.setAttribute("aria-label",on?"Exit fullscreen":"View fullscreen");
+      }
+      if(fsBtn){
+        fsBtn.addEventListener("click",function(){
+          if(document.fullscreenElement===el||document.webkitFullscreenElement===el){
+            (document.exitFullscreen||document.webkitExitFullscreen).call(document); return;
+          }
+          if(el.classList.contains("vlive--max")){ el.classList.remove("vlive--max"); fsSync(false); return; }
+          var rf=el.requestFullscreen||el.webkitRequestFullscreen;
+          function overlay(){ el.classList.add("vlive--max"); fsSync(true); }
+          if(rf){ try{ var pr=rf.call(el); if(pr&&pr.catch)pr.catch(overlay); }catch(e){ overlay(); } }
+          else overlay();
+        });
+        document.addEventListener("fullscreenchange",function(){ if(!el.classList.contains("vlive--max"))fsSync(document.fullscreenElement===el); });
+        document.addEventListener("webkitfullscreenchange",function(){ if(!el.classList.contains("vlive--max"))fsSync(document.webkitFullscreenElement===el); });
+        document.addEventListener("keydown",function(e){ if(e.key==="Escape"&&el.classList.contains("vlive--max")){ el.classList.remove("vlive--max"); fsSync(false); } });
+      }
       tick(); setInterval(tick, 1000);
       /* the badge clock ticks every second while the realtime stream is alive */
       setInterval(function(){ if(lastJ&&!lastJ.sample&&sseAlive()) setTxt(q("[data-updated]"),liveClock()); },1000);
-      /* the cost meter accrues every second at the live load's rate — the van's taxi meter */
+      /* the cost meter accrues every second at the live load's rate — the van's taxi meter.
+         PENNY DROP: each whole penny flips the gold coin once — a flip now MEANS money moved. */
+      var coinEl=el.querySelector(".vcoin2");
+      if(coinEl)coinEl.addEventListener("animationend",function(){coinEl.classList.remove("spin");});
       setInterval(function(){
         var now=Date.now(), dt=(now-lastAcc)/1000; lastAcc=now;
         if(lastLoadW==null)return;
+        var wholeBefore=Math.floor(sessP);
         sessP+=(lastLoadW/1000)*RATE*100/3600*dt;
+        if(!reduce&&coinEl&&Math.floor(sessP)>wholeBefore){ coinEl.classList.remove("spin"); void coinEl.getBoundingClientRect(); coinEl.classList.add("spin"); }
         setTxt(q("[data-cost-sub]"),(sessP<100?sessP.toFixed(3)+"p":"£"+(sessP/100).toFixed(3))+" while you've watched");
       },1000);
       loadHist24(); setInterval(loadHist24, 600000);
