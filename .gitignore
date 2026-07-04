@@ -19,3 +19,6 @@ api/domain-cache.json
 api/isitdown-cache.json
 api/isitdown-cache.json.tmp
 api/isitdown-cache.json.lock
+api/vrm-history-cache.json
+api/vrm-history-cache.json.tmp
+api/vrm-cache.json.tmp

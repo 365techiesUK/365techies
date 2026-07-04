@@ -10,9 +10,10 @@
  *     <?php $VRM_TOKEN = 'paste-the-vrm-access-token-here';
  *
  * This proxy exposes ONLY a whitelisted, read-only summary of site 458482
- * (SOC, volts, watts, solar, yields, tanks, 30-day history) — never the token,
- * serial numbers or account data. Responses are cached server-side for 60s
- * (vrm-cache.json) so visitor traffic can never hammer the VRM API.
+ * (SOC, volts, watts, solar, yields, tanks, 30-day history, battery passport,
+ * MPPT/engine-charger detail, alarms) — never the token, serial numbers or
+ * account data. Responses are cached server-side for a few seconds
+ * (vrm-cache.json, $TTL below) so visitor traffic can never hammer the VRM API.
  */
 error_reporting(0);
 ini_set('serialize_precision', '-1');   // clean float output (78.7, not 78.70000000000000284)
@@ -60,7 +61,7 @@ foreach ($diag['records'] as $rec) {
     $code = $rec['code'];
     $ts   = isset($rec['timestamp']) ? (int)$rec['timestamp'] : 0;
     if ($ts > $updated) $updated = $ts;
-    if ($code === 'tl' || $code === 'tf' || $code === 'tcn') {
+    if (in_array($code, ['tl', 'tf', 'tcn', 'tc', 'tr'], true)) {
         $inst = isset($rec['instance']) ? (string)$rec['instance'] : '0';
         $tank_recs[$inst][$code] = $rec;
         continue;
@@ -76,6 +77,11 @@ foreach ($diag['records'] as $rec) {
 function raw_num($m, $code) {
     if (!isset($m[$code]) || $m[$code]['raw'] === null || $m[$code]['raw'] === '') return null;
     return (float)$m[$code]['raw'];
+}
+function fmt_str($m, $code) {
+    if (!isset($m[$code]) || $m[$code]['fmt'] === null) return null;
+    $s = trim((string)$m[$code]['fmt']);
+    return ($s === '') ? null : $s;
 }
 
 $soc   = raw_num($m, 'SOC');
@@ -103,7 +109,58 @@ foreach ($tank_recs as $t) {
     if (isset($t['tcn']) && trim((string)$t['tcn']['formattedValue']) !== '') $type = trim((string)$t['tcn']['formattedValue']);
     elseif (isset($t['tf'])) $type = trim((string)$t['tf']['formattedValue']);
     if ($type === '') $type = 'Tank';
-    $tanks[] = ['type' => $type, 'level' => round((float)$t['tl']['rawValue'])];
+    $row = ['type' => $type, 'level' => round((float)$t['tl']['rawValue'])];
+    if (isset($t['tc']) && (float)$t['tc']['rawValue'] > 0) {
+        $row['capL'] = (int)round((float)$t['tc']['rawValue'] * 1000);   // m3 -> litres
+        $trv = (isset($t['tr']) && $t['tr']['rawValue'] !== null && $t['tr']['rawValue'] !== '') ? (float)$t['tr']['rawValue'] : null;
+        // fall back to level% x capacity so an unknown reading is never shown as an empty tank
+        $row['remL'] = ($trv !== null) ? (int)round(max(0, $trv) * 1000) : (int)round($row['level'] / 100 * $row['capL']);
+    }
+    $tanks[] = $row;
+}
+
+/* ---- extended live detail (2026-07-04): battery passport, MPPT, engine charger, alarms ---- */
+$batt = [
+    'capAh'     => raw_num($m, 'ca'),
+    'consAh'    => raw_num($m, 'CE'),
+    'cycles'    => raw_num($m, 'H4'),
+    'fullDis'   => raw_num($m, 'H5'),
+    'deepAh'    => raw_num($m, 'H1'),
+    'minV'      => raw_num($m, 'H7'),
+    'maxV'      => raw_num($m, 'H8'),
+    'disKwh'    => raw_num($m, 'H21'),
+    'chgKwh'    => raw_num($m, 'H22'),
+    'sinceFull' => raw_num($m, 'H9'),   // days
+];
+$mppt = [
+    'stage' => fmt_str($m, 'ScS'),      // Bulk / Absorption / Float
+    'track' => fmt_str($m, 'ScMm'),     // e.g. "MPPT active"
+    'pvV'   => raw_num($m, 'PVV'),
+    'chgI'  => raw_num($m, 'ScI'),
+    'peakT' => raw_num($m, 'MCPT'),     // max charge power today, W
+    'peakY' => raw_num($m, 'MCPY'),
+];
+$orion = [
+    'state'  => fmt_str($m, 'als'),
+    'why'    => fmt_str($m, 'alOR'),    // e.g. "No/low input power" = engine off
+    'inV'    => raw_num($m, 'aliV'),    // starter battery volts
+    'inW'    => raw_num($m, 'aliP'),
+    'outI'   => raw_num($m, 'alI'),
+    'lifeAh' => raw_num($m, 'alah'),
+];
+$ALARM_LABELS = ['AL' => 'Low battery voltage', 'AH' => 'High battery voltage', 'ASoc' => 'Low state of charge',
+                 'ALT' => 'Low battery temperature', 'AHT' => 'High battery temperature', 'AM' => 'Mid-voltage imbalance',
+                 'ALS' => 'Low starter voltage', 'AHS' => 'High starter voltage'];
+$alarms = [];
+foreach ($ALARM_LABELS as $c => $lbl) { $v = raw_num($m, $c); if ($v !== null && $v != 0) $alarms[] = $lbl; }
+$e = raw_num($m, 'ScERR'); if ($e !== null && $e != 0) $alarms[] = 'Solar charger: ' . (fmt_str($m, 'ScERR') ?: 'error');
+$e = raw_num($m, 'alE');   if ($e !== null && $e != 0) $alarms[] = 'Engine charger: ' . (fmt_str($m, 'alE') ?: 'error');
+$alarmsSeen = isset($m['AL']);   // only claim "healthy" when the shunt's alarm set is actually present
+/* Relay 1 doubles as the water-pump switch when its function is set to Tank pump */
+$pump = null;
+if (isset($m['rf0']) && (string)$m['rf0']['raw'] === '3' && isset($m['cRelay'])) {
+    $rv = (string)$m['cRelay']['raw'];
+    $pump = ($rv === '0') ? 'off' : (($rv === '1') ? 'on' : null);   // unknown stays unknown, never asserted 'on'
 }
 
 /* ---- 30-day solar history: daily kWh = Pb (PV->battery) + Pc (PV->consumers) ---- */
@@ -138,6 +195,15 @@ $out = json_encode([
     'tanks'          => $tanks,
     'history'        => $hist,
     'updated'        => $updated,
+    'dcW'            => raw_num($m, 'dc'),      // real DC system load, W
+    'batt'           => $batt,
+    'mppt'           => $mppt,
+    'orion'          => $orion,
+    'alarms'         => $alarms,
+    'alarmsSeen'     => $alarmsSeen,
+    'pump'           => $pump,
+    'ledger'         => ['pb' => raw_num($m, 'Pb'), 'pc' => raw_num($m, 'Pc'), 'bc' => raw_num($m, 'Bc')],  // kWh so far today
 ]);
-@file_put_contents($CACHE, $out, LOCK_EX);
+@file_put_contents($CACHE . '.tmp', $out, LOCK_EX);
+@rename($CACHE . '.tmp', $CACHE);   // atomic swap — unlocked readers never see a half-written file
 echo $out;
