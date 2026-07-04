@@ -4,7 +4,8 @@
  *
  * Connects server-side to Victron's VRM MQTT broker farm (the same realtime stream the
  * official apps use), subscribes to a small whitelist of hot values (SOC, volts, amps,
- * battery W, solar W) and streams them to the browser as SSE — per-second liveness.
+ * battery W, solar W, DC load, time-to-go, MPPT stage/panel volts, engine-charger input)
+ * and streams them to the browser as SSE — per-second liveness.
  *
  * SECURITY: credentials never leave the server. Requires api/vrm-token.php (NOT in git):
  *     <?php $VRM_TOKEN = '...'; $VRM_EMAIL = 'you@example.com';
@@ -128,11 +129,18 @@ if (!$connected) {
 /* subscribe hot topics + kick the device awake */
 $N = 'N/' . $PORTAL . '/';
 $TOPICS = [
-    $N . 'system/0/Dc/Battery/Soc'     => 'soc',
-    $N . 'system/0/Dc/Battery/Voltage' => 'battV',
-    $N . 'system/0/Dc/Battery/Current' => 'battA',
-    $N . 'system/0/Dc/Battery/Power'   => 'battW',
-    $N . 'system/0/Dc/Pv/Power'        => 'pvW',
+    $N . 'system/0/Dc/Battery/Soc'      => 'soc',
+    $N . 'system/0/Dc/Battery/Voltage'  => 'battV',
+    $N . 'system/0/Dc/Battery/Current'  => 'battA',
+    $N . 'system/0/Dc/Battery/Power'    => 'battW',
+    $N . 'system/0/Dc/Pv/Power'         => 'pvW',
+    /* verified live on this system 2026-07-04 (instances hardcoded for our own van) */
+    $N . 'system/0/Dc/System/Power'     => 'dcW',       // real DC load — per-second, like the official app
+    $N . 'system/0/Dc/Battery/TimeToGo' => 'ttgS',      // seconds; 864000 = the 10-day cap
+    $N . 'solarcharger/277/State'       => 'mpptState', // 3=Bulk 4=Absorption 5=Float
+    $N . 'solarcharger/277/Pv/V'        => 'pvV',       // panel volts
+    $N . 'alternator/279/Dc/In/P'       => 'orionInW',  // engine charge power (Orion XS input)
+    $N . 'alternator/279/Dc/In/V'       => 'orionInV',  // starter battery volts
 ];
 fwrite($fp, mq_subscribe(array_keys($TOPICS)));
 fwrite($fp, mq_publish('R/' . $PORTAL . '/keepalive', ''));
@@ -150,7 +158,8 @@ if (!$PROBE) {
 
 $vals = []; $dirty = false; $t0 = microtime(true); $first = null;
 $lastKa = $t0; $lastPing = $t0; $lastEmit = 0;
-$roundmap = ['soc' => 1, 'battV' => 2, 'battA' => 1, 'battW' => 1, 'pvW' => 0];
+$roundmap = ['soc' => 1, 'battV' => 2, 'battA' => 1, 'battW' => 1, 'pvW' => 0,
+             'dcW' => 0, 'ttgS' => 0, 'mpptState' => 0, 'pvV' => 1, 'orionInW' => 0, 'orionInV' => 2];
 
 while (true) {
     $now = microtime(true);
@@ -164,12 +173,16 @@ while (true) {
         $payload = substr($p[1], 2 + $tl);
         if (isset($TOPICS[$topic])) {
             $j = json_decode($payload, true);
-            if (is_array($j) && array_key_exists('value', $j) && $j['value'] !== null) {
+            if (is_array($j) && array_key_exists('value', $j)) {
                 $key = $TOPICS[$topic];
-                $v = round((float)$j['value'], $roundmap[$key]);
-                if (!isset($vals[$key]) || $vals[$key] !== $v) { $vals[$key] = $v; $dirty = true; }
-                $diag['msgs']++;
-                if ($first === null) { $first = $now; $diag['firstMsgMs'] = (int)round(($now - $t0) * 1000); }
+                $v = null;
+                if ($j['value'] !== null) $v = round((float)$j['value'], $roundmap[$key]);
+                elseif ($key === 'ttgS') $v = -1;   // Venus publishes null TTG while charging = infinite; -1 sentinel
+                if ($v !== null) {
+                    if (!isset($vals[$key]) || $vals[$key] !== $v) { $vals[$key] = $v; $dirty = true; }
+                    $diag['msgs']++;
+                    if ($first === null) { $first = $now; $diag['firstMsgMs'] = (int)round(($now - $t0) * 1000); }
+                }
             }
         }
     }

@@ -1626,7 +1626,7 @@ def off_grid():
         tween("[data-bw]","bw",s.battW,function(v){return (v>0?"+":"")+Math.round(v)+" W";});
         tween("[data-yield]","yield",s.yieldToday,function(v){return v.toFixed(2)+" kWh";});
         tween("[data-bv]","bv",s.battV,function(v){return v.toFixed(2)+" V";});
-        setTxt(q("[data-ttg]"),(s.timeToGo==null||s.timeToGo>240)?"10+ days":(s.timeToGo>48?(s.timeToGo/24).toFixed(1)+" days":Math.round(s.timeToGo)+" h"));
+        setTxt(q("[data-ttg]"),(s.timeToGo==null||s.timeToGo>=239.9)?"10+ days":(s.timeToGo>48?(s.timeToGo/24).toFixed(1)+" days":Math.round(s.timeToGo)+" h"));
         setTxt(q("[data-updated]"),s.sample?"sample reading":("live"+(s.updated?" · updated "+ago(s.updated):"")));
         setTxt(q("[data-live-lbl]"),s.sample?"Sample":"Live");
         var ring=q("[data-ring]"); if(ring){ var soc=Math.max(0,Math.min(100,s.soc||0)); ring.style.strokeDashoffset=(RC*(1-soc/100)).toFixed(1); ring.style.stroke=col; }
@@ -1768,28 +1768,48 @@ def off_grid():
           paintCharts(j.soc,j.pv||[],false);
         }).catch(function(){ var s1=sampleSeries(); paintCharts(s1.soc,s1.pv,true); });
       }
-      var lastJ=null, sseOn=0, lastRest=0, busy=false, sampled=false;
-      var HOT={soc:1,battV:1,battA:1,battW:1,pvW:1};   /* per-second values owned by the SSE stream */
+      var lastJ=null, lastSse=0, lastRest=0, busy=false, sampled=false;
+      function sseAlive(){ return lastSse>0 && (Date.now()-lastSse)<20000; } /* self-heals: if the stream dies, REST reclaims all values within 20s */
+      var HOT={soc:1,battV:1,battA:1,battW:1,pvW:1,dcW:1,timeToGo:1,updated:1};   /* values owned by the SSE stream while it's alive */
+      var SSEOWN={mppt:{stage:1,pvV:1},orion:{inW:1,inV:1}};                      /* SSE-owned subfields inside REST objects */
       function apply(j){ lastJ=j; render(j); }
       function tick(){
         if(!window.fetch){ if(!sampled){sampled=true;render(SAMPLE);} return; }
         if(busy) return; /* never pile up requests on slow connections */
-        if(sseOn && Date.now()-lastRest<15000) return; /* SSE carries the hot values; REST tops up the rest every 15s */
+        if(sseAlive() && Date.now()-lastRest<15000) return; /* SSE carries the hot values; REST tops up the rest every 15s */
         busy=true;
         fetch(PROXY,{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){
           busy=false; lastRest=Date.now();
-          if(!(j&&j.ok)){ if(!sseOn) apply(SAMPLE); return; }
-          if(sseOn&&lastJ&&!lastJ.sample){ for(var k in j){ if(!HOT[k]) lastJ[k]=j[k]; } render(lastJ); } /* don't regress SSE-fresh values to the REST snapshot */
+          if(!(j&&j.ok)){ if(!sseAlive()) apply(SAMPLE); return; }
+          if(sseAlive()&&lastJ&&!lastJ.sample){ /* don't regress SSE-fresh values to the REST snapshot */
+            for(var k in j){
+              if(HOT[k]) continue;
+              if(SSEOWN[k]&&lastJ[k]){ var o=lastJ[k],n=j[k]||{},kk; for(kk in n){ if(!SSEOWN[k][kk]) o[kk]=n[kk]; } continue; }
+              lastJ[k]=j[k];
+            }
+            render(lastJ);
+          }
           else apply(j);
-        }).catch(function(){ busy=false; if(!sseOn) apply(SAMPLE); });
+        }).catch(function(){ busy=false; if(!sseAlive()) apply(SAMPLE); });
       }
       tick(); setInterval(tick, 1000);
       loadHist24(); setInterval(loadHist24, 600000);
       /* realtime overlay: same per-second MQTT stream the official Victron apps use, bridged server-side */
       if(PROXY && window.EventSource){ try{
         var es=new EventSource(PROXY.replace("vrm.php","vrm-live.php"));
-        es.onmessage=function(ev){ try{ var d=JSON.parse(ev.data); if(!d||!d.live||!lastJ||lastJ.sample) return; sseOn=1;
-          for(var k in d){ if(k!=="live") lastJ[k]=d[k]; } render(lastJ);
+        var SM={0:"Off",1:"Low power",2:"Fault",3:"Bulk",4:"Absorption",5:"Float",6:"Storage",7:"Equalize",245:"Wake-up",246:"Repeated absorption",247:"Auto equalize",248:"BatterySafe",250:"Blocked",252:"External control"};
+        es.onmessage=function(ev){ try{ var d=JSON.parse(ev.data); if(!d||!d.live||!lastJ||lastJ.sample) return; lastSse=Date.now();
+          for(var k in d){
+            if(k==="live") continue;
+            if(k==="ttgS"){ lastJ.timeToGo=(d[k]<0||d[k]>=863900)?null:d[k]/3600; } /* -1 sentinel = charging (infinite); 0 stays 0 h */
+            else if(k==="pvV"){ (lastJ.mppt=lastJ.mppt||{}).pvV=d[k]; }
+            else if(k==="mpptState"){ (lastJ.mppt=lastJ.mppt||{}).stage=(SM[d[k]]!=null)?SM[d[k]]:null; } /* unknown code shows an em-dash, never a stale stage */
+            else if(k==="orionInW"){ (lastJ.orion=lastJ.orion||{}).inW=d[k]; }
+            else if(k==="orionInV"){ (lastJ.orion=lastJ.orion||{}).inV=d[k]; }
+            else lastJ[k]=d[k];
+          }
+          lastJ.updated=Math.floor(Date.now()/1000);   /* freshness = the realtime stream, not VRM's 15-min logger */
+          render(lastJ);
         }catch(e){} };
       }catch(e){} }
     })();
