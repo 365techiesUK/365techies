@@ -952,7 +952,7 @@
               <!-- COST satellite + taxi meter -->
               <g transform="translate(605,255)">
                 <g class="vnpop" style="animation-delay:.18s">
-                  <title>The live running cost of what the van is using right now, at 40p/kWh &mdash; watch it jump when the kettle goes on. Below it: what today&rsquo;s usage has cost so far, and the last 30 days&rsquo; total, at 40p/kWh.</title>
+                  <title>The live running cost of what the van is using right now, at 40p/kWh &mdash; watch it jump when the kettle goes on. Below it: what today&rsquo;s usage has cost so far and the last 30 days&rsquo; total &mdash; at 40p/kWh plus the 50p/day standing charge, the same model as the savings.</title>
                   <circle class="vglow" data-glow-cost r="38" fill="#e06a4a" opacity="0" filter="url(#vblur)"></circle>
                   <circle r="30" fill="url(#vgcost)" stroke="rgba(224,106,74,.55)" stroke-width="1.5"></circle>
                   <path d="M-14 -19 A24 24 0 0 1 14 -19" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.5" stroke-linecap="round"></path>
@@ -1181,10 +1181,10 @@
         var ldc=s.ledger||{};
         var usedToday=(ldc.pc!=null||ldc.bc!=null)?((ldc.pc||0)+(ldc.bc||0)):null;
         if(usedToday==null){ setTxt(q("[data-cost-day]"),""); }
-        else tween("[data-cost-day]","cday",usedToday*RATE,function(v){return "today £"+v.toFixed(2);});
+        else tween("[data-cost-day]","cday",usedToday*RATE+STANDING,function(v){return "today £"+v.toFixed(2);});
         var used30=(s.history&&s.history.length)?s.history.reduce(function(a,d){return a+((d&&d.used)||0);},0):0;
         if(!used30){ setTxt(q("[data-cost-30d]"),""); }
-        else tween("[data-cost-30d]","c30d",used30*RATE,function(v){return "30 days £"+v.toFixed(2);});
+        else tween("[data-cost-30d]","c30d",used30*RATE+STANDING*((s.history&&s.history.length)||30),function(v){return "30 days £"+v.toFixed(2);});
         /* bank node: live value of the energy sitting in the battery (usable Ah x 12.8V lithium nominal) */
         var bcap=(s.batt&&s.batt.capAh!=null)?s.batt.capAh:null;
         var remAh2=null;

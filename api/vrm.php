@@ -167,6 +167,7 @@ if (isset($m['rf0']) && (string)$m['rf0']['raw'] === '3' && isset($m['cRelay']))
 $hist = [];
 $end = time(); $start = $end - 31 * 86400;
 $st = vrm_get('/installations/' . $SITE_ID . '/stats?type=kwh&interval=days&start=' . $start . '&end=' . $end, $VRM_TOKEN);
+$ledger = ['pb' => null, 'pc' => null, 'bc' => null];   // today's DAILY totals (the last stats entry accumulates through the day)
 if ($st && isset($st['records']['Pb']) && is_array($st['records']['Pb'])) {
     $pc = []; $bc = [];
     if (isset($st['records']['Pc']) && is_array($st['records']['Pc'])) {
@@ -175,14 +176,21 @@ if ($st && isset($st['records']['Pb']) && is_array($st['records']['Pb'])) {
     if (isset($st['records']['Bc']) && is_array($st['records']['Bc'])) {
         foreach ($st['records']['Bc'] as $p) if (is_array($p) && count($p) >= 2) $bc[(string)$p[0]] = (float)$p[1];
     }
+    $lastK = null;
     foreach ($st['records']['Pb'] as $p) {
         if (!is_array($p) || count($p) < 2) continue;
         $k = (string)$p[0];
+        $lastK = $k;
         $pck = isset($pc[$k]) ? $pc[$k] : 0.0;
         $hist[] = [
             'kwh'  => round((float)$p[1] + $pck, 2),                        // solar generated = PV->battery + PV->loads
             'used' => round($pck + (isset($bc[$k]) ? $bc[$k] : 0.0), 2),   // energy used = PV->loads + battery->loads
         ];
+        $ledger['pb'] = round((float)$p[1], 2);
+    }
+    if ($lastK !== null) {
+        $ledger['pc'] = isset($pc[$lastK]) ? round($pc[$lastK], 2) : 0.0;
+        $ledger['bc'] = isset($bc[$lastK]) ? round($bc[$lastK], 2) : 0.0;
     }
     $hist = array_slice($hist, -30);
 }
@@ -209,7 +217,7 @@ $out = json_encode([
     'alarms'         => $alarms,
     'alarmsSeen'     => $alarmsSeen,
     'pump'           => $pump,
-    'ledger'         => ['pb' => raw_num($m, 'Pb'), 'pc' => raw_num($m, 'Pc'), 'bc' => raw_num($m, 'Bc')],  // kWh so far today
+    'ledger'         => $ledger,   // today's daily totals from the stats series — NOT the diagnostics Pb/Pc/Bc codes, which are 15-min log-bucket deltas
 ]);
 @file_put_contents($CACHE . '.tmp', $out, LOCK_EX);
 @rename($CACHE . '.tmp', $CACHE);   // atomic swap — unlocked readers never see a half-written file
