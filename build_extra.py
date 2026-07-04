@@ -1425,6 +1425,7 @@ def off_grid():
         .vcoin2{animation:vcoin 3.2s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
         @keyframes vcoin{0%,55%{transform:rotateY(0)}75%{transform:rotateY(180deg)}100%{transform:rotateY(360deg)}}
         .vbank{animation:vbankpulse 2.8s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+        .vcost{animation:vbankpulse 2.8s ease-in-out .9s infinite;transform-box:fill-box;transform-origin:center}
         @keyframes vbankpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
         .vflowwrap svg{width:100%;height:auto;display:block;overflow:visible}
         .vflow{fill:none;stroke-width:3;stroke-linecap:round}
@@ -1511,7 +1512,7 @@ def off_grid():
           </div>
           <div class="vlive__alarm" data-alarms hidden></div>
           <div class="vflowwrap">
-            <svg viewBox="0 0 720 308" role="img" aria-label="Live energy flow: solar and engine charging the battery, battery powering the loads, the money being saved right now, and the value stored in the battery bank">
+            <svg viewBox="0 0 720 314" role="img" aria-label="Live energy flow: solar and engine charging the battery, battery powering the loads, the money being saved, the live cost of the load, and the value stored in the battery bank">
               <defs>
                 <filter id="vblur" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="10"></feGaussianBlur></filter>
                 <radialGradient id="vgold" cx="30%" cy="30%" r="80%"><stop offset="0%" stop-color="#ffe98a"></stop><stop offset="60%" stop-color="#e0b341"></stop><stop offset="100%" stop-color="#a8842e"></stop></radialGradient>
@@ -1527,6 +1528,10 @@ def off_grid():
               <path class="vflow vflow-base" d="M663 138 C718 160 715 192 652 210"></path>
               <path class="vflow vflow-dash" data-flow-deposit style="stroke:#39d353" d="M663 138 C718 160 715 192 652 210"></path>
               <path class="vflow vflow-dash" data-flow-withdraw style="stroke:#e0b341" d="M652 210 C715 192 718 160 663 138"></path>
+              <path class="vflow vflow-base" d="M489 137 C455 163 455 190 489 215"></path>
+              <path class="vflow vflow-base" d="M537 232 H612"></path>
+              <path class="vflow vflow-dash" data-flow-cost style="stroke:#e06a4a" d="M489 137 C455 163 455 190 489 215"></path>
+              <path class="vflow vflow-dash" data-flow-costbank style="stroke:#e0b341" d="M537 232 H612"></path>
               <g transform="translate(70,60)">
                 <circle class="vglow" data-glow-sun r="40" fill="#e0b341" opacity="0" filter="url(#vblur)"></circle>
                 <circle r="24" fill="rgba(224,179,65,.12)" stroke="#e0b341" stroke-width="2"></circle>
@@ -1568,6 +1573,18 @@ def off_grid():
               <g transform="translate(648,120)">
                 <text class="vnval" data-sn-rate text-anchor="middle" y="44" style="fill:#39d353">&mdash;</text>
                 <text class="vnlabel" text-anchor="middle" y="59">Saving now</text>
+              </g>
+              <g transform="translate(505,232)">
+                <title>The live running cost of what the van is using right now, at 40p/kWh &mdash; watch it jump when the kettle goes on. The small meter counts up every second while you have this page open.</title>
+                <circle class="vglow" data-glow-cost r="36" fill="#e06a4a" opacity="0" filter="url(#vblur)"></circle>
+                <circle r="24" fill="rgba(224,106,74,.12)" stroke="#e06a4a" stroke-width="2"></circle>
+                <g class="vcost">
+                  <path d="M-9 -13 H9 V9 L5.5 13 L2 9 L-2 13 L-5.5 9 L-9 13 Z" fill="none" stroke="#e06a4a" stroke-width="2" stroke-linejoin="round"></path>
+                  <g stroke="#e06a4a" stroke-width="1.8" stroke-linecap="round"><line x1="-4.5" y1="-6" x2="4.5" y2="-6"></line><line x1="-4.5" y1="-1" x2="4.5" y2="-1"></line><line x1="-4.5" y1="4" x2="1.5" y2="4"></line></g>
+                </g>
+                <text class="vnval" data-cost-val text-anchor="middle" y="44" style="fill:#e06a4a">&mdash;</text>
+                <text class="vnlabel" text-anchor="middle" y="59">Cost of load &middot; live</text>
+                <text class="vnlabel" data-cost-sub text-anchor="middle" y="74" style="fill:#e06a4a"></text>
               </g>
               <g transform="translate(648,232)">
                 <title>Usable energy sitting in the lithium bank right now, valued at 40p/kWh (12.8V nominal). Glows while the sun or engine is making a deposit.</title>
@@ -1760,6 +1777,12 @@ def off_grid():
         var wdrW=(s.battW!=null&&s.battW<-3)?-s.battW:null;
         flow("[data-flow-deposit]","[data-glow-bank]",depW);
         flow("[data-flow-withdraw]","[data-glow-nope]",wdrW);
+        /* cost node: LIVE cost rate of what's running right now — jumps the moment the kettle goes on */
+        flow("[data-flow-cost]","[data-glow-cost]",loadW);
+        flow("[data-flow-costbank]","[data-glow-nope]",loadW);
+        lastLoadW=loadW;
+        if(loadW==null){ setTxt(q("[data-cost-val]"),"—"); }
+        else tween("[data-cost-val]","costv",(loadW/1000)*RATE*100,function(v){return v.toFixed(1)+"p/h";});
         /* bank node: live value of the energy sitting in the battery (usable Ah x 12.8V lithium nominal) */
         var bcap=(s.batt&&s.batt.capAh!=null)?s.batt.capAh:null;
         var remAh2=null;
@@ -1962,7 +1985,7 @@ def off_grid():
           if(!j||!j.ok)throw 0; lastWx=j; paintWx();
         }).catch(function(){ lastWx=sampleWx(); paintWx(); });
       }
-      var lastJ=null, lastSse=0, lastRest=0, busy=false, sampled=false;
+      var lastJ=null, lastSse=0, lastRest=0, busy=false, sampled=false, lastLoadW=null, sessP=0, lastAcc=Date.now();
       function sseAlive(){ return lastSse>0 && (Date.now()-lastSse)<20000; } /* self-heals: if the stream dies, REST reclaims all values within 20s */
       var HOT={soc:1,battV:1,battA:1,battW:1,pvW:1,dcW:1,timeToGo:1,updated:1};   /* values owned by the SSE stream while it's alive */
       var SSEOWN={mppt:{stage:1,pvV:1},orion:{inW:1,inV:1}};                      /* SSE-owned subfields inside REST objects */
@@ -1996,6 +2019,13 @@ def off_grid():
       tick(); setInterval(tick, 1000);
       /* the badge clock ticks every second while the realtime stream is alive */
       setInterval(function(){ if(lastJ&&!lastJ.sample&&sseAlive()) setTxt(q("[data-updated]"),liveClock()); },1000);
+      /* the cost meter accrues every second at the live load's rate — the van's taxi meter */
+      setInterval(function(){
+        var now=Date.now(), dt=(now-lastAcc)/1000; lastAcc=now;
+        if(lastLoadW==null)return;
+        sessP+=(lastLoadW/1000)*RATE*100/3600*dt;
+        setTxt(q("[data-cost-sub]"),(sessP<100?sessP.toFixed(3)+"p":"£"+(sessP/100).toFixed(3))+" while you've watched");
+      },1000);
       loadHist24(); setInterval(loadHist24, 600000);
       loadWx(); setInterval(loadWx, 1800000);
       /* realtime overlay: same per-second MQTT stream the official Victron apps use, bridged server-side */
