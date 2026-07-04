@@ -81,24 +81,21 @@ if ($je && isset($je['records']['data']) && is_array($je['records']['data'])) {
             foreach ($pts as $p) { if ($p[0] <= $cutoff) $best = $p[1]; else break; }
             return $best;
         };
-        /* engine charge time = intervals where the charged-Ah counter was moving
-           (the counter only turns while the engine drives the Orion) */
-        $run1 = 0; $run30 = 0; $n = count($pts);
-        for ($i = 1; $i < $n; $i++) {
-            $dt = $pts[$i][0] - $pts[$i - 1][0];
-            if ($dt <= 0 || $dt > 7200) continue;              // logging gaps don't count
-            if ($pts[$i][1] - $pts[$i - 1][1] > 0.05) {
-                $run30 += $dt;
-                if ($pts[$i][0] > $end - 86400) $run1 += $dt;
-            }
-        }
+        /* Engine charge time = charged Ah / the Orion's observed average charge rate.
+           (Counting VRM log-interval buckets over-counts badly — a 5-minute run fills a
+           whole 15-min+ bucket. The unit's own cycle history shows ~44 A average while
+           charging: e.g. 9.6Ah/702s, 8.8Ah/665s. Energy/rate matches reality to ~1 min.) */
+        $OBSA = 44.0;
+        $ah1  = max(0, $lastV - $at($end - 86400));
+        $ah7  = max(0, $lastV - $at($end - 7 * 86400));
+        $ah30 = max(0, $lastV - $at($end - 30 * 86400));
         $NOMV = 13.2;
         $engine = [
-            'd1'     => round(max(0, $lastV - $at($end - 86400))      * $NOMV / 1000, 2),
-            'd7'     => round(max(0, $lastV - $at($end - 7 * 86400))  * $NOMV / 1000, 2),
-            'd30'    => round(max(0, $lastV - $at($end - 30 * 86400)) * $NOMV / 1000, 2),
-            'runH1'  => round($run1 / 3600, 1),
-            'runH30' => round($run30 / 3600, 1),
+            'd1'     => round($ah1  * $NOMV / 1000, 2),
+            'd7'     => round($ah7  * $NOMV / 1000, 2),
+            'd30'    => round($ah30 * $NOMV / 1000, 2),
+            'runH1'  => round($ah1 / $OBSA, 2),
+            'runH30' => round($ah30 / $OBSA, 1),
         ];
     }
 }

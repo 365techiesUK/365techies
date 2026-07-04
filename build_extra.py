@@ -1578,7 +1578,7 @@ def off_grid():
                 <text class="vnlabel" text-anchor="middle" y="59">Saving now</text>
               </g>
               <g transform="translate(70,270)">
-                <title>Time the engine spent charging the bank (measured from its charge counter moving) and the grid-equivalent value of that power, today and over 30 days.</title>
+                <title>Time the engine spent charging the bank &mdash; worked out from the energy delivered at the Orion&rsquo;s observed ~44 A charge rate &mdash; and the grid-equivalent value of that power, today and over 30 days.</title>
                 <circle class="vglow" data-glow-engh r="34" fill="#e0884a" opacity="0" filter="url(#vblur)"></circle>
                 <circle r="24" fill="rgba(224,136,74,.12)" stroke="#e0884a" stroke-width="2"></circle>
                 <g class="vengh">
@@ -1937,7 +1937,7 @@ def off_grid():
           pv.push([t,Math.round(300*day*(0.8+0.2*Math.sin(i/2.7)))]);
           soc.push([t,Math.round((80+13*Math.sin((i-24)/26))*10)/10]);
         }
-        return {soc:soc,pv:pv,engine:{d1:0.4,d7:2.8,d30:9.6,runH1:0.4,runH30:11.5}};
+        return {soc:soc,pv:pv,engine:{d1:0.4,d7:2.8,d30:9.6,runH1:0.69,runH30:16.5}};
       }
       function paintEngine(e,isSample){
         var em=q("[data-eng-money]"); if(!em)return;
