@@ -1638,7 +1638,7 @@ def off_grid():
           </div>
           <div class="vlive__alarm" data-alarms hidden></div>
           <div class="vflowwrap">
-            <svg viewBox="0 0 720 372" role="img" aria-label="Live energy flow: solar and engine charging the battery, battery powering the loads, the money being saved, the live cost of the load, the value stored in the battery bank, and the engine's charging hours and value">
+            <svg viewBox="0 0 720 400" role="img" aria-label="VRM365 live instrument cluster: central battery gauge with needle, solar and engine feeding in from the left, loads and cost on the right, saving rate at the top and the stored bank value as the odometer">
               <defs>
                 <filter id="vblur" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="10"></feGaussianBlur></filter>
                 <radialGradient id="vgold" cx="30%" cy="30%" r="80%"><stop offset="0%" stop-color="#ffe98a"></stop><stop offset="60%" stop-color="#e0b341"></stop><stop offset="100%" stop-color="#a8842e"></stop></radialGradient>
@@ -1646,148 +1646,142 @@ def off_grid():
                 <radialGradient id="vgeng" cx="32%" cy="28%" r="90%"><stop offset="0%" stop-color="#e0884a" stop-opacity=".30"></stop><stop offset="55%" stop-color="#e0884a" stop-opacity=".10"></stop><stop offset="100%" stop-color="#060c1c" stop-opacity=".95"></stop></radialGradient>
                 <radialGradient id="vgload" cx="32%" cy="28%" r="90%"><stop offset="0%" stop-color="#2aa9e0" stop-opacity=".30"></stop><stop offset="55%" stop-color="#2aa9e0" stop-opacity=".10"></stop><stop offset="100%" stop-color="#060c1c" stop-opacity=".95"></stop></radialGradient>
                 <radialGradient id="vgcost" cx="32%" cy="28%" r="90%"><stop offset="0%" stop-color="#e06a4a" stop-opacity=".30"></stop><stop offset="55%" stop-color="#e06a4a" stop-opacity=".10"></stop><stop offset="100%" stop-color="#060c1c" stop-opacity=".95"></stop></radialGradient>
-                <radialGradient id="vgbank" cx="32%" cy="28%" r="90%"><stop offset="0%" stop-color="#39d353" stop-opacity=".28"></stop><stop offset="55%" stop-color="#39d353" stop-opacity=".10"></stop><stop offset="100%" stop-color="#060c1c" stop-opacity=".95"></stop></radialGradient>
-                <radialGradient id="vgbatt" cx="50%" cy="35%" r="80%"><stop offset="0%" stop-color="#39d353" stop-opacity=".10"></stop><stop offset="60%" stop-color="#0a1430" stop-opacity=".95"></stop><stop offset="100%" stop-color="#060c1c" stop-opacity="1"></stop></radialGradient>
+                <radialGradient id="vgdial" cx="50%" cy="38%" r="75%"><stop offset="0%" stop-color="#122448" stop-opacity="1"></stop><stop offset="70%" stop-color="#0a1430" stop-opacity="1"></stop><stop offset="100%" stop-color="#060c1c" stop-opacity="1"></stop></radialGradient>
               </defs>
-              <!-- energy conduits: etched base + soft under-glow (lit while flowing) + comet dashes -->
-              <path class="vflow vflow-base" d="M104 60 C190 60 205 103 242 113"></path>
-              <path class="vflow vflow-base" d="M104 180 C190 180 205 137 242 127"></path>
-              <path class="vflow vflow-base" d="M362 120 H479"></path>
-              <path class="vflow vflow-base" d="M531 120 H624"></path>
-              <path class="vflow vflow-base" d="M53 197 C28 220 28 240 53 262"></path>
-              <path class="vflow vflow-base" d="M665 137 C722 159 719 193 652 210"></path>
-              <path class="vflow vflow-base" d="M489 137 C450 163 450 190 489 215"></path>
-              <path class="vflow vflow-base" d="M537 232 H612"></path>
-              <path class="vflow-ug" data-ug-solar style="stroke:#39d353" d="M104 60 C190 60 205 103 242 113"></path>
-              <path class="vflow-ug" data-ug-eng style="stroke:#e0884a" d="M104 180 C190 180 205 137 242 127"></path>
-              <path class="vflow-ug" data-ug-load style="stroke:#2aa9e0" d="M362 120 H479"></path>
-              <path class="vflow-ug" data-ug-money style="stroke:#e0b341" d="M531 120 H624"></path>
-              <path class="vflow vflow-dash" data-flow-solar style="stroke:#39d353" d="M104 60 C190 60 205 103 242 113"></path>
-              <path class="vflow vflow-dash" data-flow-eng style="stroke:#e0884a" d="M104 180 C190 180 205 137 242 127"></path>
-              <path class="vflow vflow-dash" data-flow-load style="stroke:#2aa9e0" d="M362 120 H479"></path>
-              <path class="vflow vflow-dash" data-flow-money style="stroke:#e0b341" d="M531 120 H624"></path>
-              <path class="vflow vflow-dash" data-flow-enghours style="stroke:#e0884a" d="M53 197 C28 220 28 240 53 262"></path>
-              <path class="vflow vflow-dash" data-flow-deposit style="stroke:#39d353" d="M665 137 C722 159 719 193 652 210"></path>
-              <path class="vflow vflow-dash" data-flow-withdraw style="stroke:#e0b341" d="M652 210 C719 193 722 159 665 137"></path>
-              <path class="vflow vflow-dash" data-flow-cost style="stroke:#e06a4a" d="M489 137 C450 163 450 190 489 215"></path>
-              <path class="vflow vflow-dash" data-flow-costbank style="stroke:#e0b341" d="M537 232 H612"></path>
-              <!-- SUN -->
-              <g transform="translate(70,60)">
+              <!-- ===== energy conduits (etched base + under-glow + comet dashes) ===== -->
+              <path class="vflow vflow-base" d="M147 95 C200 100 240 110 279 124"></path>
+              <path class="vflow vflow-base" d="M147 258 C200 270 240 280 277 283"></path>
+              <path class="vflow vflow-base" d="M441 124 C480 110 520 100 573 95"></path>
+              <path class="vflow vflow-base" d="M583 68 C515 20 455 8 377 26"></path>
+              <path class="vflow vflow-base" d="M360 66 V90"></path>
+              <path class="vflow vflow-base" d="M626 111 C672 155 672 200 626 236"></path>
+              <path class="vflow vflow-base" d="M577 262 C520 292 480 292 445 284"></path>
+              <path class="vflow-ug" data-ug-solar style="stroke:#39d353" d="M147 95 C200 100 240 110 279 124"></path>
+              <path class="vflow-ug" data-ug-eng style="stroke:#e0884a" d="M147 258 C200 270 240 280 277 283"></path>
+              <path class="vflow-ug" data-ug-load style="stroke:#2aa9e0" d="M441 124 C480 110 520 100 573 95"></path>
+              <path class="vflow-ug" data-ug-money style="stroke:#e0b341" d="M583 68 C515 20 455 8 377 26"></path>
+              <path class="vflow vflow-dash" data-flow-solar style="stroke:#39d353" d="M147 95 C200 100 240 110 279 124"></path>
+              <path class="vflow vflow-dash" data-flow-eng style="stroke:#e0884a" d="M147 258 C200 270 240 280 277 283"></path>
+              <path class="vflow vflow-dash" data-flow-load style="stroke:#2aa9e0" d="M441 124 C480 110 520 100 573 95"></path>
+              <path class="vflow vflow-dash" data-flow-money style="stroke:#e0b341" d="M583 68 C515 20 455 8 377 26"></path>
+              <path class="vflow vflow-dash" data-flow-deposit style="stroke:#39d353" d="M360 66 V90"></path>
+              <path class="vflow vflow-dash" data-flow-withdraw style="stroke:#e0b341" d="M360 90 V66"></path>
+              <path class="vflow vflow-dash" data-flow-cost style="stroke:#e06a4a" d="M626 111 C672 155 672 200 626 236"></path>
+              <path class="vflow vflow-dash" data-flow-costbank style="stroke:#e0b341" d="M577 262 C520 292 480 292 445 284"></path>
+              <!-- ===== CENTRAL GAUGE: the battery speedo ===== -->
+              <g transform="translate(360,205)">
+                <circle class="vglow" data-glow-batt r="130" fill="#39d353" opacity="0" filter="url(#vblur)"></circle>
+                <circle r="118" fill="url(#vgdial)" stroke="rgba(125,170,220,.18)" stroke-width="1.5"></circle>
+                <circle r="105" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="12" stroke-dasharray="439.82 659.73" transform="rotate(-210)"></circle>
+                <circle data-ring r="105" fill="none" stroke="#39d353" stroke-width="12" stroke-linecap="round" stroke-dasharray="439.82 659.73" stroke-dashoffset="439.82" transform="rotate(-210)" style="transition:stroke-dashoffset 1.1s cubic-bezier(.22,.9,.3,1),stroke .6s"></circle>
+                <!-- speedo tick scale: 0..100% across 240 degrees -->
+                <g stroke="rgba(196,214,236,.5)" stroke-width="2" stroke-linecap="round">
+                  <line x1="-77.9" y1="45" x2="-86.6" y2="50"></line>
+                  <line x1="-89.5" y1="9.4" x2="-99.5" y2="10.5"></line>
+                  <line x1="-85.6" y1="-27.8" x2="-95.1" y2="-30.9"></line>
+                  <line x1="-66.9" y1="-60.2" x2="-74.3" y2="-66.9"></line>
+                  <line x1="-36.6" y1="-82.2" x2="-40.7" y2="-91.4"></line>
+                  <line x1="0" y1="-90" x2="0" y2="-100"></line>
+                  <line x1="36.6" y1="-82.2" x2="40.7" y2="-91.4"></line>
+                  <line x1="66.9" y1="-60.2" x2="74.3" y2="-66.9"></line>
+                  <line x1="85.6" y1="-27.8" x2="95.1" y2="-30.9"></line>
+                  <line x1="89.5" y1="9.4" x2="99.5" y2="10.5"></line>
+                  <line x1="77.9" y1="45" x2="86.6" y2="50"></line>
+                </g>
+                <text class="vnlabel" text-anchor="middle" x="-62" y="42">0</text>
+                <text class="vnlabel" text-anchor="middle" x="0" y="-72">50</text>
+                <text class="vnlabel" text-anchor="middle" x="62" y="42">100</text>
+                <!-- needle: rotated by JS via the transform ATTRIBUTE (never CSS - position-safe) -->
+                <g data-needle transform="rotate(-120)">
+                  <path d="M-3.5 10 L0 -84 L3.5 10 Z" fill="#f2f7ff" opacity=".9"></path>
+                  <path d="M-1.2 -58 L0 -84 L1.2 -58 Z" fill="#e06a4a"></path>
+                </g>
+                <circle r="8" fill="#0b1330" stroke="rgba(196,214,236,.5)" stroke-width="2"></circle>
+                <text class="vlive__socval" data-soc text-anchor="middle" y="46" fill="#fff">&mdash;</text>
+                <rect class="vplate" x="-36" y="56" width="72" height="17" rx="8" style="stroke:rgba(125,170,220,.20)"></rect>
+                <text class="vlive__socstate" data-state text-anchor="middle" y="68" fill="#93a5bb">&mdash;</text>
+                <text class="vnlabel" data-dial-va text-anchor="middle" y="88"></text>
+              </g>
+              <!-- odometer: the stored value of the bank, under the dial -->
+              <g transform="translate(360,340)">
+                <title>Usable energy sitting in the lithium bank right now, valued at 40p/kWh (12.8V nominal) &mdash; the odometer of the van&rsquo;s energy economy.</title>
+                <circle class="vglow" data-glow-bank r="34" fill="#39d353" opacity="0" filter="url(#vblur)"></circle>
+                <rect class="vplate" x="-75" y="-14" width="150" height="28" rx="9" style="stroke:rgba(57,211,83,.35)"></rect>
+                <text class="vnval" data-bank-val text-anchor="middle" y="5" style="fill:#39d353;font-size:14px">&mdash;</text>
+                <text class="vnlabel" text-anchor="middle" y="30">Stored in battery &middot; the bank</text>
+                <text class="vnlabel" data-sn-sub text-anchor="middle" y="44" style="fill:#e0b341"></text>
+              </g>
+              <!-- SUN satellite -->
+              <g transform="translate(115,90)">
                 <g class="vnpop">
-                <circle class="vglow" data-glow-sun r="40" fill="#e0b341" opacity="0" filter="url(#vblur)"></circle>
-                <circle r="27" fill="url(#vgsun)" stroke="rgba(224,179,65,.55)" stroke-width="1.5"></circle>
-                <path d="M-13 -17 A21.5 21.5 0 0 1 13 -17" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.5" stroke-linecap="round"></path>
-                <g class="vsunrays" stroke="#e0b341" stroke-width="2" stroke-linecap="round"><line y1="-14" y2="-19"></line><line y1="14" y2="19"></line><line x1="-14" x2="-19"></line><line x1="14" x2="19"></line><line x1="-10" y1="-10" x2="-14" y2="-14"></line><line x1="10" y1="10" x2="14" y2="14"></line><line x1="10" y1="-10" x2="14" y2="-14"></line><line x1="-10" y1="10" x2="-14" y2="14"></line></g>
-                <circle r="8" fill="#e0b341"></circle>
-                <rect class="vplate" x="-42" y="36" width="84" height="26" rx="9" style="stroke:rgba(224,179,65,.30)"></rect>
-                <text class="vnval" data-pv text-anchor="middle" y="54">&mdash;</text>
-                <text class="vnlabel" text-anchor="middle" y="78">Solar</text>
+                  <circle class="vglow" data-glow-sun r="42" fill="#e0b341" opacity="0" filter="url(#vblur)"></circle>
+                  <circle r="30" fill="url(#vgsun)" stroke="rgba(224,179,65,.55)" stroke-width="1.5"></circle>
+                  <path d="M-14 -19 A24 24 0 0 1 14 -19" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.5" stroke-linecap="round"></path>
+                  <g class="vsunrays" stroke="#e0b341" stroke-width="2" stroke-linecap="round"><line y1="-15" y2="-21"></line><line y1="15" y2="21"></line><line x1="-15" x2="-21"></line><line x1="15" x2="21"></line><line x1="-11" y1="-11" x2="-15" y2="-15"></line><line x1="11" y1="11" x2="15" y2="15"></line><line x1="11" y1="-11" x2="15" y2="-15"></line><line x1="-11" y1="11" x2="-15" y2="15"></line></g>
+                  <circle r="9" fill="#e0b341"></circle>
+                  <rect class="vplate" x="-42" y="40" width="84" height="26" rx="9" style="stroke:rgba(224,179,65,.30)"></rect>
+                  <text class="vnval" data-pv text-anchor="middle" y="58">&mdash;</text>
+                  <text class="vnlabel" text-anchor="middle" y="82">Solar</text>
                 </g>
               </g>
-              <!-- ENGINE -->
-              <g transform="translate(70,180)">
+              <!-- ENGINE satellite + trip meter -->
+              <g transform="translate(115,255)">
                 <g class="vnpop" style="animation-delay:.06s">
-                <circle class="vglow" data-glow-eng r="40" fill="#e0884a" opacity="0" filter="url(#vblur)"></circle>
-                <circle r="27" fill="url(#vgeng)" stroke="rgba(224,136,74,.55)" stroke-width="1.5"></circle>
-                <path d="M-13 -17 A21.5 21.5 0 0 1 13 -17" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.5" stroke-linecap="round"></path>
-                <circle r="9" fill="none" stroke="#e0884a" stroke-width="2.5"></circle>
-                <g stroke="#e0884a" stroke-width="2.5" stroke-linecap="round"><line y1="-9" y2="-15"></line><line y1="9" y2="15"></line><line x1="-9" x2="-15"></line><line x1="9" x2="15"></line></g>
-                <rect class="vplate" x="-32" y="36" width="64" height="26" rx="9" style="stroke:rgba(224,136,74,.30)"></rect>
-                <text class="vnval" data-eng-w text-anchor="middle" y="54">&mdash;</text>
-                <text class="vnlabel" text-anchor="middle" y="78">Engine</text>
+                  <title>Time the engine spent charging the bank &mdash; worked out from the energy delivered at the Orion&rsquo;s observed ~44 A charge rate &mdash; and the grid-equivalent value of that power, today and over 30 days.</title>
+                  <circle class="vglow" data-glow-eng r="42" fill="#e0884a" opacity="0" filter="url(#vblur)"></circle>
+                  <circle r="30" fill="url(#vgeng)" stroke="rgba(224,136,74,.55)" stroke-width="1.5"></circle>
+                  <path d="M-14 -19 A24 24 0 0 1 14 -19" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.5" stroke-linecap="round"></path>
+                  <circle r="10" fill="none" stroke="#e0884a" stroke-width="2.5"></circle>
+                  <g stroke="#e0884a" stroke-width="2.5" stroke-linecap="round"><line y1="-10" y2="-16"></line><line y1="10" y2="16"></line><line x1="-10" x2="-16"></line><line x1="10" x2="16"></line></g>
+                  <rect class="vplate" x="-36" y="40" width="72" height="26" rx="9" style="stroke:rgba(224,136,74,.30)"></rect>
+                  <text class="vnval" data-eng-w text-anchor="middle" y="58">&mdash;</text>
+                  <text class="vnlabel" text-anchor="middle" y="82">Engine</text>
+                  <text class="vnlabel" data-engh-day text-anchor="middle" y="98" style="fill:#e0884a"></text>
+                  <text class="vnlabel" data-engh-month text-anchor="middle" y="112" style="fill:#e0b341"></text>
                 </g>
               </g>
-              <!-- ENGINE HOURS -->
-              <g transform="translate(70,270)">
+              <!-- LOADS satellite -->
+              <g transform="translate(605,90)">
                 <g class="vnpop" style="animation-delay:.12s">
-                <title>Time the engine spent charging the bank &mdash; worked out from the energy delivered at the Orion&rsquo;s observed ~44 A charge rate &mdash; and the grid-equivalent value of that power, today and over 30 days.</title>
-                <circle class="vglow" data-glow-engh r="34" fill="#e0884a" opacity="0" filter="url(#vblur)"></circle>
-                <circle r="27" fill="url(#vgeng)" stroke="rgba(224,136,74,.55)" stroke-width="1.5"></circle>
-                <path d="M-13 -17 A21.5 21.5 0 0 1 13 -17" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.5" stroke-linecap="round"></path>
-                <g class="vengh">
-                  <circle r="10" fill="none" stroke="#e0884a" stroke-width="2"></circle>
-                  <line x1="0" y1="-10" x2="0" y2="-13" stroke="#e0884a" stroke-width="2" stroke-linecap="round"></line>
-                  <line x1="0" y1="0" x2="0" y2="-6" stroke="#e0884a" stroke-width="2" stroke-linecap="round"></line>
-                  <line x1="0" y1="0" x2="4.5" y2="2.5" stroke="#e0884a" stroke-width="2" stroke-linecap="round"></line>
-                </g>
-                <rect class="vplate" x="-52" y="36" width="104" height="26" rx="9" style="stroke:rgba(224,136,74,.30)"></rect>
-                <text class="vnval" data-engh-day text-anchor="middle" y="54" style="fill:#e0884a;font-size:13px">&mdash;</text>
-                <text class="vnlabel" text-anchor="middle" y="78">Engine hours &amp; value</text>
-                <text class="vnlabel" data-engh-month text-anchor="middle" y="92" style="fill:#e0b341"></text>
+                  <circle class="vglow" data-glow-load r="42" fill="#2aa9e0" opacity="0" filter="url(#vblur)"></circle>
+                  <circle r="30" fill="url(#vgload)" stroke="rgba(42,169,224,.55)" stroke-width="1.5"></circle>
+                  <path d="M-14 -19 A24 24 0 0 1 14 -19" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.5" stroke-linecap="round"></path>
+                  <path d="M3 -14 L-8 3 H0 L-3 14 L9 -3 H1 Z" fill="#2aa9e0"></path>
+                  <rect class="vplate" x="-36" y="40" width="72" height="26" rx="9" style="stroke:rgba(42,169,224,.30)"></rect>
+                  <text class="vnval" data-load text-anchor="middle" y="58">&mdash;</text>
+                  <text class="vnlabel" text-anchor="middle" y="82">Loads</text>
                 </g>
               </g>
-              <!-- BATTERY -->
-              <g transform="translate(300,120)">
+              <!-- COST satellite + taxi meter -->
+              <g transform="translate(605,255)">
                 <g class="vnpop" style="animation-delay:.18s">
-                <circle class="vglow" data-glow-batt r="66" fill="#39d353" opacity="0" filter="url(#vblur)"></circle>
-                <circle r="63" fill="none" stroke="rgba(125,170,220,.16)" stroke-width="4" stroke-dasharray="1.8 11.39"></circle>
-                <circle r="47" fill="url(#vgbatt)"></circle>
-                <circle r="56" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="9"></circle>
-                <circle data-ring r="56" fill="none" stroke="#39d353" stroke-width="9" stroke-linecap="round" stroke-dasharray="351.9" stroke-dashoffset="351.9" transform="rotate(-90)" style="transition:stroke-dashoffset 1.1s cubic-bezier(.22,.9,.3,1),stroke .6s"></circle>
-                <text class="vlive__socval" data-soc text-anchor="middle" y="9" fill="#fff">&mdash;</text>
-                <rect class="vplate" x="-36" y="17" width="72" height="17" rx="8" style="stroke:rgba(125,170,220,.20)"></rect>
-                <text class="vlive__socstate" data-state text-anchor="middle" y="29" fill="#93a5bb">&mdash;</text>
+                  <title>The live running cost of what the van is using right now, at 40p/kWh &mdash; watch it jump when the kettle goes on. The small meter counts up every second while you have this page open.</title>
+                  <circle class="vglow" data-glow-cost r="38" fill="#e06a4a" opacity="0" filter="url(#vblur)"></circle>
+                  <circle r="30" fill="url(#vgcost)" stroke="rgba(224,106,74,.55)" stroke-width="1.5"></circle>
+                  <path d="M-14 -19 A24 24 0 0 1 14 -19" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.5" stroke-linecap="round"></path>
+                  <g class="vcost">
+                    <path d="M-9 -13 H9 V9 L5.5 13 L2 9 L-2 13 L-5.5 9 L-9 13 Z" fill="none" stroke="#e06a4a" stroke-width="2" stroke-linejoin="round"></path>
+                    <g stroke="#e06a4a" stroke-width="1.8" stroke-linecap="round"><line x1="-4.5" y1="-6" x2="4.5" y2="-6"></line><line x1="-4.5" y1="-1" x2="4.5" y2="-1"></line><line x1="-4.5" y1="4" x2="1.5" y2="4"></line></g>
+                  </g>
+                  <rect class="vplate" x="-42" y="40" width="84" height="26" rx="9" style="stroke:rgba(224,106,74,.30)"></rect>
+                  <text class="vnval" data-cost-val text-anchor="middle" y="58" style="fill:#e06a4a">&mdash;</text>
+                  <text class="vnlabel" text-anchor="middle" y="82">Cost of load &middot; live</text>
+                  <text class="vnlabel" data-cost-sub text-anchor="middle" y="96" style="fill:#e06a4a"></text>
                 </g>
               </g>
-              <!-- LOADS -->
-              <g transform="translate(505,120)">
+              <!-- COIN: the eco readout, top-centre -->
+              <g transform="translate(360,40)">
                 <g class="vnpop" style="animation-delay:.24s">
-                <circle class="vglow" data-glow-load r="40" fill="#2aa9e0" opacity="0" filter="url(#vblur)"></circle>
-                <circle r="27" fill="url(#vgload)" stroke="rgba(42,169,224,.55)" stroke-width="1.5"></circle>
-                <path d="M-13 -17 A21.5 21.5 0 0 1 13 -17" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.5" stroke-linecap="round"></path>
-                <path d="M3 -13 L-7 3 H0 L-3 13 L8 -3 H1 Z" fill="#2aa9e0"></path>
-                <rect class="vplate" x="-32" y="36" width="64" height="26" rx="9" style="stroke:rgba(42,169,224,.30)"></rect>
-                <text class="vnval" data-load text-anchor="middle" y="54">&mdash;</text>
-                <text class="vnlabel" text-anchor="middle" y="78">Loads</text>
-                </g>
-              </g>
-              <!-- COST -->
-              <g transform="translate(505,232)">
-                <g class="vnpop" style="animation-delay:.30s">
-                <title>The live running cost of what the van is using right now, at 40p/kWh &mdash; watch it jump when the kettle goes on. The small meter counts up every second while you have this page open.</title>
-                <circle class="vglow" data-glow-cost r="36" fill="#e06a4a" opacity="0" filter="url(#vblur)"></circle>
-                <circle r="27" fill="url(#vgcost)" stroke="rgba(224,106,74,.55)" stroke-width="1.5"></circle>
-                <path d="M-13 -17 A21.5 21.5 0 0 1 13 -17" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.5" stroke-linecap="round"></path>
-                <g class="vcost">
-                  <path d="M-9 -13 H9 V9 L5.5 13 L2 9 L-2 13 L-5.5 9 L-9 13 Z" fill="none" stroke="#e06a4a" stroke-width="2" stroke-linejoin="round"></path>
-                  <g stroke="#e06a4a" stroke-width="1.8" stroke-linecap="round"><line x1="-4.5" y1="-6" x2="4.5" y2="-6"></line><line x1="-4.5" y1="-1" x2="4.5" y2="-1"></line><line x1="-4.5" y1="4" x2="1.5" y2="4"></line></g>
-                </g>
-                <rect class="vplate" x="-42" y="36" width="84" height="26" rx="9" style="stroke:rgba(224,106,74,.30)"></rect>
-                <text class="vnval" data-cost-val text-anchor="middle" y="54" style="fill:#e06a4a">&mdash;</text>
-                <text class="vnlabel" text-anchor="middle" y="78">Cost of load &middot; live</text>
-                <text class="vnlabel" data-cost-sub text-anchor="middle" y="92" style="fill:#e06a4a"></text>
-                </g>
-              </g>
-              <!-- COIN -->
-              <g transform="translate(648,120)">
-                <g class="vnpop" style="animation-delay:.36s">
-                <title>What the van&rsquo;s current usage would cost on grid (40p/kWh) plus the 50p/day standing charge. Surplus sunshine is banked and counted when used &mdash; never twice.</title>
-                <circle class="vglow" data-glow-coin r="36" fill="#e0b341" opacity="0" filter="url(#vblur)"></circle>
-                <g class="vcoin2">
-                  <circle r="21" fill="url(#vgold)" stroke="#a8842e" stroke-width="1.5"></circle>
-                  <text text-anchor="middle" y="7" font-size="20" font-weight="800" fill="#0b1020">&pound;</text>
-                </g>
-                <rect class="vplate" x="-42" y="36" width="84" height="26" rx="9" style="stroke:rgba(224,179,65,.35)"></rect>
-                <text class="vnval" data-sn-rate text-anchor="middle" y="54" style="fill:#39d353">&mdash;</text>
-                <text class="vnlabel" text-anchor="middle" y="78">Saving now</text>
-                </g>
-              </g>
-              <!-- BANK -->
-              <g transform="translate(648,232)">
-                <g class="vnpop" style="animation-delay:.42s">
-                <title>Usable energy sitting in the lithium bank right now, valued at 40p/kWh (12.8V nominal). Glows while the sun or engine is making a deposit.</title>
-                <circle class="vglow" data-glow-bank r="32" fill="#39d353" opacity="0" filter="url(#vblur)"></circle>
-                <circle r="27" fill="url(#vgbank)" stroke="rgba(57,211,83,.55)" stroke-width="1.5"></circle>
-                <path d="M-13 -17 A21.5 21.5 0 0 1 13 -17" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.5" stroke-linecap="round"></path>
-                <g class="vbank">
-                  <path d="M-16 -4 L0 -14 L16 -4 Z" fill="none" stroke="#39d353" stroke-width="2" stroke-linejoin="round"></path>
-                  <g stroke="#39d353" stroke-width="2" stroke-linecap="round"><line x1="-12" y1="-1" x2="-12" y2="9"></line><line x1="-4" y1="-1" x2="-4" y2="9"></line><line x1="4" y1="-1" x2="4" y2="9"></line><line x1="12" y1="-1" x2="12" y2="9"></line></g>
-                  <line x1="-16" y1="12" x2="16" y2="12" stroke="#39d353" stroke-width="2" stroke-linecap="round"></line>
-                </g>
-                <rect class="vplate" x="-52" y="36" width="104" height="26" rx="9" style="stroke:rgba(57,211,83,.30)"></rect>
-                <text class="vnval" data-bank-val text-anchor="middle" y="54" style="fill:#39d353;font-size:13px">&mdash;</text>
-                <text class="vnlabel" text-anchor="middle" y="78">Stored in battery</text>
-                <text class="vnlabel" data-sn-sub text-anchor="middle" y="92" style="fill:#e0b341"></text>
+                  <title>What the van&rsquo;s current usage would cost on grid (40p/kWh) plus the 50p/day standing charge. Surplus sunshine is banked and counted when used &mdash; never twice.</title>
+                  <circle class="vglow" data-glow-coin r="34" fill="#e0b341" opacity="0" filter="url(#vblur)"></circle>
+                  <g class="vcoin2">
+                    <circle r="21" fill="url(#vgold)" stroke="#a8842e" stroke-width="1.5"></circle>
+                    <text text-anchor="middle" y="7" font-size="20" font-weight="800" fill="#0b1020">&pound;</text>
+                  </g>
+                  <text class="vnlabel" text-anchor="end" x="-34" y="-2">Saving</text>
+                  <text class="vnlabel" text-anchor="end" x="-34" y="12">now</text>
+                  <rect class="vplate" x="34" y="-13" width="84" height="26" rx="9" style="stroke:rgba(224,179,65,.35)"></rect>
+                  <text class="vnval" data-sn-rate text-anchor="middle" x="76" y="5" style="fill:#39d353">&mdash;</text>
                 </g>
               </g>
             </svg>
@@ -1873,7 +1867,7 @@ def off_grid():
         orion:{state:"Off",why:"No/low input power",inV:12.4,inW:0,outI:0,lifeAh:9533},
         ledger:{pb:0.9,pc:0.7,bc:0.4}};
       var el=document.getElementById("vlive"); if(!el) return;
-      var RC=351.9, reduce=false;
+      var RC=439.82, reduce=false;   /* 240-degree speedo arc on the r=105 gauge */
       try{ reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
       var cur={}, tanksSig=null, histKind=null, histSig=null, histData=null, histMode="solar";
       function q(s){return el.querySelector(s);}
@@ -1952,6 +1946,9 @@ def off_grid():
         setTxt(q("[data-updated]"),s.sample?"sample reading":(sseAlive()?liveClock():("live"+(s.updated?" · updated "+ago(s.updated):""))));
         setTxt(q("[data-live-lbl]"),s.sample?"Sample":"Live");
         var ring=q("[data-ring]"); if(ring){ var soc=Math.max(0,Math.min(100,s.soc||0)); ring.style.strokeDashoffset=(RC*(1-soc/100)).toFixed(1); ring.style.stroke=col; }
+        /* the speedo needle: rotated via the transform ATTRIBUTE — CSS transforms would override the gauge position */
+        var nd=q("[data-needle]"); if(nd){ var socN=Math.max(0,Math.min(100,s.soc||0)); nd.setAttribute("transform","rotate("+(-120+2.4*socN).toFixed(1)+")"); }
+        setTxt(q("[data-dial-va]"),(s.battV!=null?s.battV.toFixed(2)+" V":"")+((s.battV!=null&&s.battA!=null)?" · ":"")+(s.battA!=null?s.battA.toFixed(1)+" A":""));
         var gb=q("[data-glow-batt]"); if(gb){ gb.setAttribute("fill",col); gb.style.opacity=charging?"0.45":"0"; }
         flow("[data-flow-solar]","[data-glow-sun]",s.pvW);
         flow("[data-flow-load]","[data-glow-load]",loadW);
