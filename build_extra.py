@@ -1424,6 +1424,8 @@ def off_grid():
         .vlive__alarm--bad{border:1px solid rgba(224,106,74,.5);background:rgba(224,106,74,.10);color:#e06a4a}
         .vcoin2{animation:vcoin 3.2s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
         @keyframes vcoin{0%,55%{transform:rotateY(0)}75%{transform:rotateY(180deg)}100%{transform:rotateY(360deg)}}
+        .vbank{animation:vbankpulse 2.8s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+        @keyframes vbankpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
         .vflowwrap svg{width:100%;height:auto;display:block;overflow:visible}
         .vflow{fill:none;stroke-width:3;stroke-linecap:round}
         .vflow-base{stroke:rgba(255,255,255,.10)}
@@ -1509,7 +1511,7 @@ def off_grid():
           </div>
           <div class="vlive__alarm" data-alarms hidden></div>
           <div class="vflowwrap">
-            <svg viewBox="0 0 720 258" role="img" aria-label="Live energy flow: solar and engine charging the battery, battery powering the loads, and the money being saved right now">
+            <svg viewBox="0 0 720 292" role="img" aria-label="Live energy flow: solar and engine charging the battery, battery powering the loads, the money being saved right now, and the value stored in the battery bank">
               <defs>
                 <filter id="vblur" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="10"></feGaussianBlur></filter>
                 <radialGradient id="vgold" cx="30%" cy="30%" r="80%"><stop offset="0%" stop-color="#ffe98a"></stop><stop offset="60%" stop-color="#e0b341"></stop><stop offset="100%" stop-color="#a8842e"></stop></radialGradient>
@@ -1564,6 +1566,17 @@ def off_grid():
                 <text class="vnval" data-sn-rate text-anchor="middle" y="44" style="fill:#39d353">&mdash;</text>
                 <text class="vnlabel" text-anchor="middle" y="59">Saving now</text>
                 <text class="vnlabel" data-sn-sub text-anchor="middle" y="74" style="fill:#e0b341"></text>
+              </g>
+              <g transform="translate(648,232)">
+                <title>Usable energy sitting in the lithium bank right now, valued at 40p/kWh (12.8V nominal). Glows while the sun or engine is making a deposit.</title>
+                <circle class="vglow" data-glow-bank r="32" fill="#39d353" opacity="0" filter="url(#vblur)"></circle>
+                <g class="vbank">
+                  <path d="M-16 -4 L0 -14 L16 -4 Z" fill="none" stroke="#39d353" stroke-width="2" stroke-linejoin="round"></path>
+                  <g stroke="#39d353" stroke-width="2" stroke-linecap="round"><line x1="-12" y1="-1" x2="-12" y2="9"></line><line x1="-4" y1="-1" x2="-4" y2="9"></line><line x1="4" y1="-1" x2="4" y2="9"></line><line x1="12" y1="-1" x2="12" y2="9"></line></g>
+                  <line x1="-16" y1="12" x2="16" y2="12" stroke="#39d353" stroke-width="2" stroke-linecap="round"></line>
+                </g>
+                <text class="vnval" data-bank-val text-anchor="middle" y="34" style="fill:#39d353">&mdash;</text>
+                <text class="vnlabel" text-anchor="middle" y="49">Stored in battery</text>
               </g>
             </svg>
           </div>
@@ -1738,6 +1751,16 @@ def off_grid():
           var surp=(s.pvW!=null)?Math.max(0,s.pvW-loadW):0;
           setTxt(q("[data-sn-sub]"),surp>5?("+"+((surp/1000)*RATE*100).toFixed(1)+"p/h banked"):((s.pvW!=null&&s.pvW>5)?"sun covering use":"stored sun"));
         }
+        /* bank node: live value of the energy sitting in the battery (usable Ah x 12.8V lithium nominal) */
+        var bcap=(s.batt&&s.batt.capAh!=null)?s.batt.capAh:null;
+        var remAh2=null;
+        if(bcap!=null){ remAh2=(s.batt.consAh!=null)?Math.max(0,bcap+s.batt.consAh):((s.soc!=null)?bcap*s.soc/100:null); }
+        if(remAh2==null){ setTxt(q("[data-bank-val]"),"—"); }
+        else{
+          var storedKwh=remAh2*12.8/1000;
+          tween("[data-bank-val]","bankv",storedKwh*RATE,function(v){return "£"+v.toFixed(2)+" · "+(v/RATE).toFixed(1)+" kWh";});
+        }
+        var bg2=q("[data-glow-bank]"); if(bg2)bg2.style.opacity=(s.battW!=null&&s.battW>3)?"0.4":"0"; /* glows while a deposit is flowing in */
         /* engine / Orion XS DC-DC charger */
         var o=s.orion||{};
         var engW=(o.inW!=null)?o.inW:null;
