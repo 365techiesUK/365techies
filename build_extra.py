@@ -1569,11 +1569,20 @@ def off_grid():
         .vlive--fs .vlive__metrics{flex:none;margin-top:.5rem}
         .vlive--fs .vlive__pass,.vlive--fs .vlive__engine,.vlive--fs .vlive__charts,.vlive--fs .vlive__chartnote,.vlive--fs .vlive__wx,.vlive--fs .vlive__save,.vlive--fs .vlive__ledger,.vlive--fs .vlive__histwrap,.vlive--fs .vlive__tanks,.vlive--fs .vlive__note,.vlive--fs .vlive__rate{display:none}
         @media(max-width:600px) and (orientation:portrait){
-          .vlive--fs .vflowwrap{align-items:flex-start;padding-top:10vh}
-          .vlive--fs .vflowwrap svg{width:100%}
-          .vlive--fs .vflowwrap::before{display:block;content:"\21bb rotate your phone for the full dashboard";position:absolute;bottom:1.2rem;left:50%;transform:translateX(-50%);white-space:nowrap;font:600 .58rem/1 ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;color:#93a5bb;padding:.35rem .7rem;border:1px solid rgba(125,170,220,.16);border-radius:999px;background:rgba(7,13,34,.85)}
+          /* fake-landscape: rotate the whole dashboard 90deg so it FILLS a portrait phone.
+             Absolutely positioned so flex can't shrink its (unrotated) layout box. */
+          .vlive--fs .vflowwrap{padding:0}
+          .vlive--fs .vflowwrap svg{position:absolute;left:50%;top:50%;max-width:none;max-height:none;width:min(calc(100dvh - 120px),163vw);height:auto;aspect-ratio:720/400;transform:translate(-50%,-50%) rotate(90deg)}
+          .vlive--fs .vlive__metrics{display:none}
         }
-        @media(max-height:520px){.vlive--fs .vlive__metrics{display:none}}
+        @media(max-height:520px){
+          /* landscape phones: strip the chrome so the cluster takes every pixel */
+          .vlive--fs{padding:calc(env(safe-area-inset-top,0px) + .35rem) calc(env(safe-area-inset-right,0px) + .5rem) calc(env(safe-area-inset-bottom,0px) + .35rem) calc(env(safe-area-inset-left,0px) + .5rem)}
+          .vlive--fs .vlive__bar{margin-bottom:.15rem;padding-bottom:.3rem;font-size:.58rem}
+          .vlive--fs .vlive__fsbtn{inline-size:34px;block-size:34px}
+          .vlive--fs .vflowwrap{padding:0}
+          .vlive--fs .vlive__metrics{display:none}
+        }
         /* ===== responsive tiers ===== */
         @media(max-width:767px){
           .vflowwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;scroll-snap-type:x proximity;mask-image:linear-gradient(90deg,transparent 0,#000 12px,#000 calc(100% - 12px),transparent 100%);-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 12px,#000 calc(100% - 12px),transparent 100%)}
