@@ -952,7 +952,7 @@
               <!-- COST satellite + taxi meter -->
               <g transform="translate(605,255)">
                 <g class="vnpop" style="animation-delay:.18s">
-                  <title>The live running cost of what the van is using right now, at 40p/kWh &mdash; watch it jump when the kettle goes on. The small meter counts up every second while you have this page open.</title>
+                  <title>The live running cost of what the van is using right now, at 40p/kWh &mdash; watch it jump when the kettle goes on. Below it: what today&rsquo;s usage has cost so far, and the last 30 days&rsquo; total, at 40p/kWh.</title>
                   <circle class="vglow" data-glow-cost r="38" fill="#e06a4a" opacity="0" filter="url(#vblur)"></circle>
                   <circle r="30" fill="url(#vgcost)" stroke="rgba(224,106,74,.55)" stroke-width="1.5"></circle>
                   <path d="M-14 -19 A24 24 0 0 1 14 -19" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.5" stroke-linecap="round"></path>
@@ -963,7 +963,8 @@
                   <rect class="vplate" x="-42" y="40" width="84" height="26" rx="9" style="stroke:rgba(224,106,74,.30)"></rect>
                   <text class="vnval" data-cost-val text-anchor="middle" y="58" style="fill:#e06a4a">&mdash;</text>
                   <text class="vnlabel" text-anchor="middle" y="82">Cost of load &middot; live</text>
-                  <text class="vnlabel" data-cost-sub text-anchor="middle" y="96" style="fill:#e06a4a"></text>
+                  <text class="vnlabel" data-cost-day text-anchor="middle" y="96" style="fill:#e06a4a"></text>
+                  <text class="vnlabel" data-cost-30d text-anchor="middle" y="110" style="fill:#e0b341"></text>
                 </g>
               </g>
               <!-- COIN: the eco readout, top-centre -->
@@ -1176,6 +1177,14 @@
         lastLoadW=loadW;
         if(loadW==null){ setTxt(q("[data-cost-val]"),"—"); }
         else tween("[data-cost-val]","costv",(loadW/1000)*RATE*100,function(v){return v.toFixed(1)+"p/h";});
+        /* the £ tickers: today's usage cost (live daily ledger) + the real 30-day total */
+        var ldc=s.ledger||{};
+        var usedToday=(ldc.pc!=null||ldc.bc!=null)?((ldc.pc||0)+(ldc.bc||0)):null;
+        if(usedToday==null){ setTxt(q("[data-cost-day]"),""); }
+        else tween("[data-cost-day]","cday",usedToday*RATE,function(v){return "today £"+v.toFixed(2);});
+        var used30=(s.history&&s.history.length)?s.history.reduce(function(a,d){return a+((d&&d.used)||0);},0):0;
+        if(!used30){ setTxt(q("[data-cost-30d]"),""); }
+        else tween("[data-cost-30d]","c30d",used30*RATE,function(v){return "30 days £"+v.toFixed(2);});
         /* bank node: live value of the energy sitting in the battery (usable Ah x 12.8V lithium nominal) */
         var bcap=(s.batt&&s.batt.capAh!=null)?s.batt.capAh:null;
         var remAh2=null;
@@ -1466,7 +1475,6 @@
           var mp=q("[data-flow-money]");   /* penny drop: the money artery flares as the coin flips */
           if(mp){ mp.classList.add("drop"); setTimeout(function(){mp.classList.remove("drop");},900); }
         }
-        setTxt(q("[data-cost-sub]"),(sessP<100?sessP.toFixed(3)+"p":"£"+(sessP/100).toFixed(3))+" while you've watched");
       },1000);
       loadHist24(); setInterval(loadHist24, 600000);
       loadWx(); setInterval(loadWx, 1800000);
