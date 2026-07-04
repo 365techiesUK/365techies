@@ -1657,21 +1657,18 @@ def off_grid():
                 <radialGradient id="vgdial" cx="50%" cy="38%" r="75%"><stop offset="0%" stop-color="#122448" stop-opacity="1"></stop><stop offset="70%" stop-color="#0a1430" stop-opacity="1"></stop><stop offset="100%" stop-color="#060c1c" stop-opacity="1"></stop></radialGradient>
               </defs>
               <!-- ===== energy conduits (etched base + under-glow + comet dashes) ===== -->
-              <path class="vflow vflow-base" d="M147 95 C200 100 240 110 279 124"></path>
+              <path class="vflow vflow-base" d="M140 74 C210 66 290 62 345 55"></path>
               <path class="vflow vflow-base" d="M147 258 C200 270 240 280 277 283"></path>
               <path class="vflow vflow-base" d="M441 124 C480 110 520 100 573 95"></path>
-              <path class="vflow vflow-base" d="M583 68 C515 20 455 8 377 26"></path>
               <path class="vflow vflow-base" d="M360 66 V90"></path>
               <path class="vflow vflow-base" d="M626 111 C672 155 672 200 626 236"></path>
               <path class="vflow vflow-base" d="M577 262 C520 292 480 292 445 284"></path>
-              <path class="vflow-ug" data-ug-solar style="stroke:#39d353" d="M147 95 C200 100 240 110 279 124"></path>
+              <path class="vflow-ug" data-ug-solar style="stroke:#39d353" d="M140 74 C210 66 290 62 345 55"></path>
               <path class="vflow-ug" data-ug-eng style="stroke:#e0884a" d="M147 258 C200 270 240 280 277 283"></path>
               <path class="vflow-ug" data-ug-load style="stroke:#2aa9e0" d="M441 124 C480 110 520 100 573 95"></path>
-              <path class="vflow-ug" data-ug-money style="stroke:#e0b341" d="M583 68 C515 20 455 8 377 26"></path>
-              <path class="vflow vflow-dash" data-flow-solar style="stroke:#39d353" d="M147 95 C200 100 240 110 279 124"></path>
+              <path class="vflow vflow-dash" data-flow-solar style="stroke:#39d353" d="M140 74 C210 66 290 62 345 55"></path>
               <path class="vflow vflow-dash" data-flow-eng style="stroke:#e0884a" d="M147 258 C200 270 240 280 277 283"></path>
               <path class="vflow vflow-dash" data-flow-load style="stroke:#2aa9e0" d="M441 124 C480 110 520 100 573 95"></path>
-              <path class="vflow vflow-dash" data-flow-money style="stroke:#e0b341" d="M583 68 C515 20 455 8 377 26"></path>
               <path class="vflow vflow-dash" data-flow-deposit style="stroke:#39d353" d="M360 66 V90"></path>
               <path class="vflow vflow-dash" data-flow-withdraw style="stroke:#e0b341" d="M360 90 V66"></path>
               <path class="vflow vflow-dash" data-flow-cost style="stroke:#e06a4a" d="M626 111 C672 155 672 200 626 236"></path>
