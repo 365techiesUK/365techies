@@ -1229,7 +1229,7 @@ def spot_the_scam():
            chips=["No sign-up", "Plain English", "Great for all ages"]),
       SCAM_WIDGET,
       faq_html(faqs),
-      tools_strip(["scamlink", "breach", "privacy"], title="More free scam-busting tools", lede_text="Keep going &mdash; a few more free checks that take seconds.", alt=False),
+      tools_strip(["safetycourse", "scamlink", "breach", "privacy"], title="More free scam-busting tools", lede_text="Keep going &mdash; the free online safety course and a few more quick checks.", alt=False),
       cta("Worried about scams?",
           "We keep Dorset families and businesses safe online every day &mdash; with real protection and a friendly techie to ask.",
           primary=("Talk to a Techie", "/contact/"), secondary=("Free Health Check", "/it-health-check-tool/")),
@@ -11043,7 +11043,7 @@ def online_safety():
         ("What should I do if I think I&rsquo;ve been scammed?","Don&rsquo;t panic &mdash; act fast. Call your bank on 159, report it, and secure your accounts. Our <a href=\"/ive-been-scammed-what-to-do/\">step-by-step guide</a> covers exactly what to do."),
         ("Is antivirus enough on its own?","It&rsquo;s an important layer, but not the whole answer. Strong passwords, 2FA, updates, backups and a healthy dose of caution matter just as much. We bring it all together in <a href=\"/cybersecurity-support/\">managed cybersecurity</a>."),
       ]),
-      tools_strip(["scamlink", "breach", "privacy", "pwgen"], title="Free tools to stay safe", lede_text="Quick, free checks you can run right now &mdash; no sign-up.", alt=False),
+      tools_strip(["safetycourse", "scamlink", "breach", "privacy", "pwgen"], title="Free tools to stay safe", lede_text="Take the free online safety course, then run a few quick checks &mdash; no sign-up.", alt=False),
       cta("Want a friendly expert in your corner?","We keep Dorset families and businesses safe online every day &mdash; with real protection, Malwarebytes Premium and a real person to ask whenever you&rsquo;re unsure.",
           primary=("Explore Cybersecurity","/cybersecurity-support/"), secondary=("Malwarebytes Premium","/malwarebytes-premium/")),
     ])
