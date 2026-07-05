@@ -673,8 +673,8 @@ def windows_10_eol():
     faqs = [
       ("Is Windows 10 still safe to use?", "Windows 10 reached end of support on 14 October 2025, so Microsoft no longer ships free security updates. It still switches on, but it gets steadily riskier the longer it goes unpatched."),
       ("Do I have to buy a new computer?", "Not always. Many PCs can upgrade to Windows 11 for free &mdash; we&rsquo;ll check whether yours is eligible, and only recommend a new machine if it genuinely makes sense."),
-      ("What is ESU?", "Extended Security Updates &mdash; a paid Microsoft programme that buys limited extra time on Windows 10. We can advise whether it&rsquo;s worth it for you, or whether upgrading is better value."),
-      ("Can you handle the whole upgrade for me?", "Yes &mdash; we back up your files, upgrade or set up your new PC, move everything across and make sure it all works. No stress and no lost data."),
+      ("What is ESU?", "Extended Security Updates &mdash; a Microsoft programme that buys limited extra time on Windows 10 (you can even enrol free with a Microsoft account). We can advise whether it&rsquo;s worth it, or set it up for you &mdash; see our <a href=\"/windows-10-esu-free-enrolment-help/\">Windows 10 ESU enrolment help</a> if the &lsquo;Enrol now&rsquo; button won&rsquo;t appear."),
+      ("Can you handle the whole upgrade for me?", "Yes &mdash; our <a href=\"/windows-11-upgrade-service/\">Windows 11 upgrade service in Poole &amp; Bournemouth</a> backs up your files, upgrades or sets up your PC, moves everything across and checks it all works. No stress and no lost data."),
     ]
     pre = WIN10_CHECK_WIDGET + '''
     <section class="section" aria-label="What end of support means">
@@ -1515,7 +1515,7 @@ def off_grid():
       ("What is Victron Energy?", "Victron Energy is a leading manufacturer of off-grid and mobile power equipment — inverters, solar charge controllers, batteries and monitoring — trusted worldwide for reliability."),
       ("Can I monitor my system remotely?", "Yes. We set up Victron's VRM remote monitoring so you and we can check performance, battery levels and faults from anywhere — a natural fit for an IT and monitoring company."),
       ("Can I see my off-grid power in the 365 AI OS?", "Yes — our <a href=\"/365-ai-os/\">365 AI OS</a> includes a live Off-Grid dashboard that reads your Victron VRM data (battery charge, solar, power draw, inverter state and tank levels) from any browser. Just sign in and open it, or ask the built-in assistant to &lsquo;open off-grid&rsquo;."),
-      ("Do you cover homes and businesses, not just vehicles?", "Absolutely — from whole-home off-grid and backup power to business energy resilience and garden-office power, as well as campervans, motorhomes and boats."),
+      ("Do you cover homes and businesses, not just vehicles?", "Absolutely — from whole-home off-grid and backup power to business energy resilience and garden-office power, as well as campervans, motorhomes and boats. We&rsquo;re your local <a href=\"/victron-installer-dorset/\">Victron installer in Dorset</a>."),
     ]
     content = "\n".join([
       hero(bc("Off-Grid & Victron Energy"), "// OFF-GRID POWER",
