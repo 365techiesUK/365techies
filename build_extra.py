@@ -7481,7 +7481,7 @@ graphics_card_benchmark()
 # ===================================================== FREE TOOLS HUB (every interactive tool, grouped)
 def free_tools_hub():
     slug = "free-tools"
-    desc = "All of 365 Techies' free tools in one place — website checker, live broadband speed test, email security check, password tools, Wi-Fi QR codes, DNS lookup, cost calculators and more. No sign-up, no catch."
+    desc = "Free IT tools that run entirely in your browser — no download, no sign-up, nothing installed. Check your website, test broadband live, see if a password has leaked, make Wi-Fi QR codes, benchmark your PC and more."
     GROUPS = [
       ("Security &amp; privacy", "Check you&rsquo;re safe &mdash; and lock things down.",
        ["emailsec","breach","pwgen","pwstrength","scamlink","privacy","scamquiz","whatlose"]),
@@ -7504,24 +7504,33 @@ def free_tools_hub():
             name, href, _b = TOOLS[k]
             items.append({"@type": "ListItem", "position": pos, "name": name.replace("&amp;", "&").replace("&rsquo;", "'"), "url": SITE + href})
             pos += 1
+    faqs = [
+      ("Are these tools really free?", "Yes &mdash; every tool here is completely free to use, with no sign-up, no account and no catch. They&rsquo;re our way of being genuinely useful; when you&rsquo;d rather a friendly techie just sorted the problem for you, that&rsquo;s what our monthly plans are for."),
+      ("Do I need to download or install anything?", "No. Every tool runs entirely in your web browser &mdash; nothing is downloaded or installed, so there&rsquo;s nothing to update and nothing that can slow your computer down. Just open a tool and use it."),
+      ("Do my passwords, files or data leave my browser?", "No. The privacy-sensitive tools &mdash; the password checks, the hardware and spec checkers and the benchmarks &mdash; run on your own device and don&rsquo;t send your data to us. Where a tool needs a live lookup (like the website or broadband checks) it only sends the address or URL you type, never personal data."),
+      ("What can I check with these free tools?", "Plenty: test your website&rsquo;s speed and security, run a live broadband speed test, see if your password has leaked, benchmark your PC and graphics card, check what&rsquo;s inside your computer, make a Wi-Fi QR code, check whether a link is a scam, look up DNS and SSL records, and more &mdash; all free, all in your browser."),
+      ("Do the tools work on phones and Macs?", "Yes &mdash; anything with a modern browser. A few are tuned with Windows PCs in mind (we&rsquo;re Windows and Android specialists), but they run on phones, tablets and Macs too."),
+    ]
     content = "\n".join([
-      hero(bc("Free Tools"), "// FREE TOOLS &amp; CHECKERS",
-           'Free tools, built by <em class="grad grad--cyan">real techies</em>',
-           f"{pos - 1} genuinely useful tools &mdash; check your website, test your broadband live, see if your password has leaked, make a Wi-Fi QR code and more. All free, no sign-up, no catch.",
+      hero(bc("Free Tools"), "// FREE IT TOOLS &middot; NO DOWNLOAD",
+           'Free IT tools that run in your <em class="grad grad--cyan">browser</em>',
+           f"365 Techies offers {pos - 1} free IT tools that run entirely in your web browser &mdash; no download, no sign-up, nothing installed, and your passwords and files never leave your device. <a href=\"/website-checker/\">Check your website</a>, <a href=\"/broadband-speed-checker/\">test your broadband</a>, <a href=\"/password-breach-checker/\">see if a password&rsquo;s leaked</a>, <a href=\"/pc-benchmark/\">benchmark your PC</a> and more.",
            cta1=("Talk to a Techie", "/contact/"), cta2=("View Monthly Plans", "/monthly-it-support/"),
-           chips=["100% free","No sign-up","Built in Dorset"]),
+           chips=["100% free","No download","Built in Dorset"]),
       f'''    <section class="blog-section" aria-label="All free tools">
       <div class="wrap">
 {sections}      </div>
     </section>''',
+      faq_html(faqs),
       cta("Like the free stuff? The paid stuff is even better.",
           "These tools give you answers &mdash; our monthly plans give you a friendly techie who sorts the problems for you, from &pound;18.25/month per computer.",
           primary=("View Monthly Plans", "/monthly-it-support/"), secondary=("Contact Us", "/contact/")),
     ])
-    def schema(s, _desc=desc, _items=items):
-        return graph([crumb(s, "Free Tools"), webpage(s, "Free IT Tools & Checkers", _desc),
-                      {"@type": "ItemList", "@id": SITE + "/free-tools/#list", "name": "365 Techies free tools", "itemListElement": _items}])
-    add(slug=slug, title="Free IT Tools & Checkers — Speed Test, Security Checks & More | 365 Techies",
+    def schema(s, _desc=desc, _items=items, _faqs=faqs):
+        return graph([crumb(s, "Free Tools"), webpage(s, "Free IT Tools & Checkers", _desc, "CollectionPage"),
+                      {"@type": "ItemList", "@id": SITE + "/free-tools/#list", "name": "365 Techies free tools", "itemListElement": _items},
+                      faqpage(s, _faqs)])
+    add(slug=slug, title="Free IT Tools, No Download — Run in Your Browser | 365 Techies",
         desc=desc, og_title="Free IT Tools & Checkers | 365 Techies", schema=schema, content=content)
 free_tools_hub()
 

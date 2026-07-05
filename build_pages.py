@@ -641,8 +641,13 @@ def _meta_desc(d, limit=158):
     cut = d[:limit]
     if " " in cut:
         cut = cut[:cut.rfind(" ")]
-    if cut.rfind("&") > cut.rfind(";"):   # drop a dangling partial HTML entity
-        cut = cut[:cut.rfind("&")]
+    # Drop ONLY a trailing partial HTML entity (e.g. a '&amp' cut mid-entity),
+    # not a literal ampersand like 'IT & security' — entities have no spaces and end in ';'.
+    amp = cut.rfind("&")
+    if amp != -1:
+        tail = cut[amp:]
+        if ";" not in tail and " " not in tail and len(tail) <= 8:
+            cut = cut[:amp]
     return cut.rstrip(" ,.;:&-—") + "&hellip;"
 
 def page(slug, title, desc, og_title, schema_json, content):
