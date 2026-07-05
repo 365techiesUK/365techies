@@ -13,7 +13,7 @@
     gtag('js', new Date());
     gtag('config', 'G-EBLTJ9WJXZ');
   </script>
-  <title>Free DNS Lookup | Check A, MX, NS & TXT Records | 365 Techies</title>
+  <title>Check MX &amp; DNS Records Free Lookup | 365 Techies</title>
   <meta name="description" content="Free DNS lookup tool. Check any domain's DNS records — A, MX, NS, TXT and more — live via secure DNS-over-HTTPS. Handy for checking your website and email&hellip;" />
   <link rel="canonical" href="https://365techies.co.uk/dns-lookup/" />
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
@@ -266,6 +266,67 @@
             "@type": "Answer",
             "text": "Try our <a href=\"/email-security-checker/\">email security checker</a> &mdash; it reads your SPF, DKIM and DMARC records and tells you, in plain English, whether scammers can spoof your address."
           }
+        },
+        {
+          "@type": "Question",
+          "name": "What are MX records and why do they matter?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "MX (Mail eXchange) records tell the internet which mail servers handle email for your domain. If they're missing or point to the wrong servers, your email won't arrive &mdash; so they're the first thing to check when email breaks."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why does my domain show no MX records?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Either email isn't set up for that domain, or the MX records were removed or never added &mdash; both stop email being delivered. Check with whoever hosts your email or DNS, and add the correct MX records they provide."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does this show the same MX records everyone else sees?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes &mdash; DNS records are public and this tool reads the same live records every mail and web server uses, so what you see here is exactly what governs your real email and website."
+          }
+        }
+      ]
+    },
+    {
+      "@type": "HowTo",
+      "@id": "https://365techies.co.uk/dns-lookup/#howto",
+      "name": "How to check your MX and DNS records",
+      "step": [
+        {
+          "@type": "HowToStep",
+          "position": 1,
+          "name": "Enter your domain",
+          "text": "Type your domain (for example yourdomain.co.uk) into the lookup box — you can paste an email address too and it will use the domain after the @."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 2,
+          "name": "Run the lookup",
+          "text": "Click 'Look up records'. The tool queries live DNS over a secure connection (Google DNS-over-HTTPS)."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 3,
+          "name": "Find your MX records",
+          "text": "In the results, the 'Mail servers' card lists your MX records — these decide where your email is delivered."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 4,
+          "name": "Check the other records",
+          "text": "You'll also see A/AAAA (website server), NS (nameservers) and TXT (SPF and verification) records for the same domain."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 5,
+          "name": "Spot anything missing",
+          "text": "Empty MX or missing SPF in TXT is a common cause of email problems — if a record looks wrong, that's usually where the fault is."
         }
       ]
     }
@@ -704,6 +765,28 @@
           <a href="/web-design-hosting/" class="button secondary button--lg">Web Design &amp; Hosting</a>
         </div>
         <p class="cta__contact mono" data-reveal>01202 775566 &middot; help@365techies.co.uk &middot; MON&ndash;FRI 9AM&ndash;5PM</p>
+      </div>
+    </section>
+    <section class="section section--alt" aria-label="How this tool works">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">// HOW IT WORKS</p>
+        <h2 class="section-title" data-title>How to check your MX and DNS records<span class="title-underline"></span></h2>
+        <p class="lede"><strong>To check your MX and DNS records, enter your domain into this free DNS lookup tool and it reads the live A, AAAA, CNAME, MX, NS and TXT records over secure DNS-over-HTTPS, showing your mail servers (MX) and website settings in seconds.</strong></p>
+        <h3>Step by step</h3>
+        <ol data-stagger>
+          <li><strong>Enter your domain</strong> &mdash; Type your domain (for example yourdomain.co.uk) into the lookup box — you can paste an email address too and it will use the domain after the @.</li>
+          <li><strong>Run the lookup</strong> &mdash; Click 'Look up records'. The tool queries live DNS over a secure connection (Google DNS-over-HTTPS).</li>
+          <li><strong>Find your MX records</strong> &mdash; In the results, the 'Mail servers' card lists your MX records — these decide where your email is delivered.</li>
+          <li><strong>Check the other records</strong> &mdash; You'll also see A/AAAA (website server), NS (nameservers) and TXT (SPF and verification) records for the same domain.</li>
+          <li><strong>Spot anything missing</strong> &mdash; Empty MX or missing SPF in TXT is a common cause of email problems — if a record looks wrong, that's usually where the fault is.</li>
+        </ol>
+        <h3 class="mono" style="opacity:.7">Good to know</h3>
+          <h3>What are MX records and why do they matter?</h3>
+          <p>MX (Mail eXchange) records tell the internet which mail servers handle email for your domain. If they're missing or point to the wrong servers, your email won't arrive &mdash; so they're the first thing to check when email breaks.</p>
+          <h3>Why does my domain show no MX records?</h3>
+          <p>Either email isn't set up for that domain, or the MX records were removed or never added &mdash; both stop email being delivered. Check with whoever hosts your email or DNS, and add the correct MX records they provide.</p>
+          <h3>Does this show the same MX records everyone else sees?</h3>
+          <p>Yes &mdash; DNS records are public and this tool reads the same live records every mail and web server uses, so what you see here is exactly what governs your real email and website.</p>
       </div>
     </section>
   </main>

@@ -13,7 +13,7 @@
     gtag('js', new Date());
     gtag('config', 'G-EBLTJ9WJXZ');
   </script>
-  <title>Free Domain Expiry Checker — Official Registry Data | 365 Techies</title>
+  <title>.co.uk Domain Expiry Checker (Nominet) | 365 Techies</title>
   <meta name="description" content="Free domain expiry checker. See exactly when any domain expires, who the registrar is and whether it's transfer-locked — straight from the official registry&hellip;" />
   <link rel="canonical" href="https://365techies.co.uk/domain-expiry-checker/" />
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
@@ -266,6 +266,67 @@
             "@type": "Answer",
             "text": "A few country registries don&rsquo;t publish expiry dates publicly. The lookup still confirms the domain is registered, its status and (usually) the registrar."
           }
+        },
+        {
+          "@type": "Question",
+          "name": "Does Nominet run .co.uk domains?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes &mdash; Nominet is the official registry for all .uk domains including .co.uk. Your day-to-day renewals go through your registrar (such as your web host or a company like GoDaddy), but the authoritative record sits with Nominet, which is what this checker reads."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why doesn't my .co.uk domain show a Nominet expiry date?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Nominet doesn't always publish the full expiry date in the public RDAP record for .co.uk. The checker will still confirm the domain is registered and show its status and registrar &mdash; to see the exact renewal date, log in to your registrar account or check with Nominet directly."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do I renew a .co.uk domain with Nominet or my registrar?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "With your registrar &mdash; the company you (or whoever built your site) bought the domain through. Nominet keeps the master record for .uk, but you can't renew directly with them; the checker shows which registrar to log in to."
+          }
+        }
+      ]
+    },
+    {
+      "@type": "HowTo",
+      "@id": "https://365techies.co.uk/domain-expiry-checker/#howto",
+      "name": "How to check when a .co.uk domain expires",
+      "step": [
+        {
+          "@type": "HowToStep",
+          "position": 1,
+          "name": "Enter the .co.uk domain",
+          "text": "Type the domain (for example yourbusiness.co.uk) into the checker box."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 2,
+          "name": "Run the check",
+          "text": "Click 'Check expiry date'. The tool queries the official registry record via RDAP, the modern successor to WHOIS."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 3,
+          "name": "Read the verdict",
+          "text": "You'll get a plain-English verdict at the top — safe, renewal coming up, renew now, or expired — with the days remaining."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 4,
+          "name": "Check the registrar and lock status",
+          "text": "The results show the registrar (the company you renew through) and whether the domain is transfer-locked for safety."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 5,
+          "name": "Turn on auto-renew",
+          "text": "If renewal is close, log in to your registrar, enable auto-renew and make sure the payment card and account email are current."
         }
       ]
     }
@@ -729,6 +790,29 @@
           <a href="/web-design-hosting/" class="button secondary button--lg">Web Design &amp; Hosting</a>
         </div>
         <p class="cta__contact mono" data-reveal>01202 775566 &middot; help@365techies.co.uk &middot; MON&ndash;FRI 9AM&ndash;5PM</p>
+      </div>
+    </section>
+    <section class="section section--alt" aria-label="How this tool works">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">// HOW IT WORKS</p>
+        <h2 class="section-title" data-title>How to check when a .co.uk domain expires<span class="title-underline"></span></h2>
+        <p class="lede"><strong>A .co.uk domain's expiry date is held by Nominet, the UK registry, and this free checker reads the official registry record (RDAP) to show when the domain expires, who the registrar is and how many days remain.</strong></p>
+        <ul><li><strong>Safe</strong> &mdash; 60 or more days to renewal; no action needed yet, but keep auto-renew on.</li><li><strong>Renewal coming up</strong> &mdash; 30 to 59 days left; take two minutes to confirm auto-renew is on and the card on file is valid.</li><li><strong>Renew now</strong> &mdash; under 30 days left; if auto-renew is off or the card has expired, the website and email will stop.</li><li><strong>Expired</strong> &mdash; registration has lapsed; contact the registrar immediately, as there's often only a short grace period to save it.</li><li><strong>Registered (no date)</strong> &mdash; the registry doesn't publish a public expiry date, but the domain is confirmed registered.</li></ul>
+        <h3>Step by step</h3>
+        <ol data-stagger>
+          <li><strong>Enter the .co.uk domain</strong> &mdash; Type the domain (for example yourbusiness.co.uk) into the checker box.</li>
+          <li><strong>Run the check</strong> &mdash; Click 'Check expiry date'. The tool queries the official registry record via RDAP, the modern successor to WHOIS.</li>
+          <li><strong>Read the verdict</strong> &mdash; You'll get a plain-English verdict at the top — safe, renewal coming up, renew now, or expired — with the days remaining.</li>
+          <li><strong>Check the registrar and lock status</strong> &mdash; The results show the registrar (the company you renew through) and whether the domain is transfer-locked for safety.</li>
+          <li><strong>Turn on auto-renew</strong> &mdash; If renewal is close, log in to your registrar, enable auto-renew and make sure the payment card and account email are current.</li>
+        </ol>
+        <h3 class="mono" style="opacity:.7">Good to know</h3>
+          <h3>Does Nominet run .co.uk domains?</h3>
+          <p>Yes &mdash; Nominet is the official registry for all .uk domains including .co.uk. Your day-to-day renewals go through your registrar (such as your web host or a company like GoDaddy), but the authoritative record sits with Nominet, which is what this checker reads.</p>
+          <h3>Why doesn't my .co.uk domain show a Nominet expiry date?</h3>
+          <p>Nominet doesn't always publish the full expiry date in the public RDAP record for .co.uk. The checker will still confirm the domain is registered and show its status and registrar &mdash; to see the exact renewal date, log in to your registrar account or check with Nominet directly.</p>
+          <h3>Do I renew a .co.uk domain with Nominet or my registrar?</h3>
+          <p>With your registrar &mdash; the company you (or whoever built your site) bought the domain through. Nominet keeps the master record for .uk, but you can't renew directly with them; the checker shows which registrar to log in to.</p>
       </div>
     </section>
   </main>

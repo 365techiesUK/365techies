@@ -13,7 +13,7 @@
     gtag('js', new Date());
     gtag('config', 'G-EBLTJ9WJXZ');
   </script>
-  <title>Free Password Breach Checker | Has Your Password Leaked? | 365 Techies</title>
+  <title>Is It Safe to Check a Leaked Password? | 365 Techies</title>
   <meta name="description" content="Free password breach checker. See if your password has appeared in a data breach — privately and safely; your password never leaves your browser. From 365&hellip;" />
   <link rel="canonical" href="https://365techies.co.uk/password-breach-checker/" />
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
@@ -266,6 +266,67 @@
             "@type": "Answer",
             "text": "From Have I Been Pwned, a respected security service with a database of over 10 billion passwords exposed in data breaches. We check against it without ever sending your actual password."
           }
+        },
+        {
+          "@type": "Question",
+          "name": "Is it safe to type my real password into a leak checker?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "With this tool, yes — it uses k-anonymity, meaning your password is hashed on your device and only a five-character slice of that hash is sent, so no website (including us) ever sees your password or can store it."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How can a checker find my leaked password without knowing it?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "It sends just the first five characters of the password's hash to the Have I Been Pwned range API, which returns all matching hash endings; your browser then compares them locally, so the full password is never revealed."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is it safe to check a password I still use?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, and it is worth doing — the check reveals nothing about you, and if the password turns out to be in a breach you will want to change it straight away before criminals try it on your accounts."
+          }
+        }
+      ]
+    },
+    {
+      "@type": "HowTo",
+      "@id": "https://365techies.co.uk/password-breach-checker/#howto",
+      "name": "How to safely check if your password has been leaked",
+      "step": [
+        {
+          "@type": "HowToStep",
+          "position": 1,
+          "name": "Type the password to check",
+          "text": "Enter the password you want to test in the box; use the 'show' toggle if you need to see what you typed."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 2,
+          "name": "Run the check",
+          "text": "Press 'Check password' — your browser creates a SHA-1 fingerprint and sends only a short, anonymised fragment of it."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 3,
+          "name": "Read the result",
+          "text": "See whether the password was found in known breaches and, if so, exactly how many times it has appeared."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 4,
+          "name": "Act on a match",
+          "text": "If it was found, stop using it, change it everywhere you used it (or anything similar), and switch on two-factor authentication."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 5,
+          "name": "Prevent a repeat",
+          "text": "Use a unique password for every login — a password manager makes that effortless and 365 Techies can set one up for you."
         }
       ]
     }
@@ -725,6 +786,28 @@
           <a href="/cybersecurity-support/" class="button secondary button--lg">Cybersecurity Support</a>
         </div>
         <p class="cta__contact mono" data-reveal>01202 775566 &middot; help@365techies.co.uk &middot; MON&ndash;FRI 9AM&ndash;5PM</p>
+      </div>
+    </section>
+    <section class="section section--alt" aria-label="How this tool works">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">// HOW IT WORKS</p>
+        <h2 class="section-title" data-title>How to safely check if your password has been leaked<span class="title-underline"></span></h2>
+        <p class="lede"><strong>Yes — it is safe to check whether your password has been leaked here, because your password is turned into a one-way fingerprint in your browser and only the first five characters of that fingerprint are ever sent, so your actual password never leaves your device.</strong></p>
+        <h3>Step by step</h3>
+        <ol data-stagger>
+          <li><strong>Type the password to check</strong> &mdash; Enter the password you want to test in the box; use the 'show' toggle if you need to see what you typed.</li>
+          <li><strong>Run the check</strong> &mdash; Press 'Check password' — your browser creates a SHA-1 fingerprint and sends only a short, anonymised fragment of it.</li>
+          <li><strong>Read the result</strong> &mdash; See whether the password was found in known breaches and, if so, exactly how many times it has appeared.</li>
+          <li><strong>Act on a match</strong> &mdash; If it was found, stop using it, change it everywhere you used it (or anything similar), and switch on two-factor authentication.</li>
+          <li><strong>Prevent a repeat</strong> &mdash; Use a unique password for every login — a password manager makes that effortless and 365 Techies can set one up for you.</li>
+        </ol>
+        <h3 class="mono" style="opacity:.7">Good to know</h3>
+          <h3>Is it safe to type my real password into a leak checker?</h3>
+          <p>With this tool, yes — it uses k-anonymity, meaning your password is hashed on your device and only a five-character slice of that hash is sent, so no website (including us) ever sees your password or can store it.</p>
+          <h3>How can a checker find my leaked password without knowing it?</h3>
+          <p>It sends just the first five characters of the password's hash to the Have I Been Pwned range API, which returns all matching hash endings; your browser then compares them locally, so the full password is never revealed.</p>
+          <h3>Is it safe to check a password I still use?</h3>
+          <p>Yes, and it is worth doing — the check reveals nothing about you, and if the password turns out to be in a breach you will want to change it straight away before criminals try it on your accounts.</p>
       </div>
     </section>
   </main>

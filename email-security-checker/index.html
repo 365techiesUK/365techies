@@ -13,7 +13,7 @@
     gtag('js', new Date());
     gtag('config', 'G-EBLTJ9WJXZ');
   </script>
-  <title>Free Email Security Checker | SPF, DKIM & DMARC Test | 365 Techies</title>
+  <title>Can Scammers Spoof My Email? Free Check | 365 Techies</title>
   <meta name="description" content="Free email security checker. Enter your domain to see if SPF, DKIM and DMARC are protecting your business email from spoofing and impersonation, with&hellip;" />
   <link rel="canonical" href="https://365techies.co.uk/email-security-checker/" />
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
@@ -266,6 +266,67 @@
             "@type": "Answer",
             "text": "Completely &mdash; we only read public DNS records (the same ones every mail server checks). We don&rsquo;t see your email, your inbox or any private data, and nothing is stored."
           }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I know if someone can spoof my email address?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Enter your domain into this checker: if it finds no SPF record, no DMARC record, or a DMARC policy set to p=none, then spoofed email in your name is not being blocked and scammers can impersonate you."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What actually stops my email being spoofed?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "An enforcing DMARC policy (p=quarantine or p=reject) on top of a proper SPF record is what stops spoofing — SPF says who may send as you, DKIM signs your messages, and DMARC tells inboxes to reject anything that fails."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "The checker says DKIM was not found — is that a problem?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Not necessarily; the tool probes common DKIM selectors, and your provider may use a custom one it can't see, so it is worth confirming with your email provider that your outgoing mail is DKIM-signed."
+          }
+        }
+      ]
+    },
+    {
+      "@type": "HowTo",
+      "@id": "https://365techies.co.uk/email-security-checker/#howto",
+      "name": "How to check if scammers can spoof your email",
+      "step": [
+        {
+          "@type": "HowToStep",
+          "position": 1,
+          "name": "Enter your domain",
+          "text": "Type your email domain (the part after the @, e.g. yourbusiness.co.uk) into the checker — no email address or password needed."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 2,
+          "name": "Run the check",
+          "text": "Press check; the tool looks up your live SPF, DKIM and DMARC DNS records using a secure DNS-over-HTTPS query."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 3,
+          "name": "Read the verdict",
+          "text": "See whether your domain is Protected, partly protected or exposed, with a plain-English note on each record."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 4,
+          "name": "Note the gaps",
+          "text": "The most common gap is a missing or monitor-only (p=none) DMARC record — that is the hole scammers exploit."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 5,
+          "name": "Get it fixed",
+          "text": "If your domain is not fully protected, 365 Techies can set up SPF, DKIM and DMARC properly, usually within a day and with no disruption to your email."
         }
       ]
     }
@@ -779,6 +840,28 @@
           <a href="/cybersecurity-support/" class="button secondary button--lg">Cybersecurity Support</a>
         </div>
         <p class="cta__contact mono" data-reveal>01202 775566 &middot; help@365techies.co.uk &middot; MON&ndash;FRI 9AM&ndash;5PM</p>
+      </div>
+    </section>
+    <section class="section section--alt" aria-label="How this tool works">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">// HOW IT WORKS</p>
+        <h2 class="section-title" data-title>How to check if scammers can spoof your email<span class="title-underline"></span></h2>
+        <p class="lede"><strong>Scammers can spoof your email if your domain is missing SPF, DKIM or an enforcing DMARC record, and this free checker looks up those three public DNS records for your domain and tells you in plain English whether criminals could send email pretending to be you.</strong></p>
+        <h3>Step by step</h3>
+        <ol data-stagger>
+          <li><strong>Enter your domain</strong> &mdash; Type your email domain (the part after the @, e.g. yourbusiness.co.uk) into the checker — no email address or password needed.</li>
+          <li><strong>Run the check</strong> &mdash; Press check; the tool looks up your live SPF, DKIM and DMARC DNS records using a secure DNS-over-HTTPS query.</li>
+          <li><strong>Read the verdict</strong> &mdash; See whether your domain is Protected, partly protected or exposed, with a plain-English note on each record.</li>
+          <li><strong>Note the gaps</strong> &mdash; The most common gap is a missing or monitor-only (p=none) DMARC record — that is the hole scammers exploit.</li>
+          <li><strong>Get it fixed</strong> &mdash; If your domain is not fully protected, 365 Techies can set up SPF, DKIM and DMARC properly, usually within a day and with no disruption to your email.</li>
+        </ol>
+        <h3 class="mono" style="opacity:.7">Good to know</h3>
+          <h3>How do I know if someone can spoof my email address?</h3>
+          <p>Enter your domain into this checker: if it finds no SPF record, no DMARC record, or a DMARC policy set to p=none, then spoofed email in your name is not being blocked and scammers can impersonate you.</p>
+          <h3>What actually stops my email being spoofed?</h3>
+          <p>An enforcing DMARC policy (p=quarantine or p=reject) on top of a proper SPF record is what stops spoofing — SPF says who may send as you, DKIM signs your messages, and DMARC tells inboxes to reject anything that fails.</p>
+          <h3>The checker says DKIM was not found — is that a problem?</h3>
+          <p>Not necessarily; the tool probes common DKIM selectors, and your provider may use a custom one it can't see, so it is worth confirming with your email provider that your outgoing mail is DKIM-signed.</p>
       </div>
     </section>
   </main>

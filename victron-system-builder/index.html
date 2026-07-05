@@ -13,7 +13,7 @@
     gtag('js', new Date());
     gtag('config', 'G-EBLTJ9WJXZ');
   </script>
-  <title>Free Victron System Builder — Complete Kit List in 4 Questions | 365 Techies</title>
+  <title>Victron Cable &amp; Fuse Size Guide (DIY) | 365 Techies</title>
   <meta name="description" content="Free Victron system builder. Four questions → the complete build: lithium battery, solar, MPPT, B2B, inverter and monitoring, PLUS the exact cables, lugs and&hellip;" />
   <link rel="canonical" href="https://365techies.co.uk/victron-system-builder/" />
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
@@ -298,6 +298,67 @@
             "@type": "Answer",
             "text": "The one that matters most is a proper hydraulic lug crimper &mdash; a bad crimp on a 70mm&sup2; inverter cable is a fire risk, a good one lasts decades. The builder lists the essential kit and the nice-to-haves, with links. Or borrow ours: we fit customer-supplied kit too."
           }
+        },
+        {
+          "@type": "Question",
+          "name": "What size cable and fuse do I need for a campervan inverter?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "It depends on the inverter: the builder specs 25mm&sup2; cable with a 100A MEGA fuse for an ~800W Phoenix, 70mm&sup2; with a 300A MEGA fuse for a 2000W MultiPlus, and twin 70mm&sup2; per pole with a 400A Class-T fuse for a 3000W kettle-capable unit. In every case the fuse protects the cable, so it is never rated above the cable&rsquo;s capacity."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What fuse goes on a Victron Orion B2B engine-charging circuit?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "For the Orion XS 12/12-50 the builder specifies 16mm&sup2; tinned cable for runs up to 3m (25mm&sup2; for longer) fused with a 60A MIDI fuse at BOTH ends &mdash; at the starter battery and the leisure battery &mdash; because that cable runs the length of the vehicle and must be protected at each end."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do longer cable runs need a bigger cable in a 12V system?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. The sizes shown are for short runs of up to 3m one way at 12V; longer runs need thicker cable to beat voltage drop, while the fuse stays matched to the cable it protects. Use tinned marine cable and adhesive-lined heatshrink on every lug; for exact runs on your layout our design service calculates them properly."
+          }
+        }
+      ]
+    },
+    {
+      "@type": "HowTo",
+      "@id": "https://365techies.co.uk/victron-system-builder/#howto",
+      "name": "How to size Victron campervan cables and fuses",
+      "step": [
+        {
+          "@type": "HowToStep",
+          "position": 1,
+          "name": "Set your daily energy",
+          "text": "Pick a preset (weekender ~350Wh, regular ~800Wh, full-timer ~1500Wh) or fine-tune the Wh/day slider &mdash; this drives the battery, solar and cable sizing."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 2,
+          "name": "Choose your biggest mains load",
+          "text": "Say whether you run all 12V, a laptop/TV inverter, a microwave, or a kettle/induction &mdash; this sets the main battery cable and MEGA/Class-T fuse size."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 3,
+          "name": "Add engine and monitoring",
+          "text": "Choose whether you charge from the engine (adds an Orion B2B circuit) and your monitoring level, so every relevant circuit appears."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 4,
+          "name": "Read the per-circuit table",
+          "text": "Scroll to &lsquo;Cables, lugs &amp; fuses &mdash; per circuit&rsquo; for the cable mm&sup2;, fuse and lug for the main battery, negative/shunt, solar, PV, engine and 12V distribution runs."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 5,
+          "name": "Apply the golden rules",
+          "text": "Fuse every positive close to the battery, keep inverter cable fat and short, crimp don&rsquo;t solder, and upsize cable for runs longer than 3m to beat voltage drop."
         }
       ]
     }
@@ -1035,6 +1096,29 @@
           <a href="/off-grid-victron-energy/" class="button secondary button--lg">Off-Grid &amp; Victron</a>
         </div>
         <p class="cta__contact mono" data-reveal>01202 775566 &middot; help@365techies.co.uk &middot; MON&ndash;FRI 9AM&ndash;5PM</p>
+      </div>
+    </section>
+    <section class="section section--alt" aria-label="How this tool works">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">// HOW IT WORKS</p>
+        <h2 class="section-title" data-title>How to size Victron campervan cables and fuses<span class="title-underline"></span></h2>
+        <p class="lede"><strong>Answer four questions and this free builder returns a complete Victron campervan system with the exact cable, lug and fuse size for every circuit &mdash; sized for short runs (up to 3m one way) at 12V &mdash; following the golden rule that the fuse protects the cable, so you never fit a fuse rated higher than its cable.</strong></p>
+        <p><strong>Victron 12V cable &amp; fuse guide &mdash; short runs (&le;3m one way). Golden rule: the fuse protects the cable, never fit a fuse rated above its cable.</strong></p><div style="overflow-x:auto"><table><thead><tr><th>Circuit</th><th>Cable</th><th>Fuse</th></tr></thead><tbody><tr><td>Main battery (with ~800W inverter)</td><td>25mm&sup2;</td><td>100A MEGA</td></tr><tr><td>Main battery (2000W MultiPlus)</td><td>70mm&sup2;</td><td>300A MEGA</td></tr><tr><td>Main battery (3000W, kettle/induction)</td><td>2&times;70mm&sup2; per pole</td><td>400A Class-T (lithium)</td></tr><tr><td>Battery negative &rarr; SmartShunt</td><td>Same as main (M10 lugs at shunt)</td><td>&mdash;</td></tr><tr><td>Engine &rarr; battery (Orion XS 50A)</td><td>16mm&sup2; (25mm&sup2; longer)</td><td>60A MIDI at BOTH ends</td></tr><tr><td>Panels &rarr; MPPT controller</td><td>6mm&sup2; solar cable + MC4</td><td>&mdash;</td></tr><tr><td>12V distribution feed</td><td>10mm&sup2;</td><td>40A MIDI feed fuse</td></tr></tbody></table></div><p><strong>MPPT solar controller by array size:</strong> up to ~220W &rarr; SmartSolar 75/15 (6mm&sup2;, 20A fuse); ~290W &rarr; 100/20 (6mm&sup2;, 25A); ~440W &rarr; 100/30 (10mm&sup2;, 40A); ~700W &rarr; 100/50 (16mm&sup2;, 60A); ~1000W &rarr; 150/70 (25mm&sup2;, 100A MEGA).</p>
+        <h3>Step by step</h3>
+        <ol data-stagger>
+          <li><strong>Set your daily energy</strong> &mdash; Pick a preset (weekender ~350Wh, regular ~800Wh, full-timer ~1500Wh) or fine-tune the Wh/day slider &mdash; this drives the battery, solar and cable sizing.</li>
+          <li><strong>Choose your biggest mains load</strong> &mdash; Say whether you run all 12V, a laptop/TV inverter, a microwave, or a kettle/induction &mdash; this sets the main battery cable and MEGA/Class-T fuse size.</li>
+          <li><strong>Add engine and monitoring</strong> &mdash; Choose whether you charge from the engine (adds an Orion B2B circuit) and your monitoring level, so every relevant circuit appears.</li>
+          <li><strong>Read the per-circuit table</strong> &mdash; Scroll to &lsquo;Cables, lugs &amp; fuses &mdash; per circuit&rsquo; for the cable mm&sup2;, fuse and lug for the main battery, negative/shunt, solar, PV, engine and 12V distribution runs.</li>
+          <li><strong>Apply the golden rules</strong> &mdash; Fuse every positive close to the battery, keep inverter cable fat and short, crimp don&rsquo;t solder, and upsize cable for runs longer than 3m to beat voltage drop.</li>
+        </ol>
+        <h3 class="mono" style="opacity:.7">Good to know</h3>
+          <h3>What size cable and fuse do I need for a campervan inverter?</h3>
+          <p>It depends on the inverter: the builder specs 25mm&sup2; cable with a 100A MEGA fuse for an ~800W Phoenix, 70mm&sup2; with a 300A MEGA fuse for a 2000W MultiPlus, and twin 70mm&sup2; per pole with a 400A Class-T fuse for a 3000W kettle-capable unit. In every case the fuse protects the cable, so it is never rated above the cable&rsquo;s capacity.</p>
+          <h3>What fuse goes on a Victron Orion B2B engine-charging circuit?</h3>
+          <p>For the Orion XS 12/12-50 the builder specifies 16mm&sup2; tinned cable for runs up to 3m (25mm&sup2; for longer) fused with a 60A MIDI fuse at BOTH ends &mdash; at the starter battery and the leisure battery &mdash; because that cable runs the length of the vehicle and must be protected at each end.</p>
+          <h3>Do longer cable runs need a bigger cable in a 12V system?</h3>
+          <p>Yes. The sizes shown are for short runs of up to 3m one way at 12V; longer runs need thicker cable to beat voltage drop, while the fuse stays matched to the cable it protects. Use tinned marine cable and adhesive-lined heatshrink on every lug; for exact runs on your layout our design service calculates them properly.</p>
       </div>
     </section>
   </main>

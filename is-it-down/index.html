@@ -13,7 +13,7 @@
     gtag('js', new Date());
     gtag('config', 'G-EBLTJ9WJXZ');
   </script>
-  <title>Is My Broadband Down or Just Me? Live | 365 Techies</title>
+  <title>Is My Broadband Down or Just Me? | 365 Techies</title>
   <meta name="description" content="Is it down, or is it just you? Live status for 30+ big services including Facebook, WhatsApp, Microsoft 365, Gmail and PlayStation, an instant check of your&hellip;" />
   <link rel="canonical" href="https://365techies.co.uk/is-it-down/" />
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
@@ -277,18 +277,26 @@
         },
         {
           "@type": "Question",
-          "name": "How do I know if my broadband is down or it&rsquo;s just me?",
+          "name": "Is my broadband down or is it just me?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Load a website over mobile data with Wi-Fi off. If it works on mobile data but not on your Wi-Fi, the fault is your broadband line or router, not the website. This checker also shows live status for 30+ big services so you can rule out a wider outage."
+            "text": "Use the live connection test at the top of this page. If it confirms your connection is working but a specific service shows problems, the fault is with that service. If the test fails or several unrelated services all drop at once while their own feeds look healthy, the problem is your broadband, router or Wi-Fi — the quickest confirmation is to load the same site on your phone with Wi-Fi off."
           }
         },
         {
           "@type": "Question",
-          "name": "Is it my router or my internet provider?",
+          "name": "How do I know if it's my router or the broadband line itself?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "If every device in the house is affected and a router restart doesn&rsquo;t fix it, it&rsquo;s usually the line or provider. If only one device struggles, it&rsquo;s that device or its Wi-Fi. We can diagnose it remotely if you&rsquo;re not sure."
+            "text": "If a wired or nearby-to-router device works but others don't, it's usually Wi-Fi or the router; if nothing on any device can get online, it points to the line or an area outage. Your provider's official checker (linked on this page) can test the line directly, and dialling 105 free will tell you about a local power cut affecting the cabinet."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why is half the internet down at the same time?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Much of the web runs on a few shared providers — Cloudflare, AWS, Azure and a handful of DNS services — so when one has a bad day, thousands of unrelated sites break together. That is why this page shows Cloudflare and Azure cards: if one is red, the mass-outage mystery is usually solved and it's nothing to do with your connection."
           }
         }
       ]
@@ -296,31 +304,37 @@
     {
       "@type": "HowTo",
       "@id": "https://365techies.co.uk/is-it-down/#howto",
-      "name": "How to tell if it&rsquo;s down or just you",
+      "name": "How to check if your broadband is down or just you",
       "step": [
         {
           "@type": "HowToStep",
           "position": 1,
-          "name": "Check the live status",
-          "text": "Find the service in the list above &mdash; a red status means it&rsquo;s a known outage affecting everyone, not just you."
+          "name": "Read the connection panel at the top",
+          "text": "When the page loads it contacts Google, the BBC and Cloudflare and checks DNS live from your own connection — a green result means your line is reaching the internet."
         },
         {
           "@type": "HowToStep",
           "position": 2,
-          "name": "Try mobile data",
-          "text": "Turn Wi-Fi off on your phone and load the same site over mobile data. If it works, your broadband or router is the problem."
+          "name": "Check the service you care about",
+          "text": "Find the service in the grid (or search for it). Each card shows two signals: its official status feed and whether it answers from your connection."
         },
         {
           "@type": "HowToStep",
           "position": 3,
-          "name": "Restart your router",
-          "text": "If it&rsquo;s only you, switch the router off for 30 seconds and back on &mdash; it fixes a surprising amount."
+          "name": "Do the phone-on-mobile-data test",
+          "text": "Open the same site on your phone with Wi-Fi turned off. If it works on mobile data, your home broadband is the problem, not the website."
         },
         {
           "@type": "HowToStep",
           "position": 4,
-          "name": "Still stuck? Ask us",
-          "text": "If it&rsquo;s not a known outage and a restart didn&rsquo;t help, call 01202 775566 and we&rsquo;ll take a look remotely."
+          "name": "Check your provider's outage line",
+          "text": "Scroll to the broadband and mobile section for the official outage checkers and support numbers — have your postcode and account details ready."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 5,
+          "name": "Restart the router properly",
+          "text": "Unplug the power, wait 30 seconds, plug back in, and give it up to 5 minutes to reconnect. Never press the recessed reset pin — that wipes your settings."
         }
       ]
     }
@@ -1215,20 +1229,23 @@
     <section class="section section--alt" aria-label="How this tool works">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">// HOW IT WORKS</p>
-        <h2 class="section-title" data-title>How to tell if it&rsquo;s down or just you<span class="title-underline"></span></h2>
-        <p class="lede"><strong>If a website or app loads on mobile data but not on your Wi-Fi, the problem is almost always your own connection or router &mdash; not the service; this live checker helps you tell which.</strong></p>
+        <h2 class="section-title" data-title>How to check if your broadband is down or just you<span class="title-underline"></span></h2>
+        <p class="lede"><strong>To tell if your broadband is down or it's just you, run this page's live connection test — if it says your connection is fine but a service's official feed shows problems, it's them; if several unrelated services all fail from your line while their feeds look healthy, it's you or your router.</strong></p>
         <h3>Step by step</h3>
         <ol data-stagger>
-          <li><strong>Check the live status</strong> &mdash; Find the service in the list above &mdash; a red status means it&rsquo;s a known outage affecting everyone, not just you.</li>
-          <li><strong>Try mobile data</strong> &mdash; Turn Wi-Fi off on your phone and load the same site over mobile data. If it works, your broadband or router is the problem.</li>
-          <li><strong>Restart your router</strong> &mdash; If it&rsquo;s only you, switch the router off for 30 seconds and back on &mdash; it fixes a surprising amount.</li>
-          <li><strong>Still stuck? Ask us</strong> &mdash; If it&rsquo;s not a known outage and a restart didn&rsquo;t help, call 01202 775566 and we&rsquo;ll take a look remotely.</li>
+          <li><strong>Read the connection panel at the top</strong> &mdash; When the page loads it contacts Google, the BBC and Cloudflare and checks DNS live from your own connection — a green result means your line is reaching the internet.</li>
+          <li><strong>Check the service you care about</strong> &mdash; Find the service in the grid (or search for it). Each card shows two signals: its official status feed and whether it answers from your connection.</li>
+          <li><strong>Do the phone-on-mobile-data test</strong> &mdash; Open the same site on your phone with Wi-Fi turned off. If it works on mobile data, your home broadband is the problem, not the website.</li>
+          <li><strong>Check your provider's outage line</strong> &mdash; Scroll to the broadband and mobile section for the official outage checkers and support numbers — have your postcode and account details ready.</li>
+          <li><strong>Restart the router properly</strong> &mdash; Unplug the power, wait 30 seconds, plug back in, and give it up to 5 minutes to reconnect. Never press the recessed reset pin — that wipes your settings.</li>
         </ol>
         <h3 class="mono" style="opacity:.7">Good to know</h3>
-          <h3>How do I know if my broadband is down or it&rsquo;s just me?</h3>
-          <p>Load a website over mobile data with Wi-Fi off. If it works on mobile data but not on your Wi-Fi, the fault is your broadband line or router, not the website. This checker also shows live status for 30+ big services so you can rule out a wider outage.</p>
-          <h3>Is it my router or my internet provider?</h3>
-          <p>If every device in the house is affected and a router restart doesn&rsquo;t fix it, it&rsquo;s usually the line or provider. If only one device struggles, it&rsquo;s that device or its Wi-Fi. We can diagnose it remotely if you&rsquo;re not sure.</p>
+          <h3>Is my broadband down or is it just me?</h3>
+          <p>Use the live connection test at the top of this page. If it confirms your connection is working but a specific service shows problems, the fault is with that service. If the test fails or several unrelated services all drop at once while their own feeds look healthy, the problem is your broadband, router or Wi-Fi — the quickest confirmation is to load the same site on your phone with Wi-Fi off.</p>
+          <h3>How do I know if it's my router or the broadband line itself?</h3>
+          <p>If a wired or nearby-to-router device works but others don't, it's usually Wi-Fi or the router; if nothing on any device can get online, it points to the line or an area outage. Your provider's official checker (linked on this page) can test the line directly, and dialling 105 free will tell you about a local power cut affecting the cabinet.</p>
+          <h3>Why is half the internet down at the same time?</h3>
+          <p>Much of the web runs on a few shared providers — Cloudflare, AWS, Azure and a handful of DNS services — so when one has a bad day, thousands of unrelated sites break together. That is why this page shows Cloudflare and Azure cards: if one is red, the mass-outage mystery is usually solved and it's nothing to do with your connection.</p>
       </div>
     </section>
   </main>

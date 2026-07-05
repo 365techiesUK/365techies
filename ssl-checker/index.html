@@ -13,7 +13,7 @@
     gtag('js', new Date());
     gtag('config', 'G-EBLTJ9WJXZ');
   </script>
-  <title>Free SSL Certificate Checker — Validity & Expiry | 365 Techies</title>
+  <title>SSL Certificate Expiry Checker Free | 365 Techies</title>
   <meta name="description" content="Free SSL certificate checker. Is your website's padlock valid, who issued it, and when does it expire? Instant plain-English results for any domain. From 365&hellip;" />
   <link rel="canonical" href="https://365techies.co.uk/ssl-checker/" />
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
@@ -266,6 +266,67 @@
             "@type": "Answer",
             "text": "Completely &mdash; we simply read the public certificate your website already shows every visitor. Nothing is stored."
           }
+        },
+        {
+          "@type": "Question",
+          "name": "How many days before expiry does the checker warn me?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "If the certificate is valid but has 21 days or fewer left, the checker flags it amber as 'Expiring soon' with the exact day count, so you can confirm auto-renewal before it lapses rather than after."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I check any website's SSL expiry or just my own?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Any public website. The certificate is the same public one every visitor's browser reads, so checking a supplier's or competitor's expiry date is fine &mdash; nothing is stored."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What does 'Days remaining' mean if it's already expired?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "If the certificate has already lapsed the tool shows how many days ago it expired and flags it red &mdash; that means visitors are seeing a full-screen security warning instead of your site, so it needs fixing today."
+          }
+        }
+      ]
+    },
+    {
+      "@type": "HowTo",
+      "@id": "https://365techies.co.uk/ssl-checker/#howto",
+      "name": "How to check when an SSL certificate expires",
+      "step": [
+        {
+          "@type": "HowToStep",
+          "position": 1,
+          "name": "Enter the domain",
+          "text": "Type just the domain (for example yourbusiness.co.uk) into the checker — no https:// needed."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 2,
+          "name": "Run the check",
+          "text": "Click 'Check certificate'. The tool reads the certificate your site already shows every visitor on the secure port (443)."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 3,
+          "name": "Read the verdict",
+          "text": "You'll get a plain-English verdict — valid, expiring soon, expired, not trusted or self-signed — at the top."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 4,
+          "name": "Check the expiry date and days remaining",
+          "text": "The results table shows the valid-from and valid-to dates plus the exact number of days left before renewal is due."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 5,
+          "name": "Renew before it lapses",
+          "text": "If it's expiring soon, confirm your hosting's auto-renewal is working — don't assume it — or renew manually before the date shown."
         }
       ]
     }
@@ -731,6 +792,29 @@
           <a href="/contact/" class="button secondary button--lg">Contact Us</a>
         </div>
         <p class="cta__contact mono" data-reveal>01202 775566 &middot; help@365techies.co.uk &middot; MON&ndash;FRI 9AM&ndash;5PM</p>
+      </div>
+    </section>
+    <section class="section section--alt" aria-label="How this tool works">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">// HOW IT WORKS</p>
+        <h2 class="section-title" data-title>How to check when an SSL certificate expires<span class="title-underline"></span></h2>
+        <p class="lede"><strong>This free SSL certificate expiry checker reads the live certificate any website presents and tells you exactly when it expires, how many days remain, who issued it and whether browsers trust it.</strong></p>
+        <table><thead><tr><th>Result</th><th>What it means</th></tr></thead><tbody><tr><td>Valid &amp; trusted</td><td>Trusted issuer, correct domain, more than 21 days to renewal</td></tr><tr><td>Expiring soon</td><td>Still valid but 21 days or fewer remain &mdash; confirm auto-renewal now</td></tr><tr><td>Certificate expired</td><td>Lapsed &mdash; every visitor sees a security warning; fix today</td></tr><tr><td>Not yet valid</td><td>Start date is in the future &mdash; usually a server clock problem</td></tr><tr><td>Not trusted / self-signed</td><td>Issuer isn't recognised by browsers &mdash; visitors get a warning</td></tr><tr><td>Wrong certificate</td><td>Certificate doesn't cover this exact domain name</td></tr></tbody></table>
+        <h3>Step by step</h3>
+        <ol data-stagger>
+          <li><strong>Enter the domain</strong> &mdash; Type just the domain (for example yourbusiness.co.uk) into the checker — no https:// needed.</li>
+          <li><strong>Run the check</strong> &mdash; Click 'Check certificate'. The tool reads the certificate your site already shows every visitor on the secure port (443).</li>
+          <li><strong>Read the verdict</strong> &mdash; You'll get a plain-English verdict — valid, expiring soon, expired, not trusted or self-signed — at the top.</li>
+          <li><strong>Check the expiry date and days remaining</strong> &mdash; The results table shows the valid-from and valid-to dates plus the exact number of days left before renewal is due.</li>
+          <li><strong>Renew before it lapses</strong> &mdash; If it's expiring soon, confirm your hosting's auto-renewal is working — don't assume it — or renew manually before the date shown.</li>
+        </ol>
+        <h3 class="mono" style="opacity:.7">Good to know</h3>
+          <h3>How many days before expiry does the checker warn me?</h3>
+          <p>If the certificate is valid but has 21 days or fewer left, the checker flags it amber as 'Expiring soon' with the exact day count, so you can confirm auto-renewal before it lapses rather than after.</p>
+          <h3>Can I check any website's SSL expiry or just my own?</h3>
+          <p>Any public website. The certificate is the same public one every visitor's browser reads, so checking a supplier's or competitor's expiry date is fine &mdash; nothing is stored.</p>
+          <h3>What does 'Days remaining' mean if it's already expired?</h3>
+          <p>If the certificate has already lapsed the tool shows how many days ago it expired and flags it red &mdash; that means visitors are seeing a full-screen security warning instead of your site, so it needs fixing today.</p>
       </div>
     </section>
   </main>
