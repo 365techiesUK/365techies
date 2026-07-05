@@ -48,6 +48,12 @@ COORDS = {
  "it-support-hythe": [50.8680, -1.3990],
 }
 
+# Per-slug SEO <title> overrides (CTR harvest + near-me targeting); all other towns use the template.
+SEO_TITLES = {
+ "it-support-blandford-forum": "IT Support Blandford Forum | Same-Day, No Call-Out Fee",
+ "it-support-dorset": "IT Support Near Me in Dorset | 365 Techies",
+}
+
 REPAIR_SLUGS = {s for _t, s, _n, _it in bp.REPAIR_TOWNS}  # towns that have a computer-repair page
 
 def make_local(i, slug, town, region, lede, intro_para, nearby):
@@ -66,6 +72,8 @@ def make_local(i, slug, town, region, lede, intro_para, nearby):
       (f"Are you a local IT company in {town}?", f"Yes — 365 Techies is a family-run local IT company, established in 1995, providing IT support, IT services and computer &amp; laptop repairs for homes and businesses across {town} and the wider {region} area."),
       (f"Do you provide business IT services and Microsoft 365 support in {town}?", f"Yes — we provide managed business IT services and IT solutions for {town} businesses, including Microsoft 365 setup, migration and support, cybersecurity, backups, and fast remote and on-site help."),
     ]
+    if slug == "it-support-dorset":
+        faqs = faqs + [("Do you provide IT support near me?", "If you&rsquo;re in Dorset &mdash; Bournemouth, Poole, Christchurch, Dorchester, Weymouth or the surrounding towns &mdash; then yes, we&rsquo;re your local IT support team. Most issues are fixed remotely in minutes, and we visit on-site across the county when hands-on help is needed. Call 01202&nbsp;775566.")]
     nearby_li = "\n".join(f'          <li><a href="{h}">{l}</a></li>' for l, h in nearby)
     revs = [REVPOOL[i % len(REVPOOL)], REVPOOL[(i + 2) % len(REVPOOL)]]
     content = "\n".join([
@@ -156,7 +164,7 @@ def make_local(i, slug, town, region, lede, intro_para, nearby):
             nodes.append({"@type": "Place", "@id": f"{SITE}/{s}/#place", "name": _town,
                           "geo": {"@type": "GeoCoordinates", "latitude": _co[0], "longitude": _co[1]}})
         return graph(nodes)
-    add(slug=slug, title=f"IT Support & IT Services {town} | 365 Techies",
+    add(slug=slug, title=SEO_TITLES.get(slug) or f"IT Support & IT Services {town} | 365 Techies",
         desc=desc, og_title=f"IT Support {town} | 365 Techies", schema=schema, content=content)
 
 LOCAL = [

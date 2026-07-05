@@ -4001,7 +4001,7 @@ def plan_card(variant, badge, tag, name, desc, price, per, feats, cta_label, cta
 
 add(
  slug="home-it-support-plans",
- title="Home IT Support Plans | Monthly Computer Support Packages",
+ title="Home IT Support Plans & Pricing | From £18.25/mo",
  desc="Simple monthly home IT support — £18.25/month per computer, with Microsoft 365 available for £4.85/month per user. Remote support, regular maintenance, security and backups for home users and families in Dorset.",
  og_title="Home IT Support Plans | 365 Techies",
  schema=lambda s: graph([
@@ -4237,9 +4237,9 @@ M365_FAQS = [
 ]
 add(
  slug="microsoft-365-support",
- title="Microsoft 365 Support Bournemouth | Outlook, Teams & OneDrive Help",
+ title="Microsoft 365 Support, Bournemouth & Poole | Teams & Email",
  desc="Microsoft 365 and Office 365 support across Bournemouth, Poole and Dorset — setup, migration and installation. Microsoft Partner, rated 4.9 on Google, family-run since 1995.",
- og_title="Microsoft 365 Support | Outlook, Teams & OneDrive Help",
+ og_title="Microsoft 365 Support | Teams, Email & OneDrive",
  schema=lambda s: graph([
    crumb(s, "Microsoft 365"), webpage(s, "Microsoft 365 Support", "Complete Microsoft 365 support — Outlook, Teams, OneDrive, SharePoint, licensing, migration and security."),
    service(s, "Microsoft 365 Support", "Setup, migration, licensing, troubleshooting, security and training for Microsoft 365 for homes and businesses across Dorset.", "Microsoft 365 support"),
@@ -4512,7 +4512,7 @@ def repair_town_links():
 
 add(
  slug="computer-repairs",
- title="Computer Repair in Bournemouth, Poole & Dorset | 365 Techies",
+ title="Computer Repair Bournemouth | No Fix No Fee, Free Collection",
  desc="Computer and laptop repairs in Bournemouth, Poole and Dorset — no-fix-no-fee, 12-month warranty, no call-out fee. Free local collection. Rated 4.9 on Google, since 1995.",
  og_title="Computer Repairs Bournemouth | Laptop & PC Repairs",
  schema=lambda s: graph([

@@ -493,6 +493,7 @@ SERVICE_PAGES = [
  {
   "slug": "laptop-repair",
   "crumbName": "Laptop Repair",
+  "seoTitle": "Laptop Repair Bournemouth &amp; Poole | No Fix, No Fee",
   "eyebrow": "// LAPTOP REPAIR",
   "h1": "Laptop <em class=\"grad grad--cyan\">repair</em> in Bournemouth, Poole &amp; Dorset",
   "lede": "Cracked screen, swollen battery, dead charging port, or a laptop that just won't turn on? We diagnose the real fault, quote clearly before any chargeable work, and fix Windows laptops properly &mdash; with free local collection across Bournemouth, Poole, Christchurch and Dorset. Rated 4.9 on Google, family-run since 1995.",

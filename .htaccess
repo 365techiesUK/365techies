@@ -44,7 +44,7 @@ RewriteRule ^book-now/?$                                      /book-service/ [R=
 # --- Home / support ---
 RewriteRule ^(support|home-computer-support|home-computer-servicing-and-support)/?$ /home-it-support-subscriptions/ [R=301,L]
 RewriteRule ^computer-support-bournemouth/?$                  /it-support-bournemouth/ [R=301,L]
-RewriteRule ^it-support-near-me-computer-repair-support-and-servicing/?$ /services/ [R=301,L]
+RewriteRule ^it-support-near-me-computer-repair-support-and-servicing/?$ /it-support-dorset/ [R=301,L]
 
 # --- Repairs ---
 RewriteRule ^(computer-repair|repairs|computer-help-near-me|computer-repair-near-me-service-support)/?$ /computer-repairs/ [R=301,L]

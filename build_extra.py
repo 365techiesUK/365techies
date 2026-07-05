@@ -4801,7 +4801,7 @@ def password_generator():
         return graph([crumb(s, "Password Generator"), webpage(s, "Free Password Generator", _desc),
                       {"@type":"WebApplication","name":"365 Techies Password Generator","applicationCategory":"SecurityApplication","operatingSystem":"Web (all browsers)","url":SITE+"/password-generator/","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},"provider":{"@id":SITE+"/#business"}},
                       faqpage(s, _faqs)])
-    add(slug=slug, title="Free Password Generator | Strong Passwords & Passphrases | 365 Techies",
+    add(slug=slug, title="Free Password Generator | Strong Random Passwords",
         desc=desc, og_title="Free Password Generator | 365 Techies", schema=schema, content=content)
 password_generator()
 
@@ -11592,7 +11592,7 @@ def service_parent_page(d):
     def schema(s, _cn=cn_schema, _desc=d["metaDesc"], _faqs=faqs):
         return graph([crumb(s, _cn), webpage(s, _cn, _desc),
                       service(s, _cn, _desc, _cn), faqpage(s, _faqs)])
-    add(slug=slug, title=f"{cn} in Bournemouth &amp; Dorset | 365 Techies",
+    add(slug=slug, title=d.get("seoTitle") or f"{cn} in Bournemouth &amp; Dorset | 365 Techies",
         desc=d["metaDesc"], og_title=f"{cn} | 365 Techies", schema=schema, content=content)
 
 for _svc in SERVICE_PAGES:
