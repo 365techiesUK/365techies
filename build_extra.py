@@ -6987,7 +6987,7 @@ def pc_benchmark():
       </div>
     </section>''',
       faq_html(faqs),
-      tools_strip(["speccheck", "pcbuild", "healthcheck", "repairreplace"], title="More free computer check-ups", alt=False),
+      tools_strip(["gpubench", "speccheck", "pcbuild", "healthcheck"], title="More free computer check-ups", alt=False),
       cta("Not happy with your score?",
           "We speed up slow computers every week &mdash; deep tune-ups, SSD and memory upgrades, honest advice, no-fix-no-fee and a 12-month warranty. Or start fresh with a refurbished business-grade Dell from &pound;299.",
           primary=("Make Mine Faster", "/contact/"), secondary=("Refurbished Dells", "/dell-hardware/")),
@@ -6999,6 +6999,484 @@ def pc_benchmark():
     add(slug=slug, title="Free PC Benchmark — Test Your Computer's Speed | 365 Techies",
         desc=desc, og_title="Free PC Benchmark | 365 Techies", schema=schema, content=content)
 pc_benchmark()
+
+GPUBENCH_TOOL = r'''    <section class="section" id="gputool" aria-label="Graphics card benchmark">
+      <div class="wrap gpb" style="max-width:1000px;margin:0 auto">
+        <style>
+        .gpb{--gpb-accent:var(--cyan,#37c2c2);}
+        .gpb *{box-sizing:border-box}
+        .gpb-shell{background:var(--panel,#121a30);border:1px solid var(--line,rgba(125,170,220,.18));border-radius:18px;padding:clamp(1rem,3vw,1.6rem);}
+        .gpb-gpu{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem .9rem;font-size:.9rem;color:var(--muted,#9aa6c2);margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid var(--line,rgba(125,170,220,.18));}
+        .gpb-gpu b{color:var(--ink,#eaf0ff);font-weight:600}
+        .gpb-gpu .gpb-chip{background:var(--panel2,#0e1526);border:1px solid var(--line,rgba(125,170,220,.18));border-radius:999px;padding:.2rem .7rem;font-family:ui-monospace,Consolas,monospace;font-size:.78rem}
+        .gpb-stage{position:relative;border-radius:14px;overflow:hidden;background:#05070f;aspect-ratio:16/9;border:1px solid var(--line,rgba(125,170,220,.18));}
+        .gpb-stage canvas{display:block;width:100%;height:100%}
+        .gpb-hud{position:absolute;inset:0;pointer-events:none;display:flex;flex-direction:column;justify-content:space-between;padding:.7rem .9rem;font-family:ui-monospace,Consolas,monospace;}
+        .gpb-hud-top{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;}
+        .gpb-fps{font-size:clamp(1.6rem,6vw,2.8rem);font-weight:700;line-height:1;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.8)}
+        .gpb-fps small{display:block;font-size:.62rem;font-weight:500;letter-spacing:.14em;color:var(--gpb-accent);text-shadow:none;margin-top:.25rem}
+        .gpb-phase{text-align:right;font-size:.72rem;color:#cfe0ff;text-shadow:0 1px 6px rgba(0,0,0,.9)}
+        .gpb-phase .gpb-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--gpb-accent);margin-left:.4rem;animation:gpbpulse 1s infinite}
+        @keyframes gpbpulse{50%{opacity:.25}}
+        .gpb-graph{height:34px;display:flex;align-items:flex-end;gap:1px}
+        .gpb-graph i{flex:1;background:linear-gradient(var(--gpb-accent),rgba(55,194,194,.25));min-height:1px;border-radius:1px 1px 0 0;opacity:.85}
+        .gpb-prog{height:4px;background:rgba(255,255,255,.14);border-radius:3px;overflow:hidden;margin-top:.5rem}
+        .gpb-prog i{display:block;height:100%;width:0;background:var(--gpb-accent);transition:width .2s linear}
+        .gpb-idle{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:1rem;gap:.7rem}
+        .gpb-idle p{color:var(--muted,#9aa6c2);max-width:34ch;margin:0;font-size:.9rem}
+        .gpb-controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem;margin-top:1.1rem}
+        .gpb-field label{display:block;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#9aa6c2);margin-bottom:.35rem}
+        .gpb-seg{display:flex;background:var(--panel2,#0e1526);border:1px solid var(--line,rgba(125,170,220,.18));border-radius:10px;padding:3px;gap:3px}
+        .gpb-seg button{flex:1;border:0;background:transparent;color:var(--muted,#9aa6c2);padding:.45rem .3rem;border-radius:7px;font:inherit;font-size:.82rem;cursor:pointer}
+        .gpb-seg button[aria-pressed="true"]{background:var(--gpb-accent);color:#04121a;font-weight:600}
+        .gpb-adv{margin-top:1rem;border:1px solid var(--line,rgba(125,170,220,.18));border-radius:12px;overflow:hidden}
+        .gpb-adv>summary{cursor:pointer;padding:.7rem 1rem;font-weight:600;font-size:.9rem;list-style:none;display:flex;justify-content:space-between;align-items:center;background:var(--panel2,#0e1526)}
+        .gpb-adv>summary::-webkit-details-marker{display:none}
+        .gpb-adv>summary::after{content:"+";color:var(--gpb-accent);font-size:1.1rem}
+        .gpb-adv[open]>summary::after{content:"\2212"}
+        .gpb-advbody{padding:1rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1rem}
+        .gpb-toggles{display:flex;flex-wrap:wrap;gap:.5rem}
+        .gpb-toggle{display:inline-flex;align-items:center;gap:.4rem;background:var(--panel2,#0e1526);border:1px solid var(--line,rgba(125,170,220,.18));border-radius:999px;padding:.35rem .8rem;font-size:.82rem;cursor:pointer;user-select:none}
+        .gpb-toggle input{accent-color:var(--gpb-accent)}
+        .gpb-actions{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.2rem;align-items:center}
+        .gpb-btn{border:0;border-radius:11px;padding:.8rem 1.5rem;font:inherit;font-weight:700;cursor:pointer;background:var(--gpb-accent);color:#04121a}
+        .gpb-btn:disabled{opacity:.5;cursor:not-allowed}
+        .gpb-btn.ghost{background:transparent;color:var(--ink,#eaf0ff);border:1px solid var(--line,rgba(125,170,220,.18))}
+        .gpb-note{font-size:.78rem;color:var(--muted,#9aa6c2)}
+        .gpb-results{margin-top:1.2rem;display:none;gap:1rem;grid-template-columns:1fr;animation:gpbfade .5s}
+        @keyframes gpbfade{from{opacity:0;transform:translateY(8px)}}
+        .gpb-scorecard{background:linear-gradient(150deg,var(--panel2,#0e1526),var(--panel,#121a30));border:1px solid var(--line,rgba(125,170,220,.18));border-radius:16px;padding:1.4rem;text-align:center}
+        .gpb-score{font-size:clamp(2.6rem,11vw,4.4rem);font-weight:800;line-height:1;background:linear-gradient(120deg,var(--gpb-accent),#8fd4ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+        .gpb-score small{display:block;font-size:.7rem;letter-spacing:.16em;color:var(--muted,#9aa6c2);-webkit-text-fill-color:var(--muted,#9aa6c2);margin-bottom:.3rem}
+        .gpb-tier{display:inline-block;margin-top:.6rem;padding:.35rem 1rem;border-radius:999px;font-weight:700;font-size:.9rem;border:1px solid currentColor}
+        .gpb-metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:.7rem;margin-top:1.2rem}
+        .gpb-metric{background:var(--panel2,#0e1526);border:1px solid var(--line,rgba(125,170,220,.18));border-radius:11px;padding:.7rem}
+        .gpb-metric b{display:block;font-size:1.3rem;color:var(--ink,#eaf0ff)}
+        .gpb-metric span{font-size:.7rem;color:var(--muted,#9aa6c2);letter-spacing:.06em}
+        .gpb-verdict{background:var(--panel,#121a30);border:1px solid var(--line,rgba(125,170,220,.18));border-left:3px solid var(--gpb-accent);border-radius:12px;padding:1rem 1.2rem;font-size:.92rem;line-height:1.6}
+        .gpb-verdict h4{margin:0 0 .4rem}
+        .gpb-best{font-size:.8rem;color:var(--muted,#9aa6c2);margin-top:.5rem}
+        @media(prefers-reduced-motion:reduce){.gpb-phase .gpb-dot{animation:none}}
+        </style>
+
+        <div class="gpb-shell">
+          <div class="gpb-gpu" id="gpbGpu">
+            <span>Detecting graphics&hellip;</span>
+          </div>
+
+          <div class="gpb-stage">
+            <canvas id="gpbCanvas" aria-label="Live 3D benchmark render"></canvas>
+            <div class="gpb-hud" id="gpbHud" hidden>
+              <div class="gpb-hud-top">
+                <div class="gpb-fps"><span id="gpbFps">0</span><small>FPS</small></div>
+                <div class="gpb-phase"><span id="gpbPhase">Warming up</span><span class="gpb-dot"></span></div>
+              </div>
+              <div>
+                <div class="gpb-graph" id="gpbGraph" aria-hidden="true"></div>
+                <div class="gpb-prog"><i id="gpbProg"></i></div>
+              </div>
+            </div>
+            <div class="gpb-idle" id="gpbIdle">
+              <p><strong style="color:var(--ink,#eaf0ff);font-size:1.05rem">Live 3D graphics benchmark</strong></p>
+              <p>Renders a demanding real-time 3D scene and measures how many frames your graphics can push. Pick a test below and press start &mdash; watch it run live.</p>
+            </div>
+          </div>
+
+          <div class="gpb-controls">
+            <div class="gpb-field">
+              <label>Test</label>
+              <div class="gpb-seg" id="gpbPreset" role="group" aria-label="Test intensity">
+                <button data-preset="quick" aria-pressed="false">Quick</button>
+                <button data-preset="standard" aria-pressed="true">Standard</button>
+                <button data-preset="extreme" aria-pressed="false">Extreme</button>
+              </div>
+            </div>
+            <div class="gpb-field">
+              <label>Render scale <span id="gpbScaleV" style="color:var(--gpb-accent)"></span></label>
+              <div class="gpb-seg" id="gpbScale" role="group" aria-label="Render scale">
+                <button data-scale="0.75" aria-pressed="false">75%</button>
+                <button data-scale="1" aria-pressed="true">100%</button>
+                <button data-scale="1.5" aria-pressed="false">150%</button>
+                <button data-scale="2" aria-pressed="false">200%</button>
+              </div>
+            </div>
+          </div>
+
+          <details class="gpb-adv">
+            <summary>Advanced testing options</summary>
+            <div class="gpb-advbody">
+              <div class="gpb-field">
+                <label>Detail / quality <span id="gpbQV" style="color:var(--gpb-accent)"></span></label>
+                <input id="gpbQuality" type="range" min="32" max="200" step="8" value="88" style="width:100%;accent-color:var(--gpb-accent)">
+              </div>
+              <div class="gpb-field">
+                <label>Duration <span id="gpbDurV" style="color:var(--gpb-accent)"></span></label>
+                <input id="gpbDur" type="range" min="6" max="30" step="2" value="12" style="width:100%;accent-color:var(--gpb-accent)">
+              </div>
+              <div class="gpb-field" style="grid-column:1/-1">
+                <label>Effects (each adds GPU load)</label>
+                <div class="gpb-toggles">
+                  <label class="gpb-toggle"><input type="checkbox" id="gpbShadows" checked> Soft shadows</label>
+                  <label class="gpb-toggle"><input type="checkbox" id="gpbAO" checked> Ambient occlusion</label>
+                  <label class="gpb-toggle"><input type="checkbox" id="gpbReflect"> Reflections</label>
+                  <label class="gpb-toggle"><input type="checkbox" id="gpbGlow" checked> Glow / bloom</label>
+                </div>
+              </div>
+            </div>
+          </details>
+
+          <div class="gpb-actions">
+            <button class="gpb-btn" id="gpbStart">Start benchmark</button>
+            <button class="gpb-btn ghost" id="gpbStop" hidden>Stop</button>
+            <span class="gpb-note" id="gpbHint">Standard runs a 12-second test at 100% scale.</span>
+          </div>
+
+          <div class="gpb-results" id="gpbResults">
+            <div class="gpb-scorecard">
+              <div class="gpb-score"><small>GRAPHICS SCORE</small><span id="gpbScore">0</span></div>
+              <span class="gpb-tier" id="gpbTier">&mdash;</span>
+              <div class="gpb-metrics">
+                <div class="gpb-metric"><b id="gpbAvg">0</b><span>AVG FPS</span></div>
+                <div class="gpb-metric"><b id="gpbLow">0</b><span>1% LOW FPS</span></div>
+                <div class="gpb-metric"><b id="gpbPeak">0</b><span>PEAK FPS</span></div>
+                <div class="gpb-metric"><b id="gpbFrames">0</b><span>FRAMES</span></div>
+              </div>
+              <div class="gpb-best" id="gpbBest"></div>
+              <div class="gpb-actions" style="justify-content:center;margin-top:1rem">
+                <button class="gpb-btn ghost" id="gpbSave">Download score card</button>
+                <button class="gpb-btn ghost" id="gpbCopy">Copy results</button>
+              </div>
+            </div>
+            <div class="gpb-verdict" id="gpbVerdict"></div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+      (function(){
+        var root = document.getElementById('gputool'); if(!root) return;
+        var $ = function(id){ return document.getElementById(id); };
+        var canvas = $('gpbCanvas');
+        var gl = null, program = null, quadBuf = null, uni = {}, glLost = false;
+        var RENDERER = '', GLVER = '';
+
+        // ---------- WebGL init + GPU detection ----------
+        function initGL(){
+          var opts = {antialias:false, depth:false, powerPreference:'high-performance', preserveDrawingBuffer:false, failIfMajorPerformanceCaveat:false};
+          gl = canvas.getContext('webgl2', opts); GLVER = 'WebGL 2';
+          if(!gl){ gl = canvas.getContext('webgl', opts) || canvas.getContext('experimental-webgl', opts); GLVER = 'WebGL 1'; }
+          if(!gl) return false;
+          try{
+            var dbg = gl.getExtension('WEBGL_debug_renderer_info');
+            if(dbg){ RENDERER = gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) || ''; }
+          }catch(e){}
+          canvas.addEventListener('webglcontextlost', function(ev){ ev.preventDefault(); glLost = true; }, false);
+          return true;
+        }
+
+        var FRAG_HEAD = [
+          'precision highp float;',
+          'uniform vec2 uRes; uniform float uTime; uniform float uSteps; uniform float uShadow; uniform float uAO; uniform float uReflect; uniform float uGlow;',
+          'mat2 rot(float a){ float c=cos(a), s=sin(a); return mat2(c,-s,s,c); }',
+          'float smin(float a,float b,float k){ float h=clamp(0.5+0.5*(b-a)/k,0.0,1.0); return mix(b,a,h)-k*h*(1.0-h); }',
+          'float map(vec3 p){',
+          '  vec3 q=p; q.xz*=rot(uTime*0.15); q.xy*=rot(uTime*0.1);',
+          '  vec3 c=vec3(6.0);',
+          '  vec3 r=mod(q+0.5*c,c)-0.5*c;',
+          '  float t=uTime*0.6;',
+          '  float rad=1.35+0.35*sin(t+q.x*0.4+q.z*0.3);',
+          '  float sph=length(r)-rad;',
+          '  vec3 b=abs(r)-vec3(1.0+0.25*sin(t*1.3+q.y));',
+          '  float box=length(max(b,0.0))+min(max(b.x,max(b.y,b.z)),0.0)-0.25;',
+          '  float d=smin(sph,box,0.7);',
+          '  float torus; vec2 tt=vec2(length(r.xz)-1.7,r.y); torus=length(tt)-0.35;',
+          '  d=smin(d,torus,0.5);',
+          '  return d;',
+          '}',
+          'vec3 calcNormal(vec3 p){ vec2 e=vec2(0.0015,0.0); return normalize(vec3(map(p+e.xyy)-map(p-e.xyy),map(p+e.yxy)-map(p-e.yxy),map(p+e.yyx)-map(p-e.yyx))); }',
+          'float softShadow(vec3 ro,vec3 rd){ float res=1.0,t=0.05; for(int i=0;i<40;i++){ if(uShadow<0.5) break; if(float(i)>=uShadow) break; float h=map(ro+rd*t); res=min(res,10.0*h/t); t+=clamp(h,0.02,0.3); if(res<0.02||t>18.0) break; } return clamp(res,0.0,1.0); }',
+          'float calcAO(vec3 p,vec3 n){ float occ=0.0,sca=1.0; for(int i=0;i<5;i++){ if(uAO<0.5) break; float hr=0.02+0.12*float(i); float dd=map(p+n*hr); occ+=(hr-dd)*sca; sca*=0.85; } return clamp(1.0-1.6*occ,0.0,1.0); }',
+          'vec3 palette(float t){ return 0.55+0.45*cos(6.2831*(vec3(1.0,1.0,1.0)*t+vec3(0.0,0.33,0.66))); }',
+          'vec3 shade(vec3 ro,vec3 rd,out vec3 hitp,out vec3 hitn,out float hit){',
+          '  float t=0.0; hit=0.0; hitp=ro; hitn=vec3(0.0,1.0,0.0);',
+          '  for(int i=0;i<256;i++){ if(float(i)>=uSteps) break; vec3 p=ro+rd*t; float d=map(p); if(d<0.0012*t){ hit=1.0; break; } t+=d; if(t>40.0) break; }',
+          '  vec3 col=vec3(0.02,0.03,0.06)+0.04*rd.y;',
+          '  if(hit>0.5){ vec3 p=ro+rd*t; vec3 n=calcNormal(p); hitp=p; hitn=n;',
+          '    vec3 lp=vec3(6.0*sin(uTime*0.5),7.0,6.0*cos(uTime*0.5)); vec3 ld=normalize(lp-p);',
+          '    float dif=max(dot(n,ld),0.0); float sh=softShadow(p+n*0.02,ld); float ao=calcAO(p,n);',
+          '    float spec=pow(max(dot(reflect(-ld,n),-rd),0.0),32.0);',
+          '    float fres=pow(1.0-max(dot(n,-rd),0.0),3.0);',
+          '    vec3 base=palette(0.15*length(p)+uTime*0.05);',
+          '    col=base*(0.15+0.85*dif*sh)*ao + spec*sh*1.2 + fres*vec3(0.3,0.6,1.0)*0.6;',
+          '    col+=base*0.15;',
+          '  }',
+          '  return col;',
+          '}'
+        ].join('\n');
+
+        var FRAG_MAIN = [
+          'void main(){',
+          '  vec2 uv=(gl_FragCoord.xy*2.0-uRes)/uRes.y;',
+          '  float ca=uTime*0.2;',
+          '  vec3 ro=vec3(3.0*sin(ca),1.6+0.8*sin(uTime*0.3),3.0*cos(ca));',
+          '  vec3 ta=vec3(0.0,0.0,0.0); vec3 f=normalize(ta-ro); vec3 rgt=normalize(cross(vec3(0.0,1.0,0.0),f)); vec3 up=cross(f,rgt);',
+          '  vec3 rd=normalize(uv.x*rgt+uv.y*up+1.4*f);',
+          '  vec3 hp,hn; float hit; vec3 col=shade(ro,rd,hp,hn,hit);',
+          '  if(uReflect>0.5 && hit>0.5){ vec3 rrd=reflect(rd,hn); vec3 hp2,hn2; float hit2; vec3 rc=shade(hp+hn*0.03,rrd,hp2,hn2,hit2); col=mix(col,rc,0.28); }',
+          '  if(uGlow>0.5){ col+=col*col*0.35; }',
+          '  col=col/(col+vec3(1.0)); col=pow(col,vec3(0.4545));',
+          '  gl_FragColor=vec4(col,1.0);',
+          '}'
+        ].join('\n');
+
+        var VERT = 'attribute vec2 aPos; void main(){ gl_Position=vec4(aPos,0.0,1.0); }';
+
+        function compile(type,src){ var s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s); if(!gl.getShaderParameter(s,gl.COMPILE_STATUS)){ console.warn(gl.getShaderInfoLog(s)); return null; } return s; }
+        function buildProgram(){
+          var vs=compile(gl.VERTEX_SHADER,VERT); var fs=compile(gl.FRAGMENT_SHADER,FRAG_HEAD+'\n'+FRAG_MAIN);
+          if(!vs||!fs) return false;
+          program=gl.createProgram(); gl.attachShader(program,vs); gl.attachShader(program,fs); gl.bindAttribLocation(program,0,'aPos'); gl.linkProgram(program);
+          if(!gl.getProgramParameter(program,gl.LINK_STATUS)){ console.warn(gl.getProgramInfoLog(program)); return false; }
+          gl.useProgram(program);
+          quadBuf=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,quadBuf);
+          gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1, 3,-1, -1,3]),gl.STATIC_DRAW);
+          gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0,2,gl.FLOAT,false,0,0);
+          ['uRes','uTime','uSteps','uShadow','uAO','uReflect','uGlow'].forEach(function(n){ uni[n]=gl.getUniformLocation(program,n); });
+          return true;
+        }
+
+        // ---------- options ----------
+        var PRESETS={ quick:{scale:0.75,quality:56,dur:6}, standard:{scale:1,quality:88,dur:12}, extreme:{scale:1.5,quality:150,dur:20} };
+        var opt={ preset:'standard', scale:1, quality:88, dur:12, shadows:true, ao:true, reflect:false, glow:true };
+
+        function segWire(groupId, attr, cb){
+          var g=$(groupId); g.addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b) return;
+            [].forEach.call(g.querySelectorAll('button'),function(x){ x.setAttribute('aria-pressed', x===b?'true':'false'); });
+            cb(b.getAttribute(attr)); });
+        }
+        segWire('gpbPreset','data-preset',function(v){ applyPreset(v); });
+        segWire('gpbScale','data-scale',function(v){ opt.scale=parseFloat(v); opt.preset='custom'; $('gpbScaleV').textContent=''; refreshHint(); });
+        function pressSeg(groupId,attr,val){ var g=$(groupId); [].forEach.call(g.querySelectorAll('button'),function(x){ x.setAttribute('aria-pressed', x.getAttribute(attr)==String(val)?'true':'false'); }); }
+        function applyPreset(name){ var p=PRESETS[name]; if(!p) return; opt.preset=name; opt.scale=p.scale; opt.quality=p.quality; opt.dur=p.dur;
+          pressSeg('gpbScale','data-scale',p.scale); $('gpbQuality').value=p.quality; $('gpbDur').value=p.dur; $('gpbQV').textContent=p.quality; $('gpbDurV').textContent=p.dur+'s'; refreshHint(); }
+        $('gpbQuality').addEventListener('input',function(){ opt.quality=+this.value; $('gpbQV').textContent=this.value; opt.preset='custom'; refreshHint(); });
+        $('gpbDur').addEventListener('input',function(){ opt.dur=+this.value; $('gpbDurV').textContent=this.value+'s'; opt.preset='custom'; refreshHint(); });
+        ['gpbShadows','gpbAO','gpbReflect','gpbGlow'].forEach(function(id){ $(id).addEventListener('change',function(){ opt.shadows=$('gpbShadows').checked; opt.ao=$('gpbAO').checked; opt.reflect=$('gpbReflect').checked; opt.glow=$('gpbGlow').checked; }); });
+        function refreshHint(){ $('gpbHint').textContent=(opt.preset!=='custom'?opt.preset.charAt(0).toUpperCase()+opt.preset.slice(1):'Custom')+' runs a '+opt.dur+'-second test at '+Math.round(opt.scale*100)+'% scale.'; }
+
+        // ---------- benchmark run ----------
+        var running=false, raf=0, frames=[], startT=0, warmMs=800, phase='', internalPx=0, effSteps=0, bestGraph=[];
+        function setInternalSize(){
+          // Fixed 1280x720 reference workload x render scale — makes scores comparable
+          // across devices/screen sizes (a benchmark must test a fixed load), and is immune
+          // to layout width. The canvas element is stretched to the stage by CSS.
+          var base=1280, w=Math.round(base*opt.scale), h=Math.round(base*9/16*opt.scale);
+          var maxW=2560; if(w>maxW){ h=Math.round(h*maxW/w); w=maxW; }
+          canvas.width=w; canvas.height=h; internalPx=w*h;
+          gl.viewport(0,0,w,h);
+        }
+        function drawFrame(tSec){
+          gl.uniform2f(uni.uRes,canvas.width,canvas.height);
+          gl.uniform1f(uni.uTime,tSec);
+          gl.uniform1f(uni.uSteps,opt.quality);
+          gl.uniform1f(uni.uShadow,opt.shadows?32:0);
+          gl.uniform1f(uni.uAO,opt.ao?1:0);
+          gl.uniform1f(uni.uReflect,opt.reflect?1:0);
+          gl.uniform1f(uni.uGlow,opt.glow?1:0);
+          gl.drawArrays(gl.TRIANGLES,0,3);
+        }
+        function effectiveSteps(){ return opt.quality*(1+(opt.shadows?0.6:0)+(opt.ao?0.25:0)+(opt.reflect?0.9:0)); }
+
+        var graphEls=[];
+        function buildGraph(){ var g=$('gpbGraph'); g.innerHTML=''; graphEls=[]; for(var i=0;i<48;i++){ var el=document.createElement('i'); g.appendChild(el); graphEls.push(el); } }
+        function pushGraph(fps){ bestGraph.push(fps); if(bestGraph.length>48) bestGraph.shift(); var mx=Math.max(60,Math.max.apply(null,bestGraph)); for(var i=0;i<graphEls.length;i++){ var v=bestGraph[bestGraph.length-graphEls.length+i]; graphEls[i].style.height=(v?Math.max(2,(v/mx)*100):0)+'%'; } }
+
+        function start(){
+          if(running) return; if(glLost){ try{ location.reload(); }catch(e){} }
+          running=true; frames=[]; bestGraph=[]; effSteps=effectiveSteps();
+          $('gpbIdle').hidden=true; $('gpbHud').hidden=false; $('gpbResults').style.display='none';
+          $('gpbStart').disabled=true; $('gpbStop').hidden=false;
+          buildGraph(); setInternalSize();
+          startT=performance.now(); phase='warm'; $('gpbPhase').textContent='Warming up';
+          var last=startT, fpsAccum=0, fpsCount=0, lastUi=startT;
+          function loop(now){
+            if(!running) return;
+            var dt=now-last; last=now;
+            var tSec=(now-startT)/1000;
+            drawFrame(tSec);
+            var el=now-startT;
+            if(el>warmMs){ if(phase==='warm'){ phase='measure'; $('gpbPhase').textContent='Benchmarking'; }
+              frames.push(dt); }
+            // live UI ~ every 100ms
+            fpsAccum+=dt; fpsCount++;
+            if(now-lastUi>=100){ var f=1000/(fpsAccum/fpsCount); $('gpbFps').textContent=Math.round(f); pushGraph(f); fpsAccum=0; fpsCount=0; lastUi=now;
+              $('gpbProg').style.width=Math.min(100,(el/(warmMs+opt.dur*1000))*100)+'%'; }
+            if(el>=warmMs+opt.dur*1000){ finish(); return; }
+            raf=requestAnimationFrame(loop);
+          }
+          raf=requestAnimationFrame(loop);
+        }
+        function stop(){ running=false; cancelAnimationFrame(raf); $('gpbStart').disabled=false; $('gpbStop').hidden=true; $('gpbHud').hidden=true; $('gpbIdle').hidden=false; }
+
+        function finish(){
+          running=false; cancelAnimationFrame(raf);
+          $('gpbStart').disabled=false; $('gpbStop').hidden=true;
+          $('gpbHud').hidden=true;
+          if(frames.length<8){ $('gpbIdle').hidden=false; $('gpbIdle').innerHTML='<p style="color:var(--gold,#e8c35a);font-weight:600">Not enough frames to score</p><p>Your device rendered too few frames to measure reliably. Try the <b>Quick</b> test or a lower render scale, and close other tabs.</p>'; return; }
+          var fpsArr=frames.map(function(d){ return 1000/d; });
+          var sum=0; for(var i=0;i<frames.length;i++) sum+=frames[i];
+          var avg=1000/(sum/frames.length);
+          var peak=Math.max.apply(null,fpsArr);
+          var sorted=fpsArr.slice().sort(function(a,b){ return a-b; });
+          var low1=sorted[Math.max(0,Math.floor(sorted.length*0.01))];
+          // throughput score: pixels x effective raymarch cost x avg fps
+          var work=internalPx*effSteps;
+          var score=Math.round(avg*work/1.0e6);
+          render(score,avg,low1,peak,frames.length);
+        }
+
+        function tierFor(score){
+          if(score<1200) return {label:'Integrated / basic',col:'#9aa6c2'};
+          if(score<3500) return {label:'Entry-level',col:'#8fd4ff'};
+          if(score<7500) return {label:'Mainstream',col:'#37c2c2'};
+          if(score<15000) return {label:'High-end',col:'#00ce1b'};
+          return {label:'Enthusiast',col:'#e8c35a'};
+        }
+        function frameCapped(avg){ return opt.quality<130 && (Math.abs(avg-60)<2.5||Math.abs(avg-120)<3||Math.abs(avg-144)<3.5||Math.abs(avg-165)<4); }
+        var lastResult=null;
+        function render(score,avg,low1,peak,nframes){
+          var tier=tierFor(score);
+          $('gpbScore').textContent=score.toLocaleString();
+          var tEl=$('gpbTier'); tEl.textContent=tier.label; tEl.style.color=tier.col;
+          $('gpbAvg').textContent=avg.toFixed(0); $('gpbLow').textContent=low1.toFixed(0); $('gpbPeak').textContent=peak.toFixed(0); $('gpbFrames').textContent=nframes.toLocaleString();
+          $('gpbVerdict').innerHTML=verdict(score,avg,tier);
+          // best
+          var bestKey='gpb_best', prev=0; try{ prev=parseInt(localStorage.getItem(bestKey)||'0',10)||0; }catch(e){}
+          if(score>prev){ try{ localStorage.setItem(bestKey,String(score)); }catch(e){} $('gpbBest').textContent='New personal best! (previous: '+(prev?prev.toLocaleString():'none')+')'; }
+          else { $('gpbBest').textContent='Your best on this device: '+prev.toLocaleString()+(prev>score?' — try Extreme, or close other tabs.':''); }
+          lastResult={score:score,avg:avg,low1:low1,peak:peak,tier:tier.label,renderer:RENDERER,glver:GLVER,scale:opt.scale,quality:opt.quality};
+          $('gpbResults').style.display='grid'; $('gpbIdle').hidden=false;
+          $('gpbResults').scrollIntoView({behavior:'smooth',block:'nearest'});
+        }
+        function verdict(score,avg,tier){
+          var s='<h4>What this means</h4>';
+          if(score<800){ s+='<p>Your graphics sit in <b>integrated / basic</b> territory &mdash; perfect for everyday work, web, email, video calls and office apps, and light photo editing. It&rsquo;ll struggle with modern 3D games, 4K video editing or heavy 3D/CAD work.</p>'; }
+          else if(score<2500){ s+='<p><b>Entry-level</b> graphics &mdash; comfortable for everyday use, older or lighter games at modest settings, and casual creative work. A dedicated card would transform gaming and creative performance.</p>'; }
+          else if(score<6000){ s+='<p><b>Mainstream</b> graphics &mdash; a solid all-rounder that handles 1080p gaming, photo and video editing and most creative apps well. A good balance of power and value.</p>'; }
+          else if(score<12000){ s+='<p><b>High-end</b> graphics &mdash; strong for 1440p gaming, 4K video editing, 3D rendering and demanding creative and engineering workloads. This is a capable machine.</p>'; }
+          else { s+='<p><b>Enthusiast</b>-class graphics &mdash; top-tier performance for 4K gaming, real-time 3D, video production and AI workloads. Not much will slow this down.</p>'; }
+          if(frameCapped(avg)){ s+='<p style="color:var(--gold,#e8c35a);font-size:.9rem"><b>Looks like your frame rate hit your screen&rsquo;s refresh-rate cap.</b> Your graphics card may be faster than this score shows &mdash; run the <b>Extreme</b> test to push past the cap and measure its true ceiling.</p>'; }
+          s+='<p style="color:var(--muted,#9aa6c2);font-size:.86rem;margin-bottom:0">Averaged <b>'+avg.toFixed(0)+' FPS</b> in this browser test. Remember: this is an <em>indicative</em> WebGL benchmark &mdash; browser, drivers, laptop power mode, thermals and other open tabs all affect it. It&rsquo;s a fun relative guide, not a lab-grade score like 3DMark.</p>';
+          return s;
+        }
+
+        // ---------- score card + copy ----------
+        $('gpbSave').addEventListener('click',function(){ if(!lastResult) return;
+          var c=document.createElement('canvas'); c.width=1200; c.height=630; var x=c.getContext('2d');
+          var g=x.createLinearGradient(0,0,1200,630); g.addColorStop(0,'#0b1020'); g.addColorStop(1,'#121a30'); x.fillStyle=g; x.fillRect(0,0,1200,630);
+          x.fillStyle='#37c2c2'; x.font='600 26px Arial'; x.fillText('GRAPHICS BENCHMARK', 64,90);
+          x.fillStyle='#eaf0ff'; x.font='800 150px Arial'; x.fillText(lastResult.score.toLocaleString(), 60,250);
+          x.fillStyle='#9aa6c2'; x.font='400 26px Arial'; x.fillText('Graphics score  ·  '+lastResult.tier, 64,300);
+          var rn=(lastResult.renderer||'GPU hidden by browser'); if(rn.length>58) rn=rn.slice(0,57)+'…';
+          x.fillStyle='#eaf0ff'; x.font='500 30px Arial'; x.fillText(rn, 64,380);
+          x.fillStyle='#9aa6c2'; x.font='400 26px Arial';
+          x.fillText('Avg '+lastResult.avg.toFixed(0)+' FPS   ·   1% low '+lastResult.low1.toFixed(0)+' FPS   ·   peak '+lastResult.peak.toFixed(0)+' FPS', 64,430);
+          x.fillText(lastResult.glver+'  ·  '+Math.round(lastResult.scale*100)+'% scale  ·  detail '+lastResult.quality, 64,470);
+          x.fillStyle='#37c2c2'; x.font='700 28px Arial'; x.fillText('365techies.co.uk/graphics-card-benchmark/', 64,560);
+          x.fillStyle='#9aa6c2'; x.font='400 22px Arial'; x.fillText('Free live GPU benchmark  ·  01202 775566  ·  Dorset', 64,596);
+          try{ var a=document.createElement('a'); a.download='graphics-benchmark-'+lastResult.score+'.png'; a.href=c.toDataURL('image/png'); a.click(); }catch(e){}
+        });
+        $('gpbCopy').addEventListener('click',function(){ if(!lastResult) return;
+          var txt='GRAPHICS BENCHMARK — 365techies.co.uk\nScore: '+lastResult.score.toLocaleString()+' ('+lastResult.tier+')\nGPU: '+(lastResult.renderer||'hidden by browser')+'\nAvg '+lastResult.avg.toFixed(0)+' FPS · 1% low '+lastResult.low1.toFixed(0)+' · peak '+lastResult.peak.toFixed(0)+'\n'+lastResult.glver+' · '+Math.round(lastResult.scale*100)+'% scale · detail '+lastResult.quality;
+          try{ navigator.clipboard.writeText(txt); this.textContent='Copied!'; var b=this; setTimeout(function(){ b.textContent='Copy results'; },1500); }catch(e){}
+        });
+
+        $('gpbStart').addEventListener('click',start);
+        $('gpbStop').addEventListener('click',stop);
+
+        // ---------- boot ----------
+        function boot(){
+          if(!initGL()||!buildProgram()){
+            $('gpbIdle').innerHTML='<p style="color:var(--red,#ff6b6b);font-weight:600">WebGL isn&rsquo;t available</p><p>Your browser has WebGL disabled or blocked, so the 3D benchmark can&rsquo;t run. Enable hardware acceleration, or try a different browser.</p>';
+            $('gpbStart').disabled=true; $('gpbGpu').innerHTML='<span>Graphics acceleration unavailable in this browser.</span>'; return;
+          }
+          var maxTex=0; try{ maxTex=gl.getParameter(gl.MAX_TEXTURE_SIZE); }catch(e){}
+          var g=$('gpbGpu'); g.innerHTML='';
+          var line=document.createElement('span'); line.innerHTML='Graphics: <b>'+(RENDERER?escapeHtml(RENDERER):'hidden by your browser')+'</b>'; g.appendChild(line);
+          var c1=document.createElement('span'); c1.className='gpb-chip'; c1.textContent=GLVER; g.appendChild(c1);
+          if(maxTex){ var c2=document.createElement('span'); c2.className='gpb-chip'; c2.textContent=maxTex+'px max'; g.appendChild(c2); }
+          applyPreset('standard');
+          // draw one still frame so the stage isn't black
+          setInternalSize(); drawFrame(0.6);
+        }
+        function escapeHtml(s){ return String(s).replace(/[&<>"]/g,function(m){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]; }); }
+        boot();
+        window.addEventListener('resize',function(){ if(!running){ try{ setInternalSize(); drawFrame(0.6); }catch(e){} } });
+      })();
+      </script>
+    </section>'''
+
+def graphics_card_benchmark():
+    slug = "graphics-card-benchmark"
+    desc = ("Free graphics card benchmark &mdash; a live 3D WebGL test that stress-tests your GPU right in the browser, "
+            "with a graphics score, live FPS, 1% lows, advanced testing options and honest, plain-English advice. "
+            "Nothing to install. From 365 Techies, Dorset &mdash; Windows specialists.")
+    faqs = [
+      ("How does this graphics benchmark work?", "It renders a demanding real-time 3D scene in your browser using WebGL &mdash; the same technology games use &mdash; and measures how many frames per second your graphics card can push through it. From that it works out a graphics score, your average and 1% low frame rates, and roughly how your GPU compares. It&rsquo;s all measured live on your own machine; nothing is installed or uploaded."),
+      ("How accurate is it? Can I compare it to 3DMark?", "Treat it as an <em>indicative, relative</em> guide rather than a lab-grade result. Browser, graphics drivers, laptop power mode, thermals and other open tabs all affect it, and every benchmark uses its own scale &mdash; so don&rsquo;t compare the number directly with 3DMark, Unigine or Geekbench. Compare your machine against our tiers, or re-run it after a driver update or upgrade to see the change."),
+      ("Is it safe? Will it harm my computer?", "Completely safe. It simply makes your graphics card work hard for a few seconds &mdash; exactly like playing a game. The fan may spin up; that&rsquo;s normal and stops the moment the test ends. Nothing is installed, downloaded or sent anywhere."),
+      ("Why does it say my graphics card is &lsquo;hidden&rsquo;?", "Some browsers, and stricter privacy settings, mask the exact graphics-chip name to reduce tracking. The benchmark still runs perfectly and your score is unaffected &mdash; we just can&rsquo;t print the card&rsquo;s name on your score card."),
+      ("My score looks capped or lower than expected &mdash; why?", "The most common reason is your screen&rsquo;s refresh rate capping the frame rate (often 60 FPS) &mdash; run the <b>Extreme</b> test to push past it. On a laptop, plug it in and set Windows to Best Performance, because battery-saver throttles the GPU hard. Close other tabs and apps, and make sure hardware acceleration is switched on in your browser."),
+      ("Does it work on laptops, Macs and phones?", "Yes &mdash; any device with a modern browser. Laptops throttle on battery, so plug in for a fair result. Phones and tablets score much lower than desktops, which is completely normal &mdash; it&rsquo;s a fun way to see the gap. We&rsquo;re Windows specialists, so our advice is tuned with Windows PCs in mind."),
+      ("What do the advanced options do?", "<b>Render scale</b> changes the resolution the scene is drawn at (higher is harder on the GPU&rsquo;s fill rate). <b>Detail / quality</b> controls how much work each pixel does. The <b>effects</b> &mdash; soft shadows, ambient occlusion, reflections and glow &mdash; each add realistic load, just like game settings. Turn everything up for a proper stress test."),
+      ("My graphics card is too slow &mdash; what are my options?", "It depends what you need it for. Sometimes the fix is free (updated drivers, better cooling, the right power mode); sometimes it&rsquo;s a graphics-card upgrade or a new machine built around what you actually do. We&rsquo;ll give you an honest steer &mdash; <a href=\"/contact/\">book a chat</a>, try our <a href=\"/custom-pc-builder/\">custom PC builder</a>, or see our <a href=\"/threadripper-workstations/\">workstation builds</a>."),
+    ]
+    content = "\n".join([
+      hero(bc("Graphics Card Benchmark"), "// LIVE GPU BENCHMARK",
+           'How powerful is your <em class="grad grad--cyan">graphics card?</em>',
+           "A demanding real-time 3D scene renders live in your browser while we measure how many frames your GPU can push &mdash; with a graphics score, live FPS, advanced stress-testing options and honest advice. Nothing to install, completely safe, and fun to watch.",
+           cta1=("Start the Benchmark", "#gputool"), cta2=("Build a PC", "/custom-pc-builder/"),
+           chips=["Live 3D test","Advanced options","Share your score"]),
+      GPUBENCH_TOOL,
+      f'''    <section class="section section--alt" aria-label="What the scores mean">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// WHAT YOUR SCORE MEANS</p>
+          <h2 class="section-title section-title--center" data-title>Your graphics, in plain English<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="tile-grid" data-stagger>
+{tiles([("monitor","Integrated / basic","Perfect for everyday work, web, email, video calls and office apps. Modern 3D games and 4K editing will struggle &mdash; but that&rsquo;s rarely what these machines are for."),("spark","Entry-level","Comfortable for everyday use, lighter or older games and casual creative work. A dedicated card would lift gaming and creative performance a lot."),("bolt","Mainstream","A solid all-rounder &mdash; 1080p gaming, photo and video editing and most creative apps run well. A great balance of power and value."),("check","High-end","Strong for 1440p gaming, 4K video editing, 3D rendering and demanding creative and engineering work. A genuinely capable machine."),("gift","Enthusiast","Top-tier performance for 4K gaming, real-time 3D, video production and local AI workloads. Not much will slow this down."),("shield","Score isn&rsquo;t everything","Drivers, cooling, dust, laptop power mode and thermals all matter. A graphics card that benches low is often fixable, not finished &mdash; ask us before you replace it.")])}
+        </div>
+      </div>
+    </section>''',
+      f'''    <section class="section" aria-label="Do you need a powerful GPU">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">// DO YOU EVEN NEED ONE?</p>
+          <h2 class="section-title" data-title>How much graphics power do you actually need?<span class="title-underline"></span></h2>
+          <p>The honest answer? Most people don&rsquo;t need much. If your computer is for email, web, Microsoft 365, video calls and everyday tasks, even basic integrated graphics are plenty &mdash; and a slow computer is far more often about an old hard drive, too little memory or software clutter than the graphics card. Our <a href="/pc-benchmark/">full PC benchmark</a> will show you where the real bottleneck is.</p>
+          <p>A powerful graphics card genuinely matters if you play modern games, edit 4K video, do 3D, CAD or rendering, run AI models locally, or drive several high-resolution screens. If that&rsquo;s you and your score came back low, an upgrade transforms the experience.</p>
+          <p>Not sure which camp you&rsquo;re in? That&rsquo;s exactly what we&rsquo;re here for &mdash; <a href="/contact/">ask us</a> and we&rsquo;ll give you a straight answer, with no upsell.</p>
+        </div>
+        <ul class="checklist" data-stagger>
+{checklist(["Modern PC gaming","4K &amp; multi-camera video editing","3D modelling, CAD &amp; rendering","Running AI models on your own machine","Multiple high-res or high-refresh monitors","Live streaming &amp; content creation"])}
+        </ul>
+      </div>
+    </section>''',
+      faq_html(faqs),
+      tools_strip(["pcbench", "speccheck", "pcbuild", "faultcheck"], title="More free computer tools", alt=False),
+      cta("Need more graphics grunt?",
+          "Whether it&rsquo;s a creative workstation, a gaming rig or a business PC that&rsquo;s quietly struggling, we&rsquo;ll advise honestly, build it, or upgrade what you&rsquo;ve got &mdash; or start with a refurbished business-grade Dell from &pound;299.",
+          primary=("Talk to a Techie", "/contact/"), secondary=("Workstation Builds", "/threadripper-workstations/")),
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        return graph([crumb(s, "Graphics Card Benchmark"), webpage(s, "Free Graphics Card Benchmark", _desc),
+                      {"@type":"WebApplication","name":"365 Techies Graphics Card Benchmark","applicationCategory":"UtilitiesApplication","operatingSystem":"Web (all browsers)","url":SITE+"/graphics-card-benchmark/","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},"provider":{"@id":SITE+"/#business"}},
+                      faqpage(s, _faqs)])
+    add(slug=slug, title="Free Graphics Card Benchmark &mdash; Live 3D GPU Test | 365 Techies",
+        desc=desc, og_title="Free Graphics Card Benchmark | 365 Techies", schema=schema, content=content)
+graphics_card_benchmark()
+
 
 # ===================================================== FREE TOOLS HUB (every interactive tool, grouped)
 def free_tools_hub():
@@ -7012,7 +7490,7 @@ def free_tools_hub():
       ("Website, domain &amp; email", "See how your website, domain and email really perform.",
        ["website","ssl","domainexp","dns","emailsig"]),
       ("Your computer", "Test it, diagnose it, and make smart decisions.",
-       ["speccheck","pcbench","pcbuild","avtest","healthcheck","faultcheck","repairreplace","w10"]),
+       ["speccheck","pcbench","gpubench","pcbuild","avtest","healthcheck","faultcheck","repairreplace","w10"]),
       ("Costs &amp; planning", "Clear numbers and honest recommendations.",
        ["costcalc","planfinder","quickquote","downtime","m365picker","servercloud","aicalc","solarcalc","vbuilder"]),
     ]
