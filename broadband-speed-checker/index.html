@@ -646,9 +646,15 @@
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>// LIVE SPEED TEST</p>
           <h2 class="section-title section-title--center" data-title>Test your broadband speed, live<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>Check your real download, upload and ping right now &mdash; measured live against Cloudflare&rsquo;s global network. Free, instant, no sign-up.</p>
+          <p class="lede lede--center" data-reveal>Your real download, upload, ping, jitter and latency-under-load &mdash; measured live against Cloudflare&rsquo;s global network, with your connection and provider detected automatically. Free, instant, no sign-up.</p>
         </div>
         <div id="spd" data-reveal>
+          <div class="spd-meta" id="spd-meta" hidden>
+            <div class="spd-meta-item"><span class="spd-meta-l">Provider</span><span class="spd-meta-v" id="spd-isp">&hellip;</span></div>
+            <div class="spd-meta-item"><span class="spd-meta-l">Location</span><span class="spd-meta-v" id="spd-loc">&hellip;</span></div>
+            <div class="spd-meta-item"><span class="spd-meta-l">Your IP</span><span class="spd-meta-v" id="spd-ip">&hellip;</span></div>
+            <div class="spd-meta-item"><span class="spd-meta-l">Test server</span><span class="spd-meta-v" id="spd-server">&hellip;</span></div>
+          </div>
           <div class="spd-gauge">
             <svg viewBox="0 0 220 128" class="spd-svg" aria-hidden="true">
               <defs><linearGradient id="spd-grad" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#1d97e3"/><stop offset="1" stop-color="#00ce1b"/></linearGradient></defs>
@@ -659,14 +665,24 @@
           </div>
           <p class="spd-phase" id="spd-phase">Press start when you&rsquo;re ready.</p>
           <div style="text-align:center"><button type="button" class="button primary spd-start" id="spd-start">Start speed test</button></div>
-          <p class="spd-hint">Uses data, like any speed test &mdash; best on Wi-Fi. Nothing is stored.</p>
+          <p class="spd-hint">Uses data, like any speed test &mdash; best on Wi-Fi. Nothing is stored or sent to us.</p>
           <div class="spd-results" id="spd-results" hidden>
             <div class="spd-cards">
-              <div class="spd-card"><p class="spd-c-v" id="spd-dl">&mdash;</p><p class="spd-c-l">Download Mbps</p></div>
-              <div class="spd-card"><p class="spd-c-v" id="spd-ul">&mdash;</p><p class="spd-c-l">Upload Mbps</p></div>
+              <div class="spd-card spd-card--dl"><p class="spd-c-v" id="spd-dl">&mdash;</p><p class="spd-c-l">Download Mbps</p></div>
+              <div class="spd-card spd-card--ul"><p class="spd-c-v" id="spd-ul">&mdash;</p><p class="spd-c-l">Upload Mbps</p></div>
               <div class="spd-card"><p class="spd-c-v" id="spd-ping">&mdash;</p><p class="spd-c-l">Ping ms</p></div>
+              <div class="spd-card"><p class="spd-c-v" id="spd-jit">&mdash;</p><p class="spd-c-l">Jitter ms</p></div>
             </div>
+            <div class="spd-load" id="spd-load" hidden><span class="spd-load-dot" id="spd-load-dot"></span><span id="spd-load-txt"></span></div>
             <div id="spd-verdict"></div>
+            <div class="spd-aim" id="spd-aim" hidden>
+              <h3>What your connection can handle</h3>
+              <div class="spd-aim-grid" id="spd-aim-grid"></div>
+            </div>
+            <div class="spd-actions">
+              <button type="button" class="button spd-ghost" id="spd-copy">Copy results</button>
+              <button type="button" class="button spd-ghost" id="spd-save">Download result card</button>
+            </div>
             <div class="spd-fix">
               <h3>Slower than you pay for?</h3>
               <p>If your speed is well below your package &mdash; or keeps dropping &mdash; it&rsquo;s often the Wi-Fi, not the line. We fix Wi-Fi black-spots, set up mesh, and sort broadband for homes and businesses across Dorset (including <a href="/starlink-internet/">Starlink</a> where fibre won&rsquo;t reach).</p>
@@ -676,7 +692,11 @@
         </div>
       </div>
       <style>
-      #spd{max-width:560px;margin:0 auto}
+      #spd{max-width:600px;margin:0 auto}
+      #spd .spd-meta{display:grid;grid-template-columns:repeat(2,1fr);gap:.6rem;margin:0 auto 1.4rem;max-width:520px}
+      #spd .spd-meta-item{padding:.6rem .8rem;border-radius:11px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03)}
+      #spd .spd-meta-l{display:block;font-size:.64rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted,#9aa6c2)}
+      #spd .spd-meta-v{display:block;font-size:.92rem;font-weight:600;color:#eaf0ff;margin-top:.15rem;overflow-wrap:anywhere}
       #spd .spd-gauge{position:relative;max-width:360px;margin:0 auto}
       #spd .spd-svg{width:100%;display:block;overflow:visible}
       #spd .spd-track{fill:none;stroke:rgba(255,255,255,.1);stroke-width:14;stroke-linecap:round}
@@ -688,10 +708,14 @@
       #spd .spd-phase{text-align:center;color:var(--muted,#9aa6c2);font-size:.92rem;margin:1rem 0 1.2rem;min-height:1.2em;line-height:1.5}
       #spd .spd-hint{text-align:center;font-size:.76rem;color:var(--muted,#9aa6c2);margin:.7rem 0 0}
       #spd .spd-results{margin-top:1.8rem}
-      #spd .spd-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem}
-      #spd .spd-card{padding:1rem .6rem;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);text-align:center}
+      #spd .spd-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:.7rem}
+      #spd .spd-card{padding:1rem .5rem;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);text-align:center}
+      #spd .spd-card--dl{border-color:rgba(29,151,227,.4);background:rgba(29,151,227,.08)}
+      #spd .spd-card--ul{border-color:rgba(0,206,27,.35);background:rgba(0,206,27,.07)}
       #spd .spd-c-v{margin:0;font-size:1.5rem;font-weight:800;font-variant-numeric:tabular-nums}
-      #spd .spd-c-l{margin:.2rem 0 0;font-size:.68rem;color:var(--muted,#9aa6c2);text-transform:uppercase;letter-spacing:.04em}
+      #spd .spd-c-l{margin:.2rem 0 0;font-size:.64rem;color:var(--muted,#9aa6c2);text-transform:uppercase;letter-spacing:.04em}
+      #spd .spd-load{display:flex;align-items:center;justify-content:center;gap:.5rem;margin:1rem auto 0;font-size:.86rem;color:var(--muted,#9aa6c2)}
+      #spd .spd-load-dot{width:9px;height:9px;border-radius:50%;background:#2ecc71;flex:none}
       #spd .spd-verdict-box{text-align:center;padding:1.3rem;border-radius:14px;border:1px solid rgba(255,255,255,.12);margin:1.2rem 0}
       #spd .spd-v-g{margin:0 0 .3rem;font-size:1.4rem;font-weight:800}
       #spd .spd-v-m{margin:0 auto;max-width:46ch;color:var(--muted,#9aa6c2);font-size:.92rem;line-height:1.55}
@@ -701,29 +725,65 @@
       #spd .spd-avg .spd-v-g{color:#f1c40f}
       #spd .spd-poor{border-color:rgba(231,76,60,.4);background:rgba(231,76,60,.1)}
       #spd .spd-poor .spd-v-g{color:#e74c3c}
+      #spd .spd-aim{margin:1.2rem 0}
+      #spd .spd-aim h3{text-align:center;font-size:1.05rem;margin:0 0 .9rem}
+      #spd .spd-aim-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.6rem}
+      #spd .spd-aim-row{display:flex;align-items:center;gap:.55rem;padding:.6rem .8rem;border-radius:10px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.02);font-size:.88rem}
+      #spd .spd-aim-ic{width:20px;height:20px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800}
+      #spd .spd-y .spd-aim-ic{background:rgba(46,204,113,.2);color:#2ecc71}
+      #spd .spd-m .spd-aim-ic{background:rgba(241,196,15,.2);color:#f1c40f}
+      #spd .spd-n .spd-aim-ic{background:rgba(231,76,60,.2);color:#e74c3c}
+      #spd .spd-actions{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center;margin:1.2rem 0}
       #spd .spd-fix{margin-top:.5rem;padding:1.6rem;border-radius:16px;border:1px solid rgba(55,194,194,.35);background:rgba(55,194,194,.07);text-align:center}
       #spd .spd-fix h3{margin:0 0 .5rem;font-size:1.15rem}
       #spd .spd-fix p{margin:0 auto 1.1rem;max-width:52ch;color:var(--muted,#9aa6c2);font-size:.92rem;line-height:1.6}
       #spd .spd-fix p a{color:var(--cyan,#37c2c2)}
       #spd .spd-fix-cta{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center}
       #spd .spd-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}
+      @media(max-width:520px){#spd .spd-cards{grid-template-columns:repeat(2,1fr)}}
       </style>
       <script>
       (function(){
         var root=document.getElementById('spd'); if(!root) return;
-        var DOWN='https://speed.cloudflare.com/__down?bytes=', UP='https://speed.cloudflare.com/__up', ARC=282.743;
-        var btn=root.querySelector('#spd-start'), arc=root.querySelector('#spd-arc'), num=root.querySelector('#spd-num'), lab=root.querySelector('#spd-lab'), phase=root.querySelector('#spd-phase');
-        var res=root.querySelector('#spd-results'), dlEl=root.querySelector('#spd-dl'), ulEl=root.querySelector('#spd-ul'), pingEl=root.querySelector('#spd-ping'), verdict=root.querySelector('#spd-verdict');
-        var running=false;
+        var DOWN='https://speed.cloudflare.com/__down?bytes=', UP='https://speed.cloudflare.com/__up', META='https://speed.cloudflare.com/meta', ARC=282.743;
+        var $=function(id){return root.querySelector(id);};
+        var btn=$('#spd-start'), arc=$('#spd-arc'), num=$('#spd-num'), lab=$('#spd-lab'), phase=$('#spd-phase');
+        var res=$('#spd-results'), dlEl=$('#spd-dl'), ulEl=$('#spd-ul'), pingEl=$('#spd-ping'), jitEl=$('#spd-jit'), verdict=$('#spd-verdict');
+        var running=false, META_D=null, RESULT=null;
         function fmt(m){ return m>=100?String(Math.round(m)):(m>=10?m.toFixed(1):m.toFixed(2)); }
         function setGauge(m){ var frac=Math.max(0,Math.min(1,Math.log(Math.max(m,1))/Math.log(1000))); arc.style.strokeDashoffset=(ARC*(1-frac)).toFixed(1); num.textContent=fmt(m); }
         function rnd(){ return '&r='+Math.random().toString(36).slice(2); }
-        function ping(){ var t=[]; function one(){ var s=performance.now(); return fetch(DOWN+'0'+rnd(),{cache:'no-store'}).then(function(r){return r.arrayBuffer();}).then(function(){ t.push(performance.now()-s); }).catch(function(){}); } return one().then(one).then(one).then(one).then(one).then(function(){ t.sort(function(a,b){return a-b;}); return t.length?t[0]:0; }); }
-        function download(){
-          var STREAMS=4, DUR=8000, CAP=230*1048576, bytes=0, warmB=0, warmT=null, cs=[], stop=false, resolver, done=false;
+        function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+
+        // ---------- visitor location + ISP (Cloudflare /meta) ----------
+        function loadMeta(){
+          fetch(META,{cache:'no-store'}).then(function(r){return r.json();}).then(function(d){
+            META_D=d;
+            var isp=d.asOrganization||('AS'+(d.asn||'?'));
+            var loc=[d.city,d.region||d.country].filter(Boolean).join(', ')||d.country||'';
+            if(d.postalCode) loc+=' ('+d.postalCode+')';
+            var srv=d.colo&&d.colo.city?('Cloudflare &middot; '+d.colo.city+(d.colo.iata?' ('+d.colo.iata+')':'')):'Cloudflare global network';
+            $('#spd-isp').innerHTML=esc(isp);
+            $('#spd-loc').innerHTML=esc(loc);
+            $('#spd-ip').innerHTML=esc(d.clientIp||'&mdash;');
+            $('#spd-server').innerHTML=srv;
+            $('#spd-meta').hidden=false;
+          }).catch(function(){});
+        }
+
+        // ---------- latency + jitter ----------
+        function probe(){ var s=performance.now(); return fetch(DOWN+'0'+rnd(),{cache:'no-store'}).then(function(r){return r.arrayBuffer();}).then(function(){ return performance.now()-s; }).catch(function(){ return null; }); }
+        function pingTest(){ var t=[]; function step(i){ if(i<=0) return Promise.resolve(); return probe().then(function(ms){ if(ms!=null) t.push(ms); return step(i-1); }); }
+          return step(9).then(function(){ t.sort(function(a,b){return a-b;}); if(!t.length) return {min:0,jit:0};
+            var min=t[0], jit=0, n=0; for(var i=1;i<t.length;i++){ jit+=Math.abs(t[i]-t[i-1]); n++; } return {min:min, jit:n?jit/n:0}; }); }
+
+        // ---------- download (streaming, multi-stream) + latency-under-load ----------
+        function download(onLoadPing){
+          var STREAMS=4, DUR=9000, CAP=260*1048576, bytes=0, warmB=0, warmT=null, cs=[], stop=false, resolver, done=false;
           var p=new Promise(function(rs){ resolver=rs; });
-          function end(){ if(done) return; done=true; stop=true; clearInterval(iv); cs.forEach(function(c){try{c.abort();}catch(e){}}); var m=warmT?((bytes-warmB)*8)/((performance.now()-warmT)/1000)/1e6:0; resolver(m); }
+          function end(){ if(done) return; done=true; stop=true; clearInterval(iv); clearInterval(lp); cs.forEach(function(c){try{c.abort();}catch(e){}}); var m=warmT?((bytes-warmB)*8)/((performance.now()-warmT)/1000)/1e6:0; resolver(m); }
           var iv=setInterval(function(){ if(warmT!==null){ var m=((bytes-warmB)*8)/((performance.now()-warmT)/1000)/1e6; setGauge(m); if(bytes>CAP) end(); } },120);
+          var lp=setInterval(function(){ if(stop) return; probe().then(function(ms){ if(ms!=null&&onLoadPing) onLoadPing(ms); }); },450);
           function pull(){ var c=new AbortController(); cs.push(c);
             function once(){ if(stop) return; return fetch(DOWN+'26214400'+rnd(),{signal:c.signal,cache:'no-store'}).then(function(r){ var rd=r.body.getReader(); return (function read(){ if(stop) return; return rd.read().then(function(x){ if(x.done) return once(); if(stop) return; bytes+=x.value.length; return read(); }); })(); }).catch(function(){}); }
             return once(); }
@@ -732,37 +792,95 @@
           setTimeout(end, DUR);
           return p;
         }
+
+        // ---------- upload (XHR + upload.onprogress: real-time bytes, works on slow/asymmetric links) ----------
         function upload(){
-          var DUR=6000, bytes=0, warmB=0, warmT=null, stop=false, resolver, done=false, chunk=new Blob([new Uint8Array(2097152)]);
+          /* Cloudflare __up accepts a simple (no-preflight) POST but NOT a preflighted one,
+             so we use fetch (not XHR upload.onprogress, which forces a failing CORS preflight).
+             The original bug: 2MB chunks never finish inside the window on a slow/mobile
+             upload, so nothing got counted. Small 1MB chunks complete even at ~1-2 Mbps. */
+          var STREAMS=5, DUR=11000, CHUNK=1048576, bytes=0, warmB=0, warmT=null, stop=false, resolver, done=false;
+          var blob=new Blob([new Uint8Array(CHUNK)]);
           var p=new Promise(function(rs){ resolver=rs; });
-          var iv=setInterval(function(){ if(warmT!==null){ var m=((bytes-warmB)*8)/((performance.now()-warmT)/1000)/1e6; setGauge(m); } },120);
-          function send(){ if(stop) return Promise.resolve(); return fetch(UP,{method:'POST',body:chunk,cache:'no-store'}).then(function(){ bytes+=chunk.size; if(!stop) return send(); }).catch(function(){}); }
-          for(var i=0;i<3;i++) send();
-          setTimeout(function(){ warmT=performance.now(); warmB=bytes; },1000);
-          setTimeout(function(){ if(done) return; done=true; stop=true; clearInterval(iv); var m=warmT?((bytes-warmB)*8)/((performance.now()-warmT)/1000)/1e6:0; resolver(m); }, DUR);
+          function end(){ if(done) return; done=true; stop=true; clearInterval(iv); var m=warmT?((bytes-warmB)*8)/((performance.now()-warmT)/1000)/1e6:0; resolver(m); }
+          var iv=setInterval(function(){ if(warmT!==null){ var m=((bytes-warmB)*8)/((performance.now()-warmT)/1000)/1e6; setGauge(m); } },140);
+          function loop(){ if(stop) return; return fetch(UP,{method:'POST',body:blob,cache:'no-store'}).then(function(){ if(!stop){ bytes+=CHUNK; return loop(); } }).catch(function(){ if(!stop) return new Promise(function(r){ setTimeout(r,150); }).then(loop); }); }
+          for(var i=0;i<STREAMS;i++) loop();
+          setTimeout(function(){ warmT=performance.now(); warmB=bytes; }, 700);
+          setTimeout(end, DUR);
           return p;
         }
-        function finish(dl,ul,pg){
+
+        // ---------- verdict + AIM ----------
+        function grade(inc){ if(inc<30) return {g:'A',t:'excellent &mdash; stays responsive under load'}; if(inc<60) return {g:'B',t:'good &mdash; barely rises under load'}; if(inc<125) return {g:'C',t:'some bufferbloat &mdash; calls/games may lag when the line is busy'}; return {g:'D',t:'heavy bufferbloat &mdash; expect lag when someone is downloading'}; }
+        function aimRow(label, st){ var ic=st==='y'?'&#10003;':(st==='m'?'~':'&#10005;'); var cl=st==='y'?'spd-y':(st==='m'?'spd-m':'spd-n'); return '<div class="spd-aim-row '+cl+'"><span class="spd-aim-ic">'+ic+'</span>'+label+'</div>'; }
+
+        function finish(dl,ul,pg,jit,bloat){
           setGauge(dl); num.textContent=fmt(dl); lab.textContent='Download';
-          dlEl.textContent=fmt(dl); ulEl.textContent=fmt(ul); pingEl.textContent=String(Math.round(pg));
-          var v;
-          if(dl>=100) v={g:'Excellent',c:'good',m:'Plenty fast for a busy household &mdash; multiple 4K streams, video calls and gaming all at once.'};
+          dlEl.textContent=fmt(dl); ulEl.textContent=fmt(ul); pingEl.textContent=String(Math.round(pg)); jitEl.textContent=String(Math.round(jit));
+          RESULT={dl:dl,ul:ul,ping:pg,jit:jit,bloat:bloat};
+          // latency under load
+          if(bloat!=null){ var gr=grade(bloat); $('#spd-load-txt').innerHTML='Latency under load: <b>+'+Math.round(bloat)+' ms</b> &mdash; grade '+gr.g+' ('+gr.t+')';
+            $('#spd-load-dot').style.background=bloat<60?'#2ecc71':(bloat<125?'#f1c40f':'#e74c3c'); $('#spd-load').hidden=false; }
+          // verdict
+          var v; if(dl>=100) v={g:'Excellent',c:'good',m:'Plenty fast for a busy household &mdash; multiple 4K streams, video calls and gaming all at once.'};
           else if(dl>=30) v={g:'Good',c:'good',m:'Comfortable for most homes &mdash; HD streaming, video calls and browsing without fuss.'};
           else if(dl>=10) v={g:'OK',c:'avg',m:'Fine for light use, but it can struggle when several people are online at the same time.'};
-          else v={g:'Slow',c:'poor',m:'Likely to buffer and lag with more than one person online. Worth improving &mdash; and it may be your Wi-Fi, not your line.'};
+          else v={g:'Slow',c:'poor',m:'Likely to buffer and lag with more than one person online &mdash; and it may be your Wi-Fi, not your line.'};
           verdict.innerHTML='<div class="spd-verdict-box spd-'+v.c+'"><p class="spd-v-g">'+v.g+'</p><p class="spd-v-m">'+v.m+'</p></div>';
+          // AIM: what your connection can handle
+          function st(good,ok){ return good?'y':(ok?'m':'n'); }
+          var lowLat = pg<70 && jit<30 && (bloat==null||bloat<80);
+          var rows = aimRow('4K video streaming', st(dl>=25, dl>=15))
+            + aimRow('HD video calls', st(dl>=6&&ul>=3&&pg<120, dl>=3&&ul>=1.5))
+            + aimRow('Online gaming', st(lowLat, pg<110&&jit<50))
+            + aimRow('Large uploads &amp; cloud backup', st(ul>=15, ul>=8))
+            + aimRow('A busy household at once', st(dl>=80, dl>=40));
+          $('#spd-aim-grid').innerHTML=rows; $('#spd-aim').hidden=false;
           res.hidden=false; running=false; btn.disabled=false; btn.textContent='Test again';
           phase.innerHTML='Done &mdash; this is your device&rsquo;s speed right now (Wi-Fi, distance and other devices all affect it).';
         }
+
+        // ---------- results card + copy ----------
+        $('#spd-copy').addEventListener('click',function(){ if(!RESULT) return;
+          var d=META_D||{}, txt='BROADBAND SPEED TEST — 365techies.co.uk\n'
+            +'Download: '+fmt(RESULT.dl)+' Mbps\nUpload: '+fmt(RESULT.ul)+' Mbps\nPing: '+Math.round(RESULT.ping)+' ms\nJitter: '+Math.round(RESULT.jit)+' ms'
+            +(RESULT.bloat!=null?'\nLatency under load: +'+Math.round(RESULT.bloat)+' ms (grade '+grade(RESULT.bloat).g+')':'')
+            +(d.asOrganization?'\nProvider: '+d.asOrganization:'')+(d.city?'\nLocation: '+[d.city,d.region].filter(Boolean).join(', '):'')
+            +'\n'+new Date().toLocaleString();
+          try{ navigator.clipboard.writeText(txt); this.textContent='Copied!'; var b=this; setTimeout(function(){b.textContent='Copy results';},1500); }catch(e){}
+        });
+        $('#spd-save').addEventListener('click',function(){ if(!RESULT) return; var d=META_D||{};
+          var c=document.createElement('canvas'); c.width=1200; c.height=630; var x=c.getContext('2d');
+          var g=x.createLinearGradient(0,0,1200,630); g.addColorStop(0,'#0b1020'); g.addColorStop(1,'#121a30'); x.fillStyle=g; x.fillRect(0,0,1200,630);
+          x.fillStyle='#1d97e3'; x.font='600 26px Arial'; x.fillText('BROADBAND SPEED TEST',64,88);
+          x.fillStyle='#fff'; x.font='800 120px Arial'; x.fillText(fmt(RESULT.dl),64,215);
+          x.fillStyle='#9aa6c2'; x.font='400 30px Arial'; x.fillText('Mbps download',70,258);
+          x.fillStyle='#00ce1b'; x.font='800 70px Arial'; x.fillText(fmt(RESULT.ul),64,345);
+          x.fillStyle='#9aa6c2'; x.font='400 26px Arial'; x.fillText('Mbps upload',70,378);
+          x.fillStyle='#eaf0ff'; x.font='500 30px Arial';
+          x.fillText('Ping '+Math.round(RESULT.ping)+' ms   ·   Jitter '+Math.round(RESULT.jit)+' ms'+(RESULT.bloat!=null?'   ·   Under load +'+Math.round(RESULT.bloat)+' ms':''),64,450);
+          if(d.asOrganization){ x.fillStyle='#9aa6c2'; x.font='400 27px Arial'; x.fillText((d.asOrganization||'')+(d.city?'   ·   '+d.city+', '+(d.region||d.country||''):''),64,500); }
+          x.fillStyle='#1d97e3'; x.font='700 28px Arial'; x.fillText('365techies.co.uk/broadband-speed-checker/',64,565);
+          x.fillStyle='#9aa6c2'; x.font='400 22px Arial'; x.fillText('Free live broadband speed test  ·  01202 775566  ·  Dorset',64,600);
+          try{ var a=document.createElement('a'); a.download='broadband-speed-'+Math.round(RESULT.dl)+'mbps.png'; a.href=c.toDataURL('image/png'); a.click(); }catch(e){}
+        });
+
         btn.addEventListener('click',function(){
           if(running) return;
-          if(!(window.fetch&&window.AbortController&&window.ReadableStream)){ phase.textContent='Your browser can’t run the live test — please try a modern browser.'; return; }
-          running=true; btn.disabled=true; res.hidden=true; setGauge(0); lab.textContent='Ping'; phase.innerHTML='Measuring latency&hellip;';
-          var pg=0;
-          ping().then(function(x){ pg=x; lab.textContent='Download'; phase.innerHTML='Testing download speed&hellip;'; setGauge(0); return download(); })
-            .then(function(dl){ setGauge(dl); lab.textContent='Upload'; phase.innerHTML='Testing upload speed&hellip;'; setGauge(0); return upload().then(function(ul){ finish(dl,ul,pg); }); })
+          if(!(window.fetch&&window.AbortController&&window.ReadableStream)){ phase.textContent='Your browser can&rsquo;t run the live test — please try a modern browser.'; return; }
+          running=true; btn.disabled=true; res.hidden=true; $('#spd-load').hidden=true; $('#spd-aim').hidden=true; setGauge(0); lab.textContent='Ping'; phase.innerHTML='Measuring latency &amp; jitter&hellip;';
+          var pg=0, jit=0, loadPings=[];
+          pingTest().then(function(r){ pg=r.min; jit=r.jit; lab.textContent='Download'; phase.innerHTML='Testing download speed&hellip;'; setGauge(0);
+            return download(function(ms){ loadPings.push(ms); }); })
+            .then(function(dl){ setGauge(dl); lab.textContent='Upload'; phase.innerHTML='Testing upload speed&hellip;'; setGauge(0);
+              return upload().then(function(ul){
+                var bloat=null; if(loadPings.length){ loadPings.sort(function(a,b){return a-b;}); var med=loadPings[Math.floor(loadPings.length/2)]; bloat=Math.max(0, med-pg); }
+                finish(dl,ul,pg,jit,bloat); }); })
             .catch(function(){ phase.textContent='Something interrupted the test — please try again.'; running=false; btn.disabled=false; });
         });
+
+        loadMeta();
       })();
       </script>
     </section>
