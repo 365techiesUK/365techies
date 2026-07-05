@@ -2075,6 +2075,7 @@ TOOLS = {
   "isitdown":     ("Is It Down?", "/is-it-down/", "Facebook quiet? Email dead? Live status for 30+ big services &mdash; and whether it&rsquo;s them or your connection."),
   "speccheck":    ("PC Hardware Checker", "/computer-spec-checker/", "What&rsquo;s inside your computer? OS, graphics card, screen, memory and more &mdash; revealed instantly, nothing installed."),
   "gpubench":     ("Graphics Card Benchmark", "/graphics-card-benchmark/", "How powerful is your GPU? A live 3D WebGL benchmark &mdash; graphics score, live FPS, advanced stress tests and honest advice."),
+  "safetycourse": ("Free Online Safety Course", "/online-safety-course/", "Spot scam emails, texts &amp; calls, use safe passwords and shop safely &mdash; a free, friendly 6-lesson course with a certificate."),
 }
 
 def tool_cards(keys):

@@ -7602,7 +7602,7 @@ def free_tools_hub():
     desc = "Free IT tools that run entirely in your browser — no download, no sign-up, nothing installed. Check your website, test broadband live, see if a password has leaked, make Wi-Fi QR codes, benchmark your PC and more."
     GROUPS = [
       ("Security &amp; privacy", "Check you&rsquo;re safe &mdash; and lock things down.",
-       ["emailsec","breach","pwgen","pwstrength","scamlink","privacy","scamquiz","whatlose"]),
+       ["safetycourse","emailsec","breach","pwgen","pwstrength","scamlink","privacy","scamquiz","whatlose"]),
       ("Speed &amp; connectivity", "Test your connection and get everyone online.",
        ["isitdown","speed","broadbandcheck","wifiqr","qrgen","coverage"]),
       ("Website, domain &amp; email", "See how your website, domain and email really perform.",
@@ -12400,6 +12400,230 @@ def business_it_services(d):
 
 for _b in BIZ_SERVICES:
     business_it_services(_b)
+
+COURSE_SAFETY = r'''    <section class="section" aria-label="Free online safety course" id="oscourse">
+      <div class="wrap">
+        <div class="osc" id="osc">
+          <div class="osc-bar"><div class="osc-bar-fill" id="osc-fill"></div></div>
+          <p class="osc-step" id="osc-step">Welcome</p>
+          <div class="osc-stage" id="osc-stage"><!-- rendered by JS --></div>
+        </div>
+      </div>
+      <style>
+      #oscourse .osc{max-width:640px;margin:0 auto}
+      #oscourse .osc *{box-sizing:border-box}
+      #oscourse .osc-bar{height:8px;border-radius:6px;background:rgba(255,255,255,.1);overflow:hidden;margin-bottom:.5rem}
+      #oscourse .osc-bar-fill{height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,#1d97e3,#00ce1b);transition:width .5s ease}
+      #oscourse .osc-step{text-align:center;font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted,#9aa6c2);margin:0 0 1.2rem}
+      #oscourse .osc-stage{animation:oscfade .45s ease}
+      @keyframes oscfade{from{opacity:0;transform:translateY(10px)}}
+      #oscourse .osc-card{background:var(--panel,#121a30);border:1px solid var(--line,rgba(125,170,220,.18));border-radius:20px;padding:clamp(1.3rem,4vw,2.2rem)}
+      #oscourse .osc-ico{width:64px;height:64px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 1rem;background:rgba(29,151,227,.14);border:1px solid rgba(29,151,227,.3)}
+      #oscourse .osc-h{font-size:clamp(1.5rem,5vw,2rem);text-align:center;margin:0 0 .3rem;line-height:1.2}
+      #oscourse .osc-tag{text-align:center;color:var(--cyan,#37c2c2);font-weight:700;font-size:.8rem;letter-spacing:.09em;text-transform:uppercase;margin:0 0 1.2rem}
+      #oscourse .osc-body{font-size:1.12rem;line-height:1.7;color:#eef3fb}
+      #oscourse .osc-body p{margin:0 0 1rem}
+      #oscourse .osc-body ul{margin:.3rem 0 1.1rem;padding-left:0;list-style:none}
+      #oscourse .osc-body li{position:relative;padding:.35rem 0 .35rem 2rem;line-height:1.55}
+      #oscourse .osc-body li::before{content:"\2713";position:absolute;left:0;top:.35rem;color:#2ecc71;font-weight:800}
+      #oscourse .osc-body strong{color:#fff}
+      #oscourse .osc-msg{border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);padding:1rem 1.1rem;margin:0 0 1.3rem;font-size:1rem;line-height:1.55}
+      #oscourse .osc-msg-h{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted,#9aa6c2);margin:0 0 .5rem;display:flex;align-items:center;gap:.4rem}
+      #oscourse .osc-q{font-size:1.2rem;font-weight:700;text-align:center;margin:0 0 1.2rem;line-height:1.4}
+      #oscourse .osc-opts{display:flex;flex-direction:column;gap:.7rem}
+      #oscourse .osc-opt{text-align:left;font:inherit;font-size:1.05rem;padding:1rem 1.2rem;border-radius:13px;border:1.5px solid var(--line,rgba(125,170,220,.22));background:rgba(255,255,255,.03);color:#eef3fb;cursor:pointer;transition:border-color .15s,background .15s;display:flex;align-items:center;gap:.7rem}
+      #oscourse .osc-opt:hover:not(:disabled){border-color:var(--cyan,#37c2c2)}
+      #oscourse .osc-opt:disabled{cursor:default}
+      #oscourse .osc-opt .osc-mark{width:26px;height:26px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;border:2px solid rgba(255,255,255,.2)}
+      #oscourse .osc-opt.osc-right{border-color:#2ecc71;background:rgba(46,204,113,.12)}
+      #oscourse .osc-opt.osc-right .osc-mark{background:#2ecc71;color:#04121a;border-color:#2ecc71}
+      #oscourse .osc-opt.osc-wrong{border-color:#e74c3c;background:rgba(231,76,60,.1)}
+      #oscourse .osc-opt.osc-wrong .osc-mark{background:#e74c3c;color:#fff;border-color:#e74c3c}
+      #oscourse .osc-fb{margin:1.2rem 0 0;padding:1rem 1.2rem;border-radius:13px;font-size:1.02rem;line-height:1.6;animation:oscfade .3s ease}
+      #oscourse .osc-fb.ok{background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.35)}
+      #oscourse .osc-fb.oops{background:rgba(241,196,15,.1);border:1px solid rgba(241,196,15,.35)}
+      #oscourse .osc-fb b{color:#fff}
+      #oscourse .osc-actions{display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center;margin-top:1.6rem}
+      #oscourse .osc-btn{border:0;border-radius:13px;padding:.95rem 1.8rem;font:inherit;font-size:1.05rem;font-weight:700;cursor:pointer;background:var(--cyan,#1d97e3);color:#04121a}
+      #oscourse .osc-btn.ghost{background:transparent;color:#eaf0ff;border:1.5px solid var(--line,rgba(125,170,220,.3))}
+      #oscourse .osc-btn:disabled{opacity:.45;cursor:not-allowed}
+      #oscourse .osc-mods{display:grid;grid-template-columns:1fr;gap:.55rem;margin:1.4rem 0}
+      #oscourse .osc-modrow{display:flex;align-items:center;gap:.8rem;padding:.7rem .9rem;border-radius:12px;border:1px solid var(--line,rgba(125,170,220,.14));background:rgba(255,255,255,.02);font-size:1rem}
+      #oscourse .osc-modrow .n{width:28px;height:28px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;background:rgba(255,255,255,.08)}
+      #oscourse .osc-note{text-align:center;color:var(--muted,#9aa6c2);font-size:.9rem;margin:1.1rem auto 0;max-width:48ch;line-height:1.55}
+      #oscourse .osc-cert{text-align:center}
+      #oscourse .osc-cert-emoji{font-size:3.2rem;margin-bottom:.4rem}
+      #oscourse .osc-name{width:100%;max-width:340px;margin:.4rem auto 0;display:block;font:inherit;font-size:1.15rem;text-align:center;padding:.8rem 1rem;border-radius:12px;border:1.5px solid var(--line,rgba(125,170,220,.3));background:rgba(255,255,255,.05);color:#fff}
+      #oscourse .osc-help{margin-top:1.4rem;padding:1.4rem;border-radius:16px;border:1px solid rgba(55,194,194,.35);background:rgba(55,194,194,.08);text-align:center}
+      #oscourse .osc-help p{margin:0 0 1rem;font-size:1.02rem;line-height:1.6;color:#eef3fb}
+      #oscourse .osc-help a{color:var(--cyan,#37c2c2)}
+      @media(prefers-reduced-motion:reduce){#oscourse .osc-stage,#oscourse .osc-fb{animation:none}#oscourse .osc-bar-fill{transition:none}}
+      </style>
+      <script>
+      (function(){
+        var root=document.getElementById('oscourse'); if(!root) return;
+        var stage=root.querySelector('#osc-stage'), fill=root.querySelector('#osc-fill'), stepEl=root.querySelector('#osc-step');
+        var KEY='osc_progress_v1';
+        var MODULES=[
+          {ico:'&#128110;',tag:'Lesson 1 of 6',title:'Slow down &mdash; the scammer&rsquo;s one trick',
+           body:'<p>Nearly every scam works the same way: it tries to <strong>rush you or scare you</strong> &mdash; &ldquo;act now&rdquo;, &ldquo;your account will be closed&rdquo;, &ldquo;you owe money&rdquo;.</p><p>So the single best thing you can do is simple: <strong>slow down</strong>. A real bank, HMRC or Microsoft is perfectly happy for you to stop, hang up, and get in touch yourself using a number you trust.</p><p>If a message or call makes you feel panicked or hurried, that feeling <em>is</em> the warning sign. The experts call it &ldquo;Take Five&rdquo; &mdash; take five minutes, and it&rsquo;s much harder to be caught out.</p>',
+           check:{scenario:'<div class="osc-msg"><p class="osc-msg-h">&#128241; Text message</p>URGENT: Your bank account has been suspended. Verify your details now or lose access: bit.ly/secure-login</div>',
+             q:'What&rsquo;s the safest thing to do?',
+             opts:[{t:'Tap the link quickly, before it&rsquo;s too late',ok:false,why:'This is exactly what the scammer wants &mdash; the panic and the link are the trap. A real bank won&rsquo;t threaten you like this by text.'},
+                   {t:'Stop. Don&rsquo;t tap anything &mdash; ring the bank on the number on your card',ok:true,why:'Perfect. Slow down and check with the bank directly. The rushed, threatening tone is the biggest red flag of all.'}]}},
+          {ico:'&#9993;&#65039;',tag:'Lesson 2 of 6',title:'Scam emails &amp; texts',
+           body:'<p>These are called &ldquo;phishing&rdquo; &mdash; a fake message pretending to be someone you trust, trying to get you to click or hand over details. Watch for:</p><ul><li>It&rsquo;s <strong>unexpected</strong>, and it&rsquo;s <strong>urgent</strong> or threatening</li><li>It asks you to <strong>click a link</strong> or &ldquo;verify&rdquo; your details</li><li>A vague greeting like &ldquo;Dear Customer&rdquo;, or odd spelling</li><li>Too good to be true &mdash; a prize, a refund, a parcel you didn&rsquo;t order</li></ul><p><strong>What to do:</strong> don&rsquo;t click, don&rsquo;t reply, just delete it. If you&rsquo;re unsure, go to the company yourself &mdash; open their app, or type their website address in by hand. You can report scam texts by forwarding them to <strong>7726</strong> (free), and scam emails to <strong>report@phishing.gov.uk</strong>.</p>',
+           check:{scenario:'<div class="osc-msg"><p class="osc-msg-h">&#9993;&#65039; Email &mdash; from &ldquo;Royal M4il Delivery&rdquo;</p>Dear Customer, your parcel is waiting. A &pound;1.99 fee is required to release it. Click here to pay and confirm your address.</div>',
+             q:'Is this genuine, or a scam?',
+             opts:[{t:'Genuine &mdash; I&rsquo;ll pay the small fee to get my parcel',ok:false,why:'It&rsquo;s a scam. The odd sender name (&ldquo;M4il&rdquo;), &ldquo;Dear Customer&rdquo;, the surprise fee and the link are all classic signs. Real couriers don&rsquo;t work this way.'},
+                   {t:'A scam &mdash; delete it, and don&rsquo;t click the link',ok:true,why:'Spot on. The misspelt sender, vague greeting, surprise &ldquo;fee&rdquo; and link are all giveaways. When in doubt, check the courier&rsquo;s real app or website yourself.'}]}},
+          {ico:'&#128222;',tag:'Lesson 3 of 6',title:'Scam phone calls',
+           body:'<p>A very common one: someone phones to say your computer &ldquo;has a virus&rdquo;, or that they&rsquo;re from your bank, the police or Microsoft.</p><p>Here&rsquo;s the golden rule &mdash; your bank, the police, HMRC and Microsoft will <strong>never</strong>:</p><ul><li>Phone out of the blue to say your computer is infected</li><li>Ask you to install software or let them connect to your computer</li><li>Ask for your <strong>full PIN or password</strong></li><li>Ask you to <strong>move money to a &ldquo;safe account&rdquo;</strong></li></ul><p>If a caller asks for any of those, it&rsquo;s a scam. <strong>Hang up.</strong> Then wait a couple of minutes (scammers can stay on the line) and call back on a number you trust.</p>',
+           check:{scenario:'<div class="osc-msg"><p class="osc-msg-h">&#128222; Phone call</p>&ldquo;Hello, I&rsquo;m calling from Microsoft. We&rsquo;ve detected a serious virus on your computer. I just need you to install a small program so I can fix it for you.&rdquo;</div>',
+             q:'What should you do?',
+             opts:[{t:'Let them help &mdash; they said they&rsquo;re from Microsoft',ok:false,why:'It&rsquo;s a scam. Microsoft never phones people about viruses, and never asks to connect to your computer. Letting them in gives them control.'},
+                   {t:'Hang up &mdash; Microsoft never calls like this',ok:true,why:'Exactly right. Genuine companies don&rsquo;t cold-call about viruses. Hang up, and if you&rsquo;re worried about your computer, call someone you trust (like us).'}]}},
+          {ico:'&#128273;',tag:'Lesson 4 of 6',title:'Strong passwords, made simple',
+           body:'<p>You don&rsquo;t need something impossible to remember. The advice from the experts is lovely and simple: <strong>three random words</strong> &mdash; like <em>coffee-badger-window</em>. It&rsquo;s long, it&rsquo;s strong, and you can actually remember it.</p><ul><li>Use a <strong>different</strong> password for your email and your bank &mdash; if one leaks, the others stay safe</li><li>A <strong>password manager</strong> can remember them all for you</li><li>Turn on <strong>two-factor</strong> (a code by text or app) for email and banking &mdash; it&rsquo;s the single best extra lock</li></ul><p>Our free <a href="/password-generator/">password generator</a> makes a three-word password for you, and our <a href="/password-breach-checker/">breach checker</a> tells you if one of yours has leaked &mdash; both private, in your browser.</p>',
+           check:{q:'Which of these is the safer password?',
+             opts:[{t:'Pa55word!',ok:false,why:'Surprisingly weak &mdash; it&rsquo;s short and it&rsquo;s a pattern scammers&rsquo; computers try first. Length beats clever squiggles.'},
+                   {t:'coffee-badger-window',ok:true,why:'Yes! Three random words are much longer and far harder to crack &mdash; and easy to remember. That&rsquo;s the trick.'}]}},
+          {ico:'&#128179;',tag:'Lesson 5 of 6',title:'Shopping &amp; banking safely',
+           body:'<p>The internet is a wonderful place to shop and bank &mdash; a few simple habits keep it safe:</p><ul><li>Use the shop or bank&rsquo;s <strong>official app</strong>, or type the address in yourself &mdash; don&rsquo;t follow links from messages</li><li>Look for the <strong>padlock</strong> in the address bar (though a padlock alone doesn&rsquo;t prove it&rsquo;s genuine)</li><li>Pay by <strong>card</strong> &mdash; it gives you more protection than a bank transfer</li><li>Be wary of deals that seem far too cheap, or a seller pushing you to pay &ldquo;off&rdquo; the website</li></ul><p><strong>Most important of all:</strong> never share a one-time security code that&rsquo;s texted to you. Your bank will <em>never</em> ring and ask you to read it out.</p>',
+           check:{scenario:'<div class="osc-msg"><p class="osc-msg-h">&#128241; Text, then a phone call</p>Your bank texts you a 6-digit security code. A minute later, someone rings saying they&rsquo;re from the bank and asks you to read the code back &ldquo;to verify your identity&rdquo;.</div>',
+             q:'What do you do?',
+             opts:[{t:'Read the code out &mdash; they&rsquo;re from my bank',ok:false,why:'It&rsquo;s a scam. That code is the key to your account &mdash; and your real bank will never phone to ask for it. Sharing it lets them in.'},
+                   {t:'Refuse and hang up &mdash; never share a security code',ok:true,why:'Perfect. A one-time code is like a key &mdash; never read it out to anyone who rings you, even if they say they&rsquo;re the bank.'}]}},
+          {ico:'&#128155;',tag:'Lesson 6 of 6',title:'If something goes wrong',
+           body:'<p>First, an important message: if you&rsquo;re ever caught out, <strong>it is not your fault</strong>. These scams fool sensible, careful people every single day. What matters is acting quickly:</p><ul><li>If you let someone onto your computer, <strong>disconnect</strong> &mdash; turn off the Wi-Fi or unplug the cable</li><li><strong>Change your passwords</strong> (from a different device if you can)</li><li>If money or card details are involved, <strong>call your bank straight away</strong> &mdash; you can dial <strong>159</strong> to reach your bank safely</li><li>Report it to <strong>Action Fraud</strong> on <strong>0300 123 2040</strong> (in Scotland, call <strong>Police Scotland on 101</strong>); if a crime is happening right now, call <strong>999</strong></li><li>Tell someone you trust &mdash; there&rsquo;s no shame in it</li></ul><p>And you can always <a href="/contact/">call us</a>. We&rsquo;re friendly, we&rsquo;re local, and we never judge.</p>',
+           check:{q:'You think you&rsquo;ve been scammed and shared your card details. What&rsquo;s the first thing to do?',
+             opts:[{t:'Wait and see if any money goes missing',ok:false,why:'Waiting gives the scammer time. Act straight away &mdash; the sooner your bank knows, the more they can do.'},
+                   {t:'Contact your bank right away (you can dial 159)',ok:true,why:'Exactly. Ring your bank immediately &mdash; dialling 159 connects you safely. Then report it to Action Fraud and tell someone you trust.'}]}}
+        ];
+        var state={m:0,phase:'lesson',score:0}, saved=null;
+        try{ saved=JSON.parse(localStorage.getItem(KEY)||'null'); }catch(e){}
+
+        function setBar(){ var total=MODULES.length+1; var done=(state.phase==='done')?total:state.m; fill.style.width=Math.round(done/total*100)+'%'; }
+        function save(){ try{ localStorage.setItem(KEY, JSON.stringify({m:state.m,score:state.score})); }catch(e){} }
+        function h(html){ stage.innerHTML=html; }
+
+        function intro(){
+          state.phase='intro'; stepEl.textContent='Free course'; setBar();
+          var rows=MODULES.map(function(m,i){ return '<div class="osc-modrow"><span class="n">'+(i+1)+'</span>'+m.title+'</div>'; }).join('');
+          var resume = (saved&&saved.m>0&&saved.m<MODULES.length)?'<div class="osc-actions"><button class="osc-btn" id="osc-resume">Continue where I left off</button><button class="osc-btn ghost" id="osc-restart">Start again</button></div>':'<div class="osc-actions"><button class="osc-btn" id="osc-begin">Start the course &#8594;</button></div>';
+          h('<div class="osc-card"><div class="osc-ico">&#128737;&#65039;</div><h1 class="osc-h">Staying safe online</h1><p class="osc-tag">Free &middot; 6 short lessons &middot; about 10 minutes</p><div class="osc-body"><p>A friendly, jargon-free course to help you spot scams and stay safe online &mdash; whatever your confidence with computers. Read a short lesson, try a quick &ldquo;what would you do?&rdquo;, and collect your certificate at the end. Nothing to install, and you can stop and come back any time.</p></div>'+
+            '<div class="osc-mods">'+rows+'</div>'+resume+'<p class="osc-note">Made by 365 Techies &mdash; friendly, family-run IT support in Dorset since 1995. Nothing you type here is stored or sent to us.</p></div>');
+          var b=stage.querySelector('#osc-begin'); if(b) b.onclick=function(){ state.m=0; state.score=0; lesson(); };
+          var r=stage.querySelector('#osc-resume'); if(r) r.onclick=function(){ state.m=saved.m; state.score=saved.score||0; lesson(); };
+          var rs=stage.querySelector('#osc-restart'); if(rs) rs.onclick=function(){ state.m=0; state.score=0; lesson(); };
+        }
+        function lesson(){
+          var m=MODULES[state.m]; state.phase='lesson'; stepEl.textContent=m.tag; setBar(); save();
+          h('<div class="osc-card"><div class="osc-ico">'+m.ico+'</div><p class="osc-tag">'+m.tag+'</p><h2 class="osc-h">'+m.title+'</h2><div class="osc-body">'+m.body+'</div><div class="osc-actions"><button class="osc-btn" id="osc-go">Got it &mdash; try a quick check &#8594;</button></div></div>');
+          stage.querySelector('#osc-go').onclick=check;
+          stage.scrollIntoView({behavior:'smooth',block:'nearest'});
+        }
+        function check(){
+          var m=MODULES[state.m]; state.phase='check'; setBar();
+          var c=m.check, opts=c.opts.map(function(o,i){ return '<button class="osc-opt" data-i="'+i+'"><span class="osc-mark"></span><span>'+o.t+'</span></button>'; }).join('');
+          h('<div class="osc-card"><p class="osc-tag">Quick check</p>'+(c.scenario||'')+'<p class="osc-q">'+c.q+'</p><div class="osc-opts">'+opts+'</div><div id="osc-fb"></div><div class="osc-actions" id="osc-next" style="display:none"></div></div>');
+          var chosen=false;
+          [].forEach.call(stage.querySelectorAll('.osc-opt'),function(bt){ bt.onclick=function(){ if(chosen) return; chosen=true;
+            var i=+bt.getAttribute('data-i'), o=c.opts[i];
+            [].forEach.call(stage.querySelectorAll('.osc-opt'),function(x,xi){ x.disabled=true; if(c.opts[xi].ok){ x.classList.add('osc-right'); x.querySelector('.osc-mark').innerHTML='&#10003;'; } });
+            if(!o.ok){ bt.classList.add('osc-wrong'); bt.querySelector('.osc-mark').innerHTML='&#10005;'; }
+            if(o.ok) state.score++;
+            stage.querySelector('#osc-fb').className='osc-fb '+(o.ok?'ok':'oops');
+            stage.querySelector('#osc-fb').innerHTML=(o.ok?'<b>Well spotted!</b> ':'<b>Good to learn. </b>')+o.why;
+            var nx=stage.querySelector('#osc-next'); nx.style.display='flex';
+            nx.innerHTML='<button class="osc-btn" id="osc-cont">'+(state.m<MODULES.length-1?'Next lesson &#8594;':'Finish &amp; get my certificate &#8594;')+'</button>';
+            stage.querySelector('#osc-cont').onclick=function(){ if(state.m<MODULES.length-1){ state.m++; lesson(); } else { state.m=MODULES.length; save(); done(); } };
+          }; });
+        }
+        function done(){
+          state.phase='done'; stepEl.textContent='Well done!'; setBar();
+          h('<div class="osc-card osc-cert"><div class="osc-cert-emoji">&#127881;</div><h2 class="osc-h">You did it!</h2><p class="osc-tag">You got '+state.score+' of '+MODULES.length+' checks right</p>'+
+            '<div class="osc-body" style="text-align:center"><p>You now know the scammer&rsquo;s tricks and how to beat them. The most important habit of all? <strong>Slow down</strong> &mdash; and never be afraid to hang up, delete, or ask someone you trust.</p><p>Pop your first name in for a certificate to keep or print:</p></div>'+
+            '<input class="osc-name" id="osc-cn" type="text" maxlength="30" placeholder="Your first name" autocomplete="given-name">'+
+            '<div class="osc-actions"><button class="osc-btn" id="osc-cert-btn">Get my certificate &#8594;</button><button class="osc-btn ghost" id="osc-again">Take it again</button></div>'+
+            '<div class="osc-help"><p><strong>Worried about something right now?</strong> A dodgy email, a strange phone call, or you think you&rsquo;ve been caught out? Talk to a real person &mdash; we&rsquo;re friendly, local and we never judge.</p><a class="osc-btn" href="/contact/" style="display:inline-block;text-decoration:none">Talk to a real person</a></div></div>');
+          stage.querySelector('#osc-again').onclick=function(){ state.m=0; state.score=0; lesson(); };
+          stage.querySelector('#osc-cert-btn').onclick=function(){ makeCert((stage.querySelector('#osc-cn').value||'').trim()); };
+          stage.scrollIntoView({behavior:'smooth',block:'nearest'});
+        }
+        function makeCert(name){
+          if(!name) name='';
+          var c=document.createElement('canvas'); c.width=1200; c.height=849; var x=c.getContext('2d');
+          x.fillStyle='#0b1020'; x.fillRect(0,0,1200,849);
+          x.strokeStyle='#1d97e3'; x.lineWidth=6; x.strokeRect(34,34,1132,781);
+          x.strokeStyle='rgba(0,206,27,.5)'; x.lineWidth=2; x.strokeRect(52,52,1096,745);
+          x.textAlign='center';
+          x.fillStyle='#37c2c2'; x.font='700 30px Georgia'; x.fillText('CERTIFICATE OF COMPLETION', 600, 175);
+          x.fillStyle='#9aa6c2'; x.font='400 26px Georgia'; x.fillText('This certifies that', 600, 270);
+          x.fillStyle='#ffffff'; x.font='700 62px Georgia'; x.fillText(name||'(your name)', 600, 355);
+          x.strokeStyle='rgba(255,255,255,.25)'; x.lineWidth=1; x.beginPath(); x.moveTo(360,385); x.lineTo(840,385); x.stroke();
+          x.fillStyle='#9aa6c2'; x.font='400 26px Georgia'; x.fillText('has completed the free online safety course', 600, 440);
+          x.fillStyle='#eaf0ff'; x.font='700 40px Georgia'; x.fillText('Staying Safe Online', 600, 500);
+          x.fillStyle='#9aa6c2'; x.font='400 22px Georgia'; x.fillText('Spotting scam emails, texts and calls · safe passwords · shopping & banking safely', 600, 545);
+          x.fillStyle='#00ce1b'; x.font='700 26px Georgia'; x.fillText('365 Techies', 600, 660);
+          x.fillStyle='#9aa6c2'; x.font='400 20px Georgia'; x.fillText('Friendly, family-run IT support · Dorset · since 1995', 600, 692);
+          try{ var d=new Date(); x.fillText(d.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}), 600, 730); }catch(e){}
+          x.fillStyle='#5a6a86'; x.font='400 16px Georgia'; x.fillText('A 365 Techies certificate of completion. Not a Microsoft or accredited qualification.', 600, 785);
+          try{ var a=document.createElement('a'); a.download='online-safety-certificate.png'; a.href=c.toDataURL('image/png'); a.click(); }catch(e){}
+        }
+        intro();
+      })();
+      </script>
+    </section>'''
+
+def online_safety_course():
+    slug = "online-safety-course"
+    desc = ("A free, friendly online safety course — learn to spot scam emails, texts and phone calls, "
+            "use strong passwords, and shop and bank safely online. Six short, plain-English lessons for "
+            "everyday and less-confident users, with quick checks and a certificate. From 365 Techies, Dorset.")
+    faqs = [
+      ("Is the online safety course really free?", "Yes &mdash; completely free, with no sign-up and nothing to install. It runs in your web browser, and nothing you type is stored or sent to us. It&rsquo;s simply our way of helping people stay safe from scams."),
+      ("Who is it for?", "Everyone &mdash; but it&rsquo;s written especially for people who don&rsquo;t feel very confident with computers, including older users and anyone worried about scams. It&rsquo;s plain English, gentle, and there&rsquo;s no time pressure or pass mark."),
+      ("How long does it take?", "About ten minutes. There are six short lessons, each with a quick &lsquo;what would you do?&rsquo; check. You can stop at any point and come back &mdash; it remembers where you got to."),
+      ("Do I get a certificate?", "Yes &mdash; when you finish you can pop in your name and download a &lsquo;365 Techies Certificate of Completion&rsquo; to keep or print. It&rsquo;s our own friendly certificate, not a Microsoft or accredited qualification."),
+      ("I think I&rsquo;ve been scammed &mdash; what should I do now?", "Act quickly and don&rsquo;t panic &mdash; it&rsquo;s not your fault. If money or card details are involved, call your bank straight away (you can dial 159 to reach it safely), report it to Action Fraud on 0300 123 2040 (in Scotland, Police Scotland on 101), change your passwords, and tell someone you trust. You can also <a href=\"/contact/\">call us</a> &mdash; friendly, local, and we never judge."),
+    ]
+    content = "\n".join([
+      hero(bc("Online Safety Course"), "// FREE ONLINE SAFETY COURSE",
+           'The free <em class="grad grad--cyan">online safety</em> course',
+           "Learn to spot scam emails, texts and phone calls, use strong passwords, and shop and bank safely &mdash; in six short, friendly lessons with a certificate at the end. Written in plain English for everyone, especially anyone who doesn&rsquo;t feel confident online. Free, no sign-up, nothing to install.",
+           cta1=("Start the Course", "#oscourse"), cta2=("Talk to a Techie", "/contact/"),
+           chips=["100% free","6 short lessons","Certificate"]),
+      COURSE_SAFETY,
+      f'''    <section class="section section--alt" aria-label="What you will learn">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// WHAT YOU&rsquo;LL LEARN</p>
+          <h2 class="section-title section-title--center" data-title>Six short lessons, one big win<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>By the end you&rsquo;ll spot the tricks scammers use &mdash; and know exactly what to do.</p>
+        </div>
+        <div class="tile-grid" data-stagger>
+{tiles([("mail","Spot scam emails &amp; texts","The tell-tale signs of a phishing message &mdash; and how to check safely without clicking."),("phone","Handle scam phone calls","Why your bank and Microsoft never call about viruses &mdash; and the golden rule for hanging up."),("lock","Strong passwords, made simple","The &lsquo;three random words&rsquo; trick, why you shouldn&rsquo;t reuse passwords, and two-factor made easy."),("shield","Shop &amp; bank safely","Simple habits for buying and banking online &mdash; and the one code you must never share."),("heart","Written for everyone","Plain English, no jargon, no time pressure &mdash; especially kind to less-confident and older users."),("check","If something goes wrong","Exactly what to do, who to call (159, Action Fraud) &mdash; and why it&rsquo;s never your fault.")])}
+        </div>
+      </div>
+    </section>''',
+      faq_html(faqs),
+      tools_strip(["scamquiz", "scamlink", "breach", "pwgen"], title="Keep going &mdash; more free safety tools", alt=False),
+      cta("Worried about a scam? Talk to a real person.",
+          "Whether it&rsquo;s a dodgy email, a strange phone call, or you think you&rsquo;ve been caught out &mdash; we&rsquo;re friendly, local, and we never judge. Helping Dorset stay safe online since 1995.",
+          primary=("Talk to a Techie", "/contact/"), secondary=("Spot the Scam Quiz", "/spot-the-scam/")),
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        course = {"@type": "Course", "@id": SITE + "/online-safety-course/#course", "name": "Staying Safe Online",
+                  "description": _desc, "provider": {"@type": "Organization", "name": "365 Techies", "@id": SITE + "/#business"},
+                  "isAccessibleForFree": True, "inLanguage": "en-GB", "educationalLevel": "Beginner",
+                  "teaches": ["Spotting scam emails and texts", "Handling scam phone calls", "Strong passwords", "Shopping and banking safely online", "What to do if scammed"],
+                  "offers": {"@type": "Offer", "price": "0", "priceCurrency": "GBP", "category": "Free"},
+                  "hasCourseInstance": {"@type": "CourseInstance", "courseMode": "online", "courseWorkload": "PT10M"}}
+        return graph([crumb(s, "Online Safety Course"), webpage(s, "Free Online Safety Course", _desc), course, faqpage(s, _faqs)])
+    add(slug=slug, title="Free Online Safety Course, Spot the Scams | 365 Techies",
+        desc=desc, og_title="Free Online Safety Course | 365 Techies", schema=schema, content=content)
+online_safety_course()
 
 if __name__ == "__main__":
     w = write_all()
