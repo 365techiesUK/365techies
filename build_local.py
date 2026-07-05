@@ -63,6 +63,8 @@ def make_local(i, slug, town, region, lede, intro_para, nearby):
     repair_slug = ("computer-repair-" + slug[len("it-support-"):]) if slug.startswith("it-support-") else ""
     repair_link = (f'\n          <p>Just need a one-off fix rather than a plan? See our <a href="/{repair_slug}/">computer &amp; laptop repair in {town}</a> &mdash; home visits, fast remote help and no call-out fee.</p>'
                    if repair_slug in REPAIR_SLUGS else "")
+    biz_link = (f'\n          <p>Running a business in {town}? See our dedicated <a href="/it-services-{slug[len("it-support-"):]}/">business IT services in {town}</a> &mdash; fully managed IT, Microsoft 365, cybersecurity and support for one monthly cost per computer.</p>'
+                if slug in ("it-support-bournemouth", "it-support-poole") else "")
     desc = (f"IT support, IT services and computer repairs in {town} — rated 4.9 on Google, "
             f"no call-out fee, family-run since 1995. Homes and businesses.")
     faqs = [
@@ -93,7 +95,7 @@ def make_local(i, slug, town, region, lede, intro_para, nearby):
           <h2 class="section-title" data-title>Your local {town} techies<span class="title-underline"></span></h2>
           <p>{intro_para}</p>
           <p>As your local IT company, we cover it all &mdash; IT support and business IT services, computer and laptop repairs, Microsoft 365, cybersecurity and practical IT solutions for {town} homes and businesses.</p>
-          <p><strong>Most problems are solved remotely in minutes</strong> — and when you need someone in person, we&rsquo;re close by. Local knowledge, no call-centres, no jargon.</p>{repair_link}
+          <p><strong>Most problems are solved remotely in minutes</strong> — and when you need someone in person, we&rsquo;re close by. Local knowledge, no call-centres, no jargon.</p>{repair_link}{biz_link}
         </div>
         <ul class="checklist" data-stagger>
 {checklist(["Monthly IT support plans","Computer &amp; laptop repairs","Microsoft 365 support","Cybersecurity &amp; backups","Wi-Fi, printer &amp; email help","Remote &amp; on-site support"])}

@@ -11640,6 +11640,162 @@ def glossary_spoke_page(d):
 for _g in GLOSSARY_PAGES:
     glossary_spoke_page(_g)
 
+# ============================================================ BUSINESS IT SERVICES (B2B/MSP — Bournemouth + Poole ONLY; 2 substantial pages, never a town roll-out)
+BIZ_SERVICES = [
+ {
+  "slug": "it-services-poole", "town": "Poole", "region": "Dorset", "twin": "it-support-poole",
+  "coords": [50.7150, -1.9872],
+  "title": "IT Services Poole | Managed Business IT &amp; Support",
+  "h1": 'Business IT services in <em class="grad grad--cyan">Poole</em>',
+  "lede": "Proactive, fully managed IT services for Poole businesses &mdash; one local team looking after your computers, Microsoft 365, cybersecurity, servers and connectivity for a simple, predictable monthly cost per computer. Windows specialists, family-run since 1995.",
+  "intro": [
+    "Poole is one of the largest towns on the south coast and home to thousands of small and medium businesses &mdash; from the marine and boating trade around the harbour and Poole Quay, to accountants, solicitors, agencies, trades and retailers working out of offices and units around the Nuffield and Fleets Corner business areas. What they all share is that IT has become business-critical: when email, Microsoft 365, the server or the broadband goes down, so does the working day.",
+    "That&rsquo;s where a proactive, managed IT service pays for itself. As your outsourced IT department we don&rsquo;t wait for things to break &mdash; we monitor and maintain your computers, keep Windows and security patched, back everything up, protect you from ransomware and phishing, and pick up the phone the moment you need us, usually fixing the problem remotely within minutes. All the reliability of an in-house IT team, without the salary, for one predictable monthly cost per computer.",
+  ],
+  "solutions": None,
+  "local_h2": "Local IT services, on-site across Poole",
+  "local": [
+    "We&rsquo;re based just up the road in Bournemouth, so on-site help across Poole &mdash; Hamworthy, Canford Heath, Broadstone, Upton and the town centre &mdash; is never far away. Most day-to-day issues are solved remotely in minutes over a secure connection, and when something genuinely needs hands-on attention (a new server, a network install, a machine that won&rsquo;t boot) an engineer comes to you.",
+    "No call-centres, no ticket-number ping-pong &mdash; the same friendly local team every time, who get to know your business and your setup. It&rsquo;s the kind of service you only get from a genuinely local IT company.",
+  ],
+  "faqs": [
+    ("What are managed IT services?", "Managed IT services mean we look after your business technology proactively for a fixed monthly cost, rather than only fixing things when they break. That covers day-to-day support, monitoring and maintenance, Microsoft 365, cybersecurity, backups, and advice &mdash; so your IT just works and you can budget for it."),
+    ("How much do business IT services in Poole cost?", "Business IT support starts from &pound;24.38 per computer per month, with Microsoft 365 licences from &pound;4.85 per user per month. There are no call-out fees and no long tie-ins &mdash; just one predictable monthly cost per computer. See our <a href=\"/business-it-support-subscriptions/\">business IT support plans</a> for what&rsquo;s included."),
+    ("Do you provide on-site IT services in Poole?", "Yes. Most issues are fixed remotely in minutes, and we provide on-site visits right across Poole &mdash; from the Quay and Hamworthy to Canford Heath, Broadstone and Upton &mdash; whenever hands-on help is needed, with no call-out fee."),
+    ("Can you look after our server and network?", "Yes &mdash; we design, install, monitor and support <a href=\"/server-network-support/\">servers, networks, switches and business Wi-Fi</a>, keeping them fast, secure and reliable, whether you have one server or several sites to link together."),
+    ("What about cybersecurity and Cyber Essentials?", "Cybersecurity is built into every plan &mdash; layered protection from ransomware, phishing and scams, plus multi-factor authentication and verified backups. We also help Poole businesses achieve <a href=\"/cyber-essentials/\">Cyber Essentials</a> certification, which many customers and contracts now require."),
+    ("Do you support Microsoft 365 and email?", "Absolutely &mdash; <a href=\"/microsoft-365-support/\">Microsoft 365</a> setup, migration, licensing and day-to-day support, including Outlook, Teams, OneDrive and SharePoint, all set up properly and looked after for you."),
+    ("How do we switch to 365 Techies?", "It&rsquo;s easier than most businesses expect. We start with a free review of your current setup, agree a simple plan, then handle the handover in the background &mdash; documenting your systems, taking over monitoring and support, and tidying up anything the last provider left behind. Most businesses move across with no downtime."),
+  ],
+ },
+ {
+  "slug": "it-services-bournemouth", "town": "Bournemouth", "region": "Dorset", "twin": "it-support-bournemouth",
+  "coords": [50.7192, -1.8808],
+  "title": "IT Services Bournemouth | Managed Business IT &amp; Solutions",
+  "h1": 'Business IT services &amp; solutions in <em class="grad grad--cyan">Bournemouth</em>',
+  "lede": "Proactive, fully managed IT services and IT solutions for Bournemouth businesses &mdash; one local team running your computers, Microsoft 365, cybersecurity, servers and connectivity for a simple monthly cost per computer. Windows specialists, family-run since 1995.",
+  "intro": [
+    "Bournemouth is Dorset&rsquo;s business hub &mdash; a mix of finance and professional-services firms, digital and creative agencies, hospitality and tourism operators, and independent trades and retailers, spread from the town centre out to Boscombe, Winton, Charminster and Southbourne. For all of them, technology has become the business: Microsoft 365, the cloud, the network and cybersecurity all have to just work.",
+    "Managed IT services turn that from a worry into something you never have to think about. As your outsourced IT team we proactively monitor and maintain your computers, keep Windows and security patched, back everything up, defend you against ransomware and phishing, and answer the phone the moment you need us &mdash; usually fixing things remotely within minutes. All the reliability of an in-house IT department, for one predictable monthly cost per computer.",
+  ],
+  "solutions": [
+    "When people search for &lsquo;IT solutions Bournemouth&rsquo; they usually mean one thing: someone to design, run and look after the technology their business depends on, end to end. That&rsquo;s exactly what we do.",
+    "We match practical IT solutions to how your business actually works &mdash; the right <a href=\"/microsoft-365-support/\">Microsoft 365</a> setup, <a href=\"/cybersecurity-support/\">cybersecurity</a>, <a href=\"/server-network-support/\">servers and networks</a>, <a href=\"/cloud-hosted-desktops/\">cloud desktops</a> and <a href=\"/business-broadband-connectivity/\">connectivity</a> &mdash; all planned, delivered and managed under one roof, in plain English.",
+  ],
+  "local_h2": "Local IT services, on-site across Bournemouth",
+  "local": [
+    "We&rsquo;re a Bournemouth IT company right on your doorstep, so on-site help across the town &mdash; the centre, Boscombe, Winton, Charminster and Southbourne &mdash; is never far away. Most day-to-day issues are solved remotely in minutes over a secure connection, and when something needs hands-on attention an engineer comes to you.",
+    "No call-centres, no jargon, no ticket-number ping-pong &mdash; the same friendly local team every time, who learn your business and your setup. That&rsquo;s the difference a genuinely local IT partner makes.",
+  ],
+  "faqs": [
+    ("What are managed IT services?", "Managed IT services mean we look after your business technology proactively for a fixed monthly cost, rather than only fixing things when they break. That covers day-to-day support, monitoring and maintenance, Microsoft 365, cybersecurity, backups and advice &mdash; so your IT just works and you can budget for it."),
+    ("Do you provide IT solutions for Bournemouth businesses?", "Yes &mdash; we design, deliver and manage complete IT solutions for Bournemouth businesses: Microsoft 365, cybersecurity and Cyber Essentials, servers and networks, cloud and hosted desktops, backup, and business connectivity, all matched to how your business works and supported under one roof."),
+    ("How much do business IT services in Bournemouth cost?", "Business IT support starts from &pound;24.38 per computer per month, with Microsoft 365 licences from &pound;4.85 per user per month. No call-out fees and no long tie-ins &mdash; just one predictable monthly cost per computer. See our <a href=\"/business-it-support-subscriptions/\">business IT support plans</a> for the detail."),
+    ("Do you provide on-site IT services in Bournemouth?", "Yes. Most issues are fixed remotely in minutes, and we provide on-site visits across Bournemouth &mdash; the town centre, Boscombe, Winton, Charminster and Southbourne &mdash; whenever hands-on help is needed, with no call-out fee."),
+    ("What about cybersecurity and Cyber Essentials?", "Cybersecurity is built into every plan &mdash; layered protection from ransomware, phishing and scams, multi-factor authentication and verified backups. We also help Bournemouth businesses achieve <a href=\"/cyber-essentials/\">Cyber Essentials</a> certification, which many customers and contracts now require."),
+    ("Can you look after our server, network and Microsoft 365?", "Yes &mdash; <a href=\"/server-network-support/\">servers, networks and business Wi-Fi</a> plus full <a href=\"/microsoft-365-support/\">Microsoft 365</a> setup, migration and support (Outlook, Teams, OneDrive and SharePoint), all monitored and looked after for you."),
+    ("How do we switch to 365 Techies?", "We do the heavy lifting. We start with a free review of your current setup, agree a simple plan, then handle the handover in the background &mdash; documenting your systems, taking over monitoring and support, and tightening up anything the last provider left behind. Most businesses move across with no downtime."),
+  ],
+ },
+]
+
+def business_it_services(d):
+    town = d["town"]; region = d["region"]; slug = d["slug"]; twin = d["twin"]; co = d["coords"]
+    intro_p = "\n".join(f"          <p>{p}</p>" for p in d["intro"])
+    local_p = "\n".join(f"          <p>{p}</p>" for p in d["local"])
+    stack = tiles([
+      ("handshake", "Fully managed IT support", "Your outsourced IT department &mdash; unlimited remote and on-site help, proactive monitoring and maintenance, for one monthly cost per computer."),
+      ("cloud", "Microsoft 365 &amp; email", "Licences, setup, migration and support &mdash; Outlook, Teams, OneDrive and SharePoint, set up properly and looked after day to day."),
+      ("shield", "Cybersecurity &amp; Cyber Essentials", "Layered protection from ransomware, phishing and scams, MFA, and help achieving Cyber Essentials certification."),
+      ("lock", "Backup &amp; disaster recovery", "Automatic, verified backups of your data and Microsoft 365 &mdash; so a mistake, a failure or ransomware never means lost work."),
+      ("server", "Servers &amp; networks", "Design, installation, monitoring and support of servers, networks, switches and business Wi-Fi that stay fast and reliable."),
+      ("monitor", "Cloud &amp; hosted desktops", "Windows 365 and hosted desktops so your team can work securely from the office, from home or anywhere."),
+      ("wifi", "Broadband, VoIP &amp; connectivity", "Business broadband, full-fibre and leased lines, plus VoIP phone systems that follow your team wherever they work."),
+      ("spark", "IT strategy &amp; roadmap", "Honest, plain-English advice and a rolling IT plan, so your technology keeps pace with your business."),
+    ])
+    solutions_section = ""
+    if d.get("solutions"):
+        sol_p = "\n".join(f"          <p>{p}</p>" for p in d["solutions"])
+        solutions_section = f'''    <section class="section" aria-label="IT solutions">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">/03 &mdash; IT SOLUTIONS</p>
+        <h2 class="section-title" data-title>IT solutions for {town} business<span class="title-underline"></span></h2>
+{sol_p}
+      </div>
+    </section>'''
+    lede = hero_trust(d["lede"])
+    content = "\n".join([
+      hero(bc_sub("Services", "/services/", f"Business IT Services {town}"), f"// {town.upper()} &middot; BUSINESS IT",
+           d["h1"], lede,
+           cta1=("Get a Free IT Review", "/contact/"), cta2=("See Business Plans", "/business-it-support-subscriptions/"),
+           chips=["Windows specialists", "Family-run since 1995", "From &pound;24.38/mo per computer"]),
+      f'''    <section class="section" aria-label="Managed IT services">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">/01 &mdash; MANAGED IT</p>
+          <h2 class="section-title" data-title>IT services built around your {town} business<span class="title-underline"></span></h2>
+{intro_p}
+        </div>
+        <ul class="checklist" data-stagger>
+{checklist(["Fully managed IT support &amp; helpdesk","Microsoft 365 setup, migration &amp; support","Cybersecurity &amp; Cyber Essentials","Backup &amp; disaster recovery","Servers, networks &amp; business Wi-Fi","Cloud &amp; hosted desktops","Business broadband &amp; VoIP phones","IT strategy, budgeting &amp; advice"])}
+        </ul>
+      </div>
+    </section>''',
+      f'''    <section class="section section--alt" aria-label="What's included">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/02 &mdash; WHAT&rsquo;S INCLUDED</p>
+          <h2 class="section-title section-title--center" data-title>Everything your business needs, under one roof<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>One local team for the whole lot &mdash; no juggling suppliers, no gaps, no finger-pointing.</p>
+        </div>
+        <div class="tile-grid" data-stagger>
+{stack}
+        </div>
+        <p style="text-align:center;margin-top:1.8rem" data-reveal>Explore <a href="/managed-it-support/">managed IT support</a>, <a href="/microsoft-365-support/">Microsoft 365</a>, <a href="/cybersecurity-support/">cybersecurity</a>, <a href="/cyber-essentials/">Cyber Essentials</a>, <a href="/backup-support/">backup</a>, <a href="/server-network-support/">servers &amp; networks</a>, <a href="/cloud-hosted-desktops/">cloud desktops</a>, <a href="/business-broadband-connectivity/">connectivity</a> and <a href="/voip-business-phones/">VoIP phones</a>.</p>
+      </div>
+    </section>''',
+      solutions_section,
+      f'''    <section class="section" aria-label="Pricing">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">/04 &mdash; SIMPLE PRICING</p>
+        <h2 class="section-title" data-title>One predictable monthly cost<span class="title-underline"></span></h2>
+        <p>Business IT support starts from <strong>&pound;24.38 per computer per month</strong>, and Microsoft 365 licences from <strong>&pound;4.85 per user per month</strong>. No call-out fees, no long tie-ins and no jargon &mdash; just proactive support and maintenance for your team, for a cost you can budget for.</p>
+        <p>See our <a href="/business-it-support-subscriptions/">business IT support plans</a> for what&rsquo;s included, <a href="/business-it-support-plans/">compare the plans</a>, or explore day-to-day <a href="/{twin}/">IT support in {town}</a>.</p>
+      </div>
+    </section>''',
+      f'''    <section class="section section--alt" aria-label="Local to {town}">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">/05 &mdash; LOCAL TO {town.upper()}</p>
+        <h2 class="section-title" data-title>{d["local_h2"]}<span class="title-underline"></span></h2>
+{local_p}
+      </div>
+    </section>''',
+      f'''    <section class="section" aria-label="Switching">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">/06 &mdash; SWITCHING IS EASY</p>
+        <h2 class="section-title" data-title>Changing IT provider, without the drama<span class="title-underline"></span></h2>
+        <p>Moving IT provider sounds daunting, but we do the heavy lifting. We start with a free review of your setup, agree a simple plan, then handle the handover in the background &mdash; documenting your systems, taking over monitoring and support, and tidying up anything the last provider left behind. Most {town} businesses are fully onboarded with no downtime and no drama.</p>
+      </div>
+    </section>''',
+      faq_html(d["faqs"]),
+      cta(f"Ready for IT that just works, {town}?", "Book a free, no-obligation IT review and we&rsquo;ll show you exactly where you stand &mdash; no jargon, no hard sell.",
+          primary=("Get a Free IT Review", "/contact/"), secondary=("Call 01202 775566", "tel:+441202775566")),
+    ])
+    desc = (f"Managed business IT services in {town} &mdash; fully managed IT support, Microsoft 365, "
+            f"cybersecurity, servers and connectivity from &pound;24.38/mo per computer. Windows specialists, since 1995.")
+    def schema(s, _town=town, _region=region, _desc=desc, _faqs=d["faqs"], _co=co):
+        svc = service(s, f"Business IT Services {_town}", f"Fully managed business IT services for {_town} companies &mdash; support, Microsoft 365, cybersecurity, servers, networks and connectivity.", "IT services")
+        svc["areaServed"] = {"@type": "City", "name": _town, "containedInPlace": {"@type": "AdministrativeArea", "name": _region}}
+        nodes = [crumb_sub(s, "Services", "services", f"Business IT Services {_town}"),
+                 webpage(s, f"Business IT Services {_town}", _desc), svc, faqpage(s, _faqs),
+                 {"@type": "Place", "@id": f"{SITE}/{s}/#place", "name": _town,
+                  "geo": {"@type": "GeoCoordinates", "latitude": _co[0], "longitude": _co[1]}}]
+        return graph(nodes)
+    add(slug=slug, title=d["title"], desc=desc, og_title=f"IT Services {town} | 365 Techies", schema=schema, content=content)
+
+for _b in BIZ_SERVICES:
+    business_it_services(_b)
+
 if __name__ == "__main__":
     w = write_all()
     print("Wrote %d pages total:" % len(w))
