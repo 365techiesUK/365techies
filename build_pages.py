@@ -435,6 +435,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/it-support-dorchester/">Dorchester</a>
         <a href="/it-support-blandford-forum/">Blandford Forum</a>
         <a href="/it-support-shaftesbury/">Shaftesbury</a>
+        <a href="/it-support-gillingham/">Gillingham</a>
         <a href="/it-support-sherborne/">Sherborne</a>
         <a href="/it-support-new-forest/">New Forest</a>
         <a href="/it-support-lymington/">Lymington</a>
@@ -4234,6 +4235,8 @@ M365_FAQS = [
   ("Can you train us to use it?", "Absolutely &mdash; friendly, plain-English help with Outlook, Teams, OneDrive and SharePoint, so you and your team actually get the most out of it."),
   ("Do you support home users too?", "Definitely &mdash; from a single personal mailbox to family setups, we make Microsoft 365 simple at home as well as at work."),
   ("Do you support Microsoft 365 for Dorset businesses?", "Yes &mdash; we set up, migrate, secure and support Microsoft 365 for businesses right across Dorset, Bournemouth and Poole, from a single mailbox to a whole team, with friendly, plain-English help."),
+  ("Are you a local Office 365 installer in Bournemouth and Poole?", "Yes &mdash; we&rsquo;re a hands-on Office 365 and Microsoft 365 installer for Bournemouth, Poole and across Dorset: we install and set up Office 365 on your PCs and laptops, migrate your email, and get Outlook, Teams and OneDrive working &mdash; remotely or on-site."),
+  ("Do you provide Microsoft 365 support in Bournemouth and Poole?", "Yes &mdash; Microsoft 365 support for Bournemouth and Poole homes and businesses: setup, migration, licensing, security and everyday help, with fast remote support and on-site visits when you need them."),
 ]
 add(
  slug="microsoft-365-support",
@@ -4349,9 +4352,9 @@ CYBER_FAQS = [
 ]
 add(
  slug="cybersecurity-support",
- title="The Ultimate Cybersecurity for Homes & Businesses | 365 Techies",
- desc="Cybersecurity for Dorset homes and businesses — protection from ransomware, phishing, scams and malware, with MFA and verified backups. Rated 4.9 on Google, family-run since 1995.",
- og_title="The Ultimate Cybersecurity | 365 Techies",
+ title="Cyber Security Services for Businesses | Bournemouth & Dorset",
+ desc="Cyber security services for businesses and homes across Bournemouth, Poole and Dorset — protection from ransomware, phishing, scams and malware, with MFA, verified backups and Cyber Essentials. Rated 4.9 on Google, since 1995.",
+ og_title="Cyber Security Services | Bournemouth & Dorset",
  schema=lambda s: graph([
    crumb(s, "Cybersecurity"), webpage(s, "Cybersecurity Support", "The ultimate layered cybersecurity for homes and small businesses across Dorset."),
    service(s, "Cybersecurity Support", "Layered, always-on protection from ransomware, phishing, scams and malware for homes and businesses across Dorset.", "Cybersecurity"),
@@ -4359,8 +4362,8 @@ add(
  ]),
  content="\n".join([
    hero(bc("Cybersecurity"), "// THE ULTIMATE SECURITY",
-        'The ultimate <em class="grad grad--green">cyber protection</em>',
-        hero_trust("Ransomware, scams and phishing don&rsquo;t care whether you&rsquo;re a family or a business &mdash; they just look for the easy way in. We close every door with layered, always-on protection that&rsquo;s set up, managed and watched over by us, keeping you safe online 24/7."),
+        'Cyber security <em class="grad grad--green">services</em> for Dorset',
+        hero_trust("Cyber security services for businesses and homes across Bournemouth, Poole and Dorset. Ransomware, scams and phishing don&rsquo;t care whether you&rsquo;re a family or a business &mdash; they just look for the easy way in. We close every door with layered, always-on protection that&rsquo;s set up, managed and watched over by us, keeping you safe online 24/7."),
         cta1=("Get Protected", "/contact/"), cta2=("Free IT Health Check", "/contact/"),
         chips=["Malwarebytes Partner", "Layered defence", "Monitored 24/7"]),
    f'''    <section class="section" aria-label="Why it matters">
@@ -4369,7 +4372,7 @@ add(
           <p class="eyebrow mono">/01 — WHY IT MATTERS</p>
           <h2 class="section-title" data-title>One wrong click shouldn&rsquo;t cost you everything<span class="title-underline"></span></h2>
           <p>Cybercrime targets homes and small businesses just as hard as big companies &mdash; because they&rsquo;re often the softest targets. One dodgy email or weak password can mean locked files, a drained bank account or stolen customer data.</p>
-          <p><strong>So we don&rsquo;t rely on a single tool.</strong> We build layers of protection that work together &mdash; and we manage and monitor them for you, so security actually stays switched on instead of lapsing the moment life gets busy.</p>
+          <p><strong>So we don&rsquo;t rely on a single tool.</strong> We build layers of protection that work together &mdash; and we manage and monitor them for you, so security actually stays switched on instead of lapsing the moment life gets busy. For businesses that need certified assurance, we also help you achieve <a href="/cyber-essentials/">Cyber Essentials</a>.</p>
         </div>
         <ul class="checklist" data-stagger>
 {checklist(["Endpoint protection &amp; antivirus","Ransomware prevention","Phishing &amp; scam filtering","Multi-factor authentication","Password management","Web &amp; DNS filtering","Verified backups &amp; recovery","24/7 threat monitoring","Staff &amp; family awareness","Plain-English security reviews"])}

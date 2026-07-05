@@ -53,6 +53,7 @@ COORDS = {
 SEO_TITLES = {
  "it-support-blandford-forum": "IT Support Blandford Forum | Same-Day, No Call-Out Fee",
  "it-support-dorset": "IT Support Near Me in Dorset | 365 Techies",
+ "it-support-gillingham": "IT Support Gillingham, Dorset | Same-Day, No Call-Out Fee",
 }
 
 REPAIR_SLUGS = {s for _t, s, _n, _it in bp.REPAIR_TOWNS}  # towns that have a computer-repair page
@@ -74,7 +75,11 @@ def make_local(i, slug, town, region, lede, intro_para, nearby):
       (f"Do you provide business IT services and Microsoft 365 support in {town}?", f"Yes — we provide managed business IT services and IT solutions for {town} businesses, including Microsoft 365 setup, migration and support, cybersecurity, backups, and fast remote and on-site help."),
     ]
     if slug == "it-support-dorset":
-        faqs = faqs + [("Do you provide IT support near me?", "If you&rsquo;re in Dorset &mdash; Bournemouth, Poole, Christchurch, Dorchester, Weymouth or the surrounding towns &mdash; then yes, we&rsquo;re your local IT support team. Most issues are fixed remotely in minutes, and we visit on-site across the county when hands-on help is needed. Call 01202&nbsp;775566.")]
+        faqs = faqs + [
+          ("Do you provide IT support near me?", "If you&rsquo;re in Dorset &mdash; Bournemouth, Poole, Christchurch, Dorchester, Weymouth or the surrounding towns &mdash; then yes, we&rsquo;re your local IT support team. Most issues are fixed remotely in minutes, and we visit on-site across the county when hands-on help is needed. Call 01202&nbsp;775566."),
+          ("Can I find IT support and services near me in Dorset?", "Yes &mdash; wherever you are in Dorset you&rsquo;ll find local IT support and services near you. Homes, sole traders and businesses across the county rely on us as their nearby IT experts for computer support, Microsoft 365, cybersecurity and everyday help &mdash; remotely in minutes and on-site when needed."),
+          ("Do you offer managed IT services and IT solutions in Dorset?", "Yes &mdash; we&rsquo;re a family-run Dorset <a href=\"/managed-it-support/\">managed IT services</a> provider (MSP), delivering proactive IT solutions for businesses across the county: monthly <a href=\"/business-it-support-subscriptions/\">business IT support</a>, Microsoft 365, cybersecurity, backups, servers and networks, all for one predictable monthly cost."),
+        ]
     nearby_li = "\n".join(f'          <li><a href="{h}">{l}</a></li>' for l, h in nearby)
     revs = [REVPOOL[i % len(REVPOOL)], REVPOOL[(i + 2) % len(REVPOOL)]]
     content = "\n".join([
@@ -211,7 +216,7 @@ LOCAL = [
   [("IT Support Wimborne", "/it-support-wimborne/"), ("IT Support Bournemouth", "/it-support-bournemouth/"), ("IT Support Ringwood", "/it-support-ringwood/"), ("Areas Covered", "/areas-covered/")]),
  ("it-support-dorset", "Dorset", "South Coast",
   "Managed IT support across Dorset for homes, sole traders and small businesses — your local managed service provider (MSP) for monthly support plans, computer repairs, Microsoft 365 and cybersecurity, remote and on-site.",
-  "From <a href=\"/it-support-bournemouth/\">Bournemouth</a> and <a href=\"/it-support-poole/\">Poole</a> to Dorchester, Weymouth and the Blackmore Vale, we&rsquo;re the family-run <strong>managed service provider (MSP)</strong> looking after homes and small businesses right across Dorset. In plain English, that means we proactively manage and protect your technology for one predictable monthly cost &mdash; fast remote help wherever you are, plus on-site visits across the county.",
+  "From <a href=\"/it-support-bournemouth/\">Bournemouth</a> and <a href=\"/it-support-poole/\">Poole</a> to Dorchester, Weymouth and <a href=\"/it-support-gillingham/\">Gillingham</a> in the Blackmore Vale, we&rsquo;re the family-run <strong>managed service provider (MSP)</strong> looking after homes and small businesses right across Dorset. In plain English, that means we proactively manage and protect your technology for one predictable monthly cost &mdash; fast remote help wherever you are, plus on-site visits across the county.",
   [("IT Support Bournemouth", "/it-support-bournemouth/"), ("IT Support Poole", "/it-support-poole/"), ("IT Support Christchurch", "/it-support-christchurch/"), ("Areas Covered", "/areas-covered/")]),
  ("it-support-ringwood", "Ringwood", "Hampshire",
   "Monthly IT support, Microsoft 365 help, remote computer support and security advice for homes and businesses in Ringwood and the surrounding area.",

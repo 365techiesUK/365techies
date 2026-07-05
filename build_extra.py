@@ -7486,7 +7486,7 @@ def repair_pages():
                              "description": "Free diagnosis, then a clear fixed quote. No call-out fee, no-fix-no-fee, and a 12-month warranty on every repair. Free local collection across Dorset."}
             return graph([crumb_sub(s, "Computer Repairs", "computer-repairs", f"Computer Repair {_town}"), webpage(s, f"Computer & Laptop Repair {_town}", _desc),
                           svc, faqpage(s, _faqs)])
-        add(slug=slug, title=f"Computer & Laptop Repair {town} | 365 Techies",
+        add(slug=slug, title=f"Computer & Laptop Repair {town} | No Call-Out Fee",
             desc=desc, og_title=f"Computer & Laptop Repair {town} | 365 Techies", schema=schema, content=content)
 repair_pages()
 
