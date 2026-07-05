@@ -4,6 +4,7 @@ Holds the shared header/footer/head once; each PAGE supplies unique content + SE
 Run: python build_pages.py  (writes <slug>/index.html for every page)
 """
 import os, json, datetime
+from tool_seo_data import TOOL_TITLES, TOOL_SEO
 TODAY = datetime.date.today().isoformat()  # build date — used for dateModified / sitemap lastmod (freshness)
 # Per-town UNIQUE researched local content (keyed by town name) — injected into repair/town
 # pages so each is genuinely distinct (kills doorway/duplicate-content risk). Built by the
@@ -3711,7 +3712,70 @@ REMOTE_ACCESS_BAND = f'''    <section class="section" aria-label="Remote access 
     </section>'''
 
 PAGES = []
+def howto_node(slug, name, steps):
+    return {"@type": "HowTo", "@id": f"{SITE}/{slug}/#howto", "name": name,
+            "step": [{"@type": "HowToStep", "position": i + 1, "name": n, "text": t} for i, (n, t) in enumerate(steps)]}
+
+def _faq_q(q, a):
+    return {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}}
+
+def tool_seo_html(slug, enh):
+    """Visible 'how it works' block appended to a tool page: answer-first sentence,
+    optional key-facts HTML, ordered how-to steps and a mini-FAQ. Matches the injected schema."""
+    ans = enh.get("answer", "")
+    ht = enh.get("howto") or {}
+    name = ht.get("name", "How it works")
+    steps = ht.get("steps", [])
+    kf = enh.get("keyfacts", "")
+    faqs = enh.get("faqs", [])
+    ans_html = f'\n        <p class="lede"><strong>{ans}</strong></p>' if ans else ""
+    kf_html = f'\n        {kf}' if kf else ""
+    steps_html = ""
+    if steps:
+        lis = "\n".join(f'          <li><strong>{n}</strong> &mdash; {t}</li>' for n, t in steps)
+        steps_html = f'\n        <h3>Step by step</h3>\n        <ol data-stagger>\n{lis}\n        </ol>'
+    faq_html_inner = ""
+    if faqs:
+        qa = "\n".join(f'          <h3>{q}</h3>\n          <p>{a}</p>' for q, a in faqs)
+        faq_html_inner = f'\n        <h3 class="mono" style="opacity:.7">Good to know</h3>\n{qa}'
+    return f'''    <section class="section section--alt" aria-label="How this tool works">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">// HOW IT WORKS</p>
+        <h2 class="section-title" data-title>{name}<span class="title-underline"></span></h2>{ans_html}{kf_html}{steps_html}{faq_html_inner}
+      </div>
+    </section>'''
+
 def add(**kw):
+    _slug = kw.get("slug")
+    if _slug in TOOL_TITLES:
+        kw["title"] = TOOL_TITLES[_slug]
+    _enh = TOOL_SEO.get(_slug)
+    if _enh:
+        if _enh.get("meta"):
+            kw["desc"] = _enh["meta"]
+        _orig = kw.get("schema")
+        def _wrap(s, _orig=_orig, _e=_enh, _sl=_slug):
+            obj = json.loads(_orig(s) if _orig else graph([]))
+            g = obj["@graph"]
+            ht = _e.get("howto")
+            if ht and ht.get("steps"):
+                g.append(howto_node(_sl, ht["name"], ht["steps"]))
+            if _e.get("faqs"):
+                items = [_faq_q(q, a) for q, a in _e["faqs"]]
+                fp = next((n for n in g if isinstance(n, dict) and n.get("@type") == "FAQPage"), None)
+                if fp is not None:
+                    fp.setdefault("mainEntity", []).extend(items)
+                else:
+                    g.append({"@type": "FAQPage", "@id": f"{SITE}/{_sl}/#faq", "mainEntity": items})
+            if _e.get("webapp") and not any(isinstance(n, dict) and n.get("@type") == "WebApplication" for n in g):
+                g.append({"@type": "WebApplication", "name": _e.get("appName", "365 Techies free tool"),
+                          "applicationCategory": "UtilitiesApplication", "operatingSystem": "Web (all browsers)",
+                          "url": f"{SITE}/{_sl}/", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "GBP"},
+                          "provider": {"@id": SITE + "/#business"}})
+            return json.dumps(obj, indent=2, ensure_ascii=False)
+        kw["schema"] = _wrap
+        if kw.get("content") is not None:
+            kw["content"] = kw["content"] + "\n" + tool_seo_html(_slug, _enh)
     PAGES.append(kw)
 
 # ============================================================ MONTHLY IT SUPPORT
