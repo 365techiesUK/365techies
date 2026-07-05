@@ -12,6 +12,7 @@ from build_pages import (add, graph, crumb, webpage, service, faqpage,
                          promise_strip, uk_remote_band, WCHECK_TOOL, EMAILSEC_TOOL, PWNED_TOOL, PRIVACY_TOOL, SCAM_TOOL, PWGEN_TOOL, WIFIQR_TOOL, DNS_TOOL, PCBENCH_TOOL, QRGEN_TOOL,
                          SIGGEN_TOOL, SSLCHECK_TOOL, DOMEXP_TOOL, SOLARCALC_TOOL, AVTEST_TOOL, VBUILDER_TOOL, PCBUILD_TOOL, TOOLS, tool_cards, tools_strip, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
 from build_local import make_customer
+from new_pages_data import NEW_PAGES
 
 # ── Competitive prices for the new AI offerings (owner-approved 2026-06-17; edit here) ──
 AI_VOICE_FROM = "95"   # AI voice receptionist agent, £/month
@@ -12624,6 +12625,48 @@ def online_safety_course():
     add(slug=slug, title="Free Online Safety Course, Spot the Scams | 365 Techies",
         desc=desc, og_title="Free Online Safety Course | 365 Techies", schema=schema, content=content)
 online_safety_course()
+
+# ============================================================ EASY-KEYWORD PAGES (data-driven, from new_pages_data.py)
+def _sec_block(s):
+    return f'''    <section class="section section--alt" aria-label="{s['h2']}">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">{s['eyebrow']}</p>
+        <h2 class="section-title" data-title>{s['h2']}<span class="title-underline"></span></h2>
+{s['html']}
+      </div>
+    </section>'''
+
+def build_new_page(d):
+    faqs = [(f['q'], f['a']) for f in d['faqs']]
+    sections = "\n".join(_sec_block(s) for s in d['sections'])
+    cross = ""
+    if d.get('crossLinksHtml'):
+        cross = f'''    <section class="section" aria-label="Related">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">// RELATED</p>
+{d['crossLinksHtml']}
+      </div>
+    </section>'''
+    content = "\n".join([
+      hero(bc(d['crumbName']), d['eyebrow'], d['h1'], hero_trust(d['lede']),
+           cta1=tuple(d['primaryCta']), cta2=tuple(d['secondaryCta']), chips=list(d['chips'])),
+      sections,
+      cross,
+      faq_html(faqs),
+      cta(d['ctaHead'], d['ctaSub'], primary=tuple(d['primaryCta']), secondary=tuple(d['secondaryCta'])),
+    ])
+    def schema(s, _d=d, _faqs=faqs):
+        nodes = [crumb(s, _d['crumbName']), webpage(s, _d['crumbName'], _d['metaDesc'])]
+        if _d.get('schemaKind') == 'service':
+            nodes.append(service(s, _d.get('serviceName', _d['crumbName']), _d['metaDesc'], _d.get('serviceName', _d['crumbName'])))
+        if _d.get('howToSteps'):
+            nodes.append(bp.howto_node(s, _d.get('howToName', _d['crumbName']), [(st['name'], st['text']) for st in _d['howToSteps']]))
+        nodes.append(faqpage(s, _faqs))
+        return graph(nodes)
+    add(slug=d['slug'], title=d['title'], desc=d['metaDesc'], og_title=d['ogTitle'], schema=schema, content=content)
+
+for _np in NEW_PAGES:
+    build_new_page(_np)
 
 if __name__ == "__main__":
     w = write_all()

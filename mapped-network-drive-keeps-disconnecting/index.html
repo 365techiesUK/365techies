@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Google tag (gtag.js) - Consent Mode v2: denied by default, granted on cookie-accept -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-EBLTJ9WJXZ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', { ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'denied', wait_for_update: 500 });
+    try { if (localStorage.getItem('tt_consent') === 'accepted') gtag('consent', 'update', { ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted', analytics_storage: 'granted' }); } catch (e) {}
+    gtag('js', new Date());
+    gtag('config', 'G-EBLTJ9WJXZ');
+  </script>
+  <title>Mapped Drive Keeps Disconnecting? Fix It | 365 Techies</title>
+  <meta name="description" content="Mapped network drive keeps disconnecting on Windows 11? The usual causes are saved credentials, NIC power settings, SMB timeouts and Wi-Fi. Real fixes plus&hellip;" />
+  <link rel="canonical" href="https://365techies.co.uk/mapped-network-drive-keeps-disconnecting/" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <meta name="author" content="365 Techies Limited" />
+  <meta name="geo.region" content="GB-BCP" />
+  <meta name="geo.placename" content="Bournemouth, Dorset" />
+  <meta name="geo.position" content="50.7192;-1.8808" />
+  <meta name="ICBM" content="50.7192, -1.8808" />
+  <meta name="theme-color" content="#070d22" />
+  <meta name="color-scheme" content="dark" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="365 Techies" />
+  <meta property="og:locale" content="en_GB" />
+  <meta property="og:url" content="https://365techies.co.uk/mapped-network-drive-keeps-disconnecting/" />
+  <meta property="og:title" content="Mapped Network Drive Keeps Disconnecting on Windows 11? Here's the Fix" />
+  <meta property="og:description" content="Mapped network drive keeps disconnecting on Windows 11? The usual causes are saved credentials, NIC power settings, SMB timeouts and Wi-Fi. Real fixes plus fast remote help across Poole, Bournemouth & Dorset." />
+  <meta property="og:image" content="https://365techies.co.uk/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Mapped Network Drive Keeps Disconnecting on Windows 11? Here's the Fix" />
+  <meta name="twitter:description" content="Mapped network drive keeps disconnecting on Windows 11? The usual causes are saved credentials, NIC power settings, SMB timeouts and Wi-Fi. Real fixes plus fast remote help across Poole, Bournemouth & Dorset." />
+  <meta name="twitter:image" content="https://365techies.co.uk/og-image.jpg" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+  <link rel="preconnect" href="https://fonts.bunny.net" />
+  <link rel="preconnect" href="https://fonts.bunny.net" crossorigin />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/clash-display-700.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
+  <noscript>
+    <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
+  </noscript>
+  <link rel="stylesheet" href="/css/styles.min.css?v=51" />
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://365techies.co.uk/#website",
+      "url": "https://365techies.co.uk/",
+      "name": "365 Techies",
+      "inLanguage": "en-GB",
+      "publisher": {
+        "@id": "https://365techies.co.uk/#business"
+      }
+    },
+    {
+      "@type": [
+        "LocalBusiness",
+        "ProfessionalService"
+      ],
+      "@id": "https://365techies.co.uk/#business",
+      "name": "365 Techies",
+      "legalName": "365 Techies Limited",
+      "url": "https://365techies.co.uk/",
+      "telephone": "+441202775566",
+      "email": "help@365techies.co.uk",
+      "foundingDate": "1995",
+      "image": "https://365techies.co.uk/og-image.jpg",
+      "logo": "https://365techies.co.uk/logo.jpg",
+      "priceRange": "££",
+      "alternateName": "365 Techies Ltd",
+      "slogan": "The IT support experts",
+      "description": "Family-run, leading Managed Service Provider (MSP) established in 1995 — Dell hardware specialists, Microsoft partners and certified Microsoft Office Specialists. Fully managed monthly IT support, cybersecurity, backups and cloud, plus one-off computer repairs and refurbished Dell hardware, for homes and small businesses across Bournemouth, Poole and Dorset.",
+      "currenciesAccepted": "GBP",
+      "paymentAccepted": "Direct Debit (GoCardless), Bank Transfer, Credit Card, Debit Card",
+      "identifier": {
+        "@type": "PropertyValue",
+        "name": "Company registration number",
+        "value": "11073501"
+      },
+      "memberOf": {
+        "@type": "Organization",
+        "name": "Sustainable Dorset",
+        "url": "https://www.sustainabledorset.org/"
+      },
+      "knowsAbout": [
+        "IT support",
+        "Computer repair",
+        "Laptop repair",
+        "Microsoft 365",
+        "Cybersecurity",
+        "Data backup",
+        "Network security",
+        "Wi-Fi",
+        "Remote support",
+        "Dell hardware",
+        "Dell Latitude laptops",
+        "Dell OptiPlex desktops",
+        "Refurbished computers",
+        "Malwarebytes Premium",
+        "VPN",
+        "Online safety",
+        "Accessible IT support",
+        "IT support for retired people",
+        "IT support for disabled people",
+        "Website design",
+        "Web hosting",
+        "Business email",
+        "Managed service provider",
+        "Managed IT services",
+        "MSP",
+        "New Forest IT support"
+      ],
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Bournemouth",
+        "addressRegion": "Dorset",
+        "addressCountry": "GB"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 50.7192,
+        "longitude": -1.8808
+      },
+      "areaServed": [
+        {
+          "@type": "AdministrativeArea",
+          "name": "Dorset"
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "Bournemouth, Christchurch and Poole"
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "New Forest"
+        }
+      ],
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday"
+        ],
+        "opens": "09:00",
+        "closes": "17:00"
+      },
+      "hasMap": "https://www.google.com/maps/place/?q=place_id:ChIJlTb8YRuic0gRCRczduB8OFI",
+      "sameAs": [
+        "https://www.facebook.com/365computersuk",
+        "https://www.google.com/maps/place/?q=place_id:ChIJlTb8YRuic0gRCRczduB8OFI",
+        "https://find-and-update.company-information.service.gov.uk/company/11073501"
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://365techies.co.uk/mapped-network-drive-keeps-disconnecting/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://365techies.co.uk/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Mapped Drive Keeps Disconnecting",
+          "item": "https://365techies.co.uk/mapped-network-drive-keeps-disconnecting/"
+        }
+      ]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://365techies.co.uk/mapped-network-drive-keeps-disconnecting/#webpage",
+      "url": "https://365techies.co.uk/mapped-network-drive-keeps-disconnecting/",
+      "name": "Mapped Drive Keeps Disconnecting",
+      "description": "Mapped network drive keeps disconnecting on Windows 11? The usual causes are saved credentials, NIC power settings, SMB timeouts and Wi-Fi. Real fixes plus fast remote help across Poole, Bournemouth & Dorset.",
+      "inLanguage": "en-GB",
+      "isPartOf": {
+        "@id": "https://365techies.co.uk/#website"
+      },
+      "about": {
+        "@id": "https://365techies.co.uk/#business"
+      },
+      "breadcrumb": {
+        "@id": "https://365techies.co.uk/mapped-network-drive-keeps-disconnecting/#breadcrumb"
+      },
+      "primaryImageOfPage": {
+        "@type": "ImageObject",
+        "url": "https://365techies.co.uk/og-image.jpg"
+      },
+      "datePublished": "2026-06-12",
+      "dateModified": "2026-07-06"
+    },
+    {
+      "@type": "HowTo",
+      "@id": "https://365techies.co.uk/mapped-network-drive-keeps-disconnecting/#howto",
+      "name": "How to fix a mapped network drive that keeps disconnecting on Windows 11",
+      "step": [
+        {
+          "@type": "HowToStep",
+          "position": 1,
+          "name": "Save the drive's login in Credential Manager",
+          "text": "Search Credential Manager in the Start menu, choose Windows Credentials, then Add a Windows credential. Enter the server or NAS name (e.g. \\\\SERVER or its IP) with the correct username and password so Windows stops dropping the connection when the session lapses."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 2,
+          "name": "Stop Windows powering off the network card",
+          "text": "Right-click Start, open Device Manager, expand Network adapters, open your adapter's Properties, go to the Power Management tab, and untick \"Allow the computer to turn off this device to save power\"."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 3,
+          "name": "Re-map with reconnect at sign-in",
+          "text": "In File Explorer, go to This PC then Map network drive, choose the folder, and tick \"Reconnect at sign-in\" (and \"Connect using different credentials\" if the share needs a separate login) so the drive comes back cleanly every time you log on."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 4,
+          "name": "Address idle SMB timeouts",
+          "text": "Idle shared-folder connections can be dropped by an SMB autodisconnect on the Windows server or the NAS. The idle timeout can be raised, but these settings are best changed knowingly — if unsure, have it configured for you rather than risk other side-effects."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 5,
+          "name": "Prefer a wired connection over Wi-Fi",
+          "text": "Mapped drives need a steady connection. If the affected PC is on Wi-Fi, plug in a network cable where possible, or improve access-point placement and channels, since dropped Wi-Fi packets are a common cause of disconnects."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 6,
+          "name": "Move office mapping to Group Policy, or call us",
+          "text": "In a business, map drives centrally via Group Policy or a logon script (set to \"Update\", not \"Recreate\") so every machine reconnects consistently. If it's still dropping, call 01202 775566 or book online and we'll fix it remotely across the whole office. No call-out fee, and no fix, no fee."
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://365techies.co.uk/mapped-network-drive-keeps-disconnecting/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Why does my mapped network drive keep disconnecting in Windows 11?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Usually one of a few predictable causes: the login for the server or NAS isn't saved in Credential Manager, so Windows drops the connection; a power-saving setting is switching off your network card; an idle SMB session is timing out; the drive isn't set to reconnect at sign-in; or the machine is on unstable Wi-Fi. Working through those in order fixes the great majority of cases — and it's a quick job for us to sort remotely."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I stop a network drive from disconnecting?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Start with the two big ones. Save the drive's username and password in Credential Manager (search it in Start, choose Windows Credentials, add the server or NAS name with the login). Then stop Windows powering down the network card: in Device Manager, open your network adapter's Power Management tab and untick \"Allow the computer to turn off this device to save power\". Re-map the drive with \"Reconnect at sign-in\" ticked, and if it's on Wi-Fi, try a wired connection."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why does my mapped drive show a red X but still work when I click it?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "That red X is Windows telling you it hasn't verified the connection recently — often because an idle SMB session timed out or the drive hasn't reconnected since you signed in. It usually springs back to life the moment you double-click it. Your files are fine, but it's a sign the connection is dropping when idle, which is worth fixing properly so it stays reliable. The credential and reconnect-at-logon fixes on this page usually clear it."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is a disconnecting mapped drive a sign of a bigger network problem?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Occasionally, but usually not. On small-office networks it's nearly always a local setting — saved credentials, network-card power management, an SMB timeout or Wi-Fi — rather than a failing server or serious fault. That said, if several PCs drop the same drive at the same times, or it coincides with the network feeling slow, it's worth having someone check the switch, cabling, NAS or server. We can tell you quickly which it is and whether anything bigger needs attention."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Should office drives be mapped with Group Policy instead of by hand?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "For a business, yes — it's much more reliable. When each person maps their own drives, letters and paths drift out of sync and problems are hard to support. Mapping centrally via Group Policy or a logon script means every machine gets the same drives, mapped the same way, that reconnect consistently (and set to \"Update\" rather than \"Recreate\" so they don't drop on every refresh). Tidying this up is a standard part of taking on an office's IT support, and it removes a whole category of \"my drive's gone again\" tickets."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can 365 Techies fix a disconnecting drive remotely?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes — it's routine work for us. We connect with your permission using Splashtop SOS (we phone first, you watch the session, it ends when we're done), work through the real causes in order, and get the drive stable for good. Same-day response, no call-out fee, no fix, no fee, and we can do the whole office rather than one PC at a time. We look after businesses across Poole, Bournemouth, Christchurch and Dorset."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+</head>
+<body id="top">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="grid-overlay" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <header class="site-header">
+    <div class="status-ticker" aria-hidden="true">
+      <div class="status-ticker__track">
+        <span>&#9679; CALL 01202 775566&ensp;//&ensp;FAMILY BUSINESS SINCE 1995&ensp;//&ensp;DORSET MICROSOFT EDUCATION RESOURCE CENTRE 1998&ndash;2008&ensp;//&ensp;IT SUPPORT FOR MERCEDES-BENZ PENTAGON 1998&ndash;2008&ensp;//&ensp;COMPUTER SALES &amp; SERVICE CENTRE 2008&ndash;2017&ensp;//&ensp;KINSON COMMUNITY CENTRE 2017&ndash;NOW&ensp;//&ensp;ENVIRONMENT AGENCY RIVER AVON WIRELESS LINK SINCE 2015&ensp;//&ensp;DELL SPECIALISTS&ensp;//&ensp;WEBSITE DESIGN, HOSTING &amp; EMAIL&ensp;//&ensp;WORK FROM ANYWHERE &mdash; REMOTE PC ACCESS FOR SUPPORT CUSTOMERS&ensp;//&ensp;MICROSOFT PARTNER &amp; OFFICE SPECIALISTS&ensp;//&ensp;WINDOWS &amp; ANDROID SPECIALISTS&ensp;//&ensp;SAME-DAY RESPONSE &middot; USUALLY MINUTES REMOTELY&ensp;//&ensp;<a href="/heatwave-tech-guide/" tabindex="-1">HEATWAVE? KEEP YOUR TECH COOL &mdash; FREE GUIDE</a>&ensp;//&ensp;<a href="/is-it-down/" tabindex="-1">IS IT DOWN, OR IS IT JUST YOU? CHECK LIVE</a>&ensp;//&ensp;REMOTE IT SUPPORT ACROSS THE WHOLE UK&ensp;//&ensp;MALWAREBYTES PARTNER&ensp;//&ensp;NVIDIA &amp; SCAN PARTNER&ensp;//&ensp;RICHER SOUNDS PARTNER&ensp;//&ensp;BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;//&ensp;PLANS FROM &pound;18.25/MO&ensp;//&ensp;MON&ndash;FRI 9AM&ndash;5PM&ensp;//&ensp;</span>
+        <span>&#9679; CALL 01202 775566&ensp;//&ensp;FAMILY BUSINESS SINCE 1995&ensp;//&ensp;DORSET MICROSOFT EDUCATION RESOURCE CENTRE 1998&ndash;2008&ensp;//&ensp;IT SUPPORT FOR MERCEDES-BENZ PENTAGON 1998&ndash;2008&ensp;//&ensp;COMPUTER SALES &amp; SERVICE CENTRE 2008&ndash;2017&ensp;//&ensp;KINSON COMMUNITY CENTRE 2017&ndash;NOW&ensp;//&ensp;ENVIRONMENT AGENCY RIVER AVON WIRELESS LINK SINCE 2015&ensp;//&ensp;DELL SPECIALISTS&ensp;//&ensp;WEBSITE DESIGN, HOSTING &amp; EMAIL&ensp;//&ensp;WORK FROM ANYWHERE &mdash; REMOTE PC ACCESS FOR SUPPORT CUSTOMERS&ensp;//&ensp;MICROSOFT PARTNER &amp; OFFICE SPECIALISTS&ensp;//&ensp;WINDOWS &amp; ANDROID SPECIALISTS&ensp;//&ensp;SAME-DAY RESPONSE &middot; USUALLY MINUTES REMOTELY&ensp;//&ensp;<a href="/heatwave-tech-guide/" tabindex="-1">HEATWAVE? KEEP YOUR TECH COOL &mdash; FREE GUIDE</a>&ensp;//&ensp;<a href="/is-it-down/" tabindex="-1">IS IT DOWN, OR IS IT JUST YOU? CHECK LIVE</a>&ensp;//&ensp;REMOTE IT SUPPORT ACROSS THE WHOLE UK&ensp;//&ensp;MALWAREBYTES PARTNER&ensp;//&ensp;NVIDIA &amp; SCAN PARTNER&ensp;//&ensp;RICHER SOUNDS PARTNER&ensp;//&ensp;BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;//&ensp;PLANS FROM &pound;18.25/MO&ensp;//&ensp;MON&ndash;FRI 9AM&ndash;5PM&ensp;//&ensp;</span>
+      </div>
+    </div>
+    <div class="header-bar">
+      <a class="logo" href="/" aria-label="365 Techies — home">
+        <svg class="logo__mark" viewBox="0 0 32 32" aria-hidden="true">
+          <circle cx="16" cy="16" r="13.4" fill="none" stroke="#8fb3d9" stroke-width="2" stroke-linecap="round" stroke-dasharray="63 22" transform="rotate(-55 16 16)"/>
+          <circle cx="16" cy="16" r="9.4" fill="none" stroke="#1d97e3" stroke-width="2" stroke-linecap="round" stroke-dasharray="46 14" transform="rotate(115 16 16)"/>
+          <path d="M12.4 18.4l3.6-5.8 3.4 5.1z" fill="none" stroke="#8fb3d9" stroke-width="1.2"/>
+          <circle cx="12.4" cy="18.4" r="1.6" fill="#00ce1b"/>
+          <circle cx="16" cy="12.6" r="1.6" fill="#1d97e3"/>
+          <circle cx="19.4" cy="17.7" r="1.6" fill="#1d97e3"/>
+        </svg>
+        <span class="logo__text"><em>365</em>techies</span>
+      </a>
+      <nav class="desktop-nav" aria-label="Primary">
+        <a href="/">Home</a>
+        <div class="nav-item has-dropdown">
+          <a href="/home-it-support-subscriptions/" aria-haspopup="true">For Home
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/home-it-support-subscriptions/">Home IT Support</a>
+            <a href="/home-it-support-plans/">Home Support Plans</a>
+            <a href="/family-it-support/">Families</a>
+            <a href="/it-support-for-retired-users/">Retired Users</a>
+            <a href="/it-support-for-disabled-people/">Disabled People</a>
+            <a href="/computer-help-for-seniors/">Help for Seniors</a>
+            <a href="/it-support-for-home-workers/">Home Workers</a>
+            <a href="/it-support-for-digital-nomads/">Digital Nomads</a>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown">
+          <a href="/business-it-support-subscriptions/" aria-haspopup="true">For Business
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/business-it-support-subscriptions/">Business IT Support</a>
+            <a href="/business-it-support-plans/">Business Support Plans</a>
+            <a href="/small-business-it-support/">Small Businesses</a>
+            <a href="/it-support-for-sole-traders/">Sole Traders</a>
+            <a href="/it-support-for-education/">Schools &amp; Education</a>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown">
+          <a href="/services/" aria-haspopup="true">Services
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/services/">All Services &#8594;</a>
+            <a href="/remote-it-support/">Remote IT Support</a>
+            <a href="/preventative-maintenance/">Preventative Maintenance</a>
+            <a href="/microsoft-365-support/">Microsoft 365</a>
+            <a href="/cybersecurity-support/">Cybersecurity</a>
+            <a href="/computer-repairs/">Computer Repairs</a>
+            <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
+            <a href="/custom-pc-builds/">Custom-Built PCs</a>
+            <a href="/wifi-support/">Wi-Fi Support</a>
+            <a href="/email-support/">Email Support</a>
+            <a href="/printer-support/">Printer Support</a>
+            <a href="/backup-support/">Backup Support</a>
+            <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
+            <a href="/cctv-smart-home/">CCTV &amp; Smart Home</a>
+            <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
+            <a href="/starlink-internet/">Starlink Internet</a>
+            <a href="/agentic-ai-systems/">Agentic AI &amp; Automation</a>
+            <a href="/it-support-by-industry/">IT Support by Industry</a>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown">
+          <a href="/free-tools/" aria-haspopup="true">Free Tools
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/free-tools/">All Free Tools &#8594;</a>
+            <a href="/online-safety-course/">Free Online Safety Course</a>
+            <a href="/broadband-speed-checker/">Broadband Speed Test</a>
+            <a href="/pc-benchmark/">PC Benchmark</a>
+            <a href="/website-checker/">Website Checker</a>
+            <a href="/email-security-checker/">Email Security Checker</a>
+            <a href="/password-breach-checker/">Password Breach Checker</a>
+            <a href="/link-safety-checker/">Link Safety Checker</a>
+            <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
+            <a href="/custom-pc-builder/">Custom PC Builder</a>
+            <a href="/victron-system-builder/">Victron System Builder</a>
+            <a href="/spot-the-scam/">Spot the Scam Quiz</a>
+            <a href="/is-it-down/">Is It Down? Status Checker</a>
+            <a href="/computer-spec-checker/">PC Hardware Checker</a>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown">
+          <a href="/book-service/" aria-haspopup="true">Get Help
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/book-service/">Book a Service</a>
+            <a href="/book-a-collection/">Book a Collection</a>
+            <a href="/remote-support/">Start Remote Support</a>
+            <a href="/emergency-it-help/">Emergency IT Help</a>
+            <a href="/is-it-down/">Is Something Down?</a>
+            <a href="/support-portal/">Support Portal</a>
+            <a href="/splashtop-business-guide/">Remote Access Guide</a>
+            <a href="/dell-latitude-3520-guide/">Dell Laptop Guide</a>
+            <a href="/dell-optiplex-guide/">Dell Desktop Guide</a>
+            <a href="/heatwave-tech-guide/">Heatwave Tech Guide</a>
+            <a href="/monthly-it-support/">Monthly IT Support</a>
+            <a href="/switching-it-provider/">Switching to Us</a>
+            <a href="/plan-finder/">Plan Finder</a>
+            <a href="/cost-calculator/">Cost Calculator</a>
+            <a href="/quick-quote/">Quick Quote</a>
+            <a href="/resources/">Resources &amp; Guides</a>
+            <a href="/it-advice/">IT Advice</a>
+            <a href="/faqs/">FAQs</a>
+          </div>
+        </div>
+        <a href="/pricing/">Pricing</a>
+        <div class="nav-item has-dropdown">
+          <a href="/about/" aria-haspopup="true">About
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/about/">About</a>
+            <a href="/our-values/">Our Values</a>
+            <a href="/meet-the-team/">Meet the Team</a>
+            <a href="/why-choose-365-techies/">Why Choose Us</a>
+            <a href="/our-guarantees/">Our Guarantees</a>
+            <a href="/case-studies/">Case Studies</a>
+            <a href="/reviews/">Reviews</a>
+            <a href="/accreditations/">Accreditations</a>
+            <a href="/service-level-agreement/">Service Level Agreement</a>
+            <a href="/areas-covered/">Areas Covered</a>
+            <a href="/it-support-uk-europe/">UK &amp; Europe</a>
+            <a href="/refer-a-friend/">Refer a Friend</a>
+          </div>
+        </div>
+        <a href="/contact/">Contact</a>
+      </nav>
+      <div class="header-actions">
+        <a href="tel:+441202775566" class="nav-phone" aria-label="Call 365 Techies on 01202 775566">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>01202 775566
+        </a>
+        <a href="/book-service/" class="nav-book" aria-label="Book a computer service">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v3M17 3v3M4 8h16M5 6h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z"/></svg>Book
+        </a>
+        <a href="https://sos.splashtop.com/en/sos-download" class="nav-sos" target="_blank" rel="noopener" aria-label="SOS emergency remote support — download Splashtop SOS">
+          <span class="sos-dot" aria-hidden="true"></span>SOS<span class="nav-sos__long">&nbsp;REMOTE SUPPORT</span>
+        </a>
+        <button class="mobile-menu-button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="menu-backdrop" aria-hidden="true"></div>
+  <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
+    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <nav class="mobile-menu__nav" aria-label="Mobile">
+      <a href="/">Home</a>
+      <a href="/pricing/">Pricing</a>
+      <a href="/contact/">Contact</a>
+      <details class="m-group">
+        <summary>For Home</summary>
+        <div class="m-group__links">
+          <a href="/home-it-support-subscriptions/">Home IT Support</a>
+          <a href="/home-it-support-plans/">Home Support Plans</a>
+          <a href="/family-it-support/">Families</a>
+          <a href="/it-support-for-retired-users/">Retired Users</a>
+          <a href="/it-support-for-disabled-people/">Disabled People</a>
+          <a href="/computer-help-for-seniors/">Help for Seniors</a>
+          <a href="/it-support-for-home-workers/">Home Workers</a>
+          <a href="/it-support-for-digital-nomads/">Digital Nomads</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>For Business</summary>
+        <div class="m-group__links">
+          <a href="/business-it-support-subscriptions/">Business IT Support</a>
+          <a href="/business-it-support-plans/">Business Support Plans</a>
+          <a href="/small-business-it-support/">Small Businesses</a>
+          <a href="/it-support-for-sole-traders/">Sole Traders</a>
+          <a href="/it-support-for-education/">Schools &amp; Education</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>Services</summary>
+        <div class="m-group__links">
+          <a href="/services/">All Services &#8594;</a>
+          <a href="/remote-it-support/">Remote IT Support</a>
+          <a href="/preventative-maintenance/">Preventative Maintenance</a>
+          <a href="/microsoft-365-support/">Microsoft 365</a>
+          <a href="/cybersecurity-support/">Cybersecurity</a>
+          <a href="/computer-repairs/">Computer Repairs</a>
+          <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
+          <a href="/custom-pc-builds/">Custom-Built PCs</a>
+          <a href="/wifi-support/">Wi-Fi Support</a>
+          <a href="/email-support/">Email Support</a>
+          <a href="/printer-support/">Printer Support</a>
+          <a href="/backup-support/">Backup Support</a>
+          <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
+          <a href="/cctv-smart-home/">CCTV &amp; Smart Home</a>
+          <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
+          <a href="/starlink-internet/">Starlink Internet</a>
+          <a href="/agentic-ai-systems/">Agentic AI &amp; Automation</a>
+          <a href="/it-support-by-industry/">IT Support by Industry</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>Free Tools</summary>
+        <div class="m-group__links">
+          <a href="/free-tools/">All Free Tools &#8594;</a>
+          <a href="/online-safety-course/">Free Online Safety Course</a>
+          <a href="/broadband-speed-checker/">Broadband Speed Test</a>
+          <a href="/pc-benchmark/">PC Benchmark</a>
+          <a href="/website-checker/">Website Checker</a>
+          <a href="/email-security-checker/">Email Security Checker</a>
+          <a href="/password-breach-checker/">Password Breach Checker</a>
+          <a href="/link-safety-checker/">Link Safety Checker</a>
+          <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
+          <a href="/custom-pc-builder/">Custom PC Builder</a>
+          <a href="/victron-system-builder/">Victron System Builder</a>
+          <a href="/spot-the-scam/">Spot the Scam Quiz</a>
+          <a href="/is-it-down/">Is It Down? Status Checker</a>
+          <a href="/computer-spec-checker/">PC Hardware Checker</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>Get Help</summary>
+        <div class="m-group__links">
+          <a href="/book-service/">Book a Service</a>
+          <a href="/book-a-collection/">Book a Collection</a>
+          <a href="/remote-support/">Start Remote Support</a>
+          <a href="/emergency-it-help/">Emergency IT Help</a>
+          <a href="/is-it-down/">Is Something Down?</a>
+          <a href="/support-portal/">Support Portal</a>
+          <a href="/splashtop-business-guide/">Remote Access Guide</a>
+          <a href="/dell-latitude-3520-guide/">Dell Laptop Guide</a>
+          <a href="/dell-optiplex-guide/">Dell Desktop Guide</a>
+          <a href="/heatwave-tech-guide/">Heatwave Tech Guide</a>
+          <a href="/monthly-it-support/">Monthly IT Support</a>
+          <a href="/switching-it-provider/">Switching to Us</a>
+          <a href="/plan-finder/">Plan Finder</a>
+          <a href="/cost-calculator/">Cost Calculator</a>
+          <a href="/quick-quote/">Quick Quote</a>
+          <a href="/resources/">Resources &amp; Guides</a>
+          <a href="/it-advice/">IT Advice</a>
+          <a href="/faqs/">FAQs</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>About &amp; Trust</summary>
+        <div class="m-group__links">
+          <a href="/about/">About</a>
+          <a href="/our-values/">Our Values</a>
+          <a href="/meet-the-team/">Meet the Team</a>
+          <a href="/why-choose-365-techies/">Why Choose Us</a>
+          <a href="/our-guarantees/">Our Guarantees</a>
+          <a href="/case-studies/">Case Studies</a>
+          <a href="/reviews/">Reviews</a>
+          <a href="/accreditations/">Accreditations</a>
+          <a href="/service-level-agreement/">Service Level Agreement</a>
+          <a href="/areas-covered/">Areas Covered</a>
+          <a href="/it-support-uk-europe/">UK &amp; Europe</a>
+          <a href="/refer-a-friend/">Refer a Friend</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>Resources &amp; Info</summary>
+        <div class="m-group__links">
+          <a href="/resources/">Resources &amp; Guides</a>
+          <a href="/it-advice/">IT Advice</a>
+          <a href="/it-support-cost-guide/">IT Cost Guide</a>
+          <a href="/it-jargon-buster/">IT Jargon Buster</a>
+          <a href="/cybersecurity-checklist/">Cybersecurity Checklist</a>
+          <a href="/cyber-threats/">Cyber Threats Explained</a>
+          <a href="/faqs/">FAQs</a>
+          <a href="/system-status/">System Status</a>
+          <a href="/privacy-policy/">Privacy Policy</a>
+          <a href="/cookie-policy/">Cookie Policy</a>
+          <a href="/terms/">Terms of Service</a>
+          <a href="/accessibility-statement/">Accessibility</a>
+        </div>
+      </details>
+    </nav>
+    <div class="mobile-menu__plans">
+      <a class="button sos" href="https://sos.splashtop.com/en/sos-download" target="_blank" rel="noopener"><span class="sos-dot" aria-hidden="true"></span>SOS Remote Support</a>
+      <a class="button primary" href="/book-service/">Book a Service</a>
+      <a class="button secondary" href="/home-it-support-plans/">Home Plans</a>
+      <a class="button secondary" href="/business-it-support-plans/">Business Plans</a>
+    </div>
+    <p class="mobile-menu__foot mono"><a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a><br /><a href="tel:+441202775566">01202 775566</a><br /><a href="sms:+447520615332">Text only: 07520 615332</a></p>
+  </aside>
+
+  <main id="main">
+    <section class="page-hero" aria-label="Introduction">
+      <div class="page-hero__inner">
+        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">Mapped Drive Keeps Disconnecting</span></nav>
+        <p class="eyebrow mono">// MAPPED DRIVE FIXES</p>
+        <h1>Mapped network drive <em class="grad grad--cyan">keeps disconnecting</em> on Windows 11?</h1>
+        <p class="lede">A mapped drive that shows a red X, throws "the network path was not found", or makes you reconnect every morning is one of the most common small-office headaches we fix. The good news: it's almost always a handful of predictable causes — saved credentials, network-card power settings, SMB timeouts or flaky Wi-Fi — and we sort it remotely, usually in minutes. Straight-talking help for Windows offices across Poole, Bournemouth, Christchurch and Dorset. Rated 4.9 on Google.</p>
+        <div class="page-hero__cta">
+          <a href="tel:+441202775566" class="button primary button--lg">Get it fixed — call 01202 775566</a>
+          <a href="/contact/" class="button secondary button--lg">Book remote office support</a>
+        </div>
+        <ul class="page-hero__chips mono"><li>&#9679; Common on small offices</li><li>&#9679; Fixed remotely</li><li>&#9679; Windows 11 & servers</li></ul>
+      </div>
+    </section>
+    <section class="section section--alt" aria-label="Why mapped drives drop — and why it's usually an easy fix">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">// WHY IT HAPPENS</p>
+        <h2 class="section-title" data-title>Why mapped drives drop — and why it's usually an easy fix<span class="title-underline"></span></h2>
+<p>A mapped network drive is just a shortcut that gives a shared folder — on a server, a NAS box, or another office PC — its own drive letter like <strong>S:</strong> or <strong>Z:</strong>, so it behaves like part of your own computer. When it "disconnects", the letter is still there but Windows has lost its live connection to the folder behind it, so you see a red X on the drive, a "reconnecting" spinner, or errors like <em>"the network path was not found"</em> or <em>"an error occurred while reconnecting"</em>.</p><p>Here's the reassuring part: on small-office networks this is rarely a sign of something seriously broken. It's almost always one of a short list of well-known causes — forgotten credentials, a power-saving setting quietly switching your network card off, a Windows or SMB timeout dropping idle connections, or an unstable Wi-Fi link. Work through the fixes below in order and most drives settle down. If you'd rather not touch the technical bits, this is exactly the kind of thing we quietly fix for offices as part of <a href="/it-services-poole/">day-to-day IT support</a> — often before your team even notices.</p>
+      </div>
+    </section>
+    <section class="section section--alt" aria-label="Saved credentials and network-card power settings">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">// THE TOP TWO CAUSES</p>
+        <h2 class="section-title" data-title>Saved credentials and network-card power settings<span class="title-underline"></span></h2>
+<p><strong>1. Credentials aren't being saved.</strong> By far the most common cause. If the drive lives on a server or NAS that needs a username and password, and those aren't stored, Windows quietly drops the connection whenever the session lapses — and you're prompted to sign in again (or just get an error). The fix is to store the login in <strong>Credential Manager</strong>: open the Start menu, search <strong>Credential Manager</strong>, choose <strong>Windows Credentials</strong>, then <strong>Add a Windows credential</strong>. Enter the server or NAS name (for example <em>\\SERVER</em> or its IP address) with the correct username and password. When you re-map the drive, tick <strong>"Reconnect at sign-in"</strong> and, if the share needs a different login, <strong>"Connect using different credentials"</strong> so it signs in cleanly every time. In business setups it's worth doing this consistently across every PC — something we handle as standard.</p><p><strong>2. Windows is powering down the network card.</strong> A sneaky one. By default, Windows is often allowed to switch off your network adapter to save power — and when it does, your mapped drive drops. To stop it: right-click <strong>Start</strong>, open <strong>Device Manager</strong>, expand <strong>Network adapters</strong>, right-click your adapter, choose <strong>Properties</strong>, go to the <strong>Power Management</strong> tab, and <strong>untick "Allow the computer to turn off this device to save power"</strong>. On laptops it's also worth setting the power plan so it doesn't aggressively sleep the network. These two fixes alone resolve the majority of the mapped-drive cases we see.</p>
+      </div>
+    </section>
+    <section class="section section--alt" aria-label="SMB session timeouts and reconnecting at logon">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">// TIMEOUTS & RECONNECTION</p>
+        <h2 class="section-title" data-title>SMB session timeouts and reconnecting at logon<span class="title-underline"></span></h2>
+<p><strong>Idle SMB sessions time out.</strong> SMB is the protocol Windows uses to talk to shared folders. To save resources, Windows and many servers/NAS devices automatically drop a connection that's been idle for a while (an "autodisconnect"). Come back after a coffee break and the drive shows disconnected until you double-click it. On the Windows server side this behaviour is controlled by the <em>autodisconnect</em> setting, and on a NAS the idle-timeout can usually be raised — but these are settings best changed knowingly, because getting them wrong can cause other issues, so it's a fair point to hand to us. Another common trigger on managed networks is <strong>Group Policy drive maps set to "Recreate"</strong> instead of "Update", which drop and rebuild the drive on every refresh; switching them to "Update" clears a whole class of these disconnects.</p><p><strong>Reconnect at logon — and persistent mapping.</strong> Make sure the drive is set to reconnect automatically. When you map it (in File Explorer, <strong>This PC</strong> → <strong>Map network drive</strong>), tick <strong>"Reconnect at sign-in"</strong>. In a managed office, drives are often mapped centrally by a <strong>Group Policy or a logon script</strong> instead, so they appear reliably on every machine the same way — which is far more robust than each person mapping their own. If your drives are mapped by hand and keep drifting out of sync across the team, moving to a proper policy-based mapping is one of the tidy-ups we do when we take on an office's <a href="/it-services-bournemouth/">IT support</a>.</p>
+      </div>
+    </section>
+    <section class="section section--alt" aria-label="Wi-Fi vs wired, and the wider network">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">// THE NETWORK ITSELF</p>
+        <h2 class="section-title" data-title>Wi-Fi vs wired, and the wider network<span class="title-underline"></span></h2>
+<p>Sometimes the drive is innocent and the <em>network</em> is the problem. <strong>Wi-Fi is the usual suspect.</strong> A shared drive needs a steady, always-on connection, and Wi-Fi — especially at the edge of a busy office, on a crowded channel, or roaming between access points — drops packets that a mapped drive doesn't tolerate well. If a machine that keeps disconnecting is on Wi-Fi, the single most effective fix is often to <strong>plug it into a network cable</strong>. Where wiring isn't practical, we look at access-point placement, channels and mesh coverage so the connection stays rock-solid.</p><p>Beyond that, we check the boring-but-important basics that catch offices out: a NAS or server going to sleep, a flaky switch or network cable, IP addresses changing so the drive points at the wrong place, or the server simply being overloaded at busy times. None of it is exotic — but chasing it down across several PCs eats an afternoon, which is why offices across <a href="/it-services-bournemouth/">Bournemouth</a> and <a href="/it-services-poole/">Poole</a> simply hand it to us. We find the actual cause, fix it properly, and make sure it stays fixed for the whole team.</p>
+      </div>
+    </section>
+    <section class="section" aria-label="Related">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">// RELATED</p>
+<p>Sorting one disconnecting drive is often the tip of the iceberg — if your office network could do with being made properly reliable, our local <a href="/it-services-poole/">IT services in Poole</a> and <a href="/it-services-bournemouth/">IT services in Bournemouth</a> keep shares, servers, NAS and Wi-Fi running day to day. For account and file-sharing headaches see <a href="/microsoft-365-support/">Microsoft 365 support</a>, browse our wider <a href="/it-support-dorset/">IT support across Dorset</a>, or take a look at ongoing <a href="/monthly-it-support/">monthly IT support</a> so niggles like this are handled before they cost your team time.</p>
+      </div>
+    </section>
+    <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
+      <div class="wrap">
+        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
+        <div class="faq-wrap">
+        <details class="faq" data-reveal>
+          <summary>Why does my mapped network drive keep disconnecting in Windows 11?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Usually one of a few predictable causes: the login for the server or NAS isn't saved in Credential Manager, so Windows drops the connection; a power-saving setting is switching off your network card; an idle SMB session is timing out; the drive isn't set to reconnect at sign-in; or the machine is on unstable Wi-Fi. Working through those in order fixes the great majority of cases — and it's a quick job for us to sort remotely.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>How do I stop a network drive from disconnecting?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Start with the two big ones. Save the drive's username and password in Credential Manager (search it in Start, choose Windows Credentials, add the server or NAS name with the login). Then stop Windows powering down the network card: in Device Manager, open your network adapter's Power Management tab and untick "Allow the computer to turn off this device to save power". Re-map the drive with "Reconnect at sign-in" ticked, and if it's on Wi-Fi, try a wired connection.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Why does my mapped drive show a red X but still work when I click it?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>That red X is Windows telling you it hasn't verified the connection recently — often because an idle SMB session timed out or the drive hasn't reconnected since you signed in. It usually springs back to life the moment you double-click it. Your files are fine, but it's a sign the connection is dropping when idle, which is worth fixing properly so it stays reliable. The credential and reconnect-at-logon fixes on this page usually clear it.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Is a disconnecting mapped drive a sign of a bigger network problem?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Occasionally, but usually not. On small-office networks it's nearly always a local setting — saved credentials, network-card power management, an SMB timeout or Wi-Fi — rather than a failing server or serious fault. That said, if several PCs drop the same drive at the same times, or it coincides with the network feeling slow, it's worth having someone check the switch, cabling, NAS or server. We can tell you quickly which it is and whether anything bigger needs attention.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Should office drives be mapped with Group Policy instead of by hand?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>For a business, yes — it's much more reliable. When each person maps their own drives, letters and paths drift out of sync and problems are hard to support. Mapping centrally via Group Policy or a logon script means every machine gets the same drives, mapped the same way, that reconnect consistently (and set to "Update" rather than "Recreate" so they don't drop on every refresh). Tidying this up is a standard part of taking on an office's IT support, and it removes a whole category of "my drive's gone again" tickets.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Can 365 Techies fix a disconnecting drive remotely?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Yes — it's routine work for us. We connect with your permission using Splashtop SOS (we phone first, you watch the session, it ends when we're done), work through the real causes in order, and get the drive stable for good. Same-day response, no call-out fee, no fix, no fee, and we can do the whole office rather than one PC at a time. We look after businesses across Poole, Bournemouth, Christchurch and Dorset.</p></div>
+        </details>
+        </div>
+      </div>
+    </section>
+    <section class="cta-band" aria-label="Get started">
+      <div class="cta-band__inner">
+        <h2 data-title>Tired of reconnecting that drive every morning? Let us settle it for good.<span class="title-underline title-underline--center"></span></h2>
+        <p class="lede lede--center" data-reveal>This is bread-and-butter work for us — we connect remotely with your permission using Splashtop SOS (you watch, we phone first, it ends when we're done), work through the real causes in order, and get your shared drive rock-solid so the whole office stops losing time. No call-out fee, and no fix, no fee. Serving businesses across Poole, Bournemouth, Christchurch and Dorset.</p>
+        <div class="hero-buttons hero-buttons--center" data-reveal>
+          <a href="tel:+441202775566" class="button primary button--lg">Get it fixed — call 01202 775566</a>
+          <a href="/contact/" class="button secondary button--lg">Book remote office support</a>
+        </div>
+        <p class="cta__contact mono" data-reveal>01202 775566 &middot; help@365techies.co.uk &middot; MON&ndash;FRI 9AM&ndash;5PM</p>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <div class="footer-areas">
+      <p class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</p>
+      <nav class="footer-areas__links" aria-label="Areas we cover">
+        <a href="/it-support-bournemouth/">Bournemouth</a>
+        <a href="/it-support-poole/">Poole</a>
+        <a href="/it-support-christchurch/">Christchurch</a>
+        <a href="/it-support-ferndown/">Ferndown</a>
+        <a href="/it-support-wimborne/">Wimborne</a>
+        <a href="/it-support-broadstone/">Broadstone</a>
+        <a href="/it-support-verwood/">Verwood</a>
+        <a href="/it-support-ringwood/">Ringwood</a>
+        <a href="/it-support-wareham/">Wareham</a>
+        <a href="/it-support-swanage/">Swanage</a>
+        <a href="/it-support-weymouth/">Weymouth</a>
+        <a href="/it-support-dorchester/">Dorchester</a>
+        <a href="/it-support-blandford-forum/">Blandford Forum</a>
+        <a href="/it-support-shaftesbury/">Shaftesbury</a>
+        <a href="/it-support-gillingham/">Gillingham</a>
+        <a href="/it-support-sherborne/">Sherborne</a>
+        <a href="/it-support-new-forest/">New Forest</a>
+        <a href="/it-support-lymington/">Lymington</a>
+        <a href="/it-support-new-milton/">New Milton</a>
+        <a href="/it-support-brockenhurst/">Brockenhurst</a>
+        <a href="/it-support-southampton/">Southampton</a>
+        <a class="footer-areas__all" href="/areas-covered/">View all areas &#8594;</a>
+      </nav>
+    </div>
+    <div class="site-footer__grid">
+      <div class="site-footer__brand">
+        <a class="logo" href="/">
+          <svg class="logo__mark" viewBox="0 0 32 32" aria-hidden="true">
+            <circle cx="16" cy="16" r="13.4" fill="none" stroke="#8fb3d9" stroke-width="2" stroke-linecap="round" stroke-dasharray="63 22" transform="rotate(-55 16 16)"/>
+            <circle cx="16" cy="16" r="9.4" fill="none" stroke="#1d97e3" stroke-width="2" stroke-linecap="round" stroke-dasharray="46 14" transform="rotate(115 16 16)"/>
+            <path d="M12.4 18.4l3.6-5.8 3.4 5.1z" fill="none" stroke="#8fb3d9" stroke-width="1.2"/>
+            <circle cx="12.4" cy="18.4" r="1.6" fill="#00ce1b"/>
+            <circle cx="16" cy="12.6" r="1.6" fill="#1d97e3"/>
+            <circle cx="19.4" cy="17.7" r="1.6" fill="#1d97e3"/>
+          </svg>
+          <span class="logo__text"><em>365</em>techies</span>
+        </a>
+        <p>The IT support experts. A family-run business established in 1995 — Dell hardware specialists, Microsoft partners and certified Microsoft Office Specialists, providing monthly IT support for homes and businesses across Bournemouth, Poole and Dorset.</p>
+        <div class="partner-badges" aria-label="Accreditations">
+          <span class="partner-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="8" r="5"/><path d="M8.5 12.5 7 21l5-2.5L17 21l-1.5-8.5"/></svg>Family Business &middot; Est. 1995</span>
+          <span class="partner-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 18h18M9 22h6"/></svg>Dell Specialist</span>
+          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>Microsoft Partner</span>
+          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>Microsoft Office Specialist</span>
+          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>Malwarebytes Partner</span>
+          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/></svg>NVIDIA &amp; Scan Partner</span>
+          <a class="partner-badge partner-badge--gold" href="https://www.google.com/maps?cid=5924622613303465737" target="_blank" rel="noopener" title="See our 4.9-star reviews on Google"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.5 1.6 6.7L12 17l-6.2 3.6 1.6-6.7L2.2 8.9l6.9-.6z"/></svg>4.9 on Google</a>
+          <a class="partner-badge partner-badge--green" href="/sustainability/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 20c0-9 7-16 16-16 0 9-7 16-16 16z"/><path d="M4 20C9 15 13 11 18 9"/></svg>Sustainable Dorset Member</a>
+        </div>
+      </div>
+      <nav aria-label="Support links">
+        <p class="site-footer__head mono">SUPPORT</p>
+        <a href="/book-service/">Book a Service</a>
+        <a href="/book-a-collection/">Book a Collection</a>
+        <a href="/remote-support/">Start Remote Support</a>
+        <a href="/emergency-it-help/">Emergency IT Help</a>
+        <a href="/is-it-down/">Is Something Down?</a>
+        <a href="/support-portal/">Support Portal</a>
+        <a href="/splashtop-business-guide/">Remote Access Guide</a>
+        <a href="/dell-latitude-3520-guide/">Dell Laptop Guide</a>
+        <a href="/dell-optiplex-guide/">Dell Desktop Guide</a>
+        <a href="/heatwave-tech-guide/">Heatwave Tech Guide</a>
+        <a href="/monthly-it-support/">Monthly IT Support</a>
+        <a href="/home-it-support-subscriptions/">Home IT Support</a>
+        <a href="/business-it-support-subscriptions/">Business IT Support</a>
+        <a href="/computer-repairs/">Computer Repairs</a>
+        <a href="/switching-it-provider/">Switching to Us</a>
+        <a href="/pricing/">Pricing</a>
+        <a href="/quick-quote/">Quick Quote</a>
+        <a href="/free-it-health-check/">Free IT Health Check</a>
+      </nav>
+      <nav aria-label="Free tools links">
+        <p class="site-footer__head mono">FREE TOOLS</p>
+        <a href="/free-tools/">All Free Tools &#8594;</a>
+        <a href="/online-safety-course/">Free Online Safety Course</a>
+        <a href="/broadband-speed-checker/">Broadband Speed Test</a>
+        <a href="/pc-benchmark/">PC Benchmark</a>
+        <a href="/website-checker/">Website Checker</a>
+        <a href="/email-security-checker/">Email Security Checker</a>
+        <a href="/password-breach-checker/">Password Breach Checker</a>
+        <a href="/link-safety-checker/">Link Safety Checker</a>
+        <a href="/password-generator/">Password Generator</a>
+        <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
+        <a href="/custom-pc-builder/">Custom PC Builder</a>
+        <a href="/victron-system-builder/">Victron System Builder</a>
+        <a href="/solar-battery-calculator/">Battery &amp; Solar Calculator</a>
+        <a href="/cost-calculator/">Cost Calculator</a>
+        <a href="/plan-finder/">Plan Finder</a>
+        <a href="/spot-the-scam/">Spot the Scam Quiz</a>
+        <a href="/is-it-down/">Is It Down? Status Checker</a>
+        <a href="/computer-spec-checker/">PC Hardware Checker</a>
+      </nav>
+      <nav aria-label="Services links">
+        <p class="site-footer__head mono">SERVICES</p>
+        <a href="/services/">All Services</a>
+        <a href="/it-support-by-industry/">IT Support by Industry</a>
+        <a href="/preventative-maintenance/">Preventative Maintenance</a>
+        <a href="/remote-it-support/">Remote IT Support</a>
+        <a href="/microsoft-365-support/">Microsoft 365</a>
+        <a href="/cybersecurity-support/">Cybersecurity</a>
+        <a href="/malwarebytes-premium/">Malwarebytes Premium &amp; VPN</a>
+        <a href="/disaster-recovery/">Disaster Recovery</a>
+        <a href="/gdpr-it-compliance/">GDPR &amp; IT Compliance</a>
+        <a href="/windows-11-support/">Windows 11</a>
+        <a href="/windows-10-end-of-life/">Windows 10 End of Life</a>
+        <a href="/email-support/">Email Support</a>
+        <a href="/wifi-support/">Wi-Fi Support</a>
+        <a href="/printer-support/">Printer Support</a>
+        <a href="/backup-support/">Backup Support</a>
+        <a href="/new-computer-setup/">New Computer Setup</a>
+        <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
+        <a href="/custom-pc-builds/">Custom-Built PCs</a>
+        <a href="/threadripper-workstations/">Threadripper Workstations</a>
+        <a href="/gaming-pcs/">Gaming PCs</a>
+        <a href="/content-creator-pcs/">Content Creator PCs</a>
+        <a href="/home-cinema-entertainment/">Home Cinema &amp; AV</a>
+        <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
+        <a href="/lithium-battery-installs-dorset/">Leisure &amp; Marine Batteries</a>
+        <a href="/rural-and-farm-wifi-dorset/">Rural &amp; Farm Wi-Fi</a>
+        <a href="/starlink-internet/">Starlink Internet</a>
+        <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
+        <a href="/agentic-ai-systems/">Agentic AI Systems</a>
+        <a href="/365-ai-os/">365 AI OS</a>
+        <a href="/ai-voice-agents/">AI Voice Agents</a>
+        <a href="/unitree-robots/">Unitree Robots</a>
+        <a href="/it-support-for-hotels-holiday-lets/">Hotels &amp; Holiday Lets</a>
+        <a href="/it-support-for-vets/">Veterinary Practices</a>
+        <a href="/it-support-for-salons-beauty/">Salons &amp; Beauty</a>
+        <a href="/it-support-for-financial-advisers/">Financial Advisers</a>
+        <a href="/it-support-for-recruitment-agencies/">Recruitment Agencies</a>
+        <a href="/it-support-for-garages-automotive/">Garages &amp; Automotive</a>
+        <a href="/it-support-for-gyms-fitness/">Gyms &amp; Fitness</a>
+        <a href="/it-support-for-ecommerce/">E-commerce &amp; Online Retail</a>
+        <a href="/it-support-for-property-management/">Property Management</a>
+        <a href="/it-support-for-manufacturing/">Manufacturing &amp; Engineering</a>
+        <a href="/it-support-for-churches-faith/">Churches &amp; Faith Groups</a>
+      </nav>
+      <nav aria-label="Who we help links">
+        <p class="site-footer__head mono">WHO WE HELP</p>
+        <a href="/family-it-support/">Families</a>
+        <a href="/it-support-for-retired-users/">Retired Users</a>
+        <a href="/it-support-for-disabled-people/">Disabled People</a>
+        <a href="/computer-help-for-seniors/">Help for Seniors</a>
+        <a href="/it-support-for-home-workers/">Home Workers</a>
+        <a href="/it-support-for-digital-nomads/">Digital Nomads</a>
+        <a href="/it-support-for-sole-traders/">Sole Traders</a>
+        <a href="/small-business-it-support/">Small Businesses</a>
+      </nav>
+      <nav aria-label="Company links">
+        <p class="site-footer__head mono">COMPANY</p>
+        <a href="/plan-finder/">Plan Finder</a>
+        <a href="/areas-covered/">Areas Covered</a>
+        <a href="/it-support-uk-europe/">UK &amp; Europe</a>
+        <a href="/about/">About</a>
+        <a href="/meet-the-team/">Meet the Team</a>
+        <a href="/why-choose-365-techies/">Why Choose Us</a>
+        <a href="/our-guarantees/">Our Guarantees</a>
+        <a href="/case-studies/">Case Studies</a>
+        <a href="/reviews/">Reviews</a>
+        <a href="/refer-a-friend/">Refer a Friend</a>
+        <a href="/cyber-threats/">Cyber Threats Explained</a>
+        <a href="/it-jargon-buster/">IT Jargon Buster</a>
+        <a href="/cybersecurity-checklist/">Cybersecurity Checklist</a>
+        <a href="/plain-english/">Tech in Plain English</a>
+        <a href="/using-ai-safely/">Using AI Safely</a>
+        <a href="/pre-call-checklists/">Get-Ready Checklists</a>
+        <a href="/our-values/">Our Values &amp; Promises</a>
+        <a href="/choosing-it-support/">How to Choose IT Support</a>
+        <a href="/independent-it-support/">Local vs the Alternatives</a>
+        <a href="/it-cost-worksheet/">IT Quote Worksheet</a>
+        <a href="/how-we-price/">How We Price</a>
+        <a href="/your-first-6-weekly-service/">Your First Service</a>
+        <a href="/how-to-set-up-two-factor-authentication/">Set Up 2FA</a>
+        <a href="/ive-been-scammed-what-to-do/">I&rsquo;ve Been Scammed</a>
+        <a href="/i-think-ive-been-hacked/">If You&rsquo;ve Been Hacked</a>
+        <a href="/lost-or-stolen-phone-what-to-do/">Lost or Stolen Phone</a>
+        <a href="/how-to-choose-a-laptop/">How to Choose a Laptop</a>
+        <a href="/how-to-wipe-and-recycle-old-computer/">Wipe &amp; Recycle a PC</a>
+        <a href="/safe-online-banking-for-beginners/">Safe Online Banking</a>
+        <a href="/windows-accessibility-features-guide/">Windows Accessibility</a>
+        <a href="/avoiding-tech-overwhelm/">Avoiding Tech Overwhelm</a>
+        <a href="/how-to-choose-antivirus/">How to Choose Antivirus</a>
+        <a href="/how-to-choose-broadband/">How to Choose Broadband</a>
+        <a href="/setting-up-a-computer-for-an-older-relative/">Computer for an Older Relative</a>
+        <a href="/helping-a-relative-with-their-computer/">Helping a Relative Remotely</a>
+        <a href="/confident-video-calling/">Confident Video Calling</a>
+        <a href="/how-onboarding-works/">How Onboarding Works</a>
+        <a href="/microsoft-365-vs-google-workspace/">Microsoft 365 vs Google Workspace</a>
+        <a href="/break-fix-vs-managed-it/">Break-Fix vs Managed IT</a>
+        <a href="/spring-clean-your-computer/">Spring-Clean Your Computer</a>
+        <a href="/back-to-school-it/">Back-to-School IT</a>
+        <a href="/cloud-vs-on-premise/">Cloud vs On-Premise</a>
+        <a href="/sustainability/">Sustainability</a>
+        <a href="/resources/">Resources &amp; Guides</a>
+        <a href="/faqs/">FAQs</a>
+        <a href="/it-advice/">IT Advice</a>
+        <a href="/contact/">Contact</a>
+        <p class="site-footer__contact" style="margin-top:1.1rem"><a href="tel:+441202775566">01202 775566</a><br /><a href="sms:+447520615332">Text only: 07520 615332</a><br /><a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a><br />Mon&ndash;Fri, 9am&ndash;5pm<br />Bournemouth, Dorset<br />Remote IT support across the whole of the UK<br /><a href="https://www.facebook.com/365computersuk/" target="_blank" rel="noopener me">Find us on Facebook</a></p>
+      </nav>
+    </div>
+    <nav class="site-footer__legal-links mono" aria-label="Legal and policies">
+      <a href="/privacy-policy/">Privacy Policy</a>
+      <a href="/cookie-policy/">Cookie Policy</a>
+      <a href="/terms/">Terms of Service</a>
+      <a href="/service-level-agreement/">SLA</a>
+      <a href="/accessibility-statement/">Accessibility</a>
+      <a href="/accreditations/">Accreditations</a>
+      <a href="/system-status/">System Status</a>
+    </nav>
+    <p class="site-footer__legal mono">&copy; 2026 365 TECHIES LIMITED &middot; REGISTERED IN ENGLAND &amp; WALES 11073501 &middot; ALL SYSTEMS OPERATIONAL <span class="pulse-dot pulse-dot--green"></span></p>
+  </footer>
+
+  <nav class="mobile-cta-bar" aria-label="Quick contact">
+    <a href="tel:+441202775566"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>Call</a>
+    <a href="/book-service/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v3M17 3v3M4 8h16M5 6h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z"/></svg>Book</a>
+    <a href="#" data-open-chat><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.5 7.5L3 21l2-5.5A8.5 8.5 0 1 1 21 11.5z"/></svg>Chat</a>
+  </nav>
+  <div class="a11y" id="a11y">
+    <button type="button" class="a11y__toggle" id="a11y-toggle" aria-expanded="false" aria-controls="a11y-panel" aria-label="Accessibility tools" title="Accessibility tools">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="3.6" r="1.6"/><path d="M3.5 8h17M12 8v6m0 0-3.2 6.4M12 14l3.2 6.4"/></svg>
+    </button>
+    <div class="a11y__panel" id="a11y-panel" role="region" aria-label="Accessibility options" hidden>
+      <p class="a11y__title mono">Accessibility</p>
+      <div class="a11y__rowsize"><span>Text size</span><span class="a11y__btns"><button type="button" data-a11y="text-down" aria-label="Decrease text size">A&minus;</button><button type="button" data-a11y="text-up" aria-label="Increase text size">A+</button></span></div>
+      <button type="button" class="a11y__opt" data-a11y="contrast" aria-pressed="false">High contrast</button>
+      <button type="button" class="a11y__opt" data-a11y="readable" aria-pressed="false">Readable font</button>
+      <button type="button" class="a11y__opt" data-a11y="reduce" aria-pressed="false">Reduce motion</button>
+      <button type="button" class="a11y__opt" data-a11y="read" aria-pressed="false">Read this page aloud</button>
+      <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
+    </div>
+  </div>
+  <script type="module" src="/js/interior.js?v=17"></script>
+  <script src="/js/a11y.js?v=2" defer></script>
+  <script src="/js/forms.js?v=2" defer></script>
+  <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
+    <p>We use cookies to power our live chat and understand how the site is used. See our <a href="/cookie-policy/">cookie policy</a>.</p>
+    <div class="cookie-banner__actions">
+      <button type="button" class="button secondary" data-cookie="decline">Decline</button>
+      <button type="button" class="button primary" data-cookie="accept">Accept</button>
+    </div>
+  </div>
+  <!-- Consent-gated chat / analytics (HubSpot loads only after consent) -->
+  <script>
+  (function () {
+    var KEY = "tt_consent";
+    function loadConsented() {
+      if (!document.getElementById("hs-script-loader")) {
+        var s = document.createElement("script");
+        s.id = "hs-script-loader"; s.async = true; s.defer = true;
+        s.src = "//js-eu1.hs-scripts.com/148562638.js";
+        document.body.appendChild(s);
+      }
+      if (window.ANALYTICS_SRC && !window.__analyticsLoaded) {
+        window.__analyticsLoaded = true;
+        var a = document.createElement("script"); a.async = true; a.src = window.ANALYTICS_SRC;
+        document.head.appendChild(a);
+      }
+    }
+    var c = null;
+    try { c = localStorage.getItem(KEY); } catch (e) {}
+    if (c === "accepted") { loadConsented(); }
+    else if (c !== "declined") { var b = document.getElementById("cookie-banner"); if (b) b.hidden = false; }
+    document.addEventListener("click", function (e) {
+      var t = e.target.closest("[data-cookie]"); if (!t) return;
+      var v = t.getAttribute("data-cookie") === "accept" ? "accepted" : "declined";
+      try { localStorage.setItem(KEY, v); } catch (e) {}
+      var b = document.getElementById("cookie-banner"); if (b) b.hidden = true;
+      if (v === "accepted") { if (window.gtag) gtag('consent', 'update', { ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted', analytics_storage: 'granted' }); loadConsented(); }
+    });
+  })();
+  </script>
+</body>
+</html>
