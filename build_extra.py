@@ -10183,7 +10183,7 @@ def repair_or_replace_advisor():
     slug="repair-or-replace-advisor"
     desc="Repair or replace your computer? Answer four quick questions for an honest, no-nonsense recommendation - based on the age, the problem and any repair quote you've been given. Free guidance from 365 Techies, Dorset."
     faqs=[
-      ("How do you decide whether to repair or replace?","We weigh up the computer&rsquo;s age, the type of fault, and what a repair would cost against a replacement. A common rule of thumb is that if a repair costs more than about half the price of a new one, replacing is usually better value &mdash; but we always check honestly first."),
+      ("How do you decide whether to repair or replace?","We weigh up the computer&rsquo;s age, the type of fault, and what a repair would cost against a replacement. A common rule of thumb is that if a repair costs more than about half the price of a new one, replacing is usually better value &mdash; but we always check honestly first. See our guide: <a href=\"/worth-repairing-old-laptop/\">is it worth repairing an old laptop?</a>"),
       ("Is the recommendation a quote?","No &mdash; it&rsquo;s friendly guidance to point you in the right direction. The only way to know for sure is to look, which we do free on diagnosis (no-fix-no-fee), with a 12-month warranty on any repair."),
       ("My computer is losing files &mdash; what should I do first?","Back up anything precious straight away. Strange noises or disappearing files can mean a failing drive, and acting fast gives the best chance of saving your data. See our <a href=\"/backup-support/\">backup &amp; recovery</a> page, then get in touch."),
       ("Can you move my files to a new computer?","Yes &mdash; if replacing is the better option, we&rsquo;ll move your files, photos, email and programs across and set it all up. See <a href=\"/new-computer-setup/\">new computer setup</a>."),
@@ -12358,6 +12358,7 @@ def business_it_services(d):
 {stack}
         </div>
         <p style="text-align:center;margin-top:1.8rem" data-reveal>Explore <a href="/managed-it-support/">managed IT support</a>, <a href="/microsoft-365-support/">Microsoft 365</a>, <a href="/cybersecurity-support/">cybersecurity</a>, <a href="/cyber-essentials/">Cyber Essentials</a>, <a href="/backup-support/">backup</a>, <a href="/server-network-support/">servers &amp; networks</a>, <a href="/cloud-hosted-desktops/">cloud desktops</a>, <a href="/business-broadband-connectivity/">connectivity</a> and <a href="/voip-business-phones/">VoIP phones</a>.</p>
+        <p style="text-align:center;margin-top:1rem" data-reveal>We support specific sectors too &mdash; <a href="/it-support-for-accountants-dorset/">IT support for accountants</a> and <a href="/it-support-for-charities-dorset/">charities</a> in Dorset &mdash; and we fix the everyday annoyances, like a <a href="/mapped-network-drive-keeps-disconnecting/">mapped network drive that keeps disconnecting</a>.</p>
       </div>
     </section>''',
       solutions_section,
