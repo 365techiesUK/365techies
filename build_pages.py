@@ -4352,6 +4352,22 @@ add(
         </div>
       </div>
     </section>''',
+   f'''    <section class="section" aria-label="Common Outlook problems">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">/03 &mdash; OUTLOOK PROBLEMS</p>
+        <h2 class="section-title" data-title>Common Outlook problems we fix<span class="title-underline"></span></h2>
+        <p>Outlook playing up? We sort these every day &mdash; usually remotely, in minutes. Plain-English fix guides, plus a real person on the end of the phone:</p>
+        <ul>
+          <li>Send/receive errors <a href="/outlook-error-0x800ccc0e/">0x800ccc0e &amp; 0x800ccc0f</a>, <a href="/outlook-error-0x80042109/">0x80042109</a> and <a href="/outlook-error-0x800ccc90/">0x800ccc90</a></li>
+          <li><a href="/outlook-not-sending-emails/">Receiving but not sending</a>, or <a href="/outlook-stuck-in-outbox/">stuck in the Outbox</a></li>
+          <li><a href="/outlook-keeps-asking-for-password/">Outlook keeps asking for your password</a></li>
+          <li><a href="/outlook-data-file-cannot-be-accessed/">Data file cannot be accessed (0x8004010f)</a> and <a href="/outlook-pst-cannot-be-accessed/">PST cannot be accessed (0x80040116)</a></li>
+          <li><a href="/outlook-cannot-open-the-outlook-window/">Cannot open the Outlook window</a>, or <a href="/outlook-search-not-finding-old-emails/">search not finding old emails</a></li>
+          <li>New Outlook: <a href="/new-outlook-wont-open/">won&rsquo;t open</a>, <a href="/new-outlook-blank-screen/">blank white screen</a>, <a href="/outlook-rules-not-working-new-outlook/">rules not running</a></li>
+          <li>Outlook on Android: <a href="/outlook-app-crashing-android/">app keeps crashing</a> or <a href="/outlook-not-syncing-android/">not syncing</a></li>
+        </ul>
+      </div>
+    </section>''',
    f'''    <section class="m365" aria-label="Apps we support">
       <div class="wrap">
         <div class="section-head">
