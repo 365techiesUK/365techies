@@ -12638,7 +12638,7 @@ def _sec_block(s):
     </section>'''
 
 def build_new_page(d):
-    faqs = [(f['q'], f['a']) for f in d['faqs']]
+    faqs = [(f['q'], f['a']) if isinstance(f, dict) else tuple(f) for f in d['faqs']]
     sections = "\n".join(_sec_block(s) for s in d['sections'])
     cross = ""
     if d.get('crossLinksHtml'):

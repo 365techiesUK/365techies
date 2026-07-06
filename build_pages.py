@@ -4356,7 +4356,7 @@ add(
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; OUTLOOK PROBLEMS</p>
         <h2 class="section-title" data-title>Common Outlook problems we fix<span class="title-underline"></span></h2>
-        <p>Outlook playing up? We sort these every day &mdash; usually remotely, in minutes. Plain-English fix guides, plus a real person on the end of the phone:</p>
+        <p>Outlook playing up? We sort these every day &mdash; usually remotely, in minutes. See the full <a href="/outlook-problems/">Outlook problems guide</a>, or jump straight to yours:</p>
         <ul>
           <li>Send/receive errors <a href="/outlook-error-0x800ccc0e/">0x800ccc0e &amp; 0x800ccc0f</a>, <a href="/outlook-error-0x80042109/">0x80042109</a> and <a href="/outlook-error-0x800ccc90/">0x800ccc90</a></li>
           <li><a href="/outlook-not-sending-emails/">Receiving but not sending</a>, or <a href="/outlook-stuck-in-outbox/">stuck in the Outbox</a></li>
