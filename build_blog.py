@@ -602,3 +602,29 @@ if os.path.exists(_css_src):
         f.write(_min)
     print("Minified styles.css -> styles.min.css (%dKB -> %dKB)" % (
         len(_raw.encode("utf-8")) // 1024, len(_min.encode("utf-8")) // 1024))
+
+# ---- Minify site JS with terser (repo node_modules); falls back to a plain copy
+#      so the *.min.js references can never 404 if terser is unavailable. ----
+import shutil as _shutil, subprocess as _subprocess
+_terser = os.path.join(bp.BASE, "node_modules", ".bin", "terser.cmd")
+# main/interior are ES modules (loaded with type=module); a11y/forms are classic scripts.
+for _js, _is_module in (("main", True), ("interior", True), ("a11y", False), ("forms", False)):
+    _src = os.path.join(bp.BASE, "js", _js + ".js")
+    _dst = os.path.join(bp.BASE, "js", _js + ".min.js")
+    if not os.path.exists(_src):
+        continue
+    _ok = False
+    if os.path.exists(_terser):
+        _cmd = '"%s" "%s" --compress --mangle%s -o "%s"' % (
+            _terser, _src, " --module" if _is_module else "", _dst)
+        try:
+            _r = _subprocess.run(_cmd, shell=True, capture_output=True, text=True, timeout=120)
+            _ok = _r.returncode == 0 and os.path.exists(_dst) and os.path.getsize(_dst) > 0
+            if not _ok:
+                print("terser FAILED for %s.js (falling back to copy): %s" % (_js, (_r.stderr or "")[:200]))
+        except Exception as _e:
+            print("terser error for %s.js (falling back to copy): %s" % (_js, _e))
+    if not _ok:
+        _shutil.copyfile(_src, _dst)
+    print("JS %s.js -> %s.min.js (%dKB -> %dKB)" % (
+        _js, _js, os.path.getsize(_src) // 1024, os.path.getsize(_dst) // 1024))

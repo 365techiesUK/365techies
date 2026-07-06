@@ -1115,6 +1115,8 @@ body.menu-open { overflow: hidden; }
 }
 
 @media (max-width: 680px) {
+  /* full-screen SVG-noise layer costs paint on low-end phones for little payoff */
+  .grain { display: none; }
   .stats__grid { grid-template-columns: repeat(2, 1fr); gap: 2.2rem 1.4rem; }
   .stat { border-left: 0; padding-left: 0; }
   .security-grid { grid-template-columns: 1fr; }

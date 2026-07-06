@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- Google tag (gtag.js) - Consent Mode v2: denied by default, granted on cookie-accept -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-EBLTJ9WJXZ"></script>
+  <!-- Google tag (gtag.js) - Consent Mode v2: denied by default, granted on cookie-accept.
+       The library itself loads lazily (first interaction, or idle ~4s) so its ~90KB never
+       competes with LCP; calls below queue into dataLayer and replay when it arrives. -->
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
@@ -12,6 +13,19 @@
     try { if (localStorage.getItem('tt_consent') === 'accepted') gtag('consent', 'update', { ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted', analytics_storage: 'granted' }); } catch (e) {}
     gtag('js', new Date());
     gtag('config', 'G-EBLTJ9WJXZ');
+    (function () {
+      function loadGtagLib() {
+        if (window.__gtagLibLoaded) return; window.__gtagLibLoaded = true;
+        var g = document.createElement('script'); g.async = true;
+        g.src = 'https://www.googletagmanager.com/gtag/js?id=G-EBLTJ9WJXZ';
+        document.head.appendChild(g);
+      }
+      ['pointerdown', 'keydown', 'touchstart', 'scroll'].forEach(function (evt) {
+        window.addEventListener(evt, loadGtagLib, { once: true, passive: true });
+      });
+      if ('requestIdleCallback' in window) requestIdleCallback(loadGtagLib, { timeout: 4000 });
+      else window.addEventListener('load', function () { setTimeout(loadGtagLib, 3000); });
+    })();
   </script>
   <title>Outlook Password Not Working But Is Correct | 365 Techies</title>
   <meta name="description" content="Outlook says your password is wrong but it's correct? Clear the stale credential in Windows Credential Manager and sign back in. Free Dorset remote fix in&hellip;" />
@@ -50,7 +64,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=51" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=52" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -317,7 +331,7 @@
       </div>
     </div>
     <div class="header-bar">
-      <a class="logo" href="/" aria-label="365 Techies — home">
+      <a class="logo" href="/" aria-label="365techies — home">
         <svg class="logo__mark" viewBox="0 0 32 32" aria-hidden="true">
           <circle cx="16" cy="16" r="13.4" fill="none" stroke="#8fb3d9" stroke-width="2" stroke-linecap="round" stroke-dasharray="63 22" transform="rotate(-55 16 16)"/>
           <circle cx="16" cy="16" r="9.4" fill="none" stroke="#1d97e3" stroke-width="2" stroke-linecap="round" stroke-dasharray="46 14" transform="rotate(115 16 16)"/>
@@ -918,9 +932,9 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.js?v=17"></script>
-  <script src="/js/a11y.js?v=2" defer></script>
-  <script src="/js/forms.js?v=2" defer></script>
+  <script type="module" src="/js/interior.min.js?v=18"></script>
+  <script src="/js/a11y.min.js?v=3" defer></script>
+  <script src="/js/forms.min.js?v=3" defer></script>
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
     <p>We use cookies to power our live chat and understand how the site is used. See our <a href="/cookie-policy/">cookie policy</a>.</p>
     <div class="cookie-banner__actions">

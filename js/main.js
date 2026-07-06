@@ -11,7 +11,10 @@ const LOW_POWER = (() => {
   try { return !!(navigator.connection && navigator.connection.saveData); } catch (e) { return false; }
 })();
 const HAS_GSAP = typeof window.gsap !== "undefined" && typeof window.ScrollTrigger !== "undefined";
-const isMobile = () => window.innerWidth < 920;
+// Cached so per-frame callers never force a layout read (innerWidth flushes layout).
+let _isMobile = window.innerWidth < 920;
+const isMobile = () => _isMobile;
+window.addEventListener("resize", () => { _isMobile = window.innerWidth < 920; }, { passive: true });
 
 if (HAS_GSAP) gsap.registerPlugin(ScrollTrigger);
 
@@ -104,7 +107,8 @@ function initCounters() {
     const decimals = parseInt(el.dataset.decimals || "0", 10);
     const fmt = (v) => v.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
 
-    if (!HAS_GSAP || REDUCED) { el.textContent = fmt(target); return; }
+    // Static on mobile too: skips per-stat ScrollTrigger setup (layout reads)
+    if (!HAS_GSAP || REDUCED || isMobile()) { el.textContent = fmt(target); return; }
 
     const proxy = { v: 0 };
     gsap.to(proxy, {
@@ -119,25 +123,31 @@ function initCounters() {
 }
 
 function initUI() {
-  /* ---- page load: header + hero ---- */
-  const load = gsap.timeline({ defaults: { ease: "power3.out" } });
+  /* ---- page load: header + hero (DESKTOP ONLY) ----
+     On mobile the hero H1/sub is the LCP element; a .from() intro re-hides the
+     already-painted text and replays it once the GSAP CDN arrives, which gates
+     LCP on a third-party request + a ~1s tween (measured ~2s of render delay).
+     Mobile therefore keeps the first CSS paint and skips the intro entirely. */
+  if (!isMobile()) {
+    const load = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-  load
-    .from(".site-header", { y: -110, opacity: 0, duration: 0.8 })
-    .from(".desktop-nav > a, .desktop-nav .nav-item", {
-      y: -18, opacity: 0, duration: 0.5, stagger: 0.07,
-    }, 0.3)
-    .from(".hero__eyebrow", { y: 24, opacity: 0, duration: 0.6 }, 0.45)
-    .from(".hero__title .line-inner", {
-      yPercent: 118, duration: 1.05, stagger: 0.13, ease: "power4.out",
-    }, 0.55)
-    .from(".hero__sub", { y: 36, opacity: 0, duration: 0.8 }, 1.05)
-    .from(".hero-buttons .button", {
-      y: 28, opacity: 0, scale: 0.92, duration: 0.65, stagger: 0.12, ease: "back.out(1.7)",
-    }, 1.25)
-    .from(".hero__chips li", { y: 16, opacity: 0, duration: 0.5, stagger: 0.08 }, 1.5)
-    .from(".hero__console", { x: 70, opacity: 0, rotate: 4, duration: 0.9 }, 1.1)
-    .from(".scroll-hint", { opacity: 0, duration: 0.8 }, 1.9);
+    load
+      .from(".site-header", { y: -110, opacity: 0, duration: 0.8 })
+      .from(".desktop-nav > a, .desktop-nav .nav-item", {
+        y: -18, opacity: 0, duration: 0.5, stagger: 0.07,
+      }, 0.3)
+      .from(".hero__eyebrow", { y: 24, opacity: 0, duration: 0.6 }, 0.45)
+      .from(".hero__title .line-inner", {
+        yPercent: 118, duration: 1.05, stagger: 0.13, ease: "power4.out",
+      }, 0.55)
+      .from(".hero__sub", { y: 36, opacity: 0, duration: 0.8 }, 1.05)
+      .from(".hero-buttons .button", {
+        y: 28, opacity: 0, scale: 0.92, duration: 0.65, stagger: 0.12, ease: "back.out(1.7)",
+      }, 1.25)
+      .from(".hero__chips li", { y: 16, opacity: 0, duration: 0.5, stagger: 0.08 }, 1.5)
+      .from(".hero__console", { x: 70, opacity: 0, rotate: 4, duration: 0.9 }, 1.1)
+      .from(".scroll-hint", { opacity: 0, duration: 0.8 }, 1.9);
+  }
 
   /* ---- header darkens after scrolling past the hero top ---- */
   ScrollTrigger.create({
@@ -210,16 +220,20 @@ function initUI() {
       .to(fx, { [key]: 1, duration: 0.32, ease: "none" })
       .to(fx, { [key]: 0, duration: 0.32, ease: "none" }, 0.68);
   };
-  scene("#home-support", "home");
-  scene("#business-support", "biz");
-  scene("#plans", "split");
-  scene("#security", "shield");
+  /* fx.* is read only by the desktop-only WebGL render loop — on mobile these
+     scrub triggers (the costliest, layout-reading kind) would animate nothing. */
+  if (!isMobile()) {
+    scene("#home-support", "home");
+    scene("#business-support", "biz");
+    scene("#plans", "split");
+    scene("#security", "shield");
 
-  /* CTA convergence ramps up and stays */
-  gsap.to(fx, {
-    converge: 1, ease: "none",
-    scrollTrigger: { trigger: "#cta", start: "top 95%", end: "center 55%", scrub: 0.8 },
-  });
+    /* CTA convergence ramps up and stays */
+    gsap.to(fx, {
+      converge: 1, ease: "none",
+      scrollTrigger: { trigger: "#cta", start: "top 95%", end: "center 55%", scrub: 0.8 },
+    });
+  }
 }
 
 /* ==========================================================================
@@ -636,9 +650,10 @@ async function initBackground() {
   // so there's no frozen frame and no "stops half-way down" effect.
 
   window.addEventListener("resize", () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
+    const w = window.innerWidth, h = window.innerHeight; // read layout once
+    camera.aspect = w / h;
     camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(w, h);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile() ? 1.5 : 2));
     placeGroups();
   });
