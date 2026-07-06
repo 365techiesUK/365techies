@@ -13,9 +13,9 @@
     gtag('js', new Date());
     gtag('config', 'G-EBLTJ9WJXZ');
   </script>
-  <title>Outlook Problems? Fixes + Remote Help | 365 Techies</title>
-  <meta name="description" content="Outlook not working? Plain-English fixes for the most common Microsoft Outlook problems — send/receive errors, won't open, password loops, not syncing, and&hellip;" />
-  <link rel="canonical" href="https://365techies.co.uk/outlook-problems/" />
+  <title>Add Gmail to Outlook (Keeps Asking Password) | 365 Techies</title>
+  <meta name="description" content="Classic Outlook keeps asking for your Gmail password? You need a Google App password, not your normal one. Step-by-step fix - or we'll set it up remotely in&hellip;" />
+  <link rel="canonical" href="https://365techies.co.uk/how-to-add-gmail-to-outlook/" />
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
   <meta name="author" content="365 Techies Limited" />
   <meta name="geo.region" content="GB-BCP" />
@@ -27,15 +27,15 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="365 Techies" />
   <meta property="og:locale" content="en_GB" />
-  <meta property="og:url" content="https://365techies.co.uk/outlook-problems/" />
-  <meta property="og:title" content="Outlook Problems? Free Fixes + Remote Help | 365 Techies" />
-  <meta property="og:description" content="Outlook not working? Plain-English fixes for the most common Microsoft Outlook problems — send/receive errors, won't open, password loops, not syncing, and more, across every version. Or we'll fix it remotely in minutes." />
+  <meta property="og:url" content="https://365techies.co.uk/how-to-add-gmail-to-outlook/" />
+  <meta property="og:title" content="Add Gmail to classic Outlook (app password fix)" />
+  <meta property="og:description" content="Classic Outlook keeps asking for your Gmail password? You need a Google App password, not your normal one. Step-by-step fix - or we'll set it up remotely in minutes." />
   <meta property="og:image" content="https://365techies.co.uk/og-image.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Outlook Problems? Free Fixes + Remote Help | 365 Techies" />
-  <meta name="twitter:description" content="Outlook not working? Plain-English fixes for the most common Microsoft Outlook problems — send/receive errors, won't open, password loops, not syncing, and more, across every version. Or we'll fix it remotely in minutes." />
+  <meta name="twitter:title" content="Add Gmail to classic Outlook (app password fix)" />
+  <meta name="twitter:description" content="Classic Outlook keeps asking for your Gmail password? You need a Google App password, not your normal one. Step-by-step fix - or we'll set it up remotely in minutes." />
   <meta name="twitter:image" content="https://365techies.co.uk/og-image.jpg" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -169,7 +169,7 @@
     },
     {
       "@type": "BreadcrumbList",
-      "@id": "https://365techies.co.uk/outlook-problems/#breadcrumb",
+      "@id": "https://365techies.co.uk/how-to-add-gmail-to-outlook/#breadcrumb",
       "itemListElement": [
         {
           "@type": "ListItem",
@@ -180,17 +180,17 @@
         {
           "@type": "ListItem",
           "position": 2,
-          "name": "Outlook Problems",
-          "item": "https://365techies.co.uk/outlook-problems/"
+          "name": "Add Gmail to Outlook",
+          "item": "https://365techies.co.uk/how-to-add-gmail-to-outlook/"
         }
       ]
     },
     {
       "@type": "WebPage",
-      "@id": "https://365techies.co.uk/outlook-problems/#webpage",
-      "url": "https://365techies.co.uk/outlook-problems/",
-      "name": "Outlook Problems",
-      "description": "Outlook not working? Plain-English fixes for the most common Microsoft Outlook problems — send/receive errors, won't open, password loops, not syncing, and more, across every version. Or we'll fix it remotely in minutes.",
+      "@id": "https://365techies.co.uk/how-to-add-gmail-to-outlook/#webpage",
+      "url": "https://365techies.co.uk/how-to-add-gmail-to-outlook/",
+      "name": "Add Gmail to Outlook",
+      "description": "Classic Outlook keeps asking for your Gmail password? You need a Google App password, not your normal one. Step-by-step fix - or we'll set it up remotely in minutes.",
       "inLanguage": "en-GB",
       "isPartOf": {
         "@id": "https://365techies.co.uk/#website"
@@ -199,7 +199,7 @@
         "@id": "https://365techies.co.uk/#business"
       },
       "breadcrumb": {
-        "@id": "https://365techies.co.uk/outlook-problems/#breadcrumb"
+        "@id": "https://365techies.co.uk/how-to-add-gmail-to-outlook/#breadcrumb"
       },
       "primaryImageOfPage": {
         "@type": "ImageObject",
@@ -209,47 +209,92 @@
       "dateModified": "2026-07-06"
     },
     {
+      "@type": "HowTo",
+      "@id": "https://365techies.co.uk/how-to-add-gmail-to-outlook/#howto",
+      "name": "Add a Gmail account to classic Outlook using a Google App password",
+      "step": [
+        {
+          "@type": "HowToStep",
+          "position": 1,
+          "name": "Turn on 2-Step Verification",
+          "text": "Go to Google Account > Security, switch on 2-Step Verification and confirm with your phone. App passwords only appear once this is on."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 2,
+          "name": "Create an App password",
+          "text": "Go to myaccount.google.com/apppasswords, name it Outlook, click Create, and copy the 16-character password Google shows."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 3,
+          "name": "Start adding the account in Outlook",
+          "text": "In classic Outlook, go to File > Add Account, choose Advanced options and Let me set up my account manually (or Manual setup on older builds), then POP or IMAP."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 4,
+          "name": "Enter the Gmail server settings",
+          "text": "Set account type IMAP. Incoming: imap.gmail.com port 993 SSL/TLS. Outgoing: smtp.gmail.com port 587 STARTTLS (or 465 SSL/TLS). User name is your full Gmail address; outgoing server requires authentication."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 5,
+          "name": "Paste the app password",
+          "text": "When Outlook asks for your password, paste the 16-character app password instead of your normal Gmail password, then click OK and Finish."
+        }
+      ]
+    },
+    {
       "@type": "FAQPage",
-      "@id": "https://365techies.co.uk/outlook-problems/#faq",
+      "@id": "https://365techies.co.uk/how-to-add-gmail-to-outlook/#faq",
       "mainEntity": [
         {
           "@type": "Question",
-          "name": "Is Outlook broken, or is it my email account?",
+          "name": "What is a Google App password and why do I need one?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Usually it&rsquo;s Outlook, not the account. The quickest test is to sign in to your email in a web browser (Outlook on the web, or your provider&rsquo;s webmail). If your mail is all there and works, the problem is the Outlook app or its settings on your device &mdash; which is good news, because that&rsquo;s a quick fix."
+            "text": "An App password is a one-off 16-character code Google generates just for a single app, like Outlook. Because a manually-added Gmail account can't use Google's secure sign-in pop-up, Google won't accept your normal password - the app password is the substitute it will accept. You create it once and Outlook remembers it."
           }
         },
         {
           "@type": "Question",
-          "name": "Can you really fix Outlook remotely?",
+          "name": "I can't find App passwords in my Google account.",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Yes &mdash; the vast majority of Outlook problems are fixed remotely, usually within minutes. We connect over a secure Splashtop session (we phone first, you watch everything on screen, and access ends when we&rsquo;re done), sort the settings or the cache file, and get your email flowing again."
+            "text": "App passwords only appear after 2-Step Verification is switched on. Turn that on first under Google Account > Security, then go to myaccount.google.com/apppasswords, or search \"App passwords\" in your Google Account search box. If it's still hidden, your account may be a work or school account whose administrator has disabled app passwords."
           }
         },
         {
           "@type": "Question",
-          "name": "Which version of Outlook do I have?",
+          "name": "What are the correct Gmail server settings for classic Outlook?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "There are a few: classic Outlook for Windows (the long-standing desktop app, part of Microsoft 365 or Office), the new Outlook for Windows (a simpler, cloud-based app Microsoft is rolling out), Outlook on the web, Outlook.com webmail, and the Outlook mobile app. Our guides are tagged by version &mdash; and if you&rsquo;re not sure which you&rsquo;ve got, just call us."
+            "text": "Incoming (IMAP): imap.gmail.com, port 993, SSL/TLS. Outgoing (SMTP): smtp.gmail.com, port 587 with STARTTLS (or port 465 with SSL/TLS). Your user name is your full Gmail address, and the password is the 16-character app password. Make sure the outgoing server is set to require authentication."
           }
         },
         {
           "@type": "Question",
-          "name": "How much does it cost to fix Outlook?",
+          "name": "Do I always need an app password to add Gmail?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "We diagnose for free and quote clearly before any chargeable work &mdash; no-fix-no-fee. Many quick Outlook fixes are a single remote session; if you&rsquo;d like us to keep everything running smoothly, home IT support is &pound;18.25/month per computer and business from &pound;24.38."
+            "text": "No. If you add Gmail the simple way - choosing Google and letting the Google sign-in pop-up appear - Outlook uses Google's secure sign-in and no app password is needed. You only need an app password for the manual IMAP setup, which is where the endless password prompt usually happens."
           }
         },
         {
           "@type": "Question",
-          "name": "My Outlook problem isn&rsquo;t in the list &mdash; can you still help?",
+          "name": "Is it safe to use an app password?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Almost certainly. The guides above are the most common ones, but we fix every kind of Outlook problem &mdash; calendars, shared mailboxes, contacts, add-ins, migrations and more. Give us a ring on 01202 775566 or drop us a message and we&rsquo;ll take a look."
+            "text": "Yes. An app password only works for the one app you created it for, and you can revoke it any time from Google's Security page without changing your main Gmail password. Because 2-Step Verification stays on, your account is actually more secure than before. Note that if you ever change your main Google password, existing app passwords stop working and you'll need to create a new one."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can you set up Gmail in Outlook for me?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Absolutely. Call 365 Techies on 01202 775566 and we'll add your Gmail to Outlook remotely, usually within minutes. You watch every step on your own screen with Splashtop, we phone you first, and access ends as soon as it's working. We're Windows specialists in Bournemouth."
           }
         }
       ]
@@ -564,111 +609,35 @@
   <main id="main">
     <section class="page-hero" aria-label="Introduction">
       <div class="page-hero__inner">
-        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">Outlook Problems</span></nav>
-        <p class="eyebrow mono">// OUTLOOK HELP &middot; ALL VERSIONS</p>
-        <h1>Outlook problems, <em class="grad grad--cyan">sorted</em></h1>
-        <p class="lede">Outlook playing up? You&rsquo;re in the right place. Below are plain-English fixes for the most common Microsoft Outlook problems &mdash; classic Outlook, the new Outlook, Outlook.com and the Android app. Find yours, follow the steps, and if you&rsquo;d rather just have it done, we&rsquo;ll fix it remotely in minutes. Rated 4.9 on Google.</p>
+        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">Add Gmail to Outlook</span></nav>
+        <p class="eyebrow mono">Classic Outlook · Gmail setup</p>
+        <h1>Add Gmail to Outlook when it <em class="grad grad--cyan">keeps asking for your password</em></h1>
+        <p class="lede">If classic Outlook rejects your Gmail password again and again, you're not typing it wrong - Google no longer accepts your normal password for a manually-added account. The fix is a one-time 16-character "App password" from Google. Here's exactly how, and we can set it up remotely in minutes if you'd rather not fiddle. Rated 4.9 on Google.</p>
         <div class="page-hero__cta">
-          <a href="/contact/" class="button primary button--lg">Get Outlook Fixed Remotely</a>
-          <a href="tel:+441202775566" class="button secondary button--lg">Call 01202 775566</a>
+          <a href="tel:+441202775566" class="button primary button--lg">Set it up remotely</a>
+          <a href="/outlook-problems/" class="button secondary button--lg">More Outlook fixes</a>
         </div>
-        <ul class="page-hero__chips mono"><li>&#9679; All versions of Outlook</li><li>&#9679; Free step-by-step fixes</li><li>&#9679; Or fixed remotely in minutes</li></ul>
+        <ul class="page-hero__chips mono"><li>&#9679; Classic Outlook</li><li>&#9679; Gmail + IMAP</li><li>&#9679; Set up in minutes</li></ul>
       </div>
     </section>
-    <section class="section section--alt" aria-label="The most common Outlook problems &mdash; and the fix">
+    <section class="section section--alt" aria-label="Why Gmail keeps asking for your password">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// FIND YOUR PROBLEM</p>
-        <h2 class="section-title" data-title>The most common Outlook problems &mdash; and the fix<span class="title-underline"></span></h2>
-          <p>Pick the one that matches what you&rsquo;re seeing. Each links to a short, plain-English guide with the exact steps.</p>
-          <p><strong>Can&rsquo;t send or receive (error codes):</strong></p>
-          <ul>
-            <li><a href="/outlook-error-0x800ccc0e/">0x800ccc0e &amp; 0x800ccc0f</a> &mdash; can&rsquo;t connect / connection interrupted</li>
-            <li><a href="/outlook-error-0x80042108/">0x80042108</a> &mdash; can&rsquo;t reach the incoming server</li>
-            <li><a href="/outlook-error-0x80042109/">0x80042109</a> &mdash; can&rsquo;t connect to the outgoing (SMTP) server</li>
-            <li><a href="/outlook-error-0x800ccc90/">0x800ccc90</a> &mdash; POP3 login failed</li>
-            <li><a href="/outlook-error-0x800ccc78/">0x800ccc78 &amp; 0x800ccc79</a> &mdash; sender rejected / relay not allowed</li>
-            <li><a href="/outlook-error-0x8004060c/">0x8004060c</a> &mdash; message store reached maximum size</li>
-            <li><a href="/outlook-error-0x8004010b/">0x8004010b</a> &mdash; sending reported error</li>
-          </ul>
-          <p><strong>Send &amp; receive not working:</strong></p>
-          <ul>
-            <li><a href="/outlook-not-sending-emails/">Receiving but not sending</a></li>
-            <li><a href="/outlook-stuck-in-outbox/">Stuck in the Outbox</a></li>
-            <li><a href="/outlook-not-syncing/">Not syncing / inbox not updating (Windows)</a></li>
-            <li><a href="/outlook-not-syncing-android/">Not syncing on the Android app</a></li>
-          </ul>
-          <p><strong>Won&rsquo;t open, freezes or crashes:</strong></p>
-          <ul>
-            <li><a href="/outlook-cannot-open-the-outlook-window/">Cannot open the Outlook window</a></li>
-            <li><a href="/outlook-stuck-on-loading-profile/">Stuck on &lsquo;Loading Profile&rsquo;</a></li>
-            <li><a href="/outlook-wont-open-in-safe-mode/">Won&rsquo;t even open in safe mode</a></li>
-            <li><a href="/outlook-opens-then-closes/">Opens then closes / crashes on open</a></li>
-            <li><a href="/new-outlook-wont-open/">New Outlook won&rsquo;t open</a></li>
-            <li><a href="/new-outlook-blank-screen/">New Outlook blank white screen</a></li>
-            <li><a href="/outlook-app-crashing-android/">Android app keeps crashing</a></li>
-          </ul>
-          <p><strong>Login &amp; password:</strong></p>
-          <ul>
-            <li><a href="/outlook-keeps-asking-for-password/">Keeps asking for your password</a></li>
-            <li><a href="/outlook-password-not-working/">Password not working but it&rsquo;s correct</a></li>
-            <li><a href="/outlook-stuck-in-sign-in-loop/">Stuck in a sign-in loop</a></li>
-            <li><a href="/outlook-cant-sign-in/">&ldquo;Something went wrong, we can&rsquo;t sign you in&rdquo;</a></li>
-            <li><a href="/how-to-add-gmail-to-outlook/">Adding Gmail keeps asking for a password</a></li>
-          </ul>
-          <p><strong>Search, rules, signatures &amp; data files:</strong></p>
-          <ul>
-            <li><a href="/outlook-search-not-finding-old-emails/">Search not finding old emails</a></li>
-            <li><a href="/outlook-data-file-cannot-be-accessed/">Data file cannot be accessed (0x8004010f)</a></li>
-            <li><a href="/outlook-pst-cannot-be-accessed/">PST cannot be accessed (0x80040116)</a></li>
-            <li><a href="/outlook-ost-file-corrupt/">OST file corrupt / errors in the file</a></li>
-            <li><a href="/outlook-rules-not-working/">Rules not working (classic)</a></li>
-            <li><a href="/outlook-rules-not-working-new-outlook/">Rules not running (new Outlook)</a></li>
-            <li><a href="/outlook-signature-not-showing/">Signature not showing</a></li>
-            <li><a href="/outlook-search-greyed-out/">Search greyed out / not working</a></li>
-            <li><a href="/outlook-running-slow/">Running slow, laggy or high memory</a></li>
-            <li><a href="/outlook-working-offline-wont-turn-off/">Stuck on &lsquo;Working Offline&rsquo;</a></li>
-          </ul>
-          <p><strong>The new Outlook:</strong></p>
-          <ul>
-            <li><a href="/how-to-go-back-to-classic-outlook/">How to go back to classic Outlook</a></li>
-            <li><a href="/new-outlook-no-send-receive-button/">There&rsquo;s no Send/Receive button</a></li>
-          </ul>
-          <p><strong>Calendar &amp; out of office:</strong></p>
-          <ul>
-            <li><a href="/outlook-calendar-not-syncing/">Calendar not syncing (with your phone)</a></li>
-            <li><a href="/outlook-calendar-appointments-disappearing/">Appointments disappearing</a></li>
-            <li><a href="/outlook-out-of-office-not-working/">Out of office / automatic replies not working</a></li>
-          </ul>
-          <p><strong>Contacts, attachments &amp; add-ins:</strong></p>
-          <ul>
-            <li><a href="/outlook-contacts-missing/">Contacts missing or disappeared</a></li>
-            <li><a href="/outlook-autocomplete-not-working/">Autocomplete not working</a></li>
-            <li><a href="/outlook-add-in-not-loading/">An add-in won&rsquo;t load / is missing</a></li>
-            <li><a href="/cant-open-attachments-in-outlook/">Can&rsquo;t open attachments</a></li>
-          </ul>
-          <p><strong>Shared mailboxes:</strong></p>
-          <ul>
-            <li><a href="/outlook-shared-mailbox-not-showing/">Shared mailbox not showing</a></li>
-            <li><a href="/outlook-shared-mailbox-sent-items/">Sent items saving to the wrong mailbox</a></li>
-          </ul>
-          <p><strong>Setup &amp; profiles:</strong></p>
-          <ul>
-            <li><a href="/recreate-outlook-profile-without-losing-emails/">Recreate your profile without losing emails</a></li>
-          </ul>
+        <p class="eyebrow mono">The short answer</p>
+        <h2 class="section-title" data-title>Why Gmail keeps asking for your password<span class="title-underline"></span></h2>
+<p>When you add a Gmail account to <strong>classic Outlook</strong> by typing the settings in yourself, Google treats Outlook as a "less secure" third-party app and <strong>refuses your ordinary Gmail password</strong> - so Outlook asks for it again, and again, and again. It's not that you're getting it wrong; Google simply won't accept a normal password over a manual connection any more.</p><p>The answer is a <strong>Google App password</strong>: a special 16-character code you generate once, just for Outlook. You paste that in place of your usual password and Outlook connects straight away. To create one you first need Google's <strong>2-Step Verification</strong> switched on - App passwords don't exist until it is.</p><p>One shortcut worth knowing: if you add Gmail the <em>simple</em> way (choosing Google and letting a Google sign-in pop-up appear), that uses Google's secure sign-in and needs no app password at all. This page covers the manual IMAP route, which is what most people who hit the password loop are using. Before you start, make sure IMAP is switched on in Gmail: in Gmail on the web, go to Settings > See all settings > Forwarding and POP/IMAP, and under IMAP access choose Enable IMAP.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Why Outlook breaks &mdash; and why it&rsquo;s usually a quick fix">
+    <section class="section section--alt" aria-label="How to add Gmail to Outlook with an app password">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// GOOD NEWS</p>
-        <h2 class="section-title" data-title>Why Outlook breaks &mdash; and why it&rsquo;s usually a quick fix<span class="title-underline"></span></h2>
-          <p>Outlook looks complicated when it goes wrong, but the causes are surprisingly few: a server setting or port that&rsquo;s slightly off, a password that changed, a corrupt local cache file, a misbehaving add-in, or a quirk of the new Outlook that Microsoft is still ironing out. <strong>Your actual emails are almost always safe on the server the whole time</strong> &mdash; it&rsquo;s the connection or the local copy that&rsquo;s playing up.</p>
-          <p>That&rsquo;s why most Outlook problems are a five-minute job for someone who fixes them every day. We can talk you through it, or connect securely and sort it for you &mdash; we always phone first, you watch the whole session, and access ends the moment we&rsquo;re done. We&rsquo;re <a href="/microsoft-365-support/">Microsoft 365 &amp; Outlook specialists</a> and offer <a href="/remote-it-support/">fast remote IT support</a> right across the UK.</p>
+        <p class="eyebrow mono">Do these in order</p>
+        <h2 class="section-title" data-title>How to add Gmail to Outlook with an app password<span class="title-underline"></span></h2>
+<p>You'll do the first two steps at Google's website, then finish in Outlook.</p><ol><li><strong>Turn on 2-Step Verification.</strong> Go to your <em>Google Account > Security</em>, find <strong>2-Step Verification</strong> and switch it on, following the prompts to confirm your phone. App passwords only appear once this is on.</li><li><strong>Create an App password.</strong> Go to <em>myaccount.google.com/apppasswords</em> (or search "App passwords" in your Google Account). Type a name like "Outlook", click <strong>Create</strong>, and Google shows a <strong>16-character password</strong>. Copy it - the spaces don't matter.</li><li><strong>Add the account in Outlook.</strong> In classic Outlook go to <em>File > Add Account</em>, and if it doesn't auto-configure choose <strong>Advanced options</strong> and tick <strong>Let me set up my account manually</strong> (on older builds, <strong>Manual setup or additional server types</strong>), then <strong>POP or IMAP</strong>.</li><li><strong>Enter the Gmail server settings.</strong> Account type <strong>IMAP</strong>; incoming server <strong>imap.gmail.com</strong>, port <strong>993</strong>, encryption <strong>SSL/TLS</strong>; outgoing server <strong>smtp.gmail.com</strong>, port <strong>587</strong>, encryption <strong>STARTTLS</strong> (port 465 with SSL/TLS also works). Your user name is your full Gmail address, and make sure the outgoing server is set to require authentication.</li><li><strong>Paste the app password.</strong> When Outlook asks for your password, paste the <strong>16-character app password</strong> - not your normal Gmail password. Click <strong>OK</strong>, then <strong>Finish</strong>.</li></ol><p>Outlook will test the connection and start downloading your Gmail. Because Gmail is an IMAP account, your mail stays on Google's servers and simply syncs down - nothing is moved or at risk.</p>
       </div>
     </section>
     <section class="section" aria-label="Related">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">// RELATED</p>
-        <p>Related: <a href="/microsoft-365-support/">Microsoft 365 &amp; Outlook support</a>, <a href="/remote-it-support/">remote IT support</a>, <a href="/email-signature-generator/">free email signature generator</a>, or <a href="/contact/">talk to a techie</a>.</p>
+<p>Related help: <a href="/outlook-problems/">all Outlook problems</a> · <a href="/microsoft-365-support/">Microsoft 365 support</a> · <a href="/remote-it-support/">remote IT support</a> · <a href="/contact/">contact 365 Techies</a></p>
       </div>
     </section>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
@@ -677,35 +646,39 @@
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
-          <summary>Is Outlook broken, or is it my email account?<span class="faq__icon" aria-hidden="true"></span></summary>
-          <div class="faq__ans"><p>Usually it&rsquo;s Outlook, not the account. The quickest test is to sign in to your email in a web browser (Outlook on the web, or your provider&rsquo;s webmail). If your mail is all there and works, the problem is the Outlook app or its settings on your device &mdash; which is good news, because that&rsquo;s a quick fix.</p></div>
+          <summary>What is a Google App password and why do I need one?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>An App password is a one-off 16-character code Google generates just for a single app, like Outlook. Because a manually-added Gmail account can't use Google's secure sign-in pop-up, Google won't accept your normal password - the app password is the substitute it will accept. You create it once and Outlook remembers it.</p></div>
         </details>
         <details class="faq" data-reveal>
-          <summary>Can you really fix Outlook remotely?<span class="faq__icon" aria-hidden="true"></span></summary>
-          <div class="faq__ans"><p>Yes &mdash; the vast majority of Outlook problems are fixed remotely, usually within minutes. We connect over a secure Splashtop session (we phone first, you watch everything on screen, and access ends when we&rsquo;re done), sort the settings or the cache file, and get your email flowing again.</p></div>
+          <summary>I can't find App passwords in my Google account.<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>App passwords only appear after 2-Step Verification is switched on. Turn that on first under Google Account > Security, then go to myaccount.google.com/apppasswords, or search "App passwords" in your Google Account search box. If it's still hidden, your account may be a work or school account whose administrator has disabled app passwords.</p></div>
         </details>
         <details class="faq" data-reveal>
-          <summary>Which version of Outlook do I have?<span class="faq__icon" aria-hidden="true"></span></summary>
-          <div class="faq__ans"><p>There are a few: classic Outlook for Windows (the long-standing desktop app, part of Microsoft 365 or Office), the new Outlook for Windows (a simpler, cloud-based app Microsoft is rolling out), Outlook on the web, Outlook.com webmail, and the Outlook mobile app. Our guides are tagged by version &mdash; and if you&rsquo;re not sure which you&rsquo;ve got, just call us.</p></div>
+          <summary>What are the correct Gmail server settings for classic Outlook?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Incoming (IMAP): imap.gmail.com, port 993, SSL/TLS. Outgoing (SMTP): smtp.gmail.com, port 587 with STARTTLS (or port 465 with SSL/TLS). Your user name is your full Gmail address, and the password is the 16-character app password. Make sure the outgoing server is set to require authentication.</p></div>
         </details>
         <details class="faq" data-reveal>
-          <summary>How much does it cost to fix Outlook?<span class="faq__icon" aria-hidden="true"></span></summary>
-          <div class="faq__ans"><p>We diagnose for free and quote clearly before any chargeable work &mdash; no-fix-no-fee. Many quick Outlook fixes are a single remote session; if you&rsquo;d like us to keep everything running smoothly, home IT support is &pound;18.25/month per computer and business from &pound;24.38.</p></div>
+          <summary>Do I always need an app password to add Gmail?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>No. If you add Gmail the simple way - choosing Google and letting the Google sign-in pop-up appear - Outlook uses Google's secure sign-in and no app password is needed. You only need an app password for the manual IMAP setup, which is where the endless password prompt usually happens.</p></div>
         </details>
         <details class="faq" data-reveal>
-          <summary>My Outlook problem isn&rsquo;t in the list &mdash; can you still help?<span class="faq__icon" aria-hidden="true"></span></summary>
-          <div class="faq__ans"><p>Almost certainly. The guides above are the most common ones, but we fix every kind of Outlook problem &mdash; calendars, shared mailboxes, contacts, add-ins, migrations and more. Give us a ring on 01202 775566 or drop us a message and we&rsquo;ll take a look.</p></div>
+          <summary>Is it safe to use an app password?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Yes. An app password only works for the one app you created it for, and you can revoke it any time from Google's Security page without changing your main Gmail password. Because 2-Step Verification stays on, your account is actually more secure than before. Note that if you ever change your main Google password, existing app passwords stop working and you'll need to create a new one.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Can you set up Gmail in Outlook for me?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Absolutely. Call 365 Techies on 01202 775566 and we'll add your Gmail to Outlook remotely, usually within minutes. You watch every step on your own screen with Splashtop, we phone you first, and access ends as soon as it's working. We're Windows specialists in Bournemouth.</p></div>
         </details>
         </div>
       </div>
     </section>
     <section class="cta-band" aria-label="Get started">
       <div class="cta-band__inner">
-        <h2 data-title>Can&rsquo;t find your Outlook problem &mdash; or want it just done?<span class="title-underline title-underline--center"></span></h2>
-        <p class="lede lede--center" data-reveal>Whatever Outlook is doing, we&rsquo;ve almost certainly fixed it before &mdash; usually remotely, within minutes, over a secure Splashtop session you watch the whole time. Homes and businesses across Bournemouth, Poole and Dorset, and remote across the UK.</p>
+        <h2 data-title>Gmail still won't connect?<span class="title-underline title-underline--center"></span></h2>
+        <p class="lede lede--center" data-reveal>Call 365 Techies on 01202 775566 and we'll add your Gmail to Outlook remotely - usually within minutes. You watch the whole time, we phone first, access ends when it's done.</p>
         <div class="hero-buttons hero-buttons--center" data-reveal>
-          <a href="/contact/" class="button primary button--lg">Get Outlook Fixed Remotely</a>
-          <a href="tel:+441202775566" class="button secondary button--lg">Call 01202 775566</a>
+          <a href="tel:+441202775566" class="button primary button--lg">Set it up remotely</a>
+          <a href="/outlook-problems/" class="button secondary button--lg">More Outlook fixes</a>
         </div>
         <p class="cta__contact mono" data-reveal>01202 775566 &middot; help@365techies.co.uk &middot; MON&ndash;FRI 9AM&ndash;5PM</p>
       </div>

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Easy-keyword + Outlook fix pages + Outlook hub, rendered by build_extra.build_new_page().
+# Easy-keyword + Outlook fix pages (waves 1-3) + Outlook hub, rendered by build_extra.build_new_page().
 
 NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
   'title': 'Windows 11 Upgrade Service Poole & Bournemouth | 365 Techies',
@@ -3265,6 +3265,8 @@ NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
                         '            <li><a href="/outlook-keeps-asking-for-password/">Keeps asking for your password</a></li>\n'
                         '            <li><a href="/outlook-password-not-working/">Password not working but it&rsquo;s correct</a></li>\n'
                         '            <li><a href="/outlook-stuck-in-sign-in-loop/">Stuck in a sign-in loop</a></li>\n'
+                        '            <li><a href="/outlook-cant-sign-in/">&ldquo;Something went wrong, we can&rsquo;t sign you in&rdquo;</a></li>\n'
+                        '            <li><a href="/how-to-add-gmail-to-outlook/">Adding Gmail keeps asking for a password</a></li>\n'
                         '          </ul>\n'
                         '          <p><strong>Search, rules, signatures &amp; data files:</strong></p>\n'
                         '          <ul>\n'
@@ -3275,11 +3277,36 @@ NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
                         '            <li><a href="/outlook-rules-not-working/">Rules not working (classic)</a></li>\n'
                         '            <li><a href="/outlook-rules-not-working-new-outlook/">Rules not running (new Outlook)</a></li>\n'
                         '            <li><a href="/outlook-signature-not-showing/">Signature not showing</a></li>\n'
+                        '            <li><a href="/outlook-search-greyed-out/">Search greyed out / not working</a></li>\n'
+                        '            <li><a href="/outlook-running-slow/">Running slow, laggy or high memory</a></li>\n'
+                        '            <li><a href="/outlook-working-offline-wont-turn-off/">Stuck on &lsquo;Working Offline&rsquo;</a></li>\n'
                         '          </ul>\n'
                         '          <p><strong>The new Outlook:</strong></p>\n'
                         '          <ul>\n'
                         '            <li><a href="/how-to-go-back-to-classic-outlook/">How to go back to classic Outlook</a></li>\n'
                         '            <li><a href="/new-outlook-no-send-receive-button/">There&rsquo;s no Send/Receive button</a></li>\n'
+                        '          </ul>\n'
+                        '          <p><strong>Calendar &amp; out of office:</strong></p>\n'
+                        '          <ul>\n'
+                        '            <li><a href="/outlook-calendar-not-syncing/">Calendar not syncing (with your phone)</a></li>\n'
+                        '            <li><a href="/outlook-calendar-appointments-disappearing/">Appointments disappearing</a></li>\n'
+                        '            <li><a href="/outlook-out-of-office-not-working/">Out of office / automatic replies not working</a></li>\n'
+                        '          </ul>\n'
+                        '          <p><strong>Contacts, attachments &amp; add-ins:</strong></p>\n'
+                        '          <ul>\n'
+                        '            <li><a href="/outlook-contacts-missing/">Contacts missing or disappeared</a></li>\n'
+                        '            <li><a href="/outlook-autocomplete-not-working/">Autocomplete not working</a></li>\n'
+                        '            <li><a href="/outlook-add-in-not-loading/">An add-in won&rsquo;t load / is missing</a></li>\n'
+                        '            <li><a href="/cant-open-attachments-in-outlook/">Can&rsquo;t open attachments</a></li>\n'
+                        '          </ul>\n'
+                        '          <p><strong>Shared mailboxes:</strong></p>\n'
+                        '          <ul>\n'
+                        '            <li><a href="/outlook-shared-mailbox-not-showing/">Shared mailbox not showing</a></li>\n'
+                        '            <li><a href="/outlook-shared-mailbox-sent-items/">Sent items saving to the wrong mailbox</a></li>\n'
+                        '          </ul>\n'
+                        '          <p><strong>Setup &amp; profiles:</strong></p>\n'
+                        '          <ul>\n'
+                        '            <li><a href="/recreate-outlook-profile-without-losing-emails/">Recreate your profile without losing emails</a></li>\n'
                         '          </ul>'},
                {'eyebrow': '// GOOD NEWS',
                 'h2': 'Why Outlook breaks &mdash; and why it&rsquo;s usually a quick fix',
@@ -3307,4 +3334,1126 @@ NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
             'us a ring on 01202 775566 or drop us a message and we&rsquo;ll take a look.')],
   'schemaKind': 'faq',
   'crossLinksHtml': '        <p>Related: <a href="/microsoft-365-support/">Microsoft 365 &amp; Outlook support</a>, <a href="/remote-it-support/">remote IT support</a>, <a '
-                    'href="/email-signature-generator/">free email signature generator</a>, or <a href="/contact/">talk to a techie</a>.</p>'}]
+                    'href="/email-signature-generator/">free email signature generator</a>, or <a href="/contact/">talk to a techie</a>.</p>'},
+ {'slug': 'outlook-calendar-not-syncing',
+  'title': 'Outlook Calendar Not Syncing With Phone | 365 Techies',
+  'metaDesc': "Outlook calendar not syncing between your PC and Android phone? Here's the plain-English cause and the exact fix — or we'll sort it remotely in minutes.",
+  'ogTitle': "Outlook Calendar Not Syncing With Your Phone? Here's the Fix",
+  'crumbName': 'Calendar Not Syncing',
+  'eyebrow': 'Outlook Fix · All Versions',
+  'h1': 'Outlook <em class="grad grad--cyan">calendar not syncing</em> with your phone',
+  'lede': "If your Outlook calendar shows different appointments on your PC than on your Android phone, it's almost always because the two devices aren't looking at the same calendar — or calendar "
+          "sync is switched off in the Outlook app. Here's how to fix it in a few minutes.",
+  'chips': ['Windows & Android', 'Microsoft Partner', 'Fixed remotely in minutes'],
+  'primaryCta': ['Fix my calendar now', 'tel:+441202775566'],
+  'secondaryCta': ['See all Outlook problems', '/outlook-problems/'],
+  'ctaHead': 'Still not syncing?',
+  'ctaSub': "Call 365 Techies on 01202 775566 and we'll watch your screen over Splashtop, phone you first, and get both devices showing the same calendar — usually in minutes.",
+  'sections': [{'eyebrow': 'The real cause',
+                'h2': "Why your calendar won't sync to your phone",
+                'html': '<p>Nine times out of ten this comes down to <strong>which calendar the appointment actually lives in</strong>. A calendar stored in a Microsoft 365 or Exchange account lives '
+                        "on Microsoft's servers, so it syncs everywhere automatically — your PC, the Outlook app on your Android phone, Outlook on the web, the lot. But a calendar stored in a "
+                        '<strong>local PST file on your PC</strong> only exists on that one computer. It has nowhere to sync <em>from</em>, so it will never appear on your phone no matter how long '
+                        "you wait.</p><p>The other common culprit is simply that <strong>calendar sync is turned off in the Outlook app</strong> on your phone, or Android's own privacy settings are "
+                        'blocking Outlook from touching your calendar. And very often an account that was added as POP or IMAP (a mail-only setup) will happily sync email but silently drop calendars '
+                        "and contacts — because POP and IMAP are email-only protocols that don't carry calendar data at all. If that's the case the fix is to remove the account and add it back as a "
+                        "Microsoft 365 / Exchange (modern authentication) account.</p><p>So before you start deleting things, the first job is to work out which of those three situations you're "
+                        'in.</p>'},
+               {'eyebrow': 'Do this first',
+                'h2': 'The quick checks that fix most cases',
+                'html': '<p>Start on your <strong>PC</strong>. In the folder list down the left of Outlook, click the calendar icon and look at the calendar headings. If you see your appointments '
+                        'under a Microsoft 365 or Exchange account name, good — that will sync. If they\'re under something like "Personal Folders" or an <code>.pst</code> file, that calendar is '
+                        'local and needs moving to your account calendar before it can ever reach your phone. We can migrate those appointments across for you without losing a thing.</p><p>Now the '
+                        '<strong>phone</strong>. In the Outlook Android app, tap your profile picture (top-left) > the gear icon for <strong>Settings</strong> > tap your email account > make sure '
+                        "<strong>Sync Calendars</strong> is switched on. (If that toggle is greyed out and won't turn on, the account was added as IMAP or POP — remove it and re-add it as a "
+                        "Microsoft 365 / Exchange account.) Then leave Outlook and open Android's own <strong>Settings > Apps > Outlook > Permissions</strong> and set both <strong>Calendar</strong> "
+                        'and <strong>Contacts</strong> to <strong>Allow</strong>. Give it a minute and the appointments should flow through.</p>'}],
+  'faqs': [{'q': 'Why does my Outlook calendar sync email but not appointments to my phone?',
+            'a': "That's the classic sign your phone added the account as POP or IMAP, which are email-only protocols and don't carry calendars or contacts. Remove the account from the Outlook app "
+                 'and add it back using the Microsoft 365 / Exchange (modern authentication) option, and the calendar will start syncing. Alternatively, an appointment stored in a local PST on your '
+                 'PC will also fail to reach the phone because it never leaves the PC.'},
+           {'q': 'Do I need Microsoft 365 or Exchange for my calendar to sync everywhere?',
+            'a': "Effectively yes. A Microsoft 365 or Exchange calendar lives on Microsoft's servers, so it appears automatically on your PC, your phone and the web. A calendar kept in a local PST "
+                 'file has nowhere to sync from, so it will only ever show on the one PC it was created on.'},
+           {'q': 'I turned on Sync Calendars but nothing changed — what now?',
+            'a': "Two things to try. First, check Android's own permissions: Settings > Apps > Outlook > Permissions and set both Calendar and Contacts to Allow. Second, in the Outlook app tap your "
+                 "account and scroll to the bottom to choose Reset Account, which refreshes the connection to the server. If it's a shared or M365 calendar on the desktop that's stuck, removing and "
+                 're-adding the account on the PC usually clears it.'},
+           {'q': 'Am I looking at the wrong calendar?',
+            'a': 'Very possibly. If you have several calendars (a personal one, a work M365 one, maybe a shared one), your phone may be showing a different calendar from your PC. Tap the calendar '
+                 "view options in the Outlook app and make sure the account calendar you actually book into is ticked, and that you're not viewing a separate local calendar by mistake."},
+           {'q': 'Will fixing this delete any of my appointments?',
+            'a': "No. Turning calendar sync on, resetting the account, or re-adding it as Exchange doesn't delete anything — your appointments live safely on Microsoft's servers and simply "
+                 're-download to the device. The only calendars that need care are local PST ones, which we copy across to your account calendar before making any changes.'},
+           {'q': 'Can 365 Techies fix this without me being technical?',
+            'a': "Absolutely — this is exactly the kind of thing we sort remotely in minutes. Call 01202 775566, we'll phone you first, then connect to your screen over Splashtop so you can watch "
+                 "every step. Access ends the moment we're done. We support Outlook on Windows and the Outlook app on Android."}],
+  'schemaKind': 'howto',
+  'howToName': 'How to fix Outlook calendar not syncing with your phone',
+  'howToSteps': [{'name': 'Confirm the calendar is on your account, not a local PST',
+                  'text': "On your PC, open Outlook's calendar and check the heading your appointments sit under. If it's a Microsoft 365 or Exchange account it will sync; if it's a Personal Folders "
+                          'or PST calendar, those appointments must be moved to your account calendar before they can reach your phone.'},
+                 {'name': 'Turn on Sync Calendars in the Outlook Android app',
+                  'text': 'In the Outlook app tap your profile picture, open Settings, tap your email account and switch Sync Calendars on. If the toggle is greyed out, the account is IMAP or POP '
+                          'and must be removed and re-added as Microsoft 365 / Exchange.'},
+                 {'name': 'Allow the calendar permission in Android settings',
+                  'text': 'Go to Android Settings > Apps > Outlook > Permissions and set both Calendar and Contacts to Allow so Outlook can write appointments to the device.'},
+                 {'name': "Reset the account if it still won't sync",
+                  'text': 'In the Outlook app, tap the account and scroll to the bottom to choose Reset Account, which refreshes the connection to the server. If a shared or M365 calendar is stuck '
+                          'on the desktop, remove and re-add that account in Outlook on the PC.'},
+                 {'name': "Check you're viewing the account calendar",
+                  'text': 'Make sure both devices are showing the same account calendar and not a separate local one, so identical appointments appear on each.'}],
+  'crossLinksHtml': '<p>Related help: <a href="/outlook-problems/">all Outlook problems</a> · <a href="/microsoft-365-support/">Microsoft 365 support</a> · <a href="/remote-it-support/">remote IT '
+                    'support</a> · <a href="/contact/">contact us</a></p>'},
+ {'slug': 'outlook-out-of-office-not-working',
+  'title': 'Outlook Out of Office Not Working (Greyed Out) | 365 Techies',
+  'metaDesc': "Outlook Automatic Replies greyed out or not working? Here's why the Out of Office button disappears, and the exact fix — or we'll sort it remotely in minutes.",
+  'ogTitle': "Outlook Out of Office Greyed Out? Here's Why and the Fix",
+  'crumbName': 'Out of Office Not Working',
+  'eyebrow': 'Outlook Fix · All Versions',
+  'h1': 'Outlook <em class="grad grad--cyan">Out of Office</em> not working or greyed out',
+  'lede': "If the Automatic Replies (Out of Office) button in Outlook is greyed out or missing, it's almost always because your account is a POP or IMAP account — and that type simply doesn't have "
+          "the feature. Here's how to tell, and what to use instead.",
+  'chips': ['Windows & Android', 'Microsoft Partner', 'Fixed remotely in minutes'],
+  'primaryCta': ['Get my Out of Office working', 'tel:+441202775566'],
+  'secondaryCta': ['See all Outlook problems', '/outlook-problems/'],
+  'ctaHead': 'Need it working before you leave?',
+  'ctaSub': "Call 365 Techies on 01202 775566. We'll phone you first, connect over Splashtop while you watch, and get your automatic replies set up properly — usually in minutes.",
+  'sections': [{'eyebrow': 'The real cause',
+                'h2': 'Why the Out of Office button is greyed out',
+                'html': '<p>Outlook\'s <strong>Automatic Replies</strong> feature (the proper "Out of Office") isn\'t part of Outlook the program — it\'s a service that runs on the mail server. That '
+                        "means it only exists on <strong>Microsoft 365 and Exchange</strong> accounts, because those are the accounts with a server clever enough to reply on your behalf while you're "
+                        'away.</p><p>If your Outlook is set up with a <strong>POP or IMAP account</strong> — which covers most standard broadband, Gmail-via-IMAP and web-host mailboxes — there is no '
+                        "such server feature, so Outlook greys the button out or hides it entirely. It's not broken and there's nothing to repair; the option simply isn't available for that account "
+                        'type. The fix is either to set your out-of-office in a way that <em>does</em> work for your account, or to move onto a Microsoft 365 mailbox that has the feature built '
+                        'in.</p><p>One quick way to check in <strong>classic Outlook</strong>: click <strong>File</strong> at the top-left. If you see <strong>Automatic Replies (Out of '
+                        "Office)</strong>, you're on Exchange/365. If that option isn't there, you're on POP/IMAP. In the <strong>new Outlook for Windows</strong> there's no File menu — instead "
+                        "click the <strong>gear (Settings)</strong> icon > <strong>Accounts > Automatic replies</strong>; if it says the account doesn't support it, that again means POP/IMAP.</p>"},
+               {'eyebrow': 'The fix',
+                'h2': 'How to set your out-of-office the right way',
+                'html': "<p><strong>If you're on Microsoft 365 or Exchange (classic Outlook):</strong> go to <strong>File > Automatic Replies</strong>, choose <strong>Send automatic "
+                        'replies</strong>, and tick <strong>Only send during this time range</strong> to set your dates so it switches itself on and off. Write your inside-the-office message, then — '
+                        'this is the bit people miss — click the <strong>Outside My Organization</strong> tab and tick <strong>Send replies outside my organization</strong> so customers and '
+                        'suppliers get a reply too. In the <strong>new Outlook for Windows</strong> the same thing lives under the <strong>gear (Settings) > Accounts > Automatic replies</strong> '
+                        "toggle. You can also do all of this from <strong>Outlook on the web</strong> (Settings > Account > Automatic replies), which is handy if you're away from your "
+                        "PC.</p><p><strong>If you're on POP or IMAP:</strong> you won't have the button, but you have three good alternatives. You can build a reply template and an Outlook "
+                        '<strong>rule</strong> in classic Outlook to send it to everyone who emails you (Outlook must stay open on your PC for this). You can set a <strong>vacation reply on your '
+                        "mail provider's website</strong>, which many web hosts and Gmail/Outlook.com offer. Or you can move to a Microsoft 365 mailbox — which we can set up for you — and get the "
+                        'real thing.</p>'}],
+  'faqs': [{'q': 'Why is the Automatic Replies button greyed out in my Outlook?',
+            'a': "Because your account is a POP or IMAP account, and that type doesn't include the Out of Office feature. Automatic Replies is a server-side service that only Microsoft 365 and "
+                 "Exchange accounts have. It's not a fault — the option simply isn't available for POP/IMAP, so Outlook greys it out or hides it."},
+           {'q': "How do I know if I'm on Exchange/365 or POP/IMAP?",
+            'a': "In classic Outlook, click File. If you see 'Automatic Replies (Out of Office)', you're on Microsoft 365 or Exchange; if it isn't there, your account is POP or IMAP. In the new "
+                 "Outlook for Windows there's no File menu — click the gear (Settings) icon > Accounts > Automatic replies; if it tells you the account isn't supported, you're on POP/IMAP."},
+           {'q': 'How can I set an out-of-office without Exchange?',
+            'a': "You have three options. In classic Outlook, create an email template plus a rule that replies to incoming mail (your PC must stay on and Outlook open). Set a 'vacation' or "
+                 "'auto-reply' on your mail provider's website — most web hosts, Gmail and Outlook.com offer this. Or move to a Microsoft 365 mailbox, which has proper Automatic Replies built in."},
+           {'q': "I'm on 365 but external senders don't get my reply — why?",
+            'a': "By default Outlook can auto-reply only to people inside your own organisation. In classic Outlook go to File > Automatic Replies, click the 'Outside My Organization' tab and tick "
+                 "'Send replies outside my organization', then write a message there too (in new Outlook and on the web there's an equivalent external-replies option). If it's still blocked, a "
+                 'tenant mail-flow rule set by your admin can suppress external replies — we can check that for you.'},
+           {'q': "My Out of Office won't turn off — what's wrong?",
+            'a': "Usually the date range is still active. In File > Automatic Replies (or the gear > Accounts > Automatic replies in new Outlook), either untick 'Only send during this time range' or "
+                 "select 'Do not send automatic replies'. If you set it via a rule instead, disable that rule in Rules and Alerts. If it's also set in Outlook on the web, turn it off there as well "
+                 "so the two don't fight."},
+           {'q': 'Can 365 Techies set this up for me remotely?',
+            'a': "Yes — this is a quick remote job. Call 01202 775566, we'll phone you first and connect to your screen over Splashtop so you can watch. We'll either configure your 365 automatic "
+                 "replies (dates and external replies included) or set up a proper rule-based reply for a POP/IMAP account. Access ends as soon as we're finished."}],
+  'schemaKind': 'howto',
+  'howToName': 'How to fix Outlook Out of Office not working',
+  'howToSteps': [{'name': 'Check your account type',
+                  'text': "In classic Outlook click File — if you see 'Automatic Replies (Out of Office)' you're on Microsoft 365 or Exchange; if not, you're on POP or IMAP. In new Outlook for "
+                          "Windows there's no File menu, so use the gear (Settings) icon > Accounts > Automatic replies instead."},
+                 {'name': 'On 365/Exchange, open Automatic Replies',
+                  'text': "In classic Outlook go to File > Automatic Replies (or the gear > Accounts > Automatic replies in new Outlook), choose 'Send automatic replies', and tick 'Only send during "
+                          "this time range' to set your start and end dates."},
+                 {'name': 'Turn on external replies',
+                  'text': "On the 'Outside My Organization' tab tick 'Send replies outside my organization', then write a message there so customers and suppliers also get a reply."},
+                 {'name': 'Or set it in Outlook on the web', 'text': 'Go to Outlook on the web > Settings > Account > Automatic replies to set the same thing without your desktop PC.'},
+                 {'name': 'On POP/IMAP, use a rule or server auto-reply',
+                  'text': "In classic Outlook create a reply template plus a rule to answer incoming mail (Outlook must stay open), or set a vacation reply on your mail provider's website instead."}],
+  'crossLinksHtml': '<p>Related help: <a href="/outlook-problems/">all Outlook problems</a> · <a href="/microsoft-365-support/">Microsoft 365 support</a> · <a href="/remote-it-support/">remote IT '
+                    'support</a> · <a href="/contact/">contact us</a></p>'},
+ {'slug': 'outlook-calendar-appointments-disappearing',
+  'title': 'Outlook Calendar Appointments Disappearing | 365 Techies',
+  'metaDesc': "Outlook calendar appointments disappearing? Here's what's really happening and the exact fix — nothing lost — or we'll sort it remotely in minutes.",
+  'ogTitle': "Outlook Calendar Appointments Vanishing? Here's the Fix",
+  'crumbName': 'Appointments Disappearing',
+  'eyebrow': 'Outlook Fix · All Versions',
+  'h1': 'Outlook calendar <em class="grad grad--cyan">appointments disappearing</em>',
+  'lede': "If appointments keep vanishing from your Outlook calendar, don't panic — they're usually still there, just hidden by a view filter, sitting in a different calendar, or waiting behind a "
+          "corrupt local cache. Here's how to find them and stop it happening again.",
+  'chips': ['Windows & Android', 'Microsoft Partner', 'Fixed remotely in minutes'],
+  'primaryCta': ['Get my appointments back', 'tel:+441202775566'],
+  'secondaryCta': ['See all Outlook problems', '/outlook-problems/'],
+  'ctaHead': 'Appointments still missing?',
+  'ctaSub': "Call 365 Techies on 01202 775566. We'll phone you first, connect over Splashtop while you watch, and track down your appointments — safely, nothing lost — usually in minutes.",
+  'sections': [{'eyebrow': 'Do this first',
+                'h2': 'Check Outlook on the web before anything else',
+                'html': '<p>The single most useful thing you can do is open <strong>Outlook on the web</strong> (sign in at the Microsoft 365 / Outlook.com site) and look at the calendar there. '
+                        "Because the web version reads straight from Microsoft's servers, it tells you the truth. <strong>If your appointments are present on the web</strong>, they haven't been "
+                        "deleted — the problem is on your PC's Outlook, and it's a display or cache issue we can clear in minutes with nothing lost. <strong>If they're gone from the web "
+                        'too</strong>, they\'ve genuinely been removed, and we shift to recovering them.</p><p>This one check saves a huge amount of worry, because it separates "Outlook is hiding '
+                        'them" from "something deleted them" — two very different fixes.</p>'},
+               {'eyebrow': 'The real causes',
+                'h2': 'Why appointments vanish — and how to fix each',
+                'html': "<p><strong>A view filter or the wrong calendar.</strong> The most common cause is completely harmless: a filter has been applied to the calendar view, or you're looking at a "
+                        'different calendar from the one the appointments live in. In classic Outlook the cure is to reset the view — close Outlook and reopen it with <strong><code>outlook.exe '
+                        '/cleanviews</code></strong> (Windows key + R, paste that, Enter). That strips any custom filters and puts every appointment back on screen; it changes only how items are '
+                        "displayed and never touches the appointments themselves. Also check the calendar list on the left so you're viewing the right one. (The <code>/cleanviews</code> switch is a "
+                        'classic-Outlook tool; in the new Outlook for Windows, remove any filter via the calendar view options instead.)</p><p><strong>A corrupt cached OST file.</strong> Microsoft '
+                        "365 and Exchange accounts keep a local copy of your mailbox in an <code>.ost</code> file. If that copy corrupts, appointments can flicker or drop out — even though they're "
+                        'safe on the server. The fix is to close Outlook, delete (or rename) the <code>.ost</code>, and reopen Outlook: it rebuilds a fresh copy straight from the server, so '
+                        "<strong>nothing is lost</strong>. This is safe for Exchange/365 accounts only — never do it to a POP account, whose mail lives only in the local file. It's the sort of thing "
+                        "we're happy to do with you over remote support so you're comfortable.</p><p><strong>A phone, app or delegate deleting them.</strong> If someone has delegate access to your "
+                        "calendar, or a phone app is misbehaving, appointments can be genuinely deleted. Check the calendar's permissions and any linked mobile apps. And if your organisation has a "
+                        '<strong>retention policy</strong>, older items may be removed automatically on a schedule — an admin setting rather than a fault.</p>'}],
+  'faqs': [{'q': 'My appointments vanished — are they gone for good?',
+            'a': "Usually not. First open Outlook on the web and check the calendar there, because it reads straight from the server. If the appointments are present on the web, they're safe and the "
+                 "problem is just your PC's Outlook hiding them — a quick fix. If they're missing on the web too, they've been genuinely deleted and we move to recovering them, often still possible "
+                 'from Deleted Items or a server backup.'},
+           {'q': 'What does outlook.exe /cleanviews do — is it safe?',
+            'a': "It's completely safe. It resets your Outlook views back to default, removing any custom filters or groupings that might be hiding appointments. It doesn't touch your actual data — "
+                 "only how it's displayed. Press Windows key + R, type outlook.exe /cleanviews and press Enter. Note it's a switch for classic Outlook; the new Outlook for Windows doesn't use "
+                 'command-line switches, so you clear filters from the calendar view options there instead.'},
+           {'q': 'Will deleting the OST file lose my calendar?',
+            'a': "No — as long as it's a Microsoft 365 or Exchange account. The OST is only a local cached copy of that mailbox, and the real data lives on Microsoft's servers. When you close "
+                 'Outlook, delete or rename the OST and reopen, Outlook downloads a fresh copy from the server. This is a standard fix for a corrupt cache and nothing is lost. Never do this to a POP '
+                 'account, though — POP mail is stored only in the local file, so deleting it would lose mail.'},
+           {'q': 'Could my phone or someone else be deleting appointments?',
+            'a': "Yes, it happens. A misbehaving mobile app can delete items during a sync, and anyone with delegate access to your calendar can remove appointments too. Check your calendar's "
+                 'sharing permissions and any linked phone apps. If items keep going on a schedule, it may be an organisation retention policy set by your admin rather than a person.'},
+           {'q': 'Only some appointments disappear, not all — why?',
+            'a': 'That points to a view filter (which hides items matching certain criteria) or a category/recurring-meeting quirk, rather than deletion. In classic Outlook reset the view with '
+                 'outlook.exe /cleanviews and make sure no filter is applied via the View tab > View Settings > Filter. If specific recurring meetings vanish, the organiser may have changed or '
+                 'cancelled the series.'},
+           {'q': 'Can 365 Techies recover missing appointments remotely?',
+            'a': "Yes. Call 01202 775566 — we'll phone you first, then connect to your screen over Splashtop so you can watch. We'll check the web calendar, reset views, safely rebuild a corrupt "
+                 "cache if needed, and recover deleted items where possible. It's usually sorted in minutes and access ends the moment we're done."}],
+  'schemaKind': 'howto',
+  'howToName': 'How to fix Outlook calendar appointments disappearing',
+  'howToSteps': [{'name': 'Check Outlook on the web first',
+                  'text': "Sign in to Outlook on the web and look at the calendar. If the appointments are there, they're safe on the server and the problem is your PC's Outlook. If they're missing "
+                          "there too, they've been genuinely deleted."},
+                 {'name': 'Reset the view with /cleanviews',
+                  'text': 'In classic Outlook, close it, press Windows key + R, type outlook.exe /cleanviews and press Enter to strip any view filters that are hiding appointments. In new Outlook, '
+                          'clear filters from the calendar view options instead.'},
+                 {'name': "Confirm you're on the right calendar",
+                  'text': 'Check the calendar list on the left of Outlook and make sure the correct account calendar is selected, not a separate local or shared one.'},
+                 {'name': 'Rebuild a corrupt cached OST',
+                  'text': 'For a Microsoft 365 or Exchange account only, close Outlook, delete or rename the .ost file, then reopen Outlook so it rebuilds a fresh copy from the server. Nothing is '
+                          'lost. Never do this to a POP account.'},
+                 {'name': 'Rule out phones, delegates and retention',
+                  'text': 'Check calendar sharing permissions, any linked mobile apps, and whether an organisation retention policy is removing older items automatically.'}],
+  'crossLinksHtml': '<p>Related help: <a href="/outlook-problems/">all Outlook problems</a> · <a href="/microsoft-365-support/">Microsoft 365 support</a> · <a href="/remote-it-support/">remote IT '
+                    'support</a> · <a href="/contact/">contact us</a></p>'},
+ {'slug': 'outlook-contacts-missing',
+  'title': 'Outlook Contacts Missing or Disappeared | 365 Techies',
+  'metaDesc': "Outlook contacts missing or disappeared after an update? Here's why they vanish and how to get them back in minutes — or we'll fix it remotely for you.",
+  'ogTitle': "Outlook Contacts Missing? Here's How to Get Them Back",
+  'crumbName': 'Outlook Contacts Missing',
+  'eyebrow': 'Outlook fix · all versions',
+  'h1': 'Outlook <em class="grad grad--cyan">contacts missing</em> or disappeared after an update?',
+  'lede': "In most cases your contacts are not actually gone — Outlook is just showing the wrong folder or account after an update, or your profile needs a quick refresh. Here's how to find them "
+          'again, plus the one thing to check before you panic about lost data.',
+  'chips': ['All Outlook versions', 'Windows & Android', 'Fixed remotely in minutes'],
+  'primaryCta': ['Fix it for me remotely', 'tel:+441202775566'],
+  'secondaryCta': ['See all Outlook problems', '/outlook-problems/'],
+  'ctaHead': "Still can't see your contacts?",
+  'ctaSub': "Call 365 Techies on 01202 775566. We watch, we phone first, and we'll usually have your contacts back on screen within minutes — access ends the moment we're done.",
+  'sections': [{'eyebrow': 'Why it happens',
+                'h2': 'Why your Outlook contacts have vanished',
+                'html': "<p>Nine times out of ten your contacts are safe and Outlook is simply looking in the wrong place. The most common causes are:</p><ul><li><strong>You're viewing the wrong "
+                        "account's People folder.</strong> If you have more than one account in Outlook, the contacts panel may be showing an empty local folder rather than the one holding your "
+                        'addresses.</li><li><strong>A view filter is hiding them.</strong> A leftover filter or sort in the People view can make a full contacts list look empty.</li><li><strong>A '
+                        'Windows or Outlook update knocked the profile out of sync.</strong> After an update, classic Outlook sometimes fails to redraw the People view or resync the '
+                        "account.</li><li><strong>They were local-only contacts in a PST that is no longer attached.</strong> Contacts saved only in a local data file don't live in the cloud, so if "
+                        'that PST is disconnected they disappear from view.</li></ul><p>For a Microsoft 365 or Outlook.com account, your contacts live in the cloud — so the quickest sanity check is '
+                        "to sign in to <strong>Outlook on the web</strong>. If they're there, your data is completely safe and this is purely a display or sync problem on the PC.</p>"},
+               {'eyebrow': 'The fix',
+                'h2': 'How to get your Outlook contacts back',
+                'html': '<p>Work through these in order — most people are sorted by step 3.</p><ol><li><strong>Confirm your data is safe on the web.</strong> Go to outlook.office.com (or '
+                        "outlook.com), sign in, and open People. If your contacts are there, you've only got a display issue to fix — no data has been lost.</li><li><strong>Check you're on the right "
+                        'People folder.</strong> In classic Outlook click <strong>People</strong> at the bottom left, then look under <strong>My Contacts</strong> in the folder pane. Click each '
+                        'Contacts folder in turn — the one tied to your main account is the one you want, not a local or archive folder.</li><li><strong>Clear any view filter.</strong> On the '
+                        '<strong>View</strong> tab choose <strong>Reset View</strong> (or set the arrangement back to a simple list). A stuck filter is a very common reason a full list looks empty. '
+                        'Reset View only restores the layout — it never deletes contacts.</li><li><strong>Refresh the People view via Safe Mode.</strong> Fully close Outlook, then hold '
+                        '<strong>Ctrl</strong> as you reopen it and keep holding until Outlook asks if you want to start in Safe Mode — click <strong>Yes</strong>. Let it load, then close and reopen '
+                        'normally. This nudges Outlook to rebuild the People view after an update.</li><li><strong>Check the address book dropdown.</strong> Start a new email, click '
+                        '<strong>To</strong>, and use the <strong>Address Book</strong> dropdown (top right) to switch between your address books — your contacts may be filed under a different '
+                        "one.</li><li><strong>Re-sync the account, or build a fresh profile.</strong> If the web shows your contacts but the desktop still won't, remove and re-add the account (or "
+                        'create a new mail profile in Control Panel > Mail). A rebuilt profile re-downloads all your cloud contacts automatically.</li></ol><p><strong>One important caution:</strong> '
+                        "if your contacts were stored only in a local PST file (never synced to the cloud), don't create a new profile before re-attaching that PST — the addresses live in that file, "
+                        "not on the server. If you're not sure whether yours are local or cloud, stop and let us check first so nothing is lost.</p>"}],
+  'faqs': [{'q': 'Are my Outlook contacts gone for good?',
+            'a': 'Almost never. For Microsoft 365 and Outlook.com accounts your contacts are stored in the cloud, so signing in to Outlook on the web will usually show them safe and sound — the '
+                 'problem is display or sync on your PC, not lost data. Only contacts saved solely in a disconnected local PST need that file re-attached to reappear.'},
+           {'q': 'My contacts disappeared right after a Windows update — is that the cause?',
+            'a': 'Very likely. Updates can leave classic Outlook failing to redraw the People view or resync the account. Closing Outlook, reopening it once in Safe Mode (hold Ctrl as it starts, '
+                 'then click Yes), then reopening it normally usually restores the view. If not, re-adding the account forces a fresh sync from the cloud.'},
+           {'q': 'Why can I see my contacts on my phone but not on my computer?',
+            'a': 'That confirms your contacts are safely in the cloud and the issue is only on the desktop. The fix is to make the desktop resync — reset the People view, or remove and re-add the '
+                 'account so Outlook pulls the contacts down again. No re-creating needed.'},
+           {'q': "How do I check I'm looking at the right Contacts folder?",
+            'a': "In classic Outlook click People, then under My Contacts in the folder pane click each Contacts folder in turn — the addresses may be in a folder you're not currently viewing. If a "
+                 "folder holds your contacts but they don't show when you click To in a new email, right-click that folder, choose Properties, open the Outlook Address Book tab and tick 'Show this "
+                 "folder as an e-mail Address Book' so it appears in your address book."},
+           {'q': 'Should I create a new Outlook profile to fix missing contacts?',
+            'a': "A new profile re-downloads all cloud contacts and often fixes a corrupt profile after an update — but only do it once you've confirmed your contacts are in the cloud. If they were "
+                 "local-only in a PST, re-attach that PST first, or the addresses won't come back. When in doubt, let us check before making changes."},
+           {'q': 'Can 365 Techies fix missing contacts remotely?',
+            'a': 'Yes. We connect with your permission, confirm where your contacts actually live, and get them showing again — usually within minutes. We phone first, you watch the whole time, and '
+                 "access ends as soon as we're finished. Call 01202 775566."}],
+  'schemaKind': 'howto',
+  'howToName': 'How to fix missing Outlook contacts',
+  'howToSteps': [{'name': 'Confirm your data is safe on the web',
+                  'text': 'Sign in to Outlook on the web and open People. If your contacts appear there, no data is lost and you only have a display or sync issue to fix on the PC.'},
+                 {'name': 'Select the right People folder',
+                  'text': 'In classic Outlook click People, then under My Contacts click each Contacts folder in turn to find the one holding your addresses — not a local or archive folder.'},
+                 {'name': 'Clear any view filter',
+                  'text': "On the View tab choose Reset View so a stuck filter isn't hiding a full contacts list. Reset View only restores the layout and never deletes contacts."},
+                 {'name': 'Refresh via Safe Mode',
+                  'text': 'Fully close Outlook, hold Ctrl while reopening until it asks to start in Safe Mode, click Yes, let it load, then close and reopen normally to rebuild the People view after '
+                          'an update.'},
+                 {'name': 'Check the address book dropdown',
+                  'text': 'Start a new email, click To, and use the Address Book dropdown to switch between address books in case your contacts are filed under a different one.'},
+                 {'name': 'Re-sync or rebuild the profile',
+                  'text': "If the web shows contacts but the desktop won't, remove and re-add the account, or create a new mail profile — a rebuilt profile re-downloads all cloud contacts. Re-attach "
+                          'any local PST first if your contacts were local-only.'}],
+  'crossLinksHtml': '<p>Related help: <a href="/outlook-problems/">all Outlook problems</a> · <a href="/microsoft-365-support/">Microsoft 365 support</a> · <a href="/remote-it-support/">remote IT '
+                    'support</a> · <a href="/contact/">contact us</a></p>'},
+ {'slug': 'outlook-autocomplete-not-working',
+  'title': 'Outlook Autocomplete Not Working | 365 Techies',
+  'metaDesc': "Outlook autocomplete not working and your name suggestions list has disappeared? Here's how to switch it back on and rebuild it — or we'll fix it remotely in minutes.",
+  'ogTitle': 'Outlook Autocomplete Not Working? Turn It Back On',
+  'crumbName': 'Outlook Autocomplete Not Working',
+  'eyebrow': 'Outlook fix · classic Outlook',
+  'h1': 'Outlook <em class="grad grad--cyan">autocomplete not working</em> and your name list disappeared?',
+  'lede': "When you start typing an address and no suggestions appear, autocomplete has almost always just been switched off or the suggestion list has been reset. Here's how to turn it back on and "
+          'let it rebuild — plus why in cached mode it should follow you between PCs.',
+  'chips': ['Classic Outlook', 'Windows', 'Fixed remotely in minutes'],
+  'primaryCta': ['Fix it for me remotely', 'tel:+441202775566'],
+  'secondaryCta': ['See all Outlook problems', '/outlook-problems/'],
+  'ctaHead': 'Suggestions still not showing?',
+  'ctaSub': "Call 365 Techies on 01202 775566. We watch, we phone first, and we'll have autocomplete switched back on and relearning within minutes — access ends the moment we're done.",
+  'sections': [{'eyebrow': 'Why it happens',
+                'h2': 'Why Outlook autocomplete stops suggesting names',
+                'html': '<p>The autocomplete list (also called the suggestion or nickname list) is the little dropdown of names and addresses that appears as you type into the To, Cc or Bcc box. '
+                        "When it stops working, it's usually one of these:</p><ul><li><strong>The setting has been switched off.</strong> A single tick box in Outlook's options controls whether "
+                        'suggestions appear at all — an update or a stray click can clear it.</li><li><strong>The list was emptied or reset.</strong> After clearing it, or after a new profile, the '
+                        'list starts blank and has nothing to suggest yet.</li><li><strong>The list has become corrupt.</strong> Occasionally the stored list gets damaged and needs emptying so '
+                        'Outlook can rebuild a clean one.</li></ul><p>The good news: the autocomplete list is self-healing. It rebuilds itself as you send email, so even a completely empty list '
+                        're-learns your regular contacts within a few days of normal use.</p>'},
+               {'eyebrow': 'The fix',
+                'h2': 'How to get Outlook autocomplete working again',
+                'html': '<p>These steps are for <strong>classic Outlook</strong>. Work through them in order.</p><ol><li><strong>Switch the setting back on.</strong> Go to <strong>File > Options > '
+                        'Mail</strong> and scroll to the <strong>Send messages</strong> section. Tick <strong>Use Auto-Complete List to suggest names when typing in the To, Cc, and Bcc '
+                        'lines</strong>, then click OK. Start a new email and test.</li><li><strong>Let it relearn.</strong> If the setting was already on but the list is empty, just send a few '
+                        'emails as normal. The list saves each recipient as you send, so your regular contacts reappear in the suggestions over the next few days.</li><li><strong>Empty a corrupt '
+                        "list and start fresh.</strong> If suggestions are wrong, stuck or won't appear, go back to <strong>File > Options > Mail</strong>, and under Send messages click "
+                        '<strong>Empty Auto-Complete List</strong>, then confirm with <strong>Yes</strong>. This permanently clears the list and lets Outlook build a clean one as you send — so only '
+                        'do it if the list is misbehaving.</li><li><strong>Create a new mail profile if it still misbehaves.</strong> If autocomplete remains broken after emptying it, a corrupt '
+                        'profile may be to blame. Creating a fresh mail profile (Control Panel > Mail) gives Outlook a clean start; in Cached Exchange Mode your existing list re-downloads from the '
+                        "mailbox, since it's stored there rather than only on the PC.</li></ol><p><strong>Handy to know:</strong> in Cached Exchange Mode the autocomplete list is stored as a hidden "
+                        'item in your mailbox, not just on the one PC. That means it roams with you — sign in on a new computer with the same Microsoft 365 or Exchange account and your suggestions '
+                        "come with you. If they don't, that's a sign the account isn't fully cached or the list needs a rebuild.</p>"}],
+  'faqs': [{'q': 'How do I turn Outlook autocomplete back on?',
+            'a': 'In classic Outlook go to File > Options > Mail, scroll to Send messages, and tick Use Auto-Complete List to suggest names when typing in the To, Cc, and Bcc lines, then click OK. '
+                 'Start a new email and begin typing an address to test it.'},
+           {'q': 'Why is my autocomplete list empty after a new profile or PC?',
+            'a': 'A brand-new profile starts with an empty list. In Cached Exchange Mode it should re-download from your mailbox, since the list is stored there as a hidden item and roams between '
+                 'computers. If it stays empty, just send a few emails — the list relearns your regular contacts as you go.'},
+           {'q': 'Will I lose my suggestions if I empty the Auto-Complete List?',
+            'a': "Emptying the list clears all current suggestions permanently, so only do it if the list is corrupt or misbehaving. It's not a disaster though — Outlook rebuilds the list "
+                 'automatically as you send email, so your regular contacts return within a few days of normal use.'},
+           {'q': 'How does Outlook rebuild the autocomplete list?',
+            'a': "Every time you send an email, Outlook adds the recipients to the suggestion list. So there's no import needed — normal day-to-day sending re-teaches it. Your most-used addresses "
+                 'come back first because you email them most often.'},
+           {'q': 'Should my autocomplete follow me to a new computer?',
+            'a': 'Yes, if you use Cached Exchange Mode with a Microsoft 365 or Exchange account. The list is stored as a hidden item in your mailbox, so it syncs down to each PC you sign in on. If '
+                 "it doesn't appear, the account may not be fully cached — that's something we can check and fix remotely."},
+           {'q': 'Can 365 Techies fix autocomplete remotely?',
+            'a': 'Yes. We connect with your permission, confirm the setting, empty a corrupt list if needed and check your cached-mode setup so suggestions come back. We phone first, you watch '
+                 "throughout, and access ends when we're done. Call 01202 775566."}],
+  'schemaKind': 'howto',
+  'howToName': 'How to fix Outlook autocomplete not working',
+  'howToSteps': [{'name': 'Switch the setting back on',
+                  'text': 'In classic Outlook go to File > Options > Mail, scroll to Send messages, and tick Use Auto-Complete List to suggest names when typing in the To, Cc, and Bcc lines, then '
+                          'click OK and test with a new email.'},
+                 {'name': 'Let the list relearn',
+                  'text': 'If the setting was on but the list is empty, send a few emails as normal. Outlook saves each recipient as you send, so your regular contacts reappear in the suggestions '
+                          'over a few days.'},
+                 {'name': 'Empty a corrupt list',
+                  'text': 'If suggestions are stuck or wrong, go to File > Options > Mail and click Empty Auto-Complete List under Send messages, then confirm with Yes so Outlook builds a clean '
+                          "list. This clears the list permanently, so only do it if it's misbehaving."},
+                 {'name': 'Create a new mail profile',
+                  'text': 'If autocomplete is still broken, create a fresh mail profile in Control Panel > Mail. In Cached Exchange Mode your list re-downloads from the mailbox, giving Outlook a '
+                          'clean start.'}],
+  'crossLinksHtml': '<p>Related help: <a href="/outlook-problems/">all Outlook problems</a> · <a href="/microsoft-365-support/">Microsoft 365 support</a> · <a href="/remote-it-support/">remote IT '
+                    'support</a> · <a href="/contact/">contact us</a></p>'},
+ {'slug': 'outlook-add-in-not-loading',
+  'title': 'Outlook Add-in Not Loading or Disabled | 365 Techies',
+  'metaDesc': "Outlook add-in not loading, missing from the ribbon or disabled? Here's how to re-enable it and stop Outlook auto-disabling it — or we'll fix it remotely in minutes.",
+  'ogTitle': 'Outlook Add-in Not Loading or Missing? Re-enable It',
+  'crumbName': 'Outlook Add-in Not Loading',
+  'eyebrow': 'Outlook fix · classic Outlook',
+  'h1': 'Outlook <em class="grad grad--cyan">add-in not loading</em>, missing from the ribbon or disabled?',
+  'lede': "When an add-in vanishes from the ribbon, Outlook has usually either turned it off or auto-disabled it for being slow. Here's how to switch it back on, re-enable it properly, and stop "
+          "Outlook disabling it again — plus one catch to check if you've moved to the new Outlook.",
+  'chips': ['Classic Outlook', 'Windows', 'Fixed remotely in minutes'],
+  'primaryCta': ['Fix it for me remotely', 'tel:+441202775566'],
+  'secondaryCta': ['See all Outlook problems', '/outlook-problems/'],
+  'ctaHead': "Add-in still won't load?",
+  'ctaSub': "Call 365 Techies on 01202 775566. We watch, we phone first, and we'll get your add-in back on the ribbon within minutes — access ends the moment we're done.",
+  'sections': [{'eyebrow': 'Why it happens',
+                'h2': 'Why your Outlook add-in has disappeared',
+                'html': "<p>Add-ins are the extra buttons that other software (like accounting, CRM, encryption or Teams tools) adds to your Outlook ribbon. When one goes missing, it's usually one "
+                        "of these:</p><ul><li><strong>The add-in has been unticked.</strong> In Outlook's COM Add-ins list, an add-in that's inactive simply won't appear on the "
+                        'ribbon.</li><li><strong>Outlook auto-disabled it for being slow.</strong> If an add-in slows Outlook down or crashes it, Outlook can move it to the Disabled Items list to '
+                        'protect performance — and you\'ll sometimes see a prompt offering to disable a "slow add-in."</li><li><strong>The add-in is out of date or needs reinstalling.</strong> An '
+                        "Outlook or Windows update can leave an older add-in incompatible until it's updated.</li><li><strong>You're running the new Outlook.</strong> The new Outlook doesn't support "
+                        'traditional COM add-ins at all, so a plug-in that worked in classic Outlook may simply not be available there.</li></ul>'},
+               {'eyebrow': 'The fix',
+                'h2': 'How to get your Outlook add-in loading again',
+                'html': '<p>These steps are for <strong>classic Outlook</strong>. Work through them in order.</p><ol><li><strong>Re-tick the add-in.</strong> Go to <strong>File > Options > '
+                        'Add-ins</strong>. At the bottom, set <strong>Manage</strong> to <strong>COM Add-ins</strong> and click <strong>Go</strong>. Tick the box next to your add-in and click OK, '
+                        "then restart Outlook.</li><li><strong>Rescue it from Disabled Items.</strong> If it's not in the COM list or keeps switching off, go back to <strong>File > Options > "
+                        'Add-ins</strong>, set <strong>Manage</strong> to <strong>Disabled Items</strong>, click <strong>Go</strong>, select your add-in and click '
+                        '<strong>Enable</strong>.</li><li><strong>Stop Outlook auto-disabling it.</strong> If Outlook shows a prompt about a slow add-in, choose to keep it enabled rather than '
+                        'disable it. You can also open <strong>File > Slow and Disabled COM Add-ins</strong> and choose <strong>Always enable this add-in</strong> so Outlook stops turning it '
+                        'off.</li><li><strong>Run Outlook normally, not as administrator.</strong> Add-ins loaded under a normal Outlook session won\'t appear if you later open Outlook "as '
+                        'administrator," because that\'s effectively a different context. Close any elevated session and open Outlook the usual way.</li><li><strong>Update or reinstall the '
+                        "add-in.</strong> If it still won't load, install the latest version from the vendor. An update often restores compatibility after an Outlook or Windows "
+                        'update.</li><li><strong>Check it supports your Outlook version.</strong> Confirm the add-in supports your build — and note that traditional COM add-ins do not work in the '
+                        'new Outlook, so you may need to switch back to classic Outlook to use it.</li></ol>'}],
+  'faqs': [{'q': 'How do I re-enable a disabled Outlook add-in?',
+            'a': "In classic Outlook go to File > Options > Add-ins. Set Manage to COM Add-ins and click Go, then tick your add-in. If it's not there or keeps disabling, set Manage to Disabled Items "
+                 'instead, click Go, select the add-in and click Enable. Restart Outlook afterwards.'},
+           {'q': 'Why does Outlook keep disabling my add-in?',
+            'a': 'Outlook auto-disables add-ins it thinks are slowing it down or causing crashes. When you see the slow-add-in prompt, choose to keep it enabled. You can also open File > Slow and '
+                 'Disabled COM Add-ins and pick Always enable this add-in so Outlook stops turning it off.'},
+           {'q': 'My add-in is missing from the ribbon but shows as active — what now?',
+            'a': "First close any Outlook session you opened as administrator and reopen Outlook normally, since add-ins loaded in a standard session won't show in an elevated one. If it's still "
+                 "missing, reinstall or update the add-in, then confirm it's ticked under File > Options > Add-ins > COM Add-ins."},
+           {'q': 'Does my add-in work in the new Outlook?',
+            'a': "Traditional COM add-ins do not work in the new Outlook — it only supports newer web-based add-ins. If a plug-in that worked before has vanished, check whether you've switched to "
+                 'the new Outlook; you may need to toggle back to classic Outlook to keep using it.'},
+           {'q': 'Should I run Outlook as administrator to load an add-in?',
+            'a': "No — that usually causes the opposite problem. Add-ins registered for your normal user session won't appear when Outlook runs elevated. Always open Outlook the standard way, not "
+                 'via Run as administrator, unless a vendor specifically tells you otherwise.'},
+           {'q': 'Can 365 Techies fix a missing Outlook add-in remotely?',
+            'a': "Yes. We connect with your permission, re-enable the add-in, rescue it from Disabled Items, stop Outlook auto-disabling it and confirm it's compatible with your version. We phone "
+                 "first, you watch throughout, and access ends when we're done. Call 01202 775566."}],
+  'schemaKind': 'howto',
+  'howToName': "How to fix an Outlook add-in that won't load",
+  'howToSteps': [{'name': 'Re-tick the add-in', 'text': 'Go to File > Options > Add-ins, set Manage to COM Add-ins and click Go, then tick the box next to your add-in, click OK and restart Outlook.'},
+                 {'name': 'Rescue it from Disabled Items',
+                  'text': "If it's missing or keeps switching off, go to File > Options > Add-ins, set Manage to Disabled Items, click Go, select the add-in and click Enable."},
+                 {'name': 'Stop Outlook auto-disabling it',
+                  'text': 'When Outlook prompts about a slow add-in, choose to keep it enabled. Open File > Slow and Disabled COM Add-ins and choose Always enable this add-in so Outlook stops '
+                          'turning it off.'},
+                 {'name': 'Run Outlook normally',
+                  'text': "Close any session opened as administrator and reopen Outlook the usual way, since add-ins from a standard session won't appear in an elevated one."},
+                 {'name': 'Update or reinstall the add-in', 'text': 'Install the latest version from the vendor to restore compatibility after an Outlook or Windows update.'},
+                 {'name': 'Check version support',
+                  'text': "Confirm the add-in supports your Outlook build, and note that traditional COM add-ins don't work in the new Outlook — switch back to classic Outlook if needed."}],
+  'crossLinksHtml': '<p>Related help: <a href="/outlook-problems/">all Outlook problems</a> · <a href="/microsoft-365-support/">Microsoft 365 support</a> · <a href="/remote-it-support/">remote IT '
+                    'support</a> · <a href="/contact/">contact us</a></p>'},
+ {'slug': 'cant-open-attachments-in-outlook',
+  'title': "Can't Open Attachments in Outlook? Fix | 365 Techies",
+  'metaDesc': "Can't open attachments in classic Outlook? It's usually a blocked file type, a full temporary files folder, no default app or Protected View. Here's the real fix, plus free Dorset "
+              'remote help.',
+  'ogTitle': "Can't Open Attachments in Outlook? Here's the Fix",
+  'crumbName': "Can't Open Attachments in Outlook",
+  'eyebrow': 'Outlook fix | Windows | classic Outlook',
+  'h1': 'Can\'t open <em class="grad grad--cyan">attachments</em> in Outlook?',
+  'lede': "If you can't open attachments in classic Outlook, the most common cause is that Outlook is deliberately blocking a risky file type (like a .exe) to keep you safe — you'll see a note that "
+          'it blocked access to protect your computer. If nothing at all will open, the culprit is usually a full temporary Outlook files folder, an attachment type with no program set to open it, '
+          'or Protected View holding a document shut. The quick, reliable fix for almost every case is to save the attachment to your Desktop and open it from there. Below we walk through each cause '
+          "in plain English, and if you'd rather not touch it, we'll sort it remotely in minutes.",
+  'chips': ['Windows only', 'Classic Outlook', 'Save to Desktop first'],
+  'primaryCta': ['Get us to fix it remotely', 'tel:+441202775566'],
+  'secondaryCta': ['See remote IT support', '/remote-it-support/'],
+  'ctaHead': "Attachments still won't open?",
+  'ctaSub': "Call 365 Techies on 01202 775566. We'll get your attachments opening again remotely while you watch — we phone first and access ends when it's done. Same-day help across Bournemouth and "
+            'Dorset.',
+  'sections': [{'eyebrow': 'Answer first',
+                'h2': 'The quick fix that works most of the time',
+                'html': '<p>Nine times out of ten, the fastest cure is to get the file out of Outlook and open it normally:</p><ol><li>In the email, <strong>right-click the attachment</strong> and '
+                        'choose <strong>Save As</strong> (or use <strong>Save All Attachments</strong>).</li><li>Save it to your <strong>Desktop</strong> — somewhere easy to find.</li><li>Close the '
+                        "email, go to your Desktop, and <strong>double-click the saved file</strong> to open it.</li></ol><p>This sidesteps Outlook's temporary-files folder and Protected View "
+                        "entirely, and it's completely safe as long as you trust who sent the file. If a photo, PDF or Word document opens fine this way, you've confirmed the file itself is good — "
+                        "the problem was Outlook's handling of it, which the steps below fix properly. While you're at it, install any pending <strong>Office updates</strong> (File > Office Account "
+                        '> Update Options > Update Now), as an out-of-date Outlook is a common cause of attachment glitches.</p>'},
+               {'eyebrow': "Why it's blocked",
+                'h2': 'Cause 1: Outlook is blocking a risky file type',
+                'html': '<p>Classic Outlook blocks over 100 file types it considers dangerous — things like <code>.exe</code>, <code>.bat</code>, <code>.vbs</code>, <code>.js</code>, '
+                        "<code>.msi</code> and <code>.reg</code>. These are the extensions viruses hide inside, so Outlook won't let you open <em>or</em> save them, and you'll see a message that it "
+                        '<strong>blocked access to protect your computer</strong>. This is Outlook doing its job, not a fault.</p><p>If the file is genuinely safe and expected — say a colleague sent '
+                        'a small program — the safest workaround is to have them <strong>put it in OneDrive or a zip file</strong> and send you a link instead, so it never triggers the block. Only '
+                        "the trickier, riskier route of editing the registry (the <code>Level1Remove</code> value under the Outlook Security key) actually unblocks a type, and we'd rather do that "
+                        "with you than have you loosen your protection by accident. If in doubt, don't force it open — check with the sender first, or let us take a safe look.</p>"},
+               {'eyebrow': 'The hidden folder',
+                'h2': 'Cause 2: the temporary Outlook files folder is full',
+                'html': '<p>Every time you open an attachment, Outlook quietly saves a copy into a hidden cache called the <strong>Outlook Secure Temp folder</strong> (its location is stored in the '
+                        'registry as <code>OutlookSecureTempFolder</code>). Over months of double-clicking attachments this folder fills up, and once it hits its limit Outlook simply stops opening '
+                        'new ones — often with no clear error at all. Emptying it fixes the problem instantly and safely, because it only holds throwaway copies.</p><p>To clear it: close Outlook, '
+                        'press <strong>Windows key + R</strong>, type <code>regedit</code> and press Enter, then use <strong>Edit > Find</strong> to search for '
+                        "<strong>OutlookSecureTempFolder</strong> (you'll find it under a Security key such as HKEY_CURRENT_USER\\Software\\Microsoft\\Office\\16.0\\Outlook\\Security). Double-click "
+                        'the value it finds and copy the folder path shown. Press <strong>Windows key + R</strong> again, paste that path in and press Enter — File Explorer opens the hidden folder. '
+                        'Select everything inside (<strong>Ctrl + A</strong>) and delete it, then reopen Outlook and try the attachment again. If the registry makes you nervous, this is a two-minute '
+                        'job for us remotely.</p>'},
+               {'eyebrow': 'The other two causes',
+                'h2': 'Cause 3 and 4: no default app, or Protected View',
+                'html': "<p><strong>No program set to open that file type.</strong> If Windows doesn't know which app should open, say, a <code>.heic</code> photo or an unusual document, "
+                        'double-clicking does nothing or throws an error. Save the attachment to your Desktop, <strong>right-click it > Open with > Choose another app</strong>, pick the right '
+                        "program (Photos, Word, Adobe Reader, etc.), and tick <strong>Always use this app</strong>. From then on it'll open normally.</p><p><strong>Protected View is holding a "
+                        'document shut.</strong> Office documents that arrive by email open in <strong>Protected View</strong> — a read-only safety mode — and it can occasionally stick so the file '
+                        'looks frozen or blank. If you trust the sender, open the document and click <strong>Enable Editing</strong> on the yellow bar. If Protected View is blocking everything, save '
+                        "the file to your Desktop first (files opened from disk aren't treated as email attachments), and it'll usually open cleanly.</p>"}],
+  'faqs': [{'q': "Why can't I open attachments in Outlook at all?",
+            'a': 'The usual causes are a full temporary Outlook files folder (OutlookSecureTempFolder), an attachment type with no default app set to open it, or Protected View blocking an Office '
+                 'document. Blocked risky types like .exe are a separate, deliberate safety block. Saving the attachment to your Desktop and opening it from there fixes most cases.'},
+           {'q': 'Why does Outlook say it blocked access to my attachment?',
+            'a': "Classic Outlook blocks over 100 file types it treats as dangerous — such as .exe, .bat, .vbs, .js and .msi — because these are how viruses spread. It won't let you open or save "
+                 'them. If the file is genuinely safe and expected, ask the sender to share it via a OneDrive link or inside a zip file instead.'},
+           {'q': 'How do I clear the Outlook temporary files folder?',
+            'a': 'Close Outlook, run regedit (Windows key + R, type regedit), use Edit > Find to search for OutlookSecureTempFolder, and copy the folder path it shows. Paste that path into Windows '
+                 "key + R to open the hidden folder, select everything with Ctrl + A and delete it, then reopen Outlook. It only holds throwaway copies, so it's safe to empty."},
+           {'q': 'Why do my attachments open in read-only Protected View?',
+            'a': 'Office documents that arrive by email open in Protected View, a safety mode that stops booby-trapped files running automatically. If you trust the sender, click Enable Editing on '
+                 "the yellow bar. If Protected View is jamming, save the file to your Desktop first and open it from there — files opened from disk aren't treated as email attachments."},
+           {'q': 'Is it safe to save an attachment to my Desktop and open it?',
+            'a': "Yes, as long as you trust who sent it. Saving to the Desktop and double-clicking bypasses Outlook's temporary-files folder and Protected View, and it's the most reliable way to "
+                 "open a legitimate attachment. If you're not sure the email is genuine, don't open it — ask us to check it first."},
+           {'q': 'Can 365 Techies fix my Outlook attachments for me?',
+            'a': "Yes. We'll clear the temporary files folder, set the right default apps, sort Protected View and update Office — remotely while you watch, usually in minutes. We phone you first "
+                 "and access ends when it's done. Call 01202 775566 for same-day help across Bournemouth and Dorset."}],
+  'schemaKind': 'howto',
+  'howToName': "Fix attachments that won't open in classic Outlook",
+  'howToSteps': [{'name': 'Save the attachment to your Desktop',
+                  'text': "In the email, right-click the attachment, choose Save As, and save it to your Desktop. Then double-click it from the Desktop to open it — this bypasses Outlook's temporary "
+                          'folder and Protected View.'},
+                 {'name': 'Update Office',
+                  'text': 'Go to File > Office Account > Update Options > Update Now and install any pending updates, as an out-of-date Outlook often causes attachment problems.'},
+                 {'name': 'Clear the temporary Outlook files folder',
+                  'text': 'Close Outlook, run regedit, use Edit > Find to locate OutlookSecureTempFolder, copy the folder path, paste it into Windows key + R to open the hidden folder, select '
+                          'everything with Ctrl + A and delete it. Reopen Outlook.'},
+                 {'name': 'Set a default app for the file type',
+                  'text': "If a file type won't open, right-click the saved file > Open with > Choose another app, pick the correct program, and tick Always use this app."},
+                 {'name': 'Enable editing past Protected View', 'text': 'For Office documents, open the file and click Enable Editing on the yellow Protected View bar if you trust the sender.'},
+                 {'name': 'For blocked risky types, use a link instead',
+                  'text': 'For blocked types like .exe, ask the sender to share the file via a OneDrive link or inside a zip file rather than forcing Outlook to unblock it.'}],
+  'crossLinksHtml': '<p>More Outlook help from 365 Techies: our <a href="/outlook-problems/">Outlook problems hub</a>, <a href="/common-outlook-problems-and-fixes/">common Outlook problems and '
+                    'fixes</a>, <a href="/outlook-shared-mailbox-not-showing/">shared mailbox not showing</a> and <a href="/microsoft-365-support/">Microsoft 365 support</a>. See also <a '
+                    'href="/remote-it-support/">remote IT support</a>, <a href="/email-support/">email support</a>, <a href="/it-support-dorset/">IT support in Dorset</a> or <a '
+                    'href="/contact/">contact us</a>.</p>'},
+ {'slug': 'outlook-shared-mailbox-not-showing',
+  'title': 'Outlook Shared Mailbox Not Showing? Fix | 365 Techies',
+  'metaDesc': "Shared mailbox not showing in Outlook after you were given access? Automapping can take up to an hour and needs a restart. Here's how to wait it out or add it manually. Free Dorset "
+              'help.',
+  'ogTitle': "Outlook Shared Mailbox Not Showing? Here's the Fix",
+  'crumbName': 'Shared Mailbox Not Showing',
+  'eyebrow': 'Outlook fix | Windows & Android | all versions',
+  'h1': 'Outlook <em class="grad grad--cyan">shared mailbox</em> not showing?',
+  'lede': "If a shared mailbox isn't showing in Outlook after you were given access, the usual reason is simply timing: when you're granted Full Access, Outlook is supposed to add the mailbox "
+          "automatically (a feature called automapping), but it can take up to an hour to appear and it needs you to fully close and reopen Outlook first. If it still won't show after that, you can "
+          "add it by hand — the steps differ slightly between classic Outlook and the new Outlook — and it's always worth double-checking that Full Access was actually granted at the mailbox. Here's "
+          "exactly what to do, and we're happy to sort it for you remotely.",
+  'chips': ['Windows & Android', 'Classic & new Outlook', 'Restart, then wait up to 1hr'],
+  'primaryCta': ['Get us to add it remotely', 'tel:+441202775566'],
+  'secondaryCta': ['See Microsoft 365 support', '/microsoft-365-support/'],
+  'ctaHead': 'Shared mailbox still not appearing?',
+  'ctaSub': "Call 365 Techies on 01202 775566. We'll confirm your permissions and get the shared mailbox showing correctly — remotely while you watch, usually in minutes. We phone first and access "
+            "ends when it's done. Same-day help across Bournemouth and Dorset.",
+  'sections': [{'eyebrow': 'Answer first',
+                'h2': 'First, restart Outlook and give it time',
+                'html': '<p>When your administrator grants you <strong>Full Access</strong> to a shared mailbox, Microsoft 365 usually adds it to your Outlook automatically — this is '
+                        "<strong>automapping</strong>. The catch is that it isn't instant. Two things have to happen before the mailbox appears:</p><ul><li><strong>The change has to reach "
+                        'Outlook.</strong> This can take anywhere from a few minutes to about an <strong>hour</strong> after access is granted, because Outlook only picks up the new permission when '
+                        'it next refreshes.</li><li><strong>You have to fully restart Outlook.</strong> Not just close the window — close Outlook completely, and on Windows check <strong>Task '
+                        "Manager</strong> to make sure it isn't still running in the background, then reopen it.</li></ul><p>So the honest first answer is: close Outlook properly, wait a little "
+                        "while, and reopen it. Very often the shared mailbox is sitting in your folder list underneath your own when you come back. If it's been well over an hour and a couple of "
+                        'restarts, move on to adding it manually below.</p>'},
+               {'eyebrow': 'Classic Outlook',
+                'h2': 'Add the shared mailbox by hand in classic Outlook',
+                'html': "<p>If automapping hasn't delivered it, you can add the mailbox manually in classic Outlook:</p><ol><li>Go to <strong>File > Account Settings > Account "
+                        'Settings</strong>.</li><li>On the <strong>Email</strong> tab, click your Microsoft 365 / Exchange account once to highlight it, then click '
+                        '<strong>Change</strong>.</li><li>Click <strong>More Settings</strong>, then open the <strong>Advanced</strong> tab.</li><li>Under <em>Open these additional mailboxes</em>, '
+                        "click <strong>Add</strong>, type the shared mailbox's name or address, and click <strong>OK</strong>.</li><li>Click <strong>Apply</strong> / <strong>OK</strong>, then "
+                        '<strong>Next</strong> and <strong>Finish</strong>, and restart Outlook.</li></ol><p>The shared mailbox then appears as its own heading in your folder list, below your '
+                        'personal mailbox. Note: if automapping later adds the same mailbox too, you can end up with it listed twice — harmless, but if it clutters your view we can tidy it up.</p>'},
+               {'eyebrow': 'New Outlook & mobile',
+                'h2': 'Add it in the new Outlook or the Outlook app',
+                'html': "<p><strong>New Outlook (Windows).</strong> The new Outlook doesn't use the classic <em>More Settings</em> screen. Instead you add the shared mailbox from the <strong>Shared "
+                        'with me</strong> area: click <strong>Settings (the cog) > Accounts > Shared with me</strong>, then click <strong>Add</strong> (or <strong>+ Add shared folder or '
+                        'mailbox</strong>), type the shared mailbox address and add it. It then shows as its own folder tree under <em>Shared with me</em> in the left-hand list. (You can also '
+                        'right-click your account name in the folder pane and choose <strong>Add shared folder or mailbox</strong>.) The new Outlook supports automapping too, so it may well appear '
+                        'on its own after a restart.</p><p><strong>Outlook on Android.</strong> On the Outlook mobile app, open the left-hand navigation, tap <strong>Add Account</strong> (the '
+                        'mail-with-plus icon at the bottom of your account list) and choose <strong>Add a Shared Mailbox</strong>, then type the shared mailbox address. As with the desktop, the Full '
+                        "Access permission has to be in place first. If the shared mailbox won't add, that points back to the permission not being granted yet — which is the next thing to "
+                        'check.</p>'},
+               {'eyebrow': "If it still won't show",
+                'h2': 'Confirm Full Access was really granted',
+                'html': "<p>If you've restarted, waited an hour and tried adding it manually, and the mailbox <em>still</em> won't appear — or you can add it but see an error opening it — the "
+                        "likeliest reason is that the permission isn't actually in place. A couple of things trip people up:</p><ul><li><strong>You were given the wrong permission.</strong> To see a "
+                        'shared mailbox in your folder list you need <strong>Full Access</strong> ("Read and manage"). <em>Send As</em> or <em>Send on Behalf</em> alone let you send from the mailbox '
+                        'but do <strong>not</strong> make it show up.</li><li><strong>Automapping was switched off.</strong> If the admin granted access via PowerShell with automapping disabled '
+                        '(AutoMapping $false), the mailbox will never appear on its own — you have to add it manually using the steps above.</li></ul><p>Whoever administers your Microsoft 365 can '
+                        "confirm Full Access is assigned to you in the admin centre. If that's us, or you're not sure who to ask, give us a call and we'll check the permission and get the mailbox "
+                        'showing properly.</p>'}],
+  'faqs': [{'q': "Why isn't my shared mailbox showing in Outlook?",
+            'a': "Most often it's timing. When you're granted Full Access, automapping adds the mailbox automatically, but it can take up to an hour to appear and needs a full restart of Outlook. "
+                 "Close Outlook completely, wait a little, and reopen it. If it still doesn't show, add it manually or check that Full Access was actually granted."},
+           {'q': "How long does a shared mailbox take to appear after I'm given access?",
+            'a': 'Usually within a few minutes to about an hour. Outlook only picks up the new permission when it next refreshes, and you need to fully close and reopen Outlook — on Windows, check '
+                 "Task Manager to make sure it isn't still running in the background before you reopen it."},
+           {'q': 'How do I manually add a shared mailbox in classic Outlook?',
+            'a': "Go to File > Account Settings > Account Settings, select your account and click Change, then More Settings > Advanced. Under 'Open these additional mailboxes' click Add, type the "
+                 'shared mailbox name, click OK, then Apply, Next and Finish. Restart Outlook and it appears below your own mailbox.'},
+           {'q': 'How do I add a shared mailbox in the new Outlook?',
+            'a': "The new Outlook doesn't use the classic More Settings screen — you add it from the Shared with me area. Go to Settings (the cog) > Accounts > Shared with me and click Add (or "
+                 'right-click your account name in the folder pane and choose Add shared folder or mailbox), then enter the shared mailbox address. It appears as its own folder tree under Shared '
+                 'with me.'},
+           {'q': "I can send from the shared mailbox but it doesn't appear — why?",
+            'a': "You've probably been given Send As or Send on Behalf, but not Full Access. Those let you send from the mailbox but don't make it show in your folder list. You need Full Access "
+                 '(Read and manage) for the mailbox to appear. Ask your administrator to confirm Full Access is assigned to you.'},
+           {'q': 'Can 365 Techies get my shared mailbox showing?',
+            'a': "Yes. We'll confirm your Full Access permission, wait out or trigger automapping, and add the mailbox correctly in classic Outlook, new Outlook or the mobile app — remotely while "
+                 "you watch, usually in minutes. We phone first and access ends when it's done. Call 01202 775566."}],
+  'schemaKind': 'howto',
+  'howToName': 'Get a shared mailbox showing in Outlook',
+  'howToSteps': [{'name': 'Fully restart Outlook',
+                  'text': "Close Outlook completely — on Windows, check Task Manager to make sure it isn't still running in the background — then reopen it, as automapping needs a full restart to "
+                          'take effect.'},
+                 {'name': 'Give automapping up to an hour',
+                  'text': 'After Full Access is granted, the shared mailbox can take up to an hour to appear automatically. Wait a while and restart Outlook again before adding it by hand.'},
+                 {'name': 'Add it manually in classic Outlook',
+                  'text': "Go to File > Account Settings > Account Settings, select your account, click Change > More Settings > Advanced, then under 'Open these additional mailboxes' click Add, "
+                          'type the mailbox name and click OK. Restart Outlook.'},
+                 {'name': 'Add it via Shared with me in new Outlook',
+                  'text': 'In the new Outlook, go to Settings (cog) > Accounts > Shared with me and click Add, then enter the shared mailbox address. On Android, tap Add Account > Add a Shared '
+                          'Mailbox.'},
+                 {'name': 'Confirm Full Access was granted',
+                  'text': "If it still won't show, have your administrator confirm you were granted Full Access (Read and manage) — not just Send As — and that automapping wasn't disabled when "
+                          'access was assigned.'}],
+  'crossLinksHtml': '<p>More Outlook help from 365 Techies: our <a href="/outlook-problems/">Outlook problems hub</a>, <a href="/outlook-shared-mailbox-sent-items/">shared mailbox sent items saving '
+                    'to your own</a>, <a href="/cant-open-attachments-in-outlook/">can\'t open attachments in Outlook</a> and <a href="/common-outlook-problems-and-fixes/">common Outlook problems '
+                    'and fixes</a>. See also <a href="/microsoft-365-support/">Microsoft 365 support</a>, <a href="/remote-it-support/">remote IT support</a>, <a href="/it-support-dorset/">IT '
+                    'support in Dorset</a> or <a href="/contact/">contact us</a>.</p>'},
+ {'slug': 'outlook-shared-mailbox-sent-items',
+  'title': 'Shared Mailbox Sent Items Not Saving | 365 Techies',
+  'metaDesc': 'Mail sent from a shared mailbox landing in your own Sent Items, not the shared one? Fix it in Microsoft 365 with MessageCopyForSentAsEnabled, or the DelegateSentItemsStyle registry '
+              'value. Free Dorset help.',
+  'ogTitle': 'Shared Mailbox Sent Items Not Saving? The Fix',
+  'crumbName': 'Shared Mailbox Sent Items',
+  'eyebrow': 'Outlook fix | Windows | classic Outlook',
+  'h1': 'Shared mailbox <em class="grad grad--cyan">sent items</em> saving to your own?',
+  'lede': "If mail you send from a shared mailbox keeps landing in your <em>own</em> Sent Items instead of the shared mailbox's Sent Items, that's Outlook's default behaviour — annoying, but not a "
+          "fault, and it means colleagues can't see what's been sent from the shared address. The proper fix is done in Microsoft 365: switch on the mailbox setting so Exchange saves a copy in the "
+          "shared Sent Items for everyone. There's also a per-PC registry fix (DelegateSentItemsStyle) that does the same thing on one computer. Below is exactly how to do each — and the one "
+          "important rule about not using both at once. We're happy to set it up for you remotely.",
+  'chips': ['Windows only', 'Classic Outlook', 'Best fixed in Microsoft 365'],
+  'primaryCta': ['Get us to set it up remotely', 'tel:+441202775566'],
+  'secondaryCta': ['See Microsoft 365 support', '/microsoft-365-support/'],
+  'ctaHead': 'Sent mail still landing in the wrong place?',
+  'ctaSub': "Call 365 Techies on 01202 775566. We'll switch on the right setting so shared-mailbox sent mail saves where the whole team can see it — remotely while you watch, usually in minutes. We "
+            "phone first and access ends when it's done. Same-day help across Bournemouth and Dorset.",
+  'sections': [{'eyebrow': 'Answer first',
+                'h2': 'Why sent mail lands in your own Sent Items',
+                'html': '<p>By default, when you send an email <em>as</em> or <em>on behalf of</em> a shared mailbox, Outlook keeps the copy in <strong>your own</strong> Sent Items — the personal '
+                        "one on your account — not in the shared mailbox's Sent Items. That's Microsoft's out-of-the-box behaviour. It causes real headaches for teams: your colleagues open the "
+                        "shared mailbox, look in its Sent Items, and can't see the reply you just sent, so someone answers the customer twice.</p><p>The good news is there's a clean, official fix "
+                        "that makes sent mail save into the <strong>shared mailbox's</strong> Sent Items so everyone can see it. The best place to set it is <strong>Microsoft 365</strong>, because "
+                        "it then works for <em>every</em> person who uses that mailbox, on any computer, automatically. There's also a registry option for a single PC — useful in specific cases — "
+                        'covered further down.</p>'},
+               {'eyebrow': 'The recommended fix',
+                'h2': 'Turn it on in Microsoft 365 (works for everyone)',
+                'html': "<p>This is the fix we recommend, because it's applied once at the mailbox and covers the whole team. It's a quick command run by whoever administers your Microsoft 365 "
+                        '(using Exchange Online PowerShell):</p><ul><li>For mail sent <strong>as</strong> the shared mailbox: <code>Set-Mailbox "Shared Mailbox" -MessageCopyForSentAsEnabled '
+                        '$true</code></li><li>For mail sent <strong>on behalf of</strong> the mailbox: <code>Set-Mailbox "Shared Mailbox" -MessageCopyForSentOnBehalfEnabled '
+                        "$true</code></li></ul><p>Once it's on, Exchange itself drops a copy of every outgoing message into the shared mailbox's <strong>Sent Items</strong> — no change needed on "
+                        "anyone's PC, and it works in classic Outlook, the new Outlook, Outlook on the web and the mobile app. It can take a short while to start applying after the command is run. "
+                        'If we look after your Microsoft 365, this is a two-minute job we can do for you; if another provider does, they can run the same command.</p>'},
+               {'eyebrow': 'The per-PC alternative',
+                'h2': 'The DelegateSentItemsStyle registry fix (one computer)',
+                'html': "<p>If you can't get the mailbox setting changed, classic Outlook has a per-computer workaround using a registry value called <strong>DelegateSentItemsStyle</strong>. It only "
+                        "affects the one Outlook profile on the one PC where you set it, so it's a fallback rather than the ideal fix:</p><ol><li>Close Outlook completely.</li><li>Press "
+                        '<strong>Windows key + R</strong>, type <code>regedit</code> and press Enter.</li><li>Go to '
+                        '<code>HKEY_CURRENT_USER\\Software\\Microsoft\\Office\\16.0\\Outlook\\Preferences</code> (the <code>16.0</code> covers Outlook 2016, 2019, 2021, 2024 and Microsoft '
+                        '365).</li><li>Right-click in the empty space on the right, choose <strong>New > DWORD (32-bit) Value</strong>, and name it '
+                        '<code>DelegateSentItemsStyle</code>.</li><li>Double-click it and set the value data to <strong>1</strong>.</li><li>Close the registry editor and reopen '
+                        "Outlook.</li></ol><p>For this to work, that Outlook profile must be running in <strong>Cached Exchange Mode</strong> — if it's in online mode, sent mail can get stuck in the "
+                        "Outbox instead. Editing the registry is safe if you follow the steps exactly, but if you're unsure, let us do it.</p>"},
+               {'eyebrow': 'Important',
+                'h2': "Don't use both fixes together",
+                'html': "<p>Here's the rule that trips people up: <strong>use the Microsoft 365 setting or the registry value, but not both</strong>. If <code>MessageCopyForSentAsEnabled</code> is "
+                        'switched on in Microsoft 365 <em>and</em> the <code>DelegateSentItemsStyle</code> registry value is set on a cached PC, they fight each other — you can end up with sent mail '
+                        "duplicated (two copies in the shared Sent Items), missing, or stuck in the Outbox.</p><p>So if you're moving to the recommended Microsoft 365 fix, first "
+                        "<strong>delete</strong> any <code>DelegateSentItemsStyle</code> value from the registry on every affected PC, then reopen Outlook. If you're relying on the registry fix on a "
+                        'single machine, make sure the mailbox setting is <em>off</em>. Getting this combination right across a team is exactly the kind of thing we sort out cleanly and quickly, so '
+                        "nobody's sent mail goes astray.</p>"}],
+  'faqs': [{'q': 'Why does mail from a shared mailbox save to my own Sent Items?',
+            'a': "That's Outlook's default behaviour: when you send as or on behalf of a shared mailbox, the copy stays in your personal Sent Items, not the shared mailbox's. It means colleagues "
+                 "can't see what's been sent from the shared address. You fix it by turning on the mailbox setting in Microsoft 365, or the DelegateSentItemsStyle registry value on the PC."},
+           {'q': 'How do I make shared mailbox sent items save to the shared mailbox?',
+            'a': 'The recommended fix is in Microsoft 365: an administrator runs Set-Mailbox "Shared Mailbox" -MessageCopyForSentAsEnabled $true (and -MessageCopyForSentOnBehalfEnabled $true for '
+                 "on-behalf sending). Exchange then saves a copy in the shared mailbox's Sent Items for everyone, on every device, with no change needed on individual PCs."},
+           {'q': 'What is the DelegateSentItemsStyle registry fix?',
+            'a': "It's a per-computer workaround for classic Outlook. Close Outlook, run regedit, go to HKEY_CURRENT_USER\\Software\\Microsoft\\Office\\16.0\\Outlook\\Preferences, create a DWORD "
+                 'value named DelegateSentItemsStyle and set it to 1, then reopen Outlook. It only affects that one Outlook profile, and the profile must be running in Cached Exchange Mode or mail '
+                 'can stick in the Outbox.'},
+           {'q': 'Which is better — the Microsoft 365 setting or the registry fix?',
+            'a': "The Microsoft 365 setting (MessageCopyForSentAsEnabled) is better because it's applied once at the mailbox and works for everyone who uses it, on any computer and any Outlook "
+                 "version. The registry fix only covers one profile on one PC, so it's a fallback for when you can't change the mailbox setting."},
+           {'q': 'Can I use both the Microsoft 365 setting and the registry value?',
+            'a': 'No — use one or the other, never both. If MessageCopyForSentAsEnabled is on in Microsoft 365 and DelegateSentItemsStyle is also set on a cached PC, they conflict and sent mail can '
+                 'be duplicated (two copies in the shared Sent Items), lost, or stuck in the Outbox. If you switch to the Microsoft 365 fix, delete DelegateSentItemsStyle from the registry on every '
+                 'affected PC first.'},
+           {'q': 'Can 365 Techies set this up for me?',
+            'a': "Yes. We'll switch on the right Microsoft 365 setting so shared-mailbox sent mail saves where your whole team can see it, and tidy up any conflicting registry values — remotely "
+                 "while you watch, usually in minutes. We phone first and access ends when it's done. Call 01202 775566."}],
+  'schemaKind': 'howto',
+  'howToName': 'Save shared mailbox sent items to the shared mailbox',
+  'howToSteps': [{'name': 'Turn it on in Microsoft 365 (recommended)',
+                  'text': 'Have your administrator run Set-Mailbox "Shared Mailbox" -MessageCopyForSentAsEnabled $true (and -MessageCopyForSentOnBehalfEnabled $true for on-behalf sending) in '
+                          'Exchange Online PowerShell. Exchange then saves a copy in the shared Sent Items for everyone.'},
+                 {'name': 'Wait for it to apply',
+                  'text': "Allow a short while after the command runs for the change to take effect, then send a test message and check the shared mailbox's Sent Items."},
+                 {'name': 'Or use the registry fix on one PC',
+                  'text': "If you can't change the mailbox setting, close Outlook, run regedit, go to HKEY_CURRENT_USER\\Software\\Microsoft\\Office\\16.0\\Outlook\\Preferences, create a DWORD named "
+                          'DelegateSentItemsStyle set to 1, and reopen Outlook. The profile must run in Cached Exchange Mode or mail can stick in the Outbox.'},
+                 {'name': 'Never use both fixes together',
+                  'text': "Don't set both MessageCopyForSentAsEnabled and DelegateSentItemsStyle. If moving to the Microsoft 365 fix, delete DelegateSentItemsStyle from the registry on every "
+                          'affected PC first to avoid duplicated, missing or stuck sent mail.'}],
+  'crossLinksHtml': '<p>More Outlook help from 365 Techies: our <a href="/outlook-problems/">Outlook problems hub</a>, <a href="/outlook-shared-mailbox-not-showing/">shared mailbox not showing in '
+                    'Outlook</a>, <a href="/cant-open-attachments-in-outlook/">can\'t open attachments in Outlook</a> and <a href="/common-outlook-problems-and-fixes/">common Outlook problems and '
+                    'fixes</a>. See also <a href="/microsoft-365-support/">Microsoft 365 support</a>, <a href="/remote-it-support/">remote IT support</a>, <a href="/it-support-dorset/">IT support in '
+                    'Dorset</a> or <a href="/contact/">contact us</a>.</p>'},
+ {'slug': 'outlook-working-offline-wont-turn-off',
+  'title': "Outlook Working Offline Won't Turn Off | 365 Techies",
+  'metaDesc': "Outlook stuck on Working Offline and the button won't toggle back? Here's the plain-English fix for classic Outlook - or we'll sort it remotely in minutes.",
+  'ogTitle': 'Fix Outlook Stuck on Working Offline (Classic)',
+  'crumbName': "Working Offline Won't Turn Off",
+  'eyebrow': 'Outlook fix - classic',
+  'h1': 'Outlook <em class="grad grad--cyan">Working Offline</em> won\'t turn off',
+  'lede': "If Outlook is stuck on Working Offline, the quick fix is to click the Work Offline button on the Send/Receive tab so it un-highlights and goes back online. If it's greyed out or won't "
+          'budge, that points to a bad add-in, a corrupt profile or a failed account - and we can fix it remotely in minutes.',
+  'chips': ['Classic Outlook on Windows', 'Fix in minutes remotely', 'Microsoft Partner'],
+  'primaryCta': ['Fix it for me now', 'tel:+441202775566'],
+  'secondaryCta': ['See all Outlook fixes', '/outlook-problems/'],
+  'ctaHead': 'Still stuck offline?',
+  'ctaSub': "We'll connect securely, watch alongside you and flip Outlook back online while you make a cuppa. Call before we connect, access ends the moment we're done.",
+  'sections': [{'eyebrow': 'The quick answer',
+                'h2': 'Turn Working Offline back off in one click',
+                'html': "<p>Nine times out of ten this is a single toggle that's been switched by accident - a stray click or a keyboard shortcut. Here's the fix for <strong>classic Outlook on "
+                        'Windows</strong>:</p><ol><li>Open Outlook and click the <strong>Send / Receive</strong> tab on the ribbon.</li><li>Look at the far right for the <strong>Work '
+                        "Offline</strong> button. If it's <strong>highlighted</strong> (shaded in), Outlook is offline.</li><li>Click <strong>Work Offline</strong> once. The button text stays the "
+                        'same, but it should <strong>un-highlight</strong> and, within a few seconds, the status bar at the bottom right should change from <em>Working Offline</em> to '
+                        "<strong>Connected</strong> or <em>Trying to connect</em>.</li></ol><p>That's it - your mail will start flowing again. If the button won't change, or it's greyed out so you "
+                        "can't click it, keep reading.</p>"},
+               {'eyebrow': "When the button won't play ball",
+                'h2': "If Work Offline is greyed out or won't toggle",
+                'html': "<p>A stuck or greyed-out button means Outlook can't actually reach your mail server, or something is jamming the works. Work through these in order - stop as soon as your "
+                        'mail comes back:</p><ol><li><strong>Check your internet is actually up.</strong> Open a website in your browser. If nothing loads, the problem is your connection, not '
+                        'Outlook - restart your router and try again.</li><li><strong>Restart Outlook properly.</strong> Close it fully, wait ten seconds and reopen. A quick restart clears a '
+                        'surprising number of these.</li><li><strong>Start in Safe Mode to rule out a bad add-in.</strong> Press the <strong>Windows key + R</strong>, type <strong>outlook.exe '
+                        '/safe</strong> and press Enter. If Outlook connects fine in Safe Mode, a faulty add-in is to blame - go to <strong>File > Options > Add-ins</strong>, set <strong>Manage: COM '
+                        "Add-ins</strong> at the bottom, click <strong>Go</strong> and untick anything you don't recognise.</li><li><strong>Repair the account.</strong> Go to <strong>File > Account "
+                        'Settings > Account Settings</strong>, click your email account, then <strong>Repair</strong> and follow the prompts. This re-checks the server connection without touching '
+                        'your mail.</li><li><strong>Create a fresh profile if it still sticks.</strong> A corrupt profile is a common culprit. In Windows, open <strong>Control Panel > Mail '
+                        '(Microsoft Outlook) > Show Profiles > Add</strong>, set up a new profile and open Outlook with it. On Exchange, Microsoft 365, Outlook.com or IMAP your mail re-downloads '
+                        "from the server, so nothing is lost.</li></ol><p><strong>Good to know:</strong> repairing an account or making a new profile won't delete your emails on a normal Exchange, "
+                        'Microsoft 365, Outlook.com or IMAP account - they live on the mail server and simply re-sync. The one exception is a <strong>POP</strong> account, where the only copy may be '
+                        "on your PC: don't remove a POP profile before you've backed up its data file, or you can lose that mail for good. If you're on POP, shout before you start and we'll back it "
+                        'up first.</p>'}],
+  'faqs': [{'q': 'Why does my Outlook keep saying Working Offline?',
+            'a': "Usually the Work Offline button on the Send/Receive tab has been switched on by accident. Click it once so it un-highlights and Outlook goes back online (the button text doesn't "
+                 'change - only the highlight does). If it flips back to offline on its own, that points to a flaky internet connection, a bad add-in or a profile that needs repairing.'},
+           {'q': 'The Work Offline button is greyed out - what now?',
+            'a': "A greyed-out button usually means Outlook can't reach your mail server at all, or you're in Safe Mode. First check your internet is working, then restart Outlook, try Safe Mode "
+                 '(outlook.exe /safe) to rule out an add-in, and repair the account under File > Account Settings. If it persists, a new Outlook profile almost always clears it.'},
+           {'q': 'Will I lose emails if I repair my account or make a new profile?',
+            'a': 'No - with a normal Exchange, Microsoft 365, Outlook.com or IMAP account your mail lives on the server and simply re-downloads. The one exception is a POP account, where the only '
+                 'copy may be on your PC. On POP, removing the profile can delete that mail, so back up your data file first (or let us do it) before making any changes.'},
+           {'q': 'Is Working Offline the same as being disconnected?',
+            'a': 'Not quite. Working Offline is a setting you (or a stray click) can turn on and off - Outlook deliberately stops talking to the server. Being disconnected means Outlook is trying to '
+                 "connect but can't, usually because of internet or server trouble. The greyed-out button is often the second problem wearing the first one's clothes."},
+           {'q': "I clicked Work Offline off but it still won't send or receive.",
+            'a': "Give it a minute to reconnect, then press Send/Receive All Folders (or F9). If it still won't sync, restart Outlook, check your internet, and repair the account. Persistent sync "
+                 'failures after coming back online usually mean a corrupt OST file or profile - an easy remote fix for us.'},
+           {'q': 'Can you fix this without me handing over my password?',
+            'a': 'Yes. We use Splashtop SOS: we phone you first, you click one link, and you watch everything we do on your own screen. We never need your email password, and your access ends the '
+                 "instant we're finished. Most Working Offline cases are sorted in a few minutes."}],
+  'schemaKind': 'howto',
+  'howToName': 'Fix Outlook stuck on Working Offline (classic Outlook)',
+  'howToSteps': [{'name': 'Open the Send/Receive tab', 'text': 'In classic Outlook, click the Send / Receive tab on the ribbon.'},
+                 {'name': 'Toggle Work Offline off',
+                  'text': 'Click the Work Offline button on the far right so it un-highlights. The button text stays the same, but the status bar should change from Working Offline to Connected.'},
+                 {'name': 'Check your internet', 'text': 'If nothing changes, confirm your internet works by loading a website. Restart your router if needed.'},
+                 {'name': 'Start Outlook in Safe Mode',
+                  'text': 'Press Windows key + R, type outlook.exe /safe and press Enter to rule out a faulty add-in. Then disable suspect COM add-ins under File > Options > Add-ins > Manage: COM '
+                          'Add-ins > Go.'},
+                 {'name': 'Repair the account', 'text': 'Go to File > Account Settings > Account Settings, select your account and click Repair to re-check the server connection.'},
+                 {'name': 'Create a new profile if needed',
+                  'text': 'If it still sticks, open Control Panel > Mail > Show Profiles > Add, create a fresh profile and open Outlook with it. On Exchange, 365 or IMAP, mail re-downloads from the '
+                          'server; back up first on POP.'}],
+  'crossLinksHtml': '<p>More help: <a href="/outlook-problems/">Outlook problems hub</a>, <a href="/outlook-search-greyed-out/">Outlook search greyed out</a>, <a '
+                    'href="/outlook-running-slow/">Outlook running slow</a>, <a href="/microsoft-365-support/">Microsoft 365 support</a> and <a href="/remote-it-support/">remote IT support</a>. '
+                    'Prefer to talk? <a href="/contact/">Get in touch</a>.</p>'},
+ {'slug': 'outlook-search-greyed-out',
+  'title': 'Outlook Search Greyed Out or Not Working | 365 Techies',
+  'metaDesc': "Outlook search greyed out or returning no results in classic Outlook? Here's the real fix - Windows Search service, no admin mode, rebuild the index - or we'll do it remotely.",
+  'ogTitle': 'Fix Outlook Search Greyed Out (Classic Outlook)',
+  'crumbName': 'Search Greyed Out',
+  'eyebrow': 'Outlook fix - classic',
+  'h1': 'Outlook <em class="grad grad--cyan">search</em> greyed out or not working',
+  'lede': 'If the search box in classic Outlook is greyed out or finds nothing, the usual causes are the Windows Search service being stopped, Outlook running as administrator (which breaks search), '
+          "or a broken index. Here's how to fix each - or we'll sort it remotely in minutes.",
+  'chips': ['Classic Outlook on Windows', 'No password needed', '4.9 on Google'],
+  'primaryCta': ['Fix my Outlook search', 'tel:+441202775566'],
+  'secondaryCta': ['See all Outlook fixes', '/outlook-problems/'],
+  'ctaHead': "Search still won't behave?",
+  'ctaSub': "Rebuilding an index and untangling admin-mode quirks is fiddly. We'll connect securely, watch alongside you and get search finding your emails again - usually in minutes.",
+  'sections': [{'eyebrow': 'The quick answer',
+                'h2': 'Two things break Outlook search most often',
+                'html': '<p>Before you rebuild anything, check the two culprits behind most greyed-out or dead searches in <strong>classic Outlook on Windows</strong>:</p><ol><li><strong>The Windows '
+                        "Search service has stopped.</strong> Classic Outlook borrows Windows' own search engine to index your mail. If that service isn't running, search greys out. Press "
+                        '<strong>Windows key + R</strong>, type <strong>services.msc</strong> and press Enter. Scroll to <strong>Windows Search</strong>, right-click it and choose '
+                        "<strong>Start</strong>. Double-click it and set <strong>Startup type</strong> to <strong>Automatic</strong> so it starts every boot.</li><li><strong>You're running Outlook "
+                        'as administrator.</strong> This one catches people out: Instant Search does <em>not</em> work when Outlook is launched with administrator rights. Close Outlook, then open it '
+                        'by clicking its normal icon (not right-click > Run as administrator). If you pinned an admin shortcut, check its <strong>Properties > Compatibility</strong> tab and untick '
+                        "<strong>Run this program as an administrator</strong>.</li></ol><p>Fix those two and search often springs straight back. If it's working but missing recent emails, the index "
+                        'needs rebuilding - see below.</p>'},
+               {'eyebrow': 'When search works but finds nothing',
+                'h2': 'Rebuild the search index the right way',
+                'html': '<p>If search runs but returns partial or no results, the index is incomplete or corrupt. Rebuilding it re-catalogues every email. This can take a while on a big mailbox - '
+                        'anything from a few minutes to a couple of hours - but it runs in the background, so you can keep using your PC while it catches up:</p><ol><li>In Outlook, go to '
+                        '<strong>File > Options > Search</strong>.</li><li>Click <strong>Indexing Options</strong>, then <strong>Advanced</strong>.</li><li>Under Troubleshooting, click '
+                        "<strong>Rebuild</strong> and confirm. Windows now re-indexes from scratch in the background.</li><li>While you're in Indexing Options, click <strong>Modify</strong> and make "
+                        "sure <strong>Microsoft Outlook</strong> is <strong>ticked</strong> as an included location. If it isn't, search will never find your mail.</li><li>Give it time to settle. "
+                        "Search may be patchy for an hour or two while it catches up - that's normal, and you don't need to leave Outlook open for it to finish.</li></ol><p><strong>Still greyed "
+                        'out?</strong> Run an Office repair: right-click Start > <strong>Installed apps</strong> (or <strong>Apps & features</strong>) > find Microsoft Office / Microsoft 365 > '
+                        "<strong>Modify</strong> > <strong>Quick Repair</strong>. If Quick Repair doesn't do it, try <strong>Online Repair</strong>. None of this deletes your emails - on Exchange, "
+                        '365 or IMAP they re-sync from the server afterwards.</p>'}],
+  'faqs': [{'q': 'Why is my Outlook search box greyed out?',
+            'a': 'The most common cause is the Windows Search service being stopped or disabled - classic Outlook relies on it to index your mail. Start it via services.msc (find Windows Search, '
+                 'right-click, Start) and set it to Automatic. The other frequent culprit is running Outlook as administrator, which disables Instant Search entirely.'},
+           {'q': 'Does running Outlook as administrator really break search?',
+            'a': "Yes. Microsoft's Instant Search is not available when Outlook runs with administrator permissions - the search box greys out. Always open Outlook normally, not via Run as "
+                 'administrator, and remove any admin flag from its shortcut under Properties > Compatibility.'},
+           {'q': 'How long does rebuilding the Outlook search index take?',
+            'a': 'It depends on how much mail you have - anywhere from a few minutes to a couple of hours on a large mailbox. It runs in the background, so you can carry on using your PC and Outlook '
+                 'while it works. Search results will be incomplete until it catches up, which is normal.'},
+           {'q': "Search still doesn't work after I rebuilt the index - now what?",
+            'a': "Confirm Microsoft Outlook is ticked as an indexed location (Indexing Options > Modify), then run an Office Quick Repair, and Online Repair if that fails. If it's still broken, the "
+                 "profile or data file may be corrupt - a quick remote fix for us that doesn't risk your emails."},
+           {'q': 'Will rebuilding the index delete any of my emails?',
+            'a': "No. Rebuilding the index only re-catalogues what's already there - it doesn't touch or remove a single email. An Office repair is equally safe; on Exchange, 365 or IMAP your mail "
+                 'lives on the server and re-syncs afterwards.'},
+           {'q': "I'm on new Outlook, not classic - is this the same fix?",
+            'a': 'These steps are for classic Outlook on Windows, which uses the Windows Search index. New Outlook and Outlook on the web search differently (server-side), so the services and index '
+                 "steps don't apply. If you're unsure which you have, give us a ring and we'll check and fix it for you."}],
+  'schemaKind': 'howto',
+  'howToName': 'Fix Outlook search greyed out or not working (classic Outlook)',
+  'howToSteps': [{'name': 'Start the Windows Search service', 'text': 'Press Windows key + R, type services.msc, find Windows Search, right-click and Start it, then set Startup type to Automatic.'},
+                 {'name': "Don't run Outlook as administrator",
+                  'text': 'Close Outlook and reopen it normally. Remove any Run as administrator flag from its shortcut under Properties > Compatibility, as admin mode disables Instant Search.'},
+                 {'name': 'Rebuild the search index',
+                  'text': 'In Outlook go to File > Options > Search > Indexing Options > Advanced > Rebuild. It runs in the background, so you can keep using your PC while it catches up.'},
+                 {'name': 'Confirm Outlook is an indexed location', 'text': 'In Indexing Options click Modify and make sure Microsoft Outlook is ticked as an included location.'},
+                 {'name': 'Repair Office if it persists',
+                  'text': 'Go to Installed apps > Microsoft Office / 365 > Modify > Quick Repair (then Online Repair if needed). Your emails are not affected.'}],
+  'crossLinksHtml': '<p>More help: <a href="/outlook-problems/">Outlook problems hub</a>, <a href="/outlook-working-offline-wont-turn-off/">Outlook stuck Working Offline</a>, <a '
+                    'href="/outlook-running-slow/">Outlook running slow</a>, <a href="/microsoft-365-support/">Microsoft 365 support</a> and <a href="/remote-it-support/">remote IT support</a>. '
+                    'Rather we just did it? <a href="/contact/">Get in touch</a>.</p>'},
+ {'slug': 'outlook-running-slow',
+  'title': 'Outlook Running Slow or High Memory? Fix | 365 Techies',
+  'metaDesc': "Classic Outlook slow to open, laggy or hogging memory? Here's the real fix - trim add-ins, shrink the OST, empty bulky folders, repair Office - or we'll speed it up remotely.",
+  'ogTitle': 'Fix Outlook Running Slow (Classic Outlook)',
+  'crumbName': 'Running Slow',
+  'eyebrow': 'Outlook fix - classic',
+  'h1': 'Outlook <em class="grad grad--cyan">running slow</em> or hogging memory',
+  'lede': 'If classic Outlook is slow to open, laggy or eating memory, the usual culprits are heavy startup add-ins and a bloated OST/PST data file. Disable non-essential COM add-ins, keep the '
+          "mailbox trimmed, empty bulky folders and repair Office - or we'll speed it up for you remotely in minutes.",
+  'chips': ['Classic Outlook on Windows', 'Fix in minutes remotely', 'Microsoft Partner'],
+  'primaryCta': ['Speed up my Outlook', 'tel:+441202775566'],
+  'secondaryCta': ['See all Outlook fixes', '/outlook-problems/'],
+  'ctaHead': 'Tired of watching Outlook crawl?',
+  'ctaSub': "We'll connect securely, spot the add-in or bloated data file that's dragging it down and get Outlook snappy again - usually in a few minutes, while you watch.",
+  'sections': [{'eyebrow': 'The quick answer',
+                'h2': 'Two things slow Outlook down most',
+                'html': '<p>A slow, laggy Outlook nearly always comes down to two things: a heavy add-in loading at startup, or a giant data file (OST/PST) that Outlook has to wade through. Tackle '
+                        'these first on <strong>classic Outlook for Windows</strong>:</p><ol><li><strong>Disable startup COM add-ins.</strong> Add-ins from PDF tools, CRMs, antivirus and old '
+                        'toolbars can each add seconds to launch. Go to <strong>File > Options > Add-ins</strong>, at the bottom set <strong>Manage: COM Add-ins</strong> and click '
+                        "<strong>Go</strong>, then untick anything you don't actively use. Restart Outlook and see how it feels.</li><li><strong>Shrink the mailbox Outlook keeps offline.</strong> On "
+                        'an Exchange or Microsoft 365 account, go to <strong>File > Account Settings > Account Settings > Change</strong> and drag the <strong>Mail to keep offline</strong> slider '
+                        'down to <strong>3, 6 or 12 months</strong> instead of All. This keeps the local OST small and fast. Older mail still lives on the server and stays searchable '
+                        'online.</li></ol><p>A quick test to confirm add-ins are the problem: press <strong>Windows key + R</strong>, type <strong>outlook.exe /safe</strong> and press Enter. If '
+                        "Outlook is nippy in Safe Mode (add-ins off), you've found your culprit.</p>"},
+               {'eyebrow': 'Deeper fixes',
+                'h2': 'Trim, tune and repair',
+                'html': "<p>If it's still sluggish, work through these - they clear the most common causes of high memory and a laggy interface:</p><ol><li><strong>Empty the bulky folders.</strong> "
+                        'Right-click <strong>Deleted Items > Empty Folder</strong> and clear out <strong>Junk</strong>. Thousands of old items in these folders bloat the data file and slow '
+                        "everything down.</li><li><strong>Keep the OST/PST size sensible.</strong> A data file that's grown to tens of gigabytes is the classic cause of a slow, laggy Outlook - "
+                        "startup, sync and search all suffer. Trimming the offline slider (above) and clearing junk keeps it lean.</li><li><strong>Check graphics rendering if it's stuttery.</strong> "
+                        'On older builds of classic Outlook there was a <strong>File > Options > Advanced > Display</strong> tickbox called <em>Disable hardware graphics acceleration</em>. Microsoft '
+                        "has since <strong>removed that option</strong> from current Microsoft 365 builds - Office now switches problem graphics cards to software rendering automatically, so there's "
+                        'usually nothing to toggle. If scrolling still stutters, update your graphics driver, or in Windows go to <strong>Settings > System > Display > Graphics</strong>, add Outlook '
+                        'and set its GPU preference.</li><li><strong>Repair Office and stay updated.</strong> Right-click Start > <strong>Installed apps</strong> > Microsoft Office / 365 > '
+                        '<strong>Modify</strong> > <strong>Quick Repair</strong>. Then run <strong>File > Office Account > Update Options > Update Now</strong> and keep Windows Update current - '
+                        'performance fixes ship regularly.</li></ol><p><strong>Good to know:</strong> none of this deletes your emails. Trimming the offline slider only changes how much is cached on '
+                        "this PC; on Exchange, 365 or IMAP everything stays safe on the server and re-syncs. If you're on a POP account (mail stored only locally), tell us first and we'll back it up "
+                        'before any changes.</p>'}],
+  'faqs': [{'q': 'Why is my Outlook so slow to open?',
+            'a': 'The two big causes are heavy add-ins loading at startup and a bloated OST/PST data file. Disable non-essential COM add-ins under File > Options > Add-ins, and shrink the offline '
+                 "mail slider to 3-12 months. Test with Safe Mode (outlook.exe /safe) - if it's fast with add-ins off, an add-in is the problem."},
+           {'q': 'How do I stop Outlook using so much memory?',
+            'a': "Trim the local data file: empty Deleted Items and Junk, reduce cached mail to 3-12 months so the OST stays small, and disable add-ins you don't use. A giant OST/PST is the usual "
+                 'reason Outlook hogs memory and feels sluggish. An Office repair often helps too.'},
+           {'q': 'What is the offline mail slider and is it safe to reduce it?',
+            'a': 'On Exchange and Microsoft 365 accounts, Outlook keeps a local copy of recent mail (the OST) so you can work offline. The slider under Account Settings > Change sets how far back '
+                 "that copy goes - 1, 3, 6, 12 or 24 months, or All. Reducing it to a few months keeps Outlook fast and doesn't delete anything - older mail stays on the server and is still "
+                 'searchable online.'},
+           {'q': "Where's the 'disable hardware graphics acceleration' option gone?",
+            'a': 'Microsoft has removed that tickbox from current Microsoft 365 builds of classic Outlook. Office now detects problem graphics card and driver combinations and switches to software '
+                 "rendering on its own, so there's usually nothing to toggle. If Outlook still stutters, update your graphics driver or set Outlook's GPU preference under Windows Settings > System > "
+                 'Display > Graphics.'},
+           {'q': 'Does a big PST or OST file really slow Outlook down?',
+            'a': "Yes - it's the number-one cause of a slow, laggy Outlook. Files that grow to tens of gigabytes make startup, syncing and search all crawl. Keeping the file trim (reduce cached "
+                 'months, clear Deleted Items and Junk) is the single most effective fix for most people.'},
+           {'q': 'Can you speed up Outlook without me doing all this?',
+            'a': "Absolutely. Via Splashtop SOS we phone first, you click one link, and you watch us find the add-in or bloated data file that's dragging Outlook down and fix it - usually in a few "
+                 "minutes. We never need your email password and access ends the moment we're done."}],
+  'schemaKind': 'howto',
+  'howToName': 'Speed up a slow classic Outlook (high memory / slow to open)',
+  'howToSteps': [{'name': 'Disable startup COM add-ins', 'text': "Go to File > Options > Add-ins, set Manage: COM Add-ins, click Go and untick anything you don't use. Restart Outlook."},
+                 {'name': 'Test in Safe Mode', 'text': 'Press Windows key + R, type outlook.exe /safe and press Enter. If Outlook is fast with add-ins off, an add-in is the cause.'},
+                 {'name': 'Shrink the offline mailbox',
+                  'text': 'On Exchange/365, go to File > Account Settings > Change and drag Mail to keep offline down to 3, 6 or 12 months to keep the OST small. Older mail stays on the server.'},
+                 {'name': 'Empty bulky folders', 'text': 'Right-click Deleted Items > Empty Folder and clear Junk to reduce data-file bloat.'},
+                 {'name': 'Check graphics rendering if stuttery',
+                  'text': 'The old Disable hardware graphics acceleration tickbox has been removed from current builds; Office now handles this automatically. If scrolling stutters, update your '
+                          "graphics driver or set Outlook's GPU under Windows Settings > System > Display > Graphics."},
+                 {'name': 'Repair Office and update', 'text': 'Run a Quick Repair via Installed apps > Microsoft Office/365 > Modify, then update Office and Windows to pick up performance fixes.'}],
+  'crossLinksHtml': '<p>More help: <a href="/outlook-problems/">Outlook problems hub</a>, <a href="/outlook-search-greyed-out/">Outlook search greyed out</a>, <a '
+                    'href="/outlook-working-offline-wont-turn-off/">Outlook stuck Working Offline</a>, <a href="/microsoft-365-support/">Microsoft 365 support</a> and <a '
+                    'href="/remote-it-support/">remote IT support</a>. Want it done for you? <a href="/contact/">Get in touch</a>.</p>'},
+ {'slug': 'outlook-cant-sign-in',
+  'title': "Outlook Can't Sign You In Right Now Fix | 365 Techies",
+  'metaDesc': 'Seeing "Something went wrong, we can\'t sign you in right now" in Outlook on the web? Here\'s why it happens and how to fix it fast - or we\'ll fix it remotely in minutes.',
+  'ogTitle': 'Fix "Outlook can\'t sign you in right now" (web)',
+  'crumbName': "Outlook can't sign you in",
+  'eyebrow': 'Outlook on the web · Sign-in error',
+  'h1': 'Outlook says "something went wrong, we <em class="grad grad--cyan">can\'t sign you in</em> right now"',
+  'lede': "Nine times out of ten this is a browser, cache or account-state hiccup - not a lost account. Try a different browser or a private window, clear Outlook's cookies, and check your PC clock "
+          "is set automatically. Here's the full fix, in plain English, and we can sort it remotely in minutes if you'd rather we just did it.",
+  'chips': ['Outlook on the web', 'Bournemouth & Dorset', 'Fixed in minutes'],
+  'primaryCta': ['Fix it remotely now', 'tel:+441202775566'],
+  'secondaryCta': ['More Outlook fixes', '/outlook-problems/'],
+  'ctaHead': 'Still stuck on the sign-in screen?',
+  'ctaSub': "Call 365 Techies on 01202 775566. We watch, we phone you first, and access ends the moment it's fixed - usually within minutes.",
+  'sections': [{'eyebrow': 'The short answer',
+                'h2': "Why Outlook says it can't sign you in right now",
+                'html': '<p>The message <strong>"Something went wrong and we can\'t sign you in right now"</strong> almost always points to something on your side of the connection rather than a '
+                        'problem with your actual account. The three usual culprits are a <strong>browser storing a stale sign-in cookie</strong>, a <strong>full or corrupted cache</strong>, or a '
+                        "<strong>PC clock that has drifted</strong> - and a wrong time quietly breaks the two-factor step that Microsoft uses to verify you.</p><p>Less often it's a genuine "
+                        'account-state issue: the account has been locked after too many wrong passwords, or Microsoft 365 is having a service wobble. The good news is that every one of these is '
+                        "quick to check, and none of them means your email has gone anywhere - your messages are safe on Microsoft's servers the whole time.</p><p>Work through the steps below in "
+                        'order. Most people are back in by step three.</p>'},
+               {'eyebrow': 'Do these in order',
+                'h2': 'How to fix it, step by step',
+                'html': '<p>Start with the fastest checks first - a fresh browser window rules out most cases in seconds.</p><ol><li><strong>Open a private window.</strong> In Edge press '
+                        'Ctrl+Shift+N for an InPrivate window; in Chrome the same keys open Incognito. Go to <em>outlook.com</em> and sign in. A private window ignores your saved cookies, so if it '
+                        'works here the problem is cached data.</li><li><strong>Try a different browser.</strong> If you normally use Edge, try Chrome (or vice-versa). If the second browser signs in '
+                        'cleanly, the first one is holding a bad cookie.</li><li><strong>Clear Outlook\'s cookies and cache.</strong> In your normal browser open Settings, find "Clear browsing '
+                        'data", tick <em>Cookies and other site data</em> and <em>Cached images and files</em>, then clear. Close the browser fully and reopen it. If you\'d rather not clear '
+                        'everything, you can instead remove just the cookies for <em>microsoft</em>, <em>live</em> and <em>outlook</em> under Settings > Privacy > Cookies and site '
+                        'data.</li><li><strong>Check your PC clock is automatic.</strong> Right-click the clock in the taskbar, choose <em>Adjust date and time</em>, and turn on <strong>Set time '
+                        "automatically</strong> and <strong>Set time zone automatically</strong>. A clock that's even a few minutes out will break two-factor sign-in.</li><li><strong>Check "
+                        'Microsoft\'s service health.</strong> Search "Microsoft 365 service status" - if Microsoft is reporting an outage, the fault is at their end and you just need to '
+                        "wait.</li><li><strong>Reset your password if the account is locked.</strong> If you've had several failed attempts, Microsoft may have locked the account. Go to the "
+                        'Microsoft account recovery page and reset the password, then sign in with the new one.</li></ol><p>On the desktop Outlook app the same error usually clears once you remove '
+                        'the old saved credentials - see the FAQ below.</p>'}],
+  'faqs': [{'q': "Have I lost my emails if Outlook can't sign me in?",
+            'a': "No. With a Microsoft 365, Outlook.com or Exchange account your mail lives on Microsoft's servers, not on your PC. A sign-in error only blocks the door - the moment you get back in, "
+                 'everything is exactly where you left it. Nothing is deleted by this error.'},
+           {'q': 'Why does a wrong PC clock stop me signing in?',
+            'a': "Two-factor and modern sign-in use time-sensitive security tokens. If your computer's clock is more than a few minutes out, Microsoft's servers reject those tokens as expired or "
+                 'not-yet-valid, and you get the "can\'t sign you in" message. Turning on "Set time automatically" fixes it in seconds.'},
+           {'q': 'I get the same error in the desktop Outlook app - what do I do?',
+            'a': 'Close Outlook, open the Windows Credential Manager (search for it in the Start menu), go to Windows Credentials, and delete any entries with "MicrosoftOffice" or "Outlook" in the '
+                 'name. Reopen Outlook and sign in fresh - it rebuilds a clean credential and the error usually goes. Your mailbox re-connects to the server, so no email is lost.'},
+           {'q': "How do I know if it's a Microsoft outage rather than my PC?",
+            'a': 'If a private window and a second browser both fail with the same error, and your clock is correct, check the Microsoft 365 service status page. If Microsoft is reporting a sign-in '
+                 "or Exchange incident, the problem is theirs - there's nothing to fix on your side, just wait for the all-clear."},
+           {'q': 'Do I need to reinstall Outlook to fix this?',
+            'a': 'Almost never. Reinstalling is a last resort and rarely the actual cause. A private window, cleared cookies, a correct clock and (on the desktop) cleared saved credentials solve the '
+                 'vast majority of these errors without touching your installation.'},
+           {'q': 'Can you just fix it for me?',
+            'a': "Yes. Call 365 Techies on 01202 775566 and we'll fix it remotely, usually within minutes. We connect with Splashtop so you watch every step on your own screen, we phone you first, "
+                 "and access ends the second we're done. We're Windows and Android specialists based in Bournemouth."}],
+  'schemaKind': 'howto',
+  'howToName': 'Fix Outlook "something went wrong, we can\'t sign you in right now" on the web',
+  'howToSteps': [{'name': 'Open a private window',
+                  'text': 'Press Ctrl+Shift+N (Edge InPrivate or Chrome Incognito), go to outlook.com and sign in. This ignores saved cookies and rules out most cases.'},
+                 {'name': 'Try a different browser', 'text': 'If Edge fails, try Chrome or vice-versa. A clean sign-in in the second browser means the first is holding a bad cookie.'},
+                 {'name': 'Clear cookies and cache', 'text': 'In your normal browser, open Clear browsing data, tick cookies and cached files, clear, then fully close and reopen the browser.'},
+                 {'name': 'Set your clock automatically',
+                  'text': 'Right-click the taskbar clock, choose Adjust date and time, and turn on Set time automatically and Set time zone automatically. A wrong clock breaks two-factor sign-in.'},
+                 {'name': 'Check Microsoft service health', 'text': 'Search Microsoft 365 service status. If Microsoft reports an outage, wait for it to clear - the fault is at their end.'},
+                 {'name': 'Reset the password if locked',
+                  'text': 'After repeated failed attempts the account may be locked. Reset the password on the Microsoft account recovery page and sign in with the new one.'},
+                 {'name': 'Clear saved credentials on the desktop app',
+                  'text': 'If using desktop Outlook, close it, open Windows Credential Manager, delete entries with MicrosoftOffice or Outlook in the name under Windows Credentials, then reopen '
+                          'Outlook and sign in fresh.'}],
+  'crossLinksHtml': '<p>Related help: <a href="/outlook-problems/">all Outlook problems</a> · <a href="/microsoft-365-support/">Microsoft 365 support</a> · <a href="/remote-it-support/">remote IT '
+                    'support</a> · <a href="/contact/">contact 365 Techies</a></p>'},
+ {'slug': 'how-to-add-gmail-to-outlook',
+  'title': 'Add Gmail to Outlook (Keeps Asking Password) | 365 Techies',
+  'metaDesc': "Classic Outlook keeps asking for your Gmail password? You need a Google App password, not your normal one. Step-by-step fix - or we'll set it up remotely in minutes.",
+  'ogTitle': 'Add Gmail to classic Outlook (app password fix)',
+  'crumbName': 'Add Gmail to Outlook',
+  'eyebrow': 'Classic Outlook · Gmail setup',
+  'h1': 'Add Gmail to Outlook when it <em class="grad grad--cyan">keeps asking for your password</em>',
+  'lede': "If classic Outlook rejects your Gmail password again and again, you're not typing it wrong - Google no longer accepts your normal password for a manually-added account. The fix is a "
+          'one-time 16-character "App password" from Google. Here\'s exactly how, and we can set it up remotely in minutes if you\'d rather not fiddle.',
+  'chips': ['Classic Outlook', 'Gmail + IMAP', 'Set up in minutes'],
+  'primaryCta': ['Set it up remotely', 'tel:+441202775566'],
+  'secondaryCta': ['More Outlook fixes', '/outlook-problems/'],
+  'ctaHead': "Gmail still won't connect?",
+  'ctaSub': "Call 365 Techies on 01202 775566 and we'll add your Gmail to Outlook remotely - usually within minutes. You watch the whole time, we phone first, access ends when it's done.",
+  'sections': [{'eyebrow': 'The short answer',
+                'h2': 'Why Gmail keeps asking for your password',
+                'html': '<p>When you add a Gmail account to <strong>classic Outlook</strong> by typing the settings in yourself, Google treats Outlook as a "less secure" third-party app and '
+                        "<strong>refuses your ordinary Gmail password</strong> - so Outlook asks for it again, and again, and again. It's not that you're getting it wrong; Google simply won't accept "
+                        'a normal password over a manual connection any more.</p><p>The answer is a <strong>Google App password</strong>: a special 16-character code you generate once, just for '
+                        "Outlook. You paste that in place of your usual password and Outlook connects straight away. To create one you first need Google's <strong>2-Step Verification</strong> "
+                        "switched on - App passwords don't exist until it is.</p><p>One shortcut worth knowing: if you add Gmail the <em>simple</em> way (choosing Google and letting a Google sign-in "
+                        "pop-up appear), that uses Google's secure sign-in and needs no app password at all. This page covers the manual IMAP route, which is what most people who hit the password "
+                        'loop are using. Before you start, make sure IMAP is switched on in Gmail: in Gmail on the web, go to Settings > See all settings > Forwarding and POP/IMAP, and under IMAP '
+                        'access choose Enable IMAP.</p>'},
+               {'eyebrow': 'Do these in order',
+                'h2': 'How to add Gmail to Outlook with an app password',
+                'html': "<p>You'll do the first two steps at Google's website, then finish in Outlook.</p><ol><li><strong>Turn on 2-Step Verification.</strong> Go to your <em>Google Account > "
+                        'Security</em>, find <strong>2-Step Verification</strong> and switch it on, following the prompts to confirm your phone. App passwords only appear once this is '
+                        'on.</li><li><strong>Create an App password.</strong> Go to <em>myaccount.google.com/apppasswords</em> (or search "App passwords" in your Google Account). Type a name like '
+                        '"Outlook", click <strong>Create</strong>, and Google shows a <strong>16-character password</strong>. Copy it - the spaces don\'t matter.</li><li><strong>Add the account in '
+                        "Outlook.</strong> In classic Outlook go to <em>File > Add Account</em>, and if it doesn't auto-configure choose <strong>Advanced options</strong> and tick <strong>Let me set "
+                        'up my account manually</strong> (on older builds, <strong>Manual setup or additional server types</strong>), then <strong>POP or IMAP</strong>.</li><li><strong>Enter the '
+                        'Gmail server settings.</strong> Account type <strong>IMAP</strong>; incoming server <strong>imap.gmail.com</strong>, port <strong>993</strong>, encryption '
+                        '<strong>SSL/TLS</strong>; outgoing server <strong>smtp.gmail.com</strong>, port <strong>587</strong>, encryption <strong>STARTTLS</strong> (port 465 with SSL/TLS also '
+                        'works). Your user name is your full Gmail address, and make sure the outgoing server is set to require authentication.</li><li><strong>Paste the app password.</strong> When '
+                        'Outlook asks for your password, paste the <strong>16-character app password</strong> - not your normal Gmail password. Click <strong>OK</strong>, then '
+                        "<strong>Finish</strong>.</li></ol><p>Outlook will test the connection and start downloading your Gmail. Because Gmail is an IMAP account, your mail stays on Google's servers "
+                        'and simply syncs down - nothing is moved or at risk.</p>'}],
+  'faqs': [{'q': 'What is a Google App password and why do I need one?',
+            'a': "An App password is a one-off 16-character code Google generates just for a single app, like Outlook. Because a manually-added Gmail account can't use Google's secure sign-in "
+                 "pop-up, Google won't accept your normal password - the app password is the substitute it will accept. You create it once and Outlook remembers it."},
+           {'q': "I can't find App passwords in my Google account.",
+            'a': 'App passwords only appear after 2-Step Verification is switched on. Turn that on first under Google Account > Security, then go to myaccount.google.com/apppasswords, or search "App '
+                 'passwords" in your Google Account search box. If it\'s still hidden, your account may be a work or school account whose administrator has disabled app passwords.'},
+           {'q': 'What are the correct Gmail server settings for classic Outlook?',
+            'a': 'Incoming (IMAP): imap.gmail.com, port 993, SSL/TLS. Outgoing (SMTP): smtp.gmail.com, port 587 with STARTTLS (or port 465 with SSL/TLS). Your user name is your full Gmail address, '
+                 'and the password is the 16-character app password. Make sure the outgoing server is set to require authentication.'},
+           {'q': 'Do I always need an app password to add Gmail?',
+            'a': "No. If you add Gmail the simple way - choosing Google and letting the Google sign-in pop-up appear - Outlook uses Google's secure sign-in and no app password is needed. You only "
+                 'need an app password for the manual IMAP setup, which is where the endless password prompt usually happens.'},
+           {'q': 'Is it safe to use an app password?',
+            'a': "Yes. An app password only works for the one app you created it for, and you can revoke it any time from Google's Security page without changing your main Gmail password. Because "
+                 '2-Step Verification stays on, your account is actually more secure than before. Note that if you ever change your main Google password, existing app passwords stop working and '
+                 "you'll need to create a new one."},
+           {'q': 'Can you set up Gmail in Outlook for me?',
+            'a': "Absolutely. Call 365 Techies on 01202 775566 and we'll add your Gmail to Outlook remotely, usually within minutes. You watch every step on your own screen with Splashtop, we phone "
+                 "you first, and access ends as soon as it's working. We're Windows specialists in Bournemouth."}],
+  'schemaKind': 'howto',
+  'howToName': 'Add a Gmail account to classic Outlook using a Google App password',
+  'howToSteps': [{'name': 'Turn on 2-Step Verification',
+                  'text': 'Go to Google Account > Security, switch on 2-Step Verification and confirm with your phone. App passwords only appear once this is on.'},
+                 {'name': 'Create an App password', 'text': 'Go to myaccount.google.com/apppasswords, name it Outlook, click Create, and copy the 16-character password Google shows.'},
+                 {'name': 'Start adding the account in Outlook',
+                  'text': 'In classic Outlook, go to File > Add Account, choose Advanced options and Let me set up my account manually (or Manual setup on older builds), then POP or IMAP.'},
+                 {'name': 'Enter the Gmail server settings',
+                  'text': 'Set account type IMAP. Incoming: imap.gmail.com port 993 SSL/TLS. Outgoing: smtp.gmail.com port 587 STARTTLS (or 465 SSL/TLS). User name is your full Gmail address; '
+                          'outgoing server requires authentication.'},
+                 {'name': 'Paste the app password',
+                  'text': 'When Outlook asks for your password, paste the 16-character app password instead of your normal Gmail password, then click OK and Finish.'}],
+  'crossLinksHtml': '<p>Related help: <a href="/outlook-problems/">all Outlook problems</a> · <a href="/microsoft-365-support/">Microsoft 365 support</a> · <a href="/remote-it-support/">remote IT '
+                    'support</a> · <a href="/contact/">contact 365 Techies</a></p>'},
+ {'slug': 'recreate-outlook-profile-without-losing-emails',
+  'title': 'Recreate Outlook Profile Without Losing Email | 365 Techies',
+  'metaDesc': "Need a fresh Outlook profile but scared of losing mail? For Microsoft 365, Exchange and IMAP your email re-downloads from the server. Step-by-step - or we'll do it remotely.",
+  'ogTitle': 'Recreate an Outlook profile without losing emails',
+  'crumbName': 'Recreate Outlook profile',
+  'eyebrow': 'Classic Outlook · Profile rebuild',
+  'h1': 'Recreate your Outlook profile <em class="grad grad--cyan">without losing your emails</em>',
+  'lede': 'A corrupted profile is behind a huge share of Outlook faults, and a fresh one usually fixes them. The reassuring bit: for Microsoft 365, Exchange and IMAP accounts your email lives on the '
+          "server, so a new profile simply re-downloads everything - nothing is lost. Here's the safe way to do it, with the one exception (POP) to watch out for.",
+  'chips': ['Classic Outlook', 'Mail stays safe', 'We can do it remotely'],
+  'primaryCta': ['Let us do it remotely', 'tel:+441202775566'],
+  'secondaryCta': ['More Outlook fixes', '/outlook-problems/'],
+  'ctaHead': 'Rather not risk it yourself?',
+  'ctaSub': "Call 365 Techies on 01202 775566 and we'll rebuild your Outlook profile remotely, safely, usually in minutes. You watch the whole time, we phone first, access ends when it's done.",
+  'sections': [{'eyebrow': 'The short answer',
+                'h2': 'Will I lose email if I recreate my Outlook profile?',
+                'html': '<p>For the accounts most people have - <strong>Microsoft 365, Exchange, or IMAP (including Gmail and Outlook.com)</strong> - the answer is <strong>no</strong>. Your '
+                        "messages, folders, contacts and calendar all live on the mail server. A profile is just Outlook's local settings for connecting to it, so when you create a fresh profile and "
+                        'add your account back, Outlook <strong>re-downloads everything from the server</strong>. You end up with the same mailbox, minus the corruption that was causing '
+                        'trouble.</p><p>There is <strong>one important exception: POP accounts</strong>. A POP account often pulls mail down and removes it from the server, which means the copy on '
+                        "your PC - the .pst file - can be the <em>only</em> copy in existence. If you have a POP account, you must <strong>back up that .pst file first</strong>. If you're not sure "
+                        "which type you have, check under File > Account Settings, or let us look before anything changes.</p><p>Two things don't always carry across a new profile: your "
+                        '<strong>email signatures</strong> and any <strong>local rules</strong>. Note them down first so you can pop them back afterwards.</p>'},
+               {'eyebrow': 'Do these in order',
+                'h2': 'How to create a new Outlook profile the safe way',
+                'html': "<p>You'll do this from the Windows Control Panel, not from inside Outlook. Close Outlook first.</p><ol><li><strong>Check your account type and back up if POP.</strong> In "
+                        'Outlook open <em>File > Account Settings > Account Settings</em> and note whether each account is IMAP, Exchange/Microsoft 365 or <strong>POP</strong>. If any is POP, copy '
+                        'its .pst file (find its location on the <em>Data Files</em> tab) to a safe folder before going further.</li><li><strong>Note your signatures and rules.</strong> Open '
+                        "<em>File > Options > Mail > Signatures</em> and copy the text somewhere safe, and glance at your rules under <em>File > Manage Rules & Alerts</em> - these don't always "
+                        'transfer.</li><li><strong>Open Mail in Control Panel.</strong> Close Outlook. Open the Windows <strong>Control Panel</strong> (search for it in Start - not the Settings '
+                        "app), set view to large icons, and click <strong>Mail (Microsoft Outlook)</strong>. Then click <strong>Show Profiles</strong>. If you don't see a Mail icon, open Outlook "
+                        'once and close it, then try again.</li><li><strong>Add a new profile.</strong> Click <strong>Add</strong>, give it a name like "Outlook2", and click OK.</li><li><strong>Add '
+                        'your account.</strong> Enter your name and email address. For a <strong>Microsoft 365 or Outlook.com</strong> account, a Microsoft sign-in window appears - sign in there '
+                        '(with your password and any two-factor prompt) rather than typing a password into the old box, because these accounts now use modern sign-in. For <strong>IMAP or '
+                        'POP</strong> you may need <strong>Manual setup</strong> to enter the server details. Outlook then connects and prepares to sync from the server.</li><li><strong>Set it as '
+                        'the default profile.</strong> Back on the Show Profiles screen, choose <strong>Always use this profile</strong> and pick your new one from the drop-down, then click '
+                        'OK.</li><li><strong>Open Outlook.</strong> Launch Outlook - it opens the new profile and downloads your mail from the server. If it asks you to finish signing in on first '
+                        "launch, do so. Once you're happy it's all there, re-add your signatures and rules.</li></ol><p>Leave the old profile in place until you've confirmed everything is present in "
+                        "the new one - there's no rush to delete it.</p>"}],
+  'faqs': [{'q': 'Does a new Outlook profile delete my emails?',
+            'a': 'For Microsoft 365, Exchange and IMAP accounts, no. Your mail lives on the server and a fresh profile simply re-downloads it. The only account type at risk is POP, where the .pst on '
+                 'your PC can be the only copy - so back that up first. When in doubt, check File > Account Settings for your account type.'},
+           {'q': 'How do I know if I have a POP account?',
+            'a': 'In Outlook go to File > Account Settings > Account Settings and look at the Type column for each account. If it says POP, treat the local .pst file as precious and copy it '
+                 "somewhere safe before making a new profile. IMAP, Exchange and Microsoft 365 accounts keep their mail on the server, so they're safe."},
+           {'q': "Why can't I just type my password when adding a Microsoft 365 account?",
+            'a': "Microsoft 365 and Outlook.com now use modern authentication, so instead of a plain password box you get a Microsoft sign-in window - the same one you'd see on the web - where you "
+                 "enter your password and any two-factor code. The old Control Panel Mail applet can't set up these accounts with a typed password alone, so let the sign-in window appear and "
+                 'complete it there. IMAP and POP accounts still use the traditional server settings.'},
+           {'q': 'Will my signatures and rules come across to the new profile?',
+            'a': "Not reliably. Email signatures and locally-stored rules are tied to the old profile and often don't carry over. Before you switch, copy your signature text from File > Options > "
+                 'Mail > Signatures and note your rules under Manage Rules & Alerts, so you can recreate them in the new profile in a couple of minutes.'},
+           {'q': 'Should I delete the old profile straight away?',
+            'a': "No - keep it until you've confirmed everything is present in the new profile. Once your mail, folders, contacts and calendar have all synced down and you've re-added signatures and "
+                 'rules, you can remove the old profile from Control Panel > Mail > Show Profiles if you wish.'},
+           {'q': 'Can you rebuild my Outlook profile for me?',
+            'a': "Yes. Call 365 Techies on 01202 775566 and we'll do it remotely, safely, usually within minutes - and we'll check your account type first so nothing is ever at risk. You watch every "
+                 "step with Splashtop, we phone you first, and access ends as soon as it's done. We're Windows specialists in Bournemouth."}],
+  'schemaKind': 'howto',
+  'howToName': 'Create a new Outlook profile without losing emails',
+  'howToSteps': [{'name': 'Check account type and back up POP',
+                  'text': 'In Outlook, File > Account Settings, note whether each account is IMAP, Exchange/Microsoft 365 or POP. If any is POP, copy its .pst file to a safe folder first.'},
+                 {'name': 'Note signatures and rules',
+                  'text': "Copy your signature text from File > Options > Mail > Signatures and review your rules under Manage Rules & Alerts, as these don't always transfer."},
+                 {'name': 'Open Mail in Control Panel',
+                  'text': 'Close Outlook. Open Control Panel (not the Settings app), set view to large icons, click Mail (Microsoft Outlook), then Show Profiles.'},
+                 {'name': 'Add a new profile', 'text': 'Click Add, give the profile a name such as Outlook2, and click OK.'},
+                 {'name': 'Add your account',
+                  'text': 'Enter your name and email address. For Microsoft 365 or Outlook.com, complete the Microsoft sign-in window that appears; for IMAP or POP, use Manual setup to enter the '
+                          'server details. Outlook then connects and prepares to sync.'},
+                 {'name': 'Set it as the default profile', 'text': 'On the Show Profiles screen, choose Always use this profile and select your new profile from the drop-down, then click OK.'},
+                 {'name': 'Open Outlook and restore extras',
+                  'text': 'Launch Outlook - it opens the new profile and downloads mail from the server. If prompted, finish signing in. Once everything is present, re-add your signatures and '
+                          'rules.'}],
+  'crossLinksHtml': '<p>Related help: <a href="/outlook-problems/">all Outlook problems</a> · <a href="/microsoft-365-support/">Microsoft 365 support</a> · <a href="/remote-it-support/">remote IT '
+                    'support</a> · <a href="/contact/">contact 365 Techies</a></p>'}]
