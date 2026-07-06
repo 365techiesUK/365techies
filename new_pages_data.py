@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Easy-keyword + Outlook fix pages (waves 1-3) + Outlook hub, rendered by build_extra.build_new_page().
+# Easy-keyword + Outlook fix pages (waves 1-4) + Outlook hub, rendered by build_extra.build_new_page().
 
 NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
   'title': 'Windows 11 Upgrade Service Poole & Bournemouth | 365 Techies',
@@ -3242,6 +3242,8 @@ NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
                         '            <li><a href="/outlook-error-0x800ccc78/">0x800ccc78 &amp; 0x800ccc79</a> &mdash; sender rejected / relay not allowed</li>\n'
                         '            <li><a href="/outlook-error-0x8004060c/">0x8004060c</a> &mdash; message store reached maximum size</li>\n'
                         '            <li><a href="/outlook-error-0x8004010b/">0x8004010b</a> &mdash; sending reported error</li>\n'
+                        '            <li><a href="/outlook-error-0x80040610/">0x80040610</a> &mdash; unknown error / stuck item</li>\n'
+                        '            <li><a href="/outlook-error-0x800ccc1a/">0x800ccc1a</a> &mdash; SSL/TLS encryption mismatch</li>\n'
                         '          </ul>\n'
                         '          <p><strong>Send &amp; receive not working:</strong></p>\n'
                         '          <ul>\n'
@@ -3249,6 +3251,10 @@ NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
                         '            <li><a href="/outlook-stuck-in-outbox/">Stuck in the Outbox</a></li>\n'
                         '            <li><a href="/outlook-not-syncing/">Not syncing / inbox not updating (Windows)</a></li>\n'
                         '            <li><a href="/outlook-not-syncing-android/">Not syncing on the Android app</a></li>\n'
+                        '            <li><a href="/outlook-can-send-but-not-receive/">Can send but not receive</a></li>\n'
+                        '            <li><a href="/outlook-not-showing-new-emails/">Not showing new emails (they&rsquo;re on the server)</a></li>\n'
+                        '            <li><a href="/new-outlook-not-syncing/">New Outlook not syncing automatically</a></li>\n'
+                        '            <li><a href="/outlook-com-not-syncing/">Outlook.com not syncing</a></li>\n'
                         '          </ul>\n'
                         '          <p><strong>Won&rsquo;t open, freezes or crashes:</strong></p>\n'
                         '          <ul>\n'
@@ -3259,6 +3265,9 @@ NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
                         '            <li><a href="/new-outlook-wont-open/">New Outlook won&rsquo;t open</a></li>\n'
                         '            <li><a href="/new-outlook-blank-screen/">New Outlook blank white screen</a></li>\n'
                         '            <li><a href="/outlook-app-crashing-android/">Android app keeps crashing</a></li>\n'
+                        '            <li><a href="/outlook-wont-open-after-update/">Won&rsquo;t open after a Windows/Office update</a></li>\n'
+                        '            <li><a href="/outlook-not-responding/">&ldquo;Not Responding&rdquo; / frozen</a></li>\n'
+                        '            <li><a href="/the-set-of-folders-cannot-be-opened/">&ldquo;The set of folders cannot be opened&rdquo;</a></li>\n'
                         '          </ul>\n'
                         '          <p><strong>Login &amp; password:</strong></p>\n'
                         '          <ul>\n'
@@ -3267,6 +3276,9 @@ NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
                         '            <li><a href="/outlook-stuck-in-sign-in-loop/">Stuck in a sign-in loop</a></li>\n'
                         '            <li><a href="/outlook-cant-sign-in/">&ldquo;Something went wrong, we can&rsquo;t sign you in&rdquo;</a></li>\n'
                         '            <li><a href="/how-to-add-gmail-to-outlook/">Adding Gmail keeps asking for a password</a></li>\n'
+                        '            <li><a href="/outlook-cant-add-account-new-outlook/">Can&rsquo;t add an account (new Outlook)</a></li>\n'
+                        '            <li><a href="/outlook-app-asking-to-sign-in-android/">Android app keeps asking you to sign in</a></li>\n'
+                        '            <li><a href="/outlook-modern-authentication-not-working/">Modern authentication not working</a></li>\n'
                         '          </ul>\n'
                         '          <p><strong>Search, rules, signatures &amp; data files:</strong></p>\n'
                         '          <ul>\n'
@@ -3280,11 +3292,17 @@ NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
                         '            <li><a href="/outlook-search-greyed-out/">Search greyed out / not working</a></li>\n'
                         '            <li><a href="/outlook-running-slow/">Running slow, laggy or high memory</a></li>\n'
                         '            <li><a href="/outlook-working-offline-wont-turn-off/">Stuck on &lsquo;Working Offline&rsquo;</a></li>\n'
+                        '            <li><a href="/outlook-indexing-stuck/">Search indexing stuck / never finishes</a></li>\n'
+                        '            <li><a href="/new-outlook-search-not-working/">Search not working (new Outlook)</a></li>\n'
+                        '            <li><a href="/outlook-search-not-returning-all-results/">Search not returning all results</a></li>\n'
+                        '            <li><a href="/outlook-scanpst-not-working/">ScanPST won&rsquo;t run or fix the file</a></li>\n'
+                        '            <li><a href="/outlook-needs-to-repair-your-profile/">&ldquo;Outlook needs to repair your profile&rdquo;</a></li>\n'
                         '          </ul>\n'
                         '          <p><strong>The new Outlook:</strong></p>\n'
                         '          <ul>\n'
                         '            <li><a href="/how-to-go-back-to-classic-outlook/">How to go back to classic Outlook</a></li>\n'
                         '            <li><a href="/new-outlook-no-send-receive-button/">There&rsquo;s no Send/Receive button</a></li>\n'
+                        '            <li><a href="/new-outlook-missing-features/">Missing features vs classic Outlook</a></li>\n'
                         '          </ul>\n'
                         '          <p><strong>Calendar &amp; out of office:</strong></p>\n'
                         '          <ul>\n'
@@ -4456,4 +4474,1435 @@ NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
                   'text': 'Launch Outlook - it opens the new profile and downloads mail from the server. If prompted, finish signing in. Once everything is present, re-add your signatures and '
                           'rules.'}],
   'crossLinksHtml': '<p>Related help: <a href="/outlook-problems/">all Outlook problems</a> · <a href="/microsoft-365-support/">Microsoft 365 support</a> · <a href="/remote-it-support/">remote IT '
-                    'support</a> · <a href="/contact/">contact 365 Techies</a></p>'}]
+                    'support</a> · <a href="/contact/">contact 365 Techies</a></p>'},
+ {'slug': 'outlook-error-0x80040610',
+  'title': 'Fix Outlook Error 0x80040610 | 365 Techies',
+  'metaDesc': "Outlook error 0x80040610 usually means an oversized or stuck message is jamming send/receive. Here's the plain-English fix for classic Outlook, plus scanpst — or we'll fix it remotely "
+              'in minutes.',
+  'ogTitle': 'Outlook Error 0x80040610: The Send/Receive Fix',
+  'crumbName': 'Outlook Error 0x80040610',
+  'eyebrow': 'Outlook problems · Classic Outlook',
+  'h1': 'How to fix Outlook <em class="grad grad--cyan">error 0x80040610</em>',
+  'lede': 'Error 0x80040610 nearly always means one oversized or corrupt message is jamming your Outbox and blocking every other send and receive. Clear the stuck message, empty the large item, and '
+          "if it keeps coming back run the Inbox Repair Tool (scanpst.exe) and compact your PST. Here's exactly how — or we'll do it for you remotely in minutes.",
+  'chips': ['Classic Outlook', 'Windows only', 'Fixed in minutes'],
+  'primaryCta': ['Get it fixed remotely', 'tel:+441202775566'],
+  'secondaryCta': ['See all Outlook problems', '/outlook-problems/'],
+  'ctaHead': 'Still stuck in the Outbox?',
+  'ctaSub': "Call 01202 775566 and we'll clear the jam and repair the data file remotely — you watch the whole time, we phone first, and access ends the moment it's done. Usually sorted in minutes.",
+  'sections': [{'eyebrow': 'Plain English',
+                'h2': 'What error 0x80040610 actually means',
+                'html': "<p>When Outlook throws <strong>0x80040610</strong> during a send/receive, it's telling you that a message it's trying to move is either too big for the server or the item "
+                        'itself has gone corrupt. Because Outlook processes the Outbox in order, that one bad message sits at the front of the queue and jams everything behind it — so nothing sends '
+                        'and, on some accounts, nothing receives either.</p><p>You\'ll often see this phrased two ways: <em>"the message being sent exceeds the message size established for this '
+                        'user"</em> (an oversized attachment) or a generic <em>"reported error (0x80040610): sending/receiving reported error"</em> (a corrupt item or a damaged Outlook data file, '
+                        'the .pst). The good news: both come down to the same short list of fixes, and none of them are risky if you follow the steps in order.</p><p>This affects classic Outlook on '
+                        "Windows — Outlook 2016, 2019, 2021 and the desktop app in Microsoft 365. We support Windows and the Outlook Android app; we don't cover Apple Mail or Mac Outlook.</p>"},
+               {'eyebrow': 'Do this first',
+                'h2': 'Clear the stuck message from the Outbox',
+                'html': '<p>Nine times out of ten this is a single message with a big attachment sitting in your <strong>Outbox</strong>. While Outlook keeps trying to send it, it stays locked, so '
+                        'you have to stop the sending first.</p><ol><li>Go <strong>offline</strong> so Outlook stops retrying: on the ribbon, <strong>Send / Receive</strong> tab, click <strong>Work '
+                        "Offline</strong>.</li><li>Open the <strong>Outbox</strong> folder. Drag the stuck message out into <strong>Drafts</strong> — you usually can't delete it directly while it's "
+                        'mid-send, but you can move it.</li><li>Open it from Drafts, <strong>remove the oversized attachment</strong> (anything over ~20 MB will bounce on most mail servers), and '
+                        'either send it a smaller way — a OneDrive or WeTransfer link — or delete the message if you no longer need it.</li><li>Empty <strong>Deleted Items</strong> so the large item '
+                        'is fully gone.</li><li>Turn <strong>Work Offline</strong> back off and press <strong>F9</strong> (Send/Receive All Folders). Everything queued behind it should now '
+                        "flow.</li></ol><p>If the error's gone, you're done. If it comes straight back with an empty Outbox, the data file itself is the culprit — carry on below.</p>"},
+               {'eyebrow': 'If it keeps returning',
+                'h2': 'Repair the data file with scanpst.exe, then compact it',
+                'html': '<p>A persistent 0x80040610 with nothing in the Outbox usually means your <strong>.pst</strong> (or .ost) data file has minor corruption. Microsoft ships a free repair tool '
+                        'for exactly this — the <strong>Inbox Repair Tool, scanpst.exe</strong>. Close Outlook completely before you start.</p><ol><li>Find <strong>SCANPST.EXE</strong>. On 64-bit '
+                        "installs of Outlook 2016, 2019, 2021 or Microsoft 365 it lives at <code>C:\\Program Files\\Microsoft Office\\root\\Office16</code>; on 32-bit Outlook it's under "
+                        '<code>C:\\Program Files (x86)\\Microsoft Office\\root\\Office16</code> instead. Double-click it.</li><li>Click <strong>Browse</strong> and point it at your data file. '
+                        'Personal .pst files are usually in <code>C:\\Users\\&lt;you&gt;\\Documents\\Outlook Files</code>.</li><li>Click <strong>Start</strong>. It scans and reports any '
+                        'inconsistencies. If it finds errors, tick <strong>Make a backup of scanned file before repairing</strong>, then click <strong>Repair</strong>. Run it two or three times '
+                        'until it comes back clean.</li><li>Reopen Outlook and test with <strong>F9</strong>.</li></ol><p>Finally, <strong>compact</strong> the file so it shrinks and tidies itself: '
+                        '<strong>File &gt; Account Settings &gt; Account Settings &gt; Data Files</strong>, select your PST, click <strong>Settings &gt; Compact Now</strong>. A slimmer, defragmented '
+                        'file is far less likely to jam again.</p><p>One safety note: for a <strong>POP3</strong> account your PST is the <em>only</em> copy of that mail, so let scanpst make its '
+                        "backup first. For IMAP, Microsoft 365 or Outlook.com accounts the mail lives on the server and re-downloads, so there's nothing to lose.</p>"}],
+  'faqs': [{'q': 'What does Outlook error 0x80040610 mean?',
+            'a': "It's a send/receive error that means a message Outlook is trying to move is either too large for your mail server or has become corrupt, jamming the Outbox. It can also point to "
+                 'minor corruption in your Outlook data file (.pst). Both are fixable in a few minutes.'},
+           {'q': 'Why is the same message stuck in my Outbox with error 0x80040610?',
+            'a': 'Almost always an oversized attachment. Most mail servers reject messages over about 20–25 MB, so Outlook keeps retrying and the message locks the queue. Click Work Offline, drag '
+                 'the message to Drafts, remove or shrink the attachment (send big files as a OneDrive or WeTransfer link instead), then go back online and press F9.'},
+           {'q': 'Do I need to run scanpst.exe to fix 0x80040610?',
+            'a': "Only if clearing the stuck message doesn't stop the error returning. If 0x80040610 keeps appearing with an empty Outbox, your data file likely has minor corruption, and the Inbox "
+                 'Repair Tool (scanpst.exe) fixes it. Close Outlook first, and let the tool make its backup — especially on POP3 accounts, where the PST is your only copy of the mail.'},
+           {'q': 'Where is scanpst.exe on Windows?',
+            'a': "For 64-bit Outlook 2016, 2019, 2021 and Microsoft 365 it's usually at C:\\Program Files\\Microsoft Office\\root\\Office16\\SCANPST.EXE; on 32-bit Outlook look in C:\\Program Files "
+                 '(x86)\\Microsoft Office\\root\\Office16 instead. If it\'s not there, search your Start menu for "scanpst". It won\'t appear in your list of apps — you launch the .exe directly.'},
+           {'q': 'Will fixing this error delete my emails?',
+            'a': "No, if you're careful. Removing an oversized attachment only affects that one outgoing message. scanpst.exe repairs rather than deletes, and it offers to back up the file first. "
+                 'The one thing to watch is a POP3 account, where the PST is the only copy of your mail — take the backup before repairing. On IMAP, Microsoft 365 or Outlook.com, your mail is safe '
+                 'on the server and simply re-downloads.'},
+           {'q': 'Can 365 Techies just fix this for me?',
+            'a': "Yes. Call 01202 775566 and we'll connect to your PC with Splashtop — we phone you first, you watch every click, and access ends the moment we're done. We'll clear the jam, repair "
+                 'and compact the data file, and confirm mail flows again, usually within minutes.'}],
+  'schemaKind': 'howto',
+  'howToName': 'How to fix Outlook error 0x80040610',
+  'howToSteps': [{'name': 'Go offline to stop the retry', 'text': 'On the Send / Receive tab, click Work Offline so Outlook stops trying to send the stuck message.'},
+                 {'name': 'Move the stuck message to Drafts', 'text': 'Open the Outbox and drag the jammed message into Drafts, where you can edit or delete it.'},
+                 {'name': 'Remove the oversized attachment',
+                  'text': 'Open the message from Drafts and remove any attachment over about 20 MB; send big files as a OneDrive or WeTransfer link instead, or delete the message.'},
+                 {'name': 'Empty Deleted Items and resend', 'text': 'Empty Deleted Items, turn Work Offline back off, and press F9 to run Send/Receive All Folders.'},
+                 {'name': 'Repair the data file if it returns',
+                  'text': 'If the error keeps coming back, close Outlook and run SCANPST.EXE against your .pst file (usually in C:\\Users\\<you>\\Documents\\Outlook Files), letting it back up first, '
+                          'then repair.'},
+                 {'name': 'Compact the PST',
+                  'text': "In File > Account Settings > Data Files, select your PST and choose Settings > Compact Now to shrink and tidy the file so it's less likely to jam again."}],
+  'crossLinksHtml': '<p>More help: <a href="/outlook-problems/">all Outlook problems</a> · <a href="/microsoft-365-support/">Microsoft 365 support</a> · <a href="/remote-it-support/">remote IT '
+                    'support</a> · <a href="/contact/">contact us</a></p>'},
+ {'slug': 'outlook-error-0x800ccc1a',
+  'title': 'Fix Outlook Error 0x800CCC1A | 365 Techies',
+  'metaDesc': "Outlook error 0x800CCC1A is an SSL/TLS mismatch — wrong secure ports or encryption. Here's the correct port settings for classic Outlook, plus the OAuth2 fix — or we'll sort it "
+              'remotely in minutes.',
+  'ogTitle': 'Outlook Error 0x800CCC1A: The SSL Port Fix',
+  'crumbName': 'Outlook Error 0x800CCC1A',
+  'eyebrow': 'Outlook problems · Classic Outlook',
+  'h1': 'How to fix Outlook <em class="grad grad--cyan">error 0x800CCC1A</em>',
+  'lede': "Error 0x800CCC1A means Outlook couldn't make a secure (SSL/TLS) connection to your mail server — nearly always a wrong port or encryption setting. Set the correct secure ports (IMAP 993, "
+          "POP 995, SMTP 587 or 465), test with your antivirus email scanning off, and for Gmail or Microsoft accounts re-add the account so it uses modern OAuth2 sign-in. Here's how — or we'll fix "
+          'it remotely in minutes.',
+  'chips': ['Classic Outlook', 'Windows only', 'Secure port fix'],
+  'primaryCta': ['Get it fixed remotely', 'tel:+441202775566'],
+  'secondaryCta': ['See all Outlook problems', '/outlook-problems/'],
+  'ctaHead': 'Ports not sticking?',
+  'ctaSub': "Call 01202 775566 and we'll set the secure ports and encryption for you, test the connection, and re-add the account for OAuth2 if needed — all remotely while you watch. Usually done in "
+            'minutes.',
+  'sections': [{'eyebrow': 'Plain English',
+                'h2': 'What error 0x800CCC1A means',
+                'html': '<p><strong>0x800CCC1A</strong> is a send/receive error that means Outlook tried to open a <strong>secure (SSL/TLS) connection</strong> to your incoming or outgoing mail '
+                        "server and the handshake failed. The two servers couldn't agree on how to encrypt the conversation — usually because the <strong>port number</strong> or the "
+                        '<strong>encryption type</strong> in your account settings doesn\'t match what the server expects.</p><p>You\'ll see it worded a couple of ways: <em>"your server does not '
+                        'support the connection encryption type you have specified"</em>, or a plain <em>"sending/receiving reported error (0x800CCC1A)"</em>. Either way the cause is the same family '
+                        'of settings, and once the ports are right the error disappears for good.</p><p>Two other things can trigger it: <strong>antivirus or firewall software</strong> intercepting '
+                        'the encrypted handshake, and — increasingly common in 2026 — providers like <strong>Gmail and Microsoft</strong> retiring old basic-auth sign-in and requiring <strong>modern '
+                        "authentication (OAuth2)</strong>, which the old port-only setup can't do. We cover all three below. This is for classic Outlook on Windows (2016, 2019, 2021, Microsoft 365 "
+                        'desktop).</p>'},
+               {'eyebrow': 'The main fix',
+                'h2': 'Set the correct secure ports and encryption',
+                'html': '<p>This is the fix that resolves 0x800CCC1A most of the time on ISP and third-party mailboxes (BT, Sky, TalkTalk and business hosts). In classic Outlook, go to <strong>File '
+                        '&gt; Account Settings &gt; Account Settings</strong>, double-click your email account, then click <strong>More Settings &gt; Advanced</strong>. Match your setup to these — '
+                        'the key is that the port and the encryption drop-down agree with each other:</p><ol><li><strong>IMAP incoming:</strong> port <strong>993</strong>, encryption '
+                        '<strong>SSL/TLS</strong>.</li><li><strong>POP incoming:</strong> port <strong>995</strong>, encryption <strong>SSL/TLS</strong>.</li><li><strong>SMTP outgoing:</strong> port '
+                        '<strong>587</strong> with encryption <strong>STARTTLS</strong> (the modern default) — or, if your provider still prefers it, port <strong>465</strong> with '
+                        "<strong>SSL/TLS</strong>.</li></ol><p>While you're on the <strong>Outgoing Server</strong> tab, make sure <strong>My outgoing server (SMTP) requires authentication</strong> "
+                        'is ticked and set to <em>Use same settings as my incoming mail server</em> — most SMTP failures are actually a missing tick here. Click <strong>OK</strong>, then '
+                        "<strong>Next</strong> to let Outlook test the settings, and press <strong>F9</strong>.</p><p>Not sure of your provider's exact values? BT, Sky, TalkTalk and business hosts "
+                        "each publish them — get the wrong port and 0x800CCC1A returns, so it's worth confirming. One caveat: if the account is a <strong>Gmail, Outlook.com or Microsoft 365</strong> "
+                        "mailbox, changing ports alone won't fix it — those providers now require OAuth2, so jump to the next section. We know the common UK ISP values and can set them for you.</p>"},
+               {'eyebrow': 'If ports are correct',
+                'h2': 'Test with antivirus off, then re-add for OAuth2',
+                'html': '<p>If your ports are definitely right and the error persists, two things are usually behind it.</p><p><strong>1. Antivirus or firewall is intercepting the '
+                        'handshake.</strong> Many security suites (Avast, AVG, Norton, ESET and others) have an <strong>email scanning</strong> feature that sits between Outlook and the server and '
+                        'can break the SSL negotiation. Temporarily turn off <strong>email/mail scanning</strong> in your antivirus — and, if needed, test with Windows Firewall briefly off — then '
+                        "send/receive. If that clears it, don't leave protection off: instead add Outlook (and the secure ports 993/995/465) as an <strong>exception</strong>, or simply leave the "
+                        "AV's email scanning disabled, as modern SSL already secures the mail.</p><p><strong>2. Your provider now requires modern authentication (OAuth2).</strong> Google disabled "
+                        'basic-auth sign-in for Gmail in March 2025, and Microsoft is retiring it for Outlook.com and Microsoft 365 through 2026 — so a mailbox set up the old port-only way simply '
+                        'can no longer authenticate, no matter what ports you use. The cleanest fix is to <strong>remove and re-add the account</strong>: <strong>File &gt; Account Settings &gt; '
+                        "Account Settings</strong>, select the account, click <strong>Remove</strong>, then <strong>New</strong> and add it again. When you re-add it, Outlook opens the provider's "
+                        "own <strong>web sign-in window</strong> — that's OAuth2 — and configures the secure ports automatically. For Gmail, if you're using an older client that can't do OAuth2 you "
+                        'can instead generate an <strong>app password</strong> (this requires 2-Step Verification to be switched on) and paste that in place of your normal password.</p><p>Removing '
+                        "and re-adding an <strong>IMAP</strong> or Microsoft 365 account is safe — the mail re-downloads from the server. If it's a <strong>POP3</strong> account, your messages live "
+                        'only in the local PST, so back that PST up before you remove anything.</p>'}],
+  'faqs': [{'q': 'What does Outlook error 0x800CCC1A mean?',
+            'a': "It means Outlook couldn't establish a secure SSL/TLS connection to your mail server. Almost always the port number or the encryption type in your account settings doesn't match "
+                 'what the server expects — for example POP on 995 needs SSL/TLS, not None. Fixing the ports normally clears it, though Gmail and Microsoft accounts also need modern OAuth2 sign-in.'},
+           {'q': 'What are the correct secure port settings for Outlook?',
+            'a': 'For a secure connection: IMAP incoming 993 with SSL/TLS, POP incoming 995 with SSL/TLS, and SMTP outgoing 587 with STARTTLS (or 465 with SSL/TLS if your provider prefers). The port '
+                 'and the encryption drop-down must agree, and your outgoing server should be set to require authentication.'},
+           {'q': 'Can antivirus cause error 0x800CCC1A?',
+            'a': 'Yes. Email-scanning features in security suites like Avast, AVG, Norton or ESET sit between Outlook and the server and can break the encrypted handshake. Temporarily disable email '
+                 'scanning to test. If that fixes it, add Outlook and the secure ports as an exception, or leave email scanning off — modern SSL already protects the mail in transit.'},
+           {'q': 'Why does re-adding my Gmail or Microsoft account fix 0x800CCC1A?',
+            'a': 'Because Google (Gmail, from March 2025) and Microsoft (Outlook.com and Microsoft 365, through 2026) have retired old basic-auth sign-in and now require modern authentication '
+                 "(OAuth2). An account set up the old port-only way can no longer authenticate, so changing ports won't help. Removing and re-adding it makes Outlook use the provider's secure web "
+                 'sign-in and set the correct ports automatically.'},
+           {'q': 'Is it safe to remove and re-add my email account?',
+            'a': 'For IMAP or Microsoft 365 accounts, yes — your mail lives on the server and re-downloads when you add the account back. For a POP3 account, your messages are stored only in the '
+                 'local PST file, so back that PST up before removing the account so nothing is lost.'},
+           {'q': 'Can 365 Techies fix error 0x800CCC1A for me?',
+            'a': "Yes. Call 01202 775566 and we'll connect remotely with Splashtop — we phone first, you watch every step, and access ends when we're done. We'll set the correct secure ports, test "
+                 'the connection, sort any antivirus conflict, and re-add the account for OAuth2 if needed, usually in minutes.'}],
+  'schemaKind': 'howto',
+  'howToName': 'How to fix Outlook error 0x800CCC1A',
+  'howToSteps': [{'name': 'Open Advanced account settings', 'text': 'Go to File > Account Settings > Account Settings, double-click your account, then click More Settings > Advanced.'},
+                 {'name': 'Set the incoming secure port', 'text': 'For IMAP set port 993 with SSL/TLS encryption; for POP set port 995 with SSL/TLS.'},
+                 {'name': 'Set the outgoing secure port', 'text': 'Set SMTP to port 587 with STARTTLS, or port 465 with SSL/TLS if your provider prefers, so the port and encryption match.'},
+                 {'name': 'Require outgoing authentication',
+                  'text': "On the Outgoing Server tab, tick 'My outgoing server (SMTP) requires authentication' and use the same settings as incoming, then click OK and test."},
+                 {'name': 'Test with antivirus email scanning off',
+                  'text': 'If the error persists, temporarily disable your antivirus email scanning and send/receive to rule out a blocked handshake, then add Outlook as an exception.'},
+                 {'name': 'Re-add the account for OAuth2',
+                  'text': "For Gmail or Microsoft accounts, remove and re-add the account so Outlook uses the provider's modern OAuth2 web sign-in; back up your PST first if it's a POP3 account."}],
+  'crossLinksHtml': '<p>More help: <a href="/outlook-problems/">all Outlook problems</a> · <a href="/microsoft-365-support/">Microsoft 365 support</a> · <a href="/remote-it-support/">remote IT '
+                    'support</a> · <a href="/contact/">contact us</a></p>'},
+ {'slug': 'outlook-can-send-but-not-receive',
+  'title': 'Outlook Can Send But Not Receive | 365 Techies',
+  'metaDesc': "Outlook can send but not receive emails? That's the incoming side or a filter. Check the incoming server and port, Work Offline, Junk, Focused/Other, rules and a full mailbox — or "
+              "we'll fix it remotely in minutes.",
+  'ogTitle': 'Outlook Can Send But Not Receive: The Fix',
+  'crumbName': 'Can send but not receive',
+  'eyebrow': 'Outlook problems · All versions',
+  'h1': 'Outlook <em class="grad grad--cyan">can send but not receive</em> emails',
+  'lede': 'If Outlook can send but not receive emails, the problem is on the incoming side or a filter is hiding your mail — sending uses a different server, so it working tells you the outgoing '
+          'side is fine. Check the incoming server name and port, make sure Work Offline is off, look in Junk and the Other/Focused inbox, confirm no rule is moving mail away, and check the mailbox '
+          "isn't full. Then press F9. Here's how — or we'll fix it remotely in minutes.",
+  'chips': ['All Outlook versions', 'Windows & Android', 'Incoming-side fix'],
+  'primaryCta': ['Get it fixed remotely', 'tel:+441202775566'],
+  'secondaryCta': ['See all Outlook problems', '/outlook-problems/'],
+  'ctaHead': 'Mail still not arriving?',
+  'ctaSub': "Call 01202 775566 and we'll check your incoming server, filters and mailbox remotely — we phone first, you watch, and access ends the moment we're done. Usually sorted in minutes.",
+  'sections': [{'eyebrow': 'Plain English',
+                'h2': "Why sending works but receiving doesn't",
+                'html': '<p>Email uses two separate connections: an <strong>outgoing</strong> one (SMTP) to send and a completely different <strong>incoming</strong> one (IMAP or POP) to receive. So '
+                        'when Outlook <strong>can send but not receive</strong>, you already know two useful things: your internet and your outgoing server are fine, and the fault is either on the '
+                        '<strong>incoming</strong> connection or a <strong>filter</strong> is quietly moving new mail out of your Inbox before you see it.</p><p>People describe this the same way in '
+                        'a few forms — <em>"Outlook won\'t receive emails"</em>, <em>"I can send but nothing comes in"</em>, <em>"emails not showing in my inbox"</em> — but the checklist is '
+                        "identical. Work through it in order and you'll usually find the culprit in the first two or three steps. This applies to every version: classic Outlook on Windows "
+                        '(2016–2021, Microsoft 365), new Outlook, and the Outlook app on Android.</p>'},
+               {'eyebrow': 'Quick wins',
+                'h2': 'The five-minute checklist',
+                'html': '<p>Start with the fast, no-risk checks — one of these fixes the majority of "not receiving" cases.</p><ol><li><strong>Is Work Offline on?</strong> On the <strong>Send / '
+                        "Receive</strong> tab, look at the <strong>Work Offline</strong> button. If it's highlighted, Outlook is deliberately not connecting — click it to go back online. Also check "
+                        'the status bar at the bottom reads <em>Connected</em>, not <em>Working Offline</em> or <em>Disconnected</em>.</li><li><strong>Force a receive.</strong> Press '
+                        '<strong>F9</strong> (Send/Receive All Folders). If mail suddenly arrives, it was just a stalled sync.</li><li><strong>Check Junk / Spam.</strong> New mail may be landing '
+                        'there. If it is, right-click a message and choose <strong>Junk &gt; Never Block Sender</strong>.</li><li><strong>Check the Other inbox.</strong> If Focused Inbox is on, real '
+                        'mail can hide under the <strong>Other</strong> tab. Click <strong>Other</strong>, or turn the feature off via the <strong>View</strong> tab &gt; <strong>Show Focused '
+                        'Inbox</strong>.</li><li><strong>Is the mailbox full?</strong> A mailbox at its storage limit stops accepting new mail. Check your webmail quota, empty <strong>Deleted '
+                        "Items</strong> and large <strong>Sent</strong> attachments, or ask your provider to increase the limit.</li></ol><p>If mail is now arriving, you're done. If not, the "
+                        'incoming server settings or a hidden rule is to blame — keep going.</p>'},
+               {'eyebrow': 'Deeper checks',
+                'h2': 'Incoming server, ports and stray rules',
+                'html': "<p>If the quick wins didn't do it, the incoming connection or a filter is the problem.</p><p><strong>Check the incoming server name and port.</strong> Go to <strong>File "
+                        '&gt; Account Settings &gt; Account Settings</strong>, double-click your account, and confirm the <strong>Incoming mail server</strong> name is correct (e.g. '
+                        "<em>imap.gmail.com</em> or your host's server). Then click <strong>More Settings &gt; Advanced</strong> and check the secure incoming port: <strong>IMAP 993 with "
+                        'SSL/TLS</strong>, or <strong>POP 995 with SSL/TLS</strong>. A wrong incoming port lets sending carry on working while receiving silently fails — exactly your '
+                        'symptom.</p><p><strong>Look for a rule stealing your mail.</strong> A rule set up long ago (or one that got corrupted) can move incoming messages straight to another folder, '
+                        'or even delete them, before you ever see the Inbox. Go to <strong>File &gt; Manage Rules &amp; Alerts</strong> and review the list — disable anything that moves or deletes '
+                        'incoming mail while you test. As a last resort you can start Outlook with rules stripped out by running <code>outlook.exe /cleanclientrules</code> from the Windows search '
+                        "box, which clears only the client-side rules. Avoid the blunter <code>outlook.exe /cleanrules</code> unless you're sure — it permanently deletes <em>every</em> rule (client "
+                        "and server) across <em>all</em> mailboxes in that Outlook profile, including any delegated ones, and a restart won't bring them back, so note your rules down "
+                        "first.</p><p><strong>Confirm it's not just this folder.</strong> Make sure you're viewing the <strong>Inbox</strong> and that the view isn't filtered — the words <em>Filter "
+                        'Applied</em> in the status bar mean some messages are hidden; click it to clear. Finally, check the same account in <strong>webmail</strong> in a browser: if new mail is '
+                        "arriving there but not in Outlook, the fault is Outlook's settings; if it's missing in webmail too, the problem is at the mail server or with the sender.</p>"}],
+  'faqs': [{'q': 'Why can Outlook send emails but not receive them?',
+            'a': 'Because sending and receiving use different servers. Sending goes out over SMTP, receiving comes in over IMAP or POP — so sending working proves your outgoing side is fine and '
+                 'points the fault at the incoming connection or a filter hiding your mail. Check the incoming server and port, Work Offline, Junk, the Focused/Other inbox, and any rules.'},
+           {'q': "What's the first thing to check when Outlook won't receive mail?",
+            'a': "Whether Work Offline is switched on. On the Send / Receive tab, if the Work Offline button is highlighted, Outlook isn't connecting — click it to go back online, then press F9 to "
+                 'force a send/receive. Also confirm the status bar shows Connected rather than Working Offline or Disconnected.'},
+           {'q': 'What incoming port should Outlook use to receive email?',
+            'a': 'For a secure incoming connection use IMAP port 993 with SSL/TLS, or POP port 995 with SSL/TLS. Check under File > Account Settings > your account > More Settings > Advanced. A '
+                 'wrong incoming port lets sending keep working while receiving quietly fails, which is exactly this symptom.'},
+           {'q': 'Could a rule be stopping emails reaching my Inbox?',
+            'a': 'Yes. A rule can move incoming mail to another folder or delete it before you see it. Go to File > Manage Rules & Alerts and disable anything that moves or deletes incoming '
+                 'messages, then test. To rule out a corrupted rule you can start Outlook with outlook.exe /cleanclientrules, which clears client-side rules; avoid the broader /cleanrules unless '
+                 'necessary, as it permanently deletes every rule across all mailboxes in the profile, so note them down first.'},
+           {'q': 'Does a full mailbox stop Outlook receiving email?',
+            'a': 'Yes. Once a mailbox hits its storage limit the server refuses new mail, so nothing arrives in Outlook. Check your quota in webmail, empty Deleted Items and clear large attachments '
+                 'from Sent Items, or ask your email provider to increase the limit.'},
+           {'q': "How do I know if it's Outlook or the mail server, and can 365 Techies help?",
+            'a': "Sign in to the same account through webmail in a browser. If new mail is arriving there but not in Outlook, the problem is Outlook's settings — server name, port, a rule or a "
+                 "filter. If mail is missing in webmail too, the issue is at the mail server or with the sender. Either way, call 01202 775566 and we'll connect with Splashtop — we phone first, you "
+                 "watch every click, and access ends when we're done — to check your incoming server, ports, rules and mailbox and get mail flowing, usually in minutes."}],
+  'schemaKind': 'howto',
+  'howToName': 'How to fix Outlook when it can send but not receive emails',
+  'howToSteps': [{'name': 'Turn off Work Offline',
+                  'text': "On the Send / Receive tab, check the Work Offline button isn't highlighted and the status bar shows Connected, then click it off if needed."},
+                 {'name': 'Run Send/Receive All Folders', 'text': 'Press F9 to force a full send/receive in case the sync had simply stalled.'},
+                 {'name': 'Check Junk and the Other inbox', 'text': 'Look in Junk/Spam and, if Focused Inbox is on, the Other tab, where incoming mail can be hidden.'},
+                 {'name': 'Verify the incoming server and port',
+                  'text': 'In File > Account Settings > More Settings > Advanced, confirm the incoming server name and use IMAP 993 SSL/TLS or POP 995 SSL/TLS.'},
+                 {'name': 'Disable any rule moving your mail', 'text': 'In File > Manage Rules & Alerts, disable rules that move or delete incoming messages, then test again.'},
+                 {'name': "Check the mailbox isn't full and compare with webmail",
+                  'text': "Confirm your mailbox is under its storage limit, then sign in via webmail to see whether the fault is Outlook's settings or the mail server."}],
+  'crossLinksHtml': '<p>More help: <a href="/outlook-problems/">all Outlook problems</a> · <a href="/microsoft-365-support/">Microsoft 365 support</a> · <a href="/remote-it-support/">remote IT '
+                    'support</a> · <a href="/contact/">contact us</a></p>'},
+ {'slug': 'new-outlook-not-syncing',
+  'title': 'New Outlook Not Syncing Emails? Fix | 365 Techies',
+  'metaDesc': 'New Outlook not syncing emails automatically, or only showing new mail after a restart? Force a sync, fix the offline setting and re-connect the account. Or we fix it remotely in '
+              'minutes.',
+  'ogTitle': 'New Outlook Not Syncing Emails Automatically — The Fix',
+  'crumbName': 'New Outlook not syncing',
+  'eyebrow': 'Outlook problems · New Outlook',
+  'h1': 'New Outlook <em class="grad grad--cyan">not syncing emails</em> automatically',
+  'lede': "If the new Outlook has stopped pulling in emails on its own — or only shows new mail after you close and reopen it — the app's background sync has stalled. Press F9 (or open the View tab "
+          'and click Sync) to force it, then switch off the offline setting so it holds a live connection to the server. Here is exactly how, and why it happens.',
+  'chips': ['F9 forces a sync', 'Turn off offline email', 'Windows-specialist help'],
+  'primaryCta': ['Fix my Outlook now', 'tel:+441202775566'],
+  'secondaryCta': ['See all Outlook problems', '/outlook-problems/'],
+  'ctaHead': 'Still only updating when you restart it?',
+  'ctaSub': 'We watch your screen, phone you first, and usually have the new Outlook syncing live again within minutes on Splashtop SOS. Windows and Android specialists, same-day, Bournemouth and '
+            'Dorset.',
+  'sections': [{'eyebrow': 'The quick answer',
+                'h2': 'Why the new Outlook stops syncing on its own',
+                'html': '<p>The new Outlook for Windows is a web-powered app: it needs a constant live connection to Microsoft 365 to trickle new mail into your inbox in the background. When that '
+                        'connection quietly stalls — after your PC wakes from sleep, drops Wi-Fi for a moment, or Windows throttles the app to save battery — the sync simply stops. Nothing looks '
+                        'broken, but no new email arrives until you nudge it. That is why so many people find the new Outlook <strong>only shows new mail after a restart</strong>: closing and '
+                        'reopening the app forces a fresh connection, which is really just a heavy-handed version of the proper fix below.</p><p>The good news is you rarely need to reinstall '
+                        'anything. Ninety-nine times out of a hundred it is one stalled sync and one setting. Work through the steps in order and stop as soon as mail starts flowing.</p>'},
+               {'eyebrow': 'Step by step',
+                'h2': 'Force a sync and stop it stalling again',
+                'html': '<p>Do these in order — most people are fixed by step 2.</p><ol><li><strong>Force an immediate sync.</strong> Press <strong>F9</strong>, or go to the <strong>View</strong> '
+                        'tab and click <strong>Sync</strong> (this replaces the old Send/Receive in the new Outlook). New mail should drop in within a few seconds. This proves the connection works — '
+                        'it just was not firing on its own.</li><li><strong>Turn off offline email so it holds a live connection.</strong> Go to <strong>Settings</strong> (the gear, top right) then '
+                        '<strong>General</strong> then <strong>Offline</strong>, and turn <strong>off</strong> the toggle <strong>“Enable offline email, calendar, and people.”</strong> Offline mode '
+                        'caches a local copy and can leave the app reading stale data instead of the server. With it off, Outlook keeps a live connection and pulls mail as it lands. (Tip: toggle it '
+                        'off, wait ten seconds, then only turn it back on if you genuinely need email with no internet — that also rebuilds the local sync.)</li><li><strong>Confirm the account is '
+                        'Connected.</strong> Open <strong>Settings</strong> then <strong>Accounts</strong> then <strong>Email accounts</strong> and check your account status. If it shows it needs '
+                        'attention or is disconnected, click it and sign in again.</li><li><strong>Restart the app cleanly.</strong> Fully close Outlook and reopen it, then press F9 once more. This '
+                        'clears a stuck session.</li></ol>'},
+               {'eyebrow': 'If it keeps happening',
+                'h2': 'When a stall keeps coming back',
+                'html': '<p>If mail flows after F9 but the new Outlook keeps drifting back to sleep every hour, the sync state or the account sign-in has become unreliable. Two dependable '
+                        'fixes:</p><ol><li><strong>Remove and re-add the account.</strong> In <strong>Settings</strong> then <strong>Accounts</strong>, remove the account, then add it back and sign '
+                        "in fresh. Your mailbox lives on Microsoft's servers, so nothing is deleted — everything re-downloads once it reconnects.</li><li><strong>Switch back to classic "
+                        'Outlook.</strong> Toggle off the <strong>“New Outlook”</strong> switch at the top-right of the window to drop back to the classic app, which has a proper scheduled '
+                        'Send/Receive and syncs far more reliably for many people. Classic Outlook is supported into 2029, so it is a perfectly good place to stay until the new Outlook '
+                        'matures.</li></ol><p>A quick honest note: unlike classic Outlook, the new Outlook does <strong>not</strong> give you a “sync every 10 minutes” scheduler you can rely on — '
+                        'background sync is meant to be automatic, which is exactly why a stall is so noticeable. If none of the above holds, that is the point to let us take a proper look.</p><p>We '
+                        'are Windows and Android specialists (we support Outlook on Windows and the Outlook Android app — we do not do Apple), we have been fixing local businesses and home users '
+                        'since 1995, and we are rated 4.9 on Google. On <a href="/remote-it-support/">remote support</a> we phone you first, you watch the whole thing on screen, and access ends the '
+                        'moment we are done.</p>'}],
+  'faqs': [{'q': 'Why does the new Outlook only show new emails after I restart it?',
+            'a': 'Because restarting forces a fresh connection to the server. The background sync had stalled — closing and reopening simply kick-starts it. The proper fix is to press F9 (or View > '
+                 'Sync) to sync on demand and turn off Settings > General > Offline > “Enable offline email” so the app keeps a live connection instead of reading a stale local cache.'},
+           {'q': 'What does F9 do in the new Outlook?',
+            'a': 'F9 forces an immediate sync — it pulls down any mail waiting on the server right away. You can also do it from the View tab by clicking Sync, which replaces the old Send/Receive '
+                 'button. If F9 brings mail in, your connection is fine; the app just was not syncing automatically, which the offline-email fix usually cures.'},
+           {'q': 'Should I turn off “Enable offline email” in the new Outlook?',
+            'a': 'If your sync keeps stalling, yes. Offline email caches a local copy and can leave Outlook showing stale data. Turning it off (Settings > General > Offline) makes the app hold a '
+                 'live server connection so new mail arrives as it lands. Only leave it on if you specifically need to read email with no internet.'},
+           {'q': 'How do I check my account is connected in the new Outlook?',
+            'a': 'Open Settings > Accounts > Email accounts and look at the status under your address. If it says it needs attention or is disconnected, click the account and sign in again — a '
+                 'lapsed sign-in is a common reason mail stops arriving.'},
+           {'q': "Can I go back to classic Outlook if the new one won't sync?",
+            'a': 'Yes. Toggle off the “New Outlook” switch at the top right of the window and you drop back to classic Outlook, which has a reliable scheduled Send/Receive. Your mail and settings '
+                 'are untouched, and classic Outlook is supported into 2029. Many people stay on classic for exactly this reason, and we are happy to set it up properly for you.'},
+           {'q': 'Nothing works — can 365 Techies fix it remotely?',
+            'a': 'Yes, and usually within minutes. We connect over Splashtop SOS after phoning you first, you watch every step on your own screen, and access ends when we finish. We will get the new '
+                 'Outlook syncing live again or move you cleanly to classic. Call 01202 775566.'}],
+  'schemaKind': 'howto',
+  'howToName': 'Fix the new Outlook not syncing emails automatically',
+  'howToSteps': [{'name': 'Force an immediate sync',
+                  'text': 'Press F9, or open the View tab and click Sync (this replaces the old Send/Receive). New mail should arrive within seconds, proving the connection works and the app simply '
+                          'was not syncing on its own.'},
+                 {'name': 'Turn off offline email',
+                  'text': 'Go to Settings > General > Offline and turn off “Enable offline email, calendar, and people” so Outlook holds a live server connection instead of reading a stale local '
+                          'cache.'},
+                 {'name': 'Confirm the account is Connected',
+                  'text': 'Open Settings > Accounts > Email accounts and check the account status. If it needs attention or is disconnected, click it and sign in again.'},
+                 {'name': 'Restart Outlook cleanly', 'text': 'Fully close and reopen Outlook, then press F9 once more to clear any stuck session.'},
+                 {'name': 'Re-add the account or revert to classic',
+                  'text': 'If it keeps stalling, remove and re-add the account (nothing is lost — mail re-downloads from the server), or toggle off New Outlook to return to classic Outlook, which '
+                          'syncs on a reliable schedule.'}],
+  'crossLinksHtml': '<p>Related help: <a href="/outlook-problems/">All Outlook problems</a> · <a href="/outlook-not-showing-new-emails/">Outlook not showing new emails</a> · <a '
+                    'href="/outlook-com-not-syncing/">Outlook.com not syncing</a> · <a href="/microsoft-365-support/">Microsoft 365 support</a> · <a href="/remote-it-support/">Remote IT support</a> '
+                    '· <a href="/contact/">Contact 365 Techies</a></p>'},
+ {'slug': 'outlook-com-not-syncing',
+  'title': 'Outlook.com Not Syncing or Receiving? Fix | 365 Techies',
+  'metaDesc': 'Outlook.com not syncing, or not receiving emails but sending fine? Re-enter your password, turn off Work Offline, and check the folders hiding your mail. Or we fix it remotely in '
+              'minutes.',
+  'ogTitle': 'Outlook.com Not Receiving Emails (But Sending) — The Fix',
+  'crumbName': 'Outlook.com not syncing',
+  'eyebrow': 'Outlook problems · Outlook.com',
+  'h1': 'Outlook.com <em class="grad grad--cyan">not syncing</em> or receiving emails',
+  'lede': "If your Outlook.com account sends fine but new mail never arrives, the cause is almost always one of three things: a changed password the app hasn't caught up with, Outlook stuck in Work "
+          "Offline, or the mail arriving but landing somewhere you're not looking. Here's how to find it in a couple of minutes — in the desktop app and in the browser.",
+  'chips': ['Re-enter the password', 'Check Junk & Other', 'Windows-specialist help'],
+  'primaryCta': ['Fix my Outlook.com now', 'tel:+441202775566'],
+  'secondaryCta': ['See all Outlook problems', '/outlook-problems/'],
+  'ctaHead': 'Sending fine but nothing coming in?',
+  'ctaSub': "We'll find where your Outlook.com mail is going and get it flowing again — usually within minutes on Splashtop SOS. We phone first, you watch, access ends when we're done. Windows and "
+            'Android specialists, Bournemouth and Dorset.',
+  'sections': [{'eyebrow': 'The quick answer',
+                'h2': 'Sending works but nothing comes in — why',
+                'html': '<p>When email <strong>goes out</strong> but nothing <strong>comes in</strong>, that pattern is a strong clue in itself. Sending uses one connection to the server; receiving '
+                        'uses another, plus the rules and folders that decide where each message lands. So a “sending fine, not receiving” fault is almost never a broken account — it is usually one '
+                        'of these:</p><ul><li>Your <strong>password changed</strong> (perhaps for security) and the desktop app is still trying the old one, so it can send from cache but cannot pull '
+                        'new mail.</li><li>Outlook is stuck in <strong>Work Offline</strong>, quietly holding everything back.</li><li>The mail <strong>is arriving</strong> — but a rule, the Junk '
+                        'folder, the Blocked Senders list, or the Focused/Other split is hiding it from your main view.</li><li>Your <strong>mailbox is full</strong>, and a full Outlook.com mailbox '
+                        'stops receiving.</li></ul><p>Work through the steps below and you will land on the culprit quickly. We have split them into the desktop app and the browser, because the fix '
+                        'differs.</p>'},
+               {'eyebrow': 'In the desktop app',
+                'h2': 'Fix Outlook.com in the desktop app',
+                'html': '<p>If you use Outlook.com through the classic Outlook program on Windows:</p><ol><li><strong>Turn off Work Offline.</strong> On the <strong>Send / Receive</strong> tab, look '
+                        'at the <strong>Work Offline</strong> button. If it is highlighted (or the status bar says “Working Offline”), click it once to go back online, then press <strong>F9</strong> '
+                        'to sync.</li><li><strong>Re-enter your password.</strong> If you recently changed your Microsoft password, the app is still using the old one. When prompted, type the new '
+                        "password. If you are not prompted but mail still won't arrive, clear the saved entry: open <strong>Windows Credential Manager</strong> (search it in the Start menu) then "
+                        '<strong>Windows Credentials</strong>, find any entry containing <strong>MicrosoftOffice</strong> or your Outlook.com address, remove it, then reopen Outlook and sign in '
+                        'fresh.</li><li><strong>Press F9 to Send/Receive.</strong> This forces a full sync so you can see whether mail now drops in.</li><li><strong>Check the Junk and Focused/Other '
+                        'folders.</strong> Look in <strong>Junk Email</strong>, and if you use Focused Inbox, click the <strong>Other</strong> tab — messages you are expecting are very often sitting '
+                        'there, not missing at all.</li></ol><p>Note: the newer new Outlook app is web-powered and has no Work Offline button or F9 in the same place — if you are on that version, '
+                        'see our <a href="/new-outlook-not-syncing/">new Outlook not syncing</a> guide, and use the browser and hidden-mail checks below.</p>'},
+               {'eyebrow': 'In the browser and beyond',
+                'h2': 'Fix Outlook.com in a browser (and the hidden-mail checks)',
+                'html': "<p>If you read Outlook.com at outlook.com in a web browser, or the app checks above didn't help, do these:</p><ol><li><strong>Hard-refresh the page.</strong> Press "
+                        '<strong>Ctrl + F5</strong> to force a fresh load past a stale cache. If it is still odd, clear your browser cache, or open Outlook.com in a private/incognito window to rule '
+                        'the browser out.</li><li><strong>Check your Rules.</strong> In Outlook.com go to <strong>Settings</strong> then <strong>Mail</strong> then <strong>Rules</strong>. A rule '
+                        'that moves or deletes incoming mail — set up long ago and forgotten — is a classic cause of “nothing arrives.” Disable anything suspicious.</li><li><strong>Check Blocked '
+                        'senders and Junk.</strong> Go to <strong>Settings</strong> then <strong>Mail</strong> then <strong>Junk email</strong> and review <strong>Blocked senders and '
+                        'domains</strong>, then look inside the <strong>Junk Email</strong> folder itself. Move any wanted sender back and mark them safe.</li><li><strong>Check your storage '
+                        'quota.</strong> A full Outlook.com mailbox stops receiving. In <strong>Settings</strong> then <strong>General</strong> then <strong>Storage</strong>, see how full you are; '
+                        'empty large items and the Deleted Items folder if you are near the limit.</li></ol><p>If mail is still not arriving after all of that, the fault may be at the server or '
+                        'account-security level — the point at which a quick <a href="/remote-it-support/">remote session</a> saves you a lot of guesswork. We are Windows and Android specialists '
+                        '(Outlook on Windows and the Outlook Android app — not Apple), a Microsoft Partner rated 4.9 on Google, fixing Dorset email since 1995.</p>'}],
+  'faqs': [{'q': 'Why is my Outlook.com sending emails but not receiving any?',
+            'a': "Sending and receiving use different parts of the connection. A “sending fine, not receiving” fault is usually a password the desktop app hasn't updated, Outlook stuck in Work "
+                 'Offline, mail being hidden by a rule or the Junk/Other folder, or a full mailbox. Re-enter your password, turn off Work Offline, press F9, and check those folders.'},
+           {'q': "I changed my Microsoft password and now Outlook won't receive mail — why?",
+            'a': "The desktop app is still trying your old password, so it can't pull new mail. Enter the new password when prompted. If you're not prompted, open Windows Credential Manager > "
+                 'Windows Credentials, remove the saved MicrosoftOffice / Outlook.com entry, then reopen Outlook and sign in fresh.'},
+           {'q': "My Outlook.com mail shows in the browser but not in the desktop app — what's wrong?",
+            'a': "That points to the desktop app specifically: it's likely offline, using an old password, or filtering the mail into Junk or the Other tab. Turn off Work Offline, re-enter the "
+                 'password (clear it in Credential Manager if needed), press F9, and check the Junk and Focused/Other folders.'},
+           {'q': 'Could a rule be stopping my Outlook.com emails from arriving?',
+            'a': 'Yes — this is common. A forgotten rule can move incoming mail to another folder or delete it before you see it. In Outlook.com go to Settings > Mail > Rules and review them; in the '
+                 'classic desktop app check File > Manage Rules & Alerts. Disable anything that diverts or deletes incoming mail.'},
+           {'q': 'Can a full Outlook.com mailbox stop me receiving email?',
+            'a': "Yes. Once your Outlook.com storage is full, new mail can't be delivered and is returned to the sender. Check Settings > General > Storage to see how full you are, then empty large "
+                 'items and the Deleted Items folder, or clear out old attachments, to free space and get mail flowing again.'},
+           {'q': "I've tried everything and Outlook.com still won't receive — can you help?",
+            'a': "Yes. We'll connect remotely over Splashtop SOS (after phoning you first, with you watching and access ending when we're done), track down exactly where your mail is going, and fix "
+                 'it — usually within minutes. Call 365 Techies on 01202 775566.'}],
+  'schemaKind': 'howto',
+  'howToName': 'Fix Outlook.com not syncing or not receiving emails',
+  'howToSteps': [{'name': 'Turn off Work Offline', 'text': "On the Send / Receive tab in the classic desktop app, click Work Offline if it's highlighted to go back online, then press F9 to sync."},
+                 {'name': 'Re-enter or clear your password',
+                  'text': 'Type your new Microsoft password when prompted. If not prompted, remove the saved Outlook.com / MicrosoftOffice entry in Windows Credential Manager > Windows Credentials, '
+                          'then reopen Outlook and sign in fresh.'},
+                 {'name': 'Force a sync with F9', 'text': 'Press F9 to run a full Send/Receive and check whether new mail now arrives.'},
+                 {'name': 'Check the folders hiding your mail',
+                  'text': 'Look in Junk Email, the Focused/Other tab, and your Rules and Blocked Senders — mail is often arriving but hidden rather than missing.'},
+                 {'name': 'Hard-refresh the browser and check storage',
+                  'text': 'In a browser, press Ctrl + F5 or use a private window; then check Settings > General > Storage, as a full mailbox stops receiving.'}],
+  'crossLinksHtml': '<p>Related help: <a href="/outlook-problems/">All Outlook problems</a> · <a href="/outlook-not-showing-new-emails/">Outlook not showing new emails</a> · <a '
+                    'href="/new-outlook-not-syncing/">New Outlook not syncing</a> · <a href="/microsoft-365-support/">Microsoft 365 support</a> · <a href="/remote-it-support/">Remote IT support</a> '
+                    '· <a href="/contact/">Contact 365 Techies</a></p>'},
+ {'slug': 'outlook-not-showing-new-emails',
+  'title': 'Outlook Not Showing New Emails? Fix | 365 Techies',
+  'metaDesc': 'Outlook not showing new emails that are already on the server, or stuck on “this folder is up to date”? Force a sync, reset the view, clear offline items and rebuild the OST. Or we '
+              'fix it remotely in minutes.',
+  'ogTitle': 'Outlook Not Showing New Emails (On the Server) — The Fix',
+  'crumbName': 'Outlook not showing new emails',
+  'eyebrow': 'Outlook problems · All versions',
+  'h1': 'Outlook <em class="grad grad--cyan">not showing new emails</em> that are on the server',
+  'lede': "If webmail shows messages that never appear in Outlook — and the folder just says “this folder is up to date” — the mail has reached your account but Outlook isn't displaying it. Usually "
+          "it's a stalled sync, a hidden view, or a stale offline copy of the folder. Here's how to force it through, in order.",
+  'chips': ['F9 syncs all folders', 'Reset the folder view', 'Clear offline items'],
+  'primaryCta': ['Fix my Outlook now', 'tel:+441202775566'],
+  'secondaryCta': ['See all Outlook problems', '/outlook-problems/'],
+  'ctaHead': "Mail's on the server but not in Outlook?",
+  'ctaSub': "We'll get your inbox showing the real, live folder again — usually within minutes on Splashtop SOS. We phone first, you watch, access ends when we're done. Windows and Android "
+            'specialists, Bournemouth and Dorset.',
+  'sections': [{'eyebrow': 'The quick answer',
+                'h2': '“This folder is up to date” but mail is missing — why',
+                'html': "<p>When webmail shows messages Outlook doesn't — and Outlook cheerfully reports <strong>“this folder is up to date”</strong> or <strong>“all folders are up to date”</strong> "
+                        '— the mail has genuinely arrived at your account. The problem is between the server and what Outlook is drawing on your screen. There are three usual '
+                        "culprits:</p><ul><li><strong>A stalled sync</strong> or Outlook sitting in <strong>Work Offline</strong>, so it isn't actually pulling the newest items.</li><li><strong>A "
+                        "hidden view</strong> — a sort, filter or corrupt view setting that pushes new mail off-screen even though it's downloaded.</li><li><strong>A stale offline copy</strong> of "
+                        'the folder (the OST cache) that has drifted out of step with the server.</li></ul><p>This affects every version — classic Outlook, Microsoft 365 and the new Outlook. Work '
+                        'the steps in order and stop as soon as your mail reappears. The early steps are instant and safe; the later ones (clearing offline items, rebuilding the OST) re-download the '
+                        'folder from the server, so nothing is lost for a Microsoft 365, Exchange or IMAP account. (The Send/Receive, Reset View and Clear Offline Items steps below are '
+                        'classic-Outlook features; on the new Outlook, force a sync with the View > Sync button or F9 instead.)</p>'},
+               {'eyebrow': 'Start here',
+                'h2': 'Force the sync and un-hide the view',
+                'html': '<p>These are instant and completely safe. Most people are fixed by step 3.</p><ol><li><strong>Click Send/Receive All Folders (F9).</strong> On the <strong>Send / '
+                        'Receive</strong> tab, click <strong>Send/Receive All Folders</strong>, or just press <strong>F9</strong>. This forces every folder to pull from the server, not just the '
+                        "inbox.</li><li><strong>Make sure Work Offline is off.</strong> Still on the <strong>Send / Receive</strong> tab, check the <strong>Work Offline</strong> button isn't "
+                        "highlighted and the status bar doesn't say “Working Offline.” If it does, click it once to reconnect.</li><li><strong>Reset the folder view.</strong> If webmail shows the "
+                        "mail but Outlook still doesn't, a view is hiding it. Go to the <strong>View</strong> tab, click <strong>Reset View</strong> (or View Settings then Reset Current View). Also "
+                        "check you haven't left a <strong>sort</strong> or <strong>filter</strong> applied — click the column header to sort by <strong>Date (newest on top)</strong>, and clear any "
+                        'search or filter still in the box. Corrupt or filtered views are the single most common reason new mail “vanishes.”</li></ol>'},
+               {'eyebrow': 'If it persists',
+                'h2': 'Refresh the offline copy and rebuild the OST',
+                'html': "<p>If the mail is still missing, Outlook's local copy of the folder has drifted from the server. These steps rebuild it. On a Microsoft 365, Exchange or IMAP account your "
+                        'mail lives on the server, so clearing and rebuilding is safe — everything re-downloads. (If yours is an older POP account, mail may only exist on your PC — back up your data '
+                        'file first and check with us before deleting anything.)</p><ol><li><strong>Clear Offline Items, then Update Folder.</strong> Right-click the problem folder in the folder '
+                        'list, choose <strong>Properties</strong>, and on the <strong>General</strong> tab click the <strong>Clear Offline Items</strong> button. Then on the <strong>Send / '
+                        'Receive</strong> tab click <strong>Update Folder</strong> (or press <strong>Shift + F9</strong>). Outlook empties the stale local copy and re-downloads the real contents '
+                        'from the server.</li><li><strong>Check no rule is diverting the mail.</strong> Go to <strong>File</strong> then <strong>Manage Rules &amp; Alerts</strong> and look for any '
+                        'rule that moves or deletes incoming messages. Disable anything that could be pulling mail out of your inbox before you see it.</li><li><strong>Rebuild the OST if it still '
+                        "persists.</strong> The .ost is Outlook's offline cache; if it's corrupt, deleting it forces a clean rebuild from the server. Close Outlook, then in File Explorer paste "
+                        "<strong>%localappdata%\\Microsoft\\Outlook</strong> into the address bar, rename the account's <strong>.ost</strong> file (for example to <strong>.ost.old</strong>), and "
+                        'reopen Outlook. It rebuilds a fresh, fully-synced copy automatically. Again, this is safe for 365/Exchange/IMAP — the mail comes back from the server.</li></ol><p>Note: '
+                        'rebuilding an OST is different from repairing a PST with scanpst — the OST is a disposable cache you can safely rebuild, whereas a PST holds your only copy and must be '
+                        "repaired, not deleted. If you're unsure which you have, don't delete anything — let us check.</p><p>If new mail still won't show after a clean rebuild, the fault is deeper "
+                        '(a profile, add-in or account issue), and that\'s the moment a quick <a href="/remote-it-support/">remote session</a> is worth it. We\'re Windows and Android specialists '
+                        '(Outlook on Windows and the Outlook Android app — not Apple), a Microsoft Partner rated 4.9 on Google, fixing Dorset inboxes since 1995.</p>'}],
+  'faqs': [{'q': "Outlook says “this folder is up to date” but new emails are missing — what's wrong?",
+            'a': "The mail has reached your account but Outlook isn't displaying it. It's usually a stalled sync, a hidden or corrupt view, or a stale offline copy of the folder. Press F9 to "
+                 'Send/Receive All Folders, make sure Work Offline is off, reset the view and check your sort/filter — that fixes most cases.'},
+           {'q': "Webmail shows the email but Outlook doesn't — how do I fix it?",
+            'a': 'Because the mail is clearly on the server, the fault is local to Outlook. Reset the folder view (View > Reset View), clear any sort or filter, then right-click the folder > '
+                 "Properties > Clear Offline Items and click Update Folder to re-download it. If it still won't show, rebuild the OST cache."},
+           {'q': 'What does “Clear Offline Items” do — will I lose emails?',
+            'a': "It empties Outlook's local cached copy of that folder (right-click the folder > Properties > Clear Offline Items), then re-downloads the real contents from the server via Update "
+                 'Folder. For a Microsoft 365, Exchange or IMAP account nothing is lost — your mail lives on the server. Only be cautious with older POP accounts, where mail may exist only on your '
+                 'PC; back up first and check with us.'},
+           {'q': 'How do I rebuild the OST file in Outlook?',
+            'a': "Close Outlook, open File Explorer, paste %localappdata%\\Microsoft\\Outlook into the address bar, rename the account's .ost file (e.g. to .ost.old), then reopen Outlook. It "
+                 'rebuilds a fresh, fully-synced copy from the server automatically. This is safe for 365/Exchange/IMAP accounts — the mail re-downloads.'},
+           {'q': 'Is rebuilding the OST the same as running scanpst?',
+            'a': 'No. The OST is a disposable offline cache you can safely delete and rebuild from the server. A PST holds your only copy of the mail and must be repaired with scanpst, never '
+                 "deleted. If you're not sure which file type your account uses, don't delete anything — let us check first to avoid data loss."},
+           {'q': 'Could a rule be hiding my new emails in Outlook?',
+            'a': 'Yes. A rule can move incoming mail to another folder or delete it before it reaches your inbox. Go to File > Manage Rules & Alerts and review them; disable anything that diverts or '
+                 'deletes incoming messages, then press F9 to sync and check your inbox again.'}],
+  'schemaKind': 'howto',
+  'howToName': 'Fix Outlook not showing new emails that are on the server',
+  'howToSteps': [{'name': 'Send/Receive All Folders', 'text': 'On the Send / Receive tab click Send/Receive All Folders, or press F9, to force every folder to pull the latest mail from the server.'},
+                 {'name': 'Turn off Work Offline', 'text': "Check the Work Offline button isn't highlighted and the status bar doesn't say Working Offline; click it once to reconnect if needed."},
+                 {'name': 'Reset the view and clear filters',
+                  'text': 'On the View tab click Reset View, sort by Date (newest on top), and clear any search or filter — a corrupt or filtered view is the most common reason new mail is hidden.'},
+                 {'name': 'Clear Offline Items and Update Folder',
+                  'text': 'Right-click the folder, choose Properties, click the Clear Offline Items button, then click Update Folder (or Shift + F9) to re-download the real contents from the server. '
+                          'Safe for 365/Exchange/IMAP.'},
+                 {'name': 'Check rules, then rebuild the OST',
+                  'text': "In File > Manage Rules & Alerts disable any rule diverting mail. If it persists, close Outlook and rename the account's .ost file in %localappdata%\\Microsoft\\Outlook to "
+                          'force a clean rebuild from the server.'}],
+  'crossLinksHtml': '<p>Related help: <a href="/outlook-problems/">All Outlook problems</a> · <a href="/new-outlook-not-syncing/">New Outlook not syncing</a> · <a '
+                    'href="/outlook-com-not-syncing/">Outlook.com not syncing</a> · <a href="/microsoft-365-support/">Microsoft 365 support</a> · <a href="/remote-it-support/">Remote IT support</a> '
+                    '· <a href="/contact/">Contact 365 Techies</a></p>'},
+ {'slug': 'outlook-cant-add-account-new-outlook',
+  'title': "Can't Add Account to New Outlook? Fix | 365 Techies",
+  'metaDesc': "New Outlook won't add your Gmail, Yahoo or IMAP account? Here's the plain-English fix: enable IMAP, use an app password, check work policies - or we'll fix it remotely in minutes.",
+  'ogTitle': "Can't Add an Account to New Outlook? Here's the Fix",
+  'crumbName': "Can't add account (new Outlook)",
+  'eyebrow': 'New Outlook - Windows',
+  'h1': 'Can\'t add an account to <em class="grad grad--cyan">new Outlook</em>?',
+  'lede': 'The new Outlook for Windows only supports third-party mail like Gmail, Yahoo and other IMAP hosts over IMAP, and it insists on a modern sign-in. If it keeps rejecting your account, the '
+          "fix is usually to make sure IMAP is on at your provider, use an app password if you have two-step verification, and rule out a work or school policy blocking personal accounts. Here's "
+          "how, step by step - or we'll set it up for you remotely in minutes.",
+  'chips': ['IMAP only', 'App passwords', 'Work/school policy'],
+  'primaryCta': ['Fix my Outlook now', 'tel:+441202775566'],
+  'secondaryCta': ['Ask us a question', '/contact/'],
+  'ctaHead': "Still won't add? We'll do it while you watch",
+  'ctaSub': "Same-day remote support for Bournemouth & Dorset. We phone first, you watch your screen the whole time via Splashtop SOS, and access ends the moment we're done. Most add-account "
+            'problems are fixed in minutes.',
+  'sections': [{'eyebrow': 'Why it happens',
+                'h2': 'Why new Outlook rejects your account',
+                'html': '<p>The new Outlook for Windows is a very different app from the classic desktop version, and it changed the rules for non-Microsoft email. Two things trip people '
+                        "up:</p><ul><li><strong>It's IMAP-only for third-party mail.</strong> If you're adding Gmail, Yahoo, or an account from your web host, new Outlook connects over IMAP. There's "
+                        "no working manual POP option - even where a POP field appears in the advanced setup screen it doesn't actually connect - and there's no full manual server screen like the "
+                        "old Outlook had.</li><li><strong>It requires a modern sign-in.</strong> Just typing your normal password often isn't enough. If your provider uses OAuth, new Outlook expects "
+                        "to open the provider's own sign-in page; if it uses a password box and you have two-step verification switched on, it needs an app password rather than your everyday "
+                        'password.</li></ul><p>When those expectations aren\'t met you\'ll see errors like "Invalid credentials", "Interaction required", or the account simply bounces back to the '
+                        "add screen. None of it means your password is wrong - it usually means the account isn't set up the way new Outlook wants to talk to it.</p>"},
+               {'eyebrow': 'The fix',
+                'h2': 'How to add your account to new Outlook',
+                'html': '<ol><li><strong>Make sure IMAP is on at your provider.</strong> Sign in to your email on the web and check IMAP access. Personal Gmail no longer has an on/off switch - IMAP '
+                        "is always on since early 2025, so there's nothing to enable there - but Yahoo and some web hosts still have an IMAP toggle you may need to turn on. If IMAP is switched off, "
+                        'new Outlook has nothing to connect to.</li><li><strong>Use the normal sign-in, not manual setup.</strong> In Outlook go to Settings, then Accounts, then Email accounts, and '
+                        'choose Add account. Type your email address and let it open your provider\'s own sign-in page. Avoid forcing IMAP or "advanced setup", because that path is what triggers the '
+                        'fiddly app-password prompts.</li><li><strong>Create an app password if you use two-step verification.</strong> If your account has 2-step verification (very common on Gmail '
+                        "and Yahoo), your ordinary password will be refused. Generate a 16-character app password in your provider's security settings and paste that into Outlook instead. An app "
+                        'password only exists once 2-step verification is turned on.</li><li><strong>Check for a work or school policy.</strong> If this is a company laptop, an IT policy in '
+                        "Microsoft 365 can quietly block personal accounts from being added. If you hit a wall on a managed device, that's the likely cause - your IT administrator has to allow "
+                        'it.</li><li><strong>Make sure Outlook is fully updated.</strong> Some early add-account bugs in new Outlook have already been fixed, so install the latest update, restart, '
+                        'and try once more.</li><li><strong>Still stuck? Use classic Outlook.</strong> If a provider simply refuses to add, classic Outlook still has full manual POP and IMAP setup '
+                        'where you can type in server names and ports by hand. See the FAQ below for the standard IMAP ports.</li></ol>'}],
+  'faqs': [{'q': 'Why does new Outlook only offer IMAP and not POP?',
+            'a': "The new Outlook for Windows was rebuilt around IMAP for third-party mail, so it has no working POP option - even where a POP choice appears in the advanced setup screen it doesn't "
+                 "actually connect. If you specifically need POP - for example to keep a local copy and remove mail from the server - you'll need the classic Outlook desktop app, which still has "
+                 'full, working manual POP and IMAP setup.'},
+           {'q': 'What is an app password and when do I need one?',
+            'a': 'An app password is a 16-character one-off code your email provider generates so an app can sign in when two-step verification is switched on. If your Gmail or Yahoo account has '
+                 "2-step verification, your everyday password won't work in Outlook - you generate an app password in the provider's security settings and paste that in instead. App passwords only "
+                 'appear as an option once 2-step verification is enabled.'},
+           {'q': 'What are the correct IMAP ports if I have to set it up manually?',
+            'a': 'For a manual setup in classic Outlook, incoming IMAP is port 993 with SSL/TLS, and outgoing SMTP is port 587 with STARTTLS (some hosts also allow 465 with SSL/TLS). Always check '
+                 "your provider's current documentation, as a few hosts use their own values."},
+           {'q': "I'm on my work laptop and it won't add my personal Gmail. Why?",
+            'a': 'On a company-managed device, a Microsoft 365 admin policy can block personal accounts from being added to Outlook. This is a deliberate security setting, not a fault. Your IT '
+                 "administrator would need to change the policy - it's not something you can override from the app."},
+           {'q': "It keeps saying 'invalid credentials' even though my password is right.",
+            'a': "That message almost always means Outlook needs a modern sign-in rather than your typed password. Remove the half-added account, restart Outlook, add it again and let the provider's "
+                 'own sign-in page open. If your account uses two-step verification, use an app password instead of your normal one.'},
+           {'q': 'Can 365 Techies just set this up for me?',
+            'a': "Yes. We're a Bournemouth-based Microsoft Partner and we do this all day. We'll phone you first, connect with your permission so you can watch your screen the whole time, add the "
+                 "account correctly, and disconnect the moment it's working - usually within minutes. Call 01202 775566."}],
+  'schemaKind': 'howto',
+  'howToName': "How to add an account to new Outlook when it won't connect",
+  'howToSteps': [{'name': 'Make sure IMAP is on at your provider',
+                  'text': 'Sign in to your email on the web and check IMAP access. Personal Gmail is always on with no toggle since early 2025, but Yahoo and some web hosts still have an IMAP switch '
+                          'you may need to turn on, since new Outlook connects to third-party accounts over IMAP.'},
+                 {'name': 'Use the standard sign-in',
+                  'text': "In Outlook go to Settings, Accounts, Email accounts, Add account, enter your address and let your provider's own sign-in page open rather than choosing advanced or manual "
+                          'setup.'},
+                 {'name': 'Create an app password if you use 2-step verification',
+                  'text': "If your account has two-step verification, generate a 16-character app password in your provider's security settings and paste that into Outlook instead of your normal "
+                          'password.'},
+                 {'name': 'Rule out a work or school policy',
+                  'text': 'On a company-managed laptop, check whether a Microsoft 365 admin policy is blocking personal accounts - if so, your IT administrator must allow it.'},
+                 {'name': 'Update Outlook and retry',
+                  'text': 'Install the latest Outlook update, restart, and try adding the account once more, as some early add-account bugs have already been fixed.'},
+                 {'name': 'Fall back to classic Outlook',
+                  'text': 'If a provider still refuses, use classic Outlook, which offers full manual POP and IMAP setup with server names and ports you can enter by hand.'}],
+  'crossLinksHtml': '<p>More help with the new app on our <a href="/outlook-problems/">Outlook problems hub</a>, plus <a href="/microsoft-365-support/">Microsoft 365 support</a> and fast <a '
+                    'href="/remote-it-support/">remote IT support</a> across Dorset. Prefer to talk it through? <a href="/contact/">Get in touch</a>.</p>'},
+ {'slug': 'outlook-app-asking-to-sign-in-android',
+  'title': 'Outlook Android Keeps Asking to Sign In? Fix | 365 Techies',
+  'metaDesc': "Outlook on Android stuck in a sign-in loop and keeps asking you to sign in? Clear the app cache, turn off battery/permission cleanups and re-add the account - or we'll fix it remotely "
+              'in minutes.',
+  'ogTitle': 'Outlook Android App Keeps Asking to Sign In? Fix the Loop',
+  'crumbName': 'Android sign-in loop',
+  'eyebrow': 'Outlook for Android',
+  'h1': 'Outlook on Android keeps asking you to <em class="grad grad--cyan">sign in</em>?',
+  'lede': "When the Outlook app on Android keeps asking you to sign in - or spins in an endless sign-in loop - it's nearly always a corrupted cache or an Android battery/permission cleanup killing "
+          "the app's session in the background. The quickest fix is to clear the Outlook cache, stop Android from stripping its permissions, and if needed remove and re-add the account. Here's the "
+          "full sequence - or we'll sort it for you remotely in minutes.",
+  'chips': ['Clear the cache', 'Stop permission cleanup', 'Re-add the account'],
+  'primaryCta': ['Fix my Outlook now', 'tel:+441202775566'],
+  'secondaryCta': ['Text us the problem', 'sms:07520615332'],
+  'ctaHead': "Loop still won't break? We'll fix it with you",
+  'ctaSub': 'Same-day help for Bournemouth & Dorset on your Windows PC and your Android phone. We phone first, guide you through it, and never take control without you watching. Most sign-in loops '
+            'are cleared in minutes.',
+  'sections': [{'eyebrow': 'Why it happens',
+                'h2': 'Why Outlook keeps looping on Android',
+                'html': '<p>A sign-in loop means Outlook signs in, loses that session almost immediately, and asks you to sign in again - over and over. On Android it usually comes down to one of '
+                        'these:</p><ul><li><strong>A corrupted app cache.</strong> Damaged temporary files stop the app from holding onto a valid session, so it keeps kicking you back to the login '
+                        "screen.</li><li><strong>Android quietly removing permissions.</strong> Android can strip permissions from apps it thinks you don't use, and battery-saver features can freeze "
+                        "Outlook in the background - both break the stored sign-in.</li><li><strong>A wrong clock.</strong> Sign-in tokens are time-sensitive. If your phone's date and time are off, "
+                        'especially with two-factor authentication, the sign-in is rejected and you loop.</li><li><strong>A blocked sign-in redirect.</strong> A VPN, firewall, or one flaky network '
+                        "can block the redirect to your provider's login page, so the sign-in never completes.</li></ul><p>The good news: none of this means your account is broken. Working through "
+                        'the steps below clears the cause in almost every case.</p>'},
+               {'eyebrow': 'The fix',
+                'h2': 'How to stop the Outlook sign-in loop on Android',
+                'html': "<p>Try these in order and test after each one - you'll often be back in before you reach the end.</p><ol><li><strong>Clear the Outlook cache.</strong> Go to Settings, Apps, "
+                        "Outlook, Storage, and tap Clear cache. This is the single most effective fix and it doesn't remove your account. (Menu names vary slightly by phone - on Samsung it's under "
+                        "Storage as well.)</li><li><strong>Turn off Developer Options.</strong> If you've ever enabled Developer Options, turn them off - some of those settings interfere with "
+                        "background sign-ins. You'll find them in Settings, System, Developer options (if the menu isn't there, it's already off).</li><li><strong>Stop Android removing Outlook's "
+                        'permissions.</strong> Open Settings, Apps, Outlook, and turn off "Pause app activity if unused" (on some phones this is called "Remove permissions if app unused"). This '
+                        'stops Android quietly revoking the permissions Outlook needs to stay signed in.</li><li><strong>Set date and time to automatic.</strong> In Settings, System, Date & time, '
+                        'switch on "Set time automatically" and "Set time zone automatically". A clock that\'s even a few minutes out will break token-based sign-ins.</li><li><strong>Switch between '
+                        'Wi-Fi and mobile data.</strong> Turn Wi-Fi off and try over mobile data (or the other way round). If it signs in on one but not the other, a network or VPN is blocking the '
+                        'sign-in redirect - turn off any VPN and try again.</li><li><strong>Remove and re-add the account.</strong> In the Outlook app, go to Settings, tap the account, choose Delete '
+                        'account, then add it back fresh. This clears any stale saved session.</li><li><strong>Reinstall Outlook as a last resort.</strong> Uninstall the app and reinstall the latest '
+                        "version from the Play Store, then sign in again. Do this only if the steps above haven't worked.</li></ol>"}],
+  'faqs': [{'q': 'Will clearing the cache delete my emails?',
+            'a': 'No. Clearing the cache only removes temporary files - your mail lives on the server and re-downloads automatically. Be careful not to confuse "Clear cache" with "Clear storage" or '
+                 '"Clear data", which removes the account from the app and means you\'d sign in again from scratch. Clear cache first.'},
+           {'q': "What's the difference between clearing cache and clearing data?",
+            'a': 'Clearing cache just wipes temporary files and is safe to do any time. Clearing data (sometimes labelled Clear storage) resets the app completely and removes your account setup, so '
+                 "you'd need to add the account again. For a sign-in loop, always try Clear cache first and only clear data if nothing else works."},
+           {'q': "Why does turning off 'Pause app activity if unused' help?",
+            'a': "Android automatically strips permissions from apps it thinks are unused, and can freeze them to save battery. If it revokes Outlook's permissions, the app loses the access it needs "
+                 "to keep you signed in and the loop starts. Turning that option off for Outlook (it's sometimes labelled 'Remove permissions if app unused') stops Android interfering with its "
+                 'background session.'},
+           {'q': "Could my phone's clock really cause a sign-in loop?",
+            'a': "Yes - it's a common culprit. Sign-in tokens are time-stamped, so a clock that's even slightly wrong makes them look invalid, especially with two-factor authentication. Setting the "
+                 'date, time and time zone to automatic fixes this instantly.'},
+           {'q': 'I use my work email - could a company policy be causing this?',
+            'a': 'It can. Some organisations enforce mobile security policies (conditional access) that require the phone to meet certain conditions before Outlook will stay signed in. If the steps '
+                 "here don't help on a work account, your IT team may need to check the policy - or give us a call and we'll help you work out where the block is."},
+           {'q': 'Can 365 Techies fix this on my phone remotely?',
+            'a': "We can guide you through every step over the phone, and we support Outlook on both Windows and Android. We'll phone first, talk you through the exact taps for your handset, and "
+                 "stay on the line until you're back in - usually within minutes. Call 01202 775566 or text 07520 615332."}],
+  'schemaKind': 'howto',
+  'howToName': 'How to fix the Outlook sign-in loop on Android',
+  'howToSteps': [{'name': 'Clear the Outlook cache', 'text': 'Go to Settings, Apps, Outlook, Storage and tap Clear cache. This is the most effective fix and it does not remove your account.'},
+                 {'name': 'Turn off Developer Options',
+                  'text': 'If Developer Options are enabled, switch them off in Settings, System, Developer options, as some settings there interfere with background sign-ins.'},
+                 {'name': 'Stop Android removing permissions',
+                  'text': "In Settings, Apps, Outlook, turn off 'Pause app activity if unused' (called 'Remove permissions if app unused' on some phones) so Android stops revoking the permissions "
+                          'Outlook needs to stay signed in.'},
+                 {'name': 'Set date and time to automatic',
+                  'text': 'In Settings, System, Date & time, enable Set time automatically and Set time zone automatically, since a wrong clock breaks token-based sign-ins.'},
+                 {'name': 'Switch between Wi-Fi and mobile data',
+                  'text': 'Toggle between Wi-Fi and mobile data, and turn off any VPN, to rule out a network blocking the sign-in redirect to your provider.'},
+                 {'name': 'Remove and re-add the account', 'text': 'In the Outlook app settings, delete the account and add it back fresh to clear any stale saved session.'},
+                 {'name': 'Reinstall Outlook as a last resort', 'text': 'If nothing else works, uninstall Outlook and reinstall the latest version from the Play Store, then sign in again.'}],
+  'crossLinksHtml': '<p>See more on our <a href="/outlook-problems/">Outlook problems hub</a>, and if this is a work mailbox our <a href="/microsoft-365-support/">Microsoft 365 support</a> and <a '
+                    'href="/remote-it-support/">remote IT support</a> pages explain how we help across Dorset. Rather we take a look? <a href="/contact/">Contact us</a>.</p>'},
+ {'slug': 'outlook-modern-authentication-not-working',
+  'title': 'Outlook Modern Authentication Not Working? Fix | 365 Techies',
+  'metaDesc': "Classic Outlook keeps prompting for a password because basic authentication has been retired? Update Office for OAuth 2.0, clear cached credentials and use an app password - or we'll "
+              'fix it remotely in minutes.',
+  'ogTitle': 'Outlook Modern Authentication Not Working? The Real Fix',
+  'crumbName': 'Modern auth not working',
+  'eyebrow': 'Classic Outlook - Windows',
+  'h1': 'Outlook <em class="grad grad--cyan">modern authentication</em> not working?',
+  'lede': 'If classic Outlook keeps prompting you for a password and never accepts it, the cause is almost always that basic authentication has been retired - so an old manual setup that relied on '
+          'it can no longer sign in. The fix is to update Office so it uses modern OAuth 2.0, clear the stale cached credentials Windows is holding, confirm the account allows modern auth, and use '
+          "an app password where your organisation permits one. Here's exactly how - or we'll fix it remotely in minutes.",
+  'chips': ['Basic auth retired', 'Clear cached logins', 'OAuth 2.0'],
+  'primaryCta': ['Fix my Outlook now', 'tel:+441202775566'],
+  'secondaryCta': ['Ask us a question', '/contact/'],
+  'ctaHead': "Still prompting? We'll clear it out for you",
+  'ctaSub': "Same-day remote support for Bournemouth & Dorset. We phone first, you watch the whole session via Splashtop SOS, and access ends when we're done. Endless password prompts are usually "
+            'gone in minutes.',
+  'sections': [{'eyebrow': 'Why it happens',
+                'h2': 'Why Outlook keeps prompting for your password',
+                'html': '<p>For years, email apps signed in with "basic authentication" - your username and password sent straight to the mail server. Microsoft has now retired basic authentication '
+                        'for both personal Outlook.com accounts (from September 2024, covering Outlook.com, Hotmail, Live and MSN) and for business Exchange Online mailboxes. Anything still trying '
+                        'to sign in the old way gets refused, and Outlook responds by asking for the password again... and again.</p><p>So a repeating password prompt that never sticks is the '
+                        'classic symptom of an old manual setup, or an out-of-date Office install, still trying to use basic auth. The answer is to move that account onto modern authentication '
+                        '(OAuth 2.0), which signs in through a proper Microsoft or provider login window instead of quietly passing your password to the server.</p><p>Two phrasings, one problem: '
+                        'whether you\'re seeing "modern authentication not working" or Outlook simply "keeps prompting for a password", the fix below covers both.</p>'},
+               {'eyebrow': 'The fix',
+                'h2': 'How to fix modern authentication in classic Outlook',
+                'html': '<ol><li><strong>Update Office to the latest build.</strong> Open any Office app, go to File, Account, Update Options, then Update Now. A current build of Office supports '
+                        'modern OAuth 2.0 sign-in; older builds may still default to the retired basic auth. Restart after updating.</li><li><strong>Clear the cached Office logins in Credential '
+                        'Manager.</strong> Close Outlook completely, then open Control Panel, User Accounts, Credential Manager, Windows Credentials. Remove every entry that begins with '
+                        '<strong>MicrosoftOffice16_Data:SSPI</strong> (and any older MicrosoftOffice15_Data entries) as well as anything referencing your Outlook or Microsoft 365 account. These are '
+                        'the stale saved passwords behind most repeat prompts. Restart the PC, reopen Outlook, and sign in when the proper login window appears.</li><li><strong>Confirm the account '
+                        'allows modern auth.</strong> Modern authentication needs to be enabled on the mailbox or tenant. For a work or business account, your Microsoft 365 administrator can confirm '
+                        "it's switched on - if basic auth was all that ever worked, the account may need modern auth enabled before Outlook can connect.</li><li><strong>Use an app password only "
+                        "where it's still allowed.</strong> If the account uses two-step verification and your organisation still permits app passwords, generate one in the account's security "
+                        'settings and paste it into Outlook in place of your normal password. Note: Microsoft has removed app passwords for personal Outlook.com/Hotmail accounts, so for those you '
+                        'must sign in through the modern login window instead - app passwords remain relevant mainly for some organisation and third-party (Gmail/Yahoo) '
+                        'accounts.</li><li><strong>Recreate the profile if it still prompts.</strong> If the account was originally set up manually for basic auth, the cleanest fix is to remove it '
+                        'and add it again so Outlook builds it with modern auth from the start. Your mail re-downloads from the server, but back up any POP-only mail first, since POP messages may '
+                        'exist only on your PC.</li></ol>'}],
+  'faqs': [{'q': 'What is modern authentication and why has basic auth stopped working?',
+            'a': 'Modern authentication (OAuth 2.0) signs you in through a secure Microsoft or provider login window and supports multi-factor authentication, instead of passing your password '
+                 'straight to the mail server like the old "basic authentication" did. Microsoft has retired basic auth for security reasons - for personal Outlook.com, Hotmail and Live accounts '
+                 'this happened in September 2024, and for business Exchange Online mailboxes it has already been retired too. Older setups that relied on it now get refused, which shows up as '
+                 'endless password prompts.'},
+           {'q': 'Which Credential Manager entries should I remove?',
+            'a': 'Close Outlook first, then in Control Panel, Credential Manager, Windows Credentials, remove entries starting with MicrosoftOffice16_Data:SSPI (and older MicrosoftOffice15_Data '
+                 'entries), plus anything referencing your Outlook or Microsoft 365 email. These hold outdated saved passwords. Restart, reopen Outlook, and let the proper sign-in window appear so '
+                 'it stores a fresh, modern login.'},
+           {'q': 'Do I still need an app password?',
+            'a': 'It depends on the account. Microsoft has removed app passwords for personal Outlook.com, Hotmail, Live and MSN accounts - for those you sign in through the modern login window. App '
+                 'passwords are still used for some organisation accounts that allow them and for third-party providers like Gmail and Yahoo when two-step verification is on. If your account '
+                 'qualifies, generate one in its security settings and paste it into Outlook instead of your normal password.'},
+           {'q': 'Is it safe to clear cached credentials - will I lose emails?',
+            'a': "Yes, it's safe. Clearing cached credentials only removes stored passwords, not your email. Your mail stays on the server and re-downloads when you sign back in. The one exception "
+                 'is POP accounts, where messages may exist only on your PC - so if you have a POP account, back up its data file before making bigger changes like recreating the profile.'},
+           {'q': "I'm not an admin - can I still fix this myself?",
+            'a': 'Often yes. Updating Office and clearing Credential Manager are things you can do on your own PC. But if modern authentication needs enabling on a business mailbox, or a security '
+                 "policy is blocking the sign-in, that part needs a Microsoft 365 administrator. If you're not sure where the block is, we can identify it quickly for you."},
+           {'q': 'Can 365 Techies fix these password prompts remotely?',
+            'a': "Yes - it's one of the most common jobs we do. We're a Microsoft Partner based in Bournemouth. We'll phone you first, connect with your permission so you can watch the whole "
+                 "session, update Office, clear the stale credentials and get modern auth working, then disconnect once it's sorted - usually within minutes. Call 01202 775566."}],
+  'schemaKind': 'howto',
+  'howToName': 'How to fix Outlook modern authentication and stop password prompts',
+  'howToSteps': [{'name': 'Update Office to the latest build',
+                  'text': 'In any Office app go to File, Account, Update Options, Update Now, then restart, so Office uses modern OAuth 2.0 instead of the retired basic authentication.'},
+                 {'name': 'Clear cached logins in Credential Manager',
+                  'text': 'Close Outlook, open Control Panel, Credential Manager, Windows Credentials and remove entries starting with MicrosoftOffice16_Data:SSPI and anything referencing your '
+                          'account, then restart.'},
+                 {'name': 'Confirm the account allows modern auth',
+                  'text': "Check that modern authentication is enabled on the mailbox or tenant - for a work account your Microsoft 365 administrator can confirm it's switched on."},
+                 {'name': 'Use an app password where permitted',
+                  'text': 'If the account has two-step verification and your organisation still allows app passwords, generate one and paste it into Outlook in place of your normal password. '
+                          'Personal Outlook.com accounts no longer support app passwords - sign in through the modern login window instead.'},
+                 {'name': 'Recreate the profile if it still prompts',
+                  'text': 'Remove and re-add the account so Outlook builds it with modern auth from the start; mail re-downloads from the server, but back up any POP-only mail first.'}],
+  'crossLinksHtml': '<p>More fixes on our <a href="/outlook-problems/">Outlook problems hub</a>, plus <a href="/microsoft-365-support/">Microsoft 365 support</a> and same-day <a '
+                    'href="/remote-it-support/">remote IT support</a> across Dorset. Want us to take it off your hands? <a href="/contact/">Get in touch</a>.</p>'},
+ {'slug': 'outlook-indexing-stuck',
+  'title': 'Outlook Indexing Stuck or Freezes When Searching | 365 Techies',
+  'metaDesc': 'Classic Outlook indexing stuck, or Outlook freezing when you search? Rebuild the search index, add an antivirus exception, run scanpst and clear RoamCache. Fixed remotely in minutes '
+              'by 365 Techies, Bournemouth.',
+  'ogTitle': 'Outlook Indexing Stuck? Fix the Freeze When Searching',
+  'crumbName': 'Outlook Indexing Stuck',
+  'eyebrow': 'Classic Outlook · Search & indexing',
+  'h1': 'Outlook <em class="grad grad--cyan">indexing stuck</em> or freezing when you search?',
+  'lede': 'If classic Outlook says "Search results may be incomplete because items are still being indexed" and never finishes, or it freezes the moment you click the search box, the local search '
+          'index has stalled. Rebuild the index and leave Outlook running until it completes, then stop your antivirus and an oversized PST from interfering. Here is the accurate fix, and if you '
+          'would rather not touch it, we will sort it remotely in minutes.',
+  'chips': ['Classic Outlook only', 'Windows desktop', 'Fixed remotely in minutes'],
+  'primaryCta': ['Get it fixed remotely', 'tel:+441202775566'],
+  'secondaryCta': ['See all Outlook problems', '/outlook-problems/'],
+  'ctaHead': 'Still stuck on "items are still being indexed"?',
+  'ctaSub': 'We watch, you watch, we phone first. One of the family rebuilds your index, clears the cache and adds the right antivirus exceptions, and search is usually working again within minutes. '
+            'Same-day, Bournemouth and Dorset.',
+  'sections': [{'eyebrow': 'Why it happens',
+                'h2': 'Why classic Outlook indexing gets stuck',
+                'html': '<p>Classic Outlook does not search your mail on its own. It hands that job to <strong>Windows Search</strong>, the same indexer that powers the Start-menu search box. '
+                        'Windows quietly reads every email, attachment and contact and builds a catalogue so that when you type a name, results appear instantly.</p><p>When that catalogue is '
+                        'damaged, half-built or being blocked, you get one of two symptoms. Either Outlook shows the yellow "<em>Search results may be incomplete because items are still being '
+                        'indexed</em>" bar that never clears, or the whole window freezes and greys out the instant you click into the search box. Both point at the same underlying problem: the '
+                        'index is not in a healthy state.</p><p>The usual culprits are a corrupted index catalogue, antivirus software scanning the mailbox file every time the indexer touches it, an '
+                        'oversized or damaged data file, a stale cache folder, or an outdated PDF add-on that trips up the indexer. Work through the steps below in order and you will clear the most '
+                        'common causes.</p>'},
+               {'eyebrow': 'The fix',
+                'h2': 'How to fix Outlook indexing stuck or freezing',
+                'html': '<p>Do these on the PC that has the problem, with Outlook closed unless a step says otherwise. Nothing here deletes your email, and where a step touches a data file we tell '
+                        'you exactly how your mail is protected.</p><ol><li><strong>Rebuild the search index and let it finish.</strong> In classic Outlook, go to <strong>File &gt; Options &gt; '
+                        'Search &gt; Indexing Options &gt; Advanced &gt; Rebuild</strong>, then confirm. This wipes the damaged catalogue and builds a fresh one. Crucially, <strong>leave your '
+                        'computer on and Outlook open</strong> until it completes, which can take a few hours on a large mailbox. If you close Outlook or sleep the PC halfway, it stalls '
+                        'again.</li><li><strong>Add Outlook to your antivirus exceptions.</strong> If your antivirus scans the Outlook data file (the OST or PST) every time the indexer reads it, '
+                        'indexing crawls or hangs. Open your security software and add the Outlook data file, and Outlook itself, as an exclusion so the indexer is left alone. This alone fixes a lot '
+                        'of "stuck forever" cases.</li><li><strong>Run scanpst.exe on an oversized or damaged PST.</strong> A bloated or corrupt data file can freeze search. Close Outlook, then run '
+                        'the Inbox Repair Tool, <code>scanpst.exe</code>, found in <code>C:\\Program Files\\Microsoft Office\\root\\Office16</code> (or the <code>Program Files (x86)</code> path for '
+                        '32-bit Outlook). Browse to your PST, click Start, and repair any errors it reports. The tool offers to create a backup first, but on a very large or archive PST it is '
+                        'sensible to copy the .pst file somewhere safe before you begin. This matters most for a POP or archive PST that only lives on your PC, because that mail is not held on any '
+                        'server to be re-downloaded.</li><li><strong>Clear the RoamCache folder.</strong> A corrupted autocomplete and roaming cache can stall indexing. With Outlook closed, open '
+                        '<code>%localappdata%\\Microsoft\\Outlook\\RoamCache</code> and move its contents to a temporary folder (do not delete straight away). Outlook rebuilds what it needs on next '
+                        'launch.</li><li><strong>Remove an outdated PDF iFilter.</strong> Old PDF software installs a component that lets Windows Search read inside PDF attachments. An outdated '
+                        'version is a well-documented cause of the indexer looping and Outlook freezing. Update your PDF reader to the latest version, or uninstall a redundant PDF iFilter, then '
+                        'rebuild the index again (step 1).</li></ol><p>If indexing still will not finish, the underlying Windows Search service or profile may need deeper work, which is exactly the '
+                        'kind of thing we fix remotely without you losing a single email.</p>'}],
+  'faqs': [{'q': 'How long should rebuilding the Outlook search index take?',
+            'a': 'On a small mailbox it can be under an hour, but on a large or archive mailbox it can take several hours. The important thing is to leave the PC switched on and Outlook running '
+                 'until it finishes. If you close Outlook or let the machine sleep partway through, the index stalls and you are back where you started. You can keep working while it runs; results '
+                 'will simply be incomplete until it catches up.'},
+           {'q': 'Will rebuilding the index or clearing RoamCache delete my emails?',
+            'a': 'No. Rebuilding the search index only recreates the catalogue Windows uses to find your mail, not the mail itself. Clearing the RoamCache folder only removes a temporary cache that '
+                 'Outlook rebuilds automatically. Your emails stay put. The one step to treat with care is scanpst on a PST that holds mail not stored on a server, such as a POP or archive file, '
+                 'because that mail cannot simply re-download, so we always back that file up first before repairing it.'},
+           {'q': 'Why does Outlook freeze completely the moment I click search?',
+            'a': 'A hard freeze on clicking the search box usually means the index is corrupt or an add-on, most often an outdated PDF component, is jamming the indexer. It can also be a damaged '
+                 'data file. Work through rebuilding the index, updating or removing old PDF software, and running scanpst. If it still locks up, there may be a deeper profile or Windows Search '
+                 'service fault, which we can diagnose remotely.'},
+           {'q': 'Does this apply to the new Outlook as well?',
+            'a': "No. This page is for classic Outlook, which uses the local Windows Search index. The new Outlook (the redesigned app) searches on Microsoft's servers instead and has completely "
+                 'different fixes. If your app looks stripped-back with a toggle in the top corner, see our guide to search not working in the new Outlook, linked from our Outlook problems hub.'},
+           {'q': 'I added an antivirus exception but it is still stuck. What now?',
+            'a': 'Rebuild the index again after adding the exception, because the exception only helps the next build, not the broken one. If it still will not complete, the likely remaining causes '
+                 'are an oversized PST, a corrupt cache, or a damaged Windows Search database at the operating-system level. That last one needs the Windows Search service reset, which is '
+                 'straightforward for us to do remotely in a few minutes.'},
+           {'q': 'Can 365 Techies fix this without coming to my home or office?',
+            'a': 'Yes, this is a classic remote-support job. We phone you first, you approve a one-time connection so you can watch your own screen the whole time, and we rebuild the index, add the '
+                 'right exceptions, clear the cache and repair the data file for you. Access ends the moment we finish. Most Bournemouth and Dorset customers are searching normally again within '
+                 'minutes of us connecting.'}],
+  'schemaKind': 'howto',
+  'howToName': 'How to fix classic Outlook indexing stuck or freezing when searching',
+  'howToSteps': [{'name': 'Rebuild the search index and let it finish',
+                  'text': 'In classic Outlook go to File > Options > Search > Indexing Options > Advanced > Rebuild and confirm. Leave the PC on and Outlook open until indexing completes, which can '
+                          'take a few hours on a large mailbox.'},
+                 {'name': 'Add Outlook to your antivirus exceptions',
+                  'text': 'In your security software, add the Outlook data file (OST or PST) and Outlook itself as exclusions so the antivirus stops scanning the mailbox every time the indexer reads '
+                          'it.'},
+                 {'name': 'Run scanpst.exe on an oversized PST',
+                  'text': 'Close Outlook, run scanpst.exe from C:\\Program Files\\Microsoft Office\\root\\Office16, browse to your PST, click Start and repair any errors. Copy a large POP or archive '
+                          'PST somewhere safe first, because that mail is not held on a server to re-download.'},
+                 {'name': 'Clear the RoamCache folder',
+                  'text': 'With Outlook closed, open %localappdata%\\Microsoft\\Outlook\\RoamCache and move its contents to a temporary folder. Outlook rebuilds what it needs on next launch.'},
+                 {'name': 'Remove an outdated PDF iFilter',
+                  'text': 'Update your PDF reader to the latest version or uninstall a redundant PDF iFilter, then rebuild the index again, because an old PDF component is a common cause of the '
+                          'indexer looping and Outlook freezing.'}],
+  'crossLinksHtml': '<p>More Outlook fixes: <a href="/outlook-search-not-returning-all-results/">Outlook search not returning all results</a> · <a href="/new-outlook-search-not-working/">New Outlook '
+                    'search not working</a> · <a href="/outlook-problems/">All Outlook problems</a></p><p>Related help: <a href="/microsoft-365-support/">Microsoft 365 support</a> · <a '
+                    'href="/remote-it-support/">Remote IT support</a> · <a href="/contact/">Contact 365 Techies</a></p>'},
+ {'slug': 'new-outlook-search-not-working',
+  'title': 'New Outlook Search Not Working? Fix It | 365 Techies',
+  'metaDesc': 'New Outlook search not working or returning nothing? It only searches synced mail. Widen Days of email to save, clear filter chips, include deleted items and check you are Connected. '
+              'Fixed remotely in minutes by 365 Techies.',
+  'ogTitle': 'New Outlook Search Not Working? Here Is the Fix',
+  'crumbName': 'New Outlook Search Not Working',
+  'eyebrow': 'New Outlook · Search & sync',
+  'h1': 'New Outlook <em class="grad grad--cyan">search not working</em> or returning nothing?',
+  'lede': "In the new Outlook, search runs on Microsoft's servers, not on your PC, so it can only find mail that has actually synced to the app. If older emails are missing from results or search "
+          'comes back empty, the usual cause is too little mail synced offline, a leftover filter, or an account that has dropped offline. Here is the accurate fix, and if it still misbehaves we '
+          'will sort it remotely in minutes.',
+  'chips': ['New Outlook only', 'Server-side search', 'Fixed remotely in minutes'],
+  'primaryCta': ['Get it fixed remotely', 'tel:+441202775566'],
+  'secondaryCta': ['See all Outlook problems', '/outlook-problems/'],
+  'ctaHead': 'New Outlook still not finding your emails?',
+  'ctaSub': 'We phone first, you approve a one-time connection and watch your own screen throughout. One of the family checks your sync window, connection status and filters, and search is usually '
+            'working again in minutes. Same-day, Bournemouth and Dorset.',
+  'sections': [{'eyebrow': 'Why it happens',
+                'h2': 'Why new Outlook search behaves differently',
+                'html': '<p>The new Outlook, the redesigned app that replaced Mail and is gradually replacing the classic desktop program, works very differently under the bonnet. Classic Outlook '
+                        "builds a search index on your own PC. The new Outlook does not. Instead it asks Microsoft's servers to run the search, which is why it feels more like searching Outlook on "
+                        'the web than searching a program on your computer.</p><p>That single difference explains almost every "search not working" complaint. Server-side search can only return mail '
+                        'the app knows about, and by default the new Outlook only keeps a limited window of recent email synced for offline use. If the message you want is older than that window, or '
+                        'your account has quietly dropped offline, the search never gets a clean run at it and you see partial results or nothing at all.</p><p>The good news is that there is no '
+                        'index to rebuild and nothing to reinstall. The fixes are all about widening the sync window, clearing anything narrowing your search, and making sure the account is properly '
+                        'connected.</p>'},
+               {'eyebrow': 'The fix',
+                'h2': 'How to fix search in the new Outlook',
+                'html': "<p>Do these inside the new Outlook app. None of them delete any email, because in the new Outlook your mail lives on Microsoft's servers and the app simply syncs a "
+                        'copy.</p><ol><li><strong>Widen "Days of email to save" and let it sync.</strong> Go to <strong>Settings &gt; General &gt; Offline</strong> and, under <strong>Days of email '
+                        'to save</strong>, choose a wider window. The default is only <strong>30 days</strong>; the standard choices are 7, 30, 90 or 180 days, and Microsoft is rolling out even '
+                        'longer windows (up to a year or two) to some accounts. Pick the largest option your app offers, then leave the app open and connected so it can pull that older mail down. '
+                        'This is the single most common fix, because search can only find what has synced.</li><li><strong>Clear any filter chips left in the search box.</strong> The new Outlook '
+                        'often leaves little filter tags, such as From, Has attachments, or a date, sitting in the search bar from a previous search. Those silently limit what comes back. Click the '
+                        '<strong>X</strong> on each chip, or clear the search box completely, then run your search again.</li><li><strong>Turn on "Include deleted items".</strong> By default the app '
+                        'leaves out the Deleted Items folder. Go to <strong>Settings &gt; General &gt; Search</strong> and, under Search results, tick <strong>Include deleted items</strong>, then '
+                        'Save, so recently deleted mail is included in your results.</li><li><strong>Make sure the account shows Connected.</strong> Because search is server-side, an offline account '
+                        'cannot search properly. Check the status shown at the bottom or top of the window. If it says <em>Working Offline</em>, <em>Disconnected</em> or <em>Trying to connect</em>, '
+                        'restore your internet connection and let it return to <strong>Connected</strong>, then search again.</li><li><strong>Sign out and back in, or use Outlook on the '
+                        'web.</strong> If it is still broken, remove the account and re-add it (or sign out of the app and back in) to force a clean re-sync. As an instant workaround, open '
+                        '<strong>outlook.com</strong> or your Microsoft 365 webmail in a browser, where the same server-side search covers your whole mailbox with no sync-window limit and confirms '
+                        'your mail is safely there.</li></ol><p>If search still comes back empty after all that, the account may have a sync or provisioning fault behind it, which we can diagnose '
+                        'and clear remotely without you losing any email.</p>'}],
+  'faqs': [{'q': "Why can't the new Outlook find older emails I know exist?",
+            'a': "Because the new Outlook searches Microsoft's servers but the app only keeps a limited window of mail synced offline, and by default that window is just 30 days. Anything older than "
+                 'your sync window can be missed. Go to Settings > General > Offline and raise Days of email to save to the largest option your app offers (the standard maximum is 180 days, though '
+                 'Microsoft is rolling out longer windows to some accounts), then let the app finish syncing and search again. The emails are not lost, the app simply had not pulled them down yet.'},
+           {'q': 'Where is "Days of email to save" in the new Outlook?',
+            'a': 'Open Settings (the gear icon), then General, then Offline. Under Days of email to save you can choose 7, 30, 90 or 180 days, with 30 the default; Microsoft is also rolling out '
+                 'longer options (up to a year or two) to some accounts, so pick the widest your app shows. If you routinely need to search email older than your offline window, Outlook on the web '
+                 'has no such limit because it searches everything on the server directly.'},
+           {'q': 'My search returns nothing at all. What is the first thing to check?',
+            'a': 'Check for leftover filter chips in the search box and confirm the account shows Connected. A stray From or date filter tag, or an account stuck Working Offline, is the usual reason '
+                 'search comes back completely empty. Clear the search box, restore your connection, then try once more. If it is still blank, sign out and back in to force a fresh sync.'},
+           {'q': 'Is there a search index to rebuild like in classic Outlook?',
+            'a': 'No. That is the key difference. Classic Outlook uses a local Windows Search index that you can rebuild, but the new Outlook searches on the server, so there is nothing on your PC '
+                 'to rebuild. If you have been told to rebuild the index and your app looks like the new stripped-back Outlook, you were following classic instructions by mistake. The fixes here are '
+                 'the right ones for the new app.'},
+           {'q': 'Does using Outlook on the web prove my email is safe?',
+            'a': 'Yes. Because the web version searches the same server-side mailbox with no offline limit, if a message shows up at outlook.com or your Microsoft 365 webmail then it is safely '
+                 "stored on the server and the problem is only with syncing it into the app. That is reassuring, and it means the fix is about the app's sync settings rather than any risk of lost "
+                 'mail.'},
+           {'q': 'Can 365 Techies fix new Outlook search remotely?',
+            'a': 'Yes. We phone you first, you approve a one-time connection and watch your own screen the whole time, and we check your sync window, connection status, filters and account health '
+                 'for you. Access ends the moment we are done. Most Bournemouth and Dorset customers are searching normally again within minutes, with no visit needed.'}],
+  'schemaKind': 'howto',
+  'howToName': 'How to fix search not working in the new Outlook',
+  'howToSteps': [{'name': 'Widen Days of email to save and let it sync',
+                  'text': 'Go to Settings > General > Offline and set Days of email to save to the widest option your app offers (the default is 30 days and the standard maximum is 180, with longer '
+                          'windows rolling out to some accounts). Leave the app open and connected so it can sync older mail, because server-side search only finds what has synced.'},
+                 {'name': 'Clear filter chips left in the search box',
+                  'text': 'Remove any leftover filter tags such as From, Has attachments or a date by clicking the X on each chip, or clear the search box entirely, then run the search again.'},
+                 {'name': 'Include deleted items in search',
+                  'text': 'Go to Settings > General > Search and, under Search results, tick Include deleted items, then Save, so mail in the Deleted Items folder is included in results.'},
+                 {'name': 'Confirm the account shows Connected',
+                  'text': 'Check the status indicator. If it says Working Offline, Disconnected or Trying to connect, restore your internet connection and wait until it shows Connected, then search '
+                          'again.'},
+                 {'name': 'Sign out and back in, or use Outlook on the web',
+                  'text': 'If it is still broken, sign out of the app and back in (or remove and re-add the account) to force a clean re-sync. As an instant workaround, search at outlook.com in a '
+                          'browser, where server-side search covers your whole mailbox with no sync-window limit.'}],
+  'crossLinksHtml': '<p>More Outlook fixes: <a href="/outlook-indexing-stuck/">Outlook indexing stuck or freezing when searching</a> · <a href="/outlook-search-not-returning-all-results/">Outlook '
+                    'search not returning all results</a> · <a href="/outlook-problems/">All Outlook problems</a></p><p>Related help: <a href="/microsoft-365-support/">Microsoft 365 support</a> · <a '
+                    'href="/remote-it-support/">Remote IT support</a> · <a href="/contact/">Contact 365 Techies</a></p>'},
+ {'slug': 'outlook-search-not-returning-all-results',
+  'title': 'Outlook Search Not Returning All Results? Fix | 365 Techies',
+  'metaDesc': 'Classic Outlook search missing results or capped at 250? Set the scope to All Mailboxes, finish indexing, untick the results limit, include deleted items and set Mail to keep offline '
+              'to All. Fixed remotely in minutes by 365 Techies.',
+  'ogTitle': 'Outlook Search Not Returning All Results? Fix It',
+  'crumbName': 'Search Not Returning All Results',
+  'eyebrow': 'Classic Outlook · Search scope & limits',
+  'h1': 'Outlook <em class="grad grad--cyan">search not returning all results</em>?',
+  'lede': 'If classic Outlook finds some emails but obviously misses others, the search is almost always being narrowed by three things: it is only looking in the current folder or mailbox, the '
+          'results are capped at 250, or older mail was never kept offline to be searched. Widen the scope to All Mailboxes, confirm indexing has finished, lift the results cap and keep all mail '
+          'offline. Here is the accurate fix, and if you would rather not, we will sort it remotely in minutes.',
+  'chips': ['Classic Outlook only', 'Cached Exchange Mode aware', 'Fixed remotely in minutes'],
+  'primaryCta': ['Get it fixed remotely', 'tel:+441202775566'],
+  'secondaryCta': ['See all Outlook problems', '/outlook-problems/'],
+  'ctaHead': 'Outlook still missing emails you know are there?',
+  'ctaSub': 'We phone first, you approve a one-time connection and watch your own screen throughout. One of the family widens your search scope, lifts the cap and gets older mail searchable, usually '
+            'within minutes. Same-day, Bournemouth and Dorset.',
+  'sections': [{'eyebrow': 'Why it happens',
+                'h2': 'Why Outlook misses some search results',
+                'html': '<p>When classic Outlook returns <em>some</em> results but plainly not all of them, the mail has not gone anywhere. Something is quietly narrowing what search is allowed to '
+                        'show you. There are four common narrowings, and often more than one is in play at once.</p><p>First, <strong>scope</strong>. By default Outlook searches only the current '
+                        'folder or the current mailbox, so a message in another folder or a second account added to your profile simply never appears. Second, a <strong>results cap</strong>. To feel '
+                        'fast, Outlook limits results to 250 by default and quietly hides the rest. Third, <strong>indexing not finished</strong>, so items not yet catalogued are invisible to '
+                        'search. Fourth, in <strong>Cached Exchange Mode</strong>, only a slice of your mail may be stored on the PC, and Outlook can only search what is stored locally.</p><p>Work '
+                        'through the four fixes below and you remove each of those limits in turn, so search sees your whole mailbox.</p>'},
+               {'eyebrow': 'The fix',
+                'h2': 'How to make Outlook search return all results',
+                'html': '<p>Do these in classic Outlook. None of them delete any email.</p><ol><li><strong>Set the search scope to All Mailboxes or All Outlook Items.</strong> Click into the search '
+                        'box so the Search tab appears, then change the scope from <strong>Current Folder</strong> to <strong>All Mailboxes</strong> (or <strong>All Outlook Items</strong>). '
+                        'Searching only the current folder or current mailbox is the number-one reason mail in other folders or accounts is missed. You can also change the default in <strong>File '
+                        '&gt; Options &gt; Search</strong>, under <strong>Include results only from</strong>, by choosing <strong>All mailboxes</strong> instead of the default current-mailbox '
+                        'setting.</li><li><strong>Confirm indexing has finished.</strong> Go to <strong>File &gt; Options &gt; Search &gt; Indexing Options</strong> and check it reports <strong>0 '
+                        'items remaining to be indexed</strong>. If it is still counting down, search will be incomplete until it reaches zero, so leave the PC on and Outlook open until it '
+                        'does.</li><li><strong>Untick the results limit.</strong> In <strong>File &gt; Options &gt; Search</strong>, clear the checkbox <strong>Improve search speed by limiting the '
+                        'number of results shown</strong>, then click OK and restart Outlook. This removes the default 250-result cap so every match is shown. Search may be slightly slower, but '
+                        'nothing is hidden.</li><li><strong>Include Deleted Items.</strong> By default the Deleted Items folder can be left out. In <strong>File &gt; Options &gt; Search</strong>, '
+                        'tick <strong>Include messages from the Deleted Items folder in each data file when searching in All Items</strong>, so recently deleted mail also appears in '
+                        'results.</li><li><strong>In Cached Exchange Mode, widen "Mail to keep offline" to All.</strong> If you use an Exchange or Microsoft 365 account in Cached Exchange Mode, only '
+                        'a window of recent mail may be stored locally, and Outlook can only search what is local (older items show only when you click the <em>More</em> link to pull them from the '
+                        'server). Go to <strong>File &gt; Account Settings &gt; Account Settings</strong>, select the account, click <strong>Change</strong>, and drag <strong>Mail to keep '
+                        'offline</strong> to <strong>All</strong>. Let it finish downloading, and older mail becomes searchable.</li></ol><p>If Outlook still misses emails after all of that, the '
+                        'index or profile may need deeper attention, which we can handle remotely without you losing a single message.</p>'}],
+  'faqs': [{'q': 'Why does Outlook only find emails in the folder I am looking at?',
+            'a': 'Because the search scope is set to the current folder or current mailbox. Classic Outlook defaults to a narrow scope, so anything in another folder or a second account added to '
+                 'your profile is missed. Click into the search box and change the scope to All Mailboxes or All Outlook Items. To make it stick, go to File > Options > Search and, under Include '
+                 'results only from, choose All mailboxes so every search is mailbox-wide from then on.'},
+           {'q': 'Why does Outlook stop at 250 results?',
+            'a': 'To feel fast, classic Outlook caps results at 250 by default and hides the rest. To see everything, go to File > Options > Search and untick Improve search speed by limiting the '
+                 'number of results shown, then click OK and restart Outlook. This lifts the cap so all matches are shown. Searches on very large mailboxes may take a little longer, but no results '
+                 'are held back.'},
+           {'q': 'How do I check that indexing has actually finished?',
+            'a': 'Go to File > Options > Search > Indexing Options. It tells you how many items are still waiting to be indexed. When it reads 0 items remaining, indexing is complete and search '
+                 'covers everything. If it is still counting down, results will be incomplete until it reaches zero, so leave the PC on and Outlook open until it does. If it never reaches zero, the '
+                 'index may need rebuilding.'},
+           {'q': 'I use Microsoft 365 and older emails do not appear. Why?',
+            'a': 'You are almost certainly in Cached Exchange Mode with only recent mail kept on the PC, and classic Outlook can only search mail stored locally (older matches appear only when you '
+                 'click the More link, which fetches them from the server). In File > Account Settings > Account Settings, select the account, click Change, and drag Mail to keep offline to All. '
+                 'Once it finishes downloading, your older mail is stored locally and becomes searchable. On a large mailbox this download can take a while, so let it run.'},
+           {'q': 'Are recently deleted emails included when I search?',
+            'a': 'Not by default. Classic Outlook usually leaves the Deleted Items folder out of search results. In File > Options > Search, tick the option to include messages from the Deleted '
+                 'Items folder when searching All Items, so anything you deleted recently shows up too. This is worth turning on when you are certain an email exists but it is not appearing, as it '
+                 'may simply have been deleted.'},
+           {'q': 'Can 365 Techies fix this remotely without a visit?',
+            'a': 'Yes. We phone you first, you approve a one-time connection and watch your own screen the whole time, and we set the right scope, lift the results cap, confirm indexing and widen '
+                 'your offline mail for you. Access ends the moment we finish. Most Bournemouth and Dorset customers are searching their whole mailbox again within minutes, with no visit needed.'}],
+  'schemaKind': 'howto',
+  'howToName': 'How to make classic Outlook search return all results',
+  'howToSteps': [{'name': 'Set the search scope to All Mailboxes',
+                  'text': 'Click into the search box and change the scope from Current Folder to All Mailboxes or All Outlook Items. Optionally set the default in File > Options > Search, under '
+                          'Include results only from, to All mailboxes.'},
+                 {'name': 'Confirm indexing has finished',
+                  'text': 'Go to File > Options > Search > Indexing Options and check it shows 0 items remaining to be indexed. Leave the PC on and Outlook open until it reaches zero, because '
+                          'unindexed items are invisible to search.'},
+                 {'name': 'Untick the results limit',
+                  'text': 'In File > Options > Search, clear the checkbox Improve search speed by limiting the number of results shown, click OK and restart Outlook to remove the default 250-result '
+                          'cap.'},
+                 {'name': 'Include Deleted Items',
+                  'text': 'In File > Options > Search, tick the option to include messages from the Deleted Items folder when searching All Items, so recently deleted mail also appears in results.'},
+                 {'name': 'Widen Mail to keep offline to All',
+                  'text': 'For a cached Exchange or Microsoft 365 account, go to File > Account Settings > Account Settings, select the account, click Change, and drag Mail to keep offline to All so '
+                          'older mail is stored locally and becomes searchable.'}],
+  'crossLinksHtml': '<p>More Outlook fixes: <a href="/outlook-indexing-stuck/">Outlook indexing stuck or freezing when searching</a> · <a href="/new-outlook-search-not-working/">New Outlook search '
+                    'not working</a> · <a href="/outlook-problems/">All Outlook problems</a></p><p>Related help: <a href="/microsoft-365-support/">Microsoft 365 support</a> · <a '
+                    'href="/remote-it-support/">Remote IT support</a> · <a href="/contact/">Contact 365 Techies</a></p>'},
+ {'slug': 'outlook-scanpst-not-working',
+  'title': 'ScanPST Not Working? Fix It Fast | 365 Techies',
+  'metaDesc': 'ScanPST not responding or does not recognize your file? The real, current fix for classic Outlook plus a phone-first remote option. 365 Techies, Bournemouth.',
+  'ogTitle': "ScanPST Not Working or Not Responding? Here's the Fix",
+  'crumbName': 'ScanPST Not Working',
+  'eyebrow': 'Outlook Problems · Classic Outlook',
+  'h1': 'ScanPST <em class="grad grad--cyan">not working</em>, not responding, or won\'t recognise the file',
+  'lede': 'If ScanPST.exe hangs, freezes, or throws "does not recognize the file", the usual culprit is a locked file, the wrong path, or a very large PST. Close Outlook, run ScanPST as '
+          'administrator against the real data-file path, clear the read-only/blocked flags, and give big files time. Here is the accurate, step-by-step fix for classic Outlook on Windows.',
+  'chips': ['Classic Outlook only', 'Windows PC', 'No data lost'],
+  'primaryCta': ['Call 01202 775566', 'tel:+441202775566'],
+  'secondaryCta': ['Fix it for me remotely', '/remote-it-support/'],
+  'ctaHead': 'Rather not wrestle with ScanPST?',
+  'ctaSub': "We'll connect over Splashtop SOS - you watch the whole time, we phone first, and access ends the moment it's done. Most inbox-repair jobs are sorted in minutes, same day.",
+  'sections': [{'eyebrow': 'Why it happens',
+                'h2': "Why ScanPST stops responding or won't recognise your file",
+                'html': '<p>ScanPST.exe (the Inbox Repair Tool that ships with classic Outlook for Windows) is fussy about three things, and almost every "not working" report comes down to one of '
+                        "them.</p><p><strong>The file is locked.</strong> If Outlook is still open in the background - or your antivirus is actively scanning the mailbox file - ScanPST can't get "
+                        'exclusive access, so it hangs at 0% or looks frozen.</p><p><strong>You pointed it at the wrong thing.</strong> "Microsoft Outlook Inbox Repair tool does not recognize the '
+                        'file" almost always means you fed it a desktop shortcut, a synced OneDrive placeholder that hasn\'t fully downloaded, or a path with odd characters - not the real .pst or '
+                        '.ost file. It can also mean the file is too badly corrupted for ScanPST to read at all.</p><p><strong>The file is genuinely large.</strong> Modern Unicode PSTs can grow to '
+                        "50GB. ScanPST will still work on them, but it can sit for a long time on one pass and look like it has crashed when it hasn't.</p>"},
+               {'eyebrow': 'The fix',
+                'h2': 'Fix ScanPST step by step (classic Outlook)',
+                'html': '<p>Work through these in order. Nothing here deletes your mail - repairing the data file leaves your messages in place, and ScanPST makes a backup copy (a .bak file) before '
+                        'it repairs.</p><ol><li><strong>Close Outlook completely</strong> and pause any antivirus that touches the mailbox. Check Task Manager (Ctrl+Shift+Esc) and end any lingering '
+                        'OUTLOOK.EXE process so the file is fully released.</li><li><strong>Find your real data-file path.</strong> Reopen Outlook just long enough to go to <em>File &gt; Account '
+                        'Settings &gt; Account Settings &gt; Data Files</em>. Click your file, choose <em>Open File Location</em>, and note the exact folder. Then close Outlook '
+                        'again.</li><li><strong>Clear read-only and "blocked".</strong> Right-click the .pst/.ost file &gt; <em>Properties</em>. Untick <em>Read-only</em>, and if you see an '
+                        '<em>Unblock</em> tickbox at the bottom (Windows adds this to files copied from the internet or another PC), tick it, then <em>Apply</em>. This is what usually clears the '
+                        '"does not recognize the file" error.</li><li><strong>Run ScanPST as administrator.</strong> It lives at <em>C:\\Program Files\\Microsoft '
+                        'Office\\root\\Office16\\SCANPST.EXE</em> for current Microsoft 365 and Office 2016/2019/2021/2024 installs. Right-click it and choose <em>Run as '
+                        'administrator</em>.</li><li><strong>Browse to the real file, not a shortcut.</strong> Click <em>Browse</em>, paste the exact path from step 2, then <em>Start</em>. Avoid '
+                        'cloud placeholders - if the file lives in OneDrive, make sure it shows the green "Available on this device" tick first.</li><li><strong>For very large files, copy locally '
+                        'first.</strong> Copy the PST to a plain folder such as <em>C:\\PSTFix</em>, run ScanPST against that copy, then place the repaired copy back. This dodges long paths, special '
+                        'characters and sync interference.</li><li><strong>Let it finish.</strong> On a big mailbox ScanPST can appear frozen mid-scan. Give it time - watch the pass counter rather '
+                        'than assuming it has died - and keep the "Make backup" box ticked so it protects your data before it repairs.</li></ol>'}],
+  'faqs': [{'q': 'Why does ScanPST say "does not recognize the file"?',
+            'a': "Nine times out of ten you've pointed it at a shortcut, a OneDrive placeholder that isn't fully downloaded, or a path with special characters - not the actual .pst/.ost. Copy the "
+                 'real file to a simple local folder like C:\\PSTFix, clear the read-only and "blocked" flags in its Properties, then browse to that copy. If it still won\'t recognise the file after '
+                 'that, the corruption may be beyond ScanPST and the mailbox needs deeper recovery.'},
+           {'q': 'ScanPST is not responding - is it frozen or just slow?',
+            'a': "On a large mailbox it is usually just slow. ScanPST makes several passes and can sit on one for a long time on a big file, so it looks frozen when it isn't. Make sure Outlook is "
+                 "fully closed and your antivirus isn't scanning the file, then leave it running. If it genuinely hasn't moved after a couple of hours on a huge PST, copy the file to a local folder "
+                 'and try again from there.'},
+           {'q': 'Where is ScanPST.exe on my PC?',
+            'a': "For current classic Outlook (Microsoft 365, Office 2016/2019/2021/2024) it's normally at C:\\Program Files\\Microsoft Office\\root\\Office16\\SCANPST.EXE. If you run 32-bit Office "
+                 'on 64-bit Windows, look under C:\\Program Files (x86)\\ instead. The Office16 folder name is used even on the newest Microsoft 365, so don\'t be put off by the "16". If you can\'t '
+                 'find it, search your C: drive for scanpst.exe.'},
+           {'q': 'Do I need to run ScanPST as administrator?',
+            'a': 'It helps. Running it as administrator gives it the permissions to open and rewrite the data file without being blocked, which clears a lot of "won\'t start" and "can\'t access" '
+                 'problems. Right-click SCANPST.EXE and choose Run as administrator.'},
+           {'q': 'Will repairing the file delete my emails?',
+            'a': "Repairing the data file itself doesn't wipe your mail - it fixes the structure, leaves your messages in place, and makes a backup copy (a .bak file in the same folder) first. The "
+                 'one thing to be careful of is an old local POP PST that holds the only copy of your mail; back that up before any repair. For Microsoft 365, IMAP or Outlook.com accounts, '
+                 'everything lives on the server and re-downloads anyway.'},
+           {'q': "ScanPST still won't fix it - what now?",
+            'a': "If the file is too badly corrupted, ScanPST bails out or loops. At that point it's specialist recovery, not a retry. We can take a look remotely, salvage what's recoverable and "
+                 'rebuild a clean data file, usually the same day. Call 01202 775566.'}],
+  'schemaKind': 'howto',
+  'howToName': 'Fix ScanPST not working in classic Outlook',
+  'howToSteps': [{'name': 'Close Outlook and antivirus',
+                  'text': 'Fully close Outlook, end any OUTLOOK.EXE process in Task Manager, and pause antivirus that scans the mailbox so the file is released.'},
+                 {'name': 'Find the real data-file path',
+                  'text': 'In Outlook go to File > Account Settings > Data Files, select your file and choose Open File Location to note the exact folder, then close Outlook.'},
+                 {'name': 'Clear read-only and blocked flags', 'text': 'Right-click the .pst/.ost file, choose Properties, untick Read-only, tick Unblock if shown, and click Apply.'},
+                 {'name': 'Run ScanPST as administrator', 'text': 'Right-click SCANPST.EXE at C:\\Program Files\\Microsoft Office\\root\\Office16 and choose Run as administrator.'},
+                 {'name': 'Browse to the real file', 'text': 'In ScanPST click Browse, paste the exact path (not a shortcut or cloud placeholder), and click Start.'},
+                 {'name': 'Copy large files locally and wait',
+                  'text': 'For very large PSTs, copy the file to a simple folder like C:\\PSTFix first, keep the backup box ticked, and let it finish even if it looks frozen mid-pass.'}],
+  'crossLinksHtml': '<p>More Outlook fixes on our <a href="/outlook-problems/">Outlook problems hub</a>. See also <a href="/outlook-needs-to-repair-your-profile/">Outlook needs to repair your '
+                    'profile</a>, <a href="/microsoft-365-support/">Microsoft 365 support</a> and <a href="/remote-it-support/">remote IT support</a>, or <a href="/contact/">get in touch</a>.</p>'},
+ {'slug': 'outlook-needs-to-repair-your-profile',
+  'title': 'Outlook Needs to Repair Your Profile Fix | 365 Techies',
+  'metaDesc': '"Outlook needs to repair your profile" or "information store could not be opened"? The reliable fix - a clean new mail profile - for classic Outlook. 365 Techies.',
+  'ogTitle': '"Outlook Needs to Repair Your Profile": The Reliable Fix',
+  'crumbName': 'Repair Your Profile',
+  'eyebrow': 'Outlook Problems · Classic Outlook',
+  'h1': '"Outlook needs to <em class="grad grad--cyan">repair your profile</em>" - here\'s the reliable fix',
+  'lede': 'Seeing "Outlook needs to repair your profile", or "the information store could not be opened"? The built-in repair can work, but it sometimes demands a huge amount of free disk. The more '
+          "dependable route is a fresh mail profile via Control Panel. For Microsoft 365 and IMAP accounts your mail re-downloads from the server, so nothing is lost. Here's how to do it safely on "
+          'classic Outlook.',
+  'chips': ['Classic Outlook only', 'Windows PC', 'Nothing lost (M365/IMAP)'],
+  'primaryCta': ['Call 01202 775566', 'tel:+441202775566'],
+  'secondaryCta': ['Fix it for me remotely', '/remote-it-support/'],
+  'ctaHead': 'Want us to rebuild the profile for you?',
+  'ctaSub': "We connect over Splashtop SOS - you watch throughout, we phone first, and access ends when we're finished. A clean profile rebuild is usually a minutes-long, same-day job.",
+  'sections': [{'eyebrow': 'Before you start',
+                'h2': 'Should you let the built-in repair run?',
+                'html': "<p>When classic Outlook offers to repair the profile, it's telling you the profile - the settings-and-cache bundle that points at your mailbox - has gone wrong. The built-in "
+                        "repair can fix it, <strong>but only if you have plenty of free disk space</strong>. On a large mailbox it can ask for 20GB or more of headroom - we've seen it demand 60GB "
+                        "and beyond - and if it can't get it the repair stalls or fails halfway.</p><p>So the quick check is: how full is your C: drive? If you've got tens of gigabytes free, letting "
+                        'the built-in repair try is reasonable. If your drive is tight, skip it - a repair that runs out of space mid-way can leave the profile in a worse state. The cleaner, more '
+                        "reliable route in almost every case is to build a fresh mail profile from scratch, which is quick and doesn't touch your server-side mail.</p>"},
+               {'eyebrow': 'The reliable fix',
+                'h2': 'Create a clean new mail profile (the dependable route)',
+                'html': '<p>A brand-new profile sidesteps the corruption entirely. For Microsoft 365, Exchange, Outlook.com and IMAP accounts, all your mail lives on the server and simply '
+                        're-downloads into the new profile - you lose nothing.</p><ol><li><strong>Close Outlook.</strong></li><li><strong>Open the Mail control panel.</strong> Press the Windows key, '
+                        "type <em>Control Panel</em>, open it, set <em>View by</em> to large or small icons, and click <em>Mail (Microsoft Outlook)</em>. (If you don't see it, search <em>Control "
+                        'Panel</em> for "Mail". The Mail icon only appears once classic Outlook is installed and has been opened at least once.)</li><li><strong>Show Profiles.</strong> Click '
+                        "<em>Show Profiles</em>. You'll see your existing, misbehaving profile listed.</li><li><strong>Add a new one.</strong> Click <em>Add</em>, give it a clear name like "
+                        '<em>Outlook2026</em>, and click OK. Enter your name, email address and password when prompted, and let it set the account up automatically. For a Microsoft 365 or '
+                        'Outlook.com account, the modern sign-in window (and any two-factor prompt) opens as part of this - complete it there.</li><li><strong>Make it the default.</strong> Back on '
+                        'the profiles list, choose <em>Always use this profile</em> and pick your new one from the drop-down, then <em>Apply</em>. Leave the old profile in place for now as a '
+                        'fallback.</li><li><strong>Open Outlook.</strong> It starts on the fresh profile and re-downloads your mail, calendar and contacts from the server. If the modern sign-in '
+                        "didn't fully complete during setup, Outlook finishes it here - just sign in when asked. Once you're happy everything's there, you can remove the old "
+                        "profile.</li></ol><p><strong>One caution:</strong> if you had an old local POP account whose mail only ever existed on this PC, that mail sits in a local PST and won't "
+                        'magically reappear from a server. Back that PST up first and re-attach it to the new profile via <em>File &gt; Open &amp; Export &gt; Open Outlook Data File</em>.</p>'},
+               {'eyebrow': 'The other wording',
+                'h2': 'If you see "the information store could not be opened"',
+                'html': '<p>This is the same family of problem but has two extra quick fixes worth trying <em>before</em> you rebuild the profile:</p><ol><li><strong>Reset the navigation '
+                        'pane.</strong> A corrupted nav pane is a classic cause. Close Outlook, press <em>Windows + R</em>, type <em>outlook.exe /resetnavpane</em> and press Enter. This often clears '
+                        'the "information store could not be opened" and "the set of folders cannot be opened" errors on its own.</li><li><strong>Close Teams or Skype first.</strong> If Microsoft '
+                        'Teams or Skype for Business launches Outlook before Outlook is ready, it can trip this error. Right-click Teams/Skype in the taskbar or system tray, choose '
+                        '<em>Quit</em>/<em>Exit</em>, then open Outlook directly.</li><li><strong>Still stuck?</strong> Fall back to the clean-profile steps above - that resolves the stubborn '
+                        'cases.</li></ol>'}],
+  'faqs': [{'q': 'Will creating a new Outlook profile delete my emails?',
+            'a': 'Not for Microsoft 365, Exchange, Outlook.com or IMAP accounts - all your mail lives on the server and re-downloads into the fresh profile, so you lose nothing. The only exception '
+                 'is an old local POP account whose mail exists only in a PST on this PC; back that PST up first and re-attach it to the new profile.'},
+           {'q': "Should I just let Outlook's built-in repair run instead?",
+            'a': "Only if your C: drive has plenty of free space - the built-in repair can need 20GB or more of headroom (we've seen it ask for 60GB-plus on big mailboxes), and it can stall or fail "
+                 'if it runs out mid-way. If your drive is tight, or the repair has already failed once, a clean new profile is the more reliable route.'},
+           {'q': 'What does "the information store could not be opened" mean?',
+            'a': "It's Outlook saying it can't open the mailbox the profile points at, usually from a corrupted navigation pane, a bad profile, or another app (like Teams or Skype) launching Outlook "
+                 "too early. Try outlook.exe /resetnavpane and closing Teams/Skype first; if that doesn't clear it, build a fresh profile."},
+           {'q': 'How do I open the Mail control panel in Windows 11?',
+            'a': 'Press the Windows key, type Control Panel and open it, switch View by to large or small icons, then click Mail (Microsoft Outlook). If it isn\'t listed, type "Mail" into the '
+                 "Control Panel search box. This classic Mail applet only exists when classic Outlook is installed and has been opened at least once - it isn't part of the new Outlook."},
+           {'q': 'Does this work for new Outlook?',
+            'a': "No - the Control Panel Mail applet and profiles are a classic Outlook feature. The new Outlook manages accounts inside its own Settings and doesn't use these profiles. If you're on "
+                 "new Outlook and hitting account trouble, give us a call and we'll sort the right fix for your version."},
+           {'q': "It's still not opening after a new profile - what now?",
+            'a': 'Then something deeper is going on - a damaged install, a stuck add-in, or a corrupt data file. We can jump on remotely, diagnose it properly and get you back into Outlook, usually '
+                 'the same day and within minutes. Call 01202 775566.'}],
+  'schemaKind': 'howto',
+  'howToName': 'Fix "Outlook needs to repair your profile" with a clean profile',
+  'howToSteps': [{'name': 'Close Outlook', 'text': 'Fully close classic Outlook before making profile changes.'},
+                 {'name': 'Open the Mail control panel', 'text': 'Open Control Panel, set View by to icons, and click Mail (Microsoft Outlook), then Show Profiles.'},
+                 {'name': 'Add a new profile',
+                  'text': 'Click Add, name it clearly, enter your email address and let the wizard set the account up, completing the modern sign-in window for Microsoft 365 or Outlook.com.'},
+                 {'name': 'Set it as default', 'text': 'Choose Always use this profile, select the new profile from the drop-down, and click Apply.'},
+                 {'name': 'Open Outlook to re-download mail',
+                  'text': 'Start Outlook on the new profile; finish any sign-in prompt, and Microsoft 365 and IMAP mail re-downloads from the server with nothing lost.'},
+                 {'name': 'For the information-store variant, reset the nav pane first',
+                  'text': 'Close Outlook, press Windows + R, run outlook.exe /resetnavpane, and quit Teams or Skype before reopening Outlook.'}],
+  'crossLinksHtml': '<p>More Outlook fixes on our <a href="/outlook-problems/">Outlook problems hub</a>. See also <a href="/outlook-scanpst-not-working/">ScanPST not working</a>, <a '
+                    'href="/microsoft-365-support/">Microsoft 365 support</a> and <a href="/remote-it-support/">remote IT support</a>, or <a href="/contact/">get in touch</a>.</p>'},
+ {'slug': 'new-outlook-missing-features',
+  'title': 'New Outlook Missing Features? Fix | 365 Techies',
+  'metaDesc': 'New Outlook missing features from classic - COM add-ins, advanced rules, Quick Steps, shared mailboxes? Switch back to classic Outlook in seconds. 365 Techies.',
+  'ogTitle': "New Outlook Missing Features From Classic? Here's What to Do",
+  'crumbName': 'New Outlook Missing Features',
+  'eyebrow': 'Outlook Problems · New Outlook',
+  'h1': 'New Outlook <em class="grad grad--cyan">missing features</em> from classic? Here\'s how to get them back',
+  'lede': "If the new Outlook has dropped something you relied on - a COM add-in, Quick Steps, advanced or client-only rules, or certain shared-mailbox behaviours - you're not imagining it. Those "
+          'features aren\'t all in the new Outlook yet. The quick answer: toggle "New Outlook" off to return to classic, which is supported until at least 2029. Here\'s exactly what\'s missing and '
+          'how to switch back.',
+  'chips': ['New Outlook', 'Windows PC', 'Toggle to classic'],
+  'primaryCta': ['Call 01202 775566', 'tel:+441202775566'],
+  'secondaryCta': ['Sort my Outlook remotely', '/remote-it-support/'],
+  'ctaHead': 'Not sure which Outlook you should be on?',
+  'ctaSub': "We'll connect over Splashtop SOS - you watch the whole time, we phone first, access ends when we're done - and get you onto the version that actually does what you need. Same day, "
+            'usually minutes.',
+  'sections': [{'eyebrow': "What's actually gone",
+                'h2': 'What the new Outlook is still missing from classic',
+                'html': "<p>Microsoft is rebuilding Outlook, and the new version is faster and cleaner - but as of 2026 it hasn't caught up with everything classic Outlook does. If your workflow "
+                        "leans on any of these, that's why it feels broken:</p><ul><li><strong>COM add-ins.</strong> The old-style add-ins that hook into CRM, accounting, dictation and "
+                        "line-of-business tools don't run in the new Outlook - it only supports newer web add-ins. If your practice-management or billing plug-in has vanished, this is why. There's "
+                        'no converting them on your end; the vendor has to ship a web add-in version.</li><li><strong>Quick Steps and advanced rules.</strong> The simplified rules engine drops some '
+                        'complex, multi-condition and "client-only" rules that run on your PC rather than the server. Quick Steps - those one-click move/flag/forward automations - aren\'t in the new '
+                        "Outlook yet either, and they're one of the most-requested missing features.</li><li><strong>Local PST files (improving).</strong> The new Outlook now lets you import old "
+                        'mail from a PST and open a PST to read it, and Microsoft added contacts and calendar import through 2026 - but opening a PST currently still needs classic Outlook installed '
+                        'alongside (same 32-bit/64-bit architecture), a requirement Microsoft is removing later in 2026. If you archive to, or rely heavily on, local PSTs day to day, classic is '
+                        "still the safer home for now.</li><li><strong>Certain shared-mailbox behaviours.</strong> Some shared and delegated mailbox features don't behave the same yet - a known one "
+                        'is categories not showing on messages in a shared mailbox, plus assorted permission and new-mail-count quirks.</li></ul><p>None of this means the new Outlook is bad - it '
+                        "means it isn't finished. If you don't touch any of the above, staying on new Outlook is perfectly fine.</p>"},
+               {'eyebrow': 'The fix',
+                'h2': 'How to switch back to classic Outlook',
+                'html': "<p>The good news: getting your features back takes seconds, and you don't lose anything - your mail is on the server.</p><ol><li><strong>Find the toggle.</strong> Open the "
+                        'new Outlook and look at the very top-right corner for the <em>New Outlook</em> switch.</li><li><strong>Turn it off.</strong> Click the toggle so it reads off. Outlook shows '
+                        'a short prompt - choose "Switch back to classic Outlook" and give a quick reason if asked - then it closes and reopens as classic Outlook.</li><li><strong>Let classic '
+                        'load.</strong> Classic reopens with your accounts intact. Your COM add-ins, local PSTs, advanced rules, Quick Steps and shared-mailbox setup come back with '
+                        "it.</li><li><strong>Can't see the toggle?</strong> If the switch is missing or greyed out, your organisation may control it - or classic may not be installed. You can "
+                        'install classic from the Microsoft 365 apps, or we can set it up for you.</li></ol><p><strong>How long is classic supported?</strong> Microsoft has confirmed classic Outlook '
+                        'for Windows keeps shipping and is supported until at least 2029, so switching back is a stable choice, not a stopgap. And because the new Outlook gains features over time, '
+                        "it's worth toggling back to new every few months to see whether the thing you need has landed.</p>"}],
+  'faqs': [{'q': 'Why is my Outlook add-in missing in the new Outlook?',
+            'a': "The new Outlook doesn't run classic COM add-ins - the old-style plug-ins that hook into CRM, accounting or dictation tools. It only supports newer web add-ins, and existing COM "
+                 "add-ins can't be converted by you - the vendor has to release a web version. If your business plug-in has disappeared, switch back to classic Outlook using the toggle in the "
+                 "top-right corner and it'll return."},
+           {'q': 'Can I open a PST file in the new Outlook?',
+            'a': 'Increasingly, yes. The new Outlook can now import old mail from a PST, and Microsoft added contacts and calendar import through 2026 - but opening a PST to browse it still needs '
+                 "classic Outlook installed alongside (same 32-bit or 64-bit build) for now, a requirement Microsoft says it's removing later in 2026. If you depend on local PSTs day to day, classic "
+                 'remains the more reliable choice today.'},
+           {'q': 'How do I switch back to classic Outlook?',
+            'a': 'Open the new Outlook and click the New Outlook toggle in the very top-right corner so it turns off. Outlook shows a brief prompt - pick "Switch back to classic Outlook" - then '
+                 'closes and reopens as classic, with all your accounts, add-ins and rules intact. Nothing is lost because your mail lives on the server.'},
+           {'q': 'Is classic Outlook going away?',
+            'a': 'Not soon. Microsoft has confirmed classic Outlook for Windows is supported until at least 2029, so switching back is a stable, long-term choice rather than a temporary workaround. '
+                 'Plenty of time to move across as the new Outlook matures.'},
+           {'q': 'Are advanced rules and shared mailboxes really different in new Outlook?',
+            'a': "Yes. The new Outlook uses a simplified rules engine that drops some complex, multi-condition and client-only rules, and Quick Steps aren't there yet. A few shared-mailbox "
+                 "behaviours - like categories showing correctly on messages - aren't fully in either. If you depend on these, classic Outlook is the right home for now."},
+           {'q': 'Which Outlook should I be using?',
+            'a': "It depends on what you rely on. If you use COM add-ins, Quick Steps, advanced rules or heavy shared-mailbox work, stay on classic. If you don't, the new Outlook is fine and only "
+                 "getting better. Not sure? Call 01202 775566 and we'll get you on the right version, usually the same day."}],
+  'schemaKind': 'howto',
+  'howToName': 'Switch back to classic Outlook to restore missing features',
+  'howToSteps': [{'name': "Check what's missing",
+                  'text': "Confirm the feature you need - COM add-ins, Quick Steps, advanced or client-only rules, or shared-mailbox behaviours - isn't yet in the new Outlook."},
+                 {'name': 'Find the New Outlook toggle', 'text': 'Open the new Outlook and locate the New Outlook switch in the very top-right corner of the window.'},
+                 {'name': 'Turn the toggle off', 'text': 'Click the toggle to off, choose "Switch back to classic Outlook" at the prompt, then Outlook closes and reopens as classic.'},
+                 {'name': 'Let classic Outlook load', 'text': 'Classic reopens with your accounts, add-ins, rules and shared mailboxes intact and nothing lost, since mail lives on the server.'},
+                 {'name': 'Install classic if the toggle is missing', 'text': 'If the switch is greyed out or absent, install classic Outlook from your Microsoft 365 apps or ask us to set it up.'},
+                 {'name': 'Re-check the new Outlook periodically',
+                  'text': 'Because Microsoft adds features over time, toggle back to new Outlook every few months to see if your feature has arrived.'}],
+  'crossLinksHtml': '<p>More Outlook fixes on our <a href="/outlook-problems/">Outlook problems hub</a>. See also <a href="/outlook-needs-to-repair-your-profile/">Outlook needs to repair your '
+                    'profile</a>, <a href="/microsoft-365-support/">Microsoft 365 support</a> and <a href="/remote-it-support/">remote IT support</a>, or <a href="/contact/">get in touch</a>.</p>'},
+ {'slug': 'outlook-wont-open-after-update',
+  'title': "Outlook Won't Open After an Update? Fix | 365 Techies",
+  'metaDesc': "Classic Outlook won't launch after a Windows or Microsoft 365 update? Start in safe mode, disable a bad add-in, repair Office or roll it back. Fixed remotely, same day.",
+  'ogTitle': "Outlook Won't Open After an Update? The Real Fix",
+  'crumbName': "Won't Open After Update",
+  'eyebrow': 'Outlook fix · Windows',
+  'h1': 'Classic Outlook won\'t open after an <em class="grad grad--cyan">update</em>',
+  'lede': "A Windows or Microsoft 365 update has left classic Outlook refusing to launch — nothing happens, or an error flashes up. It's almost always a bad add-in or a half-applied update, and none "
+          'of it touches your email: your messages live safely on the server. We can fix it remotely today.',
+  'chips': ['Classic Outlook for Windows', 'No email is deleted', 'Fixed remotely, same day'],
+  'primaryCta': ['Get it fixed remotely', 'tel:+441202775566'],
+  'secondaryCta': ['See all Outlook problems', '/outlook-problems/'],
+  'ctaHead': "Still won't open after the update?",
+  'ctaSub': "Call 365 Techies in Bournemouth on 01202 775566 — we fix Outlook remotely the same day, you watch the whole time, and we're rated 4.9 on Google.",
+  'sections': [{'eyebrow': 'Why It Happens',
+                'h2': 'Why an update stops Outlook opening',
+                'html': '<p>When Windows or Microsoft 365 installs an update, a few things can leave classic Outlook (the older desktop app with the ribbon and your folders down the left) unable to '
+                        'start. The most common cause by far is an <strong>add-in that no longer matches the updated Outlook</strong> — an old toolbar from your antivirus, a CRM plug-in, Teams or an '
+                        'accounts package — which trips Outlook up the moment it loads.</p><p>Less often, the update itself was applied incompletely, leaving Office files in a mixed state, or a '
+                        'specific Windows or Office build introduced a bug. The reassuring part: this is all about the <strong>program</strong>, not your <strong>mail</strong>. Your emails, calendar '
+                        'and contacts are on the server (or in your local data file) and are not affected by any of the steps below — so you can work through them with confidence.</p>'},
+               {'eyebrow': 'The Fix',
+                'h2': 'Step-by-step: get Outlook opening again',
+                'html': '<ol><li><strong>Start Outlook in safe mode.</strong> Press <strong>Windows key + R</strong> to open the Run box, type <strong>outlook /safe</strong> and press Enter. Safe '
+                        "mode loads Outlook with add-ins switched off. If it opens now, you've found the culprit — go to the next step.</li><li><strong>Disable the add-ins.</strong> With Outlook "
+                        'open in safe mode, go to <strong>File > Options > Add-ins</strong>. At the bottom, set <strong>Manage: COM Add-ins</strong> and click <strong>Go</strong>. Untick everything, '
+                        "click <strong>OK</strong>, then close and reopen Outlook normally. Once it's opening reliably, re-enable your add-ins <strong>one at a time</strong>, restarting between "
+                        "each, until the faulty one reveals itself — leave that one switched off.</li><li><strong>Repair Office.</strong> If safe mode didn't help, close Outlook and go to "
+                        "<strong>Settings > Apps > Installed apps > Microsoft 365 > Modify</strong>. Choose <strong>Quick Repair</strong> first — it's fast and works offline. If Outlook still won't "
+                        'launch, come back and run <strong>Online Repair</strong>, which reinstalls the Office files (it needs an internet connection and takes longer).</li><li><strong>Roll back the '
+                        'update that broke it.</strong> If a specific update is to blame, undo it. For a bad <strong>Office</strong> build, roll Office back to a previous version. For a bad '
+                        '<strong>Windows</strong> update, go to <strong>Settings > Windows Update > Update history > Uninstall updates</strong>, remove the most recent one, and restart. Then reopen '
+                        'Outlook.</li><li><strong>Last resort — a fresh mail profile.</strong> If nothing else works, go to <strong>Control Panel > Mail (Microsoft Outlook) > Show Profiles > '
+                        'Add</strong>, create a new profile and set Outlook to use it. For a mailbox on the server (Microsoft 365, Exchange or Outlook.com) your mail re-downloads automatically, so '
+                        'nothing is lost.</li></ol><p><strong>One caution:</strong> if you use an older POP account, your only copy of that mail may sit in a local data file. Before creating a new '
+                        'profile or removing anything, let us check what type of account you have so nothing gets left behind.</p>'},
+               {'eyebrow': 'The Reassurance',
+                'h2': 'Your email is safe the whole time',
+                'html': '<p>Whatever the update has done to the app, <strong>your email itself is almost always safe on the server</strong>. Starting in safe mode, disabling an add-in, repairing '
+                        "Office and rolling back an update are all changes to the <strong>program</strong> — they don't delete, move or rewrite your messages. Even a fresh mail profile simply "
+                        "re-downloads your mailbox from the server.</p><p>If you'd rather not poke around in Settings and the Control Panel, we do this every day. We connect over <strong>Splashtop "
+                        "SOS</strong> — we phone you first, you watch your screen the whole time, and access ends the moment it's done. Most update problems are sorted in minutes, remotely, the same "
+                        "day. If remote can't do it, we come to you across Bournemouth, Poole, Christchurch and Dorset.</p>"}],
+  'faqs': [{'q': 'Will any of these steps delete my emails?',
+            'a': 'No. Safe mode, disabling add-ins, repairing Office and rolling back an update all affect the program, not your mail. Your emails, calendar and contacts stay on the server and are '
+                 'untouched. Even a new profile just re-downloads your mailbox.'},
+           {'q': 'Outlook opens fine in safe mode but not normally — what does that mean?',
+            'a': 'It means a faulty add-in is stopping it. In safe mode go to File > Options > Add-ins, set Manage: COM Add-ins, click Go and untick everything, then restart normally. Re-enable them '
+                 'one at a time to find the guilty one and leave that one off.'},
+           {'q': 'Should I run Quick Repair or Online Repair first?',
+            'a': "Always try Quick Repair first — it's fast, works offline and fixes most cases. Only run Online Repair if Quick Repair doesn't do it; it reinstalls the Office files, needs an "
+                 'internet connection and takes longer.'},
+           {'q': 'A recent Windows update seems to be the cause. Can I remove just that one?',
+            'a': 'Yes. Go to Settings > Windows Update > Update history > Uninstall updates, remove the most recent update and restart. If Outlook then opens, that update was the problem — hold off '
+                 'reinstalling it until Microsoft ships a fix.'},
+           {'q': 'Does this apply to the New Outlook too?',
+            'a': "No — these steps (outlook /safe, COM add-ins, Office repair) are for classic Outlook for Windows. The New Outlook is a rebuilt app with different fixes. If you're on New Outlook, "
+                 "give us a call and we'll sort the right one."}],
+  'schemaKind': 'howto',
+  'howToName': "Fix classic Outlook that won't open after a Windows or Office update",
+  'howToSteps': [{'name': 'Start Outlook in safe mode',
+                  'text': 'Press Windows key + R to open the Run box, type outlook /safe and press Enter. Safe mode loads Outlook with add-ins switched off. If it opens, a bad add-in is the cause.'},
+                 {'name': 'Disable the add-ins',
+                  'text': 'In safe mode go to File > Options > Add-ins, set Manage: COM Add-ins at the bottom and click Go. Untick everything, click OK, restart Outlook normally, then re-enable them '
+                          'one at a time to find the faulty one.'},
+                 {'name': 'Repair Office',
+                  'text': "Close Outlook and go to Settings > Apps > Installed apps > Microsoft 365 > Modify. Run Quick Repair first; if Outlook still won't open, run Online Repair, which reinstalls "
+                          'the Office files.'},
+                 {'name': 'Roll back the update that broke it',
+                  'text': 'For a bad Office build, roll Office back to a previous version. For a bad Windows update, go to Settings > Windows Update > Update history > Uninstall updates, remove the '
+                          'latest one and restart.'},
+                 {'name': 'Create a fresh mail profile',
+                  'text': 'As a last resort, go to Control Panel > Mail (Microsoft Outlook) > Show Profiles > Add, create a new profile and set Outlook to use it. Server mailboxes re-download '
+                          'automatically, so no email is lost.'}],
+  'crossLinksHtml': '<p>More help: <a href="/outlook-wont-open-in-safe-mode/">Outlook won\'t open in safe mode</a> · <a href="/outlook-opens-then-closes/">Outlook opens then closes</a> · <a '
+                    'href="/microsoft-365-support/">Microsoft 365 support</a> · <a href="/outlook-problems/">all Outlook problems</a></p>'},
+ {'slug': 'outlook-not-responding',
+  'title': 'Outlook Not Responding or Frozen? Fix | 365 Techies',
+  'metaDesc': "Outlook showing (Not Responding), frozen or hanging? Here's the safe, ordered fix - safe mode, add-ins, repair Office, trim the data file - or we'll sort it remotely today.",
+  'ogTitle': "Fix Outlook That's Not Responding or Frozen",
+  'crumbName': 'Not Responding',
+  'eyebrow': 'Outlook fix · classic Outlook (Windows)',
+  'h1': 'Fix Outlook that\'s <em class="grad grad--cyan">not responding</em> or frozen',
+  'lede': 'If classic Outlook keeps showing "(Not Responding)", freezes or hangs, it\'s usually a temporary indexing or send/receive that clears on its own - or a stuck add-in, a graphics glitch, or '
+          "a bloated data file. Work through the safe, ordered steps below, or we'll connect and unfreeze it for you remotely today. Rated 4.9 on Google.",
+  'chips': ['Windows · classic Outlook', 'Fix in minutes remotely', 'Data-safe steps'],
+  'primaryCta': ['Get it fixed remotely', 'tel:+441202775566'],
+  'secondaryCta': ['See all Outlook problems', '/outlook-problems/'],
+  'ctaHead': "Outlook frozen and won't budge?",
+  'ctaSub': "We're a Bournemouth-based family firm rated 4.9 on Google - we'll connect remotely today (we phone first, you watch throughout), find what's making Outlook hang and get it responding "
+            'again, usually within minutes.',
+  'sections': [{'eyebrow': "First, don't panic",
+                'h2': 'Why Outlook says (Not Responding)',
+                'html': '<p>Seeing <strong>(Not Responding)</strong> in the title bar rarely means anything is broken. Most of the time Outlook is simply busy - indexing a large mailbox, running a '
+                        "big send/receive, or waiting on a slow server - and it comes back to life on its own after a minute or two. It's worth <strong>giving it a moment before you do anything "
+                        "drastic</strong>.</p><p>If it's genuinely stuck and won't recover, the usual culprits on <strong>classic Outlook for Windows</strong> are a misbehaving add-in, a "
+                        'graphics-rendering glitch, a damaged Office install, or a very large or fragmented data file that Outlook has to wade through. The steps below work through these in the '
+                        'right order. None of them delete your email - your mail stays safe on the server (Microsoft 365, Exchange, IMAP or Google Workspace) throughout, and we flag the one step '
+                        'that touches a local file.</p>'},
+               {'eyebrow': 'The fix',
+                'h2': "How to fix Outlook that's not responding",
+                'html': '<p>For <strong>classic Outlook for Windows</strong>, in order. Most freezes are solved by the first three steps.</p><ol><li><strong>Give it a minute, then force it closed if '
+                        "needed.</strong> A large mailbox indexing or a big send/receive can freeze Outlook temporarily - wait a minute or two and it often recovers. If it's still truly stuck, close "
+                        'it firmly: press <strong>Ctrl+Shift+Esc</strong> to open Task Manager, find <strong>Outlook</strong> in the list, select it and click <strong>End task</strong>, then reopen '
+                        'Outlook.</li><li><strong>Start in safe mode and check your add-ins.</strong> Press <strong>Windows key + R</strong>, type <code>outlook /safe</code> and press Enter to start '
+                        "Outlook with add-ins disabled. If it's stable in safe mode, an add-in is the cause: close it, reopen normally, go to <strong>File > Options > Add-ins</strong>, set "
+                        '<strong>Manage: COM Add-ins</strong> at the bottom and click <strong>Go</strong>, then <strong>untick all</strong> the add-ins. Re-enable them <strong>one at a time</strong> '
+                        "(restarting Outlook between each) until the freeze returns - that's your problem add-in.</li><li><strong>Turn off hardware graphics acceleration.</strong> On builds that "
+                        'still have it, go to <strong>File > Options > Advanced > Display</strong> and tick <strong>Disable hardware graphics acceleration</strong>, then restart Outlook. On current '
+                        "Microsoft 365 builds that tickbox may be missing - in that case it's a registry setting your IT team (or us) can apply for you, or you can update your graphics driver "
+                        'instead.</li><li><strong>Repair Office.</strong> Go to <strong>Settings > Apps</strong> (right-click Start > <strong>Installed apps</strong>), find <strong>Microsoft 365 / '
+                        "Office</strong>, choose <strong>Modify</strong> and run <strong>Quick Repair</strong> first (fast, offline, doesn't touch your mail). If it's still freezing, run "
+                        "<strong>Online Repair</strong> - it's more thorough and needs an internet connection.</li><li><strong>Trim a large or fragmented data file.</strong> A PST or OST that has "
+                        'grown to tens of gigabytes makes Outlook sluggish and prone to hanging. Archive old mail, empty <strong>Deleted Items</strong> and <strong>Junk</strong>, and (on '
+                        'Exchange/365) reduce the offline mail slider under <strong>File > Account Settings > Change</strong>. Compacting the data file also helps.</li><li><strong>Check your '
+                        "antivirus isn't scanning the mailbox live.</strong> Some security software scans the .pst/.ost file in real time, which locks Outlook up. Add your Outlook data file (and "
+                        'Outlook itself) to your antivirus exclusions, or temporarily disable its email/file scanning to test.</li><li><strong>Create a new mail profile as a last resort.</strong> If '
+                        'nothing above helps, a corrupt profile can cause repeated hangs. Go to <strong>Control Panel > Mail > Show Profiles > Add</strong>, create a fresh profile and re-add your '
+                        'account. Server mail re-downloads automatically - <strong>back up any local-only PST first</strong> so nothing on your PC is lost.</li></ol>'},
+               {'eyebrow': 'Keeping your data safe',
+                'h2': 'Is any of this risky for my emails?',
+                'html': "<p>Almost none of it. <strong>Force-closing Outlook, safe mode, disabling add-ins, turning off graphics acceleration and repairing Office don't touch your mail at "
+                        'all</strong> - your emails live on the server and simply re-sync. Quick Repair and Online Repair fix the Office program, not your mailbox.</p><p>The one step to be careful '
+                        'with is <strong>trimming or compacting the data file, or rebuilding your profile</strong>, and only if you have a <strong>local-only PST archive</strong> that exists solely '
+                        "on your PC (not mirrored on the server). Before archiving, compacting or rebuilding a profile, <strong>copy that PST somewhere safe first</strong>. If you're not sure "
+                        "whether your data is on the server or only on your PC, don't guess - that's exactly the kind of thing we'll confirm for you remotely so nothing is lost.</p>"}],
+  'faqs': [{'q': 'Does (Not Responding) mean Outlook has crashed?',
+            'a': 'Usually not. It most often means Outlook is busy - indexing a large mailbox, running a big send/receive, or waiting on a slow server - and it typically recovers on its own after a '
+                 'minute or two. Give it a moment before force-closing it.'},
+           {'q': "How do I force Outlook to close when it's frozen?",
+            'a': 'Press Ctrl+Shift+Esc to open Task Manager, find Outlook in the list, select it and click End task. Then reopen Outlook. This is safe - your emails are stored on the server, not in '
+                 'the running program.'},
+           {'q': 'How do I start Outlook in safe mode to test add-ins?',
+            'a': 'Press Windows key + R, type outlook /safe and press Enter. That starts Outlook with all add-ins disabled. If it stops freezing, an add-in is the cause - disable them under File > '
+                 'Options > Add-ins (Manage: COM Add-ins > Go) and re-enable them one at a time to find the culprit.'},
+           {'q': "Where is the 'disable hardware graphics acceleration' option?",
+            'a': "On builds that still have it, it's under File > Options > Advanced > Display. On some current Microsoft 365 builds that tickbox has been removed, in which case it's a registry "
+                 'setting your IT team or we can apply for you - or you can update your graphics driver instead.'},
+           {'q': 'Can 365 Techies fix a frozen Outlook remotely?',
+            'a': "Yes. Via Splashtop SOS we phone first, you click one link and watch the whole session, and access ends the moment we're done. We'll find what's making Outlook hang - an add-in, a "
+                 'graphics glitch, a bloated data file - and get it responding again, usually within minutes. Windows and Android only. Call 01202 775566.'}],
+  'schemaKind': 'howto',
+  'howToName': "How to fix Outlook that's not responding or frozen",
+  'howToSteps': [{'name': 'Give it a minute, then force-close if needed',
+                  'text': "A large mailbox indexing or a big send/receive can freeze Outlook temporarily - wait a minute or two. If it's still stuck, press Ctrl+Shift+Esc, select Outlook and click "
+                          'End task, then reopen it.'},
+                 {'name': 'Start in safe mode and check add-ins',
+                  'text': 'Press Windows key + R, type outlook /safe and press Enter. If Outlook is stable, go to File > Options > Add-ins, set Manage: COM Add-ins, click Go, untick all, then '
+                          're-enable one by one to find the bad add-in.'},
+                 {'name': 'Turn off hardware graphics acceleration',
+                  'text': 'Go to File > Options > Advanced > Display and tick Disable hardware graphics acceleration, then restart Outlook. On some current builds this is a registry setting your IT '
+                          'team or we can apply instead.'},
+                 {'name': 'Repair Office',
+                  'text': 'Go to Settings > Apps (Installed apps), select Microsoft 365 / Office, choose Modify and run Quick Repair first. If it still freezes, run Online Repair, which is more '
+                          'thorough and needs internet.'},
+                 {'name': 'Trim a large or fragmented data file',
+                  'text': 'Archive old mail, empty Deleted Items and Junk, reduce the offline mail slider on Exchange/365, and compact the PST. A data file grown to tens of gigabytes makes Outlook '
+                          'sluggish and prone to hanging.'},
+                 {'name': 'Check antivirus and, if needed, rebuild the profile',
+                  'text': 'Exclude the .pst/.ost file from live antivirus scanning. As a last resort, create a new mail profile via Control Panel > Mail > Show Profiles > Add - server mail '
+                          're-downloads; back up any local-only PST first.'}],
+  'crossLinksHtml': '<p>More help: <a href="/outlook-running-slow/">Outlook running slow</a> · <a href="/outlook-opens-then-closes/">Outlook opens then closes</a> · <a '
+                    'href="/outlook-ost-file-corrupt/">Outlook OST file corrupt</a> · <a href="/outlook-problems/">all Outlook problems</a></p>'},
+ {'slug': 'the-set-of-folders-cannot-be-opened',
+  'title': 'The Set of Folders Cannot Be Opened Fix | 365 Techies',
+  'metaDesc': 'Outlook says "The set of folders cannot be opened" on startup? Reset the navigation pane and repair the data file — or we fix it remotely, same day. Bournemouth & Dorset.',
+  'ogTitle': 'Fix "The Set of Folders Cannot Be Opened" in Outlook',
+  'crumbName': "Set of Folders Won't Open",
+  'eyebrow': 'Outlook fix · Windows',
+  'h1': '"The set of folders cannot be opened" — the <em class="grad grad--cyan">navigation-pane</em> fix',
+  'lede': 'This startup error nearly always means a small settings file has become corrupt — your emails are safe, sitting untouched in your data file or on the server. Work through the ordered '
+          'steps below, or let us fix it remotely today while you watch.',
+  'chips': ['No email is deleted', 'Ordered fixes, safest first', 'Fixed in minutes remotely'],
+  'primaryCta': ['Get it fixed remotely', 'tel:+441202775566'],
+  'secondaryCta': ['See all Outlook problems', '/outlook-problems/'],
+  'ctaHead': 'Still stuck on that error?',
+  'ctaSub': 'Call 365 Techies in Bournemouth on 01202 775566 — we fix it remotely the same day while you watch on Splashtop, rated 4.9 on Google.',
+  'sections': [{'eyebrow': 'Why It Happens',
+                'h2': 'What "the set of folders cannot be opened" actually means',
+                'html': '<p>On startup, classic Outlook for Windows shows the full message <strong>"Cannot start Microsoft Outlook. Cannot open the Outlook window. The set of folders cannot be '
+                        'opened."</strong> Despite how alarming it looks, this almost never means your emails are gone.</p><p>Outlook reads two things as it opens: a tiny <strong>navigation-pane '
+                        'file</strong> that remembers your folder list, favourites and account order, and your <strong>data file</strong> where the mail itself lives. If the navigation-pane file '
+                        "gets corrupted — often after a crash, a forced shutdown, a OneDrive sync hiccup or an interrupted update — Outlook can't make sense of it and throws this error. Less often, "
+                        'the message points at a data file that has been moved, deleted or damaged, or a default data file that is no longer set.</p><p>The reassuring part: for most people this is a '
+                        '<strong>layout problem, not a mail problem</strong>. Your emails, calendar and contacts are safe in your data file or on the mail server. The steps below start with the '
+                        'safest, most common fix and only move on if needed.</p>'},
+               {'eyebrow': 'The Fix',
+                'h2': 'Ordered steps to get Outlook opening again',
+                'html': '<ol><li><strong>Reset the navigation pane (fixes it most of the time).</strong> Close Outlook completely. Press <strong>Windows key + R</strong> to open the Run box, type '
+                        "<strong>outlook /resetnavpane</strong> (there's a space before the slash) and press Enter. This rebuilds the corrupt navigation-pane file. Your emails are not touched — you "
+                        'may just need to re-pin a favourite folder afterwards.</li><li><strong>Start Outlook in Safe Mode to rule out an add-in.</strong> Press Windows key + R again and run '
+                        '<strong>outlook /safe</strong>. Safe Mode loads Outlook with add-ins switched off. If it opens now, a faulty add-in is the cause — go to File > Options > Add-ins, choose '
+                        '<em>COM Add-ins</em> and click Go, untick recent ones, then restart normally.</li><li><strong>Repair or rebuild the data file if the error mentions it.</strong> For a '
+                        '<strong>POP account</strong>, close Outlook and run <strong>ScanPST</strong> (the Inbox Repair Tool) against your .pst file to repair it. For <strong>IMAP, Microsoft 365, '
+                        'Outlook.com or Exchange</strong>, the local cache .ost can simply be rebuilt: close Outlook, open Control Panel > Mail > Data Files, note where the .ost lives, then rename '
+                        'or delete it so Outlook downloads a fresh copy from the server.</li><li><strong>Check the correct default data file is set.</strong> A deleted or moved default file triggers '
+                        'this exact message. Open File > Account Settings > Account Settings > Data Files, click your main file and choose <em>Set as Default</em>, then restart '
+                        'Outlook.</li><li><strong>Create a new mail profile as a last resort.</strong> If the profile itself is corrupt, go to Control Panel > Mail > Show Profiles > Add, create a '
+                        'fresh profile and set Outlook to use it. Server mailboxes re-download automatically; back up a POP .pst first.</li></ol><p><strong>Important — back up before touching a POP '
+                        ".pst.</strong> Rebuilding the .ost is safe because IMAP, Microsoft 365 and Outlook.com mail re-downloads from the server. But a POP account's .pst is the <strong>only "
+                        'copy</strong> of that mail — back it up before you rename, delete or repair it, or ask us to do it safely for you.</p>'},
+               {'eyebrow': 'Related Help',
+                'h2': 'When to let us take a look',
+                'html': "<p>If you're not sure whether your account is POP or IMAP, or the same error keeps returning after a reset, stop before anything is deleted and let us check — getting the "
+                        'account type wrong is the one way this can risk your mail. We handle it remotely the same day: we phone you first, connect through Splashtop SOS so you watch the whole time, '
+                        'and access ends the moment it\'s fixed.</p><p>We also help with wider mailbox issues, including <a href="/microsoft-365-support/">Microsoft 365 support</a>, a corrupt <a '
+                        'href="/outlook-ost-file-corrupt/">Outlook OST file</a>, and fast <a href="/remote-it-support/">remote IT support</a> across Bournemouth, Poole and Dorset.</p>'}],
+  'faqs': [{'q': 'Does "the set of folders cannot be opened" mean I\'ve lost my emails?',
+            'a': 'Almost never. It usually points to a corrupt navigation-pane file, which is just a layout file — your emails, calendar and contacts stay safe in your data file or on the server. '
+                 'Resetting the navigation pane fixes it most of the time without deleting anything.'},
+           {'q': 'Will outlook /resetnavpane delete my emails?',
+            'a': 'No. It only rebuilds the navigation pane — the folder list, favourites and shortcuts down the left. Your mail is untouched. You may just need to re-pin a favourite folder '
+                 'afterwards.'},
+           {'q': 'Is it safe to delete the OST file to fix this?',
+            'a': 'Yes for IMAP, Microsoft 365, Outlook.com and Exchange accounts — the .ost is only a local cache and Outlook re-downloads a fresh copy from the server. But never delete a POP '
+                 "account's .pst without a backup, because that .pst is the only copy of that mail."},
+           {'q': 'How do I know if I have a POP or an IMAP account?',
+            'a': 'Open File > Account Settings > Account Settings and look at the Type column next to your account, or check Data Files — a POP account keeps everything in a .pst, while IMAP, '
+                 "Microsoft 365 and Outlook.com use an .ost cache. If you're unsure, call us before removing any file and we'll confirm it safely."},
+           {'q': 'Can 365 Techies fix this remotely?',
+            'a': "Yes, and it's usually a quick job. We phone you first, connect through Splashtop SOS so you watch the whole time, and access ends the moment it's done. Call 01202 775566 and we'll "
+                 'normally have Outlook opening again the same day.'}],
+  'schemaKind': 'howto',
+  'howToName': 'Fix "The set of folders cannot be opened" in Outlook',
+  'howToSteps': [{'name': 'Reset the navigation pane',
+                  'text': 'Close Outlook. Press Windows key + R, type outlook /resetnavpane (with a space before the slash) and press Enter to rebuild the corrupt navigation-pane file. Your emails '
+                          'are not affected.'},
+                 {'name': 'Start Outlook in Safe Mode',
+                  'text': 'If the error persists, press Windows key + R and run outlook /safe to load Outlook with add-ins disabled. If it opens, a faulty add-in is the cause — disable recent ones '
+                          'under File > Options > Add-ins > COM Add-ins.'},
+                 {'name': 'Repair or rebuild the data file',
+                  'text': 'For a POP account, run ScanPST (the Inbox Repair Tool) against the .pst to repair it. For IMAP, Microsoft 365, Outlook.com or Exchange, close Outlook, open Control Panel > '
+                          'Mail > Data Files, note the .ost location, then rename or delete it so Outlook re-downloads a fresh copy from the server.'},
+                 {'name': 'Set the correct default data file',
+                  'text': 'A deleted or moved default file triggers this exact message. Open File > Account Settings > Account Settings > Data Files, select your main file and choose Set as Default, '
+                          'then restart Outlook.'},
+                 {'name': 'Create a new mail profile',
+                  'text': 'If the profile is corrupt, go to Control Panel > Mail > Show Profiles > Add, create a fresh profile and set Outlook to use it. Server mailboxes re-download automatically; '
+                          'back up a POP .pst first.'}],
+  'crossLinksHtml': '<p>More help: <a href="/outlook-cannot-open-the-outlook-window/">Outlook won\'t open</a> · <a href="/outlook-ost-file-corrupt/">corrupt OST file</a> · <a '
+                    'href="/outlook-data-file-cannot-be-accessed/">data file cannot be accessed</a> · <a href="/outlook-problems/">all Outlook problems</a></p>'}]
