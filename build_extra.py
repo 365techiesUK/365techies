@@ -2937,7 +2937,7 @@ def dell_hardware():
             </ul>
           </div>
         </div>
-        <p class="mono" style="text-align:center;max-width:66ch;margin:1.8rem auto 0;color:var(--muted)" data-reveal>Not sure which Dell suits you? Our plain-English guide to <a href="/how-to-choose-a-laptop/">choosing a laptop</a> walks you through it &mdash; or just tell us what you do and we&rsquo;ll match you. We supply, set up and support refurbished Dell <a href="/areas-covered/">across Bournemouth, Poole and the rest of Dorset</a>.</p>
+        <p class="mono" style="text-align:center;max-width:66ch;margin:1.8rem auto 0;color:var(--muted)" data-reveal>Not sure which Dell suits you? Our plain-English guide to <a href="/how-to-choose-a-laptop/">choosing a laptop</a> walks you through it, and if you&rsquo;re still weighing it up, our honest guide on whether <a href="/are-refurbished-laptops-any-good/">refurbished laptops are any good</a> lays it all out &mdash; or just tell us what you do and we&rsquo;ll match you. We supply, set up and support refurbished Dell <a href="/areas-covered/">across Bournemouth, Poole and the rest of Dorset</a>.</p>
       </div>
     </section>''',
       f'''    <section class="section section--alt" aria-label="Good for the planet">
@@ -3079,7 +3079,7 @@ def refurbished_local():
           <p class="eyebrow mono">/01 — LOCAL &amp; TRUSTED</p>
           <h2 class="section-title" data-title>Your local refurbished Dell specialists<span class="title-underline"></span></h2>
           <p>For over 30 years we&rsquo;ve supplied refurbished Dell business laptops and PCs to homes and businesses across Dorset &mdash; proper business-grade Latitude laptops and OptiPlex desktops for a fraction of the price of new.</p>
-          <p>Unlike a faceless online seller, we&rsquo;re a real local family firm: we recommend the right machine, fit a brand-new Samsung Pro SSD, set it up, move your data across and support it for years &mdash; and you can phone, text or email us, or we&rsquo;ll come to you. See the full detail on our <a href="/dell-hardware/">refurbished Dell page</a>.</p>
+          <p>Unlike a faceless online seller, we&rsquo;re a real local family firm: we recommend the right machine, fit a brand-new Samsung Pro SSD, set it up, move your data across and support it for years &mdash; and you can phone, text or email us, or we&rsquo;ll come to you. New to the idea? See whether <a href="/are-refurbished-laptops-any-good/">refurbished laptops are any good</a>, or the full detail on our <a href="/dell-hardware/">refurbished Dell page</a>.</p>
         </div>
         <ul class="checklist" data-stagger>
 {checklist(["Tested ex-business Dell Latitude &amp; OptiPlex","Brand-new Samsung Pro SSD (5-year guarantee)","Dell warranty + our own 5-year guarantee","Graded A, B or C &mdash; you know what you&rsquo;re getting","Set up, data moved across &amp; fully supported","Full repair service if you ever break it"])}
@@ -10672,6 +10672,8 @@ info_page(
     ("Is a Mac or a Windows PC better for me?","Both are capable &mdash; it often comes down to what you&rsquo;re used to and what your family uses. Do note that we support Windows and Android, but not Apple Macs, iPhones or iPads."),
     ("Should I buy refurbished?","A good refurbished machine from a reputable seller can be excellent value &mdash; just check it has an SSD, enough memory and can run Windows 11. We actually supply <a href=\"/dell-hardware/\">refurbished, business-grade Dell laptops &amp; PCs</a> &mdash; tested, set up and backed by our own warranty &mdash; so we&rsquo;re happy to advise or match you one."),
     ("How do I recycle my old laptop?","Back up and wipe it first, then recycle it responsibly &mdash; see our guide to <a href=\"/how-to-wipe-and-recycle-old-computer/\">wiping and recycling an old computer</a>."),
+    ("What is the best laptop for a home-office setup, and are refurbished ones any good?","For a home office running email, the web, video calls and office software, you do not need the latest or most expensive machine &mdash; aim for an SSD, plenty of memory and a screen size that suits your desk. A professionally refurbished, business-grade Dell Latitude or OptiPlex is often the sweet spot here: built for reliable all-day office use, fitted with a brand-new Samsung Pro SSD, and typically around 30&ndash;50% less than an equivalent new machine. See our guide on whether <a href=\"/are-refurbished-laptops-any-good/\">refurbished laptops are any good</a>."),
+    ("Where can I buy a good refurbished laptop near me?","If you are in Bournemouth, Poole, Christchurch or anywhere across Dorset, we supply professionally refurbished, tested ex-business Dell laptops and desktops from &pound;299 &mdash; each with a brand-new Samsung Pro SSD, a clean licensed copy of Windows, and both a Dell next-business-day warranty and our own 5-year guarantee. See <a href=\"/refurbished-laptops-dorset/\">refurbished laptops in Dorset</a>, or call 01202 775566."),
   ],
   cta_args=("Want a hand choosing?","Tell us how you&rsquo;ll use it and your budget, and we&rsquo;ll recommend the right computer &mdash; honestly, with no upselling &mdash; and set it all up for you.",
             ("New Computer Setup","/new-computer-setup/"), ("Talk to a Techie","/contact/")),
