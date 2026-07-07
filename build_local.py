@@ -54,6 +54,16 @@ SEO_TITLES = {
  "it-support-blandford-forum": "IT Support Blandford Forum | Same-Day, No Call-Out Fee",
  "it-support-dorset": "IT Support Near Me in Dorset | 365 Techies",
  "it-support-gillingham": "IT Support Gillingham, Dorset | Same-Day, No Call-Out Fee",
+ "it-support-for-solicitors": "IT Support for Solicitors, Dorset | 365 Techies",
+}
+
+# Consumer town page -> its dedicated business/managed-IT page (reverse link)
+BIZ_LINKS = {
+ "it-support-bournemouth": ("/it-services-bournemouth/", "business IT services in Bournemouth"),
+ "it-support-poole": ("/it-services-poole/", "business IT services in Poole"),
+ "it-support-ferndown": ("/business-it-support-ferndown-industrial-estate/", "business IT support around Ferndown Industrial Estate & Wimborne"),
+ "it-support-christchurch": ("/business-it-support-christchurch/", "business IT support in Christchurch"),
+ "it-support-new-forest": ("/business-it-support-new-forest/", "business IT support across the New Forest"),
 }
 
 REPAIR_SLUGS = {s for _t, s, _n, _it in bp.REPAIR_TOWNS}  # towns that have a computer-repair page
@@ -63,8 +73,8 @@ def make_local(i, slug, town, region, lede, intro_para, nearby):
     repair_slug = ("computer-repair-" + slug[len("it-support-"):]) if slug.startswith("it-support-") else ""
     repair_link = (f'\n          <p>Just need a one-off fix rather than a plan? See our <a href="/{repair_slug}/">computer &amp; laptop repair in {town}</a> &mdash; home visits, fast remote help and no call-out fee.</p>'
                    if repair_slug in REPAIR_SLUGS else "")
-    biz_link = (f'\n          <p>Running a business in {town}? See our dedicated <a href="/it-services-{slug[len("it-support-"):]}/">business IT services in {town}</a> &mdash; fully managed IT, Microsoft 365, cybersecurity and support for one monthly cost per computer.</p>'
-                if slug in ("it-support-bournemouth", "it-support-poole") else "")
+    biz_link = (f'\n          <p>Running a business in {town}? See our dedicated <a href="{BIZ_LINKS[slug][0]}">{BIZ_LINKS[slug][1]}</a> &mdash; fully managed IT, Microsoft 365, cybersecurity and support for one monthly cost per computer.</p>'
+                if slug in BIZ_LINKS else "")
     desc = (f"IT support, IT services and computer repairs in {town} — rated 4.9 on Google, "
             f"no call-out fee, family-run since 1995. Homes and businesses.")
     faqs = [
@@ -387,7 +397,7 @@ def make_customer(i, slug, crumb_name, eyebrow, h1, lede, intro_head, intro_para
     def schema(s, _desc=desc, _cn=crumb_name, _faqs=faqs):
         return graph([crumb(s, _cn), webpage(s, _cn, _desc),
                       service(s, _cn, _desc, "IT support"), faqpage(s, _faqs)])
-    add(slug=slug, title=f"{crumb_name} | 365 Techies", desc=desc,
+    add(slug=slug, title=SEO_TITLES.get(slug) or f"{crumb_name} | 365 Techies", desc=desc,
         og_title=f"{crumb_name} | 365 Techies", schema=schema, content=content)
 
 CUSTOMERS = [
@@ -788,7 +798,7 @@ EXTRA_SERVICES = [
    intro_paras="<p>Servers, storage and networks are the invisible backbone of a business &mdash; and when they&rsquo;re badly set up, everything else suffers with slow files, dropouts and security gaps.</p><p><strong>We design, build and support reliable infrastructure</strong>, from a simple NAS to full server and network setups, monitored and maintained for you.</p><p>Moving premises? We also handle <a href=\"/office-moves-it-relocation/\">office moves &amp; IT relocation</a> &mdash; servers, network, phones and all.</p>",
    feats=["Server setup &amp; support","NAS &amp; shared storage","Wired &amp; wireless networks","Firewalls &amp; security","File sharing &amp; permissions","Monitoring &amp; maintenance","Backups &amp; recovery","Cloud or on-premise"],
    tile_items=[("server","Servers &amp; NAS","Set up, secured and maintained for reliable shared storage."),("flow","Networking","Wired and wireless networks designed to be fast and stable."),("shield","Firewalls &amp; security","Protect your network with proper firewalls and security."),("lock","File permissions","The right people access the right files, and no-one else."),("eye","Monitoring","We watch your infrastructure and fix issues before you notice."),("cloud","Cloud or on-prem","The right mix of cloud and on-site, designed around you.")],
-   faqs=[("Do you support business servers?","Yes &mdash; we design, set up, secure and maintain servers and NAS storage for small and growing businesses."),("Can you sort out our network?","Yes &mdash; we design and support reliable wired and wireless networks, firewalls and secure file sharing."),("Cloud or on-premise &mdash; which is right for us?","It depends on your needs; we&rsquo;ll advise honestly and often a sensible mix works best."),("Do you monitor and maintain it?","Yes &mdash; on a plan we monitor your infrastructure and handle maintenance, updates and backups.")],
+   faqs=[("Do you support business servers?","Yes &mdash; we design, set up, secure and maintain servers and NAS storage for small and growing businesses."),("Can you sort out our network?","Yes &mdash; we design and support reliable wired and wireless networks, firewalls and secure file sharing."),("Cloud or on-premise &mdash; which is right for us?","It depends on your needs; we&rsquo;ll advise honestly and often a sensible mix works best."),("Do you monitor and maintain it?","Yes &mdash; on a plan we monitor your infrastructure and handle maintenance, updates and backups."),("Our server has crashed &mdash; can you help urgently?","Yes &mdash; see our <a href=\"/server-down-emergency-support/\">emergency server support</a> for a downed or crashed server, and if <a href=\"/quickbooks-sage-running-slow/\">QuickBooks or Sage is running slow over the network</a> we fix that too.")],
    chips=["Servers &amp; NAS","Networks &amp; firewalls","Monitored"],
    split_eyebrow="FOR YOUR BUSINESS", split_title="Infrastructure you can rely on",
    split=[("Storage &amp; servers","Reliable, secure servers and shared storage, set up and maintained for you.",["Server setup &amp; support","NAS &amp; shared storage","File sharing &amp; permissions","Backups &amp; recovery"]),("Networks &amp; security","Fast, stable networks protected by proper firewalls and monitoring.",["Wired &amp; wireless networks","Firewalls &amp; security","Monitoring &amp; maintenance","Cloud or on-premise"])],

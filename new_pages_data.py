@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Easy-keyword + Outlook fix pages (waves 1-4) + Outlook hub, rendered by build_extra.build_new_page().
+# Easy-keyword + Outlook fix pages + Outlook hub + 10 B2B/emergency pages, rendered by build_extra.build_new_page().
 
 NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
   'title': 'Windows 11 Upgrade Service Poole & Bournemouth | 365 Techies',
@@ -5905,4 +5905,813 @@ NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
                   'text': 'If the profile is corrupt, go to Control Panel > Mail > Show Profiles > Add, create a fresh profile and set Outlook to use it. Server mailboxes re-download automatically; '
                           'back up a POP .pst first.'}],
   'crossLinksHtml': '<p>More help: <a href="/outlook-cannot-open-the-outlook-window/">Outlook won\'t open</a> · <a href="/outlook-ost-file-corrupt/">corrupt OST file</a> · <a '
-                    'href="/outlook-data-file-cannot-be-accessed/">data file cannot be accessed</a> · <a href="/outlook-problems/">all Outlook problems</a></p>'}]
+                    'href="/outlook-data-file-cannot-be-accessed/">data file cannot be accessed</a> · <a href="/outlook-problems/">all Outlook problems</a></p>'},
+ {'slug': 'business-hacked-emergency-help',
+  'title': 'Business Hacked? Emergency Help Dorset | 365 Techies',
+  'metaDesc': 'Been hacked, hit by ransomware or had money diverted? 365 Techies give Dorset businesses fast, same-day emergency IT help to contain the attack, recover and secure you.',
+  'ogTitle': 'My Business Has Been Hacked — Emergency Help in Dorset',
+  'crumbName': 'Business Hacked — Emergency Help',
+  'eyebrow': 'Emergency IT · same-day',
+  'h1': 'My business has been <em class="grad grad--cyan">hacked — emergency help</em> across Dorset',
+  'lede': "Take a breath — you've come to the right place. We give local businesses in Bournemouth, Poole, Christchurch and across Dorset fast, same-day help to contain a live cyber attack, get you "
+          'back working and lock the door behind whoever got in.',
+  'chips': ['Same-day local response', 'Windows & Microsoft 365 specialists', 'Remote-first, on-site when needed'],
+  'primaryCta': ['Call 01202 775566', 'tel:+441202775566'],
+  'secondaryCta': ['See our cybersecurity support', '/cybersecurity-support/'],
+  'ctaHead': "Under attack right now? Call us — we'll pick up.",
+  'ctaSub': 'Fast, same-day local help from a family-run Dorset firm rated 4.9 on Google. We connect remotely in minutes with your permission, contain the attack and get you working again. Phone '
+            '01202 775566, Mon–Fri 9am–5pm.',
+  'sections': [{'eyebrow': 'What To Do · Right Now',
+                'h2': 'First 10 minutes: what to do before you call',
+                'html': "<p>If you think your business has been hacked, the next few minutes matter. Work through this calmly — you don't need to be technical, and you can call us on <strong>01202 "
+                        "775566</strong> at any point and we'll talk you through it live.</p><ol><li><strong>Isolate the affected device from the network.</strong> Unplug the network cable and turn "
+                        'off its Wi-Fi. <strong>Do not switch the machine off</strong> if you can see a ransomware note or files being encrypted — powering down can destroy evidence and, in some '
+                        'cases, the only chance of recovery. Just disconnect it from the internet and other computers.</li><li><strong>Stop using any compromised accounts.</strong> If an email '
+                        "account, Microsoft 365 login, server or online banking has been accessed, stop sending from it and don't act on any instructions in it.</li><li><strong>Change passwords from "
+                        'a clean device</strong> — a different, un-affected computer or your phone on mobile data, not the hacked machine. Start with email and Microsoft 365, then anything that '
+                        'shared that password. <strong>Turn on multi-factor authentication (MFA)</strong> as you go.</li><li><strong>Tell your bank immediately if any money or payment details are '
+                        'involved</strong> — a diverted invoice, a fraudulent transfer, or card details exposed. Time is critical for recovering funds.</li><li><strong>Preserve the '
+                        "evidence.</strong> Don't wipe, reinstall or 'clean up' the affected device or server. Take photos of any ransom note or suspicious message on your "
+                        'phone.</li><li><strong>Warn your staff</strong> not to open anything unusual, click links in emails that appear to come from you or a colleague, or pay any invoice without '
+                        "verbally confirming it.</li><li><strong>Then call us on 01202 775566</strong> and we'll take it from there.</li></ol><p>We are not forensic investigators or lawyers, and we "
+                        "won't pretend to be. What we do is get your business contained, recovered and secure — fast — and point you to the right authorities where you need them.</p>"},
+               {'eyebrow': 'How We Help · Contain & Recover',
+                'h2': 'How we get you back working — and secure',
+                'html': '<p>Once you call, we move quickly and methodically. Most of it we can start <strong>remotely within minutes</strong> using Splashtop SOS — we phone you first, connect only '
+                        "with your permission, you watch the whole session on screen, and access ends the moment we're done. If hands-on work is needed, we come to you across Bournemouth, Poole, "
+                        "Christchurch and Dorset the same day where we can.</p><ul><li><strong>Rapid triage</strong> — we work out what's actually happening: email compromise, ransomware, a breached "
+                        "account, a compromised server, or a diverted payment.</li><li><strong>Contain and isolate</strong> — we stop the spread across your network, cut off the attacker's access "
+                        'and secure the accounts and systems they got into.</li><li><strong>Find how they got in</strong> — a phished password, a dodgy email rule, malware, an exposed server or a '
+                        "weak login — so we're fixing the cause, not just the symptom.</li><li><strong>Remove the malware and the access</strong> — clean the affected machines and servers, kill "
+                        'rogue mailbox rules and forwarding, and revoke sessions and app permissions the attacker set up.</li><li><strong>Reset credentials and enforce MFA</strong> across email, '
+                        "Microsoft 365 and your key business systems, so a stolen password alone can't get anyone back in.</li><li><strong>Restore from a clean backup</strong> where files, mailboxes "
+                        'or servers have been encrypted or lost — checking the backup itself is clean first.</li><li><strong>Harden everything afterwards</strong> — MFA everywhere, proper email '
+                        "security, tested backups and staff training — so it's far harder for this to happen again.</li></ul><p>We're Windows and Microsoft 365 specialists who look after servers, "
+                        'networks, email, security and backups for local businesses — so account breaches and email compromise are very much our home ground.</p>'},
+               {'eyebrow': 'Report It · The Right Authorities',
+                'h2': 'Who to report the attack to',
+                'html': "<p>Alongside the technical recovery, there are people you should tell. We'll remind you of these and help you gather what you need — but the reports themselves are yours to "
+                        'make.</p><ul><li><strong>Action Fraud</strong> — report cyber crime and fraud (including diverted payments and business email compromise) to Action Fraud on <strong>0300 123 '
+                        "2040</strong>, the UK's national reporting centre. If money has been taken, tell your bank first.</li><li><strong>Your bank</strong> — straight away if any payment, transfer "
+                        'or card detail is involved, so they can try to stop or recover funds.</li><li><strong>The ICO</strong> — if personal data (customer, staff or supplier information) may have '
+                        "been lost or exposed, a personal-data breach must be considered for reporting to the Information Commissioner's Office, generally <strong>within 72 hours</strong> of you "
+                        'becoming aware of it. Not every incident is reportable, but the 72-hour clock means you should assess it quickly.</li><li><strong>Your insurer</strong> — if you hold cyber '
+                        "insurance, check your policy's notification requirements early, as some have their own incident procedures.</li></ul><p>We're not lawyers or insurers, so treat the above as "
+                        "practical pointers rather than legal advice — but we'll make sure you know who to contact and when.</p>"},
+               {'eyebrow': 'Why 365 Techies · Local & Honest',
+                'h2': 'A local, honest team when it matters most',
+                'html': "<p>When your business has been hacked you want someone calm, close and straight with you — not a call centre. We're a family-run Dorset IT firm, trading since 1995, a "
+                        "Microsoft Partner and rated 4.9 on Google, supporting businesses across Bournemouth, Poole, Christchurch and Dorset.</p><p>We're honest about what we are: <strong>fast, "
+                        "same-day, remote-first local help</strong> that gets your business contained, recovered and properly secured. We work Monday to Friday, 9am to 5pm — we don't claim a 24/7 "
+                        "hotline we can't stand behind. What we do promise is a real person who knows Windows, Microsoft 365 and servers, who'll pick up the phone, and who'll stay with you until "
+                        'you\'re working safely again.</p><p>After the emergency, we can keep you protected with ongoing <a href="/cybersecurity-support/">cybersecurity support</a>, help you achieve '
+                        '<a href="/cyber-essentials/">Cyber Essentials</a>, and put <a href="/security-awareness-training/">staff training</a> in place — all on rolling monthly, cancel-anytime plans '
+                        'with no long lock-in.</p>'}],
+  'faqs': [{'q': 'My business has been hacked — what should I do first?',
+            'a': "Disconnect the affected device from your network and the internet, but don't switch it off if ransomware is actively running. Stop using any compromised accounts, change passwords "
+                 'from a clean device and turn on MFA, and tell your bank straight away if any money or payments are involved. Preserve the evidence rather than wiping anything, then call us on '
+                 '01202 775566.'},
+           {'q': 'Should I turn off the computer if I see a ransomware note?',
+            'a': 'No — not straight away. Powering the machine off can destroy evidence and, in some cases, the best chance of recovery. Instead, disconnect it from the network and Wi-Fi to stop the '
+                 'spread, leave it on, photograph the ransom note with your phone, and call us so we can advise before you do anything else.'},
+           {'q': "How quickly can you help if we're being attacked right now?",
+            'a': 'We offer same-day help and can usually begin remote triage within minutes using Splashtop SOS — we phone first, connect only with your permission, and you watch the whole session. '
+                 'If on-site work is needed we come to you across Bournemouth, Poole, Christchurch and Dorset the same day where we can. Our hours are Monday to Friday, 9am to 5pm.'},
+           {'q': 'Do you do forensic investigation or handle the legal side?',
+            'a': "No. We're not forensic investigators, lawyers or insurers, and we won't pretend to be. What we do is practical incident response — contain the attack, remove the access, recover "
+                 'your data and harden your systems — and point you to the right authorities, such as Action Fraud on 0300 123 2040 and the ICO for a personal-data breach.'},
+           {'q': 'Do I need to report the attack to anyone?',
+            'a': 'Usually, yes. Report cyber crime and fraud to Action Fraud on 0300 123 2040, and tell your bank immediately if money or payments are involved. If personal data may have been '
+                 "exposed, a breach must be considered for reporting to the ICO, generally within 72 hours of you becoming aware. We'll help you work out what applies."},
+           {'q': 'Can you stop this happening again?',
+            'a': "Yes — that's a core part of the job. Once you're recovered we harden everything: MFA everywhere, stronger email security, tested backups and staff awareness training. We can also "
+                 "help you achieve Cyber Essentials and put you on ongoing cybersecurity support so someone's watching your back with no long lock-in contract."}],
+  'schemaKind': 'service',
+  'serviceName': 'Emergency Cyber Attack Response & Recovery',
+  'howToName': 'What to do right now if your business has been hacked',
+  'howToSteps': [{'name': 'Isolate the affected device from the network',
+                  'text': 'Unplug the network cable and turn off Wi-Fi on the affected machine to stop the attack spreading. Do not switch the computer off if ransomware is actively encrypting files '
+                          '— powering down can destroy evidence and any chance of recovery. Just disconnect it from the internet and other devices.'},
+                 {'name': 'Stop using compromised accounts',
+                  'text': "Stop sending from any email, Microsoft 365, server or banking account that may have been accessed, and don't act on any instructions or invoices coming from it. Assume the "
+                          "attacker can see what you do in those accounts until they're secured."},
+                 {'name': 'Change passwords from a clean device and turn on MFA',
+                  'text': 'Using a different, un-affected computer or your phone on mobile data — never the hacked machine — change your passwords, starting with email and Microsoft 365 and anything '
+                          "that shared the same password. Turn on multi-factor authentication (MFA) as you go so a stolen password alone can't get anyone back in."},
+                 {'name': 'Tell your bank if money or payments are involved',
+                  'text': 'If a payment has been diverted, a transfer made, or card details exposed, contact your bank immediately. Time is critical for stopping or recovering funds, so make this '
+                          'call as early as you can.'},
+                 {'name': "Preserve the evidence — don't wipe anything",
+                  'text': "Do not reinstall, wipe or 'clean up' the affected device or server. Take photos of any ransom note or suspicious message on your phone. Preserving the machine as-is gives "
+                          'the best chance of understanding what happened and recovering data.'},
+                 {'name': 'Warn your staff, then call us',
+                  'text': 'Tell your team not to open anything unusual, click links in emails that appear to come from a colleague, or pay any invoice without confirming it verbally. Then call 365 '
+                          "Techies on 01202 775566 and we'll triage and contain it with you, usually remotely within minutes."}],
+  'crossLinksHtml': '<p>Related help: our ongoing <a href="/cybersecurity-support/">cybersecurity support</a>, dealing with <a href="/business-email-compromise/">business email compromise</a>, '
+                    'achieving <a href="/cyber-essentials/">Cyber Essentials</a>, and <a href="/security-awareness-training/">security awareness training</a> to stop the next attack. Need us now? <a '
+                    'href="/contact/">Get in touch</a> or call 01202 775566.</p>'},
+ {'slug': 'it-provider-gone-bust',
+  'title': 'IT Provider Gone Bust? Emergency Takeover | 365 Techies',
+  'metaDesc': 'Your IT company gone bust, vanished or holding you to ransom? We help Dorset businesses regain control of their domain, Microsoft 365 and backups — same day.',
+  'ogTitle': 'IT Provider Gone Bust? Emergency IT Takeover in Dorset',
+  'crumbName': 'IT Provider Gone Bust',
+  'eyebrow': 'Emergency IT · same-day',
+  'h1': 'Your IT provider has <em class="grad grad--cyan">gone bust or vanished</em>? Breathe — we can take over',
+  'lede': "If your IT company has folded, stopped answering the phone, or is holding your systems hostage, don't panic — this is fixable. We're a family-run Dorset IT firm and we help local "
+          'businesses regain control of their domain, email and accounts, usually starting the very same day.',
+  'chips': ['Same-day local response', 'Regain control of your domain & Microsoft 365', 'No lock-in monthly plans'],
+  'primaryCta': ['Call 01202 775566', 'tel:+441202775566'],
+  'secondaryCta': ['See our business IT plans', '/business-it-support-plans/'],
+  'ctaHead': "Been left in the lurch? Let's get you back in control today",
+  'ctaSub': "Call and talk to a real techie — we'll tell you honestly where you stand, help you secure access to your own systems, and take the whole mess off your hands. Local, family-run since "
+            '1995, rated 4.9 on Google. Same-day help across Bournemouth, Poole, Christchurch and Dorset, Mon–Fri 9am–5pm.',
+  'sections': [{'eyebrow': "/01 — DON'T PANIC",
+                'h2': 'First things first — you are not locked out of your own business',
+                'html': "<p>When an IT provider goes under or goes quiet, it feels like they've walked off with the keys to everything — your email, your website, your files, your logins. It's a "
+                        'horrible feeling, especially if they set it all up years ago and you never had the details. Take a breath: in almost every case, <strong>you are the legal owner of your '
+                        'domain, your Microsoft 365 tenant and your data</strong> — the provider was only ever managing it on your behalf.</p><p>That matters, because ownership is what lets us get '
+                        "you back in control. Even if the company has been dissolved, the accounts and domain still exist and can be recovered to you. The job now is to <strong>secure what's yours "
+                        'before anything lapses</strong> — an unpaid domain renewal or a cancelled Microsoft subscription is where real harm happens, not the provider disappearing itself.</p><p>Two '
+                        "calm rules for the next hour: <strong>don't cancel or delete anything yet</strong>, and <strong>don't stop paying an unresponsive provider until you've secured "
+                        'access</strong> — pulling a payment can trigger services being switched off. Gather what you can, then let us do the technical heavy lifting.</p>'},
+               {'eyebrow': '/02 — WHAT TO DO RIGHT NOW',
+                'h2': 'A calm checklist to secure access before anything lapses',
+                'html': "<p>Work through as much of this as you can. Don't worry if you can't complete it — half-answers are still useful, and we'll fill the gaps.</p><ol><li><strong>Gather every "
+                        'login and admin detail you have.</strong> Old emails, a handover document, a password manager, sticky notes, invoices — anything mentioning your domain, email, website, '
+                        'backups or software. The invoices alone often tell us who your registrar and hosting company are.</li><li><strong>Find your domain registrar.</strong> This is the company '
+                        'your web address (your <em>yourbusiness.co.uk</em>) is registered with — often Nominet-linked for .co.uk names. Whoever controls this controls your email and website, so '
+                        "it's the top priority.</li><li><strong>Locate your Microsoft 365 tenant.</strong> If you use Outlook, Teams or SharePoint, you have a Microsoft 365 tenant. We need to "
+                        "identify who holds the <strong>Global Admin</strong> account — that's the master key to your email and files.</li><li><strong>Check your backups.</strong> Note any backup "
+                        "service, external drive or cloud storage the old provider set up. If you're not sure you have backups at all, tell us — that changes what we do first.</li><li><strong>Don't "
+                        "stop paying until access is secured.</strong> Only cancel direct debits to an unresponsive provider <em>after</em> you're back in control, or you risk your domain or "
+                        "subscriptions being switched off mid-recovery.</li><li><strong>Then call us.</strong> Bring whatever you've gathered. We'll take it from there.</li></ol><p>If you suspect "
+                        'the old provider is deliberately withholding access or money has been taken, that can be reported to <strong>Action Fraud on 0300 123 2040</strong>. If any personal data may '
+                        "have been exposed, a breach must be considered for reporting to the ICO within 72 hours — we'll help you work out whether that applies.</p>"},
+               {'eyebrow': '/03 — HOW WE TAKE OVER',
+                'h2': 'How we take control back and stabilise everything',
+                'html': "<p>Once you call, we move quickly and methodically. There's no drama and no jargon — just a clear plan to get you back on solid ground.</p><ul><li><strong>We audit what "
+                        "you've got.</strong> We map out your domain, DNS, email, Microsoft 365 tenant, licences, backups and any servers or networks — so for the first time you have a clear picture "
+                        'of your own systems, written down.</li><li><strong>We regain control of your domain and DNS.</strong> We recover your domain registration to you and take charge of DNS, so '
+                        "your email and website can't be pulled out from under you.</li><li><strong>We recover your Microsoft 365 tenant.</strong> We help you re-establish a <strong>Global "
+                        'Admin</strong> account you control, secure every mailbox, and turn on multi-factor authentication so old passwords the previous provider held become '
+                        'useless.</li><li><strong>We sort backups and licences.</strong> We make sure your data is genuinely backed up, and move any software licences into your own name so nothing '
+                        'depends on the old company.</li><li><strong>We document everything and hand it to you.</strong> You end up with a plain-English record of every account, login and renewal — '
+                        "yours to keep, so you're never in this position again.</li></ul><p>Then we <strong>stabilise and manage it properly going forward</strong> on a rolling monthly plan "
+                        "(business support from £24.38/month per computer, Microsoft 365 from £4.85/user/month). It's cancel-anytime with no long lock-in contract — the opposite of how you got "
+                        'stuck. Most of this is done <a href="/remote-it-support/">remotely</a>: we phone first, you watch the whole session, and access ends the moment we\'re finished. We\'re '
+                        'on-site across Dorset when hands-on is needed.</p>'},
+               {'eyebrow': '/04 — THE REAL FEARS',
+                'h2': '"They have all my passwords" and "I can\'t access my own email"',
+                'html': '<p>These are the two fears we hear most, and both have straightforward answers.</p><p><strong>"The old provider has all my passwords."</strong> The fix isn\'t to track them '
+                        "down — it's to make their copies worthless. Once we're back in control, we reset the important passwords, enable multi-factor authentication across your accounts, and review "
+                        'who has access. From that point on, any credentials they held simply don\'t work. You don\'t need their cooperation to lock them out.</p><p><strong>"I can\'t get into my own '
+                        'email or domain."</strong> Because you\'re the legal owner, access can almost always be recovered through the registrar and Microsoft, even without the old provider\'s help '
+                        "— it just takes the right steps and a bit of patience with the paperwork. We do this regularly and we'll handle the process with you.</p><p>To be straight with you about "
+                        "what we are and aren't: we're <strong>practical IT recovery specialists</strong>, not lawyers, insurers or forensic investigators. We'll get your systems back, secured and "
+                        'properly managed, and we\'ll point you to the right authorities (like <a href="/business-email-compromise/">Action Fraud and the ICO</a>) where that\'s needed. What we '
+                        "won't do is over-promise or bill you for a crisis — we'll just get you sorted.</p>"}],
+  'faqs': [{'q': 'My IT company has gone bust — do they still own my domain and email?',
+            'a': 'Almost certainly not. In the vast majority of cases you are the legal owner of your domain, your Microsoft 365 tenant and your data — the provider was only managing them for you. '
+                 "That ownership is exactly what lets us recover access back to you, even if the company has been dissolved. The urgent risk isn't them disappearing, it's an unpaid renewal or "
+                 'cancelled subscription lapsing, which is why securing access quickly matters.'},
+           {'q': 'I have no logins or admin details at all. Can you still help?',
+            'a': "Yes. It's very common for a business to have nothing because the old provider set everything up years ago. Bring whatever you can find — old invoices alone often reveal your "
+                 "registrar and hosting company — and we'll work from there. Because you're the legal owner, domain and Microsoft 365 access can usually be recovered through the registrar and "
+                 "Microsoft even without the previous provider's cooperation."},
+           {'q': 'Should I stop paying my unresponsive IT provider straight away?',
+            'a': 'Not yet. Cancelling a payment can trigger services being switched off — your domain, email or Microsoft 365 subscription — right when you need them stable. Secure access to '
+                 "everything first, then stop paying. If you believe money has been taken dishonestly, you can report it to Action Fraud on 0300 123 2040, but keep the services live until you're "
+                 'safely back in control.'},
+           {'q': 'How fast can you start, and will there be downtime?',
+            'a': "We aim to respond the same day and can usually begin the audit and securing access remotely within hours — we're a local Dorset firm, not a call centre. Most recovery work is done "
+                 "without interrupting your day: we phone first, you watch the session, and access ends when we're done. We're on-site across Bournemouth, Poole, Christchurch and Dorset when "
+                 'hands-on help is needed. Office hours are Mon–Fri 9am–5pm.'},
+           {'q': 'The old provider had all our passwords — are we still at risk?',
+            'a': "Once we've regained control we reset the important passwords and turn on multi-factor authentication across your accounts, which makes any credentials the old provider held "
+                 "useless. You don't need their cooperation to lock them out — securing the accounts you own does it. If personal data may have been exposed at any point, we'll help you consider "
+                 'whether it needs reporting to the ICO within 72 hours.'},
+           {'q': 'How is this different from just switching IT provider?',
+            'a': 'Switching is a planned, unhurried handover where the outgoing provider cooperates — see our switching IT provider page for that. This is the crisis version: your provider has '
+                 "vanished, folded or gone silent, so there's no friendly handover. We focus first on securing access to your own domain, Microsoft 365 and backups, then stabilise everything and "
+                 'manage it properly going forward on a no-lock-in monthly plan.'}],
+  'schemaKind': 'service',
+  'serviceName': 'Emergency IT Takeover and Recovery',
+  'howToName': 'What to do if your IT provider has gone bust or vanished',
+  'howToSteps': [{'name': "Don't panic and don't delete anything",
+                  'text': "You are almost certainly the legal owner of your domain, Microsoft 365 tenant and data — the provider only managed them. Don't cancel, delete or change anything yet, and "
+                          "don't stop paying an unresponsive provider until access is secured."},
+                 {'name': 'Gather every login and admin detail you have',
+                  'text': 'Collect any handover documents, invoices, password managers and emails that mention your domain, email, website, backups or software. Old invoices alone often reveal who '
+                          'your registrar and hosting company are.'},
+                 {'name': 'Locate your domain registrar',
+                  'text': "Identify the company your web address is registered with — this controls your email and website, so it's the top priority to recover to you."},
+                 {'name': 'Find your Microsoft 365 tenant and Global Admin',
+                  'text': "If you use Outlook, Teams or SharePoint you have a Microsoft 365 tenant. Work out who holds the Global Admin account — that's the master key to your email and files."},
+                 {'name': 'Check your backups',
+                  'text': "Note any backup service, external drive or cloud storage the old provider set up. If you're unsure you have any backups at all, that changes what needs doing first."},
+                 {'name': 'Call 365 Techies to take over',
+                  'text': "Bring whatever you've gathered and call 01202 775566. We'll audit everything, recover control of your domain, Microsoft 365, backups and licences, document it all, and "
+                          'manage it properly on a no-lock-in monthly plan.'}],
+  'crossLinksHtml': '<p>Related help: our calmer, planned <a href="/switching-it-provider/">switching IT provider</a> guide, ongoing <a href="/managed-it-support/">managed IT support</a>, and <a '
+                    'href="/microsoft-365-support/">Microsoft 365 support</a> to regain and secure your tenant. See our <a href="/business-it-support-plans/">business IT support plans</a> for the '
+                    'no-lock-in monthly cover that keeps this from happening again.</p>'},
+ {'slug': 'quickbooks-sage-running-slow',
+  'title': 'QuickBooks or Sage 50 Slow on Network | 365 Techies',
+  'metaDesc': 'QuickBooks or Sage 50 running slow, freezing or dropping over your office network? 365 Techies diagnose and fix the real cause for Dorset businesses, same day.',
+  'ogTitle': 'QuickBooks & Sage 50 Slow Over the Network? We Fix It',
+  'crumbName': 'QuickBooks & Sage Slow',
+  'eyebrow': 'Business IT · Dorset',
+  'h1': 'Why is <em class="grad grad--cyan">QuickBooks or Sage 50 so slow</em> over your network?',
+  'lede': 'When your accounts software crawls, freezes or throws "another user is in the file" errors, the whole office loses time. We diagnose the real bottleneck and fix it properly for Dorset '
+          'businesses, with same-day help.',
+  'chips': ['Same-day local response', 'Windows & Microsoft 365 specialists', 'No lock-in contract'],
+  'primaryCta': ['Book a call', '/contact/'],
+  'secondaryCta': ['See our business IT plans', '/business-it-support-plans/'],
+  'ctaHead': 'Get your accounts software running fast again',
+  'ctaSub': "Same-day, local help across Bournemouth, Poole, Christchurch and Dorset. Family-run since 1995 and rated 4.9 on Google. Book a call and we'll find the bottleneck.",
+  'sections': [{'eyebrow': 'The Real Cause',
+                'h2': 'Why multi-user QuickBooks and Sage 50 slow down',
+                'html': '<p>QuickBooks Desktop and Sage 50 are not really cloud apps. Your company data file lives on one machine &mdash; a proper server or a &lsquo;host&rsquo; PC in the corner '
+                        '&mdash; and every user opens that same file across your office network. When it feels slow, it is almost never the software itself. It is the path between each PC and that '
+                        'data file.</p><p><strong>The usual culprits, in the order we tend to find them:</strong></p><ul><li><strong>Hosting / multi-user mode not set correctly.</strong> The host is '
+                        'not actually hosting the file, or QuickBooks Database Server Manager (or the Sage service) is misconfigured, so everyone fights over one '
+                        'connection.</li><li><strong>Antivirus scanning the data file.</strong> Real-time protection re-scans the .QBW or Sage data file on every read and write. Without the right '
+                        'folder and process exclusions, that alone can cripple performance.</li><li><strong>Wi-Fi instead of wired.</strong> Accounts files are chatty. A laptop on Wi-Fi &mdash; '
+                        'especially two rooms from the router &mdash; will always feel slower and drop out more than a PC on wired gigabit.</li><li><strong>An ageing host on a spinning hard '
+                        'drive.</strong> If the file sits on an old mechanical HDD with too little RAM, every user waits on that disk. An SSD and more memory can transform it.</li><li><strong>A '
+                        'bloated or fragmented data file.</strong> Years of transactions, damaged records and never-run maintenance make the file heavy and slow to open.</li><li><strong>Too many '
+                        'users for the setup.</strong> A host PC that coped with two people grinds when six are hammering it at month-end.</li></ul><p>Diagnosing which of these is <em>your</em> '
+                        'problem is the whole job. Guessing wastes money; measuring does not.</p>'},
+               {'eyebrow': 'Self-Check',
+                'h2': 'A 60-second self-check before you call',
+                'html': '<p>You can gather useful clues yourself. None of this fixes it, but it helps us pinpoint the bottleneck faster:</p><ol><li><strong>Is it slow for everyone, or just one '
+                        'PC?</strong> One PC points to that machine or its connection; everyone points to the host, the file or the network.</li><li><strong>Is the slow PC on Wi-Fi or a network '
+                        'cable?</strong> Try the same task on a wired machine and compare.</li><li><strong>Is it worse with more people in the file?</strong> Fine first thing, terrible by '
+                        'mid-morning usually means the host or file is struggling under load.</li><li><strong>How old is the host, and does it have an SSD?</strong> A spinning hard drive and 8GB of '
+                        'RAM on the machine holding the file is a common bottleneck.</li><li><strong>When was the data file last verified or tidied?</strong> If the answer is &lsquo;never&rsquo;, '
+                        'the file may simply be bloated.</li><li><strong>Does opening the file take ages but working stays okay?</strong> That points at the file and disk rather than the '
+                        'network.</li></ol><p>Note the answers down &mdash; then <a href="/contact/">book a call</a> and we\'ll take it from there.</p>'},
+               {'eyebrow': 'How We Fix It',
+                'h2': 'What we actually do to fix it',
+                'html': '<p>We connect remotely with your permission &mdash; usually within the same day &mdash; and measure where the time is going before changing anything. Then we fix the causes '
+                        'we find:</p><ul><li><strong>Set hosting and multi-user correctly</strong> on the host, and get Database Server Manager or the Sage service configured '
+                        'properly.</li><li><strong>Add the right antivirus exclusions</strong> for the data folder and program processes, so protection stays on but stops throttling the '
+                        'file.</li><li><strong>Move users onto wired gigabit</strong> where it matters, and sort out weak Wi-Fi or tired network cabling and switches.</li><li><strong>Upgrade the '
+                        'host</strong> to an SSD and more RAM, or move the data file to a machine that can cope with your number of users.</li><li><strong>Tidy and verify the data file</strong> to '
+                        'clear bloat and fix damage that slows every open.</li><li><strong>Consider a hosted or cloud option</strong> where it genuinely suits you &mdash; sometimes moving the file '
+                        "off your office network is the honest right answer, and we'll say so.</li></ul><p>We are Windows and Microsoft 365 specialists and we support servers, networks, email, "
+                        'security and backups. We are not accountants and we do not touch your bookkeeping &mdash; we make the software and the network underneath it fast and reliable. Support is '
+                        'rolling monthly with no lock-in contract.</p>'}],
+  'faqs': [{'q': 'Will fixing the network speed up QuickBooks and Sage 50?',
+            'a': 'Usually, yes. Most slowness comes from how the shared data file is hosted and reached across your network, not the software. Once we set hosting correctly, add antivirus '
+                 'exclusions, move users to wired gigabit and tidy the file, it typically feels dramatically faster.'},
+           {'q': 'Do you need to touch our actual accounts or bookkeeping?',
+            'a': 'No. We work on the IT underneath &mdash; the host PC or server, the network, hosting mode and the data file &mdash; not your figures. Your bookkeeper or accountant carries on as '
+                 'normal; we just make the software run properly.'},
+           {'q': 'Can you do this remotely or do you need to come in?',
+            'a': 'Most diagnosis and many fixes are done remotely via secure remote support, with your permission, often the same day. If it needs hands-on work &mdash; upgrading the host, sorting '
+                 'cabling or switches &mdash; we come to you across Bournemouth, Poole, Christchurch and Dorset.'},
+           {'q': 'Is it safe to add antivirus exclusions for the data file?',
+            'a': "Yes, when it is done correctly. We exclude only the specific accounts data folder and the program's own processes, which is exactly what QuickBooks and Sage recommend. Your "
+                 'antivirus stays fully active everywhere else, so you are still protected.'},
+           {'q': 'Should we just move to the cloud instead?',
+            'a': "Sometimes that is the right answer, and we'll tell you honestly if it is. For many small offices, fixing the host, network and file settings is cheaper and works brilliantly. We'll "
+                 'weigh both against your number of users and how you work, with no pressure.'},
+           {'q': 'How much does it cost to fix?',
+            'a': 'It depends what we find &mdash; a settings and network fix is very different from an SSD and RAM upgrade. Ongoing business IT support starts from £24.38 per month per computer, and '
+                 "we'll give you clear costs before doing any chargeable work."}],
+  'schemaKind': 'service',
+  'serviceName': 'QuickBooks & Sage 50 Network Performance Support',
+  'crossLinksHtml': '<p>Related help: <a href="/server-network-support/">Server &amp; network support</a>, <a href="/managed-it-support/">managed IT support</a>, <a href="/disaster-recovery/">backup '
+                    '&amp; disaster recovery</a> and <a href="/microsoft-365-support/">Microsoft 365 support</a>. Local to you in <a href="/it-services-poole/">Poole</a>, <a '
+                    'href="/it-services-bournemouth/">Bournemouth</a> and <a href="/it-support-christchurch/">Christchurch</a>, or just <a href="/contact/">book a call</a>.</p>',
+  'howToName': 'How to diagnose slow QuickBooks or Sage 50 over your network',
+  'howToSteps': [{'name': 'Check who is affected',
+                  'text': 'Confirm whether it is slow for everyone or just one PC. Everyone points to the host, data file or network; one PC points to that machine or its connection.'},
+                 {'name': 'Test wired versus Wi-Fi',
+                  'text': 'Run the same task on a wired gigabit PC and on a Wi-Fi laptop and compare. A big difference means Wi-Fi or cabling is part of the problem.'},
+                 {'name': 'Check the host and hosting mode',
+                  'text': 'Identify which machine holds the data file, whether it is set to host in multi-user mode, and whether Database Server Manager or the Sage service is running correctly.'},
+                 {'name': 'Review antivirus and the disk',
+                  'text': 'Check whether antivirus is scanning the data folder without exclusions, and whether the host is on an SSD with enough RAM for the number of users.'},
+                 {'name': 'Verify and tidy the data file', 'text': 'Run the built-in verify and maintenance tools to spot bloat or damage that slows every open, and note when it was last done.'},
+                 {'name': 'Get expert help',
+                  'text': 'Book a call with 365 Techies. We connect remotely with your permission, usually the same day, measure the bottleneck and fix hosting, exclusions, network, hardware or the '
+                          'file itself.'}]},
+ {'slug': 'business-it-support-ferndown-industrial-estate',
+  'title': 'Business IT Support Ferndown Estate | 365 Techies',
+  'metaDesc': "Managed IT support for Ferndown Industrial Estate & Wimborne (BH21) businesses — servers, networks, Microsoft 365, cybersecurity and same-day on-site help. We're minutes away.",
+  'ogTitle': 'Managed IT Support for Ferndown Industrial Estate Businesses',
+  'crumbName': 'Business IT · Ferndown Estate',
+  'eyebrow': 'Business IT · Ferndown',
+  'h1': 'Managed <em class="grad grad--cyan">business IT support for Ferndown Industrial Estate</em>',
+  'lede': "We look after the servers, networks, Microsoft 365 and security for manufacturers, engineers and offices across Ferndown Industrial Estate and Wimborne (BH21). We're minutes away, so when "
+          'something breaks we can be on-site the same day — often after fixing it remotely first.',
+  'chips': ['Same-day on-site to the estate', 'Windows & Microsoft 365 specialists', 'No lock-in contract'],
+  'primaryCta': ['Book a call', '/contact/'],
+  'secondaryCta': ['See our business IT plans', '/business-it-support-plans/'],
+  'ctaHead': 'Fully managed IT for your Ferndown estate business',
+  'ctaSub': "Same-day, local and rated 4.9 on Google. We're on the doorstep of Ferndown Industrial Estate — book a call and we'll take IT off your plate.",
+  'sections': [{'eyebrow': 'What We Do',
+                'h2': 'Fully managed IT for estate businesses, on a simple per-PC plan',
+                'html': "<p>Ferndown Industrial Estate is one of Dorset's largest business hubs — manufacturers, engineering firms, warehouses and offices around Cobham Road, Haviland Road and Cedar "
+                        "Office Park. Running that day to day needs IT that just works, and someone local to call when it doesn't. That's us.</p><p>We become your outsourced IT department on a "
+                        "rolling monthly, per-computer plan from <strong>£24.38 per month per computer</strong> — no big up-front cost and no long lock-in contract. Here's what that covers for a "
+                        'typical estate business:</p><ul><li><strong>Servers and networks</strong> — setup, monitoring, updates and repair for your on-site server, Wi-Fi and wired network across the '
+                        'unit.</li><li><strong>Microsoft 365 and email</strong> — accounts, mailboxes, Teams, SharePoint and OneDrive, from £4.85 per user per month, with email security and '
+                        "anti-spam.</li><li><strong>Cybersecurity and backups</strong> — layered protection, patching and reliable, tested backups so a ransomware hit or hardware failure doesn't "
+                        'stop production.</li><li><strong>New-starter and leaver setups</strong> — new PCs, logins and email configured ready for day one, and access removed cleanly when someone '
+                        "leaves.</li><li><strong>Same-day on-site</strong> — when hands-on work is needed, we're only minutes from the estate.</li></ul>"},
+               {'eyebrow': 'How It Works',
+                'h2': 'Switching to us is simple',
+                'html': '<p>Switching IT provider or bringing us in for the first time is straightforward, and we handle the heavy lifting. It starts with a quick call — tell us how many computers '
+                        "and users you have, what server and software you run, and what's causing you grief right now. From there we give your setup a free health check, reviewing your server, "
+                        'network, backups, Microsoft 365 and security, and flag anything urgent or risky in plain English.</p><p>You then get a clear quote: a fixed per-PC monthly price with no '
+                        "hidden extras, so you know exactly what your IT costs each month. When you're happy, we take over from your old provider or in-house setup with no disruption to production, "
+                        "documenting everything as we go. After that it's ongoing support — same-day help, usually fixed in minutes remotely with your permission, and on-site to the estate when "
+                        "hands-on is needed.</p><p>Because we're rolling monthly and cancel-anytime, you're never locked in — you stay because it works.</p>"},
+               {'eyebrow': 'Local · Ferndown',
+                'h2': 'On the doorstep of Ferndown Industrial Estate',
+                'html': '<p>Trading since 1995 and based in Bournemouth, we support businesses right across Ferndown, Wimborne and the wider BH21 area. Being local matters: when a server goes down, '
+                        "a network drops or a machine won't boot, an engineer who's minutes away beats a national helpdesk every time.</p><p>Most issues we fix remotely within minutes — we phone "
+                        "first, connect with your permission while you watch, and access ends the moment we're done. When the job needs hands on the hardware, we're on-site to the estate the same "
+                        "day. Office hours are Monday to Friday, 9am to 5pm, and we're a Microsoft Partner rated 4.9 on Google.</p>"}],
+  'faqs': [{'q': 'How quickly can you get to Ferndown Industrial Estate?',
+            'a': "We're Bournemouth-based and only minutes from the estate, so we offer same-day on-site help across Ferndown and Wimborne (BH21). Most problems we fix even faster than that — "
+                 'remotely, within minutes, once you give us permission to connect.'},
+           {'q': 'What does managed IT support cost for my business?',
+            'a': 'Our business IT support starts from £24.38 per month per computer on a simple per-PC plan, with Microsoft 365 from £4.85 per user per month. You get a clear, fixed monthly quote '
+                 'after a free health check — no hidden extras.'},
+           {'q': 'Am I locked into a long contract?',
+            'a': "No. Our support is rolling monthly and cancel-anytime — there's no long lock-in contract. You stay because the service works, not because you're tied in."},
+           {'q': 'Do you support servers and business networks, not just PCs?',
+            'a': "Yes. We fully support Windows servers, wired and Wi-Fi networks, Microsoft 365, email, security and backups — the full stack a busy estate business relies on. We're Windows and "
+                 'Android specialists, not an Apple/Mac shop.'},
+           {'q': 'Can you take over from our current IT provider?',
+            'a': 'Yes. We handle the switch for you with no disruption to production — reviewing your setup, taking over accounts and documentation, and keeping everything running through the '
+                 'handover.'},
+           {'q': 'Do you help with cybersecurity and Cyber Essentials?',
+            'a': 'We provide practical cybersecurity — layered protection, patching, email security and tested backups — and we help businesses work towards Cyber Essentials certification. We help '
+                 'you achieve it; the certification itself is awarded by the scheme.'}],
+  'schemaKind': 'service',
+  'serviceName': 'Managed Business IT Support — Ferndown Industrial Estate',
+  'crossLinksHtml': '<ul><li><a href="/managed-it-support/">Managed IT support</a> — your outsourced IT department, fully looked after</li><li><a href="/business-it-support-plans/">Business IT '
+                    'support plans</a> — simple per-PC pricing, no lock-in</li><li><a href="/server-network-support/">Server &amp; network support</a> — keep your infrastructure running</li><li><a '
+                    'href="/it-support-ferndown/">IT support in Ferndown</a> — help for homes and smaller setups</li></ul>'},
+ {'slug': 'no-contract-it-support',
+  'title': 'No-Contract IT Support Bournemouth | 365 Techies',
+  'metaDesc': 'No-contract IT support in Bournemouth, Poole, Christchurch and Dorset. Rolling monthly, cancel anytime, no long tie-in. 365 Techies help local businesses, same day.',
+  'ogTitle': 'No-Contract IT Support in Bournemouth & Dorset',
+  'crumbName': 'No-contract IT support',
+  'eyebrow': 'Business IT · Dorset',
+  'h1': 'IT support with <em class="grad grad--cyan">no lock-in contract</em>',
+  'lede': 'Been burned by a long IT contract before? We do it differently. 365 Techies give Bournemouth, Poole, Christchurch and Dorset businesses fast, same-day IT support on a rolling monthly plan '
+          'you can cancel anytime.',
+  'chips': ['Rolling monthly, cancel anytime', 'No long tie-in or exit fees', 'Same-day local response'],
+  'primaryCta': ['Book a call', '/contact/'],
+  'secondaryCta': ['See our business IT plans', '/business-it-support-plans/'],
+  'ctaHead': 'Try us without the tie-in',
+  'ctaSub': 'Same-day, local, and rated 4.9 on Google. Rolling monthly IT support for Bournemouth, Poole, Christchurch and the wider Dorset area — no long contract, cancel anytime. Book a call and '
+            'see how we work.',
+  'sections': [{'eyebrow': 'The Problem',
+                'h2': 'Why most IT companies lock you in',
+                'html': "<p>Most managed IT providers ask you to sign a <strong>12, 24 or even 36-month contract</strong> before they'll lift a finger. There are a few reasons for that, and none of "
+                        "them are really about you.</p><ul><li><strong>It guarantees their revenue.</strong> A long contract smooths out their books whether or not you're happy with the "
+                        'service.</li><li><strong>It props up upfront costs.</strong> Some providers subsidise hardware or onboarding and claw it back over years of tie-in.</li><li><strong>It makes '
+                        "leaving painful.</strong> Once you're locked in, they don't have to keep earning your business every month.</li></ul><p>The result is a familiar trap: the service quietly "
+                        "slips, response times drift, and you're stuck paying until an exit date that's months away. We think that's the wrong way round — you should stay because the support is "
+                        "good, not because you can't get out.</p>"},
+               {'eyebrow': 'How It Works',
+                'h2': 'Our rolling monthly plan, step by step',
+                'html': "<p>Our business IT support is a simple <strong>per-computer subscription from £24.38 per month, per computer</strong>, billed monthly. Here's how it "
+                        'runs:</p><ol><li><strong>Book a call.</strong> We have a short, no-pressure chat about your setup — how many PCs, whether you run servers, what systems you rely on, and '
+                        'where the pain is.</li><li><strong>We size it per computer.</strong> Your monthly cost is worked out on the number of machines we look after, plus Microsoft 365 from £4.85 '
+                        'per user per month if you need it. No mystery bundles.</li><li><strong>We onboard and start supporting.</strong> We take on your day-to-day IT — Microsoft 365, servers, '
+                        'networks, email, security and backups. Most issues are fixed within minutes remotely (with your permission, phone first), or on-site across Bournemouth, Poole, Christchurch '
+                        "and Dorset when hands-on is needed.</li><li><strong>You pay month to month.</strong> It's a rolling monthly plan. <strong>No long tie-in, no exit fees, cancel "
+                        'anytime.</strong> Add or remove computers as your team changes.</li></ol><p>We are not VAT registered, so the price you see is the price you pay. Office hours are Monday to '
+                        'Friday, 9am to 5pm.</p>'},
+               {'eyebrow': 'The Honest Trade',
+                'h2': "What you give up — and what you don't",
+                'html': "<p>Let's be straight about the trade. Because there's no long contract, we don't dangle deeply discounted hardware or loss-leader offers that only make sense over a "
+                        "three-year lock-in. What you get instead is far more valuable:</p><ul><li><strong>Freedom to leave.</strong> If we ever stop earning it, you can walk with a month's notice. "
+                        'That keeps us honest and keeps our service sharp.</li><li><strong>No nasty surprises.</strong> No hidden termination clauses, no auto-renewing multi-year rollovers, no exit '
+                        "invoice.</li><li><strong>A provider that has to be good.</strong> Every month is effectively a fresh vote of confidence. We've traded since 1995 and hold a 4.9 rating on "
+                        "Google precisely because clients choose to stay.</li></ul><p>The honest bit: most clients don't leave — but that's their choice, not a clause in a contract.</p>"},
+               {'eyebrow': 'Ad-Hoc Option',
+                'h2': 'Not ready for a plan? Pay as you go',
+                'html': "<p>Some businesses just want a reliable local number to call when something breaks — not a monthly plan at all. That's fine. We also offer <strong>pay-as-you-go, ad-hoc "
+                        "support</strong>: we help with the problem in front of you, and that's it. No commitment, no minimum.</p><p>It's a good way to try us out. Plenty of businesses start with a "
+                        "one-off job — a server that won't behave, an email or network problem, a security scare — see how quickly and clearly we work, and move onto a rolling monthly plan later "
+                        "when they want proactive, fully managed cover with backups and security handled for them. There's no pressure either way — you choose the level that suits you, and you can "
+                        'change it as your business grows.</p><p>Windows and Android are our specialism, and we fully support Microsoft 365, servers, networks, email, security and backups for Dorset '
+                        "businesses. (We're not an Apple/Mac shop.)</p>"}],
+  'faqs': [{'q': 'Is the no-contract IT support genuinely no-contract?',
+            'a': "Yes. Our business IT support is a rolling monthly plan — cancel anytime with a month's notice, no long tie-in and no exit fees. You stay because the service is good, not because "
+                 "you're locked in."},
+           {'q': 'How much does it cost with no contract?',
+            'a': "Business IT support starts from £24.38 per month per computer, with Microsoft 365 from £4.85 per user per month if you need it. We're not VAT registered, so that's the price you "
+                 'actually pay.'},
+           {'q': 'Can I just pay for one-off help instead of a plan?',
+            'a': "Yes. We offer pay-as-you-go, ad-hoc support for businesses that aren't ready for a monthly plan. Fix the problem, pay for the work, no commitment. Many businesses start this way "
+                 'and move to a plan later.'},
+           {'q': 'What if I want to leave?',
+            'a': "You give a month's notice and that's it — no termination penalty, no clawback invoice. We'll also help hand things over cleanly. If you're leaving another provider to join us, see "
+                 'our switching page for how we make the move painless.'},
+           {'q': 'Do you cover my area?',
+            'a': "We're based in Bournemouth and support businesses across Poole, Christchurch and the wider Dorset area, plus the New Forest and south-west Hampshire fringe. Most issues are fixed "
+                 'same day, remotely, with on-site visits when hands-on help is needed.'},
+           {'q': 'Why do most IT companies insist on long contracts?',
+            'a': "Usually to guarantee their revenue, recover subsidised upfront costs, or make leaving difficult. We think you should be free to go if we stop earning your business — so we don't do "
+                 'long tie-ins.'}],
+  'schemaKind': 'service',
+  'serviceName': 'No-Contract Business IT Support',
+  'crossLinksHtml': '<ul><li><a href="/business-it-support-plans/">Our business IT support plans</a> — what\'s included on the rolling monthly plan.</li><li><a href="/pricing/">Pricing</a> — the '
+                    'real, per-computer numbers, no VAT.</li><li><a href="/how-we-price/">How we price</a> — why we bill per computer and what drives the cost.</li><li><a '
+                    'href="/managed-it-support/">Managed IT support</a> — fully managed, proactive cover for your business.</li><li><a href="/switching-it-provider/">Switching IT provider</a> — how '
+                    'we make leaving your current provider painless.</li></ul>'},
+ {'slug': 'business-it-support-christchurch',
+  'title': 'Business IT Support Christchurch Dorset | 365 Techies',
+  'metaDesc': 'Fully managed business IT support for Christchurch, Dorset — servers, networks, Microsoft 365, cybersecurity and same-day on-site help. Local techies, minutes away. No lock-in.',
+  'ogTitle': 'Managed Business IT Support in Christchurch, Dorset',
+  'crumbName': 'Business IT Christchurch',
+  'eyebrow': 'Business IT · Christchurch',
+  'h1': 'Managed <em class="grad grad--cyan">business IT support in Christchurch</em>',
+  'lede': 'Fully managed IT for Christchurch businesses — servers, networks, Microsoft 365, cybersecurity and backups, all looked after for one simple per-PC monthly cost. We are local techies just '
+          'minutes from the business parks, so you get same-day on-site help with no lock-in contract. Rated 4.9 on Google.',
+  'chips': ['Same-day local on-site help', 'Windows & Microsoft 365 specialists', 'No lock-in contract'],
+  'primaryCta': ['Book a call', '/contact/'],
+  'secondaryCta': ['See our business IT plans', '/business-it-support-plans/'],
+  'ctaHead': 'Local, same-day IT for your Christchurch business',
+  'ctaSub': 'We are minutes from Aviation Business Park and Christchurch Business Park — same-day on-site when hands-on help is needed, fast remote help the rest of the time. Family-run since 1995 '
+            'and rated 4.9 on Google. Book a call and we will map out the right cover for your team.',
+  'sections': [{'eyebrow': 'Fully Managed · Per PC',
+                'h2': 'Your outsourced IT department in Christchurch',
+                'html': "<p>If you run a business on one of Christchurch's engineering, aerospace or SME hubs — <strong>Aviation Business Park, Christchurch Business Park or the Airfield Industrial "
+                        'Estate</strong> — you need IT that just works, not IT you have to chase when it breaks. That is what fully managed support gives you.</p><p>For a simple per-computer monthly '
+                        'cost we quietly monitor, patch and protect your machines, keep your Microsoft 365 and email healthy, watch your backups, and pick up the phone the moment something is wrong. '
+                        'It is like having your own IT department, without the salary.</p><ul><li><strong>Fully managed IT from £24.38/month per computer</strong> — updates, monitoring, security and '
+                        'helpdesk in one predictable cost.</li><li><strong>Microsoft 365 from £4.85/user/month</strong> — Outlook, Teams, OneDrive and SharePoint set up, licensed and '
+                        'supported.</li><li><strong>Servers, networks and Wi-Fi</strong> — designed, maintained and kept secure across your site.</li><li><strong>Cybersecurity and backups</strong> — '
+                        'layered protection, staff awareness and tested recovery so a bad day does not become a lost week.</li></ul><p>We are Windows and Microsoft 365 specialists — we are not an '
+                        'Apple/Mac shop, and we will always tell you honestly what we do and do not cover.</p>'},
+               {'eyebrow': 'Local Proximity · Same-day',
+                'h2': 'Minutes away, not an out-of-town helpdesk',
+                'html': '<p>Plenty of managed IT providers will happily sell a Christchurch business a contract from an office an hour or more away. When you need someone physically on site — a '
+                        'failed server, a switch to swap, a new starter to set up — that distance costs you a whole working day.</p><p>We are a Dorset family team based in Bournemouth, so '
+                        'Christchurch is on our doorstep. That means:</p><ul><li><strong>Same-day on-site visits</strong> across Christchurch when hands-on work is genuinely '
+                        'needed.</li><li><strong>Fast remote help in minutes</strong> for everything else, over secure Splashtop SOS — you grant permission, you watch on screen, and access ends when '
+                        'the job is done.</li><li><strong>The same familiar faces</strong> who get to know your setup, not a rotating call-centre queue.</li></ul><p>We are here Monday to Friday, 9am '
+                        'to 5pm. We do not claim a 24/7 hotline or an on-site security operations centre — what we offer instead is genuinely fast, local, same-day help you can rely on.</p>'},
+               {'eyebrow': 'Getting Started · Simple',
+                'h2': 'How we take on your business IT',
+                'html': '<p>Switching or setting up managed IT should be painless. Here is exactly how it works:</p><ol><li><strong>Book a call.</strong> Tell us how many computers and users you '
+                        'have, what you run, and where it hurts today.</li><li><strong>Free IT review.</strong> We look at your servers, network, Microsoft 365, backups and security, and flag any '
+                        'risks in plain English.</li><li><strong>A clear per-PC quote.</strong> One predictable monthly cost per computer — no jargon, no hidden extras, no long lock-in '
+                        'contract.</li><li><strong>Smooth onboarding.</strong> We take over quietly, tighten up security and backups, and handle the handover if you are leaving another '
+                        'provider.</li><li><strong>Ongoing cover.</strong> We monitor and maintain everything, and you have one local number to call whenever you need us.</li></ol><p>Because support '
+                        'is rolling monthly and cancel-anytime, you are never locked in — we earn your business every month.</p>'},
+               {'eyebrow': 'Cover · Christchurch Business',
+                'h2': 'What we look after for Christchurch businesses',
+                'html': '<ul><li><strong>Managed IT support</strong> — day-to-day helpdesk, monitoring and maintenance for every user and device.</li><li><strong>Servers and networks</strong> — file '
+                        'servers, switches, firewalls, VPNs and business-grade Wi-Fi.</li><li><strong>Microsoft 365</strong> — migration, licensing, Teams, SharePoint, shared mailboxes and security '
+                        'policies.</li><li><strong>Cybersecurity and Cyber Essentials</strong> — layered protection plus help working towards Cyber Essentials certification (we help you achieve '
+                        'it).</li><li><strong>Backups and disaster recovery</strong> — tested, off-site backups so you can recover quickly from ransomware, hardware failure or human '
+                        'error.</li><li><strong>New devices and starters</strong> — supply, set-up and secure onboarding of new PCs and staff.</li></ul><p>Whether you are a two-person engineering '
+                        'consultancy or a growing team of thirty across a unit on the business park, we scale the cover to fit.</p>'}],
+  'faqs': [{'q': 'Do you provide managed business IT support in Christchurch?',
+            'a': 'Yes. We provide fully managed IT support for Christchurch businesses — servers, networks, Microsoft 365, cybersecurity and backups — for a simple per-computer monthly cost, with '
+                 'same-day remote and on-site help across the town and the wider Dorset area.'},
+           {'q': 'How much does business IT support cost?',
+            'a': 'Fully managed business IT support starts from £24.38 per month per computer, with Microsoft 365 from £4.85 per user per month. It is rolling monthly and cancel-anytime, so there is '
+                 'no long lock-in contract. Book a call for a clear per-PC quote.'},
+           {'q': 'Can you come on site to the Christchurch business parks?',
+            'a': 'Yes. We are a Bournemouth-based family team just minutes from Aviation Business Park and Christchurch Business Park, so we offer same-day on-site visits when hands-on work is '
+                 'needed. Most issues are still fixed faster remotely, in minutes, over secure Splashtop SOS.'},
+           {'q': 'Are you tied into a long contract?',
+            'a': 'No. Our business IT support is rolling monthly and cancel-anytime — there is no long lock-in. We would rather earn your business every month than trap you in a multi-year deal.'},
+           {'q': 'Can you handle our servers, network and Microsoft 365?',
+            'a': 'Yes. We are Windows and Microsoft 365 specialists and fully support servers, networks, firewalls, Wi-Fi, email, security and backups. We are not an Apple/Mac shop, and we will '
+                 'always be upfront about what we do and do not cover.'},
+           {'q': 'Can you help us switch from our current IT provider?',
+            'a': 'Yes. We handle the whole handover quietly in the background — taking over monitoring, tightening security and backups, and coordinating with your outgoing provider so there is no '
+                 'gap in cover. See our switching IT provider page for how it works.'}],
+  'schemaKind': 'service',
+  'serviceName': 'Managed Business IT Support Christchurch',
+  'crossLinksHtml': '<ul><li><a href="/managed-it-support/">Managed IT support</a> — how fully managed cover works</li><li><a href="/business-it-support-plans/">Business IT support plans</a> — '
+                    'per-PC pricing and what is included</li><li><a href="/server-network-support/">Server &amp; network support</a> — servers, firewalls, VPNs and Wi-Fi</li><li><a '
+                    'href="/it-support-christchurch/">IT support Christchurch</a> — homes, one-off repairs and consumer help</li><li><a href="/switching-it-provider/">Switching IT provider</a> — a '
+                    'painless handover to us</li></ul>'},
+ {'slug': 'server-down-emergency-support',
+  'title': 'Server Down? Emergency Support Dorset | 365 Techies',
+  'metaDesc': "Business server down, crashed or won't boot in Bournemouth, Poole or Dorset? We help local businesses get back up the same day — fast remote triage, then on-site.",
+  'ogTitle': 'Server Down? Emergency Server Support Across Dorset',
+  'crumbName': 'Server Down (Emergency)',
+  'eyebrow': 'Emergency IT · same-day',
+  'h1': 'Business <em class="grad grad--cyan">server down</em>? Emergency support across Bournemouth, Poole & Dorset',
+  'lede': "If your server has crashed, won't boot or the whole office is offline, take a breath — most situations are recoverable. We're a local, family-run team who help Dorset businesses get back "
+          'up and running the same day, remote-first and then on-site if hands-on work is needed. Trading since 1995, rated 4.9 on Google.',
+  'chips': ['Same-day local response', 'Windows, server & network specialists', 'No lock-in contract'],
+  'primaryCta': ['Call 01202 775566', 'tel:+441202775566'],
+  'secondaryCta': ['See server & network support', '/server-network-support/'],
+  'ctaHead': "Server down? Call us now and we'll start straight away",
+  'ctaSub': 'One phone call gets a real, local techie on the case — fast same-day help, remote-first, on-site across Bournemouth, Poole, Christchurch and Dorset when hands-on is needed. Family-run '
+            'since 1995, rated 4.9 on Google. Office hours Mon–Fri 9am–5pm.',
+  'sections': [{'eyebrow': "// DON'T PANIC",
+                'h2': 'First things first — a downed server is usually recoverable',
+                'html': '<p>When a server goes down, the whole office can grind to a halt — no shared files, no line-of-business app, sometimes no email. It feels like an emergency because it is '
+                        'one, but the worst thing you can do is start pulling at things in a panic. A calm, methodical first response protects your data and helps us get you working again '
+                        'faster.</p><p>The single most important rule: <strong>stop repeatedly forcing the server off and on</strong>. Yanking the power or holding the button down again and again '
+                        "can turn a small, recoverable fault into real disk or RAID damage — and that's the difference between being back up by this afternoon and losing data. A few careful checks, "
+                        "a phone call, and let us take it from there.</p><p>We're Windows and network specialists based on your doorstep, and we've been getting Dorset businesses out of exactly this "
+                        'situation since 1995. If in doubt, don\'t guess — <a href="tel:+441202775566">call us on 01202 775566</a> and we\'ll talk you through it.</p>'},
+               {'eyebrow': '// WHAT TO DO NOW',
+                'h2': 'The safe first-response checklist while you wait for us',
+                'html': "<p>Work through these calmly. They take a couple of minutes and give us a huge head start when you call:</p><ol><li><strong>Don't keep force-rebooting.</strong> One clean "
+                        "restart may be worth trying, but repeatedly cutting the power can worsen disk or RAID damage. If it didn't come back the first time, stop and call.</li><li><strong>Check the "
+                        'power.</strong> Confirm the server (and its UPS, if you have one) is switched on and getting power — check the plug, socket and any battery-backup unit that may have '
+                        'tripped.</li><li><strong>Check the network and switch.</strong> Look at the network switch and router — are their lights on and normal? A dead switch or a knocked-out cable '
+                        "can look exactly like a dead server.</li><li><strong>Work out if it's the server or the internet.</strong> If everyone's offline but the server itself seems fine, the "
+                        'problem may be your broadband or network, not the server. Try whether local shared files or apps work even with the internet down.</li><li><strong>Note any error, beep or '
+                        'lights.</strong> Photograph any on-screen error message, and note beep patterns or warning lights on the front of the server — these tell us a great deal before we even '
+                        "connect.</li><li><strong>Don't start reinstalling or 'repairing'.</strong> Please don't reinstall Windows, run recovery tools or reformat anything. Well-meant DIY at this "
+                        'stage is the most common way good data gets lost.</li><li><strong>Call us.</strong> Ring <a href="tel:+441202775566">01202 775566</a> and tell us what you found. We\'ll take '
+                        'it from there.</li></ol>'},
+               {'eyebrow': '// HOW WE RESPOND',
+                'h2': 'How we get your business back up — same day',
+                'html': "<p>When you call, here's what actually happens:</p><ul><li><strong>Rapid remote triage first.</strong> If the server or network is reachable at all, we connect with your "
+                        "permission using our remote tools to diagnose fast — no waiting for someone to drive over before anything happens.</li><li><strong>On-site same-day if it's needed.</strong> "
+                        "If it's a power, hardware or physical fault, we come to you across Bournemouth, Poole, Christchurch and the wider Dorset area — hands-on, the same day wherever we "
+                        'can.</li><li><strong>Diagnose properly.</strong> We work through power, hardware, RAID and disk health, and the operating system to find the real cause rather than papering '
+                        'over it.</li><li><strong>Recover your data and restore from backup.</strong> The priority is your data. We recover what we can and restore from your backups to get you '
+                        "trading again.</li><li><strong>Get you working, then make you resilient.</strong> Once you're back up, we advise honestly on what would stop this happening again — verified "
+                        "backups, a UPS, proactive monitoring, and whether ageing hardware is due for replacement.</li></ul><p>An honest word on timing: we're a fast, same-day, remote-first local "
+                        'team working Monday to Friday, 9am to 5pm — not a 24/7 hotline. What we promise is a real person who knows servers, moving quickly, the same day.</p>'},
+               {'eyebrow': '// AFTERWARDS',
+                'h2': 'Stopping it happening again',
+                'html': "<p>A server that goes down once will usually do it again unless the underlying weakness is fixed. Once the fire's out, we help you build in the resilience that turns the "
+                        "next scare into a non-event:</p><ul><li><strong>Verified, tested backups</strong> — automatic and off-site, and actually checked, so a failed drive or ransomware doesn't end "
+                        'your week. See our <a href="/disaster-recovery/">disaster recovery</a> page.</li><li><strong>A UPS (battery backup)</strong> — so a power blip shuts the server down cleanly '
+                        'instead of crashing it and risking the RAID.</li><li><strong>Proactive monitoring</strong> — we watch disk, RAID and server health so we often spot a failing drive before it '
+                        "takes the office offline.</li><li><strong>Sensible replacement planning</strong> — if the hardware is past its best, we'll say so plainly and plan an upgrade on your "
+                        'timetable, not in a crisis.</li></ul><p>Most of our clients move onto simple monthly support so this is all just handled. Take a look at our <a '
+                        'href="/server-network-support/">server and network support</a> and <a href="/managed-it-support/">managed IT support</a>, or <a href="/contact/">get in touch</a> once the '
+                        'dust settles.</p>'}],
+  'faqs': [{'q': 'My server has crashed — what should I do right now?',
+            'a': 'Stop force-rebooting it repeatedly, as that can worsen disk or RAID damage. Quickly check the power and the network switch, photograph any error message and note any warning lights '
+                 "or beeps, and don't start reinstalling anything. Then call us on 01202 775566 and we'll take it from there."},
+           {'q': 'How quickly can you help if our office is offline?',
+            'a': 'We aim to respond the same day. If the server or network is reachable, we start with rapid remote triage straight away rather than waiting for a site visit; if hands-on work is '
+                 "needed we come to you across Bournemouth, Poole, Christchurch and Dorset. We're a fast, same-day local team working Monday to Friday, 9am to 5pm — not a 24/7 hotline."},
+           {'q': "Why shouldn't I just keep restarting the server?",
+            'a': 'One clean restart can be worth trying, but repeatedly cutting the power to a server — especially one with a RAID array or a struggling disk — can turn a recoverable fault into '
+                 "permanent data loss. If it didn't come back after the first restart, it's safer to stop and call us."},
+           {'q': "Can you recover our data if the server won't boot?",
+            'a': "Very often, yes. A server that won't boot doesn't usually mean the data is gone — the fault is frequently power, hardware, RAID configuration or the operating system rather than "
+                 'the data itself. We diagnose the real cause, recover what we can and restore from your backups to get you working again.'},
+           {'q': 'Do you cover our area?',
+            'a': "Yes — we're based in Bournemouth and cover Poole, Christchurch, Ferndown, Wimborne and the wider Dorset area, plus the New Forest and south-west Hampshire fringe. Most triage we "
+                 'can start remotely; for on-site work we come to you the same day wherever we can.'},
+           {'q': 'What will it cost to sort out an emergency server problem?',
+            'a': 'We quote clearly before any work begins, so there are no surprises. For ongoing peace of mind, our business IT support starts from £24.38 per month per computer on a rolling, '
+                 'cancel-anytime basis, which includes proactive monitoring and backups designed to help stop emergencies like this in the first place.'}],
+  'schemaKind': 'service',
+  'serviceName': 'Emergency Server Support (Bournemouth, Poole & Dorset)',
+  'howToName': 'What to do right now if your business server is down',
+  'howToSteps': [{'name': 'Stop force-rebooting',
+                  'text': "Don't repeatedly cut the power or hold the button down. One clean restart may be worth trying, but repeated forced reboots can worsen disk or RAID damage and risk your "
+                          "data. If it didn't come back, stop and call."},
+                 {'name': 'Check power and UPS',
+                  'text': 'Confirm the server and any battery-backup unit (UPS) are switched on and getting power — check the plug, the socket and whether a UPS has tripped or run flat.'},
+                 {'name': 'Check the network and switch',
+                  'text': 'Look at your network switch and router. Are the lights on and normal? A dead switch or a knocked-out cable can look exactly like a dead server.'},
+                 {'name': "Work out if it's the server or the internet",
+                  'text': 'If everyone is offline but the server itself seems healthy, the fault may be your broadband or network rather than the server. Check whether local shared files and apps '
+                          'still work.'},
+                 {'name': 'Note any errors, beeps or lights',
+                  'text': 'Photograph any on-screen error message and note any beep patterns or warning lights on the server. This tells us a great deal before we even connect.'},
+                 {'name': "Call us — don't start reinstalling",
+                  'text': "Don't reinstall Windows, run recovery tools or reformat anything. Call 01202 775566, tell us what you found, and let us handle the recovery safely."}],
+  'crossLinksHtml': '<p>Related help: our full <a href="/server-network-support/">server and network support</a>, <a href="/disaster-recovery/">disaster recovery</a> and backup planning, and ongoing '
+                    '<a href="/managed-it-support/">managed IT support</a>. Or just <a href="/contact/">get in touch</a>.</p>'},
+ {'slug': 'outsourced-it-department',
+  'title': 'Outsourced IT Department for Dorset SMEs | 365 Techies',
+  'metaDesc': 'Your outsourced IT department for Dorset small businesses &mdash; helpdesk, monitoring, security, backups &amp; Microsoft 365 on one per-PC plan. Same-day local help, no lock-in.',
+  'ogTitle': 'Your Outsourced IT Department, for Dorset Small Businesses',
+  'crumbName': 'Outsourced IT Department',
+  'eyebrow': 'Business IT · Dorset',
+  'h1': 'Your <em class="grad grad--cyan">outsourced IT department</em>, for a fraction of a hire',
+  'lede': 'Everything an in-house IT team does &mdash; a helpdesk to call, proactive monitoring, security, backups, Microsoft 365 and honest strategy &mdash; delivered by one Dorset family firm for '
+          'less than the cost of a single hire. We help local businesses the same day, remotely within minutes or on-site when hands-on is needed.',
+  'chips': ['Same-day local response', 'Windows &amp; Microsoft 365 specialists', 'No lock-in contract'],
+  'primaryCta': ['Book a call', '/contact/'],
+  'secondaryCta': ['See our business IT plans', '/business-it-support-plans/'],
+  'ctaHead': 'Give your business a proper IT department &mdash; without the payroll',
+  'ctaSub': 'One Dorset family firm running your helpdesk, security, backups and Microsoft 365 on a predictable per-PC plan &mdash; same-day, local, and rated 4.9 on Google. Tell us your setup and '
+            'we&rsquo;ll give you a clear, no-pressure quote.',
+  'sections': [{'eyebrow': 'What You Get',
+                'h2': 'An entire IT department on one monthly plan',
+                'html': '<p>Hiring your first IT person is a big, expensive commitment &mdash; and one person can&rsquo;t be an expert in helpdesk, security, networks, Microsoft 365 <em>and</em> '
+                        'strategy, let alone cover holidays and sick days. An <strong>outsourced IT department</strong> gives you the whole function instead of a single pair of hands, all on one '
+                        'predictable per-PC plan from &pound;24.38/month per computer.</p><p>Here&rsquo;s everything that&rsquo;s covered:</p><ul><li><strong>A helpdesk to call</strong> &mdash; a '
+                        'real, friendly team on the end of the phone, fixing most issues remotely within minutes during opening hours (Mon&ndash;Fri 9&ndash;5).</li><li><strong>Proactive monitoring '
+                        '&amp; maintenance</strong> &mdash; we watch disk space, security status and failed updates, and catch small problems before they cost you a day.</li><li><strong>Security '
+                        '&amp; backups</strong> &mdash; antivirus, web protection, patching and verified backups, kept current and actually checked.</li><li><strong>Microsoft 365 &amp; email '
+                        'management</strong> &mdash; accounts, mailboxes, licensing and day-to-day admin looked after for you.</li><li><strong>A virtual IT manager</strong> &mdash; honest strategy '
+                        'and advice on what to spend, what to skip and what&rsquo;s coming next.</li><li><strong>Projects &amp; procurement</strong> &mdash; new servers, network upgrades and '
+                        'hardware sourced and set up properly.</li><li><strong>New-starter &amp; leaver setups</strong> &mdash; accounts, devices and access created on day one and closed down '
+                        'cleanly when someone leaves.</li></ul>'},
+               {'eyebrow': 'The Maths',
+                'h2': 'Cheaper than one in-house hire &mdash; and it never takes a holiday',
+                'html': '<p>A single in-house IT technician in Dorset costs a great deal more than salary alone once you add National Insurance, pension, holiday cover, training, kit and '
+                        'recruitment. For a 5&ndash;50-person business, that one hire is often <strong>more expensive than outsourcing the whole department</strong> &mdash; and you&rsquo;re still '
+                        'relying on one person who can&rsquo;t know everything.</p><p>With an outsourced IT department you get:</p><ul><li><strong>A predictable per-PC cost</strong> &mdash; you pay '
+                        'from &pound;24.38/month per computer, so the bill scales cleanly as you grow. Microsoft 365 is from &pound;4.85/user/month.</li><li><strong>A whole team&rsquo;s worth of '
+                        'skills</strong> &mdash; helpdesk, security, networks and strategy, not one generalist stretched thin.</li><li><strong>No gaps</strong> &mdash; no single point of failure '
+                        'when your IT person is off sick or on annual leave.</li><li><strong>No lock-in</strong> &mdash; support is rolling monthly and cancel-anytime. You stay because it works, not '
+                        'because you&rsquo;re tied in.</li></ul><p>Want the exact figures for your setup? See exactly <a href="/how-we-price/">how we price</a> or ask for a quote.</p>'},
+               {'eyebrow': 'Getting Started',
+                'h2': 'How we become your IT department',
+                'html': '<p>Switching to an outsourced IT department is simpler than most owners fear. Here&rsquo;s the step-by-step:</p><ol><li><strong>A friendly, no-pressure call.</strong> We '
+                        'learn how your business runs, what you rely on and where the pain is &mdash; in plain English, no jargon.</li><li><strong>A quick review of your setup.</strong> We look at '
+                        'your computers, servers, network, Microsoft 365 and security, and flag anything urgent.</li><li><strong>A clear plan and quote.</strong> You get a simple per-PC price and a '
+                        'short list of what we&rsquo;d put right first &mdash; no obligation.</li><li><strong>A smooth handover.</strong> We take over monitoring, security, backups and your helpdesk '
+                        'with minimal disruption &mdash; even from an existing provider.</li><li><strong>Day-to-day support begins.</strong> From then on you have one number to call, the same '
+                        'familiar faces every time, and proactive care running quietly in the background.</li></ol><p>Already have an IT provider? <a href="/switching-it-provider/">Switching is '
+                        'straightforward</a> &mdash; we handle the transfer for you.</p>'},
+               {'eyebrow': "Who It's For",
+                'h2': 'Built for 5&ndash;50-user Dorset businesses',
+                'html': '<p>This is the right fit if you&rsquo;re a small business in Bournemouth, Poole, Christchurch or the wider Dorset area with <strong>no dedicated IT person &mdash; or one '
+                        'who&rsquo;s badly overstretched</strong>. You know the signs:</p><ul><li>Staff lose time to niggling computer and email problems no one has time to fix '
+                        'properly.</li><li>Nobody&rsquo;s truly sure the backups work or the security is up to date.</li><li>New starters and leavers are set up in a rush, or not shut down '
+                        'cleanly.</li><li>There&rsquo;s no one giving honest, jargon-free advice on what to spend and what to ignore.</li></ul><p>We&rsquo;re Windows and Microsoft 365 specialists, '
+                        'so if your business runs on Windows and Android you&rsquo;re exactly who we look after. We&rsquo;re honest about fit too: if you&rsquo;re mainly an Apple/Mac shop, '
+                        'we&rsquo;ll say so rather than pretend. For the fully-managed detail, see <a href="/managed-it-support/">managed IT support</a>, or explore our <a '
+                        'href="/business-it-support-plans/">business IT support plans</a>.</p>'}],
+  'faqs': [{'q': 'What exactly is an outsourced IT department?',
+            'a': 'It&rsquo;s the whole IT function &mdash; helpdesk, monitoring, security, backups, Microsoft 365 management, strategy and projects &mdash; delivered by one external team instead of '
+                 'hiring in-house. You get a team&rsquo;s worth of skills on a single predictable monthly plan, rather than one person trying to cover everything.'},
+           {'q': 'Is it really cheaper than hiring someone?',
+            'a': 'For most 5&ndash;50-person businesses, yes. Once you add National Insurance, pension, holiday cover, training and recruitment to an IT salary, outsourcing the whole department '
+                 'usually costs less &mdash; and you get a full range of skills with no single point of failure. Our support starts from &pound;24.38/month per computer.'},
+           {'q': 'Do we get a real person to call, or just tickets?',
+            'a': 'A real, friendly team. You call one number and speak to the same familiar faces who know your setup. Most issues are fixed remotely within minutes during opening hours '
+                 '(Mon&ndash;Fri 9am&ndash;5pm), and we come on-site across Dorset when hands-on help is needed.'},
+           {'q': 'Are we locked into a long contract?',
+            'a': 'No. Support is rolling monthly and cancel-anytime with no long lock-in &mdash; that&rsquo;s genuinely true. You stay because it&rsquo;s working, not because you&rsquo;re tied in. '
+                 'Pricing is per computer, so it scales cleanly as your team grows.'},
+           {'q': 'Can you take over from our current IT provider?',
+            'a': 'Yes, and we handle the transfer for you. We take over monitoring, security, backups and your helpdesk with minimal disruption, and flag anything urgent during the handover. See our '
+                 'switching guide for how it works.'},
+           {'q': 'Do you support Apple Macs?',
+            'a': 'No &mdash; we&rsquo;re Windows and Android specialists and would rather be genuinely excellent at those than spread thin. If your business runs mainly on Windows and Microsoft 365, '
+                 'you&rsquo;re exactly who we look after; if you&rsquo;re mostly Apple, we&rsquo;ll honestly say we&rsquo;re not the right fit.'}],
+  'schemaKind': 'service',
+  'serviceName': 'Outsourced IT Department',
+  'crossLinksHtml': '<ul><li><a href="/managed-it-support/">Managed IT support</a> &mdash; the proactive, looked-after-for-you detail behind the department.</li><li><a '
+                    'href="/business-it-consultancy/">Business IT consultancy</a> &mdash; your virtual IT manager for strategy and honest advice.</li><li><a '
+                    'href="/business-it-support-plans/">Business IT support plans</a> &mdash; see what&rsquo;s covered on each per-PC plan.</li><li><a href="/how-we-price/">How we price</a> &mdash; '
+                    'simple, transparent per-computer pricing with no surprises.</li></ul>'},
+ {'slug': 'it-support-for-construction',
+  'title': 'IT Support for Construction Firms Dorset | 365 Techies',
+  'metaDesc': 'IT support for construction and building firms across Dorset — site connectivity, mobile working, CAD and project software, cybersecurity and backups. Local, same-day help.',
+  'ogTitle': 'IT Support for Construction & Building Firms in Dorset',
+  'crumbName': 'Construction IT',
+  'eyebrow': 'Business IT · Dorset',
+  'h1': 'IT support for <em class="grad grad--cyan">construction &amp; building firms</em> in Dorset',
+  'lede': 'From the head office to the muddiest site, we keep your people connected and your project, estimating and accounts software running. We help construction and building firms across '
+          'Bournemouth, Poole, Christchurch and the wider Dorset area — with fast, same-day local support and no lock-in contract.',
+  'chips': ['Same-day local response', 'Site connectivity & mobile working', 'No lock-in contract'],
+  'primaryCta': ['Book a call', '/contact/'],
+  'secondaryCta': ['See our business IT plans', '/business-it-support-plans/'],
+  'ctaHead': "Let's keep your office and sites running",
+  'ctaSub': 'Family-run since 1995, rated 4.9 on Google, and just up the road. Same-day, local help for construction firms across Bournemouth, Poole, Christchurch and Dorset — book a call and tell '
+            'us about your setup.',
+  'sections': [{'eyebrow': 'The Two-Site Problem',
+                'h2': 'Your business runs in two places at once',
+                'html': "<p>A construction firm isn't like a normal office. Half your team is at a desk running estimates, drawings, programmes and payment applications — and half is on a site that "
+                        'might be a field, a fit-out, or a half-built unit with no landline, patchy mobile signal and a compound cabin for a boardroom. IT has to work in both places, and the two '
+                        "have to talk to each other.</p><p>That's exactly the gap we fill. We keep the office kit and the software your quantity surveyors, estimators and site managers rely on "
+                        "running properly, and we get your people reliable connectivity and access to the same files whether they're at HQ or in a Portakabin. When a drawing needs to be on someone's "
+                        "tablet on site this morning, it's there — the right version, safely backed up, not emailed around as <strong>final_v7</strong>.</p><ul><li><strong>Office:</strong> CAD, "
+                        "estimating, project management, accounts and payroll kept fast and available</li><li><strong>Site:</strong> 4G/5G routers and, where the mast won't reach, Starlink for "
+                        'genuinely remote sites</li><li><strong>Both:</strong> Microsoft 365, shared files and email that stay in sync across teams and devices</li></ul>'},
+               {'eyebrow': 'What We Handle',
+                'h2': 'The construction-specific IT we look after',
+                'html': '<p>We support the whole firm — the systems, connectivity, devices, security and Microsoft 365 that keep an office and its sites moving. In plain terms, that '
+                        "means:</p><ul><li><strong>Reliable site connectivity</strong> — 4G/5G routers for compounds and cabins, and Starlink where there's no usable signal at all, so a new site "
+                        "isn't dead for a fortnight waiting on a line</li><li><strong>Mobile working across office and site</strong> — laptops, tablets and phones set up so managers can pull up "
+                        'drawings, sign off deliveries and file reports from wherever the job is</li><li><strong>Keeping your software running</strong> — estimating, project/programme, CAD, and '
+                        'accounts packages installed, updated, licensed and unstuck when they throw an error before a deadline</li><li><strong>Cybersecurity and backups</strong> — protecting '
+                        'drawings, contracts, tender documents and client data from ransomware and email scams, with verified backups so a lost or stolen site laptop is an inconvenience, not a '
+                        'disaster</li><li><strong>Rugged and BYOD device support</strong> — we help you manage the mix of company kit and staff-owned phones that inevitably ends up on site, with '
+                        'sensible security around company data</li><li><strong>Microsoft 365 and shared files</strong> — email, Teams, SharePoint and OneDrive set up so the whole team works from one '
+                        'tidy, current set of files</li></ul>'},
+               {'eyebrow': 'Getting Started',
+                'h2': 'How we get a construction firm set up',
+                'html': "<p>You don't need to rip anything out to work with us. We start where you are and fix the things that hurt most first. A typical onboarding runs like "
+                        "this:</p><ol><li><strong>A quick chat.</strong> Book a call and tell us how you're set up — how many in the office, how many sites, what software you live in and where the "
+                        'pain is right now.</li><li><strong>We map office and sites.</strong> We look at your machines, connectivity, Microsoft 365, files and backups so we understand the whole '
+                        'picture, HQ and the field.</li><li><strong>We stabilise the essentials.</strong> Backups verified, security tightened, email and shared files sorted, and any flaky site '
+                        'connectivity put on a proper footing.</li><li><strong>You go onto a simple monthly plan.</strong> Per computer, from £24.38/month, rolling monthly with no long lock-in — so '
+                        "your IT cost scales with the size of the firm, not a fixed contract.</li><li><strong>We're there when a site kicks off.</strong> New job starting? Tell us and we sort "
+                        'connectivity, devices and access for the new team before day one.</li></ol>'}],
+  'faqs': [{'q': 'Can you get us connected on a remote site with no broadband?',
+            'a': "Usually, yes. For most sites a 4G or 5G router in the compound or cabin gives you a solid working connection. Where there's genuinely no usable mobile signal, Starlink satellite "
+                 "gives you proper broadband almost anywhere. We'll advise on the right option for each site and get it running."},
+           {'q': 'Do you support our CAD, estimating and project software?',
+            'a': 'We keep the kit and systems around that software running — installing, updating, licensing and troubleshooting your estimating, project/programme, CAD and accounts packages so they '
+                 "stay fast and available. We're not the software vendor, but we're who you call when it won't open or throws an error before a deadline. Please note we specialise in Windows and "
+                 'Android, not Apple Macs.'},
+           {'q': 'How do you protect our drawings, contracts and client data?',
+            'a': 'With layered security and verified backups. We put proper protection around email and devices to help block ransomware and scams, keep off-site backups of your drawings, contracts '
+                 'and files so nothing is lost to a failed drive or a stolen site laptop, and help you meet the data-handling duties that come with holding client and project information. If a '
+                 'contract asks for Cyber Essentials, we can help you prepare for it too.'},
+           {'q': 'Our staff use their own phones on site — is that a problem?',
+            'a': "It's very common in construction and we can help you manage it safely. We help you put sensible controls around company data on staff-owned phones and tablets (BYOD), so people can "
+                 'access what they need on site without your drawings and emails walking out the door if a phone is lost or someone leaves.'},
+           {'q': 'How much does it cost for a firm with an office and a few sites?',
+            'a': 'Our business IT support is priced per computer, from £24.38 per month, plus Microsoft 365 from £4.85 per user per month if you need it. That means the cost scales with the size of '
+                 "your firm rather than a fixed lump. It's rolling monthly with no long lock-in contract — book a call and we'll give you a clear figure for your setup."},
+           {'q': 'Do you actually come to site, or is it all remote?',
+            'a': "Both. Most day-to-day issues we fix in minutes remotely — we connect with your permission, you watch, and access ends when we're done. When something needs hands on the kit, we "
+                 "come out across Bournemouth, Poole, Christchurch and the wider Dorset area. We're open Monday to Friday, 9am to 5pm, and aim to help the same day."}],
+  'schemaKind': 'service',
+  'serviceName': 'IT Support for Construction &amp; Building Firms',
+  'crossLinksHtml': '<ul><li>Remote or rural sites: <a href="/rural-and-farm-wifi-dorset/">rural &amp; farm Wi-Fi across Dorset</a></li><li>Day-to-day cover: <a href="/managed-it-support/">managed '
+                    'IT support</a> and our <a href="/business-it-support-plans/">business IT support plans</a></li><li>Protecting drawings, contracts &amp; client data: <a '
+                    'href="/cybersecurity-support/">cybersecurity support</a></li><li>Prefer to talk it through? <a href="/contact/">Get in touch</a> — we\'re just up the road.</li></ul>'},
+ {'slug': 'business-it-support-new-forest',
+  'title': 'Business IT Support New Forest & Lymington | 365 Techies',
+  'metaDesc': 'Fully managed business IT support for New Forest & Lymington firms — servers, Microsoft 365, cybersecurity and backups. A genuinely local team that helps same day.',
+  'ogTitle': 'Managed Business IT Support for the New Forest & Lymington',
+  'crumbName': 'Business IT (New Forest)',
+  'eyebrow': 'Business IT · New Forest',
+  'h1': 'Managed business IT support across the <em class="grad grad--cyan">New Forest & Lymington</em>',
+  'lede': 'Fully managed IT for New Forest and Lymington businesses — servers, Microsoft 365, cybersecurity and backups, looked after by a genuinely local, family-run team since 1995. Most issues '
+          'are fixed same day, usually within minutes remotely, with on-site cover across the Forest when you need hands-on help. Rated 4.9 on Google.',
+  'chips': ['Same-day local response', 'Windows & Microsoft 365 specialists', 'No lock-in — cancel anytime'],
+  'primaryCta': ['Book a call', '/contact/'],
+  'secondaryCta': ['See our business IT plans', '/business-it-support-plans/'],
+  'ctaHead': 'A local IT department for your New Forest business',
+  'ctaSub': 'Swap a distant, slow provider for a family-run team on your doorstep. Fully managed business IT from £24.38/month per computer, same-day help, and no lock-in contract. Rated 4.9 on '
+            'Google — book a call and tell us how your business works.',
+  'sections': [{'eyebrow': 'Local & Managed',
+                'h2': 'Fully managed IT for New Forest & Lymington businesses',
+                'html': "<p>Running a business in Lymington, Brockenhurst, Lyndhurst, New Milton or out toward the Ringwood edge, you shouldn't have to wait hours for a support desk two counties "
+                        "away to call you back. We're a genuinely local, family-run team who look after the whole of your IT — the machines your staff use, the server or cloud behind them, Microsoft "
+                        '365, your network, security and backups — so technology stops being a distraction and your day just runs.</p><p><strong>Fully managed means we own the problem, not just the '
+                        'ticket.</strong> We keep your systems patched, monitored and backed up, we phone before we connect, and most issues are sorted the same day — usually within minutes remotely '
+                        "over a secure Splashtop SOS session, with you watching the whole time and access ending the moment we're done. When something genuinely needs hands-on work, we come out to "
+                        'you across the Forest.</p><ul><li><strong>One team for everything</strong> — computers, servers, network, email, Microsoft 365, security and backups, all under one '
+                        "roof.</li><li><strong>Same-day, local response</strong> — a real person who knows your setup, not a distant queue. We're here Monday to Friday, 9am to "
+                        "5pm.</li><li><strong>Windows and Android specialists</strong> — we fully support Microsoft 365, servers and networks. In fairness, we're not an Apple/Mac "
+                        'shop.</li><li><strong>No lock-in</strong> — support is rolling monthly, cancel anytime, so we earn your business every month.</li></ul><p>Take a look at how we work on our '
+                        '<a href="/managed-it-support/">managed IT support</a> page, or the consumer-focused <a href="/it-support-new-forest/">IT support for New Forest homes and businesses</a> if '
+                        "you're a smaller setup.</p>"},
+               {'eyebrow': "What's Covered",
+                'h2': 'Servers, Microsoft 365, cybersecurity, backups and connectivity',
+                'html': '<p>Whatever your Forest business runs on, we keep it reliable and secure — and we explain it in plain English, never jargon.</p><ul><li><strong>Servers &amp; '
+                        'networks</strong> — on-premise servers, switches, firewalls and business Wi-Fi kept healthy, patched and properly configured as part of managed IT.</li><li><strong>Microsoft '
+                        '365</strong> — Outlook, Teams, OneDrive and SharePoint set up, secured and managed, with licences from £4.85 per user per month.</li><li><strong>Cybersecurity</strong> — '
+                        'layered protection with multi-factor sign-in, patching, business-grade antivirus and phishing-aware staff, plus help preparing for and working toward Cyber Essentials '
+                        "certification. We help you achieve it; we don't claim it ourselves.</li><li><strong>Verified backups &amp; recovery</strong> — automatic, off-site, regularly tested backups "
+                        "so ransomware or a failed drive doesn't stop your business.</li><li><strong>Reliable rural connectivity</strong> — for sites, yards and premises where broadband is patchy, "
+                        'we can sort dependable networking, including fixed-wireless links where a fixed line won\'t reach. See our <a href="/rural-and-farm-wifi-dorset/">rural &amp; farm Wi-Fi</a> '
+                        "work.</li></ul><p>If the worst happens and you're hit by an attack, we focus on practical incident response, recovery and hardening — getting you back up and locking things "
+                        "down. We'll also point you to the right authorities: report fraud to Action Fraud on 0300 123 2040, and any personal-data breach must be considered for ICO reporting within "
+                        "72 hours. We're not forensic investigators, lawyers or insurers, and we'll always be straight about that.</p><p>Every business is different, so we tailor the mix to how you "
+                        'actually operate — a quick call is the fastest way to scope it.</p>'},
+               {'eyebrow': 'Switching Made Easy',
+                'h2': 'Moving to a local provider — how it works',
+                'html': "<p>Most businesses that call us are tired of a provider who's slow, remote or has quietly stopped caring. Switching to us is straightforward and low-risk — here's the "
+                        'sequence:</p><ol><li><strong>Book a call.</strong> Tell us how many people and computers you have, what software you rely on, and where things currently frustrate '
+                        'you.</li><li><strong>We review your setup.</strong> Remotely (and on-site if useful) we map your machines, server, Microsoft 365, network, security and backups, and flag any '
+                        "risks.</li><li><strong>You get a clear plan and quote.</strong> A fixed, honest monthly price from £24.38 per computer, with exactly what's covered — no surprises, no "
+                        'lock-in.</li><li><strong>We handle the handover.</strong> We take over admin access, tidy up what needs it, and coordinate with your outgoing provider so nothing '
+                        'drops.</li><li><strong>We keep you covered.</strong> Proactive monitoring, patching and backups, plus same-day help whenever you need it — the same faces, month after '
+                        'month.</li></ol><p>There\'s no pressure and no obligation from a first conversation. See our <a href="/business-it-support-plans/">business IT support plans</a> for what\'s '
+                        'included.</p>'}],
+  'faqs': [{'q': 'Do you actually cover the New Forest and Lymington, or just Dorset?',
+            'a': "Yes — we cover businesses right across the New Forest, including Lymington, Brockenhurst, Lyndhurst, New Milton and out toward Ringwood. We're based in Bournemouth, so the Forest "
+                 'is genuinely local to us: most help is same-day and remote, with on-site visits when hands-on work is needed.'},
+           {'q': 'How much does managed business IT support cost?',
+            'a': "Fully managed business IT support starts from £24.38 per month per computer, with Microsoft 365 licences at £4.85 per user per month if you need them. It's rolling monthly with no "
+                 "lock-in — tell us your setup and we'll give you a clear, fixed quote before anything begins."},
+           {'q': 'Are we tied into a long contract?',
+            'a': "No. Support is rolling monthly and you can cancel anytime — there's no long lock-in. We'd rather earn your business every month by being genuinely useful than trap you in a "
+                 'contract.'},
+           {'q': 'Can you support our on-site server and business network?',
+            'a': "Yes. We fully support servers, networks, firewalls and business Wi-Fi as part of managed IT — kept patched, monitored and secure. We're Windows and Android specialists and a "
+                 "Microsoft Partner; in fairness, we're not an Apple/Mac shop."},
+           {'q': 'How quickly can you help if something goes wrong?',
+            'a': 'We respond the same day, Monday to Friday 9am–5pm, and most issues are fixed within minutes remotely over a secure Splashtop SOS session — we phone first, you watch the whole time, '
+                 "and access ends the moment we're done. When it needs hands-on work, we come out to you across the Forest."},
+           {'q': 'Can you help us improve our cybersecurity and work toward Cyber Essentials?',
+            'a': 'Yes. We put layered protection in place — multi-factor sign-in, patching, business-grade antivirus, verified backups and phishing-aware staff — and we help you prepare for and work '
+                 "toward Cyber Essentials certification. To be clear, we help clients achieve Cyber Essentials; we don't claim our own certification."}],
+  'schemaKind': 'service',
+  'serviceName': 'Managed Business IT Support for the New Forest & Lymington',
+  'crossLinksHtml': '<p>Explore related help: our <a href="/managed-it-support/">managed IT support</a> and <a href="/business-it-support-plans/">business IT support plans</a>, the consumer-focused '
+                    '<a href="/it-support-new-forest/">IT support for the New Forest</a>, and <a href="/rural-and-farm-wifi-dorset/">rural &amp; farm Wi-Fi</a> for premises where broadband is '
+                    'patchy.</p>'}]

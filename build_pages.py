@@ -4457,7 +4457,7 @@ CYBER_FAQS = [
   ("How do you protect against scams and viruses?", "We set up endpoint protection and web filtering, keep everything patched, filter phishing email, and give you a real human to ask whether a message is safe before you click."),
   ("Do you offer multi-factor authentication?", "Yes &mdash; we set up multi-factor authentication (MFA) and password managers the painless way, for home and business accounts, so a stolen password isn&rsquo;t enough to get in."),
   ("Can you review our business security?", "Yes &mdash; we provide plain-English business security reviews covering devices, email, backups, passwords, access and staff awareness, with clear recommendations."),
-  ("I think I&rsquo;ve been hacked &mdash; can you help?", "Yes. Contact us straight away and we&rsquo;ll help lock down your accounts, clean up affected devices, restore from backup if needed and stop it happening again."),
+  ("I think I&rsquo;ve been hacked &mdash; can you help?", "Yes. Contact us straight away &mdash; see our <a href=\"/business-hacked-emergency-help/\">emergency help for a hacked business</a>. We&rsquo;ll help lock down your accounts, clean up affected devices, restore from backup if needed and stop it happening again."),
   ("Do you provide cyber security for small businesses in Dorset?", "Yes &mdash; layered, managed protection sized for small businesses right across Dorset, Bournemouth and Poole: endpoint security, email filtering, MFA, patching, verified backups and monitoring, with a real local person to call. Pair it with <a href=\"/cyber-essentials/\">Cyber Essentials certification</a>."),
 ]
 add(

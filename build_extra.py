@@ -8973,7 +8973,9 @@ info_page(
   inner="""          <h2>Worried it&rsquo;ll be a hassle?</h2>
           <p>Most people put off switching because they fear disruption. In reality, we do the heavy lifting &mdash; transferring what&rsquo;s needed, securing your accounts and making sure nothing is lost.</p>
           <h2>No long contracts</h2>
-          <p>Our plans are rolling and cancel-anytime, so there&rsquo;s no risk in trying us. Most new customers tell us they wish they&rsquo;d switched sooner.</p>""",
+          <p>Our plans are rolling and cancel-anytime, so there&rsquo;s no risk in trying us. Most new customers tell us they wish they&rsquo;d switched sooner.</p>
+          <h2>Provider gone bust or vanished?</h2>
+          <p>If your current IT company has stopped responding, closed down or is holding your systems hostage, that&rsquo;s an emergency &mdash; see our <a href="/it-provider-gone-bust/">emergency IT takeover</a>, where we regain control of your domain, Microsoft 365 and backups and get you stable fast.</p>""",
   cta_args=("Ready to switch?", "Let&rsquo;s make moving to better IT support effortless.",
             ("Start the Switch", "/contact/"), ("View Monthly Plans", "/monthly-it-support/")),
 )
@@ -11989,6 +11991,7 @@ def industry_hub():
             blurb = blurb[:115].rsplit(" ", 1)[0] + "&hellip;"
         return f'          <a class="post-card" href="/{d["slug"]}/"><p class="post-card__cat">Industry</p><h3>{_ind_name(d)}</h3><p>{blurb}</p><span class="post-card__more">How we help &#8594;</span></a>'
     cards = "\n".join(card(d) for d in ALL_IND)
+    cards += '\n          <a class="post-card" href="/it-support-for-construction/"><p class="post-card__cat">Industry</p><h3>Construction &amp; Building Firms</h3><p>IT for building firms, sites and offices &mdash; reliable site connectivity, project software and cybersecurity.</p><span class="post-card__more">How we help &#8594;</span></a>'
     content = "\n".join([
       hero(bc("IT Support by Industry"), "// BY INDUSTRY",
            'IT support for <em class="grad grad--cyan">your line of work</em>',
