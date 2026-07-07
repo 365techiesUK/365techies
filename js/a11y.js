@@ -170,3 +170,25 @@
     }
   }
 })();
+
+
+/* Open external links in a new tab so visitors don't lose the 365 Techies site.
+   Skips links that already set a target; keeps any existing rel (e.g. sponsored). */
+(function () {
+  var host = location.hostname;
+  function fix(a) {
+    var href = a.getAttribute('href');
+    if (!href || a.hasAttribute('target')) return;
+    if (href.indexOf('http') !== 0) return;            // skip tel:/mailto:/sms:/# and relative
+    var h;
+    try { h = new URL(a.href).hostname; } catch (e) { return; }
+    if (!h || h === host || h === 'localhost') return; // internal link
+    a.setAttribute('target', '_blank');
+    var rel = (a.getAttribute('rel') || '').split(/\s+/).filter(Boolean);
+    if (rel.indexOf('noopener') === -1) rel.push('noopener');
+    a.setAttribute('rel', rel.join(' '));
+  }
+  function run() { var l = document.getElementsByTagName('a'), i; for (i = 0; i < l.length; i++) fix(l[i]); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
+  else run();
+})();

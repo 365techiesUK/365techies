@@ -190,11 +190,12 @@ body.menu-open .site-header { z-index: 70; }
   white-space: nowrap;
   transition: color 0.25s ease, text-shadow 0.25s ease;
 }
-@media (max-width: 1400px) {
-  .desktop-nav > a, .nav-item > a { padding: 0.55rem 0.5rem; font-size: 0.9rem; }
+@media (max-width: 1799px) {
+  .desktop-nav > a, .nav-item > a { padding: 0.55rem 0.45rem; font-size: 0.9rem; }
   .nav-cta { padding: 0.55rem 1.1rem !important; margin-left: 0.4rem; }
-  .nav-sos { padding: 0.55rem 0.85rem; }
-  .header-actions { gap: 0.6rem; }
+  .nav-sos { padding: 0.55rem 0.8rem; }
+  .header-actions { gap: 0.5rem; }
+  .header-bar { padding: 0 clamp(1.1rem, 3vw, 2.6rem); }  /* keep everything (incl. SOS) on screen on mid-width desktops */
 }
 .desktop-nav > a::after, .nav-item > a::after {
   content: "";
@@ -296,7 +297,7 @@ body.menu-open .site-header { z-index: 70; }
   box-shadow: 0 0 18px rgba(255, 59, 48, 0.4);
 }
 
-@media (max-width: 1380px) { .nav-sos__long { display: none; } }
+@media (max-width: 1799px) { .nav-sos__long { display: none; } }
 
 /* Hamburger */
 .mobile-menu-button {
@@ -1286,6 +1287,8 @@ body.menu-open { overflow: hidden; }
 .nav-phone svg { width: 15px; height: 15px; color: var(--cyan); flex: none; }
 .nav-phone:hover { border-color: var(--cyan); color: #fff; box-shadow: 0 0 22px rgba(29, 151, 227, 0.25); }
 @media (max-width: 480px) { .nav-phone { display: none; } }
+/* phone shows the number only when there's room; icon-only on mid-width desktops so the SOS button stays visible */
+@media (max-width: 1799px) { .nav-phone__num { display: none; } .nav-phone { padding: 0.5rem 0.7rem; } }
 /* Keep a visible, tappable phone number in the header on tablet + desktop
    (older/less-confident visitors want to phone — the mobile bottom bar covers <480px). */
 
@@ -1651,7 +1654,9 @@ html.ss-open { overflow: hidden; }
   background: rgba(125, 170, 220, 0.12); border: 1px solid var(--line); border-radius: 5px;
 }
 .nav-search__label { display: none; }
-@media (min-width: 1180px) { .nav-search__label { display: inline; } }
+.nav-search__k { display: none; }
+/* header search is icon-only until there's room, so the SOS button always fits */
+@media (min-width: 1800px) { .nav-search__label { display: inline; } .nav-search__k { display: inline-flex; } }
 @media (max-width: 620px) { .nav-search kbd, .nav-search .nav-search__k { display: none; } .nav-search { padding: 0 0.6rem; } }
 
 /* big search box (homepage + hubs) */
