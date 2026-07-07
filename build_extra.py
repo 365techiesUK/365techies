@@ -7636,6 +7636,15 @@ def free_tools_hub():
            f"365 Techies offers {pos - 1} free IT tools that run entirely in your web browser &mdash; no download, no sign-up, nothing installed, and your passwords and files never leave your device. <a href=\"/website-checker/\">Check your website</a>, <a href=\"/broadband-speed-checker/\">test your broadband</a>, <a href=\"/password-breach-checker/\">see if a password&rsquo;s leaked</a>, <a href=\"/pc-benchmark/\">benchmark your PC</a> and more.",
            cta1=("Talk to a Techie", "/contact/"), cta2=("View Monthly Plans", "/monthly-it-support/"),
            chips=["100% free","No download","Built in Dorset"]),
+      '''    <section class="section" aria-label="Search" style="padding-top:0">
+      <div class="wrap" style="display:flex;justify-content:center">
+        <button type="button" class="search-box" data-search-open aria-label="Search the website">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <span class="search-box__txt">Search all tools &amp; the whole site&hellip;</span>
+          <kbd>/</kbd>
+        </button>
+      </div>
+    </section>''',
       f'''    <section class="blog-section" aria-label="All free tools">
       <div class="wrap">
 {sections}      </div>
@@ -12650,9 +12659,21 @@ def build_new_page(d):
 {d['crossLinksHtml']}
       </div>
     </section>'''
+    _hubbox = ""
+    if d['slug'] in ("outlook-problems",):
+        _hubbox = '''    <section class="section" aria-label="Search" style="padding-top:0">
+      <div class="wrap" style="display:flex;justify-content:center">
+        <button type="button" class="search-box" data-search-open aria-label="Search the website">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <span class="search-box__txt">Search all Outlook fixes &amp; the whole site&hellip;</span>
+          <kbd>/</kbd>
+        </button>
+      </div>
+    </section>'''
     content = "\n".join([
       hero(bc(d['crumbName']), d['eyebrow'], d['h1'], hero_trust(d['lede']),
            cta1=tuple(d['primaryCta']), cta2=tuple(d['secondaryCta']), chips=list(d['chips'])),
+      _hubbox,
       sections,
       cross,
       faq_html(faqs),

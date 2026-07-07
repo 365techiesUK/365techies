@@ -453,6 +453,13 @@ def hub():
            chips=["Plain English", "Practical tips", "Updated regularly"]),
       f'''    <section class="section" style="padding-bottom:0" aria-label="Filter advice">
       <div class="wrap">
+        <div style="display:flex;justify-content:center;margin-bottom:1.6rem">
+          <button type="button" class="search-box" data-search-open aria-label="Search the website">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+            <span class="search-box__txt">Search guides, tools &amp; the whole site&hellip;</span>
+            <kbd>/</kbd>
+          </button>
+        </div>
         <div class="hub-filter" id="advice-filter">
           <button type="button" class="hub-chip is-active" data-filter="all">All</button>
 {chips_html}        </div>
@@ -538,6 +545,64 @@ with open(os.path.join(bp.BASE, "llms.txt"), "w", encoding="utf-8") as f:
     f.write("\n".join(llms_lines) + "\n")
 print("Wrote llms.txt with %d pages" % (len(bp.PAGES) + 1))
 
+# ---------------- client-side search index (site search overlay) ----------------
+import re as _sre, html as _shtml, json as _sjson
+_TOOL_SLUGS = set()
+try:
+    for _tk, _tv in bp.TOOLS.items():
+        _th = (_tv[1] if isinstance(_tv, (list, tuple)) else (_tv.get("href") if isinstance(_tv, dict) else "")) or ""
+        _th = _th.strip("/")
+        if _th and "/" not in _th:
+            _TOOL_SLUGS.add(_th)
+except Exception:
+    pass
+_BLOG_SLUGS = set(p["slug"] for p in POSTS)
+_COMPANY_SLUGS = {"about", "about-us", "our-values", "our-story", "meet-the-team", "reviews", "careers",
+                  "contact", "accessibility-statement", "privacy-policy", "cookie-policy", "terms",
+                  "sustainability", "why-choose-365-techies", "accreditations", "case-studies",
+                  "areas-covered", "service-level-agreement", "gdpr-it-compliance", "reviews-testimonials"}
+
+def _s_txt(s):
+    return _sre.sub(r"\s+", " ", _shtml.unescape(_sre.sub(r"<[^>]+>", " ", s or ""))).strip()
+
+def _s_title(t):
+    t = _shtml.unescape(_sre.sub(r"<[^>]+>", " ", t or ""))
+    t = _sre.sub(r"\s*[|]\s*365 Techies.*$", "", t).strip()
+    return _sre.sub(r"\s+", " ", t) or (t or "")
+
+def _s_headings(content):
+    hs = _sre.findall(r"<h[1-3][^>]*>(.*?)</h[1-3]>", content or "", _sre.S)
+    return " ".join(_s_txt(h) for h in hs)[:220]
+
+def _s_cat(s):
+    if s in _TOOL_SLUGS:
+        return "Free tools"
+    if s.startswith(("outlook-", "new-outlook-")) or s in ("the-set-of-folders-cannot-be-opened", "cant-open-attachments-in-outlook", "how-to-add-gmail-to-outlook", "how-to-go-back-to-classic-outlook", "recreate-outlook-profile-without-losing-emails"):
+        return "Outlook help"
+    if s.startswith("computer-repair-near-me-service-support-") or s.startswith("computer-repair-") or (s.startswith("it-support-") and not s.startswith("it-support-for-") and s not in ("it-support-by-industry", "it-support-uk-europe")):
+        return "Areas we cover"
+    if s.startswith(("dell-", "refurbished-", "threadripper", "custom-pc", "content-creator")) or s in ("gaming-pcs", "are-refurbished-laptops-any-good", "refurbished-vs-new-laptop", "is-it-safe-to-buy-a-refurbished-laptop", "worth-repairing-old-laptop", "how-to-choose-a-laptop"):
+        return "Computers & hardware"
+    if s in _BLOG_SLUGS or s.startswith(("how-to-", "what-is-", "is-it-", "are-", "should-i-")) or s.endswith("-guide"):
+        return "Guides & advice"
+    if s in _COMPANY_SLUGS:
+        return "About 365 Techies"
+    return "Support & services"
+
+_sindex = [{"u": "", "t": "365 Techies — IT Support & Computer Repair", "c": "About 365 Techies",
+            "d": "Friendly IT support and computer repairs for homes and businesses across Bournemouth, Poole and Dorset.", "h": "home"}]
+for _p in bp.PAGES:
+    _sl = _p.get("slug")
+    if not _sl:
+        continue
+    _sindex.append({"u": _sl, "t": _s_title(_p.get("title", "")), "c": _s_cat(_sl),
+                    "d": _s_txt(_p.get("desc", ""))[:170], "h": _s_headings(_p.get("content", ""))})
+with open(os.path.join(bp.BASE, "search-index.json"), "w", encoding="utf-8") as f:
+    _sjson.dump({"v": bp.TODAY, "pages": _sindex}, f, ensure_ascii=False, separators=(",", ":"))
+import os as _sos
+_ssize = _sos.path.getsize(os.path.join(bp.BASE, "search-index.json"))
+print("Wrote search-index.json with %d pages (%dKB)" % (len(_sindex), _ssize // 1024))
+
 # ---------------- custom 404 page ----------------
 _404_cards = "".join(
     f'          <a class="post-card" href="{h}"><h3>{l}</h3><span class="post-card__more">Go &#8594;</span></a>\n'
@@ -608,7 +673,7 @@ if os.path.exists(_css_src):
 import shutil as _shutil, subprocess as _subprocess
 _terser = os.path.join(bp.BASE, "node_modules", ".bin", "terser.cmd")
 # main/interior are ES modules (loaded with type=module); a11y/forms are classic scripts.
-for _js, _is_module in (("main", True), ("interior", True), ("a11y", False), ("forms", False)):
+for _js, _is_module in (("main", True), ("interior", True), ("a11y", False), ("forms", False), ("search", False)):
     _src = os.path.join(bp.BASE, "js", _js + ".js")
     _dst = os.path.join(bp.BASE, "js", _js + ".min.js")
     if not os.path.exists(_src):
@@ -626,5 +691,12 @@ for _js, _is_module in (("main", True), ("interior", True), ("a11y", False), ("f
             print("terser error for %s.js (falling back to copy): %s" % (_js, _e))
     if not _ok:
         _shutil.copyfile(_src, _dst)
+    # Stamp the live build date into search's index-fetch URL so a rebuilt index
+    # is never served stale from cache (the ?v= in source is only a placeholder).
+    if _js == "search":
+        _sc = open(_dst, encoding="utf-8").read()
+        _sc2 = _sre.sub(r"search-index\.json\?v=[0-9A-Za-z\-]+", "search-index.json?v=" + bp.TODAY, _sc)
+        if _sc2 != _sc:
+            open(_dst, "w", encoding="utf-8").write(_sc2)
     print("JS %s.js -> %s.min.js (%dKB -> %dKB)" % (
         _js, _js, os.path.getsize(_src) // 1024, os.path.getsize(_dst) // 1024))
