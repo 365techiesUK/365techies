@@ -10362,10 +10362,10 @@ info_page(
             <li>Forward scam texts to <strong>7726</strong> and scam emails to <strong>report@phishing.gov.uk</strong>.</li>
           </ul>
           <h2>How we help afterwards</h2>
-          <p>If a scammer had access to your computer, we&rsquo;ll check it over on a secure remote session &mdash; remove anything they left, secure your accounts and set up <a href="/how-to-set-up-two-factor-authentication/">two-factor authentication</a> so it can&rsquo;t happen again. Remember: <strong>we always phone you before we connect, and a genuine technician never cold-calls demanding access.</strong> Test yourself anytime with our <a href="/spot-the-scam/">Spot the Scam</a> quiz.</p>""",
+          <p>If a scammer had access to your computer, follow our dedicated step-by-step guide: <a href="/gave-a-scammer-remote-access/">I gave a scammer remote access &mdash; what to do now</a>. We&rsquo;ll check the computer over on a secure remote session &mdash; remove anything they left, secure your accounts and set up <a href="/how-to-set-up-two-factor-authentication/">two-factor authentication</a> so it can&rsquo;t happen again. Remember: <strong>we always phone you before we connect, and a genuine technician never cold-calls demanding access.</strong> Test yourself anytime with our <a href="/spot-the-scam/">Spot the Scam</a> quiz &mdash; and if you&rsquo;re reading this because you&rsquo;re <a href="/worried-about-a-parent-being-scammed/">worried about a parent</a>, we have a guide for that too.</p>""",
   faqs=[
     ("Should I keep talking to the scammer?","No &mdash; stop all contact. Don&rsquo;t reply, don&rsquo;t click anything, and never pay a &lsquo;fee&rsquo; to get your money back, as that&rsquo;s a second scam. Keep any messages as evidence, then report them."),
-    ("They had remote access to my screen &mdash; what now?","Disconnect the computer from the internet, change your important passwords from a different device, and don&rsquo;t use online banking on it until it&rsquo;s been checked. We can review it securely &mdash; and we always call before we connect."),
+    ("They had remote access to my screen &mdash; what now?","Disconnect the computer from the internet, change your important passwords from a different device, and don&rsquo;t use online banking on it until it&rsquo;s been checked. Follow our dedicated guide: <a href=\"/gave-a-scammer-remote-access/\">I gave a scammer remote access &mdash; what to do now</a>. We can review it securely &mdash; and we always call before we connect."),
     ("Can the police get my money back?","Reporting to Action Fraud helps build the bigger picture and is sometimes needed for a refund, but your bank is usually the fastest route to recovering money. Report to both."),
     ("I&rsquo;m not in Bournemouth &mdash; can you still help?","Yes. We help across the UK and Europe with fast, secure remote support, so we can check your computer and secure your accounts wherever you are."),
   ],
@@ -11259,8 +11259,12 @@ info_page(
           <p>The biggest favour you can do is to remove clutter. A clean desktop with large icons for the few things they actually use &mdash; email, video calls, the web, photos &mdash; is far less daunting than a screen full of things they&rsquo;ll never touch. Write a simple one-page note of how to do their favourite tasks, in their words.</p>
           <h2>Protect against scams from day one</h2>
           <p>Older people are targeted most, so a little protection goes a long way: good security software, a chat about never giving anyone remote access who phones out of the blue, and our <a href="/spot-the-scam/">Spot the Scam</a> quiz to practise together. Remind them: <strong>a genuine technician calls first and is someone you arranged &mdash; we never cold-call demanding access.</strong></p>
+          <h2>Setting up a new Windows 11 computer for an elderly parent</h2>
+          <p>If the new machine is a Windows 11 laptop or desktop, give yourself an hour: sign in with their Microsoft account (write the password somewhere sensible), let it finish its first updates, turn on the accessibility settings above, and remove the pre-installed clutter before they ever see the desktop. Set their email, printer and video calling up properly on day one &mdash; those three cause most of the worried calls later.</p>
+          <h2>Still on Windows 10? Plan the move kindly</h2>
+          <p>Windows 10 has reached the end of free support, so an older relative&rsquo;s trusty machine now needs a plan &mdash; upgrading it, replacing it, or bridging safely in the meantime. Our plain-English guide to <a href="/windows-10-end-of-life/">what Windows 10 end of life means</a> covers the honest options, and we&rsquo;ll happily <a href="/windows-11-upgrade-service/">handle the upgrade</a> and move everything across so nothing is lost &mdash; photos, emails, bookmarks and all.</p>
           <h2>You don&rsquo;t have to be the IT department</h2>
-          <p>If you&rsquo;d rather not be on call forever, we&rsquo;re glad to be the patient, friendly help at the end of the phone &mdash; that&rsquo;s a real specialism of ours. See how we support <a href="/it-support-for-retired-users/">retired users</a> and <a href="/family-it-support/">families</a>, and our <a href="/refer-a-friend/">refer a friend</a> offer if you&rsquo;re already with us.</p>""" + PRINT_BTN,
+          <p>If you&rsquo;d rather not be on call forever, we&rsquo;re glad to be the patient, friendly help at the end of the phone &mdash; that&rsquo;s a real specialism of ours. See how we support <a href="/it-support-for-retired-users/">retired people</a> and <a href="/family-it-support/">families</a> &mdash; or arrange it all from wherever you live with our <a href="/computer-help-for-elderly-parents/">computer help for elderly parents</a> &mdash; and our <a href="/refer-a-friend/">refer a friend</a> offer if you&rsquo;re already with us.</p>""" + PRINT_BTN,
   faqs=[
     ("Tablet or laptop &mdash; which is better for an older person?","It depends on what they want to do. Tablets are simpler for browsing, video calls and photos; laptops are better for typing and documents. We&rsquo;re happy to advise &mdash; see our <a href=\"/how-to-choose-a-laptop/\">buyer&rsquo;s guide</a>."),
     ("How do I stop them being scammed?","Good protection, automatic updates, two-factor authentication, and a simple rule: never give remote access or money to anyone who contacts you unexpectedly. Practise spotting scams together with our <a href=\"/spot-the-scam/\">quiz</a>."),
@@ -11300,8 +11304,10 @@ info_page(
         </ol>
       </div>
     </section>''',
-  inner="""          <h2>When to let us help instead</h2>
-          <p>Helping family is lovely &mdash; but it can be stressful for both of you, especially over the phone. If something&rsquo;s fiddly, security-related, or simply wearing you both out, we&rsquo;re glad to step in as the patient, friendly expert. We support people right across the UK and Europe with secure <a href="/remote-it-support/">remote help</a>, and crucially, <strong>we always phone first and they watch everything on screen</strong> &mdash; the safe opposite of a scam.</p>
+  inner="""          <h2>Helping elderly parents with technology from far away</h2>
+          <p>Most people reading this are helping elderly parents from far away &mdash; a different town, the other end of the country, sometimes abroad. Long-distance helping is genuinely hard: you can&rsquo;t see their screen, descriptions get muddled, and a five-minute fix becomes an hour of frustration for you both. The steps above make it workable; the two sections below make it sustainable.</p>
+          <h2>When to let us help instead</h2>
+          <p>Helping family is lovely &mdash; but it can be stressful for both of you, especially over the phone. If something&rsquo;s fiddly, security-related, or simply wearing you both out, we&rsquo;re glad to step in as the patient, friendly expert. We support people right across the UK and Europe with secure <a href="/remote-it-support/">remote help</a>, and crucially, <strong>we always phone first and they watch everything on screen</strong> &mdash; the safe opposite of a scam. If your parents are in Dorset and you&rsquo;re not, our <a href="/computer-help-for-elderly-parents/">computer help for elderly parents</a> page explains how families arrange and pay for ongoing support from anywhere.</p>
           <h2>Set them up to need less help</h2>
           <p>A simple, tidy setup with the <a href="/windows-accessibility-features-guide/">accessibility features</a> turned on, good <a href="/cybersecurity-support/">protection</a>, and a little confidence-building (our <a href="/avoiding-tech-overwhelm/">gentle guide</a> helps) means fewer worried calls for everyone.</p>""" + PRINT_BTN,
   faqs=[
@@ -11365,6 +11371,14 @@ info_page(
 def computer_help_for_seniors():
     slug="computer-help-for-seniors"
     desc="Friendly, patient computer help for older people - in one place. Plain-English guides on staying safe, accessibility, video calling, online banking and feeling confident with technology. From 365 Techies, a specialism since 1995."
+    SENIOR_FAQS=[
+      ("Will you explain things slowly and clearly?","Always. Patient, unhurried help is our specialism &mdash; we go at your pace, use plain English, and happily go over anything twice. There&rsquo;s no such thing as a silly question."),
+      ("Can my son or daughter arrange help on my behalf?","Yes &mdash; families often set up and pay for support for a parent, from anywhere in the country. Our <a href=\"/computer-help-for-elderly-parents/\">computer help for elderly parents</a> page is written just for them."),
+      ("I've forgotten my email password &mdash; can you help?","Yes, this is one of the most common things we sort out. We&rsquo;ll recover or reset your email safely, get it working on your devices again, and help you keep a sensible record so it&rsquo;s less stressful next time."),
+      ("How do I know a computer helper isn't a scammer?","A fair and important question. We <strong>always phone you first</strong> &mdash; we never cold-call, never use pop-ups, you watch everything we do on screen, and our access ends when the session ends. If anyone else rings out of the blue about your computer, put the phone down and call us on 01202 775566."),
+      ("Do you run computer lessons for older people?","Yes &mdash; friendly group classes at the Kinson Community Centre in Bournemouth, plus patient 1-to-1 tuition at home or remotely. See our <a href=\"/computer-lessons-for-seniors-bournemouth/\">computer lessons for seniors</a> page, or call for the current timetable."),
+      ("What does ongoing help cost?","Our home support plan is &pound;18.25 a month per computer &mdash; rolling monthly, cancel anytime. It covers help as often as you need it, with updates, security and backups quietly looked after for you."),
+    ]
     guides=[
       ("Get confident","Avoiding tech overwhelm","Feel calmer and more in control of technology &mdash; a gentle guide.","/avoiding-tech-overwhelm/"),
       ("Easier to use","Windows accessibility features","Bigger text, magnifier and read-aloud &mdash; free and built in.","/windows-accessibility-features-guide/"),
@@ -11422,13 +11436,15 @@ def computer_help_for_seniors():
         </ul>
       </div>
     </section>''',
+      faq_html(SENIOR_FAQS),
       cta("Help that treats you like family","Friendly, patient IT support for older people across Dorset and beyond &mdash; at home or remotely, always at your pace.",
           primary=("Talk to a Techie","/contact/"), secondary=("View Monthly Plans","/monthly-it-support/")),
     ])
     allitems=guides+support
     def schema(s,_d=desc,_it=[{"@type":"ListItem","position":i+1,"name":t,"url":SITE+href} for i,(cat,t,d,href) in enumerate(allitems)]):
         return graph([crumb(s,"Computer Help for Seniors"), webpage(s,"Computer Help for Seniors",_d,"CollectionPage"),
-                      {"@type":"ItemList","@id":SITE+"/computer-help-for-seniors/#list","itemListElement":_it}])
+                      {"@type":"ItemList","@id":SITE+"/computer-help-for-seniors/#list","itemListElement":_it},
+                      faqpage(s, SENIOR_FAQS)])
     add(slug=slug, title="Computer Help for Seniors & Older People (Patient & Plain English) | 365 Techies",
         desc=desc, og_title="Computer Help for Seniors | 365 Techies", schema=schema, content=content)
 computer_help_for_seniors()

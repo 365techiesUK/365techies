@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Easy-keyword + Outlook fix pages + Outlook hub + 10 B2B/emergency pages, rendered by build_extra.build_new_page().
+# Easy-keyword + Outlook + B2B/emergency + retiree-audience pages, rendered by build_extra.build_new_page().
 
 NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
   'title': 'Windows 11 Upgrade Service Poole & Bournemouth | 365 Techies',
@@ -949,8 +949,8 @@ NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
                           'dark.'}],
   'crossLinksHtml': '<p>Related pages: our full <a href="/off-grid-victron-energy/">off-grid & Victron energy</a> page with the live dashboards from our own van, <a '
                     'href="/lithium-battery-installs-dorset/">lithium battery installs in Dorset</a>, our <a href="/custom-vrm-dashboards/">custom VRM dashboards</a> (any layout, several sites on '
-                    'one live screen — worldwide), and — because we\'re an IT firm at heart — <a href="/it-support-dorset/">IT support across '
-                    'Dorset</a>. Ready to talk? <a href="/contact/">Get in touch</a> for a Victron design and quote.</p>'},
+                    'one live screen — worldwide), and — because we\'re an IT firm at heart — <a href="/it-support-dorset/">IT support across Dorset</a>. Ready to talk? <a href="/contact/">Get in '
+                    'touch</a> for a Victron design and quote.</p>'},
  {'slug': 'outlook-error-0x800ccc0e',
   'title': 'Fix Outlook Error 0x800ccc0e / 0x800ccc0f | 365 Techies',
   'metaDesc': "Outlook error 0x800ccc0e or 0x800ccc0f means Outlook can't reach your mail server. Follow our plain-English fix for classic Outlook on Windows, or we'll fix it remotely in minutes.",
@@ -6715,4 +6715,698 @@ NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
   'serviceName': 'Managed Business IT Support for the New Forest & Lymington',
   'crossLinksHtml': '<p>Explore related help: our <a href="/managed-it-support/">managed IT support</a> and <a href="/business-it-support-plans/">business IT support plans</a>, the consumer-focused '
                     '<a href="/it-support-new-forest/">IT support for the New Forest</a>, and <a href="/rural-and-farm-wifi-dorset/">rural &amp; farm Wi-Fi</a> for premises where broadband is '
-                    'patchy.</p>'}]
+                    'patchy.</p>'},
+ {'slug': 'gave-a-scammer-remote-access',
+  'title': 'Gave a Scammer Remote Access to Your Computer? | 365 Techies',
+  'metaDesc': "Let a scammer connect to your computer? Don't panic — six calm steps to take right now, then patient local help to check and clean it. Call 01202 775566.",
+  'ogTitle': 'Gave a Scammer Remote Access? Six Steps to Take Right Now',
+  'crumbName': 'Gave a Scammer Remote Access',
+  'eyebrow': 'Scam emergency · patient local help',
+  'h1': 'Gave a scammer <em class="grad grad--cyan">remote access</em> to your computer? Here\'s how to put it right',
+  'lede': 'Take a breath — this scam catches thousands of sensible people, and acting now puts it right. Work through the steps below, then let our patient local team check the computer over '
+          'properly before you use it for anything important.',
+  'chips': ['We phone first — never pop-ups', 'Family-run since 1995', 'Rated 4.9 on Google'],
+  'primaryCta': ['Call 01202 775566', 'tel:+441202775566'],
+  'secondaryCta': ['Money taken? Start here', '/ive-been-scammed-what-to-do/'],
+  'ctaHead': "Not sure what to do first? Just call — we'll talk you through it",
+  'ctaSub': 'A real local person answers, stays calm with you and checks the computer properly — remotely while you watch every move, or with a home visit across Bournemouth, Poole, Christchurch and '
+            'Dorset (we always call with an ETA first). Mon–Fri 9am–5pm, usually same day. Family-run since 1995.',
+  'sections': [{'eyebrow': "// DON'T BLAME YOURSELF",
+                'h2': 'This happens to sensible people — and it can be put right',
+                'html': '<p>If someone claiming to be Microsoft, BT, Amazon — or even your bank — talked you into letting them connect to your computer, you are not foolish and you are not alone. '
+                        "These criminals run professional, rehearsed operations: a convincing phone call, an alarming pop-up with a number to ring, or a 'refund' that suddenly looks like too much "
+                        "money landed in your account and must be sent back. They catch thousands of sensible people.</p><p>Here's the good news: <strong>acting now puts you back in "
+                        'control</strong>. The computer is almost never ruined, banks can often stop or recover money if they hear quickly, and every account the scammer might have touched can be '
+                        "secured. Work through the six steps below, then let us give the computer a proper once-over before you use it for anything important.</p><p>And if you'd rather just talk to "
+                        'a calm human first, <a href="tel:+441202775566">call us on 01202 775566</a> (Mon–Fri, 9am–5pm). This is something we help local people with, and we will never make you feel '
+                        'silly.</p>'},
+               {'eyebrow': '// DO THIS NOW',
+                'h2': 'Six steps to take right now',
+                'html': "<p>Do these in order. Steps 1 to 5 need no technical skill and don't need us — start straight away, whatever the time of day.</p><ol><li><strong>Disconnect the computer from "
+                        "the internet.</strong> Turn off the Wi-Fi or unplug the network cable from the back of the computer. This ends the scammer's connection and stops them coming back. Leave it "
+                        'disconnected until it has been checked.</li><li><strong>If money or bank details were involved, call your bank now.</strong> Dial <strong>159</strong> — a safe, memorable '
+                        'number that puts you straight through to your own bank — and tell them exactly what happened. They can freeze cards, watch the account and often stop or recover payments if '
+                        'they hear quickly. For the full money-and-reporting side, see our guide: <a href="/ive-been-scammed-what-to-do/">I\'ve been scammed — what to do</a>.</li><li><strong>Change '
+                        'your passwords — from a different device.</strong> Use your phone, a tablet or another computer, never the one the scammer touched. Change your <strong>email password '
+                        "first</strong> (whoever controls your email can reset everything else), then banking and shopping passwords, and turn on two-factor authentication wherever it's "
+                        "offered.</li><li><strong>Don't trust follow-up calls.</strong> The same gang often rings back as 'the refund department', 'the fraud team' or even 'the police', hoping to "
+                        'reconnect or squeeze out more. Hang up. Nobody legitimate asks to get back onto your computer out of the blue.</li><li><strong>Report it.</strong> Call Action Fraud on '
+                        '<strong>0300 123 2040</strong> — it takes a few minutes and genuinely helps the police track these gangs. If scam text messages were involved, forward them free to '
+                        '<strong>7726</strong>.</li><li><strong>Get the computer professionally checked before you bank on it again.</strong> Scammers often leave remote-access software or worse '
+                        'behind, and you can\'t tell just by looking. Don\'t use the computer for banking, shopping or email until it\'s had a proper check — <a href="tel:+441202775566">call us on '
+                        "01202 775566</a> and we'll take it from there.</li></ol>"},
+               {'eyebrow': '// HOW WE HELP',
+                'h2': 'How we make the computer safe again',
+                'html': "<p>When you call, you get a patient local person — the same familiar faces every time, never a call centre. Here's what we actually do:</p><ul><li><strong>Remove what they "
+                        "left behind.</strong> We find and remove any remote-access programs the scammer installed, along with any malware or fake 'support' tools.</li><li><strong>Check for hidden "
+                        'changes.</strong> Scammers sometimes create new user accounts, add browser extensions, weaken security settings or set up email forwarding rules so they can keep watching. '
+                        'We check all of it.</li><li><strong>Help secure your accounts.</strong> We help you set strong new passwords and switch on two-factor authentication, so a stolen password on '
+                        "its own is useless to them.</li><li><strong>Explain everything in plain English.</strong> You'll know exactly what we found, what it means and what we did — no jargon, no "
+                        "lectures, no rushing.</li></ul><p>Most checks are done remotely in a single session while you watch every move on your own screen. And if you'd rather nobody connected "
+                        'remotely for a while, we completely understand — we do home visits across Bournemouth, Poole, Christchurch and Dorset, and we always call with an ETA before we set off. For '
+                        'ongoing peace of mind afterwards, our <a href="/home-it-support-plans/">home IT support plan</a> is £18.25 a month per computer, rolling monthly, cancel anytime — and a son '
+                        'or daughter can set it up and pay for a relative.</p>'},
+               {'eyebrow': '// SPOT THE DIFFERENCE',
+                'h2': 'What legitimate remote help looks like',
+                'html': "<p>After an experience like this it's natural to distrust anyone who mentions 'remote access'. Good — that instinct will protect you. Here's how genuine remote support (ours "
+                        'included) differs from what just happened:</p><ul><li><strong>We phone first — always.</strong> Real support starts with a phone call you expected, at a time you agreed. It '
+                        'never starts with a pop-up, a cold call or a voicemail about a virus or a refund.</li><li><strong>You start the connection, not us.</strong> We can only connect when you '
+                        'read us the short code shown on your own screen — nothing happens without you.</li><li><strong>You watch everything.</strong> The whole session is visible on your screen, '
+                        "and you can end it at any moment.</li><li><strong>Access ends when the job ends.</strong> When the session closes, we're gone — no lingering access, nothing left running in "
+                        "the background.</li><li><strong>We will never ask you to log into your bank,</strong> read out security codes, buy vouchers or move money 'to keep it safe'. Nobody genuine "
+                        'will.</li></ul><p>Remember: Microsoft, BT and Amazon do not cold-call about viruses or refunds — ever. To sharpen your instincts for next time, try our free <a '
+                        'href="/spot-the-scam/">Spot the Scam quiz</a> or our free <a href="/online-safety-course/">online safety course</a>.</p>'}],
+  'faqs': [{'q': 'The scammer was only connected for a few minutes — am I still at risk?',
+            'a': "Possibly, and it's worth taking seriously. A few minutes is enough to install remote-access software, copy files or change settings, and you can't tell just by looking. Disconnect "
+                 "the computer from the internet, change your passwords from a different device, and don't use it for banking or shopping until it's been properly checked. Call us on 01202 775566 "
+                 "and we'll check it — most checks are done in a single session while you watch."},
+           {'q': 'They took money, or I gave them my card or bank details — what do I do first?',
+            'a': 'Contact your bank straight away, before anything else. Dial 159 — a safe, memorable number that puts you straight through to your own bank — and tell them exactly what happened. '
+                 "They can freeze cards and often stop or recover payments if they hear quickly. Then report it to Action Fraud on 0300 123 2040. Banks deal with this every day; you won't be the "
+                 "first person they've helped that morning."},
+           {'q': "Someone from 'the refund department' keeps phoning back — is that genuine?",
+            'a': "No. It's almost always the same gang, and calling back is part of the script — they may pose as a refund team, a fraud team or even the police. Hang up, don't let anyone reconnect "
+                 "to your computer, and don't move any money. If you're unsure whether a call is genuine, hang up and ring the organisation yourself on a number you've looked up independently."},
+           {'q': 'Do I need to throw the computer away or buy a new one?',
+            'a': "Almost never. Once the scammer's software is removed, the computer is scanned for malware and the hidden places they like to tamper with are checked, it's usually perfectly safe to "
+                 "carry on using. We'll tell you honestly if we ever find something that changes that — and explain exactly what we found in plain English."},
+           {'q': "Can I sort this out for my mum or dad if I don't live nearby?",
+            'a': "Yes — many of our calls come from sons and daughters. You can arrange the check on their behalf, and if you'd like ongoing cover you can set up and pay for a home IT support plan "
+                 'for a relative: £18.25 a month per computer, rolling monthly, cancel anytime. We phone before we ever connect, your relative watches everything on screen, and they see the same '
+                 'familiar faces every time — never a call centre.'},
+           {'q': "After what's just happened, how do I know your remote support is safe?",
+            'a': 'A very fair question. The difference is control: you call us (or we phone you at an agreed time — never out of the blue), and we can only connect via Splashtop SOS when you read us '
+                 "the code shown on your own screen. You watch the entire session, you can end it at any moment, and access ends completely when we're done. If you'd rather have no remote "
+                 "connections at all for now, we'll happily visit your home instead — and we call with an ETA before we set off."}],
+  'schemaKind': 'service',
+  'serviceName': 'Scammer Remote Access Removal & Computer Security Check',
+  'howToName': 'What to do if you gave a scammer remote access to your computer',
+  'howToSteps': [{'name': 'Disconnect the computer from the internet',
+                  'text': "Turn off the Wi-Fi or unplug the network cable from the back of the computer. This ends the scammer's connection and stops them getting back on. Leave it disconnected "
+                          'until it has been professionally checked.'},
+                 {'name': 'Call your bank if money or bank details were involved',
+                  'text': 'Dial 159 — a safe, memorable number that puts you straight through to your own bank — and tell them exactly what happened. They can freeze cards, watch the account and '
+                          'often stop or recover payments if they hear quickly.'},
+                 {'name': 'Change your passwords from a different device',
+                  'text': 'Use your phone, a tablet or another computer — never the one the scammer touched. Change your email password first, because whoever controls your email can reset '
+                          "everything else, then your banking and shopping passwords, and turn on two-factor authentication wherever it's offered."},
+                 {'name': "Don't trust follow-up calls",
+                  'text': "The same gang often rings back posing as 'the refund department', 'the fraud team' or even the police, hoping to reconnect or take more. Hang up. Nobody legitimate asks to "
+                          'get back onto your computer out of the blue.'},
+                 {'name': 'Report it to Action Fraud',
+                  'text': 'Call Action Fraud on 0300 123 2040 to report what happened — it takes a few minutes and helps the police track these gangs. If scam text messages were involved, forward '
+                          'them free to 7726.'},
+                 {'name': 'Get the computer professionally checked before using it for banking',
+                  'text': "Scammers often leave remote-access software or malware behind, and you can't tell by looking. Don't use the computer for banking, shopping or email until it's been "
+                          'checked. Call 365 Techies on 01202 775566 — we remove anything left behind, check for hidden changes and explain everything patiently.'}],
+  'crossLinksHtml': '<p>Related help: the money and reporting side is covered step by step in <a href="/ive-been-scammed-what-to-do/">I\'ve been scammed — what to do</a>. If you\'re worried '
+                    'something nasty was left behind, see our <a href="/virus-removal/">virus and malware removal</a> service. Sharpen your defences with our free <a href="/spot-the-scam/">Spot the '
+                    'Scam quiz</a> and free <a href="/online-safety-course/">online safety course</a>. Worried on someone else\'s behalf? See <a href="/worried-about-a-parent-being-scammed/">worried '
+                    'about a parent being scammed</a>, or just <a href="/contact/">get in touch</a>.</p>'},
+ {'slug': 'worried-about-a-parent-being-scammed',
+  'title': 'Worried a Parent Is Being Scammed? What to Do | 365 Techies',
+  'metaDesc': 'Worried your mum or dad is being scammed online? Signs to spot, how to raise it kindly, and the steps to take today — with patient local help in Dorset.',
+  'ogTitle': 'Worried a Parent Is Being Scammed Online? How to Help',
+  'crumbName': 'Worried About a Parent',
+  'eyebrow': 'Family scam help · Bournemouth &amp; Dorset',
+  'h1': 'Worried a parent is <em class="grad grad--cyan">being scammed online</em>? Here\'s what to do',
+  'lede': "It's a horrible feeling — and you're right to act on it. These scams are run by professional criminal gangs, and with a calm plan you can protect mum or dad without a single cross word.",
+  'chips': ['We phone first — they watch everything', 'Same familiar faces, never a call centre', 'Family-run in Bournemouth since 1995'],
+  'primaryCta': ['Call 01202 775566', 'tel:+441202775566'],
+  'secondaryCta': ['Arrange a computer check', '/contact/'],
+  'ctaHead': 'Talk it through with a patient local techie',
+  'ctaSub': "Call 01202 775566 (Mon–Fri, 9am–5pm) or text 07520 615332. We'll listen, tell you honestly what needs checking, and you can arrange — and pay for — everything from anywhere in the "
+            'country.',
+  'sections': [{'eyebrow': 'Spot the signs',
+                'h2': 'Signs a parent may be caught in a scam — even from a distance',
+                'html': "<p>You can't always sit beside mum or dad while they use their computer — but scams leave traces you can spot from a phone call or a Sunday visit. No single sign proves "
+                        'anything on its own; a pattern of them is worth acting on.</p><ul><li><strong>A new online friend they\'re secretive about.</strong> A companion, penfriend or "investment '
+                        'adviser" they\'ve never met in person — especially one who asks for money, gift cards or secrecy. That\'s the classic shape of a romance scam.</li><li><strong>Unusual bank '
+                        "activity.</strong> New payees, transfers they can't quite explain, gift card purchases, or a sudden reluctance to talk about money at all.</li><li><strong>The computer was "
+                        '"fixed" by someone who phoned.</strong> Genuine companies like Microsoft don\'t cold-call about viruses. If a stranger rang up and "sorted the computer", assume something '
+                        "may have been installed.</li><li><strong>New toolbars, apps or programs.</strong> Especially remote-access tools such as AnyDesk or TeamViewer that your parent doesn't "
+                        'remember asking for.</li><li><strong>Agitation around phone calls.</strong> Jumping up to answer at set times, taking calls in another room, or seeming flustered or upset '
+                        'after the phone rings.</li><li><strong>Prizes and piling-up subscriptions.</strong> A flurry of "you\'ve won" letters and emails, or lots of small recurring charges for '
+                        "services they never use.</li></ul><p>If money has already gone, don't wait — go straight to the steps below and speak to their bank. Dialling <strong>159</strong> connects "
+                        'you securely to most UK banks.</p>'},
+               {'eyebrow': 'The conversation',
+                'h2': 'How to raise it without shame',
+                'html': '<p>This is the part most families dread — nobody wants mum or dad to feel foolish. The kindest and most accurate framing is simple: <strong>blame the criminals, never the '
+                        'parent</strong>. These are professional gangs running scripted, rehearsed operations designed to catch intelligent, careful people — and they do. Being caught by one is not '
+                        'a sign of failing; it\'s a sign the criminals are good at their job.</p><p>Gentle ways to open the conversation:</p><ul><li><strong>Make it about the criminals:</strong> "I '
+                        'read about gangs phoning people and pretending to be Microsoft — it\'s frightening how convincing they are. Has anyone like that ever rung you?"</li><li><strong>Make it '
+                        'about yourself:</strong> "I nearly clicked a fake parcel text last week. Do you get those too?"</li><li><strong>Make it routine:</strong> "I\'m getting my own computer '
+                        'checked over — shall we get yours looked at at the same time?"</li></ul><p>Avoid "How could you fall for that?", and avoid taking over. If the conversation gets shut down, '
+                        "don't force it — leave the door open and try again another day. A calm second conversation achieves far more than a heated first one. Some families find our free <a "
+                        'href="/spot-the-scam/">Spot the Scam quiz</a> a friendly, no-blame way to talk about it together.</p>'},
+               {'eyebrow': 'Act today',
+                'h2': 'What to do today, step by step',
+                'html': "<p>Here's what we'd do today, in order. You don't need to be technical for any of it — and if you'd rather a professional handled the computer side, that's exactly what we "
+                        "do.</p><ol><li><strong>Talk kindly first.</strong> Use the openers above. The goal today is honesty, not blame — you need to know what's happened so "
+                        'far.</li><li><strong>Check the computer together — or have it checked.</strong> Look for unfamiliar programs, new toolbars and remote-access apps. If a caller was ever '
+                        'allowed to control the screen, read our guide on <a href="/gave-a-scammer-remote-access/">what to do after giving a scammer remote access</a> — that needs sorting before '
+                        'anything else.</li><li><strong>Secure the email account, then the bank.</strong> Change the email password first — a criminal inside the email can reset everything else — '
+                        "then online banking. Use strong passwords that aren't reused anywhere.</li><li><strong>Switch on two-factor authentication.</strong> Turn it on for email and banking, so a "
+                        'password alone is no longer enough to get in.</li><li><strong>Tell the bank and report it.</strong> If any money has been sent, call the bank straight away — dialling '
+                        '<strong>159</strong> connects you securely to most UK banks. Then report it to Action Fraud on <strong>0300 123 2040</strong>. Reporting matters even when no money was '
+                        "lost.</li><li><strong>Forward scam texts to 7726.</strong> It's free of charge and helps get scam numbers blocked for everyone.</li></ol><p>If your parent wants to work "
+                        'through it themselves, our step-by-step guide <a href="/ive-been-scammed-what-to-do/">I\'ve been scammed — what do I do?</a> is written to them directly, in plain '
+                        'English.</p>'},
+               {'eyebrow': 'How we help',
+                'h2': 'A patient, professional check — and protection that stays on',
+                'html': "<p>After a scam — or a near miss — the last thing your parent needs is another stranger asking to get onto their computer. That's why we work the way we "
+                        'do:</p><ul><li><strong>We phone first, at an arranged time.</strong> Never cold pop-ups, never out-of-the-blue calls — so nothing about our help feels anything like the scam '
+                        'did.</li><li><strong>They watch everything on screen.</strong> With our remote support your parent sees every click we make, and our access ends the moment the session '
+                        "ends.</li><li><strong>Same familiar faces.</strong> We're a small family firm, not a call centre — your parent gets to know the actual person helping "
+                        'them.</li><li><strong>Remote or in person.</strong> Most checks are done remotely in minutes via Splashtop SOS. Where a home visit is better, we come out across Bournemouth, '
+                        'Poole, Christchurch and wider Dorset — and we call with an ETA before we arrive.</li></ul><p>For ongoing peace of mind, our home IT support plan is <strong>£18.25 a month '
+                        "per computer</strong> — rolling monthly, cancel anytime, and we're not VAT registered so there's nothing added on top. It covers the patient, unhurried help that stops small "
+                        'worries becoming big ones. <strong>You can set the plan up and pay for it yourself, from anywhere</strong> — families often do exactly that for a parent in '
+                        'Dorset.</p><p>There\'s free help too: our <a href="/online-safety-course/">free online safety course</a> is open to everyone, and every page of this website has an '
+                        'accessibility toolbar with bigger text, higher contrast and read-aloud.</p>'}],
+  'faqs': [{'q': 'My mum insists her new online friend is genuine. What can I do?',
+            'a': "Don't issue ultimatums — romance scammers deliberately isolate people from their families, so staying close matters more than winning the argument. Gently agree some ground rules "
+                 "together, like never sending money or gift cards to someone she's never met in person. If you'd like, we can patiently check her computer for anything the contact may have asked "
+                 'her to install, and you can report concerns to Action Fraud on 0300 123 2040 even while the friendship continues.'},
+           {'q': 'Dad let a caller claiming to be from Microsoft onto his computer. How serious is that?',
+            'a': 'Treat it seriously but calmly. Microsoft never cold-calls about viruses, so the caller was a scammer, and anything they installed needs finding and removing. Change the email and '
+                 'banking passwords from a different device, tell the bank if any payment was made, and have the computer professionally checked. Our guide at /gave-a-scammer-remote-access/ walks '
+                 "through it step by step, or call us on 01202 775566 and we'll check it for you."},
+           {'q': "Can you check my parent's computer if I live far away?",
+            'a': 'Yes — families often arrange this from the other side of the country. We arrange a time, phone your parent first (never a cold call), and they watch everything on screen while we '
+                 'work remotely via Splashtop SOS. Our access ends when the session ends. If a home visit suits them better, we cover Bournemouth, Poole, Christchurch and wider Dorset, and we call '
+                 'with an ETA before we arrive. You can arrange and pay for it all from anywhere.'},
+           {'q': 'Should we report it even if no money was lost?',
+            'a': 'Yes. Report it to Action Fraud on 0300 123 2040 — reports help build the picture that catches these gangs, and having a report on record helps if the same criminals try again. '
+                 'Forward any scam texts to 7726 free of charge, and if money was sent, dial 159 to reach the bank securely.'},
+           {'q': 'How much does ongoing protection cost?',
+            'a': "Our home IT support plan is £18.25 a month per computer — a simple rolling monthly plan you can cancel anytime, and we're not VAT registered so there's nothing added. A family "
+                 "member can set it up and pay for it on a parent's behalf from anywhere. Microsoft 365 can be added at £4.85 per user per month if needed."},
+           {'q': 'Will you make my parent feel silly about what happened?',
+            'a': "Never. These scams are run by professional criminals whose full-time job is being convincing — being caught out is nothing to be ashamed of, and we say so plainly. We're a family "
+                 'firm, so your parent will see the same familiar faces each time — and everything is explained patiently, in plain English, at their pace.'}],
+  'schemaKind': 'service',
+  'serviceName': 'Scam check and computer protection for elderly parents',
+  'howToName': 'What to do today if you think a parent is being scammed',
+  'howToSteps': [{'name': 'Talk kindly first',
+                  'text': 'Open the conversation gently and blame the criminals, not your parent — these are professional gangs. The goal today is honesty, not blame, so you learn what has happened '
+                          'so far.'},
+                 {'name': 'Check the computer together, or have it checked',
+                  'text': 'Look for unfamiliar programs, new toolbars and remote-access apps such as AnyDesk or TeamViewer. If a caller ever controlled the screen, have the computer professionally '
+                          'checked before anything else.'},
+                 {'name': 'Secure the email account, then the bank',
+                  'text': 'Change the email password first, because a criminal inside the email can reset everything else. Then change the online banking password. Use strong passwords that are not '
+                          'reused anywhere.'},
+                 {'name': 'Switch on two-factor authentication',
+                  'text': 'Turn on two-factor authentication for email and online banking so a password alone is no longer enough for a criminal to get in.'},
+                 {'name': 'Tell the bank and report to Action Fraud',
+                  'text': 'If money has been sent, call the bank straight away — dialling 159 connects you securely to most UK banks. Then report the scam to Action Fraud on 0300 123 2040, even if '
+                          'no money was lost.'},
+                 {'name': 'Forward scam texts to 7726', 'text': 'Forward any scam text messages to 7726 free of charge. It helps the networks block the numbers for everyone.'}],
+  'crossLinksHtml': '<p>Related guides: <a href="/ive-been-scammed-what-to-do/">I\'ve been scammed — what to do</a>, <a href="/gave-a-scammer-remote-access/">I gave a scammer remote access</a>, <a '
+                    'href="/computer-help-for-elderly-parents/">computer help for elderly parents</a> and <a href="/safe-online-banking-for-beginners/">safe online banking for beginners</a>.</p>'},
+ {'slug': 'computer-help-for-elderly-parents',
+  'title': 'Computer Help for Elderly Parents in Dorset | 365 Techies',
+  'metaDesc': 'Live far from Mum or Dad in Bournemouth or Dorset? Set up patient, local computer help from anywhere — we phone first, £18.25/month per computer, cancel anytime.',
+  'ogTitle': 'Computer Help for Elderly Parents — Arranged by You, From Anywhere',
+  'crumbName': 'Help for Elderly Parents',
+  'eyebrow': 'For sons &amp; daughters · Bournemouth &amp; Dorset',
+  'h1': 'Computer help for your elderly parents — <em class="grad grad--cyan">arranged by you, wherever you live</em>',
+  'lede': "Your mum or dad is in Bournemouth, Poole, Christchurch or Dorset — and you might be in London or on the other side of the world. We're the patient, family-run local team who look after "
+          'their computer, so you can stop being the long-distance helpdesk.',
+  'chips': ['We always phone first — never cold pop-ups', 'Family-run since 1995 — same familiar faces', '£18.25/month per computer, cancel anytime'],
+  'primaryCta': ['Call 01202 775566', 'tel:+441202775566'],
+  'secondaryCta': ['See home support plans', '/home-it-support-plans/'],
+  'ctaHead': 'Ready to stop being the long-distance helpdesk?',
+  'ctaSub': "Call 01202 775566 (Mon–Fri, 9am–5pm) or text 07520 615332. Tell us a little about your mum or dad, and we'll arrange a friendly, unhurried introduction — never a surprise.",
+  'sections': [{'eyebrow': 'Sound familiar?',
+                'h2': "You've become the family IT department — from 200 miles away",
+                'html': "<p>You know the routine. The phone rings on a Tuesday evening: the printer has stopped, an update has moved everything, or a worrying pop-up won't go away. You try to fix it "
+                        'blind — <strong>"click the little blue picture… no, the other one"</strong> — and twenty minutes later you\'re both frustrated and nothing is fixed.</p><p>It\'s stressful '
+                        "for you, and it's often worse for your mum or dad, who hates feeling like a burden. And between calls, you quietly worry: are the updates being done? Is anything actually "
+                        "backed up? Would they spot a scam?</p><p>That's the job we take off your hands.</p>"},
+               {'eyebrow': 'What we do',
+                'h2': "A patient, local team who look after your parent's computer",
+                'html': "<p>365 Techies is a family-run team based at the Kinson Community Centre in Bournemouth. We've looked after local people's computers since 1995, we're rated 4.9 on Google, "
+                        "and we're a Microsoft Partner. Here's what your parent gets:</p><ul><li><strong>Remote fixes in minutes.</strong> Most problems are solved over a secure connection, usually "
+                        'the same day (Mon–Fri, 9am–5pm). We always phone your parent first, they watch everything happen on their own screen, and our access ends the moment the session '
+                        'ends.</li><li><strong>Home visits with a courtesy call.</strong> When a visit is needed, we come to them across Bournemouth, Poole, Christchurch and Dorset — and we always '
+                        'call ahead with an ETA, so they know exactly who is coming and when.</li><li><strong>The same familiar faces.</strong> No call centre, no scripts, no stranger every time. '
+                        'Your parent gets to know us by name — and we get to know their computer.</li><li><strong>Backups that actually happen.</strong> We keep the computer updated and secure, and '
+                        'we send friendly SMS reminders about backups so nothing important is left to chance.</li><li><strong>Plain English, endless patience.</strong> We explain things properly, at '
+                        "your parent's pace, without jargon — and we never, ever talk down to anyone.</li></ul>"},
+               {'eyebrow': 'How it works for you',
+                'h2': 'Set it all up from anywhere — London, Leeds or Los Angeles',
+                'html': "<p>You don't need to be in Dorset. Everything can be arranged over the phone or by email, from wherever you live:</p><ol><li><strong>Get in touch.</strong> Call 01202 775566 "
+                        '(Mon–Fri, 9am–5pm), text 07520 615332 or use our contact form. Tell us a little about your mum or dad and their computer.</li><li><strong>Set up the plan from '
+                        "anywhere.</strong> Home IT support is £18.25 a month per computer on a simple rolling plan. You can set it up and pay on your parent's behalf, and cancel anytime — no "
+                        'minimum term, no tie-in.</li><li><strong>We introduce ourselves properly.</strong> A friendly, arranged first phone call or visit — never a surprise — so your parent knows '
+                        'exactly who we are before anything else happens.</li><li><strong>They call us instead of you.</strong> When something goes wrong, your parent rings a familiar local team. '
+                        'Most fixes happen remotely in minutes while they watch on screen; if a visit is needed, we call ahead with an ETA.</li><li><strong>You stay in the loop.</strong> With your '
+                        "parent's permission, we let you know when something genuinely matters — a repair, a recommendation, anything worth a family conversation. You're never left chasing "
+                        "updates.</li></ol><p>That's it. You go back to being a son or daughter, and we'll be the IT department.</p>"},
+               {'eyebrow': 'Trust & safety',
+                'h2': 'Why parents feel safe with us — and why you can too',
+                'html': "<p>Trusting someone with your parents' computer is a big step, so here is exactly where we stand:</p><ul><li><strong>We phone first — always.</strong> We never connect to a "
+                        'computer out of the blue, and we never use scary pop-ups. If a cold caller ever claims to be "tech support", it isn\'t us.</li><li><strong>Your parent watches '
+                        'everything.</strong> During a remote session, everything happens on their own screen, right in front of them — and our access ends when the session '
+                        'ends.</li><li><strong>Family-run since 1995.</strong> More than three decades looking after Bournemouth, Poole, Christchurch and Dorset, rated 4.9 on '
+                        "Google.</li><li><strong>Real people in a real place.</strong> We're based at the Kinson Community Centre in Bournemouth — your parent is welcome to come in and meet "
+                        'us.</li></ul><p>We also help families stay scam-aware for free: our <a href="/online-safety-course/">online safety course</a> and <a href="/spot-the-scam/">scam-spotting '
+                        'quiz</a> are open to everyone, and this website has an accessibility toolbar with bigger text, higher contrast and read-aloud to make reading easier for your parent.</p>'}],
+  'faqs': [{'q': 'Can I set this up if I live in London — or abroad?',
+            'a': "Yes — that's exactly what this page is for. Everything is arranged over the phone or by email, you pay the £18.25-a-month-per-computer plan from wherever you live, and we look "
+                 'after your mum or dad in Bournemouth, Poole, Christchurch or the wider Dorset area.'},
+           {'q': 'Will my parents be comfortable with someone on their computer?',
+            'a': "We're very careful about this. We always phone first to arrange things — never cold pop-ups — and during a remote session your parent watches everything happen on their own screen. "
+                 'Our access ends when the session ends. And because they see the same familiar faces each time, we quickly stop being strangers.'},
+           {'q': "How will I know what's going on?",
+            'a': "With your parent's permission, we keep you in the loop whenever something matters — a repair, a replacement worth considering, or anything we think you'd want a say in. It's their "
+                 "computer, so it's always their say-so — but if they're happy for us to copy you in, we gladly will."},
+           {'q': 'My mum uses an iPad — can you help with that?',
+            'a': "We're honest about this: we specialise in Windows computers and Android phones and tablets, and we don't claim Apple expertise. If your mum's main computer is a Windows PC or "
+                 "laptop, we're a great fit; for Apple devices we'd suggest Apple's own support."},
+           {'q': 'What does it cost, and is there a contract?',
+            'a': "Home IT support is £18.25 per month per computer, on a rolling monthly plan you can cancel anytime — no minimum term, no tie-in, and we're not VAT registered, so there's no VAT "
+                 "added on top. If your parent needs Microsoft 365, that's £4.85 per user per month."},
+           {'q': 'Can you teach my dad, not just fix things for him?',
+            'a': 'Gladly. Patient one-to-one tuition can be arranged on request, and we run real in-person group sessions at the Kinson Community Centre in Bournemouth — call us on 01202 775566 for '
+                 'the current timetable.'}],
+  'schemaKind': 'service',
+  'serviceName': 'Computer Help for Elderly Parents',
+  'howToName': 'How to set up computer help for your parents from anywhere',
+  'howToSteps': [{'name': 'Get in touch', 'text': 'Call 01202 775566 (Mon–Fri, 9am–5pm), text 07520 615332 or use the contact form. Tell us a little about your mum or dad and their computer.'},
+                 {'name': 'Set up the plan from anywhere',
+                  'text': "Home IT support is £18.25 a month per computer on a rolling plan. Set it up and pay on your parent's behalf from wherever you live, and cancel anytime."},
+                 {'name': 'We introduce ourselves properly',
+                  'text': 'A friendly, arranged first phone call or visit — never a surprise — so your parent knows exactly who we are before anything else happens.'},
+                 {'name': 'They call us instead of you',
+                  'text': 'When something goes wrong, your parent rings a familiar local team. Most fixes happen remotely in minutes while they watch on screen; home visits come with an ETA call.'},
+                 {'name': 'You stay in the loop',
+                  'text': "With your parent's permission, we let you know when something genuinely matters — a repair or a recommendation — so you're never left chasing updates."}],
+  'crossLinksHtml': '<p>If your mum or dad would rather read about this themselves, our <a href="/computer-help-for-seniors/">computer help for seniors</a> page is written just for them. You may '
+                    'also find <a href="/family-it-support/">family IT support</a> and our <a href="/home-it-support-plans/">home IT support plans</a> helpful — and if scams are on your mind, try '
+                    'our free <a href="/spot-the-scam/">spot-the-scam quiz</a> together.</p>'},
+ {'slug': 'computer-lessons-for-seniors-bournemouth',
+  'title': 'Computer Lessons for Seniors in Bournemouth | 365 Techies',
+  'metaDesc': 'Friendly computer lessons for older people in Bournemouth. Group classes at Kinson Community Centre plus patient 1-to-1 tuition at home. Call 01202 775566.',
+  'ogTitle': 'Friendly Computer Lessons for Seniors in Bournemouth & Dorset',
+  'crumbName': 'Computer Lessons',
+  'eyebrow': 'Patient lessons · Bournemouth & Dorset',
+  'h1': 'Friendly <em class="grad grad--cyan">computer lessons for seniors</em> in Bournemouth',
+  'lede': 'Learn email, photos, video calls and staying safe online — at your own pace, with the same patient faces every time. Group classes at our base, the Kinson Community Centre, or one-to-one '
+          'tuition wherever suits you.',
+  'chips': ['Group classes at Kinson Community Centre', 'Patient 1-to-1 tuition on request', 'Family-run since 1995, rated 4.9 on Google'],
+  'primaryCta': ['Call 01202 775566', 'tel:+441202775566'],
+  'secondaryCta': ['Text 07520 615332', 'sms:07520615332'],
+  'ctaHead': 'Ready to feel at home with your computer?',
+  'ctaSub': "Call 01202 775566 for the current class timetable, or to arrange patient one-to-one tuition. Mon–Fri, 9am–5pm — you'll always speak to the same friendly faces, never a call centre.",
+  'sections': [{'eyebrow': 'Group classes · Kinson',
+                'h2': 'Real classes at the Kinson Community Centre',
+                'html': "<p>Our home is the Kinson Community Centre in Bournemouth — it's where we've offered community IT support for years, and it's where our group computer classes take place. "
+                        'Real people, in a real room, learning together. No rush, no jargon, and nobody made to feel daft.</p><p>Classes run regularly, and we keep things relaxed and unhurried: you '
+                        'practise the everyday things you actually want to do, and you can ask the same question as many times as you need. <strong>Call 01202 775566 for the current '
+                        "timetable</strong> — we'll happily talk you through what's coming up and help you pick a good starting point.</p>"},
+               {'eyebrow': 'One-to-one · Your pace',
+                'h2': 'Patient 1-to-1 tuition — at the centre, at home or over the internet',
+                'html': "<p>If a group isn't your thing, or you'd like extra help with something specific, we offer patient one-to-one tuition — arranged on request, around what suits "
+                        'you:</p><ul><li><strong>At the Kinson Community Centre</strong> — quiet, familiar and easy to get to.</li><li><strong>In your own home</strong> — across Bournemouth, Poole, '
+                        'Christchurch and Dorset, on your own computer at your own kitchen table. We always call with an ETA before we set off.</li><li><strong>Over the internet</strong> — we phone '
+                        "you first, you watch everything happening on your screen, and our access ends the moment the session does. Never a cold pop-up, ever.</li></ul><p>You'll see the same "
+                        "familiar faces every time — we're a family-run firm, not a call centre — so your tutor remembers you, your machine and exactly where you left off.</p>"},
+               {'eyebrow': "What you'll learn",
+                'h2': 'The basics, in plain English — no jargon',
+                'html': '<p>We teach the things that make everyday life easier, one step at a time:</p><ul><li>Sending and organising <strong>email</strong> with confidence</li><li>Saving, finding '
+                        'and sharing your <strong>photos</strong></li><li><strong>Video calls</strong> with the grandchildren</li><li><strong>Shopping and banking online safely</strong>, without the '
+                        'worry</li><li><strong>Spotting scams</strong> — dodgy emails, fake texts and suspicious phone calls</li><li>Getting comfortable with your <strong>smartphone or '
+                        "tablet</strong></li></ul><p>One honest note: we're specialists in <strong>Windows computers and Android phones and tablets</strong>. If you use an Apple iPad or iPhone we'll "
+                        "gladly point you towards help, but we won't pretend Apple is our strength — you deserve a teacher who genuinely knows your device inside out.</p><p>Between lessons, our free "
+                        '<a href="/online-safety-course/">online safety course</a> lets you keep learning at home at your own pace — and our <a href="/spot-the-scam/">spot-the-scam quiz</a> is a '
+                        'gentle way to practise spotting the fakes. And if reading a screen is a strain, this website has an accessibility toolbar with bigger text, higher contrast and read-aloud '
+                        'built in.</p>'},
+               {'eyebrow': 'Honest advice · Getting started',
+                'h2': "Free sessions exist too — here's how to start with us",
+                'html': "<p>Some honest advice first: free computer sessions do exist locally — libraries, Age UK and community groups all run them, and they can be a lovely place to start. We're "
+                        "the right fit when you want <strong>patient, unhurried, expert help</strong> — a family firm that's been looking after computers since 1995, the same faces who stick with "
+                        'you week after week, and somewhere to ask the "silly" questions. (There are none.)</p><ol><li><strong>Call 01202 775566</strong> (or text 07520 615332) and ask for the '
+                        "current class timetable — or just tell us what you'd like help with.</li><li><strong>Choose what suits you</strong>: join a group class at the Kinson Community Centre, or "
+                        'arrange one-to-one tuition at the centre, in your home or over the internet.</li><li><strong>Bring your questions</strong> — and your own laptop, tablet or phone if you have '
+                        "one, so you learn on the machine you'll actually use at home.</li><li><strong>Keep going between lessons</strong> with our free online safety course — and if you'd like "
+                        'someone on hand all year round, our home support plan is £18.25 a month per computer, rolling monthly, cancel anytime.</li></ol>'}],
+  'faqs': [{'q': "I've never used a computer before. Will I be able to keep up?",
+            'a': "Yes — complete beginners are exactly who our lessons are for. We go at your pace, not anyone else's, and you can ask the same question as many times as you like. There's no such "
+                 'thing as a silly question here — honestly.'},
+           {'q': 'How much do the lessons cost, and when are the classes?',
+            'a': "Classes at the Kinson Community Centre run regularly — call us on 01202 775566 and we'll give you the current timetable and prices, with no pressure at all. One-to-one tuition is "
+                 "arranged on request around what suits you, and we'll agree everything up front before you commit to anything."},
+           {'q': 'Do I need to bring my own laptop, tablet or phone?',
+            'a': "If you have one, please do — you'll learn fastest on the machine you actually use at home. If you don't have one yet, come anyway: we'll give you honest, jargon-free advice on what "
+                 'to buy (and what not to), with no pushy selling.'},
+           {'q': 'Can you teach me to use my iPad or iPhone?',
+            'a': "We'll be honest: we're Windows and Android specialists, so Apple devices aren't our strength and we won't pretend otherwise. If you use a Windows laptop or desktop, or an Android "
+                 "phone or tablet, you're in exactly the right place. For Apple help, we'll gladly point you in the right direction."},
+           {'q': 'Can I arrange lessons for my mum or dad?',
+            'a': "Of course — give us a call, tell us a little about them and what they'd like to learn, and we'll take it gently from there. A family member can also set up and pay for our "
+                 "£18.25-a-month home support plan on a relative's behalf, so help is on hand between lessons."},
+           {'q': 'What happens if I get stuck between lessons?',
+            'a': "You're never on your own. Our home IT support plan is £18.25 a month per computer — rolling monthly, cancel anytime — and most problems are fixed remotely in minutes. We always "
+                 'phone you first before connecting, you watch everything on your screen, and our access ends when the session ends. Hours are Mon–Fri, 9am–5pm.'}],
+  'schemaKind': 'service',
+  'serviceName': 'Computer Lessons for Seniors in Bournemouth',
+  'crossLinksHtml': '<p>Keep learning at home with our free <a href="/online-safety-course/">online safety course</a>, test yourself with our <a href="/spot-the-scam/">spot-the-scam quiz</a>, read '
+                    'about ongoing <a href="/computer-help-for-seniors/">computer help for seniors</a>, or compare our <a href="/home-it-support-plans/">home IT support plans</a>.</p>'},
+ {'slug': 'landline-switch-off-help',
+  'title': 'Landline Switch-Off Help Bournemouth | 365 Techies',
+  'metaDesc': 'The UK landline switch-off explained in plain English. What changes before 31 January 2027, what to do, and patient local help in Bournemouth, Poole & Dorset.',
+  'ogTitle': 'Landline Switch-Off Help in Bournemouth & Dorset — Plain English',
+  'crumbName': 'Landline switch-off',
+  'eyebrow': 'Plain-English help · Bournemouth & Dorset',
+  'h1': 'Help with the <em class="grad grad--cyan">landline switch-off</em> — without the worry',
+  'lede': "Your home phone is moving to a digital service by 31 January 2027 — and for most homes it's a small change, not a crisis. Here's what's happening, what to do, and how we can set it all up "
+          "for you if you'd rather not do it alone.",
+  'chips': ['We phone first — you watch everything on screen', 'Home visits across Bournemouth, Poole & Dorset', 'Same familiar faces since 1995'],
+  'primaryCta': ['Call 01202 775566', 'tel:+441202775566'],
+  'secondaryCta': ['Text 07520 615332', 'sms:07520615332'],
+  'ctaHead': 'Rather we just sorted it for you?',
+  'ctaSub': "Call 01202 775566 (Mon–Fri, 9am–5pm) or text 07520 615332. We'll explain what the switch-off means for your home and, if you like, book a visit to set everything up and test it with you "
+            '— we always call ahead with an arrival time.',
+  'sections': [{'eyebrow': 'The change',
+                'h2': 'What the landline switch-off actually means',
+                'html': "<p>The UK's old analogue phone network — the copper-line system landlines have used for decades — is being retired, with a deadline of <strong>31 January 2027</strong>. By "
+                        "then, every home phone will have moved to a digital service that works over your broadband (sometimes called VoIP), such as BT Digital Voice.</p><p>In practice, here's what "
+                        "changes:</p><ul><li><strong>Your phone plugs into the router</strong>, not the wall socket. For most people that's the whole change — same phone, same number, different "
+                        'socket.</li><li><strong>Extension phones around the house</strong> may need a small adapter to keep working. We can check yours.</li><li><strong>In a power cut, a digital '
+                        "phone stops working</strong>, because the router needs electricity. If you rely on your landline, your provider can supply a battery back-up — they're expected to help "
+                        "vulnerable customers with this — so do ask them.</li></ul><p>Nobody is taking your phone away, and your number stays the same. It's a change of plumbing, not a change of "
+                        'phone.</p>'},
+               {'eyebrow': 'Step by step',
+                'h2': 'What to do — five simple steps',
+                'html': "<ol><li><strong>Wait for your phone provider to contact you.</strong> They'll tell you your switch date and exactly what to do. You don't need to buy anything from anyone "
+                        'who rings you out of the blue — cold callers pushing "switch-off deals" are often scams.</li><li><strong>When your switch date arrives, plug your phone into the '
+                        "router.</strong> Most routers have a phone socket on the back — and if yours doesn't, your provider will sort out what you need. Same phone, same number — new "
+                        "socket.</li><li><strong>Ask your provider about a battery back-up</strong> if you rely on your landline — for example, if mobile signal is poor at home or you'd struggle "
+                        "without a phone during a power cut.</li><li><strong>If you have a telecare or pendant alarm, tell your alarm provider.</strong> This one really matters. It's their job to "
+                        "make sure your alarm works on the new digital line, and they need to know before you're switched over.</li><li><strong>If it all sounds daunting, let us do it with "
+                        "you.</strong> We'll come out, plug everything in, test it and not leave until you're happy — or talk you through it patiently over the phone.</li></ol>"},
+               {'eyebrow': 'Stay safe',
+                'h2': 'Watch out for switch-off scams',
+                'html': '<p>Sadly, criminals use the switchover as a hook. They phone pretending to be "from BT" or "from Openreach", claim your line is about to be cut off, and pressure people into '
+                        "paying a fee, sharing bank details or letting them connect to a computer.</p><p>A few simple rules keep you safe:</p><ul><li>A genuine provider <strong>won't cut you off out "
+                        'of the blue</strong> — the switchover happens with plenty of written notice.</li><li><strong>Never let a cold caller connect to your computer.</strong> Just hang up. If '
+                        "you're unsure whether a call was genuine, ring your provider back on the number printed on a bill.</li><li>Forward suspicious texts to <strong>7726</strong> (it's free), and "
+                        "report fraud to Action Fraud on <strong>0300 123 2040</strong>. If you've made a payment to a scammer, call <strong>159</strong> to reach your bank securely.</li><li>When "
+                        '<strong>we</strong> help you, we always phone first at an arranged time, you watch everything happening on your own screen, and our access ends when the session ends. You '
+                        "can always hang up and call us back on <strong>01202 775566</strong> to check it's really us — we'd never mind.</li></ul>"},
+               {'eyebrow': 'How we help',
+                'h2': "We'll set it up with you, at your pace",
+                'html': "<p>If you'd rather not wrestle with sockets and settings, we'll do it for you — in plain English, with no rush. We can:</p><ul><li>Set up your new digital phone connection "
+                        'and <strong>test it properly</strong> — dialling out and receiving a call before we call it done.</li><li>Check your <strong>extension phones</strong> and fit adapters where '
+                        "they're needed.</li><li>Make sure your <strong>broadband is up to the job</strong> and the router is somewhere sensible.</li><li>Leave you with simple notes and honest "
+                        "<strong>beware-of-scammers advice</strong>, so you know exactly what a genuine call looks like.</li></ul><p>It's usually a single, unhurried home visit — we cover "
+                        "Bournemouth, Poole, Christchurch and wider Dorset — and lots of questions can be answered remotely in minutes. We always call ahead with an arrival time, and you'll see the "
+                        "same familiar faces, never a call centre.</p><p>And if you'd like someone in your corner for all the little technology things — not just the switch-off — our home IT support "
+                        "plan is <strong>£18.25 a month per computer</strong>, rolling monthly, cancel anytime. A son or daughter can set it up and pay for a parent — it's just a simple monthly "
+                        'plan.</p>'}],
+  'faqs': [{'q': 'When is the landline switch-off happening?',
+            'a': "The UK's analogue phone network is being retired with a deadline of 31 January 2027, but homes are being moved in stages before then. Your phone provider will contact you with your "
+                 "own switch date — you don't need to do anything until they do."},
+           {'q': 'Will I lose my phone number or need a new phone?',
+            'a': 'No — you keep your number, and in most homes the same phone keeps working. The change is where it plugs in: into a socket on your broadband router instead of the wall. Extension '
+                 'phones sometimes need a small adapter, which we can sort out.'},
+           {'q': 'What happens to my phone in a power cut?',
+            'a': 'A digital phone line needs the router to have power, so it stops working during a power cut. If you rely on your landline — for instance if mobile signal is poor at home — ask your '
+                 "provider about a battery back-up unit. They're expected to help vulnerable customers with this."},
+           {'q': 'My mum has a pendant alarm — what does she need to do?',
+            'a': "The single most important step is to tell her alarm (telecare) provider about the switchover before her line changes. It's their job to make sure the alarm works on the new digital "
+                 "line. We don't handle telecare equipment ourselves, but we're happy to help with everything else — the phone, the router and testing."},
+           {'q': 'Someone phoned saying my landline will be cut off today unless I pay — is that real?',
+            'a': "No. Genuine providers give plenty of written notice and never demand instant payment or remote access to your computer. Hang up, and if you're worried, call your provider on the "
+                 "number from a bill. Report the call to Action Fraud on 0300 123 2040, forward scam texts to 7726, and if you've already paid, call 159 to reach your bank securely."},
+           {'q': 'Can you just set it all up for us?',
+            'a': "Yes. We do home visits across Bournemouth, Poole, Christchurch and Dorset — we'll plug in the new phone connection, test it, check your extensions and broadband, and explain "
+                 'everything in plain English. Many questions can also be sorted remotely in minutes. Call 01202 775566, Mon–Fri 9am–5pm.'}],
+  'schemaKind': 'service',
+  'serviceName': 'Landline switch-off help and digital phone setup',
+  'howToName': 'Getting ready for the UK landline switch-off',
+  'howToSteps': [{'name': 'Wait for your provider to contact you',
+                  'text': "Your phone provider will write to you with your switch date and instructions. You don't need to buy anything from cold callers — unexpected calls pushing switch-off deals "
+                          'are often scams.'},
+                 {'name': 'Plug your phone into the router',
+                  'text': "On your switch date, move your phone's cable from the wall socket to the phone socket on your broadband router. Same phone, same number — new socket. If your router "
+                          "doesn't have a phone socket, your provider will sort out what you need."},
+                 {'name': 'Ask about a battery back-up',
+                  'text': 'If you rely on your landline, ask your provider for a battery back-up unit so the phone keeps working in a power cut. Providers are expected to help vulnerable customers '
+                          'with this.'},
+                 {'name': 'Tell your telecare or pendant alarm provider',
+                  'text': "If you have a telecare or pendant alarm, contact your alarm provider before the switch. It's essential — and it's their job to make sure the alarm works on the new digital "
+                          'line.'},
+                 {'name': 'Ask us if it feels daunting',
+                  'text': "If you'd rather not do it alone, call 365 Techies on 01202 775566. We'll set up and test the new connection at a home visit across Bournemouth, Poole, Christchurch and "
+                          'Dorset, or guide you patiently over the phone.'}],
+  'crossLinksHtml': '<p><strong>Related help:</strong> worried a parent might be caught out by a switch-off scam? Read <a href="/how-to-stay-safe-from-online-scams/">how to stay safe from online '
+                    'scams</a>, try our free <a href="/spot-the-scam/">Spot the Scam quiz</a>, or see <a href="/ive-been-scammed-what-to-do/">what to do if you\'ve been scammed</a>. We also offer '
+                    'patient <a href="/computer-help-for-the-elderly-bournemouth/">computer help for older people in Bournemouth</a>, and simple <a href="/home-it-support-plans/">home IT support '
+                    'plans</a> for ongoing peace of mind.</p>'},
+ {'slug': 'smartphone-lessons-for-seniors',
+  'title': 'Smartphone Lessons for Seniors in Bournemouth | 365 Techies',
+  'metaDesc': 'Patient smartphone lessons for older people in Bournemouth, Poole and Dorset. Android specialists. Group sessions, 1-to-1 at home or remote. Call 01202 775566.',
+  'ogTitle': 'Smartphone Lessons for Seniors - Bournemouth, Poole & Dorset',
+  'crumbName': 'Smartphone lessons',
+  'eyebrow': 'Patient lessons · Bournemouth & Dorset',
+  'h1': 'Patient <em class="grad grad--cyan">smartphone lessons for seniors</em> in Bournemouth, Poole & Dorset',
+  'lede': 'Learn to use your phone at your own pace, with patient local techies who never rush and never talk down to you. Friendly group sessions in Kinson, 1-to-1 lessons in your own home, or help '
+          'over the phone — whatever suits you best.',
+  'chips': ['Android specialists', 'Same friendly faces every time', 'Group, 1-to-1 at home or remote'],
+  'primaryCta': ['Call 01202 775566', 'tel:+441202775566'],
+  'secondaryCta': ['Text 07520 615332', 'sms:07520615332'],
+  'ctaHead': 'Ready to feel at home with your phone?',
+  'ctaSub': 'Call 01202 775566 for the current group timetable at the Kinson Community Centre, or to arrange 1-to-1 lessons at home. Mon–Fri, 9am–5pm. Prefer to text? 07520 615332.',
+  'sections': [{'eyebrow': "What you'll learn",
+                'h2': 'Lessons built around what you actually want to do',
+                'html': '<p>We are Android specialists — Samsung, Google Pixel, Motorola and the rest — so if that is what is in your pocket, you are in exactly the right place. If you have an '
+                        'iPhone, we will be honest with you: we are not Apple specialists. Plenty of the basics work much the same way and we will happily help where we genuinely can, but we will '
+                        'never pretend to expertise we do not have.</p><p>Every lesson is shaped around you, but the things people most often ask us to teach are:</p><ul><li><strong>Calls, texts and '
+                        'WhatsApp</strong> — ringing family, replying to messages, and joining the family group chat.</li><li><strong>Photos</strong> — taking them, finding them again afterwards, '
+                        'and sharing them with the grandchildren.</li><li><strong>Video calls</strong> — seeing faces, not just hearing voices, wherever your family happens to '
+                        'live.</li><li><strong>Contactless payments</strong> — how paying by phone works, and the sensible precautions to take before you switch it on. If you would rather not use it '
+                        'at all, that is a perfectly good choice too.</li><li><strong>App stores, safely</strong> — how to tell a genuine app from a dodgy one before you tap '
+                        'install.</li><li><strong>Bigger text and louder sounds</strong> — the accessibility settings that make any phone far easier on the eyes and ears.</li><li><strong>Spotting '
+                        'scam texts and calls</strong> — what the tricks look like, and how to forward scam texts free to 7726 so the networks can block them.</li></ul><p>No jargon, no rushing, and '
+                        'no question is too small. Most people worry they will ask something silly — and honestly, in over thirty years we have never heard one.</p>'},
+               {'eyebrow': 'Three ways to learn',
+                'h2': 'Group sessions, 1-to-1 at home, or remote',
+                'html': '<p><strong>Friendly group sessions</strong> run at the Kinson Community Centre in Bournemouth, where we are based. They are relaxed, sociable and taken at the pace of the '
+                        'room. Call 01202 775566 for the current timetable.</p><p><strong>1-to-1 lessons at home</strong> across Bournemouth, Poole, Christchurch and wider Dorset. You learn on your '
+                        'own phone, on your own sofa, at your own speed — and we always call with an ETA before we set off, so you know exactly who is coming and when.</p><p><strong>Remote '
+                        'help</strong> for quick questions between lessons. We always phone first — never cold pop-ups — you watch everything happening on screen, and our access ends the moment the '
+                        'session does.</p><p>Whichever you choose, you will see the same familiar faces every time. We are a family firm, not a call centre, and we have been helping people across '
+                        'Dorset since 1995.</p>'},
+               {'eyebrow': 'Try this today',
+                'h2': 'A quick win: make the text bigger right now',
+                'html': '<p>Here is a small taste of a lesson. Menus vary a little between phone makes, but on most Android phones the pattern is the same:</p><ol><li>Open <strong>Settings</strong> '
+                        '— the cog-wheel icon on your home screen or in the app list.</li><li>Tap <strong>Display</strong> (on some phones the text options live under <strong>Accessibility</strong> '
+                        'instead).</li><li>Tap <strong>Font size</strong> — sometimes labelled <strong>Font size and style</strong> or <strong>Display size and text</strong>.</li><li>Drag the slider '
+                        'to the right until the sample text is comfortable to read. The change saves itself — nothing to confirm.</li><li>For a louder ring, go back to <strong>Settings</strong>, tap '
+                        '<strong>Sound and vibration</strong>, and raise the ring and notification sliders.</li></ol><p>Stuck on a step? That is completely normal — every phone maker hides these '
+                        'menus somewhere slightly different. Bring the phone along to a lesson, or ring us on 01202 775566 and we will find it together.</p><p>By the way, this website has its own '
+                        'accessibility toolbar — bigger text, higher contrast and read-aloud — so you can make this very page easier to read while you are here.</p>'},
+               {'eyebrow': 'Honest advice',
+                'h2': 'Free lessons exist — and sometimes they are the right call',
+                'html': '<p>We would rather you found the right help than simply chose us. Age UK runs sessions covering central Bournemouth postcodes, and many local libraries offer free digital '
+                        'help too — both are genuinely worth a look if you live nearby and a set session suits you.</p><p>Where we fit in:</p><ul><li><strong>We take our time.</strong> Lessons move '
+                        'at your pace, cover the same ground as often as you like, and nobody is watching the clock.</li><li><strong>We cover more of Dorset.</strong> Poole, Christchurch and the '
+                        'wider county, not just central Bournemouth — including 1-to-1 lessons in your own home.</li><li><strong>Same faces every time.</strong> You will never have to explain '
+                        'yourself afresh to a stranger at every session.</li><li><strong>Help between lessons.</strong> Many people add our home IT support plan — £18.25 a month per computer, '
+                        'rolling monthly, cancel anytime — so there is always a familiar voice to ring when something odd pops up.</li></ul><p>Adult children often arrange lessons for a parent from '
+                        'a distance and pay on their behalf — we are always happy to set that up with a single phone call.</p>'}],
+  'faqs': [{'q': 'I have an iPhone, not an Android — can you still teach me?',
+            'a': 'We will be honest with you: we are Android and Windows specialists, not Apple specialists. Many basics — WhatsApp, video calls, spotting scam texts — work much the same on an '
+                 'iPhone, and we are happy to help with those. But if you want deep iPhone expertise, we will say so plainly and point you in the right direction rather than muddle through.'},
+           {'q': 'How much do the lessons cost?',
+            'a': 'Group sessions and 1-to-1 tuition are arranged on request, so call us on 01202 775566 and we will tell you the current details before anything is booked — no obligation, no '
+                 'pressure. For ongoing help between lessons, our home IT support plan is £18.25 a month per computer, rolling monthly, cancel anytime.'},
+           {'q': 'Do I need to bring my own phone to a group session?',
+            'a': 'Yes please — and the charger if you can. You will learn far faster on the exact phone you use at home, because the buttons and menus will be in the same places when you practise '
+                 'later.'},
+           {'q': 'My mum keeps getting scam texts. Can you help her?',
+            'a': 'Yes — spotting scam texts and calls is a big part of our lessons. We show her what the tricks look like and how to forward scam texts free to 7726. If she ever loses money to a '
+                 'scam, she should call her bank straight away on 159 and report it to Action Fraud on 0300 123 2040. Our free Spot the Scam quiz is a good practice run too.'},
+           {'q': 'Can I arrange and pay for lessons for my parent from a distance?',
+            'a': 'Absolutely — adult children do this all the time. Give us a call, tell us what your mum or dad wants to get out of it, and we will handle the rest. You can also set up and pay for '
+                 'a simple monthly support plan on their behalf, so there is always someone patient for them to ring.'},
+           {'q': 'When are the group sessions at the Kinson Community Centre?',
+            'a': 'The timetable changes from time to time, so we do not publish it here — call 01202 775566 (Mon–Fri, 9am–5pm) and we will tell you the current sessions and help you pick one that '
+                 'suits.'}],
+  'schemaKind': 'service',
+  'serviceName': 'Smartphone Lessons for Seniors',
+  'howToName': 'How to make text bigger on an Android phone',
+  'howToSteps': [{'name': 'Open Settings', 'text': 'Tap the Settings app — the cog-wheel icon on your home screen or in the app list.'},
+                 {'name': 'Find the Display menu', 'text': 'Tap Display. On some phones the text options live under Accessibility instead.'},
+                 {'name': 'Choose Font size', 'text': 'Tap Font size — sometimes labelled Font size and style, or Display size and text.'},
+                 {'name': 'Adjust the slider', 'text': 'Drag the slider to the right until the sample text is comfortable to read. The change saves itself — nothing to confirm.'},
+                 {'name': 'Raise the volume too', 'text': 'Back in Settings, tap Sound and vibration and raise the ring and notification sliders so you never miss a call.'}],
+  'crossLinksHtml': '<p>Keep building your confidence: try our <a href="/computer-lessons-for-seniors-bournemouth/">computer lessons for seniors in Bournemouth</a>, take the free <a '
+                    'href="/online-safety-course/">online safety course</a>, test yourself with the <a href="/spot-the-scam/">Spot the Scam quiz</a>, or keep help on hand between lessons with a <a '
+                    'href="/home-it-support-plans/">home IT support plan</a>.</p>'},
+ {'slug': 'smart-tv-streaming-setup-help',
+  'title': 'Smart TV & Streaming Setup Help for the Elderly | 365 Techies',
+  'metaDesc': 'Patient smart TV & streaming setup help for seniors in Bournemouth, Poole & Dorset. Wi-Fi, iPlayer, ITVX and Netflix set up, steps written down. 01202 775566.',
+  'ogTitle': 'Smart TV & Streaming Setup Help for Older People in Dorset',
+  'crumbName': 'Smart TV & Streaming Help',
+  'eyebrow': 'Patient help · Bournemouth & Dorset',
+  'h1': 'Your new TV, <em class="grad grad--cyan">set up properly</em> — and explained without the rush',
+  'lede': "A smart TV shouldn't need three passwords and a manual just to watch the news. We come to you, connect everything, set up the programmes you actually watch, and show you the remote at "
+          'your pace.',
+  'chips': ['Home visits with an ETA call first', 'Same familiar faces, never a call centre', 'Rated 4.9 on Google'],
+  'primaryCta': ['Call 01202 775566', 'tel:+441202775566'],
+  'secondaryCta': ['Text 07520 615332', 'sms:07520615332'],
+  'ctaHead': 'Shall we get your TV sorted?',
+  'ctaSub': "Call us Monday to Friday, 9am–5pm, or send a text and we'll reply. We'll tell you honestly whether it needs a home visit or a quick fix over the phone, and give you a straightforward "
+            'quote.',
+  'sections': [{'eyebrow': 'The problem',
+                'h2': 'When a new TV feels anything but smart',
+                'html': "<p>Modern TVs are wonderful once they're set up — and baffling until they are. Straight out of the box there's Wi-Fi to connect, accounts to create, apps to find, and "
+                        'passwords to type in letter by letter with a remote control. BBC iPlayer wants one sign-in. ITVX wants another. Netflix wants a third.</p><p>Then, months later, a software '
+                        'update moves everything around, or an app quietly signs itself out — and a TV that worked perfectly on Sunday feels "broken" on Monday. It almost never is. It usually just '
+                        "needs someone patient to put things back and explain what happened.</p><p>That's what we do. We're a family-run firm that has looked after homes across Bournemouth, Poole, "
+                        "Christchurch and Dorset since 1995, and we're rated 4.9 on Google. <strong>No jargon, no rushing, no judgement.</strong></p>"},
+               {'eyebrow': 'What we do',
+                'h2': 'A patient setup visit, step by step',
+                'html': "<p>Setting up a TV usually takes one unhurried home visit — and we always <strong>phone with an ETA before we set off</strong>, so you're not left waiting in all day. Here's "
+                        'how a typical visit goes:</p><ol><li><strong>We call ahead with an ETA</strong>, so you know exactly who is coming and when.</li><li><strong>We connect the TV to your '
+                        "Wi-Fi</strong> and check the connection is strong enough for smooth viewing.</li><li><strong>We set up the apps and accounts you'll actually use</strong> — BBC iPlayer, "
+                        "ITVX, Channel 4, Netflix, Prime Video, whatever you watch — and nothing you won't.</li><li><strong>We put your favourites front and centre</strong>, so the programmes you "
+                        "love are one or two button presses away.</li><li><strong>We make it comfortable to read</strong> — subtitles switched on and sized properly if you'd like them, and larger "
+                        'menu text where the TV allows it.</li><li><strong>We show you the remote, without rushing</strong> — as many times as you like, until it feels natural.</li><li><strong>We '
+                        "write the simple steps down</strong> and leave them beside the TV, so there's something to glance at later.</li></ol><p>And where a fix doesn't need a visit at all — a "
+                        "sign-in that's dropped, an app that's wandered off the home screen — we can often sort it remotely or talk you through it calmly on the phone. There's no fixed menu price "
+                        "because every job is different: <strong>call us and we'll give you an honest quote</strong>.</p>"},
+               {'eyebrow': 'Honest about kit',
+                'h2': 'Android TV and Google TV are home ground',
+                'html': "<p>We're <strong>Windows and Android specialists</strong>, and it matters here. Android TV and Google TV — the software inside many Sony, Philips and TCL sets — are home "
+                        "ground for us, and Amazon Fire TV sticks are built on Android too, so they're familiar territory.</p><p>We'll be straight with you: <strong>we're not Apple TV "
+                        "specialists</strong>. If your equipment is Apple, tell us when you call and we'll say so honestly rather than muddle through at your expense.</p><p>One more honest "
+                        "distinction: this page is about setting up and taming the TV you already own. If what you'd really like is <strong>new equipment</strong> — a new TV, soundbar or full setup, "
+                        "supplied and installed — that's our separate home cinema and entertainment service, run with our partner Richer Sounds in Bournemouth. Same patient approach, different job; "
+                        'just mention it when you call.</p>'},
+               {'eyebrow': 'After the visit',
+                'h2': 'When apps sign out or move, we put it right',
+                'html': "<p>Smart TVs don't stay set up forever. Apps update, menus rearrange themselves, and every so often something signs itself out. For most people that's an occasional "
+                        "annoyance — for some, it's the moment the TV stops being used at all.</p><p>That's where our <strong>home IT support plan</strong> comes in: <strong>£18.25 a month per "
+                        "computer, rolling monthly, cancel anytime</strong> (we're not VAT registered, so there's nothing added on top). Plan customers don't wrestle with it or wait for a visiting "
+                        "grandchild — they simply call us, and we put it right, often remotely in minutes. You'll speak to the <strong>same familiar faces every time</strong>, never a call "
+                        'centre.</p><p>Two more things worth knowing. We <strong>always phone first</strong> before ever connecting remotely — never cold pop-ups — you watch everything happen on '
+                        "your screen, and our access ends when the session ends. And if you live further away, you can set up and pay for the plan on a parent's behalf; it's a simple monthly "
+                        'arrangement, and it means Mum or Dad always has someone patient to call.</p>'}],
+  'faqs': [{'q': "My mum's TV says she's signed out of iPlayer again — is it broken?",
+            'a': 'Almost certainly not. Streaming apps sign themselves out from time to time, often after a software update, and to many people that looks exactly like a broken TV. We sign '
+                 "everything back in, write down what to do if it happens again, and if she's on our support plan she can simply call us and we'll usually put it right remotely in minutes."},
+           {'q': 'Can you make the TV simpler for my dad to use?',
+            'a': "Yes — that's most of the job. We put his favourite apps front and centre, skip anything he'll never use, switch on subtitles if they help and size them so they're easy to read, and "
+                 "go through the remote patiently, as many times as he likes. We also leave simple written steps beside the TV so there's something to glance at later."},
+           {'q': 'How much does smart TV setup help cost?',
+            'a': "Every job is a little different, so we don't publish a one-size-fits-all price — call us on 01202 775566 for an honest quote. We'll tell you straight whether it needs a home visit "
+                 "or whether we can sort it more simply over the phone or remotely. We're not VAT registered, so there's no VAT added on top."},
+           {'q': 'Do you help with Apple TV?',
+            'a': "We're honest about this one: we're Windows and Android specialists, so Android TV, Google TV and Fire TV are home ground — but Apple TV isn't our specialism. If your equipment is "
+                 "Apple, tell us when you call and we'll say straight away whether we're the right people, rather than muddling through at your expense."},
+           {'q': 'Can you supply and fit a new TV or soundbar as well?',
+            'a': "Yes, but that's a separate service — our home cinema and entertainment installs, run in partnership with Richer Sounds in Bournemouth. This page is about setting up and looking "
+                 "after the TV you already own. If you'd like new equipment supplied and installed, mention it when you call and we'll point you the right way."},
+           {'q': 'I live miles away from my parents — can I arrange and pay for this for them?',
+            'a': "Of course. You can book the visit for them, and if you'd like ongoing cover you can set up and pay for the monthly support plan on their behalf: £18.25 a month per computer, "
+                 'rolling monthly, cancel anytime. We always phone with an ETA before we arrive, so nobody is surprised by a knock at the door.'}],
+  'schemaKind': 'service',
+  'serviceName': 'Smart TV & Streaming Setup Help',
+  'howToName': 'How our smart TV setup visit works',
+  'howToSteps': [{'name': 'We call ahead with an ETA', 'text': 'Before we set off we phone with a clear ETA, so you know exactly who is coming and when — no waiting in all day.'},
+                 {'name': 'Connect the TV to your Wi-Fi', 'text': 'We get the TV online and check the connection is strong enough for smooth, stutter-free viewing.'},
+                 {'name': 'Set up the apps and accounts you actually want',
+                  'text': "BBC iPlayer, ITVX, Channel 4, Netflix, Prime Video — whatever you watch. We create or sign in to the accounts and skip anything you won't use."},
+                 {'name': 'Put your favourites front and centre', 'text': 'We arrange the home screen so the programmes you love are one or two button presses away.'},
+                 {'name': 'Make it comfortable to read', 'text': "Subtitles switched on and sized properly if you'd like them, and larger menu text where the TV allows it."},
+                 {'name': 'Show you the remote, without rushing', 'text': 'We go through the remote patiently, as many times as you like, until it feels natural.'},
+                 {'name': 'Write the simple steps down', 'text': "We leave clear written steps beside the TV, so there's something to glance at whenever you need a reminder."}],
+  'crossLinksHtml': '<p>More patient help at home: our <a href="/home-cinema-entertainment/">home cinema &amp; entertainment installs</a> if you\'d like new kit supplied and fitted, <a '
+                    'href="/computer-help-for-seniors/">computer help for seniors</a>, <a href="/home-it-support-plans/">home IT support plans</a> for ongoing peace of mind, and <a '
+                    'href="/confident-video-calling/">confident video calling</a> for keeping in touch with family.</p>'},
+ {'slug': 'computer-support-gift-for-parents',
+  'title': 'Computer Support Gift for Elderly Parents | 365 Techies',
+  'metaDesc': 'A thoughtful gift for elderly parents: friendly local computer support from £18.25 a month per computer. You set it up and pay — they get patient, familiar help.',
+  'ogTitle': 'Give Mum or Dad a Year of Friendly Computer Support',
+  'crumbName': 'Gift of Computer Support',
+  'eyebrow': 'Thoughtful gift · Bournemouth &amp; Dorset',
+  'h1': 'Give mum or dad a year of <em class="grad grad--cyan">friendly computer support</em>',
+  'lede': "It's the present that makes every other gadget finally work. You set it up and pay — from anywhere — and your mum or dad gets patient, local help from the same friendly faces all year.",
+  'chips': ['£18.25 a month per computer', 'Same familiar local faces', 'We phone first, never pop-ups'],
+  'primaryCta': ['Call 01202 775566', 'tel:+441202775566'],
+  'secondaryCta': ['Set it up from anywhere', '/contact/'],
+  'ctaHead': 'Give the gift that makes everything work',
+  'ctaSub': "Call 01202 775566 (Mon–Fri, 9am–5pm) or text 07520 615332 — tell us about your mum or dad and we'll take it gently from there.",
+  'sections': [{'eyebrow': 'Why this gift',
+                'h2': 'Better than another gadget',
+                'html': '<p>Most presents for older parents add something new to learn. This one does the opposite: it makes everything they already own work properly — the laptop, the printer that '
+                        'never prints, the email that stopped syncing, the tablet gathering dust in a drawer.</p><ul><li><strong>It ends the family helpdesk.</strong> No more talking dad through '
+                        'settings over the phone on a Sunday evening. When something goes wrong, they call us instead — and your visits go back to being visits.</li><li><strong>It lasts all year, '
+                        "not one afternoon.</strong> A gadget gets opened once. Support is there every single time something confusing pops up.</li><li><strong>It's the same friendly faces.</strong> "
+                        "Your parents deal with the same small, family-run local team every time — never a call centre, never a stranger.</li></ul><p>There's no voucher or gift card to buy, because "
+                        "none is needed. Our home support plan is a simple rolling subscription: <strong>£18.25 a month per computer</strong>, cancel anytime, and we're not VAT registered so that's "
+                        'the full price. A "year of support" is simply twelve months you choose to pay for — a birthday, Christmas or just-because present that keeps working long after the wrapping '
+                        'paper has gone.</p>'},
+               {'eyebrow': 'Setting it up',
+                'h2': 'How it works — you can arrange it from anywhere',
+                'html': "<p>You don't need to live in Dorset — you can arrange everything from wherever you are, by phone or online. Here's how it goes:</p><ol><li><strong>Get in touch.</strong> "
+                        'Call us on 01202 775566 (Mon–Fri, 9am–5pm), text 07520 615332, or set it up online from wherever you are.</li><li><strong>Tell us about your mum or dad.</strong> What '
+                        'computer they have, what they use it for, and anything they find worrying — no detail is too small.</li><li><strong>We introduce ourselves gently.</strong> A friendly first '
+                        'phone call, in plain English, at a pace that suits them. No jargon, no rushing, no talking down.</li><li><strong>You stay in the loop.</strong> You set up and pay the '
+                        "monthly plan; we keep you posted, so you always know they're looked after.</li></ol><p>From then on, when anything plays up, your parent simply rings the number by their "
+                        "computer. Most problems are fixed remotely in minutes — and we always <strong>phone first</strong> before connecting, so they know it's really us. They watch everything "
+                        'happen on their own screen, and our access ends the moment the session does.</p>'},
+               {'eyebrow': "What's included",
+                'h2': 'What mum or dad actually gets',
+                'html': '<ul><li><strong>Help that phones first.</strong> We never connect out of the blue and there are no scary pop-ups. We ring, they answer, and they can see everything we do on '
+                        'their screen.</li><li><strong>Fast remote fixes.</strong> Most problems are sorted in minutes over a secure remote session, Monday to Friday, 9am to '
+                        '5pm.</li><li><strong>Home visits when needed.</strong> Across Bournemouth, Poole, Christchurch and the rest of Dorset — and we always call with an arrival time first, so '
+                        'nobody is left waiting by the door.</li><li><strong>The same familiar faces.</strong> A small family-run team, going since 1995 and rated 4.9 on Google. Your parents will '
+                        'get to know us by name.</li><li><strong>Backup reminders by text.</strong> A friendly SMS nudge so precious photos and documents stay safe.</li><li><strong>Patient 1-to-1 '
+                        "tuition, arranged on request.</strong> If they'd like to learn — video calls, email, online shopping — we teach at their pace. We also run real group classes at the Kinson "
+                        'Community Centre in Bournemouth; call for the current timetable.</li></ul><p>There are free extras too: our online safety course, a scam-spotting quiz, and an accessibility '
+                        'toolbar on this website with bigger text, higher contrast and read-aloud — all made with older users in mind.</p>'},
+               {'eyebrow': 'An honest comparison',
+                'h2': 'Local faces, not a national call queue',
+                'html': "<p>There are national, remote-only tech support services, and for some families they work well. We'd rather be honest about the difference than pretend they don't "
+                        "exist.</p><ul><li><strong>Local, and in person when it matters.</strong> Some problems — a new router, a stubborn printer, a computer that won't switch on — need someone at "
+                        "the door. We're based at the Kinson Community Centre in Bournemouth and visit homes across Dorset.</li><li><strong>The same people every time.</strong> Your parents won't "
+                        'have to repeat their story to a different stranger on every call. Familiarity is half the reassurance.</li><li><strong>Built for older users.</strong> Patient, plain-English '
+                        "help is our everyday work, not a special request.</li></ul><p>One thing we're upfront about: we specialise in Windows computers and Android phones and tablets. If your "
+                        "parents are all-Apple, we may not be the right fit — and we'll say so rather than take your money.</p>"}],
+  'faqs': [{'q': 'Is there an actual gift voucher I can buy?',
+            'a': "No — and that's deliberate. The plan is a simple rolling monthly subscription at £18.25 per computer, so there's nothing to buy or redeem. You set it up in your name, pay monthly "
+                 'for as long as you like, and twelve months makes a lovely "year of support". You can even time the first month to start on a birthday or at Christmas.'},
+           {'q': 'Can I set it up and pay if I live miles away?',
+            'a': "Yes. You can arrange everything by phone or online from wherever you live — you don't need to be anywhere near Dorset. You pay the monthly plan, and your mum or dad gets the help. "
+                 "We'll keep you in the loop so you always know how things are going."},
+           {'q': 'How much does it cost, honestly?',
+            'a': "£18.25 a month per computer, rolling monthly, cancel anytime. We're not VAT registered, so there's nothing added on top. Patient one-to-one tuition is arranged separately on "
+                 'request — just ask when you call.'},
+           {'q': 'My parents are wary of anyone getting into their computer. How do you handle that?',
+            'a': "Very carefully — and that wariness is healthy. We always phone first before connecting, so they know it's really us and never a cold pop-up. They watch everything we do on their "
+                 'own screen, and our access ends completely when the session ends. Nothing happens behind their back.'},
+           {'q': 'Do you visit in person, or is it all done remotely?',
+            'a': 'Both. Most fixes are done remotely in minutes, which saves everyone waiting in. When a visit is needed, we come to homes across Bournemouth, Poole, Christchurch and Dorset — and we '
+                 'always ring ahead with an arrival time.'},
+           {'q': 'They have an iPad and a Mac — can you still help?',
+            'a': "We're honest about this: we specialise in Windows computers and Android phones and tablets, and we don't claim Apple expertise we don't have. If your parents are mostly on Apple "
+                 "devices, we may not be the right fit — and we'll tell you so rather than take your money."}],
+  'schemaKind': 'service',
+  'serviceName': 'Computer Support for Elderly Parents',
+  'howToName': 'How to give a parent a year of computer support',
+  'howToSteps': [{'name': 'Get in touch', 'text': 'Call 365 Techies on 01202 775566 (Mon–Fri, 9am–5pm), text 07520 615332, or use the online contact form — you can arrange everything from anywhere.'},
+                 {'name': 'Tell us about your parent',
+                  'text': 'Let us know what computer they have, what they use it for, and anything that worries them, so we can pitch the first conversation just right.'},
+                 {'name': 'We introduce ourselves gently',
+                  'text': 'We make a friendly first phone call in plain English, at their pace, with no jargon — so your mum or dad knows exactly who we are before any help begins.'},
+                 {'name': 'You stay in the loop',
+                  'text': "You set up and pay the rolling £18.25-a-month-per-computer plan; your parent gets the help; we keep you posted so you always know they're looked after."}],
+  'crossLinksHtml': '<p>More ways we help families: <a href="/computer-help-for-elderly-parents/">computer help for elderly parents</a>, <a href="/family-it-support/">family IT support</a> and <a '
+                    'href="/computer-lessons-for-seniors-bournemouth/">computer lessons for seniors in Bournemouth</a>.</p>'}]
