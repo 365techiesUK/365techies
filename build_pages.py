@@ -173,6 +173,7 @@ HEADER = '''  <header class="site-header">
             <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
             <a href="/cctv-smart-home/">CCTV &amp; Smart Home</a>
             <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
+            <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
             <a href="/starlink-internet/">Starlink Internet</a>
             <a href="/agentic-ai-systems/">Agentic AI &amp; Automation</a>
             <a href="/it-support-by-industry/">IT Support by Industry</a>
@@ -316,6 +317,7 @@ HEADER = '''  <header class="site-header">
           <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
           <a href="/cctv-smart-home/">CCTV &amp; Smart Home</a>
           <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
+          <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
           <a href="/starlink-internet/">Starlink Internet</a>
           <a href="/agentic-ai-systems/">Agentic AI &amp; Automation</a>
           <a href="/it-support-by-industry/">IT Support by Industry</a>
@@ -545,6 +547,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/content-creator-pcs/">Content Creator PCs</a>
         <a href="/home-cinema-entertainment/">Home Cinema &amp; AV</a>
         <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
+        <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
         <a href="/lithium-battery-installs-dorset/">Leisure &amp; Marine Batteries</a>
         <a href="/rural-and-farm-wifi-dorset/">Rural &amp; Farm Wi-Fi</a>
         <a href="/starlink-internet/">Starlink Internet</a>

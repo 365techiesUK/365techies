@@ -948,7 +948,8 @@ NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
                   'text': "We link your system to Victron's VRM cloud portal so you get your own live dashboard and we monitor it remotely — spotting and fixing issues before they leave you in the "
                           'dark.'}],
   'crossLinksHtml': '<p>Related pages: our full <a href="/off-grid-victron-energy/">off-grid & Victron energy</a> page with the live dashboards from our own van, <a '
-                    'href="/lithium-battery-installs-dorset/">lithium battery installs in Dorset</a>, and — because we\'re an IT firm at heart — <a href="/it-support-dorset/">IT support across '
+                    'href="/lithium-battery-installs-dorset/">lithium battery installs in Dorset</a>, our <a href="/custom-vrm-dashboards/">custom VRM dashboards</a> (any layout, several sites on '
+                    'one live screen — worldwide), and — because we\'re an IT firm at heart — <a href="/it-support-dorset/">IT support across '
                     'Dorset</a>. Ready to talk? <a href="/contact/">Get in touch</a> for a Victron design and quote.</p>'},
  {'slug': 'outlook-error-0x800ccc0e',
   'title': 'Fix Outlook Error 0x800ccc0e / 0x800ccc0f | 365 Techies',

@@ -2506,7 +2506,8 @@ def off_grid():
           <h2 class="section-title" data-title>See your off-grid power in your <em class="grad grad--cyan">365 AI OS</em><span class="title-underline"></span></h2>
           <p>Because we&rsquo;re an IT and monitoring company at heart, your off-grid system doesn&rsquo;t just sit in a cupboard. Our <a href="/365-ai-os/">365 AI OS</a> includes a live <strong>Off-Grid dashboard</strong> that reads your Victron VRM data &mdash; battery charge, solar input, power draw, inverter state and even your water tanks &mdash; from any browser, on any device.</p>
           <p>It&rsquo;s the same picture we use to keep your system healthy: spot a low battery, a tank that needs filling or a fault before it becomes a problem. Sign in and open it &mdash; or just ask the built-in assistant to &lsquo;open off-grid&rsquo;.</p>
-          <p style="margin-top:1.1rem"><a href="/365-ai-os/" class="button secondary">Explore the 365 AI OS &#8594;</a></p>
+          <p><strong>Like the live dashboard at the top of this page?</strong> We design and build <a href="/custom-vrm-dashboards/">custom VRM dashboards</a> like it for customers worldwide &mdash; any layout, any KPI, several installations on one screen, hosted on the web and supported by us.</p>
+          <p style="margin-top:1.1rem"><a href="/365-ai-os/" class="button secondary">Explore the 365 AI OS &#8594;</a> <a href="/custom-vrm-dashboards/" class="button secondary">Custom VRM Dashboards &#8594;</a></p>
         </div>
         <ul class="checklist" data-stagger>
 {checklist(["Battery charge &amp; time-to-go","Solar &amp; DC power, live","AC loads &amp; inverter state","Fresh &amp; waste tank levels","Works in any browser","Built on Victron VRM monitoring"])}
@@ -2702,6 +2703,7 @@ def services_overview():
       ]),
       ("Beyond IT support", [
         ("Off-Grid &amp; Victron Energy", "/off-grid-victron-energy/", "Solar, battery storage and inverters for homes, businesses, campervans and motorhomes."),
+        ("Custom VRM Dashboards", "/custom-vrm-dashboards/", "Custom live dashboards for Victron VRM &mdash; any layout, several sites on one screen, hosted &amp; supported worldwide."),
         ("Website Design &amp; Hosting", "/web-design-hosting/", "Premium websites, fast managed hosting and business email."),
         ("Agentic AI Systems", "/agentic-ai-systems/", "Custom-built agentic AI operating systems that automate and streamline your business-specific processes."),
         ("365 AI OS", "/365-ai-os/", "A real browser desktop with a built-in AI assistant that takes action &mdash; a working demo of the custom systems we build."),
@@ -8195,7 +8197,7 @@ def battery_installs():
             </div>
           </div>
           <p class="vmini__note" data-m-note></p>
-          <p class="vmini__cta"><a href="/off-grid-victron-energy/">See the full live dashboard &mdash; solar flow, savings &amp; 30-day history &rarr;</a></p>
+          <p class="vmini__cta"><a href="/off-grid-victron-energy/">See the full live dashboard &mdash; solar flow, savings &amp; 30-day history &rarr;</a><br /><a href="/custom-vrm-dashboards/">Want one like this for your own system? We build custom VRM dashboards &rarr;</a></p>
         </div>
         <script>
         (function(){
@@ -12691,6 +12693,357 @@ def build_new_page(d):
         nodes.append(faqpage(s, _faqs))
         return graph(nodes)
     add(slug=d['slug'], title=d['title'], desc=d['metaDesc'], og_title=d['ogTitle'], schema=schema, content=content)
+
+# ---- Custom VRM dashboards (worldwide flagship service page) ----
+def custom_dashboards():
+    slug = "custom-vrm-dashboards"
+    desc = ("Custom dashboards for Victron VRM installations — any layout, any KPI, several sites on one live screen, "
+            "hosted on the web so you can view it anywhere. Designed, built and supported for you, worldwide. "
+            "See our own live dashboard on this page.")
+
+    VDASH = '''    <section class="section" aria-label="Live demo — business-style dashboard">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/01 &mdash; LIVE DEMO &middot; REAL DATA</p>
+          <h2 class="section-title section-title--center" data-title>This is live, right now, from our own van<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Below is the <strong>365 Crafter</strong> &mdash; our own off-grid support van &mdash; streamed live through the same Victron VRM API we&rsquo;d use for yours. Same van, two completely different dashboards: here it&rsquo;s a clean business view; on our <a href="/off-grid-victron-energy/">off-grid page</a> the identical data drives a car-style instrument cluster. That&rsquo;s the point &mdash; <strong>your dashboard, your way</strong>.</p>
+        </div>
+        <style>
+        .vdash{max-width:860px;margin:0 auto;border:1px solid rgba(125,170,220,.2);border-radius:18px;background:linear-gradient(180deg,rgba(13,22,44,.92),rgba(9,16,34,.94));overflow:hidden}
+        .vdash__bar{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;padding:.8rem 1.1rem;border-bottom:1px solid rgba(125,170,220,.14);font:600 .68rem/1 ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;color:#9fb0c3}
+        .vdash__live{display:inline-flex;align-items:center;gap:.4rem;color:#39d353}
+        .vdash__dot{width:8px;height:8px;border-radius:50%;background:#39d353;animation:vdpulse 2s infinite}
+        @keyframes vdpulse{0%,100%{opacity:1}50%{opacity:.35}}
+        .vdash__site{flex:1;min-width:140px}
+        .vdash__kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:rgba(125,170,220,.12)}
+        .vdash__k{background:rgba(10,18,38,.96);padding:1rem .8rem;text-align:center}
+        .vdash__kv{font:800 1.3rem/1.1 inherit;color:#fff;font-variant-numeric:tabular-nums}
+        .vdash__kv--gold{color:#e8c35a}.vdash__kv--green{color:#39d353}
+        .vdash__kl{font:600 .55rem/1.4 ui-monospace,monospace;letter-spacing:.07em;text-transform:uppercase;color:#8fa3bd;margin-top:.35rem}
+        .vdash__tanks{display:flex;gap:1.2rem;flex-wrap:wrap;padding:1rem 1.1rem;border-top:1px solid rgba(125,170,220,.12)}
+        .vdash__tank{flex:1;min-width:200px}
+        .vdash__tl{display:flex;justify-content:space-between;font:600 .6rem/1 ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;color:#8fa3bd;margin-bottom:.4rem}
+        .vdash__tb{height:8px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden}
+        .vdash__tf{height:100%;border-radius:99px;background:#1d97e3;transition:width 1s ease}
+        .vdash__tf--waste{background:#e0b341}
+        .vdash__note{font:600 .66rem/1.5 ui-monospace,monospace;color:#8fa3bd;text-align:center;padding:0 1rem 1rem}
+        .vdash--sample .vdash__live{color:#e0b341}.vdash--sample .vdash__dot{background:#e0b341;animation:none}
+        @media (max-width:860px){.vdash__kpis{grid-template-columns:repeat(3,1fr)}}
+        @media (max-width:480px){.vdash__kpis{grid-template-columns:repeat(2,1fr)}}
+        </style>
+        <div class="vdash" id="vdash" data-reveal>
+          <div class="vdash__bar">
+            <span class="vdash__live"><span class="vdash__dot"></span> <span data-d-badge>Live</span></span>
+            <span class="vdash__site">365 Crafter &middot; business-style view &middot; Victron VRM API</span>
+            <span data-d-upd>&mdash;</span>
+          </div>
+          <div class="vdash__kpis">
+            <div class="vdash__k"><div class="vdash__kv" data-d-soc>&mdash;</div><div class="vdash__kl">Battery SOC</div></div>
+            <div class="vdash__k"><div class="vdash__kv vdash__kv--gold" data-d-pv>&mdash;</div><div class="vdash__kl">Solar now</div></div>
+            <div class="vdash__k"><div class="vdash__kv" data-d-bw>&mdash;</div><div class="vdash__kl">Battery power</div></div>
+            <div class="vdash__k"><div class="vdash__kv" data-d-ttg>&mdash;</div><div class="vdash__kl">Time to go</div></div>
+            <div class="vdash__k"><div class="vdash__kv vdash__kv--gold" data-d-yt>&mdash;</div><div class="vdash__kl">Solar today</div></div>
+            <div class="vdash__k"><div class="vdash__kv vdash__kv--green" data-d-sv>&mdash;</div><div class="vdash__kl">Saved &middot; 30 days</div></div>
+          </div>
+          <div class="vdash__tanks">
+            <div class="vdash__tank"><div class="vdash__tl"><span>Fresh water</span><span data-d-tf>&mdash;</span></div><div class="vdash__tb"><div class="vdash__tf" data-d-tfb style="width:0%"></div></div></div>
+            <div class="vdash__tank"><div class="vdash__tl"><span>Waste water</span><span data-d-tw>&mdash;</span></div><div class="vdash__tb"><div class="vdash__tf vdash__tf--waste" data-d-twb style="width:0%"></div></div></div>
+          </div>
+          <p class="vdash__note" data-d-note></p>
+        </div>
+        <script>
+        (function(){
+          var PROXY="/api/vrm.php", RATE=0.40, STANDING=0.50;
+          var SAMPLE={sample:true,soc:97,battState:"charging",battW:31,pvW:114,timeToGo:null,yieldToday:1.4,kwh30:49.6,tanks:[{type:"fresh",level:72},{type:"waste",level:31}]};
+          var el=document.getElementById("vdash"); if(!el) return;
+          var cur={}, reduce=false; try{ reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
+          function q(s){return el.querySelector(s);}
+          function tw(sel,key,to,fmt){ var n=q(sel); if(!n) return; if(to==null){n.textContent="\\u2014";return;} var f=(cur[key]==null?to:cur[key]); cur[key]=to; if(reduce||f===to){n.textContent=fmt(to);return;} var t0=null; (function st(ts){ if(t0===null){t0=ts||performance.now();} var now=ts||performance.now(); var p=Math.min(1,(now-t0)/650); var e=1-Math.pow(1-p,3); n.textContent=fmt(f+(to-f)*e); if(p<1) requestAnimationFrame(st); })(performance.now());}
+          function ttgTxt(v){ if(v==null||v<=0) return "10+ days"; var h=(v>240)?v/3600:v; if(h>240) return "10+ days"; if(h>=48) return (h/24).toFixed(1)+" days"; return h.toFixed(1)+" h"; }
+          function render(s){
+            tw("[data-d-soc]","soc",s.soc,function(v){return v.toFixed(1)+"%";});
+            tw("[data-d-pv]","pv",s.pvW,function(v){return Math.round(v)+" W";});
+            tw("[data-d-bw]","bw",s.battW,function(v){return (v>0?"+":"")+Math.round(v)+" W";});
+            var tn=q("[data-d-ttg]"); if(tn) tn.textContent=ttgTxt(s.timeToGo);
+            tw("[data-d-yt]","yt",s.yieldToday,function(v){return v.toFixed(1)+" kWh";});
+            var k30=(s.history&&s.history.length)?s.history.reduce(function(a,d){return a+((d&&d.kwh)||0);},0):(s.kwh30!=null?s.kwh30:null);
+            var d30=(s.history&&s.history.length)?s.history.length:30;
+            tw("[data-d-sv]","sv",(k30!=null)?(k30*RATE+STANDING*d30):null,function(v){return "\\u00a3"+v.toFixed(2);});
+            var tanks=s.tanks||[]; var fr=null, wa=null;
+            for(var i=0;i<tanks.length;i++){ var t=tanks[i]||{}; var ty=String(t.type||t.name||"").toLowerCase(); if(ty.indexOf("fresh")>-1&&fr===null) fr=t; else if(ty.indexOf("waste")>-1&&wa===null) wa=t; }
+            function setTank(t,vSel,bSel){ var lv=(t&&t.level!=null)?Math.max(0,Math.min(100,t.level)):null; var vn=q(vSel), bn=q(bSel); if(vn) vn.textContent=(lv==null)?"\\u2014":Math.round(lv)+"%"; if(bn) bn.style.width=((lv==null)?0:lv)+"%"; }
+            setTank(fr,"[data-d-tf]","[data-d-tfb]"); setTank(wa,"[data-d-tw]","[data-d-twb]");
+            var b=q("[data-d-badge]"); if(b) b.textContent=s.sample?"Sample":"Live";
+            var up=q("[data-d-upd]"); if(up) up.textContent=s.sample?"sample reading":"data is live";
+            var nt=q("[data-d-note]"); if(nt) nt.textContent=s.sample?"Sample reading \\u2014 the live feed switches on once connected to our VRM link.":"Every number on this panel is live from the van\\u2019s Victron system via the VRM API \\u2014 nothing staged.";
+            el.classList.toggle("vdash--sample",!!s.sample);
+            window.__vdashLast = s;
+          }
+          function tick(){ fetch(PROXY,{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){ render((j&&j.ok)?j:SAMPLE); }).catch(function(){ render(SAMPLE); }); }
+          tick(); setInterval(tick, 3000);
+        })();
+        </script>
+      </div>
+    </section>'''
+
+    VFLEET = '''    <section class="section section--alt" aria-label="Fleet demo — several installations on one screen">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/03 &mdash; ONE SCREEN &middot; EVERY SITE</p>
+          <h2 class="section-title section-title--center" data-title>Several installations. One live screen.<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>VRM shows you one installation at a time (its fleet tools are a sortable list, and the Fleet dashboard needs ten or more sites). A custom dashboard puts <strong>every site you care about on one screen</strong> &mdash; live. Below, only the van is real; the other five are <strong>clearly-marked demo sites</strong> so you can see what your fleet would look like.</p>
+        </div>
+        <style>
+        .vfleet{max-width:960px;margin:0 auto}
+        .vfleet__banner{text-align:center;font:600 .66rem/1.5 ui-monospace,monospace;letter-spacing:.05em;color:#e0b341;border:1px dashed rgba(224,179,65,.45);border-radius:12px;padding:.6rem .9rem;margin-bottom:1.1rem}
+        .vfleet__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.9rem}
+        @media (max-width:880px){.vfleet__grid{grid-template-columns:repeat(2,1fr)}}
+        @media (max-width:540px){.vfleet__grid{grid-template-columns:1fr}}
+        .vf{border:1px solid rgba(125,170,220,.18);border-radius:14px;background:rgba(11,19,40,.9);padding:.9rem .95rem}
+        .vf__top{display:flex;justify-content:space-between;align-items:center;gap:.5rem;margin-bottom:.55rem}
+        .vf__name{font:700 .8rem/1.25 inherit;color:#fff}
+        .vf__badge{font:700 .52rem/1 ui-monospace,monospace;letter-spacing:.08em;padding:.28rem .5rem;border-radius:99px;flex:none}
+        .vf__badge--live{color:#39d353;border:1px solid rgba(57,211,83,.5)}
+        .vf__badge--demo{color:#e0b341;border:1px solid rgba(224,179,65,.5)}
+        .vf__rows{display:flex;flex-direction:column;gap:.4rem}
+        .vf__r{display:flex;justify-content:space-between;align-items:baseline;font:600 .6rem/1 ui-monospace,monospace;letter-spacing:.05em;text-transform:uppercase;color:#8fa3bd}
+        .vf__v{font:800 .95rem/1 inherit;color:#fff;font-variant-numeric:tabular-nums}
+        .vf__soc{height:6px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:.55rem}
+        .vf__socf{height:100%;border-radius:99px;background:#39d353;transition:width 1.2s ease}
+        .vf--warn .vf__socf{background:#e0b341}
+        </style>
+        <div class="vfleet" data-reveal>
+          <p class="vfleet__banner">DEMO VIEW &mdash; only &ldquo;365 Crafter&rdquo; is a real live system; the other five cards are simulated demo data, not real customers.</p>
+          <div class="vfleet__grid" id="vfleet"></div>
+          <p class="vdash__note" style="padding-top:1rem">Your version could show any mix of sites, countries and hardware &mdash; with alerts, totals and whatever numbers matter to you on top.</p>
+        </div>
+        <script>
+        (function(){
+          var grid=document.getElementById("vfleet"); if(!grid) return;
+          var reduce=false; try{ reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
+          var DEMOS=[
+            {n:"Algarve villa \\u00b7 Portugal", soc:88, pv:1450, ld:620, ph:0.8},
+            {n:"Glamping pods \\u00b7 Dorset", soc:74, pv:930, ld:410, ph:2.1},
+            {n:"Canal boat \\u00b7 London", soc:63, pv:210, ld:180, ph:3.6},
+            {n:"Alpine chalet \\u00b7 Austria", soc:91, pv:760, ld:340, ph:5.2},
+            {n:"Farm workshop \\u00b7 Somerset", soc:52, pv:1120, ld:990, ph:1.4}
+          ];
+          function card(name,badge,cls){ return '<div class="vf'+(cls||'')+'"><div class="vf__top"><span class="vf__name">'+name+'</span><span class="vf__badge vf__badge--'+badge+'">'+(badge==='live'?'LIVE':'DEMO')+'</span></div><div class="vf__rows"><div class="vf__r"><span>Battery</span><span class="vf__v" data-f-soc>\\u2014</span></div><div class="vf__r"><span>Solar</span><span class="vf__v" data-f-pv>\\u2014</span></div><div class="vf__r"><span>Loads</span><span class="vf__v" data-f-ld>\\u2014</span></div></div><div class="vf__soc"><div class="vf__socf" data-f-bar style="width:0%"></div></div></div>'; }
+          var html=card("365 Crafter \\u00b7 our van","live");
+          for(var i=0;i<DEMOS.length;i++) html+=card(DEMOS[i].n,"demo");
+          grid.innerHTML=html;
+          var cards=grid.querySelectorAll(".vf");
+          function setCard(c,soc,pv,ld){
+            var s=c.querySelector("[data-f-soc]"); if(s) s.textContent=(soc==null)?"\\u2014":soc.toFixed(0)+"%";
+            var p=c.querySelector("[data-f-pv]"); if(p) p.textContent=(pv==null)?"\\u2014":Math.round(pv)+" W";
+            var l=c.querySelector("[data-f-ld]"); if(l) l.textContent=(ld==null)?"\\u2014":Math.round(ld)+" W";
+            var b=c.querySelector("[data-f-bar]"); if(b) b.style.width=((soc==null)?0:Math.max(0,Math.min(100,soc)))+"%";
+            c.classList.toggle("vf--warn", soc!=null && soc<60);
+          }
+          function tick(){
+            var t=Date.now()/1000;
+            var real=window.__vdashLast;
+            if(real && !real.sample){ setCard(cards[0], real.soc, real.pvW, Math.max(0,(real.pvW||0)-(real.battW||0))); }
+            else { setCard(cards[0], 97, 114, 83); }
+            for(var i=0;i<DEMOS.length;i++){ var d=DEMOS[i]; var w=reduce?0:Math.sin(t/7+d.ph);
+              setCard(cards[i+1], d.soc+w*2.5, Math.max(0,d.pv+w*d.pv*0.12), Math.max(0,d.ld+Math.sin(t/5+d.ph*2)*d.ld*0.15)); }
+          }
+          tick(); setInterval(tick, reduce?15000:2000);
+        })();
+        </script>
+      </div>
+    </section>'''
+
+    COMPARE = f'''    <section class="section" aria-label="VRM vs a custom dashboard">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/02 &mdash; HONEST COMPARISON</p>
+          <h2 class="section-title section-title--center" data-title>VRM is excellent. Here&rsquo;s what custom adds.<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Let&rsquo;s be straight: Victron&rsquo;s VRM portal is polished, free, and keeps getting better &mdash; live data every couple of seconds while you&rsquo;re watching, a rearrangeable Advanced tab with a custom widget builder, alarms to your phone, even remote control of your system. <strong>A custom dashboard doesn&rsquo;t replace VRM &mdash; it sits alongside it</strong> (read-only, via Victron&rsquo;s own API) and does the things VRM deliberately doesn&rsquo;t.</p>
+        </div>
+        <div class="price-table-wrap" data-reveal style="max-width:920px;margin:0 auto">
+          <table class="price-table">
+            <thead><tr><th></th><th>VRM portal (free)</th><th>Our custom dashboards</th></tr></thead>
+            <tbody>
+              <tr><td>Main dashboard layout</td><td>Auto-generated and fixed &mdash; only the Advanced tab is rearrangeable</td><td><strong>Anything, anywhere</strong> &mdash; your layout, your numbers, your look</td></tr>
+              <tr><td>Several installations on one live screen</td><td>A sortable site list; group overviews; Fleet dashboard needs 10+ sites</td><td><strong>Any number of sites, one screen, live</strong> &mdash; from 2 vans to a whole estate</td></tr>
+              <tr><td>Data beyond Victron kit</td><td>Only what reaches the GX device</td><td><strong>Most systems with an API or feed</strong> &mdash; weather, other-brand kit, tanks, business data</td></tr>
+              <tr><td>Your branding</td><td>Not available &mdash; the long-requested white-label feature never shipped</td><td><strong>Fully yours</strong> &mdash; your logo, your colours, your customers see you</td></tr>
+              <tr><td>Sharing &amp; wall screens</td><td>Read-only links and an embed &mdash; but <em>not</em> realtime (they update at the logging interval, typically 15 minutes); no kiosk mode</td><td><strong>A live web page</strong> &mdash; view anywhere, share with anyone, run it fullscreen on a TV in reception</td></tr>
+              <tr><td>Money &amp; custom KPIs</td><td>Tariff-aware figures only via Dynamic ESS (grid-tied, supported markets)</td><td><strong>Any KPI at your tariff</strong> &mdash; the savings maths on our own van dashboard is exactly this</td></tr>
+              <tr><td>Cost</td><td>Free with your Victron system</td><td>Designed, built, hosted and supported for you &mdash; <a href="#quote">free demo, fixed quote</a></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="mono" style="text-align:center;max-width:70ch;margin:1.6rem auto 0;color:var(--muted)" data-reveal>Prefer DIY? Victron&rsquo;s open tools (Grafana stacks, Node-RED on Venus OS Large, Home Assistant) can do a lot of this &mdash; free, if you&rsquo;re happy self-hosting, maintaining a database and building the screens yourself. Our service is for people who&rsquo;d rather it was simply <strong>done, hosted and supported</strong>.</p>
+      </div>
+    </section>'''
+
+    content = "\n".join([
+      hero(bc("Custom VRM Dashboards"), "// CUSTOM DASHBOARDS &middot; WORLDWIDE",
+           'Custom dashboards for your <em class="grad grad--green">Victron VRM</em> system',
+           bp.hero_trust("Your Victron system, your dashboard, your way &mdash; any layout, any KPI, several installations on one live screen, hosted on the web so you can view it anywhere in the world. Designed, built and supported for you by the family firm that runs its own van on one. Scroll down: the demo on this page is <strong>live</strong>."),
+           cta1=("Book a Free Demo", "#quote"), cta2=("Call +44 1202 775566", "tel:+441202775566"),
+           chips=["Live demo below &mdash; real data", "Worldwide &middot; done for you", "Beyond Victron too"]),
+      VDASH,
+      COMPARE,
+      VFLEET,
+      f'''    <section class="section" aria-label="What can go on your dashboard">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">/04 &mdash; ANYTHING YOU LIKE</p>
+          <h2 class="section-title" data-title>Monitor everything that matters &mdash; on one page<span class="title-underline"></span></h2>
+          <p>A custom dashboard isn&rsquo;t a fixed product &mdash; it&rsquo;s a page we design around <strong>your</strong> operation. Everything on our own van dashboard is an example you can see working today: live solar flow, battery state, tank levels, a &pound;-savings meter at our real tariff, engine-charging hours, even a 7-day solar forecast calibrated to the van&rsquo;s own history.</p>
+          <p>Yours might add site totals, alerts when a battery runs low, a generator-run log, this week vs last week, occupancy, temperatures &mdash; whatever information actually helps you decide things. That&rsquo;s the &ldquo;information efficiency&rdquo; win: <strong>one glance instead of six logins</strong>.</p>
+        </div>
+        <ul class="checklist" data-stagger>
+{checklist(["Any Victron data VRM has &mdash; live","Several installations on one screen","Your KPIs at your tariff (&pound;, kWh, %)","Alerts &amp; low-battery warnings","Tanks, temperatures &amp; sensors","Weather &amp; solar forecasts","Runs fullscreen on a TV or kiosk","Phone, tablet &amp; desktop layouts"])}
+        </ul>
+      </div>
+    </section>''',
+      f'''    <section class="section section--alt" aria-label="Industries">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/05 &mdash; IDEAS BY INDUSTRY</p>
+          <h2 class="section-title section-title--center" data-title>Who puts these on a wall?<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ul class="security-grid" data-stagger>
+{grid_cards([
+  ("Holiday parks &amp; glamping", "Every pod&rsquo;s battery, water and power on one screen in the office &mdash; know before a guest calls."),
+  ("Marine &amp; hire fleets", "Each boat&rsquo;s state of charge and shore-power status at a glance, before the weekend rush."),
+  ("Farms &amp; rural estates", "Barns, borehole pumps, electric fencing and off-grid cabins &mdash; one page for the whole holding."),
+  ("Installers &amp; system builders", "Offer your customers a branded dashboard as part of the job &mdash; we build it, you deliver it."),
+  ("Expat &amp; remote homes", "Check the villa&rsquo;s solar, batteries and water from the UK &mdash; or anywhere &mdash; on your phone."),
+  ("Remote &amp; telemetry sites", "We&rsquo;ve remotely supported a river-crossing wireless monitoring link for the Environment Agency since 2015 &mdash; unattended sites are home ground."),
+])}
+        </ul>
+      </div>
+    </section>''',
+      f'''    <section class="section" aria-label="For Victron installers">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">/06 &mdash; FOR VICTRON INSTALLERS</p>
+          <h2 class="section-title" data-title>Installers: give your customers a dashboard VRM can&rsquo;t<span class="title-underline"></span></h2>
+          <p>You fit brilliant systems &mdash; then hand customers the same VRM portal as everyone else. There&rsquo;s no white-label VRM (the long-requested &ldquo;Dealer ID&rdquo; branding feature never shipped), and the Fleet dashboard only unlocks at ten-plus sites.</p>
+          <p><strong>We build the dashboard layer for you:</strong> your branding, your customer&rsquo;s layout, hosted and supported by us &mdash; you stay the installer and the hero. It&rsquo;s a clean add-on to quote on every job, and a reason customers pick you over the next quote. Victron itself encourages exactly this kind of work through its Software Integrator Program &mdash; dashboards built on the official VRM API.</p>
+          <p>We&rsquo;re happy working behind the scenes or alongside you &mdash; <a href="#quote">talk to us about a partner arrangement</a>.</p>
+        </div>
+        <ul class="checklist" data-stagger>
+{checklist(["Your branding, not ours","Works from 1 site up &mdash; no 10-site minimum","Built on Victron&rsquo;s official VRM API","Read-only &mdash; never touches your config","We host, maintain &amp; support it","You own the customer relationship"])}
+        </ul>
+      </div>
+    </section>''',
+      f'''    <section class="section section--alt" aria-label="Worldwide and expats">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">/07 &mdash; WORLDWIDE &middot; EXPATS</p>
+          <h2 class="section-title" data-title>Off-grid in Spain, Portugal, France &mdash; supported in plain English<span class="title-underline"></span></h2>
+          <p>Thousands of English-speaking expats run Victron systems on villas, fincas, quintas and smallholdings across Europe &mdash; often a long way from the installer who fitted them. Because a custom dashboard is <strong>hosted on the web and built on the VRM cloud API, where you are doesn&rsquo;t matter</strong>: we design, build and support it remotely, from the UK, in plain English.</p>
+          <p>Check the batteries from the airport. Show a house-sitter one simple page. Get an alert before the freezer becomes a problem. And when you want changes, you deal with a real, family-run UK firm (est. 1995, rated 4.9 on Google) &mdash; not a forum thread.</p>
+          <p class="mono" style="color:var(--muted)">We work UK office hours (Mon&ndash;Fri 9&ndash;5 UK time) and support customers by email, remote session and scheduled calls worldwide.</p>
+        </div>
+        <ul class="checklist" data-stagger>
+{checklist(["Anywhere with an internet connection","Nothing extra to install on site","Plain-English design &amp; handover","Remote support via secure sessions","UK firm, since 1995, 4.9 on Google","EU, worldwide &mdash; wherever you are"])}
+        </ul>
+      </div>
+    </section>''',
+      f'''    <section class="section" aria-label="Beyond Victron">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">/08 &mdash; BEYOND VICTRON</p>
+          <h2 class="section-title" data-title>Not just Victron &mdash; if it has a feed, we can usually dash it<span class="title-underline"></span></h2>
+          <p>Victron&rsquo;s VRM API is where we started (our own van runs on it), but the same approach works for <strong>most systems that expose an API, a data feed or an export</strong>: other solar and battery brands, weather stations, tank and level sensors, heating, EV chargers, network kit &mdash; even business numbers like bookings or sales alongside your energy data.</p>
+          <p>One screen, many sources &mdash; that&rsquo;s usually where dashboards earn their keep. Tell us what you run and we&rsquo;ll tell you honestly what&rsquo;s feasible before any money changes hands. This pairs naturally with the <a href="/agentic-ai-systems/">custom software and AI systems</a> we build.</p>
+        </div>
+        <ul class="checklist" data-stagger>
+{checklist(["Other solar &amp; battery brands with APIs","Weather stations &amp; sensors","Tanks, pumps &amp; level monitors","Network &amp; connectivity status","Business data alongside energy","Honest feasibility check first"])}
+        </ul>
+      </div>
+    </section>''',
+      f'''    <section class="section section--alt" aria-label="How it works">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/09 &mdash; DONE FOR YOU</p>
+          <h2 class="section-title section-title--center" data-title>From idea to live dashboard<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ol class="how__steps">
+{bp.steps([
+  ("Free demo &amp; chat", "We show you our live dashboards, hear what you want on yours, and give you a fixed quote &mdash; no obligation."),
+  ("We design it with you", "A mock-up of your layout and numbers to react to &mdash; iterate until it&rsquo;s right."),
+  ("We build, connect &amp; host", "Built on the official VRM API with a read-only token; your data stays in VRM, your dashboard lives on the web."),
+  ("Handover &amp; support", "You get the link, it works on anything with a browser, and we support and tweak it for you remotely."),
+])}
+        </ol>
+      </div>
+    </section>''',
+      faq_html([
+        ("Does this replace the VRM portal?", "No &mdash; and it shouldn&rsquo;t. VRM stays your system of record, with its alarms, history and remote console. Your custom dashboard reads the same data through Victron&rsquo;s official API and presents it your way, alongside VRM."),
+        ("Do I need any new hardware?", "Usually not. If your system already reports to VRM (via a GX device such as a Cerbo GX), we can build from that today using a read-only API token. No site visit needed &mdash; anywhere in the world."),
+        ("Is it safe? Can a dashboard change my system?", "We build with a read-only VRM access token, kept server-side &mdash; the dashboard can display your system but never control or change it. Optional password protection on the page itself if you want it private."),
+        ("Can you put several installations on one screen?", "Yes &mdash; that&rsquo;s one of the main reasons people come to us. Any number of sites, mixed hardware, one live page; VRM&rsquo;s own multi-site tools are a list view and a fleet dashboard that needs ten or more sites."),
+        ("Can you include non-Victron equipment?", "Usually, yes &mdash; most modern kit exposes an API or feed we can read (other solar brands, sensors, weather, business data). Tell us what you run and we&rsquo;ll confirm feasibility honestly before you commit."),
+        ("What does a custom dashboard cost?", "Every dashboard is different, so we don&rsquo;t publish a one-size price &mdash; you get a free demo and a fixed written quote up front, including hosting and support, before any work starts."),
+        ("Where do you cover?", "Worldwide. The service is remote by design &mdash; we&rsquo;ve built and supported ours from Dorset, England, and yours works the same wherever the system lives. We work UK office hours and schedule calls to suit your time zone."),
+      ]),
+      f'''    <section class="section" id="quote" aria-label="Book a free demo">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// BOOK A FREE DEMO</p>
+          <h2 class="section-title section-title--center" data-title>See your dashboard before you spend a penny<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Tell us a little about your setup and we&rsquo;ll come back within one working day (Mon&ndash;Fri, UK) with a demo and honest answers &mdash; then a fixed quote if you want one. No obligation, no hard sell.</p>
+        </div>
+        <form class="contact-form" data-reveal action="mailto:help@365techies.co.uk" method="post" enctype="text/plain" style="max-width:640px;margin:0 auto">
+          <input type="text" name="company_website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" />
+          <label class="field"><span>Your name</span><input type="text" name="name" autocomplete="name" required /></label>
+          <label class="field"><span>Email</span><input type="email" name="email" autocomplete="email" required /></label>
+          <label class="field"><span>Phone (optional, with country code)</span><input type="tel" name="phone" autocomplete="tel" /></label>
+          <label class="field"><span>Country / location of the system</span><input type="text" name="country" placeholder="e.g. Portugal (Algarve), UK, Spain&hellip;" /></label>
+          <label class="field"><span>What would you like on a dashboard?</span>
+            <select name="looking_for">
+              <option>One Victron installation</option>
+              <option>Several Victron installations on one screen</option>
+              <option>Victron plus other equipment / data</option>
+              <option>Not Victron &mdash; another system</option>
+              <option>I&rsquo;m an installer &mdash; dashboards for my customers</option>
+              <option>Not sure yet &mdash; show me a demo</option>
+            </select>
+          </label>
+          <label class="field"><span>Anything else?</span><textarea name="message" placeholder="What kit you run, how many sites, what you&rsquo;d like to see at a glance&hellip;"></textarea></label>
+          <button type="submit" class="button primary button--lg" style="width:100%">Book my free demo</button>
+          <p class="form-status mono" role="status" style="margin-top:1rem;color:var(--faint);font-size:.7rem">// NO OBLIGATION &middot; FIXED QUOTE BEFORE ANY WORK &middot; A REAL PERSON REPLIES WITHIN ONE UK WORKING DAY</p>
+        </form>
+        <p class="mono" style="text-align:center;max-width:62ch;margin:1.6rem auto 0;color:var(--muted)" data-reveal>Prefer to talk? Call <a href="tel:+441202775566">+44 1202 775566</a>, text <a href="sms:+447520615332">+44 7520 615332</a> or email <a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a> &mdash; a family-run UK firm, since 1995.</p>
+      </div>
+    </section>''',
+      cta("Your system deserves a better screen",
+          "Book a free demo and see your own custom dashboard take shape — designed, built, hosted and supported for you, wherever you are in the world.",
+          primary=("Book a Free Demo", "#quote"), secondary=("Call +44 1202 775566", "tel:+441202775566")),
+    ])
+    def schema(s, _d=desc):
+        return graph([
+          crumb(s, "Custom VRM Dashboards"),
+          webpage(s, "Custom Victron VRM Dashboards", _d),
+          {"@type": "Service", "@id": f"{bp.SITE}/{s}/#service", "name": "Custom Victron VRM Dashboards",
+           "serviceType": "Custom monitoring dashboard design, build, hosting and support",
+           "description": _d.replace("&mdash;", "—"),
+           "provider": {"@id": f"{bp.SITE}/#business"},
+           "areaServed": [{"@type": "Country", "name": "United Kingdom"}, {"@type": "Place", "name": "Europe"}, {"@type": "Place", "name": "Worldwide"}],
+           "url": f"{bp.SITE}/{s}/"},
+          faqpage(s, [
+            ("Does this replace the VRM portal?", "No — VRM stays your system of record. Your custom dashboard reads the same data through Victron's official API and presents it your way, alongside VRM."),
+            ("Do I need any new hardware?", "Usually not — if your system already reports to VRM via a GX device, we can build from a read-only API token, anywhere in the world."),
+            ("Is it safe?", "We build with a read-only VRM access token kept server-side — the dashboard can display your system but never control or change it."),
+            ("Can you put several installations on one screen?", "Yes — any number of sites, mixed hardware, one live page."),
+            ("Can you include non-Victron equipment?", "Usually — most modern kit exposes an API or feed we can read. We confirm feasibility honestly before you commit."),
+            ("What does it cost?", "Every dashboard is different — you get a free demo and a fixed written quote up front, including hosting and support."),
+            ("Where do you cover?", "Worldwide — the service is remote by design; we work UK office hours and schedule calls to suit your time zone."),
+          ]),
+        ])
+    add(slug=slug, title="Custom Victron VRM Dashboards | Worldwide | 365 Techies",
+        desc=desc, og_title="Custom Victron VRM Dashboards — live demo | 365 Techies",
+        schema=schema, content=content)
+custom_dashboards()
+
 
 for _np in NEW_PAGES:
     build_new_page(_np)
