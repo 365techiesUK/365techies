@@ -30,6 +30,7 @@ def local_services(town):
 
 # Town-centre coordinates (public approximate centroids) for per-page GeoCoordinates schema
 COORDS = {
+ "it-support-dorset": [50.7192, -1.8808],  # the near-me hub carries the business's own geo (Kinson, Bournemouth)
  "it-support-bournemouth": [50.7192, -1.8808],
  "it-support-poole": [50.7150, -1.9872], "it-support-christchurch": [50.7340, -1.7800],
  "it-support-wimborne": [50.7990, -1.9870], "it-support-ferndown": [50.8080, -1.9000],
@@ -56,6 +57,7 @@ SEO_TITLES = {
  "it-support-gillingham": "IT Support Gillingham, Dorset | Same-Day, No Call-Out Fee",
  "it-support-for-solicitors": "IT Support for Solicitors, Dorset | 365 Techies",
  "it-support-for-retired-users": "IT Support for Retired People | Patient Help at Home",
+ "it-support-bournemouth": "IT Support Bournemouth | Local Team Near You | 365 Techies",
 }
 
 # Consumer town page -> its dedicated business/managed-IT page (reverse link)
@@ -93,12 +95,36 @@ def make_local(i, slug, town, region, lede, intro_para, nearby):
           ("Can I find IT support and services near me in Dorset?", "Yes &mdash; wherever you are in Dorset you&rsquo;ll find local IT support and services near you. Homes, sole traders and businesses across the county rely on us as their nearby IT experts for computer support, Microsoft 365, cybersecurity and everyday help &mdash; remotely in minutes and on-site when needed."),
           ("Do you offer managed IT services and IT solutions in Dorset?", "Yes &mdash; we&rsquo;re a family-run Dorset <a href=\"/managed-it-support/\">managed IT services</a> provider (MSP), delivering proactive IT solutions for businesses across the county: monthly <a href=\"/business-it-support-subscriptions/\">business IT support</a>, Microsoft 365, cybersecurity, backups, servers and networks, all for one predictable monthly cost."),
         ]
+    if slug == "it-support-bournemouth":
+        faqs = faqs + [
+          ("Do you provide IT support near me in Bournemouth?", "Yes &mdash; we&rsquo;re based at the Kinson Community Centre in Bournemouth, so for most of the town we really are just around the corner. Most problems are fixed remotely in minutes, and when you need someone in person we&rsquo;re minutes away and always call ahead with an arrival time."),
+        ]
     nearby_li = "\n".join(f'          <li><a href="{h}">{l}</a></li>' for l, h in nearby)
+    nearme_block = ""
+    if slug == "it-support-dorset":
+        desc = ("Looking for IT support near me in Dorset? 365 Techies — family-run, Bournemouth-based, rated 4.9 — covers every Dorset town. "
+                "Remote fixes in minutes, on-site county-wide, homes from £18.25/mo.")
+        nearby_li = "\n".join(f'          <li><a href="/{_s2}/">IT Support {_t2}</a></li>' for _s2, _t2, _r2, _l2, _i2, _n2 in LOCAL if _s2 != slug)
+        nearme_block = f'''    <section class="section" aria-label="IT support near you">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">// NEAR YOU &middot; ALL OF DORSET</p>
+          <h2 class="section-title" data-title>Looking for IT support near you?<span class="title-underline"></span></h2>
+          <p><strong>You&rsquo;ve found your local team.</strong> We&rsquo;re based at the Kinson Community Centre in Bournemouth and cover every Dorset town &mdash; most problems are fixed remotely within minutes, and when hands-on help is needed we come to you anywhere in the county, always phoning ahead with an arrival time.</p>
+          <p>We&rsquo;re open <strong>Monday to Friday, 9am&ndash;5pm</strong> &mdash; call <a href="tel:+441202775566">01202 775566</a>, text <a href="sms:+447520615332">07520 615332</a>, or <a href="https://www.google.com/maps/place/?q=place_id:ChIJlTb8YRuic0gRCRczduB8OFI" target="_blank" rel="noopener">find us on Google Maps</a>.</p>
+          <p>Honest, simple pricing: home support <strong>&pound;18.25/month per computer</strong>, business from <strong>&pound;24.38/month per computer</strong> &mdash; rolling monthly, no call-out fee, cancel anytime.</p>
+        </div>
+        <ul class="checklist" data-stagger>
+{checklist(["Family-run in Dorset since 1995","Based in Bournemouth &mdash; on-site county-wide","Same-day response &middot; usually minutes remotely","We phone ahead with an ETA","No call-out fee, no long contracts","Rated 4.9 on Google"])}
+        </ul>
+      </div>
+    </section>'''
     revs = [REVPOOL[i % len(REVPOOL)], REVPOOL[(i + 2) % len(REVPOOL)]]
     content = "\n".join([
       hero(bc_sub("IT Support Dorset", "/it-support-dorset/", crumb_name), f"// {town.upper()} &middot; {region.upper()}",
            f'IT support in <em class="grad grad--cyan">{town}</em>', bp.hero_trust(lede),
            chips=["Remote &amp; on-site", "Homes &amp; businesses", "&pound;18.25/mo per computer"]),
+      nearme_block,
       f'''    <section class="section" aria-label="Local support">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
@@ -176,11 +202,15 @@ def make_local(i, slug, town, region, lede, intro_para, nearby):
     ])
     def schema(s, _desc=desc, _cn=crumb_name, _faqs=faqs, _town=town, _region=region):
         svc = service(s, f"IT Support {_town}", f"Monthly IT support, computer repairs, Microsoft 365 and cybersecurity for {_town} homes and businesses.", "IT support")
-        svc["areaServed"] = {"@type": "City", "name": _town, "containedInPlace": {"@type": "AdministrativeArea", "name": _region}}
+        if s == "it-support-dorset":
+            svc["areaServed"] = {"@type": "AdministrativeArea", "name": "Dorset", "containedInPlace": {"@type": "Country", "name": "United Kingdom"}}
+        else:
+            svc["areaServed"] = {"@type": "City", "name": _town, "containedInPlace": {"@type": "AdministrativeArea", "name": _region}}
         nodes = [crumb_sub(s, "IT Support Dorset", "it-support-dorset", _cn), webpage(s, f"IT Support {_town}", _desc), svc, faqpage(s, _faqs)]
         _co = COORDS.get(s)
         if _co:
-            nodes.append({"@type": "Place", "@id": f"{SITE}/{s}/#place", "name": _town,
+            _pname = "365 Techies, Bournemouth" if s == "it-support-dorset" else _town
+            nodes.append({"@type": "Place", "@id": f"{SITE}/{s}/#place", "name": _pname,
                           "geo": {"@type": "GeoCoordinates", "latitude": _co[0], "longitude": _co[1]}})
         return graph(nodes)
     add(slug=slug, title=SEO_TITLES.get(slug) or f"IT Support & IT Services {town} | 365 Techies",

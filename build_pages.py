@@ -434,6 +434,7 @@ FOOTER = '''  <footer class="site-footer">
     <div class="footer-areas">
       <p class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</p>
       <nav class="footer-areas__links" aria-label="Areas we cover">
+        <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>
         <a href="/it-support-poole/">Poole</a>
         <a href="/it-support-christchurch/">Christchurch</a>
@@ -4271,7 +4272,7 @@ add(
    crumb(s, "Remote IT Support"), webpage(s, "Remote IT Support", "Fast, secure remote IT support for homes and businesses."),
    service(s, "Remote IT Support", "Secure remote computer support via Splashtop SOS, usually within minutes.", "Remote IT support"),
    faqpage(s, [
-     ("Do you provide remote IT support across the whole of the UK?", "Yes. We're based in Dorset, but remote support isn't limited by distance — we help homes and businesses anywhere in the UK over a secure, encrypted connection. Wherever you are, we can usually fix the problem in minutes."),
+     ("Do you provide remote IT support across the whole of the UK?", "Yes. We're based in Dorset, but remote support isn't limited by distance — we help homes and businesses anywhere in the UK over a secure, encrypted connection. Wherever you are, we can usually fix the problem in minutes. Closer to home, see our <a href=\"/it-support-dorset/\">IT support across Dorset</a> for on-site visits too."),
      ("Is remote support safe?", "Yes. Sessions run over Splashtop SOS — an encrypted, industry-standard remote support tool. You watch everything on screen and access ends the moment the session is over."),
      ("What can be fixed remotely?", "Most things — email problems, software issues, Microsoft 365, slow computers, printer setup, Windows updates, even a scare like <a href=\"/onedrive-files-disappeared/\">OneDrive files that have vanished</a>, and general troubleshooting for home and business users."),
      ("How fast is remote support?", "Most remote sessions start within minutes during opening hours (Mon–Fri, 9am–5pm), and subscribers always jump the queue."),
@@ -4310,7 +4311,7 @@ add(
        "          <p>Whether your computers are at home, in the office or out on the road &mdash; anywhere in the UK &mdash; we connect securely and look after them all from one place &mdash; updates, security and quick fixes, with no-one needing to visit.</p>\n          <p>You stay in control: every session is one <em>you</em> start, over an encrypted connection, and we always phone first.</p>",
        variant="home", label="LIVE VIEW &mdash; CONNECTED DEVICES"),
    faq_html([
-     ("Do you provide remote IT support across the whole of the UK?", "Yes &mdash; we&rsquo;re based in Dorset, but remote support isn&rsquo;t limited by distance. We help homes and businesses <strong>anywhere in the UK</strong> over a secure, encrypted Splashtop SOS connection, and we can usually fix the problem in minutes. For hands-on hardware work we also visit on-site across Bournemouth, Poole and Dorset."),
+     ("Do you provide remote IT support across the whole of the UK?", "Yes &mdash; we&rsquo;re based in Dorset, but remote support isn&rsquo;t limited by distance. We help homes and businesses <strong>anywhere in the UK</strong> over a secure, encrypted Splashtop SOS connection, and we can usually fix the problem in minutes. For hands-on hardware work we also visit on-site &mdash; see our <a href=\"/it-support-dorset/\">IT support across Dorset</a> for every town we cover."),
      ("Is remote support safe?", "Yes. Sessions run over Splashtop SOS — an encrypted, industry-standard remote support tool. You watch everything on screen and access ends the moment the session is over."),
      ("What can be fixed remotely?", "Most things — email problems, software issues, Microsoft 365, slow computers, printer setup, Windows updates, even a scare like <a href=\"/onedrive-files-disappeared/\">OneDrive files that have vanished</a>, and general troubleshooting for home and business users."),
      ("How fast is it?", "Most remote sessions start within minutes during opening hours (Mon&ndash;Fri, 9am&ndash;5pm). Subscribers always jump the queue."),
@@ -4643,6 +4644,7 @@ add(
      ("Do you repair both laptops and desktops?", "Yes — Windows laptops and desktop PCs, plus common upgrades like SSDs and more memory."),
      ("Can you remove a virus?", "Yes — we remove viruses and malware, clean up your system and set up protection so it doesn't come back."),
      ("Do I have to take out a subscription?", "No — we offer one-off repairs with no subscription. Many customers then move to a monthly plan to avoid future problems."),
+     ("Which areas do you cover?", "All of Dorset — we're based in Bournemouth and collect free locally, with remote help available anywhere. See <a href=\"/it-support-dorset/\">IT support across Dorset</a> for every town we cover."),
    ]),
  ]),
  content="\n".join([
@@ -4709,6 +4711,7 @@ add(
      ("Can you replace a laptop screen or battery?", "Yes — cracked or dim laptop screens, worn-out batteries, charging ports, keyboards and trackpads are all common laptop repairs we carry out, with a clear quote first and a 12-month warranty."),
      ("Can you remove a virus?", "Yes — we remove viruses and malware, clean up your system and set up protection so it doesn&rsquo;t come back."),
      ("Do I have to take out a subscription?", "No — we offer one-off repairs with no subscription. Many customers then move to a monthly plan to avoid future problems."),
+     ("Which areas do you cover?", "All of Dorset — we're based in Bournemouth and collect free locally, with remote help available anywhere. See <a href=\"/it-support-dorset/\">IT support across Dorset</a> for every town we cover."),
      ("Can you recover my files?", "In most cases, yes. Bring it to us before doing anything else and we&rsquo;ll give you the best chance of recovering your data."),
    ]),
    tools_strip(["pcbench", "faultcheck", "repairreplace"], title="Check your computer &mdash; free tools", lede_text="Benchmark it, diagnose it, or get an honest repair-or-replace verdict.", alt=False),
