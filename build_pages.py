@@ -1130,7 +1130,7 @@ WCHECK_TOOL = r'''    <section class="section" aria-label="Free website checker"
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>// FREE INSTANT CHECK</p>
           <h2 class="section-title section-title--center" data-title>Check any website in seconds<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>Enter a web address and we&rsquo;ll run a full health check &mdash; speed, SEO, accessibility, security and mobile-friendliness &mdash; powered by Google&rsquo;s own Lighthouse engine.</p>
+          <p class="lede lede--center" data-reveal>Enter a web address and we&rsquo;ll run a full health check &mdash; speed, SEO, accessibility, security and mobile-friendliness &mdash; powered by Google&rsquo;s own Lighthouse engine. Every check also shows how the site compares to <strong>our own website, measured live with the same tool</strong> &mdash; we lead by example, not by claims.</p>
         </div>
         <div id="wcheck" data-reveal>
           <form class="wc-form" id="wc-form" novalidate>
@@ -1151,6 +1151,7 @@ WCHECK_TOOL = r'''    <section class="section" aria-label="Free website checker"
           <div class="wc-results" id="wc-results" hidden>
             <p class="wc-tested">Results for <a id="wc-tested-url" href="#" target="_blank" rel="noopener nofollow"></a> <span id="wc-tested-strat" class="wc-badge"></span></p>
             <div class="wc-gauges" id="wc-gauges"></div>
+            <div id="wc-compare"></div>
             <div id="wc-cwv"></div>
             <div id="wc-checks"></div>
             <div id="wc-issues"></div>
@@ -1223,6 +1224,23 @@ WCHECK_TOOL = r'''    <section class="section" aria-label="Free website checker"
       #wcheck .wc-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}
       #wcheck .wc-powered{text-align:center;font-size:.72rem;color:var(--muted,#9aa6c2);margin:1.4rem 0 0;opacity:.8}
       @media(max-width:560px){#wcheck .wc-gauges{grid-template-columns:repeat(2,1fr)}#wcheck .wc-go{flex:1 1 100%}}
+      #wcheck .wc-cmp{margin-top:1.6rem;padding:1.2rem 1.3rem;border:1px solid rgba(255,255,255,.12);border-radius:14px;background:rgba(255,255,255,.03)}
+      #wcheck .wc-cmp h3{margin:0 0 .35rem;font-size:1.05rem}
+      #wcheck .wc-cmp-sub{font-size:.8rem;color:var(--muted,#9aa6c2);margin:0 0 1rem}
+      #wcheck .wc-cmp-row{display:grid;grid-template-columns:130px 1fr;gap:.35rem .8rem;align-items:center;margin-bottom:.75rem}
+      #wcheck .wc-cmp-lab{font-size:.8rem;font-weight:600}
+      #wcheck .wc-cmp-bars{display:flex;flex-direction:column;gap:.3rem}
+      #wcheck .wc-cmp-bar{display:flex;align-items:center;gap:.5rem;font-size:.72rem}
+      #wcheck .wc-cmp-bar .wc-cmp-who{flex:0 0 84px;color:var(--muted,#9aa6c2)}
+      #wcheck .wc-cmp-bar .wc-cmp-track{flex:1;height:9px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden}
+      #wcheck .wc-cmp-bar .wc-cmp-fill{height:100%;border-radius:99px;width:0;transition:width .9s ease}
+      #wcheck .wc-cmp-bar.wc-good .wc-cmp-fill{background:#39d353}
+      #wcheck .wc-cmp-bar.wc-avg .wc-cmp-fill{background:#e0b341}
+      #wcheck .wc-cmp-bar.wc-poor .wc-cmp-fill{background:#e06a4a}
+      #wcheck .wc-cmp-bar .wc-cmp-num{flex:0 0 28px;text-align:right;font-weight:700}
+      #wcheck .wc-cmp-note{font-size:.74rem;color:var(--muted,#9aa6c2);margin:.9rem 0 0}
+      #wcheck .wc-cmp-loading{font-size:.8rem;color:var(--muted,#9aa6c2);margin-top:1.2rem;text-align:center}
+      @media(max-width:560px){#wcheck .wc-cmp-row{grid-template-columns:1fr}}
       </style>
       <script>
       (function(){
@@ -1289,6 +1307,69 @@ WCHECK_TOOL = r'''    <section class="section" aria-label="Free website checker"
           return out;
         }
         function metricBand(c){ return c==='FAST'?'wc-good':(c==='AVERAGE'?'wc-avg':'wc-poor'); }
+        /* ---- live comparison vs our own site (lead by example, not claims) ---- */
+        var SELF_URL='https://365techies.co.uk/';
+        function scoresFrom(d){
+          var lh=d&&d.lighthouseResult; if(!lh||!lh.categories) return null;
+          function sc(k){ var c=lh.categories[k]; return c&&c.score!=null?Math.round(c.score*100):null; }
+          return {performance:sc('performance'),seo:sc('seo'),accessibility:sc('accessibility'),bp:sc('best-practices')};
+        }
+        function selfCache(read,val){
+          var k='tt_wc_self_'+strat;
+          try{
+            if(read){ var raw=localStorage.getItem(k); if(!raw) return null; var o=JSON.parse(raw);
+              if(!o||!o.t||(Date.now()-o.t)>86400000) return null; return o.S; }
+            localStorage.setItem(k, JSON.stringify({t:Date.now(),S:val}));
+          }catch(e){ return null; }
+        }
+        function fetchSelf(){
+          var cached=selfCache(true); if(cached) return Promise.resolve(cached);
+          return fetch(api(SELF_URL)).then(function(r){ if(r.status===429) throw new Error('cmp429'); if(!r.ok) throw new Error('cmp'); return r.json(); })
+            .then(function(d){ var S=scoresFrom(d); if(!S) throw new Error('cmp'); selfCache(false,S); return S; });
+        }
+        function cmpBar(who,score){
+          if(score==null) return '';
+          return '<div class="wc-cmp-bar '+band(score)+'"><span class="wc-cmp-who">'+who+'</span><span class="wc-cmp-track"><span class="wc-cmp-fill" data-w="'+score+'"></span></span><span class="wc-cmp-num">'+score+'</span></div>';
+        }
+        function renderCompare(mine,ours,isSelf){
+          var box=root.querySelector('#wc-compare'); if(!box) return;
+          if(isSelf){
+            box.innerHTML='<div class="wc-cmp"><h3>You&rsquo;re checking our website &mdash; good instinct.</h3><p class="wc-cmp-sub">These scores above <em>are</em> the benchmark this tool compares every site against. We build websites the same way we built this one &mdash; <a href="/web-design-hosting/">see our web design &amp; hosting</a>.</p></div>';
+            return;
+          }
+          var rows='', any=false;
+          [['performance','Performance'],['seo','SEO'],['accessibility','Accessibility'],['bp','Best Practices']].forEach(function(p){
+            var m=mine[p[0]], o=ours[p[0]];
+            if(m==null&&o==null) return; any=true;
+            rows+='<div class="wc-cmp-row"><span class="wc-cmp-lab">'+p[1]+'</span><div class="wc-cmp-bars">'+cmpBar('This site',m)+cmpBar('365techies.co.uk',o)+'</div></div>';
+          });
+          if(!any){ box.innerHTML=''; return; }
+          box.innerHTML='<div class="wc-cmp"><h3>How does it compare to ours?</h3>'+
+            '<p class="wc-cmp-sub">365techies.co.uk scores below were measured <strong>live with this same tool</strong> ('+(strat==='mobile'?'mobile':'desktop')+') &mdash; we&rsquo;d rather show you than make claims.</p>'+
+            rows+
+            '<p class="wc-cmp-note">Lighthouse scores naturally vary a few points between runs. Our site is our portfolio &mdash; if we can make our own site this fast and findable, we can do it for yours. <a href="/web-design-hosting/">See our web design &amp; hosting</a>.</p></div>';
+          requestAnimationFrame(function(){ box.querySelectorAll('.wc-cmp-fill').forEach(function(f){ f.style.width=f.getAttribute('data-w')+'%'; }); });
+        }
+        function startCompare(mine,testedUrl){
+          var box=root.querySelector('#wc-compare'); if(!box) return;
+          var host=''; try{ host=new URL(testedUrl).hostname.replace(/^www\./,''); }catch(e){}
+          if(host==='365techies.co.uk'){ renderCompare(mine,mine,true); return; }
+          box.innerHTML='<p class="wc-cmp-loading">Comparing with 365techies.co.uk (checked live)&hellip;</p>';
+          fetchSelf().then(function(ours){ renderCompare(mine,ours,false); })
+            .catch(function(err){
+              if(String(err&&err.message)==='cmp429') box.innerHTML='<p class="wc-cmp-loading">Google&rsquo;s free testing limit is busy, so the live comparison will be back shortly &mdash; your results above are unaffected.</p>';
+              else box.innerHTML='';
+            });
+        }
+        /* one-click "test this site" buttons anywhere on the page */
+        document.addEventListener('click',function(e){
+          var b=e.target.closest('[data-wc-prefill]'); if(!b) return;
+          e.preventDefault();
+          urlInput.value=b.getAttribute('data-wc-prefill');
+          try{ root.scrollIntoView({behavior:'smooth',block:'start'}); }catch(ex){}
+          if(typeof form.requestSubmit==='function') form.requestSubmit();
+          else form.dispatchEvent(new Event('submit',{cancelable:true}));
+        });
         function render(d,u){
           var lh=d.lighthouseResult; if(!lh){ showErr(new Error('api')); return; }
           var cats=lh.categories;
@@ -1322,6 +1403,7 @@ WCHECK_TOOL = r'''    <section class="section" aria-label="Free website checker"
           elRes.hidden=false;
           requestAnimationFrame(function(){ root.querySelectorAll('.wc-g-val').forEach(function(c){ c.style.strokeDashoffset=c.getAttribute('data-off'); }); });
           try{ elRes.scrollIntoView({behavior:'smooth',block:'start'}); }catch(e){}
+          startCompare(S,tu);
         }
       })();
       </script>

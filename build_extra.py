@@ -2562,19 +2562,77 @@ off_grid()
 # ===================================================== WEBSITE DESIGN, HOSTING & EMAIL
 def web_design():
     slug = "web-design-hosting"
-    desc = "Premium website design, fast managed hosting and professional business email for homes and businesses across Dorset. Hosting powered by SiteGround — free SSL, daily backups, UK data centre and expert support."
+    desc = "Web design and hosting in Bournemouth with proof, not promises: our own site scores 96-100 on Google Lighthouse — test it live on this page, then compare any site to ours. Design, hosting & business email for Bournemouth, Poole & Dorset."
     faqs = [
-      ("Do you design and build websites?", "Yes — we design and build fast, modern, mobile-friendly websites for sole traders and small businesses, then host, secure and look after them for you."),
+      ("Do you design and build websites?", "Yes — we design and build fast, modern, mobile-friendly websites for sole traders and small businesses across Bournemouth, Poole and Dorset, then host, secure and look after them for you."),
+      ("Do you do SEO as well as design?", "Findability is the whole point — there&rsquo;s no point having a beautiful website if nobody can find it. Every site we build is technically SEO-sound from day one (that&rsquo;s the SEO 100 on our own Lighthouse report — test it on this page), with clean structure, proper metadata and genuinely fast pages."),
+      ("Can I see proof your sites are fast?", "Yes — right on this page. Run our own website through the free checker above and the scores are measured live by Google&rsquo;s Lighthouse engine while you watch. We&rsquo;d rather show you than make claims."),
+      ("How fast will my site be?", "We build to the same standard as our own site — but we won&rsquo;t promise you a number, because honest people can&rsquo;t: scores vary between runs and depend on your content. What we can say: Google confirms page experience signals like Core Web Vitals are used by its ranking systems, and relevance always comes first — so we build for both."),
+      ("How much does a website cost?", "Independent UK guides put a typical agency-built small-business website at roughly &pound;2,500&ndash;&pound;10,000 before hosting. Every project is different, so we quote fixed and up front — tell us what you need and you&rsquo;ll get a clear written price with no surprises, from a local firm you can actually visit."),
       ("Where are the websites hosted?", "On premium infrastructure powered by SiteGround — ultrafast cloud hosting with free SSL, daily backups, a global CDN and a UK data centre, all managed by us."),
       ("Can you set up professional business email?", "Yes — we set up email on your own domain (you@yourbusiness.co.uk) or Microsoft 365, with spam protection and configuration on all your devices."),
       ("Do you look after the website after launch?", "Absolutely — our premium plan includes managed hosting, updates, security, backups and support, so your site stays fast, safe and online."),
     ]
     content = "\n".join([
-      hero(bc("Website Design & Hosting"), "// PREMIUM SERVICE",
-           'Website design, hosting &amp; <em class="grad grad--cyan">business email</em>',
-           "A premium, done-for-you service: we design and build your website, host it on fast, secure infrastructure, set up professional email on your domain — and look after all of it, so you never have to think about it.",
-           cta1=("Get a Website Quote", "/contact/"), cta2=("Call 01202 775566", "tel:+441202775566"),
-           chips=["Designed &amp; built for you","Fast managed hosting","Business email included"]),
+      hero(bc("Web Design & Hosting"), "// PROOF, NOT PROMISES",
+           'Web design &amp; hosting in <em class="grad grad--cyan">Bournemouth</em> &mdash; proven fast, built to be found',
+           "Most web designers make claims. We&rsquo;d rather show you: our own website scores 96&ndash;100 on Google&rsquo;s Lighthouse tests, and you can re-test it live on this page &mdash; then compare any website to ours with the same tool. Design, hosting and business email for Bournemouth, Poole and the rest of Dorset, all looked after by your local IT team.",
+           cta1=("Get a Website Quote", "/contact/"), cta2=("Test our site live", "#wctool"),
+           chips=["Lighthouse-proven &mdash; test us live","We lead by example","Bournemouth, Poole &amp; Dorset"]),
+      f'''    <section class="section" aria-label="Our proof">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">/01 &mdash; OUR SITE IS THE PORTFOLIO</p>
+          <h2 class="section-title" data-title>We lead by example &mdash; and you can check<span class="title-underline"></span></h2>
+          <p>Measured with the very tool on this page on <strong>1 July 2026</strong> (desktop Lighthouse): <strong>Performance 96 &middot; SEO 100 &middot; Accessibility 100 &middot; Best Practices 100</strong>. Lighthouse scores naturally vary a few points between runs &mdash; which is exactly why we don&rsquo;t ask you to take our word for it.</p>
+          <p>Run the check yourself, right now, on this page. Then run <em>any</em> web designer&rsquo;s own website through it &mdash; plenty that charge thousands score lower than the site you&rsquo;re reading. If a builder won&rsquo;t show you their scores, ask yourself why.</p>
+          <p><button type="button" class="button primary" data-wc-prefill="https://365techies.co.uk/">Re-test our site live now &#8594;</button></p>
+        </div>
+        <ul class="checklist" data-stagger>
+{checklist(["Performance 96 &mdash; measured, not claimed","SEO 100 &mdash; built to be found","Accessibility 100 &mdash; works for everyone","Best Practices 100 &mdash; secure &amp; modern","Re-testable live, any time","Same standard for every site we build"])}
+        </ul>
+      </div>
+    </section>''',
+      WCHECK_TOOL,
+      f'''    <section class="section section--alt" aria-label="Beautiful but invisible">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">/02 &mdash; FINDABILITY FIRST</p>
+          <h2 class="section-title" data-title>A beautiful website nobody finds is a brochure in a drawer<span class="title-underline"></span></h2>
+          <p>In a study of four million Google searches, <a href="https://backlinko.com/google-ctr-stats" target="_blank" rel="noopener">barely 1 in 200 people clicked anything on page two</a>. Studies consistently show the top three results take between half and two-thirds of all clicks. If your site isn&rsquo;t findable, it may as well not exist &mdash; however lovely it looks.</p>
+          <p><a href="https://developers.google.com/search/docs/appearance/page-experience" target="_blank" rel="noopener">Google confirms</a> that page experience signals like Core Web Vitals are used by its ranking systems. To be honest with you (as always): speed alone won&rsquo;t put you at #1 &mdash; Google says relevance comes first. But where competing local sites are otherwise similar, great page experience contributes &mdash; and that&rsquo;s the edge we build in from day one.</p>
+          <p>And the field is genuinely weak: Google&rsquo;s own real-user data (the <a href="https://cwvtech.report/" target="_blank" rel="noopener">Core Web Vitals Technology Report</a>) shows fewer than half of WordPress sites &mdash; the platform much of the web is built on &mdash; pass Core Web Vitals, and a large share of Wix and Squarespace sites fail too. Those are real-visitor measurements, not lab scores. Don&rsquo;t take our word for it: test any site against ours, above.</p>
+        </div>
+        <ul class="checklist" data-stagger>
+{checklist(["Technically SEO-sound from day one","Fast pages that pass Core Web Vitals","Clean structure Google can read","Mobile-first, accessible design","Honest about what SEO can&rsquo;t promise","Findability baked in, not bolted on"])}
+        </ul>
+      </div>
+    </section>''',
+      f'''    <section class="section" aria-label="What agencies charge">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/03 &mdash; HONEST VALUE</p>
+          <h2 class="section-title section-title--center" data-title>What do websites really cost?<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="prose" data-reveal style="max-width:74ch;margin:0 auto;text-align:center">
+          <p>Independent UK guides &mdash; Duport, Forbes Advisor UK, even GoDaddy&rsquo;s own 2026 guide &mdash; put a typical agency-built small-business website at roughly <strong>&pound;2,500&ndash;&pound;10,000</strong>, before hosting and upkeep. Paying that isn&rsquo;t wrong &mdash; but paying it <em>without proof</em> is. Plenty of expensive websites score poorly on the very tests Google publishes; you can check any of them on this page in thirty seconds.</p>
+          <p><strong>Our promise is simpler:</strong> a fixed written quote up front, a site built to the same measurable standard as our own, hosting and email under the same roof &mdash; and a local team you can phone, text or visit. <a href="/contact/">Tell us what you need</a> and we&rsquo;ll give you a straight price.</p>
+        </div>
+      </div>
+    </section>''',
+      f'''    <section class="section section--alt" aria-label="Overview">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">/04 &mdash; DONE FOR YOU</p>
+          <h2 class="section-title" data-title>Your website, handled end to end<span class="title-underline"></span></h2>
+          <p>A great website should win you work, not become another thing to manage. We design and build yours, then host it, secure it and keep it updated — all under one friendly, local roof in Bournemouth, serving Poole and the whole of Dorset.</p>
+          <p><strong>It&rsquo;s a premium, fully-managed service.</strong> You get the website, the hosting, the email and the ongoing care, with the same people who look after your IT &mdash; ideal for small business website design across Dorset.</p>
+        </div>
+        <ul class="checklist" data-stagger>
+{checklist(["Bespoke website design","Mobile-friendly &amp; fast","Managed web hosting","Free SSL certificate","Daily backups","Business email accounts","Domain names &amp; DNS","Ongoing updates &amp; care"])}
+        </ul>
+      </div>
+    </section>''',
       f'''    <section class="section" aria-label="Overview">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
@@ -2588,10 +2646,10 @@ def web_design():
         </ul>
       </div>
     </section>''',
-      f'''    <section class="section section--alt" aria-label="Hosting">
+      f'''    <section class="section" aria-label="Hosting">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>/02 — PREMIUM HOSTING</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>/05 — PREMIUM HOSTING</p>
           <h2 class="section-title section-title--center" data-title>Fast, secure hosting powered by SiteGround<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>We host on premium, award-winning infrastructure from SiteGround — then manage every bit of it for you.</p>
         </div>
@@ -2606,7 +2664,7 @@ def web_design():
 {checklist(["Email on your own domain","Microsoft 365 or hosted email","Spam &amp; phishing protection","Set up on all your devices","Shared mailboxes &amp; aliases","Migration from old email"])}
         </ul>
         <div class="prose" data-reveal>
-          <p class="eyebrow mono">/03 — PROFESSIONAL EMAIL</p>
+          <p class="eyebrow mono">/06 — PROFESSIONAL EMAIL</p>
           <h2 class="section-title" data-title>Email that matches your brand<span class="title-underline"></span></h2>
           <p>Ditch the generic address. We set up professional email on your own domain &mdash; <strong>you@yourbusiness.co.uk</strong> &mdash; with spam protection and everything configured across your computer, phone and tablet.</p>
           <p>Prefer Microsoft 365? We do that too, and it&rsquo;s fully covered by our IT support plans.</p>
@@ -2615,22 +2673,31 @@ def web_design():
     </section>''',
       f'''    <section class="how section--alt" aria-label="How it works">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>/04 — HOW IT WORKS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>/07 — HOW IT WORKS</p>
         <h2 class="section-title section-title--center" data-title>From idea to live in four steps<span class="title-underline title-underline--center"></span></h2>
         <ol class="how__steps">
 {steps([("Design","We learn your business and design a site that looks great and works hard."),("Build &amp; launch","We build it, set up hosting, SSL, email and your domain, and go live."),("Host &amp; secure","Fast managed hosting with backups, security and updates handled for you."),("Look after","Ongoing care and changes whenever you need them — just ask.")])}
         </ol>
       </div>
     </section>''',
-      WCHECK_TOOL,
-      f'''    <section class="section" aria-label="A site we look after">
+      f'''    <section class="section" aria-label="Sites we look after">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// A SITE WE LOOK AFTER</p>
-          <h2 class="section-title section-title--center" data-title>Designed, hosted &amp; cared for since 2014<span class="title-underline title-underline--center"></span></h2>
+          <p class="eyebrow eyebrow--center mono" data-reveal>/08 &mdash; PROOF YOU CAN CLICK</p>
+          <h2 class="section-title section-title--center" data-title>Two real sites. Test either, live.<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>We&rsquo;d rather show you two verifiable examples than a wall of logos. Both buttons run a genuine Google Lighthouse check on this page, while you watch.</p>
         </div>
-        <div class="prose" data-reveal style="max-width:720px;margin:0 auto;text-align:center">
-          <p>We design, host and look after the website for <strong><a href="https://www.colinclarkbuilders.co.uk/" target="_blank" rel="noopener">Colin Clark Builders</a></strong> &mdash; East Dorset&rsquo;s traditional and heritage-property building specialists &mdash; right alongside their IT support. <strong>The same local team since 2014:</strong> one number for the website, the email and the computers.</p>
+        <div class="split-2">
+          <div class="tile" data-reveal>
+            <h3>365techies.co.uk &mdash; this site</h3>
+            <p style="color:var(--muted);margin:0 0 1.1rem">Our own 400+ page site: designed, written, hosted and continuously tuned by us. Exhibit A for everything on this page &mdash; the speed, the SEO, the accessibility toolbar, the works.</p>
+            <p><button type="button" class="button secondary" data-wc-prefill="https://365techies.co.uk/">Check this site live &#8594;</button></p>
+          </div>
+          <div class="tile" data-reveal>
+            <h3>colinclarkbuilders.co.uk</h3>
+            <p style="color:var(--muted);margin:0 0 1.1rem">We design, host and look after the website for <a href="https://www.colinclarkbuilders.co.uk/" target="_blank" rel="noopener">Colin Clark Builders</a> &mdash; East Dorset&rsquo;s heritage-property building specialists &mdash; right alongside their IT support. The same local team since 2014: one number for the website, the email and the computers.</p>
+            <p><button type="button" class="button secondary" data-wc-prefill="https://www.colinclarkbuilders.co.uk/">Check this site live &#8594;</button></p>
+          </div>
         </div>
       </div>
     </section>''',
@@ -2641,11 +2708,13 @@ def web_design():
           primary=("Get a Website Quote", "/contact/"), secondary=("Call 01202 775566", "tel:+441202775566")),
     ])
     def schema(s, _desc=desc, _faqs=faqs):
-        return graph([crumb(s, "Website Design & Hosting"), webpage(s, "Website Design, Hosting & Business Email", _desc),
-                      service(s, "Website Design, Hosting & Email", "Premium website design, managed hosting (powered by SiteGround) and professional business email for small businesses across Dorset.", "Website design and hosting"),
+        svc = service(s, "Web Design & Hosting Bournemouth", "Web design, managed hosting (powered by SiteGround) and professional business email for small businesses in Bournemouth, Poole and across Dorset — built to measurable Lighthouse standards.", "Web design and hosting")
+        svc["areaServed"] = [{"@type": "City", "name": "Bournemouth"}, {"@type": "City", "name": "Poole"}, {"@type": "AdministrativeArea", "name": "Dorset"}]
+        return graph([crumb(s, "Web Design & Hosting"), webpage(s, "Web Design & Hosting Bournemouth", _desc),
+                      svc,
                       faqpage(s, _faqs)])
-    add(slug=slug, title="Website Design, Hosting & Business Email | Premium Service | 365 Techies",
-        desc=desc, og_title="Website Design, Hosting & Email | 365 Techies", schema=schema, content=content)
+    add(slug=slug, title="Web Design & Hosting Bournemouth | Proof, Not Promises",
+        desc=desc, og_title="Web Design & Hosting Bournemouth | 365 Techies", schema=schema, content=content)
 web_design()
 
 # ===================================================== SERVICES OVERVIEW
