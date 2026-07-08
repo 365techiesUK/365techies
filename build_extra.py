@@ -2564,7 +2564,7 @@ def web_design():
     slug = "web-design-hosting"
     desc = "Web design and hosting in Bournemouth with proof, not promises: our own site scores 96-100 on Google Lighthouse — test it live on this page, then compare any site to ours. Design, hosting & business email for Bournemouth, Poole & Dorset."
     faqs = [
-      ("Do you design and build websites?", "Yes — we design and build fast, modern, mobile-friendly websites for sole traders and small businesses across Bournemouth, Poole and Dorset, then host, secure and look after them for you."),
+      ("Do you design and build websites?", "Yes — we design and build fast, modern, mobile-friendly websites for sole traders and small businesses across Bournemouth, Poole and Dorset, then host, secure and look after them for you. Got an existing site that isn&rsquo;t working? See our <a href=\"/website-rebuild/\">website rebuild service</a>."),
       ("Do you do SEO as well as design?", "Findability is the whole point — there&rsquo;s no point having a beautiful website if nobody can find it. Every site we build is technically SEO-sound from day one (that&rsquo;s the SEO 100 on our own Lighthouse report — test it on this page), with clean structure, proper metadata and genuinely fast pages."),
       ("Can I see proof your sites are fast?", "Yes — right on this page. Run our own website through the free checker above and the scores are measured live by Google&rsquo;s Lighthouse engine while you watch. We&rsquo;d rather show you than make claims."),
       ("How fast will my site be?", "We build to the same standard as our own site — but we won&rsquo;t promise you a number, because honest people can&rsquo;t: scores vary between runs and depend on your content. What we can say: Google confirms page experience signals like Core Web Vitals are used by its ranking systems, and relevance always comes first — so we build for both."),
@@ -2617,6 +2617,7 @@ def web_design():
         <div class="prose" data-reveal style="max-width:74ch;margin:0 auto;text-align:center">
           <p>Independent UK guides &mdash; Duport, Forbes Advisor UK, even GoDaddy&rsquo;s own 2026 guide &mdash; put a typical agency-built small-business website at roughly <strong>&pound;2,500&ndash;&pound;10,000</strong>, before hosting and upkeep. Paying that isn&rsquo;t wrong &mdash; but paying it <em>without proof</em> is. Plenty of expensive websites score poorly on the very tests Google publishes; you can check any of them on this page in thirty seconds.</p>
           <p><strong>Our promise is simpler:</strong> a fixed written quote up front, a site built to the same measurable standard as our own, hosting and email under the same roof &mdash; and a local team you can phone, text or visit. <a href="/contact/">Tell us what you need</a> and we&rsquo;ll give you a straight price.</p>
+          <p>Already have a website that isn&rsquo;t pulling its weight? See our <a href="/website-rebuild/">website rebuild &amp; redesign service</a> &mdash; including the SEO-safe migration that keeps your Google rankings through the changeover.</p>
         </div>
       </div>
     </section>''',
@@ -2717,6 +2718,131 @@ def web_design():
         desc=desc, og_title="Web Design & Hosting Bournemouth | 365 Techies", schema=schema, content=content)
 web_design()
 
+# ---- Website rebuild / redesign (SEO-safe migration) ----
+def website_rebuild():
+    slug = "website-rebuild"
+    desc = ("Website not getting calls? Rebuild it without losing your Google rankings: free live diagnosis on this page, "
+            "keyword & competitor research, and an SEO-safe migration — every old link 301-forwarded to a new optimised page. "
+            "Bournemouth, Poole & Dorset.")
+    faqs = [
+      ("Will I lose my Google rankings if I rebuild my website?", "Done properly, no — and this is the part most people get wrong. Google&rsquo;s own documentation says to map <em>every</em> old URL to its new equivalent with a permanent (301) redirect and keep those redirects live for at least a year; Google treats the redirect as a signal that the new page should take the old one&rsquo;s place in its index. Expect some temporary fluctuation while Google recrawls — its guidance says a medium-sized site takes a few weeks for most pages to move. We plan the redirect map before a single page is built, because that&rsquo;s exactly how we migrated our own site."),
+      ("How long until a rebuilt website gets traffic?", "Honestly: weeks for Google to re-index, months for growth — and we&rsquo;d rather tell you that up front. Google says expect temporary ranking fluctuation during a move, and independent research by Ahrefs found fewer than 2% of newly published pages reach Google&rsquo;s top 10 within a year (the average #1 page is around five years old). A rebuild doesn&rsquo;t buy instant traffic — it removes the handbrake, and the growth compounds from there. Anyone promising you page 1 in 30 days is pricing in your disappointment."),
+      ("Can you rebuild my WordPress website?", "Yes — happily. Our own website was WordPress before we rebuilt it, so we&rsquo;ve done this exact migration ourselves: every old URL mapped and 301-forwarded to a new, faster, search-optimised page, with Google Search Console watched daily through the changeover."),
+      ("Do I have to change my domain or hosting?", "No — you keep your domain (changing it mid-rebuild adds months of settling time, so we&rsquo;d usually advise against it). Hosting-wise, we offer fast managed hosting as part of the service, but the migration method is the same either way."),
+      ("What does a website rebuild cost?", "It depends on scope — how many pages, whether you need new copy and photography, and what the old site&rsquo;s link structure looks like. We don&rsquo;t publish a one-size price because there isn&rsquo;t one; you get a free look at your current site (use the checker on this page), then a fixed written quote before any work starts."),
+      ("Can I see proof you can do this?", "Yes, live: run <strong>365techies.co.uk</strong> through the checker on this page — that&rsquo;s our own rebuild, measured by Google&rsquo;s Lighthouse engine while you watch. We also rebuilt and look after <a href=\"https://www.colinclarkbuilders.co.uk/\" target=\"_blank\" rel=\"noopener\">colinclarkbuilders.co.uk</a>. Two real, checkable examples — no mock-ups."),
+    ]
+    content = "\n".join([
+      hero(bc("Website Rebuild"), "// NOT GETTING CALLS?",
+           'Time for a <em class="grad grad--cyan">website rebuild</em> &mdash; without losing your Google rankings',
+           "If the phone isn&rsquo;t ringing, your website is usually the reason — too slow, awkward on phones, invisible on Google, or all three. We rebuild websites for Bournemouth, Poole and Dorset businesses the way we rebuilt our own: diagnosed with real data, rebuilt to measurable standards, and migrated safely so every old link forwards to a new, optimised page.",
+           cta1=("Get a Rebuild Quote", "/contact/"), cta2=("Diagnose your site free", "#wctool"),
+           chips=["Free live diagnosis below","SEO-safe migration &mdash; 301s done right","We rebuilt our own site this way"]),
+      f'''    <section class="section" aria-label="Diagnose it first">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">/01 &mdash; DIAGNOSE, DON&rsquo;T GUESS</p>
+          <h2 class="section-title" data-title>Why isn&rsquo;t the phone ringing? Let&rsquo;s find out &mdash; free<span class="title-underline"></span></h2>
+          <p>Before anyone sells you a rebuild (including us), get the facts. The checker below runs Google&rsquo;s own Lighthouse tests on your site — speed, SEO, accessibility and best practices — in about thirty seconds.</p>
+          <p><strong>Then do the revealing bit:</strong> run the competitor who outranks you. If their site scores better, loads faster and reads clearer on a phone, you&rsquo;ve just found part of the answer. Every check also compares against our own site, measured live — because we&rsquo;d rather show you our standard than claim it.</p>
+          <p><button type="button" class="button primary" data-wc-prefill="https://365techies.co.uk/">See what a good score looks like &#8594;</button></p>
+        </div>
+        <ul class="checklist" data-stagger>
+{checklist(["Google&rsquo;s own Lighthouse tests","Speed, SEO, accessibility, security","Check your site &mdash; free, no sign-up","Check the competitor who outranks you","Compared live against our site","The fix-it plan is free too"])}
+        </ul>
+      </div>
+    </section>''',
+      WCHECK_TOOL,
+      f'''    <section class="section section--alt" aria-label="Signs it's time">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/02 &mdash; SIGNS IT&rsquo;S TIME</p>
+          <h2 class="section-title section-title--center" data-title>Seven signs your website is costing you work<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ul class="security-grid" data-stagger>
+{grid_cards([
+  ("Awkward on a phone", "Google completed mobile-first indexing — it judges your site by its <em>mobile</em> version, full stop. If it&rsquo;s clumsy on a phone, that&rsquo;s the version being ranked."),
+  ("Slow to load", "Google says good page experience — including Core Web Vitals speed metrics — aligns with what its ranking systems seek to reward. The checker above runs those exact tests."),
+  ("No padlock (HTTPS)", "Google confirmed HTTPS as a ranking signal back in 2014 — and worse, visitors now see a &lsquo;Not secure&rsquo; warning in their browser. That alone loses enquiries."),
+  ("Built on an old, unmaintained CMS", "Security firm Sucuri&rsquo;s analysis of hacked sites it cleaned up found roughly four in ten were running an outdated CMS at the time of infection. An unmaintained site is a liability, not just an eyesore."),
+  ("Invisible on Google", "If you&rsquo;re not on page 1 for the searches your customers actually type, the prettiest site in Dorset won&rsquo;t ring your phone. Findability is designed in — or it isn&rsquo;t."),
+  ("You can&rsquo;t update it", "If changing an opening time means paying someone or waiting a week, the site works against you. Yours should be easy to keep current."),
+  ("It simply looks dated", "Visitors judge credibility in seconds. If the site looks abandoned, people quietly assume the business is too — fair or not."),
+])}
+        </ul>
+      </div>
+    </section>''',
+      f'''    <section class="section" aria-label="The SEO-safe migration method">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">/03 &mdash; THE PART EVERYONE FEARS</p>
+          <h2 class="section-title" data-title>The SEO-safe migration: how we rebuild without losing your rankings<span class="title-underline"></span></h2>
+          <p>The classic redesign disaster is launching a lovely new site with <strong>no redirects</strong> — or pointing every old page at the homepage. Google explicitly warns that the homepage shortcut &ldquo;might be treated as a soft 404 error&rdquo;, which quietly erases those old pages&rsquo; visibility. Years of accumulated Google presence, gone at launch.</p>
+          <p>Our method is the one Google&rsquo;s own migration guidance describes — and the one we used on our own rebuild:</p>
+          <ol>
+            <li><strong>Audit every old URL first.</strong> Everything Google has indexed gets accounted for — nothing is left to 404.</li>
+            <li><strong>Build intent-matched new pages before launch.</strong> A redirect only holds its value if the new page answers the same search — so the pages come first, then the map.</li>
+            <li><strong>301-forward every old link to its new optimised page.</strong> Google&rsquo;s documentation: map every old URL to its new equivalent with a permanent redirect, and keep the redirects live for at least a year. A 301 tells Google the new page takes the old one&rsquo;s place.</li>
+            <li><strong>Submit the new sitemap and monitor Google Search Console daily.</strong> Google says a medium-sized site takes a few weeks for most pages to move in its index, with temporary fluctuation along the way — so we watch the changeover page by page rather than hoping.</li>
+          </ol>
+          <p>We&rsquo;re not guessing this works — <strong>our own website is the case study</strong>. Every URL of our old WordPress site 301-forwards to an intent-matched new page, and we still review the Search Console data daily.</p>
+        </div>
+        <ul class="checklist" data-stagger>
+{checklist(["Every old URL audited &amp; mapped","Intent-matched pages built first","301 redirects &mdash; never all-to-homepage","Redirects kept live 12+ months","New sitemap into Search Console","Daily GSC monitoring through the move","Temporary wobble expected &amp; watched","Done on our own site &mdash; checkably"])}
+        </ul>
+      </div>
+    </section>''',
+      f'''    <section class="section section--alt" aria-label="Keyword and competitor research">
+      <div class="wrap split-2 split-2--flip">
+        <ul class="checklist" data-stagger>
+{checklist(["Real search phrases, researched first","Every page targets a genuine search","Competitor visibility compared","Honest verdicts &mdash; winnable vs not","Titles &amp; content built to be found","Search Console set up &amp; explained"])}
+        </ul>
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">/04 &mdash; BUILT TO BE FOUND</p>
+          <h2 class="section-title" data-title>Keyword research &amp; competitor comparison &mdash; included<span class="title-underline"></span></h2>
+          <p>Most rebuilds start with colours. Ours start with <strong>what your customers actually type into Google</strong> — we research the real search phrases in your market, check who currently wins them, and tell you honestly which are winnable and which aren&rsquo;t worth chasing.</p>
+          <p>Then every page of the new site is built to answer a genuine search — so the rebuild isn&rsquo;t just prettier, it&rsquo;s <em>findable</em>. There&rsquo;s no point having a beautiful website if nobody can find it.</p>
+          <p>Want a taste right now? Run your site and your nearest competitor through the checker above and compare the SEO scores side by side.</p>
+        </div>
+      </div>
+    </section>''',
+      f'''    <section class="section" aria-label="Honest expectations">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/05 &mdash; STRAIGHT ANSWERS</p>
+          <h2 class="section-title section-title--center" data-title>The honest timeline nobody else will give you<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="prose" data-reveal style="max-width:74ch;margin:0 auto;text-align:center">
+          <p>A rebuild is not a traffic switch you flick. <a href="https://developers.google.com/search/docs/crawling-indexing/site-move-with-url-changes" target="_blank" rel="noopener">Google&rsquo;s own guidance</a> says a medium-sized site takes <strong>a few weeks</strong> for most pages to move in its index, with temporary ranking fluctuation along the way. Independent research by <a href="https://ahrefs.com/blog/how-long-does-it-take-to-rank-in-google-and-how-old-are-top-ranking-pages/" target="_blank" rel="noopener">Ahrefs</a> found fewer than 2% of newly published pages reach the top 10 within a year — the average #1 page is around five years old.</p>
+          <p>So here&rsquo;s the honest shape of it: <strong>weeks</strong> for Google to re-index the new site, <strong>a few months</strong> for impressions to build, and compounding growth after that — which is why the migration is done carefully and measured daily, not launched and hoped for. What the rebuild does immediately: a site that loads fast, works on every phone, looks credible and converts the visitors you already get.</p>
+        </div>
+      </div>
+    </section>''',
+      f'''    <section class="how section--alt" aria-label="How it works">
+      <div class="wrap">
+        <p class="eyebrow eyebrow--center mono" data-reveal>/06 &mdash; HOW IT WORKS</p>
+        <h2 class="section-title section-title--center" data-title>From tired site to rebuilt &amp; found, in five steps<span class="title-underline title-underline--center"></span></h2>
+        <ol class="how__steps">
+{steps([("Free diagnosis","Run the checker above — or send us your address and we&rsquo;ll review it properly, free, with a written verdict."),("Keyword &amp; competitor research","We find the searches worth winning in your market before designing a single page."),("Design &amp; build","A fast, mobile-first site built to measurable standards — the same ones our own site hits."),("SEO-safe migration","Every old URL mapped and 301-forwarded to its new optimised page; sitemap into Search Console."),("Watch &amp; care","We monitor Search Console through the changeover and host, secure and care for the site long-term.")])}
+        </ol>
+      </div>
+    </section>''',
+      faq_html(faqs),
+      tools_strip(["website", "ssl", "domainexp"], title="Free tools for your current site", lede_text="Check the site you have today &mdash; free, in seconds.", alt=False),
+      cta("Ready to find out what a rebuild would do?",
+          "Free diagnosis, honest verdict, fixed written quote — and a migration done the way Google's own guidance describes. Bournemouth, Poole & Dorset.",
+          primary=("Get a Rebuild Quote", "/contact/"), secondary=("Call 01202 775566", "tel:+441202775566")),
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        svc = service(s, "Website Rebuild & Redesign", "Website rebuild and redesign with SEO-safe migration — keyword research, competitor comparison, 301 redirect mapping and Google Search Console monitoring, for businesses in Bournemouth, Poole and Dorset.", "Website rebuild and redesign")
+        svc["areaServed"] = [{"@type": "City", "name": "Bournemouth"}, {"@type": "City", "name": "Poole"}, {"@type": "AdministrativeArea", "name": "Dorset"}, {"@type": "Country", "name": "United Kingdom"}]
+        return graph([crumb(s, "Website Rebuild"), webpage(s, "Website Rebuild & Redesign", _desc),
+                      svc, faqpage(s, _faqs)])
+    add(slug=slug, title="Website Rebuild & Redesign Bournemouth | SEO-Safe Migration",
+        desc=desc, og_title="Website Rebuild — Without Losing Your Rankings | 365 Techies", schema=schema, content=content)
+website_rebuild()
+
+
 # ===================================================== SERVICES OVERVIEW
 def services_overview():
     slug = "services"
@@ -2774,6 +2900,7 @@ def services_overview():
         ("Off-Grid &amp; Victron Energy", "/off-grid-victron-energy/", "Solar, battery storage and inverters for homes, businesses, campervans and motorhomes."),
         ("Custom VRM Dashboards", "/custom-vrm-dashboards/", "Custom live dashboards for Victron VRM &mdash; any layout, several sites on one screen, hosted &amp; supported worldwide."),
         ("Website Design &amp; Hosting", "/web-design-hosting/", "Premium websites, fast managed hosting and business email."),
+        ("Website Rebuild &amp; Redesign", "/website-rebuild/", "Rebuild a tired website without losing your Google rankings &mdash; SEO-safe migration, done like our own."),
         ("Agentic AI Systems", "/agentic-ai-systems/", "Custom-built agentic AI operating systems that automate and streamline your business-specific processes."),
         ("365 AI OS", "/365-ai-os/", "A real browser desktop with a built-in AI assistant that takes action &mdash; a working demo of the custom systems we build."),
         ("AI Voice Agents", "/ai-voice-agents/", "An AI receptionist that answers calls 24/7, captures enquiries and books callbacks &mdash; from &pound;95/month."),
