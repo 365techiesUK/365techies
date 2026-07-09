@@ -669,6 +669,12 @@ def _meta_desc(d, limit=158):
 def page(slug, title, desc, og_title, schema_json, content):
     canon = f"{SITE}/{slug}/"
     og_type = "article" if '"BlogPosting"' in schema_json else "website"
+    # Escape raw double quotes so descriptions that OPEN with a quoted phrase
+    # (e.g. '"Cannot start Microsoft Outlook..."') can't terminate the content=""
+    # attribute early — that was silently emptying the meta description.
+    desc = desc.replace('"', "&quot;")
+    title = title.replace('"', "&quot;")
+    og_title = og_title.replace('"', "&quot;")
     meta_desc = _meta_desc(desc)
     return f'''<!DOCTYPE html>
 <html lang="en-GB">

@@ -11582,12 +11582,17 @@ def computer_help_for_seniors():
       ("Stay safe","Safe online banking","Bank online with confidence and avoid the scams.","/safe-online-banking-for-beginners/"),
       ("Stay safe","Spot the Scam quiz","Practise telling scams from the real thing &mdash; no sign-up.","/spot-the-scam/"),
       ("No jargon","Tech in plain English","The terms and services people ask about most, explained simply.","/plain-english/"),
+      ("Big change","Landline switch-off help","Your phone is moving to digital by January 2027 &mdash; what to do, calmly.","/landline-switch-off-help/"),
+      ("Learn","Computer lessons for seniors","Friendly group classes at the Kinson Community Centre, plus 1-to-1.","/computer-lessons-for-seniors-bournemouth/"),
+      ("Learn","Smartphone lessons","Get confident with your Android phone &mdash; calls, photos, WhatsApp and more.","/smartphone-lessons-for-seniors/"),
     ]
     support=[
       ("For you","Support for retired users","Patient, unhurried, jargon-free IT support &mdash; our specialism.","/it-support-for-retired-users/"),
       ("Accessibility","Support for disabled people","Accessible IT support, assistive tech and simplified setups.","/it-support-for-disabled-people/"),
       ("For family","Setting up for an older relative","How to set up a device kindly, safely and simply.","/setting-up-a-computer-for-an-older-relative/"),
       ("For family","Helping a relative remotely","Help from afar safely &mdash; and the scam to avoid.","/helping-a-relative-with-their-computer/"),
+      ("For family","Give the gift of support","Set up and pay for friendly computer support for mum or dad, from anywhere.","/computer-support-gift-for-parents/"),
+      ("At home","Smart TV &amp; streaming help","The new TV connected, signed in and simple to use &mdash; without the frustration.","/smart-tv-streaming-setup-help/"),
     ]
     gcards="\n".join(f'          <a class="post-card" href="{href}"><p class="post-card__cat">{cat}</p><h3>{t}</h3><p>{d}</p><span class="post-card__more">Read more &#8594;</span></a>' for cat,t,d,href in guides)
     scards="\n".join(f'          <a class="post-card" href="{href}"><p class="post-card__cat">{cat}</p><h3>{t}</h3><p>{d}</p><span class="post-card__more">Find out more &#8594;</span></a>' for cat,t,d,href in support)
@@ -12741,7 +12746,7 @@ COURSE_SAFETY = r'''    <section class="section" aria-label="Free online safety 
           state.phase='intro'; stepEl.textContent='Free course'; setBar();
           var rows=MODULES.map(function(m,i){ return '<div class="osc-modrow"><span class="n">'+(i+1)+'</span>'+m.title+'</div>'; }).join('');
           var resume = (saved&&saved.m>0&&saved.m<MODULES.length)?'<div class="osc-actions"><button class="osc-btn" id="osc-resume">Continue where I left off</button><button class="osc-btn ghost" id="osc-restart">Start again</button></div>':'<div class="osc-actions"><button class="osc-btn" id="osc-begin">Start the course &#8594;</button></div>';
-          h('<div class="osc-card"><div class="osc-ico">&#128737;&#65039;</div><h1 class="osc-h">Staying safe online</h1><p class="osc-tag">Free &middot; 6 short lessons &middot; about 10 minutes</p><div class="osc-body"><p>A friendly, jargon-free course to help you spot scams and stay safe online &mdash; whatever your confidence with computers. Read a short lesson, try a quick &ldquo;what would you do?&rdquo;, and collect your certificate at the end. Nothing to install, and you can stop and come back any time.</p></div>'+
+          h('<div class="osc-card"><div class="osc-ico">&#128737;&#65039;</div><h2 class="osc-h">Staying safe online</h2><p class="osc-tag">Free &middot; 6 short lessons &middot; about 10 minutes</p><div class="osc-body"><p>A friendly, jargon-free course to help you spot scams and stay safe online &mdash; whatever your confidence with computers. Read a short lesson, try a quick &ldquo;what would you do?&rdquo;, and collect your certificate at the end. Nothing to install, and you can stop and come back any time.</p></div>'+
             '<div class="osc-mods">'+rows+'</div>'+resume+'<p class="osc-note">Made by 365 Techies &mdash; friendly, family-run IT support in Dorset since 1995. Nothing you type here is stored or sent to us.</p></div>');
           var b=stage.querySelector('#osc-begin'); if(b) b.onclick=function(){ state.m=0; state.score=0; lesson(); };
           var r=stage.querySelector('#osc-resume'); if(r) r.onclick=function(){ state.m=saved.m; state.score=saved.score||0; lesson(); };
