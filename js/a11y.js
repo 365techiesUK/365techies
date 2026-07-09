@@ -192,3 +192,27 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
   else run();
 })();
+
+
+/* Conversion events -> GA4 (queued via the inline gtag stub; Consent Mode governs sending).
+   Measures the contacts that matter: calls, texts, emails, SOS, checker runs, search opens. */
+(function () {
+  function ev(name, params) {
+    try { if (typeof window.gtag === 'function') window.gtag('event', name, params || {}); } catch (e) {}
+  }
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a[href], [data-wc-prefill], [data-search-open]');
+    if (!a) return;
+    if (a.hasAttribute('data-search-open')) { ev('site_search_open', { page: location.pathname }); return; }
+    if (a.hasAttribute('data-wc-prefill')) { ev('website_check_prefill', { target_url: a.getAttribute('data-wc-prefill'), page: location.pathname }); return; }
+    var href = a.getAttribute('href') || '';
+    if (href.indexOf('tel:') === 0) ev('phone_call_click', { link_url: href, page: location.pathname });
+    else if (href.indexOf('sms:') === 0) ev('sms_click', { link_url: href, page: location.pathname });
+    else if (href.indexOf('mailto:') === 0) ev('email_click', { link_url: href, page: location.pathname });
+    else if (href.indexOf('sos.splashtop.com') !== -1) ev('sos_click', { page: location.pathname });
+  }, true);
+  document.addEventListener('submit', function (e) {
+    var f = e.target;
+    if (f && f.id === 'wc-form') ev('website_check_run', { page: location.pathname });
+  }, true);
+})();

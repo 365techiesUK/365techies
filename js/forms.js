@@ -75,6 +75,7 @@
         if (btn) { btn.disabled = false; btn.textContent = label; }
         if (res.ok) {
           if (status) { status.style.color = "#39d353"; status.textContent = "✓ Thanks — your message is in. We’ll reply within one working day."; }
+          try { if (typeof window.gtag === "function") window.gtag("event", "generate_lead", { form_page: location.pathname, form_topic: topic || "(none)" }); } catch (gerr) {}
           form.reset();
         } else if (status) {
           status.style.color = "#e06a4a"; status.innerHTML = FAIL;
