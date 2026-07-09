@@ -677,6 +677,23 @@ def windows_10_eol():
       ("Can you handle the whole upgrade for me?", "Yes &mdash; our <a href=\"/windows-11-upgrade-service/\">Windows 11 upgrade service in Poole &amp; Bournemouth</a> backs up your files, upgrades or sets up your PC, moves everything across and checks it all works. No stress and no lost data."),
     ]
     pre = WIN10_CHECK_WIDGET + '''
+    <section class="section" aria-label="ESU deadline" style="padding-top:0">
+      <div class="wrap">
+        <div class="prose" data-reveal style="max-width:74ch;margin:0 auto;text-align:center;border:1px dashed rgba(224,179,65,.5);border-radius:14px;padding:1.1rem 1.3rem">
+          <p style="margin:0" id="esu-countline"><strong>&#9203; Still on Windows 10 with ESU?</strong> <span data-esu-days>Consumer Extended Security Updates end on <strong>13 October 2026</strong></span> &mdash; after that, no more security patches at all. If you haven&rsquo;t enrolled, <a href="/windows-10-esu-free-enrolment-help/">it&rsquo;s free and takes minutes</a>; either way, use the time to <a href="/windows-11-upgrade-service/">plan the move properly</a> rather than in a rush next autumn.</p>
+        </div>
+      </div>
+      <script>
+      (function(){
+        var el=document.querySelector('[data-esu-days]'); if(!el) return;
+        var end=new Date(2026,9,13); // 13 Oct 2026 local
+        var days=Math.ceil((end-new Date())/86400000);
+        if(days>1) el.innerHTML='Consumer Extended Security Updates end on <strong>13 October 2026</strong> &mdash; <strong>'+days+' days from today</strong>';
+        else if(days>=0) el.innerHTML='Consumer Extended Security Updates end <strong>this week</strong> (13 October 2026)';
+        else { var p=document.getElementById('esu-countline'); if(p) p.innerHTML='<strong>Windows 10 Extended Security Updates have now ended</strong> (13 October 2026) &mdash; a Windows 10 PC no longer receives any security patches. <a href="/windows-11-upgrade-service/">Let&rsquo;s sort the move</a> &mdash; many machines upgrade free, and we&rsquo;ll check yours in minutes.'; }
+      })();
+      </script>
+    </section>
     <section class="section" aria-label="What end of support means">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// WHAT IT MEANS</p>
