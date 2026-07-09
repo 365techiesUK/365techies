@@ -2587,6 +2587,7 @@ def web_design():
       ("Can I see proof your sites are fast?", "Yes — right on this page. Run our own website through the free checker above and the scores are measured live by Google&rsquo;s Lighthouse engine while you watch. We&rsquo;d rather show you than make claims."),
       ("How fast will my site be?", "We build to the same standard as our own site — but we won&rsquo;t promise you a number, because honest people can&rsquo;t: scores vary between runs and depend on your content. What we can say: Google confirms page experience signals like Core Web Vitals are used by its ranking systems, and relevance always comes first — so we build for both."),
       ("How much does a website cost?", "Independent UK guides put a typical agency-built small-business website at roughly &pound;2,500&ndash;&pound;10,000 before hosting. Every project is different, so we quote fixed and up front — tell us what you need and you&rsquo;ll get a clear written price with no surprises, from a local firm you can actually visit."),
+      ("Why do some websites cost &pound;50,000 or even more?", "Because past a certain size a website is really software plus a publishing operation. At published UK rates, professionally written pages start around &pound;100 each, custom checkers and calculators are &pound;30,000+ software projects, and maintenance adds 15&ndash;25% a year on top. Our own 475-page site with its 20+ free tools is exactly that scope &mdash; built in-house, which is why we can build yours to the same measurable standard for a sensible fixed price."),
       ("Where are the websites hosted?", "On premium infrastructure powered by SiteGround — ultrafast cloud hosting with free SSL, daily backups, a global CDN and a UK data centre, all managed by us."),
       ("Can you set up professional business email?", "Yes — we set up email on your own domain (you@yourbusiness.co.uk) or Microsoft 365, with spam protection and configuration on all your devices."),
       ("Do you look after the website after launch?", "Absolutely — our premium plan includes managed hosting, updates, security, backups and support, so your site stays fast, safe and online."),
@@ -2631,9 +2632,20 @@ def web_design():
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>/03 &mdash; HONEST VALUE</p>
           <h2 class="section-title section-title--center" data-title>What do websites really cost?<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Published UK rates, not sales talk &mdash; so you can judge any quote (including ours) with the numbers in front of you.</p>
         </div>
-        <div class="prose" data-reveal style="max-width:74ch;margin:0 auto;text-align:center">
-          <p>Independent UK guides &mdash; Duport, Forbes Advisor UK, even GoDaddy&rsquo;s own 2026 guide &mdash; put a typical agency-built small-business website at roughly <strong>&pound;2,500&ndash;&pound;10,000</strong>, before hosting and upkeep. Paying that isn&rsquo;t wrong &mdash; but paying it <em>without proof</em> is. Plenty of expensive websites score poorly on the very tests Google publishes; you can check any of them on this page in thirty seconds.</p>
+        <ul class="security-grid" data-stagger>
+{grid_cards([
+  ("A typical small-business site", "Roughly <strong>&pound;2,500&ndash;&pound;10,000</strong> before hosting and upkeep, according to independent UK guides from Duport, Forbes Advisor UK and GoDaddy&rsquo;s own 2026 guide."),
+  ("A bespoke 10&ndash;20 page site", "Regional agencies&rsquo; own published packages run about <strong>&pound;3,000&ndash;&pound;15,000</strong>; London full-service firms quote &pound;8,000&ndash;&pound;30,000+ for a similar brief."),
+  ("The words on the pages", "Professional copywriting starts around <strong>&pound;100 per 1,000-word page</strong>, and the average UK freelance copywriter&rsquo;s day rate is &pound;480 (ProCopywriters survey, 2025). Fifty proper pages is a five-figure line on its own."),
+  ("Calculators, checkers &amp; tools", "Custom interactive tools are <em>software</em>, not web design &mdash; UK bespoke-software guides price customer-facing tools from <strong>&pound;30,000+</strong>."),
+  ("The bills that follow", "Agencies typically charge <strong>15&ndash;25% of the build cost per year</strong> in maintenance, plus SEO retainers of &pound;700&ndash;&pound;1,500+ a month."),
+  ("The scope test: this site", "What you&rsquo;re reading is a 475+ page site with 20+ free tools and live energy dashboards. At the published rates above, that&rsquo;s a <strong>six-figure project</strong> &mdash; we built it in-house, and you can test the result live on this page."),
+])}
+        </ul>
+        <div class="prose" data-reveal style="max-width:74ch;margin:2.2rem auto 0;text-align:center">
+          <p>Paying agency prices isn&rsquo;t wrong &mdash; paying them <em>without proof</em> is. Plenty of expensive websites score poorly on the very tests Google publishes; you can check any of them &mdash; and the designer&rsquo;s own website &mdash; on this page in thirty seconds.</p>
           <p><strong>Our promise is simpler:</strong> a fixed written quote up front, a site built to the same measurable standard as our own, hosting and email under the same roof &mdash; and a local team you can phone, text or visit. <a href="/contact/">Tell us what you need</a> and we&rsquo;ll give you a straight price.</p>
           <p>Already have a website that isn&rsquo;t pulling its weight? See our <a href="/website-rebuild/">website rebuild &amp; redesign service</a> &mdash; including the SEO-safe migration that keeps your Google rankings through the changeover.</p>
         </div>
@@ -2652,20 +2664,7 @@ def web_design():
         </ul>
       </div>
     </section>''',
-      f'''    <section class="section" aria-label="Overview">
-      <div class="wrap split-2">
-        <div class="prose" data-reveal>
-          <p class="eyebrow mono">/01 — DONE FOR YOU</p>
-          <h2 class="section-title" data-title>Your website, handled end to end<span class="title-underline"></span></h2>
-          <p>A great website should win you work, not become another thing to manage. We design and build yours, then host it, secure it and keep it updated — all under one friendly, local roof.</p>
-          <p><strong>It&rsquo;s a premium, fully-managed service.</strong> You get the website, the hosting, the email and the ongoing care, with the same people who look after your IT.</p>
-        </div>
-        <ul class="checklist" data-stagger>
-{checklist(["Bespoke website design","Mobile-friendly &amp; fast","Managed web hosting","Free SSL certificate","Daily backups","Business email accounts","Domain names &amp; DNS","Ongoing updates &amp; care"])}
-        </ul>
-      </div>
-    </section>''',
-      f'''    <section class="section" aria-label="Hosting">
+            f'''    <section class="section" aria-label="Hosting">
       <div class="wrap">
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>/05 — PREMIUM HOSTING</p>
@@ -2747,7 +2746,7 @@ def website_rebuild():
       ("How long until a rebuilt website gets traffic?", "Honestly: weeks for Google to re-index, months for growth — and we&rsquo;d rather tell you that up front. Google says expect temporary ranking fluctuation during a move, and independent research by Ahrefs found fewer than 2% of newly published pages reach Google&rsquo;s top 10 within a year (the average #1 page is around five years old). A rebuild doesn&rsquo;t buy instant traffic — it removes the handbrake, and the growth compounds from there. Anyone promising you page 1 in 30 days is pricing in your disappointment."),
       ("Can you rebuild my WordPress website?", "Yes — happily. Our own website was WordPress before we rebuilt it, so we&rsquo;ve done this exact migration ourselves: every old URL mapped and 301-forwarded to a new, faster, search-optimised page, with Google Search Console watched daily through the changeover."),
       ("Do I have to change my domain or hosting?", "No — you keep your domain (changing it mid-rebuild adds months of settling time, so we&rsquo;d usually advise against it). Hosting-wise, we offer fast managed hosting as part of the service, but the migration method is the same either way."),
-      ("What does a website rebuild cost?", "It depends on scope — how many pages, whether you need new copy and photography, and what the old site&rsquo;s link structure looks like. We don&rsquo;t publish a one-size price because there isn&rsquo;t one; you get a free look at your current site (use the checker on this page), then a fixed written quote before any work starts."),
+      ("What does a website rebuild cost?", "It depends on scope — how many pages, whether you need new copy and photography, and what the old site&rsquo;s link structure looks like. We don&rsquo;t publish a one-size price because there isn&rsquo;t one; you get a free look at your current site (use the checker on this page), then a fixed written quote before any work starts. As calibration for any quote you receive: independent UK guides put a typical agency-built small-business site at &pound;2,500&ndash;&pound;10,000 before hosting, with professional copywriting from about &pound;100 a page on top."),
       ("Can I see proof you can do this?", "Yes, live: run <strong>365techies.co.uk</strong> through the checker on this page — that&rsquo;s our own rebuild, measured by Google&rsquo;s Lighthouse engine while you watch. We also rebuilt and look after <a href=\"https://www.colinclarkbuilders.co.uk/\" target=\"_blank\" rel=\"noopener\">colinclarkbuilders.co.uk</a>. Two real, checkable examples — no mock-ups."),
     ]
     content = "\n".join([
