@@ -58,6 +58,8 @@ SEO_TITLES = {
  "it-support-for-solicitors": "IT Support for Solicitors, Dorset | 365 Techies",
  "it-support-for-retired-users": "IT Support for Retired People | Patient Help at Home",
  "it-support-bournemouth": "IT Support Bournemouth | Local Team Near You | 365 Techies",
+ "it-support-for-architects": "IT Support for Architects & Surveyors | 365 Techies",
+ "it-support-for-creative-agencies": "IT Support for Creative Agencies Dorset | 365 Techies",
 }
 
 # Consumer town page -> its dedicated business/managed-IT page (reverse link)

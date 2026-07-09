@@ -4353,7 +4353,7 @@ def service_page(slug, crumb_name, eyebrow, h1_html, lede, title, desc, og_title
 # ============================================================ REMOTE IT SUPPORT
 add(
  slug="remote-it-support",
- title="Remote IT Support Across the UK | Fast Online Computer Help | 365 Techies",
+ title="Remote IT Support UK | Fast Online Help | 365 Techies",
  desc="Fast, secure remote IT support for homes and businesses anywhere in the UK. Most computer problems fixed online in minutes via Splashtop SOS — no waiting for an engineer. Based in Dorset, helping the whole of the UK.",
  og_title="Remote IT Support | Fast Online Computer Help",
  schema=lambda s: graph([

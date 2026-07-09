@@ -2555,7 +2555,7 @@ def off_grid():
         return graph([crumb(s, "Off-Grid & Victron Energy"), webpage(s, "Off-Grid & Victron Energy Solutions", _desc),
                       service(s, "Off-Grid & Victron Energy Solutions", "Off-grid and backup power — solar, battery storage, inverters and remote monitoring built on Victron Energy for homes, businesses, campervans and motorhomes.", "Off-grid power and solar"),
                       faqpage(s, _faqs)])
-    add(slug=slug, title="Off-Grid & Victron Energy Installer Dorset | Homes, Business, Vans & Boats | 365 Techies",
+    add(slug=slug, title="Off-Grid & Victron Installer Dorset | Homes, Vans, Boats",
         desc=desc, og_title="Off-Grid & Victron Energy Solutions | 365 Techies", schema=schema, content=content)
 off_grid()
 
@@ -3251,7 +3251,7 @@ def dell_hardware():
                       service(s, "Refurbished Dell Supply & Support", "Professionally refurbished, tested ex-business Dell Latitude laptops and OptiPlex desktops, supplied, set up and supported by 365 Techies across Dorset, with our own warranty.", "Refurbished computer supply and support"),
                       {"@type": "Product", "@id": SITE + "/" + s + "/#product", "name": "Refurbished Dell Latitude Laptops & OptiPlex Desktops", "description": "Professionally refurbished, tested ex-business Dell Latitude laptops and OptiPlex desktops, supplied, set up and supported by 365 Techies with our own warranty.", "brand": {"@type": "Brand", "name": "Dell"}, "itemCondition": "https://schema.org/RefurbishedCondition", "category": "Refurbished computer hardware", "additionalProperty": [{"@type": "PropertyValue", "name": "Storage", "value": "New Samsung Pro SSD (5-year guarantee)"}, {"@type": "PropertyValue", "name": "Condition grading", "value": "Graded A, B or C by appearance; every grade fully tested"}, {"@type": "PropertyValue", "name": "Warranty", "value": "Dell next-business-day warranty plus 365 Techies 5-year guarantee"}], "offers": {"@type": "AggregateOffer", "priceCurrency": "GBP", "lowPrice": "299", "availability": "https://schema.org/InStock", "url": SITE + "/" + s + "/#match", "seller": {"@type": "Organization", "name": "365 Techies"}}, "image": SITE + "/og-image.jpg", "url": SITE + "/" + s + "/"},
                       faqpage(s, _faqs)])
-    add(slug=slug, title="Refurbished Dell Latitude Laptops & OptiPlex PCs | Dorset | 365 Techies",
+    add(slug=slug, title="Refurbished Dell Laptops & PCs Dorset | 365 Techies",
         desc=desc, og_title="Refurbished Dell Latitude & OptiPlex | 365 Techies", schema=schema, content=content)
 dell_hardware()
 
@@ -3306,7 +3306,7 @@ def refurbished_local():
         return graph([crumb(s, "Refurbished Laptops in Dorset"), webpage(s, "Refurbished Laptops & PCs in Bournemouth, Poole & Dorset", _desc),
                       service(s, "Refurbished Dell Laptops & PCs in Dorset", "Refurbished, tested ex-business Dell Latitude laptops and OptiPlex desktops, supplied, set up and supported across Bournemouth, Poole and Dorset, with a new Samsung Pro SSD and our own warranty.", "Refurbished computer supply"),
                       faqpage(s, _faqs)])
-    add(slug=slug, title="Refurbished Laptops & PCs in Bournemouth, Poole & Dorset | 365 Techies",
+    add(slug=slug, title="Refurbished Laptops in Bournemouth & Poole | 365 Techies",
         desc=desc, og_title="Refurbished Laptops in Bournemouth, Poole & Dorset | 365 Techies", schema=schema, content=content)
 refurbished_local()
 
@@ -3927,7 +3927,7 @@ def unitree_robots():
         return graph([crumb(s, "Unitree Robots"), webpage(s, "Unitree Robots", _desc),
                       service(s, "Unitree Robot Supply & Support", "Supply, setup and support of Unitree quadruped and humanoid robots as a Scan partner, for research, education, industry and innovators.", "Robotics supply and support"),
                       faqpage(s, _faqs)])
-    add(slug=slug, title="Unitree Robots | Quadruped & Humanoid Robots | Scan Partner | 365 Techies",
+    add(slug=slug, title="Unitree Robots | Quadruped & Humanoid | Scan Partner",
         desc=desc, og_title="Unitree Robots | 365 Techies", schema=schema, content=content)
 unitree_robots()
 
@@ -4193,7 +4193,7 @@ def gaming_pcs():
                       service(s, "Gaming PC Supply & Support", "Supply, setup and support of custom NVIDIA GeForce RTX gaming PCs, built by Scan 3XS, for gamers, streamers and creators.", "Gaming PC supply and support"),
                       {"@type": "Product", "@id": SITE + "/" + s + "/#product", "name": "NVIDIA GeForce RTX Gaming PCs", "description": "Custom NVIDIA GeForce RTX gaming PCs, built by Scan 3XS, supplied, set up and supported by 365 Techies.", "brand": {"@type": "Brand", "name": "Scan 3XS"}, "category": "Gaming PC", "image": SITE + "/og-image.jpg", "url": SITE + "/" + s + "/"},
                       faqpage(s, _faqs)])
-    add(slug=slug, title="NVIDIA Gaming PCs | Custom GeForce RTX PCs | NVIDIA Partner | 365 Techies",
+    add(slug=slug, title="NVIDIA Gaming PCs | Custom RTX Builds | 365 Techies",
         desc=desc, og_title="NVIDIA Gaming PCs | 365 Techies", schema=schema, content=content)
 gaming_pcs()
 
@@ -4373,7 +4373,7 @@ def home_cinema():
         return graph([crumb(s, "Home Cinema & Entertainment"), webpage(s, "Home Cinema & Entertainment Systems", _desc),
                       service(s, "Home Cinema & Entertainment Systems", "Supply, installation and support of home cinema and entertainment systems — 4K projectors, Dolby surround sound, smart TVs and multi-room audio — as a Richer Sounds Bournemouth partner.", "Home cinema and AV installation"),
                       faqpage(s, _faqs)])
-    add(slug=slug, title="Home Cinema & Entertainment Systems | 4K Projectors & Dolby Sound | 365 Techies",
+    add(slug=slug, title="Home Cinema Systems | 4K Projectors & Dolby | Dorset",
         desc=desc, og_title="Home Cinema & Entertainment | 365 Techies", schema=schema, content=content)
 home_cinema()
 
@@ -4752,7 +4752,7 @@ def ai_os():
         return graph([crumb(s, "365 AI OS"), webpage(s, "365 AI OS — Your Own AI Desktop", _desc),
                       service(s, "365 AI OS", "A real, browser-based AI desktop with a built-in agentic assistant, built in-house by 365 Techies.", "Agentic AI software"),
                       faqpage(s, _faqs)])
-    add(slug="365-ai-os", title="365 AI OS — Your Own AI Desktop with a Built-in Assistant | 365 Techies",
+    add(slug="365-ai-os", title="365 AI OS — Your Own AI Desktop & Assistant | 365 Techies",
         desc=desc, og_title="365 AI OS | 365 Techies", schema=schema, content=content)
 ai_os()
 
@@ -5659,7 +5659,7 @@ def dell_3520_guide():
         return graph([crumb(s, "Dell Latitude 3520 Guide"), webpage(s, "Dell Latitude 3520 — The Easy Owner's Guide", _desc),
                       {"@type":"TechArticle","headline":"Dell Latitude 3520 — The Easy Owner's Guide","about":{"@type":"Thing","name":"Dell Latitude 3520 laptop"},"author":{"@id":SITE+"/#business"},"url":SITE+"/dell-latitude-3520-guide/"},
                       faqpage(s, _faqs)])
-    add(slug=slug, title="Dell Latitude 3520 Easy Guide — Ports, Power & Off-Grid USB-C | 365 Techies",
+    add(slug=slug, title="Dell Latitude 3520 Guide — Ports, Power & USB-C",
         desc=desc, og_title="Dell Latitude 3520 — The Easy Guide | 365 Techies", schema=schema, content=content)
 dell_3520_guide()
 
@@ -6139,7 +6139,7 @@ def splashtop_guide():
         return graph([crumb(s, "Splashtop Remote Access Guide"), webpage(s, "Splashtop Business — The Complete Remote Access Guide", _desc),
                       {"@type":"TechArticle","headline":"Splashtop Business — The Complete Remote Access Guide","about":{"@type":"Thing","name":"Splashtop Business remote access"},"author":{"@id":SITE+"/#business"},"url":SITE+"/splashtop-business-guide/"},
                       faqpage(s, _faqs)])
-    add(slug=slug, title="Splashtop Business Guide — Connect to Your PC from Anywhere | 365 Techies",
+    add(slug=slug, title="Splashtop Business Guide — Your PC from Anywhere",
         desc=desc, og_title="Splashtop Remote Access — The Complete Guide | 365 Techies", schema=schema, content=content)
 splashtop_guide()
 
@@ -6294,7 +6294,7 @@ def heatwave_guide():
         return graph([crumb(s, "Heatwave Tech Guide"), webpage(s, "The Heatwave Guide for Your Tech", _desc),
                       {"@type":"TechArticle","headline":"The Heatwave Guide for Your Tech","about":{"@type":"Thing","name":"keeping technology safe in hot weather"},"author":{"@id":SITE+"/#business"},"url":SITE+"/heatwave-tech-guide/"},
                       faqpage(s, _faqs)])
-    add(slug=slug, title="Heatwave Tech Guide — Keep Computers, Phones & Servers Cool | 365 Techies",
+    add(slug=slug, title="Heatwave Tech Guide — Keep Your Tech Cool | 365 Techies",
         desc=desc, og_title="The Heatwave Guide for Your Tech | 365 Techies", schema=schema, content=content)
 heatwave_guide()
 
@@ -7943,7 +7943,7 @@ def ai_voice():
         return graph([crumb(s, "AI Voice Agents"), webpage(s, "AI Voice Agents & Phone Answering", _desc),
                       service(s, "AI Voice Agents", "AI voice receptionist and phone-answering agents that answer calls, capture enquiries and book callbacks 24/7 for small businesses.", "AI voice agents and phone answering"),
                       faqpage(s, _faqs)])
-    add(slug=slug, title="AI Voice Agents, Phone Answering & AI Receptionist Dorset | 365 Techies",
+    add(slug=slug, title="AI Voice Agents & AI Receptionist Dorset | 365 Techies",
         desc=desc, og_title="AI Voice Agents & Phone Answering | 365 Techies", schema=schema, content=content)
 ai_voice()
 
@@ -8466,7 +8466,7 @@ def battery_installs():
         return graph([crumb(s, "Leisure & Marine Batteries"), webpage(s, "Lithium Battery Installs — Motorhomes, Campervans & Boats", _desc),
                       service(s, "Lithium Battery & Power Installs", "Victron lithium (LiFePO4) battery, solar, inverter and monitoring installs for motorhomes, campervans and boats across Dorset.", "Leisure and marine power installation"),
                       faqpage(s, _faqs)])
-    add(slug=slug, title="Lithium Battery Installs Dorset | Motorhome, Campervan & Boat Power | 365 Techies",
+    add(slug=slug, title="Lithium Battery Installs Dorset | Motorhomes & Boats",
         desc=desc, og_title="Lithium Battery Installs Dorset | 365 Techies", schema=schema, content=content)
 battery_installs()
 
@@ -8553,7 +8553,7 @@ def rural_wifi():
         return graph([crumb(s, "Rural & Farm Wi-Fi"), webpage(s, "Rural, Farm & Glamping Wi-Fi in Dorset", _desc),
                       service(s, "Rural & Farm Wi-Fi", "Wi-Fi and internet for farms, glamping sites, holiday lets and rural businesses across Dorset — surveys, long-range Wi-Fi, Starlink, 4G/5G and guest networks.", "Rural Wi-Fi and connectivity"),
                       faqpage(s, _faqs)])
-    add(slug=slug, title="Rural, Farm & Glamping Wi-Fi Dorset | Starlink & Site Wi-Fi | 365 Techies",
+    add(slug=slug, title="Rural & Farm Wi-Fi Dorset | Starlink & Site Wi-Fi",
         desc=desc, og_title="Rural & Farm Wi-Fi Dorset | 365 Techies", schema=schema, content=content)
 rural_wifi()
 
@@ -8696,7 +8696,7 @@ GAP_SERVICES = [
     ("Does this help with Cyber Essentials?", "Yes &mdash; staff awareness is part of good security and supports your <a href=\"/cyber-essentials/\">Cyber Essentials</a> work.")],
   "cta_title": "Make your team your best defence", "cta_text": "Friendly, practical security training, phishing tests and dark-web monitoring &mdash; built for small Dorset businesses.",
   "svc_name": "Security Awareness Training", "svc_desc": "Security awareness training, phishing simulation and dark-web monitoring for small businesses across Dorset — friendly, plain-English staff cyber training.", "svc_type": "Security awareness training",
-  "title": "Security Awareness Training & Phishing Simulation | Dorset | 365 Techies",
+  "title": "Security Awareness Training Dorset | Phishing Sims",
   "og_title": "Security Awareness Training | 365 Techies",
   "desc": "Friendly security awareness training, phishing simulation and dark-web monitoring for small businesses in Bournemouth, Poole and Dorset — turn your staff into your strongest defence.",
  },
@@ -8725,7 +8725,7 @@ GAP_SERVICES = [
     ("Can you help in rural areas?", "Yes &mdash; for farms and rural sites we use Starlink, 4G/5G and long-range Wi-Fi. See our <a href=\"/rural-and-farm-wifi-dorset/\">rural &amp; farm Wi-Fi</a> page.")],
   "cta_title": "Sort your business internet", "cta_text": "Tell us what you need and we&rsquo;ll find, set up and manage the right connection &mdash; with one local team to call.",
   "svc_name": "Business Broadband & Connectivity", "svc_desc": "Business broadband, full-fibre, leased lines and failover connectivity arranged, set up and managed for businesses across Dorset.", "svc_type": "Business connectivity",
-  "title": "Business Broadband & Connectivity Dorset | Full-Fibre & Leased Lines | 365 Techies",
+  "title": "Business Broadband Dorset | Full-Fibre & Leased Lines",
   "og_title": "Business Broadband & Connectivity | 365 Techies",
   "desc": "Business broadband and connectivity across Bournemouth, Poole and Dorset — full-fibre, leased lines and automatic failover, arranged, set up and managed by your local IT team.",
  },
@@ -8754,7 +8754,7 @@ GAP_SERVICES = [
     ("Can you move my files before wiping?", "Absolutely &mdash; we transfer anything you still need to your new device first, then wipe the old one. See <a href=\"/new-computer-setup/\">new computer setup</a>.")],
   "cta_title": "Retire old kit safely", "cta_text": "Arrange secure data wiping, certified destruction and responsible recycling &mdash; for one device or a whole office.",
   "svc_name": "Secure IT Disposal & Data Destruction", "svc_desc": "Certified secure data wiping, drive destruction and responsible recycling of old computers, laptops, phones and drives for homes and businesses across Dorset.", "svc_type": "Secure IT disposal",
-  "title": "Secure IT Disposal & Data Destruction Dorset | Certified Wiping | 365 Techies",
+  "title": "Secure IT Disposal & Data Destruction Dorset | 365 Techies",
   "og_title": "Secure IT Disposal & Data Destruction | 365 Techies",
   "desc": "Certified secure IT disposal and data destruction across Bournemouth, Poole and Dorset — securely wipe or destroy old computers, laptops, phones and drives, with a certificate and responsible recycling.",
  },
@@ -10575,7 +10575,7 @@ info_page(
   h1='How to set up <em class="grad grad--cyan">two-factor authentication</em>',
   lede="Two-factor authentication (2FA) is the single best thing you can do to keep your accounts safe &mdash; even if someone learns your password. Here&rsquo;s how it works, and how to switch it on, in plain English.",
   desc="A plain-English guide to two-factor authentication (2FA): what it is, the best methods (passkeys, authenticator apps, SMS), and how to turn it on for Microsoft, Google, Apple, Facebook, banking and WhatsApp. From 365 Techies.",
-  title="How to Set Up Two-Factor Authentication (2FA) - Plain English | 365 Techies",
+  title="How to Set Up Two-Factor Authentication (2FA)",
   og_title="How to Set Up Two-Factor Authentication | 365 Techies",
   chips=["What 2FA is","Best methods ranked","We can set it up with you"],
   pre=f'''    <section class="section section--alt" aria-label="Types of two-factor authentication">
@@ -10789,7 +10789,7 @@ info_page(
   h1='Turn on Windows <em class="grad grad--cyan">accessibility features</em>',
   lede="Your computer has a whole set of free tools to make it easier to see, hear and use &mdash; and they&rsquo;re already built in. Here&rsquo;s how to switch on the ones that help, in plain English.",
   desc="A plain-English guide to the free accessibility features built into Windows - larger text, Magnifier, high contrast, Narrator, voice typing, captions and more - with simple steps. From 365 Techies, accessibility specialists.",
-  title="Turn On Windows Accessibility Features - Plain English Guide | 365 Techies",
+  title="Turn On Windows Accessibility Features — Easy Guide",
   og_title="Windows Accessibility Features Guide | 365 Techies",
   chips=["Free &amp; already there","Step by step","We can set it up for you"],
   pre=f'''    <section class="section section--alt" aria-label="Accessibility areas">
@@ -10841,7 +10841,7 @@ info_page(
   h1='How to choose a <em class="grad grad--cyan">laptop or desktop</em>',
   lede="You don&rsquo;t need to understand the jargon to choose well &mdash; you just need to know how you&rsquo;ll use it. Here&rsquo;s a plain-English buyer&rsquo;s guide, with no sales pitch.",
   desc="A plain-English guide to choosing a laptop or desktop: the five things that actually matter (processor, RAM, SSD, screen, battery), laptop vs desktop vs all-in-one, and Windows 11 readiness. Impartial advice from 365 Techies.",
-  title="How to Choose a Laptop or Desktop (Plain-English Guide) | 365 Techies",
+  title="How to Choose a Laptop or Desktop — Plain English",
   og_title="How to Choose a Laptop or Desktop | 365 Techies",
   chips=["Plain English","No sales pitch","Print-friendly"],
   pre=f'''    <section class="section section--alt" aria-label="Five things that matter">
@@ -10937,7 +10937,7 @@ info_page(
   h1='Safe online banking <em class="grad grad--green">for beginners</em>',
   lede="Online banking is genuinely safe when you follow a few simple habits &mdash; and it can make life much easier. Here&rsquo;s how to bank online with confidence, written for people who&rsquo;d rather be careful.",
   desc="Is online banking safe? Yes - here's how to do it confidently: set up safely, the golden rules every time, how to spot a banking scam, and what to do if something feels wrong. A reassuring beginner's guide from 365 Techies.",
-  title="Safe Online Banking for Beginners (Plain-English Guide) | 365 Techies",
+  title="Safe Online Banking for Beginners — Plain English",
   og_title="Safe Online Banking for Beginners | 365 Techies",
   chips=["Reassuring &amp; simple","The golden rules","Someone to ask"],
   pre=f'''    <section class="section section--alt" aria-label="Golden rules">
@@ -10984,7 +10984,7 @@ info_page(
   h1='Avoiding tech overwhelm &mdash; <em class="grad grad--cyan">feeling in control</em>',
   lede="If technology sometimes makes you feel anxious, behind, or as though everyone else got a manual you didn&rsquo;t &mdash; you are not alone, and you are not too old or &lsquo;not clever enough&rsquo;. Here are some gentle, practical ways to feel calmer and more in control.",
   desc="Feeling overwhelmed by technology? A warm, reassuring guide with small, practical habits to feel calmer and more in control - for anyone who finds tech stressful. From 365 Techies, patient IT support since 1995.",
-  title="Avoiding Tech Overwhelm - A Gentle Guide to Feeling in Control | 365 Techies",
+  title="Avoiding Tech Overwhelm — A Gentle Guide | 365 Techies",
   og_title="Avoiding Tech Overwhelm | 365 Techies",
   chips=["You&rsquo;re not behind","Small, calm steps","No silly questions"],
   inner="""          <h2>You&rsquo;re not behind, and you&rsquo;re not alone</h2>
@@ -11352,7 +11352,7 @@ info_page(
   h1='How to choose <em class="grad grad--green">antivirus &amp; online protection</em>',
   lede="There are dozens of security products all claiming to be the best. Here&rsquo;s a plain-English guide to what actually matters &mdash; and what&rsquo;s a waste of money &mdash; so you can choose with confidence.",
   desc="A plain-English guide to choosing antivirus and online protection: what good security really includes, free vs paid, whether you need a VPN, and the features that matter. Impartial advice from 365 Techies.",
-  title="How to Choose Antivirus & Online Protection (Plain English) | 365 Techies",
+  title="How to Choose Antivirus & Online Protection",
   og_title="How to Choose Antivirus | 365 Techies",
   chips=["Plain English","What actually matters","No scare tactics"],
   pre=f'''    <section class="section section--alt" aria-label="What good protection includes">
@@ -11395,7 +11395,7 @@ info_page(
   h1='How to choose <em class="grad grad--cyan">broadband</em>',
   lede="Fibre, part-fibre, mobile or satellite &mdash; broadband has more options than ever, and the adverts don&rsquo;t make it clearer. Here&rsquo;s how to pick the right one for your home or business, in plain English.",
   desc="A plain-English guide to choosing broadband: the connection types explained (FTTP full fibre, FTTC, 4G/5G, Starlink), how much speed you really need, and what to watch for. Impartial advice from 365 Techies, Dorset.",
-  title="How to Choose Broadband (Fibre, 4G/5G & Starlink Explained) | 365 Techies",
+  title="How to Choose Broadband — Fibre, 4G/5G & Starlink",
   og_title="How to Choose Broadband | 365 Techies",
   chips=["Plain English","Rural options too","Check your speed"],
   pre=f'''    <section class="section section--alt" aria-label="Connection types">
@@ -11477,7 +11477,7 @@ info_page(
   h1='Helping a relative with their computer <em class="grad grad--green">from a distance</em>',
   lede="When family live far away, helping with their computer can feel impossible &mdash; and there&rsquo;s a scam to watch for too. Here&rsquo;s how to help safely, and when to call in a patient professional.",
   desc="How to safely help an older relative with their computer remotely - the right tools, what to watch for, and the remote-access scam to avoid. Plus when to let a patient professional help. From 365 Techies.",
-  title="Helping a Relative With Their Computer Remotely (Safely) | 365 Techies",
+  title="Helping a Relative With Their Computer | 365 Techies",
   og_title="Helping a Relative Remotely | 365 Techies",
   chips=["Help from afar","Avoid the scam trap","Patient pro on call"],
   pre=f'''    <section class="section section--alt" aria-label="The remote-access scam warning">
@@ -11646,7 +11646,7 @@ def computer_help_for_seniors():
         return graph([crumb(s,"Computer Help for Seniors"), webpage(s,"Computer Help for Seniors",_d,"CollectionPage"),
                       {"@type":"ItemList","@id":SITE+"/computer-help-for-seniors/#list","itemListElement":_it},
                       faqpage(s, SENIOR_FAQS)])
-    add(slug=slug, title="Computer Help for Seniors & Older People (Patient & Plain English) | 365 Techies",
+    add(slug=slug, title="Computer Help for Seniors — Patient & Plain English",
         desc=desc, og_title="Computer Help for Seniors | 365 Techies", schema=schema, content=content)
 computer_help_for_seniors()
 
@@ -11656,7 +11656,7 @@ info_page(
   h1='Greener IT, the <em class="grad grad--green">Dorset</em> way',
   lede="Good IT support and looking after the planet pull in the same direction: keep technology working longer, waste less, and dispose of it responsibly. As a Sustainable Dorset member, that&rsquo;s simply how we work.",
   desc="How 365 Techies works more sustainably - repair before replace, extending the life of computers, secure wiping and responsible recycling, and Sustainable Dorset membership. Greener IT support in Dorset.",
-  title="Our Commitment to Sustainability - Greener IT in Dorset | 365 Techies",
+  title="Sustainability — Greener IT in Dorset | 365 Techies",
   og_title="Sustainability | 365 Techies",
   chips=["Sustainable Dorset member","Repair before replace","Responsible recycling"],
   pre=f'''    <section class="section section--alt" aria-label="How we work more sustainably">
@@ -11691,7 +11691,7 @@ info_page(
   h1='Microsoft 365 vs <em class="grad grad--cyan">Google Workspace</em>',
   lede="Which email and office suite is right for your business? Here&rsquo;s a fair, plain-English comparison of Microsoft 365 and Google Workspace &mdash; and we genuinely support both, so we&rsquo;ve no axe to grind.",
   desc="An even-handed comparison of Microsoft 365 vs Google Workspace for business - desktop apps, offline working, email, video, storage and security - to help you choose. From 365 Techies, who support both.",
-  title="Microsoft 365 vs Google Workspace for Business (Even-Handed) | 365 Techies",
+  title="Microsoft 365 vs Google Workspace for Business",
   og_title="Microsoft 365 vs Google Workspace | 365 Techies",
   chips=["Even-handed","Plain English","We support both"],
   pre='''    <section class="section section--alt" aria-label="Microsoft 365 vs Google Workspace">
@@ -11734,7 +11734,7 @@ info_page(
   h1='Break-fix vs <em class="grad grad--green">managed IT support</em>',
   lede="Pay per repair, or a fixed monthly fee for ongoing cover? Here&rsquo;s a clear, side-by-side look at break-fix versus managed IT support &mdash; so you can see which genuinely fits.",
   desc="Break-fix vs managed IT support compared: when you call, cost predictability, prevention and monitoring, security upkeep and which suits you. A clear, plain-English decision guide from 365 Techies.",
-  title="Break-Fix vs Managed IT Support: Which Is Right for You? | 365 Techies",
+  title="Break-Fix vs Managed IT: Which Is Right? | 365 Techies",
   og_title="Break-Fix vs Managed IT Support | 365 Techies",
   chips=["Side by side","Plain English","No lock-in either way"],
   pre='''    <section class="section section--alt" aria-label="Break-fix vs managed IT">
@@ -12028,7 +12028,7 @@ def spring_clean_hub():
     def schema(s,_d=desc,_it=[{"@type":"ListItem","position":i+1,"name":t,"url":SITE+href} for i,(cat,t,d,href) in enumerate(items)]):
         return graph([crumb(s,"Spring-Clean Your Computer"), webpage(s,"Spring-Clean Your Computer",_d,"CollectionPage"),
                       {"@type":"ItemList","@id":SITE+"/spring-clean-your-computer/#list","itemListElement":_it}])
-    add(slug=slug, title="Spring-Clean Your Computer - Quick Wins for a Faster PC | 365 Techies",
+    add(slug=slug, title="Spring-Clean Your Computer — Quick Speed Wins",
         desc=desc, og_title="Spring-Clean Your Computer | 365 Techies", schema=schema, content=content)
 spring_clean_hub()
 
@@ -12038,7 +12038,7 @@ info_page(
   h1='Cloud vs <em class="grad grad--cyan">on-premise server</em>',
   lede="Should your business run on the cloud, a server in the office, or a mix of both? Here&rsquo;s a clear, plain-English comparison to help you weigh it up &mdash; with no jargon and no agenda.",
   desc="Cloud vs on-premise server compared for small businesses: upfront and ongoing cost, remote access, maintenance, scaling and control - to help you choose. Plain-English guide from 365 Techies, Dorset.",
-  title="Cloud vs On-Premise Server: Which Is Right for Your Business? | 365 Techies",
+  title="Cloud vs On-Premise Server: Which Is Right? | 365 Techies",
   og_title="Cloud vs On-Premise | 365 Techies",
   chips=["Side by side","Plain English","Often a hybrid"],
   pre='''    <section class="section section--alt" aria-label="Cloud vs on-premise">
@@ -12115,7 +12115,7 @@ def back_to_school_hub():
     def schema(s,_d=desc,_it=[{"@type":"ListItem","position":i+1,"name":t,"url":SITE+href} for i,(cat,t,d,href) in enumerate(items)]):
         return graph([crumb(s,"Back-to-School IT"), webpage(s,"Back-to-School IT",_d,"CollectionPage"),
                       {"@type":"ItemList","@id":SITE+"/back-to-school-it/#list","itemListElement":_it}])
-    add(slug=slug, title="Back-to-School IT - Laptops, Online Safety & Setup for Families | 365 Techies",
+    add(slug=slug, title="Back-to-School IT — Laptops, Safety & Setup | 365 Techies",
         desc=desc, og_title="Back-to-School IT | 365 Techies", schema=schema, content=content)
 back_to_school_hub()
 
@@ -12192,7 +12192,7 @@ def industry_page(d):
                       webpage(s, f"IT Support for {_cn}", _desc),
                       service(s, f"IT Support for {_cn}", _desc, "Industry IT support"),
                       faqpage(s, _faqs)])
-    add(slug=slug, title=f"IT Support for {cn} in Bournemouth &amp; Dorset | 365 Techies",
+    add(slug=slug, title=build_local.SEO_TITLES.get(slug) or f"IT Support for {cn} in Bournemouth &amp; Dorset | 365 Techies",
         desc=d["metaDesc"], og_title=f"IT Support for {cn} | 365 Techies", schema=schema, content=content)
 
 for _ind in INDUSTRIES:
@@ -12236,7 +12236,7 @@ def industry_hub():
     def schema(s, _d=desc, _it=[{"@type": "ListItem", "position": i + 1, "name": "IT Support for " + _ind_name(x).replace("&amp;", "&"), "url": SITE + "/" + x["slug"] + "/"} for i, x in enumerate(ALL_IND)]):
         return graph([crumb(s, "IT Support by Industry"), webpage(s, "IT Support by Industry", _d, "CollectionPage"),
                       {"@type": "ItemList", "@id": SITE + "/it-support-by-industry/#list", "itemListElement": _it}])
-    add(slug=slug, title="IT Support by Industry | Bournemouth, Poole &amp; Dorset | 365 Techies",
+    add(slug=slug, title="IT Support by Industry | Bournemouth &amp; Dorset",
         desc=desc, og_title="IT Support by Industry | 365 Techies", schema=schema, content=content)
 industry_hub()
 
