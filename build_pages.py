@@ -4426,6 +4426,7 @@ M365_FAQS = [
   ("Do you support Microsoft 365 for Dorset businesses?", "Yes &mdash; we set up, migrate, secure and support Microsoft 365 for businesses right across Dorset, Bournemouth and Poole, from a single mailbox to a whole team, with friendly, plain-English help."),
   ("Are you a local Office 365 installer in Bournemouth and Poole?", "Yes &mdash; we&rsquo;re a hands-on Office 365 and Microsoft 365 installer for Bournemouth, Poole and across Dorset: we install and set up Office 365 on your PCs and laptops, migrate your email, and get Outlook, Teams and OneDrive working &mdash; remotely or on-site."),
   ("Do you provide Microsoft 365 support in Bournemouth and Poole?", "Yes &mdash; Microsoft 365 support for Bournemouth and Poole homes and businesses: setup, migration, licensing, security and everyday help, with fast remote support and on-site visits when you need them."),
+  ("We&rsquo;re locked out of our Microsoft 365 admin account &mdash; can you help?", "Yes &mdash; orphaned tenants are more common than you&rsquo;d think: the one admin leaves, or the password dies with an old phone. Our guide to <a href=\"/locked-out-microsoft-365-admin-account/\">recovering a locked-out Microsoft 365 admin account</a> covers the real routes back in &mdash; and we&rsquo;ll drive the whole recovery for you."),
 ]
 add(
  slug="microsoft-365-support",
@@ -4706,6 +4707,7 @@ REPAIR_TOWNS = [
 def repair_town_links():
     items = "\n".join(f'          <li><a href="/{slug}/">Computer Repair {town}</a></li>'
                       for town, slug, _n, _it in REPAIR_TOWNS)
+    items += '\n          <li><a href="/computer-repair-westbourne/">Computer Repair Westbourne</a></li>' 
     return f'''    <section class="section section--alt" aria-label="Computer repair by town">
       <div class="wrap">
         <div class="section-head">

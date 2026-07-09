@@ -69,6 +69,10 @@ SERVICE_PAGES = [
   ],
   "faqs": [
    {
+    "q": "Can you get the photos off a deceased relative&rsquo;s laptop?",
+    "a": "Yes &mdash; gently, privately and entirely at your own pace. We recover photos and documents from a loved one&rsquo;s Windows laptop even without the password, and can wipe the machine afterwards if you wish. See <a href=\"/recover-photos-deceased-relatives-laptop/\">getting photos off a deceased relative&rsquo;s laptop</a>."
+   },
+   {
     "q": "My hard drive is clicking or won't show up &mdash; what should I do right now?",
     "a": "Turn it off and stop using it immediately. A clicking or beeping drive usually means a physical fault, and every extra minute it runs risks turning a recoverable problem into a permanent loss. Don't try repeated reboots, \"repair\" tools or freezer tricks from the internet &mdash; these often make things worse. Ring us on 01202 775566 and we'll advise straight away."
    },
@@ -559,6 +563,10 @@ SERVICE_PAGES = [
    "Data backup &amp; file recovery"
   ],
   "faqs": [
+   {
+    "q": "My laptop won&rsquo;t turn on at all &mdash; no lights, nothing. Is it dead?",
+    "a": "Often not &mdash; a completely dead laptop is frequently the charger, the charging port or a drained battery rather than the motherboard. Work through our guide to <a href=\"/laptop-wont-turn-on-no-lights/\">a laptop that won&rsquo;t turn on with no lights</a> &mdash; including what to check after <a href=\"/will-a-power-cut-damage-my-computer/\">a power cut</a> &mdash; and if it stays dead we&rsquo;ll diagnose it properly, no fix no fee."
+   },
    {
     "q": "Is it worth repairing my laptop or should I replace it?",
     "a": "It depends on the age and the fault. A new battery, screen or SSD upgrade often gives a perfectly good laptop several more years for a fraction of the cost of a new machine &mdash; while a failed motherboard on an old laptop usually isn't worth it. We give you an honest verdict before you spend a penny. If replacement does make sense, we sell quality refurbished business-grade Dell laptops from &pound;299, so you're not pushed into an expensive new purchase."
