@@ -12877,6 +12877,103 @@ def online_safety_course():
         desc=desc, og_title="Free Online Safety Course | 365 Techies", schema=schema, content=content)
 online_safety_course()
 
+
+# ---- Pay page (config-driven: each payment method appears once its details are filled in) ----
+PAY_CONFIG = {
+    "stripe_url": "",   # paste the buy.stripe.com "Customers choose what to pay" link to switch card payments ON
+    "paypal_url": "",   # paste a paypal.me/... or PayPal payment link to switch PayPal ON
+    "bank": None,       # {"name": "365 Techies Ltd", "sort": "00-00-00", "account": "00000000"} to show bank-transfer details
+}
+def pay_page():
+    slug = "pay"
+    desc = ("Paying 365 Techies is simple and safe: the price is always agreed before work starts, you never need an "
+            "account or app, and if you'd rather sort it together we're one phone call away on 01202 775566.")
+    faqs = [
+      ("Do I need an account or an app to pay?", "No &mdash; never. Whichever way you pay us, there&rsquo;s nothing to sign up for and nothing to install."),
+      ("How do I know how much to pay?", "We agree the price with you <strong>before any work starts</strong>, and confirm the exact amount when it&rsquo;s time to pay &mdash; in plain English, with no surprises added on."),
+      ("I&rsquo;m not comfortable paying online &mdash; what can I do?", "That&rsquo;s absolutely fine. Ring us on <a href=\"tel:+441202775566\">01202 775566</a> and we&rsquo;ll sort payment together, at your pace. Nobody here will ever rush you."),
+      ("I&rsquo;m on a monthly support plan &mdash; do I need to pay here?", "No &mdash; your plan collects automatically each month by Direct Debit, protected by the Direct Debit Guarantee. There&rsquo;s nothing else to do."),
+      ("Will you ever phone me out of the blue asking for a payment?", "Never. We don&rsquo;t cold-call, and we&rsquo;ll never pressure you to pay on the spot. If anyone rings unexpectedly claiming to be us and demanding payment, hang up and call us back on <a href=\"tel:+441202775566\">01202 775566</a> &mdash; the number on this website."),
+      ("Can a family member pay for me?", "Of course &mdash; sons, daughters and friends settle up on someone&rsquo;s behalf all the time, from anywhere in the country, using this same page."),
+    ]
+    tiles = []
+    if PAY_CONFIG.get("stripe_url"):
+        tiles.append(f'''          <div class="tile" data-reveal>
+            <h3>&#128179; Pay by card &mdash; safe and simple</h3>
+            <p style="color:var(--muted);margin:0 0 .9rem">Takes about two minutes. Type the amount we agreed, add your name, and pay with your usual debit or credit card &mdash; or one tap with Apple&nbsp;Pay or Google&nbsp;Pay. You never need an account, and we never see your card details.</p>
+            <p><a class="button primary" href="{PAY_CONFIG["stripe_url"]}" target="_blank" rel="noopener">Pay by card now &#8594;</a></p>
+            <p style="color:var(--muted);font-size:.85rem;margin:.8rem 0 0">Handled by Stripe &mdash; the secure payment system behind millions of businesses.</p>
+          </div>''')
+    if PAY_CONFIG.get("bank"):
+        _b = PAY_CONFIG["bank"]
+        tiles.append(f'''          <div class="tile" data-reveal>
+            <h3>&#127974; Pay by bank transfer</h3>
+            <p style="color:var(--muted);margin:0 0 .9rem">Prefer to pay from your own online banking? Use these details and put <strong>your surname</strong> as the reference so we know it&rsquo;s you:</p>
+            <p class="mono" style="font-size:1.05rem;line-height:2">Account name: <strong>{_b["name"]}</strong><br />Sort code: <strong>{_b["sort"]}</strong><br />Account number: <strong>{_b["account"]}</strong></p>
+          </div>''')
+    if PAY_CONFIG.get("paypal_url"):
+        tiles.append(f'''          <div class="tile" data-reveal>
+            <h3>PayPal</h3>
+            <p style="color:var(--muted);margin:0 0 .9rem">Already use PayPal and prefer it? That works too.</p>
+            <p><a class="button secondary" href="{PAY_CONFIG["paypal_url"]}" target="_blank" rel="noopener">Pay with PayPal &#8594;</a></p>
+          </div>''')
+    tiles.append('''          <div class="tile" data-reveal>
+            <h3>&#128222; Rather sort it together?</h3>
+            <p style="color:var(--muted);margin:0 0 .9rem">Ring us and a real person will help you pay in whichever way suits you best &mdash; we&rsquo;ll happily stay on the line while you do it, and nobody will rush you.</p>
+            <p><a class="button secondary" href="tel:+441202775566">Call 01202 775566</a></p>
+            <p style="color:var(--muted);font-size:.85rem;margin:.8rem 0 0">Mon&ndash;Fri, 9am&ndash;5pm &middot; or text us on <a href="sms:+447520615332">07520 615332</a></p>
+          </div>''')
+    tiles_html = "\n".join(tiles)
+    content = "\n".join([
+      hero(bc("Pay Us"), "// PAYING US IS SIMPLE",
+           'A simple, safe way to <em class="grad grad--cyan">pay us</em>',
+           "Thank you for choosing a small family business. The price is always agreed <strong>before</strong> the work starts, you never need an account or an app, and if you&rsquo;d rather sort it together we&rsquo;re one phone call away.",
+           cta1=("Call 01202 775566", "tel:+441202775566"), cta2=("Ways to pay below", "#ways"),
+           chips=["Price agreed before work starts", "No account or app needed", "Real people if you need us"]),
+      f'''    <section class="section" aria-label="Ways to pay" id="ways">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// WAYS TO PAY</p>
+          <h2 class="section-title section-title--center" data-title>Choose whichever suits you<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="split-2">
+{tiles_html}
+        </div>
+      </div>
+    </section>''',
+      '''    <section class="section" aria-label="Monthly plans" style="padding-top:0">
+      <div class="wrap">
+        <div class="prose" data-reveal style="max-width:74ch;margin:0 auto;text-align:center;border:1px solid rgba(125,170,220,.25);border-radius:14px;padding:1.2rem 1.4rem">
+          <p style="margin:0"><strong>On a monthly support plan?</strong> There&rsquo;s nothing to pay here &mdash; your plan collects automatically each month by Direct Debit, protected by the Direct Debit Guarantee. See <a href="/monthly-it-support/">monthly IT support</a>.</p>
+        </div>
+      </div>
+    </section>''',
+      f'''    <section class="section section--alt" aria-label="Payment safety">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">// A QUICK WORD ABOUT SAFETY</p>
+          <h2 class="section-title" data-title>We will never cold-call you for payment<span class="title-underline"></span></h2>
+          <p>Scammers sometimes phone older people pretending to be a computer company and demanding payment. So let&rsquo;s be crystal clear about how <strong>we</strong> work:</p>
+          <p>We only ever take payment for work <strong>you asked us to do</strong>, at a price agreed <strong>before we started</strong>. We never cold-call, we never pressure, and we&rsquo;ll never mind you hanging up and ringing us back on <a href="tel:+441202775566">01202 775566</a> &mdash; the number printed on this website &mdash; to check it&rsquo;s really us.</p>
+          <p>Unsure about a call, email or payment request that mentions us? Don&rsquo;t pay &mdash; ring us first. And for staying safe generally, see our free guides to <a href="/online-scams/">online scams</a> and <a href="/spot-the-scam/">spotting a scam</a>.</p>
+        </div>
+        <ul class="checklist" data-stagger>
+{checklist(["Price agreed before work starts","We never cold-call for payment","Hang up and ring us back &mdash; we won&rsquo;t mind","We never ask for your card PIN or bank login","No gift cards, no vouchers, no couriers &mdash; ever","When in doubt: 01202 775566"])}
+        </ul>
+      </div>
+    </section>''',
+      faq_html(faqs),
+      cta("Anything unclear? Just ask.",
+          "A real, friendly person will help you pay in whichever way suits you &mdash; no rush, no jargon, no silly questions.",
+          primary=("Call 01202 775566", "tel:+441202775566"), secondary=("Text 07520 615332", "sms:+447520615332")),
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        return graph([crumb(s, "Pay Us"), webpage(s, "Pay 365 Techies", _desc), faqpage(s, _faqs)])
+    add(slug=slug, title="Pay 365 Techies | Simple, Safe Ways to Pay",
+        desc=desc, og_title="Pay 365 Techies | Simple, Safe Ways to Pay", schema=schema, content=content)
+pay_page()
+
+
 # ============================================================ EASY-KEYWORD PAGES (data-driven, from new_pages_data.py)
 def _sec_block(s):
     return f'''    <section class="section section--alt" aria-label="{s['h2']}">

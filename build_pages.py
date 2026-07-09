@@ -350,6 +350,7 @@ HEADER = '''  <header class="site-header">
         <div class="m-group__links">
           <a href="/book-service/">Book a Service</a>
           <a href="/book-a-collection/">Book a Collection</a>
+          <a href="/pay/">Pay Us</a>
           <a href="/remote-support/">Start Remote Support</a>
           <a href="/emergency-it-help/">Emergency IT Help</a>
           <a href="/is-it-down/">Is Something Down?</a>
@@ -488,6 +489,7 @@ FOOTER = '''  <footer class="site-footer">
         <p class="site-footer__head mono">SUPPORT</p>
         <a href="/book-service/">Book a Service</a>
         <a href="/book-a-collection/">Book a Collection</a>
+        <a href="/pay/">Pay Us</a>
         <a href="/remote-support/">Start Remote Support</a>
         <a href="/emergency-it-help/">Emergency IT Help</a>
         <a href="/is-it-down/">Is Something Down?</a>
