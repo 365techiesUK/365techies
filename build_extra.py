@@ -7836,7 +7836,7 @@ def free_tools_hub():
            chips=["100% free","No download","Built in Dorset"]),
       '''    <section class="section" aria-label="Search" style="padding-top:0">
       <div class="wrap" style="display:flex;justify-content:center">
-        <button type="button" class="search-box" data-search-open aria-label="Search the website">
+        <button type="button" class="search-box" data-search-open>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
           <span class="search-box__txt">Search all tools &amp; the whole site&hellip;</span>
           <kbd>/</kbd>
@@ -12880,7 +12880,7 @@ def build_new_page(d):
     if d['slug'] in ("outlook-problems",):
         _hubbox = '''    <section class="section" aria-label="Search" style="padding-top:0">
       <div class="wrap" style="display:flex;justify-content:center">
-        <button type="button" class="search-box" data-search-open aria-label="Search the website">
+        <button type="button" class="search-box" data-search-open>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
           <span class="search-box__txt">Search all Outlook fixes &amp; the whole site&hellip;</span>
           <kbd>/</kbd>

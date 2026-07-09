@@ -454,7 +454,7 @@ def hub():
       f'''    <section class="section" style="padding-bottom:0" aria-label="Filter advice">
       <div class="wrap">
         <div style="display:flex;justify-content:center;margin-bottom:1.6rem">
-          <button type="button" class="search-box" data-search-open aria-label="Search the website">
+          <button type="button" class="search-box" data-search-open>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
             <span class="search-box__txt">Search guides, tools &amp; the whole site&hellip;</span>
             <kbd>/</kbd>
