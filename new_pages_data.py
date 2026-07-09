@@ -7408,5 +7408,6 @@ NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
                   'text': 'We make a friendly first phone call in plain English, at their pace, with no jargon — so your mum or dad knows exactly who we are before any help begins.'},
                  {'name': 'You stay in the loop',
                   'text': "You set up and pay the rolling £18.25-a-month-per-computer plan; your parent gets the help; we keep you posted so you always know they're looked after."}],
-  'crossLinksHtml': '<p>More ways we help families: <a href="/computer-help-for-elderly-parents/">computer help for elderly parents</a>, <a href="/family-it-support/">family IT support</a> and <a '
+  'crossLinksHtml': '<p><strong>Buying them a new computer too?</strong> Our <a href="/new-computer-setup/">new computer setup</a> moves everything across from the old machine (usually about an hour and a half), sets it up properly &mdash; and includes <strong>30 days of remote support</strong>, so the gift comes with a month of friendly help built in.</p>'
+                    '<p>More ways we help families: <a href="/computer-help-for-elderly-parents/">computer help for elderly parents</a>, <a href="/family-it-support/">family IT support</a> and <a '
                     'href="/computer-lessons-for-seniors-bournemouth/">computer lessons for seniors in Bournemouth</a>.</p>'}]
