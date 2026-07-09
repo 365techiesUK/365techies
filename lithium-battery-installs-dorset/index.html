@@ -705,7 +705,7 @@
         <script>
         (function(){
           var PROXY="/api/vrm.php"; /* same-origin PHP proxy as the off-grid page */
-          var RATE=0.40, STANDING=0.50;
+          var RATE=0.48, STANDING=0.60;
           var SAMPLE={sample:true,soc:97,battState:"charging",battW:31,pvW:114,yieldLifetime:489.9,kwh30:49.6};
           var el=document.getElementById("vmini"); if(!el) return;
           var RC=351.9, cur={}, reduce=false; try{ reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}

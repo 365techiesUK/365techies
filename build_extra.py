@@ -1845,7 +1845,7 @@ def off_grid():
               </g>
               <!-- odometer: the stored value of the bank, under the dial -->
               <g transform="translate(360,340)">
-                <title>Usable energy sitting in the lithium bank right now, valued at 40p/kWh (12.8V nominal) &mdash; the odometer of the van&rsquo;s energy economy.</title>
+                <title>Usable energy sitting in the lithium bank right now, valued at 48p/kWh (12.8V nominal) &mdash; the odometer of the van&rsquo;s energy economy.</title>
                 <circle class="vglow" data-glow-bank r="34" fill="#39d353" opacity="0" filter="url(#vblur)"></circle>
                 <rect class="vplate" x="-75" y="-14" width="150" height="28" rx="9" style="stroke:rgba(57,211,83,.35)"></rect>
                 <text class="vnval" data-bank-val text-anchor="middle" y="5" style="fill:#39d353;font-size:14px">&mdash;</text>
@@ -1896,7 +1896,7 @@ def off_grid():
               <!-- COST satellite + taxi meter -->
               <g transform="translate(605,255)">
                 <g class="vnpop" style="animation-delay:.18s">
-                  <title>The live running cost of what the van is using right now, at 40p/kWh &mdash; watch it jump when the kettle goes on. Below it: what today&rsquo;s usage has cost so far and the last 30 days&rsquo; total &mdash; at 40p/kWh plus the 50p/day standing charge, the same model as the savings.</title>
+                  <title>The live running cost of what the van is using right now, at 48p/kWh &mdash; watch it jump when the kettle goes on. Below it: what today&rsquo;s usage has cost so far and the last 30 days&rsquo; total &mdash; at 48p/kWh plus the 60p/day standing charge, the same model as the savings.</title>
                   <circle class="vglow" data-glow-cost r="38" fill="#e06a4a" opacity="0" filter="url(#vblur)"></circle>
                   <circle r="30" fill="url(#vgcost)" stroke="rgba(224,106,74,.55)" stroke-width="1.5"></circle>
                   <path d="M-14 -19 A24 24 0 0 1 14 -19" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.5" stroke-linecap="round"></path>
@@ -1914,7 +1914,7 @@ def off_grid():
               <!-- COIN: the eco readout, top-centre -->
               <g transform="translate(360,40)">
                 <g class="vnpop" style="animation-delay:.24s">
-                  <title>Saving now = the solar power coming in right now, valued at the 40p/kWh you&rsquo;d otherwise pay for it. It&rsquo;s banked in the battery and counted once &mdash; when it&rsquo;s used. Zero after dark, because the panels only earn while the sun shines.</title>
+                  <title>Saving now = the solar power coming in right now, valued at the 48p/kWh you&rsquo;d otherwise pay for it. It&rsquo;s banked in the battery and counted once &mdash; when it&rsquo;s used. Zero after dark, because the panels only earn while the sun shines.</title>
                   <circle class="vglow" data-glow-coin r="34" fill="#e0b341" opacity="0" filter="url(#vblur)"></circle>
                   <g class="vcoin2">
                     <circle r="21" fill="url(#vgold)" stroke="#a8842e" stroke-width="1.5"></circle>
@@ -1992,7 +1992,7 @@ def off_grid():
           </div>
           <div class="vlive__tanks"><div style="display:contents" data-tanks></div><span class="vlive__pump" data-pump hidden></span></div>
           <p class="vlive__note" data-note></p>
-          <p class="vlive__rate" data-rate>Savings estimated at 40p per kWh of solar generated, plus 50p/day saved on the standing charge you&rsquo;d pay just for a grid connection.</p>
+          <p class="vlive__rate" data-rate>Savings estimated at 48p per kWh of solar generated, plus 60p/day saved on the standing charge you&rsquo;d pay just for a grid connection. Rates include VAT.</p>
         </div>
       </div>
     </section>
@@ -2000,7 +2000,7 @@ def off_grid():
     (function(){
       var PROXY="/api/vrm.php"; /* Same-origin PHP proxy on SiteGround; token lives server-side in api/vrm-token.php (never in git). */
       var HPROXY="/api/vrm-history.php";
-      var RATE=0.40, STANDING=0.50, HIST=[]; for(var hi=0;hi<30;hi++){HIST.push({kwh:Math.round((1.1+Math.sin(hi/2.5)*0.55+(hi%4)*0.16)*100)/100,used:Math.round((0.95+Math.cos(hi/3.1)*0.4+(hi%5)*0.12)*100)/100});}
+      var RATE=0.48, STANDING=0.60, HIST=[]; for(var hi=0;hi<30;hi++){HIST.push({kwh:Math.round((1.1+Math.sin(hi/2.5)*0.55+(hi%4)*0.16)*100)/100,used:Math.round((0.95+Math.cos(hi/3.1)*0.4+(hi%5)*0.12)*100)/100});}
       var SAMPLE={sample:true,soc:97,battState:"charging",battV:13.38,battA:2.3,battW:31,timeToGo:null,pvW:114,yieldToday:1.86,yieldYesterday:1.66,yieldLifetime:489.9,
         tanks:[{type:"Fresh water",level:56,capL:100,remL:56},{type:"Waste water",level:12,capL:50,remL:6}],history:HIST,updated:Math.floor(Date.now()/1000),
         dcW:83,alarms:[],alarmsSeen:false,pump:"off",
@@ -2200,7 +2200,7 @@ def off_grid():
         setTxt(q("[data-save-days]"),days30+"-day saving");
         tween("[data-save-life]","slife",(k30!=null)?(k30*RATE+STANDING*days30):null,function(v){return "£"+v.toFixed(2);});
         tween("[data-gen-life]","glife",s.yieldLifetime,function(v){return v.toFixed(1)+" kWh";});
-        var rt=q("[data-rate]"); if(rt){ var ph=(s.pvW!=null)?(s.pvW/1000*RATE*100):0; setHTML(rt,(s.pvW>5?("Generating now &middot; saving ~"+ph.toFixed(1)+"p/hour"):"Resting now")+" &middot; 40p/kWh + 50p/day standing charge"); }
+        var rt=q("[data-rate]"); if(rt){ var ph=(s.pvW!=null)?(s.pvW/1000*RATE*100):0; setHTML(rt,(s.pvW>5?("Generating now &middot; saving ~"+ph.toFixed(1)+"p/hour"):"Resting now")+" &middot; 48p/kWh + 60p/day standing charge inc. VAT"); }
         /* today's energy ledger */
         var lg=q("[data-ledger]"), ld=s.ledger||{};
         if(lg){
@@ -2277,7 +2277,7 @@ def off_grid():
         if(!e||e.d30==null){ em.hidden=true; setTxt(q("[data-engh-day]"),"—"); setTxt(q("[data-engh-month]"),""); return; }
         em.hidden=false;
         function seg(lbl,v){ return lbl+" <b>~"+v.toFixed(2)+" kWh</b> (≈£"+(v*RATE).toFixed(2)+")"; }
-        setHTML(em,"Engine energy · "+seg("today",e.d1)+" · "+seg("7 days",e.d7)+" · "+seg("30 days",e.d30)+" · grid-equivalent at 40p/kWh, ~13.2V"+(isSample?" · sample":""));
+        setHTML(em,"Engine energy · "+seg("today",e.d1)+" · "+seg("7 days",e.d7)+" · "+seg("30 days",e.d30)+" · grid-equivalent at 48p/kWh, ~13.2V"+(isSample?" · sample":""));
         /* hour-meter node: charge time + grid-equivalent value, today and 30 days */
         function fmtH(h){ return (h==null)?"—":(h<1?Math.round(h*60)+"m":h.toFixed(1)+"h"); }
         setTxt(q("[data-engh-day]"),fmtH(e.runH1)+" · £"+(e.d1*RATE).toFixed(2)+" today"+(isSample?" · sample":""));
@@ -2331,7 +2331,7 @@ def off_grid():
         setHTML(wd,html);
         Array.prototype.forEach.call(wd.children,function(c2,i2){ setTimeout(function(){c2.classList.add("in");},60+i2*90); });
         setTxt(q("[data-wx-cap]"),
-          "7-day solar forecast"+(k!=null?" · predicted ~"+tot.toFixed(1)+" kWh ≈ £"+(tot*RATE).toFixed(2)+" at 40p/kWh":"")+
+          "7-day solar forecast"+(k!=null?" · predicted ~"+tot.toFixed(1)+" kWh ≈ £"+(tot*RATE).toFixed(2)+" at 48p/kWh":"")+
           " · calibrated to this van's real last 30 days · Met Office UKMO + ECMWF models via Open-Meteo · nearest town only · estimate, not a promise"+(wx.sample?" · sample":""));
       }
       function loadWx(){
@@ -8415,7 +8415,7 @@ def battery_installs():
         <script>
         (function(){
           var PROXY="/api/vrm.php"; /* same-origin PHP proxy as the off-grid page */
-          var RATE=0.40, STANDING=0.50;
+          var RATE=0.48, STANDING=0.60;
           var SAMPLE={sample:true,soc:97,battState:"charging",battW:31,pvW:114,yieldLifetime:489.9,kwh30:49.6};
           var el=document.getElementById("vmini"); if(!el) return;
           var RC=351.9, cur={}, reduce=false; try{ reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
@@ -13084,7 +13084,7 @@ def custom_dashboards():
         </div>
         <script>
         (function(){
-          var PROXY="/api/vrm.php", RATE=0.40, STANDING=0.50;
+          var PROXY="/api/vrm.php", RATE=0.48, STANDING=0.60;
           var SAMPLE={sample:true,soc:97,battState:"charging",battW:31,pvW:114,timeToGo:null,yieldToday:1.4,kwh30:49.6,tanks:[{type:"fresh",level:72},{type:"waste",level:31}]};
           var el=document.getElementById("vdash"); if(!el) return;
           var cur={}, reduce=false; try{ reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
