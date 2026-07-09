@@ -74,7 +74,7 @@ SERVICE_PAGES = [
    },
    {
     "q": "My hard drive is clicking or won't show up &mdash; what should I do right now?",
-    "a": "Turn it off and stop using it immediately. A clicking or beeping drive usually means a physical fault, and every extra minute it runs risks turning a recoverable problem into a permanent loss. Don't try repeated reboots, \"repair\" tools or freezer tricks from the internet &mdash; these often make things worse. Ring us on 01202 775566 and we'll advise straight away."
+    "a": "Turn it off and stop using it immediately. A clicking or beeping drive usually means a physical fault, and every extra minute it runs risks turning a recoverable problem into a permanent loss. Don't try repeated reboots, \"repair\" tools or freezer tricks from the internet &mdash; these often make things worse. Ring us on 01202 775566 and we'll advise straight away. If it&rsquo;s the laptop itself clicking and refusing to start, see <a href=\"/laptop-clicking-noise-wont-turn-on/\">laptop making a clicking noise</a>."
    },
    {
     "q": "Can you recover files if I don't have a backup?",

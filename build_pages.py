@@ -4707,7 +4707,8 @@ REPAIR_TOWNS = [
 def repair_town_links():
     items = "\n".join(f'          <li><a href="/{slug}/">Computer Repair {town}</a></li>'
                       for town, slug, _n, _it in REPAIR_TOWNS)
-    items += '\n          <li><a href="/computer-repair-westbourne/">Computer Repair Westbourne</a></li>' 
+    items += '\n          <li><a href="/computer-repair-westbourne/">Computer Repair Westbourne</a></li>'
+    items += '\n          <li><a href="/computer-repair-kinson/">Computer Repair Kinson</a></li>' 
     return f'''    <section class="section section--alt" aria-label="Computer repair by town">
       <div class="wrap">
         <div class="section-head">
