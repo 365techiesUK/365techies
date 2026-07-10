@@ -10,13 +10,14 @@ const REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const LOW_POWER = (() => {
   try { return !!(navigator.connection && navigator.connection.saveData); } catch (e) { return false; }
 })();
-const HAS_GSAP = typeof window.gsap !== "undefined" && typeof window.ScrollTrigger !== "undefined";
+/* GSAP + ScrollTrigger arrive via the desktop-only motion gate in <head>
+   (phones never download them), so presence is checked LIVE, not cached
+   at module time — the libs usually land after this module has run. */
+const hasGsap = () => typeof window.gsap !== "undefined" && typeof window.ScrollTrigger !== "undefined";
 // Cached so per-frame callers never force a layout read (innerWidth flushes layout).
 let _isMobile = window.innerWidth < 920;
 const isMobile = () => _isMobile;
 window.addEventListener("resize", () => { _isMobile = window.innerWidth < 920; }, { passive: true });
-
-if (HAS_GSAP) gsap.registerPlugin(ScrollTrigger);
 
 /* Scroll-driven scene intensities, tweened by ScrollTrigger, read by the
    render loop every frame. */
@@ -36,7 +37,8 @@ const mobilePlanButtons = mobileMenu.querySelectorAll(".mobile-menu__plans .butt
 let menuOpen = false;
 let menuTl = null;
 
-if (HAS_GSAP && !REDUCED) {
+function buildMenuTl() {
+  if (menuTl || !hasGsap() || REDUCED) return;
   // visibility is flipped in setMenu(), NOT here — a .set() at position 0
   // renders immediately and would leave the backdrop covering the page.
   menuTl = gsap.timeline({
@@ -108,7 +110,7 @@ function initCounters() {
     const fmt = (v) => v.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
 
     // Static on mobile too: skips per-stat ScrollTrigger setup (layout reads)
-    if (!HAS_GSAP || REDUCED || isMobile()) { el.textContent = fmt(target); return; }
+    if (!hasGsap() || REDUCED || isMobile()) { el.textContent = fmt(target); return; }
 
     const proxy = { v: 0 };
     gsap.to(proxy, {
@@ -127,8 +129,10 @@ function initUI() {
      On mobile the hero H1/sub is the LCP element; a .from() intro re-hides the
      already-painted text and replays it once the GSAP CDN arrives, which gates
      LCP on a third-party request + a ~1s tween (measured ~2s of render delay).
-     Mobile therefore keeps the first CSS paint and skips the intro entirely. */
-  if (!isMobile()) {
+     Mobile therefore keeps the first CSS paint and skips the intro entirely.
+     GSAP also arrives async now (motion gate) — if it lands late, skip the
+     intro rather than re-hide content the visitor is already reading. */
+  if (!isMobile() && performance.now() < 2500) {
     const load = gsap.timeline({ defaults: { ease: "power3.out" } });
 
     load
@@ -512,7 +516,7 @@ async function initBackground() {
   placeGroups();
 
   /* ---------------- scroll + mouse camera motion ---------------- */
-  if (HAS_GSAP) {
+  if (hasGsap()) {
     gsap.to(camera.position, {
       z: 5,
       ease: "none",
@@ -663,10 +667,26 @@ async function initBackground() {
    BOOT
    ========================================================================== */
 
-initCounters();
-
-if (HAS_GSAP && !REDUCED) {
+/* The motion gate in <head> only injects GSAP/ScrollTrigger on desktop and
+   dispatches "motion-ready" once both are in. On phones (html.no-motion) the
+   libs never load: reveals render visible, counters set their final values,
+   and the mobile menu uses the CSS-transition fallback. If the libs somehow
+   beat this module (hot cache), boot immediately. */
+let _motionBooted = false;
+function bootMotion() {
+  if (_motionBooted || !hasGsap() || REDUCED) return;
+  _motionBooted = true;
+  gsap.registerPlugin(ScrollTrigger);
+  buildMenuTl();
   initUI();
+  initCounters();
+}
+
+if (hasGsap() && !REDUCED) {
+  bootMotion(); // initCounters runs inside
+} else {
+  initCounters(); // static path — final values painted immediately
+  window.addEventListener("motion-ready", bootMotion, { once: true });
 }
 
 // Desktop only: the Three.js background is ~1.2MB, so skip it on mobile/tablet,

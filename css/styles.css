@@ -343,6 +343,19 @@ body.menu-open .menu-backdrop { pointer-events: auto; }
   display: flex; flex-direction: column;
   overflow-y: auto;
 }
+/* No-motion devices (html.no-motion set by the head motion gate — GSAP never
+   loads there): the menu's JS fallback flips inline transform/visibility, and
+   these transitions turn that into a slide. Scoped so they can never fight a
+   GSAP tween. Visibility is delayed on close so the slide-out stays visible,
+   and un-delayed while the menu is open. */
+html.no-motion .mobile-menu {
+  transition: transform 0.38s cubic-bezier(0.22, 0.8, 0.35, 1), visibility 0s linear 0.38s;
+}
+html.no-motion body.menu-open .mobile-menu { transition-delay: 0s, 0s; }
+html.no-motion .menu-backdrop {
+  transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+}
+html.no-motion body.menu-open .menu-backdrop { transition-delay: 0s, 0s; }
 .mobile-menu__label { margin-bottom: 1.2rem; }
 .mobile-menu__nav a {
   display: block;

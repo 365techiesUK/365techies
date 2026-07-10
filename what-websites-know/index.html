@@ -23,8 +23,10 @@
       ['pointerdown', 'keydown', 'touchstart', 'scroll'].forEach(function (evt) {
         window.addEventListener(evt, loadGtagLib, { once: true, passive: true });
       });
-      if ('requestIdleCallback' in window) requestIdleCallback(loadGtagLib, { timeout: 4000 });
-      else window.addEventListener('load', function () { setTimeout(loadGtagLib, 3000); });
+      // Fallback is a flat post-load timer (NOT idle callback — headless/idle
+      // environments fire rIC instantly, dragging gtag's long tasks into TBT).
+      // Any real interaction still loads it immediately via the listeners above.
+      window.addEventListener('load', function () { setTimeout(loadGtagLib, 9000); });
     })();
   </script>
   <title>What Can a Website See About Me? | 365 Techies</title>
@@ -64,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=54" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=55" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -339,8 +341,28 @@
   ]
 }
   </script>
-  <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script>
+    /* Motion gate: GSAP + ScrollTrigger are DESKTOP-ONLY. Phones, tablets and
+       reduced-motion users skip the ~90KB download and all the ScrollTrigger
+       layout work (the main mobile TBT cost) — reveals just render visible.
+       main.js boots the animations on the motion-ready event. */
+    (function () {
+      var wantMotion = window.innerWidth >= 920
+        && window.matchMedia('(hover: hover)').matches
+        && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!wantMotion) { document.documentElement.classList.add('no-motion'); return; }
+      function inject(src, onload) {
+        var s = document.createElement('script');
+        s.src = src; s.async = true; s.onload = onload;
+        document.head.appendChild(s);
+      }
+      inject('https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js', function () {
+        inject('https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js', function () {
+          window.dispatchEvent(new Event('motion-ready'));
+        });
+      });
+    })();
+  </script>
 </head>
 <body id="top">
   <a class="skip-link" href="#main">Skip to content</a>
@@ -1040,7 +1062,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=18"></script>
+  <script type="module" src="/js/interior.min.js?v=19"></script>
   <script src="/js/a11y.min.js?v=5" defer></script>
   <script src="/js/forms.min.js?v=4" defer></script>
   <script src="/js/search.min.js?v=1" defer></script>

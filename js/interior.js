@@ -10,10 +10,10 @@ const REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const LOW_POWER = (() => {
   try { return !!(navigator.connection && navigator.connection.saveData); } catch (e) { return false; }
 })();
-const HAS_GSAP = typeof window.gsap !== "undefined" && typeof window.ScrollTrigger !== "undefined";
+/* GSAP + ScrollTrigger arrive via the desktop-only motion gate in <head>
+   (phones never download them), so presence is checked LIVE, not cached. */
+const hasGsap = () => typeof window.gsap !== "undefined" && typeof window.ScrollTrigger !== "undefined";
 const isMobile = () => window.innerWidth < 920;
-
-if (HAS_GSAP) gsap.registerPlugin(ScrollTrigger);
 
 /* ---------------- header + mobile menu ---------------- */
 const header = document.querySelector(".site-header");
@@ -24,7 +24,8 @@ const menuBackdrop = document.querySelector(".menu-backdrop");
 let menuOpen = false;
 let menuTl = null;
 
-if (mobileMenu && HAS_GSAP && !REDUCED) {
+function buildMenuTl() {
+  if (menuTl || !mobileMenu || !hasGsap() || REDUCED) return;
   const links = mobileMenu.querySelectorAll(".mobile-menu__nav > a, .mobile-menu__nav > .m-group > summary");
   const btns = mobileMenu.querySelectorAll(".mobile-menu__plans .button");
   menuTl = gsap.timeline({
@@ -74,7 +75,7 @@ function initCounters() {
     if (isNaN(target)) return;
     const decimals = parseInt(el.dataset.decimals || "0", 10);
     const fmt = (v) => v.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
-    if (!HAS_GSAP || REDUCED) { el.textContent = fmt(target); return; }
+    if (!hasGsap() || REDUCED) { el.textContent = fmt(target); return; }
     const proxy = { v: 0 };
     gsap.to(proxy, {
       v: target, duration: 1.6, ease: "power2.out",
@@ -87,12 +88,19 @@ function initCounters() {
 
 /* ---------------- UI animations ---------------- */
 function initUI() {
+  /* Intro timelines only make sense right after first paint. GSAP now arrives
+     async (motion gate) — if it lands late, re-hiding content the visitor is
+     already reading would be jarring, so skip the intros and keep only the
+     scroll-driven reveals. */
+  const FRESH_PAINT = performance.now() < 2500;
+  if (FRESH_PAINT) {
   const load = gsap.timeline({ defaults: { ease: "power3.out" } });
   load
     .from(".site-header", { y: -110, opacity: 0, duration: 0.8 })
     .from(".desktop-nav > a, .desktop-nav .nav-item", { y: -18, opacity: 0, duration: 0.5, stagger: 0.06 }, 0.3);
+  }
 
-  const hero = document.querySelector(".page-hero");
+  const hero = FRESH_PAINT ? document.querySelector(".page-hero") : null;
   if (hero) {
     const tl = gsap.timeline({ defaults: { ease: "power3.out" }, delay: 0.35 });
     const bc = hero.querySelector(".breadcrumb");
@@ -200,7 +208,7 @@ async function initBackground() {
   const web = new THREE.LineSegments(webGeo, new THREE.LineBasicMaterial({ color: 0x0b73b5, transparent: true, opacity: 0.16, depthWrite: false, blending: THREE.AdditiveBlending }));
   group.add(web);
 
-  if (HAS_GSAP) {
+  if (hasGsap()) {
     gsap.to(group.rotation, { y: Math.PI * 0.6, x: Math.PI * 0.1, ease: "none", scrollTrigger: { trigger: document.body, start: "top top", end: "bottom bottom", scrub: 1 } });
     gsap.to(camera.position, { z: 6, ease: "none", scrollTrigger: { trigger: document.body, start: "top top", end: "bottom bottom", scrub: 1 } });
   }
@@ -305,8 +313,26 @@ document.addEventListener("click", (e) => {
 });
 
 /* ---------------- boot ---------------- */
-initCounters();
-if (HAS_GSAP && !REDUCED) initUI();
+/* GSAP is injected desktop-only by the head motion gate and usually lands
+   after this module runs — boot the animations on motion-ready. On phones
+   (html.no-motion) it never loads: reveals render visible, counters are
+   static, and the menu uses the CSS-transition fallback. */
+let _motionBooted = false;
+function bootMotion() {
+  if (_motionBooted || !hasGsap() || REDUCED) return;
+  _motionBooted = true;
+  gsap.registerPlugin(ScrollTrigger);
+  buildMenuTl();
+  initUI();
+  initCounters();
+}
+
+if (hasGsap() && !REDUCED) {
+  bootMotion(); // initCounters runs inside
+} else {
+  initCounters(); // static path — final values painted immediately
+  window.addEventListener("motion-ready", bootMotion, { once: true });
+}
 // WebGL background only runs where a #tech-background canvas exists (homepage only now);
 // interior/landing pages use the lightweight static CSS background — no Three.js fetch.
 const bgCanvas = document.querySelector("#tech-background");
