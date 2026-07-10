@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Google tag (gtag.js) - Consent Mode v2: denied by default, granted on cookie-accept.
+       The library itself loads lazily (first interaction, or idle ~4s) so its ~90KB never
+       competes with LCP; calls below queue into dataLayer and replay when it arrives. -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', { ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'denied', wait_for_update: 500 });
+    try { if (localStorage.getItem('tt_consent') === 'accepted') gtag('consent', 'update', { ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted', analytics_storage: 'granted' }); } catch (e) {}
+    gtag('js', new Date());
+    gtag('config', 'G-EBLTJ9WJXZ');
+    (function () {
+      function loadGtagLib() {
+        if (window.__gtagLibLoaded) return; window.__gtagLibLoaded = true;
+        var g = document.createElement('script'); g.async = true;
+        g.src = 'https://www.googletagmanager.com/gtag/js?id=G-EBLTJ9WJXZ';
+        document.head.appendChild(g);
+      }
+      ['pointerdown', 'keydown', 'touchstart', 'scroll'].forEach(function (evt) {
+        window.addEventListener(evt, loadGtagLib, { once: true, passive: true });
+      });
+      if ('requestIdleCallback' in window) requestIdleCallback(loadGtagLib, { timeout: 4000 });
+      else window.addEventListener('load', function () { setTimeout(loadGtagLib, 3000); });
+    })();
+  </script>
+  <title>Cerbo GX MQTT Dashboard: Local & VRM Cloud, Realtime</title>
+  <meta name="description" content="How to turn a Cerbo GX MQTT feed into a polished, always-on dashboard - local Venus OS broker vs the VRM cloud broker, keepalive, TLS, and why REST isn't&hellip;" />
+  <link rel="canonical" href="https://365techies.co.uk/cerbo-gx-mqtt-dashboard/" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <meta name="author" content="365 Techies Limited" />
+  <meta name="geo.region" content="GB-BCP" />
+  <meta name="geo.placename" content="Bournemouth, Dorset" />
+  <meta name="geo.position" content="50.7192;-1.8808" />
+  <meta name="ICBM" content="50.7192, -1.8808" />
+  <meta name="theme-color" content="#070d22" />
+  <meta name="color-scheme" content="dark" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="365 Techies" />
+  <meta property="og:locale" content="en_GB" />
+  <meta property="og:url" content="https://365techies.co.uk/cerbo-gx-mqtt-dashboard/" />
+  <meta property="og:title" content="Cerbo GX MQTT Dashboard, Built and Hosted for You" />
+  <meta property="og:description" content="How to turn a Cerbo GX MQTT feed into a polished, always-on dashboard - local Venus OS broker vs the VRM cloud broker, keepalive, TLS, and why REST isn't realtime." />
+  <meta property="og:image" content="https://365techies.co.uk/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Cerbo GX MQTT Dashboard, Built and Hosted for You" />
+  <meta name="twitter:description" content="How to turn a Cerbo GX MQTT feed into a polished, always-on dashboard - local Venus OS broker vs the VRM cloud broker, keepalive, TLS, and why REST isn't realtime." />
+  <meta name="twitter:image" content="https://365techies.co.uk/og-image.jpg" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+  <link rel="preconnect" href="https://fonts.bunny.net" />
+  <link rel="preconnect" href="https://fonts.bunny.net" crossorigin />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/clash-display-700.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
+  <noscript>
+    <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
+  </noscript>
+  <link rel="stylesheet" href="/css/styles.min.css?v=54" />
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://365techies.co.uk/#website",
+      "url": "https://365techies.co.uk/",
+      "name": "365 Techies",
+      "inLanguage": "en-GB",
+      "publisher": {
+        "@id": "https://365techies.co.uk/#business"
+      }
+    },
+    {
+      "@type": [
+        "LocalBusiness",
+        "ProfessionalService"
+      ],
+      "@id": "https://365techies.co.uk/#business",
+      "name": "365 Techies",
+      "legalName": "365 Techies Limited",
+      "url": "https://365techies.co.uk/",
+      "telephone": "+441202775566",
+      "email": "help@365techies.co.uk",
+      "foundingDate": "1995",
+      "image": "https://365techies.co.uk/og-image.jpg",
+      "logo": "https://365techies.co.uk/logo.jpg",
+      "priceRange": "££",
+      "alternateName": "365 Techies Ltd",
+      "slogan": "The IT support experts",
+      "description": "Family-run, leading Managed Service Provider (MSP) established in 1995 — Dell hardware specialists, Microsoft partners and certified Microsoft Office Specialists. Fully managed monthly IT support, cybersecurity, backups and cloud, plus one-off computer repairs and refurbished Dell hardware, for homes and small businesses across Bournemouth, Poole and Dorset.",
+      "currenciesAccepted": "GBP",
+      "paymentAccepted": "Direct Debit (GoCardless), Bank Transfer, Credit Card, Debit Card",
+      "identifier": {
+        "@type": "PropertyValue",
+        "name": "Company registration number",
+        "value": "11073501"
+      },
+      "memberOf": {
+        "@type": "Organization",
+        "name": "Sustainable Dorset",
+        "url": "https://www.sustainabledorset.org/"
+      },
+      "knowsAbout": [
+        "IT support",
+        "Computer repair",
+        "Laptop repair",
+        "Microsoft 365",
+        "Cybersecurity",
+        "Data backup",
+        "Network security",
+        "Wi-Fi",
+        "Remote support",
+        "Dell hardware",
+        "Dell Latitude laptops",
+        "Dell OptiPlex desktops",
+        "Refurbished computers",
+        "Malwarebytes Premium",
+        "VPN",
+        "Online safety",
+        "Accessible IT support",
+        "IT support for retired people",
+        "IT support for disabled people",
+        "Website design",
+        "Web hosting",
+        "Business email",
+        "Managed service provider",
+        "Managed IT services",
+        "MSP",
+        "New Forest IT support"
+      ],
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Bournemouth",
+        "addressRegion": "Dorset",
+        "addressCountry": "GB"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 50.7192,
+        "longitude": -1.8808
+      },
+      "areaServed": [
+        {
+          "@type": "AdministrativeArea",
+          "name": "Dorset"
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "Bournemouth, Christchurch and Poole"
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "New Forest"
+        }
+      ],
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday"
+        ],
+        "opens": "09:00",
+        "closes": "17:00"
+      },
+      "hasMap": "https://www.google.com/maps/place/?q=place_id:ChIJlTb8YRuic0gRCRczduB8OFI",
+      "sameAs": [
+        "https://www.facebook.com/365computersuk",
+        "https://www.google.com/maps/place/?q=place_id:ChIJlTb8YRuic0gRCRczduB8OFI",
+        "https://find-and-update.company-information.service.gov.uk/company/11073501"
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://365techies.co.uk/cerbo-gx-mqtt-dashboard/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://365techies.co.uk/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Cerbo GX MQTT Dashboard",
+          "item": "https://365techies.co.uk/cerbo-gx-mqtt-dashboard/"
+        }
+      ]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://365techies.co.uk/cerbo-gx-mqtt-dashboard/#webpage",
+      "url": "https://365techies.co.uk/cerbo-gx-mqtt-dashboard/",
+      "name": "Cerbo GX MQTT Dashboard",
+      "description": "How to turn a Cerbo GX MQTT feed into a polished, always-on dashboard - local Venus OS broker vs the VRM cloud broker, keepalive, TLS, and why REST isn't realtime.",
+      "inLanguage": "en-GB",
+      "isPartOf": {
+        "@id": "https://365techies.co.uk/#website"
+      },
+      "about": {
+        "@id": "https://365techies.co.uk/#business"
+      },
+      "breadcrumb": {
+        "@id": "https://365techies.co.uk/cerbo-gx-mqtt-dashboard/#breadcrumb"
+      },
+      "primaryImageOfPage": {
+        "@type": "ImageObject",
+        "url": "https://365techies.co.uk/og-image.jpg"
+      },
+      "datePublished": "2026-06-12",
+      "dateModified": "2026-07-10"
+    },
+    {
+      "@type": "HowTo",
+      "@id": "https://365techies.co.uk/cerbo-gx-mqtt-dashboard/#howto",
+      "name": "How to build a real-time dashboard from a Cerbo GX MQTT feed",
+      "step": [
+        {
+          "@type": "HowToStep",
+          "position": 1,
+          "name": "Confirm your source and portal ID",
+          "text": "Identify the GX device that all your Victron kit reports to (Cerbo GX, Ekrano GX, Venus GX or a Raspberry Pi on Venus OS) and note its VRM portal ID. Every MQTT topic is namespaced by that ID, so it is the anchor for everything that follows."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 2,
+          "name": "Choose local or the VRM cloud broker",
+          "text": "Decide where the dashboard will run. On the same network as the GX, use the local FlashMQ broker on Venus OS for the lowest latency and no internet dependency. To reach it from anywhere, use the VRM cloud broker (mqttN.victronenergy.com). Many setups justify both."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 3,
+          "name": "Enable MQTT and connect over TLS",
+          "text": "For local, enable MQTT under Settings, Services, MQTT on the GX and connect on port 8883 with TLS. For cloud, connect to the correct broker hostname for your VRM portal ID and authenticate with your VRM credentials or an access token. Keep certificates and tokens on a server, never in the browser."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 4,
+          "name": "Hold the feed open with keepalive",
+          "text": "Subscribe to the N/ topics you need, then publish an empty keepalive to R/portalid/keepalive about every 30 seconds. Without it the broker sends only serial and system data, which looks like a dead feed. Re-send the keepalive immediately after any reconnect."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 5,
+          "name": "Decode, scale and store the values",
+          "text": "Translate enum states such as system and MPPT state into readable text, apply unit scaling, derive any figures you need, and mark readings stale if they stop updating. Blend in the VRM REST API for history and charts, since MQTT carries the live values but not the long-term record."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 6,
+          "name": "Build an always-on front end",
+          "text": "Render the data as glanceable gauges and charts that survive weeks unattended on a kiosk, TV or tablet without memory leaks or manual refreshes. Handle disconnects visibly so a frozen screen never reads as a live one."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 7,
+          "name": "Harden, brand and host it",
+          "text": "Add your branding, run it on reliable hosting, secure the endpoints, and monitor uptime. This is the difference between a working demo and a dashboard you can put in front of a client every day, for years."
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://365techies.co.uk/cerbo-gx-mqtt-dashboard/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Local FlashMQ broker or the VRM cloud broker &mdash; which should I use?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<p>It depends on where the screen lives. If the display is on the same site as the GX device, the local FlashMQ broker (Venus OS v3.20+, ports 1883/8883) gives you the lowest latency and no internet dependency. If it must be reachable from anywhere, use the VRM cloud broker over TLS. Plenty of installs want both &mdash; local for the wall, cloud for remote &mdash; and a well-built dashboard can fail over between them.</p>"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "My MQTT feed only shows serial numbers &mdash; what&rsquo;s wrong?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<p>Almost always the keepalive. Both the local and cloud brokers stop sending the full topic set unless you publish an empty keepalive to <em>R/&lt;portalid&gt;/keepalive</em> about every 30 seconds (before it times out around a minute). Miss it and you are left with just serial and system topics, which looks like a dead feed but is really a starved one. A production dashboard sends the keepalive on a reliable timer and re-sends it immediately after any reconnect.</p>"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I just poll the VRM REST API instead of using MQTT?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<p>Not for a live screen. The VRM REST API is excellent for history, alarms, configuration and reports, but its diagnostics data follows the logging interval &mdash; 15 minutes by default &mdash; so polling faster just returns the same stale numbers. Share links and iframe embeds have the same limit and are read-only. Use REST for context and long-term charts; use MQTT for the values that must move in real time.</p>"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can the dashboard change settings, or is it read-only?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<p>Either. MQTT supports writes via the <em>W/</em> topic prefix, so a dashboard can change values &mdash; ESS mode, relay states, setpoints &mdash; not just display them. Control adds real responsibility, though: authentication, confirmation, safe defaults and audit. We usually ship a read-only display first, then add controlled write actions deliberately, with the safeguards that anything touching a live power system deserves.</p>"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can you show non-Victron sensors on the same dashboard?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<p>Yes, but with an honest caveat: non-Victron data can only ride the VRM and MQTT feed if it is first fed into the GX device &mdash; for example as a supported sensor or a custom D-Bus service on Venus OS. Once it is on the GX it becomes just another topic we can render alongside your Victron values. If it can&rsquo;t reach the GX, it needs a separate feed, which we can also handle.</p>"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do you host it, and can you do this outside the UK?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<p>Yes to both. We build, host and support the dashboard as a done-for-you service, and because delivery is remote we work worldwide &mdash; the GX device and VRM don&rsquo;t care where we are. Our office hours for support and response are Monday to Friday, 9&ndash;5 GMT, stated plainly so you know when a human is at the desk. You keep ownership of your Victron kit and VRM account throughout.</p>"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "There are MQTT examples on GitHub &mdash; why pay you?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<p>Because the example that prints topics to a terminal is the easy part, and it is honestly worth trying first. The cost is in everything after: a connection that survives reboots and drops, server-side credentials, decoded enums, stale-data handling, a front end that runs untouched for years, plus branding and hosting. We have already built and proven all of it &mdash; our own van streams live on this site &mdash; so you buy the finished, supported result, not a weekend of debugging.</p>"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What do you need from me to get started?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<p>Three things: working Victron kit reporting to a GX device (the prerequisite), VRM access as appropriate &mdash; usually an invited account or an installation token plus your portal ID &mdash; and MQTT reachable either locally on the GX or via the VRM cloud. That is enough for us to scope the job and come back with a clear quote. We keep access scoped to exactly what the work needs.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+</head>
+<body id="top">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="grid-overlay" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <header class="site-header">
+    <div class="status-ticker" aria-hidden="true">
+      <div class="status-ticker__track">
+        <span>&#9679; CALL 01202 775566&ensp;//&ensp;FAMILY BUSINESS SINCE 1995&ensp;//&ensp;DORSET MICROSOFT EDUCATION RESOURCE CENTRE 1998&ndash;2008&ensp;//&ensp;IT SUPPORT FOR MERCEDES-BENZ PENTAGON 1998&ndash;2008&ensp;//&ensp;COMPUTER SALES &amp; SERVICE CENTRE 2008&ndash;2017&ensp;//&ensp;KINSON COMMUNITY CENTRE 2017&ndash;NOW&ensp;//&ensp;ENVIRONMENT AGENCY RIVER AVON WIRELESS LINK SINCE 2015&ensp;//&ensp;DELL SPECIALISTS&ensp;//&ensp;WEBSITE DESIGN, HOSTING &amp; EMAIL&ensp;//&ensp;WORK FROM ANYWHERE &mdash; REMOTE PC ACCESS FOR SUPPORT CUSTOMERS&ensp;//&ensp;MICROSOFT PARTNER &amp; OFFICE SPECIALISTS&ensp;//&ensp;WINDOWS &amp; ANDROID SPECIALISTS&ensp;//&ensp;SAME-DAY RESPONSE &middot; USUALLY MINUTES REMOTELY&ensp;//&ensp;<a href="/heatwave-tech-guide/" tabindex="-1">HEATWAVE? KEEP YOUR TECH COOL &mdash; FREE GUIDE</a>&ensp;//&ensp;<a href="/is-it-down/" tabindex="-1">IS IT DOWN, OR IS IT JUST YOU? CHECK LIVE</a>&ensp;//&ensp;REMOTE IT SUPPORT ACROSS THE WHOLE UK&ensp;//&ensp;MALWAREBYTES PARTNER&ensp;//&ensp;NVIDIA &amp; SCAN PARTNER&ensp;//&ensp;RICHER SOUNDS PARTNER&ensp;//&ensp;BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;//&ensp;PLANS FROM &pound;18.25/MO&ensp;//&ensp;MON&ndash;FRI 9AM&ndash;5PM&ensp;//&ensp;</span>
+        <span>&#9679; CALL 01202 775566&ensp;//&ensp;FAMILY BUSINESS SINCE 1995&ensp;//&ensp;DORSET MICROSOFT EDUCATION RESOURCE CENTRE 1998&ndash;2008&ensp;//&ensp;IT SUPPORT FOR MERCEDES-BENZ PENTAGON 1998&ndash;2008&ensp;//&ensp;COMPUTER SALES &amp; SERVICE CENTRE 2008&ndash;2017&ensp;//&ensp;KINSON COMMUNITY CENTRE 2017&ndash;NOW&ensp;//&ensp;ENVIRONMENT AGENCY RIVER AVON WIRELESS LINK SINCE 2015&ensp;//&ensp;DELL SPECIALISTS&ensp;//&ensp;WEBSITE DESIGN, HOSTING &amp; EMAIL&ensp;//&ensp;WORK FROM ANYWHERE &mdash; REMOTE PC ACCESS FOR SUPPORT CUSTOMERS&ensp;//&ensp;MICROSOFT PARTNER &amp; OFFICE SPECIALISTS&ensp;//&ensp;WINDOWS &amp; ANDROID SPECIALISTS&ensp;//&ensp;SAME-DAY RESPONSE &middot; USUALLY MINUTES REMOTELY&ensp;//&ensp;<a href="/heatwave-tech-guide/" tabindex="-1">HEATWAVE? KEEP YOUR TECH COOL &mdash; FREE GUIDE</a>&ensp;//&ensp;<a href="/is-it-down/" tabindex="-1">IS IT DOWN, OR IS IT JUST YOU? CHECK LIVE</a>&ensp;//&ensp;REMOTE IT SUPPORT ACROSS THE WHOLE UK&ensp;//&ensp;MALWAREBYTES PARTNER&ensp;//&ensp;NVIDIA &amp; SCAN PARTNER&ensp;//&ensp;RICHER SOUNDS PARTNER&ensp;//&ensp;BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;//&ensp;PLANS FROM &pound;18.25/MO&ensp;//&ensp;MON&ndash;FRI 9AM&ndash;5PM&ensp;//&ensp;</span>
+      </div>
+    </div>
+    <div class="header-bar">
+      <a class="logo" href="/" aria-label="365techies — home">
+        <svg class="logo__mark" viewBox="0 0 32 32" aria-hidden="true">
+          <circle cx="16" cy="16" r="13.4" fill="none" stroke="#8fb3d9" stroke-width="2" stroke-linecap="round" stroke-dasharray="63 22" transform="rotate(-55 16 16)"/>
+          <circle cx="16" cy="16" r="9.4" fill="none" stroke="#1d97e3" stroke-width="2" stroke-linecap="round" stroke-dasharray="46 14" transform="rotate(115 16 16)"/>
+          <path d="M12.4 18.4l3.6-5.8 3.4 5.1z" fill="none" stroke="#8fb3d9" stroke-width="1.2"/>
+          <circle cx="12.4" cy="18.4" r="1.6" fill="#00ce1b"/>
+          <circle cx="16" cy="12.6" r="1.6" fill="#1d97e3"/>
+          <circle cx="19.4" cy="17.7" r="1.6" fill="#1d97e3"/>
+        </svg>
+        <span class="logo__text"><em>365</em>techies</span>
+      </a>
+      <nav class="desktop-nav" aria-label="Primary">
+        <a href="/">Home</a>
+        <div class="nav-item has-dropdown">
+          <a href="/home-it-support-subscriptions/" aria-haspopup="true">For Home
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/home-it-support-subscriptions/">Home IT Support</a>
+            <a href="/home-it-support-plans/">Home Support Plans</a>
+            <a href="/family-it-support/">Families</a>
+            <a href="/it-support-for-retired-users/">Retired Users</a>
+            <a href="/it-support-for-disabled-people/">Disabled People</a>
+            <a href="/computer-help-for-seniors/">Help for Seniors</a>
+          <a href="/computer-lessons-for-seniors-bournemouth/">Computer Lessons</a>
+            <a href="/computer-lessons-for-seniors-bournemouth/">Computer Lessons</a>
+            <a href="/it-support-for-home-workers/">Home Workers</a>
+            <a href="/it-support-for-digital-nomads/">Digital Nomads</a>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown">
+          <a href="/business-it-support-subscriptions/" aria-haspopup="true">For Business
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/business-it-support-subscriptions/">Business IT Support</a>
+            <a href="/business-it-support-plans/">Business Support Plans</a>
+            <a href="/small-business-it-support/">Small Businesses</a>
+            <a href="/it-support-for-sole-traders/">Sole Traders</a>
+            <a href="/it-support-for-education/">Schools &amp; Education</a>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown">
+          <a href="/services/" aria-haspopup="true">Services
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/services/">All Services &#8594;</a>
+            <a href="/remote-it-support/">Remote IT Support</a>
+            <a href="/preventative-maintenance/">Preventative Maintenance</a>
+            <a href="/microsoft-365-support/">Microsoft 365</a>
+            <a href="/cybersecurity-support/">Cybersecurity</a>
+            <a href="/computer-repairs/">Computer Repairs</a>
+            <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
+            <a href="/custom-pc-builds/">Custom-Built PCs</a>
+            <a href="/wifi-support/">Wi-Fi Support</a>
+            <a href="/email-support/">Email Support</a>
+            <a href="/printer-support/">Printer Support</a>
+            <a href="/backup-support/">Backup Support</a>
+            <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
+            <a href="/cctv-smart-home/">CCTV &amp; Smart Home</a>
+            <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
+            <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
+            <a href="/starlink-internet/">Starlink Internet</a>
+            <a href="/agentic-ai-systems/">Agentic AI &amp; Automation</a>
+            <a href="/it-support-by-industry/">IT Support by Industry</a>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown">
+          <a href="/free-tools/" aria-haspopup="true">Free Tools
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/free-tools/">All Free Tools &#8594;</a>
+            <a href="/online-safety-course/">Free Online Safety Course</a>
+            <a href="/broadband-speed-checker/">Broadband Speed Test</a>
+            <a href="/pc-benchmark/">PC Benchmark</a>
+            <a href="/website-checker/">Website Checker</a>
+            <a href="/email-security-checker/">Email Security Checker</a>
+            <a href="/password-breach-checker/">Password Breach Checker</a>
+            <a href="/link-safety-checker/">Link Safety Checker</a>
+            <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
+            <a href="/custom-pc-builder/">Custom PC Builder</a>
+            <a href="/victron-system-builder/">Victron System Builder</a>
+            <a href="/spot-the-scam/">Spot the Scam Quiz</a>
+            <a href="/is-it-down/">Is It Down? Status Checker</a>
+            <a href="/computer-spec-checker/">PC Hardware Checker</a>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown">
+          <a href="/book-service/" aria-haspopup="true">Get Help
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/book-service/">Book a Service</a>
+            <a href="/book-a-collection/">Book a Collection</a>
+            <a href="/remote-support/">Start Remote Support</a>
+            <a href="/emergency-it-help/">Emergency IT Help</a>
+            <a href="/is-it-down/">Is Something Down?</a>
+            <a href="/support-portal/">Support Portal</a>
+            <a href="/splashtop-business-guide/">Remote Access Guide</a>
+            <a href="/dell-latitude-3520-guide/">Dell Laptop Guide</a>
+            <a href="/dell-optiplex-guide/">Dell Desktop Guide</a>
+            <a href="/heatwave-tech-guide/">Heatwave Tech Guide</a>
+            <a href="/monthly-it-support/">Monthly IT Support</a>
+            <a href="/switching-it-provider/">Switching to Us</a>
+            <a href="/plan-finder/">Plan Finder</a>
+            <a href="/cost-calculator/">Cost Calculator</a>
+            <a href="/quick-quote/">Quick Quote</a>
+            <a href="/resources/">Resources &amp; Guides</a>
+            <a href="/it-advice/">IT Advice</a>
+            <a href="/faqs/">FAQs</a>
+          </div>
+        </div>
+        <a href="/pricing/">Pricing</a>
+        <div class="nav-item has-dropdown">
+          <a href="/about/" aria-haspopup="true">About
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/about/">About</a>
+            <a href="/our-values/">Our Values</a>
+            <a href="/meet-the-team/">Meet the Team</a>
+            <a href="/why-choose-365-techies/">Why Choose Us</a>
+            <a href="/our-guarantees/">Our Guarantees</a>
+            <a href="/case-studies/">Case Studies</a>
+            <a href="/reviews/">Reviews</a>
+            <a href="/accreditations/">Accreditations</a>
+            <a href="/service-level-agreement/">Service Level Agreement</a>
+            <a href="/areas-covered/">Areas Covered</a>
+            <a href="/it-support-uk-europe/">UK &amp; Europe</a>
+            <a href="/refer-a-friend/">Refer a Friend</a>
+          </div>
+        </div>
+        <a href="/contact/">Contact</a>
+      </nav>
+      <div class="header-actions">
+        <button type="button" class="nav-search" data-search-open aria-label="Search this website" aria-keyshortcuts="/ Control+K">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <span class="nav-search__label">Search</span>
+          <span class="nav-search__k" aria-hidden="true"><kbd>/</kbd></span>
+        </button>
+        <a href="tel:+441202775566" class="nav-phone" aria-label="Call 365 Techies on 01202 775566">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg><span class="nav-phone__num">01202 775566</span>
+        </a>
+        <a href="/book-service/" class="nav-book" aria-label="Book a computer service">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v3M17 3v3M4 8h16M5 6h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z"/></svg>Book
+        </a>
+        <a href="https://sos.splashtop.com/en/sos-download" class="nav-sos" target="_blank" rel="noopener" aria-label="SOS emergency remote support — download Splashtop SOS">
+          <span class="sos-dot" aria-hidden="true"></span>SOS<span class="nav-sos__long">&nbsp;REMOTE SUPPORT</span>
+        </a>
+        <button class="mobile-menu-button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="menu-backdrop" aria-hidden="true"></div>
+  <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
+    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <nav class="mobile-menu__nav" aria-label="Mobile">
+      <a href="/">Home</a>
+      <a href="/pricing/">Pricing</a>
+      <a href="/contact/">Contact</a>
+      <details class="m-group">
+        <summary>For Home</summary>
+        <div class="m-group__links">
+          <a href="/home-it-support-subscriptions/">Home IT Support</a>
+          <a href="/home-it-support-plans/">Home Support Plans</a>
+          <a href="/family-it-support/">Families</a>
+          <a href="/it-support-for-retired-users/">Retired Users</a>
+          <a href="/it-support-for-disabled-people/">Disabled People</a>
+          <a href="/computer-help-for-seniors/">Help for Seniors</a>
+          <a href="/computer-lessons-for-seniors-bournemouth/">Computer Lessons</a>
+          <a href="/it-support-for-home-workers/">Home Workers</a>
+          <a href="/it-support-for-digital-nomads/">Digital Nomads</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>For Business</summary>
+        <div class="m-group__links">
+          <a href="/business-it-support-subscriptions/">Business IT Support</a>
+          <a href="/business-it-support-plans/">Business Support Plans</a>
+          <a href="/small-business-it-support/">Small Businesses</a>
+          <a href="/it-support-for-sole-traders/">Sole Traders</a>
+          <a href="/it-support-for-education/">Schools &amp; Education</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>Services</summary>
+        <div class="m-group__links">
+          <a href="/services/">All Services &#8594;</a>
+          <a href="/remote-it-support/">Remote IT Support</a>
+          <a href="/preventative-maintenance/">Preventative Maintenance</a>
+          <a href="/microsoft-365-support/">Microsoft 365</a>
+          <a href="/cybersecurity-support/">Cybersecurity</a>
+          <a href="/computer-repairs/">Computer Repairs</a>
+          <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
+          <a href="/custom-pc-builds/">Custom-Built PCs</a>
+          <a href="/wifi-support/">Wi-Fi Support</a>
+          <a href="/email-support/">Email Support</a>
+          <a href="/printer-support/">Printer Support</a>
+          <a href="/backup-support/">Backup Support</a>
+          <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
+          <a href="/cctv-smart-home/">CCTV &amp; Smart Home</a>
+          <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
+          <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
+          <a href="/starlink-internet/">Starlink Internet</a>
+          <a href="/agentic-ai-systems/">Agentic AI &amp; Automation</a>
+          <a href="/it-support-by-industry/">IT Support by Industry</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>Free Tools</summary>
+        <div class="m-group__links">
+          <a href="/free-tools/">All Free Tools &#8594;</a>
+          <a href="/online-safety-course/">Free Online Safety Course</a>
+          <a href="/broadband-speed-checker/">Broadband Speed Test</a>
+          <a href="/pc-benchmark/">PC Benchmark</a>
+          <a href="/website-checker/">Website Checker</a>
+          <a href="/email-security-checker/">Email Security Checker</a>
+          <a href="/password-breach-checker/">Password Breach Checker</a>
+          <a href="/link-safety-checker/">Link Safety Checker</a>
+          <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
+          <a href="/custom-pc-builder/">Custom PC Builder</a>
+          <a href="/victron-system-builder/">Victron System Builder</a>
+          <a href="/spot-the-scam/">Spot the Scam Quiz</a>
+          <a href="/is-it-down/">Is It Down? Status Checker</a>
+          <a href="/computer-spec-checker/">PC Hardware Checker</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>Get Help</summary>
+        <div class="m-group__links">
+          <a href="/book-service/">Book a Service</a>
+          <a href="/book-a-collection/">Book a Collection</a>
+          <a href="/pay/">Pay Us</a>
+          <a href="/remote-support/">Start Remote Support</a>
+          <a href="/emergency-it-help/">Emergency IT Help</a>
+          <a href="/is-it-down/">Is Something Down?</a>
+          <a href="/support-portal/">Support Portal</a>
+          <a href="/splashtop-business-guide/">Remote Access Guide</a>
+          <a href="/dell-latitude-3520-guide/">Dell Laptop Guide</a>
+          <a href="/dell-optiplex-guide/">Dell Desktop Guide</a>
+          <a href="/heatwave-tech-guide/">Heatwave Tech Guide</a>
+          <a href="/monthly-it-support/">Monthly IT Support</a>
+          <a href="/switching-it-provider/">Switching to Us</a>
+          <a href="/plan-finder/">Plan Finder</a>
+          <a href="/cost-calculator/">Cost Calculator</a>
+          <a href="/quick-quote/">Quick Quote</a>
+          <a href="/resources/">Resources &amp; Guides</a>
+          <a href="/it-advice/">IT Advice</a>
+          <a href="/faqs/">FAQs</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>About &amp; Trust</summary>
+        <div class="m-group__links">
+          <a href="/about/">About</a>
+          <a href="/our-values/">Our Values</a>
+          <a href="/meet-the-team/">Meet the Team</a>
+          <a href="/why-choose-365-techies/">Why Choose Us</a>
+          <a href="/our-guarantees/">Our Guarantees</a>
+          <a href="/case-studies/">Case Studies</a>
+          <a href="/reviews/">Reviews</a>
+          <a href="/accreditations/">Accreditations</a>
+          <a href="/service-level-agreement/">Service Level Agreement</a>
+          <a href="/areas-covered/">Areas Covered</a>
+          <a href="/it-support-uk-europe/">UK &amp; Europe</a>
+          <a href="/refer-a-friend/">Refer a Friend</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>Resources &amp; Info</summary>
+        <div class="m-group__links">
+          <a href="/resources/">Resources &amp; Guides</a>
+          <a href="/it-advice/">IT Advice</a>
+          <a href="/it-support-cost-guide/">IT Cost Guide</a>
+          <a href="/it-jargon-buster/">IT Jargon Buster</a>
+          <a href="/cybersecurity-checklist/">Cybersecurity Checklist</a>
+          <a href="/cyber-threats/">Cyber Threats Explained</a>
+          <a href="/faqs/">FAQs</a>
+          <a href="/system-status/">System Status</a>
+          <a href="/privacy-policy/">Privacy Policy</a>
+          <a href="/cookie-policy/">Cookie Policy</a>
+          <a href="/terms/">Terms of Service</a>
+          <a href="/accessibility-statement/">Accessibility</a>
+        </div>
+      </details>
+    </nav>
+    <div class="mobile-menu__plans">
+      <a class="button sos" href="https://sos.splashtop.com/en/sos-download" target="_blank" rel="noopener"><span class="sos-dot" aria-hidden="true"></span>SOS Remote Support</a>
+      <a class="button primary" href="/book-service/">Book a Service</a>
+      <a class="button secondary" href="/home-it-support-plans/">Home Plans</a>
+      <a class="button secondary" href="/business-it-support-plans/">Business Plans</a>
+    </div>
+    <p class="mobile-menu__foot mono"><a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a><br /><a href="tel:+441202775566">01202 775566</a><br /><a href="sms:+447520615332">Text only: 07520 615332</a></p>
+  </aside>
+
+  <main id="main">
+    <section class="page-hero" aria-label="Introduction">
+      <div class="page-hero__inner">
+        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">Cerbo GX MQTT Dashboard</span></nav>
+        <p class="eyebrow mono">// CERBO GX MQTT DASHBOARDS</p>
+        <h1>Turn a Cerbo GX MQTT feed into a <em class="grad grad--cyan">real-time dashboard</em></h1>
+        <p class="lede">Realtime data off a Cerbo GX means MQTT, not REST &mdash; and there are two brokers that matter: the local FlashMQ broker on Venus OS and the official VRM cloud broker. This page walks the honest route from raw topics to a polished, always-on display, then shows you ours running live on real hardware. We&rsquo;re an independent service and not affiliated with Victron Energy. Rated 4.9 on Google.</p>
+        <div class="page-hero__cta">
+          <a href="/custom-vrm-dashboards/" class="button primary button--lg">See a live custom dashboard</a>
+          <a href="/contact/" class="button secondary button--lg">Get a quote</a>
+        </div>
+        <ul class="page-hero__chips mono"><li>&#9679; Live demo on this site</li><li>&#9679; Built &amp; hosted for you</li><li>&#9679; Worldwide</li></ul>
+      </div>
+    </section>
+
+    <section class="section section--alt" aria-label="What a Cerbo GX MQTT dashboard actually is">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">/01 &mdash; THE SHORT ANSWER</p>
+        <h2 class="section-title" data-title>What a Cerbo GX MQTT dashboard actually is<span class="title-underline"></span></h2>
+<p>A Cerbo GX MQTT dashboard subscribes to the live MQTT feed published by your GX device &mdash; either the local FlashMQ broker running on Venus OS or the official VRM cloud broker &mdash; and paints those values onto a screen that updates the instant they change. Get the broker, the keepalive and the topic structure right and you have a genuinely real-time display; get them wrong and you are quietly back to polling a REST endpoint every few minutes and calling it &lsquo;live&rsquo;.</p><p>MQTT is the right transport because it is <strong>push, not poll</strong>. The GX device &mdash; a Cerbo GX, Ekrano GX, Cerbo-S, Venus GX or a Raspberry Pi running Venus OS &mdash; is the single source of truth for every connected MPPT, MultiPlus, BMV, Lynx and battery on the installation. It mirrors its internal D-Bus onto MQTT topics namespaced by your VRM portal ID, so one subscription gives you the whole system: state of charge, PV yield, AC loads, battery current, alarms and more, streaming as fast as the devices report.</p><p>The rest of this page is the honest route from that raw feed to a polished, always-on dashboard &mdash; the two brokers, the gotchas, and where DIY projects tend to stall. Then we show you ours, running live on real hardware.</p>
+      </div>
+    </section>
+    <section class="section section--alt" aria-label="Local FlashMQ vs the VRM cloud broker">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">/02 &mdash; THE TWO BROKERS</p>
+        <h2 class="section-title" data-title>Local FlashMQ vs the VRM cloud broker<span class="title-underline"></span></h2>
+<p>There are two brokers, and the right choice depends on where the screen lives.</p><p><strong>Local broker (FlashMQ on Venus OS).</strong> Since Venus OS v3.20 the GX device runs FlashMQ with the <em>dbus-flashmq</em> plugin, a D-Bus-aware broker you enable under <strong>Settings &rarr; Services &rarr; MQTT</strong>. It listens on the LAN on TCP 1883 (plain) and 8883 (TLS). This is the lowest-latency, no-internet-required option &mdash; ideal for a wall display in the same building &mdash; but the client has to reach the GX on the local network or over a VPN.</p><p><strong>VRM cloud broker.</strong> Victron also relays the same feed through <em>mqtt&lt;N&gt;.victronenergy.com</em>, where the broker index is derived from your VRM portal ID. It is TLS-secured and authenticated with your VRM credentials or an access token, so the dashboard can live anywhere in the world. Each cloud broker serves a bounded number of installations, so the exact hostname for your system matters.</p><p>Both brokers share one non-obvious rule: you must publish a <strong>keepalive</strong> to <em>R/&lt;portalid&gt;/keepalive</em> about every 30 seconds &mdash; the feed times out after roughly a minute &mdash; or it quietly drops back to just serial and system data. Data topics are namespaced <em>N/&lt;portalid&gt;/&lt;service&gt;/&lt;instance&gt;/&hellip;</em>; the <em>R/</em> prefix requests a read and <em>W/</em> writes a value back. Miss the keepalive and your &lsquo;dead&rsquo; dashboard is usually alive &mdash; just starved.</p>
+      </div>
+    </section>
+    <section class="section section--alt" aria-label="Why REST alone is never realtime">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">/03 &mdash; THE REST TRAP</p>
+        <h2 class="section-title" data-title>Why REST alone is never realtime<span class="title-underline"></span></h2>
+<p>It is tempting to skip MQTT and just poll the VRM REST API on a timer. Don&rsquo;t &mdash; not for a live screen. The REST API is genuinely excellent for what it is designed to do: pulling history, listing installations, reading alarms, fetching configuration and building reports. But its diagnostics and stats endpoints serve <strong>logged</strong> data, and the logging interval is the cadence the whole thing moves at &mdash; 15 minutes by default. Poll it every ten seconds and you will simply receive the same quarter-hour-old numbers over and over.</p><p>The same limit applies to VRM <strong>share links and iframe embeds</strong>: they are read-only and refresh at the logging interval, not in real time. They are perfect for a public &lsquo;here is our system&rsquo; link; they are not a live control-room display.</p><p>So the division of labour is clear, and it plays to VRM&rsquo;s strengths rather than against them. Use REST for history and context; use MQTT for the live numbers. A polished dashboard usually blends both &mdash; MQTT for the gauges that must move now, REST for the day, week and month charts behind them. VRM is doing exactly what it is built for; the realtime layer just needs the right channel.</p>
+      </div>
+    </section>
+    <section class="section section--alt" aria-label="From a raw feed to an always-on dashboard">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">/04 &mdash; THE HARD 80%</p>
+        <h2 class="section-title" data-title>From a raw feed to an always-on dashboard<span class="title-underline"></span></h2>
+<p>Subscribing to a broker is the easy 20%. Any MQTT client can print topics to a terminal. Turning that firehose into a display you would happily bolt to a wall for three years is the other 80%, and it is where weekend projects stall.</p><ul><li><strong>A resilient connection loop</strong> that re-authenticates, re-subscribes and re-sends keepalives through Wi-Fi drops, GX reboots and broker cutovers &mdash; without a human noticing.</li><li><strong>Credentials kept server-side.</strong> TLS certificates and VRM tokens belong on a backend, never baked into browser JavaScript where anyone can read them.</li><li><strong>Decoding the raw values:</strong> enum states (system state, MPPT state, alarm codes) into words, unit scaling, derived figures, and sensible handling of <em>stale</em> readings so a frozen number never masquerades as a live one.</li><li><strong>A front end that runs 24/7</strong> on a kiosk, TV or tablet without leaking memory or needing a nightly refresh &mdash; smooth gauges, readable at a glance, dark for a control room.</li><li><strong>Branding and hosting:</strong> your logo, your colours, a URL you can hand to a client, and somewhere reliable to run it.</li></ul><p>None of this is exotic. It is just a lot of unglamorous engineering that has to be right every day, not only on the demo. That is the work we have already done &mdash; and you can watch the result running below.</p>
+      </div>
+    </section>
+    <section class="section section--alt" aria-label="Our own off-grid van, streaming right now">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">/05 &mdash; SEE IT RUNNING LIVE</p>
+        <h2 class="section-title" data-title>Our own off-grid van, streaming right now<span class="title-underline"></span></h2>
+<p>We don&rsquo;t ask you to take this on faith. Our own off-grid support van &mdash; the <strong>365 Crafter</strong>, fitted with a Cerbo GX on Venus OS, MPPT solar and a lithium bank &mdash; streams its real telemetry through the official VRM API onto our <a href="/custom-vrm-dashboards/">custom VRM dashboards</a> page, right now.</p><p>You can see the <strong>same live feed rendered two completely different ways</strong> &mdash; one clean and client-facing, one dense and technical &mdash; to make the point that once we hold the data, the presentation is ours to shape, not VRM&rsquo;s fixed layout. There is also a <strong>fleet-style demo</strong> in which only the van is a real system; every other tile is clearly labelled as illustrative, because we won&rsquo;t fake telemetry to pad a screen.</p><p>It is the honest version of a portfolio: real hardware, real state of charge, real solar yield, moving while you watch. If you want a Cerbo GX MQTT dashboard, the most useful thing you can do is <a href="/custom-vrm-dashboards/">look at ours running live</a> and picture your own system in its place.</p>
+      </div>
+    </section>
+    <section class="section section--alt" aria-label="How we price it (and what moves the number)">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">/06 &mdash; WHAT IT COSTS</p>
+        <h2 class="section-title" data-title>How we price it (and what moves the number)<span class="title-underline"></span></h2>
+<p>Every dashboard is quoted individually, because the work genuinely varies &mdash; we would rather scope it properly than post a headline number that turns out to be wrong for you. There are no set prices to quote here, but these are the honest cost drivers:</p><ul><li><strong>Broker and reach:</strong> local-only, VRM cloud, or both &mdash; and whether the screen sits on the LAN or must be reachable worldwide.</li><li><strong>Scope:</strong> how many parameters, screens and derived views; a single glanceable kiosk is very different from a multi-view control room.</li><li><strong>One system or a fleet:</strong> a single Cerbo versus many installations aggregated into one view.</li><li><strong>Read-only or control:</strong> a display is simpler than a dashboard that also writes values back (ESS mode, relays) with the safeguards that demands.</li><li><strong>Branding, hosting and uptime:</strong> your look, where it runs, and how hard it must stay up.</li></ul><p>Because we build, host and support the whole thing as a done-for-you service, we can quote the build and the ongoing running as one. Tell us what you are picturing and we will come back with a clear, itemised quote &mdash; our office hours are Monday to Friday, 9&ndash;5 GMT, and we work worldwide via remote delivery. Start on the <a href="/contact/">contact page</a>.</p>
+      </div>
+    </section>
+    <section class="section section--alt" aria-label="What we are, and what we need from you">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">/07 &mdash; INDEPENDENCE &amp; PREREQUISITES</p>
+        <h2 class="section-title" data-title>What we are, and what we need from you<span class="title-underline"></span></h2>
+<p><strong>An honest disclosure first:</strong> 365 Techies is an independent service. We are <strong>not affiliated with, endorsed by, or certified by Victron Energy</strong> &mdash; Victron and VRM are their trademarks. We build on top of Victron&rsquo;s excellent platform using its official, documented MQTT and VRM APIs; we don&rsquo;t replace it, and we don&rsquo;t speak for them.</p><p>What we need from you to start is short and reasonable:</p><ul><li><strong>Working Victron kit reporting to a GX device</strong> &mdash; a Cerbo GX (or Ekrano/Venus GX, or a Raspberry Pi on Venus OS). This is the prerequisite; the dashboard reads what the GX already knows.</li><li><strong>VRM access as appropriate</strong> &mdash; typically an invited VRM account or an installation access token, plus your portal ID, scoped to what the job needs.</li><li><strong>MQTT reachable</strong> &mdash; the local broker enabled on the GX, or cloud access via VRM, depending on where the screen lives.</li></ul><p>We are straight about the limits, too: non-Victron data can only appear if it is first fed into the GX device, and we won&rsquo;t invent telemetry or overstate what MQTT can do. If your kit isn&rsquo;t reporting cleanly yet, we can help sort that first &mdash; see <a href="/off-grid-victron-energy/">off-grid Victron</a> and the <a href="/victron-system-builder/">Victron system builder</a>.</p>
+      </div>
+    </section>
+    <section class="section" aria-label="Related">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">// RELATED</p>
+<p>Related: <a href="/victron-vrm-api-dashboard/">Victron VRM API dashboards</a>, <a href="/customise-victron-vrm-dashboard/">customise your VRM dashboard</a>, <a href="/embed-victron-vrm-on-website/">embed VRM on a website</a>, <a href="/victron-grafana-dashboard-service/">Victron Grafana dashboards</a>, <a href="/custom-vrm-dashboards/">custom VRM dashboards</a> and <a href="/off-grid-victron-energy/">off-grid Victron</a>.</p>
+      </div>
+    </section>
+    <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
+      <div class="wrap">
+        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
+        <div class="faq-wrap">
+        <details class="faq" data-reveal>
+          <summary>Local FlashMQ broker or the VRM cloud broker &mdash; which should I use?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p><p>It depends on where the screen lives. If the display is on the same site as the GX device, the local FlashMQ broker (Venus OS v3.20+, ports 1883/8883) gives you the lowest latency and no internet dependency. If it must be reachable from anywhere, use the VRM cloud broker over TLS. Plenty of installs want both &mdash; local for the wall, cloud for remote &mdash; and a well-built dashboard can fail over between them.</p></p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>My MQTT feed only shows serial numbers &mdash; what&rsquo;s wrong?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p><p>Almost always the keepalive. Both the local and cloud brokers stop sending the full topic set unless you publish an empty keepalive to <em>R/&lt;portalid&gt;/keepalive</em> about every 30 seconds (before it times out around a minute). Miss it and you are left with just serial and system topics, which looks like a dead feed but is really a starved one. A production dashboard sends the keepalive on a reliable timer and re-sends it immediately after any reconnect.</p></p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Can I just poll the VRM REST API instead of using MQTT?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p><p>Not for a live screen. The VRM REST API is excellent for history, alarms, configuration and reports, but its diagnostics data follows the logging interval &mdash; 15 minutes by default &mdash; so polling faster just returns the same stale numbers. Share links and iframe embeds have the same limit and are read-only. Use REST for context and long-term charts; use MQTT for the values that must move in real time.</p></p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Can the dashboard change settings, or is it read-only?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p><p>Either. MQTT supports writes via the <em>W/</em> topic prefix, so a dashboard can change values &mdash; ESS mode, relay states, setpoints &mdash; not just display them. Control adds real responsibility, though: authentication, confirmation, safe defaults and audit. We usually ship a read-only display first, then add controlled write actions deliberately, with the safeguards that anything touching a live power system deserves.</p></p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Can you show non-Victron sensors on the same dashboard?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p><p>Yes, but with an honest caveat: non-Victron data can only ride the VRM and MQTT feed if it is first fed into the GX device &mdash; for example as a supported sensor or a custom D-Bus service on Venus OS. Once it is on the GX it becomes just another topic we can render alongside your Victron values. If it can&rsquo;t reach the GX, it needs a separate feed, which we can also handle.</p></p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Do you host it, and can you do this outside the UK?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p><p>Yes to both. We build, host and support the dashboard as a done-for-you service, and because delivery is remote we work worldwide &mdash; the GX device and VRM don&rsquo;t care where we are. Our office hours for support and response are Monday to Friday, 9&ndash;5 GMT, stated plainly so you know when a human is at the desk. You keep ownership of your Victron kit and VRM account throughout.</p></p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>There are MQTT examples on GitHub &mdash; why pay you?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p><p>Because the example that prints topics to a terminal is the easy part, and it is honestly worth trying first. The cost is in everything after: a connection that survives reboots and drops, server-side credentials, decoded enums, stale-data handling, a front end that runs untouched for years, plus branding and hosting. We have already built and proven all of it &mdash; our own van streams live on this site &mdash; so you buy the finished, supported result, not a weekend of debugging.</p></p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>What do you need from me to get started?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p><p>Three things: working Victron kit reporting to a GX device (the prerequisite), VRM access as appropriate &mdash; usually an invited account or an installation token plus your portal ID &mdash; and MQTT reachable either locally on the GX or via the VRM cloud. That is enough for us to scope the job and come back with a clear quote. We keep access scoped to exactly what the work needs.</p></p></div>
+        </details>
+        </div>
+      </div>
+    </section>
+    <section class="cta-band" aria-label="Get started">
+      <div class="cta-band__inner">
+        <h2 data-title>Get a Cerbo GX MQTT dashboard that actually stays live<span class="title-underline title-underline--center"></span></h2>
+        <p class="lede lede--center" data-reveal>We&rsquo;ve already solved the brokers, the keepalive and the always-on front end &mdash; and our own off-grid van proves it on this very site. Tell us what you want to see and we&rsquo;ll quote the build, hosting and support as one. Worldwide delivery, from our UK workshop.</p>
+        <div class="hero-buttons hero-buttons--center" data-reveal>
+          <a href="/custom-vrm-dashboards/" class="button primary button--lg">See a live custom dashboard</a>
+          <a href="/contact/" class="button secondary button--lg">Get a quote</a>
+        </div>
+        <p class="cta__contact mono" data-reveal>01202 775566 &middot; help@365techies.co.uk &middot; MON&ndash;FRI 9AM&ndash;5PM</p>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <div class="footer-areas">
+      <p class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</p>
+      <nav class="footer-areas__links" aria-label="Areas we cover">
+        <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
+        <a href="/it-support-bournemouth/">Bournemouth</a>
+        <a href="/it-support-poole/">Poole</a>
+        <a href="/it-support-christchurch/">Christchurch</a>
+        <a href="/it-support-ferndown/">Ferndown</a>
+        <a href="/it-support-wimborne/">Wimborne</a>
+        <a href="/it-support-broadstone/">Broadstone</a>
+        <a href="/it-support-verwood/">Verwood</a>
+        <a href="/it-support-ringwood/">Ringwood</a>
+        <a href="/it-support-wareham/">Wareham</a>
+        <a href="/it-support-swanage/">Swanage</a>
+        <a href="/it-support-weymouth/">Weymouth</a>
+        <a href="/it-support-dorchester/">Dorchester</a>
+        <a href="/it-support-blandford-forum/">Blandford Forum</a>
+        <a href="/it-support-shaftesbury/">Shaftesbury</a>
+        <a href="/it-support-gillingham/">Gillingham</a>
+        <a href="/it-support-sherborne/">Sherborne</a>
+        <a href="/it-support-new-forest/">New Forest</a>
+        <a href="/it-support-lymington/">Lymington</a>
+        <a href="/it-support-new-milton/">New Milton</a>
+        <a href="/it-support-brockenhurst/">Brockenhurst</a>
+        <a href="/it-support-southampton/">Southampton</a>
+        <a class="footer-areas__all" href="/areas-covered/">View all areas &#8594;</a>
+      </nav>
+    </div>
+    <div class="site-footer__grid">
+      <div class="site-footer__brand">
+        <a class="logo" href="/">
+          <svg class="logo__mark" viewBox="0 0 32 32" aria-hidden="true">
+            <circle cx="16" cy="16" r="13.4" fill="none" stroke="#8fb3d9" stroke-width="2" stroke-linecap="round" stroke-dasharray="63 22" transform="rotate(-55 16 16)"/>
+            <circle cx="16" cy="16" r="9.4" fill="none" stroke="#1d97e3" stroke-width="2" stroke-linecap="round" stroke-dasharray="46 14" transform="rotate(115 16 16)"/>
+            <path d="M12.4 18.4l3.6-5.8 3.4 5.1z" fill="none" stroke="#8fb3d9" stroke-width="1.2"/>
+            <circle cx="12.4" cy="18.4" r="1.6" fill="#00ce1b"/>
+            <circle cx="16" cy="12.6" r="1.6" fill="#1d97e3"/>
+            <circle cx="19.4" cy="17.7" r="1.6" fill="#1d97e3"/>
+          </svg>
+          <span class="logo__text"><em>365</em>techies</span>
+        </a>
+        <p>The IT support experts. A family-run business established in 1995 — Dell hardware specialists, Microsoft partners and certified Microsoft Office Specialists, providing monthly IT support for homes and businesses across Bournemouth, Poole and Dorset.</p>
+        <div class="partner-badges" aria-label="Accreditations">
+          <span class="partner-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="8" r="5"/><path d="M8.5 12.5 7 21l5-2.5L17 21l-1.5-8.5"/></svg>Family Business &middot; Est. 1995</span>
+          <span class="partner-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 18h18M9 22h6"/></svg>Dell Specialist</span>
+          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>Microsoft Partner</span>
+          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>Microsoft Office Specialist</span>
+          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>Malwarebytes Partner</span>
+          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/></svg>NVIDIA &amp; Scan Partner</span>
+          <a class="partner-badge partner-badge--gold" href="https://www.google.com/maps?cid=5924622613303465737" target="_blank" rel="noopener" title="See our 4.9-star reviews on Google"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.5 1.6 6.7L12 17l-6.2 3.6 1.6-6.7L2.2 8.9l6.9-.6z"/></svg>4.9 on Google</a>
+          <a class="partner-badge partner-badge--green" href="/sustainability/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 20c0-9 7-16 16-16 0 9-7 16-16 16z"/><path d="M4 20C9 15 13 11 18 9"/></svg>Sustainable Dorset Member</a>
+        </div>
+      </div>
+      <nav aria-label="Support links">
+        <p class="site-footer__head mono">SUPPORT</p>
+        <a href="/book-service/">Book a Service</a>
+        <a href="/book-a-collection/">Book a Collection</a>
+        <a href="/pay/">Pay Us</a>
+        <a href="/remote-support/">Start Remote Support</a>
+        <a href="/emergency-it-help/">Emergency IT Help</a>
+        <a href="/is-it-down/">Is Something Down?</a>
+        <a href="/support-portal/">Support Portal</a>
+        <a href="/splashtop-business-guide/">Remote Access Guide</a>
+        <a href="/dell-latitude-3520-guide/">Dell Laptop Guide</a>
+        <a href="/dell-optiplex-guide/">Dell Desktop Guide</a>
+        <a href="/heatwave-tech-guide/">Heatwave Tech Guide</a>
+        <a href="/monthly-it-support/">Monthly IT Support</a>
+        <a href="/home-it-support-subscriptions/">Home IT Support</a>
+        <a href="/business-it-support-subscriptions/">Business IT Support</a>
+        <a href="/computer-repairs/">Computer Repairs</a>
+        <a href="/switching-it-provider/">Switching to Us</a>
+        <a href="/pricing/">Pricing</a>
+        <a href="/quick-quote/">Quick Quote</a>
+        <a href="/free-it-health-check/">Free IT Health Check</a>
+      </nav>
+      <nav aria-label="Free tools links">
+        <p class="site-footer__head mono">FREE TOOLS</p>
+        <a href="/free-tools/">All Free Tools &#8594;</a>
+        <a href="/online-safety-course/">Free Online Safety Course</a>
+        <a href="/broadband-speed-checker/">Broadband Speed Test</a>
+        <a href="/pc-benchmark/">PC Benchmark</a>
+        <a href="/website-checker/">Website Checker</a>
+        <a href="/email-security-checker/">Email Security Checker</a>
+        <a href="/password-breach-checker/">Password Breach Checker</a>
+        <a href="/link-safety-checker/">Link Safety Checker</a>
+        <a href="/password-generator/">Password Generator</a>
+        <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
+        <a href="/custom-pc-builder/">Custom PC Builder</a>
+        <a href="/victron-system-builder/">Victron System Builder</a>
+        <a href="/solar-battery-calculator/">Battery &amp; Solar Calculator</a>
+        <a href="/cost-calculator/">Cost Calculator</a>
+        <a href="/plan-finder/">Plan Finder</a>
+        <a href="/spot-the-scam/">Spot the Scam Quiz</a>
+        <a href="/is-it-down/">Is It Down? Status Checker</a>
+        <a href="/computer-spec-checker/">PC Hardware Checker</a>
+      </nav>
+      <nav aria-label="Services links">
+        <p class="site-footer__head mono">SERVICES</p>
+        <a href="/services/">All Services</a>
+        <a href="/it-support-by-industry/">IT Support by Industry</a>
+        <a href="/preventative-maintenance/">Preventative Maintenance</a>
+        <a href="/remote-it-support/">Remote IT Support</a>
+        <a href="/microsoft-365-support/">Microsoft 365</a>
+        <a href="/cybersecurity-support/">Cybersecurity</a>
+        <a href="/malwarebytes-premium/">Malwarebytes Premium &amp; VPN</a>
+        <a href="/disaster-recovery/">Disaster Recovery</a>
+        <a href="/gdpr-it-compliance/">GDPR &amp; IT Compliance</a>
+        <a href="/windows-11-support/">Windows 11</a>
+        <a href="/windows-10-end-of-life/">Windows 10 End of Life</a>
+        <a href="/email-support/">Email Support</a>
+        <a href="/wifi-support/">Wi-Fi Support</a>
+        <a href="/printer-support/">Printer Support</a>
+        <a href="/backup-support/">Backup Support</a>
+        <a href="/new-computer-setup/">New Computer Setup</a>
+        <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
+        <a href="/custom-pc-builds/">Custom-Built PCs</a>
+        <a href="/threadripper-workstations/">Threadripper Workstations</a>
+        <a href="/gaming-pcs/">Gaming PCs</a>
+        <a href="/content-creator-pcs/">Content Creator PCs</a>
+        <a href="/home-cinema-entertainment/">Home Cinema &amp; AV</a>
+        <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
+        <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
+        <a href="/lithium-battery-installs-dorset/">Leisure &amp; Marine Batteries</a>
+        <a href="/rural-and-farm-wifi-dorset/">Rural &amp; Farm Wi-Fi</a>
+        <a href="/starlink-internet/">Starlink Internet</a>
+        <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
+        <a href="/agentic-ai-systems/">Agentic AI Systems</a>
+        <a href="/365-ai-os/">365 AI OS</a>
+        <a href="/ai-voice-agents/">AI Voice Agents</a>
+        <a href="/unitree-robots/">Unitree Robots</a>
+        <a href="/it-support-for-hotels-holiday-lets/">Hotels &amp; Holiday Lets</a>
+        <a href="/it-support-for-vets/">Veterinary Practices</a>
+        <a href="/it-support-for-salons-beauty/">Salons &amp; Beauty</a>
+        <a href="/it-support-for-financial-advisers/">Financial Advisers</a>
+        <a href="/it-support-for-recruitment-agencies/">Recruitment Agencies</a>
+        <a href="/it-support-for-garages-automotive/">Garages &amp; Automotive</a>
+        <a href="/it-support-for-gyms-fitness/">Gyms &amp; Fitness</a>
+        <a href="/it-support-for-ecommerce/">E-commerce &amp; Online Retail</a>
+        <a href="/it-support-for-property-management/">Property Management</a>
+        <a href="/it-support-for-manufacturing/">Manufacturing &amp; Engineering</a>
+        <a href="/it-support-for-churches-faith/">Churches &amp; Faith Groups</a>
+      </nav>
+      <nav aria-label="Who we help links">
+        <p class="site-footer__head mono">WHO WE HELP</p>
+        <a href="/family-it-support/">Families</a>
+        <a href="/it-support-for-retired-users/">Retired Users</a>
+        <a href="/it-support-for-disabled-people/">Disabled People</a>
+        <a href="/computer-help-for-seniors/">Help for Seniors</a>
+        <a href="/it-support-for-home-workers/">Home Workers</a>
+        <a href="/it-support-for-digital-nomads/">Digital Nomads</a>
+        <a href="/it-support-for-sole-traders/">Sole Traders</a>
+        <a href="/small-business-it-support/">Small Businesses</a>
+      </nav>
+      <nav aria-label="Company links">
+        <p class="site-footer__head mono">COMPANY</p>
+        <a href="/plan-finder/">Plan Finder</a>
+        <a href="/areas-covered/">Areas Covered</a>
+        <a href="/it-support-uk-europe/">UK &amp; Europe</a>
+        <a href="/about/">About</a>
+        <a href="/meet-the-team/">Meet the Team</a>
+        <a href="/why-choose-365-techies/">Why Choose Us</a>
+        <a href="/our-guarantees/">Our Guarantees</a>
+        <a href="/case-studies/">Case Studies</a>
+        <a href="/reviews/">Reviews</a>
+        <a href="/refer-a-friend/">Refer a Friend</a>
+        <a href="/cyber-threats/">Cyber Threats Explained</a>
+        <a href="/it-jargon-buster/">IT Jargon Buster</a>
+        <a href="/cybersecurity-checklist/">Cybersecurity Checklist</a>
+        <a href="/plain-english/">Tech in Plain English</a>
+        <a href="/using-ai-safely/">Using AI Safely</a>
+        <a href="/pre-call-checklists/">Get-Ready Checklists</a>
+        <a href="/our-values/">Our Values &amp; Promises</a>
+        <a href="/choosing-it-support/">How to Choose IT Support</a>
+        <a href="/independent-it-support/">Local vs the Alternatives</a>
+        <a href="/it-cost-worksheet/">IT Quote Worksheet</a>
+        <a href="/how-we-price/">How We Price</a>
+        <a href="/your-first-6-weekly-service/">Your First Service</a>
+        <a href="/how-to-set-up-two-factor-authentication/">Set Up 2FA</a>
+        <a href="/ive-been-scammed-what-to-do/">I&rsquo;ve Been Scammed</a>
+        <a href="/i-think-ive-been-hacked/">If You&rsquo;ve Been Hacked</a>
+        <a href="/lost-or-stolen-phone-what-to-do/">Lost or Stolen Phone</a>
+        <a href="/how-to-choose-a-laptop/">How to Choose a Laptop</a>
+        <a href="/how-to-wipe-and-recycle-old-computer/">Wipe &amp; Recycle a PC</a>
+        <a href="/safe-online-banking-for-beginners/">Safe Online Banking</a>
+        <a href="/windows-accessibility-features-guide/">Windows Accessibility</a>
+        <a href="/avoiding-tech-overwhelm/">Avoiding Tech Overwhelm</a>
+        <a href="/how-to-choose-antivirus/">How to Choose Antivirus</a>
+        <a href="/how-to-choose-broadband/">How to Choose Broadband</a>
+        <a href="/setting-up-a-computer-for-an-older-relative/">Computer for an Older Relative</a>
+        <a href="/helping-a-relative-with-their-computer/">Helping a Relative Remotely</a>
+        <a href="/confident-video-calling/">Confident Video Calling</a>
+        <a href="/how-onboarding-works/">How Onboarding Works</a>
+        <a href="/microsoft-365-vs-google-workspace/">Microsoft 365 vs Google Workspace</a>
+        <a href="/break-fix-vs-managed-it/">Break-Fix vs Managed IT</a>
+        <a href="/spring-clean-your-computer/">Spring-Clean Your Computer</a>
+        <a href="/back-to-school-it/">Back-to-School IT</a>
+        <a href="/cloud-vs-on-premise/">Cloud vs On-Premise</a>
+        <a href="/sustainability/">Sustainability</a>
+        <a href="/resources/">Resources &amp; Guides</a>
+        <a href="/faqs/">FAQs</a>
+        <a href="/it-advice/">IT Advice</a>
+        <a href="/contact/">Contact</a>
+        <p class="site-footer__contact" style="margin-top:1.1rem"><a href="tel:+441202775566">01202 775566</a><br /><a href="sms:+447520615332">Text only: 07520 615332</a><br /><a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a><br />Mon&ndash;Fri, 9am&ndash;5pm<br />Bournemouth, Dorset<br />Remote IT support across the whole of the UK<br /><a href="https://www.facebook.com/365computersuk/" target="_blank" rel="noopener me">Find us on Facebook</a></p>
+      </nav>
+    </div>
+    <nav class="site-footer__legal-links mono" aria-label="Legal and policies">
+      <a href="/privacy-policy/">Privacy Policy</a>
+      <a href="/cookie-policy/">Cookie Policy</a>
+      <a href="/terms/">Terms of Service</a>
+      <a href="/service-level-agreement/">SLA</a>
+      <a href="/accessibility-statement/">Accessibility</a>
+      <a href="/accreditations/">Accreditations</a>
+      <a href="/system-status/">System Status</a>
+    </nav>
+    <p class="site-footer__legal mono">&copy; 2026 365 TECHIES LIMITED &middot; REGISTERED IN ENGLAND &amp; WALES 11073501 &middot; ALL SYSTEMS OPERATIONAL <span class="pulse-dot pulse-dot--green"></span></p>
+  </footer>
+
+  <nav class="mobile-cta-bar" aria-label="Quick contact">
+    <a href="tel:+441202775566"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>Call</a>
+    <a href="/book-service/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v3M17 3v3M4 8h16M5 6h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z"/></svg>Book</a>
+    <a href="#" data-open-chat><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.5 7.5L3 21l2-5.5A8.5 8.5 0 1 1 21 11.5z"/></svg>Chat</a>
+  </nav>
+  <div class="a11y" id="a11y">
+    <button type="button" class="a11y__toggle" id="a11y-toggle" aria-expanded="false" aria-controls="a11y-panel" aria-label="Accessibility tools" title="Accessibility tools">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="3.6" r="1.6"/><path d="M3.5 8h17M12 8v6m0 0-3.2 6.4M12 14l3.2 6.4"/></svg>
+    </button>
+    <div class="a11y__panel" id="a11y-panel" role="region" aria-label="Accessibility options" hidden>
+      <p class="a11y__title mono">Accessibility</p>
+      <div class="a11y__rowsize"><span>Text size</span><span class="a11y__btns"><button type="button" data-a11y="text-down" aria-label="Decrease text size">A&minus;</button><button type="button" data-a11y="text-up" aria-label="Increase text size">A+</button></span></div>
+      <button type="button" class="a11y__opt" data-a11y="contrast" aria-pressed="false">High contrast</button>
+      <button type="button" class="a11y__opt" data-a11y="readable" aria-pressed="false">Readable font</button>
+      <button type="button" class="a11y__opt" data-a11y="reduce" aria-pressed="false">Reduce motion</button>
+      <button type="button" class="a11y__opt" data-a11y="read" aria-pressed="false">Read this page aloud</button>
+      <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
+    </div>
+  </div>
+  <script type="module" src="/js/interior.min.js?v=18"></script>
+  <script src="/js/a11y.min.js?v=5" defer></script>
+  <script src="/js/forms.min.js?v=4" defer></script>
+  <script src="/js/search.min.js?v=1" defer></script>
+  <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
+    <p>We use cookies to power our live chat and understand how the site is used. See our <a href="/cookie-policy/">cookie policy</a>.</p>
+    <div class="cookie-banner__actions">
+      <button type="button" class="button secondary" data-cookie="decline">Decline</button>
+      <button type="button" class="button primary" data-cookie="accept">Accept</button>
+    </div>
+  </div>
+  <!-- Consent-gated chat / analytics (HubSpot loads only after consent) -->
+  <script>
+  (function () {
+    var KEY = "tt_consent";
+    function loadConsented() {
+      if (!document.getElementById("hs-script-loader")) {
+        var s = document.createElement("script");
+        s.id = "hs-script-loader"; s.async = true; s.defer = true;
+        s.src = "//js-eu1.hs-scripts.com/148562638.js";
+        document.body.appendChild(s);
+      }
+      if (window.ANALYTICS_SRC && !window.__analyticsLoaded) {
+        window.__analyticsLoaded = true;
+        var a = document.createElement("script"); a.async = true; a.src = window.ANALYTICS_SRC;
+        document.head.appendChild(a);
+      }
+    }
+    var c = null;
+    try { c = localStorage.getItem(KEY); } catch (e) {}
+    if (c === "accepted") { loadConsented(); }
+    else if (c !== "declined") { var b = document.getElementById("cookie-banner"); if (b) b.hidden = false; }
+    document.addEventListener("click", function (e) {
+      var t = e.target.closest("[data-cookie]"); if (!t) return;
+      var v = t.getAttribute("data-cookie") === "accept" ? "accepted" : "declined";
+      try { localStorage.setItem(KEY, v); } catch (e) {}
+      var b = document.getElementById("cookie-banner"); if (b) b.hidden = true;
+      if (v === "accepted") { if (window.gtag) gtag('consent', 'update', { ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted', analytics_storage: 'granted' }); loadConsented(); }
+    });
+  })();
+  </script>
+</body>
+</html>
