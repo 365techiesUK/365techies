@@ -12882,7 +12882,7 @@ online_safety_course()
 PAY_CONFIG = {
     "stripe_url": "",   # paste the buy.stripe.com "Customers choose what to pay" link to switch card payments ON
     "paypal_url": "https://paypal.me/365techies",  # owner's PayPal.Me (business acct, supplied 2026-07-10); /<amt>GBP pre-fills
-    "bank": None,       # {"name": "365 Techies Ltd", "sort": "00-00-00", "account": "00000000"} to show bank-transfer details
+    "bank": {"bankName": "Lloyds Bank", "name": "365 Techies Limited", "sort": "30-96-26", "account": "33512560"},  # owner-supplied 2026-07-10
 }
 def pay_page():
     slug = "pay"
@@ -12909,7 +12909,8 @@ def pay_page():
         tiles.append(f'''          <div class="tile" data-reveal>
             <h3>&#127974; Pay by bank transfer</h3>
             <p style="color:var(--muted);margin:0 0 .9rem">Prefer to pay from your own online banking? Use these details and put <strong>your surname</strong> as the reference so we know it&rsquo;s you:</p>
-            <p class="mono" style="font-size:1.05rem;line-height:2">Account name: <strong>{_b["name"]}</strong><br />Sort code: <strong>{_b["sort"]}</strong><br />Account number: <strong>{_b["account"]}</strong></p>
+            <p class="mono" style="font-size:1.05rem;line-height:2">Account name: <strong>{_b["name"]}</strong><br />Sort code: <strong>{_b["sort"]}</strong><br />Account number: <strong>{_b["account"]}</strong><br />Bank: <strong>{_b["bankName"]}</strong></p>
+            <p style="color:var(--muted);font-size:.85rem;margin:.8rem 0 0">When your banking app checks the name, it should confirm <strong>{_b["name"]}</strong> &mdash; that&rsquo;s how you know it&rsquo;s really us. Free to send, and the money arrives in seconds.</p>
           </div>''')
     if PAY_CONFIG.get("paypal_url"):
         tiles.append(f'''          <div class="tile" data-reveal>
