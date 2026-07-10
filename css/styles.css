@@ -1300,10 +1300,10 @@ body.menu-open { overflow: hidden; }
 .nav-phone svg { width: 15px; height: 15px; color: var(--cyan); flex: none; }
 .nav-phone:hover { border-color: var(--cyan); color: #fff; box-shadow: 0 0 22px rgba(29, 151, 227, 0.25); }
 @media (max-width: 480px) { .nav-phone { display: none; } }
-/* phone shows the number only when there's room; icon-only on mid-width desktops so the SOS button stays visible */
-@media (max-width: 1799px) { .nav-phone__num { display: none; } .nav-phone { padding: 0.5rem 0.7rem; } }
-/* Keep a visible, tappable phone number in the header on tablet + desktop
-   (older/less-confident visitors want to phone — the mobile bottom bar covers <480px). */
+/* The DIGITS stay visible on every tablet/laptop/desktop — this is a phone-first
+   business with an older audience, and an unlabelled icon is not a phone number.
+   Icon-only only in the narrow 481–767px band (the bottom Call bar covers <768px). */
+@media (max-width: 767px) { .nav-phone__num { display: none; } .nav-phone { padding: 0.5rem 0.7rem; } }
 
 /* header "Book a Service" button */
 .nav-book {
@@ -1666,8 +1666,11 @@ html.ss-open { overflow: hidden; }
   font-family: var(--font-mono); font-size: 0.66rem; line-height: 1; padding: 3px 5px; color: var(--faint);
   background: rgba(125, 170, 220, 0.12); border: 1px solid var(--line); border-radius: 5px;
 }
+/* the word "Search" shows wherever the desktop nav shows — an unlabelled magnifier
+   means nothing to the non-technical core audience; only the kbd hint stays wide-only */
 .nav-search__label { display: none; }
 .nav-search__k { display: none; }
+@media (min-width: 1280px) { .nav-search__label { display: inline; } }
 /* header search is icon-only until there's room, so the SOS button always fits */
 @media (min-width: 1800px) { .nav-search__label { display: inline; } .nav-search__k { display: inline-flex; } }
 @media (max-width: 620px) { .nav-search kbd, .nav-search .nav-search__k { display: none; } .nav-search { padding: 0 0.6rem; } }

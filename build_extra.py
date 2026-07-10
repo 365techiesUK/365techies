@@ -121,7 +121,7 @@ def why_choose():
       f'''    <section class="stats section--alt" aria-label="By the numbers">
       <div class="stats__grid">
         <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="4.9" data-decimals="1">0</span></p><p class="stat__label mono">GOOGLE RATING</p></div>
-        <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="51">0</span><span class="stat__suffix">+</span></p><p class="stat__label mono">GOOGLE REVIEWS</p></div>
+        <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="49">0</span><span class="stat__suffix"></span></p><p class="stat__label mono">GOOGLE REVIEWS</p></div>
         <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="28">0</span><span class="stat__suffix">+</span></p><p class="stat__label mono">DORSET AREAS</p></div>
         <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="6">0</span><span class="stat__suffix">wk</span></p><p class="stat__label mono">SERVICE CYCLE</p></div>
       </div>
@@ -295,7 +295,7 @@ def book_service():
       hero(bc("Book a Service"), "// ONLINE BOOKING",
            'Book your <em class="grad grad--cyan">servicing appointment</em>',
            "Manage your computer servicing online — book a service, repair, security check or new-device setup at a time that suits you, and reschedule or cancel whenever you need to.",
-           cta1=("Open Booking System", "https://365techies.secure.simplybook.it/v2/"),
+           cta1=("Pick a Time Below", "#sbw-widget"),
            cta2=("Call 01202 775566", "tel:+441202775566"),
            chips=["Book in under a minute","Reschedule or cancel anytime","Remote or on-site"]),
       f'''    <section class="section" aria-label="What you can book">
@@ -1492,7 +1492,7 @@ def case_studies():
       '''    <section class="stats section--alt" aria-label="By the numbers">
       <div class="stats__grid">
         <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="4.9" data-decimals="1">0</span></p><p class="stat__label mono">GOOGLE RATING</p></div>
-        <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="51">0</span><span class="stat__suffix">+</span></p><p class="stat__label mono">GOOGLE REVIEWS</p></div>
+        <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="49">0</span><span class="stat__suffix"></span></p><p class="stat__label mono">GOOGLE REVIEWS</p></div>
         <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="30">0</span><span class="stat__suffix">+ yrs</span></p><p class="stat__label mono">SINCE 1995</p></div>
         <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="6">0</span><span class="stat__suffix">wk</span></p><p class="stat__label mono">SERVICE CYCLE</p></div>
       </div>
@@ -8837,8 +8837,11 @@ for _c in GAP_SERVICES:
 def _prose(inner):
     return f'    <section class="section">\n      <div class="wrap">\n        <div class="prose" data-reveal>\n{inner}\n        </div>\n      </div>\n    </section>'
 
-def info_page(slug, crumb_name, h1, eyebrow, lede, desc, inner, title=None, chips=None, faqs=None, cta_args=None, pre=None, og_title=None):
-    parts = [hero(bc(crumb_name), eyebrow, h1, lede, chips=chips or [])]
+def info_page(slug, crumb_name, h1, eyebrow, lede, desc, inner, title=None, chips=None, faqs=None, cta_args=None, pre=None, og_title=None, hero_cta1=None, hero_cta2=None):
+    hk = {}
+    if hero_cta1: hk["cta1"] = hero_cta1
+    if hero_cta2: hk["cta2"] = hero_cta2
+    parts = [hero(bc(crumb_name), eyebrow, h1, lede, chips=chips or [], **hk)]
     if pre:
         parts.append(pre)
     if inner:
@@ -9075,7 +9078,7 @@ info_page(
     <section class="stats" aria-label="By the numbers">
       <div class="stats__grid">
         <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="4.9" data-decimals="1">0</span></p><p class="stat__label mono">GOOGLE RATING</p></div>
-        <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="51">0</span><span class="stat__suffix">+</span></p><p class="stat__label mono">GOOGLE REVIEWS</p></div>
+        <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="49">0</span><span class="stat__suffix"></span></p><p class="stat__label mono">GOOGLE REVIEWS</p></div>
         <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="30">0</span><span class="stat__suffix">+ yrs</span></p><p class="stat__label mono">SINCE 1995</p></div>
         <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="28">0</span><span class="stat__suffix">+</span></p><p class="stat__label mono">AREAS COVERED</p></div>
       </div>
@@ -9456,6 +9459,7 @@ info_page(
   lede="Computer playing up and need hands-on help? Book a convenient collection, or drop your device off with us — we'll diagnose, fix and get it back to you, with no-fix-no-fee on diagnosis.",
   desc="Book a computer or laptop collection or drop-off with 365 Techies in Bournemouth, Poole and Dorset. We collect, diagnose, repair and return your device — no-fix-no-fee on diagnosis.",
   chips=["Collection or drop-off","No-fix-no-fee","Local to Dorset"],
+  hero_cta1=("Request a Collection", "#book"), hero_cta2=("Call 01202 775566", "tel:+441202775566"),
   pre='''    <section class="section section--alt" aria-label="How collection works">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// HOW IT WORKS</p>
@@ -13052,7 +13056,8 @@ def build_new_page(d):
     def schema(s, _d=d, _faqs=faqs):
         nodes = [crumb(s, _d['crumbName']), webpage(s, _d['crumbName'], _d['metaDesc'])]
         if _d.get('schemaKind') == 'service':
-            nodes.append(service(s, _d.get('serviceName', _d['crumbName']), _d['metaDesc'], _d.get('serviceName', _d['crumbName'])))
+            _area = bp.WORLDWIDE_AREA if _d.get('worldwide') else None
+            nodes.append(service(s, _d.get('serviceName', _d['crumbName']), _d['metaDesc'], _d.get('serviceName', _d['crumbName']), area=_area))
         if _d.get('howToSteps'):
             nodes.append(bp.howto_node(s, _d.get('howToName', _d['crumbName']), [(st['name'], st['text']) for st in _d['howToSteps']]))
         nodes.append(faqpage(s, _faqs))

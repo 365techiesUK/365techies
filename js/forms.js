@@ -29,6 +29,7 @@
       var status = form.querySelector(".form-status");
       var btn = form.querySelector('button[type="submit"]') || form.querySelector("button");
       var label = btn ? btn.textContent : "";
+      if (val(form, "company_website")) return; // honeypot: silently drop bots
       var email = val(form, "email");
       if (!email) {
         if (status) { status.style.color = "#e06a4a"; status.textContent = "Please add your email so we can reply."; }
@@ -38,6 +39,18 @@
       var topic = val(form, "topic");
       var message = val(form, "message");
       if (topic) message = message ? ("[" + topic + "] " + message) : ("Enquiry: " + topic);
+
+      /* capture EVERY other field (country, dashboard use-case, device, dates…) so
+         bespoke forms lose nothing — appended to the message for HubSpot + Slack */
+      var extras = [];
+      try {
+        new FormData(form).forEach(function (v, k) {
+          if (["name", "email", "phone", "company", "topic", "message", "company_website"].indexOf(k) !== -1) return;
+          var s = String(v || "").trim();
+          if (s) extras.push(k + ": " + s);
+        });
+      } catch (fderr) {}
+      if (extras.length) message = (message ? message + "\n\n" : "") + extras.join("\n");
 
       var fields = [];
       var add = function (n, v) { if (v) fields.push({ name: n, value: String(v) }); };
@@ -55,7 +68,8 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             name: val(form, "name"), email: email, phone: val(form, "phone"),
-            company: val(form, "company"), topic: topic, message: val(form, "message"),
+            company: val(form, "company"), topic: topic,
+            message: (val(form, "message") + (extras.length ? "\n" + extras.join("\n") : "")).trim(),
             page: location.href
           })
         }).catch(function () {});

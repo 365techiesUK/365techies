@@ -17,7 +17,7 @@ except Exception:
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://365techies.co.uk"
-CSSV = "55"
+CSSV = "56"
 HUBSPOT_ID = "148562638"
 # Public URL of the deployed 365 AI OS. When set, the /365-ai-os/ page shows a
 # prominent "Launch the live demo" button. Leave empty ("") to hide it.
@@ -138,7 +138,6 @@ HEADER = '''  <header class="site-header">
             <a href="/it-support-for-disabled-people/">Disabled People</a>
             <a href="/computer-help-for-seniors/">Help for Seniors</a>
           <a href="/computer-lessons-for-seniors-bournemouth/">Computer Lessons</a>
-            <a href="/computer-lessons-for-seniors-bournemouth/">Computer Lessons</a>
             <a href="/it-support-for-home-workers/">Home Workers</a>
             <a href="/it-support-for-digital-nomads/">Digital Nomads</a>
           </div>
@@ -209,8 +208,10 @@ HEADER = '''  <header class="site-header">
           <div class="dropdown">
             <a href="/book-service/">Book a Service</a>
             <a href="/book-a-collection/">Book a Collection</a>
+            <a href="/pay/">Pay Us</a>
             <a href="/remote-support/">Start Remote Support</a>
             <a href="/emergency-it-help/">Emergency IT Help</a>
+            <a href="/outlook-problems/">Outlook Problems &amp; Fixes</a>
             <a href="/is-it-down/">Is Something Down?</a>
             <a href="/support-portal/">Support Portal</a>
             <a href="/splashtop-business-guide/">Remote Access Guide</a>
@@ -353,6 +354,7 @@ HEADER = '''  <header class="site-header">
           <a href="/pay/">Pay Us</a>
           <a href="/remote-support/">Start Remote Support</a>
           <a href="/emergency-it-help/">Emergency IT Help</a>
+          <a href="/outlook-problems/">Outlook Problems &amp; Fixes</a>
           <a href="/is-it-down/">Is Something Down?</a>
           <a href="/support-portal/">Support Portal</a>
           <a href="/splashtop-business-guide/">Remote Access Guide</a>
@@ -492,6 +494,9 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/pay/">Pay Us</a>
         <a href="/remote-support/">Start Remote Support</a>
         <a href="/emergency-it-help/">Emergency IT Help</a>
+        <a href="/ive-been-scammed-what-to-do/">I&rsquo;ve Been Scammed</a>
+        <a href="/i-think-ive-been-hacked/">If You&rsquo;ve Been Hacked</a>
+        <a href="/outlook-problems/">Outlook Problems &amp; Fixes</a>
         <a href="/is-it-down/">Is Something Down?</a>
         <a href="/support-portal/">Support Portal</a>
         <a href="/splashtop-business-guide/">Remote Access Guide</a>
@@ -587,54 +592,25 @@ FOOTER = '''  <footer class="site-footer">
       </nav>
       <nav aria-label="Company links">
         <p class="site-footer__head mono">COMPANY</p>
-        <a href="/plan-finder/">Plan Finder</a>
-        <a href="/areas-covered/">Areas Covered</a>
-        <a href="/it-support-uk-europe/">UK &amp; Europe</a>
         <a href="/about/">About</a>
         <a href="/meet-the-team/">Meet the Team</a>
         <a href="/why-choose-365-techies/">Why Choose Us</a>
         <a href="/our-guarantees/">Our Guarantees</a>
+        <a href="/our-values/">Our Values &amp; Promises</a>
+        <a href="/how-we-price/">How We Price</a>
         <a href="/case-studies/">Case Studies</a>
         <a href="/reviews/">Reviews</a>
+        <a href="/areas-covered/">Areas Covered</a>
+        <a href="/plan-finder/">Plan Finder</a>
         <a href="/refer-a-friend/">Refer a Friend</a>
-        <a href="/cyber-threats/">Cyber Threats Explained</a>
-        <a href="/it-jargon-buster/">IT Jargon Buster</a>
-        <a href="/cybersecurity-checklist/">Cybersecurity Checklist</a>
-        <a href="/plain-english/">Tech in Plain English</a>
-        <a href="/using-ai-safely/">Using AI Safely</a>
-        <a href="/pre-call-checklists/">Get-Ready Checklists</a>
-        <a href="/our-values/">Our Values &amp; Promises</a>
-        <a href="/choosing-it-support/">How to Choose IT Support</a>
-        <a href="/independent-it-support/">Local vs the Alternatives</a>
-        <a href="/it-cost-worksheet/">IT Quote Worksheet</a>
-        <a href="/how-we-price/">How We Price</a>
-        <a href="/your-first-6-weekly-service/">Your First Service</a>
-        <a href="/how-to-set-up-two-factor-authentication/">Set Up 2FA</a>
-        <a href="/ive-been-scammed-what-to-do/">I&rsquo;ve Been Scammed</a>
-        <a href="/i-think-ive-been-hacked/">If You&rsquo;ve Been Hacked</a>
-        <a href="/lost-or-stolen-phone-what-to-do/">Lost or Stolen Phone</a>
-        <a href="/how-to-choose-a-laptop/">How to Choose a Laptop</a>
-        <a href="/how-to-wipe-and-recycle-old-computer/">Wipe &amp; Recycle a PC</a>
-        <a href="/safe-online-banking-for-beginners/">Safe Online Banking</a>
-        <a href="/windows-accessibility-features-guide/">Windows Accessibility</a>
-        <a href="/avoiding-tech-overwhelm/">Avoiding Tech Overwhelm</a>
-        <a href="/how-to-choose-antivirus/">How to Choose Antivirus</a>
-        <a href="/how-to-choose-broadband/">How to Choose Broadband</a>
-        <a href="/setting-up-a-computer-for-an-older-relative/">Computer for an Older Relative</a>
-        <a href="/helping-a-relative-with-their-computer/">Helping a Relative Remotely</a>
-        <a href="/confident-video-calling/">Confident Video Calling</a>
-        <a href="/how-onboarding-works/">How Onboarding Works</a>
-        <a href="/microsoft-365-vs-google-workspace/">Microsoft 365 vs Google Workspace</a>
-        <a href="/break-fix-vs-managed-it/">Break-Fix vs Managed IT</a>
-        <a href="/spring-clean-your-computer/">Spring-Clean Your Computer</a>
-        <a href="/back-to-school-it/">Back-to-School IT</a>
-        <a href="/cloud-vs-on-premise/">Cloud vs On-Premise</a>
         <a href="/sustainability/">Sustainability</a>
         <a href="/resources/">Resources &amp; Guides</a>
-        <a href="/faqs/">FAQs</a>
         <a href="/it-advice/">IT Advice</a>
+        <a href="/faqs/">FAQs</a>
         <a href="/contact/">Contact</a>
-        <p class="site-footer__contact" style="margin-top:1.1rem"><a href="tel:+441202775566">01202 775566</a><br /><a href="sms:+447520615332">Text only: 07520 615332</a><br /><a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a>''' + WA_FOOTER + '''<br />Mon&ndash;Fri, 9am&ndash;5pm<br />Bournemouth, Dorset<br />Remote IT support across the whole of the UK<br /><a href="https://www.facebook.com/365computersuk/" target="_blank" rel="noopener me">Find us on Facebook</a></p>
+        <a href="tel:+441202775566">01202 775566</a>
+        <a href="sms:+447520615332">Text only: 07520 615332</a>
+        <a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a>
       </nav>
     </div>
     <nav class="site-footer__legal-links mono" aria-label="Legal and policies">
@@ -803,9 +779,9 @@ def page(slug, title, desc, og_title, schema_json, content):
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=19"></script>
+  <script type="module" src="/js/interior.min.js?v=20"></script>
   <script src="/js/a11y.min.js?v=5" defer></script>
-  <script src="/js/forms.min.js?v=4" defer></script>
+  <script src="/js/forms.min.js?v=5" defer></script>
   <script src="/js/search.min.js?v=1" defer></script>
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
     <p>We use cookies to power our live chat and understand how the site is used. See our <a href="/cookie-policy/">cookie policy</a>.</p>
@@ -909,11 +885,15 @@ def webpage(slug, title, desc, wtype="WebPage"):
             "primaryImageOfPage": {"@type": "ImageObject", "url": SITE + "/og-image.jpg"},
             "datePublished": "2026-06-12", "dateModified": TODAY}
 
-def service(slug, name, desc, stype=None):
+def service(slug, name, desc, stype=None, area=None):
     n = {"@type": "Service", "@id": f"{SITE}/{slug}/#service", "name": name, "description": desc,
-         "serviceType": stype or name, "areaServed": {"@type": "AdministrativeArea", "name": "Dorset, UK"},
+         "serviceType": stype or name,
+         "areaServed": area or {"@type": "AdministrativeArea", "name": "Dorset, UK"},
          "provider": {"@id": SITE + "/#business"}, "url": f"{SITE}/{slug}/"}
     return n
+
+# Remote-by-design services (Victron dashboards, GPS trackers) genuinely serve worldwide.
+WORLDWIDE_AREA = [{"@type": "Country", "name": "United Kingdom"}, {"@type": "Place", "name": "Europe"}, {"@type": "Place", "name": "Worldwide"}]
 
 def faqpage(slug, faqs):
     return {"@type": "FAQPage", "@id": f"{SITE}/{slug}/#faq",
@@ -3944,6 +3924,7 @@ add(
    hero(bc("Monthly IT Support"), "// MONTHLY SUBSCRIPTIONS",
         'Monthly IT support <em class="grad grad--cyan">subscriptions</em>',
         hero_trust("Reliable monthly IT support for homes and businesses — remote help, regular maintenance, security checks and friendly technical support whenever you need it. £18.25 a month per computer, cancel anytime."),
+        cta1=("See the Plans", "#plans"), cta2=("Call 01202 775566", "tel:+441202775566"),
         chips=["&pound;18.25/mo per computer", "Full service every 6 weeks", "Cancel anytime"]),
    uk_remote_band(alt=True),
    f'''    <section class="section" aria-label="What is monthly IT support">
@@ -3982,7 +3963,7 @@ add(
         <p class="mono" style="text-align:center;margin-top:1.6rem"><a href="/preventative-maintenance/" style="color:var(--cyan)">See exactly what our 6-weekly preventative maintenance includes &#8594;</a></p>
       </div>
     </section>''',
-   f'''    <section class="section section--alt" aria-label="Home or business">
+   f'''    <section class="section section--alt" id="plans" aria-label="Home or business">
       <div class="wrap">
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>/04 — CHOOSE YOUR PATH</p>
@@ -4183,7 +4164,7 @@ add(
         </ol>
       </div>
     </section>''',
-   reviews_block([("The service I get with 365 techies is amazing — always on the other end of the phone. The monthly subscription and plans are worth the money.", "Vince Jones"),("Excellent service. We have been working with David and Steve for several years now and their attention is still brilliant. Highly recommended.", "Peter Moody"),("Can&rsquo;t fault the skill and attention the 365 guys give. Confidence that things keep ticking over with their regular maintenance checks.", "Rob Hazell")]),
+   reviews_block([("These guys look after my IT requirements at reasonable cost. They are less patronising than most and explain things in plain English, rather than gobbledygook.", "JAR Accountants"),("A first class service to a technological emergency. Highly recommended.", "Hardie"),("Always a professional service, a great source of knowledgeable advice and very reasonably priced. 365 Computers look after all my business and home computing needs.", "Sarah Austin")]),
    faq_html([
      ("Who is business IT support for?", "Sole traders, home offices and small businesses — estate agents, accountants, consultants, trades and retail — who need reliable IT without employing full-time staff."),
      ("What does it include?", "Remote support, staff support, Microsoft 365 administration, Outlook/Teams/OneDrive/SharePoint help, cybersecurity checks, Windows updates, backup checks, new PC setup, user onboarding and leaver checks."),
@@ -4298,8 +4279,8 @@ add(
    f'''    <section class="support-options" aria-label="Business support plans">
       <div class="plan-grid plan-grid--3">
 {plan_card("business", None, "STARTER", "Business Starter", "For sole traders and very small businesses.", "&pound;24.38", ("FROM","/mo per computer"), ["Support for 1&ndash;3 computers","Remote IT support","Email support","Microsoft 365 help","Basic security checks","Computer maintenance &amp; buying advice"], "Set up Direct Debit", subscribe_href("business-starter"))}
-{plan_card("business", "&#9733; MOST POPULAR", "STANDARD", "Business Standard", "For small businesses needing regular IT support.", "Custom", ("FROM",""), ["Support for multiple users","Microsoft 365 administration","Outlook, Teams &amp; OneDrive","Backup checks","Cybersecurity guidance","Monthly maintenance &amp; new user setup"], "Get a Quote", "/contact/")}
-{plan_card("business", None, "PREMIUM", "Business Premium", "For businesses that rely on IT every day.", "Custom", ("FROM",""), ["Priority support","Remote &amp; on-site options","Microsoft 365 management","Cybersecurity &amp; backup planning","Staff onboarding &amp; offboarding","Device setup &amp; technology planning"], "Get a Quote", "/contact/")}
+{plan_card("business", "&#9733; MOST POPULAR", "STANDARD", "Business Standard", "For small businesses needing regular IT support.", "&pound;24.38", ("FROM","/mo per computer"), ["Support for multiple users","Microsoft 365 administration","Outlook, Teams &amp; OneDrive","Backup checks","Cybersecurity guidance","Monthly maintenance &amp; new user setup"], "Get a Quote", "/contact/")}
+{plan_card("business", None, "PREMIUM", "Business Premium", "For businesses that rely on IT every day.", "&pound;24.38", ("FROM","/mo per computer"), ["Priority support","Remote &amp; on-site options","Microsoft 365 management","Cybersecurity &amp; backup planning","Staff onboarding &amp; offboarding","Device setup &amp; technology planning"], "Get a Quote", "/contact/")}
       </div>
       <p class="plans-note mono" data-reveal>// FROM &pound;24.38/MO PER COMPUTER &middot; NO LOCK-IN &middot; TELL US YOUR SETUP FOR A QUOTE</p>
       <p class="plans-note mono" data-reveal style="margin-top:.5rem"><a href="/our-guarantees/" style="color:var(--cyan)">&#10003; No lock-in, cancel anytime &middot; No-fix-no-fee repairs &middot; Family-run since 1995 &mdash; see our guarantees</a></p>
@@ -4967,7 +4948,7 @@ add(
    f'''    <section class="stats section--alt" aria-label="By the numbers">
       <div class="stats__grid">
         <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="4.9" data-decimals="1">0</span></p><p class="stat__label mono">GOOGLE RATING</p></div>
-        <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="51">0</span><span class="stat__suffix">+</span></p><p class="stat__label mono">GOOGLE REVIEWS</p></div>
+        <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="49">0</span><span class="stat__suffix"></span></p><p class="stat__label mono">GOOGLE REVIEWS</p></div>
         <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="28">0</span><span class="stat__suffix">+</span></p><p class="stat__label mono">DORSET AREAS</p></div>
         <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="6">0</span><span class="stat__suffix">wk</span></p><p class="stat__label mono">SERVICE CYCLE</p></div>
       </div>
