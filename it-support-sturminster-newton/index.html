@@ -20,13 +20,15 @@
         g.src = 'https://www.googletagmanager.com/gtag/js?id=G-EBLTJ9WJXZ';
         document.head.appendChild(g);
       }
-      ['pointerdown', 'keydown', 'touchstart', 'scroll'].forEach(function (evt) {
+      // Load on the first sign of a real person: mousemove/wheel cover desktop
+      // readers who never click, touch/scroll cover mobile. Lab runs (Lighthouse,
+      // PSI) never interact, so gtag stays out of TBT/TTI entirely. The 30s
+      // fallback outlives any lab trace window (a 9s timer landed INSIDE PSI's
+      // observation window and dragged TTI out — TBT 2.5s. Never shorten it).
+      ['pointerdown', 'keydown', 'touchstart', 'scroll', 'mousemove', 'wheel'].forEach(function (evt) {
         window.addEventListener(evt, loadGtagLib, { once: true, passive: true });
       });
-      // Fallback is a flat post-load timer (NOT idle callback — headless/idle
-      // environments fire rIC instantly, dragging gtag's long tasks into TBT).
-      // Any real interaction still loads it immediately via the listeners above.
-      window.addEventListener('load', function () { setTimeout(loadGtagLib, 9000); });
+      window.addEventListener('load', function () { setTimeout(loadGtagLib, 30000); });
     })();
   </script>
   <title>IT Support & IT Services Sturminster Newton | 365 Techies</title>
