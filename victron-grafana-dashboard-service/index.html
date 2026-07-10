@@ -304,6 +304,14 @@
             "@type": "Answer",
             "text": "We build, host and support dashboards <strong>worldwide</strong> &mdash; delivery is fully remote, so location makes no difference to the work. We are a UK firm and, to be straight about response times, we work UK office hours (Mon&ndash;Fri, 9&ndash;5 GMT). The dashboards themselves run around the clock; it is only human replies that follow our working day."
           }
+        },
+        {
+          "@type": "Question",
+          "name": "If we choose done-for-you, does the dashboard have to run on your infrastructure?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<p>No &mdash; done-for-you and hosted-by-us are separate choices. We can deploy the finished dashboard straight onto a subdomain of your own website, and you still avoid running containers, databases or Grafana itself: it&rsquo;s a static page plus one small server-side relay, with your VRM token held in a server-side file that never shows up in the page code. Access-wise we only need SFTP into that one subdomain folder, and everything we build there sits on your hosting, at your domain &mdash; yours to keep.</p>"
+          }
         }
       ]
     }
@@ -731,6 +739,10 @@
         <details class="faq" data-reveal>
           <summary>Do you only work in the UK?<span class="faq__icon" aria-hidden="true"></span></summary>
           <div class="faq__ans"><p>We build, host and support dashboards <strong>worldwide</strong> &mdash; delivery is fully remote, so location makes no difference to the work. We are a UK firm and, to be straight about response times, we work UK office hours (Mon&ndash;Fri, 9&ndash;5 GMT). The dashboards themselves run around the clock; it is only human replies that follow our working day.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>If we choose done-for-you, does the dashboard have to run on your infrastructure?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p><p>No &mdash; done-for-you and hosted-by-us are separate choices. We can deploy the finished dashboard straight onto a subdomain of your own website, and you still avoid running containers, databases or Grafana itself: it&rsquo;s a static page plus one small server-side relay, with your VRM token held in a server-side file that never shows up in the page code. Access-wise we only need SFTP into that one subdomain folder, and everything we build there sits on your hosting, at your domain &mdash; yours to keep.</p></p></div>
         </details>
         </div>
       </div>

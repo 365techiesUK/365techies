@@ -338,6 +338,14 @@
             "@type": "Answer",
             "text": "<p>Three things: working Victron kit reporting to a GX device (the prerequisite), VRM access as appropriate &mdash; usually an invited account or an installation token plus your portal ID &mdash; and MQTT reachable either locally on the GX or via the VRM cloud. That is enough for us to scope the job and come back with a clear quote. We keep access scoped to exactly what the work needs.</p>"
           }
+        },
+        {
+          "@type": "Question",
+          "name": "Can a built-for-you dashboard be deployed to our own hosting?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<p>Yes. The whole thing is a static front end plus a small PHP relay, so it drops onto almost any ordinary shared hosting on a subdomain you control; your VRM token lives in one server-side file the relay reads and is never exposed client-side. You grant SFTP scoped to just that directory, you can revoke it whenever you like, and the deployment is yours &mdash; it&rsquo;s exactly how our own <a href=\"/custom-vrm-dashboards/\">365 Crafter dashboards</a> run.</p>"
+          }
         }
       ]
     }
@@ -765,6 +773,10 @@
         <details class="faq" data-reveal>
           <summary>What do you need from me to get started?<span class="faq__icon" aria-hidden="true"></span></summary>
           <div class="faq__ans"><p><p>Three things: working Victron kit reporting to a GX device (the prerequisite), VRM access as appropriate &mdash; usually an invited account or an installation token plus your portal ID &mdash; and MQTT reachable either locally on the GX or via the VRM cloud. That is enough for us to scope the job and come back with a clear quote. We keep access scoped to exactly what the work needs.</p></p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Can a built-for-you dashboard be deployed to our own hosting?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p><p>Yes. The whole thing is a static front end plus a small PHP relay, so it drops onto almost any ordinary shared hosting on a subdomain you control; your VRM token lives in one server-side file the relay reads and is never exposed client-side. You grant SFTP scoped to just that directory, you can revoke it whenever you like, and the deployment is yours &mdash; it&rsquo;s exactly how our own <a href="/custom-vrm-dashboards/">365 Crafter dashboards</a> run.</p></p></div>
         </details>
         </div>
       </div>

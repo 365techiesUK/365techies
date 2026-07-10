@@ -13256,18 +13256,30 @@ def custom_dashboards():
           <p class="eyebrow mono">/06 &mdash; FOR VICTRON INSTALLERS</p>
           <h2 class="section-title" data-title>Installers: give your customers a dashboard VRM can&rsquo;t<span class="title-underline"></span></h2>
           <p>You fit brilliant systems &mdash; then hand customers the same VRM portal as everyone else. There&rsquo;s no white-label VRM (the long-requested &ldquo;Dealer ID&rdquo; branding feature never shipped), and the Fleet dashboard only unlocks at ten-plus sites.</p>
-          <p><strong>We build the dashboard layer for you:</strong> your branding, your customer&rsquo;s layout, hosted and supported by us &mdash; you stay the installer and the hero. It&rsquo;s a clean add-on to quote on every job, and a reason customers pick you over the next quote. Victron itself encourages exactly this kind of work through its Software Integrator Program &mdash; dashboards built on the official VRM API.</p>
+          <p><strong>We build the dashboard layer for you:</strong> your branding, your customer&rsquo;s layout, hosted and supported by us, or set up on a subdomain of your own website &mdash; you stay the installer and the hero. It&rsquo;s a clean add-on to quote on every job, and a reason customers pick you over the next quote. Victron itself encourages exactly this kind of work through its Software Integrator Program &mdash; dashboards built on the official VRM API.</p>
           <p>We&rsquo;re happy working behind the scenes or alongside you &mdash; <a href="#quote">talk to us about a partner arrangement</a>.</p>
         </div>
         <ul class="checklist" data-stagger>
-{checklist(["Your branding, not ours","Works from 1 site up &mdash; no 10-site minimum","Built on Victron&rsquo;s official VRM API","Read-only &mdash; never touches your config","We host, maintain &amp; support it","You own the customer relationship"])}
+{checklist(["Your branding, not ours","Works from 1 site up &mdash; no 10-site minimum","Built on Victron&rsquo;s official VRM API","Read-only &mdash; never touches your config","Hosted by us &mdash; or on your own subdomain","You own the customer relationship"])}
+        </ul>
+      </div>
+    </section>''',
+      f'''    <section class="section" aria-label="On your own website">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">/07 &mdash; ON YOUR OWN WEBSITE</p>
+          <h2 class="section-title" data-title>Your brand, your domain &mdash; your dashboard can live on your own website<span class="title-underline"></span></h2>
+          <p>Everywhere else on this page we say the same thing: we build it, we host it, we look after it, and you get a link. That stays the default, and for most owners it&rsquo;s the easy answer. But if you run a business &mdash; an installer, a hire fleet, a marina, a holiday site &mdash; there&rsquo;s a second route worth knowing about: <strong>your dashboard can live on your own website</strong>, ideally on a fresh subdomain such as <strong>monitor.yourcompany.co.uk</strong> or dash.yourcompany.co.uk, linked straight into your main site&rsquo;s navigation.</p><p>Your part is three small jobs, none of them technical heroics. One: create a VRM access token in your own VRM account &mdash; a two-minute job, and we send a plain-English walkthrough. We recommend creating it under a &lsquo;monitor only&rsquo; VRM user (which VRM genuinely supports, per site), so the token can only ever <strong>read</strong> data. Two: add the subdomain in your hosting control panel &mdash; one click in cPanel, Site&nbsp;Tools, Plesk and the like. Three: give us FTP or SFTP access scoped to just that subdomain&rsquo;s folder. We do everything else &mdash; design, build and deployment.</p><p>Why bother? Because the ownership sums change:</p><ul><li><strong>Your address, end to end.</strong> Customers click from your menu to monitor.yourcompany.co.uk and back without ever leaving your domain &mdash; the same your-brand-only finish as our <a href="/white-label-victron-monitoring/">white-label monitoring</a>, on hosting you already pay for.</li><li><strong>The token is yours and stays server-side.</strong> It sits in one server-side file the dashboard reads; it never appears in the page code and is never visible to visitors &mdash; and you can revoke it in VRM whenever you like.</li><li><strong>Our access is fenced in.</strong> The FTP or SFTP login only reaches the new subdomain&rsquo;s folder &mdash; we never need, and never ask for, the rest of your site. Revoke that too, any time.</li><li><strong>Room to grow.</strong> Extra pages, extra dashboards and extra features can be added there over time as your needs change.</li><li><strong>Long-term ownership.</strong> The dashboard sits on your hosting, at your domain &mdash; if our arrangement ever ended, the files would still be sitting on your server.</li></ul><p>One honest requirement: the dashboard needs a small server-side relay to keep that token out of the page &mdash; a small PHP file, which nearly all ordinary shared hosting runs as standard. If yours can&rsquo;t, nothing is lost: we simply host it for you instead, exactly as described above.</p><p>And this isn&rsquo;t theory &mdash; it&rsquo;s how we run our own. The live 365&nbsp;Crafter van dashboards further up this page work on precisely this architecture: a static page, one server-side file holding a read-only token, and a small relay. If all you want is a simple widget on an existing page, our guide to <a href="/embed-victron-vrm-on-website/">embedding VRM on your website</a> may be enough; if you want the full custom dashboard under your own roof, this is the route. Tell us which way you lean when you <a href="#quote">book a free demo</a> &mdash; either answer is fine by us.</p>
+        </div>
+        <ul class="checklist" data-stagger>
+{checklist(["Your brand &amp; domain, end to end","Read-only token in one server-side file","FTP scoped to one subdomain folder only","Revoke token or our access at any time","Extra pages &amp; dashboards added over time","Same architecture as our own live dashboards"])}
         </ul>
       </div>
     </section>''',
       f'''    <section class="section section--alt" aria-label="Worldwide and expats">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
-          <p class="eyebrow mono">/07 &mdash; WORLDWIDE &middot; EXPATS</p>
+          <p class="eyebrow mono">/08 &mdash; WORLDWIDE &middot; EXPATS</p>
           <h2 class="section-title" data-title>Off-grid in Spain, Portugal, France &mdash; supported in plain English<span class="title-underline"></span></h2>
           <p>Thousands of English-speaking expats run Victron systems on villas, fincas, quintas and smallholdings across Europe &mdash; often a long way from the installer who fitted them. Because a custom dashboard is <strong>hosted on the web and built on the VRM cloud API, where you are doesn&rsquo;t matter</strong>: we design, build and support it remotely, from the UK, in plain English.</p>
           <p>Check the batteries from the airport. Show a house-sitter one simple page. Get an alert before the freezer becomes a problem. And when you want changes, you deal with a real, family-run UK firm (est. 1995, rated 4.9 on Google) &mdash; not a forum thread.</p>
@@ -13281,7 +13293,7 @@ def custom_dashboards():
       f'''    <section class="section" aria-label="Beyond Victron">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
-          <p class="eyebrow mono">/08 &mdash; BEYOND VICTRON</p>
+          <p class="eyebrow mono">/09 &mdash; BEYOND VICTRON</p>
           <h2 class="section-title" data-title>Not just Victron &mdash; if it has a feed, we can usually dash it<span class="title-underline"></span></h2>
           <p>Victron&rsquo;s VRM API is where we started (our own van runs on it), but the same approach works for <strong>most systems that expose an API, a data feed or an export</strong>: other solar and battery brands, weather stations, tank and level sensors, heating, EV chargers, network kit &mdash; even business numbers like bookings or sales alongside your energy data.</p>
           <p>One screen, many sources &mdash; that&rsquo;s usually where dashboards earn their keep. Tell us what you run and we&rsquo;ll tell you honestly what&rsquo;s feasible before any money changes hands. This pairs naturally with the <a href="/agentic-ai-systems/">custom software and AI systems</a> we build.</p>
@@ -13294,7 +13306,7 @@ def custom_dashboards():
       f'''    <section class="section section--alt" aria-label="How it works">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>/09 &mdash; DONE FOR YOU</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>/10 &mdash; DONE FOR YOU</p>
           <h2 class="section-title section-title--center" data-title>From idea to live dashboard<span class="title-underline title-underline--center"></span></h2>
         </div>
         <ol class="how__steps">
@@ -13313,6 +13325,7 @@ def custom_dashboards():
         ("Is it safe? Can a dashboard change my system?", "We build with a read-only VRM access token, kept server-side &mdash; the dashboard can display your system but never control or change it. Optional password protection on the page itself if you want it private."),
         ("Can you put several installations on one screen?", "Yes &mdash; that&rsquo;s one of the main reasons people come to us. Any number of sites, mixed hardware, one live page; VRM&rsquo;s own multi-site tools are a list view and a fleet dashboard that needs ten or more sites."),
         ("Can you include non-Victron equipment?", "Usually, yes &mdash; most modern kit exposes an API or feed we can read (other solar brands, sensors, weather, business data). Tell us what you run and we&rsquo;ll confirm feasibility honestly before you commit."),
+        ("Can the dashboard live on my own website?", "Yes. We host by default, but if you&rsquo;d rather have it at your own address &mdash; say monitor.yourcompany.co.uk &mdash; you create a read-only VRM access token (two minutes; we send a plain-English walkthrough), add the subdomain in your hosting panel, and give us FTP or SFTP access to just that folder. The token sits in one server-side file, never appears in the page code, and you can revoke it &mdash; or our access &mdash; whenever you like. Your host just needs to run a small PHP relay, which nearly all ordinary shared hosting supports; if yours can&rsquo;t, we simply host it for you instead. It&rsquo;s the same architecture our own live van dashboards on this page run on."),
         ("What does a custom dashboard cost?", "Every dashboard is different, so we don&rsquo;t publish a one-size price &mdash; you get a free demo and a fixed written quote up front, including hosting and support, before any work starts."),
         ("Where do you cover?", "Worldwide. The service is remote by design &mdash; we&rsquo;ve built and supported ours from Dorset, England, and yours works the same wherever the system lives. We work UK office hours and schedule calls to suit your time zone."),
       ]),
@@ -13387,6 +13400,7 @@ def custom_dashboards():
             ("Is it safe?", "We build with a read-only VRM access token kept server-side — the dashboard can display your system but never control or change it."),
             ("Can you put several installations on one screen?", "Yes — any number of sites, mixed hardware, one live page."),
             ("Can you include non-Victron equipment?", "Usually — most modern kit exposes an API or feed we can read. We confirm feasibility honestly before you commit."),
+            ("Can the dashboard live on my own website?", "Yes. We host by default, but if you’d rather have it at your own address — say monitor.yourcompany.co.uk — you create a read-only VRM access token (two minutes; we send a plain-English walkthrough), add the subdomain in your hosting panel, and give us FTP or SFTP access to just that folder. The token sits in one server-side file, never appears in the page code, and you can revoke it — or our access — whenever you like. Your host just needs to run a small PHP relay, which nearly all ordinary shared hosting supports; if yours can’t, we simply host it for you instead. It’s the same architecture our own live van dashboards on this page run on."),
             ("What does it cost?", "Every dashboard is different — you get a free demo and a fixed written quote up front, including hosting and support."),
             ("Where do you cover?", "Worldwide — the service is remote by design; we work UK office hours and schedule calls to suit your time zone."),
           ]),

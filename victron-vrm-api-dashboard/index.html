@@ -338,6 +338,14 @@
             "@type": "Answer",
             "text": "<p>For many people the Advanced tab is enough &mdash; it&rsquo;s genuinely good, and if it does the job you should use it. But the main VRM dashboard layout is fixed, custom widgets are limited to around six parameters, and there&rsquo;s no branded, one-screen multi-site view. When you hit those edges, a custom dashboard on the API is the honest next step &mdash; not before.</p>"
           }
+        },
+        {
+          "@type": "Question",
+          "name": "If you build it for us, can it be deployed to our own site rather than yours?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<p>Yes &mdash; and for API-minded teams that is often the better route. We deploy to a subdomain of your site (say <strong>dash.yourcompany.co.uk</strong>): your own VRM token sits in a single server-side file that the relay reads, so it never appears in the page code, and the SFTP login you give us reaches only that subdomain&rsquo;s folder &mdash; nothing else. The whole stack lives on your hosting at your domain, so long-term ownership stays with you; it&rsquo;s the same architecture our own <a href=\"/custom-vrm-dashboards/\">live demo</a> runs on.</p>"
+          }
         }
       ]
     }
@@ -765,6 +773,10 @@
         <details class="faq" data-reveal>
           <summary>Why not just use VRM&rsquo;s Advanced tab?<span class="faq__icon" aria-hidden="true"></span></summary>
           <div class="faq__ans"><p><p>For many people the Advanced tab is enough &mdash; it&rsquo;s genuinely good, and if it does the job you should use it. But the main VRM dashboard layout is fixed, custom widgets are limited to around six parameters, and there&rsquo;s no branded, one-screen multi-site view. When you hit those edges, a custom dashboard on the API is the honest next step &mdash; not before.</p></p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>If you build it for us, can it be deployed to our own site rather than yours?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p><p>Yes &mdash; and for API-minded teams that is often the better route. We deploy to a subdomain of your site (say <strong>dash.yourcompany.co.uk</strong>): your own VRM token sits in a single server-side file that the relay reads, so it never appears in the page code, and the SFTP login you give us reaches only that subdomain&rsquo;s folder &mdash; nothing else. The whole stack lives on your hosting at your domain, so long-term ownership stays with you; it&rsquo;s the same architecture our own <a href="/custom-vrm-dashboards/">live demo</a> runs on.</p></p></div>
         </details>
         </div>
       </div>
