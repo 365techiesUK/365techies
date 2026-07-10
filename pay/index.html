@@ -616,6 +616,18 @@
         </div>
         <div class="split-2">
           <div class="tile" data-reveal>
+            <h3>&#128176; Pay with PayPal</h3>
+            <p style="color:var(--muted);margin:0 0 .9rem">Takes about two minutes. Type the amount we agreed and PayPal does the rest &mdash; and most people can pay with a normal debit or credit card as a guest, <strong>no PayPal account needed</strong>. We never see your card details.</p>
+            <p style="display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;margin:0 0 .4rem">
+              <label for="pp-amt" style="color:var(--muted)">Amount&nbsp;&pound;</label>
+              <input id="pp-amt" type="number" inputmode="decimal" min="1" max="20000" step="0.01" placeholder="e.g. 85"
+                     style="width:8.5rem;padding:.55rem .7rem;border-radius:8px;border:1px solid rgba(125,170,220,.35);background:transparent;color:inherit;font:inherit" />
+              <a class="button primary" id="pp-go" href="https://paypal.me/365techies" target="_blank" rel="noopener">Pay with PayPal &#8594;</a>
+            </p>
+            <p style="color:var(--muted);font-size:.85rem;margin:.8rem 0 0">The amount is optional &mdash; leave it blank and you can type it on PayPal&rsquo;s page instead. Handled by PayPal; the payment page will say <strong>365 Techies Ltd</strong>.</p>
+            <script>(function(){var a=document.getElementById("pp-amt"),g=document.getElementById("pp-go"),base="https://paypal.me/365techies";function u(){var v=parseFloat(a.value);g.href=(isFinite(v)&&v>=1&&v<=20000)?base+"/"+v.toFixed(2)+"GBP":base;}a.addEventListener("input",u);u();})();</script>
+          </div>
+          <div class="tile" data-reveal>
             <h3>&#128222; Rather sort it together?</h3>
             <p style="color:var(--muted);margin:0 0 .9rem">Ring us and a real person will help you pay in whichever way suits you best &mdash; we&rsquo;ll happily stay on the line while you do it, and nobody will rush you.</p>
             <p><a class="button secondary" href="tel:+441202775566">Call 01202 775566</a></p>

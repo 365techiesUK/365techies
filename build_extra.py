@@ -12881,7 +12881,7 @@ online_safety_course()
 # ---- Pay page (config-driven: each payment method appears once its details are filled in) ----
 PAY_CONFIG = {
     "stripe_url": "",   # paste the buy.stripe.com "Customers choose what to pay" link to switch card payments ON
-    "paypal_url": "",   # paste a paypal.me/... or PayPal payment link to switch PayPal ON
+    "paypal_url": "https://paypal.me/365techies",  # owner's PayPal.Me (business acct, supplied 2026-07-10); /<amt>GBP pre-fills
     "bank": None,       # {"name": "365 Techies Ltd", "sort": "00-00-00", "account": "00000000"} to show bank-transfer details
 }
 def pay_page():
@@ -12913,9 +12913,16 @@ def pay_page():
           </div>''')
     if PAY_CONFIG.get("paypal_url"):
         tiles.append(f'''          <div class="tile" data-reveal>
-            <h3>PayPal</h3>
-            <p style="color:var(--muted);margin:0 0 .9rem">Already use PayPal and prefer it? That works too.</p>
-            <p><a class="button secondary" href="{PAY_CONFIG["paypal_url"]}" target="_blank" rel="noopener">Pay with PayPal &#8594;</a></p>
+            <h3>&#128176; Pay with PayPal</h3>
+            <p style="color:var(--muted);margin:0 0 .9rem">Takes about two minutes. Type the amount we agreed and PayPal does the rest &mdash; and most people can pay with a normal debit or credit card as a guest, <strong>no PayPal account needed</strong>. We never see your card details.</p>
+            <p style="display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;margin:0 0 .4rem">
+              <label for="pp-amt" style="color:var(--muted)">Amount&nbsp;&pound;</label>
+              <input id="pp-amt" type="number" inputmode="decimal" min="1" max="20000" step="0.01" placeholder="e.g. 85"
+                     style="width:8.5rem;padding:.55rem .7rem;border-radius:8px;border:1px solid rgba(125,170,220,.35);background:transparent;color:inherit;font:inherit" />
+              <a class="button primary" id="pp-go" href="{PAY_CONFIG["paypal_url"]}" target="_blank" rel="noopener">Pay with PayPal &#8594;</a>
+            </p>
+            <p style="color:var(--muted);font-size:.85rem;margin:.8rem 0 0">The amount is optional &mdash; leave it blank and you can type it on PayPal&rsquo;s page instead. Handled by PayPal; the payment page will say <strong>365 Techies Ltd</strong>.</p>
+            <script>(function(){{var a=document.getElementById("pp-amt"),g=document.getElementById("pp-go"),base="{PAY_CONFIG["paypal_url"]}";function u(){{var v=parseFloat(a.value);g.href=(isFinite(v)&&v>=1&&v<=20000)?base+"/"+v.toFixed(2)+"GBP":base;}}a.addEventListener("input",u);u();}})();</script>
           </div>''')
     tiles.append('''          <div class="tile" data-reveal>
             <h3>&#128222; Rather sort it together?</h3>
