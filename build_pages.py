@@ -986,7 +986,7 @@ def reviews_block(revs):
     return f'''    <section class="reviews" aria-label="Customer reviews">
       <p class="eyebrow eyebrow--center mono" data-reveal>// GOOGLE REVIEWS</p>
       <h2 class="section-title section-title--center" data-title>Rated 4.9 on Google<span class="title-underline title-underline--center"></span></h2>
-      <p class="reviews__badge mono" data-reveal><span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>&ensp;4.9 FROM 51 GOOGLE REVIEWS</p>
+      <p class="reviews__badge mono" data-reveal><span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>&ensp;4.9 FROM 49 GOOGLE REVIEWS</p>
       <div class="reviews__grid">
 {figs}
       </div>

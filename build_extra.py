@@ -138,7 +138,7 @@ why_choose()
 
 # ===================================================== REVIEWS
 REVIEWS = [
- ("John Holloway", "Your service and support are unbeatable and delivered with patience and a smile."),
+ ("John Holloway", "As usual your service and support have been immaculate when required recently. I cannot thank you enough."),
  ("Alan Bevis", "A friendly team, there to help when needed. Nice to know that our laptops are being regularly checked for updates and kept virus free. Worth the monthly fee."),
  ("Vince Jones", "The service I get with 365 techies is amazing — always on the other end of the phone. The monthly subscription and plans are worth the money."),
  ("David Hagner", "I have benefited from the help of the guys at 365 for most of twenty years. They have helped me on so many occasions I can not remember. A fully inclusive service."),
@@ -152,11 +152,34 @@ REVIEWS = [
  ("Edward Clough", "Always a prompt and first class service, unable to fault."),
  ("Cordelia Cutler", "Thanks for coming to my rescue once again. You still keep my computer system in perfect order. Many, many thanks."),
  ("John Ridd", "Efficient and helpful people."),
+ ("Heather", "I have trusted 365 with my IT support since 2001 and cannot recommend them highly enough. I've lost count of the number of PCs, tablets, laptops I've bought from them. Living 60 miles away has not been a problem either."),
+ ("Maureen Drake", "After a quick phone call they log in to my computer and quickly sort me out. It's good to know who you can trust and rely on these days. A very fair company indeed."),
+ ("JAR Accountants", "These guys look after my IT requirements at reasonable cost. They are less patronising than most and explain things in plain English, rather than gobbledygook."),
+ ("Vicky Bailey", "Within 20 minutes of my phone call to Steve he came to my home with a compatible keyboard and mouse free of charge! I am blown away by their helpfulness."),
+ ("Eve Day", "You can tell they are honest people who know exactly what they are doing. My laptop now works like a dream. They went above and beyond."),
+ ("Emmanuel O", "I took my laptop to 365 and within a day the problem was rectified and I paid half the amount of money I expected. They are honest, upfront and swift."),
+ ("Dean Robertson", "The guys at 365 listened to my actual needs and tweaked a desktop to the specs I required. It's a quality Dell machine. A brilliant machine at a very good price — you get a personal service here."),
+ ("John Plumbe", "Even though the computer itself could not be saved, all my data was retrieved for a very reasonable price and customer service was second to none. I was also impressed by how there was no hard sell of a new machine."),
+ ("Sheila Cutler", "365 came to my rescue again and built me a new computer to my specifications for an extremely reasonable price. Thank you David and Steve."),
+ ("Valerie Hunt", "We have been so lucky to have Stephen & David looking after our computers. Nothing is too much trouble and quite frankly we wonder how we would manage without them."),
+ ("Roger Eede", "They were very obliging and booked me in for a remote session later that morning. Whatever it was they put their finger on it and sorted it out. Great service."),
+ ("Judith Kent", "David and Steve have been at the end of a phone to sort out any computer problems for over 10 years."),
+ ("Andrew Willis", "Always there when you need help and support with any problems. Hard to imagine what I'd do without them — can't believe you could get a better standard of service."),
+ ("Julian Barker", "A credit to the moral, support-over-profit mentality I witnessed which should be evident in all businesses, big or small."),
+ ("Sarah Austin", "Always a professional service, a great source of knowledgeable advice and very reasonably priced. 365 Computers look after all my business and home computing needs."),
+ ("Anthony Sloane", "I have unfailingly received prompt and courteous service from both David and Steve. I would recommend them to anyone who has a computer problem."),
+ ("Terese Lawton", "David and Steven have been so helpful, caring and polite irrespective of the problem I may have with my laptop. I recommend the monthly fee."),
+ ("Alison Knight", "Quite simply an excellent service! Thank you to all the team."),
+ ("Reg Portwaine", "I've used their services for years and have always been impressed with their knowledge and skill. They've never been beaten by any problem. Friendly and super efficient sums them up."),
+ ("Hardie", "A first class service to a technological emergency. Highly recommended."),
+ ("Karen Gater", "Courteous and prompt service offered. Will definitely be my choice of support when needed again."),
+ ("Michael Finch", "Service is one on one with people who know what they are talking about and also what they are selling!"),
+ ("Robert Kennard", "Thank you David & Steve for the amazing service on a monthly basis."),
 ]
 def reviews_page():
     slug = "reviews"
     crumb_name = "Reviews"
-    desc = "365 Techies is rated 4.9 out of 5 from 51 Google reviews. Read what home and business customers across Bournemouth, Poole and Dorset say about our IT support."
+    desc = "365 Techies is rated 4.9 out of 5 from 49 Google reviews. Read what home and business customers across Bournemouth, Poole and Dorset say about our IT support."
     figs = "\n".join(f'''        <figure class="review" data-reveal>
           <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;{t}&rdquo;</blockquote>
@@ -168,9 +191,9 @@ def reviews_page():
            "Don't just take our word for it. Here's what home and business customers across Bournemouth, Poole and Dorset say about 365 Techies.",
            cta1=("Review us on Google", "https://search.google.com/local/writereview?placeid=ChIJlTb8YRuic0gRCRczduB8OFI"),
            cta2=("View Monthly Plans", "/monthly-it-support/"),
-           chips=["4.9 / 5 average", "51+ Google reviews", "Real verified customers"]),
+           chips=["4.9 / 5 average", "49 Google reviews", "Real verified customers"]),
       f'''    <section class="reviews" aria-label="Customer reviews">
-      <p class="reviews__badge mono" data-reveal style="display:block;width:max-content;margin:0 auto 3rem"><span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>&ensp;4.9 FROM 51 GOOGLE REVIEWS</p>
+      <p class="reviews__badge mono" data-reveal style="display:block;width:max-content;margin:0 auto 3rem"><span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>&ensp;4.9 FROM 49 GOOGLE REVIEWS</p>
       <div class="reviews__grid">
 {figs}
       </div>
@@ -191,7 +214,7 @@ def reviews_page():
                        "image": SITE + "/og-image.jpg", "url": SITE + "/",
                        "hasMap": "https://www.google.com/maps?cid=5924622613303465737",
                        "sameAs": ["https://www.google.com/maps?cid=5924622613303465737"],
-                       "aggregateRating": {"@type": "AggregateRating", "ratingValue": "4.9", "reviewCount": "51", "bestRating": "5", "worstRating": "1"},
+                       "aggregateRating": {"@type": "AggregateRating", "ratingValue": "4.9", "reviewCount": "49", "bestRating": "5", "worstRating": "1"},
                        "review": _rev}])
     add(slug=slug, title="Customer Reviews | 365 Techies — Rated 4.9 on Google",
         desc=desc, og_title="Customer Reviews | 365 Techies", schema=schema, content=content)
@@ -3245,6 +3268,7 @@ def dell_hardware():
         <p class="mono" style="text-align:center;max-width:62ch;margin:1.6rem auto 0;color:var(--muted)" data-reveal>Prefer to just talk it through? Call <a href="tel:+441202775566">01202 775566</a>, text <a href="sms:+447520615332">07520 615332</a> or <a href="mailto:help@365techies.co.uk">email us</a> &mdash; a real Dorset family firm, here since 1995.</p>
       </div>
     </section>''',
+      reviews_block([("The guys at 365 listened to my actual needs and tweaked a desktop to the specs I required. It&rsquo;s a quality Dell machine. A brilliant machine at a very good price &mdash; you get a personal service here.", "Dean Robertson"),("365 came to my rescue again and built me a new computer to my specifications for an extremely reasonable price. Thank you David and Steve.", "Sheila Cutler"),("I have trusted 365 with my IT support since 2001. I&rsquo;ve lost count of the number of PCs, tablets, laptops I&rsquo;ve bought from them.", "Heather")]),
       faq_html(faqs),
       f'''    <section class="blog-section" aria-label="Owner's guide" id="guides">
       <div class="wrap">
@@ -8305,6 +8329,7 @@ def repair_pages():
       </div>
     </section>''',
           nearby_section,
+          reviews_block([("I took my laptop to 365 and within a day the problem was rectified and I paid half the amount of money I expected. They are honest, upfront and swift.", "Emmanuel O"),("You can tell they are honest people who know exactly what they are doing. My laptop now works like a dream. They went above and beyond.", "Eve Day"),("Sorting out a printing problem same day as reported. All is working fine even the day after &mdash; really professional service.", "Frederick Woods")]),
           faq_html(faqs),
           cta(f"Need a computer repair in {town}?",
               "Tell us what&rsquo;s wrong and we&rsquo;ll get you sorted &mdash; remotely, at home or by collection, with no call-out fee and a clear price first.",
@@ -12634,6 +12659,7 @@ def business_it_services(d):
         <p>Moving IT provider sounds daunting, but we do the heavy lifting. We start with a free review of your setup, agree a simple plan, then handle the handover in the background &mdash; documenting your systems, taking over monitoring and support, and tidying up anything the last provider left behind. Most {town} businesses are fully onboarded with no downtime and no drama.</p>
       </div>
     </section>''',
+      reviews_block([("These guys look after my IT requirements at reasonable cost. They are less patronising than most and explain things in plain English, rather than gobbledygook.", "JAR Accountants"),("A first class service to a technological emergency. Highly recommended.", "Hardie"),("Always a professional service, a great source of knowledgeable advice and very reasonably priced. 365 Computers look after all my business and home computing needs.", "Sarah Austin")]),
       faq_html(d["faqs"]),
       cta(f"Ready for IT that just works, {town}?", "Book a free, no-obligation IT review and we&rsquo;ll show you exactly where you stand &mdash; no jargon, no hard sell.",
           primary=("Get a Free IT Review", "/contact/"), secondary=("Call 01202 775566", "tel:+441202775566")),
