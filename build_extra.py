@@ -13001,6 +13001,253 @@ def online_safety_course():
         desc=desc, og_title="Free Online Safety Course | 365 Techies", schema=schema, content=content)
 online_safety_course()
 
+# ===================================================== FREE COURSES ENGINE (wave A, 2026-07-11)
+# Reuses the proven online-safety-course UX. CSS is extracted LIVE from COURSE_SAFETY
+# (always in sync with the flagship). The runtime is a faithful clone of the safety
+# course's, parameterised by ONE injected JSON config (no per-string escaping).
+# Course content lives in courses_data.py (COURSES list of packs).
+
+_COURSE_CSS = COURSE_SAFETY.split('<style>', 1)[1].split('</style>', 1)[0]
+
+_COURSE_RUNTIME = r'''
+      (function(){
+        var root=document.getElementById('oscourse'); if(!root) return;
+        var stage=root.querySelector('#osc-stage'), fill=root.querySelector('#osc-fill'), stepEl=root.querySelector('#osc-step');
+        var CFG=__CFG__;
+        var KEY=CFG.key, MODULES=CFG.modules;
+        var state={m:0,phase:'lesson',score:0}, saved=null;
+        try{ saved=JSON.parse(localStorage.getItem(KEY)||'null'); }catch(e){}
+        function setBar(){ var total=MODULES.length+1; var done=(state.phase==='done')?total:state.m; fill.style.width=Math.round(done/total*100)+'%'; }
+        function save(){ try{ localStorage.setItem(KEY, JSON.stringify({m:state.m,score:state.score})); }catch(e){} }
+        function h(html){ stage.innerHTML=html; }
+        function intro(){
+          state.phase='intro'; stepEl.textContent='Free course'; setBar();
+          var rows=MODULES.map(function(m,i){ return '<div class="osc-modrow"><span class="n">'+(i+1)+'</span>'+m.title+'</div>'; }).join('');
+          var resume=(saved&&saved.m>0&&saved.m<MODULES.length)?'<div class="osc-actions"><button class="osc-btn" id="osc-resume">Continue where I left off</button><button class="osc-btn ghost" id="osc-restart">Start again</button></div>':'<div class="osc-actions"><button class="osc-btn" id="osc-begin">Start the course &#8594;</button></div>';
+          h('<div class="osc-card"><div class="osc-ico">'+CFG.icon+'</div><h2 class="osc-h">'+CFG.courseTitle+'</h2><p class="osc-tag">'+CFG.tagline+'</p><div class="osc-body">'+CFG.introBody+'</div>'+
+            '<div class="osc-mods">'+rows+'</div>'+resume+'<p class="osc-note">Made by 365 Techies &mdash; friendly, family-run IT support in Dorset since 1995. Nothing you type here is stored or sent to us.</p></div>');
+          var b=stage.querySelector('#osc-begin'); if(b) b.onclick=function(){ state.m=0; state.score=0; lesson(); };
+          var r=stage.querySelector('#osc-resume'); if(r) r.onclick=function(){ state.m=saved.m; state.score=saved.score||0; lesson(); };
+          var rs=stage.querySelector('#osc-restart'); if(rs) rs.onclick=function(){ state.m=0; state.score=0; lesson(); };
+        }
+        function lesson(){
+          var m=MODULES[state.m]; state.phase='lesson'; stepEl.textContent=m.tag; setBar(); save();
+          h('<div class="osc-card"><div class="osc-ico">'+m.ico+'</div><p class="osc-tag">'+m.tag+'</p><h2 class="osc-h">'+m.title+'</h2><div class="osc-body">'+m.body+'</div><div class="osc-actions"><button class="osc-btn" id="osc-go">Got it &mdash; try a quick check &#8594;</button></div></div>');
+          stage.querySelector('#osc-go').onclick=check;
+          stage.scrollIntoView({behavior:'smooth',block:'nearest'});
+        }
+        function check(){
+          var m=MODULES[state.m]; state.phase='check'; setBar();
+          var c=m.check, opts=c.opts.map(function(o,i){ return '<button class="osc-opt" data-i="'+i+'"><span class="osc-mark"></span><span>'+o.t+'</span></button>'; }).join('');
+          h('<div class="osc-card"><p class="osc-tag">Quick check</p>'+(c.scenario||'')+'<p class="osc-q">'+c.q+'</p><div class="osc-opts">'+opts+'</div><div id="osc-fb"></div><div class="osc-actions" id="osc-next" style="display:none"></div></div>');
+          var chosen=false;
+          [].forEach.call(stage.querySelectorAll('.osc-opt'),function(bt){ bt.onclick=function(){ if(chosen) return; chosen=true;
+            var i=+bt.getAttribute('data-i'), o=c.opts[i];
+            [].forEach.call(stage.querySelectorAll('.osc-opt'),function(x,xi){ x.disabled=true; if(c.opts[xi].ok){ x.classList.add('osc-right'); x.querySelector('.osc-mark').innerHTML='&#10003;'; } });
+            if(!o.ok){ bt.classList.add('osc-wrong'); bt.querySelector('.osc-mark').innerHTML='&#10005;'; }
+            if(o.ok) state.score++;
+            stage.querySelector('#osc-fb').className='osc-fb '+(o.ok?'ok':'oops');
+            stage.querySelector('#osc-fb').innerHTML=(o.ok?'<b>Well spotted!</b> ':'<b>Good to learn. </b>')+o.why;
+            var nx=stage.querySelector('#osc-next'); nx.style.display='flex';
+            nx.innerHTML='<button class="osc-btn" id="osc-cont">'+(state.m<MODULES.length-1?'Next lesson &#8594;':'Finish &amp; get my certificate &#8594;')+'</button>';
+            stage.querySelector('#osc-cont').onclick=function(){ if(state.m<MODULES.length-1){ state.m++; lesson(); } else { state.m=MODULES.length; save(); done(); } };
+          }; });
+        }
+        function done(){
+          state.phase='done'; stepEl.textContent='Well done!'; setBar();
+          h('<div class="osc-card osc-cert"><div class="osc-cert-emoji">&#127881;</div><h2 class="osc-h">You did it!</h2><p class="osc-tag">You got '+state.score+' of '+MODULES.length+' checks right</p>'+
+            '<div class="osc-body" style="text-align:center">'+CFG.doneBlurb+'<p>Pop your first name in for a certificate to keep or print:</p></div>'+
+            '<input class="osc-name" id="osc-cn" type="text" maxlength="30" placeholder="Your first name" autocomplete="given-name">'+
+            '<div class="osc-actions"><button class="osc-btn" id="osc-cert-btn">Get my certificate &#8594;</button><button class="osc-btn ghost" id="osc-again">Take it again</button></div>'+
+            '<div class="osc-help"><p><strong>Would you like a friendly human to show you in person?</strong> We run patient, plain-English computer lessons at the Kinson Community Centre in Bournemouth &mdash; and we&rsquo;re on the phone Mon&ndash;Fri, 9&ndash;5.</p><a class="osc-btn" href="/contact/?topic=computer-lessons" style="display:inline-block;text-decoration:none">Ask about lessons</a></div></div>');
+          stage.querySelector('#osc-again').onclick=function(){ state.m=0; state.score=0; lesson(); };
+          stage.querySelector('#osc-cert-btn').onclick=function(){ makeCert((stage.querySelector('#osc-cn').value||'').trim()); };
+          stage.scrollIntoView({behavior:'smooth',block:'nearest'});
+        }
+        function makeCert(name){
+          if(!name) name='';
+          var c=document.createElement('canvas'); c.width=1200; c.height=849; var x=c.getContext('2d');
+          x.fillStyle='#0b1020'; x.fillRect(0,0,1200,849);
+          x.strokeStyle='#1d97e3'; x.lineWidth=6; x.strokeRect(34,34,1132,781);
+          x.strokeStyle='rgba(0,206,27,.5)'; x.lineWidth=2; x.strokeRect(52,52,1096,745);
+          x.textAlign='center';
+          x.fillStyle='#37c2c2'; x.font='700 30px Georgia'; x.fillText('CERTIFICATE OF COMPLETION', 600, 175);
+          x.fillStyle='#9aa6c2'; x.font='400 26px Georgia'; x.fillText('This certifies that', 600, 270);
+          x.fillStyle='#ffffff'; x.font='700 62px Georgia'; x.fillText(name||'(your name)', 600, 355);
+          x.strokeStyle='rgba(255,255,255,.25)'; x.lineWidth=1; x.beginPath(); x.moveTo(360,385); x.lineTo(840,385); x.stroke();
+          x.fillStyle='#9aa6c2'; x.font='400 26px Georgia'; x.fillText('has completed the free course', 600, 440);
+          x.fillStyle='#eaf0ff'; x.font='700 40px Georgia'; x.fillText(CFG.cert.courseName, 600, 500);
+          x.fillStyle='#9aa6c2'; x.font='400 22px Georgia'; x.fillText(CFG.cert.subline, 600, 545);
+          x.fillStyle='#00ce1b'; x.font='700 26px Georgia'; x.fillText('365 Techies', 600, 660);
+          x.fillStyle='#9aa6c2'; x.font='400 20px Georgia'; x.fillText('Friendly, family-run IT support · Dorset · since 1995', 600, 692);
+          try{ var d=new Date(); x.fillText(d.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}), 600, 730); }catch(e){}
+          x.fillStyle='#5a6a86'; x.font='400 16px Georgia'; x.fillText('A 365 Techies certificate of completion. Not an accredited qualification.', 600, 785);
+          try{ var a=document.createElement('a'); a.download=CFG.cert.filename; a.href=c.toDataURL('image/png'); a.click(); }catch(e){}
+        }
+        intro();
+      })();
+'''
+
+def _course_widget(c):
+    import json as _json
+    cfg = {
+        "key": "crs_" + c["slug"].replace("-", "_") + "_v1",
+        "icon": c["icon"], "courseTitle": c["courseTitle"], "tagline": c["tagline"],
+        "introBody": c["introBody"], "doneBlurb": c["doneBlurb"],
+        "modules": c["modules"],
+        "cert": {"courseName": c["certCourseName"], "subline": c["certSubline"],
+                 "filename": c["slug"] + "-certificate.png"},
+    }
+    cfg_json = _json.dumps(cfg).replace("</", "<\\/")
+    js = _COURSE_RUNTIME.replace("__CFG__", cfg_json)
+    return ('    <section class="section" aria-label="Free course" id="oscourse">\n'
+            '      <div class="wrap">\n'
+            '        <div class="osc" id="osc">\n'
+            '          <div class="osc-bar"><div class="osc-bar-fill" id="osc-fill"></div></div>\n'
+            '          <p class="osc-step" id="osc-step">Welcome</p>\n'
+            '          <div class="osc-stage" id="osc-stage"><!-- rendered by JS --></div>\n'
+            '        </div>\n'
+            '      </div>\n'
+            '      <style>' + _COURSE_CSS + '</style>\n'
+            '      <script>' + js + '</script>\n'
+            '    </section>')
+
+def _course_checklist(c):
+    import json as _json
+    items_html = "\n".join('          <li>' + it + '</li>' for it in c["checklist"])
+    items_json = _json.dumps(c["checklist"]).replace("</", "<\\/")
+    title_json = _json.dumps(c["certCourseName"])
+    js = ('(function(){var b=document.getElementById("crs-print");if(!b)return;'
+          'b.onclick=function(){var w=window.open("","_blank");if(!w)return;'
+          'var items=' + items_json + ';var t=' + title_json + ';'
+          'w.document.write("<html><head><title>"+t+" - checklist</title>'
+          '<style>body{font-family:Georgia,serif;color:#111;max-width:640px;margin:2rem auto;padding:0 1rem}'
+          'h1{font-size:1.5rem}li{margin:.65rem 0;font-size:1.1rem;line-height:1.5}'
+          'p.f{margin-top:2rem;color:#555;font-size:.9rem}</style></head><body>'
+          '<h1>"+t+" &mdash; my one-page checklist</h1><ol>"+items.map(function(i){return "<li>"+i+"</li>";}).join("")+"</ol>'
+          '<p class=f>From the free course at 365techies.co.uk &middot; 365 Techies, family-run IT support, Dorset &middot; 01202 775566</p>'
+          '</body></html>");w.document.close();setTimeout(function(){try{w.print();}catch(e){}},400);};})();')
+    return ('    <section class="section section--alt" aria-label="Printable checklist">\n'
+            '      <div class="wrap" style="max-width:760px;margin:0 auto">\n'
+            '        <div class="section-head">\n'
+            '          <p class="eyebrow eyebrow--center mono" data-reveal>// KEEP THIS BY THE COMPUTER</p>\n'
+            '          <h2 class="section-title section-title--center" data-title>Your one-page checklist<span class="title-underline title-underline--center"></span></h2>\n'
+            '          <p class="lede lede--center" data-reveal>The whole course, boiled down to the reminders that matter. Print it and keep it near the computer.</p>\n'
+            '        </div>\n'
+            '        <ol class="prose" data-reveal style="font-size:1.05rem;line-height:1.9">\n'
+            + items_html + '\n'
+            '        </ol>\n'
+            '        <p style="text-align:center;margin-top:1.6rem" data-reveal>\n'
+            '          <button type="button" class="button primary" id="crs-print">&#128424;&#65039; Print my checklist</button>\n'
+            '        </p>\n'
+            '      </div>\n'
+            '      <script>' + js + '</script>\n'
+            '    </section>')
+
+def course_page(c):
+    faqs = [(f["q"], f["a"]) for f in c["faqs"]]
+    others = [x for x in COURSES_DATA if x["slug"] != c["slug"]][:3]
+    more = "\n".join(
+        '          <a class="post-card" href="/' + o["slug"] + '/"><h3>' + o["icon"] + ' ' + o["courseTitle"] + '</h3><p>' + o["heroLede"][:110] + '&hellip;</p><span class="post-card__more">Start free &#8594;</span></a>'
+        for o in others)
+    more_section = ('    <section class="blog-section" aria-label="More free courses">\n'
+                    '      <div class="wrap">\n'
+                    '        <div class="section-head">\n'
+                    '          <p class="eyebrow eyebrow--center mono" data-reveal>// MORE FREE COURSES</p>\n'
+                    '          <h2 class="section-title section-title--center" data-title>Keep going &mdash; they&rsquo;re all free<span class="title-underline title-underline--center"></span></h2>\n'
+                    '        </div>\n'
+                    '        <div class="blog-grid" data-stagger>\n'
+                    + more + '\n'
+                    '          <a class="post-card" href="/free-courses/"><h3>&#127891; All free courses</h3><p>Every course in one place &mdash; pick whatever interests you. No sign-up, ever.</p><span class="post-card__more">See them all &#8594;</span></a>\n'
+                    '        </div>\n'
+                    '      </div>\n'
+                    '    </section>')
+    content = "\n".join([
+        hero(bp.bc_sub("Free Courses", "/free-courses/", c["crumbName"]), "// FREE COURSE &middot; NO SIGN-UP",
+             c["h1"], c["heroLede"],
+             cta1=("Start the Course", "#oscourse"), cta2=("Ask About Lessons", "/contact/?topic=computer-lessons"),
+             chips=["100% free", str(len(c["modules"])) + " short lessons", "Certificate &amp; checklist"]),
+        _course_widget(c),
+        _course_checklist(c),
+        faq_html(faqs),
+        cta("Rather learn with a friendly human?",
+            "We run patient, plain-English computer lessons at the Kinson Community Centre &mdash; and we&rsquo;re on the phone Mon&ndash;Fri, 9&ndash;5. No silly questions, ever.",
+            primary=("Ask About Lessons", "/contact/?topic=computer-lessons"), secondary=("Call 01202 775566", "tel:+441202775566")),
+        more_section,
+    ])
+    def schema(s, _c=c, _faqs=faqs):
+        course = {"@type": "Course", "@id": bp.SITE + "/" + _c["slug"] + "/#course", "name": _c["certCourseName"],
+                  "description": _c["metaDesc"], "provider": {"@type": "Organization", "name": "365 Techies", "@id": bp.SITE + "/#business"},
+                  "isAccessibleForFree": True, "inLanguage": "en-GB", "educationalLevel": "Beginner",
+                  "teaches": [m["title"] for m in _c["modules"]],
+                  "offers": {"@type": "Offer", "price": "0", "priceCurrency": "GBP", "category": "Free"},
+                  "hasCourseInstance": {"@type": "CourseInstance", "courseMode": "online", "courseWorkload": "PT15M"}}
+        return graph([bp.crumb_sub(s, "Free Courses", "free-courses", _c["crumbName"]),
+                      webpage(s, _c["crumbName"], _c["metaDesc"]), course, faqpage(s, _faqs)])
+    add(slug=c["slug"], title=c["title"], desc=c["metaDesc"], og_title=c["title"], schema=schema, content=content)
+
+def free_courses_hub():
+    slug = "free-courses"
+    desc = ("Free, friendly online courses for beginners and older learners — AI, WhatsApp, Android phones, online "
+            "banking safety and video calling. Short plain-English lessons, a certificate to print, no sign-up ever. "
+            "From 365 Techies, Dorset.")
+    all_courses = [{"slug": "online-safety-course", "icon": "&#128737;&#65039;", "courseTitle": "Staying Safe Online",
+                    "heroLede": "Spot scam emails, texts and phone calls, use strong passwords, and shop and bank safely online.",
+                    "tagline": "6 short lessons &middot; about 10 minutes"}] + [
+        {"slug": x["slug"], "icon": x["icon"], "courseTitle": x["courseTitle"],
+         "heroLede": x["heroLede"], "tagline": x["tagline"]} for x in COURSES_DATA]
+    cards = "\n".join(
+        '          <a class="post-card" href="/' + o["slug"] + '/"><h3>' + o["icon"] + ' ' + o["courseTitle"] + '</h3><p>' + o["heroLede"][:150] + '</p><p class="mono" style="color:var(--muted);font-size:.72rem;margin-top:.6rem">' + o["tagline"].replace("Free &middot; ", "").upper() + ' &middot; FREE &middot; CERTIFICATE</p><span class="post-card__more">Start the course &#8594;</span></a>'
+        for o in all_courses)
+    faqs = [
+        ("Are these courses really free?", "Completely &mdash; no sign-up, no card details, nothing to install, and no catch. They run in your web browser. We&rsquo;re a family IT firm, and helping people get confident with technology is genuinely good for everyone (and yes, some people become customers &mdash; that&rsquo;s the whole business model, out in the open)."),
+        ("Who are they for?", "Anyone, but they&rsquo;re written especially for beginners and older learners &mdash; plain English, short lessons, no time pressure, no pass marks, and nothing to be embarrassed about. Thousands of people locally are in exactly the same boat."),
+        ("Do I get a certificate?", "Yes &mdash; every course ends with a &lsquo;365 Techies Certificate of Completion&rsquo; you can pop your name on and print or keep. It&rsquo;s our own friendly certificate rather than an accredited qualification &mdash; and each course also gives you a printable one-page checklist to keep by the computer."),
+        ("Will you save my progress?", "Your progress is remembered by your own web browser on your own computer &mdash; nothing you do or type is stored by us or sent anywhere. Come back any time and pick up where you left off (on the same device)."),
+        ("Can I learn in person instead?", "Yes! We run patient, friendly computer lessons at the Kinson Community Centre in Bournemouth, and one-to-one help too. <a href=\"/contact/?topic=computer-lessons\">Ask about lessons</a> or call 01202 775566."),
+    ]
+    content = "\n".join([
+        hero(bc("Free Courses"), "// FREE COURSES &middot; NO SIGN-UP &middot; CERTIFICATES",
+             'Learn something new, <em class="grad grad--green">free</em>',
+             "Short, friendly online courses for beginners and anyone who&rsquo;d like a bit more confidence &mdash; AI, WhatsApp, your Android phone, online banking and more. Plain English, no time pressure, a certificate at the end, and never a sign-up form.",
+             cta1=("Pick a Course Below", "#courses"), cta2=("Ask About In-Person Lessons", "/contact/?topic=computer-lessons"),
+             chips=["100% free, always", "Learn at your own pace", "Certificate for every course"]),
+        ('    <section class="blog-section" id="courses" aria-label="All free courses">\n'
+         '      <div class="wrap">\n'
+         '        <div class="section-head">\n'
+         '          <p class="eyebrow eyebrow--center mono" data-reveal>// PICK ONE THAT INTERESTS YOU</p>\n'
+         '          <h2 class="section-title section-title--center" data-title>Six free courses, and counting<span class="title-underline title-underline--center"></span></h2>\n'
+         '          <p class="lede lede--center" data-reveal>Each one is a handful of short lessons with gentle &ldquo;what would you do?&rdquo; checks &mdash; finish any course and print your certificate.</p>\n'
+         '        </div>\n'
+         '        <div class="blog-grid" data-stagger>\n'
+         + cards + '\n'
+         '        </div>\n'
+         '      </div>\n'
+         '    </section>'),
+        faq_html(faqs),
+        cta("Prefer a friendly human and a cup of tea?",
+            "Our in-person computer lessons at the Kinson Community Centre are patient, plain-English and genuinely fun. Or ring us &mdash; no silly questions, ever.",
+            primary=("Ask About Lessons", "/contact/?topic=computer-lessons"), secondary=("Call 01202 775566", "tel:+441202775566")),
+    ])
+    def schema(s, _desc=desc):
+        return graph([crumb(s, "Free Courses"), webpage(s, "Free Online Courses for Beginners", _desc),
+                      {"@type": "ItemList", "@id": bp.SITE + "/free-courses/#list", "name": "Free courses from 365 Techies",
+                       "itemListElement": [{"@type": "ListItem", "position": i + 1, "url": bp.SITE + "/" + o["slug"] + "/"}
+                                            for i, o in enumerate(all_courses)]},
+                      faqpage(s, faqs)])
+    add(slug=slug, title="Free Online Courses for Beginners & Over-60s | 365 Techies",
+        desc=desc, og_title="Free Online Courses — AI, WhatsApp, Android & More | 365 Techies", schema=schema, content=content)
+
+try:
+    from courses_data import COURSES as COURSES_DATA
+except Exception:
+    COURSES_DATA = []
+if COURSES_DATA:
+    for _c in COURSES_DATA:
+        course_page(_c)
+    free_courses_hub()
+
+
 
 # ---- Pay page (config-driven: each payment method appears once its details are filled in) ----
 PAY_CONFIG = {
