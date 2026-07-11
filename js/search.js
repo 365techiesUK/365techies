@@ -154,7 +154,7 @@
       '<div class="ss-panel" role="dialog" aria-modal="true" aria-label="Search this website">' +
         '<div class="ss-inputwrap">' +
           '<svg class="ss-mag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>' +
-          '<input type="search" class="ss-input" role="combobox" aria-expanded="true" aria-controls="ss-list" aria-autocomplete="list" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Search pages, tools, Outlook fixes, your town…" />' +
+          '<input type="search" class="ss-input" role="combobox" aria-label="Search this website" aria-expanded="false" aria-controls="ss-list" aria-autocomplete="list" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Search pages, tools, Outlook fixes, your town…" />' +
           '<button type="button" class="ss-close" data-search-close aria-label="Close search"><kbd>Esc</kbd></button>' +
         '</div>' +
         '<ul class="ss-list" id="ss-list" role="listbox" aria-label="Search results"></ul>' +
@@ -195,6 +195,7 @@
   function open(prefill) {
     build();
     overlay.removeAttribute("hidden");
+    input.setAttribute("aria-expanded", "true");
     document.documentElement.classList.add("ss-open");
     if (typeof prefill === "string" && prefill) input.value = prefill;
     render(input.value);
@@ -205,6 +206,7 @@
   function close() {
     if (!overlay || overlay.hasAttribute("hidden")) return;
     overlay.setAttribute("hidden", "");
+    if (input) input.setAttribute("aria-expanded", "false");
     document.documentElement.classList.remove("ss-open");
     var t = document.querySelector("[data-search-open]");
     if (t && typeof t.focus === "function") { try { t.focus(); } catch (e) {} }

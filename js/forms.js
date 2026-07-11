@@ -105,6 +105,20 @@
       f.setAttribute("data-hs-do-not-collect", "true"); // stop HubSpot's tracking script double-collecting / hijacking the form
       attach(f);
     });
+    /* ?topic=free-business-it-review etc. preselects the enquiry topic, so CTAs
+       like "Get a Free IT Review" land on a form already set to the right thing */
+    try {
+      var t = new URLSearchParams(location.search).get("topic");
+      if (t) {
+        var want = decodeURIComponent(t).replace(/[-+_]+/g, " ").trim().toLowerCase();
+        document.querySelectorAll('form.contact-form select[name="topic"]').forEach(function (sel) {
+          for (var i = 0; i < sel.options.length; i++) {
+            var txt = sel.options[i].textContent.replace(/\s+/g, " ").trim().toLowerCase();
+            if (txt === want || txt.indexOf(want) !== -1 || want.indexOf(txt) !== -1) { sel.selectedIndex = i; break; }
+          }
+        });
+      }
+    } catch (perr) {}
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();

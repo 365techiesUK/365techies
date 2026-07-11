@@ -146,7 +146,24 @@ body.menu-open .site-header { z-index: 70; }
   display: flex; width: max-content;
   animation: ticker 120s linear infinite;
 }
-.status-ticker:hover .status-ticker__track { animation-play-state: paused; }
+.status-ticker:hover .status-ticker__track,
+.status-ticker:focus-within .status-ticker__track { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .status-ticker__track { animation: none; } }
+
+/* A11y hardening: keyboard focus must ALWAYS be visible on form controls,
+   including tool widgets whose inline styles suppress :focus outlines.
+   !important is deliberate — this is the one place it earns its keep. */
+input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--cyan) !important;
+  outline-offset: 2px !important;
+}
+
+/* Footer contact links: real tap targets on phones */
+@media (max-width: 767px) {
+  .site-footer nav a[href^="tel:"], .site-footer nav a[href^="sms:"], .site-footer nav a[href^="mailto:"] {
+    padding: 0.45rem 0; display: inline-block;
+  }
+}
 .status-ticker a { color: inherit; text-decoration: none; }
 .status-ticker a:hover { color: var(--cyan); text-decoration: underline; }
 .status-ticker__track span {
@@ -234,7 +251,8 @@ body.menu-open .site-header { z-index: 70; }
   pointer-events: none;
   transition: opacity 0.28s ease, transform 0.28s ease;
 }
-.has-dropdown:hover .dropdown, .has-dropdown:focus-within .dropdown {
+.has-dropdown:hover .dropdown, .has-dropdown:focus-within .dropdown,
+.has-dropdown.open .dropdown {
   opacity: 1; transform: translateY(0); pointer-events: auto;
 }
 .dropdown a {
@@ -320,6 +338,17 @@ body.menu-open .site-header { z-index: 70; }
 .mobile-menu-button.is-open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
 
 /* Mobile menu panel */
+/* No-JS form confirmation: /api/form-relay.php redirects to /contact/#message-sent
+   and this :target rule shows the panel — zero JavaScript required. */
+#message-sent { display: none; }
+#message-sent:target { display: block; padding-bottom: 1.6rem; }
+.message-sent__panel {
+  border: 1px solid rgba(0, 206, 27, 0.4);
+  background: rgba(0, 206, 27, 0.08);
+  border-radius: 14px; padding: 1.3rem 1.5rem;
+}
+.message-sent__panel a { color: var(--cyan); }
+
 .menu-backdrop {
   position: fixed; inset: 0; z-index: 55;
   background: rgba(2, 6, 16, 0.6);

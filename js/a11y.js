@@ -216,3 +216,42 @@
     if (f && f.id === 'wc-form') ev('website_check_run', { page: location.pathname });
   }, true);
 })();
+
+/* ==========================================================================
+   Desktop dropdown menus: click/tap to open (hover-only is hard for older
+   users with imprecise mouse control, and impossible on touch laptops).
+   First click on a dropdown parent OPENS the panel; a second click follows
+   the link. Outside click or Escape closes. Keyboard :focus-within untouched.
+   ========================================================================== */
+(function () {
+  var items = document.querySelectorAll(".has-dropdown");
+  if (!items.length) return;
+  function closeAll(except) {
+    items.forEach(function (it) {
+      if (it === except) return;
+      it.classList.remove("open");
+      var l = it.querySelector("a");
+      if (l && l.parentElement === it) l.setAttribute("aria-expanded", "false");
+    });
+  }
+  items.forEach(function (item) {
+    var link = item.querySelector("a");
+    var panel = item.querySelector(".dropdown");
+    if (!link || !panel || link.parentElement !== item) return;
+    link.setAttribute("aria-haspopup", "true");
+    link.setAttribute("aria-expanded", "false");
+    link.addEventListener("click", function (e) {
+      if (item.classList.contains("open")) return; // second click follows the link
+      e.preventDefault();
+      closeAll(item);
+      item.classList.add("open");
+      link.setAttribute("aria-expanded", "true");
+    });
+  });
+  document.addEventListener("click", function (e) {
+    if (!e.target.closest(".has-dropdown")) closeAll(null);
+  });
+  window.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") closeAll(null);
+  });
+})();

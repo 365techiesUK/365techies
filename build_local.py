@@ -208,7 +208,10 @@ def make_local(i, slug, town, region, lede, intro_para, nearby):
             svc["areaServed"] = {"@type": "AdministrativeArea", "name": "Dorset", "containedInPlace": {"@type": "Country", "name": "United Kingdom"}}
         else:
             svc["areaServed"] = {"@type": "City", "name": _town, "containedInPlace": {"@type": "AdministrativeArea", "name": _region}}
-        nodes = [crumb_sub(s, "IT Support Dorset", "it-support-dorset", _cn), webpage(s, f"IT Support {_town}", _desc), svc, faqpage(s, _faqs)]
+        # No FAQPage node here: 30+ town pages carried token-swapped identical FAQ
+        # schema — a programmatic footprint with zero rich-result upside (Google
+        # limits FAQ rich results to authority sites). Visible FAQs stay on-page.
+        nodes = [crumb_sub(s, "IT Support Dorset", "it-support-dorset", _cn), webpage(s, f"IT Support {_town}", _desc), svc]
         _co = COORDS.get(s)
         if _co:
             _pname = "365 Techies, Bournemouth" if s == "it-support-dorset" else _town
@@ -368,8 +371,10 @@ def make_customer(i, slug, crumb_name, eyebrow, h1, lede, intro_head, intro_para
     n = [1]
     def num():
         v = "/%02d" % n[0]; n[0] += 1; return v
+    _is_ind = slug.startswith("it-support-for-")
+    _bch = bp.bc_sub("IT Support by Industry", "/it-support-by-industry/", crumb_name) if _is_ind else bc(crumb_name)
     sections = [
-      hero(bc(crumb_name), eyebrow, h1, bp.hero_trust(lede), chips=chips,
+      hero(_bch, eyebrow, h1, bp.hero_trust(lede), chips=chips,
            cta1=hero_cta1 or ("View Monthly Plans", "/monthly-it-support/"),
            cta2=hero_cta2 or ("Get Support Today", "/contact/")),
       f'''    <section class="section" aria-label="Overview">
@@ -428,7 +433,8 @@ def make_customer(i, slug, crumb_name, eyebrow, h1, lede, intro_head, intro_para
     sections.append(cta(cta_title, cta_text))
     content = "\n".join(sections)
     def schema(s, _desc=desc, _cn=crumb_name, _faqs=faqs):
-        return graph([crumb(s, _cn), webpage(s, _cn, _desc),
+        _c = bp.crumb_sub(s, "IT Support by Industry", "it-support-by-industry", _cn) if _is_ind else crumb(s, _cn)
+        return graph([_c, webpage(s, _cn, _desc),
                       service(s, _cn, _desc, "IT support"), faqpage(s, _faqs)])
     add(slug=slug, title=SEO_TITLES.get(slug) or f"{crumb_name} | 365 Techies", desc=desc,
         og_title=f"{crumb_name} | 365 Techies", schema=schema, content=content)

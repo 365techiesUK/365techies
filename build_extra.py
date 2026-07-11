@@ -3230,7 +3230,7 @@ def dell_hardware():
           <h2 class="section-title section-title--center" data-title>Tell us what you need &mdash; we&rsquo;ll match you a Dell<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>Not sure where to start, or worried about the technical bits? Don&rsquo;t be &mdash; that&rsquo;s exactly what we&rsquo;re here for. Stock changes all the time, so rather than a fixed list, tell us a little about what you&rsquo;re after and we&rsquo;ll find the right refurbished Dell &mdash; or let you know the moment a match comes in. No obligation.</p>
         </div>
-        <form class="contact-form" data-reveal action="mailto:help@365techies.co.uk" method="post" enctype="text/plain" style="max-width:640px;margin:0 auto">
+        <form class="contact-form" data-reveal action="/api/form-relay.php" method="post" style="max-width:640px;margin:0 auto">
           <input type="text" name="company_website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" />
           <label class="field"><span>Your name</span><input type="text" name="name" autocomplete="name" required /></label>
           <label class="field"><span>Email</span><input type="email" name="email" autocomplete="email" required /></label>
@@ -8340,7 +8340,7 @@ def repair_pages():
             svc["offers"] = {"@type": "Offer", "priceCurrency": "GBP", "availability": "https://schema.org/InStock",
                              "description": "Free diagnosis, then a clear fixed quote. No call-out fee, no-fix-no-fee, and a 12-month warranty on every repair. Free local collection across Dorset."}
             return graph([crumb_sub(s, "Computer Repairs", "computer-repairs", f"Computer Repair {_town}"), webpage(s, f"Computer & Laptop Repair {_town}", _desc),
-                          svc, faqpage(s, _faqs)])
+                          svc])
         add(slug=slug, title=f"Computer & Laptop Repair {town} | No Call-Out Fee",
             desc=desc, og_title=f"Computer & Laptop Repair {town} | 365 Techies", schema=schema, content=content)
 repair_pages()
@@ -9423,7 +9423,7 @@ info_page(
           <p class="eyebrow eyebrow--center mono" data-reveal>// RAISE A TICKET</p>
           <h2 class="section-title section-title--center" data-title>Log a support ticket<span class="title-underline title-underline--center"></span></h2>
         </div>
-        <form class="contact-form" data-reveal action="mailto:help@365techies.co.uk" method="post" enctype="text/plain">
+        <form class="contact-form" data-reveal action="/api/form-relay.php" method="post">
           <label class="field"><span>Your name</span><input type="text" name="name" autocomplete="name" required /></label>
           <label class="field"><span>Email</span><input type="email" name="email" autocomplete="email" required /></label>
           <label class="field"><span>Phone (optional)</span><input type="tel" name="phone" autocomplete="tel" /></label>
@@ -9480,7 +9480,7 @@ info_page(
           <p class="eyebrow eyebrow--center mono" data-reveal>// REQUEST IT</p>
           <h2 class="section-title section-title--center" data-title>Request a collection or drop-off<span class="title-underline title-underline--center"></span></h2>
         </div>
-        <form class="contact-form" data-reveal action="mailto:help@365techies.co.uk" method="post" enctype="text/plain">
+        <form class="contact-form" data-reveal action="/api/form-relay.php" method="post">
           <label class="field"><span>Your name</span><input type="text" name="name" autocomplete="name" required /></label>
           <label class="field"><span>Email</span><input type="email" name="email" autocomplete="email" required /></label>
           <label class="field"><span>Phone</span><input type="tel" name="phone" autocomplete="tel" required /></label>
@@ -12185,8 +12185,8 @@ def industry_page(d):
       </div></div>
     </section>'''
     content = "\n".join([
-      hero(bc(cn), d["eyebrow"], d["h1"], hero_trust(d["lede"]),
-           cta1=("Get a Recommendation", "/contact/"), cta2=("Call 01202 775566", "tel:+441202775566"),
+      hero(bp.bc_sub("IT Support by Industry", "/it-support-by-industry/", cn), d["eyebrow"], d["h1"], hero_trust(d["lede"]),
+           cta1=("Get a Recommendation", "/contact/?topic=business-it-support"), cta2=("Call 01202 775566", "tel:+441202775566"),
            chips=d["chips"]),
       f'''    <section class="section" aria-label="Introduction">
       <div class="wrap"><div class="prose" data-reveal style="max-width:780px;margin:0 auto">
@@ -12234,7 +12234,7 @@ def industry_page(d):
           primary=("Get a Recommendation", "/contact/"), secondary=("Business Support Plans", "/business-it-support-plans/")),
     ])
     def schema(s, _cn=cn_schema, _desc=d["metaDesc"], _faqs=faqs):
-        return graph([crumb(s, f"IT Support for {_cn}"),
+        return graph([bp.crumb_sub(s, "IT Support by Industry", "it-support-by-industry", f"IT Support for {_cn}"),
                       webpage(s, f"IT Support for {_cn}", _desc),
                       service(s, f"IT Support for {_cn}", _desc, "Industry IT support"),
                       faqpage(s, _faqs)])
@@ -12612,7 +12612,7 @@ def business_it_services(d):
     content = "\n".join([
       hero(bc_sub("Services", "/services/", f"Business IT Services {town}"), f"// {town.upper()} &middot; BUSINESS IT",
            d["h1"], lede,
-           cta1=("Get a Free IT Review", "/contact/"), cta2=("See Business Plans", "/business-it-support-subscriptions/"),
+           cta1=("Get a Free IT Review", "/contact/?topic=free-business-it-review"), cta2=("See Business Plans", "/business-it-support-subscriptions/"),
            chips=["Windows specialists", "Family-run since 1995", "From &pound;24.38/mo per computer"]),
       f'''    <section class="section" aria-label="Managed IT services">
       <div class="wrap split-2">
@@ -12666,7 +12666,7 @@ def business_it_services(d):
       reviews_block([("These guys look after my IT requirements at reasonable cost. They are less patronising than most and explain things in plain English, rather than gobbledygook.", "JAR Accountants"),("A first class service to a technological emergency. Highly recommended.", "Hardie"),("Always a professional service, a great source of knowledgeable advice and very reasonably priced. 365 Computers look after all my business and home computing needs.", "Sarah Austin")]),
       faq_html(d["faqs"]),
       cta(f"Ready for IT that just works, {town}?", "Book a free, no-obligation IT review and we&rsquo;ll show you exactly where you stand &mdash; no jargon, no hard sell.",
-          primary=("Get a Free IT Review", "/contact/"), secondary=("Call 01202 775566", "tel:+441202775566")),
+          primary=("Get a Free IT Review", "/contact/?topic=free-business-it-review"), secondary=("Call 01202 775566", "tel:+441202775566")),
     ])
     desc = (f"Managed business IT services in {town} &mdash; fully managed IT support, Microsoft 365, "
             f"cybersecurity, servers and connectivity from &pound;24.38/mo per computer. Windows specialists, since 1995.")
@@ -13022,6 +13022,25 @@ def _sec_block(s):
       </div>
     </section>'''
 
+_VICTRON_HUB_SLUGS = {
+    'white-label-victron-monitoring', 'victron-vrm-api-dashboard', 'customise-victron-vrm-dashboard',
+    'motorhome-hire-fleet-monitoring', 'victron-grafana-dashboard-service', 'glamping-power-monitoring',
+    'embed-victron-vrm-on-website', 'cerbo-gx-mqtt-dashboard', 'victron-vrm-tv-kiosk-display',
+    'off-grid-holiday-let-monitoring', 'victron-gps-tracking', 'cerbo-gx-gps', 'victron-boat-gps-tracking',
+}
+
+def _pack_hub(slug):
+    """Breadcrumb hub for clustered packs: Home > hub > page (visible + schema)."""
+    if slug == 'outlook-problems':
+        return None
+    if 'outlook' in slug:
+        return ("Outlook Problems", "outlook-problems")
+    if slug in _VICTRON_HUB_SLUGS:
+        return ("Custom VRM Dashboards", "custom-vrm-dashboards")
+    if slug.startswith('it-support-for-'):
+        return ("IT Support by Industry", "it-support-by-industry")
+    return None
+
 def build_new_page(d):
     faqs = [(f['q'], f['a']) if isinstance(f, dict) else tuple(f) for f in d['faqs']]
     sections = "\n".join(_sec_block(s) for s in d['sections'])
@@ -13044,8 +13063,10 @@ def build_new_page(d):
         </button>
       </div>
     </section>'''
+    _hub = _pack_hub(d['slug'])
+    _bch = bp.bc_sub(_hub[0], '/' + _hub[1] + '/', d['crumbName']) if _hub else bc(d['crumbName'])
     content = "\n".join([
-      hero(bc(d['crumbName']), d['eyebrow'], d['h1'], hero_trust(d['lede']),
+      hero(_bch, d['eyebrow'], d['h1'], hero_trust(d['lede']),
            cta1=tuple(d['primaryCta']), cta2=tuple(d['secondaryCta']), chips=list(d['chips'])),
       _hubbox,
       sections,
@@ -13053,8 +13074,9 @@ def build_new_page(d):
       faq_html(faqs),
       cta(d['ctaHead'], d['ctaSub'], primary=tuple(d['primaryCta']), secondary=tuple(d['secondaryCta'])),
     ])
-    def schema(s, _d=d, _faqs=faqs):
-        nodes = [crumb(s, _d['crumbName']), webpage(s, _d['crumbName'], _d['metaDesc'])]
+    def schema(s, _d=d, _faqs=faqs, _hub=_hub):
+        _c = bp.crumb_sub(s, _hub[0], _hub[1], _d['crumbName']) if _hub else crumb(s, _d['crumbName'])
+        nodes = [_c, webpage(s, _d['crumbName'], _d['metaDesc'])]
         if _d.get('schemaKind') == 'service':
             _area = bp.WORLDWIDE_AREA if _d.get('worldwide') else None
             nodes.append(service(s, _d.get('serviceName', _d['crumbName']), _d['metaDesc'], _d.get('serviceName', _d['crumbName']), area=_area))
@@ -13387,7 +13409,7 @@ def custom_dashboards():
           <h2 class="section-title section-title--center" data-title>See your dashboard before you spend a penny<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>Tell us a little about your setup and we&rsquo;ll come back within one working day (Mon&ndash;Fri, UK) with a demo and honest answers &mdash; then a fixed quote if you want one. No obligation, no hard sell.</p>
         </div>
-        <form class="contact-form" data-reveal action="mailto:help@365techies.co.uk" method="post" enctype="text/plain" style="max-width:640px;margin:0 auto">
+        <form class="contact-form" data-reveal action="/api/form-relay.php" method="post" style="max-width:640px;margin:0 auto">
           <input type="text" name="company_website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" />
           <label class="field"><span>Your name</span><input type="text" name="name" autocomplete="name" required /></label>
           <label class="field"><span>Email</span><input type="email" name="email" autocomplete="email" required /></label>

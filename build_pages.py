@@ -17,7 +17,7 @@ except Exception:
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://365techies.co.uk"
-CSSV = "56"
+CSSV = "57"
 HUBSPOT_ID = "148562638"
 # Public URL of the deployed 365 AI OS. When set, the /365-ai-os/ page shows a
 # prominent "Launch the live demo" button. Leave empty ("") to hide it.
@@ -780,9 +780,9 @@ def page(slug, title, desc, og_title, schema_json, content):
     </div>
   </div>
   <script type="module" src="/js/interior.min.js?v=20"></script>
-  <script src="/js/a11y.min.js?v=5" defer></script>
-  <script src="/js/forms.min.js?v=5" defer></script>
-  <script src="/js/search.min.js?v=1" defer></script>
+  <script src="/js/a11y.min.js?v=6" defer></script>
+  <script src="/js/forms.min.js?v=6" defer></script>
+  <script src="/js/search.min.js?v=2" defer></script>
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
     <p>We use cookies to power our live chat and understand how the site is used. See our <a href="/cookie-policy/">cookie policy</a>.</p>
     <div class="cookie-banner__actions">
@@ -4279,8 +4279,8 @@ add(
    f'''    <section class="support-options" aria-label="Business support plans">
       <div class="plan-grid plan-grid--3">
 {plan_card("business", None, "STARTER", "Business Starter", "For sole traders and very small businesses.", "&pound;24.38", ("FROM","/mo per computer"), ["Support for 1&ndash;3 computers","Remote IT support","Email support","Microsoft 365 help","Basic security checks","Computer maintenance &amp; buying advice"], "Set up Direct Debit", subscribe_href("business-starter"))}
-{plan_card("business", "&#9733; MOST POPULAR", "STANDARD", "Business Standard", "For small businesses needing regular IT support.", "&pound;24.38", ("FROM","/mo per computer"), ["Support for multiple users","Microsoft 365 administration","Outlook, Teams &amp; OneDrive","Backup checks","Cybersecurity guidance","Monthly maintenance &amp; new user setup"], "Get a Quote", "/contact/")}
-{plan_card("business", None, "PREMIUM", "Business Premium", "For businesses that rely on IT every day.", "&pound;24.38", ("FROM","/mo per computer"), ["Priority support","Remote &amp; on-site options","Microsoft 365 management","Cybersecurity &amp; backup planning","Staff onboarding &amp; offboarding","Device setup &amp; technology planning"], "Get a Quote", "/contact/")}
+{plan_card("business", "&#9733; MOST POPULAR", "STANDARD", "Business Standard", "For small businesses needing regular IT support.", "&pound;24.38", ("FROM","/mo per computer"), ["Support for multiple users","Microsoft 365 administration","Outlook, Teams &amp; OneDrive","Backup checks","Cybersecurity guidance","Monthly maintenance &amp; new user setup"], "Get a Quote", "/contact/?topic=business-it-support")}
+{plan_card("business", None, "PREMIUM", "Business Premium", "For businesses that rely on IT every day.", "&pound;24.38", ("FROM","/mo per computer"), ["Priority support","Remote &amp; on-site options","Microsoft 365 management","Cybersecurity &amp; backup planning","Staff onboarding &amp; offboarding","Device setup &amp; technology planning"], "Get a Quote", "/contact/?topic=business-it-support")}
       </div>
       <p class="plans-note mono" data-reveal>// FROM &pound;24.38/MO PER COMPUTER &middot; NO LOCK-IN &middot; TELL US YOUR SETUP FOR A QUOTE</p>
       <p class="plans-note mono" data-reveal style="margin-top:.5rem"><a href="/our-guarantees/" style="color:var(--cyan)">&#10003; No lock-in, cancel anytime &middot; No-fix-no-fee repairs &middot; Family-run since 1995 &mdash; see our guarantees</a></p>
@@ -4323,7 +4323,7 @@ add(
    GC_NOTE,
    REMOTE_ACCESS_BAND,
    cta("Choose a business plan", "Tell us how many people you need to cover and how you work — we&rsquo;ll put together the right plan and a clear quote.",
-       primary=("Get a Quote", "/contact/"), secondary=("Call 01202 775566", "tel:+441202775566")),
+       primary=("Get a Quote", "/contact/?topic=business-it-support"), secondary=("Call 01202 775566", "tel:+441202775566")),
  ]),
 )
 
@@ -4987,13 +4987,19 @@ add(
  ]),
  content="\n".join([
    hero(bc("Contact"), "// GET IN TOUCH",
-        'Ask about <em class="grad grad--cyan">monthly IT support</em>',
-        "Tell us what you need help with and we&rsquo;ll point you to the right plan or get a repair booked in. Friendly, no-pressure, no jargon.",
+        'How can we <em class="grad grad--cyan">help?</em>',
+        "Whatever it is &mdash; a repair, a question, monthly support or just some honest advice &mdash; tell us and we&rsquo;ll sort it. Friendly, no-pressure, no jargon.",
         cta1=("Call 01202 775566", "tel:+441202775566"), cta2=("Text us a message", "sms:+447520615332"),
         chips=["Mon&ndash;Fri 9am&ndash;5pm", "Text only: 07520 615332", "Remote &amp; on-site"]),
    f'''    <section class="section" aria-label="Contact details and form">
+      <div class="wrap" id="message-sent" style="max-width:760px;margin:0 auto">
+        <div class="message-sent__panel" role="status">
+          <h2 style="margin:0 0 .5rem">&#10003; Thank you &mdash; your message is in.</h2>
+          <p style="margin:0">We reply within one working day (Mon&ndash;Fri, 9am&ndash;5pm). Need help sooner? Call <a href="tel:+441202775566">01202 775566</a> or text <a href="sms:+447520615332">07520 615332</a>.</p>
+        </div>
+      </div>
       <div class="wrap contact-grid">
-        <form class="contact-form" data-reveal action="mailto:help@365techies.co.uk" method="post" enctype="text/plain">
+        <form class="contact-form" data-reveal action="/api/form-relay.php" method="post">
           <label class="field"><span>Your name</span><input type="text" name="name" autocomplete="name" required /></label>
           <label class="field"><span>Email</span><input type="email" name="email" autocomplete="email" required /></label>
           <label class="field"><span>Phone (optional)</span><input type="tel" name="phone" autocomplete="tel" /></label>
@@ -5001,15 +5007,17 @@ add(
             <select name="topic">
               <option>Home IT support</option>
               <option>Business IT support</option>
+              <option>Free business IT review</option>
+              <option>Computer repair</option>
               <option>Microsoft 365</option>
               <option>Cybersecurity</option>
-              <option>Computer repair</option>
+              <option>Victron &amp; custom dashboards</option>
               <option>Something else</option>
             </select>
           </label>
           <label class="field"><span>How can we help?</span><textarea name="message" required></textarea></label>
-          <button type="submit" class="button primary button--lg" style="width:100%">Send to help@365techies.co.uk</button>
-          <p class="form-status mono" role="status" style="margin-top:1rem;color:var(--faint);font-size:.7rem">// SENDS STRAIGHT TO help@365techies.co.uk &middot; WE REPLY WITHIN ONE WORKING DAY</p>
+          <button type="submit" class="button primary button--lg" style="width:100%">Send Your Message</button>
+          <p class="form-status mono" role="status" style="margin-top:1rem;color:var(--faint);font-size:.7rem">// GOES STRAIGHT TO OUR FAMILY TEAM &middot; WE REPLY WITHIN ONE WORKING DAY (MON&ndash;FRI)</p>
           <p style="margin-top:.6rem;color:var(--muted);font-size:.85rem">Prefer email? Write to <a href="mailto:help@365techies.co.uk" style="color:var(--cyan)">help@365techies.co.uk</a> directly.</p>
         </form>
         <div data-reveal>
@@ -5034,7 +5042,6 @@ add(
         </div>
       </div>
     </section>''',
-   WCHECK_TOOL,
    cta("Prefer to just pick a plan?", "Browse monthly support for homes and businesses — clear pricing, no contracts, cancel anytime.",
        primary=("View Monthly Plans", "/monthly-it-support/"), secondary=("Home Plans", "/home-it-support-plans/")),
  ]),
