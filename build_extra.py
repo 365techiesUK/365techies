@@ -3037,6 +3037,7 @@ def dell_hardware():
       ("Can you supply screens, webcams and other accessories?", "Yes &mdash; we&rsquo;ll supply and set up whatever you need alongside your Dell: monitors, webcams, backup drives, speakers, keyboards, mice and more, all configured and ready to use."),
       ("Can you wipe and recycle my old computer?", "Yes &mdash; we can move your files across to your new Dell, then securely wipe (with a certificate) and responsibly recycle your old machine. See our <a href=\"/secure-it-disposal/\">secure IT disposal</a> page."),
       ("Do you set it up and support it too?", "Always. Every Dell we supply is set up ready to use &mdash; Windows, Microsoft 365, security, backups and your data moved across &mdash; and you can keep it looked after on a <a href=\"/home-it-support-plans/\">home</a> or <a href=\"/business-it-support-plans/\">business</a> support plan."),
+      ("Do you supply second-hand computers for a business or office?", "Yes &mdash; refurbished business-grade Dell OptiPlex desktops and Latitude laptops are ideal, affordable office machines. See our page on <a href=\"/second-hand-office-computers-poole/\">second-hand office computers in Poole</a>, or setting up <a href=\"/new-laptop-set-up-bournemouth/\">a new laptop ready to use</a> for home."),
     ]
     content = "\n".join([
       hero(bc("Refurbished Dell"), "// REFURBISHED &middot; BUSINESS-GRADE",
@@ -12353,6 +12354,7 @@ def industry_hub():
         return f'          <a class="post-card" href="/{d["slug"]}/"><p class="post-card__cat">Industry</p><h3>{_ind_name(d)}</h3><p>{blurb}</p><span class="post-card__more">How we help &#8594;</span></a>'
     cards = "\n".join(card(d) for d in ALL_IND)
     cards += '\n          <a class="post-card" href="/it-support-for-construction/"><p class="post-card__cat">Industry</p><h3>Construction &amp; Building Firms</h3><p>IT for building firms, sites and offices &mdash; reliable site connectivity, project software and cybersecurity.</p><span class="post-card__more">How we help &#8594;</span></a>'
+    cards += '\n          <a class="post-card" href="/it-support-for-nurseries-dorset/"><p class="post-card__cat">Industry</p><h3>Nurseries &amp; Childcare</h3><p>Friendly IT for day nurseries and pre-schools &mdash; the PCs and network behind Tapestry and Famly, safeguarding backups and patient staff support.</p><span class="post-card__more">How we help &#8594;</span></a>'
     content = "\n".join([
       hero(bc("IT Support by Industry"), "// BY INDUSTRY",
            'IT support for <em class="grad grad--cyan">your line of work</em>',
