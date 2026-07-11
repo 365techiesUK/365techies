@@ -7841,8 +7841,10 @@ def free_tools_hub():
     slug = "free-tools"
     desc = "Free IT tools that run entirely in your browser — no download, no sign-up, nothing installed. Check your website, test broadband live, see if a password has leaked, make Wi-Fi QR codes, benchmark your PC and more."
     GROUPS = [
+      ("Learn something new", "Free, friendly courses for beginners and older learners &mdash; certificate included.",
+       ["freecourses","safetycourse"]),
       ("Security &amp; privacy", "Check you&rsquo;re safe &mdash; and lock things down.",
-       ["safetycourse","emailsec","breach","pwgen","pwstrength","scamlink","privacy","scamquiz","whatlose"]),
+       ["emailsec","breach","pwgen","pwstrength","scamlink","privacy","scamquiz","whatlose"]),
       ("Speed &amp; connectivity", "Test your connection and get everyone online.",
        ["isitdown","speed","broadbandcheck","wifiqr","qrgen","coverage"]),
       ("Website, domain &amp; email", "See how your website, domain and email really perform.",
@@ -12833,6 +12835,12 @@ COURSE_SAFETY = r'''    <section class="section" aria-label="Free online safety 
       #oscourse .osc-help{margin-top:1.4rem;padding:1.4rem;border-radius:16px;border:1px solid rgba(55,194,194,.35);background:rgba(55,194,194,.08);text-align:center}
       #oscourse .osc-help p{margin:0 0 1rem;font-size:1.02rem;line-height:1.6;color:#eef3fb}
       #oscourse .osc-help a{color:var(--cyan,#37c2c2)}
+      #oscourse .osc-next-courses{margin-top:1.2rem;text-align:left}
+      #oscourse .osc-nextcard{display:flex;align-items:center;gap:.9rem;border:1px solid rgba(29,151,227,.3);background:rgba(29,151,227,.07);border-radius:12px;padding:.8rem 1rem;margin:.6rem 0;text-decoration:none;color:inherit;transition:border-color .2s}
+      #oscourse .osc-nextcard:hover{border-color:rgba(29,151,227,.7)}
+      #oscourse .osc-nextcard-ico{font-size:1.5rem;flex:none}
+      #oscourse .osc-nextcard-why{color:var(--muted,#9aa6c2);font-size:.9rem;line-height:1.45}
+      #oscourse .osc-nextcard-go{margin-left:auto;color:#1d97e3;font-weight:700;flex:none}
       @media(prefers-reduced-motion:reduce){#oscourse .osc-stage,#oscourse .osc-fb{animation:none}#oscourse .osc-bar-fill{transition:none}}
       </style>
       <script>
@@ -12922,6 +12930,11 @@ COURSE_SAFETY = r'''    <section class="section" aria-label="Free online safety 
             '<div class="osc-body" style="text-align:center"><p>You now know the scammer&rsquo;s tricks and how to beat them. The most important habit of all? <strong>Slow down</strong> &mdash; and never be afraid to hang up, delete, or ask someone you trust.</p><p>Pop your first name in for a certificate to keep or print:</p></div>'+
             '<input class="osc-name" id="osc-cn" type="text" maxlength="30" placeholder="Your first name" autocomplete="given-name">'+
             '<div class="osc-actions"><button class="osc-btn" id="osc-cert-btn">Get my certificate &#8594;</button><button class="osc-btn ghost" id="osc-again">Take it again</button></div>'+
+            '<div class="osc-next-courses"><p class="osc-tag" style="text-align:center;margin-top:1.4rem">What would you like to learn next?</p>'+
+            '<a class="osc-nextcard" href="/online-banking-safely-course/"><span class="osc-nextcard-ico">&#127974;</span><span><strong>Online Banking, Safely</strong><br><span class="osc-nextcard-why">Use your new scam-spotting skills where they matter most.</span></span><span class="osc-nextcard-go">&#8594;</span></a>'+
+            '<a class="osc-nextcard" href="/online-shopping-safely-course/"><span class="osc-nextcard-ico">&#128722;</span><span><strong>Online Shopping, Safely</strong><br><span class="osc-nextcard-why">Buy online with the same care and confidence.</span></span><span class="osc-nextcard-go">&#8594;</span></a>'+
+            '<a class="osc-nextcard" href="/email-basics-course/"><span class="osc-nextcard-ico">&#128231;</span><span><strong>Email, Comfortably</strong><br><span class="osc-nextcard-why">Get comfortable with the inbox where most scams arrive.</span></span><span class="osc-nextcard-go">&#8594;</span></a>'+
+            '<p style="margin:.7rem 0 0;text-align:center"><a href="/free-courses/" style="color:var(--cyan,#37c2c2)">See all our free courses &#8594;</a></p></div>'+
             '<div class="osc-help"><p><strong>Worried about something right now?</strong> A dodgy email, a strange phone call, or you think you&rsquo;ve been caught out? Talk to a real person &mdash; we&rsquo;re friendly, local and we never judge.</p><a class="osc-btn" href="/contact/" style="display:inline-block;text-decoration:none">Talk to a real person</a></div></div>');
           stage.querySelector('#osc-again').onclick=function(){ state.m=0; state.score=0; lesson(); };
           stage.querySelector('#osc-cert-btn').onclick=function(){ makeCert((stage.querySelector('#osc-cn').value||'').trim()); };
@@ -13055,10 +13068,16 @@ _COURSE_RUNTIME = r'''
         }
         function done(){
           state.phase='done'; stepEl.textContent='Well done!'; setBar();
+          var nx='';
+          if(CFG.next&&CFG.next.length){
+            nx='<div class="osc-next-courses"><p class="osc-tag" style="text-align:center;margin-top:1.4rem">What would you like to learn next?</p>'+
+              CFG.next.map(function(n){ return '<a class="osc-nextcard" href="'+n.u+'"><span class="osc-nextcard-ico">'+n.icon+'</span><span><strong>'+n.t+'</strong><br><span class="osc-nextcard-why">'+n.why+'</span></span><span class="osc-nextcard-go">&#8594;</span></a>'; }).join('')+
+              '<p style="margin:.7rem 0 0;text-align:center"><a href="/free-courses/" style="color:var(--cyan,#37c2c2)">See all our free courses &#8594;</a></p></div>';
+          }
           h('<div class="osc-card osc-cert"><div class="osc-cert-emoji">&#127881;</div><h2 class="osc-h">You did it!</h2><p class="osc-tag">You got '+state.score+' of '+MODULES.length+' checks right</p>'+
             '<div class="osc-body" style="text-align:center">'+CFG.doneBlurb+'<p>Pop your first name in for a certificate to keep or print:</p></div>'+
             '<input class="osc-name" id="osc-cn" type="text" maxlength="30" placeholder="Your first name" autocomplete="given-name">'+
-            '<div class="osc-actions"><button class="osc-btn" id="osc-cert-btn">Get my certificate &#8594;</button><button class="osc-btn ghost" id="osc-again">Take it again</button></div>'+
+            '<div class="osc-actions"><button class="osc-btn" id="osc-cert-btn">Get my certificate &#8594;</button><button class="osc-btn ghost" id="osc-again">Take it again</button></div>'+nx+
             '<div class="osc-help"><p><strong>Would you like a friendly human to show you in person?</strong> We run patient, plain-English computer lessons at the Kinson Community Centre in Bournemouth &mdash; and we&rsquo;re on the phone Mon&ndash;Fri, 9&ndash;5.</p><a class="osc-btn" href="/contact/?topic=computer-lessons" style="display:inline-block;text-decoration:none">Ask about lessons</a></div></div>');
           stage.querySelector('#osc-again').onclick=function(){ state.m=0; state.score=0; lesson(); };
           stage.querySelector('#osc-cert-btn').onclick=function(){ makeCert((stage.querySelector('#osc-cn').value||'').trim()); };
@@ -13088,6 +13107,122 @@ _COURSE_RUNTIME = r'''
       })();
 '''
 
+# Animated scene illustrations (course_scenes.py, drawn in the homepage live-view
+# style; validated). Empty dict if the file is missing - cards degrade gracefully.
+try:
+    from course_scenes import SCENES as COURSE_SCENES
+except Exception:
+    COURSE_SCENES = {}
+
+def _scene(slug):
+    svg = COURSE_SCENES.get(slug, "")
+    return '<div class="course-scene" aria-hidden="true">' + svg + '</div>' if svg else ''
+
+# Curated learning paths: shown on each course's completion screen ("what next?")
+# and used to order the cross-promo cards under each course. Hand-picked, not
+# algorithmic - the "why" line is the hook.
+_SAFETY_COURSE = {"slug": "online-safety-course", "icon": "&#128737;&#65039;",
+                  "courseTitle": "Staying Safe Online"}
+NEXT_MAP = {
+    "computer-basics-course": [
+        ("email-basics-course", "Now the mouse behaves, email is the natural next step."),
+        ("online-safety-course", "Learn the scammers&rsquo; tricks before they try them on you."),
+        ("digital-photos-course", "Put your new confidence to work on your photos.")],
+    "email-basics-course": [
+        ("online-safety-course", "Most scams arrive by email &mdash; learn to spot every one."),
+        ("whatsapp-course-for-beginners", "Faster than email for family chat &mdash; and free."),
+        ("video-calling-course-for-beginners", "From written words to seeing their faces.")],
+    "online-safety-course": [
+        ("online-banking-safely-course", "Use your new scam-spotting skills where they matter most."),
+        ("online-shopping-safely-course", "Buy online with the same care and confidence."),
+        ("email-basics-course", "Get comfortable with the inbox where most scams arrive.")],
+    "online-banking-safely-course": [
+        ("online-shopping-safely-course", "The same careful habits, now for buying things."),
+        ("nhs-app-course", "Another official service worth having in your pocket."),
+        ("online-safety-course", "The full scam-spotting course, from texts to phone calls.")],
+    "online-shopping-safely-course": [
+        ("online-banking-safely-course", "Take the same care with your banking."),
+        ("online-safety-course", "Spot every kind of scam, not just the shopping ones."),
+        ("email-basics-course", "Tame the inbox where all the receipts land.")],
+    "whatsapp-course-for-beginners": [
+        ("video-calling-course-for-beginners", "You can message &mdash; now see their faces too."),
+        ("digital-photos-course", "Get the photos you share looking their best."),
+        ("android-phone-course-for-beginners", "Get the rest of your phone as tame as WhatsApp.")],
+    "android-phone-course-for-beginners": [
+        ("whatsapp-course-for-beginners", "The app families love most, step by step."),
+        ("nhs-app-course", "Order prescriptions from the phone you&rsquo;ve just tamed."),
+        ("digital-photos-course", "Do more with the photos already on your phone.")],
+    "video-calling-course-for-beginners": [
+        ("whatsapp-course-for-beginners", "Message between calls &mdash; step by step."),
+        ("digital-photos-course", "Share what you&rsquo;ve been up to, beautifully."),
+        ("ai-for-beginners-course", "Curious? Meet the technology everyone&rsquo;s talking about.")],
+    "digital-photos-course": [
+        ("whatsapp-course-for-beginners", "Send your photos to the family in seconds."),
+        ("video-calling-course-for-beginners", "Show them in person, on screen."),
+        ("ai-for-beginners-course", "See what AI can do with words and pictures.")],
+    "nhs-app-course": [
+        ("android-phone-course-for-beginners", "Get confident with the rest of your phone."),
+        ("online-safety-course", "Keep your health details safe from scammers."),
+        ("online-banking-safely-course", "Handle your banking as smartly as your health.")],
+    "ai-for-beginners-course": [
+        ("online-safety-course", "Scammers use AI too &mdash; stay one step ahead."),
+        ("whatsapp-course-for-beginners", "Chat with the family as easily as you chat with AI."),
+        ("email-basics-course", "Get the everyday basics feeling just as comfortable.")],
+}
+
+def _course_lookup(slug):
+    if slug == "online-safety-course":
+        return _SAFETY_COURSE
+    for x in COURSES_DATA:
+        if x["slug"] == slug:
+            return x
+    return None
+
+def _next_for(slug):
+    out = []
+    for target, why in NEXT_MAP.get(slug, []):
+        t = _course_lookup(target)
+        if t:
+            out.append({"u": "/" + t["slug"] + "/", "icon": t["icon"],
+                        "t": t["courseTitle"], "why": why})
+    return out
+
+def _course_card(o, badge_attrs=True):
+    """One course card (hub + cross-promo): animated scene on top, then copy."""
+    n_mod = len(o["modules"]) if o.get("modules") else o.get("nModules", 6)
+    key = "osc_progress_v1" if o["slug"] == "online-safety-course" else "crs_" + o["slug"].replace("-", "_") + "_v1"
+    attrs = ' data-crskey="' + key + '" data-crsn="' + str(n_mod) + '"' if badge_attrs else ''
+    # taglines mix literal middle dots and &middot; entities; normalise BEFORE
+    # .upper() (which would corrupt entities into unrendered &MIDDOT;)
+    tag = o["tagline"].replace("&middot;", "·")
+    if tag.lower().startswith("free · "):
+        tag = tag[7:]
+    lede = o["heroLede"]
+    if len(lede) > 150:
+        lede = lede[:150].rsplit(" ", 1)[0].rstrip(" ,;") + "&hellip;"
+    return ('          <a class="post-card" href="/' + o["slug"] + '/"' + attrs + '>'
+            + _scene(o["slug"])
+            + '<h3>' + o["icon"] + ' ' + o["courseTitle"] + '</h3><p>' + lede + '</p>'
+            + '<p class="mono" style="color:var(--muted);font-size:.72rem;margin-top:.6rem">'
+            + tag.upper() + ' · FREE · CERTIFICATE</p>'
+            + '<span class="post-card__more">Start the course &#8594;</span></a>')
+
+# Progress badges: purely client-side, reads the same localStorage the courses
+# save to. Injected on any page that renders _course_card with badge attrs.
+_CRS_BADGE_JS = ('(function(){try{[].forEach.call(document.querySelectorAll("[data-crskey]"),function(a){'
+    'var s=null;try{s=JSON.parse(localStorage.getItem(a.getAttribute("data-crskey"))||"null")}catch(e){}'
+    'if(!s)return;var n=+a.getAttribute("data-crsn"),b=document.createElement("span");'
+    'if(s.m>=n){b.className="crs-badge crs-badge--done";b.innerHTML="&#10003; COMPLETED";}'
+    'else if(s.m>0){b.className="crs-badge";b.innerHTML="&#9654; YOU&rsquo;RE ON LESSON "+(s.m+1)+" OF "+n;}'
+    'else return;var h=a.querySelector("h3");if(h)h.parentNode.insertBefore(b,h);});}catch(e){}})();')
+
+def _first_sentence(html_body):
+    import re as _re
+    txt = _re.sub(r'<[^>]+>', ' ', html_body)
+    txt = _re.sub(r'\s+', ' ', txt).strip()
+    m = _re.match(r'(.{20,240}?[.!?])(\s|$)', txt)
+    return m.group(1) if m else (txt[:200].rstrip() + '&hellip;')
+
 def _course_widget(c):
     import json as _json
     cfg = {
@@ -13095,6 +13230,7 @@ def _course_widget(c):
         "icon": c["icon"], "courseTitle": c["courseTitle"], "tagline": c["tagline"],
         "introBody": c["introBody"], "doneBlurb": c["doneBlurb"],
         "modules": c["modules"],
+        "next": _next_for(c["slug"]),
         "cert": {"courseName": c["certCourseName"], "subline": c["certSubline"],
                  "filename": c["slug"] + "-certificate.png"},
     }
@@ -13145,11 +13281,14 @@ def _course_checklist(c):
             '    </section>')
 
 def course_page(c):
+    import re as _re
     faqs = [(f["q"], f["a"]) for f in c["faqs"]]
-    others = [x for x in COURSES_DATA if x["slug"] != c["slug"]][:3]
-    more = "\n".join(
-        '          <a class="post-card" href="/' + o["slug"] + '/"><h3>' + o["icon"] + ' ' + o["courseTitle"] + '</h3><p>' + o["heroLede"][:110] + '&hellip;</p><span class="post-card__more">Start free &#8594;</span></a>'
-        for o in others)
+    # cross-promo cards follow the curated learning path, falling back to any others
+    next_slugs = [t for t, _w in NEXT_MAP.get(c["slug"], [])]
+    ordered = ([_course_lookup(t) for t in next_slugs]
+               + [x for x in COURSES_DATA if x["slug"] != c["slug"] and x["slug"] not in next_slugs])
+    others = [o for o in ordered if o and o.get("heroLede")][:3]
+    more = "\n".join(_course_card(o) for o in others)
     more_section = ('    <section class="blog-section" aria-label="More free courses">\n'
                     '      <div class="wrap">\n'
                     '        <div class="section-head">\n'
@@ -13161,13 +13300,32 @@ def course_page(c):
                     '          <a class="post-card" href="/free-courses/"><h3>&#127891; All free courses</h3><p>Every course in one place &mdash; pick whatever interests you. No sign-up, ever.</p><span class="post-card__more">See them all &#8594;</span></a>\n'
                     '        </div>\n'
                     '      </div>\n'
+                    '      <script>' + _CRS_BADGE_JS + '</script>\n'
                     '    </section>')
+    # static, crawlable syllabus: the lesson list lives in JS config, so without
+    # this section search engines and AI crawlers that skip JS see no course body
+    syllabus_rows = "\n".join(
+        '          <li><strong>' + m["title"] + '.</strong> ' + _first_sentence(m["body"]) + '</li>'
+        for m in c["modules"])
+    syllabus = ('    <section class="section section--alt" aria-label="What is in this course">\n'
+                '      <div class="wrap" style="max-width:760px;margin:0 auto">\n'
+                '        <div class="section-head">\n'
+                '          <p class="eyebrow eyebrow--center mono" data-reveal>// WHAT&rsquo;S IN THIS COURSE</p>\n'
+                '          <h2 class="section-title section-title--center" data-title>' + str(len(c["modules"])) + ' short lessons, at your own pace<span class="title-underline title-underline--center"></span></h2>\n'
+                '          <p class="lede lede--center" data-reveal>Every lesson ends with one gentle &ldquo;what would you do?&rdquo; question &mdash; no scores, no time limits, no pass marks. Here&rsquo;s what you&rsquo;ll cover:</p>\n'
+                '        </div>\n'
+                '        <ol class="prose" data-reveal style="font-size:1.02rem;line-height:1.8">\n'
+                + syllabus_rows + '\n'
+                '        </ol>\n'
+                '      </div>\n'
+                '    </section>')
     content = "\n".join([
         hero(bp.bc_sub("Free Courses", "/free-courses/", c["crumbName"]), "// FREE COURSE &middot; NO SIGN-UP",
              c["h1"], c["heroLede"],
              cta1=("Start the Course", "#oscourse"), cta2=("Ask About Lessons", "/contact/?topic=computer-lessons"),
              chips=["100% free", str(len(c["modules"])) + " short lessons", "Certificate &amp; checklist"]),
         _course_widget(c),
+        syllabus,
         _course_checklist(c),
         faq_html(faqs),
         cta("Rather learn with a friendly human?",
@@ -13175,30 +13333,30 @@ def course_page(c):
             primary=("Ask About Lessons", "/contact/?topic=computer-lessons"), secondary=("Call 01202 775566", "tel:+441202775566")),
         more_section,
     ])
-    def schema(s, _c=c, _faqs=faqs):
+    _mins = _re.search(r'about (\d+) minutes', c["tagline"])
+    workload = "PT" + (_mins.group(1) if _mins else "30") + "M"
+    def schema(s, _c=c, _faqs=faqs, _workload=workload):
         course = {"@type": "Course", "@id": bp.SITE + "/" + _c["slug"] + "/#course", "name": _c["certCourseName"],
                   "description": _c["metaDesc"], "provider": {"@type": "Organization", "name": "365 Techies", "@id": bp.SITE + "/#business"},
                   "isAccessibleForFree": True, "inLanguage": "en-GB", "educationalLevel": "Beginner",
+                  "audience": {"@type": "Audience", "audienceType": "beginners and older adults"},
                   "teaches": [m["title"] for m in _c["modules"]],
                   "offers": {"@type": "Offer", "price": "0", "priceCurrency": "GBP", "category": "Free"},
-                  "hasCourseInstance": {"@type": "CourseInstance", "courseMode": "online", "courseWorkload": "PT15M"}}
+                  "hasCourseInstance": {"@type": "CourseInstance", "courseMode": "online", "courseWorkload": _workload}}
         return graph([bp.crumb_sub(s, "Free Courses", "free-courses", _c["crumbName"]),
                       webpage(s, _c["crumbName"], _c["metaDesc"]), course, faqpage(s, _faqs)])
     add(slug=c["slug"], title=c["title"], desc=c["metaDesc"], og_title=c["title"], schema=schema, content=content)
 
 def free_courses_hub():
     slug = "free-courses"
-    desc = ("Free, friendly online courses for beginners and older learners — AI, WhatsApp, Android phones, online "
-            "banking safety and video calling. Short plain-English lessons, a certificate to print, no sign-up ever. "
-            "From 365 Techies, Dorset.")
+    desc = ("Free, friendly online courses for beginners and over-60s — computer basics, email, WhatsApp, AI, "
+            "the NHS App, safe banking and shopping. Certificate included, no sign-up ever.")
     all_courses = [{"slug": "online-safety-course", "icon": "&#128737;&#65039;", "courseTitle": "Staying Safe Online",
                     "heroLede": "Spot scam emails, texts and phone calls, use strong passwords, and shop and bank safely online.",
-                    "tagline": "6 short lessons &middot; about 10 minutes"}] + [
+                    "tagline": "6 short lessons &middot; about 10 minutes", "nModules": 6}] + [
         {"slug": x["slug"], "icon": x["icon"], "courseTitle": x["courseTitle"],
-         "heroLede": x["heroLede"], "tagline": x["tagline"]} for x in COURSES_DATA]
-    cards = "\n".join(
-        '          <a class="post-card" href="/' + o["slug"] + '/"><h3>' + o["icon"] + ' ' + o["courseTitle"] + '</h3><p>' + o["heroLede"][:150] + '</p><p class="mono" style="color:var(--muted);font-size:.72rem;margin-top:.6rem">' + o["tagline"].replace("Free &middot; ", "").upper() + ' &middot; FREE &middot; CERTIFICATE</p><span class="post-card__more">Start the course &#8594;</span></a>'
-        for o in all_courses)
+         "heroLede": x["heroLede"], "tagline": x["tagline"], "modules": x["modules"]} for x in COURSES_DATA]
+    cards = "\n".join(_course_card(o) for o in all_courses)
     faqs = [
         ("Are these courses really free?", "Completely &mdash; no sign-up, no card details, nothing to install, and no catch. They run in your web browser. We&rsquo;re a family IT firm, and helping people get confident with technology is genuinely good for everyone (and yes, some people become customers &mdash; that&rsquo;s the whole business model, out in the open)."),
         ("Who are they for?", "Anyone, but they&rsquo;re written especially for beginners and older learners &mdash; plain English, short lessons, no time pressure, no pass marks, and nothing to be embarrassed about. Thousands of people locally are in exactly the same boat."),
@@ -13209,7 +13367,7 @@ def free_courses_hub():
     content = "\n".join([
         hero(bc("Free Courses"), "// FREE COURSES &middot; NO SIGN-UP &middot; CERTIFICATES",
              'Learn something new, <em class="grad grad--green">free</em>',
-             "Short, friendly online courses for beginners and anyone who&rsquo;d like a bit more confidence &mdash; AI, WhatsApp, your Android phone, online banking and more. Plain English, no time pressure, a certificate at the end, and never a sign-up form.",
+             "Short, friendly online courses for beginners and anyone who&rsquo;d like a bit more confidence &mdash; computer basics, email, WhatsApp, AI, your Android phone, the NHS App, photos, and shopping and banking safely. Plain English, no time pressure, a certificate at the end, and never a sign-up form.",
              cta1=("Pick a Course Below", "#courses"), cta2=("Ask About In-Person Lessons", "/contact/?topic=computer-lessons"),
              chips=["100% free, always", "Learn at your own pace", "Certificate for every course"]),
         ('    <section class="blog-section" id="courses" aria-label="All free courses">\n'
@@ -13223,6 +13381,7 @@ def free_courses_hub():
          + cards + '\n'
          '        </div>\n'
          '      </div>\n'
+         '      <script>' + _CRS_BADGE_JS + '</script>\n'
          '    </section>'),
         faq_html(faqs),
         cta("Prefer a friendly human and a cup of tea?",
@@ -13388,6 +13547,17 @@ def _wants_sos_band(slug):
         return False
     return any(w in slug for w in _SOS_WORDS)
 
+# Free-courses funnel: gentle/how-to/beginner pages promote the courses at the
+# END of the page (reader got their answer; now offer to build their confidence).
+# Never stacked with the SOS band - urgent pages stay urgent.
+_CRS_BAND_WORDS = ('how-to-', 'beginner', 'senior', 'over-60', 'granny', 'grandparent',
+                   'parent', 'retired', 'lessons', 'first-computer', 'silver')
+
+def _wants_courses_band(slug):
+    if _wants_sos_band(slug):
+        return False
+    return any(w in slug for w in _CRS_BAND_WORDS)
+
 def _pack_hub(slug):
     """Breadcrumb hub for clustered packs: Home > hub > page (visible + schema)."""
     if slug == 'outlook-problems':
@@ -13406,6 +13576,9 @@ def build_new_page(d):
     # help-ASAP funnel: problem-intent pages get the SOS band right after section 1
     if _wants_sos_band(d['slug']) and len(_blocks) > 1:
         _blocks.insert(1, bp.SOS_BAND)
+    # learning funnel: gentle pages promote the free courses at the end
+    if _wants_courses_band(d['slug']):
+        _blocks.append(bp.COURSES_BAND)
     sections = "\n".join(_blocks)
     cross = ""
     if d.get('crossLinksHtml'):

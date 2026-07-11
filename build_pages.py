@@ -17,7 +17,7 @@ except Exception:
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://365techies.co.uk"
-CSSV = "58"
+CSSV = "59"
 HUBSPOT_ID = "148562638"
 # Public URL of the deployed 365 AI OS. When set, the /365-ai-os/ page shows a
 # prominent "Launch the live demo" button. Leave empty ("") to hide it.
@@ -913,6 +913,43 @@ SOS_BAND = '''    <section class="section" aria-label="Fix this now with remote 
           </p>
         </div>
       </div>
+    </section>'''
+
+# ---- Free-courses promo band (learning funnel) ------------------------------
+# Appended at the END of gentle/guide pages (never stacked with SOS_BAND: SOS =
+# urgent problem, courses = calm learning; a page gets one or the other). The
+# inline script swaps the copy for "continue where you left off" when the
+# visitor has saved course progress - progress lives only in their browser.
+try:
+    from courses_data import COURSES as _CRS
+except Exception:
+    _CRS = []
+_CRS_COUNT = len(_CRS) + 1  # + the online-safety flagship (not in courses_data)
+_CRS_MAP = [{"k": "osc_progress_v1", "u": "/online-safety-course/", "t": "Staying Safe Online", "n": 6}] + [
+    {"k": "crs_" + _c["slug"].replace("-", "_") + "_v1", "u": "/" + _c["slug"] + "/",
+     "t": _c["courseTitle"], "n": len(_c["modules"])} for _c in _CRS]
+import json as _cjson
+_CRS_JSON = _cjson.dumps(_CRS_MAP).replace("</", "<\\/")
+_CRS_RESUME_JS = ('(function(){try{var M=' + _CRS_JSON + ';var go=null,fin=null;'
+    'for(var i=0;i<M.length;i++){var s=null;try{s=JSON.parse(localStorage.getItem(M[i].k)||"null")}catch(e){}'
+    'if(!s)continue;if(s.m>0&&s.m<M[i].n&&!go){go=M[i];go.next=s.m+1}else if(s.m>=M[i].n&&!fin){fin=M[i]}}'
+    'var tx=document.getElementById("crs-band-txt"),bt=document.getElementById("crs-band-go");if(!tx||!bt)return;'
+    'if(go){tx.innerHTML="<strong>Welcome back!</strong> You&rsquo;re part-way through <strong>"+go.t+"</strong> &mdash; lesson "+go.next+" of "+go.n+" is ready when you are.";'
+    'bt.href=go.u;bt.textContent="Continue where I left off \\u2192";}'
+    'else if(fin){tx.innerHTML="<strong>Welcome back!</strong> You finished <strong>"+fin.t+"</strong> \\ud83c\\udf89 &mdash; ready to pick your next free course?";'
+    'bt.textContent="Pick my next course \\u2192";}}catch(e){}})();')
+COURSES_BAND = '''    <section class="section" aria-label="Free courses for beginners">
+      <div class="wrap" style="max-width:860px;margin:0 auto">
+        <div data-reveal style="border:1px solid rgba(29,151,227,0.35);background:rgba(29,151,227,0.06);border-radius:16px;padding:1.6rem 1.8rem;text-align:center">
+          <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// FREE &middot; LEARN SOMETHING NEW</p>
+          <p id="crs-band-txt" style="font-size:1.08rem;margin:0 0 1.1rem"><strong>''' + str(_CRS_COUNT) + ''' free, friendly online courses</strong> for beginners and older learners &mdash; computer basics, email, WhatsApp, staying safe online and more. Short plain-English lessons, a printable certificate at the end, and never a sign-up form.</p>
+          <p style="margin:0;display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap">
+            <a class="button primary" id="crs-band-go" href="/free-courses/">Browse the Free Courses</a>
+            <a class="button secondary" href="/contact/?topic=computer-lessons">Ask About In-Person Lessons</a>
+          </p>
+        </div>
+      </div>
+      <script>''' + _CRS_RESUME_JS + '''</script>
     </section>'''
 
 def faqpage(slug, faqs):
@@ -2220,6 +2257,7 @@ TOOLS = {
   "speccheck":    ("PC Hardware Checker", "/computer-spec-checker/", "What&rsquo;s inside your computer? OS, graphics card, screen, memory and more &mdash; revealed instantly, nothing installed."),
   "gpubench":     ("Graphics Card Benchmark", "/graphics-card-benchmark/", "How powerful is your GPU? A live 3D WebGL benchmark &mdash; graphics score, live FPS, advanced stress tests and honest advice."),
   "safetycourse": ("Free Online Safety Course", "/online-safety-course/", "Spot scam emails, texts &amp; calls, use safe passwords and shop safely &mdash; a free, friendly 6-lesson course with a certificate."),
+  "freecourses":  ("Free Online Courses (" + str(_CRS_COUNT) + ")", "/free-courses/", "Free, friendly courses for beginners and older learners &mdash; computer basics, email, WhatsApp, AI, staying safe online and more. Short lessons, a certificate for every course, no sign-up ever."),
 }
 
 def tool_cards(keys):

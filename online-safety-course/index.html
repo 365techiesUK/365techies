@@ -68,7 +68,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=58" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=59" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -716,6 +716,12 @@
       #oscourse .osc-help{margin-top:1.4rem;padding:1.4rem;border-radius:16px;border:1px solid rgba(55,194,194,.35);background:rgba(55,194,194,.08);text-align:center}
       #oscourse .osc-help p{margin:0 0 1rem;font-size:1.02rem;line-height:1.6;color:#eef3fb}
       #oscourse .osc-help a{color:var(--cyan,#37c2c2)}
+      #oscourse .osc-next-courses{margin-top:1.2rem;text-align:left}
+      #oscourse .osc-nextcard{display:flex;align-items:center;gap:.9rem;border:1px solid rgba(29,151,227,.3);background:rgba(29,151,227,.07);border-radius:12px;padding:.8rem 1rem;margin:.6rem 0;text-decoration:none;color:inherit;transition:border-color .2s}
+      #oscourse .osc-nextcard:hover{border-color:rgba(29,151,227,.7)}
+      #oscourse .osc-nextcard-ico{font-size:1.5rem;flex:none}
+      #oscourse .osc-nextcard-why{color:var(--muted,#9aa6c2);font-size:.9rem;line-height:1.45}
+      #oscourse .osc-nextcard-go{margin-left:auto;color:#1d97e3;font-weight:700;flex:none}
       @media(prefers-reduced-motion:reduce){#oscourse .osc-stage,#oscourse .osc-fb{animation:none}#oscourse .osc-bar-fill{transition:none}}
       </style>
       <script>
@@ -805,6 +811,11 @@
             '<div class="osc-body" style="text-align:center"><p>You now know the scammer&rsquo;s tricks and how to beat them. The most important habit of all? <strong>Slow down</strong> &mdash; and never be afraid to hang up, delete, or ask someone you trust.</p><p>Pop your first name in for a certificate to keep or print:</p></div>'+
             '<input class="osc-name" id="osc-cn" type="text" maxlength="30" placeholder="Your first name" autocomplete="given-name">'+
             '<div class="osc-actions"><button class="osc-btn" id="osc-cert-btn">Get my certificate &#8594;</button><button class="osc-btn ghost" id="osc-again">Take it again</button></div>'+
+            '<div class="osc-next-courses"><p class="osc-tag" style="text-align:center;margin-top:1.4rem">What would you like to learn next?</p>'+
+            '<a class="osc-nextcard" href="/online-banking-safely-course/"><span class="osc-nextcard-ico">&#127974;</span><span><strong>Online Banking, Safely</strong><br><span class="osc-nextcard-why">Use your new scam-spotting skills where they matter most.</span></span><span class="osc-nextcard-go">&#8594;</span></a>'+
+            '<a class="osc-nextcard" href="/online-shopping-safely-course/"><span class="osc-nextcard-ico">&#128722;</span><span><strong>Online Shopping, Safely</strong><br><span class="osc-nextcard-why">Buy online with the same care and confidence.</span></span><span class="osc-nextcard-go">&#8594;</span></a>'+
+            '<a class="osc-nextcard" href="/email-basics-course/"><span class="osc-nextcard-ico">&#128231;</span><span><strong>Email, Comfortably</strong><br><span class="osc-nextcard-why">Get comfortable with the inbox where most scams arrive.</span></span><span class="osc-nextcard-go">&#8594;</span></a>'+
+            '<p style="margin:.7rem 0 0;text-align:center"><a href="/free-courses/" style="color:var(--cyan,#37c2c2)">See all our free courses &#8594;</a></p></div>'+
             '<div class="osc-help"><p><strong>Worried about something right now?</strong> A dodgy email, a strange phone call, or you think you&rsquo;ve been caught out? Talk to a real person &mdash; we&rsquo;re friendly, local and we never judge.</p><a class="osc-btn" href="/contact/" style="display:inline-block;text-decoration:none">Talk to a real person</a></div></div>');
           stage.querySelector('#osc-again').onclick=function(){ state.m=0; state.score=0; lesson(); };
           stage.querySelector('#osc-cert-btn').onclick=function(){ makeCert((stage.querySelector('#osc-cn').value||'').trim()); };

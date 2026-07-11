@@ -695,6 +695,24 @@ body.menu-open { overflow: hidden; }
 .nm-dot { transform-box: fill-box; transform-origin: center; animation: nmDot 2.4s ease-in-out infinite; animation-delay: var(--d, 0s); }
 @keyframes nmDot { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
+/* Animated course-scene illustrations (free-courses cards; same visual language) */
+.course-scene { position: relative; aspect-ratio: 5 / 3; border-radius: 10px; margin: 0 0 1rem; overflow: hidden;
+  background: radial-gradient(ellipse at center, rgba(30, 70, 130, 0.16), rgba(10, 22, 44, 0.35) 78%);
+  border: 1px solid rgba(125, 170, 220, 0.14); }
+.course-scene__svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.cs-float { animation: csFloat 5s ease-in-out infinite; animation-delay: var(--d, 0s); }
+@keyframes csFloat { 0%, 100% { translate: 0 0; } 50% { translate: 0 -6px; } }
+/* Course progress badge (hub cards) */
+.crs-badge { display: inline-block; margin: 0 0 0.55rem; padding: 0.22rem 0.65rem; border-radius: 999px;
+  font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.06em;
+  border: 1px solid rgba(29, 151, 227, 0.45); color: #8fc6ef; background: rgba(29, 151, 227, 0.1); }
+.crs-badge--done { border-color: rgba(0, 206, 27, 0.45); color: #7fe08c; background: rgba(0, 206, 27, 0.1); }
+@media (prefers-reduced-motion: reduce) {
+  .nm-link, .nm-scan, .nm-hub, .nm-node, .nm-dot, .cs-float { animation: none; }
+  .nm-scan { opacity: 0; }
+  .nm-dot { opacity: 1; }
+}
+
 /* Heritage certification gallery (About page) */
 .heritage-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1.1rem; max-width: 1000px; margin: 0 auto; }
 .heritage-card { margin: 0; background: rgba(10, 22, 44, 0.55); border: 1px solid var(--line); border-radius: 12px; padding: 0.7rem; text-align: center; }

@@ -65,6 +65,8 @@ def make_post(slug, cat, title, lede, body, points, related, faqs=None, dt="2026
       </div>
     </section>''',
       faq_html(faqs) if faqs else "",
+      # learning funnel: home-audience advice readers are exactly who the free courses serve
+      bp.COURSES_BAND if cat in ("Home Users", "Windows") else "",
       cta("Reliable IT support, every month",
           "Stop firefighting tech problems. Get friendly monthly IT support for your home or business across Dorset.",
           primary=("View Monthly Plans", "/monthly-it-support/"), secondary=("Call 01202 775566", "tel:+441202775566")),
