@@ -13216,7 +13216,7 @@ def free_courses_hub():
          '      <div class="wrap">\n'
          '        <div class="section-head">\n'
          '          <p class="eyebrow eyebrow--center mono" data-reveal>// PICK ONE THAT INTERESTS YOU</p>\n'
-         '          <h2 class="section-title section-title--center" data-title>Six free courses, and counting<span class="title-underline title-underline--center"></span></h2>\n'
+         '          <h2 class="section-title section-title--center" data-title>' + str(len(all_courses)) + ' free courses, and counting<span class="title-underline title-underline--center"></span></h2>\n'
          '          <p class="lede lede--center" data-reveal>Each one is a handful of short lessons with gentle &ldquo;what would you do?&rdquo; checks &mdash; finish any course and print your certificate.</p>\n'
          '        </div>\n'
          '        <div class="blog-grid" data-stagger>\n'
