@@ -10045,6 +10045,95 @@ info_page(
             ("Book a Service", "/book-service/"), ("Call 01202 775566", "tel:+441202775566")),
 )
 
+# ---- /sos/ — the on-site SOS download + instructions page (every SOS button targets this).
+# Splashtop officially publishes these permanent always-latest direct links for hosting on
+# your own site. ⚠️ STACK: currently the GLOBAL exe; if the owner's console is
+# my.splashtop.eu, swap SOS_DL_WIN to the /sos/eu/ URL (both verified live 2026-07-11).
+SOS_DL_WIN = "https://download.splashtop.com/sos/SplashtopSOS.exe"          # Global stack
+# SOS_DL_WIN = "https://download.splashtop.com/sos/eu/SplashtopSOS.exe"     # EU stack
+SOS_DL_ANDROID = "https://play.google.com/store/apps/details?id=com.splashtop.sos"
+
+def sos_page():
+    slug = "sos"
+    desc = ("Start a secure 365 Techies remote-support session: download the support tool, open it, and read us "
+            "the 9-digit code over the phone. Big, simple steps — we stay on the line the whole way.")
+    steps_css = "font-size:1.05rem;line-height:1.65"
+    content = "\n".join([
+      hero(bc("SOS Remote Support"), "// SOS &middot; WE&rsquo;LL DO THIS TOGETHER",
+           'Let&rsquo;s get you <em class="grad grad--green">connected</em>',
+           "Best done while you&rsquo;re on the phone with us &mdash; we&rsquo;ll talk you through every step and you&rsquo;ll see everything we do. Not on the phone yet? Call <strong>01202 775566</strong> first and we&rsquo;ll do it together.",
+           cta1=("Start Step 1 Below", "#step1"), cta2=("Call 01202 775566", "tel:+441202775566"),
+           chips=["We stay on the phone with you", "Nothing installs permanently", "You watch everything"]),
+      f'''    <section class="section section--alt" id="step1" aria-label="Step 1 — download">
+      <div class="wrap" style="max-width:820px;margin:0 auto;text-align:center">
+        <p class="eyebrow eyebrow--center mono" data-reveal>STEP 1 OF 3</p>
+        <h2 class="section-title section-title--center" data-title>Download the support tool<span class="title-underline title-underline--center"></span></h2>
+        <p class="lede lede--center" data-reveal style="{steps_css}">Click the big green button. A small program downloads &mdash; it doesn&rsquo;t install anything permanent on your computer.</p>
+        <p style="margin:1.6rem 0 0.8rem" data-reveal>
+          <a class="button primary button--lg" id="sos-dl" href="{SOS_DL_WIN}" style="font-size:1.15rem;padding:1.1rem 2.4rem">&#11015;&#65039; Download the Support Tool</a>
+        </p>
+        <p class="mono" id="sos-dl-status" style="color:var(--muted);font-size:0.8rem" aria-live="polite">// FOR WINDOWS COMPUTERS &amp; LAPTOPS &middot; ABOUT 20&nbsp;MB</p>
+        <p style="color:var(--muted);margin-top:1.4rem;font-size:0.95rem" data-reveal>On an <strong>Android phone or tablet</strong>? <a href="{SOS_DL_ANDROID}" target="_blank" rel="noopener">Get the Splashtop SOS app from Google Play</a> instead, then jump to step 3.</p>
+      </div>
+    </section>''',
+      f'''    <section class="section" aria-label="Step 2 — open it">
+      <div class="wrap" style="max-width:820px;margin:0 auto;text-align:center">
+        <p class="eyebrow eyebrow--center mono" data-reveal>STEP 2 OF 3</p>
+        <h2 class="section-title section-title--center" data-title>Open the file you just downloaded<span class="title-underline title-underline--center"></span></h2>
+        <div class="prose" data-reveal style="text-align:left;max-width:640px;margin:0 auto;{steps_css}">
+          <p>Look for <strong>SplashtopSOS</strong> &mdash; it usually appears at the <strong>bottom of your browser window</strong>, or in your <strong>Downloads</strong> folder. Click it once (or double-click in Downloads) to open it.</p>
+          <p><strong>If Windows asks &ldquo;Do you want to allow this app to make changes?&rdquo;</strong> &mdash; don&rsquo;t worry, either answer is fine. The tool opens all the same.</p>
+        </div>
+      </div>
+    </section>''',
+      f'''    <section class="section section--alt" aria-label="Step 3 — read us the code">
+      <div class="wrap" style="max-width:820px;margin:0 auto;text-align:center">
+        <p class="eyebrow eyebrow--center mono" data-reveal>STEP 3 OF 3</p>
+        <h2 class="section-title section-title--center" data-title>Read us the 9-digit number<span class="title-underline title-underline--center"></span></h2>
+        <p data-reveal aria-hidden="true" class="mono" style="font-size:2.1rem;letter-spacing:0.18em;color:var(--cyan);margin:0.6rem 0 1rem">123&thinsp;456&thinsp;789</p>
+        <div class="prose" data-reveal style="text-align:left;max-width:640px;margin:0 auto;{steps_css}">
+          <p>A window opens showing a <strong>9-digit number</strong>. Read it to us over the phone &mdash; that number is your permission, and we can&rsquo;t connect without it.</p>
+          <p>Then relax: <strong>you&rsquo;ll see everything we do on your screen</strong>, and our access ends the moment the session does. We can&rsquo;t reconnect later without a brand-new code from you.</p>
+        </div>
+      </div>
+    </section>''',
+      '''    <section class="section" aria-label="Safety and trouble-shooting">
+      <div class="wrap">
+        <div class="tile-grid" data-stagger style="max-width:900px;margin:0 auto">
+          <div class="tile"><h3>&#128274; Is this safe?</h3><p>Yes. Sessions are encrypted, the one-time code is your permission, and we never connect out of the blue &mdash; a session only ever starts while we&rsquo;re talking to you.</p></div>
+          <div class="tile"><h3>&#129300; Nothing downloaded?</h3><p>Stay on the phone &mdash; we&rsquo;ll talk you through it. You can also try the <a href="https://sos.splashtop.com/en/sos-download" target="_blank" rel="noopener">direct download page</a>.</p></div>
+          <div class="tile"><h3>&#127397; Which devices?</h3><p>Windows computers and laptops, plus Android phones and tablets. We can&rsquo;t remotely connect to Apple Macs, iPhones or iPads.</p></div>
+        </div>
+      </div>
+    </section>''',
+      '''    <script>
+    /* Auto-start the download once per visit — belt for the button's braces.
+       Guarded so back-navigation doesn't re-trigger it. */
+    (function () {
+      try {
+        if (sessionStorage.getItem("tt_sos_dl")) return;
+        setTimeout(function () {
+          var a = document.getElementById("sos-dl");
+          var st = document.getElementById("sos-dl-status");
+          if (!a) return;
+          sessionStorage.setItem("tt_sos_dl", "1");
+          var l = document.createElement("a");
+          l.href = a.href; l.download = "";
+          document.body.appendChild(l); l.click(); l.remove();
+          if (st) st.textContent = "// YOUR DOWNLOAD HAS STARTED \\u2014 LOOK AT THE BOTTOM OF THIS WINDOW OR IN YOUR DOWNLOADS FOLDER";
+        }, 1400);
+      } catch (e) {}
+    })();
+  </script>''',
+      cta("Rather we just talked you through it?", "That&rsquo;s what we&rsquo;re here for. Ring us and we&rsquo;ll do every step together, at your pace.",
+          primary=("Call 01202 775566", "tel:+441202775566"), secondary=("Text us: 07520 615332", "sms:+447520615332")),
+    ])
+    def schema(s, _d=desc):
+        return graph([crumb(s, "SOS Remote Support"), webpage(s, "SOS Remote Support", _d)])
+    add(slug=slug, title="SOS Remote Support — Get Connected | 365 Techies",
+        desc=desc, og_title="SOS Remote Support | 365 Techies", schema=schema, content=content)
+sos_page()
+
 # ===================================================== CYBER THREATS EXPLAINED
 def make_threat(slug, name, h1, lede, desc, what_html, signs, protect, ifhit, faqs):
     related = "\n".join(f'          <li><a href="/{t["slug"]}/">{t["name"]}</a></li>' for t in THREATS if t["slug"] != slug)
