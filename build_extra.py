@@ -268,7 +268,7 @@ BOOKING_EMBED = '''    <section class="section section--alt" aria-label="Online 
         </div>
         <div class="booking-embed" data-reveal>
           <div id="sbw-widget"></div>
-          <p class="booking-fallback">Booking system not loading? <a href="https://365techies.secure.simplybook.it/v2/" target="_blank" rel="noopener">OPEN IT IN A NEW TAB &#8594;</a></p>
+          <p class="booking-fallback">Booking system not loading? <a href="https://365techies.simplybook.it/v2/" target="_blank" rel="noopener">OPEN IT IN A NEW TAB &#8594;</a></p>
         </div>
       </div>
       <script src="//widget.simplybook.it/v2/widget/widget.js" defer></script>
@@ -276,7 +276,7 @@ BOOKING_EMBED = '''    <section class="section section--alt" aria-label="Online 
         window.addEventListener('load', function () {
           try {
             if (typeof SimplybookWidget === 'undefined') return;
-            new SimplybookWidget({"widget_type":"iframe","url":"https://365techies.secure.simplybook.it","theme":"default","theme_settings":{"timeline_hide_unavailable":"1","hide_past_days":"0","timeline_show_end_time":"0","timeline_modern_display":"as_slots","sidebar_type":"normal","display_item_mode":"block","body_bg_color":"#070d22","dark_font_color":"#eaf4ff","light_font_color":"#ffffff","btn_color_1":"#1d97e3","sidebar_bg_color":"#0c1430","booking_nav_bg_color":"#0c1430"},"timeline":"modern","datepicker":"top_calendar","is_rtl":false,"app_config":{"clear_session":0,"allow_switch_to_ashby":1,"predefined":[]},"container_id":"sbw-widget"});
+            new SimplybookWidget({"widget_type":"iframe","url":"https://365techies.simplybook.it","theme":"default","theme_settings":{"timeline_hide_unavailable":"1","hide_past_days":"0","timeline_show_end_time":"0","timeline_modern_display":"as_slots","sidebar_type":"normal","display_item_mode":"block","body_bg_color":"#070d22","dark_font_color":"#eaf4ff","light_font_color":"#ffffff","btn_color_1":"#1d97e3","sidebar_bg_color":"#0c1430","booking_nav_bg_color":"#0c1430"},"timeline":"modern","datepicker":"top_calendar","is_rtl":false,"app_config":{"clear_session":0,"allow_switch_to_ashby":1,"predefined":[]},"container_id":"sbw-widget"});
           } catch (e) {}
         });
       </script>
@@ -323,7 +323,7 @@ def book_service():
       faq_html(faqs),
       cta("Not sure what you need?",
           "Call us on 01202 775566 or start a live chat and a friendly techie will help you book the right appointment.",
-          primary=("Open Booking System", "https://365techies.secure.simplybook.it/v2/"),
+          primary=("Open Booking System", "https://365techies.simplybook.it/v2/"),
           secondary=("Call 01202 775566", "tel:+441202775566")),
     ])
     def schema(s, _desc=desc, _faqs=faqs):

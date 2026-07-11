@@ -1422,7 +1422,11 @@ body.menu-open { overflow: hidden; }
    ========================================================================== */
 .booking-embed { max-width: 1000px; margin: 0 auto; }
 #sbw-widget { min-height: 620px; border-radius: 18px; overflow: hidden; }
-#sbw-widget iframe { width: 100% !important; border: 0; border-radius: 18px; background: var(--glass); }
+/* Floor on the IFRAME itself — SimplyBook's widget sets height only via a
+   postMessage from inside the frame; until (or if ever) that arrives the
+   iframe would otherwise collapse to the 150px browser default inside our
+   620px container and read as "blank". */
+#sbw-widget iframe { width: 100% !important; min-height: 680px; border: 0; border-radius: 18px; background: var(--glass); }
 .booking-fallback { text-align: center; margin-top: 1.2rem; color: var(--faint); font-size: 0.82rem; font-family: var(--font-mono); letter-spacing: 0.04em; }
 .booking-fallback a { color: var(--cyan); }
 
