@@ -68,7 +68,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=59" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=60" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -446,6 +446,7 @@
             <a href="/microsoft-365-support/">Microsoft 365</a>
             <a href="/cybersecurity-support/">Cybersecurity</a>
             <a href="/computer-repairs/">Computer Repairs</a>
+            <span class="dropdown__label dropdown__label--sep">Dell specialists since 1995</span>
             <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
             <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
             <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
@@ -597,6 +598,7 @@
           <a href="/microsoft-365-support/">Microsoft 365</a>
           <a href="/cybersecurity-support/">Cybersecurity</a>
           <a href="/computer-repairs/">Computer Repairs</a>
+          <span class="dropdown__label dropdown__label--sep">Dell specialists since 1995</span>
           <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
           <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
           <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
@@ -718,7 +720,7 @@
       </div>
     </section>
 
-    <section class="section section--alt" aria-label="What the Windows 11 24H2 update actually changed">
+    <section class="section" aria-label="What the Windows 11 24H2 update actually changed">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; WHAT ACTUALLY CHANGED</p>
         <h2 class="section-title" data-title>What the Windows 11 24H2 update actually changed<span class="title-underline"></span></h2>
@@ -744,7 +746,7 @@
 <p>You can usually confirm this is the 24H2 change by the error you get. The most common ones are:</p><ul><li><strong>0x80070035 &mdash; &lsquo;The network path was not found&rsquo;.</strong> Misleading, because the path is fine; the connection is being refused before it gets that far.</li><li><strong>&lsquo;You can&rsquo;t access this shared folder because your organisation&rsquo;s security policies block unauthenticated guest access.&rsquo;</strong> This is the guest-logon block, almost word for word. You may see error code 0x4f8 alongside it.</li><li><strong>A username and password box that rejects everything you type</strong>, or keeps reappearing in a loop &mdash; usually a stale saved credential, or a share that only ever offered guest access.</li></ul><p>A useful tell is the timing: everything worked until a Windows feature update landed, then several machines (or just the ones that updated) lost access to the same folder at once. If a colleague on an older Windows build can still reach the share and a freshly-updated PC can&rsquo;t, that&rsquo;s 24H2 doing exactly what it was designed to do. Jot down the exact wording and the share path (it looks like <strong>\\PC-NAME\Folder</strong>) before you start &mdash; it saves time if you call us.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="The safe fix: give the share a proper login">
+    <section class="section" aria-label="The safe fix: give the share a proper login">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; THE SAFE FIX</p>
         <h2 class="section-title" data-title>The safe fix: give the share a proper login<span class="title-underline"></span></h2>
@@ -758,7 +760,7 @@
 <p>If the folder lives on a NAS (a Synology, QNAP, WD, Buffalo or similar box) rather than another PC, the same two rules apply &mdash; but you fix them on the NAS, not in Windows. The proper path is to <strong>enable SMB signing on the NAS</strong> and give it a real user account with a password, then connect from Windows using those details.</p><p>The exact menu wording varies by make and model, so we won&rsquo;t guess yours here &mdash; but in general you&rsquo;re looking for the SMB or file-services settings, an option to enable or require signing, and a minimum SMB protocol of SMB2 or SMB3 (never SMB1, which is insecure and disabled in modern Windows). A firmware update often adds or fixes these options, so check for one first.</p><p>Some older or budget NAS units simply can&rsquo;t do signing at all. If yours can&rsquo;t, you&rsquo;re left choosing between replacing it, living with the workaround below, or moving those files somewhere better. We&rsquo;re happy to check your specific model and tell you honestly which camp it&rsquo;s in.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="The bodge &mdash; and why we&rsquo;d rather you didn&rsquo;t">
+    <section class="section" aria-label="The bodge &mdash; and why we&rsquo;d rather you didn&rsquo;t">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; THE BODGE (AND ITS COST)</p>
         <h2 class="section-title" data-title>The bodge &mdash; and why we&rsquo;d rather you didn&rsquo;t<span class="title-underline"></span></h2>

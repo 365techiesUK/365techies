@@ -68,7 +68,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=59" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=60" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -444,6 +444,7 @@
             <a href="/microsoft-365-support/">Microsoft 365</a>
             <a href="/cybersecurity-support/">Cybersecurity</a>
             <a href="/computer-repairs/">Computer Repairs</a>
+            <span class="dropdown__label dropdown__label--sep">Dell specialists since 1995</span>
             <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
             <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
             <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
@@ -595,6 +596,7 @@
           <a href="/microsoft-365-support/">Microsoft 365</a>
           <a href="/cybersecurity-support/">Cybersecurity</a>
           <a href="/computer-repairs/">Computer Repairs</a>
+          <span class="dropdown__label dropdown__label--sep">Dell specialists since 1995</span>
           <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
           <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
           <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
@@ -716,7 +718,7 @@
       </div>
     </section>
 
-    <section class="section section--alt" aria-label="Can&rsquo;t send BTinternet email from new Outlook? Start here">
+    <section class="section" aria-label="Can&rsquo;t send BTinternet email from new Outlook? Start here">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; QUICK ANSWER</p>
         <h2 class="section-title" data-title>Can&rsquo;t send BTinternet email from new Outlook? Start here<span class="title-underline"></span></h2>
@@ -742,7 +744,7 @@
 <p>These are the settings BT publishes for any email program, including new Outlook. Use them exactly &mdash; a single wrong digit stops sending.</p><ul><li><strong>Outgoing (SMTP) server:</strong> mail.btinternet.com</li><li><strong>SMTP port:</strong> 465 with SSL/TLS (SSL enabled, not STARTTLS)</li><li><strong>Authentication:</strong> required &mdash; the same username and password as your incoming server</li><li><strong>Username:</strong> your <strong>full</strong> BTinternet address, e.g. yourname@btinternet.com (or @btopenworld.com / @talk21.com)</li><li><strong>Password:</strong> your BT email password &mdash; not a BT broadband account PIN</li></ul><p>For completeness, incoming mail is <strong>mail.btinternet.com</strong> on <strong>port 993 with SSL (IMAP)</strong>. If port 465 won&rsquo;t send, <strong>port 587 with STARTTLS</strong> usually works as an alternative outgoing port &mdash; you&rsquo;d enter one or the other when you add or re-add the account. These are the same details you&rsquo;d use when the account won&rsquo;t add in the first place; if you&rsquo;re stuck at that earlier stage, see our guide on <a href="/btinternet-email-wont-add-to-new-outlook/">BTinternet email that won&rsquo;t add to new Outlook</a>.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Why BTinternet sending breaks in new Outlook">
+    <section class="section" aria-label="Why BTinternet sending breaks in new Outlook">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; WHY IT FAILS</p>
         <h2 class="section-title" data-title>Why BTinternet sending breaks in new Outlook<span class="title-underline"></span></h2>
@@ -756,7 +758,7 @@
 <p>Here&rsquo;s the reliable order to fix it in new Outlook. Because new Outlook usually won&rsquo;t let you change the outgoing server on an account that&rsquo;s already set up, the dependable fix is to re-add the account with the right details.</p><ul><li>Open new Outlook, click the <strong>Settings</strong> gear (top right), then <strong>Accounts</strong>, then <strong>Email accounts</strong>, and select your btinternet.com account.</li><li>Click <strong>Manage</strong>. If new Outlook happens to show editable <strong>IMAP and SMTP settings</strong>, set the outgoing server to <strong>mail.btinternet.com</strong>, <strong>port 465 with SSL</strong>, and confirm <strong>authentication is on</strong>. For most BT accounts, though, there&rsquo;s nothing editable here &mdash; that&rsquo;s a known Microsoft limitation, not something you&rsquo;ve done wrong.</li><li>So <strong>remove the account</strong> and add it again &mdash; choose &lsquo;Show more options&rsquo; (advanced setup) and pick <strong>IMAP</strong> so you can type the servers yourself.</li><li>Enter incoming <strong>mail.btinternet.com, port 993, SSL</strong> and outgoing <strong>mail.btinternet.com, port 465, SSL</strong>, tick that the outgoing server <strong>requires authentication</strong>, and use your full email address and BT email password.</li><li>Send a test message to yourself. If it won&rsquo;t send on port 465, re-add using <strong>port 587 with STARTTLS</strong> instead.</li></ul><p>New Outlook&rsquo;s menus shift between updates, so the exact wording may differ slightly on your version &mdash; but the server values above don&rsquo;t change. Take a screenshot of any error message before you make changes; the code (such as a 530, or a timeout) tells us exactly which part is failing.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="If it still won&rsquo;t send">
+    <section class="section" aria-label="If it still won&rsquo;t send">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; STILL STUCK</p>
         <h2 class="section-title" data-title>If it still won&rsquo;t send<span class="title-underline"></span></h2>

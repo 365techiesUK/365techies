@@ -68,7 +68,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=59" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=60" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -428,6 +428,7 @@
             <a href="/microsoft-365-support/">Microsoft 365</a>
             <a href="/cybersecurity-support/">Cybersecurity</a>
             <a href="/computer-repairs/">Computer Repairs</a>
+            <span class="dropdown__label dropdown__label--sep">Dell specialists since 1995</span>
             <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
             <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
             <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
@@ -579,6 +580,7 @@
           <a href="/microsoft-365-support/">Microsoft 365</a>
           <a href="/cybersecurity-support/">Cybersecurity</a>
           <a href="/computer-repairs/">Computer Repairs</a>
+          <span class="dropdown__label dropdown__label--sep">Dell specialists since 1995</span>
           <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
           <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
           <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
@@ -700,7 +702,7 @@
       </div>
     </section>
 
-    <section class="section section--alt" aria-label="Yes &mdash; GPS tracking is an official Victron add-on">
+    <section class="section" aria-label="Yes &mdash; GPS tracking is an official Victron add-on">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; THE SHORT ANSWER</p>
         <h2 class="section-title" data-title>Yes &mdash; GPS tracking is an official Victron add-on<span class="title-underline"></span></h2>
@@ -714,7 +716,7 @@
 <p>There are three officially supported routes, and the right one depends on what you already have.</p><p><strong>1. A USB GPS receiver (around &pound;18&ndash;45).</strong> Victron doesn&rsquo;t sell a USB GPS of its own; instead the official <a href="https://www.victronenergy.com/media/pg/Cerbo_GX/en/index-en.html">Cerbo GX manual</a> documents support for most third-party receivers that speak NMEA&nbsp;0183 at 4800 or 38400 baud &mdash; plug one in and it&rsquo;s auto-recognised. The officially tested list includes GlobalSat models such as the BU-353S4 (roughly &pound;30&ndash;45 from UK retailers); the u-blox VK-162, around &pound;17.50 at the time of writing and sometimes sold specifically for Victron use, meets the same NMEA&nbsp;0183 criterion and is widely used in the community, though it isn&rsquo;t on the official tested list. One gotcha worth knowing: on the Cerbo GX, the USB port closest to the HDMI connector is power-only &mdash; a GPS plugged in there does precisely nothing. Full walkthrough on our <a href="/cerbo-gx-gps/">Cerbo GX GPS</a> page.</p><p><strong>2. The boat&rsquo;s existing NMEA 2000 GPS (around &pound;52).</strong> If your boat already has an N2K GPS, the Cerbo can read it over VE.Can using Victron&rsquo;s VE.Can to NMEA2000 micro-C male cable (ASS030520200, around &pound;52) or the OSUKL 3802 adapter, with the VE.Can port set to the 250&nbsp;kbit/s NMEA2000 profile. The catch: the device must present itself as Device Class 60 (Navigation), Function 145 (Ownship Position). Dedicated N2K GPS pucks and sensors reliably do; whether a given chartplotter re-broadcasts position that way varies by manufacturer, so it needs checking per device. More on our <a href="/victron-boat-gps-tracking/">boat GPS tracking</a> page.</p><p><strong>3. A GX LTE 4G-E (around &pound;215 plus a SIM).</strong> If the system also needs its own internet connection, the GX LTE 4G-E (around &pound;183) has a GPS receiver built in &mdash; but it stays inactive until the optional active GPS antenna is fitted (part GSM900200100, around &pound;32&ndash;36, and it is not in the box). It needs Venus OS v2.60 or later and a Mini-SIM, and the official manual is plain that with the antenna fitted &lsquo;the system can be tracked as well as geo-fenced on the VRM Portal&rsquo;. Two cautions: the modem provides internet for the GX only &mdash; it is not a wifi router for the occupants &mdash; and the older GX GSM is a 2G/3G unit, a dead end now UK 3G has been switched off. Three LTE variants exist; make sure you buy the 4G-E for the UK and Europe.</p><p>All prices here are indicative UK retailer prices at the time of writing, not ours. In practice: a van that already has internet needs about &pound;18 of hardware; a van that needs internet and GPS together, about &pound;215 plus a SIM; a boat reusing its N2K GPS, about &pound;52.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Fleet map, geofence and history &mdash; before we add anything">
+    <section class="section" aria-label="Fleet map, geofence and history &mdash; before we add anything">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; WHAT VRM GIVES YOU FREE</p>
         <h2 class="section-title" data-title>Fleet map, geofence and history &mdash; before we add anything<span class="title-underline"></span></h2>
@@ -728,7 +730,7 @@
 <p>Here is the cadence story most tracking pages skip. Position reaches VRM inside the GX device&rsquo;s ordinary datalog, so the map moves at the log interval &mdash; <strong>15 minutes by default</strong>, configurable down to one minute under Settings &rarr; VRM online portal &rarr; Log interval. One-minute logging uses about 25&nbsp;MB of data a month, which is nothing for a van and worth setting on any vehicle you actually want to track.</p><p>Two things are faster. Open an installation in VRM and its <strong>realtime mode</strong> streams updates roughly every two seconds while you&rsquo;re watching. And underneath, the GX publishes position over <strong>MQTT</strong> &mdash; latitude, longitude, speed, course, altitude and fix quality &mdash; event-driven rather than on a timer. Victron doesn&rsquo;t publish an official update rate for a moving vehicle, so we won&rsquo;t invent one: in practice it&rsquo;s near-live, typically updating every second or two.</p><p>That MQTT feed is the same one our <a href="/cerbo-gx-mqtt-dashboard/">custom dashboards</a> already stream: our own van&rsquo;s battery data updates every second or two on <a href="/custom-vrm-dashboards/">this very site</a>, live, right now. Adding GPS topics to that pipeline is a small increment &mdash; though we&rsquo;ll be straight that the van doesn&rsquo;t carry a GPS yet, so we won&rsquo;t point you at a live route map that doesn&rsquo;t exist. Ask us for a demonstration and we&rsquo;ll show you the architecture running instead.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Routes that outlive VRM&rsquo;s six-month detail window">
+    <section class="section" aria-label="Routes that outlive VRM&rsquo;s six-month detail window">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; THE ROUTE TRACKER WE BUILD</p>
         <h2 class="section-title" data-title>Routes that outlive VRM&rsquo;s six-month detail window<span class="title-underline"></span></h2>
@@ -742,7 +744,7 @@
 <p>Because the VRM map already shows every installation on an account, Victron fleet tracking scales naturally &mdash; the work is turning it into one branded screen you&rsquo;d happily put in reception.</p><p><strong>Hire fleets.</strong> Every van on one map with charge state beside position: which vehicles are out, where they are, and whether one is about to come back flat. That&rsquo;s the heart of our <a href="/motorhome-hire-fleet-monitoring/">motorhome hire fleet monitoring</a> service.</p><p><strong>Sites with scattered kit.</strong> <a href="/glamping-power-monitoring/">Glamping pods</a> and <a href="/off-grid-holiday-let-monitoring/">off-grid holiday lets</a> rarely move, but the same one-account, one-screen treatment shows every unit&rsquo;s power health at a glance &mdash; and anything towable keeps its dot on the map.</p><p><strong>Installers.</strong> If you fit Victron kit for a living, we can build the fleet screen under your brand rather than ours &mdash; see <a href="/white-label-victron-monitoring/">white-label Victron monitoring</a>.</p><p>Any of these can run full-screen on a <a href="/victron-vrm-tv-kiosk-display/">TV or kiosk display</a>, be <a href="/embed-victron-vrm-on-website/">embedded in your existing website</a>, or be deployed wholesale to a subdomain you own, with your VRM token kept in one server-side file rather than in the page code. Boats are a story of their own &mdash; coastal 4G range, Starlink afloat, keeping an eye on an anchored position &mdash; covered on our <a href="/victron-boat-gps-tracking/">boat GPS tracking</a> page.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Not a theft tracker &mdash; and we won&rsquo;t pretend otherwise">
+    <section class="section" aria-label="Not a theft tracker &mdash; and we won&rsquo;t pretend otherwise">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/07 &mdash; WHAT THIS IS NOT</p>
         <h2 class="section-title" data-title>Not a theft tracker &mdash; and we won&rsquo;t pretend otherwise<span class="title-underline"></span></h2>

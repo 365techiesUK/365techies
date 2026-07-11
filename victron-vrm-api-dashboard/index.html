@@ -68,7 +68,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=59" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=60" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -452,6 +452,7 @@
             <a href="/microsoft-365-support/">Microsoft 365</a>
             <a href="/cybersecurity-support/">Cybersecurity</a>
             <a href="/computer-repairs/">Computer Repairs</a>
+            <span class="dropdown__label dropdown__label--sep">Dell specialists since 1995</span>
             <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
             <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
             <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
@@ -603,6 +604,7 @@
           <a href="/microsoft-365-support/">Microsoft 365</a>
           <a href="/cybersecurity-support/">Cybersecurity</a>
           <a href="/computer-repairs/">Computer Repairs</a>
+          <span class="dropdown__label dropdown__label--sep">Dell specialists since 1995</span>
           <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
           <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
           <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
@@ -724,7 +726,7 @@
       </div>
     </section>
 
-    <section class="section section--alt" aria-label="Yes &mdash; you can build a custom dashboard on the VRM API">
+    <section class="section" aria-label="Yes &mdash; you can build a custom dashboard on the VRM API">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; THE SHORT ANSWER</p>
         <h2 class="section-title" data-title>Yes &mdash; you can build a custom dashboard on the VRM API<span class="title-underline"></span></h2>
@@ -738,7 +740,7 @@
 <p>Four or five endpoints do almost all the work. Once you have a token and an <strong>idSite</strong>, this is the map:</p><ul><li><strong>Authenticate</strong> &mdash; create a personal access token in your VRM profile and send it in the <strong>X-Authorization</strong> header. No password in your code, and you can revoke it any time.</li><li><strong>Installations</strong> &mdash; list the sites your account can see and read the <strong>idSite</strong> for the system you&rsquo;re building on. Every other call keys off that ID.</li><li><strong>Stats</strong> &mdash; time-series data for charts: state of charge, battery voltage, PV yield, consumption, across a start/end window at your chosen interval.</li><li><strong>Diagnostics</strong> &mdash; the latest logged value of every parameter the GX device reports. This is the closest thing to a &lsquo;current state&rsquo; snapshot the API offers.</li><li><strong>Widgets</strong> &mdash; pre-shaped data for specific devices (battery summary, solar charger, inverter), handy when you&rsquo;d rather not assemble a view from raw parameters.</li><li><strong>Overallstats</strong> &mdash; lifetime and aggregated totals for the &lsquo;since install&rsquo; numbers.</li></ul><p>Request only the parameters you&rsquo;ll actually display. A tidy dashboard that pulls six values beats one that drags down everything and shows half of it.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="How &lsquo;live&rsquo; does it really need to be?">
+    <section class="section" aria-label="How &lsquo;live&rsquo; does it really need to be?">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; POLLING VS THE MQTT REALTIME OPTION</p>
         <h2 class="section-title" data-title>How &lsquo;live&rsquo; does it really need to be?<span class="title-underline"></span></h2>
@@ -752,7 +754,7 @@
 <p>The API is generous but not infinite, and courtesy keeps you out of trouble. <strong>Cache on your server, poll at a sane interval, and back off when you get an error</strong> rather than retrying in a tight loop. If ten browsers open your dashboard, they should all read from your cache &mdash; not fire ten fresh calls at Victron.</p><p>Which brings up the part beginners skip: <strong>this needs somewhere to live.</strong> Your access token must never sit in browser JavaScript where anyone could read it, so you put a small server or proxy in the middle. It holds the token, talks to the VRM API, caches the results, and serves clean data to your front-end &mdash; browser, wall-mounted TV, or website embed.</p><p>That&rsquo;s not theory for us. Our own off-grid support van runs exactly this pattern: a server-side proxy holds a read-only token and feeds two live dashboards from the official VRM API, so the credentials never touch the public page. It&rsquo;s a modest bit of infrastructure, but it&rsquo;s the difference between a demo that works on your laptop and one that runs unattended for years.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Building it is a weekend. Keeping it running is forever.">
+    <section class="section" aria-label="Building it is a weekend. Keeping it running is forever.">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; THE PART EVERYONE UNDERESTIMATES</p>
         <h2 class="section-title" data-title>Building it is a weekend. Keeping it running is forever.<span class="title-underline"></span></h2>
@@ -766,7 +768,7 @@
 <p>We don&rsquo;t ask you to take this on trust from a slide deck. <strong>Our own off-grid support van &mdash; the 365 Crafter &mdash; is live on this site right now.</strong> It&rsquo;s a real vehicle with a Cerbo GX running Venus OS, MPPT solar and a lithium battery bank, and its data streams through the official VRM API onto our public page.</p><p>On <a href="/custom-vrm-dashboards/">our custom VRM dashboards page</a> you can watch the same van rendered in <strong>two completely different dashboard styles</strong> &mdash; proof that once you&rsquo;re building on the API, the layout and branding are yours, not VRM&rsquo;s fixed template. There&rsquo;s also a <strong>fleet-style demo</strong> where several vehicles appear on one screen; only the van is real live data, and it&rsquo;s clearly labelled as such, so you&rsquo;re never misled about what you&rsquo;re looking at.</p><p>It&rsquo;s the worked example the search results don&rsquo;t give you: not a code snippet buried in a forum thread, but a running dashboard you can open, poke at, and judge for yourself.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Pricing is quote-based &mdash; here&rsquo;s what moves it">
+    <section class="section" aria-label="Pricing is quote-based &mdash; here&rsquo;s what moves it">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/07 &mdash; WHAT IT COSTS</p>
         <h2 class="section-title" data-title>Pricing is quote-based &mdash; here&rsquo;s what moves it<span class="title-underline"></span></h2>

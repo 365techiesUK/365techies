@@ -68,7 +68,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=59" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=60" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -452,6 +452,7 @@
             <a href="/microsoft-365-support/">Microsoft 365</a>
             <a href="/cybersecurity-support/">Cybersecurity</a>
             <a href="/computer-repairs/">Computer Repairs</a>
+            <span class="dropdown__label dropdown__label--sep">Dell specialists since 1995</span>
             <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
             <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
             <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
@@ -603,6 +604,7 @@
           <a href="/microsoft-365-support/">Microsoft 365</a>
           <a href="/cybersecurity-support/">Cybersecurity</a>
           <a href="/computer-repairs/">Computer Repairs</a>
+          <span class="dropdown__label dropdown__label--sep">Dell specialists since 1995</span>
           <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
           <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
           <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
@@ -724,7 +726,7 @@
       </div>
     </section>
 
-    <section class="section section--alt" aria-label="What a Cerbo GX MQTT dashboard actually is">
+    <section class="section" aria-label="What a Cerbo GX MQTT dashboard actually is">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; THE SHORT ANSWER</p>
         <h2 class="section-title" data-title>What a Cerbo GX MQTT dashboard actually is<span class="title-underline"></span></h2>
@@ -738,7 +740,7 @@
 <p>There are two brokers, and the right choice depends on where the screen lives.</p><p><strong>Local broker (FlashMQ on Venus OS).</strong> Since Venus OS v3.20 the GX device runs FlashMQ with the <em>dbus-flashmq</em> plugin, a D-Bus-aware broker you enable under <strong>Settings &rarr; Services &rarr; MQTT</strong>. It listens on the LAN on TCP 1883 (plain) and 8883 (TLS). This is the lowest-latency, no-internet-required option &mdash; ideal for a wall display in the same building &mdash; but the client has to reach the GX on the local network or over a VPN.</p><p><strong>VRM cloud broker.</strong> Victron also relays the same feed through <em>mqtt&lt;N&gt;.victronenergy.com</em>, where the broker index is derived from your VRM portal ID. It is TLS-secured and authenticated with your VRM credentials or an access token, so the dashboard can live anywhere in the world. Each cloud broker serves a bounded number of installations, so the exact hostname for your system matters.</p><p>Both brokers share one non-obvious rule: you must publish a <strong>keepalive</strong> to <em>R/&lt;portalid&gt;/keepalive</em> about every 30 seconds &mdash; the feed times out after roughly a minute &mdash; or it quietly drops back to just serial and system data. Data topics are namespaced <em>N/&lt;portalid&gt;/&lt;service&gt;/&lt;instance&gt;/&hellip;</em>; the <em>R/</em> prefix requests a read and <em>W/</em> writes a value back. Miss the keepalive and your &lsquo;dead&rsquo; dashboard is usually alive &mdash; just starved.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Why REST alone is never realtime">
+    <section class="section" aria-label="Why REST alone is never realtime">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; THE REST TRAP</p>
         <h2 class="section-title" data-title>Why REST alone is never realtime<span class="title-underline"></span></h2>
@@ -752,7 +754,7 @@
 <p>Subscribing to a broker is the easy 20%. Any MQTT client can print topics to a terminal. Turning that firehose into a display you would happily bolt to a wall for three years is the other 80%, and it is where weekend projects stall.</p><ul><li><strong>A resilient connection loop</strong> that re-authenticates, re-subscribes and re-sends keepalives through Wi-Fi drops, GX reboots and broker cutovers &mdash; without a human noticing.</li><li><strong>Credentials kept server-side.</strong> TLS certificates and VRM tokens belong on a backend, never baked into browser JavaScript where anyone can read them.</li><li><strong>Decoding the raw values:</strong> enum states (system state, MPPT state, alarm codes) into words, unit scaling, derived figures, and sensible handling of <em>stale</em> readings so a frozen number never masquerades as a live one.</li><li><strong>A front end that runs 24/7</strong> on a kiosk, TV or tablet without leaking memory or needing a nightly refresh &mdash; smooth gauges, readable at a glance, dark for a control room.</li><li><strong>Branding and hosting:</strong> your logo, your colours, a URL you can hand to a client, and somewhere reliable to run it.</li></ul><p>None of this is exotic. It is just a lot of unglamorous engineering that has to be right every day, not only on the demo. That is the work we have already done &mdash; and you can watch the result running below.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Our own off-grid van, streaming right now">
+    <section class="section" aria-label="Our own off-grid van, streaming right now">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; SEE IT RUNNING LIVE</p>
         <h2 class="section-title" data-title>Our own off-grid van, streaming right now<span class="title-underline"></span></h2>
@@ -766,7 +768,7 @@
 <p>Every dashboard is quoted individually, because the work genuinely varies &mdash; we would rather scope it properly than post a headline number that turns out to be wrong for you. There are no set prices to quote here, but these are the honest cost drivers:</p><ul><li><strong>Broker and reach:</strong> local-only, VRM cloud, or both &mdash; and whether the screen sits on the LAN or must be reachable worldwide.</li><li><strong>Scope:</strong> how many parameters, screens and derived views; a single glanceable kiosk is very different from a multi-view control room.</li><li><strong>One system or a fleet:</strong> a single Cerbo versus many installations aggregated into one view.</li><li><strong>Read-only or control:</strong> a display is simpler than a dashboard that also writes values back (ESS mode, relays) with the safeguards that demands.</li><li><strong>Branding, hosting and uptime:</strong> your look, where it runs, and how hard it must stay up.</li></ul><p>Because we build, host and support the whole thing as a done-for-you service, we can quote the build and the ongoing running as one. Tell us what you are picturing and we will come back with a clear, itemised quote &mdash; our office hours are Monday to Friday, 9&ndash;5 UK time, and we work worldwide via remote delivery. Start on the <a href="/contact/">contact page</a>.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="What we are, and what we need from you">
+    <section class="section" aria-label="What we are, and what we need from you">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/07 &mdash; INDEPENDENCE &amp; PREREQUISITES</p>
         <h2 class="section-title" data-title>What we are, and what we need from you<span class="title-underline"></span></h2>

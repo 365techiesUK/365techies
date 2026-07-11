@@ -68,7 +68,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=59" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=60" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -422,6 +422,7 @@
             <a href="/microsoft-365-support/">Microsoft 365</a>
             <a href="/cybersecurity-support/">Cybersecurity</a>
             <a href="/computer-repairs/">Computer Repairs</a>
+            <span class="dropdown__label dropdown__label--sep">Dell specialists since 1995</span>
             <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
             <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
             <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
@@ -573,6 +574,7 @@
           <a href="/microsoft-365-support/">Microsoft 365</a>
           <a href="/cybersecurity-support/">Cybersecurity</a>
           <a href="/computer-repairs/">Computer Repairs</a>
+          <span class="dropdown__label dropdown__label--sep">Dell specialists since 1995</span>
           <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
           <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
           <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
@@ -694,7 +696,7 @@
       </div>
     </section>
 
-    <section class="section section--alt" aria-label="The quick answer: start Outlook in Safe Mode">
+    <section class="section" aria-label="The quick answer: start Outlook in Safe Mode">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">Answer first</p>
         <h2 class="section-title" data-title>The quick answer: start Outlook in Safe Mode<span class="title-underline"></span></h2>
@@ -720,7 +722,7 @@
 <p><strong>1. Disable the faulty add-in (the most common cause).</strong> With Outlook open in Safe Mode, go to <strong>File > Options > Add-ins</strong>. At the bottom, next to <em>Manage</em>, choose <strong>COM Add-ins</strong> and click <strong>Go</strong>. Untick every add-in, click <strong>OK</strong>, then close and reopen Outlook normally. If it now stays open, re-enable the add-ins one at a time (reopening Outlook after each) until it crashes again — that last one is the offender. Leave it disabled or check for an update.</p><p><strong>2. Watch out for the Teams Meeting Add-in crash.</strong> Since 12 March 2026, older classic Outlook builds (Version 2402, Build 17328.20142 or lower) can crash on launch because of a clash between the newest Teams Meeting Add-in and an older Windows file (MSVCP140.dll) bundled with those Office builds. If that is you, the real fix is to update Office: because Outlook won't open, open <strong>Word</strong> instead and go to <strong>File > Account > Update Options > Update Now</strong>. As a temporary workaround you can untick the <em>Microsoft Teams Meeting Add-in for Microsoft Office</em> via the Safe Mode add-ins steps above. Microsoft has also shipped a Teams-side fix, so keeping both Office and Teams up to date resolves it.</p><p><strong>3. Repair Office.</strong> If no add-in is to blame, run an Office repair. Close all Office apps, then go to <strong>Settings > Apps > Installed apps</strong>, find <em>Microsoft 365</em> (or Office), click the three dots and choose <strong>Modify</strong>, then <strong>Quick Repair</strong>. If that doesn't help, run <strong>Online Repair</strong> (this needs an internet connection and takes longer). Your emails are not touched by this.</p><p><strong>4. Repair the data file with scanpst.exe.</strong> A corrupt Outlook data file can crash it on open. Close Outlook and run the built-in Inbox Repair Tool, <code>scanpst.exe</code>, usually found in <code>C:\Program Files\Microsoft Office\root\Office16</code>. Browse to your .pst or .ost file, click <strong>Start</strong>, and let it repair. This is safe — it fixes the file in place.</p><p><strong>5. Create a new Outlook profile.</strong> If the profile itself is damaged, a fresh one often cures the crash. Close Outlook, open <strong>Control Panel > Mail (Microsoft Outlook) > Show Profiles > Add</strong>, create a new profile, add your account, and set it as the default. For IMAP, Exchange and Microsoft 365 accounts your mail re-downloads from the server, so nothing is lost — but if you have any POP account, back up your .pst file first, because POP mail lives only on your PC.</p><p><strong>6. Check your antivirus isn't quarantining Outlook.</strong> Occasionally security software wrongly flags Outlook and blocks it from staying open. Open your antivirus, check its quarantine and protection history, and add Outlook (<code>outlook.exe</code>) as an exception if it has been blocked.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Fix for the new Outlook app">
+    <section class="section" aria-label="Fix for the new Outlook app">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">New Outlook</p>
         <h2 class="section-title" data-title>Fix for the new Outlook app<span class="title-underline"></span></h2>

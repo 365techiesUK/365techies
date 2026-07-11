@@ -68,7 +68,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=59" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=60" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -438,6 +438,7 @@
             <a href="/microsoft-365-support/">Microsoft 365</a>
             <a href="/cybersecurity-support/">Cybersecurity</a>
             <a href="/computer-repairs/">Computer Repairs</a>
+            <span class="dropdown__label dropdown__label--sep">Dell specialists since 1995</span>
             <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
             <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
             <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
@@ -589,6 +590,7 @@
           <a href="/microsoft-365-support/">Microsoft 365</a>
           <a href="/cybersecurity-support/">Cybersecurity</a>
           <a href="/computer-repairs/">Computer Repairs</a>
+          <span class="dropdown__label dropdown__label--sep">Dell specialists since 1995</span>
           <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
           <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
           <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
@@ -710,7 +712,7 @@
       </div>
     </section>
 
-    <section class="section section--alt" aria-label="What&rsquo;s actually going wrong when Sage 50 won&rsquo;t print to PDF">
+    <section class="section" aria-label="What&rsquo;s actually going wrong when Sage 50 won&rsquo;t print to PDF">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; THE QUICK ANSWER</p>
         <h2 class="section-title" data-title>What&rsquo;s actually going wrong when Sage 50 won&rsquo;t print to PDF<span class="title-underline"></span></h2>
@@ -736,7 +738,7 @@
 <p>Sage&rsquo;s PDF engine is a virtual printer &mdash; historically the Amyuni Document Converter, shown in Windows as something like <strong>Sage PDF</strong> or <strong>Sage 50 Document Converter</strong>. When you choose Print, Preview, Publish or Email in Sage, your report is quietly &lsquo;printed&rsquo; to that driver, which turns it into a PDF. Anything that damages that driver stops the whole chain.</p><p>On Windows 11 the usual culprits are:</p><ul><li><strong>A Windows or Office update</strong> that strips the permissions the driver needs, removes the printer, or changes how drivers are trusted. That&rsquo;s why it so often &lsquo;stops working overnight&rsquo; when nothing else changed &mdash; see <a href="/why-windows-updates-break-things/">why Windows updates break things</a>.</li><li><strong>Missing administrator rights</strong>, or User Account Control blocking the driver from running.</li><li><strong>The wrong converter selected</strong>, or the Sage printer&rsquo;s port pointing somewhere other than where it should.</li><li><strong>A damaged Windows user profile</strong>, so PDFs work for one login but not another.</li></ul><p>You might see a specific message such as <strong>&lsquo;Printer not activated &mdash; error code 20&rsquo;</strong> (or -30 / -41), or the PDF may simply never appear. Those activation codes point squarely at the driver and its registry permissions rather than anything wrong with your accounts &mdash; your figures are safe throughout.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="How to fix it yourself, in the right order">
+    <section class="section" aria-label="How to fix it yourself, in the right order">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; THE FIX, IN ORDER</p>
         <h2 class="section-title" data-title>How to fix it yourself, in the right order<span class="title-underline"></span></h2>
@@ -750,7 +752,7 @@
 <p>Sometimes every other document turns into a PDF perfectly well, but one specific invoice or report fails &mdash; or you see <strong>&lsquo;Sage report designer is unable to generate report: out of memory&rsquo;</strong>. That isn&rsquo;t the driver at all. The usual cause is an oversized company logo or image embedded in that particular layout.</p><p>Sage has to load the full-resolution image every time it builds the PDF, and a large, photo-sized logo can exhaust the memory available to a single report. Swapping it for a smaller, lower-resolution version &mdash; a few hundred pixels wide is plenty for print &mdash; usually fixes it instantly. A corrupted custom layout can behave the same way; testing with one of Sage&rsquo;s standard layouts quickly tells you which of the two it is.</p><p>It&rsquo;s also worth separating two different problems. &lsquo;Won&rsquo;t make a PDF at all&rsquo; is the driver. &lsquo;Makes the PDF, but the email never sends&rsquo; is usually Outlook or your mail settings instead &mdash; we cover that on <a href="/sage-50-wont-email-invoices-outlook/">Sage 50 won&rsquo;t email invoices through Outlook</a>. Knowing which side of that line you&rsquo;re on saves a lot of wasted troubleshooting.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="How we fix Sage 50 PDF problems for you">
+    <section class="section" aria-label="How we fix Sage 50 PDF problems for you">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; HOW WE FIX IT FOR YOU</p>
         <h2 class="section-title" data-title>How we fix Sage 50 PDF problems for you<span class="title-underline"></span></h2>

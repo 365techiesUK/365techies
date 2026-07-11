@@ -3070,21 +3070,54 @@ _DELL_CLUSTER = [
  ]),
 ]
 
-def _dell_cluster_section():
-    groups = ""
+# Animated outcome scenes for the Dell hub 4-way cards (same style as course scenes).
+try:
+    from dell_scenes import SCENES as _DELL_SCENES
+except Exception:
+    _DELL_SCENES = {}
+def _dell_scene(key):
+    svg = _DELL_SCENES.get(key, "")
+    return '<div class="course-scene" aria-hidden="true">' + svg + '</div>' if svg else ''
+
+# short chip labels for the directory wayfinding row (keyed by group title)
+_DELL_CHIP = {
+    "Dell support, servicing &amp; emergency": "Support",
+    "Repair &amp; upgrades in Dorset": "Repairs",
+    "Buying a refurbished Dell": "Buying",
+    "Which Dell should I buy?": "Which to buy",
+    "Is this Dell worth it?": "Worth it?",
+    "Dell &amp; Windows 11": "Windows 11",
+}
+
+def _dell_cluster_section(exclude=()):
+    """Compact 'Everything Dell' directory: wayfinding chips + grouped link lists.
+    exclude = slugs already featured elsewhere on the page (e.g. the hub's 4-way front door)."""
+    import re as _re
+    ex = set(exclude)
+    def anchor(t):
+        return 'g-' + _re.sub(r'[^a-z0-9]+', '-', t.replace('&amp;', 'and').lower()).strip('-')
+    chips, groups = "", ""
     for gtitle, cards in _DELL_CLUSTER:
-        cc = "\n".join(
-          f'          <a class="post-card" href="/{s}/"><h3>{t}</h3><p>{b}</p><span class="post-card__more">Read more &#8594;</span></a>'
-          for s, t, b in cards)
-        groups += (f'        <div class="blog-cat-head" data-reveal><h2>{gtitle}</h2></div>\n'
-                   f'        <div class="blog-grid" data-stagger>\n{cc}\n        </div>\n')
+        cards = [c for c in cards if c[0] not in ex]
+        if not cards:
+            continue
+        a = anchor(gtitle)
+        chip = _DELL_CHIP.get(gtitle, gtitle.split()[0])
+        chips += f'          <a href="#{a}">{chip}</a>\n'
+        items = "\n".join(
+          f'            <a href="/{s}/"><strong>{t}</strong><span>{b}</span></a>' for s, t, b in cards)
+        groups += (f'        <div class="dell-dir-group" id="{a}">\n'
+                   f'          <h3>{gtitle}</h3>\n'
+                   f'          <div class="dell-dir">\n{items}\n          </div>\n'
+                   f'        </div>\n')
     return ('    <section class="blog-section section--alt" aria-label="Everything Dell" id="dell-help">\n'
             '      <div class="wrap">\n'
             '        <div class="section-head">\n'
             '          <p class="eyebrow eyebrow--center mono" data-reveal>// EVERYTHING DELL &middot; DORSET&rsquo;S DELL SPECIALIST</p>\n'
-            '          <h2 class="section-title section-title--center" data-title>Dell repairs, buying help &amp; model guides<span class="title-underline title-underline--center"></span></h2>\n'
-            '          <p class="lede lede--center" data-reveal>Thirty years with Dell, in one place &mdash; independent Dell repair across Dorset, honest refurbished-buying advice, and plain-English model guides. Not sure? <a href="/contact/">Talk to a techie</a>.</p>\n'
+            '          <h2 class="section-title section-title--center" data-title>Browse all our Dell help<span class="title-underline title-underline--center"></span></h2>\n'
+            '          <p class="lede lede--center" data-reveal>Thirty years with Dell, all in one place. Jump to what you need &mdash; or just <a href="/contact/">talk to a techie</a>.</p>\n'
             '        </div>\n'
+            '        <nav class="dell-chips" aria-label="Jump to a Dell topic" data-reveal>\n' + chips + '        </nav>\n'
             + groups +
             '      </div>\n'
             '    </section>')
@@ -3376,18 +3409,18 @@ def dell_it_support_hub():
             "specialist of 30+ years - remote support, servicing, emergency repairs and refurbished Dell "
             "from &pound;299, for homes &amp; businesses. Mon-Fri, no call-out fee. Call 01202 775566.")
     ways = [
-      ("&#128421;&#65039;", "Remote Dell support", "/dell-remote-support/",
+      ("remote", "Remote Dell support", "/dell-remote-support/",
        "We connect securely over a session you watch and fix Windows, email, drivers, settings and slowdowns on your Dell &mdash; often the same day, and we always phone before we connect."),
-      ("&#128295;", "Dell servicing &amp; maintenance", "/dell-support-plans/",
+      ("servicing", "Dell servicing &amp; maintenance", "/dell-support-plans/",
        "Keep your Dell fast, cool and healthy with proactive servicing and a simple monthly plan &mdash; from &pound;18.25/month per computer at home, from &pound;24.38 for business."),
-      ("&#128680;", "Emergency Dell repair", "/emergency-dell-repair-bournemouth/",
+      ("emergency", "Emergency Dell repair", "/emergency-dell-repair-bournemouth/",
        "Dead, won&rsquo;t boot, or your business is down? Fast same-day response and same-day remote diagnosis where we can, plus free local collection. (Mon&ndash;Fri, 9&ndash;5 &mdash; no 24/7 promises we can&rsquo;t keep.)"),
-      ("&#128187;", "Buy a refurbished Dell", "/dell-hardware/",
+      ("sales", "Buy a refurbished Dell", "/dell-hardware/",
        "Tested, business-grade Dell Latitude laptops &amp; OptiPlex desktops from &pound;299 &mdash; new Samsung Pro SSD, our own 5-year guarantee, set up and supported."),
     ]
     ways_html = "\n".join(
-      f'          <a class="post-card" href="{href}"><div class="osc-ico" style="font-size:2rem">{ico}</div><h3>{title}</h3><p>{blurb}</p><span class="post-card__more">Get help &#8594;</span></a>'
-      for ico, title, href, blurb in ways)
+      f'          <a class="dell-way" href="{href}">{_dell_scene(key)}<h3>{title}</h3><p>{blurb}</p><span class="post-card__more">Get help &#8594;</span></a>'
+      for key, title, href, blurb in ways)
     faqs = [
       ("Do you offer Dell support across Bournemouth, Poole and Dorset?", "Yes &mdash; we&rsquo;re a family-run, independent Dell specialist based in Kinson, Bournemouth (BH10&nbsp;7LH), and we&rsquo;ve supplied and supported Dell systems for homes and businesses across Bournemouth, Poole, Christchurch and the wider Dorset area since 1995. Remote support and refurbished sales reach customers UK-wide."),
       ("Are you a Dell authorised or official service centre?", "No &mdash; and we&rsquo;re upfront about it. We&rsquo;re a genuinely <strong>independent</strong> Dell specialist, not a Dell Authorised Service Provider, not a Dell partner and not Dell ProSupport. That independence lets us give honest advice and fair prices, and fix machines Dell would rather you replaced."),
@@ -3409,7 +3442,7 @@ def dell_it_support_hub():
        '          <h2 class="section-title section-title--center" data-title>However you need us for your Dell<span class="title-underline title-underline--center"></span></h2>\n'
        '          <p class="lede lede--center" data-reveal>Remote fixes, proactive servicing, emergency repairs, or a tested refurbished replacement &mdash; pick what you need, or just call and we&rsquo;ll steer you right.</p>\n'
        '        </div>\n'
-       '        <div class="blog-grid" data-stagger>\n' + ways_html + '\n        </div>\n'
+       '        <div class="dell-ways" data-stagger>\n' + ways_html + '\n        </div>\n'
        '      </div>\n'
        '    </section>'),
       ('    <section class="section section--alt" aria-label="30 years of Dell">\n'
@@ -3428,7 +3461,7 @@ def dell_it_support_hub():
       reviews_block([("The guys at 365 listened to my actual needs and tweaked a desktop to the specs I required. It&rsquo;s a quality Dell machine. A brilliant machine at a very good price &mdash; you get a personal service here.", "Dean Robertson"),
                      ("I have trusted 365 with my IT support since 2001. I&rsquo;ve lost count of the number of PCs, tablets, laptops I&rsquo;ve bought from them.", "Heather"),
                      ("Can&rsquo;t fault the skill and attention the 365 guys give. Confidence that things keep ticking over with their regular maintenance checks.", "Rob Hazell")]),
-      _dell_cluster_section(),
+      _dell_cluster_section(exclude=("dell-remote-support", "dell-support-plans", "emergency-dell-repair-bournemouth")),
       faq_html(faqs),
       cta("Not sure what your Dell needs? Just ask.",
           "Tell us what&rsquo;s going on &mdash; a fault, a fleet, a slow machine or a replacement &mdash; and we&rsquo;ll give you an honest steer and a fixed price before any work. Or just leave it to the techies.",
@@ -13674,8 +13707,9 @@ pay_page()
 
 
 # ============================================================ EASY-KEYWORD PAGES (data-driven, from new_pages_data.py)
-def _sec_block(s):
-    return f'''    <section class="section section--alt" aria-label="{s['h2']}">
+def _sec_block(s, i=0):
+    cls = "section" if i % 2 == 0 else "section section--alt"  # alternate bg for visual rhythm
+    return f'''    <section class="{cls}" aria-label="{s['h2']}">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">{s['eyebrow']}</p>
         <h2 class="section-title" data-title>{s['h2']}<span class="title-underline"></span></h2>
@@ -13753,7 +13787,7 @@ def _pack_hub(slug):
 
 def build_new_page(d):
     faqs = [(f['q'], f['a']) if isinstance(f, dict) else tuple(f) for f in d['faqs']]
-    _blocks = [_sec_block(s) for s in d['sections']]
+    _blocks = [_sec_block(s, i) for i, s in enumerate(d['sections'])]
     # help-ASAP funnel: problem-intent pages get the SOS band right after section 1
     if _wants_sos_band(d['slug']) and len(_blocks) > 1:
         _blocks.insert(1, bp.SOS_BAND)

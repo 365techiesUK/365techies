@@ -68,7 +68,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=59" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=60" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -432,6 +432,7 @@
             <a href="/microsoft-365-support/">Microsoft 365</a>
             <a href="/cybersecurity-support/">Cybersecurity</a>
             <a href="/computer-repairs/">Computer Repairs</a>
+            <span class="dropdown__label dropdown__label--sep">Dell specialists since 1995</span>
             <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
             <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
             <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
@@ -583,6 +584,7 @@
           <a href="/microsoft-365-support/">Microsoft 365</a>
           <a href="/cybersecurity-support/">Cybersecurity</a>
           <a href="/computer-repairs/">Computer Repairs</a>
+          <span class="dropdown__label dropdown__label--sep">Dell specialists since 1995</span>
           <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
           <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
           <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
@@ -704,7 +706,7 @@
       </div>
     </section>
 
-    <section class="section section--alt" aria-label="See who has the file open in about 30 seconds">
+    <section class="section" aria-label="See who has the file open in about 30 seconds">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; QUICK ANSWER</p>
         <h2 class="section-title" data-title>See who has the file open in about 30 seconds<span class="title-underline"></span></h2>
@@ -718,7 +720,7 @@
 <p>Here&rsquo;s the reliable way to check, on the host PC that shares the folder:</p><ul><li>Right-click the <strong>Start</strong> button and choose <strong>Computer Management</strong> (or press <strong>Windows + R</strong>, type <strong>compmgmt.msc</strong> and press Enter).</li><li>In the left pane, expand <strong>System Tools</strong>, then <strong>Shared Folders</strong>, then click <strong>Open Files</strong>.</li><li>Read across the columns: <strong>Open File</strong> is the path, <strong>Accessed By</strong> is the Windows account that has it open, <strong>#Locks</strong> shows how many locks are held, and <strong>Open Mode</strong> tells you whether it&rsquo;s open Read or Write+Read.</li><li>Click <strong>Sessions</strong> (just above Open Files) to see which users, and which computers, are connected to the share right now.</li></ul><p>If you genuinely need to free the file and the person is unreachable, right-click the entry and choose <strong>Close Open File</strong>. Treat this as a last resort: any unsaved changes that person made are lost the moment you do it, and force-closing a live database file (Sage or QuickBooks, say) can corrupt it. You&rsquo;ll need administrator rights on the host both to see the list and to close anything on it.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Why Excel just says &lsquo;another user&rsquo;">
+    <section class="section" aria-label="Why Excel just says &lsquo;another user&rsquo;">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; WHAT THE MESSAGE MEANS</p>
         <h2 class="section-title" data-title>Why Excel just says &lsquo;another user&rsquo;<span class="title-underline"></span></h2>
@@ -732,7 +734,7 @@
 <p>Alongside every open Office document sits a tiny hidden companion &mdash; the <strong>owner file</strong>. Open <strong>Budget.xlsx</strong> and Excel quietly creates <strong>~$Budget.xlsx</strong> in the same folder; it&rsquo;s the flag that tells everyone else &lsquo;someone has this&rsquo;. Word does the same, though its owner file drops the first couple of letters of the name. Close the document properly and Office deletes the owner file automatically.</p><p>The trouble starts when Office <em>doesn&rsquo;t</em> close properly &mdash; a crash, a frozen laptop, or a network drop mid-save. The ~$ file is orphaned, and the document stays &lsquo;locked&rsquo; even though nobody is actually in it. That&rsquo;s a <strong>phantom lock</strong>.</p><p>To find it, open the folder on the drive, click <strong>View</strong>, then <strong>Show</strong>, then tick <strong>Hidden items</strong>. You&rsquo;ll see the ~$ file sitting next to your document. Once you&rsquo;ve <em>confirmed on the host that nobody genuinely has the file open</em> (check Open Files first), it&rsquo;s safe to delete the stale ~$ file &mdash; it holds no data of its own, so you lose nothing. Deleting it frees the lock; it won&rsquo;t, however, recover any work that was lost in the crash.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Closing a stuck session without breaking anything">
+    <section class="section" aria-label="Closing a stuck session without breaking anything">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; CLEAR A STUCK LOCK SAFELY</p>
         <h2 class="section-title" data-title>Closing a stuck session without breaking anything<span class="title-underline"></span></h2>

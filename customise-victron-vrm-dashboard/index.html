@@ -68,7 +68,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=59" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=60" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -411,6 +411,7 @@
             <a href="/microsoft-365-support/">Microsoft 365</a>
             <a href="/cybersecurity-support/">Cybersecurity</a>
             <a href="/computer-repairs/">Computer Repairs</a>
+            <span class="dropdown__label dropdown__label--sep">Dell specialists since 1995</span>
             <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
             <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
             <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
@@ -562,6 +563,7 @@
           <a href="/microsoft-365-support/">Microsoft 365</a>
           <a href="/cybersecurity-support/">Cybersecurity</a>
           <a href="/computer-repairs/">Computer Repairs</a>
+          <span class="dropdown__label dropdown__label--sep">Dell specialists since 1995</span>
           <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
           <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
           <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
@@ -683,7 +685,7 @@
       </div>
     </section>
 
-    <section class="section section--alt" aria-label="Can you re-arrange the VRM dashboard?">
+    <section class="section" aria-label="Can you re-arrange the VRM dashboard?">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; THE SHORT ANSWER</p>
         <h2 class="section-title" data-title>Can you re-arrange the VRM dashboard?<span class="title-underline"></span></h2>
@@ -697,7 +699,7 @@
 <p>Give VRM its due &mdash; there is more customisation than people realise, it just isn&rsquo;t where you expect it. On the <strong>Advanced</strong> tab you can:</p><ul><li><strong>Choose and arrange graph widgets</strong> &mdash; show, hide and stack the standard widgets for the metrics you actually care about, then set the date range and export the underlying data.</li><li><strong>Build a Custom Widget</strong> &mdash; the most powerful and least-known feature. You can plot up to <strong>6 parameters</strong> on one colour-coded chart (ideal for comparing the voltage and current of each phase of a three-phase system), reach many undocumented datapoints that have no standard widget, and now include calculated parameters drawn from the standard widgets.</li><li><strong>Rename the installation and devices</strong> &mdash; friendly names instead of serial numbers, which quietly makes every other screen easier to read.</li><li><strong>Set alarm rules and notifications</strong> &mdash; thresholds and alerts tuned to each site.</li></ul><p>For a single installation watched by someone who knows the system, that is a lot of genuine control, and the Custom Widget in particular is worth mastering before you look further. Our service <strong>builds on top of</strong> VRM through its official API &mdash; it never replaces it, and none of the above stops working. The limits below are simply the points where stock VRM was never designed to go.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="What stock VRM won&rsquo;t do">
+    <section class="section" aria-label="What stock VRM won&rsquo;t do">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; WHERE STOCK VRM STOPS</p>
         <h2 class="section-title" data-title>What stock VRM won&rsquo;t do<span class="title-underline"></span></h2>
@@ -711,7 +713,7 @@
 <p>If you have the time and the appetite, you can absolutely build a custom view yourself &mdash; and for a lot of capable installers this is the right call. There are two honest DIY routes, both using Victron&rsquo;s own tooling:</p><ul><li><strong>On the GX device (Node-RED).</strong> <a href="/cerbo-gx-mqtt-dashboard/">Venus OS Large</a> ships <strong>Node-RED</strong> and Signal K pre-installed, with the Victron nodes ready to go. You can build fully custom dashboards &mdash; gauges, graphs, indicators, even switches and sliders &mdash; and view them locally or remotely through the VRM menu. It reads live data straight off the GX via MQTT/dbus, so it is properly real-time.</li><li><strong>Off the device (the official API).</strong> The <a href="/victron-vrm-api-dashboard/">official VRM API</a> lets you pull your installation data into a front end you control, or into <a href="/victron-grafana-dashboard-service/">Grafana</a> for polished time-series dashboards.</li></ul><p>Credit where it is due: these are powerful, well-documented and effectively free if your time is free. The honest caveats are the boring ones &mdash; you own the hosting, the API token handling and security, keeping the thing running, and fixing it when Venus OS or your data model changes. For a single site that is a fun weekend; across a fleet, or as something a client relies on, it becomes real, ongoing work. That trade-off &mdash; not capability &mdash; is what usually decides between doing it yourself and having it done.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Route two: a done-for-you custom dashboard">
+    <section class="section" aria-label="Route two: a done-for-you custom dashboard">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; ROUTE TWO: DONE FOR YOU</p>
         <h2 class="section-title" data-title>Route two: a done-for-you custom dashboard<span class="title-underline"></span></h2>
@@ -725,7 +727,7 @@
 <p><strong>Don&rsquo;t take our word for it &mdash; watch a real one.</strong> Our own off-grid support van, the <strong>365 Crafter</strong>, runs a Cerbo GX on Venus OS with MPPT solar and a lithium battery bank, and it streams <strong>live</strong> through the official VRM API onto our site.</p><p>On <a href="/custom-vrm-dashboards/">our custom VRM dashboards page</a> you can see the <em>same</em> live feed rendered in <strong>two completely different dashboard styles</strong> &mdash; proof that the layout, not the data, is what we change. There is also a fleet-style demo where, in the interest of honesty, <strong>only the van is real</strong> and the other vehicles are clearly labelled as placeholders. It is genuine hardware sending genuine data, not a mock-up or a screenshot &mdash; the most honest way we can show you what a done-for-you dashboard actually looks and behaves like before you spend anything.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="What a custom VRM dashboard costs">
+    <section class="section" aria-label="What a custom VRM dashboard costs">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/07 &mdash; WHAT IT COSTS</p>
         <h2 class="section-title" data-title>What a custom VRM dashboard costs<span class="title-underline"></span></h2>

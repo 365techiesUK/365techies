@@ -68,7 +68,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=59" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=60" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -452,6 +452,7 @@
             <a href="/microsoft-365-support/">Microsoft 365</a>
             <a href="/cybersecurity-support/">Cybersecurity</a>
             <a href="/computer-repairs/">Computer Repairs</a>
+            <span class="dropdown__label dropdown__label--sep">Dell specialists since 1995</span>
             <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
             <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
             <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
@@ -603,6 +604,7 @@
           <a href="/microsoft-365-support/">Microsoft 365</a>
           <a href="/cybersecurity-support/">Cybersecurity</a>
           <a href="/computer-repairs/">Computer Repairs</a>
+          <span class="dropdown__label dropdown__label--sep">Dell specialists since 1995</span>
           <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
           <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
           <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
@@ -724,7 +726,7 @@
       </div>
     </section>
 
-    <section class="section section--alt" aria-label="The three ways to add GPS to a Cerbo GX">
+    <section class="section" aria-label="The three ways to add GPS to a Cerbo GX">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; THE SHORT ANSWER</p>
         <h2 class="section-title" data-title>The three ways to add GPS to a Cerbo GX<span class="title-underline"></span></h2>
@@ -738,7 +740,7 @@
 <p>The Cerbo GX auto-recognises most third-party USB GPS receivers that output NMEA&nbsp;0183 at <strong>4800 or 38400 baud</strong> &mdash; plug one in and it simply appears in the device list. No driver, no configuration.</p><p>Which receiver? The officially <strong>tested</strong> models in the Cerbo manual include GlobalSat units: BU353-W, ND100, BU353S4, MR350&nbsp;+&nbsp;BR305US and BU-353-N5. Separately, u-blox-based dongles such as the VK-162 and the Navilock NL-602U are widely used with GX devices because they meet the same NMEA&nbsp;0183 criterion &mdash; they work, but they are community-verified rather than on Victron&rsquo;s tested list, and that distinction is worth knowing if you want the by-the-book option. On price: a VK-162 is around £17.50 from UK retailers at the time of writing (some sell it specifically for Victron use), while the officially tested GlobalSat BU-353S4 typically sits somewhere around the £30&ndash;45 mark.</p><p><strong>Now the gotcha that generates the forum threads.</strong> On the Cerbo GX, the USB port closest to the HDMI connector is power-only &mdash; it exists to power a GX Touch screen and carries no data. Plug your GPS in there and it will sit warm, lit and completely invisible to Venus OS. Move it to one of the other USB ports and it should appear within moments.</p><p>Placement matters too: give the receiver the clearest view of sky you can &mdash; a dashboard or window shelf works in most vans. A weak, drifting fix is the usual cause of geofence false alarms later on.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Boats: feed GPS from NMEA 2000 over VE.Can">
+    <section class="section" aria-label="Boats: feed GPS from NMEA 2000 over VE.Can">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; THE BOAT ROUTE</p>
         <h2 class="section-title" data-title>Boats: feed GPS from NMEA 2000 over VE.Can<span class="title-underline"></span></h2>
@@ -752,7 +754,7 @@
 <p>The <strong>GX LTE 4G</strong> is Victron&rsquo;s cellular modem for GX systems, and it has a GPS receiver built in &mdash; with one catch that trips up nearly everyone: the GPS stays <strong>inactive until you fit the optional active GPS antenna</strong> (part GSM900200100, around £32&ndash;36 from UK retailers) to its GPS SMA connector. The GX LTE 4G GPS antenna is not in the box. With it fitted, the <a href="https://www.victronenergy.com/media/pg/GX_LTE_4G/en/index-en.html">official manual</a> puts it plainly: &lsquo;the system can be tracked as well as geo-fenced on the VRM Portal&rsquo;. You&rsquo;ll need Venus OS v2.60 or later and a Mini-SIM.</p><p>Buy the right variant: three exist for different regions, and the UK/Europe model is the <strong>GX LTE 4G-E</strong> (GSM100100400), around £183 from UK retailers at the time of writing &mdash; so roughly £215 plus a SIM for the complete route. And avoid the older <strong>GX GSM</strong>: it is a 2G/3G unit, and UK 3G networks have been switched off.</p><p>One honest caveat before you budget for it: the modem provides internet <strong>for the GX system only</strong>. It is not a wifi router for the people on board &mdash; if you want browsing and streaming, that is a separate solution, and the £18 USB GPS plus the internet you already have may be the smarter buy.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Check it works: device list, VRM map, log interval">
+    <section class="section" aria-label="Check it works: device list, VRM map, log interval">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; CHECKING IT WORKS</p>
         <h2 class="section-title" data-title>Check it works: device list, VRM map, log interval<span class="title-underline"></span></h2>
@@ -766,7 +768,7 @@
 <p>Credit where it is due: everything in this section is Victron&rsquo;s own VRM Portal doing its job, included with the platform. Once position is flowing you get the <strong>map</strong> &mdash; including the multi-installation map, which Victron&rsquo;s own documentation pitches for fleets of vehicles with GX devices and GPS. You get the <strong>VRM geofence</strong> (Settings &rarr; Geofence): draw a circle, rectangle or free shape around the current position and VRM alarms when the system leaves it <em>and</em> when location data stops arriving, with a slider to disarm it before legitimate trips &mdash; &lsquo;typically used for RVs and boats&rsquo;, as the manual says. Give the antenna clear sky, though: GPS drift is a known cause of false geofence alarms. You also get <strong>location history</strong> on the Advanced page&rsquo;s GPS widget and a downloadable track with <strong>.kml export</strong> for Google Earth &mdash; and if you share your site publicly, VRM hides the exact location by default, which is a good privacy default.</p><p>And what it honestly isn&rsquo;t: <strong>this is not a theft tracker</strong>. It carries no Thatcham certification, insurers don&rsquo;t recognise it, it is powered from the house battery &mdash; isolate the battery and tracking stops &mdash; it isn&rsquo;t concealed, and there is no internal backup battery. The geofence plus the signal-loss alarm is the honest closest thing VRM offers, and it is genuinely useful; but if theft recovery is the real requirement, fit a dedicated tracker as well. The wider picture &mdash; what Victron GPS tracking is genuinely good at &mdash; is on our <a href="/victron-gps-tracking/">Victron GPS tracking</a> guide.</p><p>One more honest limit: VRM keeps the detailed data where GPS lives for at least six months, not forever. If you want every trip you have ever made, that needs storage of its own &mdash; which brings us to the last section.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Beyond VRM: a custom route-tracker dashboard">
+    <section class="section" aria-label="Beyond VRM: a custom route-tracker dashboard">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/07 &mdash; BEYOND VRM</p>
         <h2 class="section-title" data-title>Beyond VRM: a custom route-tracker dashboard<span class="title-underline"></span></h2>

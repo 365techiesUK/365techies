@@ -68,7 +68,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=59" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=60" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -438,6 +438,7 @@
             <a href="/microsoft-365-support/">Microsoft 365</a>
             <a href="/cybersecurity-support/">Cybersecurity</a>
             <a href="/computer-repairs/">Computer Repairs</a>
+            <span class="dropdown__label dropdown__label--sep">Dell specialists since 1995</span>
             <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
             <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
             <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
@@ -589,6 +590,7 @@
           <a href="/microsoft-365-support/">Microsoft 365</a>
           <a href="/cybersecurity-support/">Cybersecurity</a>
           <a href="/computer-repairs/">Computer Repairs</a>
+          <span class="dropdown__label dropdown__label--sep">Dell specialists since 1995</span>
           <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
           <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
           <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
@@ -710,7 +712,7 @@
       </div>
     </section>
 
-    <section class="section section--alt" aria-label="Why your Sky email won&rsquo;t add to the new Outlook">
+    <section class="section" aria-label="Why your Sky email won&rsquo;t add to the new Outlook">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; THE SHORT ANSWER</p>
         <h2 class="section-title" data-title>Why your Sky email won&rsquo;t add to the new Outlook<span class="title-underline"></span></h2>
@@ -736,7 +738,7 @@
 <p>Your <em>@sky.com</em> mailbox lives on Yahoo&rsquo;s servers &mdash; Sky email has been Yahoo-powered for years. For security, Yahoo no longer lets third-party apps like Outlook sign in with your main password. Instead it expects a one-off <strong>app password</strong>: a 16-character code you generate once and use only inside Outlook.</p><p>There are two common ways it goes wrong in the new Outlook:</p><ul><li><strong>You choose &lsquo;Yahoo&rsquo; from the account-type list.</strong> That launches a Yahoo sign-in web page (an OAuth prompt) which often loops, errors, or simply doesn&rsquo;t play nicely with a Sky-branded address. Choose <strong>IMAP</strong> or <strong>Other</strong> instead.</li><li><strong>You type your normal Sky password.</strong> Yahoo rejects it, so Outlook keeps asking for it or adds the account but never syncs. This is the same root cause behind <a href="/outlook-keeps-asking-for-password/">Outlook repeatedly asking for your password</a> and a <a href="/outlook-password-not-working/">password that won&rsquo;t work</a> on Sky and Yahoo mailboxes.</li></ul><p>Get those two things right &mdash; an IMAP account and a proper app password &mdash; and the new Outlook will connect first time. Everything below is just the detail.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Create your 16-character Sky app password">
+    <section class="section" aria-label="Create your 16-character Sky app password">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; GENERATE AN APP PASSWORD</p>
         <h2 class="section-title" data-title>Create your 16-character Sky app password<span class="title-underline"></span></h2>
@@ -750,7 +752,7 @@
 <p>When you add the account, pick <strong>IMAP</strong> and enter these settings. They&rsquo;re Yahoo&rsquo;s official Sky Mail servers, and they work in the new Outlook, classic Outlook, phones and tablets alike:</p><ul><li><strong>Incoming mail (IMAP):</strong> server <em>imap.mail.yahoo.com</em>, port <strong>993</strong>, encryption <strong>SSL/TLS</strong>.</li><li><strong>Outgoing mail (SMTP):</strong> server <em>smtp.mail.yahoo.com</em>, port <strong>465</strong> (or <strong>587</strong> if 465 is blocked), encryption <strong>SSL/TLS</strong>, with &lsquo;outgoing server requires authentication&rsquo; switched on.</li><li><strong>Username:</strong> your full email address, for example <em>yourname@sky.com</em>.</li><li><strong>Password:</strong> the 16-character app password from the step above &mdash; never your normal Sky password.</li></ul><p>Some setup screens auto-fill <em>imap.tools.sky.com</em> and <em>smtp.tools.sky.com</em> instead. Those are Sky&rsquo;s own aliases and they generally work too, but if a connection times out or won&rsquo;t authenticate, switch to the <em>mail.yahoo.com</em> servers above &mdash; they&rsquo;re the most reliable. Because IMAP keeps a copy of your mail on the server, your existing emails and folders download into Outlook and stay in sync across every device.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="When it still won&rsquo;t connect &mdash; and how we fix it">
+    <section class="section" aria-label="When it still won&rsquo;t connect &mdash; and how we fix it">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; STILL WON&rsquo;T ADD?</p>
         <h2 class="section-title" data-title>When it still won&rsquo;t connect &mdash; and how we fix it<span class="title-underline"></span></h2>

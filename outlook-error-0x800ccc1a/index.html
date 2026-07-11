@@ -68,7 +68,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=59" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=60" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -422,6 +422,7 @@
             <a href="/microsoft-365-support/">Microsoft 365</a>
             <a href="/cybersecurity-support/">Cybersecurity</a>
             <a href="/computer-repairs/">Computer Repairs</a>
+            <span class="dropdown__label dropdown__label--sep">Dell specialists since 1995</span>
             <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
             <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
             <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
@@ -573,6 +574,7 @@
           <a href="/microsoft-365-support/">Microsoft 365</a>
           <a href="/cybersecurity-support/">Cybersecurity</a>
           <a href="/computer-repairs/">Computer Repairs</a>
+          <span class="dropdown__label dropdown__label--sep">Dell specialists since 1995</span>
           <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
           <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
           <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
@@ -694,7 +696,7 @@
       </div>
     </section>
 
-    <section class="section section--alt" aria-label="What error 0x800CCC1A means">
+    <section class="section" aria-label="What error 0x800CCC1A means">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">Plain English</p>
         <h2 class="section-title" data-title>What error 0x800CCC1A means<span class="title-underline"></span></h2>
@@ -720,7 +722,7 @@
 <p>This is the fix that resolves 0x800CCC1A most of the time on ISP and third-party mailboxes (BT, Sky, TalkTalk and business hosts). In classic Outlook, go to <strong>File &gt; Account Settings &gt; Account Settings</strong>, double-click your email account, then click <strong>More Settings &gt; Advanced</strong>. Match your setup to these — the key is that the port and the encryption drop-down agree with each other:</p><ol><li><strong>IMAP incoming:</strong> port <strong>993</strong>, encryption <strong>SSL/TLS</strong>.</li><li><strong>POP incoming:</strong> port <strong>995</strong>, encryption <strong>SSL/TLS</strong>.</li><li><strong>SMTP outgoing:</strong> port <strong>587</strong> with encryption <strong>STARTTLS</strong> (the modern default) — or, if your provider still prefers it, port <strong>465</strong> with <strong>SSL/TLS</strong>.</li></ol><p>While you're on the <strong>Outgoing Server</strong> tab, make sure <strong>My outgoing server (SMTP) requires authentication</strong> is ticked and set to <em>Use same settings as my incoming mail server</em> — most SMTP failures are actually a missing tick here. Click <strong>OK</strong>, then <strong>Next</strong> to let Outlook test the settings, and press <strong>F9</strong>.</p><p>Not sure of your provider's exact values? BT, Sky, TalkTalk and business hosts each publish them — get the wrong port and 0x800CCC1A returns, so it's worth confirming. One caveat: if the account is a <strong>Gmail, Outlook.com or Microsoft 365</strong> mailbox, changing ports alone won't fix it — those providers now require OAuth2, so jump to the next section. We know the common UK ISP values and can set them for you.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Test with antivirus off, then re-add for OAuth2">
+    <section class="section" aria-label="Test with antivirus off, then re-add for OAuth2">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">If ports are correct</p>
         <h2 class="section-title" data-title>Test with antivirus off, then re-add for OAuth2<span class="title-underline"></span></h2>

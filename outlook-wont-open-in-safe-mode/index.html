@@ -68,7 +68,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=59" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=60" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -416,6 +416,7 @@
             <a href="/microsoft-365-support/">Microsoft 365</a>
             <a href="/cybersecurity-support/">Cybersecurity</a>
             <a href="/computer-repairs/">Computer Repairs</a>
+            <span class="dropdown__label dropdown__label--sep">Dell specialists since 1995</span>
             <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
             <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
             <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
@@ -567,6 +568,7 @@
           <a href="/microsoft-365-support/">Microsoft 365</a>
           <a href="/cybersecurity-support/">Cybersecurity</a>
           <a href="/computer-repairs/">Computer Repairs</a>
+          <span class="dropdown__label dropdown__label--sep">Dell specialists since 1995</span>
           <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
           <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
           <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
@@ -688,7 +690,7 @@
       </div>
     </section>
 
-    <section class="section section--alt" aria-label="Why safe mode failing is a bigger clue">
+    <section class="section" aria-label="Why safe mode failing is a bigger clue">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">What it means</p>
         <h2 class="section-title" data-title>Why safe mode failing is a bigger clue<span class="title-underline"></span></h2>
@@ -714,7 +716,7 @@
 <p>For <strong>classic Outlook for Windows</strong>, in order. Most cases are solved by the repair in step 1 or 2.</p><ol><li><strong>Run an Office Quick Repair, then Online Repair.</strong> Go to <em>Control Panel > Programs and Features</em>, select <strong>Microsoft 365 / Office</strong>, click <strong>Change</strong>, and choose <strong>Quick Repair</strong> first (fast, offline, doesn't touch your mail). If Outlook still won't open, run <strong>Online Repair</strong> — it's more thorough, redownloads and reinstalls Office, and needs an internet connection. This fixes the majority of "won't open at all" cases.</li><li><strong>Create a new mail profile.</strong> A broken profile can stop Outlook opening entirely. Go to <em>Control Panel > Mail > Show Profiles > Add</em>, create a fresh profile, re-add your account, and set it as default. For a Microsoft 365 or Outlook.com account the Control Panel dialog can't finish the modern sign-in, so instead hold the <strong>Shift</strong> key while starting Outlook (or run <code>outlook.exe /manageprofiles</code>) to reach the profile picker and add the account from Outlook's own sign-in screen. Mail on the server re-downloads automatically — back up any <strong>local-only PST</strong> archive first (see below).</li><li><strong>Repair the data file with scanpst.exe.</strong> A corrupt data file can crash Outlook at launch. Close Outlook and run the Inbox Repair Tool, <strong>scanpst.exe</strong>, usually found at <code>C:\Program Files\Microsoft Office\root\Office16</code> (or the <em>Program Files (x86)</em> version on a 32-bit install). Point it at your .pst/.ost file and run it — it can take several passes. It's a good idea to let it make a backup when it offers, and to copy your PST somewhere safe first.</li><li><strong>Catch an antivirus or firewall conflict with a clean boot.</strong> Press <strong>Windows key + R</strong>, type <code>msconfig</code> and press Enter. On the <em>General</em> tab choose <strong>Selective startup</strong> and untick <em>Load startup items</em>; on the <em>Services</em> tab tick <strong>Hide all Microsoft services</strong> then <strong>Disable all</strong>, apply and restart. If Outlook now opens, a third-party program (often security software) was blocking it — re-enable services a few at a time to find which, then update or reconfigure that program.</li><li><strong>Reinstall Office (if repair won't complete).</strong> If Online Repair fails to finish, fully uninstall Microsoft 365 / Office and reinstall it from your Microsoft account. Your mail isn't stored in the Office program, so a clean reinstall doesn't lose server mail — but back up local PSTs first.</li></ol>
       </div>
     </section>
-    <section class="section section--alt" aria-label="scanpst, profiles and local PSTs — the safe way">
+    <section class="section" aria-label="scanpst, profiles and local PSTs — the safe way">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">Protect your data first</p>
         <h2 class="section-title" data-title>scanpst, profiles and local PSTs — the safe way<span class="title-underline"></span></h2>

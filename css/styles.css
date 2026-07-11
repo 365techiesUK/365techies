@@ -713,6 +713,39 @@ body.menu-open { overflow: hidden; }
   .nm-dot { opacity: 1; }
 }
 
+/* Dell hub: the 4-outcome front-door cards (big, distinct from the directory) */
+.dell-ways { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.4rem; max-width: 940px; margin: 0 auto; }
+@media (max-width: 720px) { .dell-ways { grid-template-columns: 1fr; } }
+.dell-way { display: block; padding: 1.1rem 1.1rem 1.3rem; border-radius: 16px; text-decoration: none; color: inherit;
+  border: 1px solid rgba(29, 151, 227, 0.28); background: linear-gradient(180deg, rgba(29, 151, 227, 0.06), rgba(10, 22, 44, 0.4));
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease; }
+.dell-way:hover { border-color: rgba(29, 151, 227, 0.7); transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28); }
+.dell-way .course-scene { margin: 0 0 0.9rem; }
+.dell-way h3 { font-family: var(--font-display); font-weight: 600; font-size: 1.25rem; margin: 0 0 0.4rem; }
+.dell-way p { color: var(--muted); font-size: 0.96rem; line-height: 1.55; margin: 0 0 0.7rem; }
+
+/* Dell hub: compact "Everything Dell" directory (replaces the tall 30-card wall) */
+.dell-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; margin: 0 0 2rem; }
+.dell-chips a { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.04em; text-transform: uppercase;
+  padding: 0.4rem 0.85rem; border-radius: 999px; text-decoration: none; color: #8fc6ef;
+  border: 1px solid rgba(29, 151, 227, 0.35); background: rgba(29, 151, 227, 0.08);
+  transition: background-color 0.2s ease, border-color 0.2s ease; }
+.dell-chips a:hover { background: rgba(29, 151, 227, 0.18); border-color: rgba(29, 151, 227, 0.7); }
+.dell-dir-group { margin: 0 0 2.2rem; }
+.dell-dir-group h3 { font-family: var(--font-display); font-weight: 600; font-size: 1.15rem; margin: 0 0 1rem;
+  padding-bottom: 0.5rem; border-bottom: 1px solid var(--line); scroll-margin-top: 90px; }
+.dell-dir { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 0.6rem; }
+.dell-dir a { display: block; padding: 0.7rem 0.9rem; border-radius: 10px; text-decoration: none; color: inherit;
+  border: 1px solid transparent; transition: background-color 0.18s ease, border-color 0.18s ease; }
+.dell-dir a:hover { background: rgba(29, 151, 227, 0.07); border-color: rgba(29, 151, 227, 0.3); }
+.dell-dir a strong { display: block; font-weight: 600; font-size: 0.98rem; color: #eaf1fb; }
+.dell-dir a span { display: block; color: var(--muted); font-size: 0.82rem; line-height: 1.4; margin-top: 0.15rem; }
+
+/* Nav dropdown sub-group label (findability - lets clusters like Dell stand out) */
+.dropdown__label { display: block; padding: 0.55rem 0.9rem 0.2rem; font-family: var(--font-mono);
+  font-size: 0.64rem; letter-spacing: 0.11em; text-transform: uppercase; color: var(--faint); }
+.dropdown__label--sep { margin-top: 0.35rem; border-top: 1px solid rgba(125, 170, 220, 0.12); padding-top: 0.65rem; }
+
 /* Heritage certification gallery (About page) */
 .heritage-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1.1rem; max-width: 1000px; margin: 0 auto; }
 .heritage-card { margin: 0; background: rgba(10, 22, 44, 0.55); border: 1px solid var(--line); border-radius: 12px; padding: 0.7rem; text-align: center; }

@@ -68,7 +68,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=59" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=60" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -436,6 +436,7 @@
             <a href="/microsoft-365-support/">Microsoft 365</a>
             <a href="/cybersecurity-support/">Cybersecurity</a>
             <a href="/computer-repairs/">Computer Repairs</a>
+            <span class="dropdown__label dropdown__label--sep">Dell specialists since 1995</span>
             <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
             <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
             <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
@@ -587,6 +588,7 @@
           <a href="/microsoft-365-support/">Microsoft 365</a>
           <a href="/cybersecurity-support/">Cybersecurity</a>
           <a href="/computer-repairs/">Computer Repairs</a>
+          <span class="dropdown__label dropdown__label--sep">Dell specialists since 1995</span>
           <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
           <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
           <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
@@ -708,7 +710,7 @@
       </div>
     </section>
 
-    <section class="section section--alt" aria-label="Every van&rsquo;s battery, solar and charge state on one screen">
+    <section class="section" aria-label="Every van&rsquo;s battery, solar and charge state on one screen">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; THE ONE-SCREEN ANSWER</p>
         <h2 class="section-title" data-title>Every van&rsquo;s battery, solar and charge state on one screen<span class="title-underline"></span></h2>
@@ -722,7 +724,7 @@
 <p>The whole point of fleet monitoring is one outcome: fewer breakdown callouts. A leisure battery that has quietly sulked down to 20% on the forecourt becomes a phone call from a lay-by two hours later &mdash; a recovery van, a refund conversation, and a one-star review about a holiday that started in the dark.</p><p>Seeing SOC across the fleet turns that into a five-minute job before handover. The turnaround team spots the low tile, puts the van on charge or swaps it, and the renter never knows there was a problem. Over a season that is the difference between chasing faults reactively and running a fleet you can trust.</p><ul><li><strong>Pre-handover check:</strong> confirm every booked van is charged and healthy before the keys go out, from one screen.</li><li><strong>Fewer callouts:</strong> a flat or failing battery caught on the forecourt costs minutes, not a recovery and a refund.</li><li><strong>Better reviews:</strong> holidays that start smoothly end in five-star ratings; power problems do the opposite.</li><li><strong>Kinder to the batteries:</strong> spotting vans left deeply discharged between hires helps your lithium or AGM banks last their full life.</li></ul><p>None of this replaces your walk-round. It just means walking up to the right van already knowing what you&rsquo;ll find.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="VRM is excellent &mdash; here&rsquo;s where a hire desk outgrows it">
+    <section class="section" aria-label="VRM is excellent &mdash; here&rsquo;s where a hire desk outgrows it">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; WHERE VRM STOPS</p>
         <h2 class="section-title" data-title>VRM is excellent &mdash; here&rsquo;s where a hire desk outgrows it<span class="title-underline"></span></h2>
@@ -736,7 +738,7 @@
 <p>We take the live data VRM already holds for your vans and build the screen you actually want on the wall: your fleet, your branding, your rules.</p><ul><li><strong>Every van at a glance:</strong> one tile per vehicle showing SOC, solar and charging state, sorted so anything low floats to the top.</li><li><strong>Plain-English alerts:</strong> thresholds tuned to your turnaround &mdash; for example, flag any booked van under a set SOC the evening before collection &mdash; so the right vehicle gets attention first.</li><li><strong>Where are my vans:</strong> for vehicles with a GPS-enabled GX device, a map view so you can see location alongside power state.</li><li><strong>Reads anywhere:</strong> full-screen on the <a href="/victron-vrm-tv-kiosk-display/">office TV</a> without anyone logging in, and reflowed cleanly onto the duty manager&rsquo;s phone out of hours.</li><li><strong>Your look:</strong> your <a href="/white-label-victron-monitoring/">colours, logo and vehicle names</a> &mdash; not registration hashes and stock widgets.</li></ul><p>Because we build on the official VRM API rather than dropping in an iframe, the screen isn&rsquo;t locked to a stock share link&rsquo;s refresh &mdash; which only updates at the logging interval &mdash; and we can lay it out for people who don&rsquo;t know a MultiPlus from a mains lead. If you&rsquo;d rather your data landed in <a href="/victron-grafana-dashboard-service/">Grafana</a>, or <a href="/embed-victron-vrm-on-website/">embedded in your own booking portal</a>, we do that too &mdash; the underlying approach is the same, only the destination changes.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="This isn&rsquo;t a mock-up &mdash; watch our own van stream">
+    <section class="section" aria-label="This isn&rsquo;t a mock-up &mdash; watch our own van stream">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; SEE IT LIVE</p>
         <h2 class="section-title" data-title>This isn&rsquo;t a mock-up &mdash; watch our own van stream<span class="title-underline"></span></h2>
@@ -750,7 +752,7 @@
 <p>Here is the honest constraint. A dashboard can only show data that exists, and VRM only receives data from a Victron <strong>GX device</strong>. So each vehicle needs a GX device &mdash; commonly a <strong>Cerbo GX</strong> &mdash; wired to its Victron charger/inverter and battery monitor, plus a way to get online (a GX LTE/4G module with a SIM, or the vehicle&rsquo;s own connectivity).</p><p>That gives you the SOC, solar and charge data per van that the fleet screen relies on. Non-Victron sensors can be brought in too, but only where they can be fed through the GX device &mdash; we&rsquo;ll tell you plainly what will and won&rsquo;t appear.</p><p>If your fleet is already Victron-equipped, we can usually start with nothing more than VRM access. If it isn&rsquo;t, that&rsquo;s a conversation before the dashboard, not a nasty surprise after it: we can specify the GX and connectivity for each van, or work alongside the installer who fits your conversions. See <a href="/victron-system-builder/">our Victron system builder</a> and <a href="/off-grid-victron-energy/">off-grid Victron energy</a> pages for the hardware side.</p><p>The same applies beyond motorhomes: a <strong>boat-charter or day-hire fleet</strong> with Victron systems monitors identically &mdash; one GX device per vessel, one screen for the marina office.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Quote-based, and it scales per vehicle">
+    <section class="section" aria-label="Quote-based, and it scales per vehicle">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/07 &mdash; WHAT IT COSTS</p>
         <h2 class="section-title" data-title>Quote-based, and it scales per vehicle<span class="title-underline"></span></h2>

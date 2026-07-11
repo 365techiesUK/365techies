@@ -68,7 +68,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=59" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=60" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -428,6 +428,7 @@
             <a href="/microsoft-365-support/">Microsoft 365</a>
             <a href="/cybersecurity-support/">Cybersecurity</a>
             <a href="/computer-repairs/">Computer Repairs</a>
+            <span class="dropdown__label dropdown__label--sep">Dell specialists since 1995</span>
             <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
             <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
             <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
@@ -579,6 +580,7 @@
           <a href="/microsoft-365-support/">Microsoft 365</a>
           <a href="/cybersecurity-support/">Cybersecurity</a>
           <a href="/computer-repairs/">Computer Repairs</a>
+          <span class="dropdown__label dropdown__label--sep">Dell specialists since 1995</span>
           <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
           <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
           <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
@@ -700,7 +702,7 @@
       </div>
     </section>
 
-    <section class="section section--alt" aria-label="What a &lsquo;Victron VRM Grafana dashboard&rsquo; really is">
+    <section class="section" aria-label="What a &lsquo;Victron VRM Grafana dashboard&rsquo; really is">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; THE SHORT ANSWER</p>
         <h2 class="section-title" data-title>What a &lsquo;Victron VRM Grafana dashboard&rsquo; really is<span class="title-underline"></span></h2>
@@ -714,7 +716,7 @@
 <p>Credit where it is due &mdash; venus-grafana is well thought out. Here is what standing it up actually involves:</p><ul><li><strong>A GX device with MQTT enabled</strong> &mdash; you switch on the plaintext MQTT service on the Cerbo GX (Settings &rarr; Services) so the data can be read locally.</li><li><strong>Venus Influx Loader</strong> &mdash; the service that subscribes to MQTT and writes each measurement into the database.</li><li><strong>InfluxDB</strong> &mdash; time-series storage (pinned to 1.8 for 32-bit ARM and older Raspberry Pi). You own retention, disk space and backups.</li><li><strong>Grafana</strong> &mdash; where you design every panel and dashboard by hand.</li><li><strong>A Docker host or Raspberry Pi that never sleeps</strong> &mdash; powered, online and on your network, one per site.</li></ul><p>The genuine wins: data at roughly two-second granularity, dashboards that work with <em>no internet at all</em> (superb on a boat or a remote cabin), and total freedom over the visuals. The genuine costs: you build the dashboards, keep the containers patched, secure the exposed ports, back up InfluxDB, and repeat the whole setup for every site &mdash; and it is <strong>not officially supported</strong>, so if it breaks, neither Victron nor its dealers will help.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="When you should just run it yourself">
+    <section class="section" aria-label="When you should just run it yourself">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; WHEN TO RUN IT YOURSELF</p>
         <h2 class="section-title" data-title>When you should just run it yourself<span class="title-underline"></span></h2>
@@ -728,7 +730,7 @@
 <p>We sell the <strong>result</strong>, not the plumbing. Instead of a Grafana box on-site, we build rich, beautiful, any-KPI dashboards directly on Victron&rsquo;s <strong>official VRM API</strong> and host them for you. Concretely, that means:</p><ul><li><strong>Nothing on-site to babysit</strong> &mdash; no Pi, no Docker host, no new device on your network, nothing to patch.</li><li><strong>Many sites on one screen</strong> &mdash; VRM&rsquo;s own installer list is a table and is not brandable, and there is no stock one-screen live multi-site view; we build precisely that.</li><li><strong>Any KPI you care about</strong>, laid out and styled your way &mdash; not the roughly six-parameter ceiling of VRM&rsquo;s custom widgets.</li><li><strong>We run it</strong> &mdash; design, hosting, updates, security and support are ours, not yours.</li></ul><p>To be clear about what we are and are not: <strong>365 Techies is an independent service. We are not affiliated with, endorsed by or certified by Victron Energy, and we are not affiliated with Grafana Labs.</strong> We do not run the Grafana software or the venus-grafana project &mdash; we deliver the same outcome on the official API. Victron, VRM and Grafana are trademarks of their respective owners.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="See it running live on our own off-grid van">
+    <section class="section" aria-label="See it running live on our own off-grid van">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; SEE IT RUNNING LIVE</p>
         <h2 class="section-title" data-title>See it running live on our own off-grid van<span class="title-underline"></span></h2>
@@ -742,7 +744,7 @@
 <p>Neither route is &lsquo;better&rsquo; in the abstract &mdash; they solve different problems. Here is the honest head-to-head:</p><ul><li><strong>Data cadence</strong> &mdash; DIY venus-grafana: roughly two-second local MQTT. Us: VRM&rsquo;s cloud cadence, which follows the site logging interval, not second-by-second. If sub-minute local data is the point, DIY wins.</li><li><strong>Internet</strong> &mdash; DIY: works fully offline. Us: cloud-based on the VRM API, so a connection is needed.</li><li><strong>Who runs the box</strong> &mdash; DIY: you (a Pi or Docker host, always on, one per site). Us: nobody on-site &mdash; there is nothing to run.</li><li><strong>Multi-site on one screen</strong> &mdash; DIY: possible, but you build and host it. Us: built-in and branded.</li><li><strong>Updates, backups, security</strong> &mdash; DIY: yours. Us: ours.</li><li><strong>Support</strong> &mdash; DIY: the community forum, not official. Us: a named UK firm you can phone.</li><li><strong>Cost model</strong> &mdash; DIY: free software plus your hardware and your time. Us: a quote for a done-for-you service.</li></ul><p>Read that honestly: if the top two rows are what you care about most, run it yourself. If the bottom five are, that is what we are for.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="What a done-for-you dashboard costs">
+    <section class="section" aria-label="What a done-for-you dashboard costs">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/07 &mdash; WHAT IT COSTS</p>
         <h2 class="section-title" data-title>What a done-for-you dashboard costs<span class="title-underline"></span></h2>

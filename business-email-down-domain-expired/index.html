@@ -68,7 +68,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=59" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=60" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -404,6 +404,7 @@
             <a href="/microsoft-365-support/">Microsoft 365</a>
             <a href="/cybersecurity-support/">Cybersecurity</a>
             <a href="/computer-repairs/">Computer Repairs</a>
+            <span class="dropdown__label dropdown__label--sep">Dell specialists since 1995</span>
             <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
             <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
             <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
@@ -555,6 +556,7 @@
           <a href="/microsoft-365-support/">Microsoft 365</a>
           <a href="/cybersecurity-support/">Cybersecurity</a>
           <a href="/computer-repairs/">Computer Repairs</a>
+          <span class="dropdown__label dropdown__label--sep">Dell specialists since 1995</span>
           <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
           <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
           <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
@@ -676,7 +678,7 @@
       </div>
     </section>
 
-    <section class="section section--alt" aria-label="Why your business email stopped the moment the domain expired">
+    <section class="section" aria-label="Why your business email stopped the moment the domain expired">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; THE CAUSE</p>
         <h2 class="section-title" data-title>Why your business email stopped the moment the domain expired<span class="title-underline"></span></h2>
@@ -702,7 +704,7 @@
 <p>Before you change anything, make sure an expired domain is genuinely the cause and not a mailbox or password issue. The quickest check is a <strong>WHOIS lookup</strong>, which shows the registration status and expiry date. Run your domain through our free <a href="/domain-expiry-checker/">domain expiry checker</a> &mdash; if it reports the registration as expired, suspended or in a grace period, you have your answer.</p><p>Next, check whether the domain still resolves and whether its mail records are present. Our <a href="/dns-lookup/">DNS lookup tool</a> (or a service like MXToolbox) will show whether any <strong>MX records</strong> are returned. If the lookup fails entirely or comes back empty, the domain isn&rsquo;t live &mdash; consistent with expiry.</p><p>A few tell-tale signs it&rsquo;s the domain and not something else:</p><ul><li>Your website is down as well as email &mdash; both rely on the domain.</li><li>Senders receive bounce-backs saying the domain doesn&rsquo;t exist or can&rsquo;t be found.</li><li>Everyone on the domain is affected at once, not just one person.</li></ul><p>If only one mailbox is affected, or your website is still fine, the cause is more likely a sign-in or sync problem &mdash; our <a href="/email-support/">email support</a> pages cover those separately.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Renew the domain fast &mdash; and know your window">
+    <section class="section" aria-label="Renew the domain fast &mdash; and know your window">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; RECOVER THE DOMAIN</p>
         <h2 class="section-title" data-title>Renew the domain fast &mdash; and know your window<span class="title-underline"></span></h2>
@@ -716,7 +718,7 @@
 <p>Renewing the domain switches it back on, but email won&rsquo;t always spring back instantly. Two things need to be right: the domain has to start resolving again, and your <strong>mail records</strong> need to point to the correct mail provider.</p><p>If you simply renewed in time and nothing else was touched, your records usually survive intact and email returns on its own once DNS <strong>propagates</strong> &mdash; typically within a few hours, occasionally up to a day or so. If the domain had been deleted and restored, or the nameservers were reset, you may need to re-add your <strong>MX, SPF, DKIM and DMARC</strong> records so mail routes and authenticates properly again.</p><p>To verify everything is back, re-run our <a href="/dns-lookup/">DNS lookup</a> (or a tool like whatsmydns.net) and confirm your MX records match exactly what your email provider specifies. If you&rsquo;re on <a href="/microsoft-365-support/">Microsoft 365</a> or Google Workspace, your provider publishes the precise records you should see.</p><p>Once the correct records are live and propagated, send a test message in and out. Don&rsquo;t panic if the first few minutes are quiet &mdash; propagation isn&rsquo;t instant, and it settles as the change spreads across the internet.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="What happens to email sent while you were down">
+    <section class="section" aria-label="What happens to email sent while you were down">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; MAIL IN LIMBO</p>
         <h2 class="section-title" data-title>What happens to email sent while you were down<span class="title-underline"></span></h2>
@@ -730,7 +732,7 @@
 <p>Domain expiry is almost always avoidable. The single biggest cause we see is a <strong>renewal reminder that went to an email address on the very domain that expired</strong> &mdash; so the warning bounced along with everything else, and nobody saw it. Fix that first.</p><ul><li><strong>Turn on auto-renew</strong> at your registrar, and check the payment card on file hasn&rsquo;t itself expired.</li><li><strong>Use an off-domain contact address</strong> for your registrar account &mdash; a personal address, or one on a different domain &mdash; so reminders reach you even if the domain lapses.</li><li><strong>Register for several years at once</strong> to cut down the number of renewal moments.</li><li><strong>Keep your registrant, admin and billing contact details current</strong>, and make sure someone still at the business is named on them.</li><li><strong>Know who your registrar is</strong> and keep the login safe &mdash; a surprising number of businesses have lost track of both.</li></ul><p>It&rsquo;s also worth diarising the renewal date independently, so you&rsquo;re never relying on a single reminder. For the wider picture, our guide on <a href="/how-to-protect-your-business-email/">protecting your business email</a> covers the settings that keep mail secure and reliable, not just the domain.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="When to call us &mdash; and how we put it right">
+    <section class="section" aria-label="When to call us &mdash; and how we put it right">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/07 &mdash; HOW WE HELP</p>
         <h2 class="section-title" data-title>When to call us &mdash; and how we put it right<span class="title-underline"></span></h2>

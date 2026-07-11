@@ -68,7 +68,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=59" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=60" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -428,6 +428,7 @@
             <a href="/microsoft-365-support/">Microsoft 365</a>
             <a href="/cybersecurity-support/">Cybersecurity</a>
             <a href="/computer-repairs/">Computer Repairs</a>
+            <span class="dropdown__label dropdown__label--sep">Dell specialists since 1995</span>
             <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
             <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
             <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
@@ -579,6 +580,7 @@
           <a href="/microsoft-365-support/">Microsoft 365</a>
           <a href="/cybersecurity-support/">Cybersecurity</a>
           <a href="/computer-repairs/">Computer Repairs</a>
+          <span class="dropdown__label dropdown__label--sep">Dell specialists since 1995</span>
           <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
           <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
           <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
@@ -700,7 +702,7 @@
       </div>
     </section>
 
-    <section class="section section--alt" aria-label="How boat GPS tracking works with a Victron system">
+    <section class="section" aria-label="How boat GPS tracking works with a Victron system">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; THE SHORT ANSWER</p>
         <h2 class="section-title" data-title>How boat GPS tracking works with a Victron system<span class="title-underline"></span></h2>
@@ -714,7 +716,7 @@
 <p>Two honest routes, in order of preference.</p><p><strong>Reuse your NMEA 2000 GPS.</strong> Victron&rsquo;s &lsquo;VE.Can to NMEA2000 micro-C male&rsquo; cable (part ASS030520200, around &pound;52 from UK retailers at the time of writing &mdash; the OSUKL 3802 adapter is an alternative) joins the Cerbo&rsquo;s VE.Can port to your N2K backbone, with that port set to its 250&nbsp;kbit/s NMEA&nbsp;2000 profile. One caveat that genuinely matters: the Cerbo accepts position from devices presenting Device Class 60 (Navigation) and Device Function 145 (Ownship Position, GNSS). Dedicated N2K GPS sensors and antennas reliably do; whether a given <strong>chartplotter</strong> re-broadcasts its position with that class and function varies by manufacturer, so it has to be checked per device &mdash; we do exactly that when we scope your boat.</p><p><strong>Or add a USB GPS for around &pound;18.</strong> Venus OS auto-recognises most USB receivers that speak NMEA&nbsp;0183 at 4800 or 38400 baud. Victron&rsquo;s officially tested list includes GlobalSat units such as the BU-353S4; the u-blox VK-162 (around &pound;17.50 from UK retailers at the time of writing, sold specifically for Victron use) meets the same criterion but is community-verified rather than officially listed &mdash; worth knowing the difference. One gotcha: on a Cerbo GX the USB port nearest the HDMI connector is power-only, so a GPS plugged in there does nothing. The full wiring detail lives on our <a href="/cerbo-gx-gps/">Cerbo GX GPS</a> page.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Marina wifi, 4G, and Starlink on a boat &mdash; honestly tiered">
+    <section class="section" aria-label="Marina wifi, 4G, and Starlink on a boat &mdash; honestly tiered">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; INTERNET AT SEA</p>
         <h2 class="section-title" data-title>Marina wifi, 4G, and Starlink on a boat &mdash; honestly tiered<span class="title-underline"></span></h2>
@@ -728,7 +730,7 @@
 <p>The headline first, because it is the question every sailor asks: <strong>live tracking whenever the boat has internet; a complete route history even when it doesn&rsquo;t.</strong></p><p>When the connection drops, the GX device buffers its datalogs &mdash; GPS positions included &mdash; in non-volatile internal memory. Victron&rsquo;s manual states the internal buffer can hold logs for several days, and a microSD card or USB stick extends that enormously: 1&nbsp;GB is roughly three years of 1-minute logging. The GX continually attempts to reconnect, and the moment it succeeds it uploads the stored logs &mdash; your route backfills into VRM and onto your dashboard as if the gap never happened.</p><p>What pauses while offline is only the live layer: the moving map pin, VRM&rsquo;s alarms and geofence notifications, and remote access. One more honest note on resolution: a logged route is only as detailed as the log interval, and the default is 15 minutes &mdash; enough to draw a passage as a few long straight legs. We set tracked boats to 1-minute logging (about 25&nbsp;MB a month of data), and for the smooth live trail on the dashboard our backend records the streaming positions itself &mdash; that is part of what we build.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="The VRM geofence, and the anchor-alarm question">
+    <section class="section" aria-label="The VRM geofence, and the anchor-alarm question">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; ANCHOR WATCH &amp; GEOFENCE</p>
         <h2 class="section-title" data-title>The VRM geofence, and the anchor-alarm question<span class="title-underline"></span></h2>
@@ -742,7 +744,7 @@
 <p>VRM&rsquo;s map is functional; what we build is the screen a skipper or a charter office actually wants to look at. Your boat&rsquo;s live position and recent trail, branded your way, beside the numbers that matter aboard: state of charge, solar, tanks, shore power &mdash; and, tellingly, <strong>the Starlink dish&rsquo;s own power draw</strong>. A standard dish in use draws roughly 75&ndash;100&nbsp;W &mdash; left on around the clock that is in the region of 150&nbsp;Ah a day from a 12&nbsp;V bank, often the single biggest load aboard (the Mini is nearer 20&ndash;40&nbsp;W). Seeing the dish beside your batteries is genuinely useful, not decoration.</p><p>Position rides the same live feed our dashboards already use, so the pin is near-live &mdash; typically updating every second or two rather than on VRM&rsquo;s logging cadence &mdash; and we filter out GPS drift so a night at anchor doesn&rsquo;t scribble on your map. VRM keeps its detailed data for at least six months; our dashboards can archive your tracks for good, with .kml export for Google Earth. For <strong>charter and hire fleets</strong>, VRM&rsquo;s multi-installation map already shows every installation on one map &mdash; Victron&rsquo;s feature, happily credited &mdash; and we build on it: every boat on one branded screen, on your own website if you like, with your VRM token kept in one server-side file rather than in the page code. See how that pattern works for <a href="/motorhome-hire-fleet-monitoring/">hire fleets</a> and <a href="/white-label-victron-monitoring/">white-label monitoring</a>.</p><p>Proof rather than promises: our own off-grid van streams its real Victron telemetry live on this site, on the <a href="/custom-vrm-dashboards/">custom VRM dashboards</a> page &mdash; the same architecture a boat tracker rides on. We haven&rsquo;t yet fitted a GPS demo to the van, so we won&rsquo;t pretend one exists; ask us and we&rsquo;ll happily demonstrate the tracking side.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Not a theft tracker &mdash; and we won&rsquo;t sell it as one">
+    <section class="section" aria-label="Not a theft tracker &mdash; and we won&rsquo;t sell it as one">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/07 &mdash; WHAT THIS IS NOT</p>
         <h2 class="section-title" data-title>Not a theft tracker &mdash; and we won&rsquo;t sell it as one<span class="title-underline"></span></h2>
