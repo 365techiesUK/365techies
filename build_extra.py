@@ -3022,6 +3022,60 @@ def services_overview():
 services_overview()
 
 # ===================================================== DELL HARDWARE
+# The full "everything Dell" cluster, grouped, rendered on the /dell-hardware/ hub.
+# (slug, short title, blurb) - each links to a page in _DELL_HUB_SLUGS.
+_DELL_CLUSTER = [
+ ("Repair &amp; upgrades in Dorset", [
+   ("dell-laptop-repair-bournemouth", "Dell laptop repair", "Screens, batteries, keyboards, charging ports &amp; no-boot fixes &mdash; independent Dell specialist in Bournemouth."),
+   ("dell-optiplex-repair-poole", "Dell OptiPlex repair", "Desktop won&rsquo;t power on, POST or boot? Honest fault-finding and fixes across Poole."),
+   ("dell-laptop-battery-replacement-dorset", "Dell battery replacement", "Swollen or won&rsquo;t-charge Dell battery? Genuine-fit replacements across Dorset."),
+   ("laptop-ssd-upgrade-bournemouth", "SSD upgrade", "The single biggest speed fix for an old Dell &mdash; a new Samsung Pro SSD, your data cloned across."),
+   ("dell-caps-lock-light-blinking-wont-turn-on", "Caps-lock light blinking", "What Dell&rsquo;s blinking-light diagnostic means, and how we fix a Dell that won&rsquo;t turn on."),
+   ("dell-optiplex-fan-error-f1-fix", "OptiPlex fan error (F1)", "&lsquo;Previous fan failure, press F1&rsquo; explained &mdash; the safe fixes and when to get help."),
+ ]),
+ ("Buying a refurbished Dell", [
+   ("refurbished-dell-laptops-bournemouth", "Refurbished Dell laptops", "Business-grade Latitude from &pound;299, set up and supported &mdash; buy in person in Bournemouth."),
+   ("refurbished-dell-desktops-dorset", "Refurbished Dell desktops", "Tested, warrantied OptiPlex desktops from &pound;299 across Dorset &mdash; skip the marketplace gamble."),
+ ]),
+ ("Which Dell should I buy?", [
+   ("are-dell-latitude-laptops-good", "Are Latitudes any good?", "A 30-year Dell specialist&rsquo;s honest verdict on business-grade Latitudes."),
+   ("how-long-do-dell-latitude-laptops-last", "How long do they last?", "Real-world lifespan &mdash; and the cheap fixes that add years."),
+   ("dell-latitude-series-explained-3000-5000-7000", "Latitude 3000/5000/7000", "Which tier should you actually buy? The plain-English guide."),
+   ("dell-optiplex-micro-sff-tower-which-to-buy", "OptiPlex Micro/SFF/Tower", "Which desktop body suits your job &mdash; the honest buyer&rsquo;s steer."),
+   ("dell-latitude-5420-vs-5430-which-to-buy", "Latitude 5420 vs 5430", "Which is the smarter refurbished buy, by budget and use?"),
+   ("dell-precision-vs-latitude", "Precision vs Latitude", "Do you really need a workstation, or will a Latitude do?"),
+   ("dell-optiplex-vs-inspiron-desktop", "OptiPlex vs Inspiron", "Business-grade vs consumer &mdash; why it matters for value."),
+ ]),
+ ("Is this Dell worth it?", [
+   ("dell-latitude-5410-worth-it-2026", "Latitude 5410 in 2026", "Still worth buying? The honest verdict for a 10th-gen refurb."),
+   ("dell-latitude-3510-refurbished-worth-it", "Latitude 3510", "Any good, or a false economy? Who it suits and what to check."),
+   ("dell-latitude-5300-refurbished-worth-it", "Latitude 5300", "The light 13-inch business ultraportable &mdash; a smart refurb buy?"),
+ ]),
+ ("Dell &amp; Windows 11", [
+   ("dell-this-pc-cant-run-windows-11", "&lsquo;Can&rsquo;t run Windows 11&rsquo;", "Why your Dell fails the check &mdash; and whether it&rsquo;s a quick BIOS fix."),
+   ("windows-10-esu-or-upgrade-your-dell", "Windows 10 ESU or upgrade?", "Pay for another year, or move to a Win11-ready Dell? An honest steer."),
+ ]),
+]
+
+def _dell_cluster_section():
+    groups = ""
+    for gtitle, cards in _DELL_CLUSTER:
+        cc = "\n".join(
+          f'          <a class="post-card" href="/{s}/"><h3>{t}</h3><p>{b}</p><span class="post-card__more">Read more &#8594;</span></a>'
+          for s, t, b in cards)
+        groups += (f'        <div class="blog-cat-head" data-reveal><h2>{gtitle}</h2></div>\n'
+                   f'        <div class="blog-grid" data-stagger>\n{cc}\n        </div>\n')
+    return ('    <section class="blog-section section--alt" aria-label="Everything Dell" id="dell-help">\n'
+            '      <div class="wrap">\n'
+            '        <div class="section-head">\n'
+            '          <p class="eyebrow eyebrow--center mono" data-reveal>// EVERYTHING DELL &middot; DORSET&rsquo;S DELL SPECIALIST</p>\n'
+            '          <h2 class="section-title section-title--center" data-title>Dell repairs, buying help &amp; model guides<span class="title-underline title-underline--center"></span></h2>\n'
+            '          <p class="lede lede--center" data-reveal>Thirty years with Dell, in one place &mdash; independent Dell repair across Dorset, honest refurbished-buying advice, and plain-English model guides. Not sure? <a href="/contact/">Talk to a techie</a>.</p>\n'
+            '        </div>\n'
+            + groups +
+            '      </div>\n'
+            '    </section>')
+
 def dell_hardware():
     slug = "dell-hardware"
     desc = "Refurbished, tested ex-business Dell Latitude laptops & OptiPlex desktops from £299 — supplied, set up and supported across Bournemouth, Poole & Dorset, with our own 5-year guarantee. Reliable, lower-waste."
@@ -3284,6 +3338,7 @@ def dell_hardware():
         </div>
       </div>
     </section>''',
+      _dell_cluster_section(),
       cta("Find your next computer the easy way",
           "Tell us what you need and we&rsquo;ll match you a tested, refurbished Dell from &pound;299 &mdash; set up, supported and backed by our own warranty.",
           primary=("Find me a refurbished Dell", "#match"), secondary=("Call 01202 775566", "tel:+441202775566")),
@@ -13560,6 +13615,19 @@ def _wants_courses_band(slug):
         return False
     return any(w in slug for w in _CRS_BAND_WORDS)
 
+# The Dell cluster - repair, buying, model guides, Windows - all breadcrumb under
+# the Dell hardware hub so they read as one "everything Dell" section of the site.
+_DELL_HUB_SLUGS = frozenset({
+ 'dell-laptop-repair-bournemouth', 'dell-optiplex-repair-poole', 'dell-laptop-battery-replacement-dorset',
+ 'laptop-ssd-upgrade-bournemouth', 'refurbished-dell-laptops-bournemouth', 'refurbished-dell-desktops-dorset',
+ 'dell-latitude-5410-worth-it-2026', 'dell-latitude-3510-refurbished-worth-it', 'dell-latitude-5300-refurbished-worth-it',
+ 'dell-latitude-series-explained-3000-5000-7000', 'dell-optiplex-micro-sff-tower-which-to-buy',
+ 'dell-latitude-5420-vs-5430-which-to-buy', 'dell-precision-vs-latitude', 'dell-optiplex-vs-inspiron-desktop',
+ 'are-dell-latitude-laptops-good', 'how-long-do-dell-latitude-laptops-last',
+ 'dell-caps-lock-light-blinking-wont-turn-on', 'dell-optiplex-fan-error-f1-fix',
+ 'dell-this-pc-cant-run-windows-11', 'windows-10-esu-or-upgrade-your-dell',
+})
+
 def _pack_hub(slug):
     """Breadcrumb hub for clustered packs: Home > hub > page (visible + schema)."""
     if slug == 'outlook-problems':
@@ -13570,6 +13638,8 @@ def _pack_hub(slug):
         return ("Custom VRM Dashboards", "custom-vrm-dashboards")
     if slug.startswith('it-support-for-'):
         return ("IT Support by Industry", "it-support-by-industry")
+    if slug in _DELL_HUB_SLUGS:
+        return ("Dell Hardware", "dell-hardware")
     return None
 
 def build_new_page(d):
