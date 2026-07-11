@@ -1098,6 +1098,8 @@ body.menu-open { overflow: hidden; }
 }
 .site-footer__brand p { margin-top: 1.1rem; max-width: 34ch; color: var(--muted); font-size: 0.93rem; }
 .site-footer__head { margin-bottom: 1rem; }
+.site-footer__subhead { margin: 1.15rem 0 0.3rem; font-family: var(--font-mono); font-size: 0.62rem;
+  letter-spacing: 0.11em; text-transform: uppercase; color: var(--faint); }
 .site-footer__grid nav a {
   display: block;
   padding: 0.32rem 0;
