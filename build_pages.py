@@ -166,6 +166,7 @@ HEADER = '''  <header class="site-header">
             <a href="/microsoft-365-support/">Microsoft 365</a>
             <a href="/cybersecurity-support/">Cybersecurity</a>
             <a href="/computer-repairs/">Computer Repairs</a>
+            <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
             <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
             <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
             <a href="/custom-pc-builds/">Custom-Built PCs</a>
@@ -316,6 +317,7 @@ HEADER = '''  <header class="site-header">
           <a href="/microsoft-365-support/">Microsoft 365</a>
           <a href="/cybersecurity-support/">Cybersecurity</a>
           <a href="/computer-repairs/">Computer Repairs</a>
+          <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
           <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
           <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
           <a href="/custom-pc-builds/">Custom-Built PCs</a>
@@ -562,6 +564,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/new-computer-setup/">New Computer Setup</a>
         <a href="/new-laptop-set-up-bournemouth/">New Laptop Set Up for You</a>
         <a href="/transfer-photos-to-a-new-computer-bournemouth/">Transfer Files to a New PC</a>
+        <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
         <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
         <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
         <a href="/refurbished-dell-laptops-bournemouth/">Refurbished Dell Laptops</a>
@@ -855,7 +858,8 @@ BUSINESS_NODE = {
     "identifier": {"@type": "PropertyValue", "name": "Company registration number", "value": "11073501"},
     "memberOf": {"@type": "Organization", "name": "Sustainable Dorset", "url": "https://www.sustainabledorset.org/"},
     "knowsAbout": ["IT support", "Computer repair", "Laptop repair", "Microsoft 365", "Cybersecurity", "Data backup", "Network security", "Wi-Fi", "Remote support", "Dell hardware", "Dell Latitude laptops", "Dell OptiPlex desktops", "Refurbished computers", "Malwarebytes Premium", "VPN", "Online safety", "Accessible IT support", "IT support for retired people", "IT support for disabled people", "Website design", "Web hosting", "Business email", "Managed service provider", "Managed IT services", "MSP", "New Forest IT support"],
-    "address": {"@type": "PostalAddress", "addressLocality": "Bournemouth", "addressRegion": "Dorset", "addressCountry": "GB"},
+    "address": {"@type": "PostalAddress", "streetAddress": "Kinson Community Centre, Millhams Road, Kinson",
+                "addressLocality": "Bournemouth", "addressRegion": "Dorset", "postalCode": "BH10 7LH", "addressCountry": "GB"},
     "geo": {"@type": "GeoCoordinates", "latitude": 50.7192, "longitude": -1.8808},
     "areaServed": [{"@type": "AdministrativeArea", "name": "Dorset"},
                    {"@type": "AdministrativeArea", "name": "Bournemouth, Christchurch and Poole"},

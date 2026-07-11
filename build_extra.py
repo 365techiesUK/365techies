@@ -2907,6 +2907,7 @@ def services_overview():
         ("Computer Repair Bournemouth", "/computer-repair-bournemouth/", "Local PC &amp; laptop repair in Bournemouth &mdash; home visits, remote help, no call-out fee."),
         ("Computer Repair Poole", "/computer-repair-poole/", "Local PC &amp; laptop repair in Poole &mdash; home visits, remote help, no call-out fee."),
         ("Computer Repair Christchurch", "/computer-repair-christchurch/", "Local PC &amp; laptop repair in Christchurch &mdash; home visits, remote help, no call-out fee."),
+        ("Dell IT Support &amp; Repair", "/dell-it-support-dorset/", "Dorset&rsquo;s independent Dell specialist since 1995 &mdash; remote support, servicing, emergency repairs and refurbished Dell for homes &amp; business."),
         ("Dell Laptops &amp; Desktops", "/dell-hardware/", "Refurbished, tested ex-business Dell Latitude laptops and OptiPlex desktops, supplied, set up and supported."),
         ("Custom-Built PCs", "/custom-pc-builds/", "Bespoke desktops for home, gaming, creative and business &mdash; built, tested and supported."),
         ("AMD Threadripper Workstations", "/threadripper-workstations/", "High-end Scan 3XS Threadripper workstations for video, 3D, CAD and AI &mdash; supplied &amp; supported."),
@@ -3025,6 +3026,18 @@ services_overview()
 # The full "everything Dell" cluster, grouped, rendered on the /dell-hardware/ hub.
 # (slug, short title, blurb) - each links to a page in _DELL_HUB_SLUGS.
 _DELL_CLUSTER = [
+ ("Dell support, servicing &amp; emergency", [
+   ("dell-remote-support", "Remote Dell support", "Fix your Dell over a secure session you watch &mdash; Windows, email, drivers, slowdowns, often the same day."),
+   ("dell-business-support-dorset", "Dell business support", "Managed support for business Dell fleets &mdash; Latitude, OptiPlex, Precision &mdash; across Dorset."),
+   ("dell-out-of-warranty-repair", "Out-of-warranty repair", "Independent Dell repair once the warranty ends &mdash; faster and friendlier than shipping it to Dell."),
+   ("dell-support-plans", "Dell support plans", "A simple independent monthly plan that keeps your Dell healthy &mdash; not a Dell warranty."),
+   ("emergency-dell-repair-bournemouth", "Emergency Dell repair", "Dead or won&rsquo;t boot? Same-day response and remote diagnosis, plus free local collection."),
+   ("dell-same-day-support-dorset", "Same-day Dell support", "Same-day response and remote diagnosis across Dorset when your Dell can&rsquo;t wait."),
+   ("dell-laptop-servicing-bournemouth", "Dell laptop servicing", "A proactive health-check and tune-up &mdash; clean-out, SSD/RAM/battery check, driver tune."),
+   ("dell-support-bournemouth", "Dell support Bournemouth", "All four ways we help, for Bournemouth homes and businesses."),
+   ("dell-support-poole", "Dell support Poole", "All four ways we help, for Poole homes and businesses."),
+   ("dell-laptop-repair-poole", "Dell laptop repair Poole", "Screens, batteries, ports and no-boot fixes &mdash; independent Dell repair across Poole."),
+ ]),
  ("Repair &amp; upgrades in Dorset", [
    ("dell-laptop-repair-bournemouth", "Dell laptop repair", "Screens, batteries, keyboards, charging ports &amp; no-boot fixes &mdash; independent Dell specialist in Bournemouth."),
    ("dell-optiplex-repair-poole", "Dell OptiPlex repair", "Desktop won&rsquo;t power on, POST or boot? Honest fault-finding and fixes across Poole."),
@@ -3094,7 +3107,7 @@ def dell_hardware():
       ("Do you supply second-hand computers for a business or office?", "Yes &mdash; refurbished business-grade Dell OptiPlex desktops and Latitude laptops are ideal, affordable office machines. See our page on <a href=\"/second-hand-office-computers-poole/\">second-hand office computers in Poole</a>, or setting up <a href=\"/new-laptop-set-up-bournemouth/\">a new laptop ready to use</a> for home."),
     ]
     content = "\n".join([
-      hero(bc("Refurbished Dell"), "// REFURBISHED &middot; BUSINESS-GRADE",
+      hero(bc_sub("Dell IT Support", "/dell-it-support-dorset/", "Refurbished Dell"), "// REFURBISHED &middot; BUSINESS-GRADE",
            'Refurbished Dell Latitude laptops &amp; <em class="grad grad--cyan">OptiPlex desktops</em>',
            "Professionally refurbished, tested ex-business Dell &mdash; proper business-grade computers for a fraction of the price of new, set up and supported by a real local firm you can phone, text or email &mdash; and that comes to you. Kinder on your wallet and the planet.",
            cta1=("Find me a refurbished Dell", "#match"), cta2=("Call 01202 775566", "tel:+441202775566"),
@@ -3344,13 +3357,104 @@ def dell_hardware():
           primary=("Find me a refurbished Dell", "#match"), secondary=("Call 01202 775566", "tel:+441202775566")),
     ])
     def schema(s, _desc=desc, _faqs=faqs):
-        return graph([crumb(s, "Refurbished Dell"), webpage(s, "Refurbished Dell Latitude Laptops & OptiPlex Desktops", _desc),
+        return graph([crumb_sub(s, "Dell IT Support", "dell-it-support-dorset", "Refurbished Dell"), webpage(s, "Refurbished Dell Latitude Laptops & OptiPlex Desktops", _desc),
                       service(s, "Refurbished Dell Supply & Support", "Professionally refurbished, tested ex-business Dell Latitude laptops and OptiPlex desktops, supplied, set up and supported by 365 Techies across Dorset, with our own warranty.", "Refurbished computer supply and support"),
                       {"@type": "Product", "@id": SITE + "/" + s + "/#product", "name": "Refurbished Dell Latitude Laptops & OptiPlex Desktops", "description": "Professionally refurbished, tested ex-business Dell Latitude laptops and OptiPlex desktops, supplied, set up and supported by 365 Techies with our own warranty.", "brand": {"@type": "Brand", "name": "Dell"}, "itemCondition": "https://schema.org/RefurbishedCondition", "category": "Refurbished computer hardware", "additionalProperty": [{"@type": "PropertyValue", "name": "Storage", "value": "New Samsung Pro SSD (5-year guarantee)"}, {"@type": "PropertyValue", "name": "Condition grading", "value": "Graded A, B or C by appearance; every grade fully tested"}, {"@type": "PropertyValue", "name": "Warranty", "value": "Dell next-business-day warranty plus 365 Techies 5-year guarantee"}], "offers": {"@type": "AggregateOffer", "priceCurrency": "GBP", "lowPrice": "299", "availability": "https://schema.org/InStock", "url": SITE + "/" + s + "/#match", "seller": {"@type": "Organization", "name": "365 Techies"}}, "image": SITE + "/og-image.jpg", "url": SITE + "/" + s + "/"},
                       faqpage(s, _faqs)])
     add(slug=slug, title="Refurbished Dell Laptops & PCs Dorset | 365 Techies",
         desc=desc, og_title="Refurbished Dell Latitude & OptiPlex | 365 Techies", schema=schema, content=content)
 dell_hardware()
+
+# ===================================================== DELL IT SUPPORT — MASTER HUB
+# The silo ROOT the whole Dell cluster breadcrumbs under (see _pack_hub). Leads with the
+# four money outcomes (remote support / servicing / emergency repair / refurbished sales)
+# and the 30-year independent-specialist USP - the "support hub" positioning, distinct from
+# the /dell-hardware/ buying spoke.
+def dell_it_support_hub():
+    slug = "dell-it-support-dorset"
+    desc = ("Dell support, servicing & repair across Bournemouth, Poole & Dorset from an independent Dell "
+            "specialist of 30+ years - remote support, servicing, emergency repairs and refurbished Dell "
+            "from &pound;299, for homes &amp; businesses. Mon-Fri, no call-out fee. Call 01202 775566.")
+    ways = [
+      ("&#128421;&#65039;", "Remote Dell support", "/dell-remote-support/",
+       "We connect securely over a session you watch and fix Windows, email, drivers, settings and slowdowns on your Dell &mdash; often the same day, and we always phone before we connect."),
+      ("&#128295;", "Dell servicing &amp; maintenance", "/dell-support-plans/",
+       "Keep your Dell fast, cool and healthy with proactive servicing and a simple monthly plan &mdash; from &pound;18.25/month per computer at home, from &pound;24.38 for business."),
+      ("&#128680;", "Emergency Dell repair", "/emergency-dell-repair-bournemouth/",
+       "Dead, won&rsquo;t boot, or your business is down? Fast same-day response and same-day remote diagnosis where we can, plus free local collection. (Mon&ndash;Fri, 9&ndash;5 &mdash; no 24/7 promises we can&rsquo;t keep.)"),
+      ("&#128187;", "Buy a refurbished Dell", "/dell-hardware/",
+       "Tested, business-grade Dell Latitude laptops &amp; OptiPlex desktops from &pound;299 &mdash; new Samsung Pro SSD, our own 5-year guarantee, set up and supported."),
+    ]
+    ways_html = "\n".join(
+      f'          <a class="post-card" href="{href}"><div class="osc-ico" style="font-size:2rem">{ico}</div><h3>{title}</h3><p>{blurb}</p><span class="post-card__more">Get help &#8594;</span></a>'
+      for ico, title, href, blurb in ways)
+    faqs = [
+      ("Do you offer Dell support across Bournemouth, Poole and Dorset?", "Yes &mdash; we&rsquo;re a family-run, independent Dell specialist based in Kinson, Bournemouth (BH10&nbsp;7LH), and we&rsquo;ve supplied and supported Dell systems for homes and businesses across Bournemouth, Poole, Christchurch and the wider Dorset area since 1995. Remote support and refurbished sales reach customers UK-wide."),
+      ("Are you a Dell authorised or official service centre?", "No &mdash; and we&rsquo;re upfront about it. We&rsquo;re a genuinely <strong>independent</strong> Dell specialist, not a Dell Authorised Service Provider, not a Dell partner and not Dell ProSupport. That independence lets us give honest advice and fair prices, and fix machines Dell would rather you replaced."),
+      ("Can you fix my Dell remotely?", "Often, yes. Software, Windows, email, driver, setup and slowdown problems can usually be sorted the same day over a secure remote session you watch on screen &mdash; we always phone first. Physical faults (a screen, battery or port) need hands-on repair, with free local collection. See <a href=\"/dell-remote-support/\">Dell remote support</a>."),
+      ("Do you support Dell for businesses as well as homes?", "Both. We look after home users&rsquo; Dell laptops and desktops, and we support small-business Dell fleets &mdash; Latitude, OptiPlex and Precision &mdash; with proactive maintenance, remote and on-site help. See <a href=\"/dell-business-support-dorset/\">Dell business support</a>. Home support is &pound;18.25/month per computer; business from &pound;24.38."),
+      ("My Dell is out of warranty &mdash; can you still help?", "Yes &mdash; that&rsquo;s one of the best reasons to use an independent specialist. We repair out-of-warranty Dell laptops and desktops locally, usually far faster than Dell&rsquo;s ship-it-away service, with no-fix-no-fee and a 12-month warranty on the work. See <a href=\"/dell-out-of-warranty-repair/\">Dell out-of-warranty repair</a>."),
+      ("What if my Dell is too old to be worth fixing?", "We&rsquo;ll tell you honestly. If a repair costs more than the machine is worth, we&rsquo;ll suggest a tested, refurbished business-grade Dell from <strong>&pound;299</strong> instead &mdash; with a new Samsung Pro SSD, a clean copy of Windows and our own 5-year guarantee. No pressure either way."),
+    ]
+    content = "\n".join([
+      hero(bc("Dell IT Support"), "// DORSET&rsquo;S INDEPENDENT DELL SPECIALIST &middot; SINCE 1995",
+           'Dell support, servicing &amp; repair across <em class="grad grad--cyan">Bournemouth, Poole &amp; Dorset</em>',
+           hero_trust("Whatever&rsquo;s going on with your Dell &mdash; a laptop that won&rsquo;t boot, a business fleet to look after, or a machine that&rsquo;s just had its day &mdash; you&rsquo;re in the right place. We&rsquo;re a family-run, independent Dell specialist who&rsquo;s been supplying and supporting Dell systems for homes and businesses for over 30 years. Here&rsquo;s the honest help &mdash; and if you&rsquo;d rather just leave it to the techies, that&rsquo;s exactly what we&rsquo;re here for."),
+           cta1=("Talk to a Techie", "/contact/"), cta2=("Call 01202 775566", "tel:+441202775566"),
+           chips=["Independent Dell specialist since 1995", "Homes &amp; businesses", "No call-out fee &middot; 4.9 on Google"]),
+      ('    <section class="blog-section" aria-label="Four ways we help with your Dell" id="ways">\n'
+       '      <div class="wrap">\n'
+       '        <div class="section-head">\n'
+       '          <p class="eyebrow eyebrow--center mono" data-reveal>// FOUR WAYS WE HELP</p>\n'
+       '          <h2 class="section-title section-title--center" data-title>However you need us for your Dell<span class="title-underline title-underline--center"></span></h2>\n'
+       '          <p class="lede lede--center" data-reveal>Remote fixes, proactive servicing, emergency repairs, or a tested refurbished replacement &mdash; pick what you need, or just call and we&rsquo;ll steer you right.</p>\n'
+       '        </div>\n'
+       '        <div class="blog-grid" data-stagger>\n' + ways_html + '\n        </div>\n'
+       '      </div>\n'
+       '    </section>'),
+      ('    <section class="section section--alt" aria-label="30 years of Dell">\n'
+       '      <div class="wrap split-2">\n'
+       '        <div class="prose" data-reveal>\n'
+       '          <p class="eyebrow mono">// WHY 365 TECHIES</p>\n'
+       '          <h2 class="section-title" data-title>30+ years of Dell &mdash; for real people, in plain English<span class="title-underline"></span></h2>\n'
+       '          <p>We&rsquo;ve been a familiar local face in computing since 1995 &mdash; from the Dorset Microsoft Education Resource Centre, to our Moordown computer shop, to our base today at the Kinson Community Centre in Bournemouth. Dell has been at the heart of it the whole way: we&rsquo;ve supplied, set up, serviced and repaired countless Latitude laptops and OptiPlex desktops for Dorset homes and businesses.</p>\n'
+       '          <p>Being <strong>independent</strong> is the point. We&rsquo;re not a Dell call centre, not &ldquo;authorised&rdquo;, and not tied to selling you anything &mdash; so you get an honest verdict, fair prices and the same friendly faces year after year. We&rsquo;ll always tell you when something&rsquo;s a quick fix, when it&rsquo;s better left to us, and when a machine simply isn&rsquo;t worth saving.</p>\n'
+       '        </div>\n'
+       '        <ul class="checklist" data-stagger>\n'
+       + checklist(["Independent Dell specialist &mdash; since 1995", "Homes and small businesses alike", "Remote, on-site &amp; free local collection", "No-fix-no-fee &middot; 12-month repair warranty", "No call-out fee &middot; honest, up-front prices", "Windows &amp; Android &middot; Mon&ndash;Fri, 9&ndash;5", "Rated 4.9 on Google by local customers"]) + '\n'
+       '        </ul>\n'
+       '      </div>\n'
+       '    </section>'),
+      reviews_block([("The guys at 365 listened to my actual needs and tweaked a desktop to the specs I required. It&rsquo;s a quality Dell machine. A brilliant machine at a very good price &mdash; you get a personal service here.", "Dean Robertson"),
+                     ("I have trusted 365 with my IT support since 2001. I&rsquo;ve lost count of the number of PCs, tablets, laptops I&rsquo;ve bought from them.", "Heather"),
+                     ("Can&rsquo;t fault the skill and attention the 365 guys give. Confidence that things keep ticking over with their regular maintenance checks.", "Rob Hazell")]),
+      _dell_cluster_section(),
+      faq_html(faqs),
+      cta("Not sure what your Dell needs? Just ask.",
+          "Tell us what&rsquo;s going on &mdash; a fault, a fleet, a slow machine or a replacement &mdash; and we&rsquo;ll give you an honest steer and a fixed price before any work. Or just leave it to the techies.",
+          primary=("Talk to a Techie", "/contact/"), secondary=("Call 01202 775566", "tel:+441202775566")),
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        area = [{"@type": "AdministrativeArea", "name": "Bournemouth, Christchurch and Poole"},
+                {"@type": "AdministrativeArea", "name": "Dorset"}, {"@type": "AdministrativeArea", "name": "New Forest"}]
+        svc = service(s, "Dell IT Support, Servicing & Repair",
+                      "Independent Dell support, servicing, emergency repair and refurbished Dell sales for homes and businesses across Bournemouth, Poole and Dorset, from a 30-year Dell specialist.",
+                      "Dell computer support and repair", area=area)
+        svc["aggregateRating"] = {"@type": "AggregateRating", "ratingValue": "4.9", "reviewCount": "49",
+                                  "bestRating": "5", "worstRating": "1"}
+        svc["review"] = [
+          {"@type": "Review", "reviewRating": {"@type": "Rating", "ratingValue": "5", "bestRating": "5"},
+           "author": {"@type": "Person", "name": "Dean Robertson"},
+           "reviewBody": "The guys at 365 listened to my actual needs and tweaked a desktop to the specs I required. It's a quality Dell machine at a very good price - you get a personal service here."},
+          {"@type": "Review", "reviewRating": {"@type": "Rating", "ratingValue": "5", "bestRating": "5"},
+           "author": {"@type": "Person", "name": "Heather"},
+           "reviewBody": "I have trusted 365 with my IT support since 2001. I've lost count of the number of PCs, tablets and laptops I've bought from them."},
+        ]
+        return graph([crumb(s, "Dell IT Support"), webpage(s, "Dell IT Support, Servicing & Repair in Dorset", _desc, "CollectionPage"),
+                      svc, faqpage(s, _faqs)])
+    add(slug=slug, title="Dell Support & Repair in Dorset (Home & Business) | 365 Techies",
+        desc=desc, og_title="Dell Support, Servicing & Repair in Dorset | 365 Techies", schema=schema, content=content)
+dell_it_support_hub()
 
 # ===================================================== REFURBISHED LAPTOPS — LOCAL LANDING
 def refurbished_local():
@@ -13626,6 +13730,11 @@ _DELL_HUB_SLUGS = frozenset({
  'are-dell-latitude-laptops-good', 'how-long-do-dell-latitude-laptops-last',
  'dell-caps-lock-light-blinking-wont-turn-on', 'dell-optiplex-fan-error-f1-fix',
  'dell-this-pc-cant-run-windows-11', 'windows-10-esu-or-upgrade-your-dell',
+ # support/servicing/emergency spokes (2026-07-11 hub build)
+ 'dell-remote-support', 'dell-business-support-dorset', 'dell-out-of-warranty-repair',
+ 'dell-support-plans', 'emergency-dell-repair-bournemouth', 'dell-same-day-support-dorset',
+ 'dell-laptop-servicing-bournemouth', 'dell-support-bournemouth', 'dell-support-poole',
+ 'dell-laptop-repair-poole',
 })
 
 def _pack_hub(slug):
@@ -13639,7 +13748,7 @@ def _pack_hub(slug):
     if slug.startswith('it-support-for-'):
         return ("IT Support by Industry", "it-support-by-industry")
     if slug in _DELL_HUB_SLUGS:
-        return ("Dell Hardware", "dell-hardware")
+        return ("Dell IT Support", "dell-it-support-dorset")
     return None
 
 def build_new_page(d):
