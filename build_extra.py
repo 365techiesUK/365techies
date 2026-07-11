@@ -9389,12 +9389,12 @@ info_page(
           <ul>
             <li><strong>Call us:</strong> <a href="tel:+441202775566">01202 775566</a> (Mon&ndash;Fri, 9am&ndash;5pm).</li>
             <li><strong>Email us:</strong> <a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a>.</li>
-            <li><strong>Emergency remote support:</strong> download <a href="https://sos.splashtop.com/en/sos-download" target="_blank" rel="noopener">Splashtop SOS</a> and call us to connect securely.</li>
+            <li><strong>Emergency remote support:</strong> download <a href="/sos/" target="_blank" rel="noopener">Splashtop SOS</a> and call us to connect securely.</li>
           </ul>
           <h2>Planned maintenance</h2>
           <p>Any planned maintenance that might affect services will be noted here in advance. There is nothing scheduled at present.</p>""",
   cta_args=("Need help right now?", "Subscribers jump the queue &mdash; reach a real techie fast.",
-            ("Contact Us", "/contact/"), ("SOS Remote Support", "https://sos.splashtop.com/en/sos-download")),
+            ("Contact Us", "/contact/"), ("SOS Remote Support", "/sos/")),
 )
 
 # ---- Support Portal / Raise a Ticket
@@ -10012,20 +10012,22 @@ info_page(
   lede="Need help right now? Our secure remote support lets us connect to your computer and fix the problem while you watch — usually in minutes. Here's how to get started.",
   desc="Start a secure remote support session with 365 Techies — download Splashtop SOS, call us, and we'll connect to your Windows PC or Android device to fix the problem while you watch.",
   chips=["Encrypted &amp; secure","You stay in control","Usually within minutes"],
+  hero_cta1=("Download Splashtop SOS", "/sos/"), hero_cta2=("Call 01202 775566", "tel:+441202775566"),
   pre='''    <section class="section section--alt" aria-label="How remote support works">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// HOW IT WORKS</p>
         <h2 class="section-title section-title--center" data-title>Connected in three steps<span class="title-underline title-underline--center"></span></h2>
         <ol class="how__steps">
 ''' + steps([
-        ("Download Splashtop SOS","Click the button below to download our secure remote-support tool (it doesn&rsquo;t install anything permanent)."),
-        ("Call us","Ring 01202 775566 and read us the 9-digit code the tool shows you."),
+        ("Download Splashtop SOS","Click the button below &mdash; a small program downloads and nothing installs permanently. When it finishes, open it from your Downloads. If Windows asks &lsquo;Do you want to allow&hellip;?&rsquo;, either answer is fine &mdash; the tool opens all the same."),
+        ("Call us","Ring 01202 775566 and read us the 9-digit code the tool shows you. We can&rsquo;t connect without it &mdash; that code is your permission."),
         ("We connect &amp; fix it","We join your screen securely, you watch everything we do, and access ends the moment we&rsquo;re done."),
       ]) + '''
         </ol>
         <p style="text-align:center;margin-top:2rem" data-reveal>
-          <a class="button primary button--lg" href="https://sos.splashtop.com/en/sos-download" target="_blank" rel="noopener">Download Splashtop SOS</a>
+          <a class="button primary button--lg" href="/sos/" target="_blank" rel="noopener">Download Splashtop SOS</a>
         </p>
+        <p style="text-align:center;margin-top:0.9rem;color:var(--muted);font-size:0.9rem" data-reveal>On an Android phone or tablet? Get the <a href="https://play.google.com/store/apps/details?id=com.splashtop.sos" target="_blank" rel="noopener">Splashtop SOS app from Google Play</a> instead, then read us the code the same way.</p>
       </div>
     </section>''',
   inner="""          <h2>Is it safe?</h2>

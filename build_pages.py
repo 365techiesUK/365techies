@@ -262,7 +262,7 @@ HEADER = '''  <header class="site-header">
         <a href="/book-service/" class="nav-book" aria-label="Book a computer service">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v3M17 3v3M4 8h16M5 6h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z"/></svg>Book
         </a>
-        <a href="https://sos.splashtop.com/en/sos-download" class="nav-sos" target="_blank" rel="noopener" aria-label="SOS emergency remote support — download Splashtop SOS">
+        <a href="/sos/" class="nav-sos" target="_blank" rel="noopener" aria-label="SOS emergency remote support — download Splashtop SOS">
           <span class="sos-dot" aria-hidden="true"></span>SOS<span class="nav-sos__long">&nbsp;REMOTE SUPPORT</span>
         </a>
         <button class="mobile-menu-button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
@@ -407,7 +407,7 @@ HEADER = '''  <header class="site-header">
       </details>
     </nav>
     <div class="mobile-menu__plans">
-      <a class="button sos" href="https://sos.splashtop.com/en/sos-download" target="_blank" rel="noopener"><span class="sos-dot" aria-hidden="true"></span>SOS Remote Support</a>
+      <a class="button sos" href="/sos/" target="_blank" rel="noopener"><span class="sos-dot" aria-hidden="true"></span>SOS Remote Support</a>
       <a class="button primary" href="/book-service/">Book a Service</a>
       <a class="button secondary" href="/home-it-support-plans/">Home Plans</a>
       <a class="button secondary" href="/business-it-support-plans/">Business Plans</a>
@@ -4378,7 +4378,7 @@ add(
    hero(bc("Remote IT Support"), "// UK-WIDE REMOTE SUPPORT",
         'UK-wide remote IT support, <em class="grad grad--cyan">in minutes</em>',
         hero_trust("Wherever you are in the UK, most computer problems can be fixed remotely &mdash; no waiting in for an engineer. We connect securely over Splashtop SOS, you watch everything happen on screen, and access ends the moment we&rsquo;re done."),
-        cta1=("Get Remote Support", "/contact/"), cta2=("SOS Emergency Session", "https://sos.splashtop.com/en/sos-download"),
+        cta1=("Get Remote Support", "/contact/"), cta2=("SOS Emergency Session", "/sos/"),
         chips=["Anywhere in the UK", "Encrypted &amp; secure", "Usually within minutes"]),
    f'''    <section class="section" aria-label="Overview">
       <div class="wrap split-2">
@@ -5032,7 +5032,7 @@ add(
             <li><span class="k">Based in</span><span class="v">Bournemouth, Dorset</span></li>
             <li><span class="k">Live chat</span><span class="v"><a href="#" data-open-chat>Chat to us now &#8594;</a></span></li>
             <li><span class="k">Book online</span><span class="v"><a href="/book-service/">Book a service or repair &#8594;</a></span></li>
-            <li><span class="k">Emergency</span><span class="v"><a href="https://sos.splashtop.com/en/sos-download" target="_blank" rel="noopener">SOS remote support &#8594;</a></span></li>
+            <li><span class="k">Emergency</span><span class="v"><a href="/sos/" target="_blank" rel="noopener">SOS remote support &#8594;</a></span></li>
           </ul>
         </div>
       </div>
