@@ -895,6 +895,23 @@ def service(slug, name, desc, stype=None, area=None):
 # Remote-by-design services (Victron dashboards, GPS trackers) genuinely serve worldwide.
 WORLDWIDE_AREA = [{"@type": "Country", "name": "United Kingdom"}, {"@type": "Place", "name": "Europe"}, {"@type": "Place", "name": "Worldwide"}]
 
+# ---- "Fix this now" SOS band - the help-ASAP funnel unit for problem-intent pages.
+# Placed right after a problem page's first section: the visitor has just confirmed
+# we understand their problem, and this is the moment they want it GONE. SOS only
+# works when the computer still runs - never place on dead-hardware pages.
+SOS_BAND = '''    <section class="section" aria-label="Fix this now with remote support">
+      <div class="wrap" style="max-width:860px;margin:0 auto">
+        <div data-reveal style="border:1px solid rgba(0,206,27,0.35);background:rgba(0,206,27,0.06);border-radius:16px;padding:1.6rem 1.8rem;text-align:center">
+          <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// NEED THIS FIXED RIGHT NOW?</p>
+          <p style="font-size:1.08rem;margin:0 0 1.1rem">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
+          <p style="margin:0;display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap">
+            <a class="button primary" href="/sos/">Start SOS Remote Support</a>
+            <a class="button secondary" href="tel:+441202775566">Call 01202 775566</a>
+          </p>
+        </div>
+      </div>
+    </section>'''
+
 def faqpage(slug, faqs):
     return {"@type": "FAQPage", "@id": f"{SITE}/{slug}/#faq",
             "mainEntity": [{"@type": "Question", "name": q,

@@ -10175,6 +10175,7 @@ def make_threat(slug, name, h1, lede, desc, what_html, signs, protect, ifhit, fa
         </ol>
       </div>
     </section>''',
+      bp.SOS_BAND,
       f'''    <section class="section section--alt" aria-label="Other cyber threats">
       <div class="wrap">
         <div class="section-head">
@@ -10662,7 +10663,8 @@ info_page(
   title="I've Been Scammed - What To Do Right Now (UK Steps) | 365 Techies",
   og_title="I've Been Scammed - What To Do Now | 365 Techies",
   chips=["Calm, step-by-step","Trusted UK numbers","We&rsquo;re here to help"],
-  pre=f'''    <section class="section section--alt" aria-label="Do this first">
+  hero_cta1=("Call 01202 775566", "tel:+441202775566"), hero_cta2=("Let Us Check Your Computer", "/sos/"),
+  pre=bp.SOS_BAND + f'''    <section class="section section--alt" aria-label="Do this first">
       <div class="wrap">
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>// DO THIS FIRST</p>
@@ -10775,7 +10777,8 @@ info_page(
   title="I Think I've Been Hacked - How To Take Back Control | 365 Techies",
   og_title="I Think I've Been Hacked | 365 Techies",
   chips=["Email first","Step-by-step","We can do it with you"],
-  pre=f'''    <section class="section section--alt" aria-label="Signs you have been hacked">
+  hero_cta1=("Call 01202 775566", "tel:+441202775566"), hero_cta2=("Do It With Us &mdash; SOS Session", "/sos/"),
+  pre=bp.SOS_BAND + f'''    <section class="section section--alt" aria-label="Signs you have been hacked">
       <div class="wrap">
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>// SIGNS IT&rsquo;S REALLY A HACK</p>
@@ -11260,7 +11263,7 @@ def emergency_it_help():
       hero(bc("Emergency IT Help"), "// EMERGENCY HELP",
            'Something&rsquo;s gone wrong? <em class="grad grad--green">Start here.</em>',
            "Pick what&rsquo;s happening below for the one most important first step &mdash; then the full guide. We&rsquo;re open Mon&ndash;Fri, 9am&ndash;5pm, and the key UK helplines below are there around the clock.",
-           cta1=("Call 01202 775566","tel:+441202775566"), cta2=("Start Remote Support","/remote-support/"),
+           cta1=("Call 01202 775566","tel:+441202775566"), cta2=("Start an SOS Session","/sos/"),
            chips=["First action for each","Trusted UK numbers","We call before we connect"]),
       f'''    <section class="section section--alt" aria-label="Pick your emergency">
       <div class="wrap">
@@ -13120,6 +13123,24 @@ _VICTRON_HUB_SLUGS = {
     'off-grid-holiday-let-monitoring', 'victron-gps-tracking', 'cerbo-gx-gps', 'victron-boat-gps-tracking',
 }
 
+# Problem-intent packs get the SOS_BAND right after their first section. Word-match
+# with an explicit exclude list: dead-hardware pages (SOS needs a running computer),
+# unhurried how-to/migration guides, and advice-for-relatives pages.
+_SOS_WORDS = ('outlook', 'not-working', 'wont-', 'error', 'problem', 'slow', 'stuck',
+              'disconnect', 'sync', 'crash', 'freez', 'blue-screen', 'printer',
+              'virus', 'malware', 'hacked', 'scammer', 'password', 'domain-expired')
+_SOS_EXCLUDE = {
+    'laptop-wont-turn-on-no-lights', 'laptop-clicking-noise-wont-turn-on',  # dead hardware
+    'how-to-add-gmail-to-outlook', 'how-to-go-back-to-classic-outlook',      # unhurried guides
+    'move-plusnet-email-to-gmail', 'move-virgin-media-email-to-gmail',
+    'wifi-in-a-granny-annexe', 'worried-about-a-parent-being-scammed',
+}
+
+def _wants_sos_band(slug):
+    if slug in _SOS_EXCLUDE or slug == 'outlook-problems':
+        return False
+    return any(w in slug for w in _SOS_WORDS)
+
 def _pack_hub(slug):
     """Breadcrumb hub for clustered packs: Home > hub > page (visible + schema)."""
     if slug == 'outlook-problems':
@@ -13134,7 +13155,11 @@ def _pack_hub(slug):
 
 def build_new_page(d):
     faqs = [(f['q'], f['a']) if isinstance(f, dict) else tuple(f) for f in d['faqs']]
-    sections = "\n".join(_sec_block(s) for s in d['sections'])
+    _blocks = [_sec_block(s) for s in d['sections']]
+    # help-ASAP funnel: problem-intent pages get the SOS band right after section 1
+    if _wants_sos_band(d['slug']) and len(_blocks) > 1:
+        _blocks.insert(1, bp.SOS_BAND)
+    sections = "\n".join(_blocks)
     cross = ""
     if d.get('crossLinksHtml'):
         cross = f'''    <section class="section" aria-label="Related">
