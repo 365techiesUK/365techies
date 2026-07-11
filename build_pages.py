@@ -5005,14 +5005,26 @@ add(
           <label class="field"><span>Phone (optional)</span><input type="tel" name="phone" autocomplete="tel" /></label>
           <label class="field"><span>I need help with</span>
             <select name="topic">
-              <option>Home IT support</option>
-              <option>Business IT support</option>
-              <option>Free business IT review</option>
-              <option>Computer repair</option>
-              <option>Microsoft 365</option>
-              <option>Cybersecurity</option>
-              <option>Victron &amp; custom dashboards</option>
-              <option>Something else</option>
+              <optgroup label="For your home">
+                <option>Home IT support</option>
+                <option>Computer or laptop repair</option>
+                <option>Buying a computer (refurbished Dell)</option>
+                <option>Wi-Fi, email or printer problems</option>
+                <option>Scam, virus or security worry</option>
+                <option>Computer lessons</option>
+              </optgroup>
+              <optgroup label="For your business">
+                <option>Business IT support</option>
+                <option>Free business IT review</option>
+                <option>Microsoft 365</option>
+                <option>Website design or hosting</option>
+                <option>AI &amp; custom software</option>
+              </optgroup>
+              <optgroup label="Anything else">
+                <option>Victron, off-grid &amp; custom dashboards</option>
+                <option>A bill or payment</option>
+                <option>Something else</option>
+              </optgroup>
             </select>
           </label>
           <label class="field"><span>How can we help?</span><textarea name="message" required></textarea></label>

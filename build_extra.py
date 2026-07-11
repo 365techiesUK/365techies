@@ -9439,8 +9439,8 @@ info_page(
             </select>
           </label>
           <label class="field"><span>Describe the problem</span><textarea name="message" required></textarea></label>
-          <button type="submit" class="button primary button--lg" style="width:100%">Send Ticket to help@365techies.co.uk</button>
-          <p class="form-status mono" role="status" style="margin-top:1rem;color:var(--faint);font-size:.7rem">// SENDS STRAIGHT TO help@365techies.co.uk &middot; WE REPLY WITHIN ONE WORKING DAY</p>
+          <button type="submit" class="button primary button--lg" style="width:100%">Send Your Ticket</button>
+          <p class="form-status mono" role="status" style="margin-top:1rem;color:var(--faint);font-size:.7rem">// GOES STRAIGHT TO OUR FAMILY TEAM &middot; WE REPLY WITHIN ONE WORKING DAY (MON&ndash;FRI)</p>
         </form>
       </div>
     </section>''',
@@ -9492,8 +9492,8 @@ info_page(
             </select>
           </label>
           <label class="field"><span>Device &amp; problem (and your area for collection)</span><textarea name="message" required></textarea></label>
-          <button type="submit" class="button primary button--lg" style="width:100%">Send Request to help@365techies.co.uk</button>
-          <p class="form-status mono" role="status" style="margin-top:1rem;color:var(--faint);font-size:.7rem">// SENDS STRAIGHT TO help@365techies.co.uk &middot; WE REPLY WITHIN ONE WORKING DAY</p>
+          <button type="submit" class="button primary button--lg" style="width:100%">Send Your Request</button>
+          <p class="form-status mono" role="status" style="margin-top:1rem;color:var(--faint);font-size:.7rem">// GOES STRAIGHT TO OUR FAMILY TEAM &middot; WE REPLY WITHIN ONE WORKING DAY (MON&ndash;FRI)</p>
         </form>
       </div>
     </section>''',
