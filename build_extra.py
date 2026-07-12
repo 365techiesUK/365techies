@@ -5867,7 +5867,7 @@ def dell_3520_guide():
            'Your Dell Latitude 3520, <em class="grad grad--cyan">made simple</em>',
            "Every port explained with an interactive tour, three ways to power it &mdash; at home, the one-cable desk, and the efficient 12V USB-C trick for vans and off-grid &mdash; plus battery care, shortcuts and quick fixes. No jargon, promise.",
            cta1=("Explore the Ports", "#d35tool"), cta2=("Refurbished Dells from &pound;299", "/dell-hardware/"),
-           chips=["Interactive port tour","Home &middot; desk &middot; off-grid","Plain English"]),
+           chips=["Interactive port tour","Home &middot; desk &middot; off-grid","Plain English"], scene=HERO_SCENES.get("dellguide")),
       DELL3520_WIDGET,
       f'''    <section class="section" aria-label="Battery care">
       <div class="wrap">
@@ -6117,7 +6117,7 @@ def dell_optiplex_guide():
            'Your Dell OptiPlex, <em class="grad grad--cyan">made simple</em>',
            "Front and back ports explained with an interactive tour, dual monitors done right, surge and battery-backup advice for business, the honest off-grid answer &mdash; plus care, upgrades and 60-second fixes. No jargon, promise.",
            cta1=("Explore the Ports", "#dopttool"), cta2=("Refurbished Dells from &pound;299", "/dell-hardware/"),
-           chips=["Interactive port tour","Dual monitors &amp; UPS","Plain English"]),
+           chips=["Interactive port tour","Dual monitors &amp; UPS","Plain English"], scene=HERO_SCENES.get("dellguide")),
       DELLOPTI_WIDGET,
       f'''    <section class="section" aria-label="Care and upgrades">
       <div class="wrap">
@@ -13918,6 +13918,28 @@ def _pack_hub(slug):
         return ("Dell IT Support", "dell-it-support-dorset")
     return None
 
+# Dell cluster packs -> hero scene key (all Dell pages get an animated hero picture)
+_PACK_SCENE = {
+    "dell-laptop-repair-bournemouth": "broken", "dell-laptop-repair-poole": "broken",
+    "dell-optiplex-repair-poole": "repairdesktop", "dell-out-of-warranty-repair": "broken",
+    "emergency-dell-repair-bournemouth": "emergency",
+    "dell-laptop-battery-replacement-dorset": "battery",
+    "refurbished-dell-laptops-bournemouth": "sales", "refurbished-dell-desktops-dorset": "sales",
+    "dell-latitude-5410-worth-it-2026": "sales", "dell-latitude-3510-refurbished-worth-it": "sales",
+    "dell-latitude-5300-refurbished-worth-it": "sales",
+    "dell-latitude-series-explained-3000-5000-7000": "dellguide",
+    "dell-optiplex-micro-sff-tower-which-to-buy": "dellguide",
+    "dell-latitude-5420-vs-5430-which-to-buy": "dellguide", "dell-precision-vs-latitude": "dellguide",
+    "dell-optiplex-vs-inspiron-desktop": "dellguide", "are-dell-latitude-laptops-good": "dellguide",
+    "how-long-do-dell-latitude-laptops-last": "dellguide",
+    "dell-caps-lock-light-blinking-wont-turn-on": "broken", "dell-optiplex-fan-error-f1-fix": "repairdesktop",
+    "dell-this-pc-cant-run-windows-11": "win10", "windows-10-esu-or-upgrade-your-dell": "win10",
+    "dell-business-support-dorset": "business", "dell-remote-support": "remote",
+    "dell-support-bournemouth": "remote", "dell-support-poole": "remote",
+    "dell-same-day-support-dorset": "remote", "dell-support-plans": "how3",
+    "dell-laptop-servicing-bournemouth": "servicing",
+}
+
 def build_new_page(d):
     faqs = [(f['q'], f['a']) if isinstance(f, dict) else tuple(f) for f in d['faqs']]
     _blocks = [_sec_block(s, i) for i, s in enumerate(d['sections'])]
@@ -13951,7 +13973,8 @@ def build_new_page(d):
     _bch = bp.bc_sub(_hub[0], '/' + _hub[1] + '/', d['crumbName']) if _hub else bc(d['crumbName'])
     content = "\n".join([
       hero(_bch, d['eyebrow'], d['h1'], hero_trust(d['lede']),
-           cta1=tuple(d['primaryCta']), cta2=tuple(d['secondaryCta']), chips=list(d['chips'])),
+           cta1=tuple(d['primaryCta']), cta2=tuple(d['secondaryCta']), chips=list(d['chips']),
+           scene=HERO_SCENES.get(_PACK_SCENE.get(d['slug']))),
       _hubbox,
       sections,
       cross,
