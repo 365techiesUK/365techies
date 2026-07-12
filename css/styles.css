@@ -1186,9 +1186,10 @@ body.menu-open { overflow: hidden; }
   .hero__console { display: none; }
 }
 
-/* full nav only shows when it comfortably fits; below 1280px use the hamburger
+/* full nav only shows when it comfortably fits; below 1360px it would push the red
+   SOS button off the right edge, so use the hamburger there instead
    (placed here, after the base .mobile-menu-button rule, so it wins the cascade) */
-@media (max-width: 1279px) {
+@media (max-width: 1359px) {
   .desktop-nav { display: none; }
   .mobile-menu-button { display: flex; }
 }
@@ -1752,12 +1753,12 @@ html.ss-open { overflow: hidden; }
   font-family: var(--font-mono); font-size: 0.66rem; line-height: 1; padding: 3px 5px; color: var(--faint);
   background: rgba(125, 170, 220, 0.12); border: 1px solid var(--line); border-radius: 5px;
 }
-/* the word "Search" shows wherever the desktop nav shows — an unlabelled magnifier
-   means nothing to the non-technical core audience; only the kbd hint stays wide-only */
+/* Search stays icon-only through the mid-width desktop band (1360-1799px): a Dell
+   top-level link now sits in the nav, and keeping the magnifier compact stops the
+   header row from pushing the red SOS button off the right edge. The "Search" word
+   and the kbd hint both return at >=1800px, where there is ample room. */
 .nav-search__label { display: none; }
 .nav-search__k { display: none; }
-@media (min-width: 1280px) { .nav-search__label { display: inline; } }
-/* header search is icon-only until there's room, so the SOS button always fits */
 @media (min-width: 1800px) { .nav-search__label { display: inline; } .nav-search__k { display: inline-flex; } }
 @media (max-width: 620px) { .nav-search kbd, .nav-search .nav-search__k { display: none; } .nav-search { padding: 0 0.6rem; } }
 

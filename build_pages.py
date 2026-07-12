@@ -17,7 +17,7 @@ except Exception:
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://365techies.co.uk"
-CSSV = "60"
+CSSV = "61"
 HUBSPOT_ID = "148562638"
 # Public URL of the deployed 365 AI OS. When set, the /365-ai-os/ page shows a
 # prominent "Launch the live demo" button. Leave empty ("") to hide it.
@@ -125,7 +125,7 @@ HEADER = '''  <header class="site-header">
         <span class="logo__text"><em>365</em>techies</span>
       </a>
       <nav class="desktop-nav" aria-label="Primary">
-        <a href="/">Home</a>
+        <a href="/dell-it-support-dorset/">Dell</a>
         <div class="nav-item has-dropdown">
           <a href="/home-it-support-subscriptions/" aria-haspopup="true">For Home
             <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
@@ -282,6 +282,7 @@ HEADER = '''  <header class="site-header">
     <p class="mobile-menu__label mono">// NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
+      <a href="/dell-it-support-dorset/">Dell</a>
       <a href="/pricing/">Pricing</a>
       <a href="/contact/">Contact</a>
       <details class="m-group">
