@@ -10247,6 +10247,46 @@ info_page(
         </ol>
       </div>
     </section>
+    <section class="section" aria-label="Remote fix prices compared with monthly support">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// PAY AS YOU GO, OR GO ON A PLAN</p>
+          <h2 class="section-title section-title--center" data-title>Remote fix prices &mdash; and how a plan compares<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Every remote job is quoted up front on difficulty and time. Here&rsquo;s how a one-off fix compares with being on our monthly support.</p>
+        </div>
+        <div class="plan-grid">
+          <article class="plan-card">
+            <p class="plan-card__tag mono">ONE-OFF REMOTE FIX</p>
+            <h3>Pay as you go</h3>
+            <p class="plan-card__desc">No plan needed. A senior techie connects, confirms what&rsquo;s needed, and agrees the price with you before any chargeable work.</p>
+            <p class="plan-card__price"><span class="from mono">FROM</span> &pound;20<span class="per">per remote job</span></p>
+            <ul class="plan-card__features">
+              <li>Priced on difficulty &amp; time &mdash; agreed with you before we start</li>
+              <li>You watch every step; access ends the moment we&rsquo;re done</li>
+              <li><strong>30 days&rsquo; follow-up remote support</strong> on the same issue, included</li>
+              <li>A <strong>free system health check at 30 days</strong> to make sure all is well</li>
+            </ul>
+            <p class="mono" style="margin:1rem 0 0;padding:.75rem .9rem;border:1px dashed rgba(125,170,220,.32);border-radius:11px;font-size:.76rem;line-height:1.55;color:var(--muted)">Worked example &mdash; a full <strong style="color:var(--ink)">Windows clean install</strong> with all your data backed up and restored takes about 4 hours: <strong style="color:var(--cyan)">&pound;149</strong></p>
+            <a href="/sos/" class="button secondary plan-card__cta" target="_blank" rel="noopener">Start a Remote Fix</a>
+          </article>
+          <article class="plan-card plan-card--business">
+            <p class="plan-card__badge mono">&#9733; BEST VALUE</p>
+            <p class="plan-card__tag mono">ON MONTHLY SUPPORT</p>
+            <h3>On a plan</h3>
+            <p class="plan-card__desc">Everyday remote help whenever you need it &mdash; no per-job quotes to think about &mdash; and your computer is proactively looked after all year.</p>
+            <p class="plan-card__price"><span class="from mono">FROM</span> &pound;18.25<span class="per">/mo per computer</span></p>
+            <ul class="plan-card__features">
+              <li>Everyday remote support included &mdash; just call</li>
+              <li><strong>Priority</strong> &mdash; plan members jump the queue</li>
+              <li>Fully-managed servicing on set days &mdash; view or change it any time</li>
+              <li>Regular maintenance, security &amp; backup checks</li>
+              <li>Miss us? Leave a message and we&rsquo;ll call you straight back</li>
+            </ul>
+            <a href="/monthly-it-support/" class="button primary plan-card__cta">See Monthly Plans</a>
+          </article>
+        </div>
+      </div>
+    </section>
     <section class="section section--alt" aria-label="Already on our support?">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// ALREADY ON OUR SUPPORT?</p>
@@ -10255,11 +10295,14 @@ info_page(
 ''' + grid_cards([
         ("Just call to arrange help","One call and it&rsquo;s arranged. If we don&rsquo;t answer, leave a message and we&rsquo;ll call you back."),
         ("Priority support","Plan members jump the queue &mdash; your problem gets looked at first."),
-        ("Servicing, fully managed","Your regular computer servicing appointments are booked and managed for you &mdash; check or change a date or time whenever you need."),
+        ("Servicing, fully managed","Your regular computer servicing appointments are booked and managed for you &mdash; check or change a date or time whenever you need. Remote servicing runs Mon, Tue &amp; Thu, 10am&ndash;1pm."),
         ("Remote help included","Remote support is part of your monthly plan (Mon&ndash;Fri, 9am&ndash;5pm) &mdash; no per-fix quotes to think about."),
       ]) + '''
         </ul>
-        <p style="text-align:center;margin-top:1.8rem" data-reveal>Not on a plan yet? <a href="/monthly-it-support/">See monthly IT support from &pound;18.25/month per computer</a>.</p>
+        <div class="prose" data-reveal style="max-width:70ch;margin:1.9rem auto 0;text-align:center">
+          <p><strong>Remote servicing slots for support customers:</strong> Mondays, Tuesdays and Thursdays, <strong>10am&ndash;1pm</strong>. Business customers can also book evening slots, <strong>5pm&ndash;7pm</strong> &mdash; we recommend after-hours servicing so there&rsquo;s no disruption during your working day.</p>
+        </div>
+        <p style="text-align:center;margin-top:1.4rem" data-reveal>Not on a plan yet? <a href="/monthly-it-support/">See monthly IT support from &pound;18.25/month per computer</a>.</p>
       </div>
     </section>''',
   inner="""          <h2>Is it safe?</h2>
@@ -10278,6 +10321,9 @@ info_page(
     ("Do I have to commit before you know what&rsquo;s wrong?", "No. A senior techie connects securely first simply to confirm what needs doing, then confirms the quote with you. Nothing chargeable happens until you&rsquo;ve agreed the price."),
     ("What if I&rsquo;m already on your monthly support?", "Just call us to arrange help &mdash; and if we don&rsquo;t answer, leave a message and we&rsquo;ll call you back. Plan members get priority support, and your regular computer servicing appointments are fully managed &mdash; you can check or change dates and times whenever you need."),
     ("Who actually connects to my computer?", "A senior 365 techie &mdash; the same small, local, family-run team every time, never an outsourced call centre. Sessions are encrypted, you watch everything on screen, and access ends the moment the session does."),
+    ("What does a bigger job like a Windows reinstall cost?", "It&rsquo;s priced on how long it takes. As a worked example, a full <strong>Windows clean install</strong> with all your data backed up and restored takes about <strong>4 hours and is &pound;149</strong>. You&rsquo;ll always get the price agreed before we start."),
+    ("Do I get any follow-up after a one-off remote fix?", "Yes &mdash; every pay-as-you-go remote job includes <strong>30 days of follow-up remote support</strong> to help sort any further issues on the same problem, plus a <strong>free system health check at 30 days</strong> to make sure everything&rsquo;s still running well."),
+    ("When can I book remote servicing on a plan?", "Remote servicing for support customers runs <strong>Mondays, Tuesdays and Thursdays, 10am&ndash;1pm</strong>. Business customers can also book <strong>evening slots, 5pm&ndash;7pm</strong> &mdash; we recommend after-hours servicing so there&rsquo;s no disruption during the working day. You can view or change your appointment any time."),
   ],
   cta_args=("Prefer to book ahead?", "Not an emergency? Book a convenient time and we&rsquo;ll call you.",
             ("Book a Service", "/book-service/"), ("Call 01202 775566", "tel:+441202775566")),
