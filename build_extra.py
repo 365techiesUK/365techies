@@ -13,6 +13,10 @@ from build_pages import (add, graph, crumb, webpage, service, faqpage,
                          SIGGEN_TOOL, SSLCHECK_TOOL, DOMEXP_TOOL, SOLARCALC_TOOL, AVTEST_TOOL, VBUILDER_TOOL, PCBUILD_TOOL, TOOLS, tool_cards, tools_strip, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
 from build_local import make_customer
 from new_pages_data import NEW_PAGES
+try:
+    from hero_scenes import SCENES as HERO_SCENES
+except Exception:
+    HERO_SCENES = {}
 
 # ── Competitive prices for the new AI offerings (owner-approved 2026-06-17; edit here) ──
 AI_VOICE_FROM = "95"   # AI voice receptionist agent, £/month
@@ -38,7 +42,7 @@ SPECIALIST = [
    split=[("Windows 11 at home","Whether it&rsquo;s one laptop or the whole family&rsquo;s devices, we check compatibility, back up your files and upgrade to Windows 11 cleanly &mdash; then keep it fast and secure.",["Compatibility check &amp; honest advice","Files backed up before we start","Clean, fast Windows 11 setup","Ongoing updates &amp; support"]),("Windows 11 for business","We plan and roll out Windows 11 across your team with no downtime &mdash; compatibility checked, data safe, security configured and everyone supported.",["Fleet-wide compatibility checks","Planned, no-downtime rollout","Security &amp; policies configured","Every user supported"])],
    steps_title="Upgraded the right way",
    step_items=[("We check","We confirm your PC is Windows 11-ready and advise honestly whether it&rsquo;s worth it."),("We upgrade","We back up your files and upgrade cleanly &mdash; no lost data, no nasty surprises."),("We support","We keep Windows 11 updated, fast and secure on your support plan.")]),
- dict(slug="email-support", crumb_name="Email Support",
+ dict(slug="email-support", scene="email", crumb_name="Email Support",
    eyebrow="// EMAIL", h1='Email <em class="grad grad--cyan">support</em>',
    lede="Outlook, Microsoft 365 and business email help — fix email that won't send or receive, sort passwords, set up new accounts and stop the spam, for homes and businesses.",
    intro_head="Email that just works",
@@ -52,7 +56,7 @@ SPECIALIST = [
    steps_title="Email flowing again, fast",
    step_items=[("We diagnose","We find out exactly why your email isn&rsquo;t behaving &mdash; settings, passwords or server."),("We fix &amp; set up","We get email flowing and configure it properly on every device."),("We protect","We filter spam, block phishing and stay on call to check anything suspicious.")],
    tools=["isitdown","emailsec","emailsig","scamlink"]),
- dict(slug="new-computer-setup", crumb_name="New Computer Setup",
+ dict(slug="new-computer-setup", scene="newpc", crumb_name="New Computer Setup",
    eyebrow="// NEW DEVICE SETUP", h1='New computer <em class="grad grad--cyan">setup</em>',
    lede="We set up your new computer or laptop properly — transferring files, email and settings, installing software, and getting security and backups in place from day one.",
    intro_head="Out of the box and ready to go",
@@ -65,7 +69,7 @@ SPECIALIST = [
    split=[("New computer at home","We turn a boxed-up new PC into a ready-to-go machine &mdash; files, photos, email and printers all moved across and working, with the bloatware gone.",["Files, photos &amp; email moved","Printers &amp; Wi-Fi reconnected","Bloatware removed","Security &amp; backups in place"]),("New computers for business","New starter or whole-team rollout &mdash; standardised, secured and onboarded, with data moved and accounts set up, ready for day one.",["Standardised business setup","Microsoft 365 &amp; accounts ready","Data migrated securely","Onboarded &amp; supported"])],
    steps_title="From box to ready-to-use",
    step_items=[("We back up &amp; transfer","Full backup of the old machine first, then files, photos, email and settings move across &mdash; usually about an hour and a half."),("We set up","We install your software, reconnect printers, Wi-Fi and Microsoft 365, and remove the bloat &mdash; set up properly so it&rsquo;s easy to use."),("We stay with you","30 days of remote support included &mdash; plus protection, backups, and a secure wipe of your old device if you like.")]),
- dict(slug="printer-support", crumb_name="Printer Support",
+ dict(slug="printer-support", scene="printer", crumb_name="Printer Support",
    eyebrow="// PRINTERS", h1='Printer <em class="grad grad--cyan">support</em>',
    lede="Get your printer working — Wi-Fi printing, offline errors, driver installs, scanning and network printing for homes and businesses across Dorset.",
    intro_head="Make peace with your printer",
@@ -78,7 +82,7 @@ SPECIALIST = [
    split=[("Printers at home","Get every device in the house printing and scanning reliably &mdash; no more &lsquo;offline&rsquo; errors or dropped Wi-Fi connections.",["Wi-Fi printing on all devices","Offline errors fixed","Scanning set up","Ink &amp; toner advice"]),("Office printers","Shared and networked office printers set up, secured and kept working &mdash; scan-to-email, scan-to-folder and reliable printing for the whole team.",["Networked &amp; shared printers","Scan-to-email &amp; folder","Reliable office printing","Fast remote fixes"])],
    steps_title="Back to printing in no time",
    step_items=[("We diagnose","We find why your printer&rsquo;s playing up &mdash; Wi-Fi, drivers or settings."),("We fix &amp; connect","We get it printing and scanning on every device, reliably."),("We keep it going","We&rsquo;re one message away if it ever drops offline again.")]),
- dict(slug="wifi-support", crumb_name="Wi-Fi Support",
+ dict(slug="wifi-support", scene="wifi", crumb_name="Wi-Fi Support",
    eyebrow="// WI-FI &amp; NETWORK", h1='Wi-Fi &amp; network <em class="grad grad--cyan">support</em>',
    lede="Fast, reliable Wi-Fi in every room — fix dead zones, slow speeds and dropouts, set up routers and mesh systems, and connect all your devices securely.",
    intro_head="Wi-Fi that reaches every room",
@@ -3005,7 +3009,7 @@ def services_overview():
            'Everything <em class="grad grad--cyan">365 Techies</em> does',
            "From monthly IT support for homes and businesses to Microsoft 365, cybersecurity and repairs — plus off-grid Victron energy and premium website design, hosting and email. One friendly, local team for it all.",
            cta1=("View Monthly Plans", "/monthly-it-support/"), cta2=("Book a Service", "/book-service/"),
-           chips=["Homes &amp; businesses","UK-wide remote support","One trusted team"]),
+           chips=["Homes &amp; businesses","UK-wide remote support","One trusted team"], scene=HERO_SCENES.get("msp")),
       uk_remote_band(alt=True),
       f'''    <section class="blog-section" aria-label="All services">
       <div class="wrap">
@@ -3144,7 +3148,7 @@ def dell_hardware():
            'Refurbished Dell Latitude laptops &amp; <em class="grad grad--cyan">OptiPlex desktops</em>',
            "Professionally refurbished, tested ex-business Dell &mdash; proper business-grade computers for a fraction of the price of new, set up and supported by a real local firm you can phone, text or email &mdash; and that comes to you. Kinder on your wallet and the planet.",
            cta1=("Find me a refurbished Dell", "#match"), cta2=("Call 01202 775566", "tel:+441202775566"),
-           chips=["From &pound;299","New Samsung Pro SSD","5-year guarantee","Set up &amp; fully supported"]),
+           chips=["From &pound;299","New Samsung Pro SSD","5-year guarantee","Set up &amp; fully supported"], scene=HERO_SCENES.get("sales")),
       f'''    <section class="section" aria-label="Why refurbished business Dell">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
@@ -8069,7 +8073,7 @@ def free_tools_hub():
            'Free IT tools that run in your <em class="grad grad--cyan">browser</em>',
            f"365 Techies offers {pos - 1} free IT tools that run entirely in your web browser &mdash; no download, no sign-up, nothing installed, and your passwords and files never leave your device. <a href=\"/website-checker/\">Check your website</a>, <a href=\"/broadband-speed-checker/\">test your broadband</a>, <a href=\"/password-breach-checker/\">see if a password&rsquo;s leaked</a>, <a href=\"/pc-benchmark/\">benchmark your PC</a> and more.",
            cta1=("Talk to a Techie", "/contact/"), cta2=("View Monthly Plans", "/monthly-it-support/"),
-           chips=["100% free","No download","Built in Dorset"]),
+           chips=["100% free","No download","Built in Dorset"], scene=HERO_SCENES.get("tools")),
       '''    <section class="section" aria-label="Search" style="padding-top:0">
       <div class="wrap" style="display:flex;justify-content:center">
         <button type="button" class="search-box" data-search-open>
@@ -12703,10 +12707,22 @@ remote_access_page()
 # ============================================================ FLAGSHIP SERVICE PAGES (wave 2)
 from services_data import SERVICE_PAGES
 from glossary_data import GLOSSARY_PAGES
+try:
+    from hero_scenes import SCENES as HERO_SCENES
+except Exception:
+    HERO_SCENES = {}
 
 _SVC_LABELS = {"monthly-it-support":"Monthly IT Support","business-it-support-plans":"Business Plans","home-it-support-plans":"Home Plans","remote-support":"Remote Support","remote-it-support":"Remote IT Support","computer-repairs":"Computer Repairs","backup-support":"Backup &amp; Recovery","wifi-support":"Wi-Fi Support","printer-support":"Printer Support","cybersecurity-support":"Cybersecurity","microsoft-365-support":"Microsoft 365","email-support":"Email Support","windows-11-support":"Windows 11","new-computer-setup":"New Computer Setup","disaster-recovery":"Disaster Recovery","dell-hardware":"Refurbished Dell","ransomware":"Ransomware","secure-it-disposal":"Secure IT Disposal","it-support-by-industry":"IT Support by Industry","gdpr-it-compliance":"GDPR &amp; Compliance","malwarebytes-premium":"Malwarebytes Premium","contact":"Contact Us","book-service":"Book a Service","pricing":"Pricing","areas-covered":"Areas Covered","remote-access":"Remote Access"}
 def _svc_label(s):
     return _SVC_LABELS.get(s, s.replace("-", " ").title())
+
+# flagship services_data pages that get an animated hero scene (slug -> hero_scenes key)
+_SVC_SCENE = {
+    "laptop-repair": "broken", "virus-removal": "malware", "data-recovery": "casedeadline",
+    "laptop-screen-repair": "screen", "slow-computer-repair": "speed", "cloud-backup": "caselaptop",
+    "new-computer-setup": "newpc", "hard-drive-upgrade": "ssd", "email-migration": "email",
+    "wifi-installation": "wifi",
+}
 
 def service_parent_page(d):
     slug = d["slug"]; cn = d["crumbName"]
@@ -12720,7 +12736,8 @@ def service_parent_page(d):
         rel_html = f'<p class="mono" style="text-align:center;max-width:64ch;margin:1.6rem auto 0;color:var(--muted)" data-reveal>Related: {links}</p>'
     content = "\n".join([
       hero(bc(cn), d["eyebrow"], d["h1"], hero_trust(d["lede"]),
-           cta1=("Get a Quote", "/contact/"), cta2=("Call 01202 775566", "tel:+441202775566"), chips=d["chips"]),
+           cta1=("Get a Quote", "/contact/"), cta2=("Call 01202 775566", "tel:+441202775566"), chips=d["chips"],
+           scene=HERO_SCENES.get(_SVC_SCENE.get(slug))),
       f'''    <section class="section" aria-label="Overview">
       <div class="wrap"><div class="prose" data-reveal style="max-width:780px;margin:0 auto">
 {d["intro"]}

@@ -706,7 +706,9 @@ body.menu-open { overflow: hidden; }
 .course-scene--band { max-width: 460px; margin: 1.6rem auto 2.6rem; }
 .how__steps .course-scene { margin: 0 0 1.15rem; }
 .m365 .course-scene--band { max-width: 420px; margin: 1.9rem 0 0; }
-@media (max-width: 620px) { .course-scene--band { max-width: 380px; } }
+/* hero illustration (flagship service pages): sits under the hero CTA, centred */
+.course-scene--hero { max-width: 440px; margin: 2.3rem auto 0.4rem; }
+@media (max-width: 620px) { .course-scene--band { max-width: min(380px, 86vw); } }
 /* Course progress badge (hub cards) */
 .crs-badge { display: inline-block; margin: 0 0 0.55rem; padding: 0.22rem 0.65rem; border-radius: 999px;
   font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.06em;

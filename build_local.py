@@ -363,7 +363,7 @@ for i, row in enumerate(LOCAL):
     make_local(i, *row)
 
 # ======================================================= CUSTOMER-TYPE PAGES
-def make_customer(i, slug, crumb_name, eyebrow, h1, lede, intro_head, intro_paras, feats, tile_items, faqs, chips, cta_title=None, cta_text=None, accent="cyan", split=None, split_title=None, split_eyebrow="HOME &amp; BUSINESS", steps_title=None, step_items=None, hero_cta1=None, hero_cta2=None, tools=None):
+def make_customer(i, slug, crumb_name, eyebrow, h1, lede, intro_head, intro_paras, feats, tile_items, faqs, chips, cta_title=None, cta_text=None, accent="cyan", split=None, split_title=None, split_eyebrow="HOME &amp; BUSINESS", steps_title=None, step_items=None, hero_cta1=None, hero_cta2=None, tools=None, scene=None):
     cta_title = cta_title or "Let&rsquo;s sort your IT"
     cta_text = cta_text or "Join the Dorset homes and businesses who never worry about technology. Pick a plan or say hello."
     desc = lede.replace("&rsquo;", "'").replace("&amp;", "and")
@@ -374,7 +374,7 @@ def make_customer(i, slug, crumb_name, eyebrow, h1, lede, intro_head, intro_para
     _is_ind = slug.startswith("it-support-for-")
     _bch = bp.bc_sub("IT Support by Industry", "/it-support-by-industry/", crumb_name) if _is_ind else bc(crumb_name)
     sections = [
-      hero(_bch, eyebrow, h1, bp.hero_trust(lede), chips=chips,
+      hero(_bch, eyebrow, h1, bp.hero_trust(lede), chips=chips, scene=bp.HERO_SCENES.get(scene),
            cta1=hero_cta1 or ("View Monthly Plans", "/monthly-it-support/"),
            cta2=hero_cta2 or ("Get Support Today", "/contact/")),
       f'''    <section class="section" aria-label="Overview">

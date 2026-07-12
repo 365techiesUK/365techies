@@ -17,7 +17,11 @@ except Exception:
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://365techies.co.uk"
-CSSV = "62"
+CSSV = "63"
+try:
+    from hero_scenes import SCENES as HERO_SCENES
+except Exception:
+    HERO_SCENES = {}
 HUBSPOT_ID = "148562638"
 # Public URL of the deployed 365 AI OS. When set, the /365-ai-os/ page shows a
 # prominent "Launch the live demo" button. Leave empty ("") to hide it.
@@ -1017,11 +1021,14 @@ def hero_trust(lede):
     return lede if "4.9" in lede else lede.rstrip() + " Rated 4.9 on Google."
 
 def hero(crumbs_html, eyebrow, h1_html, lede, cta1=("View Monthly Plans", "/monthly-it-support/"),
-         cta2=("Get Support Today", "/contact/"), chips=None):
+         cta2=("Get Support Today", "/contact/"), chips=None, scene=None):
     chips_html = ""
     if chips:
         lis = "".join(f"<li>&#9679; {c}</li>" for c in chips)
         chips_html = f'\n        <ul class="page-hero__chips mono">{lis}</ul>'
+    scene_html = ""
+    if scene:
+        scene_html = f'\n        <div class="course-scene course-scene--band course-scene--hero" aria-hidden="true">{scene}</div>'
     return f'''    <section class="page-hero" aria-label="Introduction">
       <div class="page-hero__inner">
         <nav class="breadcrumb" aria-label="Breadcrumb">{crumbs_html}</nav>
@@ -1031,7 +1038,7 @@ def hero(crumbs_html, eyebrow, h1_html, lede, cta1=("View Monthly Plans", "/mont
         <div class="page-hero__cta">
           <a href="{cta1[1]}" class="button primary button--lg">{cta1[0]}</a>
           <a href="{cta2[1]}" class="button secondary button--lg">{cta2[0]}</a>
-        </div>{chips_html}
+        </div>{chips_html}{scene_html}
       </div>
     </section>'''
 
@@ -4007,7 +4014,7 @@ add(
         'Monthly IT support <em class="grad grad--cyan">subscriptions</em>',
         hero_trust("Reliable monthly IT support for homes and businesses — remote help, regular maintenance, security checks and friendly technical support whenever you need it. £18.25 a month per computer, cancel anytime."),
         cta1=("See the Plans", "#plans"), cta2=("Call 01202 775566", "tel:+441202775566"),
-        chips=["&pound;18.25/mo per computer", "Full service every 6 weeks", "Cancel anytime"]),
+        chips=["&pound;18.25/mo per computer", "Full service every 6 weeks", "Cancel anytime"], scene=HERO_SCENES.get("how3")),
    uk_remote_band(alt=True),
    f'''    <section class="section" aria-label="What is monthly IT support">
       <div class="wrap split-2">
@@ -4141,7 +4148,7 @@ add(
         'Home IT support <em class="grad grad--cyan">subscriptions</em>',
         "Friendly monthly computer support for your home. Help with computers, laptops, printers, email, Wi-Fi, Microsoft 365, online accounts and security — patient, jargon-free and one message away.",
         cta1=("Get Monthly Home IT Support", "/home-it-support-plans/"), cta2=("Talk to a techie", "/contact/"),
-        chips=["&pound;18.25/mo per computer", "Patient, jargon-free help", "Full service every 6 weeks"]),
+        chips=["&pound;18.25/mo per computer", "Patient, jargon-free help", "Full service every 6 weeks"], scene=HERO_SCENES.get("home")),
    f'''    <section class="section" aria-label="Who it is for">
       <div class="wrap">
         <div class="section-head">
@@ -4209,7 +4216,7 @@ add(
         'Business IT support <em class="grad grad--green">subscriptions</em>',
         "Reliable monthly IT support for sole traders and small businesses — Microsoft 365, cybersecurity, backups and staff support, all proactively managed for you. Like having your own IT department, without the cost of employing one. Rated 4.9 on Google, family-run since 1995.",
         cta1=("Choose a Business Plan", "/business-it-support-plans/"), cta2=("Book a chat", "/contact/"),
-        chips=["Your outsourced IT team", "From &pound;24.38/mo per computer", "Remote &amp; on-site across Dorset"]),
+        chips=["Your outsourced IT team", "From &pound;24.38/mo per computer", "Remote &amp; on-site across Dorset"], scene=HERO_SCENES.get("business")),
    uk_remote_band(alt=True),
    f'''    <section class="section" aria-label="Who it is for">
       <div class="wrap">
@@ -4461,7 +4468,7 @@ add(
         'UK-wide remote IT support, <em class="grad grad--cyan">in minutes</em>',
         hero_trust("Wherever you are in the UK, most computer problems can be fixed remotely &mdash; no waiting in for an engineer. We connect securely over Splashtop SOS, you watch everything happen on screen, and access ends the moment we&rsquo;re done."),
         cta1=("Get Remote Support", "/contact/"), cta2=("SOS Emergency Session", "/sos/"),
-        chips=["Anywhere in the UK", "Encrypted &amp; secure", "Usually within minutes"]),
+        chips=["Anywhere in the UK", "Encrypted &amp; secure", "Usually within minutes"], scene=HERO_SCENES.get("remote")),
    f'''    <section class="section" aria-label="Overview">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
@@ -4532,7 +4539,7 @@ add(
         'Microsoft 365, <em class="grad grad--cyan">done properly</em>',
         hero_trust("As Microsoft partners and certified Office Specialists, we set up, migrate, secure and support Microsoft 365 &mdash; from a single mailbox at home to a whole team in the cloud. Email, Teams, files and security, all working together and managed for you."),
         cta1=("Get Microsoft 365 Support", "/contact/"), cta2=("View Plans", "/monthly-it-support/"),
-        chips=["Microsoft Partner", "Office Specialists", "Setup, migration &amp; security"]),
+        chips=["Microsoft Partner", "Office Specialists", "Setup, migration &amp; security"], scene=HERO_SCENES.get("m365")),
    f'''    <section class="section" aria-label="Overview">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
@@ -4660,7 +4667,7 @@ add(
         'Cyber security <em class="grad grad--green">services</em> for Dorset',
         hero_trust("Cyber security services for businesses and homes across Bournemouth, Poole and Dorset. Ransomware, scams and phishing don&rsquo;t care whether you&rsquo;re a family or a business &mdash; they just look for the easy way in. We close every door with layered, always-on protection that&rsquo;s set up, managed and watched over by us, keeping you safe online 24/7."),
         cta1=("Get Protected", "/contact/"), cta2=("Free IT Health Check", "/contact/"),
-        chips=["Malwarebytes Partner", "Layered defence", "Monitored 24/7"]),
+        chips=["Malwarebytes Partner", "Layered defence", "Monitored 24/7"], scene=HERO_SCENES.get("cyber")),
    f'''    <section class="section" aria-label="Why it matters">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
@@ -4832,7 +4839,7 @@ add(
         'Computer &amp; laptop <em class="grad grad--cyan">repairs</em>',
         hero_trust("Slow laptop, virus clean-up, dead Wi-Fi or a PC that just won&rsquo;t start? Book a one-off computer or laptop repair in Bournemouth, Poole or anywhere in Dorset — no subscription required."),
         cta1=("Book a Computer Repair", "/book-a-collection/"), cta2=("Avoid Future Problems", "/monthly-it-support/"),
-        chips=["No-fix-no-fee", "12-month warranty", "Remote or on-site"]),
+        chips=["No-fix-no-fee", "12-month warranty", "Remote or on-site"], scene=HERO_SCENES.get("repairdesktop")),
    f'''    <section class="section" aria-label="Overview">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
