@@ -4875,8 +4875,8 @@ add(
         <div class="prose" data-reveal>
           <p class="eyebrow mono">// LAPTOP REPAIR</p>
           <h2 class="section-title" data-title>Laptop repair, done locally<span class="title-underline"></span></h2>
-          <p>Most of what we fix is laptops &mdash; and most laptop problems are well worth repairing rather than replacing. From a slow laptop or a cracked screen to a worn-out battery or a dead charging port, we&rsquo;ll diagnose it, quote clearly, and get it sorted.</p>
-          <p><strong>No-fix-no-fee and a 12-month warranty</strong> on every laptop repair, with free local collection across Bournemouth, Poole and Dorset.</p>
+          <p>Most of what we fix is laptops &mdash; and most laptop problems are well worth repairing rather than replacing. From a slow laptop or a <a href="/laptop-screen-repair/">cracked screen</a> to a worn-out battery or a dead charging port, we&rsquo;ll diagnose it, quote clearly, and get it sorted. See our dedicated <a href="/laptop-repair/">laptop repair</a> service for everything we handle.</p>
+          <p><strong>No-fix-no-fee and a 12-month warranty</strong> on every laptop repair, with free local collection across Bournemouth, Poole and Dorset &mdash; and if we uncover something nasty, <a href="/virus-removal/">virus removal</a> and <a href="/data-recovery/">data recovery</a> too.</p>
         </div>
         <ul class="checklist" data-stagger>
 {checklist(["Slow laptop speed-ups &amp; SSD upgrades","Cracked or dim screen replacement","Battery &amp; charging-port repair","Keyboard &amp; trackpad fixes","Liquid-damage &amp; no-power diagnosis","Virus removal &amp; data recovery"])}

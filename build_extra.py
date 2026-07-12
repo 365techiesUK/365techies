@@ -8493,6 +8493,7 @@ def repair_pages():
         <div class="tile-grid" data-stagger>
 {tiles([("bolt","Slow computers","Speed-ups, clean-ups and SSD/memory upgrades to make an old machine feel new again."),("shield","Virus &amp; malware removal","Pop-ups, scams and infections cleared &mdash; and protection set up so it stays clean."),("wrench","Won&rsquo;t start or crashing","Boot problems, blue screens, overheating and crashes diagnosed and fixed."),("cpu","Upgrades","More memory, a fast SSD or a fresh Windows install to extend your computer&rsquo;s life."),("cloud","Data transfer &amp; recovery","Move your files to a new machine, or recover what matters from a failing one."),("monitor","New computer setup","A new PC or laptop set up properly, with your files, email and software moved across.")])}
         </div>
+        <p class="repair-xlinks" style="text-align:center;max-width:74ch;margin:1.7rem auto 0" data-reveal>Popular fixes in {town}: <a href="/laptop-repair/">laptop repair</a>, <a href="/laptop-screen-repair/">cracked screen replacement</a>, <a href="/virus-removal/">virus &amp; malware removal</a>, <a href="/slow-computer-repair/">slow-computer speed-ups</a>, <a href="/hard-drive-upgrade/">SSD &amp; hard-drive upgrades</a> and <a href="/data-recovery/">data recovery</a> &mdash; or see all our <a href="/computer-repairs/">computer repair services</a>.</p>
       </div>
     </section>''',
           f'''    <section class="section section--alt" aria-label="How we help">
