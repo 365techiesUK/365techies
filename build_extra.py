@@ -10212,9 +10212,9 @@ info_page(
 info_page(
   slug="remote-support", crumb_name="Start Remote Support", eyebrow="// REMOTE SUPPORT",
   h1='Start <em class="grad grad--green">remote support</em>',
-  lede="Need help right now? Our secure remote support lets us connect to your computer and fix the problem while you watch — usually in minutes. Here's how to get started.",
-  desc="Start a secure remote support session with 365 Techies — download Splashtop SOS, call us, and we'll connect to your Windows PC or Android device to fix the problem while you watch.",
-  chips=["Encrypted &amp; secure","You stay in control","Usually within minutes"],
+  lede="Need help right now? A senior techie connects securely to your computer and fixes the problem while you watch — usually in minutes. New to us? We&rsquo;ll confirm what&rsquo;s needed and agree the cost with you before any work begins, so you know what&rsquo;s happening every step of the way.",
+  desc="Start secure remote support with 365 Techies — a senior techie connects to your Windows PC or Android device and fixes it while you watch. Cost confirmed before any work; remote fixes from £20.",
+  chips=["Senior techie &middot; fully secure","Price agreed before any fix","Usually within minutes"],
   hero_cta1=("Download Splashtop SOS", "/sos/"), hero_cta2=("Call 01202 775566", "tel:+441202775566"),
   pre='''    <section class="section section--alt" aria-label="How remote support works">
       <div class="wrap">
@@ -10224,7 +10224,7 @@ info_page(
 ''' + steps([
         ("Download Splashtop SOS","Click the button below &mdash; a small program downloads and nothing installs permanently. When it finishes, open it from your Downloads. If Windows asks &lsquo;Do you want to allow&hellip;?&rsquo;, either answer is fine &mdash; the tool opens all the same."),
         ("Call us","Ring 01202 775566 and read us the 9-digit code the tool shows you. We can&rsquo;t connect without it &mdash; that code is your permission."),
-        ("We connect &amp; fix it","We join your screen securely, you watch everything we do, and access ends the moment we&rsquo;re done."),
+        ("We connect &amp; fix it","A senior techie joins your screen securely and you watch everything we do. New to us? We first confirm what&rsquo;s needed and agree the cost with you before the fix. Access ends the moment we&rsquo;re done."),
       ]) + '''
         </ol>
         <p style="text-align:center;margin-top:2rem" data-reveal>
@@ -10232,9 +10232,38 @@ info_page(
         </p>
         <p style="text-align:center;margin-top:0.9rem;color:var(--muted);font-size:0.9rem" data-reveal>On an Android phone or tablet? Get the <a href="https://play.google.com/store/apps/details?id=com.splashtop.sos" target="_blank" rel="noopener">Splashtop SOS app from Google Play</a> instead, then read us the code the same way.</p>
       </div>
+    </section>
+    <section class="section" aria-label="New customers — how pricing works">
+      <div class="wrap">
+        <p class="eyebrow eyebrow--center mono" data-reveal>// NEW TO US? &middot; HOW PRICING WORKS</p>
+        <h2 class="section-title section-title--center" data-title>You&rsquo;ll know the cost before we fix anything<span class="title-underline title-underline--center"></span></h2>
+        <p class="lede lede--center" data-reveal>No surprises, ever. Remote fix jobs are priced on how tricky they are and how long they take, <strong>starting from &pound;20</strong> &mdash; and nothing chargeable happens until you&rsquo;ve agreed the price.</p>
+        <ol class="how__steps">
+''' + steps([
+        ("We connect and take a look","A senior techie connects securely first simply to confirm what actually needs doing &mdash; you watch on screen the whole time."),
+        ("We confirm the cost with you","A clear quote based on difficulty and time, agreed with you <strong>before</strong> any chargeable work &mdash; so you know what&rsquo;s happening every step of the way."),
+        ("Then we fix it","Only once you&rsquo;ve said yes. You watch the whole fix on your screen, and access ends the moment we&rsquo;re done."),
+      ]) + '''
+        </ol>
+      </div>
+    </section>
+    <section class="section section--alt" aria-label="Already on our support?">
+      <div class="wrap">
+        <p class="eyebrow eyebrow--center mono" data-reveal>// ALREADY ON OUR SUPPORT?</p>
+        <h2 class="section-title section-title--center" data-title>On a plan? Just call &mdash; we take it from there<span class="title-underline title-underline--center"></span></h2>
+        <ul class="security-grid" data-stagger>
+''' + grid_cards([
+        ("Just call to arrange help","One call and it&rsquo;s arranged. If we don&rsquo;t answer, leave a message and we&rsquo;ll call you back."),
+        ("Priority support","Plan members jump the queue &mdash; your problem gets looked at first."),
+        ("Servicing, fully managed","Your regular computer servicing appointments are booked and managed for you &mdash; check or change a date or time whenever you need."),
+        ("Remote help included","Remote support is part of your monthly plan (Mon&ndash;Fri, 9am&ndash;5pm) &mdash; no per-fix quotes to think about."),
+      ]) + '''
+        </ul>
+        <p style="text-align:center;margin-top:1.8rem" data-reveal>Not on a plan yet? <a href="/monthly-it-support/">See monthly IT support from &pound;18.25/month per computer</a>.</p>
+      </div>
     </section>''',
   inner="""          <h2>Is it safe?</h2>
-          <p>Yes. Sessions run over encrypted Splashtop SOS, you watch everything on screen the whole time, and we can only connect when you give us the one-time code. Access ends as soon as the session does &mdash; we can&rsquo;t reconnect without a new code. And for a planned service we always phone you first, so a session never begins out of the blue.</p>
+          <p>Yes. Sessions run over encrypted Splashtop SOS, you watch everything on screen the whole time, and we can only connect when you give us the one-time code. Access ends as soon as the session does &mdash; we can&rsquo;t reconnect without a new code. And for a planned service we always phone you first, so a session never begins out of the blue. Your session is handled personally by a <strong>senior techie</strong> from our small local team &mdash; never an outsourced call centre.</p>
           <h2>What we can fix remotely</h2>
           <p>Most things! Slow computers, email problems, software setup, updates, printer and Wi-Fi issues, security checks and much more &mdash; all without us leaving the office or you leaving home.</p>
           <h2>Which devices?</h2>
@@ -10244,6 +10273,12 @@ info_page(
           <p>Remote support isn&rsquo;t new to us. We started connecting to customers&rsquo; computers remotely back in <strong>2001</strong>, when we were the IT support partner for <strong>Mercedes-Benz Pentagon</strong> across the south coast. With so many garages to keep running, reaching them securely over the internet was the only sensible way &mdash; and we&rsquo;ve been refining it ever since.</p>
           <h2>It once helped recover a stolen laptop</h2>
           <p>Remote support has even done something we never expected. Back in 2011, when a customer&rsquo;s laptop was stolen, the remote-support software we&rsquo;d set up meant we could see it was being used &mdash; and the internet address it was connecting from. We passed the details to Dorset Police, who recovered it, and the <em>Bournemouth Echo</em> <a href="https://www.bournemouthecho.co.uk/news/9427325.laptop-retrieved-thanks-to-software/" target="_blank" rel="noopener">ran the story</a>. (If the worst ever happens to you, here&rsquo;s <a href="/lost-or-stolen-laptop-what-to-do/">what to do if your laptop is lost or stolen</a>.)</p>""",
+  faqs=[
+    ("How much does a remote fix cost?", "Remote fix jobs are priced on difficulty and the time they take, <strong>starting from &pound;20</strong>. We connect first to confirm exactly what&rsquo;s needed, then agree the cost with you before any chargeable work &mdash; so you always know the price before we fix anything. On a monthly plan? Remote support is included &mdash; just call."),
+    ("Do I have to commit before you know what&rsquo;s wrong?", "No. A senior techie connects securely first simply to confirm what needs doing, then confirms the quote with you. Nothing chargeable happens until you&rsquo;ve agreed the price."),
+    ("What if I&rsquo;m already on your monthly support?", "Just call us to arrange help &mdash; and if we don&rsquo;t answer, leave a message and we&rsquo;ll call you back. Plan members get priority support, and your regular computer servicing appointments are fully managed &mdash; you can check or change dates and times whenever you need."),
+    ("Who actually connects to my computer?", "A senior 365 techie &mdash; the same small, local, family-run team every time, never an outsourced call centre. Sessions are encrypted, you watch everything on screen, and access ends the moment the session does."),
+  ],
   cta_args=("Prefer to book ahead?", "Not an emergency? Book a convenient time and we&rsquo;ll call you.",
             ("Book a Service", "/book-service/"), ("Call 01202 775566", "tel:+441202775566")),
 )
@@ -10303,7 +10338,7 @@ def sos_page():
       '''    <section class="section" aria-label="Safety and trouble-shooting">
       <div class="wrap">
         <div class="tile-grid" data-stagger style="max-width:900px;margin:0 auto">
-          <div class="tile"><h3>&#128274; Is this safe?</h3><p>Yes. Sessions are encrypted, the one-time code is your permission, and we never connect out of the blue &mdash; a session only ever starts while we&rsquo;re talking to you.</p></div>
+          <div class="tile"><h3>&#128274; Is this safe?</h3><p>Yes. Sessions are encrypted, the one-time code is your permission, and we never connect out of the blue &mdash; a session only ever starts while we&rsquo;re talking to you, handled personally by a senior techie.</p></div>
           <div class="tile"><h3>&#129300; Nothing downloaded?</h3><p>Stay on the phone &mdash; we&rsquo;ll talk you through it. You can also try the <a href="https://sos.splashtop.com/en/sos-download" target="_blank" rel="noopener">direct download page</a>.</p></div>
           <div class="tile"><h3>&#127397; Which devices?</h3><p>Windows computers and laptops, plus Android phones and tablets. We can&rsquo;t remotely connect to Apple Macs, iPhones or iPads.</p></div>
         </div>

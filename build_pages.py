@@ -4460,6 +4460,7 @@ add(
      ("Is remote support safe?", "Yes. Sessions run over Splashtop SOS — an encrypted, industry-standard remote support tool. You watch everything on screen and access ends the moment the session is over."),
      ("What can be fixed remotely?", "Most things — email problems, software issues, Microsoft 365, slow computers, printer setup, Windows updates, even a scare like <a href=\"/onedrive-files-disappeared/\">OneDrive files that have vanished</a>, and general troubleshooting for home and business users."),
      ("How fast is remote support?", "Most remote sessions start within minutes during opening hours (Mon–Fri, 9am–5pm), and subscribers always jump the queue."),
+     ("How much does a remote fix cost?", "Remote fix jobs are priced on difficulty and the time they take, starting from £20. For new customers we connect first to confirm exactly what's needed, then agree the cost with you before any chargeable work — so you always know the price before we fix anything. On a monthly plan, remote support is included."),
      ("Will you connect to my computer without warning?", "No. We always phone you first to say we're ready and to check you're ready before we connect. We never connect out of the blue, and a remote session can only start when you click our secure link to begin an encrypted Splashtop SOS session."),
    ]),
  ]),
@@ -4476,6 +4477,7 @@ add(
           <h2 class="section-title" data-title>Secure help, on your screen<span class="title-underline"></span></h2>
           <p>When you need help, we send you a secure link. One click connects us to your screen so we can see exactly what you see and fix it there and then.</p>
           <p><strong>You watch the whole session and stay in control</strong> — and the moment we finish, access ends automatically. It&rsquo;s the fastest, safest way to solve most IT problems.</p>
+          <p>New to us? A senior techie connects first to confirm what&rsquo;s needed, then <strong>agrees the cost with you before any chargeable work</strong> &mdash; remote fixes start from &pound;20. Already on a <a href="/monthly-it-support/">monthly plan</a>? Remote support is included, with priority &mdash; just call, and if we don&rsquo;t answer, leave a message and we&rsquo;ll call you back.</p>
         </div>
         <ul class="checklist" data-stagger>
 {checklist(["Secure remote access","Email troubleshooting","Software problems","Microsoft 365 help","Slow computer fixes","Printer setup","Windows support","Business user support"])}
@@ -4499,6 +4501,7 @@ add(
      ("Is remote support safe?", "Yes. Sessions run over Splashtop SOS — an encrypted, industry-standard remote support tool. You watch everything on screen and access ends the moment the session is over."),
      ("What can be fixed remotely?", "Most things — email problems, software issues, Microsoft 365, slow computers, printer setup, Windows updates, even a scare like <a href=\"/onedrive-files-disappeared/\">OneDrive files that have vanished</a>, and general troubleshooting for home and business users."),
      ("How fast is it?", "Most remote sessions start within minutes during opening hours (Mon&ndash;Fri, 9am&ndash;5pm). Subscribers always jump the queue."),
+     ("How much does a remote fix cost?", "Remote fix jobs are priced on difficulty and the time they take, <strong>starting from &pound;20</strong>. For new customers a senior techie connects first to confirm exactly what&rsquo;s needed, then agrees the cost with you before any chargeable work &mdash; so you always know the price before we fix anything. On a <a href=\"/monthly-it-support/\">monthly plan</a>, remote support is included."),
      ("Will you connect to my computer without warning?", "No &mdash; we always phone you first to say we&rsquo;re ready and to check you&rsquo;re ready before we connect. We never connect out of the blue, and a session can only start when you click our secure link."),
      ("Should I let someone remote into my computer?", "Only when you trust them and <em>you</em> started it &mdash; a genuine session (like ours over Splashtop SOS) only begins when you click a link you asked for, and we always phone first to check you&rsquo;re ready. If someone rings out of the blue claiming to be Microsoft, BT or your bank and asks for remote access, hang up &mdash; that&rsquo;s a scam. See our <a href=\"/spot-the-scam/\">Spot the Scam</a> guide."),
      ("What if it can&rsquo;t be fixed remotely?", "Occasionally hardware needs hands-on attention — we&rsquo;ll arrange a repair or on-site visit across Bournemouth, Poole and Dorset."),
