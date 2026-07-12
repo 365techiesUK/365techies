@@ -9245,7 +9245,7 @@ info_page(
   h1='Accreditations &amp; <em class="grad grad--cyan">partners</em>',
   lede="The accreditations, partnerships and standards behind 365 Techies — so you know your technology is in expert, trusted hands.",
   desc="365 Techies accreditations and partners — Microsoft Partner and Office Specialists, Dell specialists, Malwarebytes Partner, Sustainable Dorset member, and the trusted tools we build on.",
-  chips=["Microsoft Partner","Dell specialists","Malwarebytes Partner"],
+  chips=["Microsoft Partner","Dell reseller since 2001","Malwarebytes Partner"],
   pre='''    <section class="section section--alt" aria-label="Accreditations and partners">
       <div class="wrap">
         <div class="section-head">
@@ -9255,7 +9255,7 @@ info_page(
         <div class="tile-grid" data-stagger>
 ''' + tiles([
         ("windows","Microsoft Partner","Microsoft partners and certified Microsoft Office Specialists &mdash; deep, daily Microsoft 365 expertise."),
-        ("monitor","Dell Specialists","Refurbished, business-grade Dell Latitude laptops and OptiPlex desktops, supplied, set up and supported."),
+        ("monitor","Dell Reseller Since 2001","A Dell reseller for over two decades &mdash; we supply brand-new and tested refurbished business-grade Dell (Latitude laptops, OptiPlex desktops), set up and supported. Repairs we handle independently."),
         ("shield","Malwarebytes Partner","An official Malwarebytes Partner, delivering award-winning protection with VPN."),
         ("leaf","Sustainable Dorset Member","Proud members of Sustainable Dorset, committed to greener business."),
         ("battery","GoCardless &amp; SiteGround","We build on trusted, FCA-regulated Direct Debit and premium managed hosting."),
