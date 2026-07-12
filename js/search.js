@@ -20,7 +20,10 @@
   function load() {
     if (docs) return Promise.resolve(docs);
     if (loading) return loading;
-    loading = fetch(INDEX_URL, { credentials: "omit" })
+    // cache:"no-cache" forces the browser to revalidate the index with the server
+    // (conditional request -> 304 if unchanged), so newly-added pages appear in
+    // search without waiting for a cache-bust version to be bumped.
+    loading = fetch(INDEX_URL, { credentials: "omit", cache: "no-cache" })
       .then(function (r) { return r.json(); })
       .then(function (data) {
         docs = (data.pages || []).map(function (p) {

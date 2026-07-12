@@ -821,7 +821,7 @@ def page(slug, title, desc, og_title, schema_json, content):
   <script type="module" src="/js/interior.min.js?v=20"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=6" defer></script>
-  <script src="/js/search.min.js?v=2" defer></script>
+  <script src="/js/search.min.js?v={TODAY}" defer></script>
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
     <p>We use cookies to power our live chat and understand how the site is used. See our <a href="/cookie-policy/">cookie policy</a>.</p>
     <div class="cookie-banner__actions">
