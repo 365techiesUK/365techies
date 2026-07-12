@@ -13924,7 +13924,7 @@ _PACK_SCENE = {
     "dell-optiplex-repair-poole": "repairdesktop", "dell-out-of-warranty-repair": "broken",
     "emergency-dell-repair-bournemouth": "emergency",
     "dell-laptop-battery-replacement-dorset": "battery",
-    "refurbished-dell-laptops-bournemouth": "sales", "refurbished-dell-desktops-dorset": "sales",
+    "refurbished-dell-laptops-bournemouth": "refurblaptop", "refurbished-dell-desktops-dorset": "refurbdesktop",
     "dell-latitude-5410-worth-it-2026": "sales", "dell-latitude-3510-refurbished-worth-it": "sales",
     "dell-latitude-5300-refurbished-worth-it": "sales",
     "dell-latitude-series-explained-3000-5000-7000": "dellguide",
@@ -13989,6 +13989,18 @@ def build_new_page(d):
             nodes.append(service(s, _d.get('serviceName', _d['crumbName']), _d['metaDesc'], _d.get('serviceName', _d['crumbName']), area=_area))
         if _d.get('howToSteps'):
             nodes.append(bp.howto_node(s, _d.get('howToName', _d['crumbName']), [(st['name'], st['text']) for st in _d['howToSteps']]))
+        if _d.get('productOffer'):
+            po = _d['productOffer']
+            nodes.append({"@type": "Product", "@id": SITE + "/" + s + "/#product",
+                          "name": po['name'], "description": po['description'],
+                          "brand": {"@type": "Brand", "name": "Dell"},
+                          "itemCondition": "https://schema.org/RefurbishedCondition",
+                          "category": po.get('category', 'Refurbished computer hardware'),
+                          "additionalProperty": [{"@type": "PropertyValue", "name": n, "value": v} for n, v in po.get('props', [])],
+                          "offers": {"@type": "AggregateOffer", "priceCurrency": "GBP", "lowPrice": po['lowPrice'],
+                                     "availability": "https://schema.org/InStock", "url": SITE + "/" + s + "/" + po.get('offerAnchor', ''),
+                                     "seller": {"@type": "Organization", "name": "365 Techies"}},
+                          "image": SITE + "/og-image.jpg", "url": SITE + "/" + s + "/"})
         nodes.append(faqpage(s, _faqs))
         return graph(nodes)
     add(slug=d['slug'], title=d['title'], desc=d['metaDesc'], og_title=d['ogTitle'], schema=schema, content=content)
