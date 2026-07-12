@@ -10212,7 +10212,7 @@ info_page(
 info_page(
   slug="remote-support", crumb_name="Start Remote Support", eyebrow="// REMOTE SUPPORT",
   h1='Start <em class="grad grad--green">remote support</em>',
-  lede="Need help right now? A senior techie connects securely to your computer and fixes the problem while you watch — usually in minutes. New to us? We&rsquo;ll confirm what&rsquo;s needed and agree the cost with you before any work begins, so you know what&rsquo;s happening every step of the way.",
+  lede="Need help right now? A senior techie connects securely to your computer and fixes the problem while you watch — usually in minutes. New to us? Checking the problem is free — we&rsquo;ll then give you a realistic quote and agree it with you before any fix, so you always know what&rsquo;s happening and what it costs.",
   desc="Start secure remote support with 365 Techies — a senior techie connects to your Windows PC or Android device and fixes it while you watch. Cost confirmed before any work; remote fixes from £20.",
   chips=["Senior techie &middot; fully secure","Price agreed before any fix","Usually within minutes"],
   hero_cta1=("Download Splashtop SOS", "/sos/"), hero_cta2=("Call 01202 775566", "tel:+441202775566"),
@@ -10237,10 +10237,10 @@ info_page(
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// NEW TO US? &middot; HOW PRICING WORKS</p>
         <h2 class="section-title section-title--center" data-title>You&rsquo;ll know the cost before we fix anything<span class="title-underline title-underline--center"></span></h2>
-        <p class="lede lede--center" data-reveal>No surprises, ever. Remote fix jobs are priced on how tricky they are and how long they take, <strong>starting from &pound;20</strong> &mdash; and nothing chargeable happens until you&rsquo;ve agreed the price.</p>
+        <p class="lede lede--center" data-reveal>No surprises, ever. <strong>Checking the problem is free</strong>; the fix is priced on how tricky it is and how long it takes, <strong>from &pound;20</strong> &mdash; and nothing chargeable happens until you&rsquo;ve agreed the price.</p>
         <ol class="how__steps">
 ''' + steps([
-        ("We connect and take a look","A senior techie connects securely first simply to confirm what actually needs doing &mdash; you watch on screen the whole time."),
+        ("We check the problem &mdash; free","A senior techie connects securely first, at no charge, simply to see exactly what needs doing &mdash; you watch on screen the whole time."),
         ("We confirm the cost with you","A clear quote based on difficulty and time, agreed with you <strong>before</strong> any chargeable work &mdash; so you know what&rsquo;s happening every step of the way."),
         ("Then we fix it","Only once you&rsquo;ve said yes. You watch the whole fix on your screen, and access ends the moment we&rsquo;re done."),
       ]) + '''
@@ -10258,7 +10258,7 @@ info_page(
           <article class="plan-card">
             <p class="plan-card__tag mono">ONE-OFF REMOTE FIX</p>
             <h3>Pay as you go</h3>
-            <p class="plan-card__desc">No plan needed. A senior techie connects, confirms what&rsquo;s needed, and agrees the price with you before any chargeable work.</p>
+            <p class="plan-card__desc">No plan needed. A senior techie connects and checks the problem <strong>free</strong>, gives you a realistic quote, and agrees it with you before any chargeable work.</p>
             <p class="plan-card__price"><span class="from mono">FROM</span> &pound;20<span class="per">per remote job</span></p>
             <ul class="plan-card__features">
               <li>Priced on difficulty &amp; time &mdash; agreed with you before we start</li>
@@ -10351,6 +10351,18 @@ def sos_page():
            "Best done while you&rsquo;re on the phone with us &mdash; we&rsquo;ll talk you through every step and you&rsquo;ll see everything we do. Not on the phone yet? Call <strong>01202 775566</strong> first and we&rsquo;ll do it together.",
            cta1=("Start Step 1 Below", "#step1"), cta2=("Call 01202 775566", "tel:+441202775566"),
            chips=["We stay on the phone with you", "Nothing installs permanently", "You watch everything"]),
+      '''    <section class="section" aria-label="New to 365 Techies">
+      <div class="wrap" style="max-width:860px;margin:0 auto">
+        <div class="repairs__card" data-reveal style="border-color:rgba(29,151,227,.4)">
+          <div>
+            <p class="eyebrow mono">// NEW TO 365 TECHIES?</p>
+            <h2 class="repairs__title">We check the fault for free &mdash; then quote before we fix</h2>
+            <p class="lede">The <strong>only</strong> thing that&rsquo;s free is connecting in to check the problem, so a senior techie can give you a <strong>realistic quote</strong> &mdash; what needs doing, how long it&rsquo;ll take and what it&rsquo;ll cost. The fix itself is quoted up front and only done once you&rsquo;ve agreed the price. We never charge for a fix you haven&rsquo;t approved.</p>
+          </div>
+          <a href="/remote-support/" class="button primary">See pricing &amp; how it works</a>
+        </div>
+      </div>
+    </section>''',
       f'''    <section class="section section--alt" id="step1" aria-label="Step 1 — download">
       <div class="wrap" style="max-width:820px;margin:0 auto;text-align:center">
         <p class="eyebrow eyebrow--center mono" data-reveal>STEP 1 OF 3</p>
