@@ -4047,7 +4047,7 @@ add(
           <h2 class="section-title section-title--center" data-title>What&rsquo;s included every month<span class="title-underline title-underline--center"></span></h2>
         </div>
         <ul class="security-grid" data-stagger>
-{grid_cards([("Regular maintenance","A full computer service every six weeks to keep devices fast, clean and healthy."),("Unlimited remote support","Secure help over Splashtop SOS, usually within minutes during opening hours."),("Security &amp; protection","Antivirus, web protection, patching and a real human to ask &lsquo;is this email safe?&rsquo;"),("Microsoft 365 help","Outlook, Teams, OneDrive and licensing — set up and kept working for you."),("Backup checks","Backups verified regularly &mdash; and we can text you a reminder to plug in your backup drive when one&rsquo;s due."),("Friendly advice","Plain-English guidance on new devices, software and staying safe online.")])}
+{grid_cards([("Regular maintenance","A full computer service every six weeks to keep devices fast, clean and healthy."),("Unlimited remote support","Secure help over Splashtop SOS, usually within minutes during opening hours."),("Security &amp; protection","Antivirus, web protection, patching and a real human to ask &lsquo;is this email safe?&rsquo;"),("Microsoft 365 help","Outlook, Teams, OneDrive and licensing — set up and kept working for you."),("Backup checks","Backups verified regularly &mdash; and we can text you a reminder to plug in your backup drive when one&rsquo;s due."),("Friendly advice","Plain-English guidance on new devices, software and staying safe online."),("Our loyalty promise","Once you&rsquo;re up and running we keep it that way &mdash; and if a fault ever does crop up, any work you need is <strong>discounted</strong> because you&rsquo;re on support.")])}
         </ul>
         <p class="mono" style="text-align:center;margin-top:1.6rem"><a href="/preventative-maintenance/" style="color:var(--cyan)">See exactly what our 6-weekly preventative maintenance includes &#8594;</a></p>
       </div>
@@ -4069,6 +4069,7 @@ add(
               <li>Full service every 6 weeks</li>
               <li>Wi-Fi, printer &amp; email help</li>
               <li>Microsoft 365 &amp; security</li>
+              <li>Loyalty discount on any fault work</li>
             </ul>
             <a href="/home-it-support-plans/" class="button primary plan-card__cta">See Home Plans</a>
             <p class="mono" style="text-align:center;margin-top:.7rem;color:var(--faint);font-size:.6rem;letter-spacing:.12em">DIRECT DEBIT BY GOCARDLESS &middot; CANCEL ANYTIME</p>
@@ -4084,12 +4085,13 @@ add(
               <li>Microsoft 365 management</li>
               <li>Cybersecurity &amp; backups</li>
               <li>Staff onboarding &amp; advice</li>
+              <li>Loyalty discount on any fault work</li>
             </ul>
             <a href="/business-it-support-plans/" class="button primary plan-card__cta">See Business Plans</a>
             <p class="mono" style="text-align:center;margin-top:.7rem;color:var(--faint);font-size:.6rem;letter-spacing:.12em">DIRECT DEBIT BY GOCARDLESS &middot; CANCEL ANYTIME</p>
           </article>
         </div>
-        <p class="plans-note mono" data-reveal>// NO LOCK-IN &middot; CANCEL ANYTIME &middot; FULL COMPUTER SERVICE EVERY 6 WEEKS</p>
+        <p class="plans-note mono" data-reveal>// NO LOCK-IN &middot; CANCEL ANYTIME &middot; FULL COMPUTER SERVICE EVERY 6 WEEKS &middot; LOYALTY DISCOUNT ON ANY FAULT WORK</p>
       </div>
     </section>''',
    f'''    <section class="section" aria-label="Why subscription saves money">
@@ -4170,7 +4172,7 @@ add(
           <p><strong>Every plan includes a <a href="/preventative-maintenance/">full computer service every six weeks</a></strong> — updates, clean-up, security and health checks — so your devices stay in great shape all year round.</p>
         </div>
         <ul class="checklist" data-stagger>
-{checklist(["Remote computer support","Laptop &amp; desktop help","Email setup &amp; repair","Printer troubleshooting","Wi-Fi help","Microsoft 365 support","Windows updates","Security checks","Slow computer fixes","Backup advice","New device setup","Scam &amp; fraud prevention"])}
+{checklist(["Remote computer support","Laptop &amp; desktop help","Email setup &amp; repair","Printer troubleshooting","Wi-Fi help","Microsoft 365 support","Windows updates","Security checks","Slow computer fixes","Backup advice","New device setup","Loyalty discount on any fault work","Scam &amp; fraud prevention"])}
         </ul>
       </div>
     </section>''',
@@ -4240,7 +4242,7 @@ add(
           <p>Need a steer on the bigger decisions? Our <a href="/business-it-consultancy/">business IT consultancy</a> gives you a virtual IT manager and a clear, plain-English technology plan.</p>
         </div>
         <ul class="checklist" data-stagger>
-{checklist(["Remote IT support","Staff support","Microsoft 365 administration","Outlook &amp; email help","Teams, OneDrive &amp; SharePoint","Cybersecurity checks","Windows updates","Backup checks","New PC setup","User onboarding","Leaver account checks","Printer &amp; network support"])}
+{checklist(["Remote IT support","Staff support","Microsoft 365 administration","Outlook &amp; email help","Teams, OneDrive &amp; SharePoint","Cybersecurity checks","Windows updates","Backup checks","New PC setup","User onboarding","Leaver account checks","Loyalty discount on any fault work","Printer &amp; network support"])}
         </ul>
       </div>
     </section>''',
@@ -4302,7 +4304,7 @@ add(
         chips=["No contracts", "Cancel anytime", "Full service every 6 weeks"]),
    f'''    <section class="support-options" aria-label="Home support plans">
       <div class="plan-grid">
-{plan_card("home", None, "HOME SUPPORT", "Home IT Support", "Friendly cover for your computer &mdash; remote help, regular maintenance and security, all year round.", "&pound;18.25", ("","/mo per computer"), ["Support for your computer","Unlimited remote support","Full service every 6 weeks","Security &amp; backup checks","Wi-Fi, printer &amp; email help","Patient, jargon-free help"], "Set up Direct Debit", subscribe_href("home-support"))}
+{plan_card("home", None, "HOME SUPPORT", "Home IT Support", "Friendly cover for your computer &mdash; remote help, regular maintenance and security, all year round.", "&pound;18.25", ("","/mo per computer"), ["Support for your computer","Unlimited remote support","Full service every 6 weeks","Security &amp; backup checks","Wi-Fi, printer &amp; email help","Loyalty discount on any fault work","Patient, jargon-free help"], "Set up Direct Debit", subscribe_href("home-support"))}
 {plan_card("business", "&#9733; MOST POPULAR", "+ MICROSOFT 365", "Home Support + Microsoft 365", "Everything in Home IT Support, plus Microsoft 365 set up and looked after for you.", "&pound;23.10", ("","/mo per computer"), ["Everything in Home IT Support","Microsoft 365 set up &amp; supported","Outlook email &amp; Office apps","OneDrive backup help","One Microsoft 365 licence included","Extra licences &pound;4.85/mo each"], "Set up Direct Debit", subscribe_href("home-support-365"))}
       </div>
       <p class="plans-note mono" data-reveal>// &pound;18.25/MO PER COMPUTER &middot; ADD MICROSOFT 365 FOR &pound;4.85/MO PER USER &middot; MORE THAN ONE COMPUTER? JUST TELL US</p>
@@ -4335,6 +4337,7 @@ add(
               <tr><th scope="row">Wi-Fi, printer &amp; email help</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
               <tr><th scope="row">Security &amp; backup checks</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
               <tr><th scope="row">New device setup help</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
+              <tr><th scope="row">Loyalty discount on any fault work</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
               <tr><th scope="row">Microsoft 365 (Outlook &amp; Office apps)</th><td class="no">&ndash;</td><td class="yes">&#10003;</td></tr>
               <tr><th scope="row">OneDrive backup help</th><td>Advice</td><td class="yes">&#10003;</td></tr>
             </tbody>
@@ -4367,7 +4370,7 @@ add(
         chips=["From &pound;24.38/mo per computer", "Microsoft 365 managed", "Remote &amp; on-site options"]),
    f'''    <section class="support-options" aria-label="Business support plans">
       <div class="plan-grid plan-grid--3">
-{plan_card("business", None, "STARTER", "Business Starter", "For sole traders and very small businesses.", "&pound;24.38", ("FROM","/mo per computer"), ["Support for 1&ndash;3 computers","Remote IT support","Email support","Microsoft 365 help","Basic security checks","Computer maintenance &amp; buying advice"], "Set up Direct Debit", subscribe_href("business-starter"))}
+{plan_card("business", None, "STARTER", "Business Starter", "For sole traders and very small businesses.", "&pound;24.38", ("FROM","/mo per computer"), ["Support for 1&ndash;3 computers","Remote IT support","Email support","Microsoft 365 help","Basic security checks","Loyalty discount on any fault work","Computer maintenance &amp; buying advice"], "Set up Direct Debit", subscribe_href("business-starter"))}
 {plan_card("business", "&#9733; MOST POPULAR", "STANDARD", "Business Standard", "For small businesses needing regular IT support.", "&pound;24.38", ("FROM","/mo per computer"), ["Support for multiple users","Microsoft 365 administration","Outlook, Teams &amp; OneDrive","Backup checks","Cybersecurity guidance","Monthly maintenance &amp; new user setup"], "Get a Quote", "/contact/?topic=business-it-support")}
 {plan_card("business", None, "PREMIUM", "Business Premium", "For businesses that rely on IT every day.", "&pound;24.38", ("FROM","/mo per computer"), ["Priority support","Remote &amp; on-site options","Microsoft 365 management","Cybersecurity &amp; backup planning","Staff onboarding &amp; offboarding","Device setup &amp; technology planning"], "Get a Quote", "/contact/?topic=business-it-support")}
       </div>
@@ -4398,6 +4401,7 @@ add(
             <tbody>
               <tr><th scope="row">Computers</th><td>1&ndash;3</td><td>Multiple</td><td>Multiple</td></tr>
               <tr><th scope="row">Remote support</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
+              <tr><th scope="row">Loyalty discount on any fault work</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
               <tr><th scope="row">Microsoft 365</th><td>Help</td><td>Administration</td><td>Full management</td></tr>
               <tr><th scope="row">Cybersecurity</th><td>Basic checks</td><td>Guidance</td><td>Planning</td></tr>
               <tr><th scope="row">Backup checks</th><td class="no">&ndash;</td><td class="yes">&#10003;</td><td>+ recovery planning</td></tr>
