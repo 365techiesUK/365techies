@@ -17,7 +17,7 @@ except Exception:
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://365techies.co.uk"
-CSSV = "63"
+CSSV = "64"
 try:
     from hero_scenes import SCENES as HERO_SCENES
 except Exception:
