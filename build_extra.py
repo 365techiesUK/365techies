@@ -14,6 +14,10 @@ from build_pages import (add, graph, crumb, webpage, service, faqpage,
 from build_local import make_customer
 from new_pages_data import NEW_PAGES
 try:
+    from new_pages_data import DELL_COMPARE_TABLES
+except ImportError:
+    DELL_COMPARE_TABLES = {}
+try:
     from hero_scenes import SCENES as HERO_SCENES
 except Exception:
     HERO_SCENES = {}
@@ -3140,14 +3144,14 @@ def dell_hardware():
       ("Is it safe to buy refurbished?", "From us, yes. Every machine is fully tested and securely wiped, you&rsquo;re buying from a real local firm &mdash; a Dorset family business you can phone, text or email, here since 1995 &mdash; and you&rsquo;re covered by our own warranty plus your Consumer Rights Act protection, very different from an untested bargain off a marketplace."),
       ("What do the condition grades mean?", "We grade Dell Latitude laptops <strong>A, B or C</strong> by how they <em>look</em> &mdash; A is near-mint, B has light cosmetic wear, C has more visible marks &mdash; not by how they work. Every grade is fully tested and working, and we tell you the exact grade before you buy."),
       ("What about the storage and battery?", "Every machine is fitted with a <strong>brand-new Samsung Pro SSD</strong> (with a 5-year guarantee) for speed and reliability. Laptop batteries wear with use, so we check each one and tell you its condition up front &mdash; and can fit a fresh battery if you&rsquo;d like."),
-      ("What warranty do I get?", "Plenty of cover: a <strong>Dell next-business-day worldwide warranty</strong> (extendable if you need it), our own <strong>365 Techies 5-year guarantee</strong>, and the new Samsung Pro SSD&rsquo;s 5-year guarantee &mdash; plus full support on any of our plans and a full repair service if you ever break it. As a UK buyer you&rsquo;re also covered by the Consumer Rights Act, including a 30-day right to reject if something&rsquo;s faulty."),
+      ("What warranty do I get?", "Plenty of cover: <strong>any remaining Dell warranty where applicable</strong> (extendable if you need it), our own <strong>365 Techies 5-year guarantee</strong>, and the new Samsung Pro SSD&rsquo;s 5-year guarantee &mdash; plus full support on any of our plans and a full repair service if you ever break it. As a UK buyer you&rsquo;re also covered by the Consumer Rights Act, including a 30-day right to reject if something&rsquo;s faulty."),
       ("Can you supply screens, webcams and other accessories?", "Yes &mdash; we&rsquo;ll supply and set up whatever you need alongside your Dell: monitors, webcams, backup drives, speakers, keyboards, mice and more, all configured and ready to use."),
       ("Can you wipe and recycle my old computer?", "Yes &mdash; we can move your files across to your new Dell, then securely wipe (with a certificate) and responsibly recycle your old machine. See our <a href=\"/secure-it-disposal/\">secure IT disposal</a> page."),
       ("Do you set it up and support it too?", "Always. Every Dell we supply is set up ready to use &mdash; Windows, Microsoft 365, security, backups and your data moved across &mdash; and you can keep it looked after on a <a href=\"/home-it-support-plans/\">home</a> or <a href=\"/business-it-support-plans/\">business</a> support plan."),
       ("Do you supply second-hand computers for a business or office?", "Yes &mdash; refurbished business-grade Dell OptiPlex desktops and Latitude laptops are ideal, affordable office machines. See our page on <a href=\"/second-hand-office-computers-poole/\">second-hand office computers in Poole</a>, or setting up <a href=\"/new-laptop-set-up-bournemouth/\">a new laptop ready to use</a> for home."),
     ]
     content = "\n".join([
-      hero(bc_sub("Dell IT Support", "/dell-it-support-dorset/", "Refurbished Dell"), "// REFURBISHED &middot; BUSINESS-GRADE",
+      hero(bc_sub("Dell", "/dell-it-support-dorset/", "Refurbished Dell"), "// REFURBISHED &middot; BUSINESS-GRADE",
            'Refurbished Dell Latitude laptops &amp; <em class="grad grad--cyan">OptiPlex desktops</em>',
            "Professionally refurbished, tested ex-business Dell &mdash; proper business-grade computers for a fraction of the price of new, set up and supported by a real local firm you can phone, text or email &mdash; and that comes to you. Kinder on your wallet and the planet.",
            cta1=("Find me a refurbished Dell", "#match"), cta2=("Call 01202 775566", "tel:+441202775566"),
@@ -3161,7 +3165,7 @@ def dell_hardware():
           <p>Bought refurbished, that quality costs <strong>far less than new</strong> &mdash; often around 30&ndash;50% less &mdash; while still doing everything most homes and small businesses need. We&rsquo;ve been supplying refurbished Dell business laptops and PCs for <strong>over 30 years</strong>: we recommend the right model, spec, memory and storage, fit a <strong>brand-new Samsung Pro SSD</strong>, supply any accessories you need, set it all up and support it for years.</p>
         </div>
         <ul class="checklist" data-stagger>
-{checklist(["Genuine ex-business Dell Latitude &amp; OptiPlex","Brand-new Samsung Pro SSD &mdash; 5-year guarantee","Dell next-business-day warranty + our 5-year guarantee","From &pound;299 &mdash; often 30&ndash;50% less than new","We recommend the right spec &amp; supply the accessories","Set up &amp; fully supported by your local team","Supplying refurbished Dell business kit for 30+ years","Full repair service if you ever break it"])}
+{checklist(["Genuine ex-business Dell Latitude &amp; OptiPlex","Brand-new Samsung Pro SSD &mdash; 5-year guarantee","any remaining Dell warranty where applicable + our 5-year guarantee","From &pound;299 &mdash; often 30&ndash;50% less than new","We recommend the right spec &amp; supply the accessories","Set up &amp; fully supported by your local team","Supplying refurbished Dell business kit for 30+ years","Full repair service if you ever break it"])}
         </ul>
       </div>
     </section>''',
@@ -3213,7 +3217,7 @@ def dell_hardware():
             <h3>Covered every which way</h3>
             <p style="color:var(--muted);margin:0 0 1.1rem">These aren&rsquo;t marketplace gambles &mdash; every machine is protected several times over. And if you ever manage to break it, we run a full repair service too.</p>
             <ul class="checklist">
-{checklist(["<strong>Dell next-business-day worldwide warranty</strong> &mdash; extendable if you need it","<strong>365 Techies 5-year guarantee</strong>","New Samsung Pro SSD &mdash; 5-year guarantee","Full repair service if you break it","Full support on any of our support plans","Family firm, here since 1995"])}
+{checklist(["<strong>any remaining Dell warranty where applicable</strong> &mdash; extendable if you need it","<strong>365 Techies 5-year guarantee</strong>","New Samsung Pro SSD &mdash; 5-year guarantee","Full repair service if you break it","Full support on any of our support plans","Family firm, here since 1995"])}
             </ul>
           </div>
           <div class="tile" data-reveal>
@@ -3411,9 +3415,9 @@ def dell_hardware():
           primary=("Find me a refurbished Dell", "#match"), secondary=("Call 01202 775566", "tel:+441202775566")),
     ])
     def schema(s, _desc=desc, _faqs=faqs):
-        return graph([crumb_sub(s, "Dell IT Support", "dell-it-support-dorset", "Refurbished Dell"), webpage(s, "Refurbished Dell Latitude Laptops & OptiPlex Desktops", _desc),
+        return graph([crumb_sub(s, "Dell", "dell-it-support-dorset", "Refurbished Dell"), webpage(s, "Refurbished Dell Latitude Laptops & OptiPlex Desktops", _desc),
                       service(s, "Refurbished Dell Supply & Support", "Professionally refurbished, tested ex-business Dell Latitude laptops and OptiPlex desktops, supplied, set up and supported by 365 Techies across Dorset, with our own warranty.", "Refurbished computer supply and support"),
-                      {"@type": "Product", "@id": SITE + "/" + s + "/#product", "name": "Refurbished Dell Latitude Laptops & OptiPlex Desktops", "description": "Professionally refurbished, tested ex-business Dell Latitude laptops and OptiPlex desktops, supplied, set up and supported by 365 Techies with our own warranty.", "brand": {"@type": "Brand", "name": "Dell"}, "itemCondition": "https://schema.org/RefurbishedCondition", "category": "Refurbished computer hardware", "additionalProperty": [{"@type": "PropertyValue", "name": "Storage", "value": "New Samsung Pro SSD (5-year guarantee)"}, {"@type": "PropertyValue", "name": "Condition grading", "value": "Graded A, B or C by appearance; every grade fully tested"}, {"@type": "PropertyValue", "name": "Warranty", "value": "Dell next-business-day warranty plus 365 Techies 5-year guarantee"}], "offers": {"@type": "AggregateOffer", "priceCurrency": "GBP", "lowPrice": "299", "availability": "https://schema.org/InStock", "url": SITE + "/" + s + "/#match", "seller": {"@type": "Organization", "name": "365 Techies"}}, "image": SITE + "/og-image.jpg", "url": SITE + "/" + s + "/"},
+                      {"@type": "Product", "@id": SITE + "/" + s + "/#product", "name": "Refurbished Dell Latitude Laptops & OptiPlex Desktops", "description": "Professionally refurbished, tested ex-business Dell Latitude laptops and OptiPlex desktops, supplied, set up and supported by 365 Techies with our own warranty.", "brand": {"@type": "Brand", "name": "Dell"}, "itemCondition": "https://schema.org/RefurbishedCondition", "category": "Refurbished computer hardware", "additionalProperty": [{"@type": "PropertyValue", "name": "Storage", "value": "New Samsung Pro SSD (5-year guarantee)"}, {"@type": "PropertyValue", "name": "Condition grading", "value": "Graded A, B or C by appearance; every grade fully tested"}, {"@type": "PropertyValue", "name": "Warranty", "value": "any remaining Dell warranty where applicable plus 365 Techies 5-year guarantee"}], "offers": {"@type": "AggregateOffer", "priceCurrency": "GBP", "lowPrice": "299", "availability": "https://schema.org/InStock", "url": SITE + "/" + s + "/#match", "seller": {"@type": "Organization", "name": "365 Techies"}}, "image": SITE + "/og-image.jpg", "url": SITE + "/" + s + "/"},
                       faqpage(s, _faqs)])
     add(slug=slug, title="Refurbished Dell Laptops & PCs Dorset | 365 Techies",
         desc=desc, og_title="Refurbished Dell Latitude & OptiPlex | 365 Techies", schema=schema, content=content)
@@ -3450,7 +3454,7 @@ def dell_it_support_hub():
       ("What if my Dell is too old to be worth fixing?", "We&rsquo;ll tell you honestly. If a repair costs more than the machine is worth, we&rsquo;ll suggest a tested, refurbished business-grade Dell from <strong>&pound;299</strong> instead &mdash; with a new Samsung Pro SSD, a clean copy of Windows and our own 5-year guarantee. No pressure either way."),
     ]
     content = "\n".join([
-      hero(bc("Dell IT Support"), "// DORSET&rsquo;S INDEPENDENT DELL SPECIALIST &middot; SINCE 1995",
+      hero(bc("Dell"), "// DORSET&rsquo;S INDEPENDENT DELL SPECIALIST &middot; SINCE 1995",
            'Dell support, servicing &amp; repair across <em class="grad grad--cyan">Bournemouth, Poole &amp; Dorset</em>',
            hero_trust("Whatever&rsquo;s going on with your Dell &mdash; a laptop that won&rsquo;t boot, a business fleet to look after, or a machine that&rsquo;s just had its day &mdash; you&rsquo;re in the right place. We&rsquo;re a family-run, independent Dell specialist who&rsquo;s been supplying and supporting Dell systems for homes and businesses for over 30 years. Here&rsquo;s the honest help &mdash; and if you&rsquo;d rather just leave it to the techies, that&rsquo;s exactly what we&rsquo;re here for."),
            cta1=("Talk to a Techie", "/contact/"), cta2=("Call 01202 775566", "tel:+441202775566"),
@@ -3516,7 +3520,7 @@ def refurbished_local():
     faqs = [
       ("Where can I buy a refurbished laptop near me in Dorset?", "365 Techies supplies refurbished Dell business laptops and PCs right across Bournemouth, Poole, Christchurch and the wider Dorset area &mdash; set up and supported locally. Tell us what you need and we&rsquo;ll match you one."),
       ("Do you deliver, or do I collect?", "Whatever suits &mdash; collect locally, or we can deliver and set it up across Dorset. Much of the setup we can even do remotely once you&rsquo;re up and running."),
-      ("Are they new or refurbished?", "Professionally refurbished, tested ex-business Dell &mdash; each with a brand-new Samsung Pro SSD, graded A, B or C, and backed by a Dell next-business-day warranty plus our own 5-year guarantee. See our <a href=\"/dell-hardware/\">refurbished Dell page</a> for the full detail."),
+      ("Are they new or refurbished?", "Professionally refurbished, tested ex-business Dell &mdash; each with a brand-new Samsung Pro SSD, graded A, B or C, and backed by any remaining Dell warranty where applicable plus our own 5-year guarantee. See our <a href=\"/dell-hardware/\">refurbished Dell page</a> for the full detail."),
       ("Which areas do you cover?", "Bournemouth, Poole, Christchurch, Ferndown, Wimborne, Wareham, Dorchester, Weymouth and across Dorset &mdash; remotely and on-site."),
     ]
     content = "\n".join([
@@ -5689,6 +5693,23 @@ DELL3520_WIDGET = r'''    <section class="section" aria-label="Interactive port 
           </div>
           <div class="d3-detail" id="d3-detail"></div>
           <div class="d3-controls"><button type="button" class="button primary" id="d3-tour">&#9654; Play tour</button></div>
+          <div class="cmp-wrap" data-reveal style="margin-top:1.7rem">
+            <p class="mono" style="text-align:center;opacity:.7;margin-bottom:.6rem">Every port at a glance</p>
+            <table class="cmp-table">
+              <thead><tr><th>Port</th><th>Where</th><th>What it&rsquo;s for</th></tr></thead>
+              <tbody>
+                <tr><th>Power in (round barrel)</th><td>Left</td><td>The supplied Dell 65W charger &mdash; the USB-C port charges it too</td></tr>
+                <tr><th>HDMI</th><td>Left</td><td>A second screen, TV or projector &mdash; press Win+P to arrange</td></tr>
+                <tr><th>USB-A 3.2 (the fast one)</th><td>Left</td><td>Memory sticks, external drives and hubs &mdash; use it for moving files</td></tr>
+                <tr><th>USB-C (do-everything)</th><td>Left</td><td>Charges the laptop, drives a monitor and runs a dock &mdash; one cable for everything</td></tr>
+                <tr><th>microSD reader (some models)</th><td>Right</td><td>Copy photos off a camera or phone memory card</td></tr>
+                <tr><th>Headset jack (3.5mm)</th><td>Right</td><td>Headphones or a headset with mic</td></tr>
+                <tr><th>USB-A 2.0 (the steady one)</th><td>Right</td><td>Mouse, keyboard dongle or printer &mdash; things that stay plugged in</td></tr>
+                <tr><th>Wired network (RJ-45)</th><td>Right</td><td>Straight into the router &mdash; the most stable connection there is</td></tr>
+                <tr><th>Security lock slot</th><td>Right</td><td>Takes a laptop cable lock</td></tr>
+              </tbody>
+            </table>
+          </div>
           <p class="d3-caption">Layout is approximate and the exact port mix can vary slightly between configurations &mdash; but if the port&rsquo;s on your machine, this is what it does.</p>
         </div>
       </div>
@@ -5772,6 +5793,16 @@ DELL3520_WIDGET = r'''    <section class="section" aria-label="Interactive port 
           <p class="eyebrow eyebrow--center mono" data-reveal>// THREE WAYS TO POWER IT</p>
           <h2 class="section-title section-title--center" data-title>Home, desk &amp; off-grid power<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>The Latitude 3520 charges through its barrel jack <em>or</em> its USB-C port &mdash; and choosing the right one saves faff at a desk and real battery power off-grid.</p>
+        </div>
+        <div class="cmp-wrap" data-reveal style="margin-bottom:1.6rem">
+          <table class="cmp-table">
+            <thead><tr><th>Setup</th><th>How</th><th>Why</th></tr></thead>
+            <tbody>
+              <tr><th>At home</th><td>The supplied 65W charger (barrel or USB-C)</td><td>Simple &mdash; both fully charge it</td></tr>
+              <tr><th>Business desk</th><td>One USB-C dock or a USB-C monitor</td><td>One cable carries power, screens, wired network and accessories</td></tr>
+              <tr><th>Off-grid / van</th><td>A 65W USB-C PD adapter in a 12V socket (skip the inverter)</td><td class="hi">Roughly 90%+ efficient and silent &mdash; the most efficient way to run off-grid</td></tr>
+            </tbody>
+          </table>
         </div>
         <div id="d3p" data-reveal>
           <div class="dp-tabs">
@@ -5859,7 +5890,7 @@ def dell_3520_guide():
       ("Can I run it in my campervan without an inverter?", "That&rsquo;s the trick this guide is built around: a quality 65W USB-C PD adapter in a 12V socket powers the laptop directly at roughly 90%+ efficiency &mdash; silent, no inverter idle drain, and noticeably more runtime from your leisure battery than the 12V&#8594;230V&#8594;charger route. Pair it with a proper 100W-rated (5A) cable."),
       ("Can the USB-C port drive a monitor too?", "Yes &mdash; it carries DisplayPort video as well as power and data. A USB-C dock or USB-C monitor gives you the one-cable desk: power, screens, wired network and accessories through a single plug."),
       ("How do I make the battery last years?", "Heat and living at 100% are what age batteries. Keep it out of direct sun (especially in a van), and if it&rsquo;s plugged in most of the time, set a charge limit (around 80%) in Dell Power Manager &mdash; we set this up on the machines we supply. Storing it for a while? Leave it around half charged."),
-      ("Is this the laptop 365 Techies sells?", "Yes &mdash; the Latitude 3520 is typical of the refurbished business-grade Dells we supply from &pound;299: tested, securely wiped, fitted with a new SSD and covered by a 12-month warranty. This guide comes free with every one. See <a href=\"/dell-hardware/\">refurbished Dells</a>."),
+      ("Is this the laptop 365 Techies sells?", "Yes &mdash; the Latitude 3520 is typical of the refurbished business-grade Dells we supply from &pound;299: tested, securely wiped, fitted with a new SSD and covered by our own 5-year guarantee. This guide comes free with every one. See <a href=\"/dell-hardware/\">refurbished Dells</a>."),
       ("Something&rsquo;s not working &mdash; what now?", "Try the quick fixes above first (Win+P for screens, the F1 mute key for sound, hold the power button 15 seconds for a frozen machine). Still stuck? That&rsquo;s literally what we do &mdash; <a href=\"/remote-it-support/\">remote support</a>, usually within minutes."),
     ]
     content = "\n".join([
@@ -5906,7 +5937,7 @@ def dell_3520_guide():
       faq_html(faqs),
       tools_strip(["speccheck", "pcbench", "solarcalc", "healthcheck"], title="Free tools for your machine", alt=False),
       cta("This guide comes with the laptops we sell",
-          "Refurbished business-grade Dell Latitude &amp; OptiPlex from &pound;299 &mdash; tested, new SSD, securely wiped, 12-month warranty, and set up ready to use. Plus a friendly techie on the end of the phone.",
+          "Refurbished business-grade Dell Latitude &amp; OptiPlex from &pound;299 &mdash; tested, new SSD, securely wiped, 5-year guarantee, and set up ready to use. Plus a friendly techie on the end of the phone.",
           primary=("See Refurbished Dells", "/dell-hardware/"), secondary=("Keep It Healthy &mdash; Plans", "/monthly-it-support/")),
     ])
     def schema(s, _desc=desc, _faqs=faqs):
@@ -5939,6 +5970,23 @@ DELLOPTI_WIDGET = r'''    <section class="section" aria-label="Interactive port 
           <div class="do-detail" id="do-detail"></div>
           <div class="do-controls"><button type="button" class="button primary" id="do-tour">&#9654; Play tour</button></div>
           <p class="do-caption">Typical OptiPlex small-form-factor layout &mdash; the exact port mix varies by model and generation, but if the port&rsquo;s on your machine, this is what it does.</p>
+          <div class="cmp-wrap" data-reveal style="margin-top:1.7rem">
+            <p class="mono" style="text-align:center;opacity:.7;margin-bottom:.6rem">Every port at a glance</p>
+            <table class="cmp-table">
+              <thead><tr><th>Port</th><th>Where</th><th>What it&rsquo;s for</th></tr></thead>
+              <tbody>
+                <tr><th>Power button</th><td>Front</td><td>One press to start; hold 15 seconds to force a full shutdown</td></tr>
+                <tr><th>Front USB (the convenient ones)</th><td>Front</td><td>Memory sticks, phone charging, a camera</td></tr>
+                <tr><th>Headset jack</th><td>Front</td><td>Headphones or a headset with mic</td></tr>
+                <tr><th>Mains power (kettle lead, C13)</th><td>Back</td><td>The standard three-pin lead &mdash; push it firmly home</td></tr>
+                <tr><th>DisplayPort &times;2</th><td>Back</td><td>Dual monitors out of the box &mdash; Win+P to arrange</td></tr>
+                <tr><th>Extra video port (some models)</th><td>Back</td><td>A third screen &mdash; HDMI or VGA depending on the model</td></tr>
+                <tr><th>Rear USB (&times;4 or more)</th><td>Back</td><td>Keyboard, mouse, printer and a backup drive &mdash; the permanent ones</td></tr>
+                <tr><th>Wired network (RJ-45)</th><td>Back</td><td>Into the router &mdash; the most reliable connection there is</td></tr>
+                <tr><th>Line-out audio</th><td>Back</td><td>Powered desk speakers</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
       <style>
@@ -6021,6 +6069,16 @@ DELLOPTI_WIDGET = r'''    <section class="section" aria-label="Interactive port 
           <p class="eyebrow eyebrow--center mono" data-reveal>// THREE WAYS TO RUN IT</p>
           <h2 class="section-title section-title--center" data-title>Home, business desk &amp; off-grid<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>Desktops are simple to power &mdash; but a couple of choices make them safer, tidier and (if you must) even off-grid-able.</p>
+        </div>
+        <div class="cmp-wrap" data-reveal style="margin-bottom:1.6rem">
+          <table class="cmp-table">
+            <thead><tr><th>Setup</th><th>How</th><th>Why</th></tr></thead>
+            <tbody>
+              <tr><th>At home</th><td>Kettle lead through a surge-protected strip</td><td>Cheap insurance for the whole setup</td></tr>
+              <tr><th>Business desk</th><td>A small UPS (battery backup) between the wall and the PC</td><td class="hi">Rides through power cuts &mdash; no lost work or corrupted files</td></tr>
+              <tr><th>Off-grid</th><td>A quality pure-sine inverter from a 12V leisure battery</td><td>Desktops need mains &mdash; a clean pure-sine supply keeps them happy</td></tr>
+            </tbody>
+          </table>
         </div>
         <div id="dpp" data-reveal>
           <div class="do2-tabs">
@@ -6110,7 +6168,7 @@ def dell_optiplex_guide():
       ("Can I run a desktop in my campervan or off-grid?", "You can &mdash; small-form-factor models need a pure sine wave inverter and drink noticeably more than a laptop, while the tiny OptiPlex Micro can run from 12V via a DC&ndash;DC adapter. Our honest steer: off-grid is laptop territory &mdash; see the <a href=\"/dell-latitude-3520-guide/\">Latitude 3520 guide</a> for the efficient 12V USB-C setup."),
       ("What&rsquo;s the power lead called if I lose it?", "A &ldquo;kettle lead&rdquo; (properly: an IEC C13). Any office has a drawer full; any replacement fits. Push it in firmly &mdash; a half-seated one is a classic cause of &lsquo;dead&rsquo; computers."),
       ("The power light is flashing amber &mdash; what does it mean?", "That&rsquo;s the machine blinking a diagnostic code at you. Count the pattern (e.g. two blinks, pause, three blinks) and tell us &mdash; it identifies the fault before we&rsquo;ve even opened the case."),
-      ("Is this the desktop 365 Techies sells?", "Yes &mdash; refurbished business-grade OptiPlex desktops are half of what we supply (alongside Latitude laptops), from &pound;299: tested, securely wiped, new SSD, 12-month warranty, set up ready to use. See <a href=\"/dell-hardware/\">refurbished Dells</a>."),
+      ("Is this the desktop 365 Techies sells?", "Yes &mdash; refurbished business-grade OptiPlex desktops are half of what we supply (alongside Latitude laptops), from &pound;299: tested, securely wiped, new SSD, our own 5-year guarantee, set up ready to use. See <a href=\"/dell-hardware/\">refurbished Dells</a>."),
     ]
     content = "\n".join([
       hero(bc("Dell OptiPlex Guide"), "// THE EASY OWNER&rsquo;S GUIDE",
@@ -6144,7 +6202,7 @@ def dell_optiplex_guide():
       faq_html(faqs),
       tools_strip(["speccheck", "pcbench", "pcbuild", "healthcheck"], title="Free tools for your machine", alt=False),
       cta("This guide comes with the desktops we sell",
-          "Refurbished business-grade Dell OptiPlex &amp; Latitude from &pound;299 &mdash; tested, new SSD, securely wiped, 12-month warranty, and set up ready to use. Plus a friendly techie on the end of the phone.",
+          "Refurbished business-grade Dell OptiPlex &amp; Latitude from &pound;299 &mdash; tested, new SSD, securely wiped, 5-year guarantee, and set up ready to use. Plus a friendly techie on the end of the phone.",
           primary=("See Refurbished Dells", "/dell-hardware/"), secondary=("Keep It Healthy &mdash; Plans", "/monthly-it-support/")),
     ])
     def schema(s, _desc=desc, _faqs=faqs):
@@ -11337,7 +11395,7 @@ info_page(
     ("Should I buy refurbished?","A good refurbished machine from a reputable seller can be excellent value &mdash; just check it has an SSD, enough memory and can run Windows 11. We actually supply <a href=\"/dell-hardware/\">refurbished, business-grade Dell laptops &amp; PCs</a> &mdash; tested, set up and backed by our own warranty &mdash; so we&rsquo;re happy to advise or match you one."),
     ("How do I recycle my old laptop?","Back up and wipe it first, then recycle it responsibly &mdash; see our guide to <a href=\"/how-to-wipe-and-recycle-old-computer/\">wiping and recycling an old computer</a>."),
     ("What is the best laptop for a home-office setup, and are refurbished ones any good?","For a home office running email, the web, video calls and office software, you do not need the latest or most expensive machine &mdash; aim for an SSD, plenty of memory and a screen size that suits your desk. A professionally refurbished, business-grade Dell Latitude or OptiPlex is often the sweet spot here: built for reliable all-day office use, fitted with a brand-new Samsung Pro SSD, and typically around 30&ndash;50% less than an equivalent new machine. See our guide on whether <a href=\"/are-refurbished-laptops-any-good/\">refurbished laptops are any good</a>."),
-    ("Where can I buy a good refurbished laptop near me?","If you are in Bournemouth, Poole, Christchurch or anywhere across Dorset, we supply professionally refurbished, tested ex-business Dell laptops and desktops from &pound;299 &mdash; each with a brand-new Samsung Pro SSD, a clean licensed copy of Windows, and both a Dell next-business-day warranty and our own 5-year guarantee. See <a href=\"/refurbished-laptops-dorset/\">refurbished laptops in Dorset</a>, or call 01202 775566."),
+    ("Where can I buy a good refurbished laptop near me?","If you are in Bournemouth, Poole, Christchurch or anywhere across Dorset, we supply professionally refurbished, tested ex-business Dell laptops and desktops from &pound;299 &mdash; each with a brand-new Samsung Pro SSD, a clean licensed copy of Windows, and any remaining Dell warranty where applicable and our own 5-year guarantee. See <a href=\"/refurbished-laptops-dorset/\">refurbished laptops in Dorset</a>, or call 01202 775566."),
   ],
   cta_args=("Want a hand choosing?","Tell us how you&rsquo;ll use it and your budget, and we&rsquo;ll recommend the right computer &mdash; honestly, with no upselling &mdash; and set it all up for you.",
             ("New Computer Setup","/new-computer-setup/"), ("Talk to a Techie","/contact/")),
@@ -13915,7 +13973,7 @@ def _pack_hub(slug):
     if slug.startswith('it-support-for-'):
         return ("IT Support by Industry", "it-support-by-industry")
     if slug in _DELL_HUB_SLUGS:
-        return ("Dell IT Support", "dell-it-support-dorset")
+        return ("Dell", "dell-it-support-dorset")
     return None
 
 # Dell cluster packs -> hero scene key (all Dell pages get an animated hero picture)
@@ -13949,6 +14007,17 @@ def build_new_page(d):
     # learning funnel: gentle pages promote the free courses at the end
     if _wants_courses_band(d['slug']):
         _blocks.append(bp.COURSES_BAND)
+    # AEO comparison table: high-value "vs"/"which" pages get an at-a-glance table after section 1
+    _cmp = DELL_COMPARE_TABLES.get(d['slug'])
+    if _cmp:
+        _cmp_head, _cmp_html = _cmp
+        _cmp_block = f'''    <section class="section section--alt" aria-label="At a glance">
+      <div class="wrap" data-reveal>
+        <div class="section-head"><h2 class="section-title section-title--center">{_cmp_head}<span class="title-underline title-underline--center"></span></h2></div>
+        {_cmp_html}
+      </div>
+    </section>'''
+        _blocks.insert(1 if len(_blocks) > 1 else len(_blocks), _cmp_block)
     sections = "\n".join(_blocks)
     cross = ""
     if d.get('crossLinksHtml'):
