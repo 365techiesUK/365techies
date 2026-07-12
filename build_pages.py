@@ -1061,9 +1061,12 @@ def checklist(items):
 
 def steps(items):
     out = []
-    for n, (t, d) in enumerate(items, 1):
+    for n, item in enumerate(items, 1):
+        t, d = item[0], item[1]
+        scene = item[2] if len(item) > 2 else None
+        scene_html = f'<div class="course-scene" aria-hidden="true">{scene}</div>\n          ' if scene else ''
         out.append(f'''        <li data-reveal>
-          <p class="how__num mono">{n:02d}</p>
+          {scene_html}<p class="how__num mono">{n:02d}</p>
           <h3>{t}</h3>
           <p>{d}</p>
         </li>''')
