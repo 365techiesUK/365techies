@@ -174,6 +174,8 @@ HEADER = '''  <header class="site-header">
             <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
             <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
             <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
+            <a href="/dell-support-bournemouth/">Dell Support Bournemouth</a>
+            <a href="/dell-support-poole/">Dell Support Poole</a>
             <a href="/custom-pc-builds/">Custom-Built PCs</a>
             <a href="/wifi-support/">Wi-Fi Support</a>
             <a href="/email-support/">Email Support</a>
@@ -327,6 +329,8 @@ HEADER = '''  <header class="site-header">
           <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
           <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
           <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
+          <a href="/dell-support-bournemouth/">Dell Support Bournemouth</a>
+          <a href="/dell-support-poole/">Dell Support Poole</a>
           <a href="/custom-pc-builds/">Custom-Built PCs</a>
           <a href="/wifi-support/">Wi-Fi Support</a>
           <a href="/email-support/">Email Support</a>
@@ -576,6 +580,8 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
         <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
         <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
+        <a href="/dell-support-bournemouth/">Dell Support Bournemouth</a>
+        <a href="/dell-support-poole/">Dell Support Poole</a>
         <a href="/refurbished-dell-laptops-bournemouth/">Refurbished Dell Laptops</a>
         <a href="/second-hand-office-computers-poole/">Refurbished Office Computers</a>
         <a href="/custom-pc-builds/">Custom-Built PCs</a>
@@ -660,9 +666,12 @@ FOOTER = '''  <footer class="site-footer">
 
 def _meta_desc(d, limit=158):
     """Trim the meta description to ~limit chars at a word boundary for clean SERP snippets;
-    og:/twitter: descriptions keep the full text. Avoids cutting mid-word or mid-entity."""
+    og:/twitter: descriptions keep the full text. Avoids cutting mid-word or mid-entity.
+    Length is measured on the RENDERED text (entities like &rsquo;/&mdash;/&pound; count as
+    one char) so entity-heavy descriptions that actually fit aren't trimmed mid-CTA."""
+    from html import unescape as _unescape
     d = " ".join(d.split())
-    if len(d) <= limit:
+    if len(_unescape(d)) <= limit:
         return d
     cut = d[:limit]
     if " " in cut:

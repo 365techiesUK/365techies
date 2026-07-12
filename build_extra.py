@@ -3131,7 +3131,7 @@ def _dell_cluster_section(exclude=()):
 
 def dell_hardware():
     slug = "dell-hardware"
-    desc = "Refurbished, tested ex-business Dell Latitude laptops & OptiPlex desktops from £299 — supplied, set up and supported across Bournemouth, Poole & Dorset, with our own 5-year guarantee. Reliable, lower-waste."
+    desc = "Refurbished, tested ex-business Dell Latitude laptops & OptiPlex desktops from £299 — supplied, set up & supported across Bournemouth, Poole & Dorset."
     faqs = [
       ("Are these new or refurbished?", "They&rsquo;re professionally refurbished &mdash; genuine ex-business Dell Latitude laptops and OptiPlex desktops that we test, securely wipe, clean, grade and set up before they go out. Not new, and we&rsquo;d never pretend otherwise &mdash; that&rsquo;s rather the point: proper business-grade kit for a lot less."),
       ("How much do refurbished Dells cost?", "Our refurbished Dell Latitude laptops and OptiPlex desktops <strong>start from &pound;299</strong>, with the exact price depending on the model, spec and condition grade you choose. Tell us your budget and what you&rsquo;ll use it for, and we&rsquo;ll match you the best machine for the money &mdash; every one tested, set up, supported and backed by our warranties."),
@@ -3426,9 +3426,8 @@ dell_hardware()
 # the /dell-hardware/ buying spoke.
 def dell_it_support_hub():
     slug = "dell-it-support-dorset"
-    desc = ("Dell support, servicing & repair across Bournemouth, Poole & Dorset from an independent Dell "
-            "specialist of 30+ years - remote support, servicing, emergency repairs and refurbished Dell "
-            "from &pound;299, for homes &amp; businesses. Mon-Fri, no call-out fee. Call 01202 775566.")
+    desc = ("Independent Dell support, servicing & repair across Bournemouth, Poole & Dorset &mdash; 30+ years, "
+            "no call-out fee. Refurbished Dell from &pound;299. Call 01202 775566.")
     ways = [
       ("remote", "Remote Dell support", "/dell-remote-support/",
        "We connect securely over a session you watch and fix Windows, email, drivers, settings and slowdowns on your Dell &mdash; often the same day, and we always phone before we connect."),
@@ -3506,7 +3505,7 @@ def dell_it_support_hub():
         ]
         return graph([crumb(s, "Dell IT Support"), webpage(s, "Dell IT Support, Servicing & Repair in Dorset", _desc, "CollectionPage"),
                       svc, faqpage(s, _faqs)])
-    add(slug=slug, title="Dell Support & Repair in Dorset (Home & Business) | 365 Techies",
+    add(slug=slug, title="Dell Support & Repair, Dorset (Home & Business) | 365 Techies",
         desc=desc, og_title="Dell Support, Servicing & Repair in Dorset | 365 Techies", schema=schema, content=content)
 dell_it_support_hub()
 
@@ -5854,7 +5853,7 @@ DELL3520_WIDGET = r'''    <section class="section" aria-label="Interactive port 
 
 def dell_3520_guide():
     slug = "dell-latitude-3520-guide"
-    desc = "The easy, animated owner's guide to the Dell Latitude 3520 — every port explained, three ways to power it (home, one-cable desk, and efficient 12V USB-C off-grid), battery care, keyboard shortcuts and quick fixes. From 365 Techies, Dorset."
+    desc = "The easy, animated owner's guide to the Dell Latitude 3520 — every port explained, three ways to power it, plus battery care and quick fixes."
     faqs = [
       ("Can I charge the Latitude 3520 through USB-C?", "Yes &mdash; alongside the round barrel charger, the USB-C port takes USB-C Power Delivery. A <b>65W PD charger gives full-speed charging</b>; 45W charges more slowly (fine overnight); weak phone chargers may only trickle or prompt a warning. One port, one cable, done."),
       ("Can I run it in my campervan without an inverter?", "That&rsquo;s the trick this guide is built around: a quality 65W USB-C PD adapter in a 12V socket powers the laptop directly at roughly 90%+ efficiency &mdash; silent, no inverter idle drain, and noticeably more runtime from your leisure battery than the 12V&#8594;230V&#8594;charger route. Pair it with a proper 100W-rated (5A) cable."),
@@ -6104,7 +6103,7 @@ DELLOPTI_WIDGET = r'''    <section class="section" aria-label="Interactive port 
 
 def dell_optiplex_guide():
     slug = "dell-optiplex-guide"
-    desc = "The easy, animated owner's guide to Dell OptiPlex desktops — front and back ports explained, dual monitors, surge & UPS advice, the honest off-grid answer, upgrades, care and 60-second fixes. From 365 Techies, Dorset."
+    desc = "The easy, animated owner's guide to Dell OptiPlex desktops — ports explained, dual monitors, surge & UPS advice, upgrades and quick fixes."
     faqs = [
       ("Can the OptiPlex run two monitors?", "Yes &mdash; most have <b>two DisplayPorts on the back</b>, so dual screens work out of the box. Monitor only has HDMI? A simple DisplayPort-to-HDMI cable sorts it. Plug both in, press Win+P, choose Extend, then drag the screens into the right order in Settings &#8594; Display."),
       ("Can I upgrade it later?", "That&rsquo;s the OptiPlex party trick: the case opens without tools and takes more memory and storage easily. Machines we supply already have a brand-new SSD; adding RAM or a second drive later is a quick job we do all the time."),
@@ -6152,7 +6151,7 @@ def dell_optiplex_guide():
         return graph([crumb(s, "Dell OptiPlex Guide"), webpage(s, "Dell OptiPlex — The Easy Owner's Guide", _desc),
                       {"@type":"TechArticle","headline":"Dell OptiPlex — The Easy Owner's Guide","about":{"@type":"Thing","name":"Dell OptiPlex desktop"},"author":{"@id":SITE+"/#business"},"url":SITE+"/dell-optiplex-guide/"},
                       faqpage(s, _faqs)])
-    add(slug=slug, title="Dell OptiPlex Easy Guide — Ports, Monitors, UPS & Care | 365 Techies",
+    add(slug=slug, title="Dell OptiPlex Guide — Ports, Monitors, UPS & Care | 365 Techies",
         desc=desc, og_title="Dell OptiPlex — The Easy Guide | 365 Techies", schema=schema, content=content)
 dell_optiplex_guide()
 
