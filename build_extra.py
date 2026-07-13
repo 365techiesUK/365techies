@@ -3497,17 +3497,12 @@ def dell_it_support_hub():
         svc = service(s, "Dell IT Support, Servicing & Repair",
                       "Independent Dell support, servicing, emergency repair and refurbished Dell sales for homes and businesses across Bournemouth, Poole and Dorset, from a 30-year Dell specialist.",
                       "Dell computer support and repair", area=area)
-        svc["aggregateRating"] = {"@type": "AggregateRating", "ratingValue": "4.9", "reviewCount": "49",
-                                  "bestRating": "5", "worstRating": "1"}
-        svc["review"] = [
-          {"@type": "Review", "reviewRating": {"@type": "Rating", "ratingValue": "5", "bestRating": "5"},
-           "author": {"@type": "Person", "name": "Dean Robertson"},
-           "reviewBody": "The guys at 365 listened to my actual needs and tweaked a desktop to the specs I required. It's a quality Dell machine at a very good price - you get a personal service here."},
-          {"@type": "Review", "reviewRating": {"@type": "Rating", "ratingValue": "5", "bestRating": "5"},
-           "author": {"@type": "Person", "name": "Heather"},
-           "reviewBody": "I have trusted 365 with my IT support since 2001. I've lost count of the number of PCs, tablets and laptops I've bought from them."},
-        ]
-        return graph([crumb(s, "Dell IT Support"), webpage(s, "Dell IT Support, Servicing & Repair in Dorset", _desc, "CollectionPage"),
+        # NO aggregateRating/review on the Service node: Google Review-snippet rich results
+        # do NOT allow review markup on type Service (GSC "Invalid object type for field
+        # '<parent_node>'", flagged 2026-07-13). Star ratings are self-serving on your own
+        # site anyway (they belong in the Google Business Profile / map pack). The customer
+        # quotes still render as visible on-page testimonials in the content.
+        return graph([crumb(s, "Dell"), webpage(s, "Dell IT Support, Servicing & Repair in Dorset", _desc, "CollectionPage"),
                       svc, faqpage(s, _faqs)])
     add(slug=slug, title="Dell Support & Repair, Dorset (Home & Business) | 365 Techies",
         desc=desc, og_title="Dell Support, Servicing & Repair in Dorset | 365 Techies", schema=schema, content=content)
