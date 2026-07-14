@@ -3133,6 +3133,81 @@ def _dell_cluster_section(exclude=()):
             '      </div>\n'
             '    </section>')
 
+# ================================================ RESPONSIVE YOUTUBE VIDEO BLOCK (Dell reel)
+# Self-contained click-to-play facade. Serves the vertical YouTube Short to phones and the
+# landscape video to desktops (chosen per visitor via matchMedia), on youtube-nocookie so NO
+# cookies fire until the viewer clicks. Inert until BOTH IDs (and an upload date) are set below
+# -- like VRM_EMBED_URL -- so it ships safely before the videos are live. Inline <script> pattern
+# mirrors BOOKING_EMBED; no build wiring, no CSSV/?v= bump needed.
+DELL_REEL_SHORT_ID    = "b5VNskKmEAM"   # 9:16 YouTube Short (phones)
+DELL_REEL_WIDE_ID     = "1GQrPS59VCw"   # 16:9 YouTube video (desktop)
+DELL_REEL_UPLOAD_DATE = "2026-07-14"    # date the videos went live
+
+def responsive_video(eyebrow, title, poster_wide, poster_tall, alt):
+    if not (DELL_REEL_SHORT_ID and DELL_REEL_WIDE_ID):
+        return ""   # inert until the videos are uploaded and IDs set above
+    watch = "https://www.youtube.com/watch?v=" + DELL_REEL_WIDE_ID
+    return (
+      '    <section class="section section--alt" aria-label="Watch: Dell support across Dorset">\n'
+      '      <div class="wrap wrap--narrow">\n'
+      '        <div class="section-head">\n'
+      f'          <p class="eyebrow eyebrow--center mono" data-reveal>// {eyebrow}</p>\n'
+      f'          <h2 class="section-title section-title--center" data-title>{title}<span class="title-underline title-underline--center"></span></h2>\n'
+      '        </div>\n'
+      f'        <div class="rvid" data-rvid data-short="{DELL_REEL_SHORT_ID}" data-wide="{DELL_REEL_WIDE_ID}">\n'
+      f'          <button class="rvid__btn" type="button" aria-label="Play video: {alt}">\n'
+      '            <picture>\n'
+      f'              <source media="(max-width:767px)" srcset="{poster_tall}" />\n'
+      f'              <img class="rvid__poster" src="{poster_wide}" alt="{alt}" loading="lazy" width="1280" height="720" />\n'
+      '            </picture>\n'
+      '            <span class="rvid__play" aria-hidden="true"><svg viewBox="0 0 68 48" width="68" height="48"><path d="M66.5 7.7a8 8 0 0 0-5.6-5.7C56 .7 34 .7 34 .7s-22 0-26.9 1.3a8 8 0 0 0-5.6 5.7A83 83 0 0 0 .2 24a83 83 0 0 0 1.3 16.3 8 8 0 0 0 5.6 5.7C12 47.3 34 47.3 34 47.3s22 0 26.9-1.3a8 8 0 0 0 5.6-5.7A83 83 0 0 0 67.8 24a83 83 0 0 0-1.3-16.3z" fill="#1d97e3"/><path d="M27 34.5 45 24 27 13.5z" fill="#fff"/></svg></span>\n'
+      '          </button>\n'
+      '        </div>\n'
+      f'        <p class="rvid__fallback mono"><a href="{watch}" target="_blank" rel="noopener">Watch on YouTube &#8594;</a></p>\n'
+      '      </div>\n'
+      '      <style>\n'
+      '        .rvid{position:relative;aspect-ratio:16/9;max-width:940px;margin:0 auto;border-radius:16px;overflow:hidden;background:var(--bg-2);border:1px solid var(--line);box-shadow:0 24px 60px rgba(0,0,0,.4)}\n'
+      '        .rvid__btn{position:absolute;inset:0;width:100%;height:100%;padding:0;border:0;cursor:pointer;background:#000;display:block}\n'
+      '        .rvid__poster{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease,filter .3s ease}\n'
+      '        .rvid__btn:hover .rvid__poster,.rvid__btn:focus-visible .rvid__poster{transform:scale(1.03);filter:brightness(1.06)}\n'
+      '        .rvid__play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);filter:drop-shadow(0 8px 24px rgba(0,0,0,.55));transition:transform .2s ease,opacity .2s ease;opacity:.94}\n'
+      '        .rvid__btn:hover .rvid__play,.rvid__btn:focus-visible .rvid__play{transform:translate(-50%,-50%) scale(1.08);opacity:1}\n'
+      '        .rvid__play svg{width:84px;height:auto}\n'
+      '        .rvid iframe{position:absolute;inset:0;width:100%;height:100%;border:0}\n'
+      '        .rvid__fallback{text-align:center;margin:16px 0 0}\n'
+      '        .rvid__fallback a{color:var(--cyan-soft);text-decoration:none;font-size:.82rem;letter-spacing:.04em}\n'
+      '        .rvid__fallback a:hover{text-decoration:underline}\n'
+      '        @media(max-width:767px){.rvid{aspect-ratio:9/16;max-width:340px;border-radius:18px}.rvid__play svg{width:64px}}\n'
+      '      </style>\n'
+      '      <script>\n'
+      '      (function(){try{\n'
+      '        var sc=document.currentScript,sec=sc?sc.closest("section"):null;\n'
+      '        var box=(sec||document).querySelector("[data-rvid]");if(!box)return;\n'
+      '        var btn=box.querySelector(".rvid__btn");if(!btn)return;\n'
+      '        btn.addEventListener("click",function(){\n'
+      '          var mob=window.matchMedia("(max-width:767px)").matches;\n'
+      '          var id=mob?box.getAttribute("data-short"):box.getAttribute("data-wide");\n'
+      '          var f=document.createElement("iframe");\n'
+      '          f.setAttribute("allow","accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture");\n'
+      '          f.setAttribute("allowfullscreen","");f.setAttribute("title","365 Techies Dell video");\n'
+      '          f.src="https://www.youtube-nocookie.com/embed/"+id+"?autoplay=1&rel=0&modestbranding=1&playsinline=1";\n'
+      '          box.innerHTML="";box.appendChild(f);\n'
+      '        });\n'
+      '      }catch(e){}})();\n'
+      '      </script>\n'
+      '    </section>')
+
+def dell_video_node(s, name, desc):
+    if not (DELL_REEL_WIDE_ID and DELL_REEL_UPLOAD_DATE):
+        return None   # omit VideoObject until the video is live
+    return {"@type": "VideoObject", "@id": SITE + "/" + s + "/#video", "name": name, "description": desc,
+            "thumbnailUrl": [SITE + "/images/dell-reel-poster-wide.jpg", SITE + "/images/dell-reel-poster-tall.jpg"],
+            "uploadDate": DELL_REEL_UPLOAD_DATE, "duration": "PT16S",
+            "embedUrl": "https://www.youtube-nocookie.com/embed/" + DELL_REEL_WIDE_ID,
+            "contentUrl": "https://www.youtube.com/watch?v=" + DELL_REEL_WIDE_ID,
+            "publisher": {"@type": "Organization", "name": "365 Techies",
+                          "logo": {"@type": "ImageObject", "url": SITE + "/logo.jpg"}}}
+
 def dell_hardware():
     slug = "dell-hardware"
     desc = "Refurbished, tested ex-business Dell Latitude laptops & OptiPlex desktops from £299 — supplied, set up & supported across Bournemouth, Poole & Dorset."
@@ -3156,6 +3231,9 @@ def dell_hardware():
            "Professionally refurbished, tested ex-business Dell &mdash; proper business-grade computers for a fraction of the price of new, set up and supported by a real local firm you can phone, text or email &mdash; and that comes to you. Kinder on your wallet and the planet.",
            cta1=("Find me a refurbished Dell", "#match"), cta2=("Call 01202 775566", "tel:+441202775566"),
            chips=["From &pound;299","New Samsung Pro SSD","5-year guarantee","Set up &amp; fully supported"], scene=HERO_SCENES.get("sales")),
+      responsive_video("WATCH &middot; REFURBISHED DELL IN ACTION", "See a refurbished Dell at work",
+                       "/images/dell-reel-poster-wide.jpg", "/images/dell-reel-poster-tall.jpg",
+                       "365 Techies refurbished Dell computers at home, at work and working remotely across Dorset"),
       f'''    <section class="section" aria-label="Why refurbished business Dell">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
@@ -3415,10 +3493,14 @@ def dell_hardware():
           primary=("Find me a refurbished Dell", "#match"), secondary=("Call 01202 775566", "tel:+441202775566")),
     ])
     def schema(s, _desc=desc, _faqs=faqs):
-        return graph([crumb_sub(s, "Dell", "dell-it-support-dorset", "Refurbished Dell"), webpage(s, "Refurbished Dell Latitude Laptops & OptiPlex Desktops", _desc),
+        _nodes = [crumb_sub(s, "Dell", "dell-it-support-dorset", "Refurbished Dell"), webpage(s, "Refurbished Dell Latitude Laptops & OptiPlex Desktops", _desc),
                       service(s, "Refurbished Dell Supply & Support", "Professionally refurbished, tested ex-business Dell Latitude laptops and OptiPlex desktops, supplied, set up and supported by 365 Techies across Dorset, with our own warranty.", "Refurbished computer supply and support"),
                       {"@type": "Product", "@id": SITE + "/" + s + "/#product", "name": "Refurbished Dell Latitude Laptops & OptiPlex Desktops", "description": "Professionally refurbished, tested ex-business Dell Latitude laptops and OptiPlex desktops, supplied, set up and supported by 365 Techies with our own warranty.", "brand": {"@type": "Brand", "name": "Dell"}, "itemCondition": "https://schema.org/RefurbishedCondition", "category": "Refurbished computer hardware", "additionalProperty": [{"@type": "PropertyValue", "name": "Storage", "value": "New Samsung Pro SSD (5-year guarantee)"}, {"@type": "PropertyValue", "name": "Condition grading", "value": "Graded A, B or C by appearance; every grade fully tested"}, {"@type": "PropertyValue", "name": "Warranty", "value": "any remaining Dell warranty where applicable plus 365 Techies 5-year guarantee"}], "offers": {"@type": "AggregateOffer", "priceCurrency": "GBP", "lowPrice": "299", "availability": "https://schema.org/InStock", "url": SITE + "/" + s + "/#match", "seller": {"@type": "Organization", "name": "365 Techies"}}, "image": SITE + "/og-image.jpg", "url": SITE + "/" + s + "/"},
-                      faqpage(s, _faqs)])
+                      faqpage(s, _faqs)]
+        _v = dell_video_node(s, "Refurbished Dell computers, set up and supported across Dorset - 365 Techies",
+                             "A short 365 Techies film showing refurbished, business-grade Dell computers in use at home, in the workplace and working remotely across Dorset.")
+        if _v: _nodes.insert(-1, _v)
+        return graph(_nodes)
     add(slug=slug, title="Refurbished Dell Laptops & PCs Dorset | 365 Techies",
         desc=desc, og_title="Refurbished Dell Latitude & OptiPlex | 365 Techies", schema=schema, content=content)
 dell_hardware()
@@ -3459,6 +3541,9 @@ def dell_it_support_hub():
            hero_trust("Whatever&rsquo;s going on with your Dell &mdash; a laptop that won&rsquo;t boot, a business fleet to look after, or a machine that&rsquo;s just had its day &mdash; you&rsquo;re in the right place. We&rsquo;re a family-run, independent Dell specialist who&rsquo;s been supplying and supporting Dell systems for homes and businesses for over 30 years. Here&rsquo;s the honest help &mdash; and if you&rsquo;d rather just leave it to the techies, that&rsquo;s exactly what we&rsquo;re here for."),
            cta1=("Talk to a Techie", "/contact/"), cta2=("Call 01202 775566", "tel:+441202775566"),
            chips=["Independent Dell specialist since 1995", "Homes &amp; businesses", "No call-out fee &middot; 4.9 on Google"]),
+      responsive_video("WATCH", "Dell support, wherever you work",
+                       "/images/dell-reel-poster-wide.jpg", "/images/dell-reel-poster-tall.jpg",
+                       "365 Techies Dell support - home office, workplace and working remotely across Dorset"),
       ('    <section class="blog-section" aria-label="Four ways we help with your Dell" id="ways">\n'
        '      <div class="wrap">\n'
        '        <div class="section-head">\n'
@@ -3502,8 +3587,12 @@ def dell_it_support_hub():
         # '<parent_node>'", flagged 2026-07-13). Star ratings are self-serving on your own
         # site anyway (they belong in the Google Business Profile / map pack). The customer
         # quotes still render as visible on-page testimonials in the content.
-        return graph([crumb(s, "Dell"), webpage(s, "Dell IT Support, Servicing & Repair in Dorset", _desc, "CollectionPage"),
-                      svc, faqpage(s, _faqs)])
+        _nodes = [crumb(s, "Dell"), webpage(s, "Dell IT Support, Servicing & Repair in Dorset", _desc, "CollectionPage"),
+                      svc, faqpage(s, _faqs)]
+        _v = dell_video_node(s, "Dell support across Dorset - 365 Techies",
+                             "A short 365 Techies film - keeping Dell computers running at home, in the office and working remotely across Dorset, from a family-run local IT team since 1995.")
+        if _v: _nodes.insert(-1, _v)
+        return graph(_nodes)
     add(slug=slug, title="Dell Support & Repair, Dorset (Home & Business) | 365 Techies",
         desc=desc, og_title="Dell Support, Servicing & Repair in Dorset | 365 Techies", schema=schema, content=content)
 dell_it_support_hub()
