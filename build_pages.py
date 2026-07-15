@@ -137,14 +137,14 @@ HEADER = '''  <header class="site-header">
           <div class="dropdown">
             <a href="/home-it-support-subscriptions/">Home IT Support</a>
             <a href="/home-it-support-plans/">Home Support Plans</a>
+            <a href="/it-support-for-home-workers/">Home Workers</a>
+            <a href="/it-support-for-digital-nomads/">Digital Nomads</a>
             <a href="/family-it-support/">Families</a>
             <a href="/it-support-for-retired-users/">Retired Users</a>
             <a href="/it-support-for-disabled-people/">Disabled People</a>
             <a href="/computer-help-for-seniors/">Help for Seniors</a>
-          <a href="/computer-lessons-for-seniors-bournemouth/">Computer Lessons</a>
-          <a href="/free-courses/">Free Courses</a>
-            <a href="/it-support-for-home-workers/">Home Workers</a>
-            <a href="/it-support-for-digital-nomads/">Digital Nomads</a>
+            <a href="/computer-lessons-for-seniors-bournemouth/">Computer Lessons</a>
+            <a href="/free-courses/">Free Courses</a>
           </div>
         </div>
         <div class="nav-item has-dropdown">
@@ -296,14 +296,14 @@ HEADER = '''  <header class="site-header">
         <div class="m-group__links">
           <a href="/home-it-support-subscriptions/">Home IT Support</a>
           <a href="/home-it-support-plans/">Home Support Plans</a>
+          <a href="/it-support-for-home-workers/">Home Workers</a>
+          <a href="/it-support-for-digital-nomads/">Digital Nomads</a>
           <a href="/family-it-support/">Families</a>
           <a href="/it-support-for-retired-users/">Retired Users</a>
           <a href="/it-support-for-disabled-people/">Disabled People</a>
           <a href="/computer-help-for-seniors/">Help for Seniors</a>
           <a href="/computer-lessons-for-seniors-bournemouth/">Computer Lessons</a>
           <a href="/free-courses/">Free Courses</a>
-          <a href="/it-support-for-home-workers/">Home Workers</a>
-          <a href="/it-support-for-digital-nomads/">Digital Nomads</a>
         </div>
       </details>
       <details class="m-group">

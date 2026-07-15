@@ -52,6 +52,7 @@ COORDS = {
 
 # Per-slug SEO <title> overrides (CTR harvest + near-me targeting); all other towns use the template.
 SEO_TITLES = {
+ "it-support-for-home-workers": "IT Support for Home Workers in Dorset | Work From Anywhere",
  "it-support-blandford-forum": "IT Support Blandford Forum | Same-Day, No Call-Out Fee",
  "it-support-dorset": "IT Support Near Me in Dorset | 365 Techies",
  "it-support-gillingham": "IT Support Gillingham, Dorset | Same-Day, No Call-Out Fee",
@@ -362,8 +363,90 @@ LOCAL = [
 for i, row in enumerate(LOCAL):
     make_local(i, *row)
 
+# ============================================ RESPONSIVE YOUTUBE VIDEO BLOCK ("work from anywhere" beach reel)
+# Self-contained click-to-play facade (mirrors build_extra's Dell-reel block): serves the vertical Short to
+# phones and the landscape video to desktops, on youtube-nocookie so NO cookies fire until the viewer clicks.
+# Inert until BEACH_REEL_WIDE_ID is set. Until a Short is uploaded, phones fall back to the wide video.
+BEACH_REEL_WIDE_ID  = "pXKy7KggrG8"   # 16:9 landscape "work from anywhere" reel (live 2026-07-15)
+BEACH_REEL_SHORT_ID = "IA_t07mh6mI"   # 9:16 YouTube Short (phones) — live 2026-07-15
+BEACH_REEL_DATE     = "2026-07-15"    # date the reel went live
+
+def beach_reel_section(eyebrow, title, alt):
+    if not BEACH_REEL_WIDE_ID:
+        return ""   # inert until the reel is live and the ID is set above
+    watch = "https://www.youtube.com/watch?v=" + BEACH_REEL_WIDE_ID
+    tall  = BEACH_REEL_SHORT_ID or BEACH_REEL_WIDE_ID   # phones fall back to the wide video until the Short is up
+    mob_css = ('        @media(max-width:767px){.rvid--beach{aspect-ratio:9/16;max-width:340px;border-radius:18px}.rvid--beach .rvid__play svg{width:64px}}\n'
+               if BEACH_REEL_SHORT_ID else '')
+    tall_src = ('              <source media="(max-width:767px)" srcset="/images/beach-reel-poster-tall.jpg" />\n'
+                if BEACH_REEL_SHORT_ID else '')   # tall poster only once the 9:16 Short exists
+    return (
+      '    <section class="section section--alt" aria-label="Watch: work from anywhere in Dorset">\n'
+      '      <div class="wrap wrap--narrow">\n'
+      '        <div class="section-head">\n'
+      f'          <p class="eyebrow eyebrow--center mono" data-reveal>// {eyebrow}</p>\n'
+      f'          <h2 class="section-title section-title--center" data-title>{title}<span class="title-underline title-underline--center"></span></h2>\n'
+      '        </div>\n'
+      '        <p style="text-align:center;max-width:640px;margin:-.4rem auto 1.6rem;color:var(--muted);font-size:1.02rem;line-height:1.55">From the spare room to a Bournemouth beach caf&eacute; &mdash; when your IT just works, the desk is optional. Here&rsquo;s what reliable home-working support looks like across Dorset.</p>\n'
+      f'        <div class="rvid rvid--beach" data-rvid data-short="{tall}" data-wide="{BEACH_REEL_WIDE_ID}">\n'
+      f'          <button class="rvid__btn" type="button" aria-label="Play video: {alt}">\n'
+      '            <picture>\n'
+      + tall_src +
+      f'              <img class="rvid__poster" src="/images/beach-reel-poster-wide.jpg" alt="{alt}" loading="lazy" width="1280" height="720" />\n'
+      '            </picture>\n'
+      '            <span class="rvid__play" aria-hidden="true"><svg viewBox="0 0 68 48" width="68" height="48"><path d="M66.5 7.7a8 8 0 0 0-5.6-5.7C56 .7 34 .7 34 .7s-22 0-26.9 1.3a8 8 0 0 0-5.6 5.7A83 83 0 0 0 .2 24a83 83 0 0 0 1.3 16.3 8 8 0 0 0 5.6 5.7C12 47.3 34 47.3 34 47.3s22 0 26.9-1.3a8 8 0 0 0 5.6-5.7A83 83 0 0 0 67.8 24a83 83 0 0 0-1.3-16.3z" fill="#1d97e3"/><path d="M27 34.5 45 24 27 13.5z" fill="#fff"/></svg></span>\n'
+      '          </button>\n'
+      '        </div>\n'
+      f'        <p class="rvid__fallback mono"><a href="{watch}" target="_blank" rel="noopener">Watch on YouTube &#8594;</a></p>\n'
+      '      </div>\n'
+      '      <style>\n'
+      '        .rvid--beach{position:relative;aspect-ratio:16/9;max-width:940px;margin:0 auto;border-radius:16px;overflow:hidden;background:var(--bg-2);border:1px solid var(--line);box-shadow:0 24px 60px rgba(0,0,0,.4)}\n'
+      '        .rvid--beach .rvid__btn{position:absolute;inset:0;width:100%;height:100%;padding:0;border:0;cursor:pointer;background:#000;display:block}\n'
+      '        .rvid--beach .rvid__poster{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease,filter .3s ease}\n'
+      '        .rvid--beach .rvid__btn:hover .rvid__poster,.rvid--beach .rvid__btn:focus-visible .rvid__poster{transform:scale(1.03);filter:brightness(1.06)}\n'
+      '        .rvid--beach .rvid__play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);filter:drop-shadow(0 8px 24px rgba(0,0,0,.55));transition:transform .2s ease,opacity .2s ease;opacity:.94}\n'
+      '        .rvid--beach .rvid__btn:hover .rvid__play,.rvid--beach .rvid__btn:focus-visible .rvid__play{transform:translate(-50%,-50%) scale(1.08);opacity:1}\n'
+      '        .rvid--beach .rvid__play svg{width:84px;height:auto}\n'
+      '        .rvid--beach iframe{position:absolute;inset:0;width:100%;height:100%;border:0}\n'
+      '        .rvid__fallback{text-align:center;margin:16px 0 0}\n'
+      '        .rvid__fallback a{color:var(--cyan-soft);text-decoration:none;font-size:.82rem;letter-spacing:.04em}\n'
+      '        .rvid__fallback a:hover{text-decoration:underline}\n'
+      + mob_css +
+      '      </style>\n'
+      '      <script>\n'
+      '      (function(){try{\n'
+      '        var sc=document.currentScript,sec=sc?sc.closest("section"):null;\n'
+      '        var box=(sec||document).querySelector("[data-rvid]");if(!box)return;\n'
+      '        var btn=box.querySelector(".rvid__btn");if(!btn)return;\n'
+      '        btn.addEventListener("click",function(){\n'
+      '          var mob=window.matchMedia("(max-width:767px)").matches;\n'
+      '          var id=(mob&&box.getAttribute("data-short"))?box.getAttribute("data-short"):box.getAttribute("data-wide");\n'
+      '          var f=document.createElement("iframe");\n'
+      '          f.setAttribute("allow","accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture");\n'
+      '          f.setAttribute("allowfullscreen","");f.setAttribute("title","365 Techies — work from anywhere");\n'
+      '          f.src="https://www.youtube-nocookie.com/embed/"+id+"?autoplay=1&rel=0&modestbranding=1&playsinline=1";\n'
+      '          box.innerHTML="";box.appendChild(f);\n'
+      '        });\n'
+      '      }catch(e){}})();\n'
+      '      </script>\n'
+      '    </section>')
+
+def beach_reel_node(s):
+    if not BEACH_REEL_WIDE_ID:
+        return None   # omit VideoObject until the reel is live
+    return {"@type": "VideoObject", "@id": SITE + "/" + s + "/#video",
+            "name": "Work from anywhere in Dorset — 365 Techies",
+            "description": "When your IT just works, the desk is optional. 365 Techies is family-run IT support in Bournemouth, keeping home and remote workers reliable so they can work from anywhere.",
+            "thumbnailUrl": [SITE + "/images/beach-reel-poster-wide.jpg", SITE + "/images/beach-reel-poster-tall.jpg"],
+            "uploadDate": BEACH_REEL_DATE, "duration": "PT23S", "inLanguage": "en-GB", "isFamilyFriendly": True,
+            "transcript": "Working from home. Again. Your tech just works. So work from anywhere. You could work from here. Your IT just works wherever you are. This is the office now. Bournemouth's own, since 1995. Why work from anywhere else?",
+            "embedUrl": "https://www.youtube-nocookie.com/embed/" + BEACH_REEL_WIDE_ID,
+            "contentUrl": "https://www.youtube.com/watch?v=" + BEACH_REEL_WIDE_ID,
+            "publisher": {"@type": "Organization", "name": "365 Techies",
+                          "logo": {"@type": "ImageObject", "url": SITE + "/logo.jpg"}}}
+
 # ======================================================= CUSTOMER-TYPE PAGES
-def make_customer(i, slug, crumb_name, eyebrow, h1, lede, intro_head, intro_paras, feats, tile_items, faqs, chips, cta_title=None, cta_text=None, accent="cyan", split=None, split_title=None, split_eyebrow="HOME &amp; BUSINESS", steps_title=None, step_items=None, hero_cta1=None, hero_cta2=None, tools=None, scene=None):
+def make_customer(i, slug, crumb_name, eyebrow, h1, lede, intro_head, intro_paras, feats, tile_items, faqs, chips, cta_title=None, cta_text=None, accent="cyan", split=None, split_title=None, split_eyebrow="HOME &amp; BUSINESS", steps_title=None, step_items=None, hero_cta1=None, hero_cta2=None, tools=None, scene=None, reel=False):
     cta_title = cta_title or "Let&rsquo;s sort your IT"
     cta_text = cta_text or "Join the Dorset homes and businesses who never worry about technology. Pick a plan or say hello."
     desc = lede.replace("&rsquo;", "'").replace("&amp;", "and")
@@ -401,6 +484,10 @@ def make_customer(i, slug, crumb_name, eyebrow, h1, lede, intro_head, intro_para
       </div>
     </section>''',
     ]
+    if reel:
+        sections.insert(1, beach_reel_section("WATCH &middot; THE DESK IS OPTIONAL",
+                        "Your IT just works, wherever you work",
+                        "365 Techies reel &mdash; work from home, or from a Bournemouth beach"))
     if split:
         cards = ""
         for ct, cintro, citems in split:
@@ -432,10 +519,15 @@ def make_customer(i, slug, crumb_name, eyebrow, h1, lede, intro_head, intro_para
         sections.append(bp.tools_strip(tools, alt=False))
     sections.append(cta(cta_title, cta_text))
     content = "\n".join(sections)
-    def schema(s, _desc=desc, _cn=crumb_name, _faqs=faqs):
+    def schema(s, _desc=desc, _cn=crumb_name, _faqs=faqs, _reel=reel):
         _c = bp.crumb_sub(s, "IT Support by Industry", "it-support-by-industry", _cn) if _is_ind else crumb(s, _cn)
-        return graph([_c, webpage(s, _cn, _desc),
-                      service(s, _cn, _desc, "IT support"), faqpage(s, _faqs)])
+        nodes = [_c, webpage(s, _cn, _desc),
+                 service(s, _cn, _desc, "IT support"), faqpage(s, _faqs)]
+        if _reel:
+            _v = beach_reel_node(s)
+            if _v:
+                nodes.append(_v)
+        return graph(nodes)
     add(slug=slug, title=SEO_TITLES.get(slug) or f"{crumb_name} | 365 Techies", desc=desc,
         og_title=f"{crumb_name} | 365 Techies", schema=schema, content=content)
 
@@ -453,7 +545,7 @@ CUSTOMERS = [
    split=[("Your devices &amp; connection","Laptops, screens, Wi-Fi and home network kept fast and reliable, so a dropout never costs you a morning.",["Laptop &amp; desktop support","Fast, reliable home Wi-Fi","Remote access &amp; VPN","Screens, docks &amp; peripherals"]),("Your apps &amp; data","Microsoft 365, Teams, email and files set up, secured and backed up so you can work from anywhere.",["Microsoft 365 &amp; Teams","Email that just works","Secure file backup","Antivirus &amp; protection"])],
    steps_title="Productive in three steps",
    step_items=[("We set up","We get your home office &mdash; devices, Microsoft 365, Wi-Fi and printers &mdash; working properly."),("We protect","We add security and backups so your work is always safe."),("We support","One message away whenever something stops working.")],
-   tools=["avtest","speed","healthcheck"]),
+   tools=["avtest","speed","healthcheck"], reel=True),
  dict(slug="it-support-for-sole-traders", crumb_name="IT Support for Sole Traders",
    eyebrow="// FOR SOLE TRADERS", h1='IT support for <em class="grad grad--green">sole traders</em>',
    lede="Affordable monthly IT support for sole traders who need their computer, email, phone, printer and cloud systems working reliably — without paying for an IT department.",
