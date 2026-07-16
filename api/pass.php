@@ -15,6 +15,10 @@
  */
 header('Content-Type: text/plain; charset=utf-8');
 header('X-Robots-Tag: noindex, nofollow');
+// single-use depends on every request reaching PHP - SiteGround's dynamic cache must never serve this
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+header('Expires: 0');
 
 $secretFile = __DIR__ . '/pass-secret.php';
 $payload    = __DIR__ . '/servicepass-payload.ps1';
