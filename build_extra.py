@@ -3230,6 +3230,70 @@ def dell_video_node(s, name, desc):
             "publisher": {"@type": "Organization", "name": "365 Techies",
                           "logo": {"@type": "ImageObject", "url": SITE + "/logo.jpg"}}}
 
+# ====================== NEW DELL UK PRICE COMPARISON (2026-07-16) ======================
+# Current brand-new Dell UK business range with live-checked from-prices, shown UNDER the
+# refurbished range on /dell-hardware/ so buyers see the contrast. Filled from research.
+NEW_DELL_MODELS = [   # audit-confirmed against live Dell UK pages, 16 Jul 2026 (inc VAT)
+ ("Dell Pro 14 Essential (PV14250)", "laptop", "The old Latitude 3000&rsquo;s successor",
+  "Core 3 100U &middot; 8GB &middot; 512GB SSD &middot; 14&Prime; FHD+", 754.79,
+  "https://www.dell.com/en-uk/shop/laptops-2-in-1-pcs/dell-pro-14-essential-laptop/spd/dell-pro-pv14250-laptop/cnpv1425004"),
+ ("Dell Pro 14 (PC14250)", "laptop", "The old Latitude 5000&rsquo;s successor",
+  "Core Ultra 5 225U &middot; 8GB &middot; 512GB SSD &middot; 14&Prime; FHD+", 1074.76,
+  "https://www.dell.com/en-uk/shop/laptops-2-in-1-pcs/dell-pro-14-laptop/spd/dell-pro-pc14250-laptop/bts122b_pc14250_noac_ukie"),
+ ("Dell Pro 14 Plus (PB14250)", "laptop", "Latitude 5000/7000-class, vPro",
+  "Core Ultra 5 235U vPro &middot; 16GB &middot; 512GB SSD &middot; 14&Prime; FHD+", 1395.00,
+  "https://www.dell.com/en-uk/shop/laptops-2-in-1-pcs/dell-pro-14-plus-laptop-or-2-in-1/spd/dell-pro-pb14250-2-in-1-laptop/bts105_pb14250_noac_ukie"),
+ ("Dell Pro 14 Premium (PA14250)", "laptop", "The old Latitude 7000&rsquo;s successor",
+  "Core Ultra 5 236V vPro &middot; 16GB &middot; 512GB SSD &middot; 14&Prime; 400-nit &middot; Copilot+", 1524.23,
+  "https://www.dell.com/en-uk/shop/laptops-2-in-1-pcs/dell-pro-14-premium-laptop/spd/dell-pro-pa14250-laptop/bts202_pa14250_noac_ukie"),
+ ("Dell Pro Micro (QCM1250)", "desktop", "The old OptiPlex Micro&rsquo;s successor",
+  "Core i3-14100T &middot; 8GB &middot; 512GB SSD &middot; ultracompact", 662.16,
+  "https://www.dell.com/en-uk/shop/desktop-computers/dell-pro-micro-desktop/spd/dell-pro-qcm1250-micro/bts002_qcm1250_wer"),
+ ("Dell Pro Slim (QCS1250)", "desktop", "The old OptiPlex SFF&rsquo;s successor",
+  "Core i5-14500 vPro &middot; 8GB &middot; 512GB SSD &middot; slim desktop", 728.53,
+  "https://www.dell.com/en-uk/shop/desktop-computers/dell-pro-slim-desktop/spd/dell-pro-qcs1250-slim-desktop/bts007_qcs1250_wer"),
+ ("Dell Pro Tower (QCT1250)", "desktop", "The old OptiPlex Tower&rsquo;s successor",
+  "Core Ultra 5 235 &middot; 16GB &middot; 512GB SSD &middot; tower", 1033.96,
+  "https://www.dell.com/en-uk/shop/desktop-computers/dell-pro-tower-desktop/spd/dell-pro-qct1250-desktop/bts107_qct1250_wer"),
+ ("Dell Pro Tower Plus (QBT1250)", "desktop", "OptiPlex Plus Tower successor",
+  "Core Ultra 7 265 (20 cores) &middot; 16GB &middot; 512GB SSD &middot; configurable tower", 1666.08,
+  "https://www.dell.com/en-uk/shop/desktop-computers/dell-pro-tower-plus-desktop/spd/dell-pro-qbt1250-plus-desktop/gcto_qbt1250_emea"),
+]
+NEW_DELL_CHECKED = "16 JULY 2026"
+NEW_DELL_NAMING_NOTE = "Buying brand-new instead? In 2025 Dell retired the Latitude and OptiPlex names &mdash; new business laptops are now <strong>Dell Pro</strong> (Essential, Base, Plus and Premium tiers) and desktops are <strong>Dell Pro</strong> Micro, Slim and Tower. Same business DNA, new badges."
+
+def new_dell_section():
+    if not NEW_DELL_MODELS:
+        return ""
+    rows = "\n".join(
+        f'          <tr><td><strong>{n}</strong><br><span class="ndell__succ">{succ}</span></td>'
+        f'<td>{spec}</td><td class="ndell__p">from &pound;{price:,.0f}</td>'
+        f'<td><a href="{url}" target="_blank" rel="noopener noreferrer">View at Dell UK &#8599;</a></td></tr>'
+        for n, kind, succ, spec, price, url in NEW_DELL_MODELS)
+    return ('''    <section class="section" aria-label="What brand-new Dell costs" id="new-dell">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// FOR COMPARISON &middot; BRAND-NEW AT DELL UK</p>
+          <h2 class="section-title section-title--center" data-title>What does brand-new business Dell cost?<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>''' + NEW_DELL_NAMING_NOTE + ''' Here&rsquo;s Dell UK&rsquo;s current business range at their own from-prices &mdash; each link opens Dell&rsquo;s live page in a new tab. Compare it with our refurbished business-grade range above (laptops from <strong>&pound;510</strong>, desktops from <strong>&pound;545</strong>, each with a new 1TB Samsung 990 PRO, Windows 11 set up and data moved across).</p>
+        </div>
+        <div class="cmp-wrap"><table class="cmp-table ndell">
+          <thead><tr><th>New model</th><th>Base spec at that price</th><th>Dell UK price</th><th>&nbsp;</th></tr></thead>
+          <tbody>
+''' + rows + '''
+          </tbody>
+        </table></div>
+        <p class="mono ndell__note" data-reveal>// DELL UK FROM-PRICES CHECKED ''' + NEW_DELL_CHECKED + ''' &mdash; THEIR PRICES AND OFFERS CHANGE OFTEN; THE LINKS SHOW TODAY&rsquo;S. WANT NEW RATHER THAN REFURBISHED? WE&rsquo;VE BEEN A DELL RESELLER SINCE 2001 &mdash; WE&rsquo;LL ORDER IT, SET IT UP AND SUPPORT IT THE SAME WAY. CALL 01202 775566.</p>
+      </div>
+      <style>
+        .ndell td{vertical-align:top}
+        .ndell__succ{color:var(--muted);font-size:.74rem}
+        .ndell__p{white-space:nowrap;font-weight:700}
+        .ndell a{color:var(--cyan-soft)}
+        .ndell__note{text-align:center;max-width:74ch;margin:1.1rem auto 0;color:var(--faint);font-size:.68rem;letter-spacing:.04em}
+      </style>
+    </section>''')
+
 # =============================== DELL MACHINE PICKER (2026-07-16) ===============================
 # The buy-funnel centrepiece on /dell-hardware/#pick: crawlable static model cards (SEO/AI) that
 # JS enhances into a picker; selecting a machine reveals a reserve form that rides the existing
@@ -3787,6 +3851,7 @@ def dell_hardware():
         </div>
       </div>
     </section>''',
+      new_dell_section(),
       f'''    <section class="blog-section" aria-label="Owner's guide" id="guides">
       <div class="wrap">
         <div class="section-head">
