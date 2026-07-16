@@ -513,7 +513,7 @@ TOOL_SEO = {'ai-roi-calculator': {'answer': 'This free ROI calculator estimates 
                                          'usually mean a replacement is better value.')],
                                'howto': {'name': 'How to decide whether to repair or replace',
                                          'steps': [('Get the repair price', 'Find out what the fix actually costs &mdash; we quote clearly and for free, with no-fix-no-fee.'),
-                                                   ('Compare to a replacement', 'Weigh it against a comparable machine, including our refurbished business-grade Dells from &pound;299.'),
+                                                   ('Compare to a replacement', 'Weigh it against a comparable machine, including our refurbished business-grade Dells from &pound;510.'),
                                                    ('Check the age and updates', 'Over ~5 years old or no longer getting security updates tips the balance towards replacing.'),
                                                    ('Ask about a cheap upgrade', 'If it&rsquo;s just slow, an SSD or memory upgrade often fixes it for a fraction of a new PC.')]},
                                'keyfacts': '<ul><li><strong>The 50% rule:</strong> if the repair costs more than half the price of a similar new or refurbished machine, lean towards replacing.</li><li><strong>Age:</strong> under ~5 years '

@@ -3212,6 +3212,156 @@ def dell_video_node(s, name, desc):
             "publisher": {"@type": "Organization", "name": "365 Techies",
                           "logo": {"@type": "ImageObject", "url": SITE + "/logo.jpg"}}}
 
+# =============================== DELL MACHINE PICKER (2026-07-16) ===============================
+# The buy-funnel centrepiece on /dell-hardware/#pick: crawlable static model cards (SEO/AI) that
+# JS enhances into a picker; selecting a machine reveals a reserve form that rides the existing
+# forms.js pipeline (HubSpot + Slack relay) with the machine appended automatically. Guide prices.
+DELL_MACHINES = [
+    # (id, kind, series_label, name, meta, guide_price, series_href)
+    ("latitude-3420", "laptop", "Latitude 3000", "Latitude 3420", "14&Prime; &middot; 11th-gen i5 &middot; 16GB", 510, "/refurbished-dell-latitude-3000/"),
+    ("latitude-3520", "laptop", "Latitude 3000", "Latitude 3520", "15.6&Prime; &middot; 11th-gen i5 &middot; 16GB", 545, "/refurbished-dell-latitude-3000/"),
+    ("latitude-3540", "laptop", "Latitude 3000", "Latitude 3540", "15.6&Prime; &middot; 12th/13th-gen i5 &middot; 16GB", 605, "/refurbished-dell-latitude-3000/"),
+    ("latitude-5520", "laptop", "Latitude 5000", "Latitude 5520", "15.6&Prime; &middot; 11th-gen i5 &middot; 16GB", 535, "/refurbished-dell-latitude-5000/"),
+    ("latitude-5420", "laptop", "Latitude 5000", "Latitude 5420", "14&Prime; &middot; 11th-gen i5 &middot; 16GB", 540, "/refurbished-dell-latitude-5000/"),
+    ("latitude-5430", "laptop", "Latitude 5000", "Latitude 5430", "14&Prime; &middot; 12th-gen i5 &middot; 16GB", 555, "/refurbished-dell-latitude-5000/"),
+    ("latitude-5530", "laptop", "Latitude 5000", "Latitude 5530", "15.6&Prime; &middot; 12th-gen i5 &middot; 16GB", 605, "/refurbished-dell-latitude-5000/"),
+    ("latitude-7320", "laptop", "Latitude 7000", "Latitude 7320", "13.3&Prime; ultralight &middot; 11th-gen i5 &middot; 16GB", 520, "/refurbished-dell-latitude-7000/"),
+    ("latitude-7420", "laptop", "Latitude 7000", "Latitude 7420", "14&Prime; ultralight &middot; 11th-gen i5 &middot; 16GB", 520, "/refurbished-dell-latitude-7000/"),
+    ("latitude-7330", "laptop", "Latitude 7000", "Latitude 7330", "13.3&Prime; ultralight &middot; 12th-gen i5 &middot; 16GB", 560, "/refurbished-dell-latitude-7000/"),
+    ("latitude-7430", "laptop", "Latitude 7000", "Latitude 7430", "14&Prime; ultralight &middot; 12th-gen i5 &middot; 16GB", 570, "/refurbished-dell-latitude-7000/"),
+    ("optiplex-3080", "desktop", "OptiPlex 3000", "OptiPlex 3080", "Micro / SFF / Tower &middot; 10th-gen i5 &middot; 16GB", 545, "/refurbished-dell-optiplex-3000/"),
+    ("optiplex-3090", "desktop", "OptiPlex 3000", "OptiPlex 3090", "Micro / SFF / Tower &middot; 10th-gen i5 &middot; 16GB", 550, "/refurbished-dell-optiplex-3000/"),
+    ("optiplex-3000", "desktop", "OptiPlex 3000", "OptiPlex 3000 (2022)", "Micro / SFF / Tower &middot; 12th-gen i5 &middot; 16GB", 655, "/refurbished-dell-optiplex-3000/"),
+    ("optiplex-5080", "desktop", "OptiPlex 5000", "OptiPlex 5080", "Micro / SFF / Tower &middot; 10th-gen i5 &middot; 16GB", 615, "/refurbished-dell-optiplex-5000/"),
+    ("optiplex-5090", "desktop", "OptiPlex 5000", "OptiPlex 5090", "Micro / SFF / Tower &middot; 11th-gen i5 &middot; 16GB", 620, "/refurbished-dell-optiplex-5000/"),
+    ("optiplex-5000", "desktop", "OptiPlex 5000", "OptiPlex 5000 (2022)", "Micro / SFF / Tower &middot; 12th-gen i5 &middot; 16GB", 690, "/refurbished-dell-optiplex-5000/"),
+    ("optiplex-7080", "desktop", "OptiPlex 7000", "OptiPlex 7080", "Micro / SFF / Tower &middot; 10th-gen i5 &middot; 16GB", 590, "/refurbished-dell-optiplex-7000/"),
+    ("optiplex-7090", "desktop", "OptiPlex 7000", "OptiPlex 7090", "Micro / SFF / Tower &middot; 11th-gen i5 &middot; 16GB", 610, "/refurbished-dell-optiplex-7000/"),
+    ("optiplex-7000", "desktop", "OptiPlex 7000", "OptiPlex 7000 (2022)", "Micro / SFF / Tower &middot; 12th-gen i5 &middot; 16GB", 700, "/refurbished-dell-optiplex-7000/"),
+    ("optiplex-7010", "desktop", "OptiPlex 7000", "OptiPlex 7010 (2023)", "Micro / SFF / Tower &middot; 12th/13th-gen i5 &middot; 16GB", 720, "/refurbished-dell-optiplex-7000/"),
+]
+
+def dell_picker_section():
+    cards = []
+    for mid, kind, series, name, meta, price, href in DELL_MACHINES:
+        cards.append(
+            f'          <div class="dpick__card" data-kind="{kind}" data-id="{mid}" data-label="{name} &middot; {meta} &middot; guide &pound;{price}">\n'
+            f'            <p class="dpick__series mono">{series}</p>\n'
+            f'            <h3>{name}</h3>\n'
+            f'            <p class="dpick__meta">{meta}</p>\n'
+            f'            <p class="dpick__price">Guide <strong>&pound;{price}</strong></p>\n'
+            f'            <div class="dpick__row"><button type="button" class="button primary dpick__sel">Pick this one</button>'
+            f'<a class="dpick__more" href="{href}">Details &#8594;</a></div>\n'
+            '          </div>')
+    cards_html = "\n".join(cards)
+    return ('''    <section class="section" aria-label="Pick and reserve your Dell" id="pick">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// PICK &middot; RESERVE &middot; DONE</p>
+          <h2 class="section-title section-title--center" data-title>Pick your machine &mdash; reserve it in a minute<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Every machine comes with a <strong>new 1TB Samsung 990 PRO SSD</strong>, Windows 11 Home or Pro professionally set up, your data moved across and a 12-month guarantee (5 years on a support plan) &mdash; all included. <strong>All prices are guide prices</strong> &mdash; we confirm the exact price against the machine and grade in stock, with no obligation.</p>
+        </div>
+        <div class="dpick" data-reveal>
+          <div class="dpick__tabs" aria-label="Machine type">
+            <button type="button" class="dpick__tab is-on" data-kind="laptop" aria-pressed="true">&#128187; Laptops</button>
+            <button type="button" class="dpick__tab" data-kind="desktop" aria-pressed="false">&#128421;&#65039; Desktops</button>
+          </div>
+          <noscript><p class="mono" style="text-align:center;color:var(--muted);font-size:.8rem;margin:.6rem 0 0">To reserve a machine, call <a href="tel:+441202775566">01202 775566</a> or use the enquiry form further down the page.</p><style>.dpick__tabs,.dpick__sel{display:none}</style></noscript>
+          <div class="dpick__grid">
+''' + cards_html + '''
+          </div>
+          <div class="dpick__formwrap" id="dpick-form" hidden tabindex="-1">
+            <div class="dpick__chosen" aria-live="polite">
+              <p class="mono dpick__chosenlabel">// YOUR PICK</p>
+              <p class="dpick__chosentext" id="dpick-chosen">&nbsp;</p>
+              <p class="dpick__note">Guide price &mdash; we&rsquo;ll confirm the exact machine, grade and price when we&rsquo;re in touch. No payment now, no obligation.</p>
+            </div>
+            <form class="contact-form dpick__form" method="post" action="/api/form-relay.php" data-success="&#10003; Sent &mdash; thank you! Your pick is with the team and a real 365 techie will be in contact shortly.">
+              <input type="hidden" name="machine" id="dpick-machine" value="" />
+              <input type="hidden" name="topic" value="Reserve a refurbished Dell" />
+              <input type="text" name="company_website" tabindex="-1" autocomplete="one-time-code" style="position:absolute;left:-5000px" aria-hidden="true" />
+              <div class="dpick__fields">
+                <label class="field"><span>Name</span><input type="text" name="name" autocomplete="name" required /></label>
+                <label class="field"><span>Email</span><input type="email" name="email" autocomplete="email" required /></label>
+                <label class="field"><span>Phone (optional)</span><input type="tel" name="phone" autocomplete="tel" /></label>
+              </div>
+              <label class="field"><span>Anything we should know? (optional)</span><textarea name="message" rows="3" placeholder="What you&rsquo;ll use it for, screen-size preference, Windows 11 Home or Pro, part-exchange&hellip;"></textarea></label>
+              <button type="submit" class="button primary button--lg" style="width:100%">Reserve this machine &#8594;</button>
+              <p class="form-status mono" role="status" style="margin-top:.9rem"></p>
+              <p class="mono" style="margin-top:.4rem;color:var(--faint);font-size:.72rem">// NO PAYMENT NOW &middot; NO OBLIGATION &middot; MON&ndash;FRI 9&ndash;5 &middot; OR CALL 01202 775566</p>
+            </form>
+          </div>
+        </div>
+      </div>
+      <style>
+        .dpick{max-width:1040px;margin:0 auto}
+        .dpick__tabs{display:flex;gap:.7rem;justify-content:center;margin-bottom:1.4rem}
+        .dpick__tab{font:600 .95rem/1 var(--font-body);padding:.75rem 1.5rem;border-radius:999px;cursor:pointer;
+          background:var(--glass);color:var(--muted);border:1px solid var(--line);transition:all .2s ease}
+        .dpick__tab.is-on{background:rgba(29,151,227,.16);color:#fff;border-color:rgba(29,151,227,.65)}
+        .dpick__grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(228px,1fr));gap:1rem}
+        .dpick__card{background:var(--glass);border:1px solid var(--line);border-radius:16px;padding:1.05rem 1.05rem 1.15rem;
+          transition:border-color .2s ease,transform .2s ease}
+        .dpick__card:hover{border-color:rgba(29,151,227,.55);transform:translateY(-2px)}
+        .dpick__card.is-picked{border-color:#00ce1b;box-shadow:0 0 0 1px rgba(0,206,27,.5)}
+        .dpick__card[hidden]{display:none}
+        .dpick__series{font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--cyan-soft);margin:0 0 .3rem}
+        .dpick__card h3{margin:0 0 .25rem;font-size:1.06rem}
+        .dpick__meta{color:var(--muted);font-size:.8rem;margin:0 0 .5rem;line-height:1.45}
+        .dpick__price{font-size:1.02rem;margin:0 0 .8rem;color:var(--ink)}
+        .dpick__price strong{font-size:1.2rem}
+        .dpick__row{display:flex;align-items:center;gap:.8rem}
+        .dpick__sel{font-size:.82rem;padding:.55rem .95rem}
+        .dpick__more{color:var(--cyan-soft);text-decoration:none;font-size:.78rem;white-space:nowrap}
+        .dpick__more:hover{text-decoration:underline}
+        .dpick__formwrap{margin-top:1.6rem;background:var(--glass-strong);border:1px solid rgba(29,151,227,.4);border-radius:18px;padding:1.4rem clamp(1rem,3vw,2rem) 1.6rem}
+        .dpick__chosenlabel{font-size:.62rem;letter-spacing:.1em;color:var(--cyan-soft);margin:0 0 .3rem}
+        .dpick__chosentext{font-family:var(--font-display);font-weight:600;font-size:1.25rem;margin:0 0 .3rem;color:#fff}
+        .dpick__note{color:var(--muted);font-size:.8rem;margin:0 0 1.1rem}
+        .dpick__fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.9rem}
+        @media(max-width:560px){.dpick__tabs{flex-wrap:wrap}}
+      </style>
+      <script>
+      (function(){try{
+        var sec=document.getElementById('pick');if(!sec)return;
+        var cards=[].slice.call(sec.querySelectorAll('.dpick__card'));
+        var tabs=[].slice.call(sec.querySelectorAll('.dpick__tab'));
+        var wrap=document.getElementById('dpick-form');
+        var chosen=document.getElementById('dpick-chosen');
+        var hidden=document.getElementById('dpick-machine');
+        var smooth=(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)?'auto':'smooth';
+        function show(kind){
+          tabs.forEach(function(t){var on=t.getAttribute('data-kind')===kind;
+            t.classList.toggle('is-on',on);t.setAttribute('aria-pressed',on?'true':'false');});
+          cards.forEach(function(c){if(c.getAttribute('data-kind')===kind)c.removeAttribute('hidden');else c.setAttribute('hidden','');});
+        }
+        function pick(card,scroll,fromUser){
+          cards.forEach(function(c){c.classList.remove('is-picked');});
+          card.classList.add('is-picked');
+          var label=card.getAttribute('data-label'); /* entities arrive decoded */
+          chosen.textContent=label;
+          hidden.value=label;
+          hidden.setAttribute('value',label); /* survive form.reset() after a successful send */
+          wrap.hidden=false;
+          try{wrap.focus({preventScroll:true});}catch(fe){}
+          if(scroll)wrap.scrollIntoView({behavior:smooth,block:'center'});
+          if(fromUser){try{if(typeof window.gtag==='function')window.gtag('event','select_item',{item_id:card.getAttribute('data-id')});}catch(e){}}
+        }
+        tabs.forEach(function(t){t.addEventListener('click',function(){show(t.getAttribute('data-kind'));});});
+        cards.forEach(function(c){
+          var b=c.querySelector('.dpick__sel');
+          if(b)b.addEventListener('click',function(){pick(c,true,true);});
+        });
+        show('laptop');
+        /* deep link: /dell-hardware/?model=latitude-3520#pick preselects */
+        var m=new URLSearchParams(location.search).get('model');
+        if(m){var t=cards.filter(function(c){return c.getAttribute('data-id')===m;})[0];
+          if(t){show(t.getAttribute('data-kind'));pick(t,false,false);
+            setTimeout(function(){sec.scrollIntoView({behavior:smooth});},150);}}
+      }catch(e){}})();
+      </script>
+    </section>''')
+
 def dell_hardware():
     slug = "dell-hardware"
     desc = "Refurbished, tested ex-business Dell Latitude laptops & OptiPlex desktops from £510 — supplied, set up & supported across Bournemouth, Poole & Dorset."
@@ -3223,7 +3373,8 @@ def dell_hardware():
       ("Is it safe to buy refurbished?", "From us, yes. Every machine is fully tested and securely wiped, you&rsquo;re buying from a real local firm &mdash; a Dorset family business you can phone, text or email, here since 1995 &mdash; and you&rsquo;re covered by our own warranty plus your Consumer Rights Act protection, very different from an untested bargain off a marketplace."),
       ("What do the condition grades mean?", "We grade Dell Latitude laptops <strong>A, B or C</strong> by how they <em>look</em> &mdash; A is near-mint, B has light cosmetic wear, C has more visible marks &mdash; not by how they work. Every grade is fully tested and working, and we tell you the exact grade before you buy."),
       ("What about the storage and battery?", "Every machine is fitted with a <strong>brand-new Samsung Pro SSD</strong> (with a 5-year guarantee) for speed and reliability. Laptop batteries wear with use, so we check each one and tell you its condition up front &mdash; and can fit a fresh battery if you&rsquo;d like."),
-      ("What warranty do I get?", "Plenty of cover: <strong>any remaining Dell warranty where applicable</strong> (extendable if you need it), our own <strong>365 Techies 5-year guarantee</strong>, and the new Samsung Pro SSD&rsquo;s 5-year guarantee &mdash; plus full support on any of our plans and a full repair service if you ever break it. As a UK buyer you&rsquo;re also covered by the Consumer Rights Act, including a 30-day right to reject if something&rsquo;s faulty."),
+      ("What warranty do I get?", "Every machine comes with a <strong>12-month return-to-base guarantee</strong> as standard &mdash; and that becomes a <strong>5-year guarantee for as long as you&rsquo;re on a 365 support plan</strong> (home &pound;18.25/month per computer, business from &pound;24.38). On top of that: any remaining Dell warranty where applicable, the new Samsung 990 PRO SSD&rsquo;s own 5-year guarantee, and your Consumer Rights Act protection including a 30-day right to reject if something&rsquo;s faulty."),
+      ("Can I pick and reserve a machine online?", "Yes &mdash; use the <a href=\"#pick\">pick &amp; reserve tool</a> on this page: choose laptop or desktop, pick the model, add your name and contact details, and it goes straight to the team. A real 365 techie will be in contact shortly to confirm the exact machine, grade and price &mdash; no payment is taken online and there&rsquo;s no obligation."),
       ("Can you supply screens, webcams and other accessories?", "Yes &mdash; we&rsquo;ll supply and set up whatever you need alongside your Dell: monitors, webcams, backup drives, speakers, keyboards, mice and more, all configured and ready to use."),
       ("Can you wipe and recycle my old computer?", "Yes &mdash; we can move your files across to your new Dell, then securely wipe (with a certificate) and responsibly recycle your old machine. See our <a href=\"/secure-it-disposal/\">secure IT disposal</a> page."),
       ("Do you set it up and support it too?", "Always. Every Dell we supply is set up ready to use &mdash; Windows, Microsoft 365, security, backups and your data moved across &mdash; and you can keep it looked after on a <a href=\"/home-it-support-plans/\">home</a> or <a href=\"/business-it-support-plans/\">business</a> support plan."),
@@ -3233,7 +3384,7 @@ def dell_hardware():
       hero(bc_sub("Dell", "/dell-it-support-dorset/", "Refurbished Dell"), "// REFURBISHED &middot; BUSINESS-GRADE",
            'Refurbished Dell Latitude laptops &amp; <em class="grad grad--cyan">OptiPlex desktops</em>',
            "Professionally refurbished, tested ex-business Dell &mdash; proper business-grade computers for a fraction of the price of new, set up and supported by a real local firm you can phone, text or email &mdash; and that comes to you. Kinder on your wallet and the planet.",
-           cta1=("Find me a refurbished Dell", "#match"), cta2=("Call 01202 775566", "tel:+441202775566"),
+           cta1=("Pick &amp; reserve a machine", "#pick"), cta2=("Call 01202 775566", "tel:+441202775566"),
            chips=["From &pound;510","New Samsung Pro SSD","5-year guarantee","Set up &amp; fully supported"], scene=HERO_SCENES.get("sales")),
       responsive_video("WATCH &middot; REFURBISHED DELL IN ACTION", "See a refurbished Dell at work",
                        "/images/dell-reel-poster-wide.jpg", "/images/dell-reel-poster-tall.jpg",
@@ -3494,6 +3645,7 @@ def dell_hardware():
         </div>
       </div>
     </section>''',
+      dell_picker_section(),
       f'''    <section class="blog-section" aria-label="Owner's guide" id="guides">
       <div class="wrap">
         <div class="section-head">
@@ -3537,18 +3689,18 @@ def dell_it_support_hub():
     desc = ("Independent Dell support, servicing & repair across Bournemouth, Poole & Dorset &mdash; 30+ years, "
             "no call-out fee. Refurbished Dell from &pound;510. Call 01202 775566.")
     ways = [
-      ("remote", "Remote Dell support", "/dell-remote-support/",
-       "We connect securely over a session you watch and fix Windows, email, drivers, settings and slowdowns on your Dell &mdash; often the same day, and we always phone before we connect."),
-      ("servicing", "Dell servicing &amp; maintenance", "/dell-support-plans/",
-       "Keep your Dell fast, cool and healthy with proactive servicing and a simple monthly plan &mdash; from &pound;18.25/month per computer at home, from &pound;24.38 for business."),
-      ("emergency", "Emergency Dell repair", "/emergency-dell-repair-bournemouth/",
-       "Dead, won&rsquo;t boot, or your business is down? Fast same-day response and same-day remote diagnosis where we can, plus free local collection. (Mon&ndash;Fri, 9&ndash;5 &mdash; no 24/7 promises we can&rsquo;t keep.)"),
-      ("sales", "Buy a refurbished Dell", "/dell-hardware/",
-       "Tested, business-grade Dell &mdash; Latitude laptops from &pound;510, OptiPlex desktops from &pound;545, every one with a new 1TB Samsung 990 PRO &mdash; 5-year guarantee on a support plan, set up and supported."),
+      ("remote", "Get Dell support", "/dell-remote-support/",
+       "Something&rsquo;s not working &mdash; Windows, email, drivers, slowdowns. We connect securely over a session you watch and sort it, often the same day. We always phone before we connect.", "Get support"),
+      ("emergency", "Book a Dell repair", "/dell-laptop-repair-bournemouth/",
+       "Broken screen, dead machine, worn battery &mdash; laptop or desktop. Honest diagnosis, no-fix-no-fee, 12-month warranty on the work and free local collection. Business down? We prioritise emergencies (Mon&ndash;Fri, 9&ndash;5).", "Book a repair"),
+      ("servicing", "Servicing &amp; care plans", "/dell-support-plans/",
+       "Keep your Dell fast, cool and healthy with a full service every 6 weeks on a simple monthly plan &mdash; from &pound;18.25/month per computer at home, from &pound;24.38 for business &mdash; and your guarantee becomes 5 years.", "See plans"),
+      ("sales", "Buy a Dell &mdash; new or refurbished", "/dell-hardware/#pick",
+       "Pick your machine online and reserve it in a minute &mdash; Latitude laptops from &pound;510, OptiPlex desktops from &pound;545 (guide prices), each with a new 1TB Samsung 990 PRO, set up and supported. Brand-new Dell to order too.", "Pick a machine"),
     ]
     ways_html = "\n".join(
-      f'          <a class="dell-way" href="{href}">{_dell_scene(key)}<h3>{title}</h3><p>{blurb}</p><span class="post-card__more">Get help &#8594;</span></a>'
-      for key, title, href, blurb in ways)
+      f'          <a class="dell-way" href="{href}">{_dell_scene(key)}<h3>{title}</h3><p>{blurb}</p><span class="post-card__more">{more} &#8594;</span></a>'
+      for key, title, href, blurb, more in ways)
     faqs = [
       ("Do you offer Dell support across Bournemouth, Poole and Dorset?", "Yes &mdash; we&rsquo;re a family-run, independent Dell specialist based in Kinson, Bournemouth (BH10&nbsp;7LH), and we&rsquo;ve supplied and supported Dell systems for homes and businesses across Bournemouth, Poole, Christchurch and the wider Dorset area since 1995. Remote support and refurbished sales reach customers UK-wide."),
       ("Are you a Dell reseller or a Dell authorised repair centre?", "Both parts have an honest answer. We <strong>are</strong> a genuine <strong>Dell reseller &mdash; and have been since 2001</strong> &mdash; so we can supply brand-new Dell hardware as well as our tested refurbished range. For <strong>repairs and support</strong>, though, we&rsquo;re deliberately independent: not a Dell Authorised Service Provider and not Dell ProSupport. That independence lets us give honest advice and fair prices, and fix machines Dell would rather you replaced."),
@@ -3563,19 +3715,19 @@ def dell_it_support_hub():
            hero_trust("Whatever&rsquo;s going on with your Dell &mdash; a laptop that won&rsquo;t boot, a business fleet to look after, or a machine that&rsquo;s just had its day &mdash; you&rsquo;re in the right place. We&rsquo;re a family-run, independent Dell specialist who&rsquo;s been supplying and supporting Dell systems for homes and businesses for over 30 years. Here&rsquo;s the honest help &mdash; and if you&rsquo;d rather just leave it to the techies, that&rsquo;s exactly what we&rsquo;re here for."),
            cta1=("Talk to a Techie", "/contact/"), cta2=("Call 01202 775566", "tel:+441202775566"),
            chips=["Independent Dell specialist since 1995", "Homes &amp; businesses", "No call-out fee &middot; 4.9 on Google"]),
-      responsive_video("WATCH", "Dell support, wherever you work",
-                       "/images/dell-reel-poster-wide.jpg", "/images/dell-reel-poster-tall.jpg",
-                       "365 Techies Dell support - home office, workplace and working remotely across Dorset"),
-      ('    <section class="blog-section" aria-label="Four ways we help with your Dell" id="ways">\n'
+      ('    <section class="blog-section" aria-label="What do you need today?" id="ways">\n'
        '      <div class="wrap">\n'
        '        <div class="section-head">\n'
-       '          <p class="eyebrow eyebrow--center mono" data-reveal>// FOUR WAYS WE HELP</p>\n'
-       '          <h2 class="section-title section-title--center" data-title>However you need us for your Dell<span class="title-underline title-underline--center"></span></h2>\n'
-       '          <p class="lede lede--center" data-reveal>Remote fixes, proactive servicing, emergency repairs, or a tested refurbished replacement &mdash; pick what you need, or just call and we&rsquo;ll steer you right.</p>\n'
+       '          <p class="eyebrow eyebrow--center mono" data-reveal>// START HERE</p>\n'
+       '          <h2 class="section-title section-title--center" data-title>What do you need today?<span class="title-underline title-underline--center"></span></h2>\n'
+       '          <p class="lede lede--center" data-reveal><strong>Support</strong>, a <strong>repair</strong>, ongoing <strong>servicing</strong> &mdash; or a <strong>new or refurbished Dell</strong>? Pick one and you&rsquo;re two clicks from sorted. Not sure? Call 01202 775566 and we&rsquo;ll steer you right.</p>\n'
        '        </div>\n'
        '        <div class="dell-ways" data-stagger>\n' + ways_html + '\n        </div>\n'
        '      </div>\n'
        '    </section>'),
+      responsive_video("WATCH", "Dell support, wherever you work",
+                       "/images/dell-reel-poster-wide.jpg", "/images/dell-reel-poster-tall.jpg",
+                       "365 Techies Dell support - home office, workplace and working remotely across Dorset"),
       ('    <section class="section section--alt" aria-label="30 years of Dell">\n'
        '      <div class="wrap split-2">\n'
        '        <div class="prose" data-reveal>\n'
@@ -14149,6 +14301,37 @@ REFURB_SUPPORT_BAND = '''    <section class="section" aria-label="Setup, guarant
       </div>
     </section>'''
 
+def _refurb_reserve_band(slug):
+    """Per-series 'pick & reserve' band: quick links into the /dell-hardware/#pick tool
+    with the right model preselected. Injected on refurbBands sales pages."""
+    prefix = {"refurbished-dell-latitude-3000": "latitude-3", "refurbished-dell-latitude-5000": "latitude-5",
+              "refurbished-dell-latitude-7000": "latitude-7", "refurbished-dell-optiplex-3000": "optiplex-3",
+              "refurbished-dell-optiplex-5000": "optiplex-5", "refurbished-dell-optiplex-7000": "optiplex-7"}.get(slug)
+    if not prefix:
+        return ""
+    links = "".join(
+        f'          <a class="rsv__m" href="/dell-hardware/?model={mid}#pick"><span class="rsv__name">{name}</span><span class="rsv__price mono">guide &pound;{price}</span></a>\n'
+        for mid, kind, series, name, meta, price, href in DELL_MACHINES if mid.startswith(prefix))
+    return ('''    <section class="section section--alt" aria-label="Pick and reserve">
+      <div class="wrap" data-reveal>
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono">// READY? RESERVE IN A MINUTE</p>
+          <h2 class="section-title section-title--center" data-title>Pick your machine &amp; reserve it online<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center">Choose a model below, add your name and contact details, and your pick goes straight to the team &mdash; a real 365 techie will be in contact shortly. <strong>Guide prices</strong>, no payment online, no obligation.</p>
+        </div>
+        <div class="rsv">
+''' + links + '''        </div>
+      </div>
+      <style>
+        .rsv{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:.9rem;max-width:900px;margin:0 auto}
+        .rsv__m{display:flex;flex-direction:column;gap:.25rem;padding:1rem 1.1rem;background:var(--glass);border:1px solid var(--line);
+          border-radius:14px;text-decoration:none;color:inherit;transition:border-color .2s ease,transform .2s ease}
+        .rsv__m:hover{border-color:rgba(29,151,227,.6);transform:translateY(-2px)}
+        .rsv__name{font-family:var(--font-display);font-weight:600;font-size:1.02rem}
+        .rsv__price{color:var(--cyan-soft);font-size:.72rem;letter-spacing:.05em;text-transform:uppercase}
+      </style>
+    </section>''')
+
 def build_new_page(d):
     faqs = [(f['q'], f['a']) if isinstance(f, dict) else tuple(f) for f in d['faqs']]
     _blocks = [_sec_block(s, i) for i, s in enumerate(d['sections'])]
@@ -14172,6 +14355,7 @@ def build_new_page(d):
     if d.get('refurbBands'):
         _blocks.append(REFURB_PRICE_RISE_BAND)
         _blocks.append(REFURB_SUPPORT_BAND)
+        _blocks.append(_refurb_reserve_band(d['slug']))
     sections = "\n".join(_blocks)
     cross = ""
     if d.get('crossLinksHtml'):

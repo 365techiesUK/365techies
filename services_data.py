@@ -569,7 +569,7 @@ SERVICE_PAGES = [
    },
    {
     "q": "Is it worth repairing my laptop or should I replace it?",
-    "a": "It depends on the age and the fault. A new battery, screen or SSD upgrade often gives a perfectly good laptop several more years for a fraction of the cost of a new machine &mdash; while a failed motherboard on an old laptop usually isn't worth it. We give you an honest verdict before you spend a penny. If replacement does make sense, we sell quality refurbished business-grade Dell laptops from &pound;299, so you're not pushed into an expensive new purchase."
+    "a": "It depends on the age and the fault. A new battery, screen or SSD upgrade often gives a perfectly good laptop several more years for a fraction of the cost of a new machine &mdash; while a failed motherboard on an old laptop usually isn't worth it. We give you an honest verdict before you spend a penny. If replacement does make sense, we sell quality refurbished business-grade Dell laptops from &pound;510, so you're not pushed into an expensive new purchase."
    },
    {
     "q": "Can you replace a cracked laptop screen?",
@@ -1463,7 +1463,7 @@ SERVICE_PAGES = [
    },
    {
     "q": "Should I reinstall Windows or just buy a new computer?",
-    "a": "It depends on the machine. A reinstall can give a tired but healthy PC years more life and is far cheaper than replacing it. But if the hardware is failing or the computer is genuinely too old to keep up, a refresh only papers over the cracks &mdash; and we'll tell you honestly. If a new machine makes more sense, our new computer setup service moves you across smoothly, and we supply refurbished business-grade Dell from &pound;299."
+    "a": "It depends on the machine. A reinstall can give a tired but healthy PC years more life and is far cheaper than replacing it. But if the hardware is failing or the computer is genuinely too old to keep up, a refresh only papers over the cracks &mdash; and we'll tell you honestly. If a new machine makes more sense, our new computer setup service moves you across smoothly, and we supply refurbished business-grade Dell from &pound;510."
    },
    {
     "q": "Do you reinstall Windows on Apple Macs or iPads?",

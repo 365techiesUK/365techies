@@ -31,8 +31,8 @@
       var label = btn ? btn.textContent : "";
       if (val(form, "company_website")) return; // honeypot: silently drop bots
       var email = val(form, "email");
-      if (!email) {
-        if (status) { status.style.color = "#e06a4a"; status.textContent = "Please add your email so we can reply."; }
+      if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+        if (status) { status.style.color = "#e06a4a"; status.textContent = email ? "That email doesn’t look right — please check it." : "Please add your email so we can reply."; }
         return;
       }
       var nm = splitName(val(form, "name"));
@@ -50,6 +50,8 @@
           if (s) extras.push(k + ": " + s);
         });
       } catch (fderr) {}
+      /* belt-and-braces: the machine field is the reserve funnel's key datum — never lose it */
+      if (!extras.length) { var mach = val(form, "machine"); if (mach) extras.push("machine: " + mach); }
       if (extras.length) message = (message ? message + "\n\n" : "") + extras.join("\n");
 
       var fields = [];
@@ -61,8 +63,11 @@
       add("company", val(form, "company"));
       add("message", message);
 
-      /* instant Slack ping (server-side relay) — independent of the HubSpot submission */
-      try {
+      /* instant Slack ping (server-side relay) — independent of the HubSpot submission.
+         Fires once per enquiry: retries after a HubSpot failure don't re-ping (or burn the
+         relay's rate limit); the flag clears on success so a genuinely new enquiry pings. */
+      if (!form.dataset.slackSent) try {
+        form.dataset.slackSent = "1";
         fetch("/api/slack-lead.php", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -88,9 +93,10 @@
       }).then(function (res) {
         if (btn) { btn.disabled = false; btn.textContent = label; }
         if (res.ok) {
-          if (status) { status.style.color = "#39d353"; status.textContent = "✓ Thanks — your message is in. We’ll reply within one working day."; }
+          if (status) { status.style.color = "#39d353"; status.textContent = form.getAttribute("data-success") || "✓ Thanks — your message is in. We’ll reply within one working day."; }
           try { if (typeof window.gtag === "function") window.gtag("event", "generate_lead", { form_page: location.pathname, form_topic: topic || "(none)" }); } catch (gerr) {}
           form.reset();
+          delete form.dataset.slackSent;
         } else if (status) {
           status.style.color = "#e06a4a"; status.innerHTML = FAIL;
         }
@@ -110,7 +116,7 @@
     try {
       var t = new URLSearchParams(location.search).get("topic");
       if (t) {
-        var want = decodeURIComponent(t).replace(/[-+_]+/g, " ").trim().toLowerCase();
+        var want = t.replace(/[-+_]+/g, " ").trim().toLowerCase(); /* URLSearchParams already decoded */
         document.querySelectorAll('form.contact-form select[name="topic"]').forEach(function (sel) {
           for (var i = 0; i < sel.options.length; i++) {
             var txt = sel.options[i].textContent.replace(/\s+/g, " ").trim().toLowerCase();
