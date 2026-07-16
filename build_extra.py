@@ -3900,7 +3900,7 @@ def dell_it_support_hub():
       ("emergency", "Book a Dell repair", "/dell-laptop-repair-bournemouth/",
        "Broken screen, dead machine, worn battery &mdash; laptop or desktop. Honest diagnosis, no-fix-no-fee, 12-month warranty on the work and free local collection. Business down? We prioritise emergencies (Mon&ndash;Fri, 9&ndash;5).", "Book a repair"),
       ("servicing", "Servicing &amp; care plans", "/dell-support-plans/",
-       "Keep your Dell fast, cool and healthy with a full service every 6 weeks on a simple monthly plan &mdash; from &pound;18.25/month per computer at home, from &pound;24.38 for business &mdash; and your guarantee becomes 5 years.", "See plans"),
+       "Keep your Dell fast, cool and healthy with a full service every 6 weeks &mdash; each one documented with a written Service Report &mdash; on a simple monthly plan from &pound;18.25/month per computer at home, &pound;24.38 for business. And your guarantee becomes 5 years.", "See plans"),
       ("sales", "Buy a Dell &mdash; new or refurbished", "/dell-hardware/#pick",
        "Pick your machine online and get an availability check &amp; quote in a minute &mdash; Latitude laptops from &pound;510, OptiPlex desktops from &pound;545 (guide prices), each with a new 1TB Samsung 990 PRO, set up and supported. Brand-new Dell to order too.", "Pick a machine"),
     ]
@@ -14518,7 +14518,7 @@ REFURB_SUPPORT_BAND = '''    <section class="section" aria-label="Setup, guarant
           <tr><th>Guarantee</th><td>12-month return-to-base</td><td>12-month return-to-base</td><td class="hi"><strong>5 years</strong> &mdash; for as long as you&rsquo;re on the plan</td></tr>
           <tr><th>Setup</th><td>Windows 11 Home or Pro, data moved across</td><td>Tailored home <em>or</em> business setup &mdash; email, printers, accounts, the lot</td><td>Tailored setup, then kept right</td></tr>
           <tr><th>Support</th><td>Pay-as-you-go remote help from &pound;20</td><td><strong>30 days of remote support included</strong></td><td class="hi">Help as often as you need it &mdash; we always phone first</td></tr>
-          <tr><th>Servicing</th><td>&mdash;</td><td><strong>A full service after your first 30 days</strong></td><td class="hi">A full service <strong>every 6 weeks</strong> &mdash; updates, security &amp; backup checks</td></tr>
+          <tr><th>Servicing</th><td>&mdash;</td><td><strong>A full service after your first 30 days</strong></td><td class="hi">A full service <strong>every 6 weeks</strong> with a <strong>written Service Report</strong> each time</td></tr>
           <tr><th>Best for</th><td>Confident users</td><td>A properly settled-in start</td><td class="hi">Never worrying about your computer again</td></tr>
         </tbody></table></div>
         <div class="prose" style="max-width:760px;margin:1.6rem auto 0" data-reveal>
