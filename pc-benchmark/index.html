@@ -446,6 +446,9 @@
             <a href="/refurbished-dell-latitude-3000/">Latitude 3000 Series</a>
             <a href="/refurbished-dell-latitude-5000/">Latitude 5000 Series</a>
             <a href="/refurbished-dell-latitude-7000/">Latitude 7000 Series</a>
+            <a href="/refurbished-dell-optiplex-3000/">OptiPlex 3000 Tier</a>
+            <a href="/refurbished-dell-optiplex-5000/">OptiPlex 5000 Tier</a>
+            <a href="/refurbished-dell-optiplex-7000/">OptiPlex 7000 Tier</a>
             <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
             <a href="/dell-support-bournemouth/">Dell Support Bournemouth</a>
             <a href="/dell-support-poole/">Dell Support Poole</a>
@@ -504,6 +507,7 @@
             <a href="/dell-latitude-7000-guide/">Latitude 7000 Guide</a>
             <a href="/dell-optiplex-guide/">Dell Desktop Guide</a>
             <a href="/heatwave-tech-guide/">Heatwave Tech Guide</a>
+            <a href="/why-computer-prices-have-gone-up/">Why Prices Went Up</a>
             <a href="/monthly-it-support/">Monthly IT Support</a>
             <a href="/switching-it-provider/">Switching to Us</a>
             <a href="/plan-finder/">Plan Finder</a>
@@ -606,6 +610,9 @@
             <a href="/refurbished-dell-latitude-3000/">Latitude 3000 Series</a>
             <a href="/refurbished-dell-latitude-5000/">Latitude 5000 Series</a>
             <a href="/refurbished-dell-latitude-7000/">Latitude 7000 Series</a>
+            <a href="/refurbished-dell-optiplex-3000/">OptiPlex 3000 Tier</a>
+            <a href="/refurbished-dell-optiplex-5000/">OptiPlex 5000 Tier</a>
+            <a href="/refurbished-dell-optiplex-7000/">OptiPlex 7000 Tier</a>
           <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
           <a href="/dell-support-bournemouth/">Dell Support Bournemouth</a>
           <a href="/dell-support-poole/">Dell Support Poole</a>
@@ -660,6 +667,7 @@
             <a href="/dell-latitude-7000-guide/">Latitude 7000 Guide</a>
           <a href="/dell-optiplex-guide/">Dell Desktop Guide</a>
           <a href="/heatwave-tech-guide/">Heatwave Tech Guide</a>
+            <a href="/why-computer-prices-have-gone-up/">Why Prices Went Up</a>
           <a href="/monthly-it-support/">Monthly IT Support</a>
           <a href="/switching-it-provider/">Switching to Us</a>
           <a href="/plan-finder/">Plan Finder</a>
@@ -944,7 +952,7 @@
           if(overall>=80) v={g:'Blazing fast',m:'This is a quick machine &mdash; everything should feel instant. If it doesn&rsquo;t, something else (startup programs, updates, malware) is slowing it down, and that&rsquo;s fixable.'};
           else if(overall>=60) v={g:'Running well',m:'A healthy, capable computer for everyday work. Keep it maintained and it&rsquo;ll stay that way.'};
           else if(overall>=40) v={g:'Room for improvement',m:'Usable, but you&rsquo;re waiting on it more than you should be. A tune-up &mdash; and often a simple upgrade &mdash; makes a machine like this feel new again.'};
-          else v={g:'Struggling',m:'This machine is holding you back every day. Before you bin it: an SSD or memory upgrade often transforms a slow computer for a fraction of the cost of a new one &mdash; and if it really is time, we supply refurbished business-grade Dells from &pound;299.'};
+          else v={g:'Struggling',m:'This machine is holding you back every day. Before you bin it: an SSD or memory upgrade often transforms a slow computer for a fraction of the cost of a new one &mdash; and if it really is time, we supply refurbished business-grade Dells from &pound;510.'};
           LAST.band=v.g;
           root.querySelector('#bm-verdict').innerHTML='<p class="bm-verdict-g">'+v.g+'</p><p>'+v.m+'</p>';
           root.querySelector('#bm-scale-me').style.left=Math.max(2,Math.min(98,overall))+'%';
@@ -974,7 +982,7 @@
           if(navigator.getBattery){ try{ navigator.getBattery().then(function(b){ if(b&&b.charging===false){ var d=document.createElement('div'); d.className='bm-note'; d.innerHTML='<b>On battery power:</b> laptops usually run faster plugged in &mdash; connect the charger and run it again for your best score.'; notesEl.appendChild(d); } }).catch(function(){}); }catch(e){} }
           var fix=root.querySelector('#bm-fix');
           if(overall>=60) fix.innerHTML='<h3>Keep it this way</h3><p>Regular servicing is why our customers&rsquo; computers stay fast for years &mdash; a full service every six weeks, updates, security and backups, all handled for you.</p><div class="bm-fix-cta"><a class="button primary" href="/monthly-it-support/">See monthly plans &#8594;</a><a class="button bm-ghost" href="/contact/">Ask a techie</a></div>';
-          else fix.innerHTML='<h3>Don&rsquo;t put up with a slow computer</h3><p>We speed up machines like this every week &mdash; deep tune-ups, SSD and memory upgrades, or an honest &ldquo;it&rsquo;s time&rdquo; and a refurbished business-grade Dell from &pound;299. No-fix-no-fee, 12-month warranty.</p><div class="bm-fix-cta"><a class="button primary" href="/contact/">Make mine faster &#8594;</a><a class="button bm-ghost" href="/dell-hardware/">Refurbished Dells</a></div>';
+          else fix.innerHTML='<h3>Don&rsquo;t put up with a slow computer</h3><p>We speed up machines like this every week &mdash; deep tune-ups, SSD and memory upgrades, or an honest &ldquo;it&rsquo;s time&rdquo; and a refurbished business-grade Dell from &pound;510. No-fix-no-fee, 12-month warranty.</p><div class="bm-fix-cta"><a class="button primary" href="/contact/">Make mine faster &#8594;</a><a class="button bm-ghost" href="/dell-hardware/">Refurbished Dells</a></div>';
           results.hidden=false;
           root.querySelector('#bm-ring').style.strokeDashoffset=(339.292*(1-overall/100)).toFixed(1);
           requestAnimationFrame(function(){ setTimeout(function(){ root.querySelectorAll('.bm-bar').forEach(function(b){ b.style.width=b.getAttribute('data-w')+'%'; }); },60); });
@@ -1090,7 +1098,7 @@
     <section class="cta-band" aria-label="Get started">
       <div class="cta-band__inner">
         <h2 data-title>Not happy with your score?<span class="title-underline title-underline--center"></span></h2>
-        <p class="lede lede--center" data-reveal>We speed up slow computers every week &mdash; deep tune-ups, SSD and memory upgrades, honest advice, no-fix-no-fee and a 12-month warranty. Or start fresh with a refurbished business-grade Dell from &pound;299.</p>
+        <p class="lede lede--center" data-reveal>We speed up slow computers every week &mdash; deep tune-ups, SSD and memory upgrades, honest advice, no-fix-no-fee and a 12-month warranty. Or start fresh with a refurbished business-grade Dell from &pound;510.</p>
         <div class="hero-buttons hero-buttons--center" data-reveal>
           <a href="/contact/" class="button primary button--lg">Make Mine Faster</a>
           <a href="/dell-hardware/" class="button secondary button--lg">Refurbished Dells</a>
@@ -1192,6 +1200,7 @@
             <a href="/dell-latitude-7000-guide/">Latitude 7000 Guide</a>
         <a href="/dell-optiplex-guide/">Dell Desktop Guide</a>
         <a href="/heatwave-tech-guide/">Heatwave Tech Guide</a>
+            <a href="/why-computer-prices-have-gone-up/">Why Prices Went Up</a>
         <a href="/monthly-it-support/">Monthly IT Support</a>
         <a href="/home-it-support-subscriptions/">Home IT Support</a>
         <a href="/business-it-support-subscriptions/">Business IT Support</a>
@@ -1250,6 +1259,9 @@
             <a href="/refurbished-dell-latitude-3000/">Latitude 3000 Series</a>
             <a href="/refurbished-dell-latitude-5000/">Latitude 5000 Series</a>
             <a href="/refurbished-dell-latitude-7000/">Latitude 7000 Series</a>
+            <a href="/refurbished-dell-optiplex-3000/">OptiPlex 3000 Tier</a>
+            <a href="/refurbished-dell-optiplex-5000/">OptiPlex 5000 Tier</a>
+            <a href="/refurbished-dell-optiplex-7000/">OptiPlex 7000 Tier</a>
         <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
         <a href="/dell-support-bournemouth/">Dell Support Bournemouth</a>
         <a href="/dell-support-poole/">Dell Support Poole</a>

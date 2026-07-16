@@ -1,5 +1,5 @@
-# Auto-assembled 2026-07-16 (audit fixes applied): refurbished Latitude 3000/5000/7000 sales pages + 5000/7000 guides.
-# Pricing formula (owner-directed): avg eBay UK sold + Samsung 990 PRO 1TB (scan.co.uk 230) + 150 setup, rounded to nearest 5.
+# Auto-assembled 2026-07-16 (audit fixes + offer restructure): Latitude 3000/5000/7000 sales + 5000/7000 guides.
+# Pricing: avg eBay UK sold + 990 PRO 1TB (230) + 150 setup, rounded to 5. Guarantee: 5yr on support plan / 12mo RTB.
 LATITUDE_PAGES = [
  {
   "slug": "refurbished-dell-latitude-3000",
@@ -8,11 +8,11 @@ LATITUDE_PAGES = [
   "ogTitle": "Refurbished Dell Latitude 3000 Series &mdash; the honest budget business laptop",
   "eyebrow": "// REFURBISHED &middot; LATITUDE 3000 SERIES",
   "h1": "Refurbished Dell Latitude 3000 &mdash; <em class=\"grad grad--cyan\">the honest budget business laptop</em>",
-  "lede": "The Latitude 3000 series is Dell&rsquo;s entry point to its business line &mdash; the sensible choice when you want a proper work laptop without paying 5000-series money. We fit every one with a new 1TB Samsung 990 PRO SSD, 16GB of RAM and a clean licensed copy of Windows 11, then back it with our 5-year guarantee. Setup and moving your data across are included in the price.",
+  "lede": "The Latitude 3000 series is Dell&rsquo;s entry point to its business line &mdash; the sensible choice when you want a proper work laptop without paying 5000-series money. We fit every one with a new 1TB Samsung 990 PRO SSD, 16GB of RAM and a professionally installed Windows 11 Home or Pro (your choice), then back it with our 5-year guarantee (with a support plan). Setup and moving your data across are included in the price.",
   "chips": [
    "From &pound;510 &mdash; setup included",
    "New 1TB Samsung 990 PRO fitted",
-   "5-year guarantee"
+   "5-yr guarantee (with a support plan) on a support plan"
   ],
   "ctaHead": "Want a budget business laptop that&rsquo;s been set up properly?",
   "ctaSub": "Call <strong>01202 775566</strong> or text <strong>07520 615332</strong> and tell us what you&rsquo;ll use it for. We&rsquo;ll match you to the right Latitude in stock &mdash; and steer you away from the configs we&rsquo;d avoid ourselves.",
@@ -25,12 +25,12 @@ LATITUDE_PAGES = [
    {
     "eyebrow": "// THE LINE-UP",
     "h2": "The models we sell &mdash; and what they typically cost",
-    "html": "<p>Every price below is for our standard build: <strong>16GB of RAM, a new 1TB Samsung 990 PRO SSD, clean licensed Windows 11, setup and your data moved across &mdash; all included</strong>. The exact price depends on the machine in stock and its grade &mdash; call for today&rsquo;s price.</p><ul><li><strong>Latitude 3420 (14-inch, 11th-gen, 2021)</strong> &mdash; typically <strong>from &pound;510</strong>. The compact one. Light at around 1.5kg, with the same platform as its bigger sibling.</li><li><strong>Latitude 3520 (15.6-inch, 11th-gen, 2021)</strong> &mdash; typically <strong>&pound;545</strong>. The big-screen all-rounder. Same ports and internals as the 3420 in a roomier body.</li><li><strong>Latitude 3540 (15.6-inch, 12th/13th-gen, 2023)</strong> &mdash; typically <strong>&pound;605</strong>. The newest of the three, with 10-core i5 processors that are a genuinely big step up for multitasking, plus USB-C charging.</li><li><strong>Latitude 3440 (14-inch, 12th/13th-gen, 2023)</strong> &mdash; the compact version of the 3540. Stock is less predictable, so we don&rsquo;t publish a price &mdash; <a href=\"/contact/\">ask us</a> what&rsquo;s in.</li></ul><p>Every machine is securely wiped, fully tested and graded A, B or C by looks alone &mdash; every grade works exactly the same.</p>"
+    "html": "<p>Every price below is for our standard build: <strong>16GB of RAM, a new 1TB Samsung 990 PRO SSD, Windows 11 Home or Pro, professionally set up, setup and your data moved across &mdash; all included</strong>. The exact price depends on the machine in stock and its grade &mdash; call for today&rsquo;s price.</p><ul><li><strong>Latitude 3420 (14-inch, 11th-gen, 2021)</strong> &mdash; typically <strong>from &pound;510</strong>. The compact one. Light at around 1.5kg, with the same platform as its bigger sibling.</li><li><strong>Latitude 3520 (15.6-inch, 11th-gen, 2021)</strong> &mdash; typically <strong>&pound;545</strong>. The big-screen all-rounder. Same ports and internals as the 3420 in a roomier body.</li><li><strong>Latitude 3540 (15.6-inch, 12th/13th-gen, 2023)</strong> &mdash; typically <strong>&pound;605</strong>. The newest of the three, with 10-core i5 processors that are a genuinely big step up for multitasking, plus USB-C charging.</li><li><strong>Latitude 3440 (14-inch, 12th/13th-gen, 2023)</strong> &mdash; the compact version of the 3540. Stock is less predictable, so we don&rsquo;t publish a price &mdash; <a href=\"/contact/\">ask us</a> what&rsquo;s in.</li></ul><p>Every machine is securely wiped, fully tested and graded A, B or C by looks alone &mdash; every grade works exactly the same.</p>"
    },
    {
     "eyebrow": "// PROCESSORS",
     "h2": "CPU advice: the chips to want and the ones to walk past",
-    "html": "<p>The 3000 series was sold with a wide spread of processors, and the difference between the best and worst is enormous. Our honest guidance:</p><ul><li><strong>Avoid anything with a Celeron.</strong> The Celeron 6305U in the 2021 models is kiosk-grade &mdash; fine for a till, miserable for actual work. Worse, the Celeron 7305 in the 2023 models <strong>lacks discrete TPM 2.0 support</strong>, which rules it out for BitLocker-encrypted business use. We don&rsquo;t sell them.</li><li><strong>The i5-1135G7 is the sweet spot</strong> on the 3420 and 3520 &mdash; a quad-core chip that handles office work, video calls and everyday multitasking comfortably.</li><li><strong>Watch the i3 trap.</strong> The quad-core i3-1125G4 is a sleeper bargain, but the near-identically named i3-1115G4 &mdash; and the 10th-gen i3-1005G1 that also appeared in these machines &mdash; are only dual-core. Sellers rarely spell this out; we do.</li><li><strong>The 12th/13th-gen i5s in the 3440 and 3540</strong> (i5-1235U, i5-1335U) are <strong>10-core chips</strong> &mdash; two performance cores plus eight efficiency cores &mdash; and a genuinely big step up over any 11th-gen machine. If you multitask heavily, they&rsquo;re worth the extra.</li></ul>"
+    "html": "<p>The 3000 series was sold with a wide spread of processors, and the difference between the best and worst is enormous. Our honest guidance:</p><ul><li><strong>We only stock Core i5 and above.</strong> These models were also sold elsewhere with Celeron and dual-core i3 chips &mdash; fine for a kiosk, miserable for real work (and the 2023 Celeron can&rsquo;t do BitLocker properly). We simply don&rsquo;t sell them.</li><li><strong>The i5-1135G7 is the sweet spot</strong> on the 3420 and 3520 &mdash; a quad-core chip that handles office work, video calls and everyday multitasking comfortably.</li><li><strong>The 12th/13th-gen i5s in the 3440 and 3540</strong> (i5-1235U, i5-1335U) are <strong>10-core chips</strong> &mdash; two performance cores plus eight efficiency cores &mdash; and a genuinely big step up over any 11th-gen machine. If you multitask heavily, they&rsquo;re worth the extra.</li></ul>"
    },
    {
     "eyebrow": "// MEMORY",
@@ -40,7 +40,7 @@ LATITUDE_PAGES = [
    {
     "eyebrow": "// STORAGE",
     "h2": "A new Samsung 990 PRO in every machine &mdash; with the honest speed caveat",
-    "html": "<p>The single biggest weakness of most refurbished laptops is a tired old SSD of unknown history. So we don&rsquo;t take the chance: <strong>every laptop we sell gets a brand-new 1TB Samsung 990 PRO fitted as standard</strong> &mdash; Samsung&rsquo;s flagship NVMe drive, with its own <strong>5-year Samsung guarantee</strong> on top of ours.</p><p>Now the honesty bit. The 990 PRO is a PCIe Gen4 drive, but <strong>the 3420 and 3520 run it at Gen3 speed in practice</strong> &mdash; around 3.5&nbsp;GB/s. That&rsquo;s still a huge real-world upgrade over the worn drives these machines arrive with, and the reason we fit the PRO anyway is its <strong>endurance and that 5-year guarantee</strong>, not the headline speed figure. The <strong>3440 and 3540 have proper Gen4 slots</strong>, so the same drive runs at full speed there.</p><p>Need more room? Upgrade at the time of purchase:</p><ul><li><strong>1TB Samsung 990 PRO</strong> &mdash; included as standard</li><li><strong>2TB</strong> &mdash; add &pound;185</li><li><strong>4TB</strong> &mdash; add &pound;420</li></ul><p>One nice quirk: the 3420 and 3520 also have an optional second 2.5-inch drive bay (mutually exclusive with the larger battery option), so some units can take a second drive for backups &mdash; ask when you call.</p>"
+    "html": "<p>The single biggest weakness of most refurbished laptops is a tired old SSD of unknown history. So we don&rsquo;t take the chance: <strong>every laptop we sell gets a brand-new 1TB Samsung 990 PRO fitted as standard</strong> &mdash; Samsung&rsquo;s flagship NVMe drive, with its own <strong>5-year Samsung guarantee</strong> on top of ours.</p><p>Now the honesty bit. The 990 PRO is a PCIe Gen4 drive, but <strong>the 3420 and 3520 run it at Gen3 speed in practice</strong> &mdash; around 3.5&nbsp;GB/s. That&rsquo;s still a huge real-world upgrade over the worn drives these machines arrive with, and the reason we fit the PRO anyway is its <strong>endurance and that 5-year guarantee (with a support plan)</strong>, not the headline speed figure. The <strong>3440 and 3540 have proper Gen4 slots</strong>, so the same drive runs at full speed there.</p><p>Need more room? Upgrade at the time of purchase:</p><ul><li><strong>1TB Samsung 990 PRO</strong> &mdash; included as standard</li><li><strong>2TB</strong> &mdash; add &pound;185</li><li><strong>4TB</strong> &mdash; add &pound;420</li></ul><p>One nice quirk: the 3420 and 3520 also have an optional second 2.5-inch drive bay (mutually exclusive with the larger battery option), so some units can take a second drive for backups &mdash; ask when you call.</p>"
    },
    {
     "eyebrow": "// SCREENS",
@@ -55,7 +55,7 @@ LATITUDE_PAGES = [
    },
    {
     "q": "Which processor should I choose?",
-    "a": "On the 2021 models (3420/3520) the i5-1135G7 is the sweet spot. On the 2023 models (3440/3540) the 12th/13th-gen i5s are 10-core chips and a big step up. Avoid Celerons entirely &mdash; and be careful with i3s, because some are quad-core bargains and others are dual-core disappointments with nearly identical names. We&rsquo;ll tell you exactly which chip is in any machine we offer you."
+    "a": "On the 2021 models (3420/3520) the i5-1135G7 is the sweet spot. On the 2023 models (3440/3540) the 12th/13th-gen i5s are 10-core chips and a big step up. We only sell Core i5 and above &mdash; the Celeron and i3 configs these models carry elsewhere are best avoided. We&rsquo;ll tell you exactly which chip is in any machine we offer you."
    },
    {
     "q": "Why do you avoid Celeron models?",
@@ -75,11 +75,15 @@ LATITUDE_PAGES = [
    },
    {
     "q": "Is setup included, or is that extra?",
-    "a": "Included, always. We set the laptop up with clean licensed Windows 11, move your files and data across from your old machine, and hand it over ready to use. There&rsquo;s no setup fee hiding at the till. Delivery is available UK-wide, or collect from us in Kinson, Bournemouth."
+    "a": "Included, always. We set the laptop up with Windows 11 Home or Pro, professionally set up, move your files and data across from your old machine, and hand it over ready to use. There&rsquo;s no setup fee hiding at the till. Delivery is available UK-wide, or collect from us in Kinson, Bournemouth."
    },
    {
     "q": "What guarantee do I get?",
     "a": "Our own 5-year 365 Techies guarantee on the laptop, plus Samsung&rsquo;s separate 5-year guarantee on the new 990 PRO SSD inside it. We&rsquo;re a family-run firm that&rsquo;s sold Dell since 2001 and been going since 1995 &mdash; we&rsquo;re not going anywhere, and we&rsquo;re rated 4.9 on Google. Questions? Call 01202 775566 or <a href=\"/contact/\">get in touch</a>."
+   },
+   {
+    "q": "Why are refurbished laptops more expensive than they used to be?",
+    "a": "Because the memory chips inside every computer have risen sharply in price &mdash; AI data centres are buying storage and memory at unprecedented scale, which has pushed up the cost of the SSDs we fit. The brand-new 1TB Samsung 990 PRO in every machine now costs around &pound;230 on its own. Refurbished business-grade Dell remains the best-value response: the full story is on our <a href=\"/why-computer-prices-have-gone-up/\">why computer prices have gone up</a> page."
    }
   ],
   "schemaKind": "service",
@@ -96,11 +100,11 @@ LATITUDE_PAGES = [
    },
    {
     "name": "We build it properly",
-    "text": "A new 1TB Samsung 990 PRO SSD, 16GB of dual-channel RAM and clean licensed Windows 11 go in as standard. We set it up and move your data across from your old machine &mdash; all included in the price."
+    "text": "A new 1TB Samsung 990 PRO SSD, 16GB of dual-channel RAM and Windows 11 Home or Pro, professionally set up go in as standard. We set it up and move your data across from your old machine &mdash; all included in the price."
    },
    {
     "name": "Collect or have it delivered",
-    "text": "Pick it up from Kinson, Bournemouth (Mon&ndash;Fri 9&ndash;5) or have it delivered UK-wide. It arrives ready to use, backed by our 5-year guarantee."
+    "text": "Pick it up from Kinson, Bournemouth (Mon&ndash;Fri 9&ndash;5) or have it delivered UK-wide. It arrives ready to use, backed by our 5-year guarantee (with a support plan)."
    }
   ],
   "crossLinksHtml": "<p>Digging deeper? Read our in-depth <a href=\"/dell-latitude-3520-guide/\">Latitude 3520 owner&rsquo;s guide</a>, or get the <a href=\"/dell-latitude-series-explained-3000-5000-7000/\">3000 vs 5000 vs 7000 series explained</a>. Ready to step up? Compare the <a href=\"/refurbished-dell-latitude-5000/\">refurbished Latitude 5000 series</a> and the premium <a href=\"/refurbished-dell-latitude-7000/\">Latitude 7000 series</a>. See everything we sell on our <a href=\"/dell-hardware/\">Dell hardware page</a>, or start local with <a href=\"/refurbished-dell-laptops-bournemouth/\">refurbished Dell laptops in Bournemouth</a>.</p>",
@@ -115,7 +119,7 @@ LATITUDE_PAGES = [
   ],
   "productOffer": {
    "name": "Refurbished Dell Latitude 3000 Series Laptop",
-   "description": "Refurbished Dell Latitude 3000-series business laptop (3420, 3520, 3440 or 3540) with 16GB dual-channel RAM, a new 1TB Samsung 990 PRO NVMe SSD, clean licensed Windows 11, setup and data transfer included, backed by a 5-year 365 Techies guarantee.",
+   "description": "Refurbished Dell Latitude 3000-series business laptop (3420, 3520, 3440 or 3540) with 16GB dual-channel RAM, a new 1TB Samsung 990 PRO NVMe SSD, Windows 11 Home or Pro, professionally set up, setup and data transfer included, backed by a 5-year 365 Techies guarantee (with a support plan).",
    "lowPrice": "510",
    "category": "Refurbished laptop",
    "props": [
@@ -137,10 +141,11 @@ LATITUDE_PAGES = [
     ],
     [
      "Guarantee",
-     "5-year 365 Techies guarantee"
+     "5-year 365 Techies guarantee (with a support plan)"
     ]
    ]
-  }
+  },
+  "refurbBands": True
  },
  {
   "slug": "refurbished-dell-latitude-5000",
@@ -149,11 +154,11 @@ LATITUDE_PAGES = [
   "ogTitle": "Refurbished Dell Latitude 5000 Series &mdash; the business workhorse, from &pound;535",
   "eyebrow": "// LATITUDE &middot; 5000 &middot; SERIES",
   "h1": "Refurbished Dell Latitude 5000 series &mdash; <em class=\"grad grad--cyan\">the sweet spot for most buyers</em>",
-  "lede": "The Latitude 5000 is Dell&rsquo;s mainstream business workhorse &mdash; tougher and better connected than the budget 3000 series, far easier to upgrade than the slim 7000s. Every machine we sell leaves Kinson with <strong>16GB of dual-channel RAM, a brand-new 1TB Samsung 990 PRO SSD, a clean licensed Windows 11 install and our 5-year guarantee</strong> &mdash; with setup and your data moved across included in the price.",
+  "lede": "The Latitude 5000 is Dell&rsquo;s mainstream business workhorse &mdash; tougher and better connected than the budget 3000 series, far easier to upgrade than the slim 7000s. Every machine we sell leaves Kinson with <strong>16GB of dual-channel RAM, a brand-new 1TB Samsung 990 PRO SSD, a Windows 11 Home or Pro, professionally set up install and our 5-year guarantee</strong> &mdash; with setup and your data moved across included in the price.",
   "chips": [
    "From &pound;535 all-in",
    "New Samsung 990 PRO fitted",
-   "5-year guarantee"
+   "5-yr guarantee (with a support plan) on a support plan"
   ],
   "ctaHead": "Want the right Latitude, not just any Latitude?",
   "ctaSub": "Tell us what you do all day and we&rsquo;ll match you to the model, grade and spec that fits &mdash; no upsell, just an honest recommendation. Call <strong>01202 775566</strong>, text <strong>07520 615332</strong>, or drop into the shop in Kinson, Bournemouth (Mon&ndash;Fri 9&ndash;5).",
@@ -166,7 +171,7 @@ LATITUDE_PAGES = [
    {
     "eyebrow": "// THE &middot; LINE-UP",
     "h2": "The line-up and our typical prices",
-    "html": "<p>Four models make up the heart of our 5000-series stock. Every price below is <strong>all-in: 16GB dual-channel RAM, a new 1TB Samsung 990 PRO, clean licensed Windows 11, setup and your data moved across, and our 5-year guarantee</strong>. The exact price depends on the machine in stock and its grade &mdash; call for today&rsquo;s price.</p><ul><li><strong>Latitude 5520</strong> &mdash; 15.6&Prime;, 11th-gen Intel &mdash; typically <strong>&pound;535</strong>. The best-value big-screen machine, with a number pad.</li><li><strong>Latitude 5420</strong> &mdash; 14&Prime;, 11th-gen Intel &mdash; typically <strong>&pound;540</strong>. Same platform in the portable chassis.</li><li><strong>Latitude 5430</strong> &mdash; 14&Prime;, 12th-gen Intel &mdash; typically <strong>&pound;555</strong>. The step-up: 10-core CPU and full-speed Gen4 storage.</li><li><strong>Latitude 5530</strong> &mdash; 15.6&Prime;, 12th-gen Intel &mdash; typically <strong>&pound;605</strong>. The 12th-gen platform with the big screen.</li></ul><p>The newer <strong>5440 and 5540</strong> (13th-gen, 2023) appear on the refurb market too and we can source them to order, but stock is thinner and prices move &mdash; <a href=\"/contact/\">ask us</a> for what&rsquo;s on the bench this week. Every machine is securely wiped, fully tested, and graded A, B or C on looks alone &mdash; every grade works identically.</p>"
+    "html": "<p>Four models make up the heart of our 5000-series stock. Every price below is <strong>all-in: 16GB dual-channel RAM, a new 1TB Samsung 990 PRO, Windows 11 Home or Pro, professionally set up, setup and your data moved across, and our 5-year guarantee (with a support plan)</strong>. The exact price depends on the machine in stock and its grade &mdash; call for today&rsquo;s price.</p><ul><li><strong>Latitude 5520</strong> &mdash; 15.6&Prime;, 11th-gen Intel &mdash; typically <strong>&pound;535</strong>. The best-value big-screen machine, with a number pad.</li><li><strong>Latitude 5420</strong> &mdash; 14&Prime;, 11th-gen Intel &mdash; typically <strong>&pound;540</strong>. Same platform in the portable chassis.</li><li><strong>Latitude 5430</strong> &mdash; 14&Prime;, 12th-gen Intel &mdash; typically <strong>&pound;555</strong>. The step-up: 10-core CPU and full-speed Gen4 storage.</li><li><strong>Latitude 5530</strong> &mdash; 15.6&Prime;, 12th-gen Intel &mdash; typically <strong>&pound;605</strong>. The 12th-gen platform with the big screen.</li></ul><p>The newer <strong>5440 and 5540</strong> (13th-gen, 2023) appear on the refurb market too and we can source them to order, but stock is thinner and prices move &mdash; <a href=\"/contact/\">ask us</a> for what&rsquo;s on the bench this week. Every machine is securely wiped, fully tested, and graded A, B or C on looks alone &mdash; every grade works identically.</p>"
    },
    {
     "eyebrow": "// PROCESSOR &middot; ADVICE",
@@ -192,7 +197,7 @@ LATITUDE_PAGES = [
   "faqs": [
    {
     "q": "What exactly is included in the price?",
-    "a": "Everything: the laptop with <strong>16GB dual-channel RAM</strong>, a <strong>brand-new 1TB Samsung 990 PRO SSD</strong>, a clean licensed Windows 11 installation, full setup, your data and files moved across from your old machine, and our <strong>5-year guarantee</strong>. There are no hidden extras &mdash; the price we quote is the price you pay."
+    "a": "Everything: the laptop with <strong>16GB dual-channel RAM</strong>, a <strong>brand-new 1TB Samsung 990 PRO SSD</strong>, a Windows 11 Home or Pro, professionally set up installation, full setup, your data and files moved across from your old machine, and our <strong>5-year guarantee (with a support plan)</strong>. There are no hidden extras &mdash; the price we quote is the price you pay."
    },
    {
     "q": "Which model should I buy?",
@@ -221,6 +226,10 @@ LATITUDE_PAGES = [
    {
     "q": "Do you deliver, and can I see machines in person?",
     "a": "Both. We deliver <strong>UK-wide</strong>, and you&rsquo;re welcome at the shop in <strong>Kinson, Bournemouth BH10 7LH, Mon&ndash;Fri 9&ndash;5</strong> to see what&rsquo;s in stock. We&rsquo;ve sold Dell since 2001 and we&rsquo;re a family firm going back to 1995 &mdash; rated 4.9 on Google. Call <strong>01202 775566</strong> or text <strong>07520 615332</strong> for today&rsquo;s stock and prices."
+   },
+   {
+    "q": "Why are refurbished laptops more expensive than they used to be?",
+    "a": "Because the memory chips inside every computer have risen sharply in price &mdash; AI data centres are buying storage and memory at unprecedented scale, which has pushed up the cost of the SSDs we fit. The brand-new 1TB Samsung 990 PRO in every machine now costs around &pound;230 on its own. Refurbished business-grade Dell remains the best-value response: the full story is on our <a href=\"/why-computer-prices-have-gone-up/\">why computer prices have gone up</a> page."
    }
   ],
   "schemaKind": "service",
@@ -237,7 +246,7 @@ LATITUDE_PAGES = [
    },
    {
     "name": "We build it properly",
-    "text": "Your Latitude is securely wiped and fully tested, then fitted with 16GB dual-channel RAM and a brand-new 1TB Samsung 990 PRO, with a clean licensed Windows 11 install. Setup and moving your data across are included."
+    "text": "Your Latitude is securely wiped and fully tested, then fitted with 16GB dual-channel RAM and a brand-new 1TB Samsung 990 PRO, with a Windows 11 Home or Pro, professionally set up install. Setup and moving your data across are included."
    },
    {
     "name": "Collect or have it delivered",
@@ -256,7 +265,7 @@ LATITUDE_PAGES = [
   ],
   "productOffer": {
    "name": "Refurbished Dell Latitude 5000 Series (5420 / 5520 / 5430 / 5530)",
-   "description": "Refurbished Dell Latitude 5000-series business laptops, securely wiped and fully tested, fitted with 16GB dual-channel RAM and a brand-new 1TB Samsung 990 PRO SSD, clean licensed Windows 11, setup and data transfer included, with a 5-year 365 Techies guarantee.",
+   "description": "Refurbished Dell Latitude 5000-series business laptops, securely wiped and fully tested, fitted with 16GB dual-channel RAM and a brand-new 1TB Samsung 990 PRO SSD, Windows 11 Home or Pro, professionally set up, setup and data transfer included, with a 5-year 365 Techies guarantee (with a support plan).",
    "lowPrice": "535",
    "category": "Refurbished laptop",
    "props": [
@@ -281,7 +290,8 @@ LATITUDE_PAGES = [
      "5-year 365 Techies guarantee + 5-year Samsung SSD guarantee"
     ]
    ]
-  }
+  },
+  "refurbBands": True
  },
  {
   "slug": "refurbished-dell-latitude-7000",
@@ -290,7 +300,7 @@ LATITUDE_PAGES = [
   "ogTitle": "Refurbished Dell Latitude 7000 &mdash; Premium Ultralight from &pound;520",
   "eyebrow": "// PREMIUM &middot; ULTRALIGHT",
   "h1": "Refurbished Dell Latitude <em class=\"grad grad--cyan\">7000 Series</em>",
-  "lede": "The Latitude 7000 is Dell&rsquo;s premium lightweight business tier &mdash; and because so many come off corporate fleets, a refurbished one can actually cost less than a newer mid-range 5000. Every machine we sell gets 16GB of RAM, a new 1TB Samsung 990 PRO SSD, clean licensed Windows 11 and our 5-year guarantee, with setup and your data moved across included in the price.",
+  "lede": "The Latitude 7000 is Dell&rsquo;s premium lightweight business tier &mdash; and because so many come off corporate fleets, a refurbished one can actually cost less than a newer mid-range 5000. Every machine we sell gets 16GB of RAM, a new 1TB Samsung 990 PRO SSD, Windows 11 Home or Pro, professionally set up and our 5-year guarantee, with setup and your data moved across included in the price.",
   "chips": [
    "From &pound;520, setup included",
    "New 1TB Samsung 990 PRO in every one",
@@ -307,7 +317,7 @@ LATITUDE_PAGES = [
    {
     "eyebrow": "// THE LINE-UP",
     "h2": "Four models we price, one we quote",
-    "html": "<p>Every typical price below includes <strong>16GB of RAM, a new 1TB Samsung 990 PRO SSD, clean licensed Windows 11, setup and your data moved across</strong> &mdash; nothing added at the till.</p><ul><li><strong>Latitude 7320 (13.3-inch, 11th-gen)</strong> &mdash; the smallest, lightest way in: typically from <strong>&pound;520</strong>.</li><li><strong>Latitude 7420 (14-inch, 11th-gen)</strong> &mdash; the same platform with a roomier screen: typically <strong>&pound;520</strong>.</li><li><strong>Latitude 7330 (13.3-inch, 12th-gen)</strong> &mdash; ten CPU cores in a genuinely tiny laptop: typically <strong>&pound;560</strong>.</li><li><strong>Latitude 7430 (14-inch, 12th-gen)</strong> &mdash; our value pick: modern 10-core pace, the bigger screen and full-speed storage: typically <strong>&pound;570</strong>.</li></ul><p>The newest model, the <strong>Latitude 7440 (14-inch, 13th-gen)</strong>, we quote individually. It takes only the small M.2 2230 drive size, so it gets a different (equally good) SSD, and its price moves with stock.</p><p>The exact price always depends on the machine in stock and its grade &mdash; we grade A, B or C by looks only, and every grade is fully tested and working. <strong>Call 01202 775566 for today&rsquo;s price.</strong></p>"
+    "html": "<p>Every typical price below includes <strong>16GB of RAM, a new 1TB Samsung 990 PRO SSD, Windows 11 Home or Pro, professionally set up, setup and your data moved across</strong> &mdash; nothing added at the till.</p><ul><li><strong>Latitude 7320 (13.3-inch, 11th-gen)</strong> &mdash; the smallest, lightest way in: typically from <strong>&pound;520</strong>.</li><li><strong>Latitude 7420 (14-inch, 11th-gen)</strong> &mdash; the same platform with a roomier screen: typically <strong>&pound;520</strong>.</li><li><strong>Latitude 7330 (13.3-inch, 12th-gen)</strong> &mdash; ten CPU cores in a genuinely tiny laptop: typically <strong>&pound;560</strong>.</li><li><strong>Latitude 7430 (14-inch, 12th-gen)</strong> &mdash; our value pick: modern 10-core pace, the bigger screen and full-speed storage: typically <strong>&pound;570</strong>.</li></ul><p>The newest model, the <strong>Latitude 7440 (14-inch, 13th-gen)</strong>, we quote individually. It takes only the small M.2 2230 drive size, so it gets a different (equally good) SSD, and its price moves with stock.</p><p>The exact price always depends on the machine in stock and its grade &mdash; we grade A, B or C by looks only, and every grade is fully tested and working. <strong>Call 01202 775566 for today&rsquo;s price.</strong></p>"
    },
    {
     "eyebrow": "// READ THIS FIRST",
@@ -361,7 +371,11 @@ LATITUDE_PAGES = [
    },
    {
     "q": "What&rsquo;s included in the price, and do you deliver?",
-    "a": "16GB RAM, a new 1TB Samsung 990 PRO, clean licensed Windows 11, full testing, setup and your data moved across &mdash; all included, no extras at checkout. Collect from us in Kinson, Bournemouth BH10 7LH (Mon&ndash;Fri 9&ndash;5) or we deliver UK-wide. See the whole range at our <a href=\"/dell-hardware/\">refurbished Dell shop</a>."
+    "a": "16GB RAM, a new 1TB Samsung 990 PRO, Windows 11 Home or Pro, professionally set up, full testing, setup and your data moved across &mdash; all included, no extras at checkout. Collect from us in Kinson, Bournemouth BH10 7LH (Mon&ndash;Fri 9&ndash;5) or we deliver UK-wide. See the whole range at our <a href=\"/dell-hardware/\">refurbished Dell shop</a>."
+   },
+   {
+    "q": "Why are refurbished laptops more expensive than they used to be?",
+    "a": "Because the memory chips inside every computer have risen sharply in price &mdash; AI data centres are buying storage and memory at unprecedented scale, which has pushed up the cost of the SSDs we fit. The brand-new 1TB Samsung 990 PRO in every machine now costs around &pound;230 on its own. Refurbished business-grade Dell remains the best-value response: the full story is on our <a href=\"/why-computer-prices-have-gone-up/\">why computer prices have gone up</a> page."
    }
   ],
   "schemaKind": "service",
@@ -378,11 +392,11 @@ LATITUDE_PAGES = [
    },
    {
     "name": "We build and test it",
-    "text": "A new 1TB Samsung 990 PRO SSD goes in (2TB +&pound;185, 4TB +&pound;420), the old drive is securely wiped, clean licensed Windows 11 is installed and the whole machine is fully tested."
+    "text": "A new 1TB Samsung 990 PRO SSD goes in (2TB +&pound;185, 4TB +&pound;420), the old drive is securely wiped, Windows 11 Home or Pro, professionally set up is installed and the whole machine is fully tested."
    },
    {
     "name": "Setup and handover",
-    "text": "We set it up and move your data across &mdash; included in the price. Collect from Kinson, Bournemouth BH10 7LH, Mon&ndash;Fri 9&ndash;5, or have it delivered anywhere in the UK, backed by our 5-year guarantee."
+    "text": "We set it up and move your data across &mdash; included in the price. Collect from Kinson, Bournemouth BH10 7LH, Mon&ndash;Fri 9&ndash;5, or have it delivered anywhere in the UK, backed by our 5-year guarantee (with a support plan)."
    }
   ],
   "crossLinksHtml": "<p>Keep reading: our <a href=\"/dell-latitude-7000-guide/\">Latitude 7000 buyer&rsquo;s guide</a>, <a href=\"/dell-latitude-series-explained-3000-5000-7000/\">Latitude 3000 vs 5000 vs 7000 explained</a>, <a href=\"/refurbished-dell-latitude-5000/\">refurbished Latitude 5000</a>, <a href=\"/refurbished-dell-latitude-3000/\">refurbished Latitude 3000</a>, the full <a href=\"/dell-hardware/\">refurbished Dell shop</a>, and <a href=\"/dell-precision-vs-latitude/\">Precision vs Latitude</a> if you need workstation power.</p>",
@@ -397,7 +411,7 @@ LATITUDE_PAGES = [
   ],
   "productOffer": {
    "name": "Refurbished Dell Latitude 7000 Series Laptop",
-   "description": "Refurbished Dell Latitude 7000-series business ultrabook (7320, 7420, 7330 or 7430) with 16GB RAM, a new 1TB Samsung 990 PRO SSD, clean licensed Windows 11, setup and data transfer included, and a 5-year 365 Techies guarantee.",
+   "description": "Refurbished Dell Latitude 7000-series business ultrabook (7320, 7420, 7330 or 7430) with 16GB RAM, a new 1TB Samsung 990 PRO SSD, Windows 11 Home or Pro, professionally set up, setup and data transfer included, and a 5-year 365 Techies guarantee (with a support plan).",
    "lowPrice": "520",
    "category": "Refurbished laptop",
    "props": [
@@ -415,14 +429,15 @@ LATITUDE_PAGES = [
     ],
     [
      "Guarantee",
-     "5-year 365 Techies guarantee"
+     "5-year 365 Techies guarantee (with a support plan)"
     ],
     [
      "Included",
      "Setup, data transfer and UK-wide delivery"
     ]
    ]
-  }
+  },
+  "refurbBands": True
  },
  {
   "slug": "dell-latitude-5000-guide",
@@ -438,7 +453,7 @@ LATITUDE_PAGES = [
    "Refurb from &pound;535"
   ],
   "ctaHead": "Want one picked, fitted and set up for you?",
-  "ctaSub": "Every refurbished Latitude we sell leaves with a new 1TB Samsung 990 PRO, clean licensed Windows 11 and your data moved across &mdash; all in the price. Call 01202 775566 or text 07520 615332.",
+  "ctaSub": "Every refurbished Latitude we sell leaves with a new 1TB Samsung 990 PRO, Windows 11 Home or Pro, professionally set up and your data moved across &mdash; all in the price. Call 01202 775566 or text 07520 615332.",
   "sections": [
    {
     "eyebrow": "// THE FAMILY",
@@ -453,7 +468,7 @@ LATITUDE_PAGES = [
    {
     "eyebrow": "// UPGRADES",
     "h2": "Upgrades: mostly great news, with two traps",
-    "html": "<p><strong>Memory is the easy win.</strong> Every model here has <strong>two SODIMM slots, nothing soldered, up to 64GB</strong>. Ex-fleet machines often arrive with a single 8GB stick &mdash; and a single stick runs single-channel, which noticeably blunts the Intel graphics. Fitting a second module is cheap and genuinely worthwhile; <strong>16GB as 2&times;8GB</strong> is the sweet spot. The 2021/2022 models all use DDR4-3200. <strong>Trap one:</strong> on the 5440/5540, U-series boards take DDR4 but P-series boards take DDR5 &mdash; physically incompatible, so verify which you have before ordering RAM.</p><p><strong>Storage is all M.2 NVMe</strong> &mdash; no old-style drive bays &mdash; but the slots differ:</p><ul><li><strong>5420 / 5520:</strong> PCIe Gen3 slots. A Samsung 990 PRO fits and caps at Gen3 (~3.5&nbsp;GB/s) &mdash; still a huge real-world upgrade, and the drive&rsquo;s endurance and 5-year guarantee are the point. The 5520 has a handy second slot.</li><li><strong>5430 / 5530:</strong> full PCIe Gen4 &mdash; the 990 PRO runs flat out. The 5530&rsquo;s second slot is Gen3-limited.</li><li><strong>5540:</strong> Gen4 main slot; optional second slot is Gen3, small-format only.</li><li><strong>Trap two &mdash; the 5440:</strong> its single slot takes <strong>short M.2 2230 drives only</strong>. A standard 2280 drive like the 990 PRO simply doesn&rsquo;t fit &mdash; it needs a quality Gen4 2230 drive instead.</li></ul>"
+    "html": "<p><strong>Memory is the easy win.</strong> Every model here has <strong>two SODIMM slots, nothing soldered, up to 64GB</strong>. Ex-fleet machines often arrive with a single 8GB stick &mdash; and a single stick runs single-channel, which noticeably blunts the Intel graphics. Fitting a second module is cheap and genuinely worthwhile; <strong>16GB as 2&times;8GB</strong> is the sweet spot. The 2021/2022 models all use DDR4-3200. <strong>Trap one:</strong> on the 5440/5540, U-series boards take DDR4 but P-series boards take DDR5 &mdash; physically incompatible, so verify which you have before ordering RAM.</p><p><strong>Storage is all M.2 NVMe</strong> &mdash; no old-style drive bays &mdash; but the slots differ:</p><ul><li><strong>5420 / 5520:</strong> PCIe Gen3 slots. A Samsung 990 PRO fits and caps at Gen3 (~3.5&nbsp;GB/s) &mdash; still a huge real-world upgrade, and the drive&rsquo;s endurance and 5-year guarantee (with a support plan) are the point. The 5520 has a handy second slot.</li><li><strong>5430 / 5530:</strong> full PCIe Gen4 &mdash; the 990 PRO runs flat out. The 5530&rsquo;s second slot is Gen3-limited.</li><li><strong>5540:</strong> Gen4 main slot; optional second slot is Gen3, small-format only.</li><li><strong>Trap two &mdash; the 5440:</strong> its single slot takes <strong>short M.2 2230 drives only</strong>. A standard 2280 drive like the 990 PRO simply doesn&rsquo;t fit &mdash; it needs a quality Gen4 2230 drive instead.</li></ul>"
    },
    {
     "eyebrow": "// BATTERIES &amp; POWER",
@@ -468,7 +483,7 @@ LATITUDE_PAGES = [
    {
     "eyebrow": "// BUYING REFURBISHED",
     "h2": "Buying a refurbished 5000 series: what we do and what it costs",
-    "html": "<p>A refurbished Latitude 5000 is the best-value business laptop we know &mdash; if it&rsquo;s prepared properly. Here&rsquo;s our process:</p><ul><li><strong>Securely wiped and fully tested</strong> &mdash; every port, the screen, keyboard, webcam and battery health.</li><li><strong>A new 1TB Samsung 990 PRO SSD fitted as standard</strong>, with Samsung&rsquo;s own 5-year guarantee &mdash; not the tired fleet drive it arrived with. (On the Gen3-slot 5420/5520 we&rsquo;re upfront that it runs at Gen3 speed; want more space? <strong>2TB is +&pound;185, 4TB +&pound;420</strong>.)</li><li><strong>Clean licensed Windows 11</strong>, no corporate leftovers.</li><li><strong>Graded A, B or C on looks alone</strong> &mdash; every grade is fully tested and working; a Grade C just wears its office years on the lid.</li><li><strong>Setup and your data moved across, included in the price</strong> &mdash; plus our own 5-year guarantee and UK-wide delivery.</li></ul><p>Prices start <strong>from &pound;535</strong> for a ready-to-go machine with the new 1TB 990 PRO and setup included. The exact price depends on the machine in stock and its grade &mdash; <a href=\"/refurbished-dell-latitude-5000/\">see current 5000-series stock</a> or call <strong>01202 775566</strong> for today&rsquo;s price.</p>"
+    "html": "<p>A refurbished Latitude 5000 is the best-value business laptop we know &mdash; if it&rsquo;s prepared properly. Here&rsquo;s our process:</p><ul><li><strong>Securely wiped and fully tested</strong> &mdash; every port, the screen, keyboard, webcam and battery health.</li><li><strong>A new 1TB Samsung 990 PRO SSD fitted as standard</strong>, with Samsung&rsquo;s own 5-year guarantee &mdash; not the tired fleet drive it arrived with. (On the Gen3-slot 5420/5520 we&rsquo;re upfront that it runs at Gen3 speed; want more space? <strong>2TB is +&pound;185, 4TB +&pound;420</strong>.)</li><li><strong>Clean licensed Windows 11</strong>, no corporate leftovers.</li><li><strong>Graded A, B or C on looks alone</strong> &mdash; every grade is fully tested and working; a Grade C just wears its office years on the lid.</li><li><strong>Setup and your data moved across, included in the price</strong> &mdash; plus our own 5-year guarantee (with a support plan) and UK-wide delivery.</li></ul><p>Prices start <strong>from &pound;535</strong> for a ready-to-go machine with the new 1TB 990 PRO and setup included. The exact price depends on the machine in stock and its grade &mdash; <a href=\"/refurbished-dell-latitude-5000/\">see current 5000-series stock</a> or call <strong>01202 775566</strong> for today&rsquo;s price.</p>"
    }
   ],
   "faqs": [
@@ -486,7 +501,7 @@ LATITUDE_PAGES = [
    },
    {
     "q": "Will a Samsung 990 PRO fit in every model?",
-    "a": "Almost. It fits and runs at <strong>full Gen4 speed in the 5430, the 5530 (main slot) and the 5540 (main slot)</strong>. In the <strong>5420 and 5520</strong> it fits but the slot caps it at Gen3 (~3.5&nbsp;GB/s) &mdash; still a huge upgrade, and the drive&rsquo;s endurance and 5-year guarantee still apply. The <strong>5440 is the exception</strong>: its slot takes short 2230 drives only, so a standard 990 PRO doesn&rsquo;t fit and we fit a quality Gen4 2230 drive instead."
+    "a": "Almost. It fits and runs at <strong>full Gen4 speed in the 5430, the 5530 (main slot) and the 5540 (main slot)</strong>. In the <strong>5420 and 5520</strong> it fits but the slot caps it at Gen3 (~3.5&nbsp;GB/s) &mdash; still a huge upgrade, and the drive&rsquo;s endurance and 5-year guarantee (with a support plan) still apply. The <strong>5440 is the exception</strong>: its slot takes short 2230 drives only, so a standard 990 PRO doesn&rsquo;t fit and we fit a quality Gen4 2230 drive instead."
    },
    {
     "q": "Do these laptops run Windows 11 properly?",
@@ -502,7 +517,7 @@ LATITUDE_PAGES = [
    },
    {
     "q": "What does a refurbished 5000 series cost from you?",
-    "a": "Typically <strong>from &pound;535</strong>, including a <strong>new 1TB Samsung 990 PRO SSD</strong>, clean licensed Windows 11, setup with your data moved across, and our 5-year guarantee. The exact price depends on the machine in stock and its grade (A, B or C by looks only &mdash; all fully tested). <a href=\"/refurbished-dell-latitude-5000/\">See current stock</a> or call for today&rsquo;s price."
+    "a": "Typically <strong>from &pound;535</strong>, including a <strong>new 1TB Samsung 990 PRO SSD</strong>, Windows 11 Home or Pro, professionally set up, setup with your data moved across, and our 5-year guarantee (with a support plan). The exact price depends on the machine in stock and its grade (A, B or C by looks only &mdash; all fully tested). <a href=\"/refurbished-dell-latitude-5000/\">See current stock</a> or call for today&rsquo;s price."
    }
   ],
   "schemaKind": "service",
@@ -581,7 +596,7 @@ LATITUDE_PAGES = [
    {
     "eyebrow": "// THE VERDICT",
     "h2": "Is a refurbished 7000-series right for you?",
-    "html": "<p><strong>Choose a 7000 if you carry your laptop.</strong> These are genuinely premium machines at refurb prices &mdash; most weigh 1.0&ndash;1.3&nbsp;kg against roughly 1.6&nbsp;kg-plus for an equivalent <a href=\"/dell-latitude-5000-guide/\">5000-series</a>. Directors, hybrid workers and anyone living out of a laptop bag will feel the difference daily, and the 12th/13th-gen models have serious multi-core speed.</p><p><strong>Choose a 5000 instead if</strong> you want upgradeable RAM, sit at the same desk most days, or simply want the most spec per pound &mdash; the 5000 is heavier but more flexible inside.</p><p><strong>Against buying new:</strong> a well-graded refurb 7000 with a fresh SSD does the same email, Office, browsing and video-call work as a current laptop for a fraction of the cost. Every machine we sell is securely wiped, fully tested, graded A, B or C by looks alone, fitted with a <strong>new Samsung 990 PRO SSD</strong> (where the slot allows) and a clean licensed Windows 11, and backed by our <strong>5-year guarantee</strong> &mdash; with setup and your data moved across included in the price. It&rsquo;s not for you if you need built-in Ethernet or a numeric keypad.</p>"
+    "html": "<p><strong>Choose a 7000 if you carry your laptop.</strong> These are genuinely premium machines at refurb prices &mdash; most weigh 1.0&ndash;1.3&nbsp;kg against roughly 1.6&nbsp;kg-plus for an equivalent <a href=\"/dell-latitude-5000-guide/\">5000-series</a>. Directors, hybrid workers and anyone living out of a laptop bag will feel the difference daily, and the 12th/13th-gen models have serious multi-core speed.</p><p><strong>Choose a 5000 instead if</strong> you want upgradeable RAM, sit at the same desk most days, or simply want the most spec per pound &mdash; the 5000 is heavier but more flexible inside.</p><p><strong>Against buying new:</strong> a well-graded refurb 7000 with a fresh SSD does the same email, Office, browsing and video-call work as a current laptop for a fraction of the cost. Every machine we sell is securely wiped, fully tested, graded A, B or C by looks alone, fitted with a <strong>new Samsung 990 PRO SSD</strong> (where the slot allows) and a Windows 11 Home or Pro, professionally set up, and backed by our <strong>5-year guarantee (with a support plan)</strong> &mdash; with setup and your data moved across included in the price. It&rsquo;s not for you if you need built-in Ethernet or a numeric keypad.</p>"
    }
   ],
   "faqs": [
@@ -611,7 +626,7 @@ LATITUDE_PAGES = [
    },
    {
     "q": "How much does a refurbished Latitude 7000 cost?",
-    "a": "It depends on the model, spec and cosmetic grade of the machines in stock that week, so we&rsquo;d rather quote you a real price than print a vague one. Every machine includes a new Samsung SSD (where the slot allows), clean licensed Windows 11, setup with your data moved across, and our 5-year guarantee. See <a href=\"/refurbished-dell-latitude-7000/\">our refurbished 7000-series page</a> or call 01202 775566 for today&rsquo;s prices."
+    "a": "It depends on the model, spec and cosmetic grade of the machines in stock that week, so we&rsquo;d rather quote you a real price than print a vague one. Every machine includes a new Samsung SSD (where the slot allows), Windows 11 Home or Pro, professionally set up, setup with your data moved across, and our 5-year guarantee (with a support plan). See <a href=\"/refurbished-dell-latitude-7000/\">our refurbished 7000-series page</a> or call 01202 775566 for today&rsquo;s prices."
    },
    {
     "q": "Do you repair Latitude 7000-series laptops?",

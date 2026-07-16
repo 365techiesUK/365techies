@@ -176,6 +176,9 @@ HEADER = '''  <header class="site-header">
             <a href="/refurbished-dell-latitude-3000/">Latitude 3000 Series</a>
             <a href="/refurbished-dell-latitude-5000/">Latitude 5000 Series</a>
             <a href="/refurbished-dell-latitude-7000/">Latitude 7000 Series</a>
+            <a href="/refurbished-dell-optiplex-3000/">OptiPlex 3000 Tier</a>
+            <a href="/refurbished-dell-optiplex-5000/">OptiPlex 5000 Tier</a>
+            <a href="/refurbished-dell-optiplex-7000/">OptiPlex 7000 Tier</a>
             <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
             <a href="/dell-support-bournemouth/">Dell Support Bournemouth</a>
             <a href="/dell-support-poole/">Dell Support Poole</a>
@@ -234,6 +237,7 @@ HEADER = '''  <header class="site-header">
             <a href="/dell-latitude-7000-guide/">Latitude 7000 Guide</a>
             <a href="/dell-optiplex-guide/">Dell Desktop Guide</a>
             <a href="/heatwave-tech-guide/">Heatwave Tech Guide</a>
+            <a href="/why-computer-prices-have-gone-up/">Why Prices Went Up</a>
             <a href="/monthly-it-support/">Monthly IT Support</a>
             <a href="/switching-it-provider/">Switching to Us</a>
             <a href="/plan-finder/">Plan Finder</a>
@@ -336,6 +340,9 @@ HEADER = '''  <header class="site-header">
             <a href="/refurbished-dell-latitude-3000/">Latitude 3000 Series</a>
             <a href="/refurbished-dell-latitude-5000/">Latitude 5000 Series</a>
             <a href="/refurbished-dell-latitude-7000/">Latitude 7000 Series</a>
+            <a href="/refurbished-dell-optiplex-3000/">OptiPlex 3000 Tier</a>
+            <a href="/refurbished-dell-optiplex-5000/">OptiPlex 5000 Tier</a>
+            <a href="/refurbished-dell-optiplex-7000/">OptiPlex 7000 Tier</a>
           <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
           <a href="/dell-support-bournemouth/">Dell Support Bournemouth</a>
           <a href="/dell-support-poole/">Dell Support Poole</a>
@@ -390,6 +397,7 @@ HEADER = '''  <header class="site-header">
             <a href="/dell-latitude-7000-guide/">Latitude 7000 Guide</a>
           <a href="/dell-optiplex-guide/">Dell Desktop Guide</a>
           <a href="/heatwave-tech-guide/">Heatwave Tech Guide</a>
+            <a href="/why-computer-prices-have-gone-up/">Why Prices Went Up</a>
           <a href="/monthly-it-support/">Monthly IT Support</a>
           <a href="/switching-it-provider/">Switching to Us</a>
           <a href="/plan-finder/">Plan Finder</a>
@@ -536,6 +544,7 @@ FOOTER = '''  <footer class="site-footer">
             <a href="/dell-latitude-7000-guide/">Latitude 7000 Guide</a>
         <a href="/dell-optiplex-guide/">Dell Desktop Guide</a>
         <a href="/heatwave-tech-guide/">Heatwave Tech Guide</a>
+            <a href="/why-computer-prices-have-gone-up/">Why Prices Went Up</a>
         <a href="/monthly-it-support/">Monthly IT Support</a>
         <a href="/home-it-support-subscriptions/">Home IT Support</a>
         <a href="/business-it-support-subscriptions/">Business IT Support</a>
@@ -594,6 +603,9 @@ FOOTER = '''  <footer class="site-footer">
             <a href="/refurbished-dell-latitude-3000/">Latitude 3000 Series</a>
             <a href="/refurbished-dell-latitude-5000/">Latitude 5000 Series</a>
             <a href="/refurbished-dell-latitude-7000/">Latitude 7000 Series</a>
+            <a href="/refurbished-dell-optiplex-3000/">OptiPlex 3000 Tier</a>
+            <a href="/refurbished-dell-optiplex-5000/">OptiPlex 5000 Tier</a>
+            <a href="/refurbished-dell-optiplex-7000/">OptiPlex 7000 Tier</a>
         <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
         <a href="/dell-support-bournemouth/">Dell Support Bournemouth</a>
         <a href="/dell-support-poole/">Dell Support Poole</a>
@@ -2560,7 +2572,7 @@ PCBENCH_TOOL = r'''    <section class="section" aria-label="PC benchmark" id="be
           if(overall>=80) v={g:'Blazing fast',m:'This is a quick machine &mdash; everything should feel instant. If it doesn&rsquo;t, something else (startup programs, updates, malware) is slowing it down, and that&rsquo;s fixable.'};
           else if(overall>=60) v={g:'Running well',m:'A healthy, capable computer for everyday work. Keep it maintained and it&rsquo;ll stay that way.'};
           else if(overall>=40) v={g:'Room for improvement',m:'Usable, but you&rsquo;re waiting on it more than you should be. A tune-up &mdash; and often a simple upgrade &mdash; makes a machine like this feel new again.'};
-          else v={g:'Struggling',m:'This machine is holding you back every day. Before you bin it: an SSD or memory upgrade often transforms a slow computer for a fraction of the cost of a new one &mdash; and if it really is time, we supply refurbished business-grade Dells from &pound;299.'};
+          else v={g:'Struggling',m:'This machine is holding you back every day. Before you bin it: an SSD or memory upgrade often transforms a slow computer for a fraction of the cost of a new one &mdash; and if it really is time, we supply refurbished business-grade Dells from &pound;510.'};
           LAST.band=v.g;
           root.querySelector('#bm-verdict').innerHTML='<p class="bm-verdict-g">'+v.g+'</p><p>'+v.m+'</p>';
           root.querySelector('#bm-scale-me').style.left=Math.max(2,Math.min(98,overall))+'%';
@@ -2590,7 +2602,7 @@ PCBENCH_TOOL = r'''    <section class="section" aria-label="PC benchmark" id="be
           if(navigator.getBattery){ try{ navigator.getBattery().then(function(b){ if(b&&b.charging===false){ var d=document.createElement('div'); d.className='bm-note'; d.innerHTML='<b>On battery power:</b> laptops usually run faster plugged in &mdash; connect the charger and run it again for your best score.'; notesEl.appendChild(d); } }).catch(function(){}); }catch(e){} }
           var fix=root.querySelector('#bm-fix');
           if(overall>=60) fix.innerHTML='<h3>Keep it this way</h3><p>Regular servicing is why our customers&rsquo; computers stay fast for years &mdash; a full service every six weeks, updates, security and backups, all handled for you.</p><div class="bm-fix-cta"><a class="button primary" href="/monthly-it-support/">See monthly plans &#8594;</a><a class="button bm-ghost" href="/contact/">Ask a techie</a></div>';
-          else fix.innerHTML='<h3>Don&rsquo;t put up with a slow computer</h3><p>We speed up machines like this every week &mdash; deep tune-ups, SSD and memory upgrades, or an honest &ldquo;it&rsquo;s time&rdquo; and a refurbished business-grade Dell from &pound;299. No-fix-no-fee, 12-month warranty.</p><div class="bm-fix-cta"><a class="button primary" href="/contact/">Make mine faster &#8594;</a><a class="button bm-ghost" href="/dell-hardware/">Refurbished Dells</a></div>';
+          else fix.innerHTML='<h3>Don&rsquo;t put up with a slow computer</h3><p>We speed up machines like this every week &mdash; deep tune-ups, SSD and memory upgrades, or an honest &ldquo;it&rsquo;s time&rdquo; and a refurbished business-grade Dell from &pound;510. No-fix-no-fee, 12-month warranty.</p><div class="bm-fix-cta"><a class="button primary" href="/contact/">Make mine faster &#8594;</a><a class="button bm-ghost" href="/dell-hardware/">Refurbished Dells</a></div>';
           results.hidden=false;
           root.querySelector('#bm-ring').style.strokeDashoffset=(339.292*(1-overall/100)).toFixed(1);
           requestAnimationFrame(function(){ setTimeout(function(){ root.querySelectorAll('.bm-bar').forEach(function(b){ b.style.width=b.getAttribute('data-w')+'%'; }); },60); });
@@ -3725,7 +3737,7 @@ PCBUILD_TOOL = r'''    <section class="section" aria-label="Custom PC builder" i
             <li><b>The graphics card can come last.</b> GPU prices swing more than any other part &mdash; bridge with integrated graphics or a cheap used card, then pounce when the sales hit.</li>
             <li><b>Storage and memory are the easy laters.</b> Start at 1TB and one 2&times;8GB kit if you must &mdash; both drop in later in minutes. Just always buy RAM as a matched pair, never a single stick &ldquo;to add to&rdquo;.</li>
             <li><b>Case bling and RGB wait at the back of the queue.</b> A &pound;60 mesh case cools as well as a &pound;150 showpiece &mdash; looks are the one upgrade with zero performance.</li>
-            <li><b>Under ~&pound;600 all-in?</b> Be honest with yourself: a <a href="/dell-hardware/">refurbished business-grade Dell from &pound;299</a> plus a graphics card later usually beats a compromised new build.</li>
+            <li><b>Under ~&pound;600 all-in?</b> Be honest with yourself: a <a href="/dell-hardware/">refurbished business-grade Dell from &pound;510</a> plus a graphics card later usually beats a compromised new build.</li>
           </ul>
           <h3 class="pb-sec-t">&#128161; Golden rules of PC building</h3>
           <ul class="pb-rules">
@@ -3752,7 +3764,7 @@ PCBUILD_TOOL = r'''    <section class="section" aria-label="Custom PC builder" i
           <p class="pb-note">Honest guidance, not gospel: component generations move fast, so we point you at the right <em>class</em> of part for your money and link to live listings rather than quoting prices that would be stale by Friday. Sales (and GPU price swings!) can move the sweet spots.</p>
           <div class="pb-fix">
             <h3>Want a second pair of eyes?</h3>
-            <p>Send us your parts basket before you hit buy and we&rsquo;ll sanity-check it free &mdash; compatibility, balance and honest &ldquo;spend less here, more there&rdquo; advice. And if the budget&rsquo;s tight: our refurbished business-grade Dells from &pound;299 beat most sub-&pound;500 new builds.</p>
+            <p>Send us your parts basket before you hit buy and we&rsquo;ll sanity-check it free &mdash; compatibility, balance and honest &ldquo;spend less here, more there&rdquo; advice. And if the budget&rsquo;s tight: our refurbished business-grade Dells from &pound;510 beat most sub-&pound;500 new builds.</p>
             <div class="pb-fix-cta"><a class="button primary" href="/contact/">Sanity-check my build &#8594;</a><a class="button pb-ghost" href="/dell-hardware/">Refurbished Dells</a></div>
           </div>
         </div>
@@ -3841,7 +3853,7 @@ PCBUILD_TOOL = r'''    <section class="section" aria-label="Custom PC builder" i
           var pool=state.b-(win?110:0);
           var P=PROFILES[state.use], items=[];
           var warn=root.querySelector('#pb-warn');
-          if(state.b<600&&state.use!=='office'){ warn.innerHTML='Honestly? Below ~&pound;600 for a gaming/creative build, a <a href="/dell-hardware/" style="color:#f5d97e"><b>refurbished business-grade Dell from &pound;299</b></a> plus a modest graphics card usually beats an all-new build. Worth a chat before you spend.'; warn.hidden=false; }
+          if(state.b<600&&state.use!=='office'){ warn.innerHTML='Honestly? Below ~&pound;600 for a gaming/creative build, a <a href="/dell-hardware/" style="color:#f5d97e"><b>refurbished business-grade Dell from &pound;510</b></a> plus a modest graphics card usually beats an all-new build. Worth a chat before you spend.'; warn.hidden=false; }
           else if(state.use==='office'&&state.b>1200){ warn.innerHTML='For office work, &pound;'+state.b+' is more than you need &mdash; a &pound;700&ndash;&pound;900 build is already superb. Bank the rest or upgrade your monitor (the part you actually look at).'; warn.hidden=false; }
           else warn.hidden=true;
           var spend={}; Object.keys(P).forEach(function(k){ spend[k]=r10(pool*P[k]); });
