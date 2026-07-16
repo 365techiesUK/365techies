@@ -3090,6 +3090,9 @@ _DELL_CLUSTER = [
    ("dell-optiplex-990-upgrade", "OptiPlex 990", "Upgrade or retire? The honest triage for the 990."),
    ("dell-optiplex-7020-upgrade", "OptiPlex 7020", "Why it can&rsquo;t follow you to Windows 11 &mdash; and what should."),
    ("dell-optiplex-9020-upgrade", "OptiPlex 9020", "The office workhorse of 2014 &mdash; its honest 2026 options."),
+   ("dell-inspiron-15-3000-windows-11", "Inspiron 15 3000 &amp; Win 11", "The UK&rsquo;s best-selling home Dell &mdash; how to tell if yours can make the move."),
+   ("dell-inspiron-15-5000-windows-11", "Inspiron 15 5000 &amp; Win 11", "Mid-range Inspiron owners: the 30-second eligibility check and your honest options."),
+   ("dell-inspiron-desktop-windows-11", "Inspiron desktops &amp; Win 11", "The family tower or all-in-one &mdash; upgrade, repurpose or replace, honestly."),
  ]),
  ("Which Dell should I buy?", [
    ("are-dell-latitude-laptops-good", "Are Latitudes any good?", "A 30-year Dell specialist&rsquo;s honest verdict on business-grade Latitudes."),
@@ -14460,6 +14463,10 @@ _DELL_HUB_SLUGS = frozenset({
  'dell-inspiron-repair-bournemouth', 'dell-precision-workstation-repair-support-dorset',
  'alienware-dell-g-series-repair-bournemouth',
  'dell-xps-repair-bournemouth', 'dell-vostro-repair-support-dorset', 'dell-monitor-dock-support-dorset',
+ # phase 2 problem pages + phase 3 Inspiron upgrades (2026-07-17)
+ 'dell-laptop-hinge-repair', 'dell-xps-swollen-battery', 'dell-docking-station-not-working',
+ 'dell-g15-overheating', 'dell-killer-wifi-problems',
+ 'dell-inspiron-15-3000-windows-11', 'dell-inspiron-15-5000-windows-11', 'dell-inspiron-desktop-windows-11',
 })
 
 def _pack_hub(slug):
@@ -14506,6 +14513,11 @@ _PACK_SCENE = {
     "dell-inspiron-repair-bournemouth": "broken", "dell-precision-workstation-repair-support-dorset": "business",
     "dell-xps-repair-bournemouth": "broken", "dell-vostro-repair-support-dorset": "business",
     "dell-monitor-dock-support-dorset": "dellguide",
+    "dell-laptop-hinge-repair": "broken", "dell-xps-swollen-battery": "battery",
+    "dell-docking-station-not-working": "remote", "dell-g15-overheating": "servicing",
+    "dell-killer-wifi-problems": "remote",
+    "dell-inspiron-15-3000-windows-11": "win10", "dell-inspiron-15-5000-windows-11": "win10",
+    "dell-inspiron-desktop-windows-11": "win10",
     "alienware-dell-g-series-repair-bournemouth": "repairdesktop",
     "dell-optiplex-790-upgrade": "win10", "dell-optiplex-990-upgrade": "win10",
     "dell-optiplex-7020-upgrade": "win10", "dell-optiplex-9020-upgrade": "win10",

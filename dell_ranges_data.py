@@ -1,4 +1,4 @@
-# Auto-assembled (audited): Dell range pillars - wave 1 (Inspiron/Precision/Alienware) + wave 2 (XPS/Vostro/monitors-docks).
+# Auto-assembled (audited).
 DELL_RANGE_PAGES = [
  {
   "slug": "dell-inspiron-repair-bournemouth",
@@ -743,6 +743,607 @@ DELL_RANGE_PAGES = [
   ],
   "crossLinksHtml": "<ul><li><a href=\"/dell-it-support-dorset/\">Dell IT support in Dorset &mdash; the hub</a></li><li><a href=\"/dell-hardware/\">Refurbished Dell hardware &amp; buying guide</a></li><li><a href=\"/dell-inspiron-repair-bournemouth/\">Dell Inspiron repair &amp; upgrades</a></li><li><a href=\"/dell-precision-workstation-repair-support-dorset/\">Dell Precision workstation support</a></li><li><a href=\"/alienware-dell-g-series-repair-bournemouth/\">Alienware &amp; Dell G-Series repair</a></li><li><a href=\"/dell-support-plans/\">Dell support plans</a></li><li><a href=\"/dell-remote-support/\">Dell remote support</a></li><li><a href=\"/secure-it-disposal/\">Secure IT disposal</a></li></ul>",
   "crumbName": "Monitors &amp; Docks",
+  "primaryCta": [
+   "Book a Repair or Ask Us",
+   "/contact/"
+  ],
+  "secondaryCta": [
+   "Call 01202 775566",
+   "tel:+441202775566"
+  ]
+ },
+ {
+  "slug": "dell-laptop-hinge-repair",
+  "title": "Dell Laptop Hinge Repair (Inspiron &amp; All Models) &mdash; Free Collection in Bournemouth, Poole &amp; Dorset | 365 Techies",
+  "metaDesc": "Broken or wobbly Dell laptop hinge? Honest local repair with free collection across Bournemouth, Poole &amp; Dorset &mdash; no posting your laptop away. Fixed quote before any work. Family-run since 1995.",
+  "ogTitle": "Dell Laptop Hinge Repair &mdash; Free Collection in Bournemouth, Poole &amp; Dorset",
+  "eyebrow": "Dell Laptop Repair",
+  "h1": "Dell Laptop Hinge Repair &mdash; Inspiron &amp; All Models, Collected Free Across Dorset",
+  "lede": "The lid creaks, a corner lifts, or the plastic around the hinge has cracked and something brass is poking out. It looks like you broke it &mdash; you almost certainly didn&rsquo;t. Here&rsquo;s what&rsquo;s actually happened, what you can safely check yourself, and the three honest ways to fix it. We&rsquo;re independent Dell specialists (a Dell reseller since 2001, not authorised or endorsed by Dell), and we collect free across Bournemouth, Poole, Christchurch and wider Dorset.",
+  "chips": [
+   "Free collection across Dorset",
+   "Fixed quote before any work",
+   "Independent Dell specialists since 2001"
+  ],
+  "ctaHead": "Hinge cracked the lid or gone wobbly?",
+  "ctaSub": "Tell us the model and what happened &mdash; a photo helps. You&rsquo;ll get an honest verdict and a fixed quote before any work starts, and we collect for free.",
+  "sections": [
+   {
+    "eyebrow": "Start here",
+    "h2": "Free checks before you book anything",
+    "html": "<p>A few minutes now can stop a &pound;-something repair becoming a bigger one. In order:</p><ul><li><strong>Back up your files first.</strong> Hinge work doesn&rsquo;t touch your storage, but any laptop with a physical fault deserves a fresh backup before anything else.</li><li><strong>Open and close from the centre of the lid</strong>, slowly, with two hands on the base. Never from one corner &mdash; that&rsquo;s exactly the twisting force a weakened hinge can&rsquo;t take.</li><li><strong>Check the bottom-cover screws.</strong> On some models a slightly loose base or hinge screw mimics early hinge failure. If tightening them (gently, with the right size driver) cures the wobble, you may need nothing more.</li><li><strong>Look at what&rsquo;s actually failed.</strong> Cracked plastic around the hinge with a small brass barrel visible or rattling loose means the threaded inserts have pulled out of the lid or palmrest &mdash; the classic Dell failure. A hinge that&rsquo;s gone very stiff or grinds is a different problem, and forcing it will cause the first one.</li><li><strong>If the plastic has cracked, stop opening and closing more than you must.</strong> Every cycle widens the damage.</li><li><strong>Don&rsquo;t reach for superglue.</strong> Ordinary adhesives can&rsquo;t hold hinge tension, and a failed glue job makes a proper rebuild harder and sometimes dearer.</li></ul><p>If the wobble survives the screw check, or you can see cracked plastic or loose brass inserts, read on &mdash; it&rsquo;s very fixable, but it won&rsquo;t fix itself.</p>"
+   },
+   {
+    "eyebrow": "Why it happens",
+    "h2": "Why Dell hinges fail &mdash; and why it&rsquo;s usually not your fault",
+    "html": "<p>On plastic-chassis Dell laptops &mdash; most commonly Inspirons &mdash; the hinges screw into small brass threaded inserts moulded into the plastic lid and palmrest. The hinges themselves are strong steel and stay tight for years; the plastic holding those inserts is the weak point. As it ages and the hinge tension stays high, the inserts tear out of the plastic, the lid starts to separate, and eventually the corner cracks open.</p><p>This is a materials and design issue, not user abuse. Dell&rsquo;s own community forum has a long-running thread titled &ldquo;Recurring Hinge Break Issue &mdash; Need a Permanent Fix&rdquo; (dell.com/community) in which owners describe the same break happening repeatedly, sometimes after a repair &mdash; and there&rsquo;s no official Dell fix programme for it.</p><p>To be fair to Dell: it does not affect every Inspiron, and plenty run for many years without a creak. It&rsquo;s most common on budget plastic chassis. Dell&rsquo;s business-grade Latitude range uses metal-reinforced hinge mounts, which is one reason we often suggest a <a href=\"/refurbished-dell-laptops-bournemouth/\">refurbished Latitude</a> when an older Inspiron&rsquo;s hinge goes &mdash; more on that below.</p>"
+   },
+   {
+    "eyebrow": "Don&rsquo;t wait",
+    "h2": "Why a wobbly hinge gets expensive if you leave it",
+    "html": "<p>A hinge problem starts structural and cheap, and ends electrical and dear. The display cable, webcam cable and (on many models) the WiFi antenna leads all route through the hinge area. Once the hinge is loose, every open and close lets it grind against those cables &mdash; repair specialists such as Low Cost Laptop Repair in London and Atlantis HC in Canterbury both flag chewed screen cables as the common consequence of a hinge left too long.</p><p>The usual escalation looks like this:</p><ul><li><strong>Week one:</strong> a creak and a slightly lifting corner &mdash; a straightforward structural rebuild.</li><li><strong>Later:</strong> the crack spreads across the lid or palmrest &mdash; now panels may need replacing too.</li><li><strong>Eventually:</strong> flickering or dead display, lost webcam, or a screen cracked by the flexing lid &mdash; now it&rsquo;s hinge <em>plus</em> cable <em>plus</em> possibly a screen.</li></ul><p>If yours is at the creak stage, that&rsquo;s genuinely the cheap moment to deal with it. Use it gently, back it up, and get a quote.</p>"
+   },
+   {
+    "eyebrow": "The real fixes",
+    "h2": "The three honest ways to fix a broken Dell hinge",
+    "html": "<p>There are only three proper repairs, and which one suits yours depends on what the plastic looks like once it&rsquo;s open:</p><ul><li><strong>1. Epoxy and insert rebuild.</strong> The torn brass inserts are re-set into rebuilt mounting points using industrial epoxy, restoring the anchor the hinge screws into. This is the right fix when the plastic around the hinge is chewed but the lid and palmrest are otherwise sound. As market context: Atlantis HC, a Canterbury specialist, lists this as a &pound;90 mail-in service with a one-year structural warranty &mdash; that&rsquo;s their price for a post-it-away repair, not ours, but it tells you the honest ballpark for this class of fix.</li><li><strong>2. Hinge replacement.</strong> Sometimes the hinge itself has seized or snapped rather than pulled out. Replacement hinges exist for a great many Dell models, and it&rsquo;s a documented, well-understood job &mdash; iFixit publishes a step-by-step hinge replacement guide for the Inspiron 13-7352, for example (guide 52318).</li><li><strong>3. Palmrest or lid-assembly replacement.</strong> When the plastic is cracked beyond rebuilding, the honest fix is a replacement palmrest or display back assembly. Dearer in parts, but the result is as-new and it doesn&rsquo;t rely on rebuilt plastic.</li></ul><p>We don&rsquo;t pick one from a script. We open it up, look at what&rsquo;s actually failed, and quote you for the fix that makes sense &mdash; including telling you when none of them do, which brings us to the next bit.</p>"
+   },
+   {
+    "eyebrow": "Honest verdict",
+    "h2": "When hinge repair is false economy &mdash; and what we&rsquo;d say instead",
+    "html": "<p>Sometimes the right answer is &ldquo;don&rsquo;t spend it.&rdquo; If the laptop is an older Inspiron that was already slow, with a tired battery and a spinning hard drive, a hinge rebuild plus a replacement panel can add up to more than the machine is sensibly worth &mdash; and the community thread above shows rebuilt plastic on an ageing chassis can break again.</p><p>In that case we&rsquo;ll say so, and usually suggest one of two things:</p><ul><li><strong>A refurbished Dell Latitude, from &pound;510.</strong> Business-grade build with metal-reinforced hinge mounts &mdash; the durability contrast to a budget plastic chassis is exactly the point on this page. Ours come fitted with a Samsung 990 PRO SSD, fully set up, with your files and settings moved across from the old machine, and a 12-month return-to-base warranty (five years while you&rsquo;re on one of our support plans). See <a href=\"/refurbished-dell-laptops-bournemouth/\">our refurbished Dell laptops</a> or the <a href=\"/dell-latitude-series-explained-3000-5000-7000/\">Latitude 3000 vs 5000 vs 7000 guide</a>.</li><li><strong>A new Dell to order</strong>, if you&rsquo;d rather buy new &mdash; we&rsquo;ve supplied Dell since 2001 and can spec one honestly for what you actually do.</li></ul><p>And if the machine is worth saving &mdash; a decent-spec Inspiron a few years old, say &mdash; we&rsquo;ll tell you that too, and just fix the hinge. The quote comes before any work either way, so the decision is always yours with the numbers in front of you.</p>"
+   },
+   {
+    "eyebrow": "How it works",
+    "h2": "Quote first, free collection &mdash; no posting your laptop away",
+    "html": "<p>Search for Dell hinge repair and most of what you&rsquo;ll find is a mail-in service in Canterbury or a walk-in counter in London. Both mean your laptop travels without you &mdash; postage risk one way, a long drive the other. We&rsquo;re the local alternative: family-run in Dorset since 1995, and we <strong>collect for free across Bournemouth, Poole, Christchurch and the surrounding areas</strong>.</p><p>What to expect:</p><ul><li><strong>We call before we start.</strong> Once we&rsquo;ve diagnosed it, you get a phone call with an honest verdict and a fixed quote &mdash; nothing happens to your laptop until you say yes.</li><li><strong>Same faces.</strong> The person who collects your laptop is from the same small family team you spoke to on the phone, not a rotating cast.</li><li><strong>No walk-in shop</strong> &mdash; we work by collection, on-site and remote. If you&rsquo;d rather hand the laptop over in person, we can meet by appointment at Kinson Community Centre.</li><li><strong>Open Monday to Friday, 9am&ndash;5pm.</strong> Call 01202 775566, or text 07520 615332 if that&rsquo;s easier. We&rsquo;re rated 4.9 on Google.</li></ul><p>If you&rsquo;re on one of our support plans (home cover is &pound;18.25 a month per computer), hinge trouble is exactly the kind of thing we catch early &mdash; every visit ends with a written Service Report, so a creaking lid gets flagged before it becomes a cracked one. Out of warranty? That&rsquo;s most of what we see &mdash; see <a href=\"/dell-out-of-warranty-repair/\">Dell out-of-warranty repair</a>.</p>"
+   }
+  ],
+  "faqs": [
+   {
+    "q": "How much does a Dell laptop hinge repair cost?",
+    "a": "We quote after seeing the damage, because the honest price depends on whether it needs an insert rebuild, new hinges or a replacement panel &mdash; and we quote before any work starts, with free collection either way. For market context, Atlantis HC in Canterbury lists a mail-in epoxy hinge rebuild at &pound;90 with a one-year structural warranty; that&rsquo;s their price, not ours, but it shows the sensible ballpark for this class of repair."
+   },
+   {
+    "q": "Can I keep using the laptop while the hinge is broken?",
+    "a": "Briefly and carefully, yes. Open and close from the centre of the lid with two hands on the base, keep the cycles to a minimum, and back up your files now. The risk of carrying on regardless is that the loose hinge grinds through the display or webcam cables routed beside it, which turns a structural repair into an electrical one."
+   },
+   {
+    "q": "Did I break it? It just cracked one day.",
+    "a": "Almost certainly not. On plastic-chassis Dells the hinges screw into brass inserts moulded into the plastic, and the plastic &mdash; not you &mdash; is the weak point. Dell&rsquo;s own community forum has a long-running thread (&ldquo;Recurring Hinge Break Issue &mdash; Need a Permanent Fix&rdquo;) describing exactly this happening in normal use."
+   },
+   {
+    "q": "Can I just superglue it?",
+    "a": "We&rsquo;d honestly rather you didn&rsquo;t. Ordinary superglue can&rsquo;t hold the tension a laptop hinge puts on its mounts, so it fails quickly &mdash; and glue residue in the mounting area can make a proper epoxy rebuild harder. A correct rebuild re-sets the brass inserts in industrial epoxy, which is a different job entirely."
+   },
+   {
+    "q": "Do all Dell Inspirons have this hinge problem?",
+    "a": "No. It&rsquo;s most common on budget plastic-chassis models, and plenty of Inspirons run for years without any hinge trouble at all. Dell&rsquo;s business Latitude range uses metal-reinforced hinge mounts, which is why it holds up better &mdash; and why we sometimes suggest a refurbished Latitude when an older Inspiron&rsquo;s hinge fails."
+   },
+   {
+    "q": "Will Dell fix a broken hinge under warranty?",
+    "a": "If your laptop is still under a Dell warranty it&rsquo;s always worth asking Dell first, though owners on Dell&rsquo;s forum report hinge damage often being classed as accidental rather than covered, and there&rsquo;s no official fix programme for the recurring insert failure. Once you&rsquo;re out of warranty &mdash; which is when most hinges go &mdash; that&rsquo;s exactly what we&rsquo;re here for. We&rsquo;re independent Dell specialists, not authorised or endorsed by Dell."
+   },
+   {
+    "q": "How long does the repair take?",
+    "a": "It depends on the fix: an insert rebuild needs cure time, and replacement hinges or panels depend on parts availability for your exact model. We won&rsquo;t promise a same-day fix &mdash; what we will do is give you an honest timescale with the quote, before you commit to anything."
+   },
+   {
+    "q": "Is my data safe during a hinge repair?",
+    "a": "Yes &mdash; hinge work is structural and doesn&rsquo;t touch your storage. We still recommend backing up before any physical repair, simply because a laptop with one fault deserves a safety net, and we can help you sort a backup if you don&rsquo;t have one."
+   },
+   {
+    "q": "Can I drop the laptop off at your shop?",
+    "a": "We don&rsquo;t have a walk-in shop &mdash; we work by free local collection, on-site visits and remote support. We collect free across Bournemouth, Poole, Christchurch and wider Dorset, and if you&rsquo;d prefer to hand it over in person we can arrange to meet by appointment at Kinson Community Centre."
+   }
+  ],
+  "schemaKind": "service",
+  "serviceName": "Dell Laptop Hinge Repair",
+  "howToName": "How to book a Dell laptop hinge repair",
+  "howToSteps": [
+   {
+    "name": "Tell us what happened",
+    "text": "Call 01202 775566, text 07520 615332, or use the contact form. The model number and a quick photo of the hinge area help us prepare, but neither is essential."
+   },
+   {
+    "name": "Free collection",
+    "text": "We collect the laptop from your home or business anywhere across Bournemouth, Poole, Christchurch and wider Dorset, at a time agreed with you &mdash; no posting it away."
+   },
+   {
+    "name": "Diagnosis and a fixed quote",
+    "text": "We open it up, see whether it needs an insert rebuild, new hinges or a replacement panel, then call you with an honest verdict and a fixed price. Nothing happens until you say yes."
+   },
+   {
+    "name": "Repair, test and return",
+    "text": "We carry out the agreed fix, check the display and webcam cables the hinge sits beside, test everything, and bring the laptop back to you."
+   }
+  ],
+  "crossLinksHtml": "<ul><li><a href=\"/dell-inspiron-repair-bournemouth/\">Dell Inspiron repair in Bournemouth</a> &mdash; the full Inspiron repair service, hinges included</li><li><a href=\"/dell-laptop-repair-bournemouth/\">Dell laptop repair</a> &mdash; screens, batteries, boards and everything else</li><li><a href=\"/dell-out-of-warranty-repair/\">Dell out-of-warranty repair</a> &mdash; what to do when Dell&rsquo;s cover has ended</li><li><a href=\"/refurbished-dell-laptops-bournemouth/\">Refurbished Dell laptops</a> &mdash; business-grade Latitudes from &pound;510, set up with your data</li><li><a href=\"/dell-latitude-series-explained-3000-5000-7000/\">Latitude 3000 vs 5000 vs 7000</a> &mdash; which refurbished Latitude suits you</li><li><a href=\"/dell-it-support-dorset/\">Dell IT support in Dorset</a> &mdash; our full Dell hub</li><li><a href=\"/book-service/\">Book a repair or collection online</a> &mdash; pick a time that suits you</li></ul>",
+  "crumbName": "Hinge Repair",
+  "primaryCta": [
+   "Book a Repair or Ask Us",
+   "/contact/"
+  ],
+  "secondaryCta": [
+   "Call 01202 775566",
+   "tel:+441202775566"
+  ]
+ },
+ {
+  "slug": "dell-xps-swollen-battery",
+  "title": "Dell XPS Swollen Battery &mdash; Touchpad Lifting or Not Clicking? What to Do | 365 Techies",
+  "metaDesc": "XPS touchpad bulging or not clicking? It&rsquo;s very likely a swollen battery. What Dell says to do (and not do), plus safe replacement with free collection across Bournemouth, Poole &amp; Dorset.",
+  "ogTitle": "Dell XPS Touchpad Lifting? It&rsquo;s Probably a Swollen Battery",
+  "eyebrow": "Dell XPS &middot; Battery Safety",
+  "h1": "Dell XPS Touchpad Lifting or Not Clicking? It&rsquo;s Probably a Swollen Battery",
+  "lede": "If the touchpad on your Dell XPS has stopped clicking, sits proud of the palm rest, or the case has started to bulge, the most likely cause is a swollen lithium-ion battery pressing up from underneath. Power the laptop off, unplug the charger, and stop using it. This page explains why the XPS shows the fault at the touchpad first, what Dell officially advises, and how to get the battery replaced safely &mdash; with free collection across Bournemouth, Poole and Dorset.",
+  "chips": [
+   "Power off &amp; unplug first",
+   "Free local collection across Dorset",
+   "Independent Dell specialists since 2001"
+  ],
+  "ctaHead": "Swollen battery? Don&rsquo;t press it &mdash; talk to us today",
+  "ctaSub": "Family-run, independent Dell specialists since 2001 (not authorised by Dell). Free local collection, diagnosis first, and a clear quote before any work. Mon&ndash;Fri 9&ndash;5 on 01202 775566, or text 07520 615332.",
+  "sections": [
+   {
+    "eyebrow": "First things first",
+    "h2": "The 60-second answer &mdash; and what to do right now",
+    "html": "<p>A touchpad that suddenly stops clicking, feels stiff, or visibly lifts out of the palm rest is the classic first symptom of a swollen battery on a Dell XPS. The lithium-ion pack sits directly beneath the touchpad, and when its cells swell they push upwards before you notice anything else.</p><ul><li><strong>Shut the laptop down fully</strong> &mdash; not sleep, a proper shutdown.</li><li><strong>Unplug the charger</strong> and any docking station.</li><li><strong>Stop using it.</strong> Don&rsquo;t press the bulging area, and don&rsquo;t squeeze the laptop into a tight bag.</li><li><strong>Put it somewhere cool and flat</strong>, away from soft furnishings, until it&rsquo;s dealt with.</li></ul><p>A swollen battery is not something to panic about, but it is a safety risk that Dell tells owners to take seriously and act on straight away. The one thing you should not do is carry on using the laptop and hope it settles down &mdash; swelling only goes one way.</p>"
+   },
+   {
+    "eyebrow": "Why the touchpad?",
+    "h2": "Why an XPS shows battery swelling at the touchpad first",
+    "html": "<p>The XPS range is deliberately thin. Inside the sealed aluminium-and-carbon-fibre chassis there is almost no clearance between the top of the battery and the underside of the touchpad. On most laptops a swelling battery has somewhere to go; on an XPS it presses straight into the touchpad mechanism.</p><p>That&rsquo;s why the first sign is so often mechanical rather than electrical:</p><ul><li>The touchpad click goes stiff, then stops working altogether.</li><li>The touchpad or spacebar area sits raised or rocks when pressed.</li><li>The palm rest or bottom panel develops a visible bulge, or the base no longer sits flat on a desk.</li><li>In later stages the case seams start to separate.</li></ul><p>This pattern is well documented in Dell&rsquo;s own community forums on the XPS 15 9570 and 9560 and the XPS 13 9350 and 7390, among others &mdash; and it isn&rsquo;t a design defect unique to those machines. Lithium-ion swelling can happen to any laptop as the cells age; the XPS chassis just makes it visible at the touchpad first. If yours clicks fine but the pointer misbehaves, that&rsquo;s more likely a driver or hardware fault than a battery &mdash; the giveaway for swelling is physical lifting or a click that&rsquo;s gone dead.</p>"
+   },
+   {
+    "eyebrow": "Dell&rsquo;s guidance",
+    "h2": "What Dell officially says to do (and not do)",
+    "html": "<p>Dell publishes formal guidance on this &mdash; knowledge base article 000128491, <em>&ldquo;Swollen Battery Information and Guidance&rdquo;</em> &mdash; along with per-model swollen-battery technical sheets. Plainly restated, Dell&rsquo;s advice is:</p><ul><li><strong>Swelling is an industry-wide lithium-ion issue</strong>, typically caused by battery age, charge cycles or heat exposure &mdash; not something you did wrong.</li><li><strong>Stop using the laptop immediately</strong>, power it off and disconnect the AC adapter.</li><li><strong>Allow the battery to discharge</strong> naturally rather than recharging it.</li><li><strong>Do not puncture, crush, press on, bend or pry</strong> the battery or the panels around it.</li><li><strong>Do not attempt to remove a swollen battery yourself.</strong> Dell is explicit on this point &mdash; a swollen pack should be handled by a trained technician and disposed of properly.</li></ul><p>That last point matters more on an XPS than on most laptops. The battery isn&rsquo;t a clip-out pack: it sits under a Torx-screwed base panel and is often secured with adhesive, inside a chassis with very tight tolerances. Prising at a swollen cell in that environment is exactly what Dell&rsquo;s guidance is written to prevent.</p><p>One more honest note: <strong>if your XPS is still under Dell warranty, contact Dell first.</strong> Swollen batteries on in-warranty machines are Dell&rsquo;s to sort under its own swollen-battery process, usually at no cost to you, and that&rsquo;s the route we&rsquo;d genuinely recommend. We&rsquo;re here for the many XPS machines that are past their warranty.</p>"
+   },
+   {
+    "eyebrow": "Forum fixes",
+    "h2": "The nylon-washer trick &mdash; please don&rsquo;t",
+    "html": "<p>Search the forums for this fault and you&rsquo;ll find a popular workaround: open the laptop, fit small nylon washers or spacers under the touchpad or base panel to hold things apart, and carry on using the machine with the swollen battery still inside.</p><p>We understand the appeal &mdash; it makes the click work again for a while. But it&rsquo;s a bad idea, and worth saying so directly:</p><ul><li>It <strong>clamps pressure onto a swollen cell</strong>, which is precisely what Dell&rsquo;s guidance says never to do.</li><li>The battery keeps swelling underneath &mdash; the washer hides the symptom while the actual risk grows.</li><li>You&rsquo;ve now reassembled a compromised battery into a sealed metal chassis you carry around in a bag.</li></ul><p>The swollen pack needs to come out. Spacers, tape, clamps and &ldquo;just don&rsquo;t press that corner&rdquo; are all versions of ignoring it.</p>"
+   },
+   {
+    "eyebrow": "The proper fix",
+    "h2": "Getting the battery replaced safely",
+    "html": "<p>The honest fix is straightforward: a trained technician removes the swollen pack, checks the touchpad, keyboard and chassis for pressure damage, fits a replacement battery and disposes of the old cell properly. On an XPS that means Torx drivers, adhesive work and patience &mdash; not a five-minute swap, but a routine job done carefully.</p><p>Here&rsquo;s how it works with us:</p><ul><li><strong>Free local collection</strong> across Bournemouth, Poole, Christchurch and the surrounding Dorset area &mdash; we come to you, so the laptop isn&rsquo;t rattling around in a courier van. We don&rsquo;t run a walk-in shop; collection, on-site visits and by-appointment meetings at Kinson Community Centre are how we work.</li><li><strong>Diagnosis first, then a written quote.</strong> Battery replacement is quote-based because parts vary by model &mdash; we confirm the exact battery your XPS needs and price it before any work starts. No surprises.</li><li><strong>We tell you if it&rsquo;s not worth it.</strong> On an older XPS with other faults, a new battery may not be the best use of your money &mdash; and we&rsquo;ll say so. If replacement makes more sense, our refurbished Dell Latitude laptops start from &pound;510 with a fast SSD, setup and data transfer included.</li></ul><p>Given the safety angle, we treat swollen-battery jobs as urgent: call <strong>01202 775566</strong> (Mon&ndash;Fri 9&ndash;5) or text <strong>07520 615332</strong> and we&rsquo;ll arrange collection promptly. We&rsquo;re independent Dell specialists &mdash; not authorised or endorsed by Dell &mdash; but we&rsquo;ve been supplying and repairing Dell machines since 2001, and we&rsquo;re a family-run firm rated 4.9 on Google.</p>"
+   },
+   {
+    "eyebrow": "After the repair",
+    "h2": "Helping the new battery last longer",
+    "html": "<p>Nothing makes a lithium-ion battery immortal, but a few habits genuinely slow the ageing that leads to swelling:</p><ul><li><strong>Keep it cool.</strong> Heat is the biggest accelerant &mdash; avoid leaving the laptop in hot cars, on duvets, or running hard on a blocked vent.</li><li><strong>Don&rsquo;t live at 100% on the mains.</strong> If your XPS spends its life docked, Dell&rsquo;s Power Manager / MyDell software can cap the charge level, which is kinder to the cells.</li><li><strong>Watch for early signs.</strong> A click going stiff, a lid that no longer sits flush &mdash; caught early, a swelling battery is a smaller, safer job.</li></ul><p>If you&rsquo;d rather not be the one watching, our monthly support plans (from &pound;18.25 per computer for home users, from &pound;24.38 per computer for business) include proactive health monitoring, and every visit or session ends with a written Service Report &mdash; so battery wear, temperatures and anything else we spot is on record in plain English, not left to memory.</p>"
+   }
+  ],
+  "faqs": [
+   {
+    "q": "How do I know it&rsquo;s a swollen battery and not just a broken touchpad?",
+    "a": "Feel and look. If the touchpad sits raised, rocks, or the palm rest and base have any bulge or gap, it&rsquo;s almost certainly the battery pushing up from beneath &mdash; the XPS battery sits directly under the touchpad. If everything is perfectly flat and only the cursor misbehaves, a driver or touchpad fault is more likely. If in doubt, power off and let us check it; diagnosis comes before any quote."
+   },
+   {
+    "q": "Is a swollen battery dangerous?",
+    "a": "It&rsquo;s a safety risk that Dell tells owners to take seriously, rather than an emergency. A swollen cell is damaged and unpredictable, especially if punctured, crushed or heated &mdash; which is why Dell&rsquo;s guidance says stop using the laptop, power off, unplug, and don&rsquo;t press or pry at it. Handled calmly and promptly, it&rsquo;s a routine repair."
+   },
+   {
+    "q": "Can I keep using the laptop if I just avoid pressing the touchpad?",
+    "a": "We wouldn&rsquo;t, and Dell&rsquo;s guidance says not to. The swelling continues whether or not you touch that area, and every charge cycle and warm session adds stress to a cell that&rsquo;s already failed. Power it off and get the pack removed."
+   },
+   {
+    "q": "Should I let the battery drain down?",
+    "a": "Yes &mdash; Dell&rsquo;s official guidance is to power off, disconnect the charger and allow the battery to discharge naturally rather than topping it up. A lower charge level makes the pack safer to handle and transport. Don&rsquo;t try to force-drain it by running the laptop hard, though; just leave it powered off."
+   },
+   {
+    "q": "Can I remove the swollen battery myself?",
+    "a": "Dell&rsquo;s guidance is explicit: don&rsquo;t. On an XPS the battery sits under a Torx-screwed, tightly-fitted base panel and is often held with adhesive, so removal involves exactly the prying and flexing you must not apply to a swollen cell. It should be removed by a trained technician and disposed of properly &mdash; that&rsquo;s the part of this job we&rsquo;d never suggest you DIY."
+   },
+   {
+    "q": "My XPS is still under Dell warranty &mdash; should I contact Dell or you?",
+    "a": "Dell first, honestly. A swollen battery on an in-warranty machine is covered by Dell&rsquo;s own process at no cost to you, and as independent specialists we&rsquo;d never want you to pay for something Dell owes you. We look after the many XPS laptops that are outside warranty."
+   },
+   {
+    "q": "How much does an XPS battery replacement cost?",
+    "a": "It&rsquo;s quote-based, because the correct battery differs between XPS models and generations. We diagnose first, confirm the exact part, and give you a written quote before any work starts &mdash; and if a repair doesn&rsquo;t make financial sense on an older machine, we&rsquo;ll tell you rather than take the job."
+   },
+   {
+    "q": "Which XPS models does this affect?",
+    "a": "Swelling with touchpad symptoms is widely reported on Dell&rsquo;s own community forums for the XPS 15 9570 and 9560 and the XPS 13 9350 and 7390, but it isn&rsquo;t limited to those. Any lithium-ion battery can swell with age, charge cycles or heat &mdash; the slim XPS chassis just shows it at the touchpad first."
+   },
+   {
+    "q": "Can you fix it the same day?",
+    "a": "We treat swollen-battery jobs as urgent and can usually arrange collection quickly Mon&ndash;Fri 9&ndash;5, but we won&rsquo;t promise a same-day fix &mdash; the right battery for your exact model sometimes has to be ordered, and we&rsquo;d rather fit the correct part than rush the wrong one. We&rsquo;ll give you a realistic timescale when we quote."
+   },
+   {
+    "q": "Are you Dell-authorised?",
+    "a": "No &mdash; we&rsquo;re independent and not authorised or endorsed by Dell. Our Dell relationship is as a reseller since 2001, and we&rsquo;ve been repairing and supporting Dell machines across Dorset ever since. Family-run since 1995, rated 4.9 on Google."
+   }
+  ],
+  "schemaKind": "service",
+  "serviceName": "Dell XPS Swollen Battery Replacement",
+  "howToName": "What to do with a swollen Dell XPS battery",
+  "howToSteps": [
+   {
+    "name": "Power off and unplug",
+    "text": "Shut the laptop down fully (not sleep), disconnect the charger and any dock, and stop using it. Dell&rsquo;s guidance is to let the battery discharge naturally rather than recharging it."
+   },
+   {
+    "name": "Don&rsquo;t press, pry or puncture",
+    "text": "Never press on the bulging touchpad or panels, fit spacers or washers, or attempt to open the chassis and remove the battery yourself &mdash; Dell&rsquo;s guidance is explicit that a swollen pack must not be squeezed or pried at. Keep the laptop flat, cool and out of tight bags."
+   },
+   {
+    "name": "Check your warranty first",
+    "text": "Look up your Service Tag on Dell&rsquo;s support site. If the XPS is still under Dell warranty, use Dell&rsquo;s own swollen-battery process first &mdash; it&rsquo;s covered at no cost to you."
+   },
+   {
+    "name": "Arrange safe replacement",
+    "text": "Out of warranty? Call 01202 775566 or text 07520 615332 and we&rsquo;ll arrange free local collection across Bournemouth, Poole and Dorset, diagnose it, and give you a written quote before any work &mdash; then remove and properly dispose of the old cell."
+   }
+  ],
+  "crossLinksHtml": "<ul><li><a href=\"/dell-laptop-battery-replacement-dorset/\">Dell laptop battery replacement in Dorset</a> &mdash; our main battery service page for all Dell ranges</li><li><a href=\"/dell-xps-repair-bournemouth/\">Dell XPS repair in Bournemouth</a> &mdash; screens, hinges, WiFi and everything else XPS</li><li><a href=\"/dell-it-support-dorset/\">Dell IT support in Dorset</a> &mdash; the full Dell hub</li><li><a href=\"/book-service/\">Book a collection or repair online</a></li></ul>",
+  "crumbName": "XPS Swollen Battery",
+  "primaryCta": [
+   "Book a Repair or Ask Us",
+   "/contact/"
+  ],
+  "secondaryCta": [
+   "Call 01202 775566",
+   "tel:+441202775566"
+  ]
+ },
+ {
+  "slug": "dell-docking-station-not-working",
+  "title": "Dell Docking Station Not Working? WD19 &amp; WD22 Fixes for Power, Charging &amp; Monitors | 365 Techies",
+  "metaDesc": "Dell WD19 or WD22 dock not working? Step-by-step fixes for no power, a laptop that won&rsquo;t charge and monitors not detected &mdash; most dock faults are software, and a remote session from &pound;20 sorts the majority. Honest Dorset help.",
+  "ogTitle": "Dell dock not working? Check these before you buy a new one",
+  "eyebrow": "Fixing a Dell fault",
+  "h1": "Dell docking station not working? Work through this before you buy a new one",
+  "lede": "When a Dell dock plays up, the whole desk goes down with it &mdash; monitors dark, laptop not charging, network gone. Here&rsquo;s the honest bit most troubleshooting pages bury: <strong>the majority of dock faults are firmware, drivers or settings, not dead hardware</strong>. Dell&rsquo;s own support articles say as much, they&rsquo;re just scattered across half a dozen separate guides. This page pulls them into one plain-English decision tree for the WD19 family and WD22TB4 &mdash; pick your symptom, try the free checks, and if it still misbehaves, a remote session from <strong>&pound;20</strong> sorts most of the rest. And if your dock genuinely is bricked, we&rsquo;ll tell you that <em>before</em> you spend money on a new one.",
+  "chips": [
+   "Most dock faults fixed remotely &mdash; from &pound;20",
+   "Honest verdict before you buy a new dock",
+   "Family-run, 4.9 on Google"
+  ],
+  "ctaHead": "Dock still misbehaving after the checks?",
+  "ctaSub": "Call 01202 775566 or text 07520 615332, Mon&ndash;Fri 9&ndash;5. Most dock faults are fixed in a single remote session from &pound;20 &mdash; and we always call before we connect. For hands-on work we come to homes and businesses across Bournemouth, Poole, Christchurch &amp; Dorset, or meet at the Kinson Community Centre by appointment.",
+  "sections": [
+   {
+    "eyebrow": "Start here",
+    "h2": "The short answer: it&rsquo;s usually not the dock",
+    "html": "<p>Dell&rsquo;s USB-C and Thunderbolt docks &mdash; the WD19, WD19S, WD19TB, WD19DCS and the newer WD22TB4 &mdash; are genuinely well-built bits of kit. When one &ldquo;stops working&rdquo;, the cause is far more often a firmware version, a driver, a BIOS setting or an under-specced power adapter than a failed circuit board. That&rsquo;s good news, because software problems don&rsquo;t cost a new dock to fix.</p><p>The frustration is that Dell&rsquo;s own answers are spread across separate support articles &mdash; one for no power, one for monitors, one for firmware &mdash; and none of them talks to the others. So here&rsquo;s the whole thing as one decision tree. Find your symptom:</p><ul><li><strong>Dock completely dead, no light at all</strong> &mdash; start at the power section below.</li><li><strong>Dock has power but the laptop won&rsquo;t charge</strong> (or complains about a slow charger) &mdash; jump to the charging section, because the answer is usually arithmetic.</li><li><strong>Laptop charges but the monitors aren&rsquo;t detected</strong> &mdash; the monitor section.</li><li><strong>Everything works, then randomly doesn&rsquo;t</strong> &mdash; the reset and firmware section.</li></ul><p>Work through the free checks honestly &mdash; many readers will fix theirs without calling anyone. If yours survives all four sections, that&rsquo;s when we earn our keep.</p>"
+   },
+   {
+    "eyebrow": "Symptom 1",
+    "h2": "Dock completely dead: no LED, no fan, nothing",
+    "html": "<p>Dell publishes a dedicated no-power troubleshooting guide for these docks (KB 000223850, covering the WD19S, WD19DCS and WD22TB4 among others), and the checks in it are ones you can do yourself in five minutes:</p><ul><li><strong>Prove the wall socket first.</strong> Plug something else into it, or the dock into a socket you trust. Obvious &mdash; and genuinely the answer more often than anyone admits.</li><li><strong>Try a known-good Dell adapter of the right wattage.</strong> Dock power supplies fail more often than docks. If a colleague has the same dock, borrowing their adapter for two minutes answers the question for free.</li><li><strong>Watch the LED when you connect power.</strong> A steady light is healthy. Pay attention to the pattern: <strong>three blinks and then off</strong> is a fault indication Dell&rsquo;s guide specifically calls out &mdash; make a note of exactly what the light does, because it tells a diagnostician a lot.</li><li><strong>Check the Type-C cable to the laptop.</strong> The captive cable on the WD19 family takes a beating from years of plugging and desk-yanking. Inspect it for kinks and damage, and test the dock with power connected but the laptop <em>disconnected</em> &mdash; if the dock lights up alone but dies on the laptop, the cable or port is the suspect, not the dock&rsquo;s power stage.</li></ul><p>If the dock shows no sign of life on a known-good adapter and socket, it may genuinely be hardware &mdash; that&rsquo;s the minority case, but it exists. Before you order a replacement, it&rsquo;s worth one quick call: we&rsquo;ve seen &ldquo;dead&rdquo; docks revived by a proper reset (covered below) often enough that we&rsquo;d check that first.</p>"
+   },
+   {
+    "eyebrow": "Symptom 2",
+    "h2": "Dock alive but the laptop won&rsquo;t charge &mdash; the power-delivery arithmetic",
+    "html": "<p>This is the most misunderstood dock fault of all, and it&rsquo;s often not a fault &mdash; it&rsquo;s maths. A dock can&rsquo;t pass its whole adapter rating through to your laptop, because it keeps some back to run its own electronics, monitors and USB ports. Dell publishes the real numbers in the WD19 user guide:</p><ul><li>A WD19 running on its <strong>130W adapter</strong> can deliver <strong>up to 90W</strong> to the laptop.</li><li>On the <strong>180W adapter</strong>, it can deliver <strong>up to 130W to Dell laptops</strong> &mdash; and up to 90W to non-Dell machines.</li></ul><p>So if you&rsquo;ve got a high-wattage Latitude, Precision or XPS on a dock with the smaller adapter, Windows may charge slowly, complain about the power supply, or lose charge under heavy load &mdash; and no amount of driver reinstalling will change it, because the dock physically can&rsquo;t feed the machine what it wants. The fix is the right adapter (or the right dock), not a new laptop.</p><p>Two more culprits worth checking while you&rsquo;re here:</p><ul><li><strong>BIOS settings can block docks outright.</strong> Dell laptops have BIOS options covering Thunderbolt and USB-C dock support, and machines occasionally arrive &mdash; or get reconfigured by an IT policy &mdash; with them disabled. It&rsquo;s a well-documented cause on Dell&rsquo;s community forums and Microsoft Q&amp;A, and it looks exactly like a broken dock.</li><li><strong>The cable again.</strong> A damaged Type-C cable can negotiate data but not full power, producing the weirdest half-working states of all.</li></ul><p>BIOS changes are somewhere we&rsquo;d honestly rather you didn&rsquo;t experiment alone if you&rsquo;re not comfortable there &mdash; it&rsquo;s a two-minute check in a remote session and we&rsquo;ll happily do it with you watching.</p>"
+   },
+   {
+    "eyebrow": "Symptom 3",
+    "h2": "Monitors not detected through the dock",
+    "html": "<p>Dell&rsquo;s guide for docks not being recognised (KB 000146415) boils down to three suspects, in rough order of likelihood:</p><ul><li><strong>Cables and ports.</strong> Test each monitor cable directly from laptop to monitor if you can &mdash; that instantly tells you whether the dock is even involved. Cheap or elderly HDMI and DisplayPort cables cause more &ldquo;dock&rdquo; faults than docks do, and a cable that worked at 1080p may sulk at higher resolutions.</li><li><strong>Firmware and drivers.</strong> Dock firmware, the laptop&rsquo;s BIOS, Thunderbolt drivers and graphics drivers all have to agree with each other. An out-of-date dock on an updated laptop (or the reverse) is the classic cause of monitors vanishing after a Windows update. The fix is the firmware routine in the next section &mdash; with one important warning attached.</li><li><strong>Bandwidth limits.</strong> Every dock has a ceiling on how many screens at what resolution and refresh rate it can drive, and the ceiling depends on which laptop and port it&rsquo;s connected to. Two 4K monitors that worked fine on one laptop may exceed what the same dock can do on another. If monitors appear when you unplug one of them, you&rsquo;ve found a bandwidth ceiling, not a fault.</li></ul><p>If one specific monitor is the problem, swap its cable and its port on the dock before blaming anything else. If <em>all</em> monitors are missing but the laptop charges happily, it&rsquo;s almost always firmware or drivers &mdash; read on.</p>"
+   },
+   {
+    "eyebrow": "Symptom 4",
+    "h2": "Everything&rsquo;s flaky? The reset, the firmware update &mdash; and the honest warning",
+    "html": "<p>For docks that half-work, randomly disconnect, or misbehave in ways that defy the sections above, there are two remaining moves.</p><p><strong>First, the full reset.</strong> Unplug the dock&rsquo;s Type-C cable from the laptop, disconnect the power adapter, then press and hold the dock&rsquo;s power button for around <strong>15&ndash;30 seconds</strong> to drain it completely. Reconnect power first, then the laptop. This clears more mystery faults than any other single step, and it&rsquo;s completely safe to try.</p><p><strong>Second, the firmware update &mdash; and here&rsquo;s where we&rsquo;ll be straight with you.</strong> Dell publishes a Dock Firmware Update Utility for each model on dell.com/support, and running the current version (as administrator, laptop on mains power) fixes a large share of monitor and stability faults. But there is a documented failure mode: Dell&rsquo;s own support article on WD19-series firmware recovery (KB 000184585) exists because an <strong>EC firmware update that fails partway can leave the dock unusable</strong>. It&rsquo;s not common &mdash; but it&rsquo;s real, it tends to strike when the update is interrupted or run on a flaky connection, and it turns a software problem into a dead dock.</p><p>That&rsquo;s not a reason to fear the update. It <em>is</em> a reason to have it done by someone who&rsquo;s run hundreds of them, checks the preconditions first, and knows the recovery route if something goes sideways. It&rsquo;s exactly the kind of job we do in a remote session &mdash; you watch the whole thing happen on your own screen.</p>"
+   },
+   {
+    "eyebrow": "When to call us",
+    "h2": "Remote-first, honest verdict &mdash; and we&rsquo;ll say if the dock really is dead",
+    "html": "<p>If you&rsquo;ve worked through the tree and the dock still isn&rsquo;t behaving, here&rsquo;s how we handle it. Most dock faults being software means most dock faults can be fixed without anyone travelling anywhere: a <strong>remote support session from &pound;20</strong> covers driver and firmware sorting, BIOS dock settings, and the detective work above done properly. We always <strong>call before we connect</strong>, and you see everything we do.</p><p>Two honest caveats, because they matter:</p><ul><li>We say the <em>majority</em> of dock faults are fixable remotely &mdash; not all. Genuinely failed hardware exists, and a damaged captive cable needs hands, not software.</li><li>When a dock is truly bricked or broken, we&rsquo;ll tell you plainly &mdash; <strong>before</strong> you&rsquo;ve paid for hours of wheel-spinning and before you buy a replacement. A &pound;20 session that ends with &ldquo;it&rsquo;s dead, here&rsquo;s what to buy instead&rdquo; is money well spent compared with guessing.</li></ul><p>For businesses, docks are rarely a one-off: a Dorset office running Latitude, Precision or XPS laptops usually has a whole estate of WD19s of mixed ages and firmware versions, and one Windows update can upset several at once. We support exactly these fleets &mdash; see our <a href=\"/dell-business-support-dorset/\">Dell business support</a> page, and our business plans from <strong>&pound;24.38 per computer per month</strong> keep dock firmware in step across the fleet, with a <strong>written Service Report</strong> after every visit so you can see what was checked and changed.</p><p>One thing to know about us: we&rsquo;re <strong>independent Dell specialists</strong> &mdash; a family-run firm that&rsquo;s sold and supported Dell since 2001, not authorised or endorsed by Dell. That independence is why you get a straight answer about whether your dock is worth saving. There&rsquo;s no walk-in shop; we work remotely, come to you across Bournemouth, Poole, Christchurch and Dorset with free local collection where hands-on work is needed, or meet at the Kinson Community Centre by appointment. <strong>Call 01202 775566</strong> or <strong>text 07520 615332</strong>, Mon&ndash;Fri 9&ndash;5.</p>"
+   }
+  ],
+  "faqs": [
+   {
+    "q": "Why has my Dell docking station suddenly stopped working?",
+    "a": "The most common trigger is an update &mdash; Windows, graphics drivers, laptop BIOS or dock firmware getting out of step with each other. Genuine hardware failure is the minority case. Start with a full dock reset (power and laptop cable disconnected, hold the dock&rsquo;s power button 15&ndash;30 seconds), then work through cables, power and firmware. The majority of dock faults are resolved without buying anything."
+   },
+   {
+    "q": "My Dell dock has no lights at all &mdash; is it dead?",
+    "a": "Not necessarily. Prove the wall socket, then try a known-good Dell adapter of the right wattage &mdash; adapters fail more often than docks. Watch the LED pattern when power connects: three blinks then off is a specific fault indication in Dell&rsquo;s no-power guide. Also test the dock with the laptop disconnected. If it stays completely dead on a known-good adapter, it may genuinely be hardware &mdash; but try the full reset before ordering a replacement."
+   },
+   {
+    "q": "Why won&rsquo;t my Dell WD19 dock charge my laptop?",
+    "a": "Usually arithmetic rather than a fault. The dock keeps some of its adapter&rsquo;s power for itself: per Dell&rsquo;s WD19 documentation, a WD19 on the 130W adapter delivers up to 90W to the laptop, and on the 180W adapter up to 130W to Dell laptops (90W to non-Dell). A high-wattage Latitude, Precision or XPS on the smaller adapter will charge slowly or complain &mdash; the fix is the right adapter, not a new dock. BIOS dock settings and a damaged Type-C cable are the other two suspects."
+   },
+   {
+    "q": "Why does Windows say &ldquo;slow charger&rdquo; when I&rsquo;m on the dock?",
+    "a": "The dock is delivering less wattage than the laptop wants &mdash; typically because the dock&rsquo;s adapter is under-specced for your machine, or a damaged Type-C cable is negotiating reduced power. Check which adapter your dock has (130W and 180W versions look similar) against what your laptop shipped with. It&rsquo;s annoying but usually harmless: the laptop still charges, just slowly and sometimes not under full load."
+   },
+   {
+    "q": "Why are my monitors not detected through the Dell dock?",
+    "a": "Three suspects, per Dell&rsquo;s dock-recognition guidance: cables and ports (test the monitor directly on the laptop to rule the dock in or out), firmware and drivers (dock firmware, BIOS, Thunderbolt and graphics drivers must all be current together), and bandwidth ceilings (every dock has a limit on screens, resolution and refresh rate that varies by laptop). If all monitors vanished after an update, it&rsquo;s almost always firmware or drivers."
+   },
+   {
+    "q": "How do I reset a Dell WD19 or WD22 docking station?",
+    "a": "Unplug the dock&rsquo;s Type-C cable from the laptop, disconnect the power adapter, then press and hold the dock&rsquo;s power button for around 15&ndash;30 seconds to fully drain it. Reconnect the power adapter first, then the laptop. This clears a surprising number of mystery faults and is completely safe to try at home."
+   },
+   {
+    "q": "Should I update my Dell dock&rsquo;s firmware myself?",
+    "a": "You can &mdash; Dell publishes a Dock Firmware Update Utility for each model, run as administrator with the laptop on mains power. But be aware of the documented failure mode: Dell&rsquo;s own WD19-series recovery article exists because an EC firmware update that fails partway can leave the dock unusable. If the update matters (or the dock already misbehaves), having a professional run it in a remote session from &pound;20 is cheap insurance against turning a software fault into a dead dock."
+   },
+   {
+    "q": "Can you really fix a docking station remotely?",
+    "a": "The majority of the time, yes &mdash; because most dock faults are firmware, drivers or settings rather than hardware. A remote session from &pound;20 covers firmware updates done safely, BIOS dock settings and driver sorting, and we always call before we connect. Where it genuinely is hardware &mdash; a failed dock or damaged cable &mdash; we&rsquo;ll say so plainly before you spend anything more, and free local collection covers the hands-on cases."
+   },
+   {
+    "q": "We&rsquo;re a business with a whole office of Dell docks &mdash; can you help?",
+    "a": "Yes &mdash; that&rsquo;s our bread and butter. Dorset offices running Latitude, Precision or XPS laptops usually have an estate of WD19-family docks on mixed firmware, and one Windows update can upset several at once. Our business support plans from &pound;24.38 per computer per month keep drivers and dock firmware in step across the fleet, with a written Service Report after every visit so you can see exactly what was checked and changed."
+   },
+   {
+    "q": "Can I bring my dock into your shop? And are you Dell-authorised?",
+    "a": "We don&rsquo;t have a walk-in shop &mdash; we work remotely (most dock faults suit this perfectly), come to homes and businesses across Bournemouth, Poole, Christchurch and Dorset with free local collection, and meet at the Kinson Community Centre by appointment. And we&rsquo;re independent Dell specialists &mdash; selling and supporting Dell since 2001, but not authorised or endorsed by Dell. That independence is why the advice stays honest."
+   }
+  ],
+  "schemaKind": "service",
+  "serviceName": "Dell Docking Station Support, Dorset",
+  "howToName": "How to fix a Dell docking station that isn&rsquo;t working",
+  "howToSteps": [
+   {
+    "name": "Try the full reset and power checks",
+    "text": "Disconnect the dock from the laptop and the mains, hold its power button 15&ndash;30 seconds, then reconnect power first and laptop second. If the dock is completely dead, prove the wall socket and try a known-good Dell adapter of the right wattage, noting the LED pattern (three blinks then off indicates a fault)."
+   },
+   {
+    "name": "Match the symptom to the cause",
+    "text": "Not charging is usually power-delivery arithmetic &mdash; a WD19 on the 130W adapter passes up to 90W to the laptop, so high-wattage machines need the 180W version. Monitors missing is usually cables, firmware or bandwidth limits. Random flakiness usually means dock firmware is out of step with Windows and BIOS."
+   },
+   {
+    "name": "Book a remote session from &pound;20",
+    "text": "If the free checks don&rsquo;t fix it, most remaining faults are software &mdash; we sort firmware (safely, avoiding the documented WD19 update failure that can brick a dock), BIOS dock settings and drivers in a single remote session from &pound;20. We call before we connect, and you watch everything on your own screen."
+   },
+   {
+    "name": "Get an honest hardware verdict",
+    "text": "If the dock is genuinely dead &mdash; the minority case &mdash; we say so plainly before you spend more, and advise on the right replacement for your laptop&rsquo;s wattage and monitors. Free local collection across Bournemouth, Poole, Christchurch and Dorset covers cases that need hands-on work."
+   }
+  ],
+  "crossLinksHtml": "<ul><li><a href=\"/dell-monitor-dock-support-dorset/\">Dell monitor &amp; dock support in Dorset</a> &mdash; the wider service: multi-screen setups, monitors and docks done properly.</li><li><a href=\"/dell-remote-support/\">Dell remote support from &pound;20</a> &mdash; how the remote session works, and why we call before we connect.</li><li><a href=\"/dell-business-support-dorset/\">Dell business support in Dorset</a> &mdash; fleets of Latitudes, Precisions and docks kept in step, with a written Service Report after every visit.</li><li><a href=\"/dell-laptop-repair-bournemouth/\">Dell laptop repair in Bournemouth</a> &mdash; if the fault turns out to be the laptop&rsquo;s port rather than the dock.</li><li><a href=\"/dell-it-support-dorset/\">All Dell support services</a> &mdash; the full range from a family-run independent Dell specialist.</li></ul>",
+  "crumbName": "Dock Not Working",
+  "primaryCta": [
+   "Book a Repair or Ask Us",
+   "/contact/"
+  ],
+  "secondaryCta": [
+   "Call 01202 775566",
+   "tel:+441202775566"
+  ]
+ },
+ {
+  "slug": "dell-g15-overheating",
+  "title": "Dell G15 Overheating or Fans Screaming? Free Fixes First, Then the Honest Hardware Answer | 365 Techies",
+  "metaDesc": "Dell G15 hitting 90&deg;C+ with fans at full blast? Try these free fixes first &mdash; then the honest answer on fan cleaning &amp; repaste, with free collection across Bournemouth, Poole &amp; Dorset.",
+  "ogTitle": "Dell G15 Overheating? Free Fixes First, Then the Honest Answer",
+  "eyebrow": "Dell G15 &amp; Dell Gaming Laptops",
+  "h1": "Dell G15 Overheating or Fans Screaming? Try the Free Fixes First",
+  "lede": "The G15 is Dell&rsquo;s best-selling budget gaming laptop, and running hot is its most-searched complaint &mdash; the 5510, 5511 and 5515 all have long threads about it on Dell&rsquo;s own community forum. The good news: a surprising number of overheating G15s are fixed for free. This page gives you those fixes first. Then, if yours is a two-to-four-year-old machine that still sounds like a jet, we&rsquo;ll give you the honest hardware answer &mdash; and a quote before anyone touches a screw. We&rsquo;re independent Dell specialists in Bournemouth (Dell resellers since 2001, not authorised or endorsed by Dell), family-run since 1995.",
+  "chips": [
+   "Free fixes explained first",
+   "Quote before any work",
+   "Free collection across Dorset"
+  ],
+  "ctaHead": "Fans screaming and frames dropping?",
+  "ctaSub": "Tell us your G15 model and what it&rsquo;s doing &mdash; we&rsquo;ll say honestly whether it needs a thermal service, quote it first, and collect it for free anywhere in Bournemouth, Poole, Christchurch or wider Dorset. Call 01202 775566 (Mon&ndash;Fri, 9&ndash;5) or text 07520 615332.",
+  "sections": [
+   {
+    "eyebrow": "Start here &mdash; costs nothing",
+    "h2": "Five free fixes to try before you spend a penny",
+    "html": "<p>Work through these in order. Between them they sort a genuinely large share of &ldquo;my G15 is overheating&rdquo; complaints &mdash; and none of them costs anything.</p><ul><li><strong>1. Hard, flat surface only.</strong> The G15 pulls most of its cool air through the underside. On a bed, sofa, carpet or your lap, that intake is smothered and temperatures climb within minutes. A desk or even a hardback book makes a measurable difference. It sounds too simple to matter; it&rsquo;s the single most common cause we see.</li><li><strong>2. Clear the vents of dust.</strong> Power off, unplug, and use a can of compressed air in short bursts through the rear and side vents and the underside intake grille. If a grey mat of dust puffs out, you&rsquo;ve found a big part of your problem. This matches Dell&rsquo;s own published overheating guidance &mdash; dust on the fans and heatsink fins is the first thing they tell owners to rule out.</li><li><strong>3. Use Game Shift (G-mode).</strong> Press <strong>Fn + F9</strong> (the key with the little &lsquo;G&rsquo;) to toggle Game Shift, which runs the fans at maximum during demanding games. It&rsquo;s loud by design, but that&rsquo;s the cooling headroom Dell built in &mdash; many owners never discover it exists.</li><li><strong>4. Update the BIOS.</strong> Dell has shipped fan-curve and thermal-behaviour changes for G15 models in BIOS updates. Put your Service Tag into dell.com/support and install any pending BIOS and thermal-related updates. Plug the charger in first and don&rsquo;t interrupt it.</li><li><strong>5. Check your thermal profile.</strong> In the Dell power/thermal software your G15 shipped with (Dell Power Manager on some models, the command-centre app on others), make sure you&rsquo;re not stuck in a &ldquo;Quiet&rdquo; profile while gaming &mdash; it deliberately holds fan speed down and lets temperatures rise. &ldquo;Ultra Performance&rdquo; or &ldquo;Performance&rdquo; prioritises cooling.</li></ul><p>One thing you&rsquo;ll see recommended in enthusiast forums is <strong>undervolting</strong> &mdash; reducing the voltage fed to the processor to cut heat. It genuinely works for some people, but it&rsquo;s a tinkerer&rsquo;s technique with stability trade-offs, and it&rsquo;s not something we recommend or offer as a service. If your G15 needs undervolting just to behave, the real problem is almost always the one in the next section.</p>"
+   },
+   {
+    "eyebrow": "Why it happens",
+    "h2": "Why the G15 runs hot in the first place",
+    "html": "<p>The G15 puts a proper gaming processor and graphics chip into a budget-priced chassis. That&rsquo;s the whole appeal &mdash; but it means the cooling system is working near its limits from day one. There&rsquo;s not much spare capacity, so anything that degrades the cooling shows up quickly as high temperatures, screaming fans, stuttering frame rates or outright thermal shutdowns mid-game.</p><p>Two things degrade it, and both are simply age:</p><ul><li><strong>Dust builds up inside, not just at the vents.</strong> Compressed air from outside helps, but over a couple of years a felt-like blanket forms on the inside face of the heatsink fins, where the fans blow through. Air can&rsquo;t get through it, so the fans spin harder and harder to move less and less heat. You can&rsquo;t reach it without opening the machine.</li><li><strong>The thermal paste dries out.</strong> The factory paste between the CPU/GPU and the heatsink pumps out and hardens over roughly two to four years of gaming temperatures. Once it does, heat can&rsquo;t transfer into the heatsink efficiently no matter how fast the fans run.</li></ul><p>This is why the pattern of complaints on Dell&rsquo;s community forum is so consistent across the 5510, 5511, 5515 and later models (you&rsquo;ll find the threads filed under Inspiron on dell.com/community): the machines are fine when new, then progressively hotter and louder from around year two. It isn&rsquo;t a fault unique to your unit, and it isn&rsquo;t something a Windows reinstall fixes &mdash; it&rsquo;s maintenance.</p>"
+   },
+   {
+    "eyebrow": "The honest answer",
+    "h2": "The two-to-four-year truth: it usually needs a fan de-dust and repaste",
+    "html": "<p>If you&rsquo;ve done the free fixes and your G15 still hits very high temperatures with the fans flat out, the honest answer &mdash; and the consensus across Dell&rsquo;s community threads and every credible teardown guide &mdash; is that it needs a <strong>professional thermal service</strong>: the machine opened up, both fans and the full heatsink assembly properly de-dusted, the old paste cleaned off the CPU and GPU dies, fresh quality thermal compound applied, and everything reassembled and tested under a sustained gaming load.</p><p>We&rsquo;d love to tell you it&rsquo;s a quick blast of air. On a gaming chassis it isn&rsquo;t. The G15&rsquo;s heatpipe assembly sits under other components, the dies are bare silicon that&rsquo;s easy to chip if you rush, and getting the mounting pressure right on reassembly matters as much as the paste itself. It&rsquo;s a bench job with the right tools and a test afterwards &mdash; not a five-minute favour. Done properly, owners typically get their machine back running dramatically cooler and quieter, back to behaving the way it did when it was new.</p><p>Two honest caveats, because we&rsquo;d rather you hear them now:</p><ul><li><strong>A repaste fixes heat-transfer problems, not silicon problems.</strong> If your G15 has an actual failed graphics chip or board-level fault, no amount of paste helps &mdash; and <strong>we don&rsquo;t do board-level GPU repair</strong>. We&rsquo;ll tell you straight if that&rsquo;s what the diagnosis points to, rather than selling you a thermal service that won&rsquo;t fix it.</li><li><strong>A dying fan is a parts job.</strong> If a fan bearing is grinding or a fan has failed outright, it needs replacing, not cleaning. We&rsquo;ll quote that separately and clearly before doing anything.</li></ul>"
+   },
+   {
+    "eyebrow": "Our service",
+    "h2": "Quote first, free collection &mdash; no posting your laptop to London",
+    "html": "<p>The UK specialists we could find for Dell gaming thermal work are London mail-in operations &mdash; as a market benchmark, Creative IT in London advertises Alienware and Dell gaming laptop thermal repair from &pound;135+VAT (delllaptoprepairs.co.uk), and you post your machine to them. That&rsquo;s their price and their model, not ours &mdash; we quote each job individually &mdash; but it tells you what this work costs at a specialist, and it highlights the bit we do differently: <strong>your G15 never goes in the post</strong>.</p><p>Here&rsquo;s how it works with us:</p><ul><li><strong>Tell us the model and symptoms.</strong> Call 01202 775566, text 07520 615332, or use the booking form. The model number (5510, 5511, 5515, 5520, 5530&hellip;) is on the sticker underneath.</li><li><strong>Free collection.</strong> We collect from your home or workplace anywhere across Bournemouth, Poole, Christchurch and the wider Dorset area &mdash; no courier, no packaging anxiety, no walk-in shop needed (we don&rsquo;t have one; collection is genuinely how we work).</li><li><strong>Diagnosis first, then a quote.</strong> We test under load, confirm whether it&rsquo;s dust, paste, a failing fan or something a thermal service won&rsquo;t fix, and call you with a clear quote <em>before</em> any work starts. If the honest answer is &ldquo;don&rsquo;t spend money on this machine&rdquo;, that&rsquo;s what we&rsquo;ll say.</li><li><strong>The full thermal service.</strong> Fan and heatsink de-dust, CPU/GPU repaste with quality compound, BIOS brought up to date, thermal profile and Game Shift set up sensibly, then a sustained load test before it comes back to you.</li></ul><p>We&rsquo;re a family-run firm, trading since 1995, rated 4.9 on Google &mdash; and you&rsquo;ll deal with the same faces from first call to return visit. We&rsquo;re independent Dell specialists and long-standing Dell resellers, not a Dell-authorised repair centre, which is exactly why we can give you a straight answer rather than a warranty-script one. (If your G15 is still under Dell warranty, use Dell&rsquo;s warranty route first &mdash; it&rsquo;s already paid for.)</p>"
+   },
+   {
+    "eyebrow": "Keep or replace?",
+    "h2": "When a thermal service is worth it &mdash; and when it isn&rsquo;t",
+    "html": "<p>A thermal service makes obvious sense on a G15 that&rsquo;s otherwise healthy: two to four years old, plays the games you want, just running hot and loud. You&rsquo;re restoring a machine with life left in it for a fraction of replacement cost.</p><p>It makes less sense when the overheating is one problem among several &mdash; a battery on its way out, a damaged hinge, a graphics chip that&rsquo;s artifacting even when cool &mdash; or when the machine no longer plays what you actually want to play at settings you can live with. Stacking repairs into an ageing budget gaming laptop can quietly cost more than it&rsquo;s worth, and we&rsquo;ll tell you when you&rsquo;re at that point rather than take the booking.</p><p>If you do decide to replace, two honest routes:</p><ul><li><strong>If the gaming days are over</strong> and the G15 was really doing schoolwork, browsing and office jobs, a refurbished business-grade Dell Latitude from &pound;510 (fitted with a Samsung 990 PRO SSD, fully set up with your data moved over, 12-month return-to-base warranty) is quieter, cooler and tougher than any budget gaming chassis &mdash; see our <a href=\"/refurbished-dell-laptops-bournemouth/\">refurbished Dell laptops</a>.</li><li><strong>If you still want to game</strong>, we can spec and order a current Dell gaming machine for you as Dell resellers since 2001, and set it up properly &mdash; sensible thermal profile from day one included. Just ask.</li></ul>"
+   },
+   {
+    "eyebrow": "Alienware owners",
+    "h2": "Got an Alienware rather than a G15?",
+    "html": "<p>Everything above about dust, dried paste and honest triage applies to Alienware machines too &mdash; the m-series and x-series push even more power through their cooling and are, if anything, less forgiving of neglected maintenance. Dell publishes its own overheating guidance for those models, and the same free checks (surface, vents, BIOS, thermal profiles) are the right starting point. For the service side &mdash; what we can do on Alienware thermals, and what we honestly can&rsquo;t &mdash; see our <a href=\"/alienware-dell-g-series-repair-bournemouth/\">Alienware &amp; Dell G-Series repair</a> page, which covers the whole Dell gaming range in one place.</p>"
+   }
+  ],
+  "faqs": [
+   {
+    "q": "Why does my Dell G15 get so hot when gaming?",
+    "a": "It packs a gaming CPU and GPU into a budget chassis, so the cooling runs near its limits from new. Add two-plus years of internal dust on the heatsink fins and factory thermal paste that has dried out, and temperatures climb while the fans work harder for less effect. The 5510, 5511 and 5515 all have long threads about exactly this on Dell&rsquo;s community forum."
+   },
+   {
+    "q": "Is 90&deg;C dangerous for a Dell G15?",
+    "a": "Gaming laptops are designed to run hot under load, and we won&rsquo;t invent a magic safe number &mdash; Dell doesn&rsquo;t publish one as policy. The signs that matter are change and behaviour: hotter and louder than it used to be, stuttering or frame drops as the machine throttles itself, or shutting down mid-game. Those are the machine protecting itself, and the cue to act."
+   },
+   {
+    "q": "What is Game Shift or G-mode on the G15?",
+    "a": "A built-in maximum-fan mode for demanding games. Press Fn + F9 (the key marked with a &lsquo;G&rsquo;) to toggle it. It&rsquo;s deliberately loud &mdash; that&rsquo;s the extra cooling headroom Dell built in. Many owners never discover it."
+   },
+   {
+    "q": "Will cleaning the fans and repasting actually fix my G15&rsquo;s overheating?",
+    "a": "In the large majority of two-to-four-year-old G15s, yes &mdash; dust blanketing the heatsink fins and dried thermal paste are the consensus hardware causes across Dell&rsquo;s community forum and every credible fix guide. What it won&rsquo;t fix is a genuinely failed graphics chip or board fault, and we&rsquo;ll tell you if the diagnosis points that way rather than sell you a service that won&rsquo;t help."
+   },
+   {
+    "q": "How much does a G15 thermal service cost with you?",
+    "a": "We quote each job individually after diagnosis, and you approve the quote before any work starts. As market context, the London mail-in specialists who rank for this work advertise Dell gaming thermal repair from &pound;135+VAT (Creative IT, delllaptoprepairs.co.uk) &mdash; that&rsquo;s their price, not ours, but it shows what specialist thermal work costs. With us there&rsquo;s no postage either way: collection across Bournemouth, Poole, Christchurch and Dorset is free."
+   },
+   {
+    "q": "Can I drop my G15 in to your shop?",
+    "a": "We don&rsquo;t have a walk-in shop &mdash; and honestly, you don&rsquo;t need one. We collect for free from your home or workplace anywhere across Bournemouth, Poole, Christchurch and the wider Dorset area, and we can meet by appointment at Kinson Community Centre if you&rsquo;d rather hand it over in person."
+   },
+   {
+    "q": "Do you repair failed GPUs or do board-level repair on the G15?",
+    "a": "No &mdash; we don&rsquo;t do board-level GPU repair, and we&rsquo;d rather say so plainly than take your machine in on false hope. Our thermal service covers fan de-dusting, repasting, fan replacement where needed, BIOS updates and thermal-profile setup. If diagnosis points to a failed graphics chip, we&rsquo;ll tell you and talk through the honest keep-or-replace options."
+   },
+   {
+    "q": "Should I undervolt my Dell G15 to run cooler?",
+    "a": "Undervolting genuinely lowers temperatures for some enthusiast owners, but it trades stability for heat and needs careful testing &mdash; it&rsquo;s a tinkerer&rsquo;s technique, not something we recommend or offer as a service. If a G15 needs undervolting just to behave, dust and dried paste are almost always the real problem."
+   },
+   {
+    "q": "My G15 shuts down in the middle of games &mdash; is that overheating?",
+    "a": "Very likely. Sudden shutdowns under load are the classic thermal-protection response: the machine cuts power to protect the silicon. Try the free fixes on this page first (surface, vents, Game Shift, BIOS, thermal profile). If shutdowns continue, it needs opening up &mdash; get in touch and we&rsquo;ll diagnose it before quoting."
+   },
+   {
+    "q": "Are you a Dell-authorised repair centre?",
+    "a": "No &mdash; we&rsquo;re independent Dell specialists, not authorised or endorsed by Dell. Our Dell relationship is as resellers since 2001, and we&rsquo;ve been a family-run Dorset firm since 1995, rated 4.9 on Google. If your G15 is still under Dell warranty, use Dell&rsquo;s warranty route first; for everything out of warranty, that independence is why you get a straight answer."
+   }
+  ],
+  "schemaKind": "service",
+  "serviceName": "Dell G15 Overheating &amp; Thermal Service (Fan Clean &amp; Repaste)",
+  "howToName": "How to fix a Dell G15 that is overheating",
+  "howToSteps": [
+   {
+    "name": "Try the free fixes",
+    "text": "Move to a hard flat surface, blow dust from the vents with compressed air (powered off), toggle Game Shift with Fn + F9, update the BIOS from dell.com/support, and check you are not in a Quiet thermal profile."
+   },
+   {
+    "name": "Tell us the model and symptoms",
+    "text": "If it still runs hot with fans flat out, call 01202 775566, text 07520 615332 or book online with your G15 model number (on the sticker underneath) and what it is doing."
+   },
+   {
+    "name": "Free collection and diagnosis",
+    "text": "We collect free across Bournemouth, Poole, Christchurch and Dorset, test the machine under sustained load, and phone you with a clear quote before any work starts."
+   },
+   {
+    "name": "Thermal service and load-tested return",
+    "text": "Fan and heatsink de-dust, fresh thermal paste on the CPU and GPU, BIOS and thermal profiles set up properly, then a sustained gaming-load test before we return the machine."
+   }
+  ],
+  "crossLinksHtml": "<ul><li><a href=\"/alienware-dell-g-series-repair-bournemouth/\">Alienware &amp; Dell G-Series repair in Bournemouth</a> &mdash; the pillar page for the whole Dell gaming range</li><li><a href=\"/dell-laptop-repair-bournemouth/\">Dell laptop repair in Bournemouth</a> &mdash; every Dell laptop fault, one honest starting point</li><li><a href=\"/book-service/\">Book a repair or thermal service</a> &mdash; pick a time that suits you</li><li><a href=\"/refurbished-dell-laptops-bournemouth/\">Refurbished Dell laptops</a> &mdash; business-grade Latitude machines from &pound;510 if the gaming days are over</li><li><a href=\"/dell-it-support-dorset/\">Dell IT support in Dorset</a> &mdash; the full Dell hub</li></ul>",
+  "crumbName": "G15 Overheating",
+  "primaryCta": [
+   "Book a Repair or Ask Us",
+   "/contact/"
+  ],
+  "secondaryCta": [
+   "Call 01202 775566",
+   "tel:+441202775566"
+  ]
+ },
+ {
+  "slug": "dell-killer-wifi-problems",
+  "title": "Dell Wi-Fi Keeps Dropping? Killer AX1650 Problems &amp; the Fix That Usually Works | 365 Techies",
+  "metaDesc": "If your Dell&rsquo;s Wi-Fi keeps dropping and there&rsquo;s a Killer AX1650 card inside, it&rsquo;s almost always the software. Free step-by-step fixes first &mdash; or we do it remotely from &pound;20. Independent Dell specialists in Bournemouth.",
+  "ogTitle": "Dell Killer Wi-Fi problems: why it keeps dropping &mdash; and the honest fix",
+  "eyebrow": "Dell Wi-Fi problems",
+  "h1": "Dell Wi-Fi keeps dropping? If there&rsquo;s a Killer AX1650 inside, it&rsquo;s almost certainly the software",
+  "lede": "Random disconnects that only a reboot cures. An adapter that vanishes from Device Manager. Full bars but no internet. If your Dell XPS, Alienware, G-Series or Latitude does any of this, there&rsquo;s a very good chance the culprit is the <strong>Killer AX1650</strong> wireless card &mdash; or rather, its software. The good news: the card itself is genuinely decent Intel hardware, no parts are usually needed, and the fix is one of the most reliably <em>remote-fixable</em> jobs we do. The free steps are below. If you&rsquo;d rather not wrestle with driver uninstallers, we&rsquo;re independent Dell specialists (a Dell reseller since 2001, not Dell-authorised) and we usually sort this in a single remote session from <strong>&pound;20</strong>.",
+  "chips": [
+   "Usually fixed in one remote session &mdash; from &pound;20",
+   "Independent Dell specialists, family-run since 1995",
+   "4.9 on Google"
+  ],
+  "ctaHead": "Rather we just made the Wi-Fi behave?",
+  "ctaSub": "Call 01202 775566 or text 07520 615332, Mon&ndash;Fri 9&ndash;5. Most Killer Wi-Fi faults are resolved in one remote session from &pound;20 &mdash; and we always call you before we connect, so you know exactly who&rsquo;s on your machine. If it does turn out to be hardware, free collection across Bournemouth, Poole, Christchurch &amp; Dorset.",
+  "sections": [
+   {
+    "eyebrow": "Sound familiar?",
+    "h2": "The symptoms &mdash; and how to check whether you&rsquo;ve got the Killer card",
+    "html": "<p>Killer AX1650 trouble has a recognisable pattern, documented at length across Dell&rsquo;s own community forums (XPS 15 7590, XPS 15/17 9500 and 9510, Alienware m15 R4 and plenty more) and Microsoft&rsquo;s Q&amp;A boards:</p><ul><li><strong>Random drops that only a restart fixes.</strong> The connection dies mid-call or mid-download; other devices in the house stay online happily.</li><li><strong>The adapter disappears.</strong> Wi-Fi vanishes from Windows entirely, or Device Manager shows the card with a warning and &ldquo;this device cannot start&rdquo;.</li><li><strong>Fussy about certain networks.</strong> It connects fine at home but refuses a particular router or 5GHz access point &mdash; or vice versa.</li><li><strong>Speed collapse.</strong> Connected, full signal, yet throughput crawls until you toggle Wi-Fi off and on.</li></ul><p><strong>Check what card you have in 20 seconds:</strong> right-click the Start button, choose <strong>Device Manager</strong>, open <strong>Network adapters</strong>, and look for &ldquo;Killer(R) Wi-Fi 6 AX1650&rdquo; (an AX1650s or AX1650x counts too). If it says Intel, Realtek or Qualcomm instead, this page isn&rsquo;t your diagnosis &mdash; not every Dell Wi-Fi fault is the Killer card, and we&rsquo;d be guessing if we pretended otherwise. Call us and we&rsquo;ll look at what you&rsquo;ve actually got.</p>"
+   },
+   {
+    "eyebrow": "Plain English",
+    "h2": "What a &ldquo;Killer&rdquo; card actually is: Intel hardware wearing a gaming badge",
+    "html": "<p>Here&rsquo;s the part that makes the whole problem less scary. Killer began life as a gaming-networking brand owned by Rivet Networks &mdash; and <strong>Intel bought Rivet Networks in May 2020</strong> (price undisclosed, as Engadget and PCWorld reported at the time). The Killer AX1650 in your Dell is <strong>built on Intel&rsquo;s AX200 Wi-Fi 6 silicon</strong> &mdash; essentially the same module as the widely used Intel AX200NGW, with Killer&rsquo;s &ldquo;performance&rdquo; software layered on top.</p><p>That software layer &mdash; the traffic-prioritisation suite and its drivers &mdash; is where almost all the misery lives. One driver version pushed out in February 2022 (v22.100.0.3) became notorious on Dell&rsquo;s forums for causing exactly the recurring malfunctions described above. The radio underneath is solid, proven Intel hardware.</p><p>Because Dell fitted the AX1650 across the <a href=\"/dell-xps-repair-bournemouth/\">XPS range</a>, <a href=\"/alienware-dell-g-series-repair-bournemouth/\">Alienware and the G-Series</a>, and many Latitudes, this one fault turns up in student laptops, gaming rigs and business fleets alike &mdash; which is why we&rsquo;ve given it a page of its own rather than a footnote.</p>"
+   },
+   {
+    "eyebrow": "Free fix no. 1",
+    "h2": "Dell&rsquo;s own cure: the clean reinstall, step by step",
+    "html": "<p>Dell&rsquo;s recommended procedure &mdash; the one that resolves a large share of cases &mdash; is a proper clean reinstall, not just an update. The order matters:</p><ol><li><strong>Download first, uninstall second.</strong> While your Wi-Fi still works (or over an ethernet cable / phone hotspot), go to <strong>dell.com/support</strong>, enter your Service Tag, and download the current Killer wireless driver for your exact machine. Grab the <strong>Killer Uninstaller Tool</strong> as well &mdash; a plain uninstall from Windows settings tends to leave bits of the old software behind, which is precisely what you&rsquo;re trying to get rid of.</li><li><strong>Remove the whole Killer stack.</strong> Run the uninstaller and let it take out the driver <em>and</em> the Killer performance software together.</li><li><strong>Restart.</strong> Properly &mdash; a full shut down and start, not sleep.</li><li><strong>Install the fresh driver</strong> you downloaded in step 1, then restart once more.</li></ol><p>If the drops were driver corruption or a bad update &mdash; and they very often are &mdash; this is the end of the story. If the machine settles for a few weeks and then relapses after a Windows or Dell update quietly swaps the driver back, move on to fix no. 2, which is the more permanent answer.</p>"
+   },
+   {
+    "eyebrow": "Free fix no. 2",
+    "h2": "The more permanent answer: run it as the Intel card it really is",
+    "html": "<p>Because the AX1650 is Intel AX200 silicon underneath, there&rsquo;s a second route that many long-suffering owners on Dell&rsquo;s forums and Microsoft Q&amp;A eventually land on: <strong>remove the Killer software stack entirely and run the card on Intel&rsquo;s plain Wi-Fi driver instead</strong>, downloaded straight from intel.com (the current v23.x releases support it).</p><p>The trade-off, stated honestly: you lose the Killer traffic-prioritisation features. In our experience almost nobody notices, because almost nobody was using them &mdash; what they notice is Wi-Fi that simply stays connected. The card&rsquo;s actual capabilities (Wi-Fi 6, Bluetooth, speed) are unchanged, because the hardware is unchanged.</p><p>Two smaller checks worth making while you&rsquo;re at it:</p><ul><li><strong>If drops only happen on one network</strong> &mdash; particularly one 5GHz access point &mdash; the fault may be a disagreement between the driver and that router&rsquo;s settings. Trying a different wireless channel, or separating the 2.4GHz and 5GHz bands into differently named networks, often exposes (or solves) it.</li><li><strong>After any driver change,</strong> let Windows Update run and confirm it hasn&rsquo;t &ldquo;helpfully&rdquo; reinstated the old Killer driver &mdash; the classic cause of the fault coming back a month later.</li></ul>"
+   },
+   {
+    "eyebrow": "The honest exception",
+    "h2": "The rare case where it genuinely is the hardware",
+    "html": "<p>A small minority of cases survive every driver cure. The signs it really is the card itself: it fails on <em>every</em> network, it keeps vanishing from Device Manager even after a completely clean reinstall of Windows, or it throws errors no driver version clears.</p><p>Even then, the news is better than you&rsquo;d expect. The AX1650 isn&rsquo;t soldered to the motherboard &mdash; it&rsquo;s a small plug-in M.2 module, and it can be <strong>swapped inexpensively for a plain Intel equivalent</strong>. This is a short bench job, not a motherboard repair, and it&rsquo;s quoted before we touch anything &mdash; diagnosis first, no surprises. We&rsquo;ll tell you plainly if your machine is in this minority rather than selling you a remote session that can&rsquo;t fix it.</p>"
+   },
+   {
+    "eyebrow": "When you&rsquo;ve had enough",
+    "h2": "How we fix it: one remote session, from &pound;20",
+    "html": "<p>This is honestly one of the best remote-fix jobs on our books &mdash; no parts usually needed, so the promise is real rather than optimistic. Here&rsquo;s how it works:</p><ul><li><strong>We call you before we connect</strong> &mdash; always. You know exactly who&rsquo;s on your machine and when.</li><li><strong>One session, from &pound;20.</strong> We run the full clean-reinstall procedure, or move you onto the plain Intel driver where that&rsquo;s the better long-term answer, and check your router settings against the card while we&rsquo;re in. Most Killer faults are resolved remotely &mdash; we won&rsquo;t claim all, because the hardware minority above exists.</li><li><strong>If it is the card,</strong> free collection across Bournemouth, Poole, Christchurch and Dorset for the inexpensive M.2 swap &mdash; quoted first. No walk-in shop; we come to you, or meet at the Kinson Community Centre by appointment.</li><li><strong>Running a fleet?</strong> Killer-equipped Latitudes and XPS machines across a business are exactly the sort of recurring niggle our <a href=\"/dell-business-support-dorset/\">business support</a> exists for. On a support plan (home &pound;18.25/month per computer, business from &pound;24.38) this sort of fix is simply part of the service &mdash; and every piece of work ends with a <strong>written Service Report</strong> so you can see what was done and why.</li></ul><p>We&rsquo;re independent Dell specialists &mdash; a Dell reseller since 2001, but not authorised or endorsed by Dell or Intel &mdash; and a family-run firm since 1995. Same faces every time, 4.9 on Google. See our <a href=\"/dell-remote-support/\">Dell remote support</a> page for how a session works end to end.</p>"
+   }
+  ],
+  "faqs": [
+   {
+    "q": "Why does my Dell Wi-Fi keep dropping?",
+    "a": "On a great many Dell XPS, Alienware, G-Series and Latitude machines, the cause is the Killer AX1650 wireless card&rsquo;s software rather than the hardware. The pattern is random disconnects fixed by a reboot, the adapter vanishing from Device Manager, or trouble with certain 5GHz networks. A clean reinstall of the driver stack &mdash; or replacing it with Intel&rsquo;s plain driver &mdash; usually cures it. Not every Dell Wi-Fi fault is the Killer card, though, so check Device Manager first."
+   },
+   {
+    "q": "How do I know if my Dell has a Killer wireless card?",
+    "a": "Right-click the Start button, choose Device Manager, and open Network adapters. If you see &ldquo;Killer(R) Wi-Fi 6 AX1650&rdquo; (or AX1650s/AX1650x), this page applies to you. If the adapter is listed as Intel, Realtek or Qualcomm, the diagnosis is different &mdash; call us on 01202 775566 and we&rsquo;ll look at what you&rsquo;ve actually got."
+   },
+   {
+    "q": "Is the Killer AX1650 a bad Wi-Fi card?",
+    "a": "The hardware is genuinely good &mdash; it&rsquo;s built on Intel&rsquo;s AX200 Wi-Fi 6 silicon, essentially the same module as the widely used Intel AX200NGW. Intel bought the Killer brand&rsquo;s maker, Rivet Networks, in May 2020. The problems live almost entirely in the Killer software layered on top, which is why software fixes work so well."
+   },
+   {
+    "q": "Can I just use the Intel driver instead of the Killer one?",
+    "a": "Yes. Because the AX1650 is Intel AX200 silicon underneath, it runs happily on Intel&rsquo;s plain Wi-Fi driver from intel.com (current v23.x releases). Remove the Killer software stack with the Killer Uninstaller Tool first, restart, then install the Intel driver. Many owners on Dell&rsquo;s own forums settle on this as the permanent fix."
+   },
+   {
+    "q": "Will I lose anything by removing the Killer software?",
+    "a": "Only the Killer traffic-prioritisation features &mdash; the tools that claim to favour game or video traffic. In practice very few people use them, and the card&rsquo;s actual capabilities (Wi-Fi 6 speeds, Bluetooth, range) are unchanged because the hardware is unchanged. What most people gain is a connection that simply stays up."
+   },
+   {
+    "q": "Why does the problem come back after I&rsquo;ve fixed it?",
+    "a": "Usually because Windows Update or Dell&rsquo;s update tool has quietly reinstalled the old Killer driver over your fix &mdash; one driver version from February 2022 (v22.100.0.3) was notorious for exactly this misery. After any driver change, let updates run and then confirm in Device Manager that your chosen driver is still the one in charge. That check is part of our remote session too."
+   },
+   {
+    "q": "Which Dell laptops use the Killer AX1650?",
+    "a": "It shipped very widely: XPS 13, 15 and 17 models (the 7590, 9500 and 9510 threads are among the best documented), Alienware and G-Series gaming laptops, and many Latitude business machines. That&rsquo;s why the same Wi-Fi complaint turns up in student laptops, gaming rigs and office fleets alike."
+   },
+   {
+    "q": "Can you fix Killer Wi-Fi problems remotely, and what does it cost?",
+    "a": "Yes &mdash; this is one of the most reliably remote-fixable faults we see, because no parts are usually needed. A remote session starts from &pound;20, we always call you before we connect, and most cases are resolved in that one session. We won&rsquo;t promise every case, because a small minority turn out to be the card itself."
+   },
+   {
+    "q": "What if it really is the hardware?",
+    "a": "Then the fix is still modest: the AX1650 is a small plug-in M.2 module, not soldered to the board, and it can be swapped inexpensively for a plain Intel equivalent. We collect free of charge across Bournemouth, Poole, Christchurch and Dorset, quote before we touch anything, and return the machine tested on your own network."
+   },
+   {
+    "q": "Do you have a shop I can bring my Dell to? Are you Dell-authorised?",
+    "a": "No walk-in shop &mdash; we&rsquo;re remote-first, with free local collection when hands-on work is needed, and we can meet at the Kinson Community Centre by appointment. We&rsquo;re independent Dell specialists: a Dell reseller since 2001 and family-run since 1995, but not authorised or endorsed by Dell or Intel. Call 01202 775566 or text 07520 615332, Mon&ndash;Fri 9&ndash;5."
+   }
+  ],
+  "schemaKind": "service",
+  "serviceName": "Dell Killer Wi-Fi Fix (Remote &amp; On-Site), Dorset",
+  "howToName": "How to fix Killer AX1650 Wi-Fi problems on a Dell",
+  "howToSteps": [
+   {
+    "name": "Confirm it&rsquo;s the Killer card",
+    "text": "Right-click Start, open Device Manager, and look under Network adapters for &ldquo;Killer(R) Wi-Fi 6 AX1650&rdquo;. If your adapter is Intel, Realtek or Qualcomm instead, the diagnosis is different &mdash; call 01202 775566 and we&rsquo;ll check what you&rsquo;ve got."
+   },
+   {
+    "name": "Try Dell&rsquo;s clean reinstall",
+    "text": "Download the current Killer driver for your Service Tag from dell.com/support plus the Killer Uninstaller Tool, remove the whole Killer stack, restart fully, then install the fresh driver. This resolves a large share of cases on its own."
+   },
+   {
+    "name": "Or move to the plain Intel driver",
+    "text": "For the more permanent fix, remove the Killer software and install Intel&rsquo;s standard Wi-Fi driver from intel.com (v23.x) &mdash; the AX1650 is Intel AX200 hardware underneath and runs happily on it. You lose only the Killer prioritisation features most people never use."
+   },
+   {
+    "name": "Hand it to us if you&rsquo;d rather not",
+    "text": "Book a remote session from &pound;20 &mdash; we call before we connect, and most Killer faults are resolved in that one session. In the rare hardware case, we collect free across Bournemouth, Poole, Christchurch and Dorset and quote for an inexpensive Intel M.2 module swap."
+   }
+  ],
+  "crossLinksHtml": "<ul><li><a href=\"/dell-remote-support/\">Dell remote support from &pound;20</a> &mdash; how a session works, from the call-before-we-connect to the fix.</li><li><a href=\"/dell-xps-repair-bournemouth/\">Dell XPS repair in Bournemouth</a> &mdash; the full XPS range page, including the other faults these machines are known for.</li><li><a href=\"/alienware-dell-g-series-repair-bournemouth/\">Alienware &amp; Dell G-Series repair</a> &mdash; gaming-laptop support, where the AX1650 also turns up.</li><li><a href=\"/dell-laptop-repair-bournemouth/\">Dell laptop repair in Bournemouth</a> &mdash; our main Dell laptop repair service, with free local collection.</li><li><a href=\"/dell-business-support-dorset/\">Dell business support in Dorset</a> &mdash; fleets of Killer-equipped Latitudes are exactly what our plans cover, with a written Service Report after every job.</li><li><a href=\"/dell-it-support-dorset/\">All Dell support services</a> &mdash; the full hub, from repairs to refurbished hardware.</li></ul>",
+  "crumbName": "Killer Wi-Fi Problems",
   "primaryCta": [
    "Book a Repair or Ask Us",
    "/contact/"
