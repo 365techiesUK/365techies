@@ -51,6 +51,10 @@ foreach ($used as $k => $v) { if ($v < $cut) unset($used[$k]); }
 if (!isset($used[$key])) { $used[$key] = $nowM; }
 @file_put_contents($usedFile, json_encode($used), LOCK_EX);
 
-// serve, watermarked
+// serve, watermarked. Strip any UTF-8 BOM from the payload: prepending the watermark
+// would push the BOM mid-file, which corrupts PowerShell's parse ("Unexpected attribute
+// 'CmdletBinding'") and kills the app instantly.
+$code = (string)file_get_contents($payload);
+if (substr($code, 0, 3) === "\xEF\xBB\xBF") { $code = substr($code, 3); }
 echo "# 365 Techies Service Pass - served " . gmdate('Y-m-d H:i') . " UTC - session " . $key . "\n";
-readfile($payload);
+echo $code;
