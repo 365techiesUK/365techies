@@ -40,14 +40,15 @@ $mins = intval($mins36, 36);
 $nowM = intdiv(time(), 60);
 if ($nowM - $mins > 20 || $mins - $nowM > 2) { http_response_code(403); exit("Write-Host '365 Techies Service Pass: token expired (20 min) - generate a fresh one' -ForegroundColor Yellow\n"); }
 
-// single use
+// single use - with a 3-minute grace window after first use, so a WAF retry or an
+// overeager link-prefetcher can't burn the token before the technician's own run
 $used = file_exists($usedFile) ? (json_decode((string)@file_get_contents($usedFile), true) ?: array()) : array();
 $key  = strtolower($mins36 . '-' . $nonce);
-if (isset($used[$key])) { http_response_code(403); exit("Write-Host '365 Techies Service Pass: that token was already used - generate a fresh one' -ForegroundColor Yellow\n"); }
-// prune entries older than a day, then burn this one
+if (isset($used[$key]) && ($nowM - $used[$key]) > 3) { http_response_code(403); exit("Write-Host '365 Techies Service Pass: that token was already used - generate a fresh one' -ForegroundColor Yellow\n"); }
+// prune entries older than a day, then record first use
 $cut = $nowM - 1440;
 foreach ($used as $k => $v) { if ($v < $cut) unset($used[$k]); }
-$used[$key] = $nowM;
+if (!isset($used[$key])) { $used[$key] = $nowM; }
 @file_put_contents($usedFile, json_encode($used), LOCK_EX);
 
 // serve, watermarked
