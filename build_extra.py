@@ -13,10 +13,12 @@ from build_pages import (add, graph, crumb, webpage, service, faqpage,
                          SIGGEN_TOOL, SSLCHECK_TOOL, DOMEXP_TOOL, SOLARCALC_TOOL, AVTEST_TOOL, VBUILDER_TOOL, PCBUILD_TOOL, TOOLS, tool_cards, tools_strip, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
 from build_local import make_customer
 from new_pages_data import NEW_PAGES
+from latitude_pages_data import LATITUDE_PAGES, LATITUDE_COMPARE_TABLES
 try:
     from new_pages_data import DELL_COMPARE_TABLES
 except ImportError:
     DELL_COMPARE_TABLES = {}
+DELL_COMPARE_TABLES.update(LATITUDE_COMPARE_TABLES)
 try:
     from hero_scenes import SCENES as HERO_SCENES
 except Exception:
@@ -3058,7 +3060,7 @@ _DELL_CLUSTER = [
    ("dell-optiplex-fan-error-f1-fix", "OptiPlex fan error (F1)", "&lsquo;Previous fan failure, press F1&rsquo; explained &mdash; the safe fixes and when to get help."),
  ]),
  ("Buying a refurbished Dell", [
-   ("refurbished-dell-laptops-bournemouth", "Refurbished Dell laptops", "Business-grade Latitude from &pound;299, set up and supported &mdash; buy in person in Bournemouth."),
+   ("refurbished-dell-laptops-bournemouth", "Refurbished Dell laptops", "Business-grade Latitude from &pound;510 with a new 1TB Samsung 990 PRO, set up and supported &mdash; buy in person in Bournemouth."),
    ("refurbished-dell-desktops-dorset", "Refurbished Dell desktops", "Tested, warrantied OptiPlex desktops from &pound;299 across Dorset &mdash; skip the marketplace gamble."),
  ]),
  ("Which Dell should I buy?", [
@@ -3213,7 +3215,7 @@ def dell_hardware():
     desc = "Refurbished, tested ex-business Dell Latitude laptops & OptiPlex desktops from £299 — supplied, set up & supported across Bournemouth, Poole & Dorset."
     faqs = [
       ("Are these new or refurbished?", "They&rsquo;re professionally refurbished &mdash; genuine ex-business Dell Latitude laptops and OptiPlex desktops that we test, securely wipe, clean, grade and set up before they go out. Not new, and we&rsquo;d never pretend otherwise &mdash; that&rsquo;s rather the point: proper business-grade kit for a lot less."),
-      ("How much do refurbished Dells cost?", "Our refurbished Dell Latitude laptops and OptiPlex desktops <strong>start from &pound;299</strong>, with the exact price depending on the model, spec and condition grade you choose. Tell us your budget and what you&rsquo;ll use it for, and we&rsquo;ll match you the best machine for the money &mdash; every one tested, set up, supported and backed by our warranties."),
+      ("How much do refurbished Dells cost?", "Our refurbished Dell OptiPlex desktops <strong>start from &pound;299</strong> and Latitude laptops <strong>from &pound;510</strong> &mdash; every laptop now includes a brand-new <strong>1TB Samsung 990 PRO SSD</strong> with setup and data transfer in the price, and the exact figure depends on the model, spec and condition grade you choose. Tell us your budget and what you&rsquo;ll use it for, and we&rsquo;ll match you the best machine for the money &mdash; every one tested, set up, supported and backed by our warranties."),
       ("I&rsquo;m not very confident with technology &mdash; is this still for me?", "Absolutely &mdash; you don&rsquo;t need to know any of the technical words, that&rsquo;s our job, not yours. We help plenty of people who&rsquo;d rather not deal with the technical side. We choose the right computer for you, set it all up, and can make it easier to use with larger text and other accessibility options. And there&rsquo;s always a real local person to phone if you ever get stuck &mdash; the same friendly faces, year after year, on a number that&rsquo;s been ours for years (01202 775566)."),
       ("Are refurbished business laptops any good?", "Genuinely, yes. Business-grade Dell Latitudes and OptiPlexes are built to work hard for years &mdash; tougher materials and, for Latitude laptops, tested to military-standard durability methods. A well-refurbished one often outlasts a brand-new budget laptop that was built down to a price."),
       ("Is it safe to buy refurbished?", "From us, yes. Every machine is fully tested and securely wiped, you&rsquo;re buying from a real local firm &mdash; a Dorset family business you can phone, text or email, here since 1995 &mdash; and you&rsquo;re covered by our own warranty plus your Consumer Rights Act protection, very different from an untested bargain off a marketplace."),
@@ -3243,7 +3245,7 @@ def dell_hardware():
           <p>Bought refurbished, that quality costs <strong>far less than new</strong> &mdash; often around 30&ndash;50% less &mdash; while still doing everything most homes and small businesses need. We&rsquo;ve been supplying refurbished Dell business laptops and PCs for <strong>over 30 years</strong>: we recommend the right model, spec, memory and storage, fit a <strong>brand-new Samsung Pro SSD</strong>, supply any accessories you need, set it all up and support it for years.</p>
         </div>
         <ul class="checklist" data-stagger>
-{checklist(["Genuine ex-business Dell Latitude &amp; OptiPlex","Brand-new Samsung Pro SSD &mdash; 5-year guarantee","any remaining Dell warranty where applicable + our 5-year guarantee","From &pound;299 &mdash; often 30&ndash;50% less than new","We recommend the right spec &amp; supply the accessories","Set up &amp; fully supported by your local team","Supplying refurbished Dell business kit for 30+ years","Full repair service if you ever break it"])}
+{checklist(["Genuine ex-business Dell Latitude &amp; OptiPlex","Brand-new Samsung Pro SSD &mdash; 5-year guarantee","any remaining Dell warranty where applicable + our 5-year guarantee","Desktops from &pound;299, laptops from &pound;510 &mdash; often 30&ndash;50% less than new","We recommend the right spec &amp; supply the accessories","Set up &amp; fully supported by your local team","Supplying refurbished Dell business kit for 30+ years","Full repair service if you ever break it"])}
         </ul>
       </div>
     </section>''',
@@ -3459,7 +3461,8 @@ def dell_hardware():
           <label class="field"><span>Rough budget (optional)</span>
             <select name="budget">
               <option>Not sure yet &mdash; advise me</option>
-              <option>Around &pound;299 (our entry price)</option>
+              <option>Around &pound;299 (our desktop entry price)</option>
+              <option>Around &pound;510 (our laptop entry price)</option>
               <option>&pound;300&ndash;&pound;450</option>
               <option>&pound;450&ndash;&pound;650</option>
               <option>&pound;650+</option>
@@ -3474,6 +3477,20 @@ def dell_hardware():
     </section>''',
       reviews_block([("The guys at 365 listened to my actual needs and tweaked a desktop to the specs I required. It&rsquo;s a quality Dell machine. A brilliant machine at a very good price &mdash; you get a personal service here.", "Dean Robertson"),("365 came to my rescue again and built me a new computer to my specifications for an extremely reasonable price. Thank you David and Steve.", "Sheila Cutler"),("I have trusted 365 with my IT support since 2001. I&rsquo;ve lost count of the number of PCs, tablets, laptops I&rsquo;ve bought from them.", "Heather")]),
       faq_html(faqs),
+      '''    <section class="blog-section" aria-label="Choose your Latitude series" id="series">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// LAPTOPS &middot; PICK YOUR LATITUDE SERIES</p>
+          <h2 class="section-title section-title--center" data-title>Which Latitude series suits you?<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Every refurbished Latitude we sell comes with a <strong>new 1TB Samsung 990 PRO SSD</strong>, a clean licensed copy of Windows 11, setup and data transfer included, and our 5-year guarantee. Three tiers, honestly explained &mdash; prices are typical and depend on the exact machine and grade in stock.</p>
+        </div>
+        <div class="blog-grid" data-stagger>
+          <a class="post-card" href="/refurbished-dell-latitude-3000/"><p class="post-card__cat">From &pound;510 &middot; honest budget</p><h3>Latitude 3000 Series</h3><p>The sensible-money business laptop &mdash; and the easiest to upgrade later. Great for email, Office and everyday life.</p><span class="post-card__more">See models &amp; prices &#8594;</span></a>
+          <a class="post-card" href="/refurbished-dell-latitude-5000/"><p class="post-card__cat">From &pound;535 &middot; the sweet spot</p><h3>Latitude 5000 Series</h3><p>The mainstream business workhorse most people should buy &mdash; strong build, easy upgrades, all-day comfort.</p><span class="post-card__more">See models &amp; prices &#8594;</span></a>
+          <a class="post-card" href="/refurbished-dell-latitude-7000/"><p class="post-card__cat">From &pound;520 &middot; premium ultralight</p><h3>Latitude 7000 Series</h3><p>Dell&rsquo;s executive lightweights &mdash; lovely to carry, and refurbished they can cost less than a 5000. One golden rule inside.</p><span class="post-card__more">See models &amp; prices &#8594;</span></a>
+        </div>
+      </div>
+    </section>''',
       f'''    <section class="blog-section" aria-label="Owner's guide" id="guides">
       <div class="wrap">
         <div class="section-head">
@@ -3484,6 +3501,8 @@ def dell_hardware():
         <div class="blog-grid" data-stagger style="max-width:760px;margin:0 auto">
           <a class="post-card" href="/dell-latitude-3520-guide/"><p class="post-card__cat">Laptop guide</p><h3>Dell Latitude 3520 &mdash; The Easy Guide</h3><p>Interactive port tour &middot; home, desk &amp; off-grid power &middot; battery care &middot; quick fixes.</p><span class="post-card__more">Open the guide &#8594;</span></a>
           <a class="post-card" href="/dell-optiplex-guide/"><p class="post-card__cat">Desktop guide</p><h3>Dell OptiPlex &mdash; The Easy Guide</h3><p>Front &amp; back ports &middot; dual monitors &middot; UPS advice &middot; upgrades &amp; 60-second fixes.</p><span class="post-card__more">Open the guide &#8594;</span></a>
+          <a class="post-card" href="/dell-latitude-5000-guide/"><p class="post-card__cat">Laptop guide</p><h3>Latitude 5000 Series &mdash; The Easy Guide</h3><p>Meet the 5420&ndash;5530 family &middot; upgrade truths &middot; buying advice &amp; honest gotchas.</p><span class="post-card__more">Open the guide &#8594;</span></a>
+          <a class="post-card" href="/dell-latitude-7000-guide/"><p class="post-card__cat">Laptop guide</p><h3>Latitude 7000 Series &mdash; The Easy Guide</h3><p>The premium ultralights &middot; the soldered-RAM rule &middot; storage traps &amp; buying advice.</p><span class="post-card__more">Open the guide &#8594;</span></a>
         </div>
       </div>
     </section>''',
@@ -3522,7 +3541,7 @@ def dell_it_support_hub():
       ("emergency", "Emergency Dell repair", "/emergency-dell-repair-bournemouth/",
        "Dead, won&rsquo;t boot, or your business is down? Fast same-day response and same-day remote diagnosis where we can, plus free local collection. (Mon&ndash;Fri, 9&ndash;5 &mdash; no 24/7 promises we can&rsquo;t keep.)"),
       ("sales", "Buy a refurbished Dell", "/dell-hardware/",
-       "Tested, business-grade Dell Latitude laptops &amp; OptiPlex desktops from &pound;299 &mdash; new Samsung Pro SSD, our own 5-year guarantee, set up and supported."),
+       "Tested, business-grade Dell &mdash; OptiPlex desktops from &pound;299, Latitude laptops from &pound;510 with a new 1TB Samsung 990 PRO &mdash; our own 5-year guarantee, set up and supported."),
     ]
     ways_html = "\n".join(
       f'          <a class="dell-way" href="{href}">{_dell_scene(key)}<h3>{title}</h3><p>{blurb}</p><span class="post-card__more">Get help &#8594;</span></a>'
@@ -5974,14 +5993,14 @@ def dell_3520_guide():
       ("Can I run it in my campervan without an inverter?", "That&rsquo;s the trick this guide is built around: a quality 65W USB-C PD adapter in a 12V socket powers the laptop directly at roughly 90%+ efficiency &mdash; silent, no inverter idle drain, and noticeably more runtime from your leisure battery than the 12V&#8594;230V&#8594;charger route. Pair it with a proper 100W-rated (5A) cable."),
       ("Can the USB-C port drive a monitor too?", "Yes &mdash; it carries DisplayPort video as well as power and data. A USB-C dock or USB-C monitor gives you the one-cable desk: power, screens, wired network and accessories through a single plug."),
       ("How do I make the battery last years?", "Heat and living at 100% are what age batteries. Keep it out of direct sun (especially in a van), and if it&rsquo;s plugged in most of the time, set a charge limit (around 80%) in Dell Power Manager &mdash; we set this up on the machines we supply. Storing it for a while? Leave it around half charged."),
-      ("Is this the laptop 365 Techies sells?", "Yes &mdash; the Latitude 3520 is typical of the refurbished business-grade Dells we supply from &pound;299: tested, securely wiped, fitted with a new SSD and covered by our own 5-year guarantee. This guide comes free with every one. See <a href=\"/dell-hardware/\">refurbished Dells</a>."),
+      ("Is this the laptop 365 Techies sells?", "Yes &mdash; the Latitude 3520 is typical of the refurbished business-grade Dell laptops we supply from &pound;510: tested, securely wiped, fitted with a new 1TB Samsung 990 PRO SSD and covered by our own 5-year guarantee. This guide comes free with every one. See <a href=\"/dell-hardware/\">refurbished Dells</a>."),
       ("Something&rsquo;s not working &mdash; what now?", "Try the quick fixes above first (Win+P for screens, the F1 mute key for sound, hold the power button 15 seconds for a frozen machine). Still stuck? That&rsquo;s literally what we do &mdash; <a href=\"/remote-it-support/\">remote support</a>, usually within minutes."),
     ]
     content = "\n".join([
       hero(bc("Dell Latitude 3520 Guide"), "// THE EASY OWNER&rsquo;S GUIDE",
            'Your Dell Latitude 3520, <em class="grad grad--cyan">made simple</em>',
            "Every port explained with an interactive tour, three ways to power it &mdash; at home, the one-cable desk, and the efficient 12V USB-C trick for vans and off-grid &mdash; plus battery care, shortcuts and quick fixes. No jargon, promise.",
-           cta1=("Explore the Ports", "#d35tool"), cta2=("Refurbished Dells from &pound;299", "/dell-hardware/"),
+           cta1=("Explore the Ports", "#d35tool"), cta2=("Refurbished Dell Laptops from &pound;510", "/dell-hardware/"),
            chips=["Interactive port tour","Home &middot; desk &middot; off-grid","Plain English"], scene=HERO_SCENES.get("dellguide")),
       DELL3520_WIDGET,
       f'''    <section class="section" aria-label="Battery care">
@@ -6021,7 +6040,7 @@ def dell_3520_guide():
       faq_html(faqs),
       tools_strip(["speccheck", "pcbench", "solarcalc", "healthcheck"], title="Free tools for your machine", alt=False),
       cta("This guide comes with the laptops we sell",
-          "Refurbished business-grade Dell Latitude &amp; OptiPlex from &pound;299 &mdash; tested, new SSD, securely wiped, 5-year guarantee, and set up ready to use. Plus a friendly techie on the end of the phone.",
+          "Refurbished business-grade Dell &mdash; Latitude laptops from &pound;510 (with a new 1TB Samsung 990 PRO), OptiPlex desktops from &pound;299 &mdash; tested, securely wiped, 5-year guarantee, and set up ready to use. Plus a friendly techie on the end of the phone.",
           primary=("See Refurbished Dells", "/dell-hardware/"), secondary=("Keep It Healthy &mdash; Plans", "/monthly-it-support/")),
     ])
     def schema(s, _desc=desc, _faqs=faqs):
@@ -14044,6 +14063,9 @@ _DELL_HUB_SLUGS = frozenset({
  'dell-support-plans', 'emergency-dell-repair-bournemouth', 'dell-same-day-support-dorset',
  'dell-laptop-servicing-bournemouth', 'dell-support-bournemouth', 'dell-support-poole',
  'dell-laptop-repair-poole',
+ # refurbished Latitude series pages + guides (2026-07-16)
+ 'refurbished-dell-latitude-3000', 'refurbished-dell-latitude-5000', 'refurbished-dell-latitude-7000',
+ 'dell-latitude-5000-guide', 'dell-latitude-7000-guide',
 })
 
 def _pack_hub(slug):
@@ -14080,6 +14102,9 @@ _PACK_SCENE = {
     "dell-support-bournemouth": "remote", "dell-support-poole": "remote",
     "dell-same-day-support-dorset": "remote", "dell-support-plans": "how3",
     "dell-laptop-servicing-bournemouth": "servicing",
+    "refurbished-dell-latitude-3000": "refurblaptop", "refurbished-dell-latitude-5000": "refurblaptop",
+    "refurbished-dell-latitude-7000": "refurblaptop",
+    "dell-latitude-5000-guide": "dellguide", "dell-latitude-7000-guide": "dellguide",
 }
 
 def build_new_page(d):
@@ -14560,6 +14585,9 @@ custom_dashboards()
 
 
 for _np in NEW_PAGES:
+    build_new_page(_np)
+
+for _np in LATITUDE_PAGES:
     build_new_page(_np)
 
 if __name__ == "__main__":

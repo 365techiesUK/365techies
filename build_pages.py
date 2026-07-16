@@ -173,6 +173,9 @@ HEADER = '''  <header class="site-header">
             <span class="dropdown__label dropdown__label--sep">Dell specialists since 1995</span>
             <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
             <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
+            <a href="/refurbished-dell-latitude-3000/">Latitude 3000 Series</a>
+            <a href="/refurbished-dell-latitude-5000/">Latitude 5000 Series</a>
+            <a href="/refurbished-dell-latitude-7000/">Latitude 7000 Series</a>
             <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
             <a href="/dell-support-bournemouth/">Dell Support Bournemouth</a>
             <a href="/dell-support-poole/">Dell Support Poole</a>
@@ -227,6 +230,8 @@ HEADER = '''  <header class="site-header">
             <a href="/support-portal/">Support Portal</a>
             <a href="/splashtop-business-guide/">Remote Access Guide</a>
             <a href="/dell-latitude-3520-guide/">Dell Laptop Guide</a>
+            <a href="/dell-latitude-5000-guide/">Latitude 5000 Guide</a>
+            <a href="/dell-latitude-7000-guide/">Latitude 7000 Guide</a>
             <a href="/dell-optiplex-guide/">Dell Desktop Guide</a>
             <a href="/heatwave-tech-guide/">Heatwave Tech Guide</a>
             <a href="/monthly-it-support/">Monthly IT Support</a>
@@ -328,6 +333,9 @@ HEADER = '''  <header class="site-header">
           <span class="dropdown__label dropdown__label--sep">Dell specialists since 1995</span>
           <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
           <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
+            <a href="/refurbished-dell-latitude-3000/">Latitude 3000 Series</a>
+            <a href="/refurbished-dell-latitude-5000/">Latitude 5000 Series</a>
+            <a href="/refurbished-dell-latitude-7000/">Latitude 7000 Series</a>
           <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
           <a href="/dell-support-bournemouth/">Dell Support Bournemouth</a>
           <a href="/dell-support-poole/">Dell Support Poole</a>
@@ -378,6 +386,8 @@ HEADER = '''  <header class="site-header">
           <a href="/support-portal/">Support Portal</a>
           <a href="/splashtop-business-guide/">Remote Access Guide</a>
           <a href="/dell-latitude-3520-guide/">Dell Laptop Guide</a>
+            <a href="/dell-latitude-5000-guide/">Latitude 5000 Guide</a>
+            <a href="/dell-latitude-7000-guide/">Latitude 7000 Guide</a>
           <a href="/dell-optiplex-guide/">Dell Desktop Guide</a>
           <a href="/heatwave-tech-guide/">Heatwave Tech Guide</a>
           <a href="/monthly-it-support/">Monthly IT Support</a>
@@ -522,6 +532,8 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/support-portal/">Support Portal</a>
         <a href="/splashtop-business-guide/">Remote Access Guide</a>
         <a href="/dell-latitude-3520-guide/">Dell Laptop Guide</a>
+            <a href="/dell-latitude-5000-guide/">Latitude 5000 Guide</a>
+            <a href="/dell-latitude-7000-guide/">Latitude 7000 Guide</a>
         <a href="/dell-optiplex-guide/">Dell Desktop Guide</a>
         <a href="/heatwave-tech-guide/">Heatwave Tech Guide</a>
         <a href="/monthly-it-support/">Monthly IT Support</a>
@@ -579,6 +591,9 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/transfer-photos-to-a-new-computer-bournemouth/">Transfer Files to a New PC</a>
         <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
         <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
+            <a href="/refurbished-dell-latitude-3000/">Latitude 3000 Series</a>
+            <a href="/refurbished-dell-latitude-5000/">Latitude 5000 Series</a>
+            <a href="/refurbished-dell-latitude-7000/">Latitude 7000 Series</a>
         <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
         <a href="/dell-support-bournemouth/">Dell Support Bournemouth</a>
         <a href="/dell-support-poole/">Dell Support Poole</a>
