@@ -3079,6 +3079,9 @@ _DELL_CLUSTER = [
    ("dell-inspiron-repair-bournemouth", "Inspiron repair &amp; upgrades", "Screens, hinges, batteries, SSD upgrades and honest keep-or-replace advice for the Dell most homes own."),
    ("dell-precision-workstation-repair-support-dorset", "Precision workstations", "Repairs, upgrades and business support for Dorset&rsquo;s CAD, engineering and creative machines."),
    ("alienware-dell-g-series-repair-bournemouth", "Alienware &amp; G-series", "Gaming Dell running hot or slowing down? Local collection &mdash; no posting your rig to London."),
+   ("dell-xps-repair-bournemouth", "XPS repair", "Premium Dell playing up &mdash; battery, heat, screen? Honest repair advice for machines worth fixing."),
+   ("dell-vostro-repair-support-dorset", "Vostro support", "Dell moved on from Vostro &mdash; we didn&rsquo;t. Repairs, upgrades and business support for SME fleets."),
+   ("dell-monitor-dock-support-dorset", "Monitors &amp; docks", "No signal, dock dramas, multi-screen setups &mdash; plain-English help that actually matches your ports."),
  ]),
  ("Upgrading an older Dell", [
    ("dell-latitude-e5550-upgrade", "Latitude E5550", "Still running after a decade? Why that&rsquo;s the point &mdash; and the honest Windows 11 upgrade path."),
@@ -14456,6 +14459,7 @@ _DELL_HUB_SLUGS = frozenset({
  # range pillars (2026-07-17)
  'dell-inspiron-repair-bournemouth', 'dell-precision-workstation-repair-support-dorset',
  'alienware-dell-g-series-repair-bournemouth',
+ 'dell-xps-repair-bournemouth', 'dell-vostro-repair-support-dorset', 'dell-monitor-dock-support-dorset',
 })
 
 def _pack_hub(slug):
@@ -14500,6 +14504,8 @@ _PACK_SCENE = {
     "why-computer-prices-have-gone-up": "dellguide",
     "dell-latitude-e5550-upgrade": "win10", "dell-latitude-e5540-upgrade": "win10",
     "dell-inspiron-repair-bournemouth": "broken", "dell-precision-workstation-repair-support-dorset": "business",
+    "dell-xps-repair-bournemouth": "broken", "dell-vostro-repair-support-dorset": "business",
+    "dell-monitor-dock-support-dorset": "dellguide",
     "alienware-dell-g-series-repair-bournemouth": "repairdesktop",
     "dell-optiplex-790-upgrade": "win10", "dell-optiplex-990-upgrade": "win10",
     "dell-optiplex-7020-upgrade": "win10", "dell-optiplex-9020-upgrade": "win10",
