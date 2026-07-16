@@ -20,26 +20,26 @@ $secretFile = __DIR__ . '/pass-secret.php';
 $payload    = __DIR__ . '/servicepass-payload.ps1';
 $usedFile   = __DIR__ . '/pass-used.json';
 
-if (!file_exists($secretFile) || !file_exists($payload)) { http_response_code(503); exit("# not configured\n"); }
+if (!file_exists($secretFile) || !file_exists($payload)) { http_response_code(503); exit("Write-Host '365 Techies Service Pass: server not configured yet' -ForegroundColor Yellow\n"); }
 require $secretFile; // defines $PASS_SECRET
 
 $t = isset($_GET['t']) ? trim((string)$_GET['t']) : '';
-if (!preg_match('/^([a-z0-9]{4,8})-([a-z0-9]{4})-([a-f0-9]{10})$/i', $t, $m)) { http_response_code(403); exit("# invalid token\n"); }
+if (!preg_match('/^([a-z0-9]{4,8})-([a-z0-9]{4})-([a-f0-9]{10})$/i', $t, $m)) { http_response_code(403); exit("Write-Host '365 Techies Service Pass: invalid token - run New-PassToken.ps1 for a fresh one' -ForegroundColor Yellow\n"); }
 list(, $mins36, $nonce, $mac) = $m;
 
 // signature
 $calc = substr(hash_hmac('sha256', strtolower($mins36) . '-' . strtolower($nonce), $PASS_SECRET), 0, 10);
-if (!hash_equals($calc, strtolower($mac))) { http_response_code(403); exit("# invalid token\n"); }
+if (!hash_equals($calc, strtolower($mac))) { http_response_code(403); exit("Write-Host '365 Techies Service Pass: invalid token - run New-PassToken.ps1 for a fresh one' -ForegroundColor Yellow\n"); }
 
 // age: 20-minute window (allow 2 min clock skew forward)
 $mins = intval($mins36, 36);
 $nowM = intdiv(time(), 60);
-if ($nowM - $mins > 20 || $mins - $nowM > 2) { http_response_code(403); exit("# token expired - generate a fresh one\n"); }
+if ($nowM - $mins > 20 || $mins - $nowM > 2) { http_response_code(403); exit("Write-Host '365 Techies Service Pass: token expired (20 min) - generate a fresh one' -ForegroundColor Yellow\n"); }
 
 // single use
 $used = file_exists($usedFile) ? (json_decode((string)@file_get_contents($usedFile), true) ?: array()) : array();
 $key  = strtolower($mins36 . '-' . $nonce);
-if (isset($used[$key])) { http_response_code(403); exit("# token already used - generate a fresh one\n"); }
+if (isset($used[$key])) { http_response_code(403); exit("Write-Host '365 Techies Service Pass: that token was already used - generate a fresh one' -ForegroundColor Yellow\n"); }
 // prune entries older than a day, then burn this one
 $cut = $nowM - 1440;
 foreach ($used as $k => $v) { if ($v < $cut) unset($used[$k]); }
