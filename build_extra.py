@@ -3248,18 +3248,18 @@ def dell_picker_section():
             f'          <div class="dpick__card" data-kind="{kind}" data-id="{mid}" data-label="{name} &middot; {meta} &middot; guide &pound;{price}" data-cpu="{cpu_disp}" data-threads="{threads}" data-gen="{gen}">\n'
             f'            <p class="dpick__series mono">{series}</p>\n'
             f'            <h3>{name}</h3>\n'
-            f'            <p class="dpick__meta">{meta}</p>\n'
+            f'            <div class="dpick__specs"><span class="dpick__screen">{meta.split(" &middot; ")[0]}</span><span>{cpu_disp}</span><span>16GB RAM &middot; new 1TB Samsung 990 PRO</span></div>\n'
             f'            <p class="dpick__price">Guide <strong>&pound;{price}</strong></p>\n'
             f'            <div class="dpick__row"><button type="button" class="button primary dpick__sel">Pick this one</button>'
-            f'<a class="dpick__more" href="{href}">Details &#8594;</a></div>\n'
+            f'<a class="dpick__more" href="{href}#{mid}">Full details &#8594;</a></div>\n'
             '          </div>')
     cards_html = "\n".join(cards)
     return ('''    <section class="section" aria-label="Pick and reserve your Dell" id="pick">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// PICK &middot; RESERVE &middot; DONE</p>
-          <h2 class="section-title section-title--center" data-title>Pick your machine &mdash; reserve it in a minute<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>Every machine comes with a <strong>new 1TB Samsung 990 PRO SSD</strong>, Windows 11 Home or Pro professionally set up, your data moved across and a 12-month guarantee (5 years on a support plan) &mdash; all included. <strong>All prices are guide prices</strong> &mdash; we confirm the exact price against the machine and grade in stock, with no obligation.</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>// PICK &middot; ASK &middot; SORTED</p>
+          <h2 class="section-title section-title--center" data-title>Pick your machine &mdash; check availability &amp; get your quote<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Every machine comes with a <strong>new 1TB Samsung 990 PRO SSD</strong>, Windows 11 Home or Pro professionally set up, your data moved across and a 12-month guarantee (5 years on a support plan) &mdash; all included. <strong>All prices are guide prices</strong> and stock moves week to week &mdash; not every model is in at once, so tell us your pick and we&rsquo;ll confirm availability, the exact machine, grade and price (or offer the nearest equivalent), with no obligation.</p>
         </div>
         <div class="dpick" data-reveal>
           <div class="dpick__tabs" aria-label="Machine type">
@@ -3274,24 +3274,35 @@ def dell_picker_section():
             <div class="dpick__chosen" aria-live="polite">
               <p class="mono dpick__chosenlabel">// YOUR PICK</p>
               <p class="dpick__chosentext" id="dpick-chosen">&nbsp;</p>
-              <p class="dpick__note">Guide price &mdash; we&rsquo;ll confirm the exact machine, grade and price when we&rsquo;re in touch. No payment now, no obligation. <strong>Want to see it first?</strong> We&rsquo;ll bring it to your home or business in our service area, or meet you at the Kinson Community Centre by appointment &mdash; just say so in the message.</p>
+              <p class="dpick__note">Guide price &mdash; stock varies, so we&rsquo;ll confirm availability and the exact machine, grade and price when we&rsquo;re in touch (or suggest the nearest equivalent). No payment now, no obligation. <strong>Want to see it first?</strong> We&rsquo;ll bring it to your home or business in our service area, or meet you at the Kinson Community Centre by appointment &mdash; just say so in the message.</p>
             </div>
             <div class="dcmp" id="dcmp">
               <button type="button" class="button" id="dcmp-run">&#9889; How much faster is this than my current computer?</button>
               <div class="dcmp__out" id="dcmp-out" hidden aria-live="polite"></div>
             </div>
-            <form class="contact-form dpick__form" method="post" action="/api/form-relay.php" data-success="&#10003; Sent &mdash; thank you! Your pick is with the team and a real 365 techie will be in contact shortly.">
+            <form class="contact-form dpick__form" method="post" action="/api/form-relay.php" data-success="&#10003; Sent &mdash; thank you! We&rsquo;re checking availability for your pick and a real 365 techie will be in contact shortly with your quote.">
               <input type="hidden" name="machine" id="dpick-machine" value="" />
               <input type="hidden" name="current_system" id="dcmp-field" value="" />
-              <input type="hidden" name="topic" value="Reserve a refurbished Dell" />
+              <input type="hidden" name="topic" value="Dell availability &amp; quote" />
               <input type="text" name="company_website" tabindex="-1" autocomplete="one-time-code" style="position:absolute;left:-5000px" aria-hidden="true" />
               <div class="dpick__fields">
                 <label class="field"><span>Name</span><input type="text" name="name" autocomplete="name" required /></label>
                 <label class="field"><span>Email</span><input type="email" name="email" autocomplete="email" required /></label>
                 <label class="field"><span>Phone (optional)</span><input type="tel" name="phone" autocomplete="tel" /></label>
               </div>
-              <label class="field"><span>Anything we should know? (optional)</span><textarea name="message" rows="3" placeholder="What you&rsquo;ll use it for, screen-size preference, Windows 11 Home or Pro, part-exchange&hellip;"></textarea></label>
-              <button type="submit" class="button primary button--lg" style="width:100%">Reserve this machine &#8594;</button>
+              <fieldset class="dpick__acc"><legend>Add accessories to the same quote (optional)</legend>
+                <label><input type="checkbox" name="accessories" value="Monitor / screen" /> Monitor</label>
+                <label><input type="checkbox" name="accessories" value="Keyboard &amp; mouse" /> Keyboard &amp; mouse</label>
+                <label><input type="checkbox" name="accessories" value="Portable travel keyboard &amp; mouse" /> Travel keyboard &amp; mouse</label>
+                <label><input type="checkbox" name="accessories" value="Webcam" /> Webcam</label>
+                <label><input type="checkbox" name="accessories" value="Speakers / headset" /> Speakers / headset</label>
+                <label><input type="checkbox" name="accessories" value="Projector" /> Projector</label>
+                <label><input type="checkbox" name="accessories" value="XREAL AR glasses (portable big screen)" /> XREAL AR glasses</label>
+                <label><input type="checkbox" name="accessories" value="Docking station" /> Docking station</label>
+                <label><input type="checkbox" name="accessories" value="Laptop bag / sleeve" /> Bag / sleeve</label>
+              </fieldset>
+              <label class="field"><span>Anything we should know? (optional)</span><textarea name="message" rows="3" placeholder="What you&rsquo;ll use it for, screen-size preference, Windows 11 Home or Pro, your old monitor&rsquo;s connector, part-exchange&hellip;"></textarea></label>
+              <button type="submit" class="button primary button--lg" style="width:100%">Check availability &amp; get my quote &#8594;</button>
               <p class="form-status mono" role="status" style="margin-top:.9rem"></p>
               <p class="mono" style="margin-top:.4rem;color:var(--faint);font-size:.72rem">// NO PAYMENT NOW &middot; NO OBLIGATION &middot; MON&ndash;FRI 9&ndash;5 &middot; OR CALL 01202 775566</p>
             </form>
@@ -3311,8 +3322,11 @@ def dell_picker_section():
         .dpick__card.is-picked{border-color:#00ce1b;box-shadow:0 0 0 1px rgba(0,206,27,.5)}
         .dpick__card[hidden]{display:none}
         .dpick__series{font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--cyan-soft);margin:0 0 .3rem}
-        .dpick__card h3{margin:0 0 .25rem;font-size:1.06rem}
-        .dpick__meta{color:var(--muted);font-size:.8rem;margin:0 0 .5rem;line-height:1.45}
+        .dpick__card h3{margin:0 0 .35rem;font-size:1.06rem}
+        .dpick__specs{display:flex;flex-direction:column;gap:.15rem;margin:0 0 .55rem}
+        .dpick__specs span{color:var(--ink);font-size:.88rem;line-height:1.4}
+        .dpick__specs .dpick__screen{font-family:var(--font-display);font-weight:600;font-size:1.05rem;color:#fff}
+        .dpick__specs span:last-child{color:var(--muted);font-size:.78rem}
         .dpick__price{font-size:1.02rem;margin:0 0 .8rem;color:var(--ink)}
         .dpick__price strong{font-size:1.2rem}
         .dpick__row{display:flex;align-items:center;gap:.8rem}
@@ -3324,6 +3338,10 @@ def dell_picker_section():
         .dpick__chosentext{font-family:var(--font-display);font-weight:600;font-size:1.25rem;margin:0 0 .3rem;color:#fff}
         .dpick__note{color:var(--muted);font-size:.8rem;margin:0 0 1.1rem}
         .dpick__fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.9rem}
+        .dpick__acc{border:1px solid var(--line);border-radius:14px;padding:.8rem 1rem 1rem;margin:0 0 .9rem;background:var(--glass)}
+        .dpick__acc legend{font:600 .72rem/1 var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--cyan-soft);padding:0 .4rem}
+        .dpick__acc label{display:inline-flex;align-items:center;gap:.4rem;margin:.3rem .9rem .2rem 0;font-size:.84rem;color:var(--muted);cursor:pointer}
+        .dpick__acc input{accent-color:var(--cyan)}
         .dcmp{margin:0 0 1.2rem}
         .dcmp__out{margin-top:1rem;border:1px solid var(--line);border-radius:14px;padding:1rem 1.1rem;background:var(--glass)}
         .dcmp__grid{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;margin:.6rem 0 .9rem}
@@ -3464,7 +3482,7 @@ def dell_hardware():
       ("What do the condition grades mean?", "We grade Dell Latitude laptops <strong>A, B or C</strong> by how they <em>look</em> &mdash; A is near-mint, B has light cosmetic wear, C has more visible marks &mdash; not by how they work. Every grade is fully tested and working, and we tell you the exact grade before you buy."),
       ("What about the storage and battery?", "Every machine is fitted with a <strong>brand-new Samsung Pro SSD</strong> (with a 5-year guarantee) for speed and reliability. Laptop batteries wear with use, so we check each one and tell you its condition up front &mdash; and can fit a fresh battery if you&rsquo;d like."),
       ("What warranty do I get?", "Every machine comes with a <strong>12-month return-to-base guarantee</strong> as standard &mdash; and that becomes a <strong>5-year guarantee for as long as you&rsquo;re on a 365 support plan</strong> (home &pound;18.25/month per computer, business from &pound;24.38). On top of that: any remaining Dell warranty where applicable, the new Samsung 990 PRO SSD&rsquo;s own 5-year guarantee, and your Consumer Rights Act protection including a 30-day right to reject if something&rsquo;s faulty."),
-      ("Can I pick and reserve a machine online?", "Yes &mdash; use the <a href=\"#pick\">pick &amp; reserve tool</a> on this page: choose laptop or desktop, pick the model, add your name and contact details, and it goes straight to the team. A real 365 techie will be in contact shortly to confirm the exact machine, grade and price &mdash; no payment is taken online and there&rsquo;s no obligation."),
+      ("Can I check availability and get a quote online?", "Yes &mdash; use the <a href=\"#pick\">picker</a> on this page: choose laptop or desktop, pick the model, add your details and it goes straight to the team. Because refurbished stock changes week to week we don&rsquo;t promise every model is in at once &mdash; a real 365 techie will confirm availability and your exact quote shortly, or suggest the nearest equivalent. No payment online, no obligation."),
       ("Can you supply screens, webcams and other accessories?", "Yes &mdash; we&rsquo;ll supply and set up whatever you need alongside your Dell: monitors, webcams, backup drives, speakers, keyboards, mice and more, all configured and ready to use."),
       ("Can you wipe and recycle my old computer?", "Yes &mdash; we can move your files across to your new Dell, then securely wipe (with a certificate) and responsibly recycle your old machine. See our <a href=\"/secure-it-disposal/\">secure IT disposal</a> page."),
       ("Do you set it up and support it too?", "Always. Every Dell we supply is set up ready to use &mdash; Windows, Microsoft 365, security, backups and your data moved across &mdash; and you can keep it looked after on a <a href=\"/home-it-support-plans/\">home</a> or <a href=\"/business-it-support-plans/\">business</a> support plan."),
@@ -3474,7 +3492,7 @@ def dell_hardware():
       hero(bc_sub("Dell", "/dell-it-support-dorset/", "Refurbished Dell"), "// REFURBISHED &middot; BUSINESS-GRADE",
            'Refurbished Dell Latitude laptops &amp; <em class="grad grad--cyan">OptiPlex desktops</em>',
            "Professionally refurbished, tested ex-business Dell &mdash; proper business-grade computers for a fraction of the price of new, set up and supported by a real local firm you can phone, text or email &mdash; and that comes to you. Kinder on your wallet and the planet.",
-           cta1=("Pick &amp; reserve a machine", "#pick"), cta2=("Call 01202 775566", "tel:+441202775566"),
+           cta1=("Pick a machine &amp; get a quote", "#pick"), cta2=("Call 01202 775566", "tel:+441202775566"),
            chips=["From &pound;510","New Samsung Pro SSD","5-year guarantee","Set up &amp; fully supported"], scene=HERO_SCENES.get("sales")),
       responsive_video("WATCH &middot; REFURBISHED DELL IN ACTION", "See a refurbished Dell at work",
                        "/images/dell-reel-poster-wide.jpg", "/images/dell-reel-poster-tall.jpg",
@@ -3736,6 +3754,21 @@ def dell_hardware():
       </div>
     </section>''',
       dell_picker_section(),
+      '''    <section class="section section--alt" aria-label="Accessories" id="accessories">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// COMPLETE THE SETUP</p>
+          <h2 class="section-title section-title--center" data-title>Accessories, supplied and set up with your Dell<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Everything around the computer, from trusted brands, working before we&rsquo;re done &mdash; quoted individually, or tick the boxes in the <a href="#pick">picker</a> to add them to your machine quote.</p>
+        </div>
+        <div class="tile-grid" data-stagger>
+          <div class="tile" data-reveal><h3>&#128421;&#65039; Monitors &amp; projectors</h3><p>The right screen for your desk &mdash; or a projector for the meeting room &mdash; matched to your Dell&rsquo;s ports so it just plugs in and works. Already have a monitor? Tell us its connector and we&rsquo;ll check it fits before you buy.</p></div>
+          <div class="tile" data-reveal><h3>&#9000;&#65039; Keyboards, mice &amp; speakers</h3><p>Comfortable full-size sets for the desk, plus quality speakers, headsets and webcams for calls that sound and look right.</p></div>
+          <div class="tile" data-reveal><h3>&#127758; Remote-worker &amp; travel kit</h3><p>Compact portable keyboards and mice, docks and webcams for working from anywhere &mdash; the same &ldquo;desk is optional&rdquo; setup we run ourselves, sized for a rucksack.</p></div>
+          <div class="tile" data-reveal><h3>&#128083; XREAL AR glasses</h3><p>A huge private virtual screen from a lightweight pair of glasses &mdash; brilliant with an ultralight <a href="/refurbished-dell-latitude-7000/">Latitude 7000</a> for trains, vans and tiny desks. Ask for a demo by appointment.</p></div>
+        </div>
+      </div>
+    </section>''',
       f'''    <section class="blog-section" aria-label="Owner's guide" id="guides">
       <div class="wrap">
         <div class="section-head">
@@ -3786,7 +3819,7 @@ def dell_it_support_hub():
       ("servicing", "Servicing &amp; care plans", "/dell-support-plans/",
        "Keep your Dell fast, cool and healthy with a full service every 6 weeks on a simple monthly plan &mdash; from &pound;18.25/month per computer at home, from &pound;24.38 for business &mdash; and your guarantee becomes 5 years.", "See plans"),
       ("sales", "Buy a Dell &mdash; new or refurbished", "/dell-hardware/#pick",
-       "Pick your machine online and reserve it in a minute &mdash; Latitude laptops from &pound;510, OptiPlex desktops from &pound;545 (guide prices), each with a new 1TB Samsung 990 PRO, set up and supported. Brand-new Dell to order too.", "Pick a machine"),
+       "Pick your machine online and get an availability check &amp; quote in a minute &mdash; Latitude laptops from &pound;510, OptiPlex desktops from &pound;545 (guide prices), each with a new 1TB Samsung 990 PRO, set up and supported. Brand-new Dell to order too.", "Pick a machine"),
     ]
     ways_html = "\n".join(
       f'          <a class="dell-way" href="{href}">{_dell_scene(key)}<h3>{title}</h3><p>{blurb}</p><span class="post-card__more">{more} &#8594;</span></a>'
@@ -6775,6 +6808,20 @@ def splashtop_guide():
         </div>
         <ul class="security-grid" data-stagger>
 {grid_cards([("Encrypted end to end","Every session runs over TLS with AES-256 encryption &mdash; the same grade protecting your online banking."),("Two-factor sign-in","Your password alone isn&rsquo;t enough &mdash; a second code proves it&rsquo;s really you. We switch this on for everyone we set up."),("Blank screen + auto-lock","Black out the office monitor while you work, and the PC locks itself the moment you disconnect. Nobody sees, nothing&rsquo;s left open."),("You control the keys","Only your account &mdash; on devices you&rsquo;ve signed in on &mdash; can reach your PC. Leaver in the business? We revoke access in minutes.")])}
+        </ul>
+      </div>
+    </section>''',
+      '''    <section class="section section--alt" aria-label="From an iPad or tablet">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">// FROM YOUR IPAD OR TABLET</p>
+          <h2 class="section-title" data-title>Your iPad as a window to your Windows computer<span class="title-underline"></span></h2>
+          <p>Already carry an iPad or tablet? With Splashtop Business you can <strong>connect from it straight to your Windows laptop or desktop</strong> &mdash; at home or at work &mdash; and use the full computer exactly as if you were sitting at it. Your files, your programs, your Windows desktop, on the device you already have with you.</p>
+          <p>Two tricks make it genuinely comfortable rather than a novelty: <strong>pair a Bluetooth keyboard and mouse with the iPad</strong> and you get precise, accurate pointer control instead of finger-prodding &mdash; proper clicking, right-clicking and text selection on your remote Windows desktop. And <strong>pinch to zoom</strong> in and out of any part of the screen, which together with the iPad&rsquo;s accessibility options makes small text and fiddly interfaces easy on the eyes.</p>
+          <p>It&rsquo;s ideal for working from home or on the go &mdash; the office machine stays put and secure, and you reach it from wherever you are. We&rsquo;ll set the whole thing up for you: Splashtop on both ends, the keyboard and mouse paired, and a five-minute walkthrough so it feels natural. Pair it with a light <a href="/refurbished-dell-latitude-7000/">Latitude 7000</a> or our <a href="/dell-hardware/#accessories">travel accessories</a> and the desk really is optional.</p>
+        </div>
+        <ul class="checklist" data-stagger>
+''' + checklist(["Connect from an iPad or tablet to your Windows PC", "Home or work machine &mdash; reach it anywhere", "Bluetooth keyboard &amp; mouse for precise pointer control", "Pinch-zoom &amp; accessibility for easy reading", "Files and programs stay safely on the computer", "We set it up end to end and show you how"]) + '''
         </ul>
       </div>
     </section>''',
@@ -14391,6 +14438,79 @@ REFURB_SUPPORT_BAND = '''    <section class="section" aria-label="Setup, guarant
       </div>
     </section>'''
 
+# Per-model spec/upgrade details (anchored so the picker's "Full details" deep-links land here).
+# PORTS + RAM_UPGRADE are filled from the 2026-07 ports/RAM research pack.
+# Verified against Dell setup-and-specifications manuals, 16 Jul 2026 (ports/RAM research pack).
+DELL_PORTS = {
+ "latitude-3420": "HDMI 1.4 + USB-C with DisplayPort (drives a monitor and can charge the laptop). HDMI suits 1080p screens; use the USB-C for sharper/4K. No Thunderbolt.",
+ "latitude-3520": "HDMI 1.4 + USB-C with DisplayPort (drives a monitor and can charge the laptop). HDMI suits 1080p screens; use the USB-C for sharper/4K. No Thunderbolt.",
+ "latitude-3540": "HDMI 1.4 + USB-C with DisplayPort 1.4 (also a charging port). HDMI suits 1080p; USB-C for sharper/4K.",
+ "latitude-5420": "HDMI 2.0 + two Thunderbolt 4 / USB-C ports &mdash; single-cable docking and charging. (A few early units carry 10th-gen CPUs without full TB4 &mdash; we check the exact unit.)",
+ "latitude-5520": "HDMI 2.0 + two Thunderbolt 4 / USB-C ports &mdash; single-cable docking and charging. (A few early units carry 10th-gen CPUs without full TB4 &mdash; we check the exact unit.)",
+ "latitude-5430": "HDMI 2.0 + two Thunderbolt 4 / USB-C ports &mdash; dock, run dual 4K via a dock, and charge on either port.",
+ "latitude-5530": "HDMI 2.0 + two Thunderbolt 4 / USB-C ports &mdash; dock, run dual 4K via a dock, and charge on either port.",
+ "latitude-7320": "HDMI 2.0 + two Thunderbolt 4 / USB-C ports. No built-in wired-network port &mdash; a small USB-C adapter or dock adds it.",
+ "latitude-7420": "HDMI 2.0 + two Thunderbolt 4 / USB-C ports. No built-in wired-network port &mdash; a small USB-C adapter or dock adds it.",
+ "latitude-7330": "HDMI 2.0 + two Thunderbolt 4 / USB-C ports. No built-in wired-network port &mdash; a small USB-C adapter or dock adds it.",
+ "latitude-7430": "HDMI 2.0b + two Thunderbolt 4 / USB-C ports. No built-in wired-network port &mdash; a small USB-C adapter or dock adds it.",
+ "optiplex-3080": "DisplayPort 1.4 + HDMI 1.4 on every size &mdash; two monitors out of the box. Some units carry a factory third port (VGA, extra DP or HDMI 2.0); an old VGA monitor otherwise connects via a small DP-to-VGA adapter. No DVI &mdash; DVI monitors use a cheap adapter too.",
+ "optiplex-3090": "2&times; DisplayPort 1.4 &mdash; <strong>no HDMI as standard</strong> (some units carry an optional VGA, DP or HDMI 2.0 port). An HDMI or VGA monitor connects via a small DP adapter &mdash; tell us what your screen has and we&rsquo;ll include the right one.",
+ "optiplex-3000": "DisplayPort 1.4 + HDMI 1.4 (the built-in HDMI tops out at 1920&times;1200 &mdash; use the DisplayPort for 4K). Optional third port on some units (HDMI 2.0, DP or VGA). VGA/DVI monitors connect via a small adapter.",
+ "optiplex-5080": "2&times; DisplayPort 1.4 &mdash; no HDMI as standard; some units carry an optional HDMI 2.0, VGA or USB-C-video port. HDMI/VGA/DVI monitors connect via a small DP adapter &mdash; tell us your screen&rsquo;s connector and we&rsquo;ll sort it.",
+ "optiplex-5090": "2&times; DisplayPort 1.4 &mdash; no HDMI as standard; some units carry an optional HDMI 2.0, VGA or USB-C-video port. HDMI/VGA/DVI monitors connect via a small DP adapter.",
+ "optiplex-5000": "2&times; DisplayPort 1.4a &mdash; no HDMI as standard; some units carry an optional HDMI 2.0 (4K60), DP, VGA or USB-C-video port. HDMI/VGA/DVI monitors connect via a small DP adapter.",
+ "optiplex-7080": "2&times; DisplayPort 1.4 &mdash; no HDMI as standard; some units carry an optional HDMI 2.0, VGA or USB-C-video port. HDMI/VGA/DVI monitors connect via a small DP adapter.",
+ "optiplex-7090": "2&times; DisplayPort 1.4 &mdash; no HDMI as standard; some units carry an optional HDMI 2.0, VGA or USB-C-video port. HDMI/VGA/DVI monitors connect via a small DP adapter.",
+ "optiplex-7000": "3&times; DisplayPort on Tower/SFF (Micro: 2&ndash;3 depending on CPU) &mdash; three monitors out of the box; no HDMI as standard, optional extra port on some units. HDMI/VGA monitors connect via a small DP adapter.",
+ "optiplex-7010": "DisplayPort 1.4a + HDMI 1.4 (built-in HDMI tops out at 1920&times;1200 &mdash; use the DP for 4K); some units carry an optional HDMI 2.1, DP or VGA port, and 7010 Plus models have 3&times; DP. VGA/DVI via a small adapter.",
+}
+DELL_RAM_NOTE = ("Every machine comes with <strong>16GB fitted</strong>. Want 32GB? Guide upgrade: <strong>+&pound;176</strong> on laptops and Micro desktops, <strong>+&pound;210</strong> on SFF/Tower desktops (2&times;16GB, fitted). "
+                 "One honest heads-up: memory prices are moving unusually fast right now (the same AI data-centre demand behind <a href=\"/why-computer-prices-have-gone-up/\">rising computer prices</a>), so we confirm RAM upgrade pricing at quote time. "
+                 "Note the Latitude 7000 series has soldered memory &mdash; it can&rsquo;t be upgraded later, so pick the size you&rsquo;ll ever need up front.")
+
+def _model_details_band(slug):
+    prefix = {"refurbished-dell-latitude-3000": "latitude-3", "refurbished-dell-latitude-5000": "latitude-5",
+              "refurbished-dell-latitude-7000": "latitude-7", "refurbished-dell-optiplex-3000": "optiplex-3",
+              "refurbished-dell-optiplex-5000": "optiplex-5", "refurbished-dell-optiplex-7000": "optiplex-7"}.get(slug)
+    if not prefix:
+        return ""
+    rows = []
+    for mid, kind, series, name, meta, price, href, cpu_disp, threads, gen in DELL_MACHINES:
+        if not mid.startswith(prefix):
+            continue
+        port = DELL_PORTS.get(mid, "")
+        port_row = f'<tr><th>Screen connections</th><td>{port}</td></tr>' if port else ''
+        first = meta.split(' &middot; ')[0]
+        label = ('Display' if kind == 'laptop' else 'Form factors')
+        rows.append(f'''          <div class="mdet" id="{mid}">
+            <h3>{name} <span class="mdet__price mono">guide &pound;{price}</span></h3>
+            <div class="cmp-wrap"><table class="cmp-table"><tbody>
+              <tr><th>{label}</th><td>{first}</td></tr>
+              <tr><th>Processor</th><td>{cpu_disp}</td></tr>
+              <tr><th>Memory</th><td>{('16GB soldered &mdash; cannot be upgraded later; 32GB units available to order, so pick the size you&rsquo;ll ever need' if mid.startswith('latitude-7') else ('16GB fitted (dual-channel, two slots) &middot; 32GB upgrade guide +&pound;176' if kind=='laptop' else '16GB fitted (two slots) &middot; 32GB upgrade guide +&pound;176 (Micro) or +&pound;210 (SFF/Tower)'))}</td></tr>
+              <tr><th>Storage</th><td>New 1TB Samsung 990 PRO NVMe &middot; upgrade to 2TB +&pound;185 or 4TB +&pound;420 (guide)</td></tr>
+              {port_row}
+              <tr><th>Included</th><td>Windows 11 Home or Pro set up, data moved across, 12-month guarantee (5 years on a support plan)</td></tr>
+            </tbody></table></div>
+            <p class="mdet__cta"><a class="button primary" href="/dell-hardware/?model={mid}#pick">Check availability &amp; get a quote &#8594;</a></p>
+          </div>''')
+    ram_note = f'<p class="lede lede--center" data-reveal>{DELL_RAM_NOTE}</p>' if DELL_RAM_NOTE else ''
+    return ('''    <section class="section" aria-label="Model details and upgrades">
+      <div class="wrap" data-reveal>
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono">// FULL MODEL DETAILS &amp; UPGRADES</p>
+          <h2 class="section-title section-title--center" data-title>Every model in detail<span class="title-underline title-underline--center"></span></h2>
+''' + ram_note + '''        </div>
+''' + "\n".join(rows) + '''
+      </div>
+      <style>
+        .mdet{max-width:860px;margin:0 auto 1.6rem}
+        .mdet h3{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin:0 0 .6rem}
+        .mdet__price{color:var(--cyan-soft);font-size:.78rem;letter-spacing:.05em;text-transform:uppercase}
+        .mdet__cta{margin:.8rem 0 0;text-align:right}
+      </style>
+    </section>''')
+
 def _refurb_reserve_band(slug):
     """Per-series 'pick & reserve' band: quick links into the /dell-hardware/#pick tool
     with the right model preselected. Injected on refurbBands sales pages."""
@@ -14405,9 +14525,9 @@ def _refurb_reserve_band(slug):
     return ('''    <section class="section section--alt" aria-label="Pick and reserve">
       <div class="wrap" data-reveal>
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono">// READY? RESERVE IN A MINUTE</p>
-          <h2 class="section-title section-title--center" data-title>Pick your machine &amp; reserve it online<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center">Choose a model below, add your name and contact details, and your pick goes straight to the team &mdash; a real 365 techie will be in contact shortly. <strong>Guide prices</strong>, no payment online, no obligation.</p>
+          <p class="eyebrow eyebrow--center mono">// READY? CHECK AVAILABILITY IN A MINUTE</p>
+          <h2 class="section-title section-title--center" data-title>Check availability &amp; get your quote<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center">Choose a model below, add your details, and your pick goes straight to the team &mdash; we&rsquo;ll confirm availability and your exact quote shortly (stock varies, so we may suggest the nearest equivalent). <strong>Guide prices</strong>, no payment online, no obligation &mdash; and you can add accessories to the same quote.</p>
         </div>
         <div class="rsv">
 ''' + links + '''        </div>
@@ -14445,6 +14565,7 @@ def build_new_page(d):
     if d.get('refurbBands'):
         _blocks.append(REFURB_PRICE_RISE_BAND)
         _blocks.append(REFURB_SUPPORT_BAND)
+        _blocks.append(_model_details_band(d['slug']))
         _blocks.append(_refurb_reserve_band(d['slug']))
     sections = "\n".join(_blocks)
     cross = ""
