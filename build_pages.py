@@ -4584,7 +4584,7 @@ add(
  content="\n".join([
    hero(bc("Microsoft 365"), "// MICROSOFT PARTNER",
         'Microsoft 365, <em class="grad grad--cyan">done properly</em>',
-        hero_trust("As Microsoft partners and certified Office Specialists, we set up, migrate, secure and support Microsoft 365 &mdash; from a single mailbox at home to a whole team in the cloud. Email, Teams, files and security, all working together and managed for you."),
+        hero_trust("We&rsquo;ve supported Microsoft Office since 1995 &mdash; the dial-up days &mdash; and taught it for over ten years at a Microsoft-certified training centre here in Dorset. As Microsoft partners and certified Office Specialists, we set up, migrate, secure and support Microsoft 365: from a single mailbox at home to a whole team in the cloud, all working together and managed for you."),
         cta1=("Get Microsoft 365 Support", "/contact/"), cta2=("View Plans", "/monthly-it-support/"),
         chips=["Microsoft Partner", "Office Specialists", "Setup, migration &amp; security"], scene=HERO_SCENES.get("m365")),
    f'''    <section class="section" aria-label="Overview">

@@ -3223,7 +3223,7 @@ NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
   'crumbName': 'Outlook Problems',
   'eyebrow': '// OUTLOOK HELP &middot; ALL VERSIONS',
   'h1': 'Outlook problems, <em class="grad grad--cyan">sorted</em>',
-  'lede': 'Outlook playing up? You&rsquo;re in the right place. Below are plain-English fixes for the most common Microsoft Outlook problems &mdash; classic Outlook, the new Outlook, Outlook.com and '
+  'lede': 'Outlook playing up? You&rsquo;re in the right place &mdash; we&rsquo;ve been untangling Microsoft Office since 1995 and taught it for over ten years at a Microsoft-certified training centre in Dorset, so there isn&rsquo;t much Outlook can throw at us we haven&rsquo;t seen. Below are plain-English fixes for the most common Microsoft Outlook problems &mdash; classic Outlook, the new Outlook, Outlook.com and '
           'the Android app. Find yours, follow the steps, and if you&rsquo;d rather just have it done, we&rsquo;ll fix it remotely in minutes.',
   'chips': ['All versions of Outlook', 'Free step-by-step fixes', 'Or fixed remotely in minutes'],
   'primaryCta': ['Get Outlook Fixed Remotely', '/contact/'],
