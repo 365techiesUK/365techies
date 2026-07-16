@@ -16,6 +16,7 @@ from new_pages_data import NEW_PAGES
 from latitude_pages_data import LATITUDE_PAGES, LATITUDE_COMPARE_TABLES
 from optiplex_pages_data import OPTIPLEX_PAGES, OPTIPLEX_COMPARE_TABLES
 from legacy_dell_data import LEGACY_DELL_PAGES
+from dell_ranges_data import DELL_RANGE_PAGES
 try:
     from new_pages_data import DELL_COMPARE_TABLES
 except ImportError:
@@ -3074,6 +3075,11 @@ _DELL_CLUSTER = [
    ("refurbished-dell-desktops-dorset", "Refurbished Dell desktops", "Tested, warrantied OptiPlex desktops from &pound;545 across Dorset &mdash; skip the marketplace gamble."),
    ("why-computer-prices-have-gone-up", "Why prices went up", "The honest AI data-centre memory story behind 2026 computer prices."),
  ]),
+ ("Every Dell range, supported", [
+   ("dell-inspiron-repair-bournemouth", "Inspiron repair &amp; upgrades", "Screens, hinges, batteries, SSD upgrades and honest keep-or-replace advice for the Dell most homes own."),
+   ("dell-precision-workstation-repair-support-dorset", "Precision workstations", "Repairs, upgrades and business support for Dorset&rsquo;s CAD, engineering and creative machines."),
+   ("alienware-dell-g-series-repair-bournemouth", "Alienware &amp; G-series", "Gaming Dell running hot or slowing down? Local collection &mdash; no posting your rig to London."),
+ ]),
  ("Upgrading an older Dell", [
    ("dell-latitude-e5550-upgrade", "Latitude E5550", "Still running after a decade? Why that&rsquo;s the point &mdash; and the honest Windows 11 upgrade path."),
    ("dell-latitude-e5540-upgrade", "Latitude E5540", "The three honest reasons it&rsquo;s time &mdash; and what replaces it properly."),
@@ -3119,6 +3125,7 @@ _DELL_CHIP = {
     "Which Dell should I buy?": "Which to buy",
     "Is this Dell worth it?": "Worth it?",
     "Dell &amp; Windows 11": "Windows 11",
+    "Every Dell range, supported": "All ranges",
     "Upgrading an older Dell": "Old models",
 }
 
@@ -14446,6 +14453,9 @@ _DELL_HUB_SLUGS = frozenset({
  # legacy-model upgrade pages (2026-07-16)
  'dell-latitude-e5550-upgrade', 'dell-latitude-e5540-upgrade', 'dell-optiplex-790-upgrade',
  'dell-optiplex-990-upgrade', 'dell-optiplex-7020-upgrade', 'dell-optiplex-9020-upgrade',
+ # range pillars (2026-07-17)
+ 'dell-inspiron-repair-bournemouth', 'dell-precision-workstation-repair-support-dorset',
+ 'alienware-dell-g-series-repair-bournemouth',
 })
 
 def _pack_hub(slug):
@@ -14489,6 +14499,8 @@ _PACK_SCENE = {
     "refurbished-dell-optiplex-7000": "refurbdesktop",
     "why-computer-prices-have-gone-up": "dellguide",
     "dell-latitude-e5550-upgrade": "win10", "dell-latitude-e5540-upgrade": "win10",
+    "dell-inspiron-repair-bournemouth": "broken", "dell-precision-workstation-repair-support-dorset": "business",
+    "alienware-dell-g-series-repair-bournemouth": "repairdesktop",
     "dell-optiplex-790-upgrade": "win10", "dell-optiplex-990-upgrade": "win10",
     "dell-optiplex-7020-upgrade": "win10", "dell-optiplex-9020-upgrade": "win10",
 }
@@ -15123,6 +15135,9 @@ for _np in OPTIPLEX_PAGES:
     build_new_page(_np)
 
 for _np in LEGACY_DELL_PAGES:
+    build_new_page(_np)
+
+for _np in DELL_RANGE_PAGES:
     build_new_page(_np)
 
 if __name__ == "__main__":
