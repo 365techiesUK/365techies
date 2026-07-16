@@ -45,7 +45,7 @@ NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
                 'html': '<p>Some perfectly usable PCs simply don’t meet Microsoft’s Windows 11 requirements — usually an older processor that isn’t on the supported list, or missing TPM 2.0 that '
                         'can’t be enabled. If that’s your machine, don’t panic and please don’t rush out and buy the first laptop you see. You have two sensible routes, and we’ll help you '
                         'pick.</p><ul><li><strong>Stay on Windows 10 a little longer with ESU.</strong> Microsoft’s consumer Extended Security Updates programme keeps security patches coming until '
-                        '<strong>13 October 2026</strong>, and you can enrol <strong>free</strong> using a Microsoft account (or 1,000 Rewards points), or pay a one-off fee of roughly £23 (a single '
+                        '<strong>12 October 2027</strong>, and you can enrol <strong>free</strong> using a Microsoft account (or 1,000 Rewards points), or pay a one-off fee of roughly £23 (a single '
                         '$30 charge). It buys breathing room to plan a replacement properly. We can set this up for you — see our <a href="/windows-10-esu-free-enrolment-help/">Windows 10 ESU '
                         'enrolment help</a> if the ‘Enrol now’ button won’t appear.</li><li><strong>Move to a refurbished business-grade Dell from £510.</strong> We supply properly refurbished Dell '
                         'Latitude laptops and OptiPlex desktops — solid, business-class machines that run Windows 11 comfortably — set up, your files moved across, and your old PC securely wiped and '
@@ -68,7 +68,7 @@ NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
            {'q': 'Is it safe to stay on Windows 10?',
             'a': 'Windows 10 still switches on and works, but Microsoft stopped issuing free security updates on 14 October 2025, so it gets steadily riskier the longer it goes unpatched. The safest '
                  'move is to upgrade to Windows 11 if your PC is eligible. If it isn’t, you can stay on Windows 10 more safely for a while by enrolling in consumer ESU (Extended Security Updates), '
-                 'which extends security patches until 13 October 2026. We can set that up for you.'},
+                 'which extends security patches until 12 October 2027. We can set that up for you.'},
            {'q': 'Will I lose my files, photos or programs when I upgrade to Windows 11?',
             'a': 'No. We always take a full backup before we start, and an in-place upgrade keeps your files, apps and settings exactly where they are. Even with a clean install we move everything '
                  'across afterwards. Your data is never put at risk — that’s the whole point of doing it properly rather than clicking ‘upgrade’ and hoping.'},
@@ -97,7 +97,7 @@ NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
   'crumbName': 'Windows 10 ESU Enrolment Help',
   'eyebrow': '// WINDOWS 10 ESU ENROLMENT',
   'h1': 'Windows 10 <em class="grad grad--cyan">ESU free enrolment</em> help (and the missing ‘Enrol now’ button, fixed)',
-  'lede': 'You can keep getting Windows 10 security updates until 13 October 2026 by enrolling in Microsoft’s consumer Extended Security Updates (ESU) — free with a Microsoft account, free with '
+  'lede': 'You can keep getting Windows 10 security updates until 12 October 2027 by enrolling in Microsoft’s consumer Extended Security Updates (ESU) — free with a Microsoft account, free with '
           '1,000 Rewards points, or a one-off fee of about £23 (a single $30 charge). If the ‘Enrol now’ button won’t appear in Windows Update, this page explains why and how to fix it. Prefer not '
           'to fiddle? We’ll set it up for you remotely today.',
   'chips': ['Free enrolment options explained', "'Enrol now' missing? Fixed", 'We can set it up remotely'],
@@ -111,8 +111,8 @@ NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
   'sections': [{'eyebrow': '/01 — WHAT IT IS',
                 'h2': 'What is Windows 10 consumer ESU?',
                 'html': '<p>Windows 10 reached the end of free support on <strong>14 October 2025</strong>. To give home users breathing room, Microsoft opened a consumer <strong>Extended Security '
-                        'Updates (ESU)</strong> programme — a way to keep receiving important and critical <strong>security</strong> updates on Windows 10 (version 22H2) for one more year, until '
-                        '<strong>13 October 2026</strong>.</p><p>A few things to be clear about, because there’s a lot of confusion online:</p><ul><li>ESU covers <strong>security updates '
+                        'Updates (ESU)</strong> programme — a way to keep receiving important and critical <strong>security</strong> updates on Windows 10 (version 22H2) until '
+                        '<strong>12 October 2027</strong>.</p><p>A few things to be clear about, because there’s a lot of confusion online:</p><ul><li>ESU covers <strong>security updates '
                         'only</strong>. You won’t get new features, and general technical support for Windows 10 has ended.</li><li>It’s a <strong>one-year bridge</strong> for home users, not a '
                         'long-term fix. It buys time to plan an upgrade to Windows 11 or a new PC — it doesn’t remove the need to move on.</li><li>Your PC must be on <strong>Windows 10 version '
                         '22H2</strong> and fully up to date before the option appears.</li></ul><p>If your machine can run Windows 11, upgrading is usually the better long-term move — see our <a '
@@ -146,7 +146,7 @@ NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
                  'Microsoft Rewards points. There’s also a paid option — a one-off $30 charge (roughly £23 in the UK) that covers up to 10 PCs on the same Microsoft account — if you’d rather not use '
                  'an account sync or points.'},
            {'q': 'How long does Windows 10 ESU last?',
-            'a': 'For home users, consumer ESU extends security updates for Windows 10 22H2 for one year, until 13 October 2026. It’s a bridge, not a permanent fix — it gives you time to plan a move '
+            'a': 'For home users, consumer ESU extends security updates for Windows 10 22H2 until 12 October 2027. It’s a bridge, not a permanent fix — it gives you time to plan a move '
                  'to Windows 11 or a new PC. It provides security patches only, not new features or general technical support.'},
            {'q': 'Do I need a Microsoft account to enrol in ESU?',
             'a': 'Yes — consumer ESU enrolment is tied to a Microsoft account for all three routes, including the paid one, and you need to be signed in as an administrator. If you currently sign in '

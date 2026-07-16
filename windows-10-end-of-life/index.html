@@ -729,17 +729,17 @@
     <section class="section" aria-label="ESU deadline" style="padding-top:0">
       <div class="wrap">
         <div class="prose" data-reveal style="max-width:74ch;margin:0 auto;text-align:center;border:1px dashed rgba(224,179,65,.5);border-radius:14px;padding:1.1rem 1.3rem">
-          <p style="margin:0" id="esu-countline"><strong>&#9203; Still on Windows 10 with ESU?</strong> <span data-esu-days>Consumer Extended Security Updates end on <strong>13 October 2026</strong></span> &mdash; after that, no more security patches at all. If you haven&rsquo;t enrolled, <a href="/windows-10-esu-free-enrolment-help/">it&rsquo;s free and takes minutes</a>; either way, use the time to <a href="/windows-11-upgrade-service/">plan the move properly</a> rather than in a rush next autumn.</p>
+          <p style="margin:0" id="esu-countline"><strong>&#9203; Still on Windows 10 with ESU?</strong> <span data-esu-days>Consumer Extended Security Updates end on <strong>12 October 2027</strong></span> &mdash; after that, no more security patches at all. If you haven&rsquo;t enrolled, <a href="/windows-10-esu-free-enrolment-help/">it&rsquo;s free and takes minutes</a>; either way, use the time to <a href="/windows-11-upgrade-service/">plan the move properly</a> rather than in a rush next autumn.</p>
         </div>
       </div>
       <script>
       (function(){
         var el=document.querySelector('[data-esu-days]'); if(!el) return;
-        var end=new Date(2026,9,13); // 13 Oct 2026 local
+        var end=new Date(2027,9,12); // 12 Oct 2027 local (Microsoft extended consumer ESU, Jun 2026)
         var days=Math.ceil((end-new Date())/86400000);
-        if(days>1) el.innerHTML='Consumer Extended Security Updates end on <strong>13 October 2026</strong> &mdash; <strong>'+days+' days from today</strong>';
-        else if(days>=0) el.innerHTML='Consumer Extended Security Updates end <strong>this week</strong> (13 October 2026)';
-        else { var p=document.getElementById('esu-countline'); if(p) p.innerHTML='<strong>Windows 10 Extended Security Updates have now ended</strong> (13 October 2026) &mdash; a Windows 10 PC no longer receives any security patches. <a href="/windows-11-upgrade-service/">Let&rsquo;s sort the move</a> &mdash; many machines upgrade free, and we&rsquo;ll check yours in minutes.'; }
+        if(days>1) el.innerHTML='Consumer Extended Security Updates end on <strong>12 October 2027</strong> &mdash; <strong>'+days+' days from today</strong>';
+        else if(days>=0) el.innerHTML='Consumer Extended Security Updates end <strong>this week</strong> (12 October 2027)';
+        else { var p=document.getElementById('esu-countline'); if(p) p.innerHTML='<strong>Windows 10 Extended Security Updates have now ended</strong> (12 October 2027) &mdash; a Windows 10 PC no longer receives any security patches. <a href="/windows-11-upgrade-service/">Let&rsquo;s sort the move</a> &mdash; many machines upgrade free, and we&rsquo;ll check yours in minutes.'; }
       })();
       </script>
     </section>
