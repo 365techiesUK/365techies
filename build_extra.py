@@ -15,6 +15,7 @@ from build_local import make_customer
 from new_pages_data import NEW_PAGES
 from latitude_pages_data import LATITUDE_PAGES, LATITUDE_COMPARE_TABLES
 from optiplex_pages_data import OPTIPLEX_PAGES, OPTIPLEX_COMPARE_TABLES
+from legacy_dell_data import LEGACY_DELL_PAGES
 try:
     from new_pages_data import DELL_COMPARE_TABLES
 except ImportError:
@@ -3062,8 +3063,24 @@ _DELL_CLUSTER = [
    ("dell-optiplex-fan-error-f1-fix", "OptiPlex fan error (F1)", "&lsquo;Previous fan failure, press F1&rsquo; explained &mdash; the safe fixes and when to get help."),
  ]),
  ("Buying a refurbished Dell", [
+   ("dell-hardware", "Pick a machine &amp; get a quote", "The full range with the online picker &mdash; check availability, compare against your current computer, add accessories."),
+   ("refurbished-dell-latitude-3000", "Latitude 3000 series", "The honest budget business laptop &mdash; models, guide prices from &pound;510 and buying advice."),
+   ("refurbished-dell-latitude-5000", "Latitude 5000 series", "The mainstream workhorse most people should buy &mdash; from &pound;535."),
+   ("refurbished-dell-latitude-7000", "Latitude 7000 series", "Premium ultralights from &pound;520 &mdash; and the one golden rule (soldered RAM)."),
+   ("refurbished-dell-optiplex-3000", "OptiPlex 3000 tier", "Entry business desktops from &pound;545 &mdash; the i5-only truth inside."),
+   ("refurbished-dell-optiplex-5000", "OptiPlex 5000 tier", "Mainstream business desktops from &pound;615 &mdash; i5 and i7, room to grow."),
+   ("refurbished-dell-optiplex-7000", "OptiPlex 7000 tier", "Premium desktops from &pound;590 &mdash; the only tier where a real i9 exists."),
    ("refurbished-dell-laptops-bournemouth", "Refurbished Dell laptops", "Business-grade Latitude from &pound;510 with a new 1TB Samsung 990 PRO, set up and supported &mdash; we bring it to you to see first, home or business."),
    ("refurbished-dell-desktops-dorset", "Refurbished Dell desktops", "Tested, warrantied OptiPlex desktops from &pound;545 across Dorset &mdash; skip the marketplace gamble."),
+   ("why-computer-prices-have-gone-up", "Why prices went up", "The honest AI data-centre memory story behind 2026 computer prices."),
+ ]),
+ ("Upgrading an older Dell", [
+   ("dell-latitude-e5550-upgrade", "Latitude E5550", "Still running after a decade? Why that&rsquo;s the point &mdash; and the honest Windows 11 upgrade path."),
+   ("dell-latitude-e5540-upgrade", "Latitude E5540", "The three honest reasons it&rsquo;s time &mdash; and what replaces it properly."),
+   ("dell-optiplex-790-upgrade", "OptiPlex 790", "A 2011 stalwart &mdash; what to do with it in the Windows 11 era."),
+   ("dell-optiplex-990-upgrade", "OptiPlex 990", "Upgrade or retire? The honest triage for the 990."),
+   ("dell-optiplex-7020-upgrade", "OptiPlex 7020", "Why it can&rsquo;t follow you to Windows 11 &mdash; and what should."),
+   ("dell-optiplex-9020-upgrade", "OptiPlex 9020", "The office workhorse of 2014 &mdash; its honest 2026 options."),
  ]),
  ("Which Dell should I buy?", [
    ("are-dell-latitude-laptops-good", "Are Latitudes any good?", "A 30-year Dell specialist&rsquo;s honest verdict on business-grade Latitudes."),
@@ -3102,6 +3119,7 @@ _DELL_CHIP = {
     "Which Dell should I buy?": "Which to buy",
     "Is this Dell worth it?": "Worth it?",
     "Dell &amp; Windows 11": "Windows 11",
+    "Upgrading an older Dell": "Old models",
 }
 
 def _dell_cluster_section(exclude=()):
@@ -14360,6 +14378,9 @@ _DELL_HUB_SLUGS = frozenset({
  'dell-latitude-5000-guide', 'dell-latitude-7000-guide',
  # refurbished OptiPlex tier pages (2026-07-16)
  'refurbished-dell-optiplex-3000', 'refurbished-dell-optiplex-5000', 'refurbished-dell-optiplex-7000',
+ # legacy-model upgrade pages (2026-07-16)
+ 'dell-latitude-e5550-upgrade', 'dell-latitude-e5540-upgrade', 'dell-optiplex-790-upgrade',
+ 'dell-optiplex-990-upgrade', 'dell-optiplex-7020-upgrade', 'dell-optiplex-9020-upgrade',
 })
 
 def _pack_hub(slug):
@@ -14402,6 +14423,9 @@ _PACK_SCENE = {
     "refurbished-dell-optiplex-3000": "refurbdesktop", "refurbished-dell-optiplex-5000": "refurbdesktop",
     "refurbished-dell-optiplex-7000": "refurbdesktop",
     "why-computer-prices-have-gone-up": "dellguide",
+    "dell-latitude-e5550-upgrade": "win10", "dell-latitude-e5540-upgrade": "win10",
+    "dell-optiplex-790-upgrade": "win10", "dell-optiplex-990-upgrade": "win10",
+    "dell-optiplex-7020-upgrade": "win10", "dell-optiplex-9020-upgrade": "win10",
 }
 
 # ============================== SHARED REFURB BANDS (2026-07-16) ==============================
@@ -15031,6 +15055,9 @@ for _np in LATITUDE_PAGES:
     build_new_page(_np)
 
 for _np in OPTIPLEX_PAGES:
+    build_new_page(_np)
+
+for _np in LEGACY_DELL_PAGES:
     build_new_page(_np)
 
 if __name__ == "__main__":
