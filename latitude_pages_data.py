@@ -630,7 +630,7 @@ LATITUDE_PAGES = [
    },
    {
     "q": "Do you repair Latitude 7000-series laptops?",
-    "a": "Yes &mdash; we&rsquo;ve worked on Dell since 2001 and we&rsquo;re deliberately independent rather than a Dell Authorised Service Provider, so our advice is ours alone. We work remote-first with no call-out fee, and we&rsquo;ll tell you honestly when a repair isn&rsquo;t worth it. Call 01202 775566, text 07520 615332, or visit us in Kinson, Bournemouth (Mon&ndash;Fri 9&ndash;5)."
+    "a": "Yes &mdash; we&rsquo;ve worked on Dell since 2001 and we&rsquo;re deliberately independent rather than a Dell Authorised Service Provider, so our advice is ours alone. We work remote-first with no call-out fee, and we&rsquo;ll tell you honestly when a repair isn&rsquo;t worth it. Call 01202 775566 or text 07520 615332 (Mon&ndash;Fri 9&ndash;5) &mdash; we come to you, or meet at the Kinson Community Centre by appointment."
    }
   ],
   "schemaKind": "service",

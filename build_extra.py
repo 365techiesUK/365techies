@@ -3062,7 +3062,7 @@ _DELL_CLUSTER = [
    ("dell-optiplex-fan-error-f1-fix", "OptiPlex fan error (F1)", "&lsquo;Previous fan failure, press F1&rsquo; explained &mdash; the safe fixes and when to get help."),
  ]),
  ("Buying a refurbished Dell", [
-   ("refurbished-dell-laptops-bournemouth", "Refurbished Dell laptops", "Business-grade Latitude from &pound;510 with a new 1TB Samsung 990 PRO, set up and supported &mdash; buy in person in Bournemouth."),
+   ("refurbished-dell-laptops-bournemouth", "Refurbished Dell laptops", "Business-grade Latitude from &pound;510 with a new 1TB Samsung 990 PRO, set up and supported &mdash; we bring it to you to see first, home or business."),
    ("refurbished-dell-desktops-dorset", "Refurbished Dell desktops", "Tested, warrantied OptiPlex desktops from &pound;545 across Dorset &mdash; skip the marketplace gamble."),
  ]),
  ("Which Dell should I buy?", [
@@ -3218,34 +3218,34 @@ def dell_video_node(s, name, desc):
 # forms.js pipeline (HubSpot + Slack relay) with the machine appended automatically. Guide prices.
 DELL_MACHINES = [
     # (id, kind, series_label, name, meta, guide_price, series_href)
-    ("latitude-3420", "laptop", "Latitude 3000", "Latitude 3420", "14&Prime; &middot; 11th-gen i5 &middot; 16GB", 510, "/refurbished-dell-latitude-3000/"),
-    ("latitude-3520", "laptop", "Latitude 3000", "Latitude 3520", "15.6&Prime; &middot; 11th-gen i5 &middot; 16GB", 545, "/refurbished-dell-latitude-3000/"),
-    ("latitude-3540", "laptop", "Latitude 3000", "Latitude 3540", "15.6&Prime; &middot; 12th/13th-gen i5 &middot; 16GB", 605, "/refurbished-dell-latitude-3000/"),
-    ("latitude-5520", "laptop", "Latitude 5000", "Latitude 5520", "15.6&Prime; &middot; 11th-gen i5 &middot; 16GB", 535, "/refurbished-dell-latitude-5000/"),
-    ("latitude-5420", "laptop", "Latitude 5000", "Latitude 5420", "14&Prime; &middot; 11th-gen i5 &middot; 16GB", 540, "/refurbished-dell-latitude-5000/"),
-    ("latitude-5430", "laptop", "Latitude 5000", "Latitude 5430", "14&Prime; &middot; 12th-gen i5 &middot; 16GB", 555, "/refurbished-dell-latitude-5000/"),
-    ("latitude-5530", "laptop", "Latitude 5000", "Latitude 5530", "15.6&Prime; &middot; 12th-gen i5 &middot; 16GB", 605, "/refurbished-dell-latitude-5000/"),
-    ("latitude-7320", "laptop", "Latitude 7000", "Latitude 7320", "13.3&Prime; ultralight &middot; 11th-gen i5 &middot; 16GB", 520, "/refurbished-dell-latitude-7000/"),
-    ("latitude-7420", "laptop", "Latitude 7000", "Latitude 7420", "14&Prime; ultralight &middot; 11th-gen i5 &middot; 16GB", 520, "/refurbished-dell-latitude-7000/"),
-    ("latitude-7330", "laptop", "Latitude 7000", "Latitude 7330", "13.3&Prime; ultralight &middot; 12th-gen i5 &middot; 16GB", 560, "/refurbished-dell-latitude-7000/"),
-    ("latitude-7430", "laptop", "Latitude 7000", "Latitude 7430", "14&Prime; ultralight &middot; 12th-gen i5 &middot; 16GB", 570, "/refurbished-dell-latitude-7000/"),
-    ("optiplex-3080", "desktop", "OptiPlex 3000", "OptiPlex 3080", "Micro / SFF / Tower &middot; 10th-gen i5 &middot; 16GB", 545, "/refurbished-dell-optiplex-3000/"),
-    ("optiplex-3090", "desktop", "OptiPlex 3000", "OptiPlex 3090", "Micro / SFF / Tower &middot; 10th-gen i5 &middot; 16GB", 550, "/refurbished-dell-optiplex-3000/"),
-    ("optiplex-3000", "desktop", "OptiPlex 3000", "OptiPlex 3000 (2022)", "Micro / SFF / Tower &middot; 12th-gen i5 &middot; 16GB", 655, "/refurbished-dell-optiplex-3000/"),
-    ("optiplex-5080", "desktop", "OptiPlex 5000", "OptiPlex 5080", "Micro / SFF / Tower &middot; 10th-gen i5 &middot; 16GB", 615, "/refurbished-dell-optiplex-5000/"),
-    ("optiplex-5090", "desktop", "OptiPlex 5000", "OptiPlex 5090", "Micro / SFF / Tower &middot; 11th-gen i5 &middot; 16GB", 620, "/refurbished-dell-optiplex-5000/"),
-    ("optiplex-5000", "desktop", "OptiPlex 5000", "OptiPlex 5000 (2022)", "Micro / SFF / Tower &middot; 12th-gen i5 &middot; 16GB", 690, "/refurbished-dell-optiplex-5000/"),
-    ("optiplex-7080", "desktop", "OptiPlex 7000", "OptiPlex 7080", "Micro / SFF / Tower &middot; 10th-gen i5 &middot; 16GB", 590, "/refurbished-dell-optiplex-7000/"),
-    ("optiplex-7090", "desktop", "OptiPlex 7000", "OptiPlex 7090", "Micro / SFF / Tower &middot; 11th-gen i5 &middot; 16GB", 610, "/refurbished-dell-optiplex-7000/"),
-    ("optiplex-7000", "desktop", "OptiPlex 7000", "OptiPlex 7000 (2022)", "Micro / SFF / Tower &middot; 12th-gen i5 &middot; 16GB", 700, "/refurbished-dell-optiplex-7000/"),
-    ("optiplex-7010", "desktop", "OptiPlex 7000", "OptiPlex 7010 (2023)", "Micro / SFF / Tower &middot; 12th/13th-gen i5 &middot; 16GB", 720, "/refurbished-dell-optiplex-7000/"),
+    ("latitude-3420", "laptop", "Latitude 3000", "Latitude 3420", "14&Prime; &middot; 11th-gen i5 &middot; 16GB", 510, "/refurbished-dell-latitude-3000/", "11th-gen i5 &middot; 4 cores / 8 threads", 8, 11),
+    ("latitude-3520", "laptop", "Latitude 3000", "Latitude 3520", "15.6&Prime; &middot; 11th-gen i5 &middot; 16GB", 545, "/refurbished-dell-latitude-3000/", "11th-gen i5 &middot; 4 cores / 8 threads", 8, 11),
+    ("latitude-3540", "laptop", "Latitude 3000", "Latitude 3540", "15.6&Prime; &middot; 12th/13th-gen i5 &middot; 16GB", 605, "/refurbished-dell-latitude-3000/", "12th/13th-gen i5 &middot; 10 cores", 12, 12),
+    ("latitude-5520", "laptop", "Latitude 5000", "Latitude 5520", "15.6&Prime; &middot; 11th-gen i5 &middot; 16GB", 535, "/refurbished-dell-latitude-5000/", "11th-gen i5 &middot; 4 cores / 8 threads", 8, 11),
+    ("latitude-5420", "laptop", "Latitude 5000", "Latitude 5420", "14&Prime; &middot; 11th-gen i5 &middot; 16GB", 540, "/refurbished-dell-latitude-5000/", "11th-gen i5 &middot; 4 cores / 8 threads", 8, 11),
+    ("latitude-5430", "laptop", "Latitude 5000", "Latitude 5430", "14&Prime; &middot; 12th-gen i5 &middot; 16GB", 555, "/refurbished-dell-latitude-5000/", "12th-gen i5 &middot; 10 cores", 12, 12),
+    ("latitude-5530", "laptop", "Latitude 5000", "Latitude 5530", "15.6&Prime; &middot; 12th-gen i5 &middot; 16GB", 605, "/refurbished-dell-latitude-5000/", "12th-gen i5 &middot; 10 cores", 12, 12),
+    ("latitude-7320", "laptop", "Latitude 7000", "Latitude 7320", "13.3&Prime; ultralight &middot; 11th-gen i5 &middot; 16GB", 520, "/refurbished-dell-latitude-7000/", "11th-gen i5 &middot; 4 cores / 8 threads", 8, 11),
+    ("latitude-7420", "laptop", "Latitude 7000", "Latitude 7420", "14&Prime; ultralight &middot; 11th-gen i5 &middot; 16GB", 520, "/refurbished-dell-latitude-7000/", "11th-gen i5 &middot; 4 cores / 8 threads", 8, 11),
+    ("latitude-7330", "laptop", "Latitude 7000", "Latitude 7330", "13.3&Prime; ultralight &middot; 12th-gen i5 &middot; 16GB", 560, "/refurbished-dell-latitude-7000/", "12th-gen i5 &middot; 10 cores", 12, 12),
+    ("latitude-7430", "laptop", "Latitude 7000", "Latitude 7430", "14&Prime; ultralight &middot; 12th-gen i5 &middot; 16GB", 570, "/refurbished-dell-latitude-7000/", "12th-gen i5 &middot; 10 cores", 12, 12),
+    ("optiplex-3080", "desktop", "OptiPlex 3000", "OptiPlex 3080", "Micro / SFF / Tower &middot; 10th-gen i5 &middot; 16GB", 545, "/refurbished-dell-optiplex-3000/", "10th-gen i5 &middot; 6 cores / 12 threads", 12, 10),
+    ("optiplex-3090", "desktop", "OptiPlex 3000", "OptiPlex 3090", "Micro / SFF / Tower &middot; 10th-gen i5 &middot; 16GB", 550, "/refurbished-dell-optiplex-3000/", "10th-gen i5 &middot; 6 cores / 12 threads", 12, 10),
+    ("optiplex-3000", "desktop", "OptiPlex 3000", "OptiPlex 3000 (2022)", "Micro / SFF / Tower &middot; 12th-gen i5 &middot; 16GB", 655, "/refurbished-dell-optiplex-3000/", "12th-gen i5 &middot; 6 cores / 12 threads", 12, 12),
+    ("optiplex-5080", "desktop", "OptiPlex 5000", "OptiPlex 5080", "Micro / SFF / Tower &middot; 10th-gen i5 &middot; 16GB", 615, "/refurbished-dell-optiplex-5000/", "10th-gen i5 &middot; 6 cores / 12 threads", 12, 10),
+    ("optiplex-5090", "desktop", "OptiPlex 5000", "OptiPlex 5090", "Micro / SFF / Tower &middot; 11th-gen i5 &middot; 16GB", 620, "/refurbished-dell-optiplex-5000/", "11th-gen i5 &middot; 6 cores / 12 threads", 12, 11),
+    ("optiplex-5000", "desktop", "OptiPlex 5000", "OptiPlex 5000 (2022)", "Micro / SFF / Tower &middot; 12th-gen i5 &middot; 16GB", 690, "/refurbished-dell-optiplex-5000/", "12th-gen i5 &middot; 6 cores / 12 threads", 12, 12),
+    ("optiplex-7080", "desktop", "OptiPlex 7000", "OptiPlex 7080", "Micro / SFF / Tower &middot; 10th-gen i5 &middot; 16GB", 590, "/refurbished-dell-optiplex-7000/", "10th-gen i5 &middot; 6 cores / 12 threads", 12, 10),
+    ("optiplex-7090", "desktop", "OptiPlex 7000", "OptiPlex 7090", "Micro / SFF / Tower &middot; 11th-gen i5 &middot; 16GB", 610, "/refurbished-dell-optiplex-7000/", "11th-gen i5 &middot; 6 cores / 12 threads", 12, 11),
+    ("optiplex-7000", "desktop", "OptiPlex 7000", "OptiPlex 7000 (2022)", "Micro / SFF / Tower &middot; 12th-gen i5 &middot; 16GB", 700, "/refurbished-dell-optiplex-7000/", "12th-gen i5 &middot; 6 cores / 12 threads", 12, 12),
+    ("optiplex-7010", "desktop", "OptiPlex 7000", "OptiPlex 7010 (2023)", "Micro / SFF / Tower &middot; 12th/13th-gen i5 &middot; 16GB", 720, "/refurbished-dell-optiplex-7000/", "12th/13th-gen i5 &middot; 6+ cores", 12, 12),
 ]
 
 def dell_picker_section():
     cards = []
-    for mid, kind, series, name, meta, price, href in DELL_MACHINES:
+    for mid, kind, series, name, meta, price, href, cpu_disp, threads, gen in DELL_MACHINES:
         cards.append(
-            f'          <div class="dpick__card" data-kind="{kind}" data-id="{mid}" data-label="{name} &middot; {meta} &middot; guide &pound;{price}">\n'
+            f'          <div class="dpick__card" data-kind="{kind}" data-id="{mid}" data-label="{name} &middot; {meta} &middot; guide &pound;{price}" data-cpu="{cpu_disp}" data-threads="{threads}" data-gen="{gen}">\n'
             f'            <p class="dpick__series mono">{series}</p>\n'
             f'            <h3>{name}</h3>\n'
             f'            <p class="dpick__meta">{meta}</p>\n'
@@ -3274,10 +3274,15 @@ def dell_picker_section():
             <div class="dpick__chosen" aria-live="polite">
               <p class="mono dpick__chosenlabel">// YOUR PICK</p>
               <p class="dpick__chosentext" id="dpick-chosen">&nbsp;</p>
-              <p class="dpick__note">Guide price &mdash; we&rsquo;ll confirm the exact machine, grade and price when we&rsquo;re in touch. No payment now, no obligation.</p>
+              <p class="dpick__note">Guide price &mdash; we&rsquo;ll confirm the exact machine, grade and price when we&rsquo;re in touch. No payment now, no obligation. <strong>Want to see it first?</strong> We&rsquo;ll bring it to your home or business in our service area, or meet you at the Kinson Community Centre by appointment &mdash; just say so in the message.</p>
+            </div>
+            <div class="dcmp" id="dcmp">
+              <button type="button" class="button" id="dcmp-run">&#9889; How much faster is this than my current computer?</button>
+              <div class="dcmp__out" id="dcmp-out" hidden aria-live="polite"></div>
             </div>
             <form class="contact-form dpick__form" method="post" action="/api/form-relay.php" data-success="&#10003; Sent &mdash; thank you! Your pick is with the team and a real 365 techie will be in contact shortly.">
               <input type="hidden" name="machine" id="dpick-machine" value="" />
+              <input type="hidden" name="current_system" id="dcmp-field" value="" />
               <input type="hidden" name="topic" value="Reserve a refurbished Dell" />
               <input type="text" name="company_website" tabindex="-1" autocomplete="one-time-code" style="position:absolute;left:-5000px" aria-hidden="true" />
               <div class="dpick__fields">
@@ -3319,7 +3324,16 @@ def dell_picker_section():
         .dpick__chosentext{font-family:var(--font-display);font-weight:600;font-size:1.25rem;margin:0 0 .3rem;color:#fff}
         .dpick__note{color:var(--muted);font-size:.8rem;margin:0 0 1.1rem}
         .dpick__fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.9rem}
-        @media(max-width:560px){.dpick__tabs{flex-wrap:wrap}}
+        .dcmp{margin:0 0 1.2rem}
+        .dcmp__out{margin-top:1rem;border:1px solid var(--line);border-radius:14px;padding:1rem 1.1rem;background:var(--glass)}
+        .dcmp__grid{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;margin:.6rem 0 .9rem}
+        .dcmp__col h4{margin:0 0 .35rem;font-size:.92rem}
+        .dcmp__col ul{margin:0;padding-left:1.05rem;color:var(--muted);font-size:.82rem;line-height:1.55}
+        .dcmp__verdict{font-family:var(--font-display);font-weight:600;font-size:1.05rem;margin:.2rem 0 .4rem}
+        .dcmp__verdict.good{color:#39d353}.dcmp__verdict.warn{color:#e0b341}
+        .dcmp__advice{color:var(--muted);font-size:.84rem;margin:0 0 .4rem}
+        .dcmp__hedge{color:var(--faint);font-size:.7rem;font-family:var(--font-mono);margin:0}
+        @media(max-width:560px){.dpick__tabs{flex-wrap:wrap}.dcmp__grid{grid-template-columns:1fr}}
       </style>
       <script>
       (function(){try{
@@ -3358,6 +3372,82 @@ def dell_picker_section():
         if(m){var t=cards.filter(function(c){return c.getAttribute('data-id')===m;})[0];
           if(t){show(t.getAttribute('data-kind'));pick(t,false,false);
             setTimeout(function(){sec.scrollIntoView({behavior:smooth});},150);}}
+
+        /* ---- compare with my current computer (facts the browser can see, honestly hedged) ---- */
+        var DET=null;
+        var cmpBtn=document.getElementById('dcmp-run'),cmpOut=document.getElementById('dcmp-out'),cmpField=document.getElementById('dcmp-field');
+        function gpuName(){try{var gl=document.createElement('canvas').getContext('webgl');if(!gl)return null;
+          var ext=gl.getExtension('WEBGL_debug_renderer_info');
+          return ext?String(gl.getParameter(ext.UNMASKED_RENDERER_WEBGL)):String(gl.getParameter(gl.RENDERER)||'');}catch(e){return null;}}
+        function eraFromGpu(g){
+          if(!g)return null;var s=g.toLowerCase();
+          if(/iris xe/.test(s))return{era:'2020–2023',gen:11};
+          if(/iris plus/.test(s))return{era:'2019–2020',gen:10};
+          if(/uhd graphics 6\d\d/.test(s))return{era:'2017–2019',gen:8};
+          if(/uhd graphics/.test(s))return{era:'2020 or newer',gen:10};
+          if(/hd graphics (62|63)0/.test(s))return{era:'2016–2018',gen:7};
+          if(/hd graphics 5\d\d/.test(s))return{era:'2015–2016',gen:6};
+          if(/hd graphics 4\d\d\d/.test(s))return{era:'2012–2014',gen:4};
+          if(/hd graphics ([23])\d\d\d/.test(s))return{era:'2010–2012',gen:2};
+          if(/hd graphics/.test(s))return{era:'2015 or earlier',gen:5};
+          if(/vega|radeon\(tm\) graphics|ryzen/.test(s))return{era:'2018 or newer (AMD)',gen:9};
+          if(/geforce|gtx|rtx|radeon rx|arc/.test(s))return{era:null,gen:null,dgpu:true};
+          return null;
+        }
+        function detect(){
+          var g=gpuName();var era=eraFromGpu(g);
+          var os='';try{os=(navigator.userAgentData&&navigator.userAgentData.platform)||navigator.platform||'';}catch(e){}
+          if(/win/i.test(os))os='Windows';else if(/mac/i.test(os))os='Mac';else if(/linux/i.test(os))os='Linux';
+          return{threads:navigator.hardwareConcurrency||null,
+                 mem:navigator.deviceMemory||null,
+                 gpu:g?g.replace(/^ANGLE \(([^)]*)\)$/,'$1').slice(0,90):null,
+                 era:era,os:os};
+        }
+        function renderCmp(){
+          if(!DET)return;
+          var card=cards.filter(function(c){return c.classList.contains('is-picked');})[0];
+          if(!card){cmpOut.hidden=false;cmpOut.innerHTML='<p class="dcmp__advice">Pick a machine above first, then compare.</p>';return;}
+          var dGen=parseInt(card.getAttribute('data-gen'),10);
+          var dThreads=parseInt(card.getAttribute('data-threads'),10);
+          var dName=card.querySelector('h3').textContent;
+          var dCpu=card.getAttribute('data-cpu');
+          var mine=[];
+          if(DET.os)mine.push(DET.os);
+          if(DET.threads)mine.push(DET.threads+' processor threads');
+          if(DET.mem)mine.push((DET.mem>=8?'8GB or more':'~'+DET.mem+'GB')+' memory');
+          if(DET.gpu)mine.push(DET.gpu+(DET.era&&DET.era.era?' (&asymp; '+DET.era.era+' era)':''));
+          if(!mine.length)mine.push('Your browser kept its secrets — no details available');
+          var dells=[dCpu,'16GB memory (dual-channel)','New 1TB Samsung 990 PRO NVMe SSD','Windows 11 Home or Pro, set up for you'];
+          var vClass='good',vText='',advice='';
+          var myGen=DET.era?DET.era.gen:null;
+          if(DET.era&&DET.era.dgpu){vText='You have a dedicated graphics card — let’s talk';vClass='warn';
+            advice='A machine with its own graphics card is a different animal — depending on age this Dell may or may not be an upgrade for what you do. Send the reserve form and we’ll advise honestly.';}
+          else if(myGen===null){vText='We couldn’t read enough to score it — but the facts are side by side';
+            advice='Browsers only reveal so much. Send the form and we’ll compare properly when we’re in touch.';}
+          else{var gap=dGen-myGen;
+            if(gap>=4||(DET.threads&&DET.threads<=4&&dThreads>=8)){vText='A night-and-day upgrade';
+              advice='Your current machine looks roughly '+(DET.era.era||'several generations')+' era. The '+dName+' has a far newer processor'+(DET.threads?' ('+dThreads+' threads vs your '+DET.threads+')':'')+', 16GB of memory and a brand-new NVMe SSD — expect everything from startup to browsing to feel dramatically quicker. A machine of that age is also an increasing data-loss risk on its original drive — worth moving before it chooses the moment for you.';}
+            else if(gap>=2){vText='A big, noticeable upgrade';
+              advice='You’d gain a much newer processor'+(DET.threads&&dThreads>DET.threads?' with more threads ('+dThreads+' vs '+DET.threads+')':'')+', guaranteed 16GB of memory and a new 1TB NVMe SSD — day-to-day work will feel notably snappier, and you’re fully Windows 11-ready. Your old machine may still fetch something or make a fine spare — we’ll advise.';}
+            else if(gap===1){vText='A solid step up';
+              advice='One processor generation newer plus a brand-new SSD and a fresh, clean Windows 11 install — a clear improvement, though not a transformation. If your current machine mainly feels slow, an SSD or memory upgrade to it might also be worth weighing — ask us and we’ll give you the honest maths.';}
+            else{vText='Honestly? Your machine looks similar — or newer';vClass='warn';
+              advice='On what the browser shows, this Dell may not be a meaningful upgrade for you. Talk to us before you spend — a different model might suit better, or your current machine might just need a service. We’d rather lose a sale than sell you sideways.';}}
+          cmpOut.hidden=false;
+          cmpOut.innerHTML='<p class="dcmp__verdict '+vClass+'">'+vText+'</p>'
+            +'<div class="dcmp__grid"><div class="dcmp__col"><h4>Your current computer</h4><ul><li>'+mine.join('</li><li>')+'</li></ul></div>'
+            +'<div class="dcmp__col"><h4>'+dName+' (as we supply it)</h4><ul><li>'+dells.join('</li><li>')+'</li></ul></div></div>'
+            +'<p class="dcmp__advice">'+advice+'</p>'
+            +'<p class="dcmp__hedge">// BROWSERS ONLY REVEAL SO MUCH — WE’LL CONFIRM THE FULL PICTURE WHEN WE’RE IN TOUCH</p>';
+          if(cmpField){cmpField.value='Their current computer (browser-detected): '
+            +[DET.os||null,DET.threads?DET.threads+' threads':null,DET.mem?(DET.mem>=8?'8GB+':'~'+DET.mem+'GB')+' RAM':null,
+              DET.gpu?DET.gpu+(DET.era&&DET.era.era?' (~'+DET.era.era+')':''):null].filter(Boolean).join(' | ')
+            +' || Verdict vs '+dName+': '+vText;
+            cmpField.setAttribute('value',cmpField.value);}
+          try{if(typeof window.gtag==='function')window.gtag('event','compare_system',{item_id:card.getAttribute('data-id')});}catch(e){}
+        }
+        if(cmpBtn)cmpBtn.addEventListener('click',function(){DET=DET||detect();renderCmp();});
+        var _oldPick=pick;pick=function(card,scroll,fromUser){_oldPick(card,scroll,fromUser);if(DET)renderCmp();};
       }catch(e){}})();
       </script>
     </section>''')
@@ -14311,7 +14401,7 @@ def _refurb_reserve_band(slug):
         return ""
     links = "".join(
         f'          <a class="rsv__m" href="/dell-hardware/?model={mid}#pick"><span class="rsv__name">{name}</span><span class="rsv__price mono">guide &pound;{price}</span></a>\n'
-        for mid, kind, series, name, meta, price, href in DELL_MACHINES if mid.startswith(prefix))
+        for mid, kind, series, name, meta, price, href, cpu_disp, threads, gen in DELL_MACHINES if mid.startswith(prefix))
     return ('''    <section class="section section--alt" aria-label="Pick and reserve">
       <div class="wrap" data-reveal>
         <div class="section-head">
