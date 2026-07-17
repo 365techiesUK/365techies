@@ -439,27 +439,18 @@ def pcm_landing():
           <h2 class="section-title section-title--center" data-title>Real screenshots &mdash; this is the actual app<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>Nothing mocked up &mdash; these were captured on our own Dell Latitude in the workshop.</p>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:1.4rem;align-items:start" data-stagger>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:1.2rem;align-items:start" data-stagger>
           <figure style="margin:0" data-reveal>
-            <div style="background:linear-gradient(180deg,#131c33,#0d1428);border:1px solid #33456e;border-bottom:0;border-radius:14px 14px 0 0;padding:12px 12px 10px;box-shadow:0 18px 40px rgba(0,0,0,.4)">
-              <img src="/images/pcm-health.png" alt="365 PC Manager health tab showing a live health score ring, verdict and system glance" loading="lazy" decoding="async" style="width:100%;border-radius:6px;display:block" />
-            </div>
-            <div style="height:12px;background:linear-gradient(180deg,#26334f,#141d33);border:1px solid #33456e;border-top:0;border-radius:0 0 14px 14px;margin:0 -10px;box-shadow:0 14px 28px rgba(0,0,0,.35)"></div>
-            <figcaption class="mono" style="font-size:.72rem;color:var(--muted);margin-top:.7rem;text-align:center">Your health score, at a glance</figcaption>
+            <img src="/images/pcm-laptop-health.png" alt="365 PC Manager on a laptop screen - the health tab with a live health score ring, verdict and system glance" loading="lazy" decoding="async" style="width:100%;display:block" />
+            <figcaption class="mono" style="font-size:.72rem;color:var(--muted);margin-top:.4rem;text-align:center">Your health score, at a glance</figcaption>
           </figure>
           <figure style="margin:0" data-reveal>
-            <div style="background:linear-gradient(180deg,#131c33,#0d1428);border:1px solid #33456e;border-bottom:0;border-radius:14px 14px 0 0;padding:12px 12px 10px;box-shadow:0 18px 40px rgba(0,0,0,.4)">
-              <img src="/images/pcm-boost.png" alt="365 PC Manager boost tab with a live memory graph and one-tap boost button" loading="lazy" decoding="async" style="width:100%;border-radius:6px;display:block" />
-            </div>
-            <div style="height:12px;background:linear-gradient(180deg,#26334f,#141d33);border:1px solid #33456e;border-top:0;border-radius:0 0 14px 14px;margin:0 -10px;box-shadow:0 14px 28px rgba(0,0,0,.35)"></div>
-            <figcaption class="mono" style="font-size:.72rem;color:var(--muted);margin-top:.7rem;text-align:center">One-tap boost, with live graphs</figcaption>
+            <img src="/images/pcm-laptop-boost.png" alt="365 PC Manager on a laptop screen - the boost tab with a live memory graph and one-tap boost button" loading="lazy" decoding="async" style="width:100%;display:block" />
+            <figcaption class="mono" style="font-size:.72rem;color:var(--muted);margin-top:.4rem;text-align:center">One-tap boost, with live graphs</figcaption>
           </figure>
           <figure style="margin:0" data-reveal>
-            <div style="background:linear-gradient(180deg,#131c33,#0d1428);border:1px solid #33456e;border-bottom:0;border-radius:14px 14px 0 0;padding:12px 12px 10px;box-shadow:0 18px 40px rgba(0,0,0,.4)">
-              <img src="/images/pcm-report.png" alt="365 PC Manager service tab where the free full health check report is run" loading="lazy" decoding="async" style="width:100%;border-radius:6px;display:block" />
-            </div>
-            <div style="height:12px;background:linear-gradient(180deg,#26334f,#141d33);border:1px solid #33456e;border-top:0;border-radius:0 0 14px 14px;margin:0 -10px;box-shadow:0 14px 28px rgba(0,0,0,.35)"></div>
-            <figcaption class="mono" style="font-size:.72rem;color:var(--muted);margin-top:.7rem;text-align:center">A full health-check report on your Desktop</figcaption>
+            <img src="/images/pcm-laptop-report.png" alt="365 PC Manager on a laptop screen - the service tab where the free full health check report is run" loading="lazy" decoding="async" style="width:100%;display:block" />
+            <figcaption class="mono" style="font-size:.72rem;color:var(--muted);margin-top:.4rem;text-align:center">A full health-check report on your Desktop</figcaption>
           </figure>
         </div>
       </div>
@@ -537,7 +528,7 @@ def pcm_landing():
                "applicationCategory": "UtilitiesApplication",
                "description": "Free PC health check app for Windows: health score, drive (SMART) health, one-tap boost, live performance graphs, backup and startup checks, and a plain-English report.",
                "offers": {"@type": "Offer", "price": "0", "priceCurrency": "GBP"},
-               "screenshot": [SITE + "/images/pcm-health.png", SITE + "/images/pcm-boost.png", SITE + "/images/pcm-report.png"],
+               "screenshot": [SITE + "/images/pcm-laptop-health.png", SITE + "/images/pcm-laptop-boost.png", SITE + "/images/pcm-laptop-report.png"],
                "provider": {"@id": SITE + "/#business"}, "url": f"{SITE}/{s}/"}
         return graph([crumb(s, "Free PC Health Check"),
                       webpage(s, "Free PC Health Check - 365 PC Manager", _desc),
