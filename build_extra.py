@@ -284,11 +284,34 @@ BOOKING_EMBED = '''    <section class="section section--alt" aria-label="Online 
           <h2 class="section-title section-title--center" data-title>Pick a time that suits you<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>Book a computer service, repair or setup in under a minute. Already a customer? Sign in to reschedule or cancel.</p>
         </div>
+        <div class="book-guide" data-reveal>
+          <div class="book-step"><span class="book-step__n">1</span><div><strong>Pick your service</strong><span>Service, repair, setup or a remote session.</span></div></div>
+          <span class="book-step__arrow" aria-hidden="true">&#8594;</span>
+          <div class="book-step"><span class="book-step__n">2</span><div><strong>Choose a time</strong><span>Live availability &mdash; grab any slot that suits.</span></div></div>
+          <span class="book-step__arrow" aria-hidden="true">&#8594;</span>
+          <div class="book-step"><span class="book-step__n">3</span><div><strong>We confirm &amp; call ahead</strong><span>Instant confirmation &mdash; and we phone before we arrive or connect.</span></div></div>
+        </div>
+        <p class="book-help" data-reveal>Not sure what to pick, or would you rather we booked it with you? <a href="tel:+441202775566"><strong>Call 01202&nbsp;775566</strong></a> &mdash; a real local person will sort it in a minute. <span class="book-cue">Choose your time below &#8595;</span></p>
         <div class="booking-embed" data-reveal>
           <div id="sbw-widget"></div>
           <p class="booking-fallback">Booking system not loading? <a href="https://365techies.simplybook.it/v2/" target="_blank" rel="noopener">OPEN IT IN A NEW TAB &#8594;</a></p>
         </div>
       </div>
+      <style>
+        .book-guide{display:flex;align-items:stretch;justify-content:center;gap:.6rem;flex-wrap:wrap;max-width:940px;margin:0 auto 1.1rem}
+        .book-step{display:flex;align-items:center;gap:.8rem;background:var(--glass);border:1px solid var(--line);border-radius:14px;padding:.9rem 1.1rem;flex:1 1 240px;min-width:230px}
+        .book-step__n{flex:0 0 auto;width:34px;height:34px;border-radius:999px;background:var(--cyan);color:#fff;font:700 1rem/34px var(--font-display);text-align:center;box-shadow:0 0 0 0 rgba(29,151,227,.5);animation:bookpulse 2.6s ease-out infinite}
+        .book-step:nth-child(3) .book-step__n{animation-delay:.4s}.book-step:nth-child(5) .book-step__n{animation-delay:.8s}
+        .book-step strong{display:block;font-size:.98rem}.book-step span{color:var(--muted);font-size:.8rem;line-height:1.4}
+        .book-step__arrow{align-self:center;color:var(--cyan-soft);font-size:1.3rem;font-weight:700}
+        .book-help{text-align:center;max-width:760px;margin:0 auto 1.2rem;color:var(--muted)}
+        .book-help a{color:var(--cyan-soft);text-decoration:none}.book-help a:hover{text-decoration:underline}
+        .book-cue{display:block;margin-top:.5rem;font-family:var(--font-mono);font-size:.78rem;letter-spacing:.04em;color:var(--cyan-soft);animation:bookbob 1.8s ease-in-out infinite}
+        @keyframes bookpulse{0%{box-shadow:0 0 0 0 rgba(29,151,227,.5)}70%{box-shadow:0 0 0 12px rgba(29,151,227,0)}100%{box-shadow:0 0 0 0 rgba(29,151,227,0)}}
+        @keyframes bookbob{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+        @media(max-width:640px){.book-step__arrow{display:none}}
+        @media(prefers-reduced-motion:reduce){.book-step__n,.book-cue{animation:none}}
+      </style>
       <script src="//widget.simplybook.it/v2/widget/widget.js" defer></script>
       <script>
         window.addEventListener('load', function () {
