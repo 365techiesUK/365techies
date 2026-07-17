@@ -19,6 +19,8 @@ from legacy_dell_data import LEGACY_DELL_PAGES
 from dell_ranges_data import DELL_RANGE_PAGES
 from office_data import OFFICE_PAGES
 from office_cluster import _office_cluster_section
+from webdesign_data import WEBDESIGN_PAGES
+from web_cluster import _web_cluster_section
 try:
     from new_pages_data import DELL_COMPARE_TABLES
 except ImportError:
@@ -2766,6 +2768,7 @@ def web_design():
       cta("Ready for a website that works as hard as you do?",
           "Get a friendly, no-obligation quote for website design, hosting and business email — all looked after by your local IT team.",
           primary=("Get a Website Quote", "/contact/"), secondary=("Call 01202 775566", "tel:+441202775566")),
+      _web_cluster_section(exclude=("web-design-hosting",)),
     ])
     def schema(s, _desc=desc, _faqs=faqs):
         svc = service(s, "Web Design & Hosting Bournemouth", "Web design, managed hosting (powered by SiteGround) and professional business email for small businesses in Bournemouth, Poole and across Dorset — built to measurable Lighthouse standards.", "Web design and hosting")
@@ -2891,6 +2894,7 @@ def website_rebuild():
       cta("Ready to find out what a rebuild would do?",
           "Free diagnosis, honest verdict, fixed written quote — and a migration done the way Google's own guidance describes. Bournemouth, Poole & Dorset.",
           primary=("Get a Rebuild Quote", "/contact/"), secondary=("Call 01202 775566", "tel:+441202775566")),
+      _web_cluster_section(exclude=("website-rebuild",)),
     ])
     def schema(s, _desc=desc, _faqs=faqs):
         svc = service(s, "Website Rebuild & Redesign", "Website rebuild and redesign with SEO-safe migration — keyword research, competitor comparison, 301 redirect mapping and Google Search Console monitoring, for businesses in Bournemouth, Poole and Dorset.", "Website rebuild and redesign")
@@ -14472,6 +14476,13 @@ _DELL_HUB_SLUGS = frozenset({
 })
 
 
+_WEB_CLUSTER_SLUGS = frozenset({
+ 'web-designer-disappeared', 'website-held-hostage', 'website-hacked-what-to-do',
+ 'slow-wordpress-site-fix-or-rebuild', 'outgrown-wix-squarespace', 'static-site-vs-wordpress-small-business',
+ 'how-we-rebuilt-our-website', 'website-speed-local-seo', 'website-maintenance-cost-uk',
+ 'websites-for-builders-tradesmen',
+})
+
 _OFFICE_M365_SLUGS = frozenset({
  'excel-spreadsheet-rescue', 'microsoft-word-wont-open', 'teams-keeps-opening-wrong-account',
  'microsoft-office-unlicensed-product-error', 'former-it-provider-controls-microsoft-365',
@@ -14487,6 +14498,8 @@ def _pack_hub(slug):
         return ("OneDrive Problems", "onedrive-problems")
     if slug in _OFFICE_M365_SLUGS:
         return ("Microsoft 365 Support", "microsoft-365-support")
+    if slug in _WEB_CLUSTER_SLUGS:
+        return ("Web Design &amp; Hosting", "web-design-hosting")
     if 'outlook' in slug:
         return ("Outlook Problems", "outlook-problems")
     if slug in _VICTRON_HUB_SLUGS:
@@ -15181,6 +15194,9 @@ for _np in DELL_RANGE_PAGES:
     build_new_page(_np)
 
 for _np in OFFICE_PAGES:
+    build_new_page(_np)
+
+for _np in WEBDESIGN_PAGES:
     build_new_page(_np)
 
 if __name__ == "__main__":
