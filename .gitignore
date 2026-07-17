@@ -31,3 +31,7 @@ api/pcm-data.json
 api/pcm-admin-secret.php
 api/pcm-simplybook.php
 api/pcm-sb-token.json
+api/pcm-data.json.lock
+api/pcm-data.json.tmp
+api/pcm-data.json.sb.tmp
+api/pcm-data.json.*.tmp

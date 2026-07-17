@@ -17,9 +17,27 @@ header('Cache-Control: no-store');
 $DATA = __DIR__ . '/pcm-data.json';
 $WEBHOOK = __DIR__ . '/slack-webhook.php'; // returns $SLACK_WEBHOOK (server-only, gitignored)
 
-function load($f){ return file_exists($f) ? (json_decode((string)@file_get_contents($f), true) ?: array('customers'=>array())) : array('customers'=>array()); }
-function save($f,$d){ @file_put_contents($f, json_encode($d, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES), LOCK_EX); }
+// Load the DB. A missing file is a legitimately-empty DB; a PRESENT-but-unparseable file is
+// NOT - returning empty there and saving would silently wipe every customer. So we throw.
+function load($f){
+    if (!file_exists($f)) return array('customers'=>array());
+    $raw = (string)@file_get_contents($f);
+    if ($raw === '') return array('customers'=>array());
+    $d = json_decode($raw, true);
+    if (!is_array($d)) { http_response_code(503); exit(json_encode(array('ok'=>false,'error'=>'db_unavailable'))); }
+    if (!isset($d['customers'])) $d['customers'] = array();
+    return $d;
+}
+// Atomic write (temp + rename) so a crash mid-write can't leave a torn file that load() rejects.
+function save($f,$d){
+    $tmp = $f . '.' . getmypid() . '.tmp';
+    if (@file_put_contents($tmp, json_encode($d, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES), LOCK_EX) !== false) @rename($tmp, $f);
+}
 function out($a){ echo json_encode($a); exit; }
+
+// Serialise the whole read-modify-write so concurrent check-ins / the SimplyBook callback
+// can't lost-update each other. Returns the lock handle (release by fclose).
+function db_lock($f){ $lk = @fopen($f . '.lock', 'c'); if ($lk) @flock($lk, LOCK_EX); return $lk; }
 
 $raw = file_get_contents('php://input');
 $in = json_decode($raw, true);
@@ -29,6 +47,7 @@ $action  = isset($in['action'])  ? preg_replace('/[^a-z]/','',$in['action']) : '
 $key     = isset($in['key'])      ? strtoupper(preg_replace('/[^A-Za-z0-9\-]/','',$in['key'])) : '';
 $machine = isset($in['machine'])  ? preg_replace('/[^a-f0-9]/','',substr($in['machine'],0,32)) : '';
 
+$db_lock = db_lock($DATA); // held until this request exits; serialises read-modify-write
 $db = load($DATA);
 $now = gmdate('Y-m-d H:i');
 
@@ -61,11 +80,15 @@ if ($action === 'checkin') {
 }
 
 if ($action === 'help') {
-    // relay to Slack; degrade gracefully if webhook file is absent
-    $cust = substr((string)($in['customer']??''),0,60);
-    $msg  = substr((string)($in['message']??''),0,600);
+    // only registered machines can raise a help request (stops anonymous relay abuse)
+    if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>false,'error'=>'unknown_key','sent'=>false));
+    // relay to Slack; degrade gracefully if webhook file is absent.
+    // escaping < > & neutralises all Slack link / mention / command syntax in webhook text.
+    $clean = function($s){ return str_replace(array('<','>','&'), array('&lt;','&gt;','&amp;'), (string)$s); };
+    $cust = $clean(substr((string)($in['customer']??''),0,60));
+    $msg  = $clean(substr((string)($in['message']??''),0,600));
     $score= intval($in['score']??0);
-    $text = ":rotating_light: *PC Manager help request*\n*".($cust!==''?$cust:'(unregistered)')."* — health {$score}%\n".$msg."\nMachine ".$machine." · key ".$key;
+    $text = ":rotating_light: *PC Manager help request*\n*".($cust!==''?$cust:'(registered)')."* — health {$score}%\n".$msg."\nMachine ".$machine." · key ".$key;
     $sent = false;
     if (file_exists($WEBHOOK)) {
         include $WEBHOOK; // sets $SLACK_WEBHOOK

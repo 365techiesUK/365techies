@@ -63,7 +63,13 @@ $ts = strtotime($start);
 $pretty = $ts ? date('D j M Y g:ia', $ts) : $start;
 
 // ---- match a PC Manager customer by email, write/clear next-service ----
-$db = file_exists($DATA) ? (json_decode((string)@file_get_contents($DATA), true) ?: array('customers' => array())) : array('customers' => array());
+// Lock + refuse-to-wipe: never overwrite a DB we couldn't parse (would destroy all customers).
+$lk = @fopen($DATA . '.lock', 'c'); if ($lk) @flock($lk, LOCK_EX);
+if (file_exists($DATA)) {
+    $raw = (string)@file_get_contents($DATA);
+    if ($raw === '') $db = array('customers' => array());
+    else { $db = json_decode($raw, true); if (!is_array($db)) { exit('db_unavailable'); } if (!isset($db['customers'])) $db['customers'] = array(); }
+} else { $db = array('customers' => array()); }
 $hit = false;
 foreach ($db['customers'] as $key => &$c) {
     if (isset($c['email']) && strtolower(trim($c['email'])) === $email) {
@@ -77,5 +83,5 @@ foreach ($db['customers'] as $key => &$c) {
     }
 }
 unset($c);
-if ($hit) { @file_put_contents($DATA, json_encode($db, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), LOCK_EX); exit('ok'); }
+if ($hit) { $tmp = $DATA . '.sb.tmp'; if (@file_put_contents($tmp, json_encode($db, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), LOCK_EX) !== false) @rename($tmp, $DATA); exit('ok'); }
 exit('no_match'); // booking for someone not on PC Manager — fine

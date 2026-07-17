@@ -20,8 +20,12 @@ function h($s){ return htmlspecialchars((string)$s, ENT_QUOTES); }
 function newkey(){ $a='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; $k=''; for($i=0;$i<12;$i++){ $k.=$a[random_int(0,strlen($a)-1)]; if($i==3||$i==7)$k.='-'; } return $k; }
 
 // auth
-if (isset($_POST['pass'])) { if (hash_equals($PCM_ADMIN_PASS, $_POST['pass'])) $_SESSION['pcm_ok']=1; }
+if (isset($_POST['pass'])) { if (hash_equals($PCM_ADMIN_PASS, $_POST['pass'])) { session_regenerate_id(true); $_SESSION['pcm_ok']=1; } }
 if (isset($_GET['logout'])) { session_destroy(); header('Location: pcm-admin.php'); exit; }
+if (empty($_SESSION['csrf'])) $_SESSION['csrf'] = bin2hex(random_bytes(16));
+$CSRF = $_SESSION['csrf'];
+// every mutation must carry the CSRF token
+if (($_POST['do'] ?? '') !== '' && !hash_equals($CSRF, (string)($_POST['csrf'] ?? ''))) { http_response_code(403); exit('bad token'); }
 if (empty($_SESSION['pcm_ok'])) {
     echo '<!doctype html><meta name=viewport content="width=device-width,initial-scale=1"><title>365 PC Manager admin</title>';
     echo '<body style="font-family:system-ui;background:#0b1226;color:#eef;display:grid;place-items:center;height:100vh;margin:0">';
@@ -121,7 +125,7 @@ th{color:#9fb5d3;font-weight:600;font-size:.75rem;text-transform:uppercase;lette
   <div><label>Email (optional)</label><input name=email type=email placeholder="name@example.com"></div>
   <div><label>On support?</label><select name=tier><option value=pro>Pro (on support)</option><option value=free>Free</option></select></div>
   <div><label>Next service (optional)</label><input name=next placeholder="Fri 28 Aug 2026"></div>
-  <div><input type=hidden name=do value=add><button>+ Add &amp; make key</button></div>
+  <div><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=add><button>+ Add &amp; make key</button></div>
 </form>
 <table><thead><tr><th>Customer</th><th>Key</th><th>Plan</th><th>Next service</th><th>Machines &amp; health</th><th></th></tr></thead><tbody>
 <?php foreach($cust as $key=>$c): ?>
@@ -130,7 +134,7 @@ th{color:#9fb5d3;font-weight:600;font-size:.75rem;text-transform:uppercase;lette
   <td><span class=key><?=h($key)?></span></td>
   <td><span class="pill <?=($c['tier']??'free')==='pro'?'pro':'free'?>"><?=($c['tier']??'free')==='pro'?'On support':'Free'?></span></td>
   <td>
-    <form method=post class=inline><input type=hidden name=do value=next><input type=hidden name=key value="<?=h($key)?>">
+    <form method=post class=inline><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=next><input type=hidden name=key value="<?=h($key)?>">
     <input name=next value="<?=h($c['next']??'')?>" style="width:130px" placeholder="—"><button class=ghost>save</button></form>
   </td>
   <td>
@@ -141,8 +145,8 @@ th{color:#9fb5d3;font-weight:600;font-size:.75rem;text-transform:uppercase;lette
       } ?>
   </td>
   <td style="white-space:nowrap">
-    <form method=post class=inline><input type=hidden name=do value=tier><input type=hidden name=key value="<?=h($key)?>"><button class=ghost><?=($c['tier']??'free')==='pro'?'→ Free':'→ Support'?></button></form>
-    <form method=post class=inline onsubmit="return confirm('Remove <?=h($c['name'])?>?')"><input type=hidden name=do value=del><input type=hidden name=key value="<?=h($key)?>"><button class=warn>×</button></form>
+    <form method=post class=inline><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=tier><input type=hidden name=key value="<?=h($key)?>"><button class=ghost><?=($c['tier']??'free')==='pro'?'→ Free':'→ Support'?></button></form>
+    <form method=post class=inline onsubmit="return confirm('Remove this customer and all their machines?')"><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=del><input type=hidden name=key value="<?=h($key)?>"><button class=warn>×</button></form>
   </td>
 </tr>
 <?php endforeach; if(!$cust) echo '<tr><td colspan=6 style="color:#9fb5d3;padding:2rem;text-align:center">No customers yet — add your first above.</td></tr>'; ?>

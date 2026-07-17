@@ -104,6 +104,18 @@ ErrorDocument 404 /404.html
 <FilesMatch "^(tools-rate|domain-cache|isitdown-cache)\.json(\.tmp|\.lock)?$">
   Require all denied
 </FilesMatch>
+# 365 PC Manager + Service Pass server-only data/secret files - NEVER serve over HTTP.
+# (The endpoints pcm.php, pcm-admin.php, pcm-sb-callback.php, pass.php stay served - not matched here.)
+<FilesMatch "^(pcm-data|pcm-sb-token|pcm-used|pass-used)\.json(\.tmp|\.lock)?$">
+  Require all denied
+</FilesMatch>
+<FilesMatch "^(pcm-admin-secret|pcm-simplybook|pass-secret)\.php$">
+  Require all denied
+</FilesMatch>
+# The Service Pass payload is delivered only through the token gate (pass.php), never directly.
+<FilesMatch "\.ps1$">
+  Require all denied
+</FilesMatch>
 
 # ============================================================
 # Performance: compression (Brotli preferred, gzip fallback)
