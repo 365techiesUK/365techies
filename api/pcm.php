@@ -74,9 +74,36 @@ if ($action === 'checkin') {
             'score'=>intval($in['score']??0), 'verdict'=>substr((string)($in['verdict']??''),0,24), 'seen'=>$now,
             'av'=>substr((string)($in['av']??''),0,8), 'backup'=>!empty($in['backup']),
             'diskpct'=>intval($in['diskpct']??0), 'w10'=>!empty($in['w10']), 'reboot'=>!empty($in['reboot'])));
+        // reminder preferences (for the SMS cron): minutes-before + wants-sms
+        if (isset($in['remind_min'])) $c['remind_min'] = max(5, min(2880, intval($in['remind_min'])));
+        if (isset($in['remind_sms'])) $c['remind_sms'] = !empty($in['remind_sms']);
         save($DATA,$db);
     }
-    out(array('ok'=>true,'tier'=>$tier,'next'=>$c['next'] ?? ''));
+    // ready = the owner has asked this customer to confirm their PC is on and ready to connect
+    $ready = (!empty($c['ready_ask']) && empty($c['ready_confirm'])) ? $c['ready_ask'] : '';
+    out(array('ok'=>true,'tier'=>$tier,'next'=>$c['next'] ?? '','next_ts'=>intval($c['next_ts'] ?? 0),'ready'=>$ready));
+}
+
+if ($action === 'ready') {
+    // the customer tapped "my PC is ready to connect" - stamp it + tell the tech on Slack
+    if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>false,'error'=>'unknown_key'));
+    $c =& $db['customers'][$key];
+    $c['ready_confirm'] = $now; unset($c['ready_ask']);
+    save($DATA,$db);
+    $clean = function($s){ return str_replace(array("\r","\n",'<','>','&'), array(' ',' ','&lt;','&gt;','&amp;'), (string)$s); };
+    $cust = $clean(substr((string)($c['name'] ?? '(customer)'),0,60));
+    $sent = false;
+    if (file_exists($WEBHOOK)) {
+        include $WEBHOOK;
+        if (!empty($SLACK_WEBHOOK)) {
+            $text = ":white_check_mark: *PC ready to connect*\n*".$cust."* confirmed their computer is on and ready for you.\nMachine ".$machine." · key ".$key;
+            $ch = curl_init($SLACK_WEBHOOK);
+            curl_setopt_array($ch, array(CURLOPT_POST=>true, CURLOPT_RETURNTRANSFER=>true, CURLOPT_TIMEOUT=>6,
+                CURLOPT_HTTPHEADER=>array('Content-Type: application/json'), CURLOPT_POSTFIELDS=>json_encode(array('text'=>$text))));
+            $r = curl_exec($ch); $sent = ($r === 'ok'); curl_close($ch);
+        }
+    }
+    out(array('ok'=>true,'sent'=>$sent));
 }
 
 if ($action === 'help') {
@@ -84,7 +111,7 @@ if ($action === 'help') {
     if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>false,'error'=>'unknown_key','sent'=>false));
     // relay to Slack; degrade gracefully if webhook file is absent.
     // escaping < > & neutralises all Slack link / mention / command syntax in webhook text.
-    $clean = function($s){ return str_replace(array('<','>','&'), array('&lt;','&gt;','&amp;'), (string)$s); };
+    $clean = function($s){ return str_replace(array("\r","\n",'<','>','&'), array(' ',' ','&lt;','&gt;','&amp;'), (string)$s); };
     $cust = $clean(substr((string)($in['customer']??''),0,60));
     $msg  = $clean(substr((string)($in['message']??''),0,600));
     $score= intval($in['score']??0);

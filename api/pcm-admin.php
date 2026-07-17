@@ -14,8 +14,19 @@ $DATA   = __DIR__ . '/pcm-data.json';
 if (!file_exists($SECRET)) { http_response_code(503); exit('Not configured: create api/pcm-admin-secret.php'); }
 require $SECRET; // $PCM_ADMIN_PASS
 
-function load($f){ return file_exists($f) ? (json_decode((string)@file_get_contents($f), true) ?: array('customers'=>array())) : array('customers'=>array()); }
-function save($f,$d){ @file_put_contents($f, json_encode($d, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES), LOCK_EX); }
+// Abort on a present-but-unparseable file rather than returning an empty DB - otherwise a torn
+// concurrent read could make the next save() persist an empty set and wipe every customer.
+function load($f){
+    if (!file_exists($f)) return array('customers'=>array());
+    $raw = (string)@file_get_contents($f);
+    if ($raw === '') return array('customers'=>array());
+    $d = json_decode($raw, true);
+    if (!is_array($d)) { http_response_code(503); exit('Customer data is temporarily unavailable - please refresh in a moment.'); }
+    if (!isset($d['customers'])) $d['customers'] = array();
+    return $d;
+}
+// atomic write (temp + rename), matching pcm.php, so a crash mid-write can't leave a torn file
+function save($f,$d){ $tmp=$f.'.'.getmypid().'.tmp'; if(@file_put_contents($tmp, json_encode($d, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES), LOCK_EX)!==false) @rename($tmp,$f); }
 function h($s){ return htmlspecialchars((string)$s, ENT_QUOTES); }
 function newkey(){ $a='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; $k=''; for($i=0;$i<12;$i++){ $k.=$a[random_int(0,strlen($a)-1)]; if($i==3||$i==7)$k.='-'; } return $k; }
 
@@ -35,6 +46,8 @@ if (empty($_SESSION['pcm_ok'])) {
     exit;
 }
 
+// hold the SAME lock pcm.php/pcm-booking use, so admin writes can't lost-update the app's check-ins
+$db_lock = @fopen($DATA . '.lock', 'c'); if ($db_lock) @flock($db_lock, LOCK_EX);
 $db = load($DATA);
 $msg = '';
 
@@ -58,7 +71,33 @@ if (($_POST['do'] ?? '') === 'next') {
 if (($_POST['do'] ?? '') === 'del') {
     $k=$_POST['key']??''; if (isset($db['customers'][$k])) { $n=$db['customers'][$k]['name']; unset($db['customers'][$k]); save($DATA,$db); $msg="Removed {$n}."; }
 }
+// approve a signed-in booking account as this Pro customer: promote the booking identity's
+// record to Pro (that's the record the customer's app holds a key for), copy the customer's
+// details onto it, and retire the old manual record so it stops re-matching.
+if (($_POST['do'] ?? '') === 'approve') {
+    $orig=$_POST['key']??''; $link=$_POST['link']??'';
+    if (isset($db['customers'][$orig]) && isset($db['customers'][$link]) && $orig!==$link) {
+        $o = $db['customers'][$orig];
+        $db['customers'][$link]['tier']='pro';
+        if (!empty($o['name'])) $db['customers'][$link]['name']=$o['name'];
+        if (empty($db['customers'][$link]['next']) && !empty($o['next'])) { $db['customers'][$link]['next']=$o['next']; if(!empty($o['next_ts'])) $db['customers'][$link]['next_ts']=$o['next_ts']; }
+        $db['customers'][$orig]['tier']='free'; $db['customers'][$orig]['email']=''; $db['customers'][$orig]['merged_into']=$link;
+        unset($db['customers'][$orig]['pending_signin']);
+        save($DATA,$db); $msg="Approved — {$db['customers'][$link]['name']} is now on support in the app.";
+    }
+}
+if (($_POST['do'] ?? '') === 'dismiss') {
+    $k=$_POST['key']??''; if (isset($db['customers'][$k])) { unset($db['customers'][$k]['pending_signin']); save($DATA,$db); $msg="Sign-in request dismissed."; }
+}
+// ask a customer's app to show a "confirm your PC is ready to connect" prompt (clears any old confirm)
+if (($_POST['do'] ?? '') === 'readyask') {
+    $k=$_POST['key']??''; if (isset($db['customers'][$k])) { $db['customers'][$k]['ready_ask']=gmdate('Y-m-d H:i'); unset($db['customers'][$k]['ready_confirm']); save($DATA,$db); $msg="Asked {$db['customers'][$k]['name']} to confirm their PC is ready — they'll see it in the app."; }
+}
+if (($_POST['do'] ?? '') === 'readyclear') {
+    $k=$_POST['key']??''; if (isset($db['customers'][$k])) { unset($db['customers'][$k]['ready_ask']); unset($db['customers'][$k]['ready_confirm']); save($DATA,$db); $msg="Cleared."; }
+}
 
+if ($db_lock) { @flock($db_lock, LOCK_UN); @fclose($db_lock); } // mutations done; render from memory
 $cust = $db['customers'] ?? array();
 // counts + build the proactive "needs a call" list
 $pcs=0; $active=0; $today=gmdate('Y-m-d'); $calls=array();
@@ -78,6 +117,15 @@ foreach($cust as $key=>$c){
     }
 }
 usort($calls, function($a,$b){ return $b['sev']-$a['sev']; });
+// pending sign-in approvals: Pro records a booking account matched by email but was NOT auto-granted
+$pendings=array();
+foreach($cust as $key=>$c){
+    if(!empty($c['pending_signin']) && is_array($c['pending_signin'])){
+        $ps=$c['pending_signin']; $link=$ps['link']??'';
+        if($link!=='' && isset($cust[$link])) // only if the booking identity record still exists
+            $pendings[]=array('orig'=>$key,'name'=>$c['name']??'','email'=>$c['email']??($ps['email']??''),'link'=>$link,'sbname'=>$ps['sbname']??'','ts'=>$ps['ts']??'');
+    }
+}
 ?><!doctype html><html><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1">
 <title>365 PC Manager — customers</title><style>
 :root{color-scheme:dark}body{font-family:system-ui,Segoe UI,sans-serif;background:#0b1226;color:#eef2f8;margin:0;padding:1.5rem}
@@ -103,6 +151,25 @@ th{color:#9fb5d3;font-weight:600;font-size:.75rem;text-transform:uppercase;lette
  <div class=kpi><b style="color:#39d353"><?=$active?></b><span>checked in today</span></div>
 </div>
 <?php if($msg) echo '<div class=msg>'.h($msg).'</div>'; ?>
+<?php if($pendings): ?>
+<div style="background:#0d1a2e;border:1px solid #2a5b8f;border-radius:14px;padding:1rem 1.2rem;margin-bottom:1.5rem">
+  <h2 style="margin:0 0 .3rem;font-size:1rem;color:#86b6e8">&#128273; Sign-in requests &mdash; <?=count($pendings)?> to confirm</h2>
+  <p style="color:#9fb5d3;font-size:.82rem;margin:0 0 .6rem">Someone signed into the app with a booking account whose email matches one of your <strong>Pro</strong> customers. Approving switches their app to support mode. Only approve if you recognise them as that customer.</p>
+  <table style="margin-top:0"><thead><tr><th>Signed in as</th><th>Matches your Pro customer</th><th>When</th><th></th></tr></thead><tbody>
+  <?php foreach($pendings as $pn): ?>
+    <tr>
+      <td><strong><?=h($pn['sbname']?:$pn['email'])?></strong><div class=mach><?=h($pn['email'])?></div></td>
+      <td><?=h($pn['name'])?></td>
+      <td class=mach><?=h($pn['ts'])?></td>
+      <td style="white-space:nowrap">
+        <form method=post class=inline><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=approve><input type=hidden name=key value="<?=h($pn['orig'])?>"><input type=hidden name=link value="<?=h($pn['link'])?>"><button>&#10003; Approve as Pro</button></form>
+        <form method=post class=inline onsubmit="return confirm('Dismiss this sign-in request? They keep free booking access.')"><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=dismiss><input type=hidden name=key value="<?=h($pn['orig'])?>"><button class=ghost>dismiss</button></form>
+      </td>
+    </tr>
+  <?php endforeach; ?>
+  </tbody></table>
+</div>
+<?php endif; ?>
 <?php if($calls): ?>
 <div style="background:#1a0e0e;border:1px solid #7a3b2b;border-radius:14px;padding:1rem 1.2rem;margin-bottom:1.5rem">
   <h2 style="margin:0 0 .6rem;font-size:1rem;color:#ffb4a2">&#9742; Worth a call today &mdash; <?=count($calls)?> machine(s) flagged something</h2>
@@ -128,9 +195,9 @@ th{color:#9fb5d3;font-weight:600;font-size:.75rem;text-transform:uppercase;lette
   <div><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=add><button>+ Add &amp; make key</button></div>
 </form>
 <table><thead><tr><th>Customer</th><th>Key</th><th>Plan</th><th>Next service</th><th>Machines &amp; health</th><th></th></tr></thead><tbody>
-<?php foreach($cust as $key=>$c): ?>
+<?php foreach($cust as $key=>$c): if(!empty($c['merged_into'])) continue; /* retired after approval */ ?>
 <tr>
-  <td><strong><?=h($c['name'])?></strong><?php if(!empty($c['email']))echo '<div class=mach>'.h($c['email']).'</div>';?><div class=mach>since <?=h($c['created']??'')?></div></td>
+  <td><strong><?=h($c['name'])?></strong><?php if(!empty($c['via']) && $c['via']==='signin')echo ' <span class="pill free" style="font-size:.66rem">signed in</span>'; if(!empty($c['email']))echo '<div class=mach>'.h($c['email']).'</div>';?><div class=mach>since <?=h($c['created']??'')?></div></td>
   <td><span class=key><?=h($key)?></span></td>
   <td><span class="pill <?=($c['tier']??'free')==='pro'?'pro':'free'?>"><?=($c['tier']??'free')==='pro'?'On support':'Free'?></span></td>
   <td>
@@ -146,6 +213,14 @@ th{color:#9fb5d3;font-weight:600;font-size:.75rem;text-transform:uppercase;lette
   </td>
   <td style="white-space:nowrap">
     <form method=post class=inline><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=tier><input type=hidden name=key value="<?=h($key)?>"><button class=ghost><?=($c['tier']??'free')==='pro'?'→ Free':'→ Support'?></button></form>
+    <?php if(!empty($c['ready_confirm'])): ?>
+      <span class="pill pro" title="confirmed <?=h($c['ready_confirm'])?>">✓ ready</span>
+      <form method=post class=inline><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=readyclear><input type=hidden name=key value="<?=h($key)?>"><button class=ghost>clear</button></form>
+    <?php elseif(!empty($c['ready_ask'])): ?>
+      <span class="pill free" title="asked <?=h($c['ready_ask'])?>">…awaiting</span>
+    <?php else: ?>
+      <form method=post class=inline><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=readyask><input type=hidden name=key value="<?=h($key)?>"><button class=ghost title="Ask their app to confirm the PC is on and ready to connect">📶 ready?</button></form>
+    <?php endif; ?>
     <form method=post class=inline onsubmit="return confirm('Remove this customer and all their machines?')"><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=del><input type=hidden name=key value="<?=h($key)?>"><button class=warn>×</button></form>
   </td>
 </tr>
