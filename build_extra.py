@@ -17,6 +17,8 @@ from latitude_pages_data import LATITUDE_PAGES, LATITUDE_COMPARE_TABLES
 from optiplex_pages_data import OPTIPLEX_PAGES, OPTIPLEX_COMPARE_TABLES
 from legacy_dell_data import LEGACY_DELL_PAGES
 from dell_ranges_data import DELL_RANGE_PAGES
+from office_data import OFFICE_PAGES
+from office_cluster import _office_cluster_section
 try:
     from new_pages_data import DELL_COMPARE_TABLES
 except ImportError:
@@ -14469,10 +14471,22 @@ _DELL_HUB_SLUGS = frozenset({
  'dell-inspiron-15-3000-windows-11', 'dell-inspiron-15-5000-windows-11', 'dell-inspiron-desktop-windows-11',
 })
 
+
+_OFFICE_M365_SLUGS = frozenset({
+ 'excel-spreadsheet-rescue', 'microsoft-word-wont-open', 'teams-keeps-opening-wrong-account',
+ 'microsoft-office-unlicensed-product-error', 'former-it-provider-controls-microsoft-365',
+})
+
 def _pack_hub(slug):
     """Breadcrumb hub for clustered packs: Home > hub > page (visible + schema)."""
     if slug == 'outlook-problems':
         return None
+    if slug == 'onedrive-problems':
+        return ("Microsoft 365 Support", "microsoft-365-support")
+    if 'onedrive' in slug:
+        return ("OneDrive Problems", "onedrive-problems")
+    if slug in _OFFICE_M365_SLUGS:
+        return ("Microsoft 365 Support", "microsoft-365-support")
     if 'outlook' in slug:
         return ("Outlook Problems", "outlook-problems")
     if slug in _VICTRON_HUB_SLUGS:
@@ -14518,6 +14532,12 @@ _PACK_SCENE = {
     "dell-killer-wifi-problems": "remote",
     "dell-inspiron-15-3000-windows-11": "win10", "dell-inspiron-15-5000-windows-11": "win10",
     "dell-inspiron-desktop-windows-11": "win10",
+    "onedrive-problems": "m365", "onedrive-moved-my-desktop-and-documents": "m365",
+    "files-missing-from-onedrive": "m365", "onedrive-full-cant-send-email": "email",
+    "stop-using-onedrive-without-losing-files": "m365", "excel-onedrive-sync-conflicts": "m365",
+    "excel-spreadsheet-rescue": "business", "microsoft-word-wont-open": "speed",
+    "stop-word-saving-to-onedrive": "m365", "teams-keeps-opening-wrong-account": "remote",
+    "microsoft-office-unlicensed-product-error": "m365", "former-it-provider-controls-microsoft-365": "business",
     "alienware-dell-g-series-repair-bournemouth": "repairdesktop",
     "dell-optiplex-790-upgrade": "win10", "dell-optiplex-990-upgrade": "win10",
     "dell-optiplex-7020-upgrade": "win10", "dell-optiplex-9020-upgrade": "win10",
@@ -14681,6 +14701,8 @@ def build_new_page(d):
       </div>
     </section>'''
         _blocks.insert(1 if len(_blocks) > 1 else len(_blocks), _cmp_block)
+    if d['slug'] in ('onedrive-problems', 'outlook-problems'):
+        _blocks.append(_office_cluster_section(exclude=(d['slug'],)))
     if d.get('refurbBands'):
         _blocks.append(REFURB_PRICE_RISE_BAND)
         _blocks.append(REFURB_SUPPORT_BAND)
@@ -15156,6 +15178,9 @@ for _np in LEGACY_DELL_PAGES:
     build_new_page(_np)
 
 for _np in DELL_RANGE_PAGES:
+    build_new_page(_np)
+
+for _np in OFFICE_PAGES:
     build_new_page(_np)
 
 if __name__ == "__main__":

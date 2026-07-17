@@ -4,6 +4,7 @@ Holds the shared header/footer/head once; each PAGE supplies unique content + SE
 Run: python build_pages.py  (writes <slug>/index.html for every page)
 """
 import os, json, datetime
+from office_cluster import _office_cluster_section
 from tool_seo_data import TOOL_TITLES, TOOL_SEO
 TODAY = datetime.date.today().isoformat()  # build date — used for dateModified / sitemap lastmod (freshness)
 # Per-town UNIQUE researched local content (keyed by town name) — injected into repair/town
@@ -4681,6 +4682,7 @@ add(
         </div>
       </div>
     </section>''',
+   _office_cluster_section(exclude=("microsoft-365-support",)),
    faq_html(M365_FAQS),
    tools_strip(["isitdown", "emailsec", "m365picker", "breach"], title="Free tools while you&rsquo;re here", alt=False),
    cta("Get Microsoft 365 working for you", "Stuck with Outlook, Teams or a migration? Get it sorted by Microsoft partners &mdash; or fold Microsoft 365 into a monthly plan.",
