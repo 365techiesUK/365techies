@@ -382,7 +382,7 @@ PCM_DOWNLOAD_URL = ""   # e.g. "https://365techies.co.uk/downloads/365-pc-manage
 
 def pcm_landing():
     slug = "free-pc-health-check"
-    desc = "Free PC health check for Windows - the 365 PC Manager app. See your PC's health score, one-tap boost, storage and startup tools, and honest advice. Free forever, from a family-run Dorset IT firm since 1995."
+    desc = "Free PC health check for Windows 10 &amp; 11 - the 365 PC Manager app. Health score, one-tap boost and honest advice from a Dorset family firm. Free forever."
     faqs = [
       ("Is the 365 PC Manager app really free?", "Yes &mdash; the health score, live performance graphs, one-tap boost, startup and storage tools are free forever, no sign-up. If you go on a 365 support plan we unlock the extra bits (priority help, backup checks and more), but you never have to."),
       ("Will it slow my PC down?", "No. It&rsquo;s tiny and sits quietly in your system tray, only doing anything when you open it or ask it to. The live graphs run only while you&rsquo;re watching them."),
@@ -391,11 +391,11 @@ def pcm_landing():
       ("What does &lsquo;Boost&rsquo; actually do?", "It safely clears the temporary-file clutter Windows leaves behind and refreshes memory &mdash; a quick pick-me-up when your PC feels sluggish. It never touches your documents, photos or programs."),
       ("Can you set it up for me?", "Of course &mdash; if you&rsquo;d rather not install it yourself, we&rsquo;ll pop it on during any service or remote session, or when we set up a computer for you. Just call 01202 775566."),
     ]
-    dl = (f'<a class="button primary button--lg" href="{PCM_DOWNLOAD_URL}" download>Download free for Windows &#8595;</a>'
+    dl = (f'<a class="button primary button--lg" href="{PCM_DOWNLOAD_URL}" download data-pcm-cta="download">Download free for Windows &#8595;</a>'
           if PCM_DOWNLOAD_URL else
-          '<a class="button primary button--lg" href="/contact/">Ask us to set it up for you &#8594;</a>')
-    dlnote = ("Free for Windows 10 &amp; 11 &middot; no sign-up &middot; about 60&nbsp;KB" if PCM_DOWNLOAD_URL
-              else "We&rsquo;ll install it for you on any visit or remote session &mdash; or it comes ready-to-go on every refurbished Dell we supply.")
+          '<a class="button primary button--lg" href="/contact/?topic=365-pc-manager" data-pcm-cta="ask">Ask us to set it up for you &#8594;</a>')
+    dlnote = ("Free for Windows 10 &amp; 11 &middot; no sign-up &middot; under 1&nbsp;MB" if PCM_DOWNLOAD_URL
+              else "We&rsquo;ll install it for you on any visit or remote session &mdash; and we can pop it on any refurbished Dell we supply, just say the word.")
     content = "\n".join([
       hero(bc("Free PC Health Check"), "// FREE WINDOWS APP",
            'Your PC&rsquo;s health, <em class="grad grad--cyan">at a glance</em>',
@@ -432,6 +432,62 @@ def pcm_landing():
         </ul>
       </div>
     </section>''',
+      '''    <section class="section" aria-label="What it looks like">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// WHAT IT LOOKS LIKE</p>
+          <h2 class="section-title section-title--center" data-title>Real screenshots &mdash; this is the actual app<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.1rem" data-stagger>
+          <figure style="margin:0" data-reveal><img src="/images/pcm-health.png" alt="365 PC Manager health tab showing a live health score ring, verdict and system glance" loading="lazy" decoding="async" style="width:100%;border-radius:12px;border:1px solid var(--line,#2a3b63)" /><figcaption class="mono" style="font-size:.72rem;color:var(--muted);margin-top:.4rem">Your health score, at a glance</figcaption></figure>
+          <figure style="margin:0" data-reveal><img src="/images/pcm-boost.png" alt="365 PC Manager boost tab with a live memory graph and one-tap boost button" loading="lazy" decoding="async" style="width:100%;border-radius:12px;border:1px solid var(--line,#2a3b63)" /><figcaption class="mono" style="font-size:.72rem;color:var(--muted);margin-top:.4rem">One-tap boost, with live graphs</figcaption></figure>
+          <figure style="margin:0" data-reveal><img src="/images/pcm-report.png" alt="365 PC Manager service tab where the free full health check report is run" loading="lazy" decoding="async" style="width:100%;border-radius:12px;border:1px solid var(--line,#2a3b63)" /><figcaption class="mono" style="font-size:.72rem;color:var(--muted);margin-top:.4rem">A full health-check report on your Desktop</figcaption></figure>
+        </div>
+      </div>
+    </section>''',
+      '''    <section class="section section--alt" aria-label="What it checks">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// UNDER THE BONNET</p>
+          <h2 class="section-title section-title--center" data-title>What the free health check actually looks at<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Everything is read from your own PC &mdash; measured, never made up. If something can&rsquo;t be read, the report says so rather than guessing.</p>
+        </div>
+        <div class="cmp-wrap"><table class="cmp-table">
+          <thead><tr><th>Check</th><th>What you get</th></tr></thead>
+          <tbody>
+            <tr><td>Drive health &amp; condition</td><td>The drive&rsquo;s own self-check (SMART) &mdash; the earliest warning most drives give before failing</td></tr>
+            <tr><td>How old your PC is</td><td>An honest age estimate from the processor generation, and what that means for its future</td></tr>
+            <tr><td>Memory</td><td>How much you have, the most this machine can take, and whether a top-up is worth it</td></tr>
+            <tr><td>Backup</td><td>Whether a backup is genuinely running &mdash; not just installed</td></tr>
+            <tr><td>Antivirus &amp; updates</td><td>Whether real-time protection is on and updates have finished</td></tr>
+            <tr><td>Storage &amp; startup</td><td>Where your space went and what slows your start-up</td></tr>
+            <tr><td>Value for money</td><td>What machines like yours typically cost new, and your honest cost-per-week so far</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </section>''',
+      '''    <section class="section" aria-label="Not another PC cleaner">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">// NOT ANOTHER &ldquo;PC CLEANER&rdquo;</p>
+          <h2 class="section-title" data-title>Why this isn&rsquo;t like those scary &ldquo;free PC scan&rdquo; tools<span class="title-underline"></span></h2>
+          <p>You&rsquo;ve probably seen them: a &ldquo;free scan&rdquo; that finds hundreds of alarming &ldquo;problems&rdquo;, then demands money to fix them. Some are outright scams aimed at older people; even the famous ones are pushy. <strong>We built 365 PC Manager to be the opposite</strong> &mdash; because our name and 30 years of local reputation are attached to it.</p>
+          <p>It reads your PC&rsquo;s real figures and tells you the truth, even when the truth is &ldquo;your computer is fine&rdquo;. No invented problem counts, no red flashing warnings, no pop-up upsells, no nagging. And if it ever says something needs attention, you can ring an actual person on <strong>01202 775566</strong> and ask why.</p>
+        </div>
+        <ul class="checklist" data-stagger>
+''' + checklist(["Reads your PC &mdash; changes nothing without a tap","No invented &ldquo;problems&rdquo; or scare counts","No pop-ups, no nagging, no pressure to pay","Your data stays on your PC (customers with a key share only the health score, so we can help proactively)","Made by a phoneable Bournemouth family firm, est. 1995","If it can&rsquo;t measure something, it says so"]) + '''
+        </ul>
+      </div>
+    </section>''',
+      '''    <section class="section section--alt" aria-label="365 PC Manager vs Microsoft tools">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// EASY TO MIX UP</p>
+          <h2 class="section-title section-title--center" data-title>Is this the same as Microsoft&rsquo;s &ldquo;PC Health Check&rdquo; or &ldquo;PC Manager&rdquo;?<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>No &mdash; similar names, different jobs. Microsoft&rsquo;s <strong>PC Health Check</strong> mainly answers one question: can this PC run Windows 11? Microsoft&rsquo;s <strong>PC Manager</strong> is a general clean-up utility. <strong>365 PC Manager</strong> is our own app: a plain-English health check of the things that actually catch people out &mdash; drive health, backup, protection, age and value &mdash; with a real local techie one tap away when you want a human. They happily live side by side.</p>
+        </div>
+      </div>
+    </section>''',
       f'''    <section class="section" aria-label="Get the app" id="get">
       <div class="wrap">
         <div class="section-head">
@@ -440,17 +496,33 @@ def pcm_landing():
           <p class="lede lede--center" data-reveal>{dlnote}</p>
         </div>
         <p style="text-align:center;margin:1.4rem 0" data-reveal>{dl}</p>
+        <p style="text-align:center;color:var(--muted);font-size:.9rem" data-reveal>Rather a person checked it over instead? Book a <a href="/free-it-health-check/">free IT health check</a> and a techie will look at everything with you.</p>
         <p class="mono" style="text-align:center;color:var(--faint);font-size:.72rem" data-reveal>// FAMILY-RUN SINCE 1995 &middot; 4.9 ON GOOGLE &middot; MON&ndash;FRI 9&ndash;5 &middot; BOURNEMOUTH, POOLE &amp; DORSET</p>
       </div>
     </section>''',
       faq_html(faqs),
+      '''    <script>
+      (function () {
+        var els = document.querySelectorAll('[data-pcm-cta]');
+        for (var i = 0; i < els.length; i++) els[i].addEventListener('click', function () {
+          try { if (typeof window.gtag === 'function') window.gtag('event', this.getAttribute('data-pcm-cta') === 'download' ? 'pcm_download_click' : 'pcm_ask_install_click', { page: location.pathname }); } catch (e) {}
+        });
+      })();
+    </script>''',
       cta("Rather we just sorted it?", "Put your computer on a 365 support plan and we&rsquo;ll keep it healthy for you &mdash; the app included.",
           primary=("View support plans", "/monthly-it-support/"), secondary=("Call 01202 775566", "tel:+441202775566")),
     ])
     def schema(s, _desc=desc, _faqs=faqs):
+        app = {"@type": "SoftwareApplication", "@id": f"{SITE}/{s}/#app",
+               "name": "365 PC Manager", "operatingSystem": "Windows 10, Windows 11",
+               "applicationCategory": "UtilitiesApplication",
+               "description": "Free PC health check app for Windows: health score, drive (SMART) health, one-tap boost, live performance graphs, backup and startup checks, and a plain-English report.",
+               "offers": {"@type": "Offer", "price": "0", "priceCurrency": "GBP"},
+               "screenshot": [SITE + "/images/pcm-health.png", SITE + "/images/pcm-boost.png", SITE + "/images/pcm-report.png"],
+               "provider": {"@id": SITE + "/#business"}, "url": f"{SITE}/{s}/"}
         return graph([crumb(s, "Free PC Health Check"),
                       webpage(s, "Free PC Health Check - 365 PC Manager", _desc),
-                      service(s, "365 PC Manager - free PC health app", _desc, "Computer maintenance software"),
+                      app,
                       faqpage(s, _faqs)])
     add(slug=slug, title="Free PC Health Check for Windows | 365 PC Manager",
         desc=desc, og_title="Free PC Health Check - 365 PC Manager | 365 Techies", schema=schema, content=content)
@@ -6246,7 +6318,7 @@ def custom_pc_builder():
            chips=["Budget split by use","Live retailer prices","Free basket check"]),
       PCBUILD_TOOL,
       faq_html(faqs),
-      tools_strip(["speccheck", "pcbench", "repairreplace", "healthcheck"], title="More free computer tools", alt=False),
+      tools_strip(["pcmapp", "speccheck", "pcbench", "repairreplace"], title="More free computer tools", alt=False),
       cta("Measure it when it&rsquo;s built",
           "Run our free PC Benchmark on the finished machine and see your score &mdash; then keep it fast with a plan that includes regular servicing, updates and security.",
           primary=("Sanity-Check My Build", "/contact/"), secondary=("PC Benchmark", "/pc-benchmark/")),
@@ -6522,7 +6594,7 @@ def dell_3520_guide():
       </div>
     </section>''',
       faq_html(faqs),
-      tools_strip(["speccheck", "pcbench", "solarcalc", "healthcheck"], title="Free tools for your machine", alt=False),
+      tools_strip(["pcmapp", "speccheck", "pcbench", "healthcheck"], title="Free tools for your machine", alt=False),
       cta("This guide comes with the laptops we sell",
           "Refurbished business-grade Dell &mdash; Latitude laptops from &pound;510 (with a new 1TB Samsung 990 PRO), OptiPlex desktops from &pound;545 &mdash; tested, securely wiped, 5-year guarantee (with a support plan), and set up ready to use. Plus a friendly techie on the end of the phone.",
           primary=("See Refurbished Dells", "/dell-hardware/"), secondary=("Keep It Healthy &mdash; Plans", "/monthly-it-support/")),
@@ -6787,7 +6859,7 @@ def dell_optiplex_guide():
       </div>
     </section>''',
       faq_html(faqs),
-      tools_strip(["speccheck", "pcbench", "pcbuild", "healthcheck"], title="Free tools for your machine", alt=False),
+      tools_strip(["pcmapp", "speccheck", "pcbench", "pcbuild"], title="Free tools for your machine", alt=False),
       cta("This guide comes with the desktops we sell",
           "Refurbished business-grade Dell OptiPlex &amp; Latitude from &pound;545 &mdash; tested, new SSD, securely wiped, 5-year guarantee, and set up ready to use. Plus a friendly techie on the end of the phone.",
           primary=("See Refurbished Dells", "/dell-hardware/"), secondary=("Keep It Healthy &mdash; Plans", "/monthly-it-support/")),
@@ -7198,7 +7270,7 @@ def heatwave_guide():
       </div>
     </section>''',
       faq_html(faqs),
-      tools_strip(["pcbench", "healthcheck", "avtest"], title="Check your machine&rsquo;s health &mdash; free", lede_text="A hot summer is hard on tired machines. See how yours is really doing.", alt=False),
+      tools_strip(["pcmapp", "pcbench", "healthcheck"], title="Check your machine&rsquo;s health &mdash; free", lede_text="A hot summer is hard on tired machines. See how yours is really doing.", alt=False),
       cta("Beat the heat before it beats your tech",
           "A service cleans the fans and dust that cause summer meltdowns &mdash; and our monitored plans watch business machines&rsquo; health all year round, so the server cupboard never becomes a surprise.",
           primary=("Book a Cooling Check", "/contact/"), secondary=("Monitored IT Support", "/monthly-it-support/")),
@@ -8141,7 +8213,7 @@ def computer_spec_checker():
            chips=["Instant &amp; free", "Readings never sent to us", "Downloadable spec sheet"]),
       SPECCHECK_TOOL,
       faq_html(faqs),
-      tools_strip(["pcbench", "healthcheck", "faultcheck"], title="Now put it through its paces", alt=False),
+      tools_strip(["pcmapp", "pcbench", "healthcheck", "faultcheck"], title="Now put it through its paces", alt=False),
       cta("Specs raising questions?",
           "Windows 10 warning, mystery slowness, or a machine that doesn&rsquo;t match what you thought you bought &mdash; send us your spec sheet and we&rsquo;ll give you an honest answer, usually within minutes remotely.",
           primary=("Ask a Techie", "/contact/"), secondary=("Book a Service", "/book-service/")),
@@ -8217,7 +8289,7 @@ def pc_benchmark():
       </div>
     </section>''',
       faq_html(faqs),
-      tools_strip(["gpubench", "speccheck", "pcbuild", "healthcheck"], title="More free computer check-ups", alt=False),
+      tools_strip(["pcmapp", "gpubench", "speccheck", "pcbuild"], title="More free computer check-ups", alt=False),
       cta("Not happy with your score?",
           "We speed up slow computers every week &mdash; deep tune-ups, SSD and memory upgrades, honest advice, no-fix-no-fee and a 12-month warranty. Or start fresh with a refurbished business-grade Dell from &pound;510.",
           primary=("Make Mine Faster", "/contact/"), secondary=("Refurbished Dells", "/dell-hardware/")),
@@ -8694,7 +8766,7 @@ def graphics_card_benchmark():
       </div>
     </section>''',
       faq_html(faqs),
-      tools_strip(["pcbench", "speccheck", "pcbuild", "faultcheck"], title="More free computer tools", alt=False),
+      tools_strip(["pcmapp", "pcbench", "speccheck", "faultcheck"], title="More free computer tools", alt=False),
       cta("Need more graphics grunt?",
           "Whether it&rsquo;s a creative workstation, a gaming rig or a business PC that&rsquo;s quietly struggling, we&rsquo;ll advise honestly, build it, or upgrade what you&rsquo;ve got &mdash; or start with a refurbished business-grade Dell from &pound;510.",
           primary=("Talk to a Techie", "/contact/"), secondary=("Workstation Builds", "/threadripper-workstations/")),
@@ -8722,7 +8794,7 @@ def free_tools_hub():
       ("Website, domain &amp; email", "See how your website, domain and email really perform.",
        ["website","ssl","domainexp","dns","emailsig"]),
       ("Your computer", "Test it, diagnose it, and make smart decisions.",
-       ["speccheck","pcbench","gpubench","pcbuild","avtest","healthcheck","faultcheck","repairreplace","w10"]),
+       ["pcmapp","speccheck","pcbench","gpubench","pcbuild","avtest","healthcheck","faultcheck","repairreplace","w10"]),
       ("Costs &amp; planning", "Clear numbers and honest recommendations.",
        ["costcalc","planfinder","quickquote","downtime","m365picker","servercloud","aicalc","solarcalc","vbuilder"]),
     ]
@@ -8738,7 +8810,7 @@ def free_tools_hub():
             pos += 1
     faqs = [
       ("Are these tools really free?", "Yes &mdash; every tool here is completely free to use, with no sign-up, no account and no catch. They&rsquo;re our way of being genuinely useful; when you&rsquo;d rather a friendly techie just sorted the problem for you, that&rsquo;s what our monthly plans are for."),
-      ("Do I need to download or install anything?", "No. Every tool runs entirely in your web browser &mdash; nothing is downloaded or installed, so there&rsquo;s nothing to update and nothing that can slow your computer down. Just open a tool and use it."),
+      ("Do I need to download or install anything?", "No &mdash; every tool on this page runs entirely in your web browser, so there&rsquo;s nothing to update and nothing that can slow your computer down. The one exception is our free <a href=\"/free-pc-health-check/\">365 PC Manager app</a>, a small optional Windows app &mdash; and if you&rsquo;d rather not install anything yourself, we&rsquo;ll happily pop it on for you."),
       ("Do my passwords, files or data leave my browser?", "No. The privacy-sensitive tools &mdash; the password checks, the hardware and spec checkers and the benchmarks &mdash; run on your own device and don&rsquo;t send your data to us. Where a tool needs a live lookup (like the website or broadband checks) it only sends the address or URL you type, never personal data."),
       ("What can I check with these free tools?", "Plenty: test your website&rsquo;s speed and security, run a live broadband speed test, see if your password has leaked, benchmark your PC and graphics card, check what&rsquo;s inside your computer, make a Wi-Fi QR code, check whether a link is a scam, look up DNS and SSL records, and more &mdash; all free, all in your browser."),
       ("Do the tools work on phones and Macs?", "Yes &mdash; anything with a modern browser. A few are tuned with Windows PCs in mind (we&rsquo;re Windows and Android specialists), but they run on phones, tablets and Macs too."),
@@ -10061,7 +10133,7 @@ info_page(
           </ul>
           <h2>What you get</h2>
           <p>A clear, jargon-free report on where you stand and what (if anything) we&rsquo;d recommend &mdash; with <strong>absolutely no pressure to sign up</strong>. It&rsquo;s the easiest way to see how we can help.</p>
-          <p>Prefer to start yourself? Try our free <a href="/it-health-check-tool/">instant IT Health Check tool</a> &mdash; answer a few quick questions and get a score out of 100 and a personalised action plan on the spot.</p>
+          <p>Prefer to start yourself? Try our free <a href="/it-health-check-tool/">instant IT Health Check tool</a> &mdash; answer a few quick questions and get a score out of 100 and a personalised action plan on the spot. Or for an instant automatic check of a Windows PC, our free <a href="/free-pc-health-check/">365 PC Manager app</a> reads its real health &mdash; drive condition, backup, protection and age &mdash; and puts a plain-English report on your Desktop.</p>
           <h2>Who it&rsquo;s for</h2>
           <p>Home users and businesses alike &mdash; whether you&rsquo;re worried about security, frustrated by slow tech, or just want peace of mind.</p>""",
   cta_args=("Book your free health check", "No cost, no obligation &mdash; just a clear picture of your IT.",

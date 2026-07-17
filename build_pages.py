@@ -203,6 +203,7 @@ HEADER = '''  <header class="site-header">
           </a>
           <div class="dropdown">
             <a href="/free-tools/">All Free Tools &#8594;</a>
+            <a href="/free-pc-health-check/">Free PC Health Check App</a>
             <a href="/online-safety-course/">Free Online Safety Course</a>
             <a href="/broadband-speed-checker/">Broadband Speed Test</a>
             <a href="/pc-benchmark/">PC Benchmark</a>
@@ -365,6 +366,7 @@ HEADER = '''  <header class="site-header">
         <summary>Free Tools</summary>
         <div class="m-group__links">
           <a href="/free-tools/">All Free Tools &#8594;</a>
+          <a href="/free-pc-health-check/">Free PC Health Check App</a>
           <a href="/online-safety-course/">Free Online Safety Course</a>
           <a href="/broadband-speed-checker/">Broadband Speed Test</a>
           <a href="/pc-benchmark/">PC Benchmark</a>
@@ -559,6 +561,7 @@ FOOTER = '''  <footer class="site-footer">
         <p class="site-footer__head mono">FREE TOOLS</p>
         <a href="/free-courses/">Free Courses</a>
         <a href="/free-tools/">All Free Tools &#8594;</a>
+        <a href="/free-pc-health-check/">Free PC Health Check App</a>
         <a href="/online-safety-course/">Free Online Safety Course</a>
         <a href="/broadband-speed-checker/">Broadband Speed Test</a>
         <a href="/pc-benchmark/">PC Benchmark</a>
@@ -2311,6 +2314,7 @@ TOOLS = {
   "dns":          ("DNS Lookup", "/dns-lookup/", "Check any domain&rsquo;s A, MX, NS &amp; TXT records &mdash; the settings behind your website and email."),
   "pcbench":      ("PC Benchmark", "/pc-benchmark/", "How fast is your computer, really? Six live tests &mdash; CPU, encryption, memory, graphics &amp; storage &mdash; with a score you can share."),
   "healthcheck":  ("IT Health Check Tool", "/it-health-check-tool/", "Get an instant IT &amp; security score out of 100, plus a plain-English action plan."),
+  "pcmapp":       ("Free PC Health Check App", "/free-pc-health-check/", "365 PC Manager &mdash; our free little Windows app. Health score, one-tap boost, live graphs and honest advice, from real local techies."),
   "faultcheck":   ("Computer Fault Checker", "/computer-fault-checker/", "Tell us what&rsquo;s playing up and get the likely cause and best next step."),
   "repairreplace":("Repair or Replace?", "/repair-or-replace-advisor/", "Answer four questions for an honest verdict on your ageing computer."),
   "w10":          ("Windows 10 End of Life", "/windows-10-end-of-life/", "Support has ended &mdash; find out in 30 seconds if you&rsquo;re affected, and your options."),
@@ -4063,6 +4067,7 @@ add(
           <h2 class="section-title" data-title>Stop waiting for things to break<span class="title-underline"></span></h2>
           <p>Most people only call for IT help once something has already gone wrong — a slow laptop, a hacked email, a printer that won&rsquo;t play ball. By then it&rsquo;s stressful, urgent and often more expensive to fix.</p>
           <p><strong>Monthly IT support flips that around.</strong> For one predictable monthly cost you get regular maintenance, security checks, software updates and a friendly techie on hand — so problems are caught early or never happen at all.</p>
+          <p>And you can <em>see</em> it working: our free <a href="/free-pc-health-check/">365 PC Manager app</a> sits quietly in your tray showing your PC&rsquo;s live health score — on a plan it also carries your service reminders, your written reports and one-tap help.</p>
         </div>
         <ul class="checklist" data-stagger>
 {checklist(["Unlimited remote support","Full computer service every 6 weeks","Written Service Report after every service","Antivirus &amp; web protection","Windows &amp; software updates","Microsoft 365 help","Security &amp; backup checks","Priority response","One predictable monthly cost"])}
