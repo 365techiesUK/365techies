@@ -35,12 +35,13 @@ $now = gmdate('Y-m-d H:i');
 if ($action === 'activate') {
     if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>false,'error'=>'unknown_key'));
     $c =& $db['customers'][$key];
-    if (($c['tier'] ?? 'free') !== 'pro') out(array('ok'=>false,'error'=>'not_on_support'));
+    // any valid key binds the machine and registers it for health monitoring; tier decides features
+    $tier = (($c['tier'] ?? 'free') === 'pro') ? 'pro' : 'free';
     if (!isset($c['machines'])) $c['machines'] = array();
     if ($machine !== '' && !isset($c['machines'][$machine]))
         $c['machines'][$machine] = array('name'=>substr((string)($in['name']??''),0,60),'score'=>0,'verdict'=>'','seen'=>$now,'activated'=>$now);
     save($DATA,$db);
-    out(array('ok'=>true,'tier'=>'pro','customer'=>$c['name'] ?? '','next'=>$c['next'] ?? ''));
+    out(array('ok'=>true,'tier'=>$tier,'customer'=>$c['name'] ?? '','next'=>$c['next'] ?? ''));
 }
 
 if ($action === 'checkin') {
@@ -51,7 +52,9 @@ if ($action === 'checkin') {
         if (!isset($c['machines'])) $c['machines'] = array();
         $c['machines'][$machine] = array_merge($c['machines'][$machine] ?? array(), array(
             'name'=>substr((string)($in['name']??($c['machines'][$machine]['name']??'')),0,60),
-            'score'=>intval($in['score']??0), 'verdict'=>substr((string)($in['verdict']??''),0,24), 'seen'=>$now));
+            'score'=>intval($in['score']??0), 'verdict'=>substr((string)($in['verdict']??''),0,24), 'seen'=>$now,
+            'av'=>substr((string)($in['av']??''),0,8), 'backup'=>!empty($in['backup']),
+            'diskpct'=>intval($in['diskpct']??0), 'w10'=>!empty($in['w10']), 'reboot'=>!empty($in['reboot'])));
         save($DATA,$db);
     }
     out(array('ok'=>true,'tier'=>$tier,'next'=>$c['next'] ?? ''));

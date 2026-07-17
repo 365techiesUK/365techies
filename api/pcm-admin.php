@@ -56,9 +56,24 @@ if (($_POST['do'] ?? '') === 'del') {
 }
 
 $cust = $db['customers'] ?? array();
-// counts
-$pcs=0; $active=0; $today=gmdate('Y-m-d');
-foreach($cust as $c){ foreach(($c['machines']??array()) as $m){ $pcs++; if(substr($m['seen']??'',0,10)===$today)$active++; } }
+// counts + build the proactive "needs a call" list
+$pcs=0; $active=0; $today=gmdate('Y-m-d'); $calls=array();
+foreach($cust as $key=>$c){
+    foreach(($c['machines']??array()) as $id=>$m){
+        $pcs++; if(substr($m['seen']??'',0,10)===$today)$active++;
+        $reasons=array();
+        if(($m['av']??'')==='OFF') $reasons[]='antivirus OFF';
+        if(isset($m['backup']) && !$m['backup']) $reasons[]='no backup';
+        if(intval($m['diskpct']??0)>=92) $reasons[]='disk '.$m['diskpct'].'% full';
+        if(intval($m['score']??100)<55) $reasons[]='health '.$m['score'].'%';
+        if(!empty($m['w10']) && ($c['tier']??'free')!=='pro') $reasons[]='still on Windows 10';
+        if($reasons){
+            $sev = (($m['av']??'')==='OFF'?100:0) + ((isset($m['backup'])&&!$m['backup'])?40:0) + (100-intval($m['score']??100));
+            $calls[]=array('name'=>$c['name']??'','email'=>$c['email']??'','tier'=>$c['tier']??'free','pc'=>$m['name']?:$id,'why'=>implode(', ',$reasons),'sev'=>$sev,'seen'=>$m['seen']??'');
+        }
+    }
+}
+usort($calls, function($a,$b){ return $b['sev']-$a['sev']; });
 ?><!doctype html><html><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1">
 <title>365 PC Manager — customers</title><style>
 :root{color-scheme:dark}body{font-family:system-ui,Segoe UI,sans-serif;background:#0b1226;color:#eef2f8;margin:0;padding:1.5rem}
@@ -84,6 +99,23 @@ th{color:#9fb5d3;font-weight:600;font-size:.75rem;text-transform:uppercase;lette
  <div class=kpi><b style="color:#39d353"><?=$active?></b><span>checked in today</span></div>
 </div>
 <?php if($msg) echo '<div class=msg>'.h($msg).'</div>'; ?>
+<?php if($calls): ?>
+<div style="background:#1a0e0e;border:1px solid #7a3b2b;border-radius:14px;padding:1rem 1.2rem;margin-bottom:1.5rem">
+  <h2 style="margin:0 0 .6rem;font-size:1rem;color:#ffb4a2">&#9742; Worth a call today &mdash; <?=count($calls)?> machine(s) flagged something</h2>
+  <table style="margin-top:0"><thead><tr><th>Customer</th><th>Plan</th><th>Machine</th><th>Why</th><th></th></tr></thead><tbody>
+  <?php foreach($calls as $ca): ?>
+    <tr>
+      <td><strong><?=h($ca['name'])?></strong><?php if($ca['email'])echo '<div class=mach>'.h($ca['email']).'</div>';?></td>
+      <td><span class="pill <?=$ca['tier']==='pro'?'pro':'free'?>"><?=$ca['tier']==='pro'?'On support':'Free'?></span></td>
+      <td><?=h($ca['pc'])?></td>
+      <td style="color:#ffb4a2"><?=h($ca['why'])?></td>
+      <td><?php if($ca['email'])echo '<a href="mailto:'.h($ca['email']).'?subject=Your%20PC%20flagged%20something">email</a>';?></td>
+    </tr>
+  <?php endforeach; ?>
+  </tbody></table>
+  <p style="color:#c99;font-size:.78rem;margin:.6rem 0 0">Free-tier machines here are warm upsell leads &mdash; a quick call fixing the flag is the natural way into a support plan.</p>
+</div>
+<?php endif; ?>
 <form method=post class=add>
   <div><label>Customer / business name</label><input name=name required placeholder="e.g. Mrs Wilson"></div>
   <div><label>Email (optional)</label><input name=email type=email placeholder="name@example.com"></div>
