@@ -222,17 +222,23 @@ if ($action === 'signin') {
     foreach ($th as $k2 => $v2) if ((isset($v2['ts']) ? $v2['ts'] : 0) < time() - 900) unset($th[$k2]);
     if (isset($th[$tkey]) && (isset($th[$tkey]['n']) ? $th[$tkey]['n'] : 0) >= 6) { cache_save($THROTTLE, $th); db_close($tlk); fail('throttled'); }
 
-    // 365 STAFF FIRST: if the email is on the owner allow-list, try manager mode BEFORE the
-    // client login - staff (Steve/David) are often ALSO clients, and a client match would
-    // otherwise steal them into customer mode. getUserToken proves a real company user;
-    // the allow-list ($SB_STAFF in pcm-simplybook.php) is what makes them a MANAGER. Fail
-    // closed if the list is absent. If getUserToken fails (wrong pass / client-only), we fall
-    // through to the normal client login below.
+    // 365 STAFF (allow-list) => MANAGER MODE. Authenticate them by their CLIENT/booking login
+    // (the password they book with - no 2FA, always works) or, failing that, getUserToken with
+    // their admin password (only works if that account has no 2FA). The allow-list is the
+    // AUTHORISATION; controlling the account is the AUTHENTICATION. The diary's admin API calls
+    // use the server's stored api_user_key, so a staff member's own 2FA never blocks manager mode.
+    // Allow-list emails resolve entirely here (never fall through to the customer path).
     global $SB_COMPANY, $SB_STAFF;
     $allow = (isset($SB_STAFF) && is_array($SB_STAFF)) ? array_map('strtolower', $SB_STAFF) : array();
     if (in_array($email, $allow, true)) {
-        $ur = sb_rpc('https://user-api.simplybook.me/login', 'getUserToken', array($SB_COMPANY, $email, $pass));
-        if (!sb_net($ur) && !empty($ur['result'])) {
+        $ci = sb_pub('getClientInfoByLoginPassword', array($email, $pass));
+        if (sb_net($ci)) { db_close($tlk); fail('sb_unavailable'); }
+        $authed = isset($ci['result']) && is_array($ci['result']) && !empty($ci['result']['id']);
+        if (!$authed) {
+            $ur = sb_rpc('https://user-api.simplybook.me/login', 'getUserToken', array($SB_COMPANY, $email, $pass));
+            $authed = !sb_net($ur) && !empty($ur['result']);
+        }
+        if ($authed) {
             unset($th[$tkey]); cache_save($THROTTLE, $th); db_close($tlk);
             // our own short-lived staff session token (SimplyBook password never stored),
             // bound to this machine, 12h sliding + 12h absolute cap.
@@ -244,9 +250,12 @@ if ($action === 'signin') {
             db_save($db2); db_close($lk2);
             out(array('ok' => true, 'staff' => true, 'stoken' => $stoken, 'customer' => $email));
         }
+        $th[$tkey] = array('n' => (isset($th[$tkey]['n']) ? $th[$tkey]['n'] : 0) + 1, 'ts' => time());
+        cache_save($THROTTLE, $th); db_close($tlk);
+        fail('bad_login');
     }
 
-    // otherwise: verify the customer's client login against SimplyBook (forwarded once, never stored)
+    // normal customer: verify the client login against SimplyBook (forwarded once, never stored)
     $r = sb_pub('getClientInfoByLoginPassword', array($email, $pass));
     if (sb_net($r)) { db_close($tlk); fail('sb_unavailable'); }
     $client = isset($r['result']) && is_array($r['result']) ? $r['result'] : null;
