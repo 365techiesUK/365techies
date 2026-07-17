@@ -375,6 +375,87 @@ def book_service():
         desc=desc, og_title="Book a Service | 365 Techies", schema=schema, content=content)
 book_service()
 
+# ---- 365 PC Manager - free download landing page ----
+# Owner supplies the hosted (ideally code-signed) .exe URL. Until then the page
+# routes to "ask us to install it" rather than showing a dead download button.
+PCM_DOWNLOAD_URL = ""   # e.g. "https://365techies.co.uk/downloads/365-pc-manager-setup.exe"
+
+def pcm_landing():
+    slug = "free-pc-health-check"
+    desc = "Free PC health check for Windows - the 365 PC Manager app. See your PC's health score, one-tap boost, storage and startup tools, and honest advice. Free forever, from a family-run Dorset IT firm since 1995."
+    faqs = [
+      ("Is the 365 PC Manager app really free?", "Yes &mdash; the health score, live performance graphs, one-tap boost, startup and storage tools are free forever, no sign-up. If you go on a 365 support plan we unlock the extra bits (priority help, backup checks and more), but you never have to."),
+      ("Will it slow my PC down?", "No. It&rsquo;s tiny and sits quietly in your system tray, only doing anything when you open it or ask it to. The live graphs run only while you&rsquo;re watching them."),
+      ("Is it safe to install?", "Completely. It only reads your PC&rsquo;s health (memory, disk, antivirus, backup) and never changes anything without you tapping a button. It&rsquo;s made by 365 Techies, a family-run Dorset IT firm here since 1995, rated 4.9 on Google."),
+      ("Does it send my information anywhere?", "If you&rsquo;re a 365 customer and we&rsquo;ve given you a key, it sends us your PC&rsquo;s health score so we can spot problems early and help proactively &mdash; nothing personal, just the health check. Not a customer? It keeps everything on your PC."),
+      ("What does &lsquo;Boost&rsquo; actually do?", "It safely clears the temporary-file clutter Windows leaves behind and refreshes memory &mdash; a quick pick-me-up when your PC feels sluggish. It never touches your documents, photos or programs."),
+      ("Can you set it up for me?", "Of course &mdash; if you&rsquo;d rather not install it yourself, we&rsquo;ll pop it on during any service or remote session, or when we set up a computer for you. Just call 01202 775566."),
+    ]
+    dl = (f'<a class="button primary button--lg" href="{PCM_DOWNLOAD_URL}" download>Download free for Windows &#8595;</a>'
+          if PCM_DOWNLOAD_URL else
+          '<a class="button primary button--lg" href="/contact/">Ask us to set it up for you &#8594;</a>')
+    dlnote = ("Free for Windows 10 &amp; 11 &middot; no sign-up &middot; about 60&nbsp;KB" if PCM_DOWNLOAD_URL
+              else "We&rsquo;ll install it for you on any visit or remote session &mdash; or it comes ready-to-go on every refurbished Dell we supply.")
+    content = "\n".join([
+      hero(bc("Free PC Health Check"), "// FREE WINDOWS APP",
+           'Your PC&rsquo;s health, <em class="grad grad--cyan">at a glance</em>',
+           "Meet 365 PC Manager &mdash; a free little app that shows your Windows PC&rsquo;s health score, boosts it in one tap, and gives you honest, jargon-free advice. Made by a Dorset family firm who&rsquo;ve fixed computers since 1995.",
+           cta1=("Get the free app", "#get"), cta2=("Call 01202 775566", "tel:+441202775566"),
+           chips=["Free forever", "No sign-up", "Windows 10 &amp; 11"]),
+      '''    <section class="section" aria-label="What it does">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// WHAT IT DOES</p>
+          <h2 class="section-title section-title--center" data-title>Everything your PC wishes it could tell you<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="tile-grid" data-stagger>
+''' + tiles([("shield","Health score","A clear 0&ndash;100 score and plain-English notes on anything worth sorting."),
+             ("bolt","One-tap boost","Clears the clutter and refreshes memory when things feel sluggish."),
+             ("monitor","Live performance","CPU and memory graphs that update live &mdash; like Task Manager, but friendlier."),
+             ("wrench","Startup &amp; storage","See what starts with Windows and where your space has gone."),
+             ("home","Backup &amp; safety check","Know at a glance whether your files are backed up and protected."),
+             ("bolt","Help in one tap","Stuck? Reach a real local techie without hunting for the number.")]) + '''
+        </div>
+      </div>
+    </section>''',
+      '''    <section class="section section--alt" aria-label="Free and honest">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">// FREE, AND HONEST ABOUT IT</p>
+          <h2 class="section-title" data-title>Genuinely free &mdash; here&rsquo;s the deal<span class="title-underline"></span></h2>
+          <p>The health check, boost, performance graphs and tools are <strong>free forever</strong>, no catch and no sign-up. We make it because a PC that&rsquo;s looked after breaks down less &mdash; and because when people meet how we work, some choose to put their computers on one of our <a href="/monthly-it-support/">support plans</a> (from &pound;18.25/month per computer).</p>
+          <p>On a plan, the app unlocks the extra bits &mdash; priority help, backup checks, and your six-weekly service with a written report. But the free app stands on its own, and we&rsquo;re happy either way.</p>
+          <p>Made by <strong>365 Techies</strong> &mdash; family-run in Bournemouth since 1995, Dell specialists, Microsoft Office Specialists, 4.9 on Google. Real local people you can actually phone.</p>
+        </div>
+        <ul class="checklist" data-stagger>
+''' + checklist(["Free health score &amp; advice, forever","One-tap boost &amp; clean-up","Live CPU &amp; memory graphs","Startup &amp; storage tools","Backup &amp; antivirus check","A real techie one tap away","Tiny &mdash; sits quietly in your tray","Windows 10 &amp; 11"]) + '''
+        </ul>
+      </div>
+    </section>''',
+      f'''    <section class="section" aria-label="Get the app" id="get">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// GET IT</p>
+          <h2 class="section-title section-title--center" data-title>Get 365 PC Manager<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>{dlnote}</p>
+        </div>
+        <p style="text-align:center;margin:1.4rem 0" data-reveal>{dl}</p>
+        <p class="mono" style="text-align:center;color:var(--faint);font-size:.72rem" data-reveal>// FAMILY-RUN SINCE 1995 &middot; 4.9 ON GOOGLE &middot; MON&ndash;FRI 9&ndash;5 &middot; BOURNEMOUTH, POOLE &amp; DORSET</p>
+      </div>
+    </section>''',
+      faq_html(faqs),
+      cta("Rather we just sorted it?", "Put your computer on a 365 support plan and we&rsquo;ll keep it healthy for you &mdash; the app included.",
+          primary=("View support plans", "/monthly-it-support/"), secondary=("Call 01202 775566", "tel:+441202775566")),
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        return graph([crumb(s, "Free PC Health Check"),
+                      webpage(s, "Free PC Health Check - 365 PC Manager", _desc),
+                      service(s, "365 PC Manager - free PC health app", _desc, "Computer maintenance software"),
+                      faqpage(s, _faqs)])
+    add(slug=slug, title="Free PC Health Check for Windows | 365 PC Manager",
+        desc=desc, og_title="Free PC Health Check - 365 PC Manager | 365 Techies", schema=schema, content=content)
+pcm_landing()
+
 # ===================================================== PLAN FINDER (quiz)
 PLAN_FINDER_WIDGET = '''    <section class="section section--alt" aria-label="Plan finder quiz">
       <div class="wrap">
