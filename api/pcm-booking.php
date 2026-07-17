@@ -222,32 +222,35 @@ if ($action === 'signin') {
     foreach ($th as $k2 => $v2) if ((isset($v2['ts']) ? $v2['ts'] : 0) < time() - 900) unset($th[$k2]);
     if (isset($th[$tkey]) && (isset($th[$tkey]['n']) ? $th[$tkey]['n'] : 0) >= 6) { cache_save($THROTTLE, $th); db_close($tlk); fail('throttled'); }
 
-    // verify the client login against SimplyBook (forwarded once, never stored)
+    // 365 STAFF FIRST: if the email is on the owner allow-list, try manager mode BEFORE the
+    // client login - staff (Steve/David) are often ALSO clients, and a client match would
+    // otherwise steal them into customer mode. getUserToken proves a real company user;
+    // the allow-list ($SB_STAFF in pcm-simplybook.php) is what makes them a MANAGER. Fail
+    // closed if the list is absent. If getUserToken fails (wrong pass / client-only), we fall
+    // through to the normal client login below.
+    global $SB_COMPANY, $SB_STAFF;
+    $allow = (isset($SB_STAFF) && is_array($SB_STAFF)) ? array_map('strtolower', $SB_STAFF) : array();
+    if (in_array($email, $allow, true)) {
+        $ur = sb_rpc('https://user-api.simplybook.me/login', 'getUserToken', array($SB_COMPANY, $email, $pass));
+        if (!sb_net($ur) && !empty($ur['result'])) {
+            unset($th[$tkey]); cache_save($THROTTLE, $th); db_close($tlk);
+            // our own short-lived staff session token (SimplyBook password never stored),
+            // bound to this machine, 12h sliding + 12h absolute cap.
+            $stoken = bin2hex(random_bytes(24));
+            list($lk2, $db2) = db_open();
+            if (!isset($db2['staff'])) $db2['staff'] = array();
+            foreach ($db2['staff'] as $sk => $sv) if ((isset($sv['ts']) ? $sv['ts'] : 0) < time() - 43200) unset($db2['staff'][$sk]);
+            $db2['staff'][$stoken] = array('login' => $email, 'ts' => time(), 'iat' => time(), 'machine' => $machine);
+            db_save($db2); db_close($lk2);
+            out(array('ok' => true, 'staff' => true, 'stoken' => $stoken, 'customer' => $email));
+        }
+    }
+
+    // otherwise: verify the customer's client login against SimplyBook (forwarded once, never stored)
     $r = sb_pub('getClientInfoByLoginPassword', array($email, $pass));
     if (sb_net($r)) { db_close($tlk); fail('sb_unavailable'); }
     $client = isset($r['result']) && is_array($r['result']) ? $r['result'] : null;
     if (!$client || empty($client['id'])) {
-        // not a client - maybe it's one of OUR OWN SimplyBook staff users signing in.
-        // getUserToken proves "a USER of this company", but ANY SimplyBook user (incl. a
-        // limited service-provider) would pass - so manager mode is ALSO gated by an explicit
-        // owner allow-list ($SB_STAFF in pcm-simplybook.php). Fail closed if the list is absent.
-        global $SB_COMPANY, $SB_STAFF;
-        $allow = (isset($SB_STAFF) && is_array($SB_STAFF)) ? array_map('strtolower', $SB_STAFF) : array();
-        if (in_array($email, $allow, true)) {
-            $ur = sb_rpc('https://user-api.simplybook.me/login', 'getUserToken', array($SB_COMPANY, $email, $pass));
-            if (!sb_net($ur) && !empty($ur['result'])) {
-                unset($th[$tkey]); cache_save($THROTTLE, $th); db_close($tlk);
-                // issue OUR OWN short-lived staff session token (SimplyBook password is never stored),
-                // bound to this machine, with a 12h sliding + 12h absolute cap.
-                $stoken = bin2hex(random_bytes(24));
-                list($lk2, $db2) = db_open();
-                if (!isset($db2['staff'])) $db2['staff'] = array();
-                foreach ($db2['staff'] as $sk => $sv) if ((isset($sv['ts']) ? $sv['ts'] : 0) < time() - 43200) unset($db2['staff'][$sk]);
-                $db2['staff'][$stoken] = array('login' => $email, 'ts' => time(), 'iat' => time(), 'machine' => $machine);
-                db_save($db2); db_close($lk2);
-                out(array('ok' => true, 'staff' => true, 'stoken' => $stoken, 'customer' => $email));
-            }
-        }
         $th[$tkey] = array('n' => (isset($th[$tkey]['n']) ? $th[$tkey]['n'] : 0) + 1, 'ts' => time());
         cache_save($THROTTLE, $th); db_close($tlk);
         fail('bad_login');
