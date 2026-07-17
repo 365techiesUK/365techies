@@ -402,6 +402,13 @@ def pcm_landing():
            "Meet 365 PC Manager &mdash; a free little app that shows your Windows PC&rsquo;s health score, boosts it in one tap, and gives you honest, jargon-free advice. Made by a Dorset family firm who&rsquo;ve fixed computers since 1995.",
            cta1=("Get the free app", "#get"), cta2=("Call 01202 775566", "tel:+441202775566"),
            chips=["Free forever", "No sign-up", "Windows 10 &amp; 11"]),
+      '''    <section class="section" aria-label="365 PC Manager in daily life" style="padding-top:0">
+      <div class="wrap">
+        <figure style="margin:0" data-reveal>
+          <img src="/images/pcm-hero-coffee.jpg" alt="365 PC Manager running on a laptop in a cosy coffee shop with a flat white beside it - the on-screen app is a real screenshot" loading="eager" decoding="async" style="width:100%;border-radius:18px;box-shadow:0 24px 60px rgba(0,0,0,.45);display:block" />
+        </figure>
+      </div>
+    </section>''',
       '''    <section class="section" aria-label="What it does">
       <div class="wrap">
         <div class="section-head">
@@ -411,10 +418,39 @@ def pcm_landing():
         <div class="tile-grid" data-stagger>
 ''' + tiles([("shield","Health score","A clear 0&ndash;100 score and plain-English notes on anything worth sorting."),
              ("bolt","One-tap boost","Clears the clutter and refreshes memory when things feel sluggish."),
-             ("monitor","Live performance","CPU and memory graphs that update live &mdash; like Task Manager, but friendlier."),
+             ("monitor","Live performance","CPU, memory, disk and network graphs that update live &mdash; like Task Manager, but friendlier."),
              ("wrench","Startup &amp; storage","See what starts with Windows and where your space has gone."),
              ("home","Backup &amp; safety check","Know at a glance whether your files are backed up and protected."),
+             ("bell","Service visits &amp; reminders","Book or change your service in-app, with friendly Windows reminders before each visit."),
+             ("check","Written service reports","After every service: what we did, your score, and honest advice on your Desktop."),
              ("bolt","Help in one tap","Stuck? Reach a real local techie without hunting for the number.")]) + '''
+        </div>
+      </div>
+    </section>''',
+      '''    <section class="section section--alt" aria-label="Manage your service visits">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">// THE BIG ONE &middot; ON A SUPPORT PLAN</p>
+          <h2 class="section-title" data-title>Your service visits, sorted from the app<span class="title-underline"></span></h2>
+          <p><strong>Book, change or cancel your computer service</strong> right inside the app &mdash; real available slots, no phoning around (unless you want to; we do like a chat).</p>
+          <p>Then the app quietly takes care of the rest: a <strong>Windows notification the day before</strong> with a countdown to your visit, and another <strong>15 minutes before</strong> reminding you to plug your backup drive in &mdash; with one tap to tell us <em>&ldquo;I&rsquo;m ready, come on in&rdquo;</em> when you&rsquo;re happy for us to connect.</p>
+          <p>And after every service, a <strong>written report lands on your Desktop</strong>: what we did, how your PC scored, and honest advice and recommendations in plain English. Proof, not promises.</p>
+        </div>
+        <figure style="margin:0" data-reveal>
+          <img src="/images/pcm-laptop-booking.png" alt="365 PC Manager booking tab on a laptop - a real appointment with Change and Cancel buttons, day and time slot picker, and the I'm-ready-to-connect banner" loading="lazy" decoding="async" style="width:100%;display:block" />
+        </figure>
+      </div>
+    </section>''',
+      '''    <section class="section" aria-label="Power, solar and smart home">
+      <div class="wrap split-2">
+        <figure style="margin:0" data-reveal>
+          <img src="/images/pcm-laptop-energy.png" alt="365 PC Manager power tab on a laptop - live wattage with yearly running cost, Victron VRM off-grid section and Home Assistant smart home section" loading="lazy" decoding="async" style="width:100%;display:block" />
+        </figure>
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">// POWER, SOLAR &amp; SMART HOME</p>
+          <h2 class="section-title" data-title>See what your PC really costs to run<span class="title-underline"></span></h2>
+          <p>On a laptop the app measures <strong>live watts from the battery</strong> and works out roughly what the machine costs to run a year &mdash; at <em>your</em> electricity tariff, which you can set in a tap.</p>
+          <p>Off-grid or on solar? <strong>Link your Victron VRM</strong> and see your live solar, battery and usage right in the app &mdash; the same <a href="/custom-vrm-dashboards/">custom Victron dashboards</a> we design and fit worldwide. Run Home Assistant? Link it and see at a glance that your smart home is online and healthy.</p>
         </div>
       </div>
     </section>''',
@@ -495,6 +531,20 @@ def pcm_landing():
           <p class="eyebrow eyebrow--center mono" data-reveal>// EASY TO MIX UP</p>
           <h2 class="section-title section-title--center" data-title>Is this the same as Microsoft&rsquo;s &ldquo;PC Health Check&rdquo; or &ldquo;PC Manager&rdquo;?<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>No &mdash; similar names, different jobs. Microsoft&rsquo;s <strong>PC Health Check</strong> mainly answers one question: can this PC run Windows 11? Microsoft&rsquo;s <strong>PC Manager</strong> is a general clean-up utility. <strong>365 PC Manager</strong> is our own app: a plain-English health check of the things that actually catch people out &mdash; drive health, backup, protection, age and value &mdash; with a real local techie one tap away when you want a human. They happily live side by side.</p>
+        </div>
+      </div>
+    </section>''',
+      '''    <section class="section" aria-label="Built by us, growing with you">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// BUILT IN DORSET &middot; GROWING WITH YOU</p>
+          <h2 class="section-title section-title--center" data-title>An app with a workshop behind it<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>365 PC Manager is designed and built by us, right here &mdash; the same team behind our <a href="/custom-vrm-dashboards/">custom Victron dashboards</a> and <a href="/365-ai-os/">365 AI OS</a>. We build custom Windows apps and dashboards that streamline the systems homes and small businesses actually run on &mdash; and this app grows the same way, shaped by what our customers ask for.</p>
+        </div>
+        <div class="tile-grid" data-stagger>
+''' + tiles([("spark","On the drawing board","Octopus Energy smart-meter readings in the app, and a hook-up to our 365 AI OS assistant - both in development, honestly labelled until they're real."),
+             ("flow","Have an idea?","If there's something your home or business wishes a computer did automatically, tell us - the best features in this app started as customer questions."),
+             ("handshake","Made for our neighbours","Built for Bournemouth, Poole & Dorset customers first - which is why there's always a real phone number in the corner.")]) + '''
         </div>
       </div>
     </section>''',
