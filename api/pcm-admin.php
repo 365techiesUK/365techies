@@ -198,7 +198,14 @@ th{color:#9fb5d3;font-weight:600;font-size:.75rem;text-transform:uppercase;lette
 <?php foreach($cust as $key=>$c): if(!empty($c['merged_into'])) continue; /* retired after approval */ ?>
 <tr>
   <td><strong><?=h($c['name'])?></strong><?php if(!empty($c['via']) && $c['via']==='signin')echo ' <span class="pill free" style="font-size:.66rem">signed in</span>'; if(!empty($c['email']))echo '<div class=mach>'.h($c['email']).'</div>';?><div class=mach>since <?=h($c['created']??'')?></div></td>
-  <td><span class=key><?=h($key)?></span></td>
+  <td><span class=key><?=h($key)?></span>
+    <div class=mach style="margin-top:.45rem">Activation link (send to customer):</div>
+    <div style="display:flex;gap:.3rem;margin-top:.2rem;align-items:center">
+      <input class=alink readonly value="365pcm://activate/<?=h($key)?>" onfocus="this.select()" style="width:190px;font-family:ui-monospace,monospace;font-size:.7rem;padding:.25rem .4rem">
+      <button type=button class="ghost copybtn" data-link="365pcm://activate/<?=h($key)?>" style="padding:.3rem .6rem;font-size:.75rem">Copy</button>
+      <?php if(!empty($c['email'])): ?><a class=ghost style="padding:.3rem .6rem;font-size:.75rem;text-decoration:none;border-radius:8px" href="mailto:<?=h($c['email'])?>?subject=<?=rawurlencode('Activate 365 PC Manager on your PC')?>&body=<?=rawurlencode("Hi,\n\nClick this link on the PC you'd like on support and it'll activate 365 PC Manager for you:\n\n365pcm://activate/".$key."\n\n(If nothing happens, open 365 PC Manager, go to Help & Shop, tap \"Go on support / enter key\" and paste this code: ".$key.")\n\nThanks,\n365 Techies · 01202 775566")?>">Email</a><?php endif; ?>
+    </div>
+  </td>
   <td><span class="pill <?=($c['tier']??'free')==='pro'?'pro':'free'?>"><?=($c['tier']??'free')==='pro'?'On support':'Free'?></span></td>
   <td>
     <form method=post class=inline><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=next><input type=hidden name=key value="<?=h($key)?>">
@@ -226,5 +233,13 @@ th{color:#9fb5d3;font-weight:600;font-size:.75rem;text-transform:uppercase;lette
 </tr>
 <?php endforeach; if(!$cust) echo '<tr><td colspan=6 style="color:#9fb5d3;padding:2rem;text-align:center">No customers yet — add your first above.</td></tr>'; ?>
 </tbody></table>
-<p style="color:#9fb5d3;font-size:.8rem;margin-top:1.5rem">Give the activation key to a customer when they go on support (during a Splashtop session is easiest). They tap <em>Activate 365 support</em> in the app and enter it. Toggle a customer to Free and their app quietly drops back to free mode on its next check-in.</p>
+<p style="color:#9fb5d3;font-size:.8rem;margin-top:1.5rem">Easiest way to put a customer on support: copy their <strong>activation link</strong> above and send it (email button, or paste into a Splashtop chat / text). They click it on their PC and 365 PC Manager activates itself. Or they can open <em>Help &amp; Shop</em> in the app, tap <em>Go on support / enter key</em>, and paste the key. Toggle a customer to Free and their app quietly drops back to free mode on its next check-in.</p>
+<script>
+document.querySelectorAll('.copybtn').forEach(function(b){
+  b.addEventListener('click', function(){
+    var t = b.getAttribute('data-link');
+    if (navigator.clipboard) { navigator.clipboard.writeText(t).then(function(){ b.textContent='Copied!'; setTimeout(function(){ b.textContent='Copy'; }, 1400); }); }
+  });
+});
+</script>
 </body></html>
