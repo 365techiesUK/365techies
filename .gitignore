@@ -29,3 +29,5 @@ api/servicepass-payload.ps1
 api/pass-used.json
 api/pcm-data.json
 api/pcm-admin-secret.php
+api/pcm-simplybook.php
+api/pcm-sb-token.json
