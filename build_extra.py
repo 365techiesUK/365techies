@@ -15945,7 +15945,7 @@ def write_portal_page():
       h += '<div class="card"><h2>\\ud83d\\udcc5 Diary</h2>'
         + '<button class="nbbtn" id="nbopen">\\u2795 Book a new job</button>'
         + '<div class="nbwiz" id="nbwiz" style="display:none"></div>'
-        + '<input id="dsearch" placeholder="Search a customer\\u2019s upcoming bookings (name or phone)\\u2026" />'
+        + '<input id="dsearch" placeholder="Search a customer\\u2019s upcoming bookings (name or phone)\\u2026" autocomplete="off" name="pcm-dsearch" />'
         + '<div class="dstrip" id="dstrip"></div><div id="dday"><p class="quiet">Loading the diary\\u2026</p></div></div>';
       h += '<div class="card"><h2>\\ud83d\\udda5 PC Manager fleet</h2>'
         + '<div class="stats" id="fstats"></div>'
@@ -16192,30 +16192,38 @@ def write_portal_page():
     v.innerHTML = hh;
     bindBookingButtons(v, rows);
   }
+  var searchSeq = 0;
   function doSearch(q) {
     var v = document.getElementById('dday'), s = document.getElementById('dstrip');
     if (!v) return;
+    var mySeq = ++searchSeq;
     if (!q || q.length < 2) { if (s) s.style.display = ''; buildStrip(); renderDay(selDay || todayIso()); return; }
     if (s) s.style.display = 'none';
     function run(list) {
-      var rows = list.filter(function (b) {
-        return (b.who || '').toLowerCase().indexOf(q) >= 0 || (b.phone || '').replace(/\\s/g, '').indexOf(q.replace(/\\s/g, '')) >= 0;
-      });
-      if (!rows.length) { v.innerHTML = '<p class="quiet">No upcoming bookings match \\u201c' + esc(q) + '\\u201d in the next 60 days.</p>'; return; }
-      var hh = '', lastD = '';
-      rows.forEach(function (b, i) {
-        if (b.d !== lastD) { lastD = b.d; hh += '<div class="tgroup">' + esc((b.when || '').split(' ').slice(0, 3).join(' ')) + '</div>'; }
-        hh += bookingRow(b, i, 's');
-      });
-      v.innerHTML = hh;
-      bindBookingButtons(v, rows);
+      if (mySeq !== searchSeq) return;   // a newer search superseded this one
+      try {
+        var rows = list.filter(function (b) {
+          return (b.who || '').toLowerCase().indexOf(q) >= 0 || (b.phone || '').replace(/\\s/g, '').indexOf(q.replace(/\\s/g, '')) >= 0;
+        });
+        if (!rows.length) { v.innerHTML = '<p class="quiet">No upcoming bookings match \\u201c' + esc(q) + '\\u201d in the next 60 days. (Booked further out? Check SimplyBook admin.)</p>'; return; }
+        var hh = '<p class="quiet" style="margin:0 0 .3rem"><strong>' + rows.length + '</strong> upcoming booking' + (rows.length === 1 ? '' : 's') + ' matching \\u201c' + esc(q) + '\\u201d:</p>';
+        var lastD = '';
+        rows.forEach(function (b, i) {
+          if (b.d !== lastD) { lastD = b.d; hh += '<div class="tgroup">' + esc((b.when || '').split(' ').slice(0, 3).join(' ')) + '</div>'; }
+          hh += bookingRow(b, i, 's');
+        });
+        v.innerHTML = hh;
+        bindBookingButtons(v, rows);
+      } catch (e) {
+        v.innerHTML = '<p class="quiet">Search hit a snag (' + esc(String(e && e.message || e)) + ') - tell 365 and we\\u2019ll fix it.</p>';
+      }
     }
     if (AG60) { run(AG60); return; }
     v.innerHTML = '<p class="quiet">Searching the next 60 days\\u2026</p>';
     post(BK, { action: 'agenda', stoken: S.stoken, machine: mid(), days: 60 }).then(function (d) {
       if (d && d.ok) { AG60 = d.bookings || []; run(AG60); }
-      else v.innerHTML = '<p class="quiet">Couldn\\u2019t search just now - try again.</p>';
-    }).catch(function () { v.innerHTML = '<p class="quiet">Couldn\\u2019t reach the server.</p>'; });
+      else if (mySeq === searchSeq) v.innerHTML = '<p class="quiet">Couldn\\u2019t search just now - try again.</p>';
+    }).catch(function () { if (mySeq === searchSeq) v.innerHTML = '<p class="quiet">Couldn\\u2019t reach the server.</p>'; });
   }
 
   // ---------- book a new job: who -> what -> when, live against SimplyBook ----------
