@@ -96,6 +96,26 @@ if (($_POST['do'] ?? '') === 'readyask') {
 if (($_POST['do'] ?? '') === 'readyclear') {
     $k=$_POST['key']??''; if (isset($db['customers'][$k])) { unset($db['customers'][$k]['ready_ask']); unset($db['customers'][$k]['ready_confirm']); save($DATA,$db); $msg="Cleared."; }
 }
+// Verified-Call Shield: about to ring this customer? Generate a one-off code their app
+// shows them within a minute - "the caller will say code NNNN". Valid 15 minutes.
+if (($_POST['do'] ?? '') === 'shield') {
+    $k=$_POST['key']??''; if (isset($db['customers'][$k])) {
+        $code = (string)random_int(1000, 9999);
+        $db['customers'][$k]['shield_code'] = $code;
+        $db['customers'][$k]['shield_ts'] = time();
+        save($DATA,$db);
+        $msg = "📞 Code {$code} set for {$db['customers'][$k]['name']} — give their app up to a minute to show it (it only appears while their PC is on with the app running). When they answer, SAY CODE {$code} to them FIRST — never ask them to read it to you. Valid 15 min.";
+    }
+}
+
+// authed SOS screenshot viewer: streams api/pcm-sos-<keyhash>-<machine>.jpg (direct access denied)
+if (isset($_GET['shot'])) {
+    $m = preg_replace('/[^a-f0-9\-]/','', substr((string)$_GET['shot'],0,48));
+    $f = __DIR__ . '/pcm-sos-' . $m . '.jpg';
+    if ($m !== '' && strpos($m,'-') !== false && is_readable($f)) { header('Content-Type: image/jpeg'); header('Cache-Control: no-store'); readfile($f); }
+    else { http_response_code(404); echo 'no screenshot'; }
+    exit;
+}
 
 if ($db_lock) { @flock($db_lock, LOCK_UN); @fclose($db_lock); } // mutations done; render from memory
 $cust = $db['customers'] ?? array();
@@ -218,7 +238,9 @@ th{color:#9fb5d3;font-weight:600;font-size:.75rem;text-transform:uppercase;lette
         $seen=$m['seen']??''; $fresh=substr($seen,0,10)===$today;
         $mv=intval($m['ver']??0);
         $vchip = $mv>0 ? ' · <span style="opacity:.75;color:'.(($latestVer>0&&$mv<$latestVer)?'#e0b341':'#8fa3bd').'">app v'.$mv.(($latestVer>0&&$mv<$latestVer)?' (v'.$latestVer.' out - updates itself)':'').'</span>' : '';
-        echo '<div class=mach><span class=dot style="background:'.$col.'"></span><strong style="color:#eef">'.h($m['name']?:$id).'</strong> — '.$sc.'% '.h($m['verdict']??'').' <span style="opacity:.6">· seen '.h($seen).($fresh?' ✓':'').(!empty($m['help'])?' · 🆘 '.h($m['help']):'').'</span>'.$vchip.'</div>';
+        $kh = substr(hash('sha256', $key), 0, 12);
+        $shotLink = (!empty($m['shot']) && is_readable(__DIR__.'/pcm-sos-'.$kh.'-'.$id.'.jpg')) ? ' · <a href="pcm-admin.php?shot='.h($kh.'-'.$id).'" target=_blank style="color:#1d97e3">📸 their screen ('.h($m['shot']).')</a>' : '';
+        echo '<div class=mach><span class=dot style="background:'.$col.'"></span><strong style="color:#eef">'.h($m['name']?:$id).'</strong> — '.$sc.'% '.h($m['verdict']??'').' <span style="opacity:.6">· seen '.h($seen).($fresh?' ✓':'').(!empty($m['help'])?' · 🆘 '.h($m['help']):'').'</span>'.$vchip.$shotLink.'</div>';
       } ?>
   </td>
   <td style="white-space:nowrap">
@@ -231,6 +253,8 @@ th{color:#9fb5d3;font-weight:600;font-size:.75rem;text-transform:uppercase;lette
     <?php else: ?>
       <form method=post class=inline><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=readyask><input type=hidden name=key value="<?=h($key)?>"><button class=ghost title="Ask their app to confirm the PC is on and ready to connect">📶 ready?</button></form>
     <?php endif; ?>
+    <?php $shOn = intval($c['shield_ts']??0) > 0 && (time()-intval($c['shield_ts']??0)) < 900; ?>
+    <form method=post class=inline><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=shield><input type=hidden name=key value="<?=h($key)?>"><button class=ghost title="About to ring them? Their app will say to expect a caller with this code - proves it's really us"><?= $shOn ? '📞 code '.h($c['shield_code']??'') : '📞 verify call' ?></button></form>
     <form method=post class=inline onsubmit="return confirm('Remove this customer and all their machines?')"><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=del><input type=hidden name=key value="<?=h($key)?>"><button class=warn>×</button></form>
   </td>
 </tr>

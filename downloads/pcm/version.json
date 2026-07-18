@@ -1,7 +1,7 @@
 {
-  "ver": 10,
-  "version": "1.0.10",
-  "url": "https://365techies.co.uk/downloads/pcm/pcm-v10.exe",
-  "sha256": "8fe6d4bd650b9f7bb112d187488dc5f4b4b402809919bfabff36919a908366b4",
-  "notes": "Scam check, battery health, health-over-time graph, name your PC."
+  "ver": 11,
+  "version": "1.0.11",
+  "url": "https://365techies.co.uk/downloads/pcm/pcm-v11.exe",
+  "sha256": "52ec80a8e077bdb5f591c6e89fff747193e73cc4c8750357740b1344b0ab96cc",
+  "notes": "Big SOS button with optional screen picture, Verified-Call Shield."
 }

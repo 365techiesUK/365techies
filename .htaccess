@@ -109,6 +109,10 @@ ErrorDocument 404 /404.html
 <FilesMatch "^(pcm-data|pcm-sb-token|pcm-used|pass-used|pcm-throttle)\.json(\..*)?$">
   Require all denied
 </FilesMatch>
+# SOS screenshots are viewed only through the authed admin console, never served directly
+<FilesMatch "^pcm-sos-[a-f0-9\-]+\.jpg$">
+  Require all denied
+</FilesMatch>
 <FilesMatch "^(pcm-admin-secret|pcm-simplybook|pcm-textmagic|pass-secret)\.php$">
   Require all denied
 </FilesMatch>
