@@ -690,11 +690,25 @@
         <ul class="page-hero__chips mono"><li>&#9679; Free forever</li><li>&#9679; No sign-up</li><li>&#9679; Windows 10 &amp; 11</li></ul>
       </div>
     </section>
-    <section class="section" aria-label="365 PC Manager in daily life" style="padding-top:0">
-      <div class="wrap">
-        <figure style="margin:0" data-reveal>
-          <img src="/images/pcm-hero-business.jpg" alt="A shop owner smiling at her laptop showing the 365 PC Manager booking screen, with a card reader and cup of tea on the counter - the on-screen app is a real screenshot" loading="eager" decoding="async" style="width:100%;border-radius:18px;box-shadow:0 24px 60px rgba(0,0,0,.45);display:block" />
+    <section class="section" aria-label="The real app, live" style="padding-top:0">
+      <div class="wrap" style="max-width:920px">
+        <figure style="margin:0" data-reveal aria-label="365 PC Manager genuinely running: the health score counts up, then the live memory graph flows">
+          <div style="background:linear-gradient(180deg,#131c33,#0d1428);border:2px solid #33456e;border-bottom:0;border-radius:20px 20px 0 0;padding:14px 14px 10px;box-shadow:0 24px 48px rgba(0,0,0,.45)">
+            <div style="width:8px;height:8px;border-radius:50%;background:#243352;margin:0 auto 9px"></div>
+            <video autoplay muted loop playsinline preload="metadata" poster="/images/pcm-app-live-poster.jpg" style="width:100%;border-radius:8px;display:block" aria-hidden="true">
+              <source src="/images/pcm-app-live.mp4" type="video/mp4" />
+            </video>
+          </div>
+          <div style="height:18px;background:linear-gradient(180deg,#2b3a5c,#141d33);border:2px solid #33456e;border-top:0;border-radius:0 0 20px 20px;margin:0 -26px;box-shadow:0 18px 36px rgba(0,0,0,.4);position:relative">
+            <div style="position:absolute;left:50%;top:0;transform:translateX(-50%);width:140px;height:7px;background:#0d1428;border-radius:0 0 9px 9px"></div>
+          </div>
+          <figcaption class="mono" style="font-size:.72rem;color:var(--muted);margin-top:.7rem;text-align:center">The actual app, genuinely running &mdash; recorded straight from 365 PC Manager, nothing mocked up</figcaption>
         </figure>
+        <script>
+          (function () {
+            try { if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) { var v = document.querySelector('video[poster*="pcm-app-live"]'); if (v) { v.removeAttribute('autoplay'); v.pause(); } } } catch (e) {}
+          })();
+        </script>
       </div>
     </section>
     <section class="section" aria-label="What it does">
