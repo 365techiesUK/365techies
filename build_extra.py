@@ -390,6 +390,7 @@ def pcm_landing():
       ("Does it send my information anywhere?", "If you&rsquo;re a 365 customer and we&rsquo;ve given you a key, it sends us your PC&rsquo;s health score so we can spot problems early and help proactively &mdash; nothing personal, just the health check. Not a customer? It keeps everything on your PC."),
       ("What does &lsquo;Boost&rsquo; actually do?", "It safely clears the temporary-file clutter Windows leaves behind and refreshes memory &mdash; a quick pick-me-up when your PC feels sluggish. It never touches your documents, photos or programs."),
       ("Can you set it up for me?", "Of course &mdash; if you&rsquo;d rather not install it yourself, we&rsquo;ll pop it on during any service or remote session, or when we set up a computer for you. Just call 01202 775566."),
+      ("Why can&rsquo;t I download Microsoft&rsquo;s PC Manager in the UK?", "Microsoft hasn&rsquo;t made its &ldquo;PC Manager&rdquo; utility officially available in the UK Microsoft Store &mdash; it has been region-limited for years (still, as of mid-2026). If what you actually wanted was a friendly Windows health check and tidy-up from someone you can phone, that&rsquo;s exactly what our free 365 PC Manager is: made in Dorset, works right here, and your data stays on your PC."),
     ]
     dl = (f'<a class="button primary button--lg" href="{PCM_DOWNLOAD_URL}" download data-pcm-cta="download">Download free for Windows &#8595;</a>'
           if PCM_DOWNLOAD_URL else
@@ -543,8 +544,8 @@ def pcm_landing():
       <div class="wrap">
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>// EASY TO MIX UP</p>
-          <h2 class="section-title section-title--center" data-title>Is this the same as Microsoft&rsquo;s &ldquo;PC Health Check&rdquo; or &ldquo;PC Manager&rdquo;?<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>No &mdash; similar names, different jobs. Microsoft&rsquo;s <strong>PC Health Check</strong> mainly answers one question: can this PC run Windows 11? Microsoft&rsquo;s <strong>PC Manager</strong> is a general clean-up utility. <strong>365 PC Manager</strong> is our own app: a plain-English health check of the things that actually catch people out &mdash; drive health, backup, protection, age and value &mdash; with a real local techie one tap away when you want a human. They happily live side by side.</p>
+          <h2 class="section-title section-title--center" data-title>Is this Microsoft&rsquo;s &ldquo;PC Health Check&rdquo; or &ldquo;PC Manager&rdquo;?<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>No &mdash; similar names, different things. Microsoft&rsquo;s <strong>PC Health Check</strong> mainly answers one question: can this PC run Windows 11? Microsoft&rsquo;s <strong>PC Manager</strong> clean-up utility <strong>isn&rsquo;t officially available to download in the UK</strong> &mdash; it has been region-limited out of the UK Microsoft Store for years (as of mid-2026). <strong>365 PC Manager</strong> is different: made in Dorset for UK users, a plain-English health check of the things that actually catch people out &mdash; drive health, backup, protection, age and value &mdash; your data stays on your PC, and a real local techie is one tap away when you want a human.</p>
         </div>
       </div>
     </section>''',
