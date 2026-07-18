@@ -348,8 +348,24 @@ if ($action === 'join') {
 
     $sentMail = send_join_email($email, $code);
     $sentSms = $mobile !== '' ? send_join_sms($mobile, $code) : false;
-    if (!$sentMail && !$sentSms) fail('send_failed');
-    out(array('ok' => true, 'sms' => $sentSms, 'mail' => $sentMail));
+    // STAFF codes also post to the 365 Slack - a delivery channel that can't junk-folder,
+    // and a built-in alert: staff see every attempt to sign in as staff, asked-for or not.
+    $sentSlack = false;
+    if (in_array($email, $allowSt, true)) {
+        $wh = __DIR__ . '/slack-webhook.php';
+        if (file_exists($wh)) {
+            include $wh; // $SLACK_WEBHOOK
+            if (!empty($SLACK_WEBHOOK)) {
+                $ch = curl_init($SLACK_WEBHOOK);
+                curl_setopt_array($ch, array(CURLOPT_POST => true, CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 6,
+                    CURLOPT_HTTPHEADER => array('Content-Type: application/json'),
+                    CURLOPT_POSTFIELDS => json_encode(array('text' => ":key: Portal staff sign-in code for " . $email . ": *" . $code . "*  (valid 30 min, works once, on the device that asked). Didn't request this? Someone is trying to sign in as 365 staff."))));
+                $r2 = curl_exec($ch); $sentSlack = ($r2 === 'ok'); curl_close($ch);
+            }
+        }
+    }
+    if (!$sentMail && !$sentSms && !$sentSlack) fail('send_failed');
+    out(array('ok' => true, 'sms' => $sentSms, 'mail' => $sentMail, 'slack' => $sentSlack));
 }
 
 if ($action === 'verifycode') {

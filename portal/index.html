@@ -119,7 +119,7 @@
       post('/api/pcm-booking.php', { action: 'join', email: je, mobile: jm, machine: mid() })
         .then(function (d) {
           jb.disabled = false;
-          if (d && d.ok) showCode(jn, je, d.sms, d.mail);
+          if (d && d.ok) showCode(jn, je, d.sms, d.mail, d.slack);
           else document.getElementById('jerr').textContent =
             d && d.error === 'throttled' ? 'Too many codes requested - wait an hour, or ring us: 01202 775566.'
             : d && d.error === 'bad_mobile' ? 'That mobile doesn\u2019t look like a UK number - check it or leave it empty.'
@@ -135,7 +135,7 @@
       document.getElementById('serr').textContent = '';
       post('/api/pcm-booking.php', { action: 'join', email: ce, machine: mid() })
         .then(function (d) {
-          if (d && d.ok) showCode('', ce, d.sms, d.mail);
+          if (d && d.ok) showCode('', ce, d.sms, d.mail, d.slack);
           else document.getElementById('serr').textContent = d && d.error === 'throttled' ? 'Too many codes requested - wait a while, or ring us: 01202 775566.' : 'Couldn\u2019t send a code just now - try again or ring 01202 775566.';
         }).catch(function () { document.getElementById('serr').textContent = 'Couldn\u2019t reach the server - try again.'; });
       return false;
@@ -161,10 +161,11 @@
     document.getElementById('pw').addEventListener('keydown', function (e) { if (e.key === 'Enter') doIt(); });
   }
   // code-entry step of the join flow
-  function showCode(jn, je, viaSms, viaMail) {
+  function showCode(jn, je, viaSms, viaMail, viaSlack) {
     var sentTo = viaMail && viaSms ? ('<strong>' + esc(je) + '</strong> and your mobile')
                : viaSms ? 'your mobile by text'
                : ('<strong>' + esc(je) + '</strong>');
+    if (viaSlack) sentTo += ' (and the 365 Slack)';
     el.innerHTML = '<h1>Type your code</h1>'
       + '<p class="lede">We\u2019ve sent a 6-digit code to ' + sentTo + '. Type it below - it works for 30 minutes.' + (viaMail ? ' Can\u2019t see it? Check your junk folder.' : '') + '</p>'
       + '<div class="card"><label>Your 6-digit code</label>'
