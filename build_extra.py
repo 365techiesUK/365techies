@@ -15454,6 +15454,111 @@ for _np in WEBDESIGN_PAGES:
 # /family/ - the Family View glance page. Deliberately NOT in the PAGES registry:
 # it's a private tokenised page (noindex, no sitemap, no search index). The token
 # comes from the customer's own 365 PC Manager app; data via api/pcm-family.php.
+# ---- /join/ — 365 Club free membership landing page (funnels into the passwordless /portal/ join)
+# comparison-table cells with a screen-reader label (the tick/dash glyph alone isn't announced)
+_YES = '<td class="yes"><span class="sr-only">Included</span><span aria-hidden="true">&#10003;</span></td>'
+_NO = '<td class="no"><span class="sr-only">Not included</span><span aria-hidden="true">&ndash;</span></td>'
+_join_value = ('''<section class="section" aria-label="What you get free">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow eyebrow--center mono" data-reveal>// WHAT YOU GET, FREE</p>
+      <h2 class="section-title section-title--center" data-title>Your 365 Club, from day one<span class="title-underline title-underline--center"></span></h2>
+      <p class="lede lede--center" data-reveal>Join in about a minute with a code we email or text you &mdash; no password to remember, no card, no catch. Here&rsquo;s what&rsquo;s yours the moment you&rsquo;re in.</p>
+    </div>
+    <div class="tile-grid" data-stagger>
+''' + tiles([
+    ("gift", "Free membership, no card", "Sign in with a 6-digit code by email or text &mdash; no password, no card details, ever. You get your own 365 portal for everything below."),
+    ("heart", "A free eye on your PC&rsquo;s health", "Our free 365 PC Manager app quietly watches your Windows PC and shows its health score, backup, disk space and battery right in your portal. We&rsquo;ll even pop it on for you."),
+    ("monitor", "Reports &amp; a fresh check any time", "View and download your PC&rsquo;s honest health reports, see the trend over time, and tap &lsquo;Check now&rsquo; for a fresh once-over whenever you like."),
+    ("gift", "11 free courses", "Learn to stay safe online and get more from your tech, at your own pace &mdash; all eleven 365 courses, free."),
+    ("clock", "Book &amp; manage online", "Book a service, or move or cancel a visit, straight from your portal &mdash; no phone tag."),
+    ("phone", "Help is one tap away", "The SOS remote-help button, free tools and a real local team on 01202 775566 are always a tap away. One-off help is priced up front; it&rsquo;s unlimited on a support plan."),
+]) + '''
+    </div>
+    <p class="plans-note mono" data-reveal>// WINDOWS PC APP &middot; THE FREE APP WATCHES &amp; REPORTS HONESTLY &middot; FIXING &amp; SERVICING COME WITH A PLAN</p>
+  </div>
+</section>''')
+
+_join_compare = '''<section class="section section--alt" id="included" aria-label="Free 365 Club versus a support plan">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow eyebrow--center mono" data-reveal>// FREE VS ON SUPPORT</p>
+      <h2 class="section-title section-title--center" data-title>What&rsquo;s free, and what a plan adds<span class="title-underline title-underline--center"></span></h2>
+      <p class="lede lede--center" data-reveal>The 365 Club is genuinely free forever. A support plan adds a real techie who services your PC and helps whenever you&rsquo;re stuck &mdash; from &pound;18.25/month per computer, no contract.</p>
+    </div>
+    <div class="price-table-wrap" data-reveal>
+      <table class="price-table">
+        <thead><tr><th scope="col">What you get</th><th scope="col">365 Club<span class="price">&pound;0</span><span class="per">free forever</span></th><th scope="col" class="pop">On 365 support<span class="price">&pound;18.25</span><span class="per">/mo per computer</span></th></tr></thead>
+        <tbody>
+          <tr><th scope="row">365 Club membership &amp; your own portal</th>''' + _YES + _YES + '''</tr>
+          <tr><th scope="row">365 PC Manager health monitoring</th>''' + _YES + _YES + '''</tr>
+          <tr><th scope="row">Your app&rsquo;s health reports &amp; trend</th>''' + _YES + _YES + '''</tr>
+          <tr><th scope="row">All 11 free courses</th>''' + _YES + _YES + '''</tr>
+          <tr><th scope="row">Book, move &amp; cancel online</th>''' + _YES + _YES + '''</tr>
+          <tr><th scope="row">Full service every 6 weeks + written report</th>''' + _NO + _YES + '''</tr>
+          <tr><th scope="row">Remote help</th><td>One-off, price agreed first</td><td class="yes">Unlimited, included</td></tr>
+          <tr><th scope="row">We ring before we connect</th>''' + _NO + _YES + '''</tr>
+          <tr><th scope="row">SMS backup reminders &amp; an ETA call</th>''' + _NO + _YES + '''</tr>
+          <tr><th scope="row">The same friendly faces every time</th>''' + _NO + _YES + '''</tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="plans-note mono" data-reveal>// PER COMPUTER &middot; DIRECT DEBIT &middot; NO CONTRACT &middot; CANCEL ANYTIME &middot; THE PRICE YOU SEE IS FINAL</p>
+    <div class="page-hero__cta" style="justify-content:center;margin-top:1.4rem">
+      <a href="/portal/" class="button primary button--lg">Join the 365 Club free</a>
+      <a href="/home-it-support-plans/" class="button secondary button--lg">See support plans</a>
+    </div>
+  </div>
+</section>'''
+
+_join_how = ('''<section class="how" aria-label="How to join">
+  <div class="wrap">
+    <p class="eyebrow eyebrow--center mono" data-reveal>// HOW TO JOIN</p>
+    <h2 class="section-title section-title--center" data-title>Join in three easy steps<span class="title-underline title-underline--center"></span></h2>
+    <ol class="how__steps">
+''' + steps([
+    ("Pop in your email", "On the sign-in page, type your email and tap &lsquo;Email me a code&rsquo; (or &lsquo;Text me a code&rsquo;). There&rsquo;s no password to think up."),
+    ("Type your 6-digit code", "We send a 6-digit code &mdash; type it in and you&rsquo;re straight into your 365 portal. This computer stays signed in, so it&rsquo;s a one-off."),
+    ("You&rsquo;re in &mdash; free", "See your PC&rsquo;s health, book help, take a course. Stay free forever, or add a support plan whenever it suits you."),
+]) + '''
+    </ol>
+    <div class="page-hero__cta" style="justify-content:center;margin-top:1.8rem">
+      <a href="/portal/" class="button primary button--lg">Join free now</a>
+    </div>
+  </div>
+</section>''')
+
+info_page(
+  slug="join",
+  crumb_name="Join Free",
+  title="Join the 365 Club Free | 365 Techies",
+  eyebrow="// FREE MEMBERSHIP",
+  h1='Join the <em class="grad grad--cyan">365 Club</em> &mdash; free',
+  lede="We keep a friendly eye on your PC&rsquo;s health, you get free courses and one-tap help, and there&rsquo;s no card and no catch. Sign up in about a minute.",
+  desc="Join the 365 Club free — your own portal, free PC health monitoring from the 365 PC Manager app, honest reports, all 11 free courses and one-tap help. No card, no catch. From 365 Techies in Bournemouth, Dorset.",
+  og_title="Join the 365 Club — free",
+  chips=["No card", "No catch", "One minute"],
+  hero_cta1=("Join free", "/portal/"),
+  hero_cta2=("See what&rsquo;s included", "#included"),
+  pre=_join_value + _join_compare + _join_how,
+  inner="""          <h2>Is it really free? Honestly, yes.</h2>
+          <p>The 365 Club costs nothing and always will. There&rsquo;s no card to enter, no trial that quietly starts charging, and no obligation to ever buy anything. We built it because the sooner we can see how your computer is really doing, the easier it is to help &mdash; and because a bit of good advice and a few handy tools shouldn&rsquo;t cost you a penny.</p>
+          <h2>A plain, honest word on what&rsquo;s free</h2>
+          <p>The free 365 PC Manager app <strong>watches and reports</strong> on your PC&rsquo;s health &mdash; it doesn&rsquo;t secretly fix things or remove viruses on its own. The actual servicing, tune-ups and unlimited remote help come with a <a href="/monthly-it-support/">support plan</a>. The app is for Windows PCs; if you&rsquo;re on a Mac we&rsquo;re still happy to help &mdash; just give us a ring. And the instant browser check-up on your dashboard only reads what a web browser can see &mdash; the app sees the fuller picture.</p>
+          <h2>Already a support customer?</h2>
+          <p>Then you already have all of this &mdash; just <a href="/portal/">sign in</a> with a code to reach your portal and manage your bookings.</p>""",
+  faqs=[
+    ("Is it really free? What&rsquo;s the catch?", "There&rsquo;s genuinely no catch. The 365 Club is free forever, with no card details and no obligation. You can stay on the free membership for as long as you like."),
+    ("Do I need to buy anything?", "No. You can join, run a health check, read your reports and take the free courses without spending anything. A paid support plan is there if and when you want a techie to actually service your PC and help whenever you&rsquo;re stuck."),
+    ("How do I sign in &mdash; do I need a password?", "No passwords. You type in your email, we send a 6-digit code by email or text, and you type that in. This computer then stays signed in, so it&rsquo;s a one-off."),
+    ("Is my information safe?", "Yes. We never sell your data, and joining needs nothing more than an email. See our <a href=\"/privacy-policy/\">privacy policy</a> for the detail."),
+    ("Can I upgrade to a support plan later?", "Any time &mdash; and there&rsquo;s no contract, so you can change your mind. Home support is &pound;18.25/month per computer by Direct Debit; see the <a href=\"/home-it-support-plans/\">plans</a>."),
+    ("Does the app work on a Mac?", "The 365 PC Manager app is for Windows PCs. We still support Macs &mdash; just give us a call on 01202 775566 and we&rsquo;ll help."),
+  ],
+  cta_args=("Ready when you are", "Join the 365 Club in about a minute &mdash; free, no card, no catch.",
+            ("Join free", "/portal/"), ("Talk to us first", "/contact/")),
+)
+
 def write_family_page():
     html = '''<!doctype html>
 <html lang="en-GB">

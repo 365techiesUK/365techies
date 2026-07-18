@@ -1328,6 +1328,8 @@ body.menu-open { overflow: hidden; }
 .price-table td { color: #c4d6ee; }
 .price-table .yes { color: var(--green); font-weight: 700; }
 .price-table .no { color: var(--faint); }
+/* visually-hidden text for screen readers (e.g. Included/Not-included in comparison tables) */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 .price-table tr:last-child td, .price-table tr:last-child th { border-bottom: 0; }
 
 /* areas grid */

@@ -18,7 +18,7 @@ except Exception:
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://365techies.co.uk"
-CSSV = "65"
+CSSV = "66"
 try:
     from hero_scenes import SCENES as HERO_SCENES
 except Exception:
@@ -533,6 +533,7 @@ FOOTER = '''  <footer class="site-footer">
       </div>
       <nav aria-label="Support links">
         <p class="site-footer__head mono">SUPPORT</p>
+        <a href="/join/">Join the 365 Club &mdash; Free</a>
         <a href="/book-service/">Book a Service</a>
         <a href="/book-a-collection/">Book a Collection</a>
         <a href="/pay/">Pay Us</a>
