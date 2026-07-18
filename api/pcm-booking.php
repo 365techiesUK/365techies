@@ -878,7 +878,7 @@ if ($action === 'book') {
     // bookings ("Client authorization required") under this company's config, so we resolve or
     // create the customer's own SimplyBook client and book on their behalf - same as staffbook.
     $cid = ensure_client_id($key, $snap);
-    if ($cid <= 0) fail('booking_failed');
+    if ($cid <= 0) fail('no_client');   // couldn't resolve/create a SimplyBook client for this record
     $au = sb_pub('getAvailableUnits', array($eventId, $date . ' ' . $time, 1));
     if (sb_net($au)) fail('sb_unavailable');
     $unitIds = isset($au['result']) && is_array($au['result']) ? array_values($au['result']) : array();

@@ -16143,7 +16143,12 @@ def write_portal_page():
                         setTimeout(function () { showDash(); }, 3000);
                       } else {
                         gb.disabled = false;
-                        document.getElementById('cberr').textContent = r && r.error === 'slot_taken' ? 'That time just went - pick another.' : ('Couldn\\u2019t book it' + (r && r.sberr ? ' - ' + r.sberr : ' - try again or ring 01202 775566.'));
+                        document.getElementById('cberr').textContent =
+                            r && r.error === 'slot_taken' ? 'That time just went - pick another.'
+                          : r && r.error === 'needsignin' ? 'No email on file for this account - ring 01202 775566 and we\\u2019ll add it.'
+                          : r && r.error === 'no_client' ? 'Couldn\\u2019t match this to a booking account - ring 01202 775566.'
+                          : r && r.error === 'sb_unavailable' ? 'The booking system didn\\u2019t answer - try again in a minute.'
+                          : ('Couldn\\u2019t book it' + (r && r.sberr ? ' - ' + r.sberr : (r && r.error ? ' (' + r.error + ')' : '')) + ' - try again or ring 01202 775566.');
                       }
                     })
                     .catch(function () { gb.disabled = false; document.getElementById('cberr').textContent = 'Couldn\\u2019t reach the server.'; });
