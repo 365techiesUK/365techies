@@ -678,11 +678,21 @@ if ($action === 'services') {
 }
 
 if ($action === 'slots') {
-    if (isset($in['stoken']) && $in['stoken'] !== '') need_staff(); else customer_snapshot();
+    $isStaffSlots = isset($in['stoken']) && $in['stoken'] !== '';
+    if ($isStaffSlots) need_staff(); else customer_snapshot();
     $eventId = (int)(isset($in['eventId']) ? $in['eventId'] : 0);
+    // some SimplyBook responses omit event_id on booking rows - staff may pass the booking
+    // id instead and we resolve the service from the booking details
+    if ($eventId <= 0 && $isStaffSlots && $HAS_ADMIN && intval($in['bid'] ?? 0) > 0) {
+        $det = sb_adm('getBookingDetails', array((int)$in['bid']));
+        if (!sb_net($det) && isset($det['result']) && is_array($det['result'])) {
+            $bd = $det['result'];
+            $eventId = (int)(isset($bd['event_id']) ? $bd['event_id'] : (isset($bd['event']['id']) ? $bd['event']['id'] : 0));
+        }
+    }
     $from = preg_replace('/[^0-9\-]/', '', (string)(isset($in['from']) ? $in['from'] : ''));
     $to   = preg_replace('/[^0-9\-]/', '', (string)(isset($in['to']) ? $in['to'] : ''));
-    if ($eventId <= 0 || $from === '' || $to === '') fail('bad_request');
+    if ($eventId <= 0 || $from === '' || $to === '') fail('no_service');
     $units = sb_units_for($eventId);
     if (!count($units)) fail('sb_unavailable');
     $r = sb_pub('getStartTimeMatrix', array($from, $to, $eventId, $units, 1));
@@ -696,7 +706,7 @@ if ($action === 'slots') {
         $ts = strtotime($d);
         $days[] = array('d' => $d, 'n' => $ts ? date('D j M', $ts) : $d, 't' => $tt);
     }
-    out(array('ok' => true, 'days' => $days));
+    out(array('ok' => true, 'days' => $days, 'eventId' => $eventId));   // echo the (possibly resolved) service id
 }
 
 if ($action === 'book') {
@@ -1091,7 +1101,7 @@ if ($action === 'agenda') {
                         'st' => $st,
                         'conf' => $st === 'confirmed',
                         'what' => (string)(isset($b['event_name']) ? $b['event_name'] : (isset($b['event']) ? $b['event'] : 'Service')),
-                        'eventId' => (int)(isset($b['event_id']) ? $b['event_id'] : 0));
+                        'eventId' => (int)(isset($b['event_id']) ? $b['event_id'] : (isset($b['eventId']) ? $b['eventId'] : (isset($b['service_id']) ? $b['service_id'] : 0))));
         if (count($list) >= 120) break;
     }
     out(array('ok' => true, 'bookings' => $list));

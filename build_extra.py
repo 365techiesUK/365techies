@@ -16224,9 +16224,11 @@ def write_portal_page():
       p.style.display = 'block';
       p.innerHTML = '<p class="quiet">Finding free slots\u2026</p>';
       var from = new Date(), to = new Date(Date.now() + 13 * 86400000);
-      post(BK, { action: 'slots', stoken: S.stoken, machine: mid(), eventId: b.eventId, from: iso(from), to: iso(to) })
+      post(BK, { action: 'slots', stoken: S.stoken, machine: mid(), eventId: b.eventId, bid: b.id, from: iso(from), to: iso(to) })
         .then(function (sr) {
-          if (!sr || !sr.ok || !sr.days || !sr.days.length) { p.innerHTML = '<p class="quiet">No free slots in the next two weeks - try SimplyBook admin for further out.</p>'; return; }
+          if (!sr || !sr.ok) { p.innerHTML = '<p class="quiet">' + (sr && sr.error === 'no_service' ? 'Couldn\\u2019t work out which service this booking is - move it in SimplyBook admin and tell 365.' : 'Couldn\\u2019t load slots (' + esc((sr && sr.error) || 'no reply') + ') - try again.') + '</p>'; return; }
+          if (!sr.days || !sr.days.length) { p.innerHTML = '<p class="quiet">No free slots in the next two weeks - try SimplyBook admin for further out.</p>'; return; }
+          var evId = sr.eventId || b.eventId;
           p.innerHTML = '<p class="quiet" style="margin:0 0 .3rem">Move <strong>' + esc(b.who) + '</strong> to:</p><div class="mdays"></div><div class="mtimes" style="margin-top:.3rem"></div>';
           var daysEl = p.querySelector('.mdays'), timesEl = p.querySelector('.mtimes');
           sr.days.forEach(function (day) {
@@ -16238,7 +16240,7 @@ def write_portal_page():
                 tb.onclick = function () {
                   if (!confirm('Move ' + b.who + ' to ' + day.n + ' at ' + t + '?')) return;
                   tb.disabled = true;
-                  post(BK, { action: 'staffmove', stoken: S.stoken, machine: mid(), id: b.id, eventId: b.eventId, date: day.d, time: t })
+                  post(BK, { action: 'staffmove', stoken: S.stoken, machine: mid(), id: b.id, eventId: evId, date: day.d, time: t })
                     .then(function (r) {
                       if (r && r.ok) { AG60 = null; loadDiary(); }
                       else { tb.disabled = false; alert(r && r.error === 'slot_taken' ? 'That slot just went - pick another.' : 'Couldn\u2019t move it - try again.'); }
