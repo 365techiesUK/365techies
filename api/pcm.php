@@ -144,7 +144,7 @@ if ($action === 'overview') {
         $ms[] = array('name'=>(string)($m['name'] ?? 'PC'), 'score'=>intval($m['score'] ?? 0),
             'verdict'=>(string)($m['verdict'] ?? ''), 'seen'=>(string)($m['seen'] ?? ''),
             'disk'=>intval($m['diskpct'] ?? 0), 'backup'=>!empty($m['backup']), 'ver'=>intval($m['ver'] ?? 0),
-            'fresh'=>!isset($m['diskpct'])));
+            'fresh'=>!isset($m['diskpct']));
     }
     $fam = isset($c['family']['name']) ? (string)$c['family']['name'] : '';
     // is a Pro plan waiting for the owner to link this self-serve identity?
