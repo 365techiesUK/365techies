@@ -66,6 +66,20 @@ function sb_rpc($url, $method, $params, $headers = array()) {
 }
 function sb_net($r){ return isset($r['_net']); }
 
+// Load the Slack webhook WITHOUT ever echoing the file: the config may be plain-URL format
+// (not PHP), and a bare include of a non-PHP file prints its contents into the response -
+// which would leak the webhook to any caller. Buffer + discard, then parse either format.
+function pcm_slack_webhook() {
+    $f = __DIR__ . '/slack-webhook.php';
+    if (!file_exists($f)) return '';
+    $SLACK_WEBHOOK = '';
+    ob_start(); include $f; ob_end_clean();
+    if (!empty($SLACK_WEBHOOK)) return $SLACK_WEBHOOK;
+    $raw = (string)@file_get_contents($f);
+    if (preg_match('#https://hooks\.slack\.com/\S+#', $raw, $m)) return trim($m[0]);
+    return '';
+}
+
 function cache_load($f){ $c = file_exists($f) ? json_decode((string)@file_get_contents($f), true) : null; return is_array($c) ? $c : array(); }
 function cache_save($f, $c){ $tmp = $f . '.' . getmypid() . '.tmp'; if (@file_put_contents($tmp, json_encode($c), LOCK_EX) !== false) @rename($tmp, $f); }
 
@@ -358,9 +372,8 @@ if ($action === 'join') {
     // and a built-in alert: staff see every attempt to sign in as staff, asked-for or not.
     $sentSlack = false;
     if (in_array($email, $allowSt, true)) {
-        $wh = __DIR__ . '/slack-webhook.php';
-        if (file_exists($wh)) {
-            include $wh; // $SLACK_WEBHOOK
+        $SLACK_WEBHOOK = pcm_slack_webhook();
+        if (true) {
             if (!empty($SLACK_WEBHOOK)) {
                 $ch = curl_init($SLACK_WEBHOOK);
                 curl_setopt_array($ch, array(CURLOPT_POST => true, CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 6,

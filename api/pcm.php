@@ -286,8 +286,15 @@ if ($action === 'help') {
           .($shot ? "\n:camera: they attached a picture of their screen — view it in the PCM admin console" : "")
           ."\nMachine ".$machine." · key ".$key;
     $sent = false;
-    if (file_exists($WEBHOOK)) {
-        include $WEBHOOK; // sets $SLACK_WEBHOOK
+    if (true) {
+        // buffered loader: the webhook file may be plain-URL format - a bare include would
+        // echo it into the response (leak) and leave $SLACK_WEBHOOK unset (silent send fail)
+        $SLACK_WEBHOOK = '';
+        if (file_exists($WEBHOOK)) { ob_start(); include $WEBHOOK; ob_end_clean(); }
+        if (empty($SLACK_WEBHOOK) && file_exists($WEBHOOK)) {
+            $rawWh = (string)@file_get_contents($WEBHOOK);
+            if (preg_match('#https://hooks\.slack\.com/\S+#', $rawWh, $mWh)) $SLACK_WEBHOOK = trim($mWh[0]);
+        }
         if (!empty($SLACK_WEBHOOK)) {
             $ch = curl_init($SLACK_WEBHOOK);
             curl_setopt_array($ch, array(CURLOPT_POST=>true, CURLOPT_RETURNTRANSFER=>true, CURLOPT_TIMEOUT=>6,
