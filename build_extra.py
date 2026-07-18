@@ -15636,6 +15636,7 @@ def write_portal_page():
   #p365app .nbsum { background:rgba(0,206,27,.08); border:1px solid rgba(0,206,27,.3); border-radius:10px; padding:.6rem .8rem; margin-top:.6rem; }
   #p365app .card { position:relative; }
   #p365app .card.zup { z-index:60; }
+  #p365app .tline.zup { animation:none; position:relative; z-index:70; }
   #p365app .adrop.up { top:auto; bottom:calc(100% + 4px); }
   @keyframes p365fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:none; } }
   @keyframes p365popIn { from { opacity:0; transform:scale(.96); } to { opacity:1; transform:none; } }
@@ -16264,7 +16265,7 @@ def write_portal_page():
   function bindBookingButtons(container, list) {
     var byId = {};
     list.forEach(function (b) { byId[b.id] = b; });
-    function closeAll() { Array.prototype.forEach.call(container.querySelectorAll('.adrop'), function (x) { x.classList.remove('open'); }); Array.prototype.forEach.call(document.querySelectorAll('#p365app .card.zup'), function (x) { x.classList.remove('zup'); }); }
+    function closeAll() { Array.prototype.forEach.call(container.querySelectorAll('.adrop'), function (x) { x.classList.remove('open'); }); Array.prototype.forEach.call(document.querySelectorAll('#p365app .zup'), function (x) { x.classList.remove('zup'); }); }
     Array.prototype.forEach.call(container.querySelectorAll('.ab2'), function (btn) {
       btn.onclick = function (ev) {
         ev.stopPropagation();
@@ -16279,6 +16280,10 @@ def write_portal_page():
           // lift this card above its siblings so the menu paints over the next card
           var crd = btn.closest ? btn.closest('.card') : null;
           if (crd) crd.classList.add('zup');
+          // each animated row is its own stacking context - without this lift the
+          // rows BELOW paint over the menu and swallow clicks on Move/Cancel
+          var rw = btn.closest ? btn.closest('.tline') : null;
+          if (rw) rw.classList.add('zup');
         }
       };
     });
