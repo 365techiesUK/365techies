@@ -892,6 +892,24 @@ if ($action === 'staffadd') {
         'weblink' => 'https://365techies.co.uk/activate/#' . $nk));
 }
 
+// staff: reveal ONE customer's activation key on demand (re-activating their PC Manager).
+// The customer-book table deliberately ships masked keys; this fetches a single key only
+// when a staff member explicitly asks, keeping the bulk list unexposed.
+if ($action === 'staffkey') {
+    need_staff();
+    $cid2 = preg_replace('/[^a-f0-9]/', '', (string)(isset($in['cid']) ? $in['cid'] : ''));
+    list($lk, $db) = db_open(); db_close($lk);
+    foreach ($db['customers'] as $k2 => $c2) {
+        if (!empty($c2['merged_into'])) continue;
+        if (substr(sha1('365cid|' . $k2), 0, 12) === $cid2) {
+            out(array('ok' => true, 'key' => $k2,
+                'link' => '365pcm://activate/' . $k2,
+                'weblink' => 'https://365techies.co.uk/activate/#' . $k2));
+        }
+    }
+    fail('unknown_customer');
+}
+
 // staff: SET a customer's tier (idempotent - a stale panel can't accidentally invert).
 // Takes the opaque id from staffcustomers, resolved server-side; their app follows on check-in.
 if ($action === 'stafftier') {
