@@ -866,7 +866,7 @@
       if (S.back) h = '<div class="card" style="border-color:rgba(29,151,227,.55);padding:.6rem .9rem"><div class="row" style="border:0;padding:0"><span class="quiet" style="margin:0">\ud83d\udc41 You\u2019re viewing the portal as <strong>' + esc(d.name || 'this customer') + '</strong> - exactly what they see.</span><button class="sm" id="backstaff">\u2190 Back to staff</button></div></div>' + h;
       if (d.pending) h += '<div class="card" style="border-color:rgba(224,179,65,.5)"><p class="quiet">We can see a support plan registered to this email. For security we link it to your web login by hand - it usually appears within a day. Need it sooner? Ring 01202 775566.</p></div>';
       h += '<div class="card"><h2>Your membership</h2><div class="row"><span class="pill ' + (d.tier === 'pro' ? 'pro">On 365 support' : 'free">365 member (free)') + '</span>'
-        + (d.next ? '<span>Next service: <strong>' + esc(d.next) + '</strong></span>' : '<span class="quiet">No service booked - <a href="/book-service/" target="_blank" rel="noopener">book one</a>.</span>') + '</div>';
+        + (d.next ? '<span>Next service: <strong>' + esc(d.next) + '</strong></span>' : '<span class="quiet">No service booked - <a href="#" id="cbbook">book one</a>.</span>') + '</div>';
       if (d.gc) {
         h += d.gc.active
           ? '<div class="row"><span class="big">\u00a3' + d.gc.amount.toFixed(2) + '</span><span>' + esc(d.gc.name) + ' by Direct Debit'
@@ -984,6 +984,8 @@
       });
       var cbo = document.getElementById('cbopen');
       if (cbo) cbo.onclick = function () { custWiz(); };
+      var cbb = document.getElementById('cbbook');   // membership card "book one" -> open the in-portal wizard, not the website
+      if (cbb) cbb.onclick = function () { var w = document.getElementById('cbwiz'); if (w && w.style.display === 'none') custWiz(); if (w) w.scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; };
       loadMyBookings();
       Array.prototype.forEach.call(document.querySelectorAll('#p365app .repb'), function (btn) {
         btn.onclick = function () {
