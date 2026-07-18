@@ -132,10 +132,12 @@ if ($action === 'overview') {
     $wt = isset($in['wtoken']) ? preg_replace('/[^a-f0-9]/','', (string)$in['wtoken']) : '';
     if ($wt !== '') {
         $ws = isset($db['websessions'][$wt]) ? $db['websessions'][$wt] : null;
-        // customer device sessions are long (60d sliding / 90d cap); legacy short ones 12h/24h
-        $slide = ($ws && !empty($ws['long'])) ? 5184000 : 43200;
-        $cap   = ($ws && !empty($ws['long'])) ? 7776000 : 86400;
-        $fresh = $ws && intval($ws['ts'] ?? 0) > time() - $slide && intval($ws['iat'] ?? 0) > time() - $cap;
+        // "remember me": forever sessions slide a full year and renew on every visit (an
+        // active customer never signs in again; an idle year = re-verify; still revocable
+        // server-side and machine-bound). Long = 60d/90d; legacy short = 12h/24h.
+        if ($ws && !empty($ws['forever'])) { $slide = 31536000; $cap = PHP_INT_MAX; }
+        else { $slide = ($ws && !empty($ws['long'])) ? 5184000 : 43200; $cap = ($ws && !empty($ws['long'])) ? 7776000 : 86400; }
+        $fresh = $ws && intval($ws['ts'] ?? 0) > time() - $slide && ($cap === PHP_INT_MAX || intval($ws['iat'] ?? 0) > time() - $cap);
         // soft device binding (like staff tokens): a stolen token replayed from another
         // browser is refused; legacy sessions without a machine field still work
         if ($fresh && !empty($ws['machine']) && $machine !== '' && $ws['machine'] !== $machine) $fresh = false;
@@ -162,7 +164,7 @@ if ($action === 'overview') {
     $ownerMade = (($c['via'] ?? '') !== 'signin');
     out(array('ok'=>true, 'name'=>(string)($c['name'] ?? ''), 'tier'=>(($c['tier'] ?? 'free')==='pro'?'pro':'free'),
         'next'=>(string)($c['next'] ?? ''), 'next_ts'=>intval($c['next_ts'] ?? 0),
-        'machines'=>$ms, 'fam'=>$fam, 'pending'=>$pend,
+        'machines'=>$ms, 'fam'=>$fam, 'pending'=>$pend, 'appreq'=>(string)($c['app_req'] ?? ''),
         'gc'=>$ownerMade ? pcm_gc_summary((string)($c['email'] ?? '')) : null));
 }
 
@@ -211,6 +213,35 @@ function pcm_gc_summary($email) {
     $cache[$ek] = array('ts'=>time(), 'data'=>$data);
     @file_put_contents($ck, json_encode($cache), LOCK_EX);
     return $data;
+}
+
+// Portal: "Install the app for me" - the signing-decision demand meter. Stamps the record
+// and pings Slack so the team follows up; the button becomes the trigger metric.
+if ($action === 'appreq') {
+    $wt = isset($in['wtoken']) ? preg_replace('/[^a-f0-9]/','', (string)$in['wtoken']) : '';
+    $ws = $wt !== '' && isset($db['websessions'][$wt]) ? $db['websessions'][$wt] : null;
+    if (!$ws) out(array('ok'=>false,'error'=>'expired'));
+    if (!empty($ws['machine']) && $machine !== '' && $ws['machine'] !== $machine) out(array('ok'=>false,'error'=>'expired'));
+    $key = (string)$ws['key'];
+    if (!isset($db['customers'][$key])) out(array('ok'=>false,'error'=>'unknown_key'));
+    $db['customers'][$key]['app_req'] = gmdate('Y-m-d H:i');
+    save($DATA,$db);
+    $wh = __DIR__ . '/slack-webhook.php';
+    $SLACK_WEBHOOK = '';
+    if (file_exists($wh)) { ob_start(); include $wh; ob_end_clean(); }
+    if (empty($SLACK_WEBHOOK) && file_exists($wh)) {
+        $rawWh = (string)@file_get_contents($wh);
+        if (preg_match('#https://hooks\.slack\.com/\S+#', $rawWh, $mWh)) $SLACK_WEBHOOK = trim($mWh[0]);
+    }
+    if (!empty($SLACK_WEBHOOK)) {
+        $nm = str_replace(array("\r","\n",'<','>','&'), ' ', (string)($db['customers'][$key]['name'] ?? ''));
+        $ch = curl_init($SLACK_WEBHOOK);
+        curl_setopt_array($ch, array(CURLOPT_POST=>true, CURLOPT_RETURNTRANSFER=>true, CURLOPT_TIMEOUT=>6,
+            CURLOPT_HTTPHEADER=>array('Content-Type: application/json'),
+            CURLOPT_POSTFIELDS=>json_encode(array('text'=>":arrow_down: *App install request* from portal member *".$nm."* - book them a free health check / remote session to pop 365 PC Manager on. (This counter is the code-signing demand meter.)"))));
+        curl_exec($ch); curl_close($ch);
+    }
+    out(array('ok'=>true));
 }
 
 // Family View: with the customer's explicit in-app consent, create (or replace) a share

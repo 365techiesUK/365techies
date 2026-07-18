@@ -727,63 +727,66 @@
 
   // ---------- sign-in ----------
   function showSignin(msg) {
-    el.innerHTML = '<h1>Customer portal</h1>'
-      + '<p class="lede">Existing customer? Use the email and password you book with. New to 365? Join free in under a minute - no password, no card details.</p>'
-      + '<div class="twocol">'
-      + '<div class="card"><h2>Already with us?</h2><label>Email</label><input id="em" type="email" autocomplete="email" />'
+    el.innerHTML = '<h1>Your 365 portal</h1>'
+      + '<p class="lede">No passwords here - we send a 6-digit code to type in, and this computer stays signed in. New to 365? The same box joins you free, no card details.</p>'
+      + '<div class="card"><h2>Sign in or join free</h2>'
+      + '<label>Your email</label><input id="em" type="email" autocomplete="email" />'
+      + '<div class="row" style="border:0;padding:.2rem 0 0">'
+      + '<button id="cml" class="sm">\u2709 Email me a code</button>'
+      + '<button id="csm" class="sm ghost">\ud83d\udcf1 Text me a code</button>'
+      + '</div>'
+      + '<label style="display:flex;align-items:center;gap:.45rem;margin-top:.55rem;cursor:pointer;color:var(--pmut);font-size:.85rem"><input type="checkbox" id="shpc" style="width:auto" /> This is a shared or public computer</label>'
+      + '<div class="err" id="serr">' + (msg || '') + '</div>'
+      + '<p class="quiet"><a href="#" id="havecode">Already got a code? Type it here</a>'
+      + ' \u00b7 <a href="#" id="pwmode">Prefer your password?</a>'
+      + ' \u00b7 Stuck? Ring 01202 775566.</p>'
+      + '<div id="pwbox" style="display:none">'
       + '<label>Password</label><input id="pw" type="password" autocomplete="current-password" />'
       + '<label style="display:flex;align-items:center;gap:.45rem;margin-top:.45rem;cursor:pointer;color:var(--pmut);font-size:.85rem"><input type="checkbox" id="pwv" style="width:auto" /> Show password</label>'
-      + '<button id="go">Sign in</button><div class="err" id="serr">' + (msg || '') + '</div>'
-      + '<p class="quiet">Forgotten your password? <a href="#" id="codein">Email me a sign-in code instead</a> \u2014 nothing to remember.<br />'
-      + '<a href="#" id="havecode">Already got a code? Type it here</a> \u00b7 Stuck? Ring 01202 775566.</p></div>'
-      + '<div class="card"><h2>New here? Join 365 free</h2>'
-      + '<p class="quiet">We\u2019ll email you a 6-digit code to type in - that\u2019s it. (We never email sign-in links, only codes.)</p>'
-      + '<label>Your first name</label><input id="jn" autocomplete="given-name" />'
-      + '<label>Email</label><input id="je" type="email" autocomplete="email" />'
-      + '<label>Mobile (optional - we can text the code instead)</label><input id="jm" type="tel" autocomplete="tel" />'
-      + '<button id="jgo">Join free \u2192</button><div class="err" id="jerr"></div></div>'
+      + '<button id="go" class="sm">Sign in with password</button>'
+      + '</div>'
+      + '<p class="quiet" id="joinnote">First time here? Just pop your email in and tap a code button - that\u2019s the whole sign-up. We\u2019ll ask your name once you\u2019re in if we need it.</p>'
       + '</div>';
-    document.getElementById('pwv').onchange = function () { document.getElementById('pw').type = this.checked ? 'text' : 'password'; };
-    document.getElementById('codein').onclick = function () {
+    var shared = function () { return document.getElementById('shpc').checked; };
+    function sendCode(wantSms) {
       var ce = document.getElementById('em').value.trim();
-      if (!ce) { document.getElementById('serr').textContent = 'Pop your email in above first, then tap the code link.'; return false; }
+      if (!ce) { document.getElementById('serr').textContent = 'Pop your email in first.'; return; }
       document.getElementById('serr').textContent = '';
-      post(BK, { action: 'join', email: ce, machine: mid() })
+      var btn = document.getElementById(wantSms ? 'csm' : 'cml'); btn.disabled = true;
+      post(BK, { action: 'join', email: ce, sms: wantSms ? 1 : 0, machine: mid() })
         .then(function (d) {
-          if (d && d.ok) showCode('', ce, d.sms, d.mail, d.slack);
-          else if (d && d.error === 'throttled' && d.have_code) showCode('', ce, false, true, false, true);
-          else document.getElementById('serr').textContent = d && d.error === 'throttled' ? 'Too many codes requested - wait a while, or ring us: 01202 775566.' : 'Couldn\u2019t send a code just now - try again or ring 01202 775566.';
-        }).catch(function () { document.getElementById('serr').textContent = 'Couldn\u2019t reach the server - try again.'; });
-      return false;
-    };
+          btn.disabled = false;
+          if (d && d.ok) {
+            if (wantSms && !d.sms) { document.getElementById('serr').textContent = d.mail ? 'We don\u2019t have a mobile on file for that email, so the code went by EMAIL instead.' : 'No mobile on file - try the email code.'; }
+            showCode('', ce, d.sms, d.mail, d.slack, false, d.smshint, shared());
+          }
+          else if (d && d.error === 'throttled' && d.have_code) showCode('', ce, false, true, false, true, '', shared());
+          else document.getElementById('serr').textContent =
+            d && d.error === 'throttled' ? 'Too many codes requested - wait a while, or ring us: 01202 775566.'
+            : d && d.error === 'bad_email' ? 'That email doesn\u2019t look right - please check it.'
+            : d && d.error === 'send_failed' ? 'We couldn\u2019t send a code just now - ring us and we\u2019ll sort it: 01202 775566.'
+            : 'Something went wrong - try again, or ring 01202 775566.';
+        }).catch(function () { btn.disabled = false; document.getElementById('serr').textContent = 'Couldn\u2019t reach the server - try again.'; });
+    }
+    document.getElementById('cml').onclick = function () { sendCode(false); };
+    document.getElementById('csm').onclick = function () { sendCode(true); };
     document.getElementById('havecode').onclick = function () {
       var ce = document.getElementById('em').value.trim();
-      if (!ce) { document.getElementById('serr').textContent = 'Pop your email in above first, then tap the code link.'; return false; }
-      showCode('', ce, false, true, false, true);
+      if (!ce) { document.getElementById('serr').textContent = 'Pop your email in first, then tap the code link.'; return false; }
+      showCode('', ce, false, true, false, true, '', shared());
       return false;
     };
-    document.getElementById('jgo').onclick = function () {
-      var jb = this, jn = document.getElementById('jn').value.trim(), je = document.getElementById('je').value.trim(), jm = document.getElementById('jm').value.trim();
-      document.getElementById('jerr').textContent = '';
-      if (!je) { document.getElementById('jerr').textContent = 'Pop your email in first.'; return; }
-      jb.disabled = true;
-      post(BK, { action: 'join', email: je, mobile: jm, machine: mid() })
-        .then(function (d) {
-          jb.disabled = false;
-          if (d && d.ok) showCode(jn, je, d.sms, d.mail, d.slack);
-          else if (d && d.error === 'throttled' && d.have_code) showCode(jn, je, false, true, false, true);
-          else document.getElementById('jerr').textContent =
-            d && d.error === 'throttled' ? 'Too many codes requested - wait an hour, or ring us: 01202 775566.'
-            : d && d.error === 'bad_mobile' ? 'That mobile doesn\u2019t look like a UK number - check it or leave it empty.'
-            : d && d.error === 'bad_email' ? 'That email doesn\u2019t look right - please check it.'
-            : d && d.error === 'send_failed' ? 'We couldn\u2019t send the code just now - ring us and we\u2019ll sign you up: 01202 775566.'
-            : 'Something went wrong - try again, or ring 01202 775566.';
-        }).catch(function () { jb.disabled = false; document.getElementById('jerr').textContent = 'Couldn\u2019t reach the server - try again.'; });
+    document.getElementById('pwmode').onclick = function () {
+      var pb = document.getElementById('pwbox');
+      pb.style.display = pb.style.display === 'none' ? 'block' : 'none';
+      if (pb.style.display !== 'none') document.getElementById('pw').focus();
+      return false;
     };
+    document.getElementById('pwv').onchange = function () { document.getElementById('pw').type = this.checked ? 'text' : 'password'; };
     var go = document.getElementById('go');
     function doIt() {
       go.disabled = true; document.getElementById('serr').textContent = '';
-      post(BK, { action: 'signin', email: document.getElementById('em').value.trim(), password: document.getElementById('pw').value, machine: mid(), web: true })
+      post(BK, { action: 'signin', email: document.getElementById('em').value.trim(), password: document.getElementById('pw').value, machine: mid(), web: true, shared: shared() ? 1 : 0 })
         .then(function (d) {
           go.disabled = false;
           if (d && d.ok && d.staff) { S = { staff: true, stoken: d.stoken, email: d.customer }; saveS(); showStaff(); }
@@ -791,9 +794,9 @@
           else {
             var e2 = d && d.error;
             document.getElementById('serr').textContent =
-              e2 === 'throttled' ? 'Too many password tries - wait 15 minutes. Or skip the password: tap \u201cEmail me a sign-in code instead\u201d below - codes still work right now.'
+              e2 === 'throttled' ? 'Too many password tries - wait 15 minutes, or just use a code above: codes still work right now.'
               : (e2 === 'sb_unavailable' || e2 === 'db_unavailable' || e2 === 'not_configured') ? 'We couldn\u2019t reach the booking system - nothing wrong with your details, try again in a minute.'
-              : 'That didn\u2019t match - check the password, or tap \u201cEmail me a sign-in code\u201d below.';
+              : 'That didn\u2019t match - check the password, or just use a code above.';
           }
         }).catch(function () { go.disabled = false; document.getElementById('serr').textContent = 'Couldn\u2019t reach the server - try again.'; });
     }
@@ -802,9 +805,10 @@
   }
 
   // ---------- code entry ----------
-  function showCode(jn, je, viaSms, viaMail, viaSlack, existing) {
-    var sentTo = viaMail && viaSms ? ('<strong>' + esc(je) + '</strong> and your mobile')
-               : viaSms ? 'your mobile by text'
+  function showCode(jn, je, viaSms, viaMail, viaSlack, existing, smshint, shared) {
+    var mobTxt = 'your mobile' + (smshint ? ' ending ' + esc(smshint) : '') + ' by text';
+    var sentTo = viaMail && viaSms ? ('<strong>' + esc(je) + '</strong> and ' + mobTxt)
+               : viaSms ? mobTxt
                : ('<strong>' + esc(je) + '</strong>');
     if (viaSlack) sentTo += ' (and the 365 Slack)';
     var lede = existing
@@ -824,7 +828,7 @@
       var cb = document.getElementById('cgo');
       document.getElementById('cerr').textContent = '';
       cb.disabled = true;
-      post(BK, { action: 'verifycode', email: je, code: cd.value.trim(), name: jn, machine: mid() })
+      post(BK, { action: 'verifycode', email: je, code: cd.value.trim(), name: jn, machine: mid(), shared: shared ? 1 : 0 })
         .then(function (d) {
           cb.disabled = false;
           if (d && d.ok && d.staff) { S = { staff: true, stoken: d.stoken, email: d.customer }; saveS(); showStaff(); }
@@ -853,7 +857,7 @@
       if (d.next_ts && d.next_ts * 1000 < Date.now()) d.next = '';
       var h = topRow('Hello ' + esc((d.name || '').split(' ')[0] || 'there'));
       if (d.pending) h += '<div class="card" style="border-color:rgba(224,179,65,.5)"><p class="quiet">We can see a support plan registered to this email. For security we link it to your web login by hand - it usually appears within a day. Need it sooner? Ring 01202 775566.</p></div>';
-      h += '<div class="card"><h2>Your plan</h2><div class="row"><span class="pill ' + (d.tier === 'pro' ? 'pro">On 365 support' : 'free">Free') + '</span>'
+      h += '<div class="card"><h2>Your membership</h2><div class="row"><span class="pill ' + (d.tier === 'pro' ? 'pro">On 365 support' : 'free">365 member (free)') + '</span>'
         + (d.next ? '<span>Next service: <strong>' + esc(d.next) + '</strong></span>' : '<span class="quiet">No service booked - <a href="/book-service/" target="_blank" rel="noopener">book one</a>.</span>') + '</div>';
       if (d.gc) {
         h += d.gc.active
@@ -881,16 +885,59 @@
       });
       h += '</div>';
       if (d.fam) h += '<div class="card"><h2>Family view</h2><p class="quiet">\u2713 Shared with ' + esc(d.fam) + ' - manage it from the app on your PC.</p></div>';
+      // instant browser check-up: honest, no install, fills day one
+      h += '<div class="card"><h2>\ud83e\ude7a Quick browser check-up</h2><div id="bcheck"><p class="quiet">Checking what this browser can see\u2026</p></div>'
+        + '<p class="quiet">A browser can only see so much - the free 365 PC Manager app sees the full honest picture (drive health, backup, battery, scams), and <strong>we install it for you</strong>.</p>'
+        + '<button class="sm" id="appreq"' + (d.appreq ? ' disabled' : '') + '>' + (d.appreq ? '\u2713 Requested - we\u2019ll be in touch' : '\u2b07 Install the app for me') + '</button></div>';
+      if (d.tier !== 'pro')
+        h += '<div class="card"><h2>What being on 365 support adds</h2><p class="quiet" style="margin:0 0 .4rem">'
+          + 'A full service every 6 weeks with an honest written report \u00b7 unlimited remote help from the same friendly faces \u00b7 we always ring before we connect \u00b7 SMS reminders so your backup drive\u2019s plugged in \u00b7 an ETA call before any visit.</p>'
+          + '<p class="quiet" style="margin:0 0 .55rem"><strong>\u00a318.25/month per computer</strong> by Direct Debit - about 60p a day, no contract, cancel any time.</p>'
+          + '<div class="row" style="border:0"><a href="/monthly-it-support/" target="_blank" rel="noopener"><button class="sm">See how support works</button></a>'
+          + '<a href="tel:+441202775566"><button class="sm ghost">Talk it over: 01202 775566</button></a></div></div>';
       h += '<div class="card"><h2>Need us?</h2><div class="row">'
         + '<a href="/book-service/" target="_blank" rel="noopener"><button class="sm">Book a service</button></a>'
         + '<a href="/sos/" target="_blank" rel="noopener"><button class="sm ghost">Remote help (SOS)</button></a>'
+        + '<a href="/free-tools/" target="_blank" rel="noopener"><button class="sm ghost">Free tools</button></a>'
         + '<a href="tel:+441202775566"><button class="sm ghost">Call 01202 775566</button></a></div></div>';
-      el.innerHTML = h;
+            el.innerHTML = h;
       bindOut();
+      browserCheck();
+      var ar = document.getElementById('appreq');
+      if (ar && !d.appreq) ar.onclick = function () {
+        ar.disabled = true;
+        post(PCM, { action: 'appreq', wtoken: S.wtoken, machine: mid() })
+          .then(function (r) {
+            if (r && r.ok) { ar.textContent = '\u2713 Requested - we\u2019ll be in touch'; try { if (window.gtag) gtag('event', 'pcm_app_request'); } catch (e) {} }
+            else { ar.disabled = false; alert('Couldn\u2019t send that just now - or just ring us: 01202 775566.'); }
+          })
+          .catch(function () { ar.disabled = false; alert('Couldn\u2019t reach the server.'); });
+      };
       requestAnimationFrame(function () { requestAnimationFrame(function () {
         Array.prototype.forEach.call(document.querySelectorAll('#p365app [data-dash]'), function (c) { c.setAttribute('stroke-dasharray', c.getAttribute('data-dash')); });
       }); });
     }).catch(function () { showSignin('Couldn\u2019t load your dashboard - please sign in again.'); });
+  }
+
+  // honest browser check-up: only claims what a browser can genuinely read
+  function browserCheck() {
+    var b = document.getElementById('bcheck'); if (!b) return;
+    var rows = [];
+    try {
+      var ua = navigator.userAgent || '';
+      var w11 = /Windows NT 10/.test(ua);
+      if (/Windows/.test(ua)) {
+        rows.push(['Windows', w11 ? 'Windows 10 or 11 (browsers can\u2019t tell them apart - the app can)' : 'an older Windows - worth a chat', w11 ? 'g' : 'w']);
+      } else if (/Mac/.test(ua)) rows.push(['System', 'a Mac - our app is Windows-only, but we help with Macs too', '']);
+      if (navigator.deviceMemory) rows.push(['Memory', navigator.deviceMemory >= 8 ? '8 GB or more - healthy' : ('around ' + navigator.deviceMemory + ' GB - a chat about an upgrade may help'), navigator.deviceMemory >= 8 ? 'g' : 'w']);
+      var c = navigator.connection;
+      if (c && c.downlink) rows.push(['Connection', 'roughly ' + c.downlink + ' Mbps to this device' + (c.downlink < 10 ? ' - on the slow side' : ' - decent'), c.downlink < 10 ? 'w' : 'g']);
+      if (screen && screen.width) rows.push(['Screen', screen.width + '\u00d7' + screen.height, '']);
+    } catch (e) {}
+    if (!rows.length) { b.innerHTML = '<p class="quiet">This browser keeps its details private - the app sees the honest full picture.</p>'; return; }
+    var hh = '<div class="chips">';
+    rows.forEach(function (r2) { hh += '<span class="chip ' + r2[2] + '"><strong>' + r2[0] + ':</strong> ' + r2[1] + '</span>'; });
+    b.innerHTML = hh + '</div>';
   }
 
   // ---------- staff panel: the daily-operations dashboard ----------

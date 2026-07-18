@@ -329,6 +329,24 @@ if ($action === 'join') {
     global $SB_STAFF;
     $allowSt = (isset($SB_STAFF) && is_array($SB_STAFF)) ? array_map('trim', array_map('strtolower', $SB_STAFF)) : array();
     if (in_array($email, $allowSt, true)) $mobile = '';
+    // A TYPED mobile is only honoured for a genuinely NEW email. If the email already has a
+    // customer record, texting a caller-chosen number would let a stranger claim that account
+    // - so existing identities get SMS codes ONLY on the number we already hold for them.
+    $storedPhone = ''; $isExisting = false;
+    if ($mobile !== '' || !empty($in['sms'])) {
+        list($lkJ, $dbJ) = db_open(); db_close($lkJ);
+        foreach ((isset($dbJ['customers']) ? $dbJ['customers'] : array()) as $cJ) {
+            if (!empty($cJ['merged_into'])) continue;
+            $em2 = strtolower(trim((string)(isset($cJ['sb_email']) ? $cJ['sb_email'] : (isset($cJ['email']) ? $cJ['email'] : ''))));
+            if ($em2 !== '' && $em2 === $email) {
+                $isExisting = true;
+                $storedPhone = (string)(isset($cJ['sb_phone']) ? $cJ['sb_phone'] : (isset($cJ['phone']) ? $cJ['phone'] : ''));
+                break;
+            }
+        }
+        if ($isExisting) $mobile = $storedPhone;   // stored number or nothing - never a typed one
+        else if ($mobile === '' && !empty($in['sms'])) $mobile = '';   // new email + sms requested but no number typed
+    }
     // throttle: max 4 codes per email per hour + the shared per-ip/email attempt throttle
     // throttled? If a still-valid code already exists for this email, say so - the page
     // then goes straight to the code box instead of dead-ending ("type the one we sent you")
@@ -368,6 +386,8 @@ if ($action === 'join') {
 
     $sentMail = send_join_email($email, $code);
     $sentSms = $mobile !== '' ? send_join_sms($mobile, $code) : false;
+    // masked hint so the page can say "texted to your number ending 1234" without exposing it
+    $smsHint = $sentSms ? substr(preg_replace('/[^0-9]/', '', $mobile), -4) : '';
     // STAFF codes also post to the 365 Slack - a delivery channel that can't junk-folder,
     // and a built-in alert: staff see every attempt to sign in as staff, asked-for or not.
     $sentSlack = false;
@@ -384,7 +404,7 @@ if ($action === 'join') {
         }
     }
     if (!$sentMail && !$sentSms && !$sentSlack) fail('send_failed');
-    out(array('ok' => true, 'sms' => $sentSms, 'mail' => $sentMail, 'slack' => $sentSlack));
+    out(array('ok' => true, 'sms' => $sentSms, 'mail' => $sentMail, 'slack' => $sentSlack, 'smshint' => $smsHint));
 }
 
 if ($action === 'verifycode') {
@@ -488,10 +508,10 @@ if ($action === 'verifycode') {
     $wtok = bin2hex(random_bytes(24));
     if (!isset($db['websessions'])) $db['websessions'] = array();
     foreach ($db['websessions'] as $wk => $wv) {
-        $lim = !empty($wv['long']) ? 5184000 : 43200;
+        $lim = !empty($wv['forever']) ? 31536000 : (!empty($wv['long']) ? 5184000 : 43200);
         if ((isset($wv['ts']) ? $wv['ts'] : 0) < time() - $lim) unset($db['websessions'][$wk]);
     }
-    $db['websessions'][$wtok] = array('key' => $target, 'ts' => time(), 'iat' => time(), 'long' => true, 'machine' => $machine);
+    $db['websessions'][$wtok] = array('key' => $target, 'ts' => time(), 'iat' => time(), 'long' => true, 'forever' => empty($in['shared']), 'machine' => $machine);
     db_save($db); db_close($lk);
 
     $tier = ((isset($c['tier']) && $c['tier'] === 'pro')) ? 'pro' : 'free';
@@ -628,11 +648,11 @@ if ($action === 'signin') {
         $wtok = bin2hex(random_bytes(24));
         if (!isset($db['websessions'])) $db['websessions'] = array();
         foreach ($db['websessions'] as $wk => $wv) {
-            $lim = !empty($wv['long']) ? 5184000 : 43200;
+            $lim = !empty($wv['forever']) ? 31536000 : (!empty($wv['long']) ? 5184000 : 43200);
             if ((isset($wv['ts']) ? $wv['ts'] : 0) < time() - $lim) unset($db['websessions'][$wk]);
         }
         // customers get a long device session (60d sliding / 90d cap, server-revocable)
-        $db['websessions'][$wtok] = array('key' => $target, 'ts' => time(), 'iat' => time(), 'long' => true, 'machine' => $machine);
+        $db['websessions'][$wtok] = array('key' => $target, 'ts' => time(), 'iat' => time(), 'long' => true, 'forever' => empty($in['shared']), 'machine' => $machine);
     }
     db_save($db); db_close($lk);
 
