@@ -209,6 +209,236 @@ function parse_start($b) {
 
 // ---------------------------------------------------------------- actions
 
+// ---------------------------------------------------------------- free membership join
+// Two-step, passwordless: action=join sends a 6-digit code (email + optional SMS);
+// action=verifycode proves inbox/phone ownership, then creates/reuses the SimplyBook
+// client SILENTLY (getClientList first - SB duplicate clients break sign-in) and a free
+// customer record, and mints a long-lived device session. We NEVER email sign-in links -
+// a typed code is the anti-scam-friendly pattern our brand teaches.
+$JOINCODES = __DIR__ . '/pcm-joincodes.json';
+
+// minimal authenticated-SMTP sender (server-only api/pcm-smtp.php: $SMTP_HOST,$SMTP_PORT,
+// $SMTP_USER,$SMTP_PASS,$SMTP_FROM). Falls back to PHP mail() if not configured yet.
+function send_join_email($to, $code) {
+    $subject = 'Your 365 Techies sign-in code: ' . $code;
+    $body = "Hello,\r\n\r\n"
+          . "Your 365 Techies sign-in code is:\r\n\r\n" . $code . "\r\n\r\n"
+          . "Type it into the page you have open. It works for the next 30 minutes.\r\n\r\n"
+          . "A note on staying safe: we will NEVER email you a link to sign in - only a code\r\n"
+          . "like this one, and only when you have just asked for it. Never read this code to\r\n"
+          . "anyone who rings you.\r\n\r\n"
+          . "Didn't ask for a code? You can safely ignore this email.\r\n\r\n"
+          . "365 Techies - family-run IT support in Bournemouth since 1995\r\n"
+          . "01202 775566 - 365techies.co.uk\r\n";
+    // NOTE: implicit-TLS only (port 465, SiteGround's default). Port 587/STARTTLS is NOT
+    // supported by this minimal client - configure 465 in pcm-smtp.php.
+    $cfg = __DIR__ . '/pcm-smtp.php';
+    if (is_readable($cfg)) {
+        include $cfg;
+        if (!empty($SMTP_HOST) && !empty($SMTP_USER) && !empty($SMTP_PASS)) {
+            $from = !empty($SMTP_FROM) ? $SMTP_FROM : $SMTP_USER;
+            $port = !empty($SMTP_PORT) ? intval($SMTP_PORT) : 465;
+            $fp = @stream_socket_client('ssl://' . $SMTP_HOST . ':' . $port, $en, $es, 8);
+            if (!$fp) error_log('pcm-booking: SMTP connect failed (' . $SMTP_HOST . ':' . $port . ' implicit TLS; 587/STARTTLS unsupported, use 465): ' . $es . ' - falling back to mail()');
+            if ($fp) {
+                stream_set_timeout($fp, 10);   // a stalled server must never hang the join request
+                $dead = false;
+                $say = function($cmd) use ($fp, &$dead) {
+                    if ($dead) return '';
+                    if ($cmd !== null) fwrite($fp, $cmd . "\r\n");
+                    $line = ''; $n = 0;
+                    while (($l = fgets($fp, 512)) !== false) {
+                        $md = stream_get_meta_data($fp);
+                        if (!empty($md['timed_out'])) { $dead = true; return ''; }
+                        $line = $l;
+                        if (strlen($l) < 4 || $l[3] !== '-') break;
+                        if (++$n > 50) break;   // runaway multiline guard
+                    }
+                    $md = stream_get_meta_data($fp);
+                    if (!empty($md['timed_out'])) { $dead = true; return ''; }
+                    return $line;
+                };
+                $ok = true;
+                $say(null);
+                $ok = $ok && strpos($say('EHLO 365techies.co.uk'), '250') === 0;
+                $ok = $ok && strpos($say('AUTH LOGIN'), '334') === 0;
+                $ok = $ok && strpos($say(base64_encode($SMTP_USER)), '334') === 0;
+                $ok = $ok && strpos($say(base64_encode($SMTP_PASS)), '235') === 0;
+                $ok = $ok && strpos($say('MAIL FROM:<' . $from . '>'), '250') === 0;
+                $ok = $ok && strpos($say('RCPT TO:<' . $to . '>'), '250') === 0;
+                $ok = $ok && strpos($say('DATA'), '354') === 0;
+                if ($ok) {
+                    $msg = 'Date: ' . date('r') . "\r\n"
+                         . 'Message-ID: <' . bin2hex(random_bytes(8)) . '.' . time() . "@365techies.co.uk>\r\n"
+                         . 'From: 365 Techies <' . $from . ">\r\n"
+                         . 'To: <' . $to . ">\r\n"
+                         . 'Subject: ' . $subject . "\r\n"
+                         . "MIME-Version: 1.0\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\n"
+                         . preg_replace('/^\./m', '..', $body) . "\r\n.";   // dot-stuffing per RFC 5321
+                    $ok = strpos($say($msg), '250') === 0;
+                }
+                if (!$dead) @fwrite($fp, "QUIT\r\n");   // fire-and-forget - never wait on a dying server
+                fclose($fp);
+                if ($ok) return true;
+            }
+        }
+    }
+    // fallback: local MTA (SiteGround signs SPF/DKIM for domain senders configured in Site Tools)
+    $hdr = "From: 365 Techies <no-reply@365techies.co.uk>\r\nContent-Type: text/plain; charset=UTF-8";
+    return @mail($to, $subject, $body, $hdr);
+}
+
+function send_join_sms($mobile, $code) {
+    $cfg = __DIR__ . '/pcm-textmagic.php';
+    if (!is_readable($cfg)) return false;
+    include $cfg; // $TM_USER, $TM_KEY
+    if (empty($TM_USER) || empty($TM_KEY)) return false;
+    $p = preg_replace('/[^0-9]/', '', (string)$mobile);
+    if (substr($p, 0, 2) === '07') $p = '44' . substr($p, 1);
+    if (!preg_match('/^447[0-9]{9}$/', $p)) return false;
+    $ch = curl_init('https://rest.textmagic.com/api/v2/messages');
+    curl_setopt_array($ch, array(CURLOPT_POST => true, CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 10,
+        CURLOPT_HTTPHEADER => array('X-TM-Username: ' . $TM_USER, 'X-TM-Key: ' . $TM_KEY, 'Content-Type: application/x-www-form-urlencoded'),
+        CURLOPT_POSTFIELDS => http_build_query(array('text' => '365 Techies: your sign-in code is ' . $code . '. It works for 30 minutes. We never text sign-in links - only codes. Never read it to a caller.', 'phones' => $p))));
+    $r = curl_exec($ch); $c = curl_getinfo($ch, CURLINFO_HTTP_CODE); curl_close($ch);
+    return $r !== false && $c >= 200 && $c < 300;
+}
+
+if ($action === 'join') {
+    $email = strtolower(trim((string)(isset($in['email']) ? $in['email'] : '')));
+    if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) fail('bad_email');
+    $mobile = preg_replace('/[^0-9+]/', '', (string)(isset($in['mobile']) ? $in['mobile'] : ''));
+    if ($mobile !== '' && !preg_match('/^(07[0-9]{9}|\+?447[0-9]{9})$/', $mobile)) fail('bad_mobile');
+    // throttle: max 4 codes per email per hour + the shared per-ip/email attempt throttle
+    $tkey = sha1('join|' . (isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '') . '|' . $email);
+    $tlk = @fopen($THROTTLE . '.lock', 'c'); if ($tlk) @flock($tlk, LOCK_EX);
+    $th = cache_load($THROTTLE);
+    foreach ($th as $k2 => $v2) if ((isset($v2['ts']) ? $v2['ts'] : 0) < time() - 3600) unset($th[$k2]);
+    if (isset($th[$tkey]) && (isset($th[$tkey]['n']) ? $th[$tkey]['n'] : 0) >= 4) { cache_save($THROTTLE, $th); if ($tlk) { @flock($tlk, LOCK_UN); @fclose($tlk); } fail('throttled'); }
+    $th[$tkey] = array('n' => (isset($th[$tkey]['n']) ? $th[$tkey]['n'] : 0) + 1, 'ts' => time());
+    cache_save($THROTTLE, $th); if ($tlk) { @flock($tlk, LOCK_UN); @fclose($tlk); }
+
+    $code = (string)random_int(100000, 999999);
+    $jlk = @fopen($JOINCODES . '.lock', 'c'); if ($jlk) @flock($jlk, LOCK_EX);   // serialise read-modify-write
+    $jc = cache_load($JOINCODES);
+    foreach ($jc as $k2 => $v2) if ((isset($v2['ts']) ? $v2['ts'] : 0) < time() - 86400) unset($jc[$k2]);
+    // IP-independent caps (the throttle above is per-ip and rotatable): max 8 codes per
+    // email per day, and max 3 SMS per mobile per hour (cost + nuisance control)
+    $ek0 = sha1($email);
+    $sent24 = isset($jc[$ek0]['sent']) && is_array($jc[$ek0]['sent']) ? $jc[$ek0]['sent'] : array();
+    $sent24 = array_values(array_filter($sent24, function($t){ return $t > time() - 86400; }));
+    if (count($sent24) >= 8) { if ($jlk) { @flock($jlk, LOCK_UN); @fclose($jlk); } fail('throttled'); }
+    $sent24[] = time();
+    if ($mobile !== '') {
+        $mk = 'm' . sha1(preg_replace('/[^0-9]/','',$mobile));
+        $ms = isset($jc[$mk]['sent']) && is_array($jc[$mk]['sent']) ? $jc[$mk]['sent'] : array();
+        $ms = array_values(array_filter($ms, function($t){ return $t > time() - 3600; }));
+        if (count($ms) >= 3) $mobile = '';   // stop texting, still email
+        else { $ms[] = time(); $jc[$mk] = array('sent' => $ms, 'ts' => time()); }
+    }
+    $jc[$ek0] = array('h' => hash('sha256', $code), 'ts' => time(), 'tries' => 0, 'sent' => $sent24);
+    cache_save($JOINCODES, $jc);
+    if ($jlk) { @flock($jlk, LOCK_UN); @fclose($jlk); }
+
+    $sentMail = send_join_email($email, $code);
+    $sentSms = $mobile !== '' ? send_join_sms($mobile, $code) : false;
+    if (!$sentMail && !$sentSms) fail('send_failed');
+    out(array('ok' => true, 'sms' => $sentSms, 'mail' => $sentMail));
+}
+
+if ($action === 'verifycode') {
+    $email = strtolower(trim((string)(isset($in['email']) ? $in['email'] : '')));
+    $code = preg_replace('/[^0-9]/', '', (string)(isset($in['code']) ? $in['code'] : ''));
+    $jname = substr(trim((string)(isset($in['name']) ? $in['name'] : '')), 0, 60);
+    if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($code) !== 6) fail('bad_code');
+    $jlk = @fopen($JOINCODES . '.lock', 'c'); if ($jlk) @flock($jlk, LOCK_EX);   // serialise the tries counter
+    $jc = cache_load($JOINCODES);
+    $ek = sha1($email);
+    $rec = isset($jc[$ek]) ? $jc[$ek] : null;
+    $jdone = function() use ($jlk) { if ($jlk) { @flock($jlk, LOCK_UN); @fclose($jlk); } };
+    if (!$rec || (isset($rec['ts']) ? $rec['ts'] : 0) < time() - 1800) { $jdone(); fail('code_expired'); }
+    if ((isset($rec['tries']) ? $rec['tries'] : 0) >= 6) { unset($jc[$ek]); cache_save($JOINCODES, $jc); $jdone(); fail('code_expired'); }
+    if (!hash_equals((string)$rec['h'], hash('sha256', $code))) {
+        $jc[$ek]['tries'] = (isset($rec['tries']) ? $rec['tries'] : 0) + 1;
+        cache_save($JOINCODES, $jc);
+        $jdone();
+        fail('wrong_code');
+    }
+    $jdone();   // code matches - but only BURN it after SimplyBook succeeds, so a transient
+                // SB outage doesn't waste the customer's code ("try again shortly" must work)
+
+    // inbox ownership PROVEN. Find or silently create the SimplyBook client.
+    // getClientList FIRST - SimplyBook duplicate clients break password sign-in.
+    if (!$HAS_ADMIN) fail('not_configured');
+    $cid = 0; $cname = $jname;
+    $cl = sb_adm('getClientList', array($email, null));
+    if (sb_net($cl)) fail('sb_unavailable');
+    if (!isset($cl['result']) || !is_array($cl['result'])) fail('sb_unavailable');   // API error != empty list - never blind-create
+    foreach ($cl['result'] as $cli) {
+        if (isset($cli['email']) && strtolower(trim((string)$cli['email'])) === $email) {
+            $cid = (int)$cli['id'];
+            if ($cname === '' && !empty($cli['name'])) $cname = (string)$cli['name'];
+            break;
+        }
+    }
+    if ($cid === 0) {
+        $ac = sb_adm('addClient', array(array('name' => ($cname !== '' ? $cname : $email), 'email' => $email), false));
+        if (sb_net($ac) || empty($ac['result'])) fail('sb_unavailable');
+        $cid = (int)$ac['result'];
+    }
+    if ($cid <= 0) fail('join_failed');
+    // NOW burn the code (single use) - SimplyBook resolution succeeded
+    $jlk2 = @fopen($JOINCODES . '.lock', 'c'); if ($jlk2) @flock($jlk2, LOCK_EX);
+    $jc2 = cache_load($JOINCODES); unset($jc2[$ek]); cache_save($JOINCODES, $jc2);
+    if ($jlk2) { @flock($jlk2, LOCK_UN); @fclose($jlk2); }
+
+    // find-or-create the customer record - the same safe matching as password sign-in:
+    // sb_client_id first, then a FREE unlinked email match; Pro NEVER auto-granted.
+    list($lk, $db) = db_open();
+    $now = gmdate('Y-m-d H:i');
+    $target = ''; $pending = false; $pendingKeys = array();
+    foreach ($db['customers'] as $k2 => $c2)
+        if (isset($c2['sb_client_id']) && (int)$c2['sb_client_id'] === $cid) { $target = $k2; break; }
+    if ($target === '') {
+        foreach ($db['customers'] as $k2 => $c2) {
+            if (!isset($c2['email']) || strtolower(trim($c2['email'])) !== $email) continue;
+            $recTier = (isset($c2['tier']) && $c2['tier'] === 'pro') ? 'pro' : 'free';
+            $otherId = !empty($c2['sb_client_id']) && (int)$c2['sb_client_id'] !== $cid;
+            if ($otherId) continue;
+            if ($recTier === 'pro') { $pendingKeys[] = $k2; $pending = true; continue; }
+            $target = $k2; break;
+        }
+    }
+    if ($target === '') {
+        do { $target = 'SB' . strtoupper(substr(bin2hex(random_bytes(6)), 0, 10)); } while (isset($db['customers'][$target]));
+        $db['customers'][$target] = array('name' => ($cname !== '' ? $cname : $email), 'email' => $email,
+            'tier' => 'free', 'next' => '', 'created' => $now, 'via' => 'join', 'machines' => array());
+    }
+    $c =& $db['customers'][$target];
+    $c['sb_client_id'] = $cid;
+    $c['sb_email'] = $email;
+    $c['email_verified'] = true;   // proven by the typed code - unlike raw SB self-registration
+    if ($cname !== '' && empty($c['name'])) $c['name'] = $cname;
+    if (!isset($c['machines'])) $c['machines'] = array();
+    foreach ($pendingKeys as $pk)
+        if (isset($db['customers'][$pk]) && $pk !== $target)
+            $db['customers'][$pk]['pending_signin'] = array('cid' => $cid, 'email' => $email, 'link' => $target, 'sbname' => $cname, 'ts' => $now);
+    // long-lived device session (60d sliding / 90d cap) - the best senior auth is the one
+    // they almost never see. Server-revocable via weblogout / the websessions table.
+    $wtok = bin2hex(random_bytes(24));
+    if (!isset($db['websessions'])) $db['websessions'] = array();
+    foreach ($db['websessions'] as $wk => $wv) {
+        $lim = !empty($wv['long']) ? 5184000 : 43200;
+        if ((isset($wv['ts']) ? $wv['ts'] : 0) < time() - $lim) unset($db['websessions'][$wk]);
+    }
+    $db['websessions'][$wtok] = array('key' => $target, 'ts' => time(), 'iat' => time(), 'long' => true, 'machine' => $machine);
+    db_save($db); db_close($lk);
+
+    $tier = ((isset($c['tier']) && $c['tier'] === 'pro')) ? 'pro' : 'free';
+    out(array('ok' => true, 'tier' => $tier, 'wtoken' => $wtok, 'customer' => isset($c['name']) ? $c['name'] : '',
+              'next' => isset($c['next']) ? $c['next'] : '', 'pending' => $pending, 'joined' => true));
+}
+
 if ($action === 'signin') {
     $email = strtolower(trim((string)(isset($in['email']) ? $in['email'] : '')));
     $pass  = (string)(isset($in['password']) ? $in['password'] : '');
@@ -337,8 +567,12 @@ if ($action === 'signin') {
     if (!empty($in['web'])) {
         $wtok = bin2hex(random_bytes(24));
         if (!isset($db['websessions'])) $db['websessions'] = array();
-        foreach ($db['websessions'] as $wk => $wv) if ((isset($wv['ts']) ? $wv['ts'] : 0) < time() - 43200) unset($db['websessions'][$wk]);
-        $db['websessions'][$wtok] = array('key' => $target, 'ts' => time(), 'iat' => time());
+        foreach ($db['websessions'] as $wk => $wv) {
+            $lim = !empty($wv['long']) ? 5184000 : 43200;
+            if ((isset($wv['ts']) ? $wv['ts'] : 0) < time() - $lim) unset($db['websessions'][$wk]);
+        }
+        // customers get a long device session (60d sliding / 90d cap, server-revocable)
+        $db['websessions'][$wtok] = array('key' => $target, 'ts' => time(), 'iat' => time(), 'long' => true, 'machine' => $machine);
     }
     db_save($db); db_close($lk);
 

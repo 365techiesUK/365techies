@@ -107,9 +107,12 @@ ErrorDocument 404 /404.html
 </FilesMatch>
 # 365 PC Manager + Service Pass server-only data/secret files - NEVER serve over HTTP.
 # (The endpoints pcm.php, pcm-admin.php, pcm-sb-callback.php, pass.php stay served - not matched here.)
-<FilesMatch "^(pcm-data|pcm-sb-token|pcm-used|pass-used|pcm-throttle)\.json(\..*)?$">
+<FilesMatch "^(pcm-data|pcm-sb-token|pcm-used|pass-used|pcm-throttle|pcm-joincodes)\.json(\..*)?$">
   Require all denied
 </FilesMatch>
+<Files "pcm-smtp.php">
+  Require all denied
+</Files>
 # SOS screenshots are viewed only through the authed admin console, never served directly
 <FilesMatch "^pcm-sos-[a-f0-9\-]+\.jpg$">
   Require all denied

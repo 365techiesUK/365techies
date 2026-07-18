@@ -15601,6 +15601,7 @@ def write_portal_page():
   .ok { color:var(--good); } .wn { color:var(--warn); }
   .quiet { color:var(--mut); font-size:.8rem; line-height:1.5; margin-top:.6rem; }
   .tblwrap { overflow-x:auto; }
+  @media (min-width:640px) { .twocol { display:grid; grid-template-columns:1fr 1fr; gap:.9rem; align-items:start; } }
   a { color:var(--soft); }
   footer { border-top:1px solid var(--line); background:var(--panel); }
   footer .wrap { padding:1rem; flex:0; }
@@ -15618,9 +15619,17 @@ def write_portal_page():
 <script>
 (function () {
   var el = document.getElementById('app'), outBtn = document.getElementById('signout');
+  // customer device sessions persist across browser restarts (localStorage - the server
+  // token is what actually expires); staff sessions stay tab-scoped (sessionStorage)
   var S = {};
-  try { S = JSON.parse(sessionStorage.getItem('p365') || '{}'); } catch (e) { S = {}; }
-  function saveS() { try { sessionStorage.setItem('p365', JSON.stringify(S)); } catch (e) {} }
+  try { S = JSON.parse(sessionStorage.getItem('p365s') || 'null') || JSON.parse(localStorage.getItem('p365') || '{}'); } catch (e) { S = {}; }
+  function saveS() {
+    try {
+      if (S.staff) { sessionStorage.setItem('p365s', JSON.stringify(S)); localStorage.removeItem('p365'); }
+      else { localStorage.setItem('p365', JSON.stringify(S)); sessionStorage.removeItem('p365s'); }
+      if (!S.staff && !S.wtoken) { localStorage.removeItem('p365'); sessionStorage.removeItem('p365s'); }
+    } catch (e) {}
+  }
   function mid() {
     var m = '';
     try { m = localStorage.getItem('p365mid') || ''; } catch (e) {}
@@ -15647,11 +15656,36 @@ def write_portal_page():
   function showSignin(msg) {
     outBtn.style.display = 'none';
     el.innerHTML = '<h1>Sign in</h1>'
-      + '<p class="lede">Use the same email and password you book with at 365 Techies. On a support plan? The same login shows your plan, computers and visits.</p>'
-      + '<div class="card"><label>Email</label><input id="em" type="email" autocomplete="email" />'
+      + '<p class="lede">Existing customer? Use the email and password you book with. New to 365? Join free in under a minute - no password, no card details.</p>'
+      + '<div class="twocol">'
+      + '<div class="card"><h2>Already with us?</h2><label>Email</label><input id="em" type="email" autocomplete="email" />'
       + '<label>Password</label><input id="pw" type="password" autocomplete="current-password" />'
       + '<button id="go">Sign in</button><div class="err" id="serr">' + (msg || '') + '</div>'
-      + '<p class="quiet">No login yet? It\\u2019s the one you create when <a href="https://365techies.co.uk/book-service/">booking a service</a>. Forgotten it? Ring us: 01202 775566.</p></div>';
+      + '<p class="quiet">It\\u2019s the login you book with. Forgotten it? Ring us: 01202 775566.</p></div>'
+      + '<div class="card"><h2>New here? Join 365 free</h2>'
+      + '<p class="quiet">We\\u2019ll email you a 6-digit code to type in - that\\u2019s it. (We never email sign-in links, only codes.)</p>'
+      + '<label>Your first name</label><input id="jn" autocomplete="given-name" />'
+      + '<label>Email</label><input id="je" type="email" autocomplete="email" />'
+      + '<label>Mobile (optional - we can text the code instead)</label><input id="jm" type="tel" autocomplete="tel" />'
+      + '<button id="jgo">Join free \\u2192</button><div class="err" id="jerr"></div></div>'
+      + '</div>';
+    document.getElementById('jgo').onclick = function () {
+      var jb = this, jn = document.getElementById('jn').value.trim(), je = document.getElementById('je').value.trim(), jm = document.getElementById('jm').value.trim();
+      document.getElementById('jerr').textContent = '';
+      if (!je) { document.getElementById('jerr').textContent = 'Pop your email in first.'; return; }
+      jb.disabled = true;
+      post('/api/pcm-booking.php', { action: 'join', email: je, mobile: jm, machine: mid() })
+        .then(function (d) {
+          jb.disabled = false;
+          if (d && d.ok) showCode(jn, je, d.sms, d.mail);
+          else document.getElementById('jerr').textContent =
+            d && d.error === 'throttled' ? 'Too many codes requested - wait an hour, or ring us: 01202 775566.'
+            : d && d.error === 'bad_mobile' ? 'That mobile doesn\\u2019t look like a UK number - check it or leave it empty.'
+            : d && d.error === 'bad_email' ? 'That email doesn\\u2019t look right - please check it.'
+            : d && d.error === 'send_failed' ? 'We couldn\\u2019t send the code just now - ring us and we\\u2019ll sign you up: 01202 775566.'
+            : 'Something went wrong - try again, or ring 01202 775566.';
+        }).catch(function () { jb.disabled = false; document.getElementById('jerr').textContent = 'Couldn\\u2019t reach the server - try again.'; });
+    };
     var go = document.getElementById('go');
     function doIt() {
       go.disabled = true; document.getElementById('serr').textContent = '';
@@ -15672,6 +15706,41 @@ def write_portal_page():
     go.onclick = doIt;
     document.getElementById('pw').addEventListener('keydown', function (e) { if (e.key === 'Enter') doIt(); });
   }
+  // code-entry step of the join flow
+  function showCode(jn, je, viaSms, viaMail) {
+    var sentTo = viaMail && viaSms ? ('<strong>' + esc(je) + '</strong> and your mobile')
+               : viaSms ? 'your mobile by text'
+               : ('<strong>' + esc(je) + '</strong>');
+    el.innerHTML = '<h1>Type your code</h1>'
+      + '<p class="lede">We\\u2019ve sent a 6-digit code to ' + sentTo + '. Type it below - it works for 30 minutes.' + (viaMail ? ' Can\\u2019t see it? Check your junk folder.' : '') + '</p>'
+      + '<div class="card"><label>Your 6-digit code</label>'
+      + '<input id="cd" inputmode="numeric" autocomplete="one-time-code" style="font-size:1.6rem;letter-spacing:.4em;text-align:center;font-family:Consolas,monospace" />'
+      + '<button id="cgo">Sign me in</button><div class="err" id="cerr"></div>'
+      + '<p class="quiet"><a href="#" id="cback">Wrong email, or need a fresh code? Go back</a></p>'
+      + '<p class="quiet">Remember: we never email or text sign-in links - only codes like this. Never read your code to anyone who rings you.<br />Stuck? Ring us on 01202 775566 and we\\u2019ll sort it together.</p></div>';
+    var cd = document.getElementById('cd'); cd.focus();
+    cd.addEventListener('input', function () { cd.value = cd.value.replace(/\\D/g, '').slice(0, 6); });   // pastes self-heal
+    document.getElementById('cback').onclick = function () { showSignin(); try { document.getElementById('jn').value = jn || ''; document.getElementById('je').value = je || ''; } catch (e) {} return false; };
+    function doV() {
+      var cb = document.getElementById('cgo');
+      document.getElementById('cerr').textContent = '';
+      cb.disabled = true;
+      post('/api/pcm-booking.php', { action: 'verifycode', email: je, code: cd.value.trim(), name: jn, machine: mid() })
+        .then(function (d) {
+          cb.disabled = false;
+          if (d && d.ok && d.wtoken) { S = { wtoken: d.wtoken, name: d.customer || jn, tier: d.tier, pending: !!d.pending }; saveS(); showDash(); }
+          else document.getElementById('cerr').textContent =
+            d && d.error === 'wrong_code' ? 'That code isn\\u2019t right - check and try again.'
+            : d && d.error === 'code_expired' ? 'That code has expired - go back and ask for a fresh one.'
+            : d && d.error === 'bad_code' ? 'Please type all 6 digits of the code.'
+            : d && d.error === 'sb_unavailable' ? 'Our booking system is having a moment - your code still works, try again shortly.'
+            : 'Something went wrong - try again, or ring 01202 775566.';
+        }).catch(function () { document.getElementById('cgo').disabled = false; document.getElementById('cerr').textContent = 'Couldn\\u2019t reach the server - try again.'; });
+    }
+    document.getElementById('cgo').onclick = doV;
+    cd.addEventListener('keydown', function (e) { if (e.key === 'Enter') doV(); });
+  }
+
   outBtn.onclick = function () {
     if (S.stoken) post('/api/pcm-booking.php', { action: 'stafflogout', stoken: S.stoken, machine: mid() });
     if (S.wtoken) post('/api/pcm-booking.php', { action: 'weblogout', wtoken: S.wtoken, machine: mid() });
@@ -15767,7 +15836,7 @@ def write_portal_page():
               + '<div>\\u2713 <strong>' + esc(r.name) + '</strong> created (' + esc(r.tier) + ') - key <span class="mono">' + esc(r.key) + '</span></div>'
               + '<p class="quiet">Send the link (email button, or paste into a Splashtop chat / text). They click it on their PC and the app activates itself - and it explains what to do if the app isn\\u2019t installed yet.</p>'
               + '<button class="sm" id="cpl">\\ud83d\\udccb Copy activation link</button> '
-              + '<a href="mailto:' + encodeURIComponent(document.getElementById('ae').value.trim()) + '?subject=' + encodeURIComponent('Your 365 PC Manager activation') + '&body=' + encodeURIComponent('Hello ' + r.name + ',\\n\\nClick this on your PC to activate your 365 PC Manager:\\n' + link + '\\n\\nAny bother, ring us on 01202 775566.\\n\\n365 Techies') + '"><button class="sm ghost">\\u2709 Email it</button></a></div></div>';
+              + '<a href="mailto:' + encodeURIComponent(document.getElementById('ae').value.trim()) + '?subject=' + encodeURIComponent('Your 365 PC Manager activation key') + '&body=' + encodeURIComponent('Hello ' + r.name + ',\\n\\nOpen 365 PC Manager on your computer, click "Activate 365 support", and type this key:\\n\\n' + r.key + '\\n\\n(We never email clickable sign-in links - only keys and codes you type yourself. If the app isn\\u2019t on your PC yet, ring us on 01202 775566 and we\\u2019ll pop it on.)\\n\\n365 Techies') + '"><button class="sm ghost">\\u2709 Email it</button></a></div></div>';
             document.getElementById('cpl').onclick = function () { navigator.clipboard.writeText(link).then(function () { document.getElementById('cpl').textContent = 'Copied \\u2713'; }); };
           }).catch(function () { b.disabled = false; document.getElementById('aerr').textContent = 'Couldn\\u2019t reach the server.'; });
       };

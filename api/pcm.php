@@ -132,7 +132,13 @@ if ($action === 'overview') {
     $wt = isset($in['wtoken']) ? preg_replace('/[^a-f0-9]/','', (string)$in['wtoken']) : '';
     if ($wt !== '') {
         $ws = isset($db['websessions'][$wt]) ? $db['websessions'][$wt] : null;
-        $fresh = $ws && intval($ws['ts'] ?? 0) > time() - 43200 && intval($ws['iat'] ?? 0) > time() - 86400;
+        // customer device sessions are long (60d sliding / 90d cap); legacy short ones 12h/24h
+        $slide = ($ws && !empty($ws['long'])) ? 5184000 : 43200;
+        $cap   = ($ws && !empty($ws['long'])) ? 7776000 : 86400;
+        $fresh = $ws && intval($ws['ts'] ?? 0) > time() - $slide && intval($ws['iat'] ?? 0) > time() - $cap;
+        // soft device binding (like staff tokens): a stolen token replayed from another
+        // browser is refused; legacy sessions without a machine field still work
+        if ($fresh && !empty($ws['machine']) && $machine !== '' && $ws['machine'] !== $machine) $fresh = false;
         if (!$fresh) { if ($ws) { unset($db['websessions'][$wt]); save($DATA,$db); } out(array('ok'=>false,'error'=>'expired')); }
         $key = (string)$ws['key'];
         $db['websessions'][$wt]['ts'] = time(); save($DATA,$db);   // sliding, capped by iat
