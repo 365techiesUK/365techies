@@ -15621,6 +15621,9 @@ def write_portal_page():
   #p365app .adrop button:hover { background:rgba(29,151,227,.16); transform:none; }
   #p365app .tphone { font-size:.95rem; font-weight:600; color:var(--psoft); }
   #p365app .tline.confd { background:rgba(0,206,27,.05); border-radius:8px; padding-left:.4rem; padding-right:.4rem; }
+  #p365app .chip.c { color:var(--pcyan); border-color:rgba(29,151,227,.4); }
+  #p365app .tline.done { opacity:.68; }
+  #p365app .tline.done .ttime { color:var(--pmut); }
   @keyframes p365fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:none; } }
   @keyframes p365popIn { from { opacity:0; transform:scale(.96); } to { opacity:1; transform:none; } }
   #p365app h1, #p365app .lede { animation:p365fadeUp .5s ease both; }
@@ -15983,14 +15986,17 @@ def write_portal_page():
     });
   }
   function bookingRow(b, i, prefix) {
-    return '<div class="tline' + (b.conf ? ' confd' : '') + '"><span class="ttime">' + fmtTime(b.tm) + '</span><div class="tblock">'
-      + '<strong>' + esc(b.who) + '</strong> \u00b7 ' + esc(b.what)
-      + (b.conf ? ' <span class="chip g">\u2713 confirmed</span>' : '')
-      + '<br />' + (b.phone ? '<a href="tel:' + esc(b.phone.replace(/\s/g, '')) + '" class="tphone">\\ud83d\\udcde ' + esc(b.phone) + '</a>' : '<span class="quiet">no number on file - check SimplyBook</span>')
+    var chip = b.st === 'completed' ? ' <span class="chip c">\u2714 completed</span>'
+             : b.st === 'confirmed' ? ' <span class="chip g">\u2713 confirmed</span>' : '';
+    var cls = b.st === 'completed' ? ' done' : (b.st === 'confirmed' ? ' confd' : '');
+    return '<div class="tline' + cls + '"><span class="ttime">' + fmtTime(b.tm) + '</span><div class="tblock">'
+      + '<strong>' + esc(b.who) + '</strong> \u00b7 ' + esc(b.what) + chip
+      + '<br />' + (b.phone ? '<a href="tel:' + esc(b.phone.replace(/\\s/g, '')) + '" class="tphone">\\ud83d\\udcde ' + esc(b.phone) + '</a>' : '<span class="quiet">no number on file - check SimplyBook</span>')
       + '</div>'
       + '<div class="amenu"><button class="sm ghost ab2" data-p="' + prefix + i + '">\u22ef Actions</button>'
       + '<div class="adrop" id="ad' + prefix + i + '">'
-      + '<button data-act="confirm" data-id="' + b.id + '">' + (b.conf ? 'Un-confirm' : '\u2713 Confirm booking') + '</button>'
+      + '<button data-act="confirmed" data-id="' + b.id + '">' + (b.st === 'confirmed' ? 'Un-confirm' : '\u2713 Confirm booking') + '</button>'
+      + '<button data-act="completed" data-id="' + b.id + '">' + (b.st === 'completed' ? 'Not completed' : '\u2714 Service completed') + '</button>'
       + '<button data-act="move" data-id="' + b.id + '" data-p="' + prefix + i + '">\u2194 Move\u2026</button>'
       + '<button data-act="cancel" data-id="' + b.id + '" style="color:var(--pbad)">\u2715 Cancel\u2026</button>'
       + '</div></div></div>'
@@ -16017,9 +16023,10 @@ def write_portal_page():
         .then(function (r) { if (r && r.ok) { AG60 = null; loadDiary(); } else { btn.disabled = false; alert('Couldn\u2019t cancel - try again.'); } })
         .catch(function () { btn.disabled = false; alert('Couldn\u2019t reach the server.'); });
     }
-    function doConfirm(b, btn) {
+    function doStatus(b, btn, kind) {
+      var want = (b.st === kind) ? 'none' : kind;
       btn.disabled = true;
-      post(BK, { action: 'staffconfirm', stoken: S.stoken, machine: mid(), id: b.id, on: !b.conf })
+      post(BK, { action: 'staffstatus', stoken: S.stoken, machine: mid(), id: b.id, status: want })
         .then(function (r) { if (r && r.ok) { AG60 = null; loadDiary(); } else { btn.disabled = false; alert('Couldn\u2019t update - try again.'); } })
         .catch(function () { btn.disabled = false; alert('Couldn\u2019t reach the server.'); });
     }
@@ -16067,7 +16074,7 @@ def write_portal_page():
         var b = byId[parseInt(btn.getAttribute('data-id'), 10)]; if (!b) return;
         var act = btn.getAttribute('data-act');
         if (act === 'cancel') doCancel(b, btn);
-        else if (act === 'confirm') doConfirm(b, btn);
+        else if (act === 'confirmed' || act === 'completed') doStatus(b, btn, act);
         else if (act === 'move') doMove(b, btn.getAttribute('data-p'));
       };
     });

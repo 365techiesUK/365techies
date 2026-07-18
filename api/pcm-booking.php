@@ -901,6 +901,7 @@ if ($action === 'agenda') {
     $rows = isset($r['result']) && is_array($r['result']) ? $r['result'] : array();
     list($lkA, $dbA) = db_open(); db_close($lkA);
     $bm = isset($dbA['bkmeta']) && is_array($dbA['bkmeta']) ? $dbA['bkmeta'] : array();
+    $stMap = null;   // SB status-id -> confirmed/completed, built lazily if rows carry status_id
     $list = array();
     foreach ($rows as $b) {
         $start = parse_start($b);
@@ -913,15 +914,32 @@ if ($action === 'agenda') {
         foreach (array('client_phone', 'phone', 'client_mobile') as $pk) if (!empty($b[$pk])) { $ph = (string)$b[$pk]; break; }
         if ($ph === '' && isset($b['client']) && is_array($b['client']) && !empty($b['client']['phone'])) $ph = (string)$b['client']['phone'];
         $bid = (int)(isset($b['id']) ? $b['id'] : 0);
-        // confirmed = our staff marker OR SimplyBook's own flag when it sends one
-        $conf = !empty($bm[(string)$bid]['confirmed']) || !empty($b['is_confirm']) || !empty($b['is_confirmed']);
+        // status: our staff marker first; else SimplyBook's own Status-feature id mapped by
+        // name; else SB's legacy confirm flag. So the portal shows the truth from either side.
+        $bmr = isset($bm[(string)$bid]) ? $bm[(string)$bid] : null;
+        $st = $bmr ? (string)(isset($bmr['st']) ? $bmr['st'] : (!empty($bmr['confirmed']) ? 'confirmed' : '')) : '';
+        if ($st === '' && !empty($b['status_id'])) {
+            if ($stMap === null) {
+                $stMap = array();
+                foreach (sb_statuses() as $sx) {
+                    $nm2 = strtolower((string)(isset($sx['name']) ? $sx['name'] : ''));
+                    $sid2 = intval(isset($sx['id']) ? $sx['id'] : 0);
+                    if (strpos($nm2, 'complet') !== false) $stMap[$sid2] = 'completed';
+                    else if (strpos($nm2, 'confirm') !== false) $stMap[$sid2] = 'confirmed';
+                }
+            }
+            $sid3 = intval($b['status_id']);
+            if (isset($stMap[$sid3])) $st = $stMap[$sid3];
+        }
+        if ($st === '' && (!empty($b['is_confirm']) || !empty($b['is_confirmed']))) $st = 'confirmed';
         $list[] = array('id' => $bid,
                         'when' => $ts ? date('D j M g:ia', $ts) : trim($start),
                         'd' => $ts ? date('Y-m-d', $ts) : '',           // structured, for the day view
                         'tm' => $ts ? date('H:i', $ts) : '',
                         'who' => $cname,
                         'phone' => $ph,
-                        'conf' => $conf,
+                        'st' => $st,
+                        'conf' => $st === 'confirmed',
                         'what' => (string)(isset($b['event_name']) ? $b['event_name'] : (isset($b['event']) ? $b['event'] : 'Service')),
                         'eventId' => (int)(isset($b['event_id']) ? $b['event_id'] : 0));
         if (count($list) >= 120) break;
@@ -929,26 +947,51 @@ if ($action === 'agenda') {
     out(array('ok' => true, 'bookings' => $list));
 }
 
-// staff: mark a booking confirmed. We try SimplyBook's own confirm first (so their admin
-// shows it too, where the approve feature is on) and always keep our own marker so the
-// portal state never depends on which SimplyBook plan features are enabled.
-if ($action === 'staffconfirm') {
+// SimplyBook's Status feature (the owner uses named statuses incl. "Confirmed" and
+// "Completed"): getStatuses is cached 10 min; statuses are matched by name so it works
+// whatever exact labels they configured.
+function sb_statuses() {
+    global $CACHE;
+    $c = cache_load($CACHE);
+    if (!isset($c['statuses']) || (time() - (isset($c['statuses']['ts']) ? $c['statuses']['ts'] : 0)) > 600) {
+        $r = sb_adm('getStatuses', array());
+        $list = (!sb_net($r) && isset($r['result']) && is_array($r['result'])) ? $r['result'] : array();
+        $c['statuses'] = array('data' => $list, 'ts' => time());
+        cache_save($CACHE, $c);
+    }
+    return $c['statuses']['data'];
+}
+function sb_status_id($kind) {
+    foreach (sb_statuses() as $st) {
+        $nm = strtolower((string)(isset($st['name']) ? $st['name'] : ''));
+        $id = intval(isset($st['id']) ? $st['id'] : 0);
+        if ($kind === 'confirmed' && strpos($nm, 'confirm') !== false) return $id;
+        if ($kind === 'completed' && strpos($nm, 'complet') !== false) return $id;
+        if ($kind === 'default' && !empty($st['is_default'])) return $id;
+    }
+    return 0;
+}
+
+// staff: set a booking's status (confirmed / completed / clear). Writes SimplyBook's own
+// Status feature via setStatus so their admin shows it too, and always keeps our marker
+// so the portal state never depends on which SimplyBook plan features are enabled.
+if ($action === 'staffstatus') {
     need_staff();
     $bid = (int)(isset($in['id']) ? $in['id'] : 0);
-    $on = !empty($in['on']);
-    if ($bid <= 0) fail('bad_request');
+    $want = (string)(isset($in['status']) ? $in['status'] : '');
+    if ($bid <= 0 || !in_array($want, array('confirmed', 'completed', 'none'), true)) fail('bad_request');
     $sb = false;
-    if ($on && $HAS_ADMIN) {
-        $r = sb_adm('confirmBooking', array($bid, true));
-        $sb = !sb_net($r) && !empty($r['result']);
+    if ($HAS_ADMIN) {
+        $sid = $want === 'none' ? sb_status_id('default') : sb_status_id($want);
+        if ($sid > 0) { $r = sb_adm('setStatus', array($bid, $sid)); $sb = !sb_net($r) && !empty($r['result']); }
     }
     list($lk, $db) = db_open();
     if (!isset($db['bkmeta'])) $db['bkmeta'] = array();
     foreach ($db['bkmeta'] as $k2 => $v2) if ((isset($v2['ts']) ? $v2['ts'] : 0) < time() - 86400 * 90) unset($db['bkmeta'][$k2]);
-    if ($on) $db['bkmeta'][(string)$bid] = array('confirmed' => 1, 'ts' => time(), 'sb' => $sb ? 1 : 0);
-    else unset($db['bkmeta'][(string)$bid]);
+    if ($want === 'none') unset($db['bkmeta'][(string)$bid]);
+    else $db['bkmeta'][(string)$bid] = array('st' => $want, 'ts' => time(), 'sb' => $sb ? 1 : 0);
     db_save($db); db_close($lk);
-    out(array('ok' => true, 'sb' => $sb, 'conf' => $on));
+    out(array('ok' => true, 'sb' => $sb, 'st' => $want === 'none' ? '' : $want));
 }
 
 // staff: the live fleet - every machine running 365 PC Manager, flattened, with the raw
