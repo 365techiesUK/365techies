@@ -15900,8 +15900,10 @@ def write_portal_page():
           + '<p class="quiet" style="margin:0 0 .55rem"><strong>\\u00a318.25/month per computer</strong> by Direct Debit - about 60p a day, no contract, cancel any time.</p>'
           + '<div class="row" style="border:0"><a href="/monthly-it-support/" target="_blank" rel="noopener"><button class="sm">See how support works</button></a>'
           + '<a href="tel:+441202775566"><button class="sm ghost">Talk it over: 01202 775566</button></a></div></div>';
-      h += '<div class="card"><h2>Need us?</h2><div class="row">'
-        + '<a href="/book-service/" target="_blank" rel="noopener"><button class="sm">Book a service</button></a>'
+      h += '<div class="card"><h2>Need us?</h2>'
+        + '<div class="nbwiz" id="cbwiz" style="display:none"></div>'
+        + '<div class="row">'
+        + '<button class="sm" id="cbopen">\\ud83d\\udcc5 Book a service</button>'
         + '<a href="/sos/" target="_blank" rel="noopener"><button class="sm ghost">Remote help (SOS)</button></a>'
         + '<a href="/free-tools/" target="_blank" rel="noopener"><button class="sm ghost">Free tools</button></a>'
         + '<a href="tel:+441202775566"><button class="sm ghost">Call 01202 775566</button></a></div></div>';
@@ -15947,6 +15949,8 @@ def write_portal_page():
             .catch(function () { btn.disabled = false; btn.textContent = '\\ud83e\\ude7a Check now'; alert('Couldn\\u2019t reach the server.'); });
         };
       });
+      var cbo = document.getElementById('cbopen');
+      if (cbo) cbo.onclick = function () { custWiz(); };
       Array.prototype.forEach.call(document.querySelectorAll('#p365app .repb'), function (btn) {
         btn.onclick = function () {
           btn.disabled = true;
@@ -15964,6 +15968,82 @@ def write_portal_page():
         };
       });
     }).catch(function () { showSignin('Couldn\\u2019t load your dashboard - please sign in again.'); });
+  }
+
+  // customer in-portal booking: what -> when -> booked, straight into SimplyBook
+  var CB = null, CSVC = null;
+  function custWiz() {
+    var w = document.getElementById('cbwiz'); if (!w) return;
+    if (w.style.display !== 'none') { w.style.display = 'none'; return; }
+    CB = { svc: 0, svcName: '' };
+    w.style.display = 'block';
+    w.innerHTML = '<h3>1 \\u00b7 What would you like?</h3><div id="cbsvc"><p class="quiet">Loading our services\\u2026</p></div>'
+      + '<p class="quiet"><a href="#" id="cbx">close</a> \\u00b7 prefer the full page? <a href="/book-service/" target="_blank" rel="noopener">book there</a></p>';
+    document.getElementById('cbx').onclick = function () { w.style.display = 'none'; return false; };
+    function render(list) {
+      var sv = document.getElementById('cbsvc'); if (!sv) return;
+      sv.innerHTML = '';
+      list.forEach(function (svc) {
+        var b2 = document.createElement('button');
+        b2.className = 'sm ghost dpill';
+        b2.textContent = svc.name + ' (' + svc.mins + ' min)';
+        b2.onclick = function () { CB.svc = svc.id; CB.svcName = svc.name; custWhen(); };
+        sv.appendChild(b2);
+      });
+    }
+    if (CSVC) { render(CSVC); return; }
+    post(BK, { action: 'services', wtoken: S.wtoken, machine: mid() }).then(function (d) {
+      if (d && d.ok && d.services) { CSVC = d.services; render(CSVC); }
+      else { var sv = document.getElementById('cbsvc'); if (sv) sv.innerHTML = '<p class="quiet">Couldn\\u2019t load services - <a href="/book-service/" target="_blank" rel="noopener">use the booking page</a> or ring 01202 775566.</p>'; }
+    }).catch(function () { var sv = document.getElementById('cbsvc'); if (sv) sv.innerHTML = '<p class="quiet">Couldn\\u2019t reach the server - try the <a href="/book-service/" target="_blank" rel="noopener">booking page</a>.</p>'; });
+  }
+  function custWhen() {
+    var w = document.getElementById('cbwiz'); if (!w) return;
+    w.innerHTML = '<h3>1 \\u00b7 ' + esc(CB.svcName) + ' \\u00b7 2 \\u00b7 When suits you?</h3>'
+      + '<div id="cbdays"><p class="quiet">Finding free times\\u2026</p></div><div id="cbtimes" style="margin-top:.3rem"></div><div id="cbconf"></div>'
+      + '<p class="quiet"><a href="#" id="cbb">\\u2190 Back</a></p>';
+    document.getElementById('cbb').onclick = function () { custWiz(); custWiz(); return false; };
+    var from = new Date(), to = new Date(Date.now() + 20 * 86400000);
+    post(BK, { action: 'slots', wtoken: S.wtoken, machine: mid(), eventId: CB.svc, from: iso(from), to: iso(to) })
+      .then(function (sr) {
+        var daysEl = document.getElementById('cbdays'); if (!daysEl) return;
+        if (!sr || !sr.ok || !sr.days || !sr.days.length) { daysEl.innerHTML = '<p class="quiet">Nothing free in the next three weeks - ring us on 01202 775566 and we\\u2019ll find you a slot.</p>'; return; }
+        daysEl.innerHTML = '';
+        var timesEl = document.getElementById('cbtimes');
+        sr.days.forEach(function (day) {
+          var db2 = document.createElement('button'); db2.className = 'sm ghost dpill'; db2.textContent = day.n;
+          db2.onclick = function () {
+            timesEl.innerHTML = '';
+            day.t.forEach(function (t) {
+              var tb = document.createElement('button'); tb.className = 'sm tpill'; tb.textContent = t;
+              tb.onclick = function () {
+                var cEl = document.getElementById('cbconf'); if (!cEl) return;
+                cEl.innerHTML = '<div class="nbsum"><strong>' + esc(CB.svcName) + '</strong> \\u00b7 <strong>' + esc(day.n) + ' at ' + esc(t) + '</strong><br />'
+                  + '<button class="sm" id="cbgo" style="background:var(--pgood);color:#06220b;font-weight:800">\\u2713 Book it</button> <span class="err" id="cberr" style="display:inline"></span></div>';
+                document.getElementById('cbgo').onclick = function () {
+                  var gb = this; gb.disabled = true; document.getElementById('cberr').textContent = '';
+                  post(BK, { action: 'book', wtoken: S.wtoken, machine: mid(), eventId: CB.svc, date: day.d, time: t })
+                    .then(function (r) {
+                      if (r && r.ok) {
+                        var w2 = document.getElementById('cbwiz');
+                        w2.innerHTML = '<div class="nbsum">\\u2713 Booked - ' + esc(r.when) + (r.pending ? ' (we\\u2019ll confirm it shortly)' : '') + '. A confirmation email is on its way.</div>';
+                        setTimeout(function () { showDash(); }, 3000);
+                      } else {
+                        gb.disabled = false;
+                        document.getElementById('cberr').textContent = r && r.error === 'slot_taken' ? 'That time just went - pick another.' : ('Couldn\\u2019t book it' + (r && r.sberr ? ' - ' + r.sberr : ' - try again or ring 01202 775566.'));
+                      }
+                    })
+                    .catch(function () { gb.disabled = false; document.getElementById('cberr').textContent = 'Couldn\\u2019t reach the server.'; });
+                };
+              };
+              timesEl.appendChild(tb);
+            });
+          };
+          daysEl.appendChild(db2);
+        });
+        var first = daysEl.querySelector('button'); if (first) first.click();
+      })
+      .catch(function () { var daysEl = document.getElementById('cbdays'); if (daysEl) daysEl.innerHTML = '<p class="quiet">Couldn\\u2019t load times - try the <a href="/book-service/" target="_blank" rel="noopener">booking page</a>.</p>'; });
   }
 
   // honest browser check-up: only claims what a browser can genuinely read

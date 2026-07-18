@@ -201,6 +201,29 @@ function customer_snapshot() {
     );
 }
 // re-open, mutate this customer's next-service, save, release
+// portal (web) customer auth: resolve a wtoken session to the customer snapshot - the web
+// equivalent of customer_snapshot(), with the same expiry + machine binding as pcm.php.
+function web_snapshot() {
+    global $in, $machine;
+    $wt = isset($in['wtoken']) ? preg_replace('/[^a-f0-9]/', '', (string)$in['wtoken']) : '';
+    if ($wt === '') fail('expired');
+    list($lk, $db) = db_open(); db_close($lk);
+    $ws = isset($db['websessions'][$wt]) ? $db['websessions'][$wt] : null;
+    if (!$ws) fail('expired');
+    $slide = !empty($ws['forever']) ? 31536000 : (!empty($ws['long']) ? 5184000 : 43200);
+    $capOK = !empty($ws['forever']) ? true : (intval(isset($ws['iat']) ? $ws['iat'] : 0) > time() - (!empty($ws['long']) ? 7776000 : 86400));
+    if (intval(isset($ws['ts']) ? $ws['ts'] : 0) <= time() - $slide || !$capOK) fail('expired');
+    if (!empty($ws['machine']) && $machine !== '' && $ws['machine'] !== $machine) fail('expired');
+    $key2 = (string)$ws['key'];
+    if (!isset($db['customers'][$key2])) fail('expired');
+    $c = $db['customers'][$key2];
+    return array('key' => $key2,
+        'cid' => intval(isset($c['sb_client_id']) ? $c['sb_client_id'] : 0),
+        'name' => (string)(isset($c['sb_name']) ? $c['sb_name'] : (isset($c['name']) ? $c['name'] : '')),
+        'email' => (string)(isset($c['sb_email']) ? $c['sb_email'] : (isset($c['email']) ? $c['email'] : '')),
+        'phone' => (string)(isset($c['sb_phone']) ? $c['sb_phone'] : (isset($c['phone']) ? $c['phone'] : '')));
+}
+
 function stamp_next($ts, $pretty) {
     global $key;
     list($lk, $db) = db_open();
@@ -672,14 +695,18 @@ if ($action === 'weblogout') {
 }
 
 if ($action === 'services') {
-    // staff (portal diary) may browse with their session token; customers need their key
-    if (isset($in['stoken']) && $in['stoken'] !== '') need_staff(); else customer_snapshot();
+    // staff use their session token; portal customers their web session; the app its key
+    if (isset($in['stoken']) && $in['stoken'] !== '') need_staff();
+    elseif (isset($in['wtoken']) && $in['wtoken'] !== '') web_snapshot();
+    else customer_snapshot();
     out(array('ok' => true, 'services' => sb_services()));
 }
 
 if ($action === 'slots') {
     $isStaffSlots = isset($in['stoken']) && $in['stoken'] !== '';
-    if ($isStaffSlots) need_staff(); else customer_snapshot();
+    if ($isStaffSlots) need_staff();
+    elseif (isset($in['wtoken']) && $in['wtoken'] !== '') web_snapshot();
+    else customer_snapshot();
     $eventId = (int)(isset($in['eventId']) ? $in['eventId'] : 0);
     // some SimplyBook responses omit event_id on booking rows - staff may pass the booking
     // id instead and we resolve the service from the booking details
@@ -710,7 +737,8 @@ if ($action === 'slots') {
 }
 
 if ($action === 'book') {
-    $snap = customer_snapshot();
+    if (isset($in['wtoken']) && $in['wtoken'] !== '') { $snap = web_snapshot(); $key = $snap['key']; }   // portal customer; $key feeds stamp_next
+    else $snap = customer_snapshot();
     $eventId = (int)(isset($in['eventId']) ? $in['eventId'] : 0);
     $date = preg_replace('/[^0-9\-]/', '', (string)(isset($in['date']) ? $in['date'] : ''));
     $time = preg_replace('/[^0-9:]/', '', (string)(isset($in['time']) ? $in['time'] : ''));
@@ -727,7 +755,10 @@ if ($action === 'book') {
     $r = sb_pub('book', array($eventId, (int)$unitIds[0], $date, $time, $clientData, array(), 1));
     if (sb_net($r)) fail('sb_unavailable');
     $b = isset($r['result']) && is_array($r['result']) ? $r['result'] : null;
-    if (!$b) fail('booking_failed');
+    if (!$b) {
+        $msg = isset($r['error']['message']) ? substr(preg_replace('/[^\x20-\x7E]/', '', (string)$r['error']['message']), 0, 140) : '';
+        out(array('ok' => false, 'error' => 'booking_failed', 'sberr' => $msg));
+    }
     $bid = 0; $confirmed = true;
     if (isset($b['bookings'][0])) {
         $bid = (int)(isset($b['bookings'][0]['id']) ? $b['bookings'][0]['id'] : 0);
