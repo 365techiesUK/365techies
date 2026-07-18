@@ -16384,7 +16384,7 @@ def write_portal_page():
   else showSignin();
 })();
 </script>'''
-    content = ('<section class="section" style="padding-top:1.1rem"><div class="wrap" style="max-width:880px">'
+    content = ('<section class="section" style="padding-top:6.5rem"><div class="wrap" style="max-width:880px">'
                + '<div id="p365app"><noscript><p>The customer portal needs JavaScript switched on. Or just ring us: 01202 775566.</p></noscript>'
                + '<p style="color:#9fb5d3">Loading the portal&hellip;</p></div>'
                + '</div></section>' + css + js)
