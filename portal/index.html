@@ -743,6 +743,7 @@
       + '<button id="csm" class="sm ghost">\ud83d\udcf1 Text me a code</button>'
       + '</div>'
       + '<label style="display:flex;align-items:center;gap:.45rem;margin-top:.55rem;cursor:pointer;color:var(--pmut);font-size:.85rem"><input type="checkbox" id="shpc" style="width:auto" /> This is a shared or public computer</label>'
+      + '<label style="display:flex;align-items:flex-start;gap:.45rem;margin-top:.5rem;cursor:pointer;color:var(--pmut);font-size:.82rem"><input type="checkbox" id="mkt" style="width:auto;margin-top:.15rem;flex:0 0 auto" /> <span>Email me the occasional 365 tip &amp; offer - a few a year at most, unsubscribe any time. Optional, and it will not affect your free membership or your support.</span></label>'
       + '<div class="err" id="serr">' + (msg || '') + '</div>'
       + '<p class="quiet"><a href="#" id="havecode">Already got a code? Type it here</a>'
       + ' \u00b7 <a href="#" id="pwmode">Prefer your password?</a>'
@@ -755,6 +756,7 @@
       + '<p class="quiet" id="joinnote">First time here? Just pop your email in and tap a code button - that\u2019s the whole sign-up. We\u2019ll ask your name once you\u2019re in if we need it.</p>'
       + '</div>';
     var shared = function () { return document.getElementById('shpc').checked; };
+    var marketing = function () { var m = document.getElementById('mkt'); return !!(m && m.checked); };
     function sendCode(wantSms) {
       var ce = document.getElementById('em').value.trim();
       if (!ce) { document.getElementById('serr').textContent = 'Pop your email in first.'; return; }
@@ -765,9 +767,9 @@
           btn.disabled = false;
           if (d && d.ok) {
             if (wantSms && !d.sms) { document.getElementById('serr').textContent = d.mail ? 'We don\u2019t have a mobile on file for that email, so the code went by EMAIL instead.' : 'No mobile on file - try the email code.'; }
-            showCode('', ce, d.sms, d.mail, d.slack, false, d.smshint, shared());
+            showCode('', ce, d.sms, d.mail, d.slack, false, d.smshint, shared(), marketing());
           }
-          else if (d && d.error === 'throttled' && d.have_code) showCode('', ce, false, true, false, true, '', shared());
+          else if (d && d.error === 'throttled' && d.have_code) showCode('', ce, false, true, false, true, '', shared(), marketing());
           else document.getElementById('serr').textContent =
             d && d.error === 'throttled' ? 'Too many codes requested - wait a while, or ring us: 01202 775566.'
             : d && d.error === 'bad_email' ? 'That email doesn\u2019t look right - please check it.'
@@ -780,7 +782,7 @@
     document.getElementById('havecode').onclick = function () {
       var ce = document.getElementById('em').value.trim();
       if (!ce) { document.getElementById('serr').textContent = 'Pop your email in first, then tap the code link.'; return false; }
-      showCode('', ce, false, true, false, true, '', shared());
+      showCode('', ce, false, true, false, true, '', shared(), marketing());
       return false;
     };
     document.getElementById('pwmode').onclick = function () {
@@ -812,7 +814,7 @@
   }
 
   // ---------- code entry ----------
-  function showCode(jn, je, viaSms, viaMail, viaSlack, existing, smshint, shared) {
+  function showCode(jn, je, viaSms, viaMail, viaSlack, existing, smshint, shared, marketing) {
     var mobTxt = 'your mobile' + (smshint ? ' ending ' + esc(smshint) : '') + ' by text';
     var sentTo = viaMail && viaSms ? ('<strong>' + esc(je) + '</strong> and ' + mobTxt)
                : viaSms ? mobTxt
@@ -835,7 +837,7 @@
       var cb = document.getElementById('cgo');
       document.getElementById('cerr').textContent = '';
       cb.disabled = true;
-      post(BK, { action: 'verifycode', email: je, code: cd.value.trim(), name: jn, machine: mid(), shared: shared ? 1 : 0 })
+      post(BK, { action: 'verifycode', email: je, code: cd.value.trim(), name: jn, machine: mid(), shared: shared ? 1 : 0, marketing: marketing ? 1 : 0 })
         .then(function (d) {
           cb.disabled = false;
           if (d && d.ok && d.staff) { S = { staff: true, stoken: d.stoken, email: d.customer }; saveS(); showStaff(); }

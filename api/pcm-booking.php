@@ -638,6 +638,14 @@ if ($action === 'verifycode') {
     $c['sb_client_id'] = $cid;
     $c['sb_email'] = $email;
     $c['email_verified'] = true;   // proven by the typed code - unlike raw SB self-registration
+    // marketing consent (PECR): an explicit, unticked-by-default opt-in on the join box. Only ever
+    // SET it (never silently withdraw when the box is left unticked) - withdrawal is via the
+    // unsubscribe link. Keep the ORIGINAL consent timestamp as the record of when they agreed.
+    if (!empty($in['marketing']) && empty($c['marketing_consent'])) {
+        $c['marketing_consent'] = true;
+        $c['marketing_ts'] = $now;
+        $c['marketing_src'] = 'portal-join';
+    }
     if ($cname !== '' && empty($c['name'])) $c['name'] = $cname;
     if (!isset($c['machines'])) $c['machines'] = array();
     foreach ($pendingKeys as $pk)
