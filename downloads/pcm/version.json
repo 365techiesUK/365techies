@@ -1,7 +1,7 @@
 {
-  "ver": 13,
-  "version": "1.0.13",
-  "url": "https://365techies.co.uk/downloads/pcm/pcm-v13.exe",
-  "sha256": "b458bb98bb3e00825a2d308731c30dd3a210dd99fb534faaf82434a6dca23530",
-  "notes": "Staff can activate customers from manager mode; portal groundwork."
+  "ver": 14,
+  "version": "1.0.14",
+  "url": "https://365techies.co.uk/downloads/pcm/pcm-v14.exe",
+  "sha256": "ccdaa958379ed36586b3057d836e5095356896250b1fcaafc9fbf565301b9fee",
+  "notes": "Activation and sign-in now report health to the fleet immediately."
 }
