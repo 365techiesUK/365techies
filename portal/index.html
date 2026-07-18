@@ -884,13 +884,42 @@
           return;
         }
         var col = m.score >= 80 ? 'var(--pgood)' : (m.score >= 55 ? 'var(--pwarn)' : 'var(--pbad)');
+        var spark = '';
+        if (m.hist && m.hist.length > 1) {
+          var pts = [];
+          for (var hi = 0; hi < m.hist.length; hi++) {
+            var hx = (hi / (m.hist.length - 1)) * 96;
+            var hy = 26 - (Math.max(0, Math.min(100, m.hist[hi][1])) / 100) * 24;
+            pts.push(hx.toFixed(1) + ',' + hy.toFixed(1));
+          }
+          spark = '<svg width="100" height="28" style="flex:0 0 100px" aria-label="health trend"><polyline points="' + pts.join(' ') + '" fill="none" stroke="var(--pcyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+        }
+        var reps = '';
+        (m.reps || []).slice(-3).reverse().forEach(function (rt) {
+          var rd = new Date(rt * 1000);
+          reps += '<button class="sm ghost repb" data-pc="' + esc(m.id) + '" data-ts="' + rt + '" style="margin:.25rem .25rem 0 0">\ud83d\udcc4 ' + rd.getDate() + ' ' + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][rd.getMonth()] + '</button>';
+        });
         h += '<div class="row"><div class="ringS"><svg width="56" height="56"><circle cx="28" cy="28" r="23" fill="none" stroke="#2a3b63" stroke-width="6"/><circle cx="28" cy="28" r="23" fill="none" stroke="' + col + '" stroke-width="6" stroke-linecap="round" stroke-dasharray="0 ' + circ.toFixed(1) + '" data-dash="' + (circ * m.score / 100).toFixed(1) + ' ' + circ.toFixed(1) + '"/></svg><b>' + m.score + '%</b></div>'
-          + '<div><strong>' + esc(m.name) + '</strong> <span style="color:' + col + '">' + esc(m.verdict || '') + '</span>'
+          + '<div style="flex:1;min-width:180px"><strong>' + esc(m.name) + '</strong> <span style="color:' + col + '">' + esc(m.verdict || '') + '</span>'
           + '<div class="chips"><span class="chip ' + (m.backup ? 'g">backup: yes' : 'w">no backup seen') + '</span>'
           + '<span class="chip ' + (m.disk >= 85 ? 'w">disk ' + m.disk + '% full' : '">disk fine') + '</span>'
-          + '<span class="chip">seen ' + seenTxt(m.seen) + '</span></div></div></div>';
+          + (m.batt ? '<span class="chip ' + (m.batt >= 70 ? '' : 'w') + '">battery ' + m.batt + '%</span>' : '')
+          + '<span class="chip">seen ' + seenTxt(m.seen) + '</span></div>'
+          + (reps ? '<div>' + reps + '</div>' : '')
+          + '</div>' + spark
+          + '<button class="sm ghost rcb" data-pc="' + esc(m.id) + '" title="Ask this PC for a fresh health check">\ud83e\ude7a Check now</button></div>';
       });
-      h += '</div>';
+            h += '</div>';
+      var crsAll = null;
+      d.machines.forEach(function (m) { if (m.crs && (!crsAll || parseInt(m.crs, 10) > parseInt(crsAll.crs, 10))) crsAll = m; });
+      if (crsAll && crsAll.crs) {
+        var done = crsAll.crs.split('/')[0], tot = crsAll.crs.split('/')[1] || '11';
+        h += '<div class="card"><h2>\ud83c\udf93 Your 365 learning</h2>'
+          + '<p class="quiet" style="margin:0 0 .3rem"><strong style="color:var(--pwhite)">' + esc(done) + ' of ' + esc(tot) + '</strong> free courses completed'
+          + (parseInt(done, 10) > 0 && crsAll.crst ? ' - well done!' : '') + '</p>'
+          + (crsAll.crst ? '<div class="chips">' + crsAll.crst.split('|').map(function (t) { return '<span class="chip g">\u2713 ' + esc(t) + '</span>'; }).join('') + '</div>' : '')
+          + '<p class="quiet">Carry on inside 365 PC Manager (Learn tab) or <a href="/free-tools/" target="_blank" rel="noopener">our free courses online</a>.</p></div>';
+      }
       if (d.fam) h += '<div class="card"><h2>Family view</h2><p class="quiet">\u2713 Shared with ' + esc(d.fam) + ' - manage it from the app on your PC.</p></div>';
       // instant browser check-up: honest, no install, fills day one
       h += '<div class="card"><h2>\ud83e\ude7a Quick browser check-up</h2><div id="bcheck"><p class="quiet">Checking what this browser can see\u2026</p></div>'
@@ -929,6 +958,42 @@
       requestAnimationFrame(function () { requestAnimationFrame(function () {
         Array.prototype.forEach.call(document.querySelectorAll('#p365app [data-dash]'), function (c) { c.setAttribute('stroke-dasharray', c.getAttribute('data-dash')); });
       }); });
+      Array.prototype.forEach.call(document.querySelectorAll('#p365app .rcb'), function (btn) {
+        btn.onclick = function () {
+          btn.disabled = true; btn.textContent = 'Asking\u2026';
+          post(PCM, { action: 'runcheck', wtoken: S.wtoken, machine: mid(), pc: btn.getAttribute('data-pc') })
+            .then(function (r) {
+              if (!r || !r.ok) { btn.disabled = false; btn.textContent = '\ud83e\ude7a Check now'; alert('Couldn\u2019t reach that PC\u2019s record - try again.'); return; }
+              btn.textContent = '\u23f3 Checking\u2026';
+              var tries = 0;
+              var iv = setInterval(function () {
+                tries++;
+                post(PCM, { action: 'overview', wtoken: S.wtoken, machine: mid() }).then(function (d2) {
+                  var fresh = d2 && d2.ok && d2.machines.some(function (m2) { return m2.id === btn.getAttribute('data-pc') && m2.seen && (Date.now() - Date.parse(m2.seen.replace(' ', 'T') + ':00Z')) < 120000; });
+                  if (fresh) { clearInterval(iv); showDash(); }
+                  else if (tries >= 10) { clearInterval(iv); btn.disabled = false; btn.textContent = '\ud83e\ude7a Check now'; alert('No answer yet - the PC may be off or asleep. It reports the moment it\u2019s next on.'); }
+                });
+              }, 15000);
+            })
+            .catch(function () { btn.disabled = false; btn.textContent = '\ud83e\ude7a Check now'; alert('Couldn\u2019t reach the server.'); });
+        };
+      });
+      Array.prototype.forEach.call(document.querySelectorAll('#p365app .repb'), function (btn) {
+        btn.onclick = function () {
+          btn.disabled = true;
+          post(PCM, { action: 'reportget', wtoken: S.wtoken, machine: mid(), pc: btn.getAttribute('data-pc'), ts: parseInt(btn.getAttribute('data-ts'), 10) })
+            .then(function (r) {
+              btn.disabled = false;
+              if (!r || !r.ok || !r.html) { alert('Couldn\u2019t open that report - try again.'); return; }
+              var bin = atob(r.html), arr = new Uint8Array(bin.length);
+              for (var bi = 0; bi < bin.length; bi++) arr[bi] = bin.charCodeAt(bi);
+              var url = URL.createObjectURL(new Blob([arr], { type: 'text/html' }));
+              window.open(url, '_blank');
+              setTimeout(function () { URL.revokeObjectURL(url); }, 60000);
+            })
+            .catch(function () { btn.disabled = false; alert('Couldn\u2019t reach the server.'); });
+        };
+      });
     }).catch(function () { showSignin('Couldn\u2019t load your dashboard - please sign in again.'); });
   }
 

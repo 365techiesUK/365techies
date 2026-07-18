@@ -78,7 +78,17 @@ if ($action === 'checkin') {
             'score'=>intval($in['score']??0), 'verdict'=>substr((string)($in['verdict']??''),0,24), 'seen'=>$now,
             'av'=>substr((string)($in['av']??''),0,8), 'backup'=>!empty($in['backup']),
             'diskpct'=>intval($in['diskpct']??0), 'w10'=>!empty($in['w10']), 'reboot'=>!empty($in['reboot']),
-            'ver'=>intval($in['ver']??0)));
+            'ver'=>intval($in['ver']??0),
+            'crs'=>substr((string)($in['crs']??''),0,8), 'crst'=>substr((string)($in['crst']??''),0,420),
+            'batt'=>max(0,min(100,intval($in['batt']??0)))));
+        // daily score history for the portal trend (one point per day, ~90 days)
+        $hd = gmdate('Y-m-d');
+        $hist = isset($c['machines'][$machine]['hist']) && is_array($c['machines'][$machine]['hist']) ? $c['machines'][$machine]['hist'] : array();
+        $nH = count($hist);
+        if ($nH > 0 && $hist[$nH-1][0] === $hd) $hist[$nH-1][1] = intval($in['score']??0);
+        else { $hist[] = array($hd, intval($in['score']??0)); if (count($hist) > 90) array_shift($hist); }
+        $c['machines'][$machine]['hist'] = $hist;
+        unset($c['machines'][$machine]['req_check']);   // this IS a fresh check-in - request satisfied
         // reminder preferences (for the SMS cron): minutes-before + wants-sms
         if (isset($in['remind_min'])) $c['remind_min'] = max(5, min(2880, intval($in['remind_min'])));
         if (isset($in['remind_sms'])) $c['remind_sms'] = !empty($in['remind_sms']);
@@ -152,7 +162,11 @@ if ($action === 'overview') {
         $ms[] = array('name'=>(string)($m['name'] ?? 'PC'), 'score'=>intval($m['score'] ?? 0),
             'verdict'=>(string)($m['verdict'] ?? ''), 'seen'=>(string)($m['seen'] ?? ''),
             'disk'=>intval($m['diskpct'] ?? 0), 'backup'=>!empty($m['backup']), 'ver'=>intval($m['ver'] ?? 0),
-            'fresh'=>!isset($m['diskpct']));
+            'fresh'=>!isset($m['diskpct']),
+            'id'=>(string)$id, 'batt'=>intval($m['batt'] ?? 0),
+            'crs'=>(string)($m['crs'] ?? ''), 'crst'=>(string)($m['crst'] ?? ''),
+            'hist'=>isset($m['hist']) && is_array($m['hist']) ? array_slice($m['hist'], -60) : array(),
+            'reps'=>isset($m['reps']) && is_array($m['reps']) ? $m['reps'] : array());
     }
     $fam = isset($c['family']['name']) ? (string)$c['family']['name'] : '';
     // is a Pro plan waiting for the owner to link this self-serve identity?
@@ -274,10 +288,66 @@ if ($action === 'famstop') {
 if ($action === 'shield') {
     if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>true));
     $c = $db['customers'][$key];
+    // the portal's "run a fresh health check" request rides this same minute-poll
+    $req = '';
+    if ($machine !== '' && !empty($c['machines'][$machine]['req_check'])) {
+        $req = 'checkin';
+        unset($db['customers'][$key]['machines'][$machine]['req_check']);
+        save($DATA,$db);
+    }
     $ts = intval($c['shield_ts'] ?? 0);
     if ($ts > 0 && (time() - $ts) < 900 && !empty($c['shield_code']))
-        out(array('ok'=>true,'code'=>(string)$c['shield_code'],'ask'=>$ts));
+        out(array('ok'=>true,'code'=>(string)$c['shield_code'],'ask'=>$ts,'req'=>$req));
+    out(array('ok'=>true,'req'=>$req));
+}
+
+// app: a freshly generated service/health report - store a portal copy (per machine, capped)
+if ($action === 'reportup') {
+    if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>false,'error'=>'unknown_key'));
+    if ($machine === '' || !isset($db['customers'][$key]['machines'][$machine])) out(array('ok'=>false,'error'=>'unknown_machine'));
+    $b = base64_decode(substr((string)($in['html'] ?? ''), 0, 600000), true);
+    if ($b === false || strlen($b) < 500 || strlen($b) > 420000) out(array('ok'=>false,'error'=>'bad_report'));
+    if (stripos(substr($b, 0, 200), '<html') === false && stripos(substr($b, 0, 200), '<!doctype') === false) out(array('ok'=>false,'error'=>'bad_report'));
+    $kh = substr(hash('sha256', $key), 0, 12);
+    $rts = time();
+    if (@file_put_contents(__DIR__ . '/pcm-rep-' . $kh . '-' . $machine . '-' . $rts . '.html', $b, LOCK_EX) === false) out(array('ok'=>false,'error'=>'store_failed'));
+    $reps = isset($db['customers'][$key]['machines'][$machine]['reps']) && is_array($db['customers'][$key]['machines'][$machine]['reps']) ? $db['customers'][$key]['machines'][$machine]['reps'] : array();
+    $reps[] = $rts;
+    while (count($reps) > 12) { $old = array_shift($reps); @unlink(__DIR__ . '/pcm-rep-' . $kh . '-' . $machine . '-' . $old . '.html'); }
+    $db['customers'][$key]['machines'][$machine]['reps'] = $reps;
+    save($DATA,$db);
     out(array('ok'=>true));
+}
+
+// portal: ask a machine for a fresh health check (the app's minute-poll picks it up)
+if ($action === 'runcheck') {
+    $wt = isset($in['wtoken']) ? preg_replace('/[^a-f0-9]/','', (string)$in['wtoken']) : '';
+    $ws = $wt !== '' && isset($db['websessions'][$wt]) ? $db['websessions'][$wt] : null;
+    if (!$ws) out(array('ok'=>false,'error'=>'expired'));
+    if (!empty($ws['machine']) && $machine !== '' && $ws['machine'] !== $machine) out(array('ok'=>false,'error'=>'expired'));
+    $key = (string)$ws['key'];
+    $mid2 = preg_replace('/[^a-f0-9]/','', substr((string)($in['pc'] ?? ''), 0, 32));
+    if (!isset($db['customers'][$key]['machines'][$mid2])) out(array('ok'=>false,'error'=>'unknown_machine'));
+    $db['customers'][$key]['machines'][$mid2]['req_check'] = time();
+    save($DATA,$db);
+    out(array('ok'=>true));
+}
+
+// portal: fetch one of MY OWN reports (wtoken-authed POST; the page opens it as a blob)
+if ($action === 'reportget') {
+    $wt = isset($in['wtoken']) ? preg_replace('/[^a-f0-9]/','', (string)$in['wtoken']) : '';
+    $ws = $wt !== '' && isset($db['websessions'][$wt]) ? $db['websessions'][$wt] : null;
+    if (!$ws) out(array('ok'=>false,'error'=>'expired'));
+    if (!empty($ws['machine']) && $machine !== '' && $ws['machine'] !== $machine) out(array('ok'=>false,'error'=>'expired'));
+    $key = (string)$ws['key'];
+    $mid2 = preg_replace('/[^a-f0-9]/','', substr((string)($in['pc'] ?? ''), 0, 32));
+    $rts = intval($in['ts'] ?? 0);
+    $reps = isset($db['customers'][$key]['machines'][$mid2]['reps']) ? $db['customers'][$key]['machines'][$mid2]['reps'] : array();
+    if (!in_array($rts, array_map('intval', $reps), true)) out(array('ok'=>false,'error'=>'not_found'));
+    $kh = substr(hash('sha256', $key), 0, 12);
+    $f = __DIR__ . '/pcm-rep-' . $kh . '-' . $mid2 . '-' . $rts . '.html';
+    if (!is_readable($f)) out(array('ok'=>false,'error'=>'not_found'));
+    out(array('ok'=>true, 'html'=>base64_encode((string)file_get_contents($f))));
 }
 
 if ($action === 'help') {

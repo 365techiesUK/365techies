@@ -117,6 +117,10 @@ ErrorDocument 404 /404.html
 <FilesMatch "^pcm-sos-[a-f0-9\-]+\.jpg$">
   Require all denied
 </FilesMatch>
+# portal report copies are served only through the wtoken-authed reportget action
+<FilesMatch "^pcm-rep-[a-f0-9\-]+\.html$">
+  Require all denied
+</FilesMatch>
 <FilesMatch "^(pcm-admin-secret|pcm-simplybook|pcm-textmagic|pass-secret|pcm-gocardless)\.php$">
   Require all denied
 </FilesMatch>

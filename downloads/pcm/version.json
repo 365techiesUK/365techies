@@ -1,7 +1,7 @@
 {
-  "ver": 14,
-  "version": "1.0.14",
-  "url": "https://365techies.co.uk/downloads/pcm/pcm-v14.exe",
-  "sha256": "ccdaa958379ed36586b3057d836e5095356896250b1fcaafc9fbf565301b9fee",
-  "notes": "Activation and sign-in now report health to the fleet immediately."
+  "ver": 15,
+  "version": "1.0.15",
+  "url": "https://365techies.co.uk/downloads/pcm/pcm-v15.exe",
+  "sha256": "552285aaba63b490deba28bd6fc71795cd044d4fb16303b2020773a776ac6ff9",
+  "notes": "Portal sync: courses, battery, reports, run-a-check-from-the-portal."
 }
