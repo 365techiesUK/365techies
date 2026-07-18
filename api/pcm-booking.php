@@ -910,6 +910,26 @@ if ($action === 'staffkey') {
     fail('unknown_customer');
 }
 
+// staff: delete a customer record (test keys, duplicates). Destructive - the portal
+// confirms with the customer's name first. Cleans their web sessions and SOS shots too.
+if ($action === 'staffdel') {
+    need_staff();
+    $cid2 = preg_replace('/[^a-f0-9]/', '', (string)(isset($in['cid']) ? $in['cid'] : ''));
+    list($lk, $db) = db_open();
+    $found = '';
+    foreach ($db['customers'] as $k2 => $c2) {
+        if (substr(sha1('365cid|' . $k2), 0, 12) === $cid2) { $found = $k2; break; }
+    }
+    if ($found === '') { db_close($lk); fail('unknown_customer'); }
+    $nm = (string)(isset($db['customers'][$found]['name']) ? $db['customers'][$found]['name'] : '');
+    unset($db['customers'][$found]);
+    if (isset($db['websessions'])) foreach ($db['websessions'] as $wk => $wv) if ((isset($wv['key']) ? $wv['key'] : '') === $found) unset($db['websessions'][$wk]);
+    db_save($db); db_close($lk);
+    $kh = substr(hash('sha256', $found), 0, 12);
+    foreach ((glob(__DIR__ . '/pcm-sos-' . $kh . '-*.jpg') ?: array()) as $f) @unlink($f);
+    out(array('ok' => true, 'name' => $nm));
+}
+
 // staff: SET a customer's tier (idempotent - a stale panel can't accidentally invert).
 // Takes the opaque id from staffcustomers, resolved server-side; their app follows on check-in.
 if ($action === 'stafftier') {

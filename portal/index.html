@@ -991,7 +991,7 @@
         + '<button class="sm ghost" id="pcmadm">Full PCM console</button>'
         + '<a href="/book-service/" target="_blank" rel="noopener"><button class="sm ghost">Booking page</button></a></div>'
         + '<p class="quiet">Everything opens in a new tab - this page stays put. The PCM console signs in with your staff session, no passphrase.</p></div>';
-      h += '<div class="card"><h2>Customer book</h2><div class="tblwrap"><table><tr><th>Customer</th><th>Plan</th><th>PCs</th><th>Health</th><th>Seen</th><th>App</th><th></th></tr>';
+      h += '<div class="card"><h2>PC Manager licences</h2><div class="tblwrap"><table><tr><th>Customer</th><th>Plan</th><th>PCs</th><th>Health</th><th>Seen</th><th>App</th><th></th></tr>';
       (d.customers || []).sort(function (a, b) { return (b.seen || '').localeCompare(a.seen || ''); }).forEach(function (c) {
         h += '<tr><td><strong>' + esc(c.name) + '</strong>' + (c.fam ? ' \ud83d\udc6a' : '') + '<br /><span class="quiet mono" id="kv' + esc(c.id) + '">' + esc(c.keymask) + '</span> <button class="sm ghost kb" data-cid="' + esc(c.id) + '" title="Show + copy their activation key">\ud83d\udd11</button></td>'
           + '<td><span class="pill ' + (c.tier === 'pro' ? 'pro">Pro' : 'free">Free') + '</span></td>'
@@ -999,7 +999,7 @@
           + '<td>' + (c.worst < 0 ? '\u2014' : '<span class="' + (c.worst >= 80 ? 'ok' : 'wn') + '">' + c.worst + '%</span>') + '</td>'
           + '<td>' + seenTxt(c.seen) + '</td>'
           + '<td>' + (c.ver ? 'v' + c.ver : '\u2014') + '</td>'
-          + '<td><button class="sm ghost tf" data-cid="' + esc(c.id) + '" data-to="' + (c.tier === 'pro' ? 'free' : 'pro') + '" data-nm="' + esc(c.name) + '">\u2192 ' + (c.tier === 'pro' ? 'Free' : 'Pro') + '</button></td></tr>';
+          + '<td style="white-space:nowrap"><button class="sm ghost tf" data-cid="' + esc(c.id) + '" data-to="' + (c.tier === 'pro' ? 'free' : 'pro') + '" data-nm="' + esc(c.name) + '">\u2192 ' + (c.tier === 'pro' ? 'Free' : 'Pro') + '</button> <button class="sm ghost xd" data-cid="' + esc(c.id) + '" data-nm="' + esc(c.name) + '" data-pcs="' + c.pcs + '" title="Delete this record" style="color:var(--pbad)">\u2715</button></td></tr>';
       });
       h += '</table></div></div>';
       el.innerHTML = h;
@@ -1049,6 +1049,19 @@
               cl.onclick = function () { navigator.clipboard.writeText(r.weblink).then(function () { cl.textContent = '\u2713 copied'; }); };
               sp.appendChild(ck); sp.appendChild(document.createTextNode(' ')); sp.appendChild(cl);
               btn.style.display = 'none';
+            })
+            .catch(function () { btn.disabled = false; alert('Couldn\u2019t reach the server.'); });
+        };
+      });
+      Array.prototype.forEach.call(document.querySelectorAll('#p365app .xd'), function (btn) {
+        btn.onclick = function () {
+          var nm2 = btn.getAttribute('data-nm'), pcs = parseInt(btn.getAttribute('data-pcs'), 10) || 0;
+          if (!confirm('Delete \u201c' + nm2 + '\u201d completely?\n\nTheir activation key stops working' + (pcs ? ', their ' + pcs + ' PC(s) drop off the fleet' : '') + ', and this cannot be undone.')) return;
+          btn.disabled = true;
+          post(BK, { action: 'staffdel', stoken: S.stoken, machine: mid(), cid: btn.getAttribute('data-cid') })
+            .then(function (r) {
+              if (r && r.ok) showStaff();
+              else { btn.disabled = false; alert('Couldn\u2019t delete it - try again.'); }
             })
             .catch(function () { btn.disabled = false; alert('Couldn\u2019t reach the server.'); });
         };
