@@ -91,7 +91,9 @@ if ($action === 'checkin') {
 function pcm_update_info() {
     $f = __DIR__ . '/../downloads/pcm/version.json';
     if (!is_readable($f)) return array();
-    $j = json_decode((string)@file_get_contents($f), true);
+    $raw = (string)@file_get_contents($f);
+    if (substr($raw, 0, 3) === "\xEF\xBB\xBF") $raw = substr($raw, 3);   // tolerate a UTF-8 BOM
+    $j = json_decode($raw, true);
     if (!is_array($j) || empty($j['ver']) || empty($j['url']) || empty($j['sha256'])) return array();
     return array('upd_ver'=>intval($j['ver']), 'upd_url'=>(string)$j['url'], 'upd_sha'=>(string)$j['sha256']);
 }
