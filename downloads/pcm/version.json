@@ -1,7 +1,7 @@
 {
-  "ver": 16,
-  "version": "1.0.16",
-  "url": "https://365techies.co.uk/downloads/pcm/pcm-v16.exe",
-  "sha256": "26788002da0efae93a55a5464ca553bc451341a63d248489a3b263aec02eecbe",
-  "notes": "Booking tab fixes: correct sign-in identity, book/move/cancel by your key, reminders for activated customers."
+  "ver": 17,
+  "version": "1.0.17",
+  "url": "https://365techies.co.uk/downloads/pcm/pcm-v17.exe",
+  "sha256": "291310b20f52f7ce01f19bb25e430a9c676f44d0ae6d7af99b5f6ea60e1c06e4",
+  "notes": "Proper app icon embedded, so the taskbar and Start-menu icon show correctly."
 }
