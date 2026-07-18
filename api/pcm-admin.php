@@ -32,6 +32,21 @@ function newkey(){ $a='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; $k=''; for($i=0;$i<12;
 
 // auth
 if (isset($_POST['pass'])) { if (hash_equals($PCM_ADMIN_PASS, $_POST['pass'])) { session_regenerate_id(true); $_SESSION['pcm_ok']=1; } }
+// staff single sign-on from the portal: a valid 12h staff session token (verified SimplyBook
+// staff sign-in, machine-bound) signs the console in - no separate passphrase to remember
+if (isset($_POST['stoken']) && empty($_SESSION['pcm_ok'])) {
+    $tokS = preg_replace('/[^a-f0-9]/', '', (string)$_POST['stoken']);
+    $macS = preg_replace('/[^a-f0-9]/', '', substr((string)($_POST['machine'] ?? ''), 0, 32));
+    if ($tokS !== '') {
+        $dbT = load($DATA);
+        $sS = isset($dbT['staff'][$tokS]) ? $dbT['staff'][$tokS] : null;
+        if ($sS && (time() - intval($sS['ts'] ?? 0)) < 43200 && (time() - intval($sS['iat'] ?? 0)) < 43200
+            && (empty($sS['machine']) || $sS['machine'] === $macS)) {
+            session_regenerate_id(true); $_SESSION['pcm_ok'] = 1;
+        }
+    }
+    header('Location: pcm-admin.php'); exit;
+}
 if (isset($_GET['logout'])) { session_destroy(); header('Location: pcm-admin.php'); exit; }
 if (empty($_SESSION['csrf'])) $_SESSION['csrf'] = bin2hex(random_bytes(16));
 $CSRF = $_SESSION['csrf'];
