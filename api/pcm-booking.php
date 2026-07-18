@@ -224,7 +224,8 @@ function web_snapshot() {
         'cid' => intval(isset($c['sb_client_id']) ? $c['sb_client_id'] : 0),
         'name' => (string)(isset($c['sb_name']) ? $c['sb_name'] : (isset($c['name']) ? $c['name'] : '')),
         'email' => (string)(isset($c['sb_email']) ? $c['sb_email'] : (isset($c['email']) ? $c['email'] : '')),
-        'phone' => (string)(isset($c['sb_phone']) ? $c['sb_phone'] : (isset($c['phone']) ? $c['phone'] : '')));
+        'phone' => (string)(isset($c['sb_phone']) ? $c['sb_phone'] : (isset($c['phone']) ? $c['phone'] : '')),
+        'viewas' => !empty($ws['viewas']));   // an admin impersonating this customer (they vouch for the identity)
 }
 
 // Do the record name and the SimplyBook client name plausibly refer to the same person?
@@ -251,7 +252,9 @@ function names_corroborate($a, $b) {
 // $force skips the cool-down (used right after a booking, when the SB client is freshly created).
 // &$existed is set true if ANY SimplyBook client already owns this exact email (whether or not
 // the name corroborated) - callers use it to avoid creating/attaching onto a stranger.
-function link_cid_from_email($ckey, $email, $force = false, &$existed = null) {
+// $lenient: accept a SINGLE unambiguous exact-email client even if its name doesn't corroborate
+// (used only when an admin is impersonating the customer in view-as and vouches for the identity).
+function link_cid_from_email($ckey, $email, $force = false, &$existed = null, $lenient = false) {
     global $HAS_ADMIN;
     $existed = false;
     if (!$HAS_ADMIN || $ckey === '' || $email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) return 0;
@@ -281,7 +284,7 @@ function link_cid_from_email($ckey, $email, $force = false, &$existed = null) {
     $mid = 0; $m = null;
     if (count($ids) === 1) {   // exactly one exact-email client...
         $ks = array_keys($ids); $cand = (int)$ks[0]; $cm = $ids[$ks[0]];
-        if (names_corroborate($recName, $cm['name'])) { $mid = $cand; $m = $cm; }   // ...whose name agrees
+        if ($lenient || names_corroborate($recName, $cm['name'])) { $mid = $cand; $m = $cm; }   // ...whose name agrees (or admin vouches)
     }
     list($lk, $db) = db_open();
     if (isset($db['customers'][$ckey])) {
@@ -310,24 +313,28 @@ function link_cid_from_email($ckey, $email, $force = false, &$existed = null) {
 // we genuinely cannot obtain one. Stores a freshly-created id on the record for next time.
 function ensure_client_id($ckey, $snap) {
     global $HAS_ADMIN;
+    $GLOBALS['nc_why'] = '';
     if ((int)$snap['cid'] > 0) return (int)$snap['cid'];
-    if (!$HAS_ADMIN) return 0;
+    if (!$HAS_ADMIN) { $GLOBALS['nc_why'] = 'no_admin'; return 0; }
     $existed = false;
+    $lenient = !empty($snap['viewas']);   // an admin impersonating this customer vouches for the identity
     if ($snap['email'] !== '') {
-        $linked = link_cid_from_email($ckey, $snap['email'], true, $existed);
-        if ($linked > 0) return $linked;   // a client whose email AND name match this record
-    }
-    // A client already owns this email but its NAME did not corroborate our record - it may be a
-    // different person (e.g. a mistyped activation email). addClient would dedupe ONTO that
-    // client, so refuse: never book a customer onto a stranger's SimplyBook client.
-    if ($existed) return 0;
-    // No client owns this email yet - create one from the customer's own verified record identity.
+        $linked = link_cid_from_email($ckey, $snap['email'], true, $existed, $lenient);
+        if ($linked > 0) return $linked;   // a client whose email AND name match (or, in view-as, a single exact-email match)
+    } else { $GLOBALS['nc_why'] = 'no_email'; }
+    // A client already owns this email but its NAME did not corroborate our record (and this isn't a
+    // vouched view-as), or there are several - refuse rather than book onto a possible stranger.
+    if ($existed) { $GLOBALS['nc_why'] = 'email_matches_a_different_or_ambiguous_client'; return 0; }
+    // No client owns this email yet - create one from the customer's own record identity.
     $cd = array('name' => $snap['name'] !== '' ? $snap['name'] : $snap['email']);
-    if ($cd['name'] === '') return 0;
+    if ($cd['name'] === '') { $GLOBALS['nc_why'] = 'no_name'; return 0; }
     if ($snap['email'] !== '') $cd['email'] = $snap['email'];
     if ($snap['phone'] !== '') $cd['phone'] = $snap['phone'];
     $ac = sb_adm('addClient', array($cd, false));
-    if (sb_net($ac) || empty($ac['result'])) return 0;
+    if (sb_net($ac) || empty($ac['result'])) {
+        $GLOBALS['nc_why'] = 'create_failed' . (isset($ac['error']['message']) ? ':' . substr(preg_replace('/[^\x20-\x7E]/', '', (string)$ac['error']['message']), 0, 80) : '');
+        return 0;
+    }
     $cid = (int)$ac['result'];
     if ($cid > 0 && $ckey !== '') {
         list($lk, $db) = db_open();
@@ -878,7 +885,7 @@ if ($action === 'book') {
     // bookings ("Client authorization required") under this company's config, so we resolve or
     // create the customer's own SimplyBook client and book on their behalf - same as staffbook.
     $cid = ensure_client_id($key, $snap);
-    if ($cid <= 0) fail('no_client');   // couldn't resolve/create a SimplyBook client for this record
+    if ($cid <= 0) out(array('ok' => false, 'error' => 'no_client', 'why' => (isset($GLOBALS['nc_why']) ? $GLOBALS['nc_why'] : '')));
     $au = sb_pub('getAvailableUnits', array($eventId, $date . ' ' . $time, 1));
     if (sb_net($au)) fail('sb_unavailable');
     $unitIds = isset($au['result']) && is_array($au['result']) ? array_values($au['result']) : array();
@@ -1107,7 +1114,7 @@ if ($action === 'staffview') {
     if ($found === '') { db_close($lk); fail('unknown_customer'); }
     $wtok = bin2hex(random_bytes(24));
     if (!isset($db['websessions'])) $db['websessions'] = array();
-    $db['websessions'][$wtok] = array('key' => $found, 'ts' => time(), 'iat' => time(), 'machine' => $machine);
+    $db['websessions'][$wtok] = array('key' => $found, 'ts' => time(), 'iat' => time(), 'machine' => $machine, 'viewas' => true);
     db_save($db); db_close($lk);
     $c = $db['customers'][$found];
     out(array('ok' => true, 'wtoken' => $wtok, 'name' => (string)(isset($c['name']) ? $c['name'] : ''),
