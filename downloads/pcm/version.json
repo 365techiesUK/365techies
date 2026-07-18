@@ -1,7 +1,7 @@
 {
-  "ver": 12,
-  "version": "1.0.12",
-  "url": "https://365techies.co.uk/downloads/pcm/pcm-v12.exe",
-  "sha256": "16cd2248713fb4a783b2fe008bdf06864aaccd705721b5a34e0a1edfcb964e58",
-  "notes": "Family view - share a read-only health glance with someone you trust."
+  "ver": 13,
+  "version": "1.0.13",
+  "url": "https://365techies.co.uk/downloads/pcm/pcm-v13.exe",
+  "sha256": "b458bb98bb3e00825a2d308731c30dd3a210dd99fb534faaf82434a6dca23530",
+  "notes": "Staff can activate customers from manager mode; portal groundwork."
 }

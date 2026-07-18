@@ -126,6 +126,87 @@ if ($action === 'ready') {
     out(array('ok'=>true,'sent'=>$sent));
 }
 
+// Portal overview: everything the signed-in customer's dashboard shows. Web sessions present
+// an expiring wtoken (minted at sign-in, resolved + slid here); the app may use its key.
+if ($action === 'overview') {
+    $wt = isset($in['wtoken']) ? preg_replace('/[^a-f0-9]/','', (string)$in['wtoken']) : '';
+    if ($wt !== '') {
+        $ws = isset($db['websessions'][$wt]) ? $db['websessions'][$wt] : null;
+        $fresh = $ws && intval($ws['ts'] ?? 0) > time() - 43200 && intval($ws['iat'] ?? 0) > time() - 86400;
+        if (!$fresh) { if ($ws) { unset($db['websessions'][$wt]); save($DATA,$db); } out(array('ok'=>false,'error'=>'expired')); }
+        $key = (string)$ws['key'];
+        $db['websessions'][$wt]['ts'] = time(); save($DATA,$db);   // sliding, capped by iat
+    }
+    if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>false,'error'=>'unknown_key'));
+    $c = $db['customers'][$key];
+    $ms = array();
+    foreach ((isset($c['machines']) ? $c['machines'] : array()) as $id => $m) {
+        $ms[] = array('name'=>(string)($m['name'] ?? 'PC'), 'score'=>intval($m['score'] ?? 0),
+            'verdict'=>(string)($m['verdict'] ?? ''), 'seen'=>(string)($m['seen'] ?? ''),
+            'disk'=>intval($m['diskpct'] ?? 0), 'backup'=>!empty($m['backup']), 'ver'=>intval($m['ver'] ?? 0),
+            'fresh'=>!isset($m['diskpct'])));
+    }
+    $fam = isset($c['family']['name']) ? (string)$c['family']['name'] : '';
+    // is a Pro plan waiting for the owner to link this self-serve identity?
+    $pend = false;
+    foreach ($db['customers'] as $c2) if (isset($c2['pending_signin']['link']) && $c2['pending_signin']['link'] === $key) { $pend = true; break; }
+    // GoCardless payment summary ONLY for owner-created records. A self-serve sign-in's email
+    // is unverified (SimplyBook client accounts can be registered with anyone's email), so an
+    // email-keyed payment lookup for those would leak another person's Direct Debit details.
+    $ownerMade = (($c['via'] ?? '') !== 'signin');
+    out(array('ok'=>true, 'name'=>(string)($c['name'] ?? ''), 'tier'=>(($c['tier'] ?? 'free')==='pro'?'pro':'free'),
+        'next'=>(string)($c['next'] ?? ''), 'next_ts'=>intval($c['next_ts'] ?? 0),
+        'machines'=>$ms, 'fam'=>$fam, 'pending'=>$pend,
+        'gc'=>$ownerMade ? pcm_gc_summary((string)($c['email'] ?? '')) : null));
+}
+
+// GoCardless read-only summary (plan + Direct Debit + last payment) for the portal.
+// Feature-flagged on the server-only token file; 10-min cached per email; masked data only.
+function pcm_gc_summary($email) {
+    $cfg = __DIR__ . '/pcm-gocardless.php';        // server-only: <?php $GC_TOKEN = 'live_....';
+    if (!is_readable($cfg) || $email === '') return null;
+    include $cfg; if (empty($GC_TOKEN)) return null;
+    $ck = __DIR__ . '/pcm-gc-cache.json';
+    $cache = @json_decode((string)@file_get_contents($ck), true); if (!is_array($cache)) $cache = array();
+    $ek = sha1(strtolower($email));
+    if (isset($cache[$ek]) && ($cache[$ek]['ts'] ?? 0) > time() - 600) return $cache[$ek]['data'];
+    $gc = function($path) use ($GC_TOKEN) {
+        $ch = curl_init('https://api.gocardless.com' . $path);
+        curl_setopt_array($ch, array(CURLOPT_RETURNTRANSFER=>true, CURLOPT_CONNECTTIMEOUT=>3, CURLOPT_TIMEOUT=>4,
+            CURLOPT_HTTPHEADER=>array('Authorization: Bearer ' . $GC_TOKEN, 'GoCardless-Version: 2015-07-06')));
+        $r = curl_exec($ch); $code = curl_getinfo($ch, CURLINFO_HTTP_CODE); curl_close($ch);
+        return ($r !== false && $code >= 200 && $code < 300) ? json_decode($r, true) : null;
+    };
+    $data = null;
+    $cust = $gc('/customers?email=' . rawurlencode($email));
+    if (is_array($cust) && !empty($cust['customers'][0]['id'])) {
+        $cid = $cust['customers'][0]['id'];
+        $subs = $gc('/subscriptions?customer=' . rawurlencode($cid) . '&status=active');
+        $pays = $gc('/payments?customer=' . rawurlencode($cid) . '&limit=1');
+        if (!is_array($subs)) return null;   // transport failure: don't cache a made-up "no plan"
+        // sum ALL active subscriptions (some customers pay per-PC on separate plans)
+        $tot = 0.0; $names = array(); $nextchg = '';
+        foreach ((isset($subs['subscriptions']) ? $subs['subscriptions'] : array()) as $s) {
+            $tot += intval($s['amount'] ?? 0) / 100.0;
+            $names[] = (string)($s['name'] ?? 'Support plan');
+            $nc = !empty($s['upcoming_payments'][0]['charge_date']) ? (string)$s['upcoming_payments'][0]['charge_date'] : '';
+            if ($nc !== '' && ($nextchg === '' || $nc < $nextchg)) $nextchg = $nc;
+        }
+        $p = is_array($pays) && !empty($pays['payments'][0]) ? $pays['payments'][0] : null;
+        $data = array(
+            'active' => count($names) > 0,
+            'amount' => round($tot, 2),
+            'name'   => count($names) === 1 ? $names[0] : (count($names) > 1 ? 'Support plans (' . count($names) . ' Direct Debits)' : ''),
+            'nextchg'=> $nextchg,
+            'lastamt'=> $p ? round(intval($p['amount'] ?? 0) / 100, 2) : 0,
+            'lastdate'=> $p ? (string)($p['charge_date'] ?? '') : '',
+            'laststatus'=> $p ? (string)($p['status'] ?? '') : '');
+    }
+    $cache[$ek] = array('ts'=>time(), 'data'=>$data);
+    @file_put_contents($ck, json_encode($cache), LOCK_EX);
+    return $data;
+}
+
 // Family View: with the customer's explicit in-app consent, create (or replace) a share
 // token so someone they trust can see a read-only health glance at /family/?c=TOKEN.
 // Minimal by design - the page shows health basics only. famstop revokes instantly.

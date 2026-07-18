@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<meta name="referrer" content="no-referrer" />
+<title>Activate 365 PC Manager</title>
+<style>
+  :root { --ink:#0b1226; --panel:#0d1530; --line:#2a3b63; --cyan:#1d97e3; --good:#00ce1b; --mut:#9fb5d3; --white:#f0f5fc; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--ink); color:var(--white); font-family:"Segoe UI",system-ui,sans-serif; min-height:100vh; display:grid; place-items:center; padding:1rem; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:2rem 1.6rem; max-width:480px; width:100%; }
+  .lg { background:var(--cyan); color:#fff; font-weight:900; padding:.3rem .5rem; display:inline-block; margin-bottom:.8rem; }
+  h1 { font-size:1.25rem; margin-bottom:.6rem; }
+  p { color:var(--mut); font-size:.95rem; line-height:1.55; margin-bottom:.8rem; }
+  .key { font-family:Consolas,monospace; font-size:1.15rem; color:var(--white); background:var(--ink); border:1px solid var(--line); border-radius:9px; padding:.55rem .8rem; text-align:center; margin:.6rem 0 1rem; }
+  button, .btn { display:inline-block; padding:.7rem 1.2rem; border:0; border-radius:9px; background:var(--cyan); color:#fff; font-size:.95rem; font-weight:600; cursor:pointer; text-decoration:none; }
+  .ok { color:var(--good); }
+  .steps { margin:.4rem 0 .6rem 1.1rem; color:var(--mut); font-size:.92rem; line-height:1.7; }
+  a { color:#86b6e8; }
+</style>
+</head>
+<body>
+<div class="card" id="c">
+  <span class="lg">365</span>
+  <h1>Activate your 365 PC Manager</h1>
+  <div id="body"><p>Checking your activation link&hellip;</p></div>
+</div>
+<script>
+(function () {
+  var b = document.getElementById('body');
+  var m = (location.hash || '').match(/^#([A-Z2-9]{4}-[A-Z2-9]{4}-[A-Z2-9]{4})$/);
+  if (!m) { b.innerHTML = '<p>This activation link looks incomplete. Please use the full link we sent you, or ring us on <strong style="color:var(--white)">01202 775566</strong> and we\u2019ll sort it in a minute.</p>'; return; }
+  var key = m[1];
+  b.innerHTML = '<p>On the computer you want looked after? Tap the button and the 365 PC Manager app will activate itself.</p>'
+    + '<p style="text-align:center"><button id="go">\u26a1 Activate now</button></p>'
+    + '<div id="fb"></div>';
+  function fallback() {
+    document.getElementById('fb').innerHTML =
+      '<p style="margin-top:.6rem"><span class="ok">Nothing happened?</span> The app may not be on this PC yet - no bother:</p>'
+      + '<ol class="steps"><li>Ring us on <strong style="color:var(--white)">01202 775566</strong> (or use your remote session) and we\u2019ll pop the free app on for you.</li>'
+      + '<li>Then open the app, tap <strong style="color:var(--white)">Activate 365 support</strong>, and type this key:</li></ol>'
+      + '<div class="key">' + key + '</div>'
+      + '<p>That\u2019s it - the app unlocks and we start keeping an eye on your PC\u2019s health.</p>';
+  }
+  document.getElementById('go').onclick = function () {
+    location.href = '365pcm://activate/' + key;
+    setTimeout(fallback, 1500);
+  };
+})();
+</script>
+</body>
+</html>

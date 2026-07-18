@@ -113,9 +113,12 @@ ErrorDocument 404 /404.html
 <FilesMatch "^pcm-sos-[a-f0-9\-]+\.jpg$">
   Require all denied
 </FilesMatch>
-<FilesMatch "^(pcm-admin-secret|pcm-simplybook|pcm-textmagic|pass-secret)\.php$">
+<FilesMatch "^(pcm-admin-secret|pcm-simplybook|pcm-textmagic|pass-secret|pcm-gocardless)\.php$">
   Require all denied
 </FilesMatch>
+<Files "pcm-gc-cache.json">
+  Require all denied
+</Files>
 # The Service Pass payload is delivered only through the token gate (pass.php), never directly.
 # app auto-update manifest must never be cache-served stale
 <Files "version.json">

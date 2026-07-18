@@ -231,12 +231,26 @@ if ($action === 'signin') {
     global $SB_COMPANY, $SB_STAFF;
     $allow = (isset($SB_STAFF) && is_array($SB_STAFF)) ? array_map('strtolower', $SB_STAFF) : array();
     if (in_array($email, $allow, true)) {
+        // AUTHENTICATION ORDER MATTERS. The SimplyBook ADMIN directory (getUserToken) is the
+        // real credential - client logins are SELF-REGISTERABLE with any email, so a client
+        // login alone must never grant staff. It is accepted only when its client id was
+        // PINNED during an earlier successful admin login (auto-pinned below), which an
+        // attacker's freshly-registered client can never match.
+        $ur = sb_rpc('https://user-api.simplybook.me/login', 'getUserToken', array($SB_COMPANY, $email, $pass));
+        $authed = !sb_net($ur) && !empty($ur['result']);
         $ci = sb_pub('getClientInfoByLoginPassword', array($email, $pass));
-        if (sb_net($ci)) { db_close($tlk); fail('sb_unavailable'); }
-        $authed = isset($ci['result']) && is_array($ci['result']) && !empty($ci['result']['id']);
-        if (!$authed) {
-            $ur = sb_rpc('https://user-api.simplybook.me/login', 'getUserToken', array($SB_COMPANY, $email, $pass));
-            $authed = !sb_net($ur) && !empty($ur['result']);
+        $cidStaff = (!sb_net($ci) && isset($ci['result']['id'])) ? (int)$ci['result']['id'] : 0;
+        if ($authed && $cidStaff > 0) {
+            // admin-verified AND the same credentials open a client account: pin that id so
+            // future client-only logins (e.g. if 2FA later blocks getUserToken) still work
+            list($lkp, $dbp) = db_open();
+            if (!isset($dbp['staffpin'])) $dbp['staffpin'] = array();
+            $dbp['staffpin'][$email] = $cidStaff;
+            db_save($dbp); db_close($lkp);
+        }
+        if (!$authed && $cidStaff > 0) {
+            list($lkp, $dbp) = db_open(); db_close($lkp);
+            $authed = isset($dbp['staffpin'][$email]) && (int)$dbp['staffpin'][$email] === $cidStaff;
         }
         if ($authed) {
             unset($th[$tkey]); cache_save($THROTTLE, $th); db_close($tlk);
@@ -310,17 +324,37 @@ if ($action === 'signin') {
     $c['sb_client_id'] = $cid;                      // verified identity, used for all booking ops
     $c['sb_name'] = $cname; $c['sb_email'] = $cemail; if ($cphone !== '') $c['sb_phone'] = $cphone;
     if (!isset($c['machines'])) $c['machines'] = array();
-    if (!isset($c['machines'][$machine]))
+    // a web-portal sign-in is not a PC - don't register a phantom machine in the fleet
+    if (empty($in['web']) && !isset($c['machines'][$machine]))
         $c['machines'][$machine] = array('name' => $mname, 'score' => 0, 'verdict' => '', 'seen' => $now, 'activated' => $now);
     // flag each matched Pro record for the owner's one-click approval, pointing at this booking identity
     foreach ($pendingKeys as $pk)
         if (isset($db['customers'][$pk]) && $pk !== $target)
             $db['customers'][$pk]['pending_signin'] = array('cid' => $cid, 'email' => $cemail, 'link' => $target, 'sbname' => $cname, 'ts' => $now);
+    // web portal: never hand the permanent licence key to a browser. Mint an expiring
+    // server-side session token instead (12h sliding, purged like staff tokens).
+    $wtok = '';
+    if (!empty($in['web'])) {
+        $wtok = bin2hex(random_bytes(24));
+        if (!isset($db['websessions'])) $db['websessions'] = array();
+        foreach ($db['websessions'] as $wk => $wv) if ((isset($wv['ts']) ? $wv['ts'] : 0) < time() - 43200) unset($db['websessions'][$wk]);
+        $db['websessions'][$wtok] = array('key' => $target, 'ts' => time(), 'iat' => time());
+    }
     db_save($db); db_close($lk);
 
     $tier = (($c['tier'] === 'pro')) ? 'pro' : 'free';
+    if ($wtok !== '')
+        out(array('ok' => true, 'tier' => $tier, 'wtoken' => $wtok, 'customer' => isset($c['name']) ? $c['name'] : '',
+                  'next' => isset($c['next']) ? $c['next'] : '', 'onplan' => $tier === 'pro', 'pending' => $pending));
     out(array('ok' => true, 'tier' => $tier, 'key' => $target, 'customer' => isset($c['name']) ? $c['name'] : '',
               'next' => isset($c['next']) ? $c['next'] : '', 'onplan' => $tier === 'pro', 'pending' => $pending));
+}
+
+// web portal sign-out: destroy the customer web session server-side
+if ($action === 'weblogout') {
+    $wt = isset($in['wtoken']) ? preg_replace('/[^a-f0-9]/', '', (string)$in['wtoken']) : '';
+    if ($wt !== '') { list($lk, $db) = db_open(); if (isset($db['websessions'][$wt])) { unset($db['websessions'][$wt]); db_save($db); } db_close($lk); }
+    out(array('ok' => true));
 }
 
 if ($action === 'services') {
@@ -489,6 +523,76 @@ if ($action === 'stafflogout') {
     $tok = isset($in['stoken']) ? preg_replace('/[^a-f0-9]/', '', (string)$in['stoken']) : '';
     if ($tok !== '') { list($lk, $db) = db_open(); if (isset($db['staff'][$tok])) { unset($db['staff'][$tok]); db_save($db); } db_close($lk); }
     out(array('ok' => true));
+}
+
+// staff: the customer book at a glance (for the portal admin panel + app manager mode)
+if ($action === 'staffcustomers') {
+    need_staff();
+    list($lk, $db) = db_open(); db_close($lk);
+    $list = array();
+    foreach ((isset($db['customers']) ? $db['customers'] : array()) as $k => $c) {
+        if (!empty($c['merged_into'])) continue;
+        $ms = isset($c['machines']) && is_array($c['machines']) ? $c['machines'] : array();
+        $lastSeen = ''; $minVer = 0; $worst = 101;
+        foreach ($ms as $m) {
+            if (isset($m['seen']) && $m['seen'] > $lastSeen) $lastSeen = $m['seen'];
+            $mv = intval(isset($m['ver']) ? $m['ver'] : 0); if ($minVer === 0 || ($mv > 0 && $mv < $minVer)) $minVer = $mv;
+            $sc = intval(isset($m['score']) ? $m['score'] : 0); if (count($ms) && $sc < $worst) $worst = $sc;
+        }
+        // keys are permanent bearer credentials - never ship them wholesale to a browser
+        // session. Masked display + a one-way opaque id (stafftier resolves it server-side).
+        $list[] = array('id' => substr(sha1('365cid|' . $k), 0, 12), 'keymask' => substr($k, 0, 4) . '····',
+            'name' => (string)(isset($c['name']) ? $c['name'] : ''),
+            'email' => (string)(isset($c['email']) ? $c['email'] : ''), 'tier' => ((isset($c['tier']) && $c['tier'] === 'pro') ? 'pro' : 'free'),
+            'next' => (string)(isset($c['next']) ? $c['next'] : ''), 'pcs' => count($ms),
+            'seen' => $lastSeen, 'ver' => $minVer, 'worst' => ($worst === 101 ? -1 : $worst),
+            'fam' => isset($c['family']['name']) ? (string)$c['family']['name'] : '');
+        if (count($list) >= 400) break;
+    }
+    out(array('ok' => true, 'customers' => $list));
+}
+
+// staff: activate a customer's PC Manager - creates the record + key, returns the one-click
+// activation link to text/email/paste into a Splashtop chat. Same key format as the admin console.
+if ($action === 'staffadd') {
+    need_staff();
+    $nm = trim(substr((string)(isset($in['name']) ? $in['name'] : ''), 0, 60));
+    $em = strtolower(trim(substr((string)(isset($in['email']) ? $in['email'] : ''), 0, 120)));
+    $tier = (isset($in['tier']) && $in['tier'] === 'pro') ? 'pro' : 'free';
+    if ($nm === '') fail('no_name');
+    if ($em !== '' && !filter_var($em, FILTER_VALIDATE_EMAIL)) fail('bad_email');
+    list($lk, $db) = db_open();
+    $a = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    do {
+        $nk = '';
+        for ($i = 0; $i < 12; $i++) { $nk .= $a[random_int(0, strlen($a) - 1)]; if ($i == 3 || $i == 7) $nk .= '-'; }
+    } while (isset($db['customers'][$nk]));   // never overwrite an existing record on a collision
+    $db['customers'][$nk] = array('name' => $nm, 'email' => $em, 'tier' => $tier, 'next' => '',
+        'created' => gmdate('Y-m-d'), 'via' => 'staffadd', 'machines' => array());
+    db_save($db); db_close($lk);
+    out(array('ok' => true, 'key' => $nk, 'name' => $nm, 'tier' => $tier,
+        'link' => '365pcm://activate/' . $nk,
+        // the https link works in EVERY email/chat client and falls back to install guidance;
+        // the key travels in the #fragment so it never appears in server access logs
+        'weblink' => 'https://365techies.co.uk/activate/#' . $nk));
+}
+
+// staff: SET a customer's tier (idempotent - a stale panel can't accidentally invert).
+// Takes the opaque id from staffcustomers, resolved server-side; their app follows on check-in.
+if ($action === 'stafftier') {
+    need_staff();
+    $cid2 = preg_replace('/[^a-f0-9]/', '', (string)(isset($in['cid']) ? $in['cid'] : ''));
+    $want = (isset($in['tier']) && $in['tier'] === 'pro') ? 'pro' : 'free';
+    list($lk, $db) = db_open();
+    $found = '';
+    foreach ($db['customers'] as $k2 => $c2) {
+        if (!empty($c2['merged_into'])) continue;
+        if (substr(sha1('365cid|' . $k2), 0, 12) === $cid2) { $found = $k2; break; }
+    }
+    if ($found === '') { db_close($lk); fail('unknown_customer'); }
+    $db['customers'][$found]['tier'] = $want;
+    db_save($db); db_close($lk);
+    out(array('ok' => true, 'tier' => $want));
 }
 
 if ($action === 'agenda') {

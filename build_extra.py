@@ -15550,6 +15550,327 @@ def write_family_page():
 
 write_family_page()
 
+# ---------------------------------------------------------------------------
+# /portal/ - the 365 Techies customer portal (phase 1). Standalone + noindex for
+# now (sign-in wall = thin content; owner can promote it once it earns a page).
+# Thin web client over pcm-booking.php (auth) + pcm.php (overview). Staff who
+# sign in with an allow-listed SimplyBook login get the admin panel: customer
+# book, one-click PC Manager activation, tier flips, SimplyBook admin links.
+def write_portal_page():
+    html = '''<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<meta name="referrer" content="no-referrer" />
+<title>Customer portal &mdash; 365 Techies</title>
+<style>
+  :root { --ink:#0b1226; --panel:#0d1530; --line:#2a3b63; --cyan:#1d97e3; --soft:#86b6e8; --good:#00ce1b; --warn:#e0b341; --bad:#e8637e; --mut:#9fb5d3; --white:#f0f5fc; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--ink); color:var(--white); font-family:"Segoe UI",system-ui,-apple-system,sans-serif; min-height:100vh; display:flex; flex-direction:column; }
+  .wrap { width:100%; max-width:760px; margin:0 auto; padding:1.2rem 1rem 2.5rem; flex:1; }
+  header { display:flex; align-items:center; gap:.65rem; padding:.35rem 0 1.1rem; }
+  .lg { background:var(--cyan); color:#fff; font-weight:900; font-size:1.05rem; padding:.32rem .5rem; }
+  header strong { font-size:1.05rem; } header span { color:var(--mut); font-size:.85rem; }
+  header .out { margin-left:auto; }
+  h1 { font-size:1.3rem; margin:.2rem 0 .5rem; }
+  .lede { color:var(--mut); font-size:.92rem; margin-bottom:1.1rem; line-height:1.5; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:1rem 1.1rem; margin-bottom:.9rem; }
+  .card h2 { font-size:1rem; margin-bottom:.6rem; }
+  label { display:block; color:var(--mut); font-size:.85rem; margin:.6rem 0 .25rem; }
+  input, select { width:100%; padding:.65rem .7rem; border-radius:9px; border:1px solid var(--line); background:var(--ink); color:var(--white); font-size:1rem; }
+  button { padding:.65rem 1.1rem; border:0; border-radius:9px; background:var(--cyan); color:#fff; font-size:.95rem; font-weight:600; cursor:pointer; margin-top:.8rem; }
+  button.ghost { background:transparent; border:1px solid var(--line); color:var(--soft); }
+  button.sm { padding:.35rem .7rem; font-size:.8rem; margin:0; }
+  .err { color:var(--bad); font-size:.88rem; margin-top:.6rem; min-height:1.2em; }
+  .row { display:flex; gap:1rem; align-items:center; padding:.55rem 0; border-bottom:1px solid rgba(42,59,99,.5); flex-wrap:wrap; }
+  .row:last-child { border-bottom:0; }
+  .ringS { position:relative; width:56px; height:56px; flex:0 0 56px; }
+  .ringS svg { transform:rotate(-90deg); } .ringS b { position:absolute; inset:0; display:grid; place-items:center; font-size:.85rem; }
+  .chips { display:flex; flex-wrap:wrap; gap:.35rem; margin-top:.25rem; }
+  .chip { font-size:.72rem; padding:.18rem .5rem; border-radius:999px; border:1px solid var(--line); color:var(--mut); }
+  .chip.g { color:var(--good); border-color:rgba(0,206,27,.35); } .chip.w { color:var(--warn); border-color:rgba(224,179,65,.4); }
+  .pill { font-size:.75rem; padding:.2rem .6rem; border-radius:999px; }
+  .pill.pro { background:rgba(0,206,27,.14); color:var(--good); } .pill.free { background:rgba(134,182,232,.12); color:var(--soft); }
+  .big { font-size:1.5rem; font-weight:700; }
+  .mono { font-family:Consolas,monospace; }
+  table { width:100%; border-collapse:collapse; font-size:.85rem; }
+  th { text-align:left; color:var(--mut); font-weight:600; padding:.35rem .4rem; border-bottom:1px solid var(--line); }
+  td { padding:.42rem .4rem; border-bottom:1px solid rgba(42,59,99,.4); vertical-align:middle; }
+  .ok { color:var(--good); } .wn { color:var(--warn); }
+  .quiet { color:var(--mut); font-size:.8rem; line-height:1.5; margin-top:.6rem; }
+  .tblwrap { overflow-x:auto; }
+  a { color:var(--soft); }
+  footer { border-top:1px solid var(--line); background:var(--panel); }
+  footer .wrap { padding:1rem; flex:0; }
+  footer p { color:var(--mut); font-size:.84rem; line-height:1.6; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><span class="lg">365</span><div><strong>365 Techies</strong><br /><span>Customer portal</span></div>
+    <button class="ghost sm out" id="signout" style="display:none">Sign out</button></header>
+  <div id="app"></div>
+</div>
+<footer><div class="wrap"><p><strong>365 Techies</strong> &mdash; family-run IT support in Bournemouth since 1995 &middot;
+  <a href="tel:+441202775566" style="color:var(--white);font-weight:600">01202 775566</a> &middot; <a href="https://365techies.co.uk/">365techies.co.uk</a></p></div></footer>
+<script>
+(function () {
+  var el = document.getElementById('app'), outBtn = document.getElementById('signout');
+  var S = {};
+  try { S = JSON.parse(sessionStorage.getItem('p365') || '{}'); } catch (e) { S = {}; }
+  function saveS() { try { sessionStorage.setItem('p365', JSON.stringify(S)); } catch (e) {} }
+  function mid() {
+    var m = '';
+    try { m = localStorage.getItem('p365mid') || ''; } catch (e) {}
+    if (!/^[a-f0-9]{32}$/.test(m)) {
+      var a = new Uint8Array(16); crypto.getRandomValues(a); m = '';
+      for (var i = 0; i < 16; i++) m += ('0' + a[i].toString(16)).slice(-2);
+      try { localStorage.setItem('p365mid', m); } catch (e) {}
+    }
+    return m;
+  }
+  function esc(s) { var d = document.createElement('div'); d.textContent = String(s == null ? '' : s); return d.innerHTML; }
+  function post(url, body) {
+    return fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), cache: 'no-store' })
+      .then(function (r) { return r.json(); });
+  }
+  function seenTxt(seen) {
+    if (!seen) return 'not seen yet';
+    var t = Date.parse(seen.replace(' ', 'T') + ':00Z'); if (isNaN(t)) return esc(seen);
+    var d = Math.floor((Date.now() - t) / 86400000);
+    return d <= 0 ? 'today' : (d === 1 ? 'yesterday' : d + ' days ago');
+  }
+
+  // ---------- sign-in ----------
+  function showSignin(msg) {
+    outBtn.style.display = 'none';
+    el.innerHTML = '<h1>Sign in</h1>'
+      + '<p class="lede">Use the same email and password you book with at 365 Techies. On a support plan? The same login shows your plan, computers and visits.</p>'
+      + '<div class="card"><label>Email</label><input id="em" type="email" autocomplete="email" />'
+      + '<label>Password</label><input id="pw" type="password" autocomplete="current-password" />'
+      + '<button id="go">Sign in</button><div class="err" id="serr">' + (msg || '') + '</div>'
+      + '<p class="quiet">No login yet? It\\u2019s the one you create when <a href="https://365techies.co.uk/book-service/">booking a service</a>. Forgotten it? Ring us: 01202 775566.</p></div>';
+    var go = document.getElementById('go');
+    function doIt() {
+      go.disabled = true; document.getElementById('serr').textContent = '';
+      post('/api/pcm-booking.php', { action: 'signin', email: document.getElementById('em').value.trim(), password: document.getElementById('pw').value, machine: mid(), web: true })
+        .then(function (d) {
+          go.disabled = false;
+          if (d && d.ok && d.staff) { S = { staff: true, stoken: d.stoken, email: d.customer }; saveS(); showStaff(); }
+          else if (d && d.ok && d.wtoken) { S = { wtoken: d.wtoken, name: d.customer, tier: d.tier, pending: !!d.pending }; saveS(); showDash(); }
+          else {
+            var e2 = d && d.error;
+            document.getElementById('serr').textContent =
+              e2 === 'throttled' ? 'Too many tries - wait 15 minutes.'
+              : (e2 === 'sb_unavailable' || e2 === 'db_unavailable' || e2 === 'not_configured') ? 'We couldn\\u2019t reach the booking system - nothing wrong with your details, try again in a minute.'
+              : 'That didn\\u2019t match - check your email and password.';
+          }
+        }).catch(function () { go.disabled = false; document.getElementById('serr').textContent = 'Couldn\\u2019t reach the server - try again.'; });
+    }
+    go.onclick = doIt;
+    document.getElementById('pw').addEventListener('keydown', function (e) { if (e.key === 'Enter') doIt(); });
+  }
+  outBtn.onclick = function () {
+    if (S.stoken) post('/api/pcm-booking.php', { action: 'stafflogout', stoken: S.stoken, machine: mid() });
+    if (S.wtoken) post('/api/pcm-booking.php', { action: 'weblogout', wtoken: S.wtoken, machine: mid() });
+    S = {}; saveS(); showSignin();
+  };
+
+  // ---------- customer dashboard ----------
+  function showDash() {
+    outBtn.style.display = '';
+    el.innerHTML = '<h1>Hello' + (S.name ? ' ' + esc(S.name.split(' ')[0]) : '') + '</h1><p class="lede">Loading your dashboard\\u2026</p>';
+    post('/api/pcm.php', { action: 'overview', wtoken: S.wtoken, machine: mid() }).then(function (d) {
+      if (!d || !d.ok) {
+        if (d && d.error === 'db_unavailable') { el.innerHTML = '<div class="card"><p class="quiet">Couldn\\u2019t load just now - <a href="#" onclick="location.reload();return false">try again</a>.</p></div>'; return; }
+        showSignin('Your session expired - please sign in again.'); return;
+      }
+      if (d.next_ts && d.next_ts * 1000 < Date.now()) d.next = '';   // past booking = no upcoming service
+      var h = '<h1>Hello ' + esc((d.name || '').split(' ')[0] || 'there') + '</h1>';
+      if (d.pending) h += '<div class="card" style="border-color:rgba(224,179,65,.5)"><p class="quiet">We can see a support plan registered to this email. For security we link it to your web login by hand - it usually appears within a day. Need it sooner? Ring 01202 775566.</p></div>';
+      h += '<div class="card"><h2>Your plan</h2><div class="row"><span class="pill ' + (d.tier === 'pro' ? 'pro">On 365 support' : 'free">Free') + '</span>'
+        + (d.next ? '<span>Next service: <strong>' + esc(d.next) + '</strong></span>' : '<span class="quiet">No service booked - <a href="https://365techies.co.uk/book-service/">book one</a>.</span>') + '</div>';
+      if (d.gc) {
+        h += d.gc.active
+          ? '<div class="row"><span class="big">\\u00a3' + d.gc.amount.toFixed(2) + '</span><span>' + esc(d.gc.name) + ' by Direct Debit'
+            + (d.gc.nextchg ? ' \\u00b7 next collection ' + esc(d.gc.nextchg) : '') + '</span></div>'
+            + (d.gc.lastdate ? '<p class="quiet">Last payment: \\u00a3' + d.gc.lastamt.toFixed(2) + ' on ' + esc(d.gc.lastdate) + ' (' + esc(d.gc.laststatus) + ')</p>' : '')
+          : '<p class="quiet">No active Direct Debit found for this email.</p>';
+      }
+      h += '</div>';
+      h += '<div class="card"><h2>Your computers</h2>';
+      if (!d.machines.length) h += '<p class="quiet">None checking in yet - our free <a href="https://365techies.co.uk/free-pc-health-check/">365 PC Manager</a> app keeps an eye on your PC\\u2019s health and shows it here.</p>';
+      d.machines.forEach(function (m) {
+        var circ = 2 * Math.PI * 23;
+        if (m.fresh) {
+          h += '<div class="row"><div class="ringS"><svg width="56" height="56"><circle cx="28" cy="28" r="23" fill="none" stroke="#2a3b63" stroke-width="6"/></svg><b>\\u2014</b></div>'
+            + '<div><strong>' + esc(m.name) + '</strong><div class="chips"><span class="chip">first health check coming soon</span></div></div></div>';
+          return;
+        }
+        var col = m.score >= 80 ? 'var(--good)' : (m.score >= 55 ? 'var(--warn)' : 'var(--bad)');
+        h += '<div class="row"><div class="ringS"><svg width="56" height="56"><circle cx="28" cy="28" r="23" fill="none" stroke="#2a3b63" stroke-width="6"/><circle cx="28" cy="28" r="23" fill="none" stroke="' + col + '" stroke-width="6" stroke-linecap="round" stroke-dasharray="' + (circ * m.score / 100).toFixed(1) + ' ' + circ.toFixed(1) + '"/></svg><b>' + m.score + '%</b></div>'
+          + '<div><strong>' + esc(m.name) + '</strong> <span style="color:' + col + '">' + esc(m.verdict || '') + '</span>'
+          + '<div class="chips"><span class="chip ' + (m.backup ? 'g">backup: yes' : 'w">no backup seen') + '</span>'
+          + '<span class="chip ' + (m.disk >= 85 ? 'w">disk ' + m.disk + '% full' : '">disk fine') + '</span>'
+          + '<span class="chip">seen ' + seenTxt(m.seen) + '</span></div></div></div>';
+      });
+      h += '</div>';
+      if (d.fam) h += '<div class="card"><h2>Family view</h2><p class="quiet">\\u2713 Shared with ' + esc(d.fam) + ' - manage it from the app on your PC.</p></div>';
+      h += '<div class="card"><h2>Need us?</h2><div class="row">'
+        + '<a href="https://365techies.co.uk/book-service/"><button class="sm">Book a service</button></a>'
+        + '<a href="https://365techies.co.uk/sos/"><button class="sm ghost">Remote help (SOS)</button></a>'
+        + '<a href="tel:+441202775566"><button class="sm ghost">Call 01202 775566</button></a></div></div>';
+      el.innerHTML = h;
+    }).catch(function () { showSignin('Couldn\\u2019t load your dashboard - please sign in again.'); });
+  }
+
+  // ---------- staff admin panel ----------
+  function showStaff() {
+    outBtn.style.display = '';
+    el.innerHTML = '<h1>365 staff</h1><p class="lede">Loading the customer book\\u2026</p>';
+    post('/api/pcm-booking.php', { action: 'staffcustomers', stoken: S.stoken, machine: mid() }).then(function (d) {
+      if (!d || !d.ok) { showSignin('Staff session expired (12h) - sign in again.'); return; }
+      var h = '<h1>365 staff \\u00b7 ' + esc(S.email || '') + '</h1>';
+      h += '<div class="card"><h2>\\u26a1 Activate a customer\\u2019s PC Manager</h2>'
+        + '<label>Customer name</label><input id="an" />'
+        + '<label>Email (optional - links their booking login + Direct Debit)</label><input id="ae" type="email" />'
+        + '<label>Plan</label><select id="at"><option value="pro">On support (Pro)</option><option value="free">Free</option></select>'
+        + '<button id="ab">Create activation key</button><div class="err" id="aerr"></div><div id="ares"></div></div>';
+      h += '<div class="card"><h2>Quick links</h2><div class="row">'
+        + '<a href="https://365techies.simplybook.it/v2/management/" target="_blank" rel="noopener"><button class="sm ghost">SimplyBook admin</button></a>'
+        + '<a href="/api/pcm-admin.php" target="_blank"><button class="sm ghost">Full PCM console</button></a>'
+        + '<a href="/book-service/" target="_blank"><button class="sm ghost">Booking page</button></a></div>'
+        + '<p class="quiet">The full console (customer deletes, verify-call codes, family revokes, SOS screenshots) keeps its own passphrase.</p></div>';
+      h += '<div class="card"><h2>Customer book</h2><div class="tblwrap"><table><tr><th>Customer</th><th>Plan</th><th>PCs</th><th>Health</th><th>Seen</th><th>App</th><th></th></tr>';
+      (d.customers || []).sort(function (a, b) { return (b.seen || '').localeCompare(a.seen || ''); }).forEach(function (c, i) {
+        h += '<tr><td><strong>' + esc(c.name) + '</strong>' + (c.fam ? ' \\ud83d\\udc6a' : '') + '<br /><span class="quiet mono">' + esc(c.keymask) + '</span></td>'
+          + '<td><span class="pill ' + (c.tier === 'pro' ? 'pro">Pro' : 'free">Free') + '</span></td>'
+          + '<td>' + c.pcs + '</td>'
+          + '<td>' + (c.worst < 0 ? '\\u2014' : '<span class="' + (c.worst >= 80 ? 'ok' : 'wn') + '">' + c.worst + '%</span>') + '</td>'
+          + '<td>' + seenTxt(c.seen) + '</td>'
+          + '<td>' + (c.ver ? 'v' + c.ver : '\\u2014') + '</td>'
+          + '<td><button class="sm ghost tf" data-cid="' + esc(c.id) + '" data-to="' + (c.tier === 'pro' ? 'free' : 'pro') + '" data-nm="' + esc(c.name) + '">\\u2192 ' + (c.tier === 'pro' ? 'Free' : 'Pro') + '</button></td></tr>';
+      });
+      h += '</table></div></div>';
+      el.innerHTML = h;
+      document.getElementById('ab').onclick = function () {
+        var b = this; b.disabled = true; document.getElementById('aerr').textContent = '';
+        post('/api/pcm-booking.php', { action: 'staffadd', stoken: S.stoken, machine: mid(),
+              name: document.getElementById('an').value.trim(), email: document.getElementById('ae').value.trim(), tier: document.getElementById('at').value })
+          .then(function (r) {
+            b.disabled = false;
+            if (!r || !r.ok) { document.getElementById('aerr').textContent = r && r.error === 'no_name' ? 'Name needed.' : 'Couldn\\u2019t create it - try again.'; return; }
+            var link = r.weblink || r.link;   // https link works in every email client + guides them to install first
+            document.getElementById('ares').innerHTML = '<div class="row" style="border:0;margin-top:.6rem"><div>'
+              + '<div>\\u2713 <strong>' + esc(r.name) + '</strong> created (' + esc(r.tier) + ') - key <span class="mono">' + esc(r.key) + '</span></div>'
+              + '<p class="quiet">Send the link (email button, or paste into a Splashtop chat / text). They click it on their PC and the app activates itself - and it explains what to do if the app isn\\u2019t installed yet.</p>'
+              + '<button class="sm" id="cpl">\\ud83d\\udccb Copy activation link</button> '
+              + '<a href="mailto:' + encodeURIComponent(document.getElementById('ae').value.trim()) + '?subject=' + encodeURIComponent('Your 365 PC Manager activation') + '&body=' + encodeURIComponent('Hello ' + r.name + ',\\n\\nClick this on your PC to activate your 365 PC Manager:\\n' + link + '\\n\\nAny bother, ring us on 01202 775566.\\n\\n365 Techies') + '"><button class="sm ghost">\\u2709 Email it</button></a></div></div>';
+            document.getElementById('cpl').onclick = function () { navigator.clipboard.writeText(link).then(function () { document.getElementById('cpl').textContent = 'Copied \\u2713'; }); };
+          }).catch(function () { b.disabled = false; document.getElementById('aerr').textContent = 'Couldn\\u2019t reach the server.'; });
+      };
+      Array.prototype.forEach.call(document.querySelectorAll('.tf'), function (btn) {
+        btn.onclick = function () {
+          var to = btn.getAttribute('data-to'), nm2 = btn.getAttribute('data-nm');
+          if (to === 'free' && !confirm('Move ' + nm2 + ' to Free? Their app drops to the free features on its next check-in.')) return;
+          btn.disabled = true;
+          post('/api/pcm-booking.php', { action: 'stafftier', stoken: S.stoken, machine: mid(), cid: btn.getAttribute('data-cid'), tier: to })
+            .then(function (r) {
+              if (r && r.ok) showStaff();
+              else { btn.disabled = false; alert('Couldn\\u2019t change the tier - it is unchanged. Try again.'); }
+            })
+            .catch(function () { btn.disabled = false; alert('Couldn\\u2019t reach the server - tier unchanged.'); });
+        };
+      });
+    }).catch(function () { showSignin('Couldn\\u2019t load - sign in again.'); });
+  }
+
+  if (S.stoken) showStaff();
+  else if (S.wtoken) showDash();
+  else showSignin();
+})();
+</script>
+</body>
+</html>
+'''
+    import os as _os
+    d = _os.path.join(bp.BASE, "portal")
+    _os.makedirs(d, exist_ok=True)
+    with open(_os.path.join(d, "index.html"), "w", encoding="utf-8") as f:
+        f.write(html)
+
+write_portal_page()
+
+# ---------------------------------------------------------------------------
+# /activate/ - clickable-anywhere activation landing. The key rides the #fragment
+# (never sent to the server, never in access logs). Tries the 365pcm:// app link,
+# and shows what to do if the app isn't installed yet. Standalone + noindex.
+def write_activate_page():
+    html = '''<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<meta name="referrer" content="no-referrer" />
+<title>Activate 365 PC Manager</title>
+<style>
+  :root { --ink:#0b1226; --panel:#0d1530; --line:#2a3b63; --cyan:#1d97e3; --good:#00ce1b; --mut:#9fb5d3; --white:#f0f5fc; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--ink); color:var(--white); font-family:"Segoe UI",system-ui,sans-serif; min-height:100vh; display:grid; place-items:center; padding:1rem; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:2rem 1.6rem; max-width:480px; width:100%; }
+  .lg { background:var(--cyan); color:#fff; font-weight:900; padding:.3rem .5rem; display:inline-block; margin-bottom:.8rem; }
+  h1 { font-size:1.25rem; margin-bottom:.6rem; }
+  p { color:var(--mut); font-size:.95rem; line-height:1.55; margin-bottom:.8rem; }
+  .key { font-family:Consolas,monospace; font-size:1.15rem; color:var(--white); background:var(--ink); border:1px solid var(--line); border-radius:9px; padding:.55rem .8rem; text-align:center; margin:.6rem 0 1rem; }
+  button, .btn { display:inline-block; padding:.7rem 1.2rem; border:0; border-radius:9px; background:var(--cyan); color:#fff; font-size:.95rem; font-weight:600; cursor:pointer; text-decoration:none; }
+  .ok { color:var(--good); }
+  .steps { margin:.4rem 0 .6rem 1.1rem; color:var(--mut); font-size:.92rem; line-height:1.7; }
+  a { color:#86b6e8; }
+</style>
+</head>
+<body>
+<div class="card" id="c">
+  <span class="lg">365</span>
+  <h1>Activate your 365 PC Manager</h1>
+  <div id="body"><p>Checking your activation link&hellip;</p></div>
+</div>
+<script>
+(function () {
+  var b = document.getElementById('body');
+  var m = (location.hash || '').match(/^#([A-Z2-9]{4}-[A-Z2-9]{4}-[A-Z2-9]{4})$/);
+  if (!m) { b.innerHTML = '<p>This activation link looks incomplete. Please use the full link we sent you, or ring us on <strong style="color:var(--white)">01202 775566</strong> and we\\u2019ll sort it in a minute.</p>'; return; }
+  var key = m[1];
+  b.innerHTML = '<p>On the computer you want looked after? Tap the button and the 365 PC Manager app will activate itself.</p>'
+    + '<p style="text-align:center"><button id="go">\\u26a1 Activate now</button></p>'
+    + '<div id="fb"></div>';
+  function fallback() {
+    document.getElementById('fb').innerHTML =
+      '<p style="margin-top:.6rem"><span class="ok">Nothing happened?</span> The app may not be on this PC yet - no bother:</p>'
+      + '<ol class="steps"><li>Ring us on <strong style="color:var(--white)">01202 775566</strong> (or use your remote session) and we\\u2019ll pop the free app on for you.</li>'
+      + '<li>Then open the app, tap <strong style="color:var(--white)">Activate 365 support</strong>, and type this key:</li></ol>'
+      + '<div class="key">' + key + '</div>'
+      + '<p>That\\u2019s it - the app unlocks and we start keeping an eye on your PC\\u2019s health.</p>';
+  }
+  document.getElementById('go').onclick = function () {
+    location.href = '365pcm://activate/' + key;
+    setTimeout(fallback, 1500);
+  };
+})();
+</script>
+</body>
+</html>
+'''
+    import os as _os
+    d = _os.path.join(bp.BASE, "activate")
+    _os.makedirs(d, exist_ok=True)
+    with open(_os.path.join(d, "index.html"), "w", encoding="utf-8") as f:
+        f.write(html)
+
+write_activate_page()
+
 if __name__ == "__main__":
     w = write_all()
     print("Wrote %d pages total:" % len(w))
