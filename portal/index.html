@@ -711,7 +711,7 @@
     }
     return m;
   }
-  function esc(s) { var d = document.createElement('div'); d.textContent = String(s == null ? '' : s); return d.innerHTML; }
+  function esc(s) { var d = document.createElement('div'); d.textContent = String(s == null ? '' : s); return d.innerHTML.split('"').join('&quot;').split("'").join('&#39;'); }
   function post(url, body) {
     return fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), cache: 'no-store' })
       .then(function (r) { return r.json(); });
@@ -875,6 +875,7 @@
           : '<p class="quiet">No active Direct Debit found for this email.</p>';
       }
       h += '</div>';
+      h += '<div class="card"><h2>📅 Your bookings</h2><div id="mybk"><p class="quiet">Loading your visits…</p></div></div>';
       h += '<div class="card"><h2>Your computers</h2>';
       if (!d.machines.length) h += '<p class="quiet">None checking in yet - our free <a href="/free-pc-health-check/" target="_blank">365 PC Manager</a> app keeps an eye on your PC\u2019s health and shows it here.</p>';
       d.machines.forEach(function (m) {
@@ -983,6 +984,7 @@
       });
       var cbo = document.getElementById('cbopen');
       if (cbo) cbo.onclick = function () { custWiz(); };
+      loadMyBookings();
       Array.prototype.forEach.call(document.querySelectorAll('#p365app .repb'), function (btn) {
         btn.onclick = function () {
           btn.disabled = true;
@@ -1076,6 +1078,80 @@
         var first = daysEl.querySelector('button'); if (first) first.click();
       })
       .catch(function () { var daysEl = document.getElementById('cbdays'); if (daysEl) daysEl.innerHTML = '<p class="quiet">Couldn\u2019t load times - try the <a href="/book-service/" target="_blank" rel="noopener">booking page</a>.</p>'; });
+  }
+
+  // customer bookings: list upcoming visits, then move or cancel - straight into SimplyBook
+  function loadMyBookings() {
+    var box = document.getElementById('mybk'); if (!box) return;
+    post(BK, { action: 'mybookings', wtoken: S.wtoken, machine: mid() }).then(function (d) {
+      if (!d || !d.ok) { box.innerHTML = '<p class="quiet">Couldn’t load your visits just now - <a href="/book-service/" target="_blank" rel="noopener">see them on the booking page</a>.</p>'; return; }
+      renderBookings(d.bookings || []);
+    }).catch(function () { box.innerHTML = '<p class="quiet">Couldn’t load your visits - try again shortly.</p>'; });
+  }
+  function renderBookings(list) {
+    var box = document.getElementById('mybk'); if (!box) return;
+    if (!list.length) { box.innerHTML = '<p class="quiet">No upcoming visits booked. Tap “Book a service” below and we’ll come to you.</p>'; return; }
+    var hh = '';
+    list.forEach(function (b, i) {
+      hh += '<div class="tline"><span class="ttime">📅</span><div class="tblock"><strong>' + esc(b.when) + '</strong><br /><span class="quiet" style="margin:0">' + esc(b.what) + '</span></div>'
+         + '<div style="display:flex;gap:.4rem;flex-wrap:wrap">'
+         + '<button class="sm ghost bkmove" data-i="' + i + '">↔ Move</button>'
+         + '<button class="sm ghost bkcanc" data-i="' + i + '" style="color:var(--pbad)">✕ Cancel</button></div></div>'
+         + '<div class="mvp" id="bkmv' + i + '" style="display:none"></div>';
+    });
+    box.innerHTML = hh;
+    Array.prototype.forEach.call(box.querySelectorAll('.bkmove'), function (btn) {
+      btn.onclick = function () { var i = parseInt(btn.getAttribute('data-i'), 10); custMove(list[i], i); };
+    });
+    Array.prototype.forEach.call(box.querySelectorAll('.bkcanc'), function (btn) {
+      btn.onclick = function () { var i = parseInt(btn.getAttribute('data-i'), 10); custCancel(list[i], btn); };
+    });
+  }
+  function custCancel(b, btn) {
+    if (!confirm('Cancel this visit - ' + b.when + '?')) return;
+    btn.disabled = true;
+    post(BK, { action: 'cancel', wtoken: S.wtoken, machine: mid(), id: b.id }).then(function (r) {
+      if (r && r.ok) { showDash(); }
+      else { btn.disabled = false; alert('Couldn’t cancel just now - your visit is unchanged. Try again or ring 01202 775566.'); }
+    }).catch(function () { btn.disabled = false; alert('Couldn’t reach the server.'); });
+  }
+  function custMove(b, i) {
+    var p = document.getElementById('bkmv' + i); if (!p) return;
+    if (p.style.display !== 'none') { p.style.display = 'none'; return; }
+    Array.prototype.forEach.call(document.querySelectorAll('#mybk .mvp'), function (x) { x.style.display = 'none'; });
+    p.style.display = 'block';
+    p.innerHTML = '<p class="quiet">Finding free times…</p>';
+    var from = new Date(), to = new Date(Date.now() + 20 * 86400000);
+    post(BK, { action: 'slots', wtoken: S.wtoken, machine: mid(), eventId: b.eventId, from: iso(from), to: iso(to) }).then(function (sr) {
+      if (!sr || !sr.ok || !sr.days || !sr.days.length) { p.innerHTML = '<p class="quiet">Nothing free in the next three weeks - ring 01202 775566 and we’ll find you a slot.</p>'; return; }
+      var evId = sr.eventId || b.eventId;
+      p.innerHTML = '<p class="quiet" style="margin:.2rem 0">Move to:</p><div class="mdays"></div><div class="mtimes" style="margin-top:.3rem"></div><div class="mconf"></div>';
+      var daysEl = p.querySelector('.mdays'), timesEl = p.querySelector('.mtimes'), confEl = p.querySelector('.mconf');
+      sr.days.forEach(function (day) {
+        var db2 = document.createElement('button'); db2.className = 'sm ghost dpill'; db2.textContent = day.n;
+        db2.onclick = function () {
+          timesEl.innerHTML = ''; confEl.innerHTML = '';
+          day.t.forEach(function (t) {
+            var tb = document.createElement('button'); tb.className = 'sm tpill'; tb.textContent = t;
+            tb.onclick = function () {
+              confEl.innerHTML = '<div class="nbsum"><strong>' + esc(day.n) + ' at ' + esc(t) + '</strong><br /><button class="sm" id="mvgo' + i + '" style="background:var(--pgood);color:#06220b;font-weight:800">✓ Move it</button> <span class="err" id="mverr' + i + '" style="display:inline"></span></div>';
+              document.getElementById('mvgo' + i).onclick = function () {
+                var gb = this; gb.disabled = true; document.getElementById('mverr' + i).textContent = '';
+                post(BK, { action: 'change', wtoken: S.wtoken, machine: mid(), id: b.id, eventId: evId, date: day.d, time: t }).then(function (r) {
+                  if (r && r.ok) {
+                    p.innerHTML = '<div class="nbsum">✓ Moved to ' + esc(r.when) + (r.partial ? ' (we’re releasing the old time)' : '') + '. A confirmation email is on its way.</div>';
+                    setTimeout(function () { showDash(); }, 2500);
+                  } else { gb.disabled = false; document.getElementById('mverr' + i).textContent = r && r.error === 'slot_taken' ? 'That time just went - pick another.' : 'Couldn’t move it - your original time is unchanged.'; }
+                }).catch(function () { gb.disabled = false; document.getElementById('mverr' + i).textContent = 'Couldn’t reach the server.'; });
+              };
+            };
+            timesEl.appendChild(tb);
+          });
+        };
+        daysEl.appendChild(db2);
+      });
+      var first = daysEl.querySelector('button'); if (first) first.click();
+    }).catch(function () { p.innerHTML = '<p class="quiet">Couldn’t load times - try again.</p>'; });
   }
 
   // honest browser check-up: only claims what a browser can genuinely read

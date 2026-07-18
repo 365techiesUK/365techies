@@ -213,7 +213,10 @@ function web_snapshot() {
     $slide = !empty($ws['forever']) ? 31536000 : (!empty($ws['long']) ? 5184000 : 43200);
     $capOK = !empty($ws['forever']) ? true : (intval(isset($ws['iat']) ? $ws['iat'] : 0) > time() - (!empty($ws['long']) ? 7776000 : 86400));
     if (intval(isset($ws['ts']) ? $ws['ts'] : 0) <= time() - $slide || !$capOK) fail('expired');
-    if (!empty($ws['machine']) && $machine !== '' && $ws['machine'] !== $machine) fail('expired');
+    // fail CLOSED: a machine-bound session must present its matching machine. Omitting the
+    // field (so $machine === '') must NOT skip the check, or a stolen bearer wtoken could be
+    // replayed from any device against the destructive cancel/change endpoints.
+    if (!empty($ws['machine']) && $ws['machine'] !== $machine) fail('expired');
     $key2 = (string)$ws['key'];
     if (!isset($db['customers'][$key2])) fail('expired');
     $c = $db['customers'][$key2];
@@ -222,6 +225,75 @@ function web_snapshot() {
         'name' => (string)(isset($c['sb_name']) ? $c['sb_name'] : (isset($c['name']) ? $c['name'] : '')),
         'email' => (string)(isset($c['sb_email']) ? $c['sb_email'] : (isset($c['email']) ? $c['email'] : '')),
         'phone' => (string)(isset($c['sb_phone']) ? $c['sb_phone'] : (isset($c['phone']) ? $c['phone'] : '')));
+}
+
+// Do the record name and the SimplyBook client name plausibly refer to the same person?
+// Used to corroborate an email match so a MISTYPED email that happens to be ANOTHER customer's
+// address cannot silently bind a key to a stranger's bookings. Deliberately lenient (shared
+// name token >=3 chars, or one collapsed name contained in the other) to avoid false negatives
+// like "Bob Smith" vs "Robert Smith", while still rejecting two unrelated people.
+function names_corroborate($a, $b) {
+    $na = trim(preg_replace('/\s+/', ' ', strtolower(preg_replace('/[^a-z ]/i', ' ', (string)$a))));
+    $nb = trim(preg_replace('/\s+/', ' ', strtolower(preg_replace('/[^a-z ]/i', ' ', (string)$b))));
+    if ($na === '' || $nb === '') return false;   // no name to corroborate -> refuse to link
+    $ca = str_replace(' ', '', $na); $cb = str_replace(' ', '', $nb);
+    if (strlen($ca) >= 4 && (strpos($cb, $ca) !== false || strpos($ca, $cb) !== false)) return true;
+    $tb = explode(' ', $nb);
+    foreach (explode(' ', $na) as $t) if (strlen($t) >= 3 && in_array($t, $tb, true)) return true;
+    return false;
+}
+
+// Link a customer record to its SimplyBook client id using the TRUSTED email already stored
+// on the record (set by staff at activation, or by a verified typed-code sign-in) - NEVER an
+// email supplied in the request. Links ONLY on a single unambiguous exact-email match whose
+// NAME also corroborates the record, never clobbers an existing link, and cools down failed
+// lookups so an unmatchable record can't hammer SimplyBook. Returns the linked cid (0 = none).
+// $force skips the cool-down (used right after a booking, when the SB client is freshly created).
+function link_cid_from_email($ckey, $email, $force = false) {
+    global $HAS_ADMIN;
+    if (!$HAS_ADMIN || $ckey === '' || $email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) return 0;
+    list($lk, $db) = db_open(); db_close($lk);
+    if (!isset($db['customers'][$ckey])) return 0;
+    $rec = $db['customers'][$ckey];
+    if (!empty($rec['sb_client_id'])) return (int)$rec['sb_client_id'];   // already linked
+    if (!$force && !empty($rec['sb_link_ts']) && (int)$rec['sb_link_ts'] > time() - 1800) return 0;  // tried recently, no match
+    $recName = (string)(isset($rec['sb_name']) ? $rec['sb_name'] : (isset($rec['name']) ? $rec['name'] : ''));
+
+    $r = sb_adm('getClientList', array($email, 20));
+    if (sb_net($r) || !isset($r['result']) || !is_array($r['result'])) return 0;   // transient - don't cool down
+    $want = strtolower(trim($email));
+    $ids = array();
+    foreach ($r['result'] as $cli) {
+        $ce = strtolower(trim((string)(isset($cli['email']) ? $cli['email'] : '')));
+        $id = (int)(isset($cli['id']) ? $cli['id'] : 0);
+        if ($id > 0 && $ce !== '' && $ce === $want)
+            $ids[$id] = array('name' => (string)(isset($cli['name']) ? $cli['name'] : ''),
+                              'email' => $ce,
+                              'phone' => (string)(isset($cli['phone']) ? $cli['phone'] : ''));
+    }
+    $mid = 0; $m = null;
+    if (count($ids) === 1) {   // exactly one exact-email client...
+        $ks = array_keys($ids); $cand = (int)$ks[0]; $cm = $ids[$ks[0]];
+        if (names_corroborate($recName, $cm['name'])) { $mid = $cand; $m = $cm; }   // ...whose name agrees
+    }
+    list($lk, $db) = db_open();
+    if (isset($db['customers'][$ckey])) {
+        $c =& $db['customers'][$ckey];
+        if (!empty($c['sb_client_id'])) { $mid = (int)$c['sb_client_id']; }   // a concurrent request linked it first
+        elseif ($mid > 0) {
+            $c['sb_client_id'] = $mid;
+            if ($m['name'] !== '' && empty($c['sb_name'])) $c['sb_name'] = $m['name'];
+            if ($m['email'] !== '' && empty($c['sb_email'])) $c['sb_email'] = $m['email'];
+            if ($m['phone'] !== '' && empty($c['sb_phone'])) $c['sb_phone'] = $m['phone'];
+            unset($c['sb_link_ts']);
+            db_save($db);
+        } else {
+            $c['sb_link_ts'] = time();   // no confident match - cool down further lookups
+            db_save($db);
+        }
+    }
+    db_close($lk);
+    return $mid;
 }
 
 function stamp_next($ts, $pretty) {
@@ -768,12 +840,17 @@ if ($action === 'book') {
     $ts = strtotime($date . ' ' . $time);
     $pretty = $ts ? date('D j M Y g:ia', $ts) : ($date . ' ' . $time);
     if ($confirmed) stamp_next($ts, $pretty);        // only claim a firm date once confirmed
+    // the SB client now exists for this email - link it (force past the cool-down) so the
+    // customer's new visit shows up in their own bookings list right away
+    if (!$snap['cid'] && $snap['email'] !== '') link_cid_from_email($key, $snap['email'], true);
     out(array('ok' => true, 'id' => $bid, 'when' => $pretty, 'pending' => !$confirmed));
 }
 
 if ($action === 'mybookings') {
     if (!$HAS_ADMIN) fail('nolist');
-    $snap = customer_snapshot();
+    if (isset($in['wtoken']) && $in['wtoken'] !== '') { $snap = web_snapshot(); $key = $snap['key']; }   // portal customer
+    else $snap = customer_snapshot();                                                                    // app licence key
+    if (!$snap['cid'] && $snap['email'] !== '') $snap['cid'] = link_cid_from_email($key, $snap['email']); // auto-link, no password
     if (!$snap['cid']) out(array('ok' => true, 'bookings' => array(), 'needsignin' => true));
     $r = sb_adm('getBookings', array(array('client_id' => $snap['cid'], 'booking_type' => 'non_cancelled',
         'date_from' => date('Y-m-d'), 'order' => 'date_start_asc')));
@@ -796,7 +873,9 @@ if ($action === 'mybookings') {
 
 if ($action === 'cancel' || $action === 'change') {
     if (!$HAS_ADMIN) fail('not_configured');
-    $snap = customer_snapshot();
+    if (isset($in['wtoken']) && $in['wtoken'] !== '') { $snap = web_snapshot(); $key = $snap['key']; }   // portal customer
+    else $snap = customer_snapshot();                                                                    // app licence key
+    if (!$snap['cid'] && $snap['email'] !== '') $snap['cid'] = link_cid_from_email($key, $snap['email']);
     $bid = (int)(isset($in['id']) ? $in['id'] : 0);
     if ($bid <= 0 || !$snap['cid']) fail('bad_request');
     // ownership: the booking's client must be THIS signed-in customer
@@ -926,6 +1005,7 @@ if ($action === 'staffadd') {
     $db['customers'][$nk] = array('name' => $nm, 'email' => $em, 'tier' => $tier, 'next' => '',
         'created' => gmdate('Y-m-d'), 'via' => 'staffadd', 'machines' => array());
     db_save($db); db_close($lk);
+    if ($em !== '') link_cid_from_email($nk, $em);   // link their SimplyBook client now so bookings show without a password
     out(array('ok' => true, 'key' => $nk, 'name' => $nm, 'tier' => $tier,
         'link' => '365pcm://activate/' . $nk,
         // the https link works in EVERY email/chat client and falls back to install guidance;
