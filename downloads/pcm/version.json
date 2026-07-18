@@ -1,7 +1,7 @@
 {
-  "ver": 11,
-  "version": "1.0.11",
-  "url": "https://365techies.co.uk/downloads/pcm/pcm-v11.exe",
-  "sha256": "52ec80a8e077bdb5f591c6e89fff747193e73cc4c8750357740b1344b0ab96cc",
-  "notes": "Big SOS button with optional screen picture, Verified-Call Shield."
+  "ver": 12,
+  "version": "1.0.12",
+  "url": "https://365techies.co.uk/downloads/pcm/pcm-v12.exe",
+  "sha256": "16cd2248713fb4a783b2fe008bdf06864aaccd705721b5a34e0a1edfcb964e58",
+  "notes": "Family view - share a read-only health glance with someone you trust."
 }

@@ -63,15 +63,29 @@ $ok = with_db($DATA, function($db) use ($now, &$due) {
     foreach ($db['customers'] as $key => $c) {
         $ts = intval(isset($c['next_ts']) ? $c['next_ts'] : 0);
         if ($ts <= $now || $ts > $now + 86400 * 14) continue;
+        $custPhone = uk_phone(isset($c['sb_phone']) ? $c['sb_phone'] : (isset($c['phone']) ? $c['phone'] : ''));
+
+        // Family View trusted contact: its OWN gate, independent of the customer's SMS prefs -
+        // entering the mobile during famshare IS the opt-in, and the app promises "the day
+        // before", so: fixed 24h window, own claim stamp, best-effort (never re-queued).
+        $famPhone = uk_phone(isset($c['family']['sms']) ? $c['family']['sms'] : '');
+        if ($famPhone !== '' && $famPhone !== $custPhone && $now >= $ts - 86400
+            && intval(isset($c['family']['sent']) ? $c['family']['sent'] : 0) !== $ts) {
+            $db['customers'][$key]['family']['sent'] = $ts;
+            $changed = true;
+            $nm = explode(' ', trim((string)(isset($c['name']) ? $c['name'] : '')));
+            $due[] = array('key' => $key, 'phone' => $famPhone, 'ts' => $ts, 'fam' => true, 'cust' => ($nm[0] !== '' ? $nm[0] : 'your relative'));
+        }
+
+        // the customer's own SMS reminder (opt-in, at their chosen lead time)
         if (empty($c['remind_sms'])) continue;
         $off = max(5, min(2880, intval(isset($c['remind_min']) ? $c['remind_min'] : 60))) * 60;
         if ($now < $ts - $off) continue;
         if (intval(isset($c['remind_sent']) ? $c['remind_sent'] : 0) === $ts) continue;  // already sent for this slot
-        $phone = uk_phone(isset($c['sb_phone']) ? $c['sb_phone'] : (isset($c['phone']) ? $c['phone'] : ''));
         // claim now (stamp before sending) so a crash/overlap can't re-text; a hard failure below un-claims for retry
         $db['customers'][$key]['remind_sent'] = $ts;
         $changed = true;
-        if ($phone !== '') $due[] = array('key' => $key, 'phone' => $phone, 'ts' => $ts);  // no phone => claimed + skipped
+        if ($custPhone !== '') $due[] = array('key' => $key, 'phone' => $custPhone, 'ts' => $ts);  // no phone => claimed + skipped
     }
     return $changed ? $db : true;
 });
@@ -83,7 +97,10 @@ if ($ok === false) exit("db unreadable - NOT sending\n");
 $sent = 0; $unclaim = array();
 foreach ($due as $d) {
     $whenTxt = date('g:ia \o\n D j M', $d['ts']);
-    $text = "365 Techies: a reminder your PC service is at " . $whenTxt . ". If you use a backup drive, please plug it in ready. Need to change it? Use the app or call 01202 775566.";
+    // family text kept to ONE GSM-7 segment (<=160 chars worst case incl. a 30-char name)
+    $text = !empty($d['fam'])
+        ? "365 Techies: " . $d['cust'] . "'s PC service is at " . $whenTxt . ". They added you as trusted contact. Questions or stop: 01202 775566."
+        : "365 Techies: a reminder your PC service is at " . $whenTxt . ". If you use a backup drive, please plug it in ready. Need to change it? Use the app or call 01202 775566.";
     $ch = curl_init('https://rest.textmagic.com/api/v2/messages');
     curl_setopt_array($ch, array(CURLOPT_POST => true, CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 12,
         CURLOPT_HTTPHEADER => array('X-TM-Username: ' . $TM_USER, 'X-TM-Key: ' . $TM_KEY, 'Content-Type: application/x-www-form-urlencoded'),
@@ -91,9 +108,9 @@ foreach ($due as $d) {
     $res = curl_exec($ch);
     $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
-    if ($res !== false && $code >= 200 && $code < 300) { $sent++; echo "sent to {$d['key']}\n"; }
-    else if ($res === false || $code >= 500 || $code === 0) { $unclaim[] = $d; echo "temp fail {$d['key']} (http {$code}) - will retry\n"; }
-    else echo "permanent fail {$d['key']} (http {$code}) - not retrying\n";  // 4xx: leave claimed
+    if ($res !== false && $code >= 200 && $code < 300) { $sent++; echo "sent to {$d['key']}" . (!empty($d['fam']) ? " (family)" : "") . "\n"; }
+    else if (empty($d['fam']) && ($res === false || $code >= 500 || $code === 0)) { $unclaim[] = $d; echo "temp fail {$d['key']} (http {$code}) - will retry\n"; }
+    else echo "fail {$d['key']} (http {$code}) - not retrying\n";  // 4xx, or family (best-effort: un-claiming would re-text the customer too)
 }
 // PASS 3 (brief lock): un-claim the temp failures so the next cron retries them
 if (count($unclaim)) with_db($DATA, function($db) use ($unclaim) {

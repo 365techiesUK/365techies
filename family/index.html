@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<meta name="referrer" content="no-referrer" />
+<title>Family view &mdash; 365 PC Manager</title>
+<style>
+  :root { --ink:#0b1226; --panel:#0d1530; --line:#2a3b63; --cyan:#1d97e3; --soft:#86b6e8; --good:#00ce1b; --warn:#e0b341; --bad:#e8637e; --mut:#9fb5d3; --white:#f0f5fc; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--ink); color:var(--white); font-family:"Segoe UI",system-ui,-apple-system,sans-serif; min-height:100vh; display:flex; flex-direction:column; }
+  .wrap { width:100%; max-width:640px; margin:0 auto; padding:1.2rem 1rem 2rem; flex:1; }
+  header { display:flex; align-items:center; gap:.65rem; padding:.35rem 0 1.1rem; }
+  .lg { background:var(--cyan); color:#fff; font-weight:900; font-size:1.05rem; padding:.32rem .5rem; letter-spacing:.02em; }
+  header strong { font-size:1.05rem; } header span { color:var(--mut); font-size:.85rem; }
+  h1 { font-size:1.35rem; margin:.2rem 0 .4rem; line-height:1.3; }
+  .lede { color:var(--mut); font-size:.93rem; margin-bottom:1.2rem; line-height:1.5; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:1rem 1.1rem; margin-bottom:.9rem; display:flex; gap:1rem; align-items:center; }
+  .ring { position:relative; width:86px; height:86px; flex:0 0 86px; }
+  .ring svg { transform:rotate(-90deg); }
+  .ring b { position:absolute; inset:0; display:grid; place-items:center; font-size:1.25rem; }
+  .m h2 { font-size:1.05rem; margin-bottom:.2rem; }
+  .m .v { font-weight:600; margin-bottom:.45rem; }
+  .chips { display:flex; flex-wrap:wrap; gap:.4rem; }
+  .chip { font-size:.76rem; padding:.22rem .55rem; border-radius:999px; border:1px solid var(--line); color:var(--mut); }
+  .chip.g { color:var(--good); border-color:rgba(0,206,27,.35); }
+  .chip.w { color:var(--warn); border-color:rgba(224,179,65,.4); }
+  .note { background:rgba(224,179,65,.08); border:1px solid rgba(224,179,65,.3); border-radius:12px; padding:.85rem 1rem; font-size:.88rem; color:var(--white); margin:.2rem 0 1rem; line-height:1.5; }
+  .quiet { color:var(--mut); font-size:.8rem; margin-top:1.1rem; line-height:1.5; }
+  .err { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:1.4rem; text-align:center; color:var(--mut); line-height:1.6; }
+  footer { border-top:1px solid var(--line); background:var(--panel); }
+  footer .wrap { padding:1.1rem 1rem 1.3rem; flex:0; }
+  footer p { color:var(--mut); font-size:.85rem; line-height:1.6; }
+  footer a { color:var(--soft); }
+  .tel { font-size:1.05rem; font-weight:600; color:var(--white) !important; text-decoration:none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><span class="lg">365</span><div><strong>365 PC Manager</strong><br /><span>Family view</span></div></header>
+  <div id="app"><div class="err">Checking the share link&hellip;</div></div>
+</div>
+<footer><div class="wrap">
+  <p>This page is provided by <strong>365 Techies</strong> &mdash; family-run IT support in Bournemouth since 1995.
+  Spot something worrying, or want a hand? Ring us on <a class="tel" href="tel:+441202775566">01202 775566</a> &mdash; we&rsquo;ll gladly help.</p>
+  <p style="margin-top:.5rem">Want the same peace of mind for your own family&rsquo;s computers? <a href="https://365techies.co.uk/monthly-it-support/">See how our support plans work &rarr;</a></p>
+</div></footer>
+<script>
+(function () {
+  var el = document.getElementById('app');
+  var m = location.search.match(/[?&]c=([a-f0-9]{24})/);
+  function esc(s) { var d = document.createElement('div'); d.textContent = String(s == null ? '' : s); return d.innerHTML; }
+  function fail() { el.innerHTML = '<div class="err"><strong>This share link isn&rsquo;t active.</strong><br />It may have been stopped from the app (sharing is always in their control).<br />Ask them to share again from 365&nbsp;PC&nbsp;Manager &mdash; or ring us on <a class="tel" href="tel:+441202775566">01202 775566</a>.</div>'; }
+  if (!m) { fail(); return; }
+  fetch('/api/pcm-family.php?c=' + m[1], { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) {
+    if (!d || !d.ok) { fail(); return; }
+    var h = '<h1>' + esc(d.customer) + '&rsquo;s computer' + (d.machines.length === 1 ? '' : 's') + '</h1>';
+    h += '<p class="lede">Hello ' + esc(d.fname) + ' &mdash; thanks for being their tech backup. Here&rsquo;s the honest health picture, straight from the app on their PC. It updates whenever their computer checks in (about hourly while it&rsquo;s switched on).</p>';
+    var nudges = [];
+    if (!d.machines.length) h += '<div class="err">No computers are checking in yet &mdash; the app may not have run on their PC since sharing.</div>';
+    d.machines.forEach(function (mc) {
+      var col = mc.score >= 80 ? 'var(--good)' : (mc.score >= 55 ? 'var(--warn)' : 'var(--bad)');
+      var seenTxt = 'not seen yet';
+      if (mc.seen) {
+        var t = Date.parse(mc.seen.replace(' ', 'T') + ':00Z');
+        if (!isNaN(t)) { var days = Math.floor((Date.now() - t) / 86400000);
+          seenTxt = days <= 0 ? 'checked in today' : (days === 1 ? 'checked in yesterday' : 'last seen ' + days + ' days ago');
+          if (days >= 7) nudges.push(esc(mc.name) + ' hasn&rsquo;t checked in for ' + days + ' days &mdash; the PC may just be switched off, but worth a ring to say hello.'); }
+      }
+      var circ = 2 * Math.PI * 36;
+      h += '<div class="card"><div class="ring"><svg width="86" height="86"><circle cx="43" cy="43" r="36" fill="none" stroke="#2a3b63" stroke-width="8"/><circle cx="43" cy="43" r="36" fill="none" stroke="' + col + '" stroke-width="8" stroke-linecap="round" stroke-dasharray="' + (circ * mc.score / 100).toFixed(1) + ' ' + circ.toFixed(1) + '"/></svg><b>' + mc.score + '%</b></div>'
+         + '<div class="m"><h2>' + esc(mc.name) + '</h2><div class="v" style="color:' + col + '">' + esc(mc.verdict || '') + '</div><div class="chips">'
+         + '<span class="chip ' + (mc.backup ? 'g' : 'w') + '">' + (mc.backup ? 'backup: yes' : 'no backup seen') + '</span>'
+         + '<span class="chip ' + (mc.disk >= 85 ? 'w' : '') + '">disk ' + (mc.disk >= 85 ? 'getting full (' + mc.disk + '%)' : 'fine') + '</span>'
+         + '<span class="chip">' + seenTxt + '</span></div></div></div>';
+      if (!mc.backup) nudges.push('No backup is set up on ' + esc(mc.name) + ' &mdash; one failure could lose their photos. A gentle nudge from you goes a long way (or we can sort it: 01202 775566).');
+    });
+    if (nudges.length) h += '<div class="note"><strong>Worth a nudge:</strong><br />' + nudges.join('<br />') + '</div>';
+    h += '<p class="quiet">What you can see here: health score, backup status, disk space and last check-in &mdash; nothing else. No files, no browsing, no screen. ' + esc(d.customer) + ' shared this with you deliberately and can stop it any time from their app.</p>';
+    el.innerHTML = h;
+  }).catch(fail);
+})();
+</script>
+</body>
+</html>

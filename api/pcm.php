@@ -86,7 +86,10 @@ if ($action === 'checkin') {
     }
     // ready = the owner has asked this customer to confirm their PC is on and ready to connect
     $ready = (!empty($c['ready_ask']) && empty($c['ready_confirm'])) ? $c['ready_ask'] : '';
-    out(array('ok'=>true,'tier'=>$tier,'next'=>$c['next'] ?? '','next_ts'=>intval($c['next_ts'] ?? 0),'ready'=>$ready) + $upd);
+    // family view state, so the app's "Shared with ..." card survives reinstalls
+    $fam = isset($c['family']['name']) ? (string)$c['family']['name'] : '';
+    $famUrl = isset($c['family']['token']) ? 'https://365techies.co.uk/family/?c='.$c['family']['token'] : '';
+    out(array('ok'=>true,'tier'=>$tier,'next'=>$c['next'] ?? '','next_ts'=>intval($c['next_ts'] ?? 0),'ready'=>$ready,'fam'=>$fam,'fam_url'=>$famUrl) + $upd);
 }
 
 // latest published app build, from the git-deployed manifest (downloads/pcm/version.json).
@@ -121,6 +124,30 @@ if ($action === 'ready') {
         }
     }
     out(array('ok'=>true,'sent'=>$sent));
+}
+
+// Family View: with the customer's explicit in-app consent, create (or replace) a share
+// token so someone they trust can see a read-only health glance at /family/?c=TOKEN.
+// Minimal by design - the page shows health basics only. famstop revokes instantly.
+if ($action === 'famshare') {
+    if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>false,'error'=>'unknown_key'));
+    $fname = trim(mb_substr((string)preg_replace('/[^\p{L}\p{N} \'\-\.]/u','', (string)($in['fname']??'')),0,30));
+    if ($fname === '') out(array('ok'=>false,'error'=>'no_name'));
+    $fsms = substr(preg_replace('/[^0-9+]/','', (string)($in['fsms']??'')),0,16);
+    // a wrong number would text a stranger - insist it at least looks like a UK mobile
+    if ($fsms !== '' && !preg_match('/^(07[0-9]{9}|\+?447[0-9]{9})$/', $fsms)) out(array('ok'=>false,'error'=>'bad_mobile'));
+    // re-sharing updates name/mobile but KEEPS the existing link working (so a customer can
+    // change details - or clear the mobile to stop the texts - without breaking the share)
+    $tok = isset($db['customers'][$key]['family']['token']) ? $db['customers'][$key]['family']['token'] : bin2hex(random_bytes(12));
+    $db['customers'][$key]['family'] = array('token'=>$tok,'name'=>$fname,'sms'=>$fsms,'created'=>gmdate('Y-m-d'));
+    save($DATA,$db);
+    out(array('ok'=>true,'url'=>'https://365techies.co.uk/family/?c='.$tok,'name'=>$fname));
+}
+if ($action === 'famstop') {
+    if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>false,'error'=>'unknown_key'));
+    unset($db['customers'][$key]['family']);
+    save($DATA,$db);
+    out(array('ok'=>true));
 }
 
 // Verified-Call Shield: the app polls this every minute (registered machines only).

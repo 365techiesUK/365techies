@@ -96,6 +96,9 @@ if (($_POST['do'] ?? '') === 'readyask') {
 if (($_POST['do'] ?? '') === 'readyclear') {
     $k=$_POST['key']??''; if (isset($db['customers'][$k])) { unset($db['customers'][$k]['ready_ask']); unset($db['customers'][$k]['ready_confirm']); save($DATA,$db); $msg="Cleared."; }
 }
+if (($_POST['do'] ?? '') === 'famstop') {
+    $k=$_POST['key']??''; if (isset($db['customers'][$k])) { unset($db['customers'][$k]['family']); save($DATA,$db); $msg="Family view revoked for {$db['customers'][$k]['name']}."; }
+}
 // Verified-Call Shield: about to ring this customer? Generate a one-off code their app
 // shows them within a minute - "the caller will say code NNNN". Valid 15 minutes.
 if (($_POST['do'] ?? '') === 'shield') {
@@ -252,6 +255,10 @@ th{color:#9fb5d3;font-weight:600;font-size:.75rem;text-transform:uppercase;lette
       <span class="pill free" title="asked <?=h($c['ready_ask'])?>">…awaiting</span>
     <?php else: ?>
       <form method=post class=inline><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=readyask><input type=hidden name=key value="<?=h($key)?>"><button class=ghost title="Ask their app to confirm the PC is on and ready to connect">📶 ready?</button></form>
+    <?php endif; ?>
+    <?php if (!empty($c['family']['name'])): ?>
+      <span class="pill free" title="family view active since <?=h($c['family']['created']??'')?>">👪 <?=h($c['family']['name'])?></span>
+      <form method=post class=inline onsubmit="return confirm('Revoke family view? Their share link stops working immediately.')"><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=famstop><input type=hidden name=key value="<?=h($key)?>"><button class=ghost>revoke</button></form>
     <?php endif; ?>
     <?php $shOn = intval($c['shield_ts']??0) > 0 && (time()-intval($c['shield_ts']??0)) < 900; ?>
     <form method=post class=inline><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=shield><input type=hidden name=key value="<?=h($key)?>"><button class=ghost title="About to ring them? Their app will say to expect a caller with this code - proves it's really us"><?= $shOn ? '📞 code '.h($c['shield_code']??'') : '📞 verify call' ?></button></form>
