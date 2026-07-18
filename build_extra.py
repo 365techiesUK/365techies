@@ -405,7 +405,7 @@ def pcm_landing():
       '''    <section class="section" aria-label="365 PC Manager in daily life" style="padding-top:0">
       <div class="wrap">
         <figure style="margin:0" data-reveal>
-          <img src="/images/pcm-hero-coffee2.jpg" alt="A woman using her laptop in a cosy coffee shop with 365 PC Manager on the screen and a flat white beside it - the on-screen app is a real screenshot" loading="eager" decoding="async" style="width:100%;border-radius:18px;box-shadow:0 24px 60px rgba(0,0,0,.45);display:block" />
+          <img src="/images/pcm-hero-business.jpg" alt="A shop owner smiling at her laptop showing the 365 PC Manager booking screen, with a card reader and cup of tea on the counter - the on-screen app is a real screenshot" loading="eager" decoding="async" style="width:100%;border-radius:18px;box-shadow:0 24px 60px rgba(0,0,0,.45);display:block" />
         </figure>
       </div>
     </section>''',
