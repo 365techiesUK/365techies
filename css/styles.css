@@ -1409,6 +1409,19 @@ body.menu-open { overflow: hidden; }
 .nav-book svg { width: 15px; height: 15px; flex: none; }
 @media (max-width: 767px) { .nav-book { display: none; } }
 
+/* header "Sign in" (customer portal) - quiet ghost pill; hidden on mid/narrow widths so
+   the SOS button never gets squeezed (the mobile menu carries the link instead) */
+.nav-signin {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.55rem 0.95rem; border-radius: 999px;
+  border: 1px solid var(--line); color: #c4d6ee;
+  font-weight: 600; font-size: 0.85rem; white-space: nowrap;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+.nav-signin svg { width: 15px; height: 15px; flex: none; }
+.nav-signin:hover { border-color: var(--cyan); color: #fff; }
+@media (max-width: 1199px) { .nav-signin { display: none; } }
+
 /* partner / credential badges */
 .partner-badges { display: flex; flex-wrap: wrap; gap: 0.6rem; }
 .partner-badge {
