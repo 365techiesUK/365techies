@@ -929,8 +929,10 @@ if ($action === 'staffclients') {
     out(array('ok' => true, 'clients' => $list));
 }
 
-// staff: book a new job on a customer's behalf (the phone-call flow). Same real-time
-// SimplyBook 'book' call the customer path uses; clientData matches/creates the client.
+// staff: book a new job on a customer's behalf (the phone-call flow). Uses the ADMIN
+// book method with a real client id - immune to the public API's "email/phone may be
+// mandatory" company config. Existing clients come with their id from the search;
+// new customers get a silent addClient (which dedupes) first.
 if ($action === 'staffbook') {
     if (!$HAS_ADMIN) fail('not_configured');
     need_staff();
@@ -940,20 +942,36 @@ if ($action === 'staffbook') {
     if ($eventId <= 0 || $date === '' || $time === '') fail('bad_request');
     if (strlen($time) === 5) $time .= ':00';
     if (strtotime($date . ' ' . $time) === false) fail('bad_request');
+    $cid = (int)(isset($in['cid']) ? $in['cid'] : 0);
     $cn = trim(substr((string)(isset($in['name']) ? $in['name'] : ''), 0, 60));
     $cp = trim(substr((string)(isset($in['phone']) ? $in['phone'] : ''), 0, 20));
     $ce = strtolower(trim(substr((string)(isset($in['email']) ? $in['email'] : ''), 0, 120)));
-    if ($cn === '') fail('no_name');
+    if ($cid <= 0 && $cn === '') fail('no_name');
     if ($ce !== '' && !filter_var($ce, FILTER_VALIDATE_EMAIL)) fail('bad_email');
+    if ($cid <= 0) {
+        $cdArr = array('name' => $cn);
+        if ($ce !== '') $cdArr['email'] = $ce;
+        if ($cp !== '') $cdArr['phone'] = $cp;
+        $ac = sb_adm('addClient', array($cdArr, false));
+        if (sb_net($ac) || empty($ac['result'])) fail('sb_unavailable');
+        $cid = (int)$ac['result'];
+    }
+    if ($cid <= 0) fail('booking_failed');
     $au = sb_pub('getAvailableUnits', array($eventId, $date . ' ' . $time, 1));
     if (sb_net($au)) fail('sb_unavailable');
     $unitIds = isset($au['result']) && is_array($au['result']) ? array_values($au['result']) : array();
     if (!count($unitIds)) fail('slot_taken');
-    $clientData = array('name' => $cn, 'email' => $ce, 'phone' => $cp);
-    $r = sb_pub('book', array($eventId, (int)$unitIds[0], $date, $time, $clientData, array(), 1));
+    $startTs = strtotime($date . ' ' . $time);
+    $endTs = $startTs + sb_mins_for($eventId) * 60;
+    $r = sb_adm('book', array($eventId, (int)$unitIds[0], $cid, $date, $time,
+        date('Y-m-d', $endTs), date('H:i:s', $endTs), 0, array(), 1));
     if (sb_net($r)) fail('sb_unavailable');
     $b = isset($r['result']) && is_array($r['result']) ? $r['result'] : null;
-    if (!$b) fail('booking_failed');
+    if (!$b) {
+        // surface SimplyBook's actual complaint so failures are diagnosable, not mute
+        $msg = isset($r['error']['message']) ? substr(preg_replace('/[^\x20-\x7E]/', '', (string)$r['error']['message']), 0, 140) : '';
+        out(array('ok' => false, 'error' => 'booking_failed', 'sberr' => $msg));
+    }
     $bid = 0;
     if (isset($b['bookings'][0]['id'])) $bid = (int)$b['bookings'][0]['id'];
     elseif (isset($b['id'])) $bid = (int)$b['id'];
@@ -1002,7 +1020,8 @@ if ($action === 'agenda') {
             $sid3 = intval($b['status_id']);
             if (isset($stMap[$sid3])) $st = $stMap[$sid3];
         }
-        if ($st === '' && (!empty($b['is_confirm']) || !empty($b['is_confirmed']))) $st = 'confirmed';
+        // NB: SB's is_confirm/is_confirmed just means "not cancelled/awaiting approval" -
+        // it is NOT the Status-feature "Confirmed" and must never mark rows confirmed here.
         $list[] = array('id' => $bid,
                         'when' => $ts ? date('D j M g:ia', $ts) : trim($start),
                         'd' => $ts ? date('Y-m-d', $ts) : '',           // structured, for the day view

@@ -16180,7 +16180,7 @@ def write_portal_page():
   function toggleWiz() {
     var w = document.getElementById('nbwiz'); if (!w) return;
     if (w.style.display !== 'none') { w.style.display = 'none'; return; }
-    NB = { cname: '', cphone: '', cemail: '', svc: 0, svcName: '', date: '', time: '' };
+    NB = { cid: 0, cname: '', cphone: '', cemail: '', svc: 0, svcName: '', date: '', time: '' };
     w.style.display = 'block';
     wizWho();
   }
@@ -16204,7 +16204,7 @@ def write_portal_page():
           d.clients.forEach(function (c) {
             var b2 = document.createElement('button');
             b2.innerHTML = '<strong>' + esc(c.name) + '</strong>' + (c.phone ? ' \u00b7 ' + esc(c.phone) : '') + (c.email ? ' <span class="quiet">' + esc(c.email) + '</span>' : '');
-            b2.onclick = function () { NB.cname = c.name; NB.cphone = c.phone; NB.cemail = c.email; wizWhat(); };
+            b2.onclick = function () { NB.cid = c.id; NB.cname = c.name; NB.cphone = c.phone; NB.cemail = c.email; wizWhat(); };
             res.appendChild(b2);
           });
           res.style.display = 'block';
@@ -16226,7 +16226,7 @@ def write_portal_page():
     document.getElementById('nbgo2').onclick = function () {
       var n = document.getElementById('nbn').value.trim();
       if (n.length < 2) { document.getElementById('nberr1').textContent = 'Name first, please.'; return; }
-      NB.cname = n; NB.cphone = document.getElementById('nbp').value.trim(); NB.cemail = document.getElementById('nbe').value.trim();
+      NB.cid = 0; NB.cname = n; NB.cphone = document.getElementById('nbp').value.trim(); NB.cemail = document.getElementById('nbe').value.trim();
       wizWhat();
     };
     document.getElementById('nbb1').onclick = function () { wizWho(); };
@@ -16291,7 +16291,7 @@ def write_portal_page():
       + ' <span class="err" id="nberr" style="display:inline"></span></div>';
     document.getElementById('nbgo').onclick = function () {
       var b2 = this; b2.disabled = true; document.getElementById('nberr').textContent = '';
-      post(BK, { action: 'staffbook', stoken: S.stoken, machine: mid(), eventId: NB.svc, date: NB.date, time: NB.time, name: NB.cname, phone: NB.cphone, email: NB.cemail })
+      post(BK, { action: 'staffbook', stoken: S.stoken, machine: mid(), eventId: NB.svc, date: NB.date, time: NB.time, cid: NB.cid, name: NB.cname, phone: NB.cphone, email: NB.cemail })
         .then(function (r) {
           if (r && r.ok) {
             var w = document.getElementById('nbwiz');
@@ -16300,7 +16300,7 @@ def write_portal_page():
             setTimeout(function () { var w2 = document.getElementById('nbwiz'); if (w2) w2.style.display = 'none'; }, 3500);
           } else {
             b2.disabled = false;
-            document.getElementById('nberr').textContent = r && r.error === 'slot_taken' ? 'That slot just went - pick another.' : (r && r.error === 'bad_email' ? 'That email looks wrong.' : 'Couldn\u2019t book it - try again.');
+            document.getElementById('nberr').textContent = r && r.error === 'slot_taken' ? 'That slot just went - pick another.' : (r && r.error === 'bad_email' ? 'That email looks wrong.' : ('Couldn\u2019t book it' + (r && r.sberr ? ' - SimplyBook says: ' + r.sberr : ' - try again.')));
           }
         })
         .catch(function () { b2.disabled = false; document.getElementById('nberr').textContent = 'Couldn\u2019t reach the server.'; });
