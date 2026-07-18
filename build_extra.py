@@ -15662,7 +15662,8 @@ def write_portal_page():
       + '<label>Password</label><input id="pw" type="password" autocomplete="current-password" />'
       + '<label style="display:flex;align-items:center;gap:.45rem;margin-top:.45rem;cursor:pointer;color:var(--mut);font-size:.85rem"><input type="checkbox" id="pwv" style="width:auto" /> Show password</label>'
       + '<button id="go">Sign in</button><div class="err" id="serr">' + (msg || '') + '</div>'
-      + '<p class="quiet">Forgotten your password? <a href="#" id="codein">Email me a sign-in code instead</a> \\u2014 nothing to remember. Or ring us: 01202 775566.</p></div>'
+      + '<p class="quiet">Forgotten your password? <a href="#" id="codein">Email me a sign-in code instead</a> \\u2014 nothing to remember.<br />'
+      + '<a href="#" id="havecode">Already got a code? Type it here</a> \\u00b7 Stuck? Ring 01202 775566.</p></div>'
       + '<div class="card"><h2>New here? Join 365 free</h2>'
       + '<p class="quiet">We\\u2019ll email you a 6-digit code to type in - that\\u2019s it. (We never email sign-in links, only codes.)</p>'
       + '<label>Your first name</label><input id="jn" autocomplete="given-name" />'
@@ -15695,8 +15696,15 @@ def write_portal_page():
       post('/api/pcm-booking.php', { action: 'join', email: ce, machine: mid() })
         .then(function (d) {
           if (d && d.ok) showCode('', ce, d.sms, d.mail, d.slack);
+          else if (d && d.error === 'throttled' && d.have_code) showCode('', ce, false, true, false, true);
           else document.getElementById('serr').textContent = d && d.error === 'throttled' ? 'Too many codes requested - wait a while, or ring us: 01202 775566.' : 'Couldn\\u2019t send a code just now - try again or ring 01202 775566.';
         }).catch(function () { document.getElementById('serr').textContent = 'Couldn\\u2019t reach the server - try again.'; });
+      return false;
+    };
+    document.getElementById('havecode').onclick = function () {
+      var ce = document.getElementById('em').value.trim();
+      if (!ce) { document.getElementById('serr').textContent = 'Pop your email in above first, then tap the code link.'; return false; }
+      showCode('', ce, false, true, false, true);
       return false;
     };
     var go = document.getElementById('go');
@@ -15720,13 +15728,16 @@ def write_portal_page():
     document.getElementById('pw').addEventListener('keydown', function (e) { if (e.key === 'Enter') doIt(); });
   }
   // code-entry step of the join flow
-  function showCode(jn, je, viaSms, viaMail, viaSlack) {
+  function showCode(jn, je, viaSms, viaMail, viaSlack, existing) {
     var sentTo = viaMail && viaSms ? ('<strong>' + esc(je) + '</strong> and your mobile')
                : viaSms ? 'your mobile by text'
                : ('<strong>' + esc(je) + '</strong>');
     if (viaSlack) sentTo += ' (and the 365 Slack)';
+    var lede = existing
+      ? 'Type the most recent code we sent to <strong>' + esc(je) + '</strong> - the newest one is the one that works (codes last 30 minutes). Check your junk folder too.'
+      : 'We\\u2019ve sent a 6-digit code to ' + sentTo + '. Type it below - it works for 30 minutes.' + (viaMail ? ' Can\\u2019t see it? Check your junk folder.' : '');
     el.innerHTML = '<h1>Type your code</h1>'
-      + '<p class="lede">We\\u2019ve sent a 6-digit code to ' + sentTo + '. Type it below - it works for 30 minutes.' + (viaMail ? ' Can\\u2019t see it? Check your junk folder.' : '') + '</p>'
+      + '<p class="lede">' + lede + '</p>'
       + '<div class="card"><label>Your 6-digit code</label>'
       + '<input id="cd" inputmode="numeric" autocomplete="one-time-code" style="font-size:1.6rem;letter-spacing:.4em;text-align:center;font-family:Consolas,monospace" />'
       + '<button id="cgo">Sign me in</button><div class="err" id="cerr"></div>'

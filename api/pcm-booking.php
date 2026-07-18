@@ -316,11 +316,17 @@ if ($action === 'join') {
     $allowSt = (isset($SB_STAFF) && is_array($SB_STAFF)) ? array_map('trim', array_map('strtolower', $SB_STAFF)) : array();
     if (in_array($email, $allowSt, true)) $mobile = '';
     // throttle: max 4 codes per email per hour + the shared per-ip/email attempt throttle
+    // throttled? If a still-valid code already exists for this email, say so - the page
+    // then goes straight to the code box instead of dead-ending ("type the one we sent you")
+    $have_code = false;
+    $jcPeek = cache_load($JOINCODES);
+    if (isset($jcPeek[sha1($email)]['ts']) && $jcPeek[sha1($email)]['ts'] > time() - 1800
+        && (isset($jcPeek[sha1($email)]['tries']) ? $jcPeek[sha1($email)]['tries'] : 0) < 6) $have_code = true;
     $tkey = sha1('join|' . (isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '') . '|' . $email);
     $tlk = @fopen($THROTTLE . '.lock', 'c'); if ($tlk) @flock($tlk, LOCK_EX);
     $th = cache_load($THROTTLE);
     foreach ($th as $k2 => $v2) if ((isset($v2['ts']) ? $v2['ts'] : 0) < time() - 3600) unset($th[$k2]);
-    if (isset($th[$tkey]) && (isset($th[$tkey]['n']) ? $th[$tkey]['n'] : 0) >= 4) { cache_save($THROTTLE, $th); if ($tlk) { @flock($tlk, LOCK_UN); @fclose($tlk); } fail('throttled'); }
+    if (isset($th[$tkey]) && (isset($th[$tkey]['n']) ? $th[$tkey]['n'] : 0) >= 6) { cache_save($THROTTLE, $th); if ($tlk) { @flock($tlk, LOCK_UN); @fclose($tlk); } out(array('ok' => false, 'error' => 'throttled', 'have_code' => $have_code)); }
     $th[$tkey] = array('n' => (isset($th[$tkey]['n']) ? $th[$tkey]['n'] : 0) + 1, 'ts' => time());
     cache_save($THROTTLE, $th); if ($tlk) { @flock($tlk, LOCK_UN); @fclose($tlk); }
 
@@ -333,7 +339,7 @@ if ($action === 'join') {
     $ek0 = sha1($email);
     $sent24 = isset($jc[$ek0]['sent']) && is_array($jc[$ek0]['sent']) ? $jc[$ek0]['sent'] : array();
     $sent24 = array_values(array_filter($sent24, function($t){ return $t > time() - 86400; }));
-    if (count($sent24) >= 8) { if ($jlk) { @flock($jlk, LOCK_UN); @fclose($jlk); } fail('throttled'); }
+    if (count($sent24) >= 12) { if ($jlk) { @flock($jlk, LOCK_UN); @fclose($jlk); } out(array('ok' => false, 'error' => 'throttled', 'have_code' => $have_code)); }
     $sent24[] = time();
     if ($mobile !== '') {
         $mk = 'm' . sha1(preg_replace('/[^0-9]/','',$mobile));
