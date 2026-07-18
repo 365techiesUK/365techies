@@ -34,8 +34,7 @@
   <title>Customer portal | 365 Techies</title>
   <meta name="description" content="Sign in to the 365 Techies customer portal - your plan, your computers' health, your visits." />
   <link rel="canonical" href="https://365techies.co.uk/portal/" />
-  <meta name="robots" content="noindex, nofollow" />
-  <meta name="referrer" content="no-referrer" />
+  <meta name="robots" content="noindex, nofollow" />\n  <meta name="referrer" content="no-referrer" />
   <meta name="author" content="365 Techies Limited" />
   <meta name="geo.region" content="GB-BCP" />
   <meta name="geo.placename" content="Bournemouth, Dorset" />
@@ -1105,10 +1104,7 @@
     });
     document.addEventListener('click', closeAll);
     function doCancel(b, btn) {
-      if (!confirm('Cancel this booking?
-
-' + b.when + '
-' + b.who + ' - ' + b.what)) return;
+      if (!confirm('Cancel this booking?\n\n' + b.when + '\n' + b.who + ' - ' + b.what)) return;
       btn.disabled = true;
       post(BK, { action: 'staffcancel', stoken: S.stoken, machine: mid(), id: b.id })
         .then(function (r) { if (r && r.ok) { AG60 = null; loadDiary(); } else { btn.disabled = false; alert('Couldn’t cancel - try again.'); } })

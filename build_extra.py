@@ -16077,7 +16077,7 @@ def write_portal_page():
     });
     document.addEventListener('click', closeAll);
     function doCancel(b, btn) {
-      if (!confirm('Cancel this booking?\n\n' + b.when + '\n' + b.who + ' - ' + b.what)) return;
+      if (!confirm('Cancel this booking?\\n\\n' + b.when + '\\n' + b.who + ' - ' + b.what)) return;
       btn.disabled = true;
       post(BK, { action: 'staffcancel', stoken: S.stoken, machine: mid(), id: b.id })
         .then(function (r) { if (r && r.ok) { AG60 = null; loadDiary(); } else { btn.disabled = false; alert('Couldn\u2019t cancel - try again.'); } })
@@ -16393,7 +16393,7 @@ def write_portal_page():
                    "Sign in to the 365 Techies customer portal - your plan, your computers' health, your visits.",
                    "365 Techies customer portal", schema, content)
     html = html.replace('<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />',
-                        '<meta name="robots" content="noindex, nofollow" />\n  <meta name="referrer" content="no-referrer" />', 1)
+                        '<meta name="robots" content="noindex, nofollow" />\\n  <meta name="referrer" content="no-referrer" />', 1)
     import os as _os
     d = _os.path.join(bp.BASE, "portal")
     _os.makedirs(d, exist_ok=True)
