@@ -643,6 +643,13 @@
   #p365app .ftabs button.on { background:var(--pcyan); border-color:var(--pcyan); color:#fff; }
   #p365app .chip.b { color:var(--pbad); border-color:rgba(232,99,126,.4); }
   #p365app .dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:.3rem; }
+  #p365app .amenu { position:relative; }
+  #p365app .adrop { display:none; position:absolute; right:0; top:calc(100% + 4px); background:var(--ppanel); border:1px solid var(--pline); border-radius:10px; min-width:172px; z-index:50; box-shadow:0 12px 30px rgba(0,0,0,.45); overflow:hidden; }
+  #p365app .adrop.open { display:block; animation:p365popIn .18s ease both; }
+  #p365app .adrop button { display:block; width:100%; text-align:left; background:transparent; border:0; border-radius:0; color:var(--pwhite); padding:.55rem .8rem; margin:0; font-size:.85rem; }
+  #p365app .adrop button:hover { background:rgba(29,151,227,.16); transform:none; }
+  #p365app .tphone { font-size:.95rem; font-weight:600; color:var(--psoft); }
+  #p365app .tline.confd { background:rgba(0,206,27,.05); border-radius:8px; padding-left:.4rem; padding-right:.4rem; }
   @keyframes p365fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:none; } }
   @keyframes p365popIn { from { opacity:0; transform:scale(.96); } to { opacity:1; transform:none; } }
   #p365app h1, #p365app .lede { animation:p365fadeUp .5s ease both; }
@@ -1004,65 +1011,95 @@
     });
   }
   function bookingRow(b, i, prefix) {
-    return '<div class="tline"><span class="ttime">' + fmtTime(b.tm) + '</span><div class="tblock">'
-      + '<strong>' + esc(b.who) + '</strong> \u00b7 ' + esc(b.what)
-      + (b.phone ? '<br /><a href="tel:' + esc(b.phone.replace(/\s/g, '')) + '" class="quiet">' + esc(b.phone) + '</a>' : '')
+    return '<div class="tline' + (b.conf ? ' confd' : '') + '"><span class="ttime">' + fmtTime(b.tm) + '</span><div class="tblock">'
+      + '<strong>' + esc(b.who) + '</strong> · ' + esc(b.what)
+      + (b.conf ? ' <span class="chip g">✓ confirmed</span>' : '')
+      + '<br />' + (b.phone ? '<a href="tel:' + esc(b.phone.replace(/\s/g, '')) + '" class="tphone">\ud83d\udcde ' + esc(b.phone) + '</a>' : '<span class="quiet">no number on file - check SimplyBook</span>')
       + '</div>'
-      + '<button class="sm ghost mvb" data-id="' + b.id + '" data-p="' + prefix + i + '">Move</button>'
-      + '<button class="sm ghost cnb" data-id="' + b.id + '" style="color:var(--pbad)">Cancel</button></div>'
+      + '<div class="amenu"><button class="sm ghost ab2" data-p="' + prefix + i + '">⋯ Actions</button>'
+      + '<div class="adrop" id="ad' + prefix + i + '">'
+      + '<button data-act="confirm" data-id="' + b.id + '">' + (b.conf ? 'Un-confirm' : '✓ Confirm booking') + '</button>'
+      + '<button data-act="move" data-id="' + b.id + '" data-p="' + prefix + i + '">↔ Move…</button>'
+      + '<button data-act="cancel" data-id="' + b.id + '" style="color:var(--pbad)">✕ Cancel…</button>'
+      + '</div></div></div>'
       + '<div class="mvp" id="mvp' + prefix + i + '" style="display:none"></div>';
   }
   function bindBookingButtons(container, list) {
     var byId = {};
     list.forEach(function (b) { byId[b.id] = b; });
-    Array.prototype.forEach.call(container.querySelectorAll('.cnb'), function (btn) {
-      btn.onclick = function () {
-        var b = byId[parseInt(btn.getAttribute('data-id'), 10)]; if (!b) return;
-        if (!confirm('Cancel this booking?\n\n' + b.when + '\n' + b.who + ' - ' + b.what)) return;
-        btn.disabled = true;
-        post(BK, { action: 'staffcancel', stoken: S.stoken, machine: mid(), id: b.id })
-          .then(function (r) { if (r && r.ok) { AG60 = null; loadDiary(); } else { btn.disabled = false; alert('Couldn\u2019t cancel - try again.'); } })
-          .catch(function () { btn.disabled = false; alert('Couldn\u2019t reach the server.'); });
+    function closeAll() { Array.prototype.forEach.call(container.querySelectorAll('.adrop'), function (x) { x.classList.remove('open'); }); }
+    Array.prototype.forEach.call(container.querySelectorAll('.ab2'), function (btn) {
+      btn.onclick = function (ev) {
+        ev.stopPropagation();
+        var dropEl = document.getElementById('ad' + btn.getAttribute('data-p'));
+        var was = dropEl.classList.contains('open');
+        closeAll();
+        if (!was) dropEl.classList.add('open');
       };
     });
-    Array.prototype.forEach.call(container.querySelectorAll('.mvb'), function (btn) {
-      btn.onclick = function () {
+    document.addEventListener('click', closeAll);
+    function doCancel(b, btn) {
+      if (!confirm('Cancel this booking?
+
+' + b.when + '
+' + b.who + ' - ' + b.what)) return;
+      btn.disabled = true;
+      post(BK, { action: 'staffcancel', stoken: S.stoken, machine: mid(), id: b.id })
+        .then(function (r) { if (r && r.ok) { AG60 = null; loadDiary(); } else { btn.disabled = false; alert('Couldn’t cancel - try again.'); } })
+        .catch(function () { btn.disabled = false; alert('Couldn’t reach the server.'); });
+    }
+    function doConfirm(b, btn) {
+      btn.disabled = true;
+      post(BK, { action: 'staffconfirm', stoken: S.stoken, machine: mid(), id: b.id, on: !b.conf })
+        .then(function (r) { if (r && r.ok) { AG60 = null; loadDiary(); } else { btn.disabled = false; alert('Couldn’t update - try again.'); } })
+        .catch(function () { btn.disabled = false; alert('Couldn’t reach the server.'); });
+    }
+    function doMove(b, pid) {
+      var p = document.getElementById('mvp' + pid); if (!p) return;
+      if (p.style.display !== 'none') { p.style.display = 'none'; return; }
+      Array.prototype.forEach.call(container.querySelectorAll('.mvp'), function (x) { x.style.display = 'none'; });
+      p.style.display = 'block';
+      p.innerHTML = '<p class="quiet">Finding free slots…</p>';
+      var from = new Date(), to = new Date(Date.now() + 13 * 86400000);
+      post(BK, { action: 'slots', stoken: S.stoken, machine: mid(), eventId: b.eventId, from: iso(from), to: iso(to) })
+        .then(function (sr) {
+          if (!sr || !sr.ok || !sr.days || !sr.days.length) { p.innerHTML = '<p class="quiet">No free slots in the next two weeks - try SimplyBook admin for further out.</p>'; return; }
+          p.innerHTML = '<p class="quiet" style="margin:0 0 .3rem">Move <strong>' + esc(b.who) + '</strong> to:</p><div class="mdays"></div><div class="mtimes" style="margin-top:.3rem"></div>';
+          var daysEl = p.querySelector('.mdays'), timesEl = p.querySelector('.mtimes');
+          sr.days.forEach(function (day) {
+            var db2 = document.createElement('button'); db2.className = 'sm ghost dpill'; db2.textContent = day.n;
+            db2.onclick = function () {
+              timesEl.innerHTML = '';
+              day.t.forEach(function (t) {
+                var tb = document.createElement('button'); tb.className = 'sm tpill'; tb.textContent = t;
+                tb.onclick = function () {
+                  if (!confirm('Move ' + b.who + ' to ' + day.n + ' at ' + t + '?')) return;
+                  tb.disabled = true;
+                  post(BK, { action: 'staffmove', stoken: S.stoken, machine: mid(), id: b.id, eventId: b.eventId, date: day.d, time: t })
+                    .then(function (r) {
+                      if (r && r.ok) { AG60 = null; loadDiary(); }
+                      else { tb.disabled = false; alert(r && r.error === 'slot_taken' ? 'That slot just went - pick another.' : 'Couldn’t move it - try again.'); }
+                    })
+                    .catch(function () { tb.disabled = false; alert('Couldn’t reach the server.'); });
+                };
+                timesEl.appendChild(tb);
+              });
+            };
+            daysEl.appendChild(db2);
+          });
+          var first = daysEl.querySelector('button'); if (first) first.click();
+        })
+        .catch(function () { p.innerHTML = '<p class="quiet">Couldn’t load slots - try again.</p>'; });
+    }
+    Array.prototype.forEach.call(container.querySelectorAll('.adrop button'), function (btn) {
+      btn.onclick = function (ev) {
+        ev.stopPropagation();
+        closeAll();
         var b = byId[parseInt(btn.getAttribute('data-id'), 10)]; if (!b) return;
-        var p = document.getElementById('mvp' + btn.getAttribute('data-p')); if (!p) return;
-        if (p.style.display !== 'none') { p.style.display = 'none'; return; }
-        Array.prototype.forEach.call(container.querySelectorAll('.mvp'), function (x) { x.style.display = 'none'; });
-        p.style.display = 'block';
-        p.innerHTML = '<p class="quiet">Finding free slots\u2026</p>';
-        var from = new Date(), to = new Date(Date.now() + 13 * 86400000);
-        post(BK, { action: 'slots', stoken: S.stoken, machine: mid(), eventId: b.eventId, from: iso(from), to: iso(to) })
-          .then(function (sr) {
-            if (!sr || !sr.ok || !sr.days || !sr.days.length) { p.innerHTML = '<p class="quiet">No free slots in the next two weeks - try SimplyBook admin for further out.</p>'; return; }
-            p.innerHTML = '<p class="quiet" style="margin:0 0 .3rem">Move <strong>' + esc(b.who) + '</strong> to:</p><div class="mdays"></div><div class="mtimes" style="margin-top:.3rem"></div>';
-            var daysEl = p.querySelector('.mdays'), timesEl = p.querySelector('.mtimes');
-            sr.days.forEach(function (day) {
-              var db2 = document.createElement('button'); db2.className = 'sm ghost dpill'; db2.textContent = day.n;
-              db2.onclick = function () {
-                timesEl.innerHTML = '';
-                day.t.forEach(function (t) {
-                  var tb = document.createElement('button'); tb.className = 'sm tpill'; tb.textContent = t;
-                  tb.onclick = function () {
-                    if (!confirm('Move ' + b.who + ' to ' + day.n + ' at ' + t + '?')) return;
-                    tb.disabled = true;
-                    post(BK, { action: 'staffmove', stoken: S.stoken, machine: mid(), id: b.id, eventId: b.eventId, date: day.d, time: t })
-                      .then(function (r) {
-                        if (r && r.ok) { AG60 = null; loadDiary(); }
-                        else { tb.disabled = false; alert(r && r.error === 'slot_taken' ? 'That slot just went - pick another.' : 'Couldn\u2019t move it - try again.'); }
-                      })
-                      .catch(function () { tb.disabled = false; alert('Couldn\u2019t reach the server.'); });
-                  };
-                  timesEl.appendChild(tb);
-                });
-              };
-              daysEl.appendChild(db2);
-            });
-            var first = daysEl.querySelector('button'); if (first) first.click();
-          })
-          .catch(function () { p.innerHTML = '<p class="quiet">Couldn\u2019t load slots - try again.</p>'; });
+        var act = btn.getAttribute('data-act');
+        if (act === 'cancel') doCancel(b, btn);
+        else if (act === 'confirm') doConfirm(b, btn);
+        else if (act === 'move') doMove(b, btn.getAttribute('data-p'));
       };
     });
   }

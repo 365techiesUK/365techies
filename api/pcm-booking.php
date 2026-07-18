@@ -899,6 +899,8 @@ if ($action === 'agenda') {
         'date_from' => date('Y-m-d'), 'date_to' => date('Y-m-d', time() + 86400 * $spanDays), 'order' => 'date_start_asc')));
     if (sb_net($r)) fail('sb_unavailable');
     $rows = isset($r['result']) && is_array($r['result']) ? $r['result'] : array();
+    list($lkA, $dbA) = db_open(); db_close($lkA);
+    $bm = isset($dbA['bkmeta']) && is_array($dbA['bkmeta']) ? $dbA['bkmeta'] : array();
     $list = array();
     foreach ($rows as $b) {
         $start = parse_start($b);
@@ -906,17 +908,47 @@ if ($action === 'agenda') {
         if ($ts && $ts < time() - 3600) continue;
         $cname = (string)(isset($b['client']) ? $b['client'] : (isset($b['client_name']) ? $b['client_name'] : ''));
         if ($cname === '' && isset($b['client_id'])) $cname = 'client #' . $b['client_id'];
-        $list[] = array('id' => (int)(isset($b['id']) ? $b['id'] : 0),
+        // phone lives under different keys depending on the SB response shape
+        $ph = '';
+        foreach (array('client_phone', 'phone', 'client_mobile') as $pk) if (!empty($b[$pk])) { $ph = (string)$b[$pk]; break; }
+        if ($ph === '' && isset($b['client']) && is_array($b['client']) && !empty($b['client']['phone'])) $ph = (string)$b['client']['phone'];
+        $bid = (int)(isset($b['id']) ? $b['id'] : 0);
+        // confirmed = our staff marker OR SimplyBook's own flag when it sends one
+        $conf = !empty($bm[(string)$bid]['confirmed']) || !empty($b['is_confirm']) || !empty($b['is_confirmed']);
+        $list[] = array('id' => $bid,
                         'when' => $ts ? date('D j M g:ia', $ts) : trim($start),
                         'd' => $ts ? date('Y-m-d', $ts) : '',           // structured, for the day view
                         'tm' => $ts ? date('H:i', $ts) : '',
                         'who' => $cname,
-                        'phone' => (string)(isset($b['client_phone']) ? $b['client_phone'] : ''),
+                        'phone' => $ph,
+                        'conf' => $conf,
                         'what' => (string)(isset($b['event_name']) ? $b['event_name'] : (isset($b['event']) ? $b['event'] : 'Service')),
                         'eventId' => (int)(isset($b['event_id']) ? $b['event_id'] : 0));
         if (count($list) >= 120) break;
     }
     out(array('ok' => true, 'bookings' => $list));
+}
+
+// staff: mark a booking confirmed. We try SimplyBook's own confirm first (so their admin
+// shows it too, where the approve feature is on) and always keep our own marker so the
+// portal state never depends on which SimplyBook plan features are enabled.
+if ($action === 'staffconfirm') {
+    need_staff();
+    $bid = (int)(isset($in['id']) ? $in['id'] : 0);
+    $on = !empty($in['on']);
+    if ($bid <= 0) fail('bad_request');
+    $sb = false;
+    if ($on && $HAS_ADMIN) {
+        $r = sb_adm('confirmBooking', array($bid, true));
+        $sb = !sb_net($r) && !empty($r['result']);
+    }
+    list($lk, $db) = db_open();
+    if (!isset($db['bkmeta'])) $db['bkmeta'] = array();
+    foreach ($db['bkmeta'] as $k2 => $v2) if ((isset($v2['ts']) ? $v2['ts'] : 0) < time() - 86400 * 90) unset($db['bkmeta'][$k2]);
+    if ($on) $db['bkmeta'][(string)$bid] = array('confirmed' => 1, 'ts' => time(), 'sb' => $sb ? 1 : 0);
+    else unset($db['bkmeta'][(string)$bid]);
+    db_save($db); db_close($lk);
+    out(array('ok' => true, 'sb' => $sb, 'conf' => $on));
 }
 
 // staff: the live fleet - every machine running 365 PC Manager, flattened, with the raw
