@@ -64,7 +64,8 @@ if ($action === 'activate') {
 }
 
 if ($action === 'checkin') {
-    if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>true,'tier'=>'free')); // key gone => downgrade
+    $upd = pcm_update_info();   // latest app build (ver/url/sha) - sent to every check-in, keyed or not
+    if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>true,'tier'=>'free') + $upd); // key gone => downgrade
     $c =& $db['customers'][$key];
     $tier = ($c['tier'] ?? 'free');
     if ($machine !== '') {
@@ -73,7 +74,8 @@ if ($action === 'checkin') {
             'name'=>substr((string)($in['name']??($c['machines'][$machine]['name']??'')),0,60),
             'score'=>intval($in['score']??0), 'verdict'=>substr((string)($in['verdict']??''),0,24), 'seen'=>$now,
             'av'=>substr((string)($in['av']??''),0,8), 'backup'=>!empty($in['backup']),
-            'diskpct'=>intval($in['diskpct']??0), 'w10'=>!empty($in['w10']), 'reboot'=>!empty($in['reboot'])));
+            'diskpct'=>intval($in['diskpct']??0), 'w10'=>!empty($in['w10']), 'reboot'=>!empty($in['reboot']),
+            'ver'=>intval($in['ver']??0)));
         // reminder preferences (for the SMS cron): minutes-before + wants-sms
         if (isset($in['remind_min'])) $c['remind_min'] = max(5, min(2880, intval($in['remind_min'])));
         if (isset($in['remind_sms'])) $c['remind_sms'] = !empty($in['remind_sms']);
@@ -81,7 +83,17 @@ if ($action === 'checkin') {
     }
     // ready = the owner has asked this customer to confirm their PC is on and ready to connect
     $ready = (!empty($c['ready_ask']) && empty($c['ready_confirm'])) ? $c['ready_ask'] : '';
-    out(array('ok'=>true,'tier'=>$tier,'next'=>$c['next'] ?? '','next_ts'=>intval($c['next_ts'] ?? 0),'ready'=>$ready));
+    out(array('ok'=>true,'tier'=>$tier,'next'=>$c['next'] ?? '','next_ts'=>intval($c['next_ts'] ?? 0),'ready'=>$ready) + $upd);
+}
+
+// latest published app build, from the git-deployed manifest (downloads/pcm/version.json).
+// Absent/unreadable manifest = no update offered - the app treats missing fields as "up to date".
+function pcm_update_info() {
+    $f = __DIR__ . '/../downloads/pcm/version.json';
+    if (!is_readable($f)) return array();
+    $j = json_decode((string)@file_get_contents($f), true);
+    if (!is_array($j) || empty($j['ver']) || empty($j['url']) || empty($j['sha256'])) return array();
+    return array('upd_ver'=>intval($j['ver']), 'upd_url'=>(string)$j['url'], 'upd_sha'=>(string)$j['sha256']);
 }
 
 if ($action === 'ready') {

@@ -213,9 +213,12 @@ th{color:#9fb5d3;font-weight:600;font-size:.75rem;text-transform:uppercase;lette
   </td>
   <td>
     <?php $ms=$c['machines']??array(); if(!$ms) echo '<span class=mach>none activated yet</span>';
+      $latestVer=0; $vj=@json_decode((string)@file_get_contents(__DIR__.'/../downloads/pcm/version.json'),true); if(is_array($vj)) $latestVer=intval($vj['ver']??0);
       foreach($ms as $id=>$m){ $sc=intval($m['score']??0); $col=$sc>=80?'#39d353':($sc>=55?'#e0b341':'#e8637e');
         $seen=$m['seen']??''; $fresh=substr($seen,0,10)===$today;
-        echo '<div class=mach><span class=dot style="background:'.$col.'"></span><strong style="color:#eef">'.h($m['name']?:$id).'</strong> — '.$sc.'% '.h($m['verdict']??'').' <span style="opacity:.6">· seen '.h($seen).($fresh?' ✓':'').(!empty($m['help'])?' · 🆘 '.h($m['help']):'').'</span></div>';
+        $mv=intval($m['ver']??0);
+        $vchip = $mv>0 ? ' · <span style="opacity:.75;color:'.(($latestVer>0&&$mv<$latestVer)?'#e0b341':'#8fa3bd').'">app v'.$mv.(($latestVer>0&&$mv<$latestVer)?' (v'.$latestVer.' out - updates itself)':'').'</span>' : '';
+        echo '<div class=mach><span class=dot style="background:'.$col.'"></span><strong style="color:#eef">'.h($m['name']?:$id).'</strong> — '.$sc.'% '.h($m['verdict']??'').' <span style="opacity:.6">· seen '.h($seen).($fresh?' ✓':'').(!empty($m['help'])?' · 🆘 '.h($m['help']):'').'</span>'.$vchip.'</div>';
       } ?>
   </td>
   <td style="white-space:nowrap">
