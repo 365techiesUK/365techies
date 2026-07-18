@@ -16131,11 +16131,13 @@ def write_portal_page():
               var tb = document.createElement('button'); tb.className = 'sm tpill'; tb.textContent = t;
               tb.onclick = function () {
                 var cEl = document.getElementById('cbconf'); if (!cEl) return;
-                cEl.innerHTML = '<div class="nbsum"><strong>' + esc(CB.svcName) + '</strong> \\u00b7 <strong>' + esc(day.n) + ' at ' + esc(t) + '</strong><br />'
+                cEl.innerHTML = '<div class="nbsum"><strong>' + esc(CB.svcName) + '</strong> \\u00b7 <strong>' + esc(day.n) + ' at ' + esc(t) + '</strong>'
+                  + '<div style="margin:.45rem 0 .1rem"><input id="cbphone" type="tel" inputmode="tel" autocomplete="tel" placeholder="Your mobile - so we can reach you" style="width:100%;max-width:300px;padding:.5rem .6rem;border-radius:9px;border:1px solid var(--pline);background:var(--pink);color:var(--pwhite);font-size:1rem" /></div>'
                   + '<button class="sm" id="cbgo" style="background:var(--pgood);color:#06220b;font-weight:800">\\u2713 Book it</button> <span class="err" id="cberr" style="display:inline"></span></div>';
                 document.getElementById('cbgo').onclick = function () {
                   var gb = this; gb.disabled = true; document.getElementById('cberr').textContent = '';
-                  post(BK, { action: 'book', wtoken: S.wtoken, machine: mid(), eventId: CB.svc, date: day.d, time: t })
+                  var cbp = document.getElementById('cbphone');
+                  post(BK, { action: 'book', wtoken: S.wtoken, machine: mid(), eventId: CB.svc, date: day.d, time: t, phone: (cbp ? cbp.value.trim() : '') })
                     .then(function (r) {
                       if (r && r.ok) {
                         var w2 = document.getElementById('cbwiz');
@@ -16146,7 +16148,7 @@ def write_portal_page():
                         document.getElementById('cberr').textContent =
                             r && r.error === 'slot_taken' ? 'That time just went - pick another.'
                           : r && r.error === 'needsignin' ? 'No email on file for this account - ring 01202 775566 and we\\u2019ll add it.'
-                          : r && r.error === 'no_client' ? ('Couldn\\u2019t match this to a booking account' + (r.why ? ' [' + r.why + ']' : '') + ' - ring 01202 775566.')
+                          : r && r.error === 'no_client' ? (r.needphone ? 'Pop your mobile number in above so we can set up your booking.' : ('Couldn\\u2019t match this to a booking account' + (r.why ? ' [' + r.why + ']' : '') + ' - ring 01202 775566.'))
                           : r && r.error === 'sb_unavailable' ? 'The booking system didn\\u2019t answer - try again in a minute.'
                           : ('Couldn\\u2019t book it' + (r && r.sberr ? ' - ' + r.sberr : (r && r.error ? ' (' + r.error + ')' : '')) + ' - try again or ring 01202 775566.');
                       }

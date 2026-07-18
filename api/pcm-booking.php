@@ -884,8 +884,20 @@ if ($action === 'book') {
     // Book via the ADMIN method with a real client id. The public API rejects unauthenticated
     // bookings ("Client authorization required") under this company's config, so we resolve or
     // create the customer's own SimplyBook client and book on their behalf - same as staffbook.
+    // SimplyBook may require a phone to create a booking account. Use the number the customer typed
+    // at booking if we don't already have one on file, and remember it on the record for next time.
+    $reqPhone = isset($in['phone']) ? trim(preg_replace('/[^0-9+ ]/', '', (string)$in['phone'])) : '';
+    if ($snap['phone'] === '' && $reqPhone !== '') {
+        $snap['phone'] = $reqPhone;
+        list($lkp, $dbp) = db_open();
+        if (isset($dbp['customers'][$key]) && empty($dbp['customers'][$key]['phone']) && empty($dbp['customers'][$key]['sb_phone'])) { $dbp['customers'][$key]['phone'] = $reqPhone; db_save($dbp); }
+        db_close($lkp);
+    }
     $cid = ensure_client_id($key, $snap);
-    if ($cid <= 0) out(array('ok' => false, 'error' => 'no_client', 'why' => (isset($GLOBALS['nc_why']) ? $GLOBALS['nc_why'] : '')));
+    if ($cid <= 0) {
+        $why = isset($GLOBALS['nc_why']) ? $GLOBALS['nc_why'] : '';
+        out(array('ok' => false, 'error' => 'no_client', 'why' => $why, 'needphone' => (strpos($why, 'create_failed') === 0 && $snap['phone'] === '')));
+    }
     $au = sb_pub('getAvailableUnits', array($eventId, $date . ' ' . $time, 1));
     if (sb_net($au)) fail('sb_unavailable');
     $unitIds = isset($au['result']) && is_array($au['result']) ? array_values($au['result']) : array();
