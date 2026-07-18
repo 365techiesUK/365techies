@@ -579,12 +579,13 @@ if ($action === 'verifycode') {
         $jcS = cache_load($JOINCODES); unset($jcS[$ek]); cache_save($JOINCODES, $jcS);   // burn now - no SB dependency
         if ($jlkS) { @flock($jlkS, LOCK_UN); @fclose($jlkS); }
         $stoken = bin2hex(random_bytes(24));
+        $trustS = empty($in['shared']);   // trusted own device -> long session; "shared computer" -> 12h
         list($lkS, $dbS) = db_open();
         if (!isset($dbS['staff'])) $dbS['staff'] = array();
-        foreach ($dbS['staff'] as $sk => $sv) if ((isset($sv['ts']) ? $sv['ts'] : 0) < time() - 43200) unset($dbS['staff'][$sk]);
-        $dbS['staff'][$stoken] = array('login' => $email, 'ts' => time(), 'iat' => time(), 'machine' => $machine);
+        foreach ($dbS['staff'] as $sk => $sv) if ((isset($sv['ts']) ? $sv['ts'] : 0) < time() - (empty($sv['trust']) ? 43200 : 7776000)) unset($dbS['staff'][$sk]);
+        $dbS['staff'][$stoken] = array('login' => $email, 'ts' => time(), 'iat' => time(), 'machine' => $machine, 'trust' => $trustS);
         db_save($dbS); db_close($lkS);
-        out(array('ok' => true, 'staff' => true, 'stoken' => $stoken, 'customer' => $email));
+        out(array('ok' => true, 'staff' => true, 'stoken' => $stoken, 'customer' => $email, 'trust' => $trustS));
     }
 
     // inbox ownership PROVEN. Find or silently create the SimplyBook client.
@@ -712,15 +713,16 @@ if ($action === 'signin') {
         }
         if ($authed) {
             unset($th[$tkey]); cache_save($THROTTLE, $th); db_close($tlk);
-            // our own short-lived staff session token (SimplyBook password never stored),
-            // bound to this machine, 12h sliding + 12h absolute cap.
+            // our own staff session token (SimplyBook password never stored), bound to this machine.
+            // 12h by default; on a trusted own-device (not "shared") it lasts 30d idle / 90d hard cap.
             $stoken = bin2hex(random_bytes(24));
+            $trust2 = empty($in['shared']);
             list($lk2, $db2) = db_open();
             if (!isset($db2['staff'])) $db2['staff'] = array();
-            foreach ($db2['staff'] as $sk => $sv) if ((isset($sv['ts']) ? $sv['ts'] : 0) < time() - 43200) unset($db2['staff'][$sk]);
-            $db2['staff'][$stoken] = array('login' => $email, 'ts' => time(), 'iat' => time(), 'machine' => $machine);
+            foreach ($db2['staff'] as $sk => $sv) if ((isset($sv['ts']) ? $sv['ts'] : 0) < time() - (empty($sv['trust']) ? 43200 : 7776000)) unset($db2['staff'][$sk]);
+            $db2['staff'][$stoken] = array('login' => $email, 'ts' => time(), 'iat' => time(), 'machine' => $machine, 'trust' => $trust2);
             db_save($db2); db_close($lk2);
-            out(array('ok' => true, 'staff' => true, 'stoken' => $stoken, 'customer' => $email));
+            out(array('ok' => true, 'staff' => true, 'stoken' => $stoken, 'customer' => $email, 'trust' => $trust2));
         }
         $th[$tkey] = array('n' => (isset($th[$tkey]['n']) ? $th[$tkey]['n'] : 0) + 1, 'ts' => time());
         cache_save($THROTTLE, $th); db_close($tlk);
@@ -1000,10 +1002,12 @@ function need_staff() {
     if ($tok === '') fail('not_staff');
     list($lk, $db) = db_open();
     $s = isset($db['staff'][$tok]) ? $db['staff'][$tok] : null;
+    $slide = !empty($s['trust']) ? 2592000 : 43200;   // 30d idle window on a trusted device, else 12h
+    $cap   = !empty($s['trust']) ? 7776000 : 43200;   // 90d hard cap on a trusted device, else 12h
     $ok = $s
-        && (isset($s['ts'])  ? $s['ts']  : 0) > time() - 43200          // 12h sliding
-        && (isset($s['iat']) ? $s['iat'] : 0) > time() - 43200          // 12h absolute cap
-        && (empty($s['machine']) || $s['machine'] === $machine);        // bound to the machine it was issued on
+        && (isset($s['ts'])  ? $s['ts']  : 0) > time() - $slide         // sliding idle window
+        && (isset($s['iat']) ? $s['iat'] : 0) > time() - $cap           // absolute cap
+        && !empty($s['machine']) && $s['machine'] === $machine;         // STRICTLY bound to its machine (fail closed)
     if ($ok) { $db['staff'][$tok]['ts'] = time(); db_save($db); }
     db_close($lk);
     if (!$ok) fail('not_staff');

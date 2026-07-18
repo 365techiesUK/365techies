@@ -15770,9 +15770,10 @@ def write_portal_page():
   try { S = JSON.parse(sessionStorage.getItem('p365s') || 'null') || JSON.parse(localStorage.getItem('p365') || '{}'); } catch (e) { S = {}; }
   function saveS() {
     try {
-      if (S.staff || S.back) { sessionStorage.setItem('p365s', JSON.stringify(S)); localStorage.removeItem('p365'); }
-      else { localStorage.setItem('p365', JSON.stringify(S)); sessionStorage.removeItem('p365s'); }
-      if (!S.staff && !S.wtoken) { localStorage.removeItem('p365'); sessionStorage.removeItem('p365s'); }
+      if (S.staff && S.trust && !S.back) { localStorage.setItem('p365', JSON.stringify(S)); sessionStorage.removeItem('p365s'); }   // trusted admin device - persists across restarts
+      else if (S.staff || S.back) { sessionStorage.setItem('p365s', JSON.stringify(S)); localStorage.removeItem('p365'); }           // this-session admin / view-as - cleared on close
+      else if (S.wtoken) { localStorage.setItem('p365', JSON.stringify(S)); sessionStorage.removeItem('p365s'); }                    // customer - persists
+      else { localStorage.removeItem('p365'); sessionStorage.removeItem('p365s'); }                                                 // signed out
     } catch (e) {}
   }
   function mid() {
@@ -15809,18 +15810,18 @@ def write_portal_page():
   // ---------- sign-in ----------
   function showSignin(msg) {
     el.innerHTML = '<h1>Your 365 portal</h1>'
-      + '<p class="lede">No passwords here - we send a 6-digit code to type in, and this computer stays signed in. New to 365? The same box joins you free, no card details.</p>'
+      + '<p class="lede">No passwords needed - we email or text a 6-digit code, then <strong>this computer stays signed in</strong> so you won\\u2019t keep re-doing it. New to 365? The same box joins you free, no card details.</p>'
       + '<div class="card"><h2>Sign in or join free</h2>'
       + '<label>Your email</label><input id="em" type="email" autocomplete="email" />'
       + '<div class="row" style="border:0;padding:.2rem 0 0">'
       + '<button id="cml" class="sm">\\u2709 Email me a code</button>'
       + '<button id="csm" class="sm ghost">\\ud83d\\udcf1 Text me a code</button>'
       + '</div>'
-      + '<label style="display:flex;align-items:center;gap:.45rem;margin-top:.55rem;cursor:pointer;color:var(--pmut);font-size:.85rem"><input type="checkbox" id="shpc" style="width:auto" /> This is a shared or public computer</label>'
+      + '<label style="display:flex;align-items:center;gap:.45rem;margin-top:.55rem;cursor:pointer;color:var(--pmut);font-size:.85rem"><input type="checkbox" id="keepin" checked style="width:auto" /> Keep me signed in on this computer <span class="quiet" style="margin:0">&mdash; untick on a shared or public PC</span></label>'
       + '<label style="display:flex;align-items:flex-start;gap:.45rem;margin-top:.5rem;cursor:pointer;color:var(--pmut);font-size:.82rem"><input type="checkbox" id="mkt" style="width:auto;margin-top:.15rem;flex:0 0 auto" /> <span>Email me the occasional 365 tip &amp; offer - a few a year at most, unsubscribe any time. Optional, and it will not affect your free membership or your support.</span></label>'
       + '<div class="err" id="serr">' + (msg || '') + '</div>'
       + '<p class="quiet"><a href="#" id="havecode">Already got a code? Type it here</a>'
-      + ' \\u00b7 <a href="#" id="pwmode">Prefer your password?</a>'
+      + ' \\u00b7 <a href="#" id="pwmode">Sign in with a password instead</a>'
       + ' \\u00b7 Stuck? Ring 01202 775566.</p>'
       + '<div id="pwbox" style="display:none">'
       + '<label>Password</label><input id="pw" type="password" autocomplete="current-password" />'
@@ -15829,7 +15830,7 @@ def write_portal_page():
       + '</div>'
       + '<p class="quiet" id="joinnote">First time here? Just pop your email in and tap a code button - that\\u2019s the whole sign-up. We\\u2019ll ask your name once you\\u2019re in if we need it.</p>'
       + '</div>';
-    var shared = function () { return document.getElementById('shpc').checked; };
+    var shared = function () { var k = document.getElementById('keepin'); return !(k && k.checked); };
     var marketing = function () { var m = document.getElementById('mkt'); return !!(m && m.checked); };
     function sendCode(wantSms) {
       var ce = document.getElementById('em').value.trim();
@@ -15872,7 +15873,7 @@ def write_portal_page():
       post(BK, { action: 'signin', email: document.getElementById('em').value.trim(), password: document.getElementById('pw').value, machine: mid(), web: true, shared: shared() ? 1 : 0 })
         .then(function (d) {
           go.disabled = false;
-          if (d && d.ok && d.staff) { S = { staff: true, stoken: d.stoken, email: d.customer }; saveS(); showStaff(); }
+          if (d && d.ok && d.staff) { S = { staff: true, stoken: d.stoken, email: d.customer, trust: !!d.trust }; saveS(); showStaff(); }
           else if (d && d.ok && d.wtoken) { S = { wtoken: d.wtoken, name: d.customer, tier: d.tier, pending: !!d.pending }; saveS(); showDash(); }
           else {
             var e2 = d && d.error;
@@ -15914,7 +15915,7 @@ def write_portal_page():
       post(BK, { action: 'verifycode', email: je, code: cd.value.trim(), name: jn, machine: mid(), shared: shared ? 1 : 0, marketing: marketing ? 1 : 0 })
         .then(function (d) {
           cb.disabled = false;
-          if (d && d.ok && d.staff) { S = { staff: true, stoken: d.stoken, email: d.customer }; saveS(); showStaff(); }
+          if (d && d.ok && d.staff) { S = { staff: true, stoken: d.stoken, email: d.customer, trust: !!d.trust }; saveS(); showStaff(); }
           else if (d && d.ok && d.wtoken) { S = { wtoken: d.wtoken, name: d.customer || jn, tier: d.tier, pending: !!d.pending }; saveS(); showDash(); }
           else document.getElementById('cerr').textContent =
             d && d.error === 'wrong_code' ? 'That code isn\\u2019t right - check and try again.'
@@ -16021,7 +16022,7 @@ def write_portal_page():
       var bs = document.getElementById('backstaff');
       if (bs) bs.onclick = function () {
         post(BK, { action: 'weblogout', wtoken: S.wtoken, machine: mid() });   // kill the view-as session
-        S = { staff: true, stoken: S.back.stoken, email: S.back.email };
+        S = { staff: true, stoken: S.back.stoken, email: S.back.email, trust: S.back.trust };
         saveS(); showStaff();
       };
       browserCheck();
@@ -16366,7 +16367,7 @@ def write_portal_page():
           post(BK, { action: 'staffview', stoken: S.stoken, machine: mid(), cid: btn.getAttribute('data-cid') })
             .then(function (r) {
               if (!r || !r.ok) { btn.disabled = false; alert('Couldn\\u2019t open the customer view - try again.'); return; }
-              S = { wtoken: r.wtoken, name: r.name, tier: r.tier, back: { stoken: S.stoken, email: S.email } };
+              S = { wtoken: r.wtoken, name: r.name, tier: r.tier, back: { stoken: S.stoken, email: S.email, trust: S.trust } };
               saveS(); showDash();
             })
             .catch(function () { btn.disabled = false; alert('Couldn\\u2019t reach the server.'); });
