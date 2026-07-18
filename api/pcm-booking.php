@@ -1358,9 +1358,13 @@ if ($action === 'stafffleet') {
     foreach ((isset($db['customers']) ? $db['customers'] : array()) as $k => $c) {
         if (!empty($c['merged_into'])) continue;
         $tier = (isset($c['tier']) && $c['tier'] === 'pro') ? 'pro' : 'free';
+        $custPhone = (string)(isset($c['sb_phone']) ? $c['sb_phone'] : (isset($c['phone']) ? $c['phone'] : ''));
+        $custId = substr(sha1('365cid|' . $k), 0, 12);   // opaque id, matches staffcustomers/staffview
         foreach ((isset($c['machines']) && is_array($c['machines']) ? $c['machines'] : array()) as $mid2 => $m) {
             $ms[] = array(
                 'cust' => (string)(isset($c['name']) ? $c['name'] : ''),
+                'cid' => $custId,
+                'phone' => $custPhone,
                 'tier' => $tier,
                 'name' => (string)(isset($m['name']) ? $m['name'] : 'PC'),
                 'score' => intval(isset($m['score']) ? $m['score'] : 0),
@@ -1372,6 +1376,7 @@ if ($action === 'stafffleet') {
                 'w10' => !empty($m['w10']),
                 'reboot' => !empty($m['reboot']),
                 'ver' => intval(isset($m['ver']) ? $m['ver'] : 0),
+                'batt' => intval(isset($m['batt']) ? $m['batt'] : 0),
                 'help' => (string)(isset($m['help']) ? $m['help'] : ''),
                 'fresh' => !isset($m['diskpct']));
             if (count($ms) >= 600) break 2;

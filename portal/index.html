@@ -1219,6 +1219,9 @@
         + '<div class="nbwiz" id="nbwiz" style="display:none"></div>'
         + '<input id="dsearch" placeholder="Search a customer\u2019s upcoming bookings (name or phone)\u2026" autocomplete="off" name="pcm-dsearch" />'
         + '<div class="dstrip" id="dstrip"></div><div id="dday"><p class="quiet">Loading the diary\u2026</p></div></div>';
+      h += '<div class="card" style="border-left:4px solid var(--pwarn)"><h2>\ud83d\udcde Worth a call today</h2>'
+        + '<p class="quiet" style="margin:.1rem 0 .6rem">The PCs that could do with a friendly call \u2014 ranked by what needs attention. Proactive care, before they even ring us.</p>'
+        + '<div id="worthcall"><p class="quiet">Checking the fleet\u2026</p></div></div>';
       h += '<div class="card"><h2>\ud83d\udda5 PC Manager fleet</h2>'
         + '<div class="stats" id="fstats"></div>'
         + '<div class="ftabs" id="ftabs"></div><div class="tblwrap" id="ffleet"><p class="quiet">Loading the fleet\u2026</p></div></div>';
@@ -1659,8 +1662,55 @@
     if (m.w10) w.push(['w', 'Windows 10']);
     if (m.reboot) w.push(['w', 'restart due']);
     if (latest && m.ver && m.ver < latest) w.push(['w', 'app v' + m.ver]);
+    if (m.batt > 0 && m.batt < 60) w.push(['w', 'battery ' + m.batt + '%']);
     if (m.help) w.push(['b', '\ud83c\udd98 asked for help']);
     return w;
+  }
+  // rank a machine by how much it needs a friendly call - higher = more urgent
+  function attentionScore(m) {
+    if (m.fresh) return 0;
+    var s = 0;
+    if (m.help) s += 100;                                                   // literally asked for help
+    if ((m.av || '').toUpperCase() === 'OFF') s += 45;                      // unprotected
+    if (!m.backup) s += 35;                                                 // no safety net
+    if (m.score > 0 && m.score < 40) s += 40; else if (m.score > 0 && m.score < 55) s += 26;
+    if (m.disk >= 92) s += 28; else if (m.disk >= 85) s += 15;
+    if (m.w10) s += 22;                                                     // Windows 10 EOL
+    if (m.reboot) s += 12;
+    if (m.batt > 0 && m.batt < 50) s += 18; else if (m.batt > 0 && m.batt < 60) s += 9;
+    if (m.staleDays >= 30) s += 24; else if (m.staleDays >= 7) s += 12;     // gone quiet
+    if (m.latest && m.ver && m.ver < m.latest) s += 4;
+    return s;
+  }
+  function renderWorthCall() {
+    var box = document.getElementById('worthcall'); if (!box) return;
+    var items = (FLEET || []).filter(function (m) { return !m.fresh && attentionScore(m) > 0; })
+      .sort(function (a, b) { return attentionScore(b) - attentionScore(a); }).slice(0, 12);
+    if (!items.length) { box.innerHTML = '<p class="quiet">\u2713 All quiet - every PC with the app looks healthy. Nothing needs a call today. \ud83c\udf89</p>'; return; }
+    var hh = '';
+    items.forEach(function (m) {
+      var sev = attentionScore(m);
+      var dot = sev >= 60 ? 'var(--pbad)' : (sev >= 30 ? 'var(--pwarn)' : 'var(--psoft)');
+      var chips = (m.warns || []).map(function (w) { return '<span class="chip ' + (w[0] === 'b' ? 'b' : 'w') + '">' + w[1] + '</span>'; }).join('');
+      hh += '<div class="tline"><span class="ttime" style="flex:0 0 14px;padding-top:.35rem"><span class="dot" style="background:' + dot + '"></span></span>'
+        + '<div class="tblock"><strong>' + esc(m.cust || 'Customer') + '</strong> \u00b7 <span class="quiet" style="margin:0">' + esc(m.name) + '</span>'
+        + '<div class="chips">' + chips + '<span class="chip">seen ' + seenTxt(m.seen) + '</span></div></div>'
+        + '<div style="display:flex;gap:.4rem;flex-wrap:wrap;align-items:center">'
+        + (m.phone ? '<a href="tel:' + esc(m.phone.replace(/\s/g, '')) + '"><button class="sm">\ud83d\udcde Call</button></a>' : '')
+        + '<button class="sm ghost wcview" data-cid="' + esc(m.cid) + '">\ud83d\udc41 View</button></div></div>';
+    });
+    box.innerHTML = hh;
+    Array.prototype.forEach.call(box.querySelectorAll('.wcview'), function (btn) {
+      btn.onclick = function () {
+        btn.disabled = true;
+        post(BK, { action: 'staffview', stoken: S.stoken, machine: mid(), cid: btn.getAttribute('data-cid') })
+          .then(function (r) {
+            if (!r || !r.ok) { btn.disabled = false; alert('Couldn\u2019t open the customer view - try again.'); return; }
+            S = { wtoken: r.wtoken, name: r.name, tier: r.tier, back: { stoken: S.stoken, email: S.email, trust: S.trust } };
+            saveS(); showDash();
+          }).catch(function () { btn.disabled = false; alert('Couldn\u2019t reach the server.'); });
+      };
+    });
   }
   function loadFleet() {
     post(BK, { action: 'stafffleet', stoken: S.stoken, machine: mid() }).then(function (d) {
@@ -1670,6 +1720,8 @@
       (d.machines || []).forEach(function (m) {
         var t = m.seen ? Date.parse(m.seen.replace(' ', 'T') + ':00Z') : NaN;
         m.on = !isNaN(t) && (now - t) < 70 * 60000;
+        m.staleDays = isNaN(t) ? 999 : Math.floor((now - t) / 86400000);
+        m.latest = d.latest;
         m.warns = fleetWarnings(m, d.latest);
       });
       FLEET = d.machines || [];
@@ -1685,6 +1737,7 @@
       Array.prototype.forEach.call(stats.querySelectorAll('[data-n]'), function (n) { countUp(n, parseInt(n.getAttribute('data-n'), 10)); });
       renderFtabs(on);
       renderFleet();
+      renderWorthCall();
     }).catch(function () { var fv = document.getElementById('ffleet'); if (fv) fv.innerHTML = '<p class="quiet">Couldn\u2019t reach the server.</p>'; });
   }
   function renderFtabs(onCount) {
