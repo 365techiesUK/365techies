@@ -15660,8 +15660,9 @@ def write_portal_page():
       + '<div class="twocol">'
       + '<div class="card"><h2>Already with us?</h2><label>Email</label><input id="em" type="email" autocomplete="email" />'
       + '<label>Password</label><input id="pw" type="password" autocomplete="current-password" />'
+      + '<label style="display:flex;align-items:center;gap:.45rem;margin-top:.45rem;cursor:pointer;color:var(--mut);font-size:.85rem"><input type="checkbox" id="pwv" style="width:auto" /> Show password</label>'
       + '<button id="go">Sign in</button><div class="err" id="serr">' + (msg || '') + '</div>'
-      + '<p class="quiet">It\\u2019s the login you book with. Forgotten it? Ring us: 01202 775566.</p></div>'
+      + '<p class="quiet">Forgotten your password? <a href="#" id="codein">Email me a sign-in code instead</a> \\u2014 nothing to remember. Or ring us: 01202 775566.</p></div>'
       + '<div class="card"><h2>New here? Join 365 free</h2>'
       + '<p class="quiet">We\\u2019ll email you a 6-digit code to type in - that\\u2019s it. (We never email sign-in links, only codes.)</p>'
       + '<label>Your first name</label><input id="jn" autocomplete="given-name" />'
@@ -15686,6 +15687,18 @@ def write_portal_page():
             : 'Something went wrong - try again, or ring 01202 775566.';
         }).catch(function () { jb.disabled = false; document.getElementById('jerr').textContent = 'Couldn\\u2019t reach the server - try again.'; });
     };
+    document.getElementById('pwv').onchange = function () { document.getElementById('pw').type = this.checked ? 'text' : 'password'; };
+    document.getElementById('codein').onclick = function () {
+      var ce = document.getElementById('em').value.trim();
+      if (!ce) { document.getElementById('serr').textContent = 'Pop your email in above first, then tap the code link.'; return false; }
+      document.getElementById('serr').textContent = '';
+      post('/api/pcm-booking.php', { action: 'join', email: ce, machine: mid() })
+        .then(function (d) {
+          if (d && d.ok) showCode('', ce, d.sms, d.mail);
+          else document.getElementById('serr').textContent = d && d.error === 'throttled' ? 'Too many codes requested - wait a while, or ring us: 01202 775566.' : 'Couldn\\u2019t send a code just now - try again or ring 01202 775566.';
+        }).catch(function () { document.getElementById('serr').textContent = 'Couldn\\u2019t reach the server - try again.'; });
+      return false;
+    };
     var go = document.getElementById('go');
     function doIt() {
       go.disabled = true; document.getElementById('serr').textContent = '';
@@ -15699,7 +15712,7 @@ def write_portal_page():
             document.getElementById('serr').textContent =
               e2 === 'throttled' ? 'Too many tries - wait 15 minutes.'
               : (e2 === 'sb_unavailable' || e2 === 'db_unavailable' || e2 === 'not_configured') ? 'We couldn\\u2019t reach the booking system - nothing wrong with your details, try again in a minute.'
-              : 'That didn\\u2019t match - check your email and password.';
+              : 'That didn\\u2019t match - check the password, or tap \\u201cEmail me a sign-in code\\u201d below.';
           }
         }).catch(function () { go.disabled = false; document.getElementById('serr').textContent = 'Couldn\\u2019t reach the server - try again.'; });
     }
@@ -15728,7 +15741,8 @@ def write_portal_page():
       post('/api/pcm-booking.php', { action: 'verifycode', email: je, code: cd.value.trim(), name: jn, machine: mid() })
         .then(function (d) {
           cb.disabled = false;
-          if (d && d.ok && d.wtoken) { S = { wtoken: d.wtoken, name: d.customer || jn, tier: d.tier, pending: !!d.pending }; saveS(); showDash(); }
+          if (d && d.ok && d.staff) { S = { staff: true, stoken: d.stoken, email: d.customer }; saveS(); showStaff(); }
+          else if (d && d.ok && d.wtoken) { S = { wtoken: d.wtoken, name: d.customer || jn, tier: d.tier, pending: !!d.pending }; saveS(); showDash(); }
           else document.getElementById('cerr').textContent =
             d && d.error === 'wrong_code' ? 'That code isn\\u2019t right - check and try again.'
             : d && d.error === 'code_expired' ? 'That code has expired - go back and ask for a fresh one.'

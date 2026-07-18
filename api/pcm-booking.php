@@ -309,6 +309,12 @@ if ($action === 'join') {
     if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) fail('bad_email');
     $mobile = preg_replace('/[^0-9+]/', '', (string)(isset($in['mobile']) ? $in['mobile'] : ''));
     if ($mobile !== '' && !preg_match('/^(07[0-9]{9}|\+?447[0-9]{9})$/', $mobile)) fail('bad_mobile');
+    // STAFF emails get their code by EMAIL ONLY. The mobile is attacker-suppliable, and the
+    // whole staff-code design rests on "only the allow-listed inbox can read the code" -
+    // texting it to a caller-chosen number would hand out staff sessions.
+    global $SB_STAFF;
+    $allowSt = (isset($SB_STAFF) && is_array($SB_STAFF)) ? array_map('trim', array_map('strtolower', $SB_STAFF)) : array();
+    if (in_array($email, $allowSt, true)) $mobile = '';
     // throttle: max 4 codes per email per hour + the shared per-ip/email attempt throttle
     $tkey = sha1('join|' . (isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '') . '|' . $email);
     $tlk = @fopen($THROTTLE . '.lock', 'c'); if ($tlk) @flock($tlk, LOCK_EX);
@@ -366,6 +372,25 @@ if ($action === 'verifycode') {
     }
     $jdone();   // code matches - but only BURN it after SimplyBook succeeds, so a transient
                 // SB outage doesn't waste the customer's code ("try again shortly" must work)
+
+    // 365 STAFF by emailed code: the allow-listed @365techies.co.uk inbox is a credential no
+    // attacker can self-register (unlike SimplyBook client accounts), so a typed code proves
+    // staff identity without any SimplyBook password - and survives 2FA on admin accounts.
+    global $SB_STAFF;
+    $allowJ = (isset($SB_STAFF) && is_array($SB_STAFF)) ? array_map('trim', array_map('strtolower', $SB_STAFF)) : array();
+    if (in_array($email, $allowJ, true)) {
+        if ($machine === '') fail('bad_code');   // staff tokens must be machine-bound, same as the password path
+        $jlkS = @fopen($JOINCODES . '.lock', 'c'); if ($jlkS) @flock($jlkS, LOCK_EX);
+        $jcS = cache_load($JOINCODES); unset($jcS[$ek]); cache_save($JOINCODES, $jcS);   // burn now - no SB dependency
+        if ($jlkS) { @flock($jlkS, LOCK_UN); @fclose($jlkS); }
+        $stoken = bin2hex(random_bytes(24));
+        list($lkS, $dbS) = db_open();
+        if (!isset($dbS['staff'])) $dbS['staff'] = array();
+        foreach ($dbS['staff'] as $sk => $sv) if ((isset($sv['ts']) ? $sv['ts'] : 0) < time() - 43200) unset($dbS['staff'][$sk]);
+        $dbS['staff'][$stoken] = array('login' => $email, 'ts' => time(), 'iat' => time(), 'machine' => $machine);
+        db_save($dbS); db_close($lkS);
+        out(array('ok' => true, 'staff' => true, 'stoken' => $stoken, 'customer' => $email));
+    }
 
     // inbox ownership PROVEN. Find or silently create the SimplyBook client.
     // getClientList FIRST - SimplyBook duplicate clients break password sign-in.
