@@ -652,12 +652,13 @@ if ($action === 'weblogout') {
 }
 
 if ($action === 'services') {
-    customer_snapshot();                            // validates + releases the lock
+    // staff (portal diary) may browse with their session token; customers need their key
+    if (isset($in['stoken']) && $in['stoken'] !== '') need_staff(); else customer_snapshot();
     out(array('ok' => true, 'services' => sb_services()));
 }
 
 if ($action === 'slots') {
-    customer_snapshot();
+    if (isset($in['stoken']) && $in['stoken'] !== '') need_staff(); else customer_snapshot();
     $eventId = (int)(isset($in['eventId']) ? $in['eventId'] : 0);
     $from = preg_replace('/[^0-9\-]/', '', (string)(isset($in['from']) ? $in['from'] : ''));
     $to   = preg_replace('/[^0-9\-]/', '', (string)(isset($in['to']) ? $in['to'] : ''));

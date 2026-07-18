@@ -15550,102 +15550,72 @@ def write_family_page():
 
 write_family_page()
 
-# ---------------------------------------------------------------------------
-# /portal/ - the 365 Techies customer portal (phase 1). Standalone + noindex for
-# now (sign-in wall = thin content; owner can promote it once it earns a page).
-# Thin web client over pcm-booking.php (auth) + pcm.php (overview). Staff who
-# sign in with an allow-listed SimplyBook login get the admin panel: customer
-# book, one-click PC Manager activation, tier flips, SimplyBook admin links.
+# /portal/ - the 365 Techies customer portal, rendered INSIDE the full site chrome
+# (header/nav/footer) so it feels like part of the website. Still noindex + out of
+# the sitemap (written directly, not via the PAGES registry). All styles scoped
+# under #p365app so nothing fights the site stylesheet.
 def write_portal_page():
-    html = '''<!doctype html>
-<html lang="en-GB">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="robots" content="noindex, nofollow" />
-<meta name="referrer" content="no-referrer" />
-<title>Customer portal &mdash; 365 Techies</title>
-<style>
-  :root { --ink:#0b1226; --panel:#0d1530; --line:#2a3b63; --cyan:#1d97e3; --soft:#86b6e8; --good:#00ce1b; --warn:#e0b341; --bad:#e8637e; --mut:#9fb5d3; --white:#f0f5fc; }
-  * { box-sizing:border-box; margin:0; padding:0; }
-  body { background:var(--ink); color:var(--white); font-family:"Segoe UI",system-ui,-apple-system,sans-serif; min-height:100vh; display:flex; flex-direction:column; }
-  .wrap { width:100%; max-width:760px; margin:0 auto; padding:1.2rem 1rem 2.5rem; flex:1; }
-  header { display:flex; align-items:center; gap:.65rem; padding:.35rem 0 1.1rem; }
-  .lg { background:var(--cyan); color:#fff; font-weight:900; font-size:1.05rem; padding:.32rem .5rem; }
-  header strong { font-size:1.05rem; } header span { color:var(--mut); font-size:.85rem; }
-  header .out { margin-left:auto; }
-  h1 { font-size:1.3rem; margin:.2rem 0 .5rem; }
-  .lede { color:var(--mut); font-size:.92rem; margin-bottom:1.1rem; line-height:1.5; }
-  .card { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:1rem 1.1rem; margin-bottom:.9rem; }
-  .card h2 { font-size:1rem; margin-bottom:.6rem; }
-  label { display:block; color:var(--mut); font-size:.85rem; margin:.6rem 0 .25rem; }
-  input, select { width:100%; padding:.65rem .7rem; border-radius:9px; border:1px solid var(--line); background:var(--ink); color:var(--white); font-size:1rem; }
-  button { padding:.65rem 1.1rem; border:0; border-radius:9px; background:var(--cyan); color:#fff; font-size:.95rem; font-weight:600; cursor:pointer; margin-top:.8rem; }
-  button.ghost { background:transparent; border:1px solid var(--line); color:var(--soft); }
-  button.sm { padding:.35rem .7rem; font-size:.8rem; margin:0; }
-  .err { color:var(--bad); font-size:.88rem; margin-top:.6rem; min-height:1.2em; }
-  .row { display:flex; gap:1rem; align-items:center; padding:.55rem 0; border-bottom:1px solid rgba(42,59,99,.5); flex-wrap:wrap; }
-  .row:last-child { border-bottom:0; }
-  .ringS { position:relative; width:56px; height:56px; flex:0 0 56px; }
-  .ringS svg { transform:rotate(-90deg); } .ringS b { position:absolute; inset:0; display:grid; place-items:center; font-size:.85rem; }
-  .chips { display:flex; flex-wrap:wrap; gap:.35rem; margin-top:.25rem; }
-  .chip { font-size:.72rem; padding:.18rem .5rem; border-radius:999px; border:1px solid var(--line); color:var(--mut); }
-  .chip.g { color:var(--good); border-color:rgba(0,206,27,.35); } .chip.w { color:var(--warn); border-color:rgba(224,179,65,.4); }
-  .pill { font-size:.75rem; padding:.2rem .6rem; border-radius:999px; }
-  .pill.pro { background:rgba(0,206,27,.14); color:var(--good); } .pill.free { background:rgba(134,182,232,.12); color:var(--soft); }
-  .big { font-size:1.5rem; font-weight:700; }
-  .mono { font-family:Consolas,monospace; }
-  table { width:100%; border-collapse:collapse; font-size:.85rem; }
-  th { text-align:left; color:var(--mut); font-weight:600; padding:.35rem .4rem; border-bottom:1px solid var(--line); }
-  td { padding:.42rem .4rem; border-bottom:1px solid rgba(42,59,99,.4); vertical-align:middle; }
-  .ok { color:var(--good); } .wn { color:var(--warn); }
-  .quiet { color:var(--mut); font-size:.8rem; line-height:1.5; margin-top:.6rem; }
-  .tblwrap { overflow-x:auto; }
-  @media (min-width:640px) { .twocol { display:grid; grid-template-columns:1fr 1fr; gap:.9rem; align-items:start; } }
-  /* --- motion: staggered entrances, self-drawing rings, gentle lifts --- */
-  @keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:none; } }
-  @keyframes popIn { from { opacity:0; transform:scale(.96); } to { opacity:1; transform:none; } }
-  h1, .lede { animation: fadeUp .5s ease both; }
-  .lede { animation-delay:.08s; }
-  .card { animation: fadeUp .55s ease both; }
-  .card:nth-of-type(1), .twocol .card:nth-child(1) { animation-delay:.10s; }
-  .card:nth-of-type(2), .twocol .card:nth-child(2) { animation-delay:.20s; }
-  .card:nth-of-type(3) { animation-delay:.30s; }
-  .card:nth-of-type(4) { animation-delay:.40s; }
-  .card:nth-of-type(5) { animation-delay:.50s; }
-  .card { transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
-  .card:hover { transform: translateY(-2px); border-color:#3d5486; box-shadow:0 10px 28px rgba(0,0,0,.35); }
-  .row { animation: popIn .45s ease both; }
-  button { transition: transform .15s ease, filter .15s ease; }
-  button:hover { transform: translateY(-1px); filter:brightness(1.12); }
-  button:active { transform: translateY(0); }
-  .ringS svg circle:last-child, .ring svg circle:last-child { transition: stroke-dasharray 1.1s cubic-bezier(.25,.6,.3,1); }
-  .pill { animation: popIn .5s ease both; animation-delay:.35s; }
-  header .lg { animation: popIn .4s ease both; }
+    css = '''<style>
+  #p365app { --pink:#0b1226; --ppanel:#0d1530; --pline:#2a3b63; --pcyan:#1d97e3; --psoft:#86b6e8; --pgood:#00ce1b; --pwarn:#e0b341; --pbad:#e8637e; --pmut:#9fb5d3; --pwhite:#f0f5fc; }
+  #p365app .card { background:var(--ppanel); border:1px solid var(--pline); border-radius:14px; padding:1.05rem 1.15rem; margin-bottom:.95rem; }
+  #p365app .card h2 { font-size:1.02rem; margin:0 0 .6rem; color:var(--pwhite); }
+  #p365app h1 { font-size:1.45rem; margin:.1rem 0 .45rem; color:var(--pwhite); }
+  #p365app .lede { color:var(--pmut); font-size:.93rem; margin-bottom:1.05rem; line-height:1.55; }
+  #p365app label { display:block; color:var(--pmut); font-size:.85rem; margin:.6rem 0 .25rem; }
+  #p365app input, #p365app select { width:100%; padding:.62rem .7rem; border-radius:9px; border:1px solid var(--pline); background:var(--pink); color:var(--pwhite); font-size:1rem; }
+  #p365app button { padding:.6rem 1.05rem; border:0; border-radius:9px; background:var(--pcyan); color:#fff; font-size:.93rem; font-weight:600; cursor:pointer; margin-top:.75rem; }
+  #p365app button.ghost { background:transparent; border:1px solid var(--pline); color:var(--psoft); }
+  #p365app button.sm { padding:.34rem .68rem; font-size:.8rem; margin:0; }
+  #p365app .err { color:var(--pbad); font-size:.88rem; margin-top:.55rem; min-height:1.2em; }
+  #p365app .row { display:flex; gap:.9rem; align-items:center; padding:.55rem 0; border-bottom:1px solid rgba(42,59,99,.5); flex-wrap:wrap; }
+  #p365app .row:last-child { border-bottom:0; }
+  #p365app .ringS { position:relative; width:56px; height:56px; flex:0 0 56px; }
+  #p365app .ringS svg { transform:rotate(-90deg); display:block; }
+  #p365app .ringS b { position:absolute; inset:0; display:grid; place-items:center; font-size:.85rem; color:var(--pwhite); }
+  #p365app .chips { display:flex; flex-wrap:wrap; gap:.35rem; margin-top:.25rem; }
+  #p365app .chip { font-size:.72rem; padding:.18rem .5rem; border-radius:999px; border:1px solid var(--pline); color:var(--pmut); }
+  #p365app .chip.g { color:var(--pgood); border-color:rgba(0,206,27,.35); }
+  #p365app .chip.w { color:var(--pwarn); border-color:rgba(224,179,65,.4); }
+  #p365app .pill { font-size:.75rem; padding:.2rem .6rem; border-radius:999px; }
+  #p365app .pill.pro { background:rgba(0,206,27,.14); color:var(--pgood); }
+  #p365app .pill.free { background:rgba(134,182,232,.12); color:var(--psoft); }
+  #p365app .big { font-size:1.5rem; font-weight:700; color:var(--pwhite); }
+  #p365app .mono { font-family:Consolas,monospace; }
+  #p365app table { width:100%; border-collapse:collapse; font-size:.85rem; }
+  #p365app th { text-align:left; color:var(--pmut); font-weight:600; padding:.35rem .4rem; border-bottom:1px solid var(--pline); }
+  #p365app td { padding:.42rem .4rem; border-bottom:1px solid rgba(42,59,99,.4); vertical-align:middle; color:var(--pwhite); }
+  #p365app .ok { color:var(--pgood); } #p365app .wn { color:var(--pwarn); }
+  #p365app .quiet { color:var(--pmut); font-size:.8rem; line-height:1.5; margin-top:.55rem; }
+  #p365app .tblwrap { overflow-x:auto; }
+  #p365app a { color:var(--psoft); }
+  #p365app .ptop { display:flex; align-items:center; gap:1rem; }
+  #p365app .ptop h1 { flex:1; margin:0; }
+  #p365app .dpill, #p365app .tpill { padding:.3rem .6rem; font-size:.8rem; margin:.2rem .25rem 0 0; }
+  #p365app .mvp { padding:.4rem 0 .8rem; border-bottom:1px solid rgba(42,59,99,.5); }
+  @media (min-width:640px) { #p365app .twocol { display:grid; grid-template-columns:1fr 1fr; gap:.9rem; align-items:start; } }
+  @keyframes p365fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:none; } }
+  @keyframes p365popIn { from { opacity:0; transform:scale(.96); } to { opacity:1; transform:none; } }
+  #p365app h1, #p365app .lede { animation:p365fadeUp .5s ease both; }
+  #p365app .lede { animation-delay:.08s; }
+  #p365app .card { animation:p365fadeUp .55s ease both; transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+  #p365app .card:nth-of-type(2) { animation-delay:.12s; } #p365app .card:nth-of-type(3) { animation-delay:.22s; }
+  #p365app .card:nth-of-type(4) { animation-delay:.32s; } #p365app .card:nth-of-type(5) { animation-delay:.42s; }
+  #p365app .card:hover { transform:translateY(-2px); border-color:#3d5486; box-shadow:0 10px 28px rgba(0,0,0,.35); }
+  #p365app .row { animation:p365popIn .45s ease both; }
+  #p365app button { transition:transform .15s ease, filter .15s ease; }
+  #p365app button:hover { transform:translateY(-1px); filter:brightness(1.12); }
+  #p365app .ringS svg circle:last-child { transition:stroke-dasharray 1.1s cubic-bezier(.25,.6,.3,1); }
+  #p365app .pill { animation:p365popIn .5s ease both; animation-delay:.3s; }
   @media (prefers-reduced-motion: reduce) {
-    h1, .lede, .card, .row, .pill, header .lg { animation:none; }
-    .card, button, .ringS svg circle:last-child, .ring svg circle:last-child { transition:none; }
-    .card:hover, button:hover { transform:none; }
+    #p365app h1, #p365app .lede, #p365app .card, #p365app .row, #p365app .pill { animation:none; }
+    #p365app .card, #p365app button, #p365app .ringS svg circle:last-child { transition:none; }
+    #p365app .card:hover, #p365app button:hover { transform:none; }
   }
-  a { color:var(--soft); }
-  footer { border-top:1px solid var(--line); background:var(--panel); }
-  footer .wrap { padding:1rem; flex:0; }
-  footer p { color:var(--mut); font-size:.84rem; line-height:1.6; }
-</style>
-</head>
-<body>
-<div class="wrap">
-  <header><span class="lg">365</span><div><strong>365 Techies</strong><br /><span>Customer portal</span></div>
-    <button class="ghost sm out" id="signout" style="display:none">Sign out</button></header>
-  <div id="app"></div>
-</div>
-<footer><div class="wrap"><p><strong>365 Techies</strong> &mdash; family-run IT support in Bournemouth since 1995 &middot;
-  <a href="tel:+441202775566" style="color:var(--white);font-weight:600">01202 775566</a> &middot; <a href="https://365techies.co.uk/">365techies.co.uk</a></p></div></footer>
-<script>
+</style>'''
+    js = '''<script>
 (function () {
-  var el = document.getElementById('app'), outBtn = document.getElementById('signout');
-  // customer device sessions persist across browser restarts (localStorage - the server
-  // token is what actually expires); staff sessions stay tab-scoped (sessionStorage)
+  var BK = '/api/pcm-booking.php', PCM = '/api/pcm.php';
+  var el = document.getElementById('p365app');
   var S = {};
   try { S = JSON.parse(sessionStorage.getItem('p365s') || 'null') || JSON.parse(localStorage.getItem('p365') || '{}'); } catch (e) { S = {}; }
   function saveS() {
@@ -15676,16 +15646,24 @@ def write_portal_page():
     var d = Math.floor((Date.now() - t) / 86400000);
     return d <= 0 ? 'today' : (d === 1 ? 'yesterday' : d + ' days ago');
   }
+  function sOut() {
+    if (S.stoken) post(BK, { action: 'stafflogout', stoken: S.stoken, machine: mid() });
+    if (S.wtoken) post(BK, { action: 'weblogout', wtoken: S.wtoken, machine: mid() });
+    S = {}; saveS(); showSignin();
+  }
+  function topRow(title) {
+    return '<div class="ptop"><h1>' + title + '</h1><button class="sm ghost" id="sout">Sign out</button></div>';
+  }
+  function bindOut() { var b = document.getElementById('sout'); if (b) b.onclick = sOut; }
 
   // ---------- sign-in ----------
   function showSignin(msg) {
-    outBtn.style.display = 'none';
-    el.innerHTML = '<h1>Sign in</h1>'
+    el.innerHTML = '<h1>Customer portal</h1>'
       + '<p class="lede">Existing customer? Use the email and password you book with. New to 365? Join free in under a minute - no password, no card details.</p>'
       + '<div class="twocol">'
       + '<div class="card"><h2>Already with us?</h2><label>Email</label><input id="em" type="email" autocomplete="email" />'
       + '<label>Password</label><input id="pw" type="password" autocomplete="current-password" />'
-      + '<label style="display:flex;align-items:center;gap:.45rem;margin-top:.45rem;cursor:pointer;color:var(--mut);font-size:.85rem"><input type="checkbox" id="pwv" style="width:auto" /> Show password</label>'
+      + '<label style="display:flex;align-items:center;gap:.45rem;margin-top:.45rem;cursor:pointer;color:var(--pmut);font-size:.85rem"><input type="checkbox" id="pwv" style="width:auto" /> Show password</label>'
       + '<button id="go">Sign in</button><div class="err" id="serr">' + (msg || '') + '</div>'
       + '<p class="quiet">Forgotten your password? <a href="#" id="codein">Email me a sign-in code instead</a> \\u2014 nothing to remember.<br />'
       + '<a href="#" id="havecode">Already got a code? Type it here</a> \\u00b7 Stuck? Ring 01202 775566.</p></div>'
@@ -15696,29 +15674,12 @@ def write_portal_page():
       + '<label>Mobile (optional - we can text the code instead)</label><input id="jm" type="tel" autocomplete="tel" />'
       + '<button id="jgo">Join free \\u2192</button><div class="err" id="jerr"></div></div>'
       + '</div>';
-    document.getElementById('jgo').onclick = function () {
-      var jb = this, jn = document.getElementById('jn').value.trim(), je = document.getElementById('je').value.trim(), jm = document.getElementById('jm').value.trim();
-      document.getElementById('jerr').textContent = '';
-      if (!je) { document.getElementById('jerr').textContent = 'Pop your email in first.'; return; }
-      jb.disabled = true;
-      post('/api/pcm-booking.php', { action: 'join', email: je, mobile: jm, machine: mid() })
-        .then(function (d) {
-          jb.disabled = false;
-          if (d && d.ok) showCode(jn, je, d.sms, d.mail, d.slack);
-          else document.getElementById('jerr').textContent =
-            d && d.error === 'throttled' ? 'Too many codes requested - wait an hour, or ring us: 01202 775566.'
-            : d && d.error === 'bad_mobile' ? 'That mobile doesn\\u2019t look like a UK number - check it or leave it empty.'
-            : d && d.error === 'bad_email' ? 'That email doesn\\u2019t look right - please check it.'
-            : d && d.error === 'send_failed' ? 'We couldn\\u2019t send the code just now - ring us and we\\u2019ll sign you up: 01202 775566.'
-            : 'Something went wrong - try again, or ring 01202 775566.';
-        }).catch(function () { jb.disabled = false; document.getElementById('jerr').textContent = 'Couldn\\u2019t reach the server - try again.'; });
-    };
     document.getElementById('pwv').onchange = function () { document.getElementById('pw').type = this.checked ? 'text' : 'password'; };
     document.getElementById('codein').onclick = function () {
       var ce = document.getElementById('em').value.trim();
       if (!ce) { document.getElementById('serr').textContent = 'Pop your email in above first, then tap the code link.'; return false; }
       document.getElementById('serr').textContent = '';
-      post('/api/pcm-booking.php', { action: 'join', email: ce, machine: mid() })
+      post(BK, { action: 'join', email: ce, machine: mid() })
         .then(function (d) {
           if (d && d.ok) showCode('', ce, d.sms, d.mail, d.slack);
           else if (d && d.error === 'throttled' && d.have_code) showCode('', ce, false, true, false, true);
@@ -15732,10 +15693,28 @@ def write_portal_page():
       showCode('', ce, false, true, false, true);
       return false;
     };
+    document.getElementById('jgo').onclick = function () {
+      var jb = this, jn = document.getElementById('jn').value.trim(), je = document.getElementById('je').value.trim(), jm = document.getElementById('jm').value.trim();
+      document.getElementById('jerr').textContent = '';
+      if (!je) { document.getElementById('jerr').textContent = 'Pop your email in first.'; return; }
+      jb.disabled = true;
+      post(BK, { action: 'join', email: je, mobile: jm, machine: mid() })
+        .then(function (d) {
+          jb.disabled = false;
+          if (d && d.ok) showCode(jn, je, d.sms, d.mail, d.slack);
+          else if (d && d.error === 'throttled' && d.have_code) showCode(jn, je, false, true, false, true);
+          else document.getElementById('jerr').textContent =
+            d && d.error === 'throttled' ? 'Too many codes requested - wait an hour, or ring us: 01202 775566.'
+            : d && d.error === 'bad_mobile' ? 'That mobile doesn\\u2019t look like a UK number - check it or leave it empty.'
+            : d && d.error === 'bad_email' ? 'That email doesn\\u2019t look right - please check it.'
+            : d && d.error === 'send_failed' ? 'We couldn\\u2019t send the code just now - ring us and we\\u2019ll sign you up: 01202 775566.'
+            : 'Something went wrong - try again, or ring 01202 775566.';
+        }).catch(function () { jb.disabled = false; document.getElementById('jerr').textContent = 'Couldn\\u2019t reach the server - try again.'; });
+    };
     var go = document.getElementById('go');
     function doIt() {
       go.disabled = true; document.getElementById('serr').textContent = '';
-      post('/api/pcm-booking.php', { action: 'signin', email: document.getElementById('em').value.trim(), password: document.getElementById('pw').value, machine: mid(), web: true })
+      post(BK, { action: 'signin', email: document.getElementById('em').value.trim(), password: document.getElementById('pw').value, machine: mid(), web: true })
         .then(function (d) {
           go.disabled = false;
           if (d && d.ok && d.staff) { S = { staff: true, stoken: d.stoken, email: d.customer }; saveS(); showStaff(); }
@@ -15752,7 +15731,8 @@ def write_portal_page():
     go.onclick = doIt;
     document.getElementById('pw').addEventListener('keydown', function (e) { if (e.key === 'Enter') doIt(); });
   }
-  // code-entry step of the join flow
+
+  // ---------- code entry ----------
   function showCode(jn, je, viaSms, viaMail, viaSlack, existing) {
     var sentTo = viaMail && viaSms ? ('<strong>' + esc(je) + '</strong> and your mobile')
                : viaSms ? 'your mobile by text'
@@ -15769,13 +15749,13 @@ def write_portal_page():
       + '<p class="quiet"><a href="#" id="cback">Wrong email, or need a fresh code? Go back</a></p>'
       + '<p class="quiet">Remember: we never email or text sign-in links - only codes like this. Never read your code to anyone who rings you.<br />Stuck? Ring us on 01202 775566 and we\\u2019ll sort it together.</p></div>';
     var cd = document.getElementById('cd'); cd.focus();
-    cd.addEventListener('input', function () { cd.value = cd.value.replace(/\\D/g, '').slice(0, 6); });   // pastes self-heal
-    document.getElementById('cback').onclick = function () { showSignin(); try { document.getElementById('jn').value = jn || ''; document.getElementById('je').value = je || ''; } catch (e) {} return false; };
+    cd.addEventListener('input', function () { cd.value = cd.value.replace(/\\D/g, '').slice(0, 6); });
+    document.getElementById('cback').onclick = function () { showSignin(); try { document.getElementById('jn').value = jn || ''; document.getElementById('je').value = je || ''; document.getElementById('em').value = je || ''; } catch (e) {} return false; };
     function doV() {
       var cb = document.getElementById('cgo');
       document.getElementById('cerr').textContent = '';
       cb.disabled = true;
-      post('/api/pcm-booking.php', { action: 'verifycode', email: je, code: cd.value.trim(), name: jn, machine: mid() })
+      post(BK, { action: 'verifycode', email: je, code: cd.value.trim(), name: jn, machine: mid() })
         .then(function (d) {
           cb.disabled = false;
           if (d && d.ok && d.staff) { S = { staff: true, stoken: d.stoken, email: d.customer }; saveS(); showStaff(); }
@@ -15792,26 +15772,20 @@ def write_portal_page():
     cd.addEventListener('keydown', function (e) { if (e.key === 'Enter') doV(); });
   }
 
-  outBtn.onclick = function () {
-    if (S.stoken) post('/api/pcm-booking.php', { action: 'stafflogout', stoken: S.stoken, machine: mid() });
-    if (S.wtoken) post('/api/pcm-booking.php', { action: 'weblogout', wtoken: S.wtoken, machine: mid() });
-    S = {}; saveS(); showSignin();
-  };
-
   // ---------- customer dashboard ----------
   function showDash() {
-    outBtn.style.display = '';
-    el.innerHTML = '<h1>Hello' + (S.name ? ' ' + esc(S.name.split(' ')[0]) : '') + '</h1><p class="lede">Loading your dashboard\\u2026</p>';
-    post('/api/pcm.php', { action: 'overview', wtoken: S.wtoken, machine: mid() }).then(function (d) {
+    el.innerHTML = topRow('Hello' + (S.name ? ' ' + esc(S.name.split(' ')[0]) : '')) + '<p class="lede">Loading your dashboard\\u2026</p>';
+    bindOut();
+    post(PCM, { action: 'overview', wtoken: S.wtoken, machine: mid() }).then(function (d) {
       if (!d || !d.ok) {
         if (d && d.error === 'db_unavailable') { el.innerHTML = '<div class="card"><p class="quiet">Couldn\\u2019t load just now - <a href="#" onclick="location.reload();return false">try again</a>.</p></div>'; return; }
         showSignin('Your session expired - please sign in again.'); return;
       }
-      if (d.next_ts && d.next_ts * 1000 < Date.now()) d.next = '';   // past booking = no upcoming service
-      var h = '<h1>Hello ' + esc((d.name || '').split(' ')[0] || 'there') + '</h1>';
+      if (d.next_ts && d.next_ts * 1000 < Date.now()) d.next = '';
+      var h = topRow('Hello ' + esc((d.name || '').split(' ')[0] || 'there'));
       if (d.pending) h += '<div class="card" style="border-color:rgba(224,179,65,.5)"><p class="quiet">We can see a support plan registered to this email. For security we link it to your web login by hand - it usually appears within a day. Need it sooner? Ring 01202 775566.</p></div>';
       h += '<div class="card"><h2>Your plan</h2><div class="row"><span class="pill ' + (d.tier === 'pro' ? 'pro">On 365 support' : 'free">Free') + '</span>'
-        + (d.next ? '<span>Next service: <strong>' + esc(d.next) + '</strong></span>' : '<span class="quiet">No service booked - <a href="https://365techies.co.uk/book-service/">book one</a>.</span>') + '</div>';
+        + (d.next ? '<span>Next service: <strong>' + esc(d.next) + '</strong></span>' : '<span class="quiet">No service booked - <a href="/book-service/" target="_blank" rel="noopener">book one</a>.</span>') + '</div>';
       if (d.gc) {
         h += d.gc.active
           ? '<div class="row"><span class="big">\\u00a3' + d.gc.amount.toFixed(2) + '</span><span>' + esc(d.gc.name) + ' by Direct Debit'
@@ -15821,7 +15795,7 @@ def write_portal_page():
       }
       h += '</div>';
       h += '<div class="card"><h2>Your computers</h2>';
-      if (!d.machines.length) h += '<p class="quiet">None checking in yet - our free <a href="https://365techies.co.uk/free-pc-health-check/">365 PC Manager</a> app keeps an eye on your PC\\u2019s health and shows it here.</p>';
+      if (!d.machines.length) h += '<p class="quiet">None checking in yet - our free <a href="/free-pc-health-check/" target="_blank">365 PC Manager</a> app keeps an eye on your PC\\u2019s health and shows it here.</p>';
       d.machines.forEach(function (m) {
         var circ = 2 * Math.PI * 23;
         if (m.fresh) {
@@ -15829,7 +15803,7 @@ def write_portal_page():
             + '<div><strong>' + esc(m.name) + '</strong><div class="chips"><span class="chip">first health check coming soon</span></div></div></div>';
           return;
         }
-        var col = m.score >= 80 ? 'var(--good)' : (m.score >= 55 ? 'var(--warn)' : 'var(--bad)');
+        var col = m.score >= 80 ? 'var(--pgood)' : (m.score >= 55 ? 'var(--pwarn)' : 'var(--pbad)');
         h += '<div class="row"><div class="ringS"><svg width="56" height="56"><circle cx="28" cy="28" r="23" fill="none" stroke="#2a3b63" stroke-width="6"/><circle cx="28" cy="28" r="23" fill="none" stroke="' + col + '" stroke-width="6" stroke-linecap="round" stroke-dasharray="0 ' + circ.toFixed(1) + '" data-dash="' + (circ * m.score / 100).toFixed(1) + ' ' + circ.toFixed(1) + '"/></svg><b>' + m.score + '%</b></div>'
           + '<div><strong>' + esc(m.name) + '</strong> <span style="color:' + col + '">' + esc(m.verdict || '') + '</span>'
           + '<div class="chips"><span class="chip ' + (m.backup ? 'g">backup: yes' : 'w">no backup seen') + '</span>'
@@ -15839,24 +15813,25 @@ def write_portal_page():
       h += '</div>';
       if (d.fam) h += '<div class="card"><h2>Family view</h2><p class="quiet">\\u2713 Shared with ' + esc(d.fam) + ' - manage it from the app on your PC.</p></div>';
       h += '<div class="card"><h2>Need us?</h2><div class="row">'
-        + '<a href="https://365techies.co.uk/book-service/"><button class="sm">Book a service</button></a>'
-        + '<a href="https://365techies.co.uk/sos/"><button class="sm ghost">Remote help (SOS)</button></a>'
+        + '<a href="/book-service/" target="_blank" rel="noopener"><button class="sm">Book a service</button></a>'
+        + '<a href="/sos/" target="_blank" rel="noopener"><button class="sm ghost">Remote help (SOS)</button></a>'
         + '<a href="tel:+441202775566"><button class="sm ghost">Call 01202 775566</button></a></div></div>';
       el.innerHTML = h;
-      // let the rings draw themselves in
+      bindOut();
       requestAnimationFrame(function () { requestAnimationFrame(function () {
-        Array.prototype.forEach.call(document.querySelectorAll('[data-dash]'), function (c) { c.setAttribute('stroke-dasharray', c.getAttribute('data-dash')); });
+        Array.prototype.forEach.call(document.querySelectorAll('#p365app [data-dash]'), function (c) { c.setAttribute('stroke-dasharray', c.getAttribute('data-dash')); });
       }); });
     }).catch(function () { showSignin('Couldn\\u2019t load your dashboard - please sign in again.'); });
   }
 
-  // ---------- staff admin panel ----------
+  // ---------- staff panel ----------
   function showStaff() {
-    outBtn.style.display = '';
-    el.innerHTML = '<h1>365 staff</h1><p class="lede">Loading the customer book\\u2026</p>';
-    post('/api/pcm-booking.php', { action: 'staffcustomers', stoken: S.stoken, machine: mid() }).then(function (d) {
+    el.innerHTML = topRow('365 staff') + '<p class="lede">Loading\\u2026</p>';
+    bindOut();
+    post(BK, { action: 'staffcustomers', stoken: S.stoken, machine: mid() }).then(function (d) {
       if (!d || !d.ok) { showSignin('Staff session expired (12h) - sign in again.'); return; }
-      var h = '<h1>365 staff \\u00b7 ' + esc(S.email || '') + '</h1>';
+      var h = topRow('365 staff \\u00b7 ' + esc(S.email || ''));
+      h += '<div class="card"><h2>\\ud83d\\udcc5 Diary - next 14 days</h2><div id="dy"><p class="quiet">Loading the diary\\u2026</p></div></div>';
       h += '<div class="card"><h2>\\u26a1 Activate a customer\\u2019s PC Manager</h2>'
         + '<label>Customer name</label><input id="an" />'
         + '<label>Email (optional - links their booking login + Direct Debit)</label><input id="ae" type="email" />'
@@ -15865,10 +15840,10 @@ def write_portal_page():
       h += '<div class="card"><h2>Quick links</h2><div class="row">'
         + '<a href="https://365techies.secure.simplybook.it/v2/management/" target="_blank" rel="noopener"><button class="sm ghost">SimplyBook admin</button></a>'
         + '<button class="sm ghost" id="pcmadm">Full PCM console</button>'
-        + '<a href="/book-service/" target="_blank"><button class="sm ghost">Booking page</button></a></div>'
-        + '<p class="quiet">The PCM console (customer deletes, verify-call codes, family revokes, SOS screenshots) opens with your staff sign-in - no extra passphrase.</p></div>';
+        + '<a href="/book-service/" target="_blank" rel="noopener"><button class="sm ghost">Booking page</button></a></div>'
+        + '<p class="quiet">Everything opens in a new tab - this page stays put. The PCM console signs in with your staff session, no passphrase.</p></div>';
       h += '<div class="card"><h2>Customer book</h2><div class="tblwrap"><table><tr><th>Customer</th><th>Plan</th><th>PCs</th><th>Health</th><th>Seen</th><th>App</th><th></th></tr>';
-      (d.customers || []).sort(function (a, b) { return (b.seen || '').localeCompare(a.seen || ''); }).forEach(function (c, i) {
+      (d.customers || []).sort(function (a, b) { return (b.seen || '').localeCompare(a.seen || ''); }).forEach(function (c) {
         h += '<tr><td><strong>' + esc(c.name) + '</strong>' + (c.fam ? ' \\ud83d\\udc6a' : '') + '<br /><span class="quiet mono">' + esc(c.keymask) + '</span></td>'
           + '<td><span class="pill ' + (c.tier === 'pro' ? 'pro">Pro' : 'free">Free') + '</span></td>'
           + '<td>' + c.pcs + '</td>'
@@ -15879,6 +15854,8 @@ def write_portal_page():
       });
       h += '</table></div></div>';
       el.innerHTML = h;
+      bindOut();
+      loadDiary();
       document.getElementById('pcmadm').onclick = function () {
         var f = document.createElement('form'); f.method = 'POST'; f.action = '/api/pcm-admin.php'; f.target = '_blank';
         var i1 = document.createElement('input'); i1.type = 'hidden'; i1.name = 'stoken'; i1.value = S.stoken; f.appendChild(i1);
@@ -15887,12 +15864,12 @@ def write_portal_page():
       };
       document.getElementById('ab').onclick = function () {
         var b = this; b.disabled = true; document.getElementById('aerr').textContent = '';
-        post('/api/pcm-booking.php', { action: 'staffadd', stoken: S.stoken, machine: mid(),
+        post(BK, { action: 'staffadd', stoken: S.stoken, machine: mid(),
               name: document.getElementById('an').value.trim(), email: document.getElementById('ae').value.trim(), tier: document.getElementById('at').value })
           .then(function (r) {
             b.disabled = false;
             if (!r || !r.ok) { document.getElementById('aerr').textContent = r && r.error === 'no_name' ? 'Name needed.' : 'Couldn\\u2019t create it - try again.'; return; }
-            var link = r.weblink || r.link;   // https link works in every email client + guides them to install first
+            var link = r.weblink || r.link;
             document.getElementById('ares').innerHTML = '<div class="row" style="border:0;margin-top:.6rem"><div>'
               + '<div>\\u2713 <strong>' + esc(r.name) + '</strong> created (' + esc(r.tier) + ') - key <span class="mono">' + esc(r.key) + '</span></div>'
               + '<p class="quiet">Send the link (email button, or paste into a Splashtop chat / text). They click it on their PC and the app activates itself - and it explains what to do if the app isn\\u2019t installed yet.</p>'
@@ -15901,12 +15878,12 @@ def write_portal_page():
             document.getElementById('cpl').onclick = function () { navigator.clipboard.writeText(link).then(function () { document.getElementById('cpl').textContent = 'Copied \\u2713'; }); };
           }).catch(function () { b.disabled = false; document.getElementById('aerr').textContent = 'Couldn\\u2019t reach the server.'; });
       };
-      Array.prototype.forEach.call(document.querySelectorAll('.tf'), function (btn) {
+      Array.prototype.forEach.call(document.querySelectorAll('#p365app .tf'), function (btn) {
         btn.onclick = function () {
           var to = btn.getAttribute('data-to'), nm2 = btn.getAttribute('data-nm');
           if (to === 'free' && !confirm('Move ' + nm2 + ' to Free? Their app drops to the free features on its next check-in.')) return;
           btn.disabled = true;
-          post('/api/pcm-booking.php', { action: 'stafftier', stoken: S.stoken, machine: mid(), cid: btn.getAttribute('data-cid'), tier: to })
+          post(BK, { action: 'stafftier', stoken: S.stoken, machine: mid(), cid: btn.getAttribute('data-cid'), tier: to })
             .then(function (r) {
               if (r && r.ok) showStaff();
               else { btn.disabled = false; alert('Couldn\\u2019t change the tier - it is unchanged. Try again.'); }
@@ -15917,14 +15894,92 @@ def write_portal_page():
     }).catch(function () { showSignin('Couldn\\u2019t load - sign in again.'); });
   }
 
+  // ---------- staff diary (agenda + move + cancel, all in-portal) ----------
+  function iso(d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+  function loadDiary() {
+    var dy = document.getElementById('dy'); if (!dy) return;
+    post(BK, { action: 'agenda', stoken: S.stoken, machine: mid() }).then(function (d) {
+      dy = document.getElementById('dy'); if (!dy) return;
+      if (!d || !d.ok) { dy.innerHTML = '<p class="quiet">' + (d && d.error === 'not_configured' ? 'Diary needs the SimplyBook admin key on the server.' : 'Couldn\\u2019t load the diary - <a href="#" id="dyr">retry</a>.') + '</p>'; var r = document.getElementById('dyr'); if (r) r.onclick = function () { loadDiary(); return false; }; return; }
+      if (!d.bookings || !d.bookings.length) { dy.innerHTML = '<p class="quiet">Nothing booked in the next 14 days.</p>'; return; }
+      var h = '';
+      d.bookings.forEach(function (b, i) {
+        h += '<div class="row"><div style="flex:1;min-width:200px"><strong>' + esc(b.when) + '</strong> \\u00b7 ' + esc(b.what)
+          + '<br /><span class="quiet">' + esc(b.who) + (b.phone ? ' \\u00b7 <a href="tel:' + esc(b.phone.replace(/\\s/g, '')) + '">' + esc(b.phone) + '</a>' : '') + '</span></div>'
+          + '<button class="sm ghost mvb" data-i="' + i + '">Move</button>'
+          + '<button class="sm ghost cnb" data-i="' + i + '" style="color:var(--pbad)">Cancel</button></div>'
+          + '<div class="mvp" id="mvp' + i + '" style="display:none"></div>';
+      });
+      dy.innerHTML = h;
+      Array.prototype.forEach.call(dy.querySelectorAll('.cnb'), function (btn) {
+        btn.onclick = function () {
+          var b = d.bookings[parseInt(btn.getAttribute('data-i'), 10)];
+          if (!confirm('Cancel this booking?\\n\\n' + b.when + '\\n' + b.who + ' - ' + b.what)) return;
+          btn.disabled = true;
+          post(BK, { action: 'staffcancel', stoken: S.stoken, machine: mid(), id: b.id })
+            .then(function (r) { if (r && r.ok) loadDiary(); else { btn.disabled = false; alert('Couldn\\u2019t cancel - try again.'); } })
+            .catch(function () { btn.disabled = false; alert('Couldn\\u2019t reach the server.'); });
+        };
+      });
+      Array.prototype.forEach.call(dy.querySelectorAll('.mvb'), function (btn) {
+        btn.onclick = function () {
+          var i = parseInt(btn.getAttribute('data-i'), 10), b = d.bookings[i];
+          var p = document.getElementById('mvp' + i);
+          if (p.style.display !== 'none') { p.style.display = 'none'; return; }
+          Array.prototype.forEach.call(dy.querySelectorAll('.mvp'), function (x) { x.style.display = 'none'; });
+          p.style.display = 'block';
+          p.innerHTML = '<p class="quiet">Finding free slots\\u2026</p>';
+          var from = new Date(), to = new Date(Date.now() + 13 * 86400000);
+          post(BK, { action: 'slots', stoken: S.stoken, machine: mid(), eventId: b.eventId, from: iso(from), to: iso(to) })
+            .then(function (s) {
+              if (!s || !s.ok || !s.days || !s.days.length) { p.innerHTML = '<p class="quiet">No free slots in the next two weeks - try SimplyBook admin for further out.</p>'; return; }
+              var hh = '<p class="quiet" style="margin:0 0 .3rem">Move <strong>' + esc(b.who) + '</strong> to:</p><div id="mdays' + i + '"></div><div id="mtimes' + i + '" style="margin-top:.3rem"></div>';
+              p.innerHTML = hh;
+              var daysEl = document.getElementById('mdays' + i), timesEl = document.getElementById('mtimes' + i);
+              s.days.forEach(function (day, di) {
+                var db = document.createElement('button'); db.className = 'sm ghost dpill'; db.textContent = day.n;
+                db.onclick = function () {
+                  timesEl.innerHTML = '';
+                  day.t.forEach(function (t) {
+                    var tb = document.createElement('button'); tb.className = 'sm tpill'; tb.textContent = t;
+                    tb.onclick = function () {
+                      if (!confirm('Move ' + b.who + ' to ' + day.n + ' at ' + t + '?')) return;
+                      tb.disabled = true;
+                      post(BK, { action: 'staffmove', stoken: S.stoken, machine: mid(), id: b.id, eventId: b.eventId, date: day.d, time: t })
+                        .then(function (r) {
+                          if (r && r.ok) loadDiary();
+                          else { tb.disabled = false; alert(r && r.error === 'slot_taken' ? 'That slot just went - pick another.' : 'Couldn\\u2019t move it - try again.'); }
+                        })
+                        .catch(function () { tb.disabled = false; alert('Couldn\\u2019t reach the server.'); });
+                    };
+                    timesEl.appendChild(tb);
+                  });
+                };
+                daysEl.appendChild(db);
+              });
+              var first = daysEl.querySelector('button'); if (first) first.click();
+            })
+            .catch(function () { p.innerHTML = '<p class="quiet">Couldn\\u2019t load slots - try again.</p>'; });
+        };
+      });
+    }).catch(function () { var dy2 = document.getElementById('dy'); if (dy2) dy2.innerHTML = '<p class="quiet">Couldn\\u2019t load the diary.</p>'; });
+  }
+
   if (S.stoken) showStaff();
   else if (S.wtoken) showDash();
   else showSignin();
 })();
-</script>
-</body>
-</html>
-'''
+</script>'''
+    content = ('<section class="section" style="padding-top:1.1rem"><div class="wrap" style="max-width:880px">'
+               + '<div id="p365app"><noscript><p>The customer portal needs JavaScript switched on. Or just ring us: 01202 775566.</p></noscript>'
+               + '<p style="color:#9fb5d3">Loading the portal&hellip;</p></div>'
+               + '</div></section>' + css + js)
+    schema = bp.graph([bp.webpage("portal", "Customer portal", "Sign in to the 365 Techies customer portal.")])
+    html = bp.page("portal", "Customer portal | 365 Techies",
+                   "Sign in to the 365 Techies customer portal - your plan, your computers' health, your visits.",
+                   "365 Techies customer portal", schema, content)
+    html = html.replace('<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />',
+                        '<meta name="robots" content="noindex, nofollow" />\n  <meta name="referrer" content="no-referrer" />', 1)
     import os as _os
     d = _os.path.join(bp.BASE, "portal")
     _os.makedirs(d, exist_ok=True)
