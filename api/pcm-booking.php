@@ -249,8 +249,11 @@ function names_corroborate($a, $b) {
 // NAME also corroborates the record, never clobbers an existing link, and cools down failed
 // lookups so an unmatchable record can't hammer SimplyBook. Returns the linked cid (0 = none).
 // $force skips the cool-down (used right after a booking, when the SB client is freshly created).
-function link_cid_from_email($ckey, $email, $force = false) {
+// &$existed is set true if ANY SimplyBook client already owns this exact email (whether or not
+// the name corroborated) - callers use it to avoid creating/attaching onto a stranger.
+function link_cid_from_email($ckey, $email, $force = false, &$existed = null) {
     global $HAS_ADMIN;
+    $existed = false;
     if (!$HAS_ADMIN || $ckey === '' || $email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) return 0;
     list($lk, $db) = db_open(); db_close($lk);
     if (!isset($db['customers'][$ckey])) return 0;
@@ -260,7 +263,10 @@ function link_cid_from_email($ckey, $email, $force = false) {
     $recName = (string)(isset($rec['sb_name']) ? $rec['sb_name'] : (isset($rec['name']) ? $rec['name'] : ''));
 
     $r = sb_adm('getClientList', array($email, 20));
-    if (sb_net($r) || !isset($r['result']) || !is_array($r['result'])) return 0;   // transient - don't cool down
+    // transient failure: we can't tell whether a client owns this email. Signal "assume one might"
+    // (fail-safe) so a caller like ensure_client_id refuses to create/attach rather than risk a
+    // duplicate client or, worse, deduping onto someone else. Don't cool down (it wasn't a real miss).
+    if (sb_net($r) || !isset($r['result']) || !is_array($r['result'])) { $existed = true; return 0; }
     $want = strtolower(trim($email));
     $ids = array();
     foreach ($r['result'] as $cli) {
@@ -271,6 +277,7 @@ function link_cid_from_email($ckey, $email, $force = false) {
                               'email' => $ce,
                               'phone' => (string)(isset($cli['phone']) ? $cli['phone'] : ''));
     }
+    $existed = (count($ids) > 0);
     $mid = 0; $m = null;
     if (count($ids) === 1) {   // exactly one exact-email client...
         $ks = array_keys($ids); $cand = (int)$ks[0]; $cm = $ids[$ks[0]];
@@ -294,6 +301,44 @@ function link_cid_from_email($ckey, $email, $force = false) {
     }
     db_close($lk);
     return $mid;
+}
+
+// Get a SimplyBook client id to book against: the record's linked/matched client, or a NEW
+// one created from the customer's VERIFIED identity (name/email/phone from their own record).
+// Booking via the ADMIN method with a client id is immune to the "Client authorization
+// required" company config that rejects public (unauthenticated) booking. Returns 0 only if
+// we genuinely cannot obtain one. Stores a freshly-created id on the record for next time.
+function ensure_client_id($ckey, $snap) {
+    global $HAS_ADMIN;
+    if ((int)$snap['cid'] > 0) return (int)$snap['cid'];
+    if (!$HAS_ADMIN) return 0;
+    $existed = false;
+    if ($snap['email'] !== '') {
+        $linked = link_cid_from_email($ckey, $snap['email'], true, $existed);
+        if ($linked > 0) return $linked;   // a client whose email AND name match this record
+    }
+    // A client already owns this email but its NAME did not corroborate our record - it may be a
+    // different person (e.g. a mistyped activation email). addClient would dedupe ONTO that
+    // client, so refuse: never book a customer onto a stranger's SimplyBook client.
+    if ($existed) return 0;
+    // No client owns this email yet - create one from the customer's own verified record identity.
+    $cd = array('name' => $snap['name'] !== '' ? $snap['name'] : $snap['email']);
+    if ($cd['name'] === '') return 0;
+    if ($snap['email'] !== '') $cd['email'] = $snap['email'];
+    if ($snap['phone'] !== '') $cd['phone'] = $snap['phone'];
+    $ac = sb_adm('addClient', array($cd, false));
+    if (sb_net($ac) || empty($ac['result'])) return 0;
+    $cid = (int)$ac['result'];
+    if ($cid > 0 && $ckey !== '') {
+        list($lk, $db) = db_open();
+        if (isset($db['customers'][$ckey]) && empty($db['customers'][$ckey]['sb_client_id'])) {
+            $db['customers'][$ckey]['sb_client_id'] = $cid;
+            unset($db['customers'][$ckey]['sb_link_ts']);
+            db_save($db);
+        }
+        db_close($lk);
+    }
+    return $cid;
 }
 
 function stamp_next($ts, $pretty) {
@@ -818,13 +863,19 @@ if ($action === 'book') {
     if (strlen($time) === 5) $time .= ':00';
     if (strtotime($date . ' ' . $time) === false) fail('bad_request');
     if ($snap['email'] === '') fail('needsignin');
+    if (!$HAS_ADMIN) fail('not_configured');
+    // Book via the ADMIN method with a real client id. The public API rejects unauthenticated
+    // bookings ("Client authorization required") under this company's config, so we resolve or
+    // create the customer's own SimplyBook client and book on their behalf - same as staffbook.
+    $cid = ensure_client_id($key, $snap);
+    if ($cid <= 0) fail('booking_failed');
     $au = sb_pub('getAvailableUnits', array($eventId, $date . ' ' . $time, 1));
     if (sb_net($au)) fail('sb_unavailable');
     $unitIds = isset($au['result']) && is_array($au['result']) ? array_values($au['result']) : array();
     if (!count($unitIds)) fail('slot_taken');
-    // clientData from the VERIFIED SimplyBook identity (avoids creating a duplicate client)
-    $clientData = array('name' => $snap['name'], 'email' => $snap['email'], 'phone' => $snap['phone']);
-    $r = sb_pub('book', array($eventId, (int)$unitIds[0], $date, $time, $clientData, array(), 1));
+    $startTs = strtotime($date . ' ' . $time); $endTs = $startTs + sb_mins_for($eventId) * 60;
+    $r = sb_adm('book', array($eventId, (int)$unitIds[0], $cid, $date, $time,
+        date('Y-m-d', $endTs), date('H:i:s', $endTs), 0, array(), 1));
     if (sb_net($r)) fail('sb_unavailable');
     $b = isset($r['result']) && is_array($r['result']) ? $r['result'] : null;
     if (!$b) {
@@ -840,9 +891,6 @@ if ($action === 'book') {
     $ts = strtotime($date . ' ' . $time);
     $pretty = $ts ? date('D j M Y g:ia', $ts) : ($date . ' ' . $time);
     if ($confirmed) stamp_next($ts, $pretty);        // only claim a firm date once confirmed
-    // the SB client now exists for this email - link it (force past the cool-down) so the
-    // customer's new visit shows up in their own bookings list right away
-    if (!$snap['cid'] && $snap['email'] !== '') link_cid_from_email($key, $snap['email'], true);
     out(array('ok' => true, 'id' => $bid, 'when' => $pretty, 'pending' => !$confirmed));
 }
 
@@ -918,9 +966,10 @@ if ($action === 'cancel' || $action === 'change') {
         $date, $time, date('Y-m-d', $endTs), date('H:i:s', $endTs), 0, array()));
     $okEdit = !sb_net($r) && isset($r['result']) && $r['result'];
     if (!$okEdit) {
-        // fallback: book the new slot FIRST (from verified identity), then cancel the old.
-        $clientData = array('name' => $snap['name'], 'email' => $snap['email'], 'phone' => $snap['phone']);
-        $nb = sb_pub('book', array($eventId, (int)$unitIds[0], $date, $time, $clientData, array(), 1));
+        // fallback: book the new slot FIRST via the ADMIN method with this client's id (immune
+        // to the "Client authorization required" public-booking config), then cancel the old.
+        $nb = sb_adm('book', array($eventId, (int)$unitIds[0], $snap['cid'], $date, $time,
+            date('Y-m-d', $endTs), date('H:i:s', $endTs), 0, array(), 1));
         if (sb_net($nb) || !isset($nb['result']) || !is_array($nb['result'])) fail('change_failed');
         $cx = sb_adm('cancelBooking', array($bid));
         if (sb_net($cx) || empty($cx['result'])) {
