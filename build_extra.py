@@ -15624,6 +15624,16 @@ def write_portal_page():
   #p365app .chip.c { color:var(--pcyan); border-color:rgba(29,151,227,.4); }
   #p365app .tline.done { opacity:.68; }
   #p365app .tline.done .ttime { color:var(--pmut); }
+  #p365app .nbbtn { width:100%; font-size:1.02rem; padding:.75rem 1rem; margin:.1rem 0 .6rem; background:var(--pgood); color:#06220b; font-weight:800; letter-spacing:.01em; }
+  #p365app .nbbtn:hover { filter:brightness(1.06); }
+  #p365app .nbwiz { border:1px solid var(--pline); border-radius:12px; padding:.8rem .9rem; margin-bottom:.7rem; background:var(--pink); animation:p365fadeUp .3s ease both; }
+  #p365app .nbwiz h3 { font-size:.9rem; color:var(--psoft); margin:.5rem 0 .3rem; }
+  #p365app .nbwiz h3:first-child { margin-top:0; }
+  #p365app .cres { border:1px solid var(--pline); border-radius:9px; overflow:hidden; margin-top:.35rem; }
+  #p365app .cres button { display:block; width:100%; text-align:left; background:transparent; border:0; border-radius:0; border-bottom:1px solid rgba(42,59,99,.5); color:var(--pwhite); padding:.5rem .7rem; margin:0; font-weight:400; }
+  #p365app .cres button:last-child { border-bottom:0; }
+  #p365app .cres button:hover { background:rgba(29,151,227,.14); transform:none; }
+  #p365app .nbsum { background:rgba(0,206,27,.08); border:1px solid rgba(0,206,27,.3); border-radius:10px; padding:.6rem .8rem; margin-top:.6rem; }
   @keyframes p365fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:none; } }
   @keyframes p365popIn { from { opacity:0; transform:scale(.96); } to { opacity:1; transform:none; } }
   #p365app h1, #p365app .lede { animation:p365fadeUp .5s ease both; }
@@ -15883,6 +15893,8 @@ def write_portal_page():
       if (!d || !d.ok) { showSignin('Staff session expired (12h) - sign in again.'); return; }
       var h = topRow('365 staff \\u00b7 ' + esc(S.email || ''));
       h += '<div class="card"><h2>\\ud83d\\udcc5 Diary</h2>'
+        + '<button class="nbbtn" id="nbopen">\\u2795 Book a new job</button>'
+        + '<div class="nbwiz" id="nbwiz" style="display:none"></div>'
         + '<input id="dsearch" placeholder="Search a customer\\u2019s upcoming bookings (name or phone)\\u2026" />'
         + '<div class="dstrip" id="dstrip"></div><div id="dday"><p class="quiet">Loading the diary\\u2026</p></div></div>';
       h += '<div class="card"><h2>\\ud83d\\udda5 PC Manager fleet</h2>'
@@ -15912,6 +15924,7 @@ def write_portal_page():
       el.innerHTML = h;
       bindOut();
       loadDiary(); loadFleet();
+      document.getElementById('nbopen').onclick = function () { toggleWiz(); };
       var st;
       document.getElementById('dsearch').addEventListener('input', function () {
         var q = this.value.trim().toLowerCase();
@@ -16113,6 +16126,138 @@ def write_portal_page():
       if (d && d.ok) { AG60 = d.bookings || []; run(AG60); }
       else v.innerHTML = '<p class="quiet">Couldn\\u2019t search just now - try again.</p>';
     }).catch(function () { v.innerHTML = '<p class="quiet">Couldn\\u2019t reach the server.</p>'; });
+  }
+
+  // ---------- book a new job: who -> what -> when, live against SimplyBook ----------
+  var NB = null, SVC = null;
+  function toggleWiz() {
+    var w = document.getElementById('nbwiz'); if (!w) return;
+    if (w.style.display !== 'none') { w.style.display = 'none'; return; }
+    NB = { cname: '', cphone: '', cemail: '', svc: 0, svcName: '', date: '', time: '' };
+    w.style.display = 'block';
+    wizWho();
+  }
+  function wizWho() {
+    var w = document.getElementById('nbwiz'); if (!w) return;
+    w.innerHTML = '<h3>1 \u00b7 Who\u2019s it for?</h3>'
+      + '<input id="nbq" placeholder="Type their name or number\u2026" autocomplete="off" />'
+      + '<div class="cres" id="nbres" style="display:none"></div>'
+      + '<p class="quiet" style="margin-top:.35rem"><a href="#" id="nbnew">New customer? Enter their details \u2192</a> \u00b7 <a href="#" id="nbx">close</a></p>';
+    var q = document.getElementById('nbq'); q.focus();
+    var t2;
+    q.addEventListener('input', function () {
+      clearTimeout(t2);
+      var val = q.value.trim();
+      if (val.length < 2) { document.getElementById('nbres').style.display = 'none'; return; }
+      t2 = setTimeout(function () {
+        post(BK, { action: 'staffclients', stoken: S.stoken, machine: mid(), q: val }).then(function (d) {
+          var res = document.getElementById('nbres'); if (!res) return;
+          if (!d || !d.ok || !d.clients.length) { res.style.display = 'none'; return; }
+          res.innerHTML = '';
+          d.clients.forEach(function (c) {
+            var b2 = document.createElement('button');
+            b2.innerHTML = '<strong>' + esc(c.name) + '</strong>' + (c.phone ? ' \u00b7 ' + esc(c.phone) : '') + (c.email ? ' <span class="quiet">' + esc(c.email) + '</span>' : '');
+            b2.onclick = function () { NB.cname = c.name; NB.cphone = c.phone; NB.cemail = c.email; wizWhat(); };
+            res.appendChild(b2);
+          });
+          res.style.display = 'block';
+        });
+      }, 280);
+    });
+    document.getElementById('nbnew').onclick = function () { wizNew(q.value.trim()); return false; };
+    document.getElementById('nbx').onclick = function () { toggleWiz(); return false; };
+  }
+  function wizNew(pre) {
+    var w = document.getElementById('nbwiz'); if (!w) return;
+    w.innerHTML = '<h3>1 \u00b7 New customer</h3>'
+      + '<label>Name</label><input id="nbn" value="' + esc(/^[0-9+\\s]+$/.test(pre) ? '' : pre) + '" />'
+      + '<label>Phone</label><input id="nbp" type="tel" value="' + esc(/^[0-9+\\s]+$/.test(pre) ? pre : '') + '" />'
+      + '<label>Email (optional)</label><input id="nbe" type="email" />'
+      + '<button class="sm" id="nbgo2">Next \u2192</button> <button class="sm ghost" id="nbb1">\u2190 Back</button>'
+      + '<div class="err" id="nberr1"></div>';
+    document.getElementById('nbn').focus();
+    document.getElementById('nbgo2').onclick = function () {
+      var n = document.getElementById('nbn').value.trim();
+      if (n.length < 2) { document.getElementById('nberr1').textContent = 'Name first, please.'; return; }
+      NB.cname = n; NB.cphone = document.getElementById('nbp').value.trim(); NB.cemail = document.getElementById('nbe').value.trim();
+      wizWhat();
+    };
+    document.getElementById('nbb1').onclick = function () { wizWho(); };
+  }
+  function wizWhat() {
+    var w = document.getElementById('nbwiz'); if (!w) return;
+    w.innerHTML = '<h3>1 \u00b7 ' + esc(NB.cname) + (NB.cphone ? ' \u00b7 ' + esc(NB.cphone) : '') + '</h3>'
+      + '<h3>2 \u00b7 What service?</h3><div id="nbsvc"><p class="quiet">Loading services\u2026</p></div>'
+      + '<p class="quiet"><a href="#" id="nbb2">\u2190 Back</a></p>';
+    document.getElementById('nbb2').onclick = function () { wizWho(); return false; };
+    function render(list) {
+      var sv = document.getElementById('nbsvc'); if (!sv) return;
+      sv.innerHTML = '';
+      list.forEach(function (svc) {
+        var b2 = document.createElement('button');
+        b2.className = 'sm ghost dpill';
+        b2.textContent = svc.name + ' (' + svc.mins + ' min)';
+        b2.onclick = function () { NB.svc = svc.id; NB.svcName = svc.name; wizWhen(); };
+        sv.appendChild(b2);
+      });
+    }
+    if (SVC) { render(SVC); return; }
+    post(BK, { action: 'services', stoken: S.stoken, machine: mid() }).then(function (d) {
+      if (d && d.ok && d.services) { SVC = d.services; render(SVC); }
+      else document.getElementById('nbsvc').innerHTML = '<p class="quiet">Couldn\u2019t load services - close and retry.</p>';
+    });
+  }
+  function wizWhen() {
+    var w = document.getElementById('nbwiz'); if (!w) return;
+    w.innerHTML = '<h3>1 \u00b7 ' + esc(NB.cname) + ' \u00b7 2 \u00b7 ' + esc(NB.svcName) + '</h3>'
+      + '<h3>3 \u00b7 When?</h3><div id="nbdays"><p class="quiet">Finding free slots\u2026</p></div><div id="nbtimes" style="margin-top:.3rem"></div>'
+      + '<div id="nbconf"></div>'
+      + '<p class="quiet"><a href="#" id="nbb3">\u2190 Back</a></p>';
+    document.getElementById('nbb3').onclick = function () { wizWhat(); return false; };
+    var from = new Date(), to = new Date(Date.now() + 20 * 86400000);
+    post(BK, { action: 'slots', stoken: S.stoken, machine: mid(), eventId: NB.svc, from: iso(from), to: iso(to) })
+      .then(function (sr) {
+        var daysEl = document.getElementById('nbdays'); if (!daysEl) return;
+        if (!sr || !sr.ok || !sr.days || !sr.days.length) { daysEl.innerHTML = '<p class="quiet">No free slots in the next three weeks - check SimplyBook admin.</p>'; return; }
+        daysEl.innerHTML = '';
+        var timesEl = document.getElementById('nbtimes');
+        sr.days.forEach(function (day) {
+          var db2 = document.createElement('button'); db2.className = 'sm ghost dpill'; db2.textContent = day.n;
+          db2.onclick = function () {
+            timesEl.innerHTML = '';
+            day.t.forEach(function (t) {
+              var tb = document.createElement('button'); tb.className = 'sm tpill'; tb.textContent = t;
+              tb.onclick = function () { NB.date = day.d; NB.time = t; NB.dayN = day.n; wizConfirm(); };
+              timesEl.appendChild(tb);
+            });
+          };
+          daysEl.appendChild(db2);
+        });
+        var first = daysEl.querySelector('button'); if (first) first.click();
+      })
+      .catch(function () { var daysEl = document.getElementById('nbdays'); if (daysEl) daysEl.innerHTML = '<p class="quiet">Couldn\u2019t load slots.</p>'; });
+  }
+  function wizConfirm() {
+    var cEl = document.getElementById('nbconf'); if (!cEl) return;
+    cEl.innerHTML = '<div class="nbsum"><strong>' + esc(NB.cname) + '</strong> \u00b7 ' + esc(NB.svcName) + ' \u00b7 <strong>' + esc(NB.dayN) + ' at ' + esc(NB.time) + '</strong><br />'
+      + '<button class="sm" id="nbgo" style="background:var(--pgood);color:#06220b;font-weight:800">\u2713 Book it</button>'
+      + ' <span class="err" id="nberr" style="display:inline"></span></div>';
+    document.getElementById('nbgo').onclick = function () {
+      var b2 = this; b2.disabled = true; document.getElementById('nberr').textContent = '';
+      post(BK, { action: 'staffbook', stoken: S.stoken, machine: mid(), eventId: NB.svc, date: NB.date, time: NB.time, name: NB.cname, phone: NB.cphone, email: NB.cemail })
+        .then(function (r) {
+          if (r && r.ok) {
+            var w = document.getElementById('nbwiz');
+            w.innerHTML = '<div class="nbsum">\u2713 Booked - <strong>' + esc(NB.cname) + '</strong>, ' + esc(r.when) + '. It\u2019s in SimplyBook and the diary below.</div>';
+            AG60 = null; selDay = NB.date; loadDiary();
+            setTimeout(function () { var w2 = document.getElementById('nbwiz'); if (w2) w2.style.display = 'none'; }, 3500);
+          } else {
+            b2.disabled = false;
+            document.getElementById('nberr').textContent = r && r.error === 'slot_taken' ? 'That slot just went - pick another.' : (r && r.error === 'bad_email' ? 'That email looks wrong.' : 'Couldn\u2019t book it - try again.');
+          }
+        })
+        .catch(function () { b2.disabled = false; document.getElementById('nberr').textContent = 'Couldn\u2019t reach the server.'; });
+    };
   }
 
   // ---------- fleet dashboard ----------
