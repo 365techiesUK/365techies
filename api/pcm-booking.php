@@ -910,6 +910,28 @@ if ($action === 'staffkey') {
     fail('unknown_customer');
 }
 
+// staff: view the portal AS a customer (testing + "what does this customer see?").
+// Mints a SHORT (12h) machine-bound customer session; staff already see all this data,
+// so this changes presentation, not privilege.
+if ($action === 'staffview') {
+    need_staff();
+    $cid2 = preg_replace('/[^a-f0-9]/', '', (string)(isset($in['cid']) ? $in['cid'] : ''));
+    list($lk, $db) = db_open();
+    $found = '';
+    foreach ($db['customers'] as $k2 => $c2) {
+        if (!empty($c2['merged_into'])) continue;
+        if (substr(sha1('365cid|' . $k2), 0, 12) === $cid2) { $found = $k2; break; }
+    }
+    if ($found === '') { db_close($lk); fail('unknown_customer'); }
+    $wtok = bin2hex(random_bytes(24));
+    if (!isset($db['websessions'])) $db['websessions'] = array();
+    $db['websessions'][$wtok] = array('key' => $found, 'ts' => time(), 'iat' => time(), 'machine' => $machine);
+    db_save($db); db_close($lk);
+    $c = $db['customers'][$found];
+    out(array('ok' => true, 'wtoken' => $wtok, 'name' => (string)(isset($c['name']) ? $c['name'] : ''),
+        'tier' => ((isset($c['tier']) && $c['tier'] === 'pro') ? 'pro' : 'free')));
+}
+
 // staff: delete a customer record (test keys, duplicates). Destructive - the portal
 // confirms with the customer's name first. Cleans their web sessions and SOS shots too.
 if ($action === 'staffdel') {

@@ -15664,7 +15664,7 @@ def write_portal_page():
   try { S = JSON.parse(sessionStorage.getItem('p365s') || 'null') || JSON.parse(localStorage.getItem('p365') || '{}'); } catch (e) { S = {}; }
   function saveS() {
     try {
-      if (S.staff) { sessionStorage.setItem('p365s', JSON.stringify(S)); localStorage.removeItem('p365'); }
+      if (S.staff || S.back) { sessionStorage.setItem('p365s', JSON.stringify(S)); localStorage.removeItem('p365'); }
       else { localStorage.setItem('p365', JSON.stringify(S)); sessionStorage.removeItem('p365s'); }
       if (!S.staff && !S.wtoken) { localStorage.removeItem('p365'); sessionStorage.removeItem('p365s'); }
     } catch (e) {}
@@ -15831,6 +15831,7 @@ def write_portal_page():
       }
       if (d.next_ts && d.next_ts * 1000 < Date.now()) d.next = '';
       var h = topRow('Hello ' + esc((d.name || '').split(' ')[0] || 'there'));
+      if (S.back) h = '<div class="card" style="border-color:rgba(29,151,227,.55);padding:.6rem .9rem"><div class="row" style="border:0;padding:0"><span class="quiet" style="margin:0">\\ud83d\\udc41 You\\u2019re viewing the portal as <strong>' + esc(d.name || 'this customer') + '</strong> - exactly what they see.</span><button class="sm" id="backstaff">\\u2190 Back to staff</button></div></div>' + h;
       if (d.pending) h += '<div class="card" style="border-color:rgba(224,179,65,.5)"><p class="quiet">We can see a support plan registered to this email. For security we link it to your web login by hand - it usually appears within a day. Need it sooner? Ring 01202 775566.</p></div>';
       h += '<div class="card"><h2>Your membership</h2><div class="row"><span class="pill ' + (d.tier === 'pro' ? 'pro">On 365 support' : 'free">365 member (free)') + '</span>'
         + (d.next ? '<span>Next service: <strong>' + esc(d.next) + '</strong></span>' : '<span class="quiet">No service booked - <a href="/book-service/" target="_blank" rel="noopener">book one</a>.</span>') + '</div>';
@@ -15877,6 +15878,12 @@ def write_portal_page():
         + '<a href="tel:+441202775566"><button class="sm ghost">Call 01202 775566</button></a></div></div>';
             el.innerHTML = h;
       bindOut();
+      var bs = document.getElementById('backstaff');
+      if (bs) bs.onclick = function () {
+        post(BK, { action: 'weblogout', wtoken: S.wtoken, machine: mid() });   // kill the view-as session
+        S = { staff: true, stoken: S.back.stoken, email: S.back.email };
+        saveS(); showStaff();
+      };
       browserCheck();
       var ar = document.getElementById('appreq');
       if (ar && !d.appreq) ar.onclick = function () {
@@ -15962,7 +15969,7 @@ def write_portal_page():
         + '<p class="quiet">Everything opens in a new tab - this page stays put. The PCM console signs in with your staff session, no passphrase.</p></div>';
       h += '<div class="card"><h2>PC Manager licences</h2><div class="tblwrap"><table><tr><th>Customer</th><th>Plan</th><th>PCs</th><th>Health</th><th>Seen</th><th>App</th><th></th></tr>';
       (d.customers || []).sort(function (a, b) { return (b.seen || '').localeCompare(a.seen || ''); }).forEach(function (c) {
-        h += '<tr><td><strong>' + esc(c.name) + '</strong>' + (c.fam ? ' \\ud83d\\udc6a' : '') + '<br /><span class="quiet mono" id="kv' + esc(c.id) + '">' + esc(c.keymask) + '</span> <button class="sm ghost kb" data-cid="' + esc(c.id) + '" title="Show + copy their activation key">\\ud83d\\udd11</button></td>'
+        h += '<tr><td><strong>' + esc(c.name) + '</strong>' + (c.fam ? ' \\ud83d\\udc6a' : '') + '<br /><span class="quiet mono" id="kv' + esc(c.id) + '">' + esc(c.keymask) + '</span> <button class="sm ghost kb" data-cid="' + esc(c.id) + '" title="Show + copy their activation key">\\ud83d\\udd11</button> <button class="sm ghost vw" data-cid="' + esc(c.id) + '" title="View the portal as this customer">\\ud83d\\udc41</button></td>'
           + '<td><span class="pill ' + (c.tier === 'pro' ? 'pro">Pro' : 'free">Free') + '</span></td>'
           + '<td>' + c.pcs + '</td>'
           + '<td>' + (c.worst < 0 ? '\\u2014' : '<span class="' + (c.worst >= 80 ? 'ok' : 'wn') + '">' + c.worst + '%</span>') + '</td>'
@@ -16018,6 +16025,18 @@ def write_portal_page():
               cl.onclick = function () { navigator.clipboard.writeText(r.weblink).then(function () { cl.textContent = '\\u2713 copied'; }); };
               sp.appendChild(ck); sp.appendChild(document.createTextNode(' ')); sp.appendChild(cl);
               btn.style.display = 'none';
+            })
+            .catch(function () { btn.disabled = false; alert('Couldn\\u2019t reach the server.'); });
+        };
+      });
+      Array.prototype.forEach.call(document.querySelectorAll('#p365app .vw'), function (btn) {
+        btn.onclick = function () {
+          btn.disabled = true;
+          post(BK, { action: 'staffview', stoken: S.stoken, machine: mid(), cid: btn.getAttribute('data-cid') })
+            .then(function (r) {
+              if (!r || !r.ok) { btn.disabled = false; alert('Couldn\\u2019t open the customer view - try again.'); return; }
+              S = { wtoken: r.wtoken, name: r.name, tier: r.tier, back: { stoken: S.stoken, email: S.email } };
+              saveS(); showDash();
             })
             .catch(function () { btn.disabled = false; alert('Couldn\\u2019t reach the server.'); });
         };
