@@ -15718,7 +15718,7 @@ def write_portal_page():
           else {
             var e2 = d && d.error;
             document.getElementById('serr').textContent =
-              e2 === 'throttled' ? 'Too many tries - wait 15 minutes.'
+              e2 === 'throttled' ? 'Too many password tries - wait 15 minutes. Or skip the password: tap \\u201cEmail me a sign-in code instead\\u201d below - codes still work right now.'
               : (e2 === 'sb_unavailable' || e2 === 'db_unavailable' || e2 === 'not_configured') ? 'We couldn\\u2019t reach the booking system - nothing wrong with your details, try again in a minute.'
               : 'That didn\\u2019t match - check the password, or tap \\u201cEmail me a sign-in code\\u201d below.';
           }

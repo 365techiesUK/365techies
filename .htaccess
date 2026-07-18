@@ -166,4 +166,8 @@ ErrorDocument 404 /404.html
   <FilesMatch "\.html$">
     Header set Cache-Control "no-cache"
   </FilesMatch>
+  # App-like pages (sign-in flows) must NEVER be cache-served stale - a customer on an old
+  # portal page mid-fix is undebuggable ("nowhere to enter the code")
+  SetEnvIf Request_URI "^/(portal|family|activate)/" PCMNOSTORE
+  Header set Cache-Control "no-store, max-age=0" env=PCMNOSTORE
 </IfModule>

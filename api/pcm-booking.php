@@ -510,7 +510,7 @@ if ($action === 'signin') {
     $tlk = @fopen($THROTTLE . '.lock', 'c'); if ($tlk) @flock($tlk, LOCK_EX);
     $th = cache_load($THROTTLE);
     foreach ($th as $k2 => $v2) if ((isset($v2['ts']) ? $v2['ts'] : 0) < time() - 900) unset($th[$k2]);
-    if (isset($th[$tkey]) && (isset($th[$tkey]['n']) ? $th[$tkey]['n'] : 0) >= 6) { cache_save($THROTTLE, $th); db_close($tlk); fail('throttled'); }
+    if (isset($th[$tkey]) && (isset($th[$tkey]['n']) ? $th[$tkey]['n'] : 0) >= 12) { cache_save($THROTTLE, $th); db_close($tlk); fail('throttled'); }
 
     // 365 STAFF (allow-list) => MANAGER MODE. Authenticate them by their CLIENT/booking login
     // (the password they book with - no 2FA, always works) or, failing that, getUserToken with
