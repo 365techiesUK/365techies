@@ -622,6 +622,27 @@
   #p365app .dpill, #p365app .tpill { padding:.3rem .6rem; font-size:.8rem; margin:.2rem .25rem 0 0; }
   #p365app .mvp { padding:.4rem 0 .8rem; border-bottom:1px solid rgba(42,59,99,.5); }
   @media (min-width:640px) { #p365app .twocol { display:grid; grid-template-columns:1fr 1fr; gap:.9rem; align-items:start; } }
+  #p365app .dstrip { display:flex; flex-wrap:wrap; gap:.3rem; margin:.3rem 0 .7rem; }
+  #p365app .dpill { padding:.34rem .6rem; font-size:.8rem; margin:0; background:transparent; border:1px solid var(--pline); color:var(--pmut); border-radius:9px; }
+  #p365app .dpill.em { font-weight:700; color:var(--pwhite); }
+  #p365app .dpill.on { background:var(--pcyan); border-color:var(--pcyan); color:#fff; }
+  #p365app .dpill b { background:rgba(255,255,255,.22); border-radius:999px; padding:0 .38rem; margin-left:.25rem; font-size:.72rem; }
+  #p365app .dpill:not(.on) b { background:rgba(29,151,227,.25); color:var(--psoft); }
+  #p365app .tline { display:flex; gap:.7rem; padding:.4rem 0; border-bottom:1px solid rgba(42,59,99,.45); animation:p365popIn .4s ease both; align-items:flex-start; flex-wrap:wrap; }
+  #p365app .tline:last-child { border-bottom:0; }
+  #p365app .ttime { flex:0 0 62px; color:var(--pcyan); font-weight:700; font-size:.95rem; padding-top:.1rem; }
+  #p365app .tblock { flex:1; min-width:180px; }
+  #p365app .tgroup { color:var(--psoft); font-weight:600; font-size:.85rem; margin:.7rem 0 .2rem; }
+  #p365app .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(96px,1fr)); gap:.5rem; margin-bottom:.7rem; }
+  #p365app .stat { background:var(--pink); border:1px solid var(--pline); border-radius:11px; padding:.55rem .6rem; text-align:center; animation:p365popIn .5s ease both; }
+  #p365app .stat b { display:block; font-size:1.45rem; color:var(--pwhite); font-variant-numeric:tabular-nums; }
+  #p365app .stat span { font-size:.72rem; color:var(--pmut); }
+  #p365app .stat.g b { color:var(--pgood); } #p365app .stat.w b { color:var(--pwarn); }
+  #p365app .ftabs { display:flex; gap:.35rem; margin:.2rem 0 .55rem; flex-wrap:wrap; }
+  #p365app .ftabs button { margin:0; padding:.32rem .68rem; font-size:.8rem; background:transparent; border:1px solid var(--pline); color:var(--pmut); }
+  #p365app .ftabs button.on { background:var(--pcyan); border-color:var(--pcyan); color:#fff; }
+  #p365app .chip.b { color:var(--pbad); border-color:rgba(232,99,126,.4); }
+  #p365app .dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:.3rem; }
   @keyframes p365fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:none; } }
   @keyframes p365popIn { from { opacity:0; transform:scale(.96); } to { opacity:1; transform:none; } }
   #p365app h1, #p365app .lede { animation:p365fadeUp .5s ease both; }
@@ -852,14 +873,39 @@
     }).catch(function () { showSignin('Couldn\u2019t load your dashboard - please sign in again.'); });
   }
 
-  // ---------- staff panel ----------
+  // ---------- staff panel: the daily-operations dashboard ----------
+  var AG = null, AG60 = null, selDay = null, FLEET = null, ftab = 'on';
+  function iso(dt) { return dt.getFullYear() + '-' + ('0' + (dt.getMonth() + 1)).slice(-2) + '-' + ('0' + dt.getDate()).slice(-2); }
+  function todayIso() { return iso(new Date()); }
+  function fmtTime(tm) {
+    if (!tm) return '';
+    var hp = tm.split(':'), h = parseInt(hp[0], 10), m = hp[1];
+    var ap = h >= 12 ? 'pm' : 'am'; h = h % 12; if (h === 0) h = 12;
+    return h + (m === '00' ? '' : ':' + m) + ap;
+  }
+  function countUp(node, target) {
+    var t0 = null;
+    function step(ts) {
+      if (!t0) t0 = ts;
+      var p = Math.min(1, (ts - t0) / 700);
+      node.textContent = Math.round(target * (1 - Math.pow(1 - p, 3)));
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
   function showStaff() {
     el.innerHTML = topRow('365 staff') + '<p class="lede">Loading\u2026</p>';
     bindOut();
     post(BK, { action: 'staffcustomers', stoken: S.stoken, machine: mid() }).then(function (d) {
       if (!d || !d.ok) { showSignin('Staff session expired (12h) - sign in again.'); return; }
       var h = topRow('365 staff \u00b7 ' + esc(S.email || ''));
-      h += '<div class="card"><h2>\ud83d\udcc5 Diary - next 14 days</h2><div id="dy"><p class="quiet">Loading the diary\u2026</p></div></div>';
+      h += '<div class="card"><h2>\ud83d\udcc5 Diary</h2>'
+        + '<input id="dsearch" placeholder="Search a customer\u2019s upcoming bookings (name or phone)\u2026" />'
+        + '<div class="dstrip" id="dstrip"></div><div id="dday"><p class="quiet">Loading the diary\u2026</p></div></div>';
+      h += '<div class="card"><h2>\ud83d\udda5 PC Manager fleet</h2>'
+        + '<div class="stats" id="fstats"></div>'
+        + '<div class="ftabs" id="ftabs"></div><div class="tblwrap" id="ffleet"><p class="quiet">Loading the fleet\u2026</p></div></div>';
       h += '<div class="card"><h2>\u26a1 Activate a customer\u2019s PC Manager</h2>'
         + '<label>Customer name</label><input id="an" />'
         + '<label>Email (optional - links their booking login + Direct Debit)</label><input id="ae" type="email" />'
@@ -883,7 +929,13 @@
       h += '</table></div></div>';
       el.innerHTML = h;
       bindOut();
-      loadDiary();
+      loadDiary(); loadFleet();
+      var st;
+      document.getElementById('dsearch').addEventListener('input', function () {
+        var q = this.value.trim().toLowerCase();
+        clearTimeout(st);
+        st = setTimeout(function () { doSearch(q); }, 300);
+      });
       document.getElementById('pcmadm').onclick = function () {
         var f = document.createElement('form'); f.method = 'POST'; f.action = '/api/pcm-admin.php'; f.target = '_blank';
         var i1 = document.createElement('input'); i1.type = 'hidden'; i1.name = 'stoken'; i1.value = S.stoken; f.appendChild(i1);
@@ -922,75 +974,204 @@
     }).catch(function () { showSignin('Couldn\u2019t load - sign in again.'); });
   }
 
-  // ---------- staff diary (agenda + move + cancel, all in-portal) ----------
-  function iso(d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+  // ---------- diary: day strip + timeline + customer search ----------
   function loadDiary() {
-    var dy = document.getElementById('dy'); if (!dy) return;
     post(BK, { action: 'agenda', stoken: S.stoken, machine: mid() }).then(function (d) {
-      dy = document.getElementById('dy'); if (!dy) return;
-      if (!d || !d.ok) { dy.innerHTML = '<p class="quiet">' + (d && d.error === 'not_configured' ? 'Diary needs the SimplyBook admin key on the server.' : 'Couldn\u2019t load the diary - <a href="#" id="dyr">retry</a>.') + '</p>'; var r = document.getElementById('dyr'); if (r) r.onclick = function () { loadDiary(); return false; }; return; }
-      if (!d.bookings || !d.bookings.length) { dy.innerHTML = '<p class="quiet">Nothing booked in the next 14 days.</p>'; return; }
-      var h = '';
-      d.bookings.forEach(function (b, i) {
-        h += '<div class="row"><div style="flex:1;min-width:200px"><strong>' + esc(b.when) + '</strong> \u00b7 ' + esc(b.what)
-          + '<br /><span class="quiet">' + esc(b.who) + (b.phone ? ' \u00b7 <a href="tel:' + esc(b.phone.replace(/\s/g, '')) + '">' + esc(b.phone) + '</a>' : '') + '</span></div>'
-          + '<button class="sm ghost mvb" data-i="' + i + '">Move</button>'
-          + '<button class="sm ghost cnb" data-i="' + i + '" style="color:var(--pbad)">Cancel</button></div>'
-          + '<div class="mvp" id="mvp' + i + '" style="display:none"></div>';
+      var v = document.getElementById('dday'); if (!v) return;
+      if (!d || !d.ok) {
+        v.innerHTML = '<p class="quiet">' + (d && d.error === 'not_configured' ? 'Diary needs the SimplyBook admin key on the server.' : 'Couldn\u2019t load the diary - <a href="#" id="dyr">retry</a>.') + '</p>';
+        var r = document.getElementById('dyr'); if (r) r.onclick = function () { loadDiary(); return false; };
+        return;
+      }
+      AG = d.bookings || [];
+      if (!selDay) selDay = todayIso();
+      buildStrip(); renderDay(selDay);
+    }).catch(function () { var v = document.getElementById('dday'); if (v) v.innerHTML = '<p class="quiet">Couldn\u2019t load the diary.</p>'; });
+  }
+  function buildStrip() {
+    var s = document.getElementById('dstrip'); if (!s) return;
+    var counts = {};
+    (AG || []).forEach(function (b) { if (b.d) counts[b.d] = (counts[b.d] || 0) + 1; });
+    var hh = '', names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    for (var i = 0; i < 14; i++) {
+      var dt = new Date(Date.now() + i * 86400000), di = iso(dt);
+      var label = i === 0 ? 'Today' : (i === 1 ? 'Tmrw' : names[dt.getDay()] + ' ' + dt.getDate());
+      hh += '<button class="dpill' + (i < 2 ? ' em' : '') + (di === selDay ? ' on' : '') + '" data-d="' + di + '">' + label + (counts[di] ? ' <b>' + counts[di] + '</b>' : '') + '</button>';
+    }
+    s.innerHTML = hh;
+    Array.prototype.forEach.call(s.querySelectorAll('.dpill'), function (b2) {
+      b2.onclick = function () { selDay = b2.getAttribute('data-d'); buildStrip(); renderDay(selDay); };
+    });
+  }
+  function bookingRow(b, i, prefix) {
+    return '<div class="tline"><span class="ttime">' + fmtTime(b.tm) + '</span><div class="tblock">'
+      + '<strong>' + esc(b.who) + '</strong> \u00b7 ' + esc(b.what)
+      + (b.phone ? '<br /><a href="tel:' + esc(b.phone.replace(/\s/g, '')) + '" class="quiet">' + esc(b.phone) + '</a>' : '')
+      + '</div>'
+      + '<button class="sm ghost mvb" data-id="' + b.id + '" data-p="' + prefix + i + '">Move</button>'
+      + '<button class="sm ghost cnb" data-id="' + b.id + '" style="color:var(--pbad)">Cancel</button></div>'
+      + '<div class="mvp" id="mvp' + prefix + i + '" style="display:none"></div>';
+  }
+  function bindBookingButtons(container, list) {
+    var byId = {};
+    list.forEach(function (b) { byId[b.id] = b; });
+    Array.prototype.forEach.call(container.querySelectorAll('.cnb'), function (btn) {
+      btn.onclick = function () {
+        var b = byId[parseInt(btn.getAttribute('data-id'), 10)]; if (!b) return;
+        if (!confirm('Cancel this booking?\n\n' + b.when + '\n' + b.who + ' - ' + b.what)) return;
+        btn.disabled = true;
+        post(BK, { action: 'staffcancel', stoken: S.stoken, machine: mid(), id: b.id })
+          .then(function (r) { if (r && r.ok) { AG60 = null; loadDiary(); } else { btn.disabled = false; alert('Couldn\u2019t cancel - try again.'); } })
+          .catch(function () { btn.disabled = false; alert('Couldn\u2019t reach the server.'); });
+      };
+    });
+    Array.prototype.forEach.call(container.querySelectorAll('.mvb'), function (btn) {
+      btn.onclick = function () {
+        var b = byId[parseInt(btn.getAttribute('data-id'), 10)]; if (!b) return;
+        var p = document.getElementById('mvp' + btn.getAttribute('data-p')); if (!p) return;
+        if (p.style.display !== 'none') { p.style.display = 'none'; return; }
+        Array.prototype.forEach.call(container.querySelectorAll('.mvp'), function (x) { x.style.display = 'none'; });
+        p.style.display = 'block';
+        p.innerHTML = '<p class="quiet">Finding free slots\u2026</p>';
+        var from = new Date(), to = new Date(Date.now() + 13 * 86400000);
+        post(BK, { action: 'slots', stoken: S.stoken, machine: mid(), eventId: b.eventId, from: iso(from), to: iso(to) })
+          .then(function (sr) {
+            if (!sr || !sr.ok || !sr.days || !sr.days.length) { p.innerHTML = '<p class="quiet">No free slots in the next two weeks - try SimplyBook admin for further out.</p>'; return; }
+            p.innerHTML = '<p class="quiet" style="margin:0 0 .3rem">Move <strong>' + esc(b.who) + '</strong> to:</p><div class="mdays"></div><div class="mtimes" style="margin-top:.3rem"></div>';
+            var daysEl = p.querySelector('.mdays'), timesEl = p.querySelector('.mtimes');
+            sr.days.forEach(function (day) {
+              var db2 = document.createElement('button'); db2.className = 'sm ghost dpill'; db2.textContent = day.n;
+              db2.onclick = function () {
+                timesEl.innerHTML = '';
+                day.t.forEach(function (t) {
+                  var tb = document.createElement('button'); tb.className = 'sm tpill'; tb.textContent = t;
+                  tb.onclick = function () {
+                    if (!confirm('Move ' + b.who + ' to ' + day.n + ' at ' + t + '?')) return;
+                    tb.disabled = true;
+                    post(BK, { action: 'staffmove', stoken: S.stoken, machine: mid(), id: b.id, eventId: b.eventId, date: day.d, time: t })
+                      .then(function (r) {
+                        if (r && r.ok) { AG60 = null; loadDiary(); }
+                        else { tb.disabled = false; alert(r && r.error === 'slot_taken' ? 'That slot just went - pick another.' : 'Couldn\u2019t move it - try again.'); }
+                      })
+                      .catch(function () { tb.disabled = false; alert('Couldn\u2019t reach the server.'); });
+                  };
+                  timesEl.appendChild(tb);
+                });
+              };
+              daysEl.appendChild(db2);
+            });
+            var first = daysEl.querySelector('button'); if (first) first.click();
+          })
+          .catch(function () { p.innerHTML = '<p class="quiet">Couldn\u2019t load slots - try again.</p>'; });
+      };
+    });
+  }
+  function renderDay(dsel) {
+    var v = document.getElementById('dday'); if (!v) return;
+    var rows = (AG || []).filter(function (b) { return b.d === dsel; })
+      .sort(function (a, b) { return (a.tm || '').localeCompare(b.tm || ''); });
+    if (!rows.length) { v.innerHTML = '<p class="quiet">Nothing booked ' + (dsel === todayIso() ? 'today' : 'this day') + '.</p>'; return; }
+    var hh = '';
+    rows.forEach(function (b, i) { hh += bookingRow(b, i, 'd'); });
+    v.innerHTML = hh;
+    bindBookingButtons(v, rows);
+  }
+  function doSearch(q) {
+    var v = document.getElementById('dday'), s = document.getElementById('dstrip');
+    if (!v) return;
+    if (!q || q.length < 2) { if (s) s.style.display = ''; buildStrip(); renderDay(selDay || todayIso()); return; }
+    if (s) s.style.display = 'none';
+    function run(list) {
+      var rows = list.filter(function (b) {
+        return (b.who || '').toLowerCase().indexOf(q) >= 0 || (b.phone || '').replace(/\s/g, '').indexOf(q.replace(/\s/g, '')) >= 0;
       });
-      dy.innerHTML = h;
-      Array.prototype.forEach.call(dy.querySelectorAll('.cnb'), function (btn) {
-        btn.onclick = function () {
-          var b = d.bookings[parseInt(btn.getAttribute('data-i'), 10)];
-          if (!confirm('Cancel this booking?\n\n' + b.when + '\n' + b.who + ' - ' + b.what)) return;
-          btn.disabled = true;
-          post(BK, { action: 'staffcancel', stoken: S.stoken, machine: mid(), id: b.id })
-            .then(function (r) { if (r && r.ok) loadDiary(); else { btn.disabled = false; alert('Couldn\u2019t cancel - try again.'); } })
-            .catch(function () { btn.disabled = false; alert('Couldn\u2019t reach the server.'); });
-        };
+      if (!rows.length) { v.innerHTML = '<p class="quiet">No upcoming bookings match \u201c' + esc(q) + '\u201d in the next 60 days.</p>'; return; }
+      var hh = '', lastD = '';
+      rows.forEach(function (b, i) {
+        if (b.d !== lastD) { lastD = b.d; hh += '<div class="tgroup">' + esc((b.when || '').split(' ').slice(0, 3).join(' ')) + '</div>'; }
+        hh += bookingRow(b, i, 's');
       });
-      Array.prototype.forEach.call(dy.querySelectorAll('.mvb'), function (btn) {
-        btn.onclick = function () {
-          var i = parseInt(btn.getAttribute('data-i'), 10), b = d.bookings[i];
-          var p = document.getElementById('mvp' + i);
-          if (p.style.display !== 'none') { p.style.display = 'none'; return; }
-          Array.prototype.forEach.call(dy.querySelectorAll('.mvp'), function (x) { x.style.display = 'none'; });
-          p.style.display = 'block';
-          p.innerHTML = '<p class="quiet">Finding free slots\u2026</p>';
-          var from = new Date(), to = new Date(Date.now() + 13 * 86400000);
-          post(BK, { action: 'slots', stoken: S.stoken, machine: mid(), eventId: b.eventId, from: iso(from), to: iso(to) })
-            .then(function (s) {
-              if (!s || !s.ok || !s.days || !s.days.length) { p.innerHTML = '<p class="quiet">No free slots in the next two weeks - try SimplyBook admin for further out.</p>'; return; }
-              var hh = '<p class="quiet" style="margin:0 0 .3rem">Move <strong>' + esc(b.who) + '</strong> to:</p><div id="mdays' + i + '"></div><div id="mtimes' + i + '" style="margin-top:.3rem"></div>';
-              p.innerHTML = hh;
-              var daysEl = document.getElementById('mdays' + i), timesEl = document.getElementById('mtimes' + i);
-              s.days.forEach(function (day, di) {
-                var db = document.createElement('button'); db.className = 'sm ghost dpill'; db.textContent = day.n;
-                db.onclick = function () {
-                  timesEl.innerHTML = '';
-                  day.t.forEach(function (t) {
-                    var tb = document.createElement('button'); tb.className = 'sm tpill'; tb.textContent = t;
-                    tb.onclick = function () {
-                      if (!confirm('Move ' + b.who + ' to ' + day.n + ' at ' + t + '?')) return;
-                      tb.disabled = true;
-                      post(BK, { action: 'staffmove', stoken: S.stoken, machine: mid(), id: b.id, eventId: b.eventId, date: day.d, time: t })
-                        .then(function (r) {
-                          if (r && r.ok) loadDiary();
-                          else { tb.disabled = false; alert(r && r.error === 'slot_taken' ? 'That slot just went - pick another.' : 'Couldn\u2019t move it - try again.'); }
-                        })
-                        .catch(function () { tb.disabled = false; alert('Couldn\u2019t reach the server.'); });
-                    };
-                    timesEl.appendChild(tb);
-                  });
-                };
-                daysEl.appendChild(db);
-              });
-              var first = daysEl.querySelector('button'); if (first) first.click();
-            })
-            .catch(function () { p.innerHTML = '<p class="quiet">Couldn\u2019t load slots - try again.</p>'; });
-        };
+      v.innerHTML = hh;
+      bindBookingButtons(v, rows);
+    }
+    if (AG60) { run(AG60); return; }
+    v.innerHTML = '<p class="quiet">Searching the next 60 days\u2026</p>';
+    post(BK, { action: 'agenda', stoken: S.stoken, machine: mid(), days: 60 }).then(function (d) {
+      if (d && d.ok) { AG60 = d.bookings || []; run(AG60); }
+      else v.innerHTML = '<p class="quiet">Couldn\u2019t search just now - try again.</p>';
+    }).catch(function () { v.innerHTML = '<p class="quiet">Couldn\u2019t reach the server.</p>'; });
+  }
+
+  // ---------- fleet dashboard ----------
+  function fleetWarnings(m, latest) {
+    var w = [];
+    if (m.fresh) return w;
+    if (m.score > 0 && m.score < 55) w.push(['b', 'low health ' + m.score + '%']);
+    if ((m.av || '').toUpperCase() === 'OFF') w.push(['b', 'antivirus OFF']);
+    if (!m.backup) w.push(['w', 'no backup']);
+    if (m.disk >= 85) w.push(['w', 'disk ' + m.disk + '%']);
+    if (m.w10) w.push(['w', 'Windows 10']);
+    if (m.reboot) w.push(['w', 'restart due']);
+    if (latest && m.ver && m.ver < latest) w.push(['w', 'app v' + m.ver]);
+    if (m.help) w.push(['b', '\ud83c\udd98 asked for help']);
+    return w;
+  }
+  function loadFleet() {
+    post(BK, { action: 'stafffleet', stoken: S.stoken, machine: mid() }).then(function (d) {
+      var fv = document.getElementById('ffleet'); if (!fv) return;
+      if (!d || !d.ok) { fv.innerHTML = '<p class="quiet">Couldn\u2019t load the fleet - refresh to retry.</p>'; return; }
+      var now = Date.now();
+      (d.machines || []).forEach(function (m) {
+        var t = m.seen ? Date.parse(m.seen.replace(' ', 'T') + ':00Z') : NaN;
+        m.on = !isNaN(t) && (now - t) < 70 * 60000;
+        m.warns = fleetWarnings(m, d.latest);
       });
-    }).catch(function () { var dy2 = document.getElementById('dy'); if (dy2) dy2.innerHTML = '<p class="quiet">Couldn\u2019t load the diary.</p>'; });
+      FLEET = d.machines || [];
+      var on = FLEET.filter(function (m) { return m.on; }).length;
+      var pro = FLEET.filter(function (m) { return m.tier === 'pro'; }).length;
+      var warn = FLEET.filter(function (m) { return m.warns.length; }).length;
+      var stats = document.getElementById('fstats');
+      stats.innerHTML = '<div class="stat"><b data-n="' + FLEET.length + '">0</b><span>PCs with the app</span></div>'
+        + '<div class="stat g"><b data-n="' + on + '">0</b><span>on right now</span></div>'
+        + '<div class="stat"><b data-n="' + pro + '">0</b><span>on support (Pro)</span></div>'
+        + '<div class="stat"><b data-n="' + (FLEET.length - pro) + '">0</b><span>free</span></div>'
+        + '<div class="stat' + (warn ? ' w' : '') + '"><b data-n="' + warn + '">0</b><span>with warnings</span></div>';
+      Array.prototype.forEach.call(stats.querySelectorAll('[data-n]'), function (n) { countUp(n, parseInt(n.getAttribute('data-n'), 10)); });
+      renderFtabs(on);
+      renderFleet();
+    }).catch(function () { var fv = document.getElementById('ffleet'); if (fv) fv.innerHTML = '<p class="quiet">Couldn\u2019t reach the server.</p>'; });
+  }
+  function renderFtabs(onCount) {
+    var t = document.getElementById('ftabs'); if (!t) return;
+    var offCount = FLEET.length - onCount;
+    t.innerHTML = '<button data-t="on"' + (ftab === 'on' ? ' class="on"' : '') + '>On now (' + onCount + ')</button>'
+      + '<button data-t="off"' + (ftab === 'off' ? ' class="on"' : '') + '>Offline (' + offCount + ')</button>'
+      + '<button data-t="all"' + (ftab === 'all' ? ' class="on"' : '') + '>All (' + FLEET.length + ')</button>';
+    Array.prototype.forEach.call(t.querySelectorAll('button'), function (b2) {
+      b2.onclick = function () { ftab = b2.getAttribute('data-t'); renderFtabs(onCount); renderFleet(); };
+    });
+  }
+  function renderFleet() {
+    var fv = document.getElementById('ffleet'); if (!fv) return;
+    var rows = FLEET.filter(function (m) { return ftab === 'all' ? true : (ftab === 'on' ? m.on : !m.on); })
+      .sort(function (a, b) { return (b.seen || '').localeCompare(a.seen || ''); });
+    if (!rows.length) { fv.innerHTML = '<p class="quiet">' + (ftab === 'on' ? 'No customer PCs are on right now.' : 'Nothing here.') + '</p>'; return; }
+    var hh = '<table><tr><th></th><th>Computer</th><th>Customer</th><th>Health</th><th>Warnings</th><th>Seen</th><th>App</th></tr>';
+    rows.forEach(function (m) {
+      var col = m.fresh ? 'var(--pmut)' : (m.score >= 80 ? 'var(--pgood)' : (m.score >= 55 ? 'var(--pwarn)' : 'var(--pbad)'));
+      var wch = m.warns.length
+        ? m.warns.map(function (w) { return '<span class="chip ' + w[0] + '">' + w[1] + '</span>'; }).join(' ')
+        : (m.fresh ? '<span class="chip">first check due</span>' : '<span class="chip g">all good</span>');
+      hh += '<tr><td><span class="dot" style="background:' + (m.on ? 'var(--pgood)' : '#44507a') + '" title="' + (m.on ? 'on now' : 'offline') + '"></span></td>'
+        + '<td><strong>' + esc(m.name) + '</strong></td>'
+        + '<td>' + esc(m.cust) + ' <span class="pill ' + (m.tier === 'pro' ? 'pro">Pro' : 'free">Free') + '</span></td>'
+        + '<td><span style="color:' + col + ';font-weight:700">' + (m.fresh ? '\u2014' : m.score + '%') + '</span>' + (m.verdict ? ' <span class="quiet">' + esc(m.verdict) + '</span>' : '') + '</td>'
+        + '<td><div class="chips">' + wch + '</div></td>'
+        + '<td>' + seenTxt(m.seen) + '</td>'
+        + '<td>' + (m.ver ? 'v' + m.ver : '\u2014') + '</td></tr>';
+    });
+    hh += '</table>';
+    fv.innerHTML = hh;
   }
 
   if (S.stoken) showStaff();

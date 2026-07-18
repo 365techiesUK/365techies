@@ -893,8 +893,10 @@ if ($action === 'stafftier') {
 if ($action === 'agenda') {
     if (!$HAS_ADMIN) fail('not_configured');
     need_staff();
+    // default 14 days; the dashboard's customer search may ask for a wider window (max 60)
+    $spanDays = max(1, min(60, intval(isset($in['days']) ? $in['days'] : 14)));
     $r = sb_adm('getBookings', array(array('booking_type' => 'non_cancelled',
-        'date_from' => date('Y-m-d'), 'date_to' => date('Y-m-d', time() + 86400 * 14), 'order' => 'date_start_asc')));
+        'date_from' => date('Y-m-d'), 'date_to' => date('Y-m-d', time() + 86400 * $spanDays), 'order' => 'date_start_asc')));
     if (sb_net($r)) fail('sb_unavailable');
     $rows = isset($r['result']) && is_array($r['result']) ? $r['result'] : array();
     $list = array();
@@ -906,13 +908,50 @@ if ($action === 'agenda') {
         if ($cname === '' && isset($b['client_id'])) $cname = 'client #' . $b['client_id'];
         $list[] = array('id' => (int)(isset($b['id']) ? $b['id'] : 0),
                         'when' => $ts ? date('D j M g:ia', $ts) : trim($start),
+                        'd' => $ts ? date('Y-m-d', $ts) : '',           // structured, for the day view
+                        'tm' => $ts ? date('H:i', $ts) : '',
                         'who' => $cname,
                         'phone' => (string)(isset($b['client_phone']) ? $b['client_phone'] : ''),
                         'what' => (string)(isset($b['event_name']) ? $b['event_name'] : (isset($b['event']) ? $b['event'] : 'Service')),
                         'eventId' => (int)(isset($b['event_id']) ? $b['event_id'] : 0));
-        if (count($list) >= 40) break;
+        if (count($list) >= 120) break;
     }
     out(array('ok' => true, 'bookings' => $list));
+}
+
+// staff: the live fleet - every machine running 365 PC Manager, flattened, with the raw
+// health flags so the dashboard can show on/offline, warnings and versions in real time.
+// "On now" = checked in within ~70 min (the app checks in hourly while the PC is on).
+if ($action === 'stafffleet') {
+    need_staff();
+    list($lk, $db) = db_open(); db_close($lk);
+    $latest = 0;
+    $vj = @json_decode((string)@file_get_contents(__DIR__ . '/../downloads/pcm/version.json'), true);
+    if (is_array($vj)) $latest = intval(isset($vj['ver']) ? $vj['ver'] : 0);
+    $ms = array();
+    foreach ((isset($db['customers']) ? $db['customers'] : array()) as $k => $c) {
+        if (!empty($c['merged_into'])) continue;
+        $tier = (isset($c['tier']) && $c['tier'] === 'pro') ? 'pro' : 'free';
+        foreach ((isset($c['machines']) && is_array($c['machines']) ? $c['machines'] : array()) as $mid2 => $m) {
+            $ms[] = array(
+                'cust' => (string)(isset($c['name']) ? $c['name'] : ''),
+                'tier' => $tier,
+                'name' => (string)(isset($m['name']) ? $m['name'] : 'PC'),
+                'score' => intval(isset($m['score']) ? $m['score'] : 0),
+                'verdict' => (string)(isset($m['verdict']) ? $m['verdict'] : ''),
+                'seen' => (string)(isset($m['seen']) ? $m['seen'] : ''),
+                'disk' => intval(isset($m['diskpct']) ? $m['diskpct'] : 0),
+                'backup' => !empty($m['backup']),
+                'av' => (string)(isset($m['av']) ? $m['av'] : ''),
+                'w10' => !empty($m['w10']),
+                'reboot' => !empty($m['reboot']),
+                'ver' => intval(isset($m['ver']) ? $m['ver'] : 0),
+                'help' => (string)(isset($m['help']) ? $m['help'] : ''),
+                'fresh' => !isset($m['diskpct']));
+            if (count($ms) >= 600) break 2;
+        }
+    }
+    out(array('ok' => true, 'latest' => $latest, 'machines' => $ms, 'now' => gmdate('Y-m-d H:i')));
 }
 
 if ($action === 'staffcancel') {
