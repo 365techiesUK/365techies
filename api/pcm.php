@@ -17,6 +17,15 @@ header('Cache-Control: no-store');
 $DATA = __DIR__ . '/pcm-data.json';
 $WEBHOOK = __DIR__ . '/slack-webhook.php'; // returns $SLACK_WEBHOOK (server-only, gitignored)
 
+// Safe-maintenance allow-list. The APP holds the real gate: it maps each id to a hard-coded,
+// parameter-free, non-destructive routine and ignores anything not in its own switch. The server
+// never sends a command string or arguments - only one of these fixed ids. Validating here too
+// is defence-in-depth: a bad/unknown id can't even be queued. Nothing here deletes user data,
+// changes settings permanently, installs software, or reads personal files. Each runs without
+// elevation and without spawning processes or touching the registry (keeps the unsigned binary
+// from tripping AV heuristics). Disruptive/admin fixes arrive later with the signed elevated helper.
+$PCM_CMDS = array('flushdns','cleartemp','collectlogs');
+
 // Load the DB. A missing file is a legitimately-empty DB; a PRESENT-but-unparseable file is
 // NOT - returning empty there and saving would silently wipe every customer. So we throw.
 function load($f){
@@ -80,7 +89,13 @@ if ($action === 'checkin') {
             'diskpct'=>intval($in['diskpct']??0), 'w10'=>!empty($in['w10']), 'reboot'=>!empty($in['reboot']),
             'ver'=>intval($in['ver']??0),
             'crs'=>substr((string)($in['crs']??''),0,8), 'crst'=>substr((string)($in['crst']??''),0,420),
-            'batt'=>max(0,min(100,intval($in['batt']??0)))));
+            'batt'=>max(0,min(100,intval($in['batt']??0))),
+            // customer's in-app "let 365 run safe maintenance" consent. Old apps never send it,
+            // so it defaults OFF here every check-in - a machine can only be opted IN by v18+.
+            'rmaint'=>!empty($in['rmaint'])));
+        // opting OUT of remote maintenance clears any queued commands, so a command the customer
+        // just revoked can never resurrect and run when they later opt back in.
+        if (empty($in['rmaint'])) unset($c['machines'][$machine]['cmdq']);
         // daily score history for the portal trend (one point per day, ~90 days)
         $hd = gmdate('Y-m-d');
         $hist = isset($c['machines'][$machine]['hist']) && is_array($c['machines'][$machine]['hist']) ? $c['machines'][$machine]['hist'] : array();
@@ -150,7 +165,7 @@ if ($action === 'overview') {
         $fresh = $ws && intval($ws['ts'] ?? 0) > time() - $slide && ($cap === PHP_INT_MAX || intval($ws['iat'] ?? 0) > time() - $cap);
         // soft device binding (like staff tokens): a stolen token replayed from another
         // browser is refused; legacy sessions without a machine field still work
-        if ($fresh && !empty($ws['machine']) && $machine !== '' && $ws['machine'] !== $machine) $fresh = false;
+        if ($fresh && !empty($ws['machine']) && $ws['machine'] !== $machine) $fresh = false;
         if (!$fresh) { if ($ws) { unset($db['websessions'][$wt]); save($DATA,$db); } out(array('ok'=>false,'error'=>'expired')); }
         $key = (string)$ws['key'];
         $db['websessions'][$wt]['ts'] = time(); save($DATA,$db);   // sliding, capped by iat
@@ -235,7 +250,7 @@ if ($action === 'appreq') {
     $wt = isset($in['wtoken']) ? preg_replace('/[^a-f0-9]/','', (string)$in['wtoken']) : '';
     $ws = $wt !== '' && isset($db['websessions'][$wt]) ? $db['websessions'][$wt] : null;
     if (!$ws) out(array('ok'=>false,'error'=>'expired'));
-    if (!empty($ws['machine']) && $machine !== '' && $ws['machine'] !== $machine) out(array('ok'=>false,'error'=>'expired'));
+    if (!empty($ws['machine']) && $ws['machine'] !== $machine) out(array('ok'=>false,'error'=>'expired'));
     $key = (string)$ws['key'];
     if (!isset($db['customers'][$key])) out(array('ok'=>false,'error'=>'unknown_key'));
     $db['customers'][$key]['app_req'] = gmdate('Y-m-d H:i');
@@ -290,15 +305,112 @@ if ($action === 'shield') {
     $c = $db['customers'][$key];
     // the portal's "run a fresh health check" request rides this same minute-poll
     $req = '';
+    $dirty = false;
     if ($machine !== '' && !empty($c['machines'][$machine]['req_check'])) {
         $req = 'checkin';
         unset($db['customers'][$key]['machines'][$machine]['req_check']);
-        save($DATA,$db);
+        $dirty = true;
     }
+    // Safe-maintenance command delivery. Only ever offered to a machine the customer has
+    // opted in (rmaint), and only ids on the server allow-list. We hand out the head of the
+    // queue, stamp sent_ts, and leave it queued until the app reports a result (cmdresult) -
+    // the app dedupes by id so a re-poll before the result lands won't double-run it.
+    $cmd = null;
+    if ($machine !== '' && isset($db['customers'][$key]['machines'][$machine])) {
+        $mm =& $db['customers'][$key]['machines'][$machine];
+        if (!empty($mm['rmaint']) && !empty($mm['cmdq']) && is_array($mm['cmdq'])) {
+            $tnow = time();
+            $keep = array();
+            foreach ($mm['cmdq'] as $q) {
+                // whole lifecycle is bounded to 15 min from when staff queued it (by 'ts'), so a
+                // command can never linger and run much later - delivered-but-unanswered AND
+                // never-picked-up both expire here, with an audit label that says which.
+                if (($tnow - intval(isset($q['ts']) ? $q['ts'] : 0)) > 900) {
+                    pcm_cmdlog($mm, $q, false, !empty($q['sent']) ? 'delivered - no result within 15 min' : 'expired - PC did not pick it up within 15 min');
+                    $dirty = true; continue;
+                }
+                $keep[] = $q;
+            }
+            $mm['cmdq'] = array_values($keep);
+            foreach ($mm['cmdq'] as $i => $q) {
+                if (!in_array($q['act'], $GLOBALS['PCM_CMDS'], true)) continue;   // defence-in-depth
+                $sent = intval(isset($q['sent']) ? $q['sent'] : 0);
+                if ($sent === 0 || ($tnow - $sent) > 90) {   // fresh, or retry after 90s of silence
+                    $mm['cmdq'][$i]['sent'] = $tnow;
+                    $cmd = array('id'=>(string)$q['id'], 'act'=>(string)$q['act']);
+                    $dirty = true;
+                }
+                break;   // one in flight at a time
+            }
+        }
+        unset($mm);
+    }
+    if ($dirty) save($DATA,$db);
     $ts = intval($c['shield_ts'] ?? 0);
-    if ($ts > 0 && (time() - $ts) < 900 && !empty($c['shield_code']))
-        out(array('ok'=>true,'code'=>(string)$c['shield_code'],'ask'=>$ts,'req'=>$req));
-    out(array('ok'=>true,'req'=>$req));
+    $resp = array('ok'=>true,'req'=>$req);
+    if ($cmd) $resp['cmd'] = $cmd;
+    if ($ts > 0 && (time() - $ts) < 900 && !empty($c['shield_code'])) {
+        $resp['code'] = (string)$c['shield_code']; $resp['ask'] = $ts;
+    }
+    out($resp);
+}
+
+// Append a finished command to the machine's capped audit log. $mm is a reference into $db.
+function pcm_cmdlog(&$mm, $q, $ok, $outText) {
+    if (!isset($mm['cmdlog']) || !is_array($mm['cmdlog'])) $mm['cmdlog'] = array();
+    $mm['cmdlog'][] = array(
+        'id'   => (string)(isset($q['id']) ? $q['id'] : ''),
+        'act'  => (string)(isset($q['act']) ? $q['act'] : ''),
+        'by'   => (string)(isset($q['by']) ? $q['by'] : ''),
+        'ts'   => intval(isset($q['ts']) ? $q['ts'] : 0),
+        'done' => time(),
+        'ok'   => $ok ? 1 : 0,
+        'out'  => substr((string)$outText, 0, 300));
+    while (count($mm['cmdlog']) > 20) array_shift($mm['cmdlog']);
+}
+
+// app: report the outcome of a safe-maintenance command it just ran (key+machine authed).
+if ($action === 'cmdresult') {
+    if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>false,'error'=>'unknown_key'));
+    if ($machine === '' || !isset($db['customers'][$key]['machines'][$machine])) out(array('ok'=>false,'error'=>'unknown_machine'));
+    $cid = preg_replace('/[^a-f0-9]/','', substr((string)($in['id'] ?? ''), 0, 32));
+    if ($cid === '') out(array('ok'=>false,'error'=>'bad_request'));
+    $mm =& $db['customers'][$key]['machines'][$machine];
+    $ok = !empty($in['ok']);
+    $outText = substr((string)($in['out'] ?? ''), 0, 300);
+    $q = null; $keep = array();
+    foreach ((isset($mm['cmdq']) && is_array($mm['cmdq']) ? $mm['cmdq'] : array()) as $row) {
+        if ($q === null && (string)$row['id'] === $cid) { $q = $row; continue; }
+        $keep[] = $row;
+    }
+    if ($q === null) out(array('ok'=>true,'dup'=>true));   // already logged / unknown id - idempotent
+    $mm['cmdq'] = array_values($keep);
+    pcm_cmdlog($mm, $q, $ok, $outText);
+    unset($mm);
+    save($DATA,$db);
+    out(array('ok'=>true));
+}
+
+// app: upload a plain-text diagnostic bundle produced by the collectlogs command (key+machine authed).
+// Text only, size-capped, one current bundle per machine. No personal files are ever gathered.
+if ($action === 'logup') {
+    if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>false,'error'=>'unknown_key'));
+    if ($machine === '' || !isset($db['customers'][$key]['machines'][$machine])) out(array('ok'=>false,'error'=>'unknown_machine'));
+    $b = base64_decode(substr((string)($in['txt'] ?? ''), 0, 400000), true);
+    if ($b === false || strlen($b) < 20 || strlen($b) > 260000) out(array('ok'=>false,'error'=>'bad_bundle'));
+    // must be OUR diagnostics format (like reportup sniffs for <html>), and strip control bytes so
+    // a tampered client can't smuggle markup/binary into text a staff panel later displays.
+    if (strncmp($b, '365 PC Manager', 14) !== 0) out(array('ok'=>false,'error'=>'bad_bundle'));
+    $b = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F]/', '', (string)$b);
+    $kh = substr(hash('sha256', $key), 0, 12);
+    $lts = time();
+    $prev = isset($db['customers'][$key]['machines'][$machine]['logf']) ? (string)$db['customers'][$key]['machines'][$machine]['logf'] : '';
+    if (@file_put_contents(__DIR__ . '/pcm-log-' . $kh . '-' . $machine . '-' . $lts . '.txt', $b, LOCK_EX) === false) out(array('ok'=>false,'error'=>'store_failed'));
+    if ($prev !== '' && preg_match('/^pcm-log-[a-f0-9]{12}-[a-f0-9]{1,32}-\d+\.txt$/', $prev)) @unlink(__DIR__ . '/' . $prev);
+    $db['customers'][$key]['machines'][$machine]['logf'] = 'pcm-log-' . $kh . '-' . $machine . '-' . $lts . '.txt';
+    $db['customers'][$key]['machines'][$machine]['logts'] = $lts;
+    save($DATA,$db);
+    out(array('ok'=>true));
 }
 
 // app: a freshly generated service/health report - store a portal copy (per machine, capped)
@@ -324,7 +436,7 @@ if ($action === 'runcheck') {
     $wt = isset($in['wtoken']) ? preg_replace('/[^a-f0-9]/','', (string)$in['wtoken']) : '';
     $ws = $wt !== '' && isset($db['websessions'][$wt]) ? $db['websessions'][$wt] : null;
     if (!$ws) out(array('ok'=>false,'error'=>'expired'));
-    if (!empty($ws['machine']) && $machine !== '' && $ws['machine'] !== $machine) out(array('ok'=>false,'error'=>'expired'));
+    if (!empty($ws['machine']) && $ws['machine'] !== $machine) out(array('ok'=>false,'error'=>'expired'));
     $key = (string)$ws['key'];
     $mid2 = preg_replace('/[^a-f0-9]/','', substr((string)($in['pc'] ?? ''), 0, 32));
     if (!isset($db['customers'][$key]['machines'][$mid2])) out(array('ok'=>false,'error'=>'unknown_machine'));
@@ -338,7 +450,7 @@ if ($action === 'reportget') {
     $wt = isset($in['wtoken']) ? preg_replace('/[^a-f0-9]/','', (string)$in['wtoken']) : '';
     $ws = $wt !== '' && isset($db['websessions'][$wt]) ? $db['websessions'][$wt] : null;
     if (!$ws) out(array('ok'=>false,'error'=>'expired'));
-    if (!empty($ws['machine']) && $machine !== '' && $ws['machine'] !== $machine) out(array('ok'=>false,'error'=>'expired'));
+    if (!empty($ws['machine']) && $ws['machine'] !== $machine) out(array('ok'=>false,'error'=>'expired'));
     $key = (string)$ws['key'];
     $mid2 = preg_replace('/[^a-f0-9]/','', substr((string)($in['pc'] ?? ''), 0, 32));
     $rts = intval($in['ts'] ?? 0);

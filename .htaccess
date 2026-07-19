@@ -121,6 +121,10 @@ ErrorDocument 404 /404.html
 <FilesMatch "^pcm-rep-[a-f0-9\-]+\.html$">
   Require all denied
 </FilesMatch>
+# diagnostics bundles (collectlogs) are served only through the staff-authed stafflog action
+<FilesMatch "^pcm-log-[a-f0-9\-]+\.txt$">
+  Require all denied
+</FilesMatch>
 <FilesMatch "^(pcm-admin-secret|pcm-simplybook|pcm-textmagic|pass-secret|pcm-gocardless)\.php$">
   Require all denied
 </FilesMatch>

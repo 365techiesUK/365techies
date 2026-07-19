@@ -33,6 +33,9 @@ $CFG      = __DIR__ . '/pcm-simplybook.php';
 $DATA     = __DIR__ . '/pcm-data.json';
 $CACHE    = __DIR__ . '/pcm-sb-token.json';
 $THROTTLE = __DIR__ . '/pcm-throttle.json';
+// Safe-maintenance allow-list - MUST match pcm.php. Only these fixed ids can be queued; the app
+// maps each to a hard-coded, non-destructive routine and ignores anything else. See pcm.php note.
+$PCM_CMDS = array('flushdns','cleartemp','collectlogs');
 
 function out($a){ echo json_encode($a); exit; }
 function fail($e){ out(array('ok'=>false,'error'=>$e)); }
@@ -1364,8 +1367,10 @@ if ($action === 'stafffleet') {
             $ms[] = array(
                 'cust' => (string)(isset($c['name']) ? $c['name'] : ''),
                 'cid' => $custId,
+                'mid' => (string)$mid2,
                 'phone' => $custPhone,
                 'tier' => $tier,
+                'rmaint' => !empty($m['rmaint']),
                 'name' => (string)(isset($m['name']) ? $m['name'] : 'PC'),
                 'score' => intval(isset($m['score']) ? $m['score'] : 0),
                 'verdict' => (string)(isset($m['verdict']) ? $m['verdict'] : ''),
@@ -1383,6 +1388,77 @@ if ($action === 'stafffleet') {
         }
     }
     out(array('ok' => true, 'latest' => $latest, 'machines' => $ms, 'now' => gmdate('Y-m-d H:i')));
+}
+
+// staff: queue a SAFE maintenance command onto one machine. Never a command string - only a
+// fixed id from the allow-list, which the app maps to a hard-coded routine. Refused unless the
+// customer has switched on remote maintenance in their app. Every queued command records who
+// (staff email) asked for it, so the per-machine cmdlog is a full audit trail.
+if ($action === 'staffcmd') {
+    $tok = need_staff();
+    global $PCM_CMDS;
+    $cid2 = preg_replace('/[^a-f0-9]/', '', (string)(isset($in['cid']) ? $in['cid'] : ''));
+    $pc   = preg_replace('/[^a-f0-9]/', '', substr((string)(isset($in['pc']) ? $in['pc'] : ''), 0, 32));
+    $act  = preg_replace('/[^a-z]/', '', (string)(isset($in['act']) ? $in['act'] : ''));
+    if (!in_array($act, $PCM_CMDS, true)) fail('bad_command');
+    list($lk, $db) = db_open();
+    $byEmail = isset($db['staff'][$tok]['login']) ? (string)$db['staff'][$tok]['login'] : 'staff';
+    $found = '';
+    foreach ($db['customers'] as $k2 => $c2) {
+        if (!empty($c2['merged_into'])) continue;
+        if (substr(sha1('365cid|' . $k2), 0, 12) === $cid2) { $found = $k2; break; }
+    }
+    if ($found === '' || !isset($db['customers'][$found]['machines'][$pc])) { db_close($lk); fail('unknown_machine'); }
+    $mm =& $db['customers'][$found]['machines'][$pc];
+    if (empty($mm['rmaint'])) { db_close($lk); fail('not_enabled'); }   // customer hasn't opted in
+    if (!isset($mm['cmdq']) || !is_array($mm['cmdq'])) $mm['cmdq'] = array();
+    if (count($mm['cmdq']) >= 5) { db_close($lk); fail('queue_full'); }
+    $id = bin2hex(random_bytes(8));
+    $mm['cmdq'][] = array('id' => $id, 'act' => $act, 'by' => $byEmail, 'ts' => time());
+    unset($mm);
+    db_save($db); db_close($lk);
+    out(array('ok' => true, 'id' => $id));
+}
+
+// staff: read one machine's command status (pending queue + recent audit log + consent state).
+// Polled by the portal tune-up panel to animate progress and show results.
+if ($action === 'staffcmdlog') {
+    need_staff();
+    $cid2 = preg_replace('/[^a-f0-9]/', '', (string)(isset($in['cid']) ? $in['cid'] : ''));
+    $pc   = preg_replace('/[^a-f0-9]/', '', substr((string)(isset($in['pc']) ? $in['pc'] : ''), 0, 32));
+    list($lk, $db) = db_open(); db_close($lk);
+    foreach ($db['customers'] as $k2 => $c2) {
+        if (!empty($c2['merged_into'])) continue;
+        if (substr(sha1('365cid|' . $k2), 0, 12) !== $cid2) continue;
+        if (!isset($c2['machines'][$pc])) fail('unknown_machine');
+        $m = $c2['machines'][$pc];
+        $pend = array();
+        foreach ((isset($m['cmdq']) && is_array($m['cmdq']) ? $m['cmdq'] : array()) as $q)
+            $pend[] = array('id' => (string)$q['id'], 'act' => (string)$q['act'], 'sent' => !empty($q['sent']));
+        out(array('ok' => true, 'rmaint' => !empty($m['rmaint']),
+            'pending' => $pend,
+            'log' => isset($m['cmdlog']) && is_array($m['cmdlog']) ? array_slice($m['cmdlog'], -20) : array(),
+            'haslog' => !empty($m['logf']), 'logts' => intval(isset($m['logts']) ? $m['logts'] : 0)));
+    }
+    fail('unknown_customer');
+}
+
+// staff: read the plain-text diagnostic bundle a machine uploaded via collectlogs.
+if ($action === 'stafflog') {
+    need_staff();
+    $cid2 = preg_replace('/[^a-f0-9]/', '', (string)(isset($in['cid']) ? $in['cid'] : ''));
+    $pc   = preg_replace('/[^a-f0-9]/', '', substr((string)(isset($in['pc']) ? $in['pc'] : ''), 0, 32));
+    list($lk, $db) = db_open(); db_close($lk);
+    foreach ($db['customers'] as $k2 => $c2) {
+        if (!empty($c2['merged_into'])) continue;
+        if (substr(sha1('365cid|' . $k2), 0, 12) !== $cid2) continue;
+        $f = isset($c2['machines'][$pc]['logf']) ? (string)$c2['machines'][$pc]['logf'] : '';
+        if ($f === '' || !preg_match('/^pcm-log-[a-f0-9]{12}-[a-f0-9]{1,32}-\d+\.txt$/', $f)) fail('no_log');
+        $p = __DIR__ . '/' . $f;
+        if (!is_readable($p)) fail('no_log');
+        out(array('ok' => true, 'text' => (string)@file_get_contents($p), 'ts' => intval(isset($c2['machines'][$pc]['logts']) ? $c2['machines'][$pc]['logts'] : 0)));
+    }
+    fail('unknown_customer');
 }
 
 if ($action === 'staffcancel') {
