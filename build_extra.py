@@ -15772,6 +15772,90 @@ def write_portal_page():
   #p365app .tlog { margin-top:.6rem; font-size:.82rem; max-height:180px; overflow:auto; }
   #p365app .tlog .lr { display:flex; gap:.5rem; padding:.32rem 0; border-bottom:1px solid rgba(42,59,99,.4); align-items:baseline; }
   #p365app .tlog .lr:last-child { border-bottom:0; }
+
+  /* ===== next-gen 3D health dashboard (namespaced ng*, fully scoped) ===== */
+  #p365app { --ngcard:#111a3c; --ngraised:#16214a; --ngline:rgba(255,255,255,.10); --ngmut:#6d82ad; --ngspring:cubic-bezier(.34,1.56,.4,1); }
+  #p365app .ngnum { font-family:ui-monospace,"Cascadia Mono",Consolas,monospace; font-variant-numeric:tabular-nums; letter-spacing:-.02em; }
+  #p365app .ngtop { display:flex; align-items:center; gap:.7rem; flex-wrap:wrap; margin:.1rem .1rem 1rem; }
+  #p365app .nglogo { width:38px; height:38px; border-radius:11px; background:linear-gradient(150deg,var(--pcyan),#0f6bb0); display:grid; place-items:center; font-weight:800; color:#fff; font-size:.8rem; box-shadow:0 8px 22px rgba(29,151,227,.4); }
+  #p365app .ngname { font-size:1.05rem; font-weight:650; color:var(--pwhite); }
+  #p365app .ngseen { font-size:.8rem; color:var(--ngmut); }
+  #p365app .ngchip { display:inline-flex; align-items:center; gap:.3rem; font-size:.72rem; padding:.2rem .55rem; border-radius:999px; border:1px solid var(--pline); color:var(--psoft); background:rgba(17,26,60,.5); }
+  #p365app .ngchip.ok { color:var(--pgood); border-color:rgba(0,206,27,.3); }
+  #p365app .ngstage { position:relative; perspective:1400px; perspective-origin:50% 40%; margin:.3rem 0 1.5rem; height:clamp(300px,40vw,420px); }
+  #p365app .ngbg { position:absolute; inset:0; z-index:0; display:block; border-radius:16px; }
+  #p365app .ngscene { position:absolute; inset:0; z-index:1; transform-style:preserve-3d; transition:transform .25s ease-out; will-change:transform; }
+  #p365app .ngglow { position:absolute; left:50%; top:56%; width:340px; height:145px; transform:translate(-50%,-50%); background:radial-gradient(ellipse,var(--nghue,var(--pgood)),transparent 70%); filter:blur(32px); opacity:.4; animation:ngbreathe 5s ease-in-out infinite; }
+  @keyframes ngbreathe { 0%,100% { opacity:.32; } 50% { opacity:.5; } }
+  #p365app .ngdevice { position:absolute; left:50%; top:50%; transform-style:preserve-3d; transform:translate(-50%,-52%) rotateX(var(--rx,8deg)) rotateY(var(--ry,-16deg)); transition:transform .3s var(--ngspring); }
+  #p365app .nglid { position:relative; width:380px; height:238px; transform-origin:bottom center; transform:rotateX(-78deg); background:linear-gradient(160deg,#1b2a55,#0d1633); border:1px solid #2c3f74; border-radius:14px 14px 4px 4px; box-shadow:0 -2px 0 rgba(255,255,255,.06) inset,0 30px 60px rgba(0,0,0,.5); padding:11px; }
+  #p365app .ngbase { position:absolute; top:237px; left:-22px; width:424px; height:19px; transform:rotateX(-6deg); transform-origin:top center; background:linear-gradient(180deg,#24356a,#131d3e); border-radius:6px 6px 12px 12px; box-shadow:0 24px 40px rgba(0,0,0,.55); border:1px solid #2c3f74; border-top:0; }
+  #p365app .ngbase::after { content:""; position:absolute; left:50%; top:2px; width:66px; height:5px; border-radius:0 0 6px 6px; background:#0c1430; transform:translateX(-50%); }
+  #p365app .ngscreen { position:absolute; inset:11px; border-radius:8px; background:radial-gradient(120% 120% at 30% 20%,#12204a,#0a1330); overflow:hidden; border:1px solid #223361; }
+  #p365app .nggloss { position:absolute; inset:0; background:linear-gradient(115deg,rgba(255,255,255,.14) 0%,rgba(255,255,255,0) 30%,rgba(255,255,255,0) 70%,rgba(255,255,255,.05) 100%); pointer-events:none; mix-blend-mode:screen; }
+  #p365app .ngcam { position:absolute; top:5px; left:50%; width:5px; height:5px; border-radius:50%; background:#0c1430; transform:translateX(-50%); box-shadow:0 0 0 1px #223361; }
+  #p365app .ngmon { position:relative; width:380px; height:238px; background:linear-gradient(160deg,#1b2a55,#0d1633); border:8px solid #131d3e; border-radius:12px; box-shadow:0 30px 60px rgba(0,0,0,.5); overflow:hidden; }
+  #p365app .ngstand { position:absolute; left:50%; top:238px; width:16px; height:42px; background:#1a2650; transform:translateX(-50%); }
+  #p365app .ngfoot { position:absolute; left:50%; top:278px; width:144px; height:12px; border-radius:8px; background:#131d3e; transform:translateX(-50%); }
+  #p365app .ngtower { position:absolute; left:calc(50% + 238px); top:110px; width:66px; height:172px; background:linear-gradient(160deg,#1b2a55,#0d1633); border:1px solid #2c3f74; border-radius:8px; box-shadow:0 24px 44px rgba(0,0,0,.5); transform:translateX(-50%) rotateY(8deg); }
+  #p365app .ngtower::after { content:""; position:absolute; left:18px; bottom:16px; width:8px; height:8px; border-radius:50%; background:var(--nghue,var(--pgood)); box-shadow:0 0 10px var(--nghue,var(--pgood)); }
+  #p365app .ngscr { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  #p365app .ngringwrap { position:relative; width:150px; height:150px; }
+  #p365app .ngring { transform:rotate(-90deg); }
+  #p365app .ngring .tk { fill:none; stroke:#182449; stroke-width:11; }
+  #p365app .ngring .arc { fill:none; stroke:var(--nghue,var(--pgood)); stroke-width:11; stroke-linecap:round; filter:drop-shadow(0 0 5px var(--nghue,var(--pgood))); transition:stroke-dashoffset 1.15s cubic-bezier(.2,.7,.2,1),stroke .8s; }
+  #p365app .ngctr { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  #p365app .ngctr .sc { font-size:2.4rem; font-weight:750; line-height:1; color:var(--pwhite); }
+  #p365app .ngctr .of { font-size:.6rem; color:var(--ngmut); letter-spacing:.05em; }
+  #p365app .ngscr .vd { font-size:.72rem; color:var(--psoft); margin-top:.3rem; max-width:210px; text-align:center; padding:0 8px; }
+  #p365app .ngfloat { position:absolute; transform-style:preserve-3d; transition:transform .3s ease-out; z-index:2; }
+  #p365app .ngfchip { background:rgba(17,26,60,.82); border:1px solid var(--ngline); backdrop-filter:blur(6px); border-radius:12px; padding:.5rem .65rem; box-shadow:0 14px 30px rgba(0,0,0,.4); animation:nghover 6s ease-in-out infinite; }
+  #p365app .ngfchip .k { font-size:.64rem; color:var(--psoft); display:flex; gap:.3rem; align-items:center; }
+  #p365app .ngfchip .v { font-weight:700; font-size:1rem; color:var(--pwhite); }
+  @keyframes nghover { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-7px); } }
+  #p365app .ngverdline { font-size:1.3rem; font-weight:650; text-align:center; margin:0 0 .3rem; color:var(--pwhite); }
+  #p365app .ngh2 { font-size:.74rem; letter-spacing:.1em; text-transform:uppercase; color:var(--psoft); margin:1.5rem .1rem .55rem; font-weight:700; }
+  #p365app .nggrid { display:grid; grid-template-columns:repeat(6,1fr); gap:.8rem; perspective:900px; }
+  #p365app .ngc { background:var(--ngcard); border:1px solid var(--pline); border-top-color:var(--ngline); border-radius:15px; padding:.95rem 1rem; transition:transform .32s var(--ngspring),box-shadow .32s ease,background .3s; transform-style:preserve-3d; position:relative; }
+  #p365app .ngc.hx { cursor:default; }
+  #p365app .ngc.hx:hover { transform:translateZ(30px) translateY(-4px) scale(1.02); box-shadow:0 26px 50px rgba(0,0,0,.5),0 0 0 1px rgba(77,180,247,.25); background:var(--ngraised); z-index:3; }
+  #p365app .ngc .lab { font-size:.72rem; color:var(--psoft); display:flex; gap:.35rem; align-items:center; margin-bottom:.45rem; }
+  #p365app .ngc .val { font-size:1.4rem; font-weight:700; color:var(--pwhite); }
+  #p365app .ngc .note { font-size:.73rem; color:var(--ngmut); margin-top:.1rem; }
+  #p365app .ngc .more { max-height:0; overflow:hidden; opacity:0; transition:max-height .35s ease,opacity .3s ease; font-size:.79rem; color:var(--psoft); }
+  #p365app .ngc.hx:hover .more { max-height:140px; opacity:1; margin-top:.5rem; }
+  #p365app .ng-s2 { grid-column:span 2; } #p365app .ng-s3 { grid-column:span 3; } #p365app .ng-s6 { grid-column:span 6; }
+  #p365app .ngbadge { width:30px; height:30px; border-radius:8px; display:grid; place-items:center; font-size:.95rem; flex:0 0 auto; }
+  #p365app .ngbadge.on { background:rgba(0,206,27,.13); color:var(--pgood); } #p365app .ngbadge.off { background:rgba(232,99,126,.13); color:var(--pbad); } #p365app .ngbadge.neu { background:rgba(134,182,232,.12); color:var(--psoft); }
+  #p365app .ngprot { display:flex; gap:1.3rem; flex-wrap:wrap; } #p365app .ngprot .p { display:flex; gap:.5rem; align-items:center; }
+  #p365app .ngmeter { height:8px; border-radius:5px; background:#182449; overflow:hidden; margin:.5rem 0 .2rem; }
+  #p365app .ngmeter i { display:block; height:100%; width:0; border-radius:5px; transition:width 1.2s cubic-bezier(.2,.7,.2,1); }
+  #p365app .ngtrend svg { width:100%; height:92px; display:block; }
+  #p365app .ngtl { stroke:var(--pcyan); stroke-width:2.5; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+  #p365app .ngledger { background:linear-gradient(180deg,#12204a,var(--ngcard)); }
+  #p365app .ngledger .lh { display:flex; justify-content:space-between; align-items:center; padding-bottom:.65rem; border-bottom:1px solid var(--pline); margin-bottom:.4rem; gap:.6rem; }
+  #p365app .ngledger .row { display:flex; gap:.6rem; padding:.42rem 0; border-bottom:1px solid var(--pline); align-items:baseline; }
+  #p365app .ngledger .row:last-child { border-bottom:0; }
+  #p365app .ngledger .dot { width:8px; height:8px; border-radius:50%; flex:0 0 auto; transform:translateY(3px); }
+  #p365app .ngledger .dot.ok { background:var(--pgood); box-shadow:0 0 0 3px rgba(0,206,27,.12); } #p365app .ngledger .dot.no { background:var(--pbad); box-shadow:0 0 0 3px rgba(232,99,126,.12); }
+  #p365app .ngledger .h { font-weight:600; font-size:.88rem; color:var(--pwhite); } #p365app .ngledger .m { font-size:.75rem; color:var(--ngmut); } #p365app .ngledger .y { color:var(--psoft); }
+  #p365app .ngsw { width:42px; height:24px; border-radius:14px; position:relative; flex:0 0 auto; }
+  #p365app .ngsw.on { background:var(--pgood); } #p365app .ngsw.off { background:#33406e; }
+  #p365app .ngsw i { position:absolute; top:3px; width:18px; height:18px; border-radius:50%; background:#fff; transition:left .2s; }
+  #p365app .ngsw.on i { left:21px; } #p365app .ngsw.off i { left:3px; }
+  @media (max-width:640px) {
+    #p365app .nggrid { grid-template-columns:repeat(2,1fr); }
+    #p365app .ng-s3 { grid-column:span 2; } #p365app .ng-s2 { grid-column:span 1; }
+    #p365app .ngfloat { display:none; }
+    #p365app .ngdevice { transform:translate(-50%,-52%) rotateX(6deg) rotateY(-8deg); }
+    #p365app .nglid,#p365app .ngmon { width:300px; height:190px; }
+    #p365app .ngbase { top:189px; left:-18px; width:336px; }
+    #p365app .ngtower { display:none; }
+  }
+  @media (prefers-reduced-motion:reduce) {
+    #p365app .ngglow,#p365app .ngfchip { animation:none; }
+    #p365app .ngscene,#p365app .ngdevice,#p365app .ngc { transition:none; }
+  }
 </style>'''
     js = '''<script>
 (function () {
@@ -15940,6 +16024,184 @@ def write_portal_page():
     cd.addEventListener('keydown', function (e) { if (e.key === 'Enter') doV(); });
   }
 
+  // ---------- next-gen 3D health dashboard (primary PC) ----------
+  var ngGen = 0, ngPM = null, ngRz = null;   // generation guard so re-renders do not stack loops/listeners
+  var MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  // one machine as a compact ring row (secondary PCs + the no-data fallback)
+  function machineRow(m) {
+    var circ = 2 * Math.PI * 23;
+    if (m.fresh) return '<div class="row"><div class="ringS"><svg width="56" height="56"><circle cx="28" cy="28" r="23" fill="none" stroke="#2a3b63" stroke-width="6"/></svg><b>\\u2014</b></div>'
+      + '<div><strong>' + esc(m.name) + '</strong><div class="chips"><span class="chip">first health check coming soon</span></div></div></div>';
+    var col = m.score >= 80 ? 'var(--pgood)' : (m.score >= 55 ? 'var(--pwarn)' : 'var(--pbad)');
+    var spark = '';
+    if (m.hist && m.hist.length > 1) {
+      var pts = [];
+      for (var hi = 0; hi < m.hist.length; hi++) { var hx = (hi / (m.hist.length - 1)) * 96; var hy = 26 - (Math.max(0, Math.min(100, m.hist[hi][1])) / 100) * 24; pts.push(hx.toFixed(1) + ',' + hy.toFixed(1)); }
+      spark = '<svg width="100" height="28" style="flex:0 0 100px" aria-label="health trend"><polyline points="' + pts.join(' ') + '" fill="none" stroke="var(--pcyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    }
+    var reps = '';
+    (m.reps || []).slice(-3).reverse().forEach(function (rt) { var rd = new Date(rt * 1000); reps += '<button class="sm ghost repb" data-pc="' + esc(m.id) + '" data-ts="' + rt + '" style="margin:.25rem .25rem 0 0">\\ud83d\\udcc4 ' + rd.getDate() + ' ' + MON[rd.getMonth()] + '</button>'; });
+    return '<div class="row"><div class="ringS"><svg width="56" height="56"><circle cx="28" cy="28" r="23" fill="none" stroke="#2a3b63" stroke-width="6"/><circle cx="28" cy="28" r="23" fill="none" stroke="' + col + '" stroke-width="6" stroke-linecap="round" stroke-dasharray="0 ' + circ.toFixed(1) + '" data-dash="' + (circ * m.score / 100).toFixed(1) + ' ' + circ.toFixed(1) + '"/></svg><b>' + m.score + '%</b></div>'
+      + '<div style="flex:1;min-width:180px"><strong>' + esc(m.name) + '</strong> <span style="color:' + col + '">' + esc(m.verdict || '') + '</span>'
+      + '<div class="chips"><span class="chip ' + (m.backup ? 'g">backup: yes' : 'w">no backup seen') + '</span>'
+      + '<span class="chip ' + (m.disk >= 85 ? 'w">disk ' + m.disk + '% full' : '">disk fine') + '</span>'
+      + (m.batt ? '<span class="chip ' + (m.batt >= 70 ? '' : 'w') + '">battery ' + m.batt + '%</span>' : '')
+      + '<span class="chip">seen ' + seenTxt(m.seen) + '</span></div>'
+      + (reps ? '<div>' + reps + '</div>' : '')
+      + '</div>' + spark
+      + '<button class="sm ghost rcb" data-pc="' + esc(m.id) + '" title="Ask this PC for a fresh health check">\\ud83e\\ude7a Check now</button></div>';
+  }
+
+  function ngAct(a) { return a === 'flushdns' ? 'Refreshed your internet settings' : a === 'cleartemp' ? 'Cleared out temporary files' : a === 'collectlogs' ? 'Collected a diagnostics report' : 'Ran safe maintenance'; }
+
+  // build the 3D hero + posture bento + trend + consent ledger for one PC, wired to live data
+  function ngHero(d, m) {
+    var first = esc((d.name || '').split(' ')[0] || 'there');
+    var col = m.score >= 80 ? 'var(--pgood)' : (m.score >= 55 ? 'var(--pwarn)' : 'var(--pbad)');
+    var word = m.score >= 80 ? 'great shape' : (m.score >= 55 ? 'good shape, with a little to tidy' : 'need of a little care');
+    var lap = m.batt > 0;
+    var ringSvg = '<div class="ngringwrap"><svg class="ngring" width="150" height="150" viewBox="0 0 150 150">'
+      + '<circle class="tk" cx="75" cy="75" r="63"/><circle class="arc" id="ngarc" cx="75" cy="75" r="63"/></svg>'
+      + '<div class="ngctr"><div class="sc ngnum" id="ngscore">0</div><div class="of">HEALTH</div></div></div>'
+      + '<div class="vd">' + esc(m.verdict || (m.score >= 80 ? 'in good shape' : 'a few things to look at')) + '</div>';
+    var device = lap
+      ? '<div class="nglid"><div class="ngscreen"><div class="ngscr">' + ringSvg + '</div><div class="nggloss"></div><div class="ngcam"></div></div></div><div class="ngbase"></div>'
+      : '<div class="ngmon"><div class="ngscreen" style="inset:0;border:0"><div class="ngscr">' + ringSvg + '</div><div class="nggloss"></div></div></div><div class="ngstand"></div><div class="ngfoot"></div><div class="ngtower"></div>';
+    var protV = m.avoff ? '<span style="color:var(--pbad)">Off</span>' : (m.avon ? '<span style="color:var(--pgood)">On</span>' : '<span style="color:var(--psoft)">\\u2014</span>');
+    var f1 = '<div class="ngfloat" style="left:4%;top:14%;transform:translateZ(60px)"><div class="ngfchip"><div class="k">\\ud83d\\udee1\\ufe0f Protection</div><div class="v">' + protV + '</div></div></div>';
+    var f2 = '<div class="ngfloat" style="right:2%;top:24%;transform:translateZ(90px)"><div class="ngfchip" style="animation-delay:1.5s"><div class="k">\\u2601\\ufe0f Backup</div><div class="v" style="color:' + (m.backup ? 'var(--pgood)' : 'var(--pbad)') + '">' + (m.backup ? 'On' : 'Off') + '</div></div></div>';
+    var f3 = '<div class="ngfloat" style="right:8%;bottom:10%;transform:translateZ(40px)"><div class="ngfchip" style="animation-delay:.8s"><div class="k">\\ud83d\\udcbe Storage</div><div class="v ngnum">' + m.disk + '%</div></div></div>';
+    var h = '<div class="ngwrap">'
+      + '<div class="ngtop"><div class="nglogo">365</div><div><div class="ngname">' + esc(m.name) + '</div><div class="ngseen">Checked ' + seenTxt(m.seen) + '</div></div>'
+      + (m.ver ? '<span class="ngchip ok">\\u2713 App v' + m.ver + '</span>' : '')
+      + '<button class="sm ghost rcb" data-pc="' + esc(m.id) + '" style="margin:0 0 0 auto;padding:.35rem .7rem" title="Ask this PC for a fresh health check">\\ud83e\\ude7a Check now</button></div>'
+      + '<div class="ngstage" id="ngstage" style="--nghue:' + col + '"><canvas class="ngbg" id="ngbg"></canvas>'
+      + '<div class="ngscene" id="ngscene"><div class="ngglow"></div><div class="ngdevice" id="ngdevice">' + device + '</div>' + f1 + f2 + f3 + '</div></div>'
+      + '<p class="ngverdline">Your PC is in <span style="color:' + col + '">' + word + '</span>, ' + first + '.</p>';
+    var acts = [];
+    if (m.avoff) acts.push({ i: '\\ud83d\\udee1\\ufe0f', t: 'Turn your protection back on', s: 'Antivirus is switched off', more: 'Your PC is exposed while antivirus is off. We can switch it back on and check nothing slipped through - only with your OK.', p: '+20', c: 'var(--pbad)' });
+    if (!m.backup) acts.push({ i: '\\u2601\\ufe0f', t: 'Turn on automatic backup', s: 'Your files aren\\u2019t protected yet', more: 'If the ' + (lap ? 'laptop' : 'PC') + ' failed today, your photos and documents could be lost. One word from you and 365 sets up automatic cloud backup.', p: '+15', c: 'var(--pbad)' });
+    if (m.disk >= 85) acts.push({ i: '\\ud83d\\udcbe', t: 'Free up disk space', s: 'Your drive is ' + m.disk + '% full', more: 'A nearly-full drive slows everything down. We safely clear temporary files to win space back - nothing of yours is touched.', p: '+8', c: 'var(--pwarn)' });
+    if (m.reboot) acts.push({ i: '\\ud83d\\udd04', t: 'A restart finishes some updates', s: 'Windows updates are waiting', more: 'Two minutes and you\\u2019re fully patched. We can do it at your next check-up, or you can restart whenever it suits.', p: '+3', c: 'var(--pwarn)' });
+    if (m.w10) acts.push({ i: '\\ud83e\\ude9f', t: 'Windows 10 support is ending', s: 'Plan the move, calmly', more: 'Microsoft stops free Windows 10 security updates in Oct 2025 (extended cover runs to Oct 2027). No rush - we\\u2019ll help you plan it.', p: '', c: 'var(--pwarn)' });
+    acts = acts.slice(0, 4);
+    if (acts.length) {
+      h += '<div class="ngh2">What we\\u2019d recommend</div><div class="nggrid">'
+        + acts.map(function (a) { return '<div class="ngc hx ' + (acts.length >= 3 ? 'ng-s2' : 'ng-s3') + '" style="border-left:3px solid ' + a.c + '"><div class="lab">' + a.i + ' ' + esc(a.t) + (a.p ? '<span class="ngnum" style="color:var(--pgood);margin-left:auto">' + a.p + '</span>' : '') + '</div><div class="val" style="font-size:1rem">' + esc(a.s) + '</div><div class="more">' + esc(a.more) + '</div></div>'; }).join('')
+        + '</div>';
+    } else {
+      h += '<div class="ngh2">What we\\u2019d recommend</div><div class="ngc ng-s6" style="border-left:3px solid var(--pgood)"><div class="lab">\\u2713 All clear</div><div class="val" style="font-size:1.05rem">Nothing needs doing right now - your ' + (lap ? 'laptop' : 'PC') + ' is looking after itself nicely.</div></div>';
+    }
+    h += '<div class="ngh2">Protection \\u0026 health</div><div class="nggrid">';
+    h += '<div class="ngc hx ng-s3"><div class="lab">\\ud83d\\udee1\\ufe0f Protection</div><div class="ngprot">'
+      + '<div class="p"><div class="ngbadge ' + (m.avoff ? 'off' : (m.avon ? 'on' : 'neu')) + '">' + (m.avoff ? '!' : (m.avon ? '\\u2713' : '?')) + '</div><div><div style="font-weight:600;color:var(--pwhite)">Antivirus ' + (m.avoff ? 'off' : (m.avon ? 'on' : 'status unknown')) + '</div><div class="note">' + (m.avoff ? 'Not protecting right now' : (m.avon ? 'Actively protecting' : 'Not reported by this PC')) + '</div></div></div>'
+      + '<div class="p"><div class="ngbadge ' + (m.backup ? 'on' : 'off') + '">' + (m.backup ? '\\u2713' : '!') + '</div><div><div style="font-weight:600;color:var(--pwhite)">Backup ' + (m.backup ? 'on' : 'off') + '</div><div class="note">' + (m.backup ? 'Your files are copied safely' : 'Nothing backed up yet') + '</div></div></div>'
+      + '</div><div class="more">' + (m.avon && m.backup ? 'Both your safety nets are in place - antivirus watching in real time and your files backed up.' : 'We keep an eye on both your safety nets; anything amber shows up as a recommendation above.') + '</div></div>';
+    h += '<div class="ngc hx ng-s2"><div class="lab">\\ud83d\\udcbe Storage</div><div class="val ngnum"><span id="ngdisk">0</span>%</div><div class="ngmeter"><i id="ngdiskbar" style="background:' + (m.disk >= 85 ? 'linear-gradient(90deg,var(--pwarn),var(--pbad))' : 'linear-gradient(90deg,#0f7d24,var(--pgood))') + '"></i></div><div class="note">' + (m.disk >= 85 ? 'Getting full - worth a tidy' : 'Plenty of room') + '</div><div class="more">We tidy temporary files automatically to keep space free.</div></div>';
+    if (lap) h += '<div class="ngc hx ng-s2" style="grid-column:auto"><div class="lab">\\ud83d\\udd0b Battery</div><div class="val ngnum">' + m.batt + '%</div><div class="note">' + (m.batt >= 60 ? 'Healthy charge' : 'Running low right now') + '</div><div class="more">Charge level at the last check-in. A steadily falling maximum can mean the battery is ageing.</div></div>';
+    h += '</div>';
+    if (m.hist && m.hist.length > 1) {
+      var delta = m.hist[m.hist.length - 1][1] - m.hist[Math.max(0, m.hist.length - 30)][1];
+      var tline = delta > 2 ? '\\u25b2 Up ' + delta + ' points recently - nice work.' : (delta < -2 ? '\\u25bc Down ' + Math.abs(delta) + ' points lately - worth a check-up.' : 'Holding steady - just how we like it.');
+      h += '<div class="ngh2">Health over the last 90 days</div><div class="ngc ngtrend ng-s6"><div style="color:' + (delta < -2 ? 'var(--pwarn)' : 'var(--pgood)') + ';font-weight:600;font-size:.88rem;margin-bottom:.3rem">' + tline + '</div>'
+        + '<svg viewBox="0 0 620 92" preserveAspectRatio="none"><defs><linearGradient id="ngfill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#1D97E3" stop-opacity=".3"/><stop offset="1" stop-color="#1D97E3" stop-opacity="0"/></linearGradient></defs>'
+        + '<path id="ngarea" fill="url(#ngfill)" opacity="0"></path><path id="ngtline" class="ngtl"></path></svg></div>';
+    }
+    var repShelf = (m.reps || []).slice(-4).reverse().map(function (rt) { var rd = new Date(rt * 1000); return '<button class="sm ghost repb" data-pc="' + esc(m.id) + '" data-ts="' + rt + '" style="margin:.25rem .3rem 0 0">\\ud83d\\udcc4 ' + rd.getDate() + ' ' + MON[rd.getMonth()] + '</button>'; }).join('');
+    if (repShelf) h += '<div class="ngh2">Your reports</div><div class="ngc">' + repShelf + '</div>';
+    h += '<div class="ngh2">What we\\u2019ve done \\u2014 with your permission</div><div class="ngc ngledger ng-s6">'
+      + '<div class="lh"><div><div style="font-weight:650;color:var(--pwhite)">Let 365 run safe maintenance</div><div class="ngseen">' + (m.rmaint ? 'On - you\\u2019re always in control' : 'Off - you decide if we ever do') + ' \\u00b7 set in the app on your PC</div></div><div class="ngsw ' + (m.rmaint ? 'on' : 'off') + '" title="Turn this on or off inside 365 PC Manager on your PC"><i></i></div></div>';
+    if (m.log && m.log.length) {
+      h += m.log.slice().reverse().map(function (L) {
+        var ld = new Date((L.ts || 0) * 1000);
+        var when = L.ts ? (ld.getDate() + ' ' + MON[ld.getMonth()] + ' ' + ('0' + ld.getHours()).slice(-2) + ':' + ('0' + ld.getMinutes()).slice(-2)) : '';
+        return '<div class="row"><span class="dot ' + (L.ok ? 'ok' : 'no') + '"></span><div><div class="h">' + esc(ngAct(L.act)) + (L.ok ? '' : ' (didn\\u2019t complete)') + '</div><div class="m">' + esc(when) + ' \\u00b7 <span class="y">you approved this</span></div></div></div>';
+      }).join('');
+    } else {
+      h += '<div class="row" style="border:0"><span class="dot ok"></span><div><div class="h">Nothing run yet</div><div class="m">When you allow it, every safe action we take appears here - timestamped, tied to your yes.</div></div></div>';
+    }
+    h += '</div></div>';
+    return h;
+  }
+
+  // wire the hero: ring count-up + arc, trend draw, ambient canvas, mouse parallax
+  function ngAnim(m) {
+    ngGen++; var gen = ngGen, rm = false;
+    try { rm = matchMedia('(prefers-reduced-motion:reduce)').matches; } catch (e) {}
+    var R = 63, C = 2 * Math.PI * R, small = window.innerWidth <= 640;
+    var arc = document.getElementById('ngarc');
+    if (arc) arc.style.strokeDasharray = C;
+    var finalOff = C * (1 - Math.max(0, Math.min(100, m.score)) / 100);
+    function cUp(el, to, dur) { if (!el) return; if (rm) { el.textContent = to; return; } var t0 = 0; (function s(t) { if (!t0) t0 = t; var p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3); el.textContent = Math.round(to * e); if (p < 1 && gen === ngGen) requestAnimationFrame(s); })(performance.now()); }
+    if (rm) {
+      if (arc) arc.style.strokeDashoffset = finalOff;
+      var se = document.getElementById('ngscore'); if (se) se.textContent = m.score;
+      var de = document.getElementById('ngdisk'); if (de) de.textContent = m.disk;
+      var db0 = document.getElementById('ngdiskbar'); if (db0) db0.style.width = m.disk + '%';
+    } else {
+      if (arc) { arc.style.strokeDashoffset = C; requestAnimationFrame(function () { requestAnimationFrame(function () { if (arc) arc.style.strokeDashoffset = finalOff; }); }); }
+      cUp(document.getElementById('ngscore'), m.score, 1150);
+      setTimeout(function () { cUp(document.getElementById('ngdisk'), m.disk, 900); var db = document.getElementById('ngdiskbar'); if (db) db.style.width = m.disk + '%'; }, 350);
+    }
+    if (m.hist && m.hist.length > 1) {
+      var line = document.getElementById('ngtline'), area = document.getElementById('ngarea');
+      if (line && area) {
+        var pts = m.hist.map(function (p) { return Math.max(0, Math.min(100, p[1])); }), n = pts.length;
+        var W = 620, H = 92, pad = 6, mn = Math.min.apply(null, pts) - 4, mx = Math.max.apply(null, pts) + 4;
+        if (mx - mn < 8) { mn -= 4; mx += 4; }
+        var X = function (i) { return pad + i * (W - 2 * pad) / (n - 1); }, Y = function (v) { return H - pad - (v - mn) / (mx - mn) * (H - 2 * pad); };
+        var dp = 'M' + X(0).toFixed(1) + ',' + Y(pts[0]).toFixed(1);
+        for (var i = 1; i < n; i++) dp += ' L' + X(i).toFixed(1) + ',' + Y(pts[i]).toFixed(1);
+        line.setAttribute('d', dp);
+        area.setAttribute('d', dp + ' L' + X(n - 1).toFixed(1) + ',' + H + ' L' + X(0).toFixed(1) + ',' + H + ' Z');
+        var len = 1400; try { len = line.getTotalLength(); } catch (e) {}
+        if (rm) { area.setAttribute('opacity', '1'); }
+        else {
+          line.style.strokeDasharray = len; line.style.strokeDashoffset = len;
+          requestAnimationFrame(function () { requestAnimationFrame(function () { line.style.transition = 'stroke-dashoffset 1.6s ease .3s'; line.style.strokeDashoffset = 0; }); });
+          setTimeout(function () { if (area) { area.style.transition = 'opacity .8s'; area.setAttribute('opacity', '1'); } }, 1200);
+        }
+      }
+    }
+    var stage = document.getElementById('ngstage'), scene = document.getElementById('ngscene'), device = document.getElementById('ngdevice'), cv = document.getElementById('ngbg');
+    if (cv && stage && cv.getContext) {
+      var ctx = cv.getContext('2d'), orbs = [], t = 0, COL = ['29,151,227', '0,206,27', '29,120,200'];
+      function sz() { cv.width = stage.clientWidth; cv.height = stage.clientHeight; }
+      sz();
+      if (ngRz) window.removeEventListener('resize', ngRz);
+      ngRz = sz; window.addEventListener('resize', ngRz);
+      for (var oi = 0; oi < 5; oi++) orbs.push({ x: Math.random(), y: Math.random(), r: 120 + oi * 44, a: .05 + oi * .006, c: COL[oi % 3], dx: (oi % 2 ? 1 : -1) * .00006 * (oi + 1), dy: .00005 * (oi + 1) });
+      (function amb() {
+        if (gen !== ngGen) return;
+        t++; ctx.clearRect(0, 0, cv.width, cv.height); ctx.globalCompositeOperation = 'lighter';
+        for (var k = 0; k < orbs.length; k++) {
+          var o = orbs[k]; o.x += o.dx; o.y += o.dy; if (o.x < -.2 || o.x > 1.2) o.dx *= -1; if (o.y < -.2 || o.y > 1.2) o.dy *= -1;
+          var px = (o.x + Math.sin(t / 600 + o.r) * .03) * cv.width, py = (o.y + Math.cos(t / 700 + o.r) * .03) * cv.height;
+          var g = ctx.createRadialGradient(px, py, 0, px, py, o.r); g.addColorStop(0, 'rgba(' + o.c + ',' + o.a + ')'); g.addColorStop(1, 'rgba(' + o.c + ',0)');
+          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(px, py, o.r, 0, 7); ctx.fill();
+        }
+        if (!rm) requestAnimationFrame(amb);
+      })();
+    }
+    if (!rm && !small && scene && device) {
+      var tx = 0, ty = 0, mx2 = 0, my2 = 0, baseRy = lapRy(m);
+      if (ngPM) window.removeEventListener('pointermove', ngPM);
+      ngPM = function (e) { tx = (e.clientX / window.innerWidth - .5); ty = (e.clientY / window.innerHeight - .5); };
+      window.addEventListener('pointermove', ngPM);
+      var floats = document.querySelectorAll('#p365app .ngfloat'), depth = [60, 90, 40];
+      (function loop() {
+        if (gen !== ngGen) return;
+        mx2 += (tx - mx2) * .06; my2 += (ty - my2) * .06;
+        scene.style.transform = 'rotateY(' + (mx2 * 9) + 'deg) rotateX(' + (-my2 * 7) + 'deg)';
+        device.style.setProperty('--ry', (baseRy + mx2 * 13) + 'deg'); device.style.setProperty('--rx', (8 - my2 * 7) + 'deg');
+        for (var fi = 0; fi < floats.length; fi++) floats[fi].style.transform = 'translateZ(' + depth[fi] + 'px) translate(' + (mx2 * depth[fi] * .4) + 'px,' + (my2 * depth[fi] * .4) + 'px)';
+        requestAnimationFrame(loop);
+      })();
+    }
+  }
+  function lapRy(m) { return m.batt > 0 ? -16 : -14; }
+
   // ---------- customer dashboard ----------
   function showDash() {
     el.innerHTML = topRow('Hello' + (S.name ? ' ' + esc(S.name.split(' ')[0]) : '')) + '<p class="lede">Loading your dashboard\\u2026</p>';
@@ -15953,6 +16215,19 @@ def write_portal_page():
       var h = topRow('Hello ' + esc((d.name || '').split(' ')[0] || 'there'));
       if (S.back) h = '<div class="card" style="border-color:rgba(29,151,227,.55);padding:.6rem .9rem"><div class="row" style="border:0;padding:0"><span class="quiet" style="margin:0">\\ud83d\\udc41 You\\u2019re viewing the portal as <strong>' + esc(d.name || 'this customer') + '</strong> - exactly what they see.</span><button class="sm" id="backstaff">\\u2190 Back to staff</button></div></div>' + h;
       if (d.pending) h += '<div class="card" style="border-color:rgba(224,179,65,.5)"><p class="quiet">We can see a support plan registered to this email. For security we link it to your web login by hand - it usually appears within a day. Need it sooner? Ring 01202 775566.</p></div>';
+      // primary PC gets the next-gen 3D hero up top; any others listed compactly beneath
+      var ngLive = d.machines.filter(function (mm) { return !mm.fresh; });
+      var ngPrimary = null;
+      if (ngLive.length) { ngLive.sort(function (a, b) { return (b.seen || '').localeCompare(a.seen || ''); }); ngPrimary = ngLive[0]; }
+      if (ngPrimary) {
+        h += ngHero(d, ngPrimary);
+        var ngOthers = d.machines.filter(function (mm) { return mm.id !== ngPrimary.id; });
+        if (ngOthers.length) h += '<div class="ngh2">Your other computers</div><div class="card">' + ngOthers.map(machineRow).join('') + '</div>';
+      } else {
+        h += '<div class="card"><h2>Your computers</h2>';
+        if (!d.machines.length) h += '<p class="quiet">None checking in yet - our free <a href="/free-pc-health-check/" target="_blank">365 PC Manager</a> app keeps an eye on your PC\\u2019s health and shows it here.</p>';
+        h += d.machines.map(machineRow).join('') + '</div>';
+      }
       h += '<div class="card"><h2>Your membership</h2><div class="row"><span class="pill ' + (d.tier === 'pro' ? 'pro">On 365 support' : 'free">365 member (free)') + '</span>'
         + (d.next ? '<span>Next service: <strong>' + esc(d.next) + '</strong></span>' : '<span class="quiet">No service booked - <a href="#" id="cbbook">book one</a>.</span>') + '</div>';
       if (d.gc) {
@@ -15964,42 +16239,6 @@ def write_portal_page():
       }
       h += '</div>';
       h += '<div class="card"><h2>📅 Your bookings</h2><div id="mybk"><p class="quiet">Loading your visits…</p></div></div>';
-      h += '<div class="card"><h2>Your computers</h2>';
-      if (!d.machines.length) h += '<p class="quiet">None checking in yet - our free <a href="/free-pc-health-check/" target="_blank">365 PC Manager</a> app keeps an eye on your PC\\u2019s health and shows it here.</p>';
-      d.machines.forEach(function (m) {
-        var circ = 2 * Math.PI * 23;
-        if (m.fresh) {
-          h += '<div class="row"><div class="ringS"><svg width="56" height="56"><circle cx="28" cy="28" r="23" fill="none" stroke="#2a3b63" stroke-width="6"/></svg><b>\\u2014</b></div>'
-            + '<div><strong>' + esc(m.name) + '</strong><div class="chips"><span class="chip">first health check coming soon</span></div></div></div>';
-          return;
-        }
-        var col = m.score >= 80 ? 'var(--pgood)' : (m.score >= 55 ? 'var(--pwarn)' : 'var(--pbad)');
-        var spark = '';
-        if (m.hist && m.hist.length > 1) {
-          var pts = [];
-          for (var hi = 0; hi < m.hist.length; hi++) {
-            var hx = (hi / (m.hist.length - 1)) * 96;
-            var hy = 26 - (Math.max(0, Math.min(100, m.hist[hi][1])) / 100) * 24;
-            pts.push(hx.toFixed(1) + ',' + hy.toFixed(1));
-          }
-          spark = '<svg width="100" height="28" style="flex:0 0 100px" aria-label="health trend"><polyline points="' + pts.join(' ') + '" fill="none" stroke="var(--pcyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-        }
-        var reps = '';
-        (m.reps || []).slice(-3).reverse().forEach(function (rt) {
-          var rd = new Date(rt * 1000);
-          reps += '<button class="sm ghost repb" data-pc="' + esc(m.id) + '" data-ts="' + rt + '" style="margin:.25rem .25rem 0 0">\\ud83d\\udcc4 ' + rd.getDate() + ' ' + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][rd.getMonth()] + '</button>';
-        });
-        h += '<div class="row"><div class="ringS"><svg width="56" height="56"><circle cx="28" cy="28" r="23" fill="none" stroke="#2a3b63" stroke-width="6"/><circle cx="28" cy="28" r="23" fill="none" stroke="' + col + '" stroke-width="6" stroke-linecap="round" stroke-dasharray="0 ' + circ.toFixed(1) + '" data-dash="' + (circ * m.score / 100).toFixed(1) + ' ' + circ.toFixed(1) + '"/></svg><b>' + m.score + '%</b></div>'
-          + '<div style="flex:1;min-width:180px"><strong>' + esc(m.name) + '</strong> <span style="color:' + col + '">' + esc(m.verdict || '') + '</span>'
-          + '<div class="chips"><span class="chip ' + (m.backup ? 'g">backup: yes' : 'w">no backup seen') + '</span>'
-          + '<span class="chip ' + (m.disk >= 85 ? 'w">disk ' + m.disk + '% full' : '">disk fine') + '</span>'
-          + (m.batt ? '<span class="chip ' + (m.batt >= 70 ? '' : 'w') + '">battery ' + m.batt + '%</span>' : '')
-          + '<span class="chip">seen ' + seenTxt(m.seen) + '</span></div>'
-          + (reps ? '<div>' + reps + '</div>' : '')
-          + '</div>' + spark
-          + '<button class="sm ghost rcb" data-pc="' + esc(m.id) + '" title="Ask this PC for a fresh health check">\\ud83e\\ude7a Check now</button></div>';
-      });
-            h += '</div>';
       var crsAll = null;
       d.machines.forEach(function (m) { if (m.crs && (!crsAll || parseInt(m.crs, 10) > parseInt(crsAll.crs, 10))) crsAll = m; });
       if (crsAll && crsAll.crs) {
@@ -16030,6 +16269,7 @@ def write_portal_page():
         + '<a href="tel:+441202775566"><button class="sm ghost">Call 01202 775566</button></a></div></div>';
             el.innerHTML = h;
       bindOut();
+      if (ngPrimary) ngAnim(ngPrimary);
       var bs = document.getElementById('backstaff');
       if (bs) bs.onclick = function () {
         post(BK, { action: 'weblogout', wtoken: S.wtoken, machine: mid() });   // kill the view-as session

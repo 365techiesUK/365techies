@@ -174,13 +174,26 @@ if ($action === 'overview') {
     $c = $db['customers'][$key];
     $ms = array();
     foreach ((isset($c['machines']) ? $c['machines'] : array()) as $id => $m) {
+        $avr = strtolower(trim((string)($m['av'] ?? '')));
+        // sanitised audit trail for the customer consent ledger: action + outcome + when only.
+        // Deliberately omits 'by' (internal staff login) and 'out' (may carry paths/hostnames).
+        $log = array();
+        if (isset($m['cmdlog']) && is_array($m['cmdlog'])) {
+            foreach (array_slice($m['cmdlog'], -6) as $L) {
+                $log[] = array('act'=>(string)($L['act'] ?? ''), 'ok'=>!empty($L['ok']),
+                    'ts'=>intval(isset($L['done']) ? $L['done'] : (isset($L['ts']) ? $L['ts'] : 0)));
+            }
+        }
         $ms[] = array('name'=>(string)($m['name'] ?? 'PC'), 'score'=>intval($m['score'] ?? 0),
             'verdict'=>(string)($m['verdict'] ?? ''), 'seen'=>(string)($m['seen'] ?? ''),
             'disk'=>intval($m['diskpct'] ?? 0), 'backup'=>!empty($m['backup']), 'ver'=>intval($m['ver'] ?? 0),
             'fresh'=>!isset($m['diskpct']),
             'id'=>(string)$id, 'batt'=>intval($m['batt'] ?? 0),
+            'avon'=>($avr==='on'), 'avoff'=>($avr==='off'), 'w10'=>!empty($m['w10']),
+            'reboot'=>!empty($m['reboot']), 'rmaint'=>!empty($m['rmaint']),
             'crs'=>(string)($m['crs'] ?? ''), 'crst'=>(string)($m['crst'] ?? ''),
             'hist'=>isset($m['hist']) && is_array($m['hist']) ? array_slice($m['hist'], -60) : array(),
+            'log'=>$log,
             'reps'=>isset($m['reps']) && is_array($m['reps']) ? $m['reps'] : array());
     }
     $fam = isset($c['family']['name']) ? (string)$c['family']['name'] : '';
