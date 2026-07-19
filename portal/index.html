@@ -205,7 +205,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-07-18"
+      "dateModified": "2026-07-19"
     }
   ]
 }
@@ -688,6 +688,17 @@
     #p365app .card, #p365app button, #p365app .ringS svg circle:last-child { transition:none; }
     #p365app .card:hover, #p365app button:hover { transform:none; }
   }
+  #p365app .tmask { position:fixed; inset:0; background:rgba(4,8,20,.74); display:flex; align-items:flex-start; justify-content:center; padding:5vh 1rem 2rem; z-index:200; overflow:auto; animation:p365popIn .18s ease both; }
+  #p365app .tmodal { background:var(--ppanel); border:1px solid var(--pline); border-radius:14px; max-width:560px; width:100%; padding:1.1rem 1.2rem 1.3rem; box-shadow:0 14px 44px rgba(0,0,0,.55); }
+  #p365app .tmodal h3 { margin:0; font-size:1.15rem; color:var(--pwhite); }
+  #p365app .tacts { display:flex; flex-wrap:wrap; gap:.5rem; margin:.9rem 0 .3rem; }
+  #p365app .tacts button { flex:1 1 46%; min-width:150px; }
+  #p365app .tnote { font-size:.86rem; color:var(--pwarn); background:rgba(224,179,65,.1); border:1px solid rgba(224,179,65,.35); border-radius:9px; padding:.55rem .7rem; margin:.7rem 0; }
+  #p365app .tstat { min-height:1.3em; font-size:.9rem; margin:.4rem 0; }
+  #p365app pre.tdiag { background:var(--pink); border:1px solid var(--pline); border-radius:9px; padding:.7rem; max-height:300px; overflow:auto; font:12px/1.5 Consolas,monospace; color:var(--psoft); white-space:pre-wrap; word-break:break-word; margin:.5rem 0 0; }
+  #p365app .tlog { margin-top:.6rem; font-size:.82rem; max-height:180px; overflow:auto; }
+  #p365app .tlog .lr { display:flex; gap:.5rem; padding:.32rem 0; border-bottom:1px solid rgba(42,59,99,.4); align-items:baseline; }
+  #p365app .tlog .lr:last-child { border-bottom:0; }
 </style><script>
 (function () {
   var BK = '/api/pcm-booking.php', PCM = '/api/pcm.php';
@@ -1755,7 +1766,7 @@
     var rows = FLEET.filter(function (m) { return ftab === 'all' ? true : (ftab === 'on' ? m.on : !m.on); })
       .sort(function (a, b) { return (b.seen || '').localeCompare(a.seen || ''); });
     if (!rows.length) { fv.innerHTML = '<p class="quiet">' + (ftab === 'on' ? 'No customer PCs are on right now.' : 'Nothing here.') + '</p>'; return; }
-    var hh = '<table><tr><th></th><th>Computer</th><th>Customer</th><th>Health</th><th>Warnings</th><th>Seen</th><th>App</th></tr>';
+    var hh = '<table><tr><th></th><th>Computer</th><th>Customer</th><th>Health</th><th>Warnings</th><th>Seen</th><th>App</th><th></th></tr>';
     rows.forEach(function (m) {
       var col = m.fresh ? 'var(--pmut)' : (m.score >= 80 ? 'var(--pgood)' : (m.score >= 55 ? 'var(--pwarn)' : 'var(--pbad)'));
       var wch = m.warns.length
@@ -1767,10 +1778,110 @@
         + '<td><span style="color:' + col + ';font-weight:700">' + (m.fresh ? '\u2014' : m.score + '%') + '</span>' + (m.verdict ? ' <span class="quiet">' + esc(m.verdict) + '</span>' : '') + '</td>'
         + '<td><div class="chips">' + wch + '</div></td>'
         + '<td>' + seenTxt(m.seen) + '</td>'
-        + '<td>' + (m.ver ? 'v' + m.ver : '\u2014') + '</td></tr>';
+        + '<td>' + (m.ver ? 'v' + m.ver : '\u2014') + '</td>'
+        + '<td>' + (m.mid ? '<button class="sm ghost tune" data-cid="' + esc(m.cid) + '" data-mid="' + esc(m.mid) + '" title="Safe tune-up">\ud83d\udee0</button>' : '') + '</td></tr>';
     });
     hh += '</table>';
     fv.innerHTML = hh;
+    Array.prototype.forEach.call(fv.querySelectorAll('.tune'), function (btn) {
+      btn.onclick = function () {
+        var c = btn.getAttribute('data-cid'), md = btn.getAttribute('data-mid');
+        var m2 = FLEET.filter(function (x) { return x.cid === c && x.mid === md; })[0];
+        if (m2) openTuneup(m2);
+      };
+    });
+  }
+
+  // ---------- safe remote maintenance: staff tune-up panel (v18 command channel) ----------
+  var TUNE_ACTS = [
+    { act: 'flushdns', label: '\ud83d\udd04 Refresh internet settings' },
+    { act: 'cleartemp', label: '\ud83e\uddf9 Clear temp files' },
+    { act: 'collectlogs', label: '\ud83d\udccb Collect diagnostics' }
+  ];
+  function actLabel(a) { for (var i = 0; i < TUNE_ACTS.length; i++) if (TUNE_ACTS[i].act === a) return TUNE_ACTS[i].label; return a; }
+  function agoTxt(sec) { if (!sec) return ''; var d = Math.floor((Date.now() / 1000) - sec); if (d < 60) return 'just now'; if (d < 3600) return Math.floor(d / 60) + ' min ago'; if (d < 86400) return Math.floor(d / 3600) + ' h ago'; return Math.floor(d / 86400) + ' d ago'; }
+  function closeTune() { var x = document.getElementById('tmask'); if (x && x.parentNode) x.parentNode.removeChild(x); }
+  function openTuneup(m) {
+    closeTune();
+    var mask = document.createElement('div');
+    mask.className = 'tmask'; mask.id = 'tmask';
+    mask.onclick = function (e) { if (e.target === mask) closeTune(); };
+    mask.innerHTML = '<div class="tmodal" role="dialog" aria-label="Safe maintenance">'
+      + '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem">'
+      + '<div><h3>\ud83d\udee0 Safe tune-up</h3><p class="quiet" style="margin:.15rem 0 0">' + esc(m.name) + ' \u00b7 ' + esc(m.cust || 'Customer') + '</p></div>'
+      + '<button class="sm ghost" id="tclose" aria-label="Close">\u2715</button></div>'
+      + '<div id="tbody"><p class="quiet">Checking\u2026</p></div></div>';
+    el.appendChild(mask);
+    document.getElementById('tclose').onclick = closeTune;
+    tuneRefresh(m);
+  }
+  function tuneRefresh(m) {
+    post(BK, { action: 'staffcmdlog', stoken: S.stoken, machine: mid(), cid: m.cid, pc: m.mid }).then(function (d) {
+      var b = document.getElementById('tbody'); if (!b) return;
+      if (!d || !d.ok) { b.innerHTML = '<p class="quiet">Couldn\u2019t load - the customer may have been removed.</p>'; return; }
+      var hh = '';
+      if (!d.rmaint) {
+        hh += '<div class="tnote">This customer hasn\u2019t switched on remote maintenance yet. Ask them to open 365 PC Manager \u2192 Booking and tick <strong>\u201cLet 365 run safe maintenance\u201d</strong>. Until then these tools stay locked \u2014 by design.</div>';
+      } else {
+        hh += '<p class="quiet" style="margin:.2rem 0 0">Runs on the customer\u2019s PC only when they\u2019re online, and they see each one happen. Nothing here opens or deletes their files.</p>'
+          + '<div class="tacts">' + TUNE_ACTS.map(function (a) { return '<button class="sm tact" data-act="' + a.act + '">' + a.label + '</button>'; }).join('') + '</div>';
+      }
+      hh += '<div class="tstat" id="tstat"></div>';
+      if (d.haslog) hh += '<button class="sm ghost" id="tviewlog">\ud83d\udcc4 View last diagnostics report</button><pre class="tdiag" id="tdiag" style="display:none"></pre>';
+      var pend = (d.pending || []).length;
+      if (pend) hh += '<p class="quiet" style="margin-top:.5rem">\u23f3 ' + pend + ' job' + (pend > 1 ? 's' : '') + ' waiting for the PC to pick up\u2026</p>';
+      hh += renderTuneLog(d.log);
+      b.innerHTML = hh;
+      Array.prototype.forEach.call(b.querySelectorAll('.tact'), function (btn) { btn.onclick = function () { tuneRun(m, btn.getAttribute('data-act'), btn); }; });
+      var vl = document.getElementById('tviewlog'); if (vl) vl.onclick = function () { tuneViewLog(m, vl); };
+    }).catch(function () { var b = document.getElementById('tbody'); if (b) b.innerHTML = '<p class="quiet">Couldn\u2019t reach the server.</p>'; });
+  }
+  function renderTuneLog(log) {
+    if (!log || !log.length) return '';
+    var hh = '<div class="tlog"><div class="tgroup" style="margin:.5rem 0 .1rem">Recent activity</div>';
+    log.slice().reverse().forEach(function (r) {
+      var ok = r.ok ? '<span style="color:var(--pgood)">\u2713</span>' : '<span style="color:var(--pbad)">\u2715</span>';
+      hh += '<div class="lr">' + ok + '<div style="flex:1"><strong>' + esc(actLabel(r.act)) + '</strong> <span class="quiet">' + esc(r.out || '') + '</span><br /><span class="quiet" style="font-size:.75rem">' + esc(r.by || '') + ' \u00b7 ' + esc(agoTxt(r.done)) + '</span></div></div>';
+    });
+    return hh + '</div>';
+  }
+  function tuneRun(m, act, btn) {
+    btn.disabled = true;
+    var st = document.getElementById('tstat'); if (st) { st.style.color = 'var(--psoft)'; st.textContent = 'Sending to the PC\u2026'; }
+    post(BK, { action: 'staffcmd', stoken: S.stoken, machine: mid(), cid: m.cid, pc: m.mid, act: act }).then(function (r) {
+      if (!r || !r.ok) { if (st) { st.style.color = 'var(--pwarn)'; st.textContent = tuneErr(r && r.error); } btn.disabled = false; return; }
+      if (st) st.textContent = 'Queued \u2014 waiting for the PC to run it\u2026';
+      tunePoll(m, r.id, 0);
+    }).catch(function () { if (st) { st.style.color = 'var(--pbad)'; st.textContent = 'Couldn\u2019t reach the server.'; } btn.disabled = false; });
+  }
+  function tuneErr(e) {
+    if (e === 'not_enabled') return 'The customer switched remote maintenance off - it can\u2019t run.';
+    if (e === 'queue_full') return 'Too many jobs already waiting - let those finish first.';
+    if (e === 'bad_command') return 'That action isn\u2019t available.';
+    return 'Couldn\u2019t queue it - try again.';
+  }
+  function tunePoll(m, id, tries) {
+    if (tries > 40) { var s0 = document.getElementById('tstat'); if (s0) { s0.style.color = 'var(--pwarn)'; s0.textContent = 'Still waiting - the PC may be offline. It\u2019ll run when it next connects (up to 15 min, then it expires).'; } tuneRefresh(m); return; }
+    setTimeout(function () {
+      if (!document.getElementById('tmask')) return;
+      post(BK, { action: 'staffcmdlog', stoken: S.stoken, machine: mid(), cid: m.cid, pc: m.mid }).then(function (d) {
+        if (!document.getElementById('tmask')) return;
+        var done = null;
+        (d && d.log ? d.log : []).forEach(function (l) { if (l.id === id) done = l; });
+        var st = document.getElementById('tstat');
+        if (done) { if (st) { st.style.color = done.ok ? 'var(--pgood)' : 'var(--pbad)'; st.textContent = (done.ok ? '\u2713 Done \u2014 ' : '\u2715 ') + (done.out || (done.ok ? 'completed' : 'failed')); } tuneRefresh(m); }
+        else tunePoll(m, id, tries + 1);
+      }).catch(function () { tunePoll(m, id, tries + 1); });
+    }, 3000);
+  }
+  function tuneViewLog(m, btn) {
+    btn.disabled = true; btn.textContent = 'Loading\u2026';
+    post(BK, { action: 'stafflog', stoken: S.stoken, machine: mid(), cid: m.cid, pc: m.mid }).then(function (d) {
+      var pre = document.getElementById('tdiag');
+      if (!d || !d.ok) { if (pre) { pre.style.display = 'block'; pre.textContent = 'Couldn\u2019t load the report.'; } btn.textContent = '\ud83d\udcc4 View last diagnostics report'; btn.disabled = false; return; }
+      if (pre) { pre.style.display = 'block'; pre.textContent = d.text || '(empty)'; }
+      btn.style.display = 'none';
+    }).catch(function () { btn.textContent = '\ud83d\udcc4 View last diagnostics report'; btn.disabled = false; });
   }
 
   if (S.stoken) showStaff();
@@ -2024,7 +2135,7 @@
   <script type="module" src="/js/interior.min.js?v=20"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
-  <script src="/js/search.min.js?v=2026-07-18" defer></script>
+  <script src="/js/search.min.js?v=2026-07-19" defer></script>
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
     <p>We use cookies to power our live chat and understand how the site is used. See our <a href="/cookie-policy/">cookie policy</a>.</p>
     <div class="cookie-banner__actions">
