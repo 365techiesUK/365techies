@@ -3330,6 +3330,7 @@ def services_overview():
         ("Custom VRM Dashboards", "/custom-vrm-dashboards/", "Custom live dashboards for Victron VRM &mdash; any layout, several sites on one screen, hosted &amp; supported worldwide."),
         ("Website Design &amp; Hosting", "/web-design-hosting/", "Premium websites, fast managed hosting and business email."),
         ("Website Rebuild &amp; Redesign", "/website-rebuild/", "Rebuild a tired website without losing your Google rankings &mdash; SEO-safe migration, done like our own."),
+        ("365 Web Care", "/web-care/", "One simple monthly plan &mdash; we host, secure, back up and look after your website, so you never worry about it."),
         ("Agentic AI Systems", "/agentic-ai-systems/", "Custom-built agentic AI operating systems that automate and streamline your business-specific processes."),
         ("365 AI OS", "/365-ai-os/", "A real browser desktop with a built-in AI assistant that takes action &mdash; a working demo of the custom systems we build."),
         ("AI Voice Agents", "/ai-voice-agents/", "An AI receptionist that answers calls 24/7, captures enquiries and books callbacks &mdash; from &pound;95/month."),
