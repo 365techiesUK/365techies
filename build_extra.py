@@ -14546,6 +14546,12 @@ PAY_CONFIG = {
     "stripe_url": "",   # paste the buy.stripe.com "Customers choose what to pay" link to switch card payments ON
     "paypal_url": "https://paypal.me/365techies",  # owner's PayPal.Me (business acct, supplied 2026-07-10); /<amt>GBP pre-fills
     "bank": {"bankName": "Lloyds Bank", "name": "365 Techies Limited", "sort": "30-96-26", "account": "33512560"},  # owner-supplied 2026-07-10
+    # --- GoCardless Direct Debit (staged; each tile/panel stays hidden until its value is filled) ---
+    # ⚠️ SECURITY: paste ONLY a reusable link the owner copied via the GoCardless dashboard "Copy link" button.
+    #    NEVER paste a single-use flow link (pay.gocardless.com/billing/static/flow?id=BRF...) or any per-customer link.
+    "gocardless_dd_setup": "",   # reusable Billing-Request-Template / mandate-setup link -> "Set up your Direct Debit" (start a plan; exact amount agreed with the customer)
+    "gocardless_paylink": "",    # OPTIONAL reusable one-off paylink for a FIXED fee (e.g. callout) -> extra pay tile
+    "gocardless_sun": "",        # Service User Number (public id) -> shown with the Direct Debit Guarantee
 }
 def pay_page():
     slug = "pay"
@@ -14588,6 +14594,13 @@ def pay_page():
             <p style="color:var(--muted);font-size:.85rem;margin:.8rem 0 0">The amount is optional &mdash; leave it blank and you can type it on PayPal&rsquo;s page instead. Handled by PayPal; the payment page will say <strong>365 Techies Ltd</strong>.</p>
             <script>(function(){{var a=document.getElementById("pp-amt"),g=document.getElementById("pp-go"),base="{PAY_CONFIG["paypal_url"]}";function u(){{var v=parseFloat(a.value);g.href=(isFinite(v)&&v>=1&&v<=20000)?base+"/"+v.toFixed(2)+"GBP":base;}}a.addEventListener("input",u);u();}})();</script>
           </div>''')
+    if PAY_CONFIG.get("gocardless_paylink"):
+        tiles.append(f'''          <div class="tile" data-reveal>
+            <h3>&#127974; Pay by Direct Debit</h3>
+            <p style="color:var(--muted);margin:0 0 .9rem">Prefer to pay straight from your bank, no card needed? You&rsquo;ll confirm the amount we agreed on GoCardless&rsquo;s secure page &mdash; we never see your bank details, and it&rsquo;s protected by the Direct Debit Guarantee.</p>
+            <p><a class="button primary" href="{PAY_CONFIG["gocardless_paylink"]}" target="_blank" rel="noopener">Pay by Direct Debit &#8594;</a></p>
+            <p style="color:var(--muted);font-size:.85rem;margin:.8rem 0 0">Handled securely by GoCardless &mdash; the FCA-regulated Direct Debit provider behind all our monthly plans.</p>
+          </div>''')
     tiles.append('''          <div class="tile" data-reveal>
             <h3>&#128222; Rather sort it together?</h3>
             <p style="color:var(--muted);margin:0 0 .9rem">Ring us and a real person will help you pay in whichever way suits you best &mdash; we&rsquo;ll happily stay on the line while you do it, and nobody will rush you.</p>
@@ -14595,6 +14608,25 @@ def pay_page():
             <p style="color:var(--muted);font-size:.85rem;margin:.8rem 0 0">Mon&ndash;Fri, 9am&ndash;5pm &middot; or text us on <a href="sms:+447520615332">07520 615332</a></p>
           </div>''')
     tiles_html = "\n".join(tiles)
+    _gc_dd = PAY_CONFIG.get("gocardless_dd_setup")
+    _gc_sun = PAY_CONFIG.get("gocardless_sun")
+    dd_setup_cta = (f'''
+          <p style="margin:1rem 0 0"><a class="button primary" href="{_gc_dd}" target="_blank" rel="noopener">Set up your Direct Debit &#8594;</a></p>
+          <p style="color:var(--muted);font-size:.85rem;margin:.6rem 0 0">New and starting a plan? Set it up in about two minutes &mdash; we agree the exact monthly amount with you first, then GoCardless handles it securely. Nothing to remember, and you can cancel anytime.</p>''') if _gc_dd else ''
+    _sun_line = (f' Our Service User Number is <strong>{_gc_sun}</strong>.') if _gc_sun else ''
+    dd_guarantee_section = f'''    <section class="section" aria-label="Direct Debit Guarantee" style="padding-top:0">
+      <div class="wrap">
+        <div class="prose" data-reveal style="max-width:80ch;margin:0 auto;border:1px solid rgba(125,170,220,.25);border-radius:14px;padding:1.4rem 1.6rem">
+          <p class="eyebrow eyebrow--center mono">// PROTECTED BY THE DIRECT DEBIT GUARANTEE</p>
+          <h2 class="section-title section-title--center" data-title style="margin-top:.2rem">Your Direct Debit is protected<span class="title-underline title-underline--center"></span></h2>
+          <p style="text-align:center;color:var(--muted);max-width:62ch;margin:0 auto 1.2rem">We collect monthly support plans by Direct Debit through GoCardless, an FCA-regulated payment provider. Every payment is covered by the Direct Debit Guarantee:</p>
+          <ul class="checklist" data-stagger style="max-width:60ch;margin:0 auto">
+{checklist(["You get advance notice of the amount and date of every payment","If an error is ever made, you&rsquo;re entitled to an immediate refund from your bank","You can cancel at any time &mdash; simply tell your bank, or tell us"])}
+          </ul>
+          <p style="text-align:center;color:var(--muted);font-size:.85rem;margin:1.2rem 0 0">Payments by GoCardless &mdash; the FCA-regulated Direct Debit provider we use.{_sun_line} We never see or store your bank details.</p>
+        </div>
+      </div>
+    </section>'''
     content = "\n".join([
       hero(bc("Pay Us"), "// PAYING US IS SIMPLE",
            'A simple, safe way to <em class="grad grad--cyan">pay us</em>',
@@ -14612,13 +14644,14 @@ def pay_page():
         </div>
       </div>
     </section>''',
-      '''    <section class="section" aria-label="Monthly plans" style="padding-top:0">
+      f'''    <section class="section" aria-label="Monthly plans" style="padding-top:0">
       <div class="wrap">
         <div class="prose" data-reveal style="max-width:74ch;margin:0 auto;text-align:center;border:1px solid rgba(125,170,220,.25);border-radius:14px;padding:1.2rem 1.4rem">
-          <p style="margin:0"><strong>On a monthly support plan?</strong> There&rsquo;s nothing to pay here &mdash; your plan collects automatically each month by Direct Debit, protected by the Direct Debit Guarantee. See <a href="/monthly-it-support/">monthly IT support</a>.</p>
+          <p style="margin:0"><strong>On a monthly support plan?</strong> There&rsquo;s nothing to pay here &mdash; your plan collects automatically each month by Direct Debit, protected by the Direct Debit Guarantee. See <a href="/monthly-it-support/">monthly IT support</a>.</p>{dd_setup_cta}
         </div>
       </div>
     </section>''',
+      dd_guarantee_section,
       f'''    <section class="section section--alt" aria-label="Payment safety">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
