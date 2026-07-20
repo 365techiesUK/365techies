@@ -1,0 +1,28 @@
+<?php
+/**
+ * TEMPLATE — copy this file to  api/pcm-quickbooks.php  (which is gitignored)
+ * and fill in the real values. NEVER commit pcm-quickbooks.php — it holds your
+ * API secret. All values come from your free Intuit Developer app + your
+ * QuickBooks company. See quickbooks-phase2-setup.txt for the step-by-step.
+ */
+
+// --- From developer.intuit.com -> your app -> Keys & credentials -----------
+$QBO_CLIENT_ID     = '';        // app Client ID
+$QBO_CLIENT_SECRET = '';        // app Client Secret  (SECRET — server only)
+
+// --- Your QuickBooks company (realm) id ------------------------------------
+$QBO_REALM_ID      = '';        // shown when you authorise (and in the OAuth Playground)
+
+// 'sandbox' while testing against a free test company; 'production' for the real books
+$QBO_ENV           = 'sandbox';
+
+// --- A long random string YOU invent: the ?k= guard for running over HTTP --
+$QBO_GUARD         = '';        // e.g. run once:  php -r "echo bin2hex(random_bytes(16));"
+
+// --- The QuickBooks Product/Service item every invoice line points at ------
+// Create ONE service item in QBO (e.g. "Monthly IT Support"), then paste its Id.
+$QBO_ITEM_ID       = '';
+
+// --- SAFETY GATES (leave these until you've tested — see the setup guide) ---
+$QBO_LIVE_ENABLED  = false;     // must be true AND the call must use live=1 before ANY real invoice is created
+$QBO_ONLY_KEY      = '';        // set to ONE licence key (e.g. 'ABCD-EFGH-JKLM') to invoice just that customer first

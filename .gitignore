@@ -41,3 +41,15 @@ api/pcm-throttle.json.lock
 api/pcm-throttle.json.*.tmp
 api/pcm-used.json
 api/pass-used.json.lock
+# GoCardless (server-only) — was missing from ignore; the live DD token must never enter the public repo
+api/pcm-gocardless.php
+api/pcm-gc-cache.json
+api/pcm-gc-cache.json.tmp
+# QuickBooks auto-invoicing (phase 2, server-only): OAuth secrets, rotating token store, state, logs
+api/pcm-quickbooks.php
+api/pcm-qbo-token.json
+api/pcm-qbo-token.json.tmp
+api/pcm-invoice-state.json
+api/pcm-invoice-state.json.tmp
+api/pcm-invoice.log
+api/pcm-invoice.lock
