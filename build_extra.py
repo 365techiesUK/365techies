@@ -3031,6 +3031,120 @@ def web_design():
         desc=desc, og_title="Web Design & Hosting Bournemouth | 365 Techies", schema=schema, content=content)
 web_design()
 
+# ---- 365 Web Care: productised recurring managed-hosting + care plan ----
+# Monetises the GoGeek plan (hosts unlimited sites). PRICES ARE OWNER-SET: leave "price"
+# blank and the tile shows a "simple monthly price / get your price" quote CTA (no fabricated
+# numbers, per pricing-truth). Fill the three prices once the owner decides them.
+WEBCARE = {
+    "care":     {"price": "", "name": "Care",          "for": "A simple business or trade site",
+                 "feats": ["Fast managed hosting (SiteGround)","Free SSL certificate &mdash; padlock always on","Daily backups &mdash; restored in minutes","Security monitoring &amp; patching","Software &amp; plugin updates kept current","Uptime monitoring","Email &amp; phone support from your local team"]},
+    "plus":     {"price": "", "name": "Care Plus",      "for": "A growing business that changes often", "popular": True,
+                 "feats": ["<strong>Everything in Care</strong>, plus:","Professional email on your domain","Up to an hour of content changes a month","Priority support","Quarterly speed &amp; SEO health check","Kept passing Core Web Vitals"]},
+    "complete": {"price": "", "name": "Care Complete",  "for": "A shop or larger, business-critical site",
+                 "feats": ["<strong>Everything in Care Plus</strong>, plus:","More monthly changes &amp; small additions","Faster response times","Ongoing SEO &amp; ranking monitoring","A named point of contact"]},
+}
+def web_care_page():
+    slug = "web-care"
+    desc = ("365 Web Care: one simple monthly plan that keeps your website fast, safe and online &mdash; premium managed "
+            "hosting, security, daily backups, updates and a real local person to call. We host and look after websites for "
+            "businesses across Bournemouth, Poole and Dorset, and we can take over an existing site.")
+    def tier_card(k):
+        t = WEBCARE[k]
+        price = (t.get("price") or "").strip()
+        phtml = ('<p style="font-size:1.6rem;font-weight:800;margin:.2rem 0 .5rem">' + price + '</p>') if price else '<p style="font-weight:700;margin:.2rem 0 .5rem;line-height:1.3">Simple monthly price<br /><span style="color:var(--muted);font-weight:400;font-size:.85rem">set by the size of your site</span></p>'
+        pop = ' style="border-color:rgba(14,159,181,.55)"' if t.get("popular") else ''
+        badge = '<p style="margin:0 0 .5rem"><span style="background:var(--cyan,#0e9fb5);color:#fff;font-size:.68rem;font-weight:700;letter-spacing:.05em;padding:3px 9px;border-radius:999px">MOST POPULAR</span></p>' if t.get("popular") else ''
+        feats = "\n".join('              <li>' + f + '</li>' for f in t["feats"])
+        return (f'''          <div class="tile"{pop} data-reveal>
+            {badge}<h3 style="margin:.1rem 0 .2rem">{t["name"]}</h3>
+            <p style="color:var(--muted);margin:0 0 .5rem;font-size:.9rem">{t["for"]}</p>
+            {phtml}
+            <ul class="checklist" style="margin:.7rem 0 1.1rem">
+{feats}
+            </ul>
+            <p style="margin:0"><a class="button primary" href="/contact/">Get your price &#8594;</a></p>
+          </div>''')
+    tiers = "\n".join(tier_card(k) for k in ("care", "plus", "complete"))
+    faqs = [
+      ("What exactly is 365 Web Care?", "One simple monthly plan that keeps your website completely looked after &mdash; fast managed hosting, a free SSL certificate, daily backups, security monitoring and patching, software updates, uptime monitoring and a real local person to call. You run your business; we keep the website fast, safe and online."),
+      ("Do you have to build my website, or can you take over my existing one?", "Either. We build new sites, and we happily take over and host an existing one &mdash; we move it onto our premium managed hosting, tidy up anything urgent, and look after it from then on. See <a href=\"/web-design-hosting/\">web design &amp; hosting</a>."),
+      ("Where is it hosted?", "On premium cloud infrastructure powered by SiteGround &mdash; the same ultrafast hosting our own <a href=\"/web-design-hosting/\">Lighthouse-proven website</a> runs on, with a UK data centre, a global CDN, free SSL and daily backups, all managed by us."),
+      ("What if I want to leave?", "You&rsquo;re never held hostage &mdash; you own your domain and your website, and we hand everything over cleanly if you ever move on. We&rsquo;ve <a href=\"/website-held-hostage/\">rescued plenty of people</a> from firms that don&rsquo;t work that way; we&rsquo;re the opposite."),
+      ("How much does it cost?", "One simple monthly price, set by the size and needs of your site &mdash; a one-page trade site costs less than a busy shop. Tell us about your website and you&rsquo;ll get a clear monthly price up front, with no surprises."),
+      ("Do you handle business email too?", "Yes &mdash; professional email on your own domain (you@yourbusiness.co.uk) or Microsoft 365, set up and supported on all your devices, is part of the higher plans or an easy add-on."),
+    ]
+    content = "\n".join([
+      hero(bc("Web Care"), "// YOUR WEBSITE, LOOKED AFTER",
+           'Website care that means you <em class="grad grad--cyan">never worry about it again</em>',
+           "365 Web Care is one simple monthly plan &mdash; fast managed hosting, security, daily backups, updates and a real local person to call &mdash; so your website stays fast, safe and online while you get on with running your business. We build it, host it and look after it, all from one Dorset firm you can actually visit.",
+           cta1=("Get your monthly price", "/contact/"), cta2=("What&rsquo;s included", "#included"),
+           chips=["One firm, one monthly price", "Premium managed hosting", "A real person to call"]),
+      f'''    <section class="section" aria-label="Why care matters">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">/01 &mdash; A WEBSITE ISN&rsquo;T &lsquo;SET AND FORGET&rsquo;</p>
+          <h2 class="section-title" data-title>Every website needs looking after &mdash; most have no one<span class="title-underline"></span></h2>
+          <p>Behind the scenes a live website needs security patches, working backups, software updates, speed-tuning and someone watching that it&rsquo;s actually online. Skip it and you don&rsquo;t notice &mdash; until it&rsquo;s hacked, down, painfully slow, or the person who built it has <a href="/web-designer-disappeared/">vanished</a>.</p>
+          <p>365 Web Care <em>is</em> that someone. One local team builds it, hosts it and looks after it &mdash; so there&rsquo;s never any &ldquo;that&rsquo;s the host&rsquo;s job, not the designer&rsquo;s.&rdquo; Just a fast, safe website and one number to call.</p>
+        </div>
+        <ul class="checklist" data-stagger>
+{checklist(["Security patched before it&rsquo;s exploited","Daily backups &mdash; restored in minutes","Watched, so we often know before you do","Kept fast for Google &amp; your customers","One number to call for a change","No finger-pointing between host &amp; designer"])}
+        </ul>
+      </div>
+    </section>''',
+      f'''    <section class="section section--alt" aria-label="What&rsquo;s included" id="included">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/02 &mdash; EVERYTHING, HANDLED</p>
+          <h2 class="section-title section-title--center" data-title>What&rsquo;s included in 365 Web Care<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>The whole job, under one roof &mdash; hosting, safety and a real person, for one monthly price.</p>
+        </div>
+        <ul class="checklist" data-stagger style="max-width:72ch;margin:0 auto">
+{checklist(["Premium managed hosting (SiteGround) &mdash; ultrafast, UK data centre, global CDN","Free SSL certificate &mdash; the padlock, always on","Daily backups you can actually restore","Security monitoring &amp; patching","Software &amp; plugin updates kept current","Uptime monitoring &mdash; we watch it&rsquo;s online","Small content changes handled for you","Professional email on your domain","Priority support from your local Dorset team","One friendly point of contact"])}
+        </ul>
+      </div>
+    </section>''',
+      f'''    <section class="section" aria-label="Care plans">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/03 &mdash; PICK YOUR LEVEL</p>
+          <h2 class="section-title section-title--center" data-title>Three simple care plans<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>One monthly price, set by the size of your site. Not sure which? We&rsquo;ll recommend the right one &mdash; no pressure.</p>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1.1rem;align-items:start">
+{tiers}
+        </div>
+        <p class="lede lede--center" data-reveal style="margin-top:1.4rem;color:var(--muted)">Prefer we build the site too? See <a href="/web-design-hosting/">web design &amp; hosting</a> &mdash; then Web Care keeps it running.</p>
+      </div>
+    </section>''',
+      f'''    <section class="section section--alt" aria-label="Why us">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">/04 &mdash; WHY 365</p>
+          <h2 class="section-title" data-title>The same care we give our own site<span class="title-underline"></span></h2>
+          <p>Your site runs on the same premium hosting our own <a href="/web-design-hosting/">Lighthouse-proven website</a> runs on. Because we build, host <em>and</em> look after it, nothing falls between the cracks &mdash; and you&rsquo;re never held hostage: you own your domain and can leave any time.</p>
+          <p>We&rsquo;re a real Dorset family firm you can phone or visit &mdash; not a faceless portal. If something breaks, a person who knows your site picks up.</p>
+          <p><a class="button primary" href="/contact/">Get your monthly price &#8594;</a></p>
+        </div>
+        <ul class="checklist" data-stagger>
+{checklist(["Build, host &amp; care from one firm","Premium infrastructure, honestly priced","You own your domain &mdash; no lock-in","A local person who knows your site","We rescue sites held hostage &mdash; we&rsquo;re the opposite","Proven on our own award-fast site"])}
+        </ul>
+      </div>
+    </section>''',
+      faq_html(faqs),
+      cta("Want your website completely off your plate?",
+          "Tell us about your site &mdash; new or existing &mdash; and we&rsquo;ll give you one simple monthly price to keep it fast, safe and online, looked after by your local Dorset team.",
+          primary=("Get your monthly price", "/contact/"), secondary=("Call 01202 775566", "tel:+441202775566")),
+      _web_cluster_section(exclude=("web-care",)),
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        svc = service(s, "365 Web Care &mdash; Managed Website Hosting &amp; Care", "One monthly plan: premium managed hosting (powered by SiteGround), SSL, daily backups, security, updates, uptime monitoring, content changes and support for small-business websites across Bournemouth, Poole and Dorset.", "Managed website hosting and maintenance")
+        svc["areaServed"] = [{"@type": "City", "name": "Bournemouth"}, {"@type": "City", "name": "Poole"}, {"@type": "AdministrativeArea", "name": "Dorset"}]
+        return graph([crumb(s, "Web Care"), webpage(s, "365 Web Care", _desc), svc, faqpage(s, _faqs)])
+    add(slug=slug, title="365 Web Care | Managed Website Hosting &amp; Care, Bournemouth &amp; Dorset",
+        desc=desc, og_title="365 Web Care | Managed Hosting &amp; Website Care", schema=schema, content=content)
+web_care_page()
+
 # ---- Website rebuild / redesign (SEO-safe migration) ----
 def website_rebuild():
     slug = "website-rebuild"

@@ -20,6 +20,7 @@ _WEB_CLUSTER = [
    ("website-speed-local-seo", "Speed &amp; local SEO", "Why a fast site wins local customers &mdash; and how to check yours."),
    ("website-checker", "Free website checker", "Speed, SSL and health in about a minute, no sign-up."),
    ("web-design-hosting", "Web design &amp; hosting", "The full service &mdash; site, hosting, email and support from one firm."),
+   ("web-care", "365 Web Care", "One monthly plan &mdash; we host it, secure it, back it up and keep it running."),
  ]),
  ("Websites for your trade", [
    ("websites-for-builders-tradesmen", "Websites for trades", "Builders and tradespeople: a site that wins the next job."),
