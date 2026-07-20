@@ -4211,9 +4211,11 @@
   }
   function unfocus(){ focused=null; focusGoal=null; screenAnim.active=false; if(ready)drawScreenMetric('health',1); }
   // hover a dial => trigger the SAME full focus view as a click (owner: "showing like this when hover"); a short lock stops the rearrange re-triggering under the cursor
-  var _hoverLock=false, _hoverLockT=null;
-  function hoverFocus(name){ if(intro||!gaugesOn||dragging||_hoverLock) return; if(gMode==='focus'&&gSel===name) return;
-    _hoverLock=true; if(_hoverLockT)clearTimeout(_hoverLockT); _hoverLockT=setTimeout(function(){ _hoverLock=false; },320);
+  var _lastHoverXY=null;
+  function hoverFocus(name,e){ if(intro||!gaugesOn||dragging) return; if(gMode==='focus'&&gSel===name) return;
+    // ignore only SPURIOUS enters: when the rearrange slides a dial under a stationary cursor the pointer position is unchanged; a real hover always moves the cursor
+    if(e&&_lastHoverXY&&Math.abs(e.clientX-_lastHoverXY[0])<4&&Math.abs(e.clientY-_lastHoverXY[1])<4) return;
+    if(e)_lastHoverXY=[e.clientX,e.clientY];
     enterFocus(name); }
 
   /* ============ floating rev-counter gauge cluster (replaces the cards) ============ */
@@ -4300,8 +4302,8 @@
     function activate(){ if(intro || !gaugesOn) return; if(cfg.onActivate) cfg.onActivate(cfg.name); sweep({click:true}); }
     hit.addEventListener('click',activate);
     hit.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); activate(); } });
-    hit.addEventListener('pointerenter',function(e){ if(e.pointerType==='touch')return; hoverFocus(cfg.name); });   // hover => full focus view, like a click
-    hit.addEventListener('focus',function(){ hoverFocus(cfg.name); });                                              // keyboard focus does the same
+    hit.addEventListener('pointerenter',function(e){ if(e.pointerType==='touch')return; hoverFocus(cfg.name,e); });   // hover => full focus view, like a click
+    hit.addEventListener('focus',function(){ hoverFocus(cfg.name,null); });                                            // keyboard focus does the same
     el._settle(0); if(GRM.matches) el._settle(target);
     numEl.textContent=isStatus?(GRM.matches?(cfg.statusOn?'ON':'OFF'):''):0;
     return { el:el, sweep:sweep, name:cfg.name };
