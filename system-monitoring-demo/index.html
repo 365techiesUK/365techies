@@ -32,15 +32,6 @@
     touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab}
   .stage:active{cursor:grabbing}
   .stage canvas{display:block;width:100%;height:100%}
-  .ring{position:absolute;top:14px;left:16px;z-index:3;display:flex;align-items:center;gap:.55rem;pointer-events:none}
-  .ring .rn{font-family:var(--num);font-size:1.5rem;font-weight:750} .ring .rl{font-size:.62rem;color:var(--soft);text-transform:uppercase;letter-spacing:.08em;line-height:1.1}
-  .callout{position:absolute;z-index:3;right:20px;top:26px;min-width:170px;max-width:240px;background:rgba(14,22,52,.82);backdrop-filter:blur(9px);
-    border:1px solid var(--line);border-radius:14px;padding:.65rem .8rem;box-shadow:0 18px 44px rgba(0,0,0,.55);
-    opacity:0;transform:translateY(8px) scale(.97);transition:opacity .25s ease,transform .3s var(--spring);pointer-events:none}
-  .callout.on{opacity:1;transform:translateY(0) scale(1)}
-  .callout .k{font-size:.66rem;letter-spacing:.03em;color:var(--soft);text-transform:uppercase;display:flex;gap:.35rem;align-items:center}
-  .callout .v{font-size:1.6rem;font-weight:760;line-height:1.05;margin:.15rem 0 .1rem;font-family:var(--num)}
-  .callout .d{font-size:.78rem;color:var(--soft)} .callout .p{font-size:.66rem;color:var(--mut);margin-top:.4rem}
   .hint{position:absolute;bottom:12px;left:0;right:0;text-align:center;font-size:.74rem;color:var(--mut);z-index:3;pointer-events:none}
   .note{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--soft);padding:2rem;z-index:4;
     background:radial-gradient(120% 120% at 50% 40%,#101c40 0%,#0a1128 70%)}
@@ -146,20 +137,179 @@
   .advice .ad-ey{ font-size:.66rem; letter-spacing:.13em; text-transform:uppercase; color:var(--soft); font-weight:700; }
   .advice .ad-big{ font-size:2.15rem; font-weight:750; font-family:var(--num); line-height:1.05; margin:.16rem 0 .18rem; }
   .advice .ad-txt{ font-size:.85rem; line-height:1.52; color:#d4e2f5; margin:0 0 .85rem; }
-  .advice .ad-act{ background:var(--cyan); color:#fff; border:0; border-radius:11px; padding:.52rem .95rem; font-weight:700; font-size:.82rem; cursor:pointer; transition:filter .15s ease; }
-  .advice .ad-act:hover{ filter:brightness(1.08); }
-  .advice .ad-act.bad{ background:var(--good); color:#06220b; }
+  .advice .ad-detail{ list-style:none; margin:0 0 .8rem; padding:0; display:flex; flex-direction:column; gap:.3rem; }
+  .advice .ad-detail li{ position:relative; padding-left:.85rem; font-size:.75rem; line-height:1.4; color:#b9cbe6; }
+  .advice .ad-detail li::before{ content:""; position:absolute; left:0; top:.5em; width:4px; height:4px; border-radius:50%; background:var(--soft); }
+  .advice .ad-cta{ display:inline-block; text-decoration:none; background:var(--good); color:#06220b; border-radius:11px; padding:.5rem .9rem; font-weight:700; font-size:.8rem; transition:filter .15s ease; }
+  .advice .ad-cta:hover{ filter:brightness(1.08); }
+  .advice .ad-cta.soft{ background:#0f6bb0; color:#fff; }
   .advice .ad-close{ display:block; margin-top:.6rem; background:none; border:0; color:var(--mut); font-size:.76rem; cursor:pointer; padding:.2rem 0 0; }
   .advice .ad-close:hover{ color:var(--soft); }
   @container stage (max-width:620px){ .advice{ right:50%; top:auto; bottom:8px; width:90%; transform:translate(50%,22px); } .advice.on{ transform:translate(50%,0); } }
   @container stage (max-width:470px){ .stage.focusing .gauge{ width:auto !important; } }
+  /* ===== Weather module ===== */
+  .wxsky{position:absolute;inset:0;z-index:0;pointer-events:none;transition:background 1.2s ease;background:radial-gradient(130% 120% at 50% 8%,#18244f 0%,#0c1430 60%,#0a1128 100%)}
+  .wxsky.wx-clear.wx-day{background:radial-gradient(120% 130% at 80% 4%,#31477f 0%,#16244f 46%,#0a1330 100%)}
+  .wxsky.wx-clear.wx-night{background:radial-gradient(120% 130% at 80% 6%,#141d46 0%,#0c1430 55%,#080e26 100%)}
+  .wxsky.wx-partly{background:radial-gradient(120% 130% at 74% 6%,#2a3b64 0%,#141f48 50%,#0a1330 100%)}
+  .wxsky.wx-cloudy{background:radial-gradient(120% 130% at 60% 4%,#2b3550 0%,#171f3e 55%,#0c1226 100%)}
+  .wxsky.wx-rain{background:radial-gradient(120% 130% at 55% 2%,#212c48 0%,#131c36 55%,#0a1122 100%)}
+  .wxsky.wx-snow{background:radial-gradient(120% 130% at 60% 4%,#2e3a58 0%,#192244 55%,#0d1430 100%)}
+  .wxsky.wx-storm{background:radial-gradient(120% 130% at 55% 2%,#252c48 0%,#141b32 55%,#090e20 100%)}
+  .wxsky.wx-fog{background:radial-gradient(120% 130% at 55% 4%,#2c3654 0%,#1b2342 55%,#0e1530 100%)}
+  /* full animated weather scene behind the transparent 3D canvas */
+  .wxsky>*{position:absolute}
+  .wxsky__vig{inset:0;background:radial-gradient(120% 92% at 50% 44%,transparent 40%,rgba(8,13,30,.5) 100%)}
+  .wxsky__sun,.wxsky__moon,.wxsky__stars,.wxsky__clouds,.wxsky__rain,.wxsky__snow,.wxsky__flash,.wxsky__fog{display:none;inset:0}
+  .wxsky__sun{top:-9%;right:5%;left:auto;bottom:auto;width:230px;height:230px}
+  .wxsky__sun::before{content:"";position:absolute;inset:30%;border-radius:50%;background:radial-gradient(circle,rgba(255,221,140,.42),rgba(255,196,86,0) 66%);filter:blur(6px);animation:wx-glow 5s ease-in-out infinite}
+  .wxsky__sun::after{content:"";position:absolute;inset:0;border-radius:50%;opacity:.3;-webkit-mask:radial-gradient(circle,#000 18%,transparent 60%);mask:radial-gradient(circle,#000 18%,transparent 60%);background:conic-gradient(rgba(255,212,120,.16),transparent 20deg,rgba(255,212,120,.16) 45deg,transparent 65deg,rgba(255,212,120,.16) 90deg,transparent 110deg,rgba(255,212,120,.16) 135deg,transparent 155deg,rgba(255,212,120,.16) 180deg,transparent 200deg,rgba(255,212,120,.16) 225deg,transparent 245deg,rgba(255,212,120,.16) 270deg,transparent 290deg,rgba(255,212,120,.16) 315deg,transparent 335deg);animation:wx-spin 64s linear infinite}
+  .wxsky__moon{top:7%;right:9%;left:auto;bottom:auto;width:54px;height:54px;border-radius:50%;background:radial-gradient(circle at 62% 40%,#eef3fc,#c6d1e8);box-shadow:inset -12px -5px 0 -3px rgba(190,205,238,.9),0 0 26px 8px rgba(170,192,236,.22);animation:wx-glow 6s ease-in-out infinite}
+  .wxsky__stars i{position:absolute;width:var(--sz,2px);height:var(--sz,2px);border-radius:50%;background:#fff;opacity:.5;animation:wx-tw 2.6s ease-in-out infinite}
+  .wxsky__clouds{overflow:hidden}
+  .wxsky__clouds b{position:absolute;left:-28%;border-radius:50%;background:radial-gradient(circle at 50% 56%,rgba(150,166,200,.4),rgba(150,166,200,0) 68%);filter:blur(5px);animation:wx-cloud linear infinite}
+  .wxsky__rain{overflow:hidden;opacity:.6;background:repeating-linear-gradient(103deg,transparent 0 6px,rgba(162,200,248,.16) 6px 7px);animation:wx-rain .5s linear infinite}
+  .wxsky__snow i{position:absolute;top:-5%;width:var(--sz,4px);height:var(--sz,4px);border-radius:50%;background:rgba(240,247,255,.85);animation:wx-snow var(--d,7s) linear infinite}
+  .wxsky__flash{background:radial-gradient(120% 85% at 62% 16%,rgba(200,222,255,.5),transparent 58%);opacity:0;animation:wx-ltng 7s ease-out infinite}
+  .wxsky__fog{overflow:hidden}
+  .wxsky__fog b{position:absolute;left:-20%;width:140%;height:64px;background:linear-gradient(90deg,transparent,rgba(184,194,214,.15),transparent);filter:blur(9px);animation:wx-fog ease-in-out infinite alternate}
+  .wxsky.wx-day.wx-clear .wxsky__sun,.wxsky.wx-day.wx-partly .wxsky__sun{display:block}
+  .wxsky.wx-night.wx-clear .wxsky__moon,.wxsky.wx-night.wx-partly .wxsky__moon,.wxsky.wx-night .wxsky__stars{display:block}
+  .wxsky.wx-partly .wxsky__clouds,.wxsky.wx-cloudy .wxsky__clouds,.wxsky.wx-rain .wxsky__clouds,.wxsky.wx-snow .wxsky__clouds,.wxsky.wx-storm .wxsky__clouds,.wxsky.wx-fog .wxsky__clouds{display:block}
+  .wxsky.wx-rain .wxsky__rain,.wxsky.wx-storm .wxsky__rain{display:block}
+  .wxsky.wx-snow .wxsky__snow{display:block}
+  .wxsky.wx-storm .wxsky__flash{display:block}
+  .wxsky.wx-fog .wxsky__fog{display:block}
+  .stage.focusing .wxsky{opacity:.45;transition:opacity .5s ease}
+  @keyframes wx-glow{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.06);opacity:1}}
+  @keyframes wx-spin{to{transform:rotate(360deg)}}
+  @keyframes wx-cloud{to{left:120%}}
+  @keyframes wx-rain{to{background-position:-13px 56px}}
+  @keyframes wx-snow{0%{transform:translate(0,-10px);opacity:0}12%{opacity:.85}100%{transform:translate(var(--x,10px),460px);opacity:.15}}
+  @keyframes wx-ltng{0%,86%,100%{opacity:0}88%{opacity:.75}90%{opacity:.15}92%{opacity:.6}94%{opacity:0}}
+  @keyframes wx-fog{to{transform:translateX(12%)}}
+  @keyframes wx-tw{0%,100%{opacity:.35}50%{opacity:1}}
+  :root.rm-reduced .wxsky__sun::before,:root.rm-reduced .wxsky__sun::after,:root.rm-reduced .wxsky__moon,:root.rm-reduced .wxsky__stars i,:root.rm-reduced .wxsky__clouds b,:root.rm-reduced .wxsky__rain,:root.rm-reduced .wxsky__snow i,:root.rm-reduced .wxsky__flash,:root.rm-reduced .wxsky__fog b{animation:none}
+  /* ===== Service cadence band (MSP service cycle) ===== */
+  .svc{display:grid;grid-template-columns:auto 1fr auto;gap:1.2rem;align-items:center;margin:.2rem 0 .5rem;padding:.85rem 1.2rem;border-radius:16px;background:linear-gradient(180deg,rgba(22,33,74,.55),rgba(13,21,48,.6));border:1px solid var(--line);box-shadow:0 14px 36px rgba(0,0,0,.24)}
+  .svc__end{text-align:center;min-width:76px}
+  .svc__num{font-family:var(--num);font-size:2.05rem;font-weight:750;line-height:1;color:var(--cyan)}
+  .svc__end--until .svc__num{color:var(--good)}
+  .svc__lbl{font-size:.6rem;color:var(--soft);text-transform:uppercase;letter-spacing:.05em;margin-top:.25rem;line-height:1.25}
+  .svc__mid{min-width:0}
+  .svc__head{display:flex;align-items:center;gap:.5rem;font-size:.78rem;font-weight:600;color:#dbe6f7;margin-bottom:.5rem}
+  .svc__head .si{font-size:.95rem}
+  .svc__pill{margin-left:auto;font-size:.58rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700;padding:.14rem .55rem;border-radius:20px;background:rgba(0,206,27,.16);color:#63f08d;border:1px solid rgba(0,206,27,.4)}
+  .svc__pill.due{background:rgba(224,179,65,.16);color:#f2cf76;border-color:rgba(224,179,65,.45)}
+  .svc__pill.over{background:rgba(232,99,126,.16);color:#ff9db2;border-color:rgba(232,99,126,.45)}
+  .svc__track{position:relative;height:8px;border-radius:5px;background:rgba(255,255,255,.09)}
+  .svc__fill{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:5px;background:linear-gradient(90deg,#1d97e3,#00ce1b)}
+  .svc__marker{position:absolute;top:50%;left:0;width:15px;height:15px;border-radius:50%;background:#fff;border:3px solid var(--cyan);transform:translate(-50%,-50%);box-shadow:0 2px 8px rgba(0,0,0,.5)}
+  .svc__fill,.svc__marker{transition:width 1.5s var(--spring),left 1.5s var(--spring)}
+  .svc__sub{display:flex;justify-content:space-between;gap:1rem;font-size:.63rem;color:var(--mut);margin-top:.45rem}
+  .svc__sub b{color:var(--soft);font-weight:600}
+  :root.rm-reduced .svc__fill,:root.rm-reduced .svc__marker{transition:none}
+  @media(max-width:560px){.svc{grid-template-columns:1fr 1fr;gap:.5rem .8rem}.svc__mid{grid-column:1/-1;order:3}.svc__num{font-size:1.7rem}}
+  /* ===== Device passport ===== */
+  .dev{margin:0 0 .5rem;padding:.85rem 1.2rem;border-radius:16px;background:linear-gradient(180deg,rgba(18,27,60,.55),rgba(11,18,42,.6));border:1px solid var(--line)}
+  .dev__head{display:flex;align-items:center;gap:.5rem;font-size:.82rem;font-weight:700;color:#eaf2ff;margin-bottom:.65rem}
+  .dev__ic{font-size:1rem}
+  .dev__flag{margin-left:auto;font-size:.57rem;text-transform:uppercase;letter-spacing:.05em;color:var(--mut);font-weight:600}
+  .dev__grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem .9rem}
+  .dev__grid span{display:flex;flex-direction:column;font-size:.78rem;color:#dbe6f7;min-width:0}
+  .dev__grid b{font-size:.57rem;text-transform:uppercase;letter-spacing:.05em;color:var(--soft);font-weight:600;margin-bottom:.12rem}
+  .dev__grid i{color:var(--mut);font-style:normal;font-size:.7rem}
+  .dev__rec{display:flex;align-items:center;flex-wrap:wrap;gap:.6rem;margin-top:.85rem;padding-top:.75rem;border-top:1px solid var(--line)}
+  .dev__note{font-size:.76rem;color:#f2cf76;flex:1 1 auto;min-width:180px}
+  .dev__cta{text-decoration:none;font-size:.75rem;font-weight:700;padding:.42rem .75rem;border-radius:9px;background:#0f6bb0;color:#fff;white-space:nowrap;transition:filter .15s ease}
+  .dev__cta--ghost{background:transparent;border:1px solid var(--line2);color:var(--soft)}
+  .dev__cta:hover{filter:brightness(1.08)}
+  @media(max-width:640px){.dev__grid{grid-template-columns:repeat(2,1fr)}}
+  /* ===== Custom-dashboard service callout ===== */
+  .dbs{display:flex;align-items:center;gap:1.2rem;margin:0 0 .5rem;padding:1.05rem 1.3rem;border-radius:16px;background:linear-gradient(120deg,rgba(29,151,227,.17),rgba(17,26,60,.5));border:1px solid rgba(29,151,227,.35)}
+  .dbs__eyebrow{font-size:.62rem;text-transform:uppercase;letter-spacing:.12em;color:var(--soft);font-weight:700}
+  .dbs__h{font-size:1.14rem;font-weight:750;color:#fff;margin:.15rem 0 .35rem}
+  .dbs__p{font-size:.82rem;line-height:1.5;color:#cfe0f5;margin:0;max-width:70ch}
+  .dbs__cta{flex:0 0 auto;text-decoration:none;background:#fff;color:#0b1226;font-weight:750;font-size:.82rem;padding:.6rem 1rem;border-radius:11px;white-space:nowrap;transition:filter .15s ease}
+  .dbs__cta:hover{filter:brightness(.94)}
+  @media(max-width:640px){.dbs{flex-direction:column;align-items:flex-start;gap:.8rem}}
+  .wx{position:relative;min-width:198px}
+  .wx__now{position:relative;display:flex;align-items:center;gap:.5rem;width:100%;border:1px solid rgba(255,255,255,.14);border-radius:13px;padding:.4rem .62rem .4rem .5rem;background:rgba(14,22,52,.55);color:var(--text);cursor:pointer;overflow:hidden;text-align:left;font:inherit;transition:border-color .2s ease}
+  .wx__now:hover{border-color:rgba(29,151,227,.5)}
+  .wx__bg{position:absolute;inset:0;z-index:0;opacity:.85;transition:background .8s ease}
+  .wx__now>*:not(.wx__bg){position:relative;z-index:1}
+  .wx__ic{width:32px;height:32px;flex:0 0 32px}
+  .wx__temp{font-family:var(--num);font-size:1.3rem;font-weight:750;line-height:1}
+  .wx__meta{display:flex;flex-direction:column;line-height:1.18;min-width:0}
+  .wx__cond{font-size:.73rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:96px}
+  .wx__loc{font-size:.58rem;color:var(--soft);display:flex;align-items:center;gap:.25rem}
+  .wx__badge{font-size:.52rem;text-transform:uppercase;letter-spacing:.05em;padding:.02rem .26rem;border-radius:4px;background:var(--warn);color:#241a02;font-weight:700}
+  .wx__badge.live{background:var(--good);color:#062810}
+  .wx__chev{margin-left:auto;color:var(--soft);transition:transform .3s ease;font-size:.66rem}
+  .wx.open .wx__chev{transform:rotate(180deg)}
+  .wx__panel{position:absolute;top:calc(100% + 8px);right:0;width:290px;max-width:86vw;z-index:30;background:linear-gradient(180deg,rgba(20,29,68,.97),rgba(11,18,42,.98));backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.13);border-radius:16px;box-shadow:0 26px 60px rgba(0,0,0,.55);padding:.85rem;opacity:0;transform:translateY(-8px) scale(.98);transform-origin:top right;pointer-events:none;transition:opacity .3s ease,transform .35s var(--spring)}
+  .wx.open .wx__panel{opacity:1;transform:none;pointer-events:auto}
+  .wx__advice{display:flex;gap:.5rem;align-items:flex-start;font-size:.79rem;line-height:1.42;color:#dbe6f7;background:rgba(255,255,255,.05);border-radius:10px;padding:.55rem .6rem;margin-bottom:.65rem}
+  .wx__advice .ai{flex:0 0 auto;font-size:1rem;line-height:1.2}
+  .wx__tech{display:flex;gap:.5rem;align-items:flex-start;font-size:.76rem;line-height:1.42;border-radius:10px;padding:.5rem .6rem;margin-bottom:.7rem}
+  .wx__tech .ti{flex:0 0 auto;font-size:.95rem;line-height:1.2}
+  .wx__tech b{color:#fff}
+  .wx__tech--tip{background:rgba(29,151,227,.13);border:1px solid rgba(29,151,227,.32);color:#cfe3f8}
+  .wx__tech--tip b{color:#9fd0f5}
+  .wx__tech--warn{background:rgba(226,132,64,.15);border:1px solid rgba(232,152,74,.5);color:#ffe2c6}
+  .wx__tech--warn b{color:#ffcf9e}
+  .wx__dhead{font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;color:var(--mut);margin:0 0 .25rem .1rem}
+  .wx__days{display:flex;flex-direction:column;gap:.05rem}
+  .wx__day{display:grid;grid-template-columns:2.3rem 1.5rem 1fr 3.2rem;align-items:center;gap:.5rem;padding:.3rem .3rem;border-radius:8px;cursor:pointer;transition:background .15s ease}
+  .wx__day:hover,.wx__day.sel{background:rgba(29,151,227,.16)}
+  .wx__day .dn{font-size:.75rem;font-weight:600}
+  .wx__day .di{width:22px;height:22px}
+  .wx__bar{position:relative;height:5px;border-radius:3px;background:rgba(255,255,255,.1)}
+  .wx__bar i{position:absolute;top:0;bottom:0;border-radius:3px;background:linear-gradient(90deg,#3aa0ff,#28c96b,#e0b341)}
+  .wx__dt{font-size:.72rem;font-family:var(--num);color:var(--soft);text-align:right;white-space:nowrap}
+  .wx__dt b{color:var(--text)}
+  .ws-rays{transform-box:fill-box;transform-origin:center;animation:ws-spin 9s linear infinite}
+  .ws-sun{transform-box:fill-box;transform-origin:center;animation:ws-pulse 3s ease-in-out infinite}
+  .ws-cloud{transform-box:fill-box;transform-origin:center;animation:ws-drift 4s ease-in-out infinite}
+  .ws-drop{transform-box:fill-box;animation:ws-fall 1.1s linear infinite}
+  .ws-drop2{animation-delay:.37s}.ws-drop3{animation-delay:.74s}
+  .ws-flake{transform-box:fill-box;transform-origin:center;animation:ws-snowfall 2.6s linear infinite}
+  .ws-flake2{animation-delay:.9s}.ws-flake3{animation-delay:1.7s}
+  .ws-bolt{transform-box:fill-box;transform-origin:center;animation:ws-flash 2.4s ease-in-out infinite}
+  .ws-twinkle{transform-box:fill-box;transform-origin:center;animation:ws-tw 2.2s ease-in-out infinite}
+  @keyframes ws-spin{to{transform:rotate(360deg)}}
+  @keyframes ws-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+  @keyframes ws-drift{0%,100%{transform:translateX(-1px)}50%{transform:translateX(1.5px)}}
+  @keyframes ws-fall{0%{transform:translateY(-3px);opacity:0}25%{opacity:1}100%{transform:translateY(7px);opacity:0}}
+  @keyframes ws-snowfall{0%{transform:translateY(-3px) rotate(0);opacity:0}25%{opacity:1}100%{transform:translateY(8px) rotate(180deg);opacity:0}}
+  @keyframes ws-flash{0%,44%,52%,100%{opacity:.35}47%,49%{opacity:1}}
+  @keyframes ws-tw{0%,100%{opacity:.4}50%{opacity:1}}
+  :root.rm-reduced .ws-rays,:root.rm-reduced .ws-sun,:root.rm-reduced .ws-cloud,:root.rm-reduced .ws-drop,:root.rm-reduced .ws-flake,:root.rm-reduced .ws-bolt,:root.rm-reduced .ws-twinkle{animation:none}
+  @media(max-width:560px){.wx{min-width:0;flex:1 1 100%;order:3}.wx__panel{right:auto;left:0;transform-origin:top left}}
 </style>
 
 <div class="wrap">
   <div class="head">
     <div class="logo">365</div>
     <div><div class="eyebrow"><b>NEW</b>&nbsp;Live System Monitoring</div><h1>Sofia&rsquo;s Laptop</h1><div class="sub">Dell Latitude 3520 &middot; sample data &middot; <span class="rtc"><span class="dot"></span>Demo &mdash; ready to connect</span></div></div>
-    <div class="controls"><button class="rm" id="rm">Reduce motion</button></div>
+    <div class="controls">
+      <div class="wx" id="wx">
+        <button class="wx__now" id="wxToggle" type="button" aria-expanded="false" aria-label="Weather forecast">
+          <span class="wx__bg" id="wxBg"></span>
+          <span class="wx__ic" id="wxIc"></span>
+          <span class="wx__temp" id="wxTemp">&ndash;&deg;</span>
+          <span class="wx__meta"><span class="wx__cond" id="wxCond">Weather</span><span class="wx__loc">Bournemouth &middot; <span class="wx__badge" id="wxBadge">sample</span></span></span>
+          <span class="wx__chev">&#9662;</span>
+        </button>
+        <div class="wx__panel" id="wxPanel">
+          <div class="wx__advice" id="wxAdvice"></div>
+          <div class="wx__tech" id="wxTech"></div>
+          <div class="wx__dhead">Next 7 days</div>
+          <div class="wx__days" id="wxDays"></div>
+        </div>
+      </div>
+      <button class="rm" id="rm">Reduce motion</button>
+    </div>
   </div>
 
   <div class="stage" id="stage">
@@ -174,7 +324,51 @@
     <div class="note" id="fallnote" style="display:none"><div style="font-size:2rem">🩺</div><p>This device&rsquo;s live 3D view needs a newer browser.</p></div>
   </div>
 
-  <div class="cap">🛈&nbsp;<span><b>Representative 3D model of a Dell laptop</b> &mdash; an illustration of your machine type, not a scan of your actual device. Every value shown is measured from your last check-in.</span></div>
+  <div class="svc" id="svc" role="group" aria-label="Service schedule">
+    <div class="svc__end svc__end--since">
+      <div class="svc__num" id="svcSince">&ndash;</div>
+      <div class="svc__lbl">days since<br>last service</div>
+    </div>
+    <div class="svc__mid">
+      <div class="svc__head"><span class="si">🛠️</span> Service cycle <span class="svc__pill" id="svcStatus">&mdash;</span></div>
+      <div class="svc__track"><div class="svc__fill" id="svcFill"></div><div class="svc__marker" id="svcMarker"></div></div>
+      <div class="svc__sub"><span>A full service every <b>6 weeks</b></span><span id="svcNext"></span></div>
+    </div>
+    <div class="svc__end svc__end--until">
+      <div class="svc__num" id="svcUntil">&ndash;</div>
+      <div class="svc__lbl">days until<br>next service</div>
+    </div>
+  </div>
+
+  <div class="dev">
+    <div class="dev__head"><span class="dev__ic">🖥️</span>Device passport<span class="dev__flag">specs measured &middot; age &amp; outlook estimated</span></div>
+    <div class="dev__grid">
+      <span><b>Model</b>Dell Latitude 3520</span>
+      <span><b>Processor</b>Intel Core i5-1135G7 &middot; 4 cores</span>
+      <span><b>Memory</b>16 GB &middot; up to 32 GB (2 slots)</span>
+      <span><b>Storage</b>476 GB NVMe SSD</span>
+      <span><b>Graphics</b>Intel Iris Xe</span>
+      <span><b>Operating system</b>Windows 10</span>
+      <span><b>Age</b>~3 years <i>(estimated)</i></span>
+      <span><b>Outlook</b>Good for ~2&ndash;3 more years</span>
+    </div>
+    <div class="dev__rec">
+      <span class="dev__note">Windows 10 support ended Oct 2025 &mdash; worth moving this machine to Windows 11.</span>
+      <a class="dev__cta" href="https://365techies.co.uk/windows-11-upgrade-service/" target="_blank" rel="noopener">Upgrade to Windows 11 &rarr;</a>
+      <a class="dev__cta dev__cta--ghost" href="https://365techies.co.uk/dell-hardware/" target="_blank" rel="noopener">Or, when it&rsquo;s time: refurbished Dells from &pound;510 &rarr;</a>
+    </div>
+  </div>
+
+  <div class="dbs">
+    <div class="dbs__body">
+      <div class="dbs__eyebrow">365 Techies &middot; Custom dashboards</div>
+      <div class="dbs__h">You&rsquo;re looking at a working example</div>
+      <p class="dbs__p">This live, fully-interactive 3D dashboard isn&rsquo;t a mock-up &mdash; it&rsquo;s the kind of thing we design and build. Custom, next-gen dashboards around your operation: your data and KPIs, several sources on one live screen, hosted and supported for you, and viewable on any browser, phone or a reception TV. If it has an API or a feed, we can usually put it on a dashboard like this &mdash; free demo and a fixed written quote up front.</p>
+    </div>
+    <a class="dbs__cta" href="https://365techies.co.uk/custom-vrm-dashboards/" target="_blank" rel="noopener">See how we build custom dashboards &rarr;</a>
+  </div>
+
+  <div class="cap">🛈&nbsp;<span><b>Representative 3D model of a Dell laptop</b> &mdash; an illustration of your machine type, not a scan of your actual device. Health, battery, storage, memory &amp; protection are measured from your last check-in; age and outlook are estimates.</span></div>
   <div class="attrib">3D model: &ldquo;Laptop Dell Latitude 5400&rdquo; by <a href="https://sketchfab.com/Yolala1232" target="_blank" rel="noopener">Yolala1232</a>, <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC-BY 4.0</a>.</div>
 
 </div>
@@ -4056,16 +4250,10 @@
   var reduce=false;   // default to the full animated experience for everyone; the "Reduce motion" button is the explicit opt-out (OS setting no longer silently strips the motion)
   var SCORE=82;
   var hueHex=SCORE>=80?0x00ce1b:SCORE>=55?0xe0b341:0xe8637e;
-  var VALS={ health:['82','In good shape'], battery:['84%','Holding 84% of original charge'], storage:['68% full','512 GB NVMe SSD'],
-    memory:['16 GB','2 slots · room to upgrade'], protection:['On','Antivirus actively protecting'], backup:['Off','No backup seen yet'] };
-  var CARDMETA={ health:['❤️','Health'], battery:['🔋','Battery'], storage:['💾','Storage'],
-    memory:['🧠','Memory'], protection:['🛡️','Protection'], backup:['☁️','Backup'] };
-  var CARDS=['health','battery','storage','memory','protection','backup'];
-
   var stage=document.getElementById('stage');
 
   var okGL=(function(){try{var c=document.createElement('canvas');return !!(window.WebGLRenderingContext&&(c.getContext('webgl2')||c.getContext('webgl')));}catch(e){return false;}})();
-  if(!okGL||typeof THREE==='undefined'||!THREE.GLTFLoader){ document.getElementById('loadingnote').style.display='none'; document.getElementById('fallnote').style.display='flex'; buildCards(); return; }
+  if(!okGL||typeof THREE==='undefined'||!THREE.GLTFLoader){ document.getElementById('loadingnote').style.display='none'; document.getElementById('fallnote').style.display='flex'; return; }
 
   var W=stage.clientWidth,H=stage.clientHeight;
   var renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
@@ -4107,7 +4295,7 @@
   var SCREEN={
     health:{v:82,unit:'',lab:'HEALTH',ring:1,max:100,sub:'in good shape',col:'#00ce1b'},
     battery:{v:84,unit:'%',lab:'BATTERY',ring:1,max:100,sub:'battery health',col:'#00ce1b'},
-    storage:{v:68,unit:'%',lab:'STORAGE',ring:1,max:100,sub:'512 GB SSD',col:'#00ce1b'},
+    storage:{v:68,unit:'%',lab:'STORAGE',ring:1,max:100,sub:'476 GB SSD',col:'#00ce1b'},
     memory:{v:16,unit:' GB',lab:'MEMORY',ring:0,sub:'2 slots fitted',col:'#4db4f7'},
     protection:{txt:'ON',lab:'PROTECTION',sub:'antivirus active',col:'#00ce1b'},
     backup:{txt:'OFF',lab:'BACKUP',sub:'no backup seen',col:'#e8637e'}
@@ -4273,12 +4461,12 @@
   }
   // animated glyph per dial so each is instantly readable
   function ICONS(name,C){
-    if(name==='health') return '<g class="g-ic g-ic-heart"><path d="M60 36.4 C60 36.4 51.4 30.6 51.4 26 C51.4 23.1 54 21.7 56.2 23.4 C57.7 24.5 60 27.1 60 27.1 C60 27.1 62.3 24.5 63.8 23.4 C66 21.7 68.6 23.1 68.6 26 C68.6 30.6 60 36.4 60 36.4 Z" fill="#ff4d6d"/><ellipse cx="56.4" cy="25.4" rx="2" ry="1.4" fill="#fff" opacity=".5"/></g>';
-    if(name==='battery') return '<g class="g-ic g-ic-batt"><rect x="52.5" y="25" width="13" height="9" rx="1.6" fill="none" stroke="'+C+'" stroke-width="1.4"/><rect x="65.7" y="27.3" width="1.8" height="4.4" rx="0.6" fill="'+C+'"/><rect x="54.2" y="26.6" width="9.6" height="5.8" rx="0.7" fill="'+C+'"/></g>';
-    if(name==='storage') return '<g class="g-ic"><g class="g-ic-disk-spin"><circle cx="60" cy="30" r="7" fill="none" stroke="'+C+'" stroke-width="1.4"/><circle cx="60" cy="30" r="2.1" fill="'+C+'"/><line x1="60" y1="30" x2="64.4" y2="25.6" stroke="'+C+'" stroke-width="1.3" stroke-linecap="round"/></g></g>';
-    if(name==='memory') return '<g class="g-ic g-ic-ram"><rect x="51.5" y="26" width="17" height="8" rx="1" fill="none" stroke="'+C+'" stroke-width="1.3"/><rect x="53.6" y="28" width="3" height="3.2" fill="'+C+'"/><rect x="58.5" y="28" width="3" height="3.2" fill="'+C+'"/><rect x="63.4" y="28" width="3" height="3.2" fill="'+C+'"/><line x1="55" y1="34" x2="55" y2="36" stroke="'+C+'" stroke-width="1.3"/><line x1="60" y1="34" x2="60" y2="36" stroke="'+C+'" stroke-width="1.3"/><line x1="65" y1="34" x2="65" y2="36" stroke="'+C+'" stroke-width="1.3"/></g>';
-    if(name==='protection') return '<g class="g-ic g-ic-shield"><path d="M60 22.5 L67.5 25.5 V31 C67.5 35.2 60 38.3 60 38.3 C60 38.3 52.5 35.2 52.5 31 V25.5 Z" fill="'+C+'" fill-opacity=".92"/><path d="M56.4 30.2 L59 32.8 L63.9 27.3" fill="none" stroke="#0a1330" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>';
-    if(name==='backup') return '<g class="g-ic"><ellipse cx="60" cy="31.6" rx="8.6" ry="4" fill="'+C+'" fill-opacity=".9"/><circle cx="55.6" cy="29.5" r="3.2" fill="'+C+'" fill-opacity=".9"/><circle cx="61.6" cy="28" r="4.2" fill="'+C+'" fill-opacity=".9"/><path class="g-cloud-arw" d="M60 34.6 V29 M57.6 31.3 L60 28.7 L62.4 31.3" fill="none" stroke="#0a1330" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></g>';
+    if(name==='health') return '<g class="g-ic g-ic-heart"><path d="M60 37.4 C59 36.6 50.2 31 50.2 25.5 C50.2 22.3 52.8 20.4 55.4 21 C57.5 21.4 59.1 23.1 60 24.9 C60.9 23.1 62.5 21.4 64.6 21 C67.2 20.4 69.8 22.3 69.8 25.5 C69.8 31 61 36.6 60 37.4 Z" fill="#ff4d6d"/><path d="M55.1 23.1 C53.8 23 52.6 23.9 52.4 25.4" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity=".6"/></g>';
+    if(name==='battery') return '<g class="g-ic g-ic-batt"><rect x="50.8" y="24.4" width="16.4" height="10.2" rx="2.3" fill="none" stroke="'+C+'" stroke-width="1.7"/><rect x="67.6" y="27.3" width="2.1" height="4.4" rx="0.9" fill="'+C+'"/><rect x="52.7" y="26.3" width="9.4" height="6.4" rx="1" fill="'+C+'"/></g>';
+    if(name==='storage') return '<g class="g-ic"><g class="g-ic-disk-spin"><circle cx="60" cy="29.5" r="8.1" fill="none" stroke="'+C+'" stroke-width="1.7"/><circle cx="60" cy="29.5" r="2.4" fill="'+C+'"/><path d="M60 21.6 A7.9 7.9 0 0 1 67.6 27" fill="none" stroke="'+C+'" stroke-width="1.8" stroke-linecap="round" opacity=".5"/></g></g>';
+    if(name==='memory') return '<g class="g-ic g-ic-ram" stroke="'+C+'" stroke-width="1.7"><rect x="52.8" y="22.6" width="14.4" height="14" rx="2.4" fill="none"/><rect x="56.4" y="26.2" width="7.2" height="6.8" rx="1.2" fill="'+C+'" stroke="none"/><g stroke-linecap="round"><line x1="56" y1="20.4" x2="56" y2="22.6"/><line x1="60" y1="20.4" x2="60" y2="22.6"/><line x1="64" y1="20.4" x2="64" y2="22.6"/><line x1="56" y1="36.6" x2="56" y2="38.8"/><line x1="60" y1="36.6" x2="60" y2="38.8"/><line x1="64" y1="36.6" x2="64" y2="38.8"/><line x1="50.6" y1="26" x2="52.8" y2="26"/><line x1="50.6" y1="33" x2="52.8" y2="33"/><line x1="67.2" y1="26" x2="69.4" y2="26"/><line x1="67.2" y1="33" x2="69.4" y2="33"/></g></g>';
+    if(name==='protection') return '<g class="g-ic g-ic-shield"><path d="M60 20.4 L69.2 24 V30 C69.2 35.4 60 39.2 60 39.2 C60 39.2 50.8 35.4 50.8 30 V24 Z" fill="'+C+'" fill-opacity=".92"/><path d="M55.5 29.4 L58.7 32.6 L64.7 25.9" fill="none" stroke="#0a1330" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></g>';
+    if(name==='backup') return '<g class="g-ic"><g fill="'+C+'" fill-opacity=".92"><ellipse cx="60" cy="31" rx="9.2" ry="4.5"/><circle cx="54.4" cy="29" r="3.7"/><circle cx="61.6" cy="26.9" r="4.9"/></g><path class="g-cloud-arw" d="M60 35.8 V27 M56.5 30.5 L60 26.8 L63.5 30.5" fill="none" stroke="#0a1330" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></g>';
     return '';
   }
   function makeGauge(cfg){
@@ -4328,24 +4516,37 @@
   }
 
   // ---- premium focus mode: click a dial and the cluster reorganises around it, with plain-English advice ----
+  var SITE='https://365techies.co.uk';
   var ADVICE={
-    health:{title:'Overall health',big:'82 / 100',text:'Your PC is in good shape. A few small tune-ups would push the score even higher — we can do those at your next visit.',act:'Book a check-up',tone:'good'},
-    battery:{title:'Battery health',big:'84%',text:'The battery still holds 84% of its original charge — healthy for its age. Nothing to do; we watch it and flag it before it becomes a problem.',act:'',tone:'good'},
-    storage:{title:'Storage space',big:'68% full',text:'Plenty of room left on the drive. We clear away temporary files automatically to keep it running sweet.',act:'',tone:'good'},
-    memory:{title:'Memory (RAM)',big:'16 GB',text:'16 GB is comfortable for everyday work. If you ever start running a lot at once, there is room to add more.',act:'',tone:'info'},
-    protection:{title:'Protection',big:'On',text:'Your antivirus is switched on and protecting you in real time. Nothing needed here — we keep watch in the background.',act:'',tone:'good'},
-    backup:{title:'Backup',big:'Off',text:'This is the one gap — nothing is being backed up yet. If the laptop failed today, your files could be lost. Say the word and we set up automatic cloud backup.',act:'Set up backup',tone:'bad'}
+    health:{title:'Overall health',big:'82 / 100',tone:'good',text:'In good shape. A few small tune-ups would nudge the score higher — we do those on your next service.',
+      detail:['Measured from disk, memory, antivirus, updates, uptime &amp; backup.','Nothing major dragging it down today.'],
+      act:{label:'Book a check-up',url:SITE+'/book-service/',soft:true}},
+    storage:{title:'Storage',big:'68% full',tone:'good',text:'Plenty of room left — and it is a fast solid-state drive in good health.',
+      detail:['152 GB free of 476 GB.','NVMe SSD &middot; SMART: Healthy.','~3 years of use (estimated from power-on hours).'],
+      act:null},
+    protection:{title:'Protection',big:'On',tone:'good',text:'Microsoft Defender is on and protecting you in real time.',
+      detail:['Real-time protection: ON.','We only report what Windows truly exposes — no firewall or AV-brand guesses.'],
+      act:null},
+    battery:{title:'Battery health',big:'84%',tone:'good',text:'Holding 84% of its original charge — healthy for its age.',
+      detail:['84% of original design capacity.','320 charge cycles.','We flag it before it drops below ~70%.'],
+      act:null},
+    memory:{title:'Memory (RAM)',big:'16 GB',tone:'info',text:'16 GB is comfortable for everyday work, with room to grow.',
+      detail:['16 GB total &middot; 42% in use right now.','2 slots &middot; supports up to 32 GB.'],
+      act:null},
+    backup:{title:'Backup',big:'Off',tone:'bad',text:'The one gap — nothing is being backed up. If this drive failed today, your files could be lost.',
+      detail:['No File History &middot; no OneDrive folder backup detected.'],
+      act:{label:'Set up a proper backup',url:SITE+'/backup-support/',soft:false}}
   };
   var adviceEl=document.createElement('div'); adviceEl.className='advice';
-  adviceEl.innerHTML='<div class="ad-ey"></div><div class="ad-big"></div><div class="ad-txt"></div><button class="ad-act" type="button"></button><button class="ad-close" type="button">← all gauges</button>';
+  adviceEl.innerHTML='<div class="ad-ey"></div><div class="ad-big"></div><div class="ad-txt"></div><ul class="ad-detail"></ul><a class="ad-cta" target="_blank" rel="noopener"></a><button class="ad-close" type="button">← all gauges</button>';
   stage.appendChild(adviceEl);
   adviceEl.querySelector('.ad-close').addEventListener('click',exitFocus);
-  adviceEl.querySelector('.ad-act').addEventListener('click',function(){ this.textContent='✓ We’ll be in touch'; this.classList.add('done'); this.disabled=true; });   // prototype ack; at rollout this opens the booking flow (in-app Booking tab / backup enquiry)
   function showAdvice(name){ var a=ADVICE[name]; if(!a)return;
     adviceEl.querySelector('.ad-ey').textContent=a.title;
     var big=adviceEl.querySelector('.ad-big'); big.textContent=a.big; big.style.color=a.tone==='bad'?'var(--bad)':a.tone==='info'?'var(--cyan)':'var(--good)';
     adviceEl.querySelector('.ad-txt').textContent=a.text;
-    var act=adviceEl.querySelector('.ad-act'); if(a.act){ act.textContent=a.act; act.style.display=''; act.disabled=false; act.className='ad-act'+(a.tone==='bad'?' bad':''); } else { act.style.display='none'; }
+    adviceEl.querySelector('.ad-detail').innerHTML=(a.detail||[]).map(function(d){return '<li>'+d+'</li>';}).join('');
+    var cta=adviceEl.querySelector('.ad-cta'); if(a.act){ cta.textContent=a.act.label; cta.href=a.act.url; cta.style.display=''; cta.className='ad-cta'+(a.act.soft?' soft':''); } else { cta.style.display='none'; }
     adviceEl.classList.add('on');
   }
   function hideAdvice(){ adviceEl.classList.remove('on'); }
@@ -4362,7 +4563,7 @@
     gauges.forEach(function(g){ g.el.classList.remove('g-hero'); g.el.classList.remove('g-strip'); g.el.style.left=''; g.el.style.top=''; g.el.style.width=''; });
     hideAdvice(); unfocus();
   }
-  function handleDialClick(name){ if(gMode==='focus'&&gSel===name){ exitFocus(); } else { enterFocus(name); } }
+  function handleDialClick(name){ enterFocus(name); }   // click always opens/keeps the advice panel; leave via "← all gauges" (hover already opened it, so a toggle-exit was hiding it on click)
 
   function resize(){ W=stage.clientWidth;H=stage.clientHeight; renderer.setSize(W,H); camera.aspect=W/H; camera.updateProjectionMatrix(); }
   window.addEventListener('resize',resize);
@@ -4425,6 +4626,146 @@
   tick();
 })();
 </script>
+<script>(function(){"use strict";
+  var LAT=50.72, LON=-1.88;
+  var $=function(id){return document.getElementById(id);};
+  var wx=$('wx'),toggle=$('wxToggle'),ic=$('wxIc'),tempEl=$('wxTemp'),condEl=$('wxCond'),badge=$('wxBadge'),bgEl=$('wxBg'),adviceEl=$('wxAdvice'),techEl=$('wxTech'),daysEl=$('wxDays'),stage=$('stage');
+  if(!wx||!stage) return;
+  var sky=document.createElement('div'); sky.className='wxsky'; stage.insertBefore(sky, stage.firstChild);
+  (function buildSky(){
+    function el(c){ var d=document.createElement('div'); if(c)d.className=c; return d; }
+    var i,s,b,w;
+    sky.appendChild(el('wxsky__vig'));
+    sky.appendChild(el('wxsky__sun'));
+    sky.appendChild(el('wxsky__moon'));
+    var stars=el('wxsky__stars');
+    for(i=0;i<28;i++){ s=document.createElement('i'); s.style.left=(Math.random()*100).toFixed(1)+'%'; s.style.top=(Math.random()*60).toFixed(1)+'%'; s.style.animationDelay=(Math.random()*3).toFixed(2)+'s'; s.style.setProperty('--sz',(1+Math.random()*1.7).toFixed(1)+'px'); stars.appendChild(s); }
+    sky.appendChild(stars);
+    var clouds=el('wxsky__clouds');
+    for(i=0;i<5;i++){ b=document.createElement('b'); w=130+Math.random()*170; b.style.width=w.toFixed(0)+'px'; b.style.height=(w*0.44).toFixed(0)+'px'; b.style.top=(3+Math.random()*52).toFixed(0)+'%'; b.style.animationDuration=(40+Math.random()*40).toFixed(0)+'s'; b.style.animationDelay=(-Math.random()*60).toFixed(0)+'s'; clouds.appendChild(b); }
+    sky.appendChild(clouds);
+    sky.appendChild(el('wxsky__rain'));
+    var snow=el('wxsky__snow');
+    for(i=0;i<24;i++){ s=document.createElement('i'); s.style.left=(Math.random()*100).toFixed(1)+'%'; s.style.setProperty('--d',(5+Math.random()*5).toFixed(1)+'s'); s.style.setProperty('--sz',(3+Math.random()*3.5).toFixed(1)+'px'); s.style.setProperty('--x',(-24+Math.random()*48).toFixed(0)+'px'); s.style.animationDelay=(-Math.random()*8).toFixed(1)+'s'; snow.appendChild(s); }
+    sky.appendChild(snow);
+    sky.appendChild(el('wxsky__flash'));
+    var fog=el('wxsky__fog');
+    for(i=0;i<3;i++){ b=document.createElement('b'); b.style.top=(28+i*20)+'%'; b.style.animationDuration=(26+i*8)+'s'; b.style.animationDelay=(-i*7)+'s'; fog.appendChild(b); }
+    sky.appendChild(fog);
+  })();
+  var NAMES=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var EMO={clear:'☀️',partly:'⛅',cloudy:'☁️',fog:'\u{1f32b}️',rain:'\u{1f327}️',snow:'❄️',storm:'⛈️'};
+  function grp(c){ c=+c;
+    if(c<=1) return ['clear', c===0?'Clear sky':'Mainly clear'];
+    if(c===2) return ['partly','Partly cloudy'];
+    if(c===3) return ['cloudy','Overcast'];
+    if(c===45||c===48) return ['fog','Fog'];
+    if(c>=51&&c<=57) return ['rain','Drizzle'];
+    if((c>=61&&c<=67)||(c>=80&&c<=82)) return ['rain','Rain'];
+    if((c>=71&&c<=77)||c===85||c===86) return ['snow','Snow'];
+    if(c>=95) return ['storm','Thunderstorm'];
+    return ['cloudy','Cloudy'];
+  }
+  var CLOUD='<path class="ws-cloud" d="M12 27 a6 6 0 0 1 1.2 -11.9 a8 8 0 0 1 15 1.4 a5.6 5.6 0 0 1 -1 10.5 Z" fill="#cdd8ec"/>';
+  function icon(g,day){
+    var s='<svg viewBox="0 0 40 40" width="100%" height="100%" aria-hidden="true">',i,a;
+    if(g==='clear'){
+      if(day){ s+='<g class="ws-rays" stroke="#ffcf5a" stroke-width="2.4" stroke-linecap="round">'; for(i=0;i<8;i++){a=i*Math.PI/4;s+='<line x1="'+(20+Math.cos(a)*11).toFixed(1)+'" y1="'+(20+Math.sin(a)*11).toFixed(1)+'" x2="'+(20+Math.cos(a)*15).toFixed(1)+'" y2="'+(20+Math.sin(a)*15).toFixed(1)+'"/>';} s+='</g><circle class="ws-sun" cx="20" cy="20" r="8" fill="#ffd257"/>'; }
+      else { s+='<path class="ws-sun" d="M26 8 a13 13 0 1 0 7 18 a10 10 0 0 1 -7 -18 Z" fill="#dfe7f7"/><circle class="ws-twinkle" cx="12" cy="12" r="1.3" fill="#fff"/><circle class="ws-twinkle ws-flake2" cx="30" cy="31" r="1" fill="#fff"/>'; }
+    } else if(g==='partly'){
+      s+=(day?'<circle class="ws-sun" cx="27" cy="14" r="6" fill="#ffd257"/>':'<circle class="ws-sun" cx="27" cy="13" r="5.5" fill="#dfe7f7"/>')+CLOUD;
+    } else if(g==='cloudy'){ s+=CLOUD;
+    } else if(g==='fog'){ s+=CLOUD+'<g stroke="#9fb0cf" stroke-width="2" stroke-linecap="round" opacity=".85"><line class="ws-cloud" x1="10" y1="32" x2="27" y2="32"/><line class="ws-cloud ws-drop2" x1="13" y1="36" x2="31" y2="36"/></g>';
+    } else if(g==='rain'){ s+=CLOUD+'<g stroke="#5ab0ff" stroke-width="2.2" stroke-linecap="round"><line class="ws-drop" x1="15" y1="30" x2="13" y2="35"/><line class="ws-drop ws-drop2" x1="21" y1="30" x2="19" y2="35"/><line class="ws-drop ws-drop3" x1="27" y1="30" x2="25" y2="35"/></g>';
+    } else if(g==='snow'){ s+=CLOUD+'<g fill="#eaf2ff"><circle class="ws-flake" cx="15" cy="32" r="1.7"/><circle class="ws-flake ws-flake2" cx="21" cy="32" r="1.7"/><circle class="ws-flake ws-flake3" cx="27" cy="32" r="1.7"/></g>';
+    } else if(g==='storm'){ s+=CLOUD+'<path class="ws-bolt" d="M21 27 l5 0 l-3.5 4.5 l4 0 l-8 8.5 l2.5 -6.5 l-4 0 Z" fill="#ffd257"/>'; }
+    return s+'</svg>';
+  }
+  function grad(g,day){ return ({clear:day?'linear-gradient(135deg,#2f5aa8,#12244f)':'linear-gradient(135deg,#1a2450,#0b1330)',partly:'linear-gradient(135deg,#2a4478,#131f45)',cloudy:'linear-gradient(135deg,#333f5c,#141d38)',fog:'linear-gradient(135deg,#3a4360,#1b2340)',rain:'linear-gradient(135deg,#24406e,#111b34)',snow:'linear-gradient(135deg,#3a4a70,#182142)',storm:'linear-gradient(135deg,#2b3350,#0f1730)'})[g]||'linear-gradient(135deg,#26365f,#0c1226)'; }
+  function advice(t,g){ var f;
+    if(t<=2) f='Bitter cold today.';
+    else if(t<8) f='Chilly out there.';
+    else if(t<14) f='Cool and fresh.';
+    else if(t<20) f='Mild and comfortable.';
+    else if(t<26) f='Lovely and warm.';
+    else f='A proper hot one.';
+    return f+({rain:' Keep a brolly handy.',snow:' Wrap up and take it steady.',storm:' Thundery about.',fog:' Take care on the roads.'}[g]||'');
+  }
+  function techAdvice(t,g){
+    if(g==='storm') return {lv:'warn',lead:'Storm warning',text:'Save your work, then unplug your PC, router and chargers at the mains — a nearby strike can travel down power and phone lines. A surge protector helps but is not a guarantee.'};
+    if(t>=28) return {lv:'warn',lead:'Heat & your tech',text:'Keep laptops off beds, sofas and laps and out of direct sun — blocked vents cause overheating, slowdowns and faster battery wear. Give it airflow or a cooling stand.'};
+    if(t<=1) return {lv:'warn',lead:'Cold & your tech',text:'Let a laptop that has been out in the cold warm to room temperature before switching on — condensation inside can damage it. Batteries also drain quicker in the cold.'};
+    if(g==='rain') return {lv:'tip',lead:'Wet out',text:'Keep devices and bags dry and wipe off any rain before opening a laptop — moisture is the enemy of electronics.'};
+    if(g==='snow') return {lv:'tip',lead:'Snowy',text:'Bringing kit in from the cold? Let it reach room temperature before powering on, so no condensation forms inside.'};
+    if(g==='fog') return {lv:'tip',lead:'Damp air',text:'A muggy, damp day is a good moment to blow the dust out of your laptop fans so it keeps its cool.'};
+    if(t>=22) return {lv:'tip',lead:'Warm one',text:'Check your laptop vents are clear and it is not sat in the sun — a raised stand helps it breathe and stay fast.'};
+    if(t<=7) return {lv:'tip',lead:'Chilly',text:'Coming in from the cold with a laptop? Give it a few minutes to reach room temperature before switching on.'};
+    return {lv:'tip',lead:'Good day for it',text:'Mild and kind to your kit — a handy moment to run that overdue Windows update or back up your files.'};
+  }
+  function setAdvice(temp,g){
+    adviceEl.innerHTML='<span class="ai">'+(EMO[g]||'⛅')+'</span><span>'+advice(temp,g)+'</span>';
+    var ta=techAdvice(temp,g);
+    techEl.className='wx__tech wx__tech--'+ta.lv;
+    techEl.innerHTML='<span class="ti">'+(ta.lv==='warn'?'⚠️':'\u{1f4bb}')+'</span><span><b>'+ta.lead+':</b> '+ta.text+'</span>';
+  }
+  var CUR=null;
+  function paint(g,day,temp,label){ ic.innerHTML=icon(g,day); tempEl.textContent=Math.round(temp)+'°'; condEl.textContent=label; bgEl.style.background=grad(g,day); sky.className='wxsky wx-'+g+' '+(day?'wx-day':'wx-night'); }
+  function render(d){ CUR=d;
+    var g=grp(d.cur.code), day=!!d.cur.isDay;
+    paint(g[0],day,d.cur.t,g[1]);
+    badge.textContent=d.live?'live':'sample'; badge.className='wx__badge'+(d.live?' live':'');
+    setAdvice(Math.round(d.cur.t),g[0]);
+    var lo=Infinity,hi=-Infinity; d.days.forEach(function(x){ if(x.tmin<lo)lo=x.tmin; if(x.tmax>hi)hi=x.tmax; });
+    var span=Math.max(1,hi-lo);
+    daysEl.innerHTML=d.days.map(function(x,i){ var dg=grp(x.code), dt=new Date(x.date+'T12:00:00'), dn=i===0?'Today':NAMES[dt.getDay()];
+      var left=(x.tmin-lo)/span*100, width=Math.max(10,(x.tmax-x.tmin)/span*100);
+      return '<div class="wx__day" data-i="'+i+'" tabindex="0" role="button" aria-label="'+dn+' forecast"><span class="dn">'+dn+'</span><span class="di">'+icon(dg[0],true)+'</span><span class="wx__bar"><i style="left:'+left.toFixed(0)+'%;width:'+width.toFixed(0)+'%"></i></span><span class="wx__dt">'+Math.round(x.tmin)+'° <b>'+Math.round(x.tmax)+'°</b></span></div>';
+    }).join('');
+    Array.prototype.forEach.call(daysEl.children,function(row){ var i=+row.getAttribute('data-i');
+      row.addEventListener('pointerenter',function(){ preview(i); });
+      row.addEventListener('pointerleave',function(){ preview(-1); });
+      row.addEventListener('focus',function(){ preview(i); });
+      row.addEventListener('blur',function(){ preview(-1); });
+    });
+  }
+  function preview(i){ if(!CUR)return;
+    Array.prototype.forEach.call(daysEl.children,function(r){ r.classList.toggle('sel', +r.getAttribute('data-i')===i); });
+    if(i<0){ var g0=grp(CUR.cur.code); paint(g0[0],!!CUR.cur.isDay,CUR.cur.t,g0[1]); setAdvice(Math.round(CUR.cur.t),g0[0]); return; }
+    var x=CUR.days[i], g=grp(x.code); paint(g[0],true,x.tmax,g[1]); setAdvice(Math.round(x.tmax),g[0]);
+  }
+  function sample(){ var now=new Date(), h=now.getHours(), day=h>=7&&h<20?1:0;
+    var codes=[2,3,61,80,1,2,3], hs=[14,13,12,11,15,16,14], ls=[7,6,7,8,6,7,8], pops=[20,40,80,70,10,20,40];
+    var days=[]; for(var i=0;i<7;i++){ var dt=new Date(now.getTime()+i*864e5); days.push({date:dt.toISOString().slice(0,10),code:codes[i],tmax:hs[i],tmin:ls[i],pop:pops[i]}); }
+    return {live:false,cur:{t:13,feels:11,code:2,isDay:day,wind:12},days:days};
+  }
+  function load(){ render(sample());
+    try{ var url='https://api.open-meteo.com/v1/forecast?latitude='+LAT+'&longitude='+LON+'&current=temperature_2m,apparent_temperature,weather_code,is_day,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Europe%2FLondon&forecast_days=7';
+      fetch(url).then(function(r){ return r.ok?r.json():Promise.reject(); }).then(function(j){
+        var cur={t:j.current.temperature_2m,feels:j.current.apparent_temperature,code:j.current.weather_code,isDay:j.current.is_day,wind:j.current.wind_speed_10m};
+        var days=j.daily.time.map(function(dt,i){ return {date:dt,code:j.daily.weather_code[i],tmax:j.daily.temperature_2m_max[i],tmin:j.daily.temperature_2m_min[i],pop:j.daily.precipitation_probability_max[i]}; });
+        render({live:true,cur:cur,days:days});
+      }).catch(function(){});
+    }catch(e){}
+  }
+  toggle.addEventListener('click',function(e){ e.stopPropagation(); var o=wx.classList.toggle('open'); toggle.setAttribute('aria-expanded',o?'true':'false'); });
+  document.addEventListener('click',function(e){ if(wx.classList.contains('open')&&!wx.contains(e.target)){ wx.classList.remove('open'); toggle.setAttribute('aria-expanded','false'); } });
+  load();
+})();</script>
+<script>(function(){"use strict";
+  var INTERVAL=42;                                  // a full 365 service every 6 weeks
+  var since=12, until=30, nextTxt='Fri 28 Aug';     // DEMO sample; live: since = days since newest report/full-service, until = ceil((next_ts*1000-now)/86400000), nextTxt from the booking
+  var $=function(id){return document.getElementById(id);};
+  var fill=$('svcFill'),marker=$('svcMarker'),status=$('svcStatus'),nextEl=$('svcNext');
+  if(!fill) return;
+  var pos=Math.max(0,Math.min(1, since/INTERVAL));
+  nextEl.innerHTML='Next: <b>'+nextTxt+'</b>';
+  if(since>INTERVAL){ status.textContent='Overdue'; status.className='svc__pill over'; }
+  else if(since>=INTERVAL-10){ status.textContent='Due soon'; status.className='svc__pill due'; }
+  else { status.textContent='On track'; status.className='svc__pill'; }
+  var reduced=document.documentElement.classList.contains('rm-reduced');
+  function countTo(el,to,dur){ if(reduced){ el.textContent=to; return; } var t0=null; function step(ts){ if(t0===null)t0=ts; var p=Math.min(1,(ts-t0)/dur), e=1-Math.pow(1-p,3); el.textContent=Math.round(to*e); if(p<1)requestAnimationFrame(step); } requestAnimationFrame(step); }
+  setTimeout(function(){ fill.style.width=(pos*100)+'%'; marker.style.left=(pos*100)+'%'; countTo($('svcSince'),since,1200); countTo($('svcUntil'),until,1200); }, 350);
+})();</script>
 
 </body>
 </html>
