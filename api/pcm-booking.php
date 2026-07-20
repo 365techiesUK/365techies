@@ -94,6 +94,13 @@ function pcm_slack_say($text) {
     $r = @curl_exec($ch); curl_close($ch);
     return ($r === 'ok');
 }
+// Booking-event Slack helpers: the signed-in staffer's label, a safe name cleaner, and a "who - what" label.
+function staff_who() { global $STAFF_REC; $r = (isset($STAFF_REC) && is_array($STAFF_REC)) ? $STAFF_REC : array();
+    return (string)(isset($r['email']) ? $r['email'] : (isset($r['name']) ? $r['name'] : '')); }
+function bk_clean($s) { return trim(substr(preg_replace('/[\x00-\x1F\x7F]+/', ' ', (string)$s), 0, 80)); }
+function bk_lbl($bid) { global $in; $who = bk_clean(isset($in['who']) ? $in['who'] : (isset($in['name']) ? $in['name'] : ''));
+    $what = bk_clean(isset($in['what']) ? $in['what'] : ''); return ($who !== '' ? $who : ('Booking #' . (int)$bid)) . ($what !== '' ? ' - ' . $what : ''); }
+function bk_by() { $w = staff_who(); return ' _(by ' . ($w !== '' ? $w : 'the team') . ')_'; }
 
 function cache_load($f){ $c = file_exists($f) ? json_decode((string)@file_get_contents($f), true) : null; return is_array($c) ? $c : array(); }
 function cache_save($f, $c){ $tmp = $f . '.' . getmypid() . '.tmp'; if (@file_put_contents($tmp, json_encode($c), LOCK_EX) !== false) @rename($tmp, $f); }
@@ -1031,11 +1038,12 @@ if ($action === 'cancel' || $action === 'change') {
 // ---------------------------------------------------------------- staff (manager mode)
 // Gated by a server-issued session token from a VERIFIED SimplyBook staff login (12h expiry).
 function need_staff() {
-    global $in, $machine;
+    global $in, $machine, $STAFF_REC;
     $tok = isset($in['stoken']) ? preg_replace('/[^a-f0-9]/', '', (string)$in['stoken']) : '';
     if ($tok === '') fail('not_staff');
     list($lk, $db) = db_open();
     $s = isset($db['staff'][$tok]) ? $db['staff'][$tok] : null;
+    $STAFF_REC = is_array($s) ? $s : array();
     $slide = !empty($s['trust']) ? 2592000 : 43200;   // 30d idle window on a trusted device, else 12h
     $cap   = !empty($s['trust']) ? 7776000 : 43200;   // 90d hard cap on a trusted device, else 12h
     $ok = $s
@@ -1252,6 +1260,7 @@ if ($action === 'staffbook') {
     if (isset($b['bookings'][0]['id'])) $bid = (int)$b['bookings'][0]['id'];
     elseif (isset($b['id'])) $bid = (int)$b['id'];
     $ts = strtotime($date . ' ' . $time);
+    pcm_slack_say(':calendar: *New booking* - ' . ($cn !== '' ? bk_clean($cn) : ('client #' . $cid)) . (isset($in['what']) && $in['what'] !== '' ? ' - ' . bk_clean($in['what']) : '') . ' on ' . ($ts ? date('D j M g:ia', $ts) : ($date . ' ' . $time)) . bk_by());
     out(array('ok' => true, 'id' => $bid, 'when' => $ts ? date('D j M Y g:ia', $ts) : ($date . ' ' . $time)));
 }
 
@@ -1492,6 +1501,7 @@ if ($action === 'staffcancel') {
     $r = sb_adm('cancelBooking', array($bid));
     if (sb_net($r)) fail('sb_unavailable');
     if (empty($r['result'])) fail('cancel_failed');
+    pcm_slack_say(':x: *Booking cancelled* - ' . bk_lbl($bid) . (isset($in['when']) && $in['when'] !== '' ? ' (' . bk_clean($in['when']) . ')' : '') . bk_by());
     out(array('ok' => true));
 }
 
@@ -1518,6 +1528,7 @@ if ($action === 'staffmove') {
     $r = sb_adm('editBook', array($bid, $eventId, (int)$unitIds[0], $bClient,
         $date, $time, date('Y-m-d', $endTs), date('H:i:s', $endTs), 0, array()));
     if (sb_net($r) || !isset($r['result']) || !$r['result']) fail('change_failed');
+    pcm_slack_say(':twisted_rightwards_arrows: *Booking moved* - ' . bk_lbl($bid) . ' -> ' . date('D j M g:ia', $startTs) . bk_by());
     out(array('ok' => true, 'when' => date('D j M g:ia', $startTs)));
 }
 

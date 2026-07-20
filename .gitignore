@@ -53,3 +53,7 @@ api/pcm-invoice-state.json
 api/pcm-invoice-state.json.tmp
 api/pcm-invoice.log
 api/pcm-invoice.lock
+# SimplyBook->portal status poll (cron): lock + admin-token cache
+api/pcm-bkpoll.lock
+api/pcm-bkpoll-cache.json
+api/pcm-bkpoll-cache.json.tmp

@@ -16771,7 +16771,7 @@ def write_portal_page():
     function doCancel(b, btn) {
       if (!confirm('Cancel this booking?\\n\\n' + b.when + '\\n' + b.who + ' - ' + b.what)) return;
       btn.disabled = true;
-      post(BK, { action: 'staffcancel', stoken: S.stoken, machine: mid(), id: b.id })
+      post(BK, { action: 'staffcancel', stoken: S.stoken, machine: mid(), id: b.id, who: b.who, what: b.what, when: b.when })
         .then(function (r) { if (r && r.ok) { AG60 = null; loadDiary(); } else { btn.disabled = false; alert('Couldn\u2019t cancel - try again.'); } })
         .catch(function () { btn.disabled = false; alert('Couldn\u2019t reach the server.'); });
     }
@@ -16805,7 +16805,7 @@ def write_portal_page():
                 tb.onclick = function () {
                   if (!confirm('Move ' + b.who + ' to ' + day.n + ' at ' + t + '?')) return;
                   tb.disabled = true;
-                  post(BK, { action: 'staffmove', stoken: S.stoken, machine: mid(), id: b.id, eventId: evId, date: day.d, time: t })
+                  post(BK, { action: 'staffmove', stoken: S.stoken, machine: mid(), id: b.id, eventId: evId, date: day.d, time: t, who: b.who, what: b.what })
                     .then(function (r) {
                       if (r && r.ok) { AG60 = null; loadDiary(); }
                       else { tb.disabled = false; alert(r && r.error === 'slot_taken' ? 'That slot just went - pick another.' : 'Couldn\u2019t move it - try again.'); }
