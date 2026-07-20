@@ -83,6 +83,18 @@ function pcm_slack_webhook() {
     return '';
 }
 
+// Fire-and-forget Slack post for booking events. Best-effort: never blocks or fails the caller.
+function pcm_slack_say($text) {
+    $wh = pcm_slack_webhook();
+    if ($wh === '') return false;
+    $ch = curl_init($wh);
+    curl_setopt_array($ch, array(CURLOPT_POST => true, CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 6,
+        CURLOPT_HTTPHEADER => array('Content-Type: application/json'),
+        CURLOPT_POSTFIELDS => json_encode(array('text' => (string)$text))));
+    $r = @curl_exec($ch); curl_close($ch);
+    return ($r === 'ok');
+}
+
 function cache_load($f){ $c = file_exists($f) ? json_decode((string)@file_get_contents($f), true) : null; return is_array($c) ? $c : array(); }
 function cache_save($f, $c){ $tmp = $f . '.' . getmypid() . '.tmp'; if (@file_put_contents($tmp, json_encode($c), LOCK_EX) !== false) @rename($tmp, $f); }
 
@@ -1330,7 +1342,7 @@ function sb_status_id($kind) {
 // Status feature via setStatus so their admin shows it too, and always keeps our marker
 // so the portal state never depends on which SimplyBook plan features are enabled.
 if ($action === 'staffstatus') {
-    need_staff();
+    $stok = need_staff();
     $bid = (int)(isset($in['id']) ? $in['id'] : 0);
     $want = (string)(isset($in['status']) ? $in['status'] : '');
     if ($bid <= 0 || !in_array($want, array('confirmed', 'completed', 'none'), true)) fail('bad_request');
@@ -1344,7 +1356,18 @@ if ($action === 'staffstatus') {
     foreach ($db['bkmeta'] as $k2 => $v2) if ((isset($v2['ts']) ? $v2['ts'] : 0) < time() - 86400 * 90) unset($db['bkmeta'][$k2]);
     if ($want === 'none') unset($db['bkmeta'][(string)$bid]);
     else $db['bkmeta'][(string)$bid] = array('st' => $want, 'ts' => time(), 'sb' => $sb ? 1 : 0);
+    $sr = isset($db['staff'][$stok]) ? $db['staff'][$stok] : array();
+    $staffWho = (string)(isset($sr['email']) ? $sr['email'] : (isset($sr['name']) ? $sr['name'] : ''));
     db_save($db); db_close($lk);
+    // Real-time Slack so the team sees every confirm/complete the instant it happens (best-effort).
+    $cl = function ($s) { return trim(substr(preg_replace('/[\x00-\x1F\x7F]+/', ' ', (string)$s), 0, 80)); };
+    $cwho = $cl(isset($in['who']) ? $in['who'] : '');
+    $cwhat = $cl(isset($in['what']) ? $in['what'] : '');
+    $label = ($cwho !== '' ? $cwho : ('Booking #' . $bid)) . ($cwhat !== '' ? ' - ' . $cwhat : '');
+    $by = ' _(by ' . ($staffWho !== '' ? $staffWho : 'the team') . ' in the portal' . ($sb ? ', synced to SimplyBook' : '') . ')_';
+    if ($want === 'completed') pcm_slack_say(':ballot_box_with_check: *Service completed* - ' . $label . $by);
+    elseif ($want === 'confirmed') pcm_slack_say(':white_check_mark: *Booking confirmed* - ' . $label . $by);
+    else pcm_slack_say(':arrows_counterclockwise: *Booking status cleared* - ' . $label . $by);
     out(array('ok' => true, 'sb' => $sb, 'st' => $want === 'none' ? '' : $want));
 }
 

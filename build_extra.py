@@ -16778,7 +16778,7 @@ def write_portal_page():
     function doStatus(b, btn, kind) {
       var want = (b.st === kind) ? 'none' : kind;
       btn.disabled = true;
-      post(BK, { action: 'staffstatus', stoken: S.stoken, machine: mid(), id: b.id, status: want })
+      post(BK, { action: 'staffstatus', stoken: S.stoken, machine: mid(), id: b.id, status: want, who: b.who, what: b.what })
         .then(function (r) { if (r && r.ok) { AG60 = null; loadDiary(); } else { btn.disabled = false; alert('Couldn\u2019t update - try again.'); } })
         .catch(function () { btn.disabled = false; alert('Couldn\u2019t reach the server.'); });
     }
