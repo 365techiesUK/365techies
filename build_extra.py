@@ -14712,9 +14712,10 @@ def pay_page():
     if PAY_CONFIG.get("gocardless_paylink"):
         tiles.append(f'''          <div class="tile" data-reveal>
             <h3>&#127974; Pay by Direct Debit</h3>
-            <p style="color:var(--muted);margin:0 0 .9rem">Prefer to pay straight from your bank, no card needed? You&rsquo;ll confirm the amount we agreed on GoCardless&rsquo;s secure page &mdash; we never see your bank details, and it&rsquo;s protected by the Direct Debit Guarantee.</p>
+            <p style="color:var(--muted);margin:0 0 .9rem">Prefer to pay straight from your bank, no card needed? You&rsquo;ll confirm the amount we agreed on GoCardless&rsquo;s secure page &mdash; we never see your full bank details, and it&rsquo;s protected by the Direct Debit Guarantee.</p>
             <p><a class="button primary" href="{PAY_CONFIG["gocardless_paylink"]}" target="_blank" rel="noopener">Pay by Direct Debit &#8594;</a></p>
             <p style="color:var(--muted);font-size:.85rem;margin:.8rem 0 0">Handled securely by GoCardless &mdash; the FCA-regulated Direct Debit provider behind all our monthly plans.</p>
+            <p style="margin:.9rem 0 0;padding-top:.75rem;border-top:1px solid rgba(125,170,220,.14)">{bp.gc_logo(h=22, block=False)}</p>
           </div>''')
     tiles.append('''          <div class="tile" data-reveal>
             <h3>&#128222; Rather sort it together?</h3>
@@ -14734,11 +14735,12 @@ def pay_page():
         <div class="prose" data-reveal style="max-width:80ch;margin:0 auto;border:1px solid rgba(125,170,220,.25);border-radius:14px;padding:1.4rem 1.6rem">
           <p class="eyebrow eyebrow--center mono">// PROTECTED BY THE DIRECT DEBIT GUARANTEE</p>
           <h2 class="section-title section-title--center" data-title style="margin-top:.2rem">Your Direct Debit is protected<span class="title-underline title-underline--center"></span></h2>
+          <div style="display:flex;justify-content:center;margin:.2rem 0 1.2rem">{bp.gc_badge()}</div>
           <p style="text-align:center;color:var(--muted);max-width:62ch;margin:0 auto 1.2rem">We collect monthly support plans by Direct Debit through GoCardless, an FCA-regulated payment provider. Every payment is covered by the Direct Debit Guarantee:</p>
           <ul class="checklist" data-stagger style="max-width:60ch;margin:0 auto">
 {checklist(["You get advance notice of the amount and date of every payment","If an error is ever made, you&rsquo;re entitled to an immediate refund from your bank","You can cancel at any time &mdash; simply tell your bank, or tell us"])}
           </ul>
-          <p style="text-align:center;color:var(--muted);font-size:.85rem;margin:1.2rem 0 0">Payments by GoCardless &mdash; the FCA-regulated Direct Debit provider we use.{_sun_line} We never see or store your bank details.</p>
+          <p style="text-align:center;color:var(--muted);font-size:.85rem;margin:1.2rem 0 0">Payments by GoCardless &mdash; the FCA-regulated Direct Debit provider we use.{_sun_line} We never see or store your full bank details.</p>
         </div>
       </div>
     </section>'''

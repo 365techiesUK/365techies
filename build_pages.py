@@ -54,14 +54,48 @@ GOCARDLESS = {
 def subscribe_href(key):
     return GOCARDLESS.get(key) or "/contact/"
 
+# --- Official GoCardless brand assets (GoCardless merchant brand toolkit) ---
+# Show the logo UNMODIFIED, correct variant per background: greystone (mono light) or
+# dawn (brand yellow) on our dark panels; darkmatter for light backgrounds. Clear space
+# comes from the wrapper padding. Renders nothing if the asset is missing (same image
+# guard used elsewhere); gc_badge falls back to a text chip so a layout never breaks.
+GC_BRAND_VARIANT = "dawn"        # on-dark logo style: "greystone" (subtle) | "dawn" (yellow)
+# variant -> (filename, intrinsic width, intrinsic height) so the width attribute is exact per asset
+_GC_LOGO = {"greystone": ("gocardless-greystone.png", 639, 96),
+            "dawn":       ("gocardless-dawn.png", 642, 96),
+            "darkmatter": ("gocardless-darkmatter.png", 642, 96)}
+
+def gc_logo(variant=None, h=22, block=True):
+    fn, iw, ih = _GC_LOGO.get(variant or GC_BRAND_VARIANT, _GC_LOGO["greystone"])
+    if not os.path.exists("images/" + fn):
+        return ""
+    w = round(h * iw / ih)
+    disp = "block" if block else "inline-block"
+    return (f'<img src="/images/{fn}" alt="GoCardless" width="{w}" height="{h}" '
+            f'loading="lazy" decoding="async" '
+            f'style="height:{h}px;width:auto;display:{disp};vertical-align:middle" />')
+
+def gc_badge(variant=None, label="Payments powered by", h=22):
+    img = gc_logo(variant, h=h)
+    if not img:
+        return '<span class="partner-badge">Direct Debit by GoCardless</span>'
+    lab = (f'<span style="font-size:.62rem;letter-spacing:.11em;text-transform:uppercase;'
+           f'color:var(--muted);white-space:nowrap">{label}</span>') if label else ''
+    # flex-wrap lets the label drop above the mark on very narrow phones; padding/gap
+    # give the wordmark its clear space (exclusion zone) on all sides.
+    return (f'<span class="gc-badge" style="display:inline-flex;align-items:center;flex-wrap:wrap;'
+            f'justify-content:center;gap:.9rem;padding:.7rem 1.1rem;'
+            f'border:1px solid rgba(125,170,220,.22);border-radius:999px;'
+            f'background:rgba(125,170,220,.06)">{lab}{img}</span>')
+
 GC_NOTE = '''    <section class="section section--alt" aria-label="Direct Debit payments">
       <div class="wrap wrap--narrow" style="text-align:center">
         <p class="eyebrow eyebrow--center mono" data-reveal>// SIMPLE MONTHLY PAYMENTS</p>
         <h2 class="section-title section-title--center" data-title>Pay monthly by Direct Debit<span class="title-underline title-underline--center"></span></h2>
         <p class="lede lede--center" data-reveal>Pay monthly by secure Direct Debit, powered by GoCardless. Tell us your setup and we&rsquo;ll send your secure sign-up link the same working day — no card to re-enter each month, no contract, change or cancel anytime.</p>
-        <div class="partner-badges" style="justify-content:center;margin-top:1.6rem" data-reveal>
-          <span class="partner-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg>Direct Debit by GoCardless</span>
-          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>Secure &amp; FCA-regulated</span>
+        <div style="display:flex;justify-content:center;margin-top:1.6rem" data-reveal>''' + gc_badge() + '''</div>
+        <div class="partner-badges" style="justify-content:center;margin-top:1rem" data-reveal>
+          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>FCA-regulated payments</span>
           <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Cancel anytime</span>
         </div>
       </div>
