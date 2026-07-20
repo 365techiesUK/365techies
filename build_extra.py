@@ -17203,10 +17203,39 @@ def write_portal_page():
   else showSignin();
 })();
 </script>'''
+    # --- Live System Monitoring: a demo teaser card above the portal app (sibling of #p365app, untouched by the client app) ---
+    lsm_style = ('<style>'
+      '.lsm{background:linear-gradient(135deg,rgba(29,151,227,.14),rgba(17,26,60,.55));border:1px solid rgba(29,151,227,.38);border-radius:18px;padding:1.4rem 1.5rem;margin:0 0 1.6rem;box-shadow:0 18px 44px rgba(0,0,0,.28)}'
+      '.lsm__head{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap}'
+      '.lsm__badge{background:#1d97e3;color:#fff;font-size:.62rem;font-weight:700;letter-spacing:.1em;padding:.22rem .5rem;border-radius:6px}'
+      '.lsm__dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#00ce1b;margin-right:.4rem;vertical-align:middle;box-shadow:0 0 0 0 rgba(0,206,27,.5);animation:lsmpulse 1.8s ease-out infinite}'
+      '@keyframes lsmpulse{0%{box-shadow:0 0 0 0 rgba(0,206,27,.45)}70%{box-shadow:0 0 0 8px rgba(0,206,27,0)}100%{box-shadow:0 0 0 0 rgba(0,206,27,0)}}'
+      '.lsm__title{margin:0;font-size:1.35rem;color:#f0f5fc}'
+      '.lsm__lede{color:#c7d6ee;margin:.6rem 0 1rem;line-height:1.55;max-width:64ch}'
+      '.lsm__actions{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}'
+      '.lsm__note{color:#7f97bd;font-size:.8rem}'
+      '.lsm__framewrap{margin-top:1.2rem;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.1)}'
+      '.lsm__frame{width:100%;height:660px;border:0;display:block;background:#0b1226}'
+      '@media(prefers-reduced-motion:reduce){.lsm__dot{animation:none}}'
+      '@media(max-width:640px){.lsm__frame{height:78vh}}'
+      '</style>')
+    lsm_teaser = ('<div class="lsm">'
+      '<div class="lsm__head"><span class="lsm__badge">NEW &middot; PREVIEW</span>'
+      '<h2 class="lsm__title">Live System Monitoring</h2></div>'
+      '<p class="lsm__lede">A live, interactive 3D health report of your actual PC &mdash; hover any dial and your machine turns to that part, with a plain-English verdict on each. '
+      '<strong><span class="lsm__dot"></span>This is a demo with sample data &mdash; ready to connect to your PC.</strong></p>'
+      '<div class="lsm__actions"><button class="button primary" id="lsmLaunch" type="button">&#9654;&nbsp;Launch interactive demo</button>'
+      '<span class="lsm__note">Loads a 3D model (~5&nbsp;MB) &middot; best on a computer</span></div>'
+      '<div class="lsm__framewrap" id="lsmFrameWrap" hidden><iframe class="lsm__frame" id="lsmFrame" title="Live System Monitoring demo"></iframe></div>'
+      '</div>')
+    lsm_script = ('<script>(function(){var b=document.getElementById("lsmLaunch"),w=document.getElementById("lsmFrameWrap"),f=document.getElementById("lsmFrame");'
+      'if(b&&f){b.addEventListener("click",function(){if(!f.getAttribute("src"))f.setAttribute("src","/system-monitoring-demo/");w.hidden=false;'
+      'b.textContent="Demo running below";b.disabled=true;setTimeout(function(){w.scrollIntoView({behavior:"smooth",block:"center"});},60);});}})();</script>')
     content = ('<section class="section" style="padding-top:6.5rem"><div class="wrap" style="max-width:880px">'
+               + lsm_teaser
                + '<div id="p365app"><noscript><p>The customer portal needs JavaScript switched on. Or just ring us: 01202 775566.</p></noscript>'
                + '<p style="color:#9fb5d3">Loading the portal&hellip;</p></div>'
-               + '</div></section>' + css + js)
+               + '</div></section>' + lsm_style + lsm_script + css + js)
     schema = bp.graph([bp.webpage("portal", "Customer portal", "Sign in to the 365 Techies customer portal.")])
     html = bp.page("portal", "Customer portal | 365 Techies",
                    "Sign in to the 365 Techies customer portal - your plan, your computers' health, your visits.",
