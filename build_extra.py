@@ -491,6 +491,10 @@ def pcm_landing():
             var f=document.createElement('iframe');
             f.src='/system-monitoring-demo/'; f.title='365 PC Manager live 3D demo'; f.setAttribute('loading','lazy');
             f.style.cssText='position:absolute;inset:0;width:100%;height:100%;border:0;display:block;background:#0a1226;z-index:2';
+            f.addEventListener('load', function(){
+              function center(){ try{ var dd=f.contentDocument, s=dd.querySelector('.stage'); if(s){ f.contentWindow.scrollTo(0, Math.max(0, s.offsetTop + s.offsetHeight/2 - f.clientHeight/2)); } }catch(e){} }
+              center(); setTimeout(center,1600); setTimeout(center,4200);
+            });
             box.appendChild(f);
             if(btn){ btn.style.display='none'; }
             var img=box.querySelector('img'); if(img){ img.style.opacity='0'; }
