@@ -109,7 +109,7 @@ SPECIALIST = [
    split=[("Wi-Fi at home","Strong, reliable Wi-Fi in every room &mdash; dead zones banished with mesh, the kids&rsquo; devices and smart home connected, all on a secure network.",["Whole-home mesh Wi-Fi","Dead zones fixed","Smart home connected","Secure &amp; guest networks"]),("Office networks","Fast, secure office networks that keep your team online &mdash; reliable Wi-Fi, wired connections and guest access, designed and supported.",["Reliable office Wi-Fi","Wired &amp; wireless networks","Secure staff &amp; guest access","Designed &amp; supported"])],
    steps_title="Full coverage in three steps",
    step_items=[("We survey","We find your dead zones, bottlenecks and weak spots."),("We set up","We install and configure routers, mesh and extenders for full coverage."),("We secure","We lock down your network and keep it running fast.")],
-   tools=["isitdown","speed","wifiqr","broadbandcheck"]),
+   tools=["wifisig","speed","wifiqr","broadbandcheck"]),
 ]
 for i, c in enumerate(SPECIALIST):
     make_customer(40 + i, **c)
@@ -789,6 +789,393 @@ def pcm_landing():
         desc=desc, og_title="Free PC Health Check - 365 PC Manager | 365 Techies", schema=schema, content=content,
         og_image=bp.SITE + "/images/pcm-og.jpg")
 pcm_landing()
+
+# ===================================================== 365 WIFI OPTIMIZER (live signal finder)
+def wifi_optimizer():
+    slug = "wifi-signal-test"
+    desc = ("Free live WiFi signal test - walk around your home and watch the signal get stronger or weaker in real time, "
+            "mark your best spots, run a speed test and get honest advice on what actually fixes weak WiFi. Works on WiFi and mobile.")
+    faqs = [
+      ("Can this show my WiFi name or whether I have WiFi 6?", "Honestly, no &mdash; and neither can any other website. Browsers deliberately don&rsquo;t let a web page see your network name, the WiFi standard (WiFi 5/6/7), the band or the channel, because your network name can identify where you live. Only an app installed on the device can read those. What this tool measures instead is arguably more useful: whether the internet <em>actually works well</em> where you&rsquo;re standing."),
+      ("So what is it actually measuring?", "Real, live network behaviour from your device: <strong>latency</strong> (how long a tiny request takes to reach our server and come back), <strong>jitter</strong> (how much that wobbles &mdash; the real giveaway for a weak or congested signal) and <strong>dropouts</strong> (requests that fail). We combine those into a 0&ndash;100 score. Nothing is guessed or made up."),
+      ("Why not just use the bars on my phone?", "The bars only tell you the strength of the radio signal &mdash; not whether the connection is usable. You can have full bars and still have unusable internet (congestion, interference, a struggling router, or a slow line). This measures what actually matters: can you really use the internet from this spot."),
+      ("Does it work on mobile data too?", "Yes. It measures the connection your device is actually using, so it works the same on 4G/5G &mdash; handy for finding the best spot for a signal in a rural house, a caravan or a workshop."),
+      ("Is it free, and do you keep my data?", "Completely free, no sign-up. The measurements stay in your browser &mdash; the spots you mark are saved on your own device only. Our latency beacon logs nothing."),
+      ("It says my signal is poor &mdash; what now?", "Scroll to the advice section: it uses your real readings to suggest what actually helps, and it will tell you honestly when something <em>won&rsquo;t</em> help (a new router often doesn&rsquo;t fix a range problem, for example). If you&rsquo;d rather someone just sorted it, we cover Bournemouth, Poole and Dorset &mdash; <a href=\"/wifi-support/\">WiFi support</a>."),
+    ]
+    content = "\n".join([
+      hero(bc("WiFi Signal Test"), "// FREE TOOL &middot; LIVE &amp; ANIMATED",
+           'Find the best WiFi signal <em class="grad grad--cyan">in your home</em>',
+           "Meet the <strong>365 WiFi Optimizer</strong> &mdash; start it, then walk around. It measures your connection live and tells you, second by second, whether it&rsquo;s <strong>getting stronger or weaker</strong>. Mark your best spots, run a speed test, and get honest advice on what actually fixes weak WiFi. Works on WiFi <em>and</em> mobile data.",
+           cta1=("Start the live test", "#finder"), cta2=("Call 01202 775566", "tel:+441202775566"),
+           chips=["Free &middot; no sign-up", "Works on any phone", "Nothing made up"]),
+      '''    <section class="section" aria-label="Live signal finder" id="finder" style="padding-top:.6rem">
+      <div class="wrap">
+        <div class="wf">
+          <div class="wf__stage">
+            <div class="wf__radar" aria-hidden="true"><span class="wf__ring"></span><span class="wf__ring wf__ring--b"></span><span class="wf__ring wf__ring--c"></span></div>
+            <div class="wf__gauge">
+              <svg viewBox="0 0 220 128" class="wf__svg" aria-hidden="true">
+                <defs><linearGradient id="wf-grad" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#e0563f"/><stop offset=".5" stop-color="#e0b341"/><stop offset="1" stop-color="#00ce1b"/></linearGradient></defs>
+                <path class="wf__track" d="M20 115 A 90 90 0 0 1 200 115"/>
+                <path class="wf__arc" id="wf-arc" d="M20 115 A 90 90 0 0 1 200 115"/>
+              </svg>
+              <div class="wf__readout">
+                <span class="wf__score" id="wf-score">&mdash;</span>
+                <span class="wf__of">SIGNAL SCORE</span>
+              </div>
+            </div>
+            <p class="wf__trend" id="wf-trend" aria-live="polite">Press start, then walk around</p>
+            <div class="wf__stats">
+              <div class="wf__stat"><span class="wf__sv" id="wf-lat">&mdash;</span><span class="wf__sl">Latency ms</span></div>
+              <div class="wf__stat"><span class="wf__sv" id="wf-jit">&mdash;</span><span class="wf__sl">Jitter ms</span></div>
+              <div class="wf__stat"><span class="wf__sv" id="wf-drop">&mdash;</span><span class="wf__sl">Dropouts</span></div>
+            </div>
+            <svg class="wf__spark" id="wf-spark" viewBox="0 0 300 54" preserveAspectRatio="none" aria-hidden="true"><polyline id="wf-sparkline" fill="none" stroke="url(#wf-grad)" stroke-width="2.5" points=""/></svg>
+            <div class="wf__btns">
+              <button type="button" class="button primary" id="wf-go">&#9654;&nbsp; Start live test</button>
+              <button type="button" class="button ghost" id="wf-sound" aria-pressed="false" title="Tick faster when the signal is better, so you can listen instead of looking">&#128266;&nbsp; Sound off</button>
+              <button type="button" class="button ghost" id="wf-mark" disabled>&#128205;&nbsp; Mark this spot</button>
+            </div>
+            <p class="wf__hint mono" id="wf-hint">Tip: turn sound on and walk slowly &mdash; the ticks speed up as the signal improves, so you don&rsquo;t have to stare at the screen.</p>
+          </div>
+          <div id="wf-spots" hidden>
+            <p class="eyebrow mono" style="margin:1.4rem 0 .5rem">// YOUR BEST SPOTS</p>
+            <ol class="wf__spotlist" id="wf-spotlist"></ol>
+            <p class="mono" style="color:var(--faint);font-size:.68rem;margin:.4rem 0 0">Saved on this device only &mdash; we never see them. <button type="button" id="wf-clear" class="wf__link">Clear</button></p>
+          </div>
+        </div>
+      </div>
+    </section>''',
+      '''    <section class="section section--alt" aria-label="Speed test">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// AND HOW FAST IS IT HERE?</p>
+          <h2 class="section-title section-title--center" data-title>Run a real speed test<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>A genuine download test against Cloudflare&rsquo;s global network &mdash; so you can see what you actually get in <em>this</em> spot, not just in theory.</p>
+        </div>
+        <div class="wf" style="text-align:center">
+          <p style="margin:0 0 1rem"><button type="button" class="button primary button--lg" id="wf-speed">&#9889;&nbsp; Run speed test</button></p>
+          <div class="wf__stats wf__stats--4" id="wf-speedres" hidden>
+            <div class="wf__stat"><span class="wf__sv" id="wf-dl">&mdash;</span><span class="wf__sl">Download Mbps</span></div>
+            <div class="wf__stat"><span class="wf__sv" id="wf-sping">&mdash;</span><span class="wf__sl">Ping ms</span></div>
+            <div class="wf__stat"><span class="wf__sv" id="wf-sjit">&mdash;</span><span class="wf__sl">Jitter ms</span></div>
+            <div class="wf__stat"><span class="wf__sv" id="wf-score2">&mdash;</span><span class="wf__sl">Signal score</span></div>
+          </div>
+          <p id="wf-speedverdict" class="wf__verdict" hidden></p>
+          <p class="mono" style="color:var(--faint);font-size:.7rem;margin:.8rem 0 0">Want upload, bufferbloat and the full picture? Use our <a href="/broadband-speed-checker/">broadband speed checker</a>.</p>
+        </div>
+      </div>
+    </section>''',
+      '''    <section class="section" aria-label="Your connection">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// YOUR CONNECTION</p>
+          <h2 class="section-title section-title--center" data-title>What we can genuinely see<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="wf">
+          <div class="wf__conn" id="wf-conn">
+            <div class="wf__crow"><span class="wf__cl">Provider</span><span class="wf__cv" id="wf-isp">Checking&hellip;</span></div>
+            <div class="wf__crow"><span class="wf__cl">Area</span><span class="wf__cv" id="wf-loc">Checking&hellip;</span></div>
+            <div class="wf__crow"><span class="wf__cl">Connection</span><span class="wf__cv" id="wf-type">&mdash;</span></div>
+          </div>
+        </div>
+      </div>
+    </section>''',
+      '''    <section class="section section--alt" aria-label="Honest advice">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// HONEST ADVICE</p>
+          <h2 class="section-title section-title--center" data-title>What your readings actually mean<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>This updates from your real measurements &mdash; including telling you when something <strong>won&rsquo;t</strong> help.</p>
+        </div>
+        <div class="wf">
+          <div class="wf__advice" id="wf-advice"><p class="quiet" style="margin:0">Run the live test above and your tailored advice will appear here.</p></div>
+        </div>
+      </div>
+    </section>''',
+      '''    <section class="section" aria-label="What actually fixes weak WiFi">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// WHAT ACTUALLY HELPS</p>
+          <h2 class="section-title section-title--center" data-title>The honest fixes, in order of what usually works<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="tile-grid" data-stagger>
+''' + tiles([("home","Move the router, not the money","The single most effective free fix. Routers belong out in the open, high up and central &mdash; not in a cupboard, behind a TV, on the floor or next to the microwave."),
+             ("bolt","Use the 5GHz network","Most routers broadcast two networks. 5GHz is much faster but travels less far; 2.4GHz reaches further but is slower and more congested. Near the router, pick 5GHz."),
+             ("monitor","Mesh beats a booster","If the problem is <em>range</em> (fine near the router, poor in the back bedroom), a mesh system genuinely fixes it. Cheap plug-in &ldquo;boosters&rdquo; often just repeat a weak signal &mdash; slower, not better."),
+             ("wrench","A new router won&rsquo;t fix range","If your speed is fine by the router and dies at the far end of the house, a faster router changes nothing. Be wary of anyone selling you one to fix that."),
+             ("shield","WiFi 6 helps crowds, not distance","WiFi 6/7 mainly helps when lots of devices compete at once. If you have a black-spot, it&rsquo;s the wrong purchase &mdash; sort coverage first."),
+             ("check","If the line is slow, WiFi can&rsquo;t save it","If speed is low even standing next to the router, the problem is the broadband line or package, not the WiFi. That&rsquo;s a different fix &mdash; and worth knowing before you spend.")]) + '''
+        </div>
+      </div>
+    </section>''',
+      '''    <section class="section section--alt" aria-label="What this tool can and cannot see">
+      <div class="wrap" style="max-width:760px">
+        <div class="prose" data-reveal style="border:1px solid rgba(125,170,220,.28);border-radius:16px;padding:1.3rem 1.5rem;background:rgba(125,170,220,.05)">
+          <p class="eyebrow mono">// BEING STRAIGHT WITH YOU</p>
+          <p style="margin:.3rem 0 .6rem"><strong>What this can&rsquo;t see:</strong> your WiFi name, whether you&rsquo;re on WiFi 5/6/7, which band or channel you&rsquo;re using, or your mesh setup. No website can &mdash; browsers block it, because your network name can identify your home. Anyone showing you those on a web page is guessing.</p>
+          <p style="margin:0"><strong>What it genuinely measures:</strong> real latency, jitter and dropouts from your device, plus a real download test. That tells you whether the internet actually works where you&rsquo;re standing &mdash; which is the thing that matters.</p>
+        </div>
+      </div>
+    </section>''',
+      cta("Want it just sorted?", "We fix WiFi black-spots, fit mesh systems properly and sort broadband for homes and businesses across Bournemouth, Poole and Dorset &mdash; honestly, and only where it&rsquo;ll actually help.",
+          primary=("WiFi support", "/wifi-support/"), secondary=("Call 01202 775566", "tel:+441202775566")),
+      '''    <style>
+      .wf{max-width:720px;margin:0 auto}
+      .wf__stage{position:relative;border:1px solid rgba(125,170,220,.28);border-radius:20px;background:linear-gradient(180deg,rgba(13,22,44,.96),rgba(9,16,34,.98));padding:1.6rem 1.1rem 1.3rem;overflow:hidden;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.4)}
+      .wf__radar{position:absolute;left:50%;top:120px;width:300px;height:300px;margin:-150px 0 0 -150px;pointer-events:none}
+      .wf__ring{position:absolute;inset:0;border-radius:50%;border:2px solid rgba(29,151,227,.4);opacity:0}
+      .wf.is-live .wf__ring{animation:wfring 2.8s ease-out infinite}
+      .wf.is-live .wf__ring--b{animation-delay:.95s}
+      .wf.is-live .wf__ring--c{animation-delay:1.9s}
+      @keyframes wfring{0%{transform:scale(.3);opacity:.55}100%{transform:scale(1.15);opacity:0}}
+      .wf__gauge{position:relative;width:240px;height:150px;margin:0 auto;z-index:1}
+      .wf__svg{width:100%;display:block;overflow:visible}
+      .wf__track{fill:none;stroke:rgba(255,255,255,.09);stroke-width:13;stroke-linecap:round}
+      .wf__arc{fill:none;stroke:url(#wf-grad);stroke-width:13;stroke-linecap:round;stroke-dasharray:282.743;stroke-dashoffset:282.743;transition:stroke-dashoffset .6s cubic-bezier(.22,1,.36,1)}
+      .wf__readout{position:absolute;left:0;right:0;bottom:6px;text-align:center}
+      .wf__score{display:block;font-size:3.2rem;font-weight:800;line-height:1;color:#f0f5fc;font-variant-numeric:tabular-nums}
+      .wf__of{display:block;font:600 .6rem/1 ui-monospace,monospace;letter-spacing:.14em;color:var(--faint);margin-top:.25rem}
+      .wf__trend{position:relative;z-index:1;margin:.9rem 0 .2rem;font-size:1.15rem;font-weight:700;min-height:1.6em;transition:color .3s}
+      .wf__trend.up{color:#00ce1b}.wf__trend.down{color:#e0563f}.wf__trend.same{color:var(--muted)}
+      .wf.is-live .wf__trend.up,.wf.is-live .wf__trend.down{animation:wfpop .5s ease}
+      @keyframes wfpop{0%{transform:scale(.92)}60%{transform:scale(1.06)}100%{transform:scale(1)}}
+      .wf__stats{position:relative;z-index:1;display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin:1rem 0 .3rem}
+      .wf__stats--4{grid-template-columns:repeat(4,1fr);margin-top:1.2rem}
+      .wf__stat{background:rgba(125,170,220,.07);border:1px solid rgba(125,170,220,.16);border-radius:12px;padding:.6rem .3rem}
+      .wf__sv{display:block;font-size:1.15rem;font-weight:700;color:#eaf1fb;font-variant-numeric:tabular-nums}
+      .wf__sl{display:block;font:600 .58rem/1.3 ui-monospace,monospace;letter-spacing:.06em;color:var(--faint);margin-top:.2rem;text-transform:uppercase}
+      .wf__spark{width:100%;height:54px;margin:.5rem 0 .2rem;position:relative;z-index:1}
+      .wf__btns{position:relative;z-index:1;display:flex;gap:.55rem;flex-wrap:wrap;justify-content:center;margin-top:.8rem}
+      .wf__hint{color:var(--faint);font-size:.68rem;margin:.8rem 0 0;position:relative;z-index:1}
+      .wf__spotlist{list-style:none;padding:0;margin:0;display:grid;gap:.45rem}
+      .wf__spotlist li{display:flex;align-items:center;gap:.7rem;background:rgba(125,170,220,.06);border:1px solid rgba(125,170,220,.16);border-radius:10px;padding:.55rem .8rem}
+      .wf__badge{font-weight:800;font-variant-numeric:tabular-nums;min-width:2.6rem;text-align:center;border-radius:8px;padding:.15rem .3rem}
+      .wf__link{background:none;border:0;color:var(--cyan,#4fb4f5);cursor:pointer;font:inherit;text-decoration:underline;padding:0}
+      .wf__conn{border:1px solid rgba(125,170,220,.2);border-radius:14px;overflow:hidden}
+      .wf__crow{display:flex;justify-content:space-between;gap:1rem;padding:.7rem 1rem;border-bottom:1px solid rgba(125,170,220,.12)}
+      .wf__crow:last-child{border-bottom:0}
+      .wf__cl{color:var(--faint);font:600 .68rem/1.4 ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase}
+      .wf__cv{color:#eaf1fb;font-weight:600;text-align:right}
+      .wf__verdict{margin:1rem 0 0;font-size:1.02rem}
+      .wf__advice{display:grid;gap:.6rem}
+      .wf__ac{border-left:3px solid var(--cyan,#4fb4f5);background:rgba(125,170,220,.06);border-radius:0 12px 12px 0;padding:.75rem 1rem}
+      .wf__ac.good{border-left-color:#00ce1b}.wf__ac.warn{border-left-color:#e0b341}.wf__ac.bad{border-left-color:#e0563f}
+      .wf__ac b{display:block;margin-bottom:.15rem;color:#eaf1fb}
+      @media (prefers-reduced-motion: reduce){.wf .wf__ring{animation:none!important}.wf__arc{transition:none}.wf__trend{animation:none!important}}
+      @media (max-width:520px){.wf__stats--4{grid-template-columns:repeat(2,1fr)}.wf__score{font-size:2.7rem}}
+    </style>
+    <script>
+      (function(){
+        var PING='/api/ping.php', META='https://speed.cloudflare.com/meta', DOWN='https://speed.cloudflare.com/__down?bytes=', ARC=282.743;
+        var $=function(s){return document.querySelector(s);};
+        var wf=document.querySelector('.wf'), arc=$('#wf-arc'), scoreEl=$('#wf-score'), trendEl=$('#wf-trend');
+        var latEl=$('#wf-lat'), jitEl=$('#wf-jit'), dropEl=$('#wf-drop'), spark=$('#wf-sparkline');
+        var goBtn=$('#wf-go'), soundBtn=$('#wf-sound'), markBtn=$('#wf-mark'), hint=$('#wf-hint');
+        var spotsWrap=$('#wf-spots'), spotList=$('#wf-spotlist'), clearBtn=$('#wf-clear');
+        if(!wf||!goBtn) return;
+        var running=false, timer=null, samples=[], hist=[], drops=0, sound=false, actx=null, tickT=null, best=-1, shown=0;
+        var reduce=false; try{reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){}
+        function med(a){ if(!a.length) return 0; var b=a.slice().sort(function(x,y){return x-y;}); return b[Math.floor(b.length/2)]; }
+        function jitter(a){ if(a.length<2) return 0; var m=a.reduce(function(s,v){return s+v;},0)/a.length, d=0;
+          for(var i=0;i<a.length;i++){ d+=Math.abs(a[i]-m); } return d/a.length; }
+        function scoreOf(lat,jit,dropRate){
+          var L = lat<=25?100 : lat<=60?100-(lat-25)*0.85 : lat<=140?70-(lat-60)*0.55 : lat<=320?26-(lat-140)*0.13 : 3;
+          var J = jit<=4?100 : jit<=14?100-(jit-4)*2.6 : jit<=40?74-(jit-14)*2.1 : 18;
+          var s = L*0.55 + J*0.45 - dropRate*45;
+          return Math.max(0,Math.min(100,Math.round(s)));
+        }
+        function colFor(s){ return s>=75?'#00ce1b':(s>=45?'#e0b341':'#e0563f'); }
+        function paint(s){
+          arc.style.strokeDashoffset=(ARC*(1-s/100)).toFixed(1);
+          var step=(s-shown)/6;
+          clearInterval(paint._t);
+          paint._t=setInterval(function(){ shown+=step; if((step>=0&&shown>=s)||(step<0&&shown<=s)||reduce){ shown=s; clearInterval(paint._t); }
+            scoreEl.textContent=Math.round(shown); scoreEl.style.color=colFor(s); }, 40);
+        }
+        function drawSpark(){
+          if(!hist.length) return;
+          var n=hist.length, pts=[];
+          for(var i=0;i<n;i++){ var x=(i/(Math.max(n-1,1)))*300, y=54-(hist[i]/100)*50-2; pts.push(x.toFixed(1)+','+y.toFixed(1)); }
+          spark.setAttribute('points', pts.join(' '));
+        }
+        function setTrend(s){
+          if(hist.length<6){ trendEl.textContent='Reading\\u2026'; trendEl.className='wf__trend same'; return; }
+          var recent=hist.slice(-3), prior=hist.slice(-7,-3);
+          var a=recent.reduce(function(x,y){return x+y;},0)/recent.length;
+          var b=prior.reduce(function(x,y){return x+y;},0)/prior.length;
+          var d=a-b;
+          if(d>=4){ trendEl.textContent='\\ud83d\\udcf6 GETTING STRONGER \\u2191'; trendEl.className='wf__trend up'; }
+          else if(d<=-4){ trendEl.textContent='\\u26a0\\ufe0f GETTING WEAKER \\u2193'; trendEl.className='wf__trend down'; }
+          else { trendEl.textContent=(s>=75?'Strong here \\u2014 holding steady':(s>=45?'OK here \\u2014 holding steady':'Weak here \\u2014 holding steady')); trendEl.className='wf__trend same'; }
+          if(s>best){ best=s; if(hist.length>4){ try{ if(navigator.vibrate) navigator.vibrate(35); }catch(e){} } }
+        }
+        function tickSound(s){
+          if(!sound) return;
+          try{
+            if(!actx){ var AC=window.AudioContext||window.webkitAudioContext; if(!AC) return; actx=new AC(); }
+            var o=actx.createOscillator(), g=actx.createGain();
+            o.frequency.value=520+s*7; g.gain.value=.05;
+            o.connect(g); g.connect(actx.destination); o.start();
+            g.gain.exponentialRampToValueAtTime(.0001, actx.currentTime+.06);
+            o.stop(actx.currentTime+.07);
+          }catch(e){}
+        }
+        function scheduleTicks(s){
+          clearTimeout(tickT);
+          if(!sound||!running) return;
+          var gap=Math.max(110, 1100 - s*9);
+          tickT=setTimeout(function(){ tickSound(s); scheduleTicks(s); }, gap);
+        }
+        function sample(){
+          var t0=performance.now(), done=false;
+          var to=setTimeout(function(){ if(!done){ done=true; drops++; after(null); } }, 4000);
+          fetch(PING+'?r='+Math.random().toString(36).slice(2), {cache:'no-store'})
+            .then(function(){ if(done) return; done=true; clearTimeout(to); after(performance.now()-t0); })
+            .catch(function(){ if(done) return; done=true; clearTimeout(to); drops++; after(null); });
+        }
+        function after(rtt){
+          if(rtt!=null){ samples.push(rtt); if(samples.length>12) samples.shift(); }
+          var lat=Math.round(med(samples)), jit=Math.round(jitter(samples));
+          var total=hist.length+drops+1, dropRate=drops/Math.max(total,1);
+          var s=samples.length?scoreOf(lat,jit,dropRate):0;
+          hist.push(s); if(hist.length>60) hist.shift();
+          latEl.textContent=samples.length?lat:'\\u2014';
+          jitEl.textContent=samples.length?jit:'\\u2014';
+          dropEl.textContent=drops;
+          paint(s); drawSpark(); setTrend(s); scheduleTicks(s); advise(lat,jit,s,null);
+          var s2=$('#wf-score2'); if(s2&&samples.length) s2.textContent=s;
+        }
+        function start(){
+          running=true; wf.classList.add('is-live');
+          goBtn.innerHTML='&#9632;&nbsp; Stop'; markBtn.disabled=false;
+          hint.textContent='Walk slowly \\u2014 give it a couple of seconds in each spot to settle.';
+          sample(); timer=setInterval(sample, 1000);
+        }
+        function stop(){
+          running=false; wf.classList.remove('is-live');
+          clearInterval(timer); clearTimeout(tickT);
+          goBtn.innerHTML='&#9654;&nbsp; Start live test';
+        }
+        goBtn.addEventListener('click', function(){ running?stop():start(); });
+        soundBtn.addEventListener('click', function(){
+          sound=!sound; soundBtn.setAttribute('aria-pressed', sound?'true':'false');
+          soundBtn.innerHTML = sound?'&#128266;&nbsp; Sound on':'&#128266;&nbsp; Sound off';
+          if(sound&&running) scheduleTicks(hist.length?hist[hist.length-1]:0); else clearTimeout(tickT);
+        });
+        function loadSpots(){ try{ return JSON.parse(localStorage.getItem('wf_spots')||'[]'); }catch(e){ return []; } }
+        function saveSpots(a){ try{ localStorage.setItem('wf_spots', JSON.stringify(a)); }catch(e){} }
+        function renderSpots(){
+          var a=loadSpots();
+          if(!a.length){ spotsWrap.hidden=true; return; }
+          a.sort(function(x,y){ return y.s-x.s; });
+          spotsWrap.hidden=false;
+          spotList.innerHTML='';
+          a.forEach(function(sp){
+            var li=document.createElement('li');
+            var b=document.createElement('span'); b.className='wf__badge'; b.textContent=sp.s;
+            b.style.background=colFor(sp.s)+'22'; b.style.color=colFor(sp.s);
+            var n=document.createElement('span'); n.textContent=sp.n;
+            var m=document.createElement('span'); m.className='mono'; m.style.cssText='margin-left:auto;color:var(--faint);font-size:.68rem';
+            m.textContent=sp.l+' ms';
+            li.appendChild(b); li.appendChild(n); li.appendChild(m); spotList.appendChild(li);
+          });
+        }
+        markBtn.addEventListener('click', function(){
+          if(!hist.length) return;
+          var name=prompt('Name this spot (e.g. kitchen, back bedroom):');
+          if(!name) return;
+          var a=loadSpots();
+          a.push({n:String(name).slice(0,40), s:hist[hist.length-1], l:Math.round(med(samples))});
+          if(a.length>12) a.shift();
+          saveSpots(a); renderSpots();
+        });
+        if(clearBtn) clearBtn.addEventListener('click', function(){ saveSpots([]); renderSpots(); });
+        renderSpots();
+        function advise(lat,jit,s,dl){
+          var box=$('#wf-advice'); if(!box) return;
+          var out=[];
+          if(!samples.length){ return; }
+          if(s>=75) out.push(['good','This is a good spot','Latency and stability are both healthy here. If this is where you actually use the computer, you are sorted.']);
+          else if(s>=45) out.push(['warn','Usable, but not great here','It will work, but you may notice video calls stuttering or pages hesitating. Try a spot closer to the router and compare the score.']);
+          else out.push(['bad','Weak here','This spot is struggling. Walk back towards the router and watch the score climb to find where it recovers.']);
+          if(jit>=18) out.push(['warn','High jitter \\u2014 that is interference or congestion','Your latency is bouncing around, which is the classic sign of a busy channel or something interfering. Switching to the 5GHz network usually helps more than any gadget.']);
+          if(lat>=140) out.push(['bad','Latency is high','Everything feels laggy at this level. If it is fine next to the router, this is a coverage problem \\u2014 mesh, not a new router.']);
+          if(drops>=3) out.push(['bad','You are dropping connections here','Requests are actually failing in this spot, not just slowing down. That is a genuine black-spot.']);
+          if(dl!=null){
+            if(dl<10) out.push(['warn','Speed is low here','Under 10 Mbps struggles with modern video. If it is just as slow standing next to the router, the line or package is the problem \\u2014 not the WiFi.']);
+            else if(dl>=60) out.push(['good','Speed here is healthy','Plenty for streaming, calls and working from home.']);
+          }
+          box.innerHTML='';
+          out.forEach(function(a){
+            var d=document.createElement('div'); d.className='wf__ac '+a[0];
+            var b=document.createElement('b'); b.textContent=a[1];
+            var p=document.createElement('p'); p.style.margin='0'; p.className='quiet'; p.textContent=a[2];
+            d.appendChild(b); d.appendChild(p); box.appendChild(d);
+          });
+        }
+        var meta=$('#wf-isp');
+        if(meta){
+          fetch(META,{cache:'no-store'}).then(function(r){return r.json();}).then(function(d){
+            $('#wf-isp').textContent=d.asOrganization||'Unknown';
+            $('#wf-loc').textContent=[d.city,d.country].filter(Boolean).join(', ')||'Unknown';
+          }).catch(function(){ $('#wf-isp').textContent='Could not detect'; $('#wf-loc').textContent='\\u2014'; });
+        }
+        var tEl=$('#wf-type');
+        if(tEl){
+          var c=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
+          if(c&&c.type) tEl.textContent=(c.type==='wifi'?'WiFi':(c.type==='cellular'?'Mobile data':c.type));
+          else if(c&&c.effectiveType) tEl.textContent='Reported as '+c.effectiveType+' (your browser does not say WiFi or mobile)';
+          else tEl.textContent='Your browser does not share this';
+        }
+        var spBtn=$('#wf-speed');
+        if(spBtn){
+          spBtn.addEventListener('click', function(){
+            spBtn.disabled=true; spBtn.innerHTML='&#8987;&nbsp; Testing\\u2026';
+            var bytes=15000000, t0=performance.now();
+            fetch(DOWN+bytes+'&r='+Math.random().toString(36).slice(2),{cache:'no-store'})
+              .then(function(r){ return r.arrayBuffer(); })
+              .then(function(buf){
+                var secs=(performance.now()-t0)/1000, mbps=(buf.byteLength*8)/secs/1e6;
+                $('#wf-speedres').hidden=false;
+                $('#wf-dl').textContent=mbps>=100?Math.round(mbps):mbps.toFixed(1);
+                $('#wf-sping').textContent=samples.length?Math.round(med(samples)):'\\u2014';
+                $('#wf-sjit').textContent=samples.length?Math.round(jitter(samples)):'\\u2014';
+                if(hist.length) $('#wf-score2').textContent=hist[hist.length-1];
+                var v=$('#wf-speedverdict'); v.hidden=false;
+                v.textContent = mbps>=100?'Excellent \\u2014 that is a fast connection in this spot.'
+                  : mbps>=30?'Healthy \\u2014 fine for streaming, calls and working from home.'
+                  : mbps>=10?'Workable, but not generous. Worth testing next to the router to see if it is the WiFi or the line.'
+                  : 'Slow here. Test again standing next to the router \\u2014 if it is just as slow there, it is the line, not the WiFi.';
+                advise(Math.round(med(samples)), Math.round(jitter(samples)), hist.length?hist[hist.length-1]:0, mbps);
+                spBtn.disabled=false; spBtn.innerHTML='&#9889;&nbsp; Run speed test again';
+              })
+              .catch(function(){
+                spBtn.disabled=false; spBtn.innerHTML='&#9889;&nbsp; Run speed test';
+                var v=$('#wf-speedverdict'); v.hidden=false; v.textContent='Could not complete the speed test \\u2014 check you are online and try again.';
+              });
+          });
+        }
+        document.addEventListener('visibilitychange', function(){ if(document.hidden&&running) stop(); });
+      })();
+    </script>''',
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        app = {"@type": "WebApplication", "@id": f"{SITE}/{s}/#app",
+               "name": "365 WiFi Optimizer", "applicationCategory": "UtilitiesApplication",
+               "operatingSystem": "Web (all browsers)",
+               "description": "Free live WiFi signal test: walk around and see your connection get stronger or weaker in real time, mark your best spots, run a speed test and get honest advice on what actually fixes weak WiFi.",
+               "offers": {"@type": "Offer", "price": "0", "priceCurrency": "GBP"},
+               "provider": {"@id": SITE + "/#business"}, "url": f"{SITE}/{s}/"}
+        return graph([crumb(s, "WiFi Signal Test"),
+                      webpage(s, "WiFi Signal Test - Find the Best Spot", _desc),
+                      app,
+                      faqpage(s, _faqs)])
+    add(slug=slug, title="WiFi Signal Test - Find the Best Spot in Your Home | 365 Techies",
+        desc=desc, og_title="365 WiFi Optimizer - Live WiFi Signal Test | 365 Techies", schema=schema,
+        content=content + "\n" + faq_html(faqs))
+wifi_optimizer()
 
 # ===================================================== PLAN FINDER (quiz)
 PLAN_FINDER_WIDGET = '''    <section class="section section--alt" aria-label="Plan finder quiz">
@@ -9167,7 +9554,7 @@ def free_tools_hub():
       ("Security &amp; privacy", "Check you&rsquo;re safe &mdash; and lock things down.",
        ["emailsec","breach","pwgen","pwstrength","scamlink","privacy","scamquiz","whatlose"]),
       ("Speed &amp; connectivity", "Test your connection and get everyone online.",
-       ["isitdown","speed","broadbandcheck","wifiqr","qrgen","coverage"]),
+       ["wifisig","isitdown","speed","broadbandcheck","wifiqr","qrgen","coverage"]),
       ("Website, domain &amp; email", "See how your website, domain and email really perform.",
        ["website","ssl","domainexp","dns","emailsig"]),
       ("Your computer", "Test it, diagnose it, and make smart decisions.",
