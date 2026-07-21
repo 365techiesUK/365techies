@@ -16123,6 +16123,26 @@ def write_portal_page():
     return '<div class="ptop"><h1>' + title + '</h1><button class="sm ghost" id="sout">Sign out</button></div>';
   }
   function bindOut() { var b = document.getElementById('sout'); if (b) b.onclick = sOut; }
+  function bindFeedback() {
+    var open = document.getElementById('pcmfbopen');
+    if (!open) return;
+    open.onclick = function () {
+      var box = document.getElementById('pcmfb');
+      box.innerHTML = '<textarea id="pcmfbtx" rows="3" placeholder="What do you think? Anything confusing, missing, or that you love?" style="width:100%;box-sizing:border-box;padding:.55rem .7rem;border-radius:8px;border:1px solid rgba(125,170,220,.4);background:rgba(255,255,255,.04);color:inherit;font:inherit;resize:vertical"></textarea>'
+        + '<div class="row" style="border:0;padding:.45rem 0 0;gap:.55rem;align-items:center"><button class="sm" id="pcmfbsend">Send feedback</button><span class="quiet" id="pcmfbmsg" style="margin:0;font-size:.82rem"></span></div>';
+      var tx = document.getElementById('pcmfbtx'); if (tx) tx.focus();
+      var send = document.getElementById('pcmfbsend');
+      send.onclick = function () {
+        var t = (tx.value || '').trim(), msg = document.getElementById('pcmfbmsg');
+        if (t.length < 3) { msg.textContent = 'Add a little more first.'; return; }
+        send.disabled = true; msg.textContent = 'Sending\\u2026';
+        post(PCM, { action: 'feedback', wtoken: S.wtoken, machine: mid(), text: t }).then(function (r) {
+          if (r && r.ok) { document.getElementById('pcmfb').innerHTML = '<p style="margin:0;color:var(--pgood)">\\u2713 Thank you \\u2014 genuinely. Feedback from testers like you is exactly how we make 365 PC Manager the best it can be. \\ud83d\\udc99</p>'; try { if (window.gtag) gtag('event', 'pcm_beta_feedback'); } catch (e) {} }
+          else { send.disabled = false; msg.textContent = (r && r.error === 'rate') ? 'Just a moment, then try again.' : 'Couldn\\u2019t send just now \\u2014 please try again.'; }
+        }, function () { send.disabled = false; msg.textContent = 'Couldn\\u2019t send just now \\u2014 please try again.'; });
+      };
+    };
+  }
 
   // ---------- sign-in ----------
   function showSignin(msg) {
@@ -16496,8 +16516,10 @@ def write_portal_page():
       if (ngPrimary) {
         h += '<div class="card" style="border-color:rgba(29,151,227,.5);background:linear-gradient(135deg,rgba(29,151,227,.1),rgba(0,206,27,.05))"><div class="row" style="border:0;padding:0;gap:.7rem;align-items:flex-start">'
           + '<span class="pill" style="background:rgba(29,151,227,.16);color:#4fb4f5;border:1px solid rgba(29,151,227,.5);white-space:nowrap">\\ud83e\\uddea BETA PREVIEW</span>'
-          + '<div><p style="margin:.1rem 0 .4rem"><strong>This is 365 PC Manager \\u2014 an early, live look.</strong></p>'
-          + '<p class="quiet" style="margin:0">You\\u2019re seeing a work-in-progress preview of <a href="/free-pc-health-check/" target="_blank">365 PC Manager</a>, the free app we\\u2019re building. We\\u2019re perfecting it so we can look after your computer completely \\u2014 and prove a full 365 service, done the very best way we can. Things will still change, and your feedback genuinely shapes it. <a href="mailto:info@365techies.co.uk?subject=365%20PC%20Manager%20feedback">Tell us what you think</a>, or ring 01202 775566.</p></div></div></div>';
+          + '<div style="flex:1;min-width:0"><p style="margin:.1rem 0 .4rem"><strong>This is 365 PC Manager \\u2014 an early, live look.</strong></p>'
+          + '<p class="quiet" style="margin:0 0 .55rem">You\\u2019re seeing a work-in-progress preview of <a href="/free-pc-health-check/" target="_blank">365 PC Manager</a>, the free app we\\u2019re building. We\\u2019re perfecting it so we can look after your computer completely \\u2014 and prove a full 365 service, done the very best way we can. As <strong>one of our first testers</strong>, your feedback genuinely shapes it \\u2014 thank you. \\ud83d\\udc99</p>'
+          + '<div id="pcmfb"><button class="sm" id="pcmfbopen">\\ud83d\\udcac Tell us what you think</button> <span class="quiet" style="margin:0;font-size:.8rem">or ring 01202 775566</span></div>'
+          + '</div></div></div>';
         h += ngHero(d, ngPrimary);
         var ngOthers = d.machines.filter(function (mm) { return mm.id !== ngPrimary.id; });
         if (ngOthers.length) h += '<div class="ngh2">Your other computers</div><div class="card">' + ngOthers.map(machineRow).join('') + '</div>';
@@ -16547,6 +16569,7 @@ def write_portal_page():
         + '<a href="tel:+441202775566"><button class="sm ghost">Call 01202 775566</button></a></div></div>';
             el.innerHTML = h;
       bindOut();
+      bindFeedback();
       if (ngPrimary) ngAnim(ngPrimary);
       var bs = document.getElementById('backstaff');
       if (bs) bs.onclick = function () {

@@ -286,6 +286,50 @@ if ($action === 'appreq') {
     out(array('ok'=>true));
 }
 
+// Portal beta feedback: a signed-in customer's note on the 365 PC Manager preview,
+// relayed to Slack (never stored on disk - no PII at rest). Auth mirrors appreq.
+if ($action === 'feedback') {
+    $wt = isset($in['wtoken']) ? preg_replace('/[^a-f0-9]/','', (string)$in['wtoken']) : '';
+    $ws = $wt !== '' && isset($db['websessions'][$wt]) ? $db['websessions'][$wt] : null;
+    if (!$ws) out(array('ok'=>false,'error'=>'expired'));
+    if (!empty($ws['machine']) && $ws['machine'] !== $machine) out(array('ok'=>false,'error'=>'expired'));
+    $key = (string)$ws['key'];
+    if (!isset($db['customers'][$key])) out(array('ok'=>false,'error'=>'unknown_key'));
+    $msg = isset($in['text']) ? trim((string)$in['text']) : '';
+    $msg = preg_replace('/[^\P{C}\n]/u', '', $msg);   // strip control chars, keep newlines
+    $msg = function_exists('mb_substr') ? mb_substr($msg, 0, 1500) : substr($msg, 0, 1500);
+    if ($msg === '') out(array('ok'=>false,'error'=>'empty'));
+    // rate limit: 20 feedbacks/min site-wide (spam floor)
+    $RLF = __DIR__ . '/pcm-fb-rate.json';
+    $minb = (int)floor(time()/60);
+    $rc = @json_decode((string)@file_get_contents($RLF), true);
+    if (!is_array($rc) || (isset($rc['min']) ? $rc['min'] : null) !== $minb) $rc = array('min'=>$minb,'n'=>0);
+    if ((isset($rc['n']) ? $rc['n'] : 0) >= 20) out(array('ok'=>false,'error'=>'rate'));
+    $rc['n']++; @file_put_contents($RLF, json_encode($rc), LOCK_EX);
+    $wh = __DIR__ . '/slack-webhook.php';
+    $SLACK_WEBHOOK = '';
+    if (file_exists($wh)) { ob_start(); include $wh; ob_end_clean(); }
+    if (empty($SLACK_WEBHOOK) && file_exists($wh)) {
+        $rawWh = (string)@file_get_contents($wh);
+        if (preg_match('#https://hooks\.slack\.com/\S+#', $rawWh, $mWh)) $SLACK_WEBHOOK = trim($mWh[0]);
+    }
+    if (!empty($SLACK_WEBHOOK)) {
+        $esc = function($s){ return str_replace(array('&','<','>'), array('&amp;','&lt;','&gt;'), (string)$s); };
+        $nm = str_replace(array("\r","\n"), ' ', (string)($db['customers'][$key]['name'] ?? 'a customer'));
+        $mc = isset($in['machine']) ? preg_replace('/[^A-Za-z0-9_\-]/','', (string)$in['machine']) : '';
+        $tier = ((($db['customers'][$key]['tier'] ?? 'free')) === 'pro') ? 'Pro' : 'free';
+        $txt = ":speech_balloon: *365 PC Manager beta feedback* from *".$esc($nm)."* (".$tier.")"
+             . ($mc !== '' ? " \xC2\xB7 machine `".substr($mc,0,12)."`" : "")
+             . "\n> ".str_replace("\n", "\n> ", $esc($msg));
+        $ch = curl_init($SLACK_WEBHOOK);
+        curl_setopt_array($ch, array(CURLOPT_POST=>true, CURLOPT_RETURNTRANSFER=>true, CURLOPT_TIMEOUT=>6,
+            CURLOPT_HTTPHEADER=>array('Content-Type: application/json'),
+            CURLOPT_POSTFIELDS=>json_encode(array('text'=>$txt, 'unfurl_links'=>false))));
+        curl_exec($ch); curl_close($ch);
+    }
+    out(array('ok'=>true));
+}
+
 // Family View: with the customer's explicit in-app consent, create (or replace) a share
 // token so someone they trust can see a read-only health glance at /family/?c=TOKEN.
 // Minimal by design - the page shows health basics only. famstop revokes instantly.

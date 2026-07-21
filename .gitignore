@@ -61,3 +61,5 @@ api/pcm-bkpoll-cache.json.tmp
 api/pcm-waitlist.json
 api/pcm-waitlist.json.tmp
 api/pcm-waitlist-rate.json
+api/pcm-fb-rate.json
+api/pcm-fb-rate.json.tmp
