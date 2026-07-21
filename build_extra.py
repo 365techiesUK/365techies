@@ -16894,6 +16894,22 @@ def write_portal_page():
       b2.onclick = function () { selDay = b2.getAttribute('data-d'); buildStrip(); renderDay(selDay); };
     });
   }
+  function clientCard(c) {
+    var rows = [];
+    if (c.email) rows.push('\\u2709\\ufe0f <a href="mailto:' + esc(c.email) + '">' + esc(c.email) + '</a>');
+    if (c.phone) rows.push('\\ud83d\\udcde <a href="tel:' + esc((c.phone || '').replace(/\\s/g, '')) + '">' + esc(c.phone) + '</a>');
+    var addr = [c.address1, c.address2, c.city, c.zip].filter(function (x) { return x && ('' + x).trim(); });
+    var out = '';
+    if (rows.length) out += '<div>' + rows.join(' &middot; ') + '</div>';
+    if (addr.length) {
+      var a = addr.map(function (x) { return esc(x); }).join(', ');
+      var q = encodeURIComponent(addr.join(', '));
+      out += '<div>\\ud83d\\udccd ' + a + ' &middot; <a href="https://www.google.com/maps/search/?api=1&query=' + q + '" target="_blank" rel="noopener">Open in Maps</a></div>';
+    } else {
+      out += '<div class="quiet">No postal address on file \\u2014 add it in SimplyBook.</div>';
+    }
+    return out;
+  }
   function bookingRow(b, i, prefix) {
     var chip = b.st === 'completed' ? ' <span class="chip c">\u2714 completed</span>'
              : b.st === 'confirmed' ? ' <span class="chip g">\u2713 confirmed</span>' : '';
@@ -16901,6 +16917,8 @@ def write_portal_page():
     return '<div class="tline' + cls + '"><span class="ttime">' + fmtTime(b.tm) + '</span><div class="tblock">'
       + '<strong>' + esc(b.who) + '</strong> \u00b7 ' + esc(b.what) + chip
       + '<br />' + (b.phone ? '<a href="tel:' + esc(b.phone.replace(/\\s/g, '')) + '" class="tphone">\\ud83d\\udcde ' + esc(b.phone) + '</a>' : '<span class="quiet">no number on file - check SimplyBook</span>')
+      + (b.email ? ' <a href="mailto:' + esc(b.email) + '" class="tphone">\\u2709\\ufe0f ' + esc(b.email) + '</a>' : '')
+      + (b.cid ? ' <button class="sm ghost cib" data-cid="' + esc(b.cid) + '" data-p="' + prefix + i + '">\\ud83d\\udccd Details</button>' : '')
       + '</div>'
       + '<div class="amenu"><button class="sm ghost ab2" data-p="' + prefix + i + '">\u22ef Actions</button>'
       + '<div class="adrop" id="ad' + prefix + i + '">'
@@ -16909,6 +16927,7 @@ def write_portal_page():
       + '<button data-act="move" data-id="' + b.id + '" data-p="' + prefix + i + '">\u2194 Move\u2026</button>'
       + '<button data-act="cancel" data-id="' + b.id + '" style="color:var(--pbad)">\u2715 Cancel\u2026</button>'
       + '</div></div></div>'
+      + '<div class="cip" id="cip' + prefix + i + '" style="display:none;padding:.5rem .75rem;margin:-.15rem 0 .55rem 3.1rem;font-size:.92rem;border-left:2px solid rgba(125,170,220,.35);line-height:1.7"></div>'
       + '<div class="mvp" id="mvp' + prefix + i + '" style="display:none"></div>';
   }
   function bindBookingButtons(container, list) {
@@ -16934,6 +16953,22 @@ def write_portal_page():
           var rw = btn.closest ? btn.closest('.tline') : null;
           if (rw) rw.classList.add('zup');
         }
+      };
+    });
+    Array.prototype.forEach.call(container.querySelectorAll('.cib'), function (btn) {
+      btn.onclick = function (ev) {
+        ev.stopPropagation();
+        var p = btn.getAttribute('data-p'), cid = btn.getAttribute('data-cid');
+        var panel = document.getElementById('cip' + p); if (!panel) return;
+        if (panel.style.display !== 'none') { panel.style.display = 'none'; return; }
+        if (panel.getAttribute('data-loaded') === '1') { panel.style.display = ''; return; }
+        panel.style.display = ''; panel.innerHTML = '<span class="quiet">Loading contact\\u2026</span>';
+        post(BK, { action: 'clientinfo', stoken: S.stoken, machine: mid(), cid: cid })
+          .then(function (r) {
+            if (!r || !r.ok || !r.client) { panel.innerHTML = '<span class="quiet">Couldn\\u2019t load contact details.</span>'; return; }
+            panel.innerHTML = clientCard(r.client); panel.setAttribute('data-loaded', '1');
+          })
+          .catch(function () { panel.innerHTML = '<span class="quiet">Couldn\\u2019t reach the server.</span>'; });
       };
     });
     document.addEventListener('click', closeAll);

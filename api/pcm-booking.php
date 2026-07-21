@@ -1287,6 +1287,11 @@ if ($action === 'agenda') {
         $ph = '';
         foreach (array('client_phone', 'phone', 'client_mobile') as $pk) if (!empty($b[$pk])) { $ph = (string)$b[$pk]; break; }
         if ($ph === '' && isset($b['client']) && is_array($b['client']) && !empty($b['client']['phone'])) $ph = (string)$b['client']['phone'];
+        // email + client id, where getBookings exposes them (else the Details button fetches the full card)
+        $em = '';
+        foreach (array('client_email', 'email') as $ek) if (!empty($b[$ek])) { $em = (string)$b[$ek]; break; }
+        if ($em === '' && isset($b['client']) && is_array($b['client']) && !empty($b['client']['email'])) $em = (string)$b['client']['email'];
+        $cid = (int)(isset($b['client_id']) ? $b['client_id'] : (isset($b['client']) && is_array($b['client']) && isset($b['client']['id']) ? $b['client']['id'] : 0));
         $bid = (int)(isset($b['id']) ? $b['id'] : 0);
         // status: our staff marker first; else SimplyBook's own Status-feature id mapped by
         // name; else SB's legacy confirm flag. So the portal shows the truth from either side.
@@ -1313,6 +1318,8 @@ if ($action === 'agenda') {
                         'tm' => $ts ? date('H:i', $ts) : '',
                         'who' => $cname,
                         'phone' => $ph,
+                        'email' => $em,
+                        'cid' => $cid,
                         'st' => $st,
                         'conf' => $st === 'confirmed',
                         'what' => (string)(isset($b['event_name']) ? $b['event_name'] : (isset($b['event']) ? $b['event'] : 'Service')),
@@ -1320,6 +1327,30 @@ if ($action === 'agenda') {
         if (count($list) >= 120) break;
     }
     out(array('ok' => true, 'bookings' => $list));
+}
+
+// staff: full contact card for ONE client (email + phone + postal address) - fetched
+// on demand from getClient by id, so the diary list stays a single cheap getBookings
+// call. Staff-session only. SimplyBook keeps one standard phone + address1/2/city/zip.
+if ($action === 'clientinfo') {
+    if (!$HAS_ADMIN) fail('not_configured');
+    need_staff();
+    $cid = (int)(isset($in['cid']) ? $in['cid'] : 0);
+    if ($cid <= 0) fail('bad_request');
+    $r = sb_adm('getClient', array($cid));
+    // some SimplyBook editions expose the single-client fetch as getClientInfo - fall back
+    if (sb_net($r) || (isset($r['error']) && empty($r['result']))) {
+        $r2 = sb_adm('getClientInfo', array($cid));
+        if (!sb_net($r2) && !empty($r2['result'])) $r = $r2;
+    }
+    if (sb_net($r)) fail('sb_unavailable');
+    $c = isset($r['result']) && is_array($r['result']) ? $r['result'] : array();
+    $g = function ($k) use ($c) { return isset($c[$k]) ? trim(preg_replace('/[\x00-\x1F\x7F]+/', ' ', (string)$c[$k])) : ''; };
+    out(array('ok' => true, 'client' => array(
+        'name' => $g('name'), 'email' => $g('email'), 'phone' => $g('phone'),
+        'address1' => $g('address1'), 'address2' => $g('address2'),
+        'city' => $g('city'), 'zip' => $g('zip')
+    )));
 }
 
 // SimplyBook's Status feature (the owner uses named statuses incl. "Confirmed" and
