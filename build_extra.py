@@ -15426,9 +15426,9 @@ def custom_dashboards():
     content = "\n".join([
       hero(bc("Custom VRM Dashboards"), "// CUSTOM DASHBOARDS &middot; WORLDWIDE",
            'Custom dashboards for your <em class="grad grad--green">Victron VRM</em> system',
-           bp.hero_trust("Your Victron system, your dashboard, your way &mdash; any layout, any KPI, several installations on one live screen, hosted on the web so you can view it anywhere in the world. Designed, built and supported for you by the family firm that runs its own van on one. Scroll down: the demo on this page is <strong>live</strong>."),
+           bp.hero_trust("Your Victron system, your dashboard, your way &mdash; any layout, any KPI, several installations on one live screen, hosted on the web so you can view it anywhere in the world. Designed, built and supported for you by the family firm that runs its own van on one &mdash; and a <a href=\"https://professional.victronenergy.com/app/software-integrators-program\" target=\"_blank\" rel=\"noopener\"><strong>Victron Recommended Software Integrator</strong></a>. Scroll down: the demo on this page is <strong>live</strong>."),
            cta1=("Book a Free Demo", "#quote"), cta2=("Call +44 1202 775566", "tel:+441202775566"),
-           chips=["Live demo below &mdash; real data", "Worldwide &middot; done for you", "Beyond Victron too"]),
+           chips=["&#10003; Victron Recommended Software Integrator", "Live demo below &mdash; real data", "Worldwide &middot; done for you"]),
       VDASH,
       COMPARE,
       VFLEET,
@@ -15469,7 +15469,7 @@ def custom_dashboards():
           <p class="eyebrow mono">/06 &mdash; FOR VICTRON INSTALLERS</p>
           <h2 class="section-title" data-title>Installers: give your customers a dashboard VRM can&rsquo;t<span class="title-underline"></span></h2>
           <p>You fit brilliant systems &mdash; then hand customers the same VRM portal as everyone else. There&rsquo;s no white-label VRM (the long-requested &ldquo;Dealer ID&rdquo; branding feature never shipped), and the Fleet dashboard only unlocks at ten-plus sites.</p>
-          <p><strong>We build the dashboard layer for you:</strong> your branding, your customer&rsquo;s layout, hosted and supported by us, or set up on a subdomain of your own website &mdash; you stay the installer and the hero. It&rsquo;s a clean add-on to quote on every job, and a reason customers pick you over the next quote. Victron itself encourages exactly this kind of work through its Software Integrator Program &mdash; dashboards built on the official VRM API.</p>
+          <p><strong>We build the dashboard layer for you:</strong> your branding, your customer&rsquo;s layout, hosted and supported by us, or set up on a subdomain of your own website &mdash; you stay the installer and the hero. It&rsquo;s a clean add-on to quote on every job, and a reason customers pick you over the next quote. And we&rsquo;re a <strong>Victron Recommended Software Integrator</strong> &mdash; listed in Victron&rsquo;s own network of vetted integrators, building on the official VRM API.</p>
           <p>We&rsquo;re happy working behind the scenes or alongside you &mdash; <a href="#quote">talk to us about a partner arrangement</a>.</p>
         </div>
         <ul class="checklist" data-stagger>
