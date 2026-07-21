@@ -705,6 +705,48 @@
         <ul class="page-hero__chips mono"><li>&#9679; Free forever</li><li>&#9679; Made in Dorset</li><li>&#9679; Coming soon</li></ul>
       </div>
     </section>
+    <section class="section" aria-label="Try the live demo" style="padding-top:1rem;position:relative;overflow:hidden">
+      <div aria-hidden="true" style="position:absolute;left:50%;top:2%;transform:translateX(-50%);width:80%;height:70%;background:radial-gradient(ellipse at center,rgba(29,151,227,.2),rgba(29,151,227,0) 70%);filter:blur(50px);pointer-events:none;z-index:0"></div>
+      <div class="wrap" style="max-width:1000px;position:relative;z-index:1">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// PLAY WITH IT &middot; LIVE 3D DEMO</p>
+          <h2 class="section-title section-title--center" data-title>See your PC in 3D &mdash; hover any gauge<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>This is the real 365 PC Manager dashboard, running live in your browser. Hover or tap a dial and the device turns to that part, with a plain-English verdict. <strong>Sample data, honestly</strong> &mdash; it&rsquo;ll be your own PC&rsquo;s numbers at launch.</p>
+        </div>
+        <div id="pcmdemo" data-reveal style="position:relative;margin:1.2rem auto 0;border-radius:18px;overflow:hidden;border:1px solid rgba(125,170,220,.3);box-shadow:0 34px 80px rgba(0,0,0,.55);aspect-ratio:16/10;background:#0a1226">
+          <img src="/images/pcm-laptop-health.png" width="2080" height="1620" alt="365 PC Manager live 3D dashboard preview" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transition:opacity .3s" loading="lazy" decoding="async" />
+          <button type="button" id="pcmdemoload" aria-label="Launch the live 3D demo" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.7rem;background:rgba(7,13,34,.42);border:0;cursor:pointer;color:#fff">
+            <span style="width:76px;height:76px;border-radius:50%;background:rgba(29,151,227,.94);display:flex;align-items:center;justify-content:center;font-size:1.9rem;padding-left:6px;box-shadow:0 12px 32px rgba(0,0,0,.45)">&#9654;</span>
+            <span class="mono" style="font-size:.8rem;letter-spacing:.05em">Launch the live 3D demo</span>
+          </button>
+        </div>
+        <p class="mono" style="font-size:.72rem;color:var(--muted);margin:.8rem 0 0;text-align:center">Best on a computer &middot; loads a 3D model (~5&nbsp;MB) &middot; sample data, honestly badged</p>
+      </div>
+      <script>
+        (function(){
+          var box=document.getElementById('pcmdemo'), btn=document.getElementById('pcmdemoload'); if(!box) return;
+          var mounted=false;
+          function mount(){
+            if(mounted) return; mounted=true;
+            var f=document.createElement('iframe');
+            f.src='/system-monitoring-demo/'; f.title='365 PC Manager live 3D demo'; f.setAttribute('loading','lazy');
+            f.style.cssText='position:absolute;inset:0;width:100%;height:100%;border:0;display:block;background:#0a1226;z-index:2';
+            box.appendChild(f);
+            if(btn){ btn.style.display='none'; }
+            var img=box.querySelector('img'); if(img){ img.style.opacity='0'; }
+          }
+          if(btn){ btn.addEventListener('click', mount); }
+          var reduce=false; try{ reduce=window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
+          var gl=false; try{ var c=document.createElement('canvas'); gl=!!(c.getContext('webgl2')||c.getContext('experimental-webgl2')); }catch(e){}
+          var coarse=false; try{ coarse=window.matchMedia && matchMedia('(pointer:coarse)').matches; }catch(e){}
+          var capable = gl && !reduce && !coarse && window.innerWidth>=900;
+          if(capable && 'IntersectionObserver' in window){
+            var io=new IntersectionObserver(function(es){ es.forEach(function(en){ if(en.isIntersecting){ mount(); io.disconnect(); } }); }, {rootMargin:'250px'});
+            io.observe(box);
+          }
+        })();
+      </script>
+    </section>
     <section class="section" aria-label="Why you can trust us" style="padding-top:1.1rem;padding-bottom:0">
       <div class="wrap">
         <div class="mono" data-reveal style="display:flex;flex-wrap:wrap;gap:.55rem 1.5rem;justify-content:center;align-items:center;font-size:.74rem;color:var(--muted);letter-spacing:.03em">
