@@ -15445,6 +15445,21 @@ def custom_dashboards():
            bp.hero_trust("Your Victron system, your dashboard, your way &mdash; any layout, any KPI, several installations on one live screen, hosted on the web so you can view it anywhere in the world. Designed, built and supported for you by the family firm that runs its own van on one &mdash; and a <a href=\"https://professional.victronenergy.com/app/software-integrators-program\" target=\"_blank\" rel=\"noopener\"><strong>Victron Recommended Software Integrator</strong></a>. Scroll down: the demo on this page is <strong>live</strong>."),
            cta1=("Book a Free Demo", "#quote"), cta2=("Call +44 1202 775566", "tel:+441202775566"),
            chips=["&#10003; Victron Recommended Software Integrator", "Live demo below &mdash; real data", "Worldwide &middot; done for you"]),
+      '''    <section class="section" aria-label="Why you can trust us" style="padding-top:1.1rem;padding-bottom:0">
+      <div class="wrap">
+        <div class="mono" data-reveal style="display:flex;flex-wrap:wrap;gap:.55rem 1.4rem;justify-content:center;align-items:center;font-size:.74rem;color:var(--muted);letter-spacing:.03em">
+          <a href="https://professional.victronenergy.com/app/software-integrators-program" target="_blank" rel="noopener" style="color:var(--pgood,#00ce1b);text-decoration:none;font-weight:700">&#10003; Victron Recommended Software Integrator</a>
+          <span style="color:var(--faint)">&middot;</span>
+          <a href="/reviews/" style="color:inherit;text-decoration:none">&#9733; 4.9 on Google</a>
+          <span style="color:var(--faint)">&middot;</span>
+          <span>Family-run in Dorset since 1995</span>
+          <span style="color:var(--faint)">&middot;</span>
+          <span>Worldwide &mdash; done for you</span>
+          <span style="color:var(--faint)">&middot;</span>
+          <a href="tel:+441202775566" style="color:inherit;text-decoration:none">+44&nbsp;1202&nbsp;775566</a>
+        </div>
+      </div>
+    </section>''',
       VDASH,
       COMPARE,
       VFLEET,
