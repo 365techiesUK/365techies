@@ -1050,7 +1050,9 @@ function need_staff() {
         && (isset($s['ts'])  ? $s['ts']  : 0) > time() - $slide         // sliding idle window
         && (isset($s['iat']) ? $s['iat'] : 0) > time() - $cap           // absolute cap
         && !empty($s['machine']) && $s['machine'] === $machine;         // STRICTLY bound to its machine (fail closed)
-    if ($ok) { $db['staff'][$tok]['ts'] = time(); db_save($db); }
+    // refresh the sliding "last seen" at most every ~5 min, so frequent polls (the diary's
+    // 15s status poll) don't rewrite the whole shared DB on every single request
+    if ($ok && (isset($s['ts']) ? $s['ts'] : 0) < time() - 300) { $db['staff'][$tok]['ts'] = time(); db_save($db); }
     db_close($lk);
     if (!$ok) fail('not_staff');
     return $tok;
@@ -1297,7 +1299,7 @@ if ($action === 'agenda') {
         // name; else SB's legacy confirm flag. So the portal shows the truth from either side.
         $bmr = isset($bm[(string)$bid]) ? $bm[(string)$bid] : null;
         $st = $bmr ? (string)(isset($bmr['st']) ? $bmr['st'] : (!empty($bmr['confirmed']) ? 'confirmed' : '')) : '';
-        if ($st === '' && !empty($b['status_id'])) {
+        if ($st === '' && !(is_array($bmr) && !empty($bmr['cleared'])) && !empty($b['status_id'])) {
             if ($stMap === null) {
                 $stMap = array();
                 foreach (sb_statuses() as $sx) {
@@ -1353,6 +1355,35 @@ if ($action === 'clientinfo') {
     )));
 }
 
+// staff: ultra-light realtime status poll for the diary. Reads ONLY our bkmeta store
+// (written instantly by staffstatus, and by the SimplyBook->bkmeta poll cron) - no
+// SimplyBook API call, so it is safe to hit every ~15s from every open diary tab.
+if ($action === 'bkstatus') {
+    if (!$HAS_ADMIN) fail('not_configured');
+    // Hot path (polled every 15s): validate the staff token inline from a SINGLE read with NO
+    // write (need_staff() would db_save the whole shared DB each call - far too heavy to poll).
+    $tok = isset($in['stoken']) ? preg_replace('/[^a-f0-9]/', '', (string)$in['stoken']) : '';
+    if ($tok === '') fail('not_staff');
+    $ids = isset($in['ids']) && is_array($in['ids']) ? array_slice($in['ids'], 0, 250) : array();
+    list($lk, $db) = db_open(); db_close($lk);
+    $s = isset($db['staff'][$tok]) ? $db['staff'][$tok] : null;
+    $slide = (!empty($s['trust']) ? 2592000 : 43200);
+    $cap   = (!empty($s['trust']) ? 7776000 : 43200);
+    $ok = $s && (isset($s['ts']) ? $s['ts'] : 0) > time() - $slide && (isset($s['iat']) ? $s['iat'] : 0) > time() - $cap
+          && !empty($s['machine']) && $s['machine'] === $machine;
+    if (!$ok) fail('not_staff');
+    $bm = isset($db['bkmeta']) && is_array($db['bkmeta']) ? $db['bkmeta'] : array();
+    $st = array();
+    foreach ($ids as $id) {
+        $id = (int)$id; if ($id <= 0 || !isset($bm[(string)$id])) continue;
+        $e = $bm[(string)$id]; $sv = (string)(isset($e['st']) ? $e['st'] : '');
+        if ($sv !== '') $st[(string)$id] = $sv;                 // a real Confirmed / Completed
+        elseif (!empty($e['cleared'])) $st[(string)$id] = '';   // an explicit staff CLEAR -> propagate the blank
+        // else a seeded-empty entry -> OMIT it, so the agenda's SimplyBook-derived value is kept (no downgrade)
+    }
+    out(array('ok' => true, 'st' => $st));
+}
+
 // SimplyBook's Status feature (the owner uses named statuses incl. "Confirmed" and
 // "Completed"): getStatuses is cached 10 min; statuses are matched by name so it works
 // whatever exact labels they configured.
@@ -1394,7 +1425,8 @@ if ($action === 'staffstatus') {
     list($lk, $db) = db_open();
     if (!isset($db['bkmeta'])) $db['bkmeta'] = array();
     foreach ($db['bkmeta'] as $k2 => $v2) if ((isset($v2['ts']) ? $v2['ts'] : 0) < time() - 86400 * 90) unset($db['bkmeta'][$k2]);
-    if ($want === 'none') unset($db['bkmeta'][(string)$bid]);
+    // keep a marker even when cleared (st='') so the diary's realtime poll propagates the clear
+    if ($want === 'none') $db['bkmeta'][(string)$bid] = array('st' => '', 'cleared' => 1, 'ts' => time(), 'sb' => $sb ? 1 : 0);
     else $db['bkmeta'][(string)$bid] = array('st' => $want, 'ts' => time(), 'sb' => $sb ? 1 : 0);
     $sr = isset($db['staff'][$stok]) ? $db['staff'][$stok] : array();
     $staffWho = (string)(isset($sr['email']) ? $sr['email'] : (isset($sr['name']) ? $sr['name'] : ''));

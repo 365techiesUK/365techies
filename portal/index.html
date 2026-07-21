@@ -656,6 +656,16 @@
   #p365app .tphone { font-size:.95rem; font-weight:600; color:var(--psoft); }
   #p365app .tline.confd { background:rgba(0,206,27,.05); border-radius:8px; padding-left:.4rem; padding-right:.4rem; }
   #p365app .chip.c { color:var(--pcyan); border-color:rgba(29,151,227,.4); }
+  #p365app .bkchip { display:inline-flex; align-items:center; gap:.28rem; font-size:.72rem; font-weight:600; letter-spacing:.01em; padding:.2rem .6rem; border-radius:999px; border:1px solid var(--pline); color:var(--pmut); background:rgba(125,170,220,.06); vertical-align:middle; white-space:nowrap; transition:background .3s,color .3s,border-color .3s; }
+  #p365app .bkchip.conf { color:var(--pgood); border-color:rgba(0,206,27,.42); background:rgba(0,206,27,.11); }
+  #p365app .bkchip.done { color:var(--pcyan); border-color:rgba(29,151,227,.42); background:rgba(29,151,227,.11); }
+  #p365app .bkchip.pend { color:var(--pmut); border-color:var(--pline); background:rgba(125,170,220,.05); }
+  #p365app .tline.bkflash { animation:bkflash 1.5s ease; border-radius:8px; }
+  @keyframes bkflash { 0%{ box-shadow:0 0 0 0 rgba(29,151,227,.55); background:rgba(29,151,227,.13); } 45%{ box-shadow:0 0 0 4px rgba(29,151,227,.22); } 100%{ box-shadow:0 0 0 0 rgba(29,151,227,0); background:transparent; } }
+  #p365app .dlive { display:inline-flex; align-items:center; gap:.34rem; font-size:.58rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--pmut); vertical-align:middle; margin-left:.5rem; }
+  #p365app .dlive i { width:7px; height:7px; border-radius:50%; background:var(--pgood); animation:dlivep 2.2s ease-in-out infinite; }
+  @keyframes dlivep { 0%,100%{ opacity:.4; box-shadow:0 0 0 0 rgba(0,206,27,.5); } 50%{ opacity:1; box-shadow:0 0 5px 1px rgba(0,206,27,.55); } }
+  @media (prefers-reduced-motion:reduce){ #p365app .dlive i,#p365app .tline.bkflash{ animation:none; } }
   #p365app .tline.done { opacity:.68; }
   #p365app .tline.done .ttime { color:var(--pmut); }
   #p365app .nbbtn { width:100%; font-size:1.02rem; padding:.75rem 1rem; margin:.1rem 0 .6rem; background:var(--pgood); color:#06220b; font-weight:800; letter-spacing:.01em; }
@@ -1519,11 +1529,12 @@
     post(BK, { action: 'staffcustomers', stoken: S.stoken, machine: mid() }).then(function (d) {
       if (!d || !d.ok) { showSignin('Staff session expired (12h) - sign in again.'); return; }
       var h = topRow('365 staff \u00b7 ' + esc(S.email || ''));
-      h += '<div class="card"><h2>\ud83d\udcc5 Diary</h2>'
+      h += '<div class="card"><h2>\ud83d\udcc5 Diary <span class="dlive" id="dlive" title="Booking statuses update automatically \u2013 no need to refresh"><i></i>Live</span></h2>'
         + '<button class="nbbtn" id="nbopen">\u2795 Book a new job</button>'
         + '<div class="nbwiz" id="nbwiz" style="display:none"></div>'
         + '<input id="dsearch" placeholder="Search a customer\u2019s upcoming bookings (name or phone)\u2026" autocomplete="off" name="pcm-dsearch" />'
-        + '<div class="dstrip" id="dstrip"></div><div id="dday"><p class="quiet">Loading the diary\u2026</p></div></div>';
+        + '<div class="dstrip" id="dstrip"></div><div id="dday"><p class="quiet">Loading the diary\u2026</p></div>'
+        + '<span id="dann" aria-live="polite" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap"></span></div>';
       h += '<div class="card" style="border-left:4px solid var(--pwarn)"><h2>\ud83d\udcde Worth a call today</h2>'
         + '<p class="quiet" style="margin:.1rem 0 .6rem">The PCs that could do with a friendly call \u2014 ranked by what needs attention. Proactive care, before they even ring us.</p>'
         + '<div id="worthcall"><p class="quiet">Checking the fleet\u2026</p></div></div>';
@@ -1655,8 +1666,41 @@
       AG = d.bookings || [];
       if (!selDay) selDay = todayIso();
       buildStrip(); renderDay(selDay);
+      startDiaryPoll();
     }).catch(function () { var v = document.getElementById('dday'); if (v) v.innerHTML = '<p class="quiet">Couldn\u2019t load the diary.</p>'; });
   }
+  // ---- realtime booking-status poll: updates the chips in place, no page refresh ----
+  var DPOLL = null, DVIS = false;
+  function diaryStatusIds() { var ids = []; Array.prototype.forEach.call(document.querySelectorAll('#p365app .tline[data-bid]'), function (r) { var b = r.getAttribute('data-bid'); if (b) ids.push(b); }); return ids; }
+  function applyStatuses(map) {
+    if (!map) return;
+    [AG, AG60].forEach(function (arr) { if (arr) arr.forEach(function (b) { if (b && Object.prototype.hasOwnProperty.call(map, '' + b.id)) b.st = map['' + b.id]; }); });
+    Object.keys(map).forEach(function (id) {
+      var row = document.querySelector('#p365app .tline[data-bid="' + id + '"]'); if (!row) return;
+      var chipEl = row.querySelector('.bkchip'); var cur = chipEl ? chipEl.getAttribute('data-st') : null;
+      var ns = map[id]; if (cur === ns) return;   // unchanged -> no flash
+      if (chipEl) { var t = document.createElement('span'); t.innerHTML = statusChip(ns); var nc = t.firstChild; if (nc) chipEl.parentNode.replaceChild(nc, chipEl); }
+      row.classList.remove('confd', 'done'); if (ns === 'confirmed') row.classList.add('confd'); else if (ns === 'completed') row.classList.add('done');
+      row.classList.remove('bkflash'); void row.offsetWidth; row.classList.add('bkflash');
+      // keep the Actions-menu labels honest (they toggle on status) + announce for screen readers
+      var cb = row.querySelector('[data-act="confirmed"]'); if (cb) cb.textContent = (ns === 'confirmed' ? 'Un-confirm' : '✓ Confirm booking');
+      var pb = row.querySelector('[data-act="completed"]'); if (pb) pb.textContent = (ns === 'completed' ? 'Not completed' : '✔ Service completed');
+      var ann = document.getElementById('dann'), nm = row.querySelector('.tblock strong');
+      if (ann) ann.textContent = (nm ? nm.textContent : 'A booking') + ' — ' + (ns === 'completed' ? 'Completed' : (ns === 'confirmed' ? 'Confirmed' : 'Awaiting'));
+    });
+  }
+  function pollStatuses() {
+    if (document.hidden) return;
+    if (!document.getElementById('dday')) { stopDiaryPoll(); return; }
+    var ids = diaryStatusIds(); if (!ids.length) return;
+    post(BK, { action: 'bkstatus', stoken: S.stoken, machine: mid(), ids: ids })
+      .then(function (r) { if (r && r.ok) applyStatuses(r.st); }).catch(function () {});
+  }
+  function startDiaryPoll() {
+    stopDiaryPoll(); DPOLL = setInterval(pollStatuses, 15000);
+    if (!DVIS) { DVIS = true; document.addEventListener('visibilitychange', function () { if (!document.hidden && DPOLL) pollStatuses(); }); }
+  }
+  function stopDiaryPoll() { if (DPOLL) { clearInterval(DPOLL); DPOLL = null; } }
   function buildStrip() {
     var s = document.getElementById('dstrip'); if (!s) return;
     var counts = {};
@@ -1672,6 +1716,12 @@
       b2.onclick = function () { selDay = b2.getAttribute('data-d'); buildStrip(); renderDay(selDay); };
     });
   }
+  function statusChip(st) {
+    var c = st === 'completed' ? 'done' : (st === 'confirmed' ? 'conf' : 'pend');
+    var t = st === 'completed' ? '✔ Completed' : (st === 'confirmed' ? '✓ Confirmed' : '● Awaiting');
+    return '<span class="bkchip ' + c + '" data-st="' + st + '">' + t + '</span>';
+  }
+  function stCls(st) { return st === 'completed' ? ' done' : (st === 'confirmed' ? ' confd' : ''); }
   function clientCard(c) {
     var rows = [];
     if (c.email) rows.push('\u2709\ufe0f <a href="mailto:' + esc(c.email) + '">' + esc(c.email) + '</a>');
@@ -1689,11 +1739,9 @@
     return out;
   }
   function bookingRow(b, i, prefix) {
-    var chip = b.st === 'completed' ? ' <span class="chip c">✔ completed</span>'
-             : b.st === 'confirmed' ? ' <span class="chip g">✓ confirmed</span>' : '';
-    var cls = b.st === 'completed' ? ' done' : (b.st === 'confirmed' ? ' confd' : '');
-    return '<div class="tline' + cls + '"><span class="ttime">' + fmtTime(b.tm) + '</span><div class="tblock">'
-      + '<strong>' + esc(b.who) + '</strong> · ' + esc(b.what) + chip
+    var cls = stCls(b.st);
+    return '<div class="tline' + cls + '" data-bid="' + esc(b.id) + '"><span class="ttime">' + fmtTime(b.tm) + '</span><div class="tblock">'
+      + '<strong>' + esc(b.who) + '</strong> · ' + esc(b.what) + ' ' + statusChip(b.st)
       + '<br />' + (b.phone ? '<a href="tel:' + esc(b.phone.replace(/\s/g, '')) + '" class="tphone">\ud83d\udcde ' + esc(b.phone) + '</a>' : '<span class="quiet">no number on file - check SimplyBook</span>')
       + (b.email ? ' <a href="mailto:' + esc(b.email) + '" class="tphone">\u2709\ufe0f ' + esc(b.email) + '</a>' : '')
       + (b.cid ? ' <button class="sm ghost cib" data-cid="' + esc(b.cid) + '" data-p="' + prefix + i + '">\ud83d\udccd Details</button>' : '')
