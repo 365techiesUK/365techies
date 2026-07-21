@@ -15733,9 +15733,33 @@ def _refurb_reserve_band(slug):
       </style>
     </section>''')
 
+# Victron cluster pages carry the Recommended Software Integrator credential (accepted + listed 2026).
+# Text credential only - no Victron logo until their brand-usage rules are confirmed.
+VICTRON_CRED_SLUGS = {
+    "white-label-victron-monitoring", "victron-vrm-api-dashboard", "customise-victron-vrm-dashboard",
+    "motorhome-hire-fleet-monitoring", "victron-grafana-dashboard-service", "glamping-power-monitoring",
+    "embed-victron-vrm-on-website", "cerbo-gx-mqtt-dashboard", "victron-vrm-tv-kiosk-display",
+    "off-grid-holiday-let-monitoring", "victron-gps-tracking", "cerbo-gx-gps", "victron-boat-gps-tracking",
+}
+VICTRON_CRED_BAND = '''    <section class="section" aria-label="Victron credential" style="padding-top:1.1rem;padding-bottom:0">
+      <div class="wrap">
+        <div class="mono" data-reveal style="display:flex;flex-wrap:wrap;gap:.55rem 1.4rem;justify-content:center;align-items:center;font-size:.74rem;color:var(--muted);letter-spacing:.03em">
+          <a href="https://professional.victronenergy.com/app/software-integrators-program" target="_blank" rel="noopener" style="color:var(--pgood,#00ce1b);text-decoration:none;font-weight:700">&#10003; Victron Recommended Software Integrator</a>
+          <span style="color:var(--faint)">&middot;</span>
+          <a href="/reviews/" style="color:inherit;text-decoration:none">&#9733; 4.9 on Google</a>
+          <span style="color:var(--faint)">&middot;</span>
+          <span>Family-run in Dorset since 1995</span>
+          <span style="color:var(--faint)">&middot;</span>
+          <a href="/custom-vrm-dashboards/" style="color:inherit;text-decoration:none">See our live van dashboard &#8594;</a>
+        </div>
+      </div>
+    </section>'''
+
 def build_new_page(d):
     faqs = [(f['q'], f['a']) if isinstance(f, dict) else tuple(f) for f in d['faqs']]
     _blocks = [_sec_block(s, i) for i, s in enumerate(d['sections'])]
+    if d['slug'] in VICTRON_CRED_SLUGS:
+        _blocks.insert(0, VICTRON_CRED_BAND)
     # help-ASAP funnel: problem-intent pages get the SOS band right after section 1
     if _wants_sos_band(d['slug']) and len(_blocks) > 1:
         _blocks.insert(1, bp.SOS_BAND)
