@@ -1282,7 +1282,7 @@ if ($action === 'agenda') {
     foreach ($rows as $b) {
         $start = parse_start($b);
         $ts = strtotime($start);
-        if ($ts && $ts < time() - 3600) continue;
+        if ($ts && $ts < strtotime('today')) continue;   // keep the WHOLE of today in the diary (incl. jobs whose time has passed), not just the next hour onward
         $cname = (string)(isset($b['client']) ? $b['client'] : (isset($b['client_name']) ? $b['client_name'] : ''));
         if ($cname === '' && isset($b['client_id'])) $cname = 'client #' . $b['client_id'];
         // phone lives under different keys depending on the SB response shape
