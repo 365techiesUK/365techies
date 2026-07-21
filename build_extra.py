@@ -651,7 +651,8 @@ def pcm_landing():
                       app,
                       faqpage(s, _faqs)])
     add(slug=slug, title="Free PC Health Check for Windows | 365 PC Manager",
-        desc=desc, og_title="Free PC Health Check - 365 PC Manager | 365 Techies", schema=schema, content=content)
+        desc=desc, og_title="Free PC Health Check - 365 PC Manager | 365 Techies", schema=schema, content=content,
+        og_image=bp.SITE + "/images/pcm-og.jpg")
 pcm_landing()
 
 # ===================================================== PLAN FINDER (quiz)

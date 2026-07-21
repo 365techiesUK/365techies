@@ -758,9 +758,11 @@ def _meta_desc(d, limit=158):
             cut = cut[:amp]
     return cut.rstrip(" ,.;:&-—") + "&hellip;"
 
-def page(slug, title, desc, og_title, schema_json, content):
+def page(slug, title, desc, og_title, schema_json, content, og_image=None):
     canon = f"{SITE}/{slug}/"
     og_type = "article" if '"BlogPosting"' in schema_json else "website"
+    # Per-page social share card; falls back to the site-wide default.
+    og_img = og_image or f"{SITE}/og-image.jpg"
     # Escape raw double quotes so descriptions that OPEN with a quoted phrase
     # (e.g. '"Cannot start Microsoft Outlook..."') can't terminate the content=""
     # attribute early — that was silently emptying the meta description.
@@ -818,13 +820,13 @@ def page(slug, title, desc, og_title, schema_json, content):
   <meta property="og:url" content="{canon}" />
   <meta property="og:title" content="{og_title}" />
   <meta property="og:description" content="{desc}" />
-  <meta property="og:image" content="{SITE}/og-image.jpg" />
+  <meta property="og:image" content="{og_img}" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="{og_title}" />
   <meta name="twitter:description" content="{desc}" />
-  <meta name="twitter:image" content="{SITE}/og-image.jpg" />
+  <meta name="twitter:image" content="{og_img}" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <link rel="manifest" href="/site.webmanifest" />
@@ -5260,7 +5262,7 @@ def write_all():
     for p in PAGES:
         slug = p["slug"]
         schema_json = p["schema"](slug)
-        html = page(slug, p["title"], p["desc"], p["og_title"], schema_json, p["content"])
+        html = page(slug, p["title"], p["desc"], p["og_title"], schema_json, p["content"], og_image=p.get("og_image"))
         d = os.path.join(BASE, slug)
         os.makedirs(d, exist_ok=True)
         fp = os.path.join(d, "index.html")
