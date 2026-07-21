@@ -15448,6 +15448,33 @@ def custom_dashboards():
       VDASH,
       COMPARE,
       VFLEET,
+      '''    <section class="section section--alt" aria-label="Our Victron specialisations">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// WHAT WE&rsquo;RE RECOGNISED FOR</p>
+          <h2 class="section-title section-title--center" data-title>Our Victron specialisations<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>The same skills and sectors listed on our <a href="https://professional.victronenergy.com/app/software-integrators-program" target="_blank" rel="noopener"><strong>Victron Recommended Software Integrator</strong></a> profile &mdash; so you know exactly what we build on, and who we build it for.</p>
+        </div>
+        <div class="split-2" style="margin-top:1.2rem">
+          <div class="prose" data-reveal>
+            <p class="eyebrow mono">// SOFTWARE WE BUILD ON</p>
+            <ul>
+              <li><strong>Victron VRM API</strong> &mdash; custom dashboards on Victron&rsquo;s official <a href="/victron-vrm-api-dashboard/">VRM API</a>: any KPI, any layout, several sites on one live screen.</li>
+              <li><strong>MQTT</strong> &mdash; live, per-second data straight from the Cerbo GX for genuinely real-time views, not the 15-minute logging interval.</li>
+              <li><strong>Grafana</strong> &mdash; polished <a href="/victron-grafana-dashboard-service/">Grafana dashboards</a> when that&rsquo;s the toolset you&rsquo;d rather have.</li>
+            </ul>
+          </div>
+          <div class="prose" data-reveal>
+            <p class="eyebrow mono">// SECTORS WE BUILD FOR</p>
+            <ul>
+              <li><strong>Professional &amp; recreational vehicles</strong> &mdash; <a href="/motorhome-hire-fleet-monitoring/">motorhome, campervan &amp; hire-fleet monitoring</a>.</li>
+              <li><strong>Professional &amp; leisure marine</strong> &mdash; boat and charter-fleet power monitoring, anywhere in the world.</li>
+              <li><strong>Off-grid &amp; backup</strong> &mdash; off-grid sites, holiday lets, glamping and backup / ESS systems.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>''',
       f'''    <section class="section" aria-label="What can go on your dashboard">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
