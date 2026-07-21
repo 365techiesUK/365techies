@@ -16494,6 +16494,10 @@ def write_portal_page():
       var ngPrimary = null;
       if (ngLive.length) { ngLive.sort(function (a, b) { return (b.seen || '').localeCompare(a.seen || ''); }); ngPrimary = ngLive[0]; }
       if (ngPrimary) {
+        h += '<div class="card" style="border-color:rgba(29,151,227,.5);background:linear-gradient(135deg,rgba(29,151,227,.1),rgba(0,206,27,.05))"><div class="row" style="border:0;padding:0;gap:.7rem;align-items:flex-start">'
+          + '<span class="pill" style="background:rgba(29,151,227,.16);color:#4fb4f5;border:1px solid rgba(29,151,227,.5);white-space:nowrap">\\ud83e\\uddea BETA PREVIEW</span>'
+          + '<div><p style="margin:.1rem 0 .4rem"><strong>This is 365 PC Manager \\u2014 an early, live look.</strong></p>'
+          + '<p class="quiet" style="margin:0">You\\u2019re seeing a work-in-progress preview of <a href="/free-pc-health-check/" target="_blank">365 PC Manager</a>, the free app we\\u2019re building. We\\u2019re perfecting it so we can look after your computer completely \\u2014 and prove a full 365 service, done the very best way we can. Things will still change, and your feedback genuinely shapes it. <a href="mailto:info@365techies.co.uk?subject=365%20PC%20Manager%20feedback">Tell us what you think</a>, or ring 01202 775566.</p></div></div></div>';
         h += ngHero(d, ngPrimary);
         var ngOthers = d.machines.filter(function (mm) { return mm.id !== ngPrimary.id; });
         if (ngOthers.length) h += '<div class="ngh2">Your other computers</div><div class="card">' + ngOthers.map(machineRow).join('') + '</div>';
