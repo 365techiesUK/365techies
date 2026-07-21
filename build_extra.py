@@ -635,21 +635,52 @@ def pcm_landing():
           <h2 class="section-title section-title--center" data-title>Real screenshots &mdash; this is the actual app<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>Nothing mocked up &mdash; these were captured on our own Dell Latitude in the workshop.</p>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:1.2rem;align-items:start" data-stagger>
-          <figure style="margin:0" data-reveal>
-            <img width="2080" height="1620" src="/images/pcm-laptop-health.png" alt="365 PC Manager on a laptop screen - the health tab with a live health score ring, verdict and system glance" loading="lazy" decoding="async" style="width:100%;height:auto;display:block" />
-            <figcaption class="mono" style="font-size:.72rem;color:var(--muted);margin-top:.4rem;text-align:center">Your health score, at a glance</figcaption>
-          </figure>
-          <figure style="margin:0" data-reveal>
-            <img width="2080" height="1620" src="/images/pcm-laptop-boost.png" alt="365 PC Manager on a laptop screen - the boost tab with a live memory graph and one-tap boost button" loading="lazy" decoding="async" style="width:100%;height:auto;display:block" />
-            <figcaption class="mono" style="font-size:.72rem;color:var(--muted);margin-top:.4rem;text-align:center">One-tap boost, with live graphs</figcaption>
-          </figure>
-          <figure style="margin:0" data-reveal>
-            <img width="2080" height="1620" src="/images/pcm-laptop-report.png" alt="365 PC Manager on a laptop screen - the service tab where the free full health check report is run" loading="lazy" decoding="async" style="width:100%;height:auto;display:block" />
-            <figcaption class="mono" style="font-size:.72rem;color:var(--muted);margin-top:.4rem;text-align:center">A full health-check report on your Desktop</figcaption>
-          </figure>
+        <div id="pcmtour" data-reveal style="margin-top:1.2rem;max-width:860px;margin-left:auto;margin-right:auto">
+          <div role="tablist" aria-label="App screenshots" style="display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-bottom:1rem">
+            <button type="button" role="tab" aria-selected="true" aria-controls="tour-panel" class="pcmtour__tab" data-i="0">Health</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="tour-panel" class="pcmtour__tab" data-i="1">Boost</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="tour-panel" class="pcmtour__tab" data-i="2">Report</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="tour-panel" class="pcmtour__tab" data-i="3">Booking</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="tour-panel" class="pcmtour__tab" data-i="4">Power</button>
+          </div>
+          <div id="tour-panel" role="tabpanel" style="position:relative;aspect-ratio:2080/1620;border-radius:14px;overflow:hidden;border:1px solid rgba(125,170,220,.25);box-shadow:0 24px 60px rgba(0,0,0,.45);background:#0a1226">
+            <img data-i="0" src="/images/pcm-laptop-health.png" width="2080" height="1620" alt="365 PC Manager health tab - live health score ring, verdict and system glance" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:1;transition:opacity .28s ease" />
+            <img data-i="1" src="/images/pcm-laptop-boost.png" width="2080" height="1620" alt="365 PC Manager boost tab - live memory graph and one-tap boost" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .28s ease" />
+            <img data-i="2" src="/images/pcm-laptop-report.png" width="2080" height="1620" alt="365 PC Manager service tab - the free full health-check report" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .28s ease" />
+            <img data-i="3" src="/images/pcm-laptop-booking.png" width="2080" height="1620" alt="365 PC Manager booking tab - book, change and cancel visits" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .28s ease" />
+            <img data-i="4" src="/images/pcm-laptop-energy.png" width="2080" height="1620" alt="365 PC Manager power tab - live wattage and yearly running cost" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .28s ease" />
+          </div>
+          <p class="mono" id="tour-cap" aria-live="polite" style="text-align:center;color:var(--muted);font-size:.75rem;margin:.75rem 0 0">Your health score, at a glance</p>
         </div>
       </div>
+      <style>
+        #pcmtour .pcmtour__tab{background:rgba(125,170,220,.08);border:1px solid rgba(125,170,220,.28);color:var(--muted);border-radius:999px;padding:.42rem .95rem;font:inherit;font-size:.85rem;cursor:pointer;transition:background .2s,border-color .2s,color .2s}
+        #pcmtour .pcmtour__tab[aria-selected="true"]{background:rgba(29,151,227,.18);border-color:rgba(29,151,227,.6);color:#eaf1fb;font-weight:600}
+        #pcmtour .pcmtour__tab:hover{border-color:rgba(29,151,227,.5)}
+      </style>
+      <script>
+        (function(){
+          var root=document.getElementById('pcmtour'); if(!root) return;
+          var tabs=[].slice.call(root.querySelectorAll('[role=tab]'));
+          var imgs=[].slice.call(root.querySelectorAll('#tour-panel img'));
+          var cap=document.getElementById('tour-cap');
+          var caps=['Your health score, at a glance','One-tap boost, with live graphs','A full health-check report on your Desktop','Book & manage visits from the app','See what your PC costs to run'];
+          function sel(i){
+            tabs.forEach(function(t,j){ t.setAttribute('aria-selected', j===i?'true':'false'); t.tabIndex = j===i?0:-1; });
+            imgs.forEach(function(m){ m.style.opacity = (parseInt(m.getAttribute('data-i'),10)===i)?'1':'0'; });
+            if(cap) cap.textContent=caps[i]||'';
+          }
+          tabs.forEach(function(t,i){
+            t.addEventListener('click',function(){ sel(i); });
+            t.addEventListener('keydown',function(e){
+              var n=null;
+              if(e.key==='ArrowRight'||e.key==='Down') n=(i+1)%tabs.length;
+              else if(e.key==='ArrowLeft'||e.key==='Up') n=(i-1+tabs.length)%tabs.length;
+              if(n!==null){ e.preventDefault(); tabs[n].focus(); sel(n); }
+            });
+          });
+        })();
+      </script>
     </section>''',
       '''    <section class="section section--alt" aria-label="What it checks">
       <div class="wrap">
