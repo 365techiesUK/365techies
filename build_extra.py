@@ -16349,6 +16349,58 @@ def write_portal_page():
         requestAnimationFrame(loop);
       })();
     }
+    // ---- premium live 3D dashboard: on capable desktop LAPTOP views, swap the CSS hero for the WebGL
+    //      device driven by THIS machine's real data (origin-locked). The CSS hero stays as the
+    //      guaranteed fallback and is retired ONLY once the iframe posts back that the model RENDERED. ----
+    (function () {
+      try {
+        var host = document.getElementById('ngstage');
+        if (!host || host.__ng3d) return;
+        if (!(m.batt > 0)) return;   // laptops only (we render a laptop model); desktops keep the CSS hero
+        var cap = true;
+        try {
+          if (matchMedia('(pointer:coarse)').matches) cap = false;                 // phones/tablets keep the CSS hero
+          if (window.innerWidth < 900) cap = false;                                 // small screens keep the CSS hero
+          if (matchMedia('(prefers-reduced-motion:reduce)').matches) cap = false;   // honour reduced-motion
+          var dmv = navigator.deviceMemory; if (dmv && dmv < 4) cap = false;         // low-RAM devices keep the CSS hero
+          var cc = document.createElement('canvas'), gl2 = cc.getContext('webgl2');
+          if (!(window.WebGL2RenderingContext && gl2)) cap = false;
+          else { try { var _lc = gl2.getExtension('WEBGL_lose_context'); if (_lc) _lc.loseContext(); } catch (_lx) {} }  // free the probe context
+        } catch (_e) { cap = false; }
+        if (!cap) return;
+        host.__ng3d = true;
+        host.style.height = 'clamp(440px, 62vw, 600px)';
+        var scn = document.getElementById('ngscene'), bg = document.getElementById('ngbg');
+        var pc = { name: m.name, score: m.score, disk: m.disk, batt: m.batt, avon: !!m.avon, avoff: !!m.avoff, backup: !!m.backup };  // ONE machine, minimal fields
+        var custName = (typeof S !== 'undefined' && S && S.name) ? S.name : '';
+        var fr = document.createElement('iframe');
+        fr.title = 'Interactive 3D view of your device';
+        fr.setAttribute('scrolling', 'no');
+        fr.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:0;display:block;border-radius:16px;z-index:4';
+        var settled = false, timer = null;
+        function commit() {   // model actually rendered -> the 3D view IS the hero; retire the CSS hero + stop its loops
+          if (settled) return; settled = true; if (timer) clearTimeout(timer);
+          window.removeEventListener('message', onMsg);
+          if (scn) scn.style.display = 'none'; if (bg) bg.style.display = 'none';
+          ngGen++;   // cancels the CSS hero's ambient-canvas + parallax rAF loops (they check gen === ngGen)
+          try { if (ngPM) { window.removeEventListener('pointermove', ngPM); ngPM = null; } } catch (_p) {}
+          try { if (ngRz) { window.removeEventListener('resize', ngRz); ngRz = null; } } catch (_r) {}
+        }
+        function fallback() {   // capability/load/render failure -> tear the iframe down, CSS hero remains
+          if (settled) return; settled = true; if (timer) clearTimeout(timer);
+          window.removeEventListener('message', onMsg);
+          try { fr.remove(); } catch (_x) {} host.__ng3d = false; host.style.height = '';
+          if (scn) scn.style.display = ''; if (bg) bg.style.display = '';
+        }
+        function onMsg(e) { if (e.origin !== location.origin) return; var dd = e.data; if (!dd) return; if (dd.__dashReady) commit(); else if (dd.__dashFail) fallback(); }
+        window.addEventListener('message', onMsg);
+        fr.onload = function () { try { fr.contentWindow.postMessage({ __portalDash: true, payload: { m: pc, d: { name: custName } } }, location.origin); } catch (_o) { fallback(); } };
+        fr.onerror = fallback;
+        timer = setTimeout(fallback, 12000);   // no "rendered" handshake within 12s -> keep the CSS hero
+        host.appendChild(fr);
+        fr.src = '/system-monitoring-demo/?embed=1';
+      } catch (_g) {}
+    })();
   }
   function lapRy(m) { return m.batt > 0 ? -16 : -14; }
 

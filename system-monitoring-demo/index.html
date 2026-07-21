@@ -286,6 +286,13 @@
   @keyframes ws-tw{0%,100%{opacity:.4}50%{opacity:1}}
   :root.rm-reduced .ws-rays,:root.rm-reduced .ws-sun,:root.rm-reduced .ws-cloud,:root.rm-reduced .ws-drop,:root.rm-reduced .ws-flake,:root.rm-reduced .ws-bolt,:root.rm-reduced .ws-twinkle{animation:none}
   @media(max-width:560px){.wx{min-width:0;flex:1 1 100%;order:3}.wx__panel{right:auto;left:0;transform-origin:top left}}
+  /* portal-embed (live customer view): show ONLY the 3D stage + dials; hide the demo header (avoids
+     duplicating the portal's own device name + a location-specific weather label), the fabricated
+     spec passport, the sales pitch and the service band; fill the iframe cleanly. */
+  :root.embed .head,:root.embed .dev,:root.embed .dbs,:root.embed .svc,:root.embed .wxsky{display:none!important}
+  :root.embed .wrap{padding:0!important;margin:0!important;max-width:none!important}
+  :root.embed .stage{height:100vh!important;min-height:100vh!important;margin:0!important;border-radius:0!important}
+  :root.embed .embed-note{position:fixed;left:0;right:0;bottom:8px;text-align:center;font-size:.66rem;line-height:1.3;color:#6d82ad;pointer-events:none;z-index:20;padding:0 12px}
 </style>
 
 <div class="wrap">
@@ -4247,6 +4254,7 @@
 <script>
 (function(){
   "use strict";
+  var EMBED=/[?&]embed=1/.test(location.search);   // portal-embed (live) mode: start blank, render only the customer's real data posted in
   var reduce=false;   // default to the full animated experience for everyone; the "Reduce motion" button is the explicit opt-out (OS setting no longer silently strips the motion)
   var SCORE=82;
   var hueHex=SCORE>=80?0x00ce1b:SCORE>=55?0xe0b341:0xe8637e;
@@ -4344,7 +4352,7 @@
     new THREE.GLTFLoader().load('./laptop.glb', onModel, null, onErr);
   }catch(e){ onErr(e); } }, 60);
 
-  function onErr(e){ try{console.error('glTF error',e);}catch(_){}}
+  function onErr(e){ try{console.error('glTF error',e);}catch(_){} try{finishLoad();}catch(_f){} embedSignal(false); }
   function onModel(g){
     model=g.scene;
     try{
@@ -4376,12 +4384,12 @@
     model.position.sub(center); model.updateMatrixWorld(true);
     box=new THREE.Box3().setFromObject(model); model.position.y-=box.min.y;
     device.add(model);
-    }catch(err){ try{document.querySelector('.loadtitle').textContent='Could not build 3D'; document.querySelector('.loadsub').textContent=(''+err).slice(0,90);}catch(_){}; try{finishLoad();}catch(_2){}; return; }
+    }catch(err){ try{document.querySelector('.loadtitle').textContent='Could not build 3D'; document.querySelector('.loadsub').textContent=(''+err).slice(0,90);}catch(_){}; try{finishLoad();}catch(_2){}; embedSignal(false); return; }
     var bb=new THREE.Box3().setFromObject(device); cen=bb.getCenter(new THREE.Vector3()); rad=bb.getSize(new THREE.Vector3()).length()/2;
     elev=0.62; dist=rad*2.75; spinY=0; introT=0;   // cinematic intro start: far + high, dollies in while spinning
     if(reduce){ intro=false; elev=REST.e; dist=rad*REST.d; drawScreenMetric('health',1); }
     else { drawBoot(); }
-    ready=true; finishLoad();
+    ready=true; finishLoad(); embedSignal(true);
   }
   // dim boot screen shown on the laptop during the intro spin (before the score animates in)
   function drawBoot(){ var x=scrCtx; x.fillStyle='#0a1330'; x.fillRect(0,0,1280,800);
@@ -4505,7 +4513,9 @@
     {name:'memory',    label:'MEMORY',    value:16, max:32,  unit:'GB',   kind:'gb',      slot:'R2'},
     {name:'backup',    label:'BACKUP',    value:0,  max:1,                kind:'status', statusOn:false, slot:'R3'}
   ];
-  var gauges=GMETRICS.map(function(m,i){ m.i=i; m.onActivate=handleDialClick; var g=makeGauge(m); gaugeLayer.appendChild(g.el); return g; });
+  var gauges=[];
+  function buildGauges(){ gaugeLayer.innerHTML=''; gauges=GMETRICS.filter(function(m){return !m.hidden;}).map(function(m,i){ m.i=i; m.onActivate=handleDialClick; var g=makeGauge(m); gaugeLayer.appendChild(g.el); return g; }); }
+  if(!EMBED) buildGauges();   // in portal-embed mode the dials are (re)built by applyData() with the customer's real values
   var gaugesOn=false;
   function bloom(g){ if(g._bloomed)return; g._bloomed=true; g.el.classList.remove('g-seed'); g.sweep(); }   // idempotent: a dial is only ever swept once
   function startGauges(){ if(gaugesOn)return; gaugesOn=true; gaugeLayer.classList.add('on');
@@ -4596,6 +4606,7 @@
   stage.addEventListener('wheel',function(e){ e.preventDefault(); zoom=clampZoom(zoom*Math.exp(e.deltaY*0.0011)); },{passive:false});
 
   function tick(){
+    if(document.hidden){ requestAnimationFrame(tick); return; }   // pause rendering when the tab/iframe is hidden (battery/CPU)
     clock+=0.016;
     if(ready){
       if(!gaugesOn && (reduce || introT>=0.72)) startGauges();   // dashboard powers on as the laptop settles
@@ -4623,10 +4634,74 @@
     renderer.render(scene,camera);
     requestAnimationFrame(tick);
   }
+
+  /* ===== portal data-injection layer: render the signed-in customer's REAL machine =====
+     One machine per message, origin-locked. The portal payload carries no RAM or hardware
+     spec, so the Memory dial + Device passport stay hidden — we never invent specifications. */
+  function _num(v,lo,hi,dflt){ v=+v; if(!isFinite(v)) return dflt; return v<lo?lo:(v>hi?hi:v); }
+  function _esc(s){ return (''+s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function _metric(n){ for(var i=0;i<GMETRICS.length;i++) if(GMETRICS[i].name===n) return GMETRICS[i]; return null; }
+  function _setM(n,patch){ var m=_metric(n); if(!m) return; m.hidden=false; for(var k in patch) m[k]=patch[k]; }
+  function _hideM(n){ var m=_metric(n); if(m) m.hidden=true; }
+  function _map(p){ p=p||{}; var m=p.m||{}, d=p.d||{};
+    return { score:_num(m.score,0,100,0), disk:_num(m.disk,0,100,null), batt:_num(m.batt,0,100,null),
+             avOn:!!m.avon, avOff:!!m.avoff, backup:!!m.backup, isDesktop:!(m.batt>0),
+             name:(m.name||d.name||'Your device'), cust:((d.name||'').split(' ')[0]||'') }; }
+  function _advice(x){
+    ADVICE.health={title:'Overall health',big:x.score+' / 100',tone:x.score>=80?'good':(x.score>=55?'info':'bad'),
+      text:x.score>=80?'In good shape. A few small tune-ups keep it there — we do those on your next service.':(x.score>=55?'A few things worth tidying on your next service.':'Worth a closer look — we can help on your next service.'),
+      detail:['Measured from disk, antivirus, updates, uptime and backup.'],act:{label:'Book a check-up',url:SITE+'/book-service/',soft:true}};
+    ADVICE.storage=(x.disk==null)?null:{title:'Storage',big:x.disk+'% full',tone:x.disk>=85?'bad':(x.disk>=70?'info':'good'),
+      text:x.disk>=85?'Running low on space — worth clearing some room.':(x.disk>=70?'Filling up, but fine for now.':'Plenty of room left.'),
+      detail:[],act:x.disk>=85?{label:'How to free up space',url:SITE+'/how-to-free-up-storage-space/',soft:true}:null};
+    ADVICE.protection={title:'Protection',big:x.avOff?'Off':(x.avOn?'On':'Unknown'),tone:x.avOff?'bad':'good',
+      text:x.avOff?'Antivirus looks off — worth turning it back on.':'Antivirus is on and protecting you in real time.',
+      detail:['We only report what Windows truly exposes.'],act:null};
+    ADVICE.battery=(x.isDesktop||x.batt==null)?null:{title:'Battery',big:x.batt+'%',tone:x.batt>=70?'good':'info',
+      text:x.batt>=70?'Reading '+x.batt+'% at the last check-in.':'Reading '+x.batt+'% — we keep an eye on it and flag any steady drop.',
+      detail:[],act:null};
+    ADVICE.backup={title:'Backup',big:x.backup?'On':'Off',tone:x.backup?'good':'bad',
+      text:x.backup?'Your files are being backed up.':'The one gap — nothing is being backed up. If this drive failed today, your files could be lost.',
+      detail:[],act:x.backup?null:{label:'Set up a proper backup',url:SITE+'/backup-support/',soft:false}};
+    ADVICE.memory=null;
+  }
+  function applyData(p){
+    var x=_map(p);
+    SCORE=x.score; hueHex=SCORE>=80?0x00ce1b:(SCORE>=55?0xe0b341:0xe8637e);
+    SCREEN.health.v=x.score; SCREEN.health.col=SCORE>=80?'#00ce1b':(SCORE>=55?'#e0b341':'#e8637e');
+    if(x.disk!=null){ SCREEN.storage.v=x.disk; SCREEN.storage.sub=''; SCREEN.storage.col=x.disk>=85?'#e8637e':(x.disk>=70?'#e0b341':'#00ce1b'); }
+    if(x.batt!=null){ SCREEN.battery.v=x.batt; SCREEN.battery.col=x.batt>=70?'#00ce1b':'#e0b341'; }
+    SCREEN.protection.txt=x.avOff?'OFF':(x.avOn?'ON':'?'); SCREEN.protection.col=x.avOff?'#e8637e':'#00ce1b'; SCREEN.protection.sub=x.avOff?'antivirus off':'antivirus active';
+    SCREEN.backup.txt=x.backup?'ON':'OFF'; SCREEN.backup.col=x.backup?'#00ce1b':'#e8637e'; SCREEN.backup.sub=x.backup?'backup active':'no backup seen';
+    _setM('health',{value:x.score});
+    if(x.disk!=null) _setM('storage',{value:x.disk}); else _hideM('storage');
+    _setM('protection',{statusOn:(x.avOn&&!x.avOff)});
+    if(!x.isDesktop&&x.batt!=null) _setM('battery',{value:x.batt}); else _hideM('battery');
+    _setM('backup',{statusOn:x.backup});
+    _hideM('memory');
+    _advice(x);
+    var h=document.querySelector('.head h1'); if(h) h.textContent=x.name;
+    var sub=document.querySelector('.head .sub'); if(sub) sub.innerHTML=(x.cust?_esc(x.cust)+'&rsquo;s device &middot; ':'')+'<span class="rtc"><span class="dot"></span>Live &middot; your own data</span>';
+    var ey=document.querySelector('.head .eyebrow'); if(ey) ey.innerHTML='<b>LIVE</b>&nbsp;Your device';
+    gaugesOn=false; buildGauges(); startGauges();
+    if(ready) drawScreenMetric('health',1);
+  }
+  function embedSignal(ok){ if(EMBED){ try{ (window.parent||window).postMessage(ok?{__dashReady:1}:{__dashFail:1}, location.origin); }catch(_e){} } }
+  if(EMBED){ document.documentElement.classList.add('embed');
+    window.__deviceDash={applyData:applyData};
+    window.addEventListener('message',function(e){ if(e.origin!==location.origin) return; var d=e.data; if(d&&d.__portalDash&&d.payload){ try{applyData(d.payload);}catch(_x){} } });
+    // no fabricated placeholders before the real data lands: blank the on-screen metrics + demo sub-labels
+    SCORE=0; SCREEN.health.v=0; SCREEN.storage.v=0; SCREEN.storage.sub=''; SCREEN.battery.v=0; SCREEN.memory.sub='';
+    var _n=document.createElement('div'); _n.className='embed-note';
+    _n.innerHTML='Representative 3D model &mdash; not a scan of your actual device &middot; model: Yolala1232 / CC BY 4.0';
+    (document.querySelector('.stage')||document.body).appendChild(_n);
+  }
+
   tick();
 })();
 </script>
 <script>(function(){"use strict";
+  if(/[?&]embed=1/.test(location.search)) return;   // portal-embed: no location-specific weather + no external call
   var LAT=50.72, LON=-1.88;
   var $=function(id){return document.getElementById(id);};
   var wx=$('wx'),toggle=$('wxToggle'),ic=$('wxIc'),tempEl=$('wxTemp'),condEl=$('wxCond'),badge=$('wxBadge'),bgEl=$('wxBg'),adviceEl=$('wxAdvice'),techEl=$('wxTech'),daysEl=$('wxDays'),stage=$('stage');
