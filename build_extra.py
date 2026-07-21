@@ -417,7 +417,14 @@ def pcm_landing():
           <h2 class="section-title section-title--center" data-title>Be first when 365 PC Manager launches<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>It&rsquo;s free forever, and we&rsquo;re putting the finishing touches to it now. Join the waitlist and on launch day we&rsquo;ll send you the download &mdash; or, if you&rsquo;d rather, <strong>we&rsquo;ll set it up for you free, by hand</strong>.</p>
         </div>
-        <form id="wlform" novalidate data-reveal style="max-width:460px;margin:1.4rem auto 0;display:flex;flex-direction:column;gap:.7rem;background:rgba(125,170,220,.05);border:1px solid rgba(125,170,220,.22);border-radius:16px;padding:1.4rem">
+        <div data-stagger style="max-width:520px;margin:1.2rem auto .3rem;display:grid;gap:.6rem">
+          <p class="mono" data-reveal style="text-align:center;color:var(--muted);font-size:.7rem;letter-spacing:.07em;margin:0 0 .1rem">// WHAT YOU GET FOR BEING FIRST</p>
+          <div data-reveal style="display:flex;gap:.55rem;align-items:flex-start"><span style="color:var(--pgood,#00ce1b);font-weight:700;flex:0 0 auto">&#10003;</span><span><strong>We set it up for you, free</strong> &mdash; a real techie, by hand, when it&rsquo;s ready. Nothing to install yourself.</span></div>
+          <div data-reveal style="display:flex;gap:.55rem;align-items:flex-start"><span style="color:var(--pgood,#00ce1b);font-weight:700;flex:0 0 auto">&#10003;</span><span><strong>Free Family View</strong> &mdash; keep a quiet eye on a parent&rsquo;s PC from your own.</span></div>
+          <div data-reveal style="display:flex;gap:.55rem;align-items:flex-start"><span style="color:var(--pgood,#00ce1b);font-weight:700;flex:0 0 auto">&#10003;</span><span><strong>First to try it</strong> &mdash; before the public launch.</span></div>
+          <div data-reveal style="display:flex;gap:.55rem;align-items:flex-start"><span style="color:var(--pgood,#00ce1b);font-weight:700;flex:0 0 auto">&#10003;</span><span><strong>Free forever</strong> &mdash; no card, no catch, no sign-up.</span></div>
+        </div>
+        <form id="wlform" novalidate data-reveal style="max-width:460px;margin:1rem auto 0;display:flex;flex-direction:column;gap:.7rem;background:rgba(125,170,220,.05);border:1px solid rgba(125,170,220,.22);border-radius:16px;padding:1.4rem">
           <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" />
           <label for="wl-email" class="mono" style="font-size:.68rem;letter-spacing:.06em;color:var(--muted)">YOUR EMAIL</label>
           <input id="wl-email" type="email" required autocomplete="email" placeholder="you@example.com" style="width:100%;padding:.75rem .9rem;border-radius:10px;border:1px solid rgba(125,170,220,.32);background:rgba(10,20,40,.5);color:inherit;font:inherit;box-sizing:border-box" />
@@ -699,6 +706,28 @@ def pcm_landing():
     </script>''',
       cta("Rather we just sorted it?", "Put your computer on a 365 support plan and we&rsquo;ll keep it healthy for you &mdash; the app included.",
           primary=("View support plans", "/monthly-it-support/"), secondary=("Call 01202 775566", "tel:+441202775566")),
+      '''    <div id="pcmbar" role="region" aria-label="Join the waitlist" style="position:fixed;left:0;right:0;bottom:0;z-index:60;transform:translateY(130%);transition:transform .3s ease;background:rgba(10,18,38,.9);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid rgba(125,170,220,.3);box-shadow:0 -10px 30px rgba(0,0,0,.35)">
+      <div class="wrap" style="display:flex;align-items:center;gap:.7rem;padding:.65rem 1rem">
+        <span style="flex:1;min-width:0;font-size:.88rem;line-height:1.3"><strong>Coming soon</strong> &mdash; be first when 365 PC Manager launches, and we&rsquo;ll set it up for you free.</span>
+        <a href="#waitlist" class="button primary" id="pcmbarcta" style="white-space:nowrap;padding:.5rem 1rem;flex:0 0 auto">Join free &#8594;</a>
+        <button type="button" id="pcmbarx" aria-label="Dismiss this bar" style="background:none;border:0;color:var(--muted);font-size:1.3rem;line-height:1;cursor:pointer;padding:.1rem .35rem;flex:0 0 auto">&times;</button>
+      </div>
+    </div>
+    <script>
+      (function(){
+        var bar=document.getElementById('pcmbar'), x=document.getElementById('pcmbarx'), cta=document.getElementById('pcmbarcta'), wl=document.getElementById('waitlist'); if(!bar) return;
+        var dismissed=false, reduce=false; try{reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){}
+        if(reduce) bar.style.transition='none';
+        if(x) x.addEventListener('click', function(){ dismissed=true; bar.style.transform='translateY(130%)'; });
+        if(cta) cta.addEventListener('click', function(e){ e.preventDefault(); if(wl) wl.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'}); });
+        var wlInView=false;
+        if('IntersectionObserver' in window && wl){
+          new IntersectionObserver(function(es){ es.forEach(function(en){ wlInView=en.isIntersecting; upd(); }); }, {threshold:.12}).observe(wl);
+        }
+        function upd(){ if(dismissed) return; var show = window.scrollY > window.innerHeight*1.1 && !wlInView; bar.style.transform = show ? 'translateY(0)' : 'translateY(130%)'; }
+        window.addEventListener('scroll', upd, {passive:true}); window.addEventListener('resize', upd, {passive:true}); upd();
+      })();
+    </script>''',
     ])
     def schema(s, _desc=desc, _faqs=faqs):
         app = {"@type": "SoftwareApplication", "@id": f"{SITE}/{s}/#app",
