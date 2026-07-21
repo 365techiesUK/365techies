@@ -2356,7 +2356,7 @@ TOOLS = {
   "dns":          ("DNS Lookup", "/dns-lookup/", "Check any domain&rsquo;s A, MX, NS &amp; TXT records &mdash; the settings behind your website and email."),
   "pcbench":      ("PC Benchmark", "/pc-benchmark/", "How fast is your computer, really? Six live tests &mdash; CPU, encryption, memory, graphics &amp; storage &mdash; with a score you can share."),
   "healthcheck":  ("IT Health Check Tool", "/it-health-check-tool/", "Get an instant IT &amp; security score out of 100, plus a plain-English action plan."),
-  "pcmapp":       ("Free PC Health Check App", "/free-pc-health-check/", "365 PC Manager &mdash; our free little Windows app. Health score, one-tap boost, live graphs and honest advice, from real local techies."),
+  "pcmapp":       ("Free PC Health Check App", "/free-pc-health-check/", "365 PC Manager &mdash; our free little Windows app, <strong>launching soon</strong>. An honest PC health check &mdash; health score, one-tap boost, no fake errors &mdash; from real local techies. Join the waitlist to be first."),
   "faultcheck":   ("Computer Fault Checker", "/computer-fault-checker/", "Tell us what&rsquo;s playing up and get the likely cause and best next step."),
   "repairreplace":("Repair or Replace?", "/repair-or-replace-advisor/", "Answer four questions for an honest verdict on your ageing computer."),
   "w10":          ("Windows 10 End of Life", "/windows-10-end-of-life/", "Support has ended &mdash; find out in 30 seconds if you&rsquo;re affected, and your options."),
@@ -2377,12 +2377,17 @@ TOOLS = {
   "freecourses":  ("Free Online Courses (" + str(_CRS_COUNT) + ")", "/free-courses/", "Free, friendly courses for beginners and older learners &mdash; computer basics, email, WhatsApp, AI, staying safe online and more. Short lessons, a certificate for every course, no sign-up ever."),
 }
 
+PCM_SOON = True   # 365 PC Manager is a coming-soon download, not a live browser tool -> its card reads "Coming soon / Join the waitlist" (flip to False at launch)
 def tool_cards(keys):
     out = ""
     for k in keys:
         name, href, blurb = TOOLS[k]
-        out += (f'          <a class="post-card" href="{href}"><p class="post-card__cat">Free tool</p><h3>{name}</h3>'
-                f'<p>{blurb}</p><span class="post-card__more">Try it &#8594;</span></a>\n')
+        soon = (k == "pcmapp" and PCM_SOON)
+        cat = "Coming soon" if soon else "Free tool"
+        cta = "Join the waitlist &#8594;" if soon else "Try it &#8594;"
+        hr = (href + "#waitlist") if soon else href
+        out += (f'          <a class="post-card" href="{hr}"><p class="post-card__cat">{cat}</p><h3>{name}</h3>'
+                f'<p>{blurb}</p><span class="post-card__more">{cta}</span></a>\n')
     return out
 
 def tools_strip(keys, title="Try our free tools", lede_text="No sign-up, no catch — free tools built by our techies.", alt=True):

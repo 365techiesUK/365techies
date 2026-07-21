@@ -1217,7 +1217,7 @@
         if (ngOthers.length) h += '<div class="ngh2">Your other computers</div><div class="card">' + ngOthers.map(machineRow).join('') + '</div>';
       } else {
         h += '<div class="card"><h2>Your computers</h2>';
-        if (!d.machines.length) h += '<p class="quiet">None checking in yet - our free <a href="/free-pc-health-check/" target="_blank">365 PC Manager</a> app keeps an eye on your PC\u2019s health and shows it here.</p>';
+        if (!d.machines.length) h += '<p class="quiet">None checking in yet - our free <a href="/free-pc-health-check/" target="_blank">365 PC Manager</a> app (coming soon) will keep an eye on your PC\u2019s health and show it here. <a href="/free-pc-health-check/#waitlist" target="_blank">Join the waitlist</a>.</p>';
         h += d.machines.map(machineRow).join('') + '</div>';
       }
       h += '<div class="card"><h2>Your membership</h2><div class="row"><span class="pill ' + (d.tier === 'pro' ? 'pro">On 365 support' : 'free">365 member (free)') + '</span>'

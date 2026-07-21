@@ -57,3 +57,7 @@ api/pcm-invoice.lock
 api/pcm-bkpoll.lock
 api/pcm-bkpoll-cache.json
 api/pcm-bkpoll-cache.json.tmp
+# 365 PC Manager launch waitlist: server-only PII store (emails) + rate file - NEVER commit
+api/pcm-waitlist.json
+api/pcm-waitlist.json.tmp
+api/pcm-waitlist-rate.json
