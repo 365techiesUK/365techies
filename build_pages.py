@@ -46,10 +46,10 @@ WA_CONTACT_ROW = (f'<li><span class="k">WhatsApp</span><span class="v"><a href="
 # GoCardless Direct Debit subscription links (paste the hosted payment-link URL
 # from your GoCardless dashboard for each plan; empty = route to /contact/).
 GOCARDLESS = {
-    "home-essential": "",
-    "home-family": "",
-    "home-premium": "",
-    "business-starter": "",
+    # Reusable GoCardless Billing Request Template links (dashboard "Copy link"). Each is FIXED per 1 computer.
+    "home-support":     "https://pay.gocardless.com/BRT01KY2ECK0E1JSJ9DX0FPG923HW",   # Home Support - 1 PC - GBP 18.25/mo
+    "home-support-365": "https://pay.gocardless.com/BRT01KY2E5JE1V186N6Z0FJMVBEJY",   # Home + Microsoft 365 (1 PC) - GBP 23.10/mo
+    "business-starter": "",                                                            # owner to add a Business template link
 }
 def subscribe_href(key):
     return GOCARDLESS.get(key) or "/contact/"
@@ -4361,13 +4361,18 @@ add(
 )
 
 # ============================================================ HOME IT SUPPORT PLANS
-def plan_card(variant, badge, tag, name, desc, price, per, feats, cta_label, cta_href):
+def plan_card(variant, badge, tag, name, desc, price, per, feats, cta_label, cta_href, cta_note=""):
     badge_html = f'\n            <p class="plan-card__badge mono">{badge}</p>' if badge else ""
     # Only promise "Set up Direct Debit" when there's a real GoCardless link; otherwise the button
     # routes to /contact/ to choose/start the plan, so label it honestly.
-    if not str(cta_href).startswith("http"):
+    is_link = str(cta_href).startswith("http")
+    if not is_link:
         cta_label = "Choose this plan"
     feats_html = "\n".join(f"              <li>{f}</li>" for f in feats)
+    # A fixed per-1-computer Direct Debit link needs an honest "more than one?" note so a customer
+    # with several computers doesn't set up the single-computer amount by mistake.
+    note_html = (f'\n            <p class="plan-card__note mono" style="margin:.55rem 0 0;font-size:.72rem;color:var(--muted);text-align:center;line-height:1.4">{cta_note}</p>'
+                 if (cta_note and is_link) else "")
     return f'''          <article class="plan-card plan-card--{variant}" data-reveal>{badge_html}
             <p class="plan-card__tag mono">{tag}</p>
             <h3>{name}</h3>
@@ -4376,7 +4381,7 @@ def plan_card(variant, badge, tag, name, desc, price, per, feats, cta_label, cta
             <ul class="plan-card__features">
 {feats_html}
             </ul>
-            <a href="{cta_href}" class="button primary plan-card__cta"{' target="_blank" rel="noopener"' if str(cta_href).startswith('http') else ''}>{cta_label}</a>
+            <a href="{cta_href}" class="button primary plan-card__cta"{' target="_blank" rel="noopener"' if is_link else ''}>{cta_label}</a>{note_html}
           </article>'''
 
 add(
@@ -4396,8 +4401,8 @@ add(
         chips=["No contracts", "Cancel anytime", "Full service every 6 weeks"]),
    f'''    <section class="support-options" aria-label="Home support plans">
       <div class="plan-grid">
-{plan_card("home", None, "HOME SUPPORT", "Home IT Support", "Friendly cover for your computer &mdash; remote help, regular maintenance and security, all year round.", "&pound;18.25", ("","/mo per computer"), ["Support for your computer","Unlimited remote support","Full service every 6 weeks","Written Service Report each visit","Security &amp; backup checks","Wi-Fi, printer &amp; email help","Loyalty discount on any fault work","Patient, jargon-free help"], "Set up Direct Debit", subscribe_href("home-support"))}
-{plan_card("business", "&#9733; MOST POPULAR", "+ MICROSOFT 365", "Home Support + Microsoft 365", "Everything in Home IT Support, plus Microsoft 365 set up and looked after for you.", "&pound;23.10", ("","/mo per computer"), ["Everything in Home IT Support","Microsoft 365 set up &amp; supported","Outlook email &amp; Office apps","OneDrive backup help","One Microsoft 365 licence included","Extra licences &pound;4.85/mo each"], "Set up Direct Debit", subscribe_href("home-support-365"))}
+{plan_card("home", None, "HOME SUPPORT", "Home IT Support", "Friendly cover for your computer &mdash; remote help, regular maintenance and security, all year round.", "&pound;18.25", ("","/mo per computer"), ["Support for your computer","Unlimited remote support","Full service every 6 weeks","Written Service Report each visit","Security &amp; backup checks","Wi-Fi, printer &amp; email help","Loyalty discount on any fault work","Patient, jargon-free help"], "Set up Direct Debit", subscribe_href("home-support"), "Sets up <strong>one computer</strong> at &pound;18.25/mo. More than one? <a href=\"/contact/?topic=home-it-support\">Tell us</a> and we&rsquo;ll set the exact amount.")}
+{plan_card("business", "&#9733; MOST POPULAR", "+ MICROSOFT 365", "Home Support + Microsoft 365", "Everything in Home IT Support, plus Microsoft 365 set up and looked after for you.", "&pound;23.10", ("","/mo per computer"), ["Everything in Home IT Support","Microsoft 365 set up &amp; supported","Outlook email &amp; Office apps","OneDrive backup help","One Microsoft 365 licence included","Extra licences &pound;4.85/mo each"], "Set up Direct Debit", subscribe_href("home-support-365"), "Sets up <strong>one computer</strong> at &pound;23.10/mo (one Microsoft 365 licence). More computers or licences? <a href=\"/contact/?topic=home-it-support\">Tell us</a> and we&rsquo;ll set the exact amount.")}
       </div>
       <p class="plans-note mono" data-reveal>// &pound;18.25/MO PER COMPUTER &middot; ADD MICROSOFT 365 FOR &pound;4.85/MO PER USER &middot; MORE THAN ONE COMPUTER? JUST TELL US</p>
       <p class="plans-note mono" data-reveal style="margin-top:.5rem"><a href="/our-guarantees/" style="color:var(--cyan)">&#10003; Cancel anytime, no contract &middot; No call-out fee for remote help &middot; Family-run since 1995 &mdash; see our guarantees</a></p>
