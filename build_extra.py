@@ -573,6 +573,20 @@ def pcm_landing():
         </div>
       </div>
     </section>''',
+      '''    <section class="section" aria-label="Family View - keep an eye on a parent's PC">
+      <div class="wrap split-2">
+        <figure style="margin:0" data-reveal>
+          <img width="2000" height="1116" src="/images/pcm-hero-coffee2.jpg" alt="Keeping a quiet eye on a family member's PC health from your own laptop, coffee in hand" loading="lazy" decoding="async" style="width:100%;height:auto;display:block;border-radius:14px" />
+        </figure>
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">// FOR MUM &amp; DAD &middot; FREE FAMILY VIEW</p>
+          <h2 class="section-title" data-title>Keep a quiet eye on a parent&rsquo;s PC &mdash; from your own<span class="title-underline"></span></h2>
+          <p>Worried about Mum or Dad&rsquo;s computer, but you live the other end of the country? <strong>Free Family View</strong> lets you see their PC&rsquo;s health from your own phone or laptop &mdash; so you can spot trouble before it becomes a panicked phone call.</p>
+          <p>It&rsquo;s <strong>health visibility, not spying</strong>: you see the score, backup and safety basics &mdash; never their screen, their files or their browsing. They stay in control, and can switch it off any time.</p>
+          <p>And if something does need a hand, you&rsquo;re dealing with a <strong>real Dorset firm you can actually phone</strong> &mdash; not a call-centre. <a href="/family/">More about Family View &#8594;</a></p>
+        </div>
+      </div>
+    </section>''',
       '''    <section class="section section--alt" aria-label="Manage your service visits">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
