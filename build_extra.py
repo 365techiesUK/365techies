@@ -15880,6 +15880,8 @@ def write_portal_page():
   #p365app .bkchip { display:inline-flex; align-items:center; gap:.28rem; font-size:.72rem; font-weight:600; letter-spacing:.01em; padding:.2rem .6rem; border-radius:999px; border:1px solid var(--pline); color:var(--pmut); background:rgba(125,170,220,.06); vertical-align:middle; white-space:nowrap; transition:background .3s,color .3s,border-color .3s; }
   #p365app .bkchip.conf { color:var(--pgood); border-color:rgba(0,206,27,.42); background:rgba(0,206,27,.11); }
   #p365app .bkchip.done { color:var(--pcyan); border-color:rgba(29,151,227,.42); background:rgba(29,151,227,.11); }
+  #p365app .sm.cdb { color:var(--pgood); border-color:rgba(0,206,27,.45); font-weight:600; }
+  #p365app .sm.cdb:hover { background:rgba(0,206,27,.13); border-color:rgba(0,206,27,.6); }
   #p365app .bkchip.pend { color:var(--pmut); border-color:var(--pline); background:rgba(125,170,220,.05); }
   #p365app .tline.bkflash { animation:bkflash 1.5s ease; border-radius:8px; }
   @keyframes bkflash { 0%{ box-shadow:0 0 0 0 rgba(29,151,227,.55); background:rgba(29,151,227,.13); } 45%{ box-shadow:0 0 0 4px rgba(29,151,227,.22); } 100%{ box-shadow:0 0 0 0 rgba(29,151,227,0); background:transparent; } }
@@ -16967,6 +16969,7 @@ def write_portal_page():
       + '<br />' + (b.phone ? '<a href="tel:' + esc(b.phone.replace(/\\s/g, '')) + '" class="tphone">\\ud83d\\udcde ' + esc(b.phone) + '</a>' : '<span class="quiet">no number on file - check SimplyBook</span>')
       + (b.email ? ' <a href="mailto:' + esc(b.email) + '" class="tphone">\\u2709\\ufe0f ' + esc(b.email) + '</a>' : '')
       + (b.cid ? ' <button class="sm ghost cib" data-cid="' + esc(b.cid) + '" data-p="' + prefix + i + '">\\ud83d\\udccd Details</button>' : '')
+      + (b.st !== 'completed' ? ' <button class="sm ghost cdb" data-id="' + esc(b.id) + '" title="Mark this job completed">✓ Done</button>' : '')
       + '</div>'
       + '<div class="amenu"><button class="sm ghost ab2" data-p="' + prefix + i + '">\u22ef Actions</button>'
       + '<div class="adrop" id="ad' + prefix + i + '">'
@@ -17017,6 +17020,28 @@ def write_portal_page():
             panel.innerHTML = clientCard(r.client); panel.setAttribute('data-loaded', '1');
           })
           .catch(function () { panel.innerHTML = '<span class="quiet">Couldn\\u2019t reach the server.</span>'; });
+      };
+    });
+    Array.prototype.forEach.call(container.querySelectorAll('.cdb'), function (btn) {
+      btn.onclick = function (ev) {
+        ev.stopPropagation();
+        var b = byId[btn.getAttribute('data-id')]; if (!b) return;
+        var lbl = btn.textContent; btn.disabled = true; btn.textContent = '\\u2026';
+        post(BK, { action: 'staffstatus', stoken: S.stoken, machine: mid(), id: b.id, status: 'completed', who: b.who, what: b.what })
+          .then(function (r) {
+            if (!r || !r.ok) { btn.disabled = false; btn.textContent = lbl; alert('Couldn\\u2019t mark it done - try again.'); return; }
+            b.st = 'completed';
+            [AG, AG60].forEach(function (arr) { if (arr) arr.forEach(function (x) { if (x && x.id === b.id) x.st = 'completed'; }); });
+            var row = btn.closest ? btn.closest('.tline') : document.querySelector('#p365app .tline[data-bid="' + b.id + '"]');
+            if (row) {
+              var chipEl = row.querySelector('.bkchip'); if (chipEl) { var t = document.createElement('span'); t.innerHTML = statusChip('completed'); var nc = t.firstChild; if (nc) chipEl.parentNode.replaceChild(nc, chipEl); }
+              row.classList.remove('confd'); row.classList.add('done');
+              row.classList.remove('bkflash'); void row.offsetWidth; row.classList.add('bkflash');
+              var cb2 = row.querySelector('[data-act="completed"]'); if (cb2) cb2.textContent = 'Not completed';
+            }
+            btn.remove();
+          })
+          .catch(function () { btn.disabled = false; btn.textContent = lbl; alert('Couldn\\u2019t reach the server.'); });
       };
     });
     document.addEventListener('click', closeAll);
