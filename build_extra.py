@@ -15475,6 +15475,20 @@ def custom_dashboards():
         </div>
       </div>
     </section>''',
+      '''    <section class="section" aria-label="How it works">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// HOW IT WORKS</p>
+          <h2 class="section-title section-title--center" data-title>Built on Victron&rsquo;s open ecosystem &mdash; never replacing it<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Your VRM stays the system of record; we add the layer that makes the data make sense &mdash; the same way we built our own van&rsquo;s live dashboard.</p>
+        </div>
+        <div class="tile-grid" data-stagger>
+''' + tiles([("shield","01 &middot; Read your VRM, safely","A small server-side proxy reads Victron&rsquo;s official <strong>read-only VRM API</strong> &mdash; your login never touches the browser, and nothing can be changed from the dashboard."),
+             ("bolt","02 &middot; Genuinely real-time","A minimal <strong>MQTT client over TLS</strong> streams live, per-second data to the screen &mdash; well beyond VRM&rsquo;s roughly 15-minute logging interval."),
+             ("monitor","03 &middot; Show what matters","A live grid-savings meter, a battery passport, a self-calibrating 7-day solar forecast, several sites on one screen, Grafana panels &mdash; hosted by us or on your own subdomain.")]) + '''
+        </div>
+      </div>
+    </section>''',
       f'''    <section class="section" aria-label="What can go on your dashboard">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
