@@ -2116,7 +2116,7 @@ def broadband_advisor():
       ("How do I find my current broadband speed?", "Just use the live speed test at the top of this page &mdash; it measures your real download, upload and ping in a few seconds, for free. The download figure (in Mbps) is the headline number."),
       ("Why is the test slower than the speed I pay for?", "Usually Wi-Fi. This test measures your <em>device&rsquo;s</em> speed right now, so distance from the router, walls, and other devices all take their toll. Testing next to the router (or on a cable) shows your true line speed &mdash; and if there&rsquo;s a big gap, better Wi-Fi is the fix."),
       ("Is slow internet the same as a slow computer?", "Not always &mdash; a slow computer or weak Wi-Fi often gets blamed on the broadband. Our free <a href=\"/it-health-check-tool/\">health check</a> and a quick look can tell which it is."),
-      ("What if fast fibre isn&rsquo;t available where I live?", "In rural parts of Dorset and the New Forest, <a href=\"/starlink-internet/\">Starlink satellite internet</a> is often the best option &mdash; we supply, install and support it."),
+      ("What if fast fibre isn&rsquo;t available where I live?", "In rural parts of Dorset and the New Forest, <a href=\"/starlink-internet/\">Starlink satellite internet</a> is often the best option &mdash; we advise on the right plan, install it and support it."),
     ]
     content = "\n".join([
       hero(bc("Broadband Speed Checker"), "// LIVE SPEED TEST &middot; FREE",
@@ -4002,7 +4002,7 @@ def services_overview():
         ("VoIP Business Phones", "/voip-business-phones/", "Business phone systems powered by Voipfone &mdash; lower bills, work-from-anywhere calls, set up &amp; supported."),
         ("CCTV &amp; Smart Home", "/cctv-smart-home/", "CCTV, video doorbells, smart lighting and home automation, set up and secured."),
         ("Home Cinema &amp; Entertainment", "/home-cinema-entertainment/", "Richer Sounds partner &mdash; 4K projectors, Dolby sound, smart TVs and multi-room audio."),
-        ("Starlink Internet", "/starlink-internet/", "Residential &amp; roaming Starlink satellite broadband &mdash; fast internet anywhere, supplied &amp; installed."),
+        ("Starlink Internet", "/starlink-internet/", "Residential &amp; roaming Starlink &mdash; independent advice on the right plan, set up, installed and supported."),
         ("Leisure &amp; Marine Batteries", "/lithium-battery-installs-dorset/", "Victron lithium (LiFePO4) power upgrades for motorhomes, campervans and boats &mdash; free survey."),
         ("Rural &amp; Farm Wi-Fi", "/rural-and-farm-wifi-dorset/", "Wi-Fi &amp; internet for farms, glamping sites and rural businesses &mdash; Starlink, 4G/5G and site surveys."),
         ("Unitree Robots", "/unitree-robots/", "As a Scan partner, we supply &amp; support Unitree quadruped and humanoid robots."),
@@ -6151,24 +6151,24 @@ home_cinema()
 # ===================================================== STARLINK INTERNET
 def starlink_internet():
     slug = "starlink-internet"
-    desc = "Fast, reliable internet anywhere — 365 Techies supplies, installs and supports Starlink satellite broadband for homes, rural properties and businesses, plus roaming Starlink for campervans, motorhomes, boats and remote sites across Dorset, the New Forest and beyond."
+    desc = "Fast, reliable internet anywhere — 365 Techies helps you pick the right Starlink plan for how you actually use it, sets it up, installs the dish and supports it, for homes, rural properties, businesses, campervans, boats and remote sites across Dorset and the New Forest."
     faqs = [
       ("What is Starlink?", "Starlink is high-speed satellite broadband from a network of low-orbit satellites &mdash; it delivers fast, low-latency internet almost anywhere with a clear view of the sky, even where fixed broadband is slow or unavailable."),
       ("Can Starlink help where I have poor broadband?", "Yes &mdash; that&rsquo;s exactly where it shines. For rural homes and businesses in the New Forest and across Dorset stuck on slow connections or in not-spots, Starlink is often a game-changer."),
-      ("Do you offer roaming Starlink for a campervan or boat?", "Yes &mdash; we supply and set up roaming and mobile Starlink for campervans, motorhomes, boats and remote sites, so you can get online on the move or off-grid."),
+      ("Do you offer roaming Starlink for a campervan or boat?", "Yes &mdash; we help you pick the right roaming or mobile plan, get it set up and mount it safely on a campervan, motorhome, boat or remote site, so you can get online on the move or off-grid. The subscription stays in your name, so you stay in control of it."),
       ("Do you install and support it?", "Yes &mdash; we advise on the right kit, install the dish safely, set up your network and support it ongoing, so you&rsquo;re never left to figure it out alone."),
       ("Can it pair with off-grid power?", "Absolutely &mdash; Starlink pairs perfectly with our <a href=\"/off-grid-victron-energy/\">off-grid Victron energy</a> systems for fully independent power and internet."),
     ]
     content = "\n".join([
       hero(bc("Starlink Internet"), "// STARLINK SOLUTIONS",
            'Starlink <em class="grad grad--cyan">satellite internet</em>',
-           "Fast, reliable internet anywhere &mdash; we supply, install and support Starlink satellite broadband for homes, rural properties and businesses, plus roaming Starlink for campervans, motorhomes, boats and remote sites.",
+           "Fast, reliable internet anywhere &mdash; we help you choose the right Starlink plan for what you actually need, set it up, install the dish properly and support it afterwards. Homes, rural properties, businesses, campervans, boats and remote sites.",
            cta1=("Get Connected", "/contact/"), cta2=("Call 01202 775566", "tel:+441202775566"),
            chips=["Residential &amp; roaming","Installed &amp; supported","Anywhere with a clear sky"]),
       f'''    <section class="section section--alt" aria-label="Starlink showcase">
       <div class="wrap">
         <div class="split-2">
-          <div class="tile robot-card" data-reveal>{DISH_SVG}<h3>Starlink at your place</h3><p>We supply and install the Starlink dish and set up your network &mdash; fast broadband for rural homes, businesses and not-spots.</p></div>
+          <div class="tile robot-card" data-reveal>{DISH_SVG}<h3>Starlink at your place</h3><p>We help you choose the right plan, install the dish and set up your network &mdash; fast broadband for rural homes, businesses and not-spots.</p></div>
           <div class="tile robot-card" data-reveal>{SATELLITE_SVG}<h3>Internet from orbit</h3><p>A network of low-orbit satellites delivers fast, low-latency internet almost anywhere with a clear view of the sky.</p></div>
         </div>
         <p class="lede lede--center" style="margin-top:1.6rem;font-size:.9rem;color:var(--faint)" data-reveal>Illustrative graphics &mdash; we&rsquo;ll recommend the right Starlink kit for your location.</p>
@@ -6180,7 +6180,7 @@ def starlink_internet():
           <p class="eyebrow mono">/01 — INTERNET ANYWHERE</p>
           <h2 class="section-title" data-title>Fast broadband, wherever you are<span class="title-underline"></span></h2>
           <p>If you&rsquo;re stuck with slow, patchy or non-existent broadband, Starlink changes everything &mdash; high-speed, low-latency internet beamed from low-orbit satellites, with no phone line needed.</p>
-          <p><strong>We supply, install and support Starlink</strong> for homes, rural properties and businesses, and set up roaming Starlink for life on the move &mdash; then look after it, and can pair it with off-grid power.</p>
+          <p><strong>We are not a Starlink dealer or reseller, and that is the point.</strong> We have no plan to push and no commission riding on your choice — so we will tell you which plan genuinely fits how you use it, whether you need it at all, and when something cheaper would do. Then we set it up, install the dish properly, sort your network and look after it. <strong>The subscription stays in your own name, so you keep control of it.</strong></p>
         </div>
         <ul class="checklist" data-stagger>
 {checklist(["Fast, low-latency broadband","Works almost anywhere","Great for rural areas &amp; not-spots","Residential &amp; roaming options","Supplied, installed &amp; supported","Pairs with off-grid power","Backup &amp; failover internet","No phone line needed"])}
@@ -6221,12 +6221,12 @@ def starlink_internet():
       faq_html(faqs),
       tools_strip(["speed", "coverage"], title="Check your connection first", lede_text="See what your current setup really delivers before you decide.", alt=False),
       cta("Get connected, anywhere",
-          "Slow broadband or none at all? Tell us your location and we&rsquo;ll get you online with Starlink &mdash; supplied, installed and supported locally.",
+          "Slow broadband or none at all? Tell us your location and how you would use it, and we&rsquo;ll advise honestly on the right plan &mdash; then set it up, install it and support it locally.",
           primary=("Get Connected", "/contact/"), secondary=("Off-Grid Energy", "/off-grid-victron-energy/")),
     ])
     def schema(s, _desc=desc, _faqs=faqs):
         return graph([crumb(s, "Starlink Internet"), webpage(s, "Starlink Satellite Internet", _desc),
-                      service(s, "Starlink Satellite Internet", "Supply, installation and support of Starlink satellite broadband &mdash; residential and roaming &mdash; for homes, businesses, campervans, boats and remote sites.", "Satellite internet supply and installation"),
+                      service(s, "Starlink Satellite Internet Setup and Support", "Independent advice on choosing the right Starlink plan, plus setup, dish installation, network configuration and ongoing support &mdash; residential and roaming &mdash; for homes, businesses, campervans, boats and remote sites.", "Satellite internet setup and support"),
                       faqpage(s, _faqs)])
     add(slug=slug, title="Starlink Satellite Internet | Residential & Roaming | 365 Techies",
         desc=desc, og_title="Starlink Satellite Internet | 365 Techies", schema=schema, content=content)
@@ -13459,7 +13459,7 @@ info_page(
             <li><strong>The router:</strong> a better router, or mesh Wi-Fi, often fixes &lsquo;slow internet&rsquo; that isn&rsquo;t the line&rsquo;s fault &mdash; see <a href="/wifi-support/">Wi-Fi support</a>.</li>
           </ul>
           <h2>Rural, remote or a not-spot?</h2>
-          <p>If fixed broadband is slow or unavailable where you are &mdash; common across rural Dorset and the New Forest &mdash; <a href="/starlink-internet/">Starlink satellite internet</a> can deliver fast, reliable broadband almost anywhere, and we supply, install and support it. It also makes a great backup connection for businesses that can&rsquo;t afford to go offline.</p>
+          <p>If fixed broadband is slow or unavailable where you are &mdash; common across rural Dorset and the New Forest &mdash; <a href="/starlink-internet/">Starlink satellite internet</a> can deliver fast, reliable broadband almost anywhere, and we advise on the right plan, install it and support it. It also makes a great backup connection for businesses that can&rsquo;t afford to go offline.</p>
           <p>You can compare availability and providers independently via <a href="https://www.ofcom.org.uk/phones-and-broadband/" target="_blank" rel="noopener">Ofcom</a>.</p>""" + PRINT_BTN,
   faqs=[
     ("What broadband speed do I really need?","It depends how many people do what at once. A light household is fine on a modest package; a busy family or a business needs more. Our <a href=\"/broadband-speed-checker/\">speed checker</a> gives you a personal recommendation in 30 seconds."),
