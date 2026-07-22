@@ -166,8 +166,8 @@ EMERGENCY_PAGES = [
            '<p><strong>An honest limit: we have one van.</strong> If it is committed to a booked event, we cannot be in two places at once, and we will tell you that '
            'when you call rather than leave you waiting. That is also the single best argument for <a href="/business-continuity-internet/">agreeing a plan in '
            'advance</a> if being online genuinely matters to your business.</p>'
-           '<p>We carry <strong>public liability insurance underwritten by Hiscox</strong>, and can provide the certificate on request &mdash; commercial sites, '
-           'venues and managing agents usually want to see it before we come on site.</p>'
+           '<p>We carry <strong>&pound;10 million public liability cover, underwritten by Hiscox</strong>, and can provide the certificate on request &mdash; commercial '
+           'sites, venues and managing agents usually want to see it before letting anyone on site.</p>'
            '<p>Our response times are what we can honestly staff and drive &mdash; we will give you a realistic window on the phone. We are not going to publish an '
            'SLA we cannot keep with one vehicle.</p>'},
  ],
@@ -450,7 +450,7 @@ EMERGENCY_PAGES = [
  'lede': 'A field in Wareham. A castle estate. A clifftop. A barn with no power. If the job needs a real internet connection somewhere there isn&rsquo;t one, we can '
          'bring one &mdash; carried by a solar-powered off-grid van that supplies its own electricity. And because we produce web and video content ourselves, we '
          'understand what you are actually trying to upload.',
- 'chips': ['No mains power needed', 'Public liability insured', 'We understand the upload'],
+ 'chips': ['No mains power needed', '&pound;10m public liability', 'We understand the upload'],
  'primaryCta': ['Talk to us about your event', '/contact/'],
  'secondaryCta': ['Call 01202 775566', 'tel:+441202775566'],
  'ctaHead': 'Got an event, a shoot or a stream coming up?',
@@ -511,10 +511,9 @@ EMERGENCY_PAGES = [
    'html': REQUIREMENTS +
            '<p><strong>For events specifically, please also tell us:</strong> the dates and times including set-up and breakdown, roughly how many people need '
            'connectivity, and what absolutely must work &mdash; payments, ticket scanning, a live stream.</p>'
-           '<p><strong>On insurance:</strong> we carry <strong>public liability insurance, underwritten by Hiscox</strong>, and we are happy to send the certificate '
-           'to your venue or organiser as part of the booking. Most larger venues and festivals ask suppliers for this along with a risk assessment before they will '
-           'let you on site, so please just tell us who needs it and we will send it over &mdash; it is much easier dealt with at enquiry stage than the week '
-           'before.</p>'},
+           '<p><strong>On insurance:</strong> we carry <strong>&pound;10 million public liability cover, underwritten by Hiscox</strong>, and we will send the certificate '
+           'straight to your venue or organiser as part of the booking. Ten million is the upper tier most festivals and large venues specify, so this should clear '
+           'your supplier requirements outright &mdash; just tell us who needs it and we will deal with it at enquiry stage rather than the week before.</p>'},
 
   {'eyebrow': '/06 &mdash; BOOKING & COST',
    'h2': 'Booking and cost',
@@ -540,9 +539,9 @@ EMERGENCY_PAGES = [
         'video calls. Tell us the numbers and what actually has to work and we will give you a straight answer. For large, high-density events, specialists who bond '
         'several mobile networks together are genuinely better suited, and we will point you towards them rather than take a booking we cannot do well.'},
   {'q': 'Do you have public liability insurance for event work?',
-   'a': 'Yes &mdash; we carry public liability insurance underwritten by Hiscox, and we will send the certificate directly to your venue or event organiser as part '
-        'of the booking. Most larger venues and festivals require this from every supplier before allowing them on site, usually alongside a risk assessment, so '
-        'tell us who needs it when you enquire and we will deal with it up front.'},
+   'a': 'Yes &mdash; we carry &pound;10 million public liability cover underwritten by Hiscox, and we will send the certificate directly to your venue or event '
+        'organiser as part of the booking. Ten million is the highest figure venues and festivals normally ask suppliers for, so it should satisfy the requirement '
+        'outright. Tell us who needs it when you enquire and we will deal with it up front, usually alongside a risk assessment.'},
   {'q': 'Do you cover events outside Bournemouth and Poole?',
    'a': 'Yes &mdash; across Dorset including Wareham, Wimborne, the Purbecks, Lulworth, Christchurch and Ferndown, with the New Forest and south-east Hampshire '
         'within reach. Rural venues are actually where this works best: poor fixed connectivity, patchy mobile coverage and plenty of open sky is exactly the '
