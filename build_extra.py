@@ -21,6 +21,7 @@ from office_data import OFFICE_PAGES
 from office_cluster import _office_cluster_section
 from webdesign_data import WEBDESIGN_PAGES
 from web_cluster import _web_cluster_section
+from wifi_data import WIFI_PAGES
 try:
     from new_pages_data import DELL_COMPARE_TABLES
 except ImportError:
@@ -1216,6 +1217,38 @@ def wifi_optimizer():
         });
       })();
     </script>''',
+      '''    <section class="section section--alt" aria-label="What your reading means">
+      <div class="wrap prose" data-reveal>
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono">// READING THE NUMBERS</p>
+          <h2 class="section-title section-title--center" data-title>What your reading actually means<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <p>Signal strength is measured in dBm, and it is a negative number &mdash; closer to zero is better. Engineers design to a target of
+        <strong>&minus;67&nbsp;dBm at the edge of coverage</strong>, so that is a sensible bar for any room you actually work or watch television in.</p>
+        <ul>
+          <li><strong>&minus;30 to &minus;55&nbsp;dBm</strong> &mdash; excellent. You are close to the router with little in the way.</li>
+          <li><strong>&minus;55 to &minus;67&nbsp;dBm</strong> &mdash; fine for video calls, streaming and everything normal.</li>
+          <li><strong>&minus;67 to &minus;75&nbsp;dBm</strong> &mdash; marginal. It will connect, and it will disappoint.</li>
+          <li><strong>Worse than &minus;75&nbsp;dBm</strong> &mdash; effectively unusable. This is the &ldquo;full bars, nothing loads&rdquo; zone.</li>
+        </ul>
+        <h3>How to run this properly</h3>
+        <p>Test in the same spot in the same minute, and <strong>run a wired test first</strong> &mdash; that is your ceiling, and nothing wireless beats it.
+        Record three numbers each time: download, upload and ping. On Windows, <code>netsh wlan show interfaces</code> tells you the band, channel and signal;
+        on a Mac, hold Option and click the WiFi icon. iPhones do not expose signal strength, so use an Android handset if you are walking a survey.</p>
+        <h3>The test that matters more than speed</h3>
+        <p>Start a large download and watch your ping while it runs. If an idle ping of around 15&nbsp;ms climbs to 250&nbsp;ms under load, that is
+        <strong>bufferbloat</strong> &mdash; and it is why calls break up the moment somebody else in the house uses the internet. It is invisible to a
+        normal speed test, and it explains more complaints than any shortage of megabits.</p>
+        <h3>Where to go next</h3>
+        <ul>
+          <li><strong>The reading is fine but it is still slow</strong> &rarr; <a href="/wifi-troubleshooting/">the fault-finding guide</a></li>
+          <li><strong>The reading is poor in one room</strong> &rarr; <a href="/mesh-wifi-systems-uk/">which mesh system actually suits a UK home</a></li>
+          <li><strong>The reading collapses through one wall</strong> &rarr; <a href="/wifi-uk-buildings-heat/">what British walls and insulation cost you</a></li>
+          <li><strong>You are setting a new system up</strong> &rarr; <a href="/mesh-wifi-setup-guide/">the step-by-step setup guide, ISP by ISP</a></li>
+          <li><strong>This is for an office</strong> &rarr; <a href="/business-wifi-installation/">business WiFi in Dorset</a></li>
+        </ul>
+      </div>
+    </section>''',
     ])
     def schema(s, _desc=desc, _faqs=faqs):
         app = {"@type": "WebApplication", "@id": f"{SITE}/{s}/#app",
@@ -16316,6 +16349,9 @@ for _np in OFFICE_PAGES:
     build_new_page(_np)
 
 for _np in WEBDESIGN_PAGES:
+    build_new_page(_np)
+
+for _np in WIFI_PAGES:
     build_new_page(_np)
 
 # ---------------------------------------------------------------------------
