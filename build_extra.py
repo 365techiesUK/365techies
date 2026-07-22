@@ -22,6 +22,7 @@ from office_cluster import _office_cluster_section
 from webdesign_data import WEBDESIGN_PAGES
 from web_cluster import _web_cluster_section
 from wifi_data import WIFI_PAGES
+from emergency_internet_data import EMERGENCY_PAGES
 try:
     from new_pages_data import DELL_COMPARE_TABLES
 except ImportError:
@@ -16352,6 +16353,9 @@ for _np in WEBDESIGN_PAGES:
     build_new_page(_np)
 
 for _np in WIFI_PAGES:
+    build_new_page(_np)
+
+for _np in EMERGENCY_PAGES:
     build_new_page(_np)
 
 # ---------------------------------------------------------------------------
