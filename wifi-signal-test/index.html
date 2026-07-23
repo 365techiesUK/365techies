@@ -725,6 +725,8 @@
               <div class="wf__stat"><span class="wf__sv" id="wf-drop">&mdash;</span><span class="wf__sl">Dropouts</span></div>
             </div>
             <svg class="wf__spark" id="wf-spark" viewBox="0 0 300 54" preserveAspectRatio="none" aria-hidden="true"><polyline id="wf-sparkline" fill="none" stroke="url(#wf-grad)" stroke-width="2.5" points=""/></svg>
+            <p style="margin:0 0 .9rem"><button type="button" class="button primary button--lg wq-open" id="wq-open">&#127918;&nbsp; Survey every room &mdash; game mode</button></p>
+            <p class="wf__hint mono" style="margin:0 0 1rem">One screen, no scrolling: pick a room, hold still, it tests the signal <strong>and runs a speed test</strong>, stamps the score, next room. Saves as you go.</p>
             <div class="wf__btns">
               <button type="button" class="button primary" id="wf-go">&#9654;&nbsp; Start live test</button>
               <button type="button" class="button ghost" id="wf-sound" aria-pressed="false" title="Tick faster when the signal is better, so you can listen instead of looking">&#128266;&nbsp; Sound off</button>
@@ -757,6 +759,43 @@
             <p class="mono" style="color:var(--faint);font-size:.68rem;margin:.4rem 0 0">Saved in this browser only &mdash; we never see your survey unless you choose to send it below. Clearing browser data deletes it, so use Export if you want a copy.</p>
           </div>
         </div>
+      </div>
+      <div class="wq" id="wq" hidden role="dialog" aria-modal="true" aria-label="Room-by-room WiFi survey">
+        <div class="wq__glow" aria-hidden="true"></div>
+        <div class="wq__top">
+          <span class="wq__count mono" id="wq-count">0 rooms</span>
+          <span class="wq__rail" id="wq-rail" aria-label="Rooms tested so far"></span>
+          <button type="button" class="wq__x" id="wq-x" aria-label="Finish and close the survey">&#10005;</button>
+        </div>
+        <div class="wq__body">
+          <div class="wq__step" id="wq-pick">
+            <p class="wq__kicker mono">// ROOM SURVEY</p>
+            <p class="wq__title">Where are you standing?</p>
+            <div class="wq__chips" id="wq-chips"></div>
+            <div class="wq__namerow">
+              <input type="text" id="wq-name" maxlength="40" placeholder="Or type a room name&hellip;" aria-label="Room name">
+              <button type="button" class="button primary" id="wq-go">Test here</button>
+            </div>
+            <p class="wq__note mono">Each room includes a real speed test (about 10&nbsp;MB) &mdash; happiest on WiFi, mind your allowance on mobile data.</p>
+          </div>
+          <div class="wq__step" id="wq-test" hidden>
+            <p class="wq__room" id="wq-room">Kitchen</p>
+            <div class="wq__dial" id="wq-dial"><div class="wq__dialin"><span class="wq__num" id="wq-num">&mdash;</span><span class="wq__unit mono" id="wq-unit">SIGNAL</span></div></div>
+            <p class="wq__phase" id="wq-phase" role="status" aria-live="polite">Checking the signal&hellip;</p>
+            <p class="wq__tip mono" id="wq-tip">Stand still &mdash; like taking a photo.</p>
+          </div>
+          <div class="wq__step" id="wq-res" hidden>
+            <p class="wq__stamp" id="wq-stamp">EXCELLENT</p>
+            <p class="wq__big" id="wq-score">92</p>
+            <p class="wq__mini mono" id="wq-mini"></p>
+            <p class="wq__verdictline" id="wq-vline"></p>
+            <div class="wq__btns">
+              <button type="button" class="button primary" id="wq-next">Next room &#8594;</button>
+              <button type="button" class="button ghost" id="wq-finish">Finish survey</button>
+            </div>
+          </div>
+        </div>
+        <div class="wq__burst" id="wq-burst" aria-hidden="true"></div>
       </div>
     </section>
     <section class="section section--alt" aria-label="Speed test">
@@ -971,6 +1010,58 @@
       .wf__consent input{margin-top:.2rem;flex:none}
       .wf__multi{border:1px solid rgba(125,170,220,.2);border-radius:14px;padding:1rem 1.2rem;margin:1.4rem 0 0;background:rgba(125,170,220,.05)}
       @media (max-width:560px){.wf__bbgrid{grid-template-columns:1fr}}
+      /* ===== room-quest overlay ===== */
+      .wq{position:fixed;inset:0;z-index:1200;display:flex;flex-direction:column;background:radial-gradient(120% 90% at 50% 0%,#12244a 0%,#0b1220 55%,#070d1a 100%);color:#eef4fd;padding:max(.8rem,env(safe-area-inset-top)) 1rem max(1rem,env(safe-area-inset-bottom));overflow:hidden}
+      .wq[hidden]{display:none}
+      .wq__glow{position:absolute;left:50%;top:34%;width:min(80vw,420px);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(29,151,227,.22),transparent 65%);pointer-events:none;transition:background 1s}
+      .wq.tier-good .wq__glow{background:radial-gradient(circle,rgba(0,206,27,.2),transparent 65%)}
+      .wq.tier-bad .wq__glow{background:radial-gradient(circle,rgba(224,86,63,.2),transparent 65%)}
+      .wq__top{display:flex;align-items:center;gap:.7rem;flex:none}
+      .wq__count{color:var(--faint);font-size:.68rem;flex:none}
+      .wq__rail{display:flex;gap:.35rem;overflow-x:auto;flex:1;padding:.2rem 0;scrollbar-width:none}
+      .wq__rail::-webkit-scrollbar{display:none}
+      .wq__pip{flex:none;font:700 .68rem/1 ui-monospace,monospace;padding:.4rem .6rem;border-radius:999px;border:1px solid rgba(125,170,220,.3);background:rgba(255,255,255,.04);color:#dfe9f7;animation:wqpip .45s cubic-bezier(.22,1.4,.36,1)}
+      @keyframes wqpip{0%{transform:scale(.4);opacity:0}100%{transform:scale(1);opacity:1}}
+      .wq__x{flex:none;width:42px;height:42px;border-radius:50%;border:1px solid rgba(125,170,220,.35);background:rgba(255,255,255,.05);color:#eaf1fb;font-size:1rem;cursor:pointer}
+      .wq__body{flex:1;display:flex;flex-direction:column;justify-content:center;position:relative;min-height:0}
+      .wq__step{text-align:center;animation:wqstep .4s ease}
+      @keyframes wqstep{0%{opacity:0;transform:translateY(14px)}100%{opacity:1;transform:none}}
+      .wq__kicker{color:var(--cyan,#4fb4f5);font-size:.66rem;letter-spacing:.14em;margin:0 0 .4rem}
+      .wq__title{font-size:clamp(1.5rem,6vw,2.1rem);font-weight:800;margin:0 0 1.2rem}
+      .wq__chips{display:flex;flex-wrap:wrap;gap:.55rem;justify-content:center;max-width:430px;margin:0 auto 1.1rem}
+      .wq__chips button{font:600 .9rem/1 inherit;color:#eaf1fb;background:rgba(125,170,220,.1);border:1px solid rgba(125,170,220,.35);border-radius:14px;padding:.85rem 1.05rem;cursor:pointer;transition:transform .15s,background .15s}
+      .wq__chips button:active{transform:scale(.94)}
+      .wq__chips button.isdone{border-color:rgba(0,206,27,.5);background:rgba(0,206,27,.1)}
+      .wq__chips button .sc{font-weight:800;margin-left:.4rem}
+      .wq__namerow{display:flex;gap:.5rem;max-width:430px;margin:0 auto;flex-wrap:wrap;justify-content:center}
+      .wq__namerow input{flex:1;min-width:170px;padding:.8rem .9rem;border-radius:12px;border:1px solid rgba(125,170,220,.35);background:#0d1526;color:#fff;font:400 1rem/1.2 inherit}
+      .wq__note{color:var(--faint);font-size:.66rem;margin:1.1rem auto 0;max-width:420px}
+      .wq__room{font-size:clamp(1.3rem,5.5vw,1.8rem);font-weight:800;margin:0 0 1rem}
+      .wq__dial{width:min(58vw,240px);aspect-ratio:1;margin:0 auto 1.1rem;border-radius:50%;position:relative;background:conic-gradient(var(--wq-col,#1d97e3) calc(var(--wq-pct,0)*1%),rgba(255,255,255,.07) 0);transition:background .3s;display:flex;align-items:center;justify-content:center;box-shadow:0 0 60px rgba(29,151,227,.15)}
+      .wq.tier-good .wq__dial{box-shadow:0 0 70px rgba(0,206,27,.2)}
+      .wq__dialin{width:84%;aspect-ratio:1;border-radius:50%;background:#0c1526;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.15rem}
+      .wq__num{font-size:clamp(2.6rem,11vw,3.6rem);font-weight:800;font-variant-numeric:tabular-nums;line-height:1}
+      .wq__unit{color:var(--faint);font-size:.62rem;letter-spacing:.14em}
+      .wq__phase{font-size:1.05rem;font-weight:700;margin:0 0 .3rem;min-height:1.5em}
+      .wq__tip{color:var(--faint);font-size:.7rem;margin:0}
+      .wq.is-pulse .wq__dial{animation:wqpulse 1.6s ease-in-out infinite}
+      @keyframes wqpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.035)}}
+      .wq__stamp{display:inline-block;font:800 1rem/1 ui-monospace,monospace;letter-spacing:.2em;padding:.55rem 1.1rem;border:2px solid currentColor;border-radius:10px;margin:0 0 .9rem;transform:rotate(-4deg);animation:wqstamp .45s cubic-bezier(.2,1.6,.4,1)}
+      @keyframes wqstamp{0%{transform:rotate(-14deg) scale(2.2);opacity:0}100%{transform:rotate(-4deg) scale(1);opacity:1}}
+      .wq__stamp.t-good{color:#2fe45a}.wq__stamp.t-mid{color:#e0b341}.wq__stamp.t-bad{color:#ff7a63}
+      .wq__big{font-size:clamp(4rem,20vw,6.5rem);font-weight:800;line-height:1;margin:0 0 .4rem;font-variant-numeric:tabular-nums}
+      .wq__mini{color:var(--muted);font-size:.8rem;margin:0 0 .6rem}
+      .wq__verdictline{max-width:420px;margin:0 auto 1.2rem;color:#c9d6e8;font-size:.95rem}
+      .wq__btns{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap}
+      .wq__burst{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+      .wq__p{position:absolute;left:50%;top:42%;width:9px;height:9px;border-radius:2px;opacity:0;animation:wqburst 1s ease-out forwards}
+      @keyframes wqburst{0%{transform:translate(0,0) rotate(0);opacity:1}100%{transform:translate(var(--dx),var(--dy)) rotate(540deg);opacity:0}}
+      @media (prefers-reduced-motion: reduce){
+        .wq__pip,.wq__step,.wq__stamp{animation:none!important}
+        .wq.is-pulse .wq__dial{animation:none!important}
+        .wq__p{display:none}
+        .wq__dial{transition:none}
+      }
       @media (prefers-reduced-motion: reduce){.wf .wf__ring{animation:none!important}.wf__arc{transition:none}.wf__trend{animation:none!important}.wf__jbar span{transition:none}}
       @media (max-width:520px){.wf__stats--4{grid-template-columns:repeat(2,1fr)}.wf__score{font-size:2.7rem}}
     </style>
@@ -1323,11 +1414,12 @@
               old.hist=old.hist||[]; old.hist.push({s:old.s,lat:old.lat,jit:old.jit,t:old.t});
               if(old.hist.length>5) old.hist.shift();
               old.s=r.s; old.lat=r.lat; old.jit=r.jit; old.drops=r.drops; old.t=Date.now();
+              if(r.dl!=null) old.dl=r.dl;
               return;
             }
           }
           if(doc.rooms.length>=20) return;
-          doc.rooms.push({n:name,s:r.s,lat:r.lat,jit:r.jit,drops:r.drops,t:Date.now(),hist:[]});
+          doc.rooms.push({n:name,s:r.s,lat:r.lat,jit:r.jit,drops:r.drops,dl:(r.dl!=null?r.dl:null),t:Date.now(),hist:[]});
         }
         function renderRooms(){
           if(!roomsWrap) return;
@@ -1341,7 +1433,7 @@
             b.style.background=colFor(r.s)+'22'; b.style.color=colFor(r.s);
             var n=el('span','',r.n);
             var m=el('span','mono'); m.style.cssText='margin-left:auto;color:var(--faint);font-size:.68rem';
-            m.textContent=r.lat+' ms \u00b7 '+ago(r.t)+(r.hist&&r.hist.length?' \u00b7 tested '+(r.hist.length+1)+'\u00d7':'');
+            m.textContent=r.lat+' ms'+(r.dl!=null?' \u00b7 '+r.dl+' Mbps':'')+' \u00b7 '+ago(r.t)+(r.hist&&r.hist.length?' \u00b7 tested '+(r.hist.length+1)+'\u00d7':'');
             var re=el('button','wf__link','re-test'); re.type='button'; re.style.marginLeft='.6rem';
             re.setAttribute('aria-label','Re-test '+r.n);
             re.addEventListener('click',function(){
@@ -1542,6 +1634,7 @@
                 lat:Math.max(0,Math.round(+r.lat)||0),
                 jit:Math.max(0,Math.round(+r.jit)||0),
                 drops:Math.max(0,Math.round(+r.drops)||0),
+                dl:(isFinite(+r.dl)&&+r.dl>=0&&+r.dl<10000)?Math.round(+r.dl*10)/10:null,
                 t:(+r.t>0&&+r.t<4102444800000)?+r.t:Date.now(), hist:[]});
             });
             var sb=(sv.bb&&typeof sv.bb==='object')?sv.bb:{}, bb={};
@@ -1567,7 +1660,7 @@
           if(!doc.rooms.length&&!doc.bb.prov){ say('Test at least one room (or record your deal) so there\u2019s something for us to look at.'); return; }
           var lines=['WiFi survey ('+doc.rooms.length+' rooms, '+pctDone()+'% complete):'];
           doc.rooms.slice().sort(function(x,y){return y.s-x.s;}).slice(0,15).forEach(function(r){
-            lines.push('- '+r.n+': '+r.s+'/100, '+r.lat+'ms'+(r.jit?', jitter '+r.jit+'ms':''));
+            lines.push('- '+r.n+': '+r.s+'/100, '+r.lat+'ms'+(r.dl!=null?', '+r.dl+' Mbps':'')+(r.jit?', jitter '+r.jit+'ms':''));
           });
           if(doc.dl) lines.push('Best measured download: '+doc.dl.best+' Mbps');
           var b=doc.bb||{};
@@ -1586,6 +1679,185 @@
             })
             .catch(function(){ sendBtn.disabled=false; say('That didn\u2019t send \u2014 check you\u2019re online, or call 01202 775566.'); });
         });
+
+        /* ---------- room quest: the one-screen game mode ---------- */
+        var wq=$('#wq'), wqOpen=$('#wq-open');
+        if(wq&&wqOpen){(function(){
+          var DOWNQ='https://speed.cloudflare.com/__down?bytes=';
+          var q={on:false,room:'',poll:null,cancel:false,count:null};
+          var E={pick:$('#wq-pick'),test:$('#wq-test'),res:$('#wq-res'),chips:$('#wq-chips'),name:$('#wq-name'),
+                 go:$('#wq-go'),roomEl:$('#wq-room'),dial:$('#wq-dial'),num:$('#wq-num'),unit:$('#wq-unit'),
+                 phase:$('#wq-phase'),tip:$('#wq-tip'),stamp:$('#wq-stamp'),score:$('#wq-score'),mini:$('#wq-mini'),
+                 vline:$('#wq-vline'),next:$('#wq-next'),fin:$('#wq-finish'),x:$('#wq-x'),rail:$('#wq-rail'),
+                 count:$('#wq-count'),burst:$('#wq-burst')};
+          for(var k in E){ if(!E[k]) return; }
+          var reduceQ=false; try{reduceQ=matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){}
+          var engineGo=$('#wf-go');
+          function engineRunning(){ var L=window.WF_LAST; return !!(L&&L.run&&(Date.now()-L.t)<8000); }
+          function qShow(step){ E.pick.hidden=(step!=='pick'); E.test.hidden=(step!=='test'); E.res.hidden=(step!=='res'); }
+          function qDial(pct,col){
+            E.dial.style.setProperty('--wq-pct',String(Math.max(0,Math.min(100,pct))));
+            if(col) E.dial.style.setProperty('--wq-col',col);
+          }
+          function qRail(){
+            E.count.textContent=doc.rooms.length+' room'+(doc.rooms.length===1?'':'s');
+            E.rail.innerHTML='';
+            doc.rooms.slice().sort(function(a,b){return b.t-a.t;}).forEach(function(r){
+              var p=el('span','wq__pip',r.n+' '+r.s);
+              p.style.color=colFor(r.s);
+              E.rail.appendChild(p);
+            });
+          }
+          function qChips(){
+            E.chips.innerHTML='';
+            PRESETS.forEach(function(p){
+              var match=null;
+              for(var i=0;i<doc.rooms.length;i++){ if(doc.rooms[i].n.toLowerCase()===p.toLowerCase()){ match=doc.rooms[i]; break; } }
+              var b=el('button','',''); b.type='button';
+              b.appendChild(document.createTextNode(p));
+              if(match){ b.className='isdone'; var sc=el('span','sc',String(match.s)); sc.style.color=colFor(match.s); b.appendChild(sc); }
+              b.addEventListener('click',function(){ qStart(p); });
+              E.chips.appendChild(b);
+            });
+          }
+          function qOpenFn(){
+            if(!booted||!doc) return;   /* storage still opening - a second later it will work */
+            wq.hidden=false; q.on=true; wq.className='wq';
+            try{ document.documentElement.style.overflow='hidden'; }catch(e){}
+            qShow('pick'); qChips(); qRail();
+            try{ E.x.focus(); }catch(e){}
+          }
+          function qClose(){
+            q.cancel=true; clearInterval(q.poll); clearInterval(q.count);
+            wq.hidden=true; q.on=false;
+            try{ document.documentElement.style.overflow=''; }catch(e){}
+            if(engineRunning()&&engineGo) engineGo.click();
+            save(); renderAll();
+          }
+          wqOpen.addEventListener('click',qOpenFn);
+          E.x.addEventListener('click',qClose);
+          E.fin.addEventListener('click',qClose);
+          document.addEventListener('keydown',function(e){ if(q.on&&e.key==='Escape') qClose(); });
+          E.go.addEventListener('click',function(){
+            var n=(E.name.value||'').replace(/\s+/g,' ').trim().slice(0,40);
+            if(!n){ E.name.focus(); return; }
+            E.name.value=''; qStart(n);
+          });
+          E.next.addEventListener('click',function(){ wq.className='wq'; qShow('pick'); qChips(); qRail(); });
+          function qStart(room){
+            var isNew=!doc.rooms.some(function(r){ return r.n.toLowerCase()===room.toLowerCase(); });
+            if(isNew&&doc.rooms.length>=20){
+              E.name.placeholder='Room limit (20) reached \u2014 remove one from the list on the page first';
+              return;
+            }
+            q.room=room; q.cancel=false;
+            E.roomEl.textContent=room;
+            qShow('test'); wq.className='wq is-pulse';
+            E.unit.textContent='SIGNAL'; E.num.textContent='\u2014'; E.num.style.color='#eef4fd'; qDial(0,'#1d97e3');
+            E.phase.textContent='Checking the signal\u2026';
+            E.tip.textContent='Stand still \u2014 like taking a photo.';
+            /* restart the engine so this room gets a clean measurement window */
+            if(engineGo){ if(engineRunning()) engineGo.click(); engineGo.click(); }
+            var need=7, t0=Date.now(), seen=0, lastT=0;
+            clearInterval(q.poll);
+            q.poll=setInterval(function(){
+              if(q.cancel){ clearInterval(q.poll); return; }
+              var L=window.WF_LAST;
+              if(L&&L.t>lastT){
+                lastT=L.t; seen++;
+                E.num.textContent=L.off?'\u2014':String(L.s);
+                E.num.style.color=colFor(L.off?0:L.s);
+                qDial(seen/need*100, colFor(L.off?0:L.s));
+                if(seen===3) E.phase.textContent='Getting a steady reading\u2026';
+              }
+              if(seen>=need){
+                clearInterval(q.poll);
+                var snap=window.WF_LAST||{s:0,lat:0,jit:0,drops:0,off:true};
+                qSpeed(snap);
+              } else if(Date.now()-t0>30000){
+                clearInterval(q.poll);
+                E.phase.textContent='That took too long \u2014 check you\u2019re online and try again.';
+                setTimeout(function(){ if(q.on&&!q.cancel){ wq.className='wq'; qShow('pick'); qChips(); } },1600);
+              }
+            },350);
+          }
+          function qSpeed(snap){
+            E.phase.textContent='Now the speed test\u2026';
+            E.tip.textContent='Hold on \u2014 downloading about 10\u00a0MB.';
+            E.unit.textContent='MBPS'; E.num.textContent='0'; E.num.style.color='#eef4fd'; qDial(0,'#1d97e3');
+            var bytes=10000000, t0=performance.now(), got=0;
+            fetch(DOWNQ+bytes+'&r='+Math.random().toString(36).slice(2),{cache:'no-store'})
+              .then(function(r){
+                if(r.body&&r.body.getReader){
+                  var rd=r.body.getReader();
+                  var pump=function(){
+                    return rd.read().then(function(res){
+                      if(q.cancel){ try{ rd.cancel(); }catch(e){} return null; }
+                      if(res.done) return got;
+                      got+=res.value.length;
+                      var secs=(performance.now()-t0)/1000;
+                      var live=secs>0?(got*8)/secs/1e6:0;
+                      E.num.textContent=live>=100?String(Math.round(live)):live.toFixed(1);
+                      qDial(got/bytes*100,'#1d97e3');
+                      return pump();
+                    });
+                  };
+                  return pump();
+                }
+                return r.arrayBuffer().then(function(b){ got=b.byteLength; return got; });
+              })
+              .then(function(total){
+                if(q.cancel||total==null) return;
+                var secs=(performance.now()-t0)/1000;
+                var mbps=secs>0?(total*8)/secs/1e6:0;
+                mbps=Math.min(Math.round(mbps*10)/10,2000);
+                qResult(snap,mbps);
+              })
+              ['catch'](function(){ if(!q.cancel) qResult(snap,null); });
+          }
+          function qResult(snap,mbps){
+            var s=snap.off?0:snap.s;
+            upsert(q.room,{s:s,lat:snap.lat,jit:snap.jit,drops:snap.drops,dl:mbps});
+            if(mbps!=null){ try{ document.dispatchEvent(new CustomEvent('wf:speed',{detail:{mbps:mbps}})); }catch(e){} }
+            save(); qRail(); renderAll();
+            qShow('res');
+            var tier=s>=75?['t-good','EXCELLENT','tier-good']:(s>=45?['t-mid','GOOD','']:['t-bad','WEAK SPOT','tier-bad']);
+            wq.className='wq'+(tier[2]?' '+tier[2]:'');
+            E.stamp.className='wq__stamp '+tier[0]; E.stamp.textContent=tier[1];
+            E.score.style.color=colFor(s);
+            clearInterval(q.count);
+            if(reduceQ){ E.score.textContent=String(s); }
+            else {
+              var shown=0, step=Math.max(1,Math.round(s/22));
+              E.score.textContent='0';
+              q.count=setInterval(function(){
+                shown+=step;
+                if(shown>=s){ shown=s; clearInterval(q.count); }
+                E.score.textContent=String(shown);
+              },30);
+            }
+            E.mini.textContent=(snap.off?'no response':snap.lat+' ms latency')+(mbps!=null?' \u00b7 '+(mbps>=100?Math.round(mbps):mbps)+' Mbps here':' \u00b7 speed test didn\u2019t finish');
+            E.vline.textContent= snap.off?'Nothing is getting through in this room \u2014 a genuine black-spot. Test the rooms either side to see where it recovers.'
+              : s>=75?'This room is sorted. On to the next one.'
+              : s>=45?'Perfectly usable \u2014 video calls should hold here, though it\u2019s not your best room.'
+              : 'Found a weak spot. Worth testing the rooms either side to see exactly where the signal gives up.';
+            if(s>=75&&!reduceQ) qBurst();
+          }
+          function qBurst(){
+            E.burst.innerHTML='';
+            var cols=['#00ce1b','#1d97e3','#e0b341','#4fb4f5','#2fe45a'];
+            for(var i=0;i<16;i++){
+              var p=el('span','wq__p','');
+              var ang=Math.random()*Math.PI*2, dist=90+Math.random()*160;
+              p.style.setProperty('--dx',(Math.cos(ang)*dist).toFixed(0)+'px');
+              p.style.setProperty('--dy',(Math.sin(ang)*dist-60).toFixed(0)+'px');
+              p.style.background=cols[i%cols.length];
+              p.style.animationDelay=(Math.random()*0.15).toFixed(2)+'s';
+              E.burst.appendChild(p);
+            }
+            setTimeout(function(){ E.burst.innerHTML=''; },1400);
+          }
+        })();}
 
         /* ---------- welcome back / boot ---------- */
         function renderAll(){ renderJourney(); renderRooms(); renderBB(); renderRep(); }
@@ -1628,7 +1900,7 @@
               var found=null;
               for(var i=0;i<doc.rooms.length;i++){ if(doc.rooms[i].n.toLowerCase()===String(r.n).toLowerCase()){ found=doc.rooms[i]; break; } }
               if(!found){ if(doc.rooms.length<20){ doc.rooms.push(r); changed=true; } }
-              else if((+r.t||0)>(+found.t||0)){ found.s=r.s; found.lat=r.lat; found.jit=r.jit; found.drops=r.drops; found.t=r.t; changed=true; }
+              else if((+r.t||0)>(+found.t||0)){ found.s=r.s; found.lat=r.lat; found.jit=r.jit; found.drops=r.drops; if(r.dl!=null) found.dl=r.dl; found.t=r.t; changed=true; }
             });
             if(!doc.dl&&st.dl){ doc.dl=st.dl; changed=true; }
             if((!doc.bb||!doc.bb.prov)&&st.bb&&st.bb.prov){ doc.bb=st.bb; fillBB(); changed=true; }
