@@ -2741,7 +2741,7 @@
             try{ body=new Uint8Array(bytes); }catch(e){}
             if(!body){ qResult(snap,dl,null); return; }
             var upTO=setTimeout(function(){ if(!upDone&&!q.cancel){ upDone=true; qResult(snap,dl,null); } },20000);
-            fetch('https://speed.cloudflare.com/__up',{method:'POST',body:body,cache:'no-store'})
+            fetch('/api/up-sink.php',{method:'POST',body:body,cache:'no-store'})
               .then(function(){
                 clearTimeout(upTO);
                 if(q.cancel||upDone) return;
@@ -2804,7 +2804,7 @@
         /* ---------- Signal Hunter: mobile speed pins + map + community share ---------- */
         var wn=$('#wn');
         if(wn){(function(){
-          var PINGU='/api/ping.php', DOWN2='https://speed.cloudflare.com/__down?bytes=', UP2='https://speed.cloudflare.com/__up';
+          var PINGU='/api/ping.php', DOWN2='https://speed.cloudflare.com/__down?bytes=', UP2='/api/up-sink.php';
           var MAPI='/api/wifi-map.php';
           var NETS2=['4G','5G','WiFi','Other'];
           var PLACES2=['Cafe','Coworking','Library','Car park / layby','Campsite','Beach / outdoors','Van spot','Harbour / marina','Other'];

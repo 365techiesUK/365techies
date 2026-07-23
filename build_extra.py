@@ -2827,7 +2827,7 @@ def wifi_optimizer():
             try{ body=new Uint8Array(bytes); }catch(e){}
             if(!body){ qResult(snap,dl,null); return; }
             var upTO=setTimeout(function(){ if(!upDone&&!q.cancel){ upDone=true; qResult(snap,dl,null); } },20000);
-            fetch('https://speed.cloudflare.com/__up',{method:'POST',body:body,cache:'no-store'})
+            fetch('/api/up-sink.php',{method:'POST',body:body,cache:'no-store'})
               .then(function(){
                 clearTimeout(upTO);
                 if(q.cancel||upDone) return;
@@ -2890,7 +2890,7 @@ def wifi_optimizer():
         /* ---------- Signal Hunter: mobile speed pins + map + community share ---------- */
         var wn=$('#wn');
         if(wn){(function(){
-          var PINGU='/api/ping.php', DOWN2='https://speed.cloudflare.com/__down?bytes=', UP2='https://speed.cloudflare.com/__up';
+          var PINGU='/api/ping.php', DOWN2='https://speed.cloudflare.com/__down?bytes=', UP2='/api/up-sink.php';
           var MAPI='/api/wifi-map.php';
           var NETS2=['4G','5G','WiFi','Other'];
           var PLACES2=['Cafe','Coworking','Library','Car park / layby','Campsite','Beach / outdoors','Van spot','Harbour / marina','Other'];
@@ -4055,7 +4055,7 @@ SPEEDTEST_WIDGET = r'''    <section class="section" aria-label="Live broadband s
       <script>
       (function(){
         var root=document.getElementById('spd'); if(!root) return;
-        var DOWN='https://speed.cloudflare.com/__down?bytes=', UP='https://speed.cloudflare.com/__up', META='https://speed.cloudflare.com/meta', ARC=282.743;
+        var DOWN='https://speed.cloudflare.com/__down?bytes=', UP='/api/up-sink.php', META='https://speed.cloudflare.com/meta', ARC=282.743;
         var $=function(id){return root.querySelector(id);};
         var btn=$('#spd-start'), arc=$('#spd-arc'), num=$('#spd-num'), lab=$('#spd-lab'), phase=$('#spd-phase');
         var res=$('#spd-results'), dlEl=$('#spd-dl'), ulEl=$('#spd-ul'), pingEl=$('#spd-ping'), jitEl=$('#spd-jit'), verdict=$('#spd-verdict');
