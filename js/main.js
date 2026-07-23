@@ -85,7 +85,55 @@ function setMenu(open) {
 menuButton.addEventListener("click", () => setMenu(!menuOpen));
 menuBackdrop.addEventListener("click", () => setMenu(false));
 document.querySelector(".header-bar .logo").addEventListener("click", () => { if (menuOpen) setMenu(false); });
-mobileLinks.forEach((a) => a.addEventListener("click", () => setMenu(false)));
+// Close the menu only on REAL links - a group header (summary) must open its
+// section in place, never close the whole menu (that was the tap-tap-tap bug).
+mobileMenu.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => setMenu(false)));
+
+/* Accordion groups: animated open/close, one open at a time, reduced-motion aware */
+const mGroups = mobileMenu.querySelectorAll(".m-group");
+mGroups.forEach((g) => {
+  const sum = g.querySelector("summary");
+  const body = g.querySelector(".m-group__links");
+  if (!sum || !body) return;
+  sum.addEventListener("click", (e) => {
+    e.preventDefault();
+    const opening = !g.hasAttribute("open");
+    // close any other open group (accordion) so the list never becomes a wall
+    mGroups.forEach((o) => {
+      if (o !== g && o.hasAttribute("open")) collapse(o);
+    });
+    if (opening) expand(g); else collapse(g);
+  });
+});
+function expand(g) {
+  const body = g.querySelector(".m-group__links");
+  g.setAttribute("open", "");
+  if (REDUCED) return;
+  body.style.overflow = "hidden";
+  body.style.maxHeight = "0px";
+  body.style.opacity = "0";
+  requestAnimationFrame(() => {
+    body.style.transition = "max-height .34s cubic-bezier(.22,1,.36,1), opacity .3s ease";
+    body.style.maxHeight = body.scrollHeight + "px";
+    body.style.opacity = "1";
+    setTimeout(() => { body.style.maxHeight = ""; body.style.overflow = ""; body.style.transition = ""; }, 380);
+  });
+}
+function collapse(g) {
+  const body = g.querySelector(".m-group__links");
+  if (REDUCED) { g.removeAttribute("open"); return; }
+  body.style.overflow = "hidden";
+  body.style.maxHeight = body.scrollHeight + "px";
+  requestAnimationFrame(() => {
+    body.style.transition = "max-height .28s cubic-bezier(.55,0,.55,.2), opacity .24s ease";
+    body.style.maxHeight = "0px";
+    body.style.opacity = "0";
+    setTimeout(() => {
+      g.removeAttribute("open");
+      body.style.maxHeight = ""; body.style.overflow = ""; body.style.transition = ""; body.style.opacity = "";
+    }, 300);
+  });
+}
 mobilePlanButtons.forEach((a) => a.addEventListener("click", () => setMenu(false)));
 window.addEventListener("keydown", (e) => { if (e.key === "Escape" && menuOpen) setMenu(false); });
 

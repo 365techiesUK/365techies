@@ -18,7 +18,7 @@ except Exception:
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://365techies.co.uk"
-CSSV = "66"
+CSSV = "67"
 try:
     from hero_scenes import SCENES as HERO_SCENES
 except Exception:
@@ -914,7 +914,7 @@ def page(slug, title, desc, og_title, schema_json, content, og_image=None):
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=20"></script>
+  <script type="module" src="/js/interior.min.js?v=21"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v={TODAY}" defer></script>

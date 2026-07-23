@@ -411,6 +411,11 @@ html.no-motion body.menu-open .menu-backdrop { transition-delay: 0s, 0s; }
 }
 .m-group[open] > summary::after { transform: rotate(-135deg); margin-bottom: 0; margin-top: 4px; }
 .m-group > summary:hover { color: var(--cyan); }
+.m-group > summary::after { transition: transform .3s cubic-bezier(.22,1,.36,1), margin .3s ease; }
+@media (max-width: 919px) {
+  /* phones: no remote support on mobiles, and the SOS pill was crowding the hamburger */
+  .nav-sos { display: none !important; }
+}
 .m-group__links { display: none; flex-direction: column; padding: 0.1rem 0 0.7rem 0.9rem; }
 .m-group[open] > .m-group__links { display: flex; }
 .m-group__links a { border-bottom: 0; font-size: 1.05rem; font-weight: 400; padding: 0.5rem 0; color: var(--muted); }
