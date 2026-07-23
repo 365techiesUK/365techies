@@ -904,6 +904,11 @@ def wifi_optimizer():
                 <span class="wq__mename">Business</span>
                 <span class="wq__medesc">Video calls, card machines, cloud apps &mdash; held to a higher bar</span>
               </button>
+              <button type="button" class="wq__mode" id="wq-mode-any">
+                <span class="wq__memoji" aria-hidden="true">&#127758;</span>
+                <span class="wq__mename">Anywhere</span>
+                <span class="wq__medesc">Vans, caf&eacute;s, fields &mdash; map mobile signal with Signal Hunter</span>
+              </button>
             </div>
             <p class="wq__note mono">This tunes the advice and the report &mdash; you can change it any time.</p>
           </div>
@@ -918,6 +923,7 @@ def wifi_optimizer():
             <p style="margin:1rem 0 0"><button type="button" class="button ghost" id="wq-viewrep" hidden>&#128202;&nbsp; View my report</button>
             <button type="button" class="wq__link" id="wq-modeswap" style="margin-left:.8rem"></button></p>
             <p style="margin:.7rem 0 0"><button type="button" class="wq__bonus" id="wq-bonus">&#128225;&nbsp; BONUS LEVEL &mdash; Signal Hunter <span class="wq__bonussub">map the best mobile signal, anywhere</span></button></p>
+            <p style="margin:1rem 0 0"><button type="button" class="wq__link" id="wq-exit">&#8592;&nbsp; Exit game mode &mdash; back to the page</button></p>
             <p class="wq__note mono">Each room includes a real download <em>and</em> upload test (about 14&nbsp;MB together) &mdash; happiest on WiFi, mind your allowance on mobile data.</p>
           </div>
           <div class="wq__step" id="wq-test" hidden>
@@ -934,7 +940,7 @@ def wifi_optimizer():
             <div class="wq__btns">
               <button type="button" class="button primary" id="wq-next">Next room &#8594;</button>
               <button type="button" class="button ghost" id="wq-rep-btn">&#128202;&nbsp; Report</button>
-              <button type="button" class="button ghost" id="wq-finish">Finish</button>
+              <button type="button" class="button ghost" id="wq-finish">Finish &amp; exit</button>
             </div>
           </div>
           <div class="wq__step wq__repstep" id="wq-rep" hidden>
@@ -1059,6 +1065,15 @@ def wifi_optimizer():
               <label>Contract ends<input type="month" id="wfb-end"></label>
               <label>Do you have any backup internet? <span class="wf__opt">a 4G/5G fallback, second line&hellip;</span>
                 <select id="wfb-backup"><option value="">Not sure</option><option value="yes">Yes</option><option value="no">No</option></select></label>
+            </div>
+            <div id="wfb-biz" hidden style="margin-top:1rem;border-top:1px solid rgba(125,170,220,.18);padding-top:1rem">
+              <p class="eyebrow mono" style="margin:0 0 .6rem">// YOUR OFFICE, ON A BUSY DAY</p>
+              <div class="wf__bbgrid">
+                <label>Staff online at once<input type="number" id="wfb-staff" min="0" max="500" step="1" inputmode="numeric" placeholder="e.g. 8"></label>
+                <label>Guests / customers online<input type="number" id="wfb-guests" min="0" max="500" step="1" inputmode="numeric" placeholder="e.g. 4"></label>
+              </div>
+              <p class="wf__opt" style="margin:.7rem 0 .35rem;font-family:ui-monospace,monospace;font-size:.66rem;letter-spacing:.07em;text-transform:uppercase;color:var(--faint)">What are they mostly doing?</p>
+              <div class="wq__chips" id="wfb-acts" style="justify-content:flex-start"></div>
             </div>
             <div class="wf__advice" id="wfb-out" style="margin-top:1rem"></div>
             <p class="mono" style="color:var(--faint);font-size:.68rem;margin:.8rem 0 0"><strong>Honest labels:</strong> the <em>advertised</em> speed is a marketing average, the <em>minimum guaranteed</em> speed is the only number your provider commits to, and what you <em>measure</em> over WiFi is your WiFi in that spot &mdash; not the line. Test wired before blaming your provider. We don&rsquo;t compare live provider deals here because we won&rsquo;t show prices we can&rsquo;t verify &mdash; but send us your survey below and a human will genuinely look.</p>
@@ -1675,6 +1690,7 @@ def wifi_optimizer():
           },350);
         }
 
+        function hhmm(t){ var d2=new Date(t); return ('0'+d2.getHours()).slice(-2)+':'+('0'+d2.getMinutes()).slice(-2); }
         /* ---------- journey ---------- */
         var journey=$('#wf-journey'), jfill=$('#wf-jfill'), jsteps=$('#wf-jsteps');
         var STEPS=[['baseline','Test standing by the router first'],
@@ -1757,7 +1773,7 @@ def wifi_optimizer():
             b.style.background=colFor(r.s)+'22'; b.style.color=colFor(r.s);
             var n=el('span','',r.n);
             var m=el('span','mono'); m.style.cssText='margin-left:auto;color:var(--faint);font-size:.68rem';
-            m.textContent=r.lat+' ms'+(r.dl!=null?' \\u00b7 '+r.dl+(r.ul!=null?'/'+r.ul:'')+' Mbps':'')+' \\u00b7 '+ago(r.t)+(r.hist&&r.hist.length?' \\u00b7 tested '+(r.hist.length+1)+'\\u00d7':'');
+            m.textContent=r.lat+' ms'+(r.dl!=null?' \\u00b7 '+r.dl+(r.ul!=null?'/'+r.ul:'')+' Mbps':'')+' \\u00b7 '+hhmm(r.t)+' \\u00b7 '+ago(r.t)+(r.hist&&r.hist.length?' \\u00b7 tested '+(r.hist.length+1)+'\\u00d7':'');
             var re=el('button','wf__link','re-test'); re.type='button'; re.style.marginLeft='.6rem';
             re.setAttribute('aria-label','Re-test '+r.n);
             re.addEventListener('click',function(){
@@ -1816,7 +1832,7 @@ def wifi_optimizer():
         });
 
         /* ---------- broadband deal ---------- */
-        var BB=['prov','pkg','down','ming','price','end','backup'];
+        var BB=['prov','pkg','down','ming','price','end','backup','staff','guests'];
         function bbEl(k){ return $('#wfb-'+k); }
         function readBB(){
           var o={};
@@ -1824,12 +1840,15 @@ def wifi_optimizer():
             var e=bbEl(k); if(!e) return;
             var v=(e.value||'').trim();
             if(k==='down'||k==='ming'||k==='price'){ var n=parseFloat(v); o[k]=(isFinite(n)&&n>=0)?n:null; }
+            else if(k==='staff'||k==='guests'){ var n2=parseInt(v,10); o[k]=(isFinite(n2)&&n2>=0&&n2<=500)?n2:null; }
             else o[k]=v.slice(0,60);
           });
+          o.acts=(doc&&doc.bb&&doc.bb.acts)?doc.bb.acts:[];
           return o;
         }
         function fillBB(){
           BB.forEach(function(k){ var e=bbEl(k); if(e&&doc.bb&&doc.bb[k]!=null&&doc.bb[k]!=='') e.value=doc.bb[k]; });
+          renderActs(); bizPanel();
         }
         function card(cls,head,body){
           var d=el('div','wf__ac '+cls); d.appendChild(el('b','',head));
@@ -1866,10 +1885,31 @@ def wifi_optimizer():
           if(doc.dl&&b.down!=null&&b.down>0){
             var pct=Math.round(doc.dl.best/b.down*100);
             var c=card(pct>=70?'good':(pct>=40?'warn':'bad'),
-              'Measured '+doc.dl.best+' Mbps here vs '+b.down+' Mbps advertised ('+pct+'%)',
+              'Measured '+doc.dl.best+' Mbps at '+hhmm(doc.dl.t)+' vs '+b.down+' Mbps advertised ('+pct+'%)',
               'Measured over WiFi, this is what the room delivers \\u2014 your WiFi\\u2019s ceiling in that spot, not the line\\u2019s. Test plugged in by the router before blaming '+(b.prov||'your provider')+'. ');
             if(pct<40) link(c.p,'/wifi-troubleshooting/','If wired is also slow, start here.');
             out.appendChild(c.d);
+          }
+          if(doc.mode==='business'&&b.staff!=null&&b.staff>0){
+            var users=b.staff+(b.guests||0);
+            var acts=b.acts||[];
+            var perDown=1;
+            if(acts.indexOf('Video calls')>=0) perDown=Math.max(perDown,3);
+            if(acts.indexOf('Streaming')>=0) perDown=Math.max(perDown,5);
+            var needDown=Math.round(users*perDown);
+            var needUp=Math.round(users*(acts.indexOf('Video calls')>=0?2:0.4)+(acts.indexOf('Large uploads')>=0?5:0));
+            var have=doc.dl?doc.dl.best:null;
+            var bestUl=null; doc.rooms.forEach(function(r){ if(r.ul!=null&&(bestUl==null||r.ul>bestUl)) bestUl=r.ul; });
+            var body='By our rule of thumb, '+users+' people doing '+(acts.length?acts.join(', ').toLowerCase():'ordinary office work')+' wants roughly '+needDown+' Mbps down and '+Math.max(needUp,2)+' Mbps up on a busy day.';
+            if(have!=null) body+=' You measured '+have+' Mbps down'+(bestUl!=null?' and '+bestUl+' up':'')+' over WiFi — '+(have>=needDown*1.2?'comfortable headroom':(have>=needDown?'workable, but no slack at peak':'short of it; expect the afternoon complaints'))+'.';
+            else body+=' Run a speed test above and we’ll put your real number against it.';
+            body+=' These are our planning figures, not physics — a proper survey beats any rule of thumb.';
+            out.appendChild(card(have!=null&&have<needDown?'warn':'','Can the line carry your office?',body).d);
+            if((b.guests||0)>0) out.appendChild(card('','Guests on the same network?','Give visitors a separate guest network isolated from your card machines and office systems — the single cheapest security win in a small business, and most routers already support it.').d);
+            if(acts.indexOf('Card machine / EPOS')>=0&&b.backup!=='yes') out.appendChild(card('warn','Card machines with no backup line','If the broadband drops, payments stop with it. A 4G/5G failover router is the honest first answer — and a written plan beats improvising on the day.').d);
+          }
+          if(doc.dl){
+            out.appendChild(card('','Time of day matters','Your measurements are stamped with when you took them for a reason: broadband and mobile networks change by the hour, and an 8pm reading can be half your 9am one. Re-test at the times that actually matter to you — the school-run video call, the evening stream — before drawing conclusions.').d);
           }
           if(b.ming!=null&&b.ming>0){
             out.appendChild(card('','Your minimum guaranteed speed is '+b.ming+' Mbps','That\\u2019s the only number your provider commits to \\u2014 and if a WIRED test stays below it, Ofcom\\u2019s speed codes may give you the right to exit. Advertised averages carry no such promise.').d);
@@ -1882,6 +1922,26 @@ def wifi_optimizer():
             c2.p.appendChild(document.createTextNode('.'));
             out.appendChild(c2.d);
           }
+        }
+        var ACTS=['Video calls','Streaming','Large uploads','Cloud apps / browsing','Card machine / EPOS'];
+        function renderActs(){
+          var box=$('#wfb-acts'); if(!box) return;
+          box.innerHTML='';
+          var cur=(doc&&doc.bb&&doc.bb.acts)?doc.bb.acts:[];
+          ACTS.forEach(function(a){
+            var b=el('button','',a); b.type='button';
+            if(cur.indexOf(a)>=0){ b.style.borderColor='#4fb4f5'; b.style.color='#fff'; }
+            b.addEventListener('click',function(){
+              var c2=(doc.bb.acts||[]).slice();
+              var i2=c2.indexOf(a);
+              if(i2>=0) c2.splice(i2,1); else c2.push(a);
+              doc.bb.acts=c2; save(); renderActs(); renderBB();
+            });
+            box.appendChild(b);
+          });
+        }
+        function bizPanel(){
+          var bp=$('#wfb-biz'); if(bp) bp.hidden=(doc&&doc.mode)!=='business';
         }
         BB.forEach(function(k){
           var e=bbEl(k); if(!e) return;
@@ -1980,6 +2040,8 @@ def wifi_optimizer():
             var sb=(st.bb&&typeof st.bb==='object')?st.bb:{}, bb={};
             ['prov','pkg','end','backup'].forEach(function(k){ bb[k]=String(sb[k]==null?'':sb[k]).slice(0,60); });
             ['down','ming','price'].forEach(function(k){ var v=parseFloat(sb[k]); bb[k]=(isFinite(v)&&v>=0&&v<100000)?v:null; });
+            ['staff','guests'].forEach(function(k){ var v2=parseInt(sb[k],10); bb[k]=(isFinite(v2)&&v2>=0&&v2<=500)?v2:null; });
+            bb.acts=(sb.acts&&sb.acts.filter)?sb.acts.filter(function(a){return typeof a==='string';}).slice(0,6):[];
             var sdl=(st.dl&&isFinite(+st.dl.best))?{best:Math.round(+st.dl.best*10)/10,last:+st.dl.best,t:Date.now()}:null;
             out.push({n:String(st.n==null?'Site':st.n).slice(0,40)||'Site',rooms:rooms,bb:bb,dl:sdl,sent:!!st.sent,events:[],updated:(+st.updated>0?+st.updated:Date.now())});
           });
@@ -2033,6 +2095,8 @@ def wifi_optimizer():
             var sb=(sv.bb&&typeof sv.bb==='object')?sv.bb:{}, bb={};
             ['prov','pkg','end','backup'].forEach(function(k){ bb[k]=String(sb[k]==null?'':sb[k]).slice(0,60); });
             ['down','ming','price'].forEach(function(k){ var v=parseFloat(sb[k]); bb[k]=(isFinite(v)&&v>=0&&v<100000)?v:null; });
+            ['staff','guests'].forEach(function(k){ var v2=parseInt(sb[k],10); bb[k]=(isFinite(v2)&&v2>=0&&v2<=500)?v2:null; });
+            bb.acts=(sb.acts&&sb.acts.filter)?sb.acts.filter(function(a){return typeof a==='string';}).slice(0,6):[];
             var sdl=sv.dl, dl=null;
             if(sdl&&isFinite(+sdl.best)) dl={best:Math.round((+sdl.best)*10)/10,last:isFinite(+sdl.last)?+sdl.last:+sdl.best,t:Date.now()};
             doc={id:(typeof sv.id==='string'&&sv.id?sv.id.slice(0,60):uuid()),
@@ -2058,7 +2122,7 @@ def wifi_optimizer():
           if(!doc.rooms.length&&!doc.bb.prov){ say('Test at least one room (or record your deal) so there\\u2019s something for us to look at.'); return; }
           var lines=['WiFi survey \\u2014 site: '+doc.siteName+' ('+doc.rooms.length+' rooms, '+pctDone()+'% complete'+(doc.sites&&doc.sites.length?', +'+doc.sites.length+' more site(s) surveyed locally':'')+'):'];
           doc.rooms.slice().sort(function(x,y){return y.s-x.s;}).slice(0,15).forEach(function(r){
-            lines.push('- '+r.n+': '+r.s+'/100, '+r.lat+'ms'+(r.dl!=null?', '+r.dl+' Mbps down':'')+(r.ul!=null?', '+r.ul+' up':'')+(r.jit?', jitter '+r.jit+'ms':''));
+            lines.push('- '+r.n+': '+r.s+'/100, '+r.lat+'ms'+(r.dl!=null?', '+r.dl+' Mbps down':'')+(r.ul!=null?', '+r.ul+' up':'')+(r.jit?', jitter '+r.jit+'ms':'')+' (at '+hhmm(r.t)+')');
           });
           if(doc.dl) lines.push('Best measured download: '+doc.dl.best+' Mbps');
           var b=doc.bb||{};
@@ -2273,7 +2337,7 @@ def wifi_optimizer():
             need(52);
             txt(M,y+12,11,true,INK,r.n);
             starsAt(W-M-118,y+8,r.s,6);
-            var meta=r.lat+' ms latency'+(r.dl!=null?'  -  '+r.dl+' Mbps down':'')+(r.ul!=null?'  -  '+r.ul+' Mbps up':'');
+            var meta=r.lat+' ms latency'+(r.dl!=null?'  -  '+r.dl+' Mbps down':'')+(r.ul!=null?'  -  '+r.ul+' Mbps up':'')+'  -  tested '+hhmm(r.t);
             txt(M,y+27,8.5,false,GREY,meta);
             rect(M,y+34,W-2*M,5,LGREY);
             rect(M,y+34,(W-2*M)*Math.max(0.02,r.s/100),5,r.s>=75?GREEN:(r.s>=45?AMBER:RED));
@@ -2579,10 +2643,12 @@ def wifi_optimizer():
             E.name.value=''; qStart(n);
           });
           E.next.addEventListener('click',function(){ wq.className='wq'; qShow('pick'); qChips(); qRail(); });
-          function setMode(m){ doc.mode=m; save(); sPop(); wq.className='wq'; qShow('pick'); qChips(); }
+          function setMode(m){ doc.mode=m; save(); sPop(); wq.className='wq'; qShow('pick'); qChips(); bizPanel(); renderBB(); }
           if(E.modeHome) E.modeHome.addEventListener('click',function(){ setMode('home'); });
           if(E.modeBiz) E.modeBiz.addEventListener('click',function(){ setMode('business'); });
           if(E.modeSwap) E.modeSwap.addEventListener('click',function(){ qShow('mode'); });
+          var exitBtn=$('#wq-exit');
+          if(exitBtn) exitBtn.addEventListener('click',qClose);
           if(E.sndBtn) E.sndBtn.addEventListener('click',function(){
             if(!snd.on){ if(sndInit()){ snd.on=true; sPop(); } }
             else snd.on=false;
@@ -2782,7 +2848,7 @@ def wifi_optimizer():
                 E.score.textContent=String(shown);
               },30);
             }
-            E.mini.textContent=(snap.off?'no response':snap.lat+' ms latency')+(mbps!=null?' \\u00b7 '+(mbps>=100?Math.round(mbps):mbps)+' Mbps down':' \\u00b7 speed test didn\\u2019t finish')+(ul!=null?' \\u00b7 '+(ul>=100?Math.round(ul):ul)+' up':'');
+            E.mini.textContent=(snap.off?'no response':snap.lat+' ms latency')+(mbps!=null?' \\u00b7 '+(mbps>=100?Math.round(mbps):mbps)+' Mbps down':' \\u00b7 speed test didn\\u2019t finish')+(ul!=null?' \\u00b7 '+(ul>=100?Math.round(ul):ul)+' up':'')+' \\u00b7 at '+hhmm(Date.now());
             E.vline.textContent= snap.off?'Nothing is getting through in this room \\u2014 a genuine black-spot. Test the rooms either side to see where it recovers.'
               : s>=75?'This room is sorted. On to the next one.'
               : s>=45?'Perfectly usable \\u2014 video calls should hold here, though it\\u2019s not your best room.'
@@ -2862,6 +2928,11 @@ def wifi_optimizer():
           document.addEventListener('keydown',function(e){ if(st.on&&e.key==='Escape') nClose(); });
           var pageOpen=$('#wn-open');
           if(pageOpen) pageOpen.addEventListener('click',nOpen);
+          var anyTile=$('#wq-mode-any');
+          if(anyTile) anyTile.addEventListener('click',function(){
+            var wqx=$('#wq-x'); if(wqx&&!$('#wq').hidden){ try{ wqx.click(); }catch(e){} }
+            nOpen(); sPop();
+          });
           var bonus=$('#wq-bonus');
           if(bonus) bonus.addEventListener('click',function(){
             var wqx=$('#wq-x'); if(wqx&&!$('#wq').hidden){ try{ wqx.click(); }catch(e){} }
@@ -3024,7 +3095,7 @@ def wifi_optimizer():
             var d=el('div','wn-pop');
             d.appendChild(el('b','',(mine?'My spot':pn.place||'Community spot')+' \u00b7 '+pn.net));
             d.appendChild(el('div','',pn.down+' Mbps down \u00b7 '+pn.up+' up \u00b7 '+pn.ping+' ms'));
-            d.appendChild(el('div','',new Date(pn.t).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})));
+            d.appendChild(el('div','',new Date(pn.t).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})+' at '+hhmm(pn.t)));
             var links=el('div','');
             var a1=document.createElement('a'); a1.href=gmaps(pn.lat,pn.lng); a1.target='_blank'; a1.rel='noopener'; a1.textContent='Google Maps';
             var a2=document.createElement('a'); a2.href=gdir(pn.lat,pn.lng); a2.target='_blank'; a2.rel='noopener'; a2.textContent='Directions'; a2.style.marginLeft='.7em';
@@ -3145,7 +3216,7 @@ def wifi_optimizer():
         })();}
 
         /* ---------- welcome back / boot ---------- */
-        function renderAll(){ renderJourney(); renderRooms(); renderBB(); renderRep(); renderSites(); }
+        function renderAll(){ bizPanel(); renderJourney(); renderRooms(); renderBB(); renderRep(); renderSites(); }
         function showResume(){
           var sub=$('#wf-resume-sub'); if(!sub) return;
           var d=new Date(doc.updated);

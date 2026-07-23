@@ -3353,7 +3353,7 @@ NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
             'us a ring on 01202 775566 or drop us a message and we&rsquo;ll take a look.')],
   'schemaKind': 'faq',
   'crossLinksHtml': '        <p>Related: <a href="/microsoft-365-support/">Microsoft 365 &amp; Outlook support</a>, <a href="/remote-it-support/">remote IT support</a>, <a '
-                    'href="/email-signature-generator/">free email signature generator</a>, or <a href="/contact/">talk to a techie</a>.</p>'},
+                    'href="/email-signature-generator/">free email signature generator</a>, or <a href="/contact/">talk to a techie</a>. &middot; <a href="/new-outlook-emails-stuck-in-drafts/">new Outlook: emails stuck in Drafts</a> &middot; <a href="/new-outlook-only-showing-recent-emails/">new Outlook only showing recent emails</a> &middot; <a href="/emails-on-computer-but-not-phone/">emails on the computer but not your phone</a></p>'},
  {'slug': 'outlook-calendar-not-syncing',
   'title': 'Outlook Calendar Not Syncing With Phone | 365 Techies',
   'metaDesc': "Outlook calendar not syncing between your PC and Android phone? Here's the plain-English cause and the exact fix — or we'll sort it remotely in minutes.",
