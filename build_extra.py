@@ -887,7 +887,7 @@ def wifi_optimizer():
           <span class="wq__count mono" id="wq-count">0 rooms</span>
           <span class="wq__rail" id="wq-rail" aria-label="Rooms tested so far"></span>
           <button type="button" class="wq__x" id="wq-snd" aria-pressed="false" aria-label="Game sounds on or off" title="Game sounds">&#128263;</button>
-          <button type="button" class="wq__x" id="wq-x" aria-label="Finish and close the survey">&#10005;</button>
+          <button type="button" class="wq__x wq__exit" id="wq-x" aria-label="Finish and close the survey">&#10005;&nbsp;Exit</button>
         </div>
         <div class="wq__body">
           <div class="wq__step" id="wq-mode" hidden>
@@ -966,7 +966,7 @@ def wifi_optimizer():
         <div class="wq__top">
           <span class="wq__count mono" id="wn-count">SIGNAL HUNTER</span>
           <span class="wq__rail" aria-hidden="true"></span>
-          <button type="button" class="wq__x" id="wn-x" aria-label="Close Signal Hunter">&#10005;</button>
+          <button type="button" class="wq__x wq__exit" id="wn-x" aria-label="Close Signal Hunter">&#10005;&nbsp;Exit</button>
         </div>
         <div class="wq__body">
           <div class="wq__step" id="wn-intro">
@@ -1299,13 +1299,15 @@ def wifi_optimizer():
       .wq__glow{position:absolute;left:50%;top:34%;width:min(80vw,420px);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(29,151,227,.22),transparent 65%);pointer-events:none;transition:background 1s}
       .wq.tier-good .wq__glow{background:radial-gradient(circle,rgba(0,206,27,.2),transparent 65%)}
       .wq.tier-bad .wq__glow{background:radial-gradient(circle,rgba(224,86,63,.2),transparent 65%)}
-      .wq__top{display:flex;align-items:center;gap:.7rem;flex:none}
+      .wq__top{display:flex;align-items:center;gap:.7rem;flex:none;position:relative;z-index:3}
       .wq__count{color:var(--faint);font-size:.68rem;flex:none}
       .wq__rail{display:flex;gap:.35rem;overflow-x:auto;flex:1;padding:.2rem 0;scrollbar-width:none}
       .wq__rail::-webkit-scrollbar{display:none}
       .wq__pip{flex:none;font:700 .68rem/1 ui-monospace,monospace;padding:.4rem .6rem;border-radius:999px;border:1px solid rgba(125,170,220,.3);background:rgba(255,255,255,.04);color:#dfe9f7;animation:wqpip .45s cubic-bezier(.22,1.4,.36,1)}
       @keyframes wqpip{0%{transform:scale(.4);opacity:0}100%{transform:scale(1);opacity:1}}
-      .wq__x{flex:none;width:42px;height:42px;border-radius:50%;border:1px solid rgba(125,170,220,.35);background:rgba(255,255,255,.05);color:#eaf1fb;font-size:1rem;cursor:pointer}
+      .wq__x{flex:none;width:44px;height:44px;border-radius:50%;border:1.5px solid rgba(125,170,220,.55);background:rgba(255,255,255,.12);color:#fff;font-size:1.05rem;cursor:pointer}
+      .wq__exit{width:auto;min-width:44px;padding:0 1.05rem;border-radius:999px;font:800 .78rem/1 ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;background:rgba(224,86,63,.22);border-color:rgba(255,122,99,.7);box-shadow:0 4px 16px rgba(224,86,63,.2)}
+      .wq__exit:active{transform:scale(.94)}
       .wq__body{flex:1;display:flex;flex-direction:column;justify-content:center;position:relative;min-height:0}
       .wq__step{text-align:center;animation:wqstep .4s ease}
       @keyframes wqstep{0%{opacity:0;transform:translateY(14px)}100%{opacity:1;transform:none}}
