@@ -102,7 +102,7 @@ ErrorDocument 404 /404.html
 <Files "slack-rate.json">
   Require all denied
 </Files>
-<FilesMatch "^(tools-rate|domain-cache|isitdown-cache)\.json(\.tmp|\.lock)?$">
+<FilesMatch "^(tools-rate|domain-cache|isitdown-cache|wifi-map-rate|wifi-map-pins)\.json(\.tmp|\.lock)?$">
   Require all denied
 </FilesMatch>
 # 365 PC Manager + Service Pass server-only data/secret files - NEVER serve over HTTP.

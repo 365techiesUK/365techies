@@ -765,9 +765,27 @@
         <div class="wq__top">
           <span class="wq__count mono" id="wq-count">0 rooms</span>
           <span class="wq__rail" id="wq-rail" aria-label="Rooms tested so far"></span>
+          <button type="button" class="wq__x" id="wq-snd" aria-pressed="false" aria-label="Game sounds on or off" title="Game sounds">&#128263;</button>
           <button type="button" class="wq__x" id="wq-x" aria-label="Finish and close the survey">&#10005;</button>
         </div>
         <div class="wq__body">
+          <div class="wq__step" id="wq-mode" hidden>
+            <p class="wq__kicker mono">// ONE QUICK QUESTION</p>
+            <p class="wq__title">What is this place?</p>
+            <div class="wq__modes">
+              <button type="button" class="wq__mode" id="wq-mode-home">
+                <span class="wq__memoji" aria-hidden="true">&#127968;</span>
+                <span class="wq__mename">Home</span>
+                <span class="wq__medesc">Streaming, calls, homework, smart home</span>
+              </button>
+              <button type="button" class="wq__mode" id="wq-mode-biz">
+                <span class="wq__memoji" aria-hidden="true">&#128188;</span>
+                <span class="wq__mename">Business</span>
+                <span class="wq__medesc">Video calls, card machines, cloud apps &mdash; held to a higher bar</span>
+              </button>
+            </div>
+            <p class="wq__note mono">This tunes the advice and the report &mdash; you can change it any time.</p>
+          </div>
           <div class="wq__step" id="wq-pick">
             <p class="wq__kicker mono">// ROOM SURVEY</p>
             <p class="wq__title">Where are you standing?</p>
@@ -776,6 +794,9 @@
               <input type="text" id="wq-name" maxlength="40" placeholder="Or type a room name&hellip;" aria-label="Room name">
               <button type="button" class="button primary" id="wq-go">Test here</button>
             </div>
+            <p style="margin:1rem 0 0"><button type="button" class="button ghost" id="wq-viewrep" hidden>&#128202;&nbsp; View my report</button>
+            <button type="button" class="wq__link" id="wq-modeswap" style="margin-left:.8rem"></button></p>
+            <p style="margin:.7rem 0 0"><button type="button" class="wq__bonus" id="wq-bonus">&#128225;&nbsp; BONUS LEVEL &mdash; Signal Hunter <span class="wq__bonussub">map the best mobile signal, anywhere</span></button></p>
             <p class="wq__note mono">Each room includes a real download <em>and</em> upload test (about 14&nbsp;MB together) &mdash; happiest on WiFi, mind your allowance on mobile data.</p>
           </div>
           <div class="wq__step" id="wq-test" hidden>
@@ -791,11 +812,91 @@
             <p class="wq__verdictline" id="wq-vline"></p>
             <div class="wq__btns">
               <button type="button" class="button primary" id="wq-next">Next room &#8594;</button>
-              <button type="button" class="button ghost" id="wq-finish">Finish survey</button>
+              <button type="button" class="button ghost" id="wq-rep-btn">&#128202;&nbsp; Report</button>
+              <button type="button" class="button ghost" id="wq-finish">Finish</button>
             </div>
+          </div>
+          <div class="wq__step wq__repstep" id="wq-rep" hidden>
+            <p class="wq__kicker mono">// YOUR WIFI REPORT</p>
+            <div class="wq__grade">
+              <span class="wq__gradenum" id="wq-gradenum">&mdash;</span>
+              <span class="wq__stars" id="wq-gradestars" aria-hidden="true"></span>
+            </div>
+            <p class="wq__gradeline" id="wq-gradeline"></p>
+            <div class="wq__reprooms" id="wq-reprooms"></div>
+            <div class="wq__repadvice" id="wq-repadvice"></div>
+            <div class="wq__btns" style="margin-top:1.1rem">
+              <button type="button" class="button primary" id="wq-pdf">&#11015;&nbsp; Download the 365 report (PDF)</button>
+              <button type="button" class="button ghost" id="wq-rep-back">&#8592;&nbsp; Keep surveying</button>
+            </div>
+            <p class="wq__note mono">The PDF is yours to keep or send to anyone &mdash; branded, plain-English, no jargon.</p>
           </div>
         </div>
         <div class="wq__burst" id="wq-burst" aria-hidden="true"></div>
+      </div>
+      <div class="wq" id="wn" hidden role="dialog" aria-modal="true" aria-label="Signal Hunter - mobile speed map">
+        <div class="wq__glow" aria-hidden="true"></div>
+        <div class="wq__top">
+          <span class="wq__count mono" id="wn-count">SIGNAL HUNTER</span>
+          <span class="wq__rail" aria-hidden="true"></span>
+          <button type="button" class="wq__x" id="wn-x" aria-label="Close Signal Hunter">&#10005;</button>
+        </div>
+        <div class="wq__body">
+          <div class="wq__step" id="wn-intro">
+            <p class="wq__kicker mono">// BONUS LEVEL</p>
+            <p class="wq__title">&#128225; Signal Hunter</p>
+            <p class="wq__verdictline" style="margin-bottom:1rem">Work from anywhere? Go live from a field? Test the mobile signal <strong>right where you&rsquo;re standing</strong>, drop a pin on your map, and build your own atlas of the places worth working from.</p>
+            <div class="wq__chips" id="wn-nets" aria-label="Which connection are you on?"></div>
+            <p style="margin:.4rem 0 0"><button type="button" class="button primary button--lg" id="wn-start">&#127919;&nbsp; Test this spot</button></p>
+            <p class="wq__note mono">Uses your location <strong>only if you allow it</strong>, and only to pin your own map on this device. Nothing is shared unless you choose to share a spot &mdash; and never share from home.</p>
+          </div>
+          <div class="wq__step" id="wn-loc" hidden>
+            <p class="wq__title">Finding you&hellip;</p>
+            <div class="wq__dial is-pulse" style="width:min(40vw,150px)"><div class="wq__dialin"><span style="font-size:2rem">&#128752;</span></div></div>
+            <p class="wq__phase" id="wn-locmsg" role="status" aria-live="polite">Waiting for location permission&hellip;</p>
+            <div class="wq__btns" style="margin-top:1rem">
+              <button type="button" class="button ghost" id="wn-locretry" hidden>Try again</button>
+              <button type="button" class="button ghost" id="wn-locskip" hidden>Test without a pin</button>
+            </div>
+          </div>
+          <div class="wq__step" id="wn-test" hidden>
+            <p class="wq__room" id="wn-where">This spot</p>
+            <div class="wq__dial" id="wn-dial"><div class="wq__dialin"><span class="wq__num" id="wn-num">&mdash;</span><span class="wq__unit mono" id="wn-unit">PING</span></div></div>
+            <p class="wq__phase" id="wn-phase" role="status" aria-live="polite">Checking response times&hellip;</p>
+            <p class="wq__tip mono" id="wn-tip">Hold still &mdash; about 20 seconds of real testing.</p>
+          </div>
+          <div class="wq__step wq__repstep" id="wn-res" hidden>
+            <p class="wq__stamp" id="wn-stamp">WORK-READY</p>
+            <p class="wq__big" id="wn-score">&mdash;</p>
+            <p class="wq__mini mono" id="wn-mini"></p>
+            <div class="wq__repadvice" id="wn-grades"></div>
+            <div class="wq__btns" style="margin-top:1rem">
+              <button type="button" class="button primary" id="wn-map-btn">&#128506;&nbsp; See my map</button>
+              <button type="button" class="button ghost" id="wn-again">Test again</button>
+            </div>
+          </div>
+          <div class="wq__step wq__repstep" id="wn-mapstep" hidden>
+            <div class="wn__togrow">
+              <label class="wn__tog"><input type="checkbox" id="wn-tog-mine" checked> My spots</label>
+              <label class="wn__tog"><input type="checkbox" id="wn-tog-comm"> Community spots</label>
+              <button type="button" class="button ghost" id="wn-testagain" style="margin-left:auto">&#127919; Test here</button>
+            </div>
+            <div id="wn-mapbox" aria-label="Map of your tested spots"></div>
+            <ol class="wf__spotlist" id="wn-list" style="margin-top:.7rem"></ol>
+            <div class="wf__send" id="wn-share" hidden style="margin-top:.8rem">
+              <p class="eyebrow mono" style="margin:0 0 .4rem">// SHARE THIS SPOT</p>
+              <p style="margin:0 0 .7rem;font-size:.88rem">Add it to the public community map so other nomads find it. <strong>Public places only &mdash; never your home.</strong> No name, no account: just the place type, speeds and a rounded location.</p>
+              <div class="wq__chips" id="wn-places"></div>
+              <input type="text" id="wn-hp" tabindex="-1" autocomplete="off" style="position:absolute;left:-5000px" aria-hidden="true">
+              <label class="wf__consent"><input type="checkbox" id="wn-consent"> Share this spot&rsquo;s rounded location, speeds and place type on the public map. It can&rsquo;t be edited later &mdash; only removed by asking us.</label>
+              <p style="margin:.8rem 0 0"><button type="button" class="button primary" id="wn-send">Share to the community map</button>
+              <button type="button" class="wq__link" id="wn-sharecancel" style="margin-left:.7rem">Cancel</button></p>
+              <p class="wf__verdict" id="wn-sharemsg" role="status" aria-live="polite" hidden></p>
+            </div>
+            <p class="wq__note mono" style="margin-top:.7rem">Map &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors. Every pin links to Google Maps for directions. Community pins are anonymous, rounded to ~11&nbsp;m, and place-type only.</p>
+          </div>
+        </div>
+        <div class="wq__burst" id="wn-burst" aria-hidden="true"></div>
       </div>
     </section>
     <section class="section section--alt" aria-label="Speed test">
@@ -872,6 +973,7 @@
         <div class="wf">
           <div class="wf__advice" id="wf-repsum"><p class="quiet" style="margin:0">Test a few rooms above and your summary will appear here.</p></div>
           <div class="wf__repbtns">
+            <button type="button" class="button primary" id="wf-pdf">&#11015;&nbsp; Download the 365 report (PDF)</button>
             <button type="button" class="button ghost" id="wf-export">&#11015;&nbsp; Export survey file</button>
             <label class="button ghost" for="wf-import" style="cursor:pointer">&#11014;&nbsp; Import a survey file<input type="file" id="wf-import" accept=".json,application/json" hidden></label>
           </div>
@@ -890,6 +992,19 @@
           <div class="wf__multi">
             <p style="margin:0"><strong>A business with more than one site?</strong> Our <a href="/business-it-support-subscriptions/">monthly support customers</a> get this done properly &mdash; we survey each site, keep the history, watch the contract renewals and flag the weak links. <a href="/business-wifi-installation/">Business WiFi</a> covers what a proper multi-site install looks like.</p>
           </div>
+        </div>
+      </div>
+    </section>
+    <section class="section" aria-label="Signal Hunter - work from anywhere" id="nomad">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// BONUS LEVEL &middot; WORK FROM ANYWHERE</p>
+          <h2 class="section-title section-title--center" data-title>&#128225; Signal Hunter: map where the signal is actually good<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>For nomads, van-lifers, content creators and anyone who works from wherever the kettle is: test the <strong>mobile signal where you&rsquo;re standing</strong> &mdash; ping, download <em>and</em> upload &mdash; and drop a pin on your own map. Build your personal atlas of laybys, caf&eacute;s and harbour walls that can actually hold a video call or a live stream&hellip; and, if you want, share the good ones to a <strong>community map</strong> so the next nomad finds them too.</p>
+        </div>
+        <div class="wf" style="text-align:center">
+          <p style="margin:0 0 .6rem"><button type="button" class="button primary button--lg" id="wn-open">&#127919;&nbsp; Start hunting</button></p>
+          <p class="mono" style="color:var(--faint);font-size:.68rem;max-width:520px;margin:0 auto">Location is used only with your permission and stays on this device &mdash; pins go public only if you choose to share one, anonymously, rounded, place-type only. Every pin links to Google Maps for directions. Works on 4G, 5G and WiFi hotspots.</p>
         </div>
       </div>
     </section>
@@ -1097,6 +1212,45 @@
       .wq__burst{position:absolute;inset:0;pointer-events:none;overflow:hidden}
       .wq__p{position:absolute;left:50%;top:42%;width:9px;height:9px;border-radius:2px;opacity:0;animation:wqburst 1s ease-out forwards}
       @keyframes wqburst{0%{transform:translate(0,0) rotate(0);opacity:1}100%{transform:translate(var(--dx),var(--dy)) rotate(540deg);opacity:0}}
+      .wq__bonus{display:inline-flex;flex-direction:column;gap:.15rem;align-items:center;font:800 .82rem/1.2 ui-monospace,monospace;letter-spacing:.1em;color:#0b1220;background:linear-gradient(135deg,#e8c35a,#f5d97b);border:0;border-radius:14px;padding:.8rem 1.3rem;cursor:pointer;box-shadow:0 8px 26px rgba(232,195,90,.25);transition:transform .15s}
+      .wq__bonus:active{transform:scale(.95)}
+      .wq__bonussub{font:600 .62rem/1 ui-monospace,monospace;letter-spacing:.05em;text-transform:none;opacity:.75}
+      .wn__togrow{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin:0 0 .6rem}
+      .wn__tog{display:flex;align-items:center;gap:.4rem;font-size:.82rem;color:#dfe9f7;cursor:pointer}
+      #wn-mapbox{height:min(52vh,430px);border-radius:16px;border:1px solid rgba(125,170,220,.3);background:#0d1526;overflow:hidden}
+      #wn-mapbox:empty::after{content:'Loading the map\2026';display:flex;align-items:center;justify-content:center;height:100%;color:var(--faint);font:600 .75rem/1 ui-monospace,monospace}
+      .wn-pop{font:400 .82rem/1.5 system-ui,sans-serif;color:#16233c}
+      .wn-pop b{font-size:.9rem}
+      .wn-pop a{color:#1d6fd1;font-weight:600}
+      .wq__modes{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;max-width:480px;margin:0 auto}
+      .wq__mode{flex:1;min-width:180px;display:flex;flex-direction:column;gap:.3rem;align-items:center;padding:1.3rem 1rem;border-radius:18px;border:1px solid rgba(125,170,220,.35);background:rgba(125,170,220,.08);color:#eef4fd;cursor:pointer;transition:transform .15s,border-color .15s}
+      .wq__mode:active{transform:scale(.95)}
+      .wq__mode:hover{border-color:var(--cyan,#4fb4f5)}
+      .wq__memoji{font-size:2.2rem}
+      .wq__mename{font-weight:800;font-size:1.15rem}
+      .wq__medesc{font-size:.78rem;color:var(--muted)}
+      .wq__repstep{max-height:100%;overflow-y:auto;padding:0 .2rem;-webkit-overflow-scrolling:touch}
+      .wq__grade{display:flex;align-items:center;justify-content:center;gap:.9rem;margin:.2rem 0 .2rem}
+      .wq__gradenum{font-size:clamp(3rem,13vw,4.6rem);font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+      .wq__stars{display:inline-flex;gap:.15rem}
+      .wq__star{width:26px;height:26px;opacity:0;transform:scale(.3) rotate(-40deg)}
+      .wq__star.on{animation:wqstar .4s cubic-bezier(.2,1.7,.4,1) forwards}
+      @keyframes wqstar{100%{opacity:1;transform:scale(1) rotate(0)}}
+      .wq__gradeline{margin:0 0 1rem;color:#c9d6e8;font-size:.98rem}
+      .wq__reprooms{display:grid;gap:.45rem;max-width:460px;margin:0 auto 1rem;text-align:left}
+      .wq__reprow{display:grid;grid-template-columns:1fr auto;gap:.15rem .7rem;background:rgba(255,255,255,.045);border:1px solid rgba(125,170,220,.18);border-radius:12px;padding:.6rem .8rem;opacity:0;transform:translateX(-14px)}
+      .wq__reprow.in{animation:wqrow .35s ease forwards}
+      @keyframes wqrow{100%{opacity:1;transform:none}}
+      .wq__reprow .rn{font-weight:700;color:#fff;font-size:.92rem}
+      .wq__reprow .rs{display:inline-flex;gap:.1rem}
+      .wq__reprow .rs svg{width:15px;height:15px}
+      .wq__reprow .rm{grid-column:1/-1;font:500 .68rem/1.4 ui-monospace,monospace;color:var(--faint)}
+      .wq__rbar{grid-column:1/-1;height:5px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
+      .wq__rbar span{display:block;height:100%;border-radius:99px;width:0;transition:width .8s cubic-bezier(.22,1,.36,1)}
+      .wq__repadvice{display:grid;gap:.5rem;max-width:460px;margin:0 auto;text-align:left}
+      .wq__repadvice .wf__ac{background:rgba(125,170,220,.08)}
+      .wq__repadvice .wf__ac p{font-size:.85rem}
+      @media (prefers-reduced-motion: reduce){.wq__star{opacity:1;transform:none;animation:none!important}.wq__reprow{opacity:1;transform:none;animation:none!important}.wq__rbar span{transition:none}.wq__mode{transition:none}}
       @media (prefers-reduced-motion: reduce){
         .wq__pip,.wq__step,.wq__stamp{animation:none!important}
         .wq.is-pulse .wq__dial{animation:none!important}
@@ -1387,9 +1541,9 @@
         }
         function uuid(){ try{ if(window.crypto&&crypto.randomUUID) return crypto.randomUUID(); }catch(e){}
           return 'wf-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10); }
-        function fresh(){ return {id:uuid(),created:Date.now(),updated:Date.now(),ver:0,siteName:'My site',rooms:[],bb:{},dl:null,sent:false,events:[],sites:[],drafts:[]}; }
+        function fresh(){ return {id:uuid(),created:Date.now(),updated:Date.now(),ver:0,siteName:'My site',mode:null,snd:false,rooms:[],bb:{},dl:null,sent:false,events:[],sites:[],pins:[],drafts:[]}; }
         /* site activity timeline: small, capped, local-only */
-        var EVK={added:'Site created',room:'Room tested',speed:'Speed test',deal:'Broadband details updated',sent:'Survey sent to 365 Techies',imp:'Survey imported',sw:'Switched to this site'};
+        var EVK={added:'Site created',room:'Room tested',speed:'Speed test',deal:'Broadband details updated',sent:'Survey sent to 365 Techies',imp:'Survey imported',sw:'Switched to this site',pdf:'Report downloaded',hunt:'Mobile spot tested',share:'Spot shared to the community map'};
         var lastDealLog=0;
         function logE(k,x){
           if(!doc) return;
@@ -1634,8 +1788,9 @@
           }
           box.innerHTML='';
           var bw=bestWorst();
+          var target=(doc.mode==='business')?60:45;
           var head=doc.rooms.length+' room'+(doc.rooms.length===1?'':'s')+' tested \u00b7 best: '+bw.best.n+' ('+bw.best.s+') \u00b7 weakest: '+bw.worst.n+' ('+bw.worst.s+')';
-          var c=card(bw.worst.s>=45?'good':'warn',head,
+          var c=card(bw.worst.s>=target?'good':'warn',head,
             doc.dl?('Best measured download so far: '+doc.dl.best+' Mbps. '):'');
           if(bw.worst.s<45){
             c.p.appendChild(document.createTextNode('Your weak spot is '+bw.worst.n+'. If it matters, the fix is usually placement or one well-placed extra access point \u2014 see '));
@@ -1668,6 +1823,23 @@
             });
             box.appendChild(tl);
           }
+        }
+        function cleanPins(a){
+          var out=[];
+          if(!a||!a.forEach) return out;
+          a.forEach(function(pn){
+            if(!pn||typeof pn!=='object'||out.length>=100) return;
+            var lat=+pn.lat, lng=+pn.lng;
+            if(!isFinite(lat)||!isFinite(lng)||lat<-90||lat>90||lng<-180||lng>180) return;
+            out.push({lat:Math.round(lat*10000)/10000,lng:Math.round(lng*10000)/10000,
+              down:(isFinite(+pn.down)&&+pn.down>=0)?Math.min(Math.round(+pn.down*10)/10,2000):0,
+              up:(isFinite(+pn.up)&&+pn.up>=0)?Math.min(Math.round(+pn.up*10)/10,2000):0,
+              ping:(isFinite(+pn.ping)&&+pn.ping>=0)?Math.min(Math.round(+pn.ping),4000):0,
+              net:(['4G','5G','WiFi','Other'].indexOf(pn.net)>=0)?pn.net:'Other',
+              t:(+pn.t>0&&+pn.t<4102444800000)?+pn.t:Date.now(),
+              shared:!!pn.shared});
+          });
+          return out;
         }
         function cleanSites(a){
           var out=[];
@@ -1748,8 +1920,9 @@
                  created:(+sv.created>0?+sv.created:Date.now()),updated:Date.now(),
                  ver:(+sv.ver>0?Math.round(+sv.ver):0),
                  siteName:String(sv.siteName==null?'My site':sv.siteName).slice(0,40)||'My site',
+                 mode:(sv.mode==='business'?'business':(sv.mode==='home'?'home':null)),snd:!!sv.snd,
                  rooms:rooms,bb:bb,dl:dl,sent:!!sv.sent,events:[],
-                 sites:cleanSites(sv.sites),drafts:[]};
+                 sites:cleanSites(sv.sites),pins:cleanPins(sv.pins),drafts:[]};
             logE('imp');
             fillBB(); save(); renderAll(); impIn.value='';
           };
@@ -1786,6 +1959,296 @@
             .catch(function(){ sendBtn.disabled=false; say('That didn\u2019t send \u2014 check you\u2019re online, or call 01202 775566.'); });
         });
 
+        /* ---------- game sounds: tiny synth, opt-in, unlocked inside a tap ---------- */
+        var snd={ctx:null,on:false};
+        function sndInit(){
+          try{
+            var AC=window.AudioContext||window.webkitAudioContext; if(!AC) return false;
+            if(!snd.ctx) snd.ctx=new AC();
+            if(snd.ctx.state==='suspended'&&snd.ctx.resume) snd.ctx.resume();
+            var o=snd.ctx.createOscillator(),g=snd.ctx.createGain();
+            g.gain.value=0.0001; o.connect(g); g.connect(snd.ctx.destination);
+            o.start(); o.stop(snd.ctx.currentTime+0.02);
+            return true;
+          }catch(e){ return false; }
+        }
+        function tone(f,dur,delay,type,vol){
+          if(!snd.on||!snd.ctx) return;
+          try{
+            if(snd.ctx.state!=='running'&&snd.ctx.resume) snd.ctx.resume();
+            var t=snd.ctx.currentTime+(delay||0);
+            var o=snd.ctx.createOscillator(),g=snd.ctx.createGain();
+            o.type=type||'sine'; o.frequency.value=f;
+            g.gain.setValueAtTime(vol||0.05,t);
+            g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+            o.connect(g); g.connect(snd.ctx.destination);
+            o.start(t); o.stop(t+dur+0.03);
+          }catch(e){}
+        }
+        function sTick(){ tone(880,0.05,0,'square',0.018); }
+        function sPop(){ tone(600,0.09,0,'triangle',0.05); }
+        function sGood(){ tone(523,0.12,0,'triangle',0.05); tone(659,0.14,0.09,'triangle',0.05); tone(784,0.22,0.18,'triangle',0.06); }
+        function sGreat(){ tone(523,0.1,0,'triangle',0.05); tone(659,0.1,0.08,'triangle',0.05); tone(784,0.1,0.16,'triangle',0.05); tone(1047,0.32,0.24,'triangle',0.07); }
+        function sLow(){ tone(233,0.22,0,'sine',0.06); tone(185,0.3,0.12,'sine',0.05); }
+        function sStar(i){ tone(700+i*130,0.09,0,'triangle',0.045); }
+
+        /* ---------- stars ---------- */
+        function starHalves(score){ return Math.max(0,Math.min(10,Math.round(score/10))); } /* 0-10 half-stars */
+        function starSvg(state){ /* state: 2 full, 1 half, 0 empty */
+          var NS='http://www.w3.org/2000/svg';
+          var sv=document.createElementNS(NS,'svg'); sv.setAttribute('viewBox','0 0 20 19');
+          var path=document.createElementNS(NS,'path');
+          path.setAttribute('d','M10 1.5l2.6 5.3 5.8.8-4.2 4 1 5.7-5.2-2.7-5.2 2.7 1-5.7-4.2-4 5.8-.8z');
+          path.setAttribute('fill', state===2?'#e8c35a':(state===1?'rgba(232,195,90,.45)':'rgba(125,170,220,.22)'));
+          sv.appendChild(path); return sv;
+        }
+        function starRowInto(elm,score,cls){
+          var h=starHalves(score);
+          for(var i=0;i<5;i++){
+            var st=h>=(i+1)*2?2:(h===i*2+1?1:0);
+            var sv=starSvg(st); if(cls) sv.setAttribute('class',cls);
+            elm.appendChild(sv);
+          }
+        }
+
+        /* ---------- the advice engine: honest, mode-aware ---------- */
+        function adviceFor(v,mode){
+          var biz=mode==='business', out=[], rooms=v.rooms||[];
+          if(!rooms.length) return out;
+          var worst=rooms[0],sum=0,lowUp=[],hiJit=[],hiLat=[];
+          rooms.forEach(function(r){
+            sum+=r.s; if(r.s<worst.s) worst=r;
+            if(r.ul!=null&&r.ul<(biz?10:3)) lowUp.push(r.n);
+            if(r.jit>=18) hiJit.push(r.n);
+            if(r.lat>=100) hiLat.push(r.n);
+          });
+          var target=biz?60:45;
+          if(worst.s<target){
+            out.push(['warn',(biz?'Below our business bar in ':'Weak coverage in ')+worst.n.slice(0,24),
+              'Start with the free fix: move the router higher, central and out of any cupboard, then re-test. If '+worst.n+' still scores under '+target+', one well-placed access point or mesh node usually solves it — a cheap plug-in booster usually doesn’t.'+(biz?' Our bar for business use is every room at 60+, because calls and card machines don’t forgive weak spots. We’d design the fix from a measured survey, not guesswork.':'')]);
+          } else {
+            out.push(['good','Coverage looks healthy everywhere you tested',
+              'Honestly: don’t spend money on WiFi kit. Your weakest room ('+worst.n+', '+worst.s+'/100) is still '+(biz?'fit for video calls and card machines':'comfortable for streaming and video calls')+'.']);
+          }
+          if(hiJit.length) out.push(['warn','Unsteady signal in '+hiJit.slice(0,3).map(function(x){return x.slice(0,24);}).join(', '),
+            'The connection wobbles there — the classic sign of interference or a busy channel. Use the 5GHz network where you can, and keep the router away from microwaves, TVs and mirrors.']);
+          if(lowUp.length) out.push([biz?'bad':'warn','Upload is tight in '+lowUp.slice(0,3).map(function(x){return x.slice(0,24);}).join(', '),
+            biz?'Video calls live and die on upload. Below about 10 Mbps up, two simultaneous calls start fighting each other — check your package’s upload speed before blaming the WiFi.'
+               :'Upload matters for video calls and backing up photos. If calls stutter in these rooms, this is why.']);
+          if(hiLat.length&&!hiJit.length) out.push(['warn','Slow to respond in '+hiLat.slice(0,3).map(function(x){return x.slice(0,24);}).join(', '),
+            'High latency makes everything feel laggy even when the speed number looks fine. If it’s fine next to the router, this is coverage — not your broadband.']);
+          if(biz&&v.bb&&v.bb.backup==='no') out.push(['bad','No backup internet',
+            'One broadband fault stops card payments, calls and cloud apps together. The honest first fix is an automatic 4G/5G failover router — we fit them. See our broadband emergency plan guide on 365techies.co.uk.']);
+          if(v.dl&&v.bb&&v.bb.down>0){
+            var pct=Math.round(v.dl.best/v.bb.down*100);
+            if(pct<50) out.push(['warn','Measured '+v.dl.best+' Mbps vs '+v.bb.down+' advertised ('+pct+'%)',
+              'That was measured over WiFi, so test plugged in at the router before blaming '+(v.bb.prov||'your provider')+'. If the wired test is slow too, it’s the line or the package — and no WiFi kit will fix that.']);
+          }
+          return out;
+        }
+        function gradeLineFor(avg,mode,worst){
+          var biz=mode==='business';
+          var eff=avg;
+          if(worst!=null&&worst<(biz?60:45)) eff=Math.min(eff,59); /* the headline must never contradict the advice below it */
+          if(eff>=80) return biz?'Business-grade by our bar everywhere you tested - a network to be proud of.':'A genuinely strong home network - nice.';
+          if(eff>=60) return biz?'Solid, with rooms to tighten before we’d call it business-grade (our bar: every room 60+).':'Good overall, with a weak spot or two worth a look.';
+          if(avg>=40) return 'Workable, but you’re living with compromises — the advice below is where to start.';
+          return 'This network is holding you back. The good news: it’s nearly always fixable, and rarely by spending a fortune.';
+        }
+
+        /* ---------- the branded 365 report PDF: hand-rolled, no libraries ---------- */
+        var BS=String.fromCharCode(92), NL=String.fromCharCode(10);
+        function pdfStr(t){
+          t=String(t);
+          var out='', i, ch, cc;
+          for(i=0;i<t.length;i++){
+            ch=t.charAt(i); cc=t.charCodeAt(i);
+            if(cc===8217) cc=146;        /* ’ */
+            else if(cc===8216) cc=145;   /* ‘ */
+            else if(cc===8212) cc=151;   /* — */
+            else if(cc===8211) cc=150;   /* – */
+            else if(cc===215) cc=215;    /* × */
+            if(cc>255) continue;
+            if(cc===t.charCodeAt(i)&&(cc<32||(cc>=127&&cc<=159))) continue; /* unmapped controls: never into the PDF */
+            ch=String.fromCharCode(cc);
+            if(ch===BS) out+=BS+BS;
+            else if(ch==='(') out+=BS+'(';
+            else if(ch===')') out+=BS+')';
+            else out+=ch;
+          }
+          return out;
+        }
+        function pdfWrap(t,maxChars){
+          var words=String(t).split(' '), lines=[], cur='';
+          words.forEach(function(w){
+            while(w.length>maxChars){ lines.push(w.slice(0,maxChars)); w=w.slice(maxChars); } /* never draw off the page */
+            if((cur+' '+w).length>maxChars&&cur){ lines.push(cur); cur=w; }
+            else cur=cur?cur+' '+w:w;
+          });
+          if(cur) lines.push(cur);
+          return lines;
+        }
+        function buildPdf(v,mode){
+          var W=595,H=842,M=44;
+          var NAVY='0.043 0.071 0.125', CYAN='0.114 0.592 0.890', GOLD='0.910 0.765 0.353',
+              GREEN='0.0 0.808 0.106', AMBER='0.878 0.702 0.255', RED='0.878 0.337 0.247',
+              INK='0.13 0.16 0.22', GREY='0.42 0.47 0.56', LGREY='0.90 0.92 0.95';
+          var pages=[], c=[], y=0;
+          function page(){ c=[]; pages.push(c); y=0; }
+          function rect(x,yy,w,h,col){ c.push(col+' rg '+x.toFixed(1)+' '+(H-yy-h).toFixed(1)+' '+w.toFixed(1)+' '+h.toFixed(1)+' re f'); }
+          function txt(x,yy,size,bold,col,t){ c.push('BT /'+(bold?'F2':'F1')+' '+size+' Tf '+col+' rg 1 0 0 1 '+x.toFixed(1)+' '+(H-yy).toFixed(1)+' Tm ('+pdfStr(t)+') Tj ET'); }
+          function star(cx,cy,r,fill,col){
+            var pts=[],k;
+            for(k=0;k<10;k++){
+              var ang=-Math.PI/2+k*Math.PI/5, rad=(k%2===0)?r:r*0.45;
+              pts.push([(cx+Math.cos(ang)*rad).toFixed(1),(H-cy+Math.sin(ang)*-rad).toFixed(1)]);
+            }
+            var d=pts[0][0]+' '+pts[0][1]+' m ';
+            for(k=1;k<10;k++) d+=pts[k][0]+' '+pts[k][1]+' l ';
+            c.push(fill?(col+' rg '+d+'h f'):(col+' RG 0.8 w '+d+'h S'));
+          }
+          function starsAt(x,yy,score,r){
+            var h2=starHalves(score),i;
+            for(i=0;i<5;i++){
+              var st=h2>=(i+1)*2?2:(h2===i*2+1?1:0);
+              star(x+i*(r*2.4),yy,r,st>0,st===2?GOLD:(st===1?'0.95 0.87 0.62':'0.85 0.88 0.92'));
+            }
+          }
+          function header(sub){
+            rect(0,0,W,96,NAVY);
+            txt(M,40,24,true,'1 1 1','365 TECHIES');
+            rect(M,50,60,3.4,CYAN);
+            txt(M,74,13,false,'0.66 0.78 0.92',sub);
+            txt(W-M-200,40,10,false,'0.66 0.78 0.92','Site: '+String(v.n||'My site').slice(0,28));
+            txt(W-M-200,56,10,false,'0.66 0.78 0.92','Date: '+new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}));
+            txt(W-M-200,72,10,true,'0.66 0.78 0.92',(mode==='business'?'BUSINESS':'HOME')+' REPORT');
+            y=126;
+          }
+          function footer(no,total){
+            rect(M,H-46,W-2*M,0.8,'0.85 0.88 0.92');
+            txt(M,H-30,8.5,false,GREY,'365 Techies - 01202 775566 - 365techies.co.uk - Family-run since 1995');
+            txt(W-M-60,H-30,8.5,false,GREY,'Page '+no+' of '+total);
+          }
+          function need(h){ if(y+h>H-70){ page(); header('WiFi Survey Report (continued)'); } }
+
+          var rooms=(v.rooms||[]).slice().sort(function(a,b){return b.s-a.s;});
+          var sum=0; rooms.forEach(function(r){sum+=r.s;});
+          var avg=rooms.length?Math.round(sum/rooms.length):0;
+
+          page(); header('WiFi Survey Report');
+          /* overall band */
+          rect(M,y,W-2*M,74,'0.965 0.973 0.984');
+          txt(M+18,y+34,30,true,avg>=75?GREEN:(avg>=45?AMBER:RED),String(avg));
+          txt(M+18+(avg>=100?58:42),y+34,11,false,GREY,'/100 overall');
+          starsAt(M+18,y+56,avg,7);
+          var gl=pdfWrap(gradeLineFor(avg,mode,rooms.length?rooms[rooms.length-1].s:null),58);
+          txt(M+210,y+28,11,true,INK,gl[0]||'');
+          if(gl[1]) txt(M+210,y+44,11,true,INK,gl[1]);
+          txt(M+210,y+62,9,false,GREY,rooms.length+' room'+(rooms.length===1?'':'s')+' tested - scores measure real latency, stability and speed where you stood');
+          y+=96;
+
+          /* rooms */
+          txt(M,y,13,true,INK,'Room by room'); y+=10;
+          rect(M,y,W-2*M,0.8,'0.85 0.88 0.92'); y+=14;
+          rooms.forEach(function(r){
+            need(52);
+            txt(M,y+12,11,true,INK,r.n);
+            starsAt(W-M-118,y+8,r.s,6);
+            var meta=r.lat+' ms latency'+(r.dl!=null?'  -  '+r.dl+' Mbps down':'')+(r.ul!=null?'  -  '+r.ul+' Mbps up':'');
+            txt(M,y+27,8.5,false,GREY,meta);
+            rect(M,y+34,W-2*M,5,LGREY);
+            rect(M,y+34,(W-2*M)*Math.max(0.02,r.s/100),5,r.s>=75?GREEN:(r.s>=45?AMBER:RED));
+            y+=52;
+          });
+
+          /* advice */
+          var adv=adviceFor({n:v.n,rooms:rooms,bb:v.bb,dl:v.dl},mode);
+          if(adv.length){
+            need(88); y+=8;
+            txt(M,y,13,true,INK,'What we would actually do'); y+=10;
+            rect(M,y,W-2*M,0.8,'0.85 0.88 0.92'); y+=14;
+            adv.forEach(function(a){
+              var heads=pdfWrap(a[1],64);
+              var lines=pdfWrap(a[2],92);
+              var h=30+(heads.length-1)*15+lines.length*13;
+              need(h+8);
+              rect(M,y,3.5,h-6,a[0]==='good'?GREEN:(a[0]==='bad'?RED:AMBER));
+              heads.forEach(function(hl,hi){ txt(M+14,y+13+hi*15,11,true,INK,hl); });
+              lines.forEach(function(ln,i2){ txt(M+14,y+29+(heads.length-1)*15+i2*13,9.5,false,'0.28 0.33 0.42',ln); });
+              y+=h+6;
+            });
+          }
+
+          /* deal summary */
+          if(v.bb&&(v.bb.prov||v.bb.price!=null)){
+            need(86); y+=8;
+            txt(M,y,13,true,INK,'Your broadband deal'); y+=10;
+            rect(M,y,W-2*M,0.8,'0.85 0.88 0.92'); y+=16;
+            var b=v.bb, dlx=v.dl;
+            if(b.prov) { txt(M,y,10,false,INK,('Provider: '+b.prov+(b.pkg?'  ('+b.pkg+')':'')).slice(0,90)); y+=15; }
+            if(b.price!=null){ txt(M,y,10,false,INK,'Price: '+String.fromCharCode(163)+b.price+' a month  -  '+String.fromCharCode(163)+(Math.round(b.price*12*100)/100)+' a year'); y+=15; }
+            if(b.down!=null){ txt(M,y,10,false,INK,'Advertised: '+b.down+' Mbps'+(b.ming!=null?'  -  minimum guaranteed: '+b.ming+' Mbps':'')+(dlx?'  -  best measured here: '+dlx.best+' Mbps (over WiFi)':'')); y+=15; }
+            if(b.end){ txt(M,y,10,false,INK,'Contract ends: '+b.end+(b.backup?'  -  backup connection: '+b.backup:'')); y+=15; }
+          }
+
+          /* honesty note */
+          need(46); y+=10;
+          var hn=pdfWrap('Being straight with you: these scores measure real connection quality (latency, stability and a live speed test) from where you stood. Advertised speeds are your provider’s marketing figure; only a wired test measures the line itself. If any of this raises questions, call us - honest answers are free.',100);
+          hn.forEach(function(ln,i3){ txt(M,y+i3*12,8.5,false,GREY,ln); });
+
+          pages.forEach(function(pc,i4){ c=pc; footer(i4+1,pages.length); });
+
+          /* assemble the PDF file */
+          var objs=[], out='', offs=[];
+          function push(str){ offs.push(out.length); out+=str; }
+          out='%PDF-1.4'+NL;
+          var kidsRefs=[], objIdx=5, streams=[];
+          pages.forEach(function(pc){
+            var stream=pc.join(NL);
+            streams.push({page:objIdx,content:objIdx+1,stream:stream});
+            kidsRefs.push(objIdx+' 0 R');
+            objIdx+=2;
+          });
+          push('1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj'+NL);
+          push('2 0 obj<</Type/Pages/Kids['+kidsRefs.join(' ')+']/Count '+pages.length+'>>endobj'+NL);
+          push('3 0 obj<</Type/Font/Subtype/Type1/BaseFont/Helvetica/Encoding/WinAnsiEncoding>>endobj'+NL);
+          push('4 0 obj<</Type/Font/Subtype/Type1/BaseFont/Helvetica-Bold/Encoding/WinAnsiEncoding>>endobj'+NL);
+          streams.forEach(function(st){
+            push(st.page+' 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 '+W+' '+H+']/Resources<</Font<</F1 3 0 R/F2 4 0 R>>>>/Contents '+st.content+' 0 R>>endobj'+NL);
+            push(st.content+' 0 obj<</Length '+st.stream.length+'>>stream'+NL+st.stream+NL+'endstream endobj'+NL);
+          });
+          var xrefPos=out.length, count=offs.length+1;
+          out+='xref'+NL+'0 '+count+NL+'0000000000 65535 f '+NL;
+          offs.forEach(function(o){ out+=('0000000000'+o).slice(-10)+' 00000 n '+NL; });
+          out+='trailer<</Size '+count+'/Root 1 0 R>>'+NL+'startxref'+NL+xrefPos+NL+'%%EOF';
+          var bytes=new Uint8Array(out.length);
+          for(var bi=0;bi<out.length;bi++) bytes[bi]=out.charCodeAt(bi)&0xFF;
+          return bytes;
+        }
+        function pdfDownload(){
+          if(!doc||!doc.rooms.length) return false;
+          try{
+            var bytes=buildPdf({n:doc.siteName,rooms:doc.rooms,bb:doc.bb,dl:doc.dl},doc.mode||'home');
+            var blob=new Blob([bytes],{type:'application/pdf'});
+            var a=document.createElement('a');
+            a.href=URL.createObjectURL(blob);
+            a.download='365-techies-wifi-report.pdf';
+            document.body.appendChild(a); a.click();
+            setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },900);
+            logE('pdf');
+            return true;
+          }catch(e){ return false; }
+        }
+        try{ window.__wfPdf=function(){ return doc&&doc.rooms.length?buildPdf({n:doc.siteName,rooms:doc.rooms,bb:doc.bb,dl:doc.dl},doc.mode||'home'):null; }; }catch(e){}
+        var pagePdfBtn=$('#wf-pdf');
+        if(pagePdfBtn) pagePdfBtn.addEventListener('click',function(){
+          if(!pdfDownload()){
+            var t=pagePdfBtn.textContent;
+            pagePdfBtn.textContent='Test a room first, then the report unlocks';
+            setTimeout(function(){ pagePdfBtn.textContent=t; },1900);
+          }
+        });
+
         /* ---------- multi-site: local sites, dashboard cards, totals ---------- */
         function stashCur(){
           return {n:doc.siteName,rooms:doc.rooms,bb:doc.bb,dl:doc.dl,sent:doc.sent,events:doc.events,updated:doc.updated};
@@ -1815,8 +2278,9 @@
           var worst=101,sum=0;
           v.rooms.forEach(function(r){ sum+=r.s; if(r.s<worst) worst=r.s; });
           var avg=sum/v.rooms.length;
+          var tgt=(doc&&doc.mode==='business')?60:45;
           if(avg<45) return ['Poor','#e0563f'];
-          if(worst<45||v.bb.backup==='no') return ['Action recommended','#e0b341'];
+          if(worst<tgt||v.bb.backup==='no') return ['Action recommended','#e0b341'];
           if(avg>=75) return ['Excellent','#00ce1b'];
           return ['Good','#2fe45a'];
         }
@@ -1921,17 +2385,21 @@
         var wq=$('#wq'), wqOpen=$('#wq-open');
         if(wq&&wqOpen){(function(){
           var DOWNQ='https://speed.cloudflare.com/__down?bytes=';
-          var q={on:false,room:'',poll:null,cancel:false,count:null};
+          var q={on:false,room:'',poll:null,cancel:false,count:null,fx:[]};
           var E={pick:$('#wq-pick'),test:$('#wq-test'),res:$('#wq-res'),chips:$('#wq-chips'),name:$('#wq-name'),
                  go:$('#wq-go'),roomEl:$('#wq-room'),dial:$('#wq-dial'),num:$('#wq-num'),unit:$('#wq-unit'),
                  phase:$('#wq-phase'),tip:$('#wq-tip'),stamp:$('#wq-stamp'),score:$('#wq-score'),mini:$('#wq-mini'),
                  vline:$('#wq-vline'),next:$('#wq-next'),fin:$('#wq-finish'),x:$('#wq-x'),rail:$('#wq-rail'),
-                 count:$('#wq-count'),burst:$('#wq-burst')};
+                 count:$('#wq-count'),burst:$('#wq-burst'),mode:$('#wq-mode'),modeHome:$('#wq-mode-home'),
+                 modeBiz:$('#wq-mode-biz'),modeSwap:$('#wq-modeswap'),viewRep:$('#wq-viewrep'),sndBtn:$('#wq-snd'),
+                 rep:$('#wq-rep'),repBtn:$('#wq-rep-btn'),repBack:$('#wq-rep-back'),pdfBtn:$('#wq-pdf'),
+                 gradeNum:$('#wq-gradenum'),gradeStars:$('#wq-gradestars'),gradeLine:$('#wq-gradeline'),
+                 repRooms:$('#wq-reprooms'),repAdvice:$('#wq-repadvice')};
           for(var k in E){ if(!E[k]) return; }
           var reduceQ=false; try{reduceQ=matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){}
           var engineGo=$('#wf-go');
           function engineRunning(){ var L=window.WF_LAST; return !!(L&&L.run&&(Date.now()-L.t)<8000); }
-          function qShow(step){ E.pick.hidden=(step!=='pick'); E.test.hidden=(step!=='test'); E.res.hidden=(step!=='res'); }
+          function qShow(step){ E.mode.hidden=(step!=='mode'); E.pick.hidden=(step!=='pick'); E.test.hidden=(step!=='test'); E.res.hidden=(step!=='res'); E.rep.hidden=(step!=='rep'); }
           function qDial(pct,col){
             E.dial.style.setProperty('--wq-pct',String(Math.max(0,Math.min(100,pct))));
             if(col) E.dial.style.setProperty('--wq-col',col);
@@ -1956,16 +2424,27 @@
               b.addEventListener('click',function(){ qStart(p); });
               E.chips.appendChild(b);
             });
+            if(E.viewRep) E.viewRep.hidden=!doc.rooms.length;
+            if(E.modeSwap) E.modeSwap.textContent='Mode: '+(doc.mode==='business'?'Business':'Home')+' - change';
           }
+          function sndUi(){
+            if(!E.sndBtn) return;
+            E.sndBtn.innerHTML=snd.on?'&#128266;':'&#128263;';
+            E.sndBtn.setAttribute('aria-pressed',snd.on?'true':'false');
+          }
+          var qPending=false;
           function qOpenFn(){
-            if(!booted||!doc) return;   /* storage still opening - a second later it will work */
+            if(!booted||!doc){ qPending=true; wqOpen.textContent='One moment\u2026'; return; }
             wq.hidden=false; q.on=true; wq.className='wq';
             try{ document.documentElement.style.overflow='hidden'; }catch(e){}
-            qShow('pick'); qChips(); qRail();
+            if(doc.snd&&!snd.on){ if(sndInit()) snd.on=true; }
+            sndUi();
+            if(!doc.mode){ qShow('mode'); } else { qShow('pick'); qChips(); }
+            qRail();
             try{ E.x.focus(); }catch(e){}
           }
           function qClose(){
-            q.cancel=true; clearInterval(q.poll); clearInterval(q.count);
+            q.cancel=true; clearInterval(q.poll); clearInterval(q.count); qFxClear();
             wq.hidden=true; q.on=false;
             try{ document.documentElement.style.overflow=''; }catch(e){}
             if(engineRunning()&&engineGo) engineGo.click();
@@ -1981,6 +2460,86 @@
             E.name.value=''; qStart(n);
           });
           E.next.addEventListener('click',function(){ wq.className='wq'; qShow('pick'); qChips(); qRail(); });
+          function setMode(m){ doc.mode=m; save(); sPop(); wq.className='wq'; qShow('pick'); qChips(); }
+          if(E.modeHome) E.modeHome.addEventListener('click',function(){ setMode('home'); });
+          if(E.modeBiz) E.modeBiz.addEventListener('click',function(){ setMode('business'); });
+          if(E.modeSwap) E.modeSwap.addEventListener('click',function(){ qShow('mode'); });
+          if(E.sndBtn) E.sndBtn.addEventListener('click',function(){
+            if(!snd.on){ if(sndInit()){ snd.on=true; sPop(); } }
+            else snd.on=false;
+            doc.snd=snd.on; save(); sndUi();
+          });
+          if(E.viewRep) E.viewRep.addEventListener('click',function(){ qReport(); });
+          if(E.repBtn) E.repBtn.addEventListener('click',function(){ qReport(); });
+          if(E.repBack) E.repBack.addEventListener('click',function(){ qFxClear(); clearInterval(q.count); wq.className='wq'; qShow('pick'); qChips(); qRail(); });
+          if(E.pdfBtn) E.pdfBtn.addEventListener('click',function(){
+            if(pdfDownload()) sGood();
+          });
+          function qFx(fn,ms){ q.fx.push(setTimeout(fn,ms)); }
+          function qFxClear(){ q.fx.forEach(function(t){ clearTimeout(t); }); q.fx=[]; }
+          function qReport(){
+            if(!doc.rooms.length){ qShow('pick'); qChips(); return; }
+            qFxClear();
+            wq.className='wq';
+            qShow('rep');
+            var rooms=doc.rooms.slice().sort(function(a,b){return b.s-a.s;});
+            var sum=0; rooms.forEach(function(r){sum+=r.s;});
+            var avg=Math.round(sum/rooms.length);
+            /* graded count-up with ticks */
+            E.gradeNum.style.color=colFor(avg);
+            clearInterval(q.count);
+            if(reduceQ) E.gradeNum.textContent=String(avg);
+            else {
+              var shown=0, step=Math.max(1,Math.round(avg/24)), tick=0;
+              E.gradeNum.textContent='0';
+              q.count=setInterval(function(){
+                shown+=step; tick++;
+                if(tick%3===0) sTick();
+                if(shown>=avg){ shown=avg; clearInterval(q.count); }
+                E.gradeNum.textContent=String(shown);
+              },28);
+            }
+            /* star row pops in with sounds */
+            E.gradeStars.innerHTML='';
+            var halves=starHalves(avg), i;
+            for(i=0;i<5;i++){
+              (function(i2){
+                var st=halves>=(i2+1)*2?2:(halves===i2*2+1?1:0);
+                var sv=starSvg(st); sv.setAttribute('class','wq__star');
+                E.gradeStars.appendChild(sv);
+                qFx(function(){
+                  sv.setAttribute('class','wq__star on');
+                  if(st>0) sStar(i2);
+                }, reduceQ?0:350+i2*160);
+              })(i);
+            }
+            E.gradeLine.textContent=gradeLineFor(avg,doc.mode||'home',rooms.length?rooms[rooms.length-1].s:null);
+            /* room rows slide in, bars grow */
+            E.repRooms.innerHTML='';
+            rooms.forEach(function(r,idx){
+              var row=el('div','wq__reprow');
+              var nEl=el('span','rn',r.n);
+              var stEl=el('span','rs');
+              starRowInto(stEl,r.s);
+              var meta=el('span','rm',r.lat+' ms'+(r.dl!=null?' - '+r.dl+' Mbps down':'')+(r.ul!=null?' - '+r.ul+' up':''));
+              var bar=el('div','wq__rbar');
+              var fill=document.createElement('span');
+              fill.style.background=colFor(r.s);
+              bar.appendChild(fill);
+              row.appendChild(nEl); row.appendChild(stEl); row.appendChild(meta); row.appendChild(bar);
+              if(!reduceQ) row.style.animationDelay=(0.15+idx*0.09)+'s';
+              row.className='wq__reprow in';
+              E.repRooms.appendChild(row);
+              qFx(function(){ fill.style.width=Math.max(3,r.s)+'%'; }, reduceQ?0:250+idx*90);
+            });
+            /* advice cards */
+            E.repAdvice.innerHTML='';
+            adviceFor({n:doc.siteName,rooms:rooms,bb:doc.bb,dl:doc.dl},doc.mode||'home').forEach(function(a){
+              E.repAdvice.appendChild(card(a[0],a[1],a[2]).d);
+            });
+            if(avg>=75&&!reduceQ){ qFx(qBurst,900); qFx(sGreat,350); }
+            else if(!reduceQ) qFx(sGood,350);
+          }
           function qStart(room){
             var isNew=!doc.rooms.some(function(r){ return r.n.toLowerCase()===room.toLowerCase(); });
             if(isNew&&doc.rooms.length>=20){
@@ -2001,7 +2560,7 @@
               if(q.cancel){ clearInterval(q.poll); return; }
               var L=window.WF_LAST;
               if(L&&L.t>lastT){
-                lastT=L.t; seen++;
+                lastT=L.t; seen++; sTick();
                 E.num.textContent=L.off?'\u2014':String(L.s);
                 E.num.style.color=colFor(L.off?0:L.s);
                 qDial(seen/need*100, colFor(L.off?0:L.s));
@@ -2022,14 +2581,19 @@
             E.phase.textContent='Now the speed test\u2026';
             E.tip.textContent='Hold on \u2014 downloading about 10\u00a0MB.';
             E.unit.textContent='MBPS'; E.num.textContent='0'; E.num.style.color='#eef4fd'; qDial(0,'#1d97e3');
-            var bytes=10000000, t0=performance.now(), got=0;
+            var bytes=10000000, t0=performance.now(), got=0, phaseDone=false;
+            /* a black-spot room can drip for many minutes - cap the phase and keep the partial */
+            var phaseTO=setTimeout(function(){
+              if(!phaseDone&&!q.cancel){ phaseDone=true; qUpload(snap,got>400000?Math.min(Math.round(((got*8)/((performance.now()-t0)/1000)/1e6)*10)/10,2000):null); }
+            },25000);
             fetch(DOWNQ+bytes+'&r='+Math.random().toString(36).slice(2),{cache:'no-store'})
               .then(function(r){
                 if(r.body&&r.body.getReader){
                   var rd=r.body.getReader();
                   var pump=function(){
+                    if((performance.now()-t0)>20000){ try{ rd.cancel(); }catch(e){} return got; }
                     return rd.read().then(function(res){
-                      if(q.cancel){ try{ rd.cancel(); }catch(e){} return null; }
+                      if(q.cancel||phaseDone){ try{ rd.cancel(); }catch(e){} return null; }
                       if(res.done) return got;
                       got+=res.value.length;
                       var secs=(performance.now()-t0)/1000;
@@ -2044,24 +2608,29 @@
                 return r.arrayBuffer().then(function(b){ got=b.byteLength; return got; });
               })
               .then(function(total){
-                if(q.cancel||total==null) return;
+                clearTimeout(phaseTO);
+                if(q.cancel||phaseDone||total==null) return;
+                phaseDone=true;
                 var secs=(performance.now()-t0)/1000;
                 var mbps=secs>0?(total*8)/secs/1e6:0;
                 mbps=Math.min(Math.round(mbps*10)/10,2000);
                 qUpload(snap,mbps);
               })
-              ['catch'](function(){ if(!q.cancel) qUpload(snap,null); });
+              ['catch'](function(){ clearTimeout(phaseTO); if(!q.cancel&&!phaseDone){ phaseDone=true; qUpload(snap,null); } });
           }
           function qUpload(snap,dl){
             E.phase.textContent='\u2026and the upload';
             E.tip.textContent='Uploads matter most for video calls.';
             E.unit.textContent='UP MBPS'; E.num.textContent='0'; qDial(0,'#8a6fe8');
-            var bytes=4000000, t0=performance.now(), body=null;
+            var bytes=4000000, t0=performance.now(), body=null, upDone=false;
             try{ body=new Uint8Array(bytes); }catch(e){}
             if(!body){ qResult(snap,dl,null); return; }
+            var upTO=setTimeout(function(){ if(!upDone&&!q.cancel){ upDone=true; qResult(snap,dl,null); } },20000);
             fetch('https://speed.cloudflare.com/__up',{method:'POST',body:body,cache:'no-store'})
               .then(function(){
-                if(q.cancel) return;
+                clearTimeout(upTO);
+                if(q.cancel||upDone) return;
+                upDone=true;
                 var secs=(performance.now()-t0)/1000;
                 var ul=secs>0?(bytes*8)/secs/1e6:0;
                 ul=Math.min(Math.round(ul*10)/10,2000);
@@ -2069,7 +2638,7 @@
                 qDial(100,'#8a6fe8');
                 qResult(snap,dl,ul);
               })
-              ['catch'](function(){ if(!q.cancel) qResult(snap,dl,null); });
+              ['catch'](function(){ clearTimeout(upTO); if(!q.cancel&&!upDone){ upDone=true; qResult(snap,dl,null); } });
           }
           function qResult(snap,mbps,ul){
             var s=snap.off?0:snap.s;
@@ -2079,6 +2648,7 @@
             save(); qRail(); renderAll();
             qShow('res');
             var tier=s>=75?['t-good','EXCELLENT','tier-good']:(s>=45?['t-mid','GOOD','']:['t-bad','WEAK SPOT','tier-bad']);
+            if(s>=75) sGreat(); else if(s>=45) sGood(); else sLow();
             wq.className='wq'+(tier[2]?' '+tier[2]:'');
             E.stamp.className='wq__stamp '+tier[0]; E.stamp.textContent=tier[1];
             E.score.style.color=colFor(s);
@@ -2114,6 +2684,345 @@
             }
             setTimeout(function(){ E.burst.innerHTML=''; },1400);
           }
+        })();}
+
+        /* ---------- Signal Hunter: mobile speed pins + map + community share ---------- */
+        var wn=$('#wn');
+        if(wn){(function(){
+          var PINGU='/api/ping.php', DOWN2='https://speed.cloudflare.com/__down?bytes=', UP2='https://speed.cloudflare.com/__up';
+          var MAPI='/api/wifi-map.php';
+          var NETS2=['4G','5G','WiFi','Other'];
+          var PLACES2=['Cafe','Coworking','Library','Car park / layby','Campsite','Beach / outdoors','Van spot','Harbour / marina','Other'];
+          var N={intro:$('#wn-intro'),loc:$('#wn-loc'),test:$('#wn-test'),res:$('#wn-res'),map:$('#wn-mapstep'),
+                 nets:$('#wn-nets'),start:$('#wn-start'),locmsg:$('#wn-locmsg'),locretry:$('#wn-locretry'),locskip:$('#wn-locskip'),
+                 where:$('#wn-where'),dial:$('#wn-dial'),num:$('#wn-num'),unit:$('#wn-unit'),phase:$('#wn-phase'),tip:$('#wn-tip'),
+                 stamp:$('#wn-stamp'),score:$('#wn-score'),mini:$('#wn-mini'),grades:$('#wn-grades'),
+                 mapBtn:$('#wn-map-btn'),again:$('#wn-again'),testagain:$('#wn-testagain'),
+                 mapbox:$('#wn-mapbox'),list:$('#wn-list'),togMine:$('#wn-tog-mine'),togComm:$('#wn-tog-comm'),
+                 share:$('#wn-share'),places:$('#wn-places'),consent:$('#wn-consent'),hp:$('#wn-hp'),
+                 send:$('#wn-send'),shareMsg:$('#wn-sharemsg'),shareCancel:$('#wn-sharecancel'),
+                 x:$('#wn-x'),count:$('#wn-count'),burst:$('#wn-burst')};
+          for(var k in N){ if(!N[k]) return; }
+          var st={on:false,net:'4G',geo:null,cancel:false,map:null,L:null,mine:null,comm:null,commPins:null,shareIdx:-1,fx:[]};
+          function nFx(fn,ms){ st.fx.push(setTimeout(fn,ms)); }
+          function nFxClear(){ st.fx.forEach(function(t){clearTimeout(t);}); st.fx=[]; }
+          function nShow(step){ ['intro','loc','test','res','map'].forEach(function(kk){ N[kk].hidden=(kk!==step); }); }
+          function nDial(pct,col){ N.dial.style.setProperty('--wq-pct',String(Math.max(0,Math.min(100,pct)))); if(col) N.dial.style.setProperty('--wq-col',col); }
+          function nScore(pn){
+            var upS=Math.min(pn.up/10,1)*45, pingS=Math.max(0,Math.min(1,(150-pn.ping)/130))*30, downS=Math.min(pn.down/50,1)*25;
+            return Math.round(upS+pingS+downS);
+          }
+          /* auto-suggest the network chip, but the user knows best */
+          function netChips(){
+            N.nets.innerHTML='';
+            var guess='4G';
+            try{ var c2=navigator.connection; if(c2&&c2.type==='wifi') guess='WiFi'; }catch(e){}
+            if(st.net==null) st.net=guess;
+            NETS2.forEach(function(nt){
+              var b=el('button','',nt+(nt==='WiFi'?' hotspot':'')); b.type='button';
+              if(nt===st.net) b.style.borderColor='#4fb4f5';
+              b.addEventListener('click',function(){ st.net=nt; netChips(); sPop(); });
+              N.nets.appendChild(b);
+            });
+          }
+          function nOpen(){
+            if(!booted||!doc) return;
+            wn.hidden=false; st.on=true;
+            try{ document.documentElement.style.overflow='hidden'; }catch(e){}
+            if(doc.snd&&!snd.on){ if(sndInit()) snd.on=true; }
+            N.count.textContent='SIGNAL HUNTER · '+doc.pins.length+' pin'+(doc.pins.length===1?'':'s');
+            nShow('intro'); netChips();
+          }
+          function nClose(){
+            st.cancel=true; nFxClear();
+            wn.hidden=true; st.on=false;
+            try{ document.documentElement.style.overflow=''; }catch(e){}
+            save(); renderAll();
+          }
+          N.x.addEventListener('click',nClose);
+          document.addEventListener('keydown',function(e){ if(st.on&&e.key==='Escape') nClose(); });
+          var pageOpen=$('#wn-open');
+          if(pageOpen) pageOpen.addEventListener('click',nOpen);
+          var bonus=$('#wq-bonus');
+          if(bonus) bonus.addEventListener('click',function(){
+            var wqx=$('#wq-x'); if(wqx&&!$('#wq').hidden){ try{ wqx.click(); }catch(e){} }
+            nOpen(); sPop();
+          });
+          /* -------- locate -------- */
+          N.start.addEventListener('click',function(){ st.cancel=false; nLocate(); });
+          N.locretry.addEventListener('click',function(){ nLocate(); });
+          N.locskip.addEventListener('click',function(){ st.geo=null; nTest(); });
+          function nLocate(){
+            nShow('loc');
+            N.locmsg.textContent='Waiting for location permission…';
+            N.locretry.hidden=true; N.locskip.hidden=true;
+            if(!navigator.geolocation){ st.geo=null; N.locmsg.textContent='This browser doesn’t share location — testing without a pin.'; nFx(nTest,900); return; }
+            var done=false;
+            var giveUp=setTimeout(function(){ if(!done){ done=true; N.locmsg.textContent='Location is taking a while.'; N.locretry.hidden=false; N.locskip.hidden=false; } },14000);
+            navigator.geolocation.getCurrentPosition(function(pos){
+              if(done) return; done=true; clearTimeout(giveUp);
+              st.geo={lat:Math.round(pos.coords.latitude*10000)/10000,lng:Math.round(pos.coords.longitude*10000)/10000};
+              N.locmsg.textContent='Got you — starting the test.';
+              sPop(); nFx(nTest,500);
+            },function(err){
+              if(done) return; done=true; clearTimeout(giveUp);
+              st.geo=null;
+              N.locmsg.textContent=(err&&err.code===1)?'No problem — you said no to location, so this test won’t drop a pin.':'Couldn’t get a location here.';
+              N.locretry.hidden=(err&&err.code===1); N.locskip.hidden=false;
+            },{enableHighAccuracy:true,timeout:12000,maximumAge:30000});
+          }
+          /* -------- the test: ping burst -> down -> up -------- */
+          function nTest(){
+            nShow('test'); wn.className='wq is-pulse';
+            N.where.textContent=st.geo?'This spot':'This spot (no pin)';
+            N.unit.textContent='PING MS'; N.num.textContent='—'; nDial(0,'#1d97e3');
+            N.phase.textContent='Checking response times…';
+            var pings=[], i=0;
+            function onePing(){
+              if(st.cancel) return;
+              if(i>=6){ var srt=pings.slice().sort(function(a,b){return a-b;}); nDown(srt.length?srt[Math.floor(srt.length/2)]:999); return; }
+              i++;
+              var t0=performance.now(), fin=false;
+              var to=setTimeout(function(){ if(!fin){ fin=true; pings.push(3000); step(); } },3000);
+              fetch(PINGU+'?r='+Math.random().toString(36).slice(2),{cache:'no-store'})
+                .then(function(){ if(fin) return; fin=true; clearTimeout(to); pings.push(Math.round(performance.now()-t0)); step(); })
+                ['catch'](function(){ if(fin) return; fin=true; clearTimeout(to); pings.push(3000); step(); });
+              function step(){
+                var last=pings[pings.length-1];
+                N.num.textContent=String(last); sTick();
+                nDial(i/6*100, last<=80?'#00ce1b':(last<=150?'#e0b341':'#e0563f'));
+                onePing();
+              }
+            }
+            onePing();
+            function nDown(ping){
+              if(st.cancel) return;
+              N.phase.textContent='Download…'; N.unit.textContent='DOWN MBPS'; N.num.textContent='0'; nDial(0,'#1d97e3');
+              var bytes=10000000, t0=performance.now(), got=0, fin=false;
+              var to=setTimeout(function(){ if(!fin){ fin=true; wrap(); } },25000);
+              function wrap(){ var secs=(performance.now()-t0)/1000; nUp(ping, got>400000&&secs>0?Math.min(Math.round((got*8)/secs/1e6*10)/10,2000):0); }
+              fetch(DOWN2+bytes+'&r='+Math.random().toString(36).slice(2),{cache:'no-store'})
+                .then(function(r){
+                  if(r.body&&r.body.getReader){
+                    var rd=r.body.getReader();
+                    var pump=function(){
+                      if(fin||st.cancel){ try{rd.cancel();}catch(e){} return null; }
+                      if((performance.now()-t0)>20000){ try{rd.cancel();}catch(e){} return got; }
+                      return rd.read().then(function(res){
+                        if(res.done) return got;
+                        got+=res.value.length;
+                        var secs=(performance.now()-t0)/1000, live=secs>0?(got*8)/secs/1e6:0;
+                        N.num.textContent=live>=100?String(Math.round(live)):live.toFixed(1);
+                        nDial(got/bytes*100,'#1d97e3');
+                        return pump();
+                      });
+                    };
+                    return pump();
+                  }
+                  return r.arrayBuffer().then(function(b){ got=b.byteLength; return got; });
+                })
+                .then(function(){ if(!fin&&!st.cancel){ fin=true; clearTimeout(to); wrap(); } })
+                ['catch'](function(){ if(!fin&&!st.cancel){ fin=true; clearTimeout(to); wrap(); } });
+            }
+            function nUp(ping,down){
+              if(st.cancel) return;
+              N.phase.textContent='…and the upload (the one that matters for going live)';
+              N.unit.textContent='UP MBPS'; N.num.textContent='0'; nDial(0,'#8a6fe8');
+              var bytes=4000000, t0=performance.now(), body=null, fin=false;
+              try{ body=new Uint8Array(bytes); }catch(e){}
+              if(!body){ nResult(ping,down,0); return; }
+              var to=setTimeout(function(){ if(!fin){ fin=true; nResult(ping,down,0); } },20000);
+              fetch(UP2,{method:'POST',body:body,cache:'no-store'})
+                .then(function(){
+                  if(fin||st.cancel) return; fin=true; clearTimeout(to);
+                  var secs=(performance.now()-t0)/1000, up=secs>0?Math.min(Math.round((bytes*8)/secs/1e6*10)/10,2000):0;
+                  N.num.textContent=up>=100?String(Math.round(up)):up.toFixed(1); nDial(100,'#8a6fe8');
+                  nResult(ping,down,up);
+                })
+                ['catch'](function(){ if(!fin&&!st.cancel){ fin=true; clearTimeout(to); nResult(ping,down,0); } });
+            }
+          }
+          function nResult(ping,down,up){
+            var pn={lat:st.geo?st.geo.lat:null,lng:st.geo?st.geo.lng:null,down:down,up:up,ping:ping,net:st.net,t:Date.now(),shared:false};
+            var sc=nScore(pn);
+            if(st.geo){ doc.pins.push(pn); if(doc.pins.length>100) doc.pins.shift(); logE('hunt'); save(); }
+            N.count.textContent='SIGNAL HUNTER · '+doc.pins.length+' pin'+(doc.pins.length===1?'':'s');
+            nShow('res');
+            var tier=sc>=70?['t-good','WORK-READY','tier-good']:(sc>=40?['t-mid','USABLE','']:['t-bad','EMERGENCY ONLY','tier-bad']);
+            wn.className='wq'+(tier[2]?' '+tier[2]:'');
+            if(sc>=70) sGreat(); else if(sc>=40) sGood(); else sLow();
+            N.stamp.className='wq__stamp '+tier[0]; N.stamp.textContent=tier[1];
+            N.score.style.color=colFor(sc); N.score.textContent=String(sc);
+            N.mini.textContent=ping+' ms · '+down+' Mbps down · '+up+' Mbps up · '+st.net+(st.geo?'':' · no pin (no location)');
+            N.grades.innerHTML='';
+            var callC=(ping<=80&&up>=3)?['good','Video calls: solid here','Latency and upload both clear our bar for a steady call.']:
+                      (ping<=150&&up>=1.5)?['warn','Video calls: workable','Expect the odd freeze if the network gets busy — keep a local recording if it matters.']:
+                      ['bad','Video calls: risky here','This spot will drop or garble calls. Emergency messages, yes — meetings, no.'];
+            var liveC=(up>=8)?['good','Going live: 1080p comfortable','Enough upload headroom to stream 1080p with margin. Always record locally too.']:
+                      (up>=4.5)?['warn','Going live: 720p yes, 1080p marginal','Stream at 720p and it should hold. Push 1080p and you’re gambling.']:
+                      (up>=2.5)?['warn','Going live: audio or low-res only','Enough for an audio stream or a low-res feed — not a clean video stream.']:
+                      ['bad','Going live: not from here','Uploads this thin won’t sustain a stream. Great spot to scout, wrong spot to broadcast.'];
+            var mins=up>0?Math.round(1024*8/up/60):0;
+            var rushC=['','Uploading footage','A 1&nbsp;GB file from here takes roughly '+(up>0?(mins<1?'under a minute':mins+' min'):'— forever; find another spot')+'. Mobile networks change by the hour — test at the time you’d actually work.'];
+            [callC,liveC,rushC].forEach(function(g){ N.grades.appendChild(card(g[0],g[1],g[2]).d); });
+            if(sc>=70) nFx(function(){ nBurst2(); },700);
+          }
+          function nBurst2(){
+            N.burst.innerHTML='';
+            var cols=['#00ce1b','#1d97e3','#e8c35a','#4fb4f5'];
+            for(var i=0;i<14;i++){
+              var p2=el('span','wq__p','');
+              var ang=Math.random()*Math.PI*2, dist=80+Math.random()*150;
+              p2.style.setProperty('--dx',(Math.cos(ang)*dist).toFixed(0)+'px');
+              p2.style.setProperty('--dy',(Math.sin(ang)*dist-50).toFixed(0)+'px');
+              p2.style.background=cols[i%cols.length];
+              N.burst.appendChild(p2);
+            }
+            setTimeout(function(){ N.burst.innerHTML=''; },1300);
+          }
+          N.again.addEventListener('click',function(){ st.cancel=false; wn.className='wq'; st.geo?nTest():nLocate(); });
+          N.testagain.addEventListener('click',function(){ st.cancel=false; wn.className='wq'; nLocate(); });
+          N.mapBtn.addEventListener('click',function(){ nMap(); });
+          /* -------- the map (self-hosted Leaflet, lazy) -------- */
+          function loadLeaflet(cb){
+            if(window.L){ cb(true); return; }
+            try{
+              var head=document.head||document.getElementsByTagName('head')[0];
+              if(!head){ cb(false); return; }
+              var css=document.createElement('link'); css.rel='stylesheet'; css.href='/js/leaflet/leaflet.css?v=194';
+              head.appendChild(css);
+              var sc=document.createElement('script'); sc.src='/js/leaflet/leaflet.js?v=194';
+              var done=false;
+              sc.onload=function(){ if(!done){ done=true; cb(!!window.L); } };
+              sc.onerror=function(){ if(!done){ done=true; cb(false); } };
+              setTimeout(function(){ if(!done){ done=true; cb(!!window.L); } },9000);
+              head.appendChild(sc);
+            }catch(e){ cb(false); }
+          }
+          function gmaps(lat,lng){ return 'https://www.google.com/maps?q='+lat+','+lng; }
+          function gdir(lat,lng){ return 'https://www.google.com/maps/dir/?api=1&destination='+lat+','+lng; }
+          function popupFor(pn,mine,idx){
+            var d=el('div','wn-pop');
+            d.appendChild(el('b','',(mine?'My spot':pn.place||'Community spot')+' · '+pn.net));
+            d.appendChild(el('div','',pn.down+' Mbps down · '+pn.up+' up · '+pn.ping+' ms'));
+            d.appendChild(el('div','',new Date(pn.t).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})));
+            var links=el('div','');
+            var a1=document.createElement('a'); a1.href=gmaps(pn.lat,pn.lng); a1.target='_blank'; a1.rel='noopener'; a1.textContent='Google Maps';
+            var a2=document.createElement('a'); a2.href=gdir(pn.lat,pn.lng); a2.target='_blank'; a2.rel='noopener'; a2.textContent='Directions'; a2.style.marginLeft='.7em';
+            links.appendChild(a1); links.appendChild(a2);
+            d.appendChild(links);
+            if(mine&&!pn.shared){
+              var sb=document.createElement('button'); sb.type='button'; sb.textContent='Share to community map';
+              sb.style.cssText='margin-top:.4em;font:600 .78rem/1 inherit;cursor:pointer';
+              sb.addEventListener('click',function(){ st.shareIdx=idx; nSharePanel(pn); });
+              d.appendChild(sb);
+            } else if(mine&&pn.shared){ d.appendChild(el('div','','✓ shared')); }
+            return d;
+          }
+          function nList(){
+            N.list.innerHTML='';
+            var pins=doc.pins.slice().reverse().slice(0,20);
+            pins.forEach(function(pn){
+              var li=document.createElement('li');
+              var b=el('span','wf__badge',String(nScore(pn)));
+              b.style.background=colFor(nScore(pn))+'22'; b.style.color=colFor(nScore(pn));
+              var t2=el('span','',pn.net+' · '+pn.down+'/'+pn.up+' Mbps · '+pn.ping+'ms');
+              var a=document.createElement('a'); a.href=gmaps(pn.lat,pn.lng); a.target='_blank'; a.rel='noopener';
+              a.textContent='Google Maps'; a.className='mono'; a.style.cssText='margin-left:auto;font-size:.68rem';
+              li.appendChild(b); li.appendChild(t2); li.appendChild(a);
+              N.list.appendChild(li);
+            });
+          }
+          function nMap(){
+            nShow('map'); wn.className='wq';
+            nList();
+            loadLeaflet(function(ok){
+              if(!ok||st.cancel) return;   /* the list below the map is the graceful fallback */
+              try{
+                var L2=window.L;
+                if(!st.map){
+                  st.map=L2.map(N.mapbox,{zoomControl:true,attributionControl:true});
+                  L2.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap contributors'}).addTo(st.map);
+                  st.mine=L2.layerGroup().addTo(st.map);
+                  st.comm=L2.layerGroup();
+                  N.togMine.addEventListener('change',function(){ N.togMine.checked?st.mine.addTo(st.map):st.map.removeLayer(st.mine); });
+                  N.togComm.addEventListener('change',function(){
+                    if(N.togComm.checked){ st.comm.addTo(st.map); nComm(); } else st.map.removeLayer(st.comm);
+                  });
+                }
+                st.mine.clearLayers();
+                var last=null;
+                doc.pins.forEach(function(pn,idx){
+                  var sc=nScore(pn);
+                  var m=L2.circleMarker([pn.lat,pn.lng],{radius:9,color:'#fff',weight:2,fillColor:colFor(sc),fillOpacity:.92});
+                  m.bindPopup(popupFor(pn,true,idx));
+                  st.mine.addLayer(m); last=pn;
+                });
+                if(last) st.map.setView([last.lat,last.lng],14);
+                else st.map.setView([54.5,-2.5],5);
+                setTimeout(function(){ try{ st.map.invalidateSize(); }catch(e){} },250);
+              }catch(e){}
+            });
+          }
+          function nComm(){
+            if(st.commPins){ nCommDraw(); return; }
+            fetch(MAPI,{cache:'no-store'}).then(function(r){ return r.json(); }).then(function(j){
+              if(j&&j.ok&&j.pins){ st.commPins=j.pins; nCommDraw(); }
+            })['catch'](function(){});
+          }
+          function nCommDraw(){
+            if(!st.comm||!window.L) return;
+            st.comm.clearLayers();
+            (st.commPins||[]).forEach(function(pn){
+              var sc=nScore(pn);
+              var m=window.L.circleMarker([pn.lat,pn.lng],{radius:7,color:colFor(sc),weight:2,fillColor:colFor(sc),fillOpacity:.25});
+              m.bindPopup(popupFor(pn,false,-1));
+              st.comm.addLayer(m);
+            });
+          }
+          /* -------- share flow -------- */
+          function nSharePanel(pn){
+            N.share.hidden=false;
+            N.consent.checked=false; N.shareMsg.hidden=true;
+            st.sharePlace=null;
+            N.places.innerHTML='';
+            PLACES2.forEach(function(pl){
+              var b=el('button','',pl); b.type='button';
+              b.addEventListener('click',function(){
+                st.sharePlace=pl;
+                var kids=N.places.children,i2;
+                for(i2=0;i2<kids.length;i2++) kids[i2].style.borderColor='';
+                b.style.borderColor='#4fb4f5'; sPop();
+              });
+              N.places.appendChild(b);
+            });
+            N.share.scrollIntoView({behavior:'smooth',block:'nearest'});
+          }
+          if(N.shareCancel) N.shareCancel.addEventListener('click',function(){ N.share.hidden=true; st.shareIdx=-1; });
+          N.send.addEventListener('click',function(){
+            var pn=doc.pins[st.shareIdx];
+            function sayS(t){ N.shareMsg.hidden=false; N.shareMsg.textContent=t; }
+            if(!pn){ sayS('Pick one of your pins on the map first.'); return; }
+            if(!st.sharePlace){ sayS('Pick a place type — it’s all the community map shows.'); return; }
+            if(!N.consent.checked){ sayS('Tick the consent box first — nothing is shared without it.'); return; }
+            N.send.disabled=true; sayS('Sharing…');
+            fetch(MAPI,{method:'POST',headers:{'Content-Type':'application/json'},
+              body:JSON.stringify({lat:pn.lat,lng:pn.lng,down:pn.down,up:pn.up,ping:pn.ping,net:pn.net,place:st.sharePlace,hp:(N.hp.value||'')})})
+              .then(function(r){ return r.json()['catch'](function(){return null;}).then(function(j){ return {code:r.status,j:j}; }); })
+              .then(function(res){
+                N.send.disabled=false;
+                if(res.j&&res.j.ok){
+                  pn.shared=true; st.commPins=null; logE('share'); save();
+                  sayS('On the map — thank you. The next nomad owes you a coffee.'); sGood();
+                  N.togComm.checked=true;
+                  if(st.comm&&st.map){ st.comm.addTo(st.map); nComm(); }
+                  nFx(function(){ N.share.hidden=true; },1800);
+                }
+                else if(res.code===429) sayS('The map is busy this minute — try again shortly.');
+                else sayS('That didn’t share — try again in a moment.');
+              })
+              ['catch'](function(){ N.send.disabled=false; sayS('That didn’t share — check you’re online.'); });
+          });
         })();}
 
         /* ---------- welcome back / boot ---------- */
@@ -2166,7 +3075,7 @@
         });
         dbOpen(function(){
           dbGet(function(existing){
-            if(existing&&existing.rooms){ doc=existing; doc.bb=doc.bb||{}; doc.drafts=doc.drafts||[]; doc.siteName=doc.siteName||'My site'; doc.sites=doc.sites||[]; doc.events=doc.events||[]; }
+            if(existing&&existing.rooms){ doc=existing; doc.bb=doc.bb||{}; doc.drafts=doc.drafts||[]; doc.siteName=doc.siteName||'My site'; doc.sites=doc.sites||[]; doc.events=doc.events||[]; if(doc.mode!=='home'&&doc.mode!=='business') doc.mode=doc.mode||null; doc.snd=!!doc.snd; doc.pins=doc.pins||[]; }
             else {
               doc=fresh();
               /* one-time import of the old best-spots feature */
@@ -2179,6 +3088,7 @@
             }
             booted=true;
             fillBB(); renderAll();
+            try{ if(typeof qPending!=='undefined'&&qPending){ qPending=false; wqOpen.innerHTML='&#127918;&nbsp; Survey every room &mdash; game mode'; qOpenFn(); } }catch(e){}
             if(idb) setSave('saved', doc.rooms.length?'Saved on this device':'');
             else setSave('nosave','Private browsing \u2014 survey won\u2019t survive closing');
             if(doc.rooms.length||doc.dl||(doc.bb&&doc.bb.prov)) showResume();
