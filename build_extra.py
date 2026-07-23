@@ -16708,7 +16708,7 @@ def custom_dashboards():
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>/01 &mdash; LIVE DEMO &middot; REAL DATA</p>
           <h2 class="section-title section-title--center" data-title>This is live, right now, from our own van<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>Below is the <strong>365 Crafter</strong> &mdash; our own off-grid support van &mdash; streamed live through the same Victron VRM API we&rsquo;d use for yours. Same van, two completely different dashboards: here it&rsquo;s a clean business view; on our <a href="/off-grid-victron-energy/">off-grid page</a> the identical data drives a car-style instrument cluster with a <strong>live grid-savings comparison</strong> &mdash; every solar watt valued against what the same power would cost on grid electricity. As far as we know, that&rsquo;s <strong>a first for a Victron off-grid system</strong>. That&rsquo;s the point &mdash; <strong>your dashboard, your way</strong>.</p>
+          <p class="lede lede--center" data-reveal>Below is the <strong>365 Crafter</strong> &mdash; our own off-grid support van &mdash; streamed live over Victron&rsquo;s MQTT feed &mdash; the same per-second stream the official apps use &mdash; with history and totals from the official VRM API, exactly the architecture we&rsquo;d use for yours. Same van, two completely different dashboards: here it&rsquo;s a clean business view; on our <a href="/off-grid-victron-energy/">off-grid page</a> the identical data drives a car-style instrument cluster with a <strong>live grid-savings comparison</strong> &mdash; every solar watt valued against what the same power would cost on grid electricity. As far as we know, that&rsquo;s <strong>a first for a Victron off-grid system</strong>. That&rsquo;s the point &mdash; <strong>your dashboard, your way</strong>.</p>
         </div>
         <style>
         .vdash{max-width:860px;margin:0 auto;border:1px solid rgba(125,170,220,.2);border-radius:18px;background:linear-gradient(180deg,rgba(13,22,44,.92),rgba(9,16,34,.94));overflow:hidden}
@@ -17052,7 +17052,7 @@ def custom_dashboards():
 {bp.steps([
   ("Free demo &amp; chat", "We show you our live dashboards, hear what you want on yours, and give you a fixed quote &mdash; no obligation."),
   ("We design it with you", "A mock-up of your layout and numbers to react to &mdash; iterate until it&rsquo;s right."),
-  ("We build, connect &amp; host", "Built on the official VRM API with a read-only token; your data stays in VRM, your dashboard lives on the web."),
+  ("We build, connect &amp; host", "History from the official VRM API, live values over Victron MQTT &mdash; using a token from a read-only VRM user, so it can only ever read. Your data stays in VRM; your dashboard lives on the web."),
   ("Handover &amp; support", "You get the link, it works on anything with a browser, and we support and tweak it for you remotely."),
 ])}
         </ol>
