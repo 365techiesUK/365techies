@@ -13,7 +13,9 @@ PILLAR_POINTS = ['A good refurbished business laptop is genuinely excellent valu
  'Honest trade-offs: a slightly earlier processor, batteries vary with age, limited stock &mdash; none of which matters for everyday use',
  'Buy from a reputable UK seller you can call: you get a warranty, a repair service and Consumer Rights Act protection']
 
-PILLAR_FAQS = [('What is a refurbished laptop, exactly?',
+PILLAR_FAQS = [('What does Grade B mean on a refurbished laptop?',
+  'There&rsquo;s no industry-wide standard &mdash; every seller defines its own grades, which is worth knowing before you compare prices. Broadly, Grade A means barely a mark, Grade B means honest visible wear (light scuffs or keyboard shine) with nothing functional wrong, and Grade C means clear cosmetic wear at a lower price. The grade describes the case, not the components &mdash; a Grade B machine should work identically to a Grade A one. Whoever you buy from, ask for their written grading definition and warranty; we publish ours and photograph what you&rsquo;re actually getting.'),
+ ('What is a refurbished laptop, exactly?',
   'It is a used machine that has been professionally tested, cleaned, securely wiped and restored to full working order before resale, with a clean, licensed copy of Windows installed. That is very '
   "different from 'used' or 'second-hand', which is sold as-is with no checks and no comeback."),
  ('Are refurbished laptops reliable?',

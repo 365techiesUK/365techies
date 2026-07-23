@@ -1128,6 +1128,10 @@
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
+          <summary>Why does my Victron VRM dashboard only update every 15 minutes?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Because VRM&rsquo;s stored data updates at your GX device&rsquo;s logging interval &mdash; 15 minutes by default (you can shorten it in the device settings, at the cost of more data use). That&rsquo;s ideal for history and diagnostics, but it&rsquo;s why an embedded VRM view never feels live. Genuinely per-second dashboards &mdash; like the van demos on this page &mdash; come from Victron&rsquo;s MQTT stream, the same live feed the official apps use, which is exactly what our custom dashboards read alongside the official API.</p></div>
+        </details>
+        <details class="faq" data-reveal>
           <summary>Can you customise the Victron VRM dashboard?<span class="faq__icon" aria-hidden="true"></span></summary>
           <div class="faq__ans"><p>Not the VRM portal itself &mdash; Victron&rsquo;s Advanced Dashboard offers configurable widgets, but the portal&rsquo;s layout, branding and structure are fixed. What we build instead is a <strong>custom dashboard alongside VRM</strong>: your layout, your branding, your KPIs, reading the same live data through Victron&rsquo;s official interfaces. VRM stays untouched as the system of record.</p></div>
         </details>

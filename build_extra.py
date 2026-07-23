@@ -796,8 +796,8 @@ pcm_landing()
 # ===================================================== 365 WIFI OPTIMIZER (live signal finder)
 def wifi_optimizer():
     slug = "wifi-signal-test"
-    desc = ("Free live WiFi signal test and room-by-room survey - walk around your home and watch the signal get stronger or weaker in real time, "
-            "save a reading for every room, compare what you measured with what your broadband deal promises, and pick up where you left off next time. "
+    desc = ("Free room-by-room WiFi survey for homes, businesses and life on the move: live signal game, a real speed test in every room, "
+            "star-rated results and a branded PDF report, multi-site dashboards, and a mobile signal map for working from anywhere. "
             "Everything stays on your device unless you choose to send it to us.")
     faqs = [
       ("Can this show my WiFi name or whether I have WiFi 6?", "Honestly, no &mdash; and neither can any other website. Browsers deliberately don&rsquo;t let a web page see your network name, the WiFi standard (WiFi 5/6/7), the band or the channel, because your network name can identify where you live. Only an app installed on the device can read those. What this tool measures instead is arguably more useful: whether the internet <em>actually works well</em> where you&rsquo;re standing."),
@@ -810,10 +810,10 @@ def wifi_optimizer():
     ]
     content = "\n".join([
       hero(bc("WiFi Signal Test"), "// FREE TOOL &middot; LIVE &amp; ANIMATED",
-           'Find the best WiFi signal <em class="grad grad--cyan">in your home</em>',
-           "Meet the <strong>365 WiFi Optimizer</strong> &mdash; start it, then walk around. It measures your connection live and tells you, second by second, whether it&rsquo;s <strong>getting stronger or weaker</strong>. Save a reading for every room, run a speed test, compare what you measured with what your broadband deal promises &mdash; and your survey <strong>saves itself on your device as you go</strong>, so you can come back and carry on. Works on WiFi <em>and</em> mobile data.",
+           'Test your WiFi <em class="grad grad--cyan">room by room</em> &mdash; home, business or anywhere',
+           "Meet the <strong>365 WiFi Optimizer</strong> &mdash; a survey that plays like a game. Pick <strong>Home, Business or Anywhere</strong>, walk from room to room while it measures your connection live, and every room gets a real download <em>and</em> upload test, a star rating and honest advice. Finish with a <strong>branded PDF report</strong> anyone can understand, keep several sites on one dashboard, and map mobile signal with Signal Hunter when you work on the move. It all <strong>saves on your device as you go</strong>.",
            cta1=("Start the live test", "#finder"), cta2=("Call 01202 775566", "tel:+441202775566"),
-           chips=["Free &middot; no sign-up", "Saves as you go", "Nothing made up"]),
+           chips=["Home &middot; Business &middot; Anywhere", "Star-rated PDF report", "Free &middot; saves as you go"]),
       '''    <section class="section" aria-label="Live signal finder" id="finder" style="padding-top:.6rem">
       <div class="wrap">
         <div class="wf">
@@ -2517,7 +2517,21 @@ def wifi_optimizer():
             }
             if(flags.children.length) cardEl.appendChild(flags);
             var acts=el('div','ws__acts');
-            if(v.cur){ var cb=el('button','cur','This site'); cb.type='button'; acts.appendChild(cb); }
+            if(v.cur){
+              var cb=el('button','cur','This site'); cb.type='button'; acts.appendChild(cb);
+              var dc=el('button','','× remove'); dc.type='button';
+              dc.addEventListener('click',function(){
+                if(!confirm('Remove “'+v.n+'” and its survey from this device?'+(doc.sites&&doc.sites.length?' Your next site will take its place.':' You’ll get a fresh empty survey.'))) return;
+                if(doc.sites&&doc.sites.length){ var t2=doc.sites.splice(0,1)[0]; loadSiteObj(t2); }
+                else {
+                  doc.siteName='My site'; doc.rooms=[]; doc.bb={}; doc.dl=null; doc.sent=false; doc.events=[];
+                  BB.forEach(function(k){ var e2=bbEl(k); if(e2) e2.value=''; });
+                  fillBB();
+                }
+                save(); renderAll();
+              });
+              acts.appendChild(dc);
+            }
             else {
               var ob=el('button','','Open'); ob.type='button';
               ob.addEventListener('click',function(){ switchSite(v.idx); });
@@ -3323,7 +3337,7 @@ def wifi_optimizer():
         app = {"@type": "WebApplication", "@id": f"{SITE}/{s}/#app",
                "name": "365 WiFi Optimizer", "applicationCategory": "UtilitiesApplication",
                "operatingSystem": "Web (all browsers)",
-               "description": "Free live WiFi signal test and room-by-room survey: walk around and see your connection get stronger or weaker in real time, save a reading for every room, run a speed test, compare your measurements with your broadband deal, and resume the survey whenever you come back. Saved on your device; sent to us only if you choose.",
+               "description": "Free room-by-room WiFi survey with a live signal game, per-room download and upload speed tests, star ratings, a branded PDF report, Home/Business/Anywhere modes, multi-site dashboards and a mobile signal map (Signal Hunter). Saved on your device; sent to us only if you choose.",
                "offers": {"@type": "Offer", "price": "0", "priceCurrency": "GBP"},
                "provider": {"@id": SITE + "/#business"}, "url": f"{SITE}/{s}/"}
         return graph([crumb(s, "WiFi Signal Test"),
@@ -3695,7 +3709,9 @@ def windows_10_eol():
     slug = "windows-10-end-of-life"
     desc = "Windows 10 reached end of support on 14 October 2025 — no more free security updates. 365 Techies explains what it means, whether you're affected, and your options: free Windows 11 upgrade check, new PCs and Dell hardware."
     faqs = [
-      ("Is Windows 10 still safe to use?", "Windows 10 reached end of support on 14 October 2025, so Microsoft no longer ships free security updates. It still switches on, but it gets steadily riskier the longer it goes unpatched."),
+  ('What happens when Windows 10 ESU ends in October 2026?',
+       'Your PC keeps working &mdash; nothing switches off &mdash; but consumer security updates stop for good, and this time there&rsquo;s no second extension for home users (businesses can buy further years through volume licensing; consumers can&rsquo;t). From that point every newly discovered Windows 10 flaw stays unpatched on your machine, which is a genuinely bad place for online banking and email to live. The sensible moves before then: upgrade to Windows 11 if your PC qualifies, or move to a machine that does &mdash; a refurbished business Dell is often the best-value route.'),
+            ("Is Windows 10 still safe to use?", "Windows 10 reached end of support on 14 October 2025, so Microsoft no longer ships free security updates. It still switches on, but it gets steadily riskier the longer it goes unpatched."),
       ("Do I have to buy a new computer?", "Not always. Many PCs can upgrade to Windows 11 for free &mdash; we&rsquo;ll check whether yours is eligible, and only recommend a new machine if it genuinely makes sense."),
       ("What is ESU?", "Extended Security Updates &mdash; a Microsoft programme that buys limited extra time on Windows 10 (you can even enrol free with a Microsoft account). We can advise whether it&rsquo;s worth it, or set it up for you &mdash; see our <a href=\"/windows-10-esu-free-enrolment-help/\">Windows 10 ESU enrolment help</a> if the &lsquo;Enrol now&rsquo; button won&rsquo;t appear."),
       ("Can you handle the whole upgrade for me?", "Yes &mdash; our <a href=\"/windows-11-upgrade-service/\">Windows 11 upgrade service in Poole &amp; Bournemouth</a> backs up your files, upgrades or sets up your PC, moves everything across and checks it all works. No stress and no lost data."),
@@ -18305,6 +18321,7 @@ def custom_dashboards():
       </div>
     </section>''',
       faq_html([
+        ("Why does my Victron VRM dashboard only update every 15 minutes?", "Because VRM&rsquo;s stored data updates at your GX device&rsquo;s logging interval &mdash; 15 minutes by default (you can shorten it in the device settings, at the cost of more data use). That&rsquo;s ideal for history and diagnostics, but it&rsquo;s why an embedded VRM view never feels live. Genuinely per-second dashboards &mdash; like the van demos on this page &mdash; come from Victron&rsquo;s MQTT stream, the same live feed the official apps use, which is exactly what our custom dashboards read alongside the official API."),
         ("Can you customise the Victron VRM dashboard?", "Not the VRM portal itself &mdash; Victron&rsquo;s Advanced Dashboard offers configurable widgets, but the portal&rsquo;s layout, branding and structure are fixed. What we build instead is a <strong>custom dashboard alongside VRM</strong>: your layout, your branding, your KPIs, reading the same live data through Victron&rsquo;s official interfaces. VRM stays untouched as the system of record."),
         ("Is there any way to customise the VRM portal?", "Within VRM you can rearrange the Advanced Dashboard&rsquo;s widgets and choose which values show &mdash; and for many owners that&rsquo;s enough. When people ask this, they usually want their own branding, a single screen for several sites, financial KPIs, or a customer-facing view &mdash; none of which VRM is designed to do. That&rsquo;s exactly the gap our custom dashboards fill, without replacing VRM."),
         ("Does this replace the VRM portal?", "No &mdash; and it shouldn&rsquo;t. VRM stays your system of record, with its alarms, history and remote console. Your custom dashboard reads the same data through Victron&rsquo;s official API and presents it your way, alongside VRM."),
@@ -18529,7 +18546,7 @@ info_page(
           <h2>Already a support customer?</h2>
           <p>Then you already have all of this &mdash; just <a href="/portal/">sign in</a> with a code to reach your portal and manage your bookings.</p>""",
   faqs=[
-    ("Is it really free? What&rsquo;s the catch?", "There&rsquo;s genuinely no catch. The 365 Club is free forever, with no card details and no obligation. You can stay on the free membership for as long as you like."),
+  ("Is it really free? What&rsquo;s the catch?", "There&rsquo;s genuinely no catch. The 365 Club is free forever, with no card details and no obligation. You can stay on the free membership for as long as you like."),
     ("Do I need to buy anything?", "No. You can join, run a health check, read your reports and take the free courses without spending anything. A paid support plan is there if and when you want a techie to actually service your PC and help whenever you&rsquo;re stuck."),
     ("How do I sign in &mdash; do I need a password?", "No passwords. You type in your email, we send a 6-digit code by email or text, and you type that in. This computer then stays signed in, so it&rsquo;s a one-off."),
     ("Is my information safe?", "Yes. We never sell your data, and joining needs nothing more than an email. See our <a href=\"/privacy-policy/\">privacy policy</a> for the detail."),

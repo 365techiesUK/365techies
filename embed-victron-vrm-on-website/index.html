@@ -280,6 +280,14 @@
       "mainEntity": [
         {
           "@type": "Question",
+          "name": "How do I put a VRM dashboard on my website without exposing my token?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Never put a VRM access token in the page itself &mdash; anything in page code is readable by every visitor via view-source. The safe pattern is a small server-side relay: the token lives in one file on the server (blocked from direct web access), a few lines of PHP read VRM on the browser&rsquo;s behalf, and the page only ever receives the numbers. Create the token under a read-only VRM user so it can never change anything, and revoke it whenever you like. It&rsquo;s precisely how our own live van dashboards work."
+          }
+        },
+        {
+          "@type": "Question",
           "name": "Is the built-in VRM website embed real-time?",
           "acceptedAnswer": {
             "@type": "Answer",
@@ -848,6 +856,10 @@
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
+        <details class="faq" data-reveal>
+          <summary>How do I put a VRM dashboard on my website without exposing my token?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Never put a VRM access token in the page itself &mdash; anything in page code is readable by every visitor via view-source. The safe pattern is a small server-side relay: the token lives in one file on the server (blocked from direct web access), a few lines of PHP read VRM on the browser&rsquo;s behalf, and the page only ever receives the numbers. Create the token under a read-only VRM user so it can never change anything, and revoke it whenever you like. It&rsquo;s precisely how our own live van dashboards work.</p></div>
+        </details>
         <details class="faq" data-reveal>
           <summary>Is the built-in VRM website embed real-time?<span class="faq__icon" aria-hidden="true"></span></summary>
           <div class="faq__ans"><p><p>No. A shared VRM site or iframe refreshes at your logging interval, which defaults to 15 minutes, and it is read-only. That is fine for an at-a-glance status page, but if you want figures that visibly tick over &mdash; a live power or state-of-charge readout &mdash; you need the VRM API route, where we refresh far more frequently within the API&rsquo;s fair-use limits.</p></p></div>

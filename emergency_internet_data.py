@@ -284,7 +284,11 @@ EMERGENCY_PAGES = [
            '<p>We would genuinely rather you took option one and never needed us. <a href="/contact/">Ask us</a> and we will tell you which of the three fits.</p>'},
  ],
  'faqs': [
-  {'q': 'How do I know if it is my router or the broadband line?',
+  {'q': 'How do I get internet working again while my broadband is down?',
+   'a': 'Fastest first: tether your phone &mdash; turn on its hotspot and connect your computer to it. That takes minutes and comfortably carries email, card machines and video calls, though it eats mobile data. Next step up is a 4G/5G router with a data SIM, which puts the whole premises back online and, kept afterwards, becomes automatic failover for next time. And if there&rsquo;s no usable mobile signal or the outage is running into days, that&rsquo;s what our <a href="/emergency-internet/">emergency internet service</a> exists for.'},
+    {'q': 'Am I entitled to compensation if my broadband goes down?',
+   'a': 'Often, yes &mdash; and it should be automatic. Under Ofcom&rsquo;s automatic compensation scheme, providers that have signed up (including BT, EE, Sky, Virgin Media, TalkTalk, Vodafone and Plusnet, among others) pay a fixed amount per day when a total loss of service isn&rsquo;t fixed within two full working days of you reporting it &mdash; currently around &pound;9&ndash;&pound;10 a day, credited to your bill without you having to claim. The rates rise periodically and not every provider is in the scheme, so check yours. It applies to the line being down, not to slow WiFi inside your home.'},
+    {'q': 'How do I know if it is my router or the broadband line?',
    'a': 'Plug a laptop directly into the router with a network cable. If that works, your line is fine and you have a WiFi or internal network problem. If it does '
         'not, look at the router&rsquo;s broadband or DSL light &mdash; if it is off or flashing, the fault is on the line rather than inside your building. Then '
         'check your provider&rsquo;s status page for a declared area fault before you spend an hour on hold.'},
@@ -414,7 +418,9 @@ EMERGENCY_PAGES = [
            'hoping. Any plan that depends on us also has a fallback that does not.</p>'},
  ],
  'faqs': [
-  {'q': 'What should a broadband emergency plan actually contain?',
+  {'q': 'Should my small business have backup internet?',
+   'a': 'If an internet outage stops you taking card payments, answering calls or reaching cloud systems &mdash; and after the analogue phone switch-off that will describe most businesses &mdash; then yes. The maths is rarely close: an automatic 4G/5G failover router costs a few hundred pounds plus a modest monthly SIM, against a standard repair window that legitimately allows a Friday-afternoon fault to run to Tuesday. Start with the failover router, write the plan on this page, and rehearse it once. That combination covers the overwhelming majority of outages for less than one bad day costs.'},
+    {'q': 'What should a broadband emergency plan actually contain?',
    'a': 'An analysis of what breaks in your business without connectivity, how long you can tolerate each thing being down, objective written triggers for acting, '
         'named roles each with a deputy, a contact tree including your provider&rsquo;s fault line and your line&rsquo;s care level, an escalation ladder with '
         'timings, and printed manual fallbacks. Then a rehearsal, because an untested plan is a document rather than a capability.'},

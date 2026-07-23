@@ -307,6 +307,14 @@
       "mainEntity": [
         {
           "@type": "Question",
+          "name": "Can I put my Sky router into modem mode for mesh WiFi?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No &mdash; Sky&rsquo;s hubs have no bridge or modem-only mode. The reliable route on Sky is access-point mode: leave the Sky hub in charge of the connection, cable your mesh&rsquo;s main unit into it, switch the mesh to AP/bridge mode and turn the hub&rsquo;s own WiFi radios off. If you&rsquo;d rather replace the hub entirely, Sky uses DHCP rather than a username/password, and some lines need DHCP option&nbsp;61 support &mdash; patchy on consumer routers, so check before buying one for a Sky line."
+          }
+        },
+        {
+          "@type": "Question",
           "name": "Should I put my ISP router in bridge mode or use access point mode?",
           "acceptedAnswer": {
             "@type": "Answer",
@@ -859,6 +867,10 @@
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
+        <details class="faq" data-reveal>
+          <summary>Can I put my Sky router into modem mode for mesh WiFi?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>No &mdash; Sky&rsquo;s hubs have no bridge or modem-only mode. The reliable route on Sky is access-point mode: leave the Sky hub in charge of the connection, cable your mesh&rsquo;s main unit into it, switch the mesh to AP/bridge mode and turn the hub&rsquo;s own WiFi radios off. If you&rsquo;d rather replace the hub entirely, Sky uses DHCP rather than a username/password, and some lines need DHCP option&nbsp;61 support &mdash; patchy on consumer routers, so check before buying one for a Sky line.</p></div>
+        </details>
         <details class="faq" data-reveal>
           <summary>Should I put my ISP router in bridge mode or use access point mode?<span class="faq__icon" aria-hidden="true"></span></summary>
           <div class="faq__ans"><p>Access-point mode is the safer default and works on every UK provider: the ISP hub keeps handling the connection, your mesh handles the WiFi, and you disable the hub&rsquo;s radios completely. Bridge or modem mode gives a slightly cleaner result but is unavailable on several UK hubs &mdash; including the residential BT Smart Hub 2, the Sky hub and the Virgin Hub 5x &mdash; and it will stop a Digital Voice landline working, including 999 calls from that handset.</p></div>

@@ -516,7 +516,9 @@ WIFI_PAGES = [
            'cannot stand behind.</p>'},
  ],
  'faqs': [
-  {'q': 'How many mesh nodes do I need for a 3-bed house in the UK?',
+  {'q': 'Does mesh WiFi work through thick brick walls and foil insulation?',
+   'a': 'It works around them, not through them &mdash; that&rsquo;s the whole trick. A 215&nbsp;mm solid brick wall costs serious signal at 5&nbsp;GHz and foil-backed plasterboard behaves like a metal sheet, so no single router beats them. Mesh works by placing nodes so the signal takes short hops through doorways and hallways instead of fighting masonry. In solid-wall and foil-insulated houses, wire the nodes together if you possibly can &mdash; wireless backhaul through the very walls that caused the problem is the most common DIY mistake. Full detail: <a href="/wifi-uk-buildings-heat/">what UK walls cost your WiFi</a>.'},
+    {'q': 'How many mesh nodes do I need for a 3-bed house in the UK?',
    'a': 'For a typical 1930s&ndash;1990s cavity-brick three-bed semi over two floors, a router plus one or two nodes is usually right. For a Victorian solid-brick '
         'terrace over three floors, plan on one unit per floor and wire them if you can. For a stone cottage with 450&nbsp;mm walls, think one unit per room cluster. '
         'Floor area matters far less than what the walls are made of &mdash; which is why the coverage figure on the box is close to useless in Britain.'},
@@ -777,7 +779,9 @@ WIFI_PAGES = [
            'regression next week.</p>'},
  ],
  'faqs': [
-  {'q': 'Should I put my ISP router in bridge mode or use access point mode?',
+  {'q': 'Can I put my Sky router into modem mode for mesh WiFi?',
+   'a': 'No &mdash; Sky&rsquo;s hubs have no bridge or modem-only mode. The reliable route on Sky is access-point mode: leave the Sky hub in charge of the connection, cable your mesh&rsquo;s main unit into it, switch the mesh to AP/bridge mode and turn the hub&rsquo;s own WiFi radios off. If you&rsquo;d rather replace the hub entirely, Sky uses DHCP rather than a username/password, and some lines need DHCP option&nbsp;61 support &mdash; patchy on consumer routers, so check before buying one for a Sky line.'},
+    {'q': 'Should I put my ISP router in bridge mode or use access point mode?',
    'a': 'Access-point mode is the safer default and works on every UK provider: the ISP hub keeps handling the connection, your mesh handles the WiFi, and you '
         'disable the hub&rsquo;s radios completely. Bridge or modem mode gives a slightly cleaner result but is unavailable on several UK hubs &mdash; including the '
         'residential BT Smart Hub 2, the Sky hub and the Virgin Hub 5x &mdash; and it will stop a Digital Voice landline working, including 999 calls from that '
@@ -1288,7 +1292,9 @@ WIFI_PAGES = [
            'in the electronics, not the propagation. Worth knowing before you spend an afternoon on the phone to your provider.</p>'},
  ],
  'faqs': [
-  {'q': 'Why won&rsquo;t my WiFi go through my walls?',
+  {'q': 'Does mesh WiFi work through thick brick walls and foil insulation?',
+   'a': 'Mesh doesn&rsquo;t punch through solid brick or foil-backed board &mdash; nothing consumer does. What it changes is the route: several modest radios placed so the signal hops through doorways and along hallways rather than through masonry. That&rsquo;s why node placement beats node power in British housing, and why the honest answer for foil-heavy or 450&nbsp;mm-stone properties is wired backhaul between nodes, or one access point per floor on a cable.'},
+    {'q': 'Why won&rsquo;t my WiFi go through my walls?',
    'a': 'Because British walls are mostly masonry. A 215&nbsp;mm Victorian solid brick wall can cost roughly 30&ndash;40&nbsp;dB at 5&nbsp;GHz, and since every '
         '6&nbsp;dB is equivalent to doubling the distance from the router, one wall can be like moving thirty times further away. Party walls and chimney breasts '
         'should be treated as opaque. The fix is another access point on the far side, ideally on a cable &mdash; not a more powerful router, because transmit power '

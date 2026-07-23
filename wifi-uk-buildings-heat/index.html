@@ -246,6 +246,14 @@
       "mainEntity": [
         {
           "@type": "Question",
+          "name": "Does mesh WiFi work through thick brick walls and foil insulation?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Mesh doesn&rsquo;t punch through solid brick or foil-backed board &mdash; nothing consumer does. What it changes is the route: several modest radios placed so the signal hops through doorways and along hallways rather than through masonry. That&rsquo;s why node placement beats node power in British housing, and why the honest answer for foil-heavy or 450&nbsp;mm-stone properties is wired backhaul between nodes, or one access point per floor on a cable."
+          }
+        },
+        {
+          "@type": "Question",
           "name": "Why won&rsquo;t my WiFi go through my walls?",
           "acceptedAnswer": {
             "@type": "Answer",
@@ -770,6 +778,10 @@
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
+        <details class="faq" data-reveal>
+          <summary>Does mesh WiFi work through thick brick walls and foil insulation?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Mesh doesn&rsquo;t punch through solid brick or foil-backed board &mdash; nothing consumer does. What it changes is the route: several modest radios placed so the signal hops through doorways and along hallways rather than through masonry. That&rsquo;s why node placement beats node power in British housing, and why the honest answer for foil-heavy or 450&nbsp;mm-stone properties is wired backhaul between nodes, or one access point per floor on a cable.</p></div>
+        </details>
         <details class="faq" data-reveal>
           <summary>Why won&rsquo;t my WiFi go through my walls?<span class="faq__icon" aria-hidden="true"></span></summary>
           <div class="faq__ans"><p>Because British walls are mostly masonry. A 215&nbsp;mm Victorian solid brick wall can cost roughly 30&ndash;40&nbsp;dB at 5&nbsp;GHz, and since every 6&nbsp;dB is equivalent to doubling the distance from the router, one wall can be like moving thirty times further away. Party walls and chimney breasts should be treated as opaque. The fix is another access point on the far side, ideally on a cable &mdash; not a more powerful router, because transmit power is capped by law.</p></div>
