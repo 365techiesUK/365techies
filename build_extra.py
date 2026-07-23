@@ -795,25 +795,36 @@ pcm_landing()
 # ===================================================== 365 WIFI OPTIMIZER (live signal finder)
 def wifi_optimizer():
     slug = "wifi-signal-test"
-    desc = ("Free live WiFi signal test - walk around your home and watch the signal get stronger or weaker in real time, "
-            "mark your best spots, run a speed test and get honest advice on what actually fixes weak WiFi. Works on WiFi and mobile.")
+    desc = ("Free live WiFi signal test and room-by-room survey - walk around your home and watch the signal get stronger or weaker in real time, "
+            "save a reading for every room, compare what you measured with what your broadband deal promises, and pick up where you left off next time. "
+            "Everything stays on your device unless you choose to send it to us.")
     faqs = [
       ("Can this show my WiFi name or whether I have WiFi 6?", "Honestly, no &mdash; and neither can any other website. Browsers deliberately don&rsquo;t let a web page see your network name, the WiFi standard (WiFi 5/6/7), the band or the channel, because your network name can identify where you live. Only an app installed on the device can read those. What this tool measures instead is arguably more useful: whether the internet <em>actually works well</em> where you&rsquo;re standing."),
       ("So what is it actually measuring?", "Real, live network behaviour from your device: <strong>latency</strong> (how long a tiny request takes to reach our server and come back), <strong>jitter</strong> (how much that wobbles &mdash; the real giveaway for a weak or congested signal) and <strong>dropouts</strong> (requests that fail). We combine those into a 0&ndash;100 score. Nothing is guessed or made up."),
       ("Why not just use the bars on my phone?", "The bars only tell you the strength of the radio signal &mdash; not whether the connection is usable. You can have full bars and still have unusable internet (congestion, interference, a struggling router, or a slow line). This measures what actually matters: can you really use the internet from this spot."),
       ("Does it work on mobile data too?", "Yes. It measures the connection your device is actually using, so it works the same on 4G/5G &mdash; handy for finding the best spot for a signal in a rural house, a caravan or a workshop."),
-      ("Is it free, and do you keep my data?", "Completely free, no sign-up. The measurements stay in your browser and the spots you mark are saved on your own device only &mdash; we never receive them. Our latency beacon stores nothing about you; it just replies with a single character (like any web request, our host keeps standard server logs). Two parts do involve a third party, and we&rsquo;d rather say so: the provider/area lookup and the speed test run against <strong>Cloudflare&rsquo;s</strong> network, so they see your IP address."),
+      ("Is it free, and do you keep my data?", "Completely free, no sign-up. Your whole survey &mdash; rooms, readings and the broadband details you type &mdash; is saved in your own browser only, and we never receive any of it <strong>unless you press the send button</strong>, which asks for your consent first. Our latency beacon stores nothing about you; it just replies with a single character (like any web request, our host keeps standard server logs). Two parts do involve a third party, and we&rsquo;d rather say so: the provider/area lookup and the speed test run against <strong>Cloudflare&rsquo;s</strong> network, so they see your IP address."),
+      ("Will my survey still be here if I come back later?", "Yes &mdash; it saves itself on this device as you go, and when you return you&rsquo;ll get a &ldquo;welcome back&rdquo; with the option to carry on where you stopped. Two honest limits: it lives in this browser, so clearing your browsing data deletes it, and it can&rsquo;t follow you to another device by itself. The <strong>Export</strong> button gives you a file you can keep or <strong>Import</strong> on any other device. In private browsing it may not survive closing the window at all &mdash; the tool will warn you."),
       ("It says my signal is poor &mdash; what now?", "Scroll to the advice section: it uses your real readings to suggest what actually helps, and it will tell you honestly when something <em>won&rsquo;t</em> help (a new router often doesn&rsquo;t fix a range problem, for example). If you&rsquo;d rather someone just sorted it, we cover Bournemouth, Poole and Dorset &mdash; <a href=\"/wifi-support/\">WiFi support</a>."),
     ]
     content = "\n".join([
       hero(bc("WiFi Signal Test"), "// FREE TOOL &middot; LIVE &amp; ANIMATED",
            'Find the best WiFi signal <em class="grad grad--cyan">in your home</em>',
-           "Meet the <strong>365 WiFi Optimizer</strong> &mdash; start it, then walk around. It measures your connection live and tells you, second by second, whether it&rsquo;s <strong>getting stronger or weaker</strong>. Mark your best spots, run a speed test, and get honest advice on what actually fixes weak WiFi. Works on WiFi <em>and</em> mobile data.",
+           "Meet the <strong>365 WiFi Optimizer</strong> &mdash; start it, then walk around. It measures your connection live and tells you, second by second, whether it&rsquo;s <strong>getting stronger or weaker</strong>. Save a reading for every room, run a speed test, compare what you measured with what your broadband deal promises &mdash; and your survey <strong>saves itself on your device as you go</strong>, so you can come back and carry on. Works on WiFi <em>and</em> mobile data.",
            cta1=("Start the live test", "#finder"), cta2=("Call 01202 775566", "tel:+441202775566"),
-           chips=["Free &middot; no sign-up", "Works on any phone", "Nothing made up"]),
+           chips=["Free &middot; no sign-up", "Saves as you go", "Nothing made up"]),
       '''    <section class="section" aria-label="Live signal finder" id="finder" style="padding-top:.6rem">
       <div class="wrap">
         <div class="wf">
+          <div class="wf__resume" id="wf-resume" hidden>
+            <p class="wf__resume-head"><strong>Welcome back.</strong> <span id="wf-resume-sub"></span></p>
+            <div class="wf__resume-btns">
+              <button type="button" class="button primary" id="wf-resume-go">Continue survey</button>
+              <button type="button" class="button ghost" id="wf-resume-export">Export</button>
+              <button type="button" class="button ghost" id="wf-resume-fresh">Start fresh</button>
+              <button type="button" class="wf__link" id="wf-resume-del">Delete my local data</button>
+            </div>
+          </div>
           <div class="wf__stage">
             <div class="wf__radar" aria-hidden="true"><span class="wf__ring"></span><span class="wf__ring wf__ring--b"></span><span class="wf__ring wf__ring--c"></span></div>
             <div class="wf__gauge">
@@ -837,16 +848,33 @@ def wifi_optimizer():
             <div class="wf__btns">
               <button type="button" class="button primary" id="wf-go">&#9654;&nbsp; Start live test</button>
               <button type="button" class="button ghost" id="wf-sound" aria-pressed="false" title="Tick faster when the signal is better, so you can listen instead of looking">&#128266;&nbsp; Sound off</button>
-              <button type="button" class="button ghost" id="wf-mark" disabled>&#128205;&nbsp; Mark this spot</button>
+              <button type="button" class="button ghost" id="wf-mark" disabled>&#128205;&nbsp; Save this room</button>
             </div>
             <p class="wf__hint mono" id="wf-hint">Tip: turn sound on and walk slowly &mdash; the ticks speed up as the connection improves, so you don&rsquo;t have to stare at the screen.</p>
             <p class="wf__hint mono" style="margin-top:.35rem">A <strong>connection-quality</strong> score from real latency &amp; stability &mdash; not radio bars (no website can read those).</p>
             <p class="wf__sr" id="wf-sr" role="status" aria-live="polite"></p>
           </div>
-          <div id="wf-spots" hidden>
-            <p class="eyebrow mono" style="margin:1.4rem 0 .5rem">// YOUR BEST SPOTS</p>
-            <ol class="wf__spotlist" id="wf-spotlist"></ol>
-            <p class="mono" style="color:var(--faint);font-size:.68rem;margin:.4rem 0 0">Saved on this device only &mdash; we never see them. <button type="button" id="wf-clear" class="wf__link">Clear</button></p>
+          <div class="wf__namer" id="wf-namer" hidden>
+            <p class="eyebrow mono" style="margin:0 0 .5rem">// WHICH ROOM IS THIS?</p>
+            <div class="wf__chips" id="wf-roomchips"></div>
+            <div class="wf__namerow">
+              <input type="text" id="wf-roomname" maxlength="40" placeholder="Or type a room name&hellip;" aria-label="Room name">
+              <button type="button" class="button primary" id="wf-roomsave">Save reading</button>
+              <button type="button" class="button ghost" id="wf-roomcancel">Cancel</button>
+            </div>
+          </div>
+          <div id="wf-journey" hidden>
+            <div class="wf__jhead">
+              <p class="eyebrow mono" style="margin:0">// YOUR SURVEY</p>
+              <span class="wf__save mono" id="wf-savestate" role="status" aria-live="polite"></span>
+            </div>
+            <div class="wf__jbar" aria-hidden="true"><span id="wf-jfill"></span></div>
+            <ul class="wf__jsteps" id="wf-jsteps"></ul>
+          </div>
+          <div id="wf-rooms" hidden>
+            <p class="eyebrow mono" style="margin:1.4rem 0 .5rem">// YOUR ROOMS, RANKED</p>
+            <ol class="wf__spotlist" id="wf-roomlist"></ol>
+            <p class="mono" style="color:var(--faint);font-size:.68rem;margin:.4rem 0 0">Saved in this browser only &mdash; we never see your survey unless you choose to send it below. Clearing browser data deletes it, so use Export if you want a copy.</p>
           </div>
         </div>
       </div>
@@ -869,6 +897,61 @@ def wifi_optimizer():
           </div>
           <p id="wf-speedverdict" class="wf__verdict" hidden></p>
           <p class="mono" style="color:var(--faint);font-size:.7rem;margin:.8rem 0 0">Want upload, bufferbloat and the full picture? Use our <a href="/broadband-speed-checker/">broadband speed checker</a>.</p>
+        </div>
+      </div>
+    </section>''',
+      '''    <section class="section" aria-label="Your broadband deal" id="deal">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// YOUR BROADBAND DEAL</p>
+          <h2 class="section-title section-title--center" data-title>Is your deal keeping up with what you measured?<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Type in what you currently pay and what was advertised, and we&rsquo;ll put it next to what you actually measured. Stays on your device with the rest of the survey.</p>
+        </div>
+        <div class="wf">
+          <div class="wf__bb">
+            <div class="wf__bbgrid">
+              <label>Provider<input type="text" id="wfb-prov" maxlength="60" placeholder="e.g. BT, Sky, Virgin Media"></label>
+              <label>Package <span class="wf__opt">optional</span><input type="text" id="wfb-pkg" maxlength="60" placeholder="e.g. Full Fibre 145"></label>
+              <label>Advertised download (Mbps)<input type="number" id="wfb-down" min="0" max="10000" step="1" inputmode="numeric" placeholder="e.g. 145"></label>
+              <label>Minimum guaranteed (Mbps) <span class="wf__opt">optional &mdash; it&rsquo;s on your contract</span><input type="number" id="wfb-ming" min="0" max="10000" step="1" inputmode="numeric" placeholder="e.g. 72"></label>
+              <label>Price per month, inc VAT (&pound;)<input type="number" id="wfb-price" min="0" max="1000" step="0.01" inputmode="decimal" placeholder="e.g. 32.99"></label>
+              <label>Contract ends<input type="month" id="wfb-end"></label>
+              <label>Do you have any backup internet? <span class="wf__opt">a 4G/5G fallback, second line&hellip;</span>
+                <select id="wfb-backup"><option value="">Not sure</option><option value="yes">Yes</option><option value="no">No</option></select></label>
+            </div>
+            <div class="wf__advice" id="wfb-out" style="margin-top:1rem"></div>
+            <p class="mono" style="color:var(--faint);font-size:.68rem;margin:.8rem 0 0"><strong>Honest labels:</strong> the <em>advertised</em> speed is a marketing average, the <em>minimum guaranteed</em> speed is the only number your provider commits to, and what you <em>measure</em> over WiFi is your WiFi in that spot &mdash; not the line. Test wired before blaming your provider. We don&rsquo;t compare live provider deals here because we won&rsquo;t show prices we can&rsquo;t verify &mdash; but send us your survey below and a human will genuinely look.</p>
+          </div>
+        </div>
+      </div>
+    </section>''',
+      '''    <section class="section section--alt" aria-label="Your survey report" id="report">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// YOUR SURVEY REPORT</p>
+          <h2 class="section-title section-title--center" data-title>Keep it, move it, or send it to a human<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="wf">
+          <div class="wf__advice" id="wf-repsum"><p class="quiet" style="margin:0">Test a few rooms above and your summary will appear here.</p></div>
+          <div class="wf__repbtns">
+            <button type="button" class="button ghost" id="wf-export">&#11015;&nbsp; Export survey file</button>
+            <label class="button ghost" for="wf-import" style="cursor:pointer">&#11014;&nbsp; Import a survey file<input type="file" id="wf-import" accept=".json,application/json" hidden></label>
+          </div>
+          <p class="mono" style="color:var(--faint);font-size:.68rem;margin:.5rem 0 1.4rem;text-align:center">Your survey lives in this browser only. Export it to keep a copy or move it to another device &mdash; then Import it there. Clearing browser data deletes the original.</p>
+          <div class="wf__send" id="wf-send">
+            <p class="eyebrow mono" style="margin:0 0 .4rem">// FREE HUMAN REVIEW</p>
+            <p style="margin:0 0 .9rem">Send your survey to 365 Techies and a real person will look at your rooms, your speeds and your deal, and reply with honest advice &mdash; including &ldquo;you&rsquo;re fine, don&rsquo;t spend anything&rdquo; if that&rsquo;s the truth. Free, no obligation.</p>
+            <div class="wf__bbgrid">
+              <label>Your name<input type="text" id="wfs-name" maxlength="80" autocomplete="name"></label>
+              <label>Email or phone<input type="text" id="wfs-contact" maxlength="120" autocomplete="email" placeholder="So we can reply"></label>
+            </div>
+            <label class="wf__consent"><input type="checkbox" id="wfs-consent"> Send my survey readings (room scores, speeds and the broadband details I typed) to 365 Techies so they can reply with advice. Nothing is sent until you tick this and press send.</label>
+            <p style="margin:.9rem 0 0"><button type="button" class="button primary" id="wfs-go">Send my survey for review</button></p>
+            <p class="wf__verdict" id="wfs-msg" role="status" aria-live="polite" hidden></p>
+          </div>
+          <div class="wf__multi">
+            <p style="margin:0"><strong>A business with more than one site?</strong> Our <a href="/business-it-support-subscriptions/">monthly support customers</a> get this done properly &mdash; we survey each site, keep the history, watch the contract renewals and flag the weak links. <a href="/business-wifi-installation/">Business WiFi</a> covers what a proper multi-site install looks like.</p>
+          </div>
         </div>
       </div>
     </section>''',
@@ -970,7 +1053,36 @@ def wifi_optimizer():
       .wf__ac{border-left:3px solid var(--cyan,#4fb4f5);background:rgba(125,170,220,.06);border-radius:0 12px 12px 0;padding:.75rem 1rem}
       .wf__ac.good{border-left-color:#00ce1b}.wf__ac.warn{border-left-color:#e0b341}.wf__ac.bad{border-left-color:#e0563f}
       .wf__ac b{display:block;margin-bottom:.15rem;color:#eaf1fb}
-      @media (prefers-reduced-motion: reduce){.wf .wf__ring{animation:none!important}.wf__arc{transition:none}.wf__trend{animation:none!important}}
+      .wf__resume{border:1px solid rgba(0,206,27,.35);background:rgba(0,206,27,.06);border-radius:16px;padding:1rem 1.2rem;margin:0 0 1rem}
+      .wf__resume-head{margin:0 0 .7rem}
+      .wf__resume-btns{display:flex;gap:.55rem;flex-wrap:wrap;align-items:center}
+      .wf__namer{border:1px solid rgba(29,151,227,.4);background:rgba(29,151,227,.07);border-radius:14px;padding:1rem 1.1rem;margin:1rem 0 0}
+      .wf__chips{display:flex;gap:.4rem;flex-wrap:wrap;margin:0 0 .7rem}
+      .wf__chips button{font:600 .74rem/1 ui-monospace,monospace;letter-spacing:.04em;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid rgba(125,170,220,.3);border-radius:999px;padding:.5rem .8rem;cursor:pointer}
+      .wf__chips button:hover{color:#fff;border-color:var(--cyan,#4fb4f5)}
+      .wf__namerow{display:flex;gap:.5rem;flex-wrap:wrap}
+      .wf__namerow input{flex:1;min-width:150px}
+      .wf__jhead{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin:1.4rem 0 .55rem}
+      .wf__save{font-size:.66rem;color:var(--faint)}
+      .wf__save.saving{color:#e0b341}.wf__save.saved{color:#00ce1b}.wf__save.nosave{color:#e0563f}
+      .wf__jbar{height:7px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
+      .wf__jbar span{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#1d97e3,#00ce1b);transition:width .5s ease}
+      .wf__jsteps{list-style:none;margin:.7rem 0 0;padding:0;display:grid;gap:.3rem}
+      .wf__jsteps li{font-size:.85rem;color:var(--muted);display:flex;gap:.55rem;align-items:baseline}
+      .wf__jsteps li.done{color:#dfe9f7}
+      .wf__jsteps li .tick{font-weight:800;color:rgba(255,255,255,.25);min-width:1.1em}
+      .wf__jsteps li.done .tick{color:#00ce1b}
+      .wf__bb,.wf__send{border:1px solid rgba(125,170,220,.24);border-radius:16px;padding:1.2rem 1.3rem;background:rgba(13,22,44,.5)}
+      .wf__bbgrid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+      .wf__bbgrid label{display:block;font:600 .66rem/1.4 ui-monospace,monospace;letter-spacing:.07em;text-transform:uppercase;color:var(--faint)}
+      .wf__bbgrid input,.wf__bbgrid select,.wf__namerow input{width:100%;margin-top:.3rem;padding:.65rem .75rem;border-radius:10px;border:1px solid rgba(125,170,220,.3);background:#0d1526;color:#fff;font:400 .95rem/1.3 inherit;letter-spacing:0;text-transform:none}
+      .wf__opt{color:rgba(125,170,220,.6);text-transform:none;letter-spacing:0;font-weight:400}
+      .wf__repbtns{display:flex;gap:.55rem;flex-wrap:wrap;justify-content:center;margin:1.1rem 0 0}
+      .wf__consent{display:flex;gap:.6rem;align-items:flex-start;margin:.9rem 0 0;font-size:.83rem;color:var(--muted);cursor:pointer}
+      .wf__consent input{margin-top:.2rem;flex:none}
+      .wf__multi{border:1px solid rgba(125,170,220,.2);border-radius:14px;padding:1rem 1.2rem;margin:1.4rem 0 0;background:rgba(125,170,220,.05)}
+      @media (max-width:560px){.wf__bbgrid{grid-template-columns:1fr}}
+      @media (prefers-reduced-motion: reduce){.wf .wf__ring{animation:none!important}.wf__arc{transition:none}.wf__trend{animation:none!important}.wf__jbar span{transition:none}}
       @media (max-width:520px){.wf__stats--4{grid-template-columns:repeat(2,1fr)}.wf__score{font-size:2.7rem}}
     </style>
     <script>
@@ -980,7 +1092,6 @@ def wifi_optimizer():
         var wf=document.querySelector('.wf'), arc=$('#wf-arc'), scoreEl=$('#wf-score'), trendEl=$('#wf-trend');
         var latEl=$('#wf-lat'), jitEl=$('#wf-jit'), dropEl=$('#wf-drop'), spark=$('#wf-sparkline');
         var goBtn=$('#wf-go'), soundBtn=$('#wf-sound'), markBtn=$('#wf-mark'), hint=$('#wf-hint');
-        var spotsWrap=$('#wf-spots'), spotList=$('#wf-spotlist'), clearBtn=$('#wf-clear');
         if(!wf||!goBtn) return;
         var running=false, timer=null, samples=[], hist=[], drops=0, attempts=0, consecFail=0, dropWin=[], sound=false, actx=null, tickT=null, best=-1, shown=0, lastCat='', lastSr=0;
         var reduce=false; try{reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){}
@@ -1073,6 +1184,8 @@ def wifi_optimizer():
           jitEl.textContent=off?'\\u2014':jit;
           dropEl.textContent=winDrops;
           paint(off?0:s); drawSpark(); setTrend(s); scheduleTicks(off?0:s); advise(lat,jit,s,null,winDrops,off);
+          // read-only snapshot for the survey layer (see the survey script below)
+          window.WF_LAST={s:off?0:s,lat:lat,jit:jit,drops:winDrops,off:off,settled:hist.length>=6,run:running,t:Date.now()};
           var s2=$('#wf-score2'); if(s2&&!off) s2.textContent=s;
           // chain the next probe so only one is ever in flight (a fixed interval overlaps on slow links)
           if(running){ clearTimeout(timer); timer=setTimeout(sample, Math.max(250, 1000-(rtt||0))); }
@@ -1111,35 +1224,15 @@ def wifi_optimizer():
             if(running) scheduleTicks(hist.length?hist[hist.length-1]:0);
           } else { clearTimeout(tickT); }
         });
-        function loadSpots(){ try{ return JSON.parse(localStorage.getItem('wf_spots')||'[]'); }catch(e){ return []; } }
-        function saveSpots(a){ try{ localStorage.setItem('wf_spots', JSON.stringify(a)); }catch(e){} }
-        function renderSpots(){
-          var a=loadSpots();
-          if(!a.length){ spotsWrap.hidden=true; return; }
-          a.sort(function(x,y){ return y.s-x.s; });
-          spotsWrap.hidden=false;
-          spotList.innerHTML='';
-          a.forEach(function(sp){
-            var li=document.createElement('li');
-            var b=document.createElement('span'); b.className='wf__badge'; b.textContent=sp.s;
-            b.style.background=colFor(sp.s)+'22'; b.style.color=colFor(sp.s);
-            var n=document.createElement('span'); n.textContent=sp.n;
-            var m=document.createElement('span'); m.className='mono'; m.style.cssText='margin-left:auto;color:var(--faint);font-size:.68rem';
-            m.textContent=sp.l+' ms';
-            li.appendChild(b); li.appendChild(n); li.appendChild(m); spotList.appendChild(li);
-          });
+        function emit(type,detail){
+          try{ document.dispatchEvent(new CustomEvent(type,{detail:detail})); }
+          catch(e){ try{ var ev=document.createEvent('CustomEvent'); ev.initCustomEvent(type,false,false,detail); document.dispatchEvent(ev); }catch(e2){} }
         }
         markBtn.addEventListener('click', function(){
           if(!hist.length) return;
-          var name=prompt('Name this spot (e.g. kitchen, back bedroom):');
-          if(!name) return;
-          var a=loadSpots();
-          a.push({n:String(name).slice(0,40), s:hist[hist.length-1], l:Math.round(med(samples))});
-          if(a.length>12) a.shift();
-          saveSpots(a); renderSpots();
+          // the survey layer owns naming + storage now
+          emit('wf:mark');
         });
-        if(clearBtn) clearBtn.addEventListener('click', function(){ saveSpots([]); renderSpots(); });
-        renderSpots();
         function advise(lat,jit,s,dl,winDrops,off){
           var box=$('#wf-advice'); if(!box) return;
           var out=[];
@@ -1171,7 +1264,7 @@ def wifi_optimizer():
           fetch(META,{cache:'no-store'}).then(function(r){return r.json();}).then(function(d){
             $('#wf-isp').textContent=d.asOrganization||'Unknown';
             $('#wf-loc').textContent=[d.city,d.country].filter(Boolean).join(', ')||'Unknown';
-          }).catch(function(){ $('#wf-isp').textContent='Could not detect'; $('#wf-loc').textContent='\\u2014'; });
+          }).catch(function(){ $('#wf-isp').textContent='Cloudflare isn\\u2019t sharing this right now'; $('#wf-loc').textContent='\\u2014'; });
         }
         var tEl=$('#wf-type');
         if(tEl){
@@ -1200,6 +1293,7 @@ def wifi_optimizer():
                   : mbps>=10?'Workable, but not generous. Worth testing next to the router to see if it is the WiFi or the line.'
                   : 'Slow here. Test again standing next to the router \\u2014 if it is just as slow there, it is the line, not the WiFi.';
                 advise(Math.round(med(samples)), Math.round(jitter(samples)), hist.length?hist[hist.length-1]:0, mbps, dropWin.reduce(function(a,b){return a+b;},0), false);
+                emit('wf:speed',{mbps:mbps});
                 spBtn.disabled=false; spBtn.innerHTML='&#9889;&nbsp; Run speed test again';
               })
               .catch(function(){
@@ -1215,6 +1309,462 @@ def wifi_optimizer():
             trendEl.className='wf__trend same';
             hint.textContent='Tip: keep the screen awake while you walk, or press Start again when you get there.';
           }
+        });
+      })();
+    </script>''',
+      '''    <script>
+      /* ===== 365 WiFi Survey layer: rooms, persistence, resume, deal check, report =====
+         Everything stays in THIS browser (IndexedDB) unless the visitor presses Send.
+         No cookies. No localStorage surveys (only a one-time import of the old spots). */
+      (function(){
+        'use strict';
+        var $=function(s){return document.querySelector(s);};
+        var resume=$('#wf-resume');
+        if(!resume) return;
+        function el(t,c,x){ var d=document.createElement(t); if(c)d.className=c; if(x!=null)d.textContent=x; return d; }
+        function colFor(s){ return s>=75?'#00ce1b':(s>=45?'#e0b341':'#e0563f'); }
+
+        /* ---------- storage (IndexedDB, in-memory fallback for private mode) ---------- */
+        var SK='survey', idb=null, memDoc=null, doc=null, saveT=null, bbT=null, booted=false;
+        var saveEl=$('#wf-savestate');
+        function setSave(cls,txt){ if(saveEl){ saveEl.className='wf__save mono '+cls; saveEl.textContent=txt; } }
+        function dbOpen(cb){
+          var done=false, fin=function(){ if(!done){ done=true; cb(); } };
+          try{
+            var rq=indexedDB.open('wf365',1);
+            rq.onupgradeneeded=function(e){ e.target.result.createObjectStore('kv'); };
+            rq.onsuccess=function(e){
+              // if the 2.5s failsafe already fired we have booted memory-only; adopting the
+              // connection NOW would let the next save() overwrite a stored survey we never
+              // loaded. Stay memory-only for this session instead - nothing is lost.
+              if(done){ try{ e.target.result.close(); }catch(x){} return; }
+              idb=e.target.result; fin();
+            };
+            rq.onerror=fin; rq.onblocked=fin;
+            setTimeout(fin,2500);
+          }catch(e){ fin(); }
+        }
+        function dbGet(cb){
+          if(!idb){ cb(memDoc); return; }
+          try{ var rq=idb.transaction('kv','readonly').objectStore('kv').get(SK);
+            rq.onsuccess=function(){ cb(rq.result||null); }; rq.onerror=function(){ cb(memDoc); };
+          }catch(e){ cb(memDoc); }
+        }
+        function dbPut(d,cb){
+          memDoc=d;
+          if(!idb){ if(cb)cb(false); return; }
+          try{ var tx=idb.transaction('kv','readwrite'); tx.objectStore('kv').put(d,SK);
+            tx.oncomplete=function(){ if(cb)cb(true); }; tx.onerror=function(){ if(cb)cb(false); };
+          }catch(e){ if(cb)cb(false); }
+        }
+        function dbDel(cb){
+          memDoc=null;
+          if(!idb){ cb(); return; }
+          try{ var tx=idb.transaction('kv','readwrite'); tx.objectStore('kv')['delete'](SK);
+            tx.oncomplete=function(){ cb(); }; tx.onerror=function(){ cb(); };
+          }catch(e){ cb(); }
+        }
+        function uuid(){ try{ if(window.crypto&&crypto.randomUUID) return crypto.randomUUID(); }catch(e){}
+          return 'wf-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10); }
+        function fresh(){ return {id:uuid(),created:Date.now(),updated:Date.now(),ver:0,rooms:[],bb:{},dl:null,sent:false,drafts:[]}; }
+        function save(){
+          if(!doc||!booted) return;
+          doc.updated=Date.now(); doc.ver++;
+          setSave('saving','Saving\\u2026');
+          clearTimeout(saveT);
+          saveT=setTimeout(function(){
+            try{ doc.drafts.push({ver:doc.ver,updated:doc.updated,rooms:JSON.parse(JSON.stringify(doc.rooms)),bb:JSON.parse(JSON.stringify(doc.bb))});
+                 if(doc.drafts.length>3) doc.drafts.shift(); }catch(e){}
+            dbPut(doc,function(ok){ setSave(ok?'saved':'nosave', ok?'Saved on this device':'Not saved \\u2014 private browsing?'); });
+          },350);
+        }
+
+        /* ---------- journey ---------- */
+        var journey=$('#wf-journey'), jfill=$('#wf-jfill'), jsteps=$('#wf-jsteps');
+        var STEPS=[['baseline','Test standing by the router first'],
+                   ['rooms3','Test the rooms that matter (three or more)'],
+                   ['speed','Run a speed test in your main room'],
+                   ['deal','Record your broadband deal below'],
+                   ['report','Report ready \\u2014 keep it, move it or send it']];
+        function stepDone(k){
+          if(k==='baseline') return doc.rooms.some(function(r){ return /router/i.test(r.n); });
+          if(k==='rooms3')   return doc.rooms.length>=3;
+          if(k==='speed')    return !!doc.dl;
+          if(k==='deal')     return !!(doc.bb&&doc.bb.prov&&doc.bb.price);
+          if(k==='report')   return doc.rooms.length>=3&&!!doc.dl&&!!(doc.bb&&doc.bb.prov);
+          return false;
+        }
+        function pctDone(){ var n=0; for(var i=0;i<STEPS.length;i++){ if(stepDone(STEPS[i][0])) n++; } return Math.round(n/STEPS.length*100); }
+        function nextStep(){ for(var i=0;i<STEPS.length;i++){ if(!stepDone(STEPS[i][0])) return STEPS[i][1]; } return 'All done \\u2014 nice work'; }
+        function renderJourney(){
+          if(!journey) return;
+          var any=doc.rooms.length||doc.dl||(doc.bb&&(doc.bb.prov||doc.bb.price));
+          journey.hidden=!any;
+          if(!any) return;
+          if(jfill) jfill.style.width=pctDone()+'%';
+          jsteps.innerHTML='';
+          STEPS.forEach(function(st){
+            var done=stepDone(st[0]);
+            var li=el('li',done?'done':'');
+            li.appendChild(el('span','tick',done?'\\u2713':'\\u25cb'));
+            li.appendChild(el('span','',st[1]));
+            jsteps.appendChild(li);
+          });
+        }
+
+        /* ---------- rooms ---------- */
+        var roomsWrap=$('#wf-rooms'), roomList=$('#wf-roomlist');
+        var namer=$('#wf-namer'), chipsBox=$('#wf-roomchips'), nameIn=$('#wf-roomname');
+        var PRESETS=['By the router','Living room','Kitchen','Main bedroom','Home office','Garden office','Conservatory','Loft'];
+        if(chipsBox) PRESETS.forEach(function(p){
+          var b=el('button','',p); b.type='button';
+          b.addEventListener('click',function(){ if(nameIn){ nameIn.value=p; nameIn.focus(); } });
+          chipsBox.appendChild(b);
+        });
+        function ago(t){
+          var m=Math.round((Date.now()-t)/60000);
+          if(m<1) return 'just now'; if(m<60) return m+' min ago';
+          var h=Math.round(m/60); if(h<24) return h+'h ago';
+          return Math.round(h/24)+'d ago';
+        }
+        function upsert(name,r){
+          for(var i=0;i<doc.rooms.length;i++){
+            if(doc.rooms[i].n.toLowerCase()===name.toLowerCase()){
+              var old=doc.rooms[i];
+              old.hist=old.hist||[]; old.hist.push({s:old.s,lat:old.lat,jit:old.jit,t:old.t});
+              if(old.hist.length>5) old.hist.shift();
+              old.s=r.s; old.lat=r.lat; old.jit=r.jit; old.drops=r.drops; old.t=Date.now();
+              return;
+            }
+          }
+          if(doc.rooms.length>=20) return;
+          doc.rooms.push({n:name,s:r.s,lat:r.lat,jit:r.jit,drops:r.drops,t:Date.now(),hist:[]});
+        }
+        function renderRooms(){
+          if(!roomsWrap) return;
+          roomsWrap.hidden=!doc.rooms.length;
+          if(!doc.rooms.length) return;
+          var a=doc.rooms.slice().sort(function(x,y){ return y.s-x.s; });
+          roomList.innerHTML='';
+          a.forEach(function(r){
+            var li=document.createElement('li');
+            var b=el('span','wf__badge',String(r.s));
+            b.style.background=colFor(r.s)+'22'; b.style.color=colFor(r.s);
+            var n=el('span','',r.n);
+            var m=el('span','mono'); m.style.cssText='margin-left:auto;color:var(--faint);font-size:.68rem';
+            m.textContent=r.lat+' ms \\u00b7 '+ago(r.t)+(r.hist&&r.hist.length?' \\u00b7 tested '+(r.hist.length+1)+'\\u00d7':'');
+            var re=el('button','wf__link','re-test'); re.type='button'; re.style.marginLeft='.6rem';
+            re.setAttribute('aria-label','Re-test '+r.n);
+            re.addEventListener('click',function(){
+              if(nameIn) nameIn.value=r.n;
+              var st=document.querySelector('.wf__stage');
+              if(st) st.scrollIntoView({behavior:'smooth',block:'center'});
+              var hint=$('#wf-hint'); if(hint) hint.textContent='Stand in '+r.n+', start the live test, give it a few seconds, then press \\u201cSave this room\\u201d.';
+            });
+            var x=el('button','wf__link','\\u00d7'); x.type='button'; x.style.marginLeft='.5rem';
+            x.setAttribute('aria-label','Remove '+r.n);
+            x.addEventListener('click',function(){ doc.rooms=doc.rooms.filter(function(q){return q!==r;}); save(); renderAll(); });
+            li.appendChild(b); li.appendChild(n); li.appendChild(m); li.appendChild(re); li.appendChild(x);
+            roomList.appendChild(li);
+          });
+        }
+        function staleL(L){
+          if(!L) return true;
+          var age=Date.now()-L.t;
+          // while the test is running, probes on a very slow link can legitimately be ~5s
+          // apart (4s timeout + 1s reschedule) and mobile timer throttling stretches that -
+          // so allow 15s while running, 6s once stopped
+          return age>(L.run?15000:6000);
+        }
+        document.addEventListener('wf:mark',function(){
+          var L=window.WF_LAST;
+          var hint=$('#wf-hint');
+          if(staleL(L)){ if(hint) hint.textContent='Start the live test first, then save the room while it\\u2019s running.'; return; }
+          if(L.off){ if(hint) hint.textContent='No response here just now \\u2014 wait for the connection to come back before saving.'; return; }
+          if(!L.settled){ if(hint) hint.textContent='Give it a few more seconds to settle, then press Save again.'; return; }
+          if(namer){ namer.hidden=false; if(nameIn&&!nameIn.value) nameIn.focus(); namer.scrollIntoView({behavior:'smooth',block:'nearest'}); }
+        });
+        var saveRoomBtn=$('#wf-roomsave'), cancelBtn=$('#wf-roomcancel');
+        if(saveRoomBtn) saveRoomBtn.addEventListener('click',function(){
+          var L=window.WF_LAST;
+          var name=(nameIn&&nameIn.value?nameIn.value:'').replace(/\\s+/g,' ').trim().slice(0,40);
+          if(!name){ if(nameIn) nameIn.focus(); return; }
+          if(!L||L.off||staleL(L)){ var h=$('#wf-hint'); if(h) h.textContent='The reading went stale \\u2014 start the live test again, then save.'; return; }
+          var isNew=!doc.rooms.some(function(q){ return q.n.toLowerCase()===name.toLowerCase(); });
+          if(isNew&&doc.rooms.length>=20){ var h2=$('#wf-hint'); if(h2) h2.textContent='Room limit reached (20) \\u2014 remove one from the list below first.'; return; }
+          upsert(name,L);
+          if(nameIn) nameIn.value='';
+          if(namer) namer.hidden=true;
+          var hint=$('#wf-hint'); if(hint) hint.textContent='Saved \\u2014 walk to the next room and let the score settle there.';
+          save(); renderAll();
+        });
+        if(cancelBtn) cancelBtn.addEventListener('click',function(){ if(namer) namer.hidden=true; });
+
+        /* ---------- speed test feeds the survey ---------- */
+        document.addEventListener('wf:speed',function(e){
+          var m=e&&e.detail?e.detail.mbps:null; if(m==null) return;
+          m=Math.round(m*10)/10;
+          if(!doc.dl) doc.dl={best:m,last:m,t:Date.now()};
+          else { doc.dl.last=m; if(m>doc.dl.best) doc.dl.best=m; doc.dl.t=Date.now(); }
+          save(); renderAll();
+        });
+
+        /* ---------- broadband deal ---------- */
+        var BB=['prov','pkg','down','ming','price','end','backup'];
+        function bbEl(k){ return $('#wfb-'+k); }
+        function readBB(){
+          var o={};
+          BB.forEach(function(k){
+            var e=bbEl(k); if(!e) return;
+            var v=(e.value||'').trim();
+            if(k==='down'||k==='ming'||k==='price'){ var n=parseFloat(v); o[k]=(isFinite(n)&&n>=0)?n:null; }
+            else o[k]=v.slice(0,60);
+          });
+          return o;
+        }
+        function fillBB(){
+          BB.forEach(function(k){ var e=bbEl(k); if(e&&doc.bb&&doc.bb[k]!=null&&doc.bb[k]!=='') e.value=doc.bb[k]; });
+        }
+        function card(cls,head,body){
+          var d=el('div','wf__ac '+cls); d.appendChild(el('b','',head));
+          var p=el('p','quiet',body||''); p.style.margin='0'; d.appendChild(p);
+          return {d:d,p:p};
+        }
+        function link(p,href,txt){ var a=document.createElement('a'); a.href=href; a.textContent=txt; p.appendChild(a); }
+        function renderBB(){
+          var out=$('#wfb-out'); if(!out) return;
+          out.innerHTML='';
+          var b=doc.bb||{};
+          var any=b.prov||b.price!=null||b.down!=null;
+          if(!any) return;
+          if(b.price!=null){
+            var yr=Math.round(b.price*12*100)/100;
+            out.appendChild(card('', 'What this deal really costs', '\\u00a3'+b.price+' a month is \\u00a3'+yr+' a year'+(b.prov?' with '+b.prov:'')+'.').d);
+          }
+          if(b.end){
+            /* the month input degrades to free text on desktop Safari/Firefox - never do
+               date maths on a shape we haven't verified, or we invent claims */
+            var em=/^(\\d{4})-(0?[1-9]|1[0-2])$/.exec(b.end), sw=/^(0?[1-9]|1[0-2])[\\/\\-](\\d{4})$/.exec(b.end);
+            var yy=em?+em[1]:(sw?+sw[2]:null), mo=em?+em[2]:(sw?+sw[1]:null);
+            if(yy!=null&&yy>=2000&&yy<2100){
+              var now=new Date();
+              var months=(yy-now.getFullYear())*12+(mo-1-now.getMonth());
+              if(!isFinite(months)){}
+              else if(months<0) out.appendChild(card('bad','You are out of contract','Out-of-contract prices are nearly always worse than new-customer prices for the same line. This is exactly the moment to compare or haggle \\u2014 you have nothing to lose.').d);
+              else if(months<=3) out.appendChild(card('warn','Renewal window \\u2014 '+months+' month'+(months===1?'':'s')+' left','Providers price for people who don\\u2019t look. Get comparison quotes now so you can renew, switch or haggle from strength.').d);
+              else out.appendChild(card('','Contract has '+months+' months to run','Note the end date somewhere you\\u2019ll see it \\u2014 the month before it ends is when comparing pays.').d);
+            } else {
+              out.appendChild(card('','We couldn\\u2019t read that end date','Type it as YYYY-MM \\u2014 for example 2027-01 \\u2014 and the countdown will appear.').d);
+            }
+          }
+          if(doc.dl&&b.down!=null&&b.down>0){
+            var pct=Math.round(doc.dl.best/b.down*100);
+            var c=card(pct>=70?'good':(pct>=40?'warn':'bad'),
+              'Measured '+doc.dl.best+' Mbps here vs '+b.down+' Mbps advertised ('+pct+'%)',
+              'Measured over WiFi, this is what the room delivers \\u2014 your WiFi\\u2019s ceiling in that spot, not the line\\u2019s. Test plugged in by the router before blaming '+(b.prov||'your provider')+'. ');
+            if(pct<40) link(c.p,'/wifi-troubleshooting/','If wired is also slow, start here.');
+            out.appendChild(c.d);
+          }
+          if(b.ming!=null&&b.ming>0){
+            out.appendChild(card('','Your minimum guaranteed speed is '+b.ming+' Mbps','That\\u2019s the only number your provider commits to \\u2014 and if a WIRED test stays below it, Ofcom\\u2019s speed codes may give you the right to exit. Advertised averages carry no such promise.').d);
+          }
+          if(b.backup==='no'){
+            var c2=card('warn','No backup internet','After the analogue phone switch-off (currently 31 January 2027) a broadband fault also takes your calls with it. A 4G/5G failover router is the honest first answer for a business \\u2014 ');
+            link(c2.p,'/business-continuity-internet/','here\\u2019s how to plan it');
+            c2.p.appendChild(document.createTextNode(', and '));
+            link(c2.p,'/emergency-internet/','what we do when it really goes wrong');
+            c2.p.appendChild(document.createTextNode('.'));
+            out.appendChild(c2.d);
+          }
+        }
+        BB.forEach(function(k){
+          var e=bbEl(k); if(!e) return;
+          e.addEventListener('input',function(){
+            clearTimeout(bbT);
+            bbT=setTimeout(function(){ doc.bb=readBB(); save(); renderBB(); renderJourney(); renderRep(); },400);
+          });
+          e.addEventListener('change',function(){ doc.bb=readBB(); save(); renderBB(); renderJourney(); renderRep(); });
+        });
+
+        /* ---------- report, export, import, send ---------- */
+        function bestWorst(){
+          if(!doc.rooms.length) return null;
+          var a=doc.rooms.slice().sort(function(x,y){ return y.s-x.s; });
+          return {best:a[0],worst:a[a.length-1]};
+        }
+        function renderRep(){
+          var box=$('#wf-repsum'); if(!box) return;
+          if(!doc.rooms.length){
+            box.innerHTML=''; var p=el('p','quiet','Test a few rooms above and your summary will appear here.'); p.style.margin='0'; box.appendChild(p); return;
+          }
+          box.innerHTML='';
+          var bw=bestWorst();
+          var head=doc.rooms.length+' room'+(doc.rooms.length===1?'':'s')+' tested \\u00b7 best: '+bw.best.n+' ('+bw.best.s+') \\u00b7 weakest: '+bw.worst.n+' ('+bw.worst.s+')';
+          var c=card(bw.worst.s>=45?'good':'warn',head,
+            doc.dl?('Best measured download so far: '+doc.dl.best+' Mbps. '):'');
+          if(bw.worst.s<45){
+            c.p.appendChild(document.createTextNode('Your weak spot is '+bw.worst.n+'. If it matters, the fix is usually placement or one well-placed extra access point \\u2014 see '));
+            link(c.p,'/mesh-wifi-systems-uk/','the honest mesh guide');
+            c.p.appendChild(document.createTextNode(' and '));
+            link(c.p,'/wifi-uk-buildings-heat/','what your walls cost you');
+            c.p.appendChild(document.createTextNode('.'));
+          }
+          box.appendChild(c.d);
+          if(doc.sent) box.appendChild(card('good','Sent to 365 Techies','We have this survey and will come back to you \\u2014 thank you. Feel free to keep testing rooms; you can send an update any time.').d);
+        }
+        function hash(s){ var h=5381; for(var i=0;i<s.length;i++){ h=((h<<5)+h+s.charCodeAt(i))|0; } return (h>>>0).toString(36); }
+        function doExport(){
+          try{
+            /* export a CLEAN copy: drafts hold prior snapshots, including rooms the visitor
+               explicitly removed - they must not resurrect inside a file that gets emailed */
+            var cl=JSON.parse(JSON.stringify(doc)); cl.drafts=[];
+            var body=JSON.stringify(cl);
+            var pack={app:'365-wifi-survey',v:1,exported:new Date().toISOString(),check:hash(body),survey:cl};
+            var blob=new Blob([JSON.stringify(pack,null,1)],{type:'application/json'});
+            var a=document.createElement('a');
+            a.href=URL.createObjectURL(blob);
+            a.download='365-wifi-survey.json';
+            document.body.appendChild(a); a.click();
+            setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },800);
+          }catch(e){ alert('Sorry \\u2014 this browser refused the export.'); }
+        }
+        var expBtn=$('#wf-export'); if(expBtn) expBtn.addEventListener('click',doExport);
+        var impIn=$('#wf-import');
+        if(impIn) impIn.addEventListener('change',function(){
+          var f=impIn.files&&impIn.files[0]; if(!f) return;
+          var rd=new FileReader();
+          rd.onload=function(){
+            var ok=false, pack=null;
+            try{ pack=JSON.parse(String(rd.result)); ok=pack&&pack.app==='365-wifi-survey'&&pack.survey&&Array.isArray(pack.survey.rooms); }catch(e){}
+            if(!ok){ alert('That doesn\\u2019t look like a 365 WiFi survey file.'); impIn.value=''; return; }
+            if(pack.check&&pack.check!==hash(JSON.stringify(pack.survey))){
+              if(!confirm('This file looks edited or damaged (its integrity check doesn\\u2019t match). Import anyway?')){ impIn.value=''; return; }
+            }
+            if(doc.rooms.length&&!confirm('Replace the survey on this device with the imported one?')){ impIn.value=''; return; }
+            /* sanitize EVERY imported field: a hand-edited file must never be able to
+               crash rendering on future loads (stored DoS) or smuggle odd types in */
+            var sv=pack.survey, rooms=[];
+            (sv.rooms||[]).slice(0,20).forEach(function(r){
+              if(!r) return;
+              var n=String(r.n==null?'':r.n).replace(/\\s+/g,' ').trim().slice(0,40);
+              if(!n) return;
+              rooms.push({n:n,
+                s:Math.max(0,Math.min(100,Math.round(+r.s)||0)),
+                lat:Math.max(0,Math.round(+r.lat)||0),
+                jit:Math.max(0,Math.round(+r.jit)||0),
+                drops:Math.max(0,Math.round(+r.drops)||0),
+                t:(+r.t>0&&+r.t<4102444800000)?+r.t:Date.now(), hist:[]});
+            });
+            var sb=(sv.bb&&typeof sv.bb==='object')?sv.bb:{}, bb={};
+            ['prov','pkg','end','backup'].forEach(function(k){ bb[k]=String(sb[k]==null?'':sb[k]).slice(0,60); });
+            ['down','ming','price'].forEach(function(k){ var v=parseFloat(sb[k]); bb[k]=(isFinite(v)&&v>=0&&v<100000)?v:null; });
+            var sdl=sv.dl, dl=null;
+            if(sdl&&isFinite(+sdl.best)) dl={best:Math.round((+sdl.best)*10)/10,last:isFinite(+sdl.last)?+sdl.last:+sdl.best,t:Date.now()};
+            doc={id:(typeof sv.id==='string'&&sv.id?sv.id.slice(0,60):uuid()),
+                 created:(+sv.created>0?+sv.created:Date.now()),updated:Date.now(),
+                 ver:(+sv.ver>0?Math.round(+sv.ver):0),rooms:rooms,bb:bb,dl:dl,sent:!!sv.sent,drafts:[]};
+            fillBB(); save(); renderAll(); impIn.value='';
+          };
+          rd.readAsText(f);
+        });
+        var sendBtn=$('#wfs-go'), sendMsg=$('#wfs-msg');
+        function say(t){ if(sendMsg){ sendMsg.hidden=false; sendMsg.textContent=t; } }
+        if(sendBtn) sendBtn.addEventListener('click',function(){
+          var nameF=$('#wfs-name'), contactF=$('#wfs-contact'), consent=$('#wfs-consent');
+          var name=(nameF&&nameF.value?nameF.value:'').trim().slice(0,80);
+          var contact=(contactF&&contactF.value?contactF.value:'').trim().slice(0,120);
+          if(!consent||!consent.checked){ say('Please tick the consent box first \\u2014 nothing is sent without it.'); return; }
+          if(!contact){ say('Add an email or phone number so we can actually reply.'); return; }
+          if(!doc.rooms.length&&!doc.bb.prov){ say('Test at least one room (or record your deal) so there\\u2019s something for us to look at.'); return; }
+          var lines=['WiFi survey ('+doc.rooms.length+' rooms, '+pctDone()+'% complete):'];
+          doc.rooms.slice().sort(function(x,y){return y.s-x.s;}).slice(0,15).forEach(function(r){
+            lines.push('- '+r.n+': '+r.s+'/100, '+r.lat+'ms'+(r.jit?', jitter '+r.jit+'ms':''));
+          });
+          if(doc.dl) lines.push('Best measured download: '+doc.dl.best+' Mbps');
+          var b=doc.bb||{};
+          if(b.prov||b.price!=null) lines.push('Deal: '+(b.prov||'?')+(b.pkg?' '+b.pkg:'')+(b.down!=null?', advertised '+b.down+' Mbps':'')+(b.ming!=null?', min guaranteed '+b.ming:'')+(b.price!=null?', \\u00a3'+b.price+'/mo':'')+(b.end?', ends '+b.end:'')+(b.backup?', backup: '+b.backup:''));
+          var isEmail=contact.indexOf('@')>0;
+          sendBtn.disabled=true; say('Sending\\u2026');
+          fetch('/api/slack-lead.php',{method:'POST',headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({name:name,email:isEmail?contact:'',phone:isEmail?'':contact,
+              topic:'WiFi survey review',message:lines.join('\\n').slice(0,2400),page:'/wifi-signal-test/'})})
+            .then(function(r){ return r.json()['catch'](function(){ return null; }).then(function(j){ return {code:r.status,j:j}; }); })
+            .then(function(res){
+              sendBtn.disabled=false;
+              if(res.j&&res.j.ok){ doc.sent=true; save(); renderRep(); say('Sent \\u2014 thank you. A real person will look at it and reply, usually the same working day.'); }
+              else if(res.code===429){ say('We\\u2019re getting a lot of messages this minute \\u2014 please try again shortly.'); }
+              else { say('That didn\\u2019t send. You can also just call 01202 775566 \\u2014 mention your WiFi survey.'); }
+            })
+            .catch(function(){ sendBtn.disabled=false; say('That didn\\u2019t send \\u2014 check you\\u2019re online, or call 01202 775566.'); });
+        });
+
+        /* ---------- welcome back / boot ---------- */
+        function renderAll(){ renderJourney(); renderRooms(); renderBB(); renderRep(); }
+        function showResume(){
+          var sub=$('#wf-resume-sub'); if(!sub) return;
+          var d=new Date(doc.updated);
+          sub.textContent='Your survey from '+d.toLocaleDateString('en-GB',{day:'numeric',month:'short'})+
+            ' \\u2014 '+doc.rooms.length+' room'+(doc.rooms.length===1?'':'s')+' tested, '+pctDone()+'% complete. Next: '+nextStep()+'.';
+          resume.hidden=false;
+          var go=$('#wf-resume-go'), ex=$('#wf-resume-export'), fr=$('#wf-resume-fresh'), del=$('#wf-resume-del');
+          if(go) go.addEventListener('click',function(){ resume.hidden=true;
+            var st=document.querySelector('.wf__stage'); if(st) st.scrollIntoView({behavior:'smooth',block:'center'}); });
+          if(ex) ex.addEventListener('click',doExport);
+          if(fr) fr.addEventListener('click',function(){
+            if(!confirm('Start a fresh survey? The current one will be replaced on this device \\u2014 Export first if you want to keep it.')) return;
+            clearTimeout(saveT); clearTimeout(bbT);
+            doc=fresh(); fillBB(); BB.forEach(function(k){ var e=bbEl(k); if(e) e.value=''; });
+            save(); renderAll(); resume.hidden=true;
+          });
+          if(del) del.addEventListener('click',function(){
+            if(!confirm('Delete your survey data from this device? This cannot be undone.')) return;
+            /* cancel any pending debounced writes FIRST and swap in an empty doc, or a
+               queued save() could re-persist the data straight after the delete */
+            clearTimeout(saveT); clearTimeout(bbT);
+            doc=fresh();
+            try{ localStorage.removeItem('wf_spots'); }catch(e){}
+            dbDel(function(){ BB.forEach(function(k){ var e=bbEl(k); if(e) e.value=''; });
+              renderAll(); resume.hidden=true; setSave('','' ); });
+          });
+        }
+        /* two tabs on this page write the same key last-writer-wins; converge on focus by
+           merging the stored rooms in by name rather than silently clobbering them */
+        window.addEventListener('focus',function(){
+          if(!booted||!idb||!doc) return;
+          dbGet(function(st){
+            if(!st||!st.rooms||!(st.updated>doc.updated)) return;
+            var changed=false;
+            st.rooms.forEach(function(r){
+              if(!r||r.n==null) return;
+              var found=null;
+              for(var i=0;i<doc.rooms.length;i++){ if(doc.rooms[i].n.toLowerCase()===String(r.n).toLowerCase()){ found=doc.rooms[i]; break; } }
+              if(!found){ if(doc.rooms.length<20){ doc.rooms.push(r); changed=true; } }
+              else if((+r.t||0)>(+found.t||0)){ found.s=r.s; found.lat=r.lat; found.jit=r.jit; found.drops=r.drops; found.t=r.t; changed=true; }
+            });
+            if(!doc.dl&&st.dl){ doc.dl=st.dl; changed=true; }
+            if((!doc.bb||!doc.bb.prov)&&st.bb&&st.bb.prov){ doc.bb=st.bb; fillBB(); changed=true; }
+            if(changed){ save(); renderAll(); }
+          });
+        });
+        dbOpen(function(){
+          dbGet(function(existing){
+            if(existing&&existing.rooms){ doc=existing; doc.bb=doc.bb||{}; doc.drafts=doc.drafts||[]; }
+            else {
+              doc=fresh();
+              /* one-time import of the old best-spots feature */
+              try{
+                var old=JSON.parse(localStorage.getItem('wf_spots')||'[]');
+                if(old&&old.length){ old.slice(0,12).forEach(function(sp){
+                  if(sp&&sp.n!=null) doc.rooms.push({n:String(sp.n).slice(0,40),s:+sp.s||0,lat:+sp.l||0,jit:0,drops:0,t:Date.now(),hist:[]});
+                }); }
+              }catch(e){}
+            }
+            booted=true;
+            fillBB(); renderAll();
+            if(idb) setSave('saved', doc.rooms.length?'Saved on this device':'');
+            else setSave('nosave','Private browsing \\u2014 survey won\\u2019t survive closing');
+            if(doc.rooms.length||doc.dl||(doc.bb&&doc.bb.prov)) showResume();
+          });
         });
       })();
     </script>''',
@@ -1255,7 +1805,7 @@ def wifi_optimizer():
         app = {"@type": "WebApplication", "@id": f"{SITE}/{s}/#app",
                "name": "365 WiFi Optimizer", "applicationCategory": "UtilitiesApplication",
                "operatingSystem": "Web (all browsers)",
-               "description": "Free live WiFi signal test: walk around and see your connection get stronger or weaker in real time, mark your best spots, run a speed test and get honest advice on what actually fixes weak WiFi.",
+               "description": "Free live WiFi signal test and room-by-room survey: walk around and see your connection get stronger or weaker in real time, save a reading for every room, run a speed test, compare your measurements with your broadband deal, and resume the survey whenever you come back. Saved on your device; sent to us only if you choose.",
                "offers": {"@type": "Offer", "price": "0", "priceCurrency": "GBP"},
                "provider": {"@id": SITE + "/#business"}, "url": f"{SITE}/{s}/"}
         return graph([crumb(s, "WiFi Signal Test"),
