@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Google tag (gtag.js) - Consent Mode v2: denied by default, granted on cookie-accept.
+       The library itself loads lazily (first interaction, or idle ~4s) so its ~90KB never
+       competes with LCP; calls below queue into dataLayer and replay when it arrives. -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', { ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'denied', wait_for_update: 500 });
+    try { if (localStorage.getItem('tt_consent') === 'accepted') gtag('consent', 'update', { ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted', analytics_storage: 'granted' }); } catch (e) {}
+    gtag('js', new Date());
+    gtag('config', 'G-EBLTJ9WJXZ');
+    (function () {
+      function loadGtagLib() {
+        if (window.__gtagLibLoaded) return; window.__gtagLibLoaded = true;
+        var g = document.createElement('script'); g.async = true;
+        g.src = 'https://www.googletagmanager.com/gtag/js?id=G-EBLTJ9WJXZ';
+        document.head.appendChild(g);
+      }
+      // Load on the first sign of a real person: mousemove/wheel cover desktop
+      // readers who never click, touch/scroll cover mobile. Lab runs (Lighthouse,
+      // PSI) never interact, so gtag stays out of TBT/TTI entirely. The 30s
+      // fallback outlives any lab trace window (a 9s timer landed INSIDE PSI's
+      // observation window and dragged TTI out — TBT 2.5s. Never shorten it).
+      ['pointerdown', 'keydown', 'touchstart', 'scroll', 'mousemove', 'wheel'].forEach(function (evt) {
+        window.addEventListener(evt, loadGtagLib, { once: true, passive: true });
+      });
+      window.addEventListener('load', function () { setTimeout(loadGtagLib, 30000); });
+    })();
+  </script>
+  <title>New Outlook Only Showing Recent Emails? | 365 Techies</title>
+  <meta name="description" content="New Outlook only showing recent emails, not old ones? They're almost certainly safe on the server. How to prove it, fix the sync window, and when to migrate." />
+  <link rel="canonical" href="https://365techies.co.uk/new-outlook-only-showing-recent-emails/" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <meta name="author" content="365 Techies Limited" />
+  <meta name="geo.region" content="GB-BCP" />
+  <meta name="geo.placename" content="Bournemouth, Dorset" />
+  <meta name="geo.position" content="50.7192;-1.8808" />
+  <meta name="ICBM" content="50.7192, -1.8808" />
+  <meta name="theme-color" content="#070d22" />
+  <meta name="color-scheme" content="dark" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="365 Techies" />
+  <meta property="og:locale" content="en_GB" />
+  <meta property="og:url" content="https://365techies.co.uk/new-outlook-only-showing-recent-emails/" />
+  <meta property="og:title" content="New Outlook Only Showing Recent Emails? Your Old Mail Isn't Gone" />
+  <meta property="og:description" content="New Outlook only showing recent emails, not old ones? They're almost certainly safe on the server. How to prove it, fix the sync window, and when to migrate." />
+  <meta property="og:image" content="https://365techies.co.uk/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="New Outlook Only Showing Recent Emails? Your Old Mail Isn't Gone" />
+  <meta name="twitter:description" content="New Outlook only showing recent emails, not old ones? They're almost certainly safe on the server. How to prove it, fix the sync window, and when to migrate." />
+  <meta name="twitter:image" content="https://365techies.co.uk/og-image.jpg" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+  <link rel="preconnect" href="https://fonts.bunny.net" />
+  <link rel="preconnect" href="https://fonts.bunny.net" crossorigin />
+  <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
+  <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
+  <noscript>
+    <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
+  </noscript>
+  <link rel="stylesheet" href="/css/styles.min.css?v=66" />
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://365techies.co.uk/#website",
+      "url": "https://365techies.co.uk/",
+      "name": "365 Techies",
+      "inLanguage": "en-GB",
+      "publisher": {
+        "@id": "https://365techies.co.uk/#business"
+      }
+    },
+    {
+      "@type": [
+        "LocalBusiness",
+        "ProfessionalService"
+      ],
+      "@id": "https://365techies.co.uk/#business",
+      "name": "365 Techies",
+      "legalName": "365 Techies Limited",
+      "url": "https://365techies.co.uk/",
+      "telephone": "+441202775566",
+      "email": "help@365techies.co.uk",
+      "foundingDate": "1995",
+      "image": "https://365techies.co.uk/og-image.jpg",
+      "logo": "https://365techies.co.uk/logo.jpg",
+      "priceRange": "££",
+      "alternateName": "365 Techies Ltd",
+      "slogan": "The IT support experts",
+      "description": "Family-run, leading Managed Service Provider (MSP) established in 1995 — Dell hardware specialists, Microsoft partners and certified Microsoft Office Specialists. Fully managed monthly IT support, cybersecurity, backups and cloud, plus one-off computer repairs and refurbished Dell hardware, for homes and small businesses across Bournemouth, Poole and Dorset.",
+      "currenciesAccepted": "GBP",
+      "paymentAccepted": "Direct Debit (GoCardless), Bank Transfer, Credit Card, Debit Card",
+      "identifier": {
+        "@type": "PropertyValue",
+        "name": "Company registration number",
+        "value": "11073501"
+      },
+      "memberOf": {
+        "@type": "Organization",
+        "name": "Sustainable Dorset",
+        "url": "https://www.sustainabledorset.org/"
+      },
+      "knowsAbout": [
+        "IT support",
+        "Computer repair",
+        "Laptop repair",
+        "Microsoft 365",
+        "Cybersecurity",
+        "Data backup",
+        "Network security",
+        "Wi-Fi",
+        "Remote support",
+        "Dell hardware",
+        "Dell Latitude laptops",
+        "Dell OptiPlex desktops",
+        "Refurbished computers",
+        "Malwarebytes Premium",
+        "VPN",
+        "Online safety",
+        "Accessible IT support",
+        "IT support for retired people",
+        "IT support for disabled people",
+        "Website design",
+        "Web hosting",
+        "Business email",
+        "Managed service provider",
+        "Managed IT services",
+        "MSP",
+        "New Forest IT support"
+      ],
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Kinson Community Centre, Millhams Road, Kinson",
+        "addressLocality": "Bournemouth",
+        "addressRegion": "Dorset",
+        "postalCode": "BH10 7LH",
+        "addressCountry": "GB"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 50.7192,
+        "longitude": -1.8808
+      },
+      "areaServed": [
+        {
+          "@type": "AdministrativeArea",
+          "name": "Dorset"
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "Bournemouth, Christchurch and Poole"
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "New Forest"
+        }
+      ],
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday"
+        ],
+        "opens": "09:00",
+        "closes": "17:00"
+      },
+      "hasMap": "https://www.google.com/maps/place/?q=place_id:ChIJlTb8YRuic0gRCRczduB8OFI",
+      "sameAs": [
+        "https://www.facebook.com/365computersuk",
+        "https://www.google.com/maps/place/?q=place_id:ChIJlTb8YRuic0gRCRczduB8OFI",
+        "https://find-and-update.company-information.service.gov.uk/company/11073501"
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://365techies.co.uk/new-outlook-only-showing-recent-emails/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://365techies.co.uk/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Outlook Problems",
+          "item": "https://365techies.co.uk/outlook-problems/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "New Outlook missing old emails",
+          "item": "https://365techies.co.uk/new-outlook-only-showing-recent-emails/"
+        }
+      ]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://365techies.co.uk/new-outlook-only-showing-recent-emails/#webpage",
+      "url": "https://365techies.co.uk/new-outlook-only-showing-recent-emails/",
+      "name": "New Outlook missing old emails",
+      "description": "New Outlook only showing recent emails, not old ones? They're almost certainly safe on the server. How to prove it, fix the sync window, and when to migrate.",
+      "inLanguage": "en-GB",
+      "isPartOf": {
+        "@id": "https://365techies.co.uk/#website"
+      },
+      "about": {
+        "@id": "https://365techies.co.uk/#business"
+      },
+      "breadcrumb": {
+        "@id": "https://365techies.co.uk/new-outlook-only-showing-recent-emails/#breadcrumb"
+      },
+      "primaryImageOfPage": {
+        "@type": "ImageObject",
+        "url": "https://365techies.co.uk/og-image.jpg"
+      },
+      "dateModified": "2026-07-23"
+    },
+    {
+      "@type": "Service",
+      "@id": "https://365techies.co.uk/new-outlook-only-showing-recent-emails/#service",
+      "name": "Outlook missing old emails help",
+      "description": "New Outlook only showing recent emails, not old ones? They're almost certainly safe on the server. How to prove it, fix the sync window, and when to migrate.",
+      "serviceType": "Outlook missing old emails help",
+      "areaServed": {
+        "@type": "AdministrativeArea",
+        "name": "Dorset, UK"
+      },
+      "provider": {
+        "@id": "https://365techies.co.uk/#business"
+      },
+      "url": "https://365techies.co.uk/new-outlook-only-showing-recent-emails/"
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://365techies.co.uk/new-outlook-only-showing-recent-emails/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Has the new Outlook deleted my old emails?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Almost certainly not. The new Outlook reads your mailbox from the server rather than storing everything on your computer, and it keeps only a recent window of messages locally — so older mail can drop out of view without going anywhere. The fastest proof is signing in to your provider's webmail in a browser, where you see the mailbox exactly as it exists on the server. The one genuine exception is mail that only ever lived in a local archive file (a PST) on an older setup — that was never on the server, so a server-first app can't show it, but it still exists on the computer's drive."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why does the new Outlook only show my recent emails and not old ones?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Because it's designed to keep a recent slice of your mailbox on the device and fetch the rest from the server on demand. If a sync or offline setting is set to a short window, the mailbox is very large, or the sync has quietly stuck, older messages fail to appear. There's also a separate case: if years of your email live in PST archive files from Classic Outlook or an old POP account, the new app can't simply open those, so everything before the switch looks missing. Checking webmail tells you which situation you're in. Note that classic Outlook needs a Microsoft 365 subscription or an Office licence that includes it — if new Outlook is all you have ever had, there may be nothing to switch back to."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I get the new Outlook to show all my old emails?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Find the sync or offline setting — the wording is along the lines of 'download email for' or 'days of email to save' — and set it to the longest option available (currently up to 180 days in new Outlook — only classic Outlook has an &ldquo;All&rdquo; setting) available, ideally all. Exact menu names move between versions, so we describe the setting rather than promise a click-path. Then give a large mailbox time to download; folders can fill in gradually. If the mail shows in webmail but still won't appear in the app, signing out and back in, or removing and re-adding the account, often resets a stuck sync. If none of that works, it's worth a professional look."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Where are my old emails if the new Outlook can't see them?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "One of two places. Most commonly they're still in your mailbox on the server, which you can confirm by signing in to webmail in a browser — the app just isn't showing them. Otherwise they're in a local archive file (a PST) created by Classic Outlook, which is very common with older POP accounts that downloaded mail to the computer and removed it from the server. Those files sit on the computer's drive or an old backup, and the new Outlook can't reliably open them — so the mail looks gone when it's actually just in a format the new app doesn't read."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Should I go back to Classic Outlook to see my old emails?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "If your old mail lives in PST archive files, yes — that's the pragmatic move. Classic Outlook opens those archives natively, switching back is free, and Microsoft has committed to supporting it for years to come, so it isn't a dead end. Longer term, the resilient answer is migrating that archive into a server-side mailbox or a properly backed-up store, so any app or phone can see it and a single hard-drive failure can't take a decade of email with it. That's a one-off job worth doing properly rather than fighting the new app indefinitely."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>
+    /* Motion gate: GSAP + ScrollTrigger are DESKTOP-ONLY. Phones, tablets and
+       reduced-motion users skip the ~90KB download and all the ScrollTrigger
+       layout work (the main mobile TBT cost) — reveals just render visible.
+       main.js boots the animations on the motion-ready event. */
+    (function () {
+      var wantMotion = window.innerWidth >= 920
+        && window.matchMedia('(hover: hover)').matches
+        && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!wantMotion) { document.documentElement.classList.add('no-motion'); return; }
+      function inject(src, onload) {
+        var s = document.createElement('script');
+        s.src = src; s.async = true; s.onload = onload;
+        document.head.appendChild(s);
+      }
+      inject('https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js', function () {
+        inject('https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js', function () {
+          window.dispatchEvent(new Event('motion-ready'));
+        });
+      });
+    })();
+  </script>
+</head>
+<body id="top">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="grid-overlay" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <header class="site-header">
+    <div class="status-ticker" aria-hidden="true">
+      <div class="status-ticker__track">
+        <span>&#9679; CALL 01202 775566&ensp;//&ensp;FAMILY BUSINESS SINCE 1995&ensp;//&ensp;DORSET MICROSOFT EDUCATION RESOURCE CENTRE 1998&ndash;2008&ensp;//&ensp;IT SUPPORT FOR MERCEDES-BENZ PENTAGON 1998&ndash;2008&ensp;//&ensp;COMPUTER SALES &amp; SERVICE CENTRE 2008&ndash;2017&ensp;//&ensp;KINSON COMMUNITY CENTRE 2017&ndash;NOW&ensp;//&ensp;ENVIRONMENT AGENCY RIVER AVON WIRELESS LINK SINCE 2015&ensp;//&ensp;DELL SPECIALISTS&ensp;//&ensp;WEBSITE DESIGN, HOSTING &amp; EMAIL&ensp;//&ensp;WORK FROM ANYWHERE &mdash; REMOTE PC ACCESS FOR SUPPORT CUSTOMERS&ensp;//&ensp;MICROSOFT PARTNER &amp; OFFICE SPECIALISTS&ensp;//&ensp;WINDOWS &amp; ANDROID SPECIALISTS&ensp;//&ensp;SAME-DAY RESPONSE &middot; USUALLY MINUTES REMOTELY&ensp;//&ensp;<a href="/heatwave-tech-guide/" tabindex="-1">HEATWAVE? KEEP YOUR TECH COOL &mdash; FREE GUIDE</a>&ensp;//&ensp;<a href="/is-it-down/" tabindex="-1">IS IT DOWN, OR IS IT JUST YOU? CHECK LIVE</a>&ensp;//&ensp;REMOTE IT SUPPORT ACROSS THE WHOLE UK&ensp;//&ensp;MALWAREBYTES PARTNER&ensp;//&ensp;NVIDIA &amp; SCAN PARTNER&ensp;//&ensp;RICHER SOUNDS PARTNER&ensp;//&ensp;BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;//&ensp;PLANS FROM &pound;18.25/MO&ensp;//&ensp;MON&ndash;FRI 9AM&ndash;5PM&ensp;//&ensp;</span>
+        <span>&#9679; CALL 01202 775566&ensp;//&ensp;FAMILY BUSINESS SINCE 1995&ensp;//&ensp;DORSET MICROSOFT EDUCATION RESOURCE CENTRE 1998&ndash;2008&ensp;//&ensp;IT SUPPORT FOR MERCEDES-BENZ PENTAGON 1998&ndash;2008&ensp;//&ensp;COMPUTER SALES &amp; SERVICE CENTRE 2008&ndash;2017&ensp;//&ensp;KINSON COMMUNITY CENTRE 2017&ndash;NOW&ensp;//&ensp;ENVIRONMENT AGENCY RIVER AVON WIRELESS LINK SINCE 2015&ensp;//&ensp;DELL SPECIALISTS&ensp;//&ensp;WEBSITE DESIGN, HOSTING &amp; EMAIL&ensp;//&ensp;WORK FROM ANYWHERE &mdash; REMOTE PC ACCESS FOR SUPPORT CUSTOMERS&ensp;//&ensp;MICROSOFT PARTNER &amp; OFFICE SPECIALISTS&ensp;//&ensp;WINDOWS &amp; ANDROID SPECIALISTS&ensp;//&ensp;SAME-DAY RESPONSE &middot; USUALLY MINUTES REMOTELY&ensp;//&ensp;<a href="/heatwave-tech-guide/" tabindex="-1">HEATWAVE? KEEP YOUR TECH COOL &mdash; FREE GUIDE</a>&ensp;//&ensp;<a href="/is-it-down/" tabindex="-1">IS IT DOWN, OR IS IT JUST YOU? CHECK LIVE</a>&ensp;//&ensp;REMOTE IT SUPPORT ACROSS THE WHOLE UK&ensp;//&ensp;MALWAREBYTES PARTNER&ensp;//&ensp;NVIDIA &amp; SCAN PARTNER&ensp;//&ensp;RICHER SOUNDS PARTNER&ensp;//&ensp;BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;//&ensp;PLANS FROM &pound;18.25/MO&ensp;//&ensp;MON&ndash;FRI 9AM&ndash;5PM&ensp;//&ensp;</span>
+      </div>
+    </div>
+    <div class="header-bar">
+      <a class="logo" href="/" aria-label="365techies — home">
+        <svg class="logo__mark" viewBox="0 0 32 32" aria-hidden="true">
+          <circle cx="16" cy="16" r="13.4" fill="none" stroke="#8fb3d9" stroke-width="2" stroke-linecap="round" stroke-dasharray="63 22" transform="rotate(-55 16 16)"/>
+          <circle cx="16" cy="16" r="9.4" fill="none" stroke="#1d97e3" stroke-width="2" stroke-linecap="round" stroke-dasharray="46 14" transform="rotate(115 16 16)"/>
+          <path d="M12.4 18.4l3.6-5.8 3.4 5.1z" fill="none" stroke="#8fb3d9" stroke-width="1.2"/>
+          <circle cx="12.4" cy="18.4" r="1.6" fill="#00ce1b"/>
+          <circle cx="16" cy="12.6" r="1.6" fill="#1d97e3"/>
+          <circle cx="19.4" cy="17.7" r="1.6" fill="#1d97e3"/>
+        </svg>
+        <span class="logo__text"><em>365</em>techies</span>
+      </a>
+      <nav class="desktop-nav" aria-label="Primary">
+        <a href="/dell-it-support-dorset/">Dell</a>
+        <div class="nav-item has-dropdown">
+          <a href="/home-it-support-subscriptions/" aria-haspopup="true">For Home
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/home-it-support-subscriptions/">Home IT Support</a>
+            <a href="/home-it-support-plans/">Home Support Plans</a>
+            <a href="/it-support-for-home-workers/">Home Workers</a>
+            <a href="/it-support-for-digital-nomads/">Digital Nomads</a>
+            <a href="/family-it-support/">Families</a>
+            <a href="/it-support-for-retired-users/">Retired Users</a>
+            <a href="/it-support-for-disabled-people/">Disabled People</a>
+            <a href="/computer-help-for-seniors/">Help for Seniors</a>
+            <a href="/computer-lessons-for-seniors-bournemouth/">Computer Lessons</a>
+            <a href="/free-courses/">Free Courses</a>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown">
+          <a href="/business-it-support-subscriptions/" aria-haspopup="true">For Business
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/business-it-support-subscriptions/">Business IT Support</a>
+            <a href="/business-it-support-plans/">Business Support Plans</a>
+            <a href="/small-business-it-support/">Small Businesses</a>
+            <a href="/it-support-for-sole-traders/">Sole Traders</a>
+            <a href="/it-support-for-education/">Schools &amp; Education</a>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown">
+          <a href="/services/" aria-haspopup="true">Services
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/services/">All Services &#8594;</a>
+            <span class="dropdown__label dropdown__label--sep">Everyday support</span>
+            <a href="/remote-it-support/">Remote IT Support</a>
+            <a href="/computer-repairs/">Computer Repairs</a>
+            <a href="/preventative-maintenance/">Preventative Maintenance</a>
+            <a href="/microsoft-365-support/">Microsoft 365</a>
+            <a href="/cybersecurity-support/">Cybersecurity</a>
+            <a href="/email-support/">Email Support</a>
+            <a href="/printer-support/">Printer Support</a>
+            <a href="/backup-support/">Backup Support</a>
+            <span class="dropdown__label dropdown__label--sep">WiFi &amp; internet</span>
+            <a href="/wifi-support/">Wi-Fi Support</a>
+            <a href="/mesh-wifi-systems-uk/">Mesh WiFi Buying Guide</a>
+            <a href="/wifi-troubleshooting/">WiFi Troubleshooting</a>
+            <a href="/business-wifi-installation/">Business WiFi</a>
+            <a href="/starlink-internet/">Starlink Internet</a>
+            <a href="/emergency-internet/">365 Emergency Internet</a>
+            <a href="/event-wifi-dorset/">Event WiFi &amp; Streaming</a>
+            <span class="dropdown__label dropdown__label--sep">Computers &amp; hardware</span>
+            <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
+            <a href="/custom-pc-builds/">Custom-Built PCs</a>
+            <a href="/dell-latitude-3520-guide/">Dell Latitude 3520 Guide</a>
+            <a href="/dell-latitude-5000-guide/">Latitude 5000 Buying Guide</a>
+            <a href="/dell-latitude-7000-guide/">Latitude 7000 Buying Guide</a>
+            <a href="/dell-optiplex-guide/">OptiPlex Buying Guide</a>
+            <span class="dropdown__label dropdown__label--sep">Web, AI &amp; off-grid</span>
+            <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
+            <a href="/web-care/">365 Web Care</a>
+            <a href="/agentic-ai-systems/">Agentic AI &amp; Automation</a>
+            <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
+            <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
+            <a href="/off-grid-internet/">Off-Grid Internet</a>
+            <span class="dropdown__label dropdown__label--sep">By sector</span>
+            <a href="/it-support-by-industry/">IT Support by Industry</a>
+            <a href="/business-continuity-internet/">Broadband Emergency Plan</a>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown">
+          <a href="/free-tools/" aria-haspopup="true">Free Tools
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/free-tools/">All Free Tools &#8594;</a>
+            <span class="dropdown__label dropdown__label--sep">Test your setup</span>
+            <a href="/broadband-speed-checker/">Broadband Speed Test</a>
+            <a href="/wifi-signal-test/">365 WiFi Optimizer</a>
+            <a href="/pc-benchmark/">PC Benchmark</a>
+            <a href="/computer-spec-checker/">PC Hardware Checker</a>
+            <a href="/website-checker/">Website Checker</a>
+            <a href="/is-it-down/">Is It Down? Status Checker</a>
+            <span class="dropdown__label dropdown__label--sep">Stay safe</span>
+            <a href="/email-security-checker/">Email Security Checker</a>
+            <a href="/password-breach-checker/">Password Breach Checker</a>
+            <a href="/link-safety-checker/">Link Safety Checker</a>
+            <a href="/spot-the-scam/">Spot the Scam Quiz</a>
+            <a href="/online-safety-course/">Free Online Safety Course</a>
+            <span class="dropdown__label dropdown__label--sep">Apps &amp; builders</span>
+            <a href="/free-pc-health-check/">Free PC Health Check App</a>
+            <a href="/custom-pc-builder/">Custom PC Builder</a>
+            <a href="/victron-system-builder/">Victron System Builder</a>
+            <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown">
+          <a href="/book-service/" aria-haspopup="true">Get Help
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/contact/">Contact Us &#8594;</a>
+            <span class="dropdown__label dropdown__label--sep">Right now</span>
+            <a href="/remote-support/">Start Remote Support</a>
+            <a href="/emergency-it-help/">Emergency IT Help</a>
+            <a href="/scam-pop-up-help-poole/">Scam Pop-up Help</a>
+            <a href="/emergency-internet/">Broadband Emergency (365 van)</a>
+            <span class="dropdown__label dropdown__label--sep">Book &amp; pay</span>
+            <a href="/book-service/">Book a Service</a>
+            <a href="/book-a-collection/">Book a Collection</a>
+            <a href="/quick-quote/">Quick Quote</a>
+            <a href="/pay/">Pay Us</a>
+            <a href="/support-portal/">Support Portal</a>
+            <span class="dropdown__label dropdown__label--sep">Plans &amp; pricing</span>
+            <a href="/monthly-it-support/">Monthly IT Support</a>
+            <a href="/plan-finder/">Plan Finder</a>
+            <a href="/cost-calculator/">Cost Calculator</a>
+            <a href="/switching-it-provider/">Switching to Us</a>
+            <span class="dropdown__label dropdown__label--sep">Fix it yourself</span>
+            <a href="/outlook-problems/">Outlook Problems &amp; Fixes</a>
+            <a href="/wifi-troubleshooting/">WiFi Troubleshooting</a>
+            <a href="/broadband-down/">Broadband Down? Start Here</a>
+            <a href="/splashtop-business-guide/">Remote Access Guide</a>
+            <a href="/heatwave-tech-guide/">Heatwave Tech Guide</a>
+          </div>
+        </div>
+        <a href="/pricing/">Pricing</a>
+        <div class="nav-item has-dropdown">
+          <a href="/about/" aria-haspopup="true">About
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <span class="dropdown__label dropdown__label--sep">Who we are</span>
+            <a href="/about/">About 365 Techies</a>
+            <a href="/our-values/">Our Values</a>
+            <a href="/meet-the-team/">Meet the Team</a>
+            <a href="/why-choose-365-techies/">Why Choose Us</a>
+            <a href="/refer-a-friend/">Refer a Friend</a>
+            <span class="dropdown__label dropdown__label--sep">Proof</span>
+            <a href="/reviews/">Reviews</a>
+            <a href="/case-studies/">Case Studies</a>
+            <a href="/our-guarantees/">Our Guarantees</a>
+            <a href="/accreditations/">Accreditations</a>
+            <a href="/service-level-agreement/">Service Level Agreement</a>
+            <span class="dropdown__label dropdown__label--sep">Where we work</span>
+            <a href="/areas-covered/">Areas Covered</a>
+            <a href="/it-support-uk-europe/">UK &amp; Europe</a>
+          </div>
+        </div>
+        <a href="/contact/">Contact</a>
+      </nav>
+      <div class="header-actions">
+        <button type="button" class="nav-search" data-search-open aria-label="Search this website" aria-keyshortcuts="/ Control+K">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <span class="nav-search__label">Search</span>
+          <span class="nav-search__k" aria-hidden="true"><kbd>/</kbd></span>
+        </button>
+        <a href="tel:+441202775566" class="nav-phone" aria-label="Call 365 Techies on 01202 775566">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg><span class="nav-phone__num">01202 775566</span>
+        </a>
+        <a href="/portal/" class="nav-signin" aria-label="Sign in to your 365 customer portal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Sign in
+        </a>
+        <a href="/book-service/" class="nav-book" aria-label="Book a computer service">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v3M17 3v3M4 8h16M5 6h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z"/></svg>Book
+        </a>
+        <a href="/sos/" class="nav-sos" target="_blank" rel="noopener" aria-label="SOS emergency remote support — download Splashtop SOS">
+          <span class="sos-dot" aria-hidden="true"></span>SOS<span class="nav-sos__long">&nbsp;REMOTE SUPPORT</span>
+        </a>
+        <button class="mobile-menu-button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="menu-backdrop" aria-hidden="true"></div>
+  <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
+    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <nav class="mobile-menu__nav" aria-label="Mobile">
+      <a href="/">Home</a>
+      <a href="/dell-it-support-dorset/">Dell</a>
+      <a href="/pricing/">Pricing</a>
+      <a href="/contact/">Contact</a>
+      <a href="/portal/">Sign in / your portal</a>
+      <details class="m-group">
+        <summary>For Home</summary>
+        <div class="m-group__links">
+          <a href="/home-it-support-subscriptions/">Home IT Support</a>
+          <a href="/home-it-support-plans/">Home Support Plans</a>
+          <a href="/it-support-for-home-workers/">Home Workers</a>
+          <a href="/it-support-for-digital-nomads/">Digital Nomads</a>
+          <a href="/family-it-support/">Families</a>
+          <a href="/it-support-for-retired-users/">Retired Users</a>
+          <a href="/it-support-for-disabled-people/">Disabled People</a>
+          <a href="/computer-help-for-seniors/">Help for Seniors</a>
+          <a href="/computer-lessons-for-seniors-bournemouth/">Computer Lessons</a>
+          <a href="/free-courses/">Free Courses</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>For Business</summary>
+        <div class="m-group__links">
+          <a href="/business-it-support-subscriptions/">Business IT Support</a>
+          <a href="/business-it-support-plans/">Business Support Plans</a>
+          <a href="/small-business-it-support/">Small Businesses</a>
+          <a href="/it-support-for-sole-traders/">Sole Traders</a>
+          <a href="/it-support-for-education/">Schools &amp; Education</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>Services</summary>
+        <div class="m-group__links">
+          <a href="/services/">All Services &#8594;</a>
+          <span class="dropdown__label dropdown__label--sep">Everyday support</span>
+          <a href="/remote-it-support/">Remote IT Support</a>
+          <a href="/computer-repairs/">Computer Repairs</a>
+          <a href="/preventative-maintenance/">Preventative Maintenance</a>
+          <a href="/microsoft-365-support/">Microsoft 365</a>
+          <a href="/cybersecurity-support/">Cybersecurity</a>
+          <a href="/email-support/">Email Support</a>
+          <a href="/printer-support/">Printer Support</a>
+          <a href="/backup-support/">Backup Support</a>
+          <span class="dropdown__label dropdown__label--sep">WiFi &amp; internet</span>
+          <a href="/wifi-support/">Wi-Fi Support</a>
+          <a href="/mesh-wifi-systems-uk/">Mesh WiFi Buying Guide</a>
+          <a href="/wifi-troubleshooting/">WiFi Troubleshooting</a>
+          <a href="/business-wifi-installation/">Business WiFi</a>
+          <a href="/starlink-internet/">Starlink Internet</a>
+          <a href="/emergency-internet/">365 Emergency Internet</a>
+          <a href="/event-wifi-dorset/">Event WiFi &amp; Streaming</a>
+          <span class="dropdown__label dropdown__label--sep">Computers &amp; hardware</span>
+          <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
+          <a href="/custom-pc-builds/">Custom-Built PCs</a>
+          <a href="/dell-latitude-3520-guide/">Dell Latitude 3520 Guide</a>
+          <a href="/dell-latitude-5000-guide/">Latitude 5000 Buying Guide</a>
+          <a href="/dell-latitude-7000-guide/">Latitude 7000 Buying Guide</a>
+          <a href="/dell-optiplex-guide/">OptiPlex Buying Guide</a>
+          <span class="dropdown__label dropdown__label--sep">Web, AI &amp; off-grid</span>
+          <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
+          <a href="/web-care/">365 Web Care</a>
+          <a href="/agentic-ai-systems/">Agentic AI &amp; Automation</a>
+          <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
+          <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
+          <a href="/off-grid-internet/">Off-Grid Internet</a>
+          <span class="dropdown__label dropdown__label--sep">By sector</span>
+          <a href="/it-support-by-industry/">IT Support by Industry</a>
+          <a href="/business-continuity-internet/">Broadband Emergency Plan</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>Free Tools</summary>
+        <div class="m-group__links">
+          <a href="/free-tools/">All Free Tools &#8594;</a>
+          <span class="dropdown__label dropdown__label--sep">Test your setup</span>
+          <a href="/broadband-speed-checker/">Broadband Speed Test</a>
+          <a href="/wifi-signal-test/">365 WiFi Optimizer</a>
+          <a href="/pc-benchmark/">PC Benchmark</a>
+          <a href="/computer-spec-checker/">PC Hardware Checker</a>
+          <a href="/website-checker/">Website Checker</a>
+          <a href="/is-it-down/">Is It Down? Status Checker</a>
+          <span class="dropdown__label dropdown__label--sep">Stay safe</span>
+          <a href="/email-security-checker/">Email Security Checker</a>
+          <a href="/password-breach-checker/">Password Breach Checker</a>
+          <a href="/link-safety-checker/">Link Safety Checker</a>
+          <a href="/spot-the-scam/">Spot the Scam Quiz</a>
+          <a href="/online-safety-course/">Free Online Safety Course</a>
+          <span class="dropdown__label dropdown__label--sep">Apps &amp; builders</span>
+          <a href="/free-pc-health-check/">Free PC Health Check App</a>
+          <a href="/custom-pc-builder/">Custom PC Builder</a>
+          <a href="/victron-system-builder/">Victron System Builder</a>
+          <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>Get Help</summary>
+        <div class="m-group__links">
+          <a href="/contact/">Contact Us &#8594;</a>
+          <span class="dropdown__label dropdown__label--sep">Right now</span>
+          <a href="/remote-support/">Start Remote Support</a>
+          <a href="/emergency-it-help/">Emergency IT Help</a>
+          <a href="/scam-pop-up-help-poole/">Scam Pop-up Help</a>
+          <a href="/emergency-internet/">Broadband Emergency (365 van)</a>
+          <span class="dropdown__label dropdown__label--sep">Book &amp; pay</span>
+          <a href="/book-service/">Book a Service</a>
+          <a href="/book-a-collection/">Book a Collection</a>
+          <a href="/quick-quote/">Quick Quote</a>
+          <a href="/pay/">Pay Us</a>
+          <a href="/support-portal/">Support Portal</a>
+          <span class="dropdown__label dropdown__label--sep">Plans &amp; pricing</span>
+          <a href="/monthly-it-support/">Monthly IT Support</a>
+          <a href="/plan-finder/">Plan Finder</a>
+          <a href="/cost-calculator/">Cost Calculator</a>
+          <a href="/switching-it-provider/">Switching to Us</a>
+          <span class="dropdown__label dropdown__label--sep">Fix it yourself</span>
+          <a href="/outlook-problems/">Outlook Problems &amp; Fixes</a>
+          <a href="/wifi-troubleshooting/">WiFi Troubleshooting</a>
+          <a href="/broadband-down/">Broadband Down? Start Here</a>
+          <a href="/splashtop-business-guide/">Remote Access Guide</a>
+          <a href="/heatwave-tech-guide/">Heatwave Tech Guide</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>About &amp; Trust</summary>
+        <div class="m-group__links">
+          <span class="dropdown__label dropdown__label--sep">Who we are</span>
+          <a href="/about/">About 365 Techies</a>
+          <a href="/our-values/">Our Values</a>
+          <a href="/meet-the-team/">Meet the Team</a>
+          <a href="/why-choose-365-techies/">Why Choose Us</a>
+          <a href="/refer-a-friend/">Refer a Friend</a>
+          <span class="dropdown__label dropdown__label--sep">Proof</span>
+          <a href="/reviews/">Reviews</a>
+          <a href="/case-studies/">Case Studies</a>
+          <a href="/our-guarantees/">Our Guarantees</a>
+          <a href="/accreditations/">Accreditations</a>
+          <a href="/service-level-agreement/">Service Level Agreement</a>
+          <span class="dropdown__label dropdown__label--sep">Where we work</span>
+          <a href="/areas-covered/">Areas Covered</a>
+          <a href="/it-support-uk-europe/">UK &amp; Europe</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>Resources &amp; Info</summary>
+        <div class="m-group__links">
+          <a href="/resources/">Resources &amp; Guides</a>
+          <a href="/it-advice/">IT Advice</a>
+          <a href="/it-support-cost-guide/">IT Cost Guide</a>
+          <a href="/it-jargon-buster/">IT Jargon Buster</a>
+          <a href="/cybersecurity-checklist/">Cybersecurity Checklist</a>
+          <a href="/cyber-threats/">Cyber Threats Explained</a>
+          <a href="/faqs/">FAQs</a>
+          <a href="/system-status/">System Status</a>
+          <a href="/privacy-policy/">Privacy Policy</a>
+          <a href="/cookie-policy/">Cookie Policy</a>
+          <a href="/terms/">Terms of Service</a>
+          <a href="/accessibility-statement/">Accessibility</a>
+        </div>
+      </details>
+    </nav>
+    <div class="mobile-menu__plans">
+      <a class="button sos" href="/sos/" target="_blank" rel="noopener"><span class="sos-dot" aria-hidden="true"></span>SOS Remote Support</a>
+      <a class="button primary" href="/book-service/">Book a Service</a>
+      <a class="button secondary" href="/home-it-support-plans/">Home Plans</a>
+      <a class="button secondary" href="/business-it-support-plans/">Business Plans</a>
+    </div>
+    <p class="mobile-menu__foot mono"><a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a><br /><a href="tel:+441202775566">01202 775566</a><br /><a href="sms:+447520615332">Text only: 07520 615332</a></p>
+  </aside>
+
+  <main id="main">
+    <section class="page-hero" aria-label="Introduction">
+      <div class="page-hero__inner">
+        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <a href="/outlook-problems/">Outlook Problems</a> <span>/</span> <span aria-current="page">New Outlook missing old emails</span></nav>
+        <p class="eyebrow mono">// OUTLOOK HELP</p>
+        <h1>New Outlook only showing recent emails? Your old mail almost certainly isn't gone</h1>
+        <p class="lede">You've switched to the new Outlook and years of email look like they've vanished — only recent messages are showing. Take a breath: in almost every case the old mail is safe on the server, and the app is simply showing you a recent slice of it. This page shows you how to prove your mail exists in two minutes, which setting controls what you see, and when it's really a job for a proper migration. Rated 4.9 on Google.</p>
+        <div class="page-hero__cta">
+          <a href="/remote-support/" class="button primary button--lg">Get it fixed remotely</a>
+          <a href="tel:+441202775566" class="button secondary button--lg">Call 01202 775566</a>
+        </div>
+        <ul class="page-hero__chips mono"><li>&#9679; No-fix-no-fee remote support</li><li>&#9679; Trading since 1995</li><li>&#9679; Rated 4.9 on Google</li></ul>
+      </div>
+    </section>
+
+    <section class="section" aria-label="Years of email look gone? They almost certainly aren't">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">/01 &mdash; START HERE</p>
+        <h2 class="section-title" data-title>Years of email look gone? They almost certainly aren't<span class="title-underline"></span></h2>
+<p>You've opened the new Outlook and years of email have apparently vanished — the inbox only goes back a few weeks or months, and folders that held a decade of correspondence look nearly empty. It's a horrible moment, so let's deal with the fear first: <strong>in almost every case, nothing has been deleted.</strong> Your old mail is still sitting in your mailbox on the server.</p><p>The new Outlook works differently from the Outlook many of us grew up with. Rather than downloading and keeping everything on your computer, it reads your mailbox from the server and keeps a recent slice of it locally for speed. When that slice is all you can see, it feels like data loss — but it's a display and sync issue, not a deletion.</p><p>On this page we'll show you how to prove your mail exists in about two minutes, where the setting that limits your view lives, why search can make things look worse than they are, and the one genuine exception — old archive files — where the right answer is a proper migration.</p>
+      </div>
+    </section>
+    <section class="section" aria-label="Fix this now with remote support">
+      <div class="wrap" style="max-width:860px;margin:0 auto">
+        <div data-reveal style="border:1px solid rgba(0,206,27,0.35);background:rgba(0,206,27,0.06);border-radius:16px;padding:1.6rem 1.8rem;text-align:center">
+          <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// NEED THIS FIXED RIGHT NOW?</p>
+          <p style="font-size:1.08rem;margin:0 0 1.1rem">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
+          <p style="margin:0;display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap">
+            <a class="button primary" href="/sos/">Start SOS Remote Support</a>
+            <a class="button secondary" href="tel:+441202775566">Call 01202 775566</a>
+          </p>
+        </div>
+      </div>
+    </section>
+    <section class="section section--alt" aria-label="Two minutes to prove your mail still exists">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">/02 &mdash; QUICK PROOF</p>
+        <h2 class="section-title" data-title>Two minutes to prove your mail still exists<span class="title-underline"></span></h2>
+<p>Before touching any settings, get your evidence. Open a web browser and sign in to your email provider's webmail — for Microsoft 365 and Outlook.com addresses that means signing in at office.com or outlook.com; other providers (BT, Gmail, your own domain's host) have their own webmail pages. Webmail shows you the mailbox as it actually exists on the server, with no app in the way.</p><p>If your old email is all there in webmail — and it usually is — you can relax. Nothing is lost, and the rest of this page is about persuading the app on your computer to show what the server already holds.</p><p>If the old mail <em>isn't</em> in webmail either, don't panic yet: this usually means it never lived on the server in the first place. Years of email from an older setup — particularly POP accounts and Classic Outlook — often sit in a local archive file on the computer instead. Skip to the last section below, because that's a different job with a happy ending of its own.</p>
+      </div>
+    </section>
+    <section class="section" aria-label="The sync window: why the app only shows a recent slice">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">/03 &mdash; THE SETTING</p>
+        <h2 class="section-title" data-title>The sync window: why the app only shows a recent slice<span class="title-underline"></span></h2>
+<p>Mail apps limit how much they keep on the device to save space and stay fast. Somewhere in the new Outlook's settings — and in Classic Outlook's account settings — there's a control that decides how far back that local slice reaches. Look for wording along the lines of <strong>"download email for"</strong>, <strong>"days of email to save"</strong> or <strong>"sync email from"</strong>; Microsoft moves the exact names and locations around between updates, which is why we're describing the setting rather than promising a click-path that may be wrong by the time you read this.</p><p>Set it to the longest window available — ideally "all" — then be patient. A large mailbox can take a while to come down, especially on a slower connection, and folders may fill in gradually rather than all at once.</p><p>Two honest notes. First, even with a short window the app should fetch older mail from the server when you scroll or search — but this fails often enough that lengthening the setting is still worth doing. Second, if the app is signed in but simply refuses to sync, signing out and back in — or removing and re-adding the account — resets a stuck sync more often than it should need to.</p>
+      </div>
+    </section>
+    <section class="section section--alt" aria-label="The mail is there — but search says it isn't">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">/04 &mdash; SEARCH QUIRK</p>
+        <h2 class="section-title" data-title>The mail is there — but search says it isn't<span class="title-underline"></span></h2>
+<p>A common variation: the old messages exist, and you can even reach them by scrolling, but typing a name or subject into search returns nothing older than a few weeks. That's a search problem, not a missing-mail problem, and it deserves its own page — see <a href="/outlook-search-not-finding-old-emails/">Outlook search not finding old emails</a> for the full treatment.</p><p>The quick cross-checks: browse the folder sorted by date instead of searching, and try the same search in webmail. Webmail searches the server's full index, so if it finds the message and the app doesn't, you've confirmed the mail is safe and the fault is purely in the app's search.</p><p>If you're hitting several of these annoyances at once — missing mail, broken search, calendar oddities — our <a href="/outlook-problems/">Outlook problems hub</a> gathers the common new-Outlook complaints in one place, because they often share a cause.</p>
+      </div>
+    </section>
+    <section class="section" aria-label="When it's not worth fighting — and what we'd do">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">/05 &mdash; HONEST ADVICE</p>
+        <h2 class="section-title" data-title>When it's not worth fighting — and what we'd do<span class="title-underline"></span></h2>
+<p>First, the free outcome: if webmail shows everything and lengthening the sync window brings it back into the app, you're done. Don't pay anyone — including us — for that.</p><p>Where we'd stop fighting: if your old email lives in PST archive files built up over years of Classic Outlook or an old POP account, the new Outlook is simply the wrong tool. Its support for opening old archives has been arriving slowly and unevenly, and we wouldn't gamble a decade of correspondence on it. <a href="/how-to-go-back-to-classic-outlook/">Going back to Classic Outlook</a> is free, legitimate, and opens those archives natively — and Microsoft has committed to supporting it for years to come.</p><p>The durable fix is a one-off migration: getting the archive off a single ageing hard drive and into a server-side mailbox or a properly backed-up store, so every app and phone can see it and one disk failure can't take it away. That's careful, slightly tedious work with real pitfalls — mailbox size limits, duplicates, corrupt archive files — and it's a job we do regularly as part of our <a href="/email-support/">email support</a>. Remote-first, no-fix-no-fee: if we can't sort it, you don't pay. And if this page hasn't sorted it, that's exactly what we're for — 01202 775566.</p>
+      </div>
+    </section>
+    <section class="section" aria-label="Related">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">// RELATED</p>
+<p><strong>Related guides:</strong> <a href="/outlook-problems/">Outlook problems hub</a> · <a href="/outlook-search-not-finding-old-emails/">Outlook search not finding old emails</a> · <a href="/how-to-go-back-to-classic-outlook/">Go back to Classic Outlook</a> · <a href="/email-support/">Email support from 365 Techies</a></p>
+      </div>
+    </section>
+    <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
+      <div class="wrap">
+        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
+        <div class="faq-wrap">
+        <details class="faq" data-reveal>
+          <summary>Has the new Outlook deleted my old emails?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Almost certainly not. The new Outlook reads your mailbox from the server rather than storing everything on your computer, and it keeps only a recent window of messages locally — so older mail can drop out of view without going anywhere. The fastest proof is signing in to your provider's webmail in a browser, where you see the mailbox exactly as it exists on the server. The one genuine exception is mail that only ever lived in a local archive file (a PST) on an older setup — that was never on the server, so a server-first app can't show it, but it still exists on the computer's drive.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Why does the new Outlook only show my recent emails and not old ones?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Because it's designed to keep a recent slice of your mailbox on the device and fetch the rest from the server on demand. If a sync or offline setting is set to a short window, the mailbox is very large, or the sync has quietly stuck, older messages fail to appear. There's also a separate case: if years of your email live in PST archive files from Classic Outlook or an old POP account, the new app can't simply open those, so everything before the switch looks missing. Checking webmail tells you which situation you're in. Note that classic Outlook needs a Microsoft 365 subscription or an Office licence that includes it — if new Outlook is all you have ever had, there may be nothing to switch back to.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>How do I get the new Outlook to show all my old emails?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Find the sync or offline setting — the wording is along the lines of 'download email for' or 'days of email to save' — and set it to the longest option available (currently up to 180 days in new Outlook — only classic Outlook has an &ldquo;All&rdquo; setting) available, ideally all. Exact menu names move between versions, so we describe the setting rather than promise a click-path. Then give a large mailbox time to download; folders can fill in gradually. If the mail shows in webmail but still won't appear in the app, signing out and back in, or removing and re-adding the account, often resets a stuck sync. If none of that works, it's worth a professional look.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Where are my old emails if the new Outlook can't see them?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>One of two places. Most commonly they're still in your mailbox on the server, which you can confirm by signing in to webmail in a browser — the app just isn't showing them. Otherwise they're in a local archive file (a PST) created by Classic Outlook, which is very common with older POP accounts that downloaded mail to the computer and removed it from the server. Those files sit on the computer's drive or an old backup, and the new Outlook can't reliably open them — so the mail looks gone when it's actually just in a format the new app doesn't read.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Should I go back to Classic Outlook to see my old emails?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>If your old mail lives in PST archive files, yes — that's the pragmatic move. Classic Outlook opens those archives natively, switching back is free, and Microsoft has committed to supporting it for years to come, so it isn't a dead end. Longer term, the resilient answer is migrating that archive into a server-side mailbox or a properly backed-up store, so any app or phone can see it and a single hard-drive failure can't take a decade of email with it. That's a one-off job worth doing properly rather than fighting the new app indefinitely.</p></div>
+        </details>
+        </div>
+      </div>
+    </section>
+    <section class="cta-band" aria-label="Get started">
+      <div class="cta-band__inner">
+        <h2 data-title>Want us to prove your mail is safe?<span class="title-underline title-underline--center"></span></h2>
+        <p class="lede lede--center" data-reveal>Remote-first, no-fix-no-fee help from a Bournemouth family firm — we'll check the server with you before touching anything. Call 01202 775566.</p>
+        <div class="hero-buttons hero-buttons--center" data-reveal>
+          <a href="/remote-support/" class="button primary button--lg">Get it fixed remotely</a>
+          <a href="tel:+441202775566" class="button secondary button--lg">Call 01202 775566</a>
+        </div>
+        <p class="cta__contact mono" data-reveal>01202 775566 &middot; help@365techies.co.uk &middot; MON&ndash;FRI 9AM&ndash;5PM</p>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <div class="footer-areas">
+      <p class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</p>
+      <nav class="footer-areas__links" aria-label="Areas we cover">
+        <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
+        <a href="/it-support-bournemouth/">Bournemouth</a>
+        <a href="/it-support-poole/">Poole</a>
+        <a href="/it-support-christchurch/">Christchurch</a>
+        <a href="/it-support-ferndown/">Ferndown</a>
+        <a href="/it-support-wimborne/">Wimborne</a>
+        <a href="/it-support-broadstone/">Broadstone</a>
+        <a href="/it-support-verwood/">Verwood</a>
+        <a href="/it-support-ringwood/">Ringwood</a>
+        <a href="/it-support-wareham/">Wareham</a>
+        <a href="/it-support-swanage/">Swanage</a>
+        <a href="/it-support-weymouth/">Weymouth</a>
+        <a href="/it-support-dorchester/">Dorchester</a>
+        <a href="/it-support-blandford-forum/">Blandford Forum</a>
+        <a href="/it-support-shaftesbury/">Shaftesbury</a>
+        <a href="/it-support-gillingham/">Gillingham</a>
+        <a href="/it-support-sherborne/">Sherborne</a>
+        <a href="/it-support-new-forest/">New Forest</a>
+        <a href="/it-support-lymington/">Lymington</a>
+        <a href="/it-support-new-milton/">New Milton</a>
+        <a href="/it-support-brockenhurst/">Brockenhurst</a>
+        <a href="/it-support-southampton/">Southampton</a>
+        <a class="footer-areas__all" href="/areas-covered/">View all areas &#8594;</a>
+      </nav>
+    </div>
+    <div class="site-footer__grid">
+      <div class="site-footer__brand">
+        <a class="logo" href="/">
+          <svg class="logo__mark" viewBox="0 0 32 32" aria-hidden="true">
+            <circle cx="16" cy="16" r="13.4" fill="none" stroke="#8fb3d9" stroke-width="2" stroke-linecap="round" stroke-dasharray="63 22" transform="rotate(-55 16 16)"/>
+            <circle cx="16" cy="16" r="9.4" fill="none" stroke="#1d97e3" stroke-width="2" stroke-linecap="round" stroke-dasharray="46 14" transform="rotate(115 16 16)"/>
+            <path d="M12.4 18.4l3.6-5.8 3.4 5.1z" fill="none" stroke="#8fb3d9" stroke-width="1.2"/>
+            <circle cx="12.4" cy="18.4" r="1.6" fill="#00ce1b"/>
+            <circle cx="16" cy="12.6" r="1.6" fill="#1d97e3"/>
+            <circle cx="19.4" cy="17.7" r="1.6" fill="#1d97e3"/>
+          </svg>
+          <span class="logo__text"><em>365</em>techies</span>
+        </a>
+        <p>The IT support experts. A family-run business established in 1995 — Dell hardware specialists, Microsoft partners and certified Microsoft Office Specialists, providing monthly IT support for homes and businesses across Bournemouth, Poole and Dorset.</p>
+        <div class="partner-badges" aria-label="Accreditations">
+          <span class="partner-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="8" r="5"/><path d="M8.5 12.5 7 21l5-2.5L17 21l-1.5-8.5"/></svg>Family Business &middot; Est. 1995</span>
+          <span class="partner-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 18h18M9 22h6"/></svg>Dell Specialist</span>
+          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>Microsoft Partner</span>
+          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>Microsoft Office Specialist</span>
+          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>Malwarebytes Partner</span>
+          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/></svg>NVIDIA &amp; Scan Partner</span>
+          <a class="partner-badge partner-badge--gold" href="https://www.google.com/maps?cid=5924622613303465737" target="_blank" rel="noopener" title="See our 4.9-star reviews on Google"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.5 1.6 6.7L12 17l-6.2 3.6 1.6-6.7L2.2 8.9l6.9-.6z"/></svg>4.9 on Google</a>
+          <a class="partner-badge partner-badge--green" href="/sustainability/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 20c0-9 7-16 16-16 0 9-7 16-16 16z"/><path d="M4 20C9 15 13 11 18 9"/></svg>Sustainable Dorset Member</a>
+        </div>
+      </div>
+      <nav aria-label="Support links">
+        <p class="site-footer__head mono">SUPPORT</p>
+        <a href="/join/">Join the 365 Club &mdash; Free</a>
+        <a href="/book-service/">Book a Service</a>
+        <a href="/book-a-collection/">Book a Collection</a>
+        <a href="/pay/">Pay Us</a>
+        <a href="/remote-support/">Start Remote Support</a>
+        <a href="/emergency-it-help/">Emergency IT Help</a>
+        <a href="/ive-been-scammed-what-to-do/">I&rsquo;ve Been Scammed</a>
+        <a href="/i-think-ive-been-hacked/">If You&rsquo;ve Been Hacked</a>
+        <a href="/scam-pop-up-help-poole/">Scam Pop-up Help (Poole)</a>
+        <a href="/virus-removal-christchurch/">Virus Removal (Christchurch)</a>
+        <a href="/outlook-problems/">Outlook Problems &amp; Fixes</a>
+        <a href="/is-it-down/">Is Something Down?</a>
+        <a href="/support-portal/">Support Portal</a>
+        <a href="/splashtop-business-guide/">Remote Access Guide</a>
+        <a href="/dell-latitude-3520-guide/">Dell Laptop Guide</a>
+            <a href="/dell-latitude-5000-guide/">Latitude 5000 Guide</a>
+            <a href="/dell-latitude-7000-guide/">Latitude 7000 Guide</a>
+        <a href="/dell-optiplex-guide/">Dell Desktop Guide</a>
+        <a href="/heatwave-tech-guide/">Heatwave Tech Guide</a>
+            <a href="/why-computer-prices-have-gone-up/">Why Prices Went Up</a>
+        <a href="/monthly-it-support/">Monthly IT Support</a>
+        <a href="/home-it-support-subscriptions/">Home IT Support</a>
+        <a href="/business-it-support-subscriptions/">Business IT Support</a>
+        <a href="/computer-repairs/">Computer Repairs</a>
+        <a href="/switching-it-provider/">Switching to Us</a>
+        <a href="/pricing/">Pricing</a>
+        <a href="/quick-quote/">Quick Quote</a>
+        <a href="/free-it-health-check/">Free IT Health Check</a>
+      </nav>
+      <nav aria-label="Free tools links">
+        <p class="site-footer__head mono">FREE TOOLS</p>
+        <a href="/free-courses/">Free Courses</a>
+        <a href="/free-tools/">All Free Tools &#8594;</a>
+        <a href="/free-pc-health-check/">Free PC Health Check App</a>
+        <a href="/online-safety-course/">Free Online Safety Course</a>
+        <a href="/broadband-speed-checker/">Broadband Speed Test</a>
+        <a href="/wifi-signal-test/">365 WiFi Optimizer</a>
+        <a href="/pc-benchmark/">PC Benchmark</a>
+        <a href="/website-checker/">Website Checker</a>
+        <a href="/email-security-checker/">Email Security Checker</a>
+        <a href="/password-breach-checker/">Password Breach Checker</a>
+        <a href="/link-safety-checker/">Link Safety Checker</a>
+        <a href="/password-generator/">Password Generator</a>
+        <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
+        <a href="/custom-pc-builder/">Custom PC Builder</a>
+        <a href="/victron-system-builder/">Victron System Builder</a>
+        <a href="/solar-battery-calculator/">Battery &amp; Solar Calculator</a>
+        <a href="/cost-calculator/">Cost Calculator</a>
+        <a href="/plan-finder/">Plan Finder</a>
+        <a href="/spot-the-scam/">Spot the Scam Quiz</a>
+        <a href="/is-it-down/">Is It Down? Status Checker</a>
+        <a href="/computer-spec-checker/">PC Hardware Checker</a>
+      </nav>
+      <nav aria-label="Services links">
+        <p class="site-footer__head mono">SERVICES</p>
+        <a href="/services/">All Services</a>
+        <a href="/it-support-by-industry/">IT Support by Industry</a>
+        <p class="site-footer__subhead mono">Support &amp; security</p>
+        <a href="/preventative-maintenance/">Preventative Maintenance</a>
+        <a href="/remote-it-support/">Remote IT Support</a>
+        <a href="/microsoft-365-support/">Microsoft 365</a>
+        <a href="/cybersecurity-support/">Cybersecurity</a>
+        <a href="/malwarebytes-premium/">Malwarebytes Premium &amp; VPN</a>
+        <a href="/disaster-recovery/">Disaster Recovery</a>
+        <a href="/gdpr-it-compliance/">GDPR &amp; IT Compliance</a>
+        <a href="/windows-11-support/">Windows 11</a>
+        <a href="/windows-10-end-of-life/">Windows 10 End of Life</a>
+        <a href="/email-support/">Email Support</a>
+        <a href="/wifi-support/">Wi-Fi Support</a>
+        <a href="/printer-support/">Printer Support</a>
+        <a href="/backup-support/">Backup Support</a>
+        <p class="site-footer__subhead mono">Hardware &amp; setup</p>
+        <a href="/new-computer-setup/">New Computer Setup</a>
+        <a href="/new-laptop-set-up-bournemouth/">New Laptop Set Up for You</a>
+        <a href="/transfer-photos-to-a-new-computer-bournemouth/">Transfer Files to a New PC</a>
+        <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
+        <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
+            <a href="/refurbished-dell-latitude-3000/">Latitude 3000 Series</a>
+            <a href="/refurbished-dell-latitude-5000/">Latitude 5000 Series</a>
+            <a href="/refurbished-dell-latitude-7000/">Latitude 7000 Series</a>
+            <a href="/refurbished-dell-optiplex-3000/">OptiPlex 3000 Tier</a>
+            <a href="/refurbished-dell-optiplex-5000/">OptiPlex 5000 Tier</a>
+            <a href="/refurbished-dell-optiplex-7000/">OptiPlex 7000 Tier</a>
+        <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
+        <a href="/dell-support-bournemouth/">Dell Support Bournemouth</a>
+        <a href="/dell-support-poole/">Dell Support Poole</a>
+        <a href="/refurbished-dell-laptops-bournemouth/">Refurbished Dell Laptops</a>
+        <a href="/second-hand-office-computers-poole/">Refurbished Office Computers</a>
+        <a href="/custom-pc-builds/">Custom-Built PCs</a>
+        <a href="/threadripper-workstations/">Threadripper Workstations</a>
+        <a href="/gaming-pcs/">Gaming PCs</a>
+        <a href="/content-creator-pcs/">Content Creator PCs</a>
+        <a href="/home-cinema-entertainment/">Home Cinema &amp; AV</a>
+        <p class="site-footer__subhead mono">Connectivity &amp; energy</p>
+        <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
+        <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
+        <a href="/lithium-battery-installs-dorset/">Leisure &amp; Marine Batteries</a>
+        <a href="/rural-and-farm-wifi-dorset/">Rural &amp; Farm Wi-Fi</a>
+        <a href="/broadband-to-a-boat-mooring/">Broadband to a Boat Mooring</a>
+        <a href="/wifi-for-a-shepherds-hut/">Wi-Fi for a Shepherd&rsquo;s Hut</a>
+        <a href="/starlink-internet/">Starlink Internet</a>
+        <p class="site-footer__subhead mono">Web, AI &amp; robotics</p>
+        <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
+        <a href="/agentic-ai-systems/">Agentic AI Systems</a>
+        <a href="/365-ai-os/">365 AI OS</a>
+        <a href="/ai-voice-agents/">AI Voice Agents</a>
+        <a href="/unitree-robots/">Unitree Robots</a>
+        <p class="site-footer__subhead mono">IT support by industry</p>
+        <a href="/it-support-for-hotels-holiday-lets/">Hotels &amp; Holiday Lets</a>
+        <a href="/it-support-for-vets/">Veterinary Practices</a>
+        <a href="/it-support-for-salons-beauty/">Salons &amp; Beauty</a>
+        <a href="/it-support-for-financial-advisers/">Financial Advisers</a>
+        <a href="/it-support-for-recruitment-agencies/">Recruitment Agencies</a>
+        <a href="/it-support-for-garages-automotive/">Garages &amp; Automotive</a>
+        <a href="/it-support-for-gyms-fitness/">Gyms &amp; Fitness</a>
+        <a href="/it-support-for-ecommerce/">E-commerce &amp; Online Retail</a>
+        <a href="/it-support-for-property-management/">Property Management</a>
+        <a href="/it-support-for-manufacturing/">Manufacturing &amp; Engineering</a>
+        <a href="/it-support-for-nurseries-dorset/">Nurseries &amp; Childcare</a>
+        <a href="/it-support-for-churches-faith/">Churches &amp; Faith Groups</a>
+      </nav>
+      <nav aria-label="Who we help links">
+        <p class="site-footer__head mono">WHO WE HELP</p>
+        <a href="/family-it-support/">Families</a>
+        <a href="/it-support-for-retired-users/">Retired Users</a>
+        <a href="/it-support-for-disabled-people/">Disabled People</a>
+        <a href="/computer-help-for-seniors/">Help for Seniors</a>
+        <a href="/it-support-for-home-workers/">Home Workers</a>
+        <a href="/it-support-for-digital-nomads/">Digital Nomads</a>
+        <a href="/it-support-for-sole-traders/">Sole Traders</a>
+        <a href="/small-business-it-support/">Small Businesses</a>
+      </nav>
+      <nav aria-label="Company links">
+        <p class="site-footer__head mono">COMPANY</p>
+        <a href="/about/">About</a>
+        <a href="/meet-the-team/">Meet the Team</a>
+        <a href="/why-choose-365-techies/">Why Choose Us</a>
+        <a href="/our-guarantees/">Our Guarantees</a>
+        <a href="/our-values/">Our Values &amp; Promises</a>
+        <a href="/how-we-price/">How We Price</a>
+        <a href="/case-studies/">Case Studies</a>
+        <a href="/reviews/">Reviews</a>
+        <a href="/areas-covered/">Areas Covered</a>
+        <a href="/plan-finder/">Plan Finder</a>
+        <a href="/refer-a-friend/">Refer a Friend</a>
+        <a href="/sustainability/">Sustainability</a>
+        <a href="/resources/">Resources &amp; Guides</a>
+        <a href="/it-advice/">IT Advice</a>
+        <a href="/faqs/">FAQs</a>
+        <a href="/contact/">Contact</a>
+        <a href="/portal/">Customer portal</a>
+        <a href="tel:+441202775566">01202 775566</a>
+        <a href="sms:+447520615332">Text only: 07520 615332</a>
+        <a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a>
+      </nav>
+    </div>
+    <nav class="site-footer__legal-links mono" aria-label="Legal and policies">
+      <a href="/privacy-policy/">Privacy Policy</a>
+      <a href="/cookie-policy/">Cookie Policy</a>
+      <a href="/terms/">Terms of Service</a>
+      <a href="/service-level-agreement/">SLA</a>
+      <a href="/accessibility-statement/">Accessibility</a>
+      <a href="/accreditations/">Accreditations</a>
+      <a href="/system-status/">System Status</a>
+    </nav>
+    <p class="site-footer__legal mono">&copy; 2026 365 TECHIES LIMITED &middot; REGISTERED IN ENGLAND &amp; WALES 11073501 &middot; ALL SYSTEMS OPERATIONAL <span class="pulse-dot pulse-dot--green"></span></p>
+  </footer>
+
+  <nav class="mobile-cta-bar" aria-label="Quick contact">
+    <a href="tel:+441202775566"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>Call</a>
+    <a href="/book-service/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v3M17 3v3M4 8h16M5 6h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z"/></svg>Book</a>
+    <a href="#" data-open-chat><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.5 7.5L3 21l2-5.5A8.5 8.5 0 1 1 21 11.5z"/></svg>Chat</a>
+  </nav>
+  <div class="a11y" id="a11y">
+    <button type="button" class="a11y__toggle" id="a11y-toggle" aria-expanded="false" aria-controls="a11y-panel" aria-label="Accessibility tools" title="Accessibility tools">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="3.6" r="1.6"/><path d="M3.5 8h17M12 8v6m0 0-3.2 6.4M12 14l3.2 6.4"/></svg>
+    </button>
+    <div class="a11y__panel" id="a11y-panel" role="region" aria-label="Accessibility options" hidden>
+      <p class="a11y__title mono">Accessibility</p>
+      <div class="a11y__rowsize"><span>Text size</span><span class="a11y__btns"><button type="button" data-a11y="text-down" aria-label="Decrease text size">A&minus;</button><button type="button" data-a11y="text-up" aria-label="Increase text size">A+</button></span></div>
+      <button type="button" class="a11y__opt" data-a11y="contrast" aria-pressed="false">High contrast</button>
+      <button type="button" class="a11y__opt" data-a11y="readable" aria-pressed="false">Readable font</button>
+      <button type="button" class="a11y__opt" data-a11y="reduce" aria-pressed="false">Reduce motion</button>
+      <button type="button" class="a11y__opt" data-a11y="read" aria-pressed="false">Read this page aloud</button>
+      <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
+    </div>
+  </div>
+  <script type="module" src="/js/interior.min.js?v=20"></script>
+  <script src="/js/a11y.min.js?v=6" defer></script>
+  <script src="/js/forms.min.js?v=7" defer></script>
+  <script src="/js/search.min.js?v=2026-07-23" defer></script>
+  <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
+    <p>We use cookies to power our live chat and understand how the site is used. See our <a href="/cookie-policy/">cookie policy</a>.</p>
+    <div class="cookie-banner__actions">
+      <button type="button" class="button secondary" data-cookie="decline">Decline</button>
+      <button type="button" class="button primary" data-cookie="accept">Accept</button>
+    </div>
+  </div>
+  <!-- Consent-gated chat / analytics (HubSpot loads only after consent) -->
+  <script>
+  (function () {
+    var KEY = "tt_consent";
+    function loadConsented() {
+      if (!document.getElementById("hs-script-loader")) {
+        var s = document.createElement("script");
+        s.id = "hs-script-loader"; s.async = true; s.defer = true;
+        s.src = "//js-eu1.hs-scripts.com/148562638.js";
+        document.body.appendChild(s);
+      }
+      if (window.ANALYTICS_SRC && !window.__analyticsLoaded) {
+        window.__analyticsLoaded = true;
+        var a = document.createElement("script"); a.async = true; a.src = window.ANALYTICS_SRC;
+        document.head.appendChild(a);
+      }
+    }
+    var c = null;
+    try { c = localStorage.getItem(KEY); } catch (e) {}
+    if (c === "accepted") { loadConsented(); }
+    else if (c !== "declined") { var b = document.getElementById("cookie-banner"); if (b) b.hidden = false; }
+    document.addEventListener("click", function (e) {
+      var t = e.target.closest("[data-cookie]"); if (!t) return;
+      var v = t.getAttribute("data-cookie") === "accept" ? "accepted" : "declined";
+      try { localStorage.setItem(KEY, v); } catch (e) {}
+      var b = document.getElementById("cookie-banner"); if (b) b.hidden = true;
+      if (v === "accepted") { if (window.gtag) gtag('consent', 'update', { ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted', analytics_storage: 'granted' }); loadConsented(); }
+    });
+  })();
+  </script>
+</body>
+</html>

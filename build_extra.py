@@ -23,6 +23,7 @@ from webdesign_data import WEBDESIGN_PAGES
 from web_cluster import _web_cluster_section
 from wifi_data import WIFI_PAGES
 from emergency_internet_data import EMERGENCY_PAGES
+from seo_wave_data import SEO_WAVE_PAGES
 try:
     from new_pages_data import DELL_COMPARE_TABLES
 except ImportError:
@@ -3258,7 +3259,7 @@ def wifi_optimizer():
                       webpage(s, "WiFi Signal Test - Find the Best Spot", _desc),
                       app,
                       faqpage(s, _faqs)])
-    add(slug=slug, title="WiFi Signal Test - Find the Best Spot in Your Home | 365 Techies",
+    add(slug=slug, title="WiFi Signal Test - Room-by-Room Survey & Best Spot Finder | 365 Techies",
         desc=desc, og_title="365 WiFi Optimizer - Live WiFi Signal Test | 365 Techies", schema=schema,
         content=content + "\n" + faq_html(faqs))
 wifi_optimizer()
@@ -18233,6 +18234,8 @@ def custom_dashboards():
       </div>
     </section>''',
       faq_html([
+        ("Can you customise the Victron VRM dashboard?", "Not the VRM portal itself &mdash; Victron&rsquo;s Advanced Dashboard offers configurable widgets, but the portal&rsquo;s layout, branding and structure are fixed. What we build instead is a <strong>custom dashboard alongside VRM</strong>: your layout, your branding, your KPIs, reading the same live data through Victron&rsquo;s official interfaces. VRM stays untouched as the system of record."),
+        ("Is there any way to customise the VRM portal?", "Within VRM you can rearrange the Advanced Dashboard&rsquo;s widgets and choose which values show &mdash; and for many owners that&rsquo;s enough. When people ask this, they usually want their own branding, a single screen for several sites, financial KPIs, or a customer-facing view &mdash; none of which VRM is designed to do. That&rsquo;s exactly the gap our custom dashboards fill, without replacing VRM."),
         ("Does this replace the VRM portal?", "No &mdash; and it shouldn&rsquo;t. VRM stays your system of record, with its alarms, history and remote console. Your custom dashboard reads the same data through Victron&rsquo;s official API and presents it your way, alongside VRM."),
         ("Do I need any new hardware?", "Usually not. If your system already reports to VRM (via a GX device such as a Cerbo GX), we can build from that today using a read-only API token. No site visit needed &mdash; anywhere in the world."),
         ("Is it safe? Can a dashboard change my system?", "We build with a read-only VRM access token, kept server-side &mdash; the dashboard can display your system but never control or change it. Optional password protection on the page itself if you want it private."),
@@ -18352,6 +18355,9 @@ for _np in WIFI_PAGES:
     build_new_page(_np)
 
 for _np in EMERGENCY_PAGES:
+    build_new_page(_np)
+
+for _np in SEO_WAVE_PAGES:
     build_new_page(_np)
 
 # ---------------------------------------------------------------------------
