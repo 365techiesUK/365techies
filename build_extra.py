@@ -1710,12 +1710,19 @@ def wifi_optimizer():
         /* ---------- rooms ---------- */
         var roomsWrap=$('#wf-rooms'), roomList=$('#wf-roomlist');
         var namer=$('#wf-namer'), chipsBox=$('#wf-roomchips'), nameIn=$('#wf-roomname');
-        var PRESETS=['By the router','Living room','Kitchen','Main bedroom','Home office','Garden office','Conservatory','Loft'];
-        if(chipsBox) PRESETS.forEach(function(p){
-          var b=el('button','',p); b.type='button';
-          b.addEventListener('click',function(){ if(nameIn){ nameIn.value=p; nameIn.focus(); } });
-          chipsBox.appendChild(b);
-        });
+        var PRESETS_HOME=['By the router','Living room','Kitchen','Main bedroom','Home office','Garden office','Conservatory','Loft'];
+        var PRESETS_BIZ=['By the router','Reception','Main office','Meeting room','Workshop','Warehouse / store','Till / counter','Staff room','Consulting room','Yard / outside'];
+        function presetsFor(){ return (doc&&doc.mode==='business')?PRESETS_BIZ:PRESETS_HOME; }
+        function renderNamerChips(){
+          if(!chipsBox) return;
+          chipsBox.innerHTML='';
+          presetsFor().forEach(function(p){
+            var b=el('button','',p); b.type='button';
+            b.addEventListener('click',function(){ if(nameIn){ nameIn.value=p; nameIn.focus(); } });
+            chipsBox.appendChild(b);
+          });
+        }
+        renderNamerChips();
         function ago(t){
           var m=Math.round((Date.now()-t)/60000);
           if(m<1) return 'just now'; if(m<60) return m+' min ago';
@@ -1779,7 +1786,7 @@ def wifi_optimizer():
           if(staleL(L)){ if(hint) hint.textContent='Start the live test first, then save the room while it\\u2019s running.'; return; }
           if(L.off){ if(hint) hint.textContent='No response here just now \\u2014 wait for the connection to come back before saving.'; return; }
           if(!L.settled){ if(hint) hint.textContent='Give it a few more seconds to settle, then press Save again.'; return; }
-          if(namer){ namer.hidden=false; if(nameIn&&!nameIn.value) nameIn.focus(); namer.scrollIntoView({behavior:'smooth',block:'nearest'}); }
+          if(namer){ renderNamerChips(); namer.hidden=false; if(nameIn&&!nameIn.value) nameIn.focus(); namer.scrollIntoView({behavior:'smooth',block:'nearest'}); }
         });
         var saveRoomBtn=$('#wf-roomsave'), cancelBtn=$('#wf-roomcancel');
         if(saveRoomBtn) saveRoomBtn.addEventListener('click',function(){
@@ -2526,7 +2533,7 @@ def wifi_optimizer():
           }
           function qChips(){
             E.chips.innerHTML='';
-            PRESETS.forEach(function(p){
+            presetsFor().forEach(function(p){
               var match=null;
               for(var i=0;i<doc.rooms.length;i++){ if(doc.rooms[i].n.toLowerCase()===p.toLowerCase()){ match=doc.rooms[i]; break; } }
               var b=el('button','',''); b.type='button';

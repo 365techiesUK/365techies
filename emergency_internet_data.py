@@ -434,7 +434,7 @@ EMERGENCY_PAGES = [
  'crossLinksHtml': '<p><strong>Related:</strong> <a href="/emergency-internet/">the mobile response service</a> &middot; '
                    '<a href="/broadband-down/">what to do right now if you are offline</a> &middot; '
                    '<a href="/monthly-it-support/">monthly IT support</a> &middot; '
-                   '<a href="/business-it-support/">business IT support in Dorset</a></p>'},
+                   '<a href="/business-it-support-subscriptions/">business IT support in Dorset</a></p>'},
 
 # ===========================================================================
 # SPOKE 3 - events, live streaming, content production
@@ -554,7 +554,7 @@ EMERGENCY_PAGES = [
  'crossLinksHtml': '<p><strong>Related:</strong> <a href="/emergency-internet/">the service in full</a> &middot; '
                    '<a href="/off-grid-internet/">off-grid and no-signal locations</a> &middot; '
                    '<a href="/web-design-hosting/">web design and content production</a> &middot; '
-                   '<a href="/rural-wifi/">rural WiFi</a></p>'},
+                   '<a href="/rural-and-farm-wifi-dorset/">rural WiFi</a></p>'},
 
 # ===========================================================================
 # SPOKE 4 - off-grid / weather / the van itself (authority bridge)
@@ -660,6 +660,6 @@ EMERGENCY_PAGES = [
  'crossLinksHtml': '<p><strong>Related:</strong> <a href="/emergency-internet/">emergency internet for business</a> &middot; '
                    '<a href="/event-wifi-dorset/">events, streaming and content production</a> &middot; '
                    '<a href="/custom-vrm-dashboards/">our Victron dashboard work</a> &middot; '
-                   '<a href="/rural-wifi/">rural WiFi</a> &middot; '
+                   '<a href="/rural-and-farm-wifi-dorset/">rural WiFi</a> &middot; '
                    '<a href="/about/">about 365 Techies</a></p>'},
 ]

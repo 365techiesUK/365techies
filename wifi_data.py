@@ -920,7 +920,7 @@ WIFI_PAGES = [
            'broadband or lost the WiFi, which is the whole question.</li>'
            '<li><strong>A 10&nbsp;m patch lead.</strong> Unglamorous, and it settles more arguments than any app.</li>'
            '<li>Our own free tools: the <a href="/wifi-signal-test/">365 WiFi Optimizer</a> for live signal quality, the '
-           '<a href="/broadband-speed-test/">broadband speed test</a>, and <a href="/is-it-down/">is it down?</a> to check whether a service is broken for everyone '
+           '<a href="/broadband-speed-checker/">broadband speed test</a>, and <a href="/is-it-down/">is it down?</a> to check whether a service is broken for everyone '
            'or just you.</li></ul>'},
 
   {'eyebrow': '/05 &mdash; WHEN IT IS THE LINE',
@@ -1319,6 +1319,6 @@ WIFI_PAGES = [
                    '<a href="/mesh-wifi-setup-guide/">setup guide</a> &middot; '
                    '<a href="/wifi-troubleshooting/">fault-finding</a> &middot; '
                    '<a href="/business-wifi-installation/">business WiFi</a> &middot; '
-                   '<a href="/rural-wifi/">rural and hard-to-reach WiFi</a></p>'},
+                   '<a href="/rural-and-farm-wifi-dorset/">rural and hard-to-reach WiFi</a></p>'},
 ]
 
