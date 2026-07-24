@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -767,43 +767,43 @@
         <ul class="page-hero__chips mono"><li>&#9679; No fix, no fee</li><li>&#9679; Usually same-day remote fix</li><li>&#9679; Family-run since 1995</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="Why one PC can&rsquo;t open the shared Sage 50 data">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; WHY IT HAPPENS</a><a href="#s2">02 &mdash; THE HOST &amp; DATA SERVICE</a><a href="#s3">03 &mdash; THE NETWORK PATH</a><a href="#s4">04 &mdash; FIREWALL &amp; ANTIVIRUS</a><a href="#s5">05 &mdash; VERSION MATCHING</a><a href="#s6">06 &mdash; WHEN TO CALL US</a></nav>
+    <section id="s1" class="section" aria-label="Why one PC can&rsquo;t open the shared Sage 50 data">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; WHY IT HAPPENS</p>
         <h2 class="section-title" data-title>Why one PC can&rsquo;t open the shared Sage 50 data<span class="title-underline"></span></h2>
 <p>When a Sage 50 workstation <strong>cannot connect to your shared company data</strong>, it is nearly always because the one computer that <em>holds</em> the data has become unreachable &mdash; that &lsquo;host&rsquo; PC is off or asleep, the Sage 50 Data Service running on it has stopped, a firewall is blocking the connection, or the workstation is running a different version of Sage 50 to the host. Fix those four things, in that order, and the shared data almost always comes straight back.</p><p>Here is the architecture, because it explains everything. Sage 50 keeps your accounts in a folder called <strong>ACCDATA</strong>, which sits on a single host computer or server. A background program on that host &mdash; the <strong>Sage 50 Data Service</strong> &mdash; controls the flow of data in and out of ACCDATA so everyone in the office works on the same live figures. Every other PC in the office does not keep its own copy; it reaches across the network and asks the host&rsquo;s data service to open the <em>same</em> live folder.</p><p>So if the host is switched off, if its data service has stopped, if the network path to it is broken, or if the versions do not match, the workstations have nothing to talk to &mdash; and Sage stops. The steps below work through each cause the way we would on a call-out, cheapest and quickest first.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Step 1: Check the host computer and its data service">
+    <section id="s2" class="section section--alt" aria-label="Step 1: Check the host computer and its data service">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/02 &mdash; THE HOST &amp; DATA SERVICE</p>
         <h2 class="section-title" data-title>Step 1: Check the host computer and its data service<span class="title-underline"></span></h2>
 <p>Start at the host &mdash; the computer or server that actually stores ACCDATA. If you are not sure which machine that is, on a working PC open <strong>Help &gt; About</strong> in Sage 50 and look at the data path; the computer name at the start of that path is your host.</p><p><strong>Is it on and awake?</strong> The host must be powered on, logged in or at least running, and not asleep, before anyone else can open the accounts. A host that hibernates overnight or after a Windows update is a very common reason a whole office &lsquo;loses Sage&rsquo; first thing in the morning. Wake it, or restart it, and try again.</p><p><strong>Is the data service running?</strong> On the host, press the <strong>Windows key + R</strong>, type <strong>services.msc</strong> and press Enter. Look for two Sage services named for your version &mdash; for example <strong>Sage 50 Accounts Service v33</strong> and <strong>Sage 50 Accounts Control v33</strong>. Both should show as <em>Running</em>. If either is stopped, right-click it and choose <strong>Start</strong>; if a service is running but Sage still cannot connect, right-click it and choose <strong>Restart</strong>. Sage also provides a <strong>Data Service Manager</strong> (search the Start menu for &lsquo;Data Service Manager&rsquo;, or open it from the Tools menu inside Sage) that lets you stop and restart the service and confirm it has started.</p>
       </div>
     </section>
-    <section class="section" aria-label="Step 2: Check how workstations point to the data">
+    <section id="s3" class="section" aria-label="Step 2: Check how workstations point to the data">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; THE NETWORK PATH</p>
         <h2 class="section-title" data-title>Step 2: Check how workstations point to the data<span class="title-underline"></span></h2>
 <p>Once the host and its data service are healthy, check how each workstation reaches the data. In Sage 50, <strong>Help &gt; About</strong> shows the current data path. That path should point to the folder that <em>contains</em> ACCDATA &mdash; it never includes the ACCDATA folder itself.</p><p><strong>UNC path or mapped drive?</strong> There are two ways a workstation can point at the host: a mapped drive letter such as S:\, or a UNC path such as <strong>\\SERVER\Sage\Accounts</strong>. Sage supports both, but a UNC path is the more reliable choice and it is what we recommend, because a mapped drive letter can silently drop off the network &mdash; the PC boots, Windows has not reconnected the drive yet, and Sage reports that it cannot find the data. If your mapped drives keep dropping, our guide on <a href="/mapped-network-drive-keeps-disconnecting/">a mapped network drive that keeps disconnecting</a> walks through switching to a more reliable UNC path.</p><p><strong>Permissions.</strong> The Windows user on each workstation needs <strong>full read and write access</strong> to the shared folder on the host. Read-only access, or a share that was rebuilt after a new PC or a Windows update, will stop Sage opening the data even when everything else is correct. If your data lives on a <a href="/desktop-pc-used-as-office-server/">desktop PC being used as an office server</a>, double-check the share and its permissions there first.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Step 3: Firewall, antivirus and the Sage ports">
+    <section id="s4" class="section section--alt" aria-label="Step 3: Firewall, antivirus and the Sage ports">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/04 &mdash; FIREWALL &amp; ANTIVIRUS</p>
         <h2 class="section-title" data-title>Step 3: Firewall, antivirus and the Sage ports<span class="title-underline"></span></h2>
 <p>If the host is on, the service is running and the path is right but a workstation still cannot connect, a <strong>firewall or antivirus</strong> is the usual culprit &mdash; especially on a PC that has just been replaced, or straight after a Windows or security-software update.</p><p>Each version of Sage 50 talks over its own set of <strong>TCP ports</strong> &mdash; a control port, a service port and an application port. Version 33, for example, uses ports in the 34233 / 32233 / 32333 range; other versions use their own numbers, so always check <strong>Sage&rsquo;s current firewall requirements</strong> article for the exact ports for the release you run. Those ports need to be open on the <strong>host and on every workstation</strong>, not just on the server.</p><p>To narrow it down quickly, temporarily disable the third-party firewall or antivirus on the affected PC and try Sage again. If it connects, do not leave protection switched off &mdash; instead add the Sage ports and program files as permanent exceptions, then turn protection back on. It is also worth a quick <strong>ping</strong> from the workstation to the host (Windows key + R, type <strong>cmd</strong>, then type ping followed by the host&rsquo;s name or IP address) to confirm the two machines can see each other on the network at all.</p>
       </div>
     </section>
-    <section class="section" aria-label="Step 4: Make sure every PC runs the same Sage 50 version">
+    <section id="s5" class="section" aria-label="Step 4: Make sure every PC runs the same Sage 50 version">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; VERSION MATCHING</p>
         <h2 class="section-title" data-title>Step 4: Make sure every PC runs the same Sage 50 version<span class="title-underline"></span></h2>
 <p>A version mismatch is a sneaky one, because Sage will often let a workstation start but then refuse to open the shared company &mdash; or show an upgrade prompt &mdash; because the data has been converted to a newer format than that PC understands.</p><p><strong>Every computer that shares the data must run the same version and build of Sage 50 as the host.</strong> A workstation still on last year&rsquo;s release cannot open data that the host has already upgraded to this year&rsquo;s. On each PC, check <strong>Help &gt; About</strong> and confirm the version number matches the host exactly.</p><p>The safe upgrade order matters too: <strong>upgrade the host first</strong>, let it convert the data, then upgrade each workstation to the same version before anyone tries to log in. Upgrading one workstation ahead of the host, or leaving one behind, is a classic way to knock the whole office out of Sage. If your renewal or update has just landed and half the team can get in while half cannot, a version split is almost certainly why.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="When to call us &mdash; and how we fix it">
+    <section id="s6" class="section section--alt" aria-label="When to call us &mdash; and how we fix it">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/06 &mdash; WHEN TO CALL US</p>
         <h2 class="section-title" data-title>When to call us &mdash; and how we fix it<span class="title-underline"></span></h2>
@@ -811,11 +811,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p>Related help: <a href="/mapped-network-drive-keeps-disconnecting/">Mapped network drive keeps disconnecting</a>, <a href="/quickbooks-sage-running-slow/">QuickBooks or Sage running slow</a>, <a href="/server-network-support/">Server &amp; network support</a>, <a href="/desktop-pc-used-as-office-server/">Using a desktop PC as an office server</a>, <a href="/it-support-for-accountants/">IT support for accountants</a>, <a href="/server-down-emergency-support/">Server down? Emergency help</a>. More Sage fixes: <a href="/sage-50-wont-email-invoices-outlook/">Sage 50 won&rsquo;t email invoices through Outlook</a> and <a href="/sage-50-wont-print-to-pdf-windows-11/">Sage 50 won&rsquo;t print to PDF on Windows 11</a>.</p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/mapped-network-drive-keeps-disconnecting/">Mapped network drive keeps disconnecting</a><a href="/quickbooks-sage-running-slow/">QuickBooks or Sage running slow</a><a href="/server-network-support/">Server &amp; network support</a><a href="/desktop-pc-used-as-office-server/">Using a desktop PC as an office server</a><a href="/it-support-for-accountants/">IT support for accountants</a><a href="/server-down-emergency-support/">Server down? Emergency help</a><a href="/sage-50-wont-email-invoices-outlook/">Sage 50 won&rsquo;t email invoices through Outlook</a><a href="/sage-50-wont-print-to-pdf-windows-11/">Sage 50 won&rsquo;t print to PDF on Windows 11</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1115,7 +1118,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

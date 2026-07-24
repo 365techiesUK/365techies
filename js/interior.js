@@ -344,3 +344,25 @@ if (WANT_BG) {
   if ("requestIdleCallback" in window) requestIdleCallback(() => initBackground(), { timeout: 3000 });
   else window.addEventListener("load", () => setTimeout(initBackground, 250));
 } else if (bgCanvas) bgCanvas.remove();
+
+// Reading-progress bar: long guides only (4+ content sections), motion-safe.
+// A 2px gradient line at the very top tracking scroll position.
+(function () {
+  if (REDUCED) return;
+  if (document.querySelectorAll("main .section").length < 4) return;
+  const bar = document.createElement("div");
+  bar.className = "read-progress";
+  bar.setAttribute("aria-hidden", "true");
+  document.body.appendChild(bar);
+  const paint = () => {
+    const h = document.documentElement;
+    const max = h.scrollHeight - window.innerHeight;
+    bar.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + "%";
+  };
+  let raf = 0;
+  window.addEventListener("scroll", () => {
+    if (raf) return;
+    raf = requestAnimationFrame(() => { raf = 0; paint(); });
+  }, { passive: true });
+  paint(); // deep links (#s5 etc.) land mid-page — show the true position immediately
+})();

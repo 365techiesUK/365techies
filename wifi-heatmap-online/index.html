@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -701,36 +701,36 @@
         <ul class="page-hero__chips mono"><li>&#9679; Trading since 1995</li><li>&#9679; 4.9-rated on Google</li><li>&#9679; No-fix-no-fee support</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="No browser can make a true WiFi heatmap — here's why, and what to do instead">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; THE STRAIGHT ANSWER</a><a href="#s2">02 &mdash; HOW REAL HEATMAPS WORK</a><a href="#s3">03 &mdash; WHAT A BROWSER CAN DO</a><a href="#s4">04 &mdash; DIY IN TEN MINUTES</a><a href="#s5">05 &mdash; OUR HONEST ADVICE</a></nav>
+    <section id="s1" class="section" aria-label="No browser can make a true WiFi heatmap — here's why, and what to do instead">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; THE STRAIGHT ANSWER</p>
         <h2 class="section-title" data-title>No browser can make a true WiFi heatmap — here's why, and what to do instead<span class="title-underline"></span></h2>
 <p>You typed something like "wifi heatmap online free no download" hoping a website could scan your house and paint a coloured map of where the signal is strong and weak. We'll be straight with you, because most pages ranking for this search aren't: <strong>no website can do that</strong>. A real heatmap plots radio signal strength — measured in dBm — at dozens of points on your floor plan, and web browsers are deliberately locked out of your WiFi radio. There is no browser feature that lets a page read signal strength, see nearby networks, or even know which access point you're connected to; it would be a privacy disaster if there were.</p><p>So any site promising a heatmap "online, no download" is either guessing from a speed test or drawing pretty pictures. But your search isn't a dead end. Below: what a genuine heatmap actually requires, the genuinely useful thing a browser <em>can</em> measure room by room — which for most homes is the better answer anyway — and our honest take on when to spend nothing at all, and when it's worth calling someone like us.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="A true heatmap needs installed software reading your WiFi card">
+    <section id="s2" class="section section--alt" aria-label="A true heatmap needs installed software reading your WiFi card">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/02 &mdash; HOW REAL HEATMAPS WORK</p>
         <h2 class="section-title" data-title>A true heatmap needs installed software reading your WiFi card<span class="title-underline"></span></h2>
 <p>A genuine WiFi heatmap works like this: you install an app on a laptop — NetSpot and Ekahau are the best-known names in this class — load or sketch your floor plan, then walk the building clicking your position as you go. The app reads the signal strength your WiFi adapter is actually receiving at each point, then fills in the gaps to produce those familiar red-to-green colour maps. The measurement is the whole product, and it can only come from software with direct access to the wireless hardware — exactly what a browser is forbidden from having.</p><p>Free options do exist, with caveats. Some heatmap apps offer a free tier for home use, though what's included changes over time, so check the current limits rather than taking an old article's word for it. On Android, free WiFi analyser apps can show live signal strength as you walk, which makes a rough-and-ready survey; Apple restricts this on iPhone, so an iPhone alone can't do the job. And if you just want one honest number with nothing new installed, Windows already has it: open a command prompt, type <strong>netsh wlan show interfaces</strong>, and look at the Signal line for your current connection.</p>
       </div>
     </section>
-    <section class="section" aria-label="What a browser can measure — often the more useful map">
+    <section id="s3" class="section" aria-label="What a browser can measure — often the more useful map">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; WHAT A BROWSER CAN DO</p>
         <h2 class="section-title" data-title>What a browser can measure — often the more useful map<span class="title-underline"></span></h2>
 <p>Here's the part most pages skip: signal strength was only ever a proxy for the thing you actually care about. Nobody's real question is "what dBm am I getting in the back bedroom?" It's "why do video calls break up in the back bedroom?" — and a browser <em>can</em> measure that directly. From a web page we can time how long data takes to travel (latency), how much that varies (jitter, the thing that wrecks calls), whether packets go missing, and how fast the connection really runs — separately, in every room you stand in.</p><p>Do that in each room and you've built a connection-quality map: not a coloured floor plan, but an honest picture of where your WiFi works and where it doesn't. Often it's more useful than a heatmap, because it catches problems signal strength misses — a room can show full bars and still stutter thanks to interference or congestion, which is common in UK brick and stone homes where <a href="/wifi-uk-buildings-heat/">the building itself shapes the signal</a>. Our free <a href="/wifi-signal-test/">WiFi signal test</a> measures exactly these things from your browser — nothing to install, nothing to sign up for.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Build your own connection-quality map in about ten minutes">
+    <section id="s4" class="section section--alt" aria-label="Build your own connection-quality map in about ten minutes">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/04 &mdash; DIY IN TEN MINUTES</p>
         <h2 class="section-title" data-title>Build your own connection-quality map in about ten minutes<span class="title-underline"></span></h2>
 <p>The DIY version takes about ten minutes with a laptop or phone and our free <a href="/room-by-room-wifi-test/">room-by-room WiFi test</a>. Stand where you actually use the internet — sofa, desk, kitchen table, the bedroom where films buffer — run the test in each spot, and save a reading for every room as you go — our tool scores each room, star-rates it and builds a report you can download. At the end you have a room-by-room comparison rather than a vague sense that "upstairs is worse".</p><p>Then read it the way an engineer would:</p><ul><li><strong>Speed falls off a cliff in certain rooms</strong> — distance and walls; classic signal decay. Router placement or a mesh node is the likely fix.</li><li><strong>Speed is fine but jitter or packet loss is high</strong> — interference or a congested band; moving the router won't help much, changing channel or band might.</li><li><strong>One device struggles where others are fine</strong> — suspect the device, not the WiFi.</li></ul><p>Settings screens move between routers and Windows versions, so we won't pretend to give you exact click-paths — but the logic holds everywhere: measure where you actually live, compare, and the weak spot names itself.</p>
       </div>
     </section>
-    <section class="section" aria-label="When it's not worth fighting it — and what we'd actually do">
+    <section id="s5" class="section" aria-label="When it's not worth fighting it — and what we'd actually do">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; OUR HONEST ADVICE</p>
         <h2 class="section-title" data-title>When it's not worth fighting it — and what we'd actually do<span class="title-underline"></span></h2>
@@ -738,11 +738,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p><strong>Keep going:</strong> <a href="/room-by-room-wifi-test/">Room-by-room WiFi test (free, in your browser)</a> · <a href="/wifi-signal-test/">WiFi signal test</a> · <a href="/wifi-uk-buildings-heat/">Why UK buildings are hard on WiFi</a> · <a href="/business-wifi-installation/">Business WiFi installation &amp; surveys</a></p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/room-by-room-wifi-test/">Room-by-room WiFi test (free, in your browser)</a><a href="/wifi-signal-test/">WiFi signal test</a><a href="/wifi-uk-buildings-heat/">Why UK buildings are hard on WiFi</a><a href="/business-wifi-installation/">Business WiFi installation &amp; surveys</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1026,7 +1029,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

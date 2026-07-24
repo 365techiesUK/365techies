@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -767,8 +767,8 @@
         <ul class="page-hero__chips mono"><li>&#9679; Family-run since 1995</li><li>&#9679; 4.9-star Google rating</li><li>&#9679; No-fix-no-fee</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="Why Plusnet email won&rsquo;t add to new Outlook">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; THE QUICK ANSWER</a><a href="#s2">02 &mdash; THE CORRECT SETTINGS</a><a href="#s3">03 &mdash; ADD IT BY HAND</a><a href="#s4">04 &mdash; WHY IT&rsquo;S HAPPENING NOW</a><a href="#s5">05 &mdash; THE RELIABLE FALLBACK</a><a href="#s6">06 &mdash; LET US SORT IT</a></nav>
+    <section id="s1" class="section" aria-label="Why Plusnet email won&rsquo;t add to new Outlook">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; THE QUICK ANSWER</p>
         <h2 class="section-title" data-title>Why Plusnet email won&rsquo;t add to new Outlook<span class="title-underline"></span></h2>
@@ -777,45 +777,45 @@
     </section>
     <section class="section" aria-label="Fix this now with remote support">
       <div class="wrap" style="max-width:860px;margin:0 auto">
-        <div data-reveal style="border:1px solid rgba(0,206,27,0.35);background:rgba(0,206,27,0.06);border-radius:16px;padding:1.6rem 1.8rem;text-align:center">
+        <div class="callout callout--good callout--center" data-reveal>
           <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// NEED THIS FIXED RIGHT NOW?</p>
-          <p style="font-size:1.08rem;margin:0 0 1.1rem">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
-          <p style="margin:0;display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap">
+          <p class="callout__lede">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
+          <p class="callout__row">
             <a class="button primary" href="/sos/">Start SOS Remote Support</a>
             <a class="button secondary" href="tel:+441202775566">Call 01202 775566</a>
           </p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="The correct Plusnet email settings">
+    <section id="s2" class="section section--alt" aria-label="The correct Plusnet email settings">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/02 &mdash; THE CORRECT SETTINGS</p>
         <h2 class="section-title" data-title>The correct Plusnet email settings<span class="title-underline"></span></h2>
 <p>Enter these exactly. Getting one port or the encryption wrong is the single most common reason new Outlook rejects the account.</p><ul><li><strong>Incoming (IMAP):</strong> server <strong>imap.plus.net</strong>, port <strong>993</strong>, encryption <strong>SSL/TLS</strong> switched on.</li><li><strong>Outgoing (SMTP):</strong> server <strong>relay.plus.net</strong>, port <strong>587</strong> with <strong>STARTTLS</strong> (if your version only offers SSL/TLS, use port <strong>465</strong> instead).</li><li><strong>Prefer POP?</strong> Use <strong>mail.plus.net</strong> on port <strong>995</strong> with SSL/TLS &mdash; though IMAP is better if you read mail on more than one device.</li><li><strong>Username:</strong> your full email address. For your main mailbox (typically <strong>yourname@plus.net</strong>, or <strong>yourname@accountname.plus.com</strong>) the password is the same one you use for Plusnet webmail. For an extra mailbox, the sign-in name is usually <strong>accountname+mailboxname</strong>.</li><li><strong>Older address?</strong> If yours ends in <strong>force9.net</strong>, <strong>force9.co.uk</strong> or <strong>free-online.net</strong>, swap &lsquo;plus.net&rsquo; in the server names for your matching domain.</li></ul><p>Outgoing mail must have authentication turned on and use the same username and password as incoming. There is no separate app password and no two-factor step on Plusnet&rsquo;s mail servers &mdash; if a guide tells you to generate one, it&rsquo;s describing a different provider. If you&rsquo;d rather we simply typed all this in for you, our <a href="/email-support/">email support</a> can do it remotely in a few minutes.</p>
       </div>
     </section>
-    <section class="section" aria-label="How to add Plusnet by hand (and the &lsquo;app password&rsquo; myth)">
+    <section id="s3" class="section" aria-label="How to add Plusnet by hand (and the &lsquo;app password&rsquo; myth)">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; ADD IT BY HAND</p>
         <h2 class="section-title" data-title>How to add Plusnet by hand (and the &lsquo;app password&rsquo; myth)<span class="title-underline"></span></h2>
 <p>The trick with new Outlook is to refuse the automatic path and drive the setup yourself:</p><ul><li>Open <strong>Settings &rarr; Accounts &rarr; Email accounts &rarr; Add account</strong> (or type your address on the first-run welcome screen).</li><li>Enter your Plusnet address, then look for <strong>Advanced setup</strong> or an option to choose the account type, and pick <strong>IMAP</strong>.</li><li>Fill in the servers and ports from the list above, then sign in with your <strong>Plusnet mailbox password</strong> &mdash; not your Microsoft account password.</li></ul><p>About that app-password warning: it is genuinely misleading. Some providers, such as Gmail, Yahoo and older Microsoft setups, do require a special app password when two-factor security is on, and new Outlook shows the same prompt to everyone when a connection fails. Plusnet doesn&rsquo;t work that way, so there is no app password to create. Nine times out of ten the real problem is a wrong port, encryption left off, or the mailbox password being confused with the broadband or Microsoft one.</p><p>If new Outlook keeps looping back to the password box even with everything correct, that&rsquo;s a known sticking point &mdash; the same one behind <a href="/outlook-keeps-asking-for-password/">Outlook repeatedly asking for your password</a>. When it does, don&rsquo;t keep retyping the same details; move to the classic-Outlook route further down instead.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Plusnet is closing its email &mdash; what that means">
+    <section id="s4" class="section section--alt" aria-label="Plusnet is closing its email &mdash; what that means">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/04 &mdash; WHY IT&rsquo;S HAPPENING NOW</p>
         <h2 class="section-title" data-title>Plusnet is closing its email &mdash; what that means<span class="title-underline"></span></h2>
 <p>There&rsquo;s a bigger reason Plusnet email feels fragile at the moment: <strong>Plusnet is shutting down its own email service</strong> and handing mailboxes to a separate company called <strong>Greenby</strong>. Your address stays the same, your existing mail moves across, and the mailbox allowance has actually gone up from 1GB to 2GB.</p><p>Crucially for setup, the server names don&rsquo;t change &mdash; <strong>imap.plus.net</strong> and <strong>relay.plus.net</strong> still work after the move, because they now point at a system that routes migrated and not-yet-migrated accounts automatically. So the settings above hold whether or not your mailbox has already transferred.</p><p>The catch is cost and choice. Plusnet has said active Plusnet broadband customers keep the Greenby mailbox free for two years, after which you pay to continue; if you&rsquo;ve left Plusnet or don&rsquo;t take their broadband, it becomes chargeable (Greenby quotes around <strong>&pound;15 a year</strong>) after a short grace period. Plusnet also emailed an <strong>opt-out</strong> link &mdash; but opting out simply closes the mailbox, so only do that once your account&rsquo;s contact address is no longer a Plusnet one.</p><p>If paying yearly to keep an email address you got for free doesn&rsquo;t appeal, this is the moment to move to something you&rsquo;ll never have to migrate again. Our guide to <a href="/move-plusnet-email-to-gmail/">moving your Plusnet email to Gmail</a> walks through it safely, and our <a href="/email-migration/">email migration</a> service can do the whole lift for you.</p>
       </div>
     </section>
-    <section class="section" aria-label="If it still won&rsquo;t add: switch back to classic Outlook">
+    <section id="s5" class="section" aria-label="If it still won&rsquo;t add: switch back to classic Outlook">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; THE RELIABLE FALLBACK</p>
         <h2 class="section-title" data-title>If it still won&rsquo;t add: switch back to classic Outlook<span class="title-underline"></span></h2>
 <p>When new Outlook simply won&rsquo;t accept a Plusnet mailbox &mdash; often because its simplified dialog gives you nowhere to type the <strong>accountname+mailbox</strong> style username &mdash; the quickest win is the classic app. Classic Outlook is still available and handles third-party IMAP the old, dependable way, storing it in a local data file rather than the newer sync engine.</p><p>Use the toggle in the top corner of new Outlook and choose <strong>Switch to classic Outlook</strong> (or open the classic app from the Start menu if it&rsquo;s still installed). Then add the account with <strong>File &rarr; Add Account &rarr; Manual setup &rarr; IMAP</strong>, using the same servers and ports. Our step-by-step on <a href="/how-to-go-back-to-classic-outlook/">going back to classic Outlook</a> covers the toggle in full.</p><p>This is the same fix we reach for across every provider caught out by new Outlook. If a friend or colleague is wrestling with a different ISP, the cause is nearly always identical &mdash; see, for example, <a href="/btinternet-email-wont-add-to-new-outlook/">BT Internet email won&rsquo;t add to new Outlook</a> or <a href="/sky-email-wont-add-to-new-outlook/">Sky email won&rsquo;t add to new Outlook</a>. Only the server names differ; the manual-IMAP method is the same every time.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="How we fix it for you">
+    <section id="s6" class="section section--alt" aria-label="How we fix it for you">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/06 &mdash; LET US SORT IT</p>
         <h2 class="section-title" data-title>How we fix it for you<span class="title-underline"></span></h2>
@@ -823,11 +823,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p>Related help: <a href="/move-plusnet-email-to-gmail/">move your Plusnet email to Gmail</a>, <a href="/btinternet-email-wont-add-to-new-outlook/">BT Internet email won&rsquo;t add to new Outlook</a>, <a href="/cant-send-btinternet-email-new-outlook/">can&rsquo;t send BT email in new Outlook</a>, <a href="/how-to-go-back-to-classic-outlook/">go back to classic Outlook</a>, <a href="/outlook-cant-add-account-new-outlook/">new Outlook won&rsquo;t add an account</a> and <a href="/email-support/">our email support</a>.</p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/move-plusnet-email-to-gmail/">move your Plusnet email to Gmail</a><a href="/btinternet-email-wont-add-to-new-outlook/">BT Internet email won&rsquo;t add to new Outlook</a><a href="/cant-send-btinternet-email-new-outlook/">can&rsquo;t send BT email in new Outlook</a><a href="/how-to-go-back-to-classic-outlook/">go back to classic Outlook</a><a href="/outlook-cant-add-account-new-outlook/">new Outlook won&rsquo;t add an account</a><a href="/email-support/">our email support</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1127,7 +1130,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -701,8 +701,8 @@
         <ul class="page-hero__chips mono"><li>&#9679; No-fix-no-fee remote help</li><li>&#9679; Rated 4.9 on Google</li><li>&#9679; Family-run since 1995</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="Prints fine, won't scan — why the new router breaks only half the machine">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; THE SYMPTOM</a><a href="#s2">02 &mdash; FIRST CHECK</a><a href="#s3">03 &mdash; HIDDEN BLOCKERS</a><a href="#s4">04 &mdash; THE RELIABLE FIX</a><a href="#s5">05 &mdash; THE STURDY WORKAROUND</a><a href="#s6">06 &mdash; HONEST ADVICE</a></nav>
+    <section id="s1" class="section" aria-label="Prints fine, won't scan — why the new router breaks only half the machine">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; THE SYMPTOM</p>
         <h2 class="section-title" data-title>Prints fine, won't scan — why the new router breaks only half the machine<span class="title-underline"></span></h2>
@@ -711,45 +711,45 @@
     </section>
     <section class="section" aria-label="Fix this now with remote support">
       <div class="wrap" style="max-width:860px;margin:0 auto">
-        <div data-reveal style="border:1px solid rgba(0,206,27,0.35);background:rgba(0,206,27,0.06);border-radius:16px;padding:1.6rem 1.8rem;text-align:center">
+        <div class="callout callout--good callout--center" data-reveal>
           <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// NEED THIS FIXED RIGHT NOW?</p>
-          <p style="font-size:1.08rem;margin:0 0 1.1rem">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
-          <p style="margin:0;display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap">
+          <p class="callout__lede">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
+          <p class="callout__row">
             <a class="button primary" href="/sos/">Start SOS Remote Support</a>
             <a class="button secondary" href="tel:+441202775566">Call 01202 775566</a>
           </p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Make sure both devices are really on the same network">
+    <section id="s2" class="section section--alt" aria-label="Make sure both devices are really on the same network">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/02 &mdash; FIRST CHECK</p>
         <h2 class="section-title" data-title>Make sure both devices are really on the same network<span class="title-underline"></span></h2>
 <p>Before touching drivers, confirm the printer and computer are genuinely on the same network — after a router swap they often aren't, even when both say "connected". Most printers can print a <strong>network configuration report</strong> from their own menu (usually somewhere under network or report settings — the wording varies by brand). Compare the printer's IP address with your computer's: on a typical home network the first three groups of numbers should match, something like 192.168.1.x on both. If they don't match, the two devices are effectively on different networks and scan-to-computer cannot work until that's fixed.</p><p>The common culprits: the printer quietly joined the router's <strong>guest network</strong> (guest networks deliberately wall devices off from each other), a mesh system placed the two on different segments, or the printer is still clinging to the old router's WiFi if that box is still powered up in a corner. If the WiFi itself has been odd since the swap, our <a href="/wifi-troubleshooting/">WiFi troubleshooting guide</a> covers the wider picture.</p>
       </div>
     </section>
-    <section class="section" aria-label="Two settings that silently block scanning">
+    <section id="s3" class="section" aria-label="Two settings that silently block scanning">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; HIDDEN BLOCKERS</p>
         <h2 class="section-title" data-title>Two settings that silently block scanning<span class="title-underline"></span></h2>
 <p>Two settings cause most of these cases, and neither produces a helpful error message.</p><p><strong>First, isolation on the router.</strong> Many new routers ship with a setting called AP isolation, client isolation or WiFi isolation — sometimes it's simply how the guest network behaves. It stops wireless devices talking to each other, which is exactly what scan-to-computer needs to do. Log into the router's settings and look for that wording; where it lives differs by make and model, so we'd rather name the setting than invent a menu path. While you're there, make sure the printer isn't sitting on the guest network.</p><p><strong>Second, the Windows firewall profile.</strong> When your computer meets a new router, Windows treats it as a brand-new network and often marks it "Public" — a cautious mode that blocks incoming connections, including the printer announcing it has a scan for you. In your network settings, set your home network to <strong>Private</strong> (the exact wording moves between Windows versions). That one change fixes a surprising share of these calls on its own.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Remove the printer and reinstall the full software package">
+    <section id="s4" class="section section--alt" aria-label="Remove the printer and reinstall the full software package">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/04 &mdash; THE RELIABLE FIX</p>
         <h2 class="section-title" data-title>Remove the printer and reinstall the full software package<span class="title-underline"></span></h2>
 <p>If the network checks pass and it still won't scan, the problem is usually stale plumbing on the computer. Windows and the printer's own software register the scanning components (the WIA and TWAIN pieces that scanner apps rely on) against the printer's old address on the old router. Printing survives because Windows re-finds printers fairly gracefully; the scan registrations just quietly rot.</p><p>The clean fix: remove the printer from your computer entirely, then download the <strong>full software package</strong> from the manufacturer's website — not just the bare driver Windows offers automatically — and run it fresh. The full package redoes the scan registrations and re-points "scan to computer" at your machine's current address. It takes about ten minutes and it's the single most reliable cure we know for this fault.</p><p>If printing has <em>also</em> stopped since the router change, that's a related but different fault — our guide to a <a href="/printer-wont-connect-after-changing-broadband/">printer that won't connect after changing broadband</a> walks through that one step by step.</p>
       </div>
     </section>
-    <section class="section" aria-label="Scan to email: the method that ignores your router">
+    <section id="s5" class="section" aria-label="Scan to email: the method that ignores your router">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; THE STURDY WORKAROUND</p>
         <h2 class="section-title" data-title>Scan to email: the method that ignores your router<span class="title-underline"></span></h2>
 <p>There's a version of scanning that simply doesn't care what your router blocks: <strong>scan to email</strong>. Set up on the printer itself, it sends each scan as an email attachment, so the printer never has to find your computer at all. Once configured it survives router swaps, new laptops and network changes untouched — plenty of our customers switch to it permanently after one of these episodes. Most modern multifunction printers support it, though setup varies by brand and some need an email account's app-password before they can send.</p><p>Two more sturdy alternatives. <strong>Scan to a USB stick</strong>, if the printer has a port, needs no network at all — walk the stick to the computer. And driving the scan <em>from the computer</em> — opening the scanner app on your PC and starting the scan there, rather than pressing the button on the printer — reverses the direction of the conversation, and often works even while the printer's own scan button is still failing. One honest caveat: scan-to-email survives router swaps only when it is set up with a provider-independent account (a Gmail or Outlook.com address, say). If it was configured against your old broadband provider&rsquo;s email servers, changing provider breaks it too — re-point it at an independent account and it stays fixed.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="When it's not worth fighting — and what we'd do">
+    <section id="s6" class="section section--alt" aria-label="When it's not worth fighting — and what we'd do">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/06 &mdash; HONEST ADVICE</p>
         <h2 class="section-title" data-title>When it's not worth fighting — and what we'd do<span class="title-underline"></span></h2>
@@ -757,11 +757,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p>Related help: <a href="/printer-support/">Printer support</a> · <a href="/printer-wont-connect-after-changing-broadband/">Printer won't connect after changing broadband</a> · <a href="/wifi-troubleshooting/">WiFi troubleshooting</a> · <a href="/remote-support/">Remote support</a></p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/printer-support/">Printer support</a><a href="/printer-wont-connect-after-changing-broadband/">Printer won't connect after changing broadband</a><a href="/wifi-troubleshooting/">WiFi troubleshooting</a><a href="/remote-support/">Remote support</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1045,7 +1048,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

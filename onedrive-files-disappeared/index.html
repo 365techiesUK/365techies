@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -743,29 +743,29 @@
         <ul class="page-hero__chips mono"><li>&#9679; Usually fully recoverable</li><li>&#9679; No data-loss risk</li><li>&#9679; Same-day remote fix</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="Your files are almost certainly still there">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">FIRST, THE REASSURANCE</a><a href="#s2">THE MOST COMMON CULPRIT</a><a href="#s3">IS ONEDRIVE ACTUALLY RUNNING?</a><a href="#s4">THE SAFETY NETS</a></nav>
+    <section id="s1" class="section" aria-label="Your files are almost certainly still there">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">// FIRST, THE REASSURANCE</p>
         <h2 class="section-title" data-title>Your files are almost certainly still there<span class="title-underline"></span></h2>
 <p><strong>Nine times out of ten, "disappeared" OneDrive files are not deleted at all.</strong> They've usually been moved, paused, signed out, or shuffled into a folder you didn't expect — and OneDrive keeps a safety net besides. So before you do anything drastic, please <strong>don't</strong> reinstall Windows, don't run "recovery" software you found online, and don't keep creating new files in the same place. None of that helps, and some of it can genuinely make a real recovery harder.</p><p>OneDrive is Microsoft's cloud storage that syncs a copy of your files to the internet. That syncing is exactly why your files are so recoverable — even if something went wrong on this PC, a copy usually still lives safely in the cloud at <strong>onedrive.com</strong>, and OneDrive quietly keeps deleted items and older versions for a while too. The trick is knowing where to look. Work through the checks below in order; most people find their files within the first two or three steps. If you'd rather someone just did it for you, that's exactly the kind of thing we <a href="/it-support-dorset/">sort out remotely</a> in a few minutes.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Windows Backup may have moved your Desktop and Documents into OneDrive">
+    <section id="s2" class="section section--alt" aria-label="Windows Backup may have moved your Desktop and Documents into OneDrive">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">// THE MOST COMMON CULPRIT</p>
         <h2 class="section-title" data-title>Windows Backup may have moved your Desktop and Documents into OneDrive<span class="title-underline"></span></h2>
 <p>This is the single most common reason people in Dorset ring us saying their files have "vanished". At some point — often after a Windows 11 update or when setting up a new PC — Windows offered to "back up your folders", and <strong>Known Folder Move</strong> quietly redirected your Desktop, Documents and Pictures <em>into</em> OneDrive. Nothing was lost. Your files simply live under OneDrive now instead of the old local path, so any shortcut or program still pointing at the old <em>C:\Users\you\Documents</em> location looks empty.</p><p>To check: open <strong>File Explorer</strong> and click <strong>OneDrive</strong> in the left-hand sidebar (it usually has a blue cloud icon). Look inside for <strong>Desktop</strong>, <strong>Documents</strong> and <strong>Pictures</strong> folders — if your missing files are in there, mystery solved. They're safe; they've just changed address. If you want to confirm it, right-click the folder that looks empty, choose <strong>Properties</strong> then the <strong>Location</strong> tab: if the path now starts with <em>...\OneDrive\</em>, that tells you it's been redirected. We can tidy this up so everything opens where you expect, and explain in plain English whether to keep folder backup on (it's genuinely useful) or turn it off. If you'd like it set up properly, our <a href="/microsoft-365-support/">Microsoft 365 support</a> gets OneDrive and folder backup working the way you actually want.</p>
       </div>
     </section>
-    <section class="section" aria-label="Check whether OneDrive is paused, signed out, or not syncing">
+    <section id="s3" class="section" aria-label="Check whether OneDrive is paused, signed out, or not syncing">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">// IS ONEDRIVE ACTUALLY RUNNING?</p>
         <h2 class="section-title" data-title>Check whether OneDrive is paused, signed out, or not syncing<span class="title-underline"></span></h2>
 <p>Sometimes files look missing simply because OneDrive has stopped talking to the cloud. If it's <strong>paused</strong>, <strong>signed out</strong>, or hit a sync error, recent files may not have come down to this PC — or newer edits haven't gone up yet. Look for the <strong>little cloud icon</strong> in the bottom-right of your taskbar (you may need to click the small up-arrow to reveal hidden icons). Click it and check the status:</p><ul><li><strong>Greyed-out or "Signed out"</strong> — sign back in with the same Microsoft account. This matters: an old work account and a personal account show completely different files, so signing into the wrong one makes files look missing when they're safe under the other.</li><li><strong>"Paused"</strong> — click the gear or the pause banner and choose <strong>Resume syncing</strong>. Give it a few minutes to catch up.</li><li><strong>A red or yellow warning</strong> — there's a sync conflict or a full-storage problem. Don't force-delete anything; this is where a wrong move can bite. It's a good moment to let us take a look.</li></ul><p>If OneDrive is missing from the taskbar entirely, search the Start menu for <strong>OneDrive</strong> and open it — don't uninstall it. And crucially, <strong>don't delete the local OneDrive folder to "reset" things</strong>; because it's linked to the cloud, deleting synced files there can remove them from the cloud too. When in doubt, stop and call us.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Recycle Bin, Files Restore — and checking your other devices">
+    <section id="s4" class="section section--alt" aria-label="Recycle Bin, Files Restore — and checking your other devices">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">// THE SAFETY NETS</p>
         <h2 class="section-title" data-title>Recycle Bin, Files Restore — and checking your other devices<span class="title-underline"></span></h2>
@@ -778,6 +778,7 @@
 <p>Once your files are back, it's worth making sure this never catches you out again: our <a href="/microsoft-365-support/">Microsoft 365 support</a> gets OneDrive and folder backup set up properly and keeps your account, apps and storage running smoothly. If a whole drive or PC is playing up, see <a href="/computer-repairs/">computer repairs</a> or <a href="/laptop-repair/">laptop repair</a>, or our wider <a href="/it-support-dorset/">IT support across Dorset</a>. Not sure whether an ageing machine is worth keeping? Try the <a href="/repair-or-replace-advisor/">repair-or-replace advisor</a>.</p>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1065,7 +1066,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

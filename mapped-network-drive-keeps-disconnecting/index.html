@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -737,8 +737,8 @@
         <ul class="page-hero__chips mono"><li>&#9679; Common on small offices</li><li>&#9679; Fixed remotely</li><li>&#9679; Windows 11 & servers</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="Why mapped drives drop — and why it's usually an easy fix">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">WHY IT HAPPENS</a><a href="#s2">THE TOP TWO CAUSES</a><a href="#s3">TIMEOUTS & RECONNECTION</a><a href="#s4">THE NETWORK ITSELF</a></nav>
+    <section id="s1" class="section" aria-label="Why mapped drives drop — and why it's usually an easy fix">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">// WHY IT HAPPENS</p>
         <h2 class="section-title" data-title>Why mapped drives drop — and why it's usually an easy fix<span class="title-underline"></span></h2>
@@ -747,31 +747,31 @@
     </section>
     <section class="section" aria-label="Fix this now with remote support">
       <div class="wrap" style="max-width:860px;margin:0 auto">
-        <div data-reveal style="border:1px solid rgba(0,206,27,0.35);background:rgba(0,206,27,0.06);border-radius:16px;padding:1.6rem 1.8rem;text-align:center">
+        <div class="callout callout--good callout--center" data-reveal>
           <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// NEED THIS FIXED RIGHT NOW?</p>
-          <p style="font-size:1.08rem;margin:0 0 1.1rem">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
-          <p style="margin:0;display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap">
+          <p class="callout__lede">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
+          <p class="callout__row">
             <a class="button primary" href="/sos/">Start SOS Remote Support</a>
             <a class="button secondary" href="tel:+441202775566">Call 01202 775566</a>
           </p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Saved credentials and network-card power settings">
+    <section id="s2" class="section section--alt" aria-label="Saved credentials and network-card power settings">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">// THE TOP TWO CAUSES</p>
         <h2 class="section-title" data-title>Saved credentials and network-card power settings<span class="title-underline"></span></h2>
 <p><strong>1. Credentials aren't being saved.</strong> By far the most common cause. If the drive lives on a server or NAS that needs a username and password, and those aren't stored, Windows quietly drops the connection whenever the session lapses — and you're prompted to sign in again (or just get an error). The fix is to store the login in <strong>Credential Manager</strong>: open the Start menu, search <strong>Credential Manager</strong>, choose <strong>Windows Credentials</strong>, then <strong>Add a Windows credential</strong>. Enter the server or NAS name (for example <em>\\SERVER</em> or its IP address) with the correct username and password. When you re-map the drive, tick <strong>"Reconnect at sign-in"</strong> and, if the share needs a different login, <strong>"Connect using different credentials"</strong> so it signs in cleanly every time. In business setups it's worth doing this consistently across every PC — something we handle as standard.</p><p><strong>2. Windows is powering down the network card.</strong> A sneaky one. By default, Windows is often allowed to switch off your network adapter to save power — and when it does, your mapped drive drops. To stop it: right-click <strong>Start</strong>, open <strong>Device Manager</strong>, expand <strong>Network adapters</strong>, right-click your adapter, choose <strong>Properties</strong>, go to the <strong>Power Management</strong> tab, and <strong>untick "Allow the computer to turn off this device to save power"</strong>. On laptops it's also worth setting the power plan so it doesn't aggressively sleep the network. These two fixes alone resolve the majority of the mapped-drive cases we see.</p>
       </div>
     </section>
-    <section class="section" aria-label="SMB session timeouts and reconnecting at logon">
+    <section id="s3" class="section" aria-label="SMB session timeouts and reconnecting at logon">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">// TIMEOUTS & RECONNECTION</p>
         <h2 class="section-title" data-title>SMB session timeouts and reconnecting at logon<span class="title-underline"></span></h2>
 <p><strong>Idle SMB sessions time out.</strong> SMB is the protocol Windows uses to talk to shared folders. To save resources, Windows and many servers/NAS devices automatically drop a connection that's been idle for a while (an "autodisconnect"). Come back after a coffee break and the drive shows disconnected until you double-click it. On the Windows server side this behaviour is controlled by the <em>autodisconnect</em> setting, and on a NAS the idle-timeout can usually be raised — but these are settings best changed knowingly, because getting them wrong can cause other issues, so it's a fair point to hand to us. Another common trigger on managed networks is <strong>Group Policy drive maps set to "Recreate"</strong> instead of "Update", which drop and rebuild the drive on every refresh; switching them to "Update" clears a whole class of these disconnects.</p><p><strong>Reconnect at logon — and persistent mapping.</strong> Make sure the drive is set to reconnect automatically. When you map it (in File Explorer, <strong>This PC</strong> → <strong>Map network drive</strong>), tick <strong>"Reconnect at sign-in"</strong>. In a managed office, drives are often mapped centrally by a <strong>Group Policy or a logon script</strong> instead, so they appear reliably on every machine the same way — which is far more robust than each person mapping their own. If your drives are mapped by hand and keep drifting out of sync across the team, moving to a proper policy-based mapping is one of the tidy-ups we do when we take on an office's <a href="/it-services-bournemouth/">IT support</a>.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Wi-Fi vs wired, and the wider network">
+    <section id="s4" class="section section--alt" aria-label="Wi-Fi vs wired, and the wider network">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">// THE NETWORK ITSELF</p>
         <h2 class="section-title" data-title>Wi-Fi vs wired, and the wider network<span class="title-underline"></span></h2>
@@ -784,6 +784,7 @@
 <p>Sorting one disconnecting drive is often the tip of the iceberg — if your office network could do with being made properly reliable, our local <a href="/it-services-poole/">IT services in Poole</a> and <a href="/it-services-bournemouth/">IT services in Bournemouth</a> keep shares, servers, NAS and Wi-Fi running day to day. For account and file-sharing headaches see <a href="/microsoft-365-support/">Microsoft 365 support</a>, browse our wider <a href="/it-support-dorset/">IT support across Dorset</a>, or take a look at ongoing <a href="/monthly-it-support/">monthly IT support</a> so niggles like this are handled before they cost your team time.</p>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1071,7 +1072,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

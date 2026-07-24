@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -717,50 +717,50 @@
         <ul class="page-hero__chips mono"><li>&#9679; Measured figures, sourced</li><li>&#9679; Claims labelled as claims</li><li>&#9679; Heat section included</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="What a decibel actually costs you">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; HOW TO READ THE NUMBERS</a><a href="#s2">02 &mdash; MEASURED LOSS</a><a href="#s3">03 &mdash; WALL BY WALL</a><a href="#s4">04 &mdash; WHY NEW HOUSES CAN BE WORSE</a><a href="#s5">05 &mdash; HOW MANY ACCESS POINTS</a><a href="#s6">06 &mdash; HOT WEATHER</a><a href="#s7">07 &mdash; PLACEMENT & COOLING</a></nav>
+    <section id="s1" class="section" aria-label="What a decibel actually costs you">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; HOW TO READ THE NUMBERS</p>
         <h2 class="section-title" data-title>What a decibel actually costs you<span class="title-underline"></span></h2>
 <p>Signal loss is measured in decibels, and decibels are logarithmic &mdash; which is why the numbers below are more brutal than they look.</p><ul><li><strong>3&nbsp;dB halves the power.</strong> 10&nbsp;dB leaves you a tenth. 20&nbsp;dB leaves you a hundredth.</li><li><strong>Every 6&nbsp;dB is equivalent to doubling the distance</strong> from the router. So a 30&nbsp;dB wall is roughly like moving the device thirty-two times further away.</li></ul><p>There is <strong>no UK or EU standard test method</strong> behind the coverage figure on a box. The only meaningful design target is the signal at the device: the long-standing professional planning figure is <strong>&minus;67&nbsp;dBm at the edge of coverage</strong>, with 15&ndash;20% overlap between cells. Above about &minus;75&nbsp;dBm a device will connect but will not deliver anything like its rated speed &mdash; which is exactly the state that produces &ldquo;full bars and nothing works&rdquo;.</p><p><strong>And frequency runs the wrong way for modern equipment:</strong> the same wall costs more decibels the higher the band. The 6&nbsp;GHz band on a Wi-Fi 6E or Wi-Fi 7 system is the <em>worst</em> of the three at getting through old British masonry, even though it is the fastest. This is why expensive new kit sometimes performs worse than the old router in a period property.</p><p>Even the international standards bodies now acknowledge this: the ITU building-entry-loss model formally splits buildings into &ldquo;traditional&rdquo; and &ldquo;thermally efficient&rdquo; populations, and states that where modern thermally-efficient methods are used &mdash; metallised glass, foil-backed panels &mdash; the loss is significantly higher.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="What common materials actually cost">
+    <section id="s2" class="section section--alt" aria-label="What common materials actually cost">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/02 &mdash; MEASURED LOSS</p>
         <h2 class="section-title" data-title>What common materials actually cost<span class="title-underline"></span></h2>
 <p>These are laboratory specimens, not your wall &mdash; but they show the shape of the problem.</p><div class="cmp-wrap"><table class="cmp-table"><thead><tr><th>Material</th><th>5&nbsp;GHz</th><th>6&nbsp;GHz</th></tr></thead><tbody><tr><th>Reinforced concrete, 203&nbsp;mm</th><td>55&nbsp;dB</td><td>63&nbsp;dB</td></tr><tr><th>Plain concrete, 203&nbsp;mm</th><td>48&nbsp;dB</td><td>54&nbsp;dB</td></tr><tr><th>Concrete, 102&nbsp;mm</th><td>22&nbsp;dB</td><td>25&nbsp;dB</td></tr><tr><th>Brick-faced concrete</th><td>41&nbsp;dB</td><td>48&nbsp;dB</td></tr><tr><th>Brick-faced masonry block</th><td>32&nbsp;dB</td><td>43&nbsp;dB</td></tr><tr><th>Brick <span class="mcard__claim">thickness not stated in source</span></th><td>15&nbsp;dB</td><td>15&nbsp;dB</td></tr><tr><th>Masonry block</th><td>15&nbsp;dB</td><td>16&nbsp;dB</td></tr><tr><th>Dry timber, 38&nbsp;mm</th><td>4&nbsp;dB</td><td>4&nbsp;dB</td></tr><tr><th>Plain glass, 6&nbsp;mm</th><td>1&nbsp;dB</td><td>1&nbsp;dB</td></tr></tbody></table></div><p class="cmp-foot">Derived from published measured construction-material data. The source does not state specimen thickness for brick and block, so <strong>do not read &ldquo;brick = 15&nbsp;dB&rdquo; as applying to a 215&nbsp;mm Victorian solid wall</strong> &mdash; the real figure is several times higher. We have deliberately omitted a 2.4&nbsp;GHz column because we could not reconcile it with the source&rsquo;s stated method.</p><p><strong>Modern glass is the standout, and almost nobody expects it.</strong> Plain glass costs about 1&nbsp;dB. Low-emissivity coated glass &mdash; effectively universal on replacement windows since the mid-2000s &mdash; has been measured at over 30&nbsp;dB. One comparison gives ordinary glass 1&nbsp;dB against low-E at 25&nbsp;dB at 3.5&nbsp;GHz. <strong>A modern coated window is worth 20&ndash;35&nbsp;dB.</strong> That is why your WiFi will not reach the conservatory, the patio or the garden office, and why the conservatory is frequently the worst-covered room in an otherwise efficient house.</p>
       </div>
     </section>
-    <section class="section" aria-label="British housing stock, wall by wall">
+    <section id="s3" class="section" aria-label="British housing stock, wall by wall">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; WALL BY WALL</p>
         <h2 class="section-title" data-title>British housing stock, wall by wall<span class="title-underline"></span></h2>
 <ul><li><strong>Solid-brick Victorian and Edwardian walls</strong> are typically 215&nbsp;mm or 328&nbsp;mm plus plaster. Plan on roughly 30&ndash;40&nbsp;dB at 5&nbsp;GHz per wall &mdash; <em>an inference from the measured table above, not a measurement of that wall type</em>. Two of those and 5&nbsp;GHz is finished.</li><li><strong>Party walls</strong> in terraces and semis: treat as opaque at 5 and 6&nbsp;GHz. Never plan on reaching through one.</li><li><strong>Stone cottages</strong> &mdash; Purbeck and Portland limestone, granite, sandstone &mdash; commonly have 450&ndash;600&nbsp;mm rubble-filled walls. There is no clean measured dataset for random rubble stone, and we are not going to invent one. Rule of thumb: one access point per room cluster, wired from the start.</li><li><strong>Flint and cob</strong>, typically 450&ndash;900&nbsp;mm, hold moisture &mdash; and water is the strongest absorber in this frequency range, so damp walls attenuate more than dry ones and vary with the season. No verified figure exists for cob.</li><li><strong>Chimney breasts</strong> are solid masonry columns running the full height of the house. There is a permanent dead zone directly behind them on every floor. Move the node; turning the power up will not help.</li><li><strong>Concrete floors</strong> &mdash; 1960s and 70s flats, beam-and-block, modern slabs: assume vertical coverage between floors does not work. Steel reinforcement mesh has a spacing far smaller than the wavelength, so it behaves as a solid conductive sheet.</li><li><strong>Expanded metal lath</strong> in late-Victorian to post-war ceilings and partitions is effectively a Faraday screen per room. The giveaway symptom: signal dies at exactly the wall line with no gradient, and 2.4&nbsp;GHz behaves no better than 5&nbsp;GHz.</li><li><strong>Extensions:</strong> the old external wall is now an internal wall &mdash; and it is still 215&nbsp;mm of solid brick. Treat it as an external wall when planning.</li></ul>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Thermal upgrades: why a &ldquo;better&rdquo; house is often worse for WiFi">
+    <section id="s4" class="section section--alt" aria-label="Thermal upgrades: why a &ldquo;better&rdquo; house is often worse for WiFi">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/04 &mdash; WHY NEW HOUSES CAN BE WORSE</p>
         <h2 class="section-title" data-title>Thermal upgrades: why a &ldquo;better&rdquo; house is often worse for WiFi<span class="title-underline"></span></h2>
 <p>This surprises people, and it is one of the most useful things on this page.</p><ul><li><strong>Foil-backed plasterboard and foil-faced insulation</strong> present a continuous aluminium layer. Published figures vary so wildly that we will give you the mechanism rather than a number: it is a metal sheet, and radio does not go through metal sheets.</li><li><strong>Loft insulation with a foil membrane</strong> caps the house horizontally.</li><li><strong>Underfloor heating</strong> &mdash; the problem is the foil-faced board under the screed and any steel mesh, not the pipes. Assume no vertical coverage and put an access point on each floor.</li><li><strong>Low-E glazing</strong> at 20&ndash;35&nbsp;dB, as above.</li></ul><p><strong>The diagnostic question we always ask:</strong> did coverage get dramatically worse after new windows, external wall insulation, a loft conversion or underfloor heating? If so, the building fabric changed &mdash; not your broadband. People spend months arguing with their provider about this.</p><p><strong>Never</strong> cut, pierce or remove foil-backed insulation, vapour barriers or coated glazing to improve signal. It breaches the thermal and vapour-control design, can cause condensation within the structure, and may breach building regulations. Move the antenna instead &mdash; it is cheaper and it is legal.</p>
       </div>
     </section>
-    <section class="section" aria-label="Node counts, outbuildings and listed buildings">
+    <section id="s5" class="section" aria-label="Node counts, outbuildings and listed buildings">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; HOW MANY ACCESS POINTS</p>
         <h2 class="section-title" data-title>Node counts, outbuildings and listed buildings<span class="title-underline"></span></h2>
 <p><strong>Rules of thumb &mdash; every one of these is a rule of thumb, not a measurement:</strong></p><ul><li>Post-2000 timber-frame semi, around 80&ndash;100&nbsp;m&sup2;: router plus one node, wireless backhaul acceptable.</li><li>1930s cavity-brick semi, around 100&nbsp;m&sup2;: router plus one or two.</li><li>Victorian solid-brick terrace over three floors: one access point per floor, wired. The staircase is your only propagation path.</li><li>Stone cottage with 450&nbsp;mm walls: one per one or two rooms, wired.</li><li><strong>Anything with foil-backed board, metal lath, underfloor heating foil or concrete floors:</strong> per floor and per zone, wired, regardless of floor area.</li><li>Bungalows have no vertical problem but a long horizontal run through a spine wall. One central unit often does a 1930s bungalow; a long 1960s one with masonry internal walls needs two, at opposite thirds.</li></ul><p><strong>Keep 2.4&nbsp;GHz switched on in old housing stock.</strong> Do not let anyone talk you into disabling it &mdash; in a solid-wall house it is often the only band that reaches.</p><p><strong>Garden offices and outbuildings.</strong> The path usually crosses at least one 215&ndash;330&nbsp;mm masonry wall <em>and</em> one low-E glazed unit &mdash; easily 50&ndash;70&nbsp;dB combined at 5&nbsp;GHz. This is a building-fabric problem, not a product problem, and no mesh system solves it. In order of preference: external-grade or direct-burial Cat6 in ducting to an access point in the outbuilding; fibre for long runs or lightning exposure; a point-to-point link with <strong>genuine external line of sight</strong> &mdash; mounting one on an internal windowsill pointing through coated glass throws away 20&ndash;35&nbsp;dB before it starts; or a separate mobile broadband service.</p><p><strong>Garages</strong> are usually single-skin with a metal door acting as a reflector &mdash; the fix is a cabled access point inside, not a stronger signal from the house. <strong>Steel container offices</strong> are close to a sealed Faraday cage: the antenna has to be outside the metal skin, cabled through a gland.</p><p><strong>A legal point that catches people out:</strong> a new electrical circuit supplying a detached outbuilding is notifiable under building regulations in England and Wales and needs a registered electrician or prior notification. <strong>Data cabling alone is not notifiable; power is.</strong> Any external Ethernet run also needs surge protection.</p><p><strong>Listed buildings:</strong> the guidance is mitigation, minimisation and reversibility &mdash; route through existing voids and service routes, and use skirtings and mouldings as concealed paths. Upgrading wiring does not automatically require consent, but cutting into original plasterwork, stonework or beams alters the fabric and can. <strong>Speak to the local conservation officer first: unauthorised works to a listed building are a criminal offence.</strong> Anyone who tells you cabling &ldquo;never&rdquo; needs consent is not someone to take advice from.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Why your WiFi gets worse every July">
+    <section id="s6" class="section section--alt" aria-label="Why your WiFi gets worse every July">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/06 &mdash; HOT WEATHER</p>
         <h2 class="section-title" data-title>Why your WiFi gets worse every July<span class="title-underline"></span></h2>
 <p>Every summer we take calls that follow the same pattern: fine in the morning, degrading through the afternoon, better overnight, router hot to the touch, and &ldquo;it fixes itself if I turn it off for ten minutes&rdquo;. <strong>A genuine line fault does not follow the sun.</strong></p><p>Three separate things are happening, and it is worth separating them:</p><ol><li><strong>Thermal throttling</strong> &mdash; the processor slows down or the radio reduces its transmit power. Throughput drops and range shrinks.</li><li><strong>Instability</strong> &mdash; watchdog resets, spontaneous reboots, dropped connections.</li><li><strong>Permanent life reduction</strong> &mdash; and this is the one nobody mentions. Heat ages the power supply long before it kills the chipset.</li></ol><p><strong>The arithmetic on that last point:</strong> electrolytic capacitor life roughly doubles for every 10&nbsp;&deg;C cooler you run. A component rated 5,000 hours at 105&nbsp;&deg;C lasts 20,000 at 85&nbsp;&deg;C. <strong>A router run 15&nbsp;&deg;C hotter than it needs to be fails in year three instead of year six.</strong> Battery backup kit is worse still &mdash; life roughly halves for every 10&nbsp;&deg;C above 25&nbsp;&deg;C, against a three-to-five year design life. A UPS in a hot airing cupboard is a consumable.</p><p><strong>Ratings versus real UK conditions.</strong> Consumer mesh is typically rated <strong>0&ndash;40&nbsp;&deg;C</strong> &mdash; we have verified that on TP-Link&rsquo;s own UK page for the Deco X50. Forty degrees is the ceiling, not a comfortable operating point. Meanwhile a UK loft in a heatwave is far outside all of it: trade sources put loft air at 40&ndash;50&nbsp;&deg;C routinely, a roof-ventilation case study records 60&nbsp;&deg;C while outside air was 35&nbsp;&deg;C, and roof undersides reach 70&ndash;80&nbsp;&deg;C. <em>Those are trade and case-study figures rather than a controlled national study &mdash; but the direction is not in doubt.</em> Conservatories and glazed garden rooms are the second worst location.</p>
       </div>
     </section>
-    <section class="section" aria-label="Where equipment fails in summer, and what to do">
+    <section id="s7" class="section" aria-label="Where equipment fails in summer, and what to do">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/07 &mdash; PLACEMENT & COOLING</p>
         <h2 class="section-title" data-title>Where equipment fails in summer, and what to do<span class="title-underline"></span></h2>
@@ -768,11 +768,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p><strong>Related:</strong> <a href="/mesh-wifi-systems-uk/">which mesh system to buy</a> &middot; <a href="/mesh-wifi-setup-guide/">setup guide</a> &middot; <a href="/wifi-troubleshooting/">fault-finding</a> &middot; <a href="/business-wifi-installation/">business WiFi</a> &middot; <a href="/rural-and-farm-wifi-dorset/">rural and hard-to-reach WiFi</a></p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/mesh-wifi-systems-uk/">which mesh system to buy</a><a href="/mesh-wifi-setup-guide/">setup guide</a><a href="/wifi-troubleshooting/">fault-finding</a><a href="/business-wifi-installation/">business WiFi</a><a href="/rural-and-farm-wifi-dorset/">rural and hard-to-reach WiFi</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1064,7 +1067,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

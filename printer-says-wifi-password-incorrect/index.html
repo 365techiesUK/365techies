@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -701,8 +701,8 @@
         <ul class="page-hero__chips mono"><li>&#9679; No fix, no fee</li><li>&#9679; Rated 4.9 on Google</li><li>&#9679; Family-run since 1995</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="Yes — the password can be right and still get rejected">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; START HERE</a><a href="#s2">02 &mdash; THE BAND TRAP</a><a href="#s3">03 &mdash; SECURITY & CHANNELS</a><a href="#s4">04 &mdash; FIRMWARE QUIRKS</a><a href="#s5">05 &mdash; THE FIX ORDER</a><a href="#s6">06 &mdash; HONEST ADVICE</a></nav>
+    <section id="s1" class="section" aria-label="Yes — the password can be right and still get rejected">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; START HERE</p>
         <h2 class="section-title" data-title>Yes — the password can be right and still get rejected<span class="title-underline"></span></h2>
@@ -711,45 +711,45 @@
     </section>
     <section class="section" aria-label="Fix this now with remote support">
       <div class="wrap" style="max-width:860px;margin:0 auto">
-        <div data-reveal style="border:1px solid rgba(0,206,27,0.35);background:rgba(0,206,27,0.06);border-radius:16px;padding:1.6rem 1.8rem;text-align:center">
+        <div class="callout callout--good callout--center" data-reveal>
           <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// NEED THIS FIXED RIGHT NOW?</p>
-          <p style="font-size:1.08rem;margin:0 0 1.1rem">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
-          <p style="margin:0;display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap">
+          <p class="callout__lede">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
+          <p class="callout__row">
             <a class="button primary" href="/sos/">Start SOS Remote Support</a>
             <a class="button secondary" href="tel:+441202775566">Call 01202 775566</a>
           </p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Most printers only speak 2.4GHz — and modern routers hide it">
+    <section id="s2" class="section section--alt" aria-label="Most printers only speak 2.4GHz — and modern routers hide it">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/02 &mdash; THE BAND TRAP</p>
         <h2 class="section-title" data-title>Most printers only speak 2.4GHz — and modern routers hide it<span class="title-underline"></span></h2>
 <p>Most home printers — especially budget and older models — only support 2.4GHz WiFi. Modern routers and mesh systems usually broadcast 2.4GHz and 5GHz under a single network name and quietly steer devices between the bands. That's great for phones and laptops, but a 2.4GHz-only printer can get caught in the middle of that negotiation, fail to join, and report the failure as a password error.</p><p>Two things help. First, check whether your router or mesh app lets you split the bands into two separately named networks, or offers a pairing mode that temporarily favours 2.4GHz for new devices — many do, though the setting's name and location vary by brand. Join the printer to the 2.4GHz name and it will usually stay put. If you're on a mesh system, our <a href="/mesh-wifi-setup-guide/">mesh WiFi setup guide</a> covers band settings in more detail.</p><p>Second, position matters: 2.4GHz travels further than 5GHz, but a printer at the very edge of coverage can fail to authenticate at all. And if the printer connects fine but keeps dropping off afterwards, that's a different fault — see <a href="/why-does-my-printer-keep-disconnecting/">why your printer keeps disconnecting</a>.</p>
       </div>
     </section>
-    <section class="section" aria-label="WPA3-only networks, hidden names and the UK's channel 13">
+    <section id="s3" class="section" aria-label="WPA3-only networks, hidden names and the UK's channel 13">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; SECURITY & CHANNELS</p>
         <h2 class="section-title" data-title>WPA3-only networks, hidden names and the UK's channel 13<span class="title-underline"></span></h2>
 <p>WPA3 is the newest WiFi security standard, and some routers now ship set to WPA3-only. Plenty of printers — including some only a few years old — only speak WPA2, and a WPA2 device knocking on a WPA3-only door gets rejected in a way many printers report as a bad password. The fix is transitional (mixed) mode, usually labelled something like <strong>WPA2/WPA3</strong>, which lets old and new devices coexist. Interfaces move around between routers and firmware versions, so look for the wireless <em>security mode</em> setting rather than a specific menu path.</p><p>Two more invisible walls. If you've hidden your network name, many printers handle that badly: you'd need to type the SSID manually, exactly, case-sensitive — or better, unhide it while you connect (hiding adds very little real security anyway). And here's a UK-specific one: routers here can legally use 2.4GHz channels 12 and 13, but printers with US-region firmware stop listening at channel 11. If your router has auto-picked channel 13, the printer can't see your network <em>at all</em>. Manually setting the 2.4GHz channel to 11 or below cures it. Our <a href="/wifi-troubleshooting/">WiFi troubleshooting guide</a> covers channels in more depth.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Passwords the printer can't digest — and memories it won't let go">
+    <section id="s4" class="section section--alt" aria-label="Passwords the printer can't digest — and memories it won't let go">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/04 &mdash; FIRMWARE QUIRKS</p>
         <h2 class="section-title" data-title>Passwords the printer can't digest — and memories it won't let go<span class="title-underline"></span></h2>
 <p>Older printer firmware can be fussy about the password itself. Some models mishandle certain symbols — quotation marks, spaces, the £ sign — and some accept fewer characters than your router allows, silently truncating a long passphrase and then, of course, failing. If your password is long and symbol-heavy, that alone can be the whole problem.</p><p>The other quiet saboteur is memory. If you've replaced your router but kept the same network name — common when a provider sends a like-for-like swap — the printer may cling to saved settings from the old router: old password, old security type, sometimes an old band preference. It looks like it's trying to join your network; it's actually trying to rejoin a network that no longer exists. The cure is to clear the printer's stored network settings — the option is usually called something like <strong>restore network defaults</strong>, though names vary by maker — so it starts genuinely fresh, then set the connection up from scratch as if the printer were brand new.</p>
       </div>
     </section>
-    <section class="section" aria-label="Work through it in this order (and where WPS fits)">
+    <section id="s5" class="section" aria-label="Work through it in this order (and where WPS fits)">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; THE FIX ORDER</p>
         <h2 class="section-title" data-title>Work through it in this order (and where WPS fits)<span class="title-underline"></span></h2>
 <p>Here's the order we'd work in — cheapest effort first:</p><ol><li>Restart both the printer and the router, then retype the password once, slowly, watching upper and lower case.</li><li>Get the printer onto 2.4GHz — split the bands or use your router's pairing mode.</li><li>Set wireless security to WPA2/WPA3 mixed mode rather than WPA3-only.</li><li>Fix the 2.4GHz channel to 11 or below.</li><li>Unhide the network name, at least while you connect.</li><li>Clear the printer's stored network settings and set it up from scratch.</li></ol><p>If all of that fails and both your router and printer have a <strong>WPS button</strong>, push-button pairing is a legitimate last resort: press the router's button, then the printer's within a couple of minutes, and no password is typed at all. The honest caveat: WPS — particularly its PIN variant — has well-documented security weaknesses, so it's sensible to switch WPS off in your router's settings once the printer is connected, where your router allows it. We wouldn't leave it permanently enabled on a network we look after.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="When it's not worth fighting — and what we'd do">
+    <section id="s6" class="section section--alt" aria-label="When it's not worth fighting — and what we'd do">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/06 &mdash; HONEST ADVICE</p>
         <h2 class="section-title" data-title>When it's not worth fighting — and what we'd do<span class="title-underline"></span></h2>
@@ -757,11 +757,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p><strong>Related guides:</strong> <a href="/why-does-my-printer-keep-disconnecting/">Why does my printer keep disconnecting?</a> · <a href="/wifi-troubleshooting/">WiFi troubleshooting</a> · <a href="/mesh-wifi-setup-guide/">Mesh WiFi setup guide</a> · <a href="/printer-support/">Printer support</a></p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/why-does-my-printer-keep-disconnecting/">Why does my printer keep disconnecting?</a><a href="/wifi-troubleshooting/">WiFi troubleshooting</a><a href="/mesh-wifi-setup-guide/">Mesh WiFi setup guide</a><a href="/printer-support/">Printer support</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1045,7 +1048,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

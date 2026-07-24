@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -709,29 +709,29 @@
         <ul class="page-hero__chips mono"><li>&#9679; No sign-up needed</li><li>&#9679; Ordered checklist</li><li>&#9679; What to say when you report it</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="The first five minutes">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; FIRST FIVE MINUTES</a><a href="#s2">02 &mdash; REPORTING IT</a><a href="#s3">03 &mdash; KEEP TRADING</a><a href="#s4">04 &mdash; WHEN TO ESCALATE</a></nav>
+    <section id="s1" class="section" aria-label="The first five minutes">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; FIRST FIVE MINUTES</p>
         <h2 class="section-title" data-title>The first five minutes<span class="title-underline"></span></h2>
 <ol><li><strong>Look at the router&rsquo;s lights before you touch anything.</strong> Photograph them. Which light is wrong tells the engineer more than ten minutes of description will.</li><li><strong>Plug a laptop into the router with a cable.</strong> If the wired connection works, your line is fine and you have a WiFi or network problem &mdash; a completely different job, and our <a href="/wifi-troubleshooting/">WiFi fault-finding guide</a> takes it from there.</li><li><strong>Check your provider&rsquo;s status page</strong>, and check whether it is <a href="/is-it-down/">down for everyone or just you</a>. An area fault means there is nothing to fix at your end and a queue of people ahead of you.</li><li><strong>Tether a phone</strong> and see whether the internet works over mobile. If it does, the problem really is your line rather than the wider internet, and that is also your emergency stopgap for the next hour.</li><li><strong>Restart the router once.</strong> Once. Not repeatedly &mdash; see the warning below.</li></ol><div class="callout"><p><strong>Do not sit there rebooting the router.</strong> On copper and part-fibre lines, repeated resyncs are read as instability and the network responds by making your line slower but steadier &mdash; and that reduction can persist long after the fault is fixed. You can permanently slow your own broadband by rebooting it all morning.</p></div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="How to report it so you are not fobbed off">
+    <section id="s2" class="section section--alt" aria-label="How to report it so you are not fobbed off">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/02 &mdash; REPORTING IT</p>
         <h2 class="section-title" data-title>How to report it so you are not fobbed off<span class="title-underline"></span></h2>
 <p>Have these ready before you ring, and the call goes very differently:</p><ul><li>Your <strong>account number</strong> and the <strong>circuit or line ID</strong> if you have it.</li><li><strong>What you have already tested</strong> &mdash; &ldquo;wired laptop straight into the router, no connection, router shows no broadband light&rdquo;. This alone skips twenty minutes of script.</li><li>When it started, and whether anything happened at the same time &mdash; street works, a power cut, a storm, a builder.</li></ul><p><strong>Then ask three specific questions and write the answers down:</strong></p><ol><li>&ldquo;What is my <strong>fault reference</strong>?&rdquo;</li><li>&ldquo;What <strong>care level</strong> is this line on, and what is the committed fix time under it?&rdquo;</li><li>&ldquo;Is there a <strong>declared area fault or major outage</strong>?&rdquo;</li></ol><p>That second question is the one almost nobody asks, and it is the one that tells you whether you are waiting hours or working days. On standard care the target is end of the <strong>second working day</strong>, excluding weekends and bank holidays &mdash; so a Friday fault can legitimately run to Tuesday.</p>
       </div>
     </section>
-    <section class="section" aria-label="How to keep trading while you wait">
+    <section id="s3" class="section" aria-label="How to keep trading while you wait">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; KEEP TRADING</p>
         <h2 class="section-title" data-title>How to keep trading while you wait<span class="title-underline"></span></h2>
 <ul><li><strong>Card payments:</strong> most modern card readers can fall back to a mobile network on their own, so check yours before assuming you cannot take money. Know your acquirer&rsquo;s authorisation phone line as a last resort.</li><li><strong>Phones:</strong> if your phone system runs over broadband, divert the main number to a mobile now rather than later. Your provider can usually do this remotely in minutes. <em>After the analogue switch-off in January 2027 this will apply to almost everyone.</em></li><li><strong>Tether, but plan it:</strong> a phone hotspot will carry email and card terminals for a while. It will not carry a room full of people doing video calls, and it will eat somebody&rsquo;s data allowance.</li><li><strong>Tell customers before they find out.</strong> A note on the door and a post on your page costs nothing and buys a great deal of patience.</li><li><strong>Write down what broke.</strong> Not for now &mdash; for afterwards. The list of what you could not do is exactly the raw material for a <a href="/business-continuity-internet/">plan that stops it hurting next time</a>.</li></ul>
       </div>
     </section>
-    <section class="section section--alt" aria-label="When to stop waiting">
+    <section id="s4" class="section section--alt" aria-label="When to stop waiting">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/04 &mdash; WHEN TO ESCALATE</p>
         <h2 class="section-title" data-title>When to stop waiting<span class="title-underline"></span></h2>
@@ -739,11 +739,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p><strong>Next:</strong> <a href="/emergency-internet/">get a connection brought to you</a> &middot; <a href="/business-continuity-internet/">make a plan so it hurts less next time</a> &middot; <a href="/is-it-down/">check if a service is down for everyone</a> &middot; <a href="/wifi-troubleshooting/">if the line is fine but WiFi is not</a></p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/emergency-internet/">get a connection brought to you</a><a href="/business-continuity-internet/">make a plan so it hurts less next time</a><a href="/is-it-down/">check if a service is down for everyone</a><a href="/wifi-troubleshooting/">if the line is fine but WiFi is not</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1031,7 +1034,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

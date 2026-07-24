@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -709,43 +709,43 @@
         <ul class="page-hero__chips mono"><li>&#9679; Free room-by-room WiFi survey</li><li>&#9679; Trading in Dorset since 1995</li><li>&#9679; Rated 4.9 on Google</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="Everyone drops at once? Stop blaming the laptops">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; THE SYMPTOM</a><a href="#s2">02 &mdash; SUSPECT ONE</a><a href="#s3">03 &mdash; SUSPECTS TWO AND THREE</a><a href="#s4">04 &mdash; SUSPECTS FOUR AND FIVE</a><a href="#s5">05 &mdash; THE HONEST BIT</a><a href="#s6">06 &mdash; THE PROPER FIX</a></nav>
+    <section id="s1" class="section" aria-label="Everyone drops at once? Stop blaming the laptops">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; THE SYMPTOM</p>
         <h2 class="section-title" data-title>Everyone drops at once? Stop blaming the laptops<span class="title-underline"></span></h2>
 <p>The WiFi keeps dropping out for everyone — every laptop, every phone, the printer, sometimes the card machine — and then it comes back, until it doesn't. If that's your office, you can stop troubleshooting individual devices right now: thirty machines don't all develop the same fault in the same second. Whole-office drops mean something <em>shared</em> has failed, however briefly — the router, a switch, the airwaves your WiFi travels over, or the broadband line behind the lot.</p><p>That's genuinely useful news, because it shrinks the suspect list from thirty devices to about five causes, and each one leaves different fingerprints. Below we walk through them in the order we'd check them ourselves: an overworked consumer router, an exhausted address pool, channel congestion from neighbouring businesses, a failing PoE switch, and — more often than anyone expects — a broadband line that's dropping while the WiFi itself is perfectly healthy.</p><p>If your problem is one stubborn laptop rather than the whole room, start with our general <a href="/wifi-troubleshooting/">WiFi troubleshooting guide</a> instead. If it really is everyone, read on — and know the definitive answer isn't guesswork: it's a survey done in your building while your team is actually working.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="One consumer router doing a whole business's job">
+    <section id="s2" class="section section--alt" aria-label="One consumer router doing a whole business's job">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/02 &mdash; SUSPECT ONE</p>
         <h2 class="section-title" data-title>One consumer router doing a whole business's job<span class="title-underline"></span></h2>
 <p>Most small offices are still running on the router the broadband provider posted out — a box designed for a family. It's doing the routing, the firewall, the WiFi and the job of handing every device an address (DHCP), and it was specced for a household's worth of gadgets. Ask it to serve twenty staff plus their phones, the printers, the CCTV and every visitor's handset, and it runs hot, drops wireless clients under load, and occasionally reboots itself — at which point everyone drops at once.</p><p>The address pool is the quieter version of the same problem. Every device on your network borrows an address from a fixed pool, and on many routers that pool is smaller than people assume — defaults and settings vary by model, which is exactly why we check rather than guess. When the pool fills up, new devices can't join at all, and as leases expire and churn, devices that were happily connected start behaving strangely.</p><p>The fingerprint: drops that get worse mid-morning as the office fills, devices showing "connected, no internet", and everything recovering after a router reboot — then sliding back within days. A reboot isn't a fix; it's a symptom with a schedule.</p>
       </div>
     </section>
-    <section class="section" aria-label="Crowded channels — and Dorset's radar quirk">
+    <section id="s3" class="section" aria-label="Crowded channels — and Dorset's radar quirk">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; SUSPECTS TWO AND THREE</p>
         <h2 class="section-title" data-title>Crowded channels — and Dorset's radar quirk<span class="title-underline"></span></h2>
 <p>WiFi is a shared radio, and in a business park or above a high street you're sharing it with every firm around you. The older 2.4 GHz band has, in practice, only three channels that don't overlap — so when your neighbours' networks pile onto the same ones, everybody's WiFi degrades together, and it's worst at exactly the hours you need it most.</p><p>The faster 5 GHz band has more room, but one quirk matters enormously around here: many of its channels are shared with radar. The rules (called DFS) require an access point that detects radar — or anything that resembles it — to leave that channel immediately. When that happens, every device on the access point drops while it finds a new home. Brief, random, whole-office cut-outs that heal themselves within a minute or two are the classic signature, and being near the Dorset coast and Bournemouth Airport puts radar events firmly on the local suspect list.</p><p>You can't see any of this from a laptop's WiFi menu. It shows up when someone measures the airwaves room by room — which is exactly what our free <a href="/wifi-signal-test/">WiFi signal test</a> does, at your desks, during working hours.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="The failing switch, and the line drop everyone blames on WiFi">
+    <section id="s4" class="section section--alt" aria-label="The failing switch, and the line drop everyone blames on WiFi">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/04 &mdash; SUSPECTS FOUR AND FIVE</p>
         <h2 class="section-title" data-title>The failing switch, and the line drop everyone blames on WiFi<span class="title-underline"></span></h2>
 <p>Two causes get missed constantly. The first is the PoE switch — the box that feeds power and data to ceiling-mounted access points through the network cable. When one starts failing, or overheats in a warm cupboard, it can restart the access points it powers, and all the WiFi in the building vanishes together for a minute or two. If your drops cluster on warm afternoons or busy periods, the switch deserves a hard look.</p><p>The second is the most common misdiagnosis we see: the broadband line dropping while the WiFi stays up. Your bars stay full — you're still connected to the router — but the internet behind it has gone, so it <em>feels</em> like a WiFi fault. Here's the order that settles it:</p><ol><li>When a drop hits, check a wired computer. If it loses internet at the same moment, the wireless is innocent.</li><li>Read the router's log — most routers keep one, usually under a name like "system log" (menus move between models). Repeated WAN drops or reconnection entries mean the line itself is failing.</li><li>Only if wired connections stay up and the logs are clean is it genuinely a wireless problem.</li></ol><p>If the line turns out to be the culprit, the fix is a conversation with your provider — and, for offices that can't afford the downtime, a <a href="/business-continuity-internet/">backup internet connection</a> that takes over automatically.</p>
       </div>
     </section>
-    <section class="section" aria-label="When it's not worth fighting it — and what we'd do">
+    <section id="s5" class="section" aria-label="When it's not worth fighting it — and what we'd do">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; THE HONEST BIT</p>
         <h2 class="section-title" data-title>When it's not worth fighting it — and what we'd do<span class="title-underline"></span></h2>
 <p>Here's the honest bit: the wrong response to whole-office drops is buying kit on a hunch. We regularly meet offices on their third WiFi booster or second <a href="/mesh-wifi-systems-uk/">consumer mesh kit</a> — decent products in the right home, but in a congested office their wireless links just add more traffic to airwaves that may already be the problem, and none of them do anything for a full address pool, a failing switch or a dropping line. That's not fixing; that's paying to guess.</p><p>Sometimes the real fix costs almost nothing — a bigger address pool, a better channel, one setting on the router. When that's the case, we'll tell you, and you'll spend a fraction of what another gadget would have cost. Sometimes the building genuinely needs proper access points. The point is to know which <em>before</em> money leaves your account.</p><p>That's why the first step is a free room-by-room survey with your team in the building — run it yourself, in a browser, with our <a href="/wifi-signal-test/">free WiFi survey tool</a>, then send us the results for a free human review. Congestion, load and line drops only show themselves under real use, so we measure during a normal working day. You get a written, plain-English report naming the cause and what fixing it involves — and if the honest answer is "your kit is fine, it's the line", the report says exactly that.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="What a real access-point install looks like">
+    <section id="s6" class="section section--alt" aria-label="What a real access-point install looks like">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/06 &mdash; THE PROPER FIX</p>
         <h2 class="section-title" data-title>What a real access-point install looks like<span class="title-underline"></span></h2>
@@ -753,11 +753,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p><strong>Related guides:</strong> <a href="/business-wifi-installation/">Business WiFi installation</a> · <a href="/wifi-signal-test/">Free WiFi signal test</a> · <a href="/wifi-troubleshooting/">WiFi troubleshooting</a> · <a href="/business-continuity-internet/">Backup internet for business</a> · <a href="/mesh-wifi-systems-uk/">Mesh WiFi systems guide</a></p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/business-wifi-installation/">Business WiFi installation</a><a href="/wifi-signal-test/">Free WiFi signal test</a><a href="/wifi-troubleshooting/">WiFi troubleshooting</a><a href="/business-continuity-internet/">Backup internet for business</a><a href="/mesh-wifi-systems-uk/">Mesh WiFi systems guide</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1045,7 +1048,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

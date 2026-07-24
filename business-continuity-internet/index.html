@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -756,36 +756,36 @@
         <ul class="page-hero__chips mono"><li>&#9679; Written, rehearsed, yours</li><li>&#9679; Honest about failover first</li><li>&#9679; Built from your numbers</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="Buy the failover router first. We mean it.">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; FIRST, THE HONEST BIT</a><a href="#s2">02 &mdash; WHAT BREAKS</a><a href="#s3">03 &mdash; THE PLAN ITSELF</a><a href="#s4">04 &mdash; REHEARSE IT</a><a href="#s5">05 &mdash; WHERE THE VAN FITS</a></nav>
+    <section id="s1" class="section" aria-label="Buy the failover router first. We mean it.">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; FIRST, THE HONEST BIT</p>
         <h2 class="section-title" data-title>Buy the failover router first. We mean it.<span class="title-underline"></span></h2>
 <p>If you take one thing from this page: <strong>for most businesses, the correct first line of defence is an automatic 4G or 5G failover router</strong>, not a plan to phone somebody.</p><p>It sits alongside your existing router, notices the line has failed, and moves your traffic onto mobile data within seconds &mdash; unattended, at three in the morning, on Boxing Day. It costs a few hundred pounds plus a small monthly data cost. Nothing that involves a human being and a vehicle competes with that.</p><p>We fit them. We would rather fit you one and never hear from you in an emergency than sell you a more exciting service that recovers you more slowly.</p><p><strong>Two things to check before you buy one, though:</strong> what the mobile coverage is actually like <em>at your premises</em> (not on a coverage map), and whether your systems will tolerate arriving on a different internet address &mdash; some card portals, banking systems and sign-in rules check that. Both are things we test as part of building the plan.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Step one: what actually breaks?">
+    <section id="s2" class="section section--alt" aria-label="Step one: what actually breaks?">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/02 &mdash; WHAT BREAKS</p>
         <h2 class="section-title" data-title>Step one: what actually breaks?<span class="title-underline"></span></h2>
 <p>Every plan starts here, and almost every plan we are shown skips it and starts with equipment instead.</p><p>Go activity by activity and write down what stops. It is nearly always more than people expect:</p><ul><li><strong>Cloud till and booking systems</strong> &mdash; many keep taking orders offline, but you lose reporting, stock and often the ability to look anything up. Find out exactly what your own system does offline <em>before</em> the day you need to know.</li><li><strong>Card payments</strong> &mdash; usually more resilient than people fear, since most modern readers fall back to mobile networks. Check yours anyway.</li><li><strong>Phones</strong> &mdash; if they run over broadband, they go with it. <strong>After the analogue switch-off, currently set for 31 January 2027, that will be almost everybody.</strong></li><li><strong>Anything cloud-based</strong> &mdash; email, files, accounts, practice management, design tools, the lot.</li><li><strong>Door entry, CCTV, alarms and remote monitoring</strong> &mdash; routinely forgotten until they are needed.</li></ul><p><strong>Then put your own number on it.</strong> Not a number off the internet. If you search for the cost of downtime you will find &ldquo;&pound;3,000 an hour&rdquo; and similar figures repeated across dozens of sites &mdash; they trace back through a chain of marketing articles to a study from 2014, and they were survey estimates rather than measured losses. Yours is: staff cost per hour times people who cannot work, plus transactions you cannot take, plus anything with a deadline. It takes twenty minutes and it is the number that decides everything else.</p>
       </div>
     </section>
-    <section class="section" aria-label="What a proper written procedure contains">
+    <section id="s3" class="section" aria-label="What a proper written procedure contains">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; THE PLAN ITSELF</p>
         <h2 class="section-title" data-title>What a proper written procedure contains<span class="title-underline"></span></h2>
 <p>We build these using standard business-continuity language, because it makes the document something your insurer, your auditor and a serious customer will recognise rather than a leaflet.</p><ul><li><strong>How long you can tolerate it</strong> and <strong>how fast you need it back</strong> &mdash; agreed per activity, in writing, by you and not by us.</li><li><strong>Objective triggers.</strong> Not &ldquo;when it feels bad&rdquo;. Real ones: total loss confirmed at the router for more than X minutes; the provider has given a fault reference and no estimate; the estimate exceeds your recovery target. Written down, so a junior member of staff can act at 7am without ringing the owner.</li><li><strong>Named roles, each with a named deputy.</strong> Incident lead, communications, technical, and payments. Deputies matter because outages do not wait for everyone to be in.</li><li><strong>A contact tree</strong> with the provider&rsquo;s fault line, account number, circuit ID, care level, the exact wording to use, our out-of-hours number, the card acquirer&rsquo;s authorisation line, and the phone system provider.</li><li><strong>An escalation ladder with clocks:</strong> 15 minutes confirm and log; 30 minutes fault raised and reference obtained; 1 hour fallback measures live; 2 hours decide on external support; 4 hours decide on relocating.</li><li><strong>The manual fallbacks</strong>, written out and printed &mdash; how to take a payment, how to record a booking, where the paper is. A plan stored only in the cloud is a plan you cannot read during the outage.</li></ul>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Then unplug it on purpose">
+    <section id="s4" class="section section--alt" aria-label="Then unplug it on purpose">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/04 &mdash; REHEARSE IT</p>
         <h2 class="section-title" data-title>Then unplug it on purpose<span class="title-underline"></span></h2>
 <p>This is the step everyone skips and it is the one that makes the difference.</p><p>Pick a quiet hour, pull the broadband out deliberately, and run the procedure. You will find things: the failover works but the card machine doesn&rsquo;t reconnect; the phone divert takes fifteen minutes nobody had allowed for; the person named in the plan left last year; the printed contact sheet is a PDF in a cloud drive you cannot now reach.</p><p>Better to find all that on a Tuesday morning of your choosing than on the worst day of your year. <strong>A plan nobody has ever tested is a document, not a capability.</strong></p><p>We do this with customers annually, and it takes about an hour.</p>
       </div>
     </section>
-    <section class="section" aria-label="Where our van fits into this">
+    <section id="s5" class="section" aria-label="Where our van fits into this">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; WHERE THE VAN FITS</p>
         <h2 class="section-title" data-title>Where our van fits into this<span class="title-underline"></span></h2>
@@ -793,11 +793,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p><strong>Related:</strong> <a href="/emergency-internet/">the mobile response service</a> &middot; <a href="/broadband-down/">what to do right now if you are offline</a> &middot; <a href="/monthly-it-support/">monthly IT support</a> &middot; <a href="/business-it-support-subscriptions/">business IT support in Dorset</a></p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/emergency-internet/">the mobile response service</a><a href="/broadband-down/">what to do right now if you are offline</a><a href="/monthly-it-support/">monthly IT support</a><a href="/business-it-support-subscriptions/">business IT support in Dorset</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1081,7 +1084,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

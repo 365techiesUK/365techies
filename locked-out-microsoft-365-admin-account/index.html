@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -733,43 +733,43 @@
         <ul class="page-hero__chips mono"><li>&#9679; Family-run since 1995</li><li>&#9679; 4.9-star Google rating</li><li>&#9679; No-fix-no-fee</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="No One Can Log In? Start Here">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; THE SHORT ANSWER</a><a href="#s2">02 &mdash; FIND ANOTHER ADMIN</a><a href="#s3">03 &mdash; RECOVERY ROUTES</a><a href="#s4">04 &mdash; OWNERSHIP VERIFICATION</a><a href="#s5">05 &mdash; HOW WE FIX IT</a><a href="#s6">06 &mdash; PREVENTION</a></nav>
+    <section id="s1" class="section" aria-label="No One Can Log In? Start Here">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; THE SHORT ANSWER</p>
         <h2 class="section-title" data-title>No One Can Log In? Start Here<span class="title-underline"></span></h2>
 <p>If no one in your business can sign in to the Microsoft 365 admin centre, your tenant is not lost &mdash; but you cannot simply reset the password, because Microsoft will not hand control of a business tenant to anyone until it has proved you own it. Recovery almost always runs down one of three routes: another Global Administrator signs you back in, you prove ownership of your domain and take the tenant over, or Microsoft&rsquo;s data-protection team verifies your ownership and restores admin access.</p><p>The good news is that your email, files and Teams keep running the whole time. Mailboxes still send and receive; OneDrive and SharePoint stay online. What you have lost is <strong>control</strong> &mdash; the ability to add or remove users, reset passwords, change licences or move your domain &mdash; not the data itself.</p><p>The wrong move is to panic and create a brand-new tenant on the same domain, which can tangle things further. The right first step is to work out <strong>who might still have access</strong> and <strong>what kind of tenant</strong> you have, because that decides which recovery route is open to you. This page walks through all three honestly, including the parts Microsoft makes slow, and how <a href="/microsoft-365-support/">our Microsoft 365 team</a> can drive the whole thing for you.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="First, Check If Anyone Else Is an Admin">
+    <section id="s2" class="section section--alt" aria-label="First, Check If Anyone Else Is an Admin">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/02 &mdash; FIND ANOTHER ADMIN</p>
         <h2 class="section-title" data-title>First, Check If Anyone Else Is an Admin<span class="title-underline"></span></h2>
 <p>Before anything else, rule out the quickest fix: <strong>a second administrator</strong>. Many businesses have more than one Global Admin without realising it &mdash; a director, a bookkeeper, or the person who first set Microsoft 365 up. If any of them can still sign in at <strong>admin.microsoft.com</strong>, they can reset the locked-out password or promote a new admin in minutes, and you are done.</p><p>Work through everyone who has ever touched the system:</p><ul><li><strong>Current staff</strong> &mdash; ask each person to try signing in to the admin centre, not just their email.</li><li><strong>The person who set it up</strong> &mdash; often a founder, an ex-employee, or a family member.</li><li><strong>Your old IT company or MSP</strong> &mdash; they may still hold Global Admin or a partner relationship. If they have <a href="/it-provider-gone-bust/">gone bust</a> or won&rsquo;t co-operate, that changes the route but not the outcome.</li></ul><p>It also matters <strong>why</strong> you are locked out. If someone still knows the password but has lost their phone or authenticator app, that is an <strong>MFA problem</strong>, not a lost-tenant problem &mdash; another admin, or Microsoft, can often reset the sign-in method far more quickly. If nobody knows the password <strong>and</strong> nobody else is an admin, you are into genuine tenant recovery, covered next.</p>
       </div>
     </section>
-    <section class="section" aria-label="The Three Real Ways Back Into a Tenant">
+    <section id="s3" class="section" aria-label="The Three Real Ways Back Into a Tenant">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; RECOVERY ROUTES</p>
         <h2 class="section-title" data-title>The Three Real Ways Back Into a Tenant<span class="title-underline"></span></h2>
 <p>There are only three honest ways back into a Microsoft 365 tenant, and which applies depends on your setup:</p><ul><li><strong>1. Another Global Admin reinstates you.</strong> The fastest route by far. If any other admin account can sign in, it resets the password on the locked account or creates a fresh Global Admin. No Microsoft ticket, no waiting.</li><li><strong>2. Domain &amp; admin takeover.</strong> Some tenants are &lsquo;unmanaged&rsquo; &mdash; created automatically when staff signed up for a free service on your domain, with no real admin ever assigned. In that case you can prove you own the domain by adding a TXT record to your DNS and become the admin yourself. This internal takeover is the supported path for Microsoft 365; a purely external takeover is <strong>not</strong> available for tenants that include SharePoint and OneDrive.</li><li><strong>3. Microsoft ownership verification.</strong> For a normal, fully-managed tenant with no reachable admin &mdash; the sole admin has left, is unreachable, or has passed away &mdash; only Microsoft can restore access, after its data-protection team verifies that your business owns the tenant.</li></ul><p>Most business lock-outs land on route one or route three. Route two is narrower than it sounds, because full Microsoft 365 licences include SharePoint and OneDrive, which rules out the simplest self-service takeover. If you are unsure which tenant type you have, that is exactly the kind of thing <a href="/microsoft-365-support/">we can check for you</a> before you commit to a slow route.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="What Microsoft&rsquo;s Ownership Check Involves">
+    <section id="s4" class="section section--alt" aria-label="What Microsoft&rsquo;s Ownership Check Involves">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/04 &mdash; OWNERSHIP VERIFICATION</p>
         <h2 class="section-title" data-title>What Microsoft&rsquo;s Ownership Check Involves<span class="title-underline"></span></h2>
 <p>Route three &mdash; Microsoft&rsquo;s data-protection verification &mdash; is the one most orphaned-tenant searches end up needing, so it is worth knowing what it actually involves. You cannot do it purely online: you raise a Microsoft 365 <strong>business support</strong> case (by phone is usually fastest) and ask to be escalated to the team that handles <strong>tenant admin recovery and ownership verification</strong>.</p><p>Microsoft will not take your word for it. Expect to provide evidence that you genuinely control the business and the domain, which typically includes:</p><ul><li><strong>DNS control</strong> &mdash; the ability to add a specific TXT record Microsoft gives you to your domain&rsquo;s DNS.</li><li><strong>Registrar proof</strong> &mdash; screenshots showing the domain sitting in your account, plus invoices or receipts for the domain registration.</li><li><strong>The tenant ID</strong> and details of the domain and organisation you are trying to recover.</li></ul><p>Be realistic about timing. This is a manual, security-sensitive process with <strong>no guaranteed timescale</strong> &mdash; it is measured in days rather than minutes, and the queue can be slow. If you work through a Microsoft partner (a CSP), they can raise and chase the case on your behalf, which is often smoother than going it alone. Whichever way you go, the more complete your ownership evidence is up front, the faster it tends to move.</p>
       </div>
     </section>
-    <section class="section" aria-label="How We Get You Back In">
+    <section id="s5" class="section" aria-label="How We Get You Back In">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; HOW WE FIX IT</p>
         <h2 class="section-title" data-title>How We Get You Back In<span class="title-underline"></span></h2>
 <p>This is a stressful, high-stakes job, and it is easy to make it worse. Here is where <a href="/microsoft-365-support/">365 Techies</a> comes in &mdash; a family-run team in Kinson, Bournemouth, trading since 1995, working remotely across the UK and in person across Bournemouth, Poole, Christchurch and Dorset.</p><p>When you call us about a locked-out tenant, we:</p><ul><li><strong>Triage fast</strong> &mdash; establish whether anyone still has access, whether it is really a lost password or just a lost <a href="/how-to-set-up-two-factor-authentication/">MFA device</a>, and which of the three routes applies.</li><li><strong>Identify your tenant</strong> &mdash; find the tenant ID and domain status so we know whether a takeover is even possible.</li><li><strong>Build the evidence pack</strong> &mdash; DNS records, registrar proof and ownership documents, so Microsoft&rsquo;s data-protection team has everything first time.</li><li><strong>Drive the case</strong> &mdash; raise and chase it with Microsoft, or use a partner route, and translate the jargon back to you in plain English.</li></ul><p>Call us the moment you realise no one can get in &mdash; the sooner we start, the sooner the clock on Microsoft&rsquo;s side starts ticking. It is <strong>no-fix-no-fee</strong>, and once you are back in control we set the tenant up properly so this can never happen again. Phone <strong>01202 775566</strong> or <a href="/contact/">get in touch</a>.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Stop This Ever Happening Again">
+    <section id="s6" class="section section--alt" aria-label="Stop This Ever Happening Again">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/06 &mdash; PREVENTION</p>
         <h2 class="section-title" data-title>Stop This Ever Happening Again<span class="title-underline"></span></h2>
@@ -777,11 +777,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p>Related help: <a href="/microsoft-365-support/">Microsoft 365 support</a>, <a href="/how-to-secure-your-microsoft-365-account/">how to secure your Microsoft 365 account</a>, <a href="/how-to-set-up-two-factor-authentication/">set up two-factor authentication</a>, <a href="/it-provider-gone-bust/">IT provider gone bust?</a>, <a href="/what-to-do-when-an-employee-leaves/">what to do when an employee leaves</a> and <a href="/business-email-down-domain-expired/">business email down after a domain expired</a>. Related: <a href="/employee-left-dont-know-computer-password/">an employee left and no one knows their computer password</a>.</p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/microsoft-365-support/">Microsoft 365 support</a><a href="/how-to-secure-your-microsoft-365-account/">how to secure your Microsoft 365 account</a><a href="/how-to-set-up-two-factor-authentication/">set up two-factor authentication</a><a href="/it-provider-gone-bust/">IT provider gone bust?</a><a href="/what-to-do-when-an-employee-leaves/">what to do when an employee leaves</a><a href="/business-email-down-domain-expired/">business email down after a domain expired</a><a href="/employee-left-dont-know-computer-password/">an employee left and no one knows their computer password</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1081,7 +1084,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

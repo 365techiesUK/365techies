@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -723,22 +723,21 @@
         <ul class="page-hero__chips mono"><li>&#9679; No email is deleted</li><li>&#9679; Ordered fixes, safest first</li><li>&#9679; Fixed in minutes remotely</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="What "the set of folders cannot be opened" actually means">
+    <section id="s1" class="section" aria-label="What "the set of folders cannot be opened" actually means">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">Why It Happens</p>
         <h2 class="section-title" data-title>What "the set of folders cannot be opened" actually means<span class="title-underline"></span></h2>
 <p>On startup, classic Outlook for Windows shows the full message <strong>"Cannot start Microsoft Outlook. Cannot open the Outlook window. The set of folders cannot be opened."</strong> Despite how alarming it looks, this almost never means your emails are gone.</p><p>Outlook reads two things as it opens: a tiny <strong>navigation-pane file</strong> that remembers your folder list, favourites and account order, and your <strong>data file</strong> where the mail itself lives. If the navigation-pane file gets corrupted — often after a crash, a forced shutdown, a OneDrive sync hiccup or an interrupted update — Outlook can't make sense of it and throws this error. Less often, the message points at a data file that has been moved, deleted or damaged, or a default data file that is no longer set.</p><p>The reassuring part: for most people this is a <strong>layout problem, not a mail problem</strong>. Your emails, calendar and contacts are safe in your data file or on the mail server. The steps below start with the safest, most common fix and only move on if needed.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Ordered steps to get Outlook opening again">
+    <section id="s2" class="section section--alt" aria-label="Ordered steps to get Outlook opening again">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">The Fix</p>
         <h2 class="section-title" data-title>Ordered steps to get Outlook opening again<span class="title-underline"></span></h2>
 <ol><li><strong>Reset the navigation pane (fixes it most of the time).</strong> Close Outlook completely. Press <strong>Windows key + R</strong> to open the Run box, type <strong>outlook /resetnavpane</strong> (there's a space before the slash) and press Enter. This rebuilds the corrupt navigation-pane file. Your emails are not touched — you may just need to re-pin a favourite folder afterwards.</li><li><strong>Start Outlook in Safe Mode to rule out an add-in.</strong> Press Windows key + R again and run <strong>outlook /safe</strong>. Safe Mode loads Outlook with add-ins switched off. If it opens now, a faulty add-in is the cause — go to File > Options > Add-ins, choose <em>COM Add-ins</em> and click Go, untick recent ones, then restart normally.</li><li><strong>Repair or rebuild the data file if the error mentions it.</strong> For a <strong>POP account</strong>, close Outlook and run <strong>ScanPST</strong> (the Inbox Repair Tool) against your .pst file to repair it. For <strong>IMAP, Microsoft 365, Outlook.com or Exchange</strong>, the local cache .ost can simply be rebuilt: close Outlook, open Control Panel > Mail > Data Files, note where the .ost lives, then rename or delete it so Outlook downloads a fresh copy from the server.</li><li><strong>Check the correct default data file is set.</strong> A deleted or moved default file triggers this exact message. Open File > Account Settings > Account Settings > Data Files, click your main file and choose <em>Set as Default</em>, then restart Outlook.</li><li><strong>Create a new mail profile as a last resort.</strong> If the profile itself is corrupt, go to Control Panel > Mail > Show Profiles > Add, create a fresh profile and set Outlook to use it. Server mailboxes re-download automatically; back up a POP .pst first.</li></ol><p><strong>Important — back up before touching a POP .pst.</strong> Rebuilding the .ost is safe because IMAP, Microsoft 365 and Outlook.com mail re-downloads from the server. But a POP account's .pst is the <strong>only copy</strong> of that mail — back it up before you rename, delete or repair it, or ask us to do it safely for you.</p>
       </div>
     </section>
-    <section class="section" aria-label="When to let us take a look">
+    <section id="s3" class="section" aria-label="When to let us take a look">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">Related Help</p>
         <h2 class="section-title" data-title>When to let us take a look<span class="title-underline"></span></h2>
@@ -746,11 +745,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p>More help: <a href="/outlook-cannot-open-the-outlook-window/">Outlook won't open</a> · <a href="/outlook-ost-file-corrupt/">corrupt OST file</a> · <a href="/outlook-data-file-cannot-be-accessed/">data file cannot be accessed</a> · <a href="/outlook-problems/">all Outlook problems</a></p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/outlook-cannot-open-the-outlook-window/">Outlook won't open</a><a href="/outlook-ost-file-corrupt/">corrupt OST file</a><a href="/outlook-data-file-cannot-be-accessed/">data file cannot be accessed</a><a href="/outlook-problems/">all Outlook problems</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1034,7 +1036,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

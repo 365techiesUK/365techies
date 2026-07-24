@@ -18,7 +18,7 @@ except Exception:
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://365techies.co.uk"
-CSSV = "70"
+CSSV = "71"
 HERITAGE_DIMS = {'heritage-01.jpg': (1400, 787), 'heritage-02.jpg': (787, 1400), 'heritage-03.jpg': (1400, 787), 'heritage-04.jpg': (1400, 787), 'heritage-05.jpg': (787, 1400), 'heritage-07.jpg': (1400, 787), 'heritage-kinson.jpg': (1200, 710), 'heritage-moordown.jpg': (1400, 788), 'heritage-stock.jpg': (1400, 788), 'heritage-storefront.jpg': (1024, 683)}
 try:
     from hero_scenes import SCENES as HERO_SCENES
@@ -915,7 +915,7 @@ def page(slug, title, desc, og_title, schema_json, content, og_image=None):
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v={TODAY}" defer></script>
@@ -1038,10 +1038,10 @@ WORLDWIDE_AREA = [{"@type": "Country", "name": "United Kingdom"}, {"@type": "Pla
 # works when the computer still runs - never place on dead-hardware pages.
 SOS_BAND = '''    <section class="section" aria-label="Fix this now with remote support">
       <div class="wrap" style="max-width:860px;margin:0 auto">
-        <div data-reveal style="border:1px solid rgba(0,206,27,0.35);background:rgba(0,206,27,0.06);border-radius:16px;padding:1.6rem 1.8rem;text-align:center">
+        <div class="callout callout--good callout--center" data-reveal>
           <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// NEED THIS FIXED RIGHT NOW?</p>
-          <p style="font-size:1.08rem;margin:0 0 1.1rem">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
-          <p style="margin:0;display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap">
+          <p class="callout__lede">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
+          <p class="callout__row">
             <a class="button primary" href="/sos/">Start SOS Remote Support</a>
             <a class="button secondary" href="tel:+441202775566">Call 01202 775566</a>
           </p>
@@ -1074,10 +1074,10 @@ _CRS_RESUME_JS = ('(function(){try{var M=' + _CRS_JSON + ';var go=null,fin=null;
     'bt.textContent="Pick my next course \\u2192";}}catch(e){}})();')
 COURSES_BAND = '''    <section class="section" aria-label="Free courses for beginners">
       <div class="wrap" style="max-width:860px;margin:0 auto">
-        <div data-reveal style="border:1px solid rgba(29,151,227,0.35);background:rgba(29,151,227,0.06);border-radius:16px;padding:1.6rem 1.8rem;text-align:center">
+        <div class="callout callout--info callout--center" data-reveal>
           <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// FREE &middot; LEARN SOMETHING NEW</p>
-          <p id="crs-band-txt" style="font-size:1.08rem;margin:0 0 1.1rem"><strong>''' + str(_CRS_COUNT) + ''' free, friendly online courses</strong> for beginners and older learners &mdash; computer basics, email, WhatsApp, staying safe online and more. Short plain-English lessons, a printable certificate at the end, and never a sign-up form.</p>
-          <p style="margin:0;display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap">
+          <p id="crs-band-txt" class="callout__lede"><strong>''' + str(_CRS_COUNT) + ''' free, friendly online courses</strong> for beginners and older learners &mdash; computer basics, email, WhatsApp, staying safe online and more. Short plain-English lessons, a printable certificate at the end, and never a sign-up form.</p>
+          <p class="callout__row">
             <a class="button primary" id="crs-band-go" href="/free-courses/">Browse the Free Courses</a>
             <a class="button secondary" href="/contact/?topic=computer-lessons">Ask About In-Person Lessons</a>
           </p>

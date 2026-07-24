@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -779,43 +779,43 @@
         <div class="course-scene course-scene--band course-scene--hero" aria-hidden="true"><svg class="course-scene__svg" viewBox="0 0 400 240" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><circle cx="200" cy="84" r="50" fill="none" stroke="rgba(29,151,227,.5)" stroke-width="2" class="nm-scan"/><path d="M176 108 C150 122 104 132 84 150" fill="none" stroke="#86b6e8" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 8" class="nm-link"/><path d="M200 114 C200 130 200 142 200 156" fill="none" stroke="#86b6e8" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 8" class="nm-link"/><path d="M224 108 C250 122 292 132 311 150" fill="none" stroke="#86b6e8" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 8" class="nm-link"/><g class="cs-float"><path d="M158 112 a20 20 0 0 1 -2 -40 a26 26 0 0 1 46 -14 a24 24 0 0 1 40 14 a18 18 0 0 1 -2 40 Z" fill="#0b1d3a" stroke="#86b6e8" stroke-width="2" stroke-linejoin="round"/><circle cx="200" cy="112" r="4" fill="#00ce1b" class="nm-dot" style="--d:.4s"/></g><rect x="50" y="152" width="56" height="38" rx="6" fill="#0a1f3d" stroke="rgba(125,170,220,.35)" stroke-width="2"/><path d="M53 156 L78 174 L103 156" fill="none" stroke="#86b6e8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="172" y="156" width="56" height="34" rx="8" fill="#0a1f3d" stroke="rgba(125,170,220,.35)" stroke-width="2"/><path d="M186 190 L184 204 L200 190" fill="none" stroke="rgba(125,170,220,.35)" stroke-width="2" stroke-linejoin="round"/><path d="M186 168 h28" stroke="#86b6e8" stroke-width="2" stroke-linecap="round"/><path d="M186 178 h18" stroke="#86b6e8" stroke-width="2" stroke-linecap="round"/><rect x="288" y="150" width="46" height="54" rx="4" fill="#0a1f3d" stroke="rgba(125,170,220,.35)" stroke-width="2"/><path d="M298 166 h26" stroke="#86b6e8" stroke-width="2" stroke-linecap="round"/><path d="M298 176 h26" stroke="#86b6e8" stroke-width="2" stroke-linecap="round"/><path d="M298 186 h18" stroke="#86b6e8" stroke-width="2" stroke-linecap="round"/><circle cx="84" cy="150" r="3" fill="#1d97e3" class="nm-node"/><circle cx="200" cy="156" r="3" fill="#1d97e3" class="nm-node"/><circle cx="311" cy="150" r="3" fill="#1d97e3" class="nm-node"/></svg></div>
       </div>
     </section>
-
-    <section class="section" aria-label="Your files are not lost &mdash; Windows moved them, it didn&rsquo;t delete them">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">Don&rsquo;t panic</a><a href="#s2">Why it happened</a><a href="#s3">The fix, part 1</a><a href="#s4">The fix, part 2</a><a href="#s5">One thing to know</a><a href="#s6">When to call us</a></nav>
+    <section id="s1" class="section" aria-label="Your files are not lost &mdash; Windows moved them, it didn&rsquo;t delete them">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">Don&rsquo;t panic</p>
         <h2 class="section-title" data-title>Your files are not lost &mdash; Windows moved them, it didn&rsquo;t delete them<span class="title-underline"></span></h2>
 <p>What happened has a name: <strong>OneDrive Folder Backup</strong> (Microsoft also calls it Known Folder Move). When it switches on, Windows <em>redirects</em> your Desktop, Documents, Pictures &mdash; and sometimes Music and Videos &mdash; so they live inside your OneDrive folder instead of their old locations. Everything that was at <code>C:\Users\&lt;name&gt;\Documents</code> is now at <code>C:\Users\&lt;name&gt;\OneDrive\Documents</code>, and the same for your Desktop.</p><p>Nothing was copied and nothing was deleted &mdash; the folders themselves were re-pointed. That&rsquo;s why your files seem to have &ldquo;disappeared&rdquo; from where you expect them, why shortcuts and some older programs suddenly can&rsquo;t find their files, and why your OneDrive storage started filling up out of nowhere.</p><p>To confirm your files are safe right now: open File Explorer, click <strong>OneDrive</strong> in the left-hand panel, and look inside the Desktop and Documents folders there. You should see everything. If files genuinely aren&rsquo;t there either, that&rsquo;s a different problem &mdash; head to our <a href="/files-missing-from-onedrive/">files missing from OneDrive</a> checklist instead.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="You didn&rsquo;t ask for this &mdash; Windows 11 now turns it on for you">
+    <section id="s2" class="section section--alt" aria-label="You didn&rsquo;t ask for this &mdash; Windows 11 now turns it on for you">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">Why it happened</p>
         <h2 class="section-title" data-title>You didn&rsquo;t ask for this &mdash; Windows 11 now turns it on for you<span class="title-underline"></span></h2>
 <p>You&rsquo;re not going mad and you didn&rsquo;t click something by accident. With the Windows 11 25H2 update, Microsoft made OneDrive Folder Backup switch on <strong>automatically</strong> when you sign in with a Microsoft account. It&rsquo;s opt-out, not opt-in &mdash; the choice is made for you unless you spot it and say no.</p><p>Microsoft&rsquo;s thinking is genuinely well-meant: with Folder Backup on, your documents survive a stolen laptop or a dead hard drive. But springing it on people has real consequences we see every week on family PCs around Bournemouth and Poole:</p><ul><li>Desktops rearranged or showing little cloud icons on everything;</li><li>the free 5GB of OneDrive storage filling up within days, followed by scary <strong>&ldquo;storage full&rdquo;</strong> emails &mdash; and eventually <a href="/onedrive-full-cant-send-email/">email that stops sending and receiving</a>;</li><li>programs like accounts packages and photo editors losing track of files they&rsquo;ve used for years;</li><li>two computers signed into the same Microsoft account quietly merging their Desktops into one jumble.</li></ul><p>Microsoft changed the rules; you&rsquo;re just the one left sorting it out. The good news is the reversal is safe &mdash; as long as you do it in the right order and read one dialog box very carefully.</p>
       </div>
     </section>
-    <section class="section" aria-label="Turn off Folder Backup &mdash; and don&rsquo;t fall for the trap dialog">
+    <section id="s3" class="section" aria-label="Turn off Folder Backup &mdash; and don&rsquo;t fall for the trap dialog">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">The fix, part 1</p>
         <h2 class="section-title" data-title>Turn off Folder Backup &mdash; and don&rsquo;t fall for the trap dialog<span class="title-underline"></span></h2>
 <p>Here&rsquo;s the safe way to stop OneDrive managing your folders:</p><ol><li>Click the <strong>OneDrive cloud icon</strong> in the system tray (bottom-right, near the clock &mdash; you may need to click the little up-arrow to find it).</li><li>Click the <strong>gear icon</strong> &rarr; <strong>Settings</strong>.</li><li>Go to <strong>Sync and backup</strong> &rarr; <strong>Manage backup</strong>.</li><li>Switch <strong>off</strong> the toggle for each folder &mdash; Desktop, Documents, Pictures, and any others that are on.</li></ol><p><strong>&#9888; The trap &mdash; read this before you click anything.</strong> When you turn a folder off, OneDrive may show a dialog with two very similar-sounding choices:</p><ul><li><strong>&ldquo;Keep files only in OneDrive&rdquo;</strong> &mdash; removes them from your computer. Your Desktop and Documents will look <em>empty</em> on the PC; the files exist only in the cloud.</li><li><strong>&ldquo;Keep files only on my PC&rdquo;</strong> &mdash; removes them from OneDrive and keeps them on the computer. For most people undoing this mess, <strong>this is the one you want</strong>.</li></ul><p>Nothing is destroyed either way &mdash; the files exist in one place or the other &mdash; but choosing the first option is exactly how people end up staring at a blank Desktop and assuming the worst. Read the wording slowly. If you&rsquo;re not sure, stop and <a href="/contact/">give us a ring</a> before clicking &mdash; a two-minute call beats an afternoon of worry.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="The gotcha Microsoft buries: your old files may stay in the OneDrive folder">
+    <section id="s4" class="section section--alt" aria-label="The gotcha Microsoft buries: your old files may stay in the OneDrive folder">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">The fix, part 2</p>
         <h2 class="section-title" data-title>The gotcha Microsoft buries: your old files may stay in the OneDrive folder<span class="title-underline"></span></h2>
 <p>Here&rsquo;s the part Microsoft&rsquo;s own help page mentions almost in passing: when you stop backing up a folder, files that were <em>already</em> moved into OneDrive <strong>stay in the OneDrive folder</strong> &mdash; they don&rsquo;t automatically jump back to your device&rsquo;s Desktop or Documents. So after part 1, your real Desktop folder may still look thin while the files sit in <code>C:\Users\&lt;name&gt;\OneDrive\Desktop</code>.</p><p>Moving them back is a straightforward copy-and-paste job:</p><ol><li>Open <strong>File Explorer</strong> and go to <strong>OneDrive &rarr; Desktop</strong>.</li><li>Select everything (<strong>Ctrl+A</strong>) and cut it (<strong>Ctrl+X</strong>).</li><li>In the left panel, go to <strong>This PC &rarr; Desktop</strong> (the real one, at <code>C:\Users\&lt;name&gt;\Desktop</code>) and paste (<strong>Ctrl+V</strong>).</li><li>Repeat for <strong>Documents</strong> and <strong>Pictures</strong>: from <code>C:\Users\&lt;name&gt;\OneDrive\Documents</code> to <code>C:\Users\&lt;name&gt;\Documents</code>, and so on.</li></ol><p>Two tips from doing this on a lot of customer machines: if you have many gigabytes of photos, do Pictures last and let it finish before shutting down; and if Windows asks about replacing files with the same name, choose to keep both and sort duplicates out afterwards rather than guessing. Once everything&rsquo;s back, empty folders left behind in OneDrive can be deleted &mdash; which also frees up your cloud storage.</p>
       </div>
     </section>
-    <section class="section" aria-label="Should you turn it back on? An honest word before you go">
+    <section id="s5" class="section" aria-label="Should you turn it back on? An honest word before you go">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">One thing to know</p>
         <h2 class="section-title" data-title>Should you turn it back on? An honest word before you go<span class="title-underline"></span></h2>
 <p>We&rsquo;re not anti-OneDrive &mdash; far from it. Folder Backup done <em>deliberately</em>, with enough storage and your say-so, is a genuinely useful safety net: if the laptop is stolen or the drive dies, your documents survive. Our objection is to it being switched on silently, not to the feature itself.</p><p>So before you close this page, one honest question: what <em>is</em> protecting your files now? If the answer is &ldquo;nothing&rdquo;, it&rsquo;s worth a think &mdash; our plain-English guide to <a href="/microsoft-365-backup-do-you-need-it/">whether you need a Microsoft 365 backup</a> covers the difference between syncing and a real backup without any scare tactics.</p><p>And two related pages, depending on where you are with all this:</p><ul><li>Want OneDrive gone altogether? Don&rsquo;t just uninstall it &mdash; there&rsquo;s a right order that keeps every file. See <a href="/stop-using-onedrive-without-losing-files/">how to stop using OneDrive without losing files</a>.</li><li>Is Word now saving <em>new</em> documents straight to OneDrive with odd date-based names? That&rsquo;s a separate change with its own off-switch: <a href="/stop-word-saving-to-onedrive/">stop Word saving to OneDrive</a>.</li></ul><p>For everything else OneDrive has done to you, the <a href="/onedrive-problems/">OneDrive problems hub</a> triages it by symptom.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="This is a one-shot job &mdash; we&rsquo;ll happily do it while you watch">
+    <section id="s6" class="section section--alt" aria-label="This is a one-shot job &mdash; we&rsquo;ll happily do it while you watch">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">When to call us</p>
         <h2 class="section-title" data-title>This is a one-shot job &mdash; we&rsquo;ll happily do it while you watch<span class="title-underline"></span></h2>
@@ -823,11 +823,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<ul><li><a href="/onedrive-problems/">OneDrive problems &amp; fixes &mdash; start here for any symptom</a></li><li><a href="/files-missing-from-onedrive/">Files missing from OneDrive &mdash; the 10-minute checklist</a></li><li><a href="/stop-using-onedrive-without-losing-files/">Stop using OneDrive without losing files</a></li><li><a href="/onedrive-full-cant-send-email/">OneDrive full and email bouncing?</a></li><li><a href="/stop-word-saving-to-onedrive/">Stop Word saving new documents to OneDrive</a></li><li><a href="/microsoft-365-backup-do-you-need-it/">Do you actually need a Microsoft 365 backup?</a></li><li><a href="/microsoft-365-support/">Microsoft 365 support for Dorset businesses</a></li><li><a href="/dell-remote-support/">Remote support from &pound;20</a></li></ul>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/onedrive-problems/">OneDrive problems &amp; fixes &mdash; start here for any symptom</a><a href="/files-missing-from-onedrive/">Files missing from OneDrive &mdash; the 10-minute checklist</a><a href="/stop-using-onedrive-without-losing-files/">Stop using OneDrive without losing files</a><a href="/onedrive-full-cant-send-email/">OneDrive full and email bouncing?</a><a href="/stop-word-saving-to-onedrive/">Stop Word saving new documents to OneDrive</a><a href="/microsoft-365-backup-do-you-need-it/">Do you actually need a Microsoft 365 backup?</a><a href="/microsoft-365-support/">Microsoft 365 support for Dorset businesses</a><a href="/dell-remote-support/">Remote support from &pound;20</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1131,7 +1134,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

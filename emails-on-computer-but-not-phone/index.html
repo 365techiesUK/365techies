@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -709,43 +709,43 @@
         <ul class="page-hero__chips mono"><li>&#9679; Trading since 1995</li><li>&#9679; 4.9★ on Google</li><li>&#9679; No fix, no fee</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="Same account, but the phone shows nothing">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; THE SYMPTOM</a><a href="#s2">02 &mdash; DIAGNOSE IT</a><a href="#s3">03 &mdash; CAUSE 1</a><a href="#s4">04 &mdash; CAUSE 2</a><a href="#s5">05 &mdash; CAUSES 3 & 4</a><a href="#s6">06 &mdash; HONEST ADVICE</a></nav>
+    <section id="s1" class="section" aria-label="Same account, but the phone shows nothing">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; THE SYMPTOM</p>
         <h2 class="section-title" data-title>Same account, but the phone shows nothing<span class="title-underline"></span></h2>
 <p>New emails land on the computer all day long, but your phone's inbox sits empty — or it stopped at some date weeks ago and never moved again. Same email address, same account, two very different results. If that's you, you're in the right place.</p><p>The good news is this problem is rarely mysterious. In our experience it almost always comes down to one of four causes:</p><ul><li><strong>POP vs IMAP</strong> — the computer is quietly taking the mail off the server before the phone ever sees it.</li><li><strong>A password or security change</strong> that the computer survived and the phone didn't.</li><li><strong>Sync switched off</strong> — often by a battery saver you never touched.</li><li><strong>A folder-view difference</strong> — the mail is on the phone, just not where you're looking.</li></ul><p>Below are three quick checks that tell you which cause you've got, then the fix for each. None of them needs any technical knowledge, and none of them can make things worse.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Three checks that find the cause in minutes">
+    <section id="s2" class="section section--alt" aria-label="Three checks that find the cause in minutes">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/02 &mdash; DIAGNOSE IT</p>
         <h2 class="section-title" data-title>Three checks that find the cause in minutes<span class="title-underline"></span></h2>
 <p>Before changing any settings, do these three checks in order — each one rules causes in or out.</p><ol><li><strong>Check webmail in a browser.</strong> On any device, sign in to your email through the website (gmail.com, outlook.com, or your provider's webmail page). Are the "missing" emails there? <em>If they're not on the webmail either</em>, your computer is almost certainly using POP and removing mail from the server — jump to the POP section below. <em>If they are there</em>, the server is fine and the problem is on the phone.</li><li><strong>Open the phone's mail app and drag down to refresh.</strong> Watch for an error message, a "cannot connect" banner, or a prompt asking for your password. A password prompt — or a quiet notification about the account needing attention — points to the security-change cause.</li><li><strong>Search the phone for a recent email you know exists.</strong> If search finds it but your inbox doesn't show it, nothing is actually broken — it's a folder or filtered-inbox view issue, which is the easiest fix of all.</li></ol><p>Whichever check lights up, the matching fix is in the sections below.</p>
       </div>
     </section>
-    <section class="section" aria-label="POP on the computer is taking the mail first">
+    <section id="s3" class="section" aria-label="POP on the computer is taking the mail first">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; CAUSE 1</p>
         <h2 class="section-title" data-title>POP on the computer is taking the mail first<span class="title-underline"></span></h2>
 <p>Older email setups often use <strong>POP</strong> (Post Office Protocol). POP works like the paper post: the computer collects each message and — depending on its settings — <strong>removes it from the server</strong>. Once that has happened, your phone connects, finds an empty mailbox, and shows you nothing. Nothing is broken; the computer simply got there first.</p><p><strong>IMAP</strong>, the modern alternative, leaves everything on the server and keeps every device in step — read a message on the computer and it shows as read on the phone too.</p><p>The fix has two parts. First, stop the leak: in the computer's email account settings, find the option worded something like <em>"leave a copy of messages on the server"</em> and turn it on (the exact wording moves around between programs and versions). Second, for the proper long-term fix, set the account up as IMAP — or Exchange/Microsoft 365 where your provider offers it — on both devices. Our guide to <a href="/how-to-set-up-email-on-your-phone/">setting up email on your phone</a> walks through it gently.</p><p>One honest warning: emails POP has already pulled off the server now exist <em>only</em> on that computer. The phone can't reach back in time for them — so don't delete the computer's email profile in a fit of tidying.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="A password or 2FA change broke the phone quietly">
+    <section id="s4" class="section section--alt" aria-label="A password or 2FA change broke the phone quietly">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/04 &mdash; CAUSE 2</p>
         <h2 class="section-title" data-title>A password or 2FA change broke the phone quietly<span class="title-underline"></span></h2>
 <p>Changed your email password recently? Turned on two-step verification? Had a security update forced on you by your provider? Any of these can break email on one device while the other carries on. Computers often keep working for a while on a saved sign-in, so the phone fails first — and phones are terrible at telling you. Many just stop syncing silently, or tuck an "account action required" notice away where nobody looks.</p><p>The fix is usually simple: open the phone's mail settings for that account and re-enter the password. If it still refuses, two wrinkles are worth knowing:</p><ul><li><strong>App passwords.</strong> With two-step verification on, some providers won't accept your normal password in older mail apps — they issue a separate "app password" from your account's security page instead. Providers have been steadily retiring these in favour of proper sign-in screens, so what your account offers varies.</li><li><strong>Microsoft accounts have their own quirks.</strong> Sign-in methods for Outlook, Hotmail and Microsoft 365 addresses have moved around a lot in recent years; if it's one of those that won't behave, our <a href="/outlook-problems/">Outlook problems guide</a> covers the common snags.</li></ul><p>If re-entering the password puts you in a loop, removing and re-adding the account on the phone often clears it — and that's safe with IMAP, because your mail lives on the server, not the phone.</p>
       </div>
     </section>
-    <section class="section" aria-label="Sync switched off, battery savers, and folder tricks">
+    <section id="s5" class="section" aria-label="Sync switched off, battery savers, and folder tricks">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; CAUSES 3 & 4</p>
         <h2 class="section-title" data-title>Sync switched off, battery savers, and folder tricks<span class="title-underline"></span></h2>
 <p>If webmail shows your emails and the password is fine, the phone itself is usually suppressing sync — or hiding the mail in plain sight.</p><ul><li><strong>Sync toggled off.</strong> Both Android and iPhone have per-account switches controlling whether mail fetches automatically. They're easy to knock off by accident, and some "phone cleaner" apps switch them off on purpose. Look in the phone's mail or accounts settings for the account and check sync is on.</li><li><strong>Battery savers.</strong> Power-saving modes — especially on Android — stop apps working in the background to stretch the battery, and mail apps are a favourite victim. If email only appears when you open the app and refresh by hand, this is the classic sign. Exempt the mail app from battery optimisation, or turn the saver off and see if mail starts flowing again.</li><li><strong>Fetch set to manual (iPhone).</strong> iPhones can be set to check mail on a schedule, or only when you open the app. If new mail appears only on opening, check the Fetch/Push setting for that account.</li><li><strong>Folder views.</strong> Focused inboxes, "All Mail" versus "Inbox", and overzealous spam filters all hide mail that has genuinely arrived. If search found the message in check three, look at which folder it's sitting in — then adjust the view or the filter, not the account.</li></ul>
       </div>
     </section>
-    <section class="section section--alt" aria-label="When to stop fighting the built-in mail app">
+    <section id="s6" class="section section--alt" aria-label="When to stop fighting the built-in mail app">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/06 &mdash; HONEST ADVICE</p>
         <h2 class="section-title" data-title>When to stop fighting the built-in mail app<span class="title-underline"></span></h2>
@@ -753,11 +753,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p><strong>More email help:</strong> <a href="/how-to-set-up-email-on-your-phone/">Set up email on your phone</a> · <a href="/outlook-problems/">Outlook problems</a> · <a href="/email-support/">Email support</a> · <a href="/remote-support/">How remote support works</a></p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/how-to-set-up-email-on-your-phone/">Set up email on your phone</a><a href="/outlook-problems/">Outlook problems</a><a href="/email-support/">Email support</a><a href="/remote-support/">How remote support works</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1045,7 +1048,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

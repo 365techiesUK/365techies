@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -778,78 +778,78 @@
         <ul class="page-hero__chips mono"><li>&#9679; 9 ordered steps</li><li>&#9679; Every major UK ISP</li><li>&#9679; Test after each step</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="Two things to check before you touch anything">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">00 &mdash; READ THIS FIRST</a><a href="#s2">01 &mdash; BASELINE</a><a href="#s3">02 &mdash; PLACEMENT</a><a href="#s4">03 &mdash; TOPOLOGY</a><a href="#s5">04 &mdash; ISP BY ISP</a><a href="#s6">05 &mdash; BACKHAUL</a><a href="#s7">06 &mdash; NETWORK NAMES & SMART DEVICES</a><a href="#s8">07 &mdash; CHANNELS</a><a href="#s9">08 &mdash; PLACING NODES</a><a href="#s10">09 &mdash; SECURITY & HANDOVER</a><a href="#s11">10 &mdash; THE ORDER</a></nav>
+    <section id="s1" class="section" aria-label="Two things to check before you touch anything">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/00 &mdash; READ THIS FIRST</p>
         <h2 class="section-title" data-title>Two things to check before you touch anything<span class="title-underline"></span></h2>
 <div class="callout"><p><strong>Ask about the landline first.</strong> On BT, EE and similar Digital Voice services the telephone registers to the ISP hub itself. Putting that hub into bridge mode, or bypassing it, <strong>stops the landline working &mdash; including 999 calls from that handset</strong>. This catches people out constantly, and it matters most in exactly the households least able to cope with it. Check before you change the topology, not after.</p></div><div class="callout"><p><strong>Photograph the label on the base of the router now.</strong> Admin password, default network name, WiFi key, serial number. Bridge and modem-mode changes can lock you out of the web interface, and that sticker is often the only way back in.</p></div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Step 1: measure before you change anything">
+    <section id="s2" class="section section--alt" aria-label="Step 1: measure before you change anything">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; BASELINE</p>
         <h2 class="section-title" data-title>Step 1: measure before you change anything<span class="title-underline"></span></h2>
 <ol><li>Plug a laptop into a LAN port on the ISP router with a cable and run a speed test. <strong>This is your ceiling.</strong> Everything else is about how much of it you can deliver to a room.</li><li>Write down your provider and package, the exact hub model from the base label, and whether the line is full fibre (an Openreach ONT box on the wall), FTTC over the phone socket, or Virgin coax.</li><li>Walk the property with a signal meter and record the reading in each room. Our free <a href="/wifi-signal-test/">365 WiFi Optimizer</a> does this live in the browser. As a scale: &minus;30 to &minus;55&nbsp;dBm is excellent, &minus;55 to &minus;67 is fine for video calls and streaming, &minus;67 to &minus;75 is marginal, and worse than &minus;75 is effectively unusable.</li><li>Mark the dead spots on a rough floor plan. You are going to want this later to prove you fixed them.</li><li>Note where the master socket, ONT or coax entry is. It is very often the worst possible place in the house &mdash; which is precisely why the router ended up there.</li></ol>
       </div>
     </section>
-    <section class="section" aria-label="Step 2: move the router (this is often the whole fix)">
+    <section id="s3" class="section" aria-label="Step 2: move the router (this is often the whole fix)">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/02 &mdash; PLACEMENT</p>
         <h2 class="section-title" data-title>Step 2: move the router (this is often the whole fix)<span class="title-underline"></span></h2>
 <ul><li><strong>Central, not cornered.</strong> A router in the front hall of a terrace throws half its signal into the street.</li><li><strong>Off the floor</strong> &mdash; waist height or higher, on a shelf. Ofcom&rsquo;s own advice is a table or shelf rather than the floor.</li><li><strong>Out in the open.</strong> Never inside a media cabinet, a metal-doored meter cupboard, a fitted wardrobe or the understairs cupboard.</li><li><strong>Away from</strong> microwave ovens, halogen lamps, dimmer switches, speakers, televisions and monitors &mdash; that list is Ofcom&rsquo;s &mdash; and also mirrors, wall-mounted TVs, fridge-freezers and hot water tanks.</li><li>If it has external aerials, point them in <strong>different directions</strong> rather than all straight up. It helps between floors.</li><li>If the socket is in the wrong place, move the router rather than accepting it: on full fibre, run Ethernet from the ONT to the router (up to 100&nbsp;m is fine); on FTTC, fit a data extension; on Virgin, a coax relocation is a chargeable engineer visit.</li></ul><p><strong>Re-survey now.</strong> If placement fixed it, stop &mdash; you may not need mesh at all. We would rather tell you that than sell you three boxes.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Step 3: decide who is in charge of the network">
+    <section id="s4" class="section section--alt" aria-label="Step 3: decide who is in charge of the network">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; TOPOLOGY</p>
         <h2 class="section-title" data-title>Step 3: decide who is in charge of the network<span class="title-underline"></span></h2>
 <p>There are four sensible shapes, in increasing order of hassle:</p><ul><li><strong>A.</strong> ISP hub alone, better placed. Try this first.</li><li><strong>B.</strong> ISP hub plus your mesh in <strong>access-point mode</strong>. No double NAT, you lose a few vendor app features. <strong>This is the fallback that works on every UK ISP</strong> and it is what we use most often.</li><li><strong>C.</strong> ISP hub in modem/bridge mode, your kit doing everything. Cleanest result, but it kills the hub&rsquo;s WiFi and usually its landline features.</li><li><strong>D.</strong> Your own router straight onto the ONT, hub removed entirely. Best on full fibre, needs the provider&rsquo;s authentication details, and loses any hub-dependent landline.</li></ul><p><strong>Understand double NAT before you choose.</strong> Two routers in series interfere with port forwarding, VPNs, some streaming and some gaming (an Xbox will report Strict or Moderate NAT). It does <em>not</em> slow down normal browsing, so it is not the disaster forums make out. But if you run a VPN to the office, a NAS, CCTV with remote viewing or a VoIP phone system, don&rsquo;t accept it.</p>
       </div>
     </section>
-    <section class="section" aria-label="Step 4: modem and bridge mode, provider by provider">
+    <section id="s5" class="section" aria-label="Step 4: modem and bridge mode, provider by provider">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/04 &mdash; ISP BY ISP</p>
         <h2 class="section-title" data-title>Step 4: modem and bridge mode, provider by provider<span class="title-underline"></span></h2>
 <p class="note"><strong>Verified July 2026 &mdash; check your exact model on the day.</strong> Availability changes with firmware and hardware revision, and providers do move things.</p><ul><li><strong>Virgin Media (Hub 3, 4, 5 and Super Hub 1/2/2AC):</strong> connect by cable, browse to <code>192.168.0.1</code>, log in with the <em>settings</em> password from the base of the hub (not the WiFi key), then Modem Mode &rarr; Enable &rarr; Apply Changes, and wait several minutes. Afterwards the hub&rsquo;s WiFi is off and its interface moves to <code>192.168.100.1</code>. <strong>Connect your router to Ethernet port 1 only</strong> &mdash; ports 2 to 4 stop working. Power-cycle the hub after connecting so it picks up the new WAN address.</li><li><strong>Virgin Hub 5x:</strong> Virgin state modem mode is <strong>not currently available</strong>. Use access-point mode, or ask them to swap you to a Hub 5.</li><li><strong>BT residential Smart Hub 2:</strong> no bridge or modem-only mode. The <strong>Business</strong> Smart Hub 2 does have one (Hub Manager &rarr; Advanced Settings &rarr; Broadband &rarr; Routing &rarr; Enable Bridging). On residential BT, use access-point mode or go direct to the ONT.</li><li><strong>BT and EE on full fibre:</strong> the ONT is only a media converter &mdash; there is nothing to bridge. Run ONT to your router&rsquo;s WAN port and configure PPPoE. <strong>Ask your provider for the correct credentials &mdash; never guess them on someone else&rsquo;s account.</strong> Leave VLAN tagging off on genuine Openreach lines.</li><li><strong>EE Smart Hub / Smart Hub Plus:</strong> no bridge mode. Turn the hub&rsquo;s WiFi off and run your kit as access points, or (if there is no Digital Voice) go direct to the ONT.</li><li><strong>Sky Broadband Hub:</strong> cannot be bridged. Sky uses DHCP rather than PPPoE, and some lines need DHCP Option 61 with a client ID. Option 61 support is patchy &mdash; present on many ASUS and Netgear routers, absent across much of TP-Link&rsquo;s consumer range. <strong>Check before you buy a router for a Sky line.</strong></li><li><strong>Plusnet Hub Two (FTTC):</strong> <code>192.168.1.254</code> &rarr; Advanced Setting &rarr; Broadband &rarr; Internet &rarr; Bridging &rarr; Enabled. Then cable from one of the first three LAN ports to your router&rsquo;s WAN port and set up PPPoE with your Plusnet credentials. On Plusnet Full Fibre, go straight to the ONT instead.</li><li><strong>TalkTalk (Sagemcom hub):</strong> no true bridge mode. If TalkTalk supplied an eero on Full Fibre, the eero itself can be bridged. Otherwise, access-point mode with the Sagemcom&rsquo;s WiFi disabled.</li><li><strong>Vodafone:</strong> treat as an access-point-mode provider unless you can confirm otherwise with Vodafone for that specific hub and package.</li></ul><p><strong>Access-point mode &mdash; the universal fallback.</strong> Leave the ISP hub handling DHCP and NAT. Set the mesh to Access Point, Bridge or &ldquo;use existing router&rdquo;. Cable the mesh&rsquo;s WAN port into a hub LAN port. <strong>Disable the hub&rsquo;s 2.4 and 5&nbsp;GHz radios completely</strong> &mdash; not just hide them. Give the mesh a different network name from the hub&rsquo;s old one so you can always prove which network a device is really on.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Step 5: how the units talk to each other">
+    <section id="s6" class="section section--alt" aria-label="Step 5: how the units talk to each other">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; BACKHAUL</p>
         <h2 class="section-title" data-title>Step 5: how the units talk to each other<span class="title-underline"></span></h2>
 <p>Order of preference: <strong>Ethernet &rarr; existing coax &rarr; powerline &rarr; wireless.</strong> TP-Link&rsquo;s own wording is that &ldquo;a wired connection is more stable and faster than a wireless backhaul&rdquo;, and they sell the wireless ones.</p><ul><li>Cat5e is fine &mdash; 100&nbsp;m maximum run, and it carries 2.5&nbsp;Gbps the whole way. Use Cat6 on new installs if it costs little more. <strong>Do not pay for Cat7 or Cat8 in a house</strong>; it is money for nothing.</li><li>Practical routes: skirting trunking, UV-stable cable up an outside wall, through the loft into upstairs bedrooms, or alongside an existing aerial run. Solid-core in the walls, stranded patch leads for the last metre. Keep data cable about 50&nbsp;mm away from parallel mains and cross it at 90&deg;.</li><li><strong>Check the property first.</strong> Many houses built from the 2000s onwards already have network sockets terminating in a hall or loft cupboard. Two minutes with a cable tester can save you a node.</li><li>Powerline only where Ethernet is impossible, and <strong>always directly into a wall socket</strong> &mdash; never an extension lead, surge strip or UPS. Expect a big drop across separate circuits and close to nothing across a separate consumer unit.</li><li>Coax networking is rarely right in the UK &mdash; most homes have no in-house coax backbone, and standard TV splitters block it.</li></ul><p><strong>The single most common DIY mistake:</strong> running wireless backhaul through the one wall you already know is the problem. You get full bars and terrible speed, and it is baffling until you realise the node is only as good as its link home.</p>
       </div>
     </section>
-    <section class="section" aria-label="Step 6: one network name, and the smart-home trap">
+    <section id="s7" class="section" aria-label="Step 6: one network name, and the smart-home trap">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/06 &mdash; NETWORK NAMES & SMART DEVICES</p>
         <h2 class="section-title" data-title>Step 6: one network name, and the smart-home trap<span class="title-underline"></span></h2>
 <p><strong>Default to one network name across all bands</strong> with band steering, so devices roam properly instead of clinging to the wrong one.</p><p>Then there is the exception that generates more support calls than anything else on this page. A great deal of smart-home kit &mdash; plugs, bulbs, video doorbells, robot vacuums, older printers, thermostats, garage door openers, cheap cameras &mdash; is <strong>2.4&nbsp;GHz only</strong>. During setup they scan 2.4&nbsp;GHz only, and if the phone running the app is sitting on 5&nbsp;GHz, pairing fails with a misleading &ldquo;wrong password&rdquo; error. Nothing is wrong with your password.</p><p><strong>A UK-specific gotcha almost nobody mentions:</strong> the UK permits 2.4&nbsp;GHz channels 1&ndash;13, but many US-designed smart devices only support 1&ndash;11 and literally cannot see a network on channel 12 or 13. If a device insists it &ldquo;cannot find&rdquo; a network that is plainly working, check the channel before you check anything else.</p><ul><li><strong>Clean fix:</strong> a dedicated 2.4&nbsp;GHz network for smart devices, where your system supports one.</li><li><strong>Quick fix:</strong> temporarily disable 5&nbsp;GHz or create a temporary 2.4&nbsp;GHz guest network, join the phone to it, pair the device, then re-enable. Most devices remember the name and password, not the band.</li><li><strong>Naming:</strong> one clear main name plus <code>-IoT</code> and <code>-Guest</code>. Avoid your house number, your business name and address, or the router model. Never leave the manufacturer default.</li><li>Keep the name and password <strong>identical on every node</strong> and on any access point you have kept.</li></ul>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Step 7: channels and widths (set them manually)">
+    <section id="s8" class="section section--alt" aria-label="Step 7: channels and widths (set them manually)">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/07 &mdash; CHANNELS</p>
         <h2 class="section-title" data-title>Step 7: channels and widths (set them manually)<span class="title-underline"></span></h2>
 <ul><li><strong>2.4&nbsp;GHz: channel 1, 6 or 11 only, at 20&nbsp;MHz.</strong> Using 40&nbsp;MHz on 2.4&nbsp;GHz in a terrace or a block of flats is antisocial and self-defeating &mdash; you will interfere with your neighbours and they with you.</li><li>Pick the 2.4&nbsp;GHz channel by scanning from the middle of the property and weighting by <em>signal strength</em>, not the number of networks. One very strong neighbour on channel 6 is worse than four weak ones on channel 1.</li><li><strong>5&nbsp;GHz: 80&nbsp;MHz is the sensible default.</strong> Drop to 40&nbsp;MHz if lots of strong neighbours overlap. 160&nbsp;MHz is worth trying only in a detached property, because in the UK a 160&nbsp;MHz block almost always includes radar-sharing channels.</li><li><strong>Radar channels, explained properly.</strong> UK 5&nbsp;GHz splits into channels 36&ndash;48 (no radar detection required, 200&nbsp;mW), 52&ndash;64 (indoor only, radar detection and power control required), 100&ndash;140 (indoor and outdoor, up to 1&nbsp;W, radar detection required) and 149&ndash;165 (no radar detection, 200&nbsp;mW). Before using a radar-sharing channel the equipment must listen for at least 60 seconds, must stop transmitting <strong>within 10 seconds</strong> of detecting radar, and must then avoid that channel for at least 30 minutes.</li><li><strong>The Dorset rule:</strong> near an airport, a Met Office radar, a port or an exposed coastal site &mdash; which covers a great deal of this county &mdash; pin 5&nbsp;GHz to a non-radar channel and accept slightly more neighbour congestion. It is the difference between a network that occasionally vanishes for a minute and one that doesn&rsquo;t.</li><li><strong>6&nbsp;GHz</strong> is licence-exempt in the UK from 5925&ndash;6425&nbsp;MHz and essentially empty of neighbours &mdash; excellent for backhaul and same-room speed, poor through walls. Treat it as a same-room band.</li><li><strong>Set channels manually.</strong> Auto-channel re-scans and hops, and each hop is a short outage. Re-check every 6&ndash;12 months.</li></ul>
       </div>
     </section>
-    <section class="section" aria-label="Step 8: place the nodes, one at a time">
+    <section id="s9" class="section" aria-label="Step 8: place the nodes, one at a time">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/08 &mdash; PLACING NODES</p>
         <h2 class="section-title" data-title>Step 8: place the nodes, one at a time<span class="title-underline"></span></h2>
 <ul><li><strong>Halfway, not in the dead spot.</strong> This is the most common mistake by a distance. A node placed where there is no signal has nothing to relay.</li><li><strong>Distance ceiling on wireless backhaul:</strong> TP-Link suggest no more than about 15&nbsp;m between Deco units; Netgear suggest planning to about two-thirds of a node&rsquo;s maximum range so coverage overlaps. If the nodes are wired, distance stops mattering entirely.</li><li><strong>Count walls, not metres.</strong> One stud wall is cheap. One solid brick wall is expensive. Two solid walls plus a chimney breast is fatal to 5&nbsp;GHz. Prefer hallways and landings with line of sight through doorways.</li><li>Same height as the main unit, in the open, away from metal cabinets, microwaves and USB 3.0 devices. A shelf beats a socket behind a bed.</li><li><strong>Add nodes one at a time:</strong> set up the main unit and confirm internet &rarr; power the first satellite <em>in the same room</em>, let it join and update its firmware &rarr; move it to position &rarr; check the link quality in the app &rarr; only then open the next box.</li><li><strong>What good looks like:</strong> TP-Link recommend at least two bars between units. As an engineering guide, aim for &minus;60&nbsp;dBm or better node-to-node, and treat worse than about &minus;70&nbsp;dBm as needing to move the node <em>closer to the router</em> &mdash; not further towards the dead spot, which is the instinct and is wrong.</li><li>Name every node something meaningful: &ldquo;Landing&rdquo;, &ldquo;Kitchen&rdquo;, &ldquo;Loft office&rdquo;. Future you will be grateful.</li><li><strong>After each node, walk the survey again</strong> and speed-test both next to the node and in the room it was meant to fix. Fast at the node but poor in the room means the position is wrong. Poor even at the node means the backhaul is the problem.</li></ul>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Step 9: lock it down before you call it finished">
+    <section id="s10" class="section section--alt" aria-label="Step 9: lock it down before you call it finished">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/09 &mdash; SECURITY & HANDOVER</p>
         <h2 class="section-title" data-title>Step 9: lock it down before you call it finished<span class="title-underline"></span></h2>
 <ul><li><strong>Change the router&rsquo;s admin password.</strong> Three random words plus a number or symbol, stored in a password manager rather than on a sticky note under the hub.</li><li><strong>Set WPA3</strong>, or WPA2/WPA3 transitional if older devices need it. WPA3 has been mandatory for newly certified devices since July 2020. Never leave WEP or WPA/TKIP enabled.</li><li>Change the WiFi password from the one on the label if it has ever been photographed, given to a tradesperson, or if the router is second-hand. <strong>Length beats complexity.</strong></li><li><strong>Disable WPS.</strong> It is not part of WPA3 certification and it is a known weak point.</li><li>Turn off remote management and UPnP unless something genuinely needs them.</li><li><strong>Enable automatic firmware updates</strong> on the router and every node &mdash; and check they are actually applying. Look up the manufacturer&rsquo;s end-of-support date too: an unsupported router is a permanent open door, and no amount of good configuration closes it.</li><li><strong>Set up a guest network with client isolation.</strong> Give it its own password and change it now and then. The trades and the cleaner should not have your main password.</li><li>Segregate true set-and-forget devices &mdash; cameras, plugs, sensors, doorbells. <strong>One caveat:</strong> on some consumer kit the &ldquo;IoT network&rdquo; is a convenience band-split rather than genuine isolation, so check whether your vendor documents actual separation. And leave Chromecast, AirPlay, Sonos, smart TVs and printers on the main network unless your router supports cross-network discovery, or they will simply vanish from everyone&rsquo;s phones.</li><li><strong>Business note:</strong> under Cyber Essentials, an ISP-provided home router is out of scope for a homeworker &mdash; but a router the <em>business</em> supplies is in scope and must meet the firewall requirements. Worth knowing before you buy kit for staff.</li></ul>
       </div>
     </section>
-    <section class="section" aria-label="The order, and what to test after each step">
+    <section id="s11" class="section" aria-label="The order, and what to test after each step">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/10 &mdash; THE ORDER</p>
         <h2 class="section-title" data-title>The order, and what to test after each step<span class="title-underline"></span></h2>
@@ -857,11 +857,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p><strong>Related:</strong> <a href="/mesh-wifi-systems-uk/">which mesh system to buy</a> &middot; <a href="/wifi-troubleshooting/">fault-finding when it goes wrong</a> &middot; <a href="/wifi-uk-buildings-heat/">walls, insulation and hot weather</a> &middot; <a href="/wifi-signal-test/">measure your signal, free</a></p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/mesh-wifi-systems-uk/">which mesh system to buy</a><a href="/wifi-troubleshooting/">fault-finding when it goes wrong</a><a href="/wifi-uk-buildings-heat/">walls, insulation and hot weather</a><a href="/wifi-signal-test/">measure your signal, free</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1153,7 +1156,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

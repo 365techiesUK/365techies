@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -737,8 +737,7 @@
         <ul class="page-hero__chips mono"><li>&#9679; Windows only</li><li>&#9679; New Outlook</li><li>&#9679; By design</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="There's no button because it syncs automatically">
+    <section id="s1" class="section" aria-label="There's no button because it syncs automatically">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">Answer first</p>
         <h2 class="section-title" data-title>There's no button because it syncs automatically<span class="title-underline"></span></h2>
@@ -747,24 +746,24 @@
     </section>
     <section class="section" aria-label="Fix this now with remote support">
       <div class="wrap" style="max-width:860px;margin:0 auto">
-        <div data-reveal style="border:1px solid rgba(0,206,27,0.35);background:rgba(0,206,27,0.06);border-radius:16px;padding:1.6rem 1.8rem;text-align:center">
+        <div class="callout callout--good callout--center" data-reveal>
           <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// NEED THIS FIXED RIGHT NOW?</p>
-          <p style="font-size:1.08rem;margin:0 0 1.1rem">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
-          <p style="margin:0;display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap">
+          <p class="callout__lede">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
+          <p class="callout__row">
             <a class="button primary" href="/sos/">Start SOS Remote Support</a>
             <a class="button secondary" href="tel:+441202775566">Call 01202 775566</a>
           </p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Fixes when new mail genuinely isn't coming through">
+    <section id="s2" class="section section--alt" aria-label="Fixes when new mail genuinely isn't coming through">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">If mail really isn't arriving</p>
         <h2 class="section-title" data-title>Fixes when new mail genuinely isn't coming through<span class="title-underline"></span></h2>
 <p>If F9 doesn't help and messages truly aren't appearing, work through these in order:</p><p><strong>1. Try toggling offline mode off.</strong> Offline email is normally on by default and is a good thing — it keeps a local copy so Outlook works without internet. But if the local copy has got stuck, briefly turning it off forces a fresh pull from the server. Go to <strong>Settings</strong> (the gear icon, top-right) <strong>> General > Offline</strong> and turn <strong>off</strong> "Enable offline email, calendar, and people". Restart Outlook and see if mail flows, then turn it back on afterwards so you keep offline access.</p><p><strong>2. Check the account shows Connected.</strong> Look at the bottom of the Outlook window or in <strong>Settings > Accounts > Email accounts</strong> and confirm your account says it's connected, not "disconnected", "needs attention" or asking you to sign in again. If it's asking you to sign in, do so — an expired login is a common reason mail stops.</p><p><strong>3. Check you're actually online.</strong> Open a website in your browser to confirm your internet is working. New Outlook relies on a live connection, so a dropped Wi-Fi or a firewall block will stop sync.</p><p><strong>4. Remove and re-add the account.</strong> If the account is stuck, go to <strong>Settings > Accounts > Email accounts</strong>, remove the affected account, then add it back with <strong>Add account</strong>. Your mail lives on the server (Microsoft 365, Outlook.com, Exchange or IMAP), so it re-downloads when you add the account again — nothing is lost.</p>
       </div>
     </section>
-    <section class="section" aria-label="Want a real Send/Receive button back? Use classic Outlook">
+    <section id="s3" class="section" aria-label="Want a real Send/Receive button back? Use classic Outlook">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">Prefer the old way</p>
         <h2 class="section-title" data-title>Want a real Send/Receive button back? Use classic Outlook<span class="title-underline"></span></h2>
@@ -772,11 +771,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p>More new Outlook help from 365 Techies: <a href="/how-to-go-back-to-classic-outlook/">how to go back to classic Outlook</a>, <a href="/new-outlook-wont-open/">new Outlook won't open</a>, <a href="/outlook-not-sending-emails/">Outlook not sending emails</a> and <a href="/outlook-keeps-asking-for-password/">Outlook keeps asking for your password</a>. See also <a href="/microsoft-365-support/">Microsoft 365 support</a>, <a href="/remote-it-support/">remote IT support</a>, <a href="/it-support-dorset/">IT support in Dorset</a> or <a href="/contact/">contact us</a>.</p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/how-to-go-back-to-classic-outlook/">how to go back to classic Outlook</a><a href="/new-outlook-wont-open/">new Outlook won't open</a><a href="/outlook-not-sending-emails/">Outlook not sending emails</a><a href="/outlook-keeps-asking-for-password/">Outlook keeps asking for your password</a><a href="/microsoft-365-support/">Microsoft 365 support</a><a href="/remote-it-support/">remote IT support</a><a href="/it-support-dorset/">IT support in Dorset</a><a href="/contact/">contact us</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1064,7 +1066,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

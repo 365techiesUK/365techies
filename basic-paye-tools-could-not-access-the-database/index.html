@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -759,43 +759,43 @@
         <ul class="page-hero__chips mono"><li>&#9679; No fix, no fee</li><li>&#9679; Same-day remote help</li><li>&#9679; Family-run since 1995</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="What the &lsquo;could not access the database&rsquo; error means">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; THE QUICK ANSWER</a><a href="#s2">02 &mdash; WHY IT HAPPENS</a><a href="#s3">03 &mdash; COPY YOUR DATA FIRST</a><a href="#s4">04 &mdash; THE SAFE FIX, STEP BY STEP</a><a href="#s5">05 &mdash; SHARED &amp; NETWORKED SETUPS</a><a href="#s6">06 &mdash; WHEN TO CALL US</a></nav>
+    <section id="s1" class="section" aria-label="What the &lsquo;could not access the database&rsquo; error means">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; THE QUICK ANSWER</p>
         <h2 class="section-title" data-title>What the &lsquo;could not access the database&rsquo; error means<span class="title-underline"></span></h2>
 <p>If <strong>Basic PAYE Tools</strong> shows &lsquo;could not access the database&rsquo;, it means the small database file the program keeps on your own computer has become corrupted, locked or moved &mdash; so the software can no longer open your payroll records. The safe fix is to <strong>close the program, take a full copy of its data folder first</strong>, then let Basic PAYE Tools rebuild a fresh database and restore your most recent automatic backup.</p><p>The single most important thing is what <em>not</em> to do: <strong>do not reinstall or &lsquo;repair&rsquo; the software before you have copied your data</strong>. Your employees, pay history and RTI submissions live in a hidden folder on the PC, not in the program itself, so a careless uninstall or clean-up can wipe the only copy you have.</p><p>If your Full Payment Submission is due today and you cannot afford to experiment, that is exactly the sort of job we handle. We can usually take a look the same day over a <a href="/remote-support/">secure remote session</a> &mdash; see <a href="/emergency-it-help/">emergency IT help</a> if the clock is against you.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="The common causes behind the error">
+    <section id="s2" class="section section--alt" aria-label="The common causes behind the error">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/02 &mdash; WHY IT HAPPENS</p>
         <h2 class="section-title" data-title>The common causes behind the error<span class="title-underline"></span></h2>
 <p>Basic PAYE Tools stores everything in a single <strong>SQLite database file</strong> on your computer. When that file cannot be opened, you get the &lsquo;could not access the database&rsquo; message. There are a handful of common reasons.</p><ul><li><strong>A corrupted database.</strong> The program was closed mid-write &mdash; a crash, a power cut or the PC being switched off while it was still saving &mdash; and the file is now damaged.</li><li><strong>Antivirus or Controlled Folder Access.</strong> Some security software locks or quarantines the database file, so Windows reports &lsquo;access denied&rsquo; even though the file is still there.</li><li><strong>Cloud sync interference.</strong> If the data folder or its backups sit inside OneDrive, Dropbox or another synced folder, the sync client can lock the file mid-upload and corrupt it. A live database should never live in a synced folder.</li><li><strong>A different Windows user.</strong> The data is saved per Windows login. If you are signed into a new or renamed profile &mdash; common after an update or on a new PC &mdash; the tools open empty or cannot find the file.</li><li><strong>A failed update or move.</strong> An interrupted Basic PAYE Tools update, or files copied to a new machine incorrectly, can leave the database in a state it cannot read.</li></ul><p>Knowing which of these applies matters, because the fix for a corrupt file is very different from the fix for a permissions or profile problem.</p>
       </div>
     </section>
-    <section class="section" aria-label="Before you touch anything, take a copy">
+    <section id="s3" class="section" aria-label="Before you touch anything, take a copy">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; COPY YOUR DATA FIRST</p>
         <h2 class="section-title" data-title>Before you touch anything, take a copy<span class="title-underline"></span></h2>
 <p>Before you change a single thing, make a copy of your payroll data. This is the step that turns a stressful morning into a non-event.</p><p>Your Basic PAYE Tools data lives in a hidden folder. To find it, open <strong>File Explorer</strong>, click in the address bar, type <strong>%appdata%</strong> and press Enter. Open the <strong>HMRC</strong> folder, then <strong>payetools-rti</strong>. Inside you will see the database file and a <strong>backups</strong> folder containing dated automatic backups.</p><p><strong>Copy the entire payetools-rti folder</strong> to somewhere safe first &mdash; your Desktop, or better still a USB stick &mdash; so you always have an untouched original to fall back on. If anything goes wrong later, you can put this copy back and be no worse off.</p><p>This is also why <strong>reinstalling is the wrong first move</strong>. Reinstalling the program does not repair a corrupt database, and some &lsquo;fix it&rsquo; guides online tell you to delete or clear the data folder &mdash; which permanently destroys your pay history. Copy first, always. If you would rather not poke around in hidden folders at all, our <a href="/backup-support/">backup and recovery</a> and <a href="/data-recovery/">data recovery</a> teams do this every week.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Rebuilding the database and restoring your backup">
+    <section id="s4" class="section section--alt" aria-label="Rebuilding the database and restoring your backup">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/04 &mdash; THE SAFE FIX, STEP BY STEP</p>
         <h2 class="section-title" data-title>Rebuilding the database and restoring your backup<span class="title-underline"></span></h2>
 <p>Once you have a copy of the folder, the recovery itself is straightforward. In short: close the program, rename the database file so Basic PAYE Tools builds a fresh one, then restore your latest backup from inside the tools.</p><ul><li><strong>Close Basic PAYE Tools completely</strong> so nothing is holding the file open.</li><li>In the <strong>payetools-rti</strong> folder, <strong>rename the database file</strong> (often shown as <em>sqlite3</em>) &mdash; for example add an &lsquo;x&rsquo; to the end. Do not delete it; you may still need it.</li><li><strong>Reopen Basic PAYE Tools.</strong> With no database to read, it builds a new, empty one. This can take several minutes &mdash; let it finish.</li><li>From the homepage, choose <strong>&lsquo;Restore your data&rsquo;</strong> and point it at your most recent backup in the <strong>backups</strong> folder. Restoring can also take a few minutes.</li><li><strong>Check your data is back</strong> &mdash; your employer details, employees and last submission &mdash; before you file anything new.</li></ul><p>If the tools still will not open, or the newest backup is older than your last pay run, stop there rather than risk your records. That is the point to <a href="/remote-support/">get a pair of expert hands on it</a> &mdash; guessing at this stage is how payroll data gets lost for good.</p>
       </div>
     </section>
-    <section class="section" aria-label="If you run on a network or shared PC">
+    <section id="s5" class="section" aria-label="If you run on a network or shared PC">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; SHARED &amp; NETWORKED SETUPS</p>
         <h2 class="section-title" data-title>If you run on a network or shared PC<span class="title-underline"></span></h2>
 <p>The fix above is for the standard single-PC install. If your Basic PAYE Tools was set up to be shared &mdash; several people using it, or the database held on a server or mapped network drive &mdash; there are extra things that can break it, and the safe steps are different.</p><p>On a networked install, &lsquo;could not access the database&rsquo; often points to a <strong>dropped connection to the shared folder</strong>, a permissions change, or two people having it open at once. The database file can also be locked by whichever machine opened it last. Renaming files on a shared setup without understanding the layout is risky, because you can orphan everyone else&rsquo;s access.</p><p>This is very similar territory to other multi-user accounting databases &mdash; see our guide on <a href="/sage-50-multi-user-cannot-connect/">Sage 50 multi-user cannot connect</a>, and on <a href="/quickbooks-sage-running-slow/">QuickBooks and Sage running slow</a>. If your payroll or accounts software is shared across the office, it is usually quicker and far safer to let us map the setup and fix it properly. Many local firms already rely on us for their <a href="/it-support-for-accountants/">accountancy and payroll IT support</a>.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="When it&rsquo;s worth handing this to us">
+    <section id="s6" class="section section--alt" aria-label="When it&rsquo;s worth handing this to us">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/06 &mdash; WHEN TO CALL US</p>
         <h2 class="section-title" data-title>When it&rsquo;s worth handing this to us<span class="title-underline"></span></h2>
@@ -803,11 +803,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p>Related help: <a href="/sage-50-multi-user-cannot-connect/">Sage 50 multi-user cannot connect</a>, <a href="/quickbooks-sage-running-slow/">QuickBooks &amp; Sage running slow</a>, <a href="/it-support-for-accountants/">IT support for accountants</a>, <a href="/data-recovery/">data recovery</a>, <a href="/backup-support/">backup support</a> and <a href="/remote-support/">remote IT support</a>.</p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/sage-50-multi-user-cannot-connect/">Sage 50 multi-user cannot connect</a><a href="/quickbooks-sage-running-slow/">QuickBooks &amp; Sage running slow</a><a href="/it-support-for-accountants/">IT support for accountants</a><a href="/data-recovery/">data recovery</a><a href="/backup-support/">backup support</a><a href="/remote-support/">remote IT support</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1103,7 +1106,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

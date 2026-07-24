@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -778,8 +778,8 @@
         <ul class="page-hero__chips mono"><li>&#9679; Family-run since 1995</li><li>&#9679; 4.9 on Google</li><li>&#9679; No plugins or WP hosting to sell you</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="The 20-minute triage">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">Start here</a><a href="#s2">Try these first</a><a href="#s3">The pattern to watch</a><a href="#s4">The honest fork</a><a href="#s5">First-party proof</a><a href="#s6">Local help</a><a href="#s7">Two doors</a></nav>
+    <section id="s1" class="section" aria-label="The 20-minute triage">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">Start here</p>
         <h2 class="section-title" data-title>The 20-minute triage<span class="title-underline"></span></h2>
@@ -788,52 +788,52 @@
     </section>
     <section class="section" aria-label="Fix this now with remote support">
       <div class="wrap" style="max-width:860px;margin:0 auto">
-        <div data-reveal style="border:1px solid rgba(0,206,27,0.35);background:rgba(0,206,27,0.06);border-radius:16px;padding:1.6rem 1.8rem;text-align:center">
+        <div class="callout callout--good callout--center" data-reveal>
           <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// NEED THIS FIXED RIGHT NOW?</p>
-          <p style="font-size:1.08rem;margin:0 0 1.1rem">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
-          <p style="margin:0;display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap">
+          <p class="callout__lede">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
+          <p class="callout__row">
             <a class="button primary" href="/sos/">Start SOS Remote Support</a>
             <a class="button secondary" href="tel:+441202775566">Call 01202 775566</a>
           </p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Fixes that genuinely work and cost little or nothing">
+    <section id="s2" class="section section--alt" aria-label="Fixes that genuinely work and cost little or nothing">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">Try these first</p>
         <h2 class="section-title" data-title>Fixes that genuinely work and cost little or nothing<span class="title-underline"></span></h2>
 <p>These are the fixes we actually apply, in the order that usually pays off. None of them requires buying anything from us.</p><ul><li><strong>Compress and resize images.</strong> The single biggest win on most small-business sites. Resize photos to the size they display at and compress them before upload; add an optimisation plugin to sweep the existing library.</li><li><strong>Prune your plugins.</strong> Deactivate anything you do not recognise or use &mdash; then delete it, because deactivated plugins still pose a security risk. One good plugin often replaces three overlapping ones.</li><li><strong>Set up caching properly.</strong> A caching plugin serves ready-made pages instead of rebuilding each one from the database. If you already have one and the site is still slow, the cache may not actually be firing &mdash; test a page as a logged-out visitor.</li><li><strong>Update your PHP version.</strong> Hosts let old sites idle on outdated PHP for years. Moving to a current version in your hosting control panel is free and often noticeably faster &mdash; take a backup first.</li><li><strong>Clean the database.</strong> Years of post revisions, spam comments and orphaned tables slow every query. A tidy-up plugin handles this safely.</li><li><strong>Move up one hosting tier.</strong> If TTFB is your problem, this beats every plugin on this list.</li></ul><p>Do these before anyone quotes you for anything. If your site is quick afterwards &mdash; excellent, you are done, and we are genuinely pleased for you. If it is still slow, keep reading.</p>
       </div>
     </section>
-    <section class="section" aria-label="The WordPress tax: paying forever to keep a slow thing slow">
+    <section id="s3" class="section" aria-label="The WordPress tax: paying forever to keep a slow thing slow">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">The pattern to watch</p>
         <h2 class="section-title" data-title>The WordPress tax: paying forever to keep a slow thing slow<span class="title-underline"></span></h2>
 <p>Here is the pattern we see again and again when a business brings us a tired WordPress site. There is a monthly maintenance fee. There are annual renewals for a premium theme, a page builder, a security plugin, a backup plugin. Every so often something breaks after an update and there is an invoice for putting it right. And after all of that&hellip; the site is still slow.</p><p>That happens because the weight is structural. A heavyweight theme, a page builder layered on top, a stack of plugins and a database round-trip for every visit add up to a site that no caching plugin can fully rescue &mdash; especially on shared hosting. You are not paying to make the site fast; you are paying to stop the complexity falling over.</p><p>At that point the question quietly changes. It stops being <em>&ldquo;how do I speed this up?&rdquo;</em> and becomes <em>&ldquo;why am I maintaining complexity I never use?&rdquo;</em> If your site is really ten pages that change twice a year, a great deal of what you are paying to patch, update and monitor exists only to support an editing system you rarely open.</p><p>If the slowness arrived suddenly rather than gradually &mdash; strange pages, spam links, a warning in Google &mdash; that is a different problem entirely: start with our <a href="/website-hacked-what-to-do/">website hacked checklist</a>. And if you cannot even get into your own site to try the fixes above, see <a href="/web-designer-disappeared/">what to do when your web designer disappears</a> or <a href="/website-held-hostage/">when access is being withheld</a>.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Some slow sites should stay on WordPress">
+    <section id="s4" class="section section--alt" aria-label="Some slow sites should stay on WordPress">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">The honest fork</p>
         <h2 class="section-title" data-title>Some slow sites should stay on WordPress<span class="title-underline"></span></h2>
 <p>This is the part most guides skip, because the people writing them sell one answer or the other. Rebuilding away from WordPress is the wrong move if any of these describe you:</p><ul><li><strong>You edit content yourself, often.</strong> If you publish news, update prices or change pages weekly, WordPress&rsquo;s editor is precisely what you are paying the overhead for. Keep it.</li><li><strong>You run an online shop.</strong> WooCommerce sites need their database and plugins. Speed work here means better hosting and plugin discipline, not a platform change.</li><li><strong>Members log in.</strong> Membership areas, courses and customer logins are dynamic by nature.</li><li><strong>Multiple people write for the site.</strong> A multi-author blog with drafts, roles and scheduling is WordPress&rsquo;s home turf.</li><li><strong>A key plugin runs your business.</strong> Booking systems, directories and event calendars can be deeply wired in. Moving them is a project in itself &mdash; sometimes worth it, often not.</li></ul><p>If that is you, the right path is fixing <em>within</em> WordPress: the cheap fixes above, a lighter theme, fewer and better plugins, and hosting that matches your traffic. We will happily say so, because we do not sell WordPress plugins, WordPress hosting or maintenance retainers &mdash; we have no stake in which answer you land on.</p><p>The rebuild case is the mirror image: a brochure site that changes a few times a year, edited by whoever built it anyway, carrying a plugin stack and monthly fees purely out of habit. For those sites, simpler is faster, safer and cheaper to live with.</p>
       </div>
     </section>
-    <section class="section" aria-label="We faced this exact decision with our own website">
+    <section id="s5" class="section" aria-label="We faced this exact decision with our own website">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">First-party proof</p>
         <h2 class="section-title" data-title>We faced this exact decision with our own website<span class="title-underline"></span></h2>
 <p>This is not theory to us. Our own site ran on WordPress for years. We did the optimisation properly &mdash; caching, image work, plugin pruning, decent hosting &mdash; and it helped, but only so far. The weight was structural, exactly as described above.</p><p>So in June 2026 we rebuilt it as a hand-built static site: no page builder, no plugin stack, no database between the visitor and the page. In our own Lighthouse and PageSpeed measurements, our mobile performance score went from roughly 65 to the high 80s. Scores vary a little run to run and every site is different, so we state that only as what happened to ours &mdash; but the direction of travel was unmistakable, and nothing has needed patching since.</p><p>We wrote the whole thing up honestly &mdash; what we kept, what broke along the way and what it did not fix &mdash; in <a href="/how-we-rebuilt-our-website/">how we rebuilt our own website</a>. The process we used, including keeping Google rankings intact through the move, is the same one we now offer clients: see <a href="/website-rebuild/">our website rebuild service</a> for how an SEO-safe migration actually works.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="WordPress help in Bournemouth, Poole &amp; Dorset">
+    <section id="s6" class="section section--alt" aria-label="WordPress help in Bournemouth, Poole &amp; Dorset">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">Local help</p>
         <h2 class="section-title" data-title>WordPress help in Bournemouth, Poole &amp; Dorset<span class="title-underline"></span></h2>
 <p>Around here, WordPress help mostly means capable one-person operations &mdash; which is fine until your one person is on holiday, fully booked or has moved on. We are a family-run firm, going since 1995, and you deal with the same faces every time.</p><p>Most WordPress speed work happens over a secure remote session, so it makes no difference whether you are in Boscombe or Bridport &mdash; we work with businesses across Bournemouth, Poole, Christchurch and the rest of Dorset, and further afield. We visit on site when that genuinely helps, and we can meet by appointment at Kinson Community Centre. There is no walk-in shop; we come to the problem rather than the other way round.</p><p>Whether it is a one-off speed sort-out, untangling a plugin conflict, or a straight answer on the fix-or-rebuild question, call <a href="tel:+441202775566">01202 775566</a> (Mon&ndash;Fri, 9&ndash;5) or text <a href="sms:+447520615332">07520 615332</a> and we will call you back. We hold a 4.9 rating on Google, and we would like to keep it &mdash; so if the honest answer is &ldquo;do these three free things and keep your money&rdquo;, that is the answer you will get.</p>
       </div>
     </section>
-    <section class="section" aria-label="Where to go from here">
+    <section id="s7" class="section" aria-label="Where to go from here">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">Two doors</p>
         <h2 class="section-title" data-title>Where to go from here<span class="title-underline"></span></h2>
@@ -846,6 +846,7 @@
 <ul><li><a href="/website-rebuild/">Website rebuilds without losing your rankings</a> &mdash; how an SEO-safe migration works, step by step</li><li><a href="/how-we-rebuilt-our-website/">How we rebuilt our own website</a> &mdash; the full warts-and-all write-up behind our before-and-after numbers</li><li><a href="/website-hacked-what-to-do/">Website hacked? A calm first-hour checklist</a> &mdash; if the slowness arrived suddenly with strange pages or warnings</li><li><a href="/web-designer-disappeared/">Your web designer has disappeared</a> &mdash; how to get your website back, step by step</li><li><a href="/website-held-hostage/">Is your website being held hostage?</a> &mdash; your escalation path when access is withheld</li><li><a href="/website-checker/">Free website speed test</a> &mdash; measure your site before and after every fix</li></ul>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1149,7 +1150,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

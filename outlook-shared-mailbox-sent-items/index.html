@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -731,8 +731,8 @@
         <ul class="page-hero__chips mono"><li>&#9679; Windows only</li><li>&#9679; Classic Outlook</li><li>&#9679; Best fixed in Microsoft 365</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="Why sent mail lands in your own Sent Items">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">Answer first</a><a href="#s2">The recommended fix</a><a href="#s3">The per-PC alternative</a><a href="#s4">Important</a></nav>
+    <section id="s1" class="section" aria-label="Why sent mail lands in your own Sent Items">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">Answer first</p>
         <h2 class="section-title" data-title>Why sent mail lands in your own Sent Items<span class="title-underline"></span></h2>
@@ -741,31 +741,31 @@
     </section>
     <section class="section" aria-label="Fix this now with remote support">
       <div class="wrap" style="max-width:860px;margin:0 auto">
-        <div data-reveal style="border:1px solid rgba(0,206,27,0.35);background:rgba(0,206,27,0.06);border-radius:16px;padding:1.6rem 1.8rem;text-align:center">
+        <div class="callout callout--good callout--center" data-reveal>
           <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// NEED THIS FIXED RIGHT NOW?</p>
-          <p style="font-size:1.08rem;margin:0 0 1.1rem">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
-          <p style="margin:0;display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap">
+          <p class="callout__lede">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
+          <p class="callout__row">
             <a class="button primary" href="/sos/">Start SOS Remote Support</a>
             <a class="button secondary" href="tel:+441202775566">Call 01202 775566</a>
           </p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Turn it on in Microsoft 365 (works for everyone)">
+    <section id="s2" class="section section--alt" aria-label="Turn it on in Microsoft 365 (works for everyone)">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">The recommended fix</p>
         <h2 class="section-title" data-title>Turn it on in Microsoft 365 (works for everyone)<span class="title-underline"></span></h2>
 <p>This is the fix we recommend, because it's applied once at the mailbox and covers the whole team. It's a quick command run by whoever administers your Microsoft 365 (using Exchange Online PowerShell):</p><ul><li>For mail sent <strong>as</strong> the shared mailbox: <code>Set-Mailbox "Shared Mailbox" -MessageCopyForSentAsEnabled $true</code></li><li>For mail sent <strong>on behalf of</strong> the mailbox: <code>Set-Mailbox "Shared Mailbox" -MessageCopyForSentOnBehalfEnabled $true</code></li></ul><p>Once it's on, Exchange itself drops a copy of every outgoing message into the shared mailbox's <strong>Sent Items</strong> — no change needed on anyone's PC, and it works in classic Outlook, the new Outlook, Outlook on the web and the mobile app. It can take a short while to start applying after the command is run. If we look after your Microsoft 365, this is a two-minute job we can do for you; if another provider does, they can run the same command.</p>
       </div>
     </section>
-    <section class="section" aria-label="The DelegateSentItemsStyle registry fix (one computer)">
+    <section id="s3" class="section" aria-label="The DelegateSentItemsStyle registry fix (one computer)">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">The per-PC alternative</p>
         <h2 class="section-title" data-title>The DelegateSentItemsStyle registry fix (one computer)<span class="title-underline"></span></h2>
 <p>If you can't get the mailbox setting changed, classic Outlook has a per-computer workaround using a registry value called <strong>DelegateSentItemsStyle</strong>. It only affects the one Outlook profile on the one PC where you set it, so it's a fallback rather than the ideal fix:</p><ol><li>Close Outlook completely.</li><li>Press <strong>Windows key + R</strong>, type <code>regedit</code> and press Enter.</li><li>Go to <code>HKEY_CURRENT_USER\Software\Microsoft\Office\16.0\Outlook\Preferences</code> (the <code>16.0</code> covers Outlook 2016, 2019, 2021, 2024 and Microsoft 365).</li><li>Right-click in the empty space on the right, choose <strong>New > DWORD (32-bit) Value</strong>, and name it <code>DelegateSentItemsStyle</code>.</li><li>Double-click it and set the value data to <strong>1</strong>.</li><li>Close the registry editor and reopen Outlook.</li></ol><p>For this to work, that Outlook profile must be running in <strong>Cached Exchange Mode</strong> — if it's in online mode, sent mail can get stuck in the Outbox instead. Editing the registry is safe if you follow the steps exactly, but if you're unsure, let us do it.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Don't use both fixes together">
+    <section id="s4" class="section section--alt" aria-label="Don't use both fixes together">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">Important</p>
         <h2 class="section-title" data-title>Don't use both fixes together<span class="title-underline"></span></h2>
@@ -773,11 +773,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p>More Outlook help from 365 Techies: our <a href="/outlook-problems/">Outlook problems hub</a>, <a href="/outlook-shared-mailbox-not-showing/">shared mailbox not showing in Outlook</a>, <a href="/cant-open-attachments-in-outlook/">can't open attachments in Outlook</a> and <a href="/common-outlook-problems-and-fixes/">common Outlook problems and fixes</a>. See also <a href="/microsoft-365-support/">Microsoft 365 support</a>, <a href="/remote-it-support/">remote IT support</a>, <a href="/it-support-dorset/">IT support in Dorset</a> or <a href="/contact/">contact us</a>.</p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/outlook-problems/">Outlook problems hub</a><a href="/outlook-shared-mailbox-not-showing/">shared mailbox not showing in Outlook</a><a href="/cant-open-attachments-in-outlook/">can't open attachments in Outlook</a><a href="/common-outlook-problems-and-fixes/">common Outlook problems and fixes</a><a href="/microsoft-365-support/">Microsoft 365 support</a><a href="/remote-it-support/">remote IT support</a><a href="/it-support-dorset/">IT support in Dorset</a><a href="/contact/">contact us</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1065,7 +1068,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

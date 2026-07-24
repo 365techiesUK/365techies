@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -743,8 +743,7 @@
         <ul class="page-hero__chips mono"><li>&#9679; Windows only</li><li>&#9679; Classic & New Outlook</li><li>&#9679; Safe Mode first</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="The quick answer: start Outlook in Safe Mode">
+    <section id="s1" class="section" aria-label="The quick answer: start Outlook in Safe Mode">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">Answer first</p>
         <h2 class="section-title" data-title>The quick answer: start Outlook in Safe Mode<span class="title-underline"></span></h2>
@@ -753,24 +752,24 @@
     </section>
     <section class="section" aria-label="Fix this now with remote support">
       <div class="wrap" style="max-width:860px;margin:0 auto">
-        <div data-reveal style="border:1px solid rgba(0,206,27,0.35);background:rgba(0,206,27,0.06);border-radius:16px;padding:1.6rem 1.8rem;text-align:center">
+        <div class="callout callout--good callout--center" data-reveal>
           <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// NEED THIS FIXED RIGHT NOW?</p>
-          <p style="font-size:1.08rem;margin:0 0 1.1rem">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
-          <p style="margin:0;display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap">
+          <p class="callout__lede">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
+          <p class="callout__row">
             <a class="button primary" href="/sos/">Start SOS Remote Support</a>
             <a class="button secondary" href="tel:+441202775566">Call 01202 775566</a>
           </p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Step-by-step fixes for classic Outlook">
+    <section id="s2" class="section section--alt" aria-label="Step-by-step fixes for classic Outlook">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">The real fixes</p>
         <h2 class="section-title" data-title>Step-by-step fixes for classic Outlook<span class="title-underline"></span></h2>
 <p><strong>1. Disable the faulty add-in (the most common cause).</strong> With Outlook open in Safe Mode, go to <strong>File > Options > Add-ins</strong>. At the bottom, next to <em>Manage</em>, choose <strong>COM Add-ins</strong> and click <strong>Go</strong>. Untick every add-in, click <strong>OK</strong>, then close and reopen Outlook normally. If it now stays open, re-enable the add-ins one at a time (reopening Outlook after each) until it crashes again — that last one is the offender. Leave it disabled or check for an update.</p><p><strong>2. Watch out for the Teams Meeting Add-in crash.</strong> Since 12 March 2026, older classic Outlook builds (Version 2402, Build 17328.20142 or lower) can crash on launch because of a clash between the newest Teams Meeting Add-in and an older Windows file (MSVCP140.dll) bundled with those Office builds. If that is you, the real fix is to update Office: because Outlook won't open, open <strong>Word</strong> instead and go to <strong>File > Account > Update Options > Update Now</strong>. As a temporary workaround you can untick the <em>Microsoft Teams Meeting Add-in for Microsoft Office</em> via the Safe Mode add-ins steps above. Microsoft has also shipped a Teams-side fix, so keeping both Office and Teams up to date resolves it.</p><p><strong>3. Repair Office.</strong> If no add-in is to blame, run an Office repair. Close all Office apps, then go to <strong>Settings > Apps > Installed apps</strong>, find <em>Microsoft 365</em> (or Office), click the three dots and choose <strong>Modify</strong>, then <strong>Quick Repair</strong>. If that doesn't help, run <strong>Online Repair</strong> (this needs an internet connection and takes longer). Your emails are not touched by this.</p><p><strong>4. Repair the data file with scanpst.exe.</strong> A corrupt Outlook data file can crash it on open. Close Outlook and run the built-in Inbox Repair Tool, <code>scanpst.exe</code>, usually found in <code>C:\Program Files\Microsoft Office\root\Office16</code>. Browse to your .pst or .ost file, click <strong>Start</strong>, and let it repair. This is safe — it fixes the file in place.</p><p><strong>5. Create a new Outlook profile.</strong> If the profile itself is damaged, a fresh one often cures the crash. Close Outlook, open <strong>Control Panel > Mail (Microsoft Outlook) > Show Profiles > Add</strong>, create a new profile, add your account, and set it as the default. For IMAP, Exchange and Microsoft 365 accounts your mail re-downloads from the server, so nothing is lost — but if you have any POP account, back up your .pst file first, because POP mail lives only on your PC.</p><p><strong>6. Check your antivirus isn't quarantining Outlook.</strong> Occasionally security software wrongly flags Outlook and blocks it from staying open. Open your antivirus, check its quarantine and protection history, and add Outlook (<code>outlook.exe</code>) as an exception if it has been blocked.</p>
       </div>
     </section>
-    <section class="section" aria-label="Fix for the new Outlook app">
+    <section id="s3" class="section" aria-label="Fix for the new Outlook app">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">New Outlook</p>
         <h2 class="section-title" data-title>Fix for the new Outlook app<span class="title-underline"></span></h2>
@@ -778,11 +777,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p>More Outlook help from 365 Techies: <a href="/outlook-not-sending-emails/">Outlook not sending emails</a>, <a href="/outlook-keeps-asking-for-password/">Outlook keeps asking for your password</a>, <a href="/new-outlook-wont-open/">new Outlook won't open</a> and <a href="/outlook-data-file-cannot-be-accessed/">Outlook data file cannot be accessed</a>. See also <a href="/microsoft-365-support/">Microsoft 365 support</a>, <a href="/remote-it-support/">remote IT support</a>, <a href="/it-support-dorset/">IT support in Dorset</a> or <a href="/contact/">contact us</a>.</p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/outlook-not-sending-emails/">Outlook not sending emails</a><a href="/outlook-keeps-asking-for-password/">Outlook keeps asking for your password</a><a href="/new-outlook-wont-open/">new Outlook won't open</a><a href="/outlook-data-file-cannot-be-accessed/">Outlook data file cannot be accessed</a><a href="/microsoft-365-support/">Microsoft 365 support</a><a href="/remote-it-support/">remote IT support</a><a href="/it-support-dorset/">IT support in Dorset</a><a href="/contact/">contact us</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1070,7 +1072,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

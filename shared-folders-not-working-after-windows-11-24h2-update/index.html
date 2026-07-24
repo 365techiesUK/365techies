@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -767,8 +767,8 @@
         <ul class="page-hero__chips mono"><li>&#9679; Usually same-day remote help</li><li>&#9679; No-fix-no-fee</li><li>&#9679; Family-run since 1995</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="What the Windows 11 24H2 update actually changed">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; WHAT ACTUALLY CHANGED</a><a href="#s2">02 &mdash; THE ERRORS YOU&rsquo;LL SEE</a><a href="#s3">03 &mdash; THE SAFE FIX</a><a href="#s4">04 &mdash; NAS &amp; OLDER DEVICES</a><a href="#s5">05 &mdash; THE BODGE (AND ITS COST)</a><a href="#s6">06 &mdash; THE REAL FIX &amp; WHEN TO CALL US</a></nav>
+    <section id="s1" class="section" aria-label="What the Windows 11 24H2 update actually changed">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; WHAT ACTUALLY CHANGED</p>
         <h2 class="section-title" data-title>What the Windows 11 24H2 update actually changed<span class="title-underline"></span></h2>
@@ -777,45 +777,45 @@
     </section>
     <section class="section" aria-label="Fix this now with remote support">
       <div class="wrap" style="max-width:860px;margin:0 auto">
-        <div data-reveal style="border:1px solid rgba(0,206,27,0.35);background:rgba(0,206,27,0.06);border-radius:16px;padding:1.6rem 1.8rem;text-align:center">
+        <div class="callout callout--good callout--center" data-reveal>
           <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// NEED THIS FIXED RIGHT NOW?</p>
-          <p style="font-size:1.08rem;margin:0 0 1.1rem">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
-          <p style="margin:0;display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap">
+          <p class="callout__lede">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
+          <p class="callout__row">
             <a class="button primary" href="/sos/">Start SOS Remote Support</a>
             <a class="button secondary" href="tel:+441202775566">Call 01202 775566</a>
           </p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="The errors that confirm it&rsquo;s 24H2">
+    <section id="s2" class="section section--alt" aria-label="The errors that confirm it&rsquo;s 24H2">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/02 &mdash; THE ERRORS YOU&rsquo;LL SEE</p>
         <h2 class="section-title" data-title>The errors that confirm it&rsquo;s 24H2<span class="title-underline"></span></h2>
 <p>You can usually confirm this is the 24H2 change by the error you get. The most common ones are:</p><ul><li><strong>0x80070035 &mdash; &lsquo;The network path was not found&rsquo;.</strong> Misleading, because the path is fine; the connection is being refused before it gets that far.</li><li><strong>&lsquo;You can&rsquo;t access this shared folder because your organisation&rsquo;s security policies block unauthenticated guest access.&rsquo;</strong> This is the guest-logon block, almost word for word. You may see error code 0x4f8 alongside it.</li><li><strong>A username and password box that rejects everything you type</strong>, or keeps reappearing in a loop &mdash; usually a stale saved credential, or a share that only ever offered guest access.</li></ul><p>A useful tell is the timing: everything worked until a Windows feature update landed, then several machines (or just the ones that updated) lost access to the same folder at once. If a colleague on an older Windows build can still reach the share and a freshly-updated PC can&rsquo;t, that&rsquo;s 24H2 doing exactly what it was designed to do. Jot down the exact wording and the share path (it looks like <strong>\\PC-NAME\Folder</strong>) before you start &mdash; it saves time if you call us.</p>
       </div>
     </section>
-    <section class="section" aria-label="The safe fix: give the share a proper login">
+    <section id="s3" class="section" aria-label="The safe fix: give the share a proper login">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; THE SAFE FIX</p>
         <h2 class="section-title" data-title>The safe fix: give the share a proper login<span class="title-underline"></span></h2>
 <p>The safe fix is to give the share a proper login instead of relying on guest access. On the computer or NAS that <strong>hosts</strong> the folder, make sure there&rsquo;s a real user account with a password, and that the folder is shared to that account. Then, on the PC that can&rsquo;t get in, open <strong>File Explorer</strong>, type <strong>\\PC-NAME\Folder</strong> into the address bar, and when prompted enter that username and password. Tick <strong>&lsquo;Remember my credentials&rsquo;</strong> so it sticks.</p><p>This works because Windows-to-Windows sharing fully supports SMB signing &mdash; once you authenticate properly, 24H2 is happy. Guest access was never the only option; it was just the lazy one.</p><p>If the login box keeps rejecting a password you know is right, the culprit is almost always a stale saved credential. Open <strong>Control Panel &rarr; Credential Manager &rarr; Windows Credentials</strong>, delete any entries for that PC or NAS, then reconnect and re-enter the details. If you map the share as a drive letter and it drops again later, our guide on a <a href="/mapped-network-drive-keeps-disconnecting/">mapped network drive that keeps disconnecting</a> covers the follow-on causes.</p><p>For a handful of machines this is ten minutes of work. Across a whole office &mdash; matching usernames, permissions and passwords on every PC &mdash; it&rsquo;s fiddlier, which is where a tidy, documented setup pays for itself.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="NAS boxes and older network hardware">
+    <section id="s4" class="section section--alt" aria-label="NAS boxes and older network hardware">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/04 &mdash; NAS &amp; OLDER DEVICES</p>
         <h2 class="section-title" data-title>NAS boxes and older network hardware<span class="title-underline"></span></h2>
 <p>If the folder lives on a NAS (a Synology, QNAP, WD, Buffalo or similar box) rather than another PC, the same two rules apply &mdash; but you fix them on the NAS, not in Windows. The proper path is to <strong>enable SMB signing on the NAS</strong> and give it a real user account with a password, then connect from Windows using those details.</p><p>The exact menu wording varies by make and model, so we won&rsquo;t guess yours here &mdash; but in general you&rsquo;re looking for the SMB or file-services settings, an option to enable or require signing, and a minimum SMB protocol of SMB2 or SMB3 (never SMB1, which is insecure and disabled in modern Windows). A firmware update often adds or fixes these options, so check for one first.</p><p>Some older or budget NAS units simply can&rsquo;t do signing at all. If yours can&rsquo;t, you&rsquo;re left choosing between replacing it, living with the workaround below, or moving those files somewhere better. We&rsquo;re happy to check your specific model and tell you honestly which camp it&rsquo;s in.</p>
       </div>
     </section>
-    <section class="section" aria-label="The bodge &mdash; and why we&rsquo;d rather you didn&rsquo;t">
+    <section id="s5" class="section" aria-label="The bodge &mdash; and why we&rsquo;d rather you didn&rsquo;t">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; THE BODGE (AND ITS COST)</p>
         <h2 class="section-title" data-title>The bodge &mdash; and why we&rsquo;d rather you didn&rsquo;t<span class="title-underline"></span></h2>
 <p>You <strong>can</strong> force 24H2 back to the old behaviour, and half the internet will tell you to. We&rsquo;d rather you understood the trade-off first, because these switches turn off the exact protections the update added.</p><p>There are two levers. <strong>Re-enabling insecure guest logons</strong> lets Windows connect to no-password shares again &mdash; via <strong>Group Policy</strong> (Computer Configuration &rarr; Administrative Templates &rarr; Network &rarr; Lanman Workstation &rarr; <strong>&lsquo;Enable insecure guest logons&rsquo; &rarr; Enabled</strong>) or the matching registry value. <strong>Disabling the SMB signing requirement</strong> (a PowerShell change) lets it talk to devices that can&rsquo;t sign. Group Policy isn&rsquo;t available on Windows&nbsp;11 Home, so Home users are pushed toward the registry, which is easier to get wrong.</p><p>Here&rsquo;s the honest bit: both of these reopen the door to credential theft and &lsquo;relay&rsquo; attacks on your network &mdash; a stranger on your Wi-Fi, or malware on one machine, intercepting or impersonating your file traffic. On a home network with nothing sensitive, that risk is small. In a business handling client data, it&rsquo;s the sort of thing that turns one infected laptop into a bad afternoon. Treat these as a <strong>short-term compatibility patch</strong> while you arrange a proper fix &mdash; not a setting you leave on and forget.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="The real fix, and when to call us">
+    <section id="s6" class="section section--alt" aria-label="The real fix, and when to call us">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/06 &mdash; THE REAL FIX &amp; WHEN TO CALL US</p>
         <h2 class="section-title" data-title>The real fix, and when to call us<span class="title-underline"></span></h2>
@@ -823,11 +823,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p>Related help: <a href="/mapped-network-drive-keeps-disconnecting/">Mapped network drive keeps disconnecting</a>, <a href="/desktop-pc-used-as-office-server/">Using a desktop PC as an office server</a>, <a href="/onedrive-sharepoint-teams-explained/">OneDrive, SharePoint &amp; Teams explained</a>, <a href="/why-windows-updates-break-things/">Why Windows updates break things</a>, <a href="/server-network-support/">Server &amp; network support</a> and <a href="/cloud-migration/">cloud migration</a>. More shared-drive help: <a href="/who-has-a-file-open-on-shared-drive/">see who has a file open on the shared drive</a> and <a href="/restrict-staff-access-to-shared-folders-windows-11/">restrict staff access to certain folders</a>.</p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/mapped-network-drive-keeps-disconnecting/">Mapped network drive keeps disconnecting</a><a href="/desktop-pc-used-as-office-server/">Using a desktop PC as an office server</a><a href="/onedrive-sharepoint-teams-explained/">OneDrive, SharePoint &amp; Teams explained</a><a href="/why-windows-updates-break-things/">Why Windows updates break things</a><a href="/server-network-support/">Server &amp; network support</a><a href="/cloud-migration/">cloud migration</a><a href="/who-has-a-file-open-on-shared-drive/">see who has a file open on the shared drive</a><a href="/restrict-staff-access-to-shared-folders-windows-11/">restrict staff access to certain folders</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1127,7 +1130,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

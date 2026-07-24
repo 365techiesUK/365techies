@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -701,50 +701,50 @@
         <ul class="page-hero__chips mono"><li>&#9679; No licence traps</li><li>&#9679; Cabling costed honestly</li><li>&#9679; Certification in writing</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="Six real differences between business WiFi and consumer mesh">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; WHY NOT A THREE-PACK?</a><a href="#s2">02 &mdash; ROAMING, HONESTLY</a><a href="#s3">03 &mdash; LICENCES</a><a href="#s4">04 &mdash; POE AND CABLING</a><a href="#s5">05 &mdash; WIRED BEATS WIRELESS</a><a href="#s6">06 &mdash; WHAT A PROPER JOB INCLUDES</a><a href="#s7">07 &mdash; SECOND-HAND KIT</a></nav>
+    <section id="s1" class="section" aria-label="Six real differences between business WiFi and consumer mesh">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; WHY NOT A THREE-PACK?</p>
         <h2 class="section-title" data-title>Six real differences between business WiFi and consumer mesh<span class="title-underline"></span></h2>
 <ol><li><strong>VLANs and genuine guest isolation.</strong> The big one. It is what keeps the guest network, the card terminals and the office network genuinely separate &mdash; and it is what your cyber-insurance questionnaire and any card-payment assessment will ask about.</li><li><strong>Fast roaming (802.11k/v/r).</strong> Handover in milliseconds rather than a full re-authentication, which is the difference between a call surviving a walk down a corridor and not.</li><li><strong>Captive portals and guest terms</strong> &mdash; a proper splash page, time limits and bandwidth caps.</li><li><strong>Centralised firmware and configuration.</strong> This is how you answer &ldquo;are we patched?&rdquo; without visiting every ceiling.</li><li><strong>The licence question</strong> &mdash; see below. It is the single biggest hidden cost in this market.</li><li><strong>PoE cabling.</strong> One cable per access point carrying both data and power, which is why the cabling usually costs more than the hardware.</li></ol>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Fast roaming, and what it can&rsquo;t do">
+    <section id="s2" class="section section--alt" aria-label="Fast roaming, and what it can&rsquo;t do">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/02 &mdash; ROAMING, HONESTLY</p>
         <h2 class="section-title" data-title>Fast roaming, and what it can&rsquo;t do<span class="title-underline"></span></h2>
 <p>802.11k gives a device a list of neighbouring access points. 802.11v lets the network suggest it moves. 802.11r pre-authenticates so the handover takes milliseconds instead of a full re-authentication &mdash; roughly 200&ndash;300&nbsp;ms down to under 50.</p><p>Two caveats worth having up front. First, <strong>802.11r upsets some older devices, printers and handheld scanners</strong>, so it is entirely normal to enable it on the staff and voice network and leave it off on a legacy one. Second, and more important: <strong>roaming is ultimately the device&rsquo;s decision.</strong> The network can advise; it cannot compel. Good placement with sensible overlap does more than any checkbox in the controller.</p>
       </div>
     </section>
-    <section class="section" aria-label="The licence trap, platform by platform">
+    <section id="s3" class="section" aria-label="The licence trap, platform by platform">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; LICENCES</p>
         <h2 class="section-title" data-title>The licence trap, platform by platform<span class="title-underline"></span></h2>
 <p>This is where budgets get ruined in year three. We are stating each of these only at the confidence we can actually support.</p><ul><li><strong>Cisco Meraki (full)</strong> &mdash; a mandatory per-access-point licence. Devices stop passing traffic after the grace period. Budget the licence for the life of the estate, not just the boxes.</li><li><strong>Meraki Go</strong> &mdash; confirmed no licensing or subscription fees. But <strong>Meraki Go is not Meraki</strong>: Cisco confirm the two cannot be managed together, so the upgrade path is rip-and-replace.</li><li><strong>Netgear Insight</strong> &mdash; one year included on the WAX610, renewing after. The access point keeps working locally without a subscription; what lapses is the cloud management.</li><li><strong>TP-Link Omada</strong> &mdash; the controller page states free cloud access with no licence fees. A paid tier exists.</li><li><strong>Ubiquiti UniFi</strong> &mdash; widely understood to have no per-device subscription, and that matches our experience.</li><li><strong>Cambium</strong> &mdash; cnMaestro Essentials is free in Cambium&rsquo;s own words. The X tier is a paid upgrade.</li><li><strong>HPE Instant On, Ruckus and Zyxel Nebula</strong> &mdash; all market a free or no-licence tier, and we could not verify the details closely enough in July 2026 to publish specifics. Ask the supplier to put the licence position in writing.</li></ul><p><strong>Ask any supplier one question:</strong> &ldquo;what stops working, and when, if I never pay you again?&rdquo; The answer tells you what you are really buying.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="The bit that costs more than the access points">
+    <section id="s4" class="section section--alt" aria-label="The bit that costs more than the access points">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/04 &mdash; POE AND CABLING</p>
         <h2 class="section-title" data-title>The bit that costs more than the access points<span class="title-underline"></span></h2>
 <p>Modern Wi-Fi 7 access points are hungry. A current tri-band unit draws around <strong>24&nbsp;W</strong> at maximum &mdash; so eight of them is about <strong>192&nbsp;W of PoE</strong> before you power a single phone or camera. A cheap eight-port switch with a 65&nbsp;W total budget will not run four of them. <strong>Check the switch&rsquo;s total power budget, not just its port count.</strong></p><p>Almost no business access point includes a power injector in the box, which is a classic wasted-visit item on install day.</p><p><strong>Cabling is the real cost.</strong> UK installers commonly quote from around &pound;65 per Cat6 data point, with &pound;75&ndash;&pound;120 typical on straightforward commercial work. Let us do the arithmetic in public for a six-access-point office:</p><ul><li>Six mid-range access points: around &pound;510</li><li>Six data points at &pound;65&ndash;&pound;120: &pound;390&ndash;&pound;720</li><li>A 16-port PoE switch: around &pound;171</li><li>A gateway with a proper firewall: around &pound;171</li></ul><p>That is roughly &pound;850 of hardware and &pound;390&ndash;&pound;720 of cabling, plus survey, configuration, commissioning and labour. <strong>The access points are under 40% of the job. Any quote where the access points are most of the cost is a quote with no cabling in it.</strong></p><p><em>Hardware figures above are from Ubiquiti&rsquo;s UK store in July 2026. Their pages do not state whether prices include VAT, so treat the basis as unstated &mdash; and note we are not VAT registered, so our own quotes carry no VAT.</em></p><p>Costs that wreck budgets if nobody mentions them: containment and fire-stopping across compartment walls, working at height, out-of-hours working in retail and hospitality, making good after chasing, a comms cabinet and a protected mains spur, and a UPS.</p>
       </div>
     </section>
-    <section class="section" aria-label="Wired backhaul beats wireless mesh, always">
+    <section id="s5" class="section" aria-label="Wired backhaul beats wireless mesh, always">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; WIRED BEATS WIRELESS</p>
         <h2 class="section-title" data-title>Wired backhaul beats wireless mesh, always<span class="title-underline"></span></h2>
 <p>Every wireless hop roughly halves throughput. This is not our opinion &mdash; Ubiquiti&rsquo;s own guidance says mesh should supplement a wired network, recommends a maximum of two wireless hops, cites close to 50% loss per hop, and sets a target of at least &minus;60&nbsp;dBm back to the parent unit.</p><p>Wireless mesh is legitimate for outbuildings, listed walls, marquees and temporary sites. It is a compromise you accept, not a design you choose.</p><p><strong>Worth saying plainly: if a supplier proposes wireless mesh for a building where cable could be run, they are saving themselves labour at your expense.</strong></p><p><strong>Placement:</strong> mount high, central, horizontal on the ceiling. Never above suspended-ceiling metal trays, inside metal cabinets, or behind foil-backed insulation. <strong>More modest access points placed well beat fewer expensive ones placed badly</strong> &mdash; every time, and it is usually cheaper too.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="What professional installation should actually include">
+    <section id="s6" class="section section--alt" aria-label="What professional installation should actually include">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/06 &mdash; WHAT A PROPER JOB INCLUDES</p>
         <h2 class="section-title" data-title>What professional installation should actually include<span class="title-underline"></span></h2>
 <ul><li>A <strong>predictive design from a floor plan</strong> plus a physical walk of the building &mdash; not a coverage map from a brochure.</li><li>A <strong>post-install validation survey</strong> with measured coverage in the locations that matter, rather than a speed test in the room with the router in it.</li><li><strong>Cabling certification in writing, per point.</strong> This is the single most commonly omitted item, and it is the one that proves the installation is sound.</li><li><strong>Documented handover:</strong> network diagram, address scheme, VLAN and network-name list, credentials <em>handed to you</em>, a device inventory with serial numbers, and firmware versions.</li><li>A guest network genuinely isolated from the internal one, sensible transmit power rather than everything at maximum, and a channel plan.</li></ul><p><strong>What we exclude, and say so up front:</strong> making good decoration, any mains electrical work (that is an electrician&rsquo;s job), and improving a broadband line that is the real bottleneck.</p><p><strong>A fair guarantee.</strong> We will commit to a minimum measured speed in named locations. We will not promise blanket &ldquo;whole-building coverage&rdquo;, because nobody can honestly deliver that &mdash; and note that the big providers have moved to exactly this per-room model themselves.</p><p>If you capture email addresses on a guest portal, you are processing personal data and need a lawful basis, a privacy notice and a retention period. That is general information rather than legal advice, but it is worth raising before the portal goes live rather than after.</p>
       </div>
     </section>
-    <section class="section" aria-label="Second-hand business kit: the risks nobody mentions">
+    <section id="s7" class="section" aria-label="Second-hand business kit: the risks nobody mentions">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/07 &mdash; SECOND-HAND KIT</p>
         <h2 class="section-title" data-title>Second-hand business kit: the risks nobody mentions<span class="title-underline"></span></h2>
@@ -752,11 +752,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p><strong>Related:</strong> <a href="/monthly-it-support/">monthly IT support for business</a> &middot; <a href="/wifi-uk-buildings-heat/">building fabric and heat</a> &middot; <a href="/mesh-wifi-setup-guide/">setup guide</a> &middot; <a href="/wifi-troubleshooting/">fault-finding</a></p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/monthly-it-support/">monthly IT support for business</a><a href="/wifi-uk-buildings-heat/">building fabric and heat</a><a href="/mesh-wifi-setup-guide/">setup guide</a><a href="/wifi-troubleshooting/">fault-finding</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1040,7 +1043,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

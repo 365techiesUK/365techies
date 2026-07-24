@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -743,8 +743,7 @@
         <ul class="page-hero__chips mono"><li>&#9679; Classic Outlook only</li><li>&#9679; Windows PC</li><li>&#9679; Nothing lost (M365/IMAP)</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="Should you let the built-in repair run?">
+    <section id="s1" class="section" aria-label="Should you let the built-in repair run?">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">Before you start</p>
         <h2 class="section-title" data-title>Should you let the built-in repair run?<span class="title-underline"></span></h2>
@@ -753,24 +752,24 @@
     </section>
     <section class="section" aria-label="Fix this now with remote support">
       <div class="wrap" style="max-width:860px;margin:0 auto">
-        <div data-reveal style="border:1px solid rgba(0,206,27,0.35);background:rgba(0,206,27,0.06);border-radius:16px;padding:1.6rem 1.8rem;text-align:center">
+        <div class="callout callout--good callout--center" data-reveal>
           <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// NEED THIS FIXED RIGHT NOW?</p>
-          <p style="font-size:1.08rem;margin:0 0 1.1rem">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
-          <p style="margin:0;display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap">
+          <p class="callout__lede">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
+          <p class="callout__row">
             <a class="button primary" href="/sos/">Start SOS Remote Support</a>
             <a class="button secondary" href="tel:+441202775566">Call 01202 775566</a>
           </p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Create a clean new mail profile (the dependable route)">
+    <section id="s2" class="section section--alt" aria-label="Create a clean new mail profile (the dependable route)">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">The reliable fix</p>
         <h2 class="section-title" data-title>Create a clean new mail profile (the dependable route)<span class="title-underline"></span></h2>
 <p>A brand-new profile sidesteps the corruption entirely. For Microsoft 365, Exchange, Outlook.com and IMAP accounts, all your mail lives on the server and simply re-downloads into the new profile - you lose nothing.</p><ol><li><strong>Close Outlook.</strong></li><li><strong>Open the Mail control panel.</strong> Press the Windows key, type <em>Control Panel</em>, open it, set <em>View by</em> to large or small icons, and click <em>Mail (Microsoft Outlook)</em>. (If you don't see it, search <em>Control Panel</em> for "Mail". The Mail icon only appears once classic Outlook is installed and has been opened at least once.)</li><li><strong>Show Profiles.</strong> Click <em>Show Profiles</em>. You'll see your existing, misbehaving profile listed.</li><li><strong>Add a new one.</strong> Click <em>Add</em>, give it a clear name like <em>Outlook2026</em>, and click OK. Enter your name, email address and password when prompted, and let it set the account up automatically. For a Microsoft 365 or Outlook.com account, the modern sign-in window (and any two-factor prompt) opens as part of this - complete it there.</li><li><strong>Make it the default.</strong> Back on the profiles list, choose <em>Always use this profile</em> and pick your new one from the drop-down, then <em>Apply</em>. Leave the old profile in place for now as a fallback.</li><li><strong>Open Outlook.</strong> It starts on the fresh profile and re-downloads your mail, calendar and contacts from the server. If the modern sign-in didn't fully complete during setup, Outlook finishes it here - just sign in when asked. Once you're happy everything's there, you can remove the old profile.</li></ol><p><strong>One caution:</strong> if you had an old local POP account whose mail only ever existed on this PC, that mail sits in a local PST and won't magically reappear from a server. Back that PST up first and re-attach it to the new profile via <em>File &gt; Open &amp; Export &gt; Open Outlook Data File</em>.</p>
       </div>
     </section>
-    <section class="section" aria-label="If you see "the information store could not be opened"">
+    <section id="s3" class="section" aria-label="If you see "the information store could not be opened"">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">The other wording</p>
         <h2 class="section-title" data-title>If you see "the information store could not be opened"<span class="title-underline"></span></h2>
@@ -778,11 +777,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p>More Outlook fixes on our <a href="/outlook-problems/">Outlook problems hub</a>. See also <a href="/outlook-scanpst-not-working/">ScanPST not working</a>, <a href="/microsoft-365-support/">Microsoft 365 support</a> and <a href="/remote-it-support/">remote IT support</a>, or <a href="/contact/">get in touch</a>.</p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/outlook-problems/">Outlook problems hub</a><a href="/outlook-scanpst-not-working/">ScanPST not working</a><a href="/microsoft-365-support/">Microsoft 365 support</a><a href="/remote-it-support/">remote IT support</a><a href="/contact/">get in touch</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1070,7 +1072,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

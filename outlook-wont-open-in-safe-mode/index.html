@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -737,8 +737,7 @@
         <ul class="page-hero__chips mono"><li>&#9679; Windows · classic Outlook</li><li>&#9679; Quick & Online Repair</li><li>&#9679; scanpst · new profile · msconfig</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="Why safe mode failing is a bigger clue">
+    <section id="s1" class="section" aria-label="Why safe mode failing is a bigger clue">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">What it means</p>
         <h2 class="section-title" data-title>Why safe mode failing is a bigger clue<span class="title-underline"></span></h2>
@@ -747,24 +746,24 @@
     </section>
     <section class="section" aria-label="Fix this now with remote support">
       <div class="wrap" style="max-width:860px;margin:0 auto">
-        <div data-reveal style="border:1px solid rgba(0,206,27,0.35);background:rgba(0,206,27,0.06);border-radius:16px;padding:1.6rem 1.8rem;text-align:center">
+        <div class="callout callout--good callout--center" data-reveal>
           <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// NEED THIS FIXED RIGHT NOW?</p>
-          <p style="font-size:1.08rem;margin:0 0 1.1rem">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
-          <p style="margin:0;display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap">
+          <p class="callout__lede">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
+          <p class="callout__row">
             <a class="button primary" href="/sos/">Start SOS Remote Support</a>
             <a class="button secondary" href="tel:+441202775566">Call 01202 775566</a>
           </p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="How to fix Outlook that won't open in safe mode">
+    <section id="s2" class="section section--alt" aria-label="How to fix Outlook that won't open in safe mode">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">The fix</p>
         <h2 class="section-title" data-title>How to fix Outlook that won't open in safe mode<span class="title-underline"></span></h2>
 <p>For <strong>classic Outlook for Windows</strong>, in order. Most cases are solved by the repair in step 1 or 2.</p><ol><li><strong>Run an Office Quick Repair, then Online Repair.</strong> Go to <em>Control Panel > Programs and Features</em>, select <strong>Microsoft 365 / Office</strong>, click <strong>Change</strong>, and choose <strong>Quick Repair</strong> first (fast, offline, doesn't touch your mail). If Outlook still won't open, run <strong>Online Repair</strong> — it's more thorough, redownloads and reinstalls Office, and needs an internet connection. This fixes the majority of "won't open at all" cases.</li><li><strong>Create a new mail profile.</strong> A broken profile can stop Outlook opening entirely. Go to <em>Control Panel > Mail > Show Profiles > Add</em>, create a fresh profile, re-add your account, and set it as default. For a Microsoft 365 or Outlook.com account the Control Panel dialog can't finish the modern sign-in, so instead hold the <strong>Shift</strong> key while starting Outlook (or run <code>outlook.exe /manageprofiles</code>) to reach the profile picker and add the account from Outlook's own sign-in screen. Mail on the server re-downloads automatically — back up any <strong>local-only PST</strong> archive first (see below).</li><li><strong>Repair the data file with scanpst.exe.</strong> A corrupt data file can crash Outlook at launch. Close Outlook and run the Inbox Repair Tool, <strong>scanpst.exe</strong>, usually found at <code>C:\Program Files\Microsoft Office\root\Office16</code> (or the <em>Program Files (x86)</em> version on a 32-bit install). Point it at your .pst/.ost file and run it — it can take several passes. It's a good idea to let it make a backup when it offers, and to copy your PST somewhere safe first.</li><li><strong>Catch an antivirus or firewall conflict with a clean boot.</strong> Press <strong>Windows key + R</strong>, type <code>msconfig</code> and press Enter. On the <em>General</em> tab choose <strong>Selective startup</strong> and untick <em>Load startup items</em>; on the <em>Services</em> tab tick <strong>Hide all Microsoft services</strong> then <strong>Disable all</strong>, apply and restart. If Outlook now opens, a third-party program (often security software) was blocking it — re-enable services a few at a time to find which, then update or reconfigure that program.</li><li><strong>Reinstall Office (if repair won't complete).</strong> If Online Repair fails to finish, fully uninstall Microsoft 365 / Office and reinstall it from your Microsoft account. Your mail isn't stored in the Office program, so a clean reinstall doesn't lose server mail — but back up local PSTs first.</li></ol>
       </div>
     </section>
-    <section class="section" aria-label="scanpst, profiles and local PSTs — the safe way">
+    <section id="s3" class="section" aria-label="scanpst, profiles and local PSTs — the safe way">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">Protect your data first</p>
         <h2 class="section-title" data-title>scanpst, profiles and local PSTs — the safe way<span class="title-underline"></span></h2>
@@ -772,11 +771,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p>Related help: <a href="/outlook-stuck-on-loading-profile/">Outlook stuck on loading profile</a> · <a href="/new-outlook-wont-open/">New Outlook won't open</a> · <a href="/outlook-data-file-cannot-be-accessed/">Outlook data file cannot be accessed</a> · <a href="/microsoft-365-support/">Microsoft 365 support</a> · <a href="/remote-it-support/">Remote IT support</a> · <a href="/it-support-dorset/">IT support in Dorset</a></p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/outlook-stuck-on-loading-profile/">Outlook stuck on loading profile</a><a href="/new-outlook-wont-open/">New Outlook won't open</a><a href="/outlook-data-file-cannot-be-accessed/">Outlook data file cannot be accessed</a><a href="/microsoft-365-support/">Microsoft 365 support</a><a href="/remote-it-support/">Remote IT support</a><a href="/it-support-dorset/">IT support in Dorset</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1064,7 +1066,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

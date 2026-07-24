@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -757,7 +757,7 @@
         <ul class="page-hero__chips mono"><li>&#9679; Live demo on this site</li><li>&#9679; Built &amp; hosted for you</li><li>&#9679; Worldwide</li></ul>
       </div>
     </section>
-
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; THE SHORT ANSWER</a><a href="#s2">02 &mdash; THE CHANGEOVER-DAY PROBLEM</a><a href="#s3">03 &mdash; WHAT VRM ALREADY DOES WELL</a><a href="#s4">04 &mdash; THE PORTFOLIO DASHBOARD WE BUILD</a><a href="#s5">05 &mdash; SEE IT RUNNING LIVE</a><a href="#s6">06 &mdash; WHAT YOU NEED, WHAT WE NEED</a><a href="#s7">07 &mdash; WHAT IT COSTS</a></nav>
     <section class="section" aria-label="Victron credential" style="padding-top:1.1rem;padding-bottom:0">
       <div class="wrap">
         <div class="mono" data-reveal style="display:flex;flex-wrap:wrap;gap:.55rem 1.4rem;justify-content:center;align-items:center;font-size:.74rem;color:var(--muted);letter-spacing:.03em">
@@ -771,49 +771,49 @@
         </div>
       </div>
     </section>
-    <section class="section" aria-label="Portfolio-level monitoring for off-grid lets">
+    <section id="s1" class="section" aria-label="Portfolio-level monitoring for off-grid lets">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; THE SHORT ANSWER</p>
         <h2 class="section-title" data-title>Portfolio-level monitoring for off-grid lets<span class="title-underline"></span></h2>
 <p>If you run more than one off-grid holiday let &mdash; a cabin in Wales, a bothy in the Highlands, a gite in the Dordogne &mdash; the job on changeover day is to know every property&rsquo;s power situation from one place, before a guest walks into a cold, dark room. We build, host and support a single custom dashboard, powered by the official <strong>Victron VRM API</strong>, that shows the state of every site side by side.</p><p>That means a drawn-down battery becomes a text on changeover morning rather than a phone call from a guest at 9pm. Each property gets its own tile &mdash; state of charge, solar in and out, load, last-seen and a plain traffic-light status &mdash; so a non-technical cleaner or manager can read it at a glance. It works whether you have two cabins or twenty, and it does not replace Victron&rsquo;s own monitoring: it sits on top of it, tuned to how a lettings operation actually runs.</p><p>The rest of this page is honest about what <a href="/custom-vrm-dashboards/">VRM already does brilliantly</a> for free, where its built-in fleet tools stop for a small distributed portfolio, and exactly what we add.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="The gap between guests is where it goes wrong">
+    <section id="s2" class="section section--alt" aria-label="The gap between guests is where it goes wrong">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/02 &mdash; THE CHANGEOVER-DAY PROBLEM</p>
         <h2 class="section-title" data-title>The gap between guests is where it goes wrong<span class="title-underline"></span></h2>
 <p>Off-grid lets have no mains to fall back on. Between guests, a fridge left running, an immersion left on, or a fortnight of flat winter light can quietly walk a battery down to the point where the next arrival has no hot water and no lights. When the property is 200 miles away &mdash; or in another country &mdash; you find out when the guest calls, which is the worst possible moment.</p><p>The people on the ground rarely help here. A changeover cleaner has ninety minutes and no way to judge whether a battery bank is healthy or on its last few percent. Logging into a separate Victron account per property, on a phone, in a hurry, is not a workflow anyone sustains.</p><p>What actually works is one screen you glance at on changeover morning:</p><ul><li><strong>Every property in one view</strong> &mdash; green means go, amber means keep an eye, red means send someone before the guest arrives.</li><li><strong>History that earns its keep</strong> &mdash; weeks of state-of-charge and solar data show which cabin is chronically under-panelled, so you right-size the array once instead of guessing every winter.</li><li><strong>Alerts that reach a human</strong> &mdash; a warning that lands before the guest does.</li></ul><p>That is the job this service is built around.</p>
       </div>
     </section>
-    <section class="section" aria-label="Victron VRM is excellent &mdash; use it first">
+    <section id="s3" class="section" aria-label="Victron VRM is excellent &mdash; use it first">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; WHAT VRM ALREADY DOES WELL</p>
         <h2 class="section-title" data-title>Victron VRM is excellent &mdash; use it first<span class="title-underline"></span></h2>
 <p>Credit where it is due: <a href="/off-grid-victron-energy/">Victron&rsquo;s VRM portal</a> is superb, and it is free. Every site with a GX device gets live dashboards, deep historical logging, and &mdash; importantly for lettings &mdash; genuinely good <strong>automatic alarm monitoring</strong>. VRM watches a predefined list of parameters and will email you and push a notification to the VRM app when something enters an alarm state, with advanced per-parameter rules and hysteresis available if you want them. For a single cabin, that may be all you ever need, and if it is, we will tell you so.</p><p>Where it stops is portfolio presentation. The built-in installation overview is a <strong>table</strong>, not a branded at-a-glance screen; the richer Fleet Dashboard only appears once your account is linked to <strong>10 or more sites</strong>; the stock per-site dashboard layout is <strong>fixed</strong> (only the Advanced tab is composable, and custom widgets are limited to about six parameters); and none of it is brandable &mdash; the long-promised white-label &ldquo;Dealer ID&rdquo; feature was confirmed by Victron staff to have never shipped.</p><p><strong>Independence line:</strong> we are an independent service and are listed in Victron Energy&rsquo;s Recommended Software Integrator Program &mdash; though not a Victron dealer, distributor or reseller. Victron and VRM are their trademarks. We build on top of the official VRM API; we do not replace it.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="One screen, every property, plain English">
+    <section id="s4" class="section section--alt" aria-label="One screen, every property, plain English">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/04 &mdash; THE PORTFOLIO DASHBOARD WE BUILD</p>
         <h2 class="section-title" data-title>One screen, every property, plain English<span class="title-underline"></span></h2>
 <p>Using the <a href="/victron-vrm-api-dashboard/">same official VRM API</a> that streams our own demo, we build you one dashboard for the whole portfolio &mdash; and it works from the very first two sites, with no 10-site threshold to cross.</p><ul><li><strong>A tile per property</strong> &mdash; state of charge, solar today, load, last-seen and a single OK / watch / act status, laid out the way you think about your cabins, not the way a table sorts them.</li><li><strong>Plain English, no login</strong> &mdash; the view we build is readable by a cleaner or manager with no Victron account and no training.</li><li><strong>Your branding</strong> &mdash; your name, colours and property labels, not a generic portal.</li><li><strong>Where you need it</strong> &mdash; on a phone for changeover mornings, an office monitor, or a <a href="/victron-vrm-tv-kiosk-display/">wall-mounted kiosk</a>; we can also <a href="/embed-victron-vrm-on-website/">embed a public view</a> if you want to reassure eco-conscious guests.</li></ul><p>Crucially, this is a <strong>layer on top of VRM</strong>, not a substitute. VRM keeps doing its own logging and alarming; our dashboard gives you the single, branded, changeover-focused view VRM does not. It is <a href="/white-label-victron-monitoring/">built, hosted and supported by us</a>, so you are not maintaining a server or a Grafana stack yourself.</p>
       </div>
     </section>
-    <section class="section" aria-label="Our own off-grid van streams live on this site">
+    <section id="s5" class="section" aria-label="Our own off-grid van streams live on this site">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; SEE IT RUNNING LIVE</p>
         <h2 class="section-title" data-title>Our own off-grid van streams live on this site<span class="title-underline"></span></h2>
 <p>We do not ask you to take this on trust. Our own off-grid support vehicle &mdash; the <strong>365 Crafter</strong>, running a Cerbo GX on Venus OS with MPPT solar and a lithium bank &mdash; streams live through the official VRM API on our <a href="/custom-vrm-dashboards/">custom dashboards page</a>, in two completely different dashboard styles built from the same data.</p><p>On the same page there is a <strong>fleet-style demo</strong> that mirrors exactly what a holiday-let portfolio view looks like &mdash; several properties side by side &mdash; where only the van is a real, live system and the rest are clearly labelled as sample sites. That is deliberate: we would rather show you one honest live feed and label the demo tiles than fake a portfolio we do not have.</p><p>Open it, watch the van&rsquo;s numbers move, resize your browser, and picture your own cabins in those tiles. If you have run Victron kit before, you will recognise immediately that this is the real API and not a screenshot. When you are ready, the same build can be pointed at your sites.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Honest prerequisites">
+    <section id="s6" class="section section--alt" aria-label="Honest prerequisites">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/06 &mdash; WHAT YOU NEED, WHAT WE NEED</p>
         <h2 class="section-title" data-title>Honest prerequisites<span class="title-underline"></span></h2>
 <p>Straight about the prerequisites, because they matter:</p><ul><li><strong>Victron kit is required.</strong> Each property needs a Victron <a href="/victron-installer-dorset/">GX device</a> (a Cerbo GX, or a GX built into another unit) online and reporting to VRM. The dashboard is only ever as good as the kit fitted &mdash; and non-Victron sensors can only appear if they are wired through the GX.</li><li><strong>We need VRM access.</strong> You grant us read access to your sites at the right level &mdash; an installer link or a shared account &mdash; so we can pull each property through the API. You keep ownership; we simply read.</li><li><strong>Each site needs a connection.</strong> No connectivity, no data. If a remote cabin has no reliable link, we also do <a href="/rural-and-farm-wifi-dorset/">rural connectivity</a>, <a href="/starlink-internet/">Starlink</a> and point-to-point wireless, so that is a problem we can solve rather than a dead end.</li></ul><p>We work <strong>worldwide and remotely</strong> &mdash; your cabins can be in three different countries and it makes no difference to us. Where response times come up, we are honest that our office hours are UK Monday to Friday, 9 to 5 UK time; the monitoring and alerting run around the clock, but a human picking up the phone is during those hours. We sit alongside your existing installer, not in their place.</p>
       </div>
     </section>
-    <section class="section" aria-label="Quote-based, and here&rsquo;s what moves the price">
+    <section id="s7" class="section" aria-label="Quote-based, and here&rsquo;s what moves the price">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/07 &mdash; WHAT IT COSTS</p>
         <h2 class="section-title" data-title>Quote-based, and here&rsquo;s what moves the price<span class="title-underline"></span></h2>
@@ -821,11 +821,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p>Related: <a href="/glamping-power-monitoring/">Glamping site power monitoring</a> &middot; <a href="/motorhome-hire-fleet-monitoring/">Motorhome &amp; campervan fleet monitoring</a> &middot; <a href="/custom-vrm-dashboards/">Custom VRM dashboards (live demo)</a> &middot; <a href="/white-label-victron-monitoring/">White-label Victron monitoring</a> &middot; <a href="/off-grid-victron-energy/">Off-grid Victron energy systems</a> &middot; <a href="/victron-system-builder/">Victron system builder</a></p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/glamping-power-monitoring/">Glamping site power monitoring</a><a href="/motorhome-hire-fleet-monitoring/">Motorhome &amp; campervan fleet monitoring</a><a href="/custom-vrm-dashboards/">Custom VRM dashboards (live demo)</a><a href="/white-label-victron-monitoring/">White-label Victron monitoring</a><a href="/off-grid-victron-energy/">Off-grid Victron energy systems</a><a href="/victron-system-builder/">Victron system builder</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1129,7 +1132,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

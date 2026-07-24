@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -773,7 +773,7 @@
         <ul class="page-hero__chips mono"><li>&#9679; Live demo on this site</li><li>&#9679; Built &amp; hosted for you</li><li>&#9679; Worldwide</li></ul>
       </div>
     </section>
-
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; THE SHORT ANSWER</a><a href="#s2">02 &mdash; THE TWO BROKERS</a><a href="#s3">03 &mdash; THE REST TRAP</a><a href="#s4">04 &mdash; THE HARD 80%</a><a href="#s5">05 &mdash; SEE IT RUNNING LIVE</a><a href="#s6">06 &mdash; WHAT IT COSTS</a><a href="#s7">07 &mdash; INDEPENDENCE &amp; PREREQUISITES</a></nav>
     <section class="section" aria-label="Victron credential" style="padding-top:1.1rem;padding-bottom:0">
       <div class="wrap">
         <div class="mono" data-reveal style="display:flex;flex-wrap:wrap;gap:.55rem 1.4rem;justify-content:center;align-items:center;font-size:.74rem;color:var(--muted);letter-spacing:.03em">
@@ -787,49 +787,49 @@
         </div>
       </div>
     </section>
-    <section class="section" aria-label="What a Cerbo GX MQTT dashboard actually is">
+    <section id="s1" class="section" aria-label="What a Cerbo GX MQTT dashboard actually is">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; THE SHORT ANSWER</p>
         <h2 class="section-title" data-title>What a Cerbo GX MQTT dashboard actually is<span class="title-underline"></span></h2>
 <p>A Cerbo GX MQTT dashboard subscribes to the live MQTT feed published by your GX device &mdash; either the local FlashMQ broker running on Venus OS or the official VRM cloud broker &mdash; and paints those values onto a screen that updates the instant they change. Get the broker, the keepalive and the topic structure right and you have a genuinely real-time display; get them wrong and you are quietly back to polling a REST endpoint every few minutes and calling it &lsquo;live&rsquo;.</p><p>MQTT is the right transport because it is <strong>push, not poll</strong>. The GX device &mdash; a Cerbo GX, Ekrano GX, Cerbo-S, Venus GX or a Raspberry Pi running Venus OS &mdash; is the single source of truth for every connected MPPT, MultiPlus, BMV, Lynx and battery on the installation. It mirrors its internal D-Bus onto MQTT topics namespaced by your VRM portal ID, so one subscription gives you the whole system: state of charge, PV yield, AC loads, battery current, alarms and more, streaming as fast as the devices report.</p><p>The rest of this page is the honest route from that raw feed to a polished, always-on dashboard &mdash; the two brokers, the gotchas, and where DIY projects tend to stall. Then we show you ours, running live on real hardware.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Local FlashMQ vs the VRM cloud broker">
+    <section id="s2" class="section section--alt" aria-label="Local FlashMQ vs the VRM cloud broker">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/02 &mdash; THE TWO BROKERS</p>
         <h2 class="section-title" data-title>Local FlashMQ vs the VRM cloud broker<span class="title-underline"></span></h2>
 <p>There are two brokers, and the right choice depends on where the screen lives.</p><p><strong>Local broker (FlashMQ on Venus OS).</strong> Since Venus OS v3.20 the GX device runs FlashMQ with the <em>dbus-flashmq</em> plugin, a D-Bus-aware broker you enable under <strong>Settings &rarr; Services &rarr; MQTT</strong>. It listens on the LAN on TCP 1883 (plain) and 8883 (TLS). This is the lowest-latency, no-internet-required option &mdash; ideal for a wall display in the same building &mdash; but the client has to reach the GX on the local network or over a VPN.</p><p><strong>VRM cloud broker.</strong> Victron also relays the same feed through <em>mqtt&lt;N&gt;.victronenergy.com</em>, where the broker index is derived from your VRM portal ID. It is TLS-secured and authenticated with your VRM credentials or an access token, so the dashboard can live anywhere in the world. Each cloud broker serves a bounded number of installations, so the exact hostname for your system matters.</p><p>Both brokers share one non-obvious rule: you must publish a <strong>keepalive</strong> to <em>R/&lt;portalid&gt;/keepalive</em> about every 30 seconds &mdash; the feed times out after roughly a minute &mdash; or it quietly drops back to just serial and system data. Data topics are namespaced <em>N/&lt;portalid&gt;/&lt;service&gt;/&lt;instance&gt;/&hellip;</em>; the <em>R/</em> prefix requests a read and <em>W/</em> writes a value back. Miss the keepalive and your &lsquo;dead&rsquo; dashboard is usually alive &mdash; just starved.</p>
       </div>
     </section>
-    <section class="section" aria-label="Why REST alone is never realtime">
+    <section id="s3" class="section" aria-label="Why REST alone is never realtime">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; THE REST TRAP</p>
         <h2 class="section-title" data-title>Why REST alone is never realtime<span class="title-underline"></span></h2>
 <p>It is tempting to skip MQTT and just poll the VRM REST API on a timer. Don&rsquo;t &mdash; not for a live screen. The REST API is genuinely excellent for what it is designed to do: pulling history, listing installations, reading alarms, fetching configuration and building reports. But its diagnostics and stats endpoints serve <strong>logged</strong> data, and the logging interval is the cadence the whole thing moves at &mdash; 15 minutes by default. Poll it every ten seconds and you will simply receive the same quarter-hour-old numbers over and over.</p><p>The same limit applies to VRM <strong>share links and iframe embeds</strong>: they are read-only and refresh at the logging interval, not in real time. They are perfect for a public &lsquo;here is our system&rsquo; link; they are not a live control-room display.</p><p>So the division of labour is clear, and it plays to VRM&rsquo;s strengths rather than against them. Use REST for history and context; use MQTT for the live numbers. A polished dashboard usually blends both &mdash; MQTT for the gauges that must move now, REST for the day, week and month charts behind them. VRM is doing exactly what it is built for; the realtime layer just needs the right channel.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="From a raw feed to an always-on dashboard">
+    <section id="s4" class="section section--alt" aria-label="From a raw feed to an always-on dashboard">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/04 &mdash; THE HARD 80%</p>
         <h2 class="section-title" data-title>From a raw feed to an always-on dashboard<span class="title-underline"></span></h2>
 <p>Subscribing to a broker is the easy 20%. Any MQTT client can print topics to a terminal. Turning that firehose into a display you would happily bolt to a wall for three years is the other 80%, and it is where weekend projects stall.</p><ul><li><strong>A resilient connection loop</strong> that re-authenticates, re-subscribes and re-sends keepalives through Wi-Fi drops, GX reboots and broker cutovers &mdash; without a human noticing.</li><li><strong>Credentials kept server-side.</strong> TLS certificates and VRM tokens belong on a backend, never baked into browser JavaScript where anyone can read them.</li><li><strong>Decoding the raw values:</strong> enum states (system state, MPPT state, alarm codes) into words, unit scaling, derived figures, and sensible handling of <em>stale</em> readings so a frozen number never masquerades as a live one.</li><li><strong>A front end that runs 24/7</strong> on a kiosk, TV or tablet without leaking memory or needing a nightly refresh &mdash; smooth gauges, readable at a glance, dark for a control room.</li><li><strong>Branding and hosting:</strong> your logo, your colours, a URL you can hand to a client, and somewhere reliable to run it.</li></ul><p>None of this is exotic. It is just a lot of unglamorous engineering that has to be right every day, not only on the demo. That is the work we have already done &mdash; and you can watch the result running below.</p>
       </div>
     </section>
-    <section class="section" aria-label="Our own off-grid van, streaming right now">
+    <section id="s5" class="section" aria-label="Our own off-grid van, streaming right now">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; SEE IT RUNNING LIVE</p>
         <h2 class="section-title" data-title>Our own off-grid van, streaming right now<span class="title-underline"></span></h2>
 <p>We don&rsquo;t ask you to take this on faith. Our own off-grid support van &mdash; the <strong>365 Crafter</strong>, fitted with a Cerbo GX on Venus OS, MPPT solar and a lithium bank &mdash; streams its real telemetry through the official VRM API onto our <a href="/custom-vrm-dashboards/">custom VRM dashboards</a> page, right now.</p><p>You can see the <strong>same live feed rendered two completely different ways</strong> &mdash; one clean and client-facing, one dense and technical &mdash; to make the point that once we hold the data, the presentation is ours to shape, not VRM&rsquo;s fixed layout. There is also a <strong>fleet-style demo</strong> in which only the van is a real system; every other tile is clearly labelled as illustrative, because we won&rsquo;t fake telemetry to pad a screen.</p><p>It is the honest version of a portfolio: real hardware, real state of charge, real solar yield, moving while you watch. If you want a Cerbo GX MQTT dashboard, the most useful thing you can do is <a href="/custom-vrm-dashboards/">look at ours running live</a> and picture your own system in its place.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="How we price it (and what moves the number)">
+    <section id="s6" class="section section--alt" aria-label="How we price it (and what moves the number)">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/06 &mdash; WHAT IT COSTS</p>
         <h2 class="section-title" data-title>How we price it (and what moves the number)<span class="title-underline"></span></h2>
 <p>Every dashboard is quoted individually, because the work genuinely varies &mdash; we would rather scope it properly than post a headline number that turns out to be wrong for you. There are no set prices to quote here, but these are the honest cost drivers:</p><ul><li><strong>Broker and reach:</strong> local-only, VRM cloud, or both &mdash; and whether the screen sits on the LAN or must be reachable worldwide.</li><li><strong>Scope:</strong> how many parameters, screens and derived views; a single glanceable kiosk is very different from a multi-view control room.</li><li><strong>One system or a fleet:</strong> a single Cerbo versus many installations aggregated into one view.</li><li><strong>Read-only or control:</strong> a display is simpler than a dashboard that also writes values back (ESS mode, relays) with the safeguards that demands.</li><li><strong>Branding, hosting and uptime:</strong> your look, where it runs, and how hard it must stay up.</li></ul><p>Because we build, host and support the whole thing as a done-for-you service, we can quote the build and the ongoing running as one. Tell us what you are picturing and we will come back with a clear, itemised quote &mdash; our office hours are Monday to Friday, 9&ndash;5 UK time, and we work worldwide via remote delivery. Start on the <a href="/contact/">contact page</a>.</p>
       </div>
     </section>
-    <section class="section" aria-label="What we are, and what we need from you">
+    <section id="s7" class="section" aria-label="What we are, and what we need from you">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/07 &mdash; INDEPENDENCE &amp; PREREQUISITES</p>
         <h2 class="section-title" data-title>What we are, and what we need from you<span class="title-underline"></span></h2>
@@ -842,6 +842,7 @@
 <p>Related: <a href="/victron-vrm-api-dashboard/">Victron VRM API dashboards</a>, <a href="/customise-victron-vrm-dashboard/">customise your VRM dashboard</a>, <a href="/embed-victron-vrm-on-website/">embed VRM on a website</a>, <a href="/victron-grafana-dashboard-service/">Victron Grafana dashboards</a>, <a href="/custom-vrm-dashboards/">custom VRM dashboards</a> and <a href="/off-grid-victron-energy/">off-grid Victron</a>. The same MQTT feed also carries GPS position topics &mdash; that&rsquo;s how <a href="/victron-gps-tracking/">Victron GPS tracking</a> gets a near-live moving map, with the hardware options covered in <a href="/cerbo-gx-gps/">adding GPS to a Cerbo GX</a>.</p>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1141,7 +1142,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

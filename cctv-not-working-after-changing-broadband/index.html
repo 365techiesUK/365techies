@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -709,8 +709,8 @@
         <ul class="page-hero__chips mono"><li>&#9679; Rated 4.9 on Google</li><li>&#9679; No-fix-no-fee support</li><li>&#9679; Family firm since 1995</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="Everything worked until the new router arrived">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; THE SYMPTOM</a><a href="#s2">02 &mdash; WHAT BROKE</a><a href="#s3">03 &mdash; TWO KINDS OF SYSTEM</a><a href="#s4">04 &mdash; THE HIDDEN CULPRIT</a><a href="#s5">05 &mdash; OUR HONEST ADVICE</a></nav>
+    <section id="s1" class="section" aria-label="Everything worked until the new router arrived">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; THE SYMPTOM</p>
         <h2 class="section-title" data-title>Everything worked until the new router arrived<span class="title-underline"></span></h2>
@@ -719,38 +719,38 @@
     </section>
     <section class="section" aria-label="Fix this now with remote support">
       <div class="wrap" style="max-width:860px;margin:0 auto">
-        <div data-reveal style="border:1px solid rgba(0,206,27,0.35);background:rgba(0,206,27,0.06);border-radius:16px;padding:1.6rem 1.8rem;text-align:center">
+        <div class="callout callout--good callout--center" data-reveal>
           <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// NEED THIS FIXED RIGHT NOW?</p>
-          <p style="font-size:1.08rem;margin:0 0 1.1rem">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
-          <p style="margin:0;display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap">
+          <p class="callout__lede">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
+          <p class="callout__row">
             <a class="button primary" href="/sos/">Start SOS Remote Support</a>
             <a class="button secondary" href="tel:+441202775566">Call 01202 775566</a>
           </p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="The settings that died with your old router">
+    <section id="s2" class="section section--alt" aria-label="The settings that died with your old router">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/02 &mdash; WHAT BROKE</p>
         <h2 class="section-title" data-title>The settings that died with your old router<span class="title-underline"></span></h2>
 <p>Port forwarding is the classic culprit. Older CCTV installs work by opening a "door" in the router that lets your phone reach the DVR or NVR from outside. Those rules live inside the router itself, so when the old one was unplugged, the rules went with it. The new router arrives with no doors open at all — and remote viewing dies instantly.</p><p>The second, sneakier problem is the recorder's own address. Installers often give a DVR a fixed (static) IP so the forwarding rule always points at the right box. If it was set to something like 192.168.1.100 but your new provider's hub uses a different range, the recorder is now stranded on a network that no longer exists — it can't even reach the internet, let alone your phone. Address ranges vary between providers, which is exactly why a swap that "should just work" often doesn't.</p><p>Finally, some systems relied on UPnP to open ports automatically. Plenty of current hubs ship with it disabled — and, in fairness, for sound security reasons, which we'll come back to below. The result is the same either way: the path from your phone to your recorder no longer exists. One more modern wrinkle: some newer providers — most 4G and 5G home broadband, Starlink&rsquo;s standard plan, and a number of full-fibre networks — put you behind carrier-grade NAT, where you share a public address with other customers. Behind CGNAT, port forwarding simply cannot work no matter what you set, and the honest fixes are the camera maker&rsquo;s cloud/P2P service, a VPN, or asking the provider whether a public IP is available.</p>
       </div>
     </section>
-    <section class="section" aria-label="Cloud (P2P) cameras and old-school DVRs need different fixes">
+    <section id="s3" class="section" aria-label="Cloud (P2P) cameras and old-school DVRs need different fixes">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; TWO KINDS OF SYSTEM</p>
         <h2 class="section-title" data-title>Cloud (P2P) cameras and old-school DVRs need different fixes<span class="title-underline"></span></h2>
 <p>Modern systems — Ring, Eufy, Tapo, and most recent Hikvision or Dahua kits used through the maker's own app — are "P2P" or cloud-connected. The recorder or camera phones home to the vendor's servers and your app meets it there, so no port forwarding is needed. After a broadband change these usually fail for one simple reason: the kit can't get online. Wired recorders may need their network settings moved onto the new range; WiFi cameras need the new network's name and password. A tip worth knowing before your next switch: if you set the new router's WiFi name and password to match the old ones, most wireless cameras reconnect on their own.</p><p>Older port-forwarded DVR systems — often reached via an IP address or DDNS name typed into the app — are a different job. Getting them going again means giving the recorder a valid address on the new network, then deciding how to make it reachable from outside, which is where the security question below really matters.</p><p>If your cameras sit in an outbuilding, there's an extra wrinkle — the link back to the house has to survive the router change too. Our guide to <a href="/cctv-in-detached-garage-connect-to-house/">connecting garage CCTV to the house</a> covers that side.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Mesh WiFi and double NAT">
+    <section id="s4" class="section section--alt" aria-label="Mesh WiFi and double NAT">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/04 &mdash; THE HIDDEN CULPRIT</p>
         <h2 class="section-title" data-title>Mesh WiFi and double NAT<span class="title-underline"></span></h2>
 <p>A broadband change is often the moment people add mesh WiFi — and mesh is behind a surprising share of these callouts. If the mesh system is plugged into the provider's hub and both are acting as routers, you now have two networks stacked on top of each other: "double NAT". A port-forwarding rule on one router doesn't carry through the other, so remote viewing fails even if you configure one of them perfectly. Some cloud systems cope with double NAT; others become flaky or drop off entirely.</p><p>The clean fix is to have only one device doing the routing — usually by putting the provider's hub into modem or bridge mode so the mesh takes over. The setting's name and availability vary by provider, and some hubs don't offer it at all, in which case workarounds like an IP passthrough or DMZ setting pointed at the mesh can do the job — but they need doing carefully, or you trade one problem for another.</p><p>This is bread-and-butter work for us on <a href="/business-wifi-installation/">business WiFi installations</a>, where cameras, tills and door systems all have to survive a network change together — and exactly the same thinking applies to a home setup.</p>
       </div>
     </section>
-    <section class="section" aria-label="When we'd tell you not to rebuild the old setup">
+    <section id="s5" class="section" aria-label="When we'd tell you not to rebuild the old setup">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; OUR HONEST ADVICE</p>
         <h2 class="section-title" data-title>When we'd tell you not to rebuild the old setup<span class="title-underline"></span></h2>
@@ -758,11 +758,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p>Related: <a href="/cctv-smart-home/">CCTV &amp; smart home installation</a> · <a href="/cctv-in-detached-garage-connect-to-house/">Connecting garage CCTV to the house</a> · <a href="/business-wifi-installation/">Business WiFi installation</a> · <a href="/contact/">Contact 365 Techies</a></p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/cctv-smart-home/">CCTV &amp; smart home installation</a><a href="/cctv-in-detached-garage-connect-to-house/">Connecting garage CCTV to the house</a><a href="/business-wifi-installation/">Business WiFi installation</a><a href="/contact/">Contact 365 Techies</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1050,7 +1053,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

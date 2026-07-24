@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -707,8 +707,8 @@
         <ul class="page-hero__chips mono"><li>&#9679; No-fix-no-fee remote support</li><li>&#9679; Trading since 1995</li><li>&#9679; Rated 4.9 on Google</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="Years of email look gone? They almost certainly aren't">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; START HERE</a><a href="#s2">02 &mdash; QUICK PROOF</a><a href="#s3">03 &mdash; THE SETTING</a><a href="#s4">04 &mdash; SEARCH QUIRK</a><a href="#s5">05 &mdash; HONEST ADVICE</a></nav>
+    <section id="s1" class="section" aria-label="Years of email look gone? They almost certainly aren't">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; START HERE</p>
         <h2 class="section-title" data-title>Years of email look gone? They almost certainly aren't<span class="title-underline"></span></h2>
@@ -717,38 +717,38 @@
     </section>
     <section class="section" aria-label="Fix this now with remote support">
       <div class="wrap" style="max-width:860px;margin:0 auto">
-        <div data-reveal style="border:1px solid rgba(0,206,27,0.35);background:rgba(0,206,27,0.06);border-radius:16px;padding:1.6rem 1.8rem;text-align:center">
+        <div class="callout callout--good callout--center" data-reveal>
           <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// NEED THIS FIXED RIGHT NOW?</p>
-          <p style="font-size:1.08rem;margin:0 0 1.1rem">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
-          <p style="margin:0;display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap">
+          <p class="callout__lede">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
+          <p class="callout__row">
             <a class="button primary" href="/sos/">Start SOS Remote Support</a>
             <a class="button secondary" href="tel:+441202775566">Call 01202 775566</a>
           </p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Two minutes to prove your mail still exists">
+    <section id="s2" class="section section--alt" aria-label="Two minutes to prove your mail still exists">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/02 &mdash; QUICK PROOF</p>
         <h2 class="section-title" data-title>Two minutes to prove your mail still exists<span class="title-underline"></span></h2>
 <p>Before touching any settings, get your evidence. Open a web browser and sign in to your email provider's webmail — for Microsoft 365 and Outlook.com addresses that means signing in at office.com or outlook.com; other providers (BT, Gmail, your own domain's host) have their own webmail pages. Webmail shows you the mailbox as it actually exists on the server, with no app in the way.</p><p>If your old email is all there in webmail — and it usually is — you can relax. Nothing is lost, and the rest of this page is about persuading the app on your computer to show what the server already holds.</p><p>If the old mail <em>isn't</em> in webmail either, don't panic yet: this usually means it never lived on the server in the first place. Years of email from an older setup — particularly POP accounts and Classic Outlook — often sit in a local archive file on the computer instead. Skip to the last section below, because that's a different job with a happy ending of its own.</p>
       </div>
     </section>
-    <section class="section" aria-label="The sync window: why the app only shows a recent slice">
+    <section id="s3" class="section" aria-label="The sync window: why the app only shows a recent slice">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; THE SETTING</p>
         <h2 class="section-title" data-title>The sync window: why the app only shows a recent slice<span class="title-underline"></span></h2>
 <p>Mail apps limit how much they keep on the device to save space and stay fast. Somewhere in the new Outlook's settings — and in Classic Outlook's account settings — there's a control that decides how far back that local slice reaches. Look for wording along the lines of <strong>"download email for"</strong>, <strong>"days of email to save"</strong> or <strong>"sync email from"</strong>; Microsoft moves the exact names and locations around between updates, which is why we're describing the setting rather than promising a click-path that may be wrong by the time you read this.</p><p>Set it to the longest window available — ideally "all" — then be patient. A large mailbox can take a while to come down, especially on a slower connection, and folders may fill in gradually rather than all at once.</p><p>Two honest notes. First, even with a short window the app should fetch older mail from the server when you scroll or search — but this fails often enough that lengthening the setting is still worth doing. Second, if the app is signed in but simply refuses to sync, signing out and back in — or removing and re-adding the account — resets a stuck sync more often than it should need to.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="The mail is there — but search says it isn't">
+    <section id="s4" class="section section--alt" aria-label="The mail is there — but search says it isn't">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/04 &mdash; SEARCH QUIRK</p>
         <h2 class="section-title" data-title>The mail is there — but search says it isn't<span class="title-underline"></span></h2>
 <p>A common variation: the old messages exist, and you can even reach them by scrolling, but typing a name or subject into search returns nothing older than a few weeks. That's a search problem, not a missing-mail problem, and it deserves its own page — see <a href="/outlook-search-not-finding-old-emails/">Outlook search not finding old emails</a> for the full treatment.</p><p>The quick cross-checks: browse the folder sorted by date instead of searching, and try the same search in webmail. Webmail searches the server's full index, so if it finds the message and the app doesn't, you've confirmed the mail is safe and the fault is purely in the app's search.</p><p>If you're hitting several of these annoyances at once — missing mail, broken search, calendar oddities — our <a href="/outlook-problems/">Outlook problems hub</a> gathers the common new-Outlook complaints in one place, because they often share a cause.</p>
       </div>
     </section>
-    <section class="section" aria-label="When it's not worth fighting — and what we'd do">
+    <section id="s5" class="section" aria-label="When it's not worth fighting — and what we'd do">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; HONEST ADVICE</p>
         <h2 class="section-title" data-title>When it's not worth fighting — and what we'd do<span class="title-underline"></span></h2>
@@ -756,11 +756,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p><strong>Related guides:</strong> <a href="/outlook-problems/">Outlook problems hub</a> · <a href="/outlook-search-not-finding-old-emails/">Outlook search not finding old emails</a> · <a href="/how-to-go-back-to-classic-outlook/">Go back to Classic Outlook</a> · <a href="/email-support/">Email support from 365 Techies</a></p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/outlook-problems/">Outlook problems hub</a><a href="/outlook-search-not-finding-old-emails/">Outlook search not finding old emails</a><a href="/how-to-go-back-to-classic-outlook/">Go back to Classic Outlook</a><a href="/email-support/">Email support from 365 Techies</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1044,7 +1047,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -759,8 +759,8 @@
         <ul class="page-hero__chips mono"><li>&#9679; Family-run since 1995</li><li>&#9679; No fix, no fee</li><li>&#9679; Rated 4.9 on Google</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="Why your Sky email won&rsquo;t add to the new Outlook">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; THE SHORT ANSWER</a><a href="#s2">02 &mdash; WHY IT REJECTS YOUR LOGIN</a><a href="#s3">03 &mdash; GENERATE AN APP PASSWORD</a><a href="#s4">04 &mdash; THE CORRECT SETTINGS</a><a href="#s5">05 &mdash; STILL WON&rsquo;T ADD?</a><a href="#s6">06 &mdash; LEFT SKY OR ON ANOTHER PROVIDER</a></nav>
+    <section id="s1" class="section" aria-label="Why your Sky email won&rsquo;t add to the new Outlook">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; THE SHORT ANSWER</p>
         <h2 class="section-title" data-title>Why your Sky email won&rsquo;t add to the new Outlook<span class="title-underline"></span></h2>
@@ -769,45 +769,45 @@
     </section>
     <section class="section" aria-label="Fix this now with remote support">
       <div class="wrap" style="max-width:860px;margin:0 auto">
-        <div data-reveal style="border:1px solid rgba(0,206,27,0.35);background:rgba(0,206,27,0.06);border-radius:16px;padding:1.6rem 1.8rem;text-align:center">
+        <div class="callout callout--good callout--center" data-reveal>
           <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// NEED THIS FIXED RIGHT NOW?</p>
-          <p style="font-size:1.08rem;margin:0 0 1.1rem">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
-          <p style="margin:0;display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap">
+          <p class="callout__lede">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
+          <p class="callout__row">
             <a class="button primary" href="/sos/">Start SOS Remote Support</a>
             <a class="button secondary" href="tel:+441202775566">Call 01202 775566</a>
           </p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="What&rsquo;s actually going wrong">
+    <section id="s2" class="section section--alt" aria-label="What&rsquo;s actually going wrong">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/02 &mdash; WHY IT REJECTS YOUR LOGIN</p>
         <h2 class="section-title" data-title>What&rsquo;s actually going wrong<span class="title-underline"></span></h2>
 <p>Your <em>@sky.com</em> mailbox lives on Yahoo&rsquo;s servers &mdash; Sky email has been Yahoo-powered for years. For security, Yahoo no longer lets third-party apps like Outlook sign in with your main password. Instead it expects a one-off <strong>app password</strong>: a 16-character code you generate once and use only inside Outlook.</p><p>There are two common ways it goes wrong in the new Outlook:</p><ul><li><strong>You choose &lsquo;Yahoo&rsquo; from the account-type list.</strong> That launches a Yahoo sign-in web page (an OAuth prompt) which often loops, errors, or simply doesn&rsquo;t play nicely with a Sky-branded address. Choose <strong>IMAP</strong> or <strong>Other</strong> instead.</li><li><strong>You type your normal Sky password.</strong> Yahoo rejects it, so Outlook keeps asking for it or adds the account but never syncs. This is the same root cause behind <a href="/outlook-keeps-asking-for-password/">Outlook repeatedly asking for your password</a> and a <a href="/outlook-password-not-working/">password that won&rsquo;t work</a> on Sky and Yahoo mailboxes.</li></ul><p>Get those two things right &mdash; an IMAP account and a proper app password &mdash; and the new Outlook will connect first time. Everything below is just the detail.</p>
       </div>
     </section>
-    <section class="section" aria-label="Create your 16-character Sky app password">
+    <section id="s3" class="section" aria-label="Create your 16-character Sky app password">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; GENERATE AN APP PASSWORD</p>
         <h2 class="section-title" data-title>Create your 16-character Sky app password<span class="title-underline"></span></h2>
 <p>You generate the app password on Sky&rsquo;s own website, not inside Outlook. You&rsquo;ll need your Sky iD &mdash; the same login you use for your Sky account:</p><ul><li>Go to Sky&rsquo;s app-password page &mdash; the manage-apps section of the Sky Yahoo Mail settings (search &lsquo;Sky generate app password&rsquo; if the exact address has changed) and sign in with your Sky iD.</li><li>Find <strong>Generate app password</strong> and select it.</li><li>Give it a label you&rsquo;ll recognise later, such as <em>Outlook</em> or <em>New laptop</em>. This just helps you spot it if you ever want to cancel it.</li><li>Click <strong>Generate</strong>. Sky shows you a <strong>16-character password</strong> once &mdash; copy it or write it down immediately, because it won&rsquo;t be shown again.</li></ul><p>A few things worth knowing: the app password is different from your Sky iD password, you enter it into Outlook without any spaces, and you can create a separate one for each device. If you set Sky email up on a phone as well as a laptop, generating one password per device means you can revoke a single device later without knocking out the others. Keep the code somewhere safe &mdash; a <a href="/password-manager-setup/">password manager</a> is ideal.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="The IMAP and SMTP settings Sky email needs">
+    <section id="s4" class="section section--alt" aria-label="The IMAP and SMTP settings Sky email needs">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/04 &mdash; THE CORRECT SETTINGS</p>
         <h2 class="section-title" data-title>The IMAP and SMTP settings Sky email needs<span class="title-underline"></span></h2>
 <p>When you add the account, pick <strong>IMAP</strong> and enter these settings. They&rsquo;re Yahoo&rsquo;s official Sky Mail servers, and they work in the new Outlook, classic Outlook, phones and tablets alike:</p><ul><li><strong>Incoming mail (IMAP):</strong> server <em>imap.mail.yahoo.com</em>, port <strong>993</strong>, encryption <strong>SSL/TLS</strong>.</li><li><strong>Outgoing mail (SMTP):</strong> server <em>smtp.mail.yahoo.com</em>, port <strong>465</strong> (or <strong>587</strong> if 465 is blocked), encryption <strong>SSL/TLS</strong>, with &lsquo;outgoing server requires authentication&rsquo; switched on.</li><li><strong>Username:</strong> your full email address, for example <em>yourname@sky.com</em>.</li><li><strong>Password:</strong> the 16-character app password from the step above &mdash; never your normal Sky password.</li></ul><p>Some setup screens auto-fill <em>imap.tools.sky.com</em> and <em>smtp.tools.sky.com</em> instead. Those are Sky&rsquo;s own aliases and they generally work too, but if a connection times out or won&rsquo;t authenticate, switch to the <em>mail.yahoo.com</em> servers above &mdash; they&rsquo;re the most reliable. Because IMAP keeps a copy of your mail on the server, your existing emails and folders download into Outlook and stay in sync across every device.</p>
       </div>
     </section>
-    <section class="section" aria-label="When it still won&rsquo;t connect &mdash; and how we fix it">
+    <section id="s5" class="section" aria-label="When it still won&rsquo;t connect &mdash; and how we fix it">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; STILL WON&rsquo;T ADD?</p>
         <h2 class="section-title" data-title>When it still won&rsquo;t connect &mdash; and how we fix it<span class="title-underline"></span></h2>
 <p>If you&rsquo;ve used an app password and the right IMAP settings and Sky email <em>still</em> won&rsquo;t add, these are the usual culprits we work through:</p><ul><li><strong>An old, half-added account is in the way.</strong> Remove the part-set-up Sky entry completely, close Outlook, reopen it and add it again from scratch. Our guide to when the <a href="/outlook-cant-add-account-new-outlook/">new Outlook can&rsquo;t add an account</a> covers this in more depth.</li><li><strong>The app password has a typo.</strong> It&rsquo;s 16 characters with no spaces &mdash; one wrong character and it fails silently. Generate a fresh one and paste it rather than type it.</li><li><strong>The account added but nothing syncs.</strong> Give it a few minutes on first connection; if it stays empty, it&rsquo;s almost always the password path &mdash; see <a href="/new-outlook-not-syncing/">new Outlook not syncing</a>.</li><li><strong>The new Outlook itself is playing up.</strong> Some people simply prefer the older app, which handles IMAP accounts smoothly &mdash; here&rsquo;s <a href="/how-to-go-back-to-classic-outlook/">how to go back to classic Outlook</a>.</li></ul><p>If it&rsquo;s still not budging, that&rsquo;s exactly the sort of fiddly job we sort every day. We&rsquo;re <strong>365 Techies</strong>, a family-run team in Kinson, Bournemouth, trading since 1995, and with your permission we can connect to your PC and set it up while you watch &mdash; usually the same day, on our <strong>no-fix-no-fee</strong> promise. See <a href="/remote-support/">remote support</a> or call <a href="tel:+441202775566">01202&nbsp;775566</a>.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="If you&rsquo;ve left Sky, or use a different provider">
+    <section id="s6" class="section section--alt" aria-label="If you&rsquo;ve left Sky, or use a different provider">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/06 &mdash; LEFT SKY OR ON ANOTHER PROVIDER</p>
         <h2 class="section-title" data-title>If you&rsquo;ve left Sky, or use a different provider<span class="title-underline"></span></h2>
@@ -815,11 +815,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p>Related help: <a href="/btinternet-email-wont-add-to-new-outlook/">BT email won&rsquo;t add to new Outlook</a>, <a href="/plusnet-email-wont-add-to-new-outlook/">Plusnet email won&rsquo;t add to new Outlook</a>, <a href="/new-outlook-not-syncing/">new Outlook not syncing</a>, <a href="/outlook-keeps-asking-for-password/">Outlook keeps asking for your password</a>, <a href="/how-to-go-back-to-classic-outlook/">how to go back to classic Outlook</a> and <a href="/email-support/">email support</a>.</p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/btinternet-email-wont-add-to-new-outlook/">BT email won&rsquo;t add to new Outlook</a><a href="/plusnet-email-wont-add-to-new-outlook/">Plusnet email won&rsquo;t add to new Outlook</a><a href="/new-outlook-not-syncing/">new Outlook not syncing</a><a href="/outlook-keeps-asking-for-password/">Outlook keeps asking for your password</a><a href="/how-to-go-back-to-classic-outlook/">how to go back to classic Outlook</a><a href="/email-support/">email support</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1115,7 +1118,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

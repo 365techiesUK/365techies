@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -737,22 +737,21 @@
         <ul class="page-hero__chips mono"><li>&#9679; Windows only</li><li>&#9679; New Outlook</li><li>&#9679; Toggle top-right</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="The quick way: flip the toggle">
+    <section id="s1" class="section" aria-label="The quick way: flip the toggle">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">Answer first</p>
         <h2 class="section-title" data-title>The quick way: flip the toggle<span class="title-underline"></span></h2>
 <p>The new Outlook has a switch built right in. In the <strong>top-right corner</strong> of the new Outlook window you'll see a <strong>New Outlook</strong> toggle. Turn it <strong>off</strong> and you'll get two choices:</p><ul><li><strong>Switch back to classic Outlook</strong> — this takes you back permanently (it asks for a quick reason first; you can skip the feedback).</li><li><strong>Use classic Outlook this time</strong> — this opens classic Outlook just for now, without permanently switching.</li></ul><p>Choose <em>Switch back to classic Outlook</em>, let it close and reopen, and you're back in the classic version you know. Nothing is deleted — classic Outlook was there the whole time.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="No toggle? Three reliable alternatives">
+    <section id="s2" class="section section--alt" aria-label="No toggle? Three reliable alternatives">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">If the toggle is missing</p>
         <h2 class="section-title" data-title>No toggle? Three reliable alternatives<span class="title-underline"></span></h2>
 <p>Sometimes the toggle isn't shown — often because your IT administrator has hidden it, or the layout has changed. You have three dependable fallbacks:</p><p><strong>1. Use the Help tab in new Outlook.</strong> Open the <strong>Help</strong> tab on the ribbon and look for the <strong>Go to classic Outlook</strong> button. This is Microsoft's own built-in alternative when the top-right slider isn't visible, and it switches you straight back.</p><p><strong>2. Open classic Outlook straight from the Start menu.</strong> Click <strong>Start</strong>, type <strong>Outlook</strong>, and look carefully at the results. You may see two entries: <em>Outlook (new)</em> and <em>Outlook (classic)</em> (the classic one usually has the familiar blue/gold envelope icon). Open the classic one and pin it to your taskbar so it's easy to find next time.</p><p><strong>3. Use the registry value (for confident users).</strong> This is the surest way to force classic Outlook. Editing the registry is safe if you follow the steps exactly, but back up first if you're unsure — or let us do it.</p><ol><li>Close Outlook completely.</li><li>Press <strong>Windows key + R</strong>, type <code>regedit</code> and press <strong>Enter</strong>.</li><li>Go to <code>HKEY_CURRENT_USER\Software\Microsoft\Office\16.0\Outlook\Preferences</code>.</li><li>Find the value <strong>UseNewOutlook</strong>. Double-click it and set the value data to <strong>0</strong>.</li><li>If <em>UseNewOutlook</em> isn't there, right-click in the empty space on the right, choose <strong>New > DWORD (32-bit) Value</strong>, name it <code>UseNewOutlook</code>, and set it to <strong>0</strong>.</li><li>Close the registry editor and open Outlook — it should launch in classic.</li></ol>
       </div>
     </section>
-    <section class="section" aria-label="Stop new Outlook nudging you back across">
+    <section id="s3" class="section" aria-label="Stop new Outlook nudging you back across">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">Making it stick</p>
         <h2 class="section-title" data-title>Stop new Outlook nudging you back across<span class="title-underline"></span></h2>
@@ -761,10 +760,10 @@
     </section>
     <section class="section" aria-label="Free courses for beginners">
       <div class="wrap" style="max-width:860px;margin:0 auto">
-        <div data-reveal style="border:1px solid rgba(29,151,227,0.35);background:rgba(29,151,227,0.06);border-radius:16px;padding:1.6rem 1.8rem;text-align:center">
+        <div class="callout callout--info callout--center" data-reveal>
           <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// FREE &middot; LEARN SOMETHING NEW</p>
-          <p id="crs-band-txt" style="font-size:1.08rem;margin:0 0 1.1rem"><strong>11 free, friendly online courses</strong> for beginners and older learners &mdash; computer basics, email, WhatsApp, staying safe online and more. Short plain-English lessons, a printable certificate at the end, and never a sign-up form.</p>
-          <p style="margin:0;display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap">
+          <p id="crs-band-txt" class="callout__lede"><strong>11 free, friendly online courses</strong> for beginners and older learners &mdash; computer basics, email, WhatsApp, staying safe online and more. Short plain-English lessons, a printable certificate at the end, and never a sign-up form.</p>
+          <p class="callout__row">
             <a class="button primary" id="crs-band-go" href="/free-courses/">Browse the Free Courses</a>
             <a class="button secondary" href="/contact/?topic=computer-lessons">Ask About In-Person Lessons</a>
           </p>
@@ -773,11 +772,14 @@
       <script>(function(){try{var M=[{"k": "osc_progress_v1", "u": "/online-safety-course/", "t": "Staying Safe Online", "n": 6}, {"k": "crs_ai_for_beginners_course_v1", "u": "/ai-for-beginners-course/", "t": "AI, Without the Mystery", "n": 7}, {"k": "crs_whatsapp_course_for_beginners_v1", "u": "/whatsapp-course-for-beginners/", "t": "WhatsApp, Step by Step", "n": 7}, {"k": "crs_android_phone_course_for_beginners_v1", "u": "/android-phone-course-for-beginners/", "t": "Your Android Phone, Tamed", "n": 7}, {"k": "crs_online_banking_safely_course_v1", "u": "/online-banking-safely-course/", "t": "Online Banking, Safely", "n": 7}, {"k": "crs_video_calling_course_for_beginners_v1", "u": "/video-calling-course-for-beginners/", "t": "See Their Faces: Video Calling", "n": 6}, {"k": "crs_computer_basics_course_v1", "u": "/computer-basics-course/", "t": "Computer Basics, Without the Fear", "n": 7}, {"k": "crs_email_basics_course_v1", "u": "/email-basics-course/", "t": "Email, Comfortably", "n": 7}, {"k": "crs_nhs_app_course_v1", "u": "/nhs-app-course/", "t": "The NHS App, Gently", "n": 7}, {"k": "crs_digital_photos_course_v1", "u": "/digital-photos-course/", "t": "Your Photos, Safe and Sorted", "n": 6}, {"k": "crs_online_shopping_safely_course_v1", "u": "/online-shopping-safely-course/", "t": "Online Shopping, Safely", "n": 7}];var go=null,fin=null;for(var i=0;i<M.length;i++){var s=null;try{s=JSON.parse(localStorage.getItem(M[i].k)||"null")}catch(e){}if(!s)continue;if(s.m>0&&s.m<M[i].n&&!go){go=M[i];go.next=s.m+1}else if(s.m>=M[i].n&&!fin){fin=M[i]}}var tx=document.getElementById("crs-band-txt"),bt=document.getElementById("crs-band-go");if(!tx||!bt)return;if(go){tx.innerHTML="<strong>Welcome back!</strong> You&rsquo;re part-way through <strong>"+go.t+"</strong> &mdash; lesson "+go.next+" of "+go.n+" is ready when you are.";bt.href=go.u;bt.textContent="Continue where I left off \u2192";}else if(fin){tx.innerHTML="<strong>Welcome back!</strong> You finished <strong>"+fin.t+"</strong> \ud83c\udf89 &mdash; ready to pick your next free course?";bt.textContent="Pick my next course \u2192";}}catch(e){}})();</script>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p>Related Outlook guides from 365 Techies: <a href="/new-outlook-wont-open/">new Outlook won't open</a>, <a href="/new-outlook-no-send-receive-button/">new Outlook has no Send/Receive button</a>, <a href="/outlook-not-sending-emails/">Outlook not sending emails</a> and <a href="/outlook-keeps-asking-for-password/">Outlook keeps asking for your password</a>. See also <a href="/microsoft-365-support/">Microsoft 365 support</a>, <a href="/remote-it-support/">remote IT support</a>, <a href="/it-support-dorset/">IT support in Dorset</a> or <a href="/contact/">contact us</a>.</p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/new-outlook-wont-open/">new Outlook won't open</a><a href="/new-outlook-no-send-receive-button/">new Outlook has no Send/Receive button</a><a href="/outlook-not-sending-emails/">Outlook not sending emails</a><a href="/outlook-keeps-asking-for-password/">Outlook keeps asking for your password</a><a href="/microsoft-365-support/">Microsoft 365 support</a><a href="/remote-it-support/">remote IT support</a><a href="/it-support-dorset/">IT support in Dorset</a><a href="/contact/">contact us</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1065,7 +1067,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

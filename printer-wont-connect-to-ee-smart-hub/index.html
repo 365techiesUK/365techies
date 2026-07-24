@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -753,8 +753,8 @@
         <ul class="page-hero__chips mono"><li>&#9679; Family-run since 1995</li><li>&#9679; 4.9-star Google rating</li><li>&#9679; No-fix-no-fee</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="The quick answer">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; THE QUICK FIX</a><a href="#s2">02 &mdash; WHY EE HUBS TRIP PRINTERS UP</a><a href="#s3">03 &mdash; CONNECT VIA COMPATIBLE WIFI</a><a href="#s4">04 &mdash; MAC FILTER &amp; WPA3 RED HERRINGS</a><a href="#s5">05 &mdash; WHICH EE HUB HAVE YOU GOT?</a><a href="#s6">06 &mdash; WHEN TO CALL 365 TECHIES</a></nav>
+    <section id="s1" class="section" aria-label="The quick answer">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; THE QUICK FIX</p>
         <h2 class="section-title" data-title>The quick answer<span class="title-underline"></span></h2>
@@ -763,45 +763,45 @@
     </section>
     <section class="section" aria-label="Fix this now with remote support">
       <div class="wrap" style="max-width:860px;margin:0 auto">
-        <div data-reveal style="border:1px solid rgba(0,206,27,0.35);background:rgba(0,206,27,0.06);border-radius:16px;padding:1.6rem 1.8rem;text-align:center">
+        <div class="callout callout--good callout--center" data-reveal>
           <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// NEED THIS FIXED RIGHT NOW?</p>
-          <p style="font-size:1.08rem;margin:0 0 1.1rem">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
-          <p style="margin:0;display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap">
+          <p class="callout__lede">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
+          <p class="callout__row">
             <a class="button primary" href="/sos/">Start SOS Remote Support</a>
             <a class="button secondary" href="tel:+441202775566">Call 01202 775566</a>
           </p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Why it happens on an EE hub">
+    <section id="s2" class="section section--alt" aria-label="Why it happens on an EE hub">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/02 &mdash; WHY EE HUBS TRIP PRINTERS UP</p>
         <h2 class="section-title" data-title>Why it happens on an EE hub<span class="title-underline"></span></h2>
 <p>Three things about EE&rsquo;s newer hubs catch printers out:</p><ul><li><strong>Band steering.</strong> The <strong>EE Smart Hub Plus</strong> and <strong>Smart Hub Pro</strong> use one name for both wifi bands and decide which band each device gets. A printer that only speaks 2.4GHz can be handed a 5GHz connection it can&rsquo;t use.</li><li><strong>WPA3 security.</strong> The latest hubs default to WPA3, a newer encryption standard. Plenty of printers that are only a few years old were built for WPA2 and quietly refuse to join a WPA3 network.</li><li><strong>The BT-to-EE switch.</strong> When BT customers moved across to EE, many received a brand-new hub with a different wifi name and password. Your printer still remembers the <em>old</em> BT network, so it keeps trying to connect to a wifi that no longer exists.</li></ul><p>That last one is the most common call we get. The printer isn&rsquo;t broken and nothing you did was wrong &mdash; the wifi it was told to use has simply changed underneath it. Once you point the printer at a network it can actually see and log in to, it behaves again. If your printer connects but then keeps dropping off, our guide on <a href="/why-does-my-printer-keep-disconnecting/">why printers keep disconnecting</a> covers that separately.</p>
       </div>
     </section>
-    <section class="section" aria-label="The reliable fix: use Compatible WiFi">
+    <section id="s3" class="section" aria-label="The reliable fix: use Compatible WiFi">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; CONNECT VIA COMPATIBLE WIFI</p>
         <h2 class="section-title" data-title>The reliable fix: use Compatible WiFi<span class="title-underline"></span></h2>
 <p>Here&rsquo;s the approach that works on the vast majority of EE Smart Hubs. The precise menu labels vary a little by hub model and firmware, but the shape is always the same.</p><p>First, get into the controls. The easiest route is the <strong>EE app</strong> on your phone. If you&rsquo;d rather use a computer, open a web browser and type <strong>192.168.1.254</strong> (or <strong>eehub</strong>) into the address bar, then sign in with the admin password printed on the pull-out card on the back of the hub &mdash; that&rsquo;s a different password from your wifi one.</p><p>Next, find <strong>Advanced Settings</strong>, then <strong>Wireless</strong>, then <strong>Compatible WiFi</strong>, and switch it on. Give it a name and password you&rsquo;ll recognise and save. Now, on the printer itself, run the wireless setup wizard, pick that Compatible WiFi name and type the password carefully &mdash; capital letters matter. Keep the printer within a few metres of the hub while it joins, and give the hub a couple of minutes to settle after any change.</p><p>The full checklist is in the numbered steps below. If your printer only offers WPS (the one-button method), there&rsquo;s a specific EE quirk covered there too. Prefer to watch someone do it? We can screen-share and <a href="/remote-support/">walk you through it remotely</a>.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Two things that send you down the wrong path">
+    <section id="s4" class="section section--alt" aria-label="Two things that send you down the wrong path">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/04 &mdash; MAC FILTER &amp; WPA3 RED HERRINGS</p>
         <h2 class="section-title" data-title>Two things that send you down the wrong path<span class="title-underline"></span></h2>
 <p>Two messages send people hunting for problems that aren&rsquo;t really there when a printer won&rsquo;t connect to an EE hub.</p><p><strong>The &lsquo;MAC address filtering&rsquo; report.</strong> Some printers &mdash; HP models in particular &mdash; run a self-test that claims a MAC address filter is blocking them. On EE Smart Hubs this is usually a false alarm: EE&rsquo;s current hubs don&rsquo;t use MAC filtering on the main network, so there&rsquo;s nothing there to switch off. The printer&rsquo;s diagnostic is guessing at why it failed and landing on the wrong reason. Don&rsquo;t spend an afternoon looking for a filter that isn&rsquo;t there &mdash; the real issue is nearly always the band or the security type.</p><p><strong>WPA3 versus WPA2.</strong> If your printer genuinely won&rsquo;t accept the password on the main network, the security standard is the likely culprit. Connecting through Compatible WiFi sidesteps it, because that network uses WPA2. If you&rsquo;d rather keep everything on one network, some hubs let you set the main wifi to a <strong>WPA2/WPA3 transition</strong> mode, which keeps old and new devices happy. Not every hub or firmware version offers that, so Compatible WiFi remains the simplest, most reliable fix.</p>
       </div>
     </section>
-    <section class="section" aria-label="Which EE hub do you have?">
+    <section id="s5" class="section" aria-label="Which EE hub do you have?">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; WHICH EE HUB HAVE YOU GOT?</p>
         <h2 class="section-title" data-title>Which EE hub do you have?<span class="title-underline"></span></h2>
 <p>Knowing your hub helps, because the wording differs slightly:</p><ul><li><strong>EE Smart Hub Plus</strong> &mdash; the dual-band WiFi 6 hub. It uses one network name across both bands, and it&rsquo;s where the Compatible WiFi option lives.</li><li><strong>EE Smart Hub Pro</strong> &mdash; the newer WiFi 7 hub. Faster, but its stronger default security is exactly what trips older printers up, so the same Compatible WiFi fix applies.</li><li><strong>BT Smart Hub 2</strong> &mdash; if you moved from BT to EE you may have kept this one. It&rsquo;s WiFi 5 and behaves like its BT self, so our <a href="/printer-wont-connect-to-bt-smart-hub/">BT Smart Hub guide</a> is the better match for you.</li></ul><p>Whichever you have, you reach the settings the same way: the EE app, or a browser pointed at <strong>192.168.1.254</strong> (or <strong>eehub</strong>), using the admin password from the card on the back. Newer firmware may load the Hub Manager over a secure <strong>https</strong> address and warn you the page isn&rsquo;t private &mdash; that&rsquo;s normal for a device on your own home network, and you can safely continue. Need a hand with the wider setup? See our <a href="/home-network-setup/">home network setup</a> help.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="When to let us do it for you">
+    <section id="s6" class="section section--alt" aria-label="When to let us do it for you">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/06 &mdash; WHEN TO CALL 365 TECHIES</p>
         <h2 class="section-title" data-title>When to let us do it for you<span class="title-underline"></span></h2>
@@ -809,11 +809,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p>Related help: <a href="/printer-support/">Printer support</a>, <a href="/how-to-set-up-a-printer/">how to set up a printer</a>, <a href="/why-does-my-printer-keep-disconnecting/">why your printer keeps disconnecting</a>, <a href="/wifi-support/">WiFi support</a>, <a href="/home-network-setup/">home network setup</a> and <a href="/broadband-help/">broadband help</a>.</p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/printer-support/">Printer support</a><a href="/how-to-set-up-a-printer/">how to set up a printer</a><a href="/why-does-my-printer-keep-disconnecting/">why your printer keeps disconnecting</a><a href="/wifi-support/">WiFi support</a><a href="/home-network-setup/">home network setup</a><a href="/broadband-help/">broadband help</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1109,7 +1112,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -743,8 +743,7 @@
         <ul class="page-hero__chips mono"><li>&#9679; Windows · classic Outlook</li><li>&#9679; Safe mode · add-ins</li><li>&#9679; Quick Repair · new profile</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="Why Outlook hangs on "Loading Profile"">
+    <section id="s1" class="section" aria-label="Why Outlook hangs on "Loading Profile"">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">What it means</p>
         <h2 class="section-title" data-title>Why Outlook hangs on "Loading Profile"<span class="title-underline"></span></h2>
@@ -753,24 +752,24 @@
     </section>
     <section class="section" aria-label="Fix this now with remote support">
       <div class="wrap" style="max-width:860px;margin:0 auto">
-        <div data-reveal style="border:1px solid rgba(0,206,27,0.35);background:rgba(0,206,27,0.06);border-radius:16px;padding:1.6rem 1.8rem;text-align:center">
+        <div class="callout callout--good callout--center" data-reveal>
           <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// NEED THIS FIXED RIGHT NOW?</p>
-          <p style="font-size:1.08rem;margin:0 0 1.1rem">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
-          <p style="margin:0;display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap">
+          <p class="callout__lede">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
+          <p class="callout__row">
             <a class="button primary" href="/sos/">Start SOS Remote Support</a>
             <a class="button secondary" href="tel:+441202775566">Call 01202 775566</a>
           </p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="How to fix Outlook stuck on loading profile">
+    <section id="s2" class="section section--alt" aria-label="How to fix Outlook stuck on loading profile">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">The fix</p>
         <h2 class="section-title" data-title>How to fix Outlook stuck on loading profile<span class="title-underline"></span></h2>
 <p>These steps are for <strong>classic Outlook for Windows</strong>, in order — most people are sorted by step 2 or 3.</p><ol><li><strong>End all Office tasks first.</strong> Right-click the taskbar and open <strong>Task Manager</strong>. Under Processes, look for anything Office-related still running — <em>Outlook</em>, <em>Microsoft Office</em>, and any leftover <em>Teams</em> or <em>Skype for Business</em> helpers. Right-click each and choose <strong>End task</strong>. This clears a half-closed process that's blocking startup.</li><li><strong>Start Outlook in safe mode.</strong> Press <strong>Windows key + R</strong>, type <code>outlook.exe /safe</code> and press Enter. Safe mode loads Outlook with add-ins switched off. If it opens now, an add-in is your culprit — go to step 3. If it still hangs, skip to step 4.</li><li><strong>Disable add-ins one at a time.</strong> With Outlook open in safe mode, go to <em>File > Options > Add-ins</em>. At the bottom, set <em>Manage</em> to <strong>COM Add-ins</strong> and click <strong>Go</strong>. Untick everything, click OK, and restart Outlook normally. If it opens, re-enable the add-ins <strong>one at a time</strong>, restarting between each, until the one that hangs it reveals itself — then leave that one off.</li><li><strong>Run an Office Quick Repair.</strong> Go to <em>Control Panel > Programs and Features</em>, click <strong>Microsoft 365 / Office</strong>, choose <strong>Change</strong>, then <strong>Quick Repair</strong>. This fixes damaged Office files without touching your mail and doesn't need the internet.</li><li><strong>Turn off hardware graphics acceleration.</strong> If Outlook opens in safe mode but hangs normally, a graphics driver can be the cause. In <em>File > Options > Advanced</em>, under Display, tick <strong>Disable hardware graphics acceleration</strong> and restart. (Note: current Office builds increasingly manage this automatically and the tick-box may be absent — if you don't see it, move on.)</li><li><strong>Create a new mail profile (last resort).</strong> Close Outlook and go to <em>Control Panel > Mail > Show Profiles > Add</em>. Create a fresh profile, re-add your account, and set it as the default. For a Microsoft 365 or Outlook.com account the Control Panel dialog can't complete the modern sign-in, so instead hold the <strong>Shift</strong> key while starting Outlook (or run <code>outlook.exe /manageprofiles</code>) to reach the profile picker, then add the account from Outlook's own sign-in screen. Your mail re-downloads from the server, so nothing is lost — but back up any <strong>local-only PST</strong> archive first (see below).</li></ol>
       </div>
     </section>
-    <section class="section" aria-label="When a new profile is safe (and when to back up)">
+    <section id="s3" class="section" aria-label="When a new profile is safe (and when to back up)">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">Before the last resort</p>
         <h2 class="section-title" data-title>When a new profile is safe (and when to back up)<span class="title-underline"></span></h2>
@@ -778,11 +777,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p>Related help: <a href="/new-outlook-wont-open/">New Outlook won't open</a> · <a href="/outlook-wont-open-in-safe-mode/">Outlook won't open in safe mode</a> · <a href="/outlook-keeps-asking-for-password/">Outlook keeps asking for password</a> · <a href="/microsoft-365-support/">Microsoft 365 support</a> · <a href="/remote-it-support/">Remote IT support</a> · <a href="/contact/">Contact 365 Techies</a></p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/new-outlook-wont-open/">New Outlook won't open</a><a href="/outlook-wont-open-in-safe-mode/">Outlook won't open in safe mode</a><a href="/outlook-keeps-asking-for-password/">Outlook keeps asking for password</a><a href="/microsoft-365-support/">Microsoft 365 support</a><a href="/remote-it-support/">Remote IT support</a><a href="/contact/">Contact 365 Techies</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1070,7 +1072,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

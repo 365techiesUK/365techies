@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -753,43 +753,43 @@
         <ul class="page-hero__chips mono"><li>&#9679; Same-day remote help</li><li>&#9679; No fix, no fee</li><li>&#9679; Family-run since 1995</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="See who has the file open in about 30 seconds">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; QUICK ANSWER</a><a href="#s2">02 &mdash; OPEN FILES, STEP BY STEP</a><a href="#s3">03 &mdash; WHAT THE MESSAGE MEANS</a><a href="#s4">04 &mdash; THE HIDDEN ~$ LOCK FILE</a><a href="#s5">05 &mdash; CLEAR A STUCK LOCK SAFELY</a><a href="#s6">06 &mdash; WHY IT KEEPS HAPPENING</a></nav>
+    <section id="s1" class="section" aria-label="See who has the file open in about 30 seconds">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; QUICK ANSWER</p>
         <h2 class="section-title" data-title>See who has the file open in about 30 seconds<span class="title-underline"></span></h2>
 <p>To see who has a file open on a shared network drive, sit at the computer that actually shares the folder and open <strong>Computer Management</strong>. Under <strong>System Tools</strong>, expand <strong>Shared Folders</strong> and click <strong>Open Files</strong> &mdash; the list shows every file currently open across your network and the Windows username holding each one, so whoever triggered &lsquo;file in use by another user&rsquo; is right there in the <strong>Accessed By</strong> column.</p><p>The catch most guides skip: this only works from the <strong>host</strong> &mdash; the PC or server that shares the folder out. You can&rsquo;t see the list from your own machine mapped to the drive, and you&rsquo;ll need administrator rights on the host to read it. If your &lsquo;server&rsquo; is really just an ordinary desktop under someone&rsquo;s desk, that&rsquo;s where you go (or where you remote in). We cover that setup, and its wobbles, in our guide to a <a href="/desktop-pc-used-as-office-server/">desktop PC used as an office server</a>. The full click-by-click steps are below.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Using Computer Management &rsaquo; Open Files">
+    <section id="s2" class="section section--alt" aria-label="Using Computer Management &rsaquo; Open Files">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/02 &mdash; OPEN FILES, STEP BY STEP</p>
         <h2 class="section-title" data-title>Using Computer Management &rsaquo; Open Files<span class="title-underline"></span></h2>
 <p>Here&rsquo;s the reliable way to check, on the host PC that shares the folder:</p><ul><li>Right-click the <strong>Start</strong> button and choose <strong>Computer Management</strong> (or press <strong>Windows + R</strong>, type <strong>compmgmt.msc</strong> and press Enter).</li><li>In the left pane, expand <strong>System Tools</strong>, then <strong>Shared Folders</strong>, then click <strong>Open Files</strong>.</li><li>Read across the columns: <strong>Open File</strong> is the path, <strong>Accessed By</strong> is the Windows account that has it open, <strong>#Locks</strong> shows how many locks are held, and <strong>Open Mode</strong> tells you whether it&rsquo;s open Read or Write+Read.</li><li>Click <strong>Sessions</strong> (just above Open Files) to see which users, and which computers, are connected to the share right now.</li></ul><p>If you genuinely need to free the file and the person is unreachable, right-click the entry and choose <strong>Close Open File</strong>. Treat this as a last resort: any unsaved changes that person made are lost the moment you do it, and force-closing a live database file (Sage or QuickBooks, say) can corrupt it. You&rsquo;ll need administrator rights on the host both to see the list and to close anything on it.</p>
       </div>
     </section>
-    <section class="section" aria-label="Why Excel just says &lsquo;another user&rsquo;">
+    <section id="s3" class="section" aria-label="Why Excel just says &lsquo;another user&rsquo;">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; WHAT THE MESSAGE MEANS</p>
         <h2 class="section-title" data-title>Why Excel just says &lsquo;another user&rsquo;<span class="title-underline"></span></h2>
 <p>When Excel or Word says a file is &lsquo;locked for editing&rsquo;, it sometimes names the culprit &mdash; &lsquo;locked for editing by John Smith&rsquo; &mdash; and sometimes just shrugs with &lsquo;another user&rsquo;. That isn&rsquo;t Windows being coy. Office only shows a name if that person once typed one into <strong>File, Options, General, User name</strong>. On many small-office PCs that box was never filled in, or everyone signs in as the same generic account, so you get the unhelpful &lsquo;another user&rsquo; every time.</p><p>That&rsquo;s exactly why the <strong>Open Files</strong> list on the host beats the pop-up: it shows the real <strong>Windows account</strong> holding the file, not whatever name Office happens to have on record. If two people swear blind they don&rsquo;t have it open and the message still nags, don&rsquo;t trust the message &mdash; go to the host and read the truth from Open Files. More often than not, the &lsquo;phantom&rsquo; user is a session someone left open on a machine they walked away from, or a laptop that dropped off the wifi mid-save.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Phantom locks and the hidden ~$ file">
+    <section id="s4" class="section section--alt" aria-label="Phantom locks and the hidden ~$ file">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/04 &mdash; THE HIDDEN ~$ LOCK FILE</p>
         <h2 class="section-title" data-title>Phantom locks and the hidden ~$ file<span class="title-underline"></span></h2>
 <p>Alongside every open Office document sits a tiny hidden companion &mdash; the <strong>owner file</strong>. Open <strong>Budget.xlsx</strong> and Excel quietly creates <strong>~$Budget.xlsx</strong> in the same folder; it&rsquo;s the flag that tells everyone else &lsquo;someone has this&rsquo;. Word does the same, though its owner file drops the first couple of letters of the name. Close the document properly and Office deletes the owner file automatically.</p><p>The trouble starts when Office <em>doesn&rsquo;t</em> close properly &mdash; a crash, a frozen laptop, or a network drop mid-save. The ~$ file is orphaned, and the document stays &lsquo;locked&rsquo; even though nobody is actually in it. That&rsquo;s a <strong>phantom lock</strong>.</p><p>To find it, open the folder on the drive, click <strong>View</strong>, then <strong>Show</strong>, then tick <strong>Hidden items</strong>. You&rsquo;ll see the ~$ file sitting next to your document. Once you&rsquo;ve <em>confirmed on the host that nobody genuinely has the file open</em> (check Open Files first), it&rsquo;s safe to delete the stale ~$ file &mdash; it holds no data of its own, so you lose nothing. Deleting it frees the lock; it won&rsquo;t, however, recover any work that was lost in the crash.</p>
       </div>
     </section>
-    <section class="section" aria-label="Closing a stuck session without breaking anything">
+    <section id="s5" class="section" aria-label="Closing a stuck session without breaking anything">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; CLEAR A STUCK LOCK SAFELY</p>
         <h2 class="section-title" data-title>Closing a stuck session without breaking anything<span class="title-underline"></span></h2>
 <p>Prefer the keyboard? From the host PC you can list and clear locks without opening Computer Management. Open <strong>Command Prompt as administrator</strong> and type <strong>net file</strong> &mdash; you&rsquo;ll get a numbered list of every open file with the user holding it. Note the ID, then run <strong>net file [id] /close</strong> to release that one lock.</p><p>PowerShell gives you more detail. <strong>Get-SmbOpenFile | Select ClientUserName, ClientComputerName, Path</strong> lists open files with the exact account <em>and</em> the computer they&rsquo;re on &mdash; handy for pinning down which machine stranded the lock. <strong>Close-SmbOpenFile</strong> then closes it. Both need an elevated window, and both must be run on the machine that shares the folder.</p><p>Whichever route you take, the same caution applies: closing a lock from underneath a live document throws away that person&rsquo;s unsaved changes, and force-closing an open accounts or database file risks corrupting it. If the &lsquo;stuck&rsquo; file is a shared Sage company or another multi-user database, stop and read our note on <a href="/sage-50-multi-user-cannot-connect/">Sage 50 multi-user connection problems</a> before you pull the plug &mdash; the right fix is usually to get everyone out cleanly, not to sever the lock.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Why this keeps happening &mdash; and when to call us">
+    <section id="s6" class="section section--alt" aria-label="Why this keeps happening &mdash; and when to call us">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/06 &mdash; WHY IT KEEPS HAPPENING</p>
         <h2 class="section-title" data-title>Why this keeps happening &mdash; and when to call us<span class="title-underline"></span></h2>
@@ -797,11 +797,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p>Related help: <a href="/desktop-pc-used-as-office-server/">desktop PC used as an office server</a>, <a href="/shared-folders-not-working-after-windows-11-24h2-update/">shared folders not working after Windows 11 24H2</a>, <a href="/mapped-network-drive-keeps-disconnecting/">mapped network drive keeps disconnecting</a>, <a href="/restrict-staff-access-to-shared-folders-windows-11/">restrict staff access to shared folders</a>, <a href="/sage-50-multi-user-cannot-connect/">Sage 50 multi-user cannot connect</a> and <a href="/small-business-it-support/">small-business IT support</a>.</p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/desktop-pc-used-as-office-server/">desktop PC used as an office server</a><a href="/shared-folders-not-working-after-windows-11-24h2-update/">shared folders not working after Windows 11 24H2</a><a href="/mapped-network-drive-keeps-disconnecting/">mapped network drive keeps disconnecting</a><a href="/restrict-staff-access-to-shared-folders-windows-11/">restrict staff access to shared folders</a><a href="/sage-50-multi-user-cannot-connect/">Sage 50 multi-user cannot connect</a><a href="/small-business-it-support/">small-business IT support</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1097,7 +1100,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

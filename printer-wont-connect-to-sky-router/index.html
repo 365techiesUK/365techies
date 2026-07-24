@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -759,8 +759,8 @@
         <ul class="page-hero__chips mono"><li>&#9679; Usually same-day remote help</li><li>&#9679; No fix, no fee</li><li>&#9679; Rated 4.9 on Google</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="Why your printer can&rsquo;t reach the Sky wifi">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; THE QUICK ANSWER</a><a href="#s2">02 &mdash; WHY SKY HUBS TRIP PRINTERS UP</a><a href="#s3">03 &mdash; FIX IT ON A BLACK SKY BROADBAND HUB</a><a href="#s4">04 &mdash; FIX IT ON A WHITE SKY MAX HUB</a><a href="#s5">05 &mdash; JUST HAD SKY INSTALLED?</a><a href="#s6">06 &mdash; PREFER SOMEONE TO JUST SORT IT?</a></nav>
+    <section id="s1" class="section" aria-label="Why your printer can&rsquo;t reach the Sky wifi">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; THE QUICK ANSWER</p>
         <h2 class="section-title" data-title>Why your printer can&rsquo;t reach the Sky wifi<span class="title-underline"></span></h2>
@@ -769,45 +769,45 @@
     </section>
     <section class="section" aria-label="Fix this now with remote support">
       <div class="wrap" style="max-width:860px;margin:0 auto">
-        <div data-reveal style="border:1px solid rgba(0,206,27,0.35);background:rgba(0,206,27,0.06);border-radius:16px;padding:1.6rem 1.8rem;text-align:center">
+        <div class="callout callout--good callout--center" data-reveal>
           <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// NEED THIS FIXED RIGHT NOW?</p>
-          <p style="font-size:1.08rem;margin:0 0 1.1rem">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
-          <p style="margin:0;display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap">
+          <p class="callout__lede">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
+          <p class="callout__row">
             <a class="button primary" href="/sos/">Start SOS Remote Support</a>
             <a class="button secondary" href="tel:+441202775566">Call 01202 775566</a>
           </p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Sky hub models and the single-name band trap">
+    <section id="s2" class="section section--alt" aria-label="Sky hub models and the single-name band trap">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/02 &mdash; WHY SKY HUBS TRIP PRINTERS UP</p>
         <h2 class="section-title" data-title>Sky hub models and the single-name band trap<span class="title-underline"></span></h2>
 <p>Sky has shipped several hubs over the years &mdash; the older <strong>Sky Hub</strong> and <strong>Sky Q Hub</strong>, the black <strong>Sky Broadband Hub</strong>, and the newer white <strong>Sky Max Hub</strong> (sometimes called Sky WiFi Max). They all share one habit that trips printers up: a single wifi name covering both bands, with the hub &lsquo;steering&rsquo; each gadget onto whichever band it thinks is best.</p><p>Your phone and laptop happily hop between bands, but a printer often can&rsquo;t. Many home printers &mdash; especially older HP, Canon, Epson and Brother models &mdash; have 2.4GHz-only wifi, so if the hub tries to hand it the 5GHz signal, the printer either can&rsquo;t see the network or fails on the password. The 2.4GHz band also reaches further through walls, which matters if the printer sits in a back room or study.</p><p>The white Sky Max Hub adds one more wrinkle: it was Sky&rsquo;s first hub to turn on <strong>WPA3</strong> security by default. WPA3 is good news for safety, but a fair few older printers only understand the earlier WPA2 standard and quietly refuse to join. That single detail is behind a lot of &lsquo;my printer worked, now it won&rsquo;t&rsquo; posts on the <a href="/wifi-support/">wifi</a> help forums.</p>
       </div>
     </section>
-    <section class="section" aria-label="Splitting the bands on a black Sky Broadband Hub">
+    <section id="s3" class="section" aria-label="Splitting the bands on a black Sky Broadband Hub">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; FIX IT ON A BLACK SKY BROADBAND HUB</p>
         <h2 class="section-title" data-title>Splitting the bands on a black Sky Broadband Hub<span class="title-underline"></span></h2>
 <p>The black Sky Broadband Hub lets you separate the two bands, which is the cleanest fix. Type <strong>192.168.0.1</strong> into a web browser on a computer or phone connected to the hub, then sign in to the settings page &mdash; the username is <strong>admin</strong> and the password is your hub&rsquo;s default wifi password (both printed on the sticker on the hub).</p><p>Choose <strong>Wireless</strong>, then untick <strong>&lsquo;Synchronise 2.4GHz and 5GHz settings&rsquo;</strong> and apply the change. When the page reloads, open the 5GHz settings and add something obvious to that network&rsquo;s name &mdash; for example popping <strong>5G</strong> on the end &mdash; so the two bands now show up as separate names. Leave the 2.4GHz name exactly as it is.</p><p>Now, on the printer, run its wifi setup again and pick the <strong>2.4GHz</strong> network (the one without 5G on the end), entering the password carefully. Helpfully, the black Sky Broadband Hub only uses <strong>WPA2</strong> security in the first place, so &mdash; unlike the newer white hub &mdash; there&rsquo;s no WPA3 setting here to trip an older printer up. Once it prints, you can leave the bands split for good &mdash; it often makes smart plugs and cameras behave too. If the menus look unfamiliar, our <a href="/home-network-setup/">home network setup</a> help walks through it.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Getting a printer onto a white Sky Max Hub">
+    <section id="s4" class="section section--alt" aria-label="Getting a printer onto a white Sky Max Hub">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/04 &mdash; FIX IT ON A WHITE SKY MAX HUB</p>
         <h2 class="section-title" data-title>Getting a printer onto a white Sky Max Hub<span class="title-underline"></span></h2>
 <p>The white Sky Max Hub is managed through the <strong>My Sky app</strong> rather than a settings web page, and it deliberately <strong>won&rsquo;t let you split the bands</strong> or rename them &mdash; so the black-hub trick above doesn&rsquo;t apply. Instead, you have two reliable levers.</p><p>First, in the My Sky app open your hub&rsquo;s settings and, under the advanced wifi options, find the <strong>WiFi security level</strong>. It ships on a WPA3 mode (Sky labels it <strong>WPA3-T</strong>); change it down to <strong>WPA2</strong>, save, and try the printer again &mdash; this alone fixes a large share of Max Hub printer problems. Second, if it still won&rsquo;t join, use the same screen to <strong>temporarily turn off the 5GHz band</strong>. With only 2.4GHz broadcasting, the printer has nowhere else to go; connect it, then switch the 5GHz band back on afterwards.</p><p>Most Sky hubs also have a <strong>WPS</strong> button on the side (a small, easily-missed button marked with the WPS arrows). Start WPS on the printer, then press and hold the hub&rsquo;s WPS button until the light on the hub flashes, and give it a couple of minutes to pair. WPS is handy, but not every printer offers it, so treat it as a fallback rather than the first thing to try.</p>
       </div>
     </section>
-    <section class="section" aria-label="New Sky install and the printer went offline">
+    <section id="s5" class="section" aria-label="New Sky install and the printer went offline">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; JUST HAD SKY INSTALLED?</p>
         <h2 class="section-title" data-title>New Sky install and the printer went offline<span class="title-underline"></span></h2>
 <p>If your printer stopped working the day a Sky engineer visited, nothing is broken &mdash; your <strong>network name and password have simply changed</strong>. A new hub comes with its own wifi details, but the printer is still trying to log in with the old ones, so it drops offline while every phone and laptop you re-entered the password on carries on fine.</p><p>The cure is to point the printer at the new network. Find the new <strong>wifi name (SSID) and password</strong> printed on the sticker on the back or base of the hub &mdash; or on the little &lsquo;connect&rsquo; card in the box &mdash; then run the printer&rsquo;s wifi setup and enter them exactly, watching for capital letters and the difference between a letter O and a zero.</p><p>If the printer still won&rsquo;t take the new details, it&rsquo;s almost always the band or WPA3 issue above, so work through the section that matches your hub. A printer that keeps joining and then dropping off again is a slightly different story &mdash; our guide on <a href="/why-does-my-printer-keep-disconnecting/">why a printer keeps disconnecting</a> covers that pattern.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="When to let us do it for you">
+    <section id="s6" class="section section--alt" aria-label="When to let us do it for you">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/06 &mdash; PREFER SOMEONE TO JUST SORT IT?</p>
         <h2 class="section-title" data-title>When to let us do it for you<span class="title-underline"></span></h2>
@@ -815,11 +815,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p>Related help: <a href="/printer-support/">printer support</a>, <a href="/how-to-set-up-a-printer/">how to set up a printer</a>, <a href="/why-does-my-printer-keep-disconnecting/">why your printer keeps disconnecting</a>, <a href="/printer-wont-connect-to-bt-smart-hub/">printer won&rsquo;t connect to a BT Smart Hub</a>, <a href="/home-network-setup/">home network setup</a> and <a href="/wifi-support/">wifi support</a>.</p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/printer-support/">printer support</a><a href="/how-to-set-up-a-printer/">how to set up a printer</a><a href="/why-does-my-printer-keep-disconnecting/">why your printer keeps disconnecting</a><a href="/printer-wont-connect-to-bt-smart-hub/">printer won&rsquo;t connect to a BT Smart Hub</a><a href="/home-network-setup/">home network setup</a><a href="/wifi-support/">wifi support</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1115,7 +1118,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

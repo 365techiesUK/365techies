@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -709,36 +709,36 @@
         <ul class="page-hero__chips mono"><li>&#9679; Trading since 1995</li><li>&#9679; 4.9★ rated on Google</li><li>&#9679; No fix, no fee</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="Your PCs have vanished from the Network view — here's the shape of it">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; THE SYMPTOM</a><a href="#s2">02 &mdash; FIRST CHECKS</a><a href="#s3">03 &mdash; THE 24H2 CHANGE</a><a href="#s4">04 &mdash; NAMES & SUBNETS</a><a href="#s5">05 &mdash; HONEST ADVICE</a></nav>
+    <section id="s1" class="section" aria-label="Your PCs have vanished from the Network view — here's the shape of it">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; THE SYMPTOM</p>
         <h2 class="section-title" data-title>Your PCs have vanished from the Network view — here's the shape of it<span class="title-underline"></span></h2>
 <p>You open File Explorer, click <strong>Network</strong>, and the other computers simply aren't there. Or one machine can see everyone else but nobody can see it. Or a shared folder that worked for years now throws a "Windows cannot access" error. If that's you, you're in the right place.</p><p>In small offices and homes this almost always comes down to one of four things, and we'll take them in the order we check them on real callouts:</p><ol><li><strong>The network profile</strong> — Windows has decided your own network is "Public" and gone quiet on purpose.</li><li><strong>Network discovery</strong> — the machinery that lets PCs announce themselves is switched off or has stalled.</li><li><strong>Deliberate security tightening</strong> — Windows 11, particularly since the 24H2 update, now blocks older, less secure ways of sharing.</li><li><strong>The machines aren't really on the same network</strong> — guest Wi-Fi, mesh kits and second routers quietly split a network in two.</li></ol><p>One honest note before we start: the Network view in File Explorer has always been unreliable, even on perfectly healthy networks. A PC missing from the list doesn't necessarily mean you can't connect to it — so we'll also show you how to reach a machine directly, which often works even when the browsing list is empty.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Is the network set to Private — and is discovery actually on?">
+    <section id="s2" class="section section--alt" aria-label="Is the network set to Private — and is discovery actually on?">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/02 &mdash; FIRST CHECKS</p>
         <h2 class="section-title" data-title>Is the network set to Private — and is discovery actually on?<span class="title-underline"></span></h2>
 <p>Windows treats every network as either <strong>Public</strong> or <strong>Private</strong>, and on a Public network it deliberately hides your PC and refuses incoming file sharing. That's sensible on café Wi-Fi and maddening in your own office — and Windows sometimes flips a network back to Public after an update or a router change, without asking.</p><p>Open Settings, go to Network &amp; internet, and click into the properties of the connection you're actually using. You're looking for the <strong>network profile type</strong> setting: set it to <strong>Private</strong> on a network you trust. Menu wording moves between Windows versions, so if the labels look different, searching Settings for "network profile" will land you in the right place.</p><p>While you're there, check <strong>network discovery</strong> and <strong>file and printer sharing</strong> are switched on for private networks — they live under the advanced sharing settings. Do this on <em>every</em> machine involved; it only takes one PC sitting on Public to make a share vanish.</p><p>One more quiet culprit: discovery depends on a handful of background Windows services, and they do occasionally stall. Restarting both machines after changing these settings sounds like a cliché, but it genuinely resets the discovery machinery and is worth doing before you dig any deeper.</p>
       </div>
     </section>
-    <section class="section" aria-label="Windows 11 has tightened file sharing on purpose">
+    <section id="s3" class="section" aria-label="Windows 11 has tightened file sharing on purpose">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; THE 24H2 CHANGE</p>
         <h2 class="section-title" data-title>Windows 11 has tightened file sharing on purpose<span class="title-underline"></span></h2>
 <p>If everything broke after an update, that's not your imagination. Windows 11's 24H2 release made two deliberate security changes: connections to shared folders now expect <strong>SMB signing</strong>, and <strong>guest access</strong> — shares that let anyone connect without a username and password — is disabled. That silently breaks a lot of older NAS drives and shares set up years ago "without passwords, to keep it simple".</p><p>The right fix is to bring the share up to standard: create a proper user account and password on the NAS or the sharing PC, update the device's firmware if it has any available, and connect using those credentials instead of as a guest.</p><p>You <em>can</em> re-enable insecure guest logons through Group Policy or the registry, and plenty of forum posts will cheerfully tell you to. We'd call that a <strong>last resort</strong>: it switches off a protection that exists for a reason and leaves that share open to anything else on your network. On a home network with one elderly NAS, it's a judgement call. In a business, we wouldn't do it.</p><p>We've covered the update-specific side in more depth in our guide to <a href="/shared-folders-not-working-after-windows-11-24h2-update/">shared folders not working after the 24H2 update</a>.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="When the name fails, try the address — and check it's really one network">
+    <section id="s4" class="section section--alt" aria-label="When the name fails, try the address — and check it's really one network">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/04 &mdash; NAMES & SUBNETS</p>
         <h2 class="section-title" data-title>When the name fails, try the address — and check it's really one network<span class="title-underline"></span></h2>
 <p>Here's the quickest diagnostic we know. Find the sharing PC's IP address — it's shown in the connection's details in Settings, or type <em>ipconfig</em> at a Command Prompt. Then, on the other machine, put <strong>\\192.168.1.50</strong> (using the real address) into File Explorer's address bar.</p><p>If the address works but the computer's <em>name</em> doesn't, sharing is actually fine — you have a <strong>name resolution</strong> problem. The old ways Windows found names on a local network have been wound down over the years, and name lookup is now the flakiest part of the whole system. Connecting by IP, or mapping a drive to the IP address, sidesteps it entirely. If mapped drives then start dropping out on you, that's a separate known nuisance — see our guide to <a href="/mapped-network-drive-keeps-disconnecting/">mapped network drives that keep disconnecting</a>.</p><p>If the IP address doesn't work either, check the machines are genuinely on the same network. Compare their addresses: if the first three groups of numbers don't match — say 192.168.1.x on one and 192.168.4.x on the other — they can't reach each other. The usual culprits are one PC on the router's <strong>guest Wi-Fi</strong>, a mesh kit running in router mode behind another router, a second router added for signal, or an "isolation" setting on the Wi-Fi. Everything needs to sit behind one router doing the addressing.</p>
       </div>
     </section>
-    <section class="section" aria-label="When it's not worth fighting — and what we'd do instead">
+    <section id="s5" class="section" aria-label="When it's not worth fighting — and what we'd do instead">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; HONEST ADVICE</p>
         <h2 class="section-title" data-title>When it's not worth fighting — and what we'd do instead<span class="title-underline"></span></h2>
@@ -746,11 +746,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p><strong>Related guides:</strong> <a href="/shared-folders-not-working-after-windows-11-24h2-update/">Shared folders not working after the 24H2 update</a> · <a href="/mapped-network-drive-keeps-disconnecting/">Mapped network drive keeps disconnecting</a> · <a href="/business-it-support-subscriptions/">Business IT support subscriptions</a> · <a href="/remote-support/">Remote support</a></p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/shared-folders-not-working-after-windows-11-24h2-update/">Shared folders not working after the 24H2 update</a><a href="/mapped-network-drive-keeps-disconnecting/">Mapped network drive keeps disconnecting</a><a href="/business-it-support-subscriptions/">Business IT support subscriptions</a><a href="/remote-support/">Remote support</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1038,7 +1041,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

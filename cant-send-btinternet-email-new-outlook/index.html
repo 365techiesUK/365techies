@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -765,8 +765,8 @@
         <ul class="page-hero__chips mono"><li>&#9679; Trading since 1995</li><li>&#9679; 4.9-star Google rating</li><li>&#9679; No fix, no fee</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="Can&rsquo;t send BTinternet email from new Outlook? Start here">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; QUICK ANSWER</a><a href="#s2">02 &mdash; THE RIGHT SETTINGS</a><a href="#s3">03 &mdash; WHY IT FAILS</a><a href="#s4">04 &mdash; THE FIX</a><a href="#s5">05 &mdash; STILL STUCK</a><a href="#s6">06 &mdash; GET HELP</a></nav>
+    <section id="s1" class="section" aria-label="Can&rsquo;t send BTinternet email from new Outlook? Start here">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; QUICK ANSWER</p>
         <h2 class="section-title" data-title>Can&rsquo;t send BTinternet email from new Outlook? Start here<span class="title-underline"></span></h2>
@@ -775,45 +775,45 @@
     </section>
     <section class="section" aria-label="Fix this now with remote support">
       <div class="wrap" style="max-width:860px;margin:0 auto">
-        <div data-reveal style="border:1px solid rgba(0,206,27,0.35);background:rgba(0,206,27,0.06);border-radius:16px;padding:1.6rem 1.8rem;text-align:center">
+        <div class="callout callout--good callout--center" data-reveal>
           <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// NEED THIS FIXED RIGHT NOW?</p>
-          <p style="font-size:1.08rem;margin:0 0 1.1rem">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
-          <p style="margin:0;display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap">
+          <p class="callout__lede">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
+          <p class="callout__row">
             <a class="button primary" href="/sos/">Start SOS Remote Support</a>
             <a class="button secondary" href="tel:+441202775566">Call 01202 775566</a>
           </p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="The correct BTinternet outgoing (SMTP) settings">
+    <section id="s2" class="section section--alt" aria-label="The correct BTinternet outgoing (SMTP) settings">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/02 &mdash; THE RIGHT SETTINGS</p>
         <h2 class="section-title" data-title>The correct BTinternet outgoing (SMTP) settings<span class="title-underline"></span></h2>
 <p>These are the settings BT publishes for any email program, including new Outlook. Use them exactly &mdash; a single wrong digit stops sending.</p><ul><li><strong>Outgoing (SMTP) server:</strong> mail.btinternet.com</li><li><strong>SMTP port:</strong> 465 with SSL/TLS (SSL enabled, not STARTTLS)</li><li><strong>Authentication:</strong> required &mdash; the same username and password as your incoming server</li><li><strong>Username:</strong> your <strong>full</strong> BTinternet address, e.g. yourname@btinternet.com (or @btopenworld.com / @talk21.com)</li><li><strong>Password:</strong> your BT email password &mdash; not a BT broadband account PIN</li></ul><p>For completeness, incoming mail is <strong>mail.btinternet.com</strong> on <strong>port 993 with SSL (IMAP)</strong>. If port 465 won&rsquo;t send, <strong>port 587 with STARTTLS</strong> usually works as an alternative outgoing port &mdash; you&rsquo;d enter one or the other when you add or re-add the account. These are the same details you&rsquo;d use when the account won&rsquo;t add in the first place; if you&rsquo;re stuck at that earlier stage, see our guide on <a href="/btinternet-email-wont-add-to-new-outlook/">BTinternet email that won&rsquo;t add to new Outlook</a>.</p>
       </div>
     </section>
-    <section class="section" aria-label="Why BTinternet sending breaks in new Outlook">
+    <section id="s3" class="section" aria-label="Why BTinternet sending breaks in new Outlook">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; WHY IT FAILS</p>
         <h2 class="section-title" data-title>Why BTinternet sending breaks in new Outlook<span class="title-underline"></span></h2>
 <p>Sending breaks for a handful of predictable reasons. Working through them in order usually finds the culprit:</p><ul><li><strong>Authentication is switched off.</strong> BT rejects any message where the outgoing server isn&rsquo;t authenticated, which typically shows as a <strong>530</strong> error. The &lsquo;my outgoing server requires authentication&rsquo; setting must be on, using the same login as your incoming mail.</li><li><strong>Wrong port and encryption pairing.</strong> Port 465 needs SSL; port 587 needs STARTTLS. Mixing them &mdash; 465 with STARTTLS, or 587 with SSL &mdash; fails silently and leaves mail sitting in the outbox.</li><li><strong>You&rsquo;ve left BT Broadband and dropped to free Basic email.</strong> When you leave BT, you have 60 days to move your mailbox to BT&rsquo;s paid Premium Mail or link it to another BT Broadband line; otherwise it becomes free <strong>Basic</strong> email, which only works through BT webmail in a browser and <strong>can&rsquo;t send or receive in Outlook at all</strong>. If that&rsquo;s happened, no settings change will fix Outlook &mdash; you&rsquo;d need Premium Mail or a linked BT line to restore email-app access.</li><li><strong>New Outlook&rsquo;s IMAP quirks.</strong> Microsoft is still maturing new Outlook&rsquo;s handling of third-party IMAP accounts &mdash; it won&rsquo;t even let you edit the server settings once an account is added &mdash; so some BT users can receive but not send until the account is removed and re-added.</li></ul><p>If your messages are visibly piling up, our notes on <a href="/outlook-stuck-in-outbox/">email stuck in the Outlook outbox</a> and <a href="/outlook-keeps-asking-for-password/">Outlook repeatedly asking for your password</a> cover two of the most common symptoms.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="How to fix it, step by step">
+    <section id="s4" class="section section--alt" aria-label="How to fix it, step by step">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/04 &mdash; THE FIX</p>
         <h2 class="section-title" data-title>How to fix it, step by step<span class="title-underline"></span></h2>
 <p>Here&rsquo;s the reliable order to fix it in new Outlook. Because new Outlook usually won&rsquo;t let you change the outgoing server on an account that&rsquo;s already set up, the dependable fix is to re-add the account with the right details.</p><ul><li>Open new Outlook, click the <strong>Settings</strong> gear (top right), then <strong>Accounts</strong>, then <strong>Email accounts</strong>, and select your btinternet.com account.</li><li>Click <strong>Manage</strong>. If new Outlook happens to show editable <strong>IMAP and SMTP settings</strong>, set the outgoing server to <strong>mail.btinternet.com</strong>, <strong>port 465 with SSL</strong>, and confirm <strong>authentication is on</strong>. For most BT accounts, though, there&rsquo;s nothing editable here &mdash; that&rsquo;s a known Microsoft limitation, not something you&rsquo;ve done wrong.</li><li>So <strong>remove the account</strong> and add it again &mdash; choose &lsquo;Show more options&rsquo; (advanced setup) and pick <strong>IMAP</strong> so you can type the servers yourself.</li><li>Enter incoming <strong>mail.btinternet.com, port 993, SSL</strong> and outgoing <strong>mail.btinternet.com, port 465, SSL</strong>, tick that the outgoing server <strong>requires authentication</strong>, and use your full email address and BT email password.</li><li>Send a test message to yourself. If it won&rsquo;t send on port 465, re-add using <strong>port 587 with STARTTLS</strong> instead.</li></ul><p>New Outlook&rsquo;s menus shift between updates, so the exact wording may differ slightly on your version &mdash; but the server values above don&rsquo;t change. Take a screenshot of any error message before you make changes; the code (such as a 530, or a timeout) tells us exactly which part is failing.</p>
       </div>
     </section>
-    <section class="section" aria-label="If it still won&rsquo;t send">
+    <section id="s5" class="section" aria-label="If it still won&rsquo;t send">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; STILL STUCK</p>
         <h2 class="section-title" data-title>If it still won&rsquo;t send<span class="title-underline"></span></h2>
 <p>Sometimes new Outlook simply won&rsquo;t co-operate with a BT IMAP account, even with perfect settings. That&rsquo;s a genuine, documented limitation rather than anything you&rsquo;ve done wrong &mdash; several BT users find sending works immediately in <strong>Classic Outlook</strong> while new Outlook still refuses.</p><p>If you need to send today, the quickest workaround is to switch back: our guide on <a href="/how-to-go-back-to-classic-outlook/">going back to Classic Outlook</a> walks through the toggle. Classic Outlook gives you full manual control of the SMTP port and encryption, which is exactly what a stubborn BT account needs. You can also send from BT&rsquo;s own webmail at bt.com in the meantime &mdash; that bypasses Outlook entirely and confirms your mailbox itself is healthy.</p><p>One caveat: if webmail works perfectly but no email app will send, and you&rsquo;ve left BT Broadband, you may be on BT&rsquo;s free Basic email, which is webmail-only by design &mdash; Outlook can&rsquo;t use it until you move to Premium Mail or link the mailbox to a BT line. And if sending fails <strong>everywhere</strong>, webmail included, then the problem is the mailbox or BT account, not Outlook, and only BT can restore it. Our wider <a href="/outlook-not-sending-emails/">Outlook not sending emails</a> guide covers the non-BT causes too. When you&rsquo;ve tried the settings and you&rsquo;re still stuck, that&rsquo;s the point to hand it over to us.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="When to call us &mdash; and how we fix it">
+    <section id="s6" class="section section--alt" aria-label="When to call us &mdash; and how we fix it">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/06 &mdash; GET HELP</p>
         <h2 class="section-title" data-title>When to call us &mdash; and how we fix it<span class="title-underline"></span></h2>
@@ -821,11 +821,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p>Related help: <a href="/btinternet-email-wont-add-to-new-outlook/">BTinternet email won&rsquo;t add to new Outlook</a>, <a href="/outlook-stuck-in-outbox/">email stuck in the outbox</a>, <a href="/how-to-go-back-to-classic-outlook/">go back to Classic Outlook</a>, <a href="/outlook-not-sending-emails/">Outlook not sending emails</a>, <a href="/common-outlook-problems-and-fixes/">common Outlook problems &amp; fixes</a> and <a href="/email-support/">email support</a>.</p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/btinternet-email-wont-add-to-new-outlook/">BTinternet email won&rsquo;t add to new Outlook</a><a href="/outlook-stuck-in-outbox/">email stuck in the outbox</a><a href="/how-to-go-back-to-classic-outlook/">go back to Classic Outlook</a><a href="/outlook-not-sending-emails/">Outlook not sending emails</a><a href="/common-outlook-problems-and-fixes/">common Outlook problems &amp; fixes</a><a href="/email-support/">email support</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1121,7 +1124,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

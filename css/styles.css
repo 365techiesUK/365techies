@@ -1961,3 +1961,61 @@ html.ss-open { overflow: hidden; }
 /* priceless plan-card price row (tier shares the headline price): compact metrics line */
 .plan-card__price--flat { line-height: 1.5; }
 .plan-card__price--flat .per { display: inline; font-size: 0.85rem; }
+
+/* ==========================================================================
+   Phase-2 mass-template premium kit (2026-07-24): callout, TOC chips,
+   trust line, prose list typography, at-a-glance facts, reading progress
+   ========================================================================== */
+.callout { border: 1px solid var(--line); background: var(--glass); border-radius: var(--r-lg); padding: 1.6rem 1.8rem; }
+.callout--good { border-color: rgba(0, 206, 27, 0.35); background: rgba(0, 206, 27, 0.06); }
+.callout--info { border-color: rgba(29, 151, 227, 0.35); background: rgba(29, 151, 227, 0.06); }
+.callout--center { text-align: center; }
+.callout__lede { font-size: 1.08rem; margin: 0 0 1.1rem; }
+.callout__row { margin: 0; display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; }
+
+/* on-page TOC chips (long guides) */
+.toc {
+  display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center;
+  padding: 1.4rem var(--pad-x) 0; max-width: 1100px; margin: 0 auto;
+}
+.toc a {
+  padding: 0.4rem 0.9rem; border: 1px solid var(--line); border-radius: var(--r-pill);
+  font-size: 0.62rem; letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--muted); text-decoration: none; background: rgba(10, 22, 44, 0.5);
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+.toc a:hover { color: var(--cyan); border-color: rgba(29, 151, 227, 0.5); }
+/* TOC anchor targets must clear the fixed header + ticker (same fix as .dell-dir-group h3) */
+.section[id] { scroll-margin-top: calc(var(--header-h) + var(--ticker-h) + 1rem); }
+
+/* trust facts line before the FAQ */
+.trust-line {
+  margin: 3rem auto 0; padding: 0 var(--pad-x); max-width: 1100px; text-align: center;
+  font-size: 0.72rem; letter-spacing: 0.1em; color: var(--muted); line-height: 2.1;
+}
+.trust-line span { white-space: nowrap; }
+
+/* guide-list typography: mono numbered steps + marked bullets in prose sections */
+.prose ol:not([class]) { list-style: none; counter-reset: prose-step; padding-left: 0; }
+.prose ol:not([class]) > li { counter-increment: prose-step; position: relative; padding-left: 2.5rem; margin: 0 0 0.85rem; }
+.prose ol:not([class]) > li::before {
+  content: counter(prose-step, decimal-leading-zero); position: absolute; left: 0; top: 0.12rem;
+  font-family: var(--font-mono); font-size: 0.8rem; font-weight: 600; color: var(--cyan);
+}
+.prose ul:not([class]) { list-style: none; padding-left: 0; }
+.prose ul:not([class]) > li { position: relative; padding-left: 1.35rem; margin: 0 0 0.55rem; }
+.prose ul:not([class]) > li::before { content: "\25B8"; position: absolute; left: 0; color: var(--cyan); }
+.prose code, .prose kbd {
+  font-family: var(--font-mono); font-size: 0.85em; padding: 0.08em 0.4em;
+  background: rgba(29, 151, 227, 0.1); border: 1px solid var(--line); border-radius: var(--r-xs);
+}
+
+/* at-a-glance facts table (label/value rows; no .pop so no popular tint) */
+.price-table--facts th, .price-table--facts td { text-align: left; }
+.price-table--facts { min-width: 0; }
+
+/* reading progress bar (interior.js adds .read-progress on 4+ section pages) */
+.read-progress {
+  position: fixed; top: 0; left: 0; height: 2px; width: 0; z-index: 60;
+  background: linear-gradient(90deg, var(--cyan), var(--green)); pointer-events: none;
+}

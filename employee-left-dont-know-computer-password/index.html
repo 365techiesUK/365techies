@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -733,8 +733,8 @@
         <ul class="page-hero__chips mono"><li>&#9679; No fix, no fee</li><li>&#9679; 4.9-star rated</li><li>&#9679; Remote-first, UK-wide</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="Can you get back into a leaver&rsquo;s locked computer?">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; THE SHORT ANSWER</a><a href="#s2">02 &mdash; KNOW YOUR ACCOUNT TYPE</a><a href="#s3">03 &mdash; THE BITLOCKER CATCH</a><a href="#s4">04 &mdash; THE FULL OFFBOARDING</a><a href="#s5">05 &mdash; THE HONEST RULE</a><a href="#s6">06 &mdash; HOW WE FIX IT</a><a href="#s7">07 &mdash; NEVER AGAIN</a></nav>
+    <section id="s1" class="section" aria-label="Can you get back into a leaver&rsquo;s locked computer?">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; THE SHORT ANSWER</p>
         <h2 class="section-title" data-title>Can you get back into a leaver&rsquo;s locked computer?<span class="title-underline"></span></h2>
@@ -743,52 +743,52 @@
     </section>
     <section class="section" aria-label="Fix this now with remote support">
       <div class="wrap" style="max-width:860px;margin:0 auto">
-        <div data-reveal style="border:1px solid rgba(0,206,27,0.35);background:rgba(0,206,27,0.06);border-radius:16px;padding:1.6rem 1.8rem;text-align:center">
+        <div class="callout callout--good callout--center" data-reveal>
           <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// NEED THIS FIXED RIGHT NOW?</p>
-          <p style="font-size:1.08rem;margin:0 0 1.1rem">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
-          <p style="margin:0;display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap">
+          <p class="callout__lede">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
+          <p class="callout__row">
             <a class="button primary" href="/sos/">Start SOS Remote Support</a>
             <a class="button secondary" href="tel:+441202775566">Call 01202 775566</a>
           </p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Local account, Microsoft account or Microsoft 365?">
+    <section id="s2" class="section section--alt" aria-label="Local account, Microsoft account or Microsoft 365?">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/02 &mdash; KNOW YOUR ACCOUNT TYPE</p>
         <h2 class="section-title" data-title>Local account, Microsoft account or Microsoft 365?<span class="title-underline"></span></h2>
 <p>Windows sign-ins come in three flavours, and telling them apart decides everything that follows.</p><ul><li><strong>A local account</strong> shows only a username on the sign-in screen &mdash; no email. If any other account on that PC has administrator rights, that account can reset the leaver&rsquo;s password from <strong>Control Panel &gt; User Accounts</strong>, the <strong>Computer Management</strong> console, or an elevated prompt using the <strong>net user</strong> command. The leaver&rsquo;s files stay exactly where they are.</li><li><strong>A personal Microsoft account</strong> shows a masked email (for example, name@outlook.com). These are reset online from any phone or PC at the Microsoft account website, so you don&rsquo;t even need the locked machine &mdash; but you do need the recovery email or phone on that account, which a leaver often still controls.</li><li><strong>A work or Microsoft 365 account</strong> (Microsoft Entra ID, once called Azure AD) also looks like an email, but the password lives in <strong>your business&rsquo;s 365 tenant</strong>, not on the PC. Whoever holds your Global Admin login resets it centrally, and the computer accepts the new password the next time it connects.</li></ul><p>That last case is the good news for most small firms: if staff computers run through Microsoft 365, you almost never need the ex-employee&rsquo;s help. If you can&rsquo;t reach the admin side either, our guide on being <a href="/locked-out-microsoft-365-admin-account/">locked out of your Microsoft 365 admin account</a> covers your options.</p>
       </div>
     </section>
-    <section class="section" aria-label="When the data is genuinely at risk">
+    <section id="s3" class="section" aria-label="When the data is genuinely at risk">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; THE BITLOCKER CATCH</p>
         <h2 class="section-title" data-title>When the data is genuinely at risk<span class="title-underline"></span></h2>
 <p>Before you factory-reset or wipe a leaver&rsquo;s PC, check whether the drive is encrypted &mdash; because this is where business data gets lost for good. Many modern Windows 11 machines switch BitLocker on automatically, often without anyone realising.</p><p>Here&rsquo;s the hard truth: <strong>resetting the password does not bypass BitLocker</strong>. If Windows shows a blue screen asking for a 48-digit recovery key on start-up, you must supply that key. Without it &mdash; and without a working login &mdash; the encrypted data cannot be decrypted by us, by Microsoft, or by any recovery tool. Re-installing Windows to reclaim the machine wipes everything on the drive.</p><p>The recovery key is usually stored in one of a few places: the leaver&rsquo;s personal Microsoft account, your Microsoft 365 / Entra admin area (under Devices) for company-managed machines, printed on paper, saved to a USB stick, or held in your on-premise directory. Track that down <strong>first</strong>.</p><p>If the data matters and the key has left with the employee, don&rsquo;t keep guessing at the login &mdash; talk to us, or read our honest take on <a href="/data-recovery/">what data recovery can and can&rsquo;t do</a> so you know where you stand before spending money.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Don&rsquo;t stop at the password &mdash; the leaver checklist">
+    <section id="s4" class="section section--alt" aria-label="Don&rsquo;t stop at the password &mdash; the leaver checklist">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/04 &mdash; THE FULL OFFBOARDING</p>
         <h2 class="section-title" data-title>Don&rsquo;t stop at the password &mdash; the leaver checklist<span class="title-underline"></span></h2>
 <p>Getting into the PC is only half the job. A proper leaver process protects the business&rsquo;s email, files and shared logins. Here&rsquo;s the checklist we work through:</p><ul><li><strong>Block the sign-in and reset the 365 password</strong> so the leaver can&rsquo;t reach email or files while you sort everything out.</li><li><strong>Keep the mailbox.</strong> In Microsoft 365 you can <strong>convert the leaver&rsquo;s mailbox to a shared mailbox</strong> &mdash; all their email and calendar stays, colleagues can open it, and once it&rsquo;s under 50 GB you can remove the paid licence and reuse it. Or set up <strong>email forwarding</strong> so nothing sent to them is missed.</li><li><strong>Rescue their files</strong> from OneDrive and any Teams or SharePoint areas before the account is touched.</li><li><strong>Wipe and block their mobile</strong> so company mail is removed from a phone you don&rsquo;t control.</li><li><strong>Rotate every shared password</strong> the leaver knew &mdash; the Wi-Fi, the banking, the website, any shared logins. This is the step most businesses forget.</li><li><strong>Tighten folder access</strong> so the next person only sees what they should.</li></ul><p>Don&rsquo;t delete the account too soon &mdash; a shared mailbox or forwarding rule needs it to stay in place as an anchor. Our fuller guides on <a href="/what-to-do-when-an-employee-leaves/">what to do when an employee leaves</a> and <a href="/restrict-staff-access-to-shared-folders-windows-11/">restricting staff access to shared folders</a> walk through the rest.</p>
       </div>
     </section>
-    <section class="section" aria-label="One plain line about whose machine it is">
+    <section id="s5" class="section" aria-label="One plain line about whose machine it is">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; THE HONEST RULE</p>
         <h2 class="section-title" data-title>One plain line about whose machine it is<span class="title-underline"></span></h2>
 <p>Let&rsquo;s be straight about this, because it matters. <strong>A business owns its equipment and its accounts, so it&rsquo;s entitled to get back into them &mdash; but we only work on machines the business genuinely owns.</strong></p><p>In practice that means we&rsquo;ll happily reset a company PC or a company Microsoft 365 account for the person who runs the business or its IT. What we won&rsquo;t do is help anyone break into a device or account they don&rsquo;t own or aren&rsquo;t authorised for &mdash; a personal laptop the employee bought themselves, or a previous employer&rsquo;s system. If the awkward case is a company laptop the leaver has kept, that&rsquo;s a conversation to have with them, not a lock for us to pick.</p><p>And we&rsquo;ll say it plainly: we&rsquo;re an IT firm, not solicitors. If anything about the leaver&rsquo;s contract, data or ownership is disputed, take proper legal advice &mdash; we&rsquo;ll stick to the technical side and get you back into the kit that&rsquo;s rightfully yours.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="How we sort it &mdash; and when to call us">
+    <section id="s6" class="section section--alt" aria-label="How we sort it &mdash; and when to call us">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/06 &mdash; HOW WE FIX IT</p>
         <h2 class="section-title" data-title>How we sort it &mdash; and when to call us<span class="title-underline"></span></h2>
 <p>Most of this we can do <strong>remotely, usually the same day</strong>, once we&rsquo;ve confirmed the machine and accounts belong to your business. Here&rsquo;s roughly how a job runs:</p><ul><li>We check the <strong>account type and whether the drive is encrypted</strong> before anyone touches a reset &mdash; that one check prevents most data loss.</li><li>We reset or recover the login the safe way. If the PC is domain-joined or centrally managed, we do it through your directory rather than fighting local policy.</li><li>We run the <strong>offboarding checklist</strong> &mdash; mailbox, files, mobile, shared passwords &mdash; so nothing&rsquo;s left open.</li><li>We hand you documented, tidy access so the next person can pick up where the leaver left off.</li></ul><p>We&rsquo;re a family-run firm in Kinson, Bournemouth, trading since 1995, and we help businesses across the UK remotely with collection or on-site visits across Bournemouth, Poole, Christchurch and Dorset. It&rsquo;s <strong>no fix, no fee</strong> &mdash; if we can&rsquo;t get you back in, you don&rsquo;t pay for the attempt. Ongoing, our <a href="/small-business-it-support/">small-business IT support</a> means a leaver is handled properly before it ever becomes a panic.</p>
       </div>
     </section>
-    <section class="section" aria-label="Stop this catching you out next time">
+    <section id="s7" class="section" aria-label="Stop this catching you out next time">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/07 &mdash; NEVER AGAIN</p>
         <h2 class="section-title" data-title>Stop this catching you out next time<span class="title-underline"></span></h2>
@@ -796,11 +796,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p>Related help: <a href="/what-to-do-when-an-employee-leaves/">What to do when an employee leaves</a>, <a href="/locked-out-microsoft-365-admin-account/">locked out of your Microsoft 365 admin account</a>, <a href="/how-to-secure-your-microsoft-365-account/">how to secure your Microsoft 365 account</a>, <a href="/restrict-staff-access-to-shared-folders-windows-11/">restrict staff access to shared folders</a>, <a href="/data-recovery/">data recovery</a> and <a href="/small-business-it-support/">small-business IT support</a>.</p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/what-to-do-when-an-employee-leaves/">What to do when an employee leaves</a><a href="/locked-out-microsoft-365-admin-account/">locked out of your Microsoft 365 admin account</a><a href="/how-to-secure-your-microsoft-365-account/">how to secure your Microsoft 365 account</a><a href="/restrict-staff-access-to-shared-folders-windows-11/">restrict staff access to shared folders</a><a href="/data-recovery/">data recovery</a><a href="/small-business-it-support/">small-business IT support</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1100,7 +1103,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

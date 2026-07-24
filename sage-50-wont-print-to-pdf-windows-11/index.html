@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -759,8 +759,8 @@
         <ul class="page-hero__chips mono"><li>&#9679; No fix, no fee</li><li>&#9679; Usually same-day remote</li><li>&#9679; 4.9-star Google rating</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="What&rsquo;s actually going wrong when Sage 50 won&rsquo;t print to PDF">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; THE QUICK ANSWER</a><a href="#s2">02 &mdash; WHY WINDOWS 11 BREAKS IT</a><a href="#s3">03 &mdash; THE FIX, IN ORDER</a><a href="#s4">04 &mdash; LAYOUT, NOT DRIVER</a><a href="#s5">05 &mdash; HOW WE FIX IT FOR YOU</a><a href="#s6">06 &mdash; STOP IT COMING BACK</a></nav>
+    <section id="s1" class="section" aria-label="What&rsquo;s actually going wrong when Sage 50 won&rsquo;t print to PDF">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; THE QUICK ANSWER</p>
         <h2 class="section-title" data-title>What&rsquo;s actually going wrong when Sage 50 won&rsquo;t print to PDF<span class="title-underline"></span></h2>
@@ -769,45 +769,45 @@
     </section>
     <section class="section" aria-label="Fix this now with remote support">
       <div class="wrap" style="max-width:860px;margin:0 auto">
-        <div data-reveal style="border:1px solid rgba(0,206,27,0.35);background:rgba(0,206,27,0.06);border-radius:16px;padding:1.6rem 1.8rem;text-align:center">
+        <div class="callout callout--good callout--center" data-reveal>
           <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// NEED THIS FIXED RIGHT NOW?</p>
-          <p style="font-size:1.08rem;margin:0 0 1.1rem">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
-          <p style="margin:0;display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap">
+          <p class="callout__lede">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
+          <p class="callout__row">
             <a class="button primary" href="/sos/">Start SOS Remote Support</a>
             <a class="button secondary" href="tel:+441202775566">Call 01202 775566</a>
           </p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Why Windows 11 (and Office) updates break Sage&rsquo;s PDF printing">
+    <section id="s2" class="section section--alt" aria-label="Why Windows 11 (and Office) updates break Sage&rsquo;s PDF printing">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/02 &mdash; WHY WINDOWS 11 BREAKS IT</p>
         <h2 class="section-title" data-title>Why Windows 11 (and Office) updates break Sage&rsquo;s PDF printing<span class="title-underline"></span></h2>
 <p>Sage&rsquo;s PDF engine is a virtual printer &mdash; historically the Amyuni Document Converter, shown in Windows as something like <strong>Sage PDF</strong> or <strong>Sage 50 Document Converter</strong>. When you choose Print, Preview, Publish or Email in Sage, your report is quietly &lsquo;printed&rsquo; to that driver, which turns it into a PDF. Anything that damages that driver stops the whole chain.</p><p>On Windows 11 the usual culprits are:</p><ul><li><strong>A Windows or Office update</strong> that strips the permissions the driver needs, removes the printer, or changes how drivers are trusted. That&rsquo;s why it so often &lsquo;stops working overnight&rsquo; when nothing else changed &mdash; see <a href="/why-windows-updates-break-things/">why Windows updates break things</a>.</li><li><strong>Missing administrator rights</strong>, or User Account Control blocking the driver from running.</li><li><strong>The wrong converter selected</strong>, or the Sage printer&rsquo;s port pointing somewhere other than where it should.</li><li><strong>A damaged Windows user profile</strong>, so PDFs work for one login but not another.</li></ul><p>You might see a specific message such as <strong>&lsquo;Printer not activated &mdash; error code 20&rsquo;</strong> (or -30 / -41), or the PDF may simply never appear. Those activation codes point squarely at the driver and its registry permissions rather than anything wrong with your accounts &mdash; your figures are safe throughout.</p>
       </div>
     </section>
-    <section class="section" aria-label="How to fix it yourself, in the right order">
+    <section id="s3" class="section" aria-label="How to fix it yourself, in the right order">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; THE FIX, IN ORDER</p>
         <h2 class="section-title" data-title>How to fix it yourself, in the right order<span class="title-underline"></span></h2>
 <p>Work through these from the top and stop as soon as PDFs start working again. Take a Sage backup first (File, then Backup) &mdash; it&rsquo;s good practice before any change, and it protects far more than just printing.</p><ul><li><strong>1. Restart Windows fully</strong> and try printing to PDF again before touching anything else.</li><li><strong>2. Run Sage as administrator</strong> &mdash; right-click the icon, choose <strong>Run as administrator</strong>, and retry.</li><li><strong>3. Check the Sage printer still exists</strong> &mdash; in Windows Settings &gt; Bluetooth &amp; devices &gt; Printers &amp; scanners, look for the Sage PDF / Document Converter printer. If it&rsquo;s gone, the driver has been removed.</li><li><strong>4. Reinstall the Sage PDF driver</strong> &mdash; in Sage, open Help &gt; About (or System Information), click through to the program directory, find the <strong>PDF</strong> folder and run its install file as administrator.</li><li><strong>5. Restart the Print Spooler</strong> &mdash; press Windows+R, type <strong>services.msc</strong>, right-click <strong>Print Spooler</strong> and choose Restart.</li><li><strong>6. Repair Sage 50</strong> &mdash; Windows Settings &gt; Apps, select Sage 50, then Modify &gt; Repair.</li></ul><p>Once PDFs work, print a test invoice to confirm before you rely on it for a real run. If you&rsquo;d rather not poke around registry-level fixes on a working accounts machine, that&rsquo;s exactly the sort of thing we sort out remotely every week &mdash; safely and without guesswork.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="When it&rsquo;s the invoice layout, not the driver">
+    <section id="s4" class="section section--alt" aria-label="When it&rsquo;s the invoice layout, not the driver">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/04 &mdash; LAYOUT, NOT DRIVER</p>
         <h2 class="section-title" data-title>When it&rsquo;s the invoice layout, not the driver<span class="title-underline"></span></h2>
 <p>Sometimes every other document turns into a PDF perfectly well, but one specific invoice or report fails &mdash; or you see <strong>&lsquo;Sage report designer is unable to generate report: out of memory&rsquo;</strong>. That isn&rsquo;t the driver at all. The usual cause is an oversized company logo or image embedded in that particular layout.</p><p>Sage has to load the full-resolution image every time it builds the PDF, and a large, photo-sized logo can exhaust the memory available to a single report. Swapping it for a smaller, lower-resolution version &mdash; a few hundred pixels wide is plenty for print &mdash; usually fixes it instantly. A corrupted custom layout can behave the same way; testing with one of Sage&rsquo;s standard layouts quickly tells you which of the two it is.</p><p>It&rsquo;s also worth separating two different problems. &lsquo;Won&rsquo;t make a PDF at all&rsquo; is the driver. &lsquo;Makes the PDF, but the email never sends&rsquo; is usually Outlook or your mail settings instead &mdash; we cover that on <a href="/sage-50-wont-email-invoices-outlook/">Sage 50 won&rsquo;t email invoices through Outlook</a>. Knowing which side of that line you&rsquo;re on saves a lot of wasted troubleshooting.</p>
       </div>
     </section>
-    <section class="section" aria-label="How we fix Sage 50 PDF problems for you">
+    <section id="s5" class="section" aria-label="How we fix Sage 50 PDF problems for you">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; HOW WE FIX IT FOR YOU</p>
         <h2 class="section-title" data-title>How we fix Sage 50 PDF problems for you<span class="title-underline"></span></h2>
 <p>If you&rsquo;ve restarted, run Sage as administrator and reinstalled the driver and it still won&rsquo;t make a PDF, the cause is usually deeper &mdash; registry permissions an update quietly changed, a broken Windows user profile, a clash with another PDF or security tool, or a Sage version that expects a particular converter. These are fiddly to get right and easy to make worse, especially on the machine you rely on for invoicing.</p><p>That&rsquo;s where we come in. We&rsquo;re <a href="/remote-support/">remote-first</a>, so most Sage PDF problems we can see and fix without anyone visiting, usually the same working day &mdash; we connect securely, reinstall or repair the Sage PDF driver, reset the permissions it needs and print a test invoice with you before we go. If it does need hands-on, we cover Bournemouth, Poole, Christchurch and across Dorset from our base in Kinson.</p><p>We&rsquo;re a family-run team of Windows specialists, trading since 1995, with a <strong>no fix, no fee</strong> promise &mdash; if we can&rsquo;t sort it, you don&rsquo;t pay. We only ever work on the printing side; we never change your accounts figures. If Sage causes regular headaches, we also offer <a href="/it-support-for-accountants/">IT support built around accountants and Sage users</a>.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="How to stop it happening again">
+    <section id="s6" class="section section--alt" aria-label="How to stop it happening again">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/06 &mdash; STOP IT COMING BACK</p>
         <h2 class="section-title" data-title>How to stop it happening again<span class="title-underline"></span></h2>
@@ -815,11 +815,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p>Related help: <a href="/sage-50-wont-email-invoices-outlook/">Sage 50 won&rsquo;t email invoices through Outlook</a>, <a href="/sage-50-multi-user-cannot-connect/">Sage 50 multi-user cannot connect</a>, <a href="/quickbooks-sage-running-slow/">QuickBooks or Sage running slow</a>, <a href="/why-windows-updates-break-things/">why Windows updates break things</a>, <a href="/it-support-for-accountants/">IT support for accountants</a> and <a href="/printer-support/">printer support</a>.</p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/sage-50-wont-email-invoices-outlook/">Sage 50 won&rsquo;t email invoices through Outlook</a><a href="/sage-50-multi-user-cannot-connect/">Sage 50 multi-user cannot connect</a><a href="/quickbooks-sage-running-slow/">QuickBooks or Sage running slow</a><a href="/why-windows-updates-break-things/">why Windows updates break things</a><a href="/it-support-for-accountants/">IT support for accountants</a><a href="/printer-support/">printer support</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1115,7 +1118,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

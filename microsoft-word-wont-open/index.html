@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -779,8 +779,8 @@
         <div class="course-scene course-scene--band course-scene--hero" aria-hidden="true"><svg class="course-scene__svg" viewBox="0 0 400 240" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><path d="M40 130 L88 130" fill="none" stroke="#86b6e8" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 8" class="nm-link"/><path d="M30 152 L90 152" fill="none" stroke="#86b6e8" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 8" class="nm-link"/><path d="M40 174 L84 174" fill="none" stroke="#86b6e8" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 8" class="nm-link"/><g class="cs-float"><path d="M92 168 A108 108 0 0 1 308 168 Z" fill="#0a1f3d" stroke="rgba(125,170,220,.35)" stroke-width="2"/><path d="M106 168 A94 94 0 0 1 294 168" fill="none" stroke="#86b6e8" stroke-width="2" stroke-linecap="round"/><path d="M106 168 L120 168" stroke="#86b6e8" stroke-width="2" stroke-linecap="round"/><path d="M133.5 101.5 L143.4 111.4" stroke="#86b6e8" stroke-width="2" stroke-linecap="round"/><path d="M200 74 L200 88" stroke="#86b6e8" stroke-width="2" stroke-linecap="round"/><path d="M266.5 101.5 L256.6 111.4" stroke="#86b6e8" stroke-width="2" stroke-linecap="round"/><path d="M294 168 L280 168" stroke="#86b6e8" stroke-width="2" stroke-linecap="round"/><path d="M200 168 L280 136" fill="none" stroke="#1d97e3" stroke-width="2" stroke-linecap="round"/><circle cx="200" cy="168" r="6" fill="#0b1d3a" stroke="#86b6e8" stroke-width="2"/><path d="M332 96 L332 62 M322 72 L332 62 L342 72" fill="none" stroke="#1d97e3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="280" cy="136" r="12" fill="none" stroke="rgba(29,151,227,.5)" stroke-width="2" class="nm-scan"/><circle cx="280" cy="136" r="4" fill="#00ce1b" class="nm-dot" style="--d:.4s"/></g></svg></div>
       </div>
     </section>
-
-    <section class="section" aria-label="Word crashes when opened from Sage or another program? Check this first">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">Rung 1 &mdash; the June 2026 bug</a><a href="#s2">Rung 2 &mdash; safe mode</a><a href="#s3">Rung 3 &mdash; the template</a><a href="#s4">Rung 4 &mdash; advanced</a><a href="#s5">Rung 5 &mdash; repair Office</a><a href="#s6">Crashed mid-edit?</a><a href="#s7">When to call us</a></nav>
+    <section id="s1" class="section" aria-label="Word crashes when opened from Sage or another program? Check this first">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">Rung 1 &mdash; the June 2026 bug</p>
         <h2 class="section-title" data-title>Word crashes when opened from Sage or another program? Check this first<span class="title-underline"></span></h2>
@@ -789,52 +789,52 @@
     </section>
     <section class="section" aria-label="Fix this now with remote support">
       <div class="wrap" style="max-width:860px;margin:0 auto">
-        <div data-reveal style="border:1px solid rgba(0,206,27,0.35);background:rgba(0,206,27,0.06);border-radius:16px;padding:1.6rem 1.8rem;text-align:center">
+        <div class="callout callout--good callout--center" data-reveal>
           <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// NEED THIS FIXED RIGHT NOW?</p>
-          <p style="font-size:1.08rem;margin:0 0 1.1rem">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
-          <p style="margin:0;display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap">
+          <p class="callout__lede">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
+          <p class="callout__row">
             <a class="button primary" href="/sos/">Start SOS Remote Support</a>
             <a class="button secondary" href="tel:+441202775566">Call 01202 775566</a>
           </p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Test Word in safe mode &mdash; the two-minute diagnosis">
+    <section id="s2" class="section section--alt" aria-label="Test Word in safe mode &mdash; the two-minute diagnosis">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">Rung 2 &mdash; safe mode</p>
         <h2 class="section-title" data-title>Test Word in safe mode &mdash; the two-minute diagnosis<span class="title-underline"></span></h2>
 <p>Press <strong>Windows key + R</strong>, type <strong>winword /safe</strong> and press Enter (or hold <strong>Ctrl</strong> while clicking the Word icon and confirm safe mode). Safe mode starts Word with no add-ins and no custom template &mdash; the two things most likely to stop it opening.</p><ul><li><strong>Word opens in safe mode?</strong> Good news: Word itself is healthy. An add-in or your template is the culprit &mdash; carry on to the steps below and Rung 3.</li><li><strong>Word still won&rsquo;t open, even in safe mode?</strong> Skip to Rung 4 or Rung 5.</li></ul><p>To find a faulty add-in: in safe mode go to <strong>File &gt; Options &gt; Add-ins</strong>, set the Manage box at the bottom to <strong>COM Add-ins</strong>, click <strong>Go</strong>, and untick everything. Restart Word normally. If it opens, re-tick the add-ins one at a time, restarting between each, until the crash returns &mdash; the last one you enabled is your troublemaker. Word can also load items from its Startup folder at <strong>C:\Users\&lt;name&gt;\AppData\Roaming\Microsoft\Word\STARTUP</strong> &mdash; move anything in there to your desktop temporarily and retest.</p><p><em>When to stop:</em> if the failing add-in is one your business relies on (Sage integration, PDF tools, a dictation add-in), don&rsquo;t just leave it off &mdash; that&rsquo;s the point to <a href="/contact/">talk to a techie</a> so you keep both Word and the tool.</p>
       </div>
     </section>
-    <section class="section" aria-label="Rename Normal.dotm &mdash; safe, quick and surprisingly effective">
+    <section id="s3" class="section" aria-label="Rename Normal.dotm &mdash; safe, quick and surprisingly effective">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">Rung 3 &mdash; the template</p>
         <h2 class="section-title" data-title>Rename Normal.dotm &mdash; safe, quick and surprisingly effective<span class="title-underline"></span></h2>
 <p>Normal.dotm is the hidden template every blank document is based on. When it gets corrupted, Word can hang or crash the moment it starts. Renaming it is completely safe: Word simply builds a fresh copy next time it opens. You lose any custom default fonts or macros you&rsquo;d saved into the template &mdash; never your documents.</p><ol><li>Close Word fully (check the Task Manager if in doubt).</li><li>Open File Explorer and paste <strong>%appdata%\Microsoft\Templates</strong> into the address bar &mdash; that&rsquo;s <strong>C:\Users\&lt;name&gt;\AppData\Roaming\Microsoft\Templates</strong> in full.</li><li>Right-click <strong>Normal.dotm</strong> and rename it to <strong>Normal.old</strong>.</li><li>Start Word. If it opens, the old template was the problem and you&rsquo;re done.</li></ol><p><em>When to stop:</em> if Word opens but your carefully built letterheads or macros lived in that template, keep the Normal.old file and give us a ring &mdash; the useful parts can often be rescued from it in a short <a href="/dell-remote-support/">remote session from &pound;20</a>.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Reset Word&rsquo;s registry Data key (with a proper backup first)">
+    <section id="s4" class="section section--alt" aria-label="Reset Word&rsquo;s registry Data key (with a proper backup first)">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">Rung 4 &mdash; advanced</p>
         <h2 class="section-title" data-title>Reset Word&rsquo;s registry Data key (with a proper backup first)<span class="title-underline"></span></h2>
 <p>This is the deep fix from Microsoft&rsquo;s own Word start-up troubleshooting guide &mdash; a guide Microsoft has now archived to its &ldquo;previous versions&rdquo; site, which is partly why so few pages mention it. It&rsquo;s labelled <strong>advanced</strong> for a reason: the registry controls the whole of Windows, so back up before you touch it, and if you&rsquo;re not comfortable, this is exactly the kind of one-shot job we do remotely from &pound;20 while you watch.</p><ol><li>Close Word. Press <strong>Windows key + R</strong>, type <strong>regedit</strong> and press Enter.</li><li>Navigate to <strong>HKEY_CURRENT_USER\Software\Microsoft\Office\16.0\Word\Data</strong>.</li><li>Right-click the <strong>Data</strong> key and choose <strong>Export</strong> &mdash; save the .reg file somewhere safe. That&rsquo;s your undo button: double-clicking it puts everything back.</li><li>Now right-click <strong>Data</strong> again and choose <strong>Delete</strong>, then restart Word.</li></ol><p>Word rebuilds the key with factory defaults. You&rsquo;ll lose your recent-files list and a few preferences &mdash; not documents, not templates. If Word still won&rsquo;t start, the neighbouring <strong>Options</strong> key is the next candidate: same export-then-delete routine.</p><p><em>When to stop:</em> if you&rsquo;ve never opened the Registry Editor before, don&rsquo;t make this your first solo flight &mdash; <a href="/contact/">we&rsquo;ll do it with you on the line</a>.</p>
       </div>
     </section>
-    <section class="section" aria-label="Run an Office repair &mdash; the fix of last resort that usually works">
+    <section id="s5" class="section" aria-label="Run an Office repair &mdash; the fix of last resort that usually works">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">Rung 5 &mdash; repair Office</p>
         <h2 class="section-title" data-title>Run an Office repair &mdash; the fix of last resort that usually works<span class="title-underline"></span></h2>
 <p>If nothing above has helped, let Windows repair the Office installation itself:</p><ol><li>Open <strong>Settings &gt; Apps &gt; Installed apps</strong>.</li><li>Find <strong>Microsoft 365</strong> (or Microsoft Office), click the three dots and choose <strong>Modify</strong>.</li><li>Try <strong>Quick Repair</strong> first &mdash; it takes a few minutes and needs no internet.</li><li>If Word still misbehaves, run the same steps again and choose <strong>Online Repair</strong>. This reinstalls Office over the internet, so allow time and a stable connection.</li></ol><p>Neither repair touches your documents, and your settings largely survive. Have your Microsoft account sign-in to hand in case Office asks you to sign back in afterwards &mdash; and if it then complains about licensing instead of crashing, that&rsquo;s a different problem with its own page: <a href="/microsoft-office-unlicensed-product-error/">the Office &ldquo;Unlicensed Product&rdquo; error</a>.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Word crashed while you were typing &mdash; your document is probably recoverable">
+    <section id="s6" class="section section--alt" aria-label="Word crashed while you were typing &mdash; your document is probably recoverable">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">Crashed mid-edit?</p>
         <h2 class="section-title" data-title>Word crashed while you were typing &mdash; your document is probably recoverable<span class="title-underline"></span></h2>
 <p>If Word died mid-sentence, don&rsquo;t panic and don&rsquo;t start retyping. When Word next opens successfully it usually shows the <strong>Document Recovery</strong> pane down the left-hand side, listing autosaved versions &mdash; open the newest, check it, and save it under a new name immediately. For a file that opens damaged, use Word&rsquo;s built-in repair: <strong>File &gt; Open &gt; Browse</strong>, select the document, then click the small arrow beside the Open button and choose <strong>Open and Repair</strong>. Microsoft&rsquo;s own &ldquo;Recover your Office files&rdquo; guide on support.microsoft.com covers the longer recovery routes.</p><p>And if Word isn&rsquo;t crashing so much as <strong>crawling or freezing</strong> (&ldquo;Not responding&rdquo; in the title bar), the culprits are usually the same suspects as this ladder: a slow add-in, an enormous document stuffed with images and tracked changes, a file sitting on a slow network location, or OneDrive syncing mid-save. On that last one &mdash; Word now saves new documents to OneDrive by default, which surprises a lot of people; see <a href="/stop-word-saving-to-onedrive/">how to stop Word saving to OneDrive</a>.</p>
       </div>
     </section>
-    <section class="section" aria-label="Honest advice: when it&rsquo;s worth handing this over">
+    <section id="s7" class="section" aria-label="Honest advice: when it&rsquo;s worth handing this over">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">When to call us</p>
         <h2 class="section-title" data-title>Honest advice: when it&rsquo;s worth handing this over<span class="title-underline"></span></h2>
@@ -842,11 +842,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p>Related guides: <a href="/stop-word-saving-to-onedrive/">Stop Word saving to OneDrive</a> &middot; <a href="/sage-50-wont-email-invoices-outlook/">Sage 50 won&rsquo;t email invoices through Outlook</a> &middot; <a href="/microsoft-office-unlicensed-product-error/">Office &ldquo;Unlicensed Product&rdquo; error</a> &middot; <a href="/onedrive-problems/">OneDrive problems</a> &middot; <a href="/outlook-problems/">Outlook problems</a> &middot; <a href="/microsoft-365-support/">Microsoft 365 support</a></p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/stop-word-saving-to-onedrive/">Stop Word saving to OneDrive</a><a href="/sage-50-wont-email-invoices-outlook/">Sage 50 won&rsquo;t email invoices through Outlook</a><a href="/microsoft-office-unlicensed-product-error/">Office &ldquo;Unlicensed Product&rdquo; error</a><a href="/onedrive-problems/">OneDrive problems</a><a href="/outlook-problems/">Outlook problems</a><a href="/microsoft-365-support/">Microsoft 365 support</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1150,7 +1153,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

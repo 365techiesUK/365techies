@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -778,8 +778,8 @@
         <ul class="page-hero__chips mono"><li>&#9679; Same-day response</li><li>&#9679; Family-run since 1995</li><li>&#9679; 4.9 on Google</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="First: it&rsquo;s recoverable, and it&rsquo;s not personal">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">Stay calm</a><a href="#s2">The first hour</a><a href="#s3">Legal duties</a><a href="#s4">The honest fork</a><a href="#s5">Aftercare</a><a href="#s6">Local help</a></nav>
+    <section id="s1" class="section" aria-label="First: it&rsquo;s recoverable, and it&rsquo;s not personal">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">Stay calm</p>
         <h2 class="section-title" data-title>First: it&rsquo;s recoverable, and it&rsquo;s not personal<span class="title-underline"></span></h2>
@@ -788,45 +788,45 @@
     </section>
     <section class="section" aria-label="Fix this now with remote support">
       <div class="wrap" style="max-width:860px;margin:0 auto">
-        <div data-reveal style="border:1px solid rgba(0,206,27,0.35);background:rgba(0,206,27,0.06);border-radius:16px;padding:1.6rem 1.8rem;text-align:center">
+        <div class="callout callout--good callout--center" data-reveal>
           <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// NEED THIS FIXED RIGHT NOW?</p>
-          <p style="font-size:1.08rem;margin:0 0 1.1rem">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
-          <p style="margin:0;display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap">
+          <p class="callout__lede">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
+          <p class="callout__row">
             <a class="button primary" href="/sos/">Start SOS Remote Support</a>
             <a class="button secondary" href="tel:+441202775566">Call 01202 775566</a>
           </p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="The first-hour checklist, in order">
+    <section id="s2" class="section section--alt" aria-label="The first-hour checklist, in order">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">The first hour</p>
         <h2 class="section-title" data-title>The first-hour checklist, in order<span class="title-underline"></span></h2>
 <ol><li><p><strong>Take the site offline or into maintenance mode.</strong> Log in to your hosting control panel and switch on maintenance mode, or ask your hosting company to suspend the site temporarily &mdash; they deal with this daily and can usually do it in minutes. A plain holding page is far better than serving malware to your customers, and it stops the damage to your Google standing getting worse while you work. (If you&rsquo;re already looking at an &ldquo;Account Suspended&rdquo; page, your host has done this step for you &mdash; ring them before anything else, because that page can also mean unpaid hosting and data at risk of deletion.)</p></li><li><p><strong>Change every password &mdash; all of them, in this order.</strong> Start with the hosting control panel account, because it controls everything else. Then FTP/SFTP, then every CMS admin user (check the user list for admin accounts you don&rsquo;t recognise and remove them), then the database password, then any email accounts that live on the same hosting. Do this from a computer you trust, make every password unique, and switch on two-factor authentication wherever it&rsquo;s offered. If you reused the old password anywhere else &mdash; and most people have &mdash; change it there too.</p></li><li><p><strong>Scope the damage before you fix anything.</strong> Is it just defacement? Are there injected spam pages (search Google for <em>site:yourdomain.co.uk</em> and look for pages you didn&rsquo;t write)? Is malware being served to visitors? And the question that matters most legally: what personal data does the site hold or connect to &mdash; contact-form submissions, customer accounts, order history, a mailing list? Write down what you find. It drives everything in the next step.</p></li></ol>
       </div>
     </section>
-    <section class="section" aria-label="The ICO, your customers, and reporting it properly">
+    <section id="s3" class="section" aria-label="The ICO, your customers, and reporting it properly">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">Legal duties</p>
         <h2 class="section-title" data-title>The ICO, your customers, and reporting it properly<span class="title-underline"></span></h2>
 <p>If the site holds or processes personal data &mdash; even just names and email addresses from a contact form &mdash; you need to assess whether this is a reportable data breach. Under UK GDPR, a breach that is likely to pose a risk to people&rsquo;s rights and freedoms must be reported to the Information Commissioner&rsquo;s Office within <strong>72 hours of you becoming aware of it</strong>. Not every hack qualifies &mdash; a defaced brochure site that stores no customer data often doesn&rsquo;t &mdash; but you must make the assessment and keep a record of your reasoning either way. The ICO&rsquo;s own guidance and self-assessment tool at <a href="https://ico.org.uk/for-organisations/report-a-breach/" rel="noopener">ico.org.uk</a> walk you through it in plain language.</p><p><strong>Tell affected customers honestly and early.</strong> If their data may have been exposed, a short, plain email &mdash; what happened, what you&rsquo;ve done, what they should do &mdash; protects them and your reputation far better than silence. People forgive a hack; they don&rsquo;t forgive a cover-up.</p><p>You can also report the attack to Action Fraud on 0300 123 2040. And for a proper plan rather than a panic, the NCSC&rsquo;s <a href="https://www.ncsc.gov.uk/collection/small-business-guidance--response-and-recovery" rel="noopener">Small Business Guide: Response &amp; Recovery</a> is the national authority on handling a cyber incident &mdash; it&rsquo;s free and written for firms exactly your size.</p><p>Two honest caveats. If payment-card data may have been accessed, involve a specialist forensics firm &mdash; that&rsquo;s a regulated area and beyond what a general IT firm should handle alone, and we&rsquo;ll tell you so if it applies. And if the breach raises questions of liability or a dispute, seek proper legal advice &mdash; nothing on this page is a legal opinion.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Clean it, or rebuild it clean?">
+    <section id="s4" class="section section--alt" aria-label="Clean it, or rebuild it clean?">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">The honest fork</p>
         <h2 class="section-title" data-title>Clean it, or rebuild it clean?<span class="title-underline"></span></h2>
 <p>Once the site is offline and the passwords are changed, you face the decision most guides skip: disinfect the existing site, or rebuild it clean. Here&rsquo;s the honest version of both.</p><p><strong>Cleaning</strong> means scanning for and removing injected files, reinstalling the CMS core, updating every plugin and theme, and checking the database for planted admin users and spam content. It can absolutely work &mdash; and if your site is recent, well-maintained and you have a clean backup from before the infection, it&rsquo;s usually the right call. The catch: if nobody ever finds the door the attacker used, reinfection is common. Cleaning the same site twice costs more than doing it properly once.</p><p><strong>Rebuilding</strong> is often the cheaper, calmer option when the site is an ageing WordPress install with abandoned plugins, when it&rsquo;s been infected before, or when there&rsquo;s no clean backup to restore from. You keep your content, your domain and your Google standing, and start from a clean, modern foundation &mdash; done properly, without losing rankings. We&rsquo;ve set out exactly how that works on our <a href="/website-rebuild/">website rebuild</a> page, so we won&rsquo;t repeat it here.</p><p>We speak from experience: in June 2026 we replaced our own WordPress site with a hand-built static one. There are no plugins and no database to attack &mdash; a far smaller attack surface &mdash; and in our own Lighthouse measurements mobile performance went from roughly 65 to the high 80s. We&rsquo;re not saying every business should do the same; we are saying the clean-vs-rebuild question deserves an honest answer, not a default invoice for cleaning.</p>
       </div>
     </section>
-    <section class="section" aria-label="Hardening, backups, and getting the Google warning removed">
+    <section id="s5" class="section" aria-label="Hardening, backups, and getting the Google warning removed">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">Aftercare</p>
         <h2 class="section-title" data-title>Hardening, backups, and getting the Google warning removed<span class="title-underline"></span></h2>
 <p>Once the site is clean (or rebuilt), a few habits stop the sequel:</p><ul><li><strong>Backups with a tested restore.</strong> A backup you&rsquo;ve never restored is a hope, not a backup. Keep copies going back weeks, keep at least one copy away from the hosting account itself, and test a restore once in a while.</li><li><strong>Update everything, on a schedule.</strong> Out-of-date plugins and themes are the number-one way in. Remove any plugin or theme you don&rsquo;t actually use &mdash; deactivated isn&rsquo;t deleted.</li><li><strong>Tighten the accounts.</strong> Two-factor authentication on hosting and CMS logins, unique passwords, and no shared &ldquo;admin&rdquo; account that half the office knows.</li><li><strong>Clear the Google warning.</strong> In Google Search Console, the Security Issues report shows what Google found; once the site is genuinely clean you request a review from the same screen, and the red warning is normally lifted after Google re-checks. Don&rsquo;t request the review before the cleanup is finished &mdash; failed reviews slow the next one down.</li><li><strong>Check your own front door.</strong> Run your site through our free <a href="/website-checker/">website checker</a> &mdash; it flags basics like missing HTTPS &mdash; and there are SSL and domain checks in our <a href="/free-tools/">free tools</a> suite. All free, no sign-up.</li></ul><p>If you&rsquo;d rather someone kept an eye on updates, backups and monitoring for you as a matter of routine, that&rsquo;s part of what our <a href="/business-it-support-plans/">business IT support plans</a> cover &mdash; and every piece of work we do comes with a written Service Report, so you can see exactly what was done and why.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Hacked and want a human? Bournemouth, Poole &amp; Dorset">
+    <section id="s6" class="section section--alt" aria-label="Hacked and want a human? Bournemouth, Poole &amp; Dorset">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">Local help</p>
         <h2 class="section-title" data-title>Hacked and want a human? Bournemouth, Poole &amp; Dorset<span class="title-underline"></span></h2>
@@ -839,6 +839,7 @@
 <ul><li><a href="/web-designer-disappeared/">Web designer disappeared? How to get your website back</a> &mdash; when the person with the keys has vanished</li><li><a href="/website-held-hostage/">Is your web designer holding your website hostage?</a> &mdash; when they&rsquo;re present but withholding access</li><li><a href="/slow-wordpress-site-fix-or-rebuild/">Slow WordPress site: fix it or rebuild it?</a> &mdash; the other reason old sites reach breaking point</li><li><a href="/website-rebuild/">Website rebuild without losing rankings</a> &mdash; the clean-foundation exit path</li><li><a href="/website-checker/">Free website checker</a> &mdash; see what state your site is in right now</li></ul>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1142,7 +1143,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

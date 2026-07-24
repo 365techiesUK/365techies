@@ -17592,11 +17592,98 @@ pay_page()
 # ============================================================ EASY-KEYWORD PAGES (data-driven, from new_pages_data.py)
 def _sec_block(s, i=0):
     cls = "section" if i % 2 == 0 else "section section--alt"  # alternate bg for visual rhythm
-    return f'''    <section class="{cls}" aria-label="{s['h2']}">
+    sid = f"s{i + 1}"  # anchor target for the on-page TOC chips
+    kind = s.get('kind', 'prose')
+    head_c = f'''        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>{s['eyebrow']}</p>
+          <h2 class="section-title section-title--center" data-title>{s['h2']}<span class="title-underline title-underline--center"></span></h2>
+        </div>'''
+    if kind == 'split-checklist':
+        # prose column + checklist column (the flagship split-2 shape)
+        return f'''    <section id="{sid}" class="{cls}" aria-label="{s['h2']}">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">{s['eyebrow']}</p>
+          <h2 class="section-title" data-title>{s['h2']}<span class="title-underline"></span></h2>
+{s['html']}
+        </div>
+        <ul class="checklist" data-stagger>
+{bp.checklist(s['items'])}
+        </ul>
+      </div>
+    </section>'''
+    if kind == 'tiles':
+        return f'''    <section id="{sid}" class="{cls}" aria-label="{s['h2']}">
+      <div class="wrap">
+{head_c}
+        <div class="tile-grid" data-stagger>
+{bp.tiles(s['items'])}
+        </div>
+      </div>
+    </section>'''
+    if kind == 'steps':
+        return f'''    <section id="{sid}" class="{cls}" aria-label="{s['h2']}">
+      <div class="wrap">
+{head_c}
+        <ol class="how__steps">
+{bp.steps(s['items'])}
+        </ol>
+      </div>
+    </section>'''
+    if kind == 'cards':
+        return f'''    <section id="{sid}" class="{cls}" aria-label="{s['h2']}">
+      <div class="wrap">
+{head_c}
+        <ul class="security-grid" data-stagger>
+{bp.grid_cards(s['items'])}
+        </ul>
+      </div>
+    </section>'''
+    return f'''    <section id="{sid}" class="{cls}" aria-label="{s['h2']}">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">{s['eyebrow']}</p>
         <h2 class="section-title" data-title>{s['h2']}<span class="title-underline"></span></h2>
 {s['html']}
+      </div>
+    </section>'''
+
+# Owner-verified trust facts restated once per guide, just before the FAQ (the hero's
+# trust furniture is off-screen by then). Claims per memory: since-1995, 4.9 Google,
+# 200+ computers under care (GoCardless fleet), no-fix-no-fee, same-day remote.
+TRUST_LINE = ('    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; '
+              '<span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; '
+              '<span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>')
+
+def _toc_chips(sections):
+    """On-page TOC chip row for long guides: labels come from the numbered eyebrows."""
+    chips = []
+    for i, s in enumerate(sections):
+        label = re.sub(r'^/+\s*', '', s['eyebrow']).strip()
+        chips.append(f'<a href="#s{i + 1}">{label}</a>')
+    return ('    <nav class="toc mono" aria-label="On this page" data-reveal>'
+            + ''.join(chips) + '</nav>')
+
+def _related_block(cross_html):
+    """Upgrade glue-only cross-link paragraphs to the premium .related component.
+    Paragraphs whose surrounding prose carries real advice keep their prose form —
+    only 'Related help: <a>, <a> and <a>' style glue is converted. Link set is
+    identical either way (SEO-neutral)."""
+    links = re.findall(r'<a href="([^"]+)"[^>]*>(.*?)</a>', cross_html, re.S)
+    if len(links) < 2:
+        return None
+    residue = re.sub(r'<a href="[^"]*"[^>]*>.*?</a>', '', cross_html, flags=re.S)
+    residue = re.sub(r'<[^>]+>', ' ', residue)
+    residue = re.sub(r'&[a-zA-Z#0-9]+;', ' ', residue)
+    residue = re.sub(r'\b(and|or|our|the|a|if|for|see|also|too|page|pages|guide|guides|related|help|more)\b', ' ', residue, flags=re.I)
+    if len(re.sub(r'[\s,.:;()’\'—-]', '', residue)) > 40:
+        return None
+    items = ''.join(f'<a href="{h}">{re.sub(r"<[^>]+>", "", t).strip()}</a>' for h, t in links)
+    return f'''    <section class="section" aria-label="Related">
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links">{items}</div>
+        </div>
       </div>
     </section>'''
 
@@ -17940,10 +18027,25 @@ def build_new_page(d):
         _blocks.append(REFURB_SUPPORT_BAND)
         _blocks.append(_model_details_band(d['slug']))
         _blocks.append(_refurb_reserve_band(d['slug']))
+    # optional at-a-glance answer table (generalised _cmp_block: list of (label, value) rows)
+    if d.get('atAGlance'):
+        _ag_rows = "\n".join(f'              <tr><th scope="row">{l}</th><td>{v}</td></tr>' for l, v in d['atAGlance'])
+        _ag = f'''    <section class="section section--alt" aria-label="At a glance">
+      <div class="wrap" data-reveal>
+        <div class="section-head"><h2 class="section-title section-title--center">At a glance<span class="title-underline title-underline--center"></span></h2></div>
+        <div class="price-table-wrap"><table class="price-table price-table--facts"><tbody>
+{_ag_rows}
+            </tbody></table></div>
+      </div>
+    </section>'''
+        _blocks.insert(1 if len(_blocks) > 1 else len(_blocks), _ag)
     sections = "\n".join(_blocks)
+    _is_course = ('-course' in d['slug']) or d['slug'].startswith('computer-lessons')
+    toc = _toc_chips(d['sections']) if (not _is_course and len(d['sections']) >= 4) else ""
+    trust = "" if _is_course else TRUST_LINE
     cross = ""
     if d.get('crossLinksHtml'):
-        cross = f'''    <section class="section" aria-label="Related">
+        cross = _related_block(d['crossLinksHtml']) or f'''    <section class="section" aria-label="Related">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">// RELATED</p>
 {d['crossLinksHtml']}
@@ -17962,16 +18064,18 @@ def build_new_page(d):
     </section>'''
     _hub = _pack_hub(d['slug'])
     _bch = bp.bc_sub(_hub[0], '/' + _hub[1] + '/', d['crumbName']) if _hub else bc(d['crumbName'])
-    content = "\n".join([
+    content = "\n".join(x for x in [
       hero(_bch, d['eyebrow'], d['h1'], hero_trust(d['lede']),
            cta1=tuple(d['primaryCta']), cta2=tuple(d['secondaryCta']), chips=list(d['chips']),
            scene=HERO_SCENES.get(_PACK_SCENE.get(d['slug']))),
+      toc,
       _hubbox,
       sections,
       cross,
+      trust,
       faq_html(faqs),
       cta(d['ctaHead'], d['ctaSub'], primary=tuple(d['primaryCta']), secondary=tuple(d['secondaryCta'])),
-    ])
+    ] if x)
     def schema(s, _d=d, _faqs=faqs, _hub=_hub):
         _c = bp.crumb_sub(s, _hub[0], _hub[1], _d['crumbName']) if _hub else crumb(s, _d['crumbName'])
         nodes = [_c, webpage(s, _d['crumbName'], _d['metaDesc'])]

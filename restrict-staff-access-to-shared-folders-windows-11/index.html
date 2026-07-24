@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -759,43 +759,43 @@
         <ul class="page-hero__chips mono"><li>&#9679; Family-run since 1995</li><li>&#9679; Business IT specialists</li><li>&#9679; No-fix-no-fee</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="The short answer, and the catch">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; THE SHORT ANSWER</a><a href="#s2">02 &mdash; EVERYONE NEEDS THEIR OWN LOGIN</a><a href="#s3">03 &mdash; LOCK THE SENSITIVE FOLDERS</a><a href="#s4">04 &mdash; DON&rsquo;T FORGET THE NETWORK SHARE</a><a href="#s5">05 &mdash; THE HONEST LIMITS</a><a href="#s6">06 &mdash; WHEN TO CALL US</a></nav>
+    <section id="s1" class="section" aria-label="The short answer, and the catch">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; THE SHORT ANSWER</p>
         <h2 class="section-title" data-title>The short answer, and the catch<span class="title-underline"></span></h2>
 <p>To restrict which staff can open which folders on a Windows 11 shared drive, set <strong>NTFS permissions</strong> on the folder: right-click it, choose <strong>Properties</strong>, open the <strong>Security</strong> tab, click <strong>Edit</strong>, and grant or remove access for each person. That is the whole mechanism &mdash; but there is one catch that trips up almost every small business.</p><p>It only works if <strong>each member of staff signs in to Windows with their own account</strong>. Windows decides who may open a folder based on who is signed in. If the office shares a single login &mdash; one &lsquo;Office&rsquo; or &lsquo;Reception&rsquo; account &mdash; there is no way to keep payroll or HR private, because as far as Windows is concerned everyone is the same person. Any folder one of you can open, all of you can.</p><p>So the job is really two parts: give people <strong>separate logins</strong>, then lock the sensitive folders to just the right people. Get the first part wrong and no amount of clicking in the Security tab will help. The rest of this page walks through both, plus the honest point where a shared PC has outgrown the task and a proper <a href="/small-business-it-support/">business IT setup</a> is the safer answer.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="First, everyone needs their own login">
+    <section id="s2" class="section section--alt" aria-label="First, everyone needs their own login">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/02 &mdash; EVERYONE NEEDS THEIR OWN LOGIN</p>
         <h2 class="section-title" data-title>First, everyone needs their own login<span class="title-underline"></span></h2>
 <p><strong>This is step zero, and it is non-negotiable.</strong> If everyone in the office uses the same Windows login, folder permissions have nothing to work with. You need a separate, password-protected account for every person who uses the PC.</p><p>On Windows 11 you add accounts under <strong>Settings &gt; Accounts &gt; Other users</strong> (sometimes shown as <strong>Family &amp; other users</strong>). You can use local accounts &mdash; just a username and password on that PC &mdash; or Microsoft accounts. For a small office PC, local accounts are usually simplest. Give each person a sensible name and their own password, and make day-to-day accounts <strong>standard users</strong> rather than administrators, so no one can casually undo your permissions.</p><p>Separate logins bring a second benefit beyond privacy: you can finally tell who did what &mdash; who saved, changed or has a file open. That matters when two people are fighting over the same spreadsheet; see <a href="/who-has-a-file-open-on-shared-drive/">who has a file open on a shared drive</a>. It also makes leavers tidy: disable their account and their access is gone, which we cover in <a href="/what-to-do-when-an-employee-leaves/">what to do when an employee leaves</a>.</p>
       </div>
     </section>
-    <section class="section" aria-label="Lock the sensitive folders with permissions">
+    <section id="s3" class="section" aria-label="Lock the sensitive folders with permissions">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; LOCK THE SENSITIVE FOLDERS</p>
         <h2 class="section-title" data-title>Lock the sensitive folders with permissions<span class="title-underline"></span></h2>
 <p>With per-person logins in place, you can lock the folders. Right-click the folder (say <strong>Payroll</strong>), choose <strong>Properties</strong>, open the <strong>Security</strong> tab and click <strong>Edit</strong>. You&rsquo;ll see a list of who currently has access and what they can do.</p><p>The tidiest approach is to <strong>remove the broad entry</strong> &mdash; usually &lsquo;Users&rsquo; or &lsquo;Everyone&rsquo; &mdash; that gives all staff access, then click <strong>Add</strong> and put back only the people who should be in. For each person, choose the right level:</p><ul><li><strong>Read &amp; execute / Read</strong> &mdash; can open and view files but not change them.</li><li><strong>Modify</strong> &mdash; can open, edit, save and delete files.</li><li><strong>Full Control</strong> &mdash; as Modify, but can also change the permissions themselves; staff rarely need this.</li></ul><p>Grant the least each person needs and no more. If you have more than a handful of staff, create a <strong>group</strong> (for example &lsquo;Payroll&rsquo;) and add people to it, so you set the folder&rsquo;s access once and just manage who is in the group.</p><p>A word on <strong>Deny</strong>: it&rsquo;s usually better to simply <strong>not grant</strong> access than to tick Deny. Deny overrides every Allow and is a classic cause of &lsquo;why is this person locked out of everything?&rsquo; Reach for it only when you understand the knock-on effects.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Don&rsquo;t forget the network share">
+    <section id="s4" class="section section--alt" aria-label="Don&rsquo;t forget the network share">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/04 &mdash; DON&rsquo;T FORGET THE NETWORK SHARE</p>
         <h2 class="section-title" data-title>Don&rsquo;t forget the network share<span class="title-underline"></span></h2>
 <p>If other computers connect to this folder <strong>over the network</strong>, there are two separate sets of permissions, and both apply.</p><ul><li>The <strong>Security (NTFS)</strong> tab &mdash; applies whether someone is sitting at the PC or connecting across the network.</li><li>The <strong>Sharing</strong> tab &mdash; click <strong>Advanced Sharing &gt; Permissions</strong>. These apply only when connecting over the network.</li></ul><p>When someone opens the folder across the network, Windows applies <strong>whichever of the two is more restrictive</strong>. So if the Security tab says Modify but the share says Read, they get Read. The commonest mistake is setting the Security tab carefully but leaving the <strong>share</strong> out of step with it &mdash; often a leftover restrictive share &mdash; and then wondering why access isn&rsquo;t behaving the way you set it.</p><p>The practical rule the professionals use: keep the <strong>share</strong> broad (Change for staff) and do all the fine-grained control on the <strong>Security</strong> tab. That way there is only one place to think about. If sharing suddenly stops working after a Windows update rather than a permissions change, that&rsquo;s a different problem &mdash; see <a href="/shared-folders-not-working-after-windows-11-24h2-update/">shared folders not working after the Windows 11 24H2 update</a>.</p>
       </div>
     </section>
-    <section class="section" aria-label="The honest limits of a shared PC">
+    <section id="s5" class="section" aria-label="The honest limits of a shared PC">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; THE HONEST LIMITS</p>
         <h2 class="section-title" data-title>The honest limits of a shared PC<span class="title-underline"></span></h2>
 <p>Setting NTFS permissions on a shared PC works, but it has a ceiling &mdash; and it&rsquo;s worth knowing where that is before you rely on it for anything genuinely confidential.</p><p>First, a locked folder is not always a hidden folder. On a standard Windows 11 PC, staff can often still <strong>see the folder&rsquo;s name</strong> in the list &mdash; they just get &lsquo;access denied&rsquo; if they try to open it. Cleanly hiding folders from people who lack access is really a file-server feature, not something a shared PC does neatly.</p><p>Second, a Windows 11 workgroup is <strong>peer-to-peer</strong>: every PC manages its own accounts and permissions. If the files live on one PC and three colleagues connect from three others, you have to create matching accounts and juggle permissions on <strong>every</strong> machine. For two or three people that&rsquo;s manageable; past that it becomes fiddly, and a single wrong tick can quietly expose payroll or HR data.</p><p>When you genuinely need per-person private areas done properly, the right answer is usually a dedicated <a href="/desktop-pc-used-as-office-server/">file server</a> or moving your files into <a href="/microsoft-365-support/">Microsoft 365 and SharePoint</a>, where permissions are per-person and managed in one place rather than PC by PC.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="When to call us &mdash; and how we fix it">
+    <section id="s6" class="section section--alt" aria-label="When to call us &mdash; and how we fix it">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/06 &mdash; WHEN TO CALL US</p>
         <h2 class="section-title" data-title>When to call us &mdash; and how we fix it<span class="title-underline"></span></h2>
@@ -803,11 +803,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p>Related help: <a href="/desktop-pc-used-as-office-server/">Using a desktop PC as an office server</a>, <a href="/shared-folders-not-working-after-windows-11-24h2-update/">Shared folders not working after Windows 11 24H2</a>, <a href="/who-has-a-file-open-on-shared-drive/">Who has a file open on the shared drive?</a>, <a href="/small-business-it-support/">Small-business IT support</a>, <a href="/microsoft-365-support/">Microsoft 365 support</a> and <a href="/server-network-support/">Server &amp; network support</a>.</p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/desktop-pc-used-as-office-server/">Using a desktop PC as an office server</a><a href="/shared-folders-not-working-after-windows-11-24h2-update/">Shared folders not working after Windows 11 24H2</a><a href="/who-has-a-file-open-on-shared-drive/">Who has a file open on the shared drive?</a><a href="/small-business-it-support/">Small-business IT support</a><a href="/microsoft-365-support/">Microsoft 365 support</a><a href="/server-network-support/">Server &amp; network support</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1103,7 +1106,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

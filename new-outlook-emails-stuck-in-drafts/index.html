@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -707,8 +707,8 @@
         <ul class="page-hero__chips mono"><li>&#9679; No fix, no fee</li><li>&#9679; Family-run since 1995</li><li>&#9679; Rated 4.9 on Google</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="You pressed Send — and found it in Drafts days later">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; THE SYMPTOM</a><a href="#s2">02 &mdash; THE CAUSE</a><a href="#s3">03 &mdash; QUICK CHECKS</a><a href="#s4">04 &mdash; THE FIXES</a><a href="#s5">05 &mdash; HONEST ADVICE</a></nav>
+    <section id="s1" class="section" aria-label="You pressed Send — and found it in Drafts days later">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; THE SYMPTOM</p>
         <h2 class="section-title" data-title>You pressed Send — and found it in Drafts days later<span class="title-underline"></span></h2>
@@ -717,38 +717,38 @@
     </section>
     <section class="section" aria-label="Fix this now with remote support">
       <div class="wrap" style="max-width:860px;margin:0 auto">
-        <div data-reveal style="border:1px solid rgba(0,206,27,0.35);background:rgba(0,206,27,0.06);border-radius:16px;padding:1.6rem 1.8rem;text-align:center">
+        <div class="callout callout--good callout--center" data-reveal>
           <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// NEED THIS FIXED RIGHT NOW?</p>
-          <p style="font-size:1.08rem;margin:0 0 1.1rem">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
-          <p style="margin:0;display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap">
+          <p class="callout__lede">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
+          <p class="callout__row">
             <a class="button primary" href="/sos/">Start SOS Remote Support</a>
             <a class="button secondary" href="tel:+441202775566">Call 01202 775566</a>
           </p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Why new Outlook parks unsent mail in Drafts">
+    <section id="s2" class="section section--alt" aria-label="Why new Outlook parks unsent mail in Drafts">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/02 &mdash; THE CAUSE</p>
         <h2 class="section-title" data-title>Why new Outlook parks unsent mail in Drafts<span class="title-underline"></span></h2>
 <p>Classic Outlook and the old Mail app talked to your mail server directly: your PC connected, handed the message over, and anything still waiting sat visibly in an Outbox. New Outlook works differently for Gmail, IMAP and most other non-Microsoft accounts: it routes them through Microsoft's cloud, which syncs with your provider on your behalf.</p><p>That design has consequences. For many account types there is <strong>no traditional Outbox at all</strong> — and when a send fails, whether because the connection dropped, your sign-in needed refreshing, the server refused the message or an attachment was too large, the app often has nowhere to queue it. So it tucks the message back into Drafts, frequently without any visible error. Nothing is lost — the email is safe — but nothing is sent either, and unless you go looking you may not notice for days.</p><p>To be fair to Microsoft, new Outlook is updated constantly and behaviour genuinely varies between versions and account types, so we won't pretend every copy acts identically. But if your unsent mail keeps surfacing in Drafts, this sync model is almost certainly why.</p>
       </div>
     </section>
-    <section class="section" aria-label="Five checks before you change anything">
+    <section id="s3" class="section" aria-label="Five checks before you change anything">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; QUICK CHECKS</p>
         <h2 class="section-title" data-title>Five checks before you change anything<span class="title-underline"></span></h2>
 <p>Run these in order — they take five minutes and often find the culprit.</p><ol><li><strong>Confirm it really didn't send.</strong> Check your Sent folder, then log into your provider's webmail. Occasionally the message did go and a stray copy stayed in Drafts — chasing a fault that doesn't exist wastes an afternoon.</li><li><strong>Check the account is syncing at all.</strong> Is new mail arriving? Look for a sign-in or sync warning near the account name — an expired sign-in silently stops sending too.</li><li><strong>Suspect the attachment.</strong> Most providers cap messages somewhere around 20–25&nbsp;MB, and limits vary. Try resending without the attachment; if it flies, share the file another way.</li><li><strong>Re-check the recipient's address.</strong> A mistyped address can cause a rejection the app doesn't clearly surface.</li><li><strong>Send yourself a plain one-line test email.</strong> If even that won't go, the problem is the account or the app rather than one message — our guide to <a href="/outlook-not-sending-emails/">Outlook not sending emails</a> covers the wider possibilities.</li></ol>
       </div>
     </section>
-    <section class="section section--alt" aria-label="The fixes that usually get mail moving">
+    <section id="s4" class="section section--alt" aria-label="The fixes that usually get mail moving">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/04 &mdash; THE FIXES</p>
         <h2 class="section-title" data-title>The fixes that usually get mail moving<span class="title-underline"></span></h2>
 <p>Start gentle and escalate:</p><ul><li><strong>Resend from Drafts.</strong> Open the stuck message and press Send again. A one-off sync hiccup is the most common cause, and a simple resend clears a surprising number of these.</li><li><strong>Restart and update the app.</strong> Close new Outlook fully, then check the Microsoft Store for updates. The app changes almost monthly, and sending bugs do get fixed.</li><li><strong>Sign out and back in.</strong> A stale sign-in stops sending without a clear error. Look for the option in the app's account settings.</li><li><strong>Remove and re-add the account.</strong> This forces a completely fresh sync and sorts the stubborn cases. You'll find it in the app's settings under <em>Accounts</em> — menu names move between versions, so look for the Accounts section rather than following a remembered click-path. First, copy the text of any stuck draft into Notepad or a document — a draft that failed to sync may exist only on this PC. For IMAP and Microsoft accounts your delivered mail lives on the server, so re-adding the account brings it back, though we'd still note your settings down first.</li><li><strong>Use webmail as a stopgap.</strong> If webmail sends fine, your account is healthy and the fault is the app — genuinely useful to know, and it keeps you working in the meantime.</li></ul><p>We can't promise any one of these will fix it — but between them they resolve the great majority of cases we see.</p>
       </div>
     </section>
-    <section class="section" aria-label="When it's not worth fighting — and what we'd do">
+    <section id="s5" class="section" aria-label="When it's not worth fighting — and what we'd do">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; HONEST ADVICE</p>
         <h2 class="section-title" data-title>When it's not worth fighting — and what we'd do<span class="title-underline"></span></h2>
@@ -756,11 +756,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p><strong>Related guides:</strong> <a href="/outlook-stuck-in-outbox/">Emails stuck in the Outbox (classic Outlook)</a> · <a href="/outlook-not-sending-emails/">Outlook not sending emails</a> · <a href="/how-to-go-back-to-classic-outlook/">How to go back to classic Outlook</a> · <a href="/outlook-problems/">Outlook problems: the full guide</a> · <a href="/remote-support/">Remote support</a></p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/outlook-stuck-in-outbox/">Emails stuck in the Outbox (classic Outlook)</a><a href="/outlook-not-sending-emails/">Outlook not sending emails</a><a href="/how-to-go-back-to-classic-outlook/">How to go back to classic Outlook</a><a href="/outlook-problems/">Outlook problems: the full guide</a><a href="/remote-support/">Remote support</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1044,7 +1047,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

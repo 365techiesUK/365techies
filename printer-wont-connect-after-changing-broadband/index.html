@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -701,8 +701,8 @@
         <ul class="page-hero__chips mono"><li>&#9679; No fix, no fee</li><li>&#9679; Family-run since 1995</li><li>&#9679; 4.9★ rated on Google</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="Why the printer got left behind when the broadband changed">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; START HERE</a><a href="#s2">02 &mdash; THE QUICK FIXES</a><a href="#s3">03 &mdash; THE HIDDEN TRAP</a><a href="#s4">04 &mdash; MODERN HUBS</a><a href="#s5">05 &mdash; HONEST ADVICE</a></nav>
+    <section id="s1" class="section" aria-label="Why the printer got left behind when the broadband changed">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; START HERE</p>
         <h2 class="section-title" data-title>Why the printer got left behind when the broadband changed<span class="title-underline"></span></h2>
@@ -711,38 +711,38 @@
     </section>
     <section class="section" aria-label="Fix this now with remote support">
       <div class="wrap" style="max-width:860px;margin:0 auto">
-        <div data-reveal style="border:1px solid rgba(0,206,27,0.35);background:rgba(0,206,27,0.06);border-radius:16px;padding:1.6rem 1.8rem;text-align:center">
+        <div class="callout callout--good callout--center" data-reveal>
           <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// NEED THIS FIXED RIGHT NOW?</p>
-          <p style="font-size:1.08rem;margin:0 0 1.1rem">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
-          <p style="margin:0;display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap">
+          <p class="callout__lede">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
+          <p class="callout__row">
             <a class="button primary" href="/sos/">Start SOS Remote Support</a>
             <a class="button secondary" href="tel:+441202775566">Call 01202 775566</a>
           </p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Rejoin the new Wi-Fi, then re-add the printer">
+    <section id="s2" class="section section--alt" aria-label="Rejoin the new Wi-Fi, then re-add the printer">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/02 &mdash; THE QUICK FIXES</p>
         <h2 class="section-title" data-title>Rejoin the new Wi-Fi, then re-add the printer<span class="title-underline"></span></h2>
 <p>Start on the printer itself. Somewhere in its menus is a wireless or network setup option — the exact name moves between brands and models, so look for anything called <strong>wireless setup</strong>, <strong>network settings</strong> or <strong>Wi-Fi</strong>. Run it, choose your new network name (it's printed on a sticker on the router), and type the password exactly, capitals included. Screenless printers usually join through the maker's phone app or a WPS button press instead.</p><p>Once the printer is on the new network, don't assume your computers will find it. They often keep pointing at the printer's old entry, so remove the printer and add it again — or reinstall it with the manufacturer's app, which is usually the least fiddly route.</p><p>One genuinely useful shortcut: most provider hubs let you change their Wi-Fi name and password. Set the new router to broadcast the <em>same</em> name and password as the old one and the printer — along with everything else in the house — usually rejoins by itself. And if it was only the password that changed rather than the whole router, our guide to a <a href="/printer-stopped-working-after-changing-wifi-password/">printer that stopped working after a Wi-Fi password change</a> covers that exact case.</p>
       </div>
     </section>
-    <section class="section" aria-label="Stranded on a fixed IP: the 192.168.0.x vs 192.168.1.x problem">
+    <section id="s3" class="section" aria-label="Stranded on a fixed IP: the 192.168.0.x vs 192.168.1.x problem">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; THE HIDDEN TRAP</p>
         <h2 class="section-title" data-title>Stranded on a fixed IP: the 192.168.0.x vs 192.168.1.x problem<span class="title-underline"></span></h2>
 <p>If you've rejoined the Wi-Fi and the printer still won't talk to anything, this is usually why. Many printers — especially office models, or ones set up by an engineer — were given a fixed address on the old network, something like 192.168.1.50, so they could always be found in the same place. The catch is that your new router may number its network differently: one common range is 192.168.1.x, another is 192.168.0.x, and different makers favour different ones. A printer clinging to an address from the old range can join the new Wi-Fi, cheerfully report "connected", and still be unreachable — it's on the right network with the wrong postcode.</p><p>Two clues point to this: the printer's own test page prints fine while jobs from the computer never arrive, and the printer's address doesn't match the pattern of everything else on the network (most printers can print a network configuration page that shows it). The fix is to open the printer's network settings and put the address back to <strong>automatic</strong> — often labelled DHCP — or give it a new fixed address inside the new router's range. Then re-add the printer on your computers, because they'll likely still be aiming at the old address too.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Band steering, mesh systems and guest networks">
+    <section id="s4" class="section section--alt" aria-label="Band steering, mesh systems and guest networks">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/04 &mdash; MODERN HUBS</p>
         <h2 class="section-title" data-title>Band steering, mesh systems and guest networks<span class="title-underline"></span></h2>
 <p>New broadband often means a genuinely different kind of network, not just a different box. Most modern hubs and mesh systems broadcast one network name covering both the 2.4GHz and 5GHz bands, then quietly decide which band each device uses — a feature usually called <strong>band steering</strong> or smart connect. Most printers cope, but some older models only speak 2.4GHz and can fail repeatedly during setup if the hub keeps nudging them towards 5GHz. Setting the printer up close to the hub helps, and some routers let you split the bands into separately named networks while you get it joined — the option varies by hub, so don't worry if yours doesn't offer it.</p><p>If you've gone from a single router to a mesh system, make sure the printer joined the mesh network and that the old router isn't still plugged in broadcasting its ghost — our <a href="/mesh-wifi-setup-guide/">mesh Wi-Fi setup guide</a> walks through getting every device onto the right network. And check the printer isn't on a <strong>guest network</strong>: guest networks deliberately wall devices off from each other, which is excellent for visitors and terrible for printing. For anything network-wide that's still misbehaving after the switch, our <a href="/wifi-troubleshooting/">Wi-Fi troubleshooting guide</a> covers the broader checks.</p>
       </div>
     </section>
-    <section class="section" aria-label="When to reset — and when to stop fighting it yourself">
+    <section id="s5" class="section" aria-label="When to reset — and when to stop fighting it yourself">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; HONEST ADVICE</p>
         <h2 class="section-title" data-title>When to reset — and when to stop fighting it yourself<span class="title-underline"></span></h2>
@@ -750,11 +750,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p><strong>Related guides:</strong> <a href="/printer-stopped-working-after-changing-wifi-password/">Printer stopped working after a Wi-Fi password change</a> · <a href="/mesh-wifi-setup-guide/">Mesh Wi-Fi setup guide</a> · <a href="/wifi-troubleshooting/">Wi-Fi troubleshooting</a> · <a href="/printer-support/">Printer support</a></p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/printer-stopped-working-after-changing-wifi-password/">Printer stopped working after a Wi-Fi password change</a><a href="/mesh-wifi-setup-guide/">Mesh Wi-Fi setup guide</a><a href="/wifi-troubleshooting/">Wi-Fi troubleshooting</a><a href="/printer-support/">Printer support</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1038,7 +1041,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

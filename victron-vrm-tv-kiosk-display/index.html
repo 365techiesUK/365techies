@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -775,7 +775,7 @@
         <ul class="page-hero__chips mono"><li>&#9679; Live demo on this site</li><li>&#9679; Built &amp; hosted for you</li><li>&#9679; Worldwide</li></ul>
       </div>
     </section>
-
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; THE SHORT ANSWER</a><a href="#s2">02 &mdash; WHERE A LIVE SCREEN PAYS OFF</a><a href="#s3">03 &mdash; THE FREE DIY ROUTE</a><a href="#s4">04 &mdash; WHERE THE DIY KIOSK BITES</a><a href="#s5">05 &mdash; THE BUILT-FOR-KIOSK ALTERNATIVE</a><a href="#s6">06 &mdash; SEE ONE RUNNING LIVE</a><a href="#s7">07 &mdash; WHAT IT COSTS</a></nav>
     <section class="section" aria-label="Victron credential" style="padding-top:1.1rem;padding-bottom:0">
       <div class="wrap">
         <div class="mono" data-reveal style="display:flex;flex-wrap:wrap;gap:.55rem 1.4rem;justify-content:center;align-items:center;font-size:.74rem;color:var(--muted);letter-spacing:.03em">
@@ -789,49 +789,49 @@
         </div>
       </div>
     </section>
-    <section class="section" aria-label="The short answer: yes, two ways">
+    <section id="s1" class="section" aria-label="The short answer: yes, two ways">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; THE SHORT ANSWER</p>
         <h2 class="section-title" data-title>The short answer: yes, two ways<span class="title-underline"></span></h2>
 <p>You can put <strong>Victron VRM on a TV or kiosk</strong> two ways: run a browser in full-screen kiosk mode against VRM&rsquo;s own pages, or point the screen at a purpose-built dashboard fed by the official VRM API. The free DIY route costs nothing but the hardware and works well; the catches are keeping a login session alive, living with VRM&rsquo;s fixed layout, and &mdash; if you use a share link to dodge the login &mdash; a refresh lag.</p><p>Pick the DIY route when it&rsquo;s an internal screen, one site, and nobody minds VRM&rsquo;s branding and menus on show. Pick a built dashboard when the screen has to earn its place &mdash; a showroom, a reception, a marina office &mdash; full-bleed, on-brand, always on and, if you want, showing several sites at once. The rest of this page covers both, honestly, and gives you the DIY steps so you can weigh it up for yourself.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Where a wall of live power data earns its keep">
+    <section id="s2" class="section section--alt" aria-label="Where a wall of live power data earns its keep">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/02 &mdash; WHERE A LIVE SCREEN PAYS OFF</p>
         <h2 class="section-title" data-title>Where a wall of live power data earns its keep<span class="title-underline"></span></h2>
 <p>A screen showing real, moving numbers does something a brochure can&rsquo;t: it proves the kit works. The places it pulls its weight:</p><ul><li><strong>Installer showrooms.</strong> A wall showing your own reference system &mdash; solar coming in, batteries filling, loads running &mdash; sells Victron better than any spec sheet. Customers watch the numbers move and get it.</li><li><strong>Site reception and lobbies.</strong> Buildings chasing a green story love a live energy board: today&rsquo;s solar yield, battery state, grid draw. It quietly tells every visitor the place is doing the right thing.</li><li><strong>Fleet and operations offices.</strong> A back-office screen with your sites or vehicles at a glance means someone spots a flat battery or a dropped inverter before the phone rings.</li><li><strong>Marina and holiday-park offices.</strong> One screen for the pontoon power, the amenity block or a run of hire units keeps staff on top of it without logging into anything.</li></ul><p>All of these want the same three things: full-screen, legible from across the room, and live enough to be believed. That&rsquo;s exactly where the stock pages start to strain.</p>
       </div>
     </section>
-    <section class="section" aria-label="The free DIY kiosk: a Pi, a browser, VRM&rsquo;s own pages">
+    <section id="s3" class="section" aria-label="The free DIY kiosk: a Pi, a browser, VRM&rsquo;s own pages">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; THE FREE DIY ROUTE</p>
         <h2 class="section-title" data-title>The free DIY kiosk: a Pi, a browser, VRM&rsquo;s own pages<span class="title-underline"></span></h2>
 <p>Credit where it&rsquo;s due: you can do this yourself for the price of a small computer, and plenty of installers have. The recipe is an always-on mini device behind the TV running a browser locked into kiosk mode, pointed at your VRM Dashboard.</p><ul><li>A <strong>Raspberry Pi (4 or 5) or a cheap mini-PC</strong> wired to the TV over HDMI, on power and network.</li><li><strong>Chromium in kiosk mode</strong> &mdash; launched at boot with flags such as <strong>--kiosk --noerrdialogs --disable-infobars --disable-session-crashed-bubble</strong> so there&rsquo;s no browser chrome and no &ldquo;restore session&rdquo; nag.</li><li>A <strong>VRM login</strong> in that browser profile, with the <strong>Dashboard</strong> open for the site you want on screen &mdash; that&rsquo;s the view that updates in real time.</li></ul><p>One thing worth knowing: while you&rsquo;re logged in with the main <strong>Dashboard</strong> actually open, VRM streams updates straight to your browser every couple of seconds when the installation is online. (The Advanced tab is different: its charts plot <em>logged</em> history at the logging interval, not that live stream, so for a live wall you want the Dashboard.) So a logged-in Dashboard kiosk genuinely is live &mdash; it&rsquo;s the login and the layout that bite, not the freshness. Our step-by-step for the full DIY build is set out below; the honest limits come next.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="The honest limits of the DIY kiosk">
+    <section id="s4" class="section section--alt" aria-label="The honest limits of the DIY kiosk">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/04 &mdash; WHERE THE DIY KIOSK BITES</p>
         <h2 class="section-title" data-title>The honest limits of the DIY kiosk<span class="title-underline"></span></h2>
 <p>None of these are dealbreakers for an internal screen. They matter the moment the screen faces a customer.</p><ul><li><strong>Sessions drop.</strong> VRM logins and browser updates will eventually kick you back to a login screen. On an unattended wall that means someone has to notice and log back in &mdash; or you script a nightly reboot and hope.</li><li><strong>The layout is fixed.</strong> VRM&rsquo;s main dashboard is a set layout; only the Advanced tab is composable, and even there custom widgets are capped at roughly six parameters. You show what VRM shows, in VRM&rsquo;s order.</li><li><strong>It isn&rsquo;t brandable.</strong> The stock pages carry VRM&rsquo;s look, menus and login. The long-promised white-label &ldquo;Dealer ID&rdquo; was confirmed by Victron staff as never shipped, so there&rsquo;s no official way to put your name on it.</li><li><strong>Share links lag.</strong> The tempting way to skip the login &mdash; a VRM share link or iframe embed &mdash; is read-only and only refreshes at the logging interval (15 minutes by default). A &ldquo;live&rdquo; wall a quarter-hour behind undercuts the whole point.</li><li><strong>No single multi-site screen.</strong> VRM has no one-screen live view across sites; the installer list is a table, and it isn&rsquo;t brandable either.</li></ul><p>So the DIY kiosk is either live-but-logged-in-and-plain, or branded-nowhere-and-lagging. For an internal board that&rsquo;s fine. For a screen that sells, it&rsquo;s a compromise.</p>
       </div>
     </section>
-    <section class="section" aria-label="A kiosk-ready dashboard we build and host for you">
+    <section id="s5" class="section" aria-label="A kiosk-ready dashboard we build and host for you">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; THE BUILT-FOR-KIOSK ALTERNATIVE</p>
         <h2 class="section-title" data-title>A kiosk-ready dashboard we build and host for you<span class="title-underline"></span></h2>
 <p>The alternative is a single URL, made for a screen. We build a dashboard on top of the <strong>official VRM API</strong> and host it, so your kiosk device just opens one full-screen page and stays there:</p><ul><li><strong>Full-bleed and on-brand</strong> &mdash; your colours, your logo, no VRM login or menus in shot.</li><li><strong>Genuinely live and auto-refreshing</strong> &mdash; it polls the VRM API and updates itself, showing the freshest data VRM holds for your system, with no login to keep alive.</li><li><strong>Any KPIs you want</strong> &mdash; the tiles and charts that matter to you, laid out for reading at distance, not squeezed into VRM&rsquo;s fixed grid.</li><li><strong>Multi-site if you want it</strong> &mdash; several installations on one wall, which the stock portal can&rsquo;t do.</li><li><strong>No session babysitting</strong> &mdash; it&rsquo;s built to sit on a screen for months, not to be logged into every morning.</li></ul><p>It doesn&rsquo;t replace VRM &mdash; VRM stays your system of record and does its job brilliantly; we build a presentation layer on top of it via the official API. <strong>To be straight with you: 365 Techies is an independent service. We are listed in Victron Energy&rsquo;s Recommended Software Integrator Program &mdash; though not a Victron dealer, distributor or reseller &mdash; Victron and VRM are their trademarks.</strong></p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="See a real one running live on this site">
+    <section id="s6" class="section section--alt" aria-label="See a real one running live on this site">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/06 &mdash; SEE ONE RUNNING LIVE</p>
         <h2 class="section-title" data-title>See a real one running live on this site<span class="title-underline"></span></h2>
 <p>You don&rsquo;t have to take our word for it. Our own off-grid support van &mdash; the <strong>365 Crafter</strong>, with a Cerbo GX, Venus OS, MPPT solar and a lithium bank &mdash; streams live through the official VRM API on our <a href="/custom-vrm-dashboards/">custom VRM dashboards</a> page.</p><p>It&rsquo;s the same van shown in <strong>two completely different dashboard styles</strong>, so you can see how far the look can move away from the stock pages while the data stays real. There&rsquo;s also a <strong>fleet-style demo</strong> where only the van is a live vehicle (it&rsquo;s clearly labelled) &mdash; a fair way to show how a multi-unit wall behaves without pretending we run a fleet we don&rsquo;t. Open it on a phone or a big screen: that&rsquo;s exactly what a kiosk build looks like in the flesh.</p><p><a href="/custom-vrm-dashboards/">See the live custom dashboards &rarr;</a></p>
       </div>
     </section>
-    <section class="section" aria-label="What a kiosk dashboard costs">
+    <section id="s7" class="section" aria-label="What a kiosk dashboard costs">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/07 &mdash; WHAT IT COSTS</p>
         <h2 class="section-title" data-title>What a kiosk dashboard costs<span class="title-underline"></span></h2>
@@ -839,11 +839,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p>Related: <a href="/embed-victron-vrm-on-website/">Embed Victron VRM on a website</a>, <a href="/white-label-victron-monitoring/">white-label Victron monitoring</a>, <a href="/customise-victron-vrm-dashboard/">customise your VRM dashboard</a>, <a href="/custom-vrm-dashboards/">custom VRM dashboards</a>, <a href="/off-grid-victron-energy/">off-grid Victron energy</a> and <a href="/victron-system-builder/">Victron system builder</a>.</p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/embed-victron-vrm-on-website/">Embed Victron VRM on a website</a><a href="/white-label-victron-monitoring/">white-label Victron monitoring</a><a href="/customise-victron-vrm-dashboard/">customise your VRM dashboard</a><a href="/custom-vrm-dashboards/">custom VRM dashboards</a><a href="/off-grid-victron-energy/">off-grid Victron energy</a><a href="/victron-system-builder/">Victron system builder</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1147,7 +1150,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

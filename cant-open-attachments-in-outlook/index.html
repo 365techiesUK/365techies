@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -743,8 +743,8 @@
         <ul class="page-hero__chips mono"><li>&#9679; Windows only</li><li>&#9679; Classic Outlook</li><li>&#9679; Save to Desktop first</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="The quick fix that works most of the time">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">Answer first</a><a href="#s2">Why it's blocked</a><a href="#s3">The hidden folder</a><a href="#s4">The other two causes</a></nav>
+    <section id="s1" class="section" aria-label="The quick fix that works most of the time">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">Answer first</p>
         <h2 class="section-title" data-title>The quick fix that works most of the time<span class="title-underline"></span></h2>
@@ -753,31 +753,31 @@
     </section>
     <section class="section" aria-label="Fix this now with remote support">
       <div class="wrap" style="max-width:860px;margin:0 auto">
-        <div data-reveal style="border:1px solid rgba(0,206,27,0.35);background:rgba(0,206,27,0.06);border-radius:16px;padding:1.6rem 1.8rem;text-align:center">
+        <div class="callout callout--good callout--center" data-reveal>
           <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// NEED THIS FIXED RIGHT NOW?</p>
-          <p style="font-size:1.08rem;margin:0 0 1.1rem">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
-          <p style="margin:0;display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap">
+          <p class="callout__lede">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
+          <p class="callout__row">
             <a class="button primary" href="/sos/">Start SOS Remote Support</a>
             <a class="button secondary" href="tel:+441202775566">Call 01202 775566</a>
           </p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Cause 1: Outlook is blocking a risky file type">
+    <section id="s2" class="section section--alt" aria-label="Cause 1: Outlook is blocking a risky file type">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">Why it's blocked</p>
         <h2 class="section-title" data-title>Cause 1: Outlook is blocking a risky file type<span class="title-underline"></span></h2>
 <p>Classic Outlook blocks over 100 file types it considers dangerous — things like <code>.exe</code>, <code>.bat</code>, <code>.vbs</code>, <code>.js</code>, <code>.msi</code> and <code>.reg</code>. These are the extensions viruses hide inside, so Outlook won't let you open <em>or</em> save them, and you'll see a message that it <strong>blocked access to protect your computer</strong>. This is Outlook doing its job, not a fault.</p><p>If the file is genuinely safe and expected — say a colleague sent a small program — the safest workaround is to have them <strong>put it in OneDrive or a zip file</strong> and send you a link instead, so it never triggers the block. Only the trickier, riskier route of editing the registry (the <code>Level1Remove</code> value under the Outlook Security key) actually unblocks a type, and we'd rather do that with you than have you loosen your protection by accident. If in doubt, don't force it open — check with the sender first, or let us take a safe look.</p>
       </div>
     </section>
-    <section class="section" aria-label="Cause 2: the temporary Outlook files folder is full">
+    <section id="s3" class="section" aria-label="Cause 2: the temporary Outlook files folder is full">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">The hidden folder</p>
         <h2 class="section-title" data-title>Cause 2: the temporary Outlook files folder is full<span class="title-underline"></span></h2>
 <p>Every time you open an attachment, Outlook quietly saves a copy into a hidden cache called the <strong>Outlook Secure Temp folder</strong> (its location is stored in the registry as <code>OutlookSecureTempFolder</code>). Over months of double-clicking attachments this folder fills up, and once it hits its limit Outlook simply stops opening new ones — often with no clear error at all. Emptying it fixes the problem instantly and safely, because it only holds throwaway copies.</p><p>To clear it: close Outlook, press <strong>Windows key + R</strong>, type <code>regedit</code> and press Enter, then use <strong>Edit > Find</strong> to search for <strong>OutlookSecureTempFolder</strong> (you'll find it under a Security key such as HKEY_CURRENT_USER\Software\Microsoft\Office\16.0\Outlook\Security). Double-click the value it finds and copy the folder path shown. Press <strong>Windows key + R</strong> again, paste that path in and press Enter — File Explorer opens the hidden folder. Select everything inside (<strong>Ctrl + A</strong>) and delete it, then reopen Outlook and try the attachment again. If the registry makes you nervous, this is a two-minute job for us remotely.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Cause 3 and 4: no default app, or Protected View">
+    <section id="s4" class="section section--alt" aria-label="Cause 3 and 4: no default app, or Protected View">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">The other two causes</p>
         <h2 class="section-title" data-title>Cause 3 and 4: no default app, or Protected View<span class="title-underline"></span></h2>
@@ -785,11 +785,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p>More Outlook help from 365 Techies: our <a href="/outlook-problems/">Outlook problems hub</a>, <a href="/common-outlook-problems-and-fixes/">common Outlook problems and fixes</a>, <a href="/outlook-shared-mailbox-not-showing/">shared mailbox not showing</a> and <a href="/microsoft-365-support/">Microsoft 365 support</a>. See also <a href="/remote-it-support/">remote IT support</a>, <a href="/email-support/">email support</a>, <a href="/it-support-dorset/">IT support in Dorset</a> or <a href="/contact/">contact us</a>.</p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/outlook-problems/">Outlook problems hub</a><a href="/common-outlook-problems-and-fixes/">common Outlook problems and fixes</a><a href="/outlook-shared-mailbox-not-showing/">shared mailbox not showing</a><a href="/microsoft-365-support/">Microsoft 365 support</a><a href="/remote-it-support/">remote IT support</a><a href="/email-support/">email support</a><a href="/it-support-dorset/">IT support in Dorset</a><a href="/contact/">contact us</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1077,7 +1080,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

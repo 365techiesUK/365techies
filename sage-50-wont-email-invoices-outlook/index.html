@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -759,8 +759,8 @@
         <ul class="page-hero__chips mono"><li>&#9679; No fix, no fee</li><li>&#9679; Trading since 1995</li><li>&#9679; 4.9-star Google rating</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="The short answer: it&rsquo;s the new Outlook">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; QUICK ANSWER</a><a href="#s2">02 &mdash; WHY IT BROKE</a><a href="#s3">03 &mdash; THE FIX</a><a href="#s4">04 &mdash; IF IT STILL WON&rsquo;T SEND</a><a href="#s5">05 &mdash; HONEST CAVEATS</a><a href="#s6">06 &mdash; HOW WE HELP</a></nav>
+    <section id="s1" class="section" aria-label="The short answer: it&rsquo;s the new Outlook">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; QUICK ANSWER</p>
         <h2 class="section-title" data-title>The short answer: it&rsquo;s the new Outlook<span class="title-underline"></span></h2>
@@ -769,45 +769,45 @@
     </section>
     <section class="section" aria-label="Fix this now with remote support">
       <div class="wrap" style="max-width:860px;margin:0 auto">
-        <div data-reveal style="border:1px solid rgba(0,206,27,0.35);background:rgba(0,206,27,0.06);border-radius:16px;padding:1.6rem 1.8rem;text-align:center">
+        <div class="callout callout--good callout--center" data-reveal>
           <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// NEED THIS FIXED RIGHT NOW?</p>
-          <p style="font-size:1.08rem;margin:0 0 1.1rem">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
-          <p style="margin:0;display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap">
+          <p class="callout__lede">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
+          <p class="callout__row">
             <a class="button primary" href="/sos/">Start SOS Remote Support</a>
             <a class="button secondary" href="tel:+441202775566">Call 01202 775566</a>
           </p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Why Sage 50 stopped emailing through Outlook">
+    <section id="s2" class="section section--alt" aria-label="Why Sage 50 stopped emailing through Outlook">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/02 &mdash; WHY IT BROKE</p>
         <h2 class="section-title" data-title>Why Sage 50 stopped emailing through Outlook<span class="title-underline"></span></h2>
 <p>For years, Sage 50 Accounts has emailed invoices, statements and remittances by quietly passing the document to your installed email program. On Windows that program is <strong>classic Outlook</strong>, and the hand-over uses a Microsoft standard called <strong>MAPI</strong> (Messaging Application Programming Interface). When it works, clicking &lsquo;email&rsquo; in Sage pops a ready-made message in Outlook with the PDF attached.</p><p>The problem is the <strong>new Outlook</strong> &mdash; the redesigned, web-style app Microsoft has been rolling out to replace the classic desktop version. The new Outlook doesn&rsquo;t include the MAPI component, so Sage has nothing to hand the invoice to. Depending on your version you&rsquo;ll either see a MAPI error, a &lsquo;no default email program&rsquo; message, or simply nothing at all when you click email.</p><p>This is why it feels like it broke overnight. A Windows or Microsoft 365 update, or a brand-new PC, can switch the new Outlook on automatically &mdash; and the moment it becomes your default mail app, Sage loses its route out. Nothing is broken inside Sage itself; the link between Sage and Outlook has simply been cut. It&rsquo;s the same root cause behind a lot of the <a href="/common-outlook-problems-and-fixes/">recent Outlook problems</a> people are seeing in 2026.</p>
       </div>
     </section>
-    <section class="section" aria-label="The fix: put classic Outlook back in charge">
+    <section id="s3" class="section" aria-label="The fix: put classic Outlook back in charge">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; THE FIX</p>
         <h2 class="section-title" data-title>The fix: put classic Outlook back in charge<span class="title-underline"></span></h2>
 <p>The reliable fix is to put classic Outlook back in charge. Do these three things in order.</p><p><strong>1. Turn off the new Outlook.</strong> Open Outlook and look for a <strong>New Outlook</strong> toggle in the top-right corner. Switch it off &mdash; the app will close and reopen as classic Outlook, and the switch should now read &lsquo;Try the new Outlook&rsquo;. Leave it off. Our step-by-step guide to <a href="/how-to-go-back-to-classic-outlook/">going back to classic Outlook</a> has more detail if you need it.</p><p><strong>2. Set classic Outlook as your default email app.</strong> On Windows 10 this lives under Settings &gt; Apps &gt; Default apps &gt; Email. On Windows 11 it moved, so search &lsquo;Default apps&rsquo; from the Start menu, or use Control Panel &gt; Default Programs, and make sure the app that handles email is <strong>Outlook (classic)</strong> &mdash; not Mail, not the new Outlook. This is the setting Sage checks when it looks for a mail program.</p><p><strong>3. Point Sage at Outlook.</strong> In Sage 50 Accounts, click <strong>Settings</strong>, then <strong>Email Defaults</strong>, and in the <strong>Email Program</strong> drop-down choose <strong>Microsoft Outlook</strong>. Click OK, close Sage and Outlook fully, then reopen both.</p><p>Now send yourself a test invoice. It should hand over to classic Outlook with the PDF attached. If it does, you&rsquo;re done &mdash; and it&rsquo;ll keep working as long as the new Outlook stays switched off.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="If invoices still won&rsquo;t send">
+    <section id="s4" class="section section--alt" aria-label="If invoices still won&rsquo;t send">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/04 &mdash; IF IT STILL WON&rsquo;T SEND</p>
         <h2 class="section-title" data-title>If invoices still won&rsquo;t send<span class="title-underline"></span></h2>
 <p>If invoices still won&rsquo;t send after switching back to classic Outlook, work through these.</p><ul><li><strong>The default app didn&rsquo;t stick.</strong> Windows updates sometimes reset the default mail app back to the new Outlook. Re-open your default-apps settings (Settings &gt; Apps &gt; Default apps on Windows 10, or Control Panel &gt; Default Programs on Windows 11) and set it back to Outlook (classic).</li><li><strong>Outlook isn&rsquo;t fully signed in.</strong> If Outlook is asking for a password or sitting on a sign-in screen, Sage can&rsquo;t use it. Get Outlook opening cleanly to the inbox first.</li><li><strong>Office &lsquo;bitness&rsquo;.</strong> Sage 50 has always relied on the 32-bit MAPI component. In the past a 64-bit-only Office could cause trouble, though on most modern set-ups the new-Outlook issue is the real cause, not bitness. If in doubt, an Office repair or reinstall settles it &mdash; something we&rsquo;d normally check for you rather than have you guess.</li></ul><p><strong>The Outlook-free alternative:</strong> Sage can also send invoices directly using <strong>Webmail (SMTP)</strong>, bypassing Outlook entirely. In <strong>Settings &gt; Email Defaults</strong>, change the Email Program to <strong>Webmail</strong>, pick your provider (such as Microsoft 365 or Gmail) and enter the details. This is often the cleaner long-term answer if the office is drifting towards the web-based new Outlook anyway. It&rsquo;s the same principle we use when Sage <a href="/sage-50-wont-print-to-pdf-windows-11/">won&rsquo;t print to PDF</a> &mdash; give Sage a route that doesn&rsquo;t depend on a fragile third-party hand-over.</p>
       </div>
     </section>
-    <section class="section" aria-label="Honest caveats &mdash; and the durable fix">
+    <section id="s5" class="section" aria-label="Honest caveats &mdash; and the durable fix">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; HONEST CAVEATS</p>
         <h2 class="section-title" data-title>Honest caveats &mdash; and the durable fix<span class="title-underline"></span></h2>
 <p>A couple of honest caveats, because this area is changing.</p><p>First, <strong>webmail (SMTP) needs modern authentication</strong>. Microsoft and Google have retired the old &lsquo;basic&rsquo; password sign-in for sending mail, so a plain mailbox password often won&rsquo;t work &mdash; you may need to sign in with a modern-authentication prompt or, in some cases, an app-specific password. Recent Sage 50 versions handle this, but an older version may need updating first. We can tell you in minutes whether your version is current.</p><p>Second, <strong>the new Outlook is Microsoft&rsquo;s direction of travel</strong>. Classic Outlook still works today and is the right fix now, but Microsoft has signalled it will eventually be retired. That&rsquo;s exactly why we often steer accounts teams towards the webmail (SMTP) route, or a proper review of how invoices leave the building &mdash; so a future Windows update doesn&rsquo;t stop your billing again. We&rsquo;d rather set it up once, honestly, than keep patching it.</p><p>Finally, if you run Sage across more than one PC and only some machines can email, the fault is usually local to each machine&rsquo;s Outlook &mdash; not the company data. That&rsquo;s a different issue from <a href="/sage-50-multi-user-cannot-connect/">Sage 50 multi-user not connecting</a>, which is about the shared data folder rather than email.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Prefer we just sort it? How we help">
+    <section id="s6" class="section section--alt" aria-label="Prefer we just sort it? How we help">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/06 &mdash; HOW WE HELP</p>
         <h2 class="section-title" data-title>Prefer we just sort it? How we help<span class="title-underline"></span></h2>
@@ -815,11 +815,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p>Related help: <a href="/how-to-go-back-to-classic-outlook/">How to go back to classic Outlook</a>, <a href="/sage-50-wont-print-to-pdf-windows-11/">Sage 50 won&rsquo;t print to PDF on Windows 11</a>, <a href="/sage-50-multi-user-cannot-connect/">Sage 50 multi-user cannot connect</a>, <a href="/quickbooks-sage-running-slow/">Sage or QuickBooks running slow</a>, <a href="/it-support-for-accountants/">IT support for accountants</a> and <a href="/outlook-stuck-in-outbox/">Outlook stuck in outbox</a>.</p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/how-to-go-back-to-classic-outlook/">How to go back to classic Outlook</a><a href="/sage-50-wont-print-to-pdf-windows-11/">Sage 50 won&rsquo;t print to PDF on Windows 11</a><a href="/sage-50-multi-user-cannot-connect/">Sage 50 multi-user cannot connect</a><a href="/quickbooks-sage-running-slow/">Sage or QuickBooks running slow</a><a href="/it-support-for-accountants/">IT support for accountants</a><a href="/outlook-stuck-in-outbox/">Outlook stuck in outbox</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1115,7 +1118,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

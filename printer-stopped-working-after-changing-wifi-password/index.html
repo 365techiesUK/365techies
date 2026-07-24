@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -709,8 +709,8 @@
         <ul class="page-hero__chips mono"><li>&#9679; No fix, no fee remote help</li><li>&#9679; Family-run since 1995</li><li>&#9679; Rated 4.9 on Google</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="Every device re-joined except the printer — here's why">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; WHAT'S GOING ON</a><a href="#s2">02 &mdash; THE EASY WAY</a><a href="#s3">03 &mdash; NO SCREEN?</a><a href="#s4">04 &mdash; THE GOTCHA</a><a href="#s5">05 &mdash; IF A SCAM STARTED THIS</a><a href="#s6">06 &mdash; STRAIGHT TALK</a></nav>
+    <section id="s1" class="section" aria-label="Every device re-joined except the printer — here's why">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; WHAT'S GOING ON</p>
         <h2 class="section-title" data-title>Every device re-joined except the printer — here's why<span class="title-underline"></span></h2>
@@ -719,45 +719,45 @@
     </section>
     <section class="section" aria-label="Fix this now with remote support">
       <div class="wrap" style="max-width:860px;margin:0 auto">
-        <div data-reveal style="border:1px solid rgba(0,206,27,0.35);background:rgba(0,206,27,0.06);border-radius:16px;padding:1.6rem 1.8rem;text-align:center">
+        <div class="callout callout--good callout--center" data-reveal>
           <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// NEED THIS FIXED RIGHT NOW?</p>
-          <p style="font-size:1.08rem;margin:0 0 1.1rem">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
-          <p style="margin:0;display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap">
+          <p class="callout__lede">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
+          <p class="callout__row">
             <a class="button primary" href="/sos/">Start SOS Remote Support</a>
             <a class="button secondary" href="tel:+441202775566">Call 01202 775566</a>
           </p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Printers with a screen: re-run the wireless setup wizard">
+    <section id="s2" class="section section--alt" aria-label="Printers with a screen: re-run the wireless setup wizard">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/02 &mdash; THE EASY WAY</p>
         <h2 class="section-title" data-title>Printers with a screen: re-run the wireless setup wizard<span class="title-underline"></span></h2>
 <p>If your printer has a touchscreen, or a small display with arrow buttons, it can take the new password directly. Look in its settings for something called <strong>Wireless Setup Wizard</strong>, <strong>WiFi Setup</strong> or <strong>Network Setup</strong> — the exact name and menu position move between makes, models and even firmware versions, so hunt for the word "wireless" rather than following a rigid click-path. The wizard scans for nearby networks; choose yours — it will be the same name as before, since only the password changed — and type the new password.</p><p>Two things trip people up here. First, WiFi passwords are case-sensitive and printer keyboards are fiddly: a lowercase l, a capital I and the digit 1 look near-identical on a small screen, as do 0 and O. If it fails once, don't assume the method is wrong — re-type it slowly. Second, once the printer re-joins, the jobs that failed earlier are often still jammed in the queue. Open the print queue on your computer, cancel anything sitting there, and send a fresh test page. If the printer joins the network but your computer still shows it offline, see the printing-versus-scanning section below — that's usually an address problem, not a password one.</p>
       </div>
     </section>
-    <section class="section" aria-label="Button-only printers: WPS, or a temporary USB cable">
+    <section id="s3" class="section" aria-label="Button-only printers: WPS, or a temporary USB cable">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; NO SCREEN?</p>
         <h2 class="section-title" data-title>Button-only printers: WPS, or a temporary USB cable<span class="title-underline"></span></h2>
 <p>Plenty of budget printers have no screen at all — just a WiFi light and a couple of buttons. You have two routes.</p><p><strong>WPS</strong> is the quickest, if your router supports it: press the WPS button on the router, then within a couple of minutes press the WiFi (or WPS) button on the printer, and the two exchange the new password automatically — no typing. The honest caveats: some broadband routers ship with WPS switched off, some have dropped it entirely for security reasons, and the exact button-press — tap versus hold, which light should flash — varies by printer, so a glance at the quick-start leaflet or the maker's website helps.</p><p><strong>The USB route</strong> is the reliable fallback. Connect the printer to your computer with an ordinary USB printer cable, then run the manufacturer's own setup app — HP, Epson, Canon and Brother all offer one as a free download from their official support sites — and use its wireless setup option to send the new password to the printer over the cable. Once it's on the WiFi, unplug the cable.</p><p>If the printer seems stuck in a sulk whatever you try, most models let you reset just their <em>network</em> settings to factory and join fresh — often the cleanest cure for a wedged connection.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Printing works again — so why is scanning still broken?">
+    <section id="s4" class="section section--alt" aria-label="Printing works again — so why is scanning still broken?">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/04 &mdash; THE GOTCHA</p>
         <h2 class="section-title" data-title>Printing works again — so why is scanning still broken?<span class="title-underline"></span></h2>
 <p>This is the bit that catches almost everyone. Printing and scanning travel different roads. When you print, your computer goes looking for the printer. When you scan — especially scan-to-computer from the printer's own buttons — the software relies on a saved registration, and that registration often records the printer's network address. Re-joining the WiFi can hand the printer a <strong>new</strong> address, so printing recovers while the scan side quietly points at the old one.</p><p>The fix is re-registration, not repair. Re-run the scan setup in the manufacturer's app — each maker has its own scan utility, and its name moves between versions, so look for "scan" in their software rather than a specific title. Alternatively, remove the printer in your computer's settings and add it again, which refreshes both printing and scanning in one go. If you normally scan from the computer's side rather than the printer's buttons, that same remove-and-re-add usually sorts it too.</p><p>Nothing is faulty and no new hardware is needed — this is bookkeeping, not breakage. It's also why a printer can look "half fixed" for weeks: the half you use daily recovered, and the half you use monthly didn't.</p>
       </div>
     </section>
-    <section class="section" aria-label="Changed the password after a scam scare? Good — here's the full order">
+    <section id="s5" class="section" aria-label="Changed the password after a scam scare? Good — here's the full order">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; IF A SCAM STARTED THIS</p>
         <h2 class="section-title" data-title>Changed the password after a scam scare? Good — here's the full order<span class="title-underline"></span></h2>
 <p>A lot of people change their WiFi password straight after a scam phone call or an alarming pop-up, and it's a sensible instinct. But be honest with yourself about what it protects: it stops strangers joining your network, and that's all. It does <strong>not</strong> remove any remote-access software a caller talked you into installing, it doesn't change your email or banking passwords, and it doesn't undo anything that already happened on the computer itself.</p><p>If a scare kicked this off, the WiFi password is step three, not step one. Our order:</p><ol><li>Uninstall any remote-access program the caller had you download, and restart the computer.</li><li>Change your important account passwords, starting with email — it's the master key to everything else — ideally from a device the caller never touched.</li><li>Then the router and WiFi passwords (which is what stranded your printer).</li><li>Run a full malware scan, and keep an eye on bank and card statements for a couple of weeks.</li></ol><p>We've written a step-by-step guide for exactly this situation — <a href="/gave-a-scammer-remote-access/">what to do if you gave a scammer remote access</a> — and if you'd rather a human checked the machine over properly, that's a routine job for us, not an embarrassing one. And one thing before anything else: if you paid the caller, read out card details, or online banking was open while they were connected, call your bank first — dial 159, the anti-fraud number that safely connects you to your own bank — before you worry about the printer.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="When it's not worth fighting — and what we'd do">
+    <section id="s6" class="section section--alt" aria-label="When it's not worth fighting — and what we'd do">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/06 &mdash; STRAIGHT TALK</p>
         <h2 class="section-title" data-title>When it's not worth fighting — and what we'd do<span class="title-underline"></span></h2>
@@ -765,11 +765,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p>Related help: <a href="/printer-support/">Printer support</a> · <a href="/printer-wont-connect-after-changing-broadband/">Printer won't connect after changing broadband</a> · <a href="/gave-a-scammer-remote-access/">Gave a scammer remote access?</a> · <a href="/remote-support/">Remote support</a></p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/printer-support/">Printer support</a><a href="/printer-wont-connect-after-changing-broadband/">Printer won't connect after changing broadband</a><a href="/gave-a-scammer-remote-access/">Gave a scammer remote access?</a><a href="/remote-support/">Remote support</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1057,7 +1060,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

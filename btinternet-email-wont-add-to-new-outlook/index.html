@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -767,8 +767,8 @@
         <ul class="page-hero__chips mono"><li>&#9679; Trading since 1995</li><li>&#9679; 4.9-star Google rating</li><li>&#9679; No fix, no fee</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="The correct BT Internet settings for the new Outlook">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; THE QUICK ANSWER</a><a href="#s2">02 &mdash; MANUAL SETUP</a><a href="#s3">03 &mdash; PASSWORD REJECTED</a><a href="#s4">04 &mdash; LEFT BT BROADBAND?</a><a href="#s5">05 &mdash; NEW VS CLASSIC</a><a href="#s6">06 &mdash; GET OUR HELP</a></nav>
+    <section id="s1" class="section" aria-label="The correct BT Internet settings for the new Outlook">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; THE QUICK ANSWER</p>
         <h2 class="section-title" data-title>The correct BT Internet settings for the new Outlook<span class="title-underline"></span></h2>
@@ -777,45 +777,45 @@
     </section>
     <section class="section" aria-label="Fix this now with remote support">
       <div class="wrap" style="max-width:860px;margin:0 auto">
-        <div data-reveal style="border:1px solid rgba(0,206,27,0.35);background:rgba(0,206,27,0.06);border-radius:16px;padding:1.6rem 1.8rem;text-align:center">
+        <div class="callout callout--good callout--center" data-reveal>
           <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// NEED THIS FIXED RIGHT NOW?</p>
-          <p style="font-size:1.08rem;margin:0 0 1.1rem">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
-          <p style="margin:0;display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap">
+          <p class="callout__lede">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
+          <p class="callout__row">
             <a class="button primary" href="/sos/">Start SOS Remote Support</a>
             <a class="button secondary" href="tel:+441202775566">Call 01202 775566</a>
           </p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Adding it by hand in the new Outlook">
+    <section id="s2" class="section section--alt" aria-label="Adding it by hand in the new Outlook">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/02 &mdash; MANUAL SETUP</p>
         <h2 class="section-title" data-title>Adding it by hand in the new Outlook<span class="title-underline"></span></h2>
 <p>The trap with the new Outlook is that it wants to add your address for you. You type btinternet.com, it phones home to work out the servers, and if it guesses wrong it either loops on the password or throws a vague &lsquo;something went wrong&rsquo;. The cure is to steer it into a manual IMAP setup instead.</p><p>Open <strong>Settings &rarr; Accounts &rarr; Email accounts &rarr; Add account</strong> (or use the &lsquo;Add account&rsquo; prompt on first run). Type your full btinternet.com address, then look for <strong>Advanced setup</strong> or the option to choose the account type yourself, and pick <strong>IMAP</strong>. The new Outlook will usually try auto-config first; if it can&rsquo;t connect, it shows the IMAP and SMTP boxes for you to fill in with the details above.</p><p>Enter mail.btinternet.com for both servers, ports 993 (in) and 465 (out), SSL/TLS on for each, your full address as the username and your BT email password. Let it test the connection. Follow the numbered steps further down if you&rsquo;d like to go through it click by click.</p>
       </div>
     </section>
-    <section class="section" aria-label="Why the password keeps getting rejected">
+    <section id="s3" class="section" aria-label="Why the password keeps getting rejected">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; PASSWORD REJECTED</p>
         <h2 class="section-title" data-title>Why the password keeps getting rejected<span class="title-underline"></span></h2>
 <p>Nine times out of ten, a &lsquo;rejected&rsquo; password isn&rsquo;t actually wrong &mdash; it&rsquo;s a misunderstanding about which password Outlook wants. A few things to rule out:</p><ul><li><strong>Which password &mdash; and whether two-step verification is on.</strong> For most BT mailboxes your normal BT email password is the one to type, and there&rsquo;s nothing extra to generate. The exception is if you&rsquo;ve switched on BT&rsquo;s two-step verification: an email app can&rsquo;t answer the security prompt, so BT has you generate an app-specific password in your BT account&rsquo;s security settings to use in Outlook instead.</li><li><strong>BT ID vs email password.</strong> The password for your wider My BT / BT ID login isn&rsquo;t always the same as your email mailbox password. Outlook needs the one for the email address itself.</li><li><strong>Test it in webmail first.</strong> Sign in at BT&rsquo;s webmail in a browser with the exact password. If it fails there too, the password &mdash; not Outlook &mdash; is the problem, and you can reset it on BT&rsquo;s site.</li><li><strong>Recent change or security prompt.</strong> If you&rsquo;ve just changed the password, or BT is asking you to confirm a sign-in, settle that on BT&rsquo;s side before you try Outlook again.</li></ul><p>If Outlook keeps popping the password box even after all that, our page on <a href="/outlook-keeps-asking-for-password/">Outlook that keeps asking for a password</a> walks through the deeper causes.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Have you left BT broadband? Check your mailbox first">
+    <section id="s4" class="section section--alt" aria-label="Have you left BT broadband? Check your mailbox first">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/04 &mdash; LEFT BT BROADBAND?</p>
         <h2 class="section-title" data-title>Have you left BT broadband? Check your mailbox first<span class="title-underline"></span></h2>
 <p>This is the one almost everyone misses. If you&rsquo;ve switched away from BT broadband to another provider, BT changes the status of your btinternet.com mailbox &mdash; and that quietly breaks email apps.</p><p>When your BT broadband stops, BT gives you a short window (they quote 60 days) to move your email onto their paid <strong>Premium Mail</strong>. If you don&rsquo;t, the mailbox is downgraded to <strong>Basic</strong>, which is <em>webmail only</em> &mdash; you can read your email in a browser, but it can no longer be added to Outlook or any other app over IMAP. So the account looks perfectly fine online yet refuses to connect in Outlook, no matter how carefully you type the password.</p><p>BT currently charges around &pound;7.50 a month for Premium Mail, which restores app access. Whether that&rsquo;s worth paying is a fair question &mdash; if you&rsquo;d rather not stay tied to it, we can help you <a href="/email-migration/">move to an email address you fully own and control</a> and bring your old messages across. Either way, confirming whether your mailbox is Basic or Premium is the first thing to check if you&rsquo;ve recently left BT.</p>
       </div>
     </section>
-    <section class="section" aria-label="New Outlook or classic Outlook?">
+    <section id="s5" class="section" aria-label="New Outlook or classic Outlook?">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; NEW VS CLASSIC</p>
         <h2 class="section-title" data-title>New Outlook or classic Outlook?<span class="title-underline"></span></h2>
 <p>The &lsquo;new&rsquo; Outlook &mdash; the app Windows 11 now nudges everyone towards &mdash; is still catching up on adding third-party IMAP accounts like btinternet.com. We regularly see it refuse an account that classic Outlook takes without a murmur. If you&rsquo;re stuck, it&rsquo;s well worth trying the classic app.</p><p>You can usually switch by toggling <strong>&lsquo;New Outlook&rsquo;</strong> off (top-right), or by opening the classic Outlook that comes with your Microsoft 365 apps. In classic Outlook, choose manual setup, pick IMAP, and enter the same BT server details. Many people find the account adds cleanly there and then, and you can carry on using classic Outlook for as long as Microsoft supports it.</p><p>If the new Outlook throws a specific &lsquo;couldn&rsquo;t add your account&rsquo; message, see <a href="/outlook-cant-add-account-new-outlook/">new Outlook won&rsquo;t add an account</a>; if you&rsquo;d simply prefer the familiar layout, <a href="/how-to-go-back-to-classic-outlook/">going back to classic Outlook</a> is straightforward.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="When to let us sort it for you">
+    <section id="s6" class="section section--alt" aria-label="When to let us sort it for you">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/06 &mdash; GET OUR HELP</p>
         <h2 class="section-title" data-title>When to let us sort it for you<span class="title-underline"></span></h2>
@@ -823,11 +823,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p>Related help: <a href="/cant-send-btinternet-email-new-outlook/">Can&rsquo;t send BT Internet email in new Outlook</a>, <a href="/outlook-cant-add-account-new-outlook/">new Outlook won&rsquo;t add an account</a>, <a href="/outlook-keeps-asking-for-password/">Outlook keeps asking for your password</a>, <a href="/how-to-go-back-to-classic-outlook/">how to go back to classic Outlook</a>, <a href="/common-outlook-problems-and-fixes/">common Outlook problems &amp; fixes</a> and <a href="/email-support/">our email support</a>. Different provider? See <a href="/sky-email-wont-add-to-new-outlook/">Sky email won&rsquo;t add to new Outlook</a> or <a href="/plusnet-email-wont-add-to-new-outlook/">Plusnet email won&rsquo;t add to new Outlook</a>.</p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/cant-send-btinternet-email-new-outlook/">Can&rsquo;t send BT Internet email in new Outlook</a><a href="/outlook-cant-add-account-new-outlook/">new Outlook won&rsquo;t add an account</a><a href="/outlook-keeps-asking-for-password/">Outlook keeps asking for your password</a><a href="/how-to-go-back-to-classic-outlook/">how to go back to classic Outlook</a><a href="/common-outlook-problems-and-fixes/">common Outlook problems &amp; fixes</a><a href="/email-support/">our email support</a><a href="/sky-email-wont-add-to-new-outlook/">Sky email won&rsquo;t add to new Outlook</a><a href="/plusnet-email-wont-add-to-new-outlook/">Plusnet email won&rsquo;t add to new Outlook</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1127,7 +1130,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

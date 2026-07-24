@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -701,8 +701,8 @@
         <ul class="page-hero__chips mono"><li>&#9679; No fix, no fee</li><li>&#9679; Rated 4.9 on Google</li><li>&#9679; Trading since 1995</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="New mesh, vanished printer">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; THE SYMPTOM</a><a href="#s2">02 &mdash; THE CAUSES</a><a href="#s3">03 &mdash; GETTING CONNECTED</a><a href="#s4">04 &mdash; STAYING CONNECTED</a><a href="#s5">05 &mdash; THE HONEST BIT</a></nav>
+    <section id="s1" class="section" aria-label="New mesh, vanished printer">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; THE SYMPTOM</p>
         <h2 class="section-title" data-title>New mesh, vanished printer<span class="title-underline"></span></h2>
@@ -711,38 +711,38 @@
     </section>
     <section class="section" aria-label="Fix this now with remote support">
       <div class="wrap" style="max-width:860px;margin:0 auto">
-        <div data-reveal style="border:1px solid rgba(0,206,27,0.35);background:rgba(0,206,27,0.06);border-radius:16px;padding:1.6rem 1.8rem;text-align:center">
+        <div class="callout callout--good callout--center" data-reveal>
           <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// NEED THIS FIXED RIGHT NOW?</p>
-          <p style="font-size:1.08rem;margin:0 0 1.1rem">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
-          <p style="margin:0;display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap">
+          <p class="callout__lede">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
+          <p class="callout__row">
             <a class="button primary" href="/sos/">Start SOS Remote Support</a>
             <a class="button secondary" href="tel:+441202775566">Call 01202 775566</a>
           </p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Four things mesh does that printers hate">
+    <section id="s2" class="section section--alt" aria-label="Four things mesh does that printers hate">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/02 &mdash; THE CAUSES</p>
         <h2 class="section-title" data-title>Four things mesh does that printers hate<span class="title-underline"></span></h2>
 <p>Most home printers — even fairly recent ones — only have a 2.4GHz radio. A traditional router usually broadcasts 2.4GHz and 5GHz as two separately named networks, so you simply picked the 2.4 one. Mesh systems typically merge both bands under a single name and use band steering to decide, device by device, which band you get. Phones cope fine. Printers, with their cheap and often elderly WiFi chips, sometimes fumble the negotiation — they can see the network but fail to join, or fail silently partway through setup.</p><p>Second: addresses. When a printer drops off and rejoins — which happens more on mesh, as devices shuffle between nodes — it starts a fresh DHCP conversation and can come back on a different IP address. Your computer's printer driver still points at the old one, so the printer shows offline even though it's connected.</p><p>Third: some systems, particularly on guest or IoT networks, switch on client isolation — devices can reach the internet but can't see each other. A printer on an isolated network is invisible to every computer in the house.</p><p>Different brands handle all of this differently; our <a href="/mesh-wifi-systems-uk/">mesh WiFi systems guide</a> covers who does what.</p>
       </div>
     </section>
-    <section class="section" aria-label="Get the printer a clean 2.4GHz connection">
+    <section id="s3" class="section" aria-label="Get the printer a clean 2.4GHz connection">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; GETTING CONNECTED</p>
         <h2 class="section-title" data-title>Get the printer a clean 2.4GHz connection<span class="title-underline"></span></h2>
 <p>Start with the band problem, because it blocks everything else. Open your mesh app and look for a setting that gives you a separate 2.4GHz network — brands call it an IoT network, a smart-home network, or simply a 2.4GHz SSID, and the names move between app versions, so hunt for the idea rather than an exact menu path. If your system offers one, join the printer to it and you've sidestepped band steering entirely.</p><p>No way to split the bands? Two honest workarounds. Some systems can temporarily pause the 5GHz band for a few minutes while a stubborn device joins — check your app's settings or the maker's help pages. And because many printer setup apps copy the WiFi connection your phone is currently using, it helps if the phone is on 2.4GHz at that moment; 2.4GHz carries further than 5GHz, so stepping well away from the nearest node makes the phone more likely to fall back to it. Clunky, but it works surprisingly often.</p><p>If you're setting the whole system up fresh, doing things in the right order avoids most of this pain — our <a href="/mesh-wifi-setup-guide/">mesh WiFi setup guide</a> covers the sequence.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Pin the address so it stays found">
+    <section id="s4" class="section section--alt" aria-label="Pin the address so it stays found">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/04 &mdash; STAYING CONNECTED</p>
         <h2 class="section-title" data-title>Pin the address so it stays found<span class="title-underline"></span></h2>
 <p>Once the printer connects, two settings stop the weekly “offline” drama. First, give it a fixed address: in your mesh app, look for DHCP reservation (sometimes called a reserved or static IP) and pin the printer to one address. Second, on each computer, add the printer by its IP address rather than letting Windows or macOS discover it by name — the add-printer screens on both accept an IP directly, and the standard connection types (IPP, or the raw print port some drivers list as 9100) work fine over mesh. With a reserved address, the driver never chases a moving target again.</p><p>Also check isolation. If the printer sits on a guest network, move it — guest networks commonly isolate devices from each other by design. If your system has a client, device or AP isolation toggle, make sure it's off for the network the printer lives on.</p><p>Finally, rule out plain weak signal, which mimics all of the above. A printer in a far corner behind a sofa struggles regardless of settings — run our free <a href="/wifi-signal-test/">WiFi signal test</a> on a phone held next to the printer to see what it's actually receiving.</p>
       </div>
     </section>
-    <section class="section" aria-label="When to stop fighting the WiFi">
+    <section id="s5" class="section" aria-label="When to stop fighting the WiFi">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; THE HONEST BIT</p>
         <h2 class="section-title" data-title>When to stop fighting the WiFi<span class="title-underline"></span></h2>
@@ -750,11 +750,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p><strong>Related guides:</strong> <a href="/mesh-wifi-setup-guide/">Mesh WiFi setup guide</a> · <a href="/mesh-wifi-systems-uk/">Mesh WiFi systems UK</a> · <a href="/why-does-my-printer-keep-disconnecting/">Why does my printer keep disconnecting?</a> · <a href="/wifi-troubleshooting/">WiFi troubleshooting</a> · <a href="/wifi-signal-test/">WiFi signal test</a> · <a href="/printer-support/">Printer support</a></p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/mesh-wifi-setup-guide/">Mesh WiFi setup guide</a><a href="/mesh-wifi-systems-uk/">Mesh WiFi systems UK</a><a href="/why-does-my-printer-keep-disconnecting/">Why does my printer keep disconnecting?</a><a href="/wifi-troubleshooting/">WiFi troubleshooting</a><a href="/wifi-signal-test/">WiFi signal test</a><a href="/printer-support/">Printer support</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1038,7 +1041,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

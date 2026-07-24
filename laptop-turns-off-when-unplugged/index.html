@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -767,43 +767,43 @@
         <ul class="page-hero__chips mono"><li>&#9679; No fix, no fee</li><li>&#9679; Free local collection</li><li>&#9679; 4.9 stars on Google</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="Why your laptop dies the moment you unplug it">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; WHAT&rsquo;S HAPPENING</a><a href="#s2">02 &mdash; RULE OUT THE CHARGER</a><a href="#s3">03 &mdash; CHECK THE BATTERY REPORT</a><a href="#s4">04 &mdash; WHICH FAULT IS IT?</a><a href="#s5">05 &mdash; REPLACE BATTERY OR LAPTOP?</a><a href="#s6">06 &mdash; HOW WE FIX IT</a></nav>
+    <section id="s1" class="section" aria-label="Why your laptop dies the moment you unplug it">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; WHAT&rsquo;S HAPPENING</p>
         <h2 class="section-title" data-title>Why your laptop dies the moment you unplug it<span class="title-underline"></span></h2>
 <p>If your laptop only works when plugged in and turns off the instant you unplug it, the battery has stopped supplying usable power &mdash; even if the on-screen percentage still shows a charge. The mains adapter is running the machine directly, so a failing battery stays hidden until the moment you pull the plug and there&rsquo;s nothing left to take over.</p><p>In almost every case, one of three things is behind it:</p><ul><li><strong>The battery is worn out</strong> &mdash; it has reached the end of its useful life and can no longer hold a real charge. Batteries are consumables, so this is completely normal after a few years of daily use.</li><li><strong>Windows can&rsquo;t see the battery</strong> &mdash; a detection or driver fault, a loose internal connector, or a battery so flat the laptop can&rsquo;t read it.</li><li><strong>The charging circuit has failed</strong> &mdash; a fault on the charging port or motherboard means the battery never truly charges, however healthy it is.</li></ul><p>The good news: two of those three are cheap fixes, and none of them automatically means a new laptop. The rest of this page helps you tell which one you&rsquo;re looking at &mdash; and it&rsquo;s all safe to check yourself at home.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="First, rule out the charger and a loose connection">
+    <section id="s2" class="section section--alt" aria-label="First, rule out the charger and a loose connection">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/02 &mdash; RULE OUT THE CHARGER</p>
         <h2 class="section-title" data-title>First, rule out the charger and a loose connection<span class="title-underline"></span></h2>
 <p>Before you blame the battery, spend two minutes ruling out the simple things &mdash; a surprising number of &ldquo;dead battery&rdquo; laptops just have a charger or connection problem.</p><ul><li><strong>Check the charger itself.</strong> Look for a light on the power brick, and make sure you&rsquo;re using the correct adapter for your model. An underpowered or generic charger can run the laptop but never properly charge the battery.</li><li><strong>Wiggle-test the charging port.</strong> If the charge light flickers when you move the cable, or the plug feels loose in the socket, the port or cable may be at fault rather than the battery.</li><li><strong>Look at the Windows battery icon.</strong> &ldquo;Plugged in, charging&rdquo; is healthy; &ldquo;plugged in, not charging&rdquo; or a red cross points to the battery or charging circuit; no battery icon at all points to a detection fault.</li><li><strong>Reseat a removable battery.</strong> If your laptop has a battery you can slide out, power down, remove it, hold the power button for 15 seconds, refit it and try again. Most modern laptops have sealed internal batteries, so skip this if yours doesn&rsquo;t.</li></ul><p>If a known-good charger fixes it, you&rsquo;re done. If the laptop still dies the moment it&rsquo;s unplugged, move on to the battery report below.</p>
       </div>
     </section>
-    <section class="section" aria-label="Check the battery report with powercfg">
+    <section id="s3" class="section" aria-label="Check the battery report with powercfg">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; CHECK THE BATTERY REPORT</p>
         <h2 class="section-title" data-title>Check the battery report with powercfg<span class="title-underline"></span></h2>
 <p>Windows has a built-in tool that tells you exactly how worn your battery is &mdash; with nothing to install. It&rsquo;s the most reliable way to separate a tired battery from everything else.</p><p>Plug the laptop in, then open <strong>Command Prompt</strong> or <strong>PowerShell as an administrator</strong> (right-click the Start button and choose the admin option) and run:</p><ul><li><strong>powercfg /batteryreport /output &quot;C:\battery-report.html&quot;</strong></li></ul><p>Open the file it creates (C:\battery-report.html) in any browser. In the <em>Installed batteries</em> section you&rsquo;ll see two figures that matter:</p><ul><li><strong>Design Capacity</strong> &mdash; how much energy the battery held when new.</li><li><strong>Full Charge Capacity</strong> &mdash; how much it can hold today.</li></ul><p>Divide the second by the first for a rough health percentage. A battery holding above about 80% of its design capacity is healthy; once it drops well below that you&rsquo;ll notice shorter run-time, and a battery that has collapsed to a small fraction of its original capacity is the classic cause of a laptop that dies the moment it&rsquo;s unplugged. The report also shows the <strong>cycle count</strong> and recent drains, which help confirm the picture.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Worn out, not detected, or a charging fault?">
+    <section id="s4" class="section section--alt" aria-label="Worn out, not detected, or a charging fault?">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/04 &mdash; WHICH FAULT IS IT?</p>
         <h2 class="section-title" data-title>Worn out, not detected, or a charging fault?<span class="title-underline"></span></h2>
 <p>Match what you&rsquo;ve found to one of these three, and you&rsquo;ll know roughly where you stand.</p><ul><li><strong>Worn-out battery.</strong> The report shows Full Charge Capacity far below Design Capacity, or a high cycle count, and Windows may have shown a &ldquo;consider replacing your battery&rdquo; notice. This is the most common cause and usually just needs a new battery.</li><li><strong>Battery not detected.</strong> Windows shows &ldquo;no battery is present&rdquo;, the battery icon is missing, or it reads 0% while plugged in. Sometimes this is only a driver glitch: in <strong>Device Manager</strong>, under <em>Batteries</em>, uninstall <em>Microsoft ACPI-Compliant Control Method Battery</em>, then use <em>Action &gt; Scan for hardware changes</em> (or reboot) to let Windows reinstall it. If it still isn&rsquo;t seen, the connector or the battery itself has likely failed.</li><li><strong>Charging-circuit fault.</strong> The battery reads as healthy but never charges, charges only at certain cable angles, or the laptop won&rsquo;t power on at all without mains. That points to the charging port or a fault on the motherboard, which needs a workshop rather than a new battery.</li></ul><p>If your laptop won&rsquo;t start even on the charger, that&rsquo;s a different fault &mdash; see our guide to a <a href="/laptop-wont-turn-on-no-lights/">laptop that won&rsquo;t turn on with no lights</a>. A grinding or <a href="/laptop-clicking-noise-wont-turn-on/">clicking noise on start-up</a> points at the hard drive instead.</p>
       </div>
     </section>
-    <section class="section" aria-label="The honest economics: new battery or new laptop?">
+    <section id="s5" class="section" aria-label="The honest economics: new battery or new laptop?">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; REPLACE BATTERY OR LAPTOP?</p>
         <h2 class="section-title" data-title>The honest economics: new battery or new laptop?<span class="title-underline"></span></h2>
 <p>A replacement battery is a consumable part, and on a laptop that&rsquo;s otherwise in good shape it&rsquo;s usually money well spent &mdash; you get your portability back for a fraction of the cost of a new machine. There&rsquo;s no scaremongering needed here: batteries simply wear out, and swapping one is routine work.</p><p>The maths changes with age. On a laptop that&rsquo;s only a couple of years old and still quick, a fresh battery is an easy call. On a machine that&rsquo;s six or seven years old, already slow, and out of warranty, it&rsquo;s often wiser to put that money toward a replacement instead &mdash; especially if the fault turns out to be the charging circuit rather than the battery.</p><p>If you&rsquo;re on the fence, our <a href="/repair-or-replace-advisor/">repair-or-replace advisor</a> walks you through it honestly, and a <a href="/hard-drive-upgrade/">quick SSD upgrade</a> alongside a new battery can make an older laptop feel new again. If replacement really is the sensible route, our <a href="/refurbished-laptops-dorset/">refurbished business-grade laptops</a> start from &pound;510 and come set up ready to go.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="How we fix it &mdash; and when to call us">
+    <section id="s6" class="section section--alt" aria-label="How we fix it &mdash; and when to call us">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/06 &mdash; HOW WE FIX IT</p>
         <h2 class="section-title" data-title>How we fix it &mdash; and when to call us<span class="title-underline"></span></h2>
@@ -811,11 +811,14 @@
       </div>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p>Related help: <a href="/laptop-wont-turn-on-no-lights/">Laptop won&rsquo;t turn on &mdash; no lights</a>, <a href="/laptop-clicking-noise-wont-turn-on/">Laptop clicking noise &amp; won&rsquo;t turn on</a>, <a href="/laptop-repair/">Laptop repair</a>, <a href="/repair-or-replace-advisor/">Repair or replace advisor</a>, <a href="/how-to-make-your-laptop-battery-last-longer/">Make your laptop battery last longer</a> and <a href="/refurbished-laptops-dorset/">Refurbished laptops in Dorset</a>.</p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/laptop-wont-turn-on-no-lights/">Laptop won&rsquo;t turn on &mdash; no lights</a><a href="/laptop-clicking-noise-wont-turn-on/">Laptop clicking noise &amp; won&rsquo;t turn on</a><a href="/laptop-repair/">Laptop repair</a><a href="/repair-or-replace-advisor/">Repair or replace advisor</a><a href="/how-to-make-your-laptop-battery-last-longer/">Make your laptop battery last longer</a><a href="/refurbished-laptops-dorset/">Refurbished laptops in Dorset</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1115,7 +1118,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>

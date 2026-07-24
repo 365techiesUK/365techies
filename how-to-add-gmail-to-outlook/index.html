@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=70" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=71" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -737,15 +737,14 @@
         <ul class="page-hero__chips mono"><li>&#9679; Classic Outlook</li><li>&#9679; Gmail + IMAP</li><li>&#9679; Set up in minutes</li></ul>
       </div>
     </section>
-
-    <section class="section" aria-label="Why Gmail keeps asking for your password">
+    <section id="s1" class="section" aria-label="Why Gmail keeps asking for your password">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">The short answer</p>
         <h2 class="section-title" data-title>Why Gmail keeps asking for your password<span class="title-underline"></span></h2>
 <p>When you add a Gmail account to <strong>classic Outlook</strong> by typing the settings in yourself, Google treats Outlook as a "less secure" third-party app and <strong>refuses your ordinary Gmail password</strong> - so Outlook asks for it again, and again, and again. It's not that you're getting it wrong; Google simply won't accept a normal password over a manual connection any more.</p><p>The answer is a <strong>Google App password</strong>: a special 16-character code you generate once, just for Outlook. You paste that in place of your usual password and Outlook connects straight away. To create one you first need Google's <strong>2-Step Verification</strong> switched on - App passwords don't exist until it is.</p><p>One shortcut worth knowing: if you add Gmail the <em>simple</em> way (choosing Google and letting a Google sign-in pop-up appear), that uses Google's secure sign-in and needs no app password at all. This page covers the manual IMAP route, which is what most people who hit the password loop are using. Before you start, make sure IMAP is switched on in Gmail: in Gmail on the web, go to Settings > See all settings > Forwarding and POP/IMAP, and under IMAP access choose Enable IMAP.</p>
       </div>
     </section>
-    <section class="section section--alt" aria-label="How to add Gmail to Outlook with an app password">
+    <section id="s2" class="section section--alt" aria-label="How to add Gmail to Outlook with an app password">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">Do these in order</p>
         <h2 class="section-title" data-title>How to add Gmail to Outlook with an app password<span class="title-underline"></span></h2>
@@ -754,10 +753,10 @@
     </section>
     <section class="section" aria-label="Free courses for beginners">
       <div class="wrap" style="max-width:860px;margin:0 auto">
-        <div data-reveal style="border:1px solid rgba(29,151,227,0.35);background:rgba(29,151,227,0.06);border-radius:16px;padding:1.6rem 1.8rem;text-align:center">
+        <div class="callout callout--info callout--center" data-reveal>
           <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// FREE &middot; LEARN SOMETHING NEW</p>
-          <p id="crs-band-txt" style="font-size:1.08rem;margin:0 0 1.1rem"><strong>11 free, friendly online courses</strong> for beginners and older learners &mdash; computer basics, email, WhatsApp, staying safe online and more. Short plain-English lessons, a printable certificate at the end, and never a sign-up form.</p>
-          <p style="margin:0;display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap">
+          <p id="crs-band-txt" class="callout__lede"><strong>11 free, friendly online courses</strong> for beginners and older learners &mdash; computer basics, email, WhatsApp, staying safe online and more. Short plain-English lessons, a printable certificate at the end, and never a sign-up form.</p>
+          <p class="callout__row">
             <a class="button primary" id="crs-band-go" href="/free-courses/">Browse the Free Courses</a>
             <a class="button secondary" href="/contact/?topic=computer-lessons">Ask About In-Person Lessons</a>
           </p>
@@ -766,11 +765,14 @@
       <script>(function(){try{var M=[{"k": "osc_progress_v1", "u": "/online-safety-course/", "t": "Staying Safe Online", "n": 6}, {"k": "crs_ai_for_beginners_course_v1", "u": "/ai-for-beginners-course/", "t": "AI, Without the Mystery", "n": 7}, {"k": "crs_whatsapp_course_for_beginners_v1", "u": "/whatsapp-course-for-beginners/", "t": "WhatsApp, Step by Step", "n": 7}, {"k": "crs_android_phone_course_for_beginners_v1", "u": "/android-phone-course-for-beginners/", "t": "Your Android Phone, Tamed", "n": 7}, {"k": "crs_online_banking_safely_course_v1", "u": "/online-banking-safely-course/", "t": "Online Banking, Safely", "n": 7}, {"k": "crs_video_calling_course_for_beginners_v1", "u": "/video-calling-course-for-beginners/", "t": "See Their Faces: Video Calling", "n": 6}, {"k": "crs_computer_basics_course_v1", "u": "/computer-basics-course/", "t": "Computer Basics, Without the Fear", "n": 7}, {"k": "crs_email_basics_course_v1", "u": "/email-basics-course/", "t": "Email, Comfortably", "n": 7}, {"k": "crs_nhs_app_course_v1", "u": "/nhs-app-course/", "t": "The NHS App, Gently", "n": 7}, {"k": "crs_digital_photos_course_v1", "u": "/digital-photos-course/", "t": "Your Photos, Safe and Sorted", "n": 6}, {"k": "crs_online_shopping_safely_course_v1", "u": "/online-shopping-safely-course/", "t": "Online Shopping, Safely", "n": 7}];var go=null,fin=null;for(var i=0;i<M.length;i++){var s=null;try{s=JSON.parse(localStorage.getItem(M[i].k)||"null")}catch(e){}if(!s)continue;if(s.m>0&&s.m<M[i].n&&!go){go=M[i];go.next=s.m+1}else if(s.m>=M[i].n&&!fin){fin=M[i]}}var tx=document.getElementById("crs-band-txt"),bt=document.getElementById("crs-band-go");if(!tx||!bt)return;if(go){tx.innerHTML="<strong>Welcome back!</strong> You&rsquo;re part-way through <strong>"+go.t+"</strong> &mdash; lesson "+go.next+" of "+go.n+" is ready when you are.";bt.href=go.u;bt.textContent="Continue where I left off \u2192";}else if(fin){tx.innerHTML="<strong>Welcome back!</strong> You finished <strong>"+fin.t+"</strong> \ud83c\udf89 &mdash; ready to pick your next free course?";bt.textContent="Pick my next course \u2192";}}catch(e){}})();</script>
     </section>
     <section class="section" aria-label="Related">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
-<p>Related help: <a href="/outlook-problems/">all Outlook problems</a> · <a href="/microsoft-365-support/">Microsoft 365 support</a> · <a href="/remote-it-support/">remote IT support</a> · <a href="/contact/">contact 365 Techies</a></p>
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/outlook-problems/">all Outlook problems</a><a href="/microsoft-365-support/">Microsoft 365 support</a><a href="/remote-it-support/">remote IT support</a><a href="/contact/">contact 365 Techies</a></div>
+        </div>
       </div>
     </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1058,7 +1060,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=21"></script>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
   <script src="/js/search.min.js?v=2026-07-24" defer></script>
