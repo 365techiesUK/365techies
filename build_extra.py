@@ -2434,6 +2434,46 @@ def wifi_optimizer():
           });
         }catch(e){}
 
+        /* ---------- upload test with LIVE progress: fetch can't observe upload bytes,
+           XHR can (upload.onprogress). Live figures are indicative - the network stack
+           buffers ahead so early readings flatter - but the FINAL saved figure is still
+           computed from total bytes / total time, exactly as before. Falls back to
+           fetch where XHR is unavailable. ---------- */
+        function upTest(o){
+          var t0=performance.now(), done=false, to=null;
+          function finish(ok){
+            if(done) return; done=true;
+            if(to) clearTimeout(to);
+            if(!ok){ o.onDone(null); return; }
+            var secs=(performance.now()-t0)/1000;
+            o.onDone(secs>0?Math.min(Math.round((o.bytes*8)/secs/1e6*10)/10,2000):0);
+          }
+          to=setTimeout(function(){ finish(false); },o.timeoutMs||20000);
+          var canXhr=false; try{ canXhr=typeof XMLHttpRequest!=='undefined'; }catch(e){}
+          if(canXhr){
+            try{
+              var xhr=new XMLHttpRequest();
+              xhr.open('POST','/api/up-sink.php');
+              xhr.timeout=o.timeoutMs||20000;
+              if(xhr.upload) xhr.upload.onprogress=function(ev){
+                if(done) return;
+                if(o.isCancelled&&o.isCancelled()){ try{ xhr.abort(); }catch(e){} return; }
+                var secs=(performance.now()-t0)/1000, sent=ev.loaded||0;
+                o.onLive(secs>0.15?Math.min((sent*8)/secs/1e6,2000):0, ev.total?sent/ev.total:0);
+              };
+              xhr.onload=function(){ finish(true); };
+              xhr.onerror=function(){ finish(false); };
+              xhr.onabort=function(){ finish(false); };
+              xhr.ontimeout=function(){ finish(false); };
+              xhr.send(o.body);
+              return;
+            }catch(e){}
+          }
+          fetch('/api/up-sink.php',{method:'POST',body:o.body,cache:'no-store'})
+            .then(function(){ finish(true); })
+            ['catch'](function(){ finish(false); });
+        }
+
         /* ---------- game sounds: tiny synth, opt-in, unlocked inside a tap ---------- */
         var snd={ctx:null,on:false};
         function sndInit(){
@@ -3550,23 +3590,23 @@ def wifi_optimizer():
             E.phase.textContent='\\u2026and the upload';
             E.tip.textContent='Uploads matter most for video calls.';
             E.unit.textContent='UP MBPS'; E.num.textContent='0'; qDial(0,'#8a6fe8');
-            var bytes=4000000, t0=performance.now(), body=null, upDone=false;
+            var bytes=4000000, body=null, lastScan=0;
             try{ body=new Uint8Array(bytes); }catch(e){}
             if(!body){ qResult(snap,dl,null); return; }
-            var upTO=setTimeout(function(){ if(!upDone&&!q.cancel){ upDone=true; qResult(snap,dl,null); } },20000);
-            fetch('/api/up-sink.php',{method:'POST',body:body,cache:'no-store'})
-              .then(function(){
-                clearTimeout(upTO);
-                if(q.cancel||upDone) return;
-                upDone=true;
-                var secs=(performance.now()-t0)/1000;
-                var ul=secs>0?(bytes*8)/secs/1e6:0;
-                ul=Math.min(Math.round(ul*10)/10,2000);
-                E.num.textContent=ul>=100?String(Math.round(ul)):ul.toFixed(1);
-                qDial(100,'#8a6fe8');
+            upTest({bytes:bytes,body:body,timeoutMs:20000,
+              isCancelled:function(){ return q.cancel; },
+              onLive:function(live,frac){
+                if(q.cancel) return;
+                E.num.textContent=live>=100?String(Math.round(live)):live.toFixed(1);
+                qDial(frac*100,'#8a6fe8');
+                var nowT=performance.now();
+                if(nowT-lastScan>320){ lastScan=nowT; sScan(frac); }
+              },
+              onDone:function(ul){
+                if(q.cancel) return;
+                if(ul!=null){ E.num.textContent=ul>=100?String(Math.round(ul)):ul.toFixed(1); qDial(100,'#8a6fe8'); }
                 qResult(snap,dl,ul);
-              })
-              ['catch'](function(){ clearTimeout(upTO); if(!q.cancel&&!upDone){ upDone=true; qResult(snap,dl,null); } });
+              }});
           }
           function qResult(snap,mbps,ul){
             var s=snap.off?0:snap.s;
@@ -3768,18 +3808,22 @@ def wifi_optimizer():
               if(st.cancel) return;
               N.phase.textContent='\u2026and the upload (the one that matters for going live)';
               N.unit.textContent='UP MBPS'; N.num.textContent='0'; nDial(0,'#8a6fe8');
-              var bytes=4000000, t0=performance.now(), body=null, fin=false;
+              var bytes=4000000, body=null;
               try{ body=new Uint8Array(bytes); }catch(e){}
               if(!body){ nResult(ping,down,0); return; }
-              var to=setTimeout(function(){ if(!fin){ fin=true; nResult(ping,down,0); } },20000);
-              fetch(UP2,{method:'POST',body:body,cache:'no-store'})
-                .then(function(){
-                  if(fin||st.cancel) return; fin=true; clearTimeout(to);
-                  var secs=(performance.now()-t0)/1000, up=secs>0?Math.min(Math.round((bytes*8)/secs/1e6*10)/10,2000):0;
+              upTest({bytes:bytes,body:body,timeoutMs:20000,
+                isCancelled:function(){ return st.cancel; },
+                onLive:function(live,frac){
+                  if(st.cancel) return;
+                  N.num.textContent=live>=100?String(Math.round(live)):live.toFixed(1);
+                  nDial(frac*100,'#8a6fe8');
+                },
+                onDone:function(ul){
+                  if(st.cancel) return;
+                  var up=ul==null?0:ul;
                   N.num.textContent=up>=100?String(Math.round(up)):up.toFixed(1); nDial(100,'#8a6fe8');
                   nResult(ping,down,up);
-                })
-                ['catch'](function(){ if(!fin&&!st.cancel){ fin=true; clearTimeout(to); nResult(ping,down,0); } });
+                }});
             }
           }
           function nResult(ping,down,up){
