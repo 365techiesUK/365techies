@@ -12943,7 +12943,7 @@ def repair_pages():
         return [(t, s) for _d, t, s in scored[:n]]
     wa_repair = (f' You can also <a href="{bp.WHATSAPP_LINK}" target="_blank" rel="noopener">send it on WhatsApp</a>.') if bp.WHATSAPP_NUMBER else ""
     for town, slug, nearby, it_slug in REPAIRS:
-        desc = f"Computer and laptop repair in {town} — no call-out fee, no-fix-no-fee, 12-month warranty. Virus removal and upgrades. Rated 4.9 on Google."
+        desc = f"Broken or slow computer in {town}? Free collection, 12-month warranty — and if we can't fix it, you pay nothing. Family-run since 1995 · 4.9 on Google."
         loc = bp.LOCAL_CONTENT.get(town, {})
         local_section = (f'''    <section class="section" aria-label="Local computer repair in {town}">
       <div class="wrap">
@@ -13042,7 +13042,7 @@ def repair_pages():
                              "description": "Free diagnosis, then a clear fixed quote. No call-out fee, no-fix-no-fee, and a 12-month warranty on every repair. Free local collection across Dorset."}
             return graph([crumb_sub(s, "Computer Repairs", "computer-repairs", f"Computer Repair {_town}"), webpage(s, f"Computer & Laptop Repair {_town}", _desc),
                           svc])
-        add(slug=slug, title=f"Computer & Laptop Repair {town} | No Call-Out Fee",
+        add(slug=slug, title=f"Computer & Laptop Repair {town} | No Fix, No Fee",
             desc=desc, og_title=f"Computer & Laptop Repair {town} | 365 Techies", schema=schema, content=content)
 repair_pages()
 

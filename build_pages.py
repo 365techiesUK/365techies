@@ -4975,8 +4975,8 @@ def repair_town_links():
 
 add(
  slug="computer-repairs",
- title="Computer Repair Bournemouth | No Fix No Fee, Free Collection",
- desc="Computer and laptop repairs in Bournemouth, Poole and Dorset — no-fix-no-fee, 12-month warranty, no call-out fee. Free local collection. Rated 4.9 on Google, since 1995.",
+ title="Computer & Laptop Repairs Dorset | No Fix, No Fee",
+ desc="Broken or slow computer? Free collection across Bournemouth, Poole & Dorset, a 12-month warranty on repairs — and if we can't fix it, you pay nothing. Family-run since 1995 · 4.9 on Google.",
  og_title="Computer Repairs Bournemouth | Laptop & PC Repairs",
  schema=lambda s: graph([
    crumb(s, "Computer Repairs"), webpage(s, "Computer Repairs", "Computer and laptop repairs in Bournemouth, Poole and Dorset."),
