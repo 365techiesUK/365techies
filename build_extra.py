@@ -2369,6 +2369,7 @@ def wifi_optimizer():
               else if(j&&j.error==='expired'){ psay('Your portal sign-in has expired \\u2014 sign in again at 365techies.co.uk/portal/ then come back.'); }
               else if(j&&j.error==='too_big'){ psay('This survey is too large to save (photo-heavy). Remove a photo or two and try again.'); }
               else if(j&&j.error==='slow_down'){ psay('One save every 30 seconds — give it a moment and press save again.'); }
+              else if(j&&j.error==='storage_full'){ psay('Our survey storage is full right now \\u2014 your survey is still safe on this device, and the 365 team has been alerted. Try again tomorrow or call 01202 775566.'); }
               else { psay('That didn\\u2019t save \\u2014 check you\\u2019re online, or call 01202 775566.'); }
             });
           });
@@ -20487,6 +20488,7 @@ def write_portal_page():
           else if (d && d.error === 'too_big') alert('That file is too large to store (photo-heavy). Remove a photo or two in the tool, re-export and try again.');
           else if (d && (d.error === 'bad_pack' || d.error === 'empty_survey')) alert('That file isn’t a usable survey - it needs at least one tested room. Export it fresh from the WiFi tool and try again.');
           else if (d && d.error === 'slow_down') alert('One save every 30 seconds - give it a moment and try again.');
+          else if (d && d.error === 'storage_full') alert('Our survey storage is full right now - your file is safe on your device. The 365 team has been alerted; try again tomorrow or call 01202 775566.');
           else alert('That didn’t save - try again shortly.');
         });
       };

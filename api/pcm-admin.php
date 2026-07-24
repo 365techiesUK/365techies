@@ -84,7 +84,24 @@ if (($_POST['do'] ?? '') === 'next') {
     $k=$_POST['key']??''; if (isset($db['customers'][$k])) { $db['customers'][$k]['next']=trim(substr((string)($_POST['next']??''),0,40)); save($DATA,$db); $msg="Next-service date updated."; }
 }
 if (($_POST['do'] ?? '') === 'del') {
-    $k=$_POST['key']??''; if (isset($db['customers'][$k])) { $n=$db['customers'][$k]['name']; unset($db['customers'][$k]); save($DATA,$db); $msg="Removed {$n}."; }
+    $k=$_POST['key']??'';
+    if (isset($db['customers'][$k])) {
+        $n=$db['customers'][$k]['name'];
+        // GDPR: the record's wifi index is the only map to their stored survey packs
+        // (room photos inside, api/pcm-wifi-<24hex>.json) - unlink them before the index
+        // goes. Id re-validated so a tampered index can't reach outside the pattern.
+        $wl = $db['customers'][$k]['wifi'] ?? array();
+        foreach ((is_array($wl) ? $wl : array()) as $w) {
+            $wid = (string)($w['id'] ?? '');
+            if (preg_match('/^[a-f0-9]{24}$/', $wid)) @unlink(__DIR__ . '/pcm-wifi-' . $wid . '.json');
+        }
+        unset($db['customers'][$k]);
+        // their web sessions and SOS screenshots go too, matching staffdel in pcm-booking.php
+        if (isset($db['websessions'])) foreach ($db['websessions'] as $wk=>$wv) if (($wv['key'] ?? '') === $k) unset($db['websessions'][$wk]);
+        save($DATA,$db);
+        foreach ((glob(__DIR__ . '/pcm-sos-' . substr(hash('sha256', $k), 0, 12) . '-*.jpg') ?: array()) as $f) @unlink($f);
+        $msg="Removed {$n}.";
+    }
 }
 // approve a signed-in booking account as this Pro customer: promote the booking identity's
 // record to Pro (that's the record the customer's app holds a key for), copy the customer's
@@ -277,7 +294,7 @@ th{color:#9fb5d3;font-weight:600;font-size:.75rem;text-transform:uppercase;lette
     <?php endif; ?>
     <?php $shOn = intval($c['shield_ts']??0) > 0 && (time()-intval($c['shield_ts']??0)) < 900; ?>
     <form method=post class=inline><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=shield><input type=hidden name=key value="<?=h($key)?>"><button class=ghost title="About to ring them? Their app will say to expect a caller with this code - proves it's really us"><?= $shOn ? '📞 code '.h($c['shield_code']??'') : '📞 verify call' ?></button></form>
-    <form method=post class=inline onsubmit="return confirm('Remove this customer and all their machines?')"><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=del><input type=hidden name=key value="<?=h($key)?>"><button class=warn>×</button></form>
+    <form method=post class=inline onsubmit="return confirm('Remove this customer, all their machines, and their stored WiFi surveys and screenshots?')"><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=del><input type=hidden name=key value="<?=h($key)?>"><button class=warn>×</button></form>
   </td>
 </tr>
 <?php endforeach; if(!$cust) echo '<tr><td colspan=6 style="color:#9fb5d3;padding:2rem;text-align:center">No customers yet — add your first above.</td></tr>'; ?>

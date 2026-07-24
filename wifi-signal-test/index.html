@@ -2282,6 +2282,7 @@
               else if(j&&j.error==='expired'){ psay('Your portal sign-in has expired \u2014 sign in again at 365techies.co.uk/portal/ then come back.'); }
               else if(j&&j.error==='too_big'){ psay('This survey is too large to save (photo-heavy). Remove a photo or two and try again.'); }
               else if(j&&j.error==='slow_down'){ psay('One save every 30 seconds — give it a moment and press save again.'); }
+              else if(j&&j.error==='storage_full'){ psay('Our survey storage is full right now \u2014 your survey is still safe on this device, and the 365 team has been alerted. Try again tomorrow or call 01202 775566.'); }
               else { psay('That didn\u2019t save \u2014 check you\u2019re online, or call 01202 775566.'); }
             });
           });

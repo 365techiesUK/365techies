@@ -1159,7 +1159,8 @@ if ($action === 'staffview') {
 }
 
 // staff: delete a customer record (test keys, duplicates). Destructive - the portal
-// confirms with the customer's name first. Cleans their web sessions and SOS shots too.
+// confirms with the customer's name first. Cleans their web sessions, SOS shots and
+// stored WiFi survey packs too.
 if ($action === 'staffdel') {
     need_staff();
     $cid2 = preg_replace('/[^a-f0-9]/', '', (string)(isset($in['cid']) ? $in['cid'] : ''));
@@ -1170,6 +1171,14 @@ if ($action === 'staffdel') {
     }
     if ($found === '') { db_close($lk); fail('unknown_customer'); }
     $nm = (string)(isset($db['customers'][$found]['name']) ? $db['customers'][$found]['name'] : '');
+    // GDPR: the record's wifi index is the only map to their stored survey packs (room
+    // photos inside) - unlink each pcm-wifi-<24hex>.json before the index goes. Id
+    // re-validated so a tampered index can't reach outside the pattern.
+    $wifiL = isset($db['customers'][$found]['wifi']) && is_array($db['customers'][$found]['wifi']) ? $db['customers'][$found]['wifi'] : array();
+    foreach ($wifiL as $wfx) {
+        $wid = (string)(isset($wfx['id']) ? $wfx['id'] : '');
+        if (preg_match('/^[a-f0-9]{24}$/', $wid)) @unlink(__DIR__ . '/pcm-wifi-' . $wid . '.json');
+    }
     unset($db['customers'][$found]);
     if (isset($db['websessions'])) foreach ($db['websessions'] as $wk => $wv) if ((isset($wv['key']) ? $wv['key'] : '') === $found) unset($db['websessions'][$wk]);
     db_save($db); db_close($lk);

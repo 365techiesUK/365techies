@@ -1510,6 +1510,7 @@
           else if (d && d.error === 'too_big') alert('That file is too large to store (photo-heavy). Remove a photo or two in the tool, re-export and try again.');
           else if (d && (d.error === 'bad_pack' || d.error === 'empty_survey')) alert('That file isn’t a usable survey - it needs at least one tested room. Export it fresh from the WiFi tool and try again.');
           else if (d && d.error === 'slow_down') alert('One save every 30 seconds - give it a moment and try again.');
+          else if (d && d.error === 'storage_full') alert('Our survey storage is full right now - your file is safe on your device. The 365 team has been alerted; try again tomorrow or call 01202 775566.');
           else alert('That didn’t save - try again shortly.');
         });
       };
