@@ -761,6 +761,19 @@
 <p>If your printer has <strong>disappeared from Windows 11 after an update</strong>, it is almost always still there &mdash; the update has broken the software link to it, not physically removed the printer. In the great majority of cases you can get it back by restarting the print spooler, re-adding the printer, or reinstalling its driver, and only rarely do you need to roll the update back.</p><p>First, work out whether it is truly gone or just hidden. Windows 11 has two places that list printers: the modern <strong>Settings &rsquo; Bluetooth &amp; devices &rsquo; Printers &amp; scanners</strong> page, and the older <strong>Devices and Printers</strong> window. Sometimes a printer disappears from the new Settings page while it is still listed in the old window. To open that classic window reliably, press <strong>Windows key + R</strong>, then copy and paste this exact line and press Enter: <strong>shell:::{A8A91A66-3A7D-4424-8D24-04E180695C7A}</strong>. (On current Windows 11 builds the old &lsquo;control printers&rsquo; shortcut often just bounces you back to the Settings page, so we use this instead.) If your printer is listed in the classic window, it is installed and printing should still work &mdash; the Settings page simply isn&rsquo;t showing it, which points to a software glitch rather than a lost printer.</p><p>It also matters whether your printer is <strong>plugged in by USB cable</strong> or connected <strong>over your Wi-Fi or network</strong>. If it went missing after a house move or a new router rather than an update, the cause is different &mdash; see our guides for the <a href="/printer-wont-connect-to-bt-smart-hub/">BT Smart Hub</a>, <a href="/printer-wont-connect-to-sky-router/">Sky router</a>, <a href="/printer-wont-connect-to-ee-smart-hub/">EE Smart Hub</a> and <a href="/printer-wont-connect-after-moving-house/">after moving house</a>.</p>
       </div>
     </section>
+    <section class="section section--alt" aria-label="At a glance">
+      <div class="wrap" data-reveal>
+        <div class="section-head"><h2 class="section-title section-title--center">At a glance<span class="title-underline title-underline--center"></span></h2></div>
+        <div class="price-table-wrap"><table class="price-table price-table--facts"><tbody>
+              <tr><th scope="row">Is the printer really gone?</th><td>Almost never &mdash; the update breaks the software link, and the printer is usually still installed.</td></tr>
+              <tr><th scope="row">Most common cause</th><td>The update replaced or removed the printer&rsquo;s driver, or left the Print Spooler service stopped.</td></tr>
+              <tr><th scope="row">DIY first step</th><td>Restart the Print Spooler (services.msc) &mdash; a 30-second fix that clears a large share of cases.</td></tr>
+              <tr><th scope="row">Can it be fixed remotely?</th><td>Yes &mdash; most printer-after-update problems are fixed in one short remote session, often the same day.</td></tr>
+              <tr><th scope="row">Will I lose my files?</th><td>No &mdash; clearing the print queue or reinstalling a driver doesn&rsquo;t touch your documents; only a full System Restore needs a backup first.</td></tr>
+              <tr><th scope="row">When to call us</th><td>If the spooler restart and re-adding haven&rsquo;t worked &mdash; call 01202 775566; no fix, no fee.</td></tr>
+            </tbody></table></div>
+      </div>
+    </section>
     <section class="section" aria-label="Fix this now with remote support">
       <div class="wrap" style="max-width:860px;margin:0 auto">
         <div class="callout callout--good callout--center" data-reveal>

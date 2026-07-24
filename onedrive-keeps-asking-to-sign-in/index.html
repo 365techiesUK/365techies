@@ -723,6 +723,19 @@
 <p>You put your password in, OneDrive settles down — and then, an hour or a day later, the "Sign in" box is back. If OneDrive keeps asking you to sign in on Windows 11, you're stuck in what's usually a <strong>credential loop</strong>, and it nearly always has one of five causes. We'll walk through the fixes in the order that sorts the most machines first.</p><ul><li><strong>Stale cached credentials</strong> — Windows keeps handing OneDrive an old saved sign-in that Microsoft's servers no longer accept.</li><li><strong>Two accounts fighting</strong> — a work and a personal Microsoft account both trying to hold the same seat.</li><li><strong>Expired security tokens</strong> — especially on work accounts, where the organisation's security policy can force regular re-authentication.</li><li><strong>A corrupted OneDrive install.</strong></li><li><strong>A wrong clock</strong> — sign-in tokens are time-sensitive, so a drifting PC clock quietly breaks them.</li></ul><p>One reassurance before you touch anything: everything already synced to OneDrive is safe on Microsoft's servers. A sign-in loop pauses new changes syncing; it doesn't delete a thing. For other sync misbehaviour beyond sign-in, our wider <a href="/onedrive-problems/">OneDrive problems guide</a> covers the rest.</p>
       </div>
     </section>
+    <section class="section section--alt" aria-label="At a glance">
+      <div class="wrap" data-reveal>
+        <div class="section-head"><h2 class="section-title section-title--center">At a glance<span class="title-underline title-underline--center"></span></h2></div>
+        <div class="price-table-wrap"><table class="price-table price-table--facts"><tbody>
+              <tr><th scope="row">Most common cause</th><td>A stale cached credential &mdash; Windows keeps re-serving an old sign-in that Microsoft&rsquo;s servers no longer accept.</td></tr>
+              <tr><th scope="row">DIY first step</th><td>Quit OneDrive, remove the &ldquo;OneDrive Cached Credential&rdquo; entries in Credential Manager, restart and sign in once.</td></tr>
+              <tr><th scope="row">Will I lose my files?</th><td>No &mdash; unlinking or resetting only breaks the sync link; just don&rsquo;t delete the local OneDrive folder.</td></tr>
+              <tr><th scope="row">Work account keeps signing out?</th><td>Often deliberate &mdash; organisation security policies expire work sessions on a schedule, so it isn&rsquo;t a fault on your PC.</td></tr>
+              <tr><th scope="row">When to call us</th><td>If the loop survives clearing credentials, unlinking and relinking, a reset and a second-account check.</td></tr>
+              <tr><th scope="row">Can it be fixed remotely?</th><td>Yes &mdash; we connect, watch the loop happen and fix the real cause, no fix, no fee.</td></tr>
+            </tbody></table></div>
+      </div>
+    </section>
     <section id="s2" class="section section--alt" aria-label="Sign out properly and clear the cached credentials">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/02 &mdash; FIX 1</p>

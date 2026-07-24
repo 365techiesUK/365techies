@@ -13,6 +13,7 @@ from build_pages import (add, graph, crumb, webpage, service, faqpage,
                          SIGGEN_TOOL, SSLCHECK_TOOL, DOMEXP_TOOL, SOLARCALC_TOOL, AVTEST_TOOL, VBUILDER_TOOL, PCBUILD_TOOL, TOOLS, tool_cards, tools_strip, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
 from build_local import make_customer
 from new_pages_data import NEW_PAGES
+from at_a_glance_data import AT_A_GLANCE
 from latitude_pages_data import LATITUDE_PAGES, LATITUDE_COMPARE_TABLES
 from optiplex_pages_data import OPTIPLEX_PAGES, OPTIPLEX_COMPARE_TABLES
 from legacy_dell_data import LEGACY_DELL_PAGES
@@ -12202,7 +12203,7 @@ def repair_pages():
                f'Computer &amp; laptop repair in <em class="grad grad--cyan">{town}</em>',
                bp.hero_trust(f"Slow, broken or playing up? We fix PCs and laptops for homes and businesses across {town} &mdash; virus removal, speed-ups, upgrades, data transfer and setup &mdash; with home visits, fast remote help and no call-out fee. Friendly, local and family-run since 1995."),
                cta1=("Book a Repair", "/book-a-collection/"), cta2=("Call 01202 775566", "tel:+441202775566"),
-               chips=["No call-out fee", "Home visits &amp; remote", "Rated 4.9 on Google"]),
+               trustbar=True),
           local_section,
           f'''    <section class="section" aria-label="Text us a photo">
       <div class="wrap">
@@ -16743,7 +16744,7 @@ def business_it_services(d):
       hero(bc_sub("Services", "/services/", f"Business IT Services {town}"), f"// {town.upper()} &middot; BUSINESS IT",
            d["h1"], lede,
            cta1=("Get a Free IT Review", "/contact/?topic=free-business-it-review"), cta2=("See Business Plans", "/business-it-support-subscriptions/"),
-           chips=["Windows specialists", "Family-run since 1995", "From &pound;24.38/mo per computer"]),
+           trustbar=True),
       f'''    <section class="section" aria-label="Managed IT services">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
@@ -17677,6 +17678,11 @@ def _related_block(cross_html):
     residue = re.sub(r'\b(and|or|our|the|a|if|for|see|also|too|page|pages|guide|guides|related|help|more)\b', ' ', residue, flags=re.I)
     if len(re.sub(r'[\s,.:;()’\'—-]', '', residue)) > 40:
         return None
+    labels = [re.sub(r'<[^>]+>', '', t).strip() for _, t in links]
+    # fragment-y anchor text ('Poole', 'how long they last') reads badly as a standalone
+    # card label — those pages keep their prose form
+    if any(len(l) < 10 for l in labels):
+        return None
     items = ''.join(f'<a href="{h}">{re.sub(r"<[^>]+>", "", t).strip()}</a>' for h, t in links)
     return f'''    <section class="section" aria-label="Related">
       <div class="wrap">
@@ -18027,9 +18033,11 @@ def build_new_page(d):
         _blocks.append(REFURB_SUPPORT_BAND)
         _blocks.append(_model_details_band(d['slug']))
         _blocks.append(_refurb_reserve_band(d['slug']))
-    # optional at-a-glance answer table (generalised _cmp_block: list of (label, value) rows)
-    if d.get('atAGlance'):
-        _ag_rows = "\n".join(f'              <tr><th scope="row">{l}</th><td>{v}</td></tr>' for l, v in d['atAGlance'])
+    # optional at-a-glance answer table (generalised _cmp_block: list of (label, value) rows;
+    # authored inline in the page dict or centrally in at_a_glance_data.py)
+    _ag_src = d.get('atAGlance') or AT_A_GLANCE.get(d['slug'])
+    if _ag_src:
+        _ag_rows = "\n".join(f'              <tr><th scope="row">{l}</th><td>{v}</td></tr>' for l, v in _ag_src)
         _ag = f'''    <section class="section section--alt" aria-label="At a glance">
       <div class="wrap" data-reveal>
         <div class="section-head"><h2 class="section-title section-title--center">At a glance<span class="title-underline title-underline--center"></span></h2></div>
