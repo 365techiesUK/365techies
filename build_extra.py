@@ -885,6 +885,7 @@ def wifi_optimizer():
       <div class="wq" id="wq" hidden role="dialog" aria-modal="true" aria-label="Room-by-room WiFi survey">
         <div class="wq__glow" aria-hidden="true"></div>
         <div class="wq__top">
+          <button type="button" class="wq__x wq__back" id="wq-back" aria-label="Back to the WiFi page">&#8592;&nbsp;Back</button>
           <span class="wq__count mono" id="wq-count">0 rooms</span>
           <span class="wq__rail" id="wq-rail" aria-label="Rooms tested so far"></span>
           <button type="button" class="wq__x" id="wq-snd" aria-pressed="false" aria-label="Game sounds on or off" title="Game sounds">&#128263;</button>
@@ -967,6 +968,7 @@ def wifi_optimizer():
       <div class="wq" id="wh" hidden role="dialog" aria-modal="true" aria-label="Site history and past reports">
         <div class="wq__glow" aria-hidden="true"></div>
         <div class="wq__top">
+          <button type="button" class="wq__x wq__back" id="wh-back" aria-label="Back to the WiFi page">&#8592;&nbsp;Back</button>
           <span class="wq__count mono" id="wh-count">History</span>
           <button type="button" class="wq__x wq__exit" id="wh-x" aria-label="Close history">&#10005;&nbsp;Exit</button>
         </div>
@@ -985,6 +987,7 @@ def wifi_optimizer():
       <div class="wq" id="wn" hidden role="dialog" aria-modal="true" aria-label="Signal Hunter - mobile speed map">
         <div class="wq__glow" aria-hidden="true"></div>
         <div class="wq__top">
+          <button type="button" class="wq__x wq__back" id="wn-back" aria-label="Back to the WiFi page">&#8592;&nbsp;Back</button>
           <span class="wq__count mono" id="wn-count">SIGNAL HUNTER</span>
           <span class="wq__rail" aria-hidden="true"></span>
           <button type="button" class="wq__x wq__exit" id="wn-x" aria-label="Close Signal Hunter">&#10005;&nbsp;Exit</button>
@@ -1332,6 +1335,14 @@ def wifi_optimizer():
       /* ===== room-quest overlay ===== */
       .wq{position:fixed;inset:0;z-index:1200;display:flex;flex-direction:column;background:radial-gradient(120% 90% at 50% 0%,#12244a 0%,#0b1220 55%,#070d1a 100%);color:#eef4fd;padding:max(.8rem,env(safe-area-inset-top)) 1rem max(1rem,env(safe-area-inset-bottom));overflow:hidden}
       .wq[hidden]{display:none}
+      /* full-screen focus: while any survey overlay is open, the site chrome
+         (fixed header, mobile call bar, a11y launcher, progress line, ticker)
+         must vanish - it was painting OVER the game (main{z-index:2} traps
+         the overlay below header z-50 / cta-bar z-95 / a11y z-1300) */
+      html.wq-lock .site-header,html.wq-lock .mobile-cta-bar,html.wq-lock .a11y,
+      html.wq-lock .read-progress,html.wq-lock .status-ticker{display:none!important}
+      .wq__back{width:auto;min-width:44px;padding:0 .95rem;border-radius:999px;font:800 .72rem/1 ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;color:#8fc6f5;background:rgba(29,151,227,.14);border-color:rgba(29,151,227,.45);white-space:nowrap;flex-shrink:0}
+      .wq__top .wq__count{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:0 1 auto}
       .wq__glow{position:absolute;left:50%;top:34%;width:min(80vw,420px);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(29,151,227,.22),transparent 65%);pointer-events:none;transition:background 1s}
       .wq.tier-good .wq__glow{background:radial-gradient(circle,rgba(0,206,27,.2),transparent 65%)}
       .wq.tier-bad .wq__glow{background:radial-gradient(circle,rgba(224,86,63,.2),transparent 65%)}
@@ -2400,6 +2411,29 @@ def wifi_optimizer():
           }catch(e){}
         })();
 
+        /* ---------- overlay chrome: escape main's stacking trap, hide site chrome,
+           and make the PHONE BACK BUTTON close the overlay instead of leaving the
+           page - nobody should ever feel stuck inside game mode ---------- */
+        ['wq','wn','wh'].forEach(function(oid){
+          var o=document.querySelector('#'+oid);
+          if(o&&document.body&&o.parentNode!==document.body){ try{ document.body.appendChild(o); }catch(e){} }
+        });
+        function ovLock(on){ try{ document.documentElement.classList[on?'add':'remove']('wq-lock'); }catch(e){} }
+        var ovIgnorePop=false, ovClosers={};
+        function ovOpen(tag){ ovLock(true); try{ history.pushState({ov:tag},''); }catch(e){} }
+        function ovDone(tag){
+          ovLock(false);
+          try{ if(history.state&&history.state.ov===tag){ ovIgnorePop=true; history.back(); } }catch(e){}
+        }
+        try{
+          window.addEventListener('popstate',function(){
+            if(ovIgnorePop){ ovIgnorePop=false; return; }
+            for(var k in ovClosers){
+              if(ovClosers[k]&&ovClosers[k].isOpen()){ ovLock(false); ovClosers[k].close(); return; }
+            }
+          });
+        }catch(e){}
+
         /* ---------- game sounds: tiny synth, opt-in, unlocked inside a tap ---------- */
         var snd={ctx:null,on:false};
         function sndInit(){
@@ -3109,8 +3143,10 @@ def wifi_optimizer():
           if(!wh||!doc) return;
           whTarget=(idx==null?-1:idx);
           var v=whView(); if(!v) return;
+          var wasHidden=wh.hidden;
           wh.hidden=false;
           try{ document.documentElement.style.overflow='hidden'; }catch(e){}
+          if(wasHidden) ovOpen('wh'); /* re-renders (note saves) must not stack history */
           $('#wh-name').textContent=v.n;
           $('#wh-count').textContent=(v.runs.length||'No')+' saved run'+(v.runs.length===1?'':'s');
           var noteEl=$('#wh-note'); if(noteEl) noteEl.value=v.note||'';
@@ -3182,12 +3218,15 @@ def wifi_optimizer():
             runsEl.appendChild(row);
           });
         }
-        function whClose(){
+        function whCloseCore(){
           wh.hidden=true;
           try{ document.documentElement.style.overflow=''; }catch(e){}
         }
+        function whClose(){ whCloseCore(); ovDone('wh'); }
         if(wh){
+          ovClosers.wh={isOpen:function(){return !wh.hidden;},close:whCloseCore};
           var whX=$('#wh-x'); if(whX) whX.addEventListener('click',whClose);
+          var whBack=$('#wh-back'); if(whBack) whBack.addEventListener('click',whClose);
           document.addEventListener('keydown',function(e){ if(!wh.hidden&&e.key==='Escape') whClose(); });
           var whNote=$('#wh-note');
           if(whNote) whNote.addEventListener('change',function(){
@@ -3276,22 +3315,27 @@ def wifi_optimizer():
             if(!booted||!doc){ qPending=true; wqOpen.textContent='One moment\\u2026'; return; }
             wq.hidden=false; q.on=true; wq.className='wq';
             try{ document.documentElement.style.overflow='hidden'; }catch(e){}
+            ovOpen('wq');
             if(doc.snd&&!snd.on){ if(sndInit()) snd.on=true; }
             sndUi();
             if(!doc.mode){ qShow('mode'); } else { qShow('pick'); qChips(); }
             qRail();
             try{ E.x.focus(); }catch(e){}
           }
-          function qClose(){
+          function qCloseCore(){
             q.cancel=true; clearInterval(q.poll); clearInterval(q.count); qFxClear();
             wq.hidden=true; q.on=false;
             try{ document.documentElement.style.overflow=''; }catch(e){}
             if(engineRunning()&&engineGo) engineGo.click();
             save(); renderAll();
           }
+          function qClose(){ qCloseCore(); ovDone('wq'); }
+          ovClosers.wq={isOpen:function(){return q.on;},close:qCloseCore};
           wqOpen.addEventListener('click',qOpenFn);
           E.x.addEventListener('click',qClose);
           E.fin.addEventListener('click',qClose);
+          var backB=$('#wq-back');
+          if(backB) backB.addEventListener('click',qClose);
           document.addEventListener('keydown',function(e){ if(q.on&&e.key==='Escape') qClose(); });
           E.go.addEventListener('click',function(){
             var n=(E.name.value||'').replace(/\\s+/g,' ').trim().slice(0,40);
@@ -3615,17 +3659,22 @@ def wifi_optimizer():
             if(!booted||!doc) return;
             wn.hidden=false; st.on=true;
             try{ document.documentElement.style.overflow='hidden'; }catch(e){}
+            ovOpen('wn');
             if(doc.snd&&!snd.on){ if(sndInit()) snd.on=true; }
             N.count.textContent='SIGNAL HUNTER \u00b7 '+doc.pins.length+' pin'+(doc.pins.length===1?'':'s');
             nShow('intro'); netChips();
           }
-          function nClose(){
+          function nCloseCore(){
             st.cancel=true; nFxClear();
             wn.hidden=true; st.on=false;
             try{ document.documentElement.style.overflow=''; }catch(e){}
             save(); renderAll();
           }
+          function nClose(){ nCloseCore(); ovDone('wn'); }
+          ovClosers.wn={isOpen:function(){return st.on;},close:nCloseCore};
           N.x.addEventListener('click',nClose);
+          var nBack=$('#wn-back');
+          if(nBack) nBack.addEventListener('click',nClose);
           document.addEventListener('keydown',function(e){ if(st.on&&e.key==='Escape') nClose(); });
           var pageOpen=$('#wn-open');
           if(pageOpen) pageOpen.addEventListener('click',nOpen);
