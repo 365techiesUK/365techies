@@ -827,7 +827,7 @@
             </div>
             <p style="margin:1rem 0 0"><button type="button" class="button ghost" id="wq-viewrep" hidden>&#128202;&nbsp; View my report</button>
             <button type="button" class="wq__link" id="wq-modeswap" style="margin-left:.8rem"></button></p>
-            <p style="margin:.7rem 0 0"><button type="button" class="wq__bonus" id="wq-bonus">&#128225;&nbsp; BONUS LEVEL &mdash; Signal Hunter <span class="wq__bonussub">map the best mobile signal, anywhere</span></button></p>
+            <p style="margin:.7rem 0 0"><button type="button" class="wq__bonus" id="wq-bonus">&#128225;&nbsp; Signal Hunter <span class="wq__bonussub">map the best mobile signal, anywhere</span></button></p>
             <p style="margin:1rem 0 0"><button type="button" class="wq__link" id="wq-exit">&#8592;&nbsp; Exit game mode &mdash; back to the page</button></p>
             <p class="wq__note mono">Each room includes a real download <em>and</em> upload test (about 14&nbsp;MB together) &mdash; happiest on WiFi, mind your allowance on mobile data.</p>
           </div>
@@ -842,6 +842,7 @@
             <p class="wq__big" id="wq-score">92</p>
             <p class="wq__mini mono" id="wq-mini"></p>
             <p class="wq__verdictline" id="wq-vline"></p>
+            <p style="margin:.4rem 0 0"><button type="button" class="wf__link" id="wq-photo" style="font-size:.78rem">&#128247;&nbsp;Add a photo of this room &mdash; helps us judge the size. Stays on your device; only travels inside the PDF if you send it.</button></p>
             <div class="wq__btns">
               <button type="button" class="button primary" id="wq-next">Next room &#8594;</button>
               <button type="button" class="button ghost" id="wq-rep-btn">&#128202;&nbsp; Report</button>
@@ -859,12 +860,31 @@
             <div class="wq__repadvice" id="wq-repadvice"></div>
             <div class="wq__btns" style="margin-top:1.1rem">
               <button type="button" class="button primary" id="wq-pdf">&#11015;&nbsp; Download the 365 report (PDF)</button>
+              <button type="button" class="button ghost" id="wq-email">&#9993;&nbsp; Email it to us</button>
               <button type="button" class="button ghost" id="wq-rep-back">&#8592;&nbsp; Keep surveying</button>
             </div>
-            <p class="wq__note mono">The PDF is yours to keep or send to anyone &mdash; branded, plain-English, no jargon.</p>
+            <p class="wq__note mono">The PDF is yours to keep or send to anyone &mdash; branded, plain-English, no jargon. Room photos you added are included, so we can see the size of each area.</p>
           </div>
         </div>
         <div class="wq__burst" id="wq-burst" aria-hidden="true"></div>
+      </div>
+      <div class="wq" id="wh" hidden role="dialog" aria-modal="true" aria-label="Site history and past reports">
+        <div class="wq__glow" aria-hidden="true"></div>
+        <div class="wq__top">
+          <span class="wq__count mono" id="wh-count">History</span>
+          <button type="button" class="wq__x wq__exit" id="wh-x" aria-label="Close history">&#10005;&nbsp;Exit</button>
+        </div>
+        <div class="wq__body">
+          <div class="wq__step">
+            <p class="wq__kicker mono">// TEST HISTORY &middot; SAVED ON THIS DEVICE</p>
+            <p class="wq__title" id="wh-name">Site</p>
+            <p class="wq__medesc" style="margin:.2rem 0 1rem">Every survey run is kept here &mdash; the story of your connection over time. Hardware moved? New mesh node? Run the survey again and watch the verdict change.</p>
+            <div id="wh-insights" style="display:grid;gap:.6rem;margin:0 0 1.1rem"></div>
+            <p class="mono" style="font-size:.68rem;letter-spacing:.06em;color:#7f93b8;margin:0 0 .35rem">SETUP / CONDITIONS NOTE &mdash; e.g. &ldquo;moved router to hall&rdquo;, &ldquo;heatwave&rdquo;, &ldquo;new mesh node&rdquo;</p>
+            <input id="wh-note" maxlength="300" placeholder="What changed, or what were conditions like?" style="width:100%;box-sizing:border-box;background:rgba(10,18,38,.9);border:1px solid #2a3b63;border-radius:10px;color:#eef4fd;padding:.6rem .8rem;font:inherit;margin:0 0 1.1rem" />
+            <div id="wh-runs" style="display:grid;gap:.55rem"></div>
+          </div>
+        </div>
       </div>
       <div class="wq" id="wn" hidden role="dialog" aria-modal="true" aria-label="Signal Hunter - mobile speed map">
         <div class="wq__glow" aria-hidden="true"></div>
@@ -875,7 +895,7 @@
         </div>
         <div class="wq__body">
           <div class="wq__step" id="wn-intro">
-            <p class="wq__kicker mono">// BONUS LEVEL</p>
+            <p class="wq__kicker mono">// MOBILE SIGNAL MAP</p>
             <p class="wq__title">&#128225; Signal Hunter</p>
             <p class="wq__verdictline" style="margin-bottom:1rem">Work from anywhere? Go live from a field? Test the mobile signal <strong>right where you&rsquo;re standing</strong>, drop a pin on your map, and build your own atlas of the places worth working from.</p>
             <div class="wq__chips" id="wn-nets" aria-label="Which connection are you on?"></div>
@@ -1018,7 +1038,12 @@
             <button type="button" class="button ghost" id="wf-export">&#11015;&nbsp; Export survey file</button>
             <label class="button ghost" for="wf-import" style="cursor:pointer">&#11014;&nbsp; Import a survey file<input type="file" id="wf-import" accept=".json,application/json" hidden></label>
           </div>
-          <p class="mono" style="color:var(--faint);font-size:.68rem;margin:.5rem 0 1.4rem;text-align:center">Your survey lives in this browser only. Export it to keep a copy or move it to another device &mdash; then Import it there. Clearing browser data deletes the original.</p>
+          <p class="mono" style="color:var(--faint);font-size:.68rem;margin:.5rem 0 .9rem;text-align:center">Your survey lives in this browser only. Export it to keep a copy or move it to another device &mdash; then Import it there. Clearing browser data deletes the original. <button type="button" class="wf__link" id="wf-feedback" style="font-size:inherit">&#128172;&nbsp;Got feedback on this tool? Tell us</button></p>
+          <div class="callout callout--info callout--center" data-reveal style="margin:0 0 1.4rem">
+            <p class="eyebrow eyebrow--center mono" style="margin-bottom:.4rem">// WANT THIS MANAGED FOR YOU?</p>
+            <p style="margin:0 0 .8rem">This tool is free for everyone. With <strong>365 Home &amp; Business Support</strong> you also get your own customer portal (bookings, PC performance reports and more), honest WiFi advice from a real local team, and a full computer service every 6 weeks.</p>
+            <p class="callout__row"><a class="button primary" href="/monthly-it-support/">See support plans</a><a class="button secondary" href="/portal/">Customer portal</a></p>
+          </div>
           <div class="wf__send" id="wf-send">
             <p class="eyebrow mono" style="margin:0 0 .4rem">// FREE HUMAN REVIEW</p>
             <p style="margin:0 0 .9rem">Send your survey to 365 Techies and a real person will look at your rooms, your speeds and your deal, and reply with honest advice &mdash; including &ldquo;you&rsquo;re fine, don&rsquo;t spend anything&rdquo; if that&rsquo;s the truth. Free, no obligation.</p>
@@ -1039,7 +1064,7 @@
     <section class="section" aria-label="Signal Hunter - work from anywhere" id="nomad">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// BONUS LEVEL &middot; WORK FROM ANYWHERE</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>// SIGNAL HUNTER &middot; WORK FROM ANYWHERE</p>
           <h2 class="section-title section-title--center" data-title>&#128225; Signal Hunter: map where the signal is actually good<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>For nomads, van-lifers, content creators and anyone who works from wherever the kettle is: test the <strong>mobile signal where you&rsquo;re standing</strong> &mdash; ping, download <em>and</em> upload &mdash; and drop a pin on your own map. Build your personal atlas of laybys, caf&eacute;s and harbour walls that can actually hold a video call or a live stream&hellip; and, if you want, share the good ones to a <strong>community map</strong> so the next nomad finds them too.</p>
         </div>
@@ -1573,6 +1598,7 @@
           if(!idb){ if(cb)cb(false); return; }
           try{ var tx=idb.transaction('kv','readwrite'); tx.objectStore('kv').put(d,SK);
             tx.oncomplete=function(){ if(cb)cb(true); }; tx.onerror=function(){ if(cb)cb(false); };
+            tx.onabort=function(){ if(cb)cb(false); }; /* quota errors can surface only as abort */
           }catch(e){ if(cb)cb(false); }
         }
         function dbDel(cb){
@@ -1584,7 +1610,7 @@
         }
         function uuid(){ try{ if(window.crypto&&crypto.randomUUID) return crypto.randomUUID(); }catch(e){}
           return 'wf-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10); }
-        function fresh(){ return {id:uuid(),created:Date.now(),updated:Date.now(),ver:0,siteName:'My site',mode:null,snd:false,rooms:[],bb:{},dl:null,sent:false,events:[],sites:[],pins:[],drafts:[]}; }
+        function fresh(){ return {id:uuid(),created:Date.now(),updated:Date.now(),ver:0,siteName:'My site',mode:null,snd:false,rooms:[],bb:{},dl:null,sent:false,events:[],sites:[],pins:[],drafts:[],runs:[],photos:{},note:''}; }
         /* site activity timeline: small, capped, local-only */
         var EVK={added:'Site created',room:'Room tested',speed:'Speed test',deal:'Broadband details updated',sent:'Survey sent to 365 Techies',imp:'Survey imported',sw:'Switched to this site',pdf:'Report downloaded',hunt:'Mobile spot tested',share:'Spot shared to the community map'};
         var lastDealLog=0;
@@ -1679,6 +1705,7 @@
         }
         function renderRooms(){
           if(!roomsWrap) return;
+          prunePhotos();
           roomsWrap.hidden=!doc.rooms.length;
           if(!doc.rooms.length){ roomList.innerHTML=''; return; }
           var a=doc.rooms.slice().sort(function(x,y){ return y.s-x.s; });
@@ -1700,11 +1727,79 @@
             });
             var x=el('button','wf__link','\u00d7'); x.type='button'; x.style.marginLeft='.5rem';
             x.setAttribute('aria-label','Remove '+r.n);
-            x.addEventListener('click',function(){ doc.rooms=doc.rooms.filter(function(q){return q!==r;}); save(); renderAll(); });
-            li.appendChild(b); li.appendChild(n); li.appendChild(m); li.appendChild(re); li.appendChild(x);
+            x.addEventListener('click',function(){ doc.rooms=doc.rooms.filter(function(q){return q!==r;}); if(doc.photos) delete doc.photos[r.n]; save(); renderAll(); });
+            li.appendChild(b); li.appendChild(n); li.appendChild(m); li.appendChild(re);
+            var ph=(doc.photos||{})[r.n];
+            if(ph){
+              var im=document.createElement('img');
+              im.src=ph; im.alt='Photo of '+r.n; im.loading='lazy';
+              im.style.cssText='width:34px;height:26px;object-fit:cover;border-radius:5px;margin-left:.5rem;cursor:pointer;border:1px solid rgba(125,170,220,.3)';
+              im.title='Tap to remove this photo';
+              im.addEventListener('click',function(){ if(confirm('Remove the photo of '+r.n+'?')){ delete doc.photos[r.n]; save(); renderAll(); } });
+              li.appendChild(im);
+            } else {
+              var pb2=el('button','wf__link','\ud83d\udcf7'); pb2.type='button'; pb2.style.marginLeft='.5rem';
+              pb2.setAttribute('aria-label','Add a photo of '+r.n+' \u2014 helps us judge the size; it stays on your device and only travels inside the PDF if you send it');
+              pb2.title='Add a photo \u2014 helps us judge the size. Stays on your device; only travels inside the PDF if you send it.';
+              pb2.addEventListener('click',function(){ photoPick(r.n); });
+              li.appendChild(pb2);
+            }
+            li.appendChild(x);
             roomList.appendChild(li);
           });
         }
+        /* ---------- room photos: captured on the device, downscaled hard, stored locally.
+           A photo of the room helps us judge the size of the area when a report reaches us. */
+        var photoRoom='';
+        var photoIn=document.createElement('input');
+        photoIn.type='file'; photoIn.accept='image/*'; photoIn.hidden=true;
+        try{ photoIn.setAttribute('capture','environment'); }catch(e){}
+        document.body.appendChild(photoIn);
+        function photoPick(room){
+          if(!doc) return;
+          doc.photos=doc.photos||{};
+          /* canonicalise to the STORED room name (rooms match case-insensitively) so a
+             re-test typed as "kitchen" never orphans the photo of "Kitchen" */
+          for(var i=0;i<doc.rooms.length;i++){
+            if(doc.rooms[i].n.toLowerCase()===String(room).toLowerCase()){ room=doc.rooms[i].n; break; }
+          }
+          if(Object.keys(doc.photos).length>=12&&!doc.photos[room]){ alert('Photo limit reached (12 per site) \u2014 remove one first.'); return; }
+          photoRoom=room; photoIn.value=''; photoIn.click();
+        }
+        function prunePhotos(){
+          /* photos for rooms that no longer exist quietly eat the 12-photo cap - drop them */
+          if(!doc||!doc.photos) return;
+          var names={};
+          doc.rooms.forEach(function(r){ names[r.n]=1; });
+          for(var k in doc.photos){ if(!names[k]) delete doc.photos[k]; }
+        }
+        photoIn.addEventListener('change',function(){
+          var f=photoIn.files&&photoIn.files[0]; if(!f||!photoRoom) return;
+          var img=new Image();
+          var url=URL.createObjectURL(f);
+          img.onload=function(){
+            try{
+              var scale=Math.min(1,1024/Math.max(img.width,img.height));
+              var cv=document.createElement('canvas');
+              cv.width=Math.max(1,Math.round(img.width*scale));
+              cv.height=Math.max(1,Math.round(img.height*scale));
+              cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);
+              var dat=cv.toDataURL('image/jpeg',0.72);
+              if(dat.length>420000){
+                cv.width=Math.max(1,Math.round(cv.width*0.7)); cv.height=Math.max(1,Math.round(cv.height*0.7));
+                cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);
+                dat=cv.toDataURL('image/jpeg',0.55);
+              }
+              if(dat.indexOf('data:image/jpeg')===0&&dat.length<=420000){
+                doc.photos[photoRoom]=dat; save(); renderAll();
+                var resPh=$('#wq-photo'); if(resPh) resPh.textContent='\u2713 Photo saved \u2014 tap to replace';
+              } else alert('That photo wouldn\u2019t compress small enough \u2014 try again.');
+            }catch(e){ alert('Sorry \u2014 this browser refused the photo.'); }
+            URL.revokeObjectURL(url);
+          };
+          img.onerror=function(){ URL.revokeObjectURL(url); };
+          img.src=url;
+        });
         function staleL(L){
           if(!L) return true;
           var age=Date.now()-L.t;
@@ -1936,6 +2031,47 @@
           });
           return out;
         }
+        /* run-history + room-photo sanitizers: imported/stored data must never be able
+           to crash rendering (stored DoS) or smuggle non-image payloads in */
+        function cleanRuns(a){
+          var out=[];
+          if(!a||!a.forEach) return out;
+          a.forEach(function(rn){
+            if(!rn||typeof rn!=='object'||out.length>=40) return;
+            var rr=[];
+            (rn.rooms&&rn.rooms.forEach?rn.rooms:[]).forEach(function(r){
+              if(!r||rr.length>=20) return;
+              var n=String(r.n==null?'':r.n).replace(/\s+/g,' ').trim().slice(0,40);
+              if(!n) return;
+              rr.push({n:n,s:Math.max(0,Math.min(100,Math.round(+r.s)||0)),
+                lat:Math.max(0,Math.round(+r.lat)||0),jit:Math.max(0,Math.round(+r.jit)||0),
+                dl:(isFinite(+r.dl)&&+r.dl>=0&&+r.dl<10000)?Math.round(+r.dl*10)/10:null,
+                ul:(isFinite(+r.ul)&&+r.ul>=0&&+r.ul<10000)?Math.round(+r.ul*10)/10:null});
+            });
+            if(!rr.length) return;
+            var sum=0; rr.forEach(function(r){sum+=r.s;});
+            out.push({t:(+rn.t>0&&+rn.t<4102444800000)?+rn.t:Date.now(),
+              mode:(rn.mode==='business'?'business':'home'),
+              avg:Math.max(0,Math.min(100,Math.round(+rn.avg)||Math.round(sum/rr.length))),
+              note:String(rn.note==null?'':rn.note).slice(0,200),rooms:rr});
+          });
+          out.sort(function(x,y){return x.t-y.t;});
+          return out.slice(-40);
+        }
+        function cleanPhotos(o){
+          var out={}, n=0;
+          if(!o||typeof o!=='object'||Array.isArray(o)) return out;
+          for(var k in o){
+            if(!Object.prototype.hasOwnProperty.call(o,k)||n>=12) continue;
+            var key=String(k).replace(/\s+/g,' ').trim().slice(0,40);
+            var v=o[k];
+            if(!key||typeof v!=='string') continue;
+            if(v.indexOf('data:image/jpeg;base64,')!==0||v.length>420000) continue;
+            if(!/^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/.test(v)) continue;
+            out[key]=v; n++;
+          }
+          return out;
+        }
         function cleanSites(a){
           var out=[];
           if(!a||!a.forEach) return out;
@@ -1959,7 +2095,7 @@
             ['staff','guests'].forEach(function(k){ var v2=parseInt(sb[k],10); bb[k]=(isFinite(v2)&&v2>=0&&v2<=500)?v2:null; });
             bb.acts=(sb.acts&&sb.acts.filter)?sb.acts.filter(function(a){return typeof a==='string';}).slice(0,6):[];
             var sdl=(st.dl&&isFinite(+st.dl.best))?{best:Math.round(+st.dl.best*10)/10,last:+st.dl.best,t:Date.now()}:null;
-            out.push({n:String(st.n==null?'Site':st.n).slice(0,40)||'Site',rooms:rooms,bb:bb,dl:sdl,sent:!!st.sent,events:[],updated:(+st.updated>0?+st.updated:Date.now())});
+            out.push({n:String(st.n==null?'Site':st.n).slice(0,40)||'Site',rooms:rooms,bb:bb,dl:sdl,sent:!!st.sent,events:[],updated:(+st.updated>0?+st.updated:Date.now()),runs:cleanRuns(st.runs),photos:cleanPhotos(st.photos),note:String(st.note==null?'':st.note).slice(0,300)});
           });
           return out;
         }
@@ -1980,6 +2116,19 @@
           }catch(e){ alert('Sorry \u2014 this browser refused the export.'); }
         }
         var expBtn=$('#wf-export'); if(expBtn) expBtn.addEventListener('click',doExport);
+        var fbBtn=$('#wf-feedback');
+        if(fbBtn) fbBtn.addEventListener('click',function(){
+          var msg=prompt('What should we improve about the WiFi Optimizer? (Goes straight to the team \u2014 add your email if you\u2019d like a reply.)','');
+          if(msg==null) return;
+          msg=String(msg).trim().slice(0,1200);
+          if(!msg) return;
+          fbBtn.disabled=true;
+          fetch('/api/slack-lead.php',{method:'POST',headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({name:'WiFi tool visitor',email:'',phone:'',topic:'WiFi tool feedback',message:msg,page:'/wifi-signal-test/'})})
+            .then(function(r){ return r.json(); })
+            .then(function(j){ fbBtn.disabled=false; fbBtn.textContent=(j&&j.ok)?'\u2713 Thank you \u2014 received':'Didn\u2019t send \u2014 try again shortly'; })
+            ['catch'](function(){ fbBtn.disabled=false; fbBtn.textContent='Didn\u2019t send \u2014 check you\u2019re online'; });
+        });
         var impIn=$('#wf-import');
         if(impIn) impIn.addEventListener('change',function(){
           var f=impIn.files&&impIn.files[0]; if(!f) return;
@@ -2021,7 +2170,9 @@
                  siteName:String(sv.siteName==null?'My site':sv.siteName).slice(0,40)||'My site',
                  mode:(sv.mode==='business'?'business':(sv.mode==='home'?'home':null)),snd:!!sv.snd,
                  rooms:rooms,bb:bb,dl:dl,sent:!!sv.sent,events:[],
-                 sites:cleanSites(sv.sites),pins:cleanPins(sv.pins),drafts:[]};
+                 sites:cleanSites(sv.sites),pins:cleanPins(sv.pins),drafts:[],
+                 runs:cleanRuns(sv.runs),photos:cleanPhotos(sv.photos),
+                 note:String(sv.note==null?'':sv.note).slice(0,300)};
             logE('imp');
             fillBB(); save(); renderAll(); impIn.value='';
           };
@@ -2041,6 +2192,8 @@
             lines.push('- '+r.n+': '+r.s+'/100, '+r.lat+'ms'+(r.dl!=null?', '+r.dl+' Mbps down':'')+(r.ul!=null?', '+r.ul+' up':'')+(r.jit?', jitter '+r.jit+'ms':'')+' (at '+hhmm(r.t)+')');
           });
           if(doc.dl) lines.push('Best measured download: '+doc.dl.best+' Mbps');
+          var phN=doc.photos?Object.keys(doc.photos).length:0;
+          if(phN) lines.push(phN+' room photo'+(phN===1?'':'s')+' saved locally (not sent \u2014 they travel inside the customer\u2019s PDF report)');
           var b=doc.bb||{};
           if(b.prov||b.price!=null) lines.push('Deal: '+(b.prov||'?')+(b.pkg?' '+b.pkg:'')+(b.down!=null?', advertised '+b.down+' Mbps':'')+(b.ming!=null?', min guaranteed '+b.ming:'')+(b.price!=null?', \u00a3'+b.price+'/mo':'')+(b.end?', ends '+b.end:'')+(b.backup?', backup: '+b.backup:''));
           var isEmail=contact.indexOf('@')>0;
@@ -2090,9 +2243,84 @@
         function sGreat(){ tone(523,0.1,0,'triangle',0.05); tone(659,0.1,0.08,'triangle',0.05); tone(784,0.1,0.16,'triangle',0.05); tone(1047,0.32,0.24,'triangle',0.07); }
         function sLow(){ tone(233,0.22,0,'sine',0.06); tone(185,0.3,0.12,'sine',0.05); }
         function sStar(i){ tone(700+i*130,0.09,0,'triangle',0.045); }
+        function sScan(p){ tone(260+p*640,0.05,0,'sine',0.022); } /* ghost-detector sweep: pitch rises with progress */
+        function sWhoosh(){ tone(880,0.07,0,'sine',0.03); tone(660,0.07,0.05,'sine',0.03); tone(440,0.12,0.1,'sine',0.035); }
+        function sLock(){ tone(1175,0.06,0,'square',0.03); tone(1568,0.1,0.06,'square',0.035); }
 
         /* ---------- stars ---------- */
         function starHalves(score){ return Math.max(0,Math.min(10,Math.round(score/10))); } /* 0-10 half-stars */
+
+        /* ---------- history insights: pure functions over the per-site run history.
+           Everything hedges honestly - these are patterns in YOUR measurements, not lab claims. */
+        function trendOf(runs){
+          if(!runs||runs.length<3) return {dir:'none',delta:0,line:'Test a few more times \u2014 the story is in the history.'};
+          /* windows must never overlap, or "recent vs before" compares a run against itself */
+          var rec=runs.length>=6?runs.slice(-3):runs.slice(-2);
+          var pri=runs.slice(0,runs.length-rec.length).slice(-5);
+          var ra=0; rec.forEach(function(r){ra+=r.avg;}); ra/=rec.length;
+          var pa=0; pri.forEach(function(r){pa+=r.avg;}); pa/=pri.length;
+          var d=Math.round(ra-pa);
+          if(d>=6) return {dir:'up',delta:d,line:'Getting better \u2014 recent tests average '+d+' points higher than before. If you changed your setup, it\u2019s working.'};
+          if(d<=-6) return {dir:'down',delta:d,line:'Declining \u2014 recent tests average '+(-d)+' points lower than before. Something changed; worth investigating.'};
+          return {dir:'same',delta:d,line:'Steady \u2014 performance is consistent across your test history.'};
+        }
+        function bestBucket(runs){
+          if(!runs||runs.length<3) return null;
+          var B={morning:[6,12,'mornings'],afternoon:[12,17,'afternoons'],evening:[17,23,'evenings'],night:[23,30,'nights']};
+          var acc={};
+          runs.forEach(function(r){
+            var h=new Date(r.t).getHours(); if(h<6) h+=24;
+            for(var k in B){ if(h>=B[k][0]&&h<B[k][1]){ (acc[k]=acc[k]||[]).push(r.avg); break; } }
+          });
+          var keys=Object.keys(acc); if(keys.length<2) return null;
+          var best=null,worst=null;
+          keys.forEach(function(k){
+            var a=acc[k], m=a.reduce(function(x,y){return x+y;},0)/a.length;
+            if(!best||m>best.m) best={k:k,m:m,n:a.length};
+            if(!worst||m<worst.m) worst={k:k,m:m,n:a.length};
+          });
+          if(!best||!worst||best.k===worst.k||Math.round(best.m-worst.m)<5) return null;
+          return {best:B[best.k][2],worst:B[worst.k][2],gap:Math.round(best.m-worst.m),
+            line:'In your tests so far, '+B[best.k][2]+' score about '+Math.round(best.m-worst.m)+' points higher than '+B[worst.k][2]+' \u2014 busy times often mean a congested line or a busy network.'};
+        }
+        function spikeScan(runs){
+          if(!runs||runs.length<4) return null;
+          var lats=[]; runs.forEach(function(r){ var s2=0,c2=0; r.rooms.forEach(function(x){ if(x.lat){s2+=x.lat;c2++;} }); if(c2) lats.push({t:r.t,v:s2/c2}); });
+          if(lats.length<4) return null;
+          var m=lats.reduce(function(a,b){return a+b.v;},0)/lats.length;
+          var sd=Math.sqrt(lats.reduce(function(a,b){return a+(b.v-m)*(b.v-m);},0)/lats.length);
+          var sp=lats.filter(function(x){ return sd>4&&x.v>m+2*sd&&x.v>m+25; });
+          if(!sp.length) return null;
+          var when=sp.slice(-2).map(function(x){ return hhmm(x.t); }).join(' and ');
+          return {count:sp.length,line:'Quality spikes detected (around '+when+') \u2014 latency jumped well above your normal. Common causes: a microwave, powerline WiFi adapters, a neighbour\u2019s network, or something heavy running on your own connection.'};
+        }
+        /* honest capacity guide: what a measured speed supports. Rules of thumb, clearly
+           framed as guidance - roughly 10 Mbps down per active person for everyday use;
+           HD stream ~5, 4K ~25 per TV; video calls ~1.5-4 Mbps BOTH ways and jitter-sensitive. */
+        function capacityFor(dl,ul,mode){
+          if(dl==null) return null;
+          var ppl=Math.max(1,Math.floor(dl/10)); if(ppl>50) ppl=50;
+          var can=[],cant=[];
+          if(dl>=25) can.push('4K streaming ('+Math.floor(dl/25)+' TV'+(Math.floor(dl/25)===1?'':'s')+' at once)');
+          else if(dl>=5) can.push('HD streaming'); else if(dl>=3) can.push('SD streaming only'); else cant.push('Smooth video streaming');
+          if(ul!=null){
+            if(ul>=4) can.push('Group video calls in HD');
+            else if(ul>=1.5) can.push('One-to-one video calls (group calls may struggle)');
+            else cant.push('Reliable video calls \u2014 uploads are too tight');
+            if(ul>=10) can.push('Sending big files & cloud photo/video backup comfortably');
+            else if(ul>=3) can.push('Cloud backup (slowly \u2014 leave it running)');
+            else cant.push('Sending large files without long waits');
+          }
+          if(dl>=10) can.push('Everyday browsing, email & shopping for ~'+ppl+' '+(mode==='business'?'staff':(ppl===1?'person':'people'))+' at once');
+          else cant.push('More than a couple of people online at once');
+          if(mode==='business'){
+            if(ul!=null&&ul<2) cant.push('Hosting video meetings while others upload');
+            if(dl<30) cant.push('A whole team on cloud apps at peak times without slowdowns');
+          }
+          return {people:ppl,can:can.slice(0,5),cant:cant.slice(0,4),
+            line:'As a guide, this speed comfortably supports about '+ppl+' '+(mode==='business'?'member'+(ppl===1?'':'s')+' of staff':(ppl===1?'person':'people'))+' doing everyday things at once.'};
+        }
+        try{ window.__wfIns={trendOf:trendOf,bestBucket:bestBucket,spikeScan:spikeScan,capacityFor:capacityFor,cleanRuns:cleanRuns,cleanPhotos:cleanPhotos}; }catch(e){}
         function starSvg(state){ /* state: 2 full, 1 half, 0 empty */
           var NS='http://www.w3.org/2000/svg';
           var sv=document.createElementNS(NS,'svg'); sv.setAttribute('viewBox','0 0 20 19');
@@ -2189,13 +2417,40 @@
         }
         function buildPdf(v,mode){
           var W=595,H=842,M=44;
-          var NAVY='0.043 0.071 0.125', CYAN='0.114 0.592 0.890', GOLD='0.910 0.765 0.353',
-              GREEN='0.0 0.808 0.106', AMBER='0.878 0.702 0.255', RED='0.878 0.337 0.247',
-              INK='0.13 0.16 0.22', GREY='0.42 0.47 0.56', LGREY='0.90 0.92 0.95';
-          var pages=[], c=[], y=0;
+          var NAVY='0.027 0.051 0.133', PANEL='0.955 0.965 0.980', CYAN='0.114 0.592 0.890',
+              GOLD='0.910 0.765 0.353', GREEN='0.0 0.808 0.106', AMBER='0.878 0.702 0.255',
+              RED='0.878 0.337 0.247', INK='0.10 0.13 0.20', GREY='0.42 0.47 0.56',
+              LGREY='0.88 0.90 0.94', WHITE='1 1 1', SOFT='0.66 0.78 0.92';
+          var pages=[], c=[], y=0, imgs=[], imgSeq=0;
           function page(){ c=[]; pages.push(c); y=0; }
           function rect(x,yy,w,h,col){ c.push(col+' rg '+x.toFixed(1)+' '+(H-yy-h).toFixed(1)+' '+w.toFixed(1)+' '+h.toFixed(1)+' re f'); }
           function txt(x,yy,size,bold,col,t){ c.push('BT /'+(bold?'F2':'F1')+' '+size+' Tf '+col+' rg 1 0 0 1 '+x.toFixed(1)+' '+(H-yy).toFixed(1)+' Tm ('+pdfStr(t)+') Tj ET'); }
+          function line(x1,y1,x2,y2,col,w){ c.push(col+' RG '+(w||1)+' w '+x1.toFixed(1)+' '+(H-y1).toFixed(1)+' m '+x2.toFixed(1)+' '+(H-y2).toFixed(1)+' l S'); }
+          /* circle / arc via cubic beziers (PDF has no arc operator) */
+          function arcSegs(cx,cy,r,a0,a1){
+            var out2=[], steps=Math.max(1,Math.ceil(Math.abs(a1-a0)/(Math.PI/2))), da=(a1-a0)/steps;
+            var cyP=H-cy;
+            for(var i=0;i<steps;i++){
+              var s0=a0+i*da, s1=s0+da, k=4/3*Math.tan(da/4);
+              var x0=cx+r*Math.cos(s0), y0=cyP+r*Math.sin(s0);
+              var x3=cx+r*Math.cos(s1), y3=cyP+r*Math.sin(s1);
+              var x1=x0-k*r*Math.sin(s0), y1=y0+k*r*Math.cos(s0);
+              var x2=x3+k*r*Math.sin(s1), y2=y3-k*r*Math.cos(s1);
+              out2.push({m:[x0,y0],c:[x1,y1,x2,y2,x3,y3]});
+            }
+            return out2;
+          }
+          function arcStroke(cx,cy,r,a0,a1,col,w){
+            var segs=arcSegs(cx,cy,r,a0,a1);
+            if(!segs.length) return;
+            var d=segs[0].m[0].toFixed(1)+' '+segs[0].m[1].toFixed(1)+' m ';
+            segs.forEach(function(sg){ d+=sg.c.map(function(n){return n.toFixed(1);}).join(' ')+' c '; });
+            c.push(col+' RG '+w+' w 1 J '+d+'S');
+          }
+          function ring(cx,cy,r,frac,col){
+            arcStroke(cx,cy,r,0,Math.PI*2,LGREY,7);
+            if(frac>0.01) arcStroke(cx,cy,r,Math.PI/2,Math.PI/2-Math.PI*2*Math.min(1,frac),col,7);
+          }
           function star(cx,cy,r,fill,col){
             var pts=[],k;
             for(k=0;k<10;k++){
@@ -2213,59 +2468,208 @@
               star(x+i*(r*2.4),yy,r,st>0,st===2?GOLD:(st===1?'0.95 0.87 0.62':'0.85 0.88 0.92'));
             }
           }
+          function logo(x,yy){
+            /* the site wordmark, vector: cyan dot-ring + 365 in cyan + techies in white */
+            arcStroke(x+9,yy-4,8,0,Math.PI*2,CYAN,2.2);
+            rect(x+6.5,yy-6.5,5,5,CYAN);
+            txt(x+24,yy,19,true,CYAN,'365');
+            txt(x+59,yy,19,true,WHITE,'techies');
+          }
           function header(sub){
-            rect(0,0,W,96,NAVY);
-            txt(M,40,24,true,'1 1 1','365 TECHIES');
-            rect(M,50,60,3.4,CYAN);
-            txt(M,74,13,false,'0.66 0.78 0.92',sub);
-            txt(W-M-200,40,10,false,'0.66 0.78 0.92','Site: '+String(v.n||'My site').slice(0,28));
-            txt(W-M-200,56,10,false,'0.66 0.78 0.92','Date: '+new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}));
-            txt(W-M-200,72,10,true,'0.66 0.78 0.92',(mode==='business'?'BUSINESS':'HOME')+' REPORT');
-            y=126;
+            rect(0,0,W,104,NAVY);
+            logo(M,42);
+            txt(M,62,7.5,false,SOFT,'F R I E N D L Y   I T   S U P P O R T   -   F A M I L Y - R U N   S I N C E   1 9 9 5');
+            txt(M,86,13,true,WHITE,sub);
+            txt(W-M-170,38,9,false,SOFT,'Site: '+String(v.n||'My site').slice(0,26));
+            txt(W-M-170,54,9,false,SOFT,new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}));
+            rect(W-M-170,64,84,16,mode==='business'?'0.114 0.592 0.890':'0.0 0.63 0.10');
+            txt(W-M-164,75.5,8,true,WHITE,(mode==='business'?'BUSINESS':'HOME')+' REPORT');
+            y=132;
           }
           function footer(no,total){
-            rect(M,H-46,W-2*M,0.8,'0.85 0.88 0.92');
-            txt(M,H-30,8.5,false,GREY,'365 Techies - 01202 775566 - 365techies.co.uk - Family-run since 1995');
-            txt(W-M-60,H-30,8.5,false,GREY,'Page '+no+' of '+total);
+            rect(0,H-58,W,58,NAVY);
+            txt(M,H-36,8.5,true,WHITE,'Want this managed for you?  Full features are included with 365 Home & Business Support.');
+            txt(M,H-22,8,false,SOFT,'Your customer portal handles bookings, PC performance reports and more  -  365techies.co.uk/monthly-it-support  -  01202 775566');
+            txt(W-M-50,H-36,8,false,SOFT,'Page '+no+' of '+total);
           }
-          function need(h){ if(y+h>H-70){ page(); header('WiFi Survey Report (continued)'); } }
+          function need(h){ if(y+h>H-78){ page(); header('WiFi Survey Report (continued)'); } }
+          function b64bin(b64){
+            try{ return atob(b64); }catch(e){ return null; }
+          }
+          function jpegDims(bin){
+            var i=2;
+            while(i<bin.length-9){
+              if(bin.charCodeAt(i)!==0xFF){ i++; continue; }
+              var m2=bin.charCodeAt(i+1);
+              if(m2>=0xC0&&m2<=0xC3){
+                return {h:(bin.charCodeAt(i+5)<<8)|bin.charCodeAt(i+6), w:(bin.charCodeAt(i+7)<<8)|bin.charCodeAt(i+8)};
+              }
+              i+=2+((bin.charCodeAt(i+2)<<8)|bin.charCodeAt(i+3));
+            }
+            return null;
+          }
+          function addImg(dataUrl){
+            var b64=dataUrl.split(',')[1]||'';
+            var bin=b64bin(b64); if(!bin) return null;
+            var dm=jpegDims(bin); if(!dm||!dm.w||!dm.h) return null;
+            imgSeq++;
+            var nm='Im'+imgSeq;
+            imgs.push({name:nm,w:dm.w,h:dm.h,data:bin});
+            return {name:nm,w:dm.w,h:dm.h};
+          }
+          function drawImg(im,x,yy,w,h){
+            c.push('q '+w.toFixed(1)+' 0 0 '+h.toFixed(1)+' '+x.toFixed(1)+' '+(H-yy-h).toFixed(1)+' cm /'+im.name+' Do Q');
+          }
 
           var rooms=(v.rooms||[]).slice().sort(function(a,b){return b.s-a.s;});
           var sum=0; rooms.forEach(function(r){sum+=r.s;});
           var avg=rooms.length?Math.round(sum/rooms.length):0;
+          var bestDl=(v.dl&&v.dl.best)?v.dl.best:null, bestUl=null;
+          rooms.forEach(function(r){ if(r.dl!=null&&(bestDl==null||r.dl>bestDl)) bestDl=r.dl; if(r.ul!=null&&(bestUl==null||r.ul>bestUl)) bestUl=r.ul; });
+          var cap=capacityFor(bestDl,bestUl,mode);
+          var runs=v.runs||[];
 
           page(); header('WiFi Survey Report');
-          /* overall band */
-          rect(M,y,W-2*M,74,'0.965 0.973 0.984');
-          txt(M+18,y+34,30,true,avg>=75?GREEN:(avg>=45?AMBER:RED),String(avg));
-          txt(M+18+(avg>=100?58:42),y+34,11,false,GREY,'/100 overall');
-          starsAt(M+18,y+56,avg,7);
-          var gl=pdfWrap(gradeLineFor(avg,mode,rooms.length?rooms[rooms.length-1].s:null),58);
-          txt(M+210,y+28,11,true,INK,gl[0]||'');
-          if(gl[1]) txt(M+210,y+44,11,true,INK,gl[1]);
-          txt(M+210,y+62,9,false,GREY,rooms.length+' room'+(rooms.length===1?'':'s')+' tested - scores measure real latency, stability and speed where you stood');
-          y+=96;
 
-          /* rooms */
-          txt(M,y,13,true,INK,'Room by room'); y+=10;
-          rect(M,y,W-2*M,0.8,'0.85 0.88 0.92'); y+=14;
-          rooms.forEach(function(r){
-            need(52);
-            txt(M,y+12,11,true,INK,r.n);
-            starsAt(W-M-118,y+8,r.s,6);
-            var meta=r.lat+' ms latency'+(r.dl!=null?'  -  '+r.dl+' Mbps down':'')+(r.ul!=null?'  -  '+r.ul+' Mbps up':'')+'  -  tested '+hhmm(r.t);
-            txt(M,y+27,8.5,false,GREY,meta);
-            rect(M,y+34,W-2*M,5,LGREY);
-            rect(M,y+34,(W-2*M)*Math.max(0.02,r.s/100),5,r.s>=75?GREEN:(r.s>=45?AMBER:RED));
-            y+=52;
+          /* overall panel: score ring + stars + verdict + capacity headline */
+          rect(M,y,W-2*M,104,PANEL);
+          ring(M+52,y+52,30,avg/100,avg>=75?GREEN:(avg>=45?AMBER:RED));
+          txt(M+52-(avg>=100?16:(avg>=10?11:6)),y+58,19,true,avg>=75?GREEN:(avg>=45?AMBER:RED),String(avg));
+          starsAt(M+96,y+86,avg,6);
+          var gl=pdfWrap(gradeLineFor(avg,mode,rooms.length?rooms[rooms.length-1].s:null),52);
+          txt(M+150,y+24,12,true,INK,gl[0]||'');
+          if(gl[1]) txt(M+150,y+40,12,true,INK,gl[1]);
+          txt(M+150,y+58,9,false,GREY,rooms.length+' room'+(rooms.length===1?'':'s')+' tested - latency, stability and live speed, where you stood');
+          if(cap) pdfWrap(cap.line,62).slice(0,2).forEach(function(cl,ci){ txt(M+150,y+74+ci*13,9.5,true,'0.16 0.45 0.20',cl); });
+          y+=126;
+
+          /* room ranking */
+          txt(M,y,13,true,INK,'Room ranking'); txt(M+92,y,9,false,GREY,'best first - the difference between rooms is the story');
+          y+=10; rect(M,y,W-2*M,0.8,LGREY); y+=14;
+          rooms.forEach(function(r,ri){
+            need(56);
+            rect(M,y,W-2*M,46,ri%2?WHITE:PANEL);
+            rect(M+8,y+10,20,20,ri===0?GOLD:(r.s<45?RED:LGREY));
+            txt(M+13+(ri>=9?-3:0),y+24,11,true,ri===0||r.s<45?WHITE:GREY,String(ri+1));
+            txt(M+38,y+18,11,true,INK,r.n.slice(0,30)+(ri===0?'  - BEST ROOM':(r.s<45?'  - WEAK SPOT':'')));
+            var meta=r.lat+' ms'+(r.dl!=null?'  -  '+r.dl+' Mbps down':'')+(r.ul!=null?'  -  '+r.ul+' up':'')+(r.jit?'  -  jitter '+r.jit+' ms':'');
+            txt(M+38,y+32,8,false,GREY,meta);
+            starsAt(W-M-118,y+14,r.s,5.4);
+            rect(M+38,y+37,W-2*M-170,4,LGREY);
+            rect(M+38,y+37,(W-2*M-170)*Math.max(0.02,r.s/100),4,r.s>=75?GREEN:(r.s>=45?AMBER:RED));
+            txt(W-M-30,y+26,11,true,r.s>=75?GREEN:(r.s>=45?AMBER:RED),String(r.s));
+            y+=50;
           });
+
+          /* what this connection supports - honest capacity columns */
+          if(cap){
+            var colW=(W-2*M-16)/2;
+            var canW=cap.can.map(function(t){ return pdfWrap(t,44).slice(0,2); });
+            var cantW=cap.cant.map(function(t){ return pdfWrap(t,44).slice(0,2); });
+            function colH(list){ var h2=26; list.forEach(function(ls){ h2+=12*ls.length+10; }); return h2; }
+            var bh=Math.max(colH(canW),colH(cantW.length?cantW:[['x']]));
+            need(bh+70); y+=10;
+            txt(M,y,13,true,INK,'What this connection supports'); y+=10;
+            rect(M,y,W-2*M,0.8,LGREY); y+=14;
+            rect(M,y,colW,bh,'0.936 0.972 0.940');
+            rect(M+colW+16,y,colW,bh,cap.cant.length?'0.984 0.945 0.937':PANEL);
+            txt(M+12,y+17,10,true,'0.10 0.50 0.16','WORKS WELL HERE');
+            txt(M+colW+28,y+17,10,true,cap.cant.length?'0.66 0.24 0.17':GREY,cap.cant.length?'WILL STRUGGLE':'NO OBVIOUS LIMITS');
+            var cy1=y+27;
+            canW.forEach(function(ls){
+              rect(M+12,cy1,7,7,GREEN);
+              ls.forEach(function(l,li){ txt(M+25,cy1+7+li*12,8.6,false,INK,l); });
+              cy1+=12*ls.length+10;
+            });
+            var cy2=y+27;
+            if(cap.cant.length){
+              cantW.forEach(function(ls){
+                rect(M+colW+28,cy2,7,7,RED);
+                ls.forEach(function(l,li){ txt(M+colW+41,cy2+7+li*12,8.6,false,INK,l); });
+                cy2+=12*ls.length+10;
+              });
+            } else {
+              pdfWrap('At the speeds measured, nothing on our everyday checklist should struggle.',44).forEach(function(l,li){ txt(M+colW+28,y+34+li*12,8.6,false,GREY,l); });
+            }
+            y+=bh+8;
+            txt(M,y+6,7.8,false,GREY,'A guide, not a promise - based on the best speed measured over WiFi during this survey'+(bestDl!=null?' ('+bestDl+' Mbps down'+(bestUl!=null?', '+bestUl+' up':'')+')':'')+'.');
+            y+=20;
+          }
+
+          /* history: the story over time */
+          if(runs.length>=2){
+            need(150); y+=8;
+            txt(M,y,13,true,INK,'Your history - the real story'); y+=10;
+            rect(M,y,W-2*M,0.8,LGREY); y+=12;
+            var chW=W-2*M-140, chH=64, x0=M+8;
+            rect(M,y,W-2*M,chH+26,PANEL);
+            var n2=runs.length;
+            var pts=runs.map(function(rn,i){
+              return [x0+((chW-10)*(n2===1?0:i/(n2-1))), y+10+(chH-16)*(1-rn.avg/100)];
+            });
+            for(var gi=0;gi<=4;gi++) line(x0,y+10+(chH-16)*gi/4,x0+chW-10,y+10+(chH-16)*gi/4,LGREY,0.4);
+            for(var pi=1;pi<pts.length;pi++) line(pts[pi-1][0],pts[pi-1][1],pts[pi][0],pts[pi][1],CYAN,1.6);
+            pts.forEach(function(p,i){ rect(p[0]-1.8,p[1]-1.8,3.6,3.6,runs[i].avg>=75?GREEN:(runs[i].avg>=45?AMBER:RED)); });
+            txt(x0,y+chH+8,7.5,false,GREY,new Date(runs[0].t).toLocaleDateString('en-GB',{day:'numeric',month:'short'}));
+            txt(x0+chW-46,y+chH+8,7.5,false,GREY,new Date(runs[n2-1].t).toLocaleDateString('en-GB',{day:'numeric',month:'short'}));
+            var tr=trendOf(runs);
+            txt(x0+chW+14,y+18,10,true,tr.dir==='up'?GREEN:(tr.dir==='down'?RED:GREY),tr.dir==='up'?'IMPROVING':(tr.dir==='down'?'DECLINING':'STEADY'));
+            txt(x0+chW+14,y+32,8,false,GREY,n2+' runs saved');
+            starsAt(x0+chW+14,y+48,runs[n2-1].avg,5);
+            y+=chH+34;
+            pdfWrap(tr.line,100).forEach(function(l){ need(13); txt(M,y,8.6,false,INK,l); y+=12; });
+            var bt=bestBucket(runs);
+            if(bt){ pdfWrap('Best time of day: '+bt.line,100).forEach(function(l){ need(13); txt(M,y,8.6,false,INK,l); y+=12; }); }
+            var sp=spikeScan(runs);
+            if(sp){ pdfWrap('Interference check: '+sp.line,100).forEach(function(l){ need(13); txt(M,y,8.6,false,'0.66 0.24 0.17',l); y+=12; }); }
+            var noted=runs.filter(function(rn){return rn.note;}).slice(-4);
+            if(v.note||noted.length){
+              need(20+noted.length*12); y+=4;
+              txt(M,y,9.5,true,INK,'Setup & conditions notes'); y+=13;
+              if(v.note){ txt(M,y,8.4,false,GREY,'Site: '+String(v.note).slice(0,100)); y+=12; }
+              noted.forEach(function(rn){
+                txt(M,y,8.4,false,GREY,new Date(rn.t).toLocaleDateString('en-GB',{day:'numeric',month:'short'})+' - "'+rn.note.slice(0,80)+'" - avg '+rn.avg);
+                y+=12;
+              });
+            }
+            y+=6;
+          }
+
+          /* room photos - so we can judge the size of each area */
+          var phRooms=rooms.filter(function(r){ return v.photos&&v.photos[r.n]; }).slice(0,6);
+          if(phRooms.length){
+            var placed=[];
+            phRooms.forEach(function(r){
+              var im=addImg(v.photos[r.n]);
+              if(im) placed.push({r:r,im:im});
+            });
+            if(placed.length){
+              var pw=(W-2*M-24)/3, phH=pw*0.66;
+              need(phH+70); y+=8;
+              txt(M,y,13,true,INK,'Room photos'); txt(M+86,y,9,false,GREY,'taken during the survey - they help us judge the size of each area');
+              y+=10; rect(M,y,W-2*M,0.8,LGREY); y+=12;
+              for(var r0=0;r0<placed.length;r0+=3){
+                need(phH+34); /* each photo row pages independently so nothing clips */
+                var rowY=y;
+                placed.slice(r0,r0+3).forEach(function(p,ci){
+                  var px=M+ci*(pw+12);
+                  var ar=p.im.h/p.im.w, dw=pw, dh=pw*ar;
+                  if(dh>phH){ dh=phH; dw=phH/ar; }
+                  drawImg(p.im,px,rowY,dw,dh);
+                  txt(px,rowY+dh+11,8,true,GREY,p.r.n.slice(0,24)+'  ('+p.r.s+'/100)');
+                });
+                y+=phH+26;
+              }
+              y+=6;
+            }
+          }
 
           /* advice */
           var adv=adviceFor({n:v.n,rooms:rooms,bb:v.bb,dl:v.dl},mode);
           if(adv.length){
             need(88); y+=8;
             txt(M,y,13,true,INK,'What we would actually do'); y+=10;
-            rect(M,y,W-2*M,0.8,'0.85 0.88 0.92'); y+=14;
+            rect(M,y,W-2*M,0.8,LGREY); y+=14;
             adv.forEach(function(a){
               var heads=pdfWrap(a[1],64);
               var lines=pdfWrap(a[2],92);
@@ -2282,7 +2686,7 @@
           if(v.bb&&(v.bb.prov||v.bb.price!=null)){
             need(86); y+=8;
             txt(M,y,13,true,INK,'Your broadband deal'); y+=10;
-            rect(M,y,W-2*M,0.8,'0.85 0.88 0.92'); y+=16;
+            rect(M,y,W-2*M,0.8,LGREY); y+=16;
             var b=v.bb, dlx=v.dl;
             if(b.prov) { txt(M,y,10,false,INK,('Provider: '+b.prov+(b.pkg?'  ('+b.pkg+')':'')).slice(0,90)); y+=15; }
             if(b.price!=null){ txt(M,y,10,false,INK,'Price: '+String.fromCharCode(163)+b.price+' a month  -  '+String.fromCharCode(163)+(Math.round(b.price*12*100)/100)+' a year'); y+=15; }
@@ -2297,23 +2701,30 @@
 
           pages.forEach(function(pc,i4){ c=pc; footer(i4+1,pages.length); });
 
-          /* assemble the PDF file */
-          var objs=[], out='', offs=[];
+          /* assemble the PDF file (fonts + optional JPEG XObjects) */
+          var out='', offs=[];
           function push(str){ offs.push(out.length); out+=str; }
           out='%PDF-1.4'+NL;
-          var kidsRefs=[], objIdx=5, streams=[];
+          var imgBase=5, firstPage=imgBase+imgs.length;
+          var kidsRefs=[], objIdx=firstPage, streams=[];
           pages.forEach(function(pc){
             var stream=pc.join(NL);
             streams.push({page:objIdx,content:objIdx+1,stream:stream});
             kidsRefs.push(objIdx+' 0 R');
             objIdx+=2;
           });
+          var xoDict='';
+          imgs.forEach(function(im,ii){ xoDict+='/'+im.name+' '+(imgBase+ii)+' 0 R'; });
+          var res='<</Font<</F1 3 0 R/F2 4 0 R>>'+(imgs.length?'/XObject<<'+xoDict+'>>':'')+'>>';
           push('1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj'+NL);
           push('2 0 obj<</Type/Pages/Kids['+kidsRefs.join(' ')+']/Count '+pages.length+'>>endobj'+NL);
           push('3 0 obj<</Type/Font/Subtype/Type1/BaseFont/Helvetica/Encoding/WinAnsiEncoding>>endobj'+NL);
           push('4 0 obj<</Type/Font/Subtype/Type1/BaseFont/Helvetica-Bold/Encoding/WinAnsiEncoding>>endobj'+NL);
+          imgs.forEach(function(im,ii){
+            push((imgBase+ii)+' 0 obj<</Type/XObject/Subtype/Image/Width '+im.w+'/Height '+im.h+'/ColorSpace/DeviceRGB/BitsPerComponent 8/Filter/DCTDecode/Length '+im.data.length+'>>stream'+NL+im.data+NL+'endstream endobj'+NL);
+          });
           streams.forEach(function(st){
-            push(st.page+' 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 '+W+' '+H+']/Resources<</Font<</F1 3 0 R/F2 4 0 R>>>>/Contents '+st.content+' 0 R>>endobj'+NL);
+            push(st.page+' 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 '+W+' '+H+']/Resources'+res+'/Contents '+st.content+' 0 R>>endobj'+NL);
             push(st.content+' 0 obj<</Length '+st.stream.length+'>>stream'+NL+st.stream+NL+'endstream endobj'+NL);
           });
           var xrefPos=out.length, count=offs.length+1;
@@ -2324,21 +2735,30 @@
           for(var bi=0;bi<out.length;bi++) bytes[bi]=out.charCodeAt(bi)&0xFF;
           return bytes;
         }
-        function pdfDownload(){
-          if(!doc||!doc.rooms.length) return false;
+        function pdfSave(bytes,fname){
+          var blob=new Blob([bytes],{type:'application/pdf'});
+          var a=document.createElement('a');
+          a.href=URL.createObjectURL(blob);
+          a.download=fname||'365-techies-wifi-report.pdf';
+          document.body.appendChild(a); a.click();
+          setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },900);
+        }
+        function pdfDownloadFor(v,mode){
+          if(!v||!v.rooms||!v.rooms.length) return false;
           try{
-            var bytes=buildPdf({n:doc.siteName,rooms:doc.rooms,bb:doc.bb,dl:doc.dl},doc.mode||'home');
-            var blob=new Blob([bytes],{type:'application/pdf'});
-            var a=document.createElement('a');
-            a.href=URL.createObjectURL(blob);
-            a.download='365-techies-wifi-report.pdf';
-            document.body.appendChild(a); a.click();
-            setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },900);
+            pdfSave(buildPdf(v,mode),'365-techies-wifi-report.pdf');
             logE('pdf');
             return true;
           }catch(e){ return false; }
         }
-        try{ window.__wfPdf=function(){ return doc&&doc.rooms.length?buildPdf({n:doc.siteName,rooms:doc.rooms,bb:doc.bb,dl:doc.dl},doc.mode||'home'):null; }; }catch(e){}
+        function curView(){
+          return {n:doc.siteName,rooms:doc.rooms,bb:doc.bb,dl:doc.dl,runs:doc.runs||[],photos:doc.photos||{},note:doc.note||''};
+        }
+        function pdfDownload(){
+          if(!doc||!doc.rooms.length) return false;
+          return pdfDownloadFor(curView(),doc.mode||'home');
+        }
+        try{ window.__wfPdf=function(){ return doc&&doc.rooms.length?buildPdf(curView(),doc.mode||'home'):null; }; }catch(e){}
         var pagePdfBtn=$('#wf-pdf');
         if(pagePdfBtn) pagePdfBtn.addEventListener('click',function(){
           if(!pdfDownload()){
@@ -2350,11 +2770,12 @@
 
         /* ---------- multi-site: local sites, dashboard cards, totals ---------- */
         function stashCur(){
-          return {n:doc.siteName,rooms:doc.rooms,bb:doc.bb,dl:doc.dl,sent:doc.sent,events:doc.events,updated:doc.updated};
+          return {n:doc.siteName,rooms:doc.rooms,bb:doc.bb,dl:doc.dl,sent:doc.sent,events:doc.events,updated:doc.updated,runs:doc.runs||[],photos:doc.photos||{},note:doc.note||''};
         }
         function loadSiteObj(st){
           doc.siteName=st.n||'Site'; doc.rooms=st.rooms||[]; doc.bb=st.bb||{};
           doc.dl=st.dl||null; doc.sent=!!st.sent; doc.events=st.events||[];
+          doc.runs=st.runs||[]; doc.photos=st.photos||{}; doc.note=st.note||'';
           BB.forEach(function(k){ var e=bbEl(k); if(e) e.value=''; });
           fillBB();
         }
@@ -2433,14 +2854,20 @@
             }
             if(flags.children.length) cardEl.appendChild(flags);
             var acts=el('div','ws__acts');
+            var hb2=el('button','','History'); hb2.type='button';
+            hb2.addEventListener('click',function(){ openHistory(v.cur?-1:v.idx); });
+            var rb2=el('button','','Rename'); rb2.type='button';
+            rb2.addEventListener('click',function(){ renameSite(v.cur?-1:v.idx); });
             if(v.cur){
               var cb=el('button','cur','This site'); cb.type='button'; acts.appendChild(cb);
+              acts.appendChild(hb2); acts.appendChild(rb2);
               var dc=el('button','','× remove'); dc.type='button';
               dc.addEventListener('click',function(){
                 if(!confirm('Remove “'+v.n+'” and its survey from this device?'+(doc.sites&&doc.sites.length?' Your next site will take its place.':' You’ll get a fresh empty survey.'))) return;
                 if(doc.sites&&doc.sites.length){ var t2=doc.sites.splice(0,1)[0]; loadSiteObj(t2); }
                 else {
                   doc.siteName='My site'; doc.rooms=[]; doc.bb={}; doc.dl=null; doc.sent=false; doc.events=[];
+                  doc.runs=[]; doc.photos={}; doc.note='';
                   BB.forEach(function(k){ var e2=bbEl(k); if(e2) e2.value=''; });
                   fillBB();
                 }
@@ -2452,6 +2879,7 @@
               var ob=el('button','','Open'); ob.type='button';
               ob.addEventListener('click',function(){ switchSite(v.idx); });
               acts.appendChild(ob);
+              acts.appendChild(hb2); acts.appendChild(rb2);
               var db=el('button','','× remove'); db.type='button';
               db.addEventListener('click',function(){
                 if(confirm('Remove the site “'+v.n+'” and its survey from this device?')){ doc.sites.splice(v.idx,1); save(); renderSites(); }
@@ -2479,6 +2907,115 @@
               if(bodyBits.length) tot.appendChild(card(noBackup||renew?'warn':'', views.length+' site'+(views.length===1?'':'s')+' on this device', bodyBits.join(' ')).d);
             }
           }
+        }
+        /* ---------- per-site history panel: runs, insights, per-run reports ---------- */
+        var wh=$('#wh'), whTarget=-1; /* -1 = current site, else doc.sites index */
+        function whSiteObj(){ return whTarget<0?null:(doc.sites||[])[whTarget]; }
+        function whView(){
+          if(whTarget<0) return curView();
+          var st=whSiteObj(); if(!st) return null;
+          return {n:st.n,rooms:st.rooms||[],bb:st.bb||{},dl:st.dl,runs:st.runs||[],photos:st.photos||{},note:st.note||''};
+        }
+        function openHistory(idx){
+          if(!wh||!doc) return;
+          whTarget=(idx==null?-1:idx);
+          var v=whView(); if(!v) return;
+          wh.hidden=false;
+          try{ document.documentElement.style.overflow='hidden'; }catch(e){}
+          $('#wh-name').textContent=v.n;
+          $('#wh-count').textContent=(v.runs.length||'No')+' saved run'+(v.runs.length===1?'':'s');
+          var noteEl=$('#wh-note'); if(noteEl) noteEl.value=v.note||'';
+          var ins=$('#wh-insights'); ins.innerHTML='';
+          var tr=trendOf(v.runs);
+          ins.appendChild(card(tr.dir==='down'?'warn':(tr.dir==='up'?'good':''),
+            tr.dir==='up'?'\u25b2 Improving':(tr.dir==='down'?'\u25bc Declining':'\u25a0 Trend'),tr.line).d);
+          var bt=bestBucket(v.runs); if(bt) ins.appendChild(card('','\u23f0 Best time of day',bt.line).d);
+          var sp=spikeScan(v.runs); if(sp) ins.appendChild(card('warn','\u26a1 Quality spikes',sp.line).d);
+          if(v.rooms.length>1){
+            var rk=v.rooms.slice().sort(function(a,b){return b.s-a.s;});
+            ins.appendChild(card('good','\ud83c\udfc6 Room ranking',
+              rk.map(function(r,i){ return (i+1)+'. '+r.n+' ('+r.s+')'; }).join(' \u00b7 ')+' \u2014 best room first. Weakest: '+rk[rk.length-1].n+'.').d);
+          }
+          var runsEl=$('#wh-runs'); runsEl.innerHTML='';
+          if(!v.runs.length) runsEl.appendChild(card('','No runs saved yet','Finish a survey and view its report \u2014 each run lands here automatically, building the history that tells the real story.').d);
+          v.runs.slice().reverse().forEach(function(rn,ri){
+            var i0=v.runs.length-1-ri, prev=i0>0?v.runs[i0-1]:null;
+            var row=el('div','ws__card');
+            var head=el('div','');
+            head.style.cssText='display:flex;align-items:center;gap:.6rem;flex-wrap:wrap';
+            var d2=new Date(rn.t);
+            head.appendChild(el('span','ws__name',d2.toLocaleDateString('en-GB',{day:'numeric',month:'short'})+' '+hhmm(rn.t)));
+            var sc=el('span','',String(rn.avg)); sc.style.cssText='font-weight:800;color:'+colFor(rn.avg);
+            head.appendChild(sc);
+            starRowInto(head,rn.avg);
+            if(prev){
+              var dd=rn.avg-prev.avg;
+              var ar=el('span','',dd>2?'\u25b2 +'+dd:(dd<-2?'\u25bc '+dd:'\u25a0'));
+              ar.style.cssText='font-size:.72rem;color:'+(dd>2?'#00ce1b':(dd<-2?'#e0563f':'#7f93b8'));
+              head.appendChild(ar);
+            }
+            head.appendChild(el('span','ws__meta',rn.rooms.length+' room'+(rn.rooms.length===1?'':'s')+(rn.note?' \u00b7 \u201c'+rn.note+'\u201d':'')));
+            row.appendChild(head);
+            var det=el('div',''); det.hidden=true; det.style.cssText='margin-top:.6rem;display:grid;gap:.35rem';
+            row.appendChild(det);
+            var acts=el('div','ws__acts');
+            var vb=el('button','','View'); vb.type='button';
+            vb.addEventListener('click',function(){
+              if(!det.hidden){ det.hidden=true; vb.textContent='View'; return; }
+              det.hidden=false; vb.textContent='Hide'; det.innerHTML='';
+              rn.rooms.slice().sort(function(a,b){return b.s-a.s;}).forEach(function(r){
+                var l=el('div','');
+                l.style.cssText='display:grid;grid-template-columns:minmax(70px,1fr) 3fr auto;gap:.5rem;align-items:center;font-size:.78rem';
+                l.appendChild(el('span','',r.n));
+                var bar=el('div',''); bar.style.cssText='height:6px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden';
+                var fill=el('span',''); fill.style.cssText='display:block;height:100%;width:0;border-radius:999px;transition:width .8s ease;background:'+colFor(r.s);
+                bar.appendChild(fill); l.appendChild(bar);
+                l.appendChild(el('span','',r.s+(r.dl!=null?' \u00b7 '+r.dl+'Mb':'')));
+                det.appendChild(l);
+                setTimeout(function(){ fill.style.width=Math.max(3,r.s)+'%'; },40);
+              });
+            });
+            acts.appendChild(vb);
+            var pb=el('button','','PDF'); pb.type='button';
+            pb.addEventListener('click',function(){
+              var vv=whView()||v; /* re-read so a just-edited conditions note is included */
+              pdfDownloadFor({n:vv.n,rooms:rn.rooms,bb:vv.bb,dl:vv.dl,runs:vv.runs.slice(0,i0+1),photos:vv.photos,note:vv.note},rn.mode||'home');
+            });
+            acts.appendChild(pb);
+            var nb=el('button','','Note'); nb.type='button';
+            nb.addEventListener('click',function(){
+              var t3=prompt('Note for this run \u2014 conditions or what changed (e.g. \u201cnew mesh node\u201d, \u201cheatwave\u201d):',rn.note||'');
+              if(t3==null) return;
+              rn.note=String(t3).slice(0,200); save(); openHistory(whTarget);
+            });
+            acts.appendChild(nb);
+            row.appendChild(acts);
+            runsEl.appendChild(row);
+          });
+        }
+        function whClose(){
+          wh.hidden=true;
+          try{ document.documentElement.style.overflow=''; }catch(e){}
+        }
+        if(wh){
+          var whX=$('#wh-x'); if(whX) whX.addEventListener('click',whClose);
+          document.addEventListener('keydown',function(e){ if(!wh.hidden&&e.key==='Escape') whClose(); });
+          var whNote=$('#wh-note');
+          if(whNote) whNote.addEventListener('change',function(){
+            var val=String(whNote.value||'').slice(0,300);
+            if(whTarget<0) doc.note=val; else if(whSiteObj()) whSiteObj().note=val;
+            save();
+          });
+        }
+        function renameSite(idx){
+          var cur=idx==null||idx<0;
+          var oldN=cur?doc.siteName:((doc.sites||[])[idx]||{}).n;
+          var t=prompt('New name for this site:',oldN||'');
+          if(t==null) return;
+          var nm=String(t).replace(/\s+/g,' ').trim().slice(0,40);
+          if(!nm) return;
+          if(cur) doc.siteName=nm; else if((doc.sites||[])[idx]) doc.sites[idx].n=nm;
+          save(); renderAll();
         }
         var wsAdd=$('#ws-add'), wsNew=$('#ws-new'), wsName=$('#ws-name'), wsCreate=$('#ws-create');
         if(wsAdd) wsAdd.addEventListener('click',function(){
@@ -2586,9 +3123,21 @@
           });
           if(E.viewRep) E.viewRep.addEventListener('click',function(){ qReport(); });
           if(E.repBtn) E.repBtn.addEventListener('click',function(){ qReport(); });
+          var resPhoto=$('#wq-photo');
+          if(resPhoto) resPhoto.addEventListener('click',function(){ if(q.room) photoPick(q.room); });
           if(E.repBack) E.repBack.addEventListener('click',function(){ qFxClear(); clearInterval(q.count); wq.className='wq'; qShow('pick'); qChips(); qRail(); });
           if(E.pdfBtn) E.pdfBtn.addEventListener('click',function(){
             if(pdfDownload()) sGood();
+          });
+          var emailBtn=$('#wq-email');
+          if(emailBtn) emailBtn.addEventListener('click',function(){
+            if(!doc.rooms.length) return;
+            pdfDownload(); /* the PDF saves first so the visitor can attach it */
+            alert('Your report PDF has just downloaded.\n\nAn email to us will open next \u2014 attach the PDF to it before sending (email can\u2019t attach files automatically).');
+            var rooms3=doc.rooms.slice().sort(function(a,b){return b.s-a.s;});
+            var sum3=0; rooms3.forEach(function(r){sum3+=r.s;});
+            var body3='Hi 365 Techies,%0A%0AMy WiFi survey for "'+encodeURIComponent(doc.siteName)+'" scored '+Math.round(sum3/rooms3.length)+'/100 across '+rooms3.length+' rooms.%0A%0AI\u2019m attaching the PDF report this tool just downloaded. Please take a look and reply with honest advice.%0A%0AThanks';
+            location.href='mailto:help@365techies.co.uk?subject='+encodeURIComponent('WiFi survey report \u2014 '+doc.siteName)+'&body='+body3;
           });
           function qFx(fn,ms){ q.fx.push(setTimeout(fn,ms)); }
           function qFxClear(){ q.fx.forEach(function(t){ clearTimeout(t); }); q.fx=[]; }
@@ -2600,6 +3149,19 @@
             var rooms=doc.rooms.slice().sort(function(a,b){return b.s-a.s;});
             var sum=0; rooms.forEach(function(r){sum+=r.s;});
             var avg=Math.round(sum/rooms.length);
+            /* snapshot this run into the site history (dedupe: skip if nothing changed) */
+            try{
+              doc.runs=doc.runs||[];
+              var rkey=JSON.stringify(rooms.map(function(r){return [r.n,r.s,r.dl];}));
+              var last=doc.runs.length?doc.runs[doc.runs.length-1]:null;
+              var lkey=last?JSON.stringify(last.rooms.map(function(r){return [r.n,r.s,r.dl];})):null;
+              if(rkey!==lkey){
+                doc.runs.push({t:Date.now(),mode:doc.mode||'home',avg:avg,note:'',
+                  rooms:rooms.map(function(r){return {n:r.n,s:r.s,lat:r.lat,jit:r.jit,dl:r.dl,ul:r.ul};})});
+                if(doc.runs.length>40) doc.runs.shift();
+                save();
+              }
+            }catch(e){}
             /* graded count-up with ticks */
             E.gradeNum.style.color=colFor(avg);
             clearInterval(q.count);
@@ -2647,11 +3209,25 @@
               E.repRooms.appendChild(row);
               qFx(function(){ fill.style.width=Math.max(3,r.s)+'%'; }, reduceQ?0:250+idx*90);
             });
-            /* advice cards */
+            /* honest capacity card first: what this speed actually supports */
             E.repAdvice.innerHTML='';
+            var bd2=(doc.dl&&doc.dl.best)?doc.dl.best:null, bu2=null;
+            rooms.forEach(function(r){ if(r.dl!=null&&(bd2==null||r.dl>bd2)) bd2=r.dl; if(r.ul!=null&&(bu2==null||r.ul>bu2)) bu2=r.ul; });
+            var cap2=capacityFor(bd2,bu2,doc.mode||'home');
+            if(cap2){
+              E.repAdvice.appendChild(card('good','What this connection supports',
+                cap2.line+' Works well: '+cap2.can.join('; ')+'.'+(cap2.cant.length?' Will struggle: '+cap2.cant.join('; ')+'.':'')+' A guide, not a promise \u2014 based on the best speed measured over WiFi.').d);
+            }
+            /* history verdict card, when there is a story to tell */
+            if((doc.runs||[]).length>=3){
+              var tr2=trendOf(doc.runs);
+              E.repAdvice.appendChild(card(tr2.dir==='down'?'warn':(tr2.dir==='up'?'good':''),
+                (tr2.dir==='up'?'\u25b2 ':(tr2.dir==='down'?'\u25bc ':''))+'Your history says',tr2.line+' See the full story in My Sites \u2192 History.').d);
+            }
             adviceFor({n:doc.siteName,rooms:rooms,bb:doc.bb,dl:doc.dl},doc.mode||'home').forEach(function(a){
               E.repAdvice.appendChild(card(a[0],a[1],a[2]).d);
             });
+            E.repAdvice.appendChild(card('','Want this managed for you?','With 365 Home & Business Support you get your own customer portal (bookings, PC performance reports and more), honest WiFi advice from a real local team, and a full computer service every 6 weeks. See 365techies.co.uk/monthly-it-support or call 01202 775566.').d);
             if(avg>=75&&!reduceQ){ qFx(qBurst,900); qFx(sGreat,350); }
             else if(!reduceQ) qFx(sGood,350);
           }
@@ -2693,10 +3269,11 @@
             },350);
           }
           function qSpeed(snap){
-            E.phase.textContent='Now the speed test\u2026';
-            E.tip.textContent='Hold on \u2014 downloading about 10\u00a0MB.';
+            sLock();
+            E.phase.textContent='Signal locked \u2014 now the speed test\u2026';
+            E.tip.textContent='Hold on \u2014 downloading about 10\u00a0MB.'+(snd.on?' Listen for the sweep.':'');
             E.unit.textContent='MBPS'; E.num.textContent='0'; E.num.style.color='#eef4fd'; qDial(0,'#1d97e3');
-            var bytes=10000000, t0=performance.now(), got=0, phaseDone=false;
+            var bytes=10000000, t0=performance.now(), got=0, phaseDone=false, lastScan=0;
             /* a black-spot room can drip for many minutes - cap the phase and keep the partial */
             var phaseTO=setTimeout(function(){
               if(!phaseDone&&!q.cancel){ phaseDone=true; qUpload(snap,got>400000?Math.min(Math.round(((got*8)/((performance.now()-t0)/1000)/1e6)*10)/10,2000):null); }
@@ -2715,6 +3292,8 @@
                       var live=secs>0?(got*8)/secs/1e6:0;
                       E.num.textContent=live>=100?String(Math.round(live)):live.toFixed(1);
                       qDial(got/bytes*100,'#1d97e3');
+                      var nowT=performance.now();
+                      if(nowT-lastScan>320){ lastScan=nowT; sScan(got/bytes); }
                       return pump();
                     });
                   };
@@ -2734,6 +3313,7 @@
               ['catch'](function(){ clearTimeout(phaseTO); if(!q.cancel&&!phaseDone){ phaseDone=true; qUpload(snap,null); } });
           }
           function qUpload(snap,dl){
+            sWhoosh();
             E.phase.textContent='\u2026and the upload';
             E.tip.textContent='Uploads matter most for video calls.';
             E.unit.textContent='UP MBPS'; E.num.textContent='0'; qDial(0,'#8a6fe8');
@@ -2781,8 +3361,10 @@
             E.mini.textContent=(snap.off?'no response':snap.lat+' ms latency')+(mbps!=null?' \u00b7 '+(mbps>=100?Math.round(mbps):mbps)+' Mbps down':' \u00b7 speed test didn\u2019t finish')+(ul!=null?' \u00b7 '+(ul>=100?Math.round(ul):ul)+' up':'')+' \u00b7 at '+hhmm(Date.now());
             E.vline.textContent= snap.off?'Nothing is getting through in this room \u2014 a genuine black-spot. Test the rooms either side to see where it recovers.'
               : s>=75?'This room is sorted. On to the next one.'
-              : s>=45?'Perfectly usable \u2014 video calls should hold here, though it\u2019s not your best room.'
-              : 'Found a weak spot. Worth testing the rooms either side to see exactly where the signal gives up.';
+              : s>=45?'Perfectly usable \u2014 video calls should hold here, though it\u2019s not your best room. Try again one desk over: WiFi can change within a single room.'
+              : 'Found a weak spot. Try another location in this room \u2014 even a few steps can change everything \u2014 then test the rooms either side to see exactly where the signal gives up.';
+            var phBtn=$('#wq-photo');
+            if(phBtn) phBtn.innerHTML=(doc.photos&&doc.photos[q.room])?'\u2713 Photo saved \u2014 tap to replace':'\ud83d\udcf7\u00a0Add a photo of this room \u2014 helps us see the size of the area';
             if(s>=75&&!reduceQ) qBurst();
           }
           function qBurst(){
