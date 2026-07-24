@@ -1277,6 +1277,9 @@
       }
       h += '</div>';
       h += '<div class="card"><h2>📅 Your bookings</h2><div id="mybk"><p class="quiet">Loading your visits…</p></div></div>';
+      h += '<div class="card"><h2>📶 Your WiFi surveys</h2><div id="mywifi"><p class="quiet">Loading…</p></div>'
+        + '<p class="quiet">Surveys you save from our free <a href="/wifi-signal-test/" target="_blank" rel="noopener">WiFi Optimizer</a> live here on your account — rooms, history and photos — so you can restore them on any device and our team can see them when they help you. '
+        + '<label style="display:inline;color:var(--psoft);cursor:pointer;text-decoration:underline">Upload a survey file<input type="file" id="mywifi-up" accept=".json,application/json" hidden /></label></p></div>';
       var crsAll = null;
       d.machines.forEach(function (m) { if (m.crs && (!crsAll || parseInt(m.crs, 10) > parseInt(crsAll.crs, 10))) crsAll = m; });
       if (crsAll && crsAll.crs) {
@@ -1354,6 +1357,7 @@
       var cbb = document.getElementById('cbbook');   // membership card "book one" -> open the in-portal wizard, not the website
       if (cbb) cbb.onclick = function () { var w = document.getElementById('cbwiz'); if (w && w.style.display === 'none') custWiz(); if (w) w.scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; };
       loadMyBookings();
+      loadWifi();
       Array.prototype.forEach.call(document.querySelectorAll('#p365app .repb'), function (btn) {
         btn.onclick = function () {
           btn.disabled = true;
@@ -1464,6 +1468,54 @@
       renderBookings(d.bookings || []);
     }).catch(function () { box.innerHTML = '<p class="quiet">Couldn’t load your visits - try again shortly.</p>'; });
   }
+  // WiFi surveys saved from the free optimizer tool: list, open-in-tool, delete, upload
+  var WIFI = '/api/pcm-wifi.php';
+  function loadWifi() {
+    var box = document.getElementById('mywifi'); if (!box) return;
+    post(WIFI, { action: 'list', wtoken: S.wtoken, machine: mid() }).then(function (d) {
+      if (!d || !d.ok) { box.innerHTML = '<p class="quiet">Couldn’t load your surveys just now - try again shortly.</p>'; return; }
+      if (!d.surveys || !d.surveys.length) { box.innerHTML = '<p class="quiet">Nothing saved yet. Run the free WiFi survey, then press “Save to my 365 portal” on the tool.</p>'; return; }
+      var hh = '';
+      d.surveys.forEach(function (w) {
+        var dt = w.t ? new Date(w.t * 1000).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+        hh += '<div class="row"><div style="flex:1;min-width:150px"><strong>' + esc(w.site) + '</strong><br /><span class="quiet" style="margin:0">'
+           + w.rooms + ' room' + (w.rooms === 1 ? '' : 's') + ' · avg <span class="' + (w.avg >= 75 ? 'ok' : (w.avg >= 45 ? 'wn' : '')) + '">' + w.avg + '/100</span> · saved ' + esc(dt) + '</span></div>'
+           + '<div style="display:flex;gap:.4rem;flex-wrap:wrap">'
+           + '<a class="sm" style="padding:.34rem .68rem;font-size:.8rem;border:1px solid var(--pline);border-radius:9px;text-decoration:none" href="/wifi-signal-test/?portal-restore=' + encodeURIComponent(w.id) + '">Open in WiFi tool</a>'
+           + '<button class="ghost sm" data-wifidel="' + esc(w.id) + '">Delete</button></div></div>';
+      });
+      box.innerHTML = hh;
+      box.querySelectorAll('[data-wifidel]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          if (!confirm('Delete this saved survey from your account? (A copy stays on any device that ran it.)')) return;
+          btn.disabled = true;
+          post(WIFI, { action: 'del', wtoken: S.wtoken, machine: mid(), id: btn.getAttribute('data-wifidel') }).then(loadWifi);
+        });
+      });
+    }).catch(function () { box.innerHTML = '<p class="quiet">Couldn’t load your surveys - try again shortly.</p>'; });
+  }
+  (function () {
+    // upload a 365-wifi-survey.json exported on another device straight into the account
+    document.addEventListener('change', function (e) {
+      var inp = e.target;
+      if (!inp || inp.id !== 'mywifi-up' || !inp.files || !inp.files[0]) return;
+      var rd = new FileReader();
+      rd.onload = function () {
+        var pack = null;
+        try { pack = JSON.parse(String(rd.result)); } catch (err) {}
+        if (!pack || pack.app !== '365-wifi-survey' || !pack.survey) { alert('That doesn’t look like a 365 WiFi survey file.'); inp.value = ''; return; }
+        post(WIFI, { action: 'save', wtoken: S.wtoken, machine: mid(), pack: pack }).then(function (d) {
+          inp.value = '';
+          if (d && d.ok) loadWifi();
+          else if (d && d.error === 'too_big') alert('That file is too large to store (photo-heavy). Remove a photo or two in the tool, re-export and try again.');
+          else if (d && (d.error === 'bad_pack' || d.error === 'empty_survey')) alert('That file isn’t a usable survey - it needs at least one tested room. Export it fresh from the WiFi tool and try again.');
+          else if (d && d.error === 'slow_down') alert('One save every 30 seconds - give it a moment and try again.');
+          else alert('That didn’t save - try again shortly.');
+        });
+      };
+      rd.readAsText(inp.files[0]);
+    });
+  })();
   function renderBookings(list) {
     var box = document.getElementById('mybk'); if (!box) return;
     if (!list.length) { box.innerHTML = '<p class="quiet">No upcoming visits booked. Tap “Book a service” below and we’ll come to you.</p>'; return; }
