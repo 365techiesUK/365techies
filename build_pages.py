@@ -18,7 +18,8 @@ except Exception:
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://365techies.co.uk"
-CSSV = "67"
+CSSV = "68"
+HERITAGE_DIMS = {'heritage-01.jpg': (1400, 787), 'heritage-02.jpg': (787, 1400), 'heritage-03.jpg': (1400, 787), 'heritage-04.jpg': (1400, 787), 'heritage-05.jpg': (787, 1400), 'heritage-07.jpg': (1400, 787), 'heritage-kinson.jpg': (1200, 710), 'heritage-moordown.jpg': (1400, 788), 'heritage-stock.jpg': (1400, 788), 'heritage-storefront.jpg': (1024, 683)}
 try:
     from hero_scenes import SCENES as HERO_SCENES
 except Exception:
@@ -1277,7 +1278,7 @@ def heritage_gallery():
         return ""
     figs = "\n".join(
         f'''          <figure class="heritage-card" data-reveal>
-            <img src="/images/{f}" alt="{alt}" loading="lazy" decoding="async" />
+            <img src="/images/{f}" alt="{alt}" width="{HERITAGE_DIMS.get(f,(1400,787))[0]}" height="{HERITAGE_DIMS.get(f,(1400,787))[1]}" loading="lazy" decoding="async" />
             <figcaption class="mono">{cap}</figcaption>
           </figure>''' for (f, alt, cap) in items)
     return f'''    <section class="section section--alt" aria-label="Our heritage">

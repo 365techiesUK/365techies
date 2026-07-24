@@ -1278,6 +1278,10 @@ body.menu-open { overflow: hidden; }
 .section-head { max-width: 700px; margin: 0 auto 3rem; text-align: center; }
 .section-head .section-title { margin-left: auto; margin-right: auto; }
 
+
+/* bare content tables (no class): scroll on phones instead of breaking the page */
+.prose table:not([class]) { display: block; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; border-collapse: collapse; }
+.prose table:not([class]) th, .prose table:not([class]) td { padding: 0.55rem 0.8rem; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
 .prose { max-width: 760px; }
 .prose p { color: var(--muted); font-size: 1.06rem; line-height: 1.75; margin: 0 0 1.15rem; }
 .prose p:last-child { margin-bottom: 0; }
