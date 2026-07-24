@@ -6410,7 +6410,7 @@ def web_design():
       ("Do you do SEO as well as design?", "Findability is the whole point — there&rsquo;s no point having a beautiful website if nobody can find it. Every site we build is technically SEO-sound from day one (that&rsquo;s the SEO 100 on our own Lighthouse report — test it on this page), with clean structure, proper metadata and genuinely fast pages."),
       ("Can I see proof your sites are fast?", "Yes — right on this page. Run our own website through the free checker above and the scores are measured live by Google&rsquo;s Lighthouse engine while you watch. We&rsquo;d rather show you than make claims."),
       ("How fast will my site be?", "We build to the same standard as our own site — but we won&rsquo;t promise you a number, because honest people can&rsquo;t: scores vary between runs and depend on your content. What we can say: Google confirms page experience signals like Core Web Vitals are used by its ranking systems, and relevance always comes first — so we build for both."),
-      ("How much does a website cost?", "Independent UK guides put a typical agency-built small-business website at roughly &pound;2,500&ndash;&pound;10,000 before hosting. Every project is different, so we quote fixed and up front — tell us what you need and you&rsquo;ll get a clear written price with no surprises, from a local firm you can actually visit."),
+      ("How much does a website cost?", "Ours is <strong>&pound;2,450 fixed</strong> for a hand-built site of up to 25 pages, half up front and half when it goes live. For calibration: independent UK guides put a typical agency-built small-business site at roughly &pound;2,500&ndash;&pound;10,000 before hosting. Bigger or more complicated jobs we quote properly rather than pretend &mdash; but most small businesses need the fixed-price one. See <a href=\"/web-care/\">our prices</a>."),
       ("Why do some websites cost &pound;50,000 or even more?", "Because past a certain size a website is really software plus a publishing operation. At published UK rates, professionally written pages start around &pound;100 each, custom checkers and calculators are &pound;30,000+ software projects, and maintenance adds 15&ndash;25% a year on top. Our own 475-page site with its 20+ free tools is exactly that scope &mdash; built in-house, which is why we can build yours to the same measurable standard for a sensible fixed price."),
       ("Where are the websites hosted?", "On premium infrastructure powered by SiteGround — ultrafast cloud hosting with free SSL, daily backups, a global CDN and a UK data centre, all managed by us."),
       ("Can you set up professional business email?", "Yes — we set up email on your own domain (you@yourbusiness.co.uk) or Microsoft 365, with spam protection and configuration on all your devices."),
@@ -6420,7 +6420,7 @@ def web_design():
       hero(bc("Web Design & Hosting"), "// PROOF, NOT PROMISES",
            'Web design &amp; hosting in <em class="grad grad--cyan">Bournemouth</em> &mdash; proven fast, built to be found',
            "Most web designers make claims. We&rsquo;d rather show you: our own website scores 96&ndash;100 on Google&rsquo;s Lighthouse tests, and you can re-test it live on this page &mdash; then compare any website to ours with the same tool. Design, hosting and business email for Bournemouth, Poole and the rest of Dorset, all looked after by your local IT team.",
-           cta1=("Get a Website Quote", "/contact/"), cta2=("Test our site live", "#wctool"),
+           cta1=("See prices &mdash; from &pound;125/mo", "/web-care/"), cta2=("Test our site live", "#wctool"),
            chips=["Lighthouse-proven &mdash; test us live","We lead by example","Bournemouth, Poole &amp; Dorset"]),
       f'''    <section class="section" aria-label="Our proof">
       <div class="wrap split-2">
@@ -6547,7 +6547,7 @@ def web_design():
       tools_strip(["ssl", "domainexp", "dns"], title="Free website &amp; domain tools", lede_text="Check the plumbing behind your website and email &mdash; free, in seconds.", alt=False),
       cta("Ready for a website that works as hard as you do?",
           "Get a friendly, no-obligation quote for website design, hosting and business email — all looked after by your local IT team.",
-          primary=("Get a Website Quote", "/contact/"), secondary=("Call 01202 775566", "tel:+441202775566")),
+          primary=("See prices &mdash; from &pound;125/mo", "/web-care/"), secondary=("Call 01202 775566", "tel:+441202775566")),
       _web_cluster_section(exclude=("web-design-hosting",)),
     ])
     def schema(s, _desc=desc, _faqs=faqs):
@@ -6733,14 +6733,14 @@ def website_rebuild():
       ("How long until a rebuilt website gets traffic?", "Honestly: weeks for Google to re-index, months for growth — and we&rsquo;d rather tell you that up front. Google says expect temporary ranking fluctuation during a move, and independent research by Ahrefs found fewer than 2% of newly published pages reach Google&rsquo;s top 10 within a year (the average #1 page is around five years old). A rebuild doesn&rsquo;t buy instant traffic — it removes the handbrake, and the growth compounds from there. Anyone promising you page 1 in 30 days is pricing in your disappointment."),
       ("Can you rebuild my WordPress website?", "Yes — happily. Our own website was WordPress before we rebuilt it, so we&rsquo;ve done this exact migration ourselves: every old URL mapped and 301-forwarded to a new, faster, search-optimised page, with Google Search Console watched daily through the changeover."),
       ("Do I have to change my domain or hosting?", "No — you keep your domain (changing it mid-rebuild adds months of settling time, so we&rsquo;d usually advise against it). Hosting-wise, we offer fast managed hosting as part of the service, but the migration method is the same either way."),
-      ("What does a website rebuild cost?", "It depends on scope — how many pages, whether you need new copy and photography, and what the old site&rsquo;s link structure looks like. We don&rsquo;t publish a one-size price because there isn&rsquo;t one; you get a free look at your current site (use the checker on this page), then a fixed written quote before any work starts. As calibration for any quote you receive: independent UK guides put a typical agency-built small-business site at &pound;2,500&ndash;&pound;10,000 before hosting, with professional copywriting from about &pound;100 a page on top."),
+      ("What does a website rebuild cost?", "<strong>&pound;2,450 fixed</strong> for up to 25 pages, agreed before we start &mdash; half up front, half when it goes live. For calibration: independent UK guides put a typical agency-built small-business site at &pound;2,500&ndash;&pound;10,000 before hosting, with professional copywriting from about &pound;100 a page on top. A much bigger or more unusual job we&rsquo;ll quote properly instead of guessing. And you don&rsquo;t have to rebuild at all to start &mdash; most people begin on <a href=\"/web-care/\">Care &amp; Search at &pound;125 a month</a> on the site they already have."),
       ("Can I see proof you can do this?", "Yes, live: run <strong>365techies.co.uk</strong> through the checker on this page — that&rsquo;s our own rebuild, measured by Google&rsquo;s Lighthouse engine while you watch. We also rebuilt and look after <a href=\"https://www.colinclarkbuilders.co.uk/\" target=\"_blank\" rel=\"noopener\">colinclarkbuilders.co.uk</a>. Two real, checkable examples — no mock-ups."),
     ]
     content = "\n".join([
       hero(bc("Website Rebuild"), "// NOT GETTING CALLS?",
            'Time for a <em class="grad grad--cyan">website rebuild</em> &mdash; without losing your Google rankings',
            "If the phone isn&rsquo;t ringing, your website is usually the reason — too slow, awkward on phones, invisible on Google, or all three. We rebuild websites for Bournemouth, Poole and Dorset businesses the way we rebuilt our own: diagnosed with real data, rebuilt to measurable standards, and migrated safely so every old link forwards to a new, optimised page.",
-           cta1=("Get a Rebuild Quote", "/contact/"), cta2=("Diagnose your site free", "#wctool"),
+           cta1=("Rebuild &mdash; &pound;2,450 fixed", "/web-care/"), cta2=("Diagnose your site free", "#wctool"),
            chips=["Free live diagnosis below","SEO-safe migration &mdash; 301s done right","We rebuilt our own site this way"]),
       f'''    <section class="section" aria-label="Diagnose it first">
       <div class="wrap split-2">
@@ -6835,7 +6835,7 @@ def website_rebuild():
       tools_strip(["website", "ssl", "domainexp"], title="Free tools for your current site", lede_text="Check the site you have today &mdash; free, in seconds.", alt=False),
       cta("Ready to find out what a rebuild would do?",
           "Free diagnosis, honest verdict, fixed written quote — and a migration done the way Google's own guidance describes. Bournemouth, Poole & Dorset.",
-          primary=("Get a Rebuild Quote", "/contact/"), secondary=("Call 01202 775566", "tel:+441202775566")),
+          primary=("Rebuild &mdash; &pound;2,450 fixed", "/web-care/"), secondary=("Call 01202 775566", "tel:+441202775566")),
       _web_cluster_section(exclude=("website-rebuild",)),
     ])
     def schema(s, _desc=desc, _faqs=faqs):
@@ -13885,6 +13885,7 @@ info_page(
           </div>
         </div>
         <p class="cmp-foot mono" data-reveal>We always agree any extra cost with you up front &mdash; never a surprise bill.</p>
+        <p class="lede lede--center" data-reveal style="margin-top:1.2rem">Looking after a <strong>website</strong> too? Those prices are published as well &mdash; <a href="/web-care/">website care from &pound;125/month, rebuilds &pound;2,450 fixed</a>.</p>
       </div>
     </section>
     <section class="section" aria-label="How we compare">
