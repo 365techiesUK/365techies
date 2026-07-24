@@ -181,8 +181,8 @@ MESH_COMPARE = '''<style>
 .mcard__dl{margin:0;font-size:.9rem}
 .mcard__dl dt{font:600 .66rem/1 var(--font-mono,inherit);letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:.7rem 0 .25rem}
 .mcard__dl dd{margin:0;color:#dfe9f7}
-.mcard__claim{color:var(--gold,#e8c35a);text-transform:none;letter-spacing:0;font-weight:400}
-.mcard__wd{color:#e0b341 !important}
+.mcard__claim{color:#e8c35a;text-transform:none;letter-spacing:0;font-weight:400}
+.mcard__wd{color:var(--warn) !important}
 .mcard__wv{color:#c9d6e8}
 .mcount{text-align:center;color:var(--faint);font-size:.8rem;margin:1.2rem 0 0}
 @media(max-width:600px){.mgrid{grid-template-columns:1fr}}

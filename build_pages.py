@@ -18,7 +18,7 @@ except Exception:
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://365techies.co.uk"
-CSSV = "68"
+CSSV = "69"
 HERITAGE_DIMS = {'heritage-01.jpg': (1400, 787), 'heritage-02.jpg': (787, 1400), 'heritage-03.jpg': (1400, 787), 'heritage-04.jpg': (1400, 787), 'heritage-05.jpg': (787, 1400), 'heritage-07.jpg': (1400, 787), 'heritage-kinson.jpg': (1200, 710), 'heritage-moordown.jpg': (1400, 788), 'heritage-stock.jpg': (1400, 788), 'heritage-storefront.jpg': (1024, 683)}
 try:
     from hero_scenes import SCENES as HERO_SCENES
@@ -1396,7 +1396,7 @@ WCHECK_TOOL = r'''    <section class="section" aria-label="Free website checker"
       #wcheck .wc-results{margin-top:1.8rem}
       #wcheck .wc-tested{font-size:.9rem;color:var(--muted,#9aa6c2);text-align:center;margin:0 0 1.4rem;word-break:break-all}
       #wcheck .wc-tested a{color:var(--cyan,#37c2c2)}
-      #wcheck .wc-badge{display:inline-block;margin-left:.4rem;font-size:.72rem;padding:.12rem .55rem;border:1px solid rgba(255,255,255,.18);border-radius:99px;white-space:nowrap}
+      #wcheck .wc-badge{display:inline-block;margin-left:.4rem;font-size:.72rem;padding:.12rem .55rem;border:1px solid rgba(255,255,255,.18);border-radius:999px;white-space:nowrap}
       #wcheck .wc-gauges{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
       #wcheck .wc-gauge{text-align:center}
       #wcheck .wc-g-ring{position:relative;width:118px;max-width:100%;margin:0 auto;aspect-ratio:1}
@@ -1411,7 +1411,7 @@ WCHECK_TOOL = r'''    <section class="section" aria-label="Free website checker"
       #wcheck .wc-metric-v{margin:0;font-size:1.35rem;font-weight:800;font-variant-numeric:tabular-nums}
       #wcheck .wc-metric-l{margin:.25rem 0 0;font-size:.74rem;color:var(--muted,#9aa6c2);line-height:1.35}
       #wcheck .wc-chk-grid{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center}
-      #wcheck .wc-chk{font-size:.82rem;padding:.4rem .75rem;border-radius:99px;border:1px solid rgba(255,255,255,.14)}
+      #wcheck .wc-chk{font-size:.82rem;padding:.4rem .75rem;border-radius:999px;border:1px solid rgba(255,255,255,.14)}
       #wcheck .wc-chk.is-ok{color:#7ee2a8;border-color:rgba(46,204,113,.4);background:rgba(46,204,113,.08)}
       #wcheck .wc-chk.is-bad{color:#f5a39b;border-color:rgba(231,76,60,.4);background:rgba(231,76,60,.08)}
       #wcheck .wc-issue-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.6rem}
@@ -1441,10 +1441,10 @@ WCHECK_TOOL = r'''    <section class="section" aria-label="Free website checker"
       #wcheck .wc-cmp-bars{display:flex;flex-direction:column;gap:.3rem}
       #wcheck .wc-cmp-bar{display:flex;align-items:center;gap:.5rem;font-size:.72rem}
       #wcheck .wc-cmp-bar .wc-cmp-who{flex:0 0 84px;color:var(--muted,#9aa6c2)}
-      #wcheck .wc-cmp-bar .wc-cmp-track{flex:1;height:9px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden}
-      #wcheck .wc-cmp-bar .wc-cmp-fill{height:100%;border-radius:99px;width:0;transition:width .9s ease}
+      #wcheck .wc-cmp-bar .wc-cmp-track{flex:1;height:9px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden}
+      #wcheck .wc-cmp-bar .wc-cmp-fill{height:100%;border-radius:999px;width:0;transition:width .9s ease}
       #wcheck .wc-cmp-bar.wc-good .wc-cmp-fill{background:#39d353}
-      #wcheck .wc-cmp-bar.wc-avg .wc-cmp-fill{background:#e0b341}
+      #wcheck .wc-cmp-bar.wc-avg .wc-cmp-fill{background:var(--warn)}
       #wcheck .wc-cmp-bar.wc-poor .wc-cmp-fill{background:#e06a4a}
       #wcheck .wc-cmp-bar .wc-cmp-num{flex:0 0 28px;text-align:right;font-weight:700}
       #wcheck .wc-cmp-note{font-size:.74rem;color:var(--muted,#9aa6c2);margin:.9rem 0 0}
@@ -2112,8 +2112,8 @@ PWGEN_TOOL = r'''    <section class="section" aria-label="Password generator" id
       #pg #pg-value{flex:1;min-width:0;display:flex;align-items:center;font-family:var(--font-mono,monospace);font-size:1.15rem;color:#fff;word-break:break-all;overflow-wrap:anywhere}
       #pg .pg-copy{white-space:nowrap;font:inherit;font-weight:600;padding:.6rem 1rem;border-radius:9px;border:1px solid var(--cyan,#37c2c2);background:transparent;color:var(--cyan,#37c2c2);cursor:pointer}
       #pg .pg-copy.done{background:#2ecc71;border-color:#2ecc71;color:#04161a}
-      #pg .pg-bar-wrap{height:7px;border-radius:99px;background:rgba(255,255,255,.1);margin:.9rem 0 .3rem;overflow:hidden}
-      #pg .pg-bar{height:100%;width:0;border-radius:99px;transition:width .3s,background .3s}
+      #pg .pg-bar-wrap{height:7px;border-radius:999px;background:rgba(255,255,255,.1);margin:.9rem 0 .3rem;overflow:hidden}
+      #pg .pg-bar{height:100%;width:0;border-radius:999px;transition:width .3s,background .3s}
       #pg .pg-strlabel{text-align:right;font-size:.78rem;margin:0 0 1.2rem;min-height:1em;color:var(--muted,#9aa6c2)}
       #pg .pg-tabs{display:flex;gap:.4rem;margin-bottom:1.1rem}
       #pg .pg-tabs button{flex:1;font:inherit;font-weight:600;padding:.65rem;border-radius:11px;border:1px solid rgba(255,255,255,.12);background:transparent;color:inherit;cursor:pointer}
@@ -2483,14 +2483,14 @@ PCBENCH_TOOL = r'''    <section class="section" aria-label="PC benchmark" id="be
       <style>
       #bm{max-width:760px;margin:0 auto}
       #bm .bm-device{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-bottom:1.2rem}
-      #bm .bm-chip{font-size:.76rem;padding:.35rem .7rem;border-radius:99px;border:1px solid rgba(255,255,255,.14);color:var(--muted,#9aa6c2)}
+      #bm .bm-chip{font-size:.76rem;padding:.35rem .7rem;border-radius:999px;border:1px solid rgba(255,255,255,.14);color:var(--muted,#9aa6c2)}
       #bm .bm-chip b{color:#fff;font-weight:600}
       #bm .bm-hint{text-align:center;font-size:.76rem;color:var(--muted,#9aa6c2);margin:.9rem auto 0;max-width:56ch;line-height:1.5}
       #bm .bm-running{text-align:center;padding:1.6rem 0 0}
       #bm .bm-phase{font-size:1rem;font-weight:600;margin:0 0 .2rem;min-height:1.3em}
       #bm .bm-live{font-size:1.7rem;font-weight:700;color:var(--cyan,#37c2c2);margin:0 0 .9rem;min-height:1.3em;font-variant-numeric:tabular-nums}
-      #bm .bm-prog-wrap{height:8px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden;max-width:440px;margin:0 auto 1.2rem}
-      #bm .bm-prog{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#1d97e3,#00ce1b);transition:width .5s}
+      #bm .bm-prog-wrap{height:8px;border-radius:999px;background:rgba(255,255,255,.1);overflow:hidden;max-width:440px;margin:0 auto 1.2rem}
+      #bm .bm-prog{height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,#1d97e3,#00ce1b);transition:width .5s}
       #bm #bm-canvas{width:100%;max-width:440px;border-radius:12px;border:1px solid rgba(255,255,255,.14);margin:0 auto;display:block}
       #bm .bm-results{margin-top:1.6rem}
       #bm .bm-top{display:grid;grid-template-columns:auto 1fr;gap:1.6rem;align-items:center;margin-bottom:1.6rem}
@@ -2509,7 +2509,7 @@ PCBENCH_TOOL = r'''    <section class="section" aria-label="PC benchmark" id="be
       #bm .bm-scale-wrap{margin:0 0 1.8rem;padding:1.1rem 1.2rem 3.1rem;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08)}
       #bm .bm-scale-title{margin:0 0 .9rem;font-size:.85rem;font-weight:700;color:#fff}
       #bm .bm-scale-title span{font-weight:400;color:var(--muted,#9aa6c2);font-size:.74rem}
-      #bm .bm-scale{position:relative;height:10px;border-radius:99px;background:linear-gradient(90deg,#e74c3c,#f1c40f 45%,#2ecc71 75%)}
+      #bm .bm-scale{position:relative;height:10px;border-radius:999px;background:linear-gradient(90deg,#e74c3c,#f1c40f 45%,#2ecc71 75%)}
       #bm .bm-scale-fill{display:none}
       #bm .bm-scale-me{position:absolute;top:-9px;width:4px;height:28px;background:#fff;border-radius:2px;transform:translateX(-50%);transition:left 1.2s cubic-bezier(.3,.8,.3,1)}
       #bm .bm-scale-me b{position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:.68rem;color:#fff;letter-spacing:.04em}
@@ -2520,8 +2520,8 @@ PCBENCH_TOOL = r'''    <section class="section" aria-label="PC benchmark" id="be
       #bm .bm-row-h{display:flex;justify-content:space-between;gap:1rem;font-size:.88rem;margin-bottom:.45rem}
       #bm .bm-row-h b{color:#fff}
       #bm .bm-row-h span{color:var(--muted,#9aa6c2);font-variant-numeric:tabular-nums;white-space:nowrap}
-      #bm .bm-bar-wrap{height:7px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
-      #bm .bm-bar{height:100%;width:0;border-radius:99px;transition:width 1s ease}
+      #bm .bm-bar-wrap{height:7px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}
+      #bm .bm-bar{height:100%;width:0;border-radius:999px;transition:width 1s ease}
       #bm .bm-bar.g{background:#2ecc71}#bm .bm-bar.a{background:#f1c40f}#bm .bm-bar.p{background:#e74c3c}
       #bm .bm-note{margin:.9rem 0 0;padding:.75rem 1rem;border-radius:10px;background:rgba(255,255,255,.03);border-left:4px solid #f1c40f;font-size:.86rem;color:var(--muted,#9aa6c2);line-height:1.55}
       #bm .bm-note b{color:#fff}
@@ -2775,7 +2775,7 @@ QRGEN_TOOL = r'''    <section class="section" aria-label="QR code generator" id=
       #qg .qg-colour{flex-direction:row;align-items:center;justify-content:space-between}
       #qg .qg-colour input[type=color]{width:52px;height:34px;padding:2px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,.2);cursor:pointer}
       #qg .qg-presets{margin:.2rem 0 0;font-size:.8rem;color:var(--muted,#9aa6c2)}
-      #qg .qg-chip{font:inherit;font-size:.8rem;cursor:pointer;background:rgba(55,194,194,.1);border:1px solid rgba(55,194,194,.35);color:var(--cyan,#37c2c2);border-radius:99px;padding:.3rem .7rem;margin-left:.3rem}
+      #qg .qg-chip{font:inherit;font-size:.8rem;cursor:pointer;background:rgba(55,194,194,.1);border:1px solid rgba(55,194,194,.35);color:var(--cyan,#37c2c2);border-radius:999px;padding:.3rem .7rem;margin-left:.3rem}
       #qg .qg-out{display:flex;flex-direction:column;align-items:center;gap:1rem;justify-content:center;min-height:220px}
       #qg .qg-placeholder{color:var(--muted,#9aa6c2);font-size:.9rem;text-align:center;border:1px dashed rgba(255,255,255,.18);border-radius:14px;padding:2.5rem 1rem;width:100%}
       #qg .qg-card{background:#fff;border-radius:16px;padding:1.1rem;max-width:260px}
@@ -3501,14 +3501,14 @@ VBUILDER_TOOL = r'''    <section class="section" aria-label="Victron system buil
       #vb .vb-q{margin-bottom:1.3rem}
       #vb .vb-q-t{font-size:.95rem;font-weight:700;margin:0 0 .6rem;color:#fff}
       #vb .vb-chips{display:flex;gap:.5rem;flex-wrap:wrap}
-      #vb .vb-chip{font:inherit;font-size:.85rem;cursor:pointer;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.16);color:inherit;border-radius:99px;padding:.5rem 1rem;transition:all .15s}
+      #vb .vb-chip{font:inherit;font-size:.85rem;cursor:pointer;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.16);color:inherit;border-radius:999px;padding:.5rem 1rem;transition:all .15s}
       #vb .vb-chip.is-on{background:rgba(55,194,194,.15);border-color:var(--cyan,#37c2c2);color:var(--cyan,#37c2c2);font-weight:600}
       #vb .vb-slider{display:block;margin-top:.7rem;font-size:.8rem;color:var(--muted,#9aa6c2)}
       #vb .vb-slider output{color:var(--cyan,#37c2c2);font-weight:700}
       #vb .vb-slider a{color:var(--cyan,#37c2c2)}
       #vb input[type=range]{width:100%;margin-top:.4rem;accent-color:var(--cyan,#37c2c2);cursor:pointer}
       #vb .vb-summary{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin:1.6rem 0 .6rem}
-      #vb .vb-sum-chip{font-size:.78rem;padding:.4rem .8rem;border-radius:99px;border:1px solid rgba(57,211,83,.35);background:rgba(57,211,83,.08);color:#9fe8b0}
+      #vb .vb-sum-chip{font-size:.78rem;padding:.4rem .8rem;border-radius:999px;border:1px solid rgba(57,211,83,.35);background:rgba(57,211,83,.08);color:#9fe8b0}
       #vb .vb-sum-chip b{color:#39d353}
       #vb .vb-sec-t{font-size:1.05rem;margin:1.8rem 0 .4rem;color:#fff}
       #vb .vb-sec-sub{font-size:.78rem;color:var(--muted,#9aa6c2);line-height:1.55;margin:0 0 .8rem}
@@ -3851,7 +3851,7 @@ PCBUILD_TOOL = r'''    <section class="section" aria-label="Custom PC builder" i
       #pcb .pb-q{margin-bottom:1.3rem}
       #pcb .pb-q-t{font-size:.95rem;font-weight:700;margin:0 0 .6rem;color:#fff}
       #pcb .pb-chips{display:flex;gap:.5rem;flex-wrap:wrap}
-      #pcb .pb-chip{font:inherit;font-size:.85rem;cursor:pointer;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.16);color:inherit;border-radius:99px;padding:.5rem 1rem;transition:all .15s}
+      #pcb .pb-chip{font:inherit;font-size:.85rem;cursor:pointer;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.16);color:inherit;border-radius:999px;padding:.5rem 1rem;transition:all .15s}
       #pcb .pb-chip.is-on{background:rgba(55,194,194,.15);border-color:var(--cyan,#37c2c2);color:var(--cyan,#37c2c2);font-weight:600}
       #pcb .pb-check{display:flex;align-items:center;gap:.5rem;font-size:.85rem;padding:.4rem .2rem;color:var(--muted,#9aa6c2)}
       #pcb .pb-check input{accent-color:var(--cyan,#37c2c2);width:1.05rem;height:1.05rem}
@@ -3859,7 +3859,7 @@ PCBUILD_TOOL = r'''    <section class="section" aria-label="Custom PC builder" i
       #pcb .pb-slider output{color:var(--cyan,#37c2c2);font-weight:700}
       #pcb input[type=range]{width:100%;margin-top:.4rem;accent-color:var(--cyan,#37c2c2);cursor:pointer}
       #pcb .pb-summary{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin:1.6rem 0 .6rem}
-      #pcb .pb-sum-chip{font-size:.78rem;padding:.4rem .8rem;border-radius:99px;border:1px solid rgba(57,211,83,.35);background:rgba(57,211,83,.08);color:#9fe8b0}
+      #pcb .pb-sum-chip{font-size:.78rem;padding:.4rem .8rem;border-radius:999px;border:1px solid rgba(57,211,83,.35);background:rgba(57,211,83,.08);color:#9fe8b0}
       #pcb .pb-sum-chip b{color:#39d353}
       #pcb .pb-warn{margin:.6rem 0 0;padding:.8rem 1rem;border-radius:11px;border:1px solid rgba(241,196,15,.4);background:rgba(241,196,15,.08);font-size:.84rem;color:#f5d97e;line-height:1.5;text-align:center}
       #pcb .pb-sec-t{font-size:1.05rem;margin:1.8rem 0 .6rem;color:#fff}

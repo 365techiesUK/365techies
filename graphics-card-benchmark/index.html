@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=68" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=69" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -1094,7 +1094,7 @@
           running=false; cancelAnimationFrame(raf);
           $('gpbStart').disabled=false; $('gpbStop').hidden=true;
           $('gpbHud').hidden=true;
-          if(frames.length<8){ $('gpbIdle').hidden=false; $('gpbIdle').innerHTML='<p style="color:var(--gold,#e8c35a);font-weight:600">Not enough frames to score</p><p>Your device rendered too few frames to measure reliably. Try the <b>Quick</b> test or a lower render scale, and close other tabs.</p>'; return; }
+          if(frames.length<8){ $('gpbIdle').hidden=false; $('gpbIdle').innerHTML='<p style="color:#e8c35a;font-weight:600">Not enough frames to score</p><p>Your device rendered too few frames to measure reliably. Try the <b>Quick</b> test or a lower render scale, and close other tabs.</p>'; return; }
           var fpsArr=frames.map(function(d){ return 1000/d; });
           var sum=0; for(var i=0;i<frames.length;i++) sum+=frames[i];
           var avg=1000/(sum/frames.length);
@@ -1137,7 +1137,7 @@
           else if(score<6000){ s+='<p><b>Mainstream</b> graphics &mdash; a solid all-rounder that handles 1080p gaming, photo and video editing and most creative apps well. A good balance of power and value.</p>'; }
           else if(score<12000){ s+='<p><b>High-end</b> graphics &mdash; strong for 1440p gaming, 4K video editing, 3D rendering and demanding creative and engineering workloads. This is a capable machine.</p>'; }
           else { s+='<p><b>Enthusiast</b>-class graphics &mdash; top-tier performance for 4K gaming, real-time 3D, video production and AI workloads. Not much will slow this down.</p>'; }
-          if(frameCapped(avg)){ s+='<p style="color:var(--gold,#e8c35a);font-size:.9rem"><b>Looks like your frame rate hit your screen&rsquo;s refresh-rate cap.</b> Your graphics card may be faster than this score shows &mdash; run the <b>Extreme</b> test to push past the cap and measure its true ceiling.</p>'; }
+          if(frameCapped(avg)){ s+='<p style="color:#e8c35a;font-size:.9rem"><b>Looks like your frame rate hit your screen&rsquo;s refresh-rate cap.</b> Your graphics card may be faster than this score shows &mdash; run the <b>Extreme</b> test to push past the cap and measure its true ceiling.</p>'; }
           s+='<p style="color:var(--muted,#9aa6c2);font-size:.86rem;margin-bottom:0">Averaged <b>'+avg.toFixed(0)+' FPS</b> in this browser test. Remember: this is an <em>indicative</em> WebGL benchmark &mdash; browser, drivers, laptop power mode, thermals and other open tabs all affect it. It&rsquo;s a fun relative guide, not a lab-grade score like 3DMark.</p>';
           return s;
         }

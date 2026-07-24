@@ -66,7 +66,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=68" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=69" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -837,7 +837,7 @@
         .vlive__ledger[hidden]{display:none}
         /* 30-day history */
         .vlive__histwrap{padding:1rem 1.1rem}
-        .vlive__histhead::before{content:"";display:inline-block;width:6px;height:6px;border-radius:2px;background:#e0b341;margin-right:.1rem;align-self:center}
+        .vlive__histhead::before{content:"";display:inline-block;width:6px;height:6px;border-radius:2px;background:var(--warn);margin-right:.1rem;align-self:center}
         .vlive__histtot{color:#f2f7ff;font-variant-numeric:tabular-nums}
         .vlive__htabs{display:flex;gap:.35rem;flex-wrap:wrap}
         .vlive__htab{font:600 .58rem/1 ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:#93a5bb;background:rgba(8,14,32,.6);border:1px solid rgba(125,170,220,.12);border-radius:999px;padding:.38rem .75rem;cursor:pointer;transition:color .18s,border-color .18s,background .18s,transform .18s}
@@ -860,7 +860,7 @@
         /* footer honesty captions */
         .vlive__note{font:600 .62rem/1.6 ui-monospace,monospace;color:#647893;text-align:center;max-width:62ch;margin:.9rem auto 0;letter-spacing:.05em;border-top:1px solid rgba(125,170,220,.08);padding-top:.9rem}
         .vlive__rate{font:600 .62rem/1.6 ui-monospace,monospace;color:#647893;text-align:center;max-width:62ch;margin:.5rem auto 0;letter-spacing:.05em;text-transform:uppercase}
-        .vlive--sample .vlive__live{color:#e0b341}.vlive--sample .vlive__dot{background:#e0b341}.vlive--sample .vlive__dot::after{border-color:rgba(224,179,65,.5)}
+        .vlive--sample .vlive__live{color:var(--warn)}.vlive--sample .vlive__dot{background:var(--warn)}.vlive--sample .vlive__dot::after{border-color:rgba(224,179,65,.5)}
         /* ===== FULLSCREEN = THE DASHBOARD: the cluster scales to fill the screen; everything else steps back ===== */
         .vlive--fs{position:fixed;inset:0;z-index:9999;max-width:none;border-radius:0;border:0;overflow:hidden;background:#070d22;animation:vfsin .45s cubic-bezier(.22,1,.36,1) 1;display:flex;flex-direction:column;padding:calc(env(safe-area-inset-top,0px) + .6rem) calc(env(safe-area-inset-right,0px) + 1rem) calc(env(safe-area-inset-bottom,0px) + .8rem) calc(env(safe-area-inset-left,0px) + 1rem)}
         @keyframes vfsin{from{opacity:.35;transform:scale(.965)}to{opacity:1;transform:none}}
@@ -1719,14 +1719,14 @@
       #vb .vb-q{margin-bottom:1.3rem}
       #vb .vb-q-t{font-size:.95rem;font-weight:700;margin:0 0 .6rem;color:#fff}
       #vb .vb-chips{display:flex;gap:.5rem;flex-wrap:wrap}
-      #vb .vb-chip{font:inherit;font-size:.85rem;cursor:pointer;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.16);color:inherit;border-radius:99px;padding:.5rem 1rem;transition:all .15s}
+      #vb .vb-chip{font:inherit;font-size:.85rem;cursor:pointer;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.16);color:inherit;border-radius:999px;padding:.5rem 1rem;transition:all .15s}
       #vb .vb-chip.is-on{background:rgba(55,194,194,.15);border-color:var(--cyan,#37c2c2);color:var(--cyan,#37c2c2);font-weight:600}
       #vb .vb-slider{display:block;margin-top:.7rem;font-size:.8rem;color:var(--muted,#9aa6c2)}
       #vb .vb-slider output{color:var(--cyan,#37c2c2);font-weight:700}
       #vb .vb-slider a{color:var(--cyan,#37c2c2)}
       #vb input[type=range]{width:100%;margin-top:.4rem;accent-color:var(--cyan,#37c2c2);cursor:pointer}
       #vb .vb-summary{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin:1.6rem 0 .6rem}
-      #vb .vb-sum-chip{font-size:.78rem;padding:.4rem .8rem;border-radius:99px;border:1px solid rgba(57,211,83,.35);background:rgba(57,211,83,.08);color:#9fe8b0}
+      #vb .vb-sum-chip{font-size:.78rem;padding:.4rem .8rem;border-radius:999px;border:1px solid rgba(57,211,83,.35);background:rgba(57,211,83,.08);color:#9fe8b0}
       #vb .vb-sum-chip b{color:#39d353}
       #vb .vb-sec-t{font-size:1.05rem;margin:1.8rem 0 .4rem;color:#fff}
       #vb .vb-sec-sub{font-size:.78rem;color:var(--muted,#9aa6c2);line-height:1.55;margin:0 0 .8rem}
