@@ -6687,6 +6687,41 @@ def dell_picker_section():
       </script>
     </section>''')
 
+def _qpick_strip():
+    """Quick-pick strip near the top of /dell-hardware/ — the actual shop sat ~61% down
+    the page behind the long-form SEO content. Guide prices are DERIVED from DELL_MACHINES
+    at build time (min per series) so they can never drift from the picker cards."""
+    def _min(pred):
+        return min(p for _m, _k, s, _n, _me, p, _h, *_ in DELL_MACHINES if pred(s))
+    lat3 = _min(lambda s: s == "Latitude 3000")
+    lat57 = _min(lambda s: s in ("Latitude 5000", "Latitude 7000"))
+    opti = _min(lambda s: s.startswith("OptiPlex"))
+    cards = [
+        ("LATITUDE 3000", "Everyday laptops", "14&Prime;&ndash;15.6&Prime; &middot; 16GB &middot; new 1TB Samsung 990 PRO", lat3),
+        ("LATITUDE 5000 &amp; 7000", "Business &amp; ultralight laptops", "Tougher builds &amp; lighter ultrabooks &middot; 16GB &middot; new SSD", lat57),
+        ("OPTIPLEX DESKTOPS", "Desktop PCs for home &amp; office", "Micro / SFF / Tower &middot; 16GB &middot; new SSD", opti),
+    ]
+    cards_html = "\n".join(
+        f'''        <a class="qpick__card" href="#pick" data-reveal>
+          <p class="qpick__series mono">{s}</p>
+          <h3>{t}</h3>
+          <p class="qpick__meta">{m}</p>
+          <p class="qpick__price">from <strong>&pound;{p}</strong></p>
+          <p class="qpick__go mono">SEE MACHINES &amp; GET A QUOTE &rarr;</p>
+        </a>''' for s, t, m, p in cards)
+    return f'''    <section class="section section--alt" aria-label="Quick pick">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// QUICK PICK &middot; GUIDE PRICES</p>
+          <h2 class="section-title section-title--center" data-title>Straight to the machines<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="qpick">
+{cards_html}
+        </div>
+        <p class="plans-note mono" data-reveal>EVERY MACHINE: TESTED &middot; NEW SAMSUNG PRO SSD &middot; SET UP &amp; SUPPORTED &middot; NO PAYMENT ONLINE</p>
+      </div>
+    </section>'''
+
 def dell_hardware():
     slug = "dell-hardware"
     desc = "Refurbished, tested ex-business Dell Latitude laptops & OptiPlex desktops from £510 — supplied, set up & supported across Bournemouth, Poole & Dorset."
@@ -6714,6 +6749,7 @@ def dell_hardware():
       responsive_video("WATCH &middot; REFURBISHED DELL IN ACTION", "See a refurbished Dell at work",
                        "/images/dell-reel-poster-wide.jpg", "/images/dell-reel-poster-tall.jpg",
                        "365 Techies refurbished Dell computers at home, at work and working remotely across Dorset"),
+      _qpick_strip(),
       f'''    <section class="section" aria-label="Why refurbished business Dell">
       <div class="wrap split-2">
         <div class="prose" data-reveal>

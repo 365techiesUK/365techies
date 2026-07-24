@@ -122,11 +122,22 @@ def make_local(i, slug, town, region, lede, intro_para, nearby):
         </ul>
       </div>
     </section>'''
+    # Section /01 side column: generic service checklist, except Bournemouth which gets
+    # the real Moordown shopfront photo — the one town where "we've physically been here
+    # for decades" is provable with an owned photo (honest-imagery rule: real photos only).
+    local_col = f'''<ul class="checklist" data-stagger>
+{checklist(["Monthly IT support plans","Computer &amp; laptop repairs","Microsoft 365 support","Cybersecurity &amp; backups","Wi-Fi, printer &amp; email help","Remote &amp; on-site support"])}
+        </ul>'''
+    if slug == "it-support-bournemouth":
+        local_col = '''<figure class="heritage-card heritage-card--photo" data-reveal>
+          <img src="/images/heritage-storefront.jpg" alt="The shopfront of our former computer sales and service centre in Moordown, Bournemouth" width="1024" height="683" loading="lazy" decoding="async" />
+          <figcaption class="mono">Our old Moordown shop &mdash; same family, same number then and now: 01202&nbsp;775566. As featured in the <a href="/about/">Bournemouth Echo, 2011 &rarr;</a></figcaption>
+        </figure>'''
     revs = [REVPOOL[i % len(REVPOOL)], REVPOOL[(i + 2) % len(REVPOOL)]]
     content = "\n".join([
       hero(bc_sub("IT Support Dorset", "/it-support-dorset/", crumb_name), f"// {town.upper()} &middot; {region.upper()}",
            f'IT support in <em class="grad grad--cyan">{town}</em>', bp.hero_trust(lede),
-           chips=["Remote &amp; on-site", "Homes &amp; businesses", "&pound;18.25/mo per computer"]),
+           trustbar=True),
       nearme_block,
       f'''    <section class="section" aria-label="Local support">
       <div class="wrap split-2">
@@ -137,9 +148,7 @@ def make_local(i, slug, town, region, lede, intro_para, nearby):
           <p>As your local IT company, we cover it all &mdash; IT support and business IT services, computer and laptop repairs, Microsoft 365, cybersecurity and practical IT solutions for {town} homes and businesses.</p>
           <p><strong>Most problems are solved remotely in minutes</strong> — and when you need someone in person, we&rsquo;re close by. Local knowledge, no call-centres, no jargon.</p>{repair_link}{biz_link}
         </div>
-        <ul class="checklist" data-stagger>
-{checklist(["Monthly IT support plans","Computer &amp; laptop repairs","Microsoft 365 support","Cybersecurity &amp; backups","Wi-Fi, printer &amp; email help","Remote &amp; on-site support"])}
-        </ul>
+        {local_col}
       </div>
     </section>''',
       f'''    <section class="section section--alt" aria-label="How we help">

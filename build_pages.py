@@ -18,7 +18,7 @@ except Exception:
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://365techies.co.uk"
-CSSV = "69"
+CSSV = "70"
 HERITAGE_DIMS = {'heritage-01.jpg': (1400, 787), 'heritage-02.jpg': (787, 1400), 'heritage-03.jpg': (1400, 787), 'heritage-04.jpg': (1400, 787), 'heritage-05.jpg': (787, 1400), 'heritage-07.jpg': (1400, 787), 'heritage-kinson.jpg': (1200, 710), 'heritage-moordown.jpg': (1400, 788), 'heritage-stock.jpg': (1400, 788), 'heritage-storefront.jpg': (1024, 683)}
 try:
     from hero_scenes import SCENES as HERO_SCENES
@@ -1108,7 +1108,25 @@ def faq_html(faqs):
       </div>
     </section>'''
 
-def cta(title, text, primary=("View Monthly Plans", "/monthly-it-support/"), secondary=("Call 01202 775566", "tel:+441202775566")):
+MAPS_REVIEWS_URL = "https://www.google.com/maps/place/?q=place_id:ChIJlTb8YRuic0gRCRczduB8OFI"
+
+def next_strip():
+    """'What happens next' micro-strip under a primary CTA — every claim owner-verified
+    (same-day response + no call-out fee are confirmed competitive-benchmark wins)."""
+    return '<p class="next-strip mono" data-reveal>NO OBLIGATION &middot; A REAL PERSON REPLIES SAME WORKING DAY &middot; NO CALL-OUT FEE</p>'
+
+def trust_bar():
+    """Hero trust bar for money pages: the real 4.9/49 Google rating (linked to the
+    verified GBP listing), heritage and the no-call-out-fee promise."""
+    return (f'\n        <p class="hero-trustbar" data-reveal>'
+            f'<a href="{MAPS_REVIEWS_URL}" target="_blank" rel="noopener">'
+            f'<span class="hero-trustbar__stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span> '
+            f'<strong>4.9</strong> from 49 Google reviews</a>'
+            f'<span>Family-run since 1995</span>'
+            f'<span>No call-out fee</span></p>')
+
+def cta(title, text, primary=("View Monthly Plans", "/monthly-it-support/"), secondary=("Call 01202 775566", "tel:+441202775566"), whats_next=False):
+    strip = ("\n        " + next_strip()) if whats_next else ""
     return f'''    <section class="cta-band" aria-label="Get started">
       <div class="cta-band__inner">
         <h2 data-title>{title}<span class="title-underline title-underline--center"></span></h2>
@@ -1116,7 +1134,7 @@ def cta(title, text, primary=("View Monthly Plans", "/monthly-it-support/"), sec
         <div class="hero-buttons hero-buttons--center" data-reveal>
           <a href="{primary[1]}" class="button primary button--lg">{primary[0]}</a>
           <a href="{secondary[1]}" class="button secondary button--lg">{secondary[0]}</a>
-        </div>
+        </div>{strip}
         <p class="cta__contact mono" data-reveal>01202 775566 &middot; help@365techies.co.uk &middot; MON&ndash;FRI 9AM&ndash;5PM</p>
       </div>
     </section>'''
@@ -1127,8 +1145,12 @@ def hero_trust(lede):
     return lede if "4.9" in lede else lede.rstrip() + " Rated 4.9 on Google."
 
 def hero(crumbs_html, eyebrow, h1_html, lede, cta1=("View Monthly Plans", "/monthly-it-support/"),
-         cta2=("Get Support Today", "/contact/"), chips=None, scene=None):
-    chips_html = ""
+         cta2=("Get Support Today", "/contact/"), chips=None, scene=None, trustbar=False):
+    if trustbar:
+        # the trust bar replaces both the dot-chips AND the lede's templated rating sentence
+        lede = lede.replace(" Rated 4.9 on Google.", "")
+        chips = None
+    chips_html = trust_bar() if trustbar else ""
     if chips:
         lis = "".join(f"<li>&#9679; {c}</li>" for c in chips)
         chips_html = f'\n        <ul class="page-hero__chips mono">{lis}</ul>'
@@ -4391,8 +4413,11 @@ def plan_card(variant, badge, tag, name, desc, price, per, feats, cta_label, cta
     # Only promise "Set up Direct Debit" when there's a real GoCardless link; otherwise the button
     # routes to /contact/ to choose/start the plan, so label it honestly.
     is_link = str(cta_href).startswith("http")
-    if not is_link:
-        cta_label = "Choose this plan"
+    # Honest-label guard: a non-link CTA routes to /contact/, so it must never promise
+    # a Direct Debit setup (subscribe_href falls back to /contact/ when no GoCardless
+    # link exists yet). Passed labels are kept otherwise.
+    if not is_link and (not cta_label or "Direct Debit" in cta_label):
+        cta_label = "Get a quote"
     feats_html = "\n".join(f"              <li>{f}</li>" for f in feats)
     # A fixed per-1-computer Direct Debit link needs an honest "more than one?" note so a customer
     # with several computers doesn't set up the single-computer amount by mistake.
@@ -4402,7 +4427,7 @@ def plan_card(variant, badge, tag, name, desc, price, per, feats, cta_label, cta
             <p class="plan-card__tag mono">{tag}</p>
             <h3>{name}</h3>
             <p class="plan-card__desc">{desc}</p>
-            <p class="plan-card__price"><span class="from mono">{per[0]}</span> {price}<span class="per">{per[1]}</span></p>
+            <p class="plan-card__price{'' if price else ' plan-card__price--flat'}"><span class="from mono">{per[0]}</span> {price}<span class="per">{per[1]}</span></p>
             <ul class="plan-card__features">
 {feats_html}
             </ul>
@@ -4423,7 +4448,7 @@ add(
         'Home IT support <em class="grad grad--cyan">plans</em>',
         "Clear, simple monthly packages for home users and families. Pick the level of cover that suits you — and change or cancel any time.",
         cta1=("Get Started", "/contact/"), cta2=("Compare Plans", "#compare"),
-        chips=["No contracts", "Cancel anytime", "Full service every 6 weeks"]),
+        trustbar=True),
    f'''    <section class="support-options" aria-label="Home support plans">
       <div class="plan-grid">
 {plan_card("home", None, "HOME SUPPORT", "Home IT Support", "Friendly cover for your computer &mdash; remote help, regular maintenance and security, all year round.", "&pound;18.25", ("","/mo per computer"), ["Support for your computer","Unlimited remote support","Full service every 6 weeks","Written Service Report each visit","Security &amp; backup checks","Wi-Fi, printer &amp; email help","Loyalty discount on any fault work","Patient, jargon-free help"], "Set up Direct Debit", subscribe_href("home-support"), "Sets up <strong>one computer</strong> at &pound;18.25/mo. More than one? <a href=\"/contact/?topic=home-it-support\">Tell us</a> and we&rsquo;ll set the exact amount.")}
@@ -4471,7 +4496,7 @@ add(
    GC_NOTE,
    REMOTE_ACCESS_BAND,
    cta("Pick a home support plan", "Not sure which plan fits? Tell us a bit about your setup and we&rsquo;ll recommend the right one — no pressure.",
-       primary=("Get Started", "/contact/"), secondary=("Call 01202 775566", "tel:+441202775566")),
+       primary=("Get Started", "/contact/"), secondary=("Call 01202 775566", "tel:+441202775566"), whats_next=True),
  ]),
 )
 
@@ -4489,13 +4514,13 @@ add(
    hero(bc("Business Support Plans"), "// BUSINESS PLANS",
         'Business IT support <em class="grad grad--green">plans</em>',
         "Scalable monthly packages for sole traders and small businesses. From a single user to a busy team — choose the cover that fits, and grow when you&rsquo;re ready.",
-        cta1=("Get a Recommendation", "/contact/"), cta2=("Compare Plans", "#compare"),
-        chips=["From &pound;24.38/mo per computer", "Microsoft 365 managed", "Remote &amp; on-site options"]),
+        cta1=("Get a quote", "/contact/?topic=business-it-support"), cta2=("Compare Plans", "#compare"),
+        trustbar=True),
    f'''    <section class="support-options" aria-label="Business support plans">
       <div class="plan-grid plan-grid--3">
 {plan_card("business", None, "STARTER", "Business Starter", "For sole traders and very small businesses.", "&pound;24.38", ("FROM","/mo per computer"), ["Support for 1&ndash;3 computers","Remote IT support","Email support","Microsoft 365 help","Basic security checks","Loyalty discount on any fault work","Computer maintenance with written Service Reports"], "Set up Direct Debit", subscribe_href("business-starter"))}
-{plan_card("business", "&#9733; MOST POPULAR", "STANDARD", "Business Standard", "For small businesses needing regular IT support.", "&pound;24.38", ("FROM","/mo per computer"), ["Support for multiple users","Microsoft 365 administration","Outlook, Teams &amp; OneDrive","Backup checks","Cybersecurity guidance","Monthly maintenance &amp; new user setup","Written Service Report each service"], "Get a Quote", "/contact/?topic=business-it-support")}
-{plan_card("business", None, "PREMIUM", "Business Premium", "For businesses that rely on IT every day.", "&pound;24.38", ("FROM","/mo per computer"), ["Priority support","Remote &amp; on-site options","Microsoft 365 management","Cybersecurity &amp; backup planning","Staff onboarding &amp; offboarding","Device setup &amp; technology planning"], "Get a Quote", "/contact/?topic=business-it-support")}
+{plan_card("business", "&#9733; MOST POPULAR", "STANDARD", "Business Standard", "For small businesses needing regular IT support.", "", ("SAME FROM-PRICE AS STARTER","&mdash; you choose the service level"), ["<strong>Steps up from Starter: Microsoft 365 administration, backup checks &amp; new-user setup</strong>","Support for multiple users","Outlook, Teams &amp; OneDrive","Cybersecurity guidance","Monthly maintenance","Written Service Report each service"], "Get a Standard quote", "/contact/?topic=business-it-support")}
+{plan_card("business", None, "PREMIUM", "Business Premium", "For businesses that rely on IT every day.", "", ("SAME FROM-PRICE AS STARTER","&mdash; you choose the service level"), ["<strong>Steps up from Standard: priority response, on-site included &amp; full 365 management</strong>","Cybersecurity &amp; backup planning","Staff onboarding &amp; offboarding","Device setup &amp; technology planning"], "Get a Premium quote", "/contact/?topic=business-it-support")}
       </div>
       <p class="plans-note mono" data-reveal>// FROM &pound;24.38/MO PER COMPUTER &middot; NO LOCK-IN &middot; TELL US YOUR SETUP FOR A QUOTE</p>
       <p class="plans-note mono" data-reveal style="margin-top:.5rem"><a href="/our-guarantees/" style="color:var(--cyan)">&#10003; No lock-in, cancel anytime &middot; No-fix-no-fee repairs &middot; Family-run since 1995 &mdash; see our guarantees</a></p>
@@ -4539,7 +4564,7 @@ add(
    GC_NOTE,
    REMOTE_ACCESS_BAND,
    cta("Choose a business plan", "Tell us how many people you need to cover and how you work — we&rsquo;ll put together the right plan and a clear quote.",
-       primary=("Get a Quote", "/contact/?topic=business-it-support"), secondary=("Call 01202 775566", "tel:+441202775566")),
+       primary=("Get a quote", "/contact/?topic=business-it-support"), secondary=("Call 01202 775566", "tel:+441202775566"), whats_next=True),
  ]),
 )
 

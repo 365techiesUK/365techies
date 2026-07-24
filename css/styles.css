@@ -1887,3 +1887,77 @@ html.ss-open { overflow: hidden; }
 .ss-foot kbd { font-family: var(--font-mono); font-size: 0.62rem; padding: 2px 5px; color: var(--muted); background: rgba(125, 170, 220, 0.1); border: 1px solid var(--line); border-radius: var(--r-xs); margin-right: 2px; }
 .ss-foot__brand { margin-left: auto; font-family: var(--font-mono); letter-spacing: 0.08em; opacity: 0.7; }
 @media (max-width: 520px) { .ss-foot span:not(.ss-foot__brand) { display: none; } }
+
+/* ==========================================================================
+   Phase-3 conversion furniture (2026-07-24): hero trust bar, next-strip,
+   Dell quick-pick, sticky compare-table column, mobile hero console
+   ========================================================================== */
+.hero-trustbar {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1.4rem;
+  margin: 1.1rem 0 0; font-size: 0.85rem; color: var(--ink-3);
+}
+.hero-trustbar a { color: var(--ink); text-decoration: none; }
+.hero-trustbar a:hover { color: #fff; text-decoration: underline; }
+.hero-trustbar__stars { color: var(--gold); letter-spacing: 0.1em; }
+.hero-trustbar strong { font-size: 1.05rem; }
+.hero-trustbar > span { position: relative; padding-left: 1.4rem; color: var(--muted); }
+.hero-trustbar > span::before {
+  content: "\2713"; position: absolute; left: 0; color: var(--green);
+  font-weight: 700;
+}
+.next-strip {
+  margin: 0.9rem 0 0; font-size: 0.72rem; letter-spacing: 0.08em;
+  color: var(--muted); text-align: center;
+}
+
+/* Dell quick-pick strip */
+.qpick { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem; }
+@media (max-width: 860px) { .qpick { grid-template-columns: 1fr; } }
+.qpick__card {
+  display: block; padding: 1.4rem 1.5rem; text-decoration: none; color: inherit;
+  background: var(--glass); border: 1px solid var(--line); border-radius: var(--r-lg);
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.qpick__card:hover { transform: translateY(-3px); border-color: rgba(29, 151, 227, 0.55); box-shadow: var(--glow-cyan); }
+.qpick__series { margin: 0 0 0.4rem; font-size: 0.72rem; letter-spacing: 0.12em; color: var(--cyan); }
+.qpick__card h3 { margin: 0 0 0.35rem; font-family: var(--font-display); font-weight: 600; font-size: 1.25rem; color: #fff; }
+.qpick__meta { margin: 0 0 0.6rem; font-size: 0.85rem; color: var(--muted); }
+.qpick__price { margin: 0 0 0.8rem; font-size: 0.95rem; color: var(--ink-3); }
+.qpick__price strong { font-family: var(--font-display); font-size: 1.5rem; color: var(--green); }
+.qpick__go { margin: 0; font-size: 0.72rem; letter-spacing: 0.1em; color: var(--cyan); }
+
+/* Bournemouth heritage photo column */
+.heritage-card--photo img { height: auto; object-fit: cover; aspect-ratio: 1024 / 683; }
+.heritage-card--photo figcaption a { color: var(--cyan); }
+
+/* Compare tables: pinned feature column, whole-column popular highlight, swipe hint */
+.price-table tbody th, .price-table thead th:first-child {
+  position: sticky; left: 0; z-index: 1; background: var(--bg-2);
+}
+/* Scoped to tables that actually have a "most popular" column — other .price-table
+   uses (SLA matrix, VRM comparison) must NOT get a self-favouring tint or compare hint. */
+.price-table:has(th.pop) td:nth-child(3), .price-table th.pop { background: rgba(0, 206, 27, 0.05); }
+@media (max-width: 640px) {
+  .price-table-wrap:has(th.pop)::before {
+    content: "\2190\00a0 swipe to compare \00a0\2192"; display: block; position: sticky; left: 0;
+    padding: 0.5rem 1.25rem 0; font-family: var(--font-mono); font-size: 0.72rem;
+    letter-spacing: 0.1em; color: var(--muted);
+  }
+}
+
+/* Homepage: compact hero console for phones/tablets (the full console rule hides
+   itself at max-width:1280px, so the mini must cover <=1280px — no gap, no overlap) */
+.hero__console-mini { display: none; }
+@media (max-width: 1280px) {
+  .hero__console-mini {
+    display: block; margin: 1.3rem 0 0; padding: 0.9rem 1.1rem;
+    background: var(--glass); border: 1px solid var(--line); border-radius: var(--r-md);
+    font-family: var(--font-mono); font-size: 0.72rem; line-height: 1.9; color: var(--ink-3);
+  }
+  .hero__console-mini .ok { color: var(--green); font-weight: 700; }
+  .hero__console-mini .dim { color: var(--muted); }
+}
+@media (max-width: 680px) { .hero__sub-more { display: none; } }
+/* priceless plan-card price row (tier shares the headline price): compact metrics line */
+.plan-card__price--flat { line-height: 1.5; }
+.plan-card__price--flat .per { display: inline; font-size: 0.85rem; }
