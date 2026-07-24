@@ -6565,113 +6565,161 @@ web_design()
 # blank and the tile shows a "simple monthly price / get your price" quote CTA (no fabricated
 # numbers, per pricing-truth). Fill the three prices once the owner decides them.
 WEBCARE = {
-    "care":     {"price": "", "name": "Care",          "for": "A simple business or trade site",
-                 "feats": ["Fast managed hosting (SiteGround)","Free SSL certificate &mdash; padlock always on","Daily backups &mdash; restored in minutes","Security monitoring &amp; patching","Software &amp; plugin updates kept current","Uptime monitoring","Email &amp; phone support from your local team"]},
-    "plus":     {"price": "", "name": "Care Plus",      "for": "A growing business that changes often", "popular": True,
-                 "feats": ["<strong>Everything in Care</strong>, plus:","Professional email on your domain","Up to an hour of content changes a month","Priority support","Quarterly speed &amp; SEO health check","Kept passing Core Web Vitals"]},
-    "complete": {"price": "", "name": "Care Complete",  "for": "A shop or larger, business-critical site",
-                 "feats": ["<strong>Everything in Care Plus</strong>, plus:","More monthly changes &amp; small additions","Faster response times","Ongoing SEO &amp; ranking monitoring","A named point of contact"]},
+    # Owner-approved 2026-07-24. Care-plan-led: the £125 plan sells on ANY existing site
+    # (WordPress patching deliberately out of scope), the rebuild is an upsell to clients
+    # who already pay, and £250 is the post-rebuild plan. Deliverables carry numbers and
+    # are guaranteed; rankings and traffic are never guaranteed anywhere on this page.
+    "care": {"price": "&pound;125", "per": "a month", "name": "Care &amp; Search", "popular": True,
+             "tag": "START HERE",
+             "for": "Your website as it is today &mdash; whatever it&rsquo;s built on",
+             "feats": ["Google Search Console set up properly &amp; watched",
+                       "A plain-English report every month &mdash; what moved, what we did",
+                       "<strong>One new page</strong> written &amp; published each month",
+                       "<strong>One technical improvement</strong> each month",
+                       "<strong>One hour</strong> of changes whenever you need them",
+                       "A real local person who answers the phone",
+                       "30-day rolling &mdash; stop any time"]},
+    "rebuild": {"price": "&pound;2,450", "per": "one-off", "name": "The Rebuild",
+                "tag": "WHEN YOU&rsquo;RE READY",
+                "for": "A fast, modern site built the way we build our own",
+                "feats": ["<strong>Up to 25 pages</strong>, hand-built &mdash; no page-builder bloat",
+                          "Every old web address redirected properly",
+                          "Structured data most local sites simply don&rsquo;t have",
+                          "Built to load fast on a phone on 4G",
+                          "Your content written with you, not scraped",
+                          "50% to start, 50% when it goes live",
+                          "Fixed price &mdash; agreed before we start"]},
+    "managed": {"price": "&pound;250", "per": "a month", "name": "Managed",
+                "tag": "AFTER THE REBUILD",
+                "for": "The finished site, hosted and grown by us",
+                "feats": ["<strong>Everything in Care &amp; Search</strong>, plus:",
+                          "Fast managed hosting &amp; SSL included",
+                          "<strong>Two new pages</strong> a month, not one",
+                          "<strong>Two hours</strong> of changes a month",
+                          "Daily backups &amp; uptime monitoring",
+                          "Priority response",
+                          "30-day rolling &mdash; stop any time"]},
 }
 def web_care_page():
     slug = "web-care"
-    desc = ("365 Web Care: one simple monthly plan that keeps your website fast, safe and online &mdash; premium managed "
-            "hosting, security, daily backups, updates and a real local person to call. We host and look after websites for "
-            "businesses across Bournemouth, Poole and Dorset, and we can take over an existing site.")
+    desc = ("365 Web Care: a monthly plan that gets your business website found and keeps it that way &mdash; Google "
+            "Search Console set up and watched, a new page every month, a plain-English report, and a real local person "
+            "to call. From &pound;125/month across Bournemouth, Poole and Dorset. Rebuilds from &pound;2,450.")
     def tier_card(k):
         t = WEBCARE[k]
-        price = (t.get("price") or "").strip()
-        phtml = ('<p style="font-size:1.6rem;font-weight:800;margin:.2rem 0 .5rem">' + price + '</p>') if price else '<p style="font-weight:700;margin:.2rem 0 .5rem;line-height:1.3">Simple monthly price<br /><span style="color:var(--muted);font-weight:400;font-size:.85rem">set by the size of your site</span></p>'
-        pop = ' style="border-color:rgba(14,159,181,.55)"' if t.get("popular") else ''
-        badge = '<p style="margin:0 0 .5rem"><span style="background:var(--cyan,#0e9fb5);color:#fff;font-size:.68rem;font-weight:700;letter-spacing:.05em;padding:3px 9px;border-radius:999px">MOST POPULAR</span></p>' if t.get("popular") else ''
+        pop = ' style="border-color:rgba(0,206,27,.45)"' if t.get("popular") else ''
+        badge = (f'<p style="margin:0 0 .5rem"><span style="background:var(--green);color:var(--ink-inverse);'
+                 f'font-size:.62rem;font-weight:800;letter-spacing:.09em;padding:3px 10px;border-radius:999px">'
+                 f'{t["tag"]}</span></p>') if t.get("tag") else ''
         feats = "\n".join('              <li>' + f + '</li>' for f in t["feats"])
         return (f'''          <div class="tile"{pop} data-reveal>
             {badge}<h3 style="margin:.1rem 0 .2rem">{t["name"]}</h3>
-            <p style="color:var(--muted);margin:0 0 .5rem;font-size:.9rem">{t["for"]}</p>
-            {phtml}
-            <ul class="checklist" style="margin:.7rem 0 1.1rem">
+            <p style="color:var(--muted);margin:0 0 .6rem;font-size:.9rem">{t["for"]}</p>
+            <p style="margin:.2rem 0 .7rem"><span style="font-size:1.75rem;font-weight:800">{t["price"]}</span>
+              <span style="color:var(--muted);font-size:.85rem">&nbsp;{t["per"]}</span></p>
+            <ul class="checklist" style="margin:0">
 {feats}
             </ul>
-            <p style="margin:0"><a class="button primary" href="/contact/">Get your price &#8594;</a></p>
           </div>''')
-    tiers = "\n".join(tier_card(k) for k in ("care", "plus", "complete"))
+    tiers = "\n".join(tier_card(k) for k in ("care", "rebuild", "managed"))
     faqs = [
-      ("What exactly is 365 Web Care?", "One simple monthly plan that keeps your website completely looked after &mdash; fast managed hosting, a free SSL certificate, daily backups, security monitoring and patching, software updates, uptime monitoring and a real local person to call. You run your business; we keep the website fast, safe and online."),
-      ("Do you have to build my website, or can you take over my existing one?", "Either. We build new sites, and we happily take over and host an existing one &mdash; we move it onto our premium managed hosting, tidy up anything urgent, and look after it from then on. See <a href=\"/web-design-hosting/\">web design &amp; hosting</a>."),
-      ("Where is it hosted?", "On premium cloud infrastructure powered by SiteGround &mdash; the same ultrafast hosting our own <a href=\"/web-design-hosting/\">Lighthouse-proven website</a> runs on, with a UK data centre, a global CDN, free SSL and daily backups, all managed by us."),
-      ("What if I want to leave?", "You&rsquo;re never held hostage &mdash; you own your domain and your website, and we hand everything over cleanly if you ever move on. We&rsquo;ve <a href=\"/website-held-hostage/\">rescued plenty of people</a> from firms that don&rsquo;t work that way; we&rsquo;re the opposite."),
-      ("How much does it cost?", "One simple monthly price, set by the size and needs of your site &mdash; a one-page trade site costs less than a busy shop. Tell us about your website and you&rsquo;ll get a clear monthly price up front, with no surprises."),
-      ("Do you handle business email too?", "Yes &mdash; professional email on your own domain (you@yourbusiness.co.uk) or Microsoft 365, set up and supported on all your devices, is part of the higher plans or an easy add-on."),
+      ("How much does it cost?", "<strong>&pound;125 a month</strong> for Care &amp; Search on your existing website, whatever it&rsquo;s built on. A rebuild is a <strong>fixed &pound;2,450</strong> for up to 25 pages. After a rebuild, the Managed plan is <strong>&pound;250 a month</strong> including hosting. Every plan is 30-day rolling &mdash; no long tie-in. We&rsquo;re not VAT registered, so the price you see is the price you pay."),
+      ("Do I have to have a new website to start?", "No &mdash; and we&rsquo;d rather you didn&rsquo;t. Start with Care &amp; Search on the site you already have. You get a new page, a technical improvement, an hour of changes and a proper report every month. If after a few months your site is genuinely holding you back, we&rsquo;ll talk about rebuilding it. Plenty of businesses never need to."),
+      ("My site is WordPress &mdash; can you look after it?", "We&rsquo;ll happily do the Care &amp; Search work on a WordPress site: Search Console, content, reports and changes. What we <em>don&rsquo;t</em> do is take responsibility for WordPress core, plugin and security patching. Doing that properly means someone on call the day a plugin flaw is published, and we won&rsquo;t take money for a promise we can&rsquo;t keep to that standard. If patching is what you need, you want a dedicated WordPress maintenance firm &mdash; we&rsquo;ll say so honestly."),
+      ("Can you guarantee I&rsquo;ll rank number one?", "No, and please be wary of anyone who does. Nobody controls Google. What we <em>do</em> guarantee is the work: the page, the improvement, the hour of changes and the report, every month, or you don&rsquo;t pay for that month. Rankings are the aim &mdash; the work is the promise."),
+      ("What about AI &mdash; ChatGPT, Google&rsquo;s AI answers?", "We build your site so AI assistants can read it and cite it properly &mdash; clean structure, clear answers, proper markup. It&rsquo;s included, not an extra. But we won&rsquo;t sell you an &ldquo;AI traffic&rdquo; package: for a local business, AI referrals are still a very small share of visits, and anyone quoting you big numbers for it is guessing."),
+      ("What if I want to leave?", "You take everything and go, with our help. Your domain, hosting and Google accounts are in <strong>your</strong> name from day one &mdash; we never hold them. On request we hand over an <strong>Exit Pack</strong>: every page as a file, your content, your redirects and your Search Console access, plus a written summary of what we did. We&rsquo;ve <a href=\"/website-held-hostage/\">rescued enough people</a> from firms that work the other way."),
+      ("How long does a rebuild take, and will my Google traffic dip?", "Usually three to five weeks. And yes &mdash; be ready for a dip: when addresses change, Google takes time to recrawl, and a <strong>10&ndash;30% dip for two to six weeks is normal</strong>, even done perfectly. We put that in writing before you agree, map every old address to a new one, and leave the old site up while it settles. Anyone who tells you there&rsquo;s no dip has either not done it or isn&rsquo;t telling you."),
+      ("Why would my IT company do my website?", "Because we&rsquo;re already the people you ring when something doesn&rsquo;t work &mdash; we know your business, and you already know we pick up. There&rsquo;s no handover between &ldquo;the IT lot&rdquo; and &ldquo;the website lot&rdquo;, and no finger-pointing. It&rsquo;s the same family firm that&rsquo;s been here since 1995."),
     ]
     content = "\n".join([
-      hero(bc("Web Care"), "// YOUR WEBSITE, LOOKED AFTER",
-           'Website care that means you <em class="grad grad--cyan">never worry about it again</em>',
-           "365 Web Care is one simple monthly plan &mdash; fast managed hosting, security, daily backups, updates and a real local person to call &mdash; so your website stays fast, safe and online while you get on with running your business. We build it, host it and look after it, all from one Dorset firm you can actually visit.",
-           cta1=("Get your monthly price", "/contact/"), cta2=("What&rsquo;s included", "#included"),
-           chips=["One firm, one monthly price", "Premium managed hosting", "A real person to call"]),
-      f'''    <section class="section" aria-label="Why care matters">
+      hero(bc("Web Care"), "// GET FOUND, STAY FOUND",
+           'A website nobody finds is just an <em class="grad grad--cyan">expensive business card</em>',
+           "Most small-business websites sit there doing nothing &mdash; no one checks whether Google can find them, nothing new is ever added, and no one reports back. 365 Web Care fixes that for &pound;125 a month: Search Console set up and watched, a new page every month, and a plain-English report showing exactly what moved. On the site you already have.",
+           cta1=("Start from &pound;125/month", "/contact/?topic=web-care"), cta2=("See what you get", "#plans"),
+           trustbar=True),
+      f'''    <section class="section" aria-label="The real problem">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
-          <p class="eyebrow mono">/01 &mdash; A WEBSITE ISN&rsquo;T &lsquo;SET AND FORGET&rsquo;</p>
-          <h2 class="section-title" data-title>Every website needs looking after &mdash; most have no one<span class="title-underline"></span></h2>
-          <p>Behind the scenes a live website needs security patches, working backups, software updates, speed-tuning and someone watching that it&rsquo;s actually online. Skip it and you don&rsquo;t notice &mdash; until it&rsquo;s hacked, down, painfully slow, or the person who built it has <a href="/web-designer-disappeared/">vanished</a>.</p>
-          <p>365 Web Care <em>is</em> that someone. One local team builds it, hosts it and looks after it &mdash; so there&rsquo;s never any &ldquo;that&rsquo;s the host&rsquo;s job, not the designer&rsquo;s.&rdquo; Just a fast, safe website and one number to call.</p>
+          <p class="eyebrow mono">/01 &mdash; THE REAL PROBLEM</p>
+          <h2 class="section-title" data-title>Your website probably isn&rsquo;t broken. It&rsquo;s invisible<span class="title-underline"></span></h2>
+          <p>Most business websites we look at are working perfectly well. They load, the phone number&rsquo;s right, the photos are fine. They just don&rsquo;t <em>bring anyone in</em> &mdash; because nobody ever set up Search Console, nobody watches what people actually search for, and nothing has been added since the day it launched.</p>
+          <p>That&rsquo;s not a design problem, and a new website on its own won&rsquo;t fix it. It&rsquo;s a <strong>nobody-is-looking-after-it</strong> problem &mdash; and that&rsquo;s a monthly job, not a one-off.</p>
+          <p>So we start there. Not with a rebuild you may not need.</p>
         </div>
         <ul class="checklist" data-stagger>
-{checklist(["Security patched before it&rsquo;s exploited","Daily backups &mdash; restored in minutes","Watched, so we often know before you do","Kept fast for Google &amp; your customers","One number to call for a change","No finger-pointing between host &amp; designer"])}
+{checklist(["Search Console set up &mdash; most sites have never had it","We see the searches you already show up for","A new page every month, on purpose","Real numbers, in plain English","No jargon, no dashboard you&rsquo;ll never log into","A local person who answers the phone"])}
         </ul>
       </div>
     </section>''',
-      f'''    <section class="section section--alt" aria-label="What&rsquo;s included" id="included">
+      f'''    <section class="section section--alt" aria-label="Plans and prices" id="plans">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>/02 &mdash; EVERYTHING, HANDLED</p>
-          <h2 class="section-title section-title--center" data-title>What&rsquo;s included in 365 Web Care<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>The whole job, under one roof &mdash; hosting, safety and a real person, for one monthly price.</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>/02 &mdash; THREE PRICES, THAT&rsquo;S ALL</p>
+          <h2 class="section-title section-title--center" data-title>Start small. Rebuild only if you need to<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Most people start with Care &amp; Search and stay there happily. The rebuild is there when your site is genuinely the thing holding you back &mdash; not before.</p>
         </div>
-        <ul class="checklist" data-stagger style="max-width:72ch;margin:0 auto">
-{checklist(["Premium managed hosting (SiteGround) &mdash; ultrafast, UK data centre, global CDN","Free SSL certificate &mdash; the padlock, always on","Daily backups you can actually restore","Security monitoring &amp; patching","Software &amp; plugin updates kept current","Uptime monitoring &mdash; we watch it&rsquo;s online","Small content changes handled for you","Professional email on your domain","Priority support from your local Dorset team","One friendly point of contact"])}
-        </ul>
-      </div>
-    </section>''',
-      f'''    <section class="section" aria-label="Care plans">
-      <div class="wrap">
-        <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>/03 &mdash; PICK YOUR LEVEL</p>
-          <h2 class="section-title section-title--center" data-title>Three simple care plans<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>One monthly price, set by the size of your site. Not sure which? We&rsquo;ll recommend the right one &mdash; no pressure.</p>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1.1rem;align-items:start">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.1rem;align-items:start">
 {tiers}
         </div>
-        <p class="lede lede--center" data-reveal style="margin-top:1.4rem;color:var(--muted)">Prefer we build the site too? See <a href="/web-design-hosting/">web design &amp; hosting</a> &mdash; then Web Care keeps it running.</p>
+        <p class="next-strip mono" data-reveal>30-DAY ROLLING &middot; NO VAT TO ADD &middot; NO TIE-IN &middot; CANCEL ANY TIME</p>
       </div>
     </section>''',
-      f'''    <section class="section section--alt" aria-label="Why us">
+      f'''    <section class="section" aria-label="What we promise">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
-          <p class="eyebrow mono">/04 &mdash; WHY 365</p>
-          <h2 class="section-title" data-title>The same care we give our own site<span class="title-underline"></span></h2>
-          <p>Your site runs on the same premium hosting our own <a href="/web-design-hosting/">Lighthouse-proven website</a> runs on. Because we build, host <em>and</em> look after it, nothing falls between the cracks &mdash; and you&rsquo;re never held hostage: you own your domain and can leave any time.</p>
-          <p>We&rsquo;re a real Dorset family firm you can phone or visit &mdash; not a faceless portal. If something breaks, a person who knows your site picks up.</p>
-          <p><a class="button primary" href="/contact/">Get your monthly price &#8594;</a></p>
+          <p class="eyebrow mono">/03 &mdash; WHAT WE PROMISE (AND WHAT WE DON&rsquo;T)</p>
+          <h2 class="section-title" data-title>We guarantee the work, never the rankings<span class="title-underline"></span></h2>
+          <p>Nobody controls Google. Any firm promising you the top spot is either guessing or misleading you &mdash; and in our experience the ones who promise loudest report back the least.</p>
+          <p>So here&rsquo;s our deal instead. <strong>Every month you get a page, a technical improvement, an hour of changes and a report that tells you the truth</strong> &mdash; including the months when the news isn&rsquo;t great. If we don&rsquo;t deliver it, you don&rsquo;t pay for that month.</p>
+          <p>Getting found is the aim. Doing the work is the promise. Those are different things, and we&rsquo;d rather say so up front.</p>
         </div>
         <ul class="checklist" data-stagger>
-{checklist(["Build, host &amp; care from one firm","Premium infrastructure, honestly priced","You own your domain &mdash; no lock-in","A local person who knows your site","We rescue sites held hostage &mdash; we&rsquo;re the opposite","Proven on our own award-fast site"])}
+{checklist(["Guaranteed: the work, with numbers on it","Never guaranteed: rankings or traffic","No &lsquo;unlimited&rsquo; anything &mdash; we tell you the amount","You own your domain, hosting &amp; Google accounts","An Exit Pack any time you ask for it","30-day rolling &mdash; we earn it monthly"])}
+        </ul>
+      </div>
+    </section>''',
+      f'''    <section class="section section--alt" aria-label="Why your IT firm">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">/04 &mdash; WHY US</p>
+          <h2 class="section-title" data-title>We do to your website what we did to ours<span class="title-underline"></span></h2>
+          <p>This site you&rsquo;re reading is our own work &mdash; hand-built, several hundred pages, and it loads faster than almost every site in our trade. We didn&rsquo;t buy that; we built it, and we watch its Search Console every week.</p>
+          <p>We&rsquo;re also already your IT firm. We know your business, your staff and your email, and you already know we pick up the phone. No handover between &ldquo;the IT lot&rdquo; and &ldquo;the website lot&rdquo;, and nobody to blame each other.</p>
+          <p><a class="button primary" href="/contact/?topic=web-care">Start from &pound;125/month &#8594;</a></p>
+        </div>
+        <ul class="checklist" data-stagger>
+{checklist(["Family-run in Dorset since 1995","Our own site is the proof &mdash; you&rsquo;re on it","Already your IT firm &mdash; no handover","One number for computers <em>and</em> website","We rescue held-hostage sites &mdash; we&rsquo;re the opposite","Honest reports, including the bad months"])}
         </ul>
       </div>
     </section>''',
       faq_html(faqs),
-      cta("Want your website completely off your plate?",
-          "Tell us about your site &mdash; new or existing &mdash; and we&rsquo;ll give you one simple monthly price to keep it fast, safe and online, looked after by your local Dorset team.",
-          primary=("Get your monthly price", "/contact/"), secondary=("Call 01202 775566", "tel:+441202775566")),
+      cta("Let&rsquo;s see what your website is actually doing",
+          "Tell us your web address and we&rsquo;ll take a proper look &mdash; free, no obligation. If it&rsquo;s doing fine, we&rsquo;ll tell you that too.",
+          primary=("Start from &pound;125/month", "/contact/?topic=web-care"), secondary=("Call 01202 775566", "tel:+441202775566"),
+          whats_next=True),
       _web_cluster_section(exclude=("web-care",)),
     ])
     def schema(s, _desc=desc, _faqs=faqs):
-        svc = service(s, "365 Web Care &mdash; Managed Website Hosting &amp; Care", "One monthly plan: premium managed hosting (powered by SiteGround), SSL, daily backups, security, updates, uptime monitoring, content changes and support for small-business websites across Bournemouth, Poole and Dorset.", "Managed website hosting and maintenance")
+        svc = service(s, "365 Web Care &mdash; Website Care &amp; Search Management",
+                      "A monthly plan that gets a small-business website found and keeps it there: Google Search Console set up and monitored, one new page a month, one technical improvement, an hour of changes and a plain-English monthly report. From \u00a3125/month. Website rebuilds from \u00a32,450 fixed.",
+                      "Website care and search management")
         svc["areaServed"] = [{"@type": "City", "name": "Bournemouth"}, {"@type": "City", "name": "Poole"}, {"@type": "AdministrativeArea", "name": "Dorset"}]
+        svc["offers"] = [
+            {"@type": "Offer", "name": "Care & Search", "price": "125", "priceCurrency": "GBP",
+             "description": "Monthly website care and search management on an existing website.",
+             "priceSpecification": {"@type": "UnitPriceSpecification", "price": "125", "priceCurrency": "GBP",
+                                    "unitCode": "MON", "billingIncrement": 1}},
+            {"@type": "Offer", "name": "Website rebuild", "price": "2450", "priceCurrency": "GBP",
+             "description": "Fixed-price hand-built static website rebuild, up to 25 pages, including redirects from the old site."},
+            {"@type": "Offer", "name": "Managed", "price": "250", "priceCurrency": "GBP",
+             "description": "Monthly hosting, care and search management after a rebuild.",
+             "priceSpecification": {"@type": "UnitPriceSpecification", "price": "250", "priceCurrency": "GBP",
+                                    "unitCode": "MON", "billingIncrement": 1}},
+        ]
         return graph([crumb(s, "Web Care"), webpage(s, "365 Web Care", _desc), svc, faqpage(s, _faqs)])
-    add(slug=slug, title="365 Web Care | Managed Website Hosting &amp; Care, Bournemouth &amp; Dorset",
-        desc=desc, og_title="365 Web Care | Managed Hosting &amp; Website Care", schema=schema, content=content)
+    add(slug=slug, title="Website Care &amp; SEO from &pound;125/mo | 365 Web Care Dorset",
+        desc=desc, og_title="365 Web Care | Get Found, Stay Found &mdash; from &pound;125/mo", schema=schema, content=content)
 web_care_page()
 
 # ---- Website rebuild / redesign (SEO-safe migration) ----
