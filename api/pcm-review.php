@@ -53,6 +53,10 @@
 $RV_LIVE = false;   // <-- review-ask emails: flip ONLY after the GO-LIVE CHECKLIST above
 $DN_LIVE = false;   // <-- "job done" emails: independent switch, same checklist items 2-5
                     //     (no SimplyBook notification to turn off - SB has no equivalent email)
+$CF_LIVE = false;   // <-- booking confirmed/changed/cancelled emails. When flipped, ours run IN
+                    //     PARALLEL with SimplyBook's for 2-4 weeks of real bookings; only then
+                    //     switch SB's client notifications off ONE TYPE AT A TIME, a week apart.
+                    //     SB's confirmation must NEVER go off before ours is proven live.
 
 $RV_Q = __DIR__ . '/pcm-reviewq.json';
 $RV_ASK_WINDOW = 1209600;   // visits stay askable for 14 days after they end; older = too late
@@ -145,7 +149,7 @@ function rv_record($bid, $email, $name, $endTs, $type) {
             // carry the job-done email state across the rebuild - without this, any
             // 'change' webhook after the job-done email sent would reset dn to pending
             // and the customer would get a second "All wrapped up" email
-            if ($cur) foreach (array('dn', 'dn_snd', 'dn_ts', 'dn_tries') as $dk)
+            if ($cur) foreach (array('dn', 'dn_snd', 'dn_ts', 'dn_tries', 'cf') as $dk)
                 if (isset($cur[$dk])) $q['q'][$bid][$dk] = $cur[$dk];
             rvq_save($q);
         }
@@ -215,6 +219,125 @@ function dn_body($first) {
     . "mention your name, so we know who to thank.\r\n";
 }
 
+// ---- booking lifecycle emails (confirm / change / cancel), sent IMMEDIATELY from
+// the webhook - a confirmation that arrives late is useless. Confirm + change carry
+// a proper .ics calendar invite with a Europe/London VTIMEZONE (SimplyBook's own
+// ICS has no timezone - ours is the upgrade that files the visit correctly).
+function cf_pretty($ts) { return $ts ? date('l j F, g:ia', $ts) : ''; }
+function cf_subject($kind, $sv, $ts) {
+    $w = $ts ? date('D j M, g:ia', $ts) : '';
+    if ($kind === 'cancel') return 'Cancelled: ' . $sv . ($w !== '' ? ' - ' . $w : '');
+    if ($kind === 'change') return 'New time: ' . $sv . ($w !== '' ? ' - now ' . $w : '');
+    return 'Booked: ' . $sv . ($w !== '' ? ' - ' . $w : '');
+}
+function cf_body($kind, $first, $sv, $ts, $code) {
+    $when = cf_pretty($ts);
+    $sig = "Steve & David\r\n365 Techies - family-run IT support in Bournemouth since 1995\r\n01202 775566 - https://365techies.co.uk\r\n";
+    $manage = "Need to move or cancel it? Your portal handles both in a couple of\r\ntaps - https://365techies.co.uk/portal/ - or just ring 01202 775566.\r\n\r\n";
+    if ($kind === 'cancel') {
+        return 'Hi ' . $first . ",\r\n\r\n"
+        . "Your booking is cancelled - this email is your confirmation:\r\n\r\n"
+        . '  What:  ' . $sv . "\r\n" . ($when !== '' ? '  Was:   ' . $when . "\r\n" : '')
+        . "\r\nNothing else is needed from you. If this wasn't you, or you'd like to\r\n"
+        . "rebook, ring 01202 775566 or book online any time:\r\nhttps://365techies.co.uk/portal/\r\n\r\n"
+        . "Thanks,\r\n" . $sig;
+    }
+    if ($kind === 'change') {
+        return 'Hi ' . $first . ",\r\n\r\n"
+        . "Your booking has a new time - here are the updated details:\r\n\r\n"
+        . '  What:  ' . $sv . "\r\n" . ($when !== '' ? '  When:  ' . $when . "\r\n" : '')
+        . ($code !== '' ? '  Booking reference: ' . $code . "\r\n" : '')
+        . "\r\nThe attached calendar file replaces the old appointment - open it and\r\n"
+        . "your calendar updates itself.\r\n\r\n" . $manage
+        . "See you then,\r\n" . $sig;
+    }
+    return 'Hi ' . $first . ",\r\n\r\n"
+    . "You're booked in - here's everything you need:\r\n\r\n"
+    . '  What:  ' . $sv . "\r\n" . ($when !== '' ? '  When:  ' . $when . "\r\n" : '')
+    . ($code !== '' ? '  Booking reference: ' . $code . "\r\n" : '')
+    . "\r\nA calendar file is attached - open it and the appointment drops straight\r\n"
+    . "into your phone or computer's calendar, reminder included.\r\n\r\n" . $manage
+    . "See you then,\r\n" . $sig;
+}
+function ics_build($summary, $st, $en, $uid, $seq) {
+    $esc = function($s){ return preg_replace('/([\\\\,;])/', '\\\\$1', preg_replace('/[\r\n]+/', ' ', (string)$s)); };
+    $tz = "BEGIN:VTIMEZONE\r\nTZID:Europe/London\r\n"
+        . "BEGIN:DAYLIGHT\r\nTZOFFSETFROM:+0000\r\nTZOFFSETTO:+0100\r\nTZNAME:BST\r\nDTSTART:19700329T010000\r\nRRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU\r\nEND:DAYLIGHT\r\n"
+        . "BEGIN:STANDARD\r\nTZOFFSETFROM:+0100\r\nTZOFFSETTO:+0000\r\nTZNAME:GMT\r\nDTSTART:19701025T020000\r\nRRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU\r\nEND:STANDARD\r\nEND:VTIMEZONE";
+    return "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//365 Techies//Booking//EN\r\nCALSCALE:GREGORIAN\r\nMETHOD:PUBLISH\r\n" . $tz
+        . "\r\nBEGIN:VEVENT\r\nUID:" . $esc($uid) . "\r\nSEQUENCE:" . (int)$seq
+        . "\r\nDTSTAMP:" . gmdate('Ymd\THis\Z')
+        . "\r\nDTSTART;TZID=Europe/London:" . date('Ymd\THis', $st)
+        . "\r\nDTEND;TZID=Europe/London:" . date('Ymd\THis', $en > $st ? $en : $st + 3600)
+        . "\r\nSUMMARY:" . $esc($summary)
+        . "\r\nDESCRIPTION:" . $esc('365 Techies - 01202 775566 - manage at https://365techies.co.uk/portal/')
+        . "\r\nORGANIZER;CN=365 Techies:mailto:info@365techies.co.uk"
+        . "\r\nSTATUS:CONFIRMED\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n";
+}
+
+// Called by the webhook right after rv_record. Dedupes SimplyBook's webhook retries
+// (mark-under-lock before sending; unmarked again + Slack alert if the send fails,
+// so a retry can recover it). Change emails only fire when the START TIME actually
+// moved - admins editing notes must not email the customer.
+function cf_notify($bid, $type, $email, $name, $sv, $ts, $ets, $code) {
+    global $CF_LIVE;
+    $bid = preg_replace('/[^0-9]/', '', (string)$bid);
+    $email = strtolower(trim((string)$email));
+    if ($bid === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) return;
+    $kind = ($type === 'cancel') ? 'cancel' : (($type === 'create') ? 'confirm' : 'change');
+    // header-injection guard: the service name reaches the Subject header raw
+    $sv = trim(preg_replace('/[\r\n\x00-\x1F]+/', ' ', (string)$sv)); if ($sv === '') $sv = 'your 365 Techies visit';
+
+    list($lk, $q) = rvq_open();
+    if (!$lk) return;
+    // rv_record runs first and refusing the entry (stale/unknown booking) is the
+    // authoritative "don't email" signal - and without an entry, no dedupe mark
+    // could persist, so every webhook retry would re-send
+    if (!isset($q['q'][$bid])) { rvq_close($lk); return; }
+    $cf = (isset($q['q'][$bid]['cf']) && is_array($q['q'][$bid]['cf'])) ? $q['q'][$bid]['cf'] : array();
+    $prevH = isset($cf['h']) ? $cf['h'] : null;
+    if (isset($q['optout'][sha1($email)])) { rvq_close($lk); return; }
+    if ($kind === 'confirm' && isset($cf['cr'])) { rvq_close($lk); return; }          // webhook retry
+    if ($kind === 'cancel' && isset($cf['ca'])) { rvq_close($lk); return; }           // webhook retry
+    if ($kind === 'change') {
+        if (!isset($cf['cr'])) $kind = 'confirm';                                     // change before we ever confirmed
+        elseif ((isset($cf['h']) ? $cf['h'] : 0) === (int)$ts) { rvq_close($lk); return; }   // time didn't move
+    }
+    // mark BEFORE sending so a webhook retry seconds later can't double-send
+    if ($kind === 'confirm') $cf['cr'] = time();
+    if ($kind === 'cancel') $cf['ca'] = time();
+    $cf['h'] = (int)$ts;
+    if (isset($q['q'][$bid])) { $q['q'][$bid]['cf'] = $cf; rvq_save($q); }
+    rvq_close($lk);
+
+    if (!$CF_LIVE) return;   // safe mode: dedupe state still exercised, nothing sent
+
+    $icsN = ''; $icsD = '';
+    if ($kind !== 'cancel' && $ts) {
+        $icsN = '365-techies-booking.ics';
+        $icsD = ics_build($sv, $ts, $ets, 'sb-' . $bid . '@365techies.co.uk', time());
+    }
+    $ok = rv_send_raw($email, cf_subject($kind, $sv, $ts), cf_body($kind, rv_first($name), $sv, $ts, (string)$code), $icsN, $icsD);
+    if (!$ok) {
+        list($lk2, $q2) = rvq_open();
+        if ($lk2) {
+            if (isset($q2['q'][$bid]['cf'])) {
+                if ($kind === 'confirm') unset($q2['q'][$bid]['cf']['cr']);
+                if ($kind === 'cancel') unset($q2['q'][$bid]['cf']['ca']);
+                // a failed CHANGE send must also restore the previous time-hash, or the
+                // webhook retry would be suppressed as "time didn't move" and lost
+                if ($kind === 'change') {
+                    if ($prevH === null) unset($q2['q'][$bid]['cf']['h']);
+                    else $q2['q'][$bid]['cf']['h'] = $prevH;
+                }
+                rvq_save($q2);
+            }
+            rvq_close($lk2);
+        }
+        rv_slack(':warning: 365 mail: ' . $kind . ' email FAILED for booking #' . $bid . ' - SimplyBook\'s own notification is the only copy the customer got');
+    }
+}
+
 // ---- best-effort Slack ping (send failures + daily summaries) - never blocks ----
 function rv_slack($text) {
     $f = __DIR__ . '/slack-webhook.php';
@@ -233,10 +356,22 @@ function rv_slack($text) {
 // ---- transport: authenticated SMTP if api/pcm-smtp.php is configured, else mail().
 // Same minimal implicit-TLS client as the portal sign-in codes (port 465 only).
 function rv_send($to, $first, $kind = 'review') {
-    $to = strtolower(trim((string)$to));
-    if (!filter_var($to, FILTER_VALIDATE_EMAIL)) return false;
     $subject = ($kind === 'done') ? dn_subject() : rv_subject();
     $body = ($kind === 'done') ? dn_body(rv_first($first)) : rv_body(rv_first($first));
+    return rv_send_raw($to, $subject, $body);
+}
+// generic transport; optional .ics calendar attachment via multipart/mixed
+function rv_send_raw($to, $subject, $body, $icsName = '', $icsData = '') {
+    $to = strtolower(trim((string)$to));
+    if (!filter_var($to, FILTER_VALIDATE_EMAIL)) return false;
+    if ($icsData !== '') {
+        $bnd = 'b365' . bin2hex(random_bytes(8));
+        $ctype = 'Content-Type: multipart/mixed; boundary="' . $bnd . '"';
+        $payload = '--' . $bnd . "\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\n" . $body
+                 . "\r\n--" . $bnd . "\r\nContent-Type: text/calendar; charset=UTF-8; method=PUBLISH\r\n"
+                 . 'Content-Disposition: attachment; filename="' . $icsName . '"' . "\r\n\r\n" . $icsData
+                 . "\r\n--" . $bnd . "--\r\n";
+    } else { $ctype = 'Content-Type: text/plain; charset=UTF-8'; $payload = $body; }
     $cfg = __DIR__ . '/pcm-smtp.php';
     if (is_readable($cfg)) {
         include $cfg;
@@ -278,8 +413,8 @@ function rv_send($to, $first, $kind = 'review') {
                          . 'Reply-To: 365 Techies <info@365techies.co.uk>' . "\r\n"
                          . 'To: <' . $to . ">\r\n"
                          . 'Subject: ' . $subject . "\r\n"
-                         . "MIME-Version: 1.0\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\n"
-                         . preg_replace('/^\./m', '..', $body) . "\r\n.";   // dot-stuffing per RFC 5321
+                         . "MIME-Version: 1.0\r\n" . $ctype . "\r\n\r\n"
+                         . preg_replace('/^\./m', '..', $payload) . "\r\n.";   // dot-stuffing per RFC 5321
                     $ok = strpos($say($msg), '250') === 0;
                 }
                 if (!$dead) @fwrite($fp, "QUIT\r\n");
@@ -291,8 +426,8 @@ function rv_send($to, $first, $kind = 'review') {
     // -f pins the ENVELOPE sender to our domain: without it Return-Path defaults to
     // the hosting account, SPF authenticates the wrong domain, and DMARC alignment
     // then hangs entirely on DKIM.
-    $hdr = "From: 365 Techies <info@365techies.co.uk>\r\nReply-To: info@365techies.co.uk\r\nContent-Type: text/plain; charset=UTF-8";
-    return @mail($to, $subject, $body, $hdr, '-finfo@365techies.co.uk');
+    $hdr = "From: 365 Techies <info@365techies.co.uk>\r\nReply-To: info@365techies.co.uk\r\nMIME-Version: 1.0\r\n" . $ctype;
+    return @mail($to, $subject, $payload, $hdr, '-finfo@365techies.co.uk');
 }
 
 // ---- queue processor. Sends entries whose appointment ended >24h ago. ----
@@ -489,8 +624,11 @@ if (!defined('RV_LIB')) {
     if (isset($_GET['test'])) {
         // exact customer email, to OUR OWN inbox only - never a caller-supplied address.
         // ?test=1 sends the review ask; ?test=done sends the job-done visit record.
-        $tkind = ((string)$_GET['test'] === 'done') ? 'done' : 'review';
-        $tstamp = ($tkind === 'done') ? 'dn_test_ts' : 'test_ts';   // independent throttles
+        $tmap = array('1' => 'review', 'review' => 'review', 'done' => 'done',
+                      'confirm' => 'confirm', 'change' => 'change', 'cancel' => 'cancel');
+        $tk = (string)$_GET['test'];
+        $tkind = isset($tmap[$tk]) ? $tmap[$tk] : 'review';
+        $tstamp = ($tkind === 'review') ? 'test_ts' : (($tkind === 'done') ? 'dn_test_ts' : ('cf_test_' . $tkind));   // independent throttles
         list($lk, $q) = rvq_open();
         if (!$lk) { echo json_encode(array('ok' => false, 'error' => 'locked')); exit; }
         if ((isset($q[$tstamp]) ? $q[$tstamp] : 0) > time() - 600) {
@@ -501,7 +639,14 @@ if (!defined('RV_LIB')) {
         $q[$tstamp] = time();
         rvq_save($q);
         rvq_close($lk);
-        $ok = rv_send('info@365techies.co.uk', 'Steve', $tkind);
+        if ($tkind === 'review' || $tkind === 'done') $ok = rv_send('info@365techies.co.uk', 'Steve', $tkind);
+        else {
+            $sts = strtotime('next tuesday 10:00');
+            $icsD = ($tkind === 'cancel') ? '' : ics_build('Computer Health Check', $sts, $sts + 5400, 'sb-sample@365techies.co.uk', time());
+            $ok = rv_send_raw('info@365techies.co.uk', cf_subject($tkind, 'Computer Health Check', $sts),
+                              cf_body($tkind, 'Steve', 'Computer Health Check', $sts, 'SAMPLE'),
+                              $icsD === '' ? '' : '365-techies-booking.ics', $icsD);
+        }
         echo json_encode(array('ok' => (bool)$ok, 'mode' => 'test', 'kind' => $tkind, 'to' => 'info@365techies.co.uk',
                                'note' => $ok ? 'check the inbox (and spam folder on first send)' : 'send failed - check server mail config'));
         exit;

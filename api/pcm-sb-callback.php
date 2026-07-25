@@ -91,6 +91,13 @@ foreach (array('client_name', 'client') as $k) {
 }
 rv_record($bid, $email, $cnm, $ets, $type);
 
+// immediate booking-lifecycle email (confirm/change/cancel) - see cf_notify's
+// dedupe rules; safe-mode gated by $CF_LIVE inside pcm-review.php
+$sv = '';
+foreach (array('event_name', 'event') as $k) if (!empty($b[$k]) && is_string($b[$k])) { $sv = (string)$b[$k]; break; }
+$bcode = isset($b['code']) ? preg_replace('/[^A-Za-z0-9]/', '', (string)$b['code']) : '';
+cf_notify($bid, $type, $email, $cnm, $sv, $ts, $ets, $bcode);
+
 // ---- match a PC Manager customer by email, write/clear next-service ----
 // Lock + refuse-to-wipe: never overwrite a DB we couldn't parse (would destroy all customers).
 $lk = @fopen($DATA . '.lock', 'c'); if ($lk) @flock($lk, LOCK_EX);
