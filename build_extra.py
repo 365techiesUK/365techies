@@ -13,6 +13,7 @@ from build_pages import (add, graph, crumb, webpage, service, faqpage,
                          SIGGEN_TOOL, SSLCHECK_TOOL, DOMEXP_TOOL, SOLARCALC_TOOL, AVTEST_TOOL, VBUILDER_TOOL, PCBUILD_TOOL, TOOLS, tool_cards, tools_strip, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
 from build_local import make_customer
 from new_pages_data import NEW_PAGES
+from booking_app import BOOKING_APP   # our own booking UI (replaces the SimplyBook widget)
 from at_a_glance_data import AT_A_GLANCE
 from latitude_pages_data import LATITUDE_PAGES, LATITUDE_COMPARE_TABLES
 from optiplex_pages_data import OPTIPLEX_PAGES, OPTIPLEX_COMPARE_TABLES
@@ -281,68 +282,27 @@ def faqs_page():
 faqs_page()
 
 # ===================================================== BOOK A SERVICE (SimplyBook)
-BOOKING_EMBED = '''    <section class="section section--alt" aria-label="Online booking">
-      <div class="wrap">
-        <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// BOOK ONLINE</p>
-          <h2 class="section-title section-title--center" data-title>Pick a time that suits you<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>Book a computer service, repair or setup in under a minute. Already a customer? Sign in to reschedule or cancel.</p>
-        </div>
-        <div class="book-guide" data-reveal>
-          <div class="book-step"><span class="book-step__n">1</span><div><strong>Pick your service</strong><span>Service, repair, setup or a remote session.</span></div></div>
-          <span class="book-step__arrow" aria-hidden="true">&#8594;</span>
-          <div class="book-step"><span class="book-step__n">2</span><div><strong>Choose a time</strong><span>Live availability &mdash; grab any slot that suits.</span></div></div>
-          <span class="book-step__arrow" aria-hidden="true">&#8594;</span>
-          <div class="book-step"><span class="book-step__n">3</span><div><strong>We confirm &amp; call ahead</strong><span>Instant confirmation &mdash; and we phone before we arrive or connect.</span></div></div>
-        </div>
-        <p class="book-help" data-reveal>Not sure what to pick, or would you rather we booked it with you? <a href="tel:+441202775566"><strong>Call 01202&nbsp;775566</strong></a> &mdash; a real local person will sort it in a minute. <span class="book-cue">Choose your time below &#8595;</span></p>
-        <div class="booking-embed" data-reveal>
-          <div id="sbw-widget"></div>
-          <p class="booking-fallback">Booking system not loading? <a href="https://365techies.simplybook.it/v2/" target="_blank" rel="noopener">OPEN IT IN A NEW TAB &#8594;</a></p>
-        </div>
-      </div>
-      <style>
-        .book-guide{display:flex;align-items:stretch;justify-content:center;gap:.6rem;flex-wrap:wrap;max-width:940px;margin:0 auto 1.1rem}
-        .book-step{display:flex;align-items:center;gap:.8rem;background:var(--glass);border:1px solid var(--line);border-radius:14px;padding:.9rem 1.1rem;flex:1 1 240px;min-width:230px}
-        .book-step__n{flex:0 0 auto;width:34px;height:34px;border-radius:999px;background:var(--cyan);color:#fff;font:700 1rem/34px var(--font-display);text-align:center;box-shadow:0 0 0 0 rgba(29,151,227,.5);animation:bookpulse 2.6s ease-out infinite}
-        .book-step:nth-child(3) .book-step__n{animation-delay:.4s}.book-step:nth-child(5) .book-step__n{animation-delay:.8s}
-        .book-step strong{display:block;font-size:.98rem}.book-step span{color:var(--muted);font-size:.8rem;line-height:1.4}
-        .book-step__arrow{align-self:center;color:var(--cyan-soft);font-size:1.3rem;font-weight:700}
-        .book-help{text-align:center;max-width:760px;margin:0 auto 1.2rem;color:var(--muted)}
-        .book-help a{color:var(--cyan-soft);text-decoration:none}.book-help a:hover{text-decoration:underline}
-        .book-cue{display:block;margin-top:.5rem;font-family:var(--font-mono);font-size:.78rem;letter-spacing:.04em;color:var(--cyan-soft);animation:bookbob 1.8s ease-in-out infinite}
-        @keyframes bookpulse{0%{box-shadow:0 0 0 0 rgba(29,151,227,.5)}70%{box-shadow:0 0 0 12px rgba(29,151,227,0)}100%{box-shadow:0 0 0 0 rgba(29,151,227,0)}}
-        @keyframes bookbob{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
-        @media(max-width:640px){.book-step__arrow{display:none}}
-        @media(prefers-reduced-motion:reduce){.book-step__n,.book-cue{animation:none}}
-      </style>
-      <script src="//widget.simplybook.it/v2/widget/widget.js" defer></script>
-      <script>
-        window.addEventListener('load', function () {
-          try {
-            if (typeof SimplybookWidget === 'undefined') return;
-            new SimplybookWidget({"widget_type":"iframe","url":"https://365techies.simplybook.it","theme":"default","theme_settings":{"timeline_hide_unavailable":"1","hide_past_days":"0","timeline_show_end_time":"0","timeline_modern_display":"as_slots","sidebar_type":"normal","display_item_mode":"block","body_bg_color":"#070d22","dark_font_color":"#eaf4ff","light_font_color":"#ffffff","btn_color_1":"#1d97e3","sidebar_bg_color":"#0c1430","booking_nav_bg_color":"#0c1430"},"timeline":"modern","datepicker":"top_calendar","is_rtl":false,"app_config":{"clear_session":0,"allow_switch_to_ashby":1,"predefined":[]},"container_id":"sbw-widget"});
-          } catch (e) {}
-        });
-      </script>
-    </section>'''
+# BOOKING_EMBED (the SimplyBook widget iframe) was RETIRED 2026-07-25 and deliberately
+# deleted: /book-service/ now uses our own BOOKING_APP (booking_app.py), which talks to
+# api/pcm-booking.php. Do not reinstate a third-party booking iframe - it put another
+# company's branding, cookies and UX in front of our customers.
 
 def book_service():
     slug = "book-service"
     desc = "Book or manage your computer servicing, repair or setup appointment online with 365 Techies. Pick a time that suits you, or sign in to reschedule. Bournemouth, Poole and Dorset."
     faqs = [
-      ("Can I reschedule or cancel my appointment?", "Yes — when you book you'll get a confirmation with a link to manage, reschedule or cancel your appointment online. You can also sign in to the booking system at any time."),
+      ("Can I reschedule or cancel my appointment?", "Yes — booking sets up your own customer portal, and you can move or cancel an appointment there in a couple of taps. Or just call 01202 775566 and we'll do it for you."),
       ("What can I book online?", "Computer and laptop servicing, repairs, new device setup, security checks and on-site visits across Bournemouth, Poole and Dorset. Not sure what you need? Call us on 01202 775566."),
-      ("Do I need an account to book?", "No — you can book as a guest in under a minute. Returning customers can sign in to see and manage their appointments."),
+      ("Do I need an account to book?", "There's no password to invent. You pick a time, then we email you a 6-digit code to check we've got your address right — that also creates your customer portal, where you can manage the appointment afterwards. Next time you book, you're already signed in."),
       ("Will I know when you're coming?", "Yes — for on-site visits we phone you when we're on our way and give you an estimated arrival time, so you know exactly when to expect us. For remote sessions we call before we connect to check you're ready, and we never connect out of the blue."),
     ]
     content = "\n".join([
       hero(bc("Book a Service"), "// ONLINE BOOKING",
            'Book your <em class="grad grad--cyan">servicing appointment</em>',
            "Manage your computer servicing online — book a service, repair, security check or new-device setup at a time that suits you, and reschedule or cancel whenever you need to.",
-           cta1=("Pick a Time Below", "#sbw-widget"),
+           cta1=("Pick a Time Below", "#book"),
            cta2=("Call 01202 775566", "tel:+441202775566"),
-           chips=["Book in under a minute","Reschedule or cancel anytime","Remote or on-site"]),
+           chips=["Live availability","Reschedule or cancel anytime","Remote or on-site"]),
       f'''    <section class="section" aria-label="What you can book">
       <div class="wrap">
         <div class="section-head">
@@ -354,13 +314,13 @@ def book_service():
         </div>
       </div>
     </section>''',
-      BOOKING_EMBED,
+      BOOKING_APP,
       f'''    <section class="how" aria-label="How booking works">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// HOW IT WORKS</p>
         <h2 class="section-title section-title--center" data-title>Booking in four simple steps<span class="title-underline title-underline--center"></span></h2>
         <ol class="how__steps">
-{steps([("Choose a service","Pick the type of appointment and a time that works for you."),("Confirm your details","Book as a guest in under a minute, or sign in if you're a returning customer."),("Manage it anytime","Get a confirmation with a link to reschedule or cancel whenever you need."),("We call ahead","For on-site visits we phone to say we&rsquo;re on our way and give you an ETA &mdash; and for remote sessions we call before we connect.")])}
+{steps([("Choose a service","Pick the type of appointment and a time that works for you."),("Confirm your details","We email you a 6-digit code to check we&rsquo;ve got your address right &mdash; that also sets up your portal. Booked before? You&rsquo;re already signed in."),("Manage it anytime","Move or cancel the appointment in your portal in a couple of taps &mdash; or just ring us."),("We call ahead","For on-site visits we phone to say we&rsquo;re on our way and give you an ETA &mdash; and for remote sessions we call before we connect.")])}
         </ol>
       </div>
     </section>''',
@@ -368,7 +328,7 @@ def book_service():
       faq_html(faqs),
       cta("Not sure what you need?",
           "Call us on 01202 775566 or start a live chat and a friendly techie will help you book the right appointment.",
-          primary=("Open Booking System", "https://365techies.simplybook.it/v2/"),
+          primary=("Pick a Time Above", "#book"),
           secondary=("Call 01202 775566", "tel:+441202775566")),
     ])
     def schema(s, _desc=desc, _faqs=faqs):

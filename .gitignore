@@ -67,3 +67,6 @@ api/pcm-reviewq.json
 api/pcm-reviewq.json.lock
 api/pcm-reviewq.json.*.tmp
 api/pcm-smtp.php
+api/pcm-pubrate.json
+api/pcm-pubrate.json.lock
+api/pcm-pubrate.json.*.tmp

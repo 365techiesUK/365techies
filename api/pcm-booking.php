@@ -149,6 +149,10 @@ function sb_services() {
         if (sb_net($r) || !isset($r['result']) || !is_array($r['result'])) fail('sb_unavailable');
         $list = array();
         foreach ($r['result'] as $id => $ev) {
+            // NOTE: deliberately permissive (skip only when EXPLICITLY inactive/hidden).
+            // Fail-closed here would empty the booking page entirely if SimplyBook ever
+            // omitted these flags. Public exposure is controlled by $SB_PUBLIC_EVENTS in
+            // the pubservices action instead.
             if (isset($ev['is_active']) && !$ev['is_active']) continue;
             if (isset($ev['is_visible']) && !$ev['is_visible']) continue;
             $units = array();
@@ -392,6 +396,87 @@ function parse_start($b) {
 
 // ---------------------------------------------------------------- actions
 
+// ---------------------------------------------------------------- PUBLIC (no sign-in)
+// Read-only endpoints powering our OWN booking page at /book-service/. Deliberately
+// the ONLY unauthenticated surface: the booking itself still goes through the proven
+// join -> verifycode -> book chain, so no stranger can put junk in the diary without
+// proving they own an inbox. Both are rate-limited per IP because they reach
+// SimplyBook's API, and a scraper hammering them would burn the API quota that real
+// bookings depend on.
+$PUBRATE = __DIR__ . '/pcm-pubrate.json';
+function pub_rate($bucket, $max, $win) {
+    global $PUBRATE;
+    $ip = isset($_SERVER['REMOTE_ADDR']) ? (string)$_SERVER['REMOTE_ADDR'] : '';
+    $k = sha1($bucket . '|' . $ip);
+    $lk = @fopen($PUBRATE . '.lock', 'c'); if ($lk) @flock($lk, LOCK_EX);
+    $d = cache_load($PUBRATE);
+    foreach ($d as $kk => $vv) if ((isset($vv['ts']) ? $vv['ts'] : 0) < time() - $win) unset($d[$kk]);
+    // hard ceiling: IP rotation must never grow this file into a rewrite-the-world DoS
+    if (count($d) > 4000) $d = array();
+    $rec = isset($d[$k]) && is_array($d[$k]) ? $d[$k] : array('n' => 0, 'ts' => time());
+    if ((isset($rec['ts']) ? $rec['ts'] : 0) < time() - $win) $rec = array('n' => 0, 'ts' => time());
+    $rec['n'] = (isset($rec['n']) ? $rec['n'] : 0) + 1;
+    $d[$k] = $rec;
+    cache_save($PUBRATE, $d);
+    if ($lk) { @flock($lk, LOCK_UN); @fclose($lk); }
+    return $rec['n'] <= $max;
+}
+
+// Optional publish control: define $SB_PUBLIC_EVENTS = array(12,15,...) in the server-only
+// pcm-simplybook.php to restrict what the PUBLIC page offers (the app/portal are unaffected).
+// Leave it undefined and everything bookable in SimplyBook is offered, as before.
+function pub_allowed($id) {
+    global $SB_PUBLIC_EVENTS;
+    if (!isset($SB_PUBLIC_EVENTS) || !is_array($SB_PUBLIC_EVENTS) || !count($SB_PUBLIC_EVENTS)) return true;
+    return in_array((int)$id, array_map('intval', $SB_PUBLIC_EVENTS), true);
+}
+
+if ($action === 'pubservices') {
+    if (!pub_rate('svc', 90, 600)) fail('busy');
+    $list = array();
+    foreach (sb_services() as $sv) if (pub_allowed($sv['id']))
+        $list[] = array('id' => $sv['id'], 'name' => $sv['name'], 'mins' => $sv['mins']);
+    out(array('ok' => true, 'services' => $list));   // never expose unit_map to the public
+}
+
+if ($action === 'pubslots') {
+    if (!pub_rate('slots', 90, 600)) fail('busy');
+    $eventId = (int)(isset($in['eventId']) ? $in['eventId'] : 0);
+    if ($eventId <= 0) fail('no_service');
+    // the service id must be one WE offer - never let a caller probe arbitrary ids
+    $known = false;
+    foreach (sb_services() as $sv) if ($sv['id'] === $eventId && pub_allowed($sv['id'])) { $known = true; break; }
+    if (!$known) fail('no_service');
+    // window is fixed server-side so a caller can neither widen it into an expensive
+    // SimplyBook query nor vary it to walk past the cache
+    $days = 21;
+    $from = date('Y-m-d');
+    $to = date('Y-m-d', time() + 86400 * $days);
+    $ck = 'pub' . $eventId;
+    $c = cache_load($CACHE);
+    // isset, not !empty: a fully-booked service returns an EMPTY list, and treating that as
+    // "no cache" would hit SimplyBook on every single page view
+    if (isset($c[$ck]['data']) && is_array($c[$ck]['data']) && (time() - (isset($c[$ck]['ts']) ? $c[$ck]['ts'] : 0)) < 90 && empty($in['fresh']))
+        out(array('ok' => true, 'days' => $c[$ck]['data'], 'cached' => true));
+    $units = sb_units_for($eventId);
+    if (!count($units)) fail('sb_unavailable');
+    $r = sb_pub('getStartTimeMatrix', array($from, $to, $eventId, $units, 1));
+    if (sb_net($r)) fail('sb_unavailable');
+    $matrix = isset($r['result']) && is_array($r['result']) ? $r['result'] : array();
+    $out = array();
+    foreach ($matrix as $d => $times) {
+        if (!is_array($times) || !count($times)) continue;
+        $tt = array();
+        foreach ($times as $t) $tt[] = substr((string)$t, 0, 5);
+        $ts = strtotime($d);
+        $out[] = array('d' => $d, 'n' => $ts ? date('D j M', $ts) : $d, 't' => $tt);
+    }
+    $c = cache_load($CACHE);   // re-read: sb_pub may have refreshed the token cache
+    $c[$ck] = array('data' => $out, 'ts' => time());
+    cache_save($CACHE, $c);
+    out(array('ok' => true, 'days' => $out));
+}
+
 // ---------------------------------------------------------------- free membership join
 // Two-step, passwordless: action=join sends a 6-digit code (email + optional SMS);
 // action=verifycode proves inbox/phone ownership, then creates/reuses the SimplyBook
@@ -491,7 +576,13 @@ if ($action === 'join') {
     $email = strtolower(trim((string)(isset($in['email']) ? $in['email'] : '')));
     if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) fail('bad_email');
     $mobile = preg_replace('/[^0-9+]/', '', (string)(isset($in['mobile']) ? $in['mobile'] : ''));
-    if ($mobile !== '' && !preg_match('/^(07[0-9]{9}|\+?447[0-9]{9})$/', $mobile)) fail('bad_mobile');
+    // A number we can't text is NOT an error: the code always goes by email, and hard-failing
+    // here would dead-end every customer who typed a landline (the web booking page's most
+    // likely visitor). Unusable number -> simply no SMS.
+    if ($mobile !== '' && !preg_match('/^(07[0-9]{9}|\+?447[0-9]{9})$/', $mobile)) $mobile = '';
+    // texting costs money and a caller-chosen number must never be texted unasked:
+    // only text when the caller explicitly asked for it
+    if (empty($in['sms'])) $mobile = '';
     // STAFF emails get their code by EMAIL ONLY. The mobile is attacker-suppliable, and the
     // whole staff-code design rests on "only the allow-listed inbox can read the code" -
     // texting it to a caller-chosen number would hand out staff sessions.
@@ -631,8 +722,14 @@ if ($action === 'verifycode') {
             break;
         }
     }
+    // carry the phone the customer typed into the NEW SimplyBook client - without this a
+    // web booking lands in the diary with no number to ring, while we promise to call ahead
+    $jphone = isset($in['phone']) ? trim(preg_replace('/[^0-9+ ]/', '', (string)$in['phone'])) : '';
+    if (strlen(preg_replace('/[^0-9]/', '', $jphone)) < 9) $jphone = '';
     if ($cid === 0) {
-        $ac = sb_adm('addClient', array(array('name' => ($cname !== '' ? $cname : $email), 'email' => $email), false));
+        $cd = array('name' => ($cname !== '' ? $cname : $email), 'email' => $email);
+        if ($jphone !== '') $cd['phone'] = $jphone;
+        $ac = sb_adm('addClient', array($cd, false));
         if (sb_net($ac) || empty($ac['result'])) fail('sb_unavailable');
         $cid = (int)$ac['result'];
     }
@@ -667,6 +764,7 @@ if ($action === 'verifycode') {
     $c =& $db['customers'][$target];
     $c['sb_client_id'] = $cid;
     $c['sb_email'] = $email;
+    if ($jphone !== '' && empty($c['phone']) && empty($c['sb_phone'])) $c['phone'] = $jphone;
     $c['email_verified'] = true;   // proven by the typed code - unlike raw SB self-registration
     // marketing consent (PECR): an explicit, unticked-by-default opt-in on the join box. Only ever
     // SET it (never silently withdraw when the box is left unticked) - withdrawal is via the
@@ -920,6 +1018,14 @@ if ($action === 'book') {
         $why = isset($GLOBALS['nc_why']) ? $GLOBALS['nc_why'] : '';
         out(array('ok' => false, 'error' => 'no_client', 'why' => $why, 'needphone' => (strpos($why, 'create_failed') === 0 && $snap['phone'] === '')));
     }
+    // Diary-flood guard: one verified inbox must not be able to fill the public diary.
+    // Generous enough for a business booking several visits, low enough to stop abuse.
+    $exb = sb_adm('getBookings', array(array('client_id' => $cid, 'booking_type' => 'non_cancelled', 'date_from' => date('Y-m-d'))));
+    if (!sb_net($exb) && isset($exb['result']) && is_array($exb['result'])) {
+        $fut = 0;
+        foreach ($exb['result'] as $eb) { $est = strtotime(parse_start($eb)); if ($est && $est > time()) $fut++; }
+        if ($fut >= 6) out(array('ok' => false, 'error' => 'too_many'));
+    }
     $au = sb_pub('getAvailableUnits', array($eventId, $date . ' ' . $time, 1));
     if (sb_net($au)) fail('sb_unavailable');
     $unitIds = isset($au['result']) && is_array($au['result']) ? array_values($au['result']) : array();
@@ -942,6 +1048,23 @@ if ($action === 'book') {
     $ts = strtotime($date . ' ' . $time);
     $pretty = $ts ? date('D j M Y g:ia', $ts) : ($date . ' ' . $time);
     if ($confirmed) stamp_next($ts, $pretty);        // only claim a firm date once confirmed
+    // What the customer told us about the job (and where, for on-site) - SimplyBook custom
+    // field ids aren't known to us, so keep it on OUR record and put it in front of the team
+    // in Slack, where booking alerts already land.
+    $note = trim(preg_replace('/[\x00-\x1F\x7F]+/', ' ', (string)(isset($in['note']) ? $in['note'] : '')));
+    if ($note !== '') {
+        $note = substr($note, 0, 400);
+        list($lkn, $dbn) = db_open();
+        if (!isset($dbn['bknote'])) $dbn['bknote'] = array();
+        foreach ($dbn['bknote'] as $nk => $nv) if ((isset($nv['ts']) ? $nv['ts'] : 0) < time() - 7776000) unset($dbn['bknote'][$nk]);
+        if ($bid > 0) $dbn['bknote'][(string)$bid] = array('t' => $note, 'ts' => time());
+        db_save($dbn); db_close($lkn);
+    }
+    // online bookings deserve the same visibility as staff-made ones
+    pcm_slack_say(':calendar: *New online booking* - ' . bk_clean($snap['name'] !== '' ? $snap['name'] : $snap['email'])
+        . ' - ' . $pretty . (!$confirmed ? ' _(awaiting confirmation)_' : '')
+        . ($note !== '' ? "\n> " . bk_clean(substr($note, 0, 200)) : '')
+        . ($snap['phone'] !== '' ? "\n> tel: " . bk_clean($snap['phone']) : ''));
     out(array('ok' => true, 'id' => $bid, 'when' => $pretty, 'pending' => !$confirmed));
 }
 
