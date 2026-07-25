@@ -157,9 +157,16 @@ function sb_services() {
             if (isset($ev['is_visible']) && !$ev['is_visible']) continue;
             $units = array();
             if (isset($ev['unit_map']) && is_array($ev['unit_map'])) foreach ($ev['unit_map'] as $uid) $units[] = (int)$uid;
+            // description is owner-controlled in SimplyBook and shown on the public
+            // booking page, so a service like a repair can say "free diagnosis, then
+            // we quote" without us hard-coding pricing claims in the site
+            $dsc = (string)(isset($ev['description']) ? $ev['description'] : '');
+            $dsc = trim(preg_replace('/\s+/', ' ', strip_tags(html_entity_decode($dsc, ENT_QUOTES, 'UTF-8'))));
+            if (strlen($dsc) > 180) $dsc = rtrim(substr($dsc, 0, 177)) . '...';
             $list[] = array('id' => (int)(isset($ev['id']) ? $ev['id'] : $id),
                             'name' => (string)(isset($ev['name']) ? $ev['name'] : 'Service'),
                             'mins' => (int)(isset($ev['duration']) ? $ev['duration'] : 60),
+                            'desc' => $dsc,
                             'units' => $units);
         }
         $c['services'] = array('data' => $list, 'ts' => time());
@@ -435,7 +442,8 @@ if ($action === 'pubservices') {
     if (!pub_rate('svc', 90, 600)) fail('busy');
     $list = array();
     foreach (sb_services() as $sv) if (pub_allowed($sv['id']))
-        $list[] = array('id' => $sv['id'], 'name' => $sv['name'], 'mins' => $sv['mins']);
+        $list[] = array('id' => $sv['id'], 'name' => $sv['name'], 'mins' => $sv['mins'],
+                        'desc' => (string)(isset($sv['desc']) ? $sv['desc'] : ''));
     out(array('ok' => true, 'services' => $list));   // never expose unit_map to the public
 }
 

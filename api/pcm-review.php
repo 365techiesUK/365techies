@@ -34,10 +34,13 @@
  *                           so the worst an abuser achieves is doing the daily
  *                           cron's work early. Anonymous callers get {"ok":true}
  *                           only; add &s=<admin pass> for the detailed stats.
- *   ?test=1 | ?test=done  - send the exact customer email (review ask | job-done
- *                           visit record) to OUR OWN inbox (hardcoded to
- *                           info@365techies.co.uk - the target is never
- *                           caller-choosable). Rate-limited 1 per 10 min per kind.
+ *   ?test=1|done|confirm|change|cancel|remind
+ *                         - send that exact customer email to info@365techies.co.uk.
+ *                           Rate-limited 1 per 10 min per kind. An ADMIN-authenticated
+ *                           caller may add &to=<address>&s=<admin pass> to send a real
+ *                           unforwarded copy to an external mailbox (Gmail) or a checker
+ *                           like mail-tester.com - the only way to prove SPF/DKIM/DMARC,
+ *                           since a FORWARDED copy authenticates the forwarder, not us.
  *
  *  6. RECOMMENDED: set the SiteGround cron for pcm-bkpoll.php (every 5 min) - it
  *     is the near-real-time engine for job-done emails after a booking is marked
@@ -726,6 +729,17 @@ if (!defined('RV_LIB')) {
     }
 
     if (isset($_GET['test'])) {
+        // Target is info@365techies.co.uk unless an ADMIN-authenticated caller names another
+        // address (&to=). That gate matters: it lets us send a real, unforwarded copy to an
+        // external mailbox (Gmail) or to a checker like mail-tester.com to prove SPF/DKIM/
+        // DMARC alignment - a FORWARDED email can't prove it, because the receiver then
+        // authenticates the forwarder, not us. Content is fixed, so this is never a useful
+        // spam vector even if the pass leaked; anonymous callers can still only mail us.
+        $tto = 'info@365techies.co.uk';
+        if ($rv_admin && isset($_GET['to'])) {
+            $cand = strtolower(trim((string)$_GET['to']));
+            if (filter_var($cand, FILTER_VALIDATE_EMAIL)) $tto = $cand;
+        }
         // exact customer email, to OUR OWN inbox only - never a caller-supplied address.
         // ?test=1 sends the review ask; ?test=done sends the job-done visit record.
         $tmap = array('1' => 'review', 'review' => 'review', 'done' => 'done',
@@ -743,18 +757,18 @@ if (!defined('RV_LIB')) {
         $q[$tstamp] = time();
         rvq_save($q);
         rvq_close($lk);
-        if ($tkind === 'review' || $tkind === 'done') $ok = rv_send('info@365techies.co.uk', 'Steve', $tkind);
+        if ($tkind === 'review' || $tkind === 'done') $ok = rv_send($tto, 'Steve', $tkind);
         elseif ($tkind === 'remind') {
             $rts = strtotime('tomorrow 14:00');
-            $ok = rv_send_raw('info@365techies.co.uk', rm_subject('tomorrow'), rm_body('Steve', 'Computer Health Check', $rts));
+            $ok = rv_send_raw($tto, rm_subject('tomorrow'), rm_body('Steve', 'Computer Health Check', $rts));
         } else {
             $sts = strtotime('next tuesday 10:00');
             $icsD = ($tkind === 'cancel') ? '' : ics_build('Computer Health Check', $sts, $sts + 5400, 'sb-sample@365techies.co.uk', time());
-            $ok = rv_send_raw('info@365techies.co.uk', cf_subject($tkind, 'Computer Health Check', $sts),
+            $ok = rv_send_raw($tto, cf_subject($tkind, 'Computer Health Check', $sts),
                               cf_body($tkind, 'Steve', 'Computer Health Check', $sts, 'SAMPLE'),
                               $icsD === '' ? '' : '365-techies-booking.ics', $icsD);
         }
-        echo json_encode(array('ok' => (bool)$ok, 'mode' => 'test', 'kind' => $tkind, 'to' => 'info@365techies.co.uk',
+        echo json_encode(array('ok' => (bool)$ok, 'mode' => 'test', 'kind' => $tkind, 'to' => $tto,
                                'note' => $ok ? 'check the inbox (and spam folder on first send)' : 'send failed - check server mail config'));
         exit;
     }

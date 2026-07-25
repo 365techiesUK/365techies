@@ -19685,6 +19685,7 @@ def write_portal_page():
   #p365app .svccard:hover, #p365app .svccard:focus-visible { border-color:var(--pcyan); background:rgba(29,151,227,.1); transform:translateY(-1px); }
   #p365app .svccard strong { display:block; font-size:.95rem; margin-bottom:.1rem; }
   #p365app .svccard em { font-style:normal; font-size:.78rem; color:var(--pmut); }
+  #p365app .svccard .svcd { display:block; font-size:.8rem; line-height:1.4; color:var(--pmut); margin:.1rem 0 .25rem; }
   #p365app .bknote { margin-top:.3rem; font-size:.82rem; }
   #p365app .bknotetx { color:var(--psoft); }
   #p365app .linky { background:none; border:0; padding:0; margin:0; color:var(--psoft); font:inherit; font-size:.82rem; text-decoration:underline; cursor:pointer; }
@@ -20392,7 +20393,7 @@ def write_portal_page():
       list.forEach(function (svc) {
         var b2 = document.createElement('button');
         b2.className = 'svccard';
-        b2.innerHTML = '<strong>' + esc(svc.name) + '</strong><em>about ' + esc(minsTxt(svc.mins)) + '</em>';
+        b2.innerHTML = '<strong>' + esc(svc.name) + '</strong>' + (svc.desc ? '<span class="svcd">' + esc(svc.desc) + '</span>' : '') + '<em>about ' + esc(minsTxt(svc.mins)) + '</em>';
         b2.onclick = function () { CB.svc = svc.id; CB.svcName = svc.name; CB.mins = svc.mins; custWhen(); };
         grid.appendChild(b2);
       });

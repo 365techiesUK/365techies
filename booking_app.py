@@ -77,6 +77,7 @@ BOOKING_APP = r'''    <section class="section section--alt" id="book" aria-label
         .bk__svc{text-align:left;background:rgba(255,255,255,.03);border:1px solid rgba(125,170,220,.42);border-radius:14px;padding:.9rem 1rem;min-height:64px;cursor:pointer;color:inherit;font:inherit;transition:transform .2s,border-color .2s,background .2s}
         .bk__svc:hover,.bk__svc:focus-visible{transform:translateY(-2px);border-color:var(--cyan);background:rgba(29,151,227,.09);outline:2px solid var(--cyan-soft);outline-offset:2px}
         .bk__svc strong{display:block;font-size:1rem;margin-bottom:.15rem}
+        .bk__svcd{display:block;color:var(--muted);font-size:.84rem;line-height:1.45;margin:.1rem 0 .3rem}
         .bk__svc em{font-style:normal;color:var(--muted);font-size:.82rem;font-family:var(--font-mono)}
         .bk__days{display:flex;gap:.45rem;overflow-x:auto;padding:.15rem .15rem .7rem;scrollbar-width:thin}
         .bk__day{flex:0 0 auto;min-width:82px;min-height:56px;text-align:center;background:rgba(255,255,255,.03);border:1px solid rgba(125,170,220,.42);border-radius:12px;padding:.55rem .5rem;cursor:pointer;color:inherit;font:inherit;transition:background .2s,border-color .2s}
@@ -216,7 +217,9 @@ BOOKING_APP = r'''    <section class="section section--alt" id="book" aria-label
             var h = '<p class="bk__h">What can we help with?</p><p class="bk__sub">Choose the appointment that fits best &mdash; not sure? Pick the closest and we&rsquo;ll sort it on the day.</p><div class="bk__grid">';
             for (var i = 0; i < r.services.length; i++) {
               var s = r.services[i];
-              h += '<button type="button" class="bk__svc" data-id="' + (+s.id) + '" data-n="' + esc(s.name) + '" data-m="' + (+s.mins) + '"><strong>' + esc(s.name) + '</strong><em>about ' + esc(minsTxt(+s.mins)) + '</em></button>';
+              h += '<button type="button" class="bk__svc" data-id="' + (+s.id) + '" data-n="' + esc(s.name) + '" data-m="' + (+s.mins) + '"><strong>' + esc(s.name) + '</strong>'
+                 + (s.desc ? '<span class="bk__svcd">' + esc(s.desc) + '</span>' : '')
+                 + '<em>about ' + esc(minsTxt(+s.mins)) + '</em></button>';
             }
             h += '</div><p class="bk__note">Every visit includes our promises: we phone before we arrive or connect, and the diagnosis is always free.</p>';
             P.innerHTML = h;
