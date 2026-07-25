@@ -161,8 +161,18 @@ function sb_services() {
             // booking page, so a service like a repair can say "free diagnosis, then
             // we quote" without us hard-coding pricing claims in the site
             $dsc = (string)(isset($ev['description']) ? $ev['description'] : '');
-            $dsc = trim(preg_replace('/\s+/', ' ', strip_tags(html_entity_decode($dsc, ENT_QUOTES, 'UTF-8'))));
-            if (strlen($dsc) > 180) $dsc = rtrim(substr($dsc, 0, 177)) . '...';
+            // replace tags with a SPACE rather than stripping them: SimplyBook descriptions
+            // often start with a heading, and removing the tag outright welds it onto the
+            // next sentence ("...Computer ServiceFull Data Backup")
+            $dsc = preg_replace('/<[^>]*>/', ' ', $dsc);
+            $dsc = trim(preg_replace('/\s+/', ' ', html_entity_decode($dsc, ENT_QUOTES, 'UTF-8')));
+            if (function_exists('mb_strlen') ? mb_strlen($dsc, 'UTF-8') > 180 : strlen($dsc) > 180) {
+                $cut = function_exists('mb_substr') ? mb_substr($dsc, 0, 180, 'UTF-8') : substr($dsc, 0, 180);
+                // end on a sentence if there is one, else a word - never mid-word
+                $stop = max(strrpos($cut, '. '), strrpos($cut, '! '), strrpos($cut, '? '));
+                if ($stop !== false && $stop > 80) $dsc = rtrim(substr($cut, 0, $stop + 1));
+                else { $sp = strrpos($cut, ' '); $dsc = rtrim($sp !== false && $sp > 80 ? substr($cut, 0, $sp) : $cut, " ,;:-") . '...'; }
+            }
             $list[] = array('id' => (int)(isset($ev['id']) ? $ev['id'] : $id),
                             'name' => (string)(isset($ev['name']) ? $ev['name'] : 'Service'),
                             'mins' => (int)(isset($ev['duration']) ? $ev['duration'] : 60),
