@@ -53,6 +53,9 @@
 $RV_LIVE = false;   // <-- review-ask emails: flip ONLY after the GO-LIVE CHECKLIST above
 $DN_LIVE = false;   // <-- "job done" emails: independent switch, same checklist items 2-5
                     //     (no SimplyBook notification to turn off - SB has no equivalent email)
+$RM_LIVE = false;   // <-- day-before reminders. SimplyBook's own reminder MUST stay switched on
+                    //     until ours has run clean for 2 weeks - if our cron dies silently and
+                    //     theirs is already off, nobody gets reminded and people miss visits.
 $CF_LIVE = false;   // <-- booking confirmed/changed/cancelled emails. When flipped, ours run IN
                     //     PARALLEL with SimplyBook's for 2-4 weeks of real bookings; only then
                     //     switch SB's client notifications off ONE TYPE AT A TIME, a week apart.
@@ -113,7 +116,7 @@ function rv_clean_name($name) {
 // ---- called by pcm-sb-callback.php on every booking create/change/cancel ----
 // $endTs = unix time the appointment ENDS (0 = unknown). Cancel marks the entry so
 // a cancelled visit never gets a "how did we do?" email.
-function rv_record($bid, $email, $name, $endTs, $type) {
+function rv_record($bid, $email, $name, $endTs, $type, $startTs = 0, $svc = '') {
     global $RV_ASK_WINDOW;
     $bid = preg_replace('/[^0-9]/', '', (string)$bid);
     $email = strtolower(trim((string)$email));
@@ -137,11 +140,17 @@ function rv_record($bid, $email, $name, $endTs, $type) {
         // booking months later must not trigger a "thanks for having us" email).
         $lateEnd = ($endTs > 0 && $endTs < time() - $RV_ASK_WINDOW);
         $protected = $cur && in_array((isset($cur['st']) ? $cur['st'] : ''), array('sent', 'sending', 'cancelled', 'skipped'), true);
+        // ...but a REINSTATED booking (cancelled, then un-cancelled in SimplyBook for a future
+        // date) must come back to life, or the customer hears nothing at all from then on
+        if ($protected && (isset($cur['st']) ? $cur['st'] : '') === 'cancelled' && $startTs > time()) $protected = false;
         if (!$lateEnd && (!$cur || !$protected)) {
             $q['q'][$bid] = array(
                 'em' => $email,
                 'nm' => rv_clean_name($name),
                 'end' => (int)$endTs,
+                'bs' => (int)$startTs,                       // appointment START (day-before reminder)
+                'sv' => rv_clean_name($svc),                 // service name, for the reminder text
+                'rm' => ($cur && isset($cur['rm'])) ? $cur['rm'] : 'pending',
                 'ts' => ($cur && isset($cur['ts'])) ? $cur['ts'] : time(),   // keep original created stamp
                 'st' => 'pending',
                 'tries' => ($cur && isset($cur['tries'])) ? $cur['tries'] : 0,
@@ -149,8 +158,17 @@ function rv_record($bid, $email, $name, $endTs, $type) {
             // carry the job-done email state across the rebuild - without this, any
             // 'change' webhook after the job-done email sent would reset dn to pending
             // and the customer would get a second "All wrapped up" email
-            if ($cur) foreach (array('dn', 'dn_snd', 'dn_ts', 'dn_tries', 'cf') as $dk)
+            // rm_snd/rm_tries MUST be carried: dropping them makes an in-flight 'sending'
+            // look instantly stale, and a concurrent run would send a second reminder
+            if ($cur) foreach (array('dn', 'dn_snd', 'dn_ts', 'dn_tries', 'cf', 'rm_snd', 'rm_ts', 'rm_tries') as $dk)
                 if (isset($cur[$dk])) $q['q'][$bid][$dk] = $cur[$dk];
+            // a MOVED appointment must be reminded about again - the customer was reminded
+            // of a time that no longer exists (fresh try budget with it)
+            if ($cur && (int)(isset($cur['bs']) ? $cur['bs'] : 0) !== (int)$startTs) {
+                $q['q'][$bid]['rm'] = 'pending';
+                $q['q'][$bid]['rm_tries'] = 0;
+                unset($q['q'][$bid]['rm_snd']);
+            }
             rvq_save($q);
         }
     }
@@ -217,6 +235,91 @@ function dn_body($first) {
     . "P.S. A small favour that means a lot to a family firm: if someone you\r\n"
     . "know is battling their computer, pass them our number - and tell them to\r\n"
     . "mention your name, so we know who to thank.\r\n";
+}
+
+// ---- day-before reminder. SimplyBook fires no webhook for reminders (they are purely
+// time-based), so this is our own scheduler: every queue run looks for appointments
+// starting in the next ~40 hours and reminds once each. Deliberately NOT sent for a
+// booking made in the last few hours - the confirmation email already just landed.
+function rm_subject($when) { return 'Reminder: we are seeing you ' . $when; }
+function rm_body($first, $svc, $ts) {
+    $day = date('l j F', $ts);
+    $tm = ltrim(date('g:ia', $ts), '0');
+    return 'Hi ' . $first . ",\r\n\r\n"
+    . "Just a quick reminder of your appointment with us:\r\n\r\n"
+    . '  What:  ' . ($svc !== '' ? $svc : 'your 365 Techies visit') . "\r\n"
+    . '  When:  ' . $day . ' at ' . $tm . "\r\n\r\n"
+    . "A couple of things that help us get you sorted quickly:\r\n\r\n"
+    . "  - Have any passwords you know to hand (we will only ever ask for them\r\n"
+    . "    in person, or during the appointment you booked with us - never in an\r\n"
+    . "    out-of-the-blue phone call, whoever the caller says they are).\r\n"
+    . "  - Jot down anything odd the machine has been doing, and roughly when it\r\n"
+    . "    started. The little details often solve it fastest.\r\n"
+    . "  - If it is a laptop, leave it plugged in so the battery is not flat.\r\n\r\n"
+    . "We will phone you before we arrive (or before we connect, for a remote\r\n"
+    . "session) - we never turn up or connect out of the blue.\r\n\r\n"
+    . "Need to move or cancel it? Your portal does both in a couple of taps -\r\n"
+    . "https://365techies.co.uk/portal/ - or just ring 01202 775566.\r\n\r\n"
+    . "See you then,\r\n"
+    . "Steve & David\r\n"
+    . "365 Techies - family-run IT support in Bournemouth since 1995\r\n"
+    . "01202 775566 - https://365techies.co.uk\r\n";
+}
+function rm_process($cap = 8) {
+    global $RM_LIVE;
+    $h = (int)date('G');
+    if ($h < 9 || $h >= 20) return array('skip' => 'quiet_hours');
+    list($lk, $q) = rvq_open();
+    if (!$lk) return array('skip' => 'locked');
+    if ((isset($q['rmrun_ts']) ? $q['rmrun_ts'] : 0) > time() - 60) { rvq_close($lk); return array('skip' => 'ran_recently'); }
+    $q['rmrun_ts'] = time();
+
+    $picked = array(); $due = 0;
+    foreach ($q['q'] as $bid => $e) {
+        $rm = isset($e['rm']) ? $e['rm'] : 'pending';
+        if ((isset($e['st']) ? $e['st'] : '') === 'cancelled') { if ($rm === 'pending') $q['q'][$bid]['rm'] = 'skipped'; continue; }
+        $retryable = ($rm === 'sending' && (isset($e['rm_snd']) ? $e['rm_snd'] : 0) < time() - 600 && (isset($e['rm_tries']) ? $e['rm_tries'] : 0) < 3);
+        if ($rm !== 'pending' && !$retryable) continue;
+        $bs = isset($e['bs']) ? (int)$e['bs'] : 0;
+        if ($bs <= 0) continue;
+        if ($bs < time() + 21600) { if ($bs < time()) $q['q'][$bid]['rm'] = 'skipped'; continue; }   // <6h away (or past): too late to be useful
+        if ($bs > time() + 108000) continue;                                     // >30h away: not yet (keeps morning visits on the day-before run)
+        if ((isset($e['ts']) ? $e['ts'] : 0) > time() - 14400) continue;         // booked <4h ago: the confirmation just landed
+        if ((isset($e['rm_tries']) ? $e['rm_tries'] : 0) >= 3) continue;
+        $em = isset($e['em']) ? $e['em'] : '';
+        if ($em === '' || !filter_var($em, FILTER_VALIDATE_EMAIL)) continue;
+        // NOTE: the opt-out list is deliberately NOT consulted here. It records people who
+        // asked to stop the marketing-class follow-ups; a reminder for an appointment they
+        // booked is transactional, and suppressing it would make customers miss visits.
+        $due++;
+        if ($RM_LIVE && count($picked) < $cap) {
+            $q['q'][$bid]['rm'] = 'sending';
+            $q['q'][$bid]['rm_snd'] = time();
+            $q['q'][$bid]['rm_tries'] = (isset($e['rm_tries']) ? $e['rm_tries'] : 0) + 1;
+            $picked[$bid] = array('em' => $em, 'nm' => isset($e['nm']) ? $e['nm'] : '',
+                                  'sv' => isset($e['sv']) ? $e['sv'] : '', 'bs' => $bs);
+        }
+    }
+    rvq_save($q);
+    rvq_close($lk);
+
+    if (!$RM_LIVE) return array('mode' => 'safe', 'due_waiting' => $due, 'sent' => 0);
+
+    $sent = 0; $failed = 0;
+    foreach ($picked as $bid => $p) {
+        $when = (date('Y-m-d', $p['bs']) === date('Y-m-d')) ? 'today' : ((date('Y-m-d', $p['bs']) === date('Y-m-d', time() + 86400)) ? 'tomorrow' : ('on ' . date('l', $p['bs'])));
+        $ok = rv_send_raw($p['em'], rm_subject($when), rm_body(rv_first($p['nm']), $p['sv'], $p['bs']));
+        list($lk2, $q2) = rvq_open();
+        if (!$lk2) continue;
+        if (isset($q2['q'][$bid]) && (isset($q2['q'][$bid]['rm']) ? $q2['q'][$bid]['rm'] : '') === 'sending') {
+            if ($ok) { $q2['q'][$bid]['rm'] = 'sent'; $q2['q'][$bid]['rm_ts'] = time(); $sent++; }
+            else { $q2['q'][$bid]['rm'] = ((isset($q2['q'][$bid]['rm_tries']) ? $q2['q'][$bid]['rm_tries'] : 1) >= 3) ? 'failed' : 'pending'; $failed++; }
+        }
+        rvq_save($q2);
+        rvq_close($lk2);
+    }
+    if ($sent > 0 || $failed > 0) rv_slack(':alarm_clock: 365 mail: reminders sent ' . $sent . ($failed ? (', FAILED ' . $failed . ' - check pcm-review') : ''));
+    return array('mode' => 'live', 'due' => $due, 'sent' => $sent, 'failed' => $failed);
 }
 
 // ---- booking lifecycle emails (confirm / change / cancel), sent IMMEDIATELY from
@@ -625,7 +728,7 @@ if (!defined('RV_LIB')) {
         // exact customer email, to OUR OWN inbox only - never a caller-supplied address.
         // ?test=1 sends the review ask; ?test=done sends the job-done visit record.
         $tmap = array('1' => 'review', 'review' => 'review', 'done' => 'done',
-                      'confirm' => 'confirm', 'change' => 'change', 'cancel' => 'cancel');
+                      'confirm' => 'confirm', 'change' => 'change', 'cancel' => 'cancel', 'remind' => 'remind');
         $tk = (string)$_GET['test'];
         $tkind = isset($tmap[$tk]) ? $tmap[$tk] : 'review';
         $tstamp = ($tkind === 'review') ? 'test_ts' : (($tkind === 'done') ? 'dn_test_ts' : ('cf_test_' . $tkind));   // independent throttles
@@ -640,7 +743,10 @@ if (!defined('RV_LIB')) {
         rvq_save($q);
         rvq_close($lk);
         if ($tkind === 'review' || $tkind === 'done') $ok = rv_send('info@365techies.co.uk', 'Steve', $tkind);
-        else {
+        elseif ($tkind === 'remind') {
+            $rts = strtotime('tomorrow 14:00');
+            $ok = rv_send_raw('info@365techies.co.uk', rm_subject('tomorrow'), rm_body('Steve', 'Computer Health Check', $rts));
+        } else {
             $sts = strtotime('next tuesday 10:00');
             $icsD = ($tkind === 'cancel') ? '' : ics_build('Computer Health Check', $sts, $sts + 5400, 'sb-sample@365techies.co.uk', time());
             $ok = rv_send_raw('info@365techies.co.uk', cf_subject($tkind, 'Computer Health Check', $sts),
@@ -655,10 +761,12 @@ if (!defined('RV_LIB')) {
     if (isset($_GET['run'])) {
         $r = rv_process(5);
         $r2 = dn_process(5);
+        $r3 = rm_process(8);
         // anonymous callers (the cron) learn nothing; the admin pass unlocks the stats
         if ($rv_admin) echo json_encode(array('ok' => true, 'mode' => 'run',
             'review' => array('live' => (bool)$GLOBALS['RV_LIVE'], 'result' => $r),
-            'done' => array('live' => (bool)$GLOBALS['DN_LIVE'], 'result' => $r2)));
+            'done' => array('live' => (bool)$GLOBALS['DN_LIVE'], 'result' => $r2),
+            'remind' => array('live' => (bool)$GLOBALS['RM_LIVE'], 'result' => $r3)));
         else echo json_encode(array('ok' => true));
         exit;
     }

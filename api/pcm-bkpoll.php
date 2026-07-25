@@ -126,5 +126,6 @@ define('RV_LIB', 1);
 require __DIR__ . '/pcm-review.php';
 $mailR = rv_process(3);
 $mailD = dn_process(3);
+$mailM = rm_process(5);
 jout(array('ok' => true, 'bookings' => count($rows), 'seeded' => $seeded, 'changed' => $changed, 'alerts' => count($toSlack),
-           'mail' => array('review' => $mailR, 'done' => $mailD)));
+           'mail' => array('review' => $mailR, 'done' => $mailD, 'remind' => $mailM)));

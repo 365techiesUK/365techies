@@ -89,14 +89,14 @@ foreach (array('client_name', 'client') as $k) {
     if (is_array($b[$k])) { if (!empty($b[$k]['name'])) { $cnm = (string)$b[$k]['name']; break; } }
     else { $cnm = (string)$b[$k]; break; }
 }
-rv_record($bid, $email, $cnm, $ets, $type);
+$svcName = '';
+foreach (array('event_name', 'event') as $k) if (!empty($b[$k]) && is_string($b[$k])) { $svcName = (string)$b[$k]; break; }
+rv_record($bid, $email, $cnm, $ets, $type, $ts, $svcName);
 
 // immediate booking-lifecycle email (confirm/change/cancel) - see cf_notify's
 // dedupe rules; safe-mode gated by $CF_LIVE inside pcm-review.php
-$sv = '';
-foreach (array('event_name', 'event') as $k) if (!empty($b[$k]) && is_string($b[$k])) { $sv = (string)$b[$k]; break; }
 $bcode = isset($b['code']) ? preg_replace('/[^A-Za-z0-9]/', '', (string)$b['code']) : '';
-cf_notify($bid, $type, $email, $cnm, $sv, $ts, $ets, $bcode);
+cf_notify($bid, $type, $email, $cnm, $svcName, $ts, $ets, $bcode);
 
 // ---- match a PC Manager customer by email, write/clear next-service ----
 // Lock + refuse-to-wipe: never overwrite a DB we couldn't parse (would destroy all customers).
@@ -124,4 +124,5 @@ if ($hit) { $tmp = $DATA . '.sb.tmp'; if (@file_put_contents($tmp, json_encode($
 if ($lk) { @flock($lk, LOCK_UN); @fclose($lk); }   // release the customer-DB lock BEFORE any slow SMTP work
 rv_process(2);   // piggyback: each booking event also sends any due review emails (capped)
 dn_process(2);   // ...and any due "job done" visit-record emails
+rm_process(3);   // ...and any due day-before reminders
 exit($out);
