@@ -693,6 +693,16 @@
   #p365app .nbbtn { width:100%; font-size:1.02rem; padding:.75rem 1rem; margin:.1rem 0 .6rem; background:var(--pgood); color:#06220b; font-weight:800; letter-spacing:.01em; }
   #p365app .nbbtn:hover { filter:brightness(1.06); }
   #p365app .nbwiz { border:1px solid var(--pline); border-radius:12px; padding:.8rem .9rem; margin-bottom:.7rem; background:var(--pink); animation:p365fadeUp .3s ease both; }
+  /* booking wizard: same card/day/time treatment as the website's booking page */
+  #p365app .svcgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:.5rem; margin:.15rem 0 .2rem; }
+  #p365app .svccard { text-align:left; width:100%; margin:0; padding:.7rem .8rem; min-height:56px; background:var(--pink); border:1px solid var(--pline); border-radius:12px; color:var(--pwhite); transition:border-color .2s, background .2s, transform .2s; }
+  #p365app .svccard:hover, #p365app .svccard:focus-visible { border-color:var(--pcyan); background:rgba(29,151,227,.1); transform:translateY(-1px); }
+  #p365app .svccard strong { display:block; font-size:.95rem; margin-bottom:.1rem; }
+  #p365app .svccard em { font-style:normal; font-size:.78rem; color:var(--pmut); }
+  #p365app .bknote { margin-top:.3rem; font-size:.82rem; }
+  #p365app .bknotetx { color:var(--psoft); }
+  #p365app .linky { background:none; border:0; padding:0; margin:0; color:var(--psoft); font:inherit; font-size:.82rem; text-decoration:underline; cursor:pointer; }
+  #p365app .linky:hover { color:var(--pwhite); }
   #p365app .nbwiz h3 { font-size:.9rem; color:var(--psoft); margin:.5rem 0 .3rem; }
   #p365app .nbwiz h3:first-child { margin-top:0; }
   #p365app .cres { border:1px solid var(--pline); border-radius:9px; overflow:hidden; margin-top:.35rem; }
@@ -1390,13 +1400,16 @@
     function render(list) {
       var sv = document.getElementById('cbsvc'); if (!sv) return;
       sv.innerHTML = '';
+      // same card treatment as the website's booking page, in portal colours
+      var grid = document.createElement('div'); grid.className = 'svcgrid';
       list.forEach(function (svc) {
         var b2 = document.createElement('button');
-        b2.className = 'sm ghost dpill';
-        b2.textContent = svc.name + ' (' + svc.mins + ' min)';
-        b2.onclick = function () { CB.svc = svc.id; CB.svcName = svc.name; custWhen(); };
-        sv.appendChild(b2);
+        b2.className = 'svccard';
+        b2.innerHTML = '<strong>' + esc(svc.name) + '</strong><em>about ' + esc(minsTxt(svc.mins)) + '</em>';
+        b2.onclick = function () { CB.svc = svc.id; CB.svcName = svc.name; CB.mins = svc.mins; custWhen(); };
+        grid.appendChild(b2);
       });
+      sv.appendChild(grid);
     }
     if (CSVC) { render(CSVC); return; }
     post(BK, { action: 'services', wtoken: S.wtoken, machine: mid() }).then(function (d) {
@@ -1422,16 +1435,17 @@
           db2.onclick = function () {
             timesEl.innerHTML = '';
             day.t.forEach(function (t) {
-              var tb = document.createElement('button'); tb.className = 'sm tpill'; tb.textContent = t;
+              var tb = document.createElement('button'); tb.className = 'sm tpill'; tb.textContent = fmtT(t);
               tb.onclick = function () {
                 var cEl = document.getElementById('cbconf'); if (!cEl) return;
-                cEl.innerHTML = '<div class="nbsum"><strong>' + esc(CB.svcName) + '</strong> \u00b7 <strong>' + esc(day.n) + ' at ' + esc(t) + '</strong>'
-                  + '<div style="margin:.45rem 0 .1rem"><input id="cbphone" type="tel" inputmode="tel" autocomplete="tel" placeholder="Your mobile - so we can reach you" style="width:100%;max-width:300px;padding:.5rem .6rem;border-radius:9px;border:1px solid var(--pline);background:var(--pink);color:var(--pwhite);font-size:1rem" /></div>'
+                cEl.innerHTML = '<div class="nbsum"><strong>' + esc(CB.svcName) + '</strong> \u00b7 <strong>' + esc(day.n) + ' at ' + esc(fmtT(t)) + '</strong>'
+                  + '<div style="margin:.45rem 0 .1rem"><input id="cbphone" type="tel" inputmode="tel" autocomplete="tel" placeholder="Best number to reach you on (landline is fine)" style="width:100%;max-width:340px;padding:.5rem .6rem;border-radius:9px;border:1px solid var(--pline);background:var(--pink);color:var(--pwhite);font-size:1rem" /></div>'
+                  + '<div style="margin:.35rem 0 .5rem"><textarea id="cbnote" rows="2" placeholder="Anything we should know? (optional) - e.g. very slow since an update, and the address if we\u2019re coming to you" style="width:100%;max-width:340px;box-sizing:border-box;padding:.5rem .6rem;border-radius:9px;border:1px solid var(--pline);background:var(--pink);color:var(--pwhite);font:inherit;resize:vertical"></textarea></div>'
                   + '<button class="sm" id="cbgo" style="background:var(--pgood);color:#06220b;font-weight:800">\u2713 Book it</button> <span class="err" id="cberr" style="display:inline"></span></div>';
                 document.getElementById('cbgo').onclick = function () {
                   var gb = this; gb.disabled = true; document.getElementById('cberr').textContent = '';
-                  var cbp = document.getElementById('cbphone');
-                  post(BK, { action: 'book', wtoken: S.wtoken, machine: mid(), eventId: CB.svc, date: day.d, time: t, phone: (cbp ? cbp.value.trim() : '') })
+                  var cbp = document.getElementById('cbphone'), cbn = document.getElementById('cbnote');
+                  post(BK, { action: 'book', wtoken: S.wtoken, machine: mid(), eventId: CB.svc, date: day.d, time: t, phone: (cbp ? cbp.value.trim() : ''), note: (cbn ? cbn.value.trim() : '') })
                     .then(function (r) {
                       if (r && r.ok) {
                         var w2 = document.getElementById('cbwiz');
@@ -1441,6 +1455,8 @@
                         gb.disabled = false;
                         document.getElementById('cberr').textContent =
                             r && r.error === 'slot_taken' ? 'That time just went - pick another.'
+                          : r && r.error === 'too_many' ? 'You already have several visits booked - ring 01202 775566 and we\u2019ll arrange this one with you.'
+                          : r && r.error === 'expired' ? 'Your sign-in expired - please sign in again.'
                           : r && r.error === 'needsignin' ? 'No email on file for this account - ring 01202 775566 and we\u2019ll add it.'
                           : r && r.error === 'no_client' ? (r.needphone ? 'Pop your mobile number in above so we can set up your booking.' : ('Couldn\u2019t match this to a booking account' + (r.why ? ' [' + r.why + ']' : '') + ' - ring 01202 775566.'))
                           : r && r.error === 'sb_unavailable' ? 'The booking system didn\u2019t answer - try again in a minute.'
@@ -1460,6 +1476,20 @@
       .catch(function () { var daysEl = document.getElementById('cbdays'); if (daysEl) daysEl.innerHTML = '<p class="quiet">Couldn\u2019t load times - try the <a href="/book-service/" target="_blank" rel="noopener">booking page</a>.</p>'; });
   }
 
+  // shared with the website's booking page: plain-English times and durations
+  function fmtT(t) {
+    var p = String(t).split(':'), h = parseInt(p[0], 10), m = p[1] || '00';
+    if (isNaN(h)) return String(t);
+    var ap = h >= 12 ? 'pm' : 'am', hh = h % 12; if (hh === 0) hh = 12;
+    return hh + ':' + m + ap;
+  }
+  function minsTxt(m) {
+    m = parseInt(m, 10);
+    if (!m) return 'an hour';
+    if (m < 60) return m + ' minutes';
+    var h = Math.floor(m / 60), r = m % 60;
+    return h + (h === 1 ? ' hour' : ' hours') + (r ? ' ' + r + ' minutes' : '');
+  }
   // customer bookings: list upcoming visits, then move or cancel - straight into SimplyBook
   function loadMyBookings() {
     var box = document.getElementById('mybk'); if (!box) return;
@@ -1522,19 +1552,44 @@
     if (!list.length) { box.innerHTML = '<p class="quiet">No upcoming visits booked. Tap “Book a service” below and we’ll come to you.</p>'; return; }
     var hh = '';
     list.forEach(function (b, i) {
-      hh += '<div class="tline"><span class="ttime">📅</span><div class="tblock"><strong>' + esc(b.when) + '</strong><br /><span class="quiet" style="margin:0">' + esc(b.what) + '</span></div>'
+      hh += '<div class="tline"><span class="ttime">📅</span><div class="tblock"><strong>' + esc(b.when) + '</strong><br /><span class="quiet" style="margin:0">' + esc(b.what) + '</span>'
+         + '<div class="bknote" id="bkn' + i + '">' + (b.note
+              ? '<span class="bknotetx">“' + esc(b.note) + '”</span> <button class="linky bknedit" data-i="' + i + '">edit</button>'
+              : '<button class="linky bknedit" data-i="' + i + '">+ Tell us anything we should know</button>') + '</div></div>'
          + '<div style="display:flex;gap:.4rem;flex-wrap:wrap">'
          + '<button class="sm ghost bkmove" data-i="' + i + '">↔ Move</button>'
          + '<button class="sm ghost bkcanc" data-i="' + i + '" style="color:var(--pbad)">✕ Cancel</button></div></div>'
          + '<div class="mvp" id="bkmv' + i + '" style="display:none"></div>';
     });
     box.innerHTML = hh;
+    Array.prototype.forEach.call(box.querySelectorAll('.bknedit'), function (btn) {
+      btn.onclick = function () { editNote(list[parseInt(btn.getAttribute('data-i'), 10)], parseInt(btn.getAttribute('data-i'), 10)); };
+    });
     Array.prototype.forEach.call(box.querySelectorAll('.bkmove'), function (btn) {
       btn.onclick = function () { var i = parseInt(btn.getAttribute('data-i'), 10); custMove(list[i], i); };
     });
     Array.prototype.forEach.call(box.querySelectorAll('.bkcanc'), function (btn) {
       btn.onclick = function () { var i = parseInt(btn.getAttribute('data-i'), 10); custCancel(list[i], btn); };
     });
+  }
+  // let the customer correct what they told us ("actually it's number 21")
+  function editNote(b, i) {
+    var box = document.getElementById('bkn' + i); if (!box) return;
+    box.innerHTML = '<textarea id="bknt' + i + '" rows="2" placeholder="e.g. very slow since an update - and the address if we\u2019re coming to you" style="width:100%;box-sizing:border-box;padding:.45rem .6rem;border-radius:9px;border:1px solid var(--pline);background:var(--pink);color:var(--pwhite);font:inherit;resize:vertical"></textarea>'
+      + '<div style="display:flex;gap:.5rem;align-items:center;margin-top:.35rem;flex-wrap:wrap"><button class="sm" id="bkns' + i + '">Save</button><button class="linky" id="bknc' + i + '">cancel</button><span class="quiet" id="bknm' + i + '" style="margin:0;font-size:.8rem"></span></div>';
+    var ta = document.getElementById('bknt' + i);
+    ta.value = b.note || '';
+    ta.focus();
+    document.getElementById('bknc' + i).onclick = function () { loadMyBookings(); };
+    document.getElementById('bkns' + i).onclick = function () {
+      var btn = this; btn.disabled = true;
+      var msg = document.getElementById('bknm' + i);
+      msg.textContent = 'Saving\u2026';
+      post(BK, { action: 'booknote', wtoken: S.wtoken, machine: mid(), id: b.id, note: ta.value.trim() }).then(function (r) {
+        if (r && r.ok) { b.note = r.note; loadMyBookings(); }
+        else { btn.disabled = false; msg.textContent = (r && r.error === 'expired') ? 'Sign-in expired - please sign in again.' : 'Couldn\u2019t save - try again.'; }
+      }).catch(function () { btn.disabled = false; msg.textContent = 'Couldn\u2019t reach the server.'; });
+    };
   }
   function custCancel(b, btn) {
     if (!confirm('Cancel this visit - ' + b.when + '?')) return;
@@ -1561,9 +1616,9 @@
         db2.onclick = function () {
           timesEl.innerHTML = ''; confEl.innerHTML = '';
           day.t.forEach(function (t) {
-            var tb = document.createElement('button'); tb.className = 'sm tpill'; tb.textContent = t;
+            var tb = document.createElement('button'); tb.className = 'sm tpill'; tb.textContent = fmtT(t);
             tb.onclick = function () {
-              confEl.innerHTML = '<div class="nbsum"><strong>' + esc(day.n) + ' at ' + esc(t) + '</strong><br /><button class="sm" id="mvgo' + i + '" style="background:var(--pgood);color:#06220b;font-weight:800">✓ Move it</button> <span class="err" id="mverr' + i + '" style="display:inline"></span></div>';
+              confEl.innerHTML = '<div class="nbsum"><strong>' + esc(day.n) + ' at ' + esc(fmtT(t)) + '</strong><br /><button class="sm" id="mvgo' + i + '" style="background:var(--pgood);color:#06220b;font-weight:800">✓ Move it</button> <span class="err" id="mverr' + i + '" style="display:inline"></span></div>';
               document.getElementById('mvgo' + i).onclick = function () {
                 var gb = this; gb.disabled = true; document.getElementById('mverr' + i).textContent = '';
                 post(BK, { action: 'change', wtoken: S.wtoken, machine: mid(), id: b.id, eventId: evId, date: day.d, time: t }).then(function (r) {
@@ -1956,7 +2011,7 @@
             db2.onclick = function () {
               timesEl.innerHTML = '';
               day.t.forEach(function (t) {
-                var tb = document.createElement('button'); tb.className = 'sm tpill'; tb.textContent = t;
+                var tb = document.createElement('button'); tb.className = 'sm tpill'; tb.textContent = fmtT(t);
                 tb.onclick = function () {
                   if (!confirm('Move ' + b.who + ' to ' + day.n + ' at ' + t + '?')) return;
                   tb.disabled = true;
@@ -2130,7 +2185,7 @@
           db2.onclick = function () {
             timesEl.innerHTML = '';
             day.t.forEach(function (t) {
-              var tb = document.createElement('button'); tb.className = 'sm tpill'; tb.textContent = t;
+              var tb = document.createElement('button'); tb.className = 'sm tpill'; tb.textContent = fmtT(t);
               tb.onclick = function () { NB.date = day.d; NB.time = t; NB.dayN = day.n; wizConfirm(); };
               timesEl.appendChild(tb);
             });

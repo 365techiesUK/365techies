@@ -1078,19 +1078,55 @@ if ($action === 'mybookings') {
         'date_from' => date('Y-m-d'), 'order' => 'date_start_asc')));
     if (sb_net($r)) fail('sb_unavailable');
     $rows = isset($r['result']) && is_array($r['result']) ? $r['result'] : array();
+    // what the customer told us when booking, so they can see (and correct) it
+    list($lkN, $dbN) = db_open(); db_close($lkN);
+    $notes = (isset($dbN['bknote']) && is_array($dbN['bknote'])) ? $dbN['bknote'] : array();
     $list = array();
     foreach ($rows as $b) {
         $start = parse_start($b);
         $ts = strtotime($start);
         if ($ts && $ts < time()) continue;
+        $nkey = (string)(int)(isset($b['id']) ? $b['id'] : 0);
+        $bnote = isset($notes[$nkey]['t']) ? (string)$notes[$nkey]['t'] : '';
         $list[] = array('id' => (int)(isset($b['id']) ? $b['id'] : 0),
                         'when' => $ts ? date('D j M Y g:ia', $ts) : trim($start),
                         'what' => (string)(isset($b['event_name']) ? $b['event_name'] : (isset($b['event']) ? $b['event'] : 'Service')),
                         'eventId' => (int)(isset($b['event_id']) ? $b['event_id'] : 0),
-                        'date' => $ts ? date('Y-m-d', $ts) : '', 'time' => $ts ? date('H:i', $ts) : '');
+                        'date' => $ts ? date('Y-m-d', $ts) : '', 'time' => $ts ? date('H:i', $ts) : '',
+                        'note' => $bnote);
         if (count($list) >= 10) break;
     }
     out(array('ok' => true, 'bookings' => $list));
+}
+
+// Customer edits what they told us about a visit ("actually it's number 21"). Same
+// ownership proof as cancel/change: the booking's SimplyBook client must be this
+// signed-in customer.
+if ($action === 'booknote') {
+    if (!$HAS_ADMIN) fail('not_configured');
+    if (isset($in['wtoken']) && $in['wtoken'] !== '') { $snap = web_snapshot(); $key = $snap['key']; }
+    else $snap = customer_snapshot();
+    if (!$snap['cid'] && $snap['email'] !== '') $snap['cid'] = link_cid_from_email($key, $snap['email']);
+    $bid = (int)(isset($in['id']) ? $in['id'] : 0);
+    if ($bid <= 0 || !$snap['cid']) fail('bad_request');
+    $det = sb_adm('getBookingDetails', array($bid));
+    if (sb_net($det)) fail('sb_unavailable');
+    $b = isset($det['result']) && is_array($det['result']) ? $det['result'] : null;
+    if (!$b) fail('not_found');
+    $bClient = (int)(isset($b['client_id']) ? $b['client_id'] : (isset($b['client']['id']) ? $b['client']['id'] : 0));
+    if ($bClient !== $snap['cid']) fail('not_yours');
+    $note = trim(preg_replace('/[\x00-\x1F\x7F]+/', ' ', (string)(isset($in['note']) ? $in['note'] : '')));
+    $note = substr($note, 0, 400);
+    list($lkB, $dbB) = db_open();
+    if (!isset($dbB['bknote'])) $dbB['bknote'] = array();
+    foreach ($dbB['bknote'] as $nk => $nv) if ((isset($nv['ts']) ? $nv['ts'] : 0) < time() - 7776000) unset($dbB['bknote'][$nk]);
+    if ($note === '') unset($dbB['bknote'][(string)$bid]);
+    else $dbB['bknote'][(string)$bid] = array('t' => $note, 'ts' => time());
+    db_save($dbB); db_close($lkB);
+    // the team works from Slack + the diary, so an edit has to reach them too
+    pcm_slack_say(':memo: *Booking note updated by the customer* - ' . bk_clean($snap['name'] !== '' ? $snap['name'] : $snap['email'])
+        . ' (booking #' . $bid . ')' . ($note !== '' ? "\n> " . bk_clean(substr($note, 0, 200)) : ' _(cleared)_'));
+    out(array('ok' => true, 'note' => $note));
 }
 
 if ($action === 'cancel' || $action === 'change') {
