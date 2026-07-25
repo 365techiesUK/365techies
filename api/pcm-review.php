@@ -50,9 +50,10 @@
  * sign-in codes), else PHP mail() with an explicit -f envelope sender.
  */
 
-$RV_LIVE = false;   // <-- review-ask emails: flip ONLY after the GO-LIVE CHECKLIST above
-$DN_LIVE = false;   // <-- "job done" emails: independent switch, same checklist items 2-5
-                    //     (no SimplyBook notification to turn off - SB has no equivalent email)
+$RV_LIVE = true;    // LIVE 2026-07-25: SimplyBook's own feedback request was set to Disable
+                    // (and its "thank you for reviewing" message unticked), so there is no
+                    // double-ask. Reviews now go to Google only.
+$DN_LIVE = true;    // LIVE 2026-07-25: SimplyBook has no equivalent email, so nothing to clash.
 $RM_LIVE = false;   // <-- day-before reminders. SimplyBook's own reminder MUST stay switched on
                     //     until ours has run clean for 2 weeks - if our cron dies silently and
                     //     theirs is already off, nobody gets reminded and people miss visits.
