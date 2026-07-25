@@ -41,14 +41,21 @@ function sb_rpc($url, $method, $params, $headers = array()) {
 
 $tokRes = sb_rpc('https://user-api.simplybook.me/login', 'getToken', array($SB_COMPANY, $SB_API_KEY));
 $token = isset($tokRes['result']) ? $tokRes['result'] : '';
-if ($token === '') exit('no_token');
+// transient failures answer NON-2xx so SimplyBook retries the delivery - a one-off
+// blip here must not permanently lose the booking from the review-email queue
+if ($token === '') { http_response_code(500); exit('no_token'); }
 
 // getBookingDetails(id, sign) where sign = md5(id . hash . secret)
 $sign = md5($bid . $bhash . $SB_SECRET);
 $det = sb_rpc('https://user-api.simplybook.me/', 'getBookingDetails', array($bid, $sign),
     array('X-Company-Login: ' . $SB_COMPANY, 'X-Token: ' . $token));
 $b = isset($det['result']) ? $det['result'] : null;
-if (!is_array($b)) exit('no_details');
+if (!is_array($b)) { http_response_code(500); exit('no_details'); }
+
+// trust the booking's OWN status over webhook ordering: a late/duplicate "create"
+// delivery arriving after a cancel must still count as cancelled
+$bstat = strtolower((string)(isset($b['status']) ? $b['status'] : ''));
+if (!empty($b['is_canceled']) || !empty($b['is_cancelled']) || $bstat === 'canceled' || $bstat === 'cancelled') $type = 'cancel';
 
 // pull email + start datetime defensively (field names vary by config)
 $email = '';
@@ -59,8 +66,30 @@ foreach (array('start_date_time', 'start_datetime', 'start_date') as $k) if (!em
 if ($start !== '' && strlen($start) <= 10 && !empty($b['start_time'])) $start .= ' ' . $b['start_time'];
 if ($email === '') exit('no_email');
 
+// Load the review-email library FIRST: it pins the timezone to Europe/London, so
+// every strtotime/date below parses SimplyBook's company-local datetimes correctly
+// (and consistently with pcm-booking.php, which already pins the same zone).
+define('RV_LIB', 1);
+require __DIR__ . '/pcm-review.php';
+
 $ts = strtotime($start);
 $pretty = $ts ? date('D j M Y g:ia', $ts) : $start;
+
+// Record for OUR post-visit Google-review email (replaces SimplyBook's built-in
+// feedback email - see pcm-review.php). End time defensively; some configs only
+// send a start, so fall back to start + 90 min.
+$endS = '';
+foreach (array('end_date_time', 'end_datetime', 'end_date') as $k) if (!empty($b[$k])) { $endS = (string)$b[$k]; break; }
+if ($endS !== '' && strlen($endS) <= 10 && !empty($b['end_time'])) $endS .= ' ' . $b['end_time'];
+$ets = $endS !== '' ? (int)strtotime($endS) : 0;
+if ($ets <= 0 && $ts) $ets = $ts + 5400;
+$cnm = '';
+foreach (array('client_name', 'client') as $k) {
+    if (empty($b[$k])) continue;
+    if (is_array($b[$k])) { if (!empty($b[$k]['name'])) { $cnm = (string)$b[$k]['name']; break; } }
+    else { $cnm = (string)$b[$k]; break; }
+}
+rv_record($bid, $email, $cnm, $ets, $type);
 
 // ---- match a PC Manager customer by email, write/clear next-service ----
 // Lock + refuse-to-wipe: never overwrite a DB we couldn't parse (would destroy all customers).
@@ -83,5 +112,8 @@ foreach ($db['customers'] as $key => &$c) {
     }
 }
 unset($c);
-if ($hit) { $tmp = $DATA . '.sb.tmp'; if (@file_put_contents($tmp, json_encode($db, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), LOCK_EX) !== false) @rename($tmp, $DATA); exit('ok'); }
-exit('no_match'); // booking for someone not on PC Manager — fine
+$out = 'no_match'; // booking for someone not on PC Manager — still fine for the review email
+if ($hit) { $tmp = $DATA . '.sb.tmp'; if (@file_put_contents($tmp, json_encode($db, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), LOCK_EX) !== false) @rename($tmp, $DATA); $out = 'ok'; }
+if ($lk) { @flock($lk, LOCK_UN); @fclose($lk); }   // release the customer-DB lock BEFORE any slow SMTP work
+rv_process(2);   // piggyback: each booking event also sends any due review emails (capped)
+exit($out);

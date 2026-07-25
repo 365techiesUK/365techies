@@ -63,3 +63,7 @@ api/pcm-waitlist.json.tmp
 api/pcm-waitlist-rate.json
 api/pcm-fb-rate.json
 api/pcm-fb-rate.json.tmp
+api/pcm-reviewq.json
+api/pcm-reviewq.json.lock
+api/pcm-reviewq.json.*.tmp
+api/pcm-smtp.php

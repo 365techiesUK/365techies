@@ -108,7 +108,7 @@ ErrorDocument 404 /404.html
 </FilesMatch>
 # 365 PC Manager + Service Pass server-only data/secret files - NEVER serve over HTTP.
 # (The endpoints pcm.php, pcm-admin.php, pcm-sb-callback.php, pass.php stay served - not matched here.)
-<FilesMatch "^(pcm-data|pcm-sb-token|pcm-used|pass-used|pcm-throttle|pcm-joincodes|pcm-waitlist|pcm-waitlist-rate|pcm-fb-rate|pcm-wifi-[a-f0-9]+)\.json(\..*)?$">
+<FilesMatch "^(pcm-data|pcm-sb-token|pcm-used|pass-used|pcm-throttle|pcm-joincodes|pcm-waitlist|pcm-waitlist-rate|pcm-fb-rate|pcm-reviewq|pcm-wifi-[a-f0-9]+)\.json(\..*)?$">
   Require all denied
 </FilesMatch>
 <Files "pcm-smtp.php">

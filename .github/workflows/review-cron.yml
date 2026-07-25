@@ -1,0 +1,27 @@
+# Fires the post-visit review-email queue processor once a day.
+# The endpoint is idempotent and unauthenticated BY DESIGN (see api/pcm-review.php:
+# exclusive-lock state machine + per-run cap + 60s min interval + 9am-8pm window),
+# so this needs no secret. SiteGround's bot wall sometimes intercepts the first
+# scripted request with an sgcaptcha interstitial - we try twice, spaced, and
+# tolerate both failing: the SimplyBook booking callback also processes the queue
+# on every booking event, so the cron is belt-and-braces, not a single point of
+# failure.
+name: Review email cron
+
+on:
+  schedule:
+    - cron: "17 9 * * *"   # 09:17 UTC daily = 10:17 UK in summer, inside the send window
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Trigger queue processor
+        run: |
+          UA="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+          curl -sS -A "$UA" --max-time 30 "https://365techies.co.uk/api/pcm-review.php?run=1" || true
+          echo
+          sleep 45
+          curl -sS -A "$UA" --max-time 30 "https://365techies.co.uk/api/pcm-review.php?run=1" || true
