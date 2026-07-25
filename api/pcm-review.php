@@ -34,9 +34,14 @@
  *                           so the worst an abuser achieves is doing the daily
  *                           cron's work early. Anonymous callers get {"ok":true}
  *                           only; add &s=<admin pass> for the detailed stats.
- *   ?test=1               - send the exact customer email to OUR OWN inbox
- *                           (hardcoded to info@365techies.co.uk - the target is
- *                           never caller-choosable). Rate-limited 1 per 10 min.
+ *   ?test=1 | ?test=done  - send the exact customer email (review ask | job-done
+ *                           visit record) to OUR OWN inbox (hardcoded to
+ *                           info@365techies.co.uk - the target is never
+ *                           caller-choosable). Rate-limited 1 per 10 min per kind.
+ *
+ *  6. RECOMMENDED: set the SiteGround cron for pcm-bkpoll.php (every 5 min) - it
+ *     is the near-real-time engine for job-done emails after a booking is marked
+ *     Completed. Without it, sends ride the 2-hourly GitHub cron + booking events.
  *   ?optout=<email>&s=<admin pass>          - suppress an address (a "no thanks"
  *   ?optout=<email>&undo=1&s=<admin pass>     reply); undo re-allows it.
  *
@@ -45,7 +50,9 @@
  * sign-in codes), else PHP mail() with an explicit -f envelope sender.
  */
 
-$RV_LIVE = false;   // <-- flip to true ONLY after the GO-LIVE CHECKLIST above
+$RV_LIVE = false;   // <-- review-ask emails: flip ONLY after the GO-LIVE CHECKLIST above
+$DN_LIVE = false;   // <-- "job done" emails: independent switch, same checklist items 2-5
+                    //     (no SimplyBook notification to turn off - SB has no equivalent email)
 
 $RV_Q = __DIR__ . '/pcm-reviewq.json';
 $RV_ASK_WINDOW = 1209600;   // visits stay askable for 14 days after they end; older = too late
@@ -135,6 +142,11 @@ function rv_record($bid, $email, $name, $endTs, $type) {
                 'st' => 'pending',
                 'tries' => ($cur && isset($cur['tries'])) ? $cur['tries'] : 0,
             );
+            // carry the job-done email state across the rebuild - without this, any
+            // 'change' webhook after the job-done email sent would reset dn to pending
+            // and the customer would get a second "All wrapped up" email
+            if ($cur) foreach (array('dn', 'dn_snd', 'dn_ts', 'dn_tries') as $dk)
+                if (isset($cur[$dk])) $q['q'][$bid][$dk] = $cur[$dk];
             rvq_save($q);
         }
     }
@@ -178,13 +190,53 @@ function rv_body($first) {
     . "\"no thanks\" and we'll switch them off.)\r\n";
 }
 
+// ---- "job done" email: sent when the booking is marked Completed (portal staff
+// action or SimplyBook admin, mirrored into bkmeta by pcm-bkpoll.php), or 3h after
+// the visit ends as a fallback for jobs nobody marks. The customer's one-stop
+// record: portal link + make-it-right promise + soft referral seed (NO reward
+// mentioned - the formal referral scheme awaits the owner's reward decision).
+function dn_subject() { return 'All wrapped up - your visit record from 365 Techies'; }
+function dn_body($first) {
+    return 'Hi ' . $first . ",\r\n\r\n"
+    . "Thanks for booking us in - this email keeps everything from your booking\r\n"
+    . "in one place.\r\n\r\n"
+    . "Your customer portal has it all together - your bookings, any reports\r\n"
+    . "we've written for you, and the quickest ways to reach us:\r\n\r\n"
+    . "https://365techies.co.uk/portal/\r\n\r\n"
+    . "And the bit that matters most: if anything isn't behaving the way it\r\n"
+    . "should, just reply to this email or ring 01202 775566 and we'll make it\r\n"
+    . "right. That's the point of using a family firm.\r\n\r\n"
+    . "Thanks again,\r\n"
+    . "Steve & David\r\n"
+    . "365 Techies - family-run IT support in Bournemouth since 1995\r\n"
+    . "01202 775566 - https://365techies.co.uk\r\n\r\n"
+    . "P.S. A small favour that means a lot to a family firm: if someone you\r\n"
+    . "know is battling their computer, pass them our number - and tell them to\r\n"
+    . "mention your name, so we know who to thank.\r\n";
+}
+
+// ---- best-effort Slack ping (send failures + daily summaries) - never blocks ----
+function rv_slack($text) {
+    $f = __DIR__ . '/slack-webhook.php';
+    if (!file_exists($f)) return;
+    $SLACK_WEBHOOK = '';
+    ob_start(); include $f; ob_end_clean();   // never echo the config file's contents
+    if (empty($SLACK_WEBHOOK)) { $raw = (string)@file_get_contents($f); if (preg_match('#https://hooks\.slack\.com/\S+#', $raw, $m)) $SLACK_WEBHOOK = trim($m[0]); }
+    if (empty($SLACK_WEBHOOK)) return;
+    $ch = curl_init($SLACK_WEBHOOK);
+    curl_setopt_array($ch, array(CURLOPT_POST => true, CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 6,
+        CURLOPT_HTTPHEADER => array('Content-Type: application/json'),
+        CURLOPT_POSTFIELDS => json_encode(array('text' => (string)$text))));
+    @curl_exec($ch); curl_close($ch);
+}
+
 // ---- transport: authenticated SMTP if api/pcm-smtp.php is configured, else mail().
 // Same minimal implicit-TLS client as the portal sign-in codes (port 465 only).
-function rv_send($to, $first) {
+function rv_send($to, $first, $kind = 'review') {
     $to = strtolower(trim((string)$to));
     if (!filter_var($to, FILTER_VALIDATE_EMAIL)) return false;
-    $subject = rv_subject();
-    $body = rv_body(rv_first($first));
+    $subject = ($kind === 'done') ? dn_subject() : rv_subject();
+    $body = ($kind === 'done') ? dn_body(rv_first($first)) : rv_body(rv_first($first));
     $cfg = __DIR__ . '/pcm-smtp.php';
     if (is_readable($cfg)) {
         include $cfg;
@@ -322,6 +374,86 @@ function rv_process($cap = 5) {
         rvq_save($q2);
         rvq_close($lk2);
     }
+    if ($sent > 0 || $failed > 0) rv_slack(':love_letter: 365 mail: review asks sent ' . $sent . ($failed ? (', FAILED ' . $failed . ' - check pcm-review') : ''));
+    return array('mode' => 'live', 'due' => $due, 'sent' => $sent, 'failed' => $failed);
+}
+
+// ---- "job done" processor. Due when the booking is marked Completed (bkmeta,
+// written by the portal staff action or mirrored from SimplyBook by pcm-bkpoll.php)
+// or 3h after the visit ends as the fallback for jobs nobody marks. One per
+// booking - a customer with two visits rightly gets two visit records.
+function dn_process($cap = 5) {
+    global $DN_LIVE;
+    $h = (int)date('G');
+    if ($h < 9 || $h >= 20) return array('skip' => 'quiet_hours');
+
+    // read the completed-status map BEFORE taking the queue lock (lock-order rule:
+    // nothing in this file may ever hold the data lock and the queue lock together)
+    $done = array();
+    $DF = __DIR__ . '/pcm-data.json';
+    $dlk = @fopen($DF . '.lock', 'c');
+    if ($dlk && @flock($dlk, LOCK_EX)) {
+        $db = json_decode((string)@file_get_contents($DF), true);
+        if (is_array($db) && isset($db['bkmeta']) && is_array($db['bkmeta']))
+            foreach ($db['bkmeta'] as $k => $v) if ((isset($v['st']) ? $v['st'] : '') === 'completed') $done[(string)$k] = true;
+        @flock($dlk, LOCK_UN);
+    }
+    if ($dlk) @fclose($dlk);
+
+    list($lk, $q) = rvq_open();
+    if (!$lk) return array('skip' => 'locked');
+    if ((isset($q['dnrun_ts']) ? $q['dnrun_ts'] : 0) > time() - 60) { rvq_close($lk); return array('skip' => 'ran_recently'); }
+    $q['dnrun_ts'] = time();
+
+    $picked = array(); $batchEm = array(); $due = 0;
+    foreach ($q['q'] as $bid => $e) {
+        $dn = isset($e['dn']) ? $e['dn'] : 'pending';
+        if ((isset($e['st']) ? $e['st'] : '') === 'cancelled') {   // cancelled visit: no record email
+            if ($dn === 'pending') $q['q'][$bid]['dn'] = 'skipped';
+            continue;
+        }
+        $retryable = ($dn === 'sending' && (isset($e['dn_snd']) ? $e['dn_snd'] : 0) < time() - 600
+                      && (isset($e['dn_tries']) ? $e['dn_tries'] : 0) < 3);
+        if ($dn !== 'pending' && !$retryable) continue;
+        $end = isset($e['end']) ? (int)$e['end'] : 0;
+        if ($end <= 0) continue;
+        if ($end < time() - 604800) { $q['q'][$bid]['dn'] = 'skipped'; continue; }   // >7 days: too stale for a visit record
+        $isDone = isset($done[(string)$bid]);
+        if ($isDone && time() < $end) continue;                    // marked done early: wait for the visit to actually end
+        if (!$isDone && time() < $end + 10800) continue;           // unmarked: fallback fires 3h after the end
+        if ((isset($e['dn_tries']) ? $e['dn_tries'] : 0) >= 3) continue;
+        $em = isset($e['em']) ? $e['em'] : '';
+        if ($em === '' || !filter_var($em, FILTER_VALIDATE_EMAIL)) continue;
+        $eh = sha1($em);
+        if (isset($q['optout'][$eh])) { $q['q'][$bid]['dn'] = 'skipped'; continue; }
+        if (isset($batchEm[$eh])) continue;                        // two visits: space the records across runs
+        $due++;
+        if ($DN_LIVE && count($picked) < $cap) {
+            $q['q'][$bid]['dn'] = 'sending';
+            $q['q'][$bid]['dn_snd'] = time();
+            $q['q'][$bid]['dn_tries'] = (isset($e['dn_tries']) ? $e['dn_tries'] : 0) + 1;
+            $picked[$bid] = array('em' => $em, 'nm' => isset($e['nm']) ? $e['nm'] : '');
+            $batchEm[$eh] = true;
+        }
+    }
+    rvq_save($q);
+    rvq_close($lk);   // NEVER hold the lock across slow SMTP
+
+    if (!$DN_LIVE) return array('mode' => 'safe', 'due_waiting' => $due, 'sent' => 0);
+
+    $sent = 0; $failed = 0;
+    foreach ($picked as $bid => $p) {
+        $ok = rv_send($p['em'], $p['nm'], 'done');
+        list($lk2, $q2) = rvq_open();
+        if (!$lk2) continue;
+        if (isset($q2['q'][$bid]) && (isset($q2['q'][$bid]['dn']) ? $q2['q'][$bid]['dn'] : '') === 'sending') {
+            if ($ok) { $q2['q'][$bid]['dn'] = 'sent'; $q2['q'][$bid]['dn_ts'] = time(); $sent++; }
+            else { $q2['q'][$bid]['dn'] = ((isset($q2['q'][$bid]['dn_tries']) ? $q2['q'][$bid]['dn_tries'] : 1) >= 3) ? 'failed' : 'pending'; $failed++; }
+        }
+        rvq_save($q2);
+        rvq_close($lk2);
+    }
+    if ($sent > 0 || $failed > 0) rv_slack(':love_letter: 365 mail: job-done emails sent ' . $sent . ($failed ? (', FAILED ' . $failed . ' - check pcm-review') : ''));
     return array('mode' => 'live', 'due' => $due, 'sent' => $sent, 'failed' => $failed);
 }
 
@@ -355,27 +487,33 @@ if (!defined('RV_LIB')) {
     }
 
     if (isset($_GET['test'])) {
-        // exact customer email, to OUR OWN inbox only - never a caller-supplied address
+        // exact customer email, to OUR OWN inbox only - never a caller-supplied address.
+        // ?test=1 sends the review ask; ?test=done sends the job-done visit record.
+        $tkind = ((string)$_GET['test'] === 'done') ? 'done' : 'review';
+        $tstamp = ($tkind === 'done') ? 'dn_test_ts' : 'test_ts';   // independent throttles
         list($lk, $q) = rvq_open();
         if (!$lk) { echo json_encode(array('ok' => false, 'error' => 'locked')); exit; }
-        if ((isset($q['test_ts']) ? $q['test_ts'] : 0) > time() - 600) {
-            $wait = 600 - (time() - $q['test_ts']);
+        if ((isset($q[$tstamp]) ? $q[$tstamp] : 0) > time() - 600) {
+            $wait = 600 - (time() - $q[$tstamp]);
             rvq_close($lk);
             echo json_encode(array('ok' => false, 'error' => 'throttled', 'retry_in_s' => $wait)); exit;
         }
-        $q['test_ts'] = time();
+        $q[$tstamp] = time();
         rvq_save($q);
         rvq_close($lk);
-        $ok = rv_send('info@365techies.co.uk', 'Steve');
-        echo json_encode(array('ok' => (bool)$ok, 'mode' => 'test', 'to' => 'info@365techies.co.uk',
+        $ok = rv_send('info@365techies.co.uk', 'Steve', $tkind);
+        echo json_encode(array('ok' => (bool)$ok, 'mode' => 'test', 'kind' => $tkind, 'to' => 'info@365techies.co.uk',
                                'note' => $ok ? 'check the inbox (and spam folder on first send)' : 'send failed - check server mail config'));
         exit;
     }
 
     if (isset($_GET['run'])) {
         $r = rv_process(5);
+        $r2 = dn_process(5);
         // anonymous callers (the cron) learn nothing; the admin pass unlocks the stats
-        if ($rv_admin) echo json_encode(array('ok' => true, 'mode' => 'run', 'live' => (bool)$GLOBALS['RV_LIVE'], 'result' => $r));
+        if ($rv_admin) echo json_encode(array('ok' => true, 'mode' => 'run',
+            'review' => array('live' => (bool)$GLOBALS['RV_LIVE'], 'result' => $r),
+            'done' => array('live' => (bool)$GLOBALS['DN_LIVE'], 'result' => $r2)));
         else echo json_encode(array('ok' => true));
         exit;
     }

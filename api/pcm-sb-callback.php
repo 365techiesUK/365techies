@@ -116,4 +116,5 @@ $out = 'no_match'; // booking for someone not on PC Manager — still fine for t
 if ($hit) { $tmp = $DATA . '.sb.tmp'; if (@file_put_contents($tmp, json_encode($db, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), LOCK_EX) !== false) @rename($tmp, $DATA); $out = 'ok'; }
 if ($lk) { @flock($lk, LOCK_UN); @fclose($lk); }   // release the customer-DB lock BEFORE any slow SMTP work
 rv_process(2);   // piggyback: each booking event also sends any due review emails (capped)
+dn_process(2);   // ...and any due "job done" visit-record emails
 exit($out);

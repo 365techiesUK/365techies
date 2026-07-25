@@ -10,7 +10,8 @@ name: Review email cron
 
 on:
   schedule:
-    - cron: "17 9 * * *"   # 09:17 UTC daily = 10:17 UK in summer, inside the send window
+    - cron: "17 8-18/2 * * *"   # every 2h through the UK day (09:17-19:17 UK in summer) - keeps
+                                # job-done + review emails timely even without the SiteGround cron
   workflow_dispatch: {}
 
 jobs:

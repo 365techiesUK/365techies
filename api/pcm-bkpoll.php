@@ -119,4 +119,12 @@ if ($wh !== '') foreach ($toSlack as $t) {
         CURLOPT_HTTPHEADER => array('Content-Type: application/json'), CURLOPT_POSTFIELDS => json_encode(array('text' => $t))));
     @curl_exec($ch); curl_close($ch);
 }
-jout(array('ok' => true, 'bookings' => count($rows), 'seeded' => $seeded, 'changed' => $changed, 'alerts' => count($toSlack)));
+// Piggyback the customer-mail queues on this poll: with the 5-min cron in place this
+// is the near-real-time engine for "job done" emails (fires soon after a booking is
+// marked Completed above). Best-effort - a mail hiccup must never fail the poll.
+define('RV_LIB', 1);
+require __DIR__ . '/pcm-review.php';
+$mailR = rv_process(3);
+$mailD = dn_process(3);
+jout(array('ok' => true, 'bookings' => count($rows), 'seeded' => $seeded, 'changed' => $changed, 'alerts' => count($toSlack),
+           'mail' => array('review' => $mailR, 'done' => $mailD)));
