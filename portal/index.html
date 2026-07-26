@@ -1096,6 +1096,9 @@
   function sOut() {
     if (S.stoken) post(BK, { action: 'stafflogout', stoken: S.stoken, machine: mid() });
     if (S.wtoken) post(BK, { action: 'weblogout', wtoken: S.wtoken, machine: mid() });
+    // the whole journey machine is module-level, so without this the next member signed in
+    // on this tab inherits the previous one's survey count and settled state
+    jSettled = false; jPend = null; JW = { wifi: 0, loaded: false, ok: false }; JD = null;
     S = {}; saveS(); showSignin();
   }
   function topRow(title) {
@@ -1109,6 +1112,9 @@
   try { SND = localStorage.getItem('p365snd') === '1'; } catch (e) {}
   var actx = null;
   function beep(freqs, dur, type) {
+    // re-read rather than trust the cached flag: someone who silences the portal in one
+    // tab must not still be beeped at by another tab they left open
+    try { SND = localStorage.getItem('p365snd') === '1'; } catch (e) {}
     if (!SND) return;
     try {
       var C = window.AudioContext || window.webkitAudioContext; if (!C) return;
@@ -1126,6 +1132,18 @@
       });
     } catch (e) {}
   }
+  function sndPaint(b) {
+    b.className = 'jrn__snd' + (SND ? ' on' : '');
+    b.setAttribute('aria-pressed', SND ? 'true' : 'false');
+    b.innerHTML = '<span aria-hidden="true">' + (SND ? '\ud83d\udd0a' : '\ud83d\udd07') + '</span> Sound ' + (SND ? 'on' : 'off');
+    b.title = SND ? 'Sounds are on \u2014 tap to silence' : 'Sounds are off \u2014 tap for a little celebration';
+  }
+  // registered once, not per render: a second open tab must follow the toggle too
+  try { window.addEventListener('storage', function (e) {
+    if (e.key !== 'p365snd') return;
+    SND = e.newValue === '1';
+    var b2 = document.getElementById('jrnSnd'); if (b2) sndPaint(b2);
+  }); } catch (e) {}
   var SFX = {
     step: function () { beep([660, 880], .28, 'sine'); },
     level: function () { beep([523, 659, 784, 1047], .55, 'triangle'); },
@@ -1186,17 +1204,32 @@
   // waits for that answer (or the fallback timer). Settling early would bank a snapshot
   // without WiFi, then "discover" it seconds later - a phantom celebration on every
   // single visit. Once settled, later settles are real in-session progress and welcome.
-  var jSettled = false;
+  var jSettled = false, jPend = null;
   function journeySettle(res, d, force) {
+    // The forced call is a BACKSTOP for "the survey count never arrived", never a second
+    // opinion. Without this it fires 3.5s after a settle that already happened, using a
+    // journey card captured before the count landed, and banks a WiFi-blind snapshot -
+    // which makes the next visit rediscover a survey saved months ago and celebrate it.
+    if (force && jSettled) return;
     if (!jSettled && !JW.loaded && !force) return;
     if (S.back) { jSettled = true; return; }   // staff viewing a customer: never celebrate, never store
+    // Never let confetti land on top of an open tool. Hold it and replay from ovShut().
+    if (ovEl) { jPend = { res: res, d: d }; return; }
     jSettled = true;
     var key = jKey(d), prev = jSnapRead();
+    var sameMember = prev.k === key && typeof prev.p === 'number';
+    var was = (sameMember && Object.prototype.toString.call(prev.d) === '[object Array]') ? prev.d : [];
     var doneKeys = res.done.map(function (x) { return x.k; });
-    jSnapWrite({ p: res.pts, l: res.lv, d: doneKeys, k: key });
-    if (prev.k !== key || typeof prev.p !== 'number') return;   // first view on this browser
-    var was = prev.d || [];
-    var fresh = res.done.filter(function (x) { return was.indexOf(x.k) < 0; });
+    // If the count never arrived, or the request failed, the WiFi step is UNKNOWN - not
+    // "not done". Recording a guess as fact is what creates the phantom celebration, so
+    // carry the previous answer through and keep the points/level we already knew about.
+    var blind = !JW.ok && was.indexOf('wifi') >= 0 && doneKeys.indexOf('wifi') < 0;
+    if (blind) doneKeys.push('wifi');
+    jSnapWrite({ p: blind ? Math.max(res.pts, prev.p || 0) : res.pts,
+                 l: blind ? Math.max(res.lv, prev.l || 0) : res.lv,
+                 d: doneKeys, k: key });
+    if (!sameMember) return;                          // first view on this browser
+    var fresh = res.done.filter(function (x) { return was.indexOf(x.k) < 0 && (JW.ok || x.k !== 'wifi'); });
     if (res.lv > (prev.l || 0)) {
       setTimeout(function () {
         confetti(140); SFX.level();
@@ -1233,10 +1266,14 @@
     'Wi-Fi trouble is nearly always <b>where the router sits</b>, not the broadband package. Moving it off the floor and out of the cupboard works wonders.',
     'Windows updates aren\u2019t optional extras \u2014 most of them close security holes. If yours keep postponing themselves, that\u2019s worth a look.'
   ];
-  var JW = { wifi: 0, loaded: false }, JD = null;   // survey count arrives asynchronously; see loadWifi()
+  // wifi: the saved-survey count. loaded: the request finished. ok: the count is TRUSTWORTHY
+  // (a 403 or a dropped connection means we know nothing, which is not the same as zero).
+  var JW = { wifi: 0, loaded: false, ok: false }, JD = null;   // arrives asynchronously; see loadWifi()
   // The WiFi step can only be judged once the survey list returns, which is AFTER the
   // dashboard paints. Rather than delay the whole page for it, the row lights up in
   // place when the count lands - which reads as the journey noticing, not as a redraw.
+  // settle against a FRESHLY computed card, without redrawing anything
+  function jSettleNow() { if (!jSettled && JD) journeySettle(journeyCard(JD), JD); }
   function journeyRefresh() {
     if (!JD) return;
     var host = document.querySelector('#p365app .jrn');
@@ -1296,8 +1333,9 @@
       + '<p class="jrn__name">' + LEVELS[lv].name + '</p></div>'
       + '<div class="jrn__pts"><div class="jrn__ptsn" id="jrnNum">0</div>'
       + '<div class="jrn__ptsl">points<button type="button" class="jrn__snd' + (SND ? ' on' : '') + '" id="jrnSnd" '
-      + 'title="' + (SND ? 'Sounds are on \u2014 tap to silence' : 'Sounds are off \u2014 tap for a little celebration') + '">'
-      + (SND ? '\ud83d\udd0a on' : '\ud83d\udd07 off') + '</button></div></div>'
+      + 'aria-pressed="' + (SND ? 'true' : 'false') + '" aria-label="Celebration sounds"'
+      + ' title="' + (SND ? 'Sounds are on \u2014 tap to silence' : 'Sounds are off \u2014 tap for a little celebration') + '">'
+      + '<span aria-hidden="true">' + (SND ? '\ud83d\udd0a' : '\ud83d\udd07') + '</span> Sound ' + (SND ? 'on' : 'off') + '</button></div></div>'
       + '</div>'
       + '<div class="jrn__bar"><div class="jrn__fill" id="jrnFill" data-pct="' + pct + '"></div></div>'
       + '<p class="jrn__hint"><b>' + doneN + ' of ' + steps.length + '</b> done'
@@ -1342,9 +1380,7 @@
     if (sb) sb.onclick = function () {
       SND = !SND;
       try { localStorage.setItem('p365snd', SND ? '1' : '0'); } catch (e) {}
-      sb.className = 'jrn__snd' + (SND ? ' on' : '');
-      sb.innerHTML = SND ? '\ud83d\udd0a on' : '\ud83d\udd07 off';
-      sb.title = SND ? 'Sounds are on \u2014 tap to silence' : 'Sounds are off \u2014 tap for a little celebration';
+      sndPaint(sb);
       if (SND) SFX.step();   // let them hear what they just agreed to
     };
     Array.prototype.forEach.call(document.querySelectorAll('#p365app .jrn__row[data-go]'), function (row) {
@@ -1373,10 +1409,14 @@
       { ic: '\ud83c\udfe0', t: 'Your own portal', s: 'Everything about your computers in one place', st: 'have' },
       { ic: '\ud83c\udf93', t: '11 free courses', s: 'Online safety, video calls, getting more from your tech', st: 'have', go: 'courses' },
       { ic: '\ud83d\udcf6', t: 'WiFi Optimizer', s: 'Score every room, saved to your account', st: JW.wifi > 0 ? 'have' : 'add', go: 'wifi' },
-      { ic: '\ud83e\uddf0', t: '20 free tools', s: 'Speed test, spec checker, is-it-down and more', st: 'have', go: 'tools' },
+      { ic: '\ud83e\uddf0', t: 'Free online tools', s: 'Speed test, spec checker, is-it-down and more', st: 'have', go: 'tools' },
       { ic: '\ud83d\udcc5', t: 'Book online', s: 'Book, move or cancel a visit yourself, any time', st: 'have', go: 'book' },
       { ic: '\ud83d\udda5', t: 'PC Manager', s: m.length ? m.length + ' computer' + (m.length === 1 ? '' : 's') + ' reporting in' : 'Free health monitoring \u2014 we fit it for you', st: m.length ? 'have' : 'add', go: 'app' },
-      { ic: '\ud83c\udd98', t: 'Remote help (SOS)', s: 'A techie on your screen in minutes', st: pro ? 'have' : 'add', go: 'sos', sub: pro ? '' : 'Pay as you go, or unlimited on support' },
+      // NOT free for a free member: /sos/ is clear that connecting in to look is free and
+      // the fix itself is quoted up front. It carries its own pill so the cyan group's
+      // "free" promise is never stretched over something chargeable.
+      { ic: '\ud83c\udd98', t: 'Remote help (SOS)', s: 'A techie on your screen in minutes', st: pro ? 'have' : 'add', go: 'sos',
+        lbl: pro ? '' : 'Free look, then quoted', sub: pro ? '' : 'Connecting in to see the problem is free \u2014 any fix is quoted before we start' },
       { ic: '\ud83d\udd27', t: 'Full service every 6 weeks', s: 'A proper going-over, not a quick look', st: pro ? 'have' : 'lock' },
       { ic: '\u267e\ufe0f', t: 'Unlimited remote help', s: 'The same friendly faces, as often as you need', st: pro ? 'have' : 'lock' },
       { ic: '\ud83d\udcde', t: 'We ring before we connect', s: 'Never a surprise connection \u2014 and an ETA call before a visit', st: pro ? 'have' : 'lock' },
@@ -1390,10 +1430,10 @@
     var h = '<div class="card" id="unlcard"><h2>\u2728 Your 365, unlocked</h2>'
       + '<p class="quiet" style="margin:0 0 .2rem">'
       + (pro ? 'You\u2019re on 365 support, so the lot is switched on. Thank you \u2014 genuinely.'
-             : 'Everything bright is already yours and always free. The ' + locked + ' dimmed ones come with 365 support \u2014 tap one to see what it does.')
+             : 'Everything bright is yours to use right now \u2014 each one says what it costs, and most cost nothing. The ' + locked + ' dimmed ones come with 365 support \u2014 tap one to see what it does.')
       + '</p><div class="unl">';
     tiles.forEach(function (x, i) {
-      var lbl = x.st === 'have' ? 'Included' : (x.st === 'add' ? 'Free \u2014 add it' : 'On support');
+      var lbl = x.lbl || (x.st === 'have' ? 'Included' : (x.st === 'add' ? 'Free \u2014 add it' : 'On support'));
       h += '<div class="unl__t ' + x.st + '" style="animation-delay:' + (i * 45) + 'ms"'
         + (x.st === 'have' ? '' : ' tabindex="0" role="button" data-unl="' + (x.go || 'plans') + '"')
         + '><span class="unl__ic">' + x.ic + '</span><strong>' + x.t + '</strong>'
@@ -1432,6 +1472,7 @@
     ovEl = null;
     try { document.documentElement.classList.remove('p365-lock'); } catch (e) {}
     if (cb) { try { cb(); } catch (e) {} }
+    if (jPend) { var q = jPend; jPend = null; journeySettle(q.res, q.d, true); }   // held celebration
     // if we pushed a history entry and we're not closing BECAUSE of a pop, unwind it
     if (!fromPop) { try { if (history.state && history.state.p365ov) { ovPop = true; history.back(); } } catch (e) {} }
   }
@@ -2036,6 +2077,9 @@
         showSignin('Your session expired - please sign in again.'); return;
       }
       if (d.next_ts && d.next_ts * 1000 < Date.now()) d.next = '';
+      // A fresh dashboard is a fresh journey. Sign-out/sign-in and staff impersonation both
+      // re-enter here, so nothing about the previous member may survive into this render.
+      jSettled = false; jPend = null; JW = { wifi: 0, loaded: false, ok: false }; JD = null;
       // the hero needs the primary machine, so work it out BEFORE building the page
       var ngLive0 = d.machines.filter(function (mm) { return !mm.fresh; });
       var heroPrimary = null;
@@ -2129,9 +2173,10 @@
       journeyBind(d);
       unlockBind();
       JD = d;   // kept so the journey can re-render when the survey count lands
-      // Safety net: if the survey count never arrives (offline, endpoint down) the
-      // journey still settles, so a returning member is never left uncelebrated.
-      setTimeout(function () { journeySettle(jrn, d, true); }, 3500);
+      // Safety net: if the survey count never arrives (offline, endpoint down) the journey
+      // still settles. It recomputes from JD rather than closing over the `jrn` captured
+      // above - that card was built before the count landed and banking it would be a lie.
+      setTimeout(function () { if (!jSettled && JD) journeySettle(journeyCard(JD), JD, true); }, 3500);
       var qb = document.getElementById('qbook');
       if (qb) qb.onclick = ovBook;
       var qw = document.getElementById('qwifi');
@@ -2324,10 +2369,12 @@
   function loadWifi() {
     var box = document.getElementById('mywifi'); if (!box) return;
     post(WIFI, { action: 'list', wtoken: S.wtoken, machine: mid() }).then(function (d) {
-      JW.loaded = true;
-      if (!d || !d.ok) { box.innerHTML = '<p class="quiet">Couldn’t load your surveys just now - try again shortly.</p>'; if (!jSettled) journeyRefresh(); return; }
+      JW.loaded = true; JW.ok = !!(d && d.ok);
+      if (!d || !d.ok) { box.innerHTML = '<p class="quiet">Couldn’t load your surveys just now - try again shortly.</p>'; jSettleNow(); return; }
       var wasW = JW.wifi; JW.wifi = (d.surveys && d.surveys.length) ? d.surveys.length : 0;
-      if (wasW !== JW.wifi || !jSettled) journeyRefresh();   // the journey notices the survey arriving
+      // re-render only when the count actually moved; otherwise just settle (a needless
+      // replaceChild on both cards restarts every entry animation for no reason)
+      if (wasW !== JW.wifi) journeyRefresh(); else jSettleNow();
       if (!d.surveys || !d.surveys.length) { box.innerHTML = '<p class="quiet">Nothing saved yet. Run the free WiFi survey, then press “Save to my 365 portal” on the tool.</p>'; return; }
       var hh = '';
       d.surveys.forEach(function (w) {
@@ -2346,7 +2393,7 @@
           post(WIFI, { action: 'del', wtoken: S.wtoken, machine: mid(), id: btn.getAttribute('data-wifidel') }).then(loadWifi);
         });
       });
-    }).catch(function () { JW.loaded = true; box.innerHTML = '<p class="quiet">Couldn’t load your surveys - try again shortly.</p>'; if (!jSettled) journeyRefresh(); });
+    }).catch(function () { JW.loaded = true; JW.ok = false; box.innerHTML = '<p class="quiet">Couldn’t load your surveys - try again shortly.</p>'; jSettleNow(); });
   }
   (function () {
     // upload a 365-wifi-survey.json exported on another device straight into the account
