@@ -817,7 +817,7 @@
         var ST = document.getElementById('bkstatus');
         if (!P) return;
         var S = { svcId: 0, svcName: '', mins: 0, days: [], dayIx: 0, date: '', time: '',
-                  email: '', name: '', phone: '', note: '', mk: false, shared: false };
+                  email: '', name: '', phone: '', note: '', refby: '', mk: false, shared: false };
         var busyFlag = false;
 
         var _mid = '';
@@ -1011,6 +1011,11 @@
             '<label class="bk__field"><span>Email address</span><input id="bke" type="email" autocomplete="email" inputmode="email" placeholder="jane@example.com" value="' + esc(S.email) + '"></label>' +
             '<label class="bk__field"><span>Best number to reach you on <em class="bk__opt">(landline is fine)</em></span><input id="bkp" type="tel" autocomplete="tel" placeholder="01202 775566" value="' + esc(S.phone) + '"></label>' +
             '<label class="bk__field"><span>Anything we should know? <em class="bk__opt">(optional)</em></span><textarea id="bkno" rows="2" placeholder="e.g. it&rsquo;s very slow since an update &mdash; and the address if we&rsquo;re coming to you">' + esc(S.note) + '</textarea></label>' +
+            // Asked ONLY of people not already signed in - a returning customer doesn't
+            // need it, and this is the single question that makes referrals countable.
+            '<label class="bk__field"><span>Did someone recommend us? <em class="bk__opt">(optional)</em></span>' +
+            '<input id="bkref" type="text" autocomplete="off" placeholder="Their name &mdash; we&rsquo;d like to thank them" value="' + esc(S.refby) + '"></label>' +
+            '<p class="bk__note" style="margin:-.35rem 0 .9rem">If a friend sent you, your first Computer Service &amp; Health Check is on us &mdash; and they get a month free on their support plan.</p>' +
             '<label class="bk__opts"><input type="checkbox" id="bksh"' + (S.shared ? ' checked' : '') + '><span>I&rsquo;m using a shared or public computer (we&rsquo;ll sign you out quickly)</span></label>' +
             '<label class="bk__opts"><input type="checkbox" id="bkm"' + (S.mk ? ' checked' : '') + '><span>Send me the occasional plain-English tip on staying safe online. No spam, unsubscribe any time.</span></label>' +
             '<div class="bk__row"><button type="button" class="bk__btn" id="bkgo">Send my code</button><button type="button" class="bk__back" id="bkb">&#8592; Pick another time</button></div>' +
@@ -1025,6 +1030,8 @@
           S.email = (document.getElementById('bke').value || '').trim().toLowerCase();
           S.phone = (document.getElementById('bkp').value || '').trim();
           S.note = (document.getElementById('bkno').value || '').trim();
+          var rf = document.getElementById('bkref');
+          S.refby = rf ? (rf.value || '').trim() : '';
           S.mk = !!document.getElementById('bkm').checked;
           S.shared = !!document.getElementById('bksh').checked;
         }
@@ -1109,7 +1116,7 @@
         // ---------- book + confirm ----------
         function doBook(wtoken) {
           loading('Putting you in the diary…');
-          post({ action: 'book', wtoken: wtoken, machine: mid(), eventId: S.svcId, date: S.date, time: S.time, phone: S.phone, note: S.note })
+          post({ action: 'book', wtoken: wtoken, machine: mid(), eventId: S.svcId, date: S.date, time: S.time, phone: S.phone, note: S.note, refby: S.refby })
             .then(function (r) {
               busyFlag = false;
               if (r && r.ok) return step4(r);

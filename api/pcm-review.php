@@ -249,9 +249,15 @@ function dn_body($first) {
     . "Steve & David\r\n"
     . "365 Techies - family-run IT support in Bournemouth since 1995\r\n"
     . "01202 775566 - https://365techies.co.uk\r\n\r\n"
-    . "P.S. A small favour that means a lot to a family firm: if someone you\r\n"
-    . "know is battling their computer, pass them our number - and tell them to\r\n"
-    . "mention your name, so we know who to thank.\r\n";
+    // NOTE: the referral offer lives HERE and must never appear in the review-ask
+    // email (rv_body). Rewarding a recommendation is perfectly lawful; rewarding a
+    // REVIEW is not (UK DMCC Act), so the two must stay firmly apart.
+    . "P.S. If someone you know is battling their computer, we'd love an\r\n"
+    . "introduction - and there's something in it for both of you:\r\n\r\n"
+    . "  - They get their first Computer Service & Health Check free\r\n"
+    . "  - You get a month free on your support plan\r\n\r\n"
+    . "Just pass on our number and ask them to mention your name, so we know\r\n"
+    . "who to thank. 01202 775566.\r\n";
 }
 
 // ---- day-before reminder. SimplyBook fires no webhook for reminders (they are purely

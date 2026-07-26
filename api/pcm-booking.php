@@ -1199,6 +1199,33 @@ if ($action === 'book') {
             }
         }
     }
+    // ---- referral capture ------------------------------------------------------
+    // The missing piece was never advocacy - customers do recommend us - it was
+    // ATTRIBUTION: when the friend rang, nothing recorded who sent them, so nobody
+    // could be thanked, and an unthanked referral does not repeat. One optional
+    // question, a permanent ledger, and a Slack nudge naming both people.
+    $refby = trim(preg_replace('/[\x00-\x1F\x7F]+/', ' ', (string)(isset($in['refby']) ? $in['refby'] : '')));
+    $refby = substr($refby, 0, 80);
+    if ($refby !== '') {
+        list($lkR, $dbR) = db_open();
+        if (!isset($dbR['referrals']) || !is_array($dbR['referrals'])) $dbR['referrals'] = array();
+        $dbR['referrals'][] = array(
+            'by'    => $refby,                                   // who they say recommended us
+            'who'   => $snap['name'] !== '' ? $snap['name'] : $snap['email'],   // the new customer
+            'email' => $snap['email'],
+            'bid'   => $bid,
+            'when'  => $pretty,
+            'ts'    => time(),
+            'thanked' => false,                                  // set by staff once the reward is applied
+        );
+        if (count($dbR['referrals']) > 2000) $dbR['referrals'] = array_slice($dbR['referrals'], -2000);
+        db_save($dbR); db_close($lkR);
+        pcm_slack_say(":handshake: *A referral!* " . bk_clean($snap['name'] !== '' ? $snap['name'] : $snap['email'])
+            . ' says they were recommended by *' . bk_clean($refby) . "*\n"
+            . "> :arrow_right: Give " . bk_clean($snap['name'] !== '' ? $snap['name'] : 'them') . " a free Computer Service & Health Check on this visit\n"
+            . "> :arrow_right: Give " . bk_clean($refby) . " a month free on their support plan (or £15 off their next visit if they are not on a plan)\n"
+            . '> Booked for ' . $pretty);
+    }
     // online bookings deserve the same visibility as staff-made ones
     pcm_slack_say(':calendar: *New online booking* - ' . bk_clean($snap['name'] !== '' ? $snap['name'] : $snap['email'])
         . ' - ' . $pretty . (!$confirmed ? ' _(awaiting confirmation)_' : '')
