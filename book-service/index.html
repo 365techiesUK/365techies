@@ -223,7 +223,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-07-25"
+      "dateModified": "2026-07-26"
     },
     {
       "@type": "Service",
@@ -1152,9 +1152,14 @@
           rail(4);
           var pend = !!(r && r.pending);
           say(pend ? 'Booking requested.' : 'You are booked in.');
+          var rep = (r && r.repeats) ? +r.repeats : 0;
           P.innerHTML = '<div class="bk__ok"><div class="bk__tick" aria-hidden="true">&#10003;</div>' +
             '<p class="bk__h">' + (pend ? 'Booking requested' : 'You&rsquo;re booked in') + '</p>' +
             '<p class="bk__sub">' + esc(S.svcName) + '<br><strong>' + esc(r && r.when ? r.when : whenTxt()) + '</strong></p></div>' +
+            // a recurring service books a whole series - say so plainly rather than let
+            // the customer discover it from a confirmation listing a dozen dates
+            (rep ? '<div class="bk__pick" style="margin-top:.2rem"><b>This is a repeating service.</b> It has booked <b>' + rep + ' visits</b>'
+                 + (r.last ? ', the last on ' + esc(r.last) : '') + '. If you only wanted the one, ring <a href="tel:+441202775566" style="color:var(--cyan-soft)"><strong>01202&nbsp;775566</strong></a> and we&rsquo;ll sort it in a minute &mdash; no bother at all.</div>' : '') +
             '<p class="bk__note">' + (pend
               ? 'We&rsquo;ll confirm this by email shortly &mdash; if anything clashes we&rsquo;ll ring you to rearrange.'
               : 'You&rsquo;ll get a confirmation email shortly, and it&rsquo;s in your portal right now.') + '</p>' +
@@ -1493,7 +1498,7 @@
   <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=6" defer></script>
   <script src="/js/forms.min.js?v=7" defer></script>
-  <script src="/js/search.min.js?v=2026-07-25" defer></script>
+  <script src="/js/search.min.js?v=2026-07-26" defer></script>
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
     <p>We use cookies to power our live chat and understand how the site is used. See our <a href="/cookie-policy/">cookie policy</a>.</p>
     <div class="cookie-banner__actions">

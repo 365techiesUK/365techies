@@ -466,9 +466,14 @@ BOOKING_APP = r'''    <section class="section section--alt" id="book" aria-label
           rail(4);
           var pend = !!(r && r.pending);
           say(pend ? 'Booking requested.' : 'You are booked in.');
+          var rep = (r && r.repeats) ? +r.repeats : 0;
           P.innerHTML = '<div class="bk__ok"><div class="bk__tick" aria-hidden="true">&#10003;</div>' +
             '<p class="bk__h">' + (pend ? 'Booking requested' : 'You&rsquo;re booked in') + '</p>' +
             '<p class="bk__sub">' + esc(S.svcName) + '<br><strong>' + esc(r && r.when ? r.when : whenTxt()) + '</strong></p></div>' +
+            // a recurring service books a whole series - say so plainly rather than let
+            // the customer discover it from a confirmation listing a dozen dates
+            (rep ? '<div class="bk__pick" style="margin-top:.2rem"><b>This is a repeating service.</b> It has booked <b>' + rep + ' visits</b>'
+                 + (r.last ? ', the last on ' + esc(r.last) : '') + '. If you only wanted the one, ring <a href="tel:+441202775566" style="color:var(--cyan-soft)"><strong>01202&nbsp;775566</strong></a> and we&rsquo;ll sort it in a minute &mdash; no bother at all.</div>' : '') +
             '<p class="bk__note">' + (pend
               ? 'We&rsquo;ll confirm this by email shortly &mdash; if anything clashes we&rsquo;ll ring you to rearrange.'
               : 'You&rsquo;ll get a confirmation email shortly, and it&rsquo;s in your portal right now.') + '</p>' +

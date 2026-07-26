@@ -1057,14 +1057,36 @@ if ($action === 'book') {
         $msg = isset($r['error']['message']) ? substr(preg_replace('/[^\x20-\x7E]/', '', (string)$r['error']['message']), 0, 140) : '';
         out(array('ok' => false, 'error' => 'booking_failed', 'sberr' => $msg));
     }
+    // A service configured as RECURRING in SimplyBook returns the whole series here, not
+    // one booking - so a customer who thought they were booking one visit has just booked
+    // many. We must (a) tell them honestly, and (b) queue EVERY occurrence for its own
+    // reminder, or only the first visit would ever be reminded.
+    $series = array();
     $bid = 0; $confirmed = true;
-    if (isset($b['bookings'][0])) {
-        $bid = (int)(isset($b['bookings'][0]['id']) ? $b['bookings'][0]['id'] : 0);
-        if (isset($b['bookings'][0]['is_confirmed'])) $confirmed = (bool)$b['bookings'][0]['is_confirmed'];
+    if (isset($b['bookings']) && is_array($b['bookings'])) {
+        foreach ($b['bookings'] as $one) {
+            if (!is_array($one)) continue;
+            $oid = (int)(isset($one['id']) ? $one['id'] : 0);
+            if ($oid <= 0) continue;
+            $ost = strtotime((string)(isset($one['start_date_time']) ? $one['start_date_time']
+                   : (isset($one['start_date']) ? $one['start_date'] . ' ' . (isset($one['start_time']) ? $one['start_time'] : $time) : '')));
+            $series[] = array('id' => $oid, 'ts' => $ost ? $ost : 0);
+        }
+        if (isset($b['bookings'][0])) {
+            $bid = (int)(isset($b['bookings'][0]['id']) ? $b['bookings'][0]['id'] : 0);
+            if (isset($b['bookings'][0]['is_confirmed'])) $confirmed = (bool)$b['bookings'][0]['is_confirmed'];
+        }
     } elseif (isset($b['id'])) { $bid = (int)$b['id']; }
     if (isset($b['require_confirm'])) $confirmed = !$b['require_confirm'];
     $ts = strtotime($date . ' ' . $time);
     $pretty = $ts ? date('D j M Y g:ia', $ts) : ($date . ' ' . $time);
+    $repeats = count($series) > 1 ? count($series) : 0;
+    $lastPretty = '';
+    if ($repeats) {
+        $lastTs = 0;
+        foreach ($series as $sv2) if ($sv2['ts'] > $lastTs) $lastTs = $sv2['ts'];
+        if ($lastTs) $lastPretty = date('j M Y', $lastTs);
+    }
     if ($confirmed) stamp_next($ts, $pretty);        // only claim a firm date once confirmed
     // What the customer told us about the job (and where, for on-site) - SimplyBook custom
     // field ids aren't known to us, so keep it on OUR record and put it in front of the team
@@ -1089,15 +1111,27 @@ if ($action === 'book') {
         if (function_exists('rv_record')) {
             $svcNm = '';
             foreach (sb_services() as $svv) if ($svv['id'] === $eventId) { $svcNm = $svv['name']; break; }
-            rv_record($bid, $snap['email'], $snap['name'], $endTs, 'create', $ts, $svcNm);
+            $mins = sb_mins_for($eventId);
+            if ($repeats) {
+                // queue EVERY occurrence: each visit needs its own reminder and job-done email
+                foreach ($series as $sv3) {
+                    if ($sv3['ts'] <= 0) continue;
+                    rv_record($sv3['id'], $snap['email'], $snap['name'], $sv3['ts'] + $mins * 60, 'create', $sv3['ts'], $svcNm);
+                }
+            } else {
+                rv_record($bid, $snap['email'], $snap['name'], $endTs, 'create', $ts, $svcNm);
+            }
         }
     }
     // online bookings deserve the same visibility as staff-made ones
     pcm_slack_say(':calendar: *New online booking* - ' . bk_clean($snap['name'] !== '' ? $snap['name'] : $snap['email'])
         . ' - ' . $pretty . (!$confirmed ? ' _(awaiting confirmation)_' : '')
+        . ($repeats ? "\n> :repeat: *RECURRING service* - this created " . $repeats . ' visits, through to ' . $lastPretty
+                    . '. If that was not intended, turn recurrence off for "' . bk_clean($svcNm !== '' ? $svcNm : 'this service') . '" in SimplyBook.' : '')
         . ($note !== '' ? "\n> " . bk_clean(substr($note, 0, 200)) : '')
         . ($snap['phone'] !== '' ? "\n> tel: " . bk_clean($snap['phone']) : ''));
-    out(array('ok' => true, 'id' => $bid, 'when' => $pretty, 'pending' => !$confirmed));
+    out(array('ok' => true, 'id' => $bid, 'when' => $pretty, 'pending' => !$confirmed,
+              'repeats' => $repeats, 'last' => $lastPretty));
 }
 
 if ($action === 'mybookings') {
