@@ -19775,6 +19775,38 @@ def write_portal_page():
   #p365app .qact span { font-size:1.35rem; line-height:1; }
   #p365app .qact.sos { background:rgba(232,99,126,.12); border-color:rgba(232,99,126,.42); }
   #p365app .qact.sos:hover { background:rgba(232,99,126,.2); border-color:#e8637e; }
+  /* ---------- IMMERSIVE OVERLAY -----------------------------------------------
+     Tapping a tool used to navigate away, which breaks the feeling of being
+     somewhere. Tools now open OVER the portal, full-bleed, and close back to
+     exactly where you were. Mounted on <body> deliberately: #p365app sits inside
+     main{position:relative;z-index:2}, which traps any child beneath the site
+     header (z-50), the mobile CTA bar (z-95) and the a11y widget (z-1300) - the
+     same stacking trap that bit the WiFi tool's game mode. */
+  .p365ov { position:fixed; inset:0; z-index:2000; background:rgba(4,9,22,.86); backdrop-filter:blur(8px);
+    display:flex; flex-direction:column; animation:p365ovIn .28s ease both; }
+  .p365ov__bar { display:flex; align-items:center; justify-content:space-between; gap:1rem;
+    padding:.85rem 1.1rem; background:linear-gradient(180deg,rgba(16,28,60,.98),rgba(11,19,39,.94));
+    border-bottom:1px solid #2b3f6d; flex:0 0 auto; }
+  .p365ov__ttl { font:700 1.05rem/1.3 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    color:#eef5fd; margin:0; display:flex; align-items:center; gap:.55rem; }
+  .p365ov__x { background:rgba(255,255,255,.08); border:1px solid rgba(125,170,220,.36); color:#eef5fd;
+    border-radius:999px; padding:.55rem 1.1rem; font:600 .9rem/1 inherit; cursor:pointer; min-height:44px;
+    transition:background .18s ease, transform .18s ease; }
+  .p365ov__x:hover { background:rgba(232,99,126,.22); border-color:#e8637e; transform:translateY(-1px); }
+  .p365ov__body { flex:1; min-height:0; overflow:auto; -webkit-overflow-scrolling:touch; }
+  .p365ov__body iframe { width:100%; height:100%; border:0; display:block; background:#0b1226; }
+  .p365ov__pad { padding:1.2rem 1.1rem 3rem; max-width:820px; margin:0 auto; animation:p365fadeUp .4s ease both; }
+  .p365ov__load { display:grid; place-items:center; height:100%; color:#9db4d4; font:600 .95rem/1.6 inherit; text-align:center; }
+  .p365ov__spin { width:38px; height:38px; border:3px solid rgba(125,170,220,.25); border-top-color:#1d97e3;
+    border-radius:50%; margin:0 auto .8rem; animation:p365spin .9s linear infinite; }
+  html.p365-lock, html.p365-lock body { overflow:hidden !important; }
+  @keyframes p365ovIn { from { opacity:0; transform:scale(.985) } to { opacity:1; transform:none } }
+  @keyframes p365spin { to { transform:rotate(360deg) } }
+  @media (prefers-reduced-motion: reduce) {
+    .p365ov, .p365ov__pad { animation:none }
+    .p365ov__spin { animation-duration:2.4s }
+    .p365ov__x:hover { transform:none }
+  }
   @keyframes p365drift { from { transform:translateX(-6%) } to { transform:translateX(6%) } }
   @keyframes p365fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:none; } }
   @keyframes p365popIn { from { opacity:0; transform:scale(.96); } to { opacity:1; transform:none; } }
@@ -19933,6 +19965,92 @@ def write_portal_page():
   function topRow(title) {
     return '<div class="ptop"><h1>' + title + '</h1><button class="sm ghost" id="sout">Sign out</button></div>';
   }
+  // ---------- immersive overlay: tools open OVER the portal, never away from it ----
+  var ovEl = null, ovOnClose = null, ovPop = false;
+  function ovShut(fromPop) {
+    if (!ovEl) return;
+    var cb = ovOnClose; ovOnClose = null;
+    try { ovEl.remove(); } catch (e) {}
+    ovEl = null;
+    try { document.documentElement.classList.remove('p365-lock'); } catch (e) {}
+    if (cb) { try { cb(); } catch (e) {} }
+    // if we pushed a history entry and we're not closing BECAUSE of a pop, unwind it
+    if (!fromPop) { try { if (history.state && history.state.p365ov) { ovPop = true; history.back(); } } catch (e) {} }
+  }
+  function ovShow(title, build, onClose) {
+    ovShut();
+    var o = document.createElement('div');
+    o.className = 'p365ov';
+    o.setAttribute('role', 'dialog');
+    o.setAttribute('aria-modal', 'true');
+    o.setAttribute('aria-label', title);
+    o.innerHTML = '<div class="p365ov__bar"><p class="p365ov__ttl">' + title + '</p>'
+      + '<button type="button" class="p365ov__x">&#10005;&nbsp; Close</button></div>'
+      + '<div class="p365ov__body"></div>';
+    document.body.appendChild(o);           // body, not #p365app - see the stacking note in CSS
+    ovEl = o; ovOnClose = onClose || null;
+    try { document.documentElement.classList.add('p365-lock'); } catch (e) {}
+    o.querySelector('.p365ov__x').onclick = function () { ovShut(); };
+    build(o.querySelector('.p365ov__body'));
+    try { history.pushState({ p365ov: 1 }, ''); } catch (e) {}
+    setTimeout(function () { try { o.querySelector('.p365ov__x').focus(); } catch (e) {} }, 60);
+    return o;
+  }
+  try {
+    window.addEventListener('popstate', function () {
+      if (ovPop) { ovPop = false; return; }
+      if (ovEl) ovShut(true);
+    });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && ovEl) ovShut(); });
+  } catch (e) {}
+
+  // WiFi survey, opened in place. Same-origin, so once the frame loads we hide the
+  // site chrome inside it (the tool's own wq-lock class) and press its game-mode
+  // button - the customer lands straight in the immersive survey, still "in" the portal.
+  function ovWifi() {
+    ovShow('\\ud83d\\udcf6&nbsp; Test my WiFi', function (body) {
+      body.innerHTML = '<div class="p365ov__load"><div><div class="p365ov__spin"></div>Opening your WiFi survey\\u2026</div></div>';
+      var fr = document.createElement('iframe');
+      fr.title = 'WiFi survey';
+      fr.setAttribute('allow', 'fullscreen');
+      fr.onload = function () {
+        try {
+          var doc = fr.contentDocument;
+          if (doc) {
+            doc.documentElement.classList.add('wq-lock');   // hides header/ticker/CTA bar/a11y inside the frame
+            var go = doc.getElementById('wq-open');
+            if (go) setTimeout(function () { try { go.click(); } catch (e) {} }, 120);
+          }
+        } catch (e) {}
+        body.innerHTML = ''; body.appendChild(fr);
+      };
+      fr.src = '/wifi-signal-test/';
+      // keep it out of the flow until loaded so the spinner is what's seen
+      fr.style.position = 'absolute'; fr.style.left = '-9999px'; fr.style.width = '100%'; fr.style.height = '100%';
+      fr.addEventListener('load', function () { fr.style.position = ''; fr.style.left = ''; }, { once: true });
+      document.body.appendChild(fr);
+    }, function () { loadWifi(); });   // refresh saved surveys on close - they may have saved one
+  }
+
+  // Booking, opened in place. The wizard element is MOVED into the overlay rather
+  // than duplicated, so there is never a second #cbwiz with the same id.
+  function ovBook() {
+    var wiz = document.getElementById('cbwiz');
+    var home = wiz ? wiz.parentNode : null;
+    var mark = null;
+    if (wiz && home) { mark = document.createComment('cbwiz'); home.insertBefore(mark, wiz); }
+    ovShow('\\ud83d\\udcc5&nbsp; Book a visit', function (body) {
+      var pad = document.createElement('div');
+      pad.className = 'p365ov__pad';
+      body.appendChild(pad);
+      if (wiz) { pad.appendChild(wiz); wiz.style.display = 'block'; }
+      custWiz();
+    }, function () {
+      if (wiz && mark && mark.parentNode) { mark.parentNode.insertBefore(wiz, mark); mark.parentNode.removeChild(mark); wiz.style.display = 'none'; }
+      showDash();   // a booking may have been made - come back to a fresh dashboard
+    });
+  }
+
   // ---------- the hero: answer "how are things?" before anything is read ----------
   function greetWord() {
     var h = new Date().getHours();
@@ -19989,7 +20107,7 @@ def write_portal_page():
       + '<div class="qacts">'
       + '<button type="button" class="qact" id="qbook"><span>\\ud83d\\udcc5</span>Book a visit</button>'
       + '<a class="qact sos" href="/sos/" target="_blank" rel="noopener"><span>\\ud83c\\udd98</span>Remote help</a>'
-      + '<a class="qact" href="/wifi-signal-test/" target="_blank" rel="noopener"><span>\\ud83d\\udcf6</span>Test my WiFi</a>'
+      + '<button type="button" class="qact" id="qwifi"><span>\\ud83d\\udcf6</span>Test my WiFi</button>'
       + '<a class="qact" href="tel:+441202775566"><span>\\ud83d\\udcde</span>Call us</a>'
       + '</div></div>';
     return h;
@@ -20532,11 +20650,9 @@ def write_portal_page():
       bindFeedback();
       heroAnim(heroPrimary);
       var qb = document.getElementById('qbook');
-      if (qb) qb.onclick = function () {
-        var w = document.getElementById('cbwiz');
-        if (w && w.style.display === 'none') custWiz();
-        if (w) w.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      };
+      if (qb) qb.onclick = ovBook;
+      var qw = document.getElementById('qwifi');
+      if (qw) qw.onclick = ovWifi;
       if (ngPrimary) ngAnim(ngPrimary);
       var bs = document.getElementById('backstaff');
       if (bs) bs.onclick = function () {
@@ -20579,10 +20695,12 @@ def write_portal_page():
         };
       });
       var cbo = document.getElementById('cbopen');
-      if (cbo) cbo.onclick = function () { custWiz(); };
-      var cbb = document.getElementById('cbbook');   // membership card "book one" -> open the in-portal wizard, not the website
-      if (cbb) cbb.onclick = function () { var w = document.getElementById('cbwiz'); if (w && w.style.display === 'none') custWiz(); if (w) w.scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; };
-      if (freshJoiner) custWiz();   // new member: the services are already open, nothing to hunt for
+      if (cbo) cbo.onclick = ovBook;
+      var cbb = document.getElementById('cbbook');   // membership card "book one"
+      if (cbb) cbb.onclick = function () { ovBook(); return false; };
+      // new member: open the booking overlay for them - the services are already there,
+      // nothing to hunt for and nothing to read first
+      if (freshJoiner) setTimeout(ovBook, 420);
       loadMyBookings();
       loadWifi();
       Array.prototype.forEach.call(document.querySelectorAll('#p365app .repb'), function (btn) {
