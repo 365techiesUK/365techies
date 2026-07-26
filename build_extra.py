@@ -19885,6 +19885,7 @@ def write_portal_page():
     el.innerHTML = '<h1>Your 365 portal</h1>'
       + '<p class="lede">No passwords needed - we email or text a 6-digit code, then <strong>this computer stays signed in</strong> so you won\\u2019t keep re-doing it. New to 365? The same box joins you free, no card details.</p>'
       + '<div class="card"><h2>Sign in or join free</h2>'
+      + '<label>Your name</label><input id="nm" type="text" autocomplete="name" placeholder="Jane Smith - so we know what to call you" />'
       + '<label>Your email</label><input id="em" type="email" autocomplete="email" />'
       + '<div class="row" style="border:0;padding:.2rem 0 0">'
       + '<button id="cml" class="sm">\\u2709 Email me a code</button>'
@@ -19905,6 +19906,7 @@ def write_portal_page():
       + '</div>';
     var shared = function () { var k = document.getElementById('keepin'); return !(k && k.checked); };
     var marketing = function () { var m = document.getElementById('mkt'); return !!(m && m.checked); };
+    var cname = function () { var n = document.getElementById('nm'); return n ? n.value.trim() : ''; };
     function sendCode(wantSms) {
       var ce = document.getElementById('em').value.trim();
       if (!ce) { document.getElementById('serr').textContent = 'Pop your email in first.'; return; }
@@ -19915,9 +19917,9 @@ def write_portal_page():
           btn.disabled = false;
           if (d && d.ok) {
             if (wantSms && !d.sms) { document.getElementById('serr').textContent = d.mail ? 'We don\\u2019t have a mobile on file for that email, so the code went by EMAIL instead.' : 'No mobile on file - try the email code.'; }
-            showCode('', ce, d.sms, d.mail, d.slack, false, d.smshint, shared(), marketing());
+            showCode(cname(), ce, d.sms, d.mail, d.slack, false, d.smshint, shared(), marketing());
           }
-          else if (d && d.error === 'throttled' && d.have_code) showCode('', ce, false, true, false, true, '', shared(), marketing());
+          else if (d && d.error === 'throttled' && d.have_code) showCode(cname(), ce, false, true, false, true, '', shared(), marketing());
           else document.getElementById('serr').textContent =
             d && d.error === 'throttled' ? 'Too many codes requested - wait a while, or ring us: 01202 775566.'
             : d && d.error === 'bad_email' ? 'That email doesn\\u2019t look right - please check it.'
@@ -19975,6 +19977,8 @@ def write_portal_page():
       + '<p class="lede">' + lede + '</p>'
       + '<div class="card"><label>Your 6-digit code</label>'
       + '<input id="cd" inputmode="numeric" autocomplete="one-time-code" style="font-size:1.6rem;letter-spacing:.4em;text-align:center;font-family:Consolas,monospace" />'
+      + '<div id="cnamebox" style="display:none;margin-top:.6rem"><label>Your name</label>'
+      + '<input id="cname" type="text" autocomplete="name" placeholder="Jane Smith" /></div>'
       + '<div id="cphonebox" style="display:none;margin-top:.6rem"><label>Your phone number</label>'
       + '<input id="cphone" type="tel" inputmode="tel" autocomplete="tel" placeholder="01202 775566 - a landline is fine" />'
       + '<p class="quiet" style="margin:.3rem 0 0">We need a number so we can ring you before we arrive or connect. We never pass it on to anyone.</p></div>'
@@ -19988,19 +19992,25 @@ def write_portal_page():
       var cb = document.getElementById('cgo');
       document.getElementById('cerr').textContent = '';
       cb.disabled = true;
-      var pbx = document.getElementById('cphone');
-      post(BK, { action: 'verifycode', email: je, code: cd.value.trim(), name: jn, machine: mid(), shared: shared ? 1 : 0, marketing: marketing ? 1 : 0, phone: pbx ? pbx.value.trim() : '' })
+      var pbx = document.getElementById('cphone'), nbx = document.getElementById('cname');
+      var useName = (nbx && nbx.value.trim()) ? nbx.value.trim() : jn;
+      post(BK, { action: 'verifycode', email: je, code: cd.value.trim(), name: useName, machine: mid(), shared: shared ? 1 : 0, marketing: marketing ? 1 : 0, phone: pbx ? pbx.value.trim() : '' })
         .then(function (d) {
           cb.disabled = false;
           if (d && d.ok && d.staff) { S = { staff: true, stoken: d.stoken, email: d.customer, trust: !!d.trust }; saveS(); showStaff(); }
           else if (d && d.ok && d.wtoken) { S = { wtoken: d.wtoken, name: d.customer || jn, tier: d.tier, pending: !!d.pending }; saveS(); showDash(); }
-          else if (d && d.error === 'needphone') {
-            // our booking system requires a number on a new customer record - ask for it
-            // rather than dead-ending; the typed code is still valid
-            document.getElementById('cphonebox').style.display = 'block';
+          else if (d && (d.error === 'needinfo' || d.error === 'needphone')) {
+            // setting up a NEW customer record needs a little more - ask for exactly
+            // what's missing rather than dead-ending; the typed code is still valid
+            var wantN = (d.error === 'needphone') ? false : !!d.needname;
+            var wantP = (d.error === 'needphone') ? true : !!d.needphone;
+            if (wantN) document.getElementById('cnamebox').style.display = 'block';
+            if (wantP) document.getElementById('cphonebox').style.display = 'block';
             document.getElementById('cgo').textContent = 'Finish signing me in';
-            document.getElementById('cerr').textContent = 'Almost there - we just need a phone number to finish setting you up.';
-            if (pbx) pbx.focus();
+            document.getElementById('cerr').textContent = 'Almost there - we just need '
+              + (wantN && wantP ? 'your name and a phone number' : (wantN ? 'your name' : 'a phone number'))
+              + ' to finish setting up your account.';
+            if (wantN && nbx) nbx.focus(); else if (pbx) pbx.focus();
           }
           else document.getElementById('cerr').textContent =
             d && d.error === 'wrong_code' ? 'That code isn\\u2019t right - check and try again.'

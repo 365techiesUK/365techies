@@ -780,7 +780,11 @@ if ($action === 'verifycode') {
     $jphone = isset($in['phone']) ? trim(preg_replace('/[^0-9+ ]/', '', (string)$in['phone'])) : '';
     if (strlen(preg_replace('/[^0-9]/', '', $jphone)) < 9) $jphone = '';
     if ($cid === 0) {
-        $cd = array('name' => ($cname !== '' ? $cname : $email), 'email' => $email);
+        // Ask for a real name up front rather than sending the email address as one:
+        // SimplyBook rejects the record, and even when it doesn't, the diary fills with
+        // customers called "someone@gmail.com" instead of their actual name.
+        if ($cname === '') out(array('ok' => false, 'error' => 'needinfo', 'needname' => true, 'needphone' => ($jphone === '')));
+        $cd = array('name' => $cname, 'email' => $email);
         if ($jphone !== '') $cd['phone'] = $jphone;
         $ac = sb_adm('addClient', array($cd, false));
         $firstWhy = (sb_net($ac) || empty($ac['result'])) ? sb_why($ac) : '';
@@ -798,7 +802,10 @@ if ($action === 'verifycode') {
             $w = $firstWhy !== '' ? $firstWhy : sb_why($ac);   // report the FIRST failure, not the retry's
             // Ask for a number rather than dead-ending the sign-up - the customer's code
             // is still valid, because we only burn it once SimplyBook has succeeded.
-            if ($jphone === '' && $required) out(array('ok' => false, 'error' => 'needphone'));
+            // whatever SimplyBook is missing, ask the customer for it rather than
+            // dead-ending them - their code stays valid until SimplyBook succeeds
+            if ($required) out(array('ok' => false, 'error' => 'needinfo',
+                                     'needname' => ($cname === ''), 'needphone' => ($jphone === '')));
             sb_alarm('creating the customer (addClient) failed', $w
                 . ' [phone ' . ($jphone !== '' ? 'supplied: ' . preg_replace('/[^0-9+ ]/', '', $jphone) : 'NOT supplied')
                 . ', name ' . ($cname !== '' ? 'supplied' : 'NOT supplied') . ']');
