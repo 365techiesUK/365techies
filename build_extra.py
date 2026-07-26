@@ -19775,6 +19775,67 @@ def write_portal_page():
   #p365app .qact span { font-size:1.35rem; line-height:1; }
   #p365app .qact.sos { background:rgba(232,99,126,.12); border-color:rgba(232,99,126,.42); }
   #p365app .qact.sos:hover { background:rgba(232,99,126,.2); border-color:#e8637e; }
+  /* ---------- THE JOURNEY -----------------------------------------------------
+     Progress and discovery, not fake scarcity. Locked rows say plainly what they
+     are ("included on 365 support") and never pretend to be a limited offer -
+     this brand teaches older people to spot manipulation, so it cannot use it.
+     Every "available" row is something genuinely FREE that they already own and
+     probably don't know about, which is the honest reason this converts. */
+  #p365app .jrn { background:linear-gradient(165deg,#0f1b39,#0b1327); border:1px solid #2b3f6d; border-radius:18px;
+    padding:1.25rem 1.35rem 1.1rem; margin-bottom:1rem; position:relative; overflow:hidden; }
+  #p365app .jrn__head { display:flex; align-items:center; gap:.9rem; flex-wrap:wrap; }
+  #p365app .jrn__badge { flex:0 0 auto; width:54px; height:54px; border-radius:16px; display:grid; place-items:center;
+    background:linear-gradient(150deg,#1d97e3,#0f6ea8); box-shadow:0 8px 22px rgba(29,151,227,.45), inset 0 1px 0 rgba(255,255,255,.3);
+    font:800 1.42rem/1 inherit; color:#fff; position:relative; animation:p365popIn .55s cubic-bezier(.2,1.3,.4,1) both; }
+  #p365app .jrn__badge::after { content:''; position:absolute; inset:-3px; border-radius:19px;
+    background:conic-gradient(from 0deg,rgba(29,151,227,.7),transparent 40%,transparent 60%,rgba(0,206,27,.6));
+    z-index:-1; animation:p365spin 6s linear infinite; }
+  #p365app .jrn__lv { font:700 .68rem/1 ui-monospace,Consolas,monospace; letter-spacing:.16em; color:var(--pcyan); text-transform:uppercase; }
+  #p365app .jrn__name { font:700 1.25rem/1.25 inherit; letter-spacing:-.01em; margin:.18rem 0 0; }
+  #p365app .jrn__pts { margin-left:auto; text-align:right; }
+  #p365app .jrn__ptsn { font:800 1.35rem/1 inherit; color:var(--pwhite); }
+  #p365app .jrn__ptsl { font:600 .64rem/1.4 ui-monospace,Consolas,monospace; letter-spacing:.12em; color:var(--pmut); text-transform:uppercase; }
+  #p365app .jrn__bar { height:10px; border-radius:99px; background:rgba(125,170,220,.16); margin:.95rem 0 .35rem; overflow:hidden; }
+  #p365app .jrn__fill { height:100%; width:0; border-radius:99px;
+    background:linear-gradient(90deg,#1d97e3,#00ce1b); transition:width 1.5s cubic-bezier(.22,.7,.25,1);
+    box-shadow:0 0 16px rgba(29,151,227,.6); }
+  #p365app .jrn__hint { color:var(--pmut); font-size:.86rem; margin:0 0 .3rem; }
+  #p365app .jrn__hint b { color:var(--psoft); }
+  #p365app .jrn__list { list-style:none; margin:.85rem 0 0; padding:0; }
+  #p365app .jrn__row { display:flex; align-items:center; gap:.75rem; padding:.6rem .7rem; border-radius:12px;
+    border:1px solid transparent; margin-bottom:.35rem; animation:p365fadeUp .5s ease both; }
+  #p365app .jrn__row:nth-child(2){animation-delay:.05s} #p365app .jrn__row:nth-child(3){animation-delay:.1s}
+  #p365app .jrn__row:nth-child(4){animation-delay:.15s} #p365app .jrn__row:nth-child(5){animation-delay:.2s}
+  #p365app .jrn__row:nth-child(6){animation-delay:.25s} #p365app .jrn__row:nth-child(7){animation-delay:.3s}
+  #p365app .jrn__row.done { background:rgba(0,206,27,.07); border-color:rgba(0,206,27,.24); }
+  #p365app .jrn__row.go { background:rgba(29,151,227,.09); border-color:rgba(29,151,227,.4); cursor:pointer;
+    transition:transform .18s ease, background .18s ease, border-color .18s ease; }
+  #p365app .jrn__row.go:hover { transform:translateX(3px); background:rgba(29,151,227,.17); border-color:var(--pcyan); }
+  #p365app .jrn__row.lock { opacity:.62; }
+  #p365app .jrn__ic { flex:0 0 auto; width:28px; height:28px; border-radius:50%; display:grid; place-items:center; font-size:.9rem;
+    background:rgba(125,170,220,.14); border:1px solid rgba(125,170,220,.3); }
+  #p365app .jrn__row.done .jrn__ic { background:rgba(0,206,27,.18); border-color:rgba(0,206,27,.55); color:#39e05c;
+    animation:p365tick .5s cubic-bezier(.2,1.5,.4,1) both; }
+  #p365app .jrn__row.go .jrn__ic { background:rgba(29,151,227,.2); border-color:var(--pcyan); color:#67c1f5;
+    animation:p365pulse 2.6s ease-in-out infinite; }
+  #p365app .jrn__tx { flex:1; min-width:0; font-size:.93rem; }
+  #p365app .jrn__tx small { display:block; color:var(--pmut); font-size:.79rem; line-height:1.45; margin-top:.1rem; }
+  #p365app .jrn__pt { flex:0 0 auto; font:700 .78rem/1 ui-monospace,Consolas,monospace; color:var(--pmut); }
+  #p365app .jrn__row.done .jrn__pt { color:#39e05c; }
+  #p365app .jrn__row.go .jrn__pt { color:var(--pcyan); }
+  #p365app .jrn__row.lock .jrn__pt { color:var(--pmut); font-size:.7rem; letter-spacing:.04em; }
+  #p365app .jrn__tip { margin-top:.9rem; padding:.7rem .85rem; border-radius:12px; background:rgba(224,179,65,.09);
+    border:1px solid rgba(224,179,65,.3); font-size:.86rem; color:#f0dcae; animation:p365fadeUp .6s ease both; animation-delay:.35s; }
+  #p365app .jrn__tip b { color:#ffe6ac; }
+  @keyframes p365tick { from { transform:scale(0) rotate(-25deg); opacity:0 } to { transform:none; opacity:1 } }
+  @keyframes p365pulse { 0%,100% { box-shadow:0 0 0 0 rgba(29,151,227,.5) } 60% { box-shadow:0 0 0 9px rgba(29,151,227,0) } }
+  @media (prefers-reduced-motion: reduce) {
+    #p365app .jrn__badge, #p365app .jrn__badge::after, #p365app .jrn__row,
+    #p365app .jrn__row.done .jrn__ic, #p365app .jrn__row.go .jrn__ic, #p365app .jrn__tip { animation:none }
+    #p365app .jrn__fill { transition:none }
+    #p365app .jrn__row.go:hover { transform:none }
+  }
+
   /* ---------- IMMERSIVE OVERLAY -----------------------------------------------
      Tapping a tool used to navigate away, which breaks the feeling of being
      somewhere. Tools now open OVER the portal, full-bleed, and close back to
@@ -19965,6 +20026,135 @@ def write_portal_page():
   function topRow(title) {
     return '<div class="ptop"><h1>' + title + '</h1><button class="sm ghost" id="sout">Sign out</button></div>';
   }
+  // ---------- the journey ---------------------------------------------------------
+  // Honest gamification: every "available" step is something genuinely free that the
+  // customer already owns and probably doesn't know about; every locked step states
+  // plainly that it comes with a support plan. No countdowns, no fake scarcity, no
+  // pretending a paid feature is nearly-unlocked. Points exist to show progress, not
+  // to manufacture urgency.
+  var LEVELS = [
+    { at: 0,   name: 'New member' },
+    { at: 100, name: 'Getting set up' },
+    { at: 250, name: 'Well set up' },
+    { at: 450, name: 'Well looked after' },
+    { at: 700, name: 'Fully covered' }
+  ];
+  var JTIPS = [
+    'Your photos aren\\u2019t really safe until they exist in <b>two places</b> \\u2014 the computer and somewhere else. One drive, one cloud, and you can relax.',
+    'If a caller says they\\u2019re from Microsoft, or your bank, and asks you to install anything \\u2014 <b>put the phone down</b>. It is always a scam, and it is never rude to hang up.',
+    'A slow computer is usually a full disk or a tired hard drive, <b>not</b> a computer that needs replacing. Worth checking before you spend anything.',
+    'We will <b>never</b> email you a link to sign in \\u2014 only a 6-digit code you type in yourself. Anything else claiming to be us isn\\u2019t.',
+    'Wi-Fi trouble is nearly always <b>where the router sits</b>, not the broadband package. Moving it off the floor and out of the cupboard works wonders.',
+    'Windows updates aren\\u2019t optional extras \\u2014 most of them close security holes. If yours keep postponing themselves, that\\u2019s worth a look.'
+  ];
+  var JW = { wifi: 0 }, JD = null;   // survey count arrives asynchronously; see loadWifi()
+  // The WiFi step can only be judged once the survey list returns, which is AFTER the
+  // dashboard paints. Rather than delay the whole page for it, the row lights up in
+  // place when the count lands - which reads as the journey noticing, not as a redraw.
+  function journeyRefresh() {
+    if (!JD) return;
+    var host = document.querySelector('#p365app .jrn');
+    if (!host) return;
+    var fresh = journeyCard(JD);
+    var tmp = document.createElement('div');
+    tmp.innerHTML = fresh.html;
+    var el2 = tmp.firstChild;
+    host.parentNode.replaceChild(el2, host);
+    journeyAnim(fresh.pts);
+    journeyBind(JD);
+  }
+  function jSteps(d) {
+    var m = d.machines || [];
+    var crsDone = 0, crsTot = 11;
+    m.forEach(function (x) { if (x.crs) { var p = String(x.crs).split('/'); crsDone = Math.max(crsDone, parseInt(p[0], 10) || 0); if (p[1]) crsTot = parseInt(p[1], 10) || 11; } });
+    var pro = d.tier === 'pro';
+    return [
+      { k: 'join', done: true, pts: 50, t: 'You joined the 365 Club', s: 'Your own portal, free forever' },
+      { k: 'book', done: !!d.next, pts: 100, t: d.next ? 'Booked a visit' : 'Book your first visit',
+        s: d.next ? esc(d.next) : 'Pick a service and a time \\u2014 about a minute', go: 'book' },
+      { k: 'wifi', done: JW.wifi > 0, pts: 60, t: JW.wifi > 0 ? 'Surveyed your WiFi' : 'Check your WiFi, room by room',
+        s: JW.wifi > 0 ? (JW.wifi + ' survey' + (JW.wifi === 1 ? '' : 's') + ' saved to your account') : 'Our free tool scores every room \\u2014 no sign-up', go: 'wifi' },
+      { k: 'crs', done: crsDone > 0, pts: 40, t: crsDone > 0 ? 'Started your free courses' : 'Try a free course',
+        s: crsDone > 0 ? (crsDone + ' of ' + crsTot + ' done') : 'Stay safe online, master video calls \\u2014 all 11 are free', go: 'courses' },
+      { k: 'app', done: m.length > 0, pts: 120, t: m.length > 0 ? 'PC Manager watching your computer' : 'Free PC health monitoring',
+        s: m.length > 0 ? (m.length + ' computer' + (m.length === 1 ? '' : 's') + ' reporting in') : 'Our free app keeps an eye on things \\u2014 we\\u2019ll fit it for you', go: 'app' },
+      { k: 'bak', done: m.some(function (x) { return x.backup; }), pts: 80, t: 'A backup you can rely on',
+        s: m.some(function (x) { return x.backup; }) ? 'Backup seen \\u2014 well done' : 'The one thing that turns a disaster into a nuisance', go: 'call' },
+      { k: 'pro', done: pro, pts: 200, lock: !pro, t: pro ? 'You\\u2019re on 365 support' : 'Full service every 6 weeks',
+        s: pro ? 'Serviced, monitored and helped whenever you\\u2019re stuck' : 'Plus unlimited remote help and the same friendly faces', go: 'plans' }
+    ];
+  }
+  function journeyCard(d) {
+    var steps = jSteps(d);
+    var got = 0, poss = 0, doneN = 0;
+    steps.forEach(function (s) { poss += s.pts; if (s.done) { got += s.pts; doneN++; } });
+    var lv = 0;
+    for (var i = 0; i < LEVELS.length; i++) if (got >= LEVELS[i].at) lv = i;
+    var nextAt = (lv + 1 < LEVELS.length) ? LEVELS[lv + 1].at : poss;
+    var base = LEVELS[lv].at;
+    var pct = Math.max(4, Math.min(100, Math.round((got - base) / Math.max(1, nextAt - base) * 100)));
+    var nextStep = null;
+    for (var j = 0; j < steps.length; j++) if (!steps[j].done && !steps[j].lock) { nextStep = steps[j]; break; }
+    var h = '<div class="jrn"><div class="jrn__head">'
+      + '<div class="jrn__badge">' + (lv + 1) + '</div>'
+      + '<div><p class="jrn__lv">Level ' + (lv + 1) + ' of ' + LEVELS.length + '</p>'
+      + '<p class="jrn__name">' + LEVELS[lv].name + '</p></div>'
+      + '<div class="jrn__pts"><div class="jrn__ptsn" id="jrnNum">0</div><div class="jrn__ptsl">points</div></div>'
+      + '</div>'
+      + '<div class="jrn__bar"><div class="jrn__fill" id="jrnFill" data-pct="' + pct + '"></div></div>'
+      + '<p class="jrn__hint"><b>' + doneN + ' of ' + steps.length + '</b> done'
+      + (lv + 1 < LEVELS.length ? ' \\u00b7 ' + (nextAt - got) + ' points to <b>' + LEVELS[lv + 1].name + '</b>' : ' \\u00b7 you have the lot \\u2014 thank you')
+      + (nextStep ? ' \\u00b7 next: <b>' + nextStep.t + '</b>' : '') + '</p>'
+      + '<ul class="jrn__list">';
+    steps.forEach(function (s) {
+      var cls = s.done ? 'done' : (s.lock ? 'lock' : 'go');
+      var ic = s.done ? '\\u2713' : (s.lock ? '\\ud83d\\udd12' : '\\u2192');
+      h += '<li class="jrn__row ' + cls + '"' + (!s.done && !s.lock && s.go ? ' data-go="' + s.go + '" tabindex="0" role="button"' : '') + '>'
+        + '<span class="jrn__ic">' + ic + '</span>'
+        + '<span class="jrn__tx">' + s.t + '<small>' + s.s + '</small></span>'
+        + '<span class="jrn__pt">' + (s.lock ? 'on support' : (s.done ? '+' + s.pts : '+' + s.pts)) + '</span></li>';
+    });
+    h += '</ul>';
+    var tip = JTIPS[Math.floor(Date.now() / 86400000) % JTIPS.length];   // steady for the day, not flickering
+    h += '<p class="jrn__tip">\\ud83d\\udca1 <b>Worth knowing:</b> ' + tip + '</p>';
+    h += '</div>';
+    return { html: h, pts: got };
+  }
+  function journeyAnim(pts) {
+    var fill = document.getElementById('jrnFill'), num = document.getElementById('jrnNum');
+    var reduce = false; try { reduce = matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+    if (fill) {
+      if (reduce) fill.style.width = fill.getAttribute('data-pct') + '%';
+      else requestAnimationFrame(function () { requestAnimationFrame(function () { fill.style.width = fill.getAttribute('data-pct') + '%'; }); });
+    }
+    if (num) {
+      if (reduce) { num.textContent = pts; return; }
+      var t0 = null;
+      var step = function (t) {
+        if (t0 === null) t0 = t;
+        var p = Math.min(1, (t - t0) / 1500);
+        num.textContent = Math.round(pts * (1 - Math.pow(1 - p, 3)));
+        if (p < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    }
+  }
+  function journeyBind(d) {
+    Array.prototype.forEach.call(document.querySelectorAll('#p365app .jrn__row[data-go]'), function (row) {
+      var act = function () {
+        var g = row.getAttribute('data-go');
+        if (g === 'book') ovBook();
+        else if (g === 'wifi') ovWifi();
+        else if (g === 'courses') window.open('/free-tools/', '_blank', 'noopener');
+        else if (g === 'app') { var b = document.getElementById('appreq'); if (b) { b.scrollIntoView({ behavior: 'smooth', block: 'center' }); b.focus(); } else window.open('/free-pc-health-check/', '_blank', 'noopener'); }
+        else if (g === 'plans') window.open('/monthly-it-support/', '_blank', 'noopener');
+        else if (g === 'call') window.location.href = 'tel:+441202775566';
+      };
+      row.onclick = act;
+      row.onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); act(); } };
+    });
+  }
+
   // ---------- immersive overlay: tools open OVER the portal, never away from it ----
   var ovEl = null, ovOnClose = null, ovPop = false;
   function ovShut(fromPop) {
@@ -20582,6 +20772,8 @@ def write_portal_page():
       var heroPrimary = null;
       if (ngLive0.length) { ngLive0.sort(function (a, b) { return (b.seen || '').localeCompare(a.seen || ''); }); heroPrimary = ngLive0[0]; }
       var h = heroBlock(d, heroPrimary);
+      var jrn = journeyCard(d);
+      h += jrn.html;
       if (S.back) h = '<div class="card" style="border-color:rgba(29,151,227,.55);padding:.6rem .9rem"><div class="row" style="border:0;padding:0"><span class="quiet" style="margin:0">\\ud83d\\udc41 You\\u2019re viewing the portal as <strong>' + esc(d.name || 'this customer') + '</strong> - exactly what they see.</span><button class="sm" id="backstaff">\\u2190 Back to staff</button></div></div>' + h;
       if (d.pending) h += '<div class="card" style="border-color:rgba(224,179,65,.5)"><p class="quiet">We can see a support plan registered to this email. For security we link it to your web login by hand - it usually appears within a day. Need it sooner? Ring 01202 775566.</p></div>';
       // A BRAND-NEW member (no app checking in, nothing booked) leads with BOOKING:
@@ -20669,6 +20861,9 @@ def write_portal_page():
       bindOut();
       bindFeedback();
       heroAnim(heroPrimary);
+      journeyAnim(jrn.pts);
+      journeyBind(d);
+      JD = d;   // kept so the journey can re-render when the survey count lands
       var qb = document.getElementById('qbook');
       if (qb) qb.onclick = ovBook;
       var qw = document.getElementById('qwifi');
@@ -20862,6 +21057,8 @@ def write_portal_page():
     var box = document.getElementById('mywifi'); if (!box) return;
     post(WIFI, { action: 'list', wtoken: S.wtoken, machine: mid() }).then(function (d) {
       if (!d || !d.ok) { box.innerHTML = '<p class="quiet">Couldn’t load your surveys just now - try again shortly.</p>'; return; }
+      var wasW = JW.wifi; JW.wifi = (d.surveys && d.surveys.length) ? d.surveys.length : 0;
+      if (wasW !== JW.wifi) journeyRefresh();   // the journey notices the survey arriving
       if (!d.surveys || !d.surveys.length) { box.innerHTML = '<p class="quiet">Nothing saved yet. Run the free WiFi survey, then press “Save to my 365 portal” on the tool.</p>'; return; }
       var hh = '';
       d.surveys.forEach(function (w) {
