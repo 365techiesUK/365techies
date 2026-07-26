@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="referrer" content="no-referrer">
+<title>DRAFT — How long do wireless access points really last? | 365 Techies</title>
+<style>
+  :root{--ink:#0b1226;--panel:#0e1730;--line:#26375c;--cyan:#1d97e3;--soft:#86b6e8;--mut:#9db4d4;--white:#eef5fd;--good:#35d07a;--warn:#e0b341;--serif:Georgia,"Times New Roman",serif;--sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;--mono:ui-monospace,Consolas,monospace}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--ink);color:var(--white);font:17px/1.75 var(--sans);-webkit-font-smoothing:antialiased}
+  .draftbar{position:sticky;top:0;z-index:60;background:linear-gradient(90deg,#3d2f07,#4a3a08);border-bottom:1px solid rgba(224,179,65,.5);padding:.6rem 1rem;text-align:center;font:600 .82rem/1.5 var(--mono);letter-spacing:.06em;color:#f2d688}
+  .wrap{max-width:760px;margin:0 auto;padding:2.6rem 1.15rem 6rem}
+  .kicker{font:600 .74rem/1 var(--mono);letter-spacing:.16em;color:var(--cyan);text-transform:uppercase;margin-bottom:1rem}
+  h1{font:700 clamp(1.9rem,5vw,2.7rem)/1.15 var(--sans);letter-spacing:-.02em;margin-bottom:.9rem}
+  .stand{color:var(--mut);font-size:1.12rem;line-height:1.7;margin-bottom:.7rem}
+  .byline{color:var(--soft);font:500 .85rem/1.6 var(--mono);margin-bottom:2.4rem;padding-bottom:1.6rem;border-bottom:1px solid var(--line)}
+  h2{font:700 1.45rem/1.3 var(--sans);letter-spacing:-.01em;margin:2.6rem 0 .8rem}
+  h3{font:700 1.08rem/1.4 var(--sans);margin:1.8rem 0 .5rem}
+  p{margin:.85rem 0;color:#d4e2f4}
+  strong{color:var(--white)}
+  a{color:var(--soft)}
+  ul,ol{margin:.85rem 0 .85rem 1.3rem;color:#d4e2f4}
+  li{margin:.45rem 0}
+  .callout{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--cyan);border-radius:0 12px 12px 0;padding:1rem 1.2rem;margin:1.4rem 0}
+  .callout.h{border-left-color:var(--warn)}
+  .callout p{margin:.4rem 0}
+  table{width:100%;border-collapse:collapse;margin:1.4rem 0;font-size:.92rem}
+  th,td{text-align:left;padding:.55rem .65rem;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--soft);font:600 .78rem/1.4 var(--mono);letter-spacing:.05em;text-transform:uppercase}
+  td:first-child{color:var(--mut)}
+  .tbl{overflow-x:auto;border:1px solid var(--line);border-radius:12px;padding:0 .4rem;background:rgba(255,255,255,.015)}
+  .yes{color:var(--good);font-weight:600}.no{color:#e8899b;font-weight:600}
+  .src{font-size:.85rem;color:var(--mut)}
+  .src li{margin:.3rem 0}
+  .foot{margin-top:3rem;padding-top:1.4rem;border-top:1px solid var(--line);color:var(--mut);font-size:.92rem}
+  ::selection{background:rgba(29,151,227,.4)}
+
+  /* ---- review layer ---- */
+  #notebtn{position:absolute;display:none;z-index:70;background:var(--cyan);color:#fff;border:0;border-radius:999px;padding:.45rem .9rem;font:700 .82rem/1 var(--sans);cursor:pointer;box-shadow:0 8px 22px rgba(0,0,0,.45)}
+  #panel{position:fixed;right:0;top:0;bottom:0;width:min(380px,92vw);background:#0a1226;border-left:1px solid var(--line);z-index:80;transform:translateX(100%);transition:transform .3s ease;display:flex;flex-direction:column;box-shadow:-18px 0 50px rgba(0,0,0,.5)}
+  #panel.open{transform:none}
+  #panel header{padding:1.1rem 1.2rem .8rem;border-bottom:1px solid var(--line)}
+  #panel h4{font:700 1rem/1.3 var(--sans)}
+  #panel .sub{color:var(--mut);font-size:.8rem;margin-top:.2rem}
+  #notes{flex:1;overflow-y:auto;padding:1rem 1.2rem}
+  .note{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:.7rem .85rem;margin-bottom:.7rem;font-size:.85rem}
+  .note q{display:block;color:var(--soft);font-style:italic;border-left:2px solid var(--cyan);padding-left:.6rem;margin-bottom:.45rem;quotes:"\201C" "\201D"}
+  .note .nx{float:right;background:none;border:0;color:var(--mut);cursor:pointer;font-size:1rem}
+  #panel footer{padding:1rem 1.2rem 1.3rem;border-top:1px solid var(--line)}
+  #gnote{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:10px;color:var(--white);font:inherit;font-size:.9rem;padding:.6rem .7rem;resize:vertical;min-height:64px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:.45rem;border:0;border-radius:999px;padding:.7rem 1.25rem;font:700 .9rem/1 var(--sans);cursor:pointer;transition:filter .2s}
+  .btn:hover{filter:brightness(1.12)}
+  .btn.send{background:var(--cyan);color:#fff}
+  .btn.approve{background:var(--good);color:#062512}
+  .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--soft)}
+  .btnrow{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.7rem}
+  #paneltab{position:fixed;right:1rem;bottom:1rem;z-index:79;background:var(--cyan);color:#fff;border:0;border-radius:999px;padding:.85rem 1.3rem;font:700 .9rem/1 var(--sans);cursor:pointer;box-shadow:0 12px 30px rgba(0,0,0,.5)}
+  #paneltab b{background:#fff;color:var(--cyan);border-radius:999px;padding:.1rem .5rem;margin-left:.3rem;font-size:.8rem}
+  .msg{font-size:.82rem;color:var(--mut);margin-top:.5rem;min-height:1.1em}
+  .done{color:var(--good)}
+  mark.hl{background:rgba(29,151,227,.28);color:inherit;border-radius:3px}
+  @media(max-width:640px){body{font-size:16px}}
+  @media(prefers-reduced-motion:reduce){#panel{transition:none}}
+</style>
+</head>
+<body>
+
+<div class="draftbar">PRIVATE DRAFT &middot; NOT PUBLISHED &middot; SHARED WITH YOU FOR EXPERT REVIEW &middot; HIGHLIGHT ANY TEXT TO ADD A NOTE</div>
+
+<article class="wrap" id="article">
+  <p class="kicker">// BUSINESS WIFI &middot; HONEST GUIDE</p>
+  <h1>How long do wireless access points really last?</h1>
+  <p class="stand">The honest answer for busy sites &mdash; what actually ages an estate, the signs it&rsquo;s past its best, and a proper look at one of the most common upgrades in the field right now: RUCKUS R510 to R550.</p>
+  <p class="byline">365 Techies &middot; Bournemouth &middot; independent &mdash; we are not affiliated with RUCKUS or CommScope. Every specification below is taken from the official datasheets and end-of-life notices, linked at the end.</p>
+
+  <h2>The short answer: 5&ndash;7 years &mdash; but not for the reason you&rsquo;d think</h2>
+  <p>Ask around the industry and you&rsquo;ll hear refresh cycles of anywhere from three to seven years. There&rsquo;s no official analyst number behind that &mdash; it&rsquo;s working convention. What <em>is</em> hard fact is this: <strong>access points are almost never retired because the hardware dies. They&rsquo;re retired because the world around them moves.</strong></p>
+  <p>Three clocks run on every estate:</p>
+  <ul>
+    <li><strong>The support clock.</strong> Vendors publish end-of-sale and end-of-support dates, and they arrive faster than people expect. Cisco Meraki&rsquo;s Wi-Fi 5 generation (MR33/42/52/53) reached end of support on 21 July 2026 &mdash; this month &mdash; meaning no more security updates at all.</li>
+    <li><strong>The client clock.</strong> The devices in your staff&rsquo;s and customers&rsquo; pockets outrun the ceiling. Apple&rsquo;s first Wi-Fi 6E iPhone shipped in September 2023; the entire iPhone 16 range speaks Wi-Fi 7. A Wi-Fi 5 access point can&rsquo;t use any of what those handsets are capable of &mdash; every year, a larger share of your traffic is negotiating down.</li>
+    <li><strong>The software clock.</strong> Older hardware gets pinned to older firmware branches, and eventually the management platform moves on without it. This one quietly decides more upgrades than any radio spec &mdash; more on it below, because it&rsquo;s the trap mixed estates fall into.</li>
+  </ul>
+
+  <h2>Do access points physically wear out? An honest answer</h2>
+  <p>Mostly, no &mdash; and we&rsquo;d rather tell you that straight than sell you fear. The component engineers actually point at is the humble electrolytic capacitor, which dries out gradually with heat and age, and power supplies/PoE injectors fail more often than the access points they feed. Ceiling voids run hot, and thermal stress is real enough that some vendors build formal protection for it &mdash; Aruba access points will shut their radios down and reboot when they overheat.</p>
+  <div class="callout h">
+    <p><strong>What we won&rsquo;t claim:</strong> you&rsquo;ll sometimes read that old access points &ldquo;transmit weaker over time&rdquo;. The proposed mechanism (RF transistor junctions failing gradually) is discussed by engineers, but nobody publishes measured output-power-versus-age data, and practitioners report noticeable RF degradation is rare. So we treat it as unproven &mdash; the case for replacing old access points doesn&rsquo;t need it, and it&rsquo;s stronger without it.</p>
+  </div>
+  <p>What certainly <em>does</em> degrade is the match between an old radio and a modern room: more devices, chattier apps, video everywhere, and clients whose best features fall on deaf ears.</p>
+
+  <h2>A worked example: RUCKUS R510 vs R550</h2>
+  <p>This pairing comes up constantly, because RUCKUS itself names the R550 as the recommended replacement for the R510 &mdash; and because thousands of sites fitted R510s in the late 2010s that are now due a decision. Here&rsquo;s the honest side-by-side, from the official datasheets:</p>
+  <div class="tbl"><table>
+    <tr><th></th><th>RUCKUS R510</th><th>RUCKUS R550</th></tr>
+    <tr><td>Generation</td><td>Wi-Fi 5 Wave 2 (802.11ac)</td><td class="yes">Wi-Fi 6 (802.11ax)</td></tr>
+    <tr><td>Launched</td><td>2016</td><td>2020</td></tr>
+    <tr><td>Max PHY rate</td><td>867 + 300 Mbps</td><td>1,200 + 574 Mbps</td></tr>
+    <tr><td>Spatial streams</td><td>2&times;2:2 both bands</td><td>2&times;2:2 both bands</td></tr>
+    <tr><td>OFDMA / TWT</td><td class="no">No</td><td class="yes">Yes (uplink &amp; downlink OFDMA)</td></tr>
+    <tr><td>WPA3</td><td class="no">No</td><td class="yes">Personal &amp; Enterprise</td></tr>
+    <tr><td>802.11k/v/r roaming</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
+    <tr><td>Power</td><td>Full function on 802.3af (12.6&nbsp;W)</td><td>Needs 802.3at for full function (18.7&nbsp;W); features disabled on plain 802.3af</td></tr>
+    <tr><td>IoT radios</td><td class="no">&mdash;</td><td class="yes">BLE + Zigbee onboard</td></tr>
+    <tr><td>Status (July 2026)</td><td>End of sale 31 Jan 2022 &middot; <strong>supported until 31 Dec 2028</strong> &middot; last software SZ 6.1.x / ZD 10.5.x</td><td class="yes">Current product</td></tr>
+  </table></div>
+  <div class="callout">
+    <p><strong>Two things worth saying plainly.</strong> First: the R510 is <em>not</em> obsolete &mdash; RUCKUS supports it until the end of 2028, and it still does honest work in quiet spaces. Second: it hasn&rsquo;t been possible to buy a new one since January 2022, so every failure from here is a hunt for refurbished stock &mdash; and the roaming standards are <em>not</em> the difference between these two models. Both speak 802.11k/v/r. The real differences are the generation (OFDMA, TWT, WPA3) and, critically, the software ceiling.</p>
+  </div>
+  <p>Interesting footnote for anyone planning further ahead: the current mid-tier RUCKUS is the Wi-Fi 7 <strong>R575</strong> &mdash; there&rsquo;s no &ldquo;R570&rdquo;, despite what the naming pattern suggests. On a two-stream access point like the R550, it&rsquo;s the OFDMA scheduling rather than MU-MIMO doing most of the busy-site work &mdash; and only Wi-Fi 6-capable clients get those benefits, which is why the client clock above matters so much.</p>
+
+  <h2>The mixed-estate trap: why two new access points don&rsquo;t fix sixteen old ones</h2>
+  <p>A very common pattern: an estate of older access points, topped up over the years with a couple of new ones. It feels like a gradual upgrade. In practice, three things bite:</p>
+  <ol>
+    <li><strong>Clients are sticky and clients decide.</strong> Roaming standards help an access point <em>suggest</em> a move, but the device chooses &mdash; and devices routinely cling to the access point they know, even when a far better one hangs ten metres away. Two fast radios in a building of slow ones mostly serve whoever happens to associate with them.</li>
+    <li><strong>The estate runs at the pace of its oldest member.</strong> The R510&rsquo;s software line tops out at SmartZone 6.1.x / ZoneDirector 10.5.x, while the current SmartZone train is 7.x. Keep R510s and R550s in one estate and either the whole zone stays pinned on the old branch &mdash; new hardware, old software &mdash; or the estate splits in two. Neither is where you want to live for long.</li>
+    <li><strong>Capacity problems are additive.</strong> Congestion on a busy floor is about airtime, and airtime is shared. A handful of efficient radios can&rsquo;t give back the airtime sixteen inefficient ones are spending.</li>
+  </ol>
+
+  <h2>Testing with a single swapped access point &mdash; done honestly</h2>
+  <p>Swapping one new access point into a problem area is a perfectly good test &mdash; <em>if it&rsquo;s judged fairly.</em> One access point out of sixteen will not transform a building, and it was never going to. Judge it like this:</p>
+  <ul>
+    <li>Measure <strong>in the swapped access point&rsquo;s own coverage area</strong> &mdash; the room it serves, not the far end of the site.</li>
+    <li>Measure <strong>the same physical spots before and after</strong>, at similar times of day, with the same device.</li>
+    <li>Expect other rooms to be unchanged. Devices elsewhere are still on the old radios &mdash; that isn&rsquo;t the test failing; it&rsquo;s the mixed-estate trap demonstrating itself.</li>
+  </ul>
+  <p>Our free, no-sign-up <a href="https://365techies.co.uk/wifi-signal-test/">WiFi Optimizer</a> was built for exactly this: room-by-room scoring, saved history so before-and-after is a fair comparison, and a report you can put in front of whoever signs the purchase order.</p>
+
+  <h2>What management and licensing actually cost</h2>
+  <p>The access points are only half the conversation with RUCKUS kit; the management layer is the other half, and it&rsquo;s changed shape over the years:</p>
+  <ul>
+    <li><strong>Unleashed</strong> (controller-less, built into the access points): <strong>no licences at all</strong>, up to 128 access points &mdash; for many small and mid-size sites this is the quietly brilliant option.</li>
+    <li><strong>ZoneDirector</strong> (the classic hardware controller): effectively the end of the road &mdash; the ZD1200 went end-of-sale in August 2022 and its software line has had its final release. Estates still on one need a destination plan.</li>
+    <li><strong>SmartZone</strong> (on-premises or virtual): the current controller platform, now on the 7.x train &mdash; which, note, is past the R510&rsquo;s ceiling.</li>
+    <li><strong>RUCKUS One</strong> (cloud): subscription per device, in tiered plans. Public list pricing isn&rsquo;t published, so treat any number you&rsquo;re quoted as a dealer price to be compared &mdash; and remember it&rsquo;s a recurring cost that belongs in the whole-life budget next to the hardware.</li>
+  </ul>
+
+  <h2>The signs an estate has aged out &mdash; a checklist</h2>
+  <ul>
+    <li>&ldquo;WiFi&rsquo;s slow&rdquo; complaints that cluster at busy times of day, not one location</li>
+    <li>Fast next to an access point, poor two rooms away &mdash; coverage designed for fewer walls and fewer devices</li>
+    <li>Devices clinging to distant access points after walking across the building</li>
+    <li>An estate that can&rsquo;t do WPA3, on hardware that stopped being sold years ago</li>
+    <li>Management software pinned on an old release because one model can&rsquo;t follow</li>
+    <li>More devices per person than the site was designed for &mdash; phones, tablets, card machines, TVs, sensors</li>
+    <li>Occasional unexplained access-point reboots, especially in warm ceiling voids</li>
+  </ul>
+
+  <h2>When to upgrade &mdash; and how to do it without wasting money</h2>
+  <p>Our honest rule of thumb: <strong>if an estate is end-of-sale, can&rsquo;t follow the current software, and serves a busier room than it was designed for &mdash; any two of those three &mdash; plan the refresh now</strong>, on your timetable, rather than after the fifth complaint or the first dead unit that can&rsquo;t be replaced like-for-like. Measure first, so the plan is sized by evidence rather than guesswork; buy the current generation, not the outgoing one, so the next five to seven years are genuinely yours; and budget the licensing alongside the hardware, because with some platforms it&rsquo;s the larger number.</p>
+
+  <div class="foot">
+    <p><strong>About us:</strong> 365 Techies is a family-run IT firm in Bournemouth, trading since 1995 &mdash; independent, and not affiliated with RUCKUS or CommScope. We diagnose business WiFi with measurements rather than opinions, and plan upgrades sized by evidence. If your estate is showing the signs above: 01202 775566.</p>
+    <h3 style="margin-top:1.6rem">Sources</h3>
+    <ul class="src">
+      <li>RUCKUS R510 datasheet &mdash; webresources.ruckuswireless.com/datasheets/r510/</li>
+      <li>RUCKUS R550 datasheet &mdash; webresources.ruckuswireless.com/datasheets/r550/</li>
+      <li>RUCKUS end-of-life tables (R510: EoS 31/01/2022, EoSupport 31/12/2028) &mdash; support.ruckuswireless.com/end-of-life-tables</li>
+      <li>ZoneDirector 1200 end-of-sale announcement &mdash; support.ruckuswireless.com/documents/4144</li>
+      <li>RUCKUS Unleashed FAQ (no AP capacity licences) &amp; portfolio datasheet (128 APs)</li>
+      <li>Wi-Fi Alliance, Wi-Fi CERTIFIED 6 (OFDMA, TWT) &mdash; wi-fi.org</li>
+      <li>Cisco Meraki end-of-life dates (MR33/42/52/53 end of support 21 July 2026) &mdash; documentation.meraki.com</li>
+      <li>Apple deployment documentation (iPhone Wi-Fi capabilities) &mdash; support.apple.com</li>
+      <li>Aruba thermal management documentation &mdash; arubanetworking.hpe.com</li>
+    </ul>
+  </div>
+</article>
+
+<button id="notebtn" type="button">&#9998; Add a note</button>
+<button id="paneltab" type="button">Review notes <b id="ncount">0</b></button>
+
+<aside id="panel" aria-label="Review notes">
+  <header>
+    <h4>Your review notes</h4>
+    <p class="sub">Highlight any text in the article to attach a note to it. Notes come straight to Steve &amp; David &mdash; nothing is published without your say-so.</p>
+  </header>
+  <div id="notes"><p class="sub" id="emptymsg" style="padding:.4rem 0">No notes yet.</p></div>
+  <footer>
+    <textarea id="gnote" placeholder="General comments &mdash; anything we've missed, overstated or got wrong?"></textarea>
+    <div class="btnrow">
+      <button class="btn send" id="sendbtn" type="button">Send notes to Steve &amp; David</button>
+      <button class="btn approve" id="okbtn" type="button">&#10003; Approve for publication</button>
+    </div>
+    <p class="msg" id="fmsg"></p>
+  </footer>
+</aside>
+
+<script>
+(function () {
+  var API = '/api/pcm-draftfb.php', DOC = 'r510';
+  var notes = [];
+  try { notes = JSON.parse(localStorage.getItem('draft-r510-notes') || '[]') || []; } catch (e) {}
+  var btn = document.getElementById('notebtn'), panel = document.getElementById('panel'),
+      tab = document.getElementById('paneltab'), list = document.getElementById('notes'),
+      count = document.getElementById('ncount'), fmsg = document.getElementById('fmsg');
+
+  function save() { try { localStorage.setItem('draft-r510-notes', JSON.stringify(notes)); } catch (e) {} }
+  function esc(s) { var d = document.createElement('div'); d.textContent = String(s == null ? '' : s); return d.innerHTML; }
+  function render() {
+    count.textContent = notes.length;
+    var em = document.getElementById('emptymsg'); if (em) em.style.display = notes.length ? 'none' : '';
+    list.querySelectorAll('.note').forEach(function (n) { n.remove(); });
+    notes.forEach(function (n, i) {
+      var d = document.createElement('div'); d.className = 'note';
+      d.innerHTML = '<button class="nx" title="Remove" data-i="' + i + '">&times;</button>'
+        + (n.quote ? '<q>' + esc(n.quote.length > 140 ? n.quote.slice(0, 140) + '…' : n.quote) + '</q>' : '')
+        + esc(n.text);
+      list.appendChild(d);
+    });
+    list.querySelectorAll('.nx').forEach(function (x) {
+      x.onclick = function () { notes.splice(+x.getAttribute('data-i'), 1); save(); render(); };
+    });
+  }
+
+  document.addEventListener('selectionchange', function () {
+    var sel = window.getSelection();
+    if (!sel || sel.isCollapsed || !sel.toString().trim()) { btn.style.display = 'none'; return; }
+    var r = sel.getRangeAt(0);
+    if (!document.getElementById('article').contains(r.commonAncestorContainer)) { btn.style.display = 'none'; return; }
+    var rect = r.getBoundingClientRect();
+    btn.style.display = 'block';
+    btn.style.top = (window.scrollY + rect.top - 44) + 'px';
+    btn.style.left = Math.max(8, window.scrollX + rect.left + rect.width / 2 - 55) + 'px';
+  });
+  btn.addEventListener('mousedown', function (e) { e.preventDefault(); });
+  btn.onclick = function () {
+    var sel = window.getSelection(); var q = sel ? sel.toString().trim() : '';
+    if (!q) return;
+    var t = prompt('Your note on:\n“' + (q.length > 90 ? q.slice(0, 90) + '…' : q) + '”');
+    if (t === null) return;
+    notes.push({ quote: q, text: (t || '').trim() || '(flagged, no comment)' });
+    save(); render();
+    panel.classList.add('open');
+    btn.style.display = 'none';
+    try { sel.removeAllRanges(); } catch (e) {}
+  };
+  tab.onclick = function () { panel.classList.toggle('open'); };
+
+  function post(kind, quote, text) {
+    return fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ d: DOC, kind: kind, quote: quote || '', note: text || '', hp: '' }), cache: 'no-store' })
+      .then(function (r) { return r.json(); });
+  }
+  document.getElementById('sendbtn').onclick = function () {
+    var g = document.getElementById('gnote').value.trim();
+    var all = notes.slice(); if (g) all.push({ quote: '', text: g });
+    if (!all.length) { fmsg.textContent = 'Add a note first — highlight any text, or use the box above.'; return; }
+    fmsg.textContent = 'Sending…';
+    var chain = Promise.resolve();
+    all.forEach(function (n) { chain = chain.then(function () { return post('note', n.quote, n.text); }); });
+    chain.then(function () {
+      fmsg.innerHTML = '<span class="done">✓ Sent — thank you. We’ll act on every one.</span>';
+      notes = []; save(); render(); document.getElementById('gnote').value = '';
+    }).catch(function () { fmsg.textContent = 'Couldn’t send just now — please try again, or email us.'; });
+  };
+  document.getElementById('okbtn').onclick = function () {
+    if (!confirm('Approve this article for publication on 365techies.co.uk?')) return;
+    fmsg.textContent = 'Sending…';
+    post('approve', '', document.getElementById('gnote').value.trim())
+      .then(function () { fmsg.innerHTML = '<span class="done">✓ Approved — thank you, genuinely. We’ll take it from here.</span>'; })
+      .catch(function () { fmsg.textContent = 'Couldn’t send just now — please try again, or email us.'; });
+  };
+  render();
+})();
+</script>
+</body>
+</html>
