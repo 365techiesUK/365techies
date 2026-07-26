@@ -792,6 +792,12 @@ if ($action === 'verifycode') {
         }
         if (sb_net($ac) || empty($ac['result'])) {
             $w = sb_why($ac);
+            // SimplyBook can insist on a phone number for new client records ("Mandatory
+            // registration fields: Phone"). Ask for one rather than dead-ending the
+            // sign-up - the customer's code is still valid, because we only burn it once
+            // SimplyBook has succeeded.
+            if ($jphone === '' && preg_match('/required|empty|mandator/i', $w))
+                out(array('ok' => false, 'error' => 'needphone'));
             sb_alarm('creating the customer (addClient) failed', $w);
             out(array('ok' => false, 'error' => 'sb_unavailable', 'at' => 'addClient', 'why' => $w));
         }

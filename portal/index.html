@@ -988,6 +988,9 @@
       + '<p class="lede">' + lede + '</p>'
       + '<div class="card"><label>Your 6-digit code</label>'
       + '<input id="cd" inputmode="numeric" autocomplete="one-time-code" style="font-size:1.6rem;letter-spacing:.4em;text-align:center;font-family:Consolas,monospace" />'
+      + '<div id="cphonebox" style="display:none;margin-top:.6rem"><label>Your phone number</label>'
+      + '<input id="cphone" type="tel" inputmode="tel" autocomplete="tel" placeholder="01202 775566 - a landline is fine" />'
+      + '<p class="quiet" style="margin:.3rem 0 0">We need a number so we can ring you before we arrive or connect. We never pass it on to anyone.</p></div>'
       + '<button id="cgo">Sign me in</button><div class="err" id="cerr"></div>'
       + '<p class="quiet"><a href="#" id="cback">Wrong email, or need a fresh code? Go back</a></p>'
       + '<p class="quiet">Remember: we never email or text sign-in links - only codes like this. Never read your code to anyone who rings you.<br />Stuck? Ring us on 01202 775566 and we\u2019ll sort it together.</p></div>';
@@ -998,11 +1001,20 @@
       var cb = document.getElementById('cgo');
       document.getElementById('cerr').textContent = '';
       cb.disabled = true;
-      post(BK, { action: 'verifycode', email: je, code: cd.value.trim(), name: jn, machine: mid(), shared: shared ? 1 : 0, marketing: marketing ? 1 : 0 })
+      var pbx = document.getElementById('cphone');
+      post(BK, { action: 'verifycode', email: je, code: cd.value.trim(), name: jn, machine: mid(), shared: shared ? 1 : 0, marketing: marketing ? 1 : 0, phone: pbx ? pbx.value.trim() : '' })
         .then(function (d) {
           cb.disabled = false;
           if (d && d.ok && d.staff) { S = { staff: true, stoken: d.stoken, email: d.customer, trust: !!d.trust }; saveS(); showStaff(); }
           else if (d && d.ok && d.wtoken) { S = { wtoken: d.wtoken, name: d.customer || jn, tier: d.tier, pending: !!d.pending }; saveS(); showDash(); }
+          else if (d && d.error === 'needphone') {
+            // our booking system requires a number on a new customer record - ask for it
+            // rather than dead-ending; the typed code is still valid
+            document.getElementById('cphonebox').style.display = 'block';
+            document.getElementById('cgo').textContent = 'Finish signing me in';
+            document.getElementById('cerr').textContent = 'Almost there - we just need a phone number to finish setting you up.';
+            if (pbx) pbx.focus();
+          }
           else document.getElementById('cerr').textContent =
             d && d.error === 'wrong_code' ? 'That code isn\u2019t right - check and try again.'
             : d && d.error === 'code_expired' ? 'That code has expired - go back and ask for a fresh one.'
