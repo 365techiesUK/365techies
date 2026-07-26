@@ -745,6 +745,52 @@
   #p365app .card.zup { z-index:60; }
   #p365app .tline.zup { animation:none; position:relative; z-index:70; }
   #p365app .adrop.up { top:auto; bottom:calc(100% + 4px); }
+  /* ---------- THE HERO -------------------------------------------------------
+     The portal's job in its first second is to answer "how are things?" without
+     the customer reading anything. A stack of equal-weight boxes cannot do that;
+     one calm status panel can. Adaptive: a live health ring when their PC reports
+     in, a warm next-visit hero when it does not. Motion is deliberate and gentle -
+     this is read by people in their seventies, so nothing darts or bounces. */
+  #p365app .hero { position:relative; overflow:hidden; background:
+      radial-gradient(120% 140% at 12% 0%, rgba(29,151,227,.20), transparent 58%),
+      radial-gradient(90% 120% at 100% 8%, rgba(0,206,27,.13), transparent 60%),
+      linear-gradient(160deg,#101c3c,#0b1327 62%);
+    border:1px solid #2b3f6d; border-radius:20px; padding:1.5rem 1.6rem 1.35rem; margin-bottom:1rem;
+    box-shadow:0 22px 60px rgba(0,0,0,.42); animation:p365fadeUp .6s ease both; }
+  #p365app .hero::after { content:''; position:absolute; inset:-40% -10% auto -10%; height:80%;
+    background:radial-gradient(closest-side, rgba(29,151,227,.16), transparent);
+    animation:p365drift 14s ease-in-out infinite alternate; pointer-events:none; }
+  #p365app .hero__top { display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; position:relative; z-index:2; }
+  #p365app .hero__hi { font:700 clamp(1.5rem,4.4vw,2.05rem)/1.15 inherit; letter-spacing:-.02em; margin:0; color:var(--pwhite); }
+  #p365app .hero__sub { color:var(--psoft); font-size:.92rem; margin:.3rem 0 0; }
+  #p365app .hero__body { display:flex; align-items:center; gap:1.4rem; margin-top:1.15rem; position:relative; z-index:2; flex-wrap:wrap; }
+  #p365app .hero__ring { position:relative; width:112px; height:112px; flex:0 0 112px; }
+  #p365app .hero__ring svg { transform:rotate(-90deg); display:block; }
+  #p365app .hero__ring circle:last-child { transition:stroke-dasharray 1.4s cubic-bezier(.22,.7,.25,1); }
+  #p365app .hero__ring b { position:absolute; inset:0; display:grid; place-items:center; font:700 1.72rem/1 inherit; letter-spacing:-.02em; }
+  #p365app .hero__ring i { position:absolute; left:0; right:0; bottom:8px; text-align:center; font-style:normal;
+    font:600 .58rem/1 ui-monospace,Consolas,monospace; letter-spacing:.14em; color:var(--pmut); text-transform:uppercase; }
+  #p365app .hero__say { flex:1; min-width:210px; }
+  #p365app .hero__verdict { font:700 1.22rem/1.3 inherit; letter-spacing:-.01em; margin:0 0 .3rem; }
+  #p365app .hero__note { color:var(--pmut); font-size:.93rem; margin:0; line-height:1.55; }
+  #p365app .hero__note strong { color:var(--pwhite); }
+  #p365app .hero__when { display:inline-flex; align-items:center; gap:.45rem; margin-top:.7rem;
+    background:rgba(29,151,227,.14); border:1px solid rgba(29,151,227,.42); border-radius:999px;
+    padding:.4rem .85rem; font-size:.88rem; color:#cfe6fa; }
+  #p365app .hero__when b { color:#fff; font-weight:700; }
+  #p365app .hero__cd { background:var(--pcyan); color:#fff; border-radius:999px; padding:.08rem .5rem; font:700 .78rem/1.5 inherit; }
+  /* quick actions - the four things people actually come here to do */
+  #p365app .qacts { display:grid; grid-template-columns:repeat(auto-fit,minmax(112px,1fr)); gap:.55rem; margin-top:1.2rem; position:relative; z-index:2; }
+  #p365app .qact { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.35rem;
+    background:rgba(255,255,255,.055); border:1px solid rgba(125,170,220,.3); border-radius:14px; padding:.8rem .5rem;
+    color:var(--pwhite); font:600 .84rem/1.2 inherit; text-decoration:none; cursor:pointer; min-height:74px;
+    transition:transform .18s ease, background .18s ease, border-color .18s ease; animation:p365popIn .5s ease both; }
+  #p365app .qact:nth-child(2){animation-delay:.06s} #p365app .qact:nth-child(3){animation-delay:.12s} #p365app .qact:nth-child(4){animation-delay:.18s}
+  #p365app .qact:hover, #p365app .qact:focus-visible { transform:translateY(-3px); background:rgba(29,151,227,.16); border-color:var(--pcyan); outline:none; }
+  #p365app .qact span { font-size:1.35rem; line-height:1; }
+  #p365app .qact.sos { background:rgba(232,99,126,.12); border-color:rgba(232,99,126,.42); }
+  #p365app .qact.sos:hover { background:rgba(232,99,126,.2); border-color:#e8637e; }
+  @keyframes p365drift { from { transform:translateX(-6%) } to { transform:translateX(6%) } }
   @keyframes p365fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:none; } }
   @keyframes p365popIn { from { opacity:0; transform:scale(.96); } to { opacity:1; transform:none; } }
   #p365app h1, #p365app .lede { animation:p365fadeUp .5s ease both; }
@@ -900,6 +946,94 @@
   }
   function topRow(title) {
     return '<div class="ptop"><h1>' + title + '</h1><button class="sm ghost" id="sout">Sign out</button></div>';
+  }
+  // ---------- the hero: answer "how are things?" before anything is read ----------
+  function greetWord() {
+    var h = new Date().getHours();
+    return h < 12 ? 'Good morning' : (h < 18 ? 'Good afternoon' : 'Good evening');
+  }
+  function daysUntil(ts) {
+    var a = new Date(); a.setHours(0, 0, 0, 0);
+    var b = new Date(ts * 1000); b.setHours(0, 0, 0, 0);
+    return Math.round((b - a) / 86400000);
+  }
+  function whenPhrase(ts) {
+    if (!ts) return '';
+    var d = daysUntil(ts);
+    if (d < 0) return '';
+    if (d === 0) return 'today';
+    if (d === 1) return 'tomorrow';
+    if (d < 7) return 'in ' + d + ' days';
+    if (d < 14) return 'next week';
+    return 'in ' + Math.round(d / 7) + ' weeks';
+  }
+  function heroBlock(d, primary) {
+    var name = esc((d.name || '').split(' ')[0] || 'there');
+    var when = d.next_ts ? whenPhrase(d.next_ts) : '';
+    var ringScore = primary ? parseInt(primary.score, 10) : null;
+    var col = primary ? (ringScore >= 80 ? 'var(--pgood)' : (ringScore >= 55 ? 'var(--pwarn)' : 'var(--pbad)')) : 'var(--pcyan)';
+    var verdict, note;
+    if (primary) {
+      verdict = ringScore >= 80 ? 'Everything looks well' : (ringScore >= 55 ? 'A couple of things worth a look' : 'Your PC needs some attention');
+      note = esc(primary.name) + (primary.verdict ? ' \u00b7 ' + esc(primary.verdict) : '');
+    } else if (d.next_ts) {
+      verdict = 'You\u2019re all set';
+      note = 'We\u2019ll ring you before we arrive \u2014 we never turn up out of the blue.';
+    } else {
+      verdict = 'Welcome to your 365 portal';
+      note = 'Everything we do for you lives here \u2014 book a visit, see your reports, and use our free tools whenever you like.';
+    }
+    var circ = 2 * Math.PI * 48;
+    var pct = primary ? ringScore : 100;
+    var h = '<div class="hero"><div class="hero__top"><div>'
+      + '<h1 class="hero__hi">' + greetWord() + ', ' + name + '</h1>'
+      + '<p class="hero__sub">' + (d.tier === 'pro' ? 'You\u2019re on 365 support \u00b7 we look after this for you' : 'Your 365 Club membership \u00b7 free, forever') + '</p>'
+      + '</div><button class="sm ghost" id="sout">Sign out</button></div>'
+      + '<div class="hero__body">'
+      + '<div class="hero__ring"><svg width="112" height="112" viewBox="0 0 112 112" aria-hidden="true">'
+      + '<circle cx="56" cy="56" r="48" fill="none" stroke="rgba(125,170,220,.18)" stroke-width="9"/>'
+      + '<circle id="heroArc" cx="56" cy="56" r="48" fill="none" stroke="' + col + '" stroke-width="9" stroke-linecap="round" stroke-dasharray="0 ' + circ.toFixed(1) + '"/>'
+      + '</svg><b id="heroNum" style="color:' + col + '">' + (primary ? '0' : '\u2713') + '</b>'
+      + (primary ? '<i>health</i>' : '<i>member</i>') + '</div>'
+      + '<div class="hero__say"><p class="hero__verdict">' + verdict + '</p>'
+      + '<p class="hero__note">' + note + '</p>'
+      + (d.next ? '<div class="hero__when">\ud83d\udcc5 Next visit <b>' + esc(d.next) + '</b>'
+                  + (when ? ' <span class="hero__cd">' + when + '</span>' : '') + '</div>' : '')
+      + '</div></div>'
+      + '<div class="qacts">'
+      + '<button type="button" class="qact" id="qbook"><span>\ud83d\udcc5</span>Book a visit</button>'
+      + '<a class="qact sos" href="/sos/" target="_blank" rel="noopener"><span>\ud83c\udd98</span>Remote help</a>'
+      + '<a class="qact" href="/wifi-signal-test/" target="_blank" rel="noopener"><span>\ud83d\udcf6</span>Test my WiFi</a>'
+      + '<a class="qact" href="tel:+441202775566"><span>\ud83d\udcde</span>Call us</a>'
+      + '</div></div>';
+    return h;
+  }
+  function heroAnim(primary) {
+    var arc = document.getElementById('heroArc'), num = document.getElementById('heroNum');
+    if (!arc) return;
+    var circ = 2 * Math.PI * 48;
+    var target = primary ? Math.max(0, Math.min(100, parseInt(primary.score, 10) || 0)) : 100;
+    var reduce = false;
+    try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+    if (reduce) {
+      arc.setAttribute('stroke-dasharray', (circ * target / 100).toFixed(1) + ' ' + circ.toFixed(1));
+      if (num && primary) num.textContent = target + '%';
+      return;
+    }
+    requestAnimationFrame(function () { requestAnimationFrame(function () {
+      arc.setAttribute('stroke-dasharray', (circ * target / 100).toFixed(1) + ' ' + circ.toFixed(1));
+    }); });
+    if (num && primary) {   // count the number up alongside the arc drawing
+      var t0 = null, dur = 1400;
+      var step = function (t) {
+        if (t0 === null) t0 = t;
+        var p = Math.min(1, (t - t0) / dur);
+        var eased = 1 - Math.pow(1 - p, 3);
+        num.textContent = Math.round(target * eased) + '%';
+        if (p < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    }
   }
   function bindOut() { var b = document.getElementById('sout'); if (b) b.onclick = sOut; }
   function bindFeedback() {
@@ -1319,7 +1453,11 @@
         showSignin('Your session expired - please sign in again.'); return;
       }
       if (d.next_ts && d.next_ts * 1000 < Date.now()) d.next = '';
-      var h = topRow('Hello ' + esc((d.name || '').split(' ')[0] || 'there'));
+      // the hero needs the primary machine, so work it out BEFORE building the page
+      var ngLive0 = d.machines.filter(function (mm) { return !mm.fresh; });
+      var heroPrimary = null;
+      if (ngLive0.length) { ngLive0.sort(function (a, b) { return (b.seen || '').localeCompare(a.seen || ''); }); heroPrimary = ngLive0[0]; }
+      var h = heroBlock(d, heroPrimary);
       if (S.back) h = '<div class="card" style="border-color:rgba(29,151,227,.55);padding:.6rem .9rem"><div class="row" style="border:0;padding:0"><span class="quiet" style="margin:0">\ud83d\udc41 You\u2019re viewing the portal as <strong>' + esc(d.name || 'this customer') + '</strong> - exactly what they see.</span><button class="sm" id="backstaff">\u2190 Back to staff</button></div></div>' + h;
       if (d.pending) h += '<div class="card" style="border-color:rgba(224,179,65,.5)"><p class="quiet">We can see a support plan registered to this email. For security we link it to your web login by hand - it usually appears within a day. Need it sooner? Ring 01202 775566.</p></div>';
       // A BRAND-NEW member (no app checking in, nothing booked) leads with BOOKING:
@@ -1336,9 +1474,7 @@
         + '<a href="tel:+441202775566"><button class="sm ghost">Call 01202 775566</button></a></div></div>';
       if (freshJoiner) h += needCard;
       // primary PC gets the next-gen 3D hero up top; any others listed compactly beneath
-      var ngLive = d.machines.filter(function (mm) { return !mm.fresh; });
-      var ngPrimary = null;
-      if (ngLive.length) { ngLive.sort(function (a, b) { return (b.seen || '').localeCompare(a.seen || ''); }); ngPrimary = ngLive[0]; }
+      var ngPrimary = heroPrimary;
       if (ngPrimary) {
         h += '<div class="card" style="border-color:rgba(29,151,227,.5);background:linear-gradient(135deg,rgba(29,151,227,.1),rgba(0,206,27,.05))"><div class="row" style="border:0;padding:0;gap:.7rem;align-items:flex-start">'
           + '<span class="pill" style="background:rgba(29,151,227,.16);color:#4fb4f5;border:1px solid rgba(29,151,227,.5);white-space:nowrap">\ud83e\uddea BETA PREVIEW</span>'
@@ -1408,6 +1544,13 @@
             el.innerHTML = h;
       bindOut();
       bindFeedback();
+      heroAnim(heroPrimary);
+      var qb = document.getElementById('qbook');
+      if (qb) qb.onclick = function () {
+        var w = document.getElementById('cbwiz');
+        if (w && w.style.display === 'none') custWiz();
+        if (w) w.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      };
       if (ngPrimary) ngAnim(ngPrimary);
       var bs = document.getElementById('backstaff');
       if (bs) bs.onclick = function () {
