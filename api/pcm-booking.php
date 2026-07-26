@@ -1078,6 +1078,20 @@ if ($action === 'book') {
         if ($bid > 0) $dbn['bknote'][(string)$bid] = array('t' => $note, 'ts' => time());
         db_save($dbn); db_close($lkn);
     }
+    // Queue this booking for OUR customer emails directly, rather than relying solely on
+    // SimplyBook's callback reaching us. A booking made through our own page/portal/app must
+    // still get its job-done, reminder and review emails even if the callback is
+    // unconfigured or SimplyBook's delivery fails. rv_record is keyed by booking id and
+    // preserves per-email state, so the callback arriving later is a harmless no-op.
+    if ($bid > 0 && $snap['email'] !== '') {
+        if (!defined('RV_LIB')) define('RV_LIB', 1);   // load the functions only, not the HTTP entry
+        @include_once __DIR__ . '/pcm-review.php';
+        if (function_exists('rv_record')) {
+            $svcNm = '';
+            foreach (sb_services() as $svv) if ($svv['id'] === $eventId) { $svcNm = $svv['name']; break; }
+            rv_record($bid, $snap['email'], $snap['name'], $endTs, 'create', $ts, $svcNm);
+        }
+    }
     // online bookings deserve the same visibility as staff-made ones
     pcm_slack_say(':calendar: *New online booking* - ' . bk_clean($snap['name'] !== '' ? $snap['name'] : $snap['email'])
         . ' - ' . $pretty . (!$confirmed ? ' _(awaiting confirmation)_' : '')
