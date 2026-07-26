@@ -305,6 +305,10 @@ BOOKING_APP = r'''    <section class="section section--alt" id="book" aria-label
               '<p class="bk__h">Ready when you are' + (s.name || s.customer ? ', ' + esc(String(s.name || s.customer).split(' ')[0]) : '') + '</p>' +
               '<p class="bk__sub">You&rsquo;re already signed in, so that&rsquo;s all we need.</p>' +
               '<label class="bk__field"><span>Anything we should know before we come? <em class="bk__opt">(optional)</em></span><textarea id="bkno" rows="2" placeholder="e.g. it&rsquo;s very slow since an update &mdash; and the address if we&rsquo;re coming to you"></textarea></label>' +
+              // a referred friend who JOINED first (via the card QR -> /join/) books signed
+              // in - without this, their referral could never be recorded
+              '<label class="bk__field"><span>Did someone recommend us? <em class="bk__opt">(optional)</em></span>' +
+              '<input id="bkref" type="text" autocomplete="off" placeholder="Their name &mdash; we&rsquo;d like to thank them"></label>' +
               '<div class="bk__row"><button type="button" class="bk__btn" id="bkgo">Confirm this booking</button><button type="button" class="bk__back" id="bkb">&#8592; Pick another time</button></div>' +
               '<p class="bk__err" id="bkerr"></p>' +
               '<p class="bk__note">Not ' + esc(String(s.name || s.customer || 'you').split(' ')[0]) + '? <button type="button" class="bk__back" id="bknot" style="padding:0">Use a different email</button></p>';
@@ -313,6 +317,8 @@ BOOKING_APP = r'''    <section class="section section--alt" id="book" aria-label
             document.getElementById('bkgo').onclick = function () {
               if (busyFlag) return;
               S.note = (document.getElementById('bkno').value || '').trim();
+              var rfEl = document.getElementById('bkref');
+              S.refby = rfEl ? (rfEl.value || '').trim() : '';
               this.disabled = true; doBook(s.wtoken);
             };
             focusH(); return;
@@ -371,7 +377,7 @@ BOOKING_APP = r'''    <section class="section section--alt" id="book" aria-label
           rail(3); say('Check your email for a 6-digit code.');
           P.innerHTML = pickBox() +
             '<p class="bk__h">Check your email</p><p class="bk__sub">' + (already ? 'We&rsquo;ve already sent a code to ' : 'We&rsquo;ve sent a 6-digit code to ') +
-            '<strong>' + esc(S.email) + '</strong>. It can take a moment &mdash; please check your junk folder too.</p>' +
+            '<strong>' + esc(S.email) + '</strong> from <strong>info@365techies.co.uk</strong>. It usually lands within a minute &mdash; please check your junk folder too.</p>' +
             '<label class="bk__field"><span>Your 6-digit code</span><input id="bkc" class="bk__code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="12" placeholder="000000"></label>' +
             '<div class="bk__row"><button type="button" class="bk__btn" id="bkgo">Confirm my booking</button><button type="button" class="bk__back" id="bkre">Send it again</button><button type="button" class="bk__back" id="bkb">&#8592; Change my details</button></div>' +
             '<p class="bk__err" id="bkerr"></p>';

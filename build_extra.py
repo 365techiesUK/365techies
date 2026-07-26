@@ -9144,51 +9144,56 @@ starlink_internet()
 # ===================================================== REFER A FRIEND
 def refer_a_friend():
     slug = "refer-a-friend"
-    desc = "Refer a friend to 365 Techies and you both get a free month. Love your friendly, reliable IT support? Share it with friends, family or businesses across Dorset — when they join a monthly plan, you each get a month free."
+    # SCHEME (owner-decided 2026-07-26, must match the booking page + referral cards +
+    # job-done email): the FRIEND gets their first Computer Service & Health Check free;
+    # the REFERRER gets a month free on their support plan (or £15 off their next
+    # visit if they are not on a plan). Reviews are NEVER mentioned here - rewarding a
+    # recommendation is lawful, rewarding a review is not.
+    desc = "Refer a friend to 365 Techies: their first Computer Service & Health Check is free, and you get a month free on your support plan. Friends, family or businesses across Dorset - just ask them to mention your name."
     faqs = [
-      ("Who can I refer?", "Anyone &mdash; friends, family, neighbours, colleagues or local businesses. If they&rsquo;d benefit from friendly, reliable IT support, refer them."),
-      ("How many people can I refer?", "As many as you like &mdash; there&rsquo;s no limit. Every friend who joins a monthly plan earns you another free month."),
-      ("When do I get my free month?", "Once your friend has joined a monthly home or business plan and is set up, we credit a free month to your account."),
-      ("What does my friend get?", "They get the same friendly, reliable IT support you enjoy &mdash; plus a free month of their own as a welcome."),
-      ("Do they have to mention me?", "Just ask them to mention your name when they get in touch, or refer them to us directly and we&rsquo;ll take care of the rest."),
-      ("Is there a catch?", "No catch &mdash; it&rsquo;s simply our way of saying thank you. Standard plan terms apply, and both free months kick in once your friend&rsquo;s plan is active."),
+      ("What does my friend get?", "Their first Computer Service &amp; Health Check is completely free &mdash; a proper service and tune-up with everything explained in plain English, not a sales visit."),
+      ("What do I get?", "A month free on your monthly support plan. Not on a plan? We&rsquo;ll take &pound;15 off your next visit instead &mdash; nobody misses out."),
+      ("Do they have to mention me?", "Yes please &mdash; that&rsquo;s how we know who to thank. There&rsquo;s a &ldquo;Did someone recommend us?&rdquo; box when they book online, or they can simply say your name on the phone."),
+      ("How many people can I refer?", "As many as you like &mdash; there&rsquo;s no limit. Every friend whose first visit happens earns you another free month."),
+      ("When do I get my free month?", "Once your friend&rsquo;s first visit has taken place, we credit it to your plan &mdash; we&rsquo;ll let you know when we do."),
+      ("Is there a catch?", "No catch &mdash; recommendations from happy customers are how a family firm grows, and we&rsquo;d rather thank you than pay for adverts."),
     ]
     content = "\n".join([
       hero(bc("Refer a Friend"), "// REFER A FRIEND",
            'Refer a friend, <em class="grad grad--green">you both win</em>',
-           "Love your IT support? Share it. When you refer a friend, family member or business and they join a monthly plan, <strong>you both get a free month</strong> &mdash; our way of saying a proper thank you.",
-           cta1=("Refer Someone Now", "/contact/"), cta2=("Call 01202 775566", "tel:+441202775566"),
-           chips=["A free month each","No limit on referrals","Homes &amp; businesses"]),
+           "Know someone battling their computer? Their <strong>first Computer Service &amp; Health Check is free</strong> &mdash; and when their visit&rsquo;s done, <strong>you get a month free</strong> on your support plan. Our way of saying a proper thank you.",
+           cta1=("Book Their Free First Service", "/book-service/"), cta2=("Call 01202 775566", "tel:+441202775566"),
+           chips=["Friend&rsquo;s first service free","A month free for you","No limit on referrals"]),
       f'''    <section class="section" aria-label="How it works">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>/01 — HOW IT WORKS</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>/01 &mdash; HOW IT WORKS</p>
           <h2 class="section-title section-title--center" data-title>Three easy steps, two happy people<span class="title-underline title-underline--center"></span></h2>
         </div>
         <ol class="how__steps">
-{steps([("Tell us who","Send us their name and number, or ask them to mention you when they get in touch."),("They join a plan","Your friend starts any monthly home or business support plan."),("You both get a free month","Once they&rsquo;re set up, we credit a free month to you both. Simple as that.")])}
+{steps([("Pass on our number","Give them one of our cards or just our number, 01202 775566 &mdash; and tell them to mention your name."),("They get their first service free","Their first Computer Service &amp; Health Check is on us. They can book it online in about a minute, or ring us."),("You get a month free","Once their visit&rsquo;s done, we credit a month free to your support plan &mdash; or &pound;15 off your next visit if you&rsquo;re not on one.")])}
         </ol>
       </div>
     </section>''',
       f'''    <section class="section section--alt" aria-label="What you both get">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>/02 — WHAT YOU BOTH GET</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>/02 &mdash; WHAT YOU BOTH GET</p>
           <h2 class="section-title section-title--center" data-title>Everybody wins<span class="title-underline title-underline--center"></span></h2>
         </div>
         <div class="split-2">
           <div class="tile" data-reveal>
-            <h3>What you get</h3>
-            <p style="color:var(--muted);margin:0 0 1.1rem">A free month of support credited to your plan, every single time someone you refer joins &mdash; with no limit on how many friends you share us with.</p>
+            <h3>What your friend gets</h3>
+            <p style="color:var(--muted);margin:0 0 1.1rem">A completely free first Computer Service &amp; Health Check &mdash; their machine backed up, secured, sped up and explained in plain English. No obligation, no sales pitch.</p>
             <ul class="checklist">
-{checklist(["A free month, every referral","No limit &mdash; refer as many as you like","A genuine thank-you from us","Works on home &amp; business plans"])}
+{checklist(["First Computer Service &amp; Health Check free","Friendly, jargon-free support","A team rated 4.9 on Google","We phone before we arrive or connect"])}
             </ul>
           </div>
           <div class="tile" data-reveal>
-            <h3>What your friend gets</h3>
-            <p style="color:var(--muted);margin:0 0 1.1rem">A warm welcome, a free month of their own, and friendly, reliable IT support they&rsquo;ll genuinely thank you for recommending.</p>
+            <h3>What you get</h3>
+            <p style="color:var(--muted);margin:0 0 1.1rem">A month free on your support plan every time a friend you sent has their first visit &mdash; with no limit on how many friends you share us with.</p>
             <ul class="checklist">
-{checklist(["Their own free month to start","Friendly, jargon-free support","A team rated 4.9 on Google","Help in minutes, when it matters"])}
+{checklist(["A month free, every referral","Not on a plan? &pound;15 off your next visit","No limit &mdash; refer as many as you like","A genuine thank-you from us"])}
             </ul>
           </div>
         </div>
@@ -9197,7 +9202,7 @@ def refer_a_friend():
       f'''    <section class="section" aria-label="Who to refer">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>/03 — WHO TO REFER</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>/03 &mdash; WHO TO REFER</p>
           <h2 class="section-title section-title--center" data-title>Know someone who&rsquo;d love us?<span class="title-underline title-underline--center"></span></h2>
         </div>
         <div class="tile-grid" data-stagger>
@@ -9206,13 +9211,13 @@ def refer_a_friend():
       </div>
     </section>''',
       faq_html(faqs),
-      cta("Refer a friend today",
-          "Share the IT support you love and you&rsquo;ll both enjoy a free month. Tell us who to look after next.",
-          primary=("Refer Someone Now", "/contact/"), secondary=("Call 01202 775566", "tel:+441202775566")),
+      cta("Know someone who needs us?",
+          "Their first Computer Service &amp; Health Check is free &mdash; and you get a month free when it&rsquo;s done. Just make sure they mention your name.",
+          primary=("Book Their Free First Service", "/book-service/"), secondary=("Call 01202 775566", "tel:+441202775566")),
     ])
     def schema(s, _desc=desc, _faqs=faqs):
         return graph([crumb(s, "Refer a Friend"), webpage(s, "Refer a Friend", _desc), faqpage(s, _faqs)])
-    add(slug=slug, title="Refer a Friend | Get a Free Month of IT Support | 365 Techies",
+    add(slug=slug, title="Refer a Friend | First Service Free for Them, a Month Free for You | 365 Techies",
         desc=desc, og_title="Refer a Friend | 365 Techies", schema=schema, content=content)
 refer_a_friend()
 
@@ -19393,19 +19398,28 @@ for _np in SEO_WAVE_PAGES:
 # comparison-table cells with a screen-reader label (the tick/dash glyph alone isn't announced)
 _YES = '<td class="yes"><span class="sr-only">Included</span><span aria-hidden="true">&#10003;</span></td>'
 _NO = '<td class="no"><span class="sr-only">Not included</span><span aria-hidden="true">&ndash;</span></td>'
+_join_referred = ('<section class="section" aria-label="Sent by a friend">'
+  '<div class="wrap"><div class="callout" data-reveal style="max-width:880px;margin:0 auto">'
+  '<p class="eyebrow mono" style="margin:0 0 .45rem">// SENT BY A FRIEND?</p>'
+  '<h2 style="margin:0 0 .45rem">Then your first service is on us</h2>'
+  '<p style="margin:0 0 1.05rem;color:var(--muted)">If someone recommended us &mdash; maybe they gave you one of our cards &mdash; your first <strong>Computer Service &amp; Health Check is completely free</strong>: a proper tune-up, backed up, secured, sped up and explained in plain English. Just <strong>mention their name when you book</strong>, so we can thank them properly.</p>'
+  '<div class="page-hero__cta"><a href="/book-service/" class="button primary">Book your free first service</a>'
+  '<a href="tel:+441202775566" class="button secondary">Call 01202 775566</a></div>'
+  '</div></div></section>')
+
 _join_value = ('''<section class="section" aria-label="What you get free">
   <div class="wrap">
     <div class="section-head">
       <p class="eyebrow eyebrow--center mono" data-reveal>// WHAT YOU GET, FREE</p>
       <h2 class="section-title section-title--center" data-title>Your 365 Club, from day one<span class="title-underline title-underline--center"></span></h2>
-      <p class="lede lede--center" data-reveal>Join in about a minute with a code we email or text you &mdash; no password to remember, no card, no catch. Here&rsquo;s what&rsquo;s yours the moment you&rsquo;re in.</p>
+      <p class="lede lede--center" data-reveal>Join in about a minute with a 6-digit code we email you &mdash; no password to remember, no card, no catch. Here&rsquo;s what&rsquo;s yours the moment you&rsquo;re in.</p>
     </div>
     <div class="tile-grid" data-stagger>
 ''' + tiles([
-    ("gift", "Free membership, no card", "Sign in with a 6-digit code by email or text &mdash; no password, no card details, ever. You get your own 365 portal for everything below."),
+    ("gift", "Free membership, no card", "Sign in with a 6-digit code we email you &mdash; no password, no card details, ever. You get your own 365 portal for everything below."),
     ("heart", "A free eye on your PC&rsquo;s health", "Our free 365 PC Manager app quietly watches your Windows PC and shows its health score, backup, disk space and battery right in your portal. We&rsquo;ll even pop it on for you."),
     ("monitor", "Reports &amp; a fresh check any time", "View and download your PC&rsquo;s honest health reports, see the trend over time, and tap &lsquo;Check now&rsquo; for a fresh once-over whenever you like."),
-    ("gift", "11 free courses", "Learn to stay safe online and get more from your tech, at your own pace &mdash; all eleven 365 courses, free."),
+    ("gift", "11 free courses", "Learn to stay safe online and get more from your tech, at your own pace &mdash; all eleven 365 courses, linked in one place from your portal."),
     ("clock", "Book &amp; manage online", "Book a service, or move or cancel a visit, straight from your portal &mdash; no phone tag."),
     ("phone", "Help is one tap away", "The SOS remote-help button, free tools and a real local team on 01202 775566 are always a tap away. One-off help is priced up front; it&rsquo;s unlimited on a support plan."),
 ]) + '''
@@ -19439,6 +19453,7 @@ _join_compare = '''<section class="section section--alt" id="included" aria-labe
       </table>
     </div>
     <p class="plans-note mono" data-reveal>// PER COMPUTER &middot; DIRECT DEBIT &middot; NO CONTRACT &middot; CANCEL ANYTIME &middot; THE PRICE YOU SEE IS FINAL</p>
+    <p class="lede lede--center" data-reveal style="margin-top:.9rem">Recommended by a friend? Your <strong>first</strong> Computer Service &amp; Health Check is free either way &mdash; <a href="/book-service/">book it here</a> and mention their name.</p>
     <div class="page-hero__cta" style="justify-content:center;margin-top:1.4rem">
       <a href="/portal/" class="button primary button--lg">Join the 365 Club free</a>
       <a href="/home-it-support-plans/" class="button secondary button--lg">See support plans</a>
@@ -19452,8 +19467,8 @@ _join_how = ('''<section class="how" aria-label="How to join">
     <h2 class="section-title section-title--center" data-title>Join in three easy steps<span class="title-underline title-underline--center"></span></h2>
     <ol class="how__steps">
 ''' + steps([
-    ("Pop in your email", "On the sign-in page, type your email and tap &lsquo;Email me a code&rsquo; (or &lsquo;Text me a code&rsquo;). There&rsquo;s no password to think up."),
-    ("Type your 6-digit code", "We send a 6-digit code &mdash; type it in and you&rsquo;re straight into your 365 portal. This computer stays signed in, so it&rsquo;s a one-off."),
+    ("Pop in your name and email", "On the sign-in page, type your name and email and tap &lsquo;Email me a code&rsquo;. There&rsquo;s no password to think up &mdash; and if you&rsquo;re brand new we&rsquo;ll ask for a phone number, so we can ring you before we ever connect."),
+    ("Type your 6-digit code", "It comes by email from info@365techies.co.uk &mdash; usually within a minute (worth a glance at your junk folder the first time). Type it in and you&rsquo;re straight into your portal; this computer then stays signed in."),
     ("You&rsquo;re in &mdash; free", "See your PC&rsquo;s health, book help, take a course. Stay free forever, or add a support plan whenever it suits you."),
 ]) + '''
     </ol>
@@ -19475,7 +19490,7 @@ info_page(
   chips=["No card", "No catch", "One minute"],
   hero_cta1=("Join free", "/portal/"),
   hero_cta2=("See what&rsquo;s included", "#included"),
-  pre=_join_value + _join_compare + _join_how,
+  pre=_join_referred + _join_value + _join_compare + _join_how,
   inner="""          <h2>Is it really free? Honestly, yes.</h2>
           <p>The 365 Club costs nothing and always will. There&rsquo;s no card to enter, no trial that quietly starts charging, and no obligation to ever buy anything. We built it because the sooner we can see how your computer is really doing, the easier it is to help &mdash; and because a bit of good advice and a few handy tools shouldn&rsquo;t cost you a penny.</p>
           <h2>A plain, honest word on what&rsquo;s free</h2>
@@ -19485,8 +19500,8 @@ info_page(
   faqs=[
   ("Is it really free? What&rsquo;s the catch?", "There&rsquo;s genuinely no catch. The 365 Club is free forever, with no card details and no obligation. You can stay on the free membership for as long as you like."),
     ("Do I need to buy anything?", "No. You can join, run a health check, read your reports and take the free courses without spending anything. A paid support plan is there if and when you want a techie to actually service your PC and help whenever you&rsquo;re stuck."),
-    ("How do I sign in &mdash; do I need a password?", "No passwords. You type in your email, we send a 6-digit code by email or text, and you type that in. This computer then stays signed in, so it&rsquo;s a one-off."),
-    ("Is my information safe?", "Yes. We never sell your data, and joining needs nothing more than an email. See our <a href=\"/privacy-policy/\">privacy policy</a> for the detail."),
+    ("How do I sign in &mdash; do I need a password?", "No passwords. You type in your name and email, we email you a 6-digit code from info@365techies.co.uk, and you type that in. This computer then stays signed in, so it&rsquo;s a one-off. Once we have your mobile, you can choose a text instead."),
+    ("Is my information safe?", "Yes. We never sell your data, and joining needs nothing more than your name and email &mdash; plus a phone number if you&rsquo;re new, so we can ring you before we ever connect. See our <a href=\"/privacy-policy/\">privacy policy</a> for the detail."),
     ("Can I upgrade to a support plan later?", "Any time &mdash; and there&rsquo;s no contract, so you can change your mind. Home support is &pound;18.25/month per computer by Direct Debit; see the <a href=\"/home-it-support-plans/\">plans</a>."),
     ("Does the app work on a Mac?", "The 365 PC Manager app is for Windows PCs. We still support Macs &mdash; just give us a call on 01202 775566 and we&rsquo;ll help."),
   ],
@@ -19895,14 +19910,14 @@ def write_portal_page():
       + '<label style="display:flex;align-items:flex-start;gap:.45rem;margin-top:.5rem;cursor:pointer;color:var(--pmut);font-size:.82rem"><input type="checkbox" id="mkt" style="width:auto;margin-top:.15rem;flex:0 0 auto" /> <span>Email me the occasional 365 tip &amp; offer - a few a year at most, unsubscribe any time. Optional, and it will not affect your free membership or your support.</span></label>'
       + '<div class="err" id="serr">' + (msg || '') + '</div>'
       + '<p class="quiet"><a href="#" id="havecode">Already got a code? Type it here</a>'
-      + ' \\u00b7 <a href="#" id="pwmode">Sign in with a password instead</a>'
+      + ' \\u00b7 <a href="#" id="pwmode" title="For the 365 team">365 staff sign-in</a>'
       + ' \\u00b7 Stuck? Ring 01202 775566.</p>'
       + '<div id="pwbox" style="display:none">'
       + '<label>Password</label><input id="pw" type="password" autocomplete="current-password" />'
       + '<label style="display:flex;align-items:center;gap:.45rem;margin-top:.45rem;cursor:pointer;color:var(--pmut);font-size:.85rem"><input type="checkbox" id="pwv" style="width:auto" /> Show password</label>'
       + '<button id="go" class="sm">Sign in with password</button>'
       + '</div>'
-      + '<p class="quiet" id="joinnote">First time here? Just pop your email in and tap a code button - that\\u2019s the whole sign-up. We\\u2019ll ask your name once you\\u2019re in if we need it.</p>'
+      + '<p class="quiet" id="joinnote">First time here? Pop in your name and email and tap \\u2018Email me a code\\u2019 - that\\u2019s the whole sign-up, no password to invent. If you\\u2019re brand new we\\u2019ll ask for a phone number too, so we can ring you before we ever connect.</p>'
       + '</div>';
     var shared = function () { var k = document.getElementById('keepin'); return !(k && k.checked); };
     var marketing = function () { var m = document.getElementById('mkt'); return !!(m && m.checked); };
@@ -19932,7 +19947,7 @@ def write_portal_page():
     document.getElementById('havecode').onclick = function () {
       var ce = document.getElementById('em').value.trim();
       if (!ce) { document.getElementById('serr').textContent = 'Pop your email in first, then tap the code link.'; return false; }
-      showCode('', ce, false, true, false, true, '', shared(), marketing());
+      showCode(cname(), ce, false, true, false, true, '', shared(), marketing());
       return false;
     };
     document.getElementById('pwmode').onclick = function () {
@@ -19972,7 +19987,7 @@ def write_portal_page():
     if (viaSlack) sentTo += ' (and the 365 Slack)';
     var lede = existing
       ? 'Type the most recent code we sent to <strong>' + esc(je) + '</strong> - the newest one is the one that works (codes last 30 minutes). Check your junk folder too.'
-      : 'We\\u2019ve sent a 6-digit code to ' + sentTo + '. Type it below - it works for 30 minutes.' + (viaMail ? ' Can\\u2019t see it? Check your junk folder.' : '');
+      : 'We\\u2019ve sent a 6-digit code to ' + sentTo + ' - it comes from <strong>info@365techies.co.uk</strong> and usually lands within a minute. Type it below; it works for 30 minutes.' + (viaMail ? ' Can\\u2019t see it? Check your junk folder.' : '');
     el.innerHTML = '<h1>Type your code</h1>'
       + '<p class="lede">' + lede + '</p>'
       + '<div class="card"><label>Your 6-digit code</label>'
@@ -19983,11 +19998,21 @@ def write_portal_page():
       + '<input id="cphone" type="tel" inputmode="tel" autocomplete="tel" placeholder="01202 775566 - a landline is fine" />'
       + '<p class="quiet" style="margin:.3rem 0 0">We need a number so we can ring you before we arrive or connect. We never pass it on to anyone.</p></div>'
       + '<button id="cgo">Sign me in</button><div class="err" id="cerr"></div>'
-      + '<p class="quiet"><a href="#" id="cback">Wrong email, or need a fresh code? Go back</a></p>'
+      + '<p class="quiet"><a href="#" id="cresend">Send it again</a> \u00b7 <a href="#" id="cback">Wrong email? Go back</a></p>'
       + '<p class="quiet">Remember: we never email or text sign-in links - only codes like this. Never read your code to anyone who rings you.<br />Stuck? Ring us on 01202 775566 and we\\u2019ll sort it together.</p></div>';
     var cd = document.getElementById('cd'); cd.focus();
     cd.addEventListener('input', function () { cd.value = cd.value.replace(/\\D/g, '').slice(0, 6); });
-    document.getElementById('cback').onclick = function () { showSignin(); try { document.getElementById('jn').value = jn || ''; document.getElementById('je').value = je || ''; document.getElementById('em').value = je || ''; } catch (e) {} return false; };
+    document.getElementById('cback').onclick = function () { showSignin(); try { document.getElementById('nm').value = jn || ''; document.getElementById('em').value = je || ''; } catch (e) {} return false; };
+    var creBtn = document.getElementById('cresend');
+    if (creBtn) creBtn.onclick = function () {
+      var msg = document.getElementById('cerr');
+      creBtn.textContent = 'Sending\u2026';
+      post(BK, { action: 'join', email: je, machine: mid() }).then(function (d) {
+        creBtn.textContent = 'Send it again';
+        msg.textContent = (d && (d.ok || d.have_code)) ? 'Sent - give it a minute, and check your junk folder.' : 'Couldn\u2019t send another just now - ring 01202 775566 and we\u2019ll sort it.';
+      }).catch(function () { creBtn.textContent = 'Send it again'; msg.textContent = 'Couldn\u2019t reach the server - try again.'; });
+      return false;
+    };
     function doV() {
       var cb = document.getElementById('cgo');
       document.getElementById('cerr').textContent = '';
@@ -20302,6 +20327,8 @@ def write_portal_page():
       h += '<div class="card"><h2>📶 Your WiFi surveys</h2><div id="mywifi"><p class="quiet">Loading…</p></div>'
         + '<p class="quiet">Surveys you save from our free <a href="/wifi-signal-test/" target="_blank" rel="noopener">WiFi Optimizer</a> live here on your account — rooms, history and photos — so you can restore them on any device and our team can see them when they help you. '
         + '<label style="display:inline;color:var(--psoft);cursor:pointer;text-decoration:underline">Upload a survey file<input type="file" id="mywifi-up" accept=".json,application/json" hidden /></label></p></div>';
+      // the learning card renders for EVERY member from day one - /join/ promises the
+      // 11 courses, so a brand-new member's dashboard must visibly deliver them
       var crsAll = null;
       d.machines.forEach(function (m) { if (m.crs && (!crsAll || parseInt(m.crs, 10) > parseInt(crsAll.crs, 10))) crsAll = m; });
       if (crsAll && crsAll.crs) {
@@ -20311,6 +20338,10 @@ def write_portal_page():
           + (parseInt(done, 10) > 0 && crsAll.crst ? ' - well done!' : '') + '</p>'
           + (crsAll.crst ? '<div class="chips">' + crsAll.crst.split('|').map(function (t) { return '<span class="chip g">\\u2713 ' + esc(t) + '</span>'; }).join('') + '</div>' : '')
           + '<p class="quiet">Carry on inside 365 PC Manager (Learn tab) or <a href="/free-tools/" target="_blank" rel="noopener">our free courses online</a>.</p></div>';
+      } else {
+        h += '<div class="card"><h2>\\ud83c\\udf93 Your 365 learning</h2>'
+          + '<p class="quiet" style="margin:0 0 .3rem">All <strong style="color:var(--pwhite)">11 free courses</strong> are yours - stay safe online, master video calls, get more from your tech. At your own pace, with a printable certificate at the end of each.</p>'
+          + '<p class="quiet"><a href="/online-safety-course/" target="_blank" rel="noopener">Start with online safety</a> \\u00b7 <a href="/free-tools/" target="_blank" rel="noopener">see all 11 courses</a></p></div>';
       }
       if (d.fam) h += '<div class="card"><h2>Family view</h2><p class="quiet">\\u2713 Shared with ' + esc(d.fam) + ' - manage it from the app on your PC.</p></div>';
       // instant browser check-up: honest, no install, fills day one
@@ -20453,11 +20484,12 @@ def write_portal_page():
                 cEl.innerHTML = '<div class="nbsum"><strong>' + esc(CB.svcName) + '</strong> \\u00b7 <strong>' + esc(day.n) + ' at ' + esc(fmtT(t)) + '</strong>'
                   + '<div style="margin:.45rem 0 .1rem"><input id="cbphone" type="tel" inputmode="tel" autocomplete="tel" placeholder="Best number to reach you on (landline is fine)" style="width:100%;max-width:340px;padding:.5rem .6rem;border-radius:9px;border:1px solid var(--pline);background:var(--pink);color:var(--pwhite);font-size:1rem" /></div>'
                   + '<div style="margin:.35rem 0 .5rem"><textarea id="cbnote" rows="2" placeholder="Anything we should know? (optional) - e.g. very slow since an update, and the address if we\\u2019re coming to you" style="width:100%;max-width:340px;box-sizing:border-box;padding:.5rem .6rem;border-radius:9px;border:1px solid var(--pline);background:var(--pink);color:var(--pwhite);font:inherit;resize:vertical"></textarea></div>'
+                  + '<div style="margin:.35rem 0 .5rem"><input id="cbref" type="text" autocomplete="off" placeholder="Did someone recommend us? Their name (optional)" style="width:100%;max-width:340px;box-sizing:border-box;padding:.5rem .6rem;border-radius:9px;border:1px solid var(--pline);background:var(--pink);color:var(--pwhite);font:inherit" /></div>'
                   + '<button class="sm" id="cbgo" style="background:var(--pgood);color:#06220b;font-weight:800">\\u2713 Book it</button> <span class="err" id="cberr" style="display:inline"></span></div>';
                 document.getElementById('cbgo').onclick = function () {
                   var gb = this; gb.disabled = true; document.getElementById('cberr').textContent = '';
-                  var cbp = document.getElementById('cbphone'), cbn = document.getElementById('cbnote');
-                  post(BK, { action: 'book', wtoken: S.wtoken, machine: mid(), eventId: CB.svc, date: day.d, time: t, phone: (cbp ? cbp.value.trim() : ''), note: (cbn ? cbn.value.trim() : '') })
+                  var cbp = document.getElementById('cbphone'), cbn = document.getElementById('cbnote'), cbr = document.getElementById('cbref');
+                  post(BK, { action: 'book', wtoken: S.wtoken, machine: mid(), eventId: CB.svc, date: day.d, time: t, phone: (cbp ? cbp.value.trim() : ''), note: (cbn ? cbn.value.trim() : ''), refby: (cbr ? cbr.value.trim() : '') })
                     .then(function (r) {
                       if (r && r.ok) {
                         var w2 = document.getElementById('cbwiz');
@@ -21460,7 +21492,7 @@ def write_portal_page():
 </script>'''
     # --- Live System Monitoring: a demo teaser card above the portal app (sibling of #p365app, untouched by the client app) ---
     lsm_style = ('<style>'
-      '.lsm{background:linear-gradient(135deg,rgba(29,151,227,.14),rgba(17,26,60,.55));border:1px solid rgba(29,151,227,.38);border-radius:18px;padding:1.4rem 1.5rem;margin:0 0 1.6rem;box-shadow:0 18px 44px rgba(0,0,0,.28)}'
+      '.lsm{background:linear-gradient(135deg,rgba(29,151,227,.14),rgba(17,26,60,.55));border:1px solid rgba(29,151,227,.38);border-radius:18px;padding:1.4rem 1.5rem;margin:1.6rem 0 0;box-shadow:0 18px 44px rgba(0,0,0,.28)}'
       '.lsm__head{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap}'
       '.lsm__badge{display:inline-block;background:rgba(0,206,27,.16);color:#12d02a;border:1px solid rgba(0,206,27,.45);font-size:.62rem;font-weight:700;letter-spacing:.1em;padding:.2rem .5rem;border-radius:999px;margin-bottom:.25rem}'
       '.lsm__logo{display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:12px;background:linear-gradient(160deg,#2aa4ee,#1477c9);color:#fff;font-weight:800;font-size:1.05rem;flex:0 0 auto;box-shadow:0 6px 16px rgba(29,151,227,.4)}'
@@ -21488,10 +21520,14 @@ def write_portal_page():
     lsm_script = ('<script>(function(){var b=document.getElementById("lsmLaunch"),w=document.getElementById("lsmFrameWrap"),f=document.getElementById("lsmFrame");'
       'if(b&&f){b.addEventListener("click",function(){if(!f.getAttribute("src"))f.setAttribute("src","/system-monitoring-demo/");w.hidden=false;'
       'b.textContent="Demo running below";b.disabled=true;setTimeout(function(){w.scrollIntoView({behavior:"smooth",block:"center"});},60);});}})();</script>')
+    # ORDER MATTERS: the sign-in/join card renders FIRST. Every "Join free" button on
+    # the site lands here, and greeting a new member with the app's "COMING SOON" badge
+    # (which belongs to the unreleased PC Manager app, not the Club) read as "this whole
+    # thing isn't ready" - the audit's single worst first impression.
     content = ('<section class="section" style="padding-top:6.5rem"><div class="wrap" style="max-width:880px">'
-               + lsm_teaser
                + '<div id="p365app"><noscript><p>The customer portal needs JavaScript switched on. Or just ring us: 01202 775566.</p></noscript>'
                + '<p style="color:#9fb5d3">Loading the portal&hellip;</p></div>'
+               + lsm_teaser
                + '</div></section>' + lsm_style + lsm_script + css + js)
     schema = bp.graph([bp.webpage("portal", "Customer portal", "Sign in to the 365 Techies customer portal.")])
     html = bp.page("portal", "Customer portal | 365 Techies",
