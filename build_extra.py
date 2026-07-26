@@ -325,6 +325,17 @@ def book_service():
       </div>
     </section>''',
       promise_strip(items=[PROMISE_ETA, PROMISE_CALL, PROMISE_PEOPLE], alt=True),
+      # this page IS the portfolio piece for the integration service - say so once,
+      # quietly, at the bottom where it interests the right reader and nobody else
+      '''    <section class="section" aria-label="How this booking page is built">
+      <div class="wrap">
+        <div class="callout" data-reveal style="max-width:880px;margin:0 auto">
+          <p class="eyebrow mono" style="margin:0 0 .45rem">// FOR THE CURIOUS</p>
+          <h2 style="margin:0 0 .45rem">This page is our own build</h2>
+          <p style="margin:0;color:var(--muted)">Everything above &mdash; the services, the live availability, the confirmation emails and the customer portal behind it &mdash; runs on our own code. The scheduling engine underneath is SimplyBook.me, kept deliberately invisible. If you run a booking system and want your customers to see <em>your</em> brand rather than a widget, we&rsquo;ve written up <a href="/simplybook-integration/">how we did it, and what it takes</a> &mdash; including several things the official documentation gets wrong.</p>
+        </div>
+      </div>
+    </section>''',
       faq_html(faqs),
       cta("Not sure what you need?",
           "Call us on 01202 775566 or start a live chat and a friendly techie will help you book the right appointment.",

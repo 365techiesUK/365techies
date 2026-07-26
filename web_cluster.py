@@ -26,9 +26,16 @@ _WEB_CLUSTER = [
    ("websites-for-builders-tradesmen", "Websites for trades", "Builders and tradespeople: a site that wins the next job."),
    ("free-tools", "All our free tools", "39 free checkers and utilities, no sign-up."),
  ]),
+ ("Online booking", [
+   ("simplybook-integration", "Custom SimplyBook integration", "Your booking screens, your emails, your brand &mdash; SimplyBook invisible behind them."),
+   ("simplybook-integration-traps", "Six SimplyBook traps", "What bit us on a live system &mdash; symptom, cause and fix."),
+   ("simplybook-custom-booking-page", "Replace the booking widget", "Your own booking page, without exposing an API key."),
+   ("book-service", "Our own booking page", "The live proof &mdash; book a visit through the integration we built."),
+ ]),
 ]
 _WEB_CHIP = {"Website rescue": "Rescue", "Thinking of a change": "Switching",
-             "Proof &amp; performance": "Proof", "Websites for your trade": "Trades"}
+             "Proof &amp; performance": "Proof", "Websites for your trade": "Trades",
+             "Online booking": "Booking"}
 
 
 def _web_cluster_section(exclude=()):
