@@ -20009,26 +20009,42 @@ def write_portal_page():
   // button - the customer lands straight in the immersive survey, still "in" the portal.
   function ovWifi() {
     ovShow('\\ud83d\\udcf6&nbsp; Test my WiFi', function (body) {
-      body.innerHTML = '<div class="p365ov__load"><div><div class="p365ov__spin"></div>Opening your WiFi survey\\u2026</div></div>';
+      // The frame is created INSIDE the overlay and never touches the page body -
+      // parking it on document.body first (an earlier attempt) briefly rendered the
+      // WiFi page full-size in the page itself before it was moved. One load handler
+      // only, for the same reason: two racing handlers caused the flicker.
+      body.style.position = 'relative';
+      var spin = document.createElement('div');
+      spin.className = 'p365ov__load';
+      spin.style.cssText = 'position:absolute;inset:0;z-index:2;background:#0b1226';
+      spin.innerHTML = '<div><div class="p365ov__spin"></div>Opening your WiFi survey\\u2026</div>';
       var fr = document.createElement('iframe');
       fr.title = 'WiFi survey';
-      fr.setAttribute('allow', 'fullscreen');
-      fr.onload = function () {
+      fr.setAttribute('allow', 'fullscreen; microphone');
+      fr.style.cssText = 'width:100%;height:100%;border:0;display:block;opacity:0;transition:opacity .35s ease';
+      fr.addEventListener('load', function () {
         try {
           var doc = fr.contentDocument;
           if (doc) {
             doc.documentElement.classList.add('wq-lock');   // hides header/ticker/CTA bar/a11y inside the frame
             var go = doc.getElementById('wq-open');
-            if (go) setTimeout(function () { try { go.click(); } catch (e) {} }, 120);
+            if (go) setTimeout(function () { try { go.click(); } catch (e) {} }, 140);
           }
         } catch (e) {}
-        body.innerHTML = ''; body.appendChild(fr);
-      };
+        setTimeout(function () {
+          fr.style.opacity = '1';
+          if (spin.parentNode) spin.parentNode.removeChild(spin);
+        }, 220);
+      }, { once: true });
+      body.appendChild(fr);
+      body.appendChild(spin);
+      // never leave someone staring at a spinner: offer the real page if the frame stalls
+      var bail = setTimeout(function () {
+        if (spin.parentNode) spin.innerHTML = '<div><p style="margin:0 0 .8rem">That&rsquo;s taking longer than it should.</p>'
+          + '<a class="qact" style="display:inline-flex;text-decoration:none;padding:.7rem 1.1rem" href="/wifi-signal-test/" target="_blank" rel="noopener">Open the WiFi survey in a new tab</a></div>';
+      }, 12000);
+      fr.addEventListener('load', function () { clearTimeout(bail); }, { once: true });
       fr.src = '/wifi-signal-test/';
-      // keep it out of the flow until loaded so the spinner is what's seen
-      fr.style.position = 'absolute'; fr.style.left = '-9999px'; fr.style.width = '100%'; fr.style.height = '100%';
-      fr.addEventListener('load', function () { fr.style.position = ''; fr.style.left = ''; }, { once: true });
-      document.body.appendChild(fr);
     }, function () { loadWifi(); });   // refresh saved surveys on close - they may have saved one
   }
 
@@ -20043,7 +20059,11 @@ def write_portal_page():
       var pad = document.createElement('div');
       pad.className = 'p365ov__pad';
       body.appendChild(pad);
-      if (wiz) { pad.appendChild(wiz); wiz.style.display = 'block'; }
+      // custWiz() is a TOGGLE - it hides the wizard when it is already visible. So the
+      // element must be left hidden here and opened BY the toggle, or the overlay ends
+      // up wrapped around an invisible wizard (which looked like "the button does
+      // nothing"). Do not "tidy" this by pre-showing it.
+      if (wiz) { pad.appendChild(wiz); wiz.style.display = 'none'; }
       custWiz();
     }, function () {
       if (wiz && mark && mark.parentNode) { mark.parentNode.insertBefore(wiz, mark); mark.parentNode.removeChild(mark); wiz.style.display = 'none'; }
