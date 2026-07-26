@@ -812,12 +812,17 @@ if ($action === 'verifycode') {
                           'needname' => ($cname === ''), 'needphone' => ($jphone === '')));
             sb_alarm('creating the customer (addClient) failed', $w
                 . ' [phone ' . ($jphone !== '' ? 'supplied: ' . preg_replace('/[^0-9+ ]/', '', $jphone) : 'NOT supplied')
-                . ', name ' . ($cname !== '' ? 'supplied' : 'NOT supplied') . ']');
-            out(array('ok' => false, 'error' => 'sb_unavailable', 'at' => 'addClient', 'why' => $w));
-        }
-        $cid = (int)$ac['result'];
+                . ', name ' . ($cname !== '' ? 'supplied' : 'NOT supplied') . ']'
+                . ' - the customer HAS been signed in; their booking account will be created'
+                . ' when they first book. Check SimplyBook for a required client field.');
+            // DEGRADE, don't dead-end. Signing in to OUR portal does not need a SimplyBook
+            // client - that is only needed to book, and the book action creates one itself
+            // (ensure_client_id) at a point where it also holds the booking details. So a
+            // fussy client-field rule in SimplyBook must never lock a customer out of their
+            // own account; it just defers the booking record.
+            $cid = 0;
+        } else $cid = (int)$ac['result'];
     }
-    if ($cid <= 0) fail('join_failed');
     // NOW burn the code (single use) - SimplyBook resolution succeeded
     $jlk2 = @fopen($JOINCODES . '.lock', 'c'); if ($jlk2) @flock($jlk2, LOCK_EX);
     $jc2 = cache_load($JOINCODES); unset($jc2[$ek]); cache_save($JOINCODES, $jc2);
@@ -828,7 +833,10 @@ if ($action === 'verifycode') {
     list($lk, $db) = db_open();
     $now = gmdate('Y-m-d H:i');
     $target = ''; $pending = false; $pendingKeys = array();
-    foreach ($db['customers'] as $k2 => $c2)
+    // $cid may legitimately be 0 (SimplyBook refused the client - see above). Matching on
+    // 0 would hand this person the FIRST record that has no booking account, i.e. someone
+    // else's, so only ever match on a real id.
+    if ($cid > 0) foreach ($db['customers'] as $k2 => $c2)
         if (isset($c2['sb_client_id']) && (int)$c2['sb_client_id'] === $cid) { $target = $k2; break; }
     if ($target === '') {
         foreach ($db['customers'] as $k2 => $c2) {
@@ -846,8 +854,10 @@ if ($action === 'verifycode') {
             'tier' => 'free', 'next' => '', 'created' => $now, 'via' => 'join', 'machines' => array());
     }
     $c =& $db['customers'][$target];
-    $c['sb_client_id'] = $cid;
+    if ($cid > 0) $c['sb_client_id'] = $cid;   // never overwrite a real link with 0
     $c['sb_email'] = $email;
+    if ($cname !== '' && (empty($c['name']) || $c['name'] === $email)) $c['name'] = $cname;
+    if ($cname !== '' && empty($c['sb_name'])) $c['sb_name'] = $cname;   // used when the booking account is created later
     if ($jphone !== '' && empty($c['phone']) && empty($c['sb_phone'])) $c['phone'] = $jphone;
     $c['email_verified'] = true;   // proven by the typed code - unlike raw SB self-registration
     // marketing consent (PECR): an explicit, unticked-by-default opt-in on the join box. Only ever
