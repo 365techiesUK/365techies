@@ -569,9 +569,17 @@ function send_join_email($to, $code) {
             }
         }
     }
-    // fallback: local MTA (SiteGround signs SPF/DKIM for domain senders configured in Site Tools)
-    $hdr = "From: 365 Techies <no-reply@365techies.co.uk>\r\nContent-Type: text/plain; charset=UTF-8";
-    return @mail($to, $subject, $body, $hdr);
+    // Fallback: local MTA. The 5th argument is NOT optional in practice - without it the
+    // envelope sender (Return-Path) defaults to the hosting account, so SPF authenticates
+    // the wrong domain and Gmail/Outlook junk or reject the message. This is the sign-in
+    // code email: if it doesn't arrive, nobody can sign in or book at all.
+    // Sending identity kept the same as every other email we send (info@), rather than a
+    // no-reply address - one consistent sender builds domain reputation, and a customer
+    // replying to a sign-in problem should reach a mailbox someone reads.
+    $hdr = "From: 365 Techies <info@365techies.co.uk>\r\nReply-To: info@365techies.co.uk\r\n"
+         . 'Message-ID: <' . bin2hex(random_bytes(8)) . '.' . time() . "@365techies.co.uk>\r\n"
+         . "MIME-Version: 1.0\r\nContent-Type: text/plain; charset=UTF-8";
+    return @mail($to, $subject, $body, $hdr, '-finfo@365techies.co.uk');
 }
 
 function send_join_sms($mobile, $code) {
