@@ -739,8 +739,11 @@ if ($action === 'verifycode') {
     if (!$HAS_ADMIN) fail('not_configured');
     $cid = 0; $cname = $jname;
     $cl = sb_adm('getClientList', array($email, null));
-    if (sb_net($cl)) fail('sb_unavailable');
-    if (!isset($cl['result']) || !is_array($cl['result'])) fail('sb_unavailable');   // API error != empty list - never blind-create
+    if (sb_net($cl)) out(array('ok' => false, 'error' => 'sb_unavailable', 'at' => 'getClientList', 'why' => 'network'));
+    if (!isset($cl['result']) || !is_array($cl['result'])) {   // API error != empty list - never blind-create
+        out(array('ok' => false, 'error' => 'sb_unavailable', 'at' => 'getClientList',
+                  'why' => isset($cl['error']['message']) ? substr(preg_replace('/[^\x20-\x7E]/', '', (string)$cl['error']['message']), 0, 140) : 'no result'));
+    }
     foreach ($cl['result'] as $cli) {
         if (isset($cli['email']) && strtolower(trim((string)$cli['email'])) === $email) {
             $cid = (int)$cli['id'];
@@ -756,7 +759,17 @@ if ($action === 'verifycode') {
         $cd = array('name' => ($cname !== '' ? $cname : $email), 'email' => $email);
         if ($jphone !== '') $cd['phone'] = $jphone;
         $ac = sb_adm('addClient', array($cd, false));
-        if (sb_net($ac) || empty($ac['result'])) fail('sb_unavailable');
+        // SimplyBook can reject a client on the phone field alone (format rules vary by
+        // company config). Losing the whole sign-in over an optional number would be
+        // absurd - we keep the number on our own record anyway - so retry without it.
+        if ((sb_net($ac) || empty($ac['result'])) && $jphone !== '') {
+            unset($cd['phone']);
+            $ac = sb_adm('addClient', array($cd, false));
+        }
+        if (sb_net($ac) || empty($ac['result'])) {
+            out(array('ok' => false, 'error' => 'sb_unavailable', 'at' => 'addClient',
+                      'why' => isset($ac['error']['message']) ? substr(preg_replace('/[^\x20-\x7E]/', '', (string)$ac['error']['message']), 0, 140) : 'no result'));
+        }
         $cid = (int)$ac['result'];
     }
     if ($cid <= 0) fail('join_failed');
