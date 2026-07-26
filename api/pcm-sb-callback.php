@@ -91,6 +91,10 @@ foreach (array('client_name', 'client') as $k) {
 }
 $svcName = '';
 foreach (array('event_name', 'event') as $k) if (!empty($b[$k]) && is_string($b[$k])) { $svcName = (string)$b[$k]; break; }
+// peek BEFORE recording: a booking we took ourselves is already queued (and already
+// announced in Slack by the book action), so we must not announce it twice
+$seenTs = rv_seen($bid);
+$ours = ($seenTs > 0 && $seenTs > time() - 300);
 rv_record($bid, $email, $cnm, $ets, $type, $ts, $svcName);
 
 // immediate booking-lifecycle email (confirm/change/cancel) - see cf_notify's
@@ -122,6 +126,21 @@ unset($c);
 $out = 'no_match'; // booking for someone not on PC Manager — still fine for the review email
 if ($hit) { $tmp = $DATA . '.sb.tmp'; if (@file_put_contents($tmp, json_encode($db, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), LOCK_EX) !== false) @rename($tmp, $DATA); $out = 'ok'; }
 if ($lk) { @flock($lk, LOCK_UN); @fclose($lk); }   // release the customer-DB lock BEFORE any slow SMTP work
+
+// Announce bookings that nothing else announces - the ones typed straight into
+// SimplyBook (phone bookings, which are most of them). Online bookings are skipped
+// here because the book action already posted them. This also makes the callback
+// itself VISIBLE: if these stop appearing, the callback has stopped working.
+if (!$ours) {
+    $who = trim(preg_replace('/[\x00-\x1F\x7F]+/', ' ', substr(($cnm !== '' ? $cnm : $email), 0, 80)));
+    $whn = $ts ? date('D j M Y g:ia', $ts) : '';
+    $what = trim(preg_replace('/[\x00-\x1F\x7F]+/', ' ', substr($svcName, 0, 80)));
+    if ($type === 'cancel') $msg = ':x: *Booking cancelled* (in SimplyBook) - ' . $who . ($whn !== '' ? ' - ' . $whn : '');
+    elseif ($type === 'change') $msg = ':arrows_counterclockwise: *Booking changed* (in SimplyBook) - ' . $who . ($whn !== '' ? ' - now ' . $whn : '');
+    else $msg = ':telephone_receiver: *New booking* (taken in SimplyBook) - ' . $who . ($whn !== '' ? ' - ' . $whn : '');
+    if ($what !== '') $msg .= "\n> " . $what;
+    rv_slack($msg);
+}
 rv_process(2);   // piggyback: each booking event also sends any due review emails (capped)
 dn_process(2);   // ...and any due "job done" visit-record emails
 rm_process(3);   // ...and any due day-before reminders

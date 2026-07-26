@@ -179,6 +179,19 @@ function rv_record($bid, $email, $name, $endTs, $type, $startTs = 0, $svc = '') 
     rvq_close($lk);
 }
 
+// Was this booking already queued, and when? Lets the SimplyBook callback tell a
+// booking WE just took (already announced in Slack by the book action) apart from one
+// entered in SimplyBook by hand, which nothing else would announce.
+function rv_seen($bid) {
+    $bid = preg_replace('/[^0-9]/', '', (string)$bid);
+    if ($bid === '') return 0;
+    list($lk, $q) = rvq_open();
+    if (!$lk) return 0;
+    $e = isset($q['q'][$bid]) ? $q['q'][$bid] : null;
+    rvq_close($lk);
+    return ($e && isset($e['ts'])) ? (int)$e['ts'] : 0;
+}
+
 // ---- the email itself (ONE place to edit wording) ----
 function rv_first($name) {
     $t = trim((string)$name);
