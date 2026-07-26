@@ -20007,10 +20007,12 @@ def write_portal_page():
             if (wantN) document.getElementById('cnamebox').style.display = 'block';
             if (wantP) document.getElementById('cphonebox').style.display = 'block';
             document.getElementById('cgo').textContent = 'Finish signing me in';
-            document.getElementById('cerr').textContent = 'Almost there - we just need '
-              + (wantN && wantP ? 'your name and a phone number' : (wantN ? 'your name' : 'a phone number'))
-              + ' to finish setting up your account.';
-            if (wantN && nbx) nbx.focus(); else if (pbx) pbx.focus();
+            // never ask for something we already have - that loops the customer
+            document.getElementById('cerr').textContent = (!wantN && !wantP)
+              ? 'Something on our side needs attention - please ring 01202 775566 and we\\u2019ll set you up in a moment.'
+              : ('Almost there - we just need ' + (wantN && wantP ? 'your name and a phone number' : (wantN ? 'your name' : 'a phone number'))
+                 + ' to finish setting up your account.');
+            if (wantN && nbx) nbx.focus(); else if (wantP && pbx) pbx.focus();
           }
           else document.getElementById('cerr').textContent =
             d && d.error === 'wrong_code' ? 'That code isn\\u2019t right - check and try again.'

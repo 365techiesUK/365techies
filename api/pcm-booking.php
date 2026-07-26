@@ -802,10 +802,14 @@ if ($action === 'verifycode') {
             $w = $firstWhy !== '' ? $firstWhy : sb_why($ac);   // report the FIRST failure, not the retry's
             // Ask for a number rather than dead-ending the sign-up - the customer's code
             // is still valid, because we only burn it once SimplyBook has succeeded.
-            // whatever SimplyBook is missing, ask the customer for it rather than
-            // dead-ending them - their code stays valid until SimplyBook succeeds
-            if ($required) out(array('ok' => false, 'error' => 'needinfo',
-                                     'needname' => ($cname === ''), 'needphone' => ($jphone === '')));
+            // Ask the customer for whatever we're missing rather than dead-ending them -
+            // their code stays valid until SimplyBook succeeds. But ONLY when something
+            // really is missing: if we already sent both and SimplyBook still says a value
+            // is required, the missing field is something else entirely, and asking again
+            // would loop the customer forever while hiding the real fault from Slack.
+            if ($required && ($cname === '' || $jphone === ''))
+                out(array('ok' => false, 'error' => 'needinfo',
+                          'needname' => ($cname === ''), 'needphone' => ($jphone === '')));
             sb_alarm('creating the customer (addClient) failed', $w
                 . ' [phone ' . ($jphone !== '' ? 'supplied: ' . preg_replace('/[^0-9+ ]/', '', $jphone) : 'NOT supplied')
                 . ', name ' . ($cname !== '' ? 'supplied' : 'NOT supplied') . ']');
