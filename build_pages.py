@@ -231,6 +231,7 @@ HEADER = '''  <header class="site-header">
             <a href="/agentic-ai-systems/">Agentic AI &amp; Automation</a>
             <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
             <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
+          <a href="/simplybook-integration/">Custom Booking Systems</a>
             <a href="/off-grid-internet/">Off-Grid Internet</a>
             <span class="dropdown__label dropdown__label--sep">By sector</span>
             <a href="/it-support-by-industry/">IT Support by Industry</a>
@@ -411,6 +412,7 @@ HEADER = '''  <header class="site-header">
           <a href="/agentic-ai-systems/">Agentic AI &amp; Automation</a>
           <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
           <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
+          <a href="/simplybook-integration/">Custom Booking Systems</a>
           <a href="/off-grid-internet/">Off-Grid Internet</a>
           <span class="dropdown__label dropdown__label--sep">By sector</span>
           <a href="/it-support-by-industry/">IT Support by Industry</a>
@@ -686,6 +688,7 @@ FOOTER = '''  <footer class="site-footer">
         <p class="site-footer__subhead mono">Connectivity &amp; energy</p>
         <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
         <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
+        <a href="/simplybook-integration/">Custom Booking Systems</a>
         <a href="/lithium-battery-installs-dorset/">Leisure &amp; Marine Batteries</a>
         <a href="/rural-and-farm-wifi-dorset/">Rural &amp; Farm Wi-Fi</a>
         <a href="/broadband-to-a-boat-mooring/">Broadband to a Boat Mooring</a>
