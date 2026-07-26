@@ -141,35 +141,17 @@ function sb_alarm($what, $why) {
 // record is refused, so the alert names the actual field instead of sending anyone
 // hunting through admin screens. Method names differ across SimplyBook versions, so
 // try the plausible ones and use whichever answers.
-function sb_required_client_fields_raw() {
-    $out = array();
-    foreach (array('getClientFields', 'getClientFieldsList', 'getAdditionalFields') as $m) {
-        $r = sb_adm($m, array());
-        if (sb_net($r) || !isset($r['result']) || !is_array($r['result'])) continue;
-        foreach ($r['result'] as $f) {
-            if (!is_array($f)) continue;
-            $req = false;
-            foreach (array('is_required', 'required', 'isRequired', 'is_mandatory') as $k)
-                if (!empty($f[$k])) { $req = true; break; }
-            if (!$req) continue;
-            $nm = '';
-            foreach (array('title', 'name', 'caption', 'label') as $k)
-                if (!empty($f[$k]) && is_string($f[$k])) { $nm = $f[$k]; break; }
-            $id = '';
-            foreach (array('id', 'field_id', 'code') as $k)
-                if (isset($f[$k]) && (is_string($f[$k]) || is_int($f[$k]))) { $id = (string)$f[$k]; break; }
-            $out[] = array('id' => $id, 'name' => $nm);
-        }
-        if (count($out)) break;
-    }
-    return $out;
-}
+// Per SimplyBook's API documentation: getCompanyParam('require_fields') is the ONLY
+// documented way to read what a client record requires (name is always mandatory;
+// email and/or phone can be). The Client Fields CUSTOM FEATURE has NO API surface -
+// its fields cannot be read or supplied through addClient at all, so one of those
+// marked "Required" makes API client creation IMPOSSIBLE until unticked in the UI.
 function sb_required_client_fields() {
-    $raw = sb_required_client_fields_raw();
-    if (!count($raw)) return 'SimplyBook reports no required client fields (or the list could not be read)';
-    $names = array();
-    foreach ($raw as $f) $names[] = ($f['name'] !== '' ? $f['name'] : 'field') . ($f['id'] !== '' ? ' (id ' . $f['id'] . ')' : '');
-    return implode(', ', $names);
+    $r = sb_adm('getCompanyParam', array('require_fields'));
+    if (sb_net($r)) return 'could not reach SimplyBook to read require_fields';
+    if (!isset($r['result'])) return 'require_fields could not be read'
+        . (isset($r['error']['message']) ? ' (' . substr(preg_replace('/[^\x20-\x7E]/', '', (string)$r['error']['message']), 0, 80) . ')' : '');
+    return 'require_fields = ' . substr(preg_replace('/[^\x20-\x7E]/', '', json_encode($r['result'])), 0, 200);
 }
 
 function sb_why($r) {
@@ -433,27 +415,15 @@ function ensure_client_id($ckey, $snap) {
     if ($snap['email'] !== '') $cd['email'] = $snap['email'];
     if ($snap['phone'] !== '') $cd['phone'] = $snap['phone'];
     $ac = sb_adm('addClient', array($cd, false));
-    // same self-heal as the join path: required custom client fields (internal CRM
-    // notes) must never block a stranger's first online booking - placeholder them
-    if ((sb_net($ac) || empty($ac['result'])) && preg_match('/required|empty|mandator/i', sb_why($ac))) {
-        $reqf = sb_required_client_fields_raw();
-        $fv = array();
-        foreach ($reqf as $rf) if ($rf['id'] !== '') $fv[$rf['id']] = '-';
-        if (count($fv)) {
-            $try = $cd; $try['fields'] = $fv;
-            $ac = sb_adm('addClient', array($try, false));
-            if (sb_net($ac) || empty($ac['result'])) {
-                $try2 = $cd;
-                foreach ($fv as $fid => $vv) $try2['field_' . $fid] = $vv;
-                $ac = sb_adm('addClient', array($try2, false));
-            }
-        }
-    }
     if (sb_net($ac) || empty($ac['result'])) {
         $GLOBALS['nc_why'] = 'create_failed' . (isset($ac['error']['message']) ? ':' . substr(preg_replace('/[^\x20-\x7E]/', '', (string)$ac['error']['message']), 0, 80) : '');
         sb_alarm('creating the customer for a BOOKING (addClient) failed', sb_why($ac)
-            . "\n> SimplyBook says these client fields are REQUIRED: " . sb_required_client_fields()
-            . "\n> Fix: Custom Features -> Client Fields -> untick Required on each.");
+            . ' [sent: name' . (isset($cd['email']) ? '+email' : '') . (isset($cd['phone']) ? '+phone' : '') . ']'
+            . "\n> Built-in requirements: " . sb_required_client_fields()
+            . "\n> If those are all supplied, a CUSTOM client field is marked Required - and SimplyBook's"
+            . " API cannot fill custom fields AT ALL (documented), so API sign-ups/bookings stay broken"
+            . " until it is unticked: SimplyBook -> Custom Features -> Client Fields -> gear/Manage"
+            . " -> edit each field -> untick Required -> Save.");
         return 0;
     }
     $cid = (int)$ac['result'];
@@ -538,13 +508,13 @@ if ($action === 'sbdiag') {
     if (!$okAdm) { http_response_code(403); fail('denied'); }
     if (!$HAS_ADMIN) fail('not_configured');
     $probe = array();
-    // method names vary by SimplyBook version/feature set - try the plausible ones and
-    // report whichever answer, rather than assuming any single name is right
-    foreach (array('getClientFields', 'getClientFieldsList', 'getAdditionalFields', 'getCompanyParams') as $m) {
-        $r = sb_adm($m, array());
-        if (sb_net($r)) { $probe[$m] = 'network error'; continue; }
-        if (isset($r['result'])) $probe[$m] = $r['result'];
-        else $probe[$m] = 'ERR: ' . (isset($r['error']['message']) ? substr(preg_replace('/[^\x20-\x7E]/', '', (string)$r['error']['message']), 0, 120) : 'no result');
+    // getCompanyParam('require_fields') is the DOCUMENTED way to read client-record
+    // requirements; the other params are speculative extras worth one look each
+    foreach (array('require_fields', 'client_fields', 'client_required_fields') as $p) {
+        $r = sb_adm('getCompanyParam', array($p));
+        if (sb_net($r)) { $probe[$p] = 'network error'; continue; }
+        if (isset($r['result'])) $probe[$p] = $r['result'];
+        else $probe[$p] = 'ERR: ' . (isset($r['error']['message']) ? substr(preg_replace('/[^\x20-\x7E]/', '', (string)$r['error']['message']), 0, 120) : 'no result');
     }
     // and show what an existing client record actually looks like - whatever fields it
     // carries are the fields this company uses
@@ -879,26 +849,10 @@ if ($action === 'verifycode') {
             unset($cd['phone']);
             $ac = sb_adm('addClient', array($cd, false));
         }
-        // SELF-HEAL: this account has custom client fields marked "required" (Support
-        // Package, Payment Method, ... - the owner's internal CRM notes). A stranger
-        // booking online cannot possibly answer those, so when SimplyBook refuses for a
-        // missing value, look up which fields it insists on and retry with an explicit
-        // "-" placeholder in each - visibly unfilled, for staff to complete on the first
-        // visit. Field-value shape varies by SimplyBook version, so try both known forms.
-        if (($required || preg_match('/required|empty|mandator/i', sb_why($ac))) && (sb_net($ac) || empty($ac['result']))) {
-            $reqf = sb_required_client_fields_raw();
-            $fv = array();
-            foreach ($reqf as $rf) if ($rf['id'] !== '') $fv[$rf['id']] = '-';
-            if (count($fv)) {
-                $try = $cd; $try['fields'] = $fv;
-                $ac = sb_adm('addClient', array($try, false));
-                if (sb_net($ac) || empty($ac['result'])) {
-                    $try2 = $cd;
-                    foreach ($fv as $fid => $vv) $try2['field_' . $fid] = $vv;
-                    $ac = sb_adm('addClient', array($try2, false));
-                }
-            }
-        }
+        // NOTE: no placeholder self-heal is possible here. SimplyBook's documented
+        // addClient accepts only name/email/phone/address fields; the Client Fields
+        // CUSTOM FEATURE has no API surface, so a custom field marked "Required" makes
+        // API client creation impossible until it is unticked in the SimplyBook UI.
         if (sb_net($ac) || empty($ac['result'])) {
             $w = $firstWhy !== '' ? $firstWhy : sb_why($ac);   // report the FIRST failure, not the retry's
             // Ask for a number rather than dead-ending the sign-up - the customer's code
@@ -914,9 +868,12 @@ if ($action === 'verifycode') {
             sb_alarm('creating the customer (addClient) failed', $w
                 . ' [phone ' . ($jphone !== '' ? 'supplied: ' . preg_replace('/[^0-9+ ]/', '', $jphone) : 'NOT supplied')
                 . ', name ' . ($cname !== '' ? 'supplied' : 'NOT supplied') . ']'
-                . "\n> SimplyBook says these client fields are REQUIRED: " . sb_required_client_fields()
-                . "\n> Fix: Custom Features -> Client Fields -> untick Required on each (they are internal CRM notes a new online customer cannot answer)."
-                . ' The customer HAS been signed in; booking needs the record, so this blocks online booking until fixed.');
+                . "\n> Built-in requirements: " . sb_required_client_fields()
+                . "\n> If those are all supplied, a CUSTOM client field is marked Required - and SimplyBook's"
+                . " API cannot fill custom fields AT ALL (documented), so this stays broken until it is"
+                . " unticked: SimplyBook -> Custom Features -> Client Fields -> gear/Manage -> edit each"
+                . " field -> untick Required -> Save."
+                . ' The customer HAS been signed in; booking needs the record, so online booking is blocked until fixed.');
             // DEGRADE, don't dead-end. Signing in to OUR portal does not need a SimplyBook
             // client - that is only needed to book, and the book action creates one itself
             // (ensure_client_id) at a point where it also holds the booking details. So a
