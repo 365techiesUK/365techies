@@ -124,12 +124,36 @@ function sb_pub($method, $params) {
     return $r;
 }
 
+// A SimplyBook auth/API failure stops sign-ins AND bookings dead, and the customer only
+// ever sees a polite apology - so it must be visible to the team. Throttled to one alert
+// per 10 minutes per kind, so an outage reports itself once rather than a hundred times.
+function sb_alarm($what, $why) {
+    global $CACHE;
+    $c = cache_load($CACHE);
+    $k = 'alarm_' . preg_replace('/[^a-z]/', '', strtolower($what));
+    if ((isset($c[$k]) ? $c[$k] : 0) > time() - 600) return;
+    $c[$k] = time();
+    cache_save($CACHE, $c);
+    pcm_slack_say(':rotating_light: *Booking system problem* - ' . $what . ': ' . $why
+        . "\n> Customers are seeing \"our booking system is having a moment\" and cannot sign in or book right now.");
+}
+function sb_why($r) {
+    if (isset($r['_net'])) return 'could not reach SimplyBook (network)';
+    if (isset($r['error']['message'])) return substr(preg_replace('/[^\x20-\x7E]/', '', (string)$r['error']['message']), 0, 140);
+    return 'no result returned';
+}
+
 function sb_adm_headers() {
     global $SB_COMPANY, $SB_API_USER, $SB_API_USER_KEY, $CACHE;
     $c = cache_load($CACHE);
     if (empty($c['adm']['tok']) || (time() - (isset($c['adm']['ts']) ? $c['adm']['ts'] : 0)) > 1200) {
         $r = sb_rpc('https://user-api.simplybook.me/login', 'getUserToken', array($SB_COMPANY, $SB_API_USER, $SB_API_USER_KEY));
-        if (empty($r['result'])) fail('sb_unavailable');
+        if (empty($r['result'])) {
+            // this exit happens INSIDE the helper, so a caller's own diagnostics never run
+            $w = sb_why($r);
+            sb_alarm('SimplyBook admin login (getUserToken) failed', $w);
+            out(array('ok' => false, 'error' => 'sb_unavailable', 'at' => 'getUserToken', 'why' => $w));
+        }
         $c['adm'] = array('tok' => $r['result'], 'ts' => time());
         cache_save($CACHE, $c);
     }
@@ -739,10 +763,10 @@ if ($action === 'verifycode') {
     if (!$HAS_ADMIN) fail('not_configured');
     $cid = 0; $cname = $jname;
     $cl = sb_adm('getClientList', array($email, null));
-    if (sb_net($cl)) out(array('ok' => false, 'error' => 'sb_unavailable', 'at' => 'getClientList', 'why' => 'network'));
-    if (!isset($cl['result']) || !is_array($cl['result'])) {   // API error != empty list - never blind-create
-        out(array('ok' => false, 'error' => 'sb_unavailable', 'at' => 'getClientList',
-                  'why' => isset($cl['error']['message']) ? substr(preg_replace('/[^\x20-\x7E]/', '', (string)$cl['error']['message']), 0, 140) : 'no result'));
+    if (sb_net($cl) || !isset($cl['result']) || !is_array($cl['result'])) {   // API error != empty list - never blind-create
+        $w = sb_why($cl);
+        sb_alarm('looking up the customer (getClientList) failed', $w);
+        out(array('ok' => false, 'error' => 'sb_unavailable', 'at' => 'getClientList', 'why' => $w));
     }
     foreach ($cl['result'] as $cli) {
         if (isset($cli['email']) && strtolower(trim((string)$cli['email'])) === $email) {
@@ -767,8 +791,9 @@ if ($action === 'verifycode') {
             $ac = sb_adm('addClient', array($cd, false));
         }
         if (sb_net($ac) || empty($ac['result'])) {
-            out(array('ok' => false, 'error' => 'sb_unavailable', 'at' => 'addClient',
-                      'why' => isset($ac['error']['message']) ? substr(preg_replace('/[^\x20-\x7E]/', '', (string)$ac['error']['message']), 0, 140) : 'no result'));
+            $w = sb_why($ac);
+            sb_alarm('creating the customer (addClient) failed', $w);
+            out(array('ok' => false, 'error' => 'sb_unavailable', 'at' => 'addClient', 'why' => $w));
         }
         $cid = (int)$ac['result'];
     }
