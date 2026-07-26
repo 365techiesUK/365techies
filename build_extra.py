@@ -19836,6 +19836,67 @@ def write_portal_page():
     #p365app .jrn__row.go:hover { transform:none }
   }
 
+  /* ---------- UNLOCK GRID ------------------------------------------------------
+     What you already have vs what you could add. Locked tiles are DIMMED, never
+     hidden and never fake: everything here is a real thing 365 actually does, and
+     the price shown is the real one. Dimming earns its keep only if lifting it
+     tells the truth. */
+  #p365app .unl { display:grid; grid-template-columns:repeat(auto-fill,minmax(158px,1fr)); gap:.5rem; margin:.2rem 0 .1rem; }
+  #p365app .unl__t { position:relative; overflow:hidden; text-align:left; border-radius:14px; padding:.65rem .7rem .6rem;
+    border:1px solid rgba(125,170,220,.2); background:rgba(255,255,255,.03); color:var(--psoft);
+    font:inherit; cursor:default; opacity:0; transform:translateY(8px);
+    animation:unlIn .45s cubic-bezier(.2,.9,.3,1) both; }
+  #p365app .unl__t .unl__ic { display:block; font-size:1.2rem; line-height:1; margin-bottom:.3rem; }
+  #p365app .unl__t strong { display:block; color:var(--pwhite); font-size:.87rem; line-height:1.25; }
+  #p365app .unl__t small { display:block; color:var(--pmut); font-size:.75rem; line-height:1.35; margin-top:.2rem; }
+  #p365app .unl__st { display:inline-block; margin-top:.45rem; font:700 .62rem/1 ui-monospace,Consolas,monospace;
+    letter-spacing:.1em; text-transform:uppercase; padding:.28rem .45rem; border-radius:999px; }
+  #p365app .unl__t.have { border-color:rgba(0,206,27,.35); background:rgba(0,206,27,.07); }
+  #p365app .unl__t.have .unl__st { color:#63e07a; background:rgba(0,206,27,.14); }
+  #p365app .unl__t.add { border-color:rgba(29,151,227,.4); background:rgba(29,151,227,.07); cursor:pointer; }
+  #p365app .unl__t.add .unl__st { color:#67c1f5; background:rgba(29,151,227,.16); }
+  /* dim via filter, NOT opacity: the entry animation owns opacity (fill-mode:both wins
+     over a plain declaration), so an opacity-based dim silently never applies */
+  #p365app .unl__t.lock { cursor:pointer; filter:grayscale(.9) brightness(.68); }
+  #p365app .unl__t.lock .unl__st { color:#e0b341; background:rgba(224,179,65,.14); }
+  /* literal emoji, NOT a \\uXXXX escape: CSS content escapes are codepoint-style
+     (\\1F512), so a JS surrogate pair renders as the letters "ud83dudd12" */
+  #p365app .unl__t.lock::after { content:'\U0001F512'; position:absolute; top:.5rem; right:.55rem; font-size:.8rem; }
+  #p365app .unl__t.add:hover, #p365app .unl__t.add:focus-visible { transform:translateY(-2px); border-color:var(--pcyan); }
+  #p365app .unl__t.lock:hover, #p365app .unl__t.lock:focus-visible { filter:none; transform:translateY(-2px);
+    border-color:rgba(224,179,65,.7); background:rgba(224,179,65,.09); }
+  #p365app .unl__t.add, #p365app .unl__t.lock { transition:transform .22s ease, filter .3s ease, border-color .22s ease, background .3s ease; }
+  @keyframes unlIn { to { opacity:1; transform:none } }
+  @media (prefers-reduced-motion: reduce) {
+    #p365app .unl__t { animation:none; opacity:1; transform:none }
+    #p365app .unl__t.add:hover, #p365app .unl__t.lock:hover { transform:none }
+  }
+
+  /* ---------- CELEBRATION ------------------------------------------------------ */
+  #p365fx { position:fixed; inset:0; pointer-events:none; z-index:2500; }
+  /* max() keeps it clear of the fixed header on short landscape phones, where a flat
+     14% would land the toast on top of the logo. pointer-events:none so a celebration
+     can never swallow a tap the customer meant for the card underneath. */
+  .p365toast { position:fixed; left:50%; top:max(84px,12vh); transform:translate(-50%,-14px); z-index:2600; pointer-events:none;
+    background:linear-gradient(150deg,#123a22,#0d2a19); border:1px solid rgba(0,206,27,.55); border-radius:18px;
+    padding:1.1rem 1.5rem; text-align:center; box-shadow:0 24px 60px rgba(0,0,0,.55);
+    color:#eafff0; max-width:min(420px,90vw); opacity:0; transition:opacity .35s ease, transform .35s cubic-bezier(.2,1.3,.4,1); }
+  .p365toast.in { opacity:1; transform:translate(-50%,0); }
+  .p365toast b { display:block; font:800 1.25rem/1.25 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; margin-bottom:.25rem; }
+  .p365toast span { color:#a8dfbc; font-size:.92rem; }
+  .p365toast .big { font-size:2.1rem; display:block; margin-bottom:.35rem; animation:p365pop .6s cubic-bezier(.2,1.5,.4,1) both; }
+  /* the sound toggle sits inside the uppercase monospace "POINTS" label, so it has to
+     opt out of that inheritance or it reads as shouting */
+  #p365app .jrn__snd { display:inline-flex; align-items:center; gap:.25rem; background:none;
+    border:1px solid rgba(125,170,220,.3); color:var(--pmut); border-radius:999px;
+    padding:.25rem .55rem; margin-left:.45rem; vertical-align:middle; cursor:pointer;
+    font:600 .68rem/1 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    text-transform:none; letter-spacing:0; transition:color .2s ease, border-color .2s ease, background .2s ease; }
+  #p365app .jrn__snd:hover { color:var(--pwhite); border-color:rgba(125,170,220,.6); }
+  #p365app .jrn__snd.on { color:#67c1f5; border-color:var(--pcyan); background:rgba(29,151,227,.12); }
+  @keyframes p365pop { from { transform:scale(.3); opacity:0 } to { transform:none; opacity:1 } }
+  @media (prefers-reduced-motion: reduce) { .p365toast { transition:none } .p365toast .big { animation:none } }
+
   /* ---------- IMMERSIVE OVERLAY -----------------------------------------------
      Tapping a tool used to navigate away, which breaks the feeling of being
      somewhere. Tools now open OVER the portal, full-bleed, and close back to
@@ -20026,6 +20087,117 @@ def write_portal_page():
   function topRow(title) {
     return '<div class="ptop"><h1>' + title + '</h1><button class="sm ghost" id="sout">Sign out</button></div>';
   }
+  // ---------- celebration: confetti, sound and level-up moments -------------------
+  // Sound is OFF until asked for. Unexpected noise is one of the documented ways to
+  // startle an older user, and a portal that blares at someone is not premium - it is
+  // rude. The toggle is visible, inviting and remembered.
+  var SND = false;
+  try { SND = localStorage.getItem('p365snd') === '1'; } catch (e) {}
+  var actx = null;
+  function beep(freqs, dur, type) {
+    if (!SND) return;
+    try {
+      var C = window.AudioContext || window.webkitAudioContext; if (!C) return;
+      actx = actx || new C();
+      if (actx.state === 'suspended') actx.resume();
+      freqs.forEach(function (f, i) {
+        var o = actx.createOscillator(), g = actx.createGain();
+        o.type = type || 'sine'; o.frequency.value = f;
+        var t = actx.currentTime + i * 0.085;
+        g.gain.setValueAtTime(0, t);
+        g.gain.linearRampToValueAtTime(.16, t + .015);
+        g.gain.exponentialRampToValueAtTime(.0008, t + dur);
+        o.connect(g); g.connect(actx.destination);
+        o.start(t); o.stop(t + dur + .02);
+      });
+    } catch (e) {}
+  }
+  var SFX = {
+    step: function () { beep([660, 880], .28, 'sine'); },
+    level: function () { beep([523, 659, 784, 1047], .55, 'triangle'); },
+    open: function () { beep([440], .12, 'sine'); }
+  };
+  function confetti(n) {
+    var reduce = false; try { reduce = matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+    if (reduce) return;
+    var cv = document.getElementById('p365fx');
+    if (!cv) { cv = document.createElement('canvas'); cv.id = 'p365fx'; document.body.appendChild(cv); }
+    var w = cv.width = innerWidth, h = cv.height = innerHeight, cx = cv.getContext('2d');
+    var cols = ['#1d97e3', '#00ce1b', '#e0b341', '#67c1f5', '#ffffff'];
+    var bits = [];
+    for (var i = 0; i < (n || 90); i++) bits.push({
+      x: w / 2 + (Math.random() - .5) * w * .5, y: h * .3 + Math.random() * 40,
+      vx: (Math.random() - .5) * 11, vy: -6 - Math.random() * 9,
+      s: 4 + Math.random() * 7, r: Math.random() * 6.3, vr: (Math.random() - .5) * .35,
+      c: cols[(Math.random() * cols.length) | 0], a: 1
+    });
+    var t0 = performance.now();
+    (function frame(t) {
+      var life = t - t0;
+      cx.clearRect(0, 0, w, h);
+      bits.forEach(function (b) {
+        b.vy += .32; b.x += b.vx; b.y += b.vy; b.r += b.vr;
+        if (life > 1400) b.a = Math.max(0, b.a - .02);
+        cx.save(); cx.globalAlpha = b.a; cx.translate(b.x, b.y); cx.rotate(b.r);
+        cx.fillStyle = b.c; cx.fillRect(-b.s / 2, -b.s / 2, b.s, b.s * .6); cx.restore();
+      });
+      if (life < 2600) requestAnimationFrame(frame);
+      else { cx.clearRect(0, 0, w, h); if (cv.parentNode) cv.parentNode.removeChild(cv); }
+    })(t0);
+  }
+  function toast(icon, title, sub, ms) {
+    var el2 = document.createElement('div');
+    el2.className = 'p365toast';
+    el2.setAttribute('role', 'status');
+    el2.innerHTML = '<span class="big">' + icon + '</span><b>' + title + '</b><span>' + sub + '</span>';
+    document.body.appendChild(el2);
+    requestAnimationFrame(function () { el2.classList.add('in'); });
+    setTimeout(function () {
+      el2.classList.remove('in');
+      setTimeout(function () { if (el2.parentNode) el2.parentNode.removeChild(el2); }, 400);
+    }, ms || 3600);
+  }
+  // Progress since last visit. Deliberately NOT a daily streak: rewarding somebody for
+  // opening a page every day is a dark pattern and this portal only earns its keep when
+  // the customer's computers are actually looked after. What IS worth marking is a step
+  // they genuinely completed since they were last here.
+  function jSnapRead() { try { return JSON.parse(localStorage.getItem('p365jrn') || '{}') || {}; } catch (e) { return {}; } }
+  function jSnapWrite(o) { try { localStorage.setItem('p365jrn', JSON.stringify(o)); } catch (e) {} }
+  function jKey(d) {                       // shared browser / different member = fresh slate, no false fanfare
+    var s = String((d && d.name) || ''), h = 0;
+    for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+    return h;
+  }
+  // The WiFi step can only be judged once the survey count returns, so the FIRST settle
+  // waits for that answer (or the fallback timer). Settling early would bank a snapshot
+  // without WiFi, then "discover" it seconds later - a phantom celebration on every
+  // single visit. Once settled, later settles are real in-session progress and welcome.
+  var jSettled = false;
+  function journeySettle(res, d, force) {
+    if (!jSettled && !JW.loaded && !force) return;
+    if (S.back) { jSettled = true; return; }   // staff viewing a customer: never celebrate, never store
+    jSettled = true;
+    var key = jKey(d), prev = jSnapRead();
+    var doneKeys = res.done.map(function (x) { return x.k; });
+    jSnapWrite({ p: res.pts, l: res.lv, d: doneKeys, k: key });
+    if (prev.k !== key || typeof prev.p !== 'number') return;   // first view on this browser
+    var was = prev.d || [];
+    var fresh = res.done.filter(function (x) { return was.indexOf(x.k) < 0; });
+    if (res.lv > (prev.l || 0)) {
+      setTimeout(function () {
+        confetti(140); SFX.level();
+        toast('\\ud83c\\udf89', 'Level ' + (res.lv + 1) + ' \\u2014 ' + res.lvName,
+          fresh.length ? esc(fresh[0].t) + ' \\u2014 nicely done.' : 'Your setup is in good shape.', 4600);
+      }, 750);
+    } else if (fresh.length) {
+      setTimeout(function () {
+        confetti(70); SFX.step();
+        toast('\\u2b50', '+' + fresh.reduce(function (a, x) { return a + x.pts; }, 0) + ' points',
+          esc(fresh[0].t) + (fresh.length > 1 ? ' and ' + (fresh.length - 1) + ' more' : '') + ' \\u2014 thank you.', 3600);
+      }, 750);
+    }
+  }
+
   // ---------- the journey ---------------------------------------------------------
   // Honest gamification: every "available" step is something genuinely free that the
   // customer already owns and probably doesn't know about; every locked step states
@@ -20047,7 +20219,7 @@ def write_portal_page():
     'Wi-Fi trouble is nearly always <b>where the router sits</b>, not the broadband package. Moving it off the floor and out of the cupboard works wonders.',
     'Windows updates aren\\u2019t optional extras \\u2014 most of them close security holes. If yours keep postponing themselves, that\\u2019s worth a look.'
   ];
-  var JW = { wifi: 0 }, JD = null;   // survey count arrives asynchronously; see loadWifi()
+  var JW = { wifi: 0, loaded: false }, JD = null;   // survey count arrives asynchronously; see loadWifi()
   // The WiFi step can only be judged once the survey list returns, which is AFTER the
   // dashboard paints. Rather than delay the whole page for it, the row lights up in
   // place when the count lands - which reads as the journey noticing, not as a redraw.
@@ -20062,6 +20234,15 @@ def write_portal_page():
     host.parentNode.replaceChild(el2, host);
     journeyAnim(fresh.pts);
     journeyBind(JD);
+    // the WiFi tile in the unlock grid reads the same count, so it moves in step
+    var uc = document.getElementById('unlcard');
+    if (uc) {
+      var t2 = document.createElement('div');
+      t2.innerHTML = unlockCard(JD);
+      uc.parentNode.replaceChild(t2.firstChild, uc);
+      unlockBind();
+    }
+    journeySettle(fresh, JD);   // the journey is now complete - safe to judge what is new
   }
   function jSteps(d) {
     var m = d.machines || [];
@@ -20086,8 +20267,8 @@ def write_portal_page():
   }
   function journeyCard(d) {
     var steps = jSteps(d);
-    var got = 0, poss = 0, doneN = 0;
-    steps.forEach(function (s) { poss += s.pts; if (s.done) { got += s.pts; doneN++; } });
+    var got = 0, poss = 0, doneN = 0, doneList = [];
+    steps.forEach(function (s) { poss += s.pts; if (s.done) { got += s.pts; doneN++; doneList.push({ k: s.k, t: s.t, pts: s.pts }); } });
     var lv = 0;
     for (var i = 0; i < LEVELS.length; i++) if (got >= LEVELS[i].at) lv = i;
     var nextAt = (lv + 1 < LEVELS.length) ? LEVELS[lv + 1].at : poss;
@@ -20099,7 +20280,10 @@ def write_portal_page():
       + '<div class="jrn__badge">' + (lv + 1) + '</div>'
       + '<div><p class="jrn__lv">Level ' + (lv + 1) + ' of ' + LEVELS.length + '</p>'
       + '<p class="jrn__name">' + LEVELS[lv].name + '</p></div>'
-      + '<div class="jrn__pts"><div class="jrn__ptsn" id="jrnNum">0</div><div class="jrn__ptsl">points</div></div>'
+      + '<div class="jrn__pts"><div class="jrn__ptsn" id="jrnNum">0</div>'
+      + '<div class="jrn__ptsl">points<button type="button" class="jrn__snd' + (SND ? ' on' : '') + '" id="jrnSnd" '
+      + 'title="' + (SND ? 'Sounds are on \\u2014 tap to silence' : 'Sounds are off \\u2014 tap for a little celebration') + '">'
+      + (SND ? '\\ud83d\\udd0a on' : '\\ud83d\\udd07 off') + '</button></div></div>'
       + '</div>'
       + '<div class="jrn__bar"><div class="jrn__fill" id="jrnFill" data-pct="' + pct + '"></div></div>'
       + '<p class="jrn__hint"><b>' + doneN + ' of ' + steps.length + '</b> done'
@@ -20118,7 +20302,7 @@ def write_portal_page():
     var tip = JTIPS[Math.floor(Date.now() / 86400000) % JTIPS.length];   // steady for the day, not flickering
     h += '<p class="jrn__tip">\\ud83d\\udca1 <b>Worth knowing:</b> ' + tip + '</p>';
     h += '</div>';
-    return { html: h, pts: got };
+    return { html: h, pts: got, lv: lv, lvName: LEVELS[lv].name, next: nextStep ? nextStep.t : '', done: doneList };
   }
   function journeyAnim(pts) {
     var fill = document.getElementById('jrnFill'), num = document.getElementById('jrnNum');
@@ -20140,6 +20324,15 @@ def write_portal_page():
     }
   }
   function journeyBind(d) {
+    var sb = document.getElementById('jrnSnd');
+    if (sb) sb.onclick = function () {
+      SND = !SND;
+      try { localStorage.setItem('p365snd', SND ? '1' : '0'); } catch (e) {}
+      sb.className = 'jrn__snd' + (SND ? ' on' : '');
+      sb.innerHTML = SND ? '\\ud83d\\udd0a on' : '\\ud83d\\udd07 off';
+      sb.title = SND ? 'Sounds are on \\u2014 tap to silence' : 'Sounds are off \\u2014 tap for a little celebration';
+      if (SND) SFX.step();   // let them hear what they just agreed to
+    };
     Array.prototype.forEach.call(document.querySelectorAll('#p365app .jrn__row[data-go]'), function (row) {
       var act = function () {
         var g = row.getAttribute('data-go');
@@ -20152,6 +20345,67 @@ def write_portal_page():
       };
       row.onclick = act;
       row.onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); act(); } };
+    });
+  }
+
+  // ---------- what you have vs what you could add ---------------------------------
+  // Every tile is a real 365 thing. "Included" means genuinely free and already theirs,
+  // "Free - add it" means free but not switched on yet, "On support" means it comes with
+  // the paid plan. Nothing here is invented and no price is guessed: 18.25 per computer
+  // per month is the live Direct Debit figure.
+  function unlockTiles(d) {
+    var pro = d.tier === 'pro', m = d.machines || [];
+    return [
+      { ic: '\\ud83c\\udfe0', t: 'Your own portal', s: 'Everything about your computers in one place', st: 'have' },
+      { ic: '\\ud83c\\udf93', t: '11 free courses', s: 'Online safety, video calls, getting more from your tech', st: 'have', go: 'courses' },
+      { ic: '\\ud83d\\udcf6', t: 'WiFi Optimizer', s: 'Score every room, saved to your account', st: JW.wifi > 0 ? 'have' : 'add', go: 'wifi' },
+      { ic: '\\ud83e\\uddf0', t: '20 free tools', s: 'Speed test, spec checker, is-it-down and more', st: 'have', go: 'tools' },
+      { ic: '\\ud83d\\udcc5', t: 'Book online', s: 'Book, move or cancel a visit yourself, any time', st: 'have', go: 'book' },
+      { ic: '\\ud83d\\udda5', t: 'PC Manager', s: m.length ? m.length + ' computer' + (m.length === 1 ? '' : 's') + ' reporting in' : 'Free health monitoring \\u2014 we fit it for you', st: m.length ? 'have' : 'add', go: 'app' },
+      { ic: '\\ud83c\\udd98', t: 'Remote help (SOS)', s: 'A techie on your screen in minutes', st: pro ? 'have' : 'add', go: 'sos', sub: pro ? '' : 'Pay as you go, or unlimited on support' },
+      { ic: '\\ud83d\\udd27', t: 'Full service every 6 weeks', s: 'A proper going-over, not a quick look', st: pro ? 'have' : 'lock' },
+      { ic: '\\u267e\\ufe0f', t: 'Unlimited remote help', s: 'The same friendly faces, as often as you need', st: pro ? 'have' : 'lock' },
+      { ic: '\\ud83d\\udcde', t: 'We ring before we connect', s: 'Never a surprise connection \\u2014 and an ETA call before a visit', st: pro ? 'have' : 'lock' },
+      { ic: '\\ud83d\\udcac', t: 'Backup reminders', s: 'A text when it\\u2019s time to plug the drive in', st: pro ? 'have' : 'lock' },
+      { ic: '\\ud83d\\udcc4', t: 'Written report each service', s: 'Honest, in plain English, kept in your portal', st: pro ? 'have' : 'lock' }
+    ];
+  }
+  function unlockCard(d) {
+    var tiles = unlockTiles(d), pro = d.tier === 'pro';
+    var locked = tiles.filter(function (x) { return x.st === 'lock'; }).length;
+    var h = '<div class="card" id="unlcard"><h2>\\u2728 Your 365, unlocked</h2>'
+      + '<p class="quiet" style="margin:0 0 .2rem">'
+      + (pro ? 'You\\u2019re on 365 support, so the lot is switched on. Thank you \\u2014 genuinely.'
+             : 'Everything bright is already yours and always free. The ' + locked + ' dimmed ones come with 365 support \\u2014 tap one to see what it does.')
+      + '</p><div class="unl">';
+    tiles.forEach(function (x, i) {
+      var lbl = x.st === 'have' ? 'Included' : (x.st === 'add' ? 'Free \\u2014 add it' : 'On support');
+      h += '<div class="unl__t ' + x.st + '" style="animation-delay:' + (i * 45) + 'ms"'
+        + (x.st === 'have' ? '' : ' tabindex="0" role="button" data-unl="' + (x.go || 'plans') + '"')
+        + '><span class="unl__ic">' + x.ic + '</span><strong>' + x.t + '</strong>'
+        + '<small>' + (x.sub || x.s) + '</small>'
+        + '<span class="unl__st">' + lbl + '</span></div>';
+    });
+    h += '</div>';
+    if (!pro) h += '<p class="quiet" style="margin:.6rem 0 .55rem"><strong style="color:var(--pwhite)">\\u00a318.25 a month per computer</strong> by Direct Debit \\u2014 about 60p a day, no contract, cancel any time.</p>'
+      + '<div class="row" style="border:0"><a href="/monthly-it-support/" target="_blank" rel="noopener"><button class="sm">See how support works</button></a>'
+      + '<a href="tel:+441202775566"><button class="sm ghost">Talk it over: 01202 775566</button></a></div>';
+    return h + '</div>';
+  }
+  function unlockBind() {
+    Array.prototype.forEach.call(document.querySelectorAll('#p365app .unl__t[data-unl]'), function (t) {
+      var act = function () {
+        var g = t.getAttribute('data-unl');
+        if (g === 'wifi') ovWifi();
+        else if (g === 'book') ovBook();
+        else if (g === 'courses') window.open('/free-tools/', '_blank', 'noopener');
+        else if (g === 'tools') window.open('/free-tools/', '_blank', 'noopener');
+        else if (g === 'sos') window.open('/sos/', '_blank', 'noopener');
+        else if (g === 'app') { var b = document.getElementById('appreq'); if (b) { b.scrollIntoView({ behavior: 'smooth', block: 'center' }); b.focus(); } else window.open('/free-pc-health-check/', '_blank', 'noopener'); }
+        else window.open('/monthly-it-support/', '_blank', 'noopener');
+      };
+      t.onclick = act;
+      t.onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); act(); } };
     });
   }
 
@@ -20181,6 +20435,7 @@ def write_portal_page():
     ovEl = o; ovOnClose = onClose || null;
     try { document.documentElement.classList.add('p365-lock'); } catch (e) {}
     o.querySelector('.p365ov__x').onclick = function () { ovShut(); };
+    SFX.open();
     build(o.querySelector('.p365ov__body'));
     try { history.pushState({ p365ov: 1 }, ''); } catch (e) {}
     setTimeout(function () { try { o.querySelector('.p365ov__x').focus(); } catch (e) {} }, 60);
@@ -20841,12 +21096,7 @@ def write_portal_page():
       h += '<div class="card"><h2>\\ud83e\\ude7a Quick browser check-up</h2><div id="bcheck"><p class="quiet">Checking what this browser can see\\u2026</p></div>'
         + '<p class="quiet">A browser can only see so much - the free 365 PC Manager app sees the full honest picture (drive health, backup, battery, scams), and <strong>we install it for you</strong>.</p>'
         + '<button class="sm" id="appreq"' + (d.appreq ? ' disabled' : '') + '>' + (d.appreq ? '\\u2713 Requested - we\\u2019ll be in touch' : '\\u2b07 Install the app for me') + '</button></div>';
-      if (d.tier !== 'pro')
-        h += '<div class="card"><h2>What being on 365 support adds</h2><p class="quiet" style="margin:0 0 .4rem">'
-          + 'A full service every 6 weeks with an honest written report \\u00b7 unlimited remote help from the same friendly faces \\u00b7 we always ring before we connect \\u00b7 SMS reminders so your backup drive\\u2019s plugged in \\u00b7 an ETA call before any visit.</p>'
-          + '<p class="quiet" style="margin:0 0 .55rem"><strong>\\u00a318.25/month per computer</strong> by Direct Debit - about 60p a day, no contract, cancel any time.</p>'
-          + '<div class="row" style="border:0"><a href="/monthly-it-support/" target="_blank" rel="noopener"><button class="sm">See how support works</button></a>'
-          + '<a href="tel:+441202775566"><button class="sm ghost">Talk it over: 01202 775566</button></a></div></div>';
+      h += unlockCard(d);
       if (!freshJoiner) h += needCard;
       // Established members get a gentle, UNCONDITIONAL review ask (never shown to a
       // brand-new joiner, who has nothing to review yet). Reviews are the strongest
@@ -20863,7 +21113,11 @@ def write_portal_page():
       heroAnim(heroPrimary);
       journeyAnim(jrn.pts);
       journeyBind(d);
+      unlockBind();
       JD = d;   // kept so the journey can re-render when the survey count lands
+      // Safety net: if the survey count never arrives (offline, endpoint down) the
+      // journey still settles, so a returning member is never left uncelebrated.
+      setTimeout(function () { journeySettle(jrn, d, true); }, 3500);
       var qb = document.getElementById('qbook');
       if (qb) qb.onclick = ovBook;
       var qw = document.getElementById('qwifi');
@@ -21056,9 +21310,10 @@ def write_portal_page():
   function loadWifi() {
     var box = document.getElementById('mywifi'); if (!box) return;
     post(WIFI, { action: 'list', wtoken: S.wtoken, machine: mid() }).then(function (d) {
-      if (!d || !d.ok) { box.innerHTML = '<p class="quiet">Couldn’t load your surveys just now - try again shortly.</p>'; return; }
+      JW.loaded = true;
+      if (!d || !d.ok) { box.innerHTML = '<p class="quiet">Couldn’t load your surveys just now - try again shortly.</p>'; if (!jSettled) journeyRefresh(); return; }
       var wasW = JW.wifi; JW.wifi = (d.surveys && d.surveys.length) ? d.surveys.length : 0;
-      if (wasW !== JW.wifi) journeyRefresh();   // the journey notices the survey arriving
+      if (wasW !== JW.wifi || !jSettled) journeyRefresh();   // the journey notices the survey arriving
       if (!d.surveys || !d.surveys.length) { box.innerHTML = '<p class="quiet">Nothing saved yet. Run the free WiFi survey, then press “Save to my 365 portal” on the tool.</p>'; return; }
       var hh = '';
       d.surveys.forEach(function (w) {
@@ -21077,7 +21332,7 @@ def write_portal_page():
           post(WIFI, { action: 'del', wtoken: S.wtoken, machine: mid(), id: btn.getAttribute('data-wifidel') }).then(loadWifi);
         });
       });
-    }).catch(function () { box.innerHTML = '<p class="quiet">Couldn’t load your surveys - try again shortly.</p>'; });
+    }).catch(function () { JW.loaded = true; box.innerHTML = '<p class="quiet">Couldn’t load your surveys - try again shortly.</p>'; if (!jSettled) journeyRefresh(); });
   }
   (function () {
     // upload a 365-wifi-survey.json exported on another device straight into the account
