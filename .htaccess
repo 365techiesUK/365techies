@@ -28,6 +28,13 @@ RewriteRule ^(.*)$ /$1? [R=301,L]
 # NB: "activate" removed from this Gone list - /activate/ is now the live PC Manager activation page
 RewriteRule ^(members|members-2|activity|activity-2|groups|forums|register|register-2|profile|moderation|messages|notifications|videos|documents|photos|password-reset|password-recover|external-link|sidebar|gutenberg|remote-jobs|365live|my-account|my-account-2|cart|checkout|checkout-2|shop-2)/?$ - [G]
 RewriteRule ^shop/?$ /dell-hardware/ [R=301,L]
+
+# Short, sayable URLs for the review ask - "just go to 365techies.co.uk/review".
+# The team says these on the phone and they are printed on the referral cards,
+# so they must never break.
+RewriteRule ^review/?$   /leave-a-review/ [R=301,L]
+RewriteRule ^reviewus/?$ /leave-a-review/ [R=301,L]
+
 # /sos/ is now a real on-site page (built by build_extra.py sos_page) with the
 # Splashtop direct-download links embedded - no redirect needed.
 

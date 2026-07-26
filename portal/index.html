@@ -1368,6 +1368,15 @@
           + '<div class="row" style="border:0"><a href="/monthly-it-support/" target="_blank" rel="noopener"><button class="sm">See how support works</button></a>'
           + '<a href="tel:+441202775566"><button class="sm ghost">Talk it over: 01202 775566</button></a></div></div>';
       if (!freshJoiner) h += needCard;
+      // Established members get a gentle, UNCONDITIONAL review ask (never shown to a
+      // brand-new joiner, who has nothing to review yet). Reviews are the strongest
+      // owner-controllable local-pack signal; the portal is a touchpoint the email
+      // can't reach. No incentive is offered - that would be unlawful.
+      if (!freshJoiner) h += '<div class="card"><h2>\u2b50 Happy with us?</h2>'
+        + '<p class="quiet" style="margin:0 0 .55rem">A quick Google review takes about thirty seconds, and it is genuinely how other local people find a firm that answers the phone. We read every single one.</p>'
+        + '<div class="row" style="border:0"><a href="/leave-a-review/" target="_blank" rel="noopener"><button class="sm">Leave a review</button></a>'
+        + '<a href="/refer-a-friend/" target="_blank" rel="noopener"><button class="sm ghost">Recommend us to a friend</button></a></div>'
+        + '<p class="quiet" style="margin:.55rem 0 0;font-size:.82rem">Something not right instead? Ring 01202 775566 and we will put it right.</p></div>';
             el.innerHTML = h;
       bindOut();
       bindFeedback();
