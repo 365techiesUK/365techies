@@ -749,9 +749,16 @@ if (!defined('RV_LIB')) {
         // authenticates the forwarder, not us. Content is fixed, so this is never a useful
         // spam vector even if the pass leaked; anonymous callers can still only mail us.
         $tto = 'info@365techies.co.uk';
-        if ($rv_admin && isset($_GET['to'])) {
+        $tnote = '';
+        if (isset($_GET['to'])) {
             $cand = strtolower(trim((string)$_GET['to']));
-            if (filter_var($cand, FILTER_VALIDATE_EMAIL)) $tto = $cand;
+            // say WHY a requested target was ignored - silently mailing ourselves instead
+            // looks like success and wastes the tester's time
+            if (!$rv_admin) $tnote = ($rv_s === '')
+                ? 'to= ignored: no admin password given. Add &s=<your PC Manager admin password> to the address.'
+                : 'to= ignored: that admin password was not accepted. If it contains & + # or a space, those must be percent-encoded in a URL (& is %26, + is %2B, # is %23, space is %20).';
+            elseif (!filter_var($cand, FILTER_VALIDATE_EMAIL)) $tnote = 'to= ignored: that is not a valid email address.';
+            else $tto = $cand;
         }
         // exact customer email, to OUR OWN inbox only - never a caller-supplied address.
         // ?test=1 sends the review ask; ?test=done sends the job-done visit record.
@@ -782,7 +789,7 @@ if (!defined('RV_LIB')) {
                               $icsD === '' ? '' : '365-techies-booking.ics', $icsD);
         }
         echo json_encode(array('ok' => (bool)$ok, 'mode' => 'test', 'kind' => $tkind, 'to' => $tto,
-                               'note' => $ok ? 'check the inbox (and spam folder on first send)' : 'send failed - check server mail config'));
+                               'note' => ($tnote !== '' ? $tnote : ($ok ? 'check the inbox (and spam folder on first send)' : 'send failed - check server mail config'))));
         exit;
     }
 
