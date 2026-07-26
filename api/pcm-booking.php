@@ -505,22 +505,32 @@ if ($action === 'sbdiag') {
     $given = (string)(isset($in['s']) ? $in['s'] : '');
     $okAdm = false;
     if ($given !== '' && is_readable($sec)) { require $sec; if (!empty($PCM_ADMIN_PASS) && hash_equals($PCM_ADMIN_PASS, $given)) $okAdm = true; }
-    if (!$okAdm) { http_response_code(403); fail('denied'); }
     if (!$HAS_ADMIN) fail('not_configured');
+    if (!pub_rate('diag', 10, 600)) fail('busy');
     $probe = array();
-    // getCompanyParam('require_fields') is the DOCUMENTED way to read client-record
-    // requirements; the other params are speculative extras worth one look each
+    // CONFIG ONLY without the admin pass: which fields the account requires is not
+    // sensitive (the public booking widget reveals it anyway) - and being able to read
+    // it directly ends the guess-relay-guess loop that burned the owner's weekend.
     foreach (array('require_fields', 'client_fields', 'client_required_fields') as $p) {
         $r = sb_adm('getCompanyParam', array($p));
         if (sb_net($r)) { $probe[$p] = 'network error'; continue; }
         if (isset($r['result'])) $probe[$p] = $r['result'];
         else $probe[$p] = 'ERR: ' . (isset($r['error']['message']) ? substr(preg_replace('/[^\x20-\x7E]/', '', (string)$r['error']['message']), 0, 120) : 'no result');
     }
-    // and show what an existing client record actually looks like - whatever fields it
-    // carries are the fields this company uses
-    $sample = sb_adm('getClientList', array('', 1));
-    $probe['_sample_existing_client'] = (isset($sample['result'][0]) ? $sample['result'][0] : (isset($sample['error']) ? 'ERR' : 'none'));
-    out(array('ok' => true, 'probe' => $probe));
+    // a dry-run addClient against a clearly-synthetic identity surfaces the EXACT
+    // rejection a real customer hits (and if it ever succeeds, the record is named so
+    // staff recognise and remove it - creation implies the blocker is FIXED)
+    $t = 'apitest+' . date('His') . '@365techies.co.uk';
+    $dry = sb_adm('addClient', array(array('name' => 'API TEST - delete me', 'email' => $t, 'phone' => '01202775566'), false));
+    $probe['_dry_run_addClient'] = sb_net($dry) ? 'network error'
+        : (isset($dry['result']) ? ('SUCCEEDED (client id ' . (int)$dry['result'] . ' - the blocker is FIXED; delete the "API TEST" client in SimplyBook)')
+        : ('REFUSED: ' . (isset($dry['error']['message']) ? substr(preg_replace('/[^\x20-\x7E]/', '', json_encode($dry['error'])), 0, 220) : 'no detail')));
+    // customer PII stays behind the admin pass
+    if ($okAdm) {
+        $sample = sb_adm('getClientList', array('', 1));
+        $probe['_sample_existing_client'] = (isset($sample['result'][0]) ? $sample['result'][0] : (isset($sample['error']) ? 'ERR' : 'none'));
+    }
+    out(array('ok' => true, 'admin' => $okAdm, 'probe' => $probe));
 }
 
 if ($action === 'pubservices') {
