@@ -20294,6 +20294,19 @@ def write_portal_page():
       var h = topRow('Hello ' + esc((d.name || '').split(' ')[0] || 'there'));
       if (S.back) h = '<div class="card" style="border-color:rgba(29,151,227,.55);padding:.6rem .9rem"><div class="row" style="border:0;padding:0"><span class="quiet" style="margin:0">\\ud83d\\udc41 You\\u2019re viewing the portal as <strong>' + esc(d.name || 'this customer') + '</strong> - exactly what they see.</span><button class="sm" id="backstaff">\\u2190 Back to staff</button></div></div>' + h;
       if (d.pending) h += '<div class="card" style="border-color:rgba(224,179,65,.5)"><p class="quiet">We can see a support plan registered to this email. For security we link it to your web login by hand - it usually appears within a day. Need it sooner? Ring 01202 775566.</p></div>';
+      // A BRAND-NEW member (no app checking in, nothing booked) leads with BOOKING:
+      // the one thing they can genuinely do right now. Services render open below,
+      // so "what can I book?" is answered without a single tap.
+      var freshJoiner = !d.machines.length && !d.next;
+      var needCard = '<div class="card"' + (freshJoiner ? ' style="border-color:rgba(29,151,227,.5)"' : '') + '><h2>\\ud83d\\udcc5 Book a visit</h2>'
+        + '<p class="quiet" style="margin:0 0 .55rem">Pick a service and a time - it takes about a minute, and you can move or cancel it here whenever you like. Most people start with the <strong>Computer Service &amp; Health Check</strong>.</p>'
+        + '<div class="nbwiz" id="cbwiz" style="display:none"></div>'
+        + '<div class="row">'
+        + '<button class="sm" id="cbopen">\\ud83d\\udcc5 Book a service</button>'
+        + '<a href="/sos/" target="_blank" rel="noopener"><button class="sm ghost">Remote help (SOS)</button></a>'
+        + '<a href="/free-tools/" target="_blank" rel="noopener"><button class="sm ghost">Free tools</button></a>'
+        + '<a href="tel:+441202775566"><button class="sm ghost">Call 01202 775566</button></a></div></div>';
+      if (freshJoiner) h += needCard;
       // primary PC gets the next-gen 3D hero up top; any others listed compactly beneath
       var ngLive = d.machines.filter(function (mm) { return !mm.fresh; });
       var ngPrimary = null;
@@ -20354,13 +20367,7 @@ def write_portal_page():
           + '<p class="quiet" style="margin:0 0 .55rem"><strong>\\u00a318.25/month per computer</strong> by Direct Debit - about 60p a day, no contract, cancel any time.</p>'
           + '<div class="row" style="border:0"><a href="/monthly-it-support/" target="_blank" rel="noopener"><button class="sm">See how support works</button></a>'
           + '<a href="tel:+441202775566"><button class="sm ghost">Talk it over: 01202 775566</button></a></div></div>';
-      h += '<div class="card"><h2>Need us?</h2>'
-        + '<div class="nbwiz" id="cbwiz" style="display:none"></div>'
-        + '<div class="row">'
-        + '<button class="sm" id="cbopen">\\ud83d\\udcc5 Book a service</button>'
-        + '<a href="/sos/" target="_blank" rel="noopener"><button class="sm ghost">Remote help (SOS)</button></a>'
-        + '<a href="/free-tools/" target="_blank" rel="noopener"><button class="sm ghost">Free tools</button></a>'
-        + '<a href="tel:+441202775566"><button class="sm ghost">Call 01202 775566</button></a></div></div>';
+      if (!freshJoiner) h += needCard;
             el.innerHTML = h;
       bindOut();
       bindFeedback();
@@ -20409,6 +20416,7 @@ def write_portal_page():
       if (cbo) cbo.onclick = function () { custWiz(); };
       var cbb = document.getElementById('cbbook');   // membership card "book one" -> open the in-portal wizard, not the website
       if (cbb) cbb.onclick = function () { var w = document.getElementById('cbwiz'); if (w && w.style.display === 'none') custWiz(); if (w) w.scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; };
+      if (freshJoiner) custWiz();   // new member: the services are already open, nothing to hunt for
       loadMyBookings();
       loadWifi();
       Array.prototype.forEach.call(document.querySelectorAll('#p365app .repb'), function (btn) {
@@ -20437,7 +20445,9 @@ def write_portal_page():
     if (w.style.display !== 'none') { w.style.display = 'none'; return; }
     CB = { svc: 0, svcName: '' };
     w.style.display = 'block';
-    w.innerHTML = '<h3>1 \\u00b7 What would you like?</h3><div id="cbsvc"><p class="quiet">Loading our services\\u2026</p></div>'
+    w.innerHTML = '<h3>1 \\u00b7 What would you like?</h3>'
+      + '<p class="quiet" style="margin:.1rem 0 .55rem">Sent to us by a friend? Pick the <strong>Computer Service &amp; Health Check</strong> - your first one\\u2019s free. Just add their name when you confirm, so we can thank them.</p>'
+      + '<div id="cbsvc"><p class="quiet">Loading our services\\u2026</p></div>'
       + '<p class="quiet"><a href="#" id="cbx">close</a> \\u00b7 prefer the full page? <a href="/book-service/" target="_blank" rel="noopener">book there</a></p>';
     document.getElementById('cbx').onclick = function () { w.style.display = 'none'; return false; };
     function render(list) {
