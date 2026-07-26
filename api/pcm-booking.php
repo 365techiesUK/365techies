@@ -783,22 +783,25 @@ if ($action === 'verifycode') {
         $cd = array('name' => ($cname !== '' ? $cname : $email), 'email' => $email);
         if ($jphone !== '') $cd['phone'] = $jphone;
         $ac = sb_adm('addClient', array($cd, false));
-        // SimplyBook can reject a client on the phone field alone (format rules vary by
-        // company config). Losing the whole sign-in over an optional number would be
-        // absurd - we keep the number on our own record anyway - so retry without it.
-        if ((sb_net($ac) || empty($ac['result'])) && $jphone !== '') {
+        $firstWhy = (sb_net($ac) || empty($ac['result'])) ? sb_why($ac) : '';
+        // SimplyBook can reject a client on phone FORMAT (rules vary by company config),
+        // and losing a sign-in over that would be absurd - we keep the number on our own
+        // record anyway. But NEVER strip the phone when SimplyBook says a value is
+        // REQUIRED: this account has Mandatory registration fields = Phone, so retrying
+        // without it guarantees failure and reports a misleading error.
+        $required = preg_match('/required|empty|mandator/i', $firstWhy);
+        if ($firstWhy !== '' && $jphone !== '' && !$required) {
             unset($cd['phone']);
             $ac = sb_adm('addClient', array($cd, false));
         }
         if (sb_net($ac) || empty($ac['result'])) {
-            $w = sb_why($ac);
-            // SimplyBook can insist on a phone number for new client records ("Mandatory
-            // registration fields: Phone"). Ask for one rather than dead-ending the
-            // sign-up - the customer's code is still valid, because we only burn it once
-            // SimplyBook has succeeded.
-            if ($jphone === '' && preg_match('/required|empty|mandator/i', $w))
-                out(array('ok' => false, 'error' => 'needphone'));
-            sb_alarm('creating the customer (addClient) failed', $w);
+            $w = $firstWhy !== '' ? $firstWhy : sb_why($ac);   // report the FIRST failure, not the retry's
+            // Ask for a number rather than dead-ending the sign-up - the customer's code
+            // is still valid, because we only burn it once SimplyBook has succeeded.
+            if ($jphone === '' && $required) out(array('ok' => false, 'error' => 'needphone'));
+            sb_alarm('creating the customer (addClient) failed', $w
+                . ' [phone ' . ($jphone !== '' ? 'supplied: ' . preg_replace('/[^0-9+ ]/', '', $jphone) : 'NOT supplied')
+                . ', name ' . ($cname !== '' ? 'supplied' : 'NOT supplied') . ']');
             out(array('ok' => false, 'error' => 'sb_unavailable', 'at' => 'addClient', 'why' => $w));
         }
         $cid = (int)$ac['result'];
