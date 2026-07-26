@@ -472,6 +472,33 @@ function pub_allowed($id) {
     return in_array((int)$id, array_map('intval', $SB_PUBLIC_EVENTS), true);
 }
 
+// Admin-only diagnostic: ask SimplyBook itself what it wants on a client record.
+// Exists because "Value is required and can't be empty" names no field, and guessing
+// has already cost hours. Password-gated, read-only, returns raw shapes.
+//   POST {"action":"sbdiag","s":"<PC Manager admin password>"}
+if ($action === 'sbdiag') {
+    $sec = __DIR__ . '/pcm-admin-secret.php';
+    $given = (string)(isset($in['s']) ? $in['s'] : '');
+    $okAdm = false;
+    if ($given !== '' && is_readable($sec)) { require $sec; if (!empty($PCM_ADMIN_PASS) && hash_equals($PCM_ADMIN_PASS, $given)) $okAdm = true; }
+    if (!$okAdm) { http_response_code(403); fail('denied'); }
+    if (!$HAS_ADMIN) fail('not_configured');
+    $probe = array();
+    // method names vary by SimplyBook version/feature set - try the plausible ones and
+    // report whichever answer, rather than assuming any single name is right
+    foreach (array('getClientFields', 'getClientFieldsList', 'getAdditionalFields', 'getCompanyParams') as $m) {
+        $r = sb_adm($m, array());
+        if (sb_net($r)) { $probe[$m] = 'network error'; continue; }
+        if (isset($r['result'])) $probe[$m] = $r['result'];
+        else $probe[$m] = 'ERR: ' . (isset($r['error']['message']) ? substr(preg_replace('/[^\x20-\x7E]/', '', (string)$r['error']['message']), 0, 120) : 'no result');
+    }
+    // and show what an existing client record actually looks like - whatever fields it
+    // carries are the fields this company uses
+    $sample = sb_adm('getClientList', array('', 1));
+    $probe['_sample_existing_client'] = (isset($sample['result'][0]) ? $sample['result'][0] : (isset($sample['error']) ? 'ERR' : 'none'));
+    out(array('ok' => true, 'probe' => $probe));
+}
+
 if ($action === 'pubservices') {
     if (!pub_rate('svc', 90, 600)) fail('busy');
     $list = array();
