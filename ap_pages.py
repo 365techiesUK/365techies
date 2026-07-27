@@ -45,6 +45,18 @@ def _page(slug, title, desc, h1, eyebrow, lede, body, chips=None, cta1=None, cta
     def schema(s, _d=desc, _t=title, _f=faq):
         nodes = [crumb(s, title.split(" | ")[0][:60]),
                  webpage(s, title.split(" | ")[0][:60], _d)]
+        # FAQPage ONLY where the page genuinely answers one clear question. This is the
+        # surface an AI assistant quotes from - an explicit Q&A with a dated answer is far
+        # more citable than prose. A FAQPage on a page without a real Q&A is spam.
+        if _f:
+            nodes.append({
+                "@type": "FAQPage",
+                "@id": bp.SITE + "/" + s + "/#faq",
+                "mainEntity": [{
+                    "@type": "Question", "name": q,
+                    "acceptedAnswer": {"@type": "Answer", "text": a},
+                } for q, a in _f],
+            })
         return graph(nodes)
 
     add(slug=slug, title=title, desc=desc, og_title=og or title.split(" | ")[0][:60],
@@ -181,7 +193,7 @@ def pillar():
         '</div></section>',
     ])
     _page(C.PILLAR,
-          "Business Wi-Fi Access Points: End-of-Support Dates and When to Actually Replace Them | 365 Techies",
+          "Access Point End-of-Support Dates: When to Replace | 365 Techies",
           "End-of-sale and end-of-support dates for RUCKUS and Cisco Aironet business access "
           "points, from the vendors' own notices, checked " + D.DATES_CHECKED_HUMAN + ". Plus the "
           "honest version: when your ageing access points do not need replacing at all.",
@@ -324,7 +336,19 @@ def s2_r510():
           "Someone has told you your 2016 access points need replacing. Before you spend "
           "anything: the vendor supports the R510 until the end of 2028. Here is what actually "
           "matters instead.",
-          body)
+          body,
+          faq=[("Is the RUCKUS R510 still supported?",
+                "Yes. RUCKUS supports the R510 until 31 December 2028. It went end of sale on "
+                "31 January 2022, which means you cannot buy a new one, but end of sale and end "
+                "of support are different things. Checked against the vendor's own end-of-life "
+                "table on " + D.DATES_CHECKED_HUMAN + "."),
+               ("Do I need to replace my RUCKUS R510 access points?",
+                "Not on age alone. If they are patched, powered correctly and your controller is "
+                "still supported, replacement is not the answer to a single dead spot. The four "
+                "things that genuinely make an R510 estate a problem are an unsupported "
+                "controller, unapplied firmware patches, client density against its 2x2 radios, "
+                "and the fact that every Wi-Fi 6 successor needs 802.3at power where the R510 "
+                "ran on 802.3af.")])
 
 
 # ===========================================================================
@@ -371,7 +395,7 @@ def s3_cisco():
         '</div></section>',
     ])
     _page("cisco-aironet-end-of-life",
-          "Cisco Aironet 1700, 2700, 3700 and 1830: End-of-Life Dates Explained | 365 Techies",
+          "Cisco Aironet End-of-Life Dates Explained | 365 Techies",
           "End-of-sale, end-of-software-maintenance and last-date-of-support dates for Cisco "
           "Aironet access points, from Cisco's own bulletins - and what each milestone actually "
           "costs you. Checked " + D.DATES_CHECKED_HUMAN + ".",
@@ -442,7 +466,7 @@ def s4_certs():
         '</div></section>',
     ])
     _page("cisco-access-point-wont-join-controller",
-          "Cisco Access Point Won't Join the Controller? Check the Certificate Date | 365 Techies",
+          "Cisco Access Point Won't Join Controller? Check the Date | 365 Techies",
           "A Cisco access point that worked yesterday and refuses today is often a ten-year "
           "certificate expiring, not a hardware failure. Cisco puts the likelihood at 100% for "
           "pre-2017 units. Field Notice FN63942 explained in plain English.",
@@ -452,7 +476,14 @@ def s4_certs():
           "An access point that worked yesterday now refuses to join the controller. It is "
           "probably not dead - its certificate has expired, and Cisco says that is a certainty "
           "for pre-2017 hardware.",
-          body)
+          body,
+          faq=[("Why has my Cisco access point stopped joining the controller?",
+                "On hardware over ten years old and manufactured before 2017, the most likely "
+                "cause is the manufacturing certificate expiring. Cisco Field Notice FN63942 "
+                "states that all Cisco wireless products manufactured after 18 July 2005 have "
+                "SHA-1 certificates that expire after 10 years, and puts the likelihood of "
+                "encountering the issue at 100 percent for that population. The access point is "
+                "not faulty; its identity has expired.")])
 
 
 # ===========================================================================
@@ -513,7 +544,7 @@ def s5_poe():
         '</div></section>',
     ])
     _page("access-point-poe-af-at-upgrade-trap",
-          "802.3af vs 802.3at: The PoE Trap That Blows Up Wi-Fi Upgrade Budgets | 365 Techies",
+          "802.3af vs 802.3at: The PoE Upgrade Trap | 365 Techies",
           "Older access points run on 802.3af. Their replacements need 802.3at. Exactly what "
           "switches off when power is short, per model, from vendor datasheets - and the free "
           "check that finds it in minutes.",
@@ -587,7 +618,7 @@ def s6_dropping():
         '</div></section>',
     ])
     _page("access-points-dropping-off-controller",
-          "Access Points Keep Dropping Off the Controller: A Diagnostic Order of Play | 365 Techies",
+          "Access Points Keep Dropping Off the Controller | 365 Techies",
           "Access points going offline and coming back is usually not a Wi-Fi fault. An ordered "
           "diagnostic method for controller-managed estates - power, cabling, firmware and "
           "heartbeat behaviour, cheapest check first.",
@@ -654,7 +685,7 @@ def s7_controller():
         '</div></section>',
     ])
     _page("wifi-controller-end-of-life",
-          "Your Wi-Fi Controller, Not Your Access Points, Is the Real Deadline | 365 Techies",
+          "Wi-Fi Controller End of Life: The Real Deadline | 365 Techies",
           "When a business Wi-Fi estate ages out, the wireless controller usually forces the "
           "decision - not the access points. ZoneDirector 1200 dates, the mixed-estate trap, and "
           "why retiring three units can unlock patching twenty-five.",
@@ -724,7 +755,7 @@ def s8_meraki():
         '</div></section>',
     ])
     _page("meraki-licence-expiry-what-happens",
-          "What Actually Happens When a Meraki Licence Expires (And What Doesn't) | 365 Techies",
+          "What Happens When a Meraki Licence Expires | 365 Techies",
           "Meraki devices do not brick when a licence expires - after a 30-day grace period they "
           "stop passing client traffic while staying manageable. The documented behaviour, the "
           "co-termination trap, and the Wi-Fi 5 hardware end-of-support dates.",
@@ -733,7 +764,17 @@ def s8_meraki():
           "If we do not renew, does the Wi-Fi stop? The precise, documented answer - which is "
           "more reassuring than the rumour, and more dangerous, because nothing at all happens "
           "for the first thirty days.",
-          body)
+          body,
+          faq=[("What happens when a Meraki licence expires?",
+                "Nothing for thirty days. Meraki documents a 30-day grace period after expiry "
+                "during which network clients will not see a difference. After that, in Meraki's "
+                "own words, the devices cease to pass client traffic but continue to pass Meraki "
+                "management traffic so they can restore automatically once the organisation "
+                "regains compliance. The hardware is not bricked or disabled."),
+               ("Does the whole Meraki network go down if one licence lapses?",
+                "It depends on the licensing model. Under co-termination licensing the whole "
+                "organisation is affected. Under per-device licensing only the non-compliant "
+                "device is affected.")])
 
 
 # ===========================================================================
@@ -805,7 +846,7 @@ def s9_security():
         '</div></section>',
     ])
     _page("unsupported-access-point-security-risk",
-          "A Working Access Point With No Security Updates Is a Different Problem | 365 Techies",
+          "Unsupported Access Points: The Security Risk | 365 Techies",
           "Broken kit is an operational problem. Working-but-unpatchable kit is a risk decision "
           "somebody has to take knowingly. The three RUCKUS build numbers that tell you whether "
           "you are patched, and the vulnerability already being exploited in the wild.",
