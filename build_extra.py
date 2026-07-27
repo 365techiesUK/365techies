@@ -19745,7 +19745,11 @@ write_family_page()
 # under #p365app so nothing fights the site stylesheet.
 def write_portal_page():
     css = '''<style>
-  #p365app { --pink:#0b1226; --ppanel:#0d1530; --pline:#2a3b63; --pcyan:#1d97e3; --psoft:#86b6e8; --pgood:#00ce1b; --pwarn:#e0b341; --pbad:#e8637e; --pmut:#9fb5d3; --pwhite:#f0f5fc; }
+  /* .p365ov shares the variables AND (via a build-time transform below) every
+     #p365app rule: the immersive overlay mounts on <body>, OUTSIDE #p365app, and
+     content moved into it (the booking wizard) must not lose its styling. This bug
+     class has bitten twice (SOS CTAs, then the wizard rendering as grey blobs). */
+  #p365app, .p365ov { --pink:#0b1226; --ppanel:#0d1530; --pline:#2a3b63; --pcyan:#1d97e3; --psoft:#86b6e8; --pgood:#00ce1b; --pwarn:#e0b341; --pbad:#e8637e; --pmut:#9fb5d3; --pwhite:#f0f5fc; }
   #p365app .card { background:var(--ppanel); border:1px solid var(--pline); border-radius:14px; padding:1.05rem 1.15rem; margin-bottom:.95rem; }
   #p365app .card h2 { font-size:1.02rem; margin:0 0 .6rem; color:var(--pwhite); }
   #p365app h1 { font-size:1.45rem; margin:.1rem 0 .45rem; color:var(--pwhite); }
@@ -21545,9 +21549,10 @@ def write_portal_page():
       if (cbo) cbo.onclick = ovBook;
       var cbb = document.getElementById('cbbook');   // membership card "book one"
       if (cbb) cbb.onclick = function () { ovBook(); return false; };
-      // new member: open the booking overlay for them - the services are already there,
-      // nothing to hunt for and nothing to read first
-      if (freshJoiner) setTimeout(ovBook, 420);
+      // New member: show the services OPEN and INLINE in the Book-a-visit card, so
+      // "what can I book?" is answered without a tap. Deliberately NOT the overlay -
+      // a full-screen takeover the moment someone signs in reads as being ambushed.
+      if (freshJoiner) custWiz();
       loadMyBookings();
       loadWifi();
       Array.prototype.forEach.call(document.querySelectorAll('#p365app .repb'), function (btn) {
@@ -22768,6 +22773,29 @@ def write_portal_page():
   check();
 })();
 </script>'''
+    # Give every #p365app CSS rule a .p365ov twin: the immersive overlay mounts on
+    # <body>, OUTSIDE #p365app, and content rendered or MOVED into it (the booking
+    # wizard) must keep its styling. Selector lists split on commas; only parts that
+    # start with #p365app are twinned; keyframe steps and media preludes (no
+    # #p365app) pass through untouched. Declarations never match: the regex only
+    # fires on text runs that end at an opening brace.
+    import re as _reC
+    # Comments must go first: a comment before a rule becomes part of the matched
+    # prelude and silently defeats the startswith test (that is exactly how .svcgrid
+    # escaped the first version of this transform). Source keeps its comments; the
+    # built page doesn't need them.
+    css = _reC.sub(r"/\*.*?\*/", "", css, flags=_reC.S)
+    def _ovscope(m):
+        sel = m.group(1)
+        if "#p365app" not in sel or ".p365ov" in sel:
+            return m.group(0)
+        lead = sel[:len(sel) - len(sel.lstrip())]
+        parts = [p.strip() for p in sel.split(",") if p.strip()]
+        extra = [p.replace("#p365app", ".p365ov", 1) for p in parts if p.startswith("#p365app")]
+        if not extra:
+            return m.group(0)
+        return lead + ", ".join(parts + extra) + " {"
+    css = _reC.sub(r"([^{}]+)\{", _ovscope, css)
     content = ('<section class="section" style="padding-top:6.5rem"><div class="wrap" style="max-width:880px">'
                + '<div id="p365app"><noscript><p>The customer portal needs JavaScript switched on. Or just ring us: 01202 775566.</p></noscript>'
                + '<p style="color:#9fb5d3">Loading the portal&hellip;</p></div>'
