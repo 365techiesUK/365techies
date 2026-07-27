@@ -19799,29 +19799,29 @@ def write_portal_page():
     background:radial-gradient(closest-side, rgba(29,151,227,.16), transparent);
     animation:p365drift 14s ease-in-out infinite alternate; pointer-events:none; }
   #p365app .hero__top { display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; position:relative; z-index:2; }
-  #p365app .hero__hi { font:700 clamp(1.5rem,4.4vw,2.05rem)/1.15 inherit; letter-spacing:-.02em; margin:0; color:var(--pwhite); }
+  #p365app .hero__hi { font-family:inherit; font-weight:700; font-size:clamp(1.5rem,4.4vw,2.05rem); line-height:1.15; letter-spacing:-.02em; margin:0; color:var(--pwhite); }
   #p365app .hero__sub { color:var(--psoft); font-size:.92rem; margin:.3rem 0 0; }
   #p365app .hero__body { display:flex; align-items:center; gap:1.4rem; margin-top:1.15rem; position:relative; z-index:2; flex-wrap:wrap; }
   #p365app .hero__ring { position:relative; width:112px; height:112px; flex:0 0 112px; }
   #p365app .hero__ring svg { transform:rotate(-90deg); display:block; }
   #p365app .hero__ring circle:last-child { transition:stroke-dasharray 1.4s cubic-bezier(.22,.7,.25,1); }
-  #p365app .hero__ring b { position:absolute; inset:0; display:grid; place-items:center; font:700 1.72rem/1 inherit; letter-spacing:-.02em; }
+  #p365app .hero__ring b { position:absolute; inset:0; display:grid; place-items:center; font-family:inherit; font-weight:700; font-size:1.72rem; line-height:1; letter-spacing:-.02em; }
   #p365app .hero__ring i { position:absolute; left:0; right:0; bottom:8px; text-align:center; font-style:normal;
     font:600 .58rem/1 ui-monospace,Consolas,monospace; letter-spacing:.14em; color:var(--pmut); text-transform:uppercase; }
   #p365app .hero__say { flex:1; min-width:210px; }
-  #p365app .hero__verdict { font:700 1.22rem/1.3 inherit; letter-spacing:-.01em; margin:0 0 .3rem; }
+  #p365app .hero__verdict { font-family:inherit; font-weight:700; font-size:1.22rem; line-height:1.3; letter-spacing:-.01em; margin:0 0 .3rem; }
   #p365app .hero__note { color:var(--pmut); font-size:.93rem; margin:0; line-height:1.55; }
   #p365app .hero__note strong { color:var(--pwhite); }
   #p365app .hero__when { display:inline-flex; align-items:center; gap:.45rem; margin-top:.7rem;
     background:rgba(29,151,227,.14); border:1px solid rgba(29,151,227,.42); border-radius:999px;
     padding:.4rem .85rem; font-size:.88rem; color:#cfe6fa; }
   #p365app .hero__when b { color:#fff; font-weight:700; }
-  #p365app .hero__cd { background:var(--pcyan); color:#fff; border-radius:999px; padding:.08rem .5rem; font:700 .78rem/1.5 inherit; }
+  #p365app .hero__cd { background:var(--pcyan); color:#fff; border-radius:999px; padding:.08rem .5rem; font-family:inherit; font-weight:700; font-size:.78rem; line-height:1.5; }
   /* quick actions - the four things people actually come here to do */
   #p365app .qacts { display:grid; grid-template-columns:repeat(auto-fit,minmax(112px,1fr)); gap:.55rem; margin-top:1.2rem; position:relative; z-index:2; }
   #p365app .qact { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.35rem;
     background:rgba(255,255,255,.055); border:1px solid rgba(125,170,220,.3); border-radius:14px; padding:.8rem .5rem;
-    color:var(--pwhite); font:600 .84rem/1.2 inherit; text-decoration:none; cursor:pointer; min-height:74px;
+    color:var(--pwhite); font-family:inherit; font-weight:600; font-size:.84rem; line-height:1.2; text-decoration:none; cursor:pointer; min-height:74px;
     transition:transform .18s ease, background .18s ease, border-color .18s ease; animation:p365popIn .5s ease both; }
   #p365app .qact:nth-child(2){animation-delay:.06s} #p365app .qact:nth-child(3){animation-delay:.12s} #p365app .qact:nth-child(4){animation-delay:.18s}
   #p365app .qact:hover, #p365app .qact:focus-visible { transform:translateY(-3px); background:rgba(29,151,227,.16); border-color:var(--pcyan); outline:none; }
@@ -19839,14 +19839,14 @@ def write_portal_page():
   #p365app .jrn__head { display:flex; align-items:center; gap:.9rem; flex-wrap:wrap; }
   #p365app .jrn__badge { flex:0 0 auto; width:54px; height:54px; border-radius:16px; display:grid; place-items:center;
     background:linear-gradient(150deg,#1d97e3,#0f6ea8); box-shadow:0 8px 22px rgba(29,151,227,.45), inset 0 1px 0 rgba(255,255,255,.3);
-    font:800 1.42rem/1 inherit; color:#fff; position:relative; animation:p365popIn .55s cubic-bezier(.2,1.3,.4,1) both; }
+    font-family:inherit; font-weight:800; font-size:1.42rem; line-height:1; color:#fff; position:relative; animation:p365popIn .55s cubic-bezier(.2,1.3,.4,1) both; }
   #p365app .jrn__badge::after { content:''; position:absolute; inset:-3px; border-radius:19px;
     background:conic-gradient(from 0deg,rgba(29,151,227,.7),transparent 40%,transparent 60%,rgba(0,206,27,.6));
     z-index:-1; animation:p365spin 6s linear infinite; }
   #p365app .jrn__lv { font:700 .68rem/1 ui-monospace,Consolas,monospace; letter-spacing:.16em; color:var(--pcyan); text-transform:uppercase; }
-  #p365app .jrn__name { font:700 1.25rem/1.25 inherit; letter-spacing:-.01em; margin:.18rem 0 0; }
+  #p365app .jrn__name { font-family:inherit; font-weight:700; font-size:1.25rem; line-height:1.25; letter-spacing:-.01em; margin:.18rem 0 0; }
   #p365app .jrn__pts { margin-left:auto; text-align:right; }
-  #p365app .jrn__ptsn { font:800 1.35rem/1 inherit; color:var(--pwhite); }
+  #p365app .jrn__ptsn { font-family:inherit; font-weight:800; font-size:1.35rem; line-height:1; color:var(--pwhite); }
   #p365app .jrn__ptsl { font:600 .64rem/1.4 ui-monospace,Consolas,monospace; letter-spacing:.12em; color:var(--pmut); text-transform:uppercase; }
   #p365app .jrn__bar { height:10px; border-radius:99px; background:rgba(125,170,220,.16); margin:.95rem 0 .35rem; overflow:hidden; }
   #p365app .jrn__fill { height:100%; width:0; border-radius:99px;
@@ -19942,16 +19942,22 @@ def write_portal_page():
   .sos__h { color:#f0f5fc; font-size:1.55rem; line-height:1.25; margin:0 0 .55rem; font-weight:800; }
   .sos__p { color:#c7d7ee; font-size:1.12rem; line-height:1.6; margin:0 auto 1.1rem; max-width:30em; }
   .sos__p b { color:#f0f5fc; }
-  #p365app-sos .sos__go { display:block; width:100%; border:0; border-radius:16px; cursor:pointer;
-    background:linear-gradient(135deg,#00ce1b,#00a316); color:#fff; font:800 1.25rem/1.3 inherit;
-    padding:1.15rem 1.3rem; margin:0 0 .8rem; box-shadow:0 12px 30px rgba(0,206,27,.25);
+  /* .sos__go is styled for BOTH <button> and <a> (phone links are plain anchors - a
+     button inside an anchor is invalid HTML and double-announces to screen readers).
+     Greens/blues darkened from brand values so white text passes WCAG AA (>=4.5:1)
+     even for the small print - this audience is exactly who contrast rules exist for. */
+  #p365app-sos .sos__go { display:block; width:100%; border:0; border-radius:16px; cursor:pointer; text-align:center; text-decoration:none;
+    background:linear-gradient(135deg,#008812,#00660b); color:#fff; font-family:inherit; font-weight:800; font-size:1.25rem; line-height:1.3;
+    padding:1.15rem 1.3rem; margin:0 0 .8rem; box-shadow:0 12px 30px rgba(0,206,27,.2); box-sizing:border-box;
     transition:transform .18s ease, box-shadow .18s ease; }
-  #p365app-sos .sos__go:hover, #p365app-sos .sos__go:focus-visible { transform:translateY(-2px); box-shadow:0 16px 36px rgba(0,206,27,.35); }
-  #p365app-sos .sos__go.blue { background:linear-gradient(135deg,#1d97e3,#1272b8); box-shadow:0 12px 30px rgba(29,151,227,.28); }
-  #p365app-sos .sos__go small { display:block; font:600 .85rem/1.4 inherit; opacity:.85; margin-top:.15rem; }
-  #p365app-sos .sos__alt { display:block; width:100%; background:none; border:1px solid rgba(125,170,220,.35); color:#86b6e8;
-    border-radius:14px; padding:.85rem 1rem; font:600 1rem/1.3 inherit; cursor:pointer; margin:0 0 .8rem; }
+  #p365app-sos .sos__go:hover, #p365app-sos .sos__go:focus-visible { transform:translateY(-2px); box-shadow:0 16px 36px rgba(0,206,27,.3); color:#fff; }
+  #p365app-sos .sos__go.blue { background:linear-gradient(135deg,#116ba6,#0d5490); box-shadow:0 12px 30px rgba(29,151,227,.24); }
+  #p365app-sos .sos__go small { display:block; font-family:inherit; font-weight:600; font-size:.9rem; line-height:1.4; color:#fff; margin-top:.15rem; }
+  #p365app-sos .sos__alt { display:block; width:100%; background:none; border:1px solid rgba(125,170,220,.35); color:#9fc4ec; text-align:center; text-decoration:none;
+    border-radius:14px; padding:.85rem 1rem; font-family:inherit; font-weight:600; font-size:1rem; line-height:1.3; cursor:pointer; margin:0 0 .8rem; box-sizing:border-box; }
   #p365app-sos .sos__alt:hover { border-color:#1d97e3; color:#f0f5fc; }
+  .sos__sr { position:absolute; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+  .sos__h:focus { outline:none; }
   .sos__code { font-family:Consolas,ui-monospace,monospace; font-size:2.3rem; letter-spacing:.14em; color:#67c1f5;
     margin:.4rem 0 1rem; animation:sosGlow 2s ease-in-out infinite; }
   @keyframes sosGlow { 0%,100% { text-shadow:0 0 18px rgba(29,151,227,.25) } 50% { text-shadow:0 0 34px rgba(29,151,227,.7) } }
@@ -19960,7 +19966,7 @@ def write_portal_page():
   .sos__note b { color:#f0f5fc; }
   .sos__tick { display:block; font-size:3rem; line-height:1; margin:0 0 .5rem; animation:sosPop .55s cubic-bezier(.2,1.5,.4,1) both; }
   @keyframes sosPop { from { transform:scale(.2); opacity:0 } to { transform:none; opacity:1 } }
-  .sos__back { background:none; border:0; color:#9fb5d3; font:600 .95rem/1 inherit; cursor:pointer; padding:.6rem 1rem; margin-top:.4rem; }
+  .sos__back { background:none; border:0; color:#9fb5d3; font-family:inherit; font-weight:600; font-size:.95rem; line-height:1; cursor:pointer; padding:.6rem 1rem; margin-top:.4rem; }
   .sos__back:hover { color:#f0f5fc; }
   .sos__arrow { display:block; font-size:2rem; line-height:1; margin:.2rem 0 .6rem; animation:sosDown 1.4s ease-in-out infinite; }
   @keyframes sosDown { 0%,100% { transform:translateY(0); opacity:.55 } 50% { transform:translateY(10px); opacity:1 } }
@@ -20010,13 +20016,13 @@ def write_portal_page():
   .p365ov__ttl { font:700 1.05rem/1.3 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
     color:#eef5fd; margin:0; display:flex; align-items:center; gap:.55rem; }
   .p365ov__x { background:rgba(255,255,255,.08); border:1px solid rgba(125,170,220,.36); color:#eef5fd;
-    border-radius:999px; padding:.55rem 1.1rem; font:600 .9rem/1 inherit; cursor:pointer; min-height:44px;
+    border-radius:999px; padding:.55rem 1.1rem; font-family:inherit; font-weight:600; font-size:.9rem; line-height:1; cursor:pointer; min-height:44px;
     transition:background .18s ease, transform .18s ease; }
   .p365ov__x:hover { background:rgba(232,99,126,.22); border-color:#e8637e; transform:translateY(-1px); }
   .p365ov__body { flex:1; min-height:0; overflow:auto; -webkit-overflow-scrolling:touch; }
   .p365ov__body iframe { width:100%; height:100%; border:0; display:block; background:#0b1226; }
   .p365ov__pad { padding:1.2rem 1.1rem 3rem; max-width:820px; margin:0 auto; animation:p365fadeUp .4s ease both; }
-  .p365ov__load { display:grid; place-items:center; height:100%; color:#9db4d4; font:600 .95rem/1.6 inherit; text-align:center; }
+  .p365ov__load { display:grid; place-items:center; height:100%; color:#9db4d4; font-family:inherit; font-weight:600; font-size:.95rem; line-height:1.6; text-align:center; }
   .p365ov__spin { width:38px; height:38px; border:3px solid rgba(125,170,220,.25); border-top-color:#1d97e3;
     border-radius:50%; margin:0 auto .8rem; animation:p365spin .9s linear infinite; }
   html.p365-lock, html.p365-lock body { overflow:hidden !important; }
@@ -20670,11 +20676,12 @@ def write_portal_page():
   // cannot connect to Apple devices, and the flow says so instead of dead-ending.
   function sosPlat() {
     var ua = navigator.userAgent || '';
-    if (/CrOS/.test(ua)) return 'android';           // Chromebooks use the Play Store app
     if (/Android/i.test(ua)) return 'android';
     if (/iPhone|iPad|iPod/i.test(ua)) return 'apple';
     if (/Macintosh/.test(ua)) return 'apple';        // includes iPads pretending to be Macs
-    return 'win';
+    if (/Windows/i.test(ua)) return 'win';
+    return 'other';   // Chromebooks, Linux, anything unusual: no download we can promise works -
+                      // /sos/ only claims Windows + Android, so route to the honest phone screen
   }
   function ovSos() {
     ovShow('\\ud83c\\udd98&nbsp; Remote help', function (body) {
@@ -20687,13 +20694,28 @@ def write_portal_page():
         for (var i = 0; i < total; i++) h += '<div class="sos__dot' + (i < step ? ' on' : (i === step ? ' now' : '')) + '"></div>';
         return h + '</div>';
       }
-      function show(html) { pad.innerHTML = html; try { pad.scrollIntoView({ block: 'start' }); } catch (e) {} }
+      function sr(step, total) { return '<span class="sos__sr">Step ' + (step + 1) + ' of ' + total + '. </span>'; }
+      var sosFirst = true;
+      function show(html) {
+        pad.innerHTML = html;
+        try { pad.scrollIntoView({ block: 'start' }); } catch (e) {}
+        // Habitual double-clickers (most of our audience) must not click through to a
+        // button that appears under the pointer on the NEXT screen.
+        pad.style.pointerEvents = 'none';
+        setTimeout(function () { pad.style.pointerEvents = ''; }, 350);
+        // After the first screen, move focus to the new heading so a screen-reader
+        // hears the step change and a keyboard user stays inside the dialog. The first
+        // screen keeps ovShow's standard focus-the-Close-button behaviour (its 60ms
+        // timer would otherwise steal focus back anyway).
+        if (!sosFirst) setTimeout(function () { var hh = document.getElementById('sosH'); if (hh) try { hh.focus(); } catch (e) {} }, 120);
+        sosFirst = false;
+      }
       function s0() {   // first: the phone. Every session starts as a conversation.
         show(dots(0, 4)
           + '<div class="sos__step"><span class="sos__big ring" aria-hidden="true">\\ud83d\\udcde</span>'
-          + '<h3 class="sos__h">First, let\\u2019s talk</h3>'
+          + '<h3 class="sos__h" id="sosH" tabindex="-1">' + sr(0, 4) + 'First, let\\u2019s talk</h3>'
           + '<p class="sos__p">Remote help is something <b>we do together on the phone</b> \\u2014 a friendly techie talks, you watch everything happen on your screen.</p>'
-          + '<a href="tel:+441202775566" style="text-decoration:none"><button type="button" class="sos__go">\\ud83d\\udcde Ring us now \\u2014 01202 775566<small>Mon\\u2013Fri 9\\u20135 \\u00b7 a real local person answers</small></button></a>'
+          + '<a class="sos__go" href="tel:+441202775566">\\ud83d\\udcde Ring us now \\u2014 01202 775566<small>Mon\\u2013Fri 9\\u20135 \\u00b7 a real local person answers</small></a>'
           + '<button type="button" class="sos__go blue" id="sosGo1">\\u2705 I\\u2019m already talking to you \\u2014 next step</button>'
           + (S.tier === 'pro'
               ? '<div class="sos__note"><b>On 365 support?</b> Remote help is included in your plan \\u2014 as often as you need it.</div>'
@@ -20702,12 +20724,14 @@ def write_portal_page():
         document.getElementById('sosGo1').onclick = s1;
       }
       function s1() {   // the download - platform-aware, one giant button
-        if (plat === 'apple') {
-          // no progress dots here: the flow honestly ends on this screen
-          show('<div class="sos__step"><span class="sos__big" aria-hidden="true">\\ud83c\\udf4e</span>'
-            + '<h3 class="sos__h">You\\u2019re on an Apple device</h3>'
-            + '<p class="sos__p">We\\u2019re being honest: <b>we can\\u2019t remotely connect to Macs, iPhones or iPads.</b> But that doesn\\u2019t mean we can\\u2019t help.</p>'
-            + '<a href="tel:+441202775566" style="text-decoration:none"><button type="button" class="sos__go">\\ud83d\\udcde Ring us \\u2014 we\\u2019ll help another way</button></a>'
+        if (plat === 'apple' || plat === 'other') {
+          // no progress dots here: on these devices the flow honestly ends at the phone
+          show('<div class="sos__step"><span class="sos__big" aria-hidden="true">' + (plat === 'apple' ? '\\ud83c\\udf4e' : '\\ud83d\\udcde') + '</span>'
+            + '<h3 class="sos__h" id="sosH" tabindex="-1">' + (plat === 'apple' ? 'You\\u2019re on an Apple device' : 'Let\\u2019s do this one by phone') + '</h3>'
+            + (plat === 'apple'
+                ? '<p class="sos__p">We\\u2019re being honest: <b>we can\\u2019t remotely connect to Macs, iPhones or iPads.</b> But that doesn\\u2019t mean we can\\u2019t help.</p>'
+                : '<p class="sos__p">This doesn\\u2019t look like a Windows computer or an Android device, so rather than guess at a download, <b>ring us and we\\u2019ll find the right way to help.</b></p>')
+            + '<a class="sos__go" href="tel:+441202775566">\\ud83d\\udcde Ring us \\u2014 we\\u2019ll help another way</a>'
             + '<p class="sos__p" style="font-size:.95rem">Is your <b>Windows computer</b> the one with the problem? Open this on that computer instead \\u2014 or just ring, and we\\u2019ll talk you through it there.</p>'
             + '<button type="button" class="sos__back" id="sosB1">\\u2190 Back</button></div>');
           document.getElementById('sosB1').onclick = s0;
@@ -20716,7 +20740,7 @@ def write_portal_page():
         var isAnd = plat === 'android';
         show(dots(1, 4)
           + '<div class="sos__step"><span class="sos__big" aria-hidden="true">\\u2b07\\ufe0f</span>'
-          + '<h3 class="sos__h">Get the support tool</h3>'
+          + '<h3 class="sos__h" id="sosH" tabindex="-1">' + sr(1, 4) + 'Get the support tool</h3>'
           + '<p class="sos__p">' + (isAnd
               ? 'Tap the big button \\u2014 it opens the <b>Splashtop SOS</b> app on Google Play. Install it like any other app.'
               : 'Click the big button. A small program downloads \\u2014 it <b>doesn\\u2019t install anything permanent</b> on your computer.') + '</p>'
@@ -20732,7 +20756,7 @@ def write_portal_page():
       function s2(isAnd) {   // open what you just got
         show(dots(2, 4)
           + '<div class="sos__step"><span class="sos__tick" aria-hidden="true">\\u2705</span>'
-          + '<h3 class="sos__h">' + (isAnd ? 'Open the app' : 'Now open it') + '</h3>'
+          + '<h3 class="sos__h" id="sosH" tabindex="-1">' + sr(2, 4) + (isAnd ? 'Open the app' : 'Now open it') + '</h3>'
           + (isAnd
               ? '<p class="sos__p">When it\\u2019s installed, tap <b>Open</b>. That\\u2019s it \\u2014 the app shows a number.</p>'
               : '<p class="sos__p">Look for <b>SplashtopSOS</b> at the <b>bottom of this window</b>, or in your <b>Downloads</b> folder. Click it once to open.</p>'
@@ -20745,11 +20769,11 @@ def write_portal_page():
       function s3() {   // the code = permission. The reassurance screen.
         show(dots(3, 4)
           + '<div class="sos__step"><span class="sos__big" aria-hidden="true">\\ud83d\\udd22</span>'
-          + '<h3 class="sos__h">Read us the 9-digit number</h3>'
+          + '<h3 class="sos__h" id="sosH" tabindex="-1">' + sr(3, 4) + 'Read us the 9-digit number</h3>'
           + '<div class="sos__code" aria-hidden="true">123&thinsp;456&thinsp;789</div>'
           + '<p class="sos__p">A window shows a number like this. <b>Read it to your techie over the phone.</b> That number is your permission \\u2014 nobody can connect without it.</p>'
-          + '<div class="sos__note"><b>Then relax.</b> You see everything we do on your screen, and our access <b>ends the moment we hang up</b>. We can never reconnect without a brand-new number from you.</div>'
-          + '<a href="tel:+441202775566" style="text-decoration:none"><button type="button" class="sos__alt">\\ud83d\\udcde Not on the phone with us yet? Ring 01202 775566</button></a>'
+          + '<div class="sos__note"><b>Then relax.</b> You see everything we do on your screen, and our access <b>ends the moment the session does</b>. We can never reconnect without a brand-new number from you.</div>'
+          + '<a class="sos__alt" href="tel:+441202775566">\\ud83d\\udcde Not on the phone with us yet? Ring 01202 775566</a>'
           + '<button type="button" class="sos__back" id="sosB3">\\u2190 Back</button></div>');
         document.getElementById('sosB3').onclick = function () { s2(plat === 'android'); };
       }
@@ -21263,6 +21287,10 @@ def write_portal_page():
         showSignin('Your session expired - please sign in again.'); return;
       }
       if (d.next_ts && d.next_ts * 1000 < Date.now()) d.next = '';
+      // Refresh the persisted tier: S.tier is written at sign-in and can go stale (a
+      // customer joining a plan mid-session would otherwise see free-tier copy - or
+      // worse, the reverse - in anything that reads S.tier, like the SOS flow).
+      if (d.tier && S.tier !== d.tier) { S.tier = d.tier; saveS(); }
       // A fresh dashboard is a fresh journey. Sign-out/sign-in and staff impersonation both
       // re-enter here, so nothing about the previous member may survive into this render.
       jSettled = false; jPend = null; JW = { wifi: 0, loaded: false, ok: false }; JD = null;
