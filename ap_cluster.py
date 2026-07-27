@@ -271,3 +271,34 @@ def survey_cta():
             '<a href="/room-by-room-wifi-test/">room-by-room method</a>.</p></div>'
             '<a href="/wifi-signal-test/" class="button primary">Run the free survey</a>'
             '</div></div></section>')
+
+
+def table_wpa3_firmware():
+    """WPA3 on Wi-Fi 5 RUCKUS kit is a CONTROLLER-VERSION question, not just hardware.
+    Verified from release notes with negative controls - genuinely scarce information."""
+    h = ['<div class="aptwrap"><table class="apt"><caption class="apt__cap">'
+         'The firmware versions that first brought WPA3 to RUCKUS kit. Your access point '
+         'supporting WPA3 is only half the answer &mdash; the controller has to offer it.'
+         '</caption><thead><tr><th scope="col">Software</th><th scope="col">First version '
+         'with WPA3</th><th scope="col">Released</th></tr></thead><tbody>']
+    for sw, ver, when, _note in D.WPA3_FIRMWARE:
+        h.append('<tr><th scope="row">' + sw + '</th><td class="mono"><strong>' + ver
+                 + '</strong></td><td>' + (when or "&mdash;") + '</td></tr>')
+    h.append('</tbody></table></div>')
+    return "".join(h)
+
+
+def smartzone7_block():
+    """What SmartZone 7.x will and will not manage - the practical upgrade blocker."""
+    legacy = ", ".join(D.SMARTZONE7_LEGACY)
+    dropped = ", ".join(D.SMARTZONE7_DROPPED)
+    return (ap_fact('SmartZone 7.x still manages the Wave 2 generation &mdash; but only inside '
+                    'an access-point zone pinned to older access-point firmware. In the '
+                    'vendor&rsquo;s own words, these appear under &ldquo;Supported AP Models for '
+                    'AP Zones Using Older AP Versions&rdquo;: <strong>' + legacy + '</strong>.',
+                    "ruckus_eol")
+            + ap_fact('These are listed as no longer supported in SmartZone 7.2.0 at all: '
+                      '<strong>' + dropped + '</strong>. If any of these are in your estate, a '
+                      'SmartZone 7 upgrade retires them whether you planned it or not &mdash; '
+                      'which is exactly the kind of surprise that turns a controller project '
+                      'into an emergency.', "ruckus_eol"))

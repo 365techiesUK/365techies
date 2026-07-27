@@ -104,7 +104,8 @@ AP_MODELS = [
          phy="600 / 1733 Mbps", ports="2 x 1GbE with LACP, 1 x USB",
          poe="802.3at (peak 25W)",
          poe_af="2.4GHz drops to 2x4 at 19dBm/chain; 2nd Ethernet disabled; USB disabled",
-         wpa3=CHECK, wpa3_note="Not stated on the datasheet we could read.",
+         wpa3="yes", wpa3_note="On the current (2020) datasheet. The 2019 revision listed "
+                               "no WPA3 - it arrived by firmware.",
          eos_sale="2022-01-31", eos_support="2028-12-31",
          last_sw="SmartZone 6.1.x (AP zone) / ZoneDirector 10.5.x",
          replacement="R750", source="ruckus_eol"),
@@ -114,20 +115,32 @@ AP_MODELS = [
          poe="PoH / UPoE (up to 33.5W) for all features",
          poe_af="af (12.95W): both radios collapse to 1x4. at (25.5W): full 4x4 but the "
                 "2nd Ethernet port and USB are still disabled",
-         wpa3=CHECK, wpa3_note="Not stated on the datasheet we could read.",
+         wpa3="yes", wpa3_note="On the current (2020) datasheet. The 2019 revision listed "
+                               "no WPA3 - it arrived by firmware.",
          eos_sale="2022-01-31", eos_support="2027-12-31",
          last_sw="SmartZone 6.1.x (AP zone) / ZoneDirector 10.5.x",
          replacement="R750", source="ruckus_eol"),
     dict(key="ruckus-r320", vendor="RUCKUS", model="R320", launched=CHECK,
-         wifi_gen="802.11ac (wave: check with vendor)", streams=CHECK, phy=CHECK,
-         ports=CHECK, poe=CHECK, poe_af=CHECK, wpa3=CHECK, wpa3_note="",
+         launched_note="On sale by early 2019 - RUCKUS has not published a launch date",
+         wifi_gen="802.11ac Wave 2 (Wi-Fi 5)", streams="2x2:2, SU-MIMO and MU-MIMO",
+         phy="300 / 867 Mbps", ports="1 x 1GbE",
+         poe="802.3af (12.18W max)",
+         poe_af="af is its normal mode - nothing is disabled",
+         wpa3="yes", wpa3_note="On the current datasheet only. The 2019 revision listed no "
+                               "WPA3, so it arrived by firmware - old firmware will not have it.",
          eos_sale="2022-01-31", eos_support="2028-12-31",
          last_sw="SmartZone 6.1.x (AP zone) / ZoneDirector 10.5.x",
          replacement="R350", source="ruckus_eol"),
     # ---- RUCKUS, Wi-Fi 6 ----
-    dict(key="ruckus-r730", vendor="RUCKUS", model="R730", launched=CHECK,
-         wifi_gen="Wi-Fi 6 (802.11ax)", streams=CHECK, phy=CHECK, ports=CHECK,
-         poe=CHECK, poe_af=CHECK, wpa3=CHECK, wpa3_note="",
+    dict(key="ruckus-r730", vendor="RUCKUS", model="R730", launched="2018",
+         launched_note="Announced 17 July 2018",
+         wifi_gen="Wi-Fi 6 (802.11ax)", streams="8x8:8 (5GHz) + 4x4:4 (2.4GHz) - 12 streams",
+         phy="1148 Mbps / 4.8 Gbps", ports="1 x 1/2.5/5GbE, 1 x 1GbE",
+         poe="PoH / UPoE / DC (31.0W max)",
+         poe_af="RUCKUS marks 802.3af <strong>not recommended</strong>. On 802.3at (23.8W) the "
+                "5GHz radio runs 4x4 instead of 8x8 and the Zigbee/BLE radio is disabled - so an "
+                "R730 on an ordinary PoE+ switch silently runs at half its 5GHz streams",
+         wpa3="yes", wpa3_note="Datasheet states WPA3 and Wi-Fi Enhanced Open.",
          eos_sale="2022-02-28", eos_support="2027-02-28",
          last_sw="SmartZone 6.1.0 (AP zone) / ZoneDirector 10.5.x",
          replacement="R850", source="ruckus_eol"),
@@ -155,21 +168,28 @@ AP_MODELS = [
          poe_af="12.54W: both radios 2x4; 2nd Ethernet, IoT radio and USB disabled",
          wpa3="yes", wpa3_note="",
          eos_sale=None, eos_support=None, last_sw="", replacement="", source="ruckus_eol"),
-    dict(key="ruckus-r850", vendor="RUCKUS", model="R850", launched=CHECK,
-         wifi_gen="Wi-Fi 6 (802.11ax)", streams=CHECK,
-         phy="4.8 Gbps combined (vendor product page)", ports=CHECK,
-         poe=CHECK, poe_af=CHECK, wpa3=CHECK, wpa3_note="",
+    dict(key="ruckus-r850", vendor="RUCKUS", model="R850", launched="2020",
+         launched_note="Announced 19 May 2020",
+         wifi_gen="Wi-Fi 6 (802.11ax)", streams="8x8:8 (5GHz) + 4x4:4 (2.4GHz) - 12 streams",
+         phy="1148 Mbps / 4.8 Gbps", ports="1 x 1/2.5/5GbE, 1 x 1GbE",
+         poe="802.3bt-class supply (PoH / UPoE / DC)",
+         poe_af="On 802.3at the 5GHz radio runs 4x4 instead of 8x8",
+         wpa3="yes", wpa3_note="",
          eos_sale=None, eos_support=None, last_sw="", replacement="", source="ruckus_eol"),
     # ---- RUCKUS, Wi-Fi 7 ----
     dict(key="ruckus-r670", vendor="RUCKUS", model="R670", launched=CHECK,
          wifi_gen="Wi-Fi 7 (802.11be), tri-band",
-         streams="2x2:2 / 4x4:4 / 2x2:2 tri-band", phy="9.34 Gbps combined",
-         ports=CHECK, poe=CHECK, poe_af=CHECK, wpa3=CHECK, wpa3_note="",
+         streams="2x2:2 / 2x2:2 / 2x2:2 tri-band (6 streams), or 2x2:2 + 4x4:4 dual-band",
+         phy="689 / 5765 / 5765 Mbps (9.34 Gbps combined)",
+         ports="1 x 1/2.5/5GbE, 1 x 1GbE", poe=CHECK, poe_af=CHECK,
+         wpa3=CHECK, wpa3_note="",
          eos_sale=None, eos_support=None, last_sw="", replacement="", source="ruckus_eol"),
-    dict(key="ruckus-r770", vendor="RUCKUS", model="R770", launched=CHECK,
+    dict(key="ruckus-r770", vendor="RUCKUS", model="R770", launched="2023",
+         launched_note="Introduced 10 October 2023",
          wifi_gen="Wi-Fi 7 (802.11be), tri-band",
          streams="2x2:2 (2.4GHz) / 4x4:4 (5GHz) / 2x2:2 (6GHz)",
-         phy="12.22 Gbps combined", ports=CHECK, poe=CHECK, poe_af=CHECK,
+         phy="689 / 5765 / 5765 Mbps (12.22 Gbps combined)",
+         ports="1 x 1/2.5/5/10GbE, 1 x 1GbE", poe=CHECK, poe_af=CHECK,
          wpa3=CHECK, wpa3_note="",
          eos_sale=None, eos_support=None, last_sw="", replacement="", source="ruckus_eol"),
     # ---- Cisco Aironet ----
@@ -195,7 +215,7 @@ AP_MODELS = [
     dict(key="cisco-3700", vendor="Cisco", model="Aironet 3700 (AIR-AP3702)",
          launched="2013", launched_note="Announced 27 September 2013",
          wifi_gen="802.11ac Wave 1 (Wi-Fi 5)", streams="4x4:3", phy="1.3 Gbps",
-         ports=CHECK, poe="802.3at for 4x4:3 (wattage: check with vendor)",
+         ports=CHECK, poe="802.3at, Enhanced PoE or PWRINJ4 (16.1W for 4x4:3)",
          poe_af="Degrades to 3x3:3",
          wpa3="no", wpa3_note="Inferred from sibling Wave 1 datasheets — the 3700 datasheet "
                               "has been withdrawn from Cisco's site.",
@@ -216,8 +236,12 @@ AP_MODELS = [
          last_sw="", replacement="", source="cisco_eol"),
     dict(key="cisco-1850", vendor="Cisco", model="Aironet 1850 (AIR-AP1852I/E)",
          launched="2015", launched_note="Announced 2 June 2015",
-         wifi_gen="802.11ac Wave 2 (Wi-Fi 5)", streams="4x4:4 SU-MIMO",
-         phy=CHECK, ports=CHECK, poe=CHECK, poe_af=CHECK, wpa3=CHECK, wpa3_note="",
+         wifi_gen="802.11ac Wave 2 (Wi-Fi 5)",
+         streams="4x4 MIMO, 4 streams (SU-MIMO); 3 streams (MU-MIMO)",
+         phy="216.7 Mbps / 1.73 Gbps", ports="2 x 1GbE (no multi-gig)",
+         poe="802.3at or Cisco Enhanced PoE (20.9W draw)",
+         poe_af="802.3af cannot supply its 20.9W draw",
+         wpa3=CHECK, wpa3_note="",
          eos_sale=CHECK, eos_support=CHECK, eos_sw_maint=CHECK, eos_vuln=CHECK,
          last_sw="", replacement="", source="cisco_eol"),
 ]
@@ -240,6 +264,31 @@ PATCH_FLOORS = [
     ("RUCKUS Unleashed", "200.15.6.212.27", "Wi-Fi 5 branch — fixes CVE-2025-46120"),
     ("RUCKUS Unleashed", "200.18.7.1.323", "Current branch — fixes CVE-2025-46120"),
     ("RUCKUS ZoneDirector", "10.5.1.0.282", "Fixes CVE-2025-46120"),
+]
+
+# WPA3 on Wi-Fi 5 RUCKUS kit is a CONTROLLER-VERSION question, not only a hardware one.
+# Verified from the release notes, with negative controls: ZoneDirector 10.2 and Unleashed
+# 200.7 contain no mention of WPA3 at all. R510, R710 and R720 all appear on the
+# supported-AP lists of both WPA3-capable releases.
+WPA3_FIRMWARE = [
+    ("RUCKUS ZoneDirector", "10.3", "18 July 2019", "First ZoneDirector release listing WPA3"),
+    ("RUCKUS Unleashed", "200.8", "23 January 2020", "First Unleashed release listing WPA3"),
+    ("RUCKUS SmartZone", "5.2", "", "First SmartZone release listing WPA3"),
+]
+
+# SmartZone 7.x still manages the Wave 2 generation - but ONLY inside an AP zone pinned to
+# older AP firmware, and some older models it will not manage at all. This is the single
+# most practical fact for anyone planning a controller upgrade.
+SMARTZONE7_LEGACY = ["R720", "R710", "R610", "R510", "R320", "M510", "H510", "H320", "C110"]
+SMARTZONE7_DROPPED = ["R500", "R600", "R700", "R300", "H500", "C500", "T300", "T301n", "T301s"]
+
+# UK compliance. We do NOT hold Cyber Essentials - we explain the rule, never imply we are
+# certified. Quotes must be checked against the current document before republishing.
+COMPLIANCE = [
+    ("Cyber Essentials", "Requirements for IT Infrastructure v3.3", "April 2026",
+     "NCSC / IASME", "https://www.ncsc.gov.uk/cyberessentials/overview"),
+    ("PCI DSS", "Requirements and Testing Procedures v4.0.1", "June 2024",
+     "PCI Security Standards Council", "https://www.pcisecuritystandards.org/"),
 ]
 
 # Every claim that could frighten a reader into spending money needs a source they can open.

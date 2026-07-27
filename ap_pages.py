@@ -219,6 +219,14 @@ def s1_ruckus():
         'rule.</strong> RUCKUS publishes a general policy, but the per-product table governs and '
         'sometimes exceeds it &mdash; the R510 went end of sale on 31/01/2022 and is supported '
         'to 31/12/2028, which is nearly seven years. Use the table, not the arithmetic.</p>',
+        C.table_wpa3_firmware(),
+        '<p><strong>Why that table matters more than the datasheet.</strong> WPA3 arrived on the '
+        'Wi-Fi 5 RUCKUS access points <em>by firmware</em>, not in the box. The 2019 revision of '
+        'the R710 and R720 datasheets lists no WPA3 at all; the 2020 revision of the same '
+        'datasheet does. So &ldquo;does my access point support WPA3?&rdquo; is really two '
+        'questions &mdash; is the hardware capable, and is your controller new enough to offer '
+        'it. We checked the negative case too: ZoneDirector 10.2 and Unleashed 200.7 contain no '
+        'mention of WPA3 anywhere.</p>',
         C.ap_fact('The last supported software release is a version number, not a date. An R500 '
                   'tops out at ZoneDirector 10.4.x while an R600 of the same era reaches 10.5.x. '
                   'If your controller needs to move to 10.5 to be patched, the R500s are what '
@@ -625,6 +633,7 @@ def s7_controller():
         'The three old ones cap the controller firmware. The controller firmware that fixes a '
         'published security flaw is above that cap. So those three units are the reason the other '
         'twenty-five cannot be patched.</p>',
+        C.smartzone7_block(),
         '<p><strong>Retiring three access points can unlock the security position of the whole '
         'estate.</strong> That is a very different quote from replacing twenty-eight, and it is '
         'the recommendation an honest survey should produce more often than it does.</p>',
