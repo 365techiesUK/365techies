@@ -20773,9 +20773,40 @@ def write_portal_page():
           + '<div class="sos__code" aria-hidden="true">123&thinsp;456&thinsp;789</div>'
           + '<p class="sos__p">A window shows a number like this. <b>Read it to your techie over the phone.</b> That number is your permission \\u2014 nobody can connect without it.</p>'
           + '<div class="sos__note"><b>Then relax.</b> You see everything we do on your screen, and our access <b>ends the moment the session does</b>. We can never reconnect without a brand-new number from you.</div>'
+          // The relay: typing the code sends it straight to our screen - kinder than
+          // reading nine digits aloud, and every submission is tied to this signed-in
+          // member. Hidden in staff view-as (the server refuses those anyway).
+          + (S.back ? '' : '<div class="sos__note" style="text-align:center"><b>Rather not read it out?</b> Type it here and it pops up on our screen.'
+            + '<div style="display:flex;gap:.5rem;margin-top:.6rem;flex-wrap:wrap;justify-content:center">'
+            + '<input id="sosCode" inputmode="numeric" autocomplete="off" maxlength="11" placeholder="123 456 789" aria-label="Your 9-digit session code"'
+            + ' style="flex:1;min-width:150px;text-align:center;font-family:Consolas,ui-monospace,monospace;font-size:1.25rem;letter-spacing:.1em;padding:.6rem .5rem;border-radius:10px;border:1px solid rgba(125,170,220,.4);background:#0b1226;color:#f0f5fc" />'
+            + '<button type="button" id="sosSend" style="margin:0;border:0;border-radius:10px;cursor:pointer;background:#116ba6;color:#fff;font-family:inherit;font-weight:700;font-size:1rem;padding:.6rem 1rem">Send it to us</button></div>'
+            + '<p id="sosMsg" role="status" style="margin:.5rem 0 0;min-height:1.2em;font-size:.92rem;color:#9fb5d3"></p></div>')
           + '<a class="sos__alt" href="tel:+441202775566">\\ud83d\\udcde Not on the phone with us yet? Ring 01202 775566</a>'
           + '<button type="button" class="sos__back" id="sosB3">\\u2190 Back</button></div>');
         document.getElementById('sosB3').onclick = function () { s2(plat === 'android'); };
+        var sndBtn = document.getElementById('sosSend');
+        if (sndBtn) sndBtn.onclick = function () {
+          var inp = document.getElementById('sosCode'), msg = document.getElementById('sosMsg');
+          var digits = (inp.value || '').replace(/\\D/g, '');
+          if (digits.length !== 9) { msg.textContent = 'That should be 9 digits \\u2014 it\\u2019s on the SplashtopSOS window.'; try { inp.focus(); } catch (e) {} return; }
+          sndBtn.disabled = true; sndBtn.textContent = 'Sending\\u2026';
+          post(BK, { action: 'soscode', wtoken: S.wtoken, machine: mid(), code: digits }).then(function (r) {
+            if (r && r.ok) {
+              var box = sndBtn.closest('.sos__note');
+              if (box) box.innerHTML = '<span style="font-size:1.6rem" aria-hidden="true">\\u2705</span><br /><b>Got it \\u2014 your number is on our screen.</b><br />Stay on the phone and we\\u2019ll connect now.';
+            } else if (r && r.error === 'slow_down') {
+              msg.textContent = 'That\\u2019s a few codes in a row \\u2014 let\\u2019s do it by phone instead: 01202 775566.';
+              sndBtn.disabled = false; sndBtn.textContent = 'Send it to us';
+            } else {
+              msg.textContent = 'That didn\\u2019t send \\u2014 just read the number to us instead.';
+              sndBtn.disabled = false; sndBtn.textContent = 'Send it to us';
+            }
+          }).catch(function () {
+            msg.textContent = 'That didn\\u2019t send \\u2014 just read the number to us instead.';
+            sndBtn.disabled = false; sndBtn.textContent = 'Send it to us';
+          });
+        };
       }
       s0();
     });
@@ -21769,6 +21800,34 @@ def write_portal_page():
     requestAnimationFrame(step);
   }
 
+  // SOS relay inbox: whole card stays hidden until a code is actually waiting, so the
+  // console isn't cluttered on the 360 days a year nobody uses it
+  function loadSosq() {
+    var card = document.getElementById('sosqcard'), box = document.getElementById('sosq');
+    if (!card || !box) return;
+    post(BK, { action: 'soslist', stoken: S.stoken, machine: mid() }).then(function (d) {
+      if (!d || !d.ok) return;
+      var list = d.codes || [];
+      if (!list.length) { card.style.display = 'none'; box.innerHTML = ''; return; }
+      var h = '<p class="quiet" style="margin:.1rem 0 .6rem">Typed into the portal by the customer \\u2014 enter it in your Splashtop Business app. Codes expire after 15 minutes.</p>';
+      list.forEach(function (c) {
+        var mins = Math.floor(c.age / 60);
+        h += '<div class="row"><div style="flex:1;min-width:160px"><strong>' + esc(c.name || c.email) + '</strong>'
+          + '<br /><span class="quiet" style="margin:0">' + (mins < 1 ? 'just now' : mins + ' min ago') + ' \\u00b7 ' + esc(c.email) + '</span></div>'
+          + '<span class="mono" style="font-size:1.5rem;letter-spacing:.12em;color:var(--pwhite)">' + esc(String(c.code).replace(/(\\d{3})(\\d{3})(\\d{3})/, '$1 $2 $3')) + '</span>'
+          + '<button class="sm sosx" data-id="' + esc(c.id) + '">\\u2713 Connected \\u2014 clear</button></div>';
+      });
+      box.innerHTML = h;
+      card.style.display = '';
+      Array.prototype.forEach.call(box.querySelectorAll('.sosx'), function (b) {
+        b.onclick = function () {
+          b.disabled = true;
+          post(BK, { action: 'sosclear', stoken: S.stoken, machine: mid(), id: b.getAttribute('data-id') })
+            .then(function () { loadSosq(); }).catch(function () { b.disabled = false; });
+        };
+      });
+    }).catch(function () {});
+  }
   function showStaff() {
     el.innerHTML = topRow('365 staff') + '<p class="lede">Loading\\u2026</p>';
     bindOut();
@@ -21781,6 +21840,10 @@ def write_portal_page():
         + '<input id="dsearch" placeholder="Search a customer\\u2019s upcoming bookings (name or phone)\\u2026" autocomplete="off" name="pcm-dsearch" />'
         + '<div class="dstrip" id="dstrip"></div><div id="dday"><p class="quiet">Loading the diary\\u2026</p></div>'
         + '<span id="dann" aria-live="polite" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap"></span></div>';
+      // SOS code relay inbox: codes customers typed into their portal instead of
+      // reading them aloud. Codes appear ONLY here (never in Slack) and expire
+      // server-side after 15 minutes.
+      h += '<div class="card" id="sosqcard" style="display:none;border-left:4px solid var(--pbad)"><h2>\\ud83c\\udd98 SOS codes waiting</h2><div id="sosq"></div></div>';
       h += '<div class="card" style="border-left:4px solid var(--pwarn)"><h2>\\ud83d\\udcde Worth a call today</h2>'
         + '<p class="quiet" style="margin:.1rem 0 .6rem">The PCs that could do with a friendly call \\u2014 ranked by what needs attention. Proactive care, before they even ring us.</p>'
         + '<div id="worthcall"><p class="quiet">Checking the fleet\\u2026</p></div></div>';
@@ -21811,6 +21874,12 @@ def write_portal_page():
       el.innerHTML = h;
       bindOut();
       loadDiary(); loadFleet();
+      loadSosq();
+      // keep the inbox fresh while the console is open; the interval dies with the card
+      var sqiv = setInterval(function () {
+        if (!document.getElementById('sosqcard')) { clearInterval(sqiv); return; }
+        loadSosq();
+      }, 30000);
       document.getElementById('nbopen').onclick = function () { toggleWiz(); };
       var st;
       document.getElementById('dsearch').addEventListener('input', function () {

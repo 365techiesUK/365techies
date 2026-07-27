@@ -1385,6 +1385,63 @@ if ($action === 'booknote') {
     out(array('ok' => true, 'note' => $note));
 }
 
+// ---------------------------------------------------------------------------
+// SOS code relay: a signed-in member types the 9-digit Splashtop session code
+// into the portal instead of reading it down the phone. The code is a LIVE
+// access secret, so the rules are strict:
+//   - portal wtoken only (no app/licence path), staff view-as refused
+//   - the Slack ping NEVER contains the code - it is visible only in the
+//     staff-authenticated console
+//   - entries live 15 minutes, then purge; 3 submissions/hour per account
+// Security is equivalent to reading the code aloud - plus attribution, since
+// every submission is tied to a signed-in member.
+if ($action === 'soscode') {
+    $snap = web_snapshot();
+    if (!empty($snap['viewas'])) fail('not_you');   // staff impersonating a customer must not file codes
+    $code = preg_replace('/\D/', '', (string)(isset($in['code']) ? $in['code'] : ''));
+    if (strlen($code) !== 9) fail('bad_code');
+    list($lk, $db) = db_open();
+    if (!isset($db['sosq'])) $db['sosq'] = array();
+    $now = time();
+    foreach ($db['sosq'] as $k => $v) if ((isset($v['ts']) ? $v['ts'] : 0) < $now - 900) unset($db['sosq'][$k]);
+    $n = 0;
+    foreach ($db['sosq'] as $v) if (isset($v['key']) && $v['key'] === $snap['key'] && $v['ts'] > $now - 3600) $n++;
+    if ($n >= 3) { db_close($lk); fail('slow_down'); }
+    $db['sosq'][bin2hex(random_bytes(8))] = array('key' => $snap['key'],
+        'name' => $snap['name'], 'email' => $snap['email'], 'code' => $code, 'ts' => $now, 'seen' => 0);
+    db_save($db); db_close($lk);
+    pcm_slack_say(':sos: *' . bk_clean($snap['name'] !== '' ? $snap['name'] : $snap['email'])
+        . '* has typed in their SOS session code - open the staff console (Portal → staff sign-in) to see it. It expires in 15 minutes.');
+    out(array('ok' => true));
+}
+
+// staff console: list pending SOS codes (also purges expired ones)
+if ($action === 'soslist') {
+    need_staff();
+    list($lk, $db) = db_open();
+    if (!isset($db['sosq'])) $db['sosq'] = array();
+    $now = time(); $codes = array(); $chg = false;
+    foreach ($db['sosq'] as $k => $v) {
+        if ((isset($v['ts']) ? $v['ts'] : 0) < $now - 900) { unset($db['sosq'][$k]); $chg = true; continue; }
+        $codes[] = array('id' => $k, 'name' => (string)$v['name'], 'email' => (string)$v['email'],
+            'code' => (string)$v['code'], 'age' => $now - intval($v['ts']));
+        if (empty($v['seen'])) { $db['sosq'][$k]['seen'] = 1; $chg = true; }
+    }
+    if ($chg) db_save($db);
+    db_close($lk);
+    out(array('ok' => true, 'codes' => $codes));
+}
+
+// staff: clear a code once connected (or if it was a mistake)
+if ($action === 'sosclear') {
+    need_staff();
+    $id = preg_replace('/[^a-f0-9]/', '', (string)(isset($in['id']) ? $in['id'] : ''));
+    list($lk, $db) = db_open();
+    if ($id !== '' && isset($db['sosq'][$id])) { unset($db['sosq'][$id]); db_save($db); }
+    db_close($lk);
+    out(array('ok' => true));
+}
+
 if ($action === 'cancel' || $action === 'change') {
     if (!$HAS_ADMIN) fail('not_configured');
     if (isset($in['wtoken']) && $in['wtoken'] !== '') { $snap = web_snapshot(); $key = $snap['key']; }   // portal customer
