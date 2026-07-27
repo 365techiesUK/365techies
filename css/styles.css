@@ -2019,3 +2019,61 @@ html.ss-open { overflow: hidden; }
   position: fixed; top: 0; left: 0; height: 2px; width: 0; z-index: 60;
   background: linear-gradient(90deg, var(--cyan), var(--green)); pointer-events: none;
 }
+
+/* ============================================================
+   AGEING ACCESS POINT CLUSTER
+   The three callout labels are the cluster's signature: a reader must be able
+   to tell a vendor datasheet fact from a forum report at a glance, without
+   reading a word. Never restyle these to look alike.
+   ============================================================ */
+.apcall { display: flex; gap: .9rem; align-items: flex-start; flex-wrap: wrap;
+  border-radius: 14px; padding: .95rem 1.1rem; margin: 1.1rem 0;
+  border: 1px solid var(--line); background: rgba(255,255,255,.02); }
+.apcall__tag { flex: 0 0 auto; font: 700 .68rem/1.35 var(--mono, ui-monospace, Consolas, monospace);
+  letter-spacing: .1em; text-transform: uppercase; padding: .3rem .6rem; border-radius: 999px;
+  white-space: nowrap; }
+.apcall__body { flex: 1 1 16rem; min-width: 0; }
+.apcall__body p:last-child { margin-bottom: 0; }
+.apcall__src { display: block; margin-top: .45rem; font-size: .85rem; opacity: .85; }
+.apcall--fact { border-color: rgba(0,206,27,.34); background: rgba(0,206,27,.055); }
+.apcall--fact .apcall__tag { background: rgba(0,206,27,.16); color: #38d24f; }
+.apcall--adv { border-color: rgba(232,99,126,.36); background: rgba(232,99,126,.06); }
+.apcall--adv .apcall__tag { background: rgba(232,99,126,.16); color: #f2879b; }
+.apcall--field { border-color: rgba(224,179,65,.36); background: rgba(224,179,65,.06); }
+.apcall--field .apcall__tag { background: rgba(224,179,65,.16); color: #e6bd5c; }
+
+/* wide tables scroll inside their own box - the page body must never scroll sideways */
+.aptwrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 1.2rem 0;
+  border: 1px solid var(--line); border-radius: 14px; }
+.apt { width: 100%; border-collapse: collapse; font-size: .9rem; min-width: 680px; }
+.apt__cap { caption-side: top; text-align: left; padding: .9rem 1rem .2rem;
+  color: var(--muted); font-size: .88rem; line-height: 1.5; }
+.apt th, .apt td { padding: .6rem .8rem; text-align: left; vertical-align: top;
+  border-bottom: 1px solid rgba(125,170,220,.14); }
+.apt thead th { font-size: .74rem; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--muted); font-weight: 700; white-space: nowrap; }
+.apt tbody th[scope="row"] { font-weight: 700; color: var(--white, #f0f5fc); white-space: nowrap; }
+.apt tbody tr:last-child th, .apt tbody tr:last-child td { border-bottom: 0; }
+.apt__note { font-weight: 400; text-transform: none; letter-spacing: 0; opacity: .75; }
+.apt__pill { display: inline-block; padding: .18rem .5rem; border-radius: 999px;
+  background: rgba(125,170,220,.12); border: 1px dashed rgba(125,170,220,.4);
+  color: var(--muted); font-size: .78rem; white-space: nowrap; }
+.apt__r--expired th[scope="row"] { color: #f2879b; }
+.apbadge { display: inline-block; padding: .2rem .55rem; border-radius: 999px;
+  font-size: .76rem; font-weight: 700; white-space: nowrap; }
+.apbadge--expired { background: rgba(232,99,126,.16); color: #f2879b; }
+.apbadge--soon    { background: rgba(224,179,65,.16); color: #e6bd5c; }
+.apbadge--ok      { background: rgba(0,206,27,.14); color: #38d24f; }
+.apbadge--current { background: rgba(29,151,227,.14); color: #67c1f5; }
+.apbadge--check   { background: rgba(125,170,220,.12); color: var(--muted); }
+.apsrc { font-size: .84rem; color: var(--muted); margin: .5rem 0 1.4rem; line-height: 1.6; }
+.apstamp { font-size: .92rem; color: var(--muted); line-height: 1.6;
+  border-left: 3px solid var(--cyan); padding: .1rem 0 .1rem .9rem; margin: 1.1rem 0; }
+.apdisc { border: 1px solid rgba(125,170,220,.3); border-radius: 14px; padding: 1rem 1.15rem;
+  margin: 1.4rem 0; background: rgba(255,255,255,.02); }
+.apdisc p { margin: 0; font-size: .92rem; line-height: 1.65; color: var(--muted); }
+.apdisc strong { color: var(--white, #f0f5fc); }
+@media (max-width: 640px) {
+  .apt { font-size: .85rem; }
+  .apcall { flex-direction: column; gap: .55rem; }
+}

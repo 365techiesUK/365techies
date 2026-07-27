@@ -22969,3 +22969,11 @@ def leave_a_review_page():
                   ("Read our reviews", "/reviews/")),
     )
 leave_a_review_page()
+
+# ---------------------------------------------------------------------------
+# Ageing access-point cluster (pillar + 9 spokes + 1 commercial page).
+# Data in ap_lifecycle_data.py, shared components in ap_cluster.py, pages in
+# ap_pages.py. Import order matters: the pages call bp.add() at import time.
+# ---------------------------------------------------------------------------
+import ap_pages as _ap_pages
+_ap_pages.build_all()
