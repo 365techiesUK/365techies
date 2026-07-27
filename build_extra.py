@@ -22977,3 +22977,11 @@ leave_a_review_page()
 # ---------------------------------------------------------------------------
 import ap_pages as _ap_pages
 _ap_pages.build_all()
+
+# ---------------------------------------------------------------------------
+# UK business network cluster, wave 1. Data in network_data.py, pages in
+# network_pages.py. The pillar is deliberately held pending an owner decision on
+# who maintains its dated table - see the note at the foot of network_pages.py.
+# ---------------------------------------------------------------------------
+import network_pages as _network_pages
+_network_pages.build_all()
