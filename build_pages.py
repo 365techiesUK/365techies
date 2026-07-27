@@ -616,6 +616,7 @@ FOOTER = '''  <footer class="site-footer">
           <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/></svg>NVIDIA &amp; Scan Partner</span>
           <a class="partner-badge partner-badge--gold" href="https://www.google.com/maps?cid=5924622613303465737" target="_blank" rel="noopener" title="See our 4.9-star reviews on Google"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.5 1.6 6.7L12 17l-6.2 3.6 1.6-6.7L2.2 8.9l6.9-.6z"/></svg>4.9 on Google</a>
           <a class="partner-badge partner-badge--green" href="/sustainability/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 20c0-9 7-16 16-16 0 9-7 16-16 16z"/><path d="M4 20C9 15 13 11 18 9"/></svg>Sustainable Dorset Member</a>
+          <a class="partner-badge partner-badge--green" href="/help-in-dorset/" title="Patient computer &amp; tech help for older people — listed on Dorset's community help directory"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 21C8 17 3 13.5 3 8.8 3 6 5.2 4 7.8 4c1.7 0 3.2.9 4.2 2.4C13 4.9 14.5 4 16.2 4 18.8 4 21 6 21 8.8c0 4.7-5 8.2-9 12.2z"/></svg>Listed on #HelpAndKindness</a>
         </div>
       </div>
       <nav aria-label="Support links">
@@ -1021,7 +1022,10 @@ BUSINESS_NODE = {
     "hasMap": "https://www.google.com/maps/place/?q=place_id:ChIJlTb8YRuic0gRCRczduB8OFI",
     "sameAs": ["https://www.facebook.com/365computersuk",
                "https://www.google.com/maps/place/?q=place_id:ChIJlTb8YRuic0gRCRczduB8OFI",
-               "https://find-and-update.company-information.service.gov.uk/company/11073501"],
+               "https://find-and-update.company-information.service.gov.uk/company/11073501",
+               # Help & Kindness (Dorset community help directory) listing - live 2026-07-27,
+               # confirmed by their CEO; two dofollow links back. Real third-party profile.
+               "https://www.helpandkindness.co.uk/service/7188/patient-computer-%26-tech-help-for-older-people-in-dorset"],
 }
 WEBSITE_NODE = {"@type": "WebSite", "@id": SITE + "/#website", "url": SITE + "/",
                 "name": "365 Techies", "inLanguage": "en-GB", "publisher": {"@id": SITE + "/#business"}}
@@ -5205,6 +5209,20 @@ add(
         <div class="prose" data-reveal style="max-width:74ch;margin:0 auto">
           <p>Back when we traded as <strong>365 Computers</strong> on the Moordown high street, a customer&rsquo;s laptop was stolen from his car in Poole, back in 2011. Because we&rsquo;d set his machine up with the same kind of <strong>remote-support software we still use to look after customers today</strong>, our team could see it was being used &mdash; and the internet (IP) address it was connecting from. We passed the details to <strong>Dorset Police</strong>, who located the address and recovered the laptop.</p>
           <p>Our own <strong>David Bridgewater</strong> was quoted in the <strong>Bournemouth Echo</strong>, which ran the story under the headline <a href="https://www.bournemouthecho.co.uk/news/9427325.laptop-retrieved-thanks-to-software/" target="_blank" rel="noopener">&ldquo;Laptop retrieved thanks to software&rdquo;</a>. All these years on, the same care &mdash; and much of the same technology &mdash; still looks after our customers every day.</p>
+        </div>
+      </div>
+    </section>''',
+   # Listed on #HelpAndKindness (live 2026-07-27, confirmed by their CEO) - a third
+   # party describing how we work, which is worth more than us saying it ourselves.
+   f'''    <section class="section section--alt" aria-label="Listed on Help and Kindness">
+      <div class="wrap" style="max-width:860px;margin:0 auto">
+        <div class="repairs__card" data-reveal style="border-color:rgba(0,206,27,.4)">
+          <div>
+            <p class="eyebrow mono">// PART OF DORSET&rsquo;S HELP NETWORK</p>
+            <h2 class="repairs__title">Listed on #HelpAndKindness</h2>
+            <p class="lede">We&rsquo;re proud to be on <a href="https://www.helpandkindness.co.uk/service/7188/patient-computer-%26-tech-help-for-older-people-in-dorset" target="_blank" rel="noopener">#HelpAndKindness</a>, the directory of support available across Dorset, listed for <strong>patient computer &amp; tech help for older people</strong>. Their directory covers far more than computers &mdash; and pointing people to the right help, even when it isn&rsquo;t us, is genuinely how we work. We&rsquo;ve put the services we trust most on one page: <a href="/help-in-dorset/">where to get help in Dorset, beyond computers</a>.</p>
+          </div>
+          <a href="/help-in-dorset/" class="button primary">Help in Dorset</a>
         </div>
       </div>
     </section>''',

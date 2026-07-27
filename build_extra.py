@@ -14963,6 +14963,73 @@ def sos_page():
         desc=desc, og_title="SOS Remote Support | 365 Techies", schema=schema, content=content)
 sos_page()
 
+# ===================================================== HELP IN DORSET (community signposting)
+# "If we can't help, we'll say so and point you the right way" is on our Help & Kindness
+# listing in a third party's voice - this page is that promise, written down. Every phone
+# number verified at source 2026-07-27 (Citizens Advice + Age UK fetched from their own
+# sites; the rest are long-stable national numbers; H&K's from their CEO's email).
+# Deliberately NOT a keyword page: it is the "how we work" page the listing describes.
+def help_in_dorset_page():
+    slug = "help-in-dorset"
+    desc = ("Where to get help in Dorset beyond computers — the trusted free services we point people to: "
+            "Help & Kindness, Citizens Advice, Age UK, Samaritans, Action Fraud, NHS. And the computer side? That's us.")
+    content = "\n".join([
+      hero(bc("Help in Dorset"), "// COMMUNITY &middot; HOW WE WORK",
+           'If we can&rsquo;t help, we&rsquo;ll <em class="grad grad--green">say so</em> &mdash; and point you the right way',
+           "That promise is on our listing at #HelpAndKindness, Dorset&rsquo;s community help directory &mdash; in their words, not just ours. "
+           "This page is the practical version: the free, trusted services we genuinely point people to when the problem isn&rsquo;t a computer.",
+           cta1=("See the services below", "#services"), cta2=("Call us: 01202 775566", "tel:+441202775566"),
+           chips=["All free to contact", "Numbers checked at source", "No referral fees &mdash; ever"]),
+      '''    <section class="section" aria-label="Our Help and Kindness listing">
+      <div class="wrap" style="max-width:860px;margin:0 auto">
+        <div class="repairs__card" data-reveal style="border-color:rgba(0,206,27,.4)">
+          <div>
+            <p class="eyebrow mono">// PROUD TO BE LISTED</p>
+            <h2 class="repairs__title">You&rsquo;ll find us on #HelpAndKindness</h2>
+            <p class="lede">#HelpAndKindness (<a href="https://www.helpandkindness.co.uk/" target="_blank" rel="noopener">helpandkindness.co.uk</a>) is the directory of support available across Dorset &mdash; the one local charities, carers and community workers actually use. It exists so that anyone in the county can find the right help, whatever the problem. We&rsquo;re listed for what we do best: <strong>patient computer and tech help for older people</strong> &mdash; home visits by appointment, remote help, and free courses, with no jargon and no pressure.</p>
+            <p class="lede">If you&rsquo;re helping someone with more than a computer problem, their directory is a genuinely good place to start &mdash; or ring them on <strong>01305&nbsp;59&nbsp;59&nbsp;58</strong>.</p>
+          </div>
+          <a href="https://www.helpandkindness.co.uk/service/7188/patient-computer-%26-tech-help-for-older-people-in-dorset" target="_blank" rel="noopener" class="button primary">See our listing</a>
+        </div>
+      </div>
+    </section>''',
+      '''    <section class="section section--alt" id="services" aria-label="Trusted free services">
+      <div class="wrap">
+        <p class="eyebrow eyebrow--center mono" data-reveal>// WHO WE POINT PEOPLE TO</p>
+        <h2 class="section-title section-title--center" data-title>Trusted help, beyond computers<span class="title-underline title-underline--center"></span></h2>
+        <p class="lede lede--center" data-reveal style="max-width:640px;margin-left:auto;margin-right:auto">All of these are free to contact. We checked every number against the organisation&rsquo;s own website before putting it here &mdash; and none of them pay us or know we&rsquo;re sending you.</p>
+        <div class="tile-grid" data-stagger style="max-width:960px;margin:1.4rem auto 0">
+          <div class="tile"><h3>&#129309; Anything local in Dorset</h3><p><strong>#HelpAndKindness</strong> &mdash; the county&rsquo;s directory of community support: food, transport, befriending, carers&rsquo; help and hundreds more. <a href="https://www.helpandkindness.co.uk/" target="_blank" rel="noopener">helpandkindness.co.uk</a> &middot; 01305&nbsp;59&nbsp;59&nbsp;58</p></div>
+          <div class="tile"><h3>&#128188; Money, benefits, housing, legal</h3><p><strong>Citizens Advice</strong> &mdash; free, confidential, independent advice on the practical problems of life. Adviceline (England): <strong>0800&nbsp;144&nbsp;8848</strong>, Mon&ndash;Fri 9am&ndash;5pm.</p></div>
+          <div class="tile"><h3>&#129701; Advice for older people</h3><p><strong>Age UK</strong> &mdash; benefits, care, staying independent, and a friendly voice. Advice line: <strong>0800&nbsp;678&nbsp;1602</strong>, free, 8am&ndash;7pm every day of the year.</p></div>
+          <div class="tile"><h3>&#128153; Someone to talk to</h3><p><strong>Samaritans</strong> &mdash; whatever you&rsquo;re facing, any time of day or night. Call <strong>116&nbsp;123</strong>, free from any phone, 24 hours a day.</p></div>
+          <div class="tile"><h3>&#128680; Scams and fraud</h3><p><strong>Action Fraud</strong> &mdash; the UK&rsquo;s reporting centre for fraud and cybercrime: <strong>0300&nbsp;123&nbsp;2040</strong> or <a href="https://www.actionfraud.police.uk/" target="_blank" rel="noopener">actionfraud.police.uk</a>. Not sure a &ldquo;computer support&rdquo; call is genuine? <strong>Ring us first on 01202&nbsp;775566 and we&rsquo;ll tell you straight &mdash; no charge.</strong> Nobody legitimate minds being checked up on.</p></div>
+          <div class="tile"><h3>&#127973; Health &amp; urgent help</h3><p><strong>NHS 111</strong> for urgent medical advice that isn&rsquo;t an emergency &middot; <strong>999</strong> when a life is at risk &middot; <strong>101</strong> for the police when it isn&rsquo;t urgent.</p></div>
+        </div>
+      </div>
+    </section>''',
+      '''    <section class="section" aria-label="The computer side">
+      <div class="wrap" style="max-width:860px;margin:0 auto">
+        <div class="repairs__card" data-reveal>
+          <div>
+            <p class="eyebrow mono">// AND THE COMPUTER SIDE? THAT&rsquo;S US</p>
+            <h2 class="repairs__title">Patient, jargon-free tech help &mdash; and plenty of it is free</h2>
+            <p class="lede">Our <a href="/online-safety-course/">Online Safety course</a> and <a href="/free-tools/">free tools and courses</a> are open to everyone, no sign-up needed &mdash; community groups are welcome to share them. When you do need hands-on help, we come to you by appointment or connect remotely, we always ring before we connect, and you&rsquo;ll deal with the same friendly faces each time. See <a href="/it-support-for-retired-users/">patient help for retired users</a> and <a href="/it-support-for-disabled-people/">accessible IT support</a>.</p>
+          </div>
+          <a href="/join/" class="button primary">Join the 365 Club free</a>
+        </div>
+      </div>
+    </section>''',
+      cta("Not sure who you need? Just ring us.",
+          "If it&rsquo;s a computer thing, we&rsquo;ll sort it. If it isn&rsquo;t, we&rsquo;ll point you to the right people on this page &mdash; that&rsquo;s the whole idea.",
+          primary=("Call 01202 775566", "tel:+441202775566"), secondary=("Text us: 07520 615332", "sms:+447520615332")),
+    ])
+    def schema(s, _d=desc):
+        return graph([crumb(s, "Help in Dorset"), webpage(s, "Where to Get Help in Dorset — Beyond Computers", _d)])
+    add(slug=slug, title="Where to Get Help in Dorset — Beyond Computers | 365 Techies",
+        desc=desc, og_title="Help in Dorset — beyond computers | 365 Techies", schema=schema, content=content)
+help_in_dorset_page()
+
 # ===================================================== CYBER THREATS EXPLAINED
 def make_threat(slug, name, h1, lede, desc, what_html, signs, protect, ifhit, faqs):
     related = "\n".join(f'          <li><a href="/{t["slug"]}/">{t["name"]}</a></li>' for t in THREATS if t["slug"] != slug)
