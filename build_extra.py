@@ -22057,6 +22057,9 @@ def write_portal_page():
       if (!selDay) selDay = todayIso();
       buildStrip(); renderDay(selDay);
       startDiaryPoll();
+      // Pull the shared status store immediately, don't wait 15s for the first tick:
+      // the whole point is that David opening the diary sees what Steve finished.
+      pollStatuses();
     }).catch(function () { var v = document.getElementById('dday'); if (v) v.innerHTML = '<p class="quiet">Couldn\\u2019t load the diary.</p>'; });
   }
   // ---- realtime booking-status poll: updates the chips in place, no page refresh ----
@@ -22206,6 +22209,10 @@ def write_portal_page():
               var cb2 = row.querySelector('[data-act="completed"]'); if (cb2) cb2.textContent = 'Not completed';
             }
             btn.remove();
+            // The portal is the source of truth either way, but if SimplyBook refused the
+            // status the team should know their SB diary won't match - silence here is how
+            // the mismatch went unnoticed for so long.
+            if (!r.sb) { var w = document.getElementById('dann'); if (w) w.textContent = 'Marked done in the portal. SimplyBook did not accept the status - its diary will still show this job as outstanding.'; }
           })
           .catch(function () { btn.disabled = false; btn.textContent = lbl; alert('Couldn\\u2019t reach the server.'); });
       };

@@ -94,8 +94,21 @@ foreach ($rows as $b) {
         $db['bkmeta'][(string)$bid] = array('st' => $m, 'ts' => time(), 'sb' => 1);
         $seeded++; continue;
     }
+    // SILENCE IS NOT "NO STATUS". If this response carries no status_id key at all we
+    // learned nothing about the booking - downgrading on that is how a completed job
+    // un-completes itself.
+    if (!array_key_exists('status_id', $b)) continue;
     if ($m === $prev) continue;                                  // no change (portal-made changes already alerted)
-    $db['bkmeta'][(string)$bid] = array('st' => $m, 'ts' => time(), 'sb' => 1);
+    // NEVER blank-revert a portal-made status whose SimplyBook write did not land.
+    // staffstatus always records our marker, but its setStatus can silently fail (the
+    // Status feature switched off, a renamed status, insufficient API permissions) -
+    // and then SimplyBook reporting "no status" is not news, it is the failure echoing
+    // back. Reverting it made Steve's completed jobs reappear as outstanding on David's
+    // login, and made re-completing them fire a second round of Slack messages.
+    // A marker written WITH a confirmed SB write (sb=1) is still allowed to be cleared
+    // here, because then a blank really is a change somebody made in SimplyBook.
+    if ($m === '' && (string)(isset($bmr['src']) ? $bmr['src'] : '') === 'portal' && empty($bmr['sb'])) continue;
+    $db['bkmeta'][(string)$bid] = array('st' => $m, 'ts' => time(), 'sb' => 1, 'src' => 'simplybook');
     $changed++;
     $who = bp_clean(isset($b['client']) ? $b['client'] : (isset($b['client_name']) ? $b['client_name'] : ('Booking #' . $bid)));
     $what = bp_clean(isset($b['event_name']) ? $b['event_name'] : (isset($b['event']) ? $b['event'] : ''));

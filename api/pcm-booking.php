@@ -1906,9 +1906,16 @@ if ($action === 'staffstatus') {
     list($lk, $db) = db_open();
     if (!isset($db['bkmeta'])) $db['bkmeta'] = array();
     foreach ($db['bkmeta'] as $k2 => $v2) if ((isset($v2['ts']) ? $v2['ts'] : 0) < time() - 86400 * 90) unset($db['bkmeta'][$k2]);
+    // Was this actually a change? Two techies working the same diary will both press
+    // Done on the same job; announcing it twice is noise, not information.
+    $prevSt = isset($db['bkmeta'][(string)$bid]['st']) ? (string)$db['bkmeta'][(string)$bid]['st'] : null;
+    $newSt = ($want === 'none') ? '' : $want;
+    $unchanged = ($prevSt !== null && $prevSt === $newSt);
+    // src='portal' marks OUR authority: the bkpoll cron must not blank-revert this when
+    // the SimplyBook write failed (see pcm-bkpoll.php - that bug un-completed jobs).
     // keep a marker even when cleared (st='') so the diary's realtime poll propagates the clear
-    if ($want === 'none') $db['bkmeta'][(string)$bid] = array('st' => '', 'cleared' => 1, 'ts' => time(), 'sb' => $sb ? 1 : 0);
-    else $db['bkmeta'][(string)$bid] = array('st' => $want, 'ts' => time(), 'sb' => $sb ? 1 : 0);
+    if ($want === 'none') $db['bkmeta'][(string)$bid] = array('st' => '', 'cleared' => 1, 'ts' => time(), 'sb' => $sb ? 1 : 0, 'src' => 'portal');
+    else $db['bkmeta'][(string)$bid] = array('st' => $want, 'ts' => time(), 'sb' => $sb ? 1 : 0, 'src' => 'portal');
     $sr = isset($db['staff'][$stok]) ? $db['staff'][$stok] : array();
     $staffWho = (string)(isset($sr['email']) ? $sr['email'] : (isset($sr['name']) ? $sr['name'] : ''));
     db_save($db); db_close($lk);
@@ -1918,10 +1925,12 @@ if ($action === 'staffstatus') {
     $cwhat = $cl(isset($in['what']) ? $in['what'] : '');
     $label = ($cwho !== '' ? $cwho : ('Booking #' . $bid)) . ($cwhat !== '' ? ' - ' . $cwhat : '');
     $by = ' _(by ' . ($staffWho !== '' ? $staffWho : 'the team') . ' in the portal' . ($sb ? ', synced to SimplyBook' : '') . ')_';
-    if ($want === 'completed') pcm_slack_say(':ballot_box_with_check: *Service completed* - ' . $label . $by);
+    if ($unchanged) {
+        // already in this state - stay quiet, but still confirm to the caller
+    } elseif ($want === 'completed') pcm_slack_say(':ballot_box_with_check: *Service completed* - ' . $label . $by);
     elseif ($want === 'confirmed') pcm_slack_say(':white_check_mark: *Booking confirmed* - ' . $label . $by);
     else pcm_slack_say(':arrows_counterclockwise: *Booking status cleared* - ' . $label . $by);
-    out(array('ok' => true, 'sb' => $sb, 'st' => $want === 'none' ? '' : $want));
+    out(array('ok' => true, 'sb' => $sb, 'st' => $want === 'none' ? '' : $want, 'unchanged' => $unchanged ? 1 : 0));
 }
 
 // staff: the live fleet - every machine running 365 PC Manager, flattened, with the raw

@@ -115,7 +115,11 @@ ErrorDocument 404 /404.html
 </FilesMatch>
 # 365 PC Manager + Service Pass server-only data/secret files - NEVER serve over HTTP.
 # (The endpoints pcm.php, pcm-admin.php, pcm-sb-callback.php, pass.php stay served - not matched here.)
-<FilesMatch "^(pcm-data|pcm-sb-token|pcm-used|pass-used|pcm-throttle|pcm-joincodes|pcm-waitlist|pcm-waitlist-rate|pcm-fb-rate|pcm-reviewq|pcm-pubrate|pcm-draftfb|pcm-draftfb-rate|pcm-wifi-[a-f0-9]+)\.json(\..*)?$">
+# NB pcm-bkpoll-cache.json holds a LIVE SimplyBook admin token (found publicly
+# readable 2026-07-27 - it was never in this list). Any new *-cache/token file the
+# api/ writes MUST be added here; check with a browser fetch, not curl (the bot wall
+# answers 202 to scripted requests and hides a real 200).
+<FilesMatch "^(pcm-data|pcm-sb-token|pcm-bkpoll-cache|pcm-used|pass-used|pcm-throttle|pcm-joincodes|pcm-waitlist|pcm-waitlist-rate|pcm-fb-rate|pcm-reviewq|pcm-pubrate|pcm-draftfb|pcm-draftfb-rate|pcm-wifi-[a-f0-9]+)\.json(\..*)?$">
   Require all denied
 </FilesMatch>
 <Files "pcm-smtp.php">
