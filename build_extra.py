@@ -19608,15 +19608,68 @@ def write_family_page():
   }).catch(fail);
 })();
 </script>
+<script>
+(function () {
+  /* Freshness beacon (family flavour). Deliberately its own <script> so a broken app
+     script can't kill self-healing. Differences from the portal one: the share code
+     rides in ?c=, so every navigation MUST carry the existing query along - dropping
+     it would sign the family member out of the view. */
+  var P365FAM = '__P365FAM__';
+  function stripU(s) { return s.replace(/([?&])u=[^&]*(&?)/, function (_, a, b) { return b ? a : ''; }); }
+  function withU(id) { var q = stripU(location.search); return '/family/' + q + (q ? '&' : '?') + 'u=' + encodeURIComponent(id); }
+  if (/[?&]u=/.test(location.search)) { try { history.replaceState(null, '', '/family/' + stripU(location.search)); } catch (e) {} }
+  var pill = null;
+  function showPill(id) {
+    if (pill) return;
+    pill = document.createElement('button');
+    pill.type = 'button';
+    pill.style.cssText = 'position:fixed;bottom:12px;right:12px;z-index:99;background:#1d97e3;color:#fff;border:0;border-radius:999px;padding:.55rem .9rem;font:600 .85rem/1 "Segoe UI",system-ui,sans-serif;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.4)';
+    pill.textContent = 'Updated \\u2014 tap to refresh';
+    pill.onclick = function () { location.replace(withU(id)); };
+    document.body.appendChild(pill);
+  }
+  function hidePill() { if (pill && pill.parentNode) pill.parentNode.removeChild(pill); pill = null; }
+  function check() {
+    try {
+      // ?b= buster is load-bearing: session-restored tabs ignore no-store until load
+      fetch('/build-id.json?b=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
+        if (!j || !j.family) return;
+        if (j.family === P365FAM) { try { sessionStorage.removeItem('p365rlf'); } catch (e) {} hidePill(); return; }
+        var ae = document.activeElement;
+        if (ae && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName)) return;
+        var rec = ''; try { rec = sessionStorage.getItem('p365rlf') || ''; } catch (e) {}
+        var p = rec.split('|'), n = (p[0] === j.family) ? (parseInt(p[1], 10) || 0) : 0;
+        if (n >= 2) { showPill(j.family); return; }
+        if (p[0] === j.family && Date.now() - (parseInt(p[2], 10) || 0) < 60000) return;
+        // verify-then-navigate: only reload once the new page is provably live + complete
+        fetch(withU(j.family), { cache: 'no-store' }).then(function (r2) { return r2.text(); }).then(function (t) {
+          if (t.indexOf("P365FAM = '" + j.family + "'") < 0) return;
+          if (t.lastIndexOf('</html>') < t.length - 40) return;
+          try { sessionStorage.setItem('p365rlf', j.family + '|' + (n + 1) + '|' + Date.now()); } catch (e) {}
+          location.replace(withU(j.family));
+        }).catch(function () {});
+      }).catch(function () {});
+    } catch (e) {}
+  }
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) check(); });
+  window.addEventListener('pageshow', function (e) { if (e.persisted) check(); });
+  setInterval(check, 300000);
+  check();
+})();
+</script>
 </body>
 </html>
 '''
-    import os as _os
+    import os as _os, hashlib as _hl
     d = _os.path.join(bp.BASE, "family")
     _os.makedirs(d, exist_ok=True)
+    # content-derived id, placeholder still in place (no dateModified here to normalise)
+    global FAMILY_BUILD_ID
+    FAMILY_BUILD_ID = _hl.sha1(html.encode("utf-8")).hexdigest()[:10]
     with open(_os.path.join(d, "index.html"), "w", encoding="utf-8") as f:
-        f.write(html)
+        f.write(html.replace("__P365FAM__", FAMILY_BUILD_ID))
 
+FAMILY_BUILD_ID = ""
 write_family_page()
 
 # /portal/ - the 365 Techies customer portal, rendered INSIDE the full site chrome
@@ -20451,6 +20504,14 @@ def write_portal_page():
 
   // ---------- immersive overlay: tools open OVER the portal, never away from it ----
   var ovEl = null, ovOnClose = null, ovPop = false;
+  // Published for the freshness beacon (its own <script>, outside this IIFE): "is the
+  // customer mid-task?" - an open overlay or a booking wizard in flight means the
+  // beacon must not reload the page out from under them.
+  window.p365Busy = function () {
+    if (ovEl) return true;
+    var wz = document.getElementById('cbwiz');
+    return !!(wz && wz.style.display !== 'none');
+  };
   function ovShut(fromPop) {
     if (!ovEl) return;
     var cb = ovOnClose; ovOnClose = null;
@@ -22337,9 +22398,74 @@ def write_portal_page():
     # the site lands here, and greeting a new member with the app's "COMING SOON" badge
     # (which belongs to the unreleased PC Manager app, not the Club) read as "this whole
     # thing isn't ready" - the audit's single worst first impression.
+    # Freshness beacon - its own <script>, DELIBERATELY separate from the app script:
+    # a truncated download or a crash inside the app must never kill the page's
+    # ability to self-heal, because the broken build is the one that most needs it.
+    # This is the fix for the recurring "the new portal didn't go live" complaint -
+    # the portal is the one page people keep open for days (staff console: weeks),
+    # so the page checks for a newer build and replaces itself.
+    beacon = '''<script>
+(function () {
+  var P365BUILD = '__P365BUILD__';
+  // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
+  // inside a check could clobber the app's overlay history state, and the lazy-loaded
+  // gtag would record /portal/?u=... as a distinct page.
+  if (/[?&]u=/.test(location.search)) { try { history.replaceState(null, '', '/portal/'); } catch (e) {} }
+  var pill = null;
+  function showPill(id) {
+    if (pill) return;
+    pill = document.createElement('button');
+    pill.id = 'p365pill'; pill.type = 'button';
+    pill.style.cssText = 'position:fixed;bottom:12px;right:12px;z-index:2700;background:#1d97e3;color:#fff;border:0;border-radius:999px;padding:.55rem .9rem;font:600 .85rem/1 "Segoe UI",system-ui,sans-serif;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.4)';
+    pill.textContent = 'Portal updated \\u2014 tap to refresh';
+    pill.onclick = function () { location.replace('/portal/?u=' + encodeURIComponent(id)); };
+    document.body.appendChild(pill);
+  }
+  function hidePill() { if (pill && pill.parentNode) pill.parentNode.removeChild(pill); pill = null; }
+  function busy() {
+    try { if (window.p365Busy && window.p365Busy()) return true; } catch (e) {}
+    var ae = document.activeElement;
+    return !!(ae && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName));
+  }
+  function check() {
+    try {
+      // The ?b= buster is NOT redundant with cache:'no-store': a session-restored tab
+      // serves subresource fetches from disk cache with validation skipped until the
+      // load event, ignoring no-store. The unique query is what actually defeats that.
+      fetch('/build-id.json?b=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
+        if (!j || !j.id) return;
+        if (j.id === P365BUILD) { try { sessionStorage.removeItem('p365rl'); } catch (e) {} hidePill(); return; }
+        if (busy()) return;                              // the next check catches it
+        var rec = ''; try { rec = sessionStorage.getItem('p365rl') || ''; } catch (e) {}
+        var p = rec.split('|'), n = (p[0] === j.id) ? (parseInt(p[1], 10) || 0) : 0;
+        if (n >= 2) { showPill(j.id); return; }          // 2 auto-reloads max per build - a loop is impossible
+        if (p[0] === j.id && Date.now() - (parseInt(p[2], 10) || 0) < 60000) return;
+        // VERIFY before navigating. During a deploy build-id.json lands minutes before
+        // the page does, and FTPS writes files in place - so only reload once the new
+        // page is provably retrievable and complete. No verification, no navigation.
+        fetch('/portal/?u=' + encodeURIComponent(j.id), { cache: 'no-store' }).then(function (r2) { return r2.text(); }).then(function (t) {
+          if (t.indexOf("P365BUILD = '" + j.id + "'") < 0) return;   // still the old page (mid-deploy)
+          if (t.lastIndexOf('</html>') < t.length - 40) return;      // truncated upload - wait
+          try { sessionStorage.setItem('p365rl', j.id + '|' + (n + 1) + '|' + Date.now()); } catch (e) {}
+          location.replace('/portal/?u=' + encodeURIComponent(j.id));
+        }).catch(function () {});
+      }).catch(function () {});
+    } catch (e) {}
+  }
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) check(); });
+  window.addEventListener('pageshow', function (e) { if (e.persisted) check(); });   // bfcache restores fetch nothing
+  setInterval(check, 300000);
+  check();
+})();
+</script>'''
     content = ('<section class="section" style="padding-top:6.5rem"><div class="wrap" style="max-width:880px">'
                + '<div id="p365app"><noscript><p>The customer portal needs JavaScript switched on. Or just ring us: 01202 775566.</p></noscript>'
                + '<p style="color:#9fb5d3">Loading the portal&hellip;</p></div>'
+               # the visible build line lets a human answer "am I on the new portal?" in one
+               # glance - the recurring stale-tab complaint was undiagnosable without it
+               + '<p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">'
+               + 'portal build __P365DATE__ &middot; __P365BUILD__</p>'
+               + beacon
                + lsm_teaser
                + '</div></section>' + lsm_style + lsm_script + css + js)
     schema = bp.graph([bp.webpage("portal", "Customer portal", "Sign in to the 365 Techies customer portal.")])
@@ -22348,16 +22474,40 @@ def write_portal_page():
                    "365 Techies customer portal", schema, content)
     html = html.replace('<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />',
                         '<meta name="robots" content="noindex, nofollow" />\\n  <meta name="referrer" content="no-referrer" />', 1)
-    import os as _os
+    import os as _os, hashlib as _hl, re as _re, json as _json, datetime as _dt
     d = _os.path.join(bp.BASE, "portal")
     _os.makedirs(d, exist_ok=True)
-    with open(_os.path.join(d, "index.html"), "w", encoding="utf-8") as f:
+    # Build id = hash of the page CONTENT (placeholders still in place), so it only
+    # changes when the portal actually changed. A timestamp id would dirty the file on
+    # every rebuild and make every open tab reload for deploys that didn't touch the
+    # portal. The date label is carried over from the previous build for the same
+    # reason - it must state when the portal last CHANGED, and must not join the hash.
+    # CRITICAL: normalise the schema's dateModified out first - bp.page() stamps it
+    # with the build date, and hashing it would change the id at every midnight,
+    # reloading every open tab daily for nothing (adversarial review finding F1).
+    bid = _hl.sha1(_re.sub(r'"dateModified":\s*"[^"]*"', '"dateModified":"X"', html).encode("utf-8")).hexdigest()[:10]
+    date_label = _dt.date.today().strftime("%d %b %Y")
+    old_path = _os.path.join(d, "index.html")
+    if _os.path.exists(old_path):
+        with open(old_path, "r", encoding="utf-8") as f:
+            old = f.read()
+        m = _re.search(r"portal build ([0-9]{2} \w{3} [0-9]{4}) &middot; ([0-9a-f]{10})<", old)
+        if m and m.group(2) == bid:
+            date_label = m.group(1)
+    html = html.replace("__P365BUILD__", bid).replace("__P365DATE__", date_label)
+    with open(old_path, "w", encoding="utf-8") as f:
         f.write(html)
+    # the beacon endpoint: tiny, no-store (see .htaccess), fetched with a cache-buster.
+    # Carries the family page's id too - one endpoint serves both beacons.
+    with open(_os.path.join(bp.BASE, "build-id.json"), "w", encoding="utf-8") as f:
+        f.write(_json.dumps({"id": bid, "changed": date_label, "family": FAMILY_BUILD_ID}))
 
 write_portal_page()
 
 # ---------------------------------------------------------------------------
 # /activate/ - clickable-anywhere activation landing. The key rides the #fragment
+# NEVER add the freshness beacon to this page: location.replace('/activate/?u=...')
+# drops the #fragment, destroying the activation key mid-flow. (Review finding F6.)
 # (never sent to the server, never in access logs). Tries the 365pcm:// app link,
 # and shows what to do if the app isn't installed yet. Standalone + noindex.
 def write_activate_page():

@@ -639,7 +639,60 @@
   </aside>
 
   <main id="main">
-<section class="section" style="padding-top:6.5rem"><div class="wrap" style="max-width:880px"><div id="p365app"><noscript><p>The customer portal needs JavaScript switched on. Or just ring us: 01202 775566.</p></noscript><p style="color:#9fb5d3">Loading the portal&hellip;</p></div><div class="lsm"><div class="lsm__head"><span class="lsm__logo">365</span><div><span class="lsm__badge">&#129514; BETA PREVIEW &middot; COMING SOON</span><h2 class="lsm__title">365 PC Manager</h2></div></div><p class="lsm__lede"><strong>365 PC Manager</strong> is the free app we&rsquo;re building &mdash; a live, interactive 3D health report of your actual PC. Hover any dial and your machine turns to that part, with a plain-English verdict on each. <strong><span class="lsm__dot"></span>This is a demo with sample data &mdash; ready to connect to your PC.</strong></p><div class="lsm__actions"><button class="button primary" id="lsmLaunch" type="button">&#9654;&nbsp;Launch interactive demo</button><span class="lsm__note">Loads a 3D model (~5&nbsp;MB) &middot; best on a computer</span></div><div class="lsm__framewrap" id="lsmFrameWrap" hidden><iframe class="lsm__frame" id="lsmFrame" title="365 PC Manager demo"></iframe></div></div></div></section><style>.lsm{background:linear-gradient(135deg,rgba(29,151,227,.14),rgba(17,26,60,.55));border:1px solid rgba(29,151,227,.38);border-radius:18px;padding:1.4rem 1.5rem;margin:1.6rem 0 0;box-shadow:0 18px 44px rgba(0,0,0,.28)}.lsm__head{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap}.lsm__badge{display:inline-block;background:rgba(0,206,27,.16);color:#12d02a;border:1px solid rgba(0,206,27,.45);font-size:.62rem;font-weight:700;letter-spacing:.1em;padding:.2rem .5rem;border-radius:999px;margin-bottom:.25rem}.lsm__logo{display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:12px;background:linear-gradient(160deg,#2aa4ee,#1477c9);color:#fff;font-weight:800;font-size:1.05rem;flex:0 0 auto;box-shadow:0 6px 16px rgba(29,151,227,.4)}.lsm__dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#00ce1b;margin-right:.4rem;vertical-align:middle;box-shadow:0 0 0 0 rgba(0,206,27,.5);animation:lsmpulse 1.8s ease-out infinite}@keyframes lsmpulse{0%{box-shadow:0 0 0 0 rgba(0,206,27,.45)}70%{box-shadow:0 0 0 8px rgba(0,206,27,0)}100%{box-shadow:0 0 0 0 rgba(0,206,27,0)}}.lsm__title{margin:0;font-size:1.35rem;color:#f0f5fc}.lsm__lede{color:#c7d6ee;margin:.6rem 0 1rem;line-height:1.55;max-width:64ch}.lsm__actions{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}.lsm__note{color:#7f97bd;font-size:.8rem}.lsm__framewrap{margin-top:1.2rem;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.1)}.lsm__frame{width:100%;height:660px;border:0;display:block;background:#0b1226}@media(prefers-reduced-motion:reduce){.lsm__dot{animation:none}}@media(max-width:640px){.lsm__frame{height:78vh}}</style><script>(function(){var b=document.getElementById("lsmLaunch"),w=document.getElementById("lsmFrameWrap"),f=document.getElementById("lsmFrame");if(b&&f){b.addEventListener("click",function(){if(!f.getAttribute("src"))f.setAttribute("src","/system-monitoring-demo/");w.hidden=false;b.textContent="Demo running below";b.disabled=true;setTimeout(function(){w.scrollIntoView({behavior:"smooth",block:"center"});},60);});}})();</script><style>
+<section class="section" style="padding-top:6.5rem"><div class="wrap" style="max-width:880px"><div id="p365app"><noscript><p>The customer portal needs JavaScript switched on. Or just ring us: 01202 775566.</p></noscript><p style="color:#9fb5d3">Loading the portal&hellip;</p></div><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">portal build 27 Jul 2026 &middot; 1965cdcd3e</p><script>
+(function () {
+  var P365BUILD = '1965cdcd3e';
+  // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
+  // inside a check could clobber the app's overlay history state, and the lazy-loaded
+  // gtag would record /portal/?u=... as a distinct page.
+  if (/[?&]u=/.test(location.search)) { try { history.replaceState(null, '', '/portal/'); } catch (e) {} }
+  var pill = null;
+  function showPill(id) {
+    if (pill) return;
+    pill = document.createElement('button');
+    pill.id = 'p365pill'; pill.type = 'button';
+    pill.style.cssText = 'position:fixed;bottom:12px;right:12px;z-index:2700;background:#1d97e3;color:#fff;border:0;border-radius:999px;padding:.55rem .9rem;font:600 .85rem/1 "Segoe UI",system-ui,sans-serif;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.4)';
+    pill.textContent = 'Portal updated \u2014 tap to refresh';
+    pill.onclick = function () { location.replace('/portal/?u=' + encodeURIComponent(id)); };
+    document.body.appendChild(pill);
+  }
+  function hidePill() { if (pill && pill.parentNode) pill.parentNode.removeChild(pill); pill = null; }
+  function busy() {
+    try { if (window.p365Busy && window.p365Busy()) return true; } catch (e) {}
+    var ae = document.activeElement;
+    return !!(ae && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName));
+  }
+  function check() {
+    try {
+      // The ?b= buster is NOT redundant with cache:'no-store': a session-restored tab
+      // serves subresource fetches from disk cache with validation skipped until the
+      // load event, ignoring no-store. The unique query is what actually defeats that.
+      fetch('/build-id.json?b=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
+        if (!j || !j.id) return;
+        if (j.id === P365BUILD) { try { sessionStorage.removeItem('p365rl'); } catch (e) {} hidePill(); return; }
+        if (busy()) return;                              // the next check catches it
+        var rec = ''; try { rec = sessionStorage.getItem('p365rl') || ''; } catch (e) {}
+        var p = rec.split('|'), n = (p[0] === j.id) ? (parseInt(p[1], 10) || 0) : 0;
+        if (n >= 2) { showPill(j.id); return; }          // 2 auto-reloads max per build - a loop is impossible
+        if (p[0] === j.id && Date.now() - (parseInt(p[2], 10) || 0) < 60000) return;
+        // VERIFY before navigating. During a deploy build-id.json lands minutes before
+        // the page does, and FTPS writes files in place - so only reload once the new
+        // page is provably retrievable and complete. No verification, no navigation.
+        fetch('/portal/?u=' + encodeURIComponent(j.id), { cache: 'no-store' }).then(function (r2) { return r2.text(); }).then(function (t) {
+          if (t.indexOf("P365BUILD = '" + j.id + "'") < 0) return;   // still the old page (mid-deploy)
+          if (t.lastIndexOf('</html>') < t.length - 40) return;      // truncated upload - wait
+          try { sessionStorage.setItem('p365rl', j.id + '|' + (n + 1) + '|' + Date.now()); } catch (e) {}
+          location.replace('/portal/?u=' + encodeURIComponent(j.id));
+        }).catch(function () {});
+      }).catch(function () {});
+    } catch (e) {}
+  }
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) check(); });
+  window.addEventListener('pageshow', function (e) { if (e.persisted) check(); });   // bfcache restores fetch nothing
+  setInterval(check, 300000);
+  check();
+})();
+</script><div class="lsm"><div class="lsm__head"><span class="lsm__logo">365</span><div><span class="lsm__badge">&#129514; BETA PREVIEW &middot; COMING SOON</span><h2 class="lsm__title">365 PC Manager</h2></div></div><p class="lsm__lede"><strong>365 PC Manager</strong> is the free app we&rsquo;re building &mdash; a live, interactive 3D health report of your actual PC. Hover any dial and your machine turns to that part, with a plain-English verdict on each. <strong><span class="lsm__dot"></span>This is a demo with sample data &mdash; ready to connect to your PC.</strong></p><div class="lsm__actions"><button class="button primary" id="lsmLaunch" type="button">&#9654;&nbsp;Launch interactive demo</button><span class="lsm__note">Loads a 3D model (~5&nbsp;MB) &middot; best on a computer</span></div><div class="lsm__framewrap" id="lsmFrameWrap" hidden><iframe class="lsm__frame" id="lsmFrame" title="365 PC Manager demo"></iframe></div></div></div></section><style>.lsm{background:linear-gradient(135deg,rgba(29,151,227,.14),rgba(17,26,60,.55));border:1px solid rgba(29,151,227,.38);border-radius:18px;padding:1.4rem 1.5rem;margin:1.6rem 0 0;box-shadow:0 18px 44px rgba(0,0,0,.28)}.lsm__head{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap}.lsm__badge{display:inline-block;background:rgba(0,206,27,.16);color:#12d02a;border:1px solid rgba(0,206,27,.45);font-size:.62rem;font-weight:700;letter-spacing:.1em;padding:.2rem .5rem;border-radius:999px;margin-bottom:.25rem}.lsm__logo{display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:12px;background:linear-gradient(160deg,#2aa4ee,#1477c9);color:#fff;font-weight:800;font-size:1.05rem;flex:0 0 auto;box-shadow:0 6px 16px rgba(29,151,227,.4)}.lsm__dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#00ce1b;margin-right:.4rem;vertical-align:middle;box-shadow:0 0 0 0 rgba(0,206,27,.5);animation:lsmpulse 1.8s ease-out infinite}@keyframes lsmpulse{0%{box-shadow:0 0 0 0 rgba(0,206,27,.45)}70%{box-shadow:0 0 0 8px rgba(0,206,27,0)}100%{box-shadow:0 0 0 0 rgba(0,206,27,0)}}.lsm__title{margin:0;font-size:1.35rem;color:#f0f5fc}.lsm__lede{color:#c7d6ee;margin:.6rem 0 1rem;line-height:1.55;max-width:64ch}.lsm__actions{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}.lsm__note{color:#7f97bd;font-size:.8rem}.lsm__framewrap{margin-top:1.2rem;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.1)}.lsm__frame{width:100%;height:660px;border:0;display:block;background:#0b1226}@media(prefers-reduced-motion:reduce){.lsm__dot{animation:none}}@media(max-width:640px){.lsm__frame{height:78vh}}</style><script>(function(){var b=document.getElementById("lsmLaunch"),w=document.getElementById("lsmFrameWrap"),f=document.getElementById("lsmFrame");if(b&&f){b.addEventListener("click",function(){if(!f.getAttribute("src"))f.setAttribute("src","/system-monitoring-demo/");w.hidden=false;b.textContent="Demo running below";b.disabled=true;setTimeout(function(){w.scrollIntoView({behavior:"smooth",block:"center"});},60);});}})();</script><style>
   #p365app { --pink:#0b1226; --ppanel:#0d1530; --pline:#2a3b63; --pcyan:#1d97e3; --psoft:#86b6e8; --pgood:#00ce1b; --pwarn:#e0b341; --pbad:#e8637e; --pmut:#9fb5d3; --pwhite:#f0f5fc; }
   #p365app .card { background:var(--ppanel); border:1px solid var(--pline); border-radius:14px; padding:1.05rem 1.15rem; margin-bottom:.95rem; }
   #p365app .card h2 { font-size:1.02rem; margin:0 0 .6rem; color:var(--pwhite); }
@@ -1465,6 +1518,14 @@
 
   // ---------- immersive overlay: tools open OVER the portal, never away from it ----
   var ovEl = null, ovOnClose = null, ovPop = false;
+  // Published for the freshness beacon (its own <script>, outside this IIFE): "is the
+  // customer mid-task?" - an open overlay or a booking wizard in flight means the
+  // beacon must not reload the page out from under them.
+  window.p365Busy = function () {
+    if (ovEl) return true;
+    var wz = document.getElementById('cbwiz');
+    return !!(wz && wz.style.display !== 'none');
+  };
   function ovShut(fromPop) {
     if (!ovEl) return;
     var cb = ovOnClose; ovOnClose = null;

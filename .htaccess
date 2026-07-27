@@ -174,6 +174,16 @@ ErrorDocument 404 /404.html
   ExpiresByType text/html "access plus 0 seconds"
 </IfModule>
 <IfModule mod_headers.c>
+  # ⚠ STANDING RULES (researched + live-verified 2026-07-27):
+  # 1. These Cache-Control headers are the ONLY thing keeping HTML out of SiteGround's
+  #    NGINX Dynamic Cache (12h TTL). FTPS deploys do NOT purge it and there is no
+  #    purge API for non-WordPress sites - if HTML ever loses no-cache here, every
+  #    page can be served 12 hours stale with no way to flush from CI.
+  # 2. Never enable SiteGround CDN casually: even its free tier caches static HTML at
+  #    edge locations for 12h, with a separate manual purge.
+  # App-like pages (sign-in flows) must NEVER be cache-served stale - a customer on an old
+  # portal page mid-fix is undebuggable ("nowhere to enter the code").
+  SetEnvIf Request_URI "^/(portal|family|activate)/" PCMNOSTORE
   # Versioned assets (?v=) are safe to cache forever
   <FilesMatch "\.(css|js|svg|jpe?g|png|ico|webp|woff2)$">
     Header set Cache-Control "public, max-age=31536000, immutable"
@@ -181,9 +191,14 @@ ErrorDocument 404 /404.html
   # HTML must always revalidate so updates show immediately
   <FilesMatch "\.html$">
     Header set Cache-Control "no-cache"
+    # The no-store override MUST live inside this FilesMatch: Apache merges <Files*>
+    # sections AFTER body-level directives, so a body-level "Header set" here is
+    # silently beaten by the no-cache above no matter where it sits in the file.
+    # (Verified live 2026-07-27: the body-level form served plain no-cache.)
+    Header set Cache-Control "no-store, max-age=0" env=PCMNOSTORE
   </FilesMatch>
-  # App-like pages (sign-in flows) must NEVER be cache-served stale - a customer on an old
-  # portal page mid-fix is undebuggable ("nowhere to enter the code")
-  SetEnvIf Request_URI "^/(portal|family|activate)/" PCMNOSTORE
-  Header set Cache-Control "no-store, max-age=0" env=PCMNOSTORE
+  # The portal's freshness beacon - must never be cached anywhere
+  <Files "build-id.json">
+    Header set Cache-Control "no-store"
+  </Files>
 </IfModule>

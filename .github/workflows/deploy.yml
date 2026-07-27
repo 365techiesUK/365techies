@@ -62,3 +62,79 @@ jobs:
             src/**
             *.bat
             index-classic.html
+
+      # The portal is the page people keep open, and its updates have "got stuck" before.
+      # After every deploy, confirm the LIVE site serves this commit's builds. Outcomes
+      # are classified by EVIDENCE (adversarial review finding F4):
+      #   - right id                     -> pass
+      #   - parseable response, WRONG id -> cannot be the bot wall: true staleness, the
+      #     classic differential-FTPS failure (sync state says uploaded, file never
+      #     landed). SELF-HEAL: atomically re-upload the file over FTPS and re-check;
+      #     still wrong -> hard FAIL so a human looks.
+      #   - garbage/challenge/timeout    -> probably sgcaptcha blocking the runner:
+      #     warn and pass (a false red deploy would be worse).
+      - name: Verify the live portal picked up this build
+        if: ${{ !(inputs.dry_run || false) }}
+        shell: bash
+        env:
+          FTP_HOST: ${{ secrets.FTP_HOST }}
+          FTP_USER: ${{ secrets.FTP_USER }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          set -u
+          id=$(python3 -c "import json;print(json.load(open('build-id.json'))['id'])")
+          fam=$(python3 -c "import json;print(json.load(open('build-id.json'))['family'])")
+          UA="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 deploy-verify"
+          fetch() { curl -sS -A "$UA" --max-time 20 "$1" || true; }
+          heal() {  # atomic re-upload: STOR to .new, then server-side rename over the top
+            echo "self-heal: re-uploading $1"
+            curl -sS --ssl-reqd --user "$FTP_USER:$FTP_PASSWORD" -T "$1" "ftp://$FTP_HOST/$1.new"                  -Q "-RNFR $1.new" -Q "-RNTO $1" && echo "re-uploaded $1" || echo "re-upload of $1 FAILED"
+          }
+          echo "expecting portal=$id family=$fam"
+
+          # ---- 1. the beacon file ------------------------------------------------
+          okj=0
+          for i in 1 2 3 4 5; do
+            live=$(fetch "https://365techies.co.uk/build-id.json?b=$RANDOM$RANDOM")
+            echo "build-id attempt $i: ${live:0:120}"
+            case "$live" in
+              *"\"$id\""*) okj=1; break ;;
+              "{"*"\"id\""*)   # valid-looking JSON with the wrong id = staleness, not bot wall
+                heal "build-id.json"; sleep 10
+                live=$(fetch "https://365techies.co.uk/build-id.json?b=$RANDOM$RANDOM")
+                case "$live" in *"\"$id\""*) okj=1;; esac
+                break ;;
+              *) sleep 12 ;;
+            esac
+          done
+          if [ "$okj" != "1" ]; then
+            case "$live" in
+              "{"*) echo "::error title=build-id.json stale::Live beacon still not serving $id after self-heal. Delete .ftp-deploy-sync-state.json on the server and re-deploy."; exit 1 ;;
+              *)    echo "::warning title=Verify blocked::Could not read live build-id.json (bot wall or network). Check https://365techies.co.uk/portal/ by hand."; exit 0 ;;
+            esac
+          fi
+
+          # ---- 2. the pages themselves ------------------------------------------
+          check_page() {  # $1 url-path  $2 marker-var  $3 expected-id  $4 file-to-heal
+            page=$(fetch "https://365techies.co.uk/$1?u=$3")
+            if echo "$page" | grep -qF "$2 = '$3'"; then echo "$1 verified at $3"; return 0; fi
+            if echo "$page" | grep -qF "$2 = '"; then   # real page, wrong id: sync skipped it
+              heal "$4"; sleep 10
+              page=$(fetch "https://365techies.co.uk/$1?u=$3")
+              if echo "$page" | grep -qF "$2 = '$3'"; then echo "$1 healed to $3"; return 0; fi
+              echo "::error title=$1 stale::$1 still serves an old build after self-heal. Delete .ftp-deploy-sync-state.json on the server and re-deploy."
+              return 1
+            fi
+            echo "::warning title=$1 unreadable::Response was not the page (bot wall?). Check by hand."
+            return 0
+          }
+          check_page "portal/" "P365BUILD" "$id" "portal/index.html" || exit 1
+          check_page "family/" "P365FAM" "$fam" "family/index.html" || exit 1
+
+          # ---- 3. regression canary: the no-store header fix must stay live ------
+          cc=$(curl -sSI -A "$UA" --max-time 20 "https://365techies.co.uk/portal/" | tr -d "" | grep -i "^cache-control:" || true)
+          echo "portal cache-control: $cc"
+          case "$cc" in
+            *no-store*) : ;;
+            *) echo "::warning title=no-store regressed::/portal/ is no longer served with no-store - check the .htaccess FilesMatch ordering." ;;
+          esac
