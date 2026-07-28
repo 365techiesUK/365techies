@@ -597,8 +597,10 @@ function rv_send_raw($to, $subject, $body, $icsName = '', $icsData = '', $html =
    ===================================================================== */
 
 $WC_LIVE  = false;  // <-- SAFE MODE. Nothing reaches a customer until this is true.
-                    // Send yourself a test first:
-                    //   /api/pcm-review.php?test&kind=welcome&to=you@example.com&s=<admin pass>
+                    // Send yourself a test first (goes to info@365techies.co.uk; an
+                    // admin pass is only needed to aim it at an external mailbox):
+                    //   /api/pcm-review.php?test=welcome
+                    //   /api/pcm-review.php?test=welcome&to=you@gmail.com&s=<admin pass>
                     // Then flip to true and deploy. See LAUNCH-PLAN.md.
 $WC_DELAY = 0;      // seconds to hold before sending. 0 = next cron tick (<=5 min), so
                     // it arrives while you are still sitting with them and you can say
@@ -1003,7 +1005,11 @@ if (!defined('RV_LIB')) {
         // exact customer email, to OUR OWN inbox only - never a caller-supplied address.
         // ?test=1 sends the review ask; ?test=done sends the job-done visit record.
         $tmap = array('1' => 'review', 'review' => 'review', 'done' => 'done',
-                      'confirm' => 'confirm', 'change' => 'change', 'cancel' => 'cancel', 'remind' => 'remind');
+                      'confirm' => 'confirm', 'change' => 'change', 'cancel' => 'cancel', 'remind' => 'remind',
+                      'welcome' => 'welcome');
+        // NOTE the shape: the kind is the VALUE of ?test (?test=welcome). An unknown
+        // value silently falls back to 'review', so a mistyped kind looks like it
+        // worked - check the "kind" field in the reply, not just ok:true.
         $tk = (string)$_GET['test'];
         $tkind = isset($tmap[$tk]) ? $tmap[$tk] : 'review';
         $tstamp = ($tkind === 'review') ? 'test_ts' : (($tkind === 'done') ? 'dn_test_ts' : ('cf_test_' . $tkind));   // independent throttles
