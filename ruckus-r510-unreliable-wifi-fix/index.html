@@ -31,9 +31,9 @@
       window.addEventListener('load', function () { setTimeout(loadGtagLib, 30000); });
     })();
   </script>
-  <title>802.3af vs 802.3at: The PoE Upgrade Trap | 365 Techies</title>
-  <meta name="description" content="Older access points run on 802.3af. Their replacements need 802.3at. Exactly what switches off when power is short, per model, from vendor datasheets - and&hellip;" />
-  <link rel="canonical" href="https://365techies.co.uk/access-point-poe-af-at-upgrade-trap/" />
+  <title>RUCKUS R510 Unreliable Wi-Fi: Diagnose It Properly</title>
+  <meta name="description" content="An R510 estate that keeps dropping: the eight-step diagnosis, how to test PoE properly, and the 802.3af trap that sends an R550 upgrade backwards." />
+  <link rel="canonical" href="https://365techies.co.uk/ruckus-r510-unreliable-wifi-fix/" />
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
   <meta name="author" content="365 Techies Limited" />
   <meta name="geo.region" content="GB-BCP" />
@@ -45,15 +45,15 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="365 Techies" />
   <meta property="og:locale" content="en_GB" />
-  <meta property="og:url" content="https://365techies.co.uk/access-point-poe-af-at-upgrade-trap/" />
-  <meta property="og:title" content="802.3af vs 802.3at: The PoE Upgrade Trap" />
-  <meta property="og:description" content="Older access points run on 802.3af. Their replacements need 802.3at. Exactly what switches off when power is short, per model, from vendor datasheets - and the free check that finds it in minutes." />
+  <meta property="og:url" content="https://365techies.co.uk/ruckus-r510-unreliable-wifi-fix/" />
+  <meta property="og:title" content="RUCKUS R510 Unreliable Wi-Fi: The Field Playbook" />
+  <meta property="og:description" content="An R510 estate that keeps dropping: the eight-step diagnosis, how to test PoE properly, and the 802.3af trap that sends an R550 upgrade backwards." />
   <meta property="og:image" content="https://365techies.co.uk/og-image.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="802.3af vs 802.3at: The PoE Upgrade Trap" />
-  <meta name="twitter:description" content="Older access points run on 802.3af. Their replacements need 802.3at. Exactly what switches off when power is short, per model, from vendor datasheets - and the free check that finds it in minutes." />
+  <meta name="twitter:title" content="RUCKUS R510 Unreliable Wi-Fi: The Field Playbook" />
+  <meta name="twitter:description" content="An R510 estate that keeps dropping: the eight-step diagnosis, how to test PoE properly, and the 802.3af trap that sends an R550 upgrade backwards." />
   <meta name="twitter:image" content="https://365techies.co.uk/og-image.jpg" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -188,7 +188,7 @@
     },
     {
       "@type": "BreadcrumbList",
-      "@id": "https://365techies.co.uk/access-point-poe-af-at-upgrade-trap/#breadcrumb",
+      "@id": "https://365techies.co.uk/ruckus-r510-unreliable-wifi-fix/#breadcrumb",
       "itemListElement": [
         {
           "@type": "ListItem",
@@ -199,17 +199,17 @@
         {
           "@type": "ListItem",
           "position": 2,
-          "name": "802.3af vs 802.3at: The PoE Upgrade Trap",
-          "item": "https://365techies.co.uk/access-point-poe-af-at-upgrade-trap/"
+          "name": "RUCKUS R510 Unreliable Wi-Fi: Diagnose It Properly",
+          "item": "https://365techies.co.uk/ruckus-r510-unreliable-wifi-fix/"
         }
       ]
     },
     {
       "@type": "WebPage",
-      "@id": "https://365techies.co.uk/access-point-poe-af-at-upgrade-trap/#webpage",
-      "url": "https://365techies.co.uk/access-point-poe-af-at-upgrade-trap/",
-      "name": "802.3af vs 802.3at: The PoE Upgrade Trap",
-      "description": "Older access points run on 802.3af. Their replacements need 802.3at. Exactly what switches off when power is short, per model, from vendor datasheets - and the free check that finds it in minutes.",
+      "@id": "https://365techies.co.uk/ruckus-r510-unreliable-wifi-fix/#webpage",
+      "url": "https://365techies.co.uk/ruckus-r510-unreliable-wifi-fix/",
+      "name": "RUCKUS R510 Unreliable Wi-Fi: Diagnose It Properly",
+      "description": "An R510 estate that keeps dropping: the eight-step diagnosis, how to test PoE properly, and the 802.3af trap that sends an R550 upgrade backwards.",
       "inLanguage": "en-GB",
       "isPartOf": {
         "@id": "https://365techies.co.uk/#website"
@@ -218,13 +218,67 @@
         "@id": "https://365techies.co.uk/#business"
       },
       "breadcrumb": {
-        "@id": "https://365techies.co.uk/access-point-poe-af-at-upgrade-trap/#breadcrumb"
+        "@id": "https://365techies.co.uk/ruckus-r510-unreliable-wifi-fix/#breadcrumb"
       },
       "primaryImageOfPage": {
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
       "dateModified": "2026-07-28"
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://365techies.co.uk/ruckus-r510-unreliable-wifi-fix/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Is a RUCKUS R510 too old to keep in 2026?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Not on the vendor's own dates. The R510 went end of sale on 31 January 2022 but is supported until 31 December 2028. End of sale and end of support are different things, and it is the second that matters. If an R510 estate is unreliable, the cause is far more often power, channel planning or cabling than the age of the hardware."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I put R550s on the same PoE switches as my R510s?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Only if those switches deliver 802.3at. The R510 is a native 802.3af access point at 12.6W, which is why R510 estates so often sit on af-only switches. The R550 is rated 802.3at at 18.71W, and on af it drops to a limited 12.71W mode: 2.4GHz only at reduced power, with the second Ethernet port, the onboard IoT radio and USB all disabled. It will look healthy in the controller and perform worse than the AP you removed."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How much more power does an R550 estate need than an R510 estate?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Using the vendor's figures, 16 R510s at 12.6W plus 2 R550s at 18.71W draws about 239W. Eighteen R550s all on 802.3at draw about 337W - roughly 97W more. That is inside a 370W switch budget and outside a 195W one, so the switch, not the access point, is usually the real purchase."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Will R510s and R550s work on the same controller?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "That depends entirely on your controller type and exact version, and the supported-AP list changes with each release. Check the release notes for your specific version rather than take anyone's word for it - including ours. If the R550 requires a newer release than the R510 supports, the controller upgrade is the project, not the APs."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is it worth jumping straight to the R650 instead?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sometimes. The R550 is the like-for-like successor and keeps the same 2x2:2 stream count as the R510, so the gain is Wi-Fi 6 efficiency rather than more capacity. The R650 is 4x4:4 on 5GHz with a 2.5GbE uplink, which is a genuine step up - but it wants more power again and a faster switch port to be worth paying for."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the most common cause of unreliable Wi-Fi on a large open sales floor?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Co-channel interference and power, in that order. On an open floor with many access points, 2.4GHz has only three non-overlapping channels, so past a handful of radios they begin talking over one another. Turning some 2.4GHz radios off and reducing transmit power often improves a busy floor more than replacing hardware."
+          }
+        }
+      ]
     }
   ]
 }
@@ -660,39 +714,124 @@
   <main id="main">
     <section class="page-hero" aria-label="Introduction">
       <div class="page-hero__inner">
-        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">802.3af vs 802.3at: The PoE Upgrade Tr</span></nav>
-        <p class="eyebrow mono">// POWER OVER ETHERNET &middot; THE HIDDEN COST</p>
-        <h1>Replacing access points is <em class="grad grad--green">never just access points</em></h1>
-        <p class="lede">The most expensive thing people miss when pricing a Wi-Fi refresh - and the five-minute check that tells you whether your existing access points are quietly running at half strength right now.</p>
+        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">RUCKUS R510 Unreliable Wi-Fi: Diagnose</span></nav>
+        <p class="eyebrow mono">// R510 FIELD PLAYBOOK &middot; FOR IT MANAGERS</p>
+        <h1>RUCKUS <em class="grad grad--cyan">R510</em> unreliable? Diagnose it before you replace it</h1>
+        <p class="lede">Written for someone with an estate in front of them and a floor full of people: how to find the actual fault, how to test power properly, and what an R550 upgrade really needs before you order a single one.</p>
         <div class="page-hero__cta">
           <a href="tel:+441202775566" class="button primary button--lg">Talk to a human: 01202 775566</a>
           <a href="/wifi-signal-test/" class="button secondary button--lg">Free Wi-Fi survey tool</a>
         </div>
-        <ul class="page-hero__chips mono"><li>&#9679; Vendor sources linked</li><li>&#9679; Dates checked 27 July 2026</li><li>&#9679; Independent &mdash; we sell no vendor&rsquo;s kit</li></ul>
+        <ul class="page-hero__chips mono"><li>&#9679; Vendor figures only</li><li>&#9679; 802.3af/at trap explained</li><li>&#9679; Dates checked 27 July 2026</li></ul>
       </div>
     </section>
     <section class="section"><div class="wrap wrap--narrow prose" data-reveal><div class="apdisc" role="note"><p><strong>Independent, and dated.</strong> 365 Techies is an independent IT firm. We are not an authorised partner, reseller or agent of RUCKUS Networks, Belden, CommScope, Cisco or Cisco Meraki, and we have no access to their support entitlements on your behalf. Every date on this page comes from the vendor&rsquo;s own published notices, linked in the source column, and was checked on 27 July 2026. Where we could not verify something from a vendor source we say &ldquo;check with vendor&rdquo; rather than guess.</p></div></div></section>
-    <section class="section"><div class="wrap wrap--narrow prose" data-reveal>
-<h2 class="section-title" data-title>The quote says access points. The job is switches too.<span class="title-underline"></span></h2>
-<p>This is the most expensive thing people miss when pricing a Wi-Fi refresh, and it is entirely knowable in advance.</p>
-<p>Older business access points were designed to run on standard Power over Ethernet (802.3af). Their modern replacements almost universally need the higher-power standard (802.3at, often called PoE+). So an estate that has run happily for eight years on the existing switches cannot simply have new access points hung on the same cables.</p>
-<div class="apcall apcall--fact"><span class="apcall__tag">Vendor datasheet</span><div class="apcall__body">RUCKUS marketed the R510 on running with existing 802.3af-capable switches. That is precisely why R510 estates tend to sit on af-only switches today &mdash; and why every Wi-Fi 6 successor (R550, R650, R750) needing 802.3at turns &ldquo;swap the access points&rdquo; into &ldquo;swap the access points and the switch&rdquo;. <span class="apcall__src"><a href="https://support.ruckuswireless.com/end-of-life-tables" target="_blank" rel="noopener">RUCKUS Hardware AP end-of-life table</a></span></div></div>
+ <section class="section"><div class="wrap wrap--narrow prose" data-reveal>
+<h2 class="section-title" data-title>Start here: is it actually the Wi-Fi?<span class="title-underline"></span></h2>
+<p>&ldquo;The Wi-Fi is unreliable&rdquo; is a symptom, not a diagnosis, and on a busy floor it is wrong about half the time. Before you touch an access point, rule out the three things that produce identical complaints:</p>
+<ol>
+<li><strong>The internet circuit, not the Wi-Fi.</strong> If a wired machine on the same switch stutters at the same moments, your problem is upstream and no access point will fix it.</li>
+<li><strong>One application, not the network.</strong> A single slow line-of-business app gets blamed on Wi-Fi constantly. Ask what specifically was slow, and when.</li>
+<li><strong>Roaming, not coverage.</strong> Staff walking a large floor while on a call or a stock lookup will describe a clean handover failure as &ldquo;the Wi-Fi dropping&rdquo;. That is a different fault with a different fix.</li>
+</ol>
+<p>Get one concrete example &mdash; who, where on the floor, what they were doing, and roughly when. Everything below is faster with one real incident to aim at.</p>
 </div></section>
-    <section class="section section--alt"><div class="wrap prose" data-reveal>
-<h2 class="section-title" data-title>What silently switches off when power is short<span class="title-underline"></span></h2>
-<p>An underpowered access point does not fail and does not warn you. It reports as healthy in the controller while quietly running with fewer aerials, a dead second network port and, on several models, no USB and no IoT radio. Users experience it as &ldquo;the Wi-Fi got worse and nobody changed anything&rdquo;.</p>
-<div class="aptwrap"><table class="apt"><caption class="apt__cap">Specifications, and what quietly stops working on underpowered PoE.</caption><thead><tr><th scope="col">Model</th><th scope="col">Streams</th><th scope="col">Headline rate <span class="apt__note">(theoretical)</span></th><th scope="col">Ports</th><th scope="col">PoE for full function</th><th scope="col">What you lose on 802.3af</th><th scope="col">WPA3</th></tr></thead><tbody><tr><th scope="row">RUCKUS R310</th><td>2x2:2 SU-MIMO (no MU-MIMO listed)</td><td>300 / 867 Mbps</td><td>1 x 1GbE</td><td>802.3af (11W max)</td><td>af is its normal mode</td><td><span class="apbadge apbadge--expired">No</span></td></tr><tr><th scope="row">RUCKUS R500</th><td>2x2:2 SU-MIMO</td><td>300 / 867 Mbps</td><td>2 x 1GbE</td><td>802.3af (10.5W max)</td><td>af is its normal mode</td><td><span class="apbadge apbadge--expired">No</span></td></tr><tr><th scope="row">RUCKUS R600</th><td class="apt__check"><span class="apt__pill">Check with vendor</span></td><td class="apt__check"><span class="apt__pill">Check with vendor</span></td><td class="apt__check"><span class="apt__pill">Check with vendor</span></td><td class="apt__check"><span class="apt__pill">Check with vendor</span></td><td class="apt__check"><span class="apt__pill">Check with vendor</span></td><td class="apt__check"><span class="apt__pill">Check with vendor</span></td></tr><tr><th scope="row">RUCKUS R510</th><td>2x2:2, SU-MIMO and MU-MIMO</td><td>300 / 867 Mbps</td><td>2 x 1GbE, 1 x USB 2.0</td><td>802.3af (12.6W max) — no separate 802.3at mode listed</td><td>af is its normal mode — this is why R510 estates sit on af-only switches</td><td><span class="apbadge apbadge--ok">Yes</span><br /><small>Listed on the current datasheet; needs later firmware and a controller version that exposes it.</small></td></tr><tr><th scope="row">RUCKUS R610</th><td>3x3:3, SU-MIMO and MU-MIMO</td><td>450 / 1300 Mbps</td><td>2 x 1GbE with LACP, 1 x USB</td><td>802.3at (21.87W)</td><td>2.4GHz limited to 2x3 (2-chain TX at 21dBm aggregate); USB port off; one Ethernet port off</td><td><span class="apbadge apbadge--ok">Yes</span><br /><small>Firmware and controller dependent.</small></td></tr><tr><th scope="row">RUCKUS R710</th><td>4x4:4 SU-MIMO; 3 streams for MU-MIMO</td><td>600 / 1733 Mbps</td><td>2 x 1GbE with LACP, 1 x USB</td><td>802.3at (peak 25W)</td><td>2.4GHz drops to 2x4 at 19dBm/chain; 2nd Ethernet disabled; USB disabled</td><td><span class="apbadge apbadge--ok">Yes</span><br /><small>On the current (2020) datasheet. The 2019 revision listed no WPA3 - it arrived by firmware.</small></td></tr><tr><th scope="row">RUCKUS R720</th><td>4x4:4, SU-MIMO and MU-MIMO</td><td>600 / 1733 Mbps</td><td>1 x 2.5GbE, 1 x 1GbE, 1 x USB</td><td>PoH / UPoE (up to 33.5W) for all features</td><td>af (12.95W): both radios collapse to 1x4. at (25.5W): full 4x4 but the 2nd Ethernet port and USB are still disabled</td><td><span class="apbadge apbadge--ok">Yes</span><br /><small>On the current (2020) datasheet. The 2019 revision listed no WPA3 - it arrived by firmware.</small></td></tr><tr><th scope="row">RUCKUS R320</th><td>2x2:2, SU-MIMO and MU-MIMO</td><td>300 / 867 Mbps</td><td>1 x 1GbE</td><td>802.3af (12.18W max)</td><td>af is its normal mode - nothing is disabled</td><td><span class="apbadge apbadge--ok">Yes</span><br /><small>On the current datasheet only. The 2019 revision listed no WPA3, so it arrived by firmware - old firmware will not have it.</small></td></tr><tr><th scope="row">RUCKUS R730</th><td>8x8:8 (5GHz) + 4x4:4 (2.4GHz) - 12 streams</td><td>1148 Mbps / 4.8 Gbps</td><td>1 x 1/2.5/5GbE, 1 x 1GbE</td><td>PoH / UPoE / DC (31.0W max)</td><td>RUCKUS marks 802.3af <strong>not recommended</strong>. On 802.3at (23.8W) the 5GHz radio runs 4x4 instead of 8x8 and the Zigbee/BLE radio is disabled - so an R730 on an ordinary PoE+ switch silently runs at half its 5GHz streams</td><td><span class="apbadge apbadge--ok">Yes</span><br /><small>Datasheet states WPA3 and Wi-Fi Enhanced Open.</small></td></tr><tr><th scope="row">RUCKUS R550</th><td>2x2:2 both bands, SU-MIMO and MU-MIMO</td><td>574 / 1200 Mbps</td><td>2 x 1GbE, 1 x USB</td><td>802.3at (18.71W)</td><td>12.71W limited mode: 2.4GHz 2x2 at 19dBm/chain; 2nd Ethernet, onboard IoT radio and USB all disabled</td><td><span class="apbadge apbadge--ok">Yes</span><br /><small>WPA3-Personal and WPA3-Enterprise both listed on the datasheet.</small></td></tr><tr><th scope="row">RUCKUS R650</th><td>4x4:4 (5GHz) + 2x2:2 (2.4GHz)</td><td>574 / 2400 Mbps (2974 combined)</td><td>1 x 2.5GbE, 1 x 1GbE, USB, BLE + Zigbee</td><td>802.3at (21.59W)</td><td>12.25W: 5GHz drops 4x4 to 2x4; 2nd Ethernet, IoT radio and USB disabled</td><td><span class="apbadge apbadge--ok">Yes</span></td></tr><tr><th scope="row">RUCKUS R750</th><td>4x4:4 both bands</td><td>1148 / 2400 Mbps</td><td>1 x 2.5GbE, 1 x 1GbE, USB, BLE + Zigbee</td><td>802.3at (22.34W)</td><td>12.54W: both radios 2x4; 2nd Ethernet, IoT radio and USB disabled</td><td><span class="apbadge apbadge--ok">Yes</span></td></tr><tr><th scope="row">RUCKUS R850</th><td>8x8:8 (5GHz) + 4x4:4 (2.4GHz) - 12 streams</td><td>1148 Mbps / 4.8 Gbps</td><td>1 x 1/2.5/5GbE, 1 x 1GbE</td><td>802.3bt-class supply (PoH / UPoE / DC)</td><td>On 802.3at the 5GHz radio runs 4x4 instead of 8x8</td><td><span class="apbadge apbadge--ok">Yes</span></td></tr><tr><th scope="row">RUCKUS R670</th><td>2x2:2 / 2x2:2 / 2x2:2 tri-band (6 streams), or 2x2:2 + 4x4:4 dual-band</td><td>689 / 5765 / 5765 Mbps (9.34 Gbps combined)</td><td>1 x 1/2.5/5GbE, 1 x 1GbE</td><td class="apt__check"><span class="apt__pill">Check with vendor</span></td><td class="apt__check"><span class="apt__pill">Check with vendor</span></td><td class="apt__check"><span class="apt__pill">Check with vendor</span></td></tr><tr><th scope="row">RUCKUS R770</th><td>2x2:2 (2.4GHz) / 4x4:4 (5GHz) / 2x2:2 (6GHz)</td><td>689 / 5765 / 5765 Mbps (12.22 Gbps combined)</td><td>1 x 1/2.5/5/10GbE, 1 x 1GbE</td><td class="apt__check"><span class="apt__pill">Check with vendor</span></td><td class="apt__check"><span class="apt__pill">Check with vendor</span></td><td class="apt__check"><span class="apt__pill">Check with vendor</span></td></tr><tr><th scope="row">Cisco Aironet 1700 (AIR-AP1702I)</th><td>3x3:2</td><td>867 Mbps (80MHz) / 300 Mbps (40MHz)</td><td>2 x 1GbE + console</td><td>802.3af / 802.3at / Cisco Enhanced PoE; 15W draw</td><td>&mdash;</td><td><span class="apbadge apbadge--expired">No</span></td></tr><tr><th scope="row">Cisco Aironet 2700 (AIR-AP2702I/E)</th><td>3x4:3</td><td>1.3 Gbps</td><td>2 x 1GbE + console (plus AUX for a downstream device)</td><td>802.3at; 15W draw</td><td>Cisco's wording: the access point will dynamically shift from 3x4 to 3x3</td><td><span class="apbadge apbadge--expired">No</span></td></tr><tr><th scope="row">Cisco Aironet 3700 (AIR-AP3702)</th><td>4x4:3</td><td>1.3 Gbps</td><td class="apt__check"><span class="apt__pill">Check with vendor</span></td><td>802.3at, Enhanced PoE or PWRINJ4 (16.1W for 4x4:3)</td><td>Degrades to 3x3:3</td><td><span class="apbadge apbadge--expired">No</span><br /><small>Inferred from sibling Wave 1 datasheets — the 3700 datasheet has been withdrawn from Cisco's site.</small></td></tr><tr><th scope="row">Cisco Aironet 1830 (AIR-AP1832I)</th><td>3x3:2, SU-MIMO and MU-MIMO</td><td>867 / 300 Mbps (vendor aggregate: up to 1 Gbps dual-radio)</td><td>1 x 1GbE only, plus console and USB</td><td>802.3af / 802.3at; 15.4W draw</td><td>Cisco's wording: if 802.3af PoE is the source of power, the USB port is disabled</td><td><span class="apbadge apbadge--ok">Yes</span><br /><small>Delivered by the controller (AireOS 8.10.x or Catalyst 9800), not by the AP.</small></td></tr><tr><th scope="row">Cisco Aironet 1850 (AIR-AP1852I/E)</th><td>4x4 MIMO, 4 streams (SU-MIMO); 3 streams (MU-MIMO)</td><td>216.7 Mbps / 1.73 Gbps</td><td>2 x 1GbE (no multi-gig)</td><td>802.3at or Cisco Enhanced PoE (20.9W draw)</td><td>802.3af cannot supply its 20.9W draw</td><td class="apt__check"><span class="apt__pill">Check with vendor</span></td></tr></tbody></table></div><p class="apsrc">Vendor headline figures are theoretical PHY rates. Real throughput per client, on a shared access point, is a fraction of them &mdash; Cisco&rsquo;s own datasheets use the word &ldquo;theoretical&rdquo;.</p>
+ <section class="section section--alt"><div class="wrap wrap--narrow prose" data-reveal>
+<h2 class="section-title" data-title>The eight-step diagnosis<span class="title-underline"></span></h2>
+<p>In the order that finds the fault fastest, not the order that looks most thorough.</p>
+<ol>
+<li><strong>Read the controller first, not the AP.</strong> Sort your APs by client count and by reboot count. An AP that has rebooted more than its neighbours is telling you something &mdash; usually power, occasionally heat.</li>
+<li><strong>Check firmware is uniform.</strong> A mixed-firmware estate produces intermittent, unrepeatable faults that waste weeks. Note the version on every AP before you change anything.</li>
+<li><strong>Check what each AP negotiated for power.</strong> The single most under-tested thing in the whole estate. Detail below.</li>
+<li><strong>Check the switch&rsquo;s total PoE budget, not just the ports.</strong> Ports can each be within spec while the switch as a whole is oversubscribed.</li>
+<li><strong>Walk the cable.</strong> Length, category, patch panels, and any injectors or midspans someone added years ago and never documented.</li>
+<li><strong>Look at the channel plan.</strong> With this many APs in one open space, co-channel interference is more likely than weak coverage. Detail below.</li>
+<li><strong>Look at client distribution.</strong> If two APs hold most of the clients while others idle, that is a design or power problem, not a hardware fault.</li>
+<li><strong>Only now consider the hardware.</strong> If steps 1&ndash;7 are clean and it still misbehaves, you have earned the right to blame the access points.</li>
+</ol>
+<div class="apcall apcall--adv"><span class="apcall__tag">Vendor advisory</span><div class="apcall__body">Change one thing at a time and write down what you changed. On a live floor the temptation is to fix six things in one evening, and then you never learn which one mattered &mdash; or which one you will have to undo.</div></div>
 </div></section>
-    <section class="section"><div class="wrap wrap--narrow prose" data-reveal>
-<h2 class="section-title" data-title>Three traps worth checking today<span class="title-underline"></span></h2>
-        <li><h3>The silent degrade</h3><p>An access point negotiated at 802.3af when it wanted 802.3at looks perfect on the dashboard. Check the negotiated class on the switch, per port. Highest-yield check in this entire guide, and it costs nothing.</p></li>
-        <li><h3>The upgrade cliff</h3><p>Budgeting for new access points without checking the switch is how a Wi-Fi project goes over budget in week one. Count the ports, check the standard, then price.</p></li>
-        <li><h3>Per-port class is not the budget</h3><p>A switch can support the higher standard on some ports and run out of total power for the rest. The result is a coverage complaint that looks random and moves around - maddening to diagnose if you do not know to look.</p></li>
-<div class="apcall apcall--field"><span class="apcall__tag">Commonly reported &mdash; not vendor-confirmed</span><div class="apcall__body">The RUCKUS R720 is reported to need more than standard PoE+ &mdash; full function including its second Ethernet port and USB is associated with higher-power PoH/UPoE. If you are quoting a site with R720s and 2.5GbE uplinks, re-read the current datasheet before you promise anyone those uplinks work.</div></div>
-<p>Long cable runs and outdoor sites change this arithmetic again &mdash; see <a href="/rural-and-farm-wifi-dorset/">rural and multi-building Wi-Fi</a>, where injector siting and run length matter as much as the standard on the switch. If your &ldquo;access points&rdquo; are really a mesh kit, <a href="/mesh-wifi-setup-guide/">the mesh guide</a> is the better starting point.</p>
+ <section class="section"><div class="wrap wrap--narrow prose" data-reveal>
+<h2 class="section-title" data-title>Testing PoE properly<span class="title-underline"></span></h2>
+<p>Most &ldquo;flaky access point&rdquo; jobs we are called to are power, and almost nobody checks it, because the AP is lit up and joined so it looks fine. An access point that is up but under-powered behaves exactly like one that is failing.</p>
+<p><strong>What to measure, per port:</strong></p>
+<ul>
+<li><strong>The class it negotiated</strong> &mdash; not what you assume it asked for. On most managed switches this is a per-interface power inline status.</li>
+<li><strong>Actual draw against the AP&rsquo;s rated maximum.</strong> An R510 rated at <strong>12.6W</strong> sitting at a fraction of that is not efficient, it is starved.</li>
+<li><strong>Whether the port is capped</strong> by a static per-port limit somebody set years ago and forgot.</li>
+<li><strong>Voltage at the far end on long runs.</strong> A 90m run of tired Cat5e delivers measurably less than a 15m run of Cat6.</li>
+</ul>
+<div class="apcall apcall--fact"><span class="apcall__tag">Vendor datasheet</span><div class="apcall__body">R510 PoE: 802.3af (12.6W max) — no separate 802.3at mode listed. af is its normal mode — this is why R510 estates sit on af-only switches. <span class="apcall__src"><a href="https://support.ruckuswireless.com/end-of-life-tables" target="_blank" rel="noopener">RUCKUS Hardware AP end-of-life table</a></span></div></div>
+<p><strong>The pattern that gives it away:</strong> problems that cluster by time of day rather than by location. If the floor degrades when everyone arrives, and the APs on the far end of the longest cable runs degrade first, you are looking at power and not at radio.</p>
+</div></section>
+ <section class="section section--alt"><div class="wrap wrap--narrow prose" data-reveal>
+<h2 class="section-title" data-title>The R510 &rarr; R550 trap nobody warns you about<span class="title-underline"></span></h2>
+<p>This is the part worth reading twice, because it is the reason some estates get <em>worse</em> after an upgrade that everyone agreed was overdue.</p>
+<p>An <strong>R510 is a native 802.3af access point</strong>. That is why R510 estates so often sit on af-only switches: it never needed anything more. An <strong>R550 is not</strong>. It wants 802.3at, and if it only gets af it still comes up &mdash; in a reduced mode.</p>
+<div class="apcall apcall--fact"><span class="apcall__tag">Vendor datasheet</span><div class="apcall__body">R550 PoE: 802.3at (18.71W). On af it runs at 12.71W limited mode: 2.4GHz 2x2 at 19dBm/chain; 2nd Ethernet, onboard IoT radio and USB all disabled. <span class="apcall__src"><a href="https://support.ruckuswireless.com/end-of-life-tables" target="_blank" rel="noopener">RUCKUS Hardware AP end-of-life table</a></span></div></div>
+<p>Read that limited mode carefully. On 802.3af an R550 gives you <strong>2.4GHz only at reduced power, with the second Ethernet port, the onboard IoT radio and the USB port all switched off</strong>. You have bought a Wi-Fi 6 access point and are running it as something considerably less capable than the Wi-Fi 5 unit you removed.</p>
+<div class="apcall apcall--adv"><span class="apcall__tag">Vendor advisory</span><div class="apcall__body">If you swap R510s for R550s without touching the switches, the honest likely outcome is that the floor performs worse and nobody can explain why. The APs will show as up, healthy and joined throughout.</div></div>
+<p>So the first question in any R510&rarr;R550 project is not about the access points at all. It is: <strong>what do the switches actually deliver, per port and in total?</strong></p>
+</div></section>
+ <section class="section"><div class="wrap wrap--narrow prose" data-reveal>
+<h2 class="section-title" data-title>What 16 R510s and 2 R550s actually need<span class="title-underline"></span></h2>
+<p>Worked through with the vendor&rsquo;s own figures, for an estate of <strong>16 &times; R510</strong> and <strong>2 &times; R550</strong>:</p>
+<div class="table-wrap"><table class="table">
+<thead><tr><th>Scenario</th><th>Per AP</th><th>Estate total</th></tr></thead><tbody>
+<tr><td>Today (16 R510 on af + 2 R550 on at)</td><td>12.6W / 18.71W</td><td><strong>239.0W</strong></td></tr>
+<tr><td>All 18 on R550 at 802.3at</td><td>18.71W</td><td><strong>336.8W</strong></td></tr>
+<tr><td>The gap you must find</td><td>&mdash;</td><td><strong>+97.8W</strong></td></tr>
+</tbody></table></div>
+<p>That extra <strong>98W</strong> is the whole project in one number. It is comfortably inside a switch with a 370W budget and comfortably outside one with 195W &mdash; and plenty of estates are running the second kind because 16 af access points never asked for more.</p>
+<div class="apcall apcall--field"><span class="apcall__tag">Commonly reported &mdash; not vendor-confirmed</span><div class="apcall__body">Add headroom on top. A switch running at its rated PoE ceiling has nothing left for the day someone adds a camera, a door controller or one more access point &mdash; and PoE budget is not something you want to discover during a trading day. Work out the real numbers for your own switches with our <a href="/access-point-poe-af-at-upgrade-trap/">PoE budget guide</a>.</div></div>
+</div></section>
+ <section class="section section--alt"><div class="wrap wrap--narrow prose" data-reveal>
+<h2 class="section-title" data-title>Controllers and firmware: check, do not assume<span class="title-underline"></span></h2>
+<p>A mixed R510 and R550 estate has to be managed by something that supports both, and the supported-AP list changes with every controller release. This is the one area where we will not give you a number, because the honest answer depends on the exact version you are running.</p>
+<div class="apcall apcall--fact"><span class="apcall__tag">Vendor datasheet</span><div class="apcall__body">R510 last supported software: SmartZone 6.1.x (AP zone) / ZoneDirector 10.5.x. End of support 31 December 2028 &mdash; the hardware is not the deadline people assume. <span class="apcall__src"><a href="https://support.ruckuswireless.com/end-of-life-tables" target="_blank" rel="noopener">RUCKUS Hardware AP end-of-life table</a></span></div></div>
+<p><strong>How to check yours in ten minutes</strong>, rather than take anyone&rsquo;s word for it:</p>
+<ol>
+<li>Note your controller type and exact version &mdash; ZoneDirector, SmartZone, Unleashed or cloud-managed are four different answers.</li>
+<li>Open the release notes for <em>that exact version</em> on the vendor&rsquo;s support site and find the supported access point table.</li>
+<li>Confirm both models appear in it. If the R550 needs a newer release than the R510 supports, that is your project, and it is a bigger one than swapping access points.</li>
+<li>Check the controller hardware itself is still supported at that version. Older controller appliances stop being carried forward before the APs do.</li>
+</ol>
+<div class="apcall apcall--adv"><span class="apcall__tag">Vendor advisory</span><div class="apcall__body">We are independent and hold no vendor support entitlement on your behalf. Anything version-specific should come from your own release notes or your reseller, in writing, before you order hardware.</div></div>
+</div></section>
+ <section class="section"><div class="wrap wrap--narrow prose" data-reveal>
+<h2 class="section-title" data-title>The options, rated honestly<span class="title-underline"></span></h2>
+<p>Our assessment, not a vendor&rsquo;s. Cost is shown as a relative band because we publish no price we have not been given by the vendor &mdash; and street pricing on access points moves constantly.</p>
+<div class="table-wrap"><table class="table">
+<thead><tr><th>Option</th><th>Cost</th><th>Fit for this estate</th><th>The honest catch</th></tr></thead>
+<tbody>
+<tr><td><strong>Stay on R510, fix the real fault</strong></td><td>&pound;</td><td>&#9733;&#9733;&#9733;&#9733;&#9734;</td><td>Supported to 2028. If the fault is power, channels or cabling, new APs fix nothing and cost a great deal.</td></tr>
+<tr><td><strong>R550 (the like-for-like successor)</strong></td><td>&pound;&pound;</td><td>&#9733;&#9733;&#9733;&#9733;&#9734;</td><td>Needs 802.3at. Same 2x2:2 stream count as the R510 &mdash; the gain is Wi-Fi 6 efficiency, not more streams.</td></tr>
+<tr><td><strong>R650 (a real step up)</strong></td><td>&pound;&pound;&pound;</td><td>&#9733;&#9733;&#9733;&#9733;&#9733;</td><td>4x4:4 on 5GHz and a 2.5GbE uplink, so it wants more power again and ideally a faster switch port to be worth it.</td></tr>
+<tr><td><strong>Switch vendor entirely</strong></td><td>&pound;&pound;</td><td>&#9733;&#9733;&#9734;&#9734;&#9734;</td><td>You throw away 18 working access points, the controller, and everyone&rsquo;s familiarity with it. Rarely the right answer when the incumbent is supported to 2028.</td></tr>
+</tbody></table></div>
+<p>The pattern we see most often on floors this size: the estate is fine, the switches are the constraint, and the money is better spent on power and channel design than on access points.</p>
+</div></section>
+ <section class="section section--alt"><div class="wrap wrap--narrow prose" data-reveal>
+<h2 class="section-title" data-title>Rolling it out across a live two-acre floor<span class="title-underline"></span></h2>
+<p>Two acres is roughly <strong>8,000 square metres</strong>. Across 18 access points that is about <strong>450 square metres each</strong> &mdash; which on an open sales floor is a density driven by client numbers and interference, not by how far the signal reaches.</p>
+<p><strong>That density is itself a clue.</strong> With this many radios in one open space, 2.4GHz has only three non-overlapping channels to share between them. Every access point you add on 2.4GHz past the third is talking over one of the others. If your floor is worse when it is busy, co-channel interference deserves suspicion well before the hardware does.</p>
+<ul>
+<li><strong>Consider switching some 2.4GHz radios off entirely.</strong> Counter-intuitive, and frequently the single biggest improvement on a dense floor.</li>
+<li><strong>Turn transmit power down, not up.</strong> Loud access points hear each other and hold clients too long. Lower power makes handover cleaner.</li>
+<li><strong>Survey before and after, in the same places.</strong> Otherwise you are debating opinions. Our <a href="/wifi-signal-test/">free Wi-Fi survey tool</a> runs in a browser and saves the results, so a walk-round before you start is genuinely five minutes of work.</li>
+</ul>
+<p><strong>Sequencing a live floor:</strong></p>
+<ol>
+<li><strong>Switches first, access points second.</strong> Power has to be in place before a single R550 is mounted, or you are commissioning into the limited mode above.</li>
+<li><strong>Prove it on one zone.</strong> Pick the worst-performing corner, do that area properly, and measure it for a week before committing to the rest.</li>
+<li><strong>Keep the two estates on the same SSID during changeover</strong> so staff notice nothing, and roll back per-zone rather than per-AP if something is wrong.</li>
+<li><strong>Work to the trading day, not the calendar.</strong> Access points can be mounted and cabled during trading; the switch and controller work cannot.</li>
+<li><strong>Keep the old units until the new ones have survived a full busy week.</strong> They cost nothing to keep and everything to have thrown away.</li>
+</ol>
+<div class="apcall apcall--field"><span class="apcall__tag">Commonly reported &mdash; not vendor-confirmed</span><div class="apcall__body">The thing that goes wrong most on live rollouts is not technical. It is that nobody told the floor staff, so the first hour of complaints gets attributed to the new kit whether or not it deserves it. Tell people what is happening and give them one name to report problems to.</div></div>
 </div></section>
     <section class="section" aria-label="Free WiFi survey"><div class="wrap" style="max-width:860px;margin:0 auto"><div class="repairs__card" data-reveal style="border-color:rgba(29,151,227,.4)"><div><p class="eyebrow mono">// BEFORE YOU RING ANYONE</p><h2 class="repairs__title">Walk the site and write down what people actually get</h2><p class="lede">Our <a href="/wifi-signal-test/">free Wi-Fi signal test</a> runs in a browser, needs no sign-up, and scores every room. Ten minutes with it turns &ldquo;the Wi-Fi is rubbish upstairs&rdquo; into numbers &mdash; which is the difference between a guess and a diagnosis, whoever ends up doing the work. See also our <a href="/room-by-room-wifi-test/">room-by-room method</a>.</p></div><a href="/wifi-signal-test/" class="button primary">Run the free survey</a></div></div></section>
-    <section class="section section--alt" aria-label="More in this guide"><div class="wrap"><div class="section-head"><h2 class="section-title section-title--center" data-title>Read next<span class="title-underline title-underline--center"></span></h2></div><div class="tile-grid" data-stagger><div class="tile"><h3><a href="/business-access-point-end-of-life/">The full guide</a></h3><p>End-of-support dates for every model we could verify, and how to tell whether yours is actually the problem.</p></div><div class="tile"><h3><a href="/ruckus-r510-unreliable-wifi-fix/">R510 field playbook</a></h3><p>Diagnose it properly, and the 802.3af trap that sends an R550 upgrade backwards.</p></div><div class="tile"><h3><a href="/wifi-controller-end-of-life/">Your controller is the real deadline</a></h3><p>Not the access points. This is the one most people miss.</p></div></div></div></section>
+    <section class="section section--alt" aria-label="More in this guide"><div class="wrap"><div class="section-head"><h2 class="section-title section-title--center" data-title>Read next<span class="title-underline title-underline--center"></span></h2></div><div class="tile-grid" data-stagger><div class="tile"><h3><a href="/business-access-point-end-of-life/">The full guide</a></h3><p>End-of-support dates for every model we could verify, and how to tell whether yours is actually the problem.</p></div><div class="tile"><h3><a href="/is-my-ruckus-r510-too-old/">Is my RUCKUS R510 too old?</a></h3><p>The honest answer, and it is probably not the one you were told.</p></div><div class="tile"><h3><a href="/access-point-poe-af-at-upgrade-trap/">The PoE trap</a></h3><p>Why replacing access points is never just access points.</p></div></div></div></section>
     <section class="cta-band" aria-label="Get started">
       <div class="cta-band__inner">
         <h2 data-title>Not sure what you're looking at?<span class="title-underline title-underline--center"></span></h2>

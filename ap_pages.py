@@ -918,6 +918,304 @@ def s10_healthcheck():
           cta2=("Book a visit", "/book-service/"))
 
 
+
+
+# ===========================================================================
+# 11 - THE R510 FIELD PLAYBOOK
+# Written for someone with an estate in front of them and a sales floor full
+# of people, not for someone browsing. Diagnosis first, upgrade second.
+# ===========================================================================
+def s11_r510_playbook():
+    r510 = next(a for a in D.AP_MODELS if a["key"] == "ruckus-r510")
+    r550 = next(a for a in D.AP_MODELS if a["key"] == "ruckus-r550")
+
+    # Arithmetic done here rather than asserted in prose, from the vendor
+    # figures in ap_lifecycle_data.py, so the page cannot drift from the data.
+    n_510, n_550 = 16, 2
+    w510, w550at, w550af = 12.6, 18.71, 12.71
+    now_w = n_510 * w510 + n_550 * w550at
+    after_w = (n_510 + n_550) * w550at
+    delta = after_w - now_w
+
+    body = "\n".join([
+        ' <section class="section"><div class="wrap wrap--narrow prose" data-reveal>',
+        '<h2 class="section-title" data-title>Start here: is it actually the Wi-Fi?'
+        '<span class="title-underline"></span></h2>',
+        '<p>&ldquo;The Wi-Fi is unreliable&rdquo; is a symptom, not a diagnosis, and on a busy '
+        'floor it is wrong about half the time. Before you touch an access point, rule out the '
+        'three things that produce identical complaints:</p>',
+        '<ol>',
+        '<li><strong>The internet circuit, not the Wi-Fi.</strong> If a wired machine on the same '
+        'switch stutters at the same moments, your problem is upstream and no access point will '
+        'fix it.</li>',
+        '<li><strong>One application, not the network.</strong> A single slow line-of-business '
+        'app gets blamed on Wi-Fi constantly. Ask what specifically was slow, and when.</li>',
+        '<li><strong>Roaming, not coverage.</strong> Staff walking a large floor while on a call '
+        'or a stock lookup will describe a clean handover failure as &ldquo;the Wi-Fi dropping&rdquo;. '
+        'That is a different fault with a different fix.</li>',
+        '</ol>',
+        '<p>Get one concrete example &mdash; who, where on the floor, what they were doing, and '
+        'roughly when. Everything below is faster with one real incident to aim at.</p>',
+        '</div></section>',
+
+        ' <section class="section section--alt"><div class="wrap wrap--narrow prose" data-reveal>',
+        '<h2 class="section-title" data-title>The eight-step diagnosis'
+        '<span class="title-underline"></span></h2>',
+        '<p>In the order that finds the fault fastest, not the order that looks most thorough.</p>',
+        '<ol>',
+        '<li><strong>Read the controller first, not the AP.</strong> Sort your APs by client count '
+        'and by reboot count. An AP that has rebooted more than its neighbours is telling you '
+        'something &mdash; usually power, occasionally heat.</li>',
+        '<li><strong>Check firmware is uniform.</strong> A mixed-firmware estate produces '
+        'intermittent, unrepeatable faults that waste weeks. Note the version on every AP before '
+        'you change anything.</li>',
+        '<li><strong>Check what each AP negotiated for power.</strong> The single most '
+        'under-tested thing in the whole estate. Detail below.</li>',
+        '<li><strong>Check the switch&rsquo;s total PoE budget, not just the ports.</strong> Ports '
+        'can each be within spec while the switch as a whole is oversubscribed.</li>',
+        '<li><strong>Walk the cable.</strong> Length, category, patch panels, and any injectors '
+        'or midspans someone added years ago and never documented.</li>',
+        '<li><strong>Look at the channel plan.</strong> With this many APs in one open space, '
+        'co-channel interference is more likely than weak coverage. Detail below.</li>',
+        '<li><strong>Look at client distribution.</strong> If two APs hold most of the clients '
+        'while others idle, that is a design or power problem, not a hardware fault.</li>',
+        '<li><strong>Only now consider the hardware.</strong> If steps 1&ndash;7 are clean and it '
+        'still misbehaves, you have earned the right to blame the access points.</li>',
+        '</ol>',
+        C.ap_advisory('Change one thing at a time and write down what you changed. On a live '
+                      'floor the temptation is to fix six things in one evening, and then you '
+                      'never learn which one mattered &mdash; or which one you will have to '
+                      'undo.'),
+        '</div></section>',
+
+        ' <section class="section"><div class="wrap wrap--narrow prose" data-reveal>',
+        '<h2 class="section-title" data-title>Testing PoE properly'
+        '<span class="title-underline"></span></h2>',
+        '<p>Most &ldquo;flaky access point&rdquo; jobs we are called to are power, and almost '
+        'nobody checks it, because the AP is lit up and joined so it looks fine. An access point '
+        'that is up but under-powered behaves exactly like one that is failing.</p>',
+        '<p><strong>What to measure, per port:</strong></p>',
+        '<ul>',
+        '<li><strong>The class it negotiated</strong> &mdash; not what you assume it asked for. '
+        'On most managed switches this is a per-interface power inline status.</li>',
+        '<li><strong>Actual draw against the AP&rsquo;s rated maximum.</strong> An R510 rated at '
+        '<strong>' + str(w510) + 'W</strong> sitting at a fraction of that is not efficient, it '
+        'is starved.</li>',
+        '<li><strong>Whether the port is capped</strong> by a static per-port limit somebody set '
+        'years ago and forgot.</li>',
+        '<li><strong>Voltage at the far end on long runs.</strong> A 90m run of tired Cat5e '
+        'delivers measurably less than a 15m run of Cat6.</li>',
+        '</ul>',
+        C.ap_fact('R510 PoE: ' + r510["poe"] + '. ' + r510["poe_af"] + '.', "ruckus_eol"),
+        '<p><strong>The pattern that gives it away:</strong> problems that cluster by time of day '
+        'rather than by location. If the floor degrades when everyone arrives, and the APs on the '
+        'far end of the longest cable runs degrade first, you are looking at power and not at '
+        'radio.</p>',
+        '</div></section>',
+
+        ' <section class="section section--alt"><div class="wrap wrap--narrow prose" data-reveal>',
+        '<h2 class="section-title" data-title>The R510 &rarr; R550 trap nobody warns you about'
+        '<span class="title-underline"></span></h2>',
+        '<p>This is the part worth reading twice, because it is the reason some estates get '
+        '<em>worse</em> after an upgrade that everyone agreed was overdue.</p>',
+        '<p>An <strong>R510 is a native 802.3af access point</strong>. That is why R510 estates '
+        'so often sit on af-only switches: it never needed anything more. An <strong>R550 is '
+        'not</strong>. It wants 802.3at, and if it only gets af it still comes up &mdash; in a '
+        'reduced mode.</p>',
+        C.ap_fact('R550 PoE: ' + r550["poe"] + '. On af it runs at ' + r550["poe_af"] + '.',
+                  "ruckus_eol"),
+        '<p>Read that limited mode carefully. On 802.3af an R550 gives you <strong>2.4GHz only at '
+        'reduced power, with the second Ethernet port, the onboard IoT radio and the USB port all '
+        'switched off</strong>. You have bought a Wi-Fi 6 access point and are running it as '
+        'something considerably less capable than the Wi-Fi 5 unit you removed.</p>',
+        C.ap_advisory('If you swap R510s for R550s without touching the switches, the honest '
+                      'likely outcome is that the floor performs worse and nobody can explain '
+                      'why. The APs will show as up, healthy and joined throughout.'),
+        '<p>So the first question in any R510&rarr;R550 project is not about the access points at '
+        'all. It is: <strong>what do the switches actually deliver, per port and in total?</strong></p>',
+        '</div></section>',
+
+        ' <section class="section"><div class="wrap wrap--narrow prose" data-reveal>',
+        '<h2 class="section-title" data-title>What ' + str(n_510) + ' R510s and ' + str(n_550) +
+        ' R550s actually need<span class="title-underline"></span></h2>',
+        '<p>Worked through with the vendor&rsquo;s own figures, for an estate of '
+        '<strong>' + str(n_510) + ' &times; R510</strong> and <strong>' + str(n_550) +
+        ' &times; R550</strong>:</p>',
+        '<div class="table-wrap"><table class="table">',
+        '<thead><tr><th>Scenario</th><th>Per AP</th><th>Estate total</th></tr></thead><tbody>',
+        '<tr><td>Today (' + str(n_510) + ' R510 on af + ' + str(n_550) + ' R550 on at)</td>'
+        '<td>' + str(w510) + 'W / ' + str(w550at) + 'W</td>'
+        '<td><strong>' + ('%.1f' % now_w) + 'W</strong></td></tr>',
+        '<tr><td>All ' + str(n_510 + n_550) + ' on R550 at 802.3at</td>'
+        '<td>' + str(w550at) + 'W</td>'
+        '<td><strong>' + ('%.1f' % after_w) + 'W</strong></td></tr>',
+        '<tr><td>The gap you must find</td><td>&mdash;</td>'
+        '<td><strong>+' + ('%.1f' % delta) + 'W</strong></td></tr>',
+        '</tbody></table></div>',
+        '<p>That extra <strong>' + ('%.0f' % delta) + 'W</strong> is the whole project in one '
+        'number. It is comfortably inside a switch with a 370W budget and comfortably outside one '
+        'with 195W &mdash; and plenty of estates are running the second kind because '
+        '' + str(n_510) + ' af access points never asked for more.</p>',
+        C.ap_field('Add headroom on top. A switch running at its rated PoE ceiling has nothing '
+                   'left for the day someone adds a camera, a door controller or one more access '
+                   'point &mdash; and PoE budget is not something you want to discover during a '
+                   'trading day. Work out the real numbers for your own switches with our '
+                   '<a href="/access-point-poe-af-at-upgrade-trap/">PoE budget guide</a>.'),
+        '</div></section>',
+
+        ' <section class="section section--alt"><div class="wrap wrap--narrow prose" data-reveal>',
+        '<h2 class="section-title" data-title>Controllers and firmware: check, do not assume'
+        '<span class="title-underline"></span></h2>',
+        '<p>A mixed R510 and R550 estate has to be managed by something that supports both, and '
+        'the supported-AP list changes with every controller release. This is the one area where '
+        'we will not give you a number, because the honest answer depends on the exact version '
+        'you are running.</p>',
+        C.ap_fact('R510 last supported software: ' + r510["last_sw"] + '. End of support '
+                  '31 December 2028 &mdash; the hardware is not the deadline people assume.',
+                  "ruckus_eol"),
+        '<p><strong>How to check yours in ten minutes</strong>, rather than take anyone&rsquo;s '
+        'word for it:</p>',
+        '<ol>',
+        '<li>Note your controller type and exact version &mdash; ZoneDirector, SmartZone, '
+        'Unleashed or cloud-managed are four different answers.</li>',
+        '<li>Open the release notes for <em>that exact version</em> on the vendor&rsquo;s support '
+        'site and find the supported access point table.</li>',
+        '<li>Confirm both models appear in it. If the R550 needs a newer release than the R510 '
+        'supports, that is your project, and it is a bigger one than swapping access points.</li>',
+        '<li>Check the controller hardware itself is still supported at that version. Older '
+        'controller appliances stop being carried forward before the APs do.</li>',
+        '</ol>',
+        C.ap_advisory('We are independent and hold no vendor support entitlement on your behalf. '
+                      'Anything version-specific should come from your own release notes or your '
+                      'reseller, in writing, before you order hardware.'),
+        '</div></section>',
+
+        ' <section class="section"><div class="wrap wrap--narrow prose" data-reveal>',
+        '<h2 class="section-title" data-title>The options, rated honestly'
+        '<span class="title-underline"></span></h2>',
+        '<p>Our assessment, not a vendor&rsquo;s. Cost is shown as a relative band because we '
+        'publish no price we have not been given by the vendor &mdash; and street pricing on '
+        'access points moves constantly.</p>',
+        '<div class="table-wrap"><table class="table">',
+        '<thead><tr><th>Option</th><th>Cost</th><th>Fit for this estate</th><th>The honest catch</th></tr></thead>',
+        '<tbody>',
+        '<tr><td><strong>Stay on R510, fix the real fault</strong></td><td>&pound;</td>'
+        '<td>&#9733;&#9733;&#9733;&#9733;&#9734;</td>'
+        '<td>Supported to 2028. If the fault is power, channels or cabling, new APs fix nothing '
+        'and cost a great deal.</td></tr>',
+        '<tr><td><strong>R550 (the like-for-like successor)</strong></td><td>&pound;&pound;</td>'
+        '<td>&#9733;&#9733;&#9733;&#9733;&#9734;</td>'
+        '<td>Needs 802.3at. Same 2x2:2 stream count as the R510 &mdash; the gain is Wi-Fi 6 '
+        'efficiency, not more streams.</td></tr>',
+        '<tr><td><strong>R650 (a real step up)</strong></td><td>&pound;&pound;&pound;</td>'
+        '<td>&#9733;&#9733;&#9733;&#9733;&#9733;</td>'
+        '<td>4x4:4 on 5GHz and a 2.5GbE uplink, so it wants more power again and ideally a faster '
+        'switch port to be worth it.</td></tr>',
+        '<tr><td><strong>Switch vendor entirely</strong></td><td>&pound;&pound;</td>'
+        '<td>&#9733;&#9733;&#9734;&#9734;&#9734;</td>'
+        '<td>You throw away 18 working access points, the controller, and everyone&rsquo;s '
+        'familiarity with it. Rarely the right answer when the incumbent is supported to 2028.</td></tr>',
+        '</tbody></table></div>',
+        '<p>The pattern we see most often on floors this size: the estate is fine, the switches '
+        'are the constraint, and the money is better spent on power and channel design than on '
+        'access points.</p>',
+        '</div></section>',
+
+        ' <section class="section section--alt"><div class="wrap wrap--narrow prose" data-reveal>',
+        '<h2 class="section-title" data-title>Rolling it out across a live two-acre floor'
+        '<span class="title-underline"></span></h2>',
+        '<p>Two acres is roughly <strong>8,000 square metres</strong>. Across '
+        '' + str(n_510 + n_550) + ' access points that is about <strong>450 square metres '
+        'each</strong> &mdash; which on an open sales floor is a density driven by client numbers '
+        'and interference, not by how far the signal reaches.</p>',
+        '<p><strong>That density is itself a clue.</strong> With this many radios in one open '
+        'space, 2.4GHz has only three non-overlapping channels to share between them. Every '
+        'access point you add on 2.4GHz past the third is talking over one of the others. If your '
+        'floor is worse when it is busy, co-channel interference deserves suspicion well before '
+        'the hardware does.</p>',
+        '<ul>',
+        '<li><strong>Consider switching some 2.4GHz radios off entirely.</strong> Counter-intuitive, '
+        'and frequently the single biggest improvement on a dense floor.</li>',
+        '<li><strong>Turn transmit power down, not up.</strong> Loud access points hear each other '
+        'and hold clients too long. Lower power makes handover cleaner.</li>',
+        '<li><strong>Survey before and after, in the same places.</strong> Otherwise you are '
+        'debating opinions. Our <a href="/wifi-signal-test/">free Wi-Fi survey tool</a> runs in a '
+        'browser and saves the results, so a walk-round before you start is genuinely five '
+        'minutes of work.</li>',
+        '</ul>',
+        '<p><strong>Sequencing a live floor:</strong></p>',
+        '<ol>',
+        '<li><strong>Switches first, access points second.</strong> Power has to be in place '
+        'before a single R550 is mounted, or you are commissioning into the limited mode above.</li>',
+        '<li><strong>Prove it on one zone.</strong> Pick the worst-performing corner, do that '
+        'area properly, and measure it for a week before committing to the rest.</li>',
+        '<li><strong>Keep the two estates on the same SSID during changeover</strong> so staff '
+        'notice nothing, and roll back per-zone rather than per-AP if something is wrong.</li>',
+        '<li><strong>Work to the trading day, not the calendar.</strong> Access points can be '
+        'mounted and cabled during trading; the switch and controller work cannot.</li>',
+        '<li><strong>Keep the old units until the new ones have survived a full busy week.</strong> '
+        'They cost nothing to keep and everything to have thrown away.</li>',
+        '</ol>',
+        C.ap_field('The thing that goes wrong most on live rollouts is not technical. It is that '
+                   'nobody told the floor staff, so the first hour of complaints gets attributed '
+                   'to the new kit whether or not it deserves it. Tell people what is happening '
+                   'and give them one name to report problems to.'),
+        '</div></section>',
+    ])
+
+    faq = [
+        ("Is a RUCKUS R510 too old to keep in 2026?",
+         "Not on the vendor's own dates. The R510 went end of sale on 31 January 2022 but is "
+         "supported until 31 December 2028. End of sale and end of support are different things, "
+         "and it is the second that matters. If an R510 estate is unreliable, the cause is far "
+         "more often power, channel planning or cabling than the age of the hardware."),
+        ("Can I put R550s on the same PoE switches as my R510s?",
+         "Only if those switches deliver 802.3at. The R510 is a native 802.3af access point at "
+         "12.6W, which is why R510 estates so often sit on af-only switches. The R550 is rated "
+         "802.3at at 18.71W, and on af it drops to a limited 12.71W mode: 2.4GHz only at reduced "
+         "power, with the second Ethernet port, the onboard IoT radio and USB all disabled. It "
+         "will look healthy in the controller and perform worse than the AP you removed."),
+        ("How much more power does an R550 estate need than an R510 estate?",
+         "Using the vendor's figures, 16 R510s at 12.6W plus 2 R550s at 18.71W draws about 239W. "
+         "Eighteen R550s all on 802.3at draw about 337W - roughly 97W more. That is inside a "
+         "370W switch budget and outside a 195W one, so the switch, not the access point, is "
+         "usually the real purchase."),
+        ("Will R510s and R550s work on the same controller?",
+         "That depends entirely on your controller type and exact version, and the supported-AP "
+         "list changes with each release. Check the release notes for your specific version "
+         "rather than take anyone's word for it - including ours. If the R550 requires a newer "
+         "release than the R510 supports, the controller upgrade is the project, not the APs."),
+        ("Is it worth jumping straight to the R650 instead?",
+         "Sometimes. The R550 is the like-for-like successor and keeps the same 2x2:2 stream "
+         "count as the R510, so the gain is Wi-Fi 6 efficiency rather than more capacity. The "
+         "R650 is 4x4:4 on 5GHz with a 2.5GbE uplink, which is a genuine step up - but it wants "
+         "more power again and a faster switch port to be worth paying for."),
+        ("What is the most common cause of unreliable Wi-Fi on a large open sales floor?",
+         "Co-channel interference and power, in that order. On an open floor with many access "
+         "points, 2.4GHz has only three non-overlapping channels, so past a handful of radios "
+         "they begin talking over one another. Turning some 2.4GHz radios off and reducing "
+         "transmit power often improves a busy floor more than replacing hardware."),
+    ]
+
+    _page(
+        slug="ruckus-r510-unreliable-wifi-fix",
+        title="RUCKUS R510 Unreliable Wi-Fi: Diagnose It Properly",
+        desc="An R510 estate that keeps dropping: the eight-step diagnosis, how to test "
+             "PoE properly, and the 802.3af trap that sends an R550 upgrade backwards.",
+        h1="RUCKUS <em class=\"grad grad--cyan\">R510</em> unreliable? Diagnose it before you replace it",
+        eyebrow="// R510 FIELD PLAYBOOK &middot; FOR IT MANAGERS",
+        lede="Written for someone with an estate in front of them and a floor full of people: "
+             "how to find the actual fault, how to test power properly, and what an R550 "
+             "upgrade really needs before you order a single one.",
+        body=body,
+        chips=["Vendor figures only", "802.3af/at trap explained",
+               "Dates checked " + D.DATES_CHECKED_HUMAN],
+        faq=faq,
+        og="RUCKUS R510 Unreliable Wi-Fi: The Field Playbook",
+    )
+
+
 def build_all():
     pillar(); s1_ruckus(); s2_r510(); s3_cisco(); s4_certs(); s5_poe()
     s6_dropping(); s7_controller(); s8_meraki(); s9_security(); s10_healthcheck()
+    s11_r510_playbook()

@@ -205,16 +205,18 @@ SPOKES = [
      "What actually happens &mdash; and what doesn&rsquo;t."),
     ("unsupported-access-point-security-risk", "Working but unpatched",
      "A different problem from broken, and a different decision."),
+    ("ruckus-r510-unreliable-wifi-fix", "R510 field playbook",
+     "Diagnose it properly, and the 802.3af trap that sends an R550 upgrade backwards."),
 ]
 SIBLINGS = {
     "ruckus-access-point-end-of-life": ["is-my-ruckus-r510-too-old", "wifi-controller-end-of-life"],
-    "is-my-ruckus-r510-too-old": ["ruckus-access-point-end-of-life", "wifi-controller-end-of-life"],
+    "is-my-ruckus-r510-too-old": ["ruckus-r510-unreliable-wifi-fix", "ruckus-access-point-end-of-life"],
     "cisco-aironet-end-of-life": ["cisco-access-point-wont-join-controller",
                                   "unsupported-access-point-security-risk"],
     "cisco-access-point-wont-join-controller": ["cisco-aironet-end-of-life",
                                                "unsupported-access-point-security-risk"],
-    "access-point-poe-af-at-upgrade-trap": ["wifi-controller-end-of-life",
-                                            "access-points-dropping-off-controller"],
+    "access-point-poe-af-at-upgrade-trap": ["ruckus-r510-unreliable-wifi-fix",
+                                            "wifi-controller-end-of-life"],
     "access-points-dropping-off-controller": ["access-point-poe-af-at-upgrade-trap",
                                               "wifi-controller-end-of-life"],
     "wifi-controller-end-of-life": ["ruckus-access-point-end-of-life",
@@ -223,6 +225,10 @@ SIBLINGS = {
                                            "wifi-controller-end-of-life"],
     "unsupported-access-point-security-risk": ["meraki-licence-expiry-what-happens",
                                                "cisco-aironet-end-of-life"],
+    # the playbook is the deep operational page - point it at the two that answer
+    # "should I replace it at all" and "what does the power actually cost me"
+    "ruckus-r510-unreliable-wifi-fix": ["is-my-ruckus-r510-too-old",
+                                        "access-point-poe-af-at-upgrade-trap"],
 }
 _TITLES = dict((s, t) for s, t, _ in SPOKES)
 _BLURBS = dict((s, b) for s, _, b in SPOKES)
@@ -233,7 +239,7 @@ def cluster_nav(current):
     if current == PILLAR:
         items = [(s, t, b) for s, t, b in SPOKES]
         head = "The rest of this guide"
-        lede = ("Nine deeper pages, each answering one question properly. Start with "
+        lede = ("Ten deeper pages, each answering one question properly. Start with "
                 "whichever describes your situation.")
     else:
         sibs = SIBLINGS.get(current, [])

@@ -9,7 +9,8 @@
  },
  "access-point-poe-af-at-upgrade-trap": {
   "first": "2026-07-28",
-  "h": "80be20e6e67cd4d0"
+  "h": "3382f661398bbb72",
+  "last": "2026-07-28"
  },
  "access-points-dropping-off-controller": {
   "first": "2026-07-28",
@@ -128,7 +129,7 @@
  },
  "business-access-point-end-of-life": {
   "first": "2026-07-28",
-  "h": "c448ca7c3799b01c",
+  "h": "bd63d2441a552596",
   "last": "2026-07-28"
  },
  "business-broadband-connectivity": {
@@ -1099,7 +1100,8 @@
  },
  "is-my-ruckus-r510-too-old": {
   "first": "2026-07-28",
-  "h": "b1e5f459256cc376"
+  "h": "f0ce30b5c3f6d56b",
+  "last": "2026-07-28"
  },
  "it-advice": {
   "first": "2026-07-28",
@@ -2285,6 +2287,11 @@
  "ruckus-access-point-end-of-life": {
   "first": "2026-07-28",
   "h": "ecbcf13f613cab34"
+ },
+ "ruckus-r510-unreliable-wifi-fix": {
+  "first": "2026-07-28",
+  "h": "80468a9cb14fd91d",
+  "last": "2026-07-28"
  },
  "rural-and-farm-wifi-dorset": {
   "first": "2026-07-28",
