@@ -640,9 +640,9 @@
   </aside>
 
   <main id="main">
-<section class="section" style="padding-top:6.5rem"><div class="wrap" style="max-width:880px"><div id="p365app"><noscript><p>The customer portal needs JavaScript switched on. Or just ring us: 01202 775566.</p></noscript><p style="color:#9fb5d3">Loading the portal&hellip;</p></div><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">portal build 28 Jul 2026 &middot; 8805fb8ade</p><script>
+<section class="section" style="padding-top:6.5rem"><div class="wrap" style="max-width:880px"><div id="p365app"><noscript><p>The customer portal needs JavaScript switched on. Or just ring us: 01202 775566.</p></noscript><p style="color:#9fb5d3">Loading the portal&hellip;</p></div><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">portal build 28 Jul 2026 &middot; 1bc53d1c43</p><script>
 (function () {
-  var P365BUILD = '8805fb8ade';
+  var P365BUILD = '1bc53d1c43';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -2558,7 +2558,8 @@
                         gb.disabled = false;
                         document.getElementById('cberr').textContent =
                             r && r.error === 'slot_taken' ? 'That time just went - pick another.'
-                          : r && r.error === 'too_many' ? 'You already have several visits booked - ring 01202 775566 and we\u2019ll arrange this one with you.'
+                          : r && r.error === 'too_many' ? 'You have ' + (r.have || 'a lot of') + ' visits already booked. Check Your bookings below \u2014 if they all still suit you, ring 01202 775566 and we\u2019ll add this one by hand.'
+                          : r && r.error === 'too_fast' ? 'That\u2019s a few bookings in quick succession. Give us a ring on 01202 775566 and we\u2019ll sort the rest together \u2014 quicker than doing them one at a time.'
                           : r && r.error === 'expired' ? 'Your sign-in expired - please sign in again.'
                           : r && r.error === 'needsignin' ? 'No email on file for this account - ring 01202 775566 and we\u2019ll add it.'
                           : r && r.error === 'no_client' ? (r.needphone ? 'Pop your mobile number in above so we can set up your booking.' : ('Couldn\u2019t match this to a booking account' + (r.why ? ' [' + r.why + ']' : '') + ' - ring 01202 775566.'))

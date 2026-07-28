@@ -21645,7 +21645,8 @@ def write_portal_page():
                         gb.disabled = false;
                         document.getElementById('cberr').textContent =
                             r && r.error === 'slot_taken' ? 'That time just went - pick another.'
-                          : r && r.error === 'too_many' ? 'You already have several visits booked - ring 01202 775566 and we\\u2019ll arrange this one with you.'
+                          : r && r.error === 'too_many' ? 'You have ' + (r.have || 'a lot of') + ' visits already booked. Check Your bookings below \\u2014 if they all still suit you, ring 01202 775566 and we\\u2019ll add this one by hand.'
+                          : r && r.error === 'too_fast' ? 'That\\u2019s a few bookings in quick succession. Give us a ring on 01202 775566 and we\\u2019ll sort the rest together \\u2014 quicker than doing them one at a time.'
                           : r && r.error === 'expired' ? 'Your sign-in expired - please sign in again.'
                           : r && r.error === 'needsignin' ? 'No email on file for this account - ring 01202 775566 and we\\u2019ll add it.'
                           : r && r.error === 'no_client' ? (r.needphone ? 'Pop your mobile number in above so we can set up your booking.' : ('Couldn\\u2019t match this to a booking account' + (r.why ? ' [' + r.why + ']' : '') + ' - ring 01202 775566.'))

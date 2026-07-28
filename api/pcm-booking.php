@@ -1200,12 +1200,31 @@ if ($action === 'book') {
         out(array('ok' => false, 'error' => 'no_client', 'why' => $why, 'needphone' => (strpos($why, 'create_failed') === 0 && $snap['phone'] === '')));
     }
     // Diary-flood guard: one verified inbox must not be able to fill the public diary.
-    // Generous enough for a business booking several visits, low enough to stop abuse.
+    //
+    // This used to block at 6 future visits, which trapped exactly the customers we most
+    // want booking freely: a recurring service plan creates a whole SERIES of visits from
+    // ONE action (we have seen a single booking create twelve), so anybody on a plan hit
+    // the ceiling immediately and could never book a repair online again.
+    //
+    // The thing actually worth preventing is somebody rapidly creating bookings, so that
+    // is what we now measure: booking ACTIONS in the last 24 hours. The count of future
+    // visits stays only as a far-off backstop, high enough that a legitimate plan
+    // customer never meets it.
+    list($lkR, $dbR2) = db_open();
+    if (!isset($dbR2['bkrate'])) $dbR2['bkrate'] = array();
+    foreach ($dbR2['bkrate'] as $rk => $rv) if (!is_array($rv) || (isset($rv['ts']) ? $rv['ts'] : 0) < time() - 86400) unset($dbR2['bkrate'][$rk]);
+    $rkey = sha1('bk|' . $key);
+    $recent = isset($dbR2['bkrate'][$rkey]['n']) ? (int)$dbR2['bkrate'][$rkey]['n'] : 0;
+    db_save($dbR2); db_close($lkR);
+    if ($recent >= 4) out(array('ok' => false, 'error' => 'too_fast'));
+
     $exb = sb_adm('getBookings', array(array('client_id' => $cid, 'booking_type' => 'non_cancelled', 'date_from' => date('Y-m-d'))));
+    $futCount = 0;
     if (!sb_net($exb) && isset($exb['result']) && is_array($exb['result'])) {
-        $fut = 0;
-        foreach ($exb['result'] as $eb) { $est = strtotime(parse_start($eb)); if ($est && $est > time()) $fut++; }
-        if ($fut >= 6) out(array('ok' => false, 'error' => 'too_many'));
+        foreach ($exb['result'] as $eb) { $est = strtotime(parse_start($eb)); if ($est && $est > time()) $futCount++; }
+        // Backstop only. A 6-weekly plan booked a year ahead is ~9 visits; 24 leaves room
+        // for that plus one-off jobs, while still stopping a runaway.
+        if ($futCount >= 24) out(array('ok' => false, 'error' => 'too_many', 'have' => $futCount));
     }
     $au = sb_pub('getAvailableUnits', array($eventId, $date . ' ' . $time, 1));
     if (sb_net($au)) fail('sb_unavailable');
@@ -1313,6 +1332,15 @@ if ($action === 'book') {
             . "> :arrow_right: Give " . bk_clean($refby) . " a month free on their support plan (or £15 off their next visit if they are not on a plan)\n"
             . '> Booked for ' . $pretty);
     }
+    // Count this booking ACTION for the 24h rate limit. Deliberately counts actions, not
+    // visits - a recurring plan creating twelve visits is one action, not twelve.
+    list($lkB2, $dbB2) = db_open();
+    if (!isset($dbB2['bkrate'])) $dbB2['bkrate'] = array();
+    $rk2 = sha1('bk|' . $key);
+    $cur = isset($dbB2['bkrate'][$rk2]['n']) ? (int)$dbB2['bkrate'][$rk2]['n'] : 0;
+    $dbB2['bkrate'][$rk2] = array('n' => $cur + 1, 'ts' => time());
+    db_save($dbB2); db_close($lkB2);
+
     // online bookings deserve the same visibility as staff-made ones
     pcm_slack_say(':calendar: *New online booking* - ' . bk_clean($snap['name'] !== '' ? $snap['name'] : $snap['email'])
         . ' - ' . $pretty . (!$confirmed ? ' _(awaiting confirmation)_' : '')
