@@ -52,6 +52,15 @@ RewriteRule ^(prices|products)/?$                             /pricing/ [R=301,L
 RewriteRule ^services-2/?$                                    /services/ [R=301,L]
 RewriteRule ^book-now/?$                                      /book-service/ [R=301,L]
 
+# --- Old WordPress structural leftovers (found 29 Jul 2026) ---
+# These two still 404 and were hiding in "Crawled - currently not indexed" rather
+# than in the 404 report, so the coverage summary alone would never have surfaced
+# them. Both have an obvious successor, so a 301 beats a 404.
+# Wildcard on /category/ - tech was simply the one Google happened to remember,
+# and any other old category archive should land in the same place.
+RewriteRule ^category(/.*)?$                                  /it-advice/ [R=301,L]
+RewriteRule ^bournemouthlive(/.*)?$                           /contact/ [R=301,L]
+
 # --- Home / support ---
 # /home/ was the old WordPress homepage alias. It was the ONLY genuine 404 in the
 # Search Console coverage report on 29 Jul 2026 - reported four times, once for each
