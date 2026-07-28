@@ -272,6 +272,38 @@
         },
         {
           "@type": "Question",
+          "name": "How much PoE power is lost per metre of Cat5e?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Inside the rules, none that you have to plan for. Each PoE class is defined as two numbers - what the switch supplies and what the device is guaranteed to receive - and the gap between them is the cable allowance, calculated for a full 100 metre channel. 802.3af supplies 15.4W and guarantees 12.95W at the access point, so 2.45W is already set aside for the cable. An AP on a compliant 95 metre run is entitled to the same power as one on a 10 metre run."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How far can an access point be from the switch?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "100 metres, and it is a channel limit rather than a cable limit: roughly 90 metres of solid horizontal cable plus about 10 metres of patch leads at both ends combined. Long patch leads in the comms room eat that allowance faster than people expect, so the run on the drawing is often not the run that exists."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is Cat6 better than Cat5e for PoE access points?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "For PoE the difference that matters is conductor thickness, not bandwidth. Cat5e is typically 24 AWG and Cat6 commonly 23 AWG, so Cat6 has lower resistance, drops less voltage and runs cooler in a bundle. The extra bandwidth is irrelevant to a 1GbE access point. That said, existing solid-copper Cat5e under 90 metres is perfectly capable of running an R550 at 802.3at - recabling a working floor is rarely the best use of the budget."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Should access point cabling be shielded?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Only where it needs to be, and only if it is bonded properly. Shielding does nothing for your power budget - it is about interference, so it earns its place alongside mains, near motors or through plant areas. Shielded cable earthed inconsistently can carry current through the shield and cause faults stranger than the interference it was fitted to prevent. Badly installed shielded cable is worse than good unshielded cable."
+          }
+        },
+        {
+          "@type": "Question",
           "name": "What is the most common cause of unreliable Wi-Fi on a large open sales floor?",
           "acceptedAnswer": {
             "@type": "Answer",
@@ -763,6 +795,45 @@
 </ul>
 <div class="apcall apcall--fact"><span class="apcall__tag">Vendor datasheet</span><div class="apcall__body">R510 PoE: 802.3af (12.6W max) — no separate 802.3at mode listed. af is its normal mode — this is why R510 estates sit on af-only switches. <span class="apcall__src"><a href="https://support.ruckuswireless.com/end-of-life-tables" target="_blank" rel="noopener">RUCKUS Hardware AP end-of-life table</a></span></div></div>
 <p><strong>The pattern that gives it away:</strong> problems that cluster by time of day rather than by location. If the floor degrades when everyone arrives, and the APs on the far end of the longest cable runs degrade first, you are looking at power and not at radio.</p>
+</div></section>
+ <section class="section section--alt"><div class="wrap wrap--narrow prose" data-reveal>
+<h2 class="section-title" data-title>Cable, distance, and where the power actually goes<span class="title-underline"></span></h2>
+<p>People ask how much power an access point loses per metre of cable. It is a reasonable question with a surprising answer: <strong>inside the rules, you do not have to budget for it at all</strong>, because the standard already has.</p>
+<p>Every PoE class is written as two numbers &mdash; what the switch puts in, and what the device is <em>guaranteed</em> to get out at the far end. The gap between them is the cable allowance, and it is calculated for the worst legal case: a full 100&nbsp;metre channel of compliant cable.</p>
+<div class="table-wrap"><table class="table">
+<thead><tr><th>Class</th><th>Switch supplies</th><th>AP guaranteed</th><th>Built-in cable allowance</th></tr></thead><tbody>
+<tr><td>802.3af (PoE)</td><td>15.4&nbsp;W</td><td>12.95&nbsp;W</td><td><strong>2.45&nbsp;W</strong></td></tr>
+<tr><td>802.3at (PoE+)</td><td>30&nbsp;W</td><td>25.5&nbsp;W</td><td><strong>4.5&nbsp;W</strong></td></tr>
+<tr><td>802.3bt Type 3</td><td>60&nbsp;W</td><td>51&nbsp;W</td><td><strong>9&nbsp;W</strong></td></tr>
+</tbody></table></div>
+<p>So an R510 on a compliant 95&nbsp;metre run and one on a 10&nbsp;metre run are both entitled to the same 12.95&nbsp;W. There is no sliding scale you need to design around. <strong>The useful question is not how long the run is, but whether the cable is what it claims to be.</strong></p>
+</div></section>
+ <section class="section"><div class="wrap wrap--narrow prose" data-reveal>
+<h2 class="section-title" data-title>What actually breaks it<span class="title-underline"></span></h2>
+<p>Four things, and only one of them is distance.</p>
+<ul>
+<li><strong>Copper-clad aluminium (CCA), by a distance the worst offender.</strong> Aluminium carries current far worse than copper, so a CCA run drops far more voltage than the standard assumes. It is not standards-compliant cable, it is common in cheap reels, and it is invisible once it is in the wall. If an estate has odd, location-specific PoE behaviour and nobody knows who cabled it, this is the first thing to suspect.</li>
+<li><strong>Over-length runs.</strong> The 100&nbsp;metre figure is a <em>channel</em> limit: roughly 90&nbsp;metres of solid horizontal cable plus about 10&nbsp;metres of patch leads at both ends. Two long patch leads at the comms room and another at the AP eat that allowance quickly, and the run measured on the drawing is not the run that exists.</li>
+<li><strong>Damage and poor terminations.</strong> A kinked run, an over-tightened cable tie, a punched-down pair with too much untwist &mdash; all raise resistance at one point rather than smoothly along the length.</li>
+<li><strong>Heat rise in bundles.</strong> Conductor resistance climbs with temperature, and a tight bundle of cables all carrying PoE warms itself. This is a recognised effect with its own industry guidance; it bites in large bundles in warm ceiling voids, which is exactly where access point cabling lives.</li>
+</ul>
+<div class="apcall apcall--field"><span class="apcall__tag">Commonly reported &mdash; not vendor-confirmed</span><div class="apcall__body">The tell for a cable fault rather than a design fault is that it is stubbornly local. One access point misbehaves, its neighbours do not, and swapping the AP moves nothing. If a replacement unit on the same cable behaves the same way, stop testing access points.</div></div>
+</div></section>
+ <section class="section section--alt"><div class="wrap wrap--narrow prose" data-reveal>
+<h2 class="section-title" data-title>Cat5e or Cat6, shielded or not<span class="title-underline"></span></h2>
+<p><strong>For PoE, the difference that matters is conductor thickness, not bandwidth.</strong> Cat5e is typically 24&nbsp;AWG; Cat6 is commonly 23&nbsp;AWG. The thicker conductor has meaningfully lower resistance, so it drops less voltage and runs cooler in a bundle. That is the real PoE argument for Cat6 &mdash; not the extra bandwidth, which a 1&nbsp;GbE access point will never use.</p>
+<p><strong>Shielding is about interference, not power.</strong> Shielded cable does nothing for your PoE budget. It earns its place where cable runs alongside mains, near motors or lift gear, or through plant areas &mdash; and it comes with a condition.</p>
+<div class="apcall apcall--adv"><span class="apcall__tag">Vendor advisory</span><div class="apcall__body">Shielded cable must be properly bonded and earthed, and consistently so. Shielding earthed at both ends of a building with different earth potentials can carry current through the shield and cause faults that are worse and far stranger than the interference it was fitted to stop. Shielded cable installed carelessly is worse than good unshielded cable.</div></div>
+<p><strong>What we would specify for access points on a floor like this:</strong></p>
+<div class="table-wrap"><table class="table">
+<thead><tr><th>Situation</th><th>Cable</th><th>Why</th></tr></thead><tbody>
+<tr><td>Standard ceiling run, open sales floor</td><td>Solid copper Cat6 U/UTP</td><td>23&nbsp;AWG gives headroom on power and heat; no shielding to bond incorrectly.</td></tr>
+<tr><td>Long run, near the 90&nbsp;m mark</td><td>Solid copper Cat6 U/UTP</td><td>Where the thicker conductor genuinely earns its money.</td></tr>
+<tr><td>Alongside mains, plant rooms, lift shafts</td><td>Shielded Cat6 F/UTP</td><td>Only with the bonding done properly at the patch panel end.</td></tr>
+<tr><td>Existing Cat5e, solid copper, under 90&nbsp;m</td><td>Leave it</td><td>Fine for a 1&nbsp;GbE access point at 802.3at. Recabling a working floor is rarely the best use of the budget.</td></tr>
+<tr><td>Anything CCA, any length</td><td>Replace</td><td>Not compliant, and the cause of faults nobody can explain.</td></tr>
+</tbody></table></div>
+<p>Two things worth saying plainly. <strong>Patch leads count</strong> &mdash; stranded patch cable has higher resistance than solid, which is exactly why the standard sets aside 10&nbsp;metres of the 100 for them. And <strong>a working Cat5e floor rarely needs recabling</strong>: if your R510s are stable on their existing runs, that cable will carry an R550 at 802.3at too, provided the switch can supply it.</p>
 </div></section>
  <section class="section section--alt"><div class="wrap wrap--narrow prose" data-reveal>
 <h2 class="section-title" data-title>The R510 &rarr; R550 trap nobody warns you about<span class="title-underline"></span></h2>
