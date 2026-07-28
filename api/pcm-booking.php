@@ -724,6 +724,37 @@ function send_join_sms($mobile, $code) {
     return $r !== false && $c >= 200 && $c < 300;
 }
 
+/* ---------------------------------------------------------------------------
+   PORTAL WELCOME - queue the one-off "here is your link" email the first time a
+   customer's portal session is ever created. In practice that is Steve or David
+   sitting with them, setting the portal up and dropping a bookmark in their
+   browser; the email is what they still have next week when they have forgotten
+   where it lives.
+
+   Called ONLY from the two genuine sign-in paths (verifycode, signin). It is
+   deliberately NOT called from action=viewas, which mints a session for staff
+   convenience - welcoming a customer because a technician opened their account
+   would be both wrong and baffling.
+
+   Once-only is owned by the queue (wc_record is idempotent on $ckey and keeps a
+   'sent' stub for ever). The 'welcomed' stamp here is only a fast path so we
+   stop re-opening that queue on every later sign-in. If the library fails to
+   load we stamp nothing and simply try again next time.
+
+   $c is by reference so the stamp lands on the record the caller is about to
+   db_save() - no second write, no second lock.
+   --------------------------------------------------------------------------- */
+function pcm_welcome_maybe(&$c, $ckey, $email, $name) {
+    if (!empty($c['welcomed'])) return;
+    $email = strtolower(trim((string)$email));
+    if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) return;
+    if (!defined('RV_LIB')) define('RV_LIB', 1);        // load the functions only, not the HTTP entry
+    @include_once __DIR__ . '/pcm-review.php';
+    if (!function_exists('wc_record')) return;          // library missing - retry on the next sign-in
+    wc_record($ckey, $email, $name);
+    $c['welcomed'] = time();
+}
+
 if ($action === 'join') {
     $email = strtolower(trim((string)(isset($in['email']) ? $in['email'] : '')));
     if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) fail('bad_email');
@@ -988,6 +1019,7 @@ if ($action === 'verifycode') {
         if ((isset($wv['ts']) ? $wv['ts'] : 0) < time() - $lim) unset($db['websessions'][$wk]);
     }
     $db['websessions'][$wtok] = array('key' => $target, 'ts' => time(), 'iat' => time(), 'long' => true, 'forever' => empty($in['shared']), 'machine' => $machine);
+    pcm_welcome_maybe($c, $target, $email, $cname !== '' ? $cname : (isset($c['name']) ? $c['name'] : ''));
     db_save($db); db_close($lk);
 
     $tier = ((isset($c['tier']) && $c['tier'] === 'pro')) ? 'pro' : 'free';
@@ -1130,6 +1162,8 @@ if ($action === 'signin') {
         }
         // customers get a long device session (60d sliding / 90d cap, server-revocable)
         $db['websessions'][$wtok] = array('key' => $target, 'ts' => time(), 'iat' => time(), 'long' => true, 'forever' => empty($in['shared']), 'machine' => $machine);
+        // inside the web branch on purpose: an app sign-in is not a portal sign-in
+        pcm_welcome_maybe($c, $target, $cemail, $cname);
     }
     db_save($db); db_close($lk);
 

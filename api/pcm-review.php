@@ -487,7 +487,11 @@ function rv_send($to, $first, $kind = 'review') {
     return rv_send_raw($to, $subject, $body);
 }
 // generic transport; optional .ics calendar attachment via multipart/mixed
-function rv_send_raw($to, $subject, $body, $icsName = '', $icsData = '') {
+// $html is OPTIONAL and trailing, so every existing caller is byte-identical: they pass
+// no $html, fall through to the plain-text branch below, and nothing about their send
+// changes. Only the welcome email uses it. The HTML part is base64'd because SMTP caps
+// a line at 998 chars (RFC 5321) and hand-written HTML blows straight through that.
+function rv_send_raw($to, $subject, $body, $icsName = '', $icsData = '', $html = '') {
     $to = strtolower(trim((string)$to));
     if (!filter_var($to, FILTER_VALIDATE_EMAIL)) return false;
     if ($icsData !== '') {
@@ -497,6 +501,16 @@ function rv_send_raw($to, $subject, $body, $icsName = '', $icsData = '') {
                  . "\r\n--" . $bnd . "\r\nContent-Type: text/calendar; charset=UTF-8; method=PUBLISH\r\n"
                  . 'Content-Disposition: attachment; filename="' . $icsName . '"' . "\r\n\r\n" . $icsData
                  . "\r\n--" . $bnd . "--\r\n";
+    } elseif ($html !== '') {
+        // multipart/alternative: text first, HTML second. Order matters - a client shows
+        // the LAST part it understands, so text-only clients keep the readable version.
+        $bnd = 'a365' . bin2hex(random_bytes(8));
+        $ctype = 'Content-Type: multipart/alternative; boundary="' . $bnd . '"';
+        $payload = '--' . $bnd . "\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\n" . $body
+                 . "\r\n--" . $bnd . "\r\nContent-Type: text/html; charset=UTF-8\r\n"
+                 . "Content-Transfer-Encoding: base64\r\n\r\n"
+                 . chunk_split(base64_encode($html), 76, "\r\n")   // already ends in CRLF
+                 . '--' . $bnd . "--\r\n";
     } else { $ctype = 'Content-Type: text/plain; charset=UTF-8'; $payload = $body; }
     $cfg = __DIR__ . '/pcm-smtp.php';
     if (is_readable($cfg)) {
@@ -554,6 +568,226 @@ function rv_send_raw($to, $subject, $body, $icsName = '', $icsData = '') {
     // then hangs entirely on DKIM.
     $hdr = "From: 365 Techies <info@365techies.co.uk>\r\nReply-To: info@365techies.co.uk\r\nMIME-Version: 1.0\r\n" . $ctype;
     return @mail($to, $subject, $payload, $hdr, '-finfo@365techies.co.uk');
+}
+
+/* =====================================================================
+   PORTAL WELCOME EMAIL
+   ---------------------------------------------------------------------
+   Fires ONCE, the first time a customer is signed in to their portal -
+   which in practice is Steve or David sitting with them, setting it up
+   and dropping a bookmark in their browser. The email is the thing they
+   still have next week when they have forgotten where it lives.
+
+   Why triggered rather than a mass send: it drips instead of bursting
+   (kind to sending reputation), it lands at the one moment the customer
+   actually cares, and every send is genuinely transactional - it is
+   about an account they just watched being set up. No marketing consent
+   question to answer, provided it carries no offer. Keep it that way.
+
+   Deliberately NOT wired to the staff "view as customer" session
+   (pcm-booking.php action=viewas), which mints a websession for OUR
+   convenience. Welcoming a customer because a technician looked at
+   their account would be both wrong and confusing.
+
+   Once-only is guaranteed twice over:
+     1. $c['welcomed'] on the customer record (pcm-booking.php) - durable,
+        survives anything that happens to this queue.
+     2. isset($q['wc'][$key]) here - catches a double-fire inside one
+        request before the record is saved.
+   ===================================================================== */
+
+$WC_LIVE  = false;  // <-- SAFE MODE. Nothing reaches a customer until this is true.
+                    // Send yourself a test first:
+                    //   /api/pcm-review.php?test&kind=welcome&to=you@example.com&s=<admin pass>
+                    // Then flip to true and deploy. See LAUNCH-PLAN.md.
+$WC_DELAY = 0;      // seconds to hold before sending. 0 = next cron tick (<=5 min), so
+                    // it arrives while you are still sitting with them and you can say
+                    // "that's just landed in your inbox - that's your link, keep it".
+                    // Prefer it as a next-day nudge instead? Try 68400 (19 hours).
+$WC_MAX_AGE = 604800;   // 7 days. The email opens "lovely to get you set up just now",
+                        // so an entry that has sat in the queue longer than this has
+                        // stopped being true - it expires quietly instead of arriving
+                        // weeks late and sounding wrong. This matters most while safe
+                        // mode is off: sign-ins keep queueing, and without this guard
+                        // flipping $WC_LIVE would post-date a month of stale welcomes.
+
+// Queue a welcome. Returns true only if this is genuinely the first time.
+function wc_record($ckey, $email, $name) {
+    $ckey  = substr(preg_replace('/[^A-Za-z0-9_.@+-]/', '', (string)$ckey), 0, 80);
+    $email = strtolower(trim((string)$email));
+    if ($ckey === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) return false;
+    // Reads no $WC_* config on purpose. pcm-booking.php calls this from INSIDE a
+    // function, so its @include_once of this file binds our top-level $WC_DELAY to
+    // that function's locals, not to the globals - a global read here would silently
+    // see nothing. wc_process applies the delay instead; it only ever runs at global
+    // scope from the ?run entry below, where the config genuinely is global.
+    list($lk, $q) = rvq_open();
+    if (!$lk) return false;
+    if (!isset($q['wc'])) $q['wc'] = array();
+    if (isset($q['wc'][$ckey])) { rvq_close($lk); return false; }   // already welcomed, ever
+    $q['wc'][$ckey] = array('em' => $email, 'nm' => rv_clean_name($name), 'ts' => time(),
+                            'st' => 'pending', 'tries' => 0);
+    rvq_save($q);
+    rvq_close($lk);
+    return true;
+}
+
+function wc_subject() { return 'Your 365 portal - here is your link'; }
+
+function wc_body($first) {
+    return 'Hi ' . $first . ",\r\n\r\n"
+    . "Lovely to get you set up on your customer portal just now. This email is\r\n"
+    . "so you always have the link, even if the bookmark ever disappears:\r\n\r\n"
+    . "  https://365techies.co.uk/portal/\r\n\r\n"
+    . "You are already signed in on that computer, so it opens straight up - no\r\n"
+    . "password to remember, nothing to install.\r\n\r\n"
+    . "WHAT YOU CAN DO IN THERE\r\n\r\n"
+    . "  * Book, move or cancel a visit yourself, at any hour\r\n"
+    . "  * See your next service date, and what your Direct Debit is\r\n"
+    . "  * Get us connected for remote help, one big step at a time\r\n"
+    . "  * Work through our free courses at your own pace\r\n\r\n"
+    . "And nothing changes unless you want it to. Your plan, your price and your\r\n"
+    . "visits carry on exactly as they are. The phone still works and always\r\n"
+    . "will - if you would rather ring us, ring us, and you will get the same\r\n"
+    . "two people you always get.\r\n\r\n"
+    . "If anything in there puzzles you, just reply to this email or ring us.\r\n"
+    . "There is no such thing as a daft question.\r\n\r\n"
+    . "Steve & David\r\n"
+    . "365 Techies - family-run IT support in Bournemouth since 1995\r\n"
+    . "01202 775566 - https://365techies.co.uk\r\n";
+}
+
+// The HTML half. Kept deliberately simple - one column, big type, no images
+// beyond the logo, so it survives Outlook and reads fine with images blocked.
+function wc_body_html($first) {
+    $tpl = <<<'WCHTML'
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="light" /><title>Your 365 portal</title>
+</head>
+<body style="margin:0;padding:0;background-color:#eef3f9;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#eef3f9;">
+<tr><td align="center" style="padding:22px 12px;">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;background-color:#ffffff;border-radius:14px;overflow:hidden;">
+
+<tr><td bgcolor="#0b1226" style="background-color:#0b1226;padding:24px 32px;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
+<td valign="middle" style="padding-right:13px;"><img src="https://365techies.co.uk/logo.jpg" width="44" height="44" alt="365" style="display:block;width:44px;height:44px;border-radius:9px;color:#ffffff;font-family:'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;font-weight:700;" /></td>
+<td valign="middle">
+<div style="font-family:'Segoe UI',-apple-system,Helvetica,Arial,sans-serif;font-size:18px;font-weight:700;color:#ffffff;line-height:1.2;">365&nbsp;Techies</div>
+<div style="font-family:'Segoe UI',-apple-system,Helvetica,Arial,sans-serif;font-size:11px;font-weight:600;color:#7fb6e4;letter-spacing:1.6px;text-transform:uppercase;padding-top:3px;">Your customer portal</div>
+</td></tr></table>
+</td></tr>
+<tr><td style="height:4px;background-color:#1d97e3;font-size:0;line-height:0;">&nbsp;</td></tr>
+
+<tr><td bgcolor="#ffffff" style="background-color:#ffffff;padding:32px 32px 8px 32px;font-family:'Segoe UI',-apple-system,Helvetica,Arial,sans-serif;">
+<h1 style="margin:0 0 18px 0;font-size:27px;line-height:1.25;font-weight:700;color:#0b1226 !important;letter-spacing:-.3px;">You are all set up</h1>
+<p style="margin:0 0 16px 0;font-size:17px;line-height:1.62;color:#243352 !important;">Hi {FIRST},</p>
+<p style="margin:0 0 16px 0;font-size:17px;line-height:1.62;color:#243352 !important;">Lovely to get you set up on your customer portal just now. This email is so you always have the link, even if that bookmark ever disappears.</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:4px 0;"><tr>
+<td bgcolor="#f2f8fd" style="background-color:#f2f8fd;border-left:4px solid #1d97e3;border-radius:0 8px 8px 0;padding:17px 21px;">
+<p style="margin:0;font-size:17px;line-height:1.55;color:#0b1226 !important;">You are already signed in on that computer, so it opens straight up. No password to remember, nothing to install.</p>
+</td></tr></table>
+</td></tr>
+
+<tr><td bgcolor="#ffffff" style="background-color:#ffffff;padding:26px 32px 4px 32px;font-family:'Segoe UI',-apple-system,Helvetica,Arial,sans-serif;">
+<p style="margin:0 0 14px 0;font-size:12px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:#1d97e3 !important;">What you can do in there</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+<tr><td width="34" valign="top" style="width:34px;padding:0 12px 16px 0;font-size:20px;line-height:1.3;">&#128197;</td><td valign="top" style="padding:0 0 16px 0;font-size:16px;line-height:1.6;color:#3d4d6d !important;"><strong style="color:#0b1226;">Book, move or cancel a visit</strong> yourself, at any hour, without waiting for us to open.</td></tr>
+<tr><td width="34" valign="top" style="width:34px;padding:0 12px 16px 0;font-size:20px;line-height:1.3;">&#128179;</td><td valign="top" style="padding:0 0 16px 0;font-size:16px;line-height:1.6;color:#3d4d6d !important;"><strong style="color:#0b1226;">Your next service date</strong> and, if you pay by Direct Debit, exactly what leaves your account and when.</td></tr>
+<tr><td width="34" valign="top" style="width:34px;padding:0 12px 16px 0;font-size:20px;line-height:1.3;">&#128736;</td><td valign="top" style="padding:0 0 16px 0;font-size:16px;line-height:1.6;color:#3d4d6d !important;"><strong style="color:#0b1226;">Get us connected for remote help</strong> &mdash; it walks you through it one big step at a time.</td></tr>
+<tr><td width="34" valign="top" style="width:34px;padding:0 12px 16px 0;font-size:20px;line-height:1.3;">&#127891;</td><td valign="top" style="padding:0 0 16px 0;font-size:16px;line-height:1.6;color:#3d4d6d !important;"><strong style="color:#0b1226;">Free courses</strong> in plain English, at your own pace.</td></tr>
+</table>
+</td></tr>
+
+<tr><td bgcolor="#ffffff" align="center" style="background-color:#ffffff;padding:14px 32px 6px 32px;font-family:'Segoe UI',-apple-system,Helvetica,Arial,sans-serif;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center"><tr>
+<td align="center" bgcolor="#1d97e3" style="background-color:#1d97e3;border-radius:9px;">
+<a href="https://365techies.co.uk/portal/" style="display:inline-block;padding:17px 38px;font-family:'Segoe UI',-apple-system,Helvetica,Arial,sans-serif;font-size:18px;font-weight:700;color:#ffffff !important;text-decoration:none;border-radius:9px;">Open my 365&nbsp;portal</a>
+</td></tr></table>
+<p style="margin:16px 0 0 0;font-size:15px;line-height:1.6;color:#5b6b8a !important;">On your phone or tablet? Tap it anyway &mdash; we will email you a six&#8209;digit code to let you in, and that device stays signed in too.</p>
+</td></tr>
+
+<tr><td bgcolor="#ffffff" style="background-color:#ffffff;padding:26px 32px 30px 32px;font-family:'Segoe UI',-apple-system,Helvetica,Arial,sans-serif;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="border-top:1px solid #e3eaf4;font-size:0;line-height:0;height:1px;">&nbsp;</td></tr></table>
+<p style="margin:22px 0 16px 0;font-size:16px;line-height:1.62;color:#3d4d6d !important;"><strong style="color:#0b1226;">Nothing changes unless you want it to.</strong> Your plan, your price and your visits carry on exactly as they are. The phone still works and always will &mdash; if you would rather ring us, ring us, and you will get the same two people you always get.</p>
+<p style="margin:0 0 20px 0;font-size:16px;line-height:1.62;color:#3d4d6d !important;">If anything in there puzzles you, just reply to this email or give us a ring. There is no such thing as a daft question.</p>
+<p style="margin:0 0 3px 0;font-size:17px;color:#0b1226 !important;"><strong>Steve and David</strong></p>
+<p style="margin:0;font-size:15px;line-height:1.6;color:#5b6b8a !important;">365 Techies &middot; family-run IT support in Bournemouth since 1995<br /><a href="tel:+441202775566" style="color:#1266a8;font-weight:600;text-decoration:none;">01202 775566</a> &middot; <a href="mailto:info@365techies.co.uk" style="color:#1266a8;text-decoration:none;">info@365techies.co.uk</a></p>
+</td></tr>
+
+<tr><td bgcolor="#f4f7fb" style="background-color:#f4f7fb;padding:18px 32px;border-top:1px solid #e3eaf4;font-family:'Segoe UI',-apple-system,Helvetica,Arial,sans-serif;">
+<p style="margin:0;font-size:13px;line-height:1.6;color:#7c8aa5 !important;">You are getting this because your 365 customer portal was just set up. 365 Techies Ltd, Bournemouth, Dorset &middot; <a href="https://365techies.co.uk/privacy-policy/" style="color:#7c8aa5;">Privacy</a></p>
+</td></tr>
+
+</table></td></tr></table></body></html>
+WCHTML;
+    // strtr, not sprintf - the CSS is full of % signs that sprintf would choke on.
+    return strtr($tpl, array('{FIRST}' => htmlspecialchars($first, ENT_QUOTES, 'UTF-8')));
+}
+
+// ---- welcome queue processor. Mirrors rv_process: locked, capped, retried. ----
+function wc_process($cap = 5) {
+    global $WC_LIVE, $WC_MAX_AGE, $WC_DELAY;
+    $h = (int)date('G');
+    if ($h < 9 || $h >= 20) return array('skip' => 'quiet_hours');
+    list($lk, $q) = rvq_open();
+    if (!$lk) return array('skip' => 'locked');
+    if (!isset($q['wc'])) { rvq_close($lk); return array('due' => 0, 'sent' => 0); }
+
+    $picked = array(); $due = 0; $stale = 0;
+    foreach ($q['wc'] as $ck => $e) {
+        $st = isset($e['st']) ? $e['st'] : '';
+        $retryable = ($st === 'sending' && (isset($e['snd_ts']) ? $e['snd_ts'] : 0) < time() - 600
+                      && (isset($e['tries']) ? $e['tries'] : 0) < 3);
+        if ($st !== 'pending' && !$retryable) continue;
+        // Too old to still say "just now". Expire it rather than send something untrue.
+        if ((isset($e['ts']) ? (int)$e['ts'] : 0) < time() - $WC_MAX_AGE) {
+            $q['wc'][$ck] = array('st' => 'stale', 'ts' => time());   // keeps the once-only stub
+            $stale++;
+            continue;
+        }
+        // the hold-back, applied here rather than at record time - see wc_record
+        if ((isset($e['ts']) ? (int)$e['ts'] : 0) + max(0, (int)$WC_DELAY) > time()) continue;
+        if ((isset($e['tries']) ? $e['tries'] : 0) >= 3) continue;
+        $em = isset($e['em']) ? $e['em'] : '';
+        if ($em === '' || !filter_var($em, FILTER_VALIDATE_EMAIL)) continue;
+        if (isset($q['optout'][sha1($em)])) continue;          // shares the review opt-out list
+        $due++;
+        if ($WC_LIVE && count($picked) < $cap) {
+            $q['wc'][$ck]['st'] = 'sending';
+            $q['wc'][$ck]['snd_ts'] = time();
+            $q['wc'][$ck]['tries'] = (isset($e['tries']) ? $e['tries'] : 0) + 1;
+            $picked[$ck] = array('em' => $em, 'nm' => isset($e['nm']) ? $e['nm'] : '');
+        }
+    }
+    rvq_save($q);
+    rvq_close($lk);                                            // send OUTSIDE the lock
+    if (!count($picked)) return array('due' => $due, 'sent' => 0, 'stale' => $stale, 'live' => (bool)$WC_LIVE);
+
+    $sent = 0; $failed = array();
+    foreach ($picked as $ck => $p) {
+        $first = rv_first($p['nm']);
+        $ok = rv_send_raw($p['em'], wc_subject(), wc_body($first), '', '', wc_body_html($first));
+        if ($ok) { $sent++; rv_slack(':wave: *Portal welcome sent* to ' . $p['em'] . ' - they were signed in to their portal for the first time.'); }
+        else $failed[] = $ck;
+    }
+
+    list($lk2, $q2) = rvq_open();                              // re-open to record outcomes
+    if ($lk2) {
+        foreach ($picked as $ck => $p) {
+            if (!isset($q2['wc'][$ck])) continue;
+            if (in_array($ck, $failed, true)) { $q2['wc'][$ck]['st'] = 'pending'; continue; }
+            // Sent. Drop the address and name - no need to keep PII in a queue file
+            // for the rest of time; the stub is all the once-only check needs.
+            $q2['wc'][$ck] = array('st' => 'sent', 'ts' => time());
+        }
+        rvq_save($q2);
+        rvq_close($lk2);
+    }
+    return array('due' => $due, 'sent' => $sent, 'failed' => count($failed), 'stale' => $stale, 'live' => true);
 }
 
 // ---- queue processor. Sends entries whose appointment ended >24h ago. ----
@@ -784,6 +1018,11 @@ if (!defined('RV_LIB')) {
         rvq_save($q);
         rvq_close($lk);
         if ($tkind === 'review' || $tkind === 'done') $ok = rv_send($tto, 'Steve', $tkind);
+        elseif ($tkind === 'welcome') {
+            // Deliberately ignores $WC_LIVE: the whole point of a test send is to see it
+            // in your own inbox BEFORE you let it loose on customers.
+            $ok = rv_send_raw($tto, wc_subject(), wc_body('Steve'), '', '', wc_body_html('Steve'));
+        }
         elseif ($tkind === 'remind') {
             $rts = strtotime('tomorrow 14:00');
             $ok = rv_send_raw($tto, rm_subject('tomorrow'), rm_body('Steve', 'Computer Health Check', $rts));
@@ -803,11 +1042,13 @@ if (!defined('RV_LIB')) {
         $r = rv_process(5);
         $r2 = dn_process(5);
         $r3 = rm_process(8);
+        $r4 = wc_process(5);
         // anonymous callers (the cron) learn nothing; the admin pass unlocks the stats
         if ($rv_admin) echo json_encode(array('ok' => true, 'mode' => 'run',
             'review' => array('live' => (bool)$GLOBALS['RV_LIVE'], 'result' => $r),
             'done' => array('live' => (bool)$GLOBALS['DN_LIVE'], 'result' => $r2),
-            'remind' => array('live' => (bool)$GLOBALS['RM_LIVE'], 'result' => $r3)));
+            'remind' => array('live' => (bool)$GLOBALS['RM_LIVE'], 'result' => $r3),
+            'welcome' => array('live' => (bool)$GLOBALS['WC_LIVE'], 'result' => $r4)));
         else echo json_encode(array('ok' => true));
         exit;
     }
