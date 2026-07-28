@@ -751,8 +751,13 @@ function pcm_welcome_maybe(&$c, $ckey, $email, $name) {
     if (!defined('RV_LIB')) define('RV_LIB', 1);        // load the functions only, not the HTTP entry
     @include_once __DIR__ . '/pcm-review.php';
     if (!function_exists('wc_record')) return;          // library missing - retry on the next sign-in
-    wc_record($ckey, $email, $name);
-    $c['welcomed'] = time();
+    // ONLY stamp when the customer is genuinely in the queue. This used to be
+    // unconditional, and on 28 Jul 2026 that cost a real customer his email: the trigger
+    // fired at 17:44, wc_record failed, and the stamp went on anyway - marking him as
+    // welcomed for ever with nothing queued and nothing logged. A stamp is a claim that
+    // something happened; never make that claim on the strength of a call you did not check.
+    $q = wc_record($ckey, $email, $name);
+    if ($q === true || $q === 'exists') $c['welcomed'] = time();
 }
 
 /* ---------------------------------------------------------------------------
@@ -819,9 +824,12 @@ if ($action === 'wcbackfill') {
             if (!defined('RV_LIB')) define('RV_LIB', 1);
             @include_once __DIR__ . '/pcm-review.php';
             if (function_exists('wc_record')) {
-                wc_record($k, $em, isset($c['name']) ? $c['name'] : '', 'launch');
-                $c['welcomed'] = time();      // never also send them the "just now" welcome
-                $stats['queued']++;
+                // only stamp on a confirmed queue entry - see pcm_welcome_maybe
+                $r = wc_record($k, $em, isset($c['name']) ? $c['name'] : '', 'launch');
+                if ($r === true || $r === 'exists') {
+                    $c['welcomed'] = time();      // never also send them the "just now" welcome
+                    $stats['queued']++;
+                }
             }
         }
         unset($c);

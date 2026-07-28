@@ -631,10 +631,16 @@ function wc_record($ckey, $email, $name, $kind = 'welcome') {
     // that function's locals, not to the globals - a global read here would silently
     // see nothing. wc_process applies the delay instead; it only ever runs at global
     // scope from the ?run entry below, where the config genuinely is global.
+    // Return values are deliberately distinguishable, because the caller must be able to
+    // tell "already handled" from "failed". Conflating them is what let a customer be
+    // stamped as emailed while no queue entry existed:
+    //     true     - newly queued
+    //     'exists' - already in the queue, nothing to do, and that is fine
+    //     false    - FAILED. The caller must not record this as done.
     list($lk, $q) = rvq_open();
     if (!$lk) return false;
     if (!isset($q['wc'])) $q['wc'] = array();
-    if (isset($q['wc'][$ckey])) { rvq_close($lk); return false; }   // already welcomed, ever
+    if (isset($q['wc'][$ckey])) { rvq_close($lk); return 'exists'; }   // already welcomed, ever
     $q['wc'][$ckey] = array('em' => $email, 'nm' => rv_clean_name($name), 'ts' => time(),
                             'k' => ($kind === 'launch' ? 'launch' : 'welcome'),
                             'st' => 'pending', 'tries' => 0);

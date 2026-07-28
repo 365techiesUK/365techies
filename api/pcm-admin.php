@@ -283,9 +283,13 @@ if (in_array(($_POST['do'] ?? ''), array('wcpreview', 'wcsend'), true)) {
             if (!defined('RV_LIB')) define('RV_LIB', 1);
             @include_once __DIR__ . '/pcm-review.php';
             if (function_exists('wc_record')) {
-                wc_record($k, $em, (string)($c['name'] ?? ''), 'launch');
-                $c['welcomed'] = time();     // so they can never also get the "just now" welcome
-                $wcPrev['queued']++;
+                // same rule as pcm_welcome_maybe: only claim they are done if they are
+                // genuinely in the queue, or a failed write silently marks them for ever
+                $r = wc_record($k, $em, (string)($c['name'] ?? ''), 'launch');
+                if ($r === true || $r === 'exists') {
+                    $c['welcomed'] = time();     // so they can never also get the "just now" welcome
+                    $wcPrev['queued']++;
+                }
             }
         }
         unset($c);
