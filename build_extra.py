@@ -5214,6 +5214,13 @@ def case_studies():
            services=["Home plan","Verified backups","Security","Remote support"],
            quote="The service I get with 365 techies is amazing &mdash; always on the other end of the phone. Without them I wouldn't have a working laptop that is bang up to date with all data backed up.",
            who="Vince Jones &mdash; Home plan"),
+      dict(label="Building firm &middot; East Dorset", headline="15 years of IT &mdash; and a website to match the workmanship",
+           outcome="Hardware, hosting, email and website from one team",
+           challenge="A heritage builder established in 1978 doing genuinely specialist work &mdash; cob, lime, green oak, listed buildings &mdash; with technology that had grown piecemeal and a website that explained almost none of it.",
+           did="Over 15 years: laptop repairs first, then Dell Latitude business laptops on a planned refresh cycle, then their website and email hosting, and in 2026 a complete rebuild of colinclarkbuilders.co.uk with the search and structured-data work the old site never had.",
+           result="One team for hardware, hosting, email and the website &mdash; and a site that finally explains the craft. <a href=\"/case-study-colin-clark-builders/\">Read the full story</a>.",
+           services=["Dell Latitude supply","Hosting &amp; email","Web design","Long-term support"],
+           quote="", who=""),
       dict(label="Long-standing client &middot; Dorset", headline="Trusted, hands-off IT for nearly 20 years",
            outcome="Nearly two decades of dependable support",
            challenge="A long-term customer wanted reliable, proactive IT they simply never had to think about &mdash; year after year.",
@@ -5317,6 +5324,148 @@ def case_studies():
     add(slug=slug, title="Customer Case Studies | 365 Techies",
         desc=desc, og_title="Customer Case Studies | 365 Techies", schema=schema, content=content)
 case_studies()
+
+# ===================================================== CASE STUDY: COLIN CLARK BUILDERS
+def ccb_case_study():
+    """Flagship named case study. Published with Colin Clark's permission.
+
+    Every claim is either something we did or something verified in the rebuild.
+    Deliberately absent: any ranking or traffic result. The new site only goes
+    live in July 2026, so there is nothing honest to claim yet — this describes
+    what was built, not what it earned. Add results later from real Search
+    Console data, once there is a fair before/after to show."""
+    slug = "case-study-colin-clark-builders"
+    desc = ("Over 15 years looking after Colin Clark Builders — laptop repairs, Dell Latitude business "
+            "laptops, website and email hosting, and a full rebuild of colinclarkbuilders.co.uk.")
+    faqs = [
+      ("How long have you worked with Colin Clark Builders?",
+       "Over 15 years. It started with repairing their existing laptops and grew into supplying and supporting "
+       "their whole IT setup, then their website and email hosting, and most recently a complete website rebuild."),
+      ("Do you only do websites, or IT as well?",
+       "Both, and that is rather the point of this story. We supply and support the hardware, host the email and "
+       "the website, and build the site itself &mdash; so there is one number to ring whatever has gone wrong. See "
+       "<a href=\"/monthly-it-support/\">monthly IT support</a> and <a href=\"/web-design-hosting/\">web design &amp; hosting</a>."),
+      ("Why Dell Latitude laptops for a building firm?",
+       "Latitudes are Dell&rsquo;s business range &mdash; sturdier than the consumer models, with longer parts "
+       "availability and next-business-day warranty options. For a firm working out of vans, sites and a home "
+       "office, that durability matters more than shaving a few pounds off the purchase price."),
+      ("Can you take over an existing website and email?",
+       "Yes &mdash; that is exactly what we did here in 2022, moving both onto hosting we manage. You keep your "
+       "domain and your addresses; we take on the updates, backups, security and the awkward jobs. That service is "
+       "now packaged as <a href=\"/web-care/\">365 Web Care</a>."),
+      ("Do you rebuild WordPress sites or replace them?",
+       "It depends on what the site needs to do. Colin&rsquo;s stayed on WordPress for the 2025 redesign. For the "
+       "2026 refresh we rebuilt it as a fast static site, because for a business site of this kind it is quicker, "
+       "far harder to hack and needs no plugin maintenance. We will always tell you which we think is right, and why."),
+    ]
+    content = "\n".join([
+      hero(bc_sub("Case Studies", "/case-studies/", "Colin Clark Builders"), "// CUSTOMER STORY",
+           'Fifteen years of IT &mdash; and a website to <em class="grad grad--cyan">match the workmanship</em>',
+           "Colin Clark Builders is a heritage builder in East Dorset, established in 1978 — cob and lime, green "
+           "oak framing and listed-building restoration. We have looked after their technology for over 15 years: "
+           "first their laptops, then their hardware refresh cycle, then their hosting and email, and in 2026 a "
+           "complete rebuild of their website. Published with their permission.",
+           cta1=("Talk to Us About Your Setup", "/contact/"), cta2=("Web Design &amp; Hosting", "/web-design-hosting/"),
+           chips=["15+ years as their IT team", "Dell Latitude business laptops", "Website, email &amp; hosting"]),
+
+      '''    <section class="section" aria-label="How it began">
+      <div class="wrap wrap--narrow">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// THE LONG VERSION</p>
+          <h2 class="section-title section-title--center" data-title>It started with a broken laptop<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Most IT relationships begin with something not working. This one did too &mdash; and then simply never ended. Fifteen years on we look after everything with a plug or a password on it, and the trust built over that time is why they asked us to rebuild the website too.</p>
+        </div>
+      </div>
+    </section>''',
+
+      f'''    <section class="section section--alt" aria-label="How the work grew">
+      <div class="wrap wrap--narrow">
+        <ol class="how">
+{steps([
+  ("Repairs, first",
+   "We started where most good relationships start &mdash; fixing what they already had. Repairing and reviving the firm&rsquo;s existing laptops rather than selling them replacements they did not yet need."),
+  ("Supply &amp; a proper refresh cycle",
+   "As machines genuinely wore out we advised on and supplied replacements &mdash; <strong>Dell Latitude business laptops</strong>, chosen for durability and long parts support rather than headline price. Hardware is now replaced on a planned cycle, before it fails, rather than in a panic afterwards."),
+  ("Hosting &amp; email taken over (2022)",
+   "We took on hosting for their WordPress website <strong>and their business email</strong> &mdash; the two things a building firm genuinely cannot afford to lose. One provider, one number to ring, and no arguing between suppliers about whose fault it is."),
+  ("Website redesign (2025)",
+   "A redesign of the existing WordPress site, bringing the look up to date and presenting the firm&rsquo;s work properly."),
+  ("Full rebuild &amp; optimisation (2026)",
+   "A ground-up rebuild on modern static architecture &mdash; faster, far harder to hack, no plugin maintenance &mdash; with the search and structured-data work the old site never had. Details below."),
+])}
+        </ol>
+      </div>
+    </section>''',
+
+      '''    <section class="section" aria-label="The 2026 rebuild">
+      <div class="wrap wrap--narrow">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// THE 2026 REBUILD</p>
+          <h2 class="section-title section-title--center" data-title>What we actually built<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>The firm does genuinely specialist work &mdash; cob, lime, green oak, listed buildings &mdash; and almost none of it was explained anywhere a customer or a search engine could find it. That was the real problem to solve, and it was a content problem as much as a technical one.</p>
+        </div>
+        <ul class="cards cards--3">
+          <li data-reveal><h3>A site that explains the craft</h3><p>Eighty pages covering the services, the materials, the towns they work in and the questions homeowners actually ask &mdash; cob repair, lime versus cement, listed-building consent, VAT relief. Written to be genuinely useful, not padded for word count.</p></li>
+          <li data-reveal><h3>Built to be found by AI too</h3><p>A full structured-data entity graph, an <code>llms.txt</code> and answer-first content, so assistants like ChatGPT, Claude and Perplexity can read and cite the business correctly &mdash; not just Google.</p></li>
+          <li data-reveal><h3>Fast, and hard to break</h3><p>Static pages, responsive images generated at build time in WebP and JPEG, no database and no plugins. Nothing to patch on a Sunday night, and nothing for a bot to log into.</p></li>
+          <li data-reveal><h3>Their search history protected</h3><p>The riskiest moment in any rebuild is launch day. We mapped every old address to a new one using their own Search Console data and a crawl of the old site &mdash; and kept twelve of the seventeen pages with search history on their <em>exact</em> original address, so Google had nothing to relearn.</p></li>
+          <li data-reveal><h3>Only real photographs</h3><p>We replaced stock library images with photographs of the firm&rsquo;s own work, captioned with the real places. A heritage builder&rsquo;s portfolio has to be theirs &mdash; the whole proposition falls apart otherwise.</p></li>
+          <li data-reveal><h3>Enquiries that reach a human</h3><p>The contact form posts to their own mailbox with the details that matter for quoting &mdash; location, and whether the property is listed &mdash; so the first reply can be useful instead of another round of questions.</p></li>
+        </ul>
+      </div>
+    </section>''',
+
+      '''    <section class="section section--alt" aria-label="A representative find">
+      <div class="wrap wrap--narrow">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// ONE EXAMPLE</p>
+          <h2 class="section-title section-title--center" data-title>Seen thousands of times. Clicked almost never.<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Their timber framing page was already appearing near the top of Google thousands of times a quarter &mdash; and almost nobody was clicking it. That is not a ranking problem, it is a <em>wording</em> problem: the title and description gave a searcher no reason to choose it. We found it by reading their Search Console data rather than guessing, and rewrote the page around what those searchers were actually after. It is the sort of thing that stays invisible unless somebody goes looking.</p>
+        </div>
+      </div>
+    </section>''',
+
+      '''    <section class="section" aria-label="Why it matters">
+      <div class="wrap wrap--narrow">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// THE POINT</p>
+          <h2 class="section-title section-title--center" data-title>One team, fifteen years, everything joined up<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>When the same people supply the laptops, host the email, run the website and answer the phone, nothing falls down the gap between suppliers. We already knew the business, the people and the work before a single page was written &mdash; which is why the site sounds like them rather than like a template. That is the case for a long relationship, and it is the one we would make to any Dorset business still juggling four different providers.</p>
+        </div>
+        <div class="hero-buttons hero-buttons--center" data-reveal>
+          <a href="https://colinclarkbuilders.co.uk/" class="button secondary" target="_blank" rel="noopener">Visit colinclarkbuilders.co.uk</a>
+        </div>
+      </div>
+    </section>''',
+
+      faq_html(faqs),
+
+      cta("Want your IT and your website looked after by the same team?",
+          "Hardware, hosting, email and a website that actually brings work in &mdash; from one Dorset team who answer the phone. Tell us what you have got and we will tell you honestly what is worth changing.",
+          primary=("Web Design &amp; Hosting", "/web-design-hosting/"), secondary=("Talk to Us", "/contact/"), whats_next=True),
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        return graph([
+          crumb_sub(s, "Case Studies", "case-studies", "Colin Clark Builders"),
+          webpage(s, "Case Study: Colin Clark Builders", _desc, "WebPage"),
+          {"@type": "Article", "@id": f"{SITE}/{s}/#article",
+           "headline": "Case study: 15 years of IT, hosting and a full website rebuild for Colin Clark Builders",
+           "description": _desc, "inLanguage": "en-GB",
+           "isPartOf": {"@id": f"{SITE}/{s}/#webpage"},
+           "mainEntityOfPage": {"@id": f"{SITE}/{s}/#webpage"},
+           "author": {"@id": SITE + "/#business"}, "publisher": {"@id": SITE + "/#business"},
+           "datePublished": "2026-07-28", "dateModified": bp.TODAY,
+           "about": {"@type": "Organization", "name": "Colin Clark Builders Ltd",
+                     "url": "https://colinclarkbuilders.co.uk/",
+                     "description": "Heritage and traditional builder in Edmondsham, East Dorset, established 1978.",
+                     "areaServed": {"@type": "AdministrativeArea", "name": "Dorset, UK"}},
+           "mentions": [{"@type": "Service", "name": "Web design and hosting", "url": SITE + "/web-design-hosting/"},
+                        {"@type": "Service", "name": "Monthly IT support", "url": SITE + "/monthly-it-support/"}]},
+          faqpage(s, _faqs),
+        ])
+    add(slug=slug, title="Case Study: Colin Clark Builders | 365 Techies",
+        desc=desc, og_title="Case Study: Colin Clark Builders | 365 Techies", schema=schema, content=content)
+ccb_case_study()
 
 # ===================================================== OFF-GRID & VICTRON ENERGY
 def off_grid():
