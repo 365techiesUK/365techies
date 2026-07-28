@@ -878,6 +878,17 @@ def _meta_desc(d, limit=158):
     d = " ".join(d.split())
     if len(_unescape(d)) <= limit:
         return d
+    # Prefer a SENTENCE boundary over a word boundary. GSC on 28 Jul 2026 showed 429 of 627
+    # pages ending mid-thought with an ellipsis ("...rated 4.9 on Google&hellip;"), which reads
+    # in the SERP as though the page itself is broken. Cutting at the last full stop inside the
+    # limit leaves a complete sentence and needs no ellipsis at all.
+    #
+    # The 65% floor stops a short opening question or an abbreviation ("Broken or slow computer?"
+    # at char 24, or a stray "Ltd.") from throwing away most of the description. Below that we
+    # fall back to the original word-boundary cut.
+    sent = max(d.rfind(". ", 0, limit + 1), d.rfind("? ", 0, limit + 1), d.rfind("! ", 0, limit + 1))
+    if sent >= int(limit * 0.65):
+        return d[:sent + 1]
     cut = d[:limit]
     if " " in cut:
         cut = cut[:cut.rfind(" ")]
@@ -4794,8 +4805,13 @@ M365_FAQS = [
 ]
 add(
  slug="microsoft-365-support",
- title="Microsoft 365 Support, Bournemouth & Poole | Teams & Email",
- desc="Microsoft 365 and Office 365 support across Bournemouth, Poole and Dorset — setup, migration and installation. Microsoft Partner, rated 4.9 on Google, family-run since 1995.",
+ # Position 3.5 for "microsoft 365 support bournemouth" with ZERO clicks (GSC 28 Jul 2026).
+ # Ranking that high and getting nothing is a snippet problem, not a ranking one. The old
+ # description said what we sell ("setup, migration and installation") rather than what the
+ # searcher is afraid of, which is losing their email in a migration. Old desc was 172 chars
+ # and got cut at "rated 4.9 on Google&hellip;"; title was 58 and close to truncating.
+ title="Microsoft 365 Support | Bournemouth, Poole & Dorset",
+ desc="Email, Teams and OneDrive set up and looked after properly. Microsoft Partner covering Bournemouth, Poole and Dorset — migrations without losing an email.",
  og_title="Microsoft 365 Support | Teams, Email & OneDrive",
  schema=lambda s: graph([
    crumb(s, "Microsoft 365"), webpage(s, "Microsoft 365 Support", "Complete Microsoft 365 support — Outlook, Teams, OneDrive, SharePoint, licensing, migration and security."),
@@ -5088,8 +5104,13 @@ def repair_town_links():
 
 add(
  slug="computer-repairs",
- title="Computer & Laptop Repairs Dorset | No Fix, No Fee",
- desc="Broken or slow computer? Free collection across Bournemouth, Poole & Dorset, a 12-month warranty on repairs — and if we can't fix it, you pay nothing. Family-run since 1995 · 4.9 on Google.",
+ # Ranks position 8.3 for "computer repair" and 7.7 for "laptop repair" - 1,112 impressions,
+ # ZERO clicks (GSC 28 Jul 2026). At that position we sit under the map pack, so the snippet
+ # has to earn the click on its own. Free collection is the thing a shop cannot match, so it
+ # leads; "no fix, no fee" moves into the description because every competitor claims it.
+ # Old desc was 187 chars and got amputated at "you pay nothing&hellip;" - now under 158.
+ title="Computer & Laptop Repair Dorset | Free Collection",
+ desc="Broken or slow computer? We collect, repair and return it free across Bournemouth, Poole and Dorset. No fix, no fee, and a 12-month warranty on repairs.",
  og_title="Computer Repairs Bournemouth | Laptop & PC Repairs",
  schema=lambda s: graph([
    crumb(s, "Computer Repairs"), webpage(s, "Computer Repairs", "Computer and laptop repairs in Bournemouth, Poole and Dorset."),

@@ -108,7 +108,12 @@ SERVICE_PAGES = [
   "eyebrow": "// VIRUS &amp; MALWARE REMOVAL",
   "h1": "Virus &amp; malware <em class=\"grad grad--cyan\">removal</em></h1>, done properly",
   "lede": "Pop-ups you can't close, a sluggish machine, scary \"your computer is infected\" warnings, or a browser that's been hijacked? We find what's really there, clean it out for good, and check nothing's been left behind &mdash; remotely or at your home in Bournemouth, Poole, Christchurch and across Dorset. Windows and Android only. Rated 4.9 on Google.",
-  "metaDesc": "Virus &amp; malware removal in Bournemouth, Poole &amp; Dorset. We clean infected Windows PCs &amp; Android devices, remove pop-ups, scams &amp; hijackers &mdash; remote or on-site.",
+  # GSC 28 Jul 2026: position 7.5 for "virus removal", zero clicks. Old desc listed the service;
+  # this one opens with the symptoms someone actually types, so they recognise their own problem.
+  # With no seoTitle the default produced 61 chars ("...&amp; Dorset | 365 Techies"), which Google
+  # truncates - and what got cut was the location, the most useful part of the whole title.
+  "seoTitle": "Virus &amp; Malware Removal, Bournemouth &amp; Dorset",
+  "metaDesc": "Pop-ups, scam warnings and hijacked browsers cleaned off Windows PCs and Android devices &mdash; usually same day, remote or at your home across Dorset.",
   "chips": [
    " Same-day where possible",
    " Remote or on-site",

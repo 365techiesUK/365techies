@@ -81,8 +81,16 @@ def make_local(i, slug, town, region, lede, intro_para, nearby):
                    if repair_slug in REPAIR_SLUGS else "")
     biz_link = (f'\n          <p>Running a business in {town}? See our dedicated <a href="{BIZ_LINKS[slug][0]}">{BIZ_LINKS[slug][1]}</a> &mdash; fully managed IT, Microsoft 365, cybersecurity and support for one monthly cost per computer.</p>'
                 if slug in BIZ_LINKS else "")
-    desc = (f"IT support, IT services and computer repairs in {town} — rated 4.9 on Google, "
-            f"no call-out fee, family-run since 1995. Homes and businesses.")
+    # GSC, 28 Jul 2026: these town pages rank but are never clicked - /it-support-blandford-forum/
+    # took 1,276 impressions at position 10.6 for ZERO clicks. The old description was the same
+    # boilerplate on every town ("IT support, IT services and computer repairs in X - rated 4.9,
+    # no call-out fee, family-run since 1995"), which lists what we are and gives a searcher no
+    # reason to pick us over the seven results above. This leads with what they get instead, and
+    # keeps the one thing no competitor can copy: they get the same two people every time.
+    # Length matters as much as wording - _meta_desc() amputates anything over 158 rendered chars
+    # and leaves a trailing ellipsis, so the fixed part stays short enough for a long town name.
+    desc = (f"IT support in {town} for homes and businesses — no call-out fee, the same "
+            f"two faces every visit, and 4.9 on Google from 49 reviews.")
     faqs = [
       (f"Do you provide IT support in {town}?", f"Yes — 365 Techies provides remote and on-site IT support for homes and businesses in {town} and the wider {region} area, with monthly plans from £18.25 per computer."),
       (f"Can you visit me in {town}?", f"Yes. Most issues are fixed remotely in minutes, and we provide on-site visits across {town} and the wider {region} when hands-on help is needed."),
@@ -228,7 +236,13 @@ def make_local(i, slug, town, region, lede, intro_para, nearby):
             nodes.append({"@type": "Place", "@id": f"{SITE}/{s}/#place", "name": _pname,
                           "geo": {"@type": "GeoCoordinates", "latitude": _co[0], "longitude": _co[1]}})
         return graph(nodes)
-    add(slug=slug, title=SEO_TITLES.get(slug) or f"IT Support & IT Services {town} | 365 Techies",
+    # "| 365 Techies" was spending 15 characters restating the brand, which Google already
+    # shows on its own line as the site name. Two towns (Blandford, Gillingham) already had a
+    # hook instead via SEO_TITLES; the other 64 did not. GSC 28 Jul 2026 has these pages
+    # ranking on page 1 for "it support new forest" (8.1) and "it support christchurch" (8.24)
+    # with zero clicks, so the title needs to give a reason to pick us, not repeat who we are.
+    # Explicit overrides in SEO_TITLES still win.
+    add(slug=slug, title=SEO_TITLES.get(slug) or f"IT Support {town} | Same-Day, No Call-Out Fee",
         desc=desc, og_title=f"IT Support {town} | 365 Techies", schema=schema, content=content)
 
 LOCAL = [
