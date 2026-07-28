@@ -419,12 +419,52 @@ POSTS = [
 ]
 
 import datetime as _dt
+import json as _json
+import os as _os
+
 _MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August",
            "September", "October", "November", "December"]
-_BASE = _dt.date(2026, 5, 20)
-for _i, p in enumerate(POSTS):
-    _d = _BASE - _dt.timedelta(days=_i * 12)
-    make_post(dt=_d.isoformat(), dt_pretty=f"{_d.day} {_MONTHS[_d.month - 1]} {_d.year}", **p)
+
+# REAL publication dates, not invented ones.
+#
+# This used to be `_BASE - timedelta(days=_i * 12)` - every post handed a date twelve
+# days before the next, counting back from a hard-coded 2026-05-20. Those dates were
+# shown to readers as "Published <date>" and emitted as schema datePublished, and most
+# of them predated this repository's first commit. It described a publishing history
+# that never happened, on a site whose whole promise is that it does not invent things.
+#
+# content_dates.json now holds, per slug: `first` (when the post genuinely first
+# appeared, seeded from git by seed_content_dates.py) and `last` (when its content last
+# actually changed). A new post gets today. An unchanged post keeps its real date
+# forever. Nothing here is generated.
+_CD_PATH = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "content_dates.json")
+try:
+    with open(_CD_PATH, encoding="utf-8") as _f:
+        _CONTENT_DATES = _json.load(_f)
+except Exception:
+    _CONTENT_DATES = {}
+
+_TODAY_ISO = _dt.date.today().isoformat()
+_cd_dirty = False
+
+
+def _pretty(iso):
+    y, m, d = (int(x) for x in iso.split("-"))
+    return "%d %s %d" % (d, _MONTHS[m - 1], y)
+
+
+for p in POSTS:
+    _slug = p["slug"]
+    _rec = _CONTENT_DATES.get(_slug)
+    if not _rec:                       # genuinely new post - today is the truth
+        _rec = {"first": _TODAY_ISO, "last": _TODAY_ISO}
+        _CONTENT_DATES[_slug] = _rec
+        _cd_dirty = True
+    make_post(dt=_rec["first"], dt_pretty=_pretty(_rec["first"]), **p)
+
+if _cd_dirty:
+    with open(_CD_PATH, "w", encoding="utf-8", newline="\n") as _f:
+        _json.dump(_CONTENT_DATES, _f, indent=1, sort_keys=True)
 
 # ---------------- THE HUB ----------------
 def hub():
@@ -500,7 +540,21 @@ print("  ... including IT Advice Hub + %d posts" % len(POSTS))
 
 # ---------------- regenerate sitemap.xml with every page ----------------
 import os
-LM = bp.TODAY  # sitemap lastmod = build date (freshness signal)
+# Sitemap lastmod. Every one of the 643 URLs used to claim it changed today, on every
+# build. Google's guidance is that lastmod is used only where it is "consistently and
+# verifiably accurate" - a blanket build-date stamp tells it nothing and, once spotted
+# as noise, gets ignored entirely. Posts now report the date their content genuinely
+# last changed; everything else omits lastmod rather than assert something untrue.
+LM = bp.TODAY   # fallback only - see _lastmod_for() below
+
+
+def _lastmod_for(slug):
+    """Real change date if we know it, else no lastmod at all.
+
+    Delegates to build_pages, which hashes every page as it is written - so this
+    covers all 640-odd URLs, not just the posts.
+    """
+    return bp.lastmod_for(slug)
 urls = ['''  <url>
     <loc>https://365techies.co.uk/</loc>
     <lastmod>%s</lastmod>
@@ -508,7 +562,11 @@ urls = ['''  <url>
     <image:image><image:loc>https://365techies.co.uk/logo.jpg</image:loc><image:title>365 Techies logo</image:title></image:image>
   </url>''' % LM]
 for p in bp.PAGES:
-    urls.append('  <url><loc>https://365techies.co.uk/%s/</loc><lastmod>%s</lastmod></url>' % (p["slug"], LM))
+    _lm = _lastmod_for(p["slug"])
+    if _lm:
+        urls.append('  <url><loc>https://365techies.co.uk/%s/</loc><lastmod>%s</lastmod></url>' % (p["slug"], _lm))
+    else:
+        urls.append('  <url><loc>https://365techies.co.uk/%s/</loc></url>' % p["slug"])
 sm = ('<?xml version="1.0" encoding="UTF-8"?>\n'
       '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
       'xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n'

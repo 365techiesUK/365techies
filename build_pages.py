@@ -6,7 +6,85 @@ Run: python build_pages.py  (writes <slug>/index.html for every page)
 import os, json, datetime
 from office_cluster import _office_cluster_section
 from tool_seo_data import TOOL_TITLES, TOOL_SEO
-TODAY = datetime.date.today().isoformat()  # build date — used for dateModified / sitemap lastmod (freshness)
+TODAY = datetime.date.today().isoformat()
+
+# ---------------------------------------------------------------------------
+# HONEST LASTMOD
+#
+# Every URL in the sitemap used to claim it changed on the day of the build. That is
+# not a freshness signal, it is noise - and Google's documented position is that it
+# uses lastmod only where it is "consistently and verifiably accurate", so a blanket
+# stamp gets discounted and takes the real signal down with it.
+#
+# We now hash each page as it is written, with the genuinely volatile parts stripped
+# out (the visible "checked on" stamp, schema dateModified, asset cache-busters). If
+# the hash moved, that page really did change today. If it did not, the page keeps
+# the date it last actually changed. content_dates.json is committed, so the history
+# survives CI builds and clean checkouts.
+# ---------------------------------------------------------------------------
+import hashlib as _hashlib
+import json as _cdjson
+import re as _cdre
+
+_CD_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "content_dates.json")
+try:
+    with open(_CD_FILE, encoding="utf-8") as _cdf:
+        CONTENT_DATES = _cdjson.load(_cdf)
+except Exception:
+    CONTENT_DATES = {}
+_CD_DIRTY = [False]
+
+# Strip what legitimately changes on every build, so a rebuild with no edits is a no-op.
+_VOLATILE = [
+    (_cdre.compile(r'"dateModified":\s*"[^"]*"'), '"dateModified":"X"'),
+    (_cdre.compile(r'\?v=\d+'), '?v=X'),
+    (_cdre.compile(r'checked on \d{1,2} \w+ \d{4}', _cdre.I), 'checked on X'),
+    (_cdre.compile(r'Dates checked: \d{1,2} \w+ \d{4}', _cdre.I), 'Dates checked: X'),
+    (_cdre.compile(r'Checked: \d{1,2} \w+ \d{4}', _cdre.I), 'Checked: X'),
+    (_cdre.compile(r'portal build [^<]*'), 'portal build X'),
+]
+
+
+def content_hash(html):
+    for rx, rep in _VOLATILE:
+        html = rx.sub(rep, html)
+    return _hashlib.sha1(html.encode("utf-8")).hexdigest()[:16]
+
+
+def note_content(slug, html):
+    """Record whether this page's content genuinely changed today.
+
+    THE RULE: you can only claim a page changed today if you knew what it looked like
+    yesterday. First sight records a baseline hash and asserts NOTHING about when the
+    page last changed - so `last` stays absent and the sitemap omits lastmod for it,
+    which is the honest answer to "when did this change?" when we do not know.
+    """
+    h = content_hash(html)
+    rec = CONTENT_DATES.get(slug)
+    if rec is None:                                   # never seen - baseline only
+        CONTENT_DATES[slug] = {"first": TODAY, "h": h}
+        _CD_DIRTY[0] = True
+    elif "h" not in rec:                              # git-seeded post - adopt baseline,
+        rec["h"] = h                                  # keep the real date from git
+        _CD_DIRTY[0] = True
+    elif rec["h"] != h:                               # genuine, observed change
+        rec["last"] = TODAY
+        rec["h"] = h
+        _CD_DIRTY[0] = True
+
+
+def save_content_dates():
+    if not _CD_DIRTY[0]:
+        return
+    with open(_CD_FILE, "w", encoding="utf-8", newline="\n") as f:
+        _cdjson.dump(CONTENT_DATES, f, indent=1, sort_keys=True)
+    _CD_DIRTY[0] = False
+
+
+def lastmod_for(slug):
+    """The date this page's content really last changed, or None - never a guess."""
+    r = CONTENT_DATES.get(slug)
+    return r.get("last") if r else None  # build date — used for dateModified / sitemap lastmod (freshness)
 # Per-town UNIQUE researched local content (keyed by town name) — injected into repair/town
 # pages so each is genuinely distinct (kills doorway/duplicate-content risk). Built by the
 # town-local-content workflow into local_content.json.
@@ -5365,7 +5443,9 @@ def write_all():
         fp = os.path.join(d, "index.html")
         with open(fp, "w", encoding="utf-8") as f:
             f.write(html)
+        note_content(slug, html)
         written.append(slug + "/index.html")
+    save_content_dates()
     return written
 
 if __name__ == "__main__":
