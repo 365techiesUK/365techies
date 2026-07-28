@@ -179,8 +179,10 @@ if (($_POST['do'] ?? '') === 'wcdiag') {
         // read the flag without executing the file
         if (preg_match('/\$WC_LIVE\s*=\s*(true|false)/', (string)@file_get_contents($rv), $m)) $live = ($m[1] === 'true');
     }
+    $beat = (is_array($q) && !empty($q['hb']['bkpoll'])) ? (time() - (int)$q['hb']['bkpoll']) : null;
     $wcDiag = array('file' => is_array($q), 'live' => $live, 'hour' => (int)date('G'),
                     'quiet' => ((int)date('G') < 9 || (int)date('G') >= 20),
+                    'beat' => $beat,
                     'rows' => array(), 'counts' => array(), 'look' => null);
 
     // Look one customer up by email. This is the question that actually gets asked -
@@ -415,6 +417,14 @@ th{color:#9fb5d3;font-weight:600;font-size:.75rem;text-transform:uppercase;lette
       Sending switched on: <strong style="color:<?=$wcDiag['live']===true?'#39d353':'#e8637e'?>"><?=$wcDiag['live']===true?'YES':($wcDiag['live']===false?'NO — $WC_LIVE is false':'could not read the flag')?></strong><br>
       Server time: <?=$wcDiag['hour']?>:00 &mdash; <strong style="color:<?=$wcDiag['quiet']?'#e0b341':'#39d353'?>"><?=$wcDiag['quiet']?'QUIET HOURS, nothing sends before 9am':'inside sending hours (9am&ndash;8pm)'?></strong><br>
       Queue file readable: <strong><?=$wcDiag['file']?'yes':'NO — pcm-reviewq.json missing or unreadable'?></strong><br>
+      5-minute mail cron:
+      <?php if($wcDiag['beat'] === null): ?>
+        <strong style="color:#e0b341">has never checked in &mdash; deploy the heartbeat, then re-check in 10 minutes</strong>
+      <?php elseif($wcDiag['beat'] <= 900): ?>
+        <strong style="color:#39d353">alive, last ran <?=(int)round($wcDiag['beat']/60)?> min ago</strong>
+      <?php else: ?>
+        <strong style="color:#e8637e">STOPPED &mdash; last ran <?=(int)round($wcDiag['beat']/60)?> minutes ago. Nothing is being sent.</strong>
+      <?php endif; ?><br>
       <?php foreach($wcDiag['counts'] as $st=>$n) echo h($st).': <strong>'.(int)$n.'</strong> &nbsp; '; ?>
     </p>
     <?php if($wcDiag['look']): $L=$wcDiag['look']; ?>

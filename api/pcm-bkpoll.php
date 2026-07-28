@@ -42,6 +42,9 @@ try {
     if (!defined('RV_LIB')) define('RV_LIB', 1);
     @include_once __DIR__ . '/pcm-review.php';
     if (function_exists('wc_process')) $mailW = wc_process(5);
+    // Prove this cron is alive. The 2-hourly GitHub job checks this stamp and shouts in
+    // Slack if it goes stale - which is the only reason anyone would ever find out.
+    if (function_exists('wc_beat')) wc_beat('bkpoll');
 } catch (Exception $e) { $mailW = array('error' => 'exception'); }
 $GLOBALS['mailW'] = $mailW;
 

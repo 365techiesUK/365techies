@@ -884,6 +884,63 @@ WLHTML;
     return strtr($tpl, array('{FIRST}' => htmlspecialchars($first, ENT_QUOTES, 'UTF-8')));
 }
 
+/* ---------------------------------------------------------------------------
+   DEAD-MAN'S SWITCH FOR THE MAIL CRON
+
+   The whole case against taking booking confirmations and reminders off
+   SimplyBook is that our pipeline can die without anyone noticing. On 28 Jul
+   2026 it did exactly that: cron output goes to /dev/null, an early exit looks
+   identical to a quiet run, and the first sign of trouble was a customer
+   asking where his email was. Reminders are a far worse thing to lose that
+   way - a missed reminder is a missed appointment.
+
+   So: the 5-minute SiteGround cron stamps a heartbeat, and the 2-hourly GitHub
+   cron checks it. Two independent machines watching each other, so a fault in
+   either one is visible from the other. A SiteGround outage cannot silence the
+   alarm, because the alarm does not live on SiteGround.
+
+   Silence is the failure mode we are engineering against. This makes it noisy.
+   --------------------------------------------------------------------------- */
+function wc_beat($src) {
+    $src = preg_replace('/[^a-z0-9_]/', '', strtolower((string)$src));
+    if ($src === '') return;
+    list($lk, $q) = rvq_open();
+    if (!$lk) return;
+    if (!isset($q['hb'])) $q['hb'] = array();
+    $q['hb'][$src] = time();
+    rvq_save($q);
+    rvq_close($lk);
+}
+
+// Returns the age in seconds of a heartbeat, or null if it has never beaten.
+function wc_beat_age($src) {
+    list($lk, $q) = rvq_open();
+    if (!$lk) return null;
+    $t = isset($q['hb'][$src]) ? (int)$q['hb'][$src] : 0;
+    rvq_close($lk);
+    return $t > 0 ? (time() - $t) : null;
+}
+
+// Called from the 2-hourly GitHub cron. Shouts once every 6h at most, so a long
+// outage nags without becoming wallpaper that everyone learns to ignore.
+function mail_watchdog($stale = 1800) {
+    $age = wc_beat_age('bkpoll');
+    if ($age !== null && $age <= $stale) return array('ok' => true, 'age_s' => $age);
+    list($lk, $q) = rvq_open();
+    if (!$lk) return array('skip' => 'locked');
+    $last = isset($q['hb']['warned']) ? (int)$q['hb']['warned'] : 0;
+    $due = ($last < time() - 21600);
+    if ($due) { $q['hb']['warned'] = time(); rvq_save($q); }
+    rvq_close($lk);
+    if ($due) {
+        rv_slack(':rotating_light: *Customer email cron has stopped.* The 5-minute job on SiteGround '
+            . ($age === null ? 'has never checked in' : 'last ran ' . round($age / 60) . ' minutes ago') . '. '
+            . 'Portal welcomes, job-done emails and review asks are NOT going out. '
+            . 'Check Site Tools -> Devs -> Cron Jobs, and that api/pcm-simplybook.php is still valid.');
+    }
+    return array('ok' => false, 'age_s' => $age, 'warned' => $due);
+}
+
 // ---- welcome queue processor. Mirrors rv_process: locked, capped, retried. ----
 function wc_process($cap = 5) {
     global $WC_LIVE, $WC_MAX_AGE, $WC_DELAY;
@@ -1215,12 +1272,16 @@ if (!defined('RV_LIB')) {
         $r2 = dn_process(5);
         $r3 = rm_process(8);
         $r4 = wc_process(5);
+        // this entry point is the 2-hourly GitHub cron, which runs on a machine SiteGround
+        // cannot take down - so it is the right place to notice SiteGround's cron has died
+        $r5 = mail_watchdog();
         // anonymous callers (the cron) learn nothing; the admin pass unlocks the stats
         if ($rv_admin) echo json_encode(array('ok' => true, 'mode' => 'run',
             'review' => array('live' => (bool)$GLOBALS['RV_LIVE'], 'result' => $r),
             'done' => array('live' => (bool)$GLOBALS['DN_LIVE'], 'result' => $r2),
             'remind' => array('live' => (bool)$GLOBALS['RM_LIVE'], 'result' => $r3),
-            'welcome' => array('live' => (bool)$GLOBALS['WC_LIVE'], 'result' => $r4)));
+            'welcome' => array('live' => (bool)$GLOBALS['WC_LIVE'], 'result' => $r4),
+            'watchdog' => $r5));
         else echo json_encode(array('ok' => true));
         exit;
     }
