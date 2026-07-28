@@ -140,5 +140,10 @@ require __DIR__ . '/pcm-review.php';
 $mailR = rv_process(3);
 $mailD = dn_process(3);
 $mailM = rm_process(5);
+// The portal welcome belongs on THIS cron, not the 2-hourly GitHub one. It is meant
+// to land while Steve or David is still sitting with the customer, so they can say
+// "that's just arrived - that's your link". A two-hour wait would miss that moment
+// entirely and turn it into a puzzling email the next day.
+$mailW = wc_process(5);
 jout(array('ok' => true, 'bookings' => count($rows), 'seeded' => $seeded, 'changed' => $changed, 'alerts' => count($toSlack),
-           'mail' => array('review' => $mailR, 'done' => $mailD, 'remind' => $mailM)));
+           'mail' => array('review' => $mailR, 'done' => $mailD, 'remind' => $mailM, 'welcome' => $mailW)));
