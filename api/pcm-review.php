@@ -596,12 +596,17 @@ function rv_send_raw($to, $subject, $body, $icsName = '', $icsData = '', $html =
         request before the record is saved.
    ===================================================================== */
 
-$WC_LIVE  = false;  // <-- SAFE MODE. Nothing reaches a customer until this is true.
-                    // Send yourself a test first (goes to info@365techies.co.uk; an
-                    // admin pass is only needed to aim it at an external mailbox):
-                    //   /api/pcm-review.php?test=welcome
-                    //   /api/pcm-review.php?test=welcome&to=you@gmail.com&s=<admin pass>
-                    // Then flip to true and deploy. See LAUNCH-PLAN.md.
+$WC_LIVE  = true;   // LIVE 2026-07-28. Held in safe mode until an external-mailbox test
+                    // proved the authentication actually aligns - a copy to our own
+                    // domain cannot show this. Gmail, 28 Jul 2026, 14s delivery:
+                    // SPF PASS (185.56.87.2), DKIM PASS *signed as 365techies.co.uk*
+                    // (so DMARC aligns rather than merely passing), DMARC PASS.
+                    // To pause it again, set this back to false: queued welcomes then
+                    // sit until $WC_MAX_AGE expires them rather than piling up.
+                    // Test send (ignores this flag; the kind is the VALUE of ?test,
+                    // and an unknown kind silently falls back to the review email):
+                    //   /api/pcm-review.php?test=welcome                 -> info@365techies.co.uk
+                    //   /api/pcm-review.php?test=welcome&to=x@y.com&s=<admin pass>
 $WC_DELAY = 0;      // seconds to hold before sending. 0 = next cron tick (<=5 min), so
                     // it arrives while you are still sitting with them and you can say
                     // "that's just landed in your inbox - that's your link, keep it".
