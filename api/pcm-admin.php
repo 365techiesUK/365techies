@@ -318,6 +318,31 @@ if (isset($_GET['shot'])) {
 
 if ($db_lock) { @flock($db_lock, LOCK_UN); @fclose($db_lock); } // mutations done; render from memory
 $cust = $db['customers'] ?? array();
+
+/* WHO IS SIGNED IN TO THE PORTAL.
+   Every live session is in $db['websessions'], and its 'ts' slides forward each time
+   the customer opens the portal - so it is a genuine "last seen", not just when they
+   first signed in. Sessions are per-DEVICE, so one person can hold several; they are
+   grouped here by customer, because "Reg on 2 devices" is the useful fact and a list
+   of tokens is not. Staff view-as sessions are excluded: those are us, not them. */
+$online = array(); $onlineNow = 0;
+foreach (($db['websessions'] ?? array()) as $wv) {
+    if (!is_array($wv) || !empty($wv['viewas'])) continue;
+    $k = (string)($wv['key'] ?? ''); if ($k === '') continue;
+    $ts = (int)($wv['ts'] ?? 0);
+    if (!isset($online[$k])) $online[$k] = array('n' => 0, 'last' => 0);
+    $online[$k]['n']++;
+    if ($ts > $online[$k]['last']) $online[$k]['last'] = $ts;
+}
+foreach ($online as $k => $o) {
+    $online[$k]['name'] = (string)($cust[$k]['name'] ?? $k);
+    $online[$k]['tier'] = (string)($cust[$k]['tier'] ?? 'free');
+    $online[$k]['gone'] = !isset($cust[$k]);            // session for a deleted customer
+    $online[$k]['welcomed'] = !empty($cust[$k]['welcomed']);
+    if ($o['last'] > time() - 900) $onlineNow++;        // active in the last 15 minutes
+}
+uasort($online, function ($a, $b) { return $b['last'] - $a['last']; });
+
 // counts + build the proactive "needs a call" list
 $pcs=0; $active=0; $today=gmdate('Y-m-d'); $calls=array();
 foreach($cust as $key=>$c){
@@ -368,8 +393,35 @@ th{color:#9fb5d3;font-weight:600;font-size:.75rem;text-transform:uppercase;lette
  <div class=kpi><b><?=count($cust)?></b><span>customers</span></div>
  <div class=kpi><b><?=$pcs?></b><span>machines</span></div>
  <div class=kpi><b style="color:#39d353"><?=$active?></b><span>checked in today</span></div>
+ <div class=kpi><b style="color:#1d97e3"><?=count($online)?></b><span>signed in to portal</span></div>
+ <?php if($onlineNow): ?><div class=kpi><b style="color:#39d353"><?=$onlineNow?></b><span>using it right now</span></div><?php endif; ?>
 </div>
 <?php if($msg) echo '<div class=msg>'.h($msg).'</div>'; ?>
+
+<?php if($online): ?>
+<div style="background:#0d1a2e;border:1px solid #2a5b8f;border-radius:14px;padding:1rem 1.2rem;margin-bottom:1.5rem">
+  <h2 style="margin:0 0 .3rem;font-size:1rem;color:#86b6e8">&#128100; Signed in to the portal &mdash; <?=count($online)?> customer(s)</h2>
+  <p style="color:#9fb5d3;font-size:.82rem;margin:0 0 .7rem">
+    Sessions last a year and renew every visit, so this is everyone who can open their portal
+    without signing in again. &ldquo;Last opened&rdquo; is genuinely the last time they used it.
+  </p>
+  <table style="margin-top:0"><thead><tr><th>Customer</th><th>Plan</th><th>Devices</th><th>Last opened</th><th>Had the email?</th></tr></thead><tbody>
+  <?php foreach($online as $ok => $o):
+        $ago = $o['last'] ? time() - $o['last'] : 0;
+        $lbl = !$o['last'] ? 'unknown'
+             : ($ago < 900 ? 'now' : ($ago < 3600 ? round($ago/60).' min ago'
+             : ($ago < 172800 ? round($ago/3600).' hr ago' : round($ago/86400).' days ago'))); ?>
+    <tr>
+      <td><strong><?=h($o['name'])?></strong><?php if($o['gone']): ?><div class=mach style="color:#e8637e">customer record deleted &mdash; stale session</div><?php endif; ?></td>
+      <td><span class="pill <?=$o['tier']==='pro'?'pro">On support':'free">Free'?></span></td>
+      <td><?=(int)$o['n']?></td>
+      <td<?=$ago && $ago<900?' style="color:#39d353;font-weight:700"':''?>><?=h($lbl)?></td>
+      <td class=mach><?=$o['welcomed']?'yes':'<span style="color:#e0b341">not yet</span>'?></td>
+    </tr>
+  <?php endforeach; ?>
+  </tbody></table>
+</div>
+<?php endif; ?>
 
 <div style="background:#0d1a2e;border:1px solid #2a5b8f;border-radius:14px;padding:1rem 1.2rem;margin-bottom:1.5rem">
   <h2 style="margin:0 0 .3rem;font-size:1rem;color:#86b6e8">&#128235; Portal launch email</h2>
