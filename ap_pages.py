@@ -1457,6 +1457,10 @@ def s11_r510_playbook():
                    'easiest thing to authorise. Diagnosis takes patience and an afternoon on the '
                    'floor with a laptop; a purchase order takes a signature. The purchase order '
                    'is quicker to approve and far more likely to disappoint.'),
+        '<p>If measuring it properly over a fortnight would help, that is precisely what our '
+        '<a href="/custom-wifi-dashboards/">custom Wi-Fi dashboards</a> do &mdash; channel '
+        'utilisation, PoE headroom and noise floor over time, on top of the controller you '
+        'already run. There is a live demo on that page you can watch a floor fill up on.</p>',
         '<p>If you get stuck, we are happy to talk it through &mdash; on the phone, no visit, no '
         'obligation. We would rather more IT managers could work this out themselves. It is the '
         'sites where nobody will go this deep, or where the only answers on offer come with a '

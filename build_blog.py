@@ -7,6 +7,7 @@ import build_pages as bp
 import build_local      # registers 12 local/customer pages
 import build_extra      # registers 9 specialist/trust pages
 import simplybook_cluster  # SimplyBook integration pillar + 5 firsthand technical guides
+import wifi_dashboards      # custom business Wi-Fi/mesh dashboard service page + live demo
 from build_pages import (add, graph, crumb, webpage, faqpage, faq_html, cta,
                          hero, SITE, write_all)
 

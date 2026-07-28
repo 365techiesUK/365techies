@@ -473,6 +473,11 @@
   "h": "19dc69b31862ed5b",
   "last": "2026-07-28"
  },
+ "custom-wifi-dashboards": {
+  "first": "2026-07-28",
+  "h": "b3708b45261a4698",
+  "last": "2026-07-28"
+ },
  "customise-victron-vrm-dashboard": {
   "first": "2026-07-28",
   "h": "0c8cc6c4c8722bf4"
@@ -2290,7 +2295,7 @@
  },
  "ruckus-r510-unreliable-wifi-fix": {
   "first": "2026-07-28",
-  "h": "6edaef5abccfa15c",
+  "h": "0a048eacf82a3dfa",
   "last": "2026-07-28"
  },
  "rural-and-farm-wifi-dorset": {
