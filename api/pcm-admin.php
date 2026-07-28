@@ -158,6 +158,44 @@ if (($_POST['do'] ?? '') === 'shield') {
    automatic welcome (that fires when a session is CREATED, and theirs already
    exists and slides for a year), which is the entire reason this exists.
    --------------------------------------------------------------------------- */
+/* ---------------------------------------------------------------------------
+   WELCOME QUEUE DIAGNOSTIC
+
+   Built after an evening of guessing why two customers signed in and no email
+   arrived. Guessing is the problem: the send path is a queue drained by cron,
+   the cron writes to /dev/null, and every failure mode looks identical from
+   the outside. This shows the queue itself - who is in it, what state they are
+   in, and whether the flag is even on.
+
+   Read-only. Answered from the session login, so no passphrase in a URL.
+   --------------------------------------------------------------------------- */
+$wcDiag = null;
+if (($_POST['do'] ?? '') === 'wcdiag') {
+    $qf = __DIR__ . '/pcm-reviewq.json';
+    $q = is_readable($qf) ? json_decode((string)@file_get_contents($qf), true) : null;
+    $live = null;
+    $rv = __DIR__ . '/pcm-review.php';
+    if (is_readable($rv)) {
+        // read the flag without executing the file
+        if (preg_match('/\$WC_LIVE\s*=\s*(true|false)/', (string)@file_get_contents($rv), $m)) $live = ($m[1] === 'true');
+    }
+    $wcDiag = array('file' => is_array($q), 'live' => $live, 'hour' => (int)date('G'),
+                    'quiet' => ((int)date('G') < 9 || (int)date('G') >= 20),
+                    'rows' => array(), 'counts' => array());
+    if (is_array($q) && !empty($q['wc'])) {
+        foreach ($q['wc'] as $ck => $e) {
+            $st = is_array($e) ? (string)($e['st'] ?? '?') : '?';
+            $wcDiag['counts'][$st] = ($wcDiag['counts'][$st] ?? 0) + 1;
+            $wcDiag['rows'][] = array('key' => $ck, 'st' => $st,
+                'em' => is_array($e) ? (string)($e['em'] ?? '(cleared after sending)') : '',
+                'k'  => is_array($e) ? (string)($e['k'] ?? 'welcome') : '',
+                'ts' => is_array($e) && !empty($e['ts']) ? date('H:i, j M', (int)$e['ts']) : '',
+                'tries' => is_array($e) ? (int)($e['tries'] ?? 0) : 0);
+        }
+        usort($wcDiag['rows'], function ($a, $b) { return strcmp($b['ts'], $a['ts']); });
+    }
+}
+
 $wcPrev = null;
 if (in_array(($_POST['do'] ?? ''), array('wcpreview', 'wcsend'), true)) {
     $wcSend  = (($_POST['do'] ?? '') === 'wcsend');
@@ -285,7 +323,33 @@ th{color:#9fb5d3;font-weight:600;font-size:.75rem;text-transform:uppercase;lette
     <input type=hidden name=wcall value=1>
     <button class=ghost>preview including free members</button>
   </form>
-<?php else: ?>
+  <form method=post class=inline>
+    <input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=wcdiag>
+    <button class=ghost>&#129514; why hasn&rsquo;t an email arrived?</button>
+  </form>
+<?php endif; ?>
+<?php if($wcDiag !== null): ?>
+  <div style="margin-top:.9rem;padding:.9rem 1rem;background:#0b1226;border:1px solid #2a3b63;border-radius:10px">
+    <div style="font-size:.86rem;color:#f0f5fc;margin-bottom:.5rem"><strong>Welcome queue</strong></div>
+    <p class=mach style="margin:0 0 .6rem;line-height:1.7">
+      Sending switched on: <strong style="color:<?=$wcDiag['live']===true?'#39d353':'#e8637e'?>"><?=$wcDiag['live']===true?'YES':($wcDiag['live']===false?'NO — $WC_LIVE is false':'could not read the flag')?></strong><br>
+      Server time: <?=$wcDiag['hour']?>:00 &mdash; <strong style="color:<?=$wcDiag['quiet']?'#e0b341':'#39d353'?>"><?=$wcDiag['quiet']?'QUIET HOURS, nothing sends before 9am':'inside sending hours (9am&ndash;8pm)'?></strong><br>
+      Queue file readable: <strong><?=$wcDiag['file']?'yes':'NO — pcm-reviewq.json missing or unreadable'?></strong><br>
+      <?php foreach($wcDiag['counts'] as $st=>$n) echo h($st).': <strong>'.(int)$n.'</strong> &nbsp; '; ?>
+    </p>
+    <?php if($wcDiag['rows']): ?>
+    <div class=mach style="max-height:210px;overflow:auto;line-height:1.8">
+      <?php foreach(array_slice($wcDiag['rows'],0,25) as $r): ?>
+        <div><span style="color:<?=$r['st']==='sent'?'#39d353':($r['st']==='pending'?'#e0b341':'#e8637e')?>"><?=h($r['st'])?></span>
+          &middot; <?=h($r['k'])?> &middot; <?=h($r['em'])?> &middot; <?=h($r['ts'])?><?=$r['tries']?' &middot; '.(int)$r['tries'].' attempt(s)':''?></div>
+      <?php endforeach; ?>
+    </div>
+    <?php else: ?>
+    <p class=mach style="margin:0">The queue is <strong>empty</strong> &mdash; nobody has been queued for a welcome email. That means the sign-in did not reach the trigger, not that sending failed.</p>
+    <?php endif; ?>
+  </div>
+<?php endif; ?>
+<?php if($wcPrev !== null): ?>
   <p style="color:#9fb5d3;font-size:.84rem;margin:0 0 .5rem">
     <strong style="color:#f0f5fc"><?=$wcPrev['eligible']?></strong> would receive it,
     out of <?=$wcPrev['signed_in']?> signed in.
