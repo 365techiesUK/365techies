@@ -1215,6 +1215,134 @@ def s11_r510_playbook():
         'access points.</p>',
         '</div></section>',
 
+        ' <section class="section"><div class="wrap wrap--narrow prose" data-reveal>',
+        '<h2 class="section-title" data-title>Heat: what it costs you in access points'
+        '<span class="title-underline"></span></h2>',
+        '<p>Access points live in the worst place in the building for heat &mdash; a ceiling '
+        'void, above the lighting, often near the ductwork, in a space designed for air movement '
+        'rather than cooling. And heat is the single biggest determinant of how long electronics '
+        'last.</p>',
+        '<p>The engineering rule of thumb is <strong>the ten-degree rule</strong>: for the '
+        'electrolytic capacitors and power components inside, every 10&deg;C of sustained '
+        'temperature rise roughly halves working life. It is an approximation rather than a '
+        'guarantee, but it is the right order of magnitude and it explains something you will '
+        'have seen: two identical access points bought the same day, and the one above the '
+        'lighting rig dies years before the one in the cool corner.</p>',
+        '<p><strong>What that looks like in the field:</strong></p>',
+        '<ul>',
+        '<li><strong>Faults that follow the clock, not the map.</strong> Fine first thing, '
+        'degrading through the afternoon, recovered by morning. That is thermal, and it is not '
+        'the radio.</li>',
+        '<li><strong>Worse in summer, better in winter</strong> &mdash; the same estate, the same '
+        'config, a different complaint rate.</li>',
+        '<li><strong>Reboots clustered on particular units</strong> whose only shared '
+        'characteristic is where they are mounted.</li>',
+        '<li><strong>An early-failure cluster</strong> in one zone of a floor cabled and '
+        'commissioned identically to the rest.</li>',
+        '</ul>',
+        C.ap_field('Heat is cumulative and quiet. An access point cooked for six years does not '
+                   'announce it; it just becomes the one that needs rebooting, then the one that '
+                   'drops clients, and eventually the one you replace without ever recording why. '
+                   'If you are mapping an estate, note what is above each AP as well as what is '
+                   'below it.'),
+        '<p>Two practical points. <strong>PoE itself adds heat</strong> &mdash; the cable '
+        'allowance in the section above is dissipated as warmth in the bundle, and a tight bundle '
+        'of PoE runs in a warm void warms itself further. And <strong>a higher-powered access '
+        'point runs hotter</strong>: an 802.3at unit at 18.71&nbsp;W has more to shed than an '
+        '802.3af unit at 12.6&nbsp;W, in the same void, through the same enclosure.</p>',
+        '</div></section>',
+
+        ' <section class="section section--alt"><div class="wrap wrap--narrow prose" data-reveal>',
+        '<h2 class="section-title" data-title>What the estate costs to run over ten years'
+        '<span class="title-underline"></span></h2>',
+        '<p>Access points are always on. Individually the draw is trivial; across eighteen units '
+        'across a decade it is a real number, and it belongs in an upgrade case alongside the '
+        'purchase price.</p>',
+        '<p>Using the vendor&rsquo;s rated figures and 8,760 hours a year:</p>',
+        '<div class="table-wrap"><table class="table">',
+        '<thead><tr><th>Estate</th><th>Draw</th><th>Per year</th><th>Over 10 years</th></tr></thead>',
+        '<tbody>',
+        '<tr><td>Today (' + str(n_510) + ' R510 + ' + str(n_550) + ' R550)</td>'
+        '<td>' + ('%.0f' % now_w) + '&nbsp;W</td>'
+        '<td>' + ('%.0f' % (now_w * 8.76)) + '&nbsp;kWh</td>'
+        '<td><strong>' + ('%.0f' % (now_w * 87.6)) + '&nbsp;kWh</strong></td></tr>',
+        '<tr><td>All ' + str(n_510 + n_550) + ' on R550 at 802.3at</td>'
+        '<td>' + ('%.0f' % after_w) + '&nbsp;W</td>'
+        '<td>' + ('%.0f' % (after_w * 8.76)) + '&nbsp;kWh</td>'
+        '<td><strong>' + ('%.0f' % (after_w * 87.6)) + '&nbsp;kWh</strong></td></tr>',
+        '<tr><td>The difference</td><td>+' + ('%.0f' % delta) + '&nbsp;W</td>'
+        '<td>+' + ('%.0f' % (delta * 8.76)) + '&nbsp;kWh</td>'
+        '<td><strong>+' + ('%.0f' % (delta * 87.6)) + '&nbsp;kWh</strong></td></tr>',
+        '</tbody></table></div>',
+        '<p>We deliberately do not put a pound figure on that, because we do not know what you '
+        'pay per unit and business tariffs vary enormously. Multiply the ten-year column by your '
+        'own rate. At <strong>25p per kWh</strong> the difference between the two columns works '
+        'out around <strong>&pound;' + ('%.0f' % (delta * 87.6 * 0.25)) + '</strong> across the '
+        'decade &mdash; illustrative only, using a round number rather than your tariff.</p>',
+        C.ap_field('Two honest caveats. The switch draws more than the access points consume, '
+                   'because the PoE cable allowance is lost as heat before it reaches them &mdash; '
+                   'so metered draw is higher than the table. And a Wi-Fi 6 access point can do '
+                   'more work per watt: if it clears traffic faster and spends longer idle, the '
+                   'real-world gap is smaller than the rated one. Rated figures are a ceiling, '
+                   'not a meter reading.'),
+        '</div></section>',
+
+        ' <section class="section"><div class="wrap wrap--narrow prose" data-reveal>',
+        '<h2 class="section-title" data-title>The one nobody plans for: the stock is broadcasting too'
+        '<span class="title-underline"></span></h2>',
+        '<p>This one is specific to showroom and forecourt floors, and it is almost never in '
+        'anyone&rsquo;s design.</p>',
+        '<p><strong>Modern vehicles have Wi-Fi built in.</strong> Manufacturer-fitted hotspots, '
+        'infotainment systems, connected services, telematics units. Park thirty of them on a '
+        'sales floor and you have not got eighteen access points in that space &mdash; you have '
+        'eighteen access points and several dozen uncontrolled radios you do not own, cannot '
+        'configure, cannot channel-plan around and cannot switch off.</p>',
+        '<p>Many broadcast with the ignition off or in accessory mode, so the floor is noisy '
+        'overnight as well. And the noise level <em>changes with your stock</em> &mdash; which is '
+        'why the fault looks random and why it so often gets pinned on the access points.</p>',
+        C.ap_advisory('This is the classic cause of &ldquo;the Wi-Fi is worse when we are busy&rdquo; '
+                      'on a sales floor, and it is not a capacity problem. Busy means more people, '
+                      'more phones AND a fuller floor of broadcasting stock, all competing for the '
+                      'same handful of channels.'),
+        '<p><strong>How to diagnose it &mdash; and it is quick:</strong></p>',
+        '<ol>',
+        '<li><strong>Do a passive scan from the middle of the floor and count what you can hear.</strong> '
+        'Not signal strength &mdash; a list of every network and BSSID in range. If dozens of '
+        'them are not yours and not the neighbours&rsquo;, you have found it. Our '
+        '<a href="/wifi-signal-test/">free Wi-Fi survey tool</a> runs in a browser and will show '
+        'you what is in earshot.</li>',
+        '<li><strong>Look at channel utilisation, not signal strength.</strong> This is the key '
+        'measurement and the one people skip. Your access points can show a strong signal '
+        'everywhere while the channel is too congested to use. Strong and unusable look identical '
+        'on a coverage map.</li>',
+        '<li><strong>Check which channels the noise sits on.</strong> Vehicle hotspots have '
+        'historically clustered on 2.4GHz, where there are only three non-overlapping channels to '
+        'begin with.</li>',
+        '<li><strong>Correlate with the floor.</strong> Scan a full floor and a near-empty one, '
+        'or scan the same spot before and after a delivery. If the noise floor moves with the '
+        'stock, that is your answer and it is not arguable.</li>',
+        '<li><strong>Scan out of hours.</strong> If the floor is still noisy at 10pm with nobody '
+        'in the building, it is not staff devices.</li>',
+        '</ol>',
+        '<p><strong>What to do about it,</strong> given you cannot turn any of it off:</p>',
+        '<ul>',
+        '<li><strong>Move your traffic to 5GHz wherever you can.</strong> Far more channels, and '
+        'historically far less competition from vehicle hotspots. On a floor like this it is the '
+        'single most effective change.</li>',
+        '<li><strong>Consider fewer 2.4GHz radios, not more.</strong> If 2.4GHz is congested, '
+        'adding access points on it makes the congestion worse. Leaving it on a handful of units '
+        'for the devices that genuinely need it is often better than running it everywhere.</li>',
+        '<li><strong>Use the DFS channels</strong> if your kit and site allow &mdash; consumer and '
+        'vehicle hardware frequently avoids them, which is precisely why they are quieter.</li>',
+        '<li><strong>Turn power down.</strong> Loud access points hear more of the noise and hold '
+        'clients further away. On a dense noisy floor, quieter and closer beats louder.</li>',
+        '</ul>',
+        C.ap_field('Worth saying to whoever signs the order: no access point upgrade fixes this. '
+                   'A Wi-Fi 6 unit handles a congested channel more gracefully than a Wi-Fi 5 one, '
+                   'but it cannot make the stock stop transmitting. If the floor is noisy, spend '
+                   'the money on channel planning and 5GHz coverage before hardware.'),
+        '</div></section>',
+
         ' <section class="section section--alt"><div class="wrap wrap--narrow prose" data-reveal>',
         '<h2 class="section-title" data-title>Rolling it out across a live two-acre floor'
         '<span class="title-underline"></span></h2>',
@@ -1310,6 +1438,27 @@ def s11_r510_playbook():
          "carry current through the shield and cause faults stranger than the interference it "
          "was fitted to prevent. Badly installed shielded cable is worse than good unshielded "
          "cable."),
+        ("Does heat shorten the life of an access point?",
+         "Yes, more than anything else does. The engineering rule of thumb is that every 10C of "
+         "sustained temperature rise roughly halves the working life of the capacitors and power "
+         "components inside. Access points live in ceiling voids above lighting, which is the "
+         "hottest part of the building, so two identical units bought the same day can fail years "
+         "apart purely because of where they were mounted. Faults that follow the clock - fine in "
+         "the morning, degrading through the afternoon - are thermal, not radio."),
+        ("Do cars with built-in Wi-Fi interfere with a showroom's access points?",
+         "They can, significantly. Modern vehicles carry manufacturer-fitted hotspots and "
+         "connected-services radios, many of which broadcast with the ignition off. A floor of "
+         "thirty vehicles is thirty uncontrolled radios you do not own and cannot configure, "
+         "competing for the same channels as your access points - and because the noise rises and "
+         "falls with your stock, the fault looks random. It is a common cause of Wi-Fi that is "
+         "worse when the floor is full."),
+        ("How do I tell whether vehicle Wi-Fi is affecting my network?",
+         "Scan from the middle of the floor and count every network and BSSID in range rather "
+         "than measuring signal strength. Then look at channel utilisation on your controller, "
+         "which is the measurement that matters and the one most people skip - coverage can be "
+         "strong everywhere while the channel is too congested to use. The clincher is to scan "
+         "the same spot with a full floor and a near-empty one: if the noise floor moves with the "
+         "stock, that is your answer."),
         ("What is the most common cause of unreliable Wi-Fi on a large open sales floor?",
          "Co-channel interference and power, in that order. On an open floor with many access "
          "points, 2.4GHz has only three non-overlapping channels, so past a handful of radios "
