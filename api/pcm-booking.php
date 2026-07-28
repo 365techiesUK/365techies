@@ -532,6 +532,25 @@ if ($action === 'sbdiag') {
     // CONFIG ONLY without the admin pass: which fields the account requires is not
     // sensitive (the public booking widget reveals it anyway) - and being able to read
     // it directly ends the guess-relay-guess loop that burned the owner's weekend.
+    // WHICH SERVICES ARE SET UP AS RECURRING? getRecurringSettings returns false for a
+    // normal service and a settings object for a recurring one. This is the question that
+    // cost us twelve diary slots from one customer click - answer it from the API rather
+    // than hunting through the SimplyBook UI.
+    $rec = array();
+    $evs = sb_adm('getEventList', array());
+    if (!sb_net($evs) && isset($evs['result']) && is_array($evs['result'])) {
+        foreach ($evs['result'] as $eid => $ev) {
+            $enm = is_array($ev) && isset($ev['name']) ? (string)$ev['name'] : (string)$eid;
+            $rs = sb_adm('getRecurringSettings', array((int)$eid));
+            if (sb_net($rs)) { $rec[$enm] = 'network error'; continue; }
+            $rv = isset($rs['result']) ? $rs['result'] : false;
+            $rec[$enm] = (!$rv || $rv === false)
+                ? 'normal - one booking per click'
+                : ('RECURRING -> ' . substr(json_encode($rv), 0, 200));
+        }
+    }
+    $probe['recurring_services'] = $rec;
+
     foreach (array('require_fields', 'client_fields', 'client_required_fields') as $p) {
         $r = sb_adm('getCompanyParam', array($p));
         if (sb_net($r)) { $probe[$p] = 'network error'; continue; }
@@ -1262,6 +1281,27 @@ if ($action === 'book') {
     if (isset($b['require_confirm'])) $confirmed = !$b['require_confirm'];
     $ts = strtotime($date . ' ' . $time);
     $pretty = $ts ? date('D j M Y g:ia', $ts) : ($date . ' ' . $time);
+    // ONE CLICK = ONE VISIT. If the service is set up as recurring in SimplyBook, the
+    // call above just created the whole series. The customer chose one date and one time
+    // and expected one appointment, so cancel every later occurrence and keep the first.
+    // A genuine recurring arrangement gets set up by a human who knows they are doing it.
+    $trimmed = 0;
+    if (count($series) > 1) {
+        usort($series, function ($a, $b) { return $a['ts'] - $b['ts']; });
+        $keep = $series[0]['id'];
+        foreach ($series as $sv) {
+            if ($sv['id'] === $keep) continue;
+            $cx = sb_adm('cancelBooking', array($sv['id']));
+            if (!sb_net($cx) && !empty($cx['result'])) $trimmed++;
+        }
+        if ($trimmed) {
+            $series = array($series[0]);
+            pcm_slack_say(':scissors: *Recurring service trimmed* - the booking above is set up as '
+                . 'RECURRING in SimplyBook, so it created ' . ($trimmed + 1) . ' visits from one '
+                . 'click. We kept the first and cancelled ' . $trimmed . '. Worth switching '
+                . 'recurrence off for this service unless it is deliberate.');
+        }
+    }
     $repeats = count($series) > 1 ? count($series) : 0;
     $lastPretty = '';
     if ($repeats) {
