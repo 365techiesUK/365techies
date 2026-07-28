@@ -181,14 +181,41 @@ if (($_POST['do'] ?? '') === 'wcdiag') {
     }
     $wcDiag = array('file' => is_array($q), 'live' => $live, 'hour' => (int)date('G'),
                     'quiet' => ((int)date('G') < 9 || (int)date('G') >= 20),
-                    'rows' => array(), 'counts' => array());
+                    'rows' => array(), 'counts' => array(), 'look' => null);
+
+    // Look one customer up by email. This is the question that actually gets asked -
+    // "why didn't SO-AND-SO get it" - and without it you are left inferring from counts.
+    // The usual answer is the boring one: they already have 'welcomed' stamped, because
+    // the backfill caught them earlier, and the system is correctly refusing to send twice.
+    $look = strtolower(trim((string)($_POST['wcemail'] ?? '')));
+    if ($look !== '') {
+        $hit = null;
+        foreach (($db['customers'] ?? array()) as $ck => $c) {
+            foreach (array('sb_email', 'email') as $f) {
+                if (strtolower(trim((string)($c[$f] ?? ''))) === $look) { $hit = array($ck, $c); break 2; }
+            }
+        }
+        if (!$hit) $wcDiag['look'] = array('em' => $look, 'found' => false);
+        else {
+            list($ck, $c) = $hit;
+            $sess = false;
+            foreach (($db['websessions'] ?? array()) as $wv)
+                if (is_array($wv) && empty($wv['viewas']) && ($wv['key'] ?? '') === $ck) { $sess = true; break; }
+            $wcDiag['look'] = array('em' => $look, 'found' => true, 'name' => (string)($c['name'] ?? ''),
+                'tier' => (string)($c['tier'] ?? 'free'), 'session' => $sess,
+                'welcomed' => !empty($c['welcomed']) ? date('H:i, j M', (int)$c['welcomed']) : '',
+                'inqueue' => (is_array($q) && isset($q['wc'][$ck])) ? (string)($q['wc'][$ck]['st'] ?? '?') : '');
+        }
+    }
     if (is_array($q) && !empty($q['wc'])) {
         foreach ($q['wc'] as $ck => $e) {
             $st = is_array($e) ? (string)($e['st'] ?? '?') : '?';
             $wcDiag['counts'][$st] = ($wcDiag['counts'][$st] ?? 0) + 1;
             $wcDiag['rows'][] = array('key' => $ck, 'st' => $st,
                 'em' => is_array($e) ? (string)($e['em'] ?? '(cleared after sending)') : '',
-                'k'  => is_array($e) ? (string)($e['k'] ?? 'welcome') : '',
+                // once sent, the entry is reduced to a stub, so which copy went is no longer
+                // recorded - say so rather than defaulting to "welcome" and misleading a reader
+                'k'  => is_array($e) ? (string)($e['k'] ?? '(kind not kept)') : '',
                 'ts' => is_array($e) && !empty($e['ts']) ? date('H:i, j M', (int)$e['ts']) : '',
                 'tries' => is_array($e) ? (int)($e['tries'] ?? 0) : 0);
         }
@@ -325,6 +352,7 @@ th{color:#9fb5d3;font-weight:600;font-size:.75rem;text-transform:uppercase;lette
   </form>
   <form method=post class=inline>
     <input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=wcdiag>
+    <input name=wcemail type=email placeholder="customer@email (optional)" style="padding:.45rem .6rem;border-radius:8px;border:1px solid #2a3b63;background:#0b1226;color:#f0f5fc;font-size:.82rem;min-width:210px">
     <button class=ghost>&#129514; why hasn&rsquo;t an email arrived?</button>
   </form>
 <?php endif; ?>
@@ -337,6 +365,21 @@ th{color:#9fb5d3;font-weight:600;font-size:.75rem;text-transform:uppercase;lette
       Queue file readable: <strong><?=$wcDiag['file']?'yes':'NO — pcm-reviewq.json missing or unreadable'?></strong><br>
       <?php foreach($wcDiag['counts'] as $st=>$n) echo h($st).': <strong>'.(int)$n.'</strong> &nbsp; '; ?>
     </p>
+    <?php if($wcDiag['look']): $L=$wcDiag['look']; ?>
+    <div style="margin:0 0 .7rem;padding:.7rem .85rem;background:#0d1530;border-left:3px solid #1d97e3;border-radius:0 8px 8px 0">
+      <div class=mach style="line-height:1.8">
+      <?php if(!$L['found']): ?>
+        <strong style="color:#e8637e"><?=h($L['em'])?> is not a customer record at all.</strong><br>
+        Nothing can be queued for an address we do not hold. Check the spelling, or the sign-in used a different address.
+      <?php else: ?>
+        <strong style="color:#f0f5fc"><?=h($L['name'] ?: $L['em'])?></strong> &middot; <?=h($L['tier'])?><br>
+        Has a portal session: <strong style="color:<?=$L['session']?'#39d353':'#e0b341'?>"><?=$L['session']?'yes':'NO — they have never signed in on this device'?></strong><br>
+        Already emailed: <strong style="color:<?=$L['welcomed']?'#e0b341':'#39d353'?>"><?=$L['welcomed'] ? 'YES, at '.h($L['welcomed']).' — this is why nothing new was queued' : 'no'?></strong><br>
+        In the queue now: <strong><?=$L['inqueue'] ? h($L['inqueue']) : 'no entry'?></strong>
+      <?php endif; ?>
+      </div>
+    </div>
+    <?php endif; ?>
     <?php if($wcDiag['rows']): ?>
     <div class=mach style="max-height:210px;overflow:auto;line-height:1.8">
       <?php foreach(array_slice($wcDiag['rows'],0,25) as $r): ?>
