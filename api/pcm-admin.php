@@ -223,6 +223,39 @@ if (($_POST['do'] ?? '') === 'wcdiag') {
     }
 }
 
+/* Send the welcome to ONE named customer, right now, bypassing the queue and the
+   cron. Built because "it will arrive within five minutes" is no use when someone
+   is sitting with a customer trying to finish a booking. Sends synchronously so the
+   page can report success or failure immediately - which also settles whether the
+   mail layer works at all, independently of the trigger and the dedup logic. */
+$wcOne = null;
+if (($_POST['do'] ?? '') === 'wcsendone') {
+    $to = strtolower(trim((string)($_POST['wcemail'] ?? '')));
+    if (!filter_var($to, FILTER_VALIDATE_EMAIL)) $wcOne = array('ok' => false, 'why' => 'That is not a valid email address.');
+    else {
+        $nm = ''; $ck = '';
+        foreach (($db['customers'] ?? array()) as $k2 => $c2) {
+            foreach (array('sb_email', 'email') as $f) {
+                if (strtolower(trim((string)($c2[$f] ?? ''))) === $to) { $nm = (string)($c2['name'] ?? ''); $ck = $k2; break 2; }
+            }
+        }
+        if (!defined('RV_LIB')) define('RV_LIB', 1);
+        @include_once __DIR__ . '/pcm-review.php';
+        if (!function_exists('rv_send_raw') || !function_exists('wc_body_html')) {
+            $wcOne = array('ok' => false, 'why' => 'Could not load the mail library (api/pcm-review.php).');
+        } else {
+            $first = function_exists('rv_first') ? rv_first($nm) : ($nm !== '' ? $nm : 'there');
+            $sent = rv_send_raw($to, wc_subject(), wc_body($first), '', '', wc_body_html($first));
+            if ($sent && $ck !== '' && empty($db['customers'][$ck]['welcomed'])) {
+                $db['customers'][$ck]['welcomed'] = time();
+                save($DATA, $db);
+            }
+            $wcOne = array('ok' => (bool)$sent, 'to' => $to, 'name' => $first, 'known' => $ck !== '',
+                           'why' => $sent ? '' : 'The mail layer refused the send. Check api/pcm-smtp.php on the server.');
+        }
+    }
+}
+
 $wcPrev = null;
 if (in_array(($_POST['do'] ?? ''), array('wcpreview', 'wcsend'), true)) {
     $wcSend  = (($_POST['do'] ?? '') === 'wcsend');
@@ -351,10 +384,25 @@ th{color:#9fb5d3;font-weight:600;font-size:.75rem;text-transform:uppercase;lette
     <button class=ghost>preview including free members</button>
   </form>
   <form method=post class=inline>
-    <input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=wcdiag>
-    <input name=wcemail type=email placeholder="customer@email (optional)" style="padding:.45rem .6rem;border-radius:8px;border:1px solid #2a3b63;background:#0b1226;color:#f0f5fc;font-size:.82rem;min-width:210px">
-    <button class=ghost>&#129514; why hasn&rsquo;t an email arrived?</button>
+    <input type=hidden name=csrf value="<?=h($CSRF)?>">
+    <input name=wcemail type=email placeholder="customer@email" style="padding:.45rem .6rem;border-radius:8px;border:1px solid #2a3b63;background:#0b1226;color:#f0f5fc;font-size:.82rem;min-width:210px">
+    <!-- both buttons name themselves, so there is no hidden 'do' for one of them to
+         silently override depending on document order -->
+    <button class=ghost name=do value=wcdiag>&#129514; why hasn&rsquo;t an email arrived?</button>
+    <button name=do value=wcsendone onclick="return confirm('Send the welcome email to this address now?')">&#9889; send it to them now</button>
   </form>
+<?php endif; ?>
+<?php if($wcOne !== null): ?>
+  <div style="margin-top:.9rem;padding:.85rem 1rem;border-radius:10px;background:<?=$wcOne['ok']?'#0c2416':'#2a0f18'?>;border:1px solid <?=$wcOne['ok']?'#1e6b3a':'#7a2740'?>">
+    <div style="font-size:.9rem;color:#f0f5fc">
+    <?php if($wcOne['ok']): ?>
+      &#9989; <strong>Sent to <?=h($wcOne['to'])?></strong> just now, addressed to <?=h($wcOne['name'])?>.
+      <?php if(!$wcOne['known']): ?><br><span class=mach>Note: no customer record matches that address, so it was sent as a one-off and nothing was recorded against an account.</span><?php endif; ?>
+    <?php else: ?>
+      &#10060; <strong>Not sent.</strong> <?=h($wcOne['why'])?>
+    <?php endif; ?>
+    </div>
+  </div>
 <?php endif; ?>
 <?php if($wcDiag !== null): ?>
   <div style="margin-top:.9rem;padding:.9rem 1rem;background:#0b1226;border:1px solid #2a3b63;border-radius:10px">
