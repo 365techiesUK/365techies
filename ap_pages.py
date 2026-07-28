@@ -1215,6 +1215,88 @@ def s11_r510_playbook():
         'access points.</p>',
         '</div></section>',
 
+        ' <section class="section section--alt"><div class="wrap wrap--narrow prose" data-reveal>',
+        '<h2 class="section-title" data-title>What about other manufacturers?'
+        '<span class="title-underline"></span></h2>',
+        '<p>A fair question, and the answer is shaped by one thing: <strong>can it run on the '
+        '802.3af switches you already own?</strong> That single question is worth roughly the '
+        'price of a switch replacement, and it separates the field more sharply than any '
+        'throughput figure.</p>',
+        '<div class="table-wrap"><table class="table">',
+        '<thead><tr><th>Access point</th><th>Wi-Fi</th><th>Streams</th><th>PoE</th>'
+        '<th>Runs on your existing af switches?</th></tr></thead><tbody>',
+
+        '<tr><td><strong>RUCKUS R510</strong><br><span class="mono">what you have</span></td>'
+        '<td>Wi-Fi 5 Wave 2</td><td>2x2:2</td><td>802.3af, 12.6&nbsp;W</td>'
+        '<td><strong style="color:var(--good)">Yes &mdash; it is what they were built for</strong></td></tr>',
+
+        '<tr><td><strong>RUCKUS R550</strong><br><span class="mono">the successor</span></td>'
+        '<td>Wi-Fi 6</td><td>2x2:2</td><td>802.3at, 18.71&nbsp;W</td>'
+        '<td><strong style="color:var(--bad)">No &mdash; runs crippled on af</strong> '
+        '(2.4GHz only, 2nd port, IoT and USB off)</td></tr>',
+
+        '<tr><td><strong>RUCKUS R650</strong><br><span class="mono">the step up</span></td>'
+        '<td>Wi-Fi 6</td><td>4x4:4 (5GHz)</td><td>802.3at, 21.59&nbsp;W</td>'
+        '<td><strong style="color:var(--bad)">No</strong> &mdash; and it wants a 2.5GbE port to '
+        'be worth paying for</td></tr>',
+
+        '<tr><td><strong>Aruba Instant On AP22</strong><br><span class="mono">HPE</span></td>'
+        '<td>Wi-Fi 6</td><td>2x2:2</td><td>802.3af, 10.1&nbsp;W max</td>'
+        '<td><strong style="color:var(--good)">Yes</strong> &mdash; Wi-Fi 6 with no switch spend '
+        'at all</td></tr>',
+
+        '<tr><td><strong>Ubiquiti UniFi U6 Pro</strong></td>'
+        '<td>Wi-Fi 6</td><td>4x4 (5GHz) / 2x2 (2.4GHz)</td><td>13&nbsp;W max; class not stated '
+        'by the vendor</td>'
+        '<td><strong style="color:var(--warn)">Treat as no.</strong> 13&nbsp;W is above the '
+        '12.95&nbsp;W af guarantees at the device</td></tr>',
+
+        '</tbody></table></div>',
+        C.ap_fact('Aruba Instant On AP22: 802.3af, 10.1W maximum. UniFi U6 Pro: 13W maximum, '
+                  '4x4 on 5GHz and 2x2 on 2.4GHz, gigabit uplink. Both from the vendors&rsquo; '
+                  'own published specifications.'),
+        '<p><strong>The U6 Pro line is worth explaining,</strong> because it is the kind of detail '
+        'that causes a bad purchase. Ubiquiti publishes &ldquo;Power Method: PoE&rdquo; without '
+        'naming a class. But 802.3af only <em>guarantees</em> 12.95&nbsp;W at the far end, and the '
+        'U6 Pro is rated to draw up to 13&nbsp;W. You cannot rely on af for a device rated above '
+        'what af promises. That is arithmetic from the vendor&rsquo;s own numbers, not an opinion '
+        '&mdash; but it is also why we would want it in writing from the reseller before ordering '
+        'eighteen of anything.</p>',
+        '<p><strong>Cambium, EnGenius and TP-Link Omada</strong> all make credible business access '
+        'points in this class, and all sit below RUCKUS on price. We have deliberately left their '
+        'figures out rather than fill them in from memory &mdash; every number in this cluster '
+        'comes from a vendor document we have actually read, and we would rather have a gap than '
+        'a guess. Ask us and we will check the current datasheets properly.</p>',
+        '</div></section>',
+
+        ' <section class="section"><div class="wrap wrap--narrow prose" data-reveal>',
+        '<h2 class="section-title" data-title>Why we would still think hard before switching'
+        '<span class="title-underline"></span></h2>',
+        '<p>On price alone, several of the alternatives above win. On this particular floor, we '
+        'would still pause, for two reasons that do not appear on a spec sheet.</p>',
+        '<p><strong>1. Your problem is noise, not throughput.</strong> A floor full of vehicle '
+        'hotspots competing for the same channels is a hearing problem: how well does the access '
+        'point pick a weak client out of a congested channel? That is antenna and radio design, '
+        'and it is the one thing spec sheets communicate badly. Two access points with identical '
+        'stream counts can behave very differently in a noisy room. RUCKUS&rsquo;s engineering '
+        'differentiator has always been adaptive antennas that steer around interference, which is '
+        'precisely the problem this site has. That is worth something here that it would not be '
+        'worth in a quiet office.</p>',
+        '<p><strong>2. The switching cost is not the hardware.</strong> Changing vendor means '
+        'eighteen working access points scrapped, the controller replaced, a management platform '
+        'your team has to relearn, and a new support relationship &mdash; to solve a problem that '
+        'may well turn out to be channel planning. That cost never appears in the quote.</p>',
+        C.ap_field('If the honest diagnosis is &ldquo;the switches are the constraint and 2.4GHz '
+                   'is congested&rdquo;, then the cheapest correct answer is usually a switch with '
+                   'a bigger PoE budget and a proper channel plan &mdash; and the existing access '
+                   'points stay where they are until 2028. We would rather tell you that and quote '
+                   'for a day&rsquo;s work than sell you eighteen access points.'),
+        '<p>Where the alternatives genuinely earn their place: if the switches cannot be upgraded '
+        'in this budget year, an 802.3af Wi-Fi 6 access point like the Instant On AP22 gets you a '
+        'generation forward on the power you already have. That is a real option and we would say '
+        'so.</p>',
+        '</div></section>',
+
         ' <section class="section"><div class="wrap wrap--narrow prose" data-reveal>',
         '<h2 class="section-title" data-title>Heat: what it costs you in access points'
         '<span class="title-underline"></span></h2>',
@@ -1438,6 +1520,20 @@ def s11_r510_playbook():
          "carry current through the shield and cause faults stranger than the interference it "
          "was fitted to prevent. Badly installed shielded cable is worse than good unshielded "
          "cable."),
+        ("Are there alternatives to the R550 that run on my existing 802.3af switches?",
+         "Yes. The Aruba Instant On AP22 is a Wi-Fi 6 access point rated at 802.3af and 10.1W "
+         "maximum on the vendor's datasheet, so it would run on af switches with no power upgrade "
+         "at all. Be careful with others: the UniFi U6 Pro is published at 13W maximum without a "
+         "stated PoE class, and 802.3af only guarantees 12.95W at the device - so af cannot be "
+         "relied on for it. Always get the PoE class in writing before ordering a fleet."),
+        ("Should I switch away from RUCKUS to save money?",
+         "On price alone several alternatives win. On a noisy floor we would still think hard. "
+         "The problem on a showroom floor is usually hearing a weak client through a congested "
+         "channel, which is antenna and radio design rather than stream count - and that is what "
+         "spec sheets convey worst. Switching vendor also means scrapping working access points, "
+         "replacing the controller and relearning a platform, none of which appears in the quote. "
+         "If the real fault is power and channel planning, neither new hardware nor a new vendor "
+         "fixes it."),
         ("Does heat shorten the life of an access point?",
          "Yes, more than anything else does. The engineering rule of thumb is that every 10C of "
          "sustained temperature rise roughly halves the working life of the capacitors and power "
