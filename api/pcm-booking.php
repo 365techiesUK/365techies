@@ -755,6 +755,88 @@ function pcm_welcome_maybe(&$c, $ckey, $email, $name) {
     $c['welcomed'] = time();
 }
 
+/* ---------------------------------------------------------------------------
+   BACKFILL - the launch email for customers who were already signed in.
+
+   The automatic welcome cannot reach them. It fires when a portal session is
+   CREATED, and theirs already exists and slides for a year on every visit, so
+   it will never fire again for them. This is the one-off that closes that gap.
+
+   DRY RUN BY DEFAULT. Nothing is queued and nothing is sent unless send=1 is
+   passed explicitly. Deliberate: this is the only thing here that touches every
+   customer at once, and it should take two decisions, not one.
+
+   Recipients are customers who ALREADY HAVE A PORTAL SESSION - the literal
+   answer to "everyone I have logged in". Filtered further by tier, because the
+   copy talks about service visits and Direct Debits: it is written for support
+   customers and would puzzle a free member.
+
+   Send rate is the queue's, not ours: 5 per 5-minute cron tick, so ~60/hour.
+   That is deliberately gentle on a sending reputation we have only just proven.
+
+     action=wcbackfill, s=<admin pass>            -> dry run, counts only
+     action=wcbackfill, s=<admin pass>, send=1    -> queue them
+     ...add tier=all to include free members too
+   --------------------------------------------------------------------------- */
+if ($action === 'wcbackfill') {
+    $sec = __DIR__ . '/pcm-admin-secret.php';
+    $given = (string)(isset($in['s']) ? $in['s'] : '');
+    $okAdm = false;
+    if ($given !== '' && is_readable($sec)) { require $sec; if (!empty($PCM_ADMIN_PASS) && hash_equals($PCM_ADMIN_PASS, $given)) $okAdm = true; }
+    if (!$okAdm) fail('denied');
+    if (!pub_rate('wcbf', 6, 600)) fail('busy');
+
+    $proOnly = !(isset($in['tier']) && $in['tier'] === 'all');
+    $doSend  = !empty($in['send']);
+
+    list($lk, $db) = db_open();
+    // who has a portal session? the websessions table is the record of "logged in"
+    $signedIn = array();
+    if (!empty($db['websessions']) && is_array($db['websessions'])) {
+        foreach ($db['websessions'] as $wv) {
+            if (!is_array($wv) || !empty($wv['viewas'])) continue;   // staff impersonation is not a customer
+            $k = isset($wv['key']) ? (string)$wv['key'] : '';
+            if ($k !== '') $signedIn[$k] = true;
+        }
+    }
+
+    $stats = array('signed_in' => count($signedIn), 'eligible' => 0, 'queued' => 0,
+                   'skip_already' => 0, 'skip_no_email' => 0, 'skip_tier' => 0, 'skip_missing' => 0);
+    $sample = array();
+    foreach (array_keys($signedIn) as $k) {
+        if (!isset($db['customers'][$k])) { $stats['skip_missing']++; continue; }
+        $c =& $db['customers'][$k];
+        if (!empty($c['welcomed'])) { $stats['skip_already']++; unset($c); continue; }
+        if ($proOnly && (!isset($c['tier']) || $c['tier'] !== 'pro')) { $stats['skip_tier']++; unset($c); continue; }
+        $em = '';
+        foreach (array('sb_email', 'email') as $f) {
+            if (!empty($c[$f]) && filter_var($c[$f], FILTER_VALIDATE_EMAIL)) { $em = strtolower(trim($c[$f])); break; }
+        }
+        if ($em === '') { $stats['skip_no_email']++; unset($c); continue; }
+        $stats['eligible']++;
+        if (count($sample) < 8) $sample[] = $em;
+        if ($doSend) {
+            if (!defined('RV_LIB')) define('RV_LIB', 1);
+            @include_once __DIR__ . '/pcm-review.php';
+            if (function_exists('wc_record')) {
+                wc_record($k, $em, isset($c['name']) ? $c['name'] : '', 'launch');
+                $c['welcomed'] = time();      // never also send them the "just now" welcome
+                $stats['queued']++;
+            }
+        }
+        unset($c);
+    }
+    if ($doSend && $stats['queued']) db_save($db);
+    db_close($lk);
+
+    out(array('ok' => true, 'mode' => $doSend ? 'QUEUED' : 'dry-run (nothing sent)',
+              'tier' => $proOnly ? 'support customers only' : 'everyone with a portal session',
+              'stats' => $stats, 'sample_recipients' => $sample,
+              'note' => $doSend
+                  ? 'Queued. They drain at 5 per 5-minute cron tick (~60/hour) and each one pings Slack.'
+                  : 'Nothing was queued or sent. Re-send this with send=1 to go ahead.'));
+}
+
 if ($action === 'join') {
     $email = strtolower(trim((string)(isset($in['email']) ? $in['email'] : '')));
     if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) fail('bad_email');

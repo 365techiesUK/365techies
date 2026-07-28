@@ -619,7 +619,10 @@ $WC_MAX_AGE = 604800;   // 7 days. The email opens "lovely to get you set up jus
                         // flipping $WC_LIVE would post-date a month of stale welcomes.
 
 // Queue a welcome. Returns true only if this is genuinely the first time.
-function wc_record($ckey, $email, $name) {
+// $kind: 'welcome' (their portal session was just created) or 'launch' (they were
+// already signed in before any of this existed - see wl_body). One entry per
+// customer either way, so nobody can receive both.
+function wc_record($ckey, $email, $name, $kind = 'welcome') {
     $ckey  = substr(preg_replace('/[^A-Za-z0-9_.@+-]/', '', (string)$ckey), 0, 80);
     $email = strtolower(trim((string)$email));
     if ($ckey === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) return false;
@@ -633,6 +636,7 @@ function wc_record($ckey, $email, $name) {
     if (!isset($q['wc'])) $q['wc'] = array();
     if (isset($q['wc'][$ckey])) { rvq_close($lk); return false; }   // already welcomed, ever
     $q['wc'][$ckey] = array('em' => $email, 'nm' => rv_clean_name($name), 'ts' => time(),
+                            'k' => ($kind === 'launch' ? 'launch' : 'welcome'),
                             'st' => 'pending', 'tries' => 0);
     rvq_save($q);
     rvq_close($lk);
@@ -742,6 +746,138 @@ WCHTML;
     return strtr($tpl, array('{FIRST}' => htmlspecialchars($first, ENT_QUOTES, 'UTF-8')));
 }
 
+/* ---------------------------------------------------------------------------
+   THE BACKFILL COPY - for customers who were ALREADY signed in before any of
+   this existed. They cannot be reached by the automatic welcome: it fires when
+   a portal session is created, and theirs already exists and slides for a year.
+
+   Different copy, and it has to be. The welcome opens "lovely to get you set up
+   just now", which to someone set up in June is simply untrue. This one starts
+   from where they actually are: they already have the bookmark, and what has
+   changed is what sits behind it.
+
+   Same rule as the welcome: no offer, no upsell. That is what keeps it a
+   service email about an account they already hold rather than marketing.
+   --------------------------------------------------------------------------- */
+function wl_subject() { return 'The bookmark in your browser just got a lot more useful'; }
+
+function wl_body($first) {
+    return 'Hi ' . $first . ",\r\n\r\n"
+    . "You already have a link to your 365 portal saved in your browser. We have\r\n"
+    . "spent the past few months rebuilding what sits behind it, and it is now\r\n"
+    . "properly live.\r\n\r\n"
+    . "It exists for one reason: the small jobs you would normally have to ring us\r\n"
+    . "about, you can now just do yourself, in seconds, at whatever hour suits you.\r\n\r\n"
+    . "You are already signed in on your computer. Nothing to set up, no app to\r\n"
+    . "install, no password to invent. Click your bookmark and you are straight in.\r\n\r\n"
+    . "  https://365techies.co.uk/portal/\r\n\r\n"
+    . "WHAT IS WAITING FOR YOU\r\n\r\n"
+    . "  * Book, move or cancel a visit yourself, at any hour\r\n"
+    . "  * Your next service date, and what your Direct Debit is\r\n"
+    . "  * Get us connected for remote help, one big step at a time\r\n"
+    . "  * Free courses in plain English, at your own pace\r\n\r\n"
+    . "NOTHING CHANGES UNLESS YOU WANT IT TO\r\n\r\n"
+    . "Your plan, your price and your visits carry on exactly as they are. The\r\n"
+    . "phone still works and always will - if you would rather ring us, ring us,\r\n"
+    . "and you will get the same two people you always get. The portal is simply\r\n"
+    . "another way to reach us, and it happens to be open at eleven on a Sunday\r\n"
+    . "night when we are not.\r\n\r\n"
+    . "Reading this on your phone? Tap the link anyway. We will email you a\r\n"
+    . "six-digit code to let you in, and that device stays signed in too.\r\n\r\n"
+    . "Thank you, genuinely, for being with us. We are a small family firm and\r\n"
+    . "everything we build gets built because people like you stayed with us.\r\n\r\n"
+    . "Steve & David\r\n"
+    . "365 Techies - family-run IT support in Bournemouth since 1995\r\n"
+    . "01202 775566 - https://365techies.co.uk\r\n\r\n"
+    . "P.S. There is more coming. We are finishing an app called 365 PC Manager\r\n"
+    . "that keeps a quiet eye on your computer's health and reports it straight\r\n"
+    . "into your portal. You will hear from us the moment it is ready.\r\n";
+}
+
+function wl_body_html($first) {
+    $tpl = <<<'WLHTML'
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="light" /><title>Your 365 portal</title>
+</head>
+<body style="margin:0;padding:0;background-color:#eef3f9;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#eef3f9;">
+<tr><td align="center" style="padding:22px 12px;">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;background-color:#ffffff;border-radius:14px;overflow:hidden;">
+
+<tr><td bgcolor="#0b1226" style="background-color:#0b1226;padding:24px 32px;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
+<td valign="middle" style="padding-right:13px;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
+<td align="center" valign="middle" width="44" height="44" bgcolor="#1d97e3" style="width:44px;height:44px;background-color:#1d97e3;border-radius:9px;font-family:'Segoe UI',-apple-system,Helvetica,Arial,sans-serif;font-size:16px;font-weight:700;color:#ffffff;text-align:center;line-height:44px;mso-line-height-rule:exactly;">365</td>
+</tr></table>
+</td>
+<td valign="middle">
+<div style="font-family:'Segoe UI',-apple-system,Helvetica,Arial,sans-serif;font-size:18px;font-weight:700;color:#ffffff;line-height:1.2;">365&nbsp;Techies</div>
+<div style="font-family:'Segoe UI',-apple-system,Helvetica,Arial,sans-serif;font-size:11px;font-weight:600;color:#7fb6e4;letter-spacing:1.6px;text-transform:uppercase;padding-top:3px;">Your customer portal</div>
+</td></tr></table>
+</td></tr>
+<tr><td style="height:4px;background-color:#1d97e3;font-size:0;line-height:0;">&nbsp;</td></tr>
+
+<tr><td bgcolor="#ffffff" style="background-color:#ffffff;padding:32px 32px 8px 32px;font-family:'Segoe UI',-apple-system,Helvetica,Arial,sans-serif;">
+<h1 style="margin:0 0 18px 0;font-size:27px;line-height:1.25;font-weight:700;color:#0b1226 !important;letter-spacing:-.3px;">The bookmark in your browser just became a great deal more useful</h1>
+<p style="margin:0 0 16px 0;font-size:17px;line-height:1.62;color:#243352 !important;">Hi {FIRST},</p>
+<p style="margin:0 0 16px 0;font-size:17px;line-height:1.62;color:#243352 !important;">You already have a link to your <strong style="color:#0b1226;">365 portal</strong> saved in your browser. We have spent the past few months rebuilding what sits behind it, and it is now properly live.</p>
+<p style="margin:0 0 16px 0;font-size:17px;line-height:1.62;color:#243352 !important;">It exists for one reason: the small jobs you would normally have to ring us about, you can now just do yourself &mdash; in seconds, at whatever hour suits you.</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:4px 0;"><tr>
+<td bgcolor="#f2f8fd" style="background-color:#f2f8fd;border-left:4px solid #1d97e3;border-radius:0 8px 8px 0;padding:17px 21px;">
+<p style="margin:0;font-size:17px;line-height:1.55;color:#0b1226 !important;"><strong>You are already signed in on your computer.</strong> Nothing to set up, no app to install, no password to invent. Click your bookmark and you are straight in.</p>
+</td></tr></table>
+</td></tr>
+
+<tr><td bgcolor="#ffffff" style="background-color:#ffffff;padding:26px 32px 4px 32px;font-family:'Segoe UI',-apple-system,Helvetica,Arial,sans-serif;">
+<p style="margin:0 0 14px 0;font-size:12px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:#1d97e3 !important;">What is waiting for you</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+<tr><td width="34" valign="top" style="width:34px;padding:0 12px 16px 0;font-size:20px;line-height:1.3;">&#128197;</td><td valign="top" style="padding:0 0 16px 0;font-size:16px;line-height:1.6;color:#3d4d6d !important;"><strong style="color:#0b1226;">Book, move or cancel a visit</strong> yourself. Changed your mind at nine on a Sunday evening? Move it in two taps &mdash; no waiting for us to open.</td></tr>
+<tr><td width="34" valign="top" style="width:34px;padding:0 12px 16px 0;font-size:20px;line-height:1.3;">&#128179;</td><td valign="top" style="padding:0 0 16px 0;font-size:16px;line-height:1.6;color:#3d4d6d !important;"><strong style="color:#0b1226;">Your plan, in plain sight.</strong> Your next service date and, if you pay by Direct Debit, exactly what leaves your account and when.</td></tr>
+<tr><td width="34" valign="top" style="width:34px;padding:0 12px 16px 0;font-size:20px;line-height:1.3;">&#128736;</td><td valign="top" style="padding:0 0 16px 0;font-size:16px;line-height:1.6;color:#3d4d6d !important;"><strong style="color:#0b1226;">Remote support, made simple.</strong> When you need one of us to connect, it walks you through it one large step at a time.</td></tr>
+<tr><td width="34" valign="top" style="width:34px;padding:0 12px 16px 0;font-size:20px;line-height:1.3;">&#127891;</td><td valign="top" style="padding:0 0 16px 0;font-size:16px;line-height:1.6;color:#3d4d6d !important;"><strong style="color:#0b1226;">Free courses</strong> in plain English, at your own pace.</td></tr>
+</table>
+</td></tr>
+
+<tr><td bgcolor="#ffffff" style="background-color:#ffffff;padding:8px 32px 0 32px;font-family:'Segoe UI',-apple-system,Helvetica,Arial,sans-serif;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+<td bgcolor="#f7f9fc" style="background-color:#f7f9fc;border:1px solid #e3eaf4;border-radius:10px;padding:19px 22px;">
+<div style="font-size:17px;font-weight:700;color:#0b1226 !important;margin-bottom:7px;">Nothing changes unless you want it to</div>
+<div style="font-size:16px;line-height:1.62;color:#3d4d6d !important;">Your plan, your price and your visits all carry on exactly as they are. The phone still works and always will &mdash; if you would rather ring us, ring us, and you will get the same two people you always get. The portal is simply another way to reach us, and it happens to be open at eleven on a Sunday night when we are not.</div>
+</td></tr></table>
+</td></tr>
+
+<tr><td bgcolor="#ffffff" align="center" style="background-color:#ffffff;padding:28px 32px 6px 32px;font-family:'Segoe UI',-apple-system,Helvetica,Arial,sans-serif;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center"><tr>
+<td align="center" bgcolor="#1d97e3" style="background-color:#1d97e3;border-radius:9px;">
+<a href="https://365techies.co.uk/portal/" style="display:inline-block;padding:17px 38px;font-family:'Segoe UI',-apple-system,Helvetica,Arial,sans-serif;font-size:18px;font-weight:700;color:#ffffff !important;text-decoration:none;border-radius:9px;">Open my 365&nbsp;portal</a>
+</td></tr></table>
+<p style="margin:16px 0 0 0;font-size:15px;line-height:1.6;color:#5b6b8a !important;">Reading this on your phone or tablet? Tap it anyway &mdash; we will email you a six&#8209;digit code to let you in, and that device stays signed in afterwards too.</p>
+</td></tr>
+
+<tr><td bgcolor="#ffffff" style="background-color:#ffffff;padding:26px 32px 30px 32px;font-family:'Segoe UI',-apple-system,Helvetica,Arial,sans-serif;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="border-top:1px solid #e3eaf4;font-size:0;line-height:0;height:1px;">&nbsp;</td></tr></table>
+<p style="margin:22px 0 18px 0;font-size:17px;line-height:1.62;color:#243352 !important;">Thank you, genuinely, for being with us. We are a small family firm and everything we build gets built because people like you stayed with us.</p>
+<p style="margin:0 0 3px 0;font-size:17px;color:#0b1226 !important;"><strong>Steve and David</strong></p>
+<p style="margin:0 0 20px 0;font-size:15px;line-height:1.6;color:#5b6b8a !important;">365 Techies &middot; family-run IT support in Bournemouth since 1995<br /><a href="tel:+441202775566" style="color:#1266a8;font-weight:600;text-decoration:none;">01202 775566</a> &middot; <a href="mailto:info@365techies.co.uk" style="color:#1266a8;text-decoration:none;">info@365techies.co.uk</a></p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+<td bgcolor="#fbfcfe" style="background-color:#fbfcfe;border:1px dashed #dbe5f2;border-radius:10px;padding:16px 20px;">
+<div style="font-size:15px;line-height:1.6;color:#5b6b8a !important;"><strong style="color:#0b1226;">One more thing.</strong> We are finishing an app called 365&nbsp;PC&nbsp;Manager that keeps a quiet eye on your computer&rsquo;s health and reports it straight into your portal. It is not quite ready, and we would rather it were right than early. You will hear from us the moment it is.</div>
+</td></tr></table>
+</td></tr>
+
+<tr><td bgcolor="#f4f7fb" style="background-color:#f4f7fb;padding:18px 32px;border-top:1px solid #e3eaf4;font-family:'Segoe UI',-apple-system,Helvetica,Arial,sans-serif;">
+<p style="margin:0;font-size:13px;line-height:1.6;color:#7c8aa5 !important;">You are receiving this because you are a 365 Techies support customer &mdash; it is about the service you pay for. 365 Techies Ltd, Bournemouth, Dorset &middot; <a href="https://365techies.co.uk/privacy-policy/" style="color:#7c8aa5;">Privacy</a></p>
+</td></tr>
+
+</table></td></tr></table></body></html>
+WLHTML;
+    return strtr($tpl, array('{FIRST}' => htmlspecialchars($first, ENT_QUOTES, 'UTF-8')));
+}
+
 // ---- welcome queue processor. Mirrors rv_process: locked, capped, retried. ----
 function wc_process($cap = 5) {
     global $WC_LIVE, $WC_MAX_AGE, $WC_DELAY;
@@ -774,7 +910,8 @@ function wc_process($cap = 5) {
             $q['wc'][$ck]['st'] = 'sending';
             $q['wc'][$ck]['snd_ts'] = time();
             $q['wc'][$ck]['tries'] = (isset($e['tries']) ? $e['tries'] : 0) + 1;
-            $picked[$ck] = array('em' => $em, 'nm' => isset($e['nm']) ? $e['nm'] : '');
+            $picked[$ck] = array('em' => $em, 'nm' => isset($e['nm']) ? $e['nm'] : '',
+                                 'k' => (isset($e['k']) && $e['k'] === 'launch') ? 'launch' : 'welcome');
         }
     }
     rvq_save($q);
@@ -784,8 +921,16 @@ function wc_process($cap = 5) {
     $sent = 0; $failed = array();
     foreach ($picked as $ck => $p) {
         $first = rv_first($p['nm']);
-        $ok = rv_send_raw($p['em'], wc_subject(), wc_body($first), '', '', wc_body_html($first));
-        if ($ok) { $sent++; rv_slack(':wave: *Portal welcome sent* to ' . $p['em'] . ' - they were signed in to their portal for the first time.'); }
+        if ($p['k'] === 'launch') {
+            $ok = rv_send_raw($p['em'], wl_subject(), wl_body($first), '', '', wl_body_html($first));
+            $say = ':mailbox_with_mail: *Portal launch email sent* to ' . $p['em']
+                 . ' - an existing customer who was already signed in.';
+        } else {
+            $ok = rv_send_raw($p['em'], wc_subject(), wc_body($first), '', '', wc_body_html($first));
+            $say = ':wave: *Portal welcome sent* to ' . $p['em']
+                 . ' - they were signed in to their portal for the first time.';
+        }
+        if ($ok) { $sent++; rv_slack($say); }
         else $failed[] = $ck;
     }
 
@@ -1018,7 +1163,7 @@ if (!defined('RV_LIB')) {
         // ?test=1 sends the review ask; ?test=done sends the job-done visit record.
         $tmap = array('1' => 'review', 'review' => 'review', 'done' => 'done',
                       'confirm' => 'confirm', 'change' => 'change', 'cancel' => 'cancel', 'remind' => 'remind',
-                      'welcome' => 'welcome');
+                      'welcome' => 'welcome', 'launch' => 'launch');
         // NOTE the shape: the kind is the VALUE of ?test (?test=welcome). An unknown
         // value silently falls back to 'review', so a mistyped kind looks like it
         // worked - check the "kind" field in the reply, not just ok:true.
@@ -1040,6 +1185,9 @@ if (!defined('RV_LIB')) {
             // Deliberately ignores $WC_LIVE: the whole point of a test send is to see it
             // in your own inbox BEFORE you let it loose on customers.
             $ok = rv_send_raw($tto, wc_subject(), wc_body('Steve'), '', '', wc_body_html('Steve'));
+        }
+        elseif ($tkind === 'launch') {
+            $ok = rv_send_raw($tto, wl_subject(), wl_body('Steve'), '', '', wl_body_html('Steve'));
         }
         elseif ($tkind === 'remind') {
             $rts = strtotime('tomorrow 14:00');
