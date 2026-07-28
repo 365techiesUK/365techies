@@ -1289,8 +1289,8 @@ def s11_r510_playbook():
         C.ap_field('If the honest diagnosis is &ldquo;the switches are the constraint and 2.4GHz '
                    'is congested&rdquo;, then the cheapest correct answer is usually a switch with '
                    'a bigger PoE budget and a proper channel plan &mdash; and the existing access '
-                   'points stay where they are until 2028. We would rather tell you that and quote '
-                   'for a day&rsquo;s work than sell you eighteen access points.'),
+                   'points stay where they are until 2028. That answer is free, and you did not '
+                   'need anyone to sell you anything to reach it.'),
         '<p>Where the alternatives genuinely earn their place: if the switches cannot be upgraded '
         'in this budget year, an 802.3af Wi-Fi 6 access point like the Instant On AP22 gets you a '
         'generation forward on the power you already have. That is a real option and we would say '
@@ -1423,6 +1423,44 @@ def s11_r510_playbook():
                    'A Wi-Fi 6 unit handles a congested channel more gracefully than a Wi-Fi 5 one, '
                    'but it cannot make the stock stop transmitting. If the floor is noisy, spend '
                    'the money on channel planning and 5GHz coverage before hardware.'),
+        '</div></section>',
+
+
+        ' <section class="section section--alt"><div class="wrap wrap--narrow prose" data-reveal>',
+        '<h2 class="section-title" data-title>Why this page gives the method away'
+        '<span class="title-underline"></span></h2>',
+        '<p>You may have noticed there is no quote on this page, and no attempt to talk you into '
+        'anything. That is deliberate.</p>',
+        '<p>Everything above is what we would actually do, in the order we would actually do it. '
+        'If you work through it yourself and find the fault, that is a good outcome. An IT manager '
+        'who understands why his floor misbehaves is in a far better position than one who has '
+        'been sold a solution to a problem nobody diagnosed.</p>',
+        '<p><strong>Money does not buy you out of a problem like this.</strong> No budget finds a '
+        'copper-clad-aluminium cable run buried in a wall. No purchase order fixes a channel plan. '
+        'You can spend twenty thousand pounds on new access points and end up with an expensive '
+        'version of the same complaint &mdash; and we have been called in to exactly that, more '
+        'than once, after the money was already gone.</p>',
+        '<p>What does work is unglamorous:</p>',
+        '<ul>',
+        '<li><strong>Establish what is actually happening</strong>, from one real incident rather '
+        'than a general feeling.</li>',
+        '<li><strong>Measure before you change anything</strong>, so you have something to compare '
+        'against later.</li>',
+        '<li><strong>Change one thing at a time</strong>, and write down what you changed.</li>',
+        '<li><strong>Test in one zone</strong> before committing the whole floor.</li>',
+        '<li><strong>Keep the old kit</strong> until the new arrangement has survived a busy week.</li>',
+        '</ul>',
+        '<p>That is not a clever method. It is just the one that works, and the reason problems '
+        'like this get called unsolvable is almost always that somebody skipped a step and then '
+        'could not tell which change caused what.</p>',
+        C.ap_field('The pattern we see most: an estate gets replaced because replacing it is the '
+                   'easiest thing to authorise. Diagnosis takes patience and an afternoon on the '
+                   'floor with a laptop; a purchase order takes a signature. The purchase order '
+                   'is quicker to approve and far more likely to disappoint.'),
+        '<p>If you get stuck, we are happy to talk it through &mdash; on the phone, no visit, no '
+        'obligation. We would rather more IT managers could work this out themselves. It is the '
+        'sites where nobody will go this deep, or where the only answers on offer come with a '
+        'five-figure price tag attached, that we tend to end up on anyway.</p>',
         '</div></section>',
 
         ' <section class="section section--alt"><div class="wrap wrap--narrow prose" data-reveal>',
