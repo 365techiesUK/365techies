@@ -143,6 +143,66 @@ if (($_POST['do'] ?? '') === 'shield') {
     }
 }
 
+/* ---------------------------------------------------------------------------
+   PORTAL LAUNCH EMAIL - the one-off for customers who were already signed in.
+
+   Lives here rather than behind an API password because this is the only thing
+   that emails every customer at once, and it should take a login and a
+   considered click - not a passphrase pasted into a browser console.
+
+   Two steps on purpose. Preview counts and shows who; only then does the send
+   button appear, with the number written on it. Nothing is written to disk by
+   the preview.
+
+   Customers who already have a portal session cannot be reached by the
+   automatic welcome (that fires when a session is CREATED, and theirs already
+   exists and slides for a year), which is the entire reason this exists.
+   --------------------------------------------------------------------------- */
+$wcPrev = null;
+if (in_array(($_POST['do'] ?? ''), array('wcpreview', 'wcsend'), true)) {
+    $wcSend  = (($_POST['do'] ?? '') === 'wcsend');
+    $wcAll   = !empty($_POST['wcall']);          // include free members too
+    $signedIn = array();
+    foreach (($db['websessions'] ?? array()) as $wv) {
+        if (!is_array($wv) || !empty($wv['viewas'])) continue;   // staff impersonation is not a customer
+        if (!empty($wv['key'])) $signedIn[(string)$wv['key']] = true;
+    }
+    $wcPrev = array('signed_in' => count($signedIn), 'eligible' => 0, 'queued' => 0,
+                    'already' => 0, 'no_email' => 0, 'free' => 0, 'gone' => 0, 'who' => array());
+    foreach (array_keys($signedIn) as $k) {
+        if (!isset($db['customers'][$k])) { $wcPrev['gone']++; continue; }
+        $c =& $db['customers'][$k];
+        if (!empty($c['welcomed'])) { $wcPrev['already']++; unset($c); continue; }
+        if (!$wcAll && (($c['tier'] ?? '') !== 'pro')) { $wcPrev['free']++; unset($c); continue; }
+        $em = '';
+        foreach (array('sb_email', 'email') as $f) {
+            if (!empty($c[$f]) && filter_var($c[$f], FILTER_VALIDATE_EMAIL)) { $em = strtolower(trim($c[$f])); break; }
+        }
+        if ($em === '') { $wcPrev['no_email']++; unset($c); continue; }
+        $wcPrev['eligible']++;
+        if (count($wcPrev['who']) < 60) $wcPrev['who'][] = ($c['name'] ?? '') . ' <' . $em . '>';
+        if ($wcSend) {
+            if (!defined('RV_LIB')) define('RV_LIB', 1);
+            @include_once __DIR__ . '/pcm-review.php';
+            if (function_exists('wc_record')) {
+                wc_record($k, $em, (string)($c['name'] ?? ''), 'launch');
+                $c['welcomed'] = time();     // so they can never also get the "just now" welcome
+                $wcPrev['queued']++;
+            }
+        }
+        unset($c);
+    }
+    $wcPrev['all'] = $wcAll;
+    if ($wcSend && $wcPrev['queued']) {
+        save($DATA, $db);
+        $mins = (int)ceil($wcPrev['queued'] / 5) * 5;
+        $msg = "\xF0\x9F\x93\xAB Queued the launch email for {$wcPrev['queued']} customer(s). "
+             . "They go out 5 every 5 minutes (about {$mins} minutes in all) and each one pings Slack. "
+             . "Nobody gets it twice, and none of them will get the new-customer welcome later.";
+        $wcPrev = null;                      // the job is done; do not re-offer the button
+    }
+}
+
 // authed SOS screenshot viewer: streams api/pcm-sos-<keyhash>-<machine>.jpg (direct access denied)
 if (isset($_GET['shot'])) {
     $m = preg_replace('/[^a-f0-9\-]/','', substr((string)$_GET['shot'],0,48));
@@ -206,6 +266,52 @@ th{color:#9fb5d3;font-weight:600;font-size:.75rem;text-transform:uppercase;lette
  <div class=kpi><b style="color:#39d353"><?=$active?></b><span>checked in today</span></div>
 </div>
 <?php if($msg) echo '<div class=msg>'.h($msg).'</div>'; ?>
+
+<div style="background:#0d1a2e;border:1px solid #2a5b8f;border-radius:14px;padding:1rem 1.2rem;margin-bottom:1.5rem">
+  <h2 style="margin:0 0 .3rem;font-size:1rem;color:#86b6e8">&#128235; Portal launch email</h2>
+  <p style="color:#9fb5d3;font-size:.82rem;margin:0 0 .7rem">
+    A one&#8209;off for customers who were <strong>already signed in</strong> before the new portal existed &mdash;
+    they never get the automatic welcome, because that only fires when a portal session is first created and
+    theirs already exists. Everyone you sign in from now on is handled automatically.
+    Preview first; nothing is sent until you press the second button.
+  </p>
+<?php if($wcPrev === null): ?>
+  <form method=post class=inline>
+    <input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=wcpreview>
+    <button>&#128065; Preview who would get it</button>
+  </form>
+  <form method=post class=inline>
+    <input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=wcpreview>
+    <input type=hidden name=wcall value=1>
+    <button class=ghost>preview including free members</button>
+  </form>
+<?php else: ?>
+  <p style="color:#9fb5d3;font-size:.84rem;margin:0 0 .5rem">
+    <strong style="color:#f0f5fc"><?=$wcPrev['eligible']?></strong> would receive it,
+    out of <?=$wcPrev['signed_in']?> signed in.
+    Skipped: <?=$wcPrev['already']?> already had it,
+    <?=$wcPrev['free']?> free members<?=$wcPrev['all']?' (included this time)':''?>,
+    <?=$wcPrev['no_email']?> without an email, <?=$wcPrev['gone']?> deleted.
+  </p>
+  <?php if($wcPrev['who']): ?>
+  <details style="margin:0 0 .7rem"><summary style="cursor:pointer;color:#86b6e8;font-size:.82rem">Show the list</summary>
+    <div class=mach style="max-height:180px;overflow:auto;margin-top:.4rem;line-height:1.7">
+      <?php foreach($wcPrev['who'] as $wl) echo h($wl).'<br>'; ?>
+    </div>
+  </details>
+  <?php endif; ?>
+  <?php if($wcPrev['eligible']): ?>
+  <form method=post class=inline onsubmit="return confirm('Send the launch email to <?=$wcPrev['eligible']?> customers? This cannot be undone.')">
+    <input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=wcsend>
+    <?php if($wcPrev['all']): ?><input type=hidden name=wcall value=1><?php endif; ?>
+    <button>&#128233; Send it to <?=$wcPrev['eligible']?> customer(s)</button>
+  </form>
+  <?php else: ?>
+  <p style="color:#9fb5d3;font-size:.82rem;margin:0">Nobody is waiting &mdash; everyone signed in has already had it.</p>
+  <?php endif; ?>
+<?php endif; ?>
+</div>
+
 <?php if($pendings): ?>
 <div style="background:#0d1a2e;border:1px solid #2a5b8f;border-radius:14px;padding:1rem 1.2rem;margin-bottom:1.5rem">
   <h2 style="margin:0 0 .3rem;font-size:1rem;color:#86b6e8">&#128273; Sign-in requests &mdash; <?=count($pendings)?> to confirm</h2>
