@@ -27,7 +27,25 @@ $LOCK  = $BASE . '/pcm-bkpoll.lock';
 $TCACHE= $BASE . '/pcm-bkpoll-cache.json';   // admin token cache
 function jout($a){ echo json_encode($a); exit; }
 
-if (!is_readable($SBF)) jout(array('ok' => false, 'error' => 'no_config'));
+/* THE PORTAL WELCOME RUNS FIRST, BEFORE ANY SIMPLYBOOK WORK - and it must stay here.
+   It was originally the last line of this file, behind seven early exits (no_config,
+   no_admin_creds, forbidden, busy, auth, sb_unavailable x2). That meant a SimplyBook
+   credential change or a slow API silently stopped customer welcome emails, with no
+   error anywhere: the cron output goes to /dev/null and the exit looks like a normal
+   run. Steve hit exactly that on 28 Jul 2026 - two customers signed in, no email.
+
+   The welcome email has nothing to do with SimplyBook. It reads our own queue file
+   and sends. So it goes first, wrapped so that even a fatal in the mail layer cannot
+   take down the booking sync that follows. */
+$mailW = array('skip' => 'not_run');
+try {
+    if (!defined('RV_LIB')) define('RV_LIB', 1);
+    @include_once __DIR__ . '/pcm-review.php';
+    if (function_exists('wc_process')) $mailW = wc_process(5);
+} catch (Exception $e) { $mailW = array('error' => 'exception'); }
+$GLOBALS['mailW'] = $mailW;
+
+if (!is_readable($SBF)) jout(array('ok' => false, 'error' => 'no_config', 'welcome' => $mailW));
 require $SBF;
 if (empty($SB_COMPANY) || empty($SB_API_USER) || empty($SB_API_USER_KEY)) jout(array('ok' => false, 'error' => 'no_admin_creds'));
 if (!$CLI) {
@@ -136,14 +154,9 @@ if ($wh !== '') foreach ($toSlack as $t) {
 // is the near-real-time engine for "job done" emails (fires soon after a booking is
 // marked Completed above). Best-effort - a mail hiccup must never fail the poll.
 define('RV_LIB', 1);
-require __DIR__ . '/pcm-review.php';
+require_once __DIR__ . '/pcm-review.php';   // _once: already loaded at the top for wc_process
 $mailR = rv_process(3);
 $mailD = dn_process(3);
 $mailM = rm_process(5);
-// The portal welcome belongs on THIS cron, not the 2-hourly GitHub one. It is meant
-// to land while Steve or David is still sitting with the customer, so they can say
-// "that's just arrived - that's your link". A two-hour wait would miss that moment
-// entirely and turn it into a puzzling email the next day.
-$mailW = wc_process(5);
 jout(array('ok' => true, 'bookings' => count($rows), 'seeded' => $seeded, 'changed' => $changed, 'alerts' => count($toSlack),
-           'mail' => array('review' => $mailR, 'done' => $mailD, 'remind' => $mailM, 'welcome' => $mailW)));
+           'mail' => array('review' => $mailR, 'done' => $mailD, 'remind' => $mailM, 'welcome' => $GLOBALS['mailW'])));
