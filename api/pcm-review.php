@@ -676,7 +676,14 @@ function wc_body_html($first) {
 
 <tr><td bgcolor="#0b1226" style="background-color:#0b1226;padding:24px 32px;">
 <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
-<td valign="middle" style="padding-right:13px;"><img src="https://365techies.co.uk/logo.jpg" width="44" height="44" alt="365" style="display:block;width:44px;height:44px;border-radius:9px;color:#ffffff;font-family:'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;font-weight:700;" /></td>
+<td valign="middle" style="padding-right:13px;">
+<!-- Drawn, not loaded. Outlook blocks remote images by default for any sender not
+     on the safe list, and a broken-image X in the header of the first email a
+     scam-wary customer gets from us is the worst possible first impression. -->
+<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
+<td align="center" valign="middle" width="44" height="44" bgcolor="#1d97e3" style="width:44px;height:44px;background-color:#1d97e3;border-radius:9px;font-family:'Segoe UI',-apple-system,Helvetica,Arial,sans-serif;font-size:16px;font-weight:700;color:#ffffff;text-align:center;line-height:44px;mso-line-height-rule:exactly;">365</td>
+</tr></table>
+</td>
 <td valign="middle">
 <div style="font-family:'Segoe UI',-apple-system,Helvetica,Arial,sans-serif;font-size:18px;font-weight:700;color:#ffffff;line-height:1.2;">365&nbsp;Techies</div>
 <div style="font-family:'Segoe UI',-apple-system,Helvetica,Arial,sans-serif;font-size:11px;font-weight:600;color:#7fb6e4;letter-spacing:1.6px;text-transform:uppercase;padding-top:3px;">Your customer portal</div>
