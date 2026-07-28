@@ -53,6 +53,11 @@ RewriteRule ^services-2/?$                                    /services/ [R=301,
 RewriteRule ^book-now/?$                                      /book-service/ [R=301,L]
 
 # --- Home / support ---
+# /home/ was the old WordPress homepage alias. It was the ONLY genuine 404 in the
+# Search Console coverage report on 29 Jul 2026 - reported four times, once for each
+# protocol/www combination. Must sit ABOVE the home-computer-* rule below, or the
+# alternation there would never see it. Goes to the root, not a support page.
+RewriteRule ^home/?$                                          / [R=301,L]
 RewriteRule ^(support|home-computer-support|home-computer-servicing-and-support)/?$ /home-it-support-subscriptions/ [R=301,L]
 RewriteRule ^computer-support-bournemouth/?$                  /it-support-bournemouth/ [R=301,L]
 RewriteRule ^it-support-near-me-computer-repair-support-and-servicing/?$ /it-support-dorset/ [R=301,L]
