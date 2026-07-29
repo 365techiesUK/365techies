@@ -108,8 +108,19 @@ $key = (string)$ws['key'];
 if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>false,'error'=>'unknown_key'));
 $c =& $db['customers'][$key];
 
+// A company team member gets their OWN saved layout, stored on their member
+// record. Without this, the first employee to press save would overwrite the
+// director's dashboard - and then wonder why theirs kept changing.
+$member = isset($ws['member']) ? strtolower((string)$ws['member']) : '';
+if ($member !== '') {
+    if (!isset($c['org']['members'][$member])) out(array('ok'=>false,'error'=>'not_a_member'));
+    $slot =& $c['org']['members'][$member];
+} else {
+    $slot =& $c;
+}
+
 if ($action === 'get') {
-    $l = isset($c['dash']) && is_array($c['dash']) ? $c['dash'] : null;
+    $l = isset($slot['dash']) && is_array($slot['dash']) ? $slot['dash'] : null;
     out(array('ok'=>true, 'layout'=>$l));
 }
 
@@ -119,7 +130,7 @@ if ($action === 'save') {
 
     // one save per 3s per account: a scripted loop must not hold the shared DB
     // lock hot behind app check-ins and portal loads
-    $prev = isset($c['dash']) && is_array($c['dash']) ? $c['dash'] : null;
+    $prev = isset($slot['dash']) && is_array($slot['dash']) ? $slot['dash'] : null;
     if ($prev && intval($prev['t'] ?? 0) > time() - 3) out(array('ok'=>false,'error'=>'slow_down'));
 
     $prop = isset($l['prop']) ? (string)$l['prop'] : 'home';
@@ -151,15 +162,15 @@ if ($action === 'save') {
     }
     if (!count($tiles)) out(array('ok'=>false,'error'=>'empty_layout'));
 
-    $c['dash'] = array('v'=>1, 'prop'=>$prop, 'name'=>$name, 'tiles'=>$tiles, 't'=>time());
+    $slot['dash'] = array('v'=>1, 'prop'=>$prop, 'name'=>$name, 'tiles'=>$tiles, 't'=>time());
     save_db($DATA, $db);
     // Deliberately no Slack ping. A customer moving tiles around a demo is not an
     // event anyone needs told about, and a notification per drag would be noise.
-    out(array('ok'=>true, 'layout'=>$c['dash']));
+    out(array('ok'=>true, 'layout'=>$slot['dash']));
 }
 
 if ($action === 'del') {
-    if (isset($c['dash'])) { unset($c['dash']); save_db($DATA, $db); }
+    if (isset($slot['dash'])) { unset($slot['dash']); save_db($DATA, $db); }
     out(array('ok'=>true));
 }
 
@@ -171,7 +182,7 @@ if ($action === 'quote') {
     // 5s, not longer: asking about two tiles in quick succession is a customer using
     // the thing properly, and being told to wait for that would be daft. This exists
     // only to stop a scripted loop holding the shared DB lock hot.
-    $last = intval($c['dash_ask_t'] ?? 0);
+    $last = intval($slot['dash_ask_t'] ?? 0);
     if ($last > time() - 5) out(array('ok'=>false,'error'=>'slow_down'));
 
     $prop = isset($in['prop']) ? (string)$in['prop'] : 'home';
@@ -188,11 +199,11 @@ if ($action === 'quote') {
     }
     if (!count($want)) out(array('ok'=>false,'error'=>'empty'));
 
-    $c['dash_ask_t'] = time();
-    $asks = isset($c['dash_asks']) && is_array($c['dash_asks']) ? $c['dash_asks'] : array();
+    $slot['dash_ask_t'] = time();
+    $asks = isset($slot['dash_asks']) && is_array($slot['dash_asks']) ? $slot['dash_asks'] : array();
     $asks[] = array('t'=>time(), 'prop'=>$prop, 'one'=>$one, 'tiles'=>$want, 'note'=>$note);
     while (count($asks) > 10) array_shift($asks);
-    $c['dash_asks'] = $asks;
+    $slot['dash_asks'] = $asks;
     save_db($DATA, $db);
 
     // release the shared lock BEFORE the webhook

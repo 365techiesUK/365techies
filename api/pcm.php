@@ -155,6 +155,7 @@ if ($action === 'ready') {
 // an expiring wtoken (minted at sign-in, resolved + slid here); the app may use its key.
 if ($action === 'overview') {
     $wt = isset($in['wtoken']) ? preg_replace('/[^a-f0-9]/','', (string)$in['wtoken']) : '';
+    $member = '';                     // set only for a company team member's session
     if ($wt !== '') {
         $ws = isset($db['websessions'][$wt]) ? $db['websessions'][$wt] : null;
         // "remember me": forever sessions slide a full year and renew on every visit (an
@@ -168,12 +169,21 @@ if ($action === 'overview') {
         if ($fresh && !empty($ws['machine']) && $ws['machine'] !== $machine) $fresh = false;
         if (!$fresh) { if ($ws) { unset($db['websessions'][$wt]); save($DATA,$db); } out(array('ok'=>false,'error'=>'expired')); }
         $key = (string)$ws['key'];
+        $member = isset($ws['member']) ? strtolower((string)$ws['member']) : '';
         $db['websessions'][$wt]['ts'] = time(); save($DATA,$db);   // sliding, capped by iat
     }
     if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>false,'error'=>'unknown_key'));
     $c = $db['customers'][$key];
+    // BUSINESS TEAM SCOPING. A staff member of a company account sees only the
+    // computers assigned to them - not a colleague's machine and not a penny of
+    // billing. This filter is the enforcement; the portal's UI is only the
+    // presentation of it, so it must never be the only thing standing in the way.
+    // null = see everything (the director, or a manager they nominated).
+    require_once __DIR__ . '/pcm-team-lib.php';
+    $visible = team_visible_pcs($c, $member);
     $ms = array();
     foreach ((isset($c['machines']) ? $c['machines'] : array()) as $id => $m) {
+        if ($visible !== null && !in_array((string)$id, $visible, true)) continue;
         $avr = strtolower(trim((string)($m['av'] ?? '')));
         // sanitised audit trail for the customer consent ledger: action + outcome + when only.
         // Deliberately omits 'by' (internal staff login) and 'out' (may carry paths/hostnames).
@@ -209,11 +219,23 @@ if ($action === 'overview') {
     // because a wrong guess either hides features someone is paying for or shows a
     // home customer a console full of things that do not apply to them.
     $plan = (($c['tier'] ?? 'free') === 'pro') ? (((string)($c['plan'] ?? '') === 'business') ? 'business' : 'home') : 'free';
-    out(array('ok'=>true, 'name'=>(string)($c['name'] ?? ''), 'tier'=>(($c['tier'] ?? 'free')==='pro'?'pro':'free'),
-        'plan'=>$plan,
+    // who is looking: '' = the account holder, else a company team member
+    $mrec = ($member !== '' && isset($c['org']['members'][$member])) ? $c['org']['members'][$member] : null;
+    $role = $member === '' ? 'director' : ((($mrec['role'] ?? 'staff') === 'manager') ? 'manager' : 'staff');
+    $teamN = isset($c['org']['members']) && is_array($c['org']['members']) ? count($c['org']['members']) : 0;
+    out(array('ok'=>true,
+        // a staff member is greeted by their OWN name, not the company's - being
+        // called "Acme Ltd" by your own computer's portal is a small thing that
+        // makes the whole product feel like it was not built for you
+        'name'=>($mrec ? (string)($mrec['name'] ?? '') : (string)($c['name'] ?? '')),
+        'tier'=>(($c['tier'] ?? 'free')==='pro'?'pro':'free'),
+        'plan'=>$plan, 'role'=>$role, 'member'=>$member,
+        'org'=>(string)($c['org']['name'] ?? ''), 'company'=>(string)($c['name'] ?? ''),
+        'team'=>$teamN, 'domains'=>array_values((array)($c['org']['domains'] ?? array())),
         'next'=>(string)($c['next'] ?? ''), 'next_ts'=>intval($c['next_ts'] ?? 0),
-        'machines'=>$ms, 'fam'=>$fam, 'pending'=>$pend, 'appreq'=>(string)($c['app_req'] ?? ''),
-        'gc'=>$ownerMade ? pcm_gc_summary((string)($c['email'] ?? '')) : null));
+        'machines'=>$ms, 'fam'=>($member === '' ? $fam : ''), 'pending'=>$pend, 'appreq'=>(string)($c['app_req'] ?? ''),
+        // billing is the account holder's business and nobody else's
+        'gc'=>($ownerMade && $member === '') ? pcm_gc_summary((string)($c['email'] ?? '')) : null));
 }
 
 // GoCardless read-only summary (plan + Direct Debit + last payment) for the portal.

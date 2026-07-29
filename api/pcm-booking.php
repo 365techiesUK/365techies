@@ -330,6 +330,16 @@ function web_snapshot() {
         'name' => (string)(isset($c['sb_name']) ? $c['sb_name'] : (isset($c['name']) ? $c['name'] : '')),
         'email' => (string)(isset($c['sb_email']) ? $c['sb_email'] : (isset($c['email']) ? $c['email'] : '')),
         'phone' => (string)(isset($c['sb_phone']) ? $c['sb_phone'] : (isset($c['phone']) ? $c['phone'] : '')),
+        // a company team member: bookings still run through the COMPANY's one
+        // SimplyBook client above, but who is asking decides what they may do
+        'member' => isset($ws['member']) ? strtolower((string)$ws['member']) : '',
+        'mname' => (string)($c['org']['members'][strtolower((string)($ws['member'] ?? ''))]['name'] ?? ''),
+        'mstaff' => (function() use ($c, $ws) {
+            $mem = isset($ws['member']) ? strtolower((string)$ws['member']) : '';
+            if ($mem === '') return false;
+            require_once __DIR__ . '/pcm-team-lib.php';
+            return team_visible_pcs($c, $mem) !== null;          // null = manager/director
+        })(),
         'viewas' => !empty($ws['viewas']));   // an admin impersonating this customer (they vouch for the identity)
 }
 
@@ -981,6 +991,52 @@ if ($action === 'verifycode') {
         out(array('ok' => true, 'staff' => true, 'stoken' => $stoken, 'customer' => $email, 'trust' => $trustS));
     }
 
+    // BUSINESS TEAM MEMBER? This must be decided BEFORE SimplyBook is touched.
+    // A company is one SimplyBook client - the director. If we fell through to the
+    // normal path, every employee signing in would be given their own client and
+    // their own free customer record, fragmenting the business and filling the
+    // diary with a client per employee. So a recognised work address joins the
+    // COMPANY's account as a member instead, and SimplyBook never hears about it.
+    // See api/pcm-team.php for the model and the domain safety rules.
+    require_once __DIR__ . '/pcm-team-lib.php';
+    list($lkT, $dbT) = db_open();
+    $orgHit = team_find_org($dbT, $email, $PUBLIC_DOMAINS);
+    if ($orgHit) {
+        list($orgKey, $memEmail, $isNewMember) = $orgHit;
+        $jlkT = @fopen($JOINCODES . '.lock', 'c'); if ($jlkT) @flock($jlkT, LOCK_EX);
+        $jcT = cache_load($JOINCODES); unset($jcT[$ek]); cache_save($JOINCODES, $jcT);   // burn the code now
+        if ($jlkT) { @flock($jlkT, LOCK_UN); @fclose($jlkT); }
+        $org =& $dbT['customers'][$orgKey];
+        if (!isset($org['org']['members']) || !is_array($org['org']['members'])) $org['org']['members'] = array();
+        if (!isset($org['org']['members'][$memEmail])) {
+            // auto-joined on the company domain: NO computers, so they see a polite
+            // empty screen until the director links a machine to them
+            $org['org']['members'][$memEmail] = array('name'=>$jname, 'role'=>'staff', 'pcs'=>array(),
+                'ts'=>time(), 'seen'=>time(), 'via'=>'domain');
+        } else {
+            $org['org']['members'][$memEmail]['seen'] = time();
+            if ($jname !== '' && ($org['org']['members'][$memEmail]['name'] ?? '') === '') $org['org']['members'][$memEmail]['name'] = $jname;
+        }
+        $mrole = (($org['org']['members'][$memEmail]['role'] ?? 'staff') === 'manager') ? 'manager' : 'staff';
+        $wtokT = bin2hex(random_bytes(24));
+        if (!isset($dbT['websessions'])) $dbT['websessions'] = array();
+        $dbT['websessions'][$wtokT] = array('key'=>$orgKey, 'member'=>$memEmail, 'ts'=>time(), 'iat'=>time(),
+            'long'=>true, 'forever'=>empty($in['shared']), 'machine'=>$machine);
+        db_save($dbT); db_close($lkT);
+        if ($isNewMember) {
+            $who = $jname !== '' ? $jname . ' (' . $memEmail . ')' : $memEmail;
+            pcm_slack_say(":bust_in_silhouette: *New team member joined a company portal* - " . $who
+                . " signed in on the company domain and joined *" . (string)($org['name'] ?? $orgKey) . "*."
+                . "\nThey can see nothing until a computer is assigned to them.");
+        }
+        // the company's real tier, not an assumed one: an existing member of a
+        // lapsed account must not be handed a 'pro' portal
+        $orgTier = ((string)($org['tier'] ?? 'free') === 'pro') ? 'pro' : 'free';
+        out(array('ok'=>true, 'tier'=>$orgTier, 'wtoken'=>$wtokT, 'customer'=>(string)($org['org']['members'][$memEmail]['name'] ?? $jname),
+                  'member'=>$memEmail, 'role'=>$mrole, 'joined'=>true, 'team'=>true));
+    }
+    db_close($lkT);
+
     // inbox ownership PROVEN. Find or silently create the SimplyBook client.
     // getClientList FIRST - SimplyBook duplicate clients break password sign-in.
     if (!$HAS_ADMIN) fail('not_configured');
@@ -1438,6 +1494,13 @@ if ($action === 'book') {
     // field ids aren't known to us, so keep it on OUR record and put it in front of the team
     // in Slack, where booking alerts already land.
     $note = trim(preg_replace('/[\x00-\x1F\x7F]+/', ' ', (string)(isset($in['note']) ? $in['note'] : '')));
+    // A company books through ONE SimplyBook client - the director - so without this
+    // the diary would say "Acme Ltd" and the engineer would arrive not knowing whose
+    // desk to go to. Stamp who actually raised it on our own record.
+    if (!empty($snap['member'])) {
+        $who = trim((string)($snap['mname'] ?? '')) !== '' ? trim((string)$snap['mname']) : (string)$snap['member'];
+        $note = 'Raised by ' . $who . ' (' . $snap['member'] . ')' . ($note !== '' ? ' - ' . $note : '');
+    }
     if ($note !== '') {
         $note = substr($note, 0, 400);
         list($lkn, $dbn) = db_open();
@@ -1638,6 +1701,11 @@ if ($action === 'cancel' || $action === 'change') {
     if (!$HAS_ADMIN) fail('not_configured');
     if (isset($in['wtoken']) && $in['wtoken'] !== '') { $snap = web_snapshot(); $key = $snap['key']; }   // portal customer
     else $snap = customer_snapshot();                                                                    // app licence key
+    // A company's appointments are the company's. A staff member can raise one and
+    // see when we are coming, but moving or cancelling the firm's visit is the
+    // director's call, not a junior's - and getting that wrong means an engineer
+    // turning up to a cancelled job.
+    if (!empty($snap['mstaff'])) fail('ask_your_manager');
     if (!$snap['cid'] && $snap['email'] !== '') $snap['cid'] = link_cid_from_email($key, $snap['email']);
     $bid = (int)(isset($in['id']) ? $in['id'] : 0);
     if ($bid <= 0 || !$snap['cid']) fail('bad_request');

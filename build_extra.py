@@ -20370,6 +20370,22 @@ def write_portal_page():
     #p365app .ngglow,#p365app .ngfchip { animation:none; }
     #p365app .ngscene,#p365app .ngdevice,#p365app .ngc { transition:none; }
   }
+  /* ---------- BUSINESS TEAM ---------------------------------------------------
+     The director's view of their own staff. Deliberately calm: this is a list of
+     people, not a console, and the actions on each row read as sentences. */
+  #p365app .tmdom { border:1px dashed var(--pline); border-radius:12px; padding:.8rem .9rem; margin:.2rem 0 .9rem; }
+  #p365app .tmat { color:var(--pmut); font-size:1rem; padding-right:.1rem; }
+  #p365app .tmlist { margin:.2rem 0 .4rem; }
+  #p365app .tmrow { padding:.7rem 0; border-bottom:1px solid rgba(42,59,99,.5); display:flex; gap:.7rem; flex-wrap:wrap; align-items:flex-start; }
+  #p365app .tmrow:last-child { border-bottom:0; }
+  #p365app .tmwho { flex:1; min-width:190px; }
+  #p365app .tmwho strong { color:var(--pwhite); }
+  #p365app .tmacts { display:flex; gap:.3rem; flex-wrap:wrap; align-items:flex-start; }
+  #p365app .tmpick { flex-basis:100%; background:var(--pink); border:1px solid var(--pline); border-radius:10px; padding:.6rem .8rem; margin-top:.5rem; }
+  #p365app .tmck { display:block; color:var(--psoft); font-size:.85rem; padding:.22rem 0; cursor:pointer; }
+  #p365app .tmck input { width:auto; margin-right:.4rem; }
+  #p365app .tmadd { border-top:1px solid rgba(42,59,99,.5); padding-top:.7rem; margin-top:.4rem; }
+  #p365app .tmadd h3 { font-size:.78rem; letter-spacing:.1em; text-transform:uppercase; color:var(--psoft); margin:0 0 .45rem; }
   /* ---------- DASHBOARD STUDIO (playable demo) --------------------------------
      Every rule here is written against #p365app so the build-time transform below
      twins it onto .p365ov - the studio lives in the overlay, outside #p365app, and
@@ -20521,7 +20537,7 @@ def write_portal_page():
 </style>'''
     js = '''<script>
 (function () {
-  var BK = '/api/pcm-booking.php', PCM = '/api/pcm.php', DASH = '/api/pcm-dash.php';
+  var BK = '/api/pcm-booking.php', PCM = '/api/pcm.php', DASH = '/api/pcm-dash.php', TEAM = '/api/pcm-team.php';
   var el = document.getElementById('p365app');
   var S = {};
   try { S = JSON.parse(sessionStorage.getItem('p365s') || 'null') || JSON.parse(localStorage.getItem('p365') || '{}'); } catch (e) { S = {}; }
@@ -21190,6 +21206,215 @@ def write_portal_page():
     });
   }
 
+  // ---------- BUSINESS TEAM: the company's own people in their portal ----------
+  // A business customer is one account with one SimplyBook client - the director.
+  // Their staff are MEMBERS of that account, never customers of their own, which is
+  // what stops the diary filling with a client per employee. See api/pcm-team.php.
+  //
+  // A staff member sees the computers assigned to them and nothing else. That is
+  // enforced server-side in pcm.php; everything below is only the presentation of
+  // it, and must never be mistaken for the guard itself.
+  var TM = null;   // {members, machines, domains, org, role, business} for a director
+  function tmRole() { return (JD && JD.role) ? JD.role : 'director'; }
+  function tmIsBoss() { var r = tmRole(); return r === 'director' || r === 'manager'; }
+  function tmFirst(s) { return String(s || '').trim().split(' ')[0] || ''; }
+  // Pre-match a machine to a person by name, so the director confirms a guess
+  // instead of reading a dropdown of hostnames. SAM-LAPTOP -> Sam. Cheap, and it is
+  // the difference between assigning twelve computers and never getting round to it.
+  function tmGuess(member, machines, taken) {
+    var first = tmFirst(member.name).toLowerCase();
+    if (first.length < 3) return '';
+    for (var i = 0; i < machines.length; i++) {
+      var nm = String(machines[i].name || '').toLowerCase();
+      if (taken[machines[i].id]) continue;
+      if (nm.indexOf(first) >= 0) return machines[i].id;
+    }
+    return '';
+  }
+  function tmPcName(id) {
+    if (!TM) return id;
+    for (var i = 0; i < TM.machines.length; i++) if (TM.machines[i].id === id) return TM.machines[i].name;
+    return id;
+  }
+  function tmSay(t) { var n = document.getElementById('tmMsg'); if (n) n.textContent = t; }
+  function tmCall(body, cb) {
+    body.wtoken = S.wtoken; body.machine = mid();
+    post(TEAM, body).then(function (r) { cb(r || {}); }).catch(function () { cb({}); });
+  }
+  function tmCard(d) {
+    if (d.plan !== 'business' || !tmIsBoss()) return '';
+    return '<div class="card" id="tmcard"><h2>\\ud83d\\udc65 Your team</h2>'
+      + '<div id="tmBody"><p class="quiet">Loading your team\\u2026</p></div></div>';
+  }
+  function tmLoad() {
+    if (!document.getElementById('tmBody')) return;
+    tmCall({ action: 'list' }, function (r) {
+      if (!r || !r.ok) { var b = document.getElementById('tmBody'); if (b) b.innerHTML = '<p class="quiet">Couldn\\u2019t load your team just now.</p>'; return; }
+      TM = r; tmPaint();
+    });
+  }
+  function tmPaint() {
+    var b = document.getElementById('tmBody'); if (!b || !TM) return;
+    var dom = (TM.domains && TM.domains.length) ? TM.domains[0] : '';
+    var taken = {};
+    TM.members.forEach(function (m) { (m.pcs || []).forEach(function (p) { taken[p] = m.email; }); });
+    var unassigned = TM.machines.filter(function (mc) { return !taken[mc.id]; });
+    var h = '<p class="quiet" style="margin:0 0 .7rem">Everyone here signs in with their work email and a code &mdash; no password to invent. '
+      + 'They see <strong>only the computers you give them</strong>, and never your billing. '
+      + 'A manager sees the whole fleet, the same as you.</p>';
+    // the company domain: the thing that lets people in without you doing anything
+    h += '<div class="tmdom">' + (dom
+        ? '<p style="margin:0 0 .4rem"><strong style="color:var(--pwhite)">Anyone at @' + esc(dom) + ' can join</strong></p>'
+          + '<p class="quiet" style="margin:0 0 .5rem">They land here with no computers until you give them one, so nobody sees anything by accident. '
+          + 'We tell you each time somebody new joins.</p>'
+          + '<button class="sm ghost" id="tmDomOff">Turn this off</button>'
+        : '<p style="margin:0 0 .4rem"><strong style="color:var(--pwhite)">Let your team in automatically</strong></p>'
+          + '<p class="quiet" style="margin:0 0 .5rem">Give us your company email domain and anyone with an address there can sign in to your portal. '
+          + 'They arrive with no computers until you assign one, so there is nothing to see by accident.</p>'
+          + '<div class="row" style="border:0;padding:0"><span class="tmat">@</span><input id="tmDom" placeholder="yourcompany.co.uk" style="max-width:220px" />'
+          + '<button class="sm" id="tmDomSet">Turn it on</button></div>') + '</div>';
+    // the people
+    if (!TM.members.length) {
+      h += '<p class="quiet" style="margin:.8rem 0 .4rem">Nobody added yet.</p>';
+    } else {
+      h += '<div class="tmlist">';
+      TM.members.forEach(function (m) {
+        var pcs = (m.pcs || []).map(function (p) { return '<span class="chip c">' + esc(tmPcName(p)) + '</span>'; }).join('');
+        var guess = (!m.pcs || !m.pcs.length) ? tmGuess(m, unassigned, taken) : '';
+        h += '<div class="tmrow" data-em="' + esc(m.email) + '">'
+          + '<div class="tmwho"><strong>' + esc(m.name || m.email) + '</strong>'
+          + '<span class="quiet" style="margin:0;display:block;font-size:.78rem">' + esc(m.email)
+          + (m.via === 'domain' ? ' &middot; joined on your domain' : '') + '</span>'
+          + '<div class="chips">' + (pcs || '<span class="chip w">no computer yet</span>')
+          + '<span class="chip' + (m.role === 'manager' ? ' g' : '') + '">' + (m.role === 'manager' ? 'manager &mdash; sees everything' : 'sees only their own') + '</span></div></div>'
+          + '<div class="tmacts">'
+          + (guess ? '<button class="sm" data-quick="' + esc(guess) + '" data-em="' + esc(m.email) + '">Assign ' + esc(tmPcName(guess)) + '?</button>' : '')
+          + '<button class="sm ghost" data-pcs="' + esc(m.email) + '">Computers</button>'
+          + '<button class="sm ghost" data-role="' + esc(m.email) + '">' + (m.role === 'manager' ? 'Make staff' : 'Make manager') + '</button>'
+          + '<button class="sm ghost" data-del="' + esc(m.email) + '">Remove</button>'
+          + '</div><div class="tmpick" hidden></div></div>';
+      });
+      h += '</div>';
+    }
+    // add someone by hand (a contractor on a different domain, or before they first sign in)
+    h += '<div class="tmadd"><h3>Add someone</h3>'
+      + '<div class="row" style="border:0;padding:0;gap:.4rem;flex-wrap:wrap">'
+      + '<input id="tmName" placeholder="Their name" style="max-width:150px" />'
+      + '<input id="tmEmail" placeholder="their@email" style="max-width:210px" />'
+      + '<button class="sm" id="tmAdd">Add</button></div></div>';
+    h += '<p class="ds__msg" id="tmMsg" role="status"></p>';
+    b.innerHTML = h;
+    tmBind();
+  }
+  function tmBind() {
+    var b = document.getElementById('tmBody'); if (!b) return;
+    var q = function (sel) { return b.querySelector(sel); };
+    var ds = q('#tmDomSet');
+    if (ds) ds.onclick = function () {
+      var v = q('#tmDom').value;
+      tmSay('Setting that up\\u2026');
+      tmCall({ action: 'domain', domain: v }, function (r) {
+        if (r.ok) { tmSay('Done \\u2014 anyone at that domain can now sign in.'); tmLoad(); }
+        else if (r.error === 'bad_domain') tmSay('That needs to be your own company domain \\u2014 we cannot use a free email provider like gmail.com, because that would let anyone in.');
+        else if (r.error === 'taken') tmSay('That domain is already set up on another account \\u2014 ring us on 01202 775566 and we will sort it.');
+        else tmSay('Couldn\\u2019t set that just now.');
+      });
+    };
+    var doff = q('#tmDomOff');
+    if (doff) doff.onclick = function () {
+      if (!confirm('Turn off automatic joining? People already on your team keep their access.')) return;
+      tmCall({ action: 'domain', off: 1 }, function (r) { if (r.ok) { tmSay('Turned off.'); tmLoad(); } });
+    };
+    var add = q('#tmAdd');
+    if (add) add.onclick = function () {
+      var em = q('#tmEmail').value.trim(), nm = q('#tmName').value.trim();
+      if (!em) { tmSay('Pop their email address in first.'); return; }
+      tmSay('Adding\\u2026');
+      tmCall({ action: 'add', email: em, name: nm }, function (r) {
+        if (r.ok) { tmSay(nm ? nm + ' can sign in now with that address.' : 'Added \\u2014 they can sign in with that address.'); tmLoad(); }
+        else if (r.error === 'bad_email') tmSay('That does not look like an email address.');
+        else if (r.error === 'elsewhere') tmSay('That address is already on another company\\u2019s account \\u2014 ring us and we will sort it.');
+        else if (r.error === 'thats_you') tmSay('That is your own address \\u2014 you already have the account, and you see everything.');
+        else if (r.error === 'too_many') tmSay('That is as many people as one account holds \\u2014 ring us.');
+        else tmSay('Couldn\\u2019t add them just now.');
+      });
+    };
+    Array.prototype.forEach.call(b.querySelectorAll('[data-del]'), function (x) {
+      x.onclick = function () {
+        var em = x.getAttribute('data-del');
+        if (!confirm('Remove ' + em + '? They are signed out straight away and lose access to the portal.')) return;
+        tmCall({ action: 'del', email: em }, function (r) { if (r.ok) { tmSay('Removed, and signed out.'); tmLoad(); } else tmSay('Couldn\\u2019t remove them.'); });
+      };
+    });
+    Array.prototype.forEach.call(b.querySelectorAll('[data-role]'), function (x) {
+      x.onclick = function () {
+        var em = x.getAttribute('data-role');
+        var cur = null;
+        TM.members.forEach(function (m) { if (m.email === em) cur = m; });
+        var nr = (cur && cur.role === 'manager') ? 'staff' : 'manager';
+        if (nr === 'manager' && !confirm('Make ' + em + ' a manager? They will see every computer in the business, the same as you.')) return;
+        tmCall({ action: 'role', email: em, role: nr }, function (r) { if (r.ok) tmLoad(); else tmSay('Couldn\\u2019t change that.'); });
+      };
+    });
+    Array.prototype.forEach.call(b.querySelectorAll('[data-quick]'), function (x) {
+      x.onclick = function () {
+        var em = x.getAttribute('data-em'), pc = x.getAttribute('data-quick');
+        tmCall({ action: 'pcs', email: em, pcs: [pc] }, function (r) { if (r.ok) { tmSay('Done \\u2014 ' + tmPcName(pc) + ' is theirs now.'); tmLoad(); } else tmSay('Couldn\\u2019t assign that.'); });
+      };
+    });
+    Array.prototype.forEach.call(b.querySelectorAll('[data-pcs]'), function (x) {
+      x.onclick = function () {
+        var em = x.getAttribute('data-pcs');
+        var row = x.closest('.tmrow'), pick = row.querySelector('.tmpick');
+        if (!pick.hidden) { pick.hidden = true; return; }
+        var cur = [];
+        TM.members.forEach(function (m) { if (m.email === em) cur = m.pcs || []; });
+        var owner = {};
+        TM.members.forEach(function (m) { if (m.email !== em) (m.pcs || []).forEach(function (p) { owner[p] = m.name || m.email; }); });
+        pick.innerHTML = '<p class="quiet" style="margin:.4rem 0 .3rem">Which computers are theirs?</p>'
+          + TM.machines.map(function (mc) {
+              return '<label class="tmck"><input type="checkbox" value="' + esc(mc.id) + '"' + (cur.indexOf(mc.id) >= 0 ? ' checked' : '') + ' /> '
+                + esc(mc.name) + (owner[mc.id] ? ' <span class="quiet" style="margin:0">(currently ' + esc(owner[mc.id]) + '\\u2019s)</span>' : '') + '</label>';
+            }).join('')
+          + (TM.machines.length ? '' : '<p class="quiet" style="margin:0">No computers are reporting in yet.</p>')
+          + '<button class="sm" data-save="' + esc(em) + '" style="margin-top:.5rem">Save</button>';
+        pick.hidden = false;
+        pick.querySelector('[data-save]').onclick = function () {
+          var picked = Array.prototype.map.call(pick.querySelectorAll('input:checked'), function (i) { return i.value; });
+          tmCall({ action: 'pcs', email: em, pcs: picked }, function (r) {
+            if (r.ok) { tmSay('Saved.'); tmLoad(); } else tmSay('Couldn\\u2019t save that.');
+          });
+        };
+      };
+    });
+  }
+  // What a staff member is told, in their own words, about what their employer can
+  // see. Saying it plainly is the difference between a tool people trust and one
+  // they resent - and they are entitled to know.
+  function tmStaffNote(d) {
+    if (!d.member) return '';
+    var co = esc(d.org || d.company || 'your employer');
+    // a manager was nominated by the director and sees the whole fleet - they still
+    // deserve to be told plainly what that means, and that billing is not theirs
+    if (tmIsBoss()) {
+      return '<div class="card" style="border-color:rgba(29,151,227,.4)"><h2>\\ud83d\\udc64 Your account</h2>'
+        + '<p class="quiet" style="margin:0">You are signed in as <strong style="color:var(--pwhite)">' + esc(d.member) + '</strong>, '
+        + 'as a <strong style="color:var(--pwhite)">manager</strong> on ' + co + '&rsquo;s 365 support plan. You can see every computer in the business '
+        + 'and look after the team. Billing stays with whoever holds the account.</p></div>';
+    }
+    return '<div class="card" style="border-color:rgba(29,151,227,.4)"><h2>\\ud83d\\udc64 Your account</h2>'
+      + '<p class="quiet" style="margin:0 0 .5rem">You are signed in as <strong style="color:var(--pwhite)">' + esc(d.member) + '</strong>, '
+      + 'on <strong style="color:var(--pwhite)">' + co + '</strong>&rsquo;s 365 support plan. '
+      + (d.machines && d.machines.length
+          ? 'You can see the ' + (d.machines.length === 1 ? 'computer' : d.machines.length + ' computers') + ' assigned to you, and book help for '
+            + (d.machines.length === 1 ? 'it' : 'them') + '.'
+          : 'Nobody has linked a computer to you yet &mdash; ask whoever looks after IT where you work, and it will appear here.')
+      + '</p>'
+      + '<p class="quiet" style="margin:0">' + co + ' can see the <strong>health</strong> of these computers &mdash; whether they are backed up, '
+      + 'up to date and running properly. They cannot see your files, your emails, your browsing or what you type, and neither can we. '
+      + 'That is not a promise about how we behave; it is simply not something the app collects.</p></div>';
+  }
+
   // ---------- DASHBOARD STUDIO -------------------------------------------------
   // What this is, and the line it must not cross.
   //
@@ -21379,6 +21604,9 @@ def write_portal_page():
   // What each plan's dashboard opens as. Live tiles lead, because the first thing a
   // paying customer should see is the thing that is actually theirs.
   var DSPLANLAY = {
+    // a company staff member: their own machine, nothing about the estate and
+    // nothing about the firm's saved surveys
+    member: [['pcs',2],['backup',1],['secure',1],['disk',1],['visit',1],['reports',1]],
     home: [['pcs',2],['backup',1],['visit',1],['secure',1],['disk',1],['survey',1],['reports',1]],
     business: [['fleet',2],['patch',1],['backup',1],['secure',1],['pcs',1],['servers',1],['wifi',2],['alerts',2]],
     free: [['pcs',2],['backup',1],['visit',1],['survey',1],['cctv',2],['energy',1],['weather',1]]
@@ -21402,7 +21630,9 @@ def write_portal_page():
   function dsAllowed(k) {
     var c = dsCat(k); if (!c) return false;
     if (DSMODE === 'custom') return true;
-    return c.aud !== 'biz' || dsPlan() === 'business';
+    // the estate tiles are for whoever runs the estate. On a staff member's screen
+    // "whole fleet" would show a fleet of one, which is worse than not showing it.
+    return c.aud !== 'biz' || (dsPlan() === 'business' && tmIsBoss());
   }
   function dsLiveHtml(c) {
     if (DSMODE === 'custom' || !c.live) return null;
@@ -21411,7 +21641,10 @@ def write_portal_page():
   function dsLay(list) {
     return list.filter(function (x) { return dsAllowed(x[0]); }).map(function (x) { return { k: x[0], w: x[1] }; });
   }
-  function dsPreset(p) { return dsLay((DSMODE === 'custom' ? dsProp(p).lay : (DSPLANLAY[p] || DSPLANLAY.free))); }
+  function dsPreset(p) {
+    if (DSMODE !== 'custom' && !tmIsBoss()) return dsLay(DSPLANLAY.member);
+    return dsLay((DSMODE === 'custom' ? dsProp(p).lay : (DSPLANLAY[p] || DSPLANLAY.free)));
+  }
   function dsNum(v, dp) { return dp ? v.toFixed(dp) : String(Math.round(v)); }
   function dsWalk() {
     var j = function (v, amt, lo, hi) { var n = v + (Math.random() - .5) * amt; return Math.max(lo, Math.min(hi, n)); };
@@ -22334,6 +22567,11 @@ def write_portal_page():
       // A fresh dashboard is a fresh journey. Sign-out/sign-in and staff impersonation both
       // re-enter here, so nothing about the previous member may survive into this render.
       jSettled = false; jPend = null; JW = { wifi: 0, avg: 0, site: '', loaded: false, ok: false }; JD = null;
+      // JD must be live BEFORE any HTML is built, not after. Everything that asks
+      // "who is looking at this?" - tmIsBoss(), the team card, the staff account
+      // note, the studio's tile gating - reads it, and with it still null a company
+      // staff member was momentarily treated as the director and shown the team card.
+      JD = d;
       // the hero needs the primary machine, so work it out BEFORE building the page
       var ngLive0 = d.machines.filter(function (mm) { return !mm.fresh; });
       var heroPrimary = null;
@@ -22373,6 +22611,8 @@ def write_portal_page():
         if (!d.machines.length) h += '<p class="quiet">None checking in yet - our free <a href="/free-pc-health-check/" target="_blank">365 PC Manager</a> app (coming soon) will keep an eye on your PC\\u2019s health and show it here. <a href="/free-pc-health-check/#waitlist" target="_blank">Join the waitlist</a>.</p>';
         h += d.machines.map(machineRow).join('') + '</div>';
       }
+      h += tmStaffNote(d);
+      h += tmCard(d);
       h += '<div class="card"><h2>Your membership</h2><div class="row"><span class="pill ' + (d.tier === 'pro' ? 'pro">On 365 support' : 'free">365 member (free)') + '</span>'
         + (d.next ? '<span>Next service: <strong>' + esc(d.next) + '</strong></span>' : '<span class="quiet">No service booked - <a href="#" id="cbbook">book one</a>.</span>') + '</div>';
       if (d.gc) {
@@ -22384,6 +22624,10 @@ def write_portal_page():
       }
       h += '</div>';
       h += '<div class="card"><h2>📅 Your bookings</h2><div id="mybk"><p class="quiet">Loading your visits…</p></div></div>';
+      // Saved site surveys belong to the account, not to an individual employee, and
+      // the server refuses them for a company staff member - so showing this card to
+      // one would only be inviting a refusal.
+      if (!(d.member && !tmIsBoss()))
       h += '<div class="card"><h2>📶 Your WiFi surveys</h2><div id="mywifi"><p class="quiet">Loading…</p></div>'
         + '<p class="quiet">Surveys you save from our free <a href="/wifi-signal-test/" target="_blank" rel="noopener">WiFi Optimizer</a> live here on your account — rooms, history and photos — so you can restore them on any device and our team can see them when they help you. '
         + '<label style="display:inline;color:var(--psoft);cursor:pointer;text-decoration:underline">Upload a survey file<input type="file" id="mywifi-up" accept=".json,application/json" hidden /></label></p></div>';
@@ -22501,6 +22745,7 @@ def write_portal_page():
       loadMyBookings();
       loadWifi();
       loadDash();
+      tmLoad();
       Array.prototype.forEach.call(document.querySelectorAll('#p365app .repb'), function (btn) {
         btn.onclick = function () {
           btn.disabled = true;

@@ -92,6 +92,17 @@ if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>false,'error'
 $c =& $db['customers'][$key];
 if (!isset($c['wifi']) || !is_array($c['wifi'])) $c['wifi'] = array();
 
+// Saved site surveys belong to the account, not to an individual employee. A
+// company staff member sees an empty shelf rather than the firm's survey history,
+// and certainly cannot delete it; a manager the director nominated is treated as
+// the account holder. Same rule as the machine list - see pcm-team-lib.php.
+require_once __DIR__ . '/pcm-team-lib.php';
+$member = isset($ws['member']) ? strtolower((string)$ws['member']) : '';
+if ($member !== '' && team_visible_pcs($c, $member) !== null) {
+    if ($action === 'list') out(array('ok'=>true, 'surveys'=>array()));
+    out(array('ok'=>false, 'error'=>'not_allowed'));
+}
+
 if ($action === 'save') {
     $pack = isset($in['pack']) && is_array($in['pack']) ? $in['pack'] : null;
     if (!$pack || ($pack['app'] ?? '') !== '365-wifi-survey' || !isset($pack['survey']) || !is_array($pack['survey'])) {
