@@ -640,9 +640,9 @@
   </aside>
 
   <main id="main">
-<section class="section" style="padding-top:6.5rem"><div class="wrap" style="max-width:880px"><div id="p365app"><noscript><p>The customer portal needs JavaScript switched on. Or just ring us: 01202 775566.</p></noscript><p style="color:#9fb5d3">Loading the portal&hellip;</p></div><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">portal build 29 Jul 2026 &middot; 693e9c8cc3</p><script>
+<section class="section" style="padding-top:6.5rem"><div class="wrap" style="max-width:880px"><div id="p365app"><noscript><p>The customer portal needs JavaScript switched on. Or just ring us: 01202 775566.</p></noscript><p style="color:#9fb5d3">Loading the portal&hellip;</p></div><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">portal build 29 Jul 2026 &middot; ebd6f04758</p><script>
 (function () {
-  var P365BUILD = '693e9c8cc3';
+  var P365BUILD = 'ebd6f04758';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -1212,6 +1212,10 @@
   #p365app .ds__t.lift, .p365ov .ds__t.lift { z-index:20; border-color:var(--pcyan); box-shadow:0 20px 44px rgba(0,0,0,.55); transform:scale(1.03); }
   #p365app .ds__t.ghost, .p365ov .ds__t.ghost { opacity:.28; }
   #p365app .ds__t.fresh, .p365ov .ds__t.fresh { animation:p365popIn .38s ease both; }
+  
+  #p365app .ds__t--in, .p365ov .ds__t--in { animation:dsIn .45s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes dsIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+  #p365app .ds__t.settling, .p365ov .ds__t.settling { z-index:5; }
   #p365app .ds__th, .p365ov .ds__th { display:flex; align-items:center; gap:.4rem; margin-bottom:.5rem; }
   #p365app .ds__ico, .p365ov .ds__ico { font-size:.98rem; line-height:1; }
   #p365app .ds__ttl, .p365ov .ds__ttl { font-size:.76rem; font-weight:700; letter-spacing:.02em; color:var(--psoft); flex:1; min-width:0;
@@ -1339,6 +1343,7 @@
   }
   @media (prefers-reduced-motion:reduce) {
     #p365app .ds__cam i, .p365ov .ds__cam i { animation:none; }
+    #p365app .ds__t--in, .p365ov .ds__t--in { animation:none; }
     #p365app .ds__t, #p365app .ds__bar2 i, .p365ov .ds__t, .p365ov .ds__bar2 i { transition:none; }
     #p365app .ds__t.fresh, .p365ov .ds__t.fresh { animation:none; }
   }
@@ -2772,7 +2777,9 @@
       // number that never agrees with the mpg beside it
       ppm: dsNum(1550 / Math.max(1, DSD.mpg)) };
     Array.prototype.forEach.call(g.querySelectorAll('[data-f]'), function (n) {
-      var v = vals[n.getAttribute('data-f')];
+      var f = n.getAttribute('data-f'), fmt = DSNUMF[f];
+      if (fmt) { dsTween(n, (f === 'ppm') ? 1550 / Math.max(1, DSD.mpg) : DSD[f], fmt[0], fmt[1]); return; }
+      var v = vals[f];
       if (v !== undefined && n.textContent !== v) n.textContent = v;
     });
     Array.prototype.forEach.call(g.querySelectorAll('[data-bar]'), function (n) {
@@ -2781,6 +2788,68 @@
     });
   }
   function dsMsg(t) { var m = document.getElementById('dsMsg'); if (m) m.textContent = t; }
+  // ---- counting numbers -----------------------------------------------------
+  // The meters eased and the numbers beside them jumped, which read as "the page
+  // re-rendered" rather than "the reading changed". Tween the digits and the tile
+  // starts to feel like an instrument.
+  var DSTW = [], DSTWR = 0;
+  var DSNUMF = { pwr:[0,1], battp:[0,0], cost:[2,0], kwh:[1,0], kwhs:[1,0], frz:[0,0], doors:[0,0],
+    aps:[0,0], clients:[0,0], poe:[0,0], mbps:[0,0], vmi:[0,0], vbatt:[1,0], wxt:[0,0], run:[0,0],
+    out:[0,1], heat:[1,0], hum:[0,0], wtr:[0,0], spd:[0,0], mtd:[1,0], mpg:[1,0], cool:[0,0],
+    fuel:[0,0], petkm:[1,0], petbat:[0,0], ppm:[0,0] };
+  function dsFmt(v, dp, sep) {
+    if (sep) return Number(v).toLocaleString('en-GB', { minimumFractionDigits: dp, maximumFractionDigits: dp });
+    return dp ? v.toFixed(dp) : String(Math.round(v));
+  }
+  function dsTweenStep(t) {
+    var alive = [];
+    for (var i = 0; i < DSTW.length; i++) {
+      var w = DSTW[i], p = Math.min(1, (t - w.t0) / w.dur), e = 1 - Math.pow(1 - p, 3);
+      w.n.textContent = dsFmt(w.from + (w.to - w.from) * e, w.dp, w.sep);
+      if (p < 1) alive.push(w);
+    }
+    DSTW = alive;
+    DSTWR = DSTW.length ? requestAnimationFrame(dsTweenStep) : 0;
+  }
+  function dsTween(n, to, dp, sep) {
+    var from = parseFloat(String(n.textContent).split(',').join(''));
+    // A hidden tab throttles rAF, so a tween started there would sit half-finished
+    // until the tab came back. Set it outright instead - nobody is watching.
+    if (DSRM || isNaN(from) || document.hidden) { n.textContent = dsFmt(to, dp, sep); return; }
+    if (Math.abs(to - from) < (dp ? Math.pow(10, -dp) / 2 : 0.5)) return;   // not worth a frame
+    for (var i = 0; i < DSTW.length; i++) if (DSTW[i].n === n) { DSTW.splice(i, 1); break; }
+    DSTW.push({ n: n, from: from, to: to, dp: dp, sep: sep, t0: performance.now(), dur: 800 });
+    if (!DSTWR) DSTWR = requestAnimationFrame(dsTweenStep);
+  }
+  // ---- FLIP ----------------------------------------------------------------
+  // Tiles used to teleport into their new slot. Measuring before and after and
+  // playing the difference backwards is what turns "it jumped" into "it moved".
+  function dsFlip(mutate, skip) {
+    var g = document.getElementById('dsGrid');
+    // hidden tab: rAF is throttled, so the play-back frame might not arrive and a
+    // tile would sit stranded at its old offset. Just move it.
+    if (!g || DSRM || document.hidden) { mutate(); return; }
+    var first = {};
+    Array.prototype.forEach.call(g.querySelectorAll('.ds__t'), function (n) {
+      first[n.getAttribute('data-k')] = n.getBoundingClientRect();
+    });
+    mutate();
+    Array.prototype.forEach.call(g.querySelectorAll('.ds__t'), function (n) {
+      var k = n.getAttribute('data-k'), a = first[k];
+      if (!a || k === skip) return;
+      var b = n.getBoundingClientRect();
+      var dx = a.left - b.left, dy = a.top - b.top;
+      if (!dx && !dy) return;
+      n.classList.add('settling');
+      n.style.transition = 'none';
+      n.style.transform = 'translate(' + dx + 'px,' + dy + 'px)';
+      requestAnimationFrame(function () {
+        n.style.transition = 'transform .3s cubic-bezier(.2,.7,.2,1)';
+        n.style.transform = '';
+        setTimeout(function () { n.style.transition = ''; n.classList.remove('settling'); }, 320);
+      });
+    });
+  }
   // tile titles carry HTML entities for the markup; the status line is textContent,
   // so it needs the plain-English version or it reads "Doors &amp; windows"
   function dsT(c) { return c ? String(c.t).split('&amp;').join('&') : ''; }
@@ -2825,9 +2894,19 @@
         + '<span aria-hidden="true">' + c.ic + '</span>' + c.t + (lv ? '<i class="ds__dot"></i>' : '') + '</button>';
     }).join('') + '</div>';
   }
+  var DSFIRST = false;
   function dsRender(freshKey) {
     var g = document.getElementById('dsGrid'); if (!g) return;
     g.innerHTML = DS.tiles.map(function (t) { return dsTileHtml(t, t.k === freshKey); }).join('');
+    // stage the grid in on the FIRST paint of a session only - re-running this
+    // on every drag would make the whole board flicker on each move
+    if (DSFIRST && !DSRM) {
+      Array.prototype.forEach.call(g.querySelectorAll('.ds__t'), function (n, i) {
+        n.classList.add('ds__t--in');
+        n.style.animationDelay = Math.min(i, 8) * 45 + 'ms';
+      });
+      DSFIRST = false;
+    }
     var sh = document.getElementById('dsShelf'); if (sh) sh.innerHTML = dsShelfHtml();
     var lc = g.querySelectorAll('.ds__t.islive').length;
     var lg = document.getElementById('dsLegend');
@@ -2844,7 +2923,7 @@
     if (i < 0 || j < 0 || j >= DS.tiles.length) return;
     var t = DS.tiles.splice(i, 1)[0];
     DS.tiles.splice(j, 0, t);
-    dsRender();
+    dsFlip(function () { dsRender(); });
     var n = document.querySelector('#dsGrid .ds__t[data-k="' + k + '"] .ds__grip');
     if (n) n.focus();
     dsMsg('Moved. Save it when you like the look of it.');
@@ -2883,7 +2962,8 @@
       if (over) {
         var r = over.getBoundingClientRect();
         var before = (e.clientY < r.top + r.height * .5) || (Math.abs(e.clientY - (r.top + r.height * .5)) < r.height * .5 && e.clientX < r.left + r.width * .5);
-        g.insertBefore(tile, before ? over : over.nextSibling);
+        // the tiles being displaced slide out of the way instead of snapping
+        dsFlip(function () { g.insertBefore(tile, before ? over : over.nextSibling); }, tile.getAttribute('data-k'));
         tile.style.transform = '';                 // re-measure where it landed, or
         home = tile.getBoundingClientRect();       // the tile jumps out from under the finger
       }
@@ -2894,9 +2974,23 @@
       grip.removeEventListener('pointermove', onMove);
       grip.removeEventListener('pointerup', onUp);
       grip.removeEventListener('pointercancel', onUp);
-      tile.classList.remove('lift');
       tile.style.pointerEvents = '';
+      // settle into the slot rather than teleporting: measure where the finger
+      // left it, drop the lifted styling, then play the gap back
+      var was = tile.getBoundingClientRect();
+      tile.classList.remove('lift');
+      tile.style.transition = 'none';
       tile.style.transform = '';
+      if (!DSRM && !document.hidden) {
+        var now = tile.getBoundingClientRect();
+        tile.style.transform = 'translate(' + (was.left - now.left) + 'px,' + (was.top - now.top) + 'px)';
+        tile.classList.add('settling');
+        requestAnimationFrame(function () {
+          tile.style.transition = 'transform .26s cubic-bezier(.2,.7,.2,1)';
+          tile.style.transform = '';
+          setTimeout(function () { tile.style.transition = ''; tile.classList.remove('settling'); }, 280);
+        });
+      } else { tile.style.transition = ''; }
       if (moved) { dsOrderFromDom(); dsMsg('Moved. Save it when you like the look of it.'); }
     }
     grip.addEventListener('pointermove', onMove);
@@ -2925,11 +3019,11 @@
           if (i < 0) return;
           if (a === 'left') dsMove(k, -1);
           else if (a === 'right') dsMove(k, 1);
-          else if (a === 'wide') { DS.tiles[i].w = DS.tiles[i].w === 2 ? 1 : 2; dsRender(); dsMsg('Resized.'); }
+          else if (a === 'wide') { DS.tiles[i].w = DS.tiles[i].w === 2 ? 1 : 2; dsFlip(function () { dsRender(); }); dsMsg('Resized.'); }
           else if (a === 'del') {
             if (DS.tiles.length <= 1) { dsMsg('Keep at least one tile on the screen.'); return; }
             var gone = dsCat(k);
-            DS.tiles.splice(i, 1); dsRender();
+            DS.tiles.splice(i, 1); dsFlip(function () { dsRender(); });
             dsMsg((gone ? dsT(gone) : 'That tile') + ' is off the screen - add it back below whenever you like.');
           }
         };
@@ -3031,7 +3125,7 @@
       pad.id = 'dsBox';
       body.appendChild(pad);
       var plan = dsPlan(), pro = (plan === 'home' || plan === 'business');
-      DSMODE = 'mine';
+      DSMODE = 'mine'; DSFIRST = true;
       DS = DSSAVED && DSSAVED.tiles && DSSAVED.tiles.length
         ? { prop: DSSAVED.prop || plan, name: DSSAVED.name || 'My dashboard', tiles: DSSAVED.tiles.map(function (t) { return { k: t.k, w: t.w === 2 ? 2 : 1 }; }) }
         : { prop: plan, name: 'My dashboard', tiles: dsPreset(plan) };
@@ -3138,6 +3232,8 @@
       DSTIMER = setInterval(function () { dsWalk(); dsPaint(); }, 2400);
     }, function () {
       if (DSTIMER) { clearInterval(DSTIMER); DSTIMER = 0; }
+      if (DSTWR) { cancelAnimationFrame(DSTWR); DSTWR = 0; }
+      DSTW = [];
       try { document.removeEventListener('fullscreenchange', dsFsSync); } catch (e) {}
       DS = null; DSMODE = 'mine';
     });
