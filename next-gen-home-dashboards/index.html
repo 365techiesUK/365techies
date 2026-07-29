@@ -744,51 +744,85 @@
 <section class="section" aria-label="Live demo home dashboard">
   <div class="wrap">
     <div class="section-head">
-      <p class="eyebrow eyebrow--center mono" data-reveal>// LIVE DEMO &middot; SAMPLE HOME</p>
-      <h2 class="section-title section-title--center" data-title>Your whole house, one screen,
+      <p class="eyebrow eyebrow--center mono" data-reveal>// LIVE DEMO &middot; SAMPLE HOME &middot; SWIPE OR USE THE ARROWS</p>
+      <h2 class="section-title section-title--center" data-title>Three screens, one glance,
         any device<span class="title-underline"></span></h2>
-      <p class="lede lede--center" data-reveal>This is a sample home, not a real one &mdash; but
-        it is built the way we build them. Watch the evening arrive.</p>
+      <p class="lede lede--center" data-reveal>A sample home, built the way we build them.
+        Swipe between screens, or press the expand button for the full-screen wall view.</p>
     </div>
 
     <div class="hd" id="hd">
       <div class="hd__top">
-        <div class="hd__clock"><span id="hdTime">16:00</span><em id="hdDay">this evening</em></div>
-        <button class="hd__btn" id="hdPlay" type="button">Pause</button>
-      </div>
-
-      <div class="hd__row">
-        <div class="hd__card hd__card--wide">
-          <h3>Cameras</h3>
-          <div class="hd__cams" id="hdCams"></div>
-          <p class="hd__sub" id="hdCamNote">All four recording. Nothing needs you.</p>
-        </div>
-        <div class="hd__card">
-          <h3>Power</h3>
-          <div class="hd__big"><span id="hdPower">0</span><em>W now</em></div>
-          <div class="hd__bar2"><i id="hdBatt" style="width:80%"></i></div>
-          <p class="hd__sub"><span id="hdBattTxt">Battery 80%</span></p>
-        </div>
-        <div class="hd__card">
-          <h3>Broadband</h3>
-          <div class="hd__big"><span id="hdNet">—</span><em>Mbps down</em></div>
-          <p class="hd__sub" id="hdNetNote">Router up 41 days</p>
+        <div class="hd__clock"><span id="hdTime">16:00</span><em id="hdScreen">Overview</em></div>
+        <div class="hd__ctl">
+          <button class="hd__btn" id="hdPrev" type="button" aria-label="Previous screen">&#8249;</button>
+          <div class="hd__dots" id="hdDots" role="tablist" aria-label="Dashboard screens"></div>
+          <button class="hd__btn hd__btn--pulse" id="hdNext" type="button" aria-label="Next screen">&#8250;</button>
+          <button class="hd__btn" id="hdFs" type="button" aria-label="Full screen">&#9974;</button>
+          <button class="hd__btn" id="hdPlay" type="button" aria-label="Pause">&#10073;&#10073;</button>
         </div>
       </div>
 
-      <div class="hd__row">
-        <div class="hd__card"><h3>Backups</h3>
-          <div class="hd__ok" id="hdBk">&#10003;</div>
-          <p class="hd__sub" id="hdBkNote">3 PCs backed up last night</p></div>
-        <div class="hd__card"><h3>Doors &amp; windows</h3>
-          <div class="hd__ok" id="hdDoor">&#10003;</div>
-          <p class="hd__sub" id="hdDoorNote">All closed</p></div>
-        <div class="hd__card"><h3>Freezer</h3>
-          <div class="hd__big"><span id="hdFrz">-19</span><em>&deg;C</em></div>
-          <p class="hd__sub">Normal</p></div>
-        <div class="hd__card"><h3>Devices online</h3>
-          <div class="hd__big"><span id="hdDev">24</span><em>of 24</em></div>
-          <p class="hd__sub">Nothing missing</p></div>
+      <div class="hd__viewport" id="hdViewport">
+        <div class="hd__track" id="hdTrack">
+
+          <!-- SCREEN 1 - overview -->
+          <div class="hd__screen" role="tabpanel" aria-label="Overview">
+            <div class="hd__row">
+              <div class="hd__card hd__card--wide">
+                <h3><svg class="ic ic--spin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3" class="ic-f"/></svg> Cameras</h3>
+                <div class="hd__cams" id="hdCams"></div>
+                <p class="hd__sub" id="hdCamNote">All four recording. Nothing needs you.</p>
+              </div>
+              <div class="hd__card">
+                <h3><svg class="ic ic--flash" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg> Power</h3>
+                <div class="hd__big"><span id="hdPower">0</span><em>W now</em></div>
+                <div class="hd__bar2"><i id="hdBatt" style="width:80%"></i></div>
+                <p class="hd__sub" id="hdBattTxt">Battery 80%</p>
+              </div>
+              <div class="hd__card">
+                <h3><svg class="ic ic--wave" viewBox="0 0 24 24"><path d="M4 14a8 8 0 0 1 16 0"/><path d="M7 17a5 5 0 0 1 10 0"/><circle cx="12" cy="20" r="1.4" class="ic-f"/></svg> Broadband</h3>
+                <div class="hd__big"><span id="hdNet">—</span><em>Mbps</em></div>
+                <p class="hd__sub" id="hdNetNote">Router up 41 days</p>
+              </div>
+            </div>
+            <div class="hd__row">
+              <div class="hd__card"><h3><svg class="ic" viewBox="0 0 24 24"><path d="M4 7h16v12H4z"/><path d="M4 7l8-4 8 4"/></svg> Backups</h3>
+                <div class="hd__ok" id="hdBk">&#10003;</div><p class="hd__sub" id="hdBkNote">3 PCs backed up last night</p></div>
+              <div class="hd__card"><h3><svg class="ic" viewBox="0 0 24 24"><path d="M5 21V6l7-3 7 3v15"/><path d="M9 21v-7h6v7"/></svg> Doors</h3>
+                <div class="hd__ok" id="hdDoor">&#10003;</div><p class="hd__sub" id="hdDoorNote">All closed</p></div>
+              <div class="hd__card"><h3><svg class="ic ic--cool" viewBox="0 0 24 24"><path d="M12 3v18M4.5 7.5l15 9M19.5 7.5l-15 9"/></svg> Freezer</h3>
+                <div class="hd__big"><span id="hdFrz">-19</span><em>&deg;C</em></div><p class="hd__sub">Normal</p></div>
+              <div class="hd__card"><h3><svg class="ic ic--blink" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8"/></svg> Devices</h3>
+                <div class="hd__big"><span id="hdDev">24</span><em>of 24</em></div><p class="hd__sub">Nothing missing</p></div>
+            </div>
+          </div>
+
+          <!-- SCREEN 2 - cameras -->
+          <div class="hd__screen" role="tabpanel" aria-label="Cameras">
+            <div class="hd__cams hd__cams--big" id="hdCamsBig"></div>
+            <p class="hd__note" id="hdCamBigNote">Every camera, live. Clips copy off-site automatically, so a stolen recorder is not a lost clip.</p>
+          </div>
+
+          <!-- SCREEN 3 - weather + energy -->
+          <div class="hd__screen" role="tabpanel" aria-label="Weather and energy">
+            <div class="hd__row">
+              <div class="hd__card hd__card--wide hd__wx">
+                <h3><svg class="ic ic--float" viewBox="0 0 24 24"><circle cx="9" cy="9" r="3.4"/><path d="M6 18h11a3.5 3.5 0 0 0 0-7 5 5 0 0 0-9.6-1"/></svg> Weather &mdash; <span id="wxPlace">your postcode</span></h3>
+                <div class="hd__wxnow"><span id="wxTemp">14</span><em>&deg;C</em>
+                  <div class="hd__wxd"><b id="wxDesc">Cloudy</b><span id="wxSub">Feels like 12&deg; &middot; wind 11mph</span></div></div>
+                <div class="hd__wxrow" id="wxDays"></div>
+              </div>
+              <div class="hd__card">
+                <h3><svg class="ic ic--flash" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg> Today</h3>
+                <div class="hd__big"><span id="wxGen">0.0</span><em>kWh made</em></div>
+                <p class="hd__sub" id="wxSaved">Used at home rather than exported</p>
+              </div>
+            </div>
+            <p class="hd__note">Weather comes from whichever source is best for your postcode &mdash; and it matters, because tomorrow&rsquo;s forecast is what decides whether the battery charges tonight.</p>
+          </div>
+
+        </div>
       </div>
 
       <p class="hd__note" id="hdNote">A quiet afternoon. Nothing wants your attention.</p>
@@ -798,82 +832,176 @@
 
 <style>
 .hd{background:var(--panel,#0d1530);border:1px solid var(--line,#2a3b63);border-radius:16px;padding:1.1rem;max-width:1080px;margin:0 auto}
-.hd__top{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.hd__top{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1rem;flex-wrap:wrap}
 .hd__clock span{font-family:var(--mono,monospace);font-size:1.9rem;font-weight:800;color:var(--white,#f0f5fc)}
 .hd__clock em{display:block;font-style:normal;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mut,#9fb5d3);margin-top:.2rem}
-.hd__btn{background:transparent;border:1px solid var(--line,#2a3b63);color:var(--soft,#86b6e8);border-radius:8px;padding:.45rem .85rem;font:inherit;font-size:.8rem;cursor:pointer}
-.hd__row{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:.6rem;margin-bottom:.6rem}
+.hd__ctl{display:flex;align-items:center;gap:.4rem}
+.hd__btn{background:transparent;border:1px solid var(--line,#2a3b63);color:var(--soft,#86b6e8);border-radius:8px;min-width:38px;height:34px;font:inherit;font-size:1rem;cursor:pointer;line-height:1}
+.hd__btn:hover,.hd__btn:focus-visible{border-color:var(--cyan,#1d97e3);color:var(--cyan,#1d97e3)}
+.hd__btn--pulse{animation:hdPulse 2.4s ease-in-out infinite}
+@keyframes hdPulse{0%,100%{box-shadow:0 0 0 0 rgba(29,151,227,.5)}50%{box-shadow:0 0 0 7px rgba(29,151,227,0)}}
+.hd__dots{display:flex;gap:.3rem;padding:0 .3rem}
+.hd__dots button{width:8px;height:8px;padding:0;border-radius:50%;border:0;background:#2a3b63;cursor:pointer}
+.hd__dots button[aria-selected="true"]{background:var(--cyan,#1d97e3);width:20px;border-radius:4px}
+.hd__viewport{overflow:hidden;border-radius:12px;touch-action:pan-y}
+.hd__track{display:flex;transition:transform .45s cubic-bezier(.4,0,.2,1)}
+.hd__screen{min-width:100%;flex:0 0 100%}
+.hd__row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.6rem;margin-bottom:.6rem}
 .hd__card{background:#0b1226;border:1px solid var(--line,#2a3b63);border-radius:12px;padding:.8rem .9rem}
 .hd__card--wide{grid-column:span 2}
-.hd__card h3{margin:0 0 .5rem;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--mut,#9fb5d3);font-weight:700}
+.hd__card h3{margin:0 0 .5rem;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--mut,#9fb5d3);font-weight:700;display:flex;align-items:center;gap:.4rem}
+.ic{width:15px;height:15px;flex:0 0 15px;fill:none;stroke:var(--cyan,#1d97e3);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.ic .ic-f{fill:var(--cyan,#1d97e3);stroke:none}
+.ic--spin{animation:icSpin 9s linear infinite;transform-origin:50% 50%}
+@keyframes icSpin{to{transform:rotate(360deg)}}
+.ic--flash{animation:icFlash 2.6s ease-in-out infinite}
+@keyframes icFlash{0%,100%{opacity:1}45%{opacity:.35}}
+.ic--wave path{animation:icWave 2.2s ease-in-out infinite}
+.ic--wave path:nth-child(2){animation-delay:.25s}
+@keyframes icWave{0%,100%{opacity:.35}50%{opacity:1}}
+.ic--cool{animation:icSpin 22s linear infinite;transform-origin:50% 50%}
+.ic--blink{animation:icFlash 4s ease-in-out infinite}
+.ic--float{animation:icFloat 3.4s ease-in-out infinite}
+@keyframes icFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
 .hd__big{line-height:1}
 .hd__big span{font-size:1.9rem;font-weight:800;color:var(--white,#f0f5fc);font-variant-numeric:tabular-nums}
 .hd__big em{font-style:normal;font-size:.7rem;color:var(--mut,#9fb5d3);margin-left:.3rem}
 .hd__sub{margin:.45rem 0 0;font-size:.72rem;color:var(--mut,#9fb5d3)}
 .hd__ok{font-size:1.7rem;color:var(--good,#39d353);line-height:1.1}
-.hd__ok.is-bad{color:#e8637e}
 .hd__cams{display:grid;grid-template-columns:repeat(4,1fr);gap:.35rem}
+.hd__cams--big{grid-template-columns:repeat(2,1fr);gap:.6rem}
 .hd__cam{aspect-ratio:4/3;border-radius:7px;background:#060b18;border:1px solid #1b2947;position:relative;overflow:hidden;transition:border-color .4s}
-.hd__cam span{position:absolute;left:4px;bottom:3px;font-size:.55rem;color:#7d90ad;font-family:var(--mono,monospace)}
-.hd__cam i{position:absolute;right:4px;top:4px;width:6px;height:6px;border-radius:50%;background:#39d353;box-shadow:0 0 6px #39d353}
+.hd__cam::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(29,151,227,.08) 50%,transparent 55%);animation:icScan 5.5s linear infinite}
+@keyframes icScan{0%{transform:translateY(-100%)}100%{transform:translateY(100%)}}
+.hd__cam span{position:absolute;left:5px;bottom:4px;font-size:.58rem;color:#7d90ad;font-family:var(--mono,monospace);z-index:2}
+.hd__cam i{position:absolute;right:5px;top:5px;width:6px;height:6px;border-radius:50%;background:#39d353;box-shadow:0 0 6px #39d353;z-index:2}
 .hd__cam.is-alert{border-color:#e0b341}
-.hd__cam.is-alert i{background:#e0b341;box-shadow:0 0 8px #e0b341}
+.hd__cam.is-alert i{background:#e0b341;box-shadow:0 0 9px #e0b341;animation:icFlash 1s ease-in-out infinite}
 .hd__bar2{height:7px;border-radius:4px;background:#0b1226;border:1px solid var(--line,#2a3b63);overflow:hidden;margin-top:.5rem}
 .hd__bar2 i{display:block;height:100%;background:linear-gradient(90deg,#1d97e3,#39d353);transition:width .6s}
+.hd__wxnow{display:flex;align-items:center;gap:.7rem;margin:.2rem 0 .6rem}
+.hd__wxnow span{font-size:2.4rem;font-weight:800;color:var(--white,#f0f5fc);line-height:1}
+.hd__wxnow em{font-style:normal;font-size:.9rem;color:var(--mut,#9fb5d3);align-self:flex-start;margin-top:.25rem}
+.hd__wxd b{display:block;color:var(--white,#f0f5fc);font-size:.9rem}
+.hd__wxd span{font-size:.72rem;color:var(--mut,#9fb5d3)}
+.hd__wxrow{display:grid;grid-template-columns:repeat(5,1fr);gap:.4rem}
+.hd__wxday{background:#0d1530;border:1px solid var(--line,#2a3b63);border-radius:8px;padding:.45rem .3rem;text-align:center}
+.hd__wxday b{display:block;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mut,#9fb5d3)}
+.hd__wxday u{display:block;text-decoration:none;font-size:.95rem;font-weight:800;color:var(--white,#f0f5fc);margin-top:.2rem}
 .hd__note{margin:.8rem 0 0;padding:.65rem .9rem;border-left:3px solid var(--cyan,#1d97e3);background:#0b1226;border-radius:0 8px 8px 0;font-size:.85rem;color:var(--soft,#86b6e8);min-height:2.4em}
-@media (max-width:620px){.hd__card--wide{grid-column:span 1}}
-@media (prefers-reduced-motion:reduce){.hd__cam,.hd__bar2 i{transition:none}}
+
+/* GAME MODE - fullscreen strips everything back to the data */
+.hd:fullscreen{max-width:none;width:100%;height:100%;border-radius:0;border:0;padding:2.2rem 3rem;display:flex;flex-direction:column;justify-content:center;background:radial-gradient(ellipse at 50% 0%,#12203f 0%,#070c1a 70%)}
+.hd:fullscreen .hd__clock span{font-size:3.4rem}
+.hd:fullscreen .hd__card{padding:1.3rem 1.5rem;border-radius:16px}
+.hd:fullscreen .hd__big span{font-size:3.2rem}
+.hd:fullscreen .hd__card h3{font-size:.82rem}
+.hd:fullscreen .ic{width:20px;height:20px;flex-basis:20px}
+.hd:fullscreen .hd__note{font-size:1.05rem;padding:1rem 1.2rem}
+.hd:fullscreen .hd__wxnow span{font-size:4rem}
+.hd:fullscreen .hd__btn{min-width:48px;height:44px;font-size:1.2rem}
+@media (max-width:620px){.hd__card--wide{grid-column:span 1}.hd__cams--big{grid-template-columns:1fr}.hd__clock span{font-size:1.5rem}}
+@media (prefers-reduced-motion:reduce){.hd__track{transition:none}.ic,.hd__cam::after,.hd__btn--pulse{animation:none!important}}
 </style>
 
 <script>
 (function(){
-  var wrap=document.getElementById('hdCams'); if(!wrap) return;
-  var names=['Front door','Driveway','Back garden','Side gate'], cams=[];
-  names.forEach(function(n){
-    var d=document.createElement('div'); d.className='hd__cam';
-    d.innerHTML='<i></i><span>'+n+'</span>'; wrap.appendChild(d); cams.push(d);
+  var root=document.getElementById('hd'); if(!root) return;
+  var track=document.getElementById('hdTrack'), vp=document.getElementById('hdViewport');
+  var screens=track.children, N=screens.length, cur=0, t=0, playing=true;
+  var $=function(i){return document.getElementById(i);};
+  var LABELS=['Overview','Cameras','Weather & energy'];
+
+  // dots
+  var dots=$('hdDots');
+  for(var d=0;d<N;d++){(function(k){
+    var b=document.createElement('button'); b.type='button'; b.setAttribute('role','tab');
+    b.setAttribute('aria-label','Screen '+(k+1)+': '+LABELS[k]);
+    b.addEventListener('click',function(){go(k);}); dots.appendChild(b);
+  })(d);}
+
+  function go(i){
+    cur=(i+N)%N;
+    track.style.transform='translateX(-'+(cur*100)+'%)';
+    $('hdScreen').textContent=LABELS[cur];
+    [].forEach.call(dots.children,function(b,k){b.setAttribute('aria-selected',k===cur?'true':'false');});
+    // once the visitor has driven it themselves, stop nudging
+    $('hdNext').classList.remove('hd__btn--pulse');
+  }
+  $('hdNext').addEventListener('click',function(){go(cur+1);});
+  $('hdPrev').addEventListener('click',function(){go(cur-1);});
+  root.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'){go(cur+1);} else if(e.key==='ArrowLeft'){go(cur-1);}
   });
-  var t=0, playing=true, btn=document.getElementById('hdPlay');
-  btn.addEventListener('click',function(){playing=!playing;btn.textContent=playing?'Pause':'Play';});
-  var $=function(id){return document.getElementById(id);};
+  root.tabIndex=0;
+
+  // swipe
+  var x0=null;
+  vp.addEventListener('touchstart',function(e){x0=e.touches[0].clientX;},{passive:true});
+  vp.addEventListener('touchend',function(e){
+    if(x0===null) return;
+    var dx=e.changedTouches[0].clientX-x0;
+    if(Math.abs(dx)>45) go(cur+(dx<0?1:-1));
+    x0=null;
+  },{passive:true});
+
+  // fullscreen "game mode"
+  $('hdFs').addEventListener('click',function(){
+    if(document.fullscreenElement){ document.exitFullscreen(); }
+    else if(root.requestFullscreen){ root.requestFullscreen().catch(function(){}); }
+  });
+  $('hdPlay').addEventListener('click',function(){
+    playing=!playing; this.innerHTML=playing?'&#10073;&#10073;':'&#9654;';
+  });
+
+  // cameras on both screens
+  var names=['Front door','Driveway','Back garden','Side gate'], cams=[], camsBig=[];
+  [['hdCams',cams],['hdCamsBig',camsBig]].forEach(function(pair){
+    var host=$(pair[0]); if(!host) return;
+    names.forEach(function(n){
+      var el=document.createElement('div'); el.className='hd__cam';
+      el.innerHTML='<i></i><span>'+n+'</span>'; host.appendChild(el); pair[1].push(el);
+    });
+  });
+
+  // 5-day forecast strip (sample)
+  var days=['Wed','Thu','Fri','Sat','Sun'], temps=[16,18,15,13,17];
+  var wx=$('wxDays');
+  days.forEach(function(d,i){
+    var el=document.createElement('div'); el.className='hd__wxday';
+    el.innerHTML='<b>'+d+'</b><u>'+temps[i]+'&deg;</u>'; wx.appendChild(el);
+  });
 
   function frame(){
     if(playing){ t+=0.02; if(t>9){ t=0; } }
-    var h=16+t;                     // 16:00 -> 01:00
-    var hh=Math.floor(h)%24, mm=Math.floor((h%1)*60);
+    var h=16+t, hh=Math.floor(h)%24, mm=Math.floor((h%1)*60);
     $('hdTime').textContent=String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');
 
-    // solar fades, house load rises as the evening comes in
     var solar=Math.max(0,Math.cos((h-13)/6));
     var load=520+Math.round(Math.sin(h)*90)+(h>17.5&&h<22?700:0);
     var net=Math.round(load-solar*2400);
     $('hdPower').textContent=(net>0?'+':'')+net;
     var batt=Math.max(18,Math.round(92-(h-16)*8));
     $('hdBatt').style.width=batt+'%';
-    $('hdBattTxt').textContent='Battery '+batt+'%'+(batt<25?' — charging overnight':'');
-
+    $('hdBattTxt').textContent='Battery '+batt+'%'+(batt<25?' \u2014 charging overnight':'');
     $('hdNet').textContent=(890+Math.round(Math.sin(h*3)*45));
     $('hdFrz').textContent=(-19+(Math.sin(h*2)>0.93?1:0));
     $('hdDev').textContent=(h>18.4&&h<18.9)?23:24;
+    $('wxGen').textContent=(solar*14+2).toFixed(1);
+    $('wxTemp').textContent=Math.round(15-(h-16)*0.7);
 
-    // one evening event: motion at the side gate, then it clears
     var alert=(h>19.1&&h<19.6);
-    cams[3].className='hd__cam'+(alert?' is-alert':'');
-    $('hdCamNote').textContent=alert?'Motion at the side gate — clip saved, and it is already off-site.'
+    [cams,camsBig].forEach(function(set){ if(set[3]) set[3].className='hd__cam'+(alert?' is-alert':''); });
+    $('hdCamNote').textContent=alert?'Motion at the side gate \u2014 clip saved, already off-site.'
                                     :'All four recording. Nothing needs you.';
-    $('hdDoor').className='hd__ok'; $('hdDoorNote').textContent='All closed';
-    var bkRun=(h>1&&h<2.5);
-    $('hdBk').textContent='✓';
-    $('hdBkNote').textContent=bkRun?'Running now':'3 PCs backed up last night';
-
     $('hdNote').textContent = alert
-      ? 'Something moved at the side gate. You get one notification with the clip attached — not forty a day, which is why people switch these things off.'
-      : (h>17.5&&h<22 ? 'Cooking, telly on, everyone home. The battery is carrying the evening so you are buying almost nothing at peak rate.'
-      : (batt<25 ? 'Battery low, so it will charge overnight on the cheap rate and be full before breakfast.'
+      ? 'Something moved at the side gate. One notification, with the clip attached \u2014 not forty a day, which is why people switch these things off.'
+      : (h>17.5&&h<22 ? 'Cooking, telly on, everyone home. The battery is carrying the evening, so you are buying almost nothing at peak rate.'
+      : (batt<25 ? 'Battery low, so it charges overnight on the cheap rate and is full before breakfast.'
                  : 'A quiet afternoon. Nothing wants your attention.'));
     requestAnimationFrame(frame);
   }
-  requestAnimationFrame(frame);
+  go(0); requestAnimationFrame(frame);
 })();
 </script>
 
