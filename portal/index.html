@@ -640,9 +640,9 @@
   </aside>
 
   <main id="main">
-<section class="section" style="padding-top:6.5rem"><div class="wrap" style="max-width:880px"><div id="p365app"><noscript><p>The customer portal needs JavaScript switched on. Or just ring us: 01202 775566.</p></noscript><p style="color:#9fb5d3">Loading the portal&hellip;</p></div><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">portal build 29 Jul 2026 &middot; ebd6f04758</p><script>
+<section class="section" style="padding-top:6.5rem"><div class="wrap" style="max-width:880px"><div id="p365app"><noscript><p>The customer portal needs JavaScript switched on. Or just ring us: 01202 775566.</p></noscript><p style="color:#9fb5d3">Loading the portal&hellip;</p></div><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">portal build 29 Jul 2026 &middot; 2915bf7eec</p><script>
 (function () {
-  var P365BUILD = 'ebd6f04758';
+  var P365BUILD = '2915bf7eec';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -1284,6 +1284,14 @@
   #p365app .ds__z i, .p365ov .ds__z i { grid-row:span 2; }
   #p365app .ds__z b, .p365ov .ds__z b { color:var(--pwhite); font-size:.83rem; }
   #p365app .ds__z span, .p365ov .ds__z span { color:var(--pmut); font-size:.72rem; line-height:1.4; }
+  #p365app .ds__jlist, .p365ov .ds__jlist { display:flex; flex-direction:column; gap:.1rem; }
+  #p365app .ds__j, .p365ov .ds__j { display:grid; grid-template-columns:1fr auto; gap:0 .6rem; align-items:baseline;
+    padding:.4rem 0; border-bottom:1px solid rgba(42,59,99,.45); }
+  #p365app .ds__j:last-child, .p365ov .ds__j:last-child { border-bottom:0; }
+  #p365app .ds__j b, .p365ov .ds__j b { color:var(--pwhite); font-size:.84rem; }
+  #p365app .ds__j span, .p365ov .ds__j span { grid-column:1; font-size:.71rem; color:var(--pmut); }
+  #p365app .ds__j u, .p365ov .ds__j u { grid-row:span 2; align-self:center; text-decoration:none; font-size:1.05rem;
+    font-weight:700; color:var(--pcyan); font-variant-numeric:tabular-nums; }
   #p365app .ds__bars, .p365ov .ds__bars { display:flex; align-items:flex-end; gap:.28rem; height:46px; margin:.5rem 0 .1rem; }
   #p365app .ds__bars i, .p365ov .ds__bars i { flex:1; background:linear-gradient(180deg,var(--pcyan),rgba(29,151,227,.3)); border-radius:3px 3px 0 0; min-height:3px; }
   #p365app .ds__cams--big, .p365ov .ds__cams--big { grid-template-columns:repeat(4,1fr); grid-auto-rows:66px; }
@@ -2271,7 +2279,15 @@
       ask:[{ f:'vehicle', l:'What is it', ph:'e.g. VW Crafter van, 2021' },
            { f:'device', l:'Any tracker or dongle already fitted?', ph:'e.g. none yet, or a make' }],
       how:'This comes from a <b>standards-based OBD or telematics device</b> &mdash; either one already fitted, or one we supply. We work from documented interfaces, never by pulling a manufacturer&rsquo;s app apart, because anything built that way breaks the next time they update it.',
-      note:'Worth saying plainly: this is not a theft tracker. It is not concealed and no insurer recognises it. A dedicated tracker still owns that job.' },
+      note:'Three honest caveats. It is not a theft tracker &mdash; not concealed, not insurer-recognised. Most cars do not publish a true fuel-flow reading, so mpg is <em>calculated</em> from airflow: good enough to compare one journey with another, and we check it against what you actually put in at the pump. And if staff drive these, they must be told they are tracked &mdash; we will help you word that, and we can stop the logging outside working hours.' },
+    { k:'ev', ic:'\ud83d\udd0b', t:'An electric car', route:'invite',
+      ask:[{ f:'car', l:'Make and model', ph:'e.g. Tesla Model Y, Kia EV6' },
+           { f:'charger', l:'Home charger, if you have one', ph:'e.g. Zappi, Ohme, none yet' }],
+      how:'Electric cars do not answer the diagnostics port the way a petrol one does &mdash; their data comes from the '
+        + '<b>manufacturer&rsquo;s own connected-car service</b>. You sign in to your car account once and grant access, exactly like connecting an app; '
+        + 'we never see your password. Services such as Smartcar and Enode cover most brands sold here between them.',
+      note:'This is the one where your dashboard tells you something the car genuinely cannot: how much of last night&rsquo;s charge came off your own roof, '
+        + 'and what the rest cost on your tariff. Cover is per brand and per model year, so we check yours first.' },
     { k:'tracker', ic:'\ud83d\udccd', t:'A tracker on something else', route:'key',
       ask:[{ f:'thing', l:'What are you tracking', ph:'e.g. a boat, a trailer, plant' },
            { f:'make', l:'Make of tracker', ph:'e.g. Teltonika, or not bought yet' }],
@@ -2304,7 +2320,8 @@
   var DSTILESRC = { energy:'victron', cost:'energy', cctv:'camera', freezer:'iot', leak:'iot', door:'iot',
     heating:'iot', water:'iot', bilge:'iot', wifi:'wifi', servers:'wifi', sites:'wifi', alerts:'slack',
     machine:'machine', vehicle:'vehicle', trip:'vehicle', ecu:'vehicle', fence:'tracker', assets:'tracker',
-    pet:'pet', weather:'other', broadband:'other' };
+    pet:'pet', weather:'other', broadband:'other',
+    journey:'vehicle', fillup:'vehicle', sitecost:'vehicle', charge:'ev' };
   var DSCONN = [];
   function dsSrc(k) { for (var i = 0; i < DSSRC.length; i++) if (DSSRC[i].k === k) return DSSRC[i]; return null; }
   function dsRouteName(r) { return r === 'invite' ? 'You invite us in' : (r === 'onsite' ? 'Needs something on site' : 'Needs a read-only key'); }
@@ -2656,6 +2673,56 @@
         + '<div><b>0</b><span>fault codes</span></div></div>'
         + '<p class="ds__sub">Straight off the engine\u2019s own diagnostics port. A fault code appears here the moment the light comes on, '
         + 'with what it actually means &mdash; not just an orange symbol.</p>' },
+    // ---- what GPS and the engine can only tell you TOGETHER -------------------
+    // The car's own trip computer has always shown mpg. What it has never known is
+    // WHERE you were or WHY, so it can never tell you what a journey cost, which
+    // customer you spent the fuel on, or that this tank was cheaper than the last.
+    // That crossover is the whole point of these four tiles.
+    { k:'journey', ic:'\ud83e\uddfe', t:'What that trip cost', aud:'all',
+      b:'<div class="ds__big">&pound;<span data-f="jcost">11.40</span><em>to Dorchester</em></div>'
+        + '<p class="ds__sub">27.4 miles &middot; 52 min &middot; <span data-f="mpg">34.2</span> mpg on the way</p>',
+      b2:'<div class="ds__jlist">'
+        + '<div class="ds__j"><b>Dorchester</b><span>27.4 mi &middot; 52 min &middot; 34.2 mpg</span><u>&pound;<span data-f="jcost">11.40</span></u></div>'
+        + '<div class="ds__j"><b>Poole depot</b><span>11.2 mi &middot; 24 min &middot; 28.1 mpg</span><u>&pound;5.62</u></div>'
+        + '<div class="ds__j"><b>Wimborne</b><span>6.8 mi &middot; 17 min &middot; 26.4 mpg</span><u>&pound;3.63</u></div>'
+        + '<div class="ds__j"><b>Sitting still, engine on</b><span>41 min of idling this week</span><u>&pound;<span data-f="idle">2.180</span></u></div>'
+        + '</div>'
+        + '<p class="ds__sub">Every trip priced at what the fuel in the tank actually cost, not the pump price today. '
+        + 'Your car has always known the mpg &mdash; it has never known where you went.</p>' },
+    { k:'fillup', ic:'\u26fd', t:'Fill-ups', aud:'all',
+      b:'<div class="ds__big">&pound;<span data-f="fuelp">1.429</span><em>a litre</em></div>'
+        + '<p class="ds__sub">48.2 L at Sainsbury&rsquo;s Wimborne &middot; &pound;68.88 &middot; logged by itself</p>',
+      b2:'<div class="ds__kpis"><div><b>&pound;<span data-f="fuelp">1.429</span></b><span>last price paid</span></div>'
+        + '<div><b>48.2<em>L</em></b><span>last fill</span></div>'
+        + '<div><b><span data-f="brim">34.9</span></b><span>real mpg, tank to tank</span></div>'
+        + '<div><b><span data-f="ppm">19</span><em>p</em></b><span>per mile</span></div></div>'
+        + '<div class="ds__bars"><i style="height:52%"></i><i style="height:61%"></i><i style="height:48%"></i><i style="height:73%"></i>'
+        + '<i style="height:44%"></i><i style="height:58%"></i></div>'
+        + '<p class="ds__sub"><strong>Why this tile matters:</strong> the mpg your car reports is usually worked out from airflow, not measured. '
+        + 'Brim to brim against the litres you actually bought is the honest number &mdash; and when the two disagree, we show you both.</p>' },
+    { k:'charge', ic:'\ud83d\udd0b', t:'Charging', aud:'all',
+      b:'<div class="ds__big"><span data-f="kwhadd">31.4</span><em>kWh added</em></div>'
+        + '<div class="ds__bar2"><i data-bar="solarsh" style="width:62%"></i></div>'
+        + '<p class="ds__sub"><span data-f="solarsh">62</span>% of it came off your own roof &middot; cost &pound;<span data-f="chcost">4.02</span></p>',
+      b2:'<div class="ds__kpis"><div><b><span data-f="kwhadd">31.4</span></b><span>kWh added</span></div>'
+        + '<div><b><span data-f="solarsh">62</span><em>%</em></b><span>from your roof</span></div>'
+        + '<div><b>&pound;<span data-f="chcost">4.02</span></b><span>this charge</span></div>'
+        + '<div><b>3.1<em>p</em></b><span>per mile</span></div></div>'
+        + '<div class="ds__jlist"><div class="ds__j"><b>Home, overnight</b><span>21.7 kWh &middot; 62% solar</span><u>&pound;4.02</u></div>'
+        + '<div class="ds__j"><b>Public rapid, Ferndown</b><span>9.7 kWh &middot; 79p/kWh</span><u>&pound;7.66</u></div></div>'
+        + '<p class="ds__sub">This is the one your car cannot do: it knows the kWh, but only your dashboard knows how much of it '
+        + 'came from the panels and what the rest cost on your tariff. Charging at home on a sunny afternoon is a different price '
+        + 'from charging at a motorway rapid, and here you can see it.</p>' },
+    { k:'sitecost', ic:'\ud83d\udcb0', t:'Driving cost by site', aud:'biz',
+      b:'<div class="ds__big">&pound;142<em>this quarter</em></div>'
+        + '<p class="ds__sub">Getting to Acme Ltd &middot; 14 visits &middot; &pound;10.14 a visit</p>',
+      b2:'<div class="ds__jlist">'
+        + '<div class="ds__j"><b>Acme Ltd, Poole</b><span>14 visits &middot; 157 miles</span><u>&pound;142</u></div>'
+        + '<div class="ds__j"><b>Bridport site</b><span>6 visits &middot; 288 miles</span><u>&pound;121</u></div>'
+        + '<div class="ds__j"><b>Ferndown unit</b><span>31 visits &middot; 74 miles</span><u>&pound;48</u></div>'
+        + '</div>'
+        + '<p class="ds__sub">Your geofences already know when a vehicle arrived somewhere. Put fuel against that and you get the '
+        + 'number nobody has: what it actually costs you to serve each customer, before you quote the next job.</p>' },
     { k:'assets', ic:'\ud83d\uddfa', t:'All your trackers', aud:'all',
       b:'<div class="ds__feed"><span><b>\ud83d\ude90 Van</b> moving &middot; A31</span>'
         + '<span><b>\u26f5 Boat</b> moored &middot; Poole Quay</span>'
@@ -2703,14 +2770,15 @@
   };
   var DSPROPS = [
     { p:'home',     ic:'\ud83c\udfe0', t:'Home',          lay:[['cctv',2],['pet',1],['energy',1],['broadband',1],['door',1],['leak',1],['weather',1]] },
-    { p:'business', ic:'\ud83c\udfe2', t:'Business',      lay:[['assets',2],['fence',1],['trip',1],['wifi',2],['servers',1],['sites',1],['alerts',2],['cctv',1]] },
+    { p:'business', ic:'\ud83c\udfe2', t:'Business',      lay:[['assets',2],['sitecost',2],['fence',1],['journey',1],['wifi',2],['servers',1],['alerts',2],['cctv',1]] },
     { p:'boat',     ic:'\u26f5', t:'Boat',                 lay:[['vehicle',2],['energy',1],['bilge',1],['fence',1],['water',1],['weather',1],['alerts',2]] },
-    { p:'camper',   ic:'\ud83d\ude90', t:'Campervan',     lay:[['vehicle',2],['energy',1],['trip',1],['ecu',1],['water',1],['broadband',1],['weather',1]] },
+    { p:'camper',   ic:'\ud83d\ude90', t:'Campervan',     lay:[['vehicle',2],['journey',2],['trip',1],['ecu',1],['fillup',1],['energy',1],['water',1]] },
     { p:'holiday',  ic:'\ud83c\udfdd', t:'Holiday home',  lay:[['heating',2],['leak',1],['cctv',1],['door',1],['energy',1],['weather',1]] }
   ];
   var DSD = { pwr:1840, battp:82, cost:1.42, kwh:6.8, kwhs:4.1, frz:-19, doors:9, aps:12, clients:38,
               poe:61, mbps:71, vmi:128, vbatt:12.7, wxt:14, run:92, out:1420, heat:17.5, hum:58, wtr:74,
-              spd:48, mtd:17.2, mpg:34.2, cool:88, fuel:62, petkm:2.4, petbat:71 };
+              spd:48, mtd:17.2, mpg:34.2, cool:88, fuel:62, petkm:2.4, petbat:71,
+              jcost:11.40, fuelp:1.429, brim:34.9, kwhadd:31.4, solarsh:62, chcost:4.02, idle:2.18 };
   var DS = null, DSTIMER = 0, DSSAVED = null, DSMODE = 'mine';
   function dsPlan() { return (JD && JD.plan) ? JD.plan : ((JD && JD.tier === 'pro') ? 'home' : 'free'); }
   function dsPlanName(p) { return p === 'business' ? '365 Business Support' : (p === 'home' ? '365 Home Support' : '365 Club (free)'); }
@@ -2761,6 +2829,15 @@
     DSD.fuel = Math.max(8, DSD.fuel - Math.random() * .04);
     DSD.petkm = Math.min(9, DSD.petkm + Math.random() * .01);
     DSD.petbat = Math.max(18, DSD.petbat - Math.random() * .02);
+    DSD.jcost = j(DSD.jcost, .5, 3.2, 24);
+    DSD.fuelp = j(DSD.fuelp, .004, 1.32, 1.58);
+    // the brim-to-brim figure tracks the reported mpg but stays stubbornly a
+    // little lower, which is the honest real-world relationship between the two
+    DSD.brim = Math.max(20, Math.min(42, DSD.mpg - 1.2 + (Math.random() - .5) * .4));
+    DSD.kwhadd = j(DSD.kwhadd, 1.2, 8, 58);
+    DSD.solarsh = j(DSD.solarsh, 4, 0, 96);
+    DSD.chcost = Math.max(0, DSD.kwhadd * (1 - DSD.solarsh / 100) * 0.34);
+    DSD.idle = j(DSD.idle, .08, .4, 9);
     DSD.wtr = Math.max(12, DSD.wtr - Math.random() * .5);
     if (DSD.wtr < 14) DSD.wtr = 96;
   }
@@ -2773,12 +2850,15 @@
       heat: dsNum(DSD.heat, 1), hum: dsNum(DSD.hum), wtr: dsNum(DSD.wtr),
       spd: dsNum(DSD.spd), mtd: dsNum(DSD.mtd, 1), mpg: dsNum(DSD.mpg, 1), cool: dsNum(DSD.cool),
       fuel: dsNum(DSD.fuel), petkm: dsNum(DSD.petkm, 1), petbat: dsNum(DSD.petbat),
+      jcost: dsNum(DSD.jcost, 2), fuelp: dsNum(DSD.fuelp, 3), brim: dsNum(DSD.brim, 1),
+      kwhadd: dsNum(DSD.kwhadd, 1), solarsh: dsNum(DSD.solarsh), chcost: dsNum(DSD.chcost, 2),
+      idle: dsNum(DSD.idle, 2),
       // pence per mile follows the economy figure rather than sitting there as a
       // number that never agrees with the mpg beside it
-      ppm: dsNum(1550 / Math.max(1, DSD.mpg)) };
+      ppm: dsNum(DSD.fuelp * 454.6 / Math.max(1, DSD.mpg)) };
     Array.prototype.forEach.call(g.querySelectorAll('[data-f]'), function (n) {
       var f = n.getAttribute('data-f'), fmt = DSNUMF[f];
-      if (fmt) { dsTween(n, (f === 'ppm') ? 1550 / Math.max(1, DSD.mpg) : DSD[f], fmt[0], fmt[1]); return; }
+      if (fmt) { dsTween(n, (f === 'ppm') ? DSD.fuelp * 454.6 / Math.max(1, DSD.mpg) : DSD[f], fmt[0], fmt[1]); return; }
       var v = vals[f];
       if (v !== undefined && n.textContent !== v) n.textContent = v;
     });
@@ -2796,7 +2876,8 @@
   var DSNUMF = { pwr:[0,1], battp:[0,0], cost:[2,0], kwh:[1,0], kwhs:[1,0], frz:[0,0], doors:[0,0],
     aps:[0,0], clients:[0,0], poe:[0,0], mbps:[0,0], vmi:[0,0], vbatt:[1,0], wxt:[0,0], run:[0,0],
     out:[0,1], heat:[1,0], hum:[0,0], wtr:[0,0], spd:[0,0], mtd:[1,0], mpg:[1,0], cool:[0,0],
-    fuel:[0,0], petkm:[1,0], petbat:[0,0], ppm:[0,0] };
+    fuel:[0,0], petkm:[1,0], petbat:[0,0], ppm:[0,0],
+    jcost:[2,0], fuelp:[3,0], brim:[1,0], kwhadd:[1,0], solarsh:[0,0], chcost:[2,0], idle:[2,0] };
   function dsFmt(v, dp, sep) {
     if (sep) return Number(v).toLocaleString('en-GB', { minimumFractionDigits: dp, maximumFractionDigits: dp });
     return dp ? v.toFixed(dp) : String(Math.round(v));
