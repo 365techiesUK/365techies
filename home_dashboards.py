@@ -17,6 +17,7 @@ foil: same promise, twenty years earlier, executed badly.
 """
 import build_pages as bp
 from build_pages import add, graph, crumb, webpage, service, faqpage, faq_html, cta, hero
+import dashboard_connectors as CONN
 
 SLUG = "next-gen-home-dashboards"
 
@@ -319,6 +320,7 @@ def build():
          "doing this in Dorset since 1995, and we build the same kind of dashboards for Victron "
          "energy systems worldwide."),
     ]
+    faqs = faqs + CONN.FAQS
 
     body = "\n".join([
         DEMO,
@@ -361,6 +363,8 @@ def build():
         'automatically, so a stolen box is not a lost clip</td></tr>',
         '</tbody></table></div>',
         '</div></section>',
+
+        CONN.section(),
 
         ' <section class="section section--alt"><div class="wrap wrap--narrow prose" data-reveal>',
         '<h2 class="section-title" data-title>Start free, and only pay if you want more'

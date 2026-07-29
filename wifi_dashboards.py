@@ -18,6 +18,7 @@ failure a coverage map cannot show you.
 """
 import build_pages as bp
 from build_pages import add, graph, crumb, webpage, service, faqpage, faq_html, cta, hero
+import dashboard_connectors as CONN
 
 SLUG = "custom-wifi-dashboards"
 
@@ -306,6 +307,7 @@ def build():
          "usually tell you whether new hardware would help at all - and quite often the honest "
          "answer is that it would not."),
     ]
+    faqs = faqs + CONN.FAQS
 
     body = "\n".join([
         DEMO,
@@ -351,6 +353,8 @@ def build():
         'when diagnosing a floor &mdash; put on one screen, kept over time, and made to explain '
         'itself.</p>',
         '</div></section>',
+
+        CONN.section(),
 
         ' <section class="section section--alt"><div class="wrap wrap--narrow prose" data-reveal>',
         '<h2 class="section-title" data-title>We have done this before, on something harder'

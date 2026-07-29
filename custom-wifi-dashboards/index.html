@@ -292,6 +292,54 @@
             "@type": "Answer",
             "text": "Because replacing the access points is the expensive way to find out what was wrong. A dashboard that shows channel utilisation and PoE headroom over a fortnight will usually tell you whether new hardware would help at all - and quite often the honest answer is that it would not."
           }
+        },
+        {
+          "@type": "Question",
+          "name": "Can you connect it to my electricity supplier?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Where the supplier exposes the data, yes - half-hourly usage and tariff information can sit alongside your solar and battery so you can see what you are actually buying and when. Coverage varies a great deal by supplier: some publish a proper API, others publish nothing. We check yours before promising anything."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can alerts go to Slack or Teams instead of another app?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, and we would usually recommend it. An alert that lands where your team already is gets read; an alert in a fourteenth app does not. We do this on our own systems - every booking and completed job on our internal setup pings Slack."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can you read data from vehicles?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "From a standards-based diagnostics or telematics device, yes - location, mileage, fault codes and battery health. We work from documented interfaces rather than by reverse-engineering a manufacturer's app, because anything built that way breaks the next time they update it."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I design my own dashboard and save layouts?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Not today, and we would rather say so plainly than imply otherwise. We design and build it with you - you tell us what matters and we lay it out, then adjust it after a fortnight of real use. Self-service layout editing is something we would like to offer and do not yet."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does it work for a boat, a campervan or a holiday home?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Those are some of the best uses for it, because they are the buildings you are not standing in. Batteries and bilge on a boat, leisure power and whether it started this morning on a campervan, heating and damp and leaks on a holiday home two hundred miles away."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What if something I want cannot be connected?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "We tell you before you have spent anything. Some equipment simply does not publish its data, and some budget cloud-only cameras deliberately prevent anyone else reading them. Finding that out afterwards is how these projects go wrong, so we check first."
+          }
         }
       ]
     }
@@ -1011,6 +1059,55 @@
 </tbody></table></div>
 <p>None of it is exotic. It is simply the set of numbers an engineer actually asks for when diagnosing a floor &mdash; put on one screen, kept over time, and made to explain itself.</p>
 </div></section>
+
+<section class="section section--alt" aria-label="What we can connect">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow eyebrow--center mono" data-reveal>// WHAT WE CAN CONNECT</p>
+      <h2 class="section-title section-title--center" data-title>If it publishes its data,
+        it can go on the screen<span class="title-underline"></span></h2>
+      <p class="lede lede--center" data-reveal>Not a shopping list &mdash; a starting point.
+        Each of these says what it gives you and where the catch is, because the catch is
+        the bit that decides whether it is worth doing.</p>
+    </div>
+    <div class="cn__grid"><div class="cn__card" data-k="energy"><div class="cn__ico" aria-hidden="true">&#9889;</div><h3>Solar &amp; battery</h3><p class="cn__g">Victron, and most inverters that publish an API or Modbus.</p><p class="cn__c"><strong>Worth knowing:</strong> We run our own business off a Victron system, so this is the one we know best.</p></div><div class="cn__card" data-k="elec"><div class="cn__ico" aria-hidden="true">&#128200;</div><h3>Your electricity supplier</h3><p class="cn__g">Half-hourly usage and tariff data where the supplier exposes it.</p><p class="cn__c"><strong>Worth knowing:</strong> Coverage varies by supplier. Some publish a proper API, some publish nothing at all.</p></div><div class="cn__card" data-k="cctv"><div class="cn__ico" aria-hidden="true">&#128247;</div><h3>Cameras &amp; CCTV</h3><p class="cn__g">Live views, motion events and clips copied off-site automatically.</p><p class="cn__c"><strong>Worth knowing:</strong> Most systems expose a stream. Some budget cloud-only cameras deliberately do not &mdash; we check yours first.</p></div><div class="cn__card" data-k="iot"><div class="cn__ico" aria-hidden="true">&#127777;</div><h3>IoT sensors</h3><p class="cn__g">Temperature, humidity, water leaks, door contacts, freezer alarms.</p><p class="cn__c"><strong>Worth knowing:</strong> Anything that speaks MQTT, Zigbee, Z-Wave or a documented API. Closed proprietary hubs are the hard ones.</p></div><div class="cn__card" data-k="net"><div class="cn__ico" aria-hidden="true">&#128225;</div><h3>Network &amp; Wi-Fi</h3><p class="cn__g">Access points, switches, PoE draw, channel utilisation, broadband health.</p><p class="cn__c"><strong>Worth knowing:</strong> RUCKUS, UniFi, Aruba and most business platforms. Depends what your controller version exposes.</p></div><div class="cn__card" data-k="vehicle"><div class="cn__ico" aria-hidden="true">&#128663;</div><h3>Vehicles &amp; fleet</h3><p class="cn__g">Location, mileage, fault codes and battery health from a diagnostics dongle.</p><p class="cn__c"><strong>Worth knowing:</strong> Via a standards-based OBD or telematics device, not by reverse-engineering a manufacturer app.</p></div><div class="cn__card" data-k="slack"><div class="cn__ico" aria-hidden="true">&#128172;</div><h3>Slack &amp; Teams</h3><p class="cn__g">Alerts land where your team already is, instead of another app nobody opens.</p><p class="cn__c"><strong>Worth knowing:</strong> We use this ourselves &mdash; every booking and job on our own system pings Slack.</p></div><div class="cn__card" data-k="backup"><div class="cn__ico" aria-hidden="true">&#128190;</div><h3>Backups &amp; PCs</h3><p class="cn__g">Whether last night actually ran, disk health, updates, antivirus state.</p><p class="cn__c"><strong>Worth knowing:</strong> Already built &mdash; this is what 365 PC Manager reports into your portal.</p></div><div class="cn__card" data-k="mfg"><div class="cn__ico" aria-hidden="true">&#9881;</div><h3>Machines &amp; production</h3><p class="cn__g">Run hours, output counts, downtime and utilisation from PLCs or line controllers.</p><p class="cn__c"><strong>Worth knowing:</strong> Where the equipment publishes it. Older machines may need a sensor retrofit rather than software.</p></div><div class="cn__card" data-k="weather"><div class="cn__ico" aria-hidden="true">&#127780;</div><h3>Weather</h3><p class="cn__g">Forecast for your postcode, tied to whatever it should influence.</p><p class="cn__c"><strong>Worth knowing:</strong> Chosen per site &mdash; the point is what it drives, not the forecast itself.</p></div></div>
+
+    <div class="cn__props">
+      <h3 class="cn__ph">Same idea, different building</h3>
+      <div class="cn__prow"><div class="cn__prop"><span aria-hidden="true">&#127968;</span><b>Home</b><em>Cameras, power, broadband, backups, the freezer in the garage.</em></div><div class="cn__prop"><span aria-hidden="true">&#127970;</span><b>Business premises</b><em>Wi-Fi estate, PoE headroom, machines, alarms, multi-site.</em></div><div class="cn__prop"><span aria-hidden="true">&#9973;</span><b>Boat</b><em>Batteries, bilge, shore power, position &mdash; the things that matter when you are not aboard.</em></div><div class="cn__prop"><span aria-hidden="true">&#128656;</span><b>Campervan</b><em>Leisure battery, solar, water, fridge, and whether it started this morning.</em></div><div class="cn__prop"><span aria-hidden="true">&#127958;</span><b>Holiday home</b><em>Heating, damp, leaks and arrivals, from two hundred miles away.</em></div></div>
+    </div>
+
+    <p class="cn__note"><strong>How this actually works.</strong> We build it, you use it &mdash;
+      there is no console for you to configure and nothing to learn. Tell us what you have and
+      what you want to see, and we do the wiring. If something on your list cannot be read, we
+      tell you that before you have spent anything, because finding out afterwards is how these
+      projects go wrong.</p>
+  </div>
+</section>
+
+<style>
+.cn__grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:.7rem;max-width:1160px;margin:0 auto}
+.cn__card{background:var(--panel,#0d1530);border:1px solid var(--line,#2a3b63);border-radius:13px;padding:1rem 1.05rem;transition:border-color .3s,transform .3s}
+.cn__card:hover{border-color:var(--cyan,#1d97e3);transform:translateY(-2px)}
+.cn__ico{font-size:1.5rem;line-height:1;margin-bottom:.5rem;display:inline-block;animation:cnFloat 4s ease-in-out infinite}
+.cn__card:nth-child(2n) .cn__ico{animation-delay:.5s}
+.cn__card:nth-child(3n) .cn__ico{animation-delay:1s}
+@keyframes cnFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.cn__card h3{margin:0 0 .35rem;font-size:.95rem;color:var(--white,#f0f5fc)}
+.cn__g{margin:0 0 .5rem;font-size:.82rem;line-height:1.55;color:var(--soft,#86b6e8)}
+.cn__c{margin:0;font-size:.75rem;line-height:1.5;color:var(--mut,#9fb5d3);padding-top:.5rem;border-top:1px solid var(--line,#2a3b63)}
+.cn__c strong{color:var(--soft,#86b6e8)}
+.cn__props{max-width:1160px;margin:1.6rem auto 0}
+.cn__ph{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mut,#9fb5d3);text-align:center;margin:0 0 .8rem}
+.cn__prow{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:.6rem}
+.cn__prop{background:var(--panel,#0d1530);border:1px solid var(--line,#2a3b63);border-radius:12px;padding:.85rem;text-align:center}
+.cn__prop span{font-size:1.6rem;display:block;line-height:1;margin-bottom:.4rem;animation:cnFloat 5s ease-in-out infinite}
+.cn__prop b{display:block;color:var(--white,#f0f5fc);font-size:.88rem;margin-bottom:.25rem}
+.cn__prop em{font-style:normal;font-size:.74rem;line-height:1.5;color:var(--mut,#9fb5d3)}
+.cn__note{max-width:900px;margin:1.6rem auto 0;padding:.9rem 1.1rem;border-left:3px solid var(--cyan,#1d97e3);background:var(--panel,#0d1530);border-radius:0 10px 10px 0;font-size:.88rem;line-height:1.65;color:var(--soft,#86b6e8)}
+@media (prefers-reduced-motion:reduce){.cn__ico,.cn__prop span{animation:none}.cn__card:hover{transform:none}}
+</style>
+
  <section class="section section--alt"><div class="wrap wrap--narrow prose" data-reveal>
 <h2 class="section-title" data-title>We have done this before, on something harder<span class="title-underline"></span></h2>
 <p>This is not a new idea for us. We build <a href="/custom-vrm-dashboards/">custom Victron dashboards</a> for off-grid power systems worldwide &mdash; and we run our own business off one, because our office is a van. Those dashboards do for solar and battery exactly what this does for wireless: take a platform that shows you what it was designed to show, and add the numbers the owner actually needs.</p>
@@ -1055,6 +1152,30 @@
         <details class="faq" data-reveal>
           <summary>Why would I want this rather than just replacing the access points?<span class="faq__icon" aria-hidden="true"></span></summary>
           <div class="faq__ans"><p>Because replacing the access points is the expensive way to find out what was wrong. A dashboard that shows channel utilisation and PoE headroom over a fortnight will usually tell you whether new hardware would help at all - and quite often the honest answer is that it would not.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Can you connect it to my electricity supplier?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Where the supplier exposes the data, yes - half-hourly usage and tariff information can sit alongside your solar and battery so you can see what you are actually buying and when. Coverage varies a great deal by supplier: some publish a proper API, others publish nothing. We check yours before promising anything.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Can alerts go to Slack or Teams instead of another app?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Yes, and we would usually recommend it. An alert that lands where your team already is gets read; an alert in a fourteenth app does not. We do this on our own systems - every booking and completed job on our internal setup pings Slack.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Can you read data from vehicles?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>From a standards-based diagnostics or telematics device, yes - location, mileage, fault codes and battery health. We work from documented interfaces rather than by reverse-engineering a manufacturer's app, because anything built that way breaks the next time they update it.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Can I design my own dashboard and save layouts?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Not today, and we would rather say so plainly than imply otherwise. We design and build it with you - you tell us what matters and we lay it out, then adjust it after a fortnight of real use. Self-service layout editing is something we would like to offer and do not yet.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Does it work for a boat, a campervan or a holiday home?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Those are some of the best uses for it, because they are the buildings you are not standing in. Batteries and bilge on a boat, leisure power and whether it started this morning on a campervan, heating and damp and leaks on a holiday home two hundred miles away.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>What if something I want cannot be connected?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>We tell you before you have spent anything. Some equipment simply does not publish its data, and some budget cloud-only cameras deliberately prevent anyone else reading them. Finding that out afterwards is how these projects go wrong, so we check first.</p></div>
         </details>
         </div>
       </div>
