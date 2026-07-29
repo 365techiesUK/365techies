@@ -20505,6 +20505,37 @@ def write_portal_page():
   #p365app .ds__days { display:flex; gap:.5rem; margin-top:.45rem; }
   #p365app .ds__day { text-align:center; font-size:.66rem; color:var(--pmut); }
   #p365app .ds__day b { display:block; font-size:.95rem; color:var(--pwhite); font-weight:600; }
+  /* ---------- trackers: maps, KPIs and zones -------------------------------
+     Deliberately tile-free. Commercial use of OpenStreetMap's tile servers is
+     against their policy, and a paid tile provider is a running cost we do not
+     need to demonstrate the idea - a drawn route ribbon reads better anyway. */
+  #p365app .ds__map { width:100%; display:block; border-radius:10px; overflow:hidden; background:#0a1226; }
+  #p365app .ds__mbg { fill:#0a1226; }
+  #p365app .ds__mroad { fill:none; stroke:#243458; stroke-width:5; stroke-linecap:round; }
+  #p365app .ds__mroad--min { stroke-width:3; stroke:#1d2a49; }
+  #p365app .ds__mtrail { fill:none; stroke:var(--pcyan); stroke-width:2; stroke-linecap:round; stroke-dasharray:4 4; opacity:.85; }
+  #p365app .ds__fence { fill:rgba(0,206,27,.08); stroke:rgba(0,206,27,.55); stroke-width:1.2; stroke-dasharray:4 3; }
+  #p365app .ds__mlbl { fill:rgba(0,206,27,.75); font-size:6px; font-weight:700; letter-spacing:.1em; }
+  #p365app .ds__pin { fill:var(--pcyan); stroke:#0a1226; stroke-width:1.6; }
+  #p365app .ds__pin.moving { fill:#4fb4f5; filter:drop-shadow(0 0 4px rgba(79,180,245,.9)); }
+  #p365app .ds__pin.still { fill:var(--pgood); }
+  #p365app .ds__pin.pet { fill:var(--pwarn); }
+  #p365app .ds__kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:.4rem; margin:.55rem 0 .1rem; }
+  #p365app .ds__kpis div { background:rgba(125,170,220,.06); border:1px solid var(--pline); border-radius:9px; padding:.4rem .3rem; text-align:center; }
+  #p365app .ds__kpis b { display:block; font-size:1.05rem; color:var(--pwhite); font-variant-numeric:tabular-nums; line-height:1.15; }
+  #p365app .ds__kpis b em { font-style:normal; font-size:.68rem; color:var(--pmut); margin-left:.05rem; }
+  #p365app .ds__kpis span { font-size:.62rem; color:var(--pmut); letter-spacing:.02em; }
+  #p365app .ds__zlist { display:flex; flex-direction:column; gap:.4rem; }
+  #p365app .ds__z { display:grid; grid-template-columns:auto 1fr; gap:.1rem .5rem; align-items:center; }
+  #p365app .ds__z i { grid-row:span 2; }
+  #p365app .ds__z b { color:var(--pwhite); font-size:.83rem; }
+  #p365app .ds__z span { color:var(--pmut); font-size:.72rem; line-height:1.4; }
+  #p365app .ds__bars { display:flex; align-items:flex-end; gap:.28rem; height:46px; margin:.5rem 0 .1rem; }
+  #p365app .ds__bars i { flex:1; background:linear-gradient(180deg,var(--pcyan),rgba(29,151,227,.3)); border-radius:3px 3px 0 0; min-height:3px; }
+  #p365app .ds__cams--big { grid-template-columns:repeat(4,1fr); grid-auto-rows:66px; }
+  #p365app .ds__cam u { position:absolute; right:4px; top:3px; font-size:.48rem; font-weight:800; letter-spacing:.08em;
+    color:var(--pbad); text-decoration:none; }
+  @media (max-width:430px) { #p365app .ds__kpis { grid-template-columns:repeat(2,1fr); } #p365app .ds__cams--big { grid-template-columns:repeat(2,1fr); } }
   #p365app .ds__shelf { margin-top:1.1rem; border:1px dashed var(--pline); border-radius:14px; padding:.85rem .9rem; }
   #p365app .ds__shelf h3 { margin:0 0 .2rem; font-size:.78rem; letter-spacing:.1em; text-transform:uppercase; color:var(--psoft); }
   #p365app .ds__shelf p { margin:0 0 .6rem; font-size:.78rem; color:var(--pmut); line-height:1.5; }
@@ -21433,6 +21464,26 @@ def write_portal_page():
   // That split is the whole product. A dashboard that quietly mixed a real backup
   // status in with a pretend freezer temperature would be worse than no dashboard,
   // because the customer could no longer trust either number.
+  // Reduced motion is decided BEFORE the catalogue is built, because the map pins
+  // animate with SMIL and there is no media query that can switch SMIL off later.
+  var DSRM = false; try { DSRM = matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+  // One road, reused as the drawn route AND as the path the pin travels, so the
+  // marker can never drift off its own line.
+  var DSROAD = 'M4 84 C38 80 58 66 96 62 S152 54 196 26';
+  var DSLANE = 'M4 46 C34 52 52 40 72 30';
+  function dsPin(path, dur, cls) {
+    if (DSRM) return '<circle class="ds__pin ' + cls + '" r="4.6" cx="4" cy="84"></circle>';
+    return '<circle class="ds__pin ' + cls + '" r="4.6"><animateMotion dur="' + dur + 's" repeatCount="indefinite" path="' + path + '"></animateMotion></circle>';
+  }
+  function dsMap(extra, h) {
+    return '<svg class="ds__map" style="height:' + (h || 96) + 'px" viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true">'
+      + '<rect x="0" y="0" width="200" height="100" class="ds__mbg"></rect>'
+      + '<path class="ds__mroad" d="' + DSROAD + '"></path>'
+      + '<path class="ds__mroad ds__mroad--min" d="' + DSLANE + '"></path>'
+      + '<path class="ds__mtrail" d="' + DSROAD + '"></path>'
+      + (extra || '')
+      + '</svg>';
+  }
   var DSCAT = [
     // ---- tiles that read the customer's own account -------------------------
     { k:'pcs', ic:'\\ud83d\\udda5', t:'Your computers', aud:'all',
@@ -21560,7 +21611,15 @@ def write_portal_page():
     { k:'cctv', ic:'\\ud83d\\udcf7', t:'Cameras', aud:'all',
       b:'<div class="ds__cams"><div class="ds__cam"><i></i><b>DRIVE</b></div><div class="ds__cam"><i></i><b>BACK DOOR</b></div>'
         + '<div class="ds__cam"><i></i><b>GARAGE</b></div><div class="ds__cam"><i></i><b>SIDE GATE</b></div></div>'
-        + '<p class="ds__sub">All four recording &middot; clips copied off-site</p>' },
+        + '<p class="ds__sub">All four recording &middot; clips copied off-site</p>',
+      b2:'<div class="ds__cams ds__cams--big"><div class="ds__cam"><i></i><b>DRIVE</b><u>REC</u></div>'
+        + '<div class="ds__cam"><i></i><b>BACK DOOR</b><u>REC</u></div>'
+        + '<div class="ds__cam"><i></i><b>GARAGE</b><u>REC</u></div>'
+        + '<div class="ds__cam"><i></i><b>SIDE GATE</b><u>REC</u></div></div>'
+        + '<div class="ds__feed"><span><b>18:42</b> Movement at the side gate &mdash; clip saved</span>'
+        + '<span><b>16:07</b> A delivery at the front door</span>'
+        + '<span><b>07:55</b> The car left the drive</span></div>'
+        + '<p class="ds__sub">All four recording &middot; clips copy off-site automatically, so a stolen recorder is not a lost clip</p>' },
     { k:'energy', ic:'\\u26a1', t:'Solar &amp; battery', aud:'all',
       b:'<div class="ds__big"><span data-f="pwr">1,840</span><em>W now</em></div>'
         + '<div class="ds__bar2"><i data-bar="battp" style="width:82%"></i></div>'
@@ -21590,9 +21649,76 @@ def write_portal_page():
     { k:'heating', ic:'\\ud83d\\udd25', t:'Heating &amp; damp', aud:'all',
       b:'<div class="ds__big"><span data-f="heat">17.5</span><em>&deg;C</em></div>'
         + '<p class="ds__sub">Humidity <span data-f="hum">58</span>% &middot; no damp risk &middot; 200 miles away</p>' },
-    { k:'vehicle', ic:'\\ud83d\\ude90', t:'Vehicle', aud:'all',
-      b:'<div class="ds__big"><span data-f="vmi">128</span><em>miles this week</em></div>'
-        + '<p class="ds__sub">Battery <span data-f="vbatt">12.7</span>V &middot; last seen Ferndown, 20 min ago</p>' },
+    // ---- trackers: where things are, and what they are doing -----------------
+    // All sample. A real one reads a Victron GX's GPS, a standards-based OBD or
+    // telematics device, or a tracker that publishes its data - never a phone app
+    // pulled apart. And it is NOT a theft tracker: see the note in the studio.
+    { k:'vehicle', ic:'\\ud83d\\udccd', t:'Where it is', aud:'all',
+      b: dsMap('<circle class="ds__fence" cx="150" cy="34" r="21"></circle>' + dsPin(DSROAD, 16, 'moving'), 84)
+        + '<p class="ds__sub"><span data-f="spd">48</span> mph on the A31 &middot; <span data-f="mtd">17.2</span> miles today</p>',
+      b2: dsMap('<circle class="ds__fence" cx="150" cy="34" r="21"></circle>'
+            + '<text x="150" y="36" class="ds__mlbl" text-anchor="middle">THE YARD</text>'
+            + dsPin(DSROAD, 16, 'moving'), 132)
+        + '<div class="ds__kpis"><div><b><span data-f="spd">48</span></b><span>mph now</span></div>'
+        + '<div><b><span data-f="mtd">17.2</span></b><span>miles today</span></div>'
+        + '<div><b><span data-f="vmi">128</span></b><span>miles this week</span></div>'
+        + '<div><b>12<em>m</em></b><span>from the yard</span></div></div>'
+        + '<p class="ds__sub">Heading south on the A31 &middot; last fix 4 seconds ago &middot; route kept for good, not six months</p>' },
+    { k:'fence', ic:'\\ud83d\\udea7', t:'Geofences', aud:'all',
+      b:'<div class="ds__big" style="color:var(--pwarn);font-size:1.15rem;line-height:1.3">Left The Yard</div>'
+        + '<p class="ds__sub">07:12 this morning &middot; 2 other zones quiet</p>'
+        + '<div class="ds__pips"><i class="ds__pip w"></i><i class="ds__pip"></i><i class="ds__pip"></i></div>',
+      b2:'<div class="ds__zlist">'
+        + '<div class="ds__z"><i class="ds__pip w"></i><b>The Yard</b><span>Left at 07:12 &mdash; alarm raised here and on your phone</span></div>'
+        + '<div class="ds__z"><i class="ds__pip"></i><b>Depot, Poole</b><span>Inside since 08:40</span></div>'
+        + '<div class="ds__z"><i class="ds__pip"></i><b>Out of hours</b><span>Quiet &mdash; nothing has moved between 7pm and 6am</span></div>'
+        + '</div><p class="ds__sub">Draw a shape on a map, choose what counts as odd, and the dashboard tells you. Losing the signal counts as odd too.</p>' },
+    { k:'trip', ic:'\\ud83d\\udee3', t:'Distance &amp; economy', aud:'all',
+      b:'<div class="ds__big"><span data-f="mpg">34.2</span><em>mpg</em></div>'
+        + '<p class="ds__sub"><span data-f="vmi">128</span> miles this week &middot; about <span data-f="ppm">19</span>p a mile</p>',
+      b2:'<div class="ds__kpis"><div><b><span data-f="mpg">34.2</span></b><span>mpg this week</span></div>'
+        + '<div><b><span data-f="vmi">128</span></b><span>miles</span></div>'
+        + '<div><b><span data-f="ppm">19</span><em>p</em></b><span>per mile</span></div>'
+        + '<div><b>9</b><span>trips</span></div></div>'
+        + '<div class="ds__bars"><i style="height:38%"></i><i style="height:62%"></i><i style="height:44%"></i><i style="height:81%"></i>'
+        + '<i style="height:56%"></i><i style="height:23%"></i><i style="height:12%"></i></div>'
+        + '<p class="ds__sub">Miles a day, Monday to Sunday &mdash; and what the fuel actually cost, not what the brochure said</p>' },
+    { k:'ecu', ic:'\\ud83d\\udd27', t:'Engine &amp; ECU', aud:'all',
+      b:'<div class="ds__big" style="color:var(--pgood)">&#10003; No faults</div>'
+        + '<p class="ds__sub">Coolant <span data-f="cool">88</span>&deg;C &middot; fuel <span data-f="fuel">62</span>% &middot; service in 2,400 miles</p>',
+      b2:'<div class="ds__kpis"><div><b><span data-f="cool">88</span><em>&deg;C</em></b><span>coolant</span></div>'
+        + '<div><b><span data-f="fuel">62</span><em>%</em></b><span>fuel</span></div>'
+        + '<div><b><span data-f="vbatt">12.7</span><em>V</em></b><span>battery</span></div>'
+        + '<div><b>0</b><span>fault codes</span></div></div>'
+        + '<p class="ds__sub">Straight off the engine\\u2019s own diagnostics port. A fault code appears here the moment the light comes on, '
+        + 'with what it actually means &mdash; not just an orange symbol.</p>' },
+    { k:'assets', ic:'\\ud83d\\uddfa', t:'All your trackers', aud:'all',
+      b:'<div class="ds__feed"><span><b>\\ud83d\\ude90 Van</b> moving &middot; A31</span>'
+        + '<span><b>\\u26f5 Boat</b> moored &middot; Poole Quay</span>'
+        + '<span><b>\\ud83d\\udc36 Bramble</b> home &middot; in the safe zone</span>'
+        + '<span><b>\\ud83d\\ude9a Trailer</b> parked &middot; the yard</span></div>'
+        + '<p class="ds__sub">Four things, one screen</p>',
+      b2: dsMap('<circle class="ds__fence" cx="150" cy="34" r="21"></circle>'
+            + dsPin(DSROAD, 16, 'moving')
+            + '<circle class="ds__pin still" cx="150" cy="40" r="4.6"></circle>'
+            + '<circle class="ds__pin still" cx="58" cy="43" r="4.6"></circle>'
+            + '<circle class="ds__pin pet" cx="26" cy="70" r="4.2"></circle>', 118)
+        + '<div class="ds__feed"><span><b>\\ud83d\\ude90 Van</b> moving, 48 mph &middot; A31 near Ferndown</span>'
+        + '<span><b>\\u26f5 Boat</b> moored, shore power on &middot; Poole Quay</span>'
+        + '<span><b>\\ud83d\\udc36 Bramble</b> home, in the safe zone &middot; collar 71%</span>'
+        + '<span><b>\\ud83d\\ude9a Trailer</b> parked 6 days &middot; the yard</span></div>'
+        + '<p class="ds__sub">A car, a boat, a trailer, a dog. Different trackers, one map, one set of rules about what counts as odd.</p>' },
+    { k:'pet', ic:'\\ud83d\\udc36', t:'Pet tracker', aud:'all',
+      b:'<div class="ds__big" style="color:var(--pgood)">&#10003; Home</div>'
+        + '<p class="ds__sub">Bramble &middot; <span data-f="petkm">2.4</span> km walked today &middot; collar <span data-f="petbat">71</span>%</p>',
+      b2: dsMap('<circle class="ds__fence" cx="30" cy="72" r="24"></circle>'
+            + '<text x="30" y="74" class="ds__mlbl" text-anchor="middle">SAFE ZONE</text>'
+            + dsPin(DSLANE, 11, 'pet'), 112)
+        + '<div class="ds__kpis"><div><b><span data-f="petkm">2.4</span><em>km</em></b><span>walked today</span></div>'
+        + '<div><b><span data-f="petbat">71</span><em>%</em></b><span>collar battery</span></div>'
+        + '<div><b>41<em>m</em></b><span>out today</span></div>'
+        + '<div><b>0</b><span>escapes</span></div></div>'
+        + '<p class="ds__sub">Draw the garden, the field, the whole village &mdash; and get told the moment she is outside it, on the same screen as everything else.</p>' },
     { k:'water', ic:'\\ud83d\\udeb0', t:'Fresh water', aud:'all',
       b:'<div class="ds__big"><span data-f="wtr">74</span><em>% full</em></div>'
         + '<div class="ds__bar2"><i data-bar="wtr" style="width:74%;background:var(--pcyan)"></i></div>'
@@ -21612,14 +21738,15 @@ def write_portal_page():
     free: [['pcs',2],['backup',1],['visit',1],['survey',1],['cctv',2],['energy',1],['weather',1]]
   };
   var DSPROPS = [
-    { p:'home',     ic:'\\ud83c\\udfe0', t:'Home',          lay:[['cctv',2],['energy',1],['broadband',1],['freezer',1],['door',1],['leak',1],['weather',1]] },
-    { p:'business', ic:'\\ud83c\\udfe2', t:'Business',      lay:[['wifi',2],['servers',1],['sites',1],['machine',1],['alerts',2],['energy',1],['cctv',1]] },
-    { p:'boat',     ic:'\\u26f5', t:'Boat',                 lay:[['energy',2],['bilge',1],['water',1],['weather',1],['vehicle',1],['alerts',2]] },
-    { p:'camper',   ic:'\\ud83d\\ude90', t:'Campervan',     lay:[['energy',2],['water',1],['vehicle',1],['broadband',1],['cctv',1],['weather',1]] },
+    { p:'home',     ic:'\\ud83c\\udfe0', t:'Home',          lay:[['cctv',2],['pet',1],['energy',1],['broadband',1],['door',1],['leak',1],['weather',1]] },
+    { p:'business', ic:'\\ud83c\\udfe2', t:'Business',      lay:[['assets',2],['fence',1],['trip',1],['wifi',2],['servers',1],['sites',1],['alerts',2],['cctv',1]] },
+    { p:'boat',     ic:'\\u26f5', t:'Boat',                 lay:[['vehicle',2],['energy',1],['bilge',1],['fence',1],['water',1],['weather',1],['alerts',2]] },
+    { p:'camper',   ic:'\\ud83d\\ude90', t:'Campervan',     lay:[['vehicle',2],['energy',1],['trip',1],['ecu',1],['water',1],['broadband',1],['weather',1]] },
     { p:'holiday',  ic:'\\ud83c\\udfdd', t:'Holiday home',  lay:[['heating',2],['leak',1],['cctv',1],['door',1],['energy',1],['weather',1]] }
   ];
   var DSD = { pwr:1840, battp:82, cost:1.42, kwh:6.8, kwhs:4.1, frz:-19, doors:9, aps:12, clients:38,
-              poe:61, mbps:71, vmi:128, vbatt:12.7, wxt:14, run:92, out:1420, heat:17.5, hum:58, wtr:74 };
+              poe:61, mbps:71, vmi:128, vbatt:12.7, wxt:14, run:92, out:1420, heat:17.5, hum:58, wtr:74,
+              spd:48, mtd:17.2, mpg:34.2, cool:88, fuel:62, petkm:2.4, petbat:71 };
   var DS = null, DSTIMER = 0, DSSAVED = null, DSMODE = 'mine';
   function dsPlan() { return (JD && JD.plan) ? JD.plan : ((JD && JD.tier === 'pro') ? 'home' : 'free'); }
   function dsPlanName(p) { return p === 'business' ? '365 Business Support' : (p === 'home' ? '365 Home Support' : '365 Club (free)'); }
@@ -21663,6 +21790,13 @@ def write_portal_page():
     DSD.out = j(DSD.out, 26, 1180, 1980);
     DSD.heat = j(DSD.heat, .3, 15.5, 20.5);
     DSD.hum = j(DSD.hum, 2, 44, 68);
+    DSD.spd = j(DSD.spd, 14, 0, 68);
+    DSD.mtd = Math.min(240, DSD.mtd + DSD.spd / 3600 * 2.4);   // miles accrue at the speed shown
+    DSD.mpg = j(DSD.mpg, .6, 26, 44);
+    DSD.cool = j(DSD.cool, 1.2, 80, 96);
+    DSD.fuel = Math.max(8, DSD.fuel - Math.random() * .04);
+    DSD.petkm = Math.min(9, DSD.petkm + Math.random() * .01);
+    DSD.petbat = Math.max(18, DSD.petbat - Math.random() * .02);
     DSD.wtr = Math.max(12, DSD.wtr - Math.random() * .5);
     if (DSD.wtr < 14) DSD.wtr = 96;
   }
@@ -21672,7 +21806,12 @@ def write_portal_page():
       kwh: dsNum(DSD.kwh, 1), kwhs: dsNum(DSD.kwhs, 1), frz: dsNum(DSD.frz), doors: dsNum(DSD.doors), aps: dsNum(DSD.aps),
       clients: dsNum(DSD.clients), poe: dsNum(DSD.poe), mbps: dsNum(DSD.mbps), vmi: dsNum(DSD.vmi),
       vbatt: dsNum(DSD.vbatt, 1), wxt: dsNum(DSD.wxt), run: dsNum(DSD.run), out: Math.round(DSD.out).toLocaleString('en-GB'),
-      heat: dsNum(DSD.heat, 1), hum: dsNum(DSD.hum), wtr: dsNum(DSD.wtr) };
+      heat: dsNum(DSD.heat, 1), hum: dsNum(DSD.hum), wtr: dsNum(DSD.wtr),
+      spd: dsNum(DSD.spd), mtd: dsNum(DSD.mtd, 1), mpg: dsNum(DSD.mpg, 1), cool: dsNum(DSD.cool),
+      fuel: dsNum(DSD.fuel), petkm: dsNum(DSD.petkm, 1), petbat: dsNum(DSD.petbat),
+      // pence per mile follows the economy figure rather than sitting there as a
+      // number that never agrees with the mpg beside it
+      ppm: dsNum(1550 / Math.max(1, DSD.mpg)) };
     Array.prototype.forEach.call(g.querySelectorAll('[data-f]'), function (n) {
       var v = vals[n.getAttribute('data-f')];
       if (v !== undefined && n.textContent !== v) n.textContent = v;
@@ -21697,6 +21836,10 @@ def write_portal_page():
   function dsTileHtml(t, fresh) {
     var c = dsCat(t.k); if (!c) return '';
     var lv = dsLiveHtml(c);
+    // A double-width tile shows a bigger, fuller version of itself where the tile
+    // has one - the map grows a route and speed readouts, the cameras grow a motion
+    // timeline. Without this, "wider" only ever meant "more empty space".
+    var body = lv || ((t.w === 2 && c.b2) ? c.b2 : c.b);
     var badge = lv
       ? '<span class="ds__tag live"><i></i>Live</span>'
       : '<span class="ds__tag samp">Sample</span>';
@@ -21704,11 +21847,11 @@ def write_portal_page():
       + '<div class="ds__th"><span class="ds__ico" aria-hidden="true">' + c.ic + '</span>'
       + '<span class="ds__ttl">' + c.t + '</span>' + badge
       + '<span class="ds__grip" role="button" tabindex="0" aria-label="Move ' + c.t + '. Drag, or use the arrow keys.">&#8942;&#8942;</span></div>'
-      + '<div class="ds__body">' + (lv || c.b) + '</div>'
+      + '<div class="ds__body">' + body + '</div>'
       + (lv ? '' : '<button type="button" class="ds__ask" data-ask="' + c.k + '">Can we make this one live?</button>')
       + '<div class="ds__tools">'
       + '<button type="button" data-act="left" title="Move left" aria-label="Move ' + c.t + ' left">&#8592;</button>'
-      + '<button type="button" data-act="wide" title="Make it wider or narrower" aria-label="Resize ' + c.t + '">&#8596;</button>'
+      + '<button type="button" data-act="wide" title="' + (c.b2 ? 'Make it wider - this one shows more' : 'Make it wider or narrower') + '" aria-label="Resize ' + c.t + '">&#8596;</button>'
       + '<button type="button" data-act="right" title="Move right" aria-label="Move ' + c.t + ' right">&#8594;</button>'
       + '<button type="button" data-act="del" title="Take it off" aria-label="Remove ' + c.t + '">&#10005;</button>'
       + '</div></div>';
@@ -21976,6 +22119,7 @@ def write_portal_page():
         + '<div class="ds__truth"><p style="margin:0"><strong>Being straight with you:</strong> a tile is either marked <em>live</em>, in which case it is '
         + 'reading your own account, or <em>sample</em>, in which case the numbers are made up and nothing is plugged in behind it. '
         + 'We will never blur those two.</p>'
+        + '<p style="margin:.5rem 0 0"><strong>And one thing a tracking tile is not:</strong> a theft tracker. It runs off the very battery bank it monitors, it is not hidden, and it is not insurer-recognised &mdash; so a dedicated tracker still owns that job. What this does well is tell you where your things are, how far they went and what it cost, and shout when something moves that should not have.</p>'
         + '<p style="margin:.5rem 0 0">Making a sample tile real &mdash; cameras, solar, sensors, your Wi-Fi controller, a production line &mdash; is a build we quote for. '
         + 'We check what can actually be read before you spend anything, because some equipment publishes nothing at all. '
         + 'That we can do it is not a claim: <a href="/custom-vrm-dashboards/" target="_blank" rel="noopener">our own van runs on one</a>, live, and you can watch it working.</p>'

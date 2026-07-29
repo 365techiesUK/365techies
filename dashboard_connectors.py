@@ -40,6 +40,12 @@ CONNECTORS = [
     ("vehicle", "Vehicles &amp; fleet", "&#128663;",
      "Location, mileage, fault codes and battery health from a diagnostics dongle.",
      "Via a standards-based OBD or telematics device, not by reverse-engineering a manufacturer app."),
+    ("gps", "GPS &amp; route tracking", "&#128205;",
+     "Where it is now, the route it took, distance covered, and a geofence that shouts when something leaves an area it should not.",
+     "It is <strong>not a theft tracker</strong> &mdash; it is not hidden, it runs off the battery it monitors, and no insurer recognises it. A dedicated tracker still owns that job."),
+    ("pet", "Pet &amp; asset trackers", "&#128054;",
+     "The dog, the trailer, the tools &mdash; on the same map and the same alarm rules as everything else.",
+     "Depends entirely on the tracker. Some publish their data properly; plenty of consumer collars keep it locked inside their own app. We check yours before promising anything."),
     ("slack", "Slack &amp; Teams", "&#128172;",
      "Alerts land where your team already is, instead of another app nobody opens.",
      "We use this ourselves &mdash; every booking and job on our own system pings Slack."),
@@ -142,10 +148,19 @@ FAQS = [
      "read; an alert in a fourteenth app does not. We do this on our own systems - every booking "
      "and completed job on our internal setup pings Slack."),
     ("Can you read data from vehicles?",
-     "From a standards-based diagnostics or telematics device, yes - location, mileage, fault "
-     "codes and battery health. We work from documented interfaces rather than by "
+     "From a standards-based diagnostics or telematics device, yes - location, mileage, fuel "
+     "economy, fault codes and battery health. We work from documented interfaces rather than by "
      "reverse-engineering a manufacturer's app, because anything built that way breaks the next "
      "time they update it."),
+    ("Can I see where the van is, and get told if it moves?",
+     "Yes - live position, the route it took, the miles it covered, and geofences you draw "
+     "yourself so the dashboard raises an alarm when something leaves an area, or when its "
+     "signal drops. On a Victron system the GPS can come from the GX itself; on a vehicle it "
+     "comes from a diagnostics or telematics device. Credit where it is due: Victron's own VRM "
+     "portal already does geofencing and keeps a position history. What we add is your own "
+     "screen, several vehicles on one map, and route history that does not expire after six "
+     "months. <strong>It is not a theft tracker</strong>, and we will not sell it as one: it is "
+     "not concealed, it runs off the battery bank it is watching, and no insurer recognises it."),
     ("Can I design my own dashboard and save layouts?",
      "Yes - there is a dashboard studio in the 365 portal, and it is free to join and play with. "
      "Drag the tiles where you want them, take off what you do not care about, save the layout to "
