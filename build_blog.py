@@ -9,6 +9,7 @@ import build_extra      # registers 9 specialist/trust pages
 import simplybook_cluster  # SimplyBook integration pillar + 5 firsthand technical guides
 import wifi_dashboards      # custom business Wi-Fi/mesh dashboard service page + live demo
 import victron_business     # Victron for business: resilience, carbon, HMRC-sourced tax position
+import home_dashboards      # next-gen home dashboards: CCTV, power, backups on one screen
 from build_pages import (add, graph, crumb, webpage, faqpage, faq_html, cta,
                          hero, SITE, write_all)
 
