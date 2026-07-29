@@ -4,11 +4,16 @@
 Third page in the dashboard family, after /custom-vrm-dashboards/ (solar) and
 /custom-wifi-dashboards/ (business wireless). This one is the home version.
 
-HONESTY FRAME, and it matters: these are BUILT TO ORDER, exactly like the
-Victron ones. Nothing here is a product you can buy off a shelf today, and
-the page must not imply otherwise. What already exists and is free is the
-365 portal - so the funnel is honest: free portal now, bespoke dashboard if
-you want the whole house on one screen.
+HONESTY FRAME, and it matters. The dashboards on THIS page - cameras, solar,
+sensors, the freezer - are still BUILT TO ORDER, exactly like the Victron
+ones, and the page must not imply otherwise.
+
+What IS self-service since 2026-07-29 is the dashboard studio in the portal:
+free to join, drag and save your own layout, with the tiles about the
+computers we look after going live on a support plan and every other tile
+clearly badged as a sample. So the funnel is three real tiers - free studio,
+support plan, bespoke build - and the middle one must never be described as
+though it reads a camera. See [[dashboard-product-plan]] in memory.
 
 The hook is the smart meter. Almost every household has been given one, and
 almost nobody looks at it, because a number in kilowatt-hours on a plastic
@@ -310,10 +315,18 @@ def build():
          "on the train, laptop abroad, tablet in the kitchen. Nothing depends on a manufacturer's "
          "app deciding to keep supporting your model."),
         ("Is this free?",
-         "The 365 portal is, and it already gives every customer bookings, reports and their own "
-         "account area. A bespoke home dashboard is different: it is designed and built for your "
-         "house, so it is quoted per home. There is no licence and no monthly per-camera fee - we "
-         "would rather charge once for building it properly."),
+         "Part of it genuinely is. The dashboard studio in the 365 portal is free to join and "
+         "play with - arrange the tiles, save the layout, keep it. On a 365 Home Support plan "
+         "(&pound;18.25 a month per computer) the tiles about the computers we look after go live "
+         "and read your own account. A bespoke home dashboard - your cameras, your solar, your "
+         "sensors on one screen - is a different job, designed and built for your house, so it is "
+         "quoted per home. There is no licence and no monthly per-camera fee; we would rather "
+         "charge once for building it properly."),
+        ("Can I try one before I commit to anything?",
+         "Yes, and we would rather you did. Join the 365 Club free, open the dashboard studio in "
+         "your portal and build a screen. Every tile in there is marked either live or sample, so "
+         "you always know which numbers are real, and you can send us a design you like and ask "
+         "what it would take to build it for real."),
         ("Why would I trust an IT firm with this rather than a security company?",
          "Because the hard part is not the cameras, it is everything talking to everything else "
          "reliably, and being told when it stops. That is thirty years of our trade. We have been "
@@ -367,25 +380,36 @@ def build():
         CONN.section(),
 
         ' <section class="section section--alt"><div class="wrap wrap--narrow prose" data-reveal>',
-        '<h2 class="section-title" data-title>Start free, and only pay if you want more'
+        '<h2 class="section-title" data-title>Three ways in, and the first one is free'
         '<span class="title-underline"></span></h2>',
-        '<p>We would rather you tried the free thing first, honestly.</p>',
-        '<div class="table-wrap"><table class="table">',
-        '<thead><tr><th></th><th>Your 365 portal</th><th>A bespoke home dashboard</th></tr></thead>'
-        '<tbody>',
-        '<tr><td><strong>Cost</strong></td><td>Free with support, and free to join</td>'
-        '<td>Quoted once, per home</td></tr>',
-        '<tr><td><strong>What it shows</strong></td><td>Bookings, your computers, reports, '
-        'courses</td><td>Cameras, power, broadband, backups, doors, sensors &mdash; whatever '
-        'your house has</td></tr>',
-        '<tr><td><strong>Built for</strong></td><td>Everyone, the same</td><td>Your house '
-        'specifically</td></tr>',
-        '<tr><td><strong>Where</strong></td><td>365techies.co.uk/portal</td><td>Its own hosted '
-        'address, any device, anywhere</td></tr>',
+        '<p>You do not have to take our word for any of this. There is a <strong>dashboard studio '
+        'in the 365 portal</strong>: drag the tiles where you want them, take off what you do not '
+        'care about, save the layout to your account and it is there on your phone too. '
+        '<a href="/join/">Joining takes about twenty seconds</a> &mdash; no card, no '
+        'salesperson.</p>',
+        # four columns will not squeeze into a phone: this is the site's established
+        # wide-comparison pattern (scrolls in its own container, 640px floor)
+        '<div class="price-table-wrap"><table class="price-table">',
+        '<thead><tr><th></th><th>Free 365 member</th><th>On 365 Home Support</th>'
+        '<th>A bespoke home dashboard</th></tr></thead><tbody>',
+        '<tr><td><strong>Cost</strong></td><td>Free to join</td>'
+        '<td>&pound;18.25 a month per computer</td><td>Quoted once, per home</td></tr>',
+        '<tr><td><strong>Arrange it yourself</strong></td><td>Yes &mdash; and the layout is saved '
+        'to your account</td><td>Yes</td><td>We lay it out with you, then adjust it after a '
+        'fortnight of real use</td></tr>',
+        '<tr><td><strong>What is actually live</strong></td><td>Nothing &mdash; every tile is a '
+        'clearly marked sample</td><td>The computers we look after: health, backups, storage, '
+        'protection, your next visit, your written reports, your saved Wi-Fi surveys</td>'
+        '<td>Whatever your house has that publishes its data &mdash; cameras, power, broadband, '
+        'doors, sensors, the freezer</td></tr>',
+        '<tr><td><strong>Where</strong></td><td colspan="2">In your portal, on any device</td>'
+        '<td>Its own hosted address, any device, anywhere</td></tr>',
         '</tbody></table></div>',
-        '<p>The portal is genuinely free and genuinely useful &mdash; <a href="/join/">join in '
-        'about twenty seconds</a>, no card, no salesperson. If you later want the whole house on '
-        'one screen, we build that to order.</p>',
+        '<p><strong>The bit we will not blur.</strong> Inside the portal a tile is either marked '
+        '<em>live</em>, in which case it is reading your own account, or <em>sample</em>, in which '
+        'case the numbers are made up and nothing is plugged in behind it. Your cameras and your '
+        'solar are not going to appear in there by magic &mdash; connecting those is the bespoke '
+        'build, and it starts with us checking what your equipment actually publishes.</p>',
         '<p><strong>No licence, and no monthly fee per camera.</strong> We would rather charge '
         'once for building it properly than meter you forever for something we already made.</p>',
         '</div></section>',

@@ -15,6 +15,12 @@ The demo below is synthetic and says so. It models an 18-AP estate through a
 working day, with a deliberate fault built in: AP 07 sits on a congested
 channel and its clients suffer while its signal stays strong - the exact
 failure a coverage map cannot show you.
+
+Reading a wireless controller is still a bespoke build, quoted per site. What
+IS self-service since 2026-07-29 is the dashboard studio in the portal (free
+to join; on 365 Business Support the tiles covering the estate we already
+manage go live). Never describe that middle tier as though it reads an access
+point - it does not. See [[dashboard-product-plan]] in memory.
 """
 import build_pages as bp
 from build_pages import add, graph, crumb, webpage, service, faqpage, faq_html, cta, hero
@@ -306,6 +312,13 @@ def build():
          "A dashboard that shows channel utilisation and PoE headroom over a fortnight will "
          "usually tell you whether new hardware would help at all - and quite often the honest "
          "answer is that it would not."),
+        ("Is anything included with a support plan?",
+         "Yes. Every 365 member gets the dashboard studio in the portal to arrange and save, and "
+         "on 365 Business Support the tiles covering the estate we already manage go live on your "
+         "own account - every computer in the business on one line, Windows versions and pending "
+         "restarts, backups, antivirus, your visits and reports. Reading your wireless controller, "
+         "switches or machines is the bespoke build, quoted per site, because it needs someone to "
+         "check what your platform actually exposes first."),
     ]
     faqs = faqs + CONN.FAQS
 
@@ -370,8 +383,39 @@ def build():
         'given away in full.</p>',
         '</div></section>',
 
+        ' <section class="section section--alt"><div class="wrap wrap--narrow prose" data-reveal>',
+        '<h2 class="section-title" data-title>You can have a go at this today, free'
+        '<span class="title-underline"></span></h2>',
+        '<p>There is a <strong>dashboard studio in the 365 portal</strong>. Drag the tiles where '
+        'you want them, take off what you do not care about, save the layout to your account. '
+        '<a href="/join/">Joining is free and takes about twenty seconds</a>, and you can design '
+        'a screen for your own site and send it to us to be priced.</p>',
+        # four columns will not squeeze into a phone: this is the site's established
+        # wide-comparison pattern (scrolls in its own container, 640px floor)
+        '<div class="price-table-wrap"><table class="price-table">',
+        '<thead><tr><th></th><th>Free 365 member</th><th>On 365 Business Support</th>'
+        '<th>A bespoke estate dashboard</th></tr></thead><tbody>',
+        '<tr><td><strong>Cost</strong></td><td>Free to join</td>'
+        '<td>From &pound;24.38 a month per computer</td><td>Quoted per site</td></tr>',
+        '<tr><td><strong>What is actually live</strong></td><td>Nothing &mdash; every tile is a '
+        'clearly marked sample</td><td>The estate we already manage: every computer in the '
+        'business on one line, Windows versions and pending restarts, backups, antivirus, your '
+        'visits and written reports</td><td>Your wireless controller, switches, PoE headroom, '
+        'servers, sensors, machines &mdash; whatever publishes its data</td></tr>',
+        '<tr><td><strong>Alerts into Slack or Teams</strong></td><td>Shown as a sample</td>'
+        '<td>Shown as a sample</td><td>Yes, wired to your own thresholds</td></tr>',
+        '<tr><td><strong>Where</strong></td><td colspan="2">In your portal, on any device</td>'
+        '<td>Its own hosted address, or a screen on the wall</td></tr>',
+        '</tbody></table></div>',
+        '<p><strong>The bit we will not blur.</strong> In the portal every tile says on its face '
+        'whether it is <em>live</em> &mdash; reading your own account &mdash; or a <em>sample</em> '
+        'with made-up numbers. Your access points do not appear in there by magic. Reading your '
+        'controller is the bespoke build below, and it starts with us checking what your platform '
+        'and firmware actually expose.</p>',
+        '</div></section>',
+
         ' <section class="section"><div class="wrap wrap--narrow prose" data-reveal>',
-        '<h2 class="section-title" data-title>How it works, and what it costs'
+        '<h2 class="section-title" data-title>How the bespoke build works, and what it costs'
         '<span class="title-underline"></span></h2>',
         '<ol>',
         '<li><strong>We check we can read your data.</strong> First conversation, before anything '

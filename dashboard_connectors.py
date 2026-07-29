@@ -97,11 +97,12 @@ def section():
       <div class="cn__prow">{{PROPS}}</div>
     </div>
 
-    <p class="cn__note"><strong>How this actually works.</strong> We build it, you use it &mdash;
-      there is no console for you to configure and nothing to learn. Tell us what you have and
-      what you want to see, and we do the wiring. If something on your list cannot be read, we
-      tell you that before you have spent anything, because finding out afterwards is how these
-      projects go wrong.</p>
+    <p class="cn__note"><strong>How this actually works.</strong> You can arrange the screen
+      yourself &mdash; there is a <a href="/portal/">dashboard studio in the 365 portal</a>, free
+      to join, where you drag the tiles about and save the layout to your account. What you do
+      not have to do is the wiring. Tell us what you have and what you want to see, and we
+      connect it. If something on your list cannot be read, we tell you that before you have
+      spent anything, because finding out afterwards is how these projects go wrong.</p>
   </div>
 </section>
 
@@ -146,9 +147,13 @@ FAQS = [
      "reverse-engineering a manufacturer's app, because anything built that way breaks the next "
      "time they update it."),
     ("Can I design my own dashboard and save layouts?",
-     "Not today, and we would rather say so plainly than imply otherwise. We design and build it "
-     "with you - you tell us what matters and we lay it out, then adjust it after a fortnight of "
-     "real use. Self-service layout editing is something we would like to offer and do not yet."),
+     "Yes - there is a dashboard studio in the 365 portal, and it is free to join and play with. "
+     "Drag the tiles where you want them, take off what you do not care about, save the layout to "
+     "your account and it follows you to any device. Being precise about what is real in it: on a "
+     "365 support plan the tiles about the computers we look after read your own account, and "
+     "every other tile is clearly marked as a sample of what we could connect. Making one of "
+     "those samples real - your cameras, your solar, your sensors - is still a build we do for "
+     "you, because it needs someone to check what your equipment actually publishes first."),
     ("Does it work for a boat, a campervan or a holiday home?",
      "Those are some of the best uses for it, because they are the buildings you are not standing "
      "in. Batteries and bilge on a boat, leisure power and whether it started this morning on a "
