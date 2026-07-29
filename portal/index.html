@@ -640,9 +640,9 @@
   </aside>
 
   <main id="main">
-<section class="section" style="padding-top:6.5rem"><div class="wrap" style="max-width:880px"><div id="p365app"><noscript><p>The customer portal needs JavaScript switched on. Or just ring us: 01202 775566.</p></noscript><p style="color:#9fb5d3">Loading the portal&hellip;</p></div><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">portal build 29 Jul 2026 &middot; f0868a934a</p><script>
+<section class="section" style="padding-top:6.5rem"><div class="wrap" style="max-width:880px"><div id="p365app"><noscript><p>The customer portal needs JavaScript switched on. Or just ring us: 01202 775566.</p></noscript><p style="color:#9fb5d3">Loading the portal&hellip;</p></div><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">portal build 29 Jul 2026 &middot; b40e7338c9</p><script>
 (function () {
-  var P365BUILD = 'f0868a934a';
+  var P365BUILD = 'b40e7338c9';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -1135,9 +1135,145 @@
     #p365app .ngglow, #p365app .ngfchip, .p365ov .ngglow, .p365ov .ngfchip { animation:none; }
     #p365app .ngscene, #p365app .ngdevice, #p365app .ngc, .p365ov .ngscene, .p365ov .ngdevice, .p365ov .ngc { transition:none; }
   }
+  
+  #p365app .ds, .p365ov .ds { max-width:1120px; margin:0 auto; padding:1rem .9rem 3rem; }
+  #p365app .ds__head, .p365ov .ds__head { display:flex; align-items:flex-start; gap:1rem; flex-wrap:wrap; margin-bottom:.9rem;
+    padding:1.15rem 1.25rem; border-radius:20px; border:1px solid #2b3f6d; position:relative; overflow:hidden;
+    background:radial-gradient(120% 150% at 8% 0%, rgba(29,151,227,.2), transparent 58%),
+      radial-gradient(90% 130% at 100% 6%, rgba(0,206,27,.11), transparent 62%),
+      linear-gradient(160deg,#101c3c,#0b1327 64%); box-shadow:0 20px 52px rgba(0,0,0,.4); }
+  #p365app .ds__eye, .p365ov .ds__eye { margin:0 0 .25rem; font:700 .6rem/1 ui-monospace,Consolas,monospace; letter-spacing:.18em;
+    text-transform:uppercase; color:var(--pcyan); }
+  #p365app .ds__head h2, .p365ov .ds__head h2 { margin:0; font-size:clamp(1.15rem,3vw,1.5rem); line-height:1.2; letter-spacing:-.02em; color:var(--pwhite); }
+  #p365app .ds__plan, .p365ov .ds__plan { display:inline-flex; align-items:center; gap:.4rem; font-size:.76rem; font-weight:700;
+    padding:.4rem .85rem; border-radius:999px; white-space:nowrap; align-self:flex-start;
+    background:rgba(134,182,232,.12); color:var(--psoft); border:1px solid var(--pline); }
+  #p365app .ds__plan.home, .p365ov .ds__plan.home { background:rgba(0,206,27,.13); color:var(--pgood); border-color:rgba(0,206,27,.42); }
+  #p365app .ds__plan.biz, .p365ov .ds__plan.biz { background:rgba(29,151,227,.16); color:#5cbcf7; border-color:rgba(29,151,227,.5); }
+  #p365app .ds__lede, .p365ov .ds__lede { color:var(--pmut); font-size:.88rem; line-height:1.6; margin:.45rem 0 0; max-width:66ch; }
+  #p365app .ds__lede strong, .p365ov .ds__lede strong { color:var(--pwhite); }
+  #p365app .ds__modes, .p365ov .ds__modes { display:inline-flex; gap:.25rem; padding:.25rem; border-radius:12px;
+    background:var(--pink); border:1px solid var(--pline); margin:0 0 .7rem; flex-wrap:wrap; }
+  #p365app .ds__modes button, .p365ov .ds__modes button { margin:0; padding:.42rem .9rem; font-size:.83rem; border-radius:9px;
+    background:transparent; color:var(--pmut); }
+  #p365app .ds__modes button.on, .p365ov .ds__modes button.on { background:var(--pcyan); color:#fff; box-shadow:0 6px 16px rgba(29,151,227,.35); }
+  #p365app .ds__legend, .p365ov .ds__legend { display:flex; align-items:center; gap:.4rem; flex-wrap:wrap; font-size:.78rem;
+    color:var(--pmut); margin:0 0 .8rem; line-height:1.6; }
+  
+  #p365app .ds__tag, .p365ov .ds__tag { display:inline-flex; align-items:center; gap:.3rem; font-size:.58rem; font-weight:800;
+    letter-spacing:.09em; text-transform:uppercase; padding:.18rem .45rem; border-radius:999px; white-space:nowrap; }
+  #p365app .ds__tag.live, .p365ov .ds__tag.live { background:rgba(0,206,27,.14); color:var(--pgood); border:1px solid rgba(0,206,27,.4); }
+  #p365app .ds__tag.live i, .p365ov .ds__tag.live i { width:6px; height:6px; border-radius:50%; background:var(--pgood); animation:dlivep 2.2s ease-in-out infinite; }
+  #p365app .ds__tag.samp, .p365ov .ds__tag.samp { background:rgba(224,179,65,.12); color:var(--pwarn); border:1px solid rgba(224,179,65,.38); }
+  #p365app .ds__up, .p365ov .ds__up { margin-top:1.2rem; border-radius:16px; padding:1.05rem 1.15rem;
+    border:1px solid rgba(0,206,27,.3); background:linear-gradient(160deg,rgba(0,206,27,.09),rgba(13,21,48,.6)); }
+  #p365app .ds__up h3, .p365ov .ds__up h3 { margin:0 0 .4rem; font-size:.95rem; color:var(--pwhite); }
+  #p365app .ds__up p, .p365ov .ds__up p { margin:0; font-size:.85rem; line-height:1.65; color:var(--psoft); }
+  #p365app .ds__up strong, .p365ov .ds__up strong { color:var(--pwhite); }
+  #p365app .ds__up .row, .p365ov .ds__up .row { border:0; padding:.7rem 0 0; }
+  #p365app .ds__ask, .p365ov .ds__ask { width:100%; margin:.5rem 0 0; padding:.32rem .5rem; font-size:.72rem; font-weight:600;
+    background:transparent; border:1px dashed rgba(29,151,227,.45); color:var(--psoft); border-radius:9px; }
+  #p365app .ds__ask:hover, .p365ov .ds__ask:hover { background:rgba(29,151,227,.12); border-style:solid; color:var(--pwhite); }
+  #p365app .ds__dot, .p365ov .ds__dot { width:7px; height:7px; border-radius:50%; background:var(--pgood); display:inline-block; margin-left:.1rem; }
+  #p365app .ds__bar, .p365ov .ds__bar { display:flex; gap:.4rem; flex-wrap:wrap; align-items:center; margin:.8rem 0 .6rem; }
+  #p365app .ds__bar button, #p365app .ds__bar a.btn, .p365ov .ds__bar button, .p365ov .ds__bar a.btn { margin:0; }
+  #p365app .ds__nm, .p365ov .ds__nm { flex:1 1 190px; min-width:150px; max-width:280px; padding:.42rem .6rem; font-size:.88rem; }
+  #p365app .ds__props, .p365ov .ds__props { display:flex; gap:.35rem; flex-wrap:wrap; margin:.2rem 0 .9rem; }
+  #p365app .ds__prop, .p365ov .ds__prop { background:transparent; border:1px solid var(--pline); color:var(--pmut); border-radius:999px;
+    padding:.34rem .74rem; font-size:.8rem; margin:0; display:inline-flex; align-items:center; gap:.35rem; }
+  #p365app .ds__prop.on, .p365ov .ds__prop.on { background:var(--pcyan); border-color:var(--pcyan); color:#fff; }
+  #p365app .ds__grid, .p365ov .ds__grid { display:grid; grid-template-columns:repeat(4,1fr); gap:.7rem; align-items:stretch; }
+  #p365app .ds__t, .p365ov .ds__t { position:relative; background:linear-gradient(165deg,#101c3c,#0b1327); border:1px solid var(--pline);
+    border-radius:15px; padding:.8rem .85rem .7rem; min-height:126px; display:flex; flex-direction:column;
+    touch-action:manipulation; transition:border-color .2s ease, box-shadow .2s ease, transform .2s ease; }
+  #p365app .ds__t::before, .p365ov .ds__t::before { content:''; position:absolute; inset:0 0 auto; height:1px; border-radius:15px 15px 0 0;
+    background:linear-gradient(90deg,transparent,rgba(125,170,220,.35),transparent); }
+  #p365app .ds__t.w2, .p365ov .ds__t.w2 { grid-column:span 2; }
+  #p365app .ds__t:hover, .p365ov .ds__t:hover { border-color:rgba(29,151,227,.6); transform:translateY(-2px); box-shadow:0 16px 34px rgba(0,0,0,.35); }
+  
+  #p365app .ds__t.islive, .p365ov .ds__t.islive { border-color:rgba(0,206,27,.34);
+    background:linear-gradient(165deg,#0f2038,#0b1327 62%); }
+  #p365app .ds__t.islive::before, .p365ov .ds__t.islive::before { background:linear-gradient(90deg,transparent,rgba(0,206,27,.45),transparent); }
+  #p365app .ds__t.islive:hover, .p365ov .ds__t.islive:hover { border-color:rgba(0,206,27,.6); }
+  #p365app .ds__t.lift, .p365ov .ds__t.lift { z-index:20; border-color:var(--pcyan); box-shadow:0 20px 44px rgba(0,0,0,.55); transform:scale(1.03); }
+  #p365app .ds__t.ghost, .p365ov .ds__t.ghost { opacity:.28; }
+  #p365app .ds__t.fresh, .p365ov .ds__t.fresh { animation:p365popIn .38s ease both; }
+  #p365app .ds__th, .p365ov .ds__th { display:flex; align-items:center; gap:.4rem; margin-bottom:.5rem; }
+  #p365app .ds__ico, .p365ov .ds__ico { font-size:.98rem; line-height:1; }
+  #p365app .ds__ttl, .p365ov .ds__ttl { font-size:.76rem; font-weight:700; letter-spacing:.02em; color:var(--psoft); flex:1; min-width:0;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #p365app .ds__grip, .p365ov .ds__grip { cursor:grab; color:var(--pmut); font-size:.85rem; border-radius:8px; display:inline-grid;
+    place-items:center; min-width:34px; min-height:30px; margin:-.3rem -.35rem -.3rem 0;
+    touch-action:none; user-select:none; -webkit-user-select:none; }
+  #p365app .ds__grip:hover, #p365app .ds__grip:focus-visible, .p365ov .ds__grip:hover, .p365ov .ds__grip:focus-visible { color:var(--pwhite); background:rgba(29,151,227,.14); }
+  #p365app .ds__grip:active, .p365ov .ds__grip:active { cursor:grabbing; }
+  #p365app .ds__body, .p365ov .ds__body { flex:1; display:flex; flex-direction:column; justify-content:center; }
+  #p365app .ds__big, .p365ov .ds__big { font-size:1.62rem; font-weight:700; color:var(--pwhite); line-height:1.05; font-variant-numeric:tabular-nums; }
+  #p365app .ds__big em, .p365ov .ds__big em { font-style:normal; font-size:.72rem; font-weight:600; color:var(--pmut); margin-left:.3rem; letter-spacing:.04em; }
+  #p365app .ds__sub, .p365ov .ds__sub { font-size:.73rem; color:var(--pmut); margin:.35rem 0 0; line-height:1.45; }
+  #p365app .ds__bar2, .p365ov .ds__bar2 { height:7px; border-radius:5px; background:#182449; overflow:hidden; margin:.5rem 0 0; }
+  #p365app .ds__bar2 i, .p365ov .ds__bar2 i { display:block; height:100%; border-radius:5px; background:var(--pgood); transition:width .9s cubic-bezier(.2,.7,.2,1); }
+  #p365app .ds__tools, .p365ov .ds__tools { display:flex; gap:.2rem; justify-content:flex-end; margin-top:.55rem; opacity:.55; transition:opacity .2s; }
+  #p365app .ds__t:hover .ds__tools, #p365app .ds__t:focus-within .ds__tools, .p365ov .ds__t:hover .ds__tools, .p365ov .ds__t:focus-within .ds__tools { opacity:1; }
+  #p365app .ds__tools button, .p365ov .ds__tools button { margin:0; padding:.16rem .4rem; font-size:.72rem; background:transparent;
+    border:1px solid var(--pline); color:var(--pmut); border-radius:7px; line-height:1.3; }
+  #p365app .ds__tools button:hover, .p365ov .ds__tools button:hover { color:var(--pwhite); border-color:var(--pcyan); }
+  
+  @media (pointer:coarse) {
+    #p365app .ds__grip, .p365ov .ds__grip { min-width:44px; min-height:40px; }
+    #p365app .ds__tools, .p365ov .ds__tools { opacity:1; gap:.3rem; }
+    #p365app .ds__tools button, .p365ov .ds__tools button { min-width:38px; min-height:32px; font-size:.86rem; }
+  }
+  
+  #p365app .ds__cams, .p365ov .ds__cams { display:grid; grid-template-columns:repeat(2,1fr); grid-auto-rows:54px; gap:.25rem; }
+  #p365app .ds.wall .ds__cams, .p365ov .ds.wall .ds__cams { grid-auto-rows:84px; }
+  #p365app .ds__cam, .p365ov .ds__cam { position:relative; border-radius:7px; overflow:hidden;
+    background:linear-gradient(150deg,#16233f,#0c142b 90%); }
+  #p365app .ds__cam i, .p365ov .ds__cam i { position:absolute; inset:0; background:linear-gradient(180deg,transparent,rgba(29,151,227,.16));
+    animation:dsScan 5.5s linear infinite; }
+  #p365app .ds__cam b, .p365ov .ds__cam b { position:absolute; left:4px; bottom:2px; font-size:.52rem; font-weight:600; color:#9fb5d3; letter-spacing:.05em; }
+  @keyframes dsScan { 0%{ transform:translateY(-100%); } 100%{ transform:translateY(100%); } }
+  #p365app .ds__spark, .p365ov .ds__spark { width:100%; height:38px; display:block; margin-top:.3rem; }
+  #p365app .ds__spark path, .p365ov .ds__spark path { fill:none; stroke:var(--pcyan); stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  #p365app .ds__feed, .p365ov .ds__feed { font-size:.72rem; color:var(--pmut); line-height:1.6; }
+  #p365app .ds__feed span, .p365ov .ds__feed span { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #p365app .ds__feed b, .p365ov .ds__feed b { color:var(--psoft); font-weight:600; }
+  #p365app .ds__pips, .p365ov .ds__pips { display:flex; gap:.3rem; margin-top:.45rem; flex-wrap:wrap; }
+  #p365app .ds__pip, .p365ov .ds__pip { width:9px; height:9px; border-radius:50%; background:var(--pgood); box-shadow:0 0 0 3px rgba(0,206,27,.1); }
+  #p365app .ds__pip.w, .p365ov .ds__pip.w { background:var(--pwarn); box-shadow:0 0 0 3px rgba(224,179,65,.12); }
+  #p365app .ds__days, .p365ov .ds__days { display:flex; gap:.5rem; margin-top:.45rem; }
+  #p365app .ds__day, .p365ov .ds__day { text-align:center; font-size:.66rem; color:var(--pmut); }
+  #p365app .ds__day b, .p365ov .ds__day b { display:block; font-size:.95rem; color:var(--pwhite); font-weight:600; }
+  #p365app .ds__shelf, .p365ov .ds__shelf { margin-top:1.1rem; border:1px dashed var(--pline); border-radius:14px; padding:.85rem .9rem; }
+  #p365app .ds__shelf h3, .p365ov .ds__shelf h3 { margin:0 0 .2rem; font-size:.78rem; letter-spacing:.1em; text-transform:uppercase; color:var(--psoft); }
+  #p365app .ds__shelf p, .p365ov .ds__shelf p { margin:0 0 .6rem; font-size:.78rem; color:var(--pmut); line-height:1.5; }
+  #p365app .ds__adds, .p365ov .ds__adds { display:flex; gap:.35rem; flex-wrap:wrap; }
+  #p365app .ds__add, .p365ov .ds__add { background:transparent; border:1px solid var(--pline); color:var(--psoft); border-radius:10px;
+    padding:.38rem .7rem; font-size:.8rem; margin:0; display:inline-flex; align-items:center; gap:.35rem; }
+  #p365app .ds__add:hover, .p365ov .ds__add:hover { border-color:var(--pcyan); color:var(--pwhite); background:rgba(29,151,227,.1); }
+  #p365app .ds__add.islive, .p365ov .ds__add.islive { border-color:rgba(0,206,27,.4); color:var(--pwhite); }
+  #p365app .ds.wall .ds__head, #p365app .ds.wall .ds__modes, #p365app .ds.wall .ds__legend, #p365app .ds.wall .ds__up, #p365app .ds.wall .ds__ask, #p365app .ds.wall .ds__msg, .p365ov .ds.wall .ds__head, .p365ov .ds.wall .ds__modes, .p365ov .ds.wall .ds__legend, .p365ov .ds.wall .ds__up, .p365ov .ds.wall .ds__ask, .p365ov .ds.wall .ds__msg { display:none; }
+  #p365app .ds__msg, .p365ov .ds__msg { font-size:.8rem; color:var(--psoft); min-height:1.2em; margin:.6rem 0 0; }
+  #p365app .ds__truth, .p365ov .ds__truth { margin-top:1.2rem; border-left:3px solid var(--pcyan); background:var(--ppanel);
+    border-radius:0 12px 12px 0; padding:.85rem 1rem; font-size:.83rem; line-height:1.62; color:var(--psoft); }
+  #p365app .ds__truth strong, .p365ov .ds__truth strong { color:var(--pwhite); }
+  #p365app .ds__truth .row, .p365ov .ds__truth .row { border:0; padding:.6rem 0 0; }
+  #p365app .ds.wall .ds__bar, #p365app .ds.wall .ds__props, #p365app .ds.wall .ds__shelf, #p365app .ds.wall .ds__truth, #p365app .ds.wall .ds__tools, #p365app .ds.wall .ds__lede, .p365ov .ds.wall .ds__bar, .p365ov .ds.wall .ds__props, .p365ov .ds.wall .ds__shelf, .p365ov .ds.wall .ds__truth, .p365ov .ds.wall .ds__tools, .p365ov .ds.wall .ds__lede { display:none; }
+  #p365app .ds.wall, .p365ov .ds.wall { max-width:none; padding:1.4rem 1.6rem; }
+  #p365app .ds.wall .ds__t, .p365ov .ds.wall .ds__t { min-height:170px; }
+  @media (max-width:820px) { #p365app .ds__grid, .p365ov .ds__grid { grid-template-columns:repeat(2,1fr); } }
+  @media (max-width:430px) {
+    #p365app .ds__grid, .p365ov .ds__grid { grid-template-columns:1fr; }
+    #p365app .ds__t.w2, .p365ov .ds__t.w2 { grid-column:span 1; }
+  }
+  @media (prefers-reduced-motion:reduce) {
+    #p365app .ds__cam i, .p365ov .ds__cam i { animation:none; }
+    #p365app .ds__t, #p365app .ds__bar2 i, .p365ov .ds__t, .p365ov .ds__bar2 i { transition:none; }
+    #p365app .ds__t.fresh, .p365ov .ds__t.fresh { animation:none; }
+  }
 </style><script>
 (function () {
-  var BK = '/api/pcm-booking.php', PCM = '/api/pcm.php';
+  var BK = '/api/pcm-booking.php', PCM = '/api/pcm.php', DASH = '/api/pcm-dash.php';
   var el = document.getElementById('p365app');
   var S = {};
   try { S = JSON.parse(sessionStorage.getItem('p365s') || 'null') || JSON.parse(localStorage.getItem('p365') || '{}'); } catch (e) { S = {}; }
@@ -1175,7 +1311,7 @@
     if (S.wtoken) post(BK, { action: 'weblogout', wtoken: S.wtoken, machine: mid() });
     // the whole journey machine is module-level, so without this the next member signed in
     // on this tab inherits the previous one's survey count and settled state
-    jSettled = false; jPend = null; JW = { wifi: 0, loaded: false, ok: false }; JD = null;
+    jSettled = false; jPend = null; JW = { wifi: 0, avg: 0, site: '', loaded: false, ok: false }; JD = null;
     S = {}; saveS(); showSignin();
   }
   function topRow(title) {
@@ -1345,7 +1481,7 @@
   ];
   // wifi: the saved-survey count. loaded: the request finished. ok: the count is TRUSTWORTHY
   // (a 403 or a dropped connection means we know nothing, which is not the same as zero).
-  var JW = { wifi: 0, loaded: false, ok: false }, JD = null;   // arrives asynchronously; see loadWifi()
+  var JW = { wifi: 0, avg: 0, site: '', loaded: false, ok: false }, JD = null;   // arrives asynchronously; see loadWifi()
   // The WiFi step can only be judged once the survey list returns, which is AFTER the
   // dashboard paints. Rather than delay the whole page for it, the row lights up in
   // place when the count lands - which reads as the journey noticing, not as a redraw.
@@ -1487,6 +1623,12 @@
       { ic: '\ud83c\udf93', t: '11 free courses', s: 'Online safety, video calls, getting more from your tech', st: 'have', go: 'courses' },
       { ic: '\ud83d\udcf6', t: 'WiFi Optimizer', s: 'Score every room, saved to your account', st: JW.wifi > 0 ? 'have' : 'add', go: 'wifi' },
       { ic: '\ud83e\uddf0', t: 'Free online tools', s: 'Speed test, spec checker, is-it-down and more', st: 'have', go: 'tools' },
+      // On a plan this is a real included feature reading real data, so it says so.
+      // Off a plan it is honestly "have a play" - never a tile that implies a
+      // dashboard is already watching something.
+      { ic: '\ud83c\udf9b', t: 'Your dashboard', go: 'dash',
+        s: pro ? 'Your computers, backups, visits and reports on one screen' : 'Build one on sample data and keep the layout',
+        st: pro ? 'have' : 'add', lbl: pro ? 'Included' : 'Free \u2014 have a play' },
       { ic: '\ud83d\udcc5', t: 'Book online', s: 'Book, move or cancel a visit yourself, any time', st: 'have', go: 'book' },
       { ic: '\ud83d\udda5', t: 'PC Manager', s: m.length ? m.length + ' computer' + (m.length === 1 ? '' : 's') + ' reporting in' : 'Free health monitoring \u2014 we fit it for you', st: m.length ? 'have' : 'add', go: 'app' },
       // NOT free for a free member: /sos/ is clear that connecting in to look is free and
@@ -1528,6 +1670,7 @@
       var act = function () {
         var g = t.getAttribute('data-unl');
         if (g === 'wifi') ovWifi();
+        else if (g === 'dash') ovDash();
         else if (g === 'book') ovBook();
         else if (g === 'courses') window.open('/free-tools/', '_blank', 'noopener');
         else if (g === 'tools') window.open('/free-tools/', '_blank', 'noopener');
@@ -1799,6 +1942,636 @@
     });
   }
 
+  // ---------- DASHBOARD STUDIO -------------------------------------------------
+  // What this is, and the line it must not cross.
+  //
+  // It comes with the support plan: 365 Home Support builds the home dashboard,
+  // 365 Business Support builds the same plus the estate tiles a business actually
+  // needs. A home customer never sees the business ones - a console full of PoE
+  // budgets and production lines is noise in a living room.
+  //
+  // Every tile is one of two things, and says which on its face:
+  //   LIVE   - reading this customer's own account right now (their PCs via 365 PC
+  //            Manager, their backups, their next visit, their saved WiFi surveys).
+  //   SAMPLE - made-up numbers showing what a connected tile looks like. Anything
+  //            needing kit or an integration is a build we quote for, and the tile
+  //            says so rather than implying something is already watching.
+  //
+  // That split is the whole product. A dashboard that quietly mixed a real backup
+  // status in with a pretend freezer temperature would be worse than no dashboard,
+  // because the customer could no longer trust either number.
+  var DSCAT = [
+    // ---- tiles that read the customer's own account -------------------------
+    { k:'pcs', ic:'\ud83d\udda5', t:'Your computers', aud:'all',
+      live:function(d){
+        if(!d || !d.machines || !d.machines.length) return null;
+        var n=d.machines.length, s=0, c=0;
+        d.machines.forEach(function(m){ if(m.score){ s+=parseInt(m.score,10); c++; } });
+        var avg=c?Math.round(s/c):0, col=avg>=80?'var(--pgood)':(avg>=55?'var(--pwarn)':'var(--pbad)');
+        return '<div class="ds__big" style="color:'+col+'">'+(c?avg:'\u2014')+'<em>health</em></div>'
+          + '<div class="ds__bar2"><i style="width:'+(c?avg:0)+'%;background:'+col+'"></i></div>'
+          + '<p class="ds__sub">'+n+' computer'+(n===1?'':'s')+' reporting in</p>';
+      },
+      b:'<div class="ds__big">88<em>health</em></div><div class="ds__bar2"><i style="width:88%"></i></div>'
+        + '<p class="ds__sub">Your PCs, scored every time they check in</p>' },
+    { k:'backup', ic:'\ud83d\udcbe', t:'Backups', aud:'all',
+      live:function(d){
+        if(!d || !d.machines || !d.machines.length) return null;
+        var n=d.machines.length, ok=0;
+        d.machines.forEach(function(m){ if(m.backup) ok++; });
+        var good=(ok===n);
+        return '<div class="ds__big" style="color:'+(good?'var(--pgood)':'var(--pwarn)')+'">'+(good?'&#10003; ':'')+ok+'<em>of '+n+' backed up</em></div>'
+          + '<p class="ds__sub">'+(good?'Every computer has a backup we can see.':'We cannot see a backup on '+(n-ok)+' of them - worth a word.')+'</p>';
+      },
+      b:'<div class="ds__big" style="color:var(--pgood)">&#10003; 3<em>of 3 backed up</em></div>'
+        + '<p class="ds__sub">Whether last night actually ran &mdash; not whether it was meant to</p>' },
+    { k:'disk', ic:'\ud83d\uddc4', t:'Storage', aud:'all',
+      live:function(d){
+        if(!d || !d.machines || !d.machines.length) return null;
+        var worst=null;
+        d.machines.forEach(function(m){ if(typeof m.disk==='number' && (!worst || m.disk>worst.disk)) worst=m; });
+        if(!worst) return null;
+        var col=worst.disk>=85?'var(--pbad)':(worst.disk>=70?'var(--pwarn)':'var(--pgood)');
+        return '<div class="ds__big" style="color:'+col+'">'+worst.disk+'<em>% full</em></div>'
+          + '<div class="ds__bar2"><i style="width:'+worst.disk+'%;background:'+col+'"></i></div>'
+          + '<p class="ds__sub">Fullest drive: '+esc(worst.name)+'</p>';
+      },
+      b:'<div class="ds__big">61<em>% full</em></div><div class="ds__bar2"><i style="width:61%"></i></div>'
+        + '<p class="ds__sub">The drive filling up first, before it becomes a problem</p>' },
+    { k:'secure', ic:'\ud83d\udee1', t:'Protection', aud:'all',
+      live:function(d){
+        if(!d || !d.machines || !d.machines.length) return null;
+        var n=d.machines.length, on=0, w10=0;
+        d.machines.forEach(function(m){ if(m.avon) on++; if(m.w10) w10++; });
+        var good=(on===n && !w10);
+        return '<div class="ds__big" style="color:'+(good?'var(--pgood)':'var(--pwarn)')+'">'+(good?'&#10003; Protected':on+'<em>of '+n+' protected</em>')+'</div>'
+          + '<p class="ds__sub">'+(w10?w10+' still on Windows 10 &mdash; that needs a plan':'Antivirus on and reporting in')+'</p>';
+      },
+      b:'<div class="ds__big" style="color:var(--pgood)">&#10003; Protected</div>'
+        + '<p class="ds__sub">Antivirus, Windows version and updates, across the lot</p>' },
+    { k:'visit', ic:'\ud83d\udcc5', t:'Next visit', aud:'all',
+      live:function(d){
+        if(!d || !d.next) return null;
+        return '<div class="ds__big" style="font-size:1.15rem;line-height:1.35">'+esc(d.next)+'</div>'
+          + '<p class="ds__sub">We ring before we set off, and give you a time. Move it in the portal whenever you need.</p>';
+      },
+      b:'<div class="ds__big" style="font-size:1.15rem;line-height:1.35">Tue 12 Aug, 10:00</div>'
+        + '<p class="ds__sub">Your six-weekly service, with a call before we set off</p>' },
+    { k:'reports', ic:'\ud83d\udcc4', t:'Service reports', aud:'all',
+      live:function(d){
+        if(!d || !d.machines) return null;
+        var n=0, last=0;
+        d.machines.forEach(function(m){ (m.reps||[]).forEach(function(ts){ n++; if(ts>last) last=ts; }); });
+        if(!n) return null;
+        var dt=new Date(last*1000);
+        return '<div class="ds__big">'+n+'<em>on file</em></div>'
+          + '<p class="ds__sub">Latest: '+dt.getDate()+' '+MON[dt.getMonth()]+' '+dt.getFullYear()+'. Open them from your computers list.</p>';
+      },
+      b:'<div class="ds__big">6<em>on file</em></div>'
+        + '<p class="ds__sub">A written report every service, in plain English, kept here</p>' },
+    { k:'survey', ic:'\ud83d\udcf6', t:'WiFi survey', aud:'all',
+      live:function(){
+        if(!JW || !JW.wifi) return null;
+        var col=JW.avg>=75?'var(--pgood)':(JW.avg>=45?'var(--pwarn)':'var(--pbad)');
+        return '<div class="ds__big" style="color:'+col+'">'+JW.avg+'<em>/100 average</em></div>'
+          + '<div class="ds__bar2"><i style="width:'+JW.avg+'%;background:'+col+'"></i></div>'
+          + '<p class="ds__sub">'+esc(JW.site||'Your survey')+' &middot; '+JW.wifi+' saved on your account</p>';
+      },
+      b:'<div class="ds__big">78<em>/100 average</em></div><div class="ds__bar2"><i style="width:78%"></i></div>'
+        + '<p class="ds__sub">Every room scored, saved to your account from our free tool</p>' },
+    // ---- business plan only: the estate view ---------------------------------
+    { k:'fleet', ic:'\ud83c\udfe2', t:'Whole fleet', aud:'biz',
+      live:function(d){
+        if(!d || !d.machines || !d.machines.length) return null;
+        var n=d.machines.length, bad=0;
+        d.machines.forEach(function(m){ if(parseInt(m.score,10) < 55 || (!m.backup) || m.avoff || m.w10) bad++; });
+        return '<div class="ds__big" style="color:'+(bad?'var(--pwarn)':'var(--pgood)')+'">'+(n-bad)+'<em>of '+n+' clean</em></div>'
+          + '<div class="ds__bar2"><i style="width:'+Math.round((n-bad)/n*100)+'%;background:'+(bad?'var(--pwarn)':'var(--pgood)')+'"></i></div>'
+          + '<p class="ds__sub">'+(bad?bad+' machine'+(bad===1?' wants':'s want')+' attention &mdash; we are on it':'Every machine in the business is clean')+'</p>';
+      },
+      b:'<div class="ds__big" style="color:var(--pgood)">11<em>of 12 clean</em></div><div class="ds__bar2"><i style="width:92%"></i></div>'
+        + '<p class="ds__sub">Every computer in the business, on one line</p>' },
+    { k:'patch', ic:'\ud83e\ude79', t:'Updates &amp; Windows', aud:'biz',
+      live:function(d){
+        if(!d || !d.machines || !d.machines.length) return null;
+        var n=d.machines.length, w10=0, rb=0, need=0;
+        d.machines.forEach(function(m){ if(m.w10) w10++; if(m.reboot) rb++; if(m.w10 || m.reboot) need++; });
+        var good=!need;
+        return '<div class="ds__big" style="color:'+(good?'var(--pgood)':'var(--pwarn)')+'">'+(good?'&#10003; Current':need+'<em>need'+(need===1?'s':'')+' a look</em>')+'</div>'
+          + '<p class="ds__sub">'+(w10?w10+' on Windows 10':'All on Windows 11')+(rb?' &middot; '+rb+' waiting on a restart':'')+' &middot; '+n+' machines</p>';
+      },
+      b:'<div class="ds__big" style="color:var(--pgood)">&#10003; Current</div>'
+        + '<p class="ds__sub">Windows version and pending restarts across the business</p>' },
+    { k:'wifi', ic:'\ud83d\udce1', t:'Wi-Fi estate', aud:'biz',
+      b:'<div class="ds__big"><span data-f="aps">12</span><em>of 12 up</em></div>'
+        + '<div class="ds__bar2"><i data-bar="poe" style="width:61%;background:var(--pcyan)"></i></div>'
+        + '<p class="ds__sub"><span data-f="clients">38</span> devices &middot; PoE budget <span data-f="poe">61</span>% used</p>' },
+    { k:'servers', ic:'\ud83d\uddc3', t:'Servers &amp; network', aud:'biz',
+      b:'<div class="ds__big" style="color:var(--pgood)">&#10003; All up</div>'
+        + '<div class="ds__pips"><i class="ds__pip"></i><i class="ds__pip"></i><i class="ds__pip"></i><i class="ds__pip w"></i></div>'
+        + '<p class="ds__sub">Server, NAS, firewall and switch &middot; one amber: firewall licence due</p>' },
+    { k:'sites', ic:'\ud83d\uddfa', t:'Every site', aud:'biz',
+      b:'<div class="ds__big">3<em>sites</em></div>'
+        + '<p class="ds__sub">Bournemouth, Poole and the unit at Ferndown, side by side</p>' },
+    { k:'alerts', ic:'\ud83d\udcac', t:'Alerts to Slack', aud:'biz',
+      b:'<div class="ds__feed"><span><b>07:02</b> Backup finished &mdash; 12 of 12</span>'
+        + '<span><b>09:41</b> Firewall licence expires in 21 days</span>'
+        + '<span><b>11:15</b> AP &ldquo;Workshop&rdquo; rebooted itself</span>'
+        + '<span><b>13:30</b> New starter&rsquo;s laptop enrolled</span></div>'
+        + '<p class="ds__sub">Where your team already is, not a fourteenth app</p>' },
+    { k:'machine', ic:'\u2699', t:'Production', aud:'biz',
+      b:'<div class="ds__big"><span data-f="run">92</span><em>% utilisation</em></div>'
+        + '<div class="ds__bar2"><i data-bar="run" style="width:92%"></i></div>'
+        + '<p class="ds__sub"><span data-f="out">1,420</span> parts today &middot; 3 lines running</p>' },
+    // ---- everything else: a build we quote for -------------------------------
+    { k:'cctv', ic:'\ud83d\udcf7', t:'Cameras', aud:'all',
+      b:'<div class="ds__cams"><div class="ds__cam"><i></i><b>DRIVE</b></div><div class="ds__cam"><i></i><b>BACK DOOR</b></div>'
+        + '<div class="ds__cam"><i></i><b>GARAGE</b></div><div class="ds__cam"><i></i><b>SIDE GATE</b></div></div>'
+        + '<p class="ds__sub">All four recording &middot; clips copied off-site</p>' },
+    { k:'energy', ic:'\u26a1', t:'Solar &amp; battery', aud:'all',
+      b:'<div class="ds__big"><span data-f="pwr">1,840</span><em>W now</em></div>'
+        + '<div class="ds__bar2"><i data-bar="battp" style="width:82%"></i></div>'
+        + '<p class="ds__sub">Battery <span data-f="battp">82</span>% &middot; charging from the roof</p>' },
+    { k:'cost', ic:'\ud83d\udcb7', t:'Electricity today', aud:'all',
+      b:'<div class="ds__big">&pound;<span data-f="cost">1.42</span><em>so far</em></div>'
+        + '<p class="ds__sub"><span data-f="kwh">6.8</span> kWh used &middot; <span data-f="kwhs">4.1</span> kWh of it free from the roof</p>' },
+    { k:'broadband', ic:'\ud83c\udf10', t:'Broadband', aud:'all',
+      b:'<div class="ds__big"><span data-f="mbps">71</span><em>Mbps</em></div>'
+        + '<svg class="ds__spark" viewBox="0 0 120 38" aria-hidden="true"><path d="M2 26 L14 22 L26 27 L38 15 L50 19 L62 11 L74 17 L86 9 L98 14 L118 8"/></svg>'
+        + '<p class="ds__sub">Router up 41 days &middot; no drop-outs this week</p>' },
+    { k:'freezer', ic:'\ud83e\uddca', t:'Freezer', aud:'all',
+      b:'<div class="ds__big"><span data-f="frz">-19</span><em>&deg;C</em></div>'
+        + '<p class="ds__sub">Garage freezer &middot; normal for 41 days</p>' },
+    { k:'leak', ic:'\ud83d\udca7', t:'Water leaks', aud:'all',
+      b:'<div class="ds__big" style="color:var(--pgood)">&#10003; Dry</div>'
+        + '<div class="ds__pips"><i class="ds__pip"></i><i class="ds__pip"></i><i class="ds__pip"></i></div>'
+        + '<p class="ds__sub">Under the sink, the boiler and the washing machine</p>' },
+    { k:'door', ic:'\ud83d\udeaa', t:'Doors &amp; windows', aud:'all',
+      b:'<div class="ds__big" style="color:var(--pgood)">&#10003; All closed</div>'
+        + '<p class="ds__sub"><span data-f="doors">9</span> contacts &middot; last opened 18:42</p>' },
+    { k:'weather', ic:'\ud83c\udf24', t:'Weather', aud:'all',
+      b:'<div class="ds__big"><span data-f="wxt">14</span><em>&deg;C cloudy</em></div>'
+        + '<div class="ds__days"><span class="ds__day"><b>15&deg;</b>Wed</span><span class="ds__day"><b>17&deg;</b>Thu</span>'
+        + '<span class="ds__day"><b>13&deg;</b>Fri</span><span class="ds__day"><b>16&deg;</b>Sat</span></div>'
+        + '<p class="ds__sub">Tomorrow is what decides whether the battery charges tonight</p>' },
+    { k:'heating', ic:'\ud83d\udd25', t:'Heating &amp; damp', aud:'all',
+      b:'<div class="ds__big"><span data-f="heat">17.5</span><em>&deg;C</em></div>'
+        + '<p class="ds__sub">Humidity <span data-f="hum">58</span>% &middot; no damp risk &middot; 200 miles away</p>' },
+    { k:'vehicle', ic:'\ud83d\ude90', t:'Vehicle', aud:'all',
+      b:'<div class="ds__big"><span data-f="vmi">128</span><em>miles this week</em></div>'
+        + '<p class="ds__sub">Battery <span data-f="vbatt">12.7</span>V &middot; last seen Ferndown, 20 min ago</p>' },
+    { k:'water', ic:'\ud83d\udeb0', t:'Fresh water', aud:'all',
+      b:'<div class="ds__big"><span data-f="wtr">74</span><em>% full</em></div>'
+        + '<div class="ds__bar2"><i data-bar="wtr" style="width:74%;background:var(--pcyan)"></i></div>'
+        + '<p class="ds__sub">About 4 days at the rate you are using it</p>' },
+    { k:'bilge', ic:'\u2693', t:'Bilge &amp; shore power', aud:'all',
+      b:'<div class="ds__big" style="color:var(--pgood)">&#10003; Dry</div>'
+        + '<p class="ds__sub">On shore power &middot; bilge pump idle 6 days</p>' }
+  ];
+  // What each plan's dashboard opens as. Live tiles lead, because the first thing a
+  // paying customer should see is the thing that is actually theirs.
+  var DSPLANLAY = {
+    home: [['pcs',2],['backup',1],['visit',1],['secure',1],['disk',1],['survey',1],['reports',1]],
+    business: [['fleet',2],['patch',1],['backup',1],['secure',1],['pcs',1],['servers',1],['wifi',2],['alerts',2]],
+    free: [['pcs',2],['backup',1],['visit',1],['survey',1],['cctv',2],['energy',1],['weather',1]]
+  };
+  var DSPROPS = [
+    { p:'home',     ic:'\ud83c\udfe0', t:'Home',          lay:[['cctv',2],['energy',1],['broadband',1],['freezer',1],['door',1],['leak',1],['weather',1]] },
+    { p:'business', ic:'\ud83c\udfe2', t:'Business',      lay:[['wifi',2],['servers',1],['sites',1],['machine',1],['alerts',2],['energy',1],['cctv',1]] },
+    { p:'boat',     ic:'\u26f5', t:'Boat',                 lay:[['energy',2],['bilge',1],['water',1],['weather',1],['vehicle',1],['alerts',2]] },
+    { p:'camper',   ic:'\ud83d\ude90', t:'Campervan',     lay:[['energy',2],['water',1],['vehicle',1],['broadband',1],['cctv',1],['weather',1]] },
+    { p:'holiday',  ic:'\ud83c\udfdd', t:'Holiday home',  lay:[['heating',2],['leak',1],['cctv',1],['door',1],['energy',1],['weather',1]] }
+  ];
+  var DSD = { pwr:1840, battp:82, cost:1.42, kwh:6.8, kwhs:4.1, frz:-19, doors:9, aps:12, clients:38,
+              poe:61, mbps:71, vmi:128, vbatt:12.7, wxt:14, run:92, out:1420, heat:17.5, hum:58, wtr:74 };
+  var DS = null, DSTIMER = 0, DSSAVED = null, DSMODE = 'mine';
+  function dsPlan() { return (JD && JD.plan) ? JD.plan : ((JD && JD.tier === 'pro') ? 'home' : 'free'); }
+  function dsPlanName(p) { return p === 'business' ? '365 Business Support' : (p === 'home' ? '365 Home Support' : '365 Club (free)'); }
+  function dsCat(k) { for (var i = 0; i < DSCAT.length; i++) if (DSCAT[i].k === k) return DSCAT[i]; return null; }
+  function dsProp(p) { for (var i = 0; i < DSPROPS.length; i++) if (DSPROPS[i].p === p) return DSPROPS[i]; return DSPROPS[0]; }
+  // A home customer never gets offered the estate tiles - in custom mode everything is
+  // on the table, because that is the point of designing one to be quoted.
+  function dsAllowed(k) {
+    var c = dsCat(k); if (!c) return false;
+    if (DSMODE === 'custom') return true;
+    return c.aud !== 'biz' || dsPlan() === 'business';
+  }
+  function dsLiveHtml(c) {
+    if (DSMODE === 'custom' || !c.live) return null;
+    try { return c.live(JD); } catch (e) { return null; }
+  }
+  function dsLay(list) {
+    return list.filter(function (x) { return dsAllowed(x[0]); }).map(function (x) { return { k: x[0], w: x[1] }; });
+  }
+  function dsPreset(p) { return dsLay((DSMODE === 'custom' ? dsProp(p).lay : (DSPLANLAY[p] || DSPLANLAY.free))); }
+  function dsNum(v, dp) { return dp ? v.toFixed(dp) : String(Math.round(v)); }
+  function dsWalk() {
+    var j = function (v, amt, lo, hi) { var n = v + (Math.random() - .5) * amt; return Math.max(lo, Math.min(hi, n)); };
+    DSD.pwr = j(DSD.pwr, 420, 380, 3100);
+    DSD.battp = j(DSD.battp, 3, 46, 100);
+    DSD.cost = j(DSD.cost, .06, .4, 4.2);
+    DSD.kwh = j(DSD.kwh, .25, 1.5, 19);
+    DSD.kwhs = Math.min(DSD.kwh, j(DSD.kwhs, .2, .6, 14));
+    DSD.frz = j(DSD.frz, .8, -22, -17);
+    DSD.clients = j(DSD.clients, 4, 22, 61);
+    DSD.poe = j(DSD.poe, 3, 44, 78);
+    DSD.mbps = j(DSD.mbps, 9, 38, 94);
+    DSD.vbatt = j(DSD.vbatt, .12, 12.2, 13.4);
+    DSD.wxt = j(DSD.wxt, .6, 9, 21);
+    DSD.run = j(DSD.run, 4, 71, 99);
+    DSD.out = j(DSD.out, 26, 1180, 1980);
+    DSD.heat = j(DSD.heat, .3, 15.5, 20.5);
+    DSD.hum = j(DSD.hum, 2, 44, 68);
+    DSD.wtr = Math.max(12, DSD.wtr - Math.random() * .5);
+    if (DSD.wtr < 14) DSD.wtr = 96;
+  }
+  function dsPaint() {
+    var g = document.getElementById('dsGrid'); if (!g) return;
+    var vals = { pwr: Math.round(DSD.pwr).toLocaleString('en-GB'), battp: dsNum(DSD.battp), cost: dsNum(DSD.cost, 2),
+      kwh: dsNum(DSD.kwh, 1), kwhs: dsNum(DSD.kwhs, 1), frz: dsNum(DSD.frz), doors: dsNum(DSD.doors), aps: dsNum(DSD.aps),
+      clients: dsNum(DSD.clients), poe: dsNum(DSD.poe), mbps: dsNum(DSD.mbps), vmi: dsNum(DSD.vmi),
+      vbatt: dsNum(DSD.vbatt, 1), wxt: dsNum(DSD.wxt), run: dsNum(DSD.run), out: Math.round(DSD.out).toLocaleString('en-GB'),
+      heat: dsNum(DSD.heat, 1), hum: dsNum(DSD.hum), wtr: dsNum(DSD.wtr) };
+    Array.prototype.forEach.call(g.querySelectorAll('[data-f]'), function (n) {
+      var v = vals[n.getAttribute('data-f')];
+      if (v !== undefined && n.textContent !== v) n.textContent = v;
+    });
+    Array.prototype.forEach.call(g.querySelectorAll('[data-bar]'), function (n) {
+      var v = vals[n.getAttribute('data-bar')];
+      if (v !== undefined) n.style.width = Math.max(0, Math.min(100, parseFloat(v))) + '%';
+    });
+  }
+  function dsMsg(t) { var m = document.getElementById('dsMsg'); if (m) m.textContent = t; }
+  // tile titles carry HTML entities for the markup; the status line is textContent,
+  // so it needs the plain-English version or it reads "Doors &amp; windows"
+  function dsT(c) { return c ? String(c.t).split('&amp;').join('&') : ''; }
+  // Send people to the page that matches what they are looking at - a boat owner
+  // reading the business Wi-Fi page learns nothing.
+  function dsLinks() {
+    var p = DS ? DS.prop : 'home';
+    var u = (p === 'business') ? '/custom-wifi-dashboards/' : ((p === 'boat' || p === 'camper') ? '/custom-vrm-dashboards/' : '/next-gen-home-dashboards/');
+    var a = document.getElementById('dsLink1'); if (a) a.href = u;
+    var b = document.getElementById('dsLink2'); if (b) b.href = u;
+  }
+  function dsTileHtml(t, fresh) {
+    var c = dsCat(t.k); if (!c) return '';
+    var lv = dsLiveHtml(c);
+    var badge = lv
+      ? '<span class="ds__tag live"><i></i>Live</span>'
+      : '<span class="ds__tag samp">Sample</span>';
+    return '<div class="ds__t' + (t.w === 2 ? ' w2' : '') + (lv ? ' islive' : '') + (fresh ? ' fresh' : '') + '" data-k="' + c.k + '">'
+      + '<div class="ds__th"><span class="ds__ico" aria-hidden="true">' + c.ic + '</span>'
+      + '<span class="ds__ttl">' + c.t + '</span>' + badge
+      + '<span class="ds__grip" role="button" tabindex="0" aria-label="Move ' + c.t + '. Drag, or use the arrow keys.">&#8942;&#8942;</span></div>'
+      + '<div class="ds__body">' + (lv || c.b) + '</div>'
+      + (lv ? '' : '<button type="button" class="ds__ask" data-ask="' + c.k + '">Can we make this one live?</button>')
+      + '<div class="ds__tools">'
+      + '<button type="button" data-act="left" title="Move left" aria-label="Move ' + c.t + ' left">&#8592;</button>'
+      + '<button type="button" data-act="wide" title="Make it wider or narrower" aria-label="Resize ' + c.t + '">&#8596;</button>'
+      + '<button type="button" data-act="right" title="Move right" aria-label="Move ' + c.t + ' right">&#8594;</button>'
+      + '<button type="button" data-act="del" title="Take it off" aria-label="Remove ' + c.t + '">&#10005;</button>'
+      + '</div></div>';
+  }
+  function dsShelfHtml() {
+    var have = {}; DS.tiles.forEach(function (t) { have[t.k] = 1; });
+    var left = DSCAT.filter(function (c) { return !have[c.k] && dsAllowed(c.k); });
+    if (!left.length) return '<p class="ds__sub" style="margin:0">Every tile is on the screen. Take one off to see the rest again.</p>';
+    return '<div class="ds__adds">' + left.map(function (c) {
+      var lv = dsLiveHtml(c);
+      return '<button type="button" class="ds__add' + (lv ? ' islive' : '') + '" data-add="' + c.k + '">'
+        + '<span aria-hidden="true">' + c.ic + '</span>' + c.t + (lv ? '<i class="ds__dot"></i>' : '') + '</button>';
+    }).join('') + '</div>';
+  }
+  function dsRender(freshKey) {
+    var g = document.getElementById('dsGrid'); if (!g) return;
+    g.innerHTML = DS.tiles.map(function (t) { return dsTileHtml(t, t.k === freshKey); }).join('');
+    var sh = document.getElementById('dsShelf'); if (sh) sh.innerHTML = dsShelfHtml();
+    var lc = g.querySelectorAll('.ds__t.islive').length;
+    var lg = document.getElementById('dsLegend');
+    if (lg) lg.innerHTML = DSMODE === 'custom'
+      ? '<span class="ds__tag samp">Sample</span> Everything here is a demo &mdash; design the screen you want and we will price building it on your own kit.'
+      : (lc ? '<span class="ds__tag live"><i></i>Live</span> ' + lc + ' tile' + (lc === 1 ? '' : 's') + ' reading your own account &middot; <span class="ds__tag samp">Sample</span> the rest are demos of what we could connect'
+            : '<span class="ds__tag samp">Sample</span> Nothing is reading your account yet &mdash; the live tiles switch on once 365 PC Manager is on your PC');
+    dsPaint();
+    dsBind();
+  }
+  function dsIndex(k) { for (var i = 0; i < DS.tiles.length; i++) if (DS.tiles[i].k === k) return i; return -1; }
+  function dsMove(k, dir) {
+    var i = dsIndex(k), j = i + dir;
+    if (i < 0 || j < 0 || j >= DS.tiles.length) return;
+    var t = DS.tiles.splice(i, 1)[0];
+    DS.tiles.splice(j, 0, t);
+    dsRender();
+    var n = document.querySelector('#dsGrid .ds__t[data-k="' + k + '"] .ds__grip');
+    if (n) n.focus();
+    dsMsg('Moved. Save it when you like the look of it.');
+  }
+  function dsOrderFromDom() {
+    var g = document.getElementById('dsGrid'); if (!g) return;
+    var out = [];
+    Array.prototype.forEach.call(g.querySelectorAll('.ds__t'), function (n) {
+      var k = n.getAttribute('data-k'), i = dsIndex(k);
+      if (i >= 0) out.push(DS.tiles[i]);
+    });
+    if (out.length === DS.tiles.length) DS.tiles = out;
+  }
+  // Drag: the tile stays in the grid and is translated under the finger, while
+  // elementFromPoint decides who it should sit before. pointer-events are killed on
+  // the lifted tile for exactly that reason - otherwise elementFromPoint only ever
+  // finds the tile being dragged. Touch works because .ds__grip sets touch-action:none.
+  function dsDrag(ev, tile, grip) {
+    var g = document.getElementById('dsGrid'); if (!g) return;
+    if (ev.button !== undefined && ev.button !== 0) return;
+    ev.preventDefault();
+    var home = tile.getBoundingClientRect();
+    var gx = ev.clientX - home.left, gy = ev.clientY - home.top;
+    tile.classList.add('lift');
+    tile.style.pointerEvents = 'none';
+    try { grip.setPointerCapture(ev.pointerId); } catch (e) {}
+    var moved = false;
+    function at(x, y) {
+      var el2 = document.elementFromPoint(x, y);
+      var t2 = el2 && el2.closest ? el2.closest('.ds__t') : null;
+      return (t2 && t2 !== tile && t2.parentNode === g) ? t2 : null;
+    }
+    function onMove(e) {
+      moved = true;
+      var over = at(e.clientX, e.clientY);
+      if (over) {
+        var r = over.getBoundingClientRect();
+        var before = (e.clientY < r.top + r.height * .5) || (Math.abs(e.clientY - (r.top + r.height * .5)) < r.height * .5 && e.clientX < r.left + r.width * .5);
+        g.insertBefore(tile, before ? over : over.nextSibling);
+        tile.style.transform = '';                 // re-measure where it landed, or
+        home = tile.getBoundingClientRect();       // the tile jumps out from under the finger
+      }
+      tile.style.transform = 'translate(' + (e.clientX - home.left - gx) + 'px,' + (e.clientY - home.top - gy) + 'px)';
+    }
+    function onUp() {
+      try { grip.releasePointerCapture(ev.pointerId); } catch (e) {}
+      grip.removeEventListener('pointermove', onMove);
+      grip.removeEventListener('pointerup', onUp);
+      grip.removeEventListener('pointercancel', onUp);
+      tile.classList.remove('lift');
+      tile.style.pointerEvents = '';
+      tile.style.transform = '';
+      if (moved) { dsOrderFromDom(); dsMsg('Moved. Save it when you like the look of it.'); }
+    }
+    grip.addEventListener('pointermove', onMove);
+    grip.addEventListener('pointerup', onUp);
+    grip.addEventListener('pointercancel', onUp);
+  }
+  function dsBind() {
+    var g = document.getElementById('dsGrid'); if (!g) return;
+    Array.prototype.forEach.call(g.querySelectorAll('.ds__t'), function (tile) {
+      var k = tile.getAttribute('data-k');
+      var grip = tile.querySelector('.ds__grip');
+      if (grip) {
+        grip.addEventListener('pointerdown', function (e) { dsDrag(e, tile, grip); });
+        grip.onkeydown = function (e) {
+          if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); dsMove(k, -1); }
+          else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); dsMove(k, 1); }
+        };
+      }
+      var ask = tile.querySelector('[data-ask]');
+      if (ask) ask.onclick = function () { dsQuote(k); };
+      Array.prototype.forEach.call(tile.querySelectorAll('.ds__tools button'), function (b) {
+        b.onclick = function () {
+          var a = b.getAttribute('data-act'), i = dsIndex(k);
+          if (i < 0) return;
+          if (a === 'left') dsMove(k, -1);
+          else if (a === 'right') dsMove(k, 1);
+          else if (a === 'wide') { DS.tiles[i].w = DS.tiles[i].w === 2 ? 1 : 2; dsRender(); dsMsg('Resized.'); }
+          else if (a === 'del') {
+            if (DS.tiles.length <= 1) { dsMsg('Keep at least one tile on the screen.'); return; }
+            var gone = dsCat(k);
+            DS.tiles.splice(i, 1); dsRender();
+            dsMsg((gone ? dsT(gone) : 'That tile') + ' is off the screen - add it back below whenever you like.');
+          }
+        };
+      });
+    });
+    var sh = document.getElementById('dsShelf');
+    if (sh) Array.prototype.forEach.call(sh.querySelectorAll('[data-add]'), function (b) {
+      b.onclick = function () {
+        var k = b.getAttribute('data-add');
+        if (DS.tiles.length >= 16 || dsIndex(k) >= 0) return;
+        DS.tiles.push({ k: k, w: 1 });
+        dsRender(k);
+        var c = dsCat(k);
+        dsMsg((c ? dsT(c) : 'Tile') + ' added at the end - drag it where you want it.');
+      };
+    });
+  }
+  // "Can we make this one live?" and the custom-build request are the same errand:
+  // it puts a named, specific job in front of the team instead of a vague enquiry.
+  function dsQuote(oneKey) {
+    var tiles = oneKey ? [oneKey] : DS.tiles.map(function (t) { return t.k; });
+    var note = document.getElementById('dsNote');
+    dsMsg(oneKey ? 'Asking\u2026' : 'Sending your design\u2026');
+    post(DASH, { action: 'quote', wtoken: S.wtoken, machine: mid(), prop: DS.prop, tiles: tiles, one: oneKey || '', note: note ? note.value : '' })
+      .then(function (r) {
+        if (r && r.ok) {
+          var c = oneKey ? dsCat(oneKey) : null;
+          dsMsg(oneKey
+            ? 'Asked \u2014 we will look at what it would take to read your ' + (c ? dsT(c).toLowerCase() : 'kit') + ' and come back with an honest answer, price included.'
+            : 'Sent \u2014 we have your design. We will check what can actually be read before quoting anything, and ring you.');
+          try { SFX.step(); } catch (e) {}
+          toast('\ud83d\udce8', 'On its way', 'We will come back to you');
+        } else if (r && r.error === 'slow_down') { dsMsg('Just sent one \u2014 give us a moment.'); }
+        else { dsMsg('Could not send that just now. Ring 01202 775566 and we will sort it.'); }
+      })
+      .catch(function () { dsMsg('Could not reach the server \u2014 ring 01202 775566.'); });
+  }
+  function dsSave(btn) {
+    btn.disabled = true; btn.textContent = 'Saving\u2026';
+    var nm = document.getElementById('dsName');
+    DS.name = nm ? nm.value.trim().slice(0, 40) : DS.name;
+    post(DASH, { action: 'save', wtoken: S.wtoken, machine: mid(), layout: { prop: DS.prop, name: DS.name || 'My dashboard', tiles: DS.tiles } })
+      .then(function (r) {
+        btn.disabled = false; btn.textContent = '\ud83d\udcbe Save my layout';
+        if (r && r.ok) {
+          DSSAVED = r.layout || null;
+          dsMsg('Saved to your 365 account - it will be here on any device you sign in on.');
+          try { SFX.step(); } catch (e) {}
+          toast('\ud83c\udf9b', 'Layout saved', 'It is on your 365 account now');
+          dsCardPaint();
+        } else if (r && r.error === 'expired') {
+          dsMsg('Your sign-in has expired - close this, refresh the page and sign in again.');
+        } else if (r && r.error === 'slow_down') {
+          dsMsg('One save every few seconds, please.');
+        } else {
+          dsMsg('Could not save that just now. Have another go, or ring 01202 775566.');
+        }
+      })
+      .catch(function () { btn.disabled = false; btn.textContent = '\ud83d\udcbe Save my layout'; dsMsg('Could not reach the server.'); });
+  }
+  function dsWall(on) {
+    var box = document.getElementById('dsBox'); if (!box) return;
+    box.classList.toggle('wall', on);
+    var b = document.getElementById('dsFs'); if (b) b.textContent = on ? '\u2716 Leave wall view' : '\ud83d\uddb5 Wall view';
+    try {
+      if (on && box.requestFullscreen) box.requestFullscreen();
+      else if (!on && document.fullscreenElement && document.exitFullscreen) document.exitFullscreen();
+    } catch (e) {}
+  }
+  // Escape out of the browser's own full-screen must not leave the studio stuck in
+  // wall view with its controls hidden.
+  function dsFsSync() {
+    var box = document.getElementById('dsBox'); if (!box) return;
+    if (!document.fullscreenElement && box.classList.contains('wall')) dsWall(false);
+  }
+  function dsSetMode(m) {
+    DSMODE = m;
+    var mine = (m === 'mine'), plan = dsPlan();
+    DS.prop = mine ? plan : 'home';
+    DS.tiles = dsPreset(DS.prop);
+    var box = document.getElementById('dsBox');
+    if (box) box.classList.toggle('custom', !mine);
+    Array.prototype.forEach.call(document.querySelectorAll('#dsModes [data-m]'), function (b) {
+      var on = b.getAttribute('data-m') === m;
+      b.classList.toggle('on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    var pr = document.getElementById('dsProps'); if (pr) pr.hidden = mine;
+    var sv = document.getElementById('dsSaveRow'); if (sv) sv.hidden = !mine;
+    var qt = document.getElementById('dsQuoteRow'); if (qt) qt.hidden = mine;
+    dsRender(); dsLinks();
+    dsMsg(mine
+      ? 'This is your ' + (plan === 'business' ? 'business' : (plan === 'home' ? 'home' : 'starter')) + ' dashboard. Arrange it how you want it and save.'
+      : 'Design whatever you like here \u2014 any building, anything on it \u2014 then send it to us and we will price building it for real.');
+  }
+  function ovDash() {
+    ovShow('\ud83c\udf9b&nbsp; Dashboard studio', function (body) {
+      var pad = document.createElement('div');
+      pad.className = 'ds';
+      pad.id = 'dsBox';
+      body.appendChild(pad);
+      var plan = dsPlan(), pro = (plan === 'home' || plan === 'business');
+      DSMODE = 'mine';
+      DS = DSSAVED && DSSAVED.tiles && DSSAVED.tiles.length
+        ? { prop: DSSAVED.prop || plan, name: DSSAVED.name || 'My dashboard', tiles: DSSAVED.tiles.map(function (t) { return { k: t.k, w: t.w === 2 ? 2 : 1 }; }) }
+        : { prop: plan, name: 'My dashboard', tiles: dsPreset(plan) };
+      DS.tiles = DS.tiles.filter(function (t) { return dsAllowed(t.k); });
+      if (!DS.tiles.length) DS.tiles = dsPreset(plan);
+      var planChip = '<span class="ds__plan ' + (plan === 'business' ? 'biz' : (plan === 'home' ? 'home' : 'free')) + '">'
+        + (plan === 'business' ? '\ud83c\udfe2' : (plan === 'home' ? '\ud83c\udfe0' : '\u2728')) + ' ' + dsPlanName(plan) + '</span>';
+      pad.innerHTML = '<div class="ds__head"><div style="flex:1;min-width:230px">'
+        + '<p class="ds__eye">Your dashboard</p>'
+        + '<h2>' + (pro ? 'Everything worth knowing, on one screen' : 'Build the screen, see if you like it') + '</h2>'
+        + '<p class="ds__lede">' + (pro
+            ? 'This comes with your plan. The tiles marked <strong>live</strong> are reading your own account right now; the rest are samples of what we could connect for you.'
+            : 'Have a play. Arrange it how you like and save it &mdash; and when you join a support plan, the live tiles start reading your own computers.')
+        + '</p></div>' + planChip + '</div>'
+        + '<div class="ds__modes" id="dsModes" role="group" aria-label="What you are building">'
+        + '<button type="button" data-m="mine" class="on" aria-pressed="true">' + (pro ? 'My dashboard' : 'My starter dashboard') + '</button>'
+        + '<button type="button" data-m="custom" aria-pressed="false">Design a custom one</button></div>'
+        + '<p class="ds__legend" id="dsLegend"></p>'
+        + '<div class="ds__props" id="dsProps" role="group" aria-label="Kind of property" hidden></div>'
+        + '<div class="ds__bar" id="dsSaveRow">'
+        + '<label for="dsName" style="margin:0;font-size:.8rem">Call it</label>'
+        + '<input class="ds__nm" id="dsName" maxlength="40" value="' + esc(DS.name) + '" />'
+        + '<button type="button" class="sm" id="dsSave">\ud83d\udcbe Save my layout</button>'
+        + '<button type="button" class="sm ghost" id="dsReset">\u21ba Start again</button>'
+        + '<button type="button" class="sm ghost" id="dsFs">\ud83d\uddb5 Wall view</button></div>'
+        + '<div class="ds__bar" id="dsQuoteRow" hidden>'
+        + '<input class="ds__nm" id="dsNote" maxlength="120" placeholder="Anything we should know? (optional)" style="max-width:340px" />'
+        + '<button type="button" class="sm" id="dsSend">\ud83d\udce8 Send this to us for a quote</button>'
+        + '<button type="button" class="sm ghost" id="dsReset2">\u21ba Start again</button>'
+        + '<button type="button" class="sm ghost" id="dsFs2">\ud83d\uddb5 Wall view</button></div>'
+        + '<div class="ds__grid" id="dsGrid"></div>'
+        + '<p class="ds__msg" id="dsMsg" role="status">Grab the dotted handle on any tile to move it &mdash; or use the arrows on the tile if that is easier.</p>'
+        + '<div class="ds__shelf"><h3>Add a tile</h3>'
+        + '<p>Everything we can genuinely read &mdash; each one is a connector we have actually built. '
+        + '<a href="/next-gen-home-dashboards/" id="dsLink1" target="_blank" rel="noopener">What each one needs, and where the catch is</a>.</p>'
+        + '<div id="dsShelf"></div></div>'
+        + (pro ? '' : '<div class="ds__up"><h3>Comes with a support plan</h3>'
+            + '<p>Join <strong>365 Home Support</strong> at <strong>&pound;18.25 a month per computer</strong> and the live tiles switch on: '
+            + 'your PCs&rsquo; health, whether last night&rsquo;s backup really ran, your next visit, your written reports. '
+            + '<strong>365 Business Support</strong>, from <strong>&pound;24.38 a month per computer</strong>, adds the estate view &mdash; '
+            + 'the whole fleet on one line, updates and Windows versions, servers, Wi-Fi and alerts into Slack or Teams. '
+            + 'No contract, cancel any time.</p>'
+            + '<div class="row"><a class="btn sm" href="/monthly-it-support/" target="_blank" rel="noopener">Home support</a>'
+            + '<a class="btn sm ghost" href="/business-it-support-plans/" target="_blank" rel="noopener">Business support</a>'
+            + '<a class="btn sm ghost" href="tel:+441202775566">01202 775566</a></div></div>')
+        + '<div class="ds__truth"><p style="margin:0"><strong>Being straight with you:</strong> a tile is either marked <em>live</em>, in which case it is '
+        + 'reading your own account, or <em>sample</em>, in which case the numbers are made up and nothing is plugged in behind it. '
+        + 'We will never blur those two.</p>'
+        + '<p style="margin:.5rem 0 0">Making a sample tile real &mdash; cameras, solar, sensors, your Wi-Fi controller, a production line &mdash; is a build we quote for. '
+        + 'We check what can actually be read before you spend anything, because some equipment publishes nothing at all. '
+        + 'That we can do it is not a claim: <a href="/custom-vrm-dashboards/" target="_blank" rel="noopener">our own van runs on one</a>, live, and you can watch it working.</p>'
+        + '<div class="row"><a class="btn sm" id="dsLink2" href="/next-gen-home-dashboards/" target="_blank" rel="noopener">How the real ones work</a>'
+        + '<a class="btn sm ghost" href="tel:+441202775566">Talk it over: 01202 775566</a></div></div>';
+      var pr = document.getElementById('dsProps');
+      pr.innerHTML = DSPROPS.map(function (p) {
+        return '<button type="button" class="ds__prop' + (p.p === DS.prop ? ' on' : '') + '" data-p="' + p.p + '" aria-pressed="'
+          + (p.p === DS.prop ? 'true' : 'false') + '"><span aria-hidden="true">' + p.ic + '</span>' + p.t + '</button>';
+      }).join('');
+      Array.prototype.forEach.call(pr.querySelectorAll('[data-p]'), function (b) {
+        b.onclick = function () {
+          DS.prop = b.getAttribute('data-p');
+          DS.tiles = dsPreset(DS.prop);
+          Array.prototype.forEach.call(pr.querySelectorAll('[data-p]'), function (o) {
+            var on = o === b; o.classList.toggle('on', on); o.setAttribute('aria-pressed', on ? 'true' : 'false');
+          });
+          dsRender(); dsLinks();
+          dsMsg('Loaded a sample ' + dsProp(DS.prop).t.toLowerCase() + ' layout. Rearrange it however you like.');
+        };
+      });
+      Array.prototype.forEach.call(document.querySelectorAll('#dsModes [data-m]'), function (b) {
+        b.onclick = function () { dsSetMode(b.getAttribute('data-m')); };
+      });
+      dsRender(); dsLinks();
+      document.getElementById('dsSave').onclick = function () { dsSave(this); };
+      document.getElementById('dsSend').onclick = function () { dsQuote(''); };
+      var rs = function () {
+        DS.tiles = dsPreset(DS.prop); dsRender();
+        dsMsg('Back to the starting layout.');
+      };
+      document.getElementById('dsReset').onclick = rs;
+      document.getElementById('dsReset2').onclick = rs;
+      var fs = function () { dsWall(!document.getElementById('dsBox').classList.contains('wall')); };
+      document.getElementById('dsFs').onclick = fs;
+      document.getElementById('dsFs2').onclick = fs;
+      try { document.addEventListener('fullscreenchange', dsFsSync); } catch (e) {}
+      if (DSTIMER) clearInterval(DSTIMER);
+      DSTIMER = setInterval(function () { dsWalk(); dsPaint(); }, 2400);
+    }, function () {
+      if (DSTIMER) { clearInterval(DSTIMER); DSTIMER = 0; }
+      try { document.removeEventListener('fullscreenchange', dsFsSync); } catch (e) {}
+      DS = null; DSMODE = 'mine';
+    });
+  }
+  // the portal card - shows what they saved, or invites a first play
+  function dsCardPaint() {
+    var c = document.getElementById('dsCard'); if (!c) return;
+    var plan = dsPlan(), pro = (plan === 'home' || plan === 'business');
+    var h = '';
+    if (DSSAVED && DSSAVED.tiles && DSSAVED.tiles.length) {
+      h = '<p class="quiet" style="margin:0 0 .55rem">Your saved layout: <strong style="color:var(--pwhite)">' + esc(DSSAVED.name || 'My dashboard')
+        + '</strong> &middot; ' + DSSAVED.tiles.length + ' tile' + (DSSAVED.tiles.length === 1 ? '' : 's')
+        + '. It follows you to any device you sign in on.</p>'
+        + '<div class="row" style="border:0"><button class="sm" id="dsOpen">\ud83c\udf9b Open my dashboard</button>'
+        + '<button class="sm ghost" id="dsWipe">Delete it</button></div>';
+    } else {
+      h = '<p class="quiet" style="margin:0 0 .55rem">' + (pro
+            ? 'Your ' + (plan === 'business' ? 'business' : 'home') + ' dashboard is ready &mdash; your computers, backups, next visit and reports on one screen, plus samples of everything else we could connect. Arrange it how you like and save it.'
+            : 'Build a dashboard and keep the layout. Join a support plan and the live tiles start reading your own computers.')
+        + '</p><div class="row" style="border:0"><button class="sm" id="dsOpen">\ud83c\udf9b Open the dashboard studio</button></div>';
+    }
+    c.innerHTML = h;
+    var o = document.getElementById('dsOpen'); if (o) o.onclick = ovDash;
+    var w = document.getElementById('dsWipe');
+    if (w) w.onclick = function () {
+      w.disabled = true;
+      post(DASH, { action: 'del', wtoken: S.wtoken, machine: mid() }).then(function () { DSSAVED = null; dsCardPaint(); })
+        .catch(function () { w.disabled = false; });
+    };
+  }
+  function loadDash() {
+    post(DASH, { action: 'get', wtoken: S.wtoken, machine: mid() })
+      .then(function (r) { DSSAVED = (r && r.ok && r.layout) ? r.layout : null; dsCardPaint(); })
+      .catch(function () { dsCardPaint(); });
+  }
+
   // ---------- the hero: answer "how are things?" before anything is read ----------
   function greetWord() {
     var h = new Date().getHours();
@@ -1856,6 +2629,7 @@
       + '<button type="button" class="qact" id="qbook"><span>\ud83d\udcc5</span>Book a visit</button>'
       + '<button type="button" class="qact sos" id="qsos"><span>\ud83c\udd98</span>Remote help</button>'
       + '<button type="button" class="qact" id="qwifi"><span>\ud83d\udcf6</span>Test my WiFi</button>'
+      + '<button type="button" class="qact" id="qdash"><span>\ud83c\udf9b</span>Dashboard studio</button>'
       + '<a class="qact" href="tel:+441202775566"><span>\ud83d\udcde</span>Call us</a>'
       + '</div></div>';
     return h;
@@ -2311,7 +3085,7 @@
       if (d.tier && S.tier !== d.tier) { S.tier = d.tier; saveS(); }
       // A fresh dashboard is a fresh journey. Sign-out/sign-in and staff impersonation both
       // re-enter here, so nothing about the previous member may survive into this render.
-      jSettled = false; jPend = null; JW = { wifi: 0, loaded: false, ok: false }; JD = null;
+      jSettled = false; jPend = null; JW = { wifi: 0, avg: 0, site: '', loaded: false, ok: false }; JD = null;
       // the hero needs the primary machine, so work it out BEFORE building the page
       var ngLive0 = d.machines.filter(function (mm) { return !mm.fresh; });
       var heroPrimary = null;
@@ -2365,6 +3139,14 @@
       h += '<div class="card"><h2>📶 Your WiFi surveys</h2><div id="mywifi"><p class="quiet">Loading…</p></div>'
         + '<p class="quiet">Surveys you save from our free <a href="/wifi-signal-test/" target="_blank" rel="noopener">WiFi Optimizer</a> live here on your account — rooms, history and photos — so you can restore them on any device and our team can see them when they help you. '
         + '<label style="display:inline;color:var(--psoft);cursor:pointer;text-decoration:underline">Upload a survey file<input type="file" id="mywifi-up" accept=".json,application/json" hidden /></label></p></div>';
+      // The playable dashboard. Free for every member, sample data, and the card says
+      // "sample" before it says anything else - see the note above ovDash().
+      h += '<div class="card"><h2>\ud83c\udf9b Your dashboard'
+        + (d.tier === 'pro' ? ' <span class="pill pro" style="font-size:.68rem">' + (d.plan === 'business' ? 'Business' : 'Home') + ' \u00b7 included</span>'
+                            : ' <span class="pill free" style="font-size:.68rem">Free to play with</span>') + '</h2>'
+        + '<div id="dsCard"><p class="quiet">Loading\u2026</p></div>'
+        + '<p class="quiet">One screen for the things you would otherwise open five apps to check. Tiles marked <strong>live</strong> read your own account; '
+        + 'the rest are samples of what we could connect &mdash; and making one of those real is a build we quote for, after checking it can actually be read.</p></div>';
       // the learning card renders for EVERY member from day one - /join/ promises the
       // 11 courses, so a brand-new member's dashboard must visibly deliver them
       var crsAll = null;
@@ -2413,6 +3195,8 @@
       if (qb) qb.onclick = ovBook;
       var qw = document.getElementById('qwifi');
       if (qw) qw.onclick = ovWifi;
+      var qd = document.getElementById('qdash');
+      if (qd) qd.onclick = ovDash;
       var qs = document.getElementById('qsos');
       if (qs) qs.onclick = ovSos;
       var cs = document.getElementById('cbsos');
@@ -2468,6 +3252,7 @@
       if (freshJoiner) custWiz();
       loadMyBookings();
       loadWifi();
+      loadDash();
       Array.prototype.forEach.call(document.querySelectorAll('#p365app .repb'), function (btn) {
         btn.onclick = function () {
           btn.disabled = true;
@@ -2610,6 +3395,10 @@
       JW.loaded = true; JW.ok = !!(d && d.ok);
       if (!d || !d.ok) { box.innerHTML = '<p class="quiet">Couldn’t load your surveys just now - try again shortly.</p>'; jSettleNow(); return; }
       var wasW = JW.wifi; JW.wifi = (d.surveys && d.surveys.length) ? d.surveys.length : 0;
+      // newest survey feeds the dashboard studio's live WiFi tile
+      if (JW.wifi) { JW.avg = parseInt(d.surveys[0].avg, 10) || 0; JW.site = String(d.surveys[0].site || ''); }
+      else { JW.avg = 0; JW.site = ''; }
+      if (typeof dsCardPaint === 'function' && document.getElementById('dsCard')) dsCardPaint();
       // re-render only when the count actually moved; otherwise just settle (a needless
       // replaceChild on both cards restarts every entry animation for no reason)
       if (wasW !== JW.wifi) journeyRefresh(); else jSettleNow();

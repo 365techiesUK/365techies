@@ -80,6 +80,14 @@ if (($_POST['do'] ?? '') === 'add') {
 if (($_POST['do'] ?? '') === 'tier') {
     $k=$_POST['key']??''; if (isset($db['customers'][$k])) { $db['customers'][$k]['tier'] = ($db['customers'][$k]['tier']==='pro'?'free':'pro'); save($DATA,$db); $msg="Updated {$db['customers'][$k]['name']} → {$db['customers'][$k]['tier']}"; }
 }
+// Home vs Business support. Drives which dashboard the customer's portal builds:
+// business accounts get the advanced estate tiles, home accounts never see them.
+if (($_POST['do'] ?? '') === 'plan') {
+    $k=$_POST['key']??''; if (isset($db['customers'][$k])) {
+        $db['customers'][$k]['plan'] = ((($db['customers'][$k]['plan'] ?? 'home')==='business') ? 'home' : 'business');
+        save($DATA,$db); $msg="Updated {$db['customers'][$k]['name']} → {$db['customers'][$k]['plan']} plan";
+    }
+}
 if (($_POST['do'] ?? '') === 'next') {
     $k=$_POST['key']??''; if (isset($db['customers'][$k])) { $db['customers'][$k]['next']=trim(substr((string)($_POST['next']??''),0,40)); save($DATA,$db); $msg="Next-service date updated."; }
 }
@@ -588,7 +596,11 @@ th{color:#9fb5d3;font-weight:600;font-size:.75rem;text-transform:uppercase;lette
       <?php if(!empty($c['email'])): ?><a class=ghost style="padding:.3rem .6rem;font-size:.75rem;text-decoration:none;border-radius:8px" href="mailto:<?=h($c['email'])?>?subject=<?=rawurlencode('Activate 365 PC Manager on your PC')?>&body=<?=rawurlencode("Hi,\n\nClick this link on the PC you'd like on support and it'll activate 365 PC Manager for you:\n\n365pcm://activate/".$key."\n\n(If nothing happens, open 365 PC Manager, go to Help & Shop, tap \"Go on support / enter key\" and paste this code: ".$key.")\n\nThanks,\n365 Techies · 01202 775566")?>">Email</a><?php endif; ?>
     </div>
   </td>
-  <td><span class="pill <?=($c['tier']??'free')==='pro'?'pro':'free'?>"><?=($c['tier']??'free')==='pro'?'On support':'Free'?></span></td>
+  <td><span class="pill <?=($c['tier']??'free')==='pro'?'pro':'free'?>"><?=($c['tier']??'free')==='pro'?'On support':'Free'?></span>
+    <?php if(($c['tier']??'free')==='pro'): $pl=(($c['plan']??'home')==='business')?'business':'home'; ?>
+    <div style="margin-top:.3rem"><span class=mach><?=$pl==='business'?'🏢 Business':'🏠 Home'?> dashboard</span></div>
+    <?php endif; ?>
+  </td>
   <td>
     <form method=post class=inline><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=next><input type=hidden name=key value="<?=h($key)?>">
     <input name=next value="<?=h($c['next']??'')?>" style="width:130px" placeholder="—"><button class=ghost>save</button></form>
@@ -607,6 +619,9 @@ th{color:#9fb5d3;font-weight:600;font-size:.75rem;text-transform:uppercase;lette
   </td>
   <td style="white-space:nowrap">
     <form method=post class=inline><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=tier><input type=hidden name=key value="<?=h($key)?>"><button class=ghost><?=($c['tier']??'free')==='pro'?'→ Free':'→ Support'?></button></form>
+    <?php if(($c['tier']??'free')==='pro'): ?>
+      <form method=post class=inline><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=plan><input type=hidden name=key value="<?=h($key)?>"><button class=ghost title="Which dashboard their portal builds: Business adds the estate tiles"><?=(($c['plan']??'home')==='business')?'→ 🏠 Home':'→ 🏢 Business'?></button></form>
+    <?php endif; ?>
     <?php if(!empty($c['ready_confirm'])): ?>
       <span class="pill pro" title="confirmed <?=h($c['ready_confirm'])?>">✓ ready</span>
       <form method=post class=inline><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=readyclear><input type=hidden name=key value="<?=h($key)?>"><button class=ghost>clear</button></form>

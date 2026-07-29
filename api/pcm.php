@@ -204,7 +204,13 @@ if ($action === 'overview') {
     // is unverified (SimplyBook client accounts can be registered with anyone's email), so an
     // email-keyed payment lookup for those would leak another person's Direct Debit details.
     $ownerMade = (($c['via'] ?? '') !== 'signin');
+    // Which support plan this account is on. 'free' is not a plan, it is the 365 Club.
+    // Only the owner sets 'business' (pcm-admin) - it is never guessed from the data,
+    // because a wrong guess either hides features someone is paying for or shows a
+    // home customer a console full of things that do not apply to them.
+    $plan = (($c['tier'] ?? 'free') === 'pro') ? (((string)($c['plan'] ?? '') === 'business') ? 'business' : 'home') : 'free';
     out(array('ok'=>true, 'name'=>(string)($c['name'] ?? ''), 'tier'=>(($c['tier'] ?? 'free')==='pro'?'pro':'free'),
+        'plan'=>$plan,
         'next'=>(string)($c['next'] ?? ''), 'next_ts'=>intval($c['next_ts'] ?? 0),
         'machines'=>$ms, 'fam'=>$fam, 'pending'=>$pend, 'appreq'=>(string)($c['app_req'] ?? ''),
         'gc'=>$ownerMade ? pcm_gc_summary((string)($c['email'] ?? '')) : null));
