@@ -20546,6 +20546,35 @@ def write_portal_page():
   #p365app .ds__add.islive { border-color:rgba(0,206,27,.4); color:var(--pwhite); }
   #p365app .ds.wall .ds__head, #p365app .ds.wall .ds__modes, #p365app .ds.wall .ds__legend,
   #p365app .ds.wall .ds__up, #p365app .ds.wall .ds__ask, #p365app .ds.wall .ds__msg { display:none; }
+  /* ---------- connect wizard ---------------------------------------------- */
+  #p365app .ds__cnpanel { border:1px solid var(--pcyan); border-radius:14px; padding:.9rem 1rem; margin:.7rem 0 .2rem;
+    background:linear-gradient(165deg,rgba(29,151,227,.1),var(--pink)); animation:p365fadeUp .3s ease both; }
+  #p365app .ds__cnhead { display:flex; gap:.7rem; align-items:flex-start; margin-bottom:.5rem; }
+  #p365app .ds__cnhead h3 { margin:0; font-size:1rem; color:var(--pwhite); }
+  #p365app .ds__cnhead > div { flex:1; min-width:0; }
+  #p365app .ds__cnico { font-size:1.5rem; line-height:1.2; }
+  #p365app .ds__route { display:inline-block; margin-top:.25rem; font-size:.62rem; font-weight:800; letter-spacing:.08em;
+    text-transform:uppercase; padding:.16rem .5rem; border-radius:999px; }
+  #p365app .ds__route.invite { background:rgba(0,206,27,.14); color:var(--pgood); border:1px solid rgba(0,206,27,.4); }
+  #p365app .ds__route.key { background:rgba(224,179,65,.13); color:var(--pwarn); border:1px solid rgba(224,179,65,.4); }
+  #p365app .ds__route.onsite { background:rgba(29,151,227,.14); color:#5cbcf7; border:1px solid rgba(29,151,227,.45); }
+  #p365app .ds__cnhow { font-size:.85rem; line-height:1.65; color:var(--psoft); margin:0 0 .5rem; }
+  #p365app .ds__cnhow b { color:var(--pwhite); }
+  #p365app .ds__cnnote { font-size:.79rem; line-height:1.55; color:var(--pmut); margin:0 0 .7rem;
+    padding-left:.7rem; border-left:2px solid var(--pline); }
+  #p365app .ds__cnfields { display:grid; gap:.5rem; margin-bottom:.6rem; }
+  @media (min-width:620px) { #p365app .ds__cnfields { grid-template-columns:1fr 1fr; } #p365app .ds__cnf:last-child { grid-column:1 / -1; } }
+  #p365app .ds__cnf span { display:block; font-size:.78rem; color:var(--psoft); margin-bottom:.2rem; }
+  #p365app .ds__cnf em { display:block; font-style:normal; font-size:.7rem; color:var(--pmut); margin-top:.2rem; }
+  #p365app .ds__cnsafe { font-size:.78rem; line-height:1.6; color:var(--pmut); background:rgba(232,99,126,.07);
+    border:1px solid rgba(232,99,126,.3); border-radius:10px; padding:.6rem .75rem; margin:0 0 .6rem; }
+  #p365app .ds__cnsafe strong { color:var(--pwhite); }
+  #p365app .ds__cn { display:flex; gap:.6rem; align-items:flex-start; padding:.5rem 0; border-bottom:1px solid rgba(42,59,99,.5); }
+  #p365app .ds__cn:last-child { border-bottom:0; }
+  #p365app .ds__cn > span { font-size:1.15rem; line-height:1.3; }
+  #p365app .ds__cn > div { flex:1; min-width:0; }
+  #p365app .ds__cn b { color:var(--pwhite); font-size:.87rem; margin-right:.4rem; }
+  #p365app .ds__cn span { display:block; font-size:.74rem; color:var(--pmut); line-height:1.45; }
   #p365app .ds__msg { font-size:.8rem; color:var(--psoft); min-height:1.2em; margin:.6rem 0 0; }
   #p365app .ds__truth { margin-top:1.2rem; border-left:3px solid var(--pcyan); background:var(--ppanel);
     border-radius:0 12px 12px 0; padding:.85rem 1rem; font-size:.83rem; line-height:1.62; color:var(--psoft); }
@@ -20568,7 +20597,7 @@ def write_portal_page():
 </style>'''
     js = '''<script>
 (function () {
-  var BK = '/api/pcm-booking.php', PCM = '/api/pcm.php', DASH = '/api/pcm-dash.php', TEAM = '/api/pcm-team.php';
+  var BK = '/api/pcm-booking.php', PCM = '/api/pcm.php', DASH = '/api/pcm-dash.php', TEAM = '/api/pcm-team.php', CONN = '/api/pcm-connect.php';
   var el = document.getElementById('p365app');
   var S = {};
   try { S = JSON.parse(sessionStorage.getItem('p365s') || 'null') || JSON.parse(localStorage.getItem('p365') || '{}'); } catch (e) { S = {}; }
@@ -21446,6 +21475,189 @@ def write_portal_page():
       + 'That is not a promise about how we behave; it is simply not something the app collects.</p></div>';
   }
 
+  // ---------- CONNECT A REAL SOURCE -------------------------------------------
+  // What happens when a customer wants a sample tile to become a real one.
+  //
+  // The thing this must NOT become is a box that asks people to paste API tokens
+  // into a website. We host on shared hosting and the repo is public; our OWN
+  // Victron token lives in a server-only file for exactly that reason, and it
+  // would be indefensible to hold a customer's to a lower standard than our own.
+  //
+  // So every source is routed one of three honest ways, and the wizard says
+  // which and why:
+  //   invite - add a READ-ONLY user of ours to their platform. No secret moves,
+  //            they can see us in their user list and remove us in two taps.
+  //   key    - a read-only key is genuinely needed: handed over on the phone and
+  //            installed server-side by us, never typed into a form.
+  //   onsite - the data only exists on their LAN (RTSP/ONVIF cameras, Modbus),
+  //            so something on site has to do the talking, outbound only.
+  var DSSRC = [
+    { k:'victron', ic:'\\u26a1', t:'Victron solar &amp; battery', route:'invite',
+      ask:[{ f:'installation', l:'VRM installation ID', ph:'e.g. 458482', hint:'The number in the VRM address bar when you are looking at your system.' }],
+      how:'Invite <b>monitoring@365techies.co.uk</b> into your VRM installation as a <b>monitor-only</b> user &mdash; in VRM that is Settings &rarr; Users &rarr; Invite user. '
+        + 'No token, no password, nothing to email us. You will see us sitting in your user list, and you can take us out again in two taps.',
+      note:'One VRM quirk to expect: a <em>pending</em> invite can still show &ldquo;full control&rdquo; in the list until it is accepted. The role you picked is the one that actually applies.' },
+    { k:'camera', ic:'\\ud83d\\udcf7', t:'Cameras &amp; CCTV', route:'onsite',
+      ask:[{ f:'make', l:'Make and model of the recorder', ph:'e.g. Reolink RLN8-410, UniFi Protect' },
+           { f:'cams', l:'How many cameras', ph:'e.g. 4' }],
+      how:'Almost every recorder worth having speaks <b>ONVIF</b> or <b>RTSP</b> &mdash; Reolink, Hikvision, Dahua, Amcrest, Axis and UniFi Protect all do, and Protect will even give us a read-only user of its own. '
+        + 'The catch is that those are <b>local network</b> protocols: they do not reach out to the internet. So something on site has to do the talking &mdash; usually a small always-on device we fit, making <b>outbound</b> connections only. We never ask you to open a hole in your firewall.',
+      note:'Some budget cloud-only cameras deliberately publish nothing to anyone but their own app. If yours is one of those we will tell you before you have spent anything.' },
+    { k:'wifi', ic:'\\ud83d\\udce1', t:'Wi-Fi controller &amp; switches', route:'invite',
+      ask:[{ f:'platform', l:'Which platform', ph:'e.g. UniFi, RUCKUS, Aruba' }],
+      how:'Most business controllers let you create a <b>read-only administrator</b>. That is what we ask for &mdash; an account of our own with no power to change anything, that you can see and delete whenever you like.',
+      note:'What a controller will tell us varies a lot by platform and firmware version. We check yours before promising a particular number ends up on the screen.' },
+    { k:'energy', ic:'\\ud83d\\udcb7', t:'Electricity supplier', route:'key',
+      ask:[{ f:'supplier', l:'Who supplies your electricity', ph:'e.g. Octopus, EDF, British Gas' }],
+      how:'Where a supplier publishes half-hourly data they issue a <b>read-only key</b> for it. That key is the one thing we cannot take through a web form: you give it to us on the phone, or we walk you through creating it while we are with you, and it goes straight into a server-only file &mdash; the same place our own Victron token lives.',
+      note:'Coverage is genuinely patchy. Some suppliers publish a proper API, some publish nothing at all, and which is which changes.' },
+    { k:'iot', ic:'\\ud83c\\udf21', t:'Sensors &mdash; temperature, leaks, doors', route:'onsite',
+      ask:[{ f:'kit', l:'What sensors, and what hub', ph:'e.g. Aqara leak sensors, Zigbee hub' }],
+      how:'Anything speaking <b>MQTT</b>, Zigbee or Z-Wave can be read, but like cameras it lives on your network rather than the internet, so it needs the same small always-on device on site.',
+      note:'Closed proprietary hubs are the hard ones. If a sensor only talks to its own app and nothing else, no amount of cleverness gets it onto your screen.' },
+    { k:'vehicle', ic:'\\ud83d\\ude90', t:'A vehicle &mdash; location, mileage, ECU', route:'key',
+      ask:[{ f:'vehicle', l:'What is it', ph:'e.g. VW Crafter van, 2021' },
+           { f:'device', l:'Any tracker or dongle already fitted?', ph:'e.g. none yet, or a make' }],
+      how:'This comes from a <b>standards-based OBD or telematics device</b> &mdash; either one already fitted, or one we supply. We work from documented interfaces, never by pulling a manufacturer&rsquo;s app apart, because anything built that way breaks the next time they update it.',
+      note:'Worth saying plainly: this is not a theft tracker. It is not concealed and no insurer recognises it. A dedicated tracker still owns that job.' },
+    { k:'tracker', ic:'\\ud83d\\udccd', t:'A tracker on something else', route:'key',
+      ask:[{ f:'thing', l:'What are you tracking', ph:'e.g. a boat, a trailer, plant' },
+           { f:'make', l:'Make of tracker', ph:'e.g. Teltonika, or not bought yet' }],
+      how:'If it publishes its position through a documented interface, it can go on your screen alongside everything else, with your own geofences on top.',
+      note:'Plenty of consumer trackers keep their data locked inside their own app. We check the specific model before quoting.' },
+    { k:'pet', ic:'\\ud83d\\udc36', t:'A pet tracker', route:'key',
+      ask:[{ f:'make', l:'Make of collar', ph:'e.g. Tractive, PitPat' }],
+      how:'Same as any other tracker: if the collar publishes its data properly, the dog goes on the map with a safe zone you draw yourself.',
+      note:'Honestly, this is the one most likely to be a no. A lot of collars are deliberately app-only. We will check yours and tell you straight.' },
+    { k:'slack', ic:'\\ud83d\\udcac', t:'Alerts into Slack or Teams', route:'invite',
+      ask:[{ f:'where', l:'Slack or Teams, and which channel', ph:'e.g. Slack, #ops' }],
+      how:'You install a small app into your own workspace and choose the channel. You are granting it, you can see it, and you can remove it &mdash; we never hold a password to your workspace.',
+      note:'We use this ourselves. Every booking and job on our own system lands in Slack.' },
+    { k:'machine', ic:'\\u2699', t:'Machines or production kit', route:'onsite',
+      ask:[{ f:'kit', l:'What machines', ph:'e.g. two CNC lines, Siemens PLC' }],
+      how:'Where equipment publishes run hours or output &mdash; usually over <b>Modbus</b> or a PLC interface &mdash; it can be read on site by the same small device.',
+      note:'Older machines often publish nothing at all and need a sensor retrofit rather than software. That is a different job and we would say so.' },
+    { k:'api', ic:'\\ud83d\\udd0c', t:'Something else with an API', route:'key',
+      ask:[{ f:'what', l:'What is it', ph:'e.g. our booking system, a weather station' },
+           { f:'docs', l:'Link to its documentation, if you have one', ph:'e.g. docs.example.com' }],
+      how:'If it publishes data and documents how, we can almost certainly read it. Tell us what it is and we will look at the documentation ourselves before saying yes.',
+      note:'If it needs a key, that key comes to us on the phone and lives in a server-only file &mdash; never in a web form and never in an email.' },
+    { k:'other', ic:'\\u2753', t:'Something not on this list', route:'key',
+      ask:[{ f:'what', l:'What would you like on the screen', ph:'Describe it in your own words' }],
+      how:'Tell us what you want to see and we will work out whether anything publishes it. Sometimes the answer is no, and you will get that answer before you have spent anything.',
+      note:'' }
+  ];
+  // which source a sample tile belongs to, so "can we make this one live?" opens
+  // the right conversation instead of a blank form
+  var DSTILESRC = { energy:'victron', cost:'energy', cctv:'camera', freezer:'iot', leak:'iot', door:'iot',
+    heating:'iot', water:'iot', bilge:'iot', wifi:'wifi', servers:'wifi', sites:'wifi', alerts:'slack',
+    machine:'machine', vehicle:'vehicle', trip:'vehicle', ecu:'vehicle', fence:'tracker', assets:'tracker',
+    pet:'pet', weather:'other', broadband:'other' };
+  var DSCONN = [];
+  function dsSrc(k) { for (var i = 0; i < DSSRC.length; i++) if (DSSRC[i].k === k) return DSSRC[i]; return null; }
+  function dsRouteName(r) { return r === 'invite' ? 'You invite us in' : (r === 'onsite' ? 'Needs something on site' : 'Needs a read-only key'); }
+  // The same guard the server applies, run early so somebody who pastes a token
+  // is stopped BEFORE it leaves their browser rather than after.
+  function dsLooksSecret(s) {
+    s = String(s || '');
+    if (!s) return false;
+    if (/\\b(password|passwd|pwd|api[\\s_-]?key|secret|bearer|authorization|access[\\s_-]?token|client[\\s_-]?secret)\\b/i.test(s)) return true;
+    if (/\\beyJ[A-Za-z0-9_\\-]{10,}/.test(s)) return true;
+    if (/\\b(sk|pk|ghp|gho|xox[baprs]|AKIA)[-_][A-Za-z0-9]{12,}/.test(s)) return true;
+    if (/\\b[a-f0-9]{32,}\\b/i.test(s)) return true;
+    var m = /[A-Za-z0-9_\\-\\.]{24,}/.exec(s);
+    if (m && /[a-z]/.test(m[0]) && /[A-Z0-9]/.test(m[0]) && /[0-9]/.test(m[0])) return true;
+    return false;
+  }
+  function dsConnLoad(cb) {
+    post(CONN, { action: 'list', wtoken: S.wtoken, machine: mid() })
+      .then(function (r) { DSCONN = (r && r.ok && r.connections) ? r.connections : []; if (cb) cb(); })
+      .catch(function () { if (cb) cb(); });
+  }
+  function dsConnPaint() {
+    var box = document.getElementById('dsConnList'); if (!box) return;
+    if (!DSCONN.length) { box.innerHTML = '<p class="ds__sub" style="margin:0">Nothing wired up yet.</p>'; return; }
+    box.innerHTML = DSCONN.map(function (cn) {
+      var s = dsSrc(cn.src);
+      var st = cn.state === 'live' ? '<span class="ds__tag live"><i></i>Live</span>'
+             : (cn.state === 'no' ? '<span class="ds__tag samp">Not possible</span>'
+             : '<span class="ds__tag samp">With us</span>');
+      return '<div class="ds__cn"><span aria-hidden="true">' + (s ? s.ic : '\\ud83d\\udd0c') + '</span>'
+        + '<div><b>' + (s ? s.t : esc(cn.src)) + '</b>' + st
+        + (cn.note ? '<span>' + esc(cn.note) + '</span>' : '')
+        + (cn.want ? '<span>Wants: ' + esc(cn.want) + '</span>' : '') + '</div>'
+        + '<button type="button" class="sm ghost" data-cndel="' + esc(cn.id) + '">Remove</button></div>';
+    }).join('');
+    Array.prototype.forEach.call(box.querySelectorAll('[data-cndel]'), function (b) {
+      b.onclick = function () {
+        b.disabled = true;
+        post(CONN, { action: 'del', wtoken: S.wtoken, machine: mid(), id: b.getAttribute('data-cndel') })
+          .then(function () { dsConnLoad(dsConnPaint); }).catch(function () { b.disabled = false; });
+      };
+    });
+  }
+  // The wizard. Opens on a source, explains the route honestly, asks only for
+  // things that are safe to write down, and refuses anything that smells of a
+  // credential before it leaves the browser.
+  function dsConnect(srcKey) {
+    var panel = document.getElementById('dsConnPanel'); if (!panel) return;
+    var s = dsSrc(srcKey) || dsSrc('other');
+    panel.hidden = false;
+    panel.innerHTML = '<div class="ds__cnhead"><span class="ds__cnico" aria-hidden="true">' + s.ic + '</span>'
+      + '<div><h3>Connect ' + s.t + '</h3>'
+      + '<span class="ds__route ' + s.route + '">' + dsRouteName(s.route) + '</span></div>'
+      + '<button type="button" class="sm ghost" id="dsCnX">Close</button></div>'
+      + '<p class="ds__cnhow">' + s.how + '</p>'
+      + (s.note ? '<p class="ds__cnnote"><strong>Worth knowing:</strong> ' + s.note + '</p>' : '')
+      + '<div class="ds__cnfields">'
+      + s.ask.map(function (a) {
+          return '<label class="ds__cnf"><span>' + a.l + '</span>'
+            + '<input data-cf="' + a.f + '" maxlength="120" placeholder="' + a.ph + '" />'
+            + (a.hint ? '<em>' + a.hint + '</em>' : '') + '</label>';
+        }).join('')
+      + '<label class="ds__cnf"><span>What would you like to see on the screen?</span>'
+      + '<input id="dsCnWant" maxlength="200" placeholder="e.g. battery percentage and whether the freezer is cold" /></label>'
+      + '</div>'
+      + '<p class="ds__cnsafe"><strong>&#128274; Never type a password or an API token in here.</strong> '
+      + 'We will not accept one &mdash; not because we do not trust you, but because a secret typed into a web page ends up stored somewhere, '
+      + 'and your credentials should live in exactly one place: with you. If a key really is needed, we take it on the phone and it goes '
+      + 'straight into a server-only file, the same way we handle our own.</p>'
+      + '<div class="ds__bar" style="margin:.2rem 0 0"><button type="button" class="sm" id="dsCnGo">Ask us to connect this</button>'
+      + '<a class="btn sm ghost" href="tel:+441202775566">Rather talk it through? 01202 775566</a></div>'
+      + '<p class="ds__msg" id="dsCnMsg" role="status"></p>';
+    document.getElementById('dsCnX').onclick = function () { panel.hidden = true; };
+    var say = function (t) { var n = document.getElementById('dsCnMsg'); if (n) n.textContent = t; };
+    document.getElementById('dsCnGo').onclick = function () {
+      var btn = this, fields = {}, bad = false;
+      Array.prototype.forEach.call(panel.querySelectorAll('[data-cf]'), function (i) {
+        if (dsLooksSecret(i.value)) bad = true;
+        fields[i.getAttribute('data-cf')] = i.value;
+      });
+      var want = document.getElementById('dsCnWant').value;
+      if (dsLooksSecret(want)) bad = true;
+      if (bad) { say('That looks like a password or an API key \\u2014 please take it back out. Ring 01202 775566 and we will take it properly.'); return; }
+      btn.disabled = true; say('Sending\\u2026');
+      post(CONN, { action: 'add', wtoken: S.wtoken, machine: mid(), src: s.k, fields: fields, want: want })
+        .then(function (r) {
+          btn.disabled = false;
+          if (r && r.ok) {
+            say('Asked. We will check what your kit actually publishes and come back with a straight answer and a price.');
+            try { SFX.step(); } catch (e) {}
+            toast('\\ud83d\\udd0c', 'Connection requested', 'We will be in touch');
+            panel.hidden = true;
+            dsConnLoad(dsConnPaint);
+          } else if (r && r.error === 'looks_secret') {
+            say('That looked like a credential, so we did not store it. Ring 01202 775566 and we will take it properly.');
+          } else if (r && r.error === 'ask_your_manager') {
+            say('Connections are set up by whoever holds the account \\u2014 have a word with them.');
+          } else if (r && r.error === 'slow_down') { say('Just a moment between requests, please.'); }
+          else { say('Could not send that just now. Ring 01202 775566 and we will sort it.'); }
+        })
+        .catch(function () { btn.disabled = false; say('Could not reach the server \\u2014 ring 01202 775566.'); });
+    };
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
   // ---------- DASHBOARD STUDIO -------------------------------------------------
   // What this is, and the line it must not cross.
   //
@@ -21957,7 +22169,9 @@ def write_portal_page():
         };
       }
       var ask = tile.querySelector('[data-ask]');
-      if (ask) ask.onclick = function () { dsQuote(k); };
+      // the ask button opens the CONVERSATION about wiring this up, pre-set to
+      // the right source - a blank enquiry form helps nobody
+      if (ask) ask.onclick = function () { dsConnect(DSTILESRC[k] || 'other'); };
       Array.prototype.forEach.call(tile.querySelectorAll('.ds__tools button'), function (b) {
         b.onclick = function () {
           var a = b.getAttribute('data-act'), i = dsIndex(k);
@@ -22107,6 +22321,12 @@ def write_portal_page():
         + '<p>Everything we can genuinely read &mdash; each one is a connector we have actually built. '
         + '<a href="/next-gen-home-dashboards/" id="dsLink1" target="_blank" rel="noopener">What each one needs, and where the catch is</a>.</p>'
         + '<div id="dsShelf"></div></div>'
+        + '<div class="ds__shelf" id="dsConnBox"><h3>Connect something real</h3>'
+        + '<p>Pick what you have and we will tell you honestly how it connects, what it will show, and where the catch is. '
+        + 'Most things take one of three routes &mdash; you invite a read-only user of ours in, a read-only key changes hands properly, or something small goes on site because the data never leaves your network.</p>'
+        + '<div class="ds__adds" id="dsSrcs"></div>'
+        + '<div class="ds__cnpanel" id="dsConnPanel" hidden></div>'
+        + '<h3 style="margin-top:1rem">Your connections</h3><div id="dsConnList"><p class="ds__sub" style="margin:0">Loading&hellip;</p></div></div>'
         + (pro ? '' : '<div class="ds__up"><h3>Comes with a support plan</h3>'
             + '<p>Join <strong>365 Home Support</strong> at <strong>&pound;18.25 a month per computer</strong> and the live tiles switch on: '
             + 'your PCs&rsquo; health, whether last night&rsquo;s backup really ran, your next visit, your written reports. '
@@ -22145,6 +22365,16 @@ def write_portal_page():
         b.onclick = function () { dsSetMode(b.getAttribute('data-m')); };
       });
       dsRender(); dsLinks();
+      var srcBox = document.getElementById('dsSrcs');
+      if (srcBox) {
+        srcBox.innerHTML = DSSRC.map(function (x) {
+          return '<button type="button" class="ds__add" data-src="' + x.k + '"><span aria-hidden="true">' + x.ic + '</span>' + x.t + '</button>';
+        }).join('');
+        Array.prototype.forEach.call(srcBox.querySelectorAll('[data-src]'), function (b) {
+          b.onclick = function () { dsConnect(b.getAttribute('data-src')); };
+        });
+      }
+      dsConnLoad(dsConnPaint);
       document.getElementById('dsSave').onclick = function () { dsSave(this); };
       document.getElementById('dsSend').onclick = function () { dsQuote(''); };
       var rs = function () {
