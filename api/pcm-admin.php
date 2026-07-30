@@ -485,15 +485,26 @@ th{color:#9fb5d3;font-weight:600;font-size:.75rem;text-transform:uppercase;lette
     <input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=wcrepair>
     <button class=ghost title="Finds customers marked as emailed who were never actually queued - the bug fixed on 30 Jul 2026. Safe to run more than once.">&#128295; Find customers the old bug missed</button>
   </form>
-  <form method=post class=inline>
-    <input type=hidden name=csrf value="<?=h($CSRF)?>">
-    <input name=wcemail type=email placeholder="customer@email" style="padding:.45rem .6rem;border-radius:8px;border:1px solid #2a3b63;background:#0b1226;color:#f0f5fc;font-size:.82rem;min-width:210px">
-    <!-- both buttons name themselves, so there is no hidden 'do' for one of them to
-         silently override depending on document order -->
-    <button class=ghost name=do value=wcdiag>&#129514; why hasn&rsquo;t an email arrived?</button>
-    <button name=do value=wcsendone onclick="return confirm('Send the welcome email to this address now?')">&#9889; send it to them now</button>
-  </form>
 <?php endif; ?>
+<?php /* THE SINGLE-ADDRESS SEND SITS OUTSIDE THE PREVIEW STATE, DELIBERATELY.
+         It used to be inside the `if($wcPrev === null)` block with the preview
+         buttons, so pressing Preview made it vanish. On 30 Jul 2026 Steve was
+         sat with a customer whose email had never arrived, pressed Preview,
+         got "0 would receive it" because everyone was wrongly stamped, and was
+         left on a page with no way to send anything at all - for an hour.
+         This is the break-glass tool. It is never hidden. */ ?>
+  <div style="margin-top:.7rem;padding-top:.7rem;border-top:1px solid #2a3b63">
+    <p class=mach style="margin:0 0 .45rem;color:#9fb5d3">Send to one person right now &mdash; goes
+      straight out, no queue, no waiting, whatever the buttons above say.</p>
+    <form method=post class=inline>
+      <input type=hidden name=csrf value="<?=h($CSRF)?>">
+      <input name=wcemail type=email placeholder="customer@email" style="padding:.45rem .6rem;border-radius:8px;border:1px solid #2a3b63;background:#0b1226;color:#f0f5fc;font-size:.82rem;min-width:210px">
+      <!-- both buttons name themselves, so there is no hidden 'do' for one of them to
+           silently override depending on document order -->
+      <button class=ghost name=do value=wcdiag>&#129514; why hasn&rsquo;t an email arrived?</button>
+      <button name=do value=wcsendone onclick="return confirm('Send the welcome email to this address now?')">&#9889; send it to them now</button>
+    </form>
+  </div>
 <?php if($wcOne !== null): ?>
   <div style="margin-top:.9rem;padding:.85rem 1rem;border-radius:10px;background:<?=$wcOne['ok']?'#0c2416':'#2a0f18'?>;border:1px solid <?=$wcOne['ok']?'#1e6b3a':'#7a2740'?>">
     <div style="font-size:.9rem;color:#f0f5fc">
