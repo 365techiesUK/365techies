@@ -6,6 +6,7 @@ Run: python build_pages.py  (writes <slug>/index.html for every page)
 import os, json, datetime
 from office_cluster import _office_cluster_section
 from tool_seo_data import TOOL_TITLES, TOOL_SEO
+from snippets_data import SNIPPETS
 TODAY = datetime.date.today().isoformat()
 
 # ---------------------------------------------------------------------------
@@ -4252,6 +4253,19 @@ def add(**kw):
         kw["schema"] = _wrap
         if kw.get("content") is not None:
             kw["content"] = kw["content"] + "\n" + tool_seo_html(_slug, _enh)
+    # CTR repair table wins over every data module and over TOOL_TITLES/TOOL_SEO -
+    # it is the one place snippets get tuned. See snippets_data.py.
+    _sn = SNIPPETS.get(_slug)
+    if _sn:
+        if _sn.get("title"):
+            # og_title is its own field and some pages set it deliberately
+            # different from the <title>. Only carry the override across when it
+            # was merely mirroring the title, so a real social title survives.
+            if kw.get("og_title") == kw.get("title"):
+                kw["og_title"] = _sn["title"]
+            kw["title"] = _sn["title"]
+        if _sn.get("desc"):
+            kw["desc"] = _sn["desc"]
     PAGES.append(kw)
 
 # ============================================================ MONTHLY IT SUPPORT
