@@ -45,7 +45,7 @@ standard ccb_case_study() already sets in build_extra.py.
 Published with Colin Clark's permission, as with the existing case study.
 """
 from build_pages import (add, graph, crumb, webpage, faqpage, faq_html, cta,
-                         hero, bc)
+                         hero, bc, SITE, TODAY)
 
 SLUG = "website-rebuild-seo-case-study"
 
@@ -345,6 +345,25 @@ def build():
             webpage(s, "Website Rebuild and SEO: A Measured Before and After",
                     "A measured before-and-after of a real WordPress-to-static website rebuild, "
                     "captured the day before the old site was replaced."),
+            # There is NO "CaseStudy" type in schema.org and no case-study rich result
+            # in Google, so calling it one buys nothing structurally. Article DOES exist,
+            # and it is what carries the things that matter for a page like this: a named
+            # author and a publication date, which is how the "measured on 30 July 2026"
+            # claim becomes machine-readable rather than just prose.
+            {"@type": "Article", "@id": SITE + "/%s/#article" % s,
+             "headline": "What a website rebuild actually changes",
+             "description": "A measured before-and-after of a real WordPress-to-static rebuild.",
+             "inLanguage": "en-GB",
+             "datePublished": "2026-07-30", "dateModified": TODAY,
+             "author": {"@type": "Organization", "name": "365 Techies", "url": SITE + "/"},
+             "publisher": {"@id": SITE + "/#business"},
+             "image": SITE + "/og-image.jpg",
+             "mainEntityOfPage": {"@id": SITE + "/%s/#webpage" % s},
+             "url": SITE + "/%s/" % s,
+             "about": [{"@type": "Thing", "name": "Website rebuild"},
+                       {"@type": "Thing", "name": "Search engine optimisation"},
+                       {"@type": "Thing", "name": "WordPress"},
+                       {"@type": "Thing", "name": "Static site generation"}]},
             faqpage(s, FAQS),
         ]),
         content="\n".join(body))

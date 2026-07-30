@@ -909,7 +909,10 @@ def _meta_desc(d, limit=158):
 
 def page(slug, title, desc, og_title, schema_json, content, og_image=None):
     canon = f"{SITE}/{slug}/"
-    og_type = "article" if '"BlogPosting"' in schema_json else "website"
+    # Article counts too, not just BlogPosting. The case study declares Article (there
+    # is no CaseStudy type in schema.org), and og:type=website on a dated, authored
+    # piece is simply wrong when it is shared.
+    og_type = "article" if ('"BlogPosting"' in schema_json or '"Article"' in schema_json) else "website"
     # Per-page social share card; falls back to the site-wide default.
     og_img = og_image or f"{SITE}/og-image.jpg"
     # Escape raw double quotes so descriptions that OPEN with a quoted phrase
