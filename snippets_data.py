@@ -34,6 +34,8 @@ Applied centrally in build_pages.add(), so it wins over every data module.
 Verify with:  py -X utf8 tools_check_snippets.py
 """
 
+from html import unescape as _unescape
+
 # slug -> {"title": ..., "desc": ...}  (either key optional)
 SNIPPETS = {
 
@@ -532,16 +534,344 @@ SNIPPETS = {
     "simplybook-integration": {
         "title": "Custom SimplyBook.me Integration: Your Booking, Your Brand",
     },
+
+    # ================================================================
+    # COMMERCIAL PAGES. Found by the build-time snippet guard, not by GSC -
+    # these earn fewer impressions than the pages above but they are the ones
+    # that convert, so a snippet that stops mid-sentence costs a customer
+    # rather than a pageview. Prices here are the real published per-PC
+    # GoCardless figures only: home 18.25, business from 24.38, MS365 4.85.
+    # Never a rounded guess, never VAT-inclusive - the firm is not VAT
+    # registered. See the pricing-truth note before touching a number.
+    # ================================================================
+    "alienware-dell-g-series-repair-bournemouth": {
+        "title": "Alienware &amp; Dell G-Series Repair, Free Dorset Collection",
+        "desc": "Alienware and Dell G15/G16 repair with free collection across Bournemouth, Poole and Dorset. Overheating, screens, batteries and upgrades, done honestly.",
+    },
+    "backup-support": {
+        "desc": "Automatic, verified backup and rapid data recovery for homes and businesses across Dorset. Photos, documents, whole computers and Microsoft 365 protected.",
+    },
+    "book-a-collection": {
+        "desc": "Book a computer or laptop collection with 365 Techies in Bournemouth, Poole and Dorset. We collect, diagnose, repair and return it. Collection is free.",
+    },
+    "break-fix-vs-monthly-vs-in-house-it-support": {
+        "desc": "Pay per problem, take a monthly plan, or hire someone in-house? A plain-English comparison of the three ways to get IT support, and who each one suits.",
+    },
+    "business-broadband-connectivity": {
+        "desc": "Business broadband and connectivity across Bournemouth, Poole and Dorset. Full-fibre, leased lines and automatic failover, arranged, set up and managed.",
+    },
+    "business-continuity-internet": {
+        "desc": "Build a written broadband emergency procedure before you need it: impact analysis, objective trigger points, named roles and an escalation ladder.",
+    },
+    "business-email-compromise": {
+        "title": "Business Email Compromise: What It Is, How to Stay Safe",
+        "desc": "What is business email compromise? A plain-English guide for small businesses: how invoice and CEO-fraud scams work, and the warning signs to teach staff.",
+    },
+    "business-hacked-emergency-help": {
+        "desc": "Hacked, hit by ransomware or had money diverted? 365 Techies give Dorset businesses same-day emergency help to contain it, recover, and close the hole.",
+    },
+    "business-it-support-plans": {
+        "desc": "Monthly business IT support plans from £24.38 per computer. Microsoft 365 management, cyber security, backups, onboarding, and remote or on-site support.",
+    },
+    "business-wifi-installation": {
+        "desc": "What business WiFi installation actually costs in Dorset, and what a proper job includes: VLANs, fast roaming, captive portals, licence traps and PoE.",
+    },
+    "choosing-it-support": {
+        "desc": "A free buyer's guide: 10 questions to ask before choosing an IT support company in Dorset, covering contracts, response times and who helps you.",
+    },
+    "dell-monitor-dock-support-dorset": {
+        "title": "Dell Monitor &amp; Docking Station Support, Dorset",
+        "desc": "Dell monitor showing no signal, or a dock not detecting your screens? Honest diagnosis, multi-monitor and dock setup across Bournemouth and Poole.",
+    },
+    "dell-xps-repair-bournemouth": {
+        "title": "Dell XPS Repair in Bournemouth, Poole &amp; Dorset",
+        "desc": "Independent Dell XPS repair across Bournemouth, Poole and Dorset. Swollen batteries, overheating, coil whine, screens and SSD upgrades, priced honestly.",
+    },
+    "disaster-recovery": {
+        "desc": "Disaster recovery and business continuity from 365 Techies: verified backups, ransomware rollback, rapid recovery, cloud failover and a written plan.",
+    },
+    "downtime-cost-calculator": {
+        "desc": "What could IT downtime be costing your business? Answer four quick questions for a friendly estimate based on your own numbers, not an industry average.",
+    },
+    "email-support": {
+        "desc": "Outlook, Microsoft 365 and business email help. Fix email that will not send or receive, sort passwords, set up new accounts and stop the spam.",
+    },
+    "event-wifi-dorset": {
+        "desc": "Internet for events, live streams and content production anywhere in Dorset, delivered from a solar-powered off-grid van that needs no mains power.",
+    },
+    "family-it-support": {
+        "desc": "Monthly support for households with several computers, tablets, printers and email accounts. One friendly plan that keeps the whole family working.",
+    },
+    "google-workspace-support": {
+        "desc": "Setup, migration and support for Google Workspace. Gmail, Drive, Docs and Meet set up properly, secured and working smoothly for your home or business.",
+    },
+    "home-network-setup": {
+        "desc": "Home network setup in Bournemouth, Poole, Christchurch and Dorset. We configure your router, connect every device and secure the lot, on site or remotely.",
+    },
+    "how-much-does-it-support-cost-uk-2026": {
+        "desc": "A clear, honest guide to what IT support costs in the UK in 2026: typical ranges for homes and businesses, what drives the price, and what to check.",
+    },
+    "independent-it-support": {
+        "desc": "An honest comparison of local independent IT support against big-box repair desks and DIY remote tools: who actually helps you, speed, and repair honesty.",
+    },
+    "it-cost-worksheet": {
+        "desc": "A free, print-friendly worksheet: the five numbers to work out before asking any IT company for a quote, covering devices, users and what you rely on.",
+    },
+    "it-services-bournemouth": {
+        "desc": "Managed business IT services in Bournemouth. Fully managed support, Microsoft 365, cyber security, servers and connectivity from £24.38 per computer.",
+    },
+    "it-services-poole": {
+        "desc": "Managed business IT services in Poole. Fully managed support, Microsoft 365, cyber security, servers and connectivity from £24.38 per computer a month.",
+    },
+    "mesh-wifi-setup-guide": {
+        "title": "Mesh WiFi Setup Guide UK: Step by Step, ISP by ISP",
+        "desc": "How to set up mesh WiFi properly in a UK home: router placement, AP versus bridge mode on BT, Sky and Virgin, wired backhaul, and choosing channels.",
+    },
+    "mesh-wifi-systems-uk": {
+        "title": "Mesh WiFi UK: Honest Buying Guide &amp; Comparison",
+        "desc": "Which mesh WiFi system actually suits a UK home? Real models with dated UK prices, honest coverage figures, and ISP mesh compared with buying your own.",
+    },
+    "new-computer-setup": {
+        "desc": "We set up your new computer or laptop properly: files, email and settings transferred, software installed, and security and backups in place from day one.",
+    },
+    "password-manager-setup": {
+        "desc": "Password manager setup for homes and small businesses across Bournemouth, Poole and Dorset. We install the vault, import your logins and show you how.",
+    },
+    "pay": {
+        "desc": "Paying 365 Techies is simple and safe. The price is always agreed before work starts, and you never need an account or an app to settle up.",
+    },
+    "pricing": {
+        "desc": "Transparent monthly IT support: homes £18.25 per computer, business from £24.38 per computer, Microsoft 365 £4.85 per user. No call-out fee, ever.",
+    },
+    "pstn-switch-off-business": {
+        "title": "PSTN Switch-Off: The Business Lines That Aren't Phones",
+        "desc": "The UK analogue phone network switches off on 31 January 2027. The lines that catch businesses out are lifts, fire panels, alarms and card machines.",
+    },
+    "quick-quote": {
+        "desc": "Get a free, no-obligation IT support quote in under a minute. Tell us about your home or business setup and we will reply with real numbers.",
+    },
+    "quickbooks-sage-running-slow": {
+        "desc": "QuickBooks or Sage 50 running slow, freezing or dropping over your office network? We diagnose and fix the real cause for Dorset businesses, same day.",
+    },
+    "ransomware-recovery": {
+        "desc": "Ransomware recovery for homes and small businesses across Bournemouth, Poole and Dorset. Do not pay the ransom. We contain it, then restore from backup.",
+    },
+    "remote-it-support": {
+        "desc": "Fast, secure remote IT support for homes and businesses anywhere in the UK. Most computer problems fixed online in minutes, with no waiting for a visit.",
+    },
+    "rural-and-farm-wifi-dorset": {
+        "desc": "Wi-Fi and internet for farms, glamping sites, holiday lets and rural businesses across Dorset. Site surveys, long-range outdoor Wi-Fi, Starlink and 4G/5G.",
+    },
+    "security-awareness-training": {
+        "desc": "Friendly security awareness training, phishing simulation and dark-web monitoring for small businesses in Bournemouth, Poole and Dorset. Staff, not slides.",
+    },
+    "server-down-emergency-support": {
+        "desc": "Business server down, crashed or will not boot in Dorset? We get local businesses back up the same day: remote triage first, then on site.",
+    },
+    "service-level-agreement": {
+        "desc": "The 365 Techies Service Level Agreement: support hours, priority levels, target response and resolution times, availability and how escalation works.",
+    },
+    "services": {
+        "desc": "Everything 365 Techies provides: monthly IT support for homes and businesses, Microsoft 365, cyber security, computer repairs and off-grid Victron energy.",
+    },
+    "simplybook-addclient-value-is-required-error": {
+        "title": "SimplyBook addClient: Value Is Required Error, Solved",
+        "desc": "SimplyBook.me addClient failing with Value is required and cannot be empty? The -32070 error payload names the missing custom client field. How to read it.",
+    },
+    "slow-computer-repair": {
+        "desc": "Slow computer repair in Bournemouth, Poole and Dorset. We diagnose why your PC or laptop is slow and fix it: SSD upgrades, malware, startup bloat.",
+    },
+    "small-business-it-support": {
+        "desc": "Monthly IT support for small businesses that need professional help without employing anyone in-house. Microsoft 365, security, backups and staff support.",
+    },
+    "static-site-vs-wordpress-small-business": {
+        "title": "Static Site vs WordPress for Small Business",
+        "desc": "Static site or WordPress for your small business? An honest comparison from a Dorset firm that ran WordPress for years, then rebuilt its own site static.",
+    },
+    "victron-installer-dorset": {
+        "desc": "Victron installer covering Dorset. Design, supply, installation and remote monitoring of off-grid and backup power for homes, businesses, vans and boats.",
+    },
+    "voip-business-phones": {
+        "desc": "Modern business phone systems powered by Voipfone. Clear UK calls over the internet, lower bills, work-from-anywhere numbers and smart call handling.",
+    },
+    "website-maintenance-cost-uk": {
+        "title": "Website Maintenance Cost UK 2026: What Should You Pay?",
+        "desc": "What should website maintenance actually cost in the UK? Verified 2026 market rates, what a legitimate plan includes, and the red flags to walk away from.",
+    },
+    "why-monthly-it-support-beats-per-repair": {
+        "desc": "Paying per repair feels cheaper, until something breaks at the worst possible moment. Why a monthly IT support plan usually works out better value.",
+    },
+    "wifi-signal-test": {
+        "title": "WiFi Signal Test: Room-by-Room Survey &amp; Best Spot",
+        "desc": "Free room-by-room WiFi survey for homes, businesses and life on the move. A live signal game, a real speed test in every room, and star-rated results.",
+    },
+    "wifi-troubleshooting": {
+        "desc": "Symptom-by-symptom WiFi troubleshooting for UK homes and small offices: slow WiFi, drop-outs at the same time daily, and WiFi calling that fails.",
+    },
+    "windows-11-support": {
+        "desc": "Help with Windows 11 upgrades, compatibility checks, updates, slow performance and new PC setup, for homes and businesses across Bournemouth and Poole.",
+    },
+    "windows-11-upgrade-service": {
+        "desc": "Fixed-price Windows 11 upgrade and installation in Poole, Bournemouth and Dorset. Free TPM 2.0 compatibility check, full backup, then the upgrade itself.",
+    },
+    "windows-reinstall": {
+        "title": "Windows Reinstall &amp; Refresh in Bournemouth &amp; Dorset",
+        "desc": "Clean Windows reinstall and refresh in Bournemouth, Poole and Dorset. We back up your files, wipe and rebuild Windows, then reinstall your apps.",
+    },
+    "your-first-6-weekly-service": {
+        "desc": "A step-by-step walkthrough of what your first 6-weekly computer service actually feels like, from the friendly call beforehand to the report afterwards.",
+    },
+
+    # ================================================================
+    # TITLE-ONLY: every remaining page whose <title> exceeded 60 characters,
+    # so Google was cutting it off mid-phrase. Most were only a few characters
+    # over and the fix is dropping "| 365 Techies" - Google appends the site
+    # name itself, so those 13 characters were buying nothing and costing the
+    # end of the headline.
+    # ================================================================
+    "dell-inspiron-repair-bournemouth": {
+        "title": "Dell Inspiron Repair &amp; Upgrades, Bournemouth &amp; Dorset",
+    },
+    "dell-vostro-repair-support-dorset": {
+        "title": "Dell Vostro Repair &amp; Small Business Support, Dorset",
+    },
+    "dell-killer-wifi-problems": {
+        "title": "Dell Wi-Fi Keeps Dropping? Killer AX1650 Problems Fixed",
+    },
+    "firewall-licence-expired-what-happens": {
+        "title": "What Happens When Your Firewall Licence Expires, By Vendor",
+    },
+    "stop-using-onedrive-without-losing-files": {
+        "title": "How to Stop Using OneDrive Without Losing Files",
+    },
+    "how-we-rebuilt-our-website": {
+        "title": "WordPress to Static Site: How We Rebuilt Our Website",
+    },
+    "websites-for-builders-tradesmen": {
+        "title": "Websites for Builders &amp; Trades in Bournemouth &amp; Dorset",
+    },
+    "business-wifi-health-check-dorset": {
+        "title": "Business Wi-Fi Health Check, Bournemouth &amp; Dorset",
+    },
+    "onedrive-full-cant-send-email": {
+        "title": "OneDrive Full and Can't Send Email? The Fix, Step by Step",
+    },
+    "office-moves-it-relocation": {
+        "title": "Office Moves &amp; IT Relocation Dorset | Minimal Downtime",
+    },
+    "off-grid-internet": {
+        "title": "Off-Grid Internet UK: No Power, No Signal, No Problem",
+    },
+    "how-we-price": {
+        "title": "How We Price IT Support (and Why Cheapest Isn't Best)",
+    },
+    "business-it-consultancy": {
+        "title": "Business IT Consultancy &amp; Virtual IT Manager, Dorset",
+    },
+    "lost-or-stolen-phone-what-to-do": {
+        "title": "Lost or Stolen Phone? Do These Things Now (UK Guide)",
+    },
+    "it-jargon-buster/megabytes-and-gigabytes": {
+        "title": "Megabytes and Gigabytes Explained in Plain English",
+    },
+    "starlink-internet": {
+        "title": "Starlink Satellite Internet: Residential &amp; Roaming",
+    },
+    "ruckus-access-point-end-of-life": {
+        "title": "RUCKUS Access Point End-of-Life Dates: R310 to R770",
+    },
+    "windows-10-end-of-life": {
+        "title": "Windows 10 End of Life (Oct 2025): What to Do Next",
+    },
+    "remote-access": {
+        "title": "Remote Access: Work From Anywhere on Your Own PC",
+    },
+    "outgrown-wix-squarespace": {
+        "title": "Outgrown Wix or Squarespace? An Honest Checklist",
+    },
+    "dell-optiplex-guide": {
+        "title": "Dell OptiPlex Guide: Ports, Monitors, UPS &amp; Care",
+    },
+    "threadripper-workstations": {
+        "title": "AMD Threadripper Workstations | Scan 3XS Partner",
+    },
+    "refurbished-vs-new-laptop": {
+        "title": "Refurbished vs New Laptop: Which Should You Buy?",
+    },
+    "outlook-indexing-stuck": {
+        "title": "Outlook Indexing Stuck or Freezes When Searching",
+    },
+    "microsoft-word-wont-open": {
+        "title": "Microsoft Word Won't Open? The 5-Step Fix Ladder",
+    },
+    "malware-and-viruses": {
+        "title": "Malware &amp; Viruses: What They Are, How to Stay Safe",
+    },
+    "it-support-for-opticians": {
+        "title": "IT Support for Opticians in Bournemouth &amp; Dorset",
+    },
+    "it-jargon-buster": {
+        "title": "IT Jargon Buster: A Plain-English A-Z IT Glossary",
+    },
+    "hard-drive-upgrade": {
+        "title": "SSD &amp; Hard Drive Upgrade in Bournemouth &amp; Dorset",
+    },
+    "free-tools": {
+        "title": "Free IT Tools, No Download: Run in Your Browser",
+    },
+    "agentic-ai-systems": {
+        "title": "Agentic AI Systems &amp; AI Automation Agency, Dorset",
+    },
+    "wifi-controller-end-of-life": {
+        "title": "Wi-Fi Controller End of Life: The Real Deadline",
+    },
+    "outlook-data-file-cannot-be-accessed": {
+        "title": "Outlook Data File Cannot Be Accessed: 0x8004010f",
+    },
+    "it-jargon-buster/operating-system": {
+        "title": "Operating System Explained in Plain English",
+    },
+    "how-to-free-up-storage-space": {
+        "title": "How to Free Up Storage Space on a Full Computer",
+    },
+    "dell-it-support-dorset": {
+        "title": "Dell Support &amp; Repair, Dorset (Home &amp; Business)",
+    },
+    "areas-covered": {
+        "title": "Areas Covered: IT Support Across Bournemouth &amp; Dorset",
+    },
 }
 
 
 def check():
-    """Self-test: every entry must be within the limits it exists to enforce."""
+    """Self-test: every entry must be within the limits it exists to enforce.
+
+    Titles are measured AFTER entity decoding, because "&amp;" is five
+    characters in the source and one in the search result - counting the
+    source would reject perfectly good titles.
+
+    Also re-reads this file to catch duplicate slugs. A Python dict literal
+    keeps only the last of a repeated key, so a second entry for a slug
+    silently discards the first one's description. That happened once.
+    """
+    import io as _io
+    import os as _os
+    import re as _re
+    from collections import Counter as _Counter
     bad = []
+    try:
+        _src = _io.open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
+                                      "snippets_data.py"), encoding="utf-8").read()
+        _keys = _re.findall(r'^    "([^"]+)": \{', _src, _re.M)
+        for _k, _n in _Counter(_keys).items():
+            if _n > 1:
+                bad.append("%s: duplicate key (%d times) - the earlier entry is lost" % (_k, _n))
+    except OSError:
+        pass
     for slug, s in SNIPPETS.items():
         t, d = s.get("title"), s.get("desc")
-        if t is not None and len(t) > 60:
-            bad.append("%s: title %d chars" % (slug, len(t)))
+        if t is not None and len(_unescape(t)) > 60:
+            bad.append("%s: title %d chars" % (slug, len(_unescape(t))))
         if d is not None:
             if len(d) > 155:
                 bad.append("%s: desc %d chars" % (slug, len(d)))

@@ -43,7 +43,9 @@ $TILES = array(
     // trackers: where things are, and what they are doing
     'vehicle','fence','trip','ecu','assets','pet',
     // what GPS and the engine only know together
-    'journey','fillup','charge','sitecost');
+    'journey','fillup','charge','sitecost',
+    // coast and sky - feeds we license, not the customer's kit
+    'tide','sunset','uv','wind','storm','aurora');
 $PROPS = array('home','business','boat','camper','holiday');
 
 function out($a){ echo json_encode($a); exit; }

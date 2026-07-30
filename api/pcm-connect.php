@@ -41,7 +41,7 @@ $MAX_RAW = 30000;
 $MAX_CONN = 24;
 
 // Must match DSSRC in the portal studio (build_extra.py).
-$SOURCES = array('victron','camera','wifi','energy','iot','vehicle','ev','tracker','pet','slack','machine','api','other');
+$SOURCES = array('victron','camera','wifi','energy','iot','vehicle','ev','tracker','pet','slack','machine','coast','api','other');
 
 function out($a){ echo json_encode($a); exit; }
 function db_lock($f){ $lk = @fopen($f . '.lock', 'c'); if ($lk) @flock($lk, LOCK_EX); return $lk; }

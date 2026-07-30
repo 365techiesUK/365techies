@@ -640,9 +640,9 @@
   </aside>
 
   <main id="main">
-<section class="section" style="padding-top:6.5rem"><div class="wrap" style="max-width:880px"><div id="p365app"><noscript><p>The customer portal needs JavaScript switched on. Or just ring us: 01202 775566.</p></noscript><p style="color:#9fb5d3">Loading the portal&hellip;</p></div><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">portal build 30 Jul 2026 &middot; d757a07f18</p><script>
+<section class="section" style="padding-top:6.5rem"><div class="wrap" style="max-width:880px"><div id="p365app"><noscript><p>The customer portal needs JavaScript switched on. Or just ring us: 01202 775566.</p></noscript><p style="color:#9fb5d3">Loading the portal&hellip;</p></div><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">portal build 30 Jul 2026 &middot; 13bcf4b9f1</p><script>
 (function () {
-  var P365BUILD = 'd757a07f18';
+  var P365BUILD = '13bcf4b9f1';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -1284,6 +1284,55 @@
   #p365app .ds__z i, .p365ov .ds__z i { grid-row:span 2; }
   #p365app .ds__z b, .p365ov .ds__z b { color:var(--pwhite); font-size:.83rem; }
   #p365app .ds__z span, .p365ov .ds__z span { color:var(--pmut); font-size:.72rem; line-height:1.4; }
+  
+  #p365app .ds__tide, .p365ov .ds__tide { width:100%; height:54px; display:block; margin:.3rem 0 0; }
+  #p365app .ds__tide--big, .p365ov .ds__tide--big { height:64px; }
+  #p365app .ds__tidefill, .p365ov .ds__tidefill { fill:rgba(29,151,227,.16); }
+  #p365app .ds__tideline, .p365ov .ds__tideline { fill:none; stroke:var(--pcyan); stroke-width:2; stroke-linecap:round; }
+  #p365app .ds__tidenow, .p365ov .ds__tidenow { fill:#fff; stroke:var(--pcyan); stroke-width:2; }
+  #p365app .ds__sky, .p365ov .ds__sky { height:34px; border-radius:9px; margin:.35rem 0 0;
+    background:linear-gradient(100deg,#12203f,#3a2b5c 22%,#8a4560 46%,#d9763c 66%,#f0b45a 80%,#12203f);
+    background-size:220% 100%; animation:dsSky 26s ease-in-out infinite alternate; }
+  #p365app .ds__sky--big, .p365ov .ds__sky--big { height:54px; }
+  @keyframes dsSky { from { background-position:0% 50%; } to { background-position:100% 50%; } }
+  #p365app .ds__gauge, .p365ov .ds__gauge { position:relative; text-align:center; }
+  #p365app .ds__gauge svg, .p365ov .ds__gauge svg { width:100%; max-width:150px; height:auto; display:block; margin:0 auto; }
+  #p365app .ds__gauge--big svg, .p365ov .ds__gauge--big svg { max-width:168px; }
+  #p365app .ds__gtrack, .p365ov .ds__gtrack { fill:none; stroke:#1d2a49; stroke-width:9; stroke-linecap:round; }
+  #p365app .ds__gval, .p365ov .ds__gval { fill:none; stroke:var(--pgood); stroke-width:9; stroke-linecap:round;
+    stroke-dasharray:0 151; transition:stroke-dasharray 1s cubic-bezier(.2,.7,.2,1), stroke .6s; }
+  #p365app .ds__gauge b, .p365ov .ds__gauge b { position:absolute; left:0; right:0; bottom:0; font-size:1.5rem; color:var(--pwhite);
+    font-variant-numeric:tabular-nums; }
+  #p365app .ds__windrow, .p365ov .ds__windrow { display:flex; gap:.7rem; align-items:center; }
+  #p365app .ds__compass, .p365ov .ds__compass { flex:0 0 60px; }
+  #p365app .ds__compass--big, .p365ov .ds__compass--big { flex:0 0 92px; }
+  #p365app .ds__compass svg, .p365ov .ds__compass svg { width:100%; height:auto; display:block; }
+  #p365app .ds__cring, .p365ov .ds__cring { fill:rgba(125,170,220,.05); stroke:var(--pline); stroke-width:1.5; }
+  #p365app .ds__clbl, .p365ov .ds__clbl { fill:var(--pmut); font-size:8px; font-weight:700; }
+  #p365app .ds__needle, .p365ov .ds__needle { transition:transform 1.4s cubic-bezier(.2,.7,.2,1); }
+  #p365app .ds__needle path, .p365ov .ds__needle path { fill:var(--pcyan); }
+  #p365app .ds__radar, .p365ov .ds__radar { position:relative; height:74px; border-radius:10px; overflow:hidden; background:#0a1226;
+    display:grid; place-items:center; }
+  #p365app .ds__radar--big, .p365ov .ds__radar--big { height:112px; }
+  #p365app .ds__radar span, .p365ov .ds__radar span { position:absolute; border:1px solid rgba(29,151,227,.28); border-radius:50%; }
+  #p365app .ds__radar span:nth-child(1), .p365ov .ds__radar span:nth-child(1) { width:34%; aspect-ratio:1; }
+  #p365app .ds__radar span:nth-child(2), .p365ov .ds__radar span:nth-child(2) { width:66%; aspect-ratio:1; }
+  #p365app .ds__radar span:nth-child(3), .p365ov .ds__radar span:nth-child(3) { width:98%; aspect-ratio:1; }
+  #p365app .ds__radar span:nth-child(4), .p365ov .ds__radar span:nth-child(4) { width:16%; aspect-ratio:1; border-color:rgba(29,151,227,.45); }
+  #p365app .ds__radar::after, .p365ov .ds__radar::after { content:''; position:absolute; width:100%; height:100%;
+    background:conic-gradient(from 0deg, rgba(29,151,227,.24), transparent 28%);
+    animation:dsSweep 4.5s linear infinite; }
+  @keyframes dsSweep { to { transform:rotate(360deg); } }
+  #p365app .ds__strike, .p365ov .ds__strike { position:absolute; width:9px; height:9px; border-radius:50%; background:var(--pwarn);
+    box-shadow:0 0 8px 2px rgba(224,179,65,.7); left:32%; top:34%; animation:dsFlash 3.6s ease-in-out infinite; }
+  #p365app .ds__strike--b, .p365ov .ds__strike--b { left:66%; top:62%; animation-delay:1.7s; background:var(--pbad);
+    box-shadow:0 0 8px 2px rgba(232,99,126,.6); }
+  @keyframes dsFlash { 0%,88%,100% { opacity:.35; transform:scale(1); } 92% { opacity:1; transform:scale(1.5); } }
+  #p365app .ds__aur, .p365ov .ds__aur { height:40px; border-radius:9px; margin:.3rem 0 0;
+    background:linear-gradient(115deg,#08172c,#0f5f4a 26%,#2fa36b 42%,#7fd8a0 52%,#2a6f8f 68%,#08172c);
+    background-size:260% 100%; filter:saturate(.85); animation:dsAur 14s ease-in-out infinite alternate; }
+  #p365app .ds__aur--big, .p365ov .ds__aur--big { height:58px; }
+  @keyframes dsAur { from { background-position:0% 50%; } to { background-position:100% 50%; } }
   #p365app .ds__jlist, .p365ov .ds__jlist { display:flex; flex-direction:column; gap:.1rem; }
   #p365app .ds__j, .p365ov .ds__j { display:grid; grid-template-columns:1fr auto; gap:0 .6rem; align-items:baseline;
     padding:.4rem 0; border-bottom:1px solid rgba(42,59,99,.45); }
@@ -1319,6 +1368,7 @@
   #p365app .ds__route.invite, .p365ov .ds__route.invite { background:rgba(0,206,27,.14); color:var(--pgood); border:1px solid rgba(0,206,27,.4); }
   #p365app .ds__route.key, .p365ov .ds__route.key { background:rgba(224,179,65,.13); color:var(--pwarn); border:1px solid rgba(224,179,65,.4); }
   #p365app .ds__route.onsite, .p365ov .ds__route.onsite { background:rgba(29,151,227,.14); color:#5cbcf7; border:1px solid rgba(29,151,227,.45); }
+  #p365app .ds__route.ours, .p365ov .ds__route.ours { background:rgba(134,182,232,.14); color:var(--psoft); border:1px solid var(--pline); }
   #p365app .ds__cnhow, .p365ov .ds__cnhow { font-size:.85rem; line-height:1.65; color:var(--psoft); margin:0 0 .5rem; }
   #p365app .ds__cnhow b, .p365ov .ds__cnhow b { color:var(--pwhite); }
   #p365app .ds__cnnote, .p365ov .ds__cnnote { font-size:.79rem; line-height:1.55; color:var(--pmut); margin:0 0 .7rem;
@@ -1352,6 +1402,8 @@
   @media (prefers-reduced-motion:reduce) {
     #p365app .ds__cam i, .p365ov .ds__cam i { animation:none; }
     #p365app .ds__t--in, .p365ov .ds__t--in { animation:none; }
+    #p365app .ds__sky, #p365app .ds__aur, #p365app .ds__radar::after, #p365app .ds__strike, .p365ov .ds__sky, .p365ov .ds__aur, .p365ov .ds__radar::after, .p365ov .ds__strike { animation:none; }
+    #p365app .ds__needle, #p365app .ds__gval, .p365ov .ds__needle, .p365ov .ds__gval { transition:none; }
     #p365app .ds__t, #p365app .ds__bar2 i, .p365ov .ds__t, .p365ov .ds__bar2 i { transition:none; }
     #p365app .ds__t.fresh, .p365ov .ds__t.fresh { animation:none; }
   }
@@ -2310,6 +2362,15 @@
            { f:'docs', l:'Link to its documentation, if you have one', ph:'e.g. docs.example.com' }],
       how:'If it publishes data and documents how, we can almost certainly read it. Tell us what it is and we will look at the documentation ourselves before saying yes.',
       note:'If it needs a key, that key comes to us on the phone and lives in a server-only file &mdash; never in a web form and never in an email.' },
+    { k:'coast', ic:'\ud83c\udf0a', t:'Tides, weather, UV, lightning, aurora', route:'ours',
+      ask:[{ f:'place', l:'Postcode or nearest harbour', ph:'e.g. BH21, or Poole Harbour' }],
+      how:'There is nothing of yours to connect here &mdash; <b>we license the feeds and point them at your postcode</b>. '
+        + 'Tides come from the <b>Admiralty&rsquo;s own tidal data</b> (600-odd UK stations, so the numbers match the harbour board&rsquo;s). '
+        + 'Weather, UV and wind come from the <b>Met Office</b>. Space weather and aurora come from the American space weather service, '
+        + 'which is genuinely free and public. The sunset score is ours, worked out from the cloud forecast.',
+      note:'One thing we will not do: community lightning networks are the obvious free source and their licence '
+        + '<b>prohibits commercial use</b> and specifically forbids storm-warning use. So lightning is either a properly licensed '
+        + 'commercial feed or it is not on your dashboard &mdash; and either way it is weather information, never a safety system.' },
     { k:'other', ic:'\u2753', t:'Something not on this list', route:'key',
       ask:[{ f:'what', l:'What would you like on the screen', ph:'Describe it in your own words' }],
       how:'Tell us what you want to see and we will work out whether anything publishes it. Sometimes the answer is no, and you will get that answer before you have spent anything.',
@@ -2321,10 +2382,16 @@
     heating:'iot', water:'iot', bilge:'iot', wifi:'wifi', servers:'wifi', sites:'wifi', alerts:'slack',
     machine:'machine', vehicle:'vehicle', trip:'vehicle', ecu:'vehicle', fence:'tracker', assets:'tracker',
     pet:'pet', weather:'other', broadband:'other',
-    journey:'vehicle', fillup:'vehicle', sitecost:'vehicle', charge:'ev' };
+    journey:'vehicle', fillup:'vehicle', sitecost:'vehicle', charge:'ev',
+    tide:'coast', sunset:'coast', uv:'coast', wind:'coast', storm:'coast', aurora:'coast' };
   var DSCONN = [];
   function dsSrc(k) { for (var i = 0; i < DSSRC.length; i++) if (DSSRC[i].k === k) return DSSRC[i]; return null; }
-  function dsRouteName(r) { return r === 'invite' ? 'You invite us in' : (r === 'onsite' ? 'Needs something on site' : 'Needs a read-only key'); }
+  function dsRouteName(r) {
+    if (r === 'invite') return 'You invite us in';
+    if (r === 'onsite') return 'Needs something on site';
+    if (r === 'ours') return 'Nothing to connect - we supply it';
+    return 'Needs a read-only key';
+  }
   // The same guard the server applies, run early so somebody who pastes a token
   // is stopped BEFORE it leaves their browser rather than after.
   function dsLooksSecret(s) {
@@ -2622,6 +2689,106 @@
     { k:'door', ic:'\ud83d\udeaa', t:'Doors &amp; windows', aud:'all',
       b:'<div class="ds__big" style="color:var(--pgood)">&#10003; All closed</div>'
         + '<p class="ds__sub"><span data-f="doors">9</span> contacts &middot; last opened 18:42</p>' },
+    // ---- coast & sky ----------------------------------------------------------
+    // Everything here is a feed WE license and point at your postcode - there is no
+    // customer credential involved, which is why the connect wizard routes these
+    // differently from a camera or a car. The licence facts behind each one are in
+    // the wizard's 'coast' entry, and they are not decoration: Blitzortung's
+    // community lightning network flatly prohibits commercial use, so a paid
+    // dashboard cannot be built on it.
+    { k:'tide', ic:'\ud83c\udf0a', t:'Tide', aud:'all',
+      b:'<div class="ds__big"><span data-f="tideh">4.2</span><em>m and rising</em></div>'
+        + '<svg class="ds__tide" viewBox="0 0 200 54" preserveAspectRatio="none" aria-hidden="true">'
+        + '<path class="ds__tidefill" d="M0 54 L0 30 C25 12 45 12 70 30 C95 48 115 48 140 30 C165 12 185 12 200 22 L200 54 Z"></path>'
+        + '<path class="ds__tideline" d="M0 30 C25 12 45 12 70 30 C95 48 115 48 140 30 C165 12 185 12 200 22"></path>'
+        + '<circle class="ds__tidenow" cx="0" cy="30" r="4"><animateMotion dur="30s" repeatCount="indefinite" '
+        + 'path="M0 30 C25 12 45 12 70 30 C95 48 115 48 140 30 C165 12 185 12 200 22"></animateMotion></circle></svg>'
+        + '<p class="ds__sub">High water <b>14:38</b> &middot; low <b>20:51</b> &middot; Poole Harbour</p>',
+      b2:'<div class="ds__kpis"><div><b><span data-f="tideh">4.2</span><em>m</em></b><span>now, rising</span></div>'
+        + '<div><b>14:38</b><span>next high</span></div>'
+        + '<div><b>20:51</b><span>next low</span></div>'
+        + '<div><b><span data-f="seatemp">17.4</span><em>&deg;C</em></b><span>sea</span></div></div>'
+        + '<svg class="ds__tide ds__tide--big" viewBox="0 0 200 76" preserveAspectRatio="none" aria-hidden="true">'
+        + '<path class="ds__tidefill" d="M0 76 L0 42 C25 16 45 16 70 42 C95 68 115 68 140 42 C165 16 185 16 200 30 L200 76 Z"></path>'
+        + '<path class="ds__tideline" d="M0 42 C25 16 45 16 70 42 C95 68 115 68 140 42 C165 16 185 16 200 30"></path>'
+        + '<circle class="ds__tidenow" cx="0" cy="42" r="4.6"><animateMotion dur="30s" repeatCount="indefinite" '
+        + 'path="M0 42 C25 16 45 16 70 42 C95 68 115 68 140 42 C165 16 185 16 200 30"></animateMotion></circle></svg>'
+        + '<p class="ds__sub">Springs on Thursday &mdash; 0.4m more range than today. Real tides come from the '
+        + 'Admiralty&rsquo;s own data, so the number matches the harbour board&rsquo;s.</p>' },
+    { k:'sunset', ic:'\ud83c\udf05', t:'Tonight&rsquo;s sunset', aud:'all',
+      b:'<div class="ds__big"><span data-f="sunq">78</span><em>/100 tonight</em></div>'
+        + '<div class="ds__sky"></div>'
+        + '<p class="ds__sub">Sets <b>21:04</b> &middot; worth being on the beach by 20:40</p>',
+      b2:'<div class="ds__sky ds__sky--big"></div>'
+        + '<div class="ds__kpis"><div><b><span data-f="sunq">78</span></b><span>out of 100</span></div>'
+        + '<div><b>21:04</b><span>sunset</span></div>'
+        + '<div><b>20:31</b><span>golden hour</span></div>'
+        + '<div><b>21:38</b><span>blue hour ends</span></div></div>'
+        + '<div class="ds__zlist"><div class="ds__z"><i class="ds__pip"></i><b>Tonight &mdash; 78</b><span>Mid-level cloud at 40%, which is the sweet spot. Clear at the horizon.</span></div>'
+        + '<div class="ds__z"><i class="ds__pip w"></i><b>Tomorrow &mdash; 34</b><span>Thick low cloud. It will just go grey then dark.</span></div>'
+        + '<div class="ds__z"><i class="ds__pip"></i><b>Friday &mdash; 71</b><span>High cirrus, light westerly. Promising.</span></div></div>'
+        + '<p class="ds__sub">The score is ours, from the cloud forecast &mdash; a flat blue sky scores badly, '
+        + 'because it is the cloud that catches the light.</p>' },
+    { k:'uv', ic:'\ud83d\udd76', t:'UV', aud:'all',
+      b:'<div class="ds__gauge"><svg viewBox="0 0 120 66" aria-hidden="true">'
+        + '<path class="ds__gtrack" d="M12 60 A48 48 0 0 1 108 60"></path>'
+        + '<path class="ds__gval" data-arc="uv" d="M12 60 A48 48 0 0 1 108 60"></path></svg>'
+        + '<b><span data-f="uv">6</span></b></div>'
+        + '<p class="ds__sub">High &middot; burns in about 30 minutes without cover</p>',
+      b2:'<div class="ds__gauge ds__gauge--big"><svg viewBox="0 0 120 66" aria-hidden="true">'
+        + '<path class="ds__gtrack" d="M12 60 A48 48 0 0 1 108 60"></path>'
+        + '<path class="ds__gval" data-arc="uv" d="M12 60 A48 48 0 0 1 108 60"></path></svg>'
+        + '<b><span data-f="uv">6</span></b></div>'
+        + '<div class="ds__bars"><i style="height:8%"></i><i style="height:24%"></i><i style="height:48%"></i><i style="height:72%"></i>'
+        + '<i style="height:88%"></i><i style="height:76%"></i><i style="height:52%"></i><i style="height:22%"></i></div>'
+        + '<p class="ds__sub">9am to 5pm, peaking at <b>13:00</b>. On the water it is worse &mdash; the sea throws '
+        + 'a good deal of it back up at you.</p>' },
+    { k:'wind', ic:'\ud83d\udca8', t:'Wind', aud:'all',
+      b:'<div class="ds__windrow"><div class="ds__compass"><svg viewBox="0 0 60 60" aria-hidden="true">'
+        + '<circle cx="30" cy="30" r="26" class="ds__cring"></circle>'
+        + '<text x="30" y="9" class="ds__clbl" text-anchor="middle">N</text>'
+        + '<g class="ds__needle" data-dir="wdir"><path d="M30 8 L34 32 L30 28 L26 32 Z"></path></g>'
+        + '</svg></div><div><div class="ds__big"><span data-f="wind">14</span><em>mph SW</em></div>'
+        + '<p class="ds__sub">Gusting <span data-f="gust">27</span> &middot; force 4</p></div></div>',
+      b2:'<div class="ds__windrow"><div class="ds__compass ds__compass--big"><svg viewBox="0 0 60 60" aria-hidden="true">'
+        + '<circle cx="30" cy="30" r="26" class="ds__cring"></circle>'
+        + '<text x="30" y="9" class="ds__clbl" text-anchor="middle">N</text>'
+        + '<text x="53" y="33" class="ds__clbl" text-anchor="middle">E</text>'
+        + '<text x="30" y="56" class="ds__clbl" text-anchor="middle">S</text>'
+        + '<text x="7" y="33" class="ds__clbl" text-anchor="middle">W</text>'
+        + '<g class="ds__needle" data-dir="wdir"><path d="M30 8 L34 32 L30 28 L26 32 Z"></path></g>'
+        + '</svg></div><div style="flex:1;min-width:0">'
+        + '<div class="ds__kpis" style="grid-template-columns:repeat(2,1fr)"><div><b><span data-f="wind">14</span></b><span>mph mean</span></div>'
+        + '<div><b><span data-f="gust">27</span></b><span>mph gusts</span></div></div></div></div>'
+        + '<div class="ds__bars"><i style="height:34%"></i><i style="height:46%"></i><i style="height:62%"></i><i style="height:55%"></i>'
+        + '<i style="height:78%"></i><i style="height:88%"></i><i style="height:64%"></i></div>'
+        + '<p class="ds__sub">Gusts through the day. It is the gust that takes a trampoline over the fence, '
+        + 'not the average.</p>' },
+    { k:'storm', ic:'\u26a1', t:'Lightning', aud:'all',
+      b:'<div class="ds__radar"><span></span><span></span><span></span><i class="ds__strike"></i></div>'
+        + '<div class="ds__big" style="font-size:1.2rem"><span data-f="strikes">3</span><em>strikes within 40 km</em></div>'
+        + '<p class="ds__sub">Nearest <span data-f="strikekm">18</span> km SW, moving away</p>',
+      b2:'<div class="ds__radar ds__radar--big"><span></span><span></span><span></span><span></span>'
+        + '<i class="ds__strike"></i><i class="ds__strike ds__strike--b"></i></div>'
+        + '<div class="ds__kpis"><div><b><span data-f="strikes">3</span></b><span>within 40 km</span></div>'
+        + '<div><b><span data-f="strikekm">18</span><em>km</em></b><span>nearest</span></div>'
+        + '<div><b>SW</b><span>track</span></div>'
+        + '<div><b>12<em>min</em></b><span>since the last</span></div></div>'
+        + '<p class="ds__sub">Rings at 10, 20 and 40 km. Weather information for deciding whether to unplug things '
+        + 'or pull a boat &mdash; never a safety system.</p>' },
+    { k:'aurora', ic:'\ud83c\udf0c', t:'Aurora &amp; solar activity', aud:'all',
+      b:'<div class="ds__aur"></div>'
+        + '<div class="ds__big">Kp <span data-f="kp">4</span><em>quiet-ish</em></div>'
+        + '<p class="ds__sub">No flare above C-class in 24h &middot; nothing to see from Dorset tonight</p>',
+      b2:'<div class="ds__aur ds__aur--big"></div>'
+        + '<div class="ds__kpis"><div><b><span data-f="kp">4</span></b><span>Kp index</span></div>'
+        + '<div><b>C2.1</b><span>biggest flare, 24h</span></div>'
+        + '<div><b>412</b><span>solar wind km/s</span></div>'
+        + '<div><b>Low</b><span>chance tonight</span></div></div>'
+        + '<div class="ds__bars"><i style="height:22%"></i><i style="height:31%"></i><i style="height:44%"></i><i style="height:38%"></i>'
+        + '<i style="height:52%"></i><i style="height:49%"></i><i style="height:44%"></i><i style="height:36%"></i></div>'
+        + '<p class="ds__sub">Kp over 24 hours. From Dorset you want Kp 6 or better before it is worth driving '
+        + 'somewhere dark and looking north.</p>' },
     { k:'weather', ic:'\ud83c\udf24', t:'Weather', aud:'all',
       b:'<div class="ds__big"><span data-f="wxt">14</span><em>&deg;C cloudy</em></div>'
         + '<div class="ds__days"><span class="ds__day"><b>15&deg;</b>Wed</span><span class="ds__day"><b>17&deg;</b>Thu</span>'
@@ -2769,16 +2936,17 @@
     free: [['pcs',2],['backup',1],['visit',1],['survey',1],['cctv',2],['energy',1],['weather',1]]
   };
   var DSPROPS = [
-    { p:'home',     ic:'\ud83c\udfe0', t:'Home',          lay:[['cctv',2],['pet',1],['energy',1],['broadband',1],['door',1],['leak',1],['weather',1]] },
+    { p:'home',     ic:'\ud83c\udfe0', t:'Home',          lay:[['cctv',2],['sunset',1],['tide',1],['uv',1],['wind',1],['energy',1],['pet',1]] },
     { p:'business', ic:'\ud83c\udfe2', t:'Business',      lay:[['assets',2],['sitecost',2],['fence',1],['journey',1],['wifi',2],['servers',1],['alerts',2],['cctv',1]] },
-    { p:'boat',     ic:'\u26f5', t:'Boat',                 lay:[['vehicle',2],['energy',1],['bilge',1],['fence',1],['water',1],['weather',1],['alerts',2]] },
+    { p:'boat',     ic:'\u26f5', t:'Boat',                 lay:[['tide',2],['wind',1],['storm',1],['vehicle',2],['energy',1],['bilge',1],['fence',1]] },
     { p:'camper',   ic:'\ud83d\ude90', t:'Campervan',     lay:[['vehicle',2],['journey',2],['trip',1],['ecu',1],['fillup',1],['energy',1],['water',1]] },
     { p:'holiday',  ic:'\ud83c\udfdd', t:'Holiday home',  lay:[['heating',2],['leak',1],['cctv',1],['door',1],['energy',1],['weather',1]] }
   ];
   var DSD = { pwr:1840, battp:82, cost:1.42, kwh:6.8, kwhs:4.1, frz:-19, doors:9, aps:12, clients:38,
               poe:61, mbps:71, vmi:128, vbatt:12.7, wxt:14, run:92, out:1420, heat:17.5, hum:58, wtr:74,
               spd:48, mtd:17.2, mpg:34.2, cool:88, fuel:62, petkm:2.4, petbat:71,
-              jcost:11.40, fuelp:1.429, brim:34.9, kwhadd:31.4, solarsh:62, chcost:4.02, idle:2.18 };
+              jcost:11.40, fuelp:1.429, brim:34.9, kwhadd:31.4, solarsh:62, chcost:4.02, idle:2.18,
+              tideh:4.2, seatemp:17.4, sunq:78, uv:6, wind:14, gust:27, wdir:225, strikes:3, strikekm:18, kp:4 };
   var DS = null, DSTIMER = 0, DSSAVED = null, DSMODE = 'mine';
   function dsPlan() { return (JD && JD.plan) ? JD.plan : ((JD && JD.tier === 'pro') ? 'home' : 'free'); }
   function dsPlanName(p) { return p === 'business' ? '365 Business Support' : (p === 'home' ? '365 Home Support' : '365 Club (free)'); }
@@ -2838,6 +3006,16 @@
     DSD.solarsh = j(DSD.solarsh, 4, 0, 96);
     DSD.chcost = Math.max(0, DSD.kwhadd * (1 - DSD.solarsh / 100) * 0.34);
     DSD.idle = j(DSD.idle, .08, .4, 9);
+    DSD.tideh = j(DSD.tideh, .12, 0.4, 4.9);
+    DSD.seatemp = j(DSD.seatemp, .1, 8, 21);
+    DSD.sunq = j(DSD.sunq, 5, 8, 97);
+    DSD.uv = j(DSD.uv, .5, 0, 9);
+    DSD.wind = j(DSD.wind, 4, 2, 46);
+    DSD.gust = Math.max(DSD.wind + 2, j(DSD.gust, 6, 4, 68));   // a gust is never below the mean
+    DSD.wdir = (DSD.wdir + (Math.random() - .5) * 14 + 360) % 360;
+    DSD.strikes = Math.max(0, Math.min(40, DSD.strikes + (Math.random() < .3 ? 1 : (Math.random() < .2 ? -1 : 0))));
+    DSD.strikekm = j(DSD.strikekm, 3, 2, 40);
+    DSD.kp = j(DSD.kp, .4, 0, 8);
     DSD.wtr = Math.max(12, DSD.wtr - Math.random() * .5);
     if (DSD.wtr < 14) DSD.wtr = 96;
   }
@@ -2853,6 +3031,9 @@
       jcost: dsNum(DSD.jcost, 2), fuelp: dsNum(DSD.fuelp, 3), brim: dsNum(DSD.brim, 1),
       kwhadd: dsNum(DSD.kwhadd, 1), solarsh: dsNum(DSD.solarsh), chcost: dsNum(DSD.chcost, 2),
       idle: dsNum(DSD.idle, 2),
+      tideh: dsNum(DSD.tideh, 1), seatemp: dsNum(DSD.seatemp, 1), sunq: dsNum(DSD.sunq),
+      uv: dsNum(DSD.uv), wind: dsNum(DSD.wind), gust: dsNum(DSD.gust),
+      strikes: dsNum(DSD.strikes), strikekm: dsNum(DSD.strikekm), kp: dsNum(DSD.kp),
       // pence per mile follows the economy figure rather than sitting there as a
       // number that never agrees with the mpg beside it
       ppm: dsNum(DSD.fuelp * 454.6 / Math.max(1, DSD.mpg)) };
@@ -2866,6 +3047,18 @@
       var v = vals[n.getAttribute('data-bar')];
       if (v !== undefined) n.style.width = Math.max(0, Math.min(100, parseFloat(v))) + '%';
     });
+    // arc gauges: UV runs 0-11 on the world scale, so the sweep is scaled to that
+    Array.prototype.forEach.call(g.querySelectorAll('[data-arc]'), function (n) {
+      var f = n.getAttribute('data-arc'), v = DSD[f];
+      if (v === undefined) return;
+      var len = 150.8, pct = Math.max(0, Math.min(1, v / 11));
+      n.setAttribute('stroke-dasharray', (len * pct).toFixed(1) + ' ' + len);
+      n.setAttribute('stroke', v >= 8 ? 'var(--pbad)' : (v >= 6 ? 'var(--pwarn)' : 'var(--pgood)'));
+    });
+    Array.prototype.forEach.call(g.querySelectorAll('[data-dir]'), function (n) {
+      var v = DSD[n.getAttribute('data-dir')];
+      if (v !== undefined) n.setAttribute('transform', 'rotate(' + Math.round(v) + ' 30 30)');
+    });
   }
   function dsMsg(t) { var m = document.getElementById('dsMsg'); if (m) m.textContent = t; }
   // ---- counting numbers -----------------------------------------------------
@@ -2877,7 +3070,9 @@
     aps:[0,0], clients:[0,0], poe:[0,0], mbps:[0,0], vmi:[0,0], vbatt:[1,0], wxt:[0,0], run:[0,0],
     out:[0,1], heat:[1,0], hum:[0,0], wtr:[0,0], spd:[0,0], mtd:[1,0], mpg:[1,0], cool:[0,0],
     fuel:[0,0], petkm:[1,0], petbat:[0,0], ppm:[0,0],
-    jcost:[2,0], fuelp:[3,0], brim:[1,0], kwhadd:[1,0], solarsh:[0,0], chcost:[2,0], idle:[2,0] };
+    jcost:[2,0], fuelp:[3,0], brim:[1,0], kwhadd:[1,0], solarsh:[0,0], chcost:[2,0], idle:[2,0],
+    tideh:[1,0], seatemp:[1,0], sunq:[0,0], uv:[0,0], wind:[0,0], gust:[0,0], strikes:[0,0],
+    strikekm:[0,0], kp:[0,0] };
   function dsFmt(v, dp, sep) {
     if (sep) return Number(v).toLocaleString('en-GB', { minimumFractionDigits: dp, maximumFractionDigits: dp });
     return dp ? v.toFixed(dp) : String(Math.round(v));

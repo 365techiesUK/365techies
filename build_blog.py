@@ -579,6 +579,27 @@ with open(os.path.join(bp.BASE, "sitemap.xml"), "w", encoding="utf-8") as f:
     f.write(sm)
 print("Wrote sitemap.xml with %d URLs" % (len(bp.PAGES) + 1))
 
+# ---------------- snippet guard: shout about anything Google will truncate ----------------
+# A description over the _meta_desc limit gets amputated mid-sentence with an
+# ellipsis, and a title over 60 characters gets cut off in the results. Both
+# silently cost clicks on pages that already rank, which is why 105 page-one
+# pages were earning 0.94% CTR before anyone noticed. Overrides: snippets_data.py.
+from html import unescape as _unesc
+# Test the ACTUAL rendered snippet, not the source length - _meta_desc trims a
+# long description at a sentence boundary where it can, and that result is fine.
+# The defect is only the ellipsis it falls back to when it cannot.
+_bad_desc = [p["slug"] for p in bp.PAGES
+             if bp._meta_desc(str(p.get("desc") or "")).rstrip().endswith("&hellip;")]
+_bad_title = [p["slug"] for p in bp.PAGES
+              if len(_unesc(str(p.get("title") or ""))) > 60]
+if _bad_desc or _bad_title:
+    print("  SNIPPET WARNING: %d descriptions get cut with an ellipsis, "
+          "%d titles over 60 chars (Google truncates)."
+          % (len(_bad_desc), len(_bad_title)))
+    for _s in (_bad_desc + _bad_title)[:6]:
+        print("    /%s/" % _s)
+    print("    Fix in snippets_data.py; audit with tools_check_snippets.py")
+
 # ---------------- regenerate llms.txt (AI grounding) from the live pages — never drifts ----------------
 import html as _html
 def _clean(s): return _html.unescape((s or "")).replace("\n", " ").strip()
