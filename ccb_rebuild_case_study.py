@@ -189,6 +189,62 @@ def build():
         cta2=("Check your own site free", "/website-checker/"),
         chips=["TTFB 1,320ms &rarr; 97ms", "111 requests &rarr; 15", "20 pages &rarr; 79"]))
 
+    # THE SCREENSHOTS. Captured with headless Edge on 30 July 2026 - the old
+    # WordPress site's last day, same day as every measurement on this page. The
+    # originals (plus a full-length capture and the timber pages) are archived at
+    # C:\\claude\\ccb-casestudy\\shots\\ - they can never be retaken. All four
+    # images carry width/height so they cannot shift layout, and load lazily.
+    # The caption is deliberate: design is taste, the tables are measurement -
+    # this page's authority rests on never blurring that line.
+    body.append('''    <section class="section section--alt" aria-label="The two sites, side by side" id="looks">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// SAME BUSINESS, SAME DAY</p>
+          <h2 class="section-title section-title--center" data-title>See the difference
+            first<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Both versions photographed on 30 July 2026
+            &mdash; the old site&rsquo;s last day. Design is taste; the tables further down are
+            measurement. But taste is where every visitor starts.</p>
+        </div>
+        <div class="sc__grid">
+          <figure class="sc__fig">
+            <span class="sc__tag sc__tag--old">Old &middot; WordPress</span>
+            <img src="/images/ccb-old-home.webp" alt="The old colinclarkbuilders.co.uk homepage: a dated WordPress theme with a grey header and stock-style layout" width="1100" height="773" loading="lazy" decoding="async">
+            <figcaption>The homepage visitors saw until 30 July 2026.</figcaption>
+          </figure>
+          <figure class="sc__fig">
+            <span class="sc__tag sc__tag--new">New &middot; static</span>
+            <img src="/images/ccb-new-home.webp" alt="The rebuilt colinclarkbuilders.co.uk homepage: full-height photograph of a restored cottage with the heading Old buildings, cared for by hand, in lime and oak" width="1100" height="773" loading="lazy" decoding="async">
+            <figcaption>The same business, rebuilt &mdash; led by their own photographs.</figcaption>
+          </figure>
+        </div>
+        <div class="sc__grid sc__grid--phones">
+          <figure class="sc__fig">
+            <span class="sc__tag sc__tag--old">Old &middot; on a phone</span>
+            <img src="/images/ccb-old-mobile.webp" alt="The old site on a 390-pixel phone screen" width="390" height="844" loading="lazy" decoding="async">
+          </figure>
+          <figure class="sc__fig">
+            <span class="sc__tag sc__tag--new">New &middot; on a phone</span>
+            <img src="/images/ccb-new-mobile.webp" alt="The rebuilt site on the same 390-pixel phone screen" width="390" height="844" loading="lazy" decoding="async">
+          </figure>
+        </div>
+        <p class="rb__note"><strong>Where most of their visitors actually are.</strong> Just over
+          half of local-service searches happen on a phone, and the phone view is where the old
+          site struggled most. The two shots above are the same 390-pixel screen.</p>
+      </div>
+    </section>
+<style>
+.sc__grid{display:grid;grid-template-columns:1fr;gap:.9rem;max-width:1100px;margin:0 auto 1rem}
+@media (min-width:700px){.sc__grid{grid-template-columns:1fr 1fr}}
+.sc__grid--phones{max-width:640px}
+.sc__fig{margin:0;background:var(--panel,#0d1530);border:1px solid var(--line,#2a3b63);border-radius:13px;padding:.7rem;text-align:center}
+.sc__fig img{width:100%;height:auto;border-radius:8px;display:block}
+.sc__tag{display:inline-block;margin:0 0 .55rem;font-family:var(--mono,monospace);font-size:.66rem;letter-spacing:.09em;text-transform:uppercase;padding:.14rem .5rem;border-radius:5px}
+.sc__tag--old{background:rgba(159,181,211,.12);color:#b9cbe2;border:1px solid rgba(159,181,211,.34)}
+.sc__tag--new{background:rgba(29,151,227,.12);color:#6fc2f5;border:1px solid rgba(29,151,227,.45)}
+.sc__fig figcaption{margin-top:.55rem;font-size:.78rem;line-height:1.5;color:var(--mut,#9fb5d3)}
+</style>''')
+
     body.append('''    <section class="section" aria-label="Why measure first" id="why">
       <div class="wrap">
         <div class="section-head">
