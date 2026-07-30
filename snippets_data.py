@@ -761,6 +761,7 @@ SNIPPETS = {
     },
     "off-grid-internet": {
         "title": "Off-Grid Internet UK: No Power, No Signal, No Problem",
+        "desc": "Internet where there is no mains power and no mobile signal, delivered from a genuinely off-grid solar and lithium powered van. Plus what it cannot do.",
     },
     "how-we-price": {
         "title": "How We Price IT Support (and Why Cheapest Isn't Best)",
@@ -785,15 +786,18 @@ SNIPPETS = {
     },
     "remote-access": {
         "title": "Remote Access: Work From Anywhere on Your Own PC",
+        "desc": "We set home and business users up to securely reach their own laptop or PC from anywhere with Splashtop Business. Fully encrypted and genuinely fast.",
     },
     "outgrown-wix-squarespace": {
         "title": "Outgrown Wix or Squarespace? An Honest Checklist",
+        "desc": "Have you outgrown Wix or Squarespace? An honest checklist from a family-run Dorset firm, including when staying put is the right call after all.",
     },
     "dell-optiplex-guide": {
         "title": "Dell OptiPlex Guide: Ports, Monitors, UPS &amp; Care",
     },
     "threadripper-workstations": {
         "title": "AMD Threadripper Workstations | Scan 3XS Partner",
+        "desc": "As a Scan partner, 365 Techies supplies and supports high-end AMD Threadripper and Threadripper PRO workstations, custom-built by Scan's 3XS division.",
     },
     "refurbished-vs-new-laptop": {
         "title": "Refurbished vs New Laptop: Which Should You Buy?",
@@ -810,14 +814,8 @@ SNIPPETS = {
     "it-support-for-opticians": {
         "title": "IT Support for Opticians in Bournemouth &amp; Dorset",
     },
-    "it-jargon-buster": {
-        "title": "IT Jargon Buster: A Plain-English A-Z IT Glossary",
-    },
     "hard-drive-upgrade": {
         "title": "SSD &amp; Hard Drive Upgrade in Bournemouth &amp; Dorset",
-    },
-    "free-tools": {
-        "title": "Free IT Tools, No Download: Run in Your Browser",
     },
     "agentic-ai-systems": {
         "title": "Agentic AI Systems &amp; AI Automation Agency, Dorset",
@@ -839,6 +837,88 @@ SNIPPETS = {
     },
     "areas-covered": {
         "title": "Areas Covered: IT Support Across Bournemouth &amp; Dorset",
+        "desc": "Remote and on-site IT support across Bournemouth, Poole, Christchurch, Wimborne, Ferndown and the rest of Dorset, for homes and businesses alike.",
+    },
+
+    # ================================================================
+    # LAST PASS: the highest-impression pages still carrying a cut description.
+    # Most sit at position 20-85, so a better snippet earns little until they
+    # rank - but /about/ alone had 1,077 impressions, and leaving the hub and
+    # nav pages broken would be an odd place to stop.
+    # ================================================================
+    "about": {
+        "desc": "365 Techies is a family-run Bournemouth IT support company established in 1995. Dell specialists, Microsoft partners, and the same two faces every visit.",
+    },
+    "computer-spec-checker": {
+        "desc": "Free PC hardware checker. See what is inside your computer instantly: operating system, graphics card, cores, screen, memory and battery, read live.",
+    },
+    "outlook-wont-open-in-safe-mode": {
+        "desc": "If classic Outlook will not open even in safe mode, the fault is past add-ins. Run Office Quick then Online Repair, make a new profile, then scanpst.",
+    },
+    "home-cinema-entertainment": {
+        "desc": "As a Richer Sounds Bournemouth partner, 365 Techies supplies, installs and supports home entertainment systems: 4K projectors and Dolby surround sound.",
+    },
+    "meet-the-team": {
+        "desc": "Meet the team behind 365 Techies, a family-run IT support business in Bournemouth looking after Dorset homes and businesses with patience since 1995.",
+    },
+    "free-pc-health-check": {
+        "desc": "365 PC Manager is a free, honest PC health check for Windows 10 and 11 from a Dorset family firm. A health score and one-tap boost, with no fake errors.",
+    },
+    "it-support-for-home-workers": {
+        "desc": "Reliable IT support for people working from home. Email, Microsoft 365, Teams, printers, Wi-Fi, security and backups, all kept working so you can stay put.",
+    },
+    "it-support-by-industry": {
+        "desc": "Specialist IT support by industry across Bournemouth, Poole and Dorset: accountants, financial advisers, solicitors, dental, care homes and manufacturers.",
+    },
+    "outlook-stuck-on-loading-profile": {
+        "desc": "Classic Outlook frozen on the Loading Profile splash screen? End the Office tasks, start in safe mode, disable add-ins, then run a Quick Repair.",
+    },
+    "outlook-signature-not-showing": {
+        "desc": "Outlook signature not showing on new emails or replies? The fix for classic Outlook and for new Outlook on the web: set it as default for both, in HTML.",
+    },
+    "it-support-for-manufacturing": {
+        "desc": "IT support for manufacturers, engineering firms and workshops across Dorset. Keeping design software, stock and order systems, and the shop floor running.",
+    },
+    "it-jargon-buster": {
+        "title": "IT Jargon Buster: A Plain-English A-Z IT Glossary",
+        "desc": "A plain-English A-Z IT glossary: clear, simple explanations of the terms that get used at you, from the cloud and VPN to ransomware, MFA and phishing.",
+    },
+    "off-grid-victron-energy": {
+        "desc": "Off-grid and backup power built on Victron Energy. Design, supply, installation and remote monitoring of solar, battery storage and inverters.",
+    },
+    "accreditations": {
+        "desc": "365 Techies accreditations and partners: Microsoft Partner and Office Specialists, Dell specialists, Malwarebytes Partner and Sustainable Dorset member.",
+    },
+    "cctv-smart-home": {
+        "desc": "Smart security and smart living. CCTV cameras, video doorbells, smart lighting, heating and home automation, set up properly and secured against hackers.",
+    },
+    "it-support-for-charities-dorset": {
+        "desc": "Affordable, caring IT support for charities and nonprofits in Dorset. Free and discounted Microsoft 365 nonprofit licences, plus Cyber Essentials help.",
+    },
+    "free-tools": {
+        "title": "Free IT Tools, No Download: Run in Your Browser",
+        "desc": "Free IT tools that run entirely in your browser. No download, no sign-up, nothing installed. Check your website, test broadband, and check a password.",
+    },
+
+    # ---- last ten at position 1-20. These sat under the >=10-impression filter
+    # used to build the striking-distance list, so they were missed first time.
+    "victron-system-builder": {
+        "desc": "Free Victron system builder. Four questions gives you the complete build: lithium battery, solar, MPPT, inverter and monitoring, plus the exact cables.",
+    },
+    "onedrive-files-disappeared": {
+        "desc": "OneDrive files or documents vanished on Windows 11? Do not panic, they are usually recoverable. Real, safe recovery steps plus same-day remote help.",
+    },
+    "it-support-for-retired-users": {
+        "desc": "Friendly, patient computer help for retired users. Unhurried support with laptops, email, printers, online accounts, photos, video calls and scam checks.",
+    },
+    "cisco-aironet-end-of-life": {
+        "desc": "End-of-sale, end-of-software-maintenance and last-date-of-support dates for Cisco Aironet access points, from Cisco's own bulletins, and what each means.",
+    },
+    "case-study-colin-clark-builders": {
+        "desc": "Over 15 years looking after Colin Clark Builders: laptop repairs, Dell Latitude business laptops, website and email hosting, and a full site rebuild.",
+    },
+    "outlook-not-responding": {
+        "desc": "Outlook showing Not Responding, frozen or hanging? The safe, ordered fix: safe mode, add-ins, repair Office, then trim the data file down.",
     },
 }
 

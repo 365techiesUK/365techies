@@ -585,6 +585,16 @@ print("Wrote sitemap.xml with %d URLs" % (len(bp.PAGES) + 1))
 # silently cost clicks on pages that already rank, which is why 105 page-one
 # pages were earning 0.94% CTR before anyone noticed. Overrides: snippets_data.py.
 from html import unescape as _unesc
+# Run the override table's own self-test as part of the build. It was only wired
+# to __main__, so a duplicate slug - which a Python dict literal resolves by
+# silently discarding the earlier entry and its description - got through twice
+# before anyone ran the file directly. A guard nobody runs is not a guard.
+import snippets_data as _sd
+_sn_problems = _sd.check()
+if _sn_problems:
+    print("  SNIPPETS_DATA FAILED %d CHECK(S):" % len(_sn_problems))
+    for _p in _sn_problems:
+        print("    " + _p)
 # Test the ACTUAL rendered snippet, not the source length - _meta_desc trims a
 # long description at a sentence boundary where it can, and that result is fine.
 # The defect is only the ellipsis it falls back to when it cannot.
