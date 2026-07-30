@@ -16,6 +16,7 @@ _WEB_CLUSTER = [
    ("website-rebuild", "Rebuild without losing rankings", "The SEO-safe migration pillar &mdash; how we move a site over."),
  ]),
  ("Proof &amp; performance", [
+   ("website-rebuild-seo-case-study", "A rebuild, measured", "A client&rsquo;s WordPress site and its replacement, measured the day before the old one died."),
    ("how-we-rebuilt-our-website", "How we rebuilt our own site", "WordPress to hand-built &mdash; the numbers, honestly."),
    ("website-speed-local-seo", "Speed &amp; local SEO", "Why a fast site wins local customers &mdash; and how to check yours."),
    ("website-checker", "Free website checker", "Speed, SSL and health in about a minute, no sign-up."),

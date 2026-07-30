@@ -46,6 +46,7 @@ Published with Colin Clark's permission, as with the existing case study.
 """
 from build_pages import (add, graph, crumb, webpage, faqpage, faq_html, cta,
                          hero, bc, SITE, TODAY)
+from ccb_race import RACE   # the real-time load race - see ccb_race.py for the rules
 
 SLUG = "website-rebuild-seo-case-study"
 
@@ -202,6 +203,8 @@ def build():
           is worse than no number.</p>
       </div>
     </section>''')
+
+    body.append(RACE)
 
     body.append('''    <section class="section section--alt" aria-label="Speed measurements" id="numbers">
       <div class="wrap">
