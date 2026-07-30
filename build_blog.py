@@ -11,6 +11,7 @@ import wifi_dashboards      # custom business Wi-Fi/mesh dashboard service page 
 import victron_business     # Victron for business: resilience, carbon, HMRC-sourced tax position
 import home_dashboards      # next-gen home dashboards: CCTV, power, backups on one screen
 import win10_esu_business   # commercial Windows 10 ESU: doubling + cumulative pricing
+import ccb_rebuild_case_study  # measured WordPress->static before/after (CCB rebuild)
 from build_pages import (add, graph, crumb, webpage, faqpage, faq_html, cta,
                          hero, SITE, write_all)
 

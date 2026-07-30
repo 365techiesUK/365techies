@@ -236,7 +236,7 @@
  },
  "case-study-colin-clark-builders": {
   "first": "2026-07-28",
-  "h": "0a0a650250c6da40",
+  "h": "5191c13808d139ab",
   "last": "2026-07-30"
  },
  "cctv-in-detached-garage-connect-to-house": {
@@ -3012,6 +3012,11 @@
  "website-rebuild": {
   "first": "2026-07-28",
   "h": "0fae192d03e8c906",
+  "last": "2026-07-30"
+ },
+ "website-rebuild-seo-case-study": {
+  "first": "2026-07-30",
+  "h": "a041dbc8b56c3cdd",
   "last": "2026-07-30"
  },
  "website-speed-local-seo": {

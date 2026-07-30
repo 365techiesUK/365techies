@@ -5357,6 +5357,8 @@ def ccb_case_study():
       ("Do you rebuild WordPress sites or replace them?",
        "It depends on what the site needs to do. Colin&rsquo;s stayed on WordPress for the 2025 redesign. For the "
        "2026 refresh we rebuilt it as a fast static site, because for a business site of this kind it is quicker, "
+       "far harder to hack and needs no plugin maintenance. We measured both versions the day before the "
+       "switch &mdash; see <a href=\"/website-rebuild-seo-case-study/\">the before-and-after numbers</a>. "
        "far harder to hack and needs no plugin maintenance. We will always tell you which we think is right, and why."),
     ]
     content = "\n".join([
