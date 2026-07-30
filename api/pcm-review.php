@@ -67,6 +67,14 @@ $CF_LIVE = false;   // <-- booking confirmed/changed/cancelled emails. When flip
 
 $RV_Q = __DIR__ . '/pcm-reviewq.json';
 $RV_ASK_WINDOW = 1209600;   // visits stay askable for 14 days after they end; older = too late
+/* How long after a visit ends before we ask. Was 86400 (next day). Steve's call on
+   30 Jul 2026: ask within the hour, while the machine is visibly working and the
+   relief is fresh - a day later they have moved on and it reads as admin.
+
+   An hour is a floor, not a promise. The send still waits for the 9am-8pm window
+   below, so a job finished at 7pm is asked at 9am rather than at night, and it
+   still waits for a cron tick. Raise this if asks ever start feeling pushy. */
+$RV_ASK_DELAY = 3600;
 
 if (!function_exists('rvq_open')) {
 
@@ -1057,7 +1065,7 @@ function wc_process($cap = 5) {
 // ---- queue processor. Sends entries whose appointment ended >24h ago. ----
 // Returns a small stats array. Never throws; safe to call from the callback.
 function rv_process($cap = 5) {
-    global $RV_LIVE, $RV_ASK_WINDOW;
+    global $RV_LIVE, $RV_ASK_WINDOW, $RV_ASK_DELAY;
     $h = (int)date('G');
     if ($h < 9 || $h >= 20) return array('skip' => 'quiet_hours');   // no 3am review asks
     list($lk, $q) = rvq_open();
@@ -1072,7 +1080,7 @@ function rv_process($cap = 5) {
                       && (isset($e['tries']) ? $e['tries'] : 0) < 3);   // a crashed send, not a live one
         if ($st !== 'pending' && !$retryable) continue;
         $end = isset($e['end']) ? (int)$e['end'] : 0;
-        if ($end <= 0 || time() < $end + 86400) continue;              // not due yet
+        if ($end <= 0 || time() < $end + max(60, (int)$RV_ASK_DELAY)) continue;   // not due yet
         if ($end < time() - $RV_ASK_WINDOW) continue;                  // visit ended >14 days ago: too late to ask
         if ((isset($e['tries']) ? $e['tries'] : 0) >= 3) continue;
         $em = isset($e['em']) ? $e['em'] : '';
