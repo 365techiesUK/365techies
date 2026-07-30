@@ -151,7 +151,13 @@ ErrorDocument 404 /404.html
 <FilesMatch "^pcm-log-[a-f0-9\-]+\.txt$">
   Require all denied
 </FilesMatch>
-<FilesMatch "^(pcm-admin-secret|pcm-simplybook|pcm-textmagic|pass-secret|pcm-gocardless)\.php$">
+<FilesMatch "^(pcm-admin-secret|pcm-simplybook|pcm-textmagic|pass-secret|pcm-gocardless|pcm-feeds-keys)\.php$">
+  Require all denied
+</FilesMatch>
+# Coast & sky feed caches. The space-weather ones are public domain, but the tide
+# and weather ones are our licensed copies of Admiralty/Met Office data - served
+# only through pcm-feeds.php, never raw.
+<FilesMatch "^pcm-feed-[a-z0-9_\-]+\.json(\..*)?$">
   Require all denied
 </FilesMatch>
 <Files "pcm-gc-cache.json">

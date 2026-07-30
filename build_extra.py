@@ -20665,7 +20665,7 @@ def write_portal_page():
 </style>'''
     js = '''<script>
 (function () {
-  var BK = '/api/pcm-booking.php', PCM = '/api/pcm.php', DASH = '/api/pcm-dash.php', TEAM = '/api/pcm-team.php', CONN = '/api/pcm-connect.php';
+  var BK = '/api/pcm-booking.php', PCM = '/api/pcm.php', DASH = '/api/pcm-dash.php', TEAM = '/api/pcm-team.php', CONN = '/api/pcm-connect.php', FEEDS = '/api/pcm-feeds.php';
   var el = document.getElementById('p365app');
   var S = {};
   try { S = JSON.parse(sessionStorage.getItem('p365s') || 'null') || JSON.parse(localStorage.getItem('p365') || '{}'); } catch (e) { S = {}; }
@@ -21641,6 +21641,27 @@ def write_portal_page():
     journey:'vehicle', fillup:'vehicle', sitecost:'vehicle', charge:'ev',
     tide:'coast', sunset:'coast', uv:'coast', wind:'coast', storm:'coast', aurora:'coast' };
   var DSCONN = [];
+  // ---- real feeds ----------------------------------------------------------
+  // A tile says "live" only when something real answered. Space weather needs no
+  // key so it is live for everyone today; tides and weather stay SAMPLE until the
+  // owner drops a key file on the server, which is the honest default rather than
+  // a promise we cannot keep. Nothing here retries or polls: one fetch per studio
+  // session, served from a server-side cache.
+  var DSFEED = { space: null, wx: null, tide: null };
+  function dsFeeds(cb) {
+    var left = 1;
+    var done = function () { if (--left <= 0 && cb) cb(); };
+    fetch(FEEDS + '?f=space', { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(function (j) { if (j && j.ok) DSFEED.space = j; done(); })
+      .catch(done);
+  }
+  function dsAge(sec) {
+    if (sec === null || sec === undefined) return '';
+    if (sec < 120) return 'moments ago';
+    if (sec < 5400) return Math.round(sec / 60) + ' min ago';
+    return Math.round(sec / 3600) + 'h ago';
+  }
   function dsSrc(k) { for (var i = 0; i < DSSRC.length; i++) if (DSSRC[i].k === k) return DSSRC[i]; return null; }
   function dsRouteName(r) {
     if (r === 'invite') return 'You invite us in';
@@ -22033,6 +22054,16 @@ def write_portal_page():
         + '<p class="ds__sub">Rings at 10, 20 and 40 km. Weather information for deciding whether to unplug things '
         + 'or pull a boat &mdash; never a safety system.</p>' },
     { k:'aurora', ic:'\\ud83c\\udf0c', t:'Aurora &amp; solar activity', aud:'all',
+      live:function(){
+        var f = DSFEED.space;
+        if (!f || f.kp === null || f.kp === undefined) return null;
+        var kp = f.kp, col = kp >= 6 ? 'var(--pgood)' : (kp >= 5 ? 'var(--pwarn)' : 'var(--pwhite)');
+        return '<div class="ds__aur"></div>'
+          + '<div class="ds__big" style="color:' + col + '">Kp ' + kp.toFixed(1) + '<em>' + esc(f.chance || '') + ' from here</em></div>'
+          + '<p class="ds__sub">' + (f.flare ? 'Biggest flare ' + esc(f.flare) + ' &middot; ' : '')
+          + (f.wind ? 'solar wind ' + f.wind + ' km/s &middot; ' : '')
+          + esc(dsAge(f.age)) + (f.stale ? ' (last good reading)' : '') + '</p>';
+      },
       b:'<div class="ds__aur"></div>'
         + '<div class="ds__big">Kp <span data-f="kp">4</span><em>quiet-ish</em></div>'
         + '<p class="ds__sub">No flare above C-class in 24h &middot; nothing to see from Dorset tonight</p>',
@@ -22444,7 +22475,7 @@ def write_portal_page():
     var lg = document.getElementById('dsLegend');
     if (lg) lg.innerHTML = DSMODE === 'custom'
       ? '<span class="ds__tag samp">Sample</span> Everything here is a demo &mdash; design the screen you want and we will price building it on your own kit.'
-      : (lc ? '<span class="ds__tag live"><i></i>Live</span> ' + lc + ' tile' + (lc === 1 ? '' : 's') + ' reading your own account &middot; <span class="ds__tag samp">Sample</span> the rest are demos of what we could connect'
+      : (lc ? '<span class="ds__tag live"><i></i>Live</span> ' + lc + ' tile' + (lc === 1 ? '' : 's') + ' reading real data &middot; <span class="ds__tag samp">Sample</span> the rest are demos of what we could connect'
             : '<span class="ds__tag samp">Sample</span> Nothing is reading your account yet &mdash; the live tiles switch on once 365 PC Manager is on your PC');
     dsPaint();
     dsBind();
@@ -22669,7 +22700,7 @@ def write_portal_page():
         + '<p class="ds__eye">Your dashboard</p>'
         + '<h2>' + (pro ? 'Everything worth knowing, on one screen' : 'Build the screen, see if you like it') + '</h2>'
         + '<p class="ds__lede">' + (pro
-            ? 'This comes with your plan. The tiles marked <strong>live</strong> are reading your own account right now; the rest are samples of what we could connect for you.'
+            ? 'This comes with your plan. The tiles marked <strong>live</strong> are reading real data right now; the rest are samples of what we could connect for you.'
             : 'Have a play. Arrange it how you like and save it &mdash; and when you join a support plan, the live tiles start reading your own computers.')
         + '</p></div>' + planChip + '</div>'
         + '<div class="ds__modes" id="dsModes" role="group" aria-label="What you are building">'
@@ -22710,7 +22741,7 @@ def write_portal_page():
             + '<a class="btn sm ghost" href="/business-it-support-plans/" target="_blank" rel="noopener">Business support</a>'
             + '<a class="btn sm ghost" href="tel:+441202775566">01202 775566</a></div></div>')
         + '<div class="ds__truth"><p style="margin:0"><strong>Being straight with you:</strong> a tile is either marked <em>live</em>, in which case it is '
-        + 'reading your own account, or <em>sample</em>, in which case the numbers are made up and nothing is plugged in behind it. '
+        + 'reading something real, or <em>sample</em>, in which case the numbers are made up and nothing is plugged in behind it. '
         + 'We will never blur those two.</p>'
         + '<p style="margin:.5rem 0 0"><strong>And one thing a tracking tile is not:</strong> a theft tracker. It runs off the very battery bank it monitors, it is not hidden, and it is not insurer-recognised &mdash; so a dedicated tracker still owns that job. What this does well is tell you where your things are, how far they went and what it cost, and shout when something moves that should not have.</p>'
         + '<p style="margin:.5rem 0 0">Making a sample tile real &mdash; cameras, solar, sensors, your Wi-Fi controller, a production line &mdash; is a build we quote for. '
@@ -22748,6 +22779,8 @@ def write_portal_page():
         });
       }
       dsConnLoad(dsConnPaint);
+      // when the feed lands, re-render so any tile it feeds can flip to live
+      dsFeeds(function () { if (DS) dsRender(); });
       document.getElementById('dsSave').onclick = function () { dsSave(this); };
       document.getElementById('dsSend').onclick = function () { dsQuote(''); };
       var rs = function () {

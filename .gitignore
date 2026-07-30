@@ -75,3 +75,5 @@ api/pcm-draftfb.json.lock
 api/pcm-draftfb-rate.json
 api/pcm-draftfb-rate.json.lock
 .research/
+api/pcm-feeds-keys.php
+api/pcm-feed-*.json
