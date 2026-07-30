@@ -955,6 +955,34 @@ function mail_watchdog($stale = 1800) {
     return array('ok' => false, 'age_s' => $age, 'warned' => $due);
 }
 
+/* Record that a welcome went out by some route OTHER than the queue.
+   ------------------------------------------------------------------
+   The admin console's "send it to them now" button calls rv_send_raw directly -
+   no queue involved - and used to record the send only as a 'welcomed' stamp on
+   the customer. That was fine while a bare stamp was trusted. It stopped being
+   fine the moment pcm_welcome_maybe started verifying stamps against the queue:
+   a stamp with no entry behind it is exactly the signature of the July 2026 bug,
+   so the next sign-in would have decided the stamp was a lie and sent a SECOND
+   welcome. Margriet, Reg and Dean were all in that state.
+
+   So a direct send now leaves the same evidence a queued one does - the identical
+   'sent' stub wc_process writes, with no PII kept. Any route that emails someone
+   must record it where the once-only check actually looks. */
+function wc_mark_sent($ckey) {
+    $ckey = substr(preg_replace('/[^A-Za-z0-9_.@+-]/', '', (string)$ckey), 0, 80);
+    if ($ckey === '') return false;
+    list($lk, $q) = rvq_open();
+    if (!$lk) return false;
+    if (!isset($q['wc'])) $q['wc'] = array();
+    // never downgrade a real queue entry that is mid-flight; only fill a gap
+    if (!isset($q['wc'][$ckey]) || (isset($q['wc'][$ckey]['st']) && $q['wc'][$ckey]['st'] === 'pending')) {
+        $q['wc'][$ckey] = array('st' => 'sent', 'ts' => time());
+        rvq_save($q);
+    }
+    rvq_close($lk);
+    return true;
+}
+
 // ---- welcome queue processor. Mirrors rv_process: locked, capped, retried. ----
 function wc_process($cap = 5) {
     global $WC_LIVE, $WC_MAX_AGE, $WC_DELAY;

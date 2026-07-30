@@ -239,6 +239,37 @@ if (($_POST['do'] ?? '') === 'wcdiag') {
    page can report success or failure immediately - which also settles whether the
    mail layer works at all, independently of the trigger and the dedup logic. */
 $wcOne = null;
+/* Mark an address as already emailed WITHOUT sending anything.
+   -----------------------------------------------------------
+   For anyone emailed by a route that left no queue record - by hand, or via
+   "send it to them now" before 30 Jul 2026, when it wrote only a stamp. Since
+   pcm_welcome_maybe and the repair tool both treat a stamp with no queue entry
+   as the old bug, those people would otherwise be emailed a second time. */
+if (($_POST['do'] ?? '') === 'wcmarksent') {
+    $to = strtolower(trim((string)($_POST['wcemail'] ?? '')));
+    if (!filter_var($to, FILTER_VALIDATE_EMAIL)) $wcOne = array('ok' => false, 'why' => 'That is not a valid email address.');
+    else {
+        $nm = ''; $ck = '';
+        foreach (($db['customers'] ?? array()) as $k2 => $c2) {
+            foreach (array('sb_email', 'email') as $f) {
+                if (strtolower(trim((string)($c2[$f] ?? ''))) === $to) { $nm = (string)($c2['name'] ?? ''); $ck = $k2; break 2; }
+            }
+        }
+        if ($ck === '') {
+            $wcOne = array('ok' => false, 'why' => 'No customer record matches that address, so there is nothing to mark.');
+        } elseif (!function_exists('wc_mark_sent')) {
+            $wcOne = array('ok' => false, 'why' => 'Could not load the mail library (api/pcm-review.php).');
+        } else {
+            $okm = wc_mark_sent($ck);
+            if ($okm && empty($db['customers'][$ck]['welcomed'])) { $db['customers'][$ck]['welcomed'] = time(); }
+            if ($okm) save($DATA, $db);
+            $wcOne = array('ok' => (bool)$okm, 'to' => $to, 'name' => $nm !== '' ? $nm : $to, 'known' => true,
+                           'marked' => true,
+                           'why' => $okm ? '' : 'Could not open the queue file to record it. Try again in a moment.');
+        }
+    }
+}
+
 if (($_POST['do'] ?? '') === 'wcsendone') {
     $to = strtolower(trim((string)($_POST['wcemail'] ?? '')));
     if (!filter_var($to, FILTER_VALIDATE_EMAIL)) $wcOne = array('ok' => false, 'why' => 'That is not a valid email address.');
@@ -256,9 +287,15 @@ if (($_POST['do'] ?? '') === 'wcsendone') {
         } else {
             $first = function_exists('rv_first') ? rv_first($nm) : ($nm !== '' ? $nm : 'there');
             $sent = rv_send_raw($to, wc_subject(), wc_body($first), '', '', wc_body_html($first));
-            if ($sent && $ck !== '' && empty($db['customers'][$ck]['welcomed'])) {
-                $db['customers'][$ck]['welcomed'] = time();
-                save($DATA, $db);
+            if ($sent && $ck !== '') {
+                // Record it in the QUEUE too, not just as a stamp. pcm_welcome_maybe
+                // verifies stamps against the queue now, so a stamp with no entry
+                // behind it reads as the old bug and would earn them a second copy.
+                if (function_exists('wc_mark_sent')) wc_mark_sent($ck);
+                if (empty($db['customers'][$ck]['welcomed'])) {
+                    $db['customers'][$ck]['welcomed'] = time();
+                    save($DATA, $db);
+                }
             }
             $wcOne = array('ok' => (bool)$sent, 'to' => $to, 'name' => $first, 'known' => $ck !== '',
                            'why' => $sent ? '' : 'The mail layer refused the send. Check api/pcm-smtp.php on the server.');
@@ -503,12 +540,16 @@ th{color:#9fb5d3;font-weight:600;font-size:.75rem;text-transform:uppercase;lette
            silently override depending on document order -->
       <button class=ghost name=do value=wcdiag>&#129514; why hasn&rsquo;t an email arrived?</button>
       <button name=do value=wcsendone onclick="return confirm('Send the welcome email to this address now?')">&#9889; send it to them now</button>
+      <button class=ghost name=do value=wcmarksent title="Records that they have had it, without sending anything. Use it for anyone you emailed by hand, or before 30 Jul 2026 when a direct send did not write a queue record." onclick="return confirm('Mark this address as already emailed? Nothing is sent, and they will be skipped from now on.')">&#9986; mark as already sent</button>
     </form>
   </div>
 <?php if($wcOne !== null): ?>
   <div style="margin-top:.9rem;padding:.85rem 1rem;border-radius:10px;background:<?=$wcOne['ok']?'#0c2416':'#2a0f18'?>;border:1px solid <?=$wcOne['ok']?'#1e6b3a':'#7a2740'?>">
     <div style="font-size:.9rem;color:#f0f5fc">
-    <?php if($wcOne['ok']): ?>
+    <?php if($wcOne['ok'] && !empty($wcOne['marked'])): ?>
+      &#9986; <strong><?=h($wcOne['to'])?> marked as already emailed.</strong> Nothing was sent.
+      They will be skipped by the automatic welcome and by the repair tool from now on.
+    <?php elseif($wcOne['ok']): ?>
       &#9989; <strong>Sent to <?=h($wcOne['to'])?></strong> just now, addressed to <?=h($wcOne['name'])?>.
       <?php if(!$wcOne['known']): ?><br><span class=mach>Note: no customer record matches that address, so it was sent as a one-off and nothing was recorded against an account.</span><?php endif; ?>
     <?php else: ?>
