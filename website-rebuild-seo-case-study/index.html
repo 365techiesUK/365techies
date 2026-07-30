@@ -312,10 +312,18 @@
         },
         {
           "@type": "Question",
+          "name": "How do I make changes to a static site afterwards?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "You tell us, and we make them &mdash; that is part of <a href=\"/web-care/\">365 Web Care</a>, the monthly plan that follows a rebuild. In practice it is usually faster than logging into WordPress yourself, and nothing can be broken by a plugin update on the way. If you genuinely edit content every week, say so up front &mdash; that is one of the cases where we would tell you a static rebuild is the wrong answer."
+          }
+        },
+        {
+          "@type": "Question",
           "name": "Can you do this for my website?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Yes &mdash; and the first useful thing is free. Run your site through our <a href=\"/website-checker/\">free website checker</a> and it will show you the same kinds of problems we found here: missing descriptions, slow responses, missing structured data. If a rebuild is not worth it we will say so; sometimes fixing what is there is the better answer. See <a href=\"/web-design-hosting/\">web design and hosting</a>."
+            "text": "Yes &mdash; and the first useful thing is free. Run your site through our <a href=\"/website-checker/\">free website checker</a> and it will show you the same kinds of problems we found here: missing descriptions, slow responses, missing structured data. If a rebuild is not worth it we will say so; sometimes fixing what is there is the better answer. Or just ring 01202 775566 or <a href=\"/contact/?topic=website-rebuild\">send us your web address</a> and we will look at it with you."
           }
         }
       ]
@@ -993,8 +1001,47 @@
           something honest to compare against. We will measure again at <strong>30, 90 and 180
           days</strong> from real Search Console data, and this page will be updated with what
           actually happened &mdash; including if it is less than we hoped.</p>
+        <p class="rb__note"><strong>The straight-answer promise.</strong> If we look at your site and
+          a rebuild is not worth your money, we will tell you so &mdash; in writing, in the verdict.
+          Sometimes the honest answer is a smaller fix, and sometimes it is &ldquo;leave it
+          alone&rdquo;. We would rather lose a job than build something you did not need.</p>
       </div>
     </section>
+    <section class="section" aria-label="What happens if you get in touch" id="process">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// NO MYSTERY PROCESS</p>
+          <h2 class="section-title section-title--center" data-title>What happens if you get in
+            touch<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="rb__grid rb__grid--4">
+          <div class="rb__card"><span class="rb__ico" aria-hidden="true">&#49;&#65039;&#8419;</span>
+            <h3>Send us your web address</h3>
+            <p>Or ring 01202 775566. That is all we need to start &mdash; no meeting, no forms.</p></div>
+          <div class="rb__card"><span class="rb__ico" aria-hidden="true">&#50;&#65039;&#8419;</span>
+            <h3>We measure it, free</h3>
+            <p>The same checks you have just read: server response, requests, what a search engine
+              can and cannot see.</p></div>
+          <div class="rb__card"><span class="rb__ico" aria-hidden="true">&#51;&#65039;&#8419;</span>
+            <h3>A written verdict, either way</h3>
+            <p>Rebuild, fix what is there, or leave it alone. If a rebuild is not worth your money,
+              the verdict says so.</p></div>
+          <div class="rb__card"><span class="rb__ico" aria-hidden="true">&#52;&#65039;&#8419;</span>
+            <h3>If it is a rebuild</h3>
+            <p>A <a href="/website-rebuild/">fixed, published price</a> agreed in writing before we
+              start &mdash; and your old site stays live until the new one is ready, which is exactly
+              how this one could be measured the day before its swap.</p></div>
+        </div>
+      </div>
+    </section>
+<style>
+/* .rb__grid.rb__grid--4, not .rb__grid--4: the base .rb__grid rules are emitted in
+   the page's LAST style block, so at equal specificity they win and this four-step
+   strip rendered 3+1 with an orphan. The double class outranks them at any order. */
+.rb__grid.rb__grid--4{grid-template-columns:1fr}
+@media (min-width:560px){.rb__grid.rb__grid--4{grid-template-columns:repeat(2,1fr)}}
+@media (min-width:1000px){.rb__grid.rb__grid--4{grid-template-columns:repeat(4,1fr)}}
+</style>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1021,8 +1068,12 @@
           <div class="faq__ans"><p>Longer than anyone wants. Google has to recrawl, and it re-earns its judgement slowly. Weeks for the technical changes to be noticed, months before rankings settle. We measure at 30, 90 and 180 days against the baseline taken the day before launch &mdash; which is why taking that baseline matters so much. If nobody measured the old site, there is nothing to compare with, and every claim afterwards is just a story.</p></div>
         </details>
         <details class="faq" data-reveal>
+          <summary>How do I make changes to a static site afterwards?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>You tell us, and we make them &mdash; that is part of <a href="/web-care/">365 Web Care</a>, the monthly plan that follows a rebuild. In practice it is usually faster than logging into WordPress yourself, and nothing can be broken by a plugin update on the way. If you genuinely edit content every week, say so up front &mdash; that is one of the cases where we would tell you a static rebuild is the wrong answer.</p></div>
+        </details>
+        <details class="faq" data-reveal>
           <summary>Can you do this for my website?<span class="faq__icon" aria-hidden="true"></span></summary>
-          <div class="faq__ans"><p>Yes &mdash; and the first useful thing is free. Run your site through our <a href="/website-checker/">free website checker</a> and it will show you the same kinds of problems we found here: missing descriptions, slow responses, missing structured data. If a rebuild is not worth it we will say so; sometimes fixing what is there is the better answer. See <a href="/web-design-hosting/">web design and hosting</a>.</p></div>
+          <div class="faq__ans"><p>Yes &mdash; and the first useful thing is free. Run your site through our <a href="/website-checker/">free website checker</a> and it will show you the same kinds of problems we found here: missing descriptions, slow responses, missing structured data. If a rebuild is not worth it we will say so; sometimes fixing what is there is the better answer. Or just ring 01202 775566 or <a href="/contact/?topic=website-rebuild">send us your web address</a> and we will look at it with you.</p></div>
         </details>
         </div>
       </div>
@@ -1030,10 +1081,10 @@
     <section class="cta-band" aria-label="Get started">
       <div class="cta-band__inner">
         <h2 data-title>Wondering about your own site?<span class="title-underline title-underline--center"></span></h2>
-        <p class="lede lede--center" data-reveal>Start with the free checker &mdash; it takes seconds and shows you the same kinds of problems we found here. If a rebuild is not worth it, we will tell you that too.</p>
+        <p class="lede lede--center" data-reveal>Send us your web address and we will reply with the same before-tables you have just read, for your site, and a straight verdict &mdash; rebuild, fix what is there, or leave it alone. If a rebuild is not worth it, we will tell you that too, in writing. And a rebuild is a <a href="/website-rebuild/">fixed, published price</a>, agreed before we start &mdash; not a number invented after we have sized you up.</p>
         <div class="hero-buttons hero-buttons--center" data-reveal>
-          <a href="/website-checker/" class="button primary button--lg">Check your website free</a>
-          <a href="/web-design-hosting/" class="button secondary button--lg">Talk to us about a rebuild</a>
+          <a href="/contact/?topic=website-rebuild" class="button primary button--lg">Ask us to measure your site &mdash; free</a>
+          <a href="/website-checker/" class="button secondary button--lg">Run the checks yourself first</a>
         </div>
         <p class="cta__contact mono" data-reveal>01202 775566 &middot; help@365techies.co.uk &middot; MON&ndash;FRI 9AM&ndash;5PM</p>
       </div>

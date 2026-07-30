@@ -131,12 +131,19 @@ FAQS = [
      "days against the baseline taken the day before launch &mdash; which is why taking that baseline "
      "matters so much. If nobody measured the old site, there is nothing to compare with, and every "
      "claim afterwards is just a story."),
+    ("How do I make changes to a static site afterwards?",
+     "You tell us, and we make them &mdash; that is part of <a href=\"/web-care/\">365 Web Care</a>, "
+     "the monthly plan that follows a rebuild. In practice it is usually faster than logging into "
+     "WordPress yourself, and nothing can be broken by a plugin update on the way. If you genuinely "
+     "edit content every week, say so up front &mdash; that is one of the cases where we would tell "
+     "you a static rebuild is the wrong answer."),
     ("Can you do this for my website?",
      "Yes &mdash; and the first useful thing is free. Run your site through our "
      "<a href=\"/website-checker/\">free website checker</a> and it will show you the same kinds of "
      "problems we found here: missing descriptions, slow responses, missing structured data. If a "
-     "rebuild is not worth it we will say so; sometimes fixing what is there is the better answer. See "
-     "<a href=\"/web-design-hosting/\">web design and hosting</a>."),
+     "rebuild is not worth it we will say so; sometimes fixing what is there is the better answer. Or "
+     "just ring 01202 775566 or <a href=\"/contact/?topic=website-rebuild\">send us your web "
+     "address</a> and we will look at it with you."),
 ]
 
 
@@ -306,8 +313,54 @@ def build():
           something honest to compare against. We will measure again at <strong>30, 90 and 180
           days</strong> from real Search Console data, and this page will be updated with what
           actually happened &mdash; including if it is less than we hoped.</p>
+        <p class="rb__note"><strong>The straight-answer promise.</strong> If we look at your site and
+          a rebuild is not worth your money, we will tell you so &mdash; in writing, in the verdict.
+          Sometimes the honest answer is a smaller fix, and sometimes it is &ldquo;leave it
+          alone&rdquo;. We would rather lose a job than build something you did not need.</p>
       </div>
     </section>''')
+
+    # THE HANDOVER. The funnel audit's top finding: this page wins the argument and
+    # then fumbled it - the only exits were a self-serve tool and a brochure page,
+    # three hops from conviction to a form. A convinced reader now gets a direct,
+    # labelled path: /contact/?topic=website-rebuild preselects the enquiry topic
+    # (forms.js fuzzy-matches it to the "Website rebuild / Web Care" option), so the
+    # lead arrives in Slack and HubSpot already tagged as a rebuild job.
+    body.append('''    <section class="section" aria-label="What happens if you get in touch" id="process">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// NO MYSTERY PROCESS</p>
+          <h2 class="section-title section-title--center" data-title>What happens if you get in
+            touch<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="rb__grid rb__grid--4">
+          <div class="rb__card"><span class="rb__ico" aria-hidden="true">&#49;&#65039;&#8419;</span>
+            <h3>Send us your web address</h3>
+            <p>Or ring 01202 775566. That is all we need to start &mdash; no meeting, no forms.</p></div>
+          <div class="rb__card"><span class="rb__ico" aria-hidden="true">&#50;&#65039;&#8419;</span>
+            <h3>We measure it, free</h3>
+            <p>The same checks you have just read: server response, requests, what a search engine
+              can and cannot see.</p></div>
+          <div class="rb__card"><span class="rb__ico" aria-hidden="true">&#51;&#65039;&#8419;</span>
+            <h3>A written verdict, either way</h3>
+            <p>Rebuild, fix what is there, or leave it alone. If a rebuild is not worth your money,
+              the verdict says so.</p></div>
+          <div class="rb__card"><span class="rb__ico" aria-hidden="true">&#52;&#65039;&#8419;</span>
+            <h3>If it is a rebuild</h3>
+            <p>A <a href="/website-rebuild/">fixed, published price</a> agreed in writing before we
+              start &mdash; and your old site stays live until the new one is ready, which is exactly
+              how this one could be measured the day before its swap.</p></div>
+        </div>
+      </div>
+    </section>
+<style>
+/* .rb__grid.rb__grid--4, not .rb__grid--4: the base .rb__grid rules are emitted in
+   the page's LAST style block, so at equal specificity they win and this four-step
+   strip rendered 3+1 with an orphan. The double class outranks them at any order. */
+.rb__grid.rb__grid--4{grid-template-columns:1fr}
+@media (min-width:560px){.rb__grid.rb__grid--4{grid-template-columns:repeat(2,1fr)}}
+@media (min-width:1000px){.rb__grid.rb__grid--4{grid-template-columns:repeat(4,1fr)}}
+</style>''')
 
     body.append(faq_html(FAQS))
     # cta() takes (label, href) TUPLES, not two loose strings. Passing strings does
@@ -315,12 +368,19 @@ def build():
     # CHARACTERS: href="h" with the label "C". Two dead buttons at the bottom of the
     # funnel, and my own link check missed them because it only tested hrefs starting
     # with "/". Steve found them by clicking. Hence _guard_hrefs() in build_blog.py.
+    #
+    # Cost line: the fixed rebuild price is PUBLISHED at /website-rebuild/ and
+    # /web-care/ (source: build_extra.py ~L6708). Link it, never restate the figure
+    # here - one source of truth, no drift.
     body.append(cta("Wondering about your own site?",
-                    "Start with the free checker &mdash; it takes seconds and shows you the same "
-                    "kinds of problems we found here. If a rebuild is not worth it, we will tell you "
-                    "that too.",
-                    ("Check your website free", "/website-checker/"),
-                    ("Talk to us about a rebuild", "/web-design-hosting/")))
+                    "Send us your web address and we will reply with the same before-tables you have "
+                    "just read, for your site, and a straight verdict &mdash; rebuild, fix what is "
+                    "there, or leave it alone. If a rebuild is not worth it, we will tell you that "
+                    "too, in writing. And a rebuild is a <a href=\"/website-rebuild/\">fixed, "
+                    "published price</a>, agreed before we start &mdash; not a number invented after "
+                    "we have sized you up.",
+                    ("Ask us to measure your site &mdash; free", "/contact/?topic=website-rebuild"),
+                    ("Run the checks yourself first", "/website-checker/")))
 
     body.append('''
 <style>

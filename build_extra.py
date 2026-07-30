@@ -6663,7 +6663,7 @@ def web_design():
           </div>
           <div class="tile" data-reveal>
             <h3>colinclarkbuilders.co.uk</h3>
-            <p style="color:var(--muted);margin:0 0 1.1rem">We design, host and look after the website for <a href="https://www.colinclarkbuilders.co.uk/" target="_blank" rel="noopener">Colin Clark Builders</a> &mdash; East Dorset&rsquo;s heritage-property building specialists &mdash; right alongside their IT support. The same local team since 2014: one number for the website, the email and the computers.</p>
+            <p style="color:var(--muted);margin:0 0 1.1rem">We design, host and look after the website for <a href="https://www.colinclarkbuilders.co.uk/" target="_blank" rel="noopener">Colin Clark Builders</a> &mdash; East Dorset&rsquo;s heritage-property building specialists &mdash; right alongside their IT support. The same local team since 2014: one number for the website, the email and the computers. In July 2026 we rebuilt this very site from WordPress and measured both versions back to back on the old site&rsquo;s last day &mdash; <a href="/website-rebuild-seo-case-study/">read the numbers</a>, then test the result yourself below.</p>
             <p><button type="button" class="button secondary" data-wc-prefill="https://www.colinclarkbuilders.co.uk/">Check this site live &#8594;</button></p>
           </div>
         </div>
@@ -6788,6 +6788,7 @@ def web_care_page():
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.1rem;align-items:start">
 {tiers}
         </div>
+        <p class="next-strip mono" data-reveal>THE LAST REBUILD, MEASURED &middot; SERVER RESPONSE 1,320MS &#8594; 97MS &middot; 111 REQUESTS &#8594; 15 &middot; <a href="/website-rebuild-seo-case-study/" style="color:var(--cyan)">READ THE CASE STUDY</a></p>
         <p class="next-strip mono" data-reveal>30-DAY ROLLING &middot; NO VAT TO ADD &middot; NO TIE-IN &middot; CANCEL ANY TIME</p>
       </div>
     </section>''',

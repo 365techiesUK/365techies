@@ -1523,7 +1523,7 @@ WCHECK_TOOL = r'''    <section class="section" aria-label="Free website checker"
               <h3>Want these issues fixed?</h3>
               <p id="wc-fix-msg"></p>
               <div class="wc-fix-cta">
-                <a class="button primary" href="/contact/">Get my free fix-it plan &#8594;</a>
+                <a class="button primary" href="/contact/?topic=website-rebuild">Get my free fix-it plan &#8594;</a>
                 <a class="button wc-ghost" href="/web-design-hosting/">Our web design &amp; hosting</a>
               </div>
             </div>
@@ -5438,6 +5438,7 @@ add(
                 <option>Free business IT review</option>
                 <option>Microsoft 365</option>
                 <option>Website design or hosting</option>
+                <option>Website rebuild / Web Care</option>
                 <option>AI &amp; custom software</option>
               </optgroup>
               <optgroup label="Anything else">
