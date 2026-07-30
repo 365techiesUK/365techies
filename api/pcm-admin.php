@@ -267,20 +267,42 @@ if (($_POST['do'] ?? '') === 'wcsendone') {
 }
 
 $wcPrev = null;
-if (in_array(($_POST['do'] ?? ''), array('wcpreview', 'wcsend'), true)) {
-    $wcSend  = (($_POST['do'] ?? '') === 'wcsend');
+if (in_array(($_POST['do'] ?? ''), array('wcpreview', 'wcsend', 'wcrepair', 'wcrepairsend'), true)) {
+    $wcSend  = in_array(($_POST['do'] ?? ''), array('wcsend', 'wcrepairsend'), true);
     $wcAll   = !empty($_POST['wcall']);          // include free members too
+    /* REPAIR MODE - for customers a broken write marked as done.
+       -------------------------------------------------------
+       Until 30 Jul 2026 the automatic welcome stamped 'welcomed' while writing
+       nothing to the queue (the include-scope bug fixed in pcm-booking.php), so
+       the stamp alone is not evidence anybody was emailed. The queue IS the
+       evidence: wc_record keeps a stub for ever once an address is handled, so
+       anyone genuinely emailed has an entry and is skipped below either way.
+       That makes this safe to press twice. */
+    $wcRepair = in_array(($_POST['do'] ?? ''), array('wcrepair', 'wcrepairsend'), true);
+    $wcKnown  = array();
+    if ($wcRepair) {
+        if (!defined('RV_LIB')) define('RV_LIB', 1);
+        @include_once __DIR__ . '/pcm-review.php';
+        if (function_exists('rvq_open')) {
+            list($qlk, $qq) = rvq_open();
+            if ($qlk) { $wcKnown = (isset($qq['wc']) && is_array($qq['wc'])) ? $qq['wc'] : array(); rvq_close($qlk); }
+        }
+    }
     $signedIn = array();
     foreach (($db['websessions'] ?? array()) as $wv) {
         if (!is_array($wv) || !empty($wv['viewas'])) continue;   // staff impersonation is not a customer
         if (!empty($wv['key'])) $signedIn[(string)$wv['key']] = true;
     }
     $wcPrev = array('signed_in' => count($signedIn), 'eligible' => 0, 'queued' => 0,
-                    'already' => 0, 'no_email' => 0, 'free' => 0, 'gone' => 0, 'who' => array());
+                    'already' => 0, 'no_email' => 0, 'free' => 0, 'gone' => 0, 'who' => array(),
+                    'repair' => $wcRepair, 'bogus' => 0);
     foreach (array_keys($signedIn) as $k) {
         if (!isset($db['customers'][$k])) { $wcPrev['gone']++; continue; }
         $c =& $db['customers'][$k];
-        if (!empty($c['welcomed'])) { $wcPrev['already']++; unset($c); continue; }
+        // a stamp with no queue entry behind it is not evidence of anything
+        $wcBogus = $wcRepair && !empty($c['welcomed']) && !isset($wcKnown[$k]);
+        if ($wcBogus) $wcPrev['bogus']++;
+        if (!empty($c['welcomed']) && !$wcBogus) { $wcPrev['already']++; unset($c); continue; }
         if (!$wcAll && (($c['tier'] ?? '') !== 'pro')) { $wcPrev['free']++; unset($c); continue; }
         $em = '';
         foreach (array('sb_email', 'email') as $f) {
@@ -295,7 +317,12 @@ if (in_array(($_POST['do'] ?? ''), array('wcpreview', 'wcsend'), true)) {
             if (function_exists('wc_record')) {
                 // same rule as pcm_welcome_maybe: only claim they are done if they are
                 // genuinely in the queue, or a failed write silently marks them for ever
-                $r = wc_record($k, $em, (string)($c['name'] ?? ''), 'launch');
+                // The welcome copy says "set up just now", so it is only honest for a
+                // recent sign-in; an older repair gets the launch copy, which makes no
+                // claim about when.
+                $wcAge  = !empty($c['welcomed']) ? (time() - (int)$c['welcomed']) : PHP_INT_MAX;
+                $wcKind = ($wcBogus && $wcAge < 172800) ? 'welcome' : 'launch';
+                $r = wc_record($k, $em, (string)($c['name'] ?? ''), $wcKind);
                 if ($r === true || $r === 'exists') {
                     $c['welcomed'] = time();     // so they can never also get the "just now" welcome
                     $wcPrev['queued']++;
@@ -308,9 +335,14 @@ if (in_array(($_POST['do'] ?? ''), array('wcpreview', 'wcsend'), true)) {
     if ($wcSend && $wcPrev['queued']) {
         save($DATA, $db);
         $mins = (int)ceil($wcPrev['queued'] / 5) * 5;
-        $msg = "\xF0\x9F\x93\xAB Queued the launch email for {$wcPrev['queued']} customer(s). "
+        $what = $wcRepair ? "the portal email" : "the launch email";
+        $extra = $wcRepair
+            ? "That includes {$wcPrev['bogus']} the old queue bug had marked as done without sending. "
+              . "Recent sign-ins get the welcome wording, older ones the launch wording."
+            : "Nobody gets it twice, and none of them will get the new-customer welcome later.";
+        $msg = "\xF0\x9F\x93\xAB Queued {$what} for {$wcPrev['queued']} customer(s). "
              . "They go out 5 every 5 minutes (about {$mins} minutes in all) and each one pings Slack. "
-             . "Nobody gets it twice, and none of them will get the new-customer welcome later.";
+             . $extra;
         $wcPrev = null;                      // the job is done; do not re-offer the button
     }
 }
@@ -450,6 +482,10 @@ th{color:#9fb5d3;font-weight:600;font-size:.75rem;text-transform:uppercase;lette
     <button class=ghost>preview including free members</button>
   </form>
   <form method=post class=inline>
+    <input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=wcrepair>
+    <button class=ghost title="Finds customers marked as emailed who were never actually queued - the bug fixed on 30 Jul 2026. Safe to run more than once.">&#128295; Find customers the old bug missed</button>
+  </form>
+  <form method=post class=inline>
     <input type=hidden name=csrf value="<?=h($CSRF)?>">
     <input name=wcemail type=email placeholder="customer@email" style="padding:.45rem .6rem;border-radius:8px;border:1px solid #2a3b63;background:#0b1226;color:#f0f5fc;font-size:.82rem;min-width:210px">
     <!-- both buttons name themselves, so there is no hidden 'do' for one of them to
@@ -522,6 +558,16 @@ th{color:#9fb5d3;font-weight:600;font-size:.75rem;text-transform:uppercase;lette
     <?=$wcPrev['free']?> free members<?=$wcPrev['all']?' (included this time)':''?>,
     <?=$wcPrev['no_email']?> without an email, <?=$wcPrev['gone']?> deleted.
   </p>
+  <?php if(!empty($wcPrev['repair'])): ?>
+  <p style="color:#9fb5d3;font-size:.84rem;margin:0 0 .5rem;padding:.6rem .8rem;border-left:3px solid #1d97e3;background:#0d1530;border-radius:0 8px 8px 0">
+    <strong style="color:#f0f5fc">Repair mode.</strong>
+    <strong style="color:#f0f5fc"><?=$wcPrev['bogus']?></strong>
+    <?=$wcPrev['bogus']===1?'customer was':'customers were'?> marked as emailed with nothing
+    actually in the queue behind it &mdash; the bug fixed on 30 July 2026. They are included
+    above. Anyone genuinely emailed keeps a queue record for ever and is still skipped, so
+    pressing this twice cannot email anybody twice.
+  </p>
+  <?php endif; ?>
   <?php if($wcPrev['who']): ?>
   <details style="margin:0 0 .7rem"><summary style="cursor:pointer;color:#86b6e8;font-size:.82rem">Show the list</summary>
     <div class=mach style="max-height:180px;overflow:auto;margin-top:.4rem;line-height:1.7">
@@ -531,7 +577,7 @@ th{color:#9fb5d3;font-weight:600;font-size:.75rem;text-transform:uppercase;lette
   <?php endif; ?>
   <?php if($wcPrev['eligible']): ?>
   <form method=post class=inline onsubmit="return confirm('Send the launch email to <?=$wcPrev['eligible']?> customers? This cannot be undone.')">
-    <input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=wcsend>
+    <input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value="<?=!empty($wcPrev['repair'])?'wcrepairsend':'wcsend'?>">
     <?php if($wcPrev['all']): ?><input type=hidden name=wcall value=1><?php endif; ?>
     <button>&#128233; Send it to <?=$wcPrev['eligible']?> customer(s)</button>
   </form>
