@@ -104,7 +104,7 @@ function bp_clean($s) { return trim(substr(preg_replace('/[\x00-\x1F\x7F]+/', ' 
 $dlk = @fopen($DATA . '.lock', 'c'); if ($dlk) @flock($dlk, LOCK_EX);
 $db = @json_decode((string)@file_get_contents($DATA), true); if (!is_array($db)) $db = array();
 if (!isset($db['bkmeta']) || !is_array($db['bkmeta'])) $db['bkmeta'] = array();
-$toSlack = array(); $seeded = 0; $changed = 0;
+$toSlack = array(); $seeded = 0; $changed = 0; $toReview = array();
 foreach ($rows as $b) {
     $bid = (int)(isset($b['id']) ? $b['id'] : 0); if ($bid <= 0) continue;
     $sid = intval(isset($b['status_id']) ? $b['status_id'] : 0);
@@ -134,6 +134,50 @@ foreach ($rows as $b) {
     $who = bp_clean(isset($b['client']) ? $b['client'] : (isset($b['client_name']) ? $b['client_name'] : ('Booking #' . $bid)));
     $what = bp_clean(isset($b['event_name']) ? $b['event_name'] : (isset($b['event']) ? $b['event'] : ''));
     $lbl = $who . ($what !== '' ? ' - ' . $what : '');
+    /* JOB MARKED COMPLETE -> QUEUE THE GOOGLE REVIEW ASK.
+       ---------------------------------------------------
+       Until 30 Jul 2026 a review ask was only ever queued when a booking was
+       CREATED, by rv_record. For bookings taken through our own /book-service/
+       page that call sat behind a function-scope include, so $RV_Q was unset and
+       the entry went nowhere (see the note at the top of pcm-booking.php). Since
+       our own page replaced the SimplyBook widget, that was most of them - which
+       is why the reviews dried up while the work carried on.
+
+       Completion is the better trigger anyway: it is the moment somebody actually
+       did the job, it does not care how the booking was created, and it is driven
+       by Steve or David marking it done rather than by a webhook that may never
+       fire. rv_record is keyed by booking id and refuses to resurrect an entry it
+       has already handled, so calling it here is a repair when the create-time
+       call was lost and a harmless no-op when it was not.
+
+       rv_process still holds it until 24h after the visit ended, and drops it if
+       that was more than $RV_ASK_WINDOW ago - so this can never ask about
+       something too old to remember. */
+    if ($m === 'completed' && function_exists('rv_record')) {
+        $rvEm = '';
+        foreach (array('email', 'client_email') as $k) if (!empty($b[$k]) && is_string($b[$k])) { $rvEm = strtolower(trim($b[$k])); break; }
+        if ($rvEm === '' && isset($b['client']) && is_array($b['client']) && !empty($b['client']['email'])) $rvEm = strtolower(trim($b['client']['email']));
+        if ($rvEm !== '' && filter_var($rvEm, FILTER_VALIDATE_EMAIL)) {
+            $rvStS = '';
+            foreach (array('start_date_time', 'start_datetime', 'start_date') as $k) if (!empty($b[$k])) { $rvStS = (string)$b[$k]; break; }
+            if ($rvStS !== '' && strlen($rvStS) <= 10 && !empty($b['start_time'])) $rvStS .= ' ' . $b['start_time'];
+            $rvSt = $rvStS !== '' ? (int)strtotime($rvStS) : 0;
+            $rvEnS = '';
+            foreach (array('end_date_time', 'end_datetime', 'end_date') as $k) if (!empty($b[$k])) { $rvEnS = (string)$b[$k]; break; }
+            if ($rvEnS !== '' && strlen($rvEnS) <= 10 && !empty($b['end_time'])) $rvEnS .= ' ' . $b['end_time'];
+            $rvEnd = $rvEnS !== '' ? (int)strtotime($rvEnS) : 0;
+            if ($rvEnd <= 0 && $rvSt > 0) $rvEnd = $rvSt + 5400;      // no end given: assume 90 min
+            if ($rvEnd <= 0) $rvEnd = time();                          // nor a start: it finished now
+            $rvNm = ''; foreach (array('client_name', 'client') as $k) {
+                if (empty($b[$k])) continue;
+                if (is_array($b[$k])) { if (!empty($b[$k]['name'])) { $rvNm = (string)$b[$k]['name']; break; } }
+                else { $rvNm = (string)$b[$k]; break; }
+            }
+            // queued for AFTER the lock: this file's rule is no I/O while holding
+            // pcm-data.json, and the Slack sends below already obey it
+            $toReview[] = array($bid, $rvEm, $rvNm, $rvEnd, $rvSt, $what);
+        }
+    }
     if ($m === 'completed') $toSlack[] = ':ballot_box_with_check: *Service completed* (in SimplyBook) - ' . $lbl;
     elseif ($m === 'confirmed') $toSlack[] = ':white_check_mark: *Booking confirmed* (in SimplyBook) - ' . $lbl;
     else $toSlack[] = ':arrows_counterclockwise: *Booking status cleared* (in SimplyBook) - ' . $lbl;
@@ -142,6 +186,14 @@ foreach ($db['bkmeta'] as $k2 => $v2) if ((isset($v2['ts']) ? $v2['ts'] : 0) < t
 $tmp = $DATA . '.' . getmypid() . '.tmp';
 if (@file_put_contents($tmp, json_encode($db, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), LOCK_EX) !== false) @rename($tmp, $DATA);
 if ($dlk) { @flock($dlk, LOCK_UN); @fclose($dlk); }
+
+// Review asks for jobs that just went Completed - AFTER the DB lock, like Slack below.
+$rvQueued = 0;
+foreach ($toReview as $rr) {
+    list($rbid, $rem, $rnm, $rend, $rst, $rsvc) = $rr;
+    rv_record($rbid, $rem, $rnm, $rend, 'create', $rst, $rsvc);
+    $rvQueued++;
+}
 
 // Slack AFTER releasing the lock (never hold the DB lock during outbound HTTP)
 $wh = ''; $swf = __DIR__ . '/slack-webhook.php';
@@ -162,4 +214,5 @@ $mailR = rv_process(3);
 $mailD = dn_process(3);
 $mailM = rm_process(5);
 jout(array('ok' => true, 'bookings' => count($rows), 'seeded' => $seeded, 'changed' => $changed, 'alerts' => count($toSlack),
+           'review_asks_queued' => $rvQueued,
            'mail' => array('review' => $mailR, 'done' => $mailD, 'remind' => $mailM, 'welcome' => $GLOBALS['mailW'])));
