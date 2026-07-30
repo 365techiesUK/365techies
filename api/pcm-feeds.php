@@ -39,6 +39,12 @@ header('Content-Type: application/json; charset=utf-8');
 header('X-Robots-Tag: noindex, nofollow');
 header('Cache-Control: public, max-age=300');
 
+// This host runs a high serialize_precision, which turns a tidy round($v,2) into
+// 0.67000000000000003996802888650563545525074005126953125 in the JSON. -1 means
+// "shortest representation that round-trips", i.e. 0.67. Cosmetic, but a payload
+// nobody can read is a payload nobody can debug.
+@ini_set('serialize_precision', '-1');
+
 $CACHE_DIR = __DIR__;
 $KEYFILE   = __DIR__ . '/pcm-feeds-keys.php';
 
