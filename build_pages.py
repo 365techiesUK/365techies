@@ -38,7 +38,11 @@ _CD_DIRTY = [False]
 # Strip what legitimately changes on every build, so a rebuild with no edits is a no-op.
 _VOLATILE = [
     (_cdre.compile(r'"dateModified":\s*"[^"]*"'), '"dateModified":"X"'),
-    (_cdre.compile(r'\?v=\d+'), '?v=X'),
+    # Cache-busters are numeric (?v=22) AND date-style (?v=2026-07-30 on search.js).
+    # \d+ only ate the "2026", leaving "?v=X-07-30" to change every single day - which
+    # made all 649 pages claim they changed on every build and quietly destroyed the
+    # whole point of hashing them. Match the entire version token.
+    (_cdre.compile(r'\?v=[\w.\-]+'), '?v=X'),
     (_cdre.compile(r'checked on \d{1,2} \w+ \d{4}', _cdre.I), 'checked on X'),
     (_cdre.compile(r'Dates checked: \d{1,2} \w+ \d{4}', _cdre.I), 'Dates checked: X'),
     (_cdre.compile(r'Checked: \d{1,2} \w+ \d{4}', _cdre.I), 'Checked: X'),
