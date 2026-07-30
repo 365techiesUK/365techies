@@ -6,6 +6,7 @@ Run: python build_extra.py
 import re
 import build_pages as bp
 import build_local  # registers the 12 local/customer pages on import
+from dashboard_promo import plan_band as _dash_band, join_band as _dash_join
 from build_pages import (add, graph, crumb, webpage, service, faqpage,
                          faq_html, cta, hero, hero_trust, bc, bc_sub, crumb_sub, tiles, grid_cards, checklist,
                          steps, reviews_block, ico, SITE, write_all,
@@ -13715,7 +13716,9 @@ for _c in GAP_SERVICES:
 def _prose(inner):
     return f'    <section class="section">\n      <div class="wrap">\n        <div class="prose" data-reveal>\n{inner}\n        </div>\n      </div>\n    </section>'
 
-def info_page(slug, crumb_name, h1, eyebrow, lede, desc, inner, title=None, chips=None, faqs=None, cta_args=None, pre=None, og_title=None, hero_cta1=None, hero_cta2=None):
+def info_page(slug, crumb_name, h1, eyebrow, lede, desc, inner, title=None, chips=None, faqs=None, cta_args=None, pre=None, og_title=None, hero_cta1=None, hero_cta2=None, post=None):
+    """`pre` and `post` take raw full-width <section> HTML either side of the
+    prose; `inner` is wrapped in _prose() and so cannot hold a section itself."""
     hk = {}
     if hero_cta1: hk["cta1"] = hero_cta1
     if hero_cta2: hk["cta2"] = hero_cta2
@@ -13724,6 +13727,8 @@ def info_page(slug, crumb_name, h1, eyebrow, lede, desc, inner, title=None, chip
         parts.append(pre)
     if inner:
         parts.append(_prose(inner))
+    if post:
+        parts.append(post)
     if faqs:
         parts.append(faq_html(faqs))
     if cta_args:
@@ -14047,6 +14052,8 @@ info_page(
           <p>Try our 30-second <a href="/plan-finder/">Plan Finder</a>, or <a href="/contact/">get in touch</a> for a no-obligation chat and quote.</p>""",
   cta_args=("Get a quote or pick a plan", "Honest pricing, no surprises &mdash; find the right fit in minutes.",
             ("Try the Plan Finder", "/plan-finder/"), ("Get a Quote", "/contact/")),
+
+  post=_dash_band("both", alt=True),
 )
 
 # ---- Free IT Health Check
@@ -19737,6 +19744,8 @@ info_page(
   ],
   cta_args=("Ready when you are", "Join the 365 Club in about a minute &mdash; free, no card, no catch.",
             ("Join free", "/portal/"), ("Talk to us first", "/contact/")),
+
+  post=_dash_join(),
 )
 
 def write_family_page():

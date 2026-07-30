@@ -808,6 +808,55 @@
         <a class="text-link" href="https://search.google.com/local/writereview?placeid=ChIJlTb8YRuic0gRCRczduB8OFI" target="_blank" rel="noopener">Leave us a review <span aria-hidden="true">&#8594;</span></a>
       </div>
     </section>
+    <section class="section section--alt" aria-label="Your 365 dashboard" id="dashboard">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// INCLUDED WITH EVERY PLAN</p>
+          <h2 class="section-title section-title--center" data-title>Your own dashboard, not another
+            login you never use<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Every home plan includes your own dashboard &mdash; one screen that answers &ldquo;is my computer actually all right?&rdquo; without you having to ask anyone, and arranged however you like it.</p>
+        </div>
+        <div class="dbp__grid"><div class="dbp__card"><span class="dbp__ico" aria-hidden="true">&#128190;</span><h3>Backups that really ran</h3><p>Not &ldquo;backup configured&rdquo;. Whether last night actually completed.</p></div><div class="dbp__card"><span class="dbp__ico" aria-hidden="true">&#129504;</span><h3>Health, storage and protection</h3><p>Disk space, antivirus state and Windows version for each computer we look after.</p></div><div class="dbp__card"><span class="dbp__ico" aria-hidden="true">&#128197;</span><h3>Your next visit</h3><p>When we are next due, and the bookings you can move or cancel yourself.</p></div><div class="dbp__card"><span class="dbp__ico" aria-hidden="true">&#128203;</span><h3>Every written report</h3><p>The Service Report from each visit, kept in one place instead of on a Desktop.</p></div><div class="dbp__card"><span class="dbp__ico" aria-hidden="true">&#128225;</span><h3>Saved Wi-Fi surveys</h3><p>Any room-by-room survey we have run for you, to compare against next time.</p></div></div>
+
+        <p class="dbp__live"><strong>The bit we will not blur.</strong> Every tile says
+          <span class="dbp__tag dbp__tag--live">live</span> or
+          <span class="dbp__tag dbp__tag--sample">sample</span> on its face. Live means it is
+          reading your own account. Sample means the numbers are made up and nothing is plugged in
+          behind it yet. Cameras, solar and sensors do not appear by magic &mdash; connecting those
+          is a separate build, and it starts with us checking what your equipment actually
+          publishes. We would rather tell you that up front than let you find out later.</p>
+
+        <p class="dbp__cta" data-reveal>
+          <a href="/join/" class="button primary">Try the dashboard free</a>
+          <span class="mono">No card &middot; nothing to install &middot; about a minute &middot; <a href="/next-gen-home-dashboards/">See a home dashboard in action &#8594;</a></span>
+        </p>
+      </div>
+    </section>
+<style>
+/* 1-2-3-5 columns, never 4 - see LAYOUT note in dashboard_promo.py */
+.dbp__grid{display:grid;grid-template-columns:1fr;gap:.7rem;max-width:1160px;margin:0 auto}
+@media (min-width:520px){.dbp__grid{grid-template-columns:repeat(2,1fr)}}
+@media (min-width:760px){.dbp__grid{grid-template-columns:repeat(3,1fr)}}
+@media (min-width:1060px){.dbp__grid{grid-template-columns:repeat(5,1fr)}}
+.dbp__card{background:var(--panel,#0d1530);border:1px solid var(--line,#2a3b63);border-radius:13px;padding:1rem 1.05rem;transition:border-color .3s,transform .3s}
+.dbp__card:hover{border-color:var(--cyan,#1d97e3);transform:translateY(-2px)}
+.dbp__ico{font-size:1.4rem;line-height:1;display:inline-block;margin-bottom:.45rem}
+.dbp__card h3{margin:0 0 .3rem;font-size:.92rem;color:var(--white,#f0f5fc)}
+.dbp__card p{margin:0;font-size:.8rem;line-height:1.55;color:var(--soft,#86b6e8)}
+.dbp__live{max-width:900px;margin:1.5rem auto 0;padding:.9rem 1.1rem;border-left:3px solid var(--cyan,#1d97e3);background:var(--panel,#0d1530);border-radius:0 10px 10px 0;font-size:.86rem;line-height:1.65;color:var(--soft,#86b6e8)}
+.dbp__live strong{color:var(--white,#f0f5fc)}
+/* These two carry the live/sample distinction the whole product rests on, so they
+   have to be READABLE, not merely decorative. At .62rem on a .16-alpha tint the
+   live tag measured 4.53:1 - over AA by 0.03, which is no margin at all. Bigger
+   type and a lighter tint give it real headroom. Re-measure if either changes. */
+.dbp__tag{display:inline-block;font-family:var(--mono,monospace);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;padding:.1rem .42rem;border-radius:4px;vertical-align:baseline}
+.dbp__tag--live{background:rgba(29,151,227,.1);color:#6fc2f5;border:1px solid rgba(29,151,227,.45)}
+.dbp__tag--sample{background:rgba(159,181,211,.1);color:#b9cbe2;border:1px solid rgba(159,181,211,.34)}
+.dbp__cta{text-align:center;margin:1.4rem auto 0}
+.dbp__cta .mono{display:block;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mut,#9fb5d3);margin-top:.55rem}
+@media (prefers-reduced-motion:reduce){.dbp__card:hover{transform:none}}
+</style>
+
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
