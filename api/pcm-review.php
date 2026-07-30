@@ -67,14 +67,16 @@ $CF_LIVE = false;   // <-- booking confirmed/changed/cancelled emails. When flip
 
 $RV_Q = __DIR__ . '/pcm-reviewq.json';
 $RV_ASK_WINDOW = 1209600;   // visits stay askable for 14 days after they end; older = too late
-/* How long after a visit ends before we ask. Was 86400 (next day). Steve's call on
-   30 Jul 2026: ask within the hour, while the machine is visibly working and the
-   relief is fresh - a day later they have moved on and it reads as admin.
+/* How long after a visit ends before we ask. Was 86400 (next day), briefly 3600.
+   Steve's call on 30 Jul 2026: 30 minutes - ask while the machine is visibly
+   working and we are still fresh in mind. A day later they have moved on and it
+   reads as admin rather than as the people who just fixed it.
 
-   An hour is a floor, not a promise. The send still waits for the 9am-8pm window
-   below, so a job finished at 7pm is asked at 9am rather than at night, and it
-   still waits for a cron tick. Raise this if asks ever start feeling pushy. */
-$RV_ASK_DELAY = 3600;
+   This is a FLOOR, not a promise. The send still waits for the 9am-8pm window
+   below, so a job finished at 7.45pm is asked at 9am rather than at night, and it
+   still waits for the next cron tick (~5 min). Raise it if asks ever start
+   feeling pushy - one number, nothing else to change. */
+$RV_ASK_DELAY = 1800;
 
 if (!function_exists('rvq_open')) {
 
