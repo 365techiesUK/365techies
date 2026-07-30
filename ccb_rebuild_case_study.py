@@ -369,6 +369,11 @@ def build():
           something honest to compare against. We will measure again at <strong>30, 90 and 180
           days</strong> from real Search Console data, and this page will be updated with what
           actually happened &mdash; including if it is less than we hoped.</p>
+        <p class="rb__honest"><strong>Update, launch day:</strong> the new site went live on
+          <strong>30 July 2026</strong>, and the first measurement on the live domain matched the
+          build &mdash; server response 106&nbsp;ms, first paint 412&nbsp;ms, zero layout shift.
+          Every old ranking address was re-tested live: all of them land on a real page, and the
+          WordPress leftovers answer 410&nbsp;Gone. The 30/90/180-day clock starts now.</p>
         <p class="rb__note"><strong>The straight-answer promise.</strong> If we look at your site and
           a rebuild is not worth your money, we will tell you so &mdash; in writing, in the verdict.
           Sometimes the honest answer is a smaller fix, and sometimes it is &ldquo;leave it
