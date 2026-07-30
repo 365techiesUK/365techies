@@ -580,6 +580,34 @@ with open(os.path.join(bp.BASE, "sitemap.xml"), "w", encoding="utf-8") as f:
     f.write(sm)
 print("Wrote sitemap.xml with %d URLs" % (len(bp.PAGES) + 1))
 
+# ---------------- href guard: catch links that are structurally impossible ----------------
+# cta() and hero() take (label, href) TUPLES. Passing two loose strings does not raise -
+# Python indexes the string, so primary[0]/[1] become the first two CHARACTERS and you
+# ship <a href="h">C</a>. That is exactly what happened on the rebuild case study: two
+# dead buttons at the bottom of a funnel page, live, until Steve clicked them. A link
+# check that only tests hrefs starting with "/" cannot see it, which is why this looks
+# for links that are structurally wrong rather than links that 404.
+import re as _hre
+_HREF_OK = _hre.compile(r'^(/|https?:|tel:|mailto:|sms:|#|mailto|javascript:void)')
+_bad_href = []
+_SCRIPTS = _hre.compile(r'<script[\s>].*?</script>', _hre.S | _hre.I)
+for _p in bp.PAGES:
+    # Strip <script> bodies first. Tools on this site build hrefs at runtime
+    # (href="'+amzn(q)+'"), which is correct JavaScript and not a broken link -
+    # 37 such false positives on the first run, all legitimate.
+    _c = _SCRIPTS.sub('', str(_p.get('content') or ''))
+    for _m in _hre.finditer(r'<a\s[^>]*href="([^"]*)"', _c):
+        _h = _m.group(1).strip()
+        if _h and not _HREF_OK.match(_h):
+            _bad_href.append((_p['slug'], _h))
+        elif _h == '':
+            _bad_href.append((_p['slug'], '(empty)'))
+if _bad_href:
+    print('  HREF WARNING: %d link(s) with an impossible target - almost always a '
+          '(label, href) tuple passed as two strings:' % len(_bad_href))
+    for _s, _h in _bad_href[:8]:
+        print('    /%s/  ->  href=%r' % (_s, _h))
+
 # ---------------- snippet guard: shout about anything Google will truncate ----------------
 # A description over the _meta_desc limit gets amputated mid-sentence with an
 # ellipsis, and a title over 60 characters gets cut off in the results. Both

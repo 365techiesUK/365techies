@@ -307,11 +307,17 @@ def build():
     </section>''')
 
     body.append(faq_html(FAQS))
+    # cta() takes (label, href) TUPLES, not two loose strings. Passing strings does
+    # not error - Python happily indexes them, so primary[0]/[1] became the first two
+    # CHARACTERS: href="h" with the label "C". Two dead buttons at the bottom of the
+    # funnel, and my own link check missed them because it only tested hrefs starting
+    # with "/". Steve found them by clicking. Hence _guard_hrefs() in build_blog.py.
     body.append(cta("Wondering about your own site?",
                     "Start with the free checker &mdash; it takes seconds and shows you the same "
                     "kinds of problems we found here. If a rebuild is not worth it, we will tell you "
                     "that too.",
-                    "Check your website free", "/website-checker/"))
+                    ("Check your website free", "/website-checker/"),
+                    ("Talk to us about a rebuild", "/web-design-hosting/")))
 
     body.append('''
 <style>
