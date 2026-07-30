@@ -584,6 +584,27 @@ print("Wrote sitemap.xml with %d URLs" % (len(bp.PAGES) + 1))
 # ellipsis, and a title over 60 characters gets cut off in the results. Both
 # silently cost clicks on pages that already rank, which is why 105 page-one
 # pages were earning 0.94% CTR before anyone noticed. Overrides: snippets_data.py.
+# ---------------- PHP guards: structure, and the include-scope rule ----------------
+# Neither of these is a style check. A function-scope include of pcm-review.php
+# unsets $RV_Q for the whole request, so the mail queue reads back empty and writes
+# to nowhere - silently, behind @, with the caller told it succeeded. That cost the
+# portal welcome two days of total silence in July 2026 and also broke review and
+# job-done emails for bookings made through our own page. The build shouts now.
+import subprocess as _sp
+for _tool, _label in (("tools_phpcheck.py", "PHP structure"),
+                      ("tools_check_libscope.py", "mail-library include scope")):
+    try:
+        _cmd = ["py", "-X", "utf8", _tool, "--quiet"]
+        if "phpcheck" in _tool: _cmd.append("api/*.php")
+        _r = _sp.run(_cmd,
+                     capture_output=True, text=True, cwd=os.path.dirname(os.path.abspath(__file__)))
+        if _r.returncode != 0:
+            print("  PHP WARNING (%s):" % _label)
+            for _line in (_r.stdout or "").strip().splitlines():
+                if _line.strip(): print("    " + _line.rstrip())
+    except Exception as _e:
+        print("  PHP WARNING: could not run %s (%s)" % (_tool, _e))
+
 from html import unescape as _unesc
 # Run the override table's own self-test as part of the build. It was only wired
 # to __main__, so a duplicate slug - which a Python dict literal resolves by

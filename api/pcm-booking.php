@@ -37,6 +37,38 @@ $THROTTLE = __DIR__ . '/pcm-throttle.json';
 // maps each to a hard-coded, non-destructive routine and ignores anything else. See pcm.php note.
 $PCM_CMDS = array('flushdns','cleartemp','collectlogs');
 
+/* THE MAIL LIBRARY LOADS HERE, AT TOP LEVEL, AND MUST STAY HERE.
+   ==============================================================
+   pcm-review.php sets its config as top-level assignments: $RV_Q (the queue file
+   path), $WC_LIVE, $WC_MAX_AGE, $WC_DELAY. PHP binds an include's top-level
+   variables to the scope that ran the include - so including it from INSIDE
+   pcm_welcome_maybe(), as this file did, made every one of them a local of that
+   function and left the globals unset.
+
+   rvq_open() and rvq_save() both read `global $RV_Q`. With it unset they became:
+
+       fopen(null . '.lock', 'c')   -> a stray .lock in the working directory
+       file_exists(null)            -> false, so the queue read back EMPTY
+       rename($tmp, '')             -> failed, silently, behind an @
+
+   So wc_record() added the customer to a phantom empty array, wrote it nowhere,
+   and returned true. The caller believed it and stamped them 'welcomed' for ever.
+   The cron then read the real queue and correctly found nothing to send.
+
+   Net effect: the automatic portal welcome had NEVER worked. The two customers
+   who got one on 28 Jul 2026 got it from the admin console's Send-now button,
+   which runs at global scope where $RV_Q is real. Steve found it on 30 Jul when
+   a batch of sign-ins produced no email at all.
+
+   wc_record() already carried a comment about this trap for $WC_DELAY. It just
+   did not follow the thought through to the queue path the function opens.
+
+   Loading at top level costs one parse of a definitions-only file (everything
+   above its RV_LIB guard is function declarations plus six assignments - no I/O,
+   no sending), and makes every later call correct wherever it is made from. */
+if (!defined('RV_LIB')) define('RV_LIB', 1);
+@include_once __DIR__ . '/pcm-review.php';
+
 function out($a){ echo json_encode($a); exit; }
 function fail($e){ out(array('ok'=>false,'error'=>$e)); }
 
@@ -758,8 +790,8 @@ function pcm_welcome_maybe(&$c, $ckey, $email, $name) {
     if (!empty($c['welcomed'])) return;
     $email = strtolower(trim((string)$email));
     if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) return;
-    if (!defined('RV_LIB')) define('RV_LIB', 1);        // load the functions only, not the HTTP entry
-    @include_once __DIR__ . '/pcm-review.php';
+    // The library is loaded at TOP LEVEL by this file - see the note there. Do NOT
+    // include it here: that is the bug that made this function silently do nothing.
     if (!function_exists('wc_record')) return;          // library missing - retry on the next sign-in
     // ONLY stamp when the customer is genuinely in the queue. This used to be
     // unconditional, and on 28 Jul 2026 that cost a real customer his email: the trigger
@@ -768,6 +800,39 @@ function pcm_welcome_maybe(&$c, $ckey, $email, $name) {
     // something happened; never make that claim on the strength of a call you did not check.
     $q = wc_record($ckey, $email, $name);
     if ($q === true || $q === 'exists') $c['welcomed'] = time();
+
+    /* SEND IT NOW, rather than leaving it for a cron to find.
+       ------------------------------------------------------
+       Queueing alone made the promise "an email about five minutes after you sign
+       in" depend on a cron nobody can see. On 30 Jul 2026 Steve signed several
+       customers in and no email arrived: the SiteGround 5-minute job could not be
+       shown to be running, and the only drain that provably still fires is the
+       2-hourly GitHub job - which also DROPS runs (08:17 fired on neither 29 nor
+       30 Jul). A 2-hourly job that skips can never keep a 5-minute promise.
+
+       So the sign-in that creates the need now also does the sending, and the
+       crons go back to being the retry net they were meant to be.
+
+       Three things make this safe to do on a customer-facing request:
+       - register_shutdown_function, so it runs AFTER db_save()/db_close(). Sending
+         inside the caller's lock would hold pcm-data.json open across an SMTP
+         conversation and stall every other portal request behind it.
+       - fastcgi_finish_request() first, so the customer's sign-in response is
+         already flushed and their wait is unchanged.
+       - catch (Throwable), because a mail failure must never turn a successful
+         sign-in into an error. wc_process is already locked, capped and
+         quiet-hours aware, so a concurrent cron tick cannot double-send. */
+    if ($q === true && !defined('PCM_WC_KICKED')) {
+        define('PCM_WC_KICKED', 1);
+        register_shutdown_function(function () {
+            if (function_exists('fastcgi_finish_request')) @fastcgi_finish_request();
+            try {
+                if (function_exists('wc_process')) wc_process(2);
+            } catch (Throwable $e) {
+                // swallowed on purpose - the cron will retry it
+            }
+        });
+    }
 }
 
 /* ---------------------------------------------------------------------------
@@ -816,12 +881,33 @@ if ($action === 'wcbackfill') {
     }
 
     $stats = array('signed_in' => count($signedIn), 'eligible' => 0, 'queued' => 0,
-                   'skip_already' => 0, 'skip_no_email' => 0, 'skip_tier' => 0, 'skip_missing' => 0);
+                   'skip_already' => 0, 'skip_no_email' => 0, 'skip_tier' => 0, 'skip_missing' => 0,
+                   'repaired' => 0);
+
+    /* repair=1 : treat a 'welcomed' stamp with NO queue entry behind it as a lie.
+       -------------------------------------------------------------------------
+       Until 30 Jul 2026 the automatic welcome stamped customers while writing
+       nothing to the queue (the include-scope bug documented at the top of this
+       file), so a stamp is not by itself evidence anyone was emailed. The queue
+       IS the evidence: wc_record keeps a stub for ever once an address has been
+       handled, so anyone genuinely emailed has an entry and is still skipped by
+       the 'exists' branch below. That makes this safe to run repeatedly - it can
+       only ever pick up customers the queue has never heard of. */
+    $repair = !empty($in['repair']);
+    $known = array();
+    if ($repair && function_exists('rvq_open')) {
+        list($qlk, $qq) = rvq_open();
+        if ($qlk) { $known = isset($qq['wc']) && is_array($qq['wc']) ? $qq['wc'] : array(); rvq_close($qlk); }
+        else fail('queue_locked');
+    }
+
     $sample = array();
     foreach (array_keys($signedIn) as $k) {
         if (!isset($db['customers'][$k])) { $stats['skip_missing']++; continue; }
         $c =& $db['customers'][$k];
-        if (!empty($c['welcomed'])) { $stats['skip_already']++; unset($c); continue; }
+        $bogus = $repair && !empty($c['welcomed']) && !isset($known[$k]);
+        if ($bogus) $stats['repaired']++;
+        if (!empty($c['welcomed']) && !$bogus) { $stats['skip_already']++; unset($c); continue; }
         if ($proOnly && (!isset($c['tier']) || $c['tier'] !== 'pro')) { $stats['skip_tier']++; unset($c); continue; }
         $em = '';
         foreach (array('sb_email', 'email') as $f) {
@@ -831,11 +917,18 @@ if ($action === 'wcbackfill') {
         $stats['eligible']++;
         if (count($sample) < 8) $sample[] = $em;
         if ($doSend) {
-            if (!defined('RV_LIB')) define('RV_LIB', 1);
-            @include_once __DIR__ . '/pcm-review.php';
+            // the library is loaded at TOP LEVEL by this file - do not include it here,
+            // that is precisely the scope bug this whole action exists to clean up
             if (function_exists('wc_record')) {
+                /* Which copy is truthful for this person? The welcome opens "lovely to
+                   get you set up just now", so it is only honest for someone signed in
+                   very recently. A repair of an older stamp gets the launch copy, which
+                   makes no claim about when. Anyone found by the normal backfill (no
+                   stamp at all) has been signed in for a while - launch, as before. */
+                $stampAge = !empty($c['welcomed']) ? (time() - (int)$c['welcomed']) : PHP_INT_MAX;
+                $kind = ($bogus && $stampAge < 172800) ? 'welcome' : 'launch';
                 // only stamp on a confirmed queue entry - see pcm_welcome_maybe
-                $r = wc_record($k, $em, isset($c['name']) ? $c['name'] : '', 'launch');
+                $r = wc_record($k, $em, isset($c['name']) ? $c['name'] : '', $kind);
                 if ($r === true || $r === 'exists') {
                     $c['welcomed'] = time();      // never also send them the "just now" welcome
                     $stats['queued']++;
@@ -1515,8 +1608,11 @@ if ($action === 'book') {
     // unconfigured or SimplyBook's delivery fails. rv_record is keyed by booking id and
     // preserves per-email state, so the callback arriving later is a harmless no-op.
     if ($bid > 0 && $snap['email'] !== '') {
-        if (!defined('RV_LIB')) define('RV_LIB', 1);   // load the functions only, not the HTTP entry
-        @include_once __DIR__ . '/pcm-review.php';
+        // loaded at TOP LEVEL by this file - see the note there. Including it here
+        // unset $RV_Q for the request, so these review and job-done entries were
+        // written to a phantom queue and never sent for any booking made through
+        // our own page. SimplyBook-originated ones were fine: pcm-sb-callback.php
+        // includes the library at top level.
         if (function_exists('rv_record')) {
             $svcNm = '';
             foreach (sb_services() as $svv) if ($svv['id'] === $eventId) { $svcNm = $svv['name']; break; }

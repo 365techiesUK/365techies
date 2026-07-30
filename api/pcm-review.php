@@ -75,6 +75,20 @@ date_default_timezone_set('Europe/London');   // SimplyBook datetimes are compan
 // ---- queue file: same lock + tmp-rename discipline as pcm-data.json ----
 function rvq_open() {
     global $RV_Q;
+    /* REFUSE to work on an empty path rather than quietly inventing a queue.
+       If this file is included from inside a function, $RV_Q is bound to that
+       function's locals and this global is unset. fopen(null.'.lock') then opens
+       a stray '.lock' in the working directory, file_exists(null) reports false,
+       and the caller gets a perfectly usable EMPTY queue that it can add to and
+       "save" nowhere. That is how the portal welcome silently did nothing for two
+       days while reporting success (see the note at the top of pcm-booking.php).
+       Returning the same (null, null) as a lock failure means every caller
+       already handles it: wc_record returns false, and false is never recorded
+       as done. A wrong answer must be louder than no answer. */
+    if (!is_string($RV_Q) || $RV_Q === '') {
+        @error_log('365: rvq_open called with no $RV_Q - pcm-review.php was included at function scope');
+        return array(null, null);
+    }
     $lk = @fopen($RV_Q . '.lock', 'c');
     if (!$lk || !@flock($lk, LOCK_EX)) return array(null, null);
     $q = array();
