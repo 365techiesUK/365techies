@@ -787,9 +787,34 @@ function send_join_sms($mobile, $code) {
    db_save() - no second write, no second lock.
    --------------------------------------------------------------------------- */
 function pcm_welcome_maybe(&$c, $ckey, $email, $name) {
-    if (!empty($c['welcomed'])) return;
     $email = strtolower(trim((string)$email));
     if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) return;
+
+    /* A BARE STAMP IS NOT EVIDENCE - verify it against the queue.
+       ----------------------------------------------------------
+       This used to `return` on !empty($c['welcomed']) alone, and that turned the
+       queue bug into a permanent one: every customer the broken code stamped was
+       locked out of this function for ever, so signing them in again did nothing
+       at all. On 30 Jul 2026 Steve sat with a customer, Outlook open, re-signing
+       her in and waiting for an email that could never come.
+
+       The queue is the record of truth - wc_record keeps a stub for ever once an
+       address has been handled. So if a stamp has no entry behind it, the stamp is
+       wrong and we carry on and queue properly. That makes a re-sign-in self-
+       healing: nobody has to know a repair tool exists.
+
+       Cost is one small locked read on a sign-in that carries a stamp. The stamp
+       was only ever a micro-optimisation to avoid this read, and correctness beats
+       it - especially now we know the stamp can lie. */
+    if (!empty($c['welcomed'])) {
+        if (!function_exists('rvq_open')) return;        // cannot verify - leave it alone
+        list($vlk, $vq) = rvq_open();
+        if (!$vlk) return;                               // cannot verify - try again next time
+        $seen = isset($vq['wc'][$ckey]);
+        rvq_close($vlk);
+        if ($seen) return;                               // genuinely handled - nothing to do
+        unset($c['welcomed']);                           // the stamp was a lie; re-earn it below
+    }
     // The library is loaded at TOP LEVEL by this file - see the note there. Do NOT
     // include it here: that is the bug that made this function silently do nothing.
     if (!function_exists('wc_record')) return;          // library missing - retry on the next sign-in

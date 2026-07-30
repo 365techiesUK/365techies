@@ -71,15 +71,34 @@ class Php(object):
         return sum(1 for e in q.get("wc", {}).values() if e.get("st") == "pending")
 
 
-def sign_in(php, ckey, email, top_level_include, guard):
-    """One portal sign-in. Returns (queued?, customer stamped 'welcomed'?)."""
+def sign_in(php, ckey, email, top_level_include, guard, cust=None, verify_stamp=False):
+    """One portal sign-in through pcm_welcome_maybe.
+
+    `cust` is the customer record, so a stamp survives between sign-ins.
+    `verify_stamp` models the fix that checks the queue before trusting a stamp.
+    """
     if top_level_include:
         php.include_review_lib(php.globals)        # FIXED: config is global
     locals_ = {}
     if not top_level_include:
         php.include_review_lib(locals_)            # BROKEN: config is function-local
+
+    if cust is None:
+        cust = {}
+    if cust.get("welcomed"):
+        if not verify_stamp:
+            return "blocked", True                 # OLD: locked out for ever
+        lk, q = php.rvq_open(guard)
+        if lk is None:
+            return "blocked", True
+        if ckey in q.get("wc", {}):
+            return "exists", True                  # genuinely handled
+        cust.pop("welcomed")                        # the stamp was a lie
+
     q = php.wc_record(ckey, email, guard)
     stamped = q in (True, "exists")
+    if stamped:
+        cust["welcomed"] = 1
     return q, stamped
 
 
@@ -93,6 +112,36 @@ def scenario(name, top_level_include, guard):
     print("%-46s wc_record=%-8s stamped=%-5s cron finds %d to send"
           % (name, str(r1), str(s1), due))
     return due, s1
+
+
+def margriet():
+    """The 30 Jul case: stamped by the broken code, then re-signed-in after the fix.
+
+    Steve was sitting with this customer, Outlook open, re-signing her in. Under
+    the old rule pcm_welcome_maybe returned on the stamp alone, so no sign-in
+    could ever help her. Verifying the stamp against the queue makes it heal.
+    """
+    if os.path.exists(REAL_QUEUE):
+        os.remove(REAL_QUEUE)
+    php = Php()
+    cust = {}
+    # day one, broken build: stamped, nothing queued
+    sign_in(php, "margriet", "m@example.com", False, False, cust)
+    was_stamped = bool(cust.get("welcomed"))
+    queued_then = php.wc_process()
+
+    # fix deployed. She signs in again - OLD rule (trust the bare stamp):
+    php_old = Php()
+    r_old, _ = sign_in(php_old, "margriet", "m@example.com", True, True,
+                       dict(cust), verify_stamp=False)
+    queued_old = php_old.wc_process()
+
+    # ...and with the fix that verifies the stamp against the queue:
+    php_new = Php()
+    r_new, _ = sign_in(php_new, "margriet", "m@example.com", True, True,
+                       dict(cust), verify_stamp=True)
+    queued_new = php_new.wc_process()
+    return was_stamped, queued_then, r_old, queued_old, r_new, queued_new
 
 
 if __name__ == "__main__":
@@ -114,6 +163,19 @@ if __name__ == "__main__":
         ("the guard alone still sends nothing (needs the real fix)", guard_due == 0),
         ("the fix queues both customers for the cron", fixed_due == 2),
         ("the fix stamps them truthfully", fixed_stamped is True),
+    ]
+
+    st, q_then, r_old, q_old, r_new, q_new = margriet()
+    print()
+    print("Re-signing in a customer the broken build had already stamped:")
+    print("  day one (broken)      stamped=%s, queued=%d" % (st, q_then))
+    print("  trusting the stamp    -> %-8s queued=%d" % (r_old, q_old))
+    print("  verifying the stamp   -> %-8s queued=%d" % (r_new, q_new))
+    print()
+    checks += [
+        ("the broken build stamped her with nothing queued", st is True and q_then == 0),
+        ("trusting a bare stamp locks her out for ever", r_old == "blocked" and q_old == 0),
+        ("verifying the stamp heals her on the next sign-in", r_new is True and q_new == 1),
     ]
     for label, passed in checks:
         print("  %s  %s" % ("PASS" if passed else "FAIL", label))
