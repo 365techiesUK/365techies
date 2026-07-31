@@ -20090,6 +20090,22 @@ def write_portal_page():
   #p365app .chip.g { color:var(--pgood); border-color:rgba(0,206,27,.35); }
   #p365app .chip.w { color:var(--pwarn); border-color:rgba(224,179,65,.4); }
   #p365app .chip.b { color:var(--pbad); border-color:rgba(232,99,126,.4); }
+  /* Message us. A conversation, not a form: the customer's own words sit right,
+     ours sit left, so a glance tells them who said what without reading. */
+  #p365app .msg-thread { max-height:340px; overflow-y:auto; padding:.2rem .1rem .4rem; margin-bottom:.7rem; }
+  #p365app .msg-day { text-align:center; font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--pmut); margin:.7rem 0 .5rem; }
+  #p365app .msg { max-width:82%; border:1px solid var(--pline); border-radius:12px; padding:.5rem .7rem; margin-bottom:.5rem; }
+  #p365app .msg--them { background:var(--ppanel); }
+  #p365app .msg--you { margin-left:auto; background:rgba(29,151,227,.10); border-color:rgba(29,151,227,.34); }
+  #p365app .msg-who { font-size:.68rem; letter-spacing:.05em; text-transform:uppercase; color:var(--pcyan); margin:0 0 .18rem; }
+  #p365app .msg--you .msg-who { color:var(--psoft); }
+  #p365app .msg-x { margin:0; font-size:.9rem; line-height:1.55; overflow-wrap:anywhere; }
+  #p365app .msg-t { margin:.25rem 0 0; font-size:.68rem; color:var(--pmut); }
+  #p365app .msg-empty { margin:.2rem 0 .8rem; }
+  #p365app .msg-lbl { display:block; font-size:.75rem; color:var(--pmut); margin-bottom:.3rem; }
+  #p365app #msgText { width:100%; box-sizing:border-box; font:inherit; font-size:.92rem; padding:.6rem .7rem; border-radius:10px; border:1px solid var(--pline); background:rgba(0,0,0,.25); color:inherit; resize:vertical; }
+  #p365app #msgText:focus { outline:none; border-color:var(--pcyan); }
+  #p365app #msgNote { font-size:.8rem; }
   /* Saved website checks. Lighthouse's own thresholds decide the colour:
      90+ green, 50-89 amber, under 50 red - so a customer reading their own
      saved result sees the same verdict Google gives, not our opinion of it. */
@@ -20875,7 +20891,7 @@ def write_portal_page():
 </style>'''
     js = '''<script>
 (function () {
-  var BK = '/api/pcm-booking.php', PCM = '/api/pcm.php', DASH = '/api/pcm-dash.php', TEAM = '/api/pcm-team.php', CONN = '/api/pcm-connect.php', FEEDS = '/api/pcm-feeds.php', WCHK = '/api/pcm-wcheck.php';
+  var BK = '/api/pcm-booking.php', PCM = '/api/pcm.php', DASH = '/api/pcm-dash.php', TEAM = '/api/pcm-team.php', CONN = '/api/pcm-connect.php', FEEDS = '/api/pcm-feeds.php', WCHK = '/api/pcm-wcheck.php', MSG = '/api/pcm-msg.php';
   var el = document.getElementById('p365app');
   var S = {};
   try { S = JSON.parse(sessionStorage.getItem('p365s') || 'null') || JSON.parse(localStorage.getItem('p365') || '{}'); } catch (e) { S = {}; }
@@ -23665,6 +23681,15 @@ def write_portal_page():
         + 'Here is a real one, start to finish, with the measurements published as they happen '
         + '\\u2014 including the ones we have not taken yet.</p>'
         + '<div id="wproj"><p class="quiet">Loading the latest\\u2026</p></div></div>';
+      // MESSAGE US. Placed high - above the browser check-up and the projects
+      // card - because a customer with something to say should not have to
+      // scroll past our marketing to say it.
+      h += '<div class="card" id="msgCard"><h2>\\ud83d\\udcac Message us</h2>'
+        + '<p class="quiet">Ask us anything about your computers, your bookings or your bill. '
+        + 'This goes straight to the team \\u2014 no ticket numbers, no hold music. '
+        + 'We answer during office hours; if it is urgent, ring '
+        + '<a href="tel:+441202775566">01202 775566</a>.</p>'
+        + '<div id="msgBox"><p class="quiet">Loading\\u2026</p></div></div>';
       // SAVED WEBSITE CHECKS. Rendered only if the customer has actually saved
       // one - an empty "you have no saved checks" box on every dashboard would
       // be clutter for the many to explain a feature to the few. The prompt to
@@ -23715,6 +23740,7 @@ def write_portal_page():
       browserCheck();
       webProjects();
       savedChecks();
+      msgInit();
       var ar = document.getElementById('appreq');
       if (ar && !d.appreq) ar.onclick = function () {
         ar.disabled = true;
@@ -24135,6 +24161,135 @@ def write_portal_page():
     if (p.length !== 3) return iso || '';
     var mi = parseInt(p[1], 10) - 1;
     return (M[mi] ? M[mi] : '') + ' ' + p[0];
+  }
+
+  // ---- message us -----------------------------------------------------------
+  // The customer's half of portal messaging. They see a conversation with 365
+  // Techies; engineers answer from Slack and never appear by name, because the
+  // customer is buying a company's attention rather than an individual's.
+  //
+  // Replies arrive by CLI cron pulling from Slack (the web WAF answers Slack's
+  // own POSTs with a captcha page and HTTP 202, which Slack counts as success -
+  // an Events subscription would lose every message silently). So this polls
+  // our own endpoint while the tab is open, and stops when it is not.
+  var msgTimer = null, msgSending = false, msgLast = 0;
+  function msgInit() {
+    var box = document.getElementById('msgBox'); if (!box) return;
+    msgLoad(true);
+    // Only poll a visible tab. A dashboard left open on a spare monitor for a
+    // week should not sit hitting the server every 20 seconds forever.
+    if (msgTimer) clearInterval(msgTimer);
+    msgTimer = setInterval(function () {
+      if (document.hidden) return;
+      if (!document.getElementById('msgBox')) { clearInterval(msgTimer); msgTimer = null; return; }
+      msgLoad(false);
+    }, 20000);
+    document.addEventListener('visibilitychange', function () {
+      if (!document.hidden && document.getElementById('msgBox')) msgLoad(false);
+    });
+  }
+  function msgLoad(first) {
+    post(MSG, { action: 'list', wtoken: S.wtoken, machine: mid() }).then(function (r) {
+      if (!r || !r.ok) { if (first) msgRender([], 'off'); return; }
+      msgRender(r.msgs || [], '');
+    }).catch(function () { if (first) msgRender([], 'off'); });
+  }
+  function msgRender(msgs, mode) {
+    var box = document.getElementById('msgBox'); if (!box) return;
+    // Preserve whatever the customer had half-typed across a poll - losing a
+    // part-written message to a background refresh is unforgivable.
+    var prev = document.getElementById('msgText');
+    var draft = prev ? prev.value : '';
+    var focused = prev && document.activeElement === prev;
+
+    var h = '';
+    if (mode === 'off') {
+      h = '<p class="quiet">Messaging is not available just now \\u2014 please ring '
+        + '<a href="tel:+441202775566">01202 775566</a> and we will help straight away.</p>';
+      box.innerHTML = h;
+      return;
+    }
+    if (!msgs.length) {
+      h += '<p class="quiet msg-empty">No messages yet. Type below and we will pick it up.</p>';
+    } else {
+      h += '<div class="msg-thread" id="msgThread">';
+      var lastDay = '';
+      msgs.forEach(function (m) {
+        var day = msgDay(m.t);
+        if (day !== lastDay) { h += '<p class="msg-day">' + esc(day) + '</p>'; lastDay = day; }
+        h += '<div class="msg msg--' + (m.w === 'e' ? 'them' : 'you') + '">'
+           + '<p class="msg-who">' + (m.w === 'e' ? '365 Techies' : 'You') + '</p>'
+           + '<p class="msg-x">' + esc(m.x).split('\\n').join('<br>') + '</p>'
+           + '<p class="msg-t">' + esc(msgTime(m.t)) + (m.p ? ' \\u00b7 sending\\u2026' : '') + '</p></div>';
+      });
+      h += '</div>';
+    }
+    h += '<div class="msg-form">'
+       + '<label class="msg-lbl" for="msgText">Your message</label>'
+       + '<textarea id="msgText" rows="3" maxlength="2000" placeholder="What can we help with?"></textarea>'
+       + '<div class="row" style="border:0"><button class="sm" id="msgSend">Send</button>'
+       + '<span class="quiet" id="msgNote"></span></div></div>';
+    box.innerHTML = h;
+
+    var ta = document.getElementById('msgText');
+    if (ta) { ta.value = draft; if (focused) { ta.focus(); ta.selectionStart = ta.selectionEnd = draft.length; } }
+    var th = document.getElementById('msgThread');
+    if (th) th.scrollTop = th.scrollHeight;
+    var b = document.getElementById('msgSend');
+    if (b) b.onclick = msgSend;
+    if (ta) ta.onkeydown = function (e) {
+      // Enter sends, Shift+Enter makes a new line - what everyone expects of a
+      // chat box. Ctrl/Cmd+Enter also sends, for the people who learned email.
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); msgSend(); }
+    };
+  }
+  function msgSend() {
+    if (msgSending) return;
+    var ta = document.getElementById('msgText'); if (!ta) return;
+    var text = (ta.value || '').trim();
+    var note = document.getElementById('msgNote');
+    if (!text) { if (note) note.textContent = 'Type something first.'; return; }
+    if (Date.now() - msgLast < 2000) { if (note) note.textContent = 'Just a moment\\u2026'; return; }
+    msgSending = true; msgLast = Date.now();
+    var b = document.getElementById('msgSend');
+    if (b) { b.disabled = true; b.textContent = 'Sending\\u2026'; }
+    if (note) note.textContent = '';
+    post(MSG, { action: 'send', wtoken: S.wtoken, machine: mid(), text: text }).then(function (r) {
+      msgSending = false;
+      if (r && r.ok) {
+        ta.value = '';
+        msgRender(r.msgs || [], '');
+        var n2 = document.getElementById('msgNote');
+        if (n2) n2.textContent = 'Sent \\u2014 we will reply here.';
+        try { if (window.gtag) gtag('event', 'portal_message_sent'); } catch (e) {}
+      } else {
+        if (b) { b.disabled = false; b.textContent = 'Send'; }
+        var n3 = document.getElementById('msgNote');
+        var why = (r && r.error === 'too_many') ? 'That is a lot of messages in an hour \\u2014 ring us on 01202 775566.'
+                : (r && r.error === 'slow_down') ? 'Just a moment between messages.'
+                : (r && r.error === 'expired') ? 'Your session expired \\u2014 please sign in again.'
+                : 'Could not send that \\u2014 your message is still in the box. Try again, or ring 01202 775566.';
+        if (n3) n3.textContent = why;
+      }
+    }).catch(function () {
+      msgSending = false;
+      if (b) { b.disabled = false; b.textContent = 'Send'; }
+      var n4 = document.getElementById('msgNote');
+      if (n4) n4.textContent = 'Could not reach us \\u2014 your message is still in the box.';
+    });
+  }
+  function msgDay(t) {
+    var d = new Date((parseInt(t, 10) || 0) * 1000), n = new Date();
+    var same = function (a, b) { return a.toDateString() === b.toDateString(); };
+    if (same(d, n)) return 'Today';
+    var y = new Date(n.getTime() - 86400000);
+    if (same(d, y)) return 'Yesterday';
+    var M = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return d.getDate() + ' ' + M[d.getMonth()] + ' ' + d.getFullYear();
+  }
+  function msgTime(t) {
+    var d = new Date((parseInt(t, 10) || 0) * 1000);
+    return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
   }
 
   // ---- saved website checks -------------------------------------------------
