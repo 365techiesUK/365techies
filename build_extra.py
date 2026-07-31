@@ -9818,21 +9818,67 @@ website_checker()
 # ===================================================== EMAIL SECURITY CHECKER (SPF/DKIM/DMARC lead-gen tool)
 def email_security_checker():
     slug = "email-security-checker"
-    desc = "Free email security checker. Enter your domain to see if SPF, DKIM and DMARC are protecting your business email from spoofing and impersonation, with plain-English fixes. From 365 Techies, Bournemouth & Dorset."
+    desc = "Free email spoofing checker. Enter your domain to see if a scammer can send email that looks like it's from you — SPF, DKIM and DMARC tested, plain-English fixes. 365 Techies, Bournemouth & Dorset."
     faqs = [
-      ("What does the email security checker do?", "It looks up your domain&rsquo;s public DNS records &mdash; SPF, DKIM and DMARC &mdash; and tells you, in plain English, whether scammers could send email pretending to be you. It&rsquo;s free, instant, and never sees your actual email."),
-      ("What are SPF, DKIM and DMARC?", "Three DNS records that prove your email is really from you. SPF lists who&rsquo;s allowed to send as your domain, DKIM cryptographically signs your messages, and DMARC tells inboxes what to do with anything that fails &mdash; together they stop spoofing and impersonation."),
-      ("Why does email spoofing matter?", "Without these records, a scammer can send an email that looks exactly like it&rsquo;s from your business &mdash; to your customers, staff or suppliers. It&rsquo;s how invoice fraud, fake &lsquo;CEO&rsquo; requests and phishing attacks start."),
-      ("My domain isn&rsquo;t fully protected &mdash; can you fix it?", "Yes &mdash; setting up SPF, DKIM and DMARC correctly is something we do for businesses regularly, usually within a day and with no disruption to your email. See our <a href=\"/cybersecurity-support/\">cybersecurity support</a> or <a href=\"/contact/\">get in touch</a>."),
+      ("Can someone send an email that looks like it&rsquo;s from my company?", "If your domain has no enforcing DMARC policy, then yes &mdash; a scammer can put your exact address in the &lsquo;From&rsquo; line and it will reach inboxes looking genuine. Enter your domain in the checker above and it tells you, in plain English, whether that is possible for you right now."),
+      ("What is email spoofing?", "Spoofing is when someone forges the sender address on an email so it appears to come from you &mdash; your customers see your name and address, but the message is really from a criminal. It is the technique behind invoice fraud, fake &lsquo;boss&rsquo; payment requests and much phishing."),
+      ("How do I stop my email being spoofed?", "Three DNS records, set up correctly: SPF (who may send as you), DKIM (a signature on your mail) and, crucially, an enforcing DMARC policy (p=quarantine or p=reject) that tells inboxes to bin anything that fails. DMARC is the one most businesses are missing, and it is what actually protects the address a person reads."),
+      ("What is DMARC and do I really need it?", "DMARC is the record that ties SPF and DKIM together and tells receiving inboxes what to do with a fake: report it, spam it or reject it. Without it, SPF and DKIM protect the technical &lsquo;envelope&rsquo; but not the visible address your customer actually sees &mdash; so yes, for a business, it is the one that matters most."),
+      ("Someone received a scam email pretending to be me &mdash; what do I do?", "First, tell the people it may have reached not to act on it, and report it (in the UK, forward phishing to report@phishing.gov.uk). Then close the hole so it can&rsquo;t happen again by getting SPF, DKIM and an enforcing DMARC policy in place. See our guide on <a href=\"/business-email-compromise/\">business email compromise</a>, or <a href=\"/contact/\">give us a call</a>."),
+      ("Can you prove my email is vulnerable?", "We can, safely and with your permission &mdash; an authorised spoofing test sends a harmless demonstration email to your own inbox so you can see for yourself how convincing a fake looks, and then we close the gap. We only ever do this to your own address, with your say-so, and never to anyone else. It is the honest version of &lsquo;seeing is believing&rsquo;."),
+      ("My domain isn&rsquo;t fully protected &mdash; can you fix it?", "Yes &mdash; setting up SPF, DKIM and DMARC correctly is something we do for businesses regularly, usually within a day and with no disruption to your email. See <a href=\"/how-to-protect-your-business-email/\">how we&rsquo;d protect your email</a> or <a href=\"/contact/\">get in touch</a>."),
       ("Is it safe to enter my domain?", "Completely &mdash; we only read public DNS records (the same ones every mail server checks). We don&rsquo;t see your email, your inbox or any private data, and nothing is stored."),
     ]
+    # a deliberately fictional, clearly-labelled illustration of a spoofed email -
+    # NO real names, and it sends nothing. It exists to make the risk concrete,
+    # which is the honest version of the owner's "prove the weakness" idea.
+    spoof_example = '''    <section class="section" aria-label="What a spoofed email looks like">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// SEEING IS BELIEVING</p>
+          <h2 class="section-title section-title--center" data-title>What a spoofed email actually looks like<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>This is the problem in one picture. If your domain isn&rsquo;t protected, a criminal can send a message like this &mdash; and to your customer, it looks completely genuine, because the address really is yours.</p>
+        </div>
+        <div class="es-demo" data-reveal>
+          <div class="es-demo-tag mono">Illustration only &mdash; a made-up example, nothing was sent</div>
+          <div class="es-demo-mail">
+            <div class="es-demo-row"><span>From</span><b>Accounts &lt;accounts@yourcompany.co.uk&gt;</b></div>
+            <div class="es-demo-row"><span>To</span><b>A customer of yours</b></div>
+            <div class="es-demo-row"><span>Subject</span><b>Updated bank details for your outstanding invoice</b></div>
+            <div class="es-demo-body">
+              <p>Hi,</p>
+              <p>Please note our bank details have changed. Kindly use the account below for the invoice due this week, and confirm once payment is sent.</p>
+              <p>Sort code: 00-00-00 &nbsp; Account: 00000000</p>
+              <p>Many thanks,<br>Accounts Team</p>
+            </div>
+          </div>
+          <p class="es-demo-note">The customer pays the criminal, not you &mdash; and the first anyone hears of it is a chased invoice weeks later. An enforcing DMARC policy stops this email ever arriving.</p>
+        </div>
+      </div>
+    </section>
+    <style>
+      .es-demo{max-width:640px;margin:0 auto}
+      .es-demo-tag{display:inline-block;font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:#f1c40f;background:rgba(241,196,15,.12);border:1px dashed rgba(241,196,15,.5);border-radius:999px;padding:.3rem .7rem;margin-bottom:.7rem}
+      .es-demo-mail{border:1px solid rgba(255,255,255,.14);border-radius:14px;overflow:hidden;background:rgba(255,255,255,.03)}
+      .es-demo-row{display:flex;gap:.8rem;padding:.6rem 1.1rem;border-bottom:1px solid rgba(255,255,255,.08);font-size:.9rem}
+      .es-demo-row span{flex:none;width:4.5rem;color:var(--muted,#9aa6c2)}
+      .es-demo-row b{min-width:0;word-break:break-word}
+      .es-demo-body{padding:1.1rem 1.2rem;font-size:.94rem;line-height:1.6}
+      .es-demo-body p{margin:0 0 .8rem}.es-demo-body p:last-child{margin-bottom:0}
+      .es-demo-note{font-size:.86rem;color:var(--muted,#9aa6c2);line-height:1.6;margin:1rem 0 0;text-align:center}
+    </style>'''
+    spoof_test = cta("Prove it &mdash; safely, and only to yourself",
+          "Want to see how convincing a fake looks? We&rsquo;ll run an <strong>authorised spoofing test</strong>: with your permission, we send one harmless demonstration email to your own inbox so you can see it with your own eyes &mdash; then we close the hole. We only ever do this to your address, with your say-so, and never to anyone else. It&rsquo;s the honest version of &lsquo;seeing is believing&rsquo;.",
+          primary=("Book a free spoofing test", "/contact/?topic=email-security"),
+          secondary=("How we protect your email", "/how-to-protect-your-business-email/"))
     content = "\n".join([
-      hero(bc("Email Security Checker"), "// FREE EMAIL SECURITY CHECK",
-           'Can scammers <em class="grad grad--cyan">spoof your email?</em>',
-           "Find out in seconds. Enter your domain and we&rsquo;ll check whether SPF, DKIM and DMARC are protecting your business email from spoofing and impersonation &mdash; the scams behind invoice fraud and phishing. Free, no sign-up.",
-           cta1=("Check a Domain", "#esectool"), cta2=("Cybersecurity Help", "/cybersecurity-support/"),
+      hero(bc("Email Security Checker"), "// FREE EMAIL SPOOFING CHECK",
+           'Can a scammer <em class="grad grad--cyan">send email as you?</em>',
+           "Find out in seconds. Enter your domain and we&rsquo;ll check whether SPF, DKIM and DMARC are stopping criminals sending email that looks exactly like it&rsquo;s from you &mdash; the scams behind invoice fraud and phishing. Free, no sign-up.",
+           cta1=("Check my domain", "#esectool"), cta2=("How we&rsquo;d fix it", "/how-to-protect-your-business-email/"),
            chips=["SPF &middot; DKIM &middot; DMARC","Instant &amp; free","No email needed"]),
       EMAILSEC_TOOL,
+      spoof_example,
       f'''    <section class="section section--alt" aria-label="What we check">
       <div class="wrap">
         <div class="section-head">
@@ -9840,21 +9886,23 @@ def email_security_checker():
           <h2 class="section-title section-title--center" data-title>SPF, DKIM &amp; DMARC, in plain English<span class="title-underline title-underline--center"></span></h2>
         </div>
         <div class="tile-grid" data-stagger>
-{tiles([("shield","SPF","Lists which servers are allowed to send email for your domain &mdash; so random servers can&rsquo;t."),("lock","DKIM","Cryptographically signs your emails, so inboxes can prove they really came from you and weren&rsquo;t tampered with."),("check","DMARC","Ties it together and tells inboxes what to do with fakes &mdash; report, spam or reject. The one most businesses are missing."),("mail","Why it matters","Without these, a scammer can email your customers or staff as &lsquo;you&rsquo; &mdash; the root of invoice fraud and phishing."),("users","Protects everyone","Your customers, suppliers and team all trust email from your domain &mdash; these records keep that trust safe."),("bolt","Quick to fix","Setting them up is fast and behind-the-scenes &mdash; no disruption to how you send email.")])}
+{tiles([("shield","SPF","Lists which servers are allowed to send email for your domain &mdash; so random servers can&rsquo;t."),("lock","DKIM","Cryptographically signs your emails, so inboxes can prove they really came from you and weren&rsquo;t tampered with."),("check","DMARC","Ties it together and tells inboxes what to do with fakes &mdash; report, spam or reject. The one most businesses are missing, and the one that protects the address people actually read."),("mail","Why it matters","Without these, a scammer can email your customers or staff as &lsquo;you&rsquo; &mdash; the root of invoice fraud and phishing."),("users","Protects everyone","Your customers, suppliers and team all trust email from your domain &mdash; these records keep that trust safe."),("bolt","Quick to fix","Setting them up is fast and behind-the-scenes &mdash; no disruption to how you send email.")])}
         </div>
+        <p class="lede lede--center" data-reveal style="margin-top:1.6rem">Want the full picture? See <a href="/how-to-protect-your-business-email/">how to protect your business email</a>, what to do about <a href="/business-email-compromise/">business email compromise</a>, and the <a href="/case-studies/">businesses we look after</a>.</p>
       </div>
     </section>''',
+      spoof_test,
       faq_html(faqs),
       cta("Not protected? We&rsquo;ll fix it.",
           "Setting up SPF, DKIM and DMARC properly stops scammers using your name &mdash; and we do it for Dorset businesses all the time, usually within a day.",
-          primary=("Secure My Email", "/contact/"), secondary=("Cybersecurity Support", "/cybersecurity-support/")),
+          primary=("Secure My Email", "/contact/?topic=email-security"), secondary=("Cybersecurity Support", "/cybersecurity-support/")),
     ])
     def schema(s, _desc=desc, _faqs=faqs):
-        return graph([crumb(s, "Email Security Checker"), webpage(s, "Free Email Security Checker", _desc),
+        return graph([crumb(s, "Email Security Checker"), webpage(s, "Free Email Spoofing Checker", _desc),
                       {"@type":"WebApplication","name":"365 Techies Email Security Checker","applicationCategory":"SecurityApplication","operatingSystem":"Web (all browsers)","url":SITE+"/email-security-checker/","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},"provider":{"@id":SITE+"/#business"}},
                       faqpage(s, _faqs)])
-    add(slug=slug, title="Free Email Security Checker | SPF, DKIM & DMARC Test | 365 Techies",
-        desc=desc, og_title="Free Email Security Checker | 365 Techies", schema=schema, content=content)
+    add(slug=slug, title="Can Someone Spoof My Email? Free SPF/DKIM/DMARC Check",
+        desc=desc, og_title="Free Email Spoofing Checker | 365 Techies", schema=schema, content=content)
 email_security_checker()
 
 # ===================================================== PASSWORD BREACH CHECKER (HIBP k-anonymity lead-gen tool)

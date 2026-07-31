@@ -476,7 +476,8 @@ SNIPPETS = {
         "desc": "Dell WD19 or WD22 dock not working? Step-by-step fixes for no power, a laptop that will not charge, and monitors not detected. Most faults are fixable.",
     },
     "email-security-checker": {
-        "desc": "Free email security checker. Enter your domain to see whether SPF, DKIM and DMARC are protecting your business email from spoofing and impersonation.",
+        "title": "Can Someone Spoof My Email? Free Domain Check",
+        "desc": "Free check: can a scammer send email that looks like it's from you? Test your domain's SPF, DKIM and DMARC in seconds, with plain-English fixes.",
     },
     "outlook-modern-authentication-not-working": {
         "desc": "Classic Outlook keeps asking for a password because basic authentication has been retired. Update Office for OAuth 2.0 and clear cached credentials.",

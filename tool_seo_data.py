@@ -263,8 +263,8 @@ TOOL_SEO = {'ai-roi-calculator': {'answer': 'This free ROI calculator estimates 
                                                   ['Read your annual cost',
                                                    'The tool instantly shows a rough &pound;-per-year figure for lost working time and compares it to the cost of a support plan &mdash; nothing you enter is sent or stored.']]},
                               'webapp': False},
- 'email-security-checker': {'answer': 'Scammers can spoof your email if your domain is missing SPF, DKIM or an enforcing DMARC record, and this free checker looks up those three public DNS records for your domain and tells you in plain '
-                                      'English whether criminals could send email pretending to be you.',
+ 'email-security-checker': {'answer': 'A scammer can send email that looks exactly like it is from you if your domain has no enforcing DMARC policy, and this free checker looks up your live SPF, DKIM, DMARC, MX and encryption records and gives you '
+                                      'a plain-English verdict &mdash; can your domain be spoofed right now, yes or no &mdash; plus the fixes.',
                             'faqs': [['How do I know if someone can spoof my email address?',
                                       'Enter your domain into this checker: if it finds no SPF record, no DMARC record, or a DMARC policy set to p=none, then spoofed email in your name is not being blocked and scammers can impersonate '
                                       'you.'],

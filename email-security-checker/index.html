@@ -31,8 +31,8 @@
       window.addEventListener('load', function () { setTimeout(loadGtagLib, 30000); });
     })();
   </script>
-  <title>Can Scammers Spoof My Email? Free Check | 365 Techies</title>
-  <meta name="description" content="Free email security checker. Enter your domain to see whether SPF, DKIM and DMARC are protecting your business email from spoofing and impersonation." />
+  <title>Can Someone Spoof My Email? Free Domain Check</title>
+  <meta name="description" content="Free check: can a scammer send email that looks like it's from you? Test your domain's SPF, DKIM and DMARC in seconds, with plain-English fixes." />
   <link rel="canonical" href="https://365techies.co.uk/email-security-checker/" />
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
   <meta name="author" content="365 Techies Limited" />
@@ -46,14 +46,14 @@
   <meta property="og:site_name" content="365 Techies" />
   <meta property="og:locale" content="en_GB" />
   <meta property="og:url" content="https://365techies.co.uk/email-security-checker/" />
-  <meta property="og:title" content="Free Email Security Checker | 365 Techies" />
-  <meta property="og:description" content="Free email security checker. Enter your domain to see whether SPF, DKIM and DMARC are protecting your business email from spoofing and impersonation." />
+  <meta property="og:title" content="Free Email Spoofing Checker | 365 Techies" />
+  <meta property="og:description" content="Free check: can a scammer send email that looks like it's from you? Test your domain's SPF, DKIM and DMARC in seconds, with plain-English fixes." />
   <meta property="og:image" content="https://365techies.co.uk/og-image.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Free Email Security Checker | 365 Techies" />
-  <meta name="twitter:description" content="Free email security checker. Enter your domain to see whether SPF, DKIM and DMARC are protecting your business email from spoofing and impersonation." />
+  <meta name="twitter:title" content="Free Email Spoofing Checker | 365 Techies" />
+  <meta name="twitter:description" content="Free check: can a scammer send email that looks like it's from you? Test your domain's SPF, DKIM and DMARC in seconds, with plain-English fixes." />
   <meta name="twitter:image" content="https://365techies.co.uk/og-image.jpg" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -208,8 +208,8 @@
       "@type": "WebPage",
       "@id": "https://365techies.co.uk/email-security-checker/#webpage",
       "url": "https://365techies.co.uk/email-security-checker/",
-      "name": "Free Email Security Checker",
-      "description": "Free email security checker. Enter your domain to see if SPF, DKIM and DMARC are protecting your business email from spoofing and impersonation, with plain-English fixes. From 365 Techies, Bournemouth & Dorset.",
+      "name": "Free Email Spoofing Checker",
+      "description": "Free email spoofing checker. Enter your domain to see if a scammer can send email that looks like it's from you — SPF, DKIM and DMARC tested, plain-English fixes. 365 Techies, Bournemouth & Dorset.",
       "inLanguage": "en-GB",
       "isPartOf": {
         "@id": "https://365techies.co.uk/#website"
@@ -247,26 +247,50 @@
       "mainEntity": [
         {
           "@type": "Question",
-          "name": "What does the email security checker do?",
+          "name": "Can someone send an email that looks like it&rsquo;s from my company?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "It looks up your domain&rsquo;s public DNS records &mdash; SPF, DKIM and DMARC &mdash; and tells you, in plain English, whether scammers could send email pretending to be you. It&rsquo;s free, instant, and never sees your actual email."
+            "text": "If your domain has no enforcing DMARC policy, then yes &mdash; a scammer can put your exact address in the &lsquo;From&rsquo; line and it will reach inboxes looking genuine. Enter your domain in the checker above and it tells you, in plain English, whether that is possible for you right now."
           }
         },
         {
           "@type": "Question",
-          "name": "What are SPF, DKIM and DMARC?",
+          "name": "What is email spoofing?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Three DNS records that prove your email is really from you. SPF lists who&rsquo;s allowed to send as your domain, DKIM cryptographically signs your messages, and DMARC tells inboxes what to do with anything that fails &mdash; together they stop spoofing and impersonation."
+            "text": "Spoofing is when someone forges the sender address on an email so it appears to come from you &mdash; your customers see your name and address, but the message is really from a criminal. It is the technique behind invoice fraud, fake &lsquo;boss&rsquo; payment requests and much phishing."
           }
         },
         {
           "@type": "Question",
-          "name": "Why does email spoofing matter?",
+          "name": "How do I stop my email being spoofed?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Without these records, a scammer can send an email that looks exactly like it&rsquo;s from your business &mdash; to your customers, staff or suppliers. It&rsquo;s how invoice fraud, fake &lsquo;CEO&rsquo; requests and phishing attacks start."
+            "text": "Three DNS records, set up correctly: SPF (who may send as you), DKIM (a signature on your mail) and, crucially, an enforcing DMARC policy (p=quarantine or p=reject) that tells inboxes to bin anything that fails. DMARC is the one most businesses are missing, and it is what actually protects the address a person reads."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is DMARC and do I really need it?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "DMARC is the record that ties SPF and DKIM together and tells receiving inboxes what to do with a fake: report it, spam it or reject it. Without it, SPF and DKIM protect the technical &lsquo;envelope&rsquo; but not the visible address your customer actually sees &mdash; so yes, for a business, it is the one that matters most."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Someone received a scam email pretending to be me &mdash; what do I do?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "First, tell the people it may have reached not to act on it, and report it (in the UK, forward phishing to report@phishing.gov.uk). Then close the hole so it can&rsquo;t happen again by getting SPF, DKIM and an enforcing DMARC policy in place. See our guide on <a href=\"/business-email-compromise/\">business email compromise</a>, or <a href=\"/contact/\">give us a call</a>."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can you prove my email is vulnerable?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "We can, safely and with your permission &mdash; an authorised spoofing test sends a harmless demonstration email to your own inbox so you can see for yourself how convincing a fake looks, and then we close the gap. We only ever do this to your own address, with your say-so, and never to anyone else. It is the honest version of &lsquo;seeing is believing&rsquo;."
           }
         },
         {
@@ -274,7 +298,7 @@
           "name": "My domain isn&rsquo;t fully protected &mdash; can you fix it?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Yes &mdash; setting up SPF, DKIM and DMARC correctly is something we do for businesses regularly, usually within a day and with no disruption to your email. See our <a href=\"/cybersecurity-support/\">cybersecurity support</a> or <a href=\"/contact/\">get in touch</a>."
+            "text": "Yes &mdash; setting up SPF, DKIM and DMARC correctly is something we do for businesses regularly, usually within a day and with no disruption to your email. See <a href=\"/how-to-protect-your-business-email/\">how we&rsquo;d protect your email</a> or <a href=\"/contact/\">get in touch</a>."
           }
         },
         {
@@ -783,12 +807,12 @@
     <section class="page-hero" aria-label="Introduction">
       <div class="page-hero__inner">
         <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">Email Security Checker</span></nav>
-        <p class="eyebrow mono">// FREE EMAIL SECURITY CHECK</p>
-        <h1>Can scammers <em class="grad grad--cyan">spoof your email?</em></h1>
-        <p class="lede">Find out in seconds. Enter your domain and we&rsquo;ll check whether SPF, DKIM and DMARC are protecting your business email from spoofing and impersonation &mdash; the scams behind invoice fraud and phishing. Free, no sign-up.</p>
+        <p class="eyebrow mono">// FREE EMAIL SPOOFING CHECK</p>
+        <h1>Can a scammer <em class="grad grad--cyan">send email as you?</em></h1>
+        <p class="lede">Find out in seconds. Enter your domain and we&rsquo;ll check whether SPF, DKIM and DMARC are stopping criminals sending email that looks exactly like it&rsquo;s from you &mdash; the scams behind invoice fraud and phishing. Free, no sign-up.</p>
         <div class="page-hero__cta">
-          <a href="#esectool" class="button primary button--lg">Check a Domain</a>
-          <a href="/cybersecurity-support/" class="button secondary button--lg">Cybersecurity Help</a>
+          <a href="#esectool" class="button primary button--lg">Check my domain</a>
+          <a href="/how-to-protect-your-business-email/" class="button secondary button--lg">How we&rsquo;d fix it</a>
         </div>
         <ul class="page-hero__chips mono"><li>&#9679; SPF &middot; DKIM &middot; DMARC</li><li>&#9679; Instant &amp; free</li><li>&#9679; No email needed</li></ul>
       </div>
@@ -812,14 +836,19 @@
           </div>
           <div class="es-error" id="es-error" hidden></div>
           <div class="es-results" id="es-results" hidden>
+            <div id="es-spoof"></div>
             <div id="es-verdict"></div>
+            <div class="es-actions" id="es-actions">
+              <button type="button" class="button es-ghost" id="es-copy">Copy my report</button>
+              <button type="button" class="button es-ghost" data-ttshare data-share-title="Free Email Spoofing Check" data-share-text="Can a scammer send email that looks like it's from you? Check your domain free, no sign-up:">Share this free check</button>
+            </div>
             <div class="es-checks" id="es-checks"></div>
             <div class="es-fix">
               <h3>Want your email locked down?</h3>
               <p id="es-fix-msg"></p>
               <div class="es-fix-cta">
                 <a class="button primary" href="/contact/">Get my email secured &#8594;</a>
-                <a class="button es-ghost" href="/cybersecurity-support/">Our cybersecurity help</a>
+                <a class="button es-ghost" href="/how-to-protect-your-business-email/">How we&rsquo;d fix it</a>
               </div>
             </div>
           </div>
@@ -862,6 +891,27 @@
       #esec .es-verdict-box.es-good .es-verdict-grade{color:#2ecc71}
       #esec .es-verdict-box.es-avg .es-verdict-grade{color:#f1c40f}
       #esec .es-verdict-box.es-poor .es-verdict-grade{color:#e74c3c}
+      #esec .es-spoof{padding:1.5rem 1.4rem;border-radius:16px;margin-bottom:1.1rem;display:flex;gap:1.1rem;align-items:center;flex-wrap:wrap}
+      #esec .es-spoof-ico{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.7rem;flex:none}
+      #esec .es-spoof-txt{flex:1 1 15rem;min-width:0}
+      #esec .es-spoof-txt b{display:block;font-size:1.15rem;margin-bottom:.15rem}
+      #esec .es-spoof-txt span{font-size:.9rem;line-height:1.55;color:var(--muted,#9aa6c2)}
+      #esec .es-spoof-score{flex:none;text-align:center;padding-left:1rem;border-left:1px solid rgba(255,255,255,.14)}
+      #esec .es-spoof-score b{display:block;font-size:1.7rem;font-weight:800;line-height:1}
+      #esec .es-spoof-score span{font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#9aa6c2)}
+      #esec .es-spoof--yes{border:1px solid rgba(231,76,60,.5);background:rgba(231,76,60,.1)}
+      #esec .es-spoof--yes .es-spoof-ico{background:rgba(231,76,60,.16)}
+      #esec .es-spoof--yes .es-spoof-txt b,#esec .es-spoof--yes .es-spoof-score b{color:#e74c3c}
+      #esec .es-spoof--no{border:1px solid rgba(46,204,113,.5);background:rgba(46,204,113,.09)}
+      #esec .es-spoof--no .es-spoof-ico{background:rgba(46,204,113,.16)}
+      #esec .es-spoof--no .es-spoof-txt b,#esec .es-spoof--no .es-spoof-score b{color:#2ecc71}
+      #esec .es-spoof--part{border:1px solid rgba(241,196,15,.5);background:rgba(241,196,15,.09)}
+      #esec .es-spoof--part .es-spoof-ico{background:rgba(241,196,15,.16)}
+      #esec .es-spoof--part .es-spoof-txt b,#esec .es-spoof--part .es-spoof-score b{color:#f1c40f}
+      #esec .es-actions{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center;margin-bottom:1.4rem}
+      #esec .es-check.es-info{border-left-color:#5aa9e6}
+      #esec .es-check.es-info .es-check-ico{background:#5aa9e6}
+      #esec .es-scorenote{text-align:center;font-size:.7rem;color:var(--muted,#9aa6c2);opacity:.75;margin:.2rem 0 1.2rem}
       #esec .es-fix{margin-top:2rem;padding:1.6rem;border-radius:16px;border:1px solid rgba(55,194,194,.35);background:rgba(55,194,194,.07);text-align:center}
       #esec .es-fix h3{margin:0 0 .5rem;font-size:1.2rem}
       #esec .es-fix p{margin:0 auto 1.1rem;max-width:48ch;color:var(--muted,#9aa6c2);font-size:.95rem;line-height:1.6}
@@ -877,61 +927,169 @@
         var elLoad=root.querySelector('#es-loading'), elMsg=root.querySelector('#es-loadmsg');
         var elErr=root.querySelector('#es-error'), elRes=root.querySelector('#es-results');
         var CTA='<a href="/contact/">get in touch</a>';
-        var SELECTORS=['google','selector1','selector2','default','k1','s1','s2','mail','dkim','smtp','zoho','mandrill','protonmail','fm1','k2','dk'];
-        var loadTimer=null, LOAD=['Looking up your DNS records…','Checking SPF (who can send as you)…','Checking DMARC (anti-spoofing policy)…','Checking DKIM (email signing)…','Working out your result…'];
+        var SELECTORS=['google','selector1','selector2','default','k1','s1','s2','mail','dkim','smtp','zoho','mandrill','protonmail','fm1','k2','dk','mxvault','pm','turbo-smtp','scph0819','scph1220','mesmtp'];
+        var lastReport='';
+        var loadTimer=null, LOAD=['Looking up your DNS records…','Checking SPF (who can send as you)…','Checking DMARC (anti-spoofing policy)…','Checking DKIM (email signing)…','Checking mail host &amp; encryption…','Working out your result…'];
         function esc(s){var d=document.createElement('div');d.textContent=(s==null?'':s);return d.innerHTML;}
         function normDomain(v){ v=(v||'').trim().toLowerCase().replace(/^https?:\/\//,'').replace(/^www\./,'').replace(/[\/?#].*$/,'').replace(/\s+/g,''); if(v.indexOf('@')>=0) v=v.split('@').pop(); return v; }
         function doh(name,type){ return fetch('https://dns.google/resolve?name='+encodeURIComponent(name)+'&type='+(type||'TXT')).then(function(r){ if(!r.ok) throw new Error('dns'); return r.json(); }); }
         function txt(name){ return doh(name,'TXT').then(function(d){ if(!d.Answer) return []; return d.Answer.filter(function(a){return a.type===16;}).map(function(a){ return String(a.data).replace(/\\"/g,'"').replace(/^"|"$/g,'').replace(/"\s+"/g,''); }); }).catch(function(){return [];}); }
+        function mx(name){ return doh(name,'MX').then(function(d){ if(!d.Answer) return []; return d.Answer.filter(function(a){return a.type===15;}).map(function(a){ return String(a.data).replace(/\.$/,'').replace(/^\d+\s+/,'').toLowerCase(); }); }).catch(function(){return [];}); }
         function findFirst(arr,re){ for(var i=0;i<arr.length;i++){ if(re.test(arr[i])) return arr[i]; } return null; }
-        function startLoad(){ var i=0; elMsg.textContent=LOAD[0]; loadTimer=setInterval(function(){ i=(i+1)%LOAD.length; elMsg.textContent=LOAD[i]; },1600); }
+        function hostName(mxs){ var j=mxs.join(' ');
+          if(/outlook\.com|microsoft/.test(j)) return 'Microsoft 365 / Outlook';
+          if(/google|googlemail|aspmx/.test(j)) return 'Google Workspace';
+          if(/mailspamprotection|siteground/.test(j)) return 'SiteGround';
+          if(/mimecast/.test(j)) return 'Mimecast';
+          if(/proofpoint|pphosted/.test(j)) return 'Proofpoint';
+          if(/zoho/.test(j)) return 'Zoho Mail';
+          if(/protonmail|proton\.me/.test(j)) return 'Proton Mail';
+          if(/secureserver|godaddy/.test(j)) return 'GoDaddy';
+          if(/ionos|1and1|1und1/.test(j)) return 'IONOS';
+          if(/fastmail|messagingengine/.test(j)) return 'Fastmail';
+          return null; }
+        function startLoad(){ var i=0; elMsg.innerHTML=LOAD[0]; loadTimer=setInterval(function(){ i=(i+1)%LOAD.length; elMsg.innerHTML=LOAD[i]; },1500); }
         function stopLoad(){ if(loadTimer){clearInterval(loadTimer);loadTimer=null;} }
         form.addEventListener('submit',function(e){
           e.preventDefault();
           var d=normDomain(input.value); if(!d || d.indexOf('.')<0){ input.focus(); return; }
           elRes.hidden=true; elErr.hidden=true; elLoad.hidden=false; startLoad();
           var btn=form.querySelector('.es-go'); btn.disabled=true;
-          Promise.all([ txt(d), txt('_dmarc.'+d), Promise.all(SELECTORS.map(function(s){ return txt(s+'._domainkey.'+d).then(function(t){return {s:s,t:t};}); })) ])
-            .then(function(r){ render(d,r[0],r[1],r[2]); })
+          Promise.all([ txt(d), txt('_dmarc.'+d),
+            Promise.all(SELECTORS.map(function(s){ return txt(s+'._domainkey.'+d).then(function(t){return {s:s,t:t};}); })),
+            mx(d), txt('_mta-sts.'+d), txt('_smtp._tls.'+d), txt('default._bimi.'+d) ])
+            .then(function(r){ render(d,r[0],r[1],r[2],r[3],r[4],r[5],r[6]); })
             .catch(function(err){ elErr.innerHTML='We couldn’t look up that domain. Check it’s spelled correctly (just the domain, e.g. yourbusiness.co.uk) and try again — or '+CTA+'.'; elErr.hidden=false; })
             .then(function(){ stopLoad(); elLoad.hidden=true; btn.disabled=false; });
         });
-        function render(domain, spfTxts, dmarcTxts, dkimProbes){
+        function render(domain, spfTxts, dmarcTxts, dkimProbes, mxs, mtaStsTxts, tlsRptTxts, bimiTxts){
           var spf=findFirst(spfTxts,/^v=spf1/i);
+          var spfMulti=spfTxts.filter(function(x){return /^v=spf1/i.test(x);}).length>1;
           var dmarc=findFirst(dmarcTxts,/^v=DMARC1/i);
-          var checks=[], dmarcEnforcing=false;
-          if(!spf) checks.push({s:'poor',t:'SPF',m:'No SPF record found — anyone can send email pretending to be your domain.'});
+          var checks=[], score=0, spfStrict=false, spfSoft=false, dmarcEnforcing=false, dmarcMonitor=false, dkimOk=false;
+
+          /* --- SPF (max 20) --- */
+          if(!spf) checks.push({s:'poor',t:'SPF',m:'No SPF record found — the internet has no list of who is allowed to send email for your domain.'});
+          else if(spfMulti) checks.push({s:'poor',t:'SPF',m:'More than one SPF record — this is a misconfiguration that breaks SPF entirely. There must be exactly one.',rec:spf});
           else { var all=(spf.match(/([~\-?+])all\b/)||[])[1];
-            if(all==='-') checks.push({s:'good',t:'SPF',m:'Set up and strict (-all) — only your approved servers can send email as you.',rec:spf});
-            else if(all==='~') checks.push({s:'avg',t:'SPF',m:'Exists, but soft-fail (~all) — spoofed mail is only flagged, not blocked. Ideally end it in -all.',rec:spf});
-            else checks.push({s:'avg',t:'SPF',m:'Exists, but weak — it should end in -all to actually block spoofing.',rec:spf}); }
-          if(!dmarc) checks.push({s:'poor',t:'DMARC',m:'No DMARC record — nothing tells inboxes to reject spoofed email. This is the big gap, and the one scammers exploit.'});
+            if(all==='-'){ spfStrict=true; score+=20; checks.push({s:'good',t:'SPF',m:'Set up and strict (-all) — only your approved servers can send email as you.',rec:spf}); }
+            else if(all==='~'){ spfSoft=true; score+=14; checks.push({s:'avg',t:'SPF',m:'Exists, but soft-fail (~all) — spoofed mail is only flagged, not blocked. Ideally end it in -all.',rec:spf}); }
+            else if(all==='+'){ score+=4; checks.push({s:'poor',t:'SPF',m:'Ends in +all — this actually lets anyone send as you. It should be -all.',rec:spf}); }
+            else { score+=8; checks.push({s:'avg',t:'SPF',m:'Exists, but weak — it should end in -all to actually block spoofing.',rec:spf}); } }
+
+          /* --- DMARC (max 40, the record that stops visible-From spoofing) --- */
+          if(!dmarc) checks.push({s:'poor',t:'DMARC',m:'No DMARC record — nothing tells inboxes to reject email that fakes your address. This is the gap scammers exploit, and the single most important one to fix.'});
           else { var p=((dmarc.match(/[;\s]p\s*=\s*(\w+)/i)||[])[1]||'').toLowerCase();
-            if(p==='reject'){ dmarcEnforcing=true; checks.push({s:'good',t:'DMARC',m:'Enforcing (p=reject) — spoofed email is rejected outright. Excellent.',rec:dmarc}); }
-            else if(p==='quarantine'){ dmarcEnforcing=true; checks.push({s:'good',t:'DMARC',m:'Enforcing (p=quarantine) — spoofed email is sent straight to spam.',rec:dmarc}); }
-            else if(p==='none') checks.push({s:'avg',t:'DMARC',m:'Monitor-only (p=none) — it watches but doesn’t yet block spoofing. Move it to quarantine or reject.',rec:dmarc});
-            else checks.push({s:'avg',t:'DMARC',m:'Record found, but the policy isn’t clearly set.',rec:dmarc}); }
+            var pct=((dmarc.match(/[;\s]pct\s*=\s*(\d+)/i)||[])[1]);
+            var hasRua=/[;\s]rua\s*=/i.test(dmarc);
+            var pctNote=(pct&&pct!=='100')?' Note it only applies to '+esc(pct)+'% of mail (pct='+esc(pct)+') — raise it to 100.':'';
+            if(p==='reject'){ dmarcEnforcing=true; score+=40; checks.push({s:'good',t:'DMARC',m:'Enforcing (p=reject) — email faking your address is rejected outright. This is the gold standard.'+pctNote,rec:dmarc}); }
+            else if(p==='quarantine'){ dmarcEnforcing=true; score+=34; checks.push({s:'good',t:'DMARC',m:'Enforcing (p=quarantine) — email faking your address is sent straight to spam.'+pctNote,rec:dmarc}); }
+            else if(p==='none'){ dmarcMonitor=true; score+=12; checks.push({s:'avg',t:'DMARC',m:'Monitor-only (p=none) — it watches but does not yet block spoofing, so fakes still reach the inbox. Move it to quarantine, then reject.'+(hasRua?'':' It has no reporting address (rua) either.'),rec:dmarc}); }
+            else { score+=10; checks.push({s:'avg',t:'DMARC',m:'Record found, but the policy is not clearly set to none, quarantine or reject.',rec:dmarc}); } }
+
+          /* --- DKIM (max 18) --- */
           var hit=null; for(var i=0;i<dkimProbes.length;i++){ if(findFirst(dkimProbes[i].t,/(v=DKIM1|k=rsa|p=[A-Za-z0-9+\/]{20,})/i)){ hit=dkimProbes[i]; break; } }
-          if(hit) checks.push({s:'good',t:'DKIM',m:'Email signing detected (selector “'+esc(hit.s)+'”) — your messages are cryptographically signed.'});
-          else checks.push({s:'avg',t:'DKIM',m:'Not found on common selectors. Your provider may use a custom one — worth confirming your email is DKIM-signed.'});
+          if(hit){ dkimOk=true; score+=18; checks.push({s:'good',t:'DKIM',m:'Email signing detected (selector “'+esc(hit.s)+'”) — your messages carry a cryptographic signature inboxes can verify.'}); }
+          else checks.push({s:'avg',t:'DKIM',m:'Not found on the common selectors we test. Your provider may use a custom one we cannot see — worth confirming with them that your outgoing mail is DKIM-signed.'});
+
+          /* --- Encryption in transit: MTA-STS + TLS-RPT (max 12, bonus — protects mail in transit, not against spoofing) --- */
+          var mtaSts=findFirst(mtaStsTxts,/^v=STSv1/i);
+          var tlsRpt=findFirst(tlsRptTxts,/^v=TLSRPTv1/i);
+          if(mtaSts&&tlsRpt){ score+=12; checks.push({s:'good',t:'Encryption in transit',m:'MTA-STS and TLS reporting are both set — email to you is required to travel encrypted, and failures get reported. Advanced, and a good sign.'}); }
+          else if(mtaSts){ score+=8; checks.push({s:'good',t:'Encryption in transit',m:'MTA-STS is set, so email to you is required to travel encrypted. Adding TLS reporting (TLS-RPT) would let you see any failures.'}); }
+          else checks.push({s:'info',t:'Encryption in transit',m:'No MTA-STS found. This is an advanced extra (it forces mail to you to be encrypted in transit) rather than an anti-spoofing control — nice to have once the three above are sorted.'});
+
+          /* --- BIMI (max 8, bonus — brand logo in the inbox, needs enforcing DMARC first) --- */
+          var bimi=findFirst(bimiTxts,/^v=BIMI1/i);
+          if(bimi){ score+=8; checks.push({s:'good',t:'BIMI (brand logo)',m:'A BIMI record is published — with enforcing DMARC in place, your logo can appear beside your emails in supporting inboxes. A genuinely premium touch.'}); }
+
+          /* --- mail host (informational, no score) --- */
+          var host=hostName(mxs);
+          if(mxs.length&&host) checks.push({s:'info',t:'Mail host',m:'Your email looks to be hosted with '+esc(host)+' (from your MX records). Handy to know when we set the records up.'});
+          else if(!mxs.length) checks.push({s:'info',t:'Mail host',m:'No MX records found — this domain may not be set up to receive email at all.'});
+
+          score=Math.max(0,Math.min(100,score));
+          var grade = score>=85?'A':score>=70?'B':score>=50?'C':score>=30?'D':'F';
+
+          /* --- the headline: can this domain be spoofed RIGHT NOW? Keyed on DMARC enforcement,
+                 because DMARC is what actually protects the visible From: address a person reads. --- */
+          var spoof;
+          if(dmarcEnforcing) spoof={cls:'no',ico:'🛡️',h:'No — your visible address is protected',m:'Your enforcing DMARC policy means inboxes reject or bin email that fakes your address. This is what you want.'};
+          else if(dmarcMonitor||spfStrict||spfSoft||dkimOk) spoof={cls:'part',ico:'⚠️',h:'Partly — there is a gap a scammer can still use',m:'You have some protection, but without an enforcing DMARC policy a convincing fake of your exact address can still reach an inbox. The fix is finishing the job, not starting it.'};
+          else spoof={cls:'yes',ico:'❗',h:'Yes — a scammer can send email as you right now',m:'Your domain has no working protection, so today someone could email your customers, staff or suppliers from an address that looks exactly like yours. This is how invoice fraud and fake-boss scams begin — and it is fixable.'};
+
+          root.querySelector('#es-spoof').className='es-spoof--'+spoof.cls;
+          root.querySelector('#es-spoof').innerHTML='<div class="es-spoof es-spoof--'+spoof.cls+'"><span class="es-spoof-ico" aria-hidden="true">'+spoof.ico+'</span><div class="es-spoof-txt"><b>Can '+esc(domain)+' be spoofed? '+spoof.h.split(' — ')[0]+'</b><span>'+spoof.m+'</span></div><div class="es-spoof-score"><b>'+grade+'</b><span>Safety score</span></div></div>';
+
           var verdict;
-          if(spf && dmarcEnforcing) verdict={g:'Protected',cls:'good',m:'Your domain is well protected against email spoofing. Nicely done.'};
-          else if(!spf && !dmarc) verdict={g:'Exposed',cls:'poor',m:'Your domain has little or no protection — scammers can send email that looks exactly like it’s from you. This is how invoice fraud and phishing begin.'};
-          else verdict={g:'Partly protected',cls:'avg',m:'You’ve got some protection, but there are gaps a scammer could still exploit. A few tweaks would close them.'};
+          if(dmarcEnforcing && (spfStrict||dkimOk)) verdict={g:'Protected',cls:'good',m:'Your domain is well protected against email spoofing. Nicely done — this is where every business should be.'};
+          else if(!spf && !dmarc) verdict={g:'Exposed',cls:'poor',m:'Your domain has little or no protection. The good news: it is a quick, behind-the-scenes fix that does not disrupt how you send email.'};
+          else verdict={g:'Partly protected',cls:'avg',m:'You have made a start, but the job is not finished — the gaps below are the ones worth closing.'};
           root.querySelector('#es-verdict').innerHTML='<div class="es-verdict-box es-'+verdict.cls+'"><p class="es-verdict-dom">'+esc(domain)+'</p><p class="es-verdict-grade">'+verdict.g+'</p><p class="es-verdict-msg">'+verdict.m+'</p></div>';
           window.ttToolDone&&window.ttToolDone("email-security-checker");
-          var ch=''; checks.forEach(function(c){ var icon=c.s==='good'?'✓':(c.s==='avg'?'!':'✗');
-            ch+='<div class="es-check es-'+c.s+'"><div class="es-check-h"><span class="es-check-ico">'+icon+'</span><b>'+c.t+'</b></div><p>'+c.m+'</p>'+(c.rec?'<code class="es-rec">'+esc(c.rec.length>140?c.rec.slice(0,138)+'…':c.rec)+'</code>':'')+'</div>'; });
+
+          var ch=''; checks.forEach(function(c){ var icon=c.s==='good'?'✓':(c.s==='avg'?'!':(c.s==='info'?'i':'✗'));
+            ch+='<div class="es-check es-'+c.s+'"><div class="es-check-h"><span class="es-check-ico">'+icon+'</span><b>'+esc(c.t)+'</b></div><p>'+c.m+'</p>'+(c.rec?'<code class="es-rec">'+esc(c.rec.length>160?c.rec.slice(0,158)+'…':c.rec)+'</code>':'')+'</div>'; });
+          ch+='<p class="es-scorenote">The safety score is 365 Techies&rsquo; own plain-English rating to make the result easy to read — it is not an official industry standard. The individual checks above are the facts.</p>';
           root.querySelector('#es-checks').innerHTML=ch;
           root.querySelector('#es-fix-msg').innerHTML = verdict.cls==='good'
-            ? 'Your setup looks solid. If you’d like us to keep it that way — or check the rest of your cybersecurity — we’re a friendly local Dorset team.'
-            : 'Email spoofing is how invoice fraud and phishing start. We’ll set up SPF, DKIM and DMARC properly so scammers can’t send email in your name — usually within a day.';
+            ? 'Your setup looks solid. If you’d like us to keep an eye on it — or look over the rest of your cybersecurity — we’re a friendly local Dorset team.'
+            : 'We set up SPF, DKIM and DMARC properly for Dorset businesses all the time, usually within a day and with no disruption to your email — so scammers can’t send in your name.';
+
+          /* plain-text report the visitor can copy and hand to whoever runs their IT */
+          lastReport='Email security check for '+domain+' — 365techies.co.uk\\n'
+            +'Can it be spoofed right now? '+spoof.h+'\\nSafety score: '+grade+' ('+score+'/100)\\n\\n'
+            +checks.map(function(c){ return '['+(c.s==='good'?'OK':(c.s==='info'?'--':(c.s==='avg'?'!!':'XX')))+'] '+c.t+': '+c.m.replace(/<[^>]+>/g,''); }).join('\\n')
+            +'\\n\\nChecked with the free tool at https://365techies.co.uk/email-security-checker/';
+
           elRes.hidden=false;
           try{ elRes.scrollIntoView({behavior:'smooth',block:'start'}); }catch(e){}
         }
+        var copyBtn=root.querySelector('#es-copy');
+        if(copyBtn) copyBtn.addEventListener('click',function(){
+          var txtOut=lastReport.replace(/\\n/g,'\n'); if(!txtOut) return;
+          function done(ok){ copyBtn.textContent=ok?'Copied — paste it anywhere':'Press Ctrl+C to copy'; setTimeout(function(){copyBtn.textContent='Copy my report';},2400); }
+          try{ navigator.clipboard.writeText(txtOut).then(function(){done(true);},function(){done(false);}); }catch(e){ done(false); }
+        });
       })();
       </script>
     </section>
+    <section class="section" aria-label="What a spoofed email looks like">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// SEEING IS BELIEVING</p>
+          <h2 class="section-title section-title--center" data-title>What a spoofed email actually looks like<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>This is the problem in one picture. If your domain isn&rsquo;t protected, a criminal can send a message like this &mdash; and to your customer, it looks completely genuine, because the address really is yours.</p>
+        </div>
+        <div class="es-demo" data-reveal>
+          <div class="es-demo-tag mono">Illustration only &mdash; a made-up example, nothing was sent</div>
+          <div class="es-demo-mail">
+            <div class="es-demo-row"><span>From</span><b>Accounts &lt;accounts@yourcompany.co.uk&gt;</b></div>
+            <div class="es-demo-row"><span>To</span><b>A customer of yours</b></div>
+            <div class="es-demo-row"><span>Subject</span><b>Updated bank details for your outstanding invoice</b></div>
+            <div class="es-demo-body">
+              <p>Hi,</p>
+              <p>Please note our bank details have changed. Kindly use the account below for the invoice due this week, and confirm once payment is sent.</p>
+              <p>Sort code: 00-00-00 &nbsp; Account: 00000000</p>
+              <p>Many thanks,<br>Accounts Team</p>
+            </div>
+          </div>
+          <p class="es-demo-note">The customer pays the criminal, not you &mdash; and the first anyone hears of it is a chased invoice weeks later. An enforcing DMARC policy stops this email ever arriving.</p>
+        </div>
+      </div>
+    </section>
+    <style>
+      .es-demo{max-width:640px;margin:0 auto}
+      .es-demo-tag{display:inline-block;font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:#f1c40f;background:rgba(241,196,15,.12);border:1px dashed rgba(241,196,15,.5);border-radius:999px;padding:.3rem .7rem;margin-bottom:.7rem}
+      .es-demo-mail{border:1px solid rgba(255,255,255,.14);border-radius:14px;overflow:hidden;background:rgba(255,255,255,.03)}
+      .es-demo-row{display:flex;gap:.8rem;padding:.6rem 1.1rem;border-bottom:1px solid rgba(255,255,255,.08);font-size:.9rem}
+      .es-demo-row span{flex:none;width:4.5rem;color:var(--muted,#9aa6c2)}
+      .es-demo-row b{min-width:0;word-break:break-word}
+      .es-demo-body{padding:1.1rem 1.2rem;font-size:.94rem;line-height:1.6}
+      .es-demo-body p{margin:0 0 .8rem}.es-demo-body p:last-child{margin-bottom:0}
+      .es-demo-note{font-size:.86rem;color:var(--muted,#9aa6c2);line-height:1.6;margin:1rem 0 0;text-align:center}
+    </style>
     <section class="section section--alt" aria-label="What we check">
       <div class="wrap">
         <div class="section-head">
@@ -941,11 +1099,23 @@
         <div class="tile-grid" data-stagger>
         <div class="tile"><svg class="tile__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg><h3>SPF</h3><p>Lists which servers are allowed to send email for your domain &mdash; so random servers can&rsquo;t.</p></div>
         <div class="tile"><svg class="tile__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><h3>DKIM</h3><p>Cryptographically signs your emails, so inboxes can prove they really came from you and weren&rsquo;t tampered with.</p></div>
-        <div class="tile"><svg class="tile__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><h3>DMARC</h3><p>Ties it together and tells inboxes what to do with fakes &mdash; report, spam or reject. The one most businesses are missing.</p></div>
+        <div class="tile"><svg class="tile__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><h3>DMARC</h3><p>Ties it together and tells inboxes what to do with fakes &mdash; report, spam or reject. The one most businesses are missing, and the one that protects the address people actually read.</p></div>
         <div class="tile"><svg class="tile__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg><h3>Why it matters</h3><p>Without these, a scammer can email your customers or staff as &lsquo;you&rsquo; &mdash; the root of invoice fraud and phishing.</p></div>
         <div class="tile"><svg class="tile__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M22 21v-1a5 5 0 0 0-3-4.6"/></svg><h3>Protects everyone</h3><p>Your customers, suppliers and team all trust email from your domain &mdash; these records keep that trust safe.</p></div>
         <div class="tile"><svg class="tile__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg><h3>Quick to fix</h3><p>Setting them up is fast and behind-the-scenes &mdash; no disruption to how you send email.</p></div>
         </div>
+        <p class="lede lede--center" data-reveal style="margin-top:1.6rem">Want the full picture? See <a href="/how-to-protect-your-business-email/">how to protect your business email</a>, what to do about <a href="/business-email-compromise/">business email compromise</a>, and the <a href="/case-studies/">businesses we look after</a>.</p>
+      </div>
+    </section>
+    <section class="cta-band" aria-label="Get started">
+      <div class="cta-band__inner">
+        <h2 data-title>Prove it &mdash; safely, and only to yourself<span class="title-underline title-underline--center"></span></h2>
+        <p class="lede lede--center" data-reveal>Want to see how convincing a fake looks? We&rsquo;ll run an <strong>authorised spoofing test</strong>: with your permission, we send one harmless demonstration email to your own inbox so you can see it with your own eyes &mdash; then we close the hole. We only ever do this to your address, with your say-so, and never to anyone else. It&rsquo;s the honest version of &lsquo;seeing is believing&rsquo;.</p>
+        <div class="hero-buttons hero-buttons--center" data-reveal>
+          <a href="/contact/?topic=email-security" class="button primary button--lg">Book a free spoofing test</a>
+          <a href="/how-to-protect-your-business-email/" class="button secondary button--lg">How we protect your email</a>
+        </div>
+        <p class="cta__contact mono" data-reveal>01202 775566 &middot; help@365techies.co.uk &middot; MON&ndash;FRI 9AM&ndash;5PM</p>
       </div>
     </section>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
@@ -954,20 +1124,32 @@
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
-          <summary>What does the email security checker do?<span class="faq__icon" aria-hidden="true"></span></summary>
-          <div class="faq__ans"><p>It looks up your domain&rsquo;s public DNS records &mdash; SPF, DKIM and DMARC &mdash; and tells you, in plain English, whether scammers could send email pretending to be you. It&rsquo;s free, instant, and never sees your actual email.</p></div>
+          <summary>Can someone send an email that looks like it&rsquo;s from my company?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>If your domain has no enforcing DMARC policy, then yes &mdash; a scammer can put your exact address in the &lsquo;From&rsquo; line and it will reach inboxes looking genuine. Enter your domain in the checker above and it tells you, in plain English, whether that is possible for you right now.</p></div>
         </details>
         <details class="faq" data-reveal>
-          <summary>What are SPF, DKIM and DMARC?<span class="faq__icon" aria-hidden="true"></span></summary>
-          <div class="faq__ans"><p>Three DNS records that prove your email is really from you. SPF lists who&rsquo;s allowed to send as your domain, DKIM cryptographically signs your messages, and DMARC tells inboxes what to do with anything that fails &mdash; together they stop spoofing and impersonation.</p></div>
+          <summary>What is email spoofing?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Spoofing is when someone forges the sender address on an email so it appears to come from you &mdash; your customers see your name and address, but the message is really from a criminal. It is the technique behind invoice fraud, fake &lsquo;boss&rsquo; payment requests and much phishing.</p></div>
         </details>
         <details class="faq" data-reveal>
-          <summary>Why does email spoofing matter?<span class="faq__icon" aria-hidden="true"></span></summary>
-          <div class="faq__ans"><p>Without these records, a scammer can send an email that looks exactly like it&rsquo;s from your business &mdash; to your customers, staff or suppliers. It&rsquo;s how invoice fraud, fake &lsquo;CEO&rsquo; requests and phishing attacks start.</p></div>
+          <summary>How do I stop my email being spoofed?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Three DNS records, set up correctly: SPF (who may send as you), DKIM (a signature on your mail) and, crucially, an enforcing DMARC policy (p=quarantine or p=reject) that tells inboxes to bin anything that fails. DMARC is the one most businesses are missing, and it is what actually protects the address a person reads.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>What is DMARC and do I really need it?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>DMARC is the record that ties SPF and DKIM together and tells receiving inboxes what to do with a fake: report it, spam it or reject it. Without it, SPF and DKIM protect the technical &lsquo;envelope&rsquo; but not the visible address your customer actually sees &mdash; so yes, for a business, it is the one that matters most.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Someone received a scam email pretending to be me &mdash; what do I do?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>First, tell the people it may have reached not to act on it, and report it (in the UK, forward phishing to report@phishing.gov.uk). Then close the hole so it can&rsquo;t happen again by getting SPF, DKIM and an enforcing DMARC policy in place. See our guide on <a href="/business-email-compromise/">business email compromise</a>, or <a href="/contact/">give us a call</a>.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Can you prove my email is vulnerable?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>We can, safely and with your permission &mdash; an authorised spoofing test sends a harmless demonstration email to your own inbox so you can see for yourself how convincing a fake looks, and then we close the gap. We only ever do this to your own address, with your say-so, and never to anyone else. It is the honest version of &lsquo;seeing is believing&rsquo;.</p></div>
         </details>
         <details class="faq" data-reveal>
           <summary>My domain isn&rsquo;t fully protected &mdash; can you fix it?<span class="faq__icon" aria-hidden="true"></span></summary>
-          <div class="faq__ans"><p>Yes &mdash; setting up SPF, DKIM and DMARC correctly is something we do for businesses regularly, usually within a day and with no disruption to your email. See our <a href="/cybersecurity-support/">cybersecurity support</a> or <a href="/contact/">get in touch</a>.</p></div>
+          <div class="faq__ans"><p>Yes &mdash; setting up SPF, DKIM and DMARC correctly is something we do for businesses regularly, usually within a day and with no disruption to your email. See <a href="/how-to-protect-your-business-email/">how we&rsquo;d protect your email</a> or <a href="/contact/">get in touch</a>.</p></div>
         </details>
         <details class="faq" data-reveal>
           <summary>Is it safe to enter my domain?<span class="faq__icon" aria-hidden="true"></span></summary>
@@ -981,7 +1163,7 @@
         <h2 data-title>Not protected? We&rsquo;ll fix it.<span class="title-underline title-underline--center"></span></h2>
         <p class="lede lede--center" data-reveal>Setting up SPF, DKIM and DMARC properly stops scammers using your name &mdash; and we do it for Dorset businesses all the time, usually within a day.</p>
         <div class="hero-buttons hero-buttons--center" data-reveal>
-          <a href="/contact/" class="button primary button--lg">Secure My Email</a>
+          <a href="/contact/?topic=email-security" class="button primary button--lg">Secure My Email</a>
           <a href="/cybersecurity-support/" class="button secondary button--lg">Cybersecurity Support</a>
         </div>
         <p class="cta__contact mono" data-reveal>01202 775566 &middot; help@365techies.co.uk &middot; MON&ndash;FRI 9AM&ndash;5PM</p>
@@ -991,7 +1173,7 @@
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">// HOW IT WORKS</p>
         <h2 class="section-title" data-title>How to check if scammers can spoof your email<span class="title-underline"></span></h2>
-        <p class="lede"><strong>Scammers can spoof your email if your domain is missing SPF, DKIM or an enforcing DMARC record, and this free checker looks up those three public DNS records for your domain and tells you in plain English whether criminals could send email pretending to be you.</strong></p>
+        <p class="lede"><strong>A scammer can send email that looks exactly like it is from you if your domain has no enforcing DMARC policy, and this free checker looks up your live SPF, DKIM, DMARC, MX and encryption records and gives you a plain-English verdict &mdash; can your domain be spoofed right now, yes or no &mdash; plus the fixes.</strong></p>
         <h3>Step by step</h3>
         <ol data-stagger>
           <li><strong>Enter your domain</strong> &mdash; Type your email domain (the part after the @, e.g. yourbusiness.co.uk) into the checker — no email address or password needed.</li>
