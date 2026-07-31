@@ -90,7 +90,7 @@ def make_local(i, slug, town, region, lede, intro_para, nearby):
     # Length matters as much as wording - _meta_desc() amputates anything over 158 rendered chars
     # and leaves a trailing ellipsis, so the fixed part stays short enough for a long town name.
     desc = (f"IT support in {town} for homes and businesses — no call-out fee, the same "
-            f"two faces every visit, and 4.9 on Google from 49 reviews.")
+            f"two faces every visit, and rated 4.9 on Google.")
     faqs = [
       (f"Do you provide IT support in {town}?", f"Yes — 365 Techies provides remote and on-site IT support for homes and businesses in {town} and the wider {region} area, with monthly plans from £18.25 per computer."),
       (f"Can you visit me in {town}?", f"Yes. Most issues are fixed remotely in minutes, and we provide on-site visits across {town} and the wider {region} when hands-on help is needed."),

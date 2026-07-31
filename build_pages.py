@@ -1249,12 +1249,15 @@ def next_strip():
     return '<p class="next-strip mono" data-reveal>NO OBLIGATION &middot; A REAL PERSON REPLIES SAME WORKING DAY &middot; NO CALL-OUT FEE</p>'
 
 def trust_bar():
-    """Hero trust bar for money pages: the real 4.9/49 Google rating (linked to the
-    verified GBP listing), heritage and the no-call-out-fee promise."""
+    """Hero trust bar for money pages: the real 4.9 Google rating (linked to the
+    verified GBP listing), heritage and the no-call-out-fee promise.
+    NO review COUNT anywhere - counts drift weekly now the review ask is live
+    (the homepage said 49 and 51 at once on 2026-07-31); the linked profile is
+    the single source of truth."""
     return (f'\n        <p class="hero-trustbar" data-reveal>'
             f'<a href="{MAPS_REVIEWS_URL}" target="_blank" rel="noopener">'
             f'<span class="hero-trustbar__stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span> '
-            f'<strong>4.9</strong> from 49 Google reviews</a>'
+            f'<strong>4.9</strong> on Google reviews</a>'
             f'<span>Family-run since 1995</span>'
             f'<span>No call-out fee</span></p>')
 
@@ -1342,7 +1345,7 @@ def reviews_block(revs):
     return f'''    <section class="reviews" aria-label="Customer reviews">
       <p class="eyebrow eyebrow--center mono" data-reveal>// GOOGLE REVIEWS</p>
       <h2 class="section-title section-title--center" data-title>Rated 4.9 on Google<span class="title-underline title-underline--center"></span></h2>
-      <p class="reviews__badge mono" data-reveal><span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>&ensp;4.9 FROM 49 GOOGLE REVIEWS</p>
+      <p class="reviews__badge mono" data-reveal><span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>&ensp;RATED 4.9 ON GOOGLE</p>
       <div class="reviews__grid">
 {figs}
       </div>

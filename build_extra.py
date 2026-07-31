@@ -206,7 +206,7 @@ _LEAVE_REVIEW_PRE = '<section class="section" aria-label="Leave a review">\n  <d
 def reviews_page():
     slug = "reviews"
     crumb_name = "Reviews"
-    desc = "365 Techies is rated 4.9 out of 5 from 49 Google reviews. Read what home and business customers across Bournemouth, Poole and Dorset say about our IT support."
+    desc = "365 Techies is rated 4.9 out of 5 on Google. Read what home and business customers across Bournemouth, Poole and Dorset say about our IT support."
     figs = "\n".join(f'''        <figure class="review" data-reveal>
           <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;{t}&rdquo;</blockquote>
@@ -218,9 +218,9 @@ def reviews_page():
            "Don't just take our word for it. Here's what home and business customers across Bournemouth, Poole and Dorset say about 365 Techies.",
            cta1=("Review us on Google", "https://search.google.com/local/writereview?placeid=ChIJlTb8YRuic0gRCRczduB8OFI"),
            cta2=("View Monthly Plans", "/monthly-it-support/"),
-           chips=["4.9 / 5 average", "49 Google reviews", "Real verified customers"]),
+           chips=["4.9 / 5 average", "Google reviews", "Real verified customers"]),
       f'''    <section class="reviews" aria-label="Customer reviews">
-      <p class="reviews__badge mono" data-reveal style="display:block;width:max-content;margin:0 auto 3rem"><span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>&ensp;4.9 FROM 49 GOOGLE REVIEWS</p>
+      <p class="reviews__badge mono" data-reveal style="display:block;width:max-content;margin:0 auto 3rem"><span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>&ensp;RATED 4.9 ON GOOGLE</p>
       <div class="reviews__grid">
 {figs}
       </div>
@@ -241,7 +241,9 @@ def reviews_page():
                        "image": SITE + "/og-image.jpg", "url": SITE + "/",
                        "hasMap": "https://www.google.com/maps?cid=5924622613303465737",
                        "sameAs": ["https://www.google.com/maps?cid=5924622613303465737"],
-                       "aggregateRating": {"@type": "AggregateRating", "ratingValue": "4.9", "reviewCount": "49", "bestRating": "5", "worstRating": "1"},
+                       # no aggregateRating: Google ignores self-serving LocalBusiness
+                       # stars, and a hard reviewCount goes stale weekly now the
+                       # review ask is live. The linked profile is the source of truth.
                        "review": _rev}])
     add(slug=slug, title="Customer Reviews | 365 Techies — Rated 4.9 on Google",
         desc=desc, og_title="Customer Reviews | 365 Techies", schema=schema, content=content)
@@ -24945,7 +24947,7 @@ def leave_a_review_page():
         h1='Leave us a <em class="grad grad--green">Google review</em>',
         lede="If we&rsquo;ve helped you, thirty seconds of your time genuinely changes who finds us next. Here&rsquo;s the button &mdash; and, if you&rsquo;ve never left one before, exactly how it works.",
         desc="Leave a Google review for 365 Techies in Bournemouth. One button, about thirty seconds - plus a plain-English guide for anyone who has never left a Google review before.",
-        chips=["About 30 seconds", "4.9 from 49 reviews", "We read every one"],
+        chips=["About 30 seconds", "Rated 4.9 on Google", "We read every one"],
         hero_cta1=("Leave a Google review", 'https://search.google.com/local/writereview?placeid=ChIJlTb8YRuic0gRCRczduB8OFI'),
         hero_cta2=("Call 01202 775566", "tel:+441202775566"),
         pre=_LEAVE_REVIEW_PRE,
