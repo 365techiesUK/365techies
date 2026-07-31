@@ -145,7 +145,11 @@ def why_choose():
       f'''    <section class="stats section--alt" aria-label="By the numbers">
       <div class="stats__grid">
         <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="4.9" data-decimals="1">0</span></p><p class="stat__label mono">GOOGLE RATING</p></div>
-        <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="49">0</span><span class="stat__suffix"></span></p><p class="stat__label mono">GOOGLE REVIEWS</p></div>
+        <!-- A hardcoded review COUNT lived here. It goes stale every time we earn a
+             review, and it survived the 2026-07-31 sweep that stripped the counts
+             everywhere else because the number sits in a data-count ATTRIBUTE rather
+             than in visible text. The linked Google profile is the only source of
+             truth for how many; the 4.9 rating beside this is verified and stays. -->
         <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="28">0</span><span class="stat__suffix">+</span></p><p class="stat__label mono">DORSET AREAS</p></div>
         <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="6">0</span><span class="stat__suffix">wk</span></p><p class="stat__label mono">SERVICE CYCLE</p></div>
       </div>
@@ -5278,12 +5282,44 @@ def case_studies():
       '''    <section class="stats section--alt" aria-label="By the numbers">
       <div class="stats__grid">
         <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="4.9" data-decimals="1">0</span></p><p class="stat__label mono">GOOGLE RATING</p></div>
-        <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="49">0</span><span class="stat__suffix"></span></p><p class="stat__label mono">GOOGLE REVIEWS</p></div>
+        <!-- A hardcoded review COUNT lived here. It goes stale every time we earn a
+             review, and it survived the 2026-07-31 sweep that stripped the counts
+             everywhere else because the number sits in a data-count ATTRIBUTE rather
+             than in visible text. The linked Google profile is the only source of
+             truth for how many; the 4.9 rating beside this is verified and stays. -->
         <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="30">0</span><span class="stat__suffix">+ yrs</span></p><p class="stat__label mono">SINCE 1995</p></div>
         <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="6">0</span><span class="stat__suffix">wk</span></p><p class="stat__label mono">SERVICE CYCLE</p></div>
       </div>
     </section>''',
-      '''    <section class="section" style="padding-bottom:0" aria-label="Filter case studies">
+      # The hub was entirely text. This is the one story we hold real, permitted
+      # photographs for (Colin Clark Builders gave naming permission), so it is
+      # the one that gets shown - the other four are laptop/backup/off-grid work
+      # with no comparable visual, and inventing one would be worse than none.
+      '''    <section class="section" aria-label="Featured: a website rebuild">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// FEATURED &middot; WEBSITE REBUILD</p>
+          <h2 class="section-title section-title--center" data-title>What a rebuild actually looks like<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Colin Clark Builders, photographed on 30 July 2026 &mdash; the old site&rsquo;s last day.</p>
+        </div>
+        <div class="sc__grid">
+          <figure class="sc__fig">
+            <span class="sc__tag sc__tag--old">Before</span>
+            <img src="/images/ccb-old-home.webp" alt="The old colinclarkbuilders.co.uk homepage: a dated WordPress theme with a grey header and stock-style layout" width="1100" height="773" loading="lazy" decoding="async">
+          </figure>
+          <figure class="sc__fig">
+            <span class="sc__tag sc__tag--new">After</span>
+            <img src="/images/ccb-new-home.webp" alt="The rebuilt colinclarkbuilders.co.uk homepage, led by a full-height photograph of a restored cottage" width="1100" height="773" loading="lazy" decoding="async">
+          </figure>
+        </div>
+        <div class="hero-buttons hero-buttons--center" data-reveal style="margin-top:1.2rem">
+          <a href="/case-study-colin-clark-builders/" class="button primary">Read the full story</a>
+          <a href="/website-rebuild-seo-case-study/" class="button secondary">See the measured results</a>
+        </div>
+      </div>
+    </section>''',
+
+      '''    <section class="section section--alt" style="padding-bottom:0" aria-label="Filter case studies">
       <div class="wrap wrap--narrow">
         <div class="hub-filter" id="case-filter">
           <button type="button" class="hub-chip is-active" data-filter="all">All stories</button>
@@ -5424,7 +5460,44 @@ def ccb_case_study():
       </div>
     </section>''',
 
-      '''    <section class="section section--alt" aria-label="A representative find">
+      # The page argued for a rebuild without ever showing one. These are the
+      # same four photographs used on the measured case study, taken on 30 July
+      # 2026 - the old site's last day, so they can never be retaken. Every
+      # image carries width/height so it cannot shift the layout.
+      '''    <section class="section section--alt" aria-label="The old site and the new one">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// BEFORE AND AFTER</p>
+          <h2 class="section-title section-title--center" data-title>The same business, photographed the same day<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Both versions captured on 30 July 2026 &mdash; the old site&rsquo;s last day. The new one leads with their own photographs of their own work, because for a heritage builder the portfolio <em>is</em> the proposition.</p>
+        </div>
+        <div class="sc__grid">
+          <figure class="sc__fig">
+            <span class="sc__tag sc__tag--old">Old &middot; WordPress</span>
+            <img src="/images/ccb-old-home.webp" alt="The old colinclarkbuilders.co.uk homepage: a dated WordPress theme with a grey header and stock-style layout" width="1100" height="773" loading="lazy" decoding="async">
+            <figcaption>The homepage visitors saw until 30 July 2026.</figcaption>
+          </figure>
+          <figure class="sc__fig">
+            <span class="sc__tag sc__tag--new">New &middot; static</span>
+            <img src="/images/ccb-new-home.webp" alt="The rebuilt colinclarkbuilders.co.uk homepage: full-height photograph of a restored cottage with the heading Old buildings, cared for by hand, in lime and oak" width="1100" height="773" loading="lazy" decoding="async">
+            <figcaption>The same business, rebuilt &mdash; led by their own photographs.</figcaption>
+          </figure>
+        </div>
+        <div class="sc__grid sc__grid--phones">
+          <figure class="sc__fig">
+            <span class="sc__tag sc__tag--old">Old &middot; on a phone</span>
+            <img src="/images/ccb-old-mobile.webp" alt="The old site on a 390-pixel phone screen" width="390" height="844" loading="lazy" decoding="async">
+          </figure>
+          <figure class="sc__fig">
+            <span class="sc__tag sc__tag--new">New &middot; on a phone</span>
+            <img src="/images/ccb-new-mobile.webp" alt="The rebuilt site on the same 390-pixel phone screen" width="390" height="844" loading="lazy" decoding="async">
+          </figure>
+        </div>
+        <p class="lede lede--center" data-reveal style="margin-top:1rem">Most of their visitors arrive on a phone, which is where the old site struggled most. The measured before-and-after figures are on the <a href="/website-rebuild-seo-case-study/">rebuild case study</a>.</p>
+      </div>
+    </section>''',
+
+      '''    <section class="section" aria-label="A representative find">
       <div class="wrap wrap--narrow">
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>// ONE EXAMPLE</p>
@@ -5434,7 +5507,7 @@ def ccb_case_study():
       </div>
     </section>''',
 
-      '''    <section class="section" aria-label="Why it matters">
+      '''    <section class="section section--alt" aria-label="Why it matters">
       <div class="wrap wrap--narrow">
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>// THE POINT</p>
@@ -14023,7 +14096,11 @@ info_page(
     <section class="stats" aria-label="By the numbers">
       <div class="stats__grid">
         <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="4.9" data-decimals="1">0</span></p><p class="stat__label mono">GOOGLE RATING</p></div>
-        <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="49">0</span><span class="stat__suffix"></span></p><p class="stat__label mono">GOOGLE REVIEWS</p></div>
+        <!-- A hardcoded review COUNT lived here. It goes stale every time we earn a
+             review, and it survived the 2026-07-31 sweep that stripped the counts
+             everywhere else because the number sits in a data-count ATTRIBUTE rather
+             than in visible text. The linked Google profile is the only source of
+             truth for how many; the 4.9 rating beside this is verified and stays. -->
         <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="30">0</span><span class="stat__suffix">+ yrs</span></p><p class="stat__label mono">SINCE 1995</p></div>
         <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="28">0</span><span class="stat__suffix">+</span></p><p class="stat__label mono">AREAS COVERED</p></div>
       </div>

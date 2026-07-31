@@ -674,12 +674,39 @@
     <section class="stats section--alt" aria-label="By the numbers">
       <div class="stats__grid">
         <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="4.9" data-decimals="1">0</span></p><p class="stat__label mono">GOOGLE RATING</p></div>
-        <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="49">0</span><span class="stat__suffix"></span></p><p class="stat__label mono">GOOGLE REVIEWS</p></div>
+        <!-- A hardcoded review COUNT lived here. It goes stale every time we earn a
+             review, and it survived the 2026-07-31 sweep that stripped the counts
+             everywhere else because the number sits in a data-count ATTRIBUTE rather
+             than in visible text. The linked Google profile is the only source of
+             truth for how many; the 4.9 rating beside this is verified and stays. -->
         <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="30">0</span><span class="stat__suffix">+ yrs</span></p><p class="stat__label mono">SINCE 1995</p></div>
         <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="6">0</span><span class="stat__suffix">wk</span></p><p class="stat__label mono">SERVICE CYCLE</p></div>
       </div>
     </section>
-    <section class="section" style="padding-bottom:0" aria-label="Filter case studies">
+    <section class="section" aria-label="Featured: a website rebuild">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// FEATURED &middot; WEBSITE REBUILD</p>
+          <h2 class="section-title section-title--center" data-title>What a rebuild actually looks like<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Colin Clark Builders, photographed on 30 July 2026 &mdash; the old site&rsquo;s last day.</p>
+        </div>
+        <div class="sc__grid">
+          <figure class="sc__fig">
+            <span class="sc__tag sc__tag--old">Before</span>
+            <img src="/images/ccb-old-home.webp" alt="The old colinclarkbuilders.co.uk homepage: a dated WordPress theme with a grey header and stock-style layout" width="1100" height="773" loading="lazy" decoding="async">
+          </figure>
+          <figure class="sc__fig">
+            <span class="sc__tag sc__tag--new">After</span>
+            <img src="/images/ccb-new-home.webp" alt="The rebuilt colinclarkbuilders.co.uk homepage, led by a full-height photograph of a restored cottage" width="1100" height="773" loading="lazy" decoding="async">
+          </figure>
+        </div>
+        <div class="hero-buttons hero-buttons--center" data-reveal style="margin-top:1.2rem">
+          <a href="/case-study-colin-clark-builders/" class="button primary">Read the full story</a>
+          <a href="/website-rebuild-seo-case-study/" class="button secondary">See the measured results</a>
+        </div>
+      </div>
+    </section>
+    <section class="section section--alt" style="padding-bottom:0" aria-label="Filter case studies">
       <div class="wrap wrap--narrow">
         <div class="hub-filter" id="case-filter">
           <button type="button" class="hub-chip is-active" data-filter="all">All stories</button>
