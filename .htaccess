@@ -124,6 +124,15 @@ ErrorDocument 404 /404.html
 <Files "slack-rate.json">
   Require all denied
 </Files>
+# Textmagic SMS: the API key file, its rate counter and its send log.
+# tm-lib.php is a library (never a URL) so it is denied too; tm-send.php stays
+# served because staff call it, and it gates on an admin session of its own.
+<FilesMatch "^(tm-key|tm-lib)\.php$">
+  Require all denied
+</FilesMatch>
+<FilesMatch "^(tm-rate|tm-log)\.json(\..*)?$">
+  Require all denied
+</FilesMatch>
 <FilesMatch "^(tools-rate|domain-cache|isitdown-cache|wifi-map-rate|wifi-map-pins)\.json(\.tmp|\.lock)?$">
   Require all denied
 </FilesMatch>

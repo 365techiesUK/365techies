@@ -13,6 +13,9 @@ out
 api/vrm-token.php
 api/vrm-cache.json
 api/slack-webhook.php
+api/tm-key.php
+api/tm-rate.json
+api/tm-log.json
 api/slack-rate.json
 api/tools-rate.json
 api/domain-cache.json
