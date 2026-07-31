@@ -1,0 +1,6 @@
+version: STSv1
+mode: testing
+mx: mx10.antispam.mailspamprotection.com
+mx: mx20.antispam.mailspamprotection.com
+mx: mx30.antispam.mailspamprotection.com
+max_age: 604800

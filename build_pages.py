@@ -1983,8 +1983,12 @@ EMAILSEC_TOOL = r'''    <section class="section" aria-label="Email security chec
           /* --- Encryption in transit: MTA-STS + TLS-RPT (max 12, bonus — protects mail in transit, not against spoofing) --- */
           var mtaSts=findFirst(mtaStsTxts,/^v=STSv1/i);
           var tlsRpt=findFirst(tlsRptTxts,/^v=TLSRPTv1/i);
-          if(mtaSts&&tlsRpt){ score+=12; checks.push({s:'good',t:'Encryption in transit',m:'MTA-STS and TLS reporting are both set — email to you is required to travel encrypted, and failures get reported. Advanced, and a good sign.'}); }
-          else if(mtaSts){ score+=8; checks.push({s:'good',t:'Encryption in transit',m:'MTA-STS is set, so email to you is required to travel encrypted. Adding TLS reporting (TLS-RPT) would let you see any failures.'}); }
+          /* We can only see the DNS record from here. Whether the policy is in
+             testing or enforce mode lives in the policy FILE on the mta-sts
+             subdomain, which a browser cannot read cross-origin - so say
+             "published", never "enforced". */
+          if(mtaSts&&tlsRpt){ score+=12; checks.push({s:'good',t:'Encryption in transit',m:'MTA-STS and TLS reporting are both published — the setup for requiring encrypted delivery is in place, and failures get reported back to you. Advanced, and a good sign. (Whether it is enforcing or still in testing is set in your policy file.)'}); }
+          else if(mtaSts){ score+=8; checks.push({s:'good',t:'Encryption in transit',m:'MTA-STS is published, so you have the setup for requiring encrypted delivery. Adding TLS reporting (TLS-RPT) would let you see any failures.'}); }
           else checks.push({s:'info',t:'Encryption in transit',m:'No MTA-STS found. This is an advanced extra (it forces mail to you to be encrypted in transit) rather than an anti-spoofing control — nice to have once the three above are sorted.'});
 
           /* --- BIMI (max 8, bonus — brand logo in the inbox, needs enforcing DMARC first) --- */
