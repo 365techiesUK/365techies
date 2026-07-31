@@ -1802,8 +1802,19 @@ EMAILSEC_TOOL = r'''    <section class="section" aria-label="Email security chec
             <div id="es-verdict"></div>
             <div class="es-actions" id="es-actions">
               <button type="button" class="button es-ghost" id="es-copy">Copy my report</button>
+              <button type="button" class="button es-ghost" id="es-mailme">Email me a branded report</button>
               <button type="button" class="button es-ghost" data-ttshare data-share-title="Free Email Spoofing Check" data-share-text="Can a scammer send email that looks like it's from you? Check your domain free, no sign-up:">Share this free check</button>
             </div>
+            <form class="es-mailform" id="es-mailform" hidden novalidate>
+              <p class="es-mailform-lede">Pop in your email and we&rsquo;ll send you a tidy, branded PDF of this report &mdash; handy to forward to whoever looks after your IT. A real person sends it, so give us a short while.</p>
+              <div class="es-mailform-row">
+                <input type="email" id="es-mailaddr" autocomplete="email" placeholder="you@yourbusiness.co.uk" aria-label="Your email address" required>
+                <button type="submit" class="button primary" id="es-mailsend">Send it over</button>
+              </div>
+              <input type="text" id="es-mail-hp" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+              <p class="es-mailform-note">We&rsquo;ll only email the address you enter, only this report, and we won&rsquo;t add you to any list. See our <a href="/privacy-policy/">privacy policy</a>.</p>
+              <p class="es-mailform-status" id="es-mail-status" hidden></p>
+            </form>
             <div class="es-checks" id="es-checks"></div>
             <div class="es-fix">
               <h3>Want your email locked down?</h3>
@@ -1870,7 +1881,17 @@ EMAILSEC_TOOL = r'''    <section class="section" aria-label="Email security chec
       #esec .es-spoof--part{border:1px solid rgba(241,196,15,.5);background:rgba(241,196,15,.09)}
       #esec .es-spoof--part .es-spoof-ico{background:rgba(241,196,15,.16)}
       #esec .es-spoof--part .es-spoof-txt b,#esec .es-spoof--part .es-spoof-score b{color:#f1c40f}
-      #esec .es-actions{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center;margin-bottom:1.4rem}
+      #esec .es-actions{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center;margin-bottom:1.1rem}
+      #esec .es-mailform{max-width:520px;margin:0 auto 1.4rem;padding:1.1rem 1.2rem;border-radius:14px;border:1px solid rgba(55,194,194,.3);background:rgba(55,194,194,.05)}
+      #esec .es-mailform-lede{margin:0 0 .8rem;font-size:.9rem;line-height:1.55;color:var(--muted,#9aa6c2)}
+      #esec .es-mailform-row{display:flex;gap:.5rem;flex-wrap:wrap}
+      #esec #es-mailaddr{flex:1 1 200px;min-width:0;padding:.8rem 1rem;border-radius:10px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.04);color:inherit;font:inherit}
+      #esec #es-mailaddr:focus{outline:none;border-color:var(--cyan,#37c2c2)}
+      #esec .es-mailform-note{margin:.7rem 0 0;font-size:.72rem;color:var(--muted,#9aa6c2);opacity:.85}
+      #esec .es-mailform-note a{color:var(--cyan,#37c2c2)}
+      #esec .es-mailform-status{margin:.8rem 0 0;font-size:.9rem;padding:.6rem .8rem;border-radius:8px}
+      #esec .es-mailform-status.ok{color:#2ecc71;background:rgba(46,204,113,.1)}
+      #esec .es-mailform-status.err{color:#e74c3c;background:rgba(231,76,60,.1)}
       #esec .es-check.es-info{border-left-color:#5aa9e6}
       #esec .es-check.es-info .es-check-ico{background:#5aa9e6}
       #esec .es-scorenote{text-align:center;font-size:.7rem;color:var(--muted,#9aa6c2);opacity:.75;margin:.2rem 0 1.2rem}
@@ -2014,6 +2035,40 @@ EMAILSEC_TOOL = r'''    <section class="section" aria-label="Email security chec
           function done(ok){ copyBtn.textContent=ok?'Copied — paste it anywhere':'Press Ctrl+C to copy'; setTimeout(function(){copyBtn.textContent='Copy my report';},2400); }
           try{ navigator.clipboard.writeText(txtOut).then(function(){done(true);},function(){done(false);}); }catch(e){ done(false); }
         });
+        /* "Email me a branded report" — this NEVER sends mail itself and never
+           emails a third party. It hands the request to our team (the same
+           Slack lead relay the contact form uses) so a person prepares and
+           sends the branded PDF to the address the visitor entered. That
+           keeps it a genuine, consented request, not an open mail relay. */
+        var mailBtn=root.querySelector('#es-mailme'), mailForm=root.querySelector('#es-mailform');
+        if(mailBtn&&mailForm){
+          mailBtn.addEventListener('click',function(){
+            var show=mailForm.hasAttribute('hidden');
+            if(show){ mailForm.removeAttribute('hidden'); var a=root.querySelector('#es-mailaddr'); if(a) a.focus(); }
+            else mailForm.setAttribute('hidden','');
+          });
+          mailForm.addEventListener('submit',function(e){
+            e.preventDefault();
+            var status=root.querySelector('#es-mail-status');
+            var addr=(root.querySelector('#es-mailaddr').value||'').trim();
+            if(root.querySelector('#es-mail-hp').value) return; /* honeypot: silently drop bots */
+            if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(addr)){ status.hidden=false; status.className='es-mailform-status err'; status.textContent='That email doesn’t look right — please check it.'; return; }
+            if(mailForm.dataset.sent){ status.hidden=false; status.className='es-mailform-status ok'; status.textContent='Already on its way — check your inbox shortly.'; return; }
+            var sendBtn=root.querySelector('#es-mailsend'); sendBtn.disabled=true;
+            status.hidden=false; status.className='es-mailform-status'; status.textContent='// Sending your request…';
+            fetch('/api/slack-lead.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+              name:'', email:addr, topic:'Email security report request',
+              message:'Please send the branded email-security PDF report to '+addr+'.\n\n'+(lastReport||'').replace(/\\n/g,'\n'),
+              page:location.href
+            })}).then(function(r){ return r.ok? r : Promise.reject(); }).then(function(){
+              mailForm.dataset.sent='1';
+              status.className='es-mailform-status ok'; status.textContent='✓ Thanks — we’ll email your branded report to '+addr+' shortly.';
+              try{ if(typeof window.gtag==='function') window.gtag('event','generate_lead',{form_page:location.pathname,form_topic:'email-report-request'}); }catch(g){}
+            }).catch(function(){
+              status.className='es-mailform-status err'; status.innerHTML='Sorry, that didn’t go through — please email help@365techies.co.uk or call 01202 775566 and we’ll send it over.';
+            }).then(function(){ sendBtn.disabled=false; });
+          });
+        }
       })();
       </script>
     </section>'''
