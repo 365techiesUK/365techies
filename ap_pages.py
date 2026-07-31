@@ -937,6 +937,10 @@ def s11_r510_playbook():
     after_w = (n_510 + n_550) * w550at
     delta = after_w - now_w
 
+    # per-band PHY rates straight from the data module ("300 / 867 Mbps" form)
+    r510_24, r510_5 = [s.strip() for s in r510["phy"].replace("Mbps", "").split("/")]
+    r550_24, r550_5 = [s.strip() for s in r550["phy"].replace("Mbps", "").split("/")]
+
     body = "\n".join([
         ' <section class="section"><div class="wrap wrap--narrow prose" data-reveal>',
         '<h2 class="section-title" data-title>Start here: is it actually the Wi-Fi?'
@@ -1127,6 +1131,59 @@ def s11_r510_playbook():
                       'why. The APs will show as up, healthy and joined throughout.'),
         '<p>So the first question in any R510&rarr;R550 project is not about the access points at '
         'all. It is: <strong>what do the switches actually deliver, per port and in total?</strong></p>',
+        '</div></section>',
+
+        ' <section class="section"><div class="wrap wrap--narrow prose" data-reveal>',
+        '<h2 class="section-title" data-title>Both bands, and which one your floor actually '
+        'lives on<span class="title-underline"></span></h2>',
+        '<p>A question that comes up constantly, so let&rsquo;s answer it plainly: <strong>the '
+        'R510 is a concurrent dual-band access point &mdash; it broadcasts 2.4GHz and 5GHz at '
+        'the same time</strong>, from the day it was installed. So does the R550. What changes '
+        'between the generations is what each band can do:</p>',
+        '<div class="table-wrap"><table class="table">',
+        '<thead><tr><th>Band</th><th>R510 (' + r510["wifi_gen"] + ')</th>'
+        '<th>R550 (' + r550["wifi_gen"] + ')</th><th>What the band is for</th></tr></thead><tbody>',
+        '<tr><td><strong>2.4GHz</strong></td><td>802.11n, up to ' + r510_24 + '&nbsp;Mbps</td>'
+        '<td>802.11ax, up to ' + r550_24 + '&nbsp;Mbps</td>'
+        '<td>The <em>reach</em> band: travels further and through more walls, but has only '
+        'three clean channels &mdash; and carries all the noise, including the vehicle hotspots '
+        'covered above.</td></tr>',
+        '<tr><td><strong>5GHz</strong></td><td>802.11ac Wave 2, up to ' + r510_5 + '&nbsp;Mbps</td>'
+        '<td>802.11ax, up to ' + r550_5 + '&nbsp;Mbps</td>'
+        '<td>The <em>capacity</em> band: many more channels, far less interference, shorter '
+        'reach. On a well-designed floor this is where almost all the work happens.</td></tr>',
+        '</tbody></table></div>',
+        C.ap_fact('R510: ' + r510["streams"] + ', ' + r510["phy"] + '. R550: ' + r550["streams"] +
+                  ', ' + r550["phy"] + '. Vendor datasheet figures.', "ruckus_eol"),
+        '<p><strong>Why this matters for diagnosis:</strong> a device&rsquo;s experience is '
+        'decided less by which access point it can see than by <em>which band it lands on</em>. '
+        'A phone clinging to 2.4GHz at the far end of the floor will feel slow on any hardware '
+        'you install, old or new &mdash; that is steering and roaming behaviour, not a hardware '
+        'fault. So when you test a swapped access point, check which band the test device '
+        'actually associates on in each spot, before and after. Two readings on different bands '
+        'are not a comparison.</p>',
+        '<p><strong>The direction we would set for a floor like this:</strong></p>',
+        '<ul>',
+        '<li><strong>Keep both bands lit.</strong> Warehouses, workshops and older kit &mdash; '
+        'printers, scanners, legacy tablets &mdash; are often 2.4GHz-only. Turning the band off '
+        'entirely strands them.</li>',
+        '<li><strong>But let 5GHz carry the load.</strong> The practical tuning is fewer, '
+        'quieter 2.4GHz radios (three clean channels shared across the whole estate) while '
+        'every access point&rsquo;s 5GHz radio earns its keep. That is configuration, not '
+        'hardware, and it is free.</li>',
+        '<li><strong>Judge Wi-Fi 6 where it actually shows.</strong> The R550&rsquo;s real '
+        'advantage on a busy floor is not the headline rate &mdash; it is how 802.11ax behaves '
+        'with <em>many devices at once</em> (OFDMA scheduling). One phone on an empty floor '
+        'will barely tell the difference; forty devices on a Saturday will.</li>',
+        '<li><strong>And read the af trap in band terms.</strong> An R550 starved on 802.3af '
+        'keeps only its 2.4GHz radio &mdash; the congested band you were trying to lean away '
+        'from becomes the only one you have. That is the whole upgrade, backwards, in one '
+        'sentence.</li>',
+        '</ul>',
+        C.ap_field('The test-swap read that holds up: same physical spots, same test device, '
+                   'confirmed on the same band, before and after &mdash; judged inside the '
+                   'swapped access point&rsquo;s own coverage area. Everything else is '
+                   'impression, and impressions on a busy floor are what started this.'),
         '</div></section>',
 
         ' <section class="section"><div class="wrap wrap--narrow prose" data-reveal>',
@@ -1602,6 +1659,13 @@ def s11_r510_playbook():
          "points, 2.4GHz has only three non-overlapping channels, so past a handful of radios "
          "they begin talking over one another. Turning some 2.4GHz radios off and reducing "
          "transmit power often improves a busy floor more than replacing hardware."),
+        ("Is the RUCKUS R510 2.4GHz or 5GHz?",
+         "Both, at the same time - it is a concurrent dual-band access point. The 2.4GHz radio "
+         "runs 802.11n at up to 300 Mbps and the 5GHz radio runs 802.11ac Wave 2 at up to "
+         "867 Mbps, each with 2x2:2 streams. The practical point for a busy floor is that "
+         "5GHz is the capacity band and 2.4GHz is the congested reach band - and that an R550 "
+         "on an 802.3af switch loses its 5GHz radio entirely, which is why the power question "
+         "comes before the hardware question."),
     ]
 
     _page(
