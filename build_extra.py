@@ -20089,6 +20089,21 @@ def write_portal_page():
   #p365app .chip { font-size:.72rem; padding:.18rem .5rem; border-radius:999px; border:1px solid var(--pline); color:var(--pmut); }
   #p365app .chip.g { color:var(--pgood); border-color:rgba(0,206,27,.35); }
   #p365app .chip.w { color:var(--pwarn); border-color:rgba(224,179,65,.4); }
+  #p365app .chip.b { color:var(--pbad); border-color:rgba(232,99,126,.4); }
+  /* Saved website checks. Lighthouse's own thresholds decide the colour:
+     90+ green, 50-89 amber, under 50 red - so a customer reading their own
+     saved result sees the same verdict Google gives, not our opinion of it. */
+  #p365app .chk-row { border:1px solid var(--pline); border-radius:12px; padding:.7rem .8rem; margin-bottom:.6rem; }
+  #p365app .chk-row:last-of-type { margin-bottom:0; }
+  #p365app .chk-top { display:flex; align-items:center; gap:.5rem; flex-wrap:wrap; margin-bottom:.4rem; }
+  #p365app .chk-top strong { word-break:break-all; }
+  #p365app .chk-meta { font-size:.78rem; }
+  /* button.chk-del, not .chk-del: the shared #p365app button.sm rule above sets
+     margin:0 at higher specificity and would win, leaving Remove bunched up
+     against the date instead of at the right edge. */
+  #p365app button.chk-del { margin-left:auto; }
+  #p365app .chk-vit { margin-top:.3rem; opacity:.9; }
+  #p365app .chk-iss { font-size:.8rem; margin:.45rem 0 0; }
   /* 365 website projects card. Deliberately NOT the public .jt/.chk classes -
      those live in the site stylesheet, which the portal does not load; these are
      the portal's own tokens so the card matches its surroundings rather than
@@ -20860,7 +20875,7 @@ def write_portal_page():
 </style>'''
     js = '''<script>
 (function () {
-  var BK = '/api/pcm-booking.php', PCM = '/api/pcm.php', DASH = '/api/pcm-dash.php', TEAM = '/api/pcm-team.php', CONN = '/api/pcm-connect.php', FEEDS = '/api/pcm-feeds.php';
+  var BK = '/api/pcm-booking.php', PCM = '/api/pcm.php', DASH = '/api/pcm-dash.php', TEAM = '/api/pcm-team.php', CONN = '/api/pcm-connect.php', FEEDS = '/api/pcm-feeds.php', WCHK = '/api/pcm-wcheck.php';
   var el = document.getElementById('p365app');
   var S = {};
   try { S = JSON.parse(sessionStorage.getItem('p365s') || 'null') || JSON.parse(localStorage.getItem('p365') || '{}'); } catch (e) { S = {}; }
@@ -23650,6 +23665,13 @@ def write_portal_page():
         + 'Here is a real one, start to finish, with the measurements published as they happen '
         + '\\u2014 including the ones we have not taken yet.</p>'
         + '<div id="wproj"><p class="quiet">Loading the latest\\u2026</p></div></div>';
+      // SAVED WEBSITE CHECKS. Rendered only if the customer has actually saved
+      // one - an empty "you have no saved checks" box on every dashboard would
+      // be clutter for the many to explain a feature to the few. The prompt to
+      // go and save one lives inside the projects card's footer instead, where
+      // there is a reason to care.
+      h += '<div class="card" id="wchkCard" hidden><h2>\\ud83d\\udcc8 Your saved website checks</h2>'
+        + '<div id="wchk"></div></div>';
       h += unlockCard(d);
       if (!freshJoiner) h += needCard;
       // Established members get a gentle, UNCONDITIONAL review ask (never shown to a
@@ -23692,6 +23714,7 @@ def write_portal_page():
       };
       browserCheck();
       webProjects();
+      savedChecks();
       var ar = document.getElementById('appreq');
       if (ar && !d.appreq) ar.onclick = function () {
         ar.disabled = true;
@@ -24112,6 +24135,65 @@ def write_portal_page():
     if (p.length !== 3) return iso || '';
     var mi = parseInt(p[1], 10) - 1;
     return (M[mi] ? M[mi] : '') + ' ' + p[0];
+  }
+
+  // ---- saved website checks -------------------------------------------------
+  // Results the customer kept from /website-checker/. Every number here was
+  // produced by Google's Lighthouse on a site they chose to check - it is their
+  // own data, so unlike the studio's tiles there is no LIVE/SAMPLE question to
+  // answer. The card stays hidden unless there is something real to show.
+  function savedChecks() {
+    var box = document.getElementById('wchk'); if (!box) return;
+    post(WCHK, { action: 'list', wtoken: S.wtoken, machine: mid() }).then(function (r) {
+      if (!r || !r.ok || !r.checks || !r.checks.length) return;   // card stays hidden
+      var card = document.getElementById('wchkCard');
+      if (card) card.hidden = false;
+      // newest first: the most recent check is the one they came to see
+      var list = r.checks.slice().sort(function (a, b) { return (b.t || 0) - (a.t || 0); });
+      box.innerHTML = list.map(chkRow).join('')
+        + '<p class="quiet" style="margin:.7rem 0 0">Re-check any of these on the '
+        + '<a href="/website-checker/" target="_blank" rel="noopener">website checker</a> '
+        + '\\u2014 saving again replaces that entry, so you always see the latest.</p>';
+      box.querySelectorAll('[data-del]').forEach(function (b) {
+        b.onclick = function () {
+          b.disabled = true;
+          post(WCHK, { action: 'del', wtoken: S.wtoken, machine: mid(), at: parseInt(b.getAttribute('data-del'), 10) })
+            .then(function (rr) {
+              if (rr && rr.ok) { savedChecks(); if (rr.checks && !rr.checks.length) { var c2 = document.getElementById('wchkCard'); if (c2) c2.hidden = true; box.innerHTML = ''; } }
+              else b.disabled = false;
+            })
+            .catch(function () { b.disabled = false; });
+        };
+      });
+    }).catch(function () { /* leave the card hidden */ });
+  }
+  function chkRow(c) {
+    var s = c.s || {};
+    var g = function (v, lbl) {
+      if (v === null || v === undefined) return '';
+      var cls = v >= 90 ? 'g' : (v >= 50 ? 'w' : 'b');
+      return '<span class="chip ' + cls + '">' + lbl + ' ' + esc(String(v)) + '</span>';
+    };
+    var vit = (c.cwv || []).map(function (m) {
+      return '<span class="chip' + (m.c === 'FAST' ? ' g' : (m.c === 'SLOW' ? ' b' : '')) + '">'
+           + esc(m.l) + ' ' + esc(m.v) + '</span>';
+    }).join('');
+    var iss = (c.iss || []).length
+      ? '<p class="quiet chk-iss">Top fixes: ' + (c.iss || []).map(function (t) { return esc(t); }).join(' \\u00b7 ') + '</p>'
+      : '';
+    return '<div class="chk-row"><div class="chk-top">'
+      + '<strong>' + esc(c.url || '') + '</strong>'
+      + '<span class="quiet chk-meta">' + esc(c.strat === 'desktop' ? 'Desktop' : 'Mobile')
+      + ' \\u00b7 ' + esc(chkWhen(c.t)) + '</span>'
+      + '<button class="sm ghost chk-del" data-del="' + esc(String(c.t || 0)) + '" title="Remove this saved check">Remove</button>'
+      + '</div><p class="chips">' + g(s.p, 'Performance') + g(s.s, 'SEO') + g(s.a, 'Accessibility') + g(s.b, 'Best practices') + '</p>'
+      + (vit ? '<p class="chips chk-vit">' + vit + '</p>' : '') + iss + '</div>';
+  }
+  function chkWhen(t) {
+    var n = parseInt(t, 10); if (!n) return '';
+    var d = new Date(n * 1000);
+    var M = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return d.getDate() + ' ' + M[d.getMonth()] + ' ' + d.getFullYear();
   }
 
   function browserCheck() {

@@ -822,7 +822,11 @@
             <div class="wc-actions" id="wc-actions">
               <button type="button" class="button wc-ghost" id="wc-copy">Copy my report</button>
               <button type="button" class="button wc-ghost" id="wc-share" data-ttshare data-share-title="Website check result" data-share-text="Website check result:">Share my result</button>
+              <!-- Only ever revealed for a signed-in CUSTOMER (see wcSaveInit).
+                   Anonymous visitors and staff/view-as sessions never see it. -->
+              <button type="button" class="button wc-ghost" id="wc-save" hidden>Save to my portal</button>
             </div>
+            <p class="wc-savemsg" id="wc-savemsg" hidden></p>
             <div id="wc-compare"></div>
             <div id="wc-cwv"></div>
             <div id="wc-checks"></div>
@@ -895,6 +899,14 @@
       #wcheck .wc-fix-cta{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center}
       #wcheck .wc-actions{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center;margin:1.2rem 0 .4rem}
       #wcheck .wc-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}
+      /* MANDATORY, not tidiness: .button sets display:inline-flex in the author
+         origin, which BEATS the user-agent [hidden]{display:none} rule - so the
+         hidden attribute on #wc-save is a no-op without this, and every
+         anonymous visitor is shown a Save button that cannot work. Same trap
+         and same fix as #spc .spc-actions[hidden] in build_extra.py. */
+      #wcheck #wc-save[hidden]{display:none}
+      #wcheck .wc-savemsg{text-align:center;font-size:.84rem;line-height:1.55;margin:.2rem auto .6rem;max-width:52ch;color:var(--green,#00ce1b)}
+      #wcheck .wc-savemsg.is-bad{color:#f0b34e}
       #wcheck .wc-powered{text-align:center;font-size:.72rem;color:var(--muted,#9aa6c2);margin:1.4rem 0 0;opacity:.8}
       @media(max-width:560px){#wcheck .wc-gauges{grid-template-columns:repeat(2,1fr)}#wcheck .wc-go{flex:1 1 100%}}
       #wcheck .wc-cmp{margin-top:1.6rem;padding:1.2rem 1.3rem;border:1px solid rgba(255,255,255,.12);border-radius:14px;background:rgba(255,255,255,.03)}
@@ -1099,10 +1111,84 @@
             + '\n\nScores come from Google PageSpeed Insights (Lighthouse).'
             + '\nRe-run this check any time: https://365techies.co.uk/website-checker/';
 
+          /* --- keep this result (signed-in customers only) ----------------
+             Stash exactly what the portal will show - scores, vitals, the top
+             issues - and nothing else. Posting the whole Lighthouse payload
+             would put megabytes of JSON into the shared customer database for
+             no gain; the endpoint whitelists these fields anyway. */
+          lastCheck={ url:host, strat:strat,
+                      s:{ p:S.performance, s:S.seo, a:S.accessibility, b:S.bp },
+                      cwv:cw.slice(0,4).map(function(m){ return {l:m.l, v:m.v, c:m.c}; }),
+                      iss:iss.slice(0,5).map(function(it){ return it.t; }) };
+          wcSaveInit();
+
           try{ elRes.scrollIntoView({behavior:'smooth',block:'start'}); }catch(e){}
           startCompare(S,tu);
         }
-        var lastReport='';
+        var lastReport='', lastCheck=null;
+
+        /* Saving a check to the portal.
+           The sign-in test mirrors the site header exactly (localStorage p365 =
+           customer, sessionStorage p365s = staff/view-as): a staff member
+           looking at the site must NOT be offered a save, because a view-as
+           session would write the result onto the customer they are viewing.
+           The device id is READ, never created - the portal minted it when the
+           session was minted, and inventing a fresh one here would fail the
+           server's machine binding and read to the customer as "expired". */
+        function wcCust(){
+          try{
+            var a=JSON.parse(localStorage.getItem('p365')||'{}')||{};
+            var b=JSON.parse(sessionStorage.getItem('p365s')||'{}')||{};
+            if(a.staff||a.stoken||b.staff||b.stoken) return null;
+            if(!a.wtoken) return null;
+            var m=''; try{ m=localStorage.getItem('p365mid')||''; }catch(e){}
+            return { wtoken:a.wtoken, machine:m };
+          }catch(e){ return null; }
+        }
+        function wcSaveMsg(t,bad){
+          var p=root.querySelector('#wc-savemsg'); if(!p) return;
+          p.textContent=t; p.hidden=!t; p.className='wc-savemsg'+(bad?' is-bad':'');
+        }
+        function wcSaveInit(){
+          var b=root.querySelector('#wc-save'); if(!b) return;
+          var who=wcCust();
+          b.hidden=!who;                      // anonymous or staff: no button at all
+          wcSaveMsg('');
+          if(!who) return;
+          b.disabled=false; b.textContent='Save to my portal';
+        }
+        var saveBtn=root.querySelector('#wc-save');
+        if(saveBtn) saveBtn.addEventListener('click',function(){
+          var who=wcCust();
+          if(!who||!lastCheck){ wcSaveMsg('Sign in to your portal first.',true); return; }
+          saveBtn.disabled=true; saveBtn.textContent='Saving…';
+          fetch('/api/pcm-wcheck.php',{ method:'POST', headers:{'Content-Type':'application/json'},
+              body:JSON.stringify({ action:'save', wtoken:who.wtoken, machine:who.machine, check:lastCheck }) })
+            .then(function(r){ return r.json(); })
+            .then(function(d){
+              if(d&&d.ok){
+                saveBtn.textContent='✓ Saved to your portal';
+                wcSaveMsg('Saved — it is on your portal dashboard, with the date, so you can see how this site changes over time.');
+                try{ if(window.gtag) gtag('event','website_check_saved'); }catch(e){}
+              } else if(d&&d.error==='expired'){
+                /* restore the label/disabled state as well as hiding: if a later
+                   check re-reveals the button it must not still read "Saving…"
+                   and be dead to the touch */
+                saveBtn.hidden=true; saveBtn.disabled=false; saveBtn.textContent='Save to my portal';
+                wcSaveMsg('Your portal session has expired — sign in again and re-run the check to save it.',true);
+              } else if(d&&d.error==='slow_down'){
+                saveBtn.disabled=false; saveBtn.textContent='Save to my portal';
+                wcSaveMsg('Just a moment between saves, then try again.',true);
+              } else {
+                saveBtn.disabled=false; saveBtn.textContent='Save to my portal';
+                wcSaveMsg('Couldn’t save that just now. Your result is still on screen — try again in a moment.',true);
+              }
+            })
+            .catch(function(){
+              saveBtn.disabled=false; saveBtn.textContent='Save to my portal';
+              wcSaveMsg('Couldn’t reach the server. Your result is still on screen.',true);
+            });
+        });
         var copyBtn=root.querySelector('#wc-copy');
         if(copyBtn) copyBtn.addEventListener('click',function(){
           if(!lastReport) return;
