@@ -185,9 +185,101 @@ def build():
         "WordPress site existed, we measured both versions back to back &mdash; so this is a real "
         "before and after, not an estimate. Here is every number, how we got it, and the one thing "
         "we are not claiming yet.",
-        cta1=("See the numbers", "#numbers"),
+        cta1=("Follow the journey", "#journey"),
         cta2=("Check your own site free", "/website-checker/"),
         chips=["TTFB 1,320ms &rarr; 97ms", "111 requests &rarr; 15", "20 pages &rarr; 79"]))
+
+    # THE JOURNEY. The page's spine, literally: every milestone dated, and the
+    # future entries already reserved as empty slots. The .jt component's rule
+    # (styles.css) is load-bearing here - a --wait milestone must never show a
+    # number, because the whole page's claim is that we publish measurements,
+    # not predictions. The due dates are launch day (30 July 2026) + 30/90/180.
+    # When a re-measure lands: flip --wait to --done, add the GSC figures as
+    # chips, and move the --live marker down. Nothing else should need touching.
+    body.append('''    <section class="section" aria-label="The journey, dated" id="journey">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// A DIARY, NOT A BROCHURE</p>
+          <h2 class="section-title section-title--center" data-title>Every step dated &mdash; including
+            the ones that haven&rsquo;t happened yet<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Most case studies are written once, afterwards, when
+            the numbers can be chosen. This one is a running record. The future entries below are
+            already reserved, and they will be filled in from Google&rsquo;s own Search Console data
+            &mdash; whatever it says.</p>
+        </div>
+        <ol class="jt">
+          <li class="jt__item jt__item--done" data-reveal>
+            <span class="jt__node" aria-hidden="true"></span>
+            <p class="jt__when">June &ndash; July 2026 &middot; Done</p>
+            <h3>The research</h3>
+            <p>Before a single page was designed: their Search Console history read line by line, the
+              old site crawled address by address, and the page Google was already showing ten and a
+              half thousand times found and understood. <a href="#research">The research nobody
+              sees</a> is most of the job.</p>
+            <ul class="jt__chips"><li>17 ranking addresses mapped</li><li>100+ hidden addresses found</li></ul>
+          </li>
+          <li class="jt__item jt__item--done" data-reveal>
+            <span class="jt__node" aria-hidden="true"></span>
+            <p class="jt__when">July 2026 &middot; Done</p>
+            <h3>The build</h3>
+            <p>Seventy-nine pages that answer real questions, a full structured-data entity graph, an
+              <code>llms.txt</code> for AI assistants, and the firm&rsquo;s own photographs
+              throughout. Static files &mdash; nothing to hack, nothing to patch.</p>
+            <ul class="jt__chips"><li>79 pages</li><li>1 script</li><li>0 plugins</li></ul>
+          </li>
+          <li class="jt__item jt__item--done" data-reveal>
+            <span class="jt__node" aria-hidden="true"></span>
+            <p class="jt__when">30 July 2026 &middot; Done</p>
+            <h3>Baseline day, then launch</h3>
+            <p>The old WordPress site measured on the last day it existed &mdash; the
+              <a href="#numbers">before column</a> that can never be retaken &mdash; then the swap,
+              with every redirect already rehearsed. Launch day was deliberately boring.</p>
+            <ul class="jt__chips"><li>TTFB 1,320 &rarr; 106 ms</li><li>111 &rarr; 15 requests</li><li>17/17 redirects live</li></ul>
+          </li>
+          <li class="jt__item jt__item--live" data-reveal>
+            <span class="jt__node" aria-hidden="true"></span>
+            <p class="jt__when">31 July 2026 &middot; You are here</p>
+            <h3>Day one &mdash; marked by our own public tool</h3>
+            <p>We pointed our <a href="/website-checker/">free website checker</a> &mdash; the same
+              one anyone can use on any site &mdash; at the site we had just built, and published
+              <a href="#checker">what it returned</a>, including what it told us to improve.</p>
+            <ul class="jt__chips"><li>Lighthouse 99 desktop &middot; 90 mobile</li><li>SEO 100</li><li>0 layout shift</li></ul>
+          </li>
+          <li class="jt__item jt__item--wait" data-reveal>
+            <span class="jt__node" aria-hidden="true"></span>
+            <p class="jt__when">Due late August 2026 &middot; Reserved</p>
+            <h3>30-day re-measure</h3>
+            <p>Clicks, impressions and average position from Search Console, set against the baseline
+              taken the day before launch. This space is deliberately empty until the data exists
+              &mdash; it will be published here whatever it shows.</p>
+            <ul class="jt__chips"><li>Awaiting Search Console data</li></ul>
+          </li>
+          <li class="jt__item jt__item--wait" data-reveal>
+            <span class="jt__node" aria-hidden="true"></span>
+            <p class="jt__when">Due late October 2026 &middot; Reserved</p>
+            <h3>90-day re-measure</h3>
+            <p>Long enough for Google to have recrawled everything and for rankings to start settling.
+              The first read that means much.</p>
+            <ul class="jt__chips"><li>Awaiting Search Console data</li></ul>
+          </li>
+          <li class="jt__item jt__item--wait" data-reveal>
+            <span class="jt__node" aria-hidden="true"></span>
+            <p class="jt__when">Due late January 2027 &middot; Reserved</p>
+            <h3>180-day verdict</h3>
+            <p>The one that counts: two full seasons of search data against the old site&rsquo;s
+              history. If the rebuild worked, this entry proves it. If it fell short, this entry says
+              that instead.</p>
+            <ul class="jt__chips"><li>Awaiting Search Console data</li></ul>
+          </li>
+        </ol>
+        <div class="hero-buttons hero-buttons--center" data-reveal style="margin-top:1.6rem">
+          <button type="button" class="button secondary" data-ttshare
+            data-share-title="A website rebuild, measured honestly"
+            data-share-text="A website rebuild case study with a real dated before-and-after - and the future measurements reserved in advance:">Share
+            this case study</button>
+        </div>
+      </div>
+    </section>''')
 
     # THE SCREENSHOTS. Captured with headless Edge on 30 July 2026 - the old
     # WordPress site's last day, same day as every measurement on this page. The
@@ -311,7 +403,57 @@ def build():
                            TIMBER,
                            ["", "Old", "New"], with_meaning=False))
 
-    body.append('''    <section class="section" aria-label="Not losing the rankings" id="redirects">
+    # THE RESEARCH. The owner's brief for the case-study upgrade: show the work
+    # that happens before the work. Everything here is specific and true of THIS
+    # project - the GSC read that surfaced the timber page, the media-API crawl,
+    # the redirect rehearsal. Generic "we do keyword research" claims are banned.
+    body.append('''    <section class="section" aria-label="The research before the build" id="research">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// THE PART YOU NEVER SEE</p>
+          <h2 class="section-title section-title--center" data-title>The research happens before a
+            single page is written<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Building the site took weeks. Knowing <em>what</em>
+            to build is most of the job &mdash; and it is the part no screenshot can show. Six things
+            that happened on this project before any design work started.</p>
+        </div>
+        <div class="rb__grid">
+          <div class="rb__card"><span class="rb__ico" aria-hidden="true">&#128202;</span>
+            <h3>Their search history, read line by line</h3>
+            <p>Search Console shows what Google was already doing with the old site &mdash; every
+              query, every page, every click. That reading is where the timber framing page&rsquo;s
+              ten and a half thousand wasted impressions were found. Not guessed: read.</p></div>
+          <div class="rb__card"><span class="rb__ico" aria-hidden="true">&#128506;&#65039;</span>
+            <h3>Every address the old site ever had</h3>
+            <p>A crawl of the live site, cross-checked against Search Console and the old
+              site&rsquo;s own media interface &mdash; which quietly held over a hundred addresses a
+              crawl alone would have missed. You cannot protect an address you never found.</p></div>
+          <div class="rb__card"><span class="rb__ico" aria-hidden="true">&#128270;</span>
+            <h3>The actual results pages, looked at by hand</h3>
+            <p>For the searches that matter to a heritage builder, we looked at what Google actually
+              shows &mdash; who ranks, what kind of page wins, what question the searcher is really
+              asking &mdash; and wrote pages that deserve a place there, rather than pages that ask
+              for one.</p></div>
+          <div class="rb__card"><span class="rb__ico" aria-hidden="true">&#129521;</span>
+            <h3>The trade&rsquo;s own language, learned</h3>
+            <p>Cob, lime versus cement, green oak, listed-building consent, VAT relief on listed
+              work. The pages are written in the words homeowners and conservation officers actually
+              use &mdash; and checked with the firm, because they are the experts, not us.</p></div>
+          <div class="rb__card"><span class="rb__ico" aria-hidden="true">&#10067;</span>
+            <h3>A page only where there was a question</h3>
+            <p>Seventy-nine pages exist because there were seventy-nine things genuinely worth
+              answering &mdash; services, materials, towns, and the questions behind the searches.
+              Not one page was added to pad a sitemap; thin pages hurt more than they help.</p></div>
+          <div class="rb__card"><span class="rb__ico" aria-hidden="true">&#127917;</span>
+            <h3>The launch, rehearsed like a fire drill</h3>
+            <p>Every redirect rule replayed by script against every known old address &mdash; before
+              go-live, not after. It is why launch day produced no drama and no lost rankings to
+              apologise for. Boring launches are engineered.</p></div>
+        </div>
+      </div>
+    </section>''')
+
+    body.append('''    <section class="section section--alt" aria-label="Not losing the rankings" id="redirects">
       <div class="wrap">
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>// THE RISKY PART</p>
@@ -336,6 +478,86 @@ def build():
             <h3>12 of 17 keep their exact address</h3>
             <p>A redirect passes on most of a page&rsquo;s standing, but not being redirected at all is
               better. Where the old address made sense, the new site simply uses it.</p></div>
+        </div>
+      </div>
+    </section>''')
+
+    # THE CHECKER VERDICT. Day-one scores from OUR OWN public /website-checker/
+    # (PageSpeed Insights / Lighthouse), run 31 July 2026, mobile AND desktop,
+    # results captured from the live tool. The rings show MOBILE - the stricter,
+    # throttled test and the one Google indexes by - resisting the temptation to
+    # lead with the prettier desktop 99. The two "still to fix" rows (contrast,
+    # HSTS) are what the tool genuinely flagged; deleting them would defeat the
+    # entire point of the section. --p values are the real scores.
+    body.append('''    <section class="section" aria-label="Scored by our own checker" id="checker">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// MARKED BY OUR OWN FREE TOOL</p>
+          <h2 class="section-title section-title--center" data-title>We ran our own build through our
+            own public checker<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Our <a href="/website-checker/">free website
+            checker</a> runs Google&rsquo;s Lighthouse engine against any site and shows the result,
+            good or bad. The day after launch we pointed it at the site we had just built. These are
+            the scores it returned on 31 July 2026 &mdash; including the two things it told us to
+            improve.</p>
+        </div>
+        <div class="chk">
+          <div class="chk__rings" data-reveal>
+            <div class="chk__ring chk__ring--good" style="--p:90">
+              <div class="chk__dial" aria-hidden="true"></div>
+              <p class="chk__num">90</p>
+              <p class="chk__lbl">Performance &middot; mobile</p>
+            </div>
+            <div class="chk__ring chk__ring--good" style="--p:100">
+              <div class="chk__dial" aria-hidden="true"></div>
+              <p class="chk__num">100</p>
+              <p class="chk__lbl">SEO</p>
+            </div>
+            <div class="chk__ring chk__ring--good" style="--p:96">
+              <div class="chk__dial" aria-hidden="true"></div>
+              <p class="chk__num">96</p>
+              <p class="chk__lbl">Accessibility</p>
+            </div>
+            <div class="chk__ring chk__ring--good" style="--p:100">
+              <div class="chk__dial" aria-hidden="true"></div>
+              <p class="chk__num">100</p>
+              <p class="chk__lbl">Best practices</p>
+            </div>
+          </div>
+          <ul class="chk__list" data-reveal>
+            <li class="chk__row"><span class="chk__ok" aria-hidden="true">&#10003;</span>
+              <strong>Desktop performance: 99 of 100</strong>
+              <p>Largest content painted in 1.0 second. The mobile 90 above is measured under
+                simulated slow-4G throttling &mdash; the stricter test, and the one Google indexes
+                by, which is why we lead with it rather than the prettier number.</p></li>
+            <li class="chk__row"><span class="chk__ok" aria-hidden="true">&#10003;</span>
+              <strong>SEO: 100</strong>
+              <p>A proper title, a 152-character description, one clear heading, a canonical address,
+                structured data and a 79-page sitemap. Everything the old site was missing, verified
+                by an engine we do not control.</p></li>
+            <li class="chk__row"><span class="chk__ok" aria-hidden="true">&#10003;</span>
+              <strong>Best practices: 100</strong>
+              <p>HTTPS everywhere, no console errors, no deprecated code. Largely a consequence of
+                there being almost no code to get wrong &mdash; one script, one stylesheet.</p></li>
+            <li class="chk__row"><span class="chk__ok" aria-hidden="true">&#10003;</span>
+              <strong>Measured from a real browser: 61&nbsp;ms server response, zero layout shift</strong>
+              <p>Read with the browser&rsquo;s own Performance API on 31 July, the same method as
+                every other number on this page. Nothing moves while the page loads &mdash; that is
+                the &ldquo;zero&rdquo;.</p></li>
+            <li class="chk__row"><span class="chk__warn" aria-hidden="true">&#9651;</span>
+              <strong>Accessibility: 96, not 100</strong>
+              <p>Lighthouse flagged one text-and-background pair as low contrast. It is on the fix
+                list. A case study that only shows the passes is an advert.</p></li>
+            <li class="chk__row"><span class="chk__warn" aria-hidden="true">&#9651;</span>
+              <strong>Also flagged: image delivery, and no HSTS header yet</strong>
+              <p>Mobile images could be tighter, and the server does not yet tell browsers to insist
+                on HTTPS for future visits. Both queued. Publishing what our own tool finds wrong
+                with our own work is the entire point of having the tool.</p></li>
+          </ul>
+          <p class="chk__foot">Run any site through the same checks &mdash; yours, ours, a
+            competitor&rsquo;s: the <a href="/website-checker/">free website checker</a> is one of
+            <a href="/free-tools/">twenty free tools we publish</a>. No sign-up, and it will tell you
+            the truth, because it tells it about us too.</p>
         </div>
       </div>
     </section>''')

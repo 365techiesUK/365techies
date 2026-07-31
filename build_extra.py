@@ -5316,6 +5316,11 @@ def case_studies():
           <a href="/case-study-colin-clark-builders/" class="button primary">Read the full story</a>
           <a href="/website-rebuild-seo-case-study/" class="button secondary">See the measured results</a>
         </div>
+        <p class="lede lede--center" data-reveal style="margin-top:1.3rem">Day one, scored by our own
+          <a href="/website-checker/">free website checker</a>: <strong>99 performance</strong>
+          (desktop), <strong>100 SEO</strong>, <strong>100 best practices</strong> &mdash; and we
+          published what it flagged for improvement, too. It is one of
+          <a href="/free-tools/">twenty free tools</a> you can run on any site, including this one.</p>
       </div>
     </section>''',
 
@@ -5412,6 +5417,70 @@ def ccb_case_study():
            "complete rebuild of their website. Published with their permission.",
            cta1=("Talk to Us About Your Setup", "/contact/"), cta2=("Web Design &amp; Hosting", "/web-design-hosting/"),
            chips=["15+ years as their IT team", "Dell Latitude business laptops", "Website, email &amp; hosting"]),
+
+      # The relationship as a dated timeline (.jt, shared case-study component).
+      # Same honesty contract as the rebuild page: --wait milestones carry no
+      # numbers, and the future GSC re-measures are reserved, not promised.
+      '''    <section class="section section--alt" aria-label="Fifteen years, dated">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// THE LONG VERSION, DATED</p>
+          <h2 class="section-title section-title--center" data-title>How one broken laptop became
+            fifteen years of everything<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ol class="jt">
+          <li class="jt__item jt__item--done" data-reveal>
+            <span class="jt__node" aria-hidden="true"></span>
+            <p class="jt__when">Over 15 years ago</p>
+            <h3>It started with a broken laptop</h3>
+            <p>A repair, done properly, at a fair price. No contract, no pitch. Trust is built in
+              jobs that small.</p>
+          </li>
+          <li class="jt__item jt__item--done" data-reveal>
+            <span class="jt__node" aria-hidden="true"></span>
+            <p class="jt__when">The years between</p>
+            <h3>From fixing their laptops to running their IT</h3>
+            <p>Dell Latitude business laptops on a planned refresh cycle &mdash; supplied, set up and
+              supported by the same people who answer the phone when something breaks.</p>
+          </li>
+          <li class="jt__item jt__item--done" data-reveal>
+            <span class="jt__node" aria-hidden="true"></span>
+            <p class="jt__when">2022</p>
+            <h3>Website and email brought in-house</h3>
+            <p>Their existing site and email moved onto hosting we manage &mdash; keeping everything,
+              changing who answers when it goes wrong. One team, one number.</p>
+          </li>
+          <li class="jt__item jt__item--done" data-reveal>
+            <span class="jt__node" aria-hidden="true"></span>
+            <p class="jt__when">30 July 2026</p>
+            <h3>The rebuild went live</h3>
+            <p>A complete rebuild of colinclarkbuilders.co.uk &mdash; 79 pages that finally explain
+              the craft, measured against the old site on its last day. The full engineering story,
+              with every number, is the <a href="/website-rebuild-seo-case-study/">measured case
+              study</a>.</p>
+            <ul class="jt__chips"><li>Server response 1,320 &rarr; 106 ms</li><li>20 &rarr; 79 pages</li></ul>
+          </li>
+          <li class="jt__item jt__item--live" data-reveal>
+            <span class="jt__node" aria-hidden="true"></span>
+            <p class="jt__when">Now</p>
+            <h3>Being measured in the open</h3>
+            <p>The day after launch we scored the new site with our own
+              <a href="/website-checker/">free website checker</a> and published the result &mdash;
+              including what it flagged for improvement.</p>
+            <ul class="jt__chips"><li>Lighthouse 99 desktop &middot; 90 mobile</li><li>SEO 100</li></ul>
+          </li>
+          <li class="jt__item jt__item--wait" data-reveal>
+            <span class="jt__node" aria-hidden="true"></span>
+            <p class="jt__when">August 2026 &ndash; January 2027 &middot; Reserved</p>
+            <h3>The results, when they are real</h3>
+            <p>Search Console re-measures at 30, 90 and 180 days, published on the
+              <a href="/website-rebuild-seo-case-study/#journey">measured case study</a> whatever
+              they say. No projections in the meantime.</p>
+            <ul class="jt__chips"><li>Awaiting Search Console data</li></ul>
+          </li>
+        </ol>
+      </div>
+    </section>''',
 
       '''    <section class="section" aria-label="How it began">
       <div class="wrap wrap--narrow">

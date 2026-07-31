@@ -2094,6 +2094,74 @@ html.ss-open { overflow: hidden; }
 .sc__fig figcaption{margin-top:.55rem;font-size:.78rem;line-height:1.5;color:var(--mut,#9fb5d3)}
 
 /* ---------------------------------------------------------------------------
+   Case-study journey timeline (.jt): the measured story as milestones on a
+   spine. Three states carry the honesty rules of the case studies: --done is
+   measured and published, --live is where the clock currently stands, --wait
+   is a promise with a due date and NO numbers. A pending milestone showing a
+   figure is a build error, not a styling choice.
+   --------------------------------------------------------------------------- */
+.jt{max-width:880px;margin:0 auto;padding:0;list-style:none;position:relative}
+.jt::before{content:"";position:absolute;left:17px;top:14px;bottom:14px;width:2px;
+  background:linear-gradient(180deg,var(--cyan) 0%,rgba(29,151,227,.45) 55%,rgba(125,170,220,.14) 100%)}
+.jt__item{position:relative;padding:0 0 2rem 56px}
+.jt__item:last-child{padding-bottom:0}
+.jt__node{position:absolute;left:6px;top:2px;width:24px;height:24px;border-radius:50%;
+  border:2px solid var(--cyan);background:var(--bg,#070d22);display:grid;place-items:center}
+.jt__node::after{content:"";width:10px;height:10px;border-radius:50%;background:var(--cyan)}
+.jt__item--done .jt__node{border-color:var(--green,#00ce1b)}
+.jt__item--done .jt__node::after{background:var(--green,#00ce1b)}
+.jt__item--live .jt__node::after{animation:jt-pulse 2.2s ease-out infinite}
+.jt__item--wait .jt__node{border-color:rgba(125,170,220,.4)}
+.jt__item--wait .jt__node::after{background:transparent;border:2px dashed rgba(125,170,220,.55);width:9px;height:9px}
+.jt__when{font-family:var(--font-mono,monospace);font-size:.7rem;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--cyan-soft,#6cc4f5);margin:0 0 .25rem}
+.jt__item--wait .jt__when{color:var(--muted,#9fb5d3)}
+.jt__item h3{margin:0 0 .35rem;font-size:1.06rem}
+.jt__item p{margin:0;font-size:.92rem;line-height:1.6;color:var(--muted,#9fb5d3)}
+.jt__item p strong{color:var(--ink,#eaf4ff)}
+.jt__chips{display:flex;flex-wrap:wrap;gap:.4rem;margin:.65rem 0 0;padding:0;list-style:none}
+.jt__chips li{font-family:var(--font-mono,monospace);font-size:.68rem;letter-spacing:.04em;
+  padding:.22rem .6rem;border-radius:6px;border:1px solid rgba(0,206,27,.35);
+  background:rgba(0,206,27,.08);color:#7fe08d}
+.jt__item--wait .jt__chips li{border-color:rgba(125,170,220,.3);background:rgba(125,170,220,.06);
+  color:var(--muted,#9fb5d3);border-style:dashed}
+@keyframes jt-pulse{0%{box-shadow:0 0 0 0 rgba(29,151,227,.55)}70%{box-shadow:0 0 0 12px rgba(29,151,227,0)}100%{box-shadow:0 0 0 0 rgba(29,151,227,0)}}
+@media (prefers-reduced-motion:reduce){.jt__item--live .jt__node::after{animation:none}}
+
+/* ---------------------------------------------------------------------------
+   Checker verdict panel (.chk): Lighthouse ring gauges + per-check rows with a
+   plain-English "what this means". Used on the case studies to show OUR OWN
+   free checker's verdict on a site we built - the ring percentages are set
+   inline via --p and must always be real, dated scores.
+   --------------------------------------------------------------------------- */
+.chk{max-width:980px;margin:0 auto}
+.chk__rings{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin:0 0 1.6rem}
+@media (min-width:720px){.chk__rings{grid-template-columns:repeat(4,1fr)}}
+.chk__ring{text-align:center;padding:1.1rem .6rem;border-radius:14px;
+  border:1px solid var(--line,rgba(125,170,220,.16));background:var(--glass,rgba(15,25,52,.55))}
+.chk__dial{width:92px;height:92px;margin:0 auto .6rem;border-radius:50%;position:relative;
+  background:conic-gradient(var(--cyan) calc(var(--p)*1%),rgba(125,170,220,.12) 0);
+  -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 9px),#000 calc(100% - 8px));
+  mask:radial-gradient(farthest-side,transparent calc(100% - 9px),#000 calc(100% - 8px))}
+.chk__ring--good .chk__dial{background:conic-gradient(var(--green,#00ce1b) calc(var(--p)*1%),rgba(125,170,220,.12) 0)}
+.chk__num{font-family:var(--font-display,sans-serif);font-size:1.7rem;font-weight:600;
+  margin:-74px 0 0;padding-bottom:34px;position:relative}
+.chk__lbl{font-family:var(--font-mono,monospace);font-size:.66rem;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted,#9fb5d3);margin:.9rem 0 0}
+.chk__list{margin:0;padding:0;list-style:none;border:1px solid var(--line,rgba(125,170,220,.16));
+  border-radius:14px;overflow:hidden}
+.chk__row{display:grid;grid-template-columns:34px 1fr;gap:.4rem .6rem;padding:.85rem 1rem;
+  border-top:1px solid var(--line,rgba(125,170,220,.16));background:var(--glass,rgba(15,25,52,.55))}
+.chk__row:first-child{border-top:0}
+.chk__ok,.chk__warn{font-weight:700;text-align:center;line-height:1.45}
+.chk__ok{color:var(--green,#00ce1b)}
+.chk__warn{color:#f0b34e}
+.chk__row strong{font-size:.92rem}
+.chk__row p{grid-column:2;margin:.1rem 0 0;font-size:.84rem;line-height:1.55;color:var(--muted,#9fb5d3)}
+.chk__foot{margin:1rem 0 0;font-size:.84rem;line-height:1.6;color:var(--muted,#9fb5d3);text-align:center}
+.chk__foot a{color:var(--cyan-soft,#6cc4f5)}
+
+/* ---------------------------------------------------------------------------
    Diagnosis playbooks (playbook_pages.py): the triage fork and the family nav.
    The fork exists to route a reader AWAY when they are on the wrong page, so it
    has to look like a decision, not a list of links. Left rule + hover shift.
