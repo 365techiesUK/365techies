@@ -63,6 +63,17 @@ $res = tm_sched_run(10);
 $res['ok'] = true;
 $res['at'] = date('Y-m-d H:i');
 
+/* Heartbeat. Without this there is no way to know the cron is alive until a
+   reminder silently fails to arrive - the same blind spot the booking poller
+   had. The console reads this and complains if it goes stale. */
+$hb = __DIR__ . '/tm-beat.json';
+$tmp = $hb . '.tmp';
+if (@file_put_contents($tmp, json_encode(array(
+        't' => time(), 'via' => $CLI ? 'cron' : 'http',
+        'sent' => $res['sent'], 'due' => $res['due']))) !== false) {
+    @rename($tmp, $hb);
+}
+
 @flock($lock, LOCK_UN); @fclose($lock);
 
 if ($CLI) {

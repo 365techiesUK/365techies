@@ -96,6 +96,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $bal   = tm_balance();
 $rows  = tm_sched_load();
+/* cron heartbeat - is the scheduler actually alive? */
+$beat  = is_file(__DIR__ . '/tm-beat.json')
+       ? json_decode((string)@file_get_contents(__DIR__ . '/tm-beat.json'), true) : null;
+$beatAge = (is_array($beat) && !empty($beat['t'])) ? (time() - (int)$beat['t']) : null;
 $log   = is_file(__DIR__ . '/tm-log.json') ? json_decode((string)@file_get_contents(__DIR__ . '/tm-log.json'), true) : array();
 if (!is_array($log)) $log = array();
 $log   = array_slice($log, -12);
@@ -137,6 +141,23 @@ form.inline{display:inline}
 </div>
 <?php if (empty($bal['ok'])): ?>
   <div class=err>Textmagic is not answering (<?=$h($bal['error'])?>). Check <span class=mono>api/pcm-textmagic.php</span> holds a valid API v2 key.</div>
+<?php endif; ?>
+
+<?php
+/* Cron health. 15-minute schedule, so anything past ~35 minutes means it has
+   stopped - and a stopped cron means reminders silently never arrive. */
+if ($beatAge === null): ?>
+  <div class=err><strong>The scheduler has never run.</strong> Reminders will not send until the cron is set up
+    (SiteGround &rarr; Site Tools &rarr; Devs &rarr; Cron Jobs, every 15 minutes:
+    <span class=mono>php /home/customer/www/365techies.co.uk/public_html/api/tm-cron.php</span>),
+    or you press <a href="tm-cron.php" target="_blank" rel="noopener">Run it now</a>.</div>
+<?php elseif ($beatAge > 2100): ?>
+  <div class=err><strong>The scheduler has stopped.</strong> Last run
+    <?=$h($beatAge > 86400 ? round($beatAge/86400) . ' day(s)' : round($beatAge/60) . ' minute(s)')?> ago &mdash;
+    it should run every 15 minutes. Reminders are not being sent. Check the cron job in SiteGround.</div>
+<?php else: ?>
+  <div class=msg>Scheduler is running &mdash; last check <?=$h($beatAge < 90 ? 'just now' : round($beatAge/60) . ' minute(s) ago')?><?=
+    !empty($beat['via']) ? ' (' . $h($beat['via']) . ')' : '' ?>.</div>
 <?php endif; ?>
 
 <div class=card>

@@ -17,6 +17,7 @@ api/tm-key.php
 api/tm-rate.json
 api/tm-log.json
 api/tm-sched.json
+api/tm-beat.json
 api/tm-cron.lock
 api/slack-rate.json
 api/tools-rate.json
