@@ -25346,7 +25346,6 @@ def write_portal_page():
       fetch('/build-id.json?b=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
         if (!j || !j.id) return;
         if (j.id === P365BUILD) { try { sessionStorage.removeItem('p365rl'); } catch (e) {} hidePill(); return; }
-        if (busy()) return;                              // the next check catches it
         var rec = ''; try { rec = sessionStorage.getItem('p365rl') || ''; } catch (e) {}
         var p = rec.split('|'), n = (p[0] === j.id) ? (parseInt(p[1], 10) || 0) : 0;
         if (n >= 2) { showPill(j.id); return; }          // 2 auto-reloads max per build - a loop is impossible
@@ -25357,6 +25356,14 @@ def write_portal_page():
         fetch('/portal/?u=' + encodeURIComponent(j.id), { cache: 'no-store' }).then(function (r2) { return r2.text(); }).then(function (t) {
           if (t.indexOf("P365BUILD = '" + j.id + "'") < 0) return;   // still the old page (mid-deploy)
           if (t.lastIndexOf('</html>') < t.length - 40) return;      // truncated upload - wait
+          // Busy (overlay open, wizard visible, cursor in a text box)? Then show
+          // the pill instead of navigating - NEVER skip silently. The old
+          // `if (busy()) return` before this block is exactly why "I deployed it
+          // and nothing changed" kept happening: an owner TESTING the portal has
+          // focus in an input half the time, so every 5-minute check landed on
+          // "busy", did nothing, and said nothing - and a fresh joiner (wizard
+          // auto-opened) could never update at all. A pill interrupts nobody.
+          if (busy()) { showPill(j.id); return; }
           try { sessionStorage.setItem('p365rl', j.id + '|' + (n + 1) + '|' + Date.now()); } catch (e) {}
           location.replace('/portal/?u=' + encodeURIComponent(j.id));
         }).catch(function () {});
@@ -25365,7 +25372,8 @@ def write_portal_page():
   }
   document.addEventListener('visibilitychange', function () { if (!document.hidden) check(); });
   window.addEventListener('pageshow', function (e) { if (e.persisted) check(); });   // bfcache restores fetch nothing
-  setInterval(check, 300000);
+  window.addEventListener('focus', check);   // alt-tab back to the browser - visibilitychange misses OS-level focus
+  setInterval(check, 120000);   // 2 min, not 5: build-id.json is ~100 bytes, and the wait after a deploy felt like failure
   check();
 })();
 </script>'''
