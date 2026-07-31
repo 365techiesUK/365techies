@@ -1915,7 +1915,11 @@ EMAILSEC_TOOL = r'''    <section class="section" aria-label="Email security chec
         var loadTimer=null, LOAD=['Looking up your DNS records…','Checking SPF (who can send as you)…','Checking DMARC (anti-spoofing policy)…','Checking DKIM (email signing)…','Checking mail host &amp; encryption…','Working out your result…'];
         function esc(s){var d=document.createElement('div');d.textContent=(s==null?'':s);return d.innerHTML;}
         function normDomain(v){ v=(v||'').trim().toLowerCase().replace(/^https?:\/\//,'').replace(/^www\./,'').replace(/[\/?#].*$/,'').replace(/\s+/g,''); if(v.indexOf('@')>=0) v=v.split('@').pop(); return v; }
-        function doh(name,type){ return fetch('https://dns.google/resolve?name='+encodeURIComponent(name)+'&type='+(type||'TXT')).then(function(r){ if(!r.ok) throw new Error('dns'); return r.json(); }); }
+        /* cache:no-store + a per-run cache-buster so a domain you have JUST fixed
+           reads live — without this the browser serves a stale DNS-over-HTTPS
+           response and the result looks unchanged after a real fix. */
+        var runId=(''+ (window.performance&&performance.now?performance.now():+new Date())).replace(/\D/g,'');
+        function doh(name,type){ return fetch('https://dns.google/resolve?name='+encodeURIComponent(name)+'&type='+(type||'TXT')+'&_cb='+runId,{cache:'no-store'}).then(function(r){ if(!r.ok) throw new Error('dns'); return r.json(); }); }
         function txt(name){ return doh(name,'TXT').then(function(d){ if(!d.Answer) return []; return d.Answer.filter(function(a){return a.type===16;}).map(function(a){ return String(a.data).replace(/\\"/g,'"').replace(/^"|"$/g,'').replace(/"\s+"/g,''); }); }).catch(function(){return [];}); }
         function mx(name){ return doh(name,'MX').then(function(d){ if(!d.Answer) return []; return d.Answer.filter(function(a){return a.type===15;}).map(function(a){ return String(a.data).replace(/\.$/,'').replace(/^\d+\s+/,'').toLowerCase(); }); }).catch(function(){return [];}); }
         function findFirst(arr,re){ for(var i=0;i<arr.length;i++){ if(re.test(arr[i])) return arr[i]; } return null; }
