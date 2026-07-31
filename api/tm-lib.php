@@ -152,8 +152,13 @@ if (!defined('TM_LIB')) {
         curl_close($ch);
         $j = json_decode((string)$body, true);
         if ($code >= 200 && $code < 300 && is_array($j)) {
+            /* Textmagic returns the balance as a raw float, which serialises as
+               27.579299999999992610355... - fine in an API response, but it looks
+               broken the moment it is shown to a human. Round it once, here. */
+            $bal = isset($j['balance']) ? round((float)$j['balance'], 2) : null;
             return array('ok' => true, 'error' => '',
-                         'balance'  => isset($j['balance']) ? $j['balance'] : null,
+                         'balance'  => $bal,
+                         'balanceText' => $bal === null ? '' : number_format($bal, 2),
                          'currency' => isset($j['currency']['id']) ? $j['currency']['id'] : '',
                          'username' => isset($j['username']) ? $j['username'] : '');
         }
