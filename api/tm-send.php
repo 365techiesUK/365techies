@@ -20,9 +20,9 @@ date_default_timezone_set('Europe/London');
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
 
-session_name('pcmadm');
-session_set_cookie_params(array('httponly' => true, 'samesite' => 'Lax',
-    'secure' => (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')));
+/* Must match pcm-admin.php EXACTLY - it uses a plain session_start() (default
+   PHPSESSID). Setting a custom session_name() here looks harmless but silently
+   reads a different cookie, so a signed-in admin is told "not-signed-in". */
 @session_start();
 
 /* the ONLY gate: an authenticated pcm-admin session */
