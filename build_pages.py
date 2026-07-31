@@ -1816,6 +1816,7 @@ EMAILSEC_TOOL = r'''    <section class="section" aria-label="Email security chec
               <p class="es-mailform-status" id="es-mail-status" hidden></p>
             </form>
             <div class="es-checks" id="es-checks"></div>
+            <div id="es-compare" hidden></div>
             <div class="es-fix">
               <h3>Want your email locked down?</h3>
               <p id="es-fix-msg"></p>
@@ -1895,6 +1896,19 @@ EMAILSEC_TOOL = r'''    <section class="section" aria-label="Email security chec
       #esec .es-check.es-info{border-left-color:#5aa9e6}
       #esec .es-check.es-info .es-check-ico{background:#5aa9e6}
       #esec .es-scorenote{text-align:center;font-size:.7rem;color:var(--muted,#9aa6c2);opacity:.75;margin:.2rem 0 1.2rem}
+      #esec .es-cmp{margin-top:1.6rem;padding:1.3rem 1.2rem;border-radius:16px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03)}
+      #esec .es-cmp h3{margin:0 0 .9rem;font-size:1.05rem;text-align:center}
+      #esec .es-cmp-row{display:flex;gap:1rem;align-items:stretch;justify-content:center;flex-wrap:wrap}
+      #esec .es-cmp-card{flex:1 1 190px;max-width:260px;text-align:center;padding:1rem .9rem;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.18)}
+      #esec .es-cmp-card b{display:block;font-size:2rem;font-weight:800;line-height:1}
+      #esec .es-cmp-card span{display:block;font-size:.78rem;color:var(--muted,#9aa6c2);margin-top:.3rem;word-break:break-all}
+      #esec .es-cmp-card.win{border-color:rgba(46,204,113,.45);background:rgba(46,204,113,.08)}
+      #esec .es-cmp-card.win b{color:#2ecc71}
+      #esec .es-cmp-card.mid{border-color:rgba(241,196,15,.45);background:rgba(241,196,15,.07)}
+      #esec .es-cmp-card.mid b{color:#f1c40f}
+      #esec .es-cmp-card.low{border-color:rgba(231,76,60,.45);background:rgba(231,76,60,.07)}
+      #esec .es-cmp-card.low b{color:#e74c3c}
+      #esec .es-cmp-msg{margin:1rem auto 0;max-width:52ch;text-align:center;font-size:.92rem;line-height:1.6;color:var(--muted,#9aa6c2)}
       #esec .es-fix{margin-top:2rem;padding:1.6rem;border-radius:16px;border:1px solid rgba(55,194,194,.35);background:rgba(55,194,194,.07);text-align:center}
       #esec .es-fix h3{margin:0 0 .5rem;font-size:1.2rem}
       #esec .es-fix p{margin:0 auto 1.1rem;max-width:48ch;color:var(--muted,#9aa6c2);font-size:.95rem;line-height:1.6}
@@ -1912,6 +1926,14 @@ EMAILSEC_TOOL = r'''    <section class="section" aria-label="Email security chec
         var CTA='<a href="/contact/">get in touch</a>';
         var SELECTORS=['google','selector1','selector2','default','k1','s1','s2','mail','dkim','smtp','zoho','mandrill','protonmail','fm1','k2','dk','mxvault','pm','turbo-smtp','scph0819','scph1220','mesmtp'];
         var lastReport='';
+        /* Scoring weights live HERE ONCE. Both the visitor's result and the
+           "how do we compare" panel read them, so the two can never drift into
+           scoring the same records differently - which would be indefensible on
+           a page whose whole point is honesty. */
+        var ESW={spfStrict:25,spfSoft:17,spfPlus:5,spfWeak:10,
+                 dmarcReject:50,dmarcQuar:42,dmarcNone:15,dmarcOther:12,
+                 dkim:25,mtaBoth:5,mtaOne:3,bimi:3};
+        function esGrade(s){ s=Math.max(0,Math.min(100,s)); return s>=85?'A':s>=70?'B':s>=50?'C':s>=30?'D':'F'; }
         var loadTimer=null, LOAD=['Looking up your DNS records…','Checking SPF (who can send as you)…','Checking DMARC (anti-spoofing policy)…','Checking DKIM (email signing)…','Checking mail host &amp; encryption…','Working out your result…'];
         function esc(s){var d=document.createElement('div');d.textContent=(s==null?'':s);return d.innerHTML;}
         function normDomain(v){ v=(v||'').trim().toLowerCase().replace(/^https?:\/\//,'').replace(/^www\./,'').replace(/[\/?#].*$/,'').replace(/\s+/g,''); if(v.indexOf('@')>=0) v=v.split('@').pop(); return v; }
@@ -1967,10 +1989,10 @@ EMAILSEC_TOOL = r'''    <section class="section" aria-label="Email security chec
           if(!spf) checks.push({s:'poor',t:'SPF',m:'No SPF record found — the internet has no list of who is allowed to send email for your domain.'});
           else if(spfMulti) checks.push({s:'poor',t:'SPF',m:'More than one SPF record — this is a misconfiguration that breaks SPF entirely. There must be exactly one.',rec:spf});
           else { var all=(spf.match(/([~\-?+])all\b/)||[])[1];
-            if(all==='-'){ spfStrict=true; score+=25; checks.push({s:'good',t:'SPF',m:'Set up and strict (-all) — only your approved servers can send email as you.',rec:spf}); }
-            else if(all==='~'){ spfSoft=true; score+=17; checks.push({s:'avg',t:'SPF',m:'Exists, but soft-fail (~all) — spoofed mail is only flagged, not blocked. Ideally end it in -all.',rec:spf}); }
-            else if(all==='+'){ score+=5; checks.push({s:'poor',t:'SPF',m:'Ends in +all — this actually lets anyone send as you. It should be -all.',rec:spf}); }
-            else { score+=10; checks.push({s:'avg',t:'SPF',m:'Exists, but weak — it should end in -all to actually block spoofing.',rec:spf}); } }
+            if(all==='-'){ spfStrict=true; score+=ESW.spfStrict; checks.push({s:'good',t:'SPF',m:'Set up and strict (-all) — only your approved servers can send email as you.',rec:spf}); }
+            else if(all==='~'){ spfSoft=true; score+=ESW.spfSoft; checks.push({s:'avg',t:'SPF',m:'Exists, but soft-fail (~all) — spoofed mail is only flagged, not blocked. Ideally end it in -all.',rec:spf}); }
+            else if(all==='+'){ score+=ESW.spfPlus; checks.push({s:'poor',t:'SPF',m:'Ends in +all — this actually lets anyone send as you. It should be -all.',rec:spf}); }
+            else { score+=ESW.spfWeak; checks.push({s:'avg',t:'SPF',m:'Exists, but weak — it should end in -all to actually block spoofing.',rec:spf}); } }
 
           /* --- DMARC (max 40, the record that stops visible-From spoofing) --- */
           if(!dmarc) checks.push({s:'poor',t:'DMARC',m:'No DMARC record — nothing tells inboxes to reject email that fakes your address. This is the gap scammers exploit, and the single most important one to fix.'});
@@ -1978,14 +2000,14 @@ EMAILSEC_TOOL = r'''    <section class="section" aria-label="Email security chec
             var pct=((dmarc.match(/[;\s]pct\s*=\s*(\d+)/i)||[])[1]);
             var hasRua=/[;\s]rua\s*=/i.test(dmarc);
             var pctNote=(pct&&pct!=='100')?' Note it only applies to '+esc(pct)+'% of mail (pct='+esc(pct)+') — raise it to 100.':'';
-            if(p==='reject'){ dmarcEnforcing=true; score+=50; checks.push({s:'good',t:'DMARC',m:'Enforcing (p=reject) — email faking your address is rejected outright. This is the gold standard.'+pctNote,rec:dmarc}); }
-            else if(p==='quarantine'){ dmarcEnforcing=true; score+=42; checks.push({s:'good',t:'DMARC',m:'Enforcing (p=quarantine) — email faking your address is sent straight to spam.'+pctNote,rec:dmarc}); }
-            else if(p==='none'){ dmarcMonitor=true; score+=15; checks.push({s:'avg',t:'DMARC',m:'Monitor-only (p=none) — it watches but does not yet block spoofing, so fakes still reach the inbox. Move it to quarantine, then reject.'+(hasRua?'':' It has no reporting address (rua) either.'),rec:dmarc}); }
-            else { score+=12; checks.push({s:'avg',t:'DMARC',m:'Record found, but the policy is not clearly set to none, quarantine or reject.',rec:dmarc}); } }
+            if(p==='reject'){ dmarcEnforcing=true; score+=ESW.dmarcReject; checks.push({s:'good',t:'DMARC',m:'Enforcing (p=reject) — email faking your address is rejected outright. This is the gold standard.'+pctNote,rec:dmarc}); }
+            else if(p==='quarantine'){ dmarcEnforcing=true; score+=ESW.dmarcQuar; checks.push({s:'good',t:'DMARC',m:'Enforcing (p=quarantine) — email faking your address is sent straight to spam.'+pctNote,rec:dmarc}); }
+            else if(p==='none'){ dmarcMonitor=true; score+=ESW.dmarcNone; checks.push({s:'avg',t:'DMARC',m:'Monitor-only (p=none) — it watches but does not yet block spoofing, so fakes still reach the inbox. Move it to quarantine, then reject.'+(hasRua?'':' It has no reporting address (rua) either.'),rec:dmarc}); }
+            else { score+=ESW.dmarcOther; checks.push({s:'avg',t:'DMARC',m:'Record found, but the policy is not clearly set to none, quarantine or reject.',rec:dmarc}); } }
 
           /* --- DKIM (max 18) --- */
           var hit=null; for(var i=0;i<dkimProbes.length;i++){ if(findFirst(dkimProbes[i].t,/(v=DKIM1|k=rsa|p=[A-Za-z0-9+\/]{20,})/i)){ hit=dkimProbes[i]; break; } }
-          if(hit){ dkimOk=true; score+=25; checks.push({s:'good',t:'DKIM',m:'Email signing detected (selector “'+esc(hit.s)+'”) — your messages carry a cryptographic signature inboxes can verify.'}); }
+          if(hit){ dkimOk=true; score+=ESW.dkim; checks.push({s:'good',t:'DKIM',m:'Email signing detected (selector “'+esc(hit.s)+'”) — your messages carry a cryptographic signature inboxes can verify.'}); }
           else checks.push({s:'avg',t:'DKIM',m:'Not found on the common selectors we test. Your provider may use a custom one we cannot see — worth confirming with them that your outgoing mail is DKIM-signed.'});
 
           /* --- Encryption in transit: MTA-STS + TLS-RPT (max 12, bonus — protects mail in transit, not against spoofing) --- */
@@ -1995,13 +2017,13 @@ EMAILSEC_TOOL = r'''    <section class="section" aria-label="Email security chec
              testing or enforce mode lives in the policy FILE on the mta-sts
              subdomain, which a browser cannot read cross-origin - so say
              "published", never "enforced". */
-          if(mtaSts&&tlsRpt){ score+=5; checks.push({s:'good',t:'Encryption in transit',m:'MTA-STS and TLS reporting are both published — the setup for requiring encrypted delivery is in place, and failures get reported back to you. Advanced, and a good sign. (Whether it is enforcing or still in testing is set in your policy file.)'}); }
-          else if(mtaSts){ score+=3; checks.push({s:'good',t:'Encryption in transit',m:'MTA-STS is published, so you have the setup for requiring encrypted delivery. Adding TLS reporting (TLS-RPT) would let you see any failures.'}); }
+          if(mtaSts&&tlsRpt){ score+=ESW.mtaBoth; checks.push({s:'good',t:'Encryption in transit',m:'MTA-STS and TLS reporting are both published — the setup for requiring encrypted delivery is in place, and failures get reported back to you. Advanced, and a good sign. (Whether it is enforcing or still in testing is set in your policy file.)'}); }
+          else if(mtaSts){ score+=ESW.mtaOne; checks.push({s:'good',t:'Encryption in transit',m:'MTA-STS is published, so you have the setup for requiring encrypted delivery. Adding TLS reporting (TLS-RPT) would let you see any failures.'}); }
           else checks.push({s:'info',t:'Encryption in transit',m:'No MTA-STS found. This is an advanced extra (it forces mail to you to be encrypted in transit) rather than an anti-spoofing control — nice to have once the three above are sorted.'});
 
           /* --- BIMI (max 8, bonus — brand logo in the inbox, needs enforcing DMARC first) --- */
           var bimi=findFirst(bimiTxts,/^v=BIMI1/i);
-          if(bimi){ score+=3; checks.push({s:'good',t:'BIMI (brand logo)',m:'A BIMI record is published — with enforcing DMARC in place, your logo can appear beside your emails in supporting inboxes. A genuinely premium touch.'}); }
+          if(bimi){ score+=ESW.bimi; checks.push({s:'good',t:'BIMI (brand logo)',m:'A BIMI record is published — with enforcing DMARC in place, your logo can appear beside your emails in supporting inboxes. A genuinely premium touch.'}); }
 
           /* --- mail host (informational, no score) --- */
           var host=hostName(mxs);
@@ -2009,7 +2031,7 @@ EMAILSEC_TOOL = r'''    <section class="section" aria-label="Email security chec
           else if(!mxs.length) checks.push({s:'info',t:'Mail host',m:'No MX records found — this domain may not be set up to receive email at all.'});
 
           score=Math.max(0,Math.min(100,score));
-          var grade = score>=85?'A':score>=70?'B':score>=50?'C':score>=30?'D':'F';
+          var grade = esGrade(score);
 
           /* --- the headline: can this domain be spoofed RIGHT NOW? Keyed on DMARC enforcement,
                  because DMARC is what actually protects the visible From: address a person reads. --- */
@@ -2044,7 +2066,76 @@ EMAILSEC_TOOL = r'''    <section class="section" aria-label="Email security chec
 
           elRes.hidden=false;
           try{ elRes.scrollIntoView({behavior:'smooth',block:'start'}); }catch(e){}
+          compareToUs(domain, score, grade);
         }
+
+        /* --- "How does it compare to ours?" -----------------------------
+           Same idea as the website checker: we publish our own live result
+           next to theirs rather than claiming to be good at this. Rules:
+             - runs AFTER their result is on screen, never blocks it
+             - 24h localStorage cache, so we do not re-run ~25 DNS lookups
+               for our own domain on every single check
+             - if OUR check fails, the panel simply does not appear
+             - if the visitor scores HIGHER than us, we say so plainly. A
+               comparison you only show when you win is an advert, not evidence.
+           -------------------------------------------------------------- */
+        var SELF='365techies.co.uk', SELFKEY='tt_es_self_v1';
+        function selfCached(){
+          try{ var j=JSON.parse(localStorage.getItem(SELFKEY)||'null');
+               if(j && (Date.now()-j.t) < 86400000 && typeof j.score==='number') return j; }catch(e){}
+          return null;
+        }
+        function scoreSelf(){
+          return Promise.all([ txt(SELF), txt('_dmarc.'+SELF),
+              Promise.all(['default','k1','google','selector1'].map(function(s){ return txt(s+'._domainkey.'+SELF); })),
+              txt('_mta-sts.'+SELF), txt('_smtp._tls.'+SELF), txt('default._bimi.'+SELF) ])
+            .then(function(r){
+              var spf=findFirst(r[0],/^v=spf1/i), dmarc=findFirst(r[1],/^v=DMARC1/i);
+              var s=0;
+              if(spf){ var a=(spf.match(/([~\-?+])all\b/)||[])[1];
+                s+= a==='-'?ESW.spfStrict : a==='~'?ESW.spfSoft : a==='+'?ESW.spfPlus : ESW.spfWeak; }
+              if(dmarc){ var p=((dmarc.match(/[;\s]p\s*=\s*(\w+)/i)||[])[1]||'').toLowerCase();
+                s+= p==='reject'?ESW.dmarcReject : p==='quarantine'?ESW.dmarcQuar : p==='none'?ESW.dmarcNone : ESW.dmarcOther; }
+              var dk=false; for(var i=0;i<r[2].length;i++){ if(findFirst(r[2][i],/(v=DKIM1|k=rsa|p=[A-Za-z0-9+\/]{20,})/i)){ dk=true; break; } }
+              if(dk) s+=ESW.dkim;
+              var mta=findFirst(r[3],/^v=STSv1/i), tls=findFirst(r[4],/^v=TLSRPTv1/i);
+              if(mta&&tls) s+=ESW.mtaBoth; else if(mta) s+=ESW.mtaOne;
+              if(findFirst(r[5],/^v=BIMI1/i)) s+=ESW.bimi;
+              s=Math.min(100,s);
+              var out={score:s,grade:esGrade(s),t:Date.now()};
+              try{ localStorage.setItem(SELFKEY,JSON.stringify(out)); }catch(e){}
+              return out;
+            });
+        }
+        function cls(g){ return (g==='A'||g==='B')?'win':(g==='C'?'mid':'low'); }
+        function compareToUs(domain, theirScore, theirGrade){
+          var el=root.querySelector('#es-compare'); if(!el) return;
+          /* Always clear first. Without this, checking a second domain leaves
+             the PREVIOUS comparison on screen while the new one loads - and
+             checking our own domain (which shows no panel) would strand the
+             last visitor's card next to an unrelated result. */
+          el.hidden=true; el.innerHTML='';
+          if(domain===SELF) return;                    /* checking us? no mirror */
+          var cached=selfCached();
+          var p = cached ? Promise.resolve(cached) : scoreSelf();
+          p.then(function(us){
+            var msg;
+            if(theirScore > us.score){
+              msg='Genuinely better than ours &mdash; nice work. We are at '+us.grade+' and finishing the last step ourselves.';
+            } else if(theirScore === us.score){
+              msg='Line ball &mdash; you are set up exactly as we are.';
+            } else {
+              msg='We fixed ours the same way we would fix yours: SPF, DKIM and an enforcing DMARC policy. It is a behind-the-scenes change that does not affect how you send email.';
+            }
+            el.innerHTML='<div class="es-cmp"><h3>How does that compare to ours?</h3>'
+              +'<div class="es-cmp-row">'
+              +'<div class="es-cmp-card '+cls(theirGrade)+'"><b>'+esc(theirGrade)+'</b><span>'+esc(domain)+'</span></div>'
+              +'<div class="es-cmp-card '+cls(us.grade)+'"><b>'+esc(us.grade)+'</b><span>365techies.co.uk (us)</span></div>'
+              +'</div><p class="es-cmp-msg">'+msg+'</p></div>';
+            el.hidden=false;
+          }).catch(function(){ /* our own check failed - show nothing rather than a broken panel */ });
+        }
+
         var copyBtn=root.querySelector('#es-copy');
         if(copyBtn) copyBtn.addEventListener('click',function(){
           var txtOut=lastReport.replace(/\\n/g,'\n'); if(!txtOut) return;
