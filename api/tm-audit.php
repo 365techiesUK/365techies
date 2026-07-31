@@ -62,10 +62,15 @@ $tr = sbrpc('https://user-api.simplybook.me/login', 'getUserToken',
 if (empty($tr['result'])) { echo json_encode(array('ok' => false, 'error' => 'auth')); exit; }
 $TOKEN = $tr['result'];
 
+/* Must match pcm-bkpoll.php EXACTLY. Two details that both produce a
+   misleading "Access denied" if you get them wrong:
+     - the header is X-User-Token (NOT X-Token, which is the company-API header)
+     - the path has a trailing slash: /admin/
+   Getting either wrong looks like a permissions problem and is not one. */
 function adm($method, $params) {
     global $SB_COMPANY, $TOKEN;
-    return sbrpc('https://user-api.simplybook.me/admin', $method, $params,
-                 array('X-Company-Login: ' . $SB_COMPANY, 'X-Token: ' . $TOKEN));
+    return sbrpc('https://user-api.simplybook.me/admin/', $method, $params,
+                 array('X-Company-Login: ' . $SB_COMPANY, 'X-User-Token: ' . $TOKEN));
 }
 
 $limit = isset($_GET['limit']) ? max(10, min(2000, (int)$_GET['limit'])) : 300;
