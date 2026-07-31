@@ -224,7 +224,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-07-30"
+      "dateModified": "2026-07-31"
     },
     {
       "@type": "WebApplication",
@@ -1083,6 +1083,7 @@
           bits.push('<em>'+Math.round(w*dpr)+'×'+Math.round(h*dpr)+(hz?' @ ~'+hz+'Hz':'')+'</em>');
           v.innerHTML='This machine: '+bits.join(' &middot; ');
           v.hidden=false;
+          window.ttToolDone&&window.ttToolDone("computer-spec-checker");
           var fl=$('#spc-flags');
           if(os.win10)fl.insertAdjacentHTML('beforeend','<div class="spc-flag spc-flag--bad">&#9888;&#65039; <strong>You&rsquo;re on Windows 10 &mdash; it stopped getting security updates in October 2025.</strong> Every day online is riskier. See <a href="/windows-10-end-of-life/">your options</a> &mdash; many machines upgrade free, and we can check yours.</div>');
           if(os.win11)fl.insertAdjacentHTML('beforeend','<div class="spc-flag spc-flag--good">&#10004;&#65039; Windows 11 &mdash; you&rsquo;re on the current, supported Windows. Good.</div>');
@@ -1457,9 +1458,9 @@
     </div>
   </div>
   <script type="module" src="/js/interior.min.js?v=22"></script>
-  <script src="/js/a11y.min.js?v=6" defer></script>
-  <script src="/js/forms.min.js?v=7" defer></script>
-  <script src="/js/search.min.js?v=2026-07-30" defer></script>
+  <script src="/js/a11y.min.js?v=7" defer></script>
+  <script src="/js/forms.min.js?v=8" defer></script>
+  <script src="/js/search.min.js?v=2026-07-31" defer></script>
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
     <p>We use cookies to power our live chat and understand how the site is used. See our <a href="/cookie-policy/">cookie policy</a>.</p>
     <div class="cookie-banner__actions">

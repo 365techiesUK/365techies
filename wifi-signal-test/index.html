@@ -224,7 +224,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-07-30"
+      "dateModified": "2026-07-31"
     },
     {
       "@type": "WebApplication",
@@ -1479,6 +1479,7 @@
           jitEl.textContent=off?'\u2014':jit;
           dropEl.textContent=winDrops;
           paint(off?0:s); drawSpark(); setTrend(s); scheduleTicks(off?0:s); advise(lat,jit,s,null,winDrops,off);
+          if(!off)window.ttToolDone&&window.ttToolDone("wifi-signal-test");
           // read-only snapshot for the survey layer (see the survey script below)
           window.WF_LAST={s:off?0:s,lat:lat,jit:jit,drops:winDrops,off:off,settled:hist.length>=6,run:running,t:Date.now()};
           var s2=$('#wf-score2'); if(s2&&!off) s2.textContent=s;
@@ -4340,9 +4341,9 @@
     </div>
   </div>
   <script type="module" src="/js/interior.min.js?v=22"></script>
-  <script src="/js/a11y.min.js?v=6" defer></script>
-  <script src="/js/forms.min.js?v=7" defer></script>
-  <script src="/js/search.min.js?v=2026-07-30" defer></script>
+  <script src="/js/a11y.min.js?v=7" defer></script>
+  <script src="/js/forms.min.js?v=8" defer></script>
+  <script src="/js/search.min.js?v=2026-07-31" defer></script>
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
     <p>We use cookies to power our live chat and understand how the site is used. See our <a href="/cookie-policy/">cookie policy</a>.</p>
     <div class="cookie-banner__actions">

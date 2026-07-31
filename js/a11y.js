@@ -195,11 +195,96 @@
 
 
 /* Conversion events -> GA4 (queued via the inline gtag stub; Consent Mode governs sending).
-   Measures the contacts that matter: calls, texts, emails, SOS, checker runs, search opens. */
+   Measures the contacts that matter: calls, texts, emails, SOS, checker runs, search opens.
+
+   FUNNEL LAYER (2026-07-31): first-party attribution + tool events.
+   - visit any page once with ?internal=365 to mark a device internal (events stop;
+     ?internal=off unmarks). Nothing else identifies the visitor.
+   - tt_attr stores first/last touch (utm_*, external referrer, landing page, date)
+     so a lead can say where it originally came from. First-party localStorage only;
+     it is sent nowhere until the visitor submits an enquiry form themselves.
+   - tool_started fires on the first interaction with any free-tool page (the
+     tool-seo section is the marker every tool page carries).
+   - window.ttToolDone("slug") is called by tool widgets when a result is shown ->
+     report_generated (once per page load per slug).
+   - window.ttFunnel() hands forms.js the attribution + tools-used trail. */
 (function () {
+  var internal = false;
+  try {
+    var q = new URLSearchParams(location.search);
+    if (q.get('internal') === '365') localStorage.setItem('tt_internal', '1');
+    if (q.get('internal') === 'off') localStorage.removeItem('tt_internal');
+    internal = localStorage.getItem('tt_internal') === '1';
+  } catch (e) {}
+
   function ev(name, params) {
+    if (internal) return;
     try { if (typeof window.gtag === 'function') window.gtag('event', name, params || {}); } catch (e) {}
   }
+
+  /* ---- attribution: first touch is written once, last touch on every arrival
+     that carries a campaign tag or an external referrer ---- */
+  var attr = null;
+  try {
+    attr = JSON.parse(localStorage.getItem('tt_attr') || 'null');
+    var qs = new URLSearchParams(location.search);
+    var extRef = '';
+    if (document.referrer) {
+      var rh = '';
+      try { rh = new URL(document.referrer).hostname; } catch (re) {}
+      if (rh && rh !== location.hostname) extRef = document.referrer.slice(0, 200);
+    }
+    var touch = {
+      src: (qs.get('utm_source') || '').slice(0, 60),
+      med: (qs.get('utm_medium') || '').slice(0, 60),
+      cam: (qs.get('utm_campaign') || '').slice(0, 80),
+      ref: extRef, land: location.pathname,
+      d: new Date().toISOString().slice(0, 10)
+    };
+    if (!attr || !attr.first) attr = { first: touch };
+    else if (touch.src || touch.med || touch.cam || touch.ref) attr.last = touch;
+    localStorage.setItem('tt_attr', JSON.stringify(attr));
+  } catch (e) {}
+
+  function toolsUsed() {
+    try { return JSON.parse(localStorage.getItem('tt_tools') || '[]'); } catch (e) { return []; }
+  }
+  function noteTool(slug) {
+    try {
+      var t = toolsUsed();
+      if (t.indexOf(slug) === -1) { t.push(slug); localStorage.setItem('tt_tools', JSON.stringify(t.slice(-12))); }
+    } catch (e) {}
+  }
+  window.ttFunnel = function () { return { attr: attr, tools: toolsUsed(), internal: internal }; };
+
+  /* ---- tool_started: first interaction on a tool page ---- */
+  var toolPage = document.querySelector('section[aria-label="How this tool works"]')
+    ? location.pathname.replace(/^\/|\/$/g, '') : null;
+  if (toolPage) {
+    var started = false;
+    var startOnce = function (e) {
+      if (started) return;
+      if (!e.target.closest('main')) return;
+      if (!e.target.closest('button, input, select, textarea, [role="button"], summary, label')) return;
+      started = true;
+      noteTool(toolPage);
+      ev('tool_started', { tool: toolPage, page: location.pathname });
+      document.removeEventListener('click', startOnce, true);
+      document.removeEventListener('change', startOnce, true);
+    };
+    document.addEventListener('click', startOnce, true);
+    document.addEventListener('change', startOnce, true);
+  }
+
+  /* ---- report_generated: tool widgets call ttToolDone at their result moment ---- */
+  var doneFired = {};
+  window.ttToolDone = function (slug) {
+    slug = String(slug || toolPage || location.pathname.replace(/^\/|\/$/g, ''));
+    if (doneFired[slug]) return;
+    doneFired[slug] = 1;
+    noteTool(slug);
+    ev('report_generated', { tool: slug, page: location.pathname });
+  };
   document.addEventListener('click', function (e) {
     var a = e.target.closest('a[href], [data-wc-prefill], [data-search-open]');
     if (!a) return;

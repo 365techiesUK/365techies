@@ -54,6 +54,35 @@
       if (!extras.length) { var mach = val(form, "machine"); if (mach) extras.push("machine: " + mach); }
       if (extras.length) message = (message ? message + "\n\n" : "") + extras.join("\n");
 
+      /* funnel attribution (from a11y.js): where this person originally came from and
+         which free tools they used before enquiring. First-party data, attached only
+         at the moment they choose to contact us. */
+      var attribution = "";
+      var fn = null;
+      try {
+        fn = window.ttFunnel && window.ttFunnel();
+        if (fn) {
+          var bits = [];
+          var t1 = fn.attr && fn.attr.first;
+          if (t1) {
+            var srcBits = [t1.src, t1.med, t1.cam].filter(Boolean).join(" / ");
+            bits.push("first seen: " + (t1.d || "?") + " via " +
+              (srcBits || (t1.ref ? "referral" : "direct/search")) +
+              (t1.ref ? " (" + t1.ref + ")" : "") + ", landed on " + (t1.land || "?"));
+          }
+          var t2 = fn.attr && fn.attr.last;
+          if (t2 && t1 && (t2.src !== t1.src || t2.cam !== t1.cam || t2.ref !== t1.ref || t2.d !== t1.d)) {
+            var src2 = [t2.src, t2.med, t2.cam].filter(Boolean).join(" / ");
+            bits.push("latest visit: " + (t2.d || "?") + " via " + (src2 || "referral") +
+              (t2.ref ? " (" + t2.ref + ")" : ""));
+          }
+          if (fn.tools && fn.tools.length) bits.push("free tools used: " + fn.tools.join(", "));
+          if (bits.length) attribution = "\n\n— journey —\n" + bits.join("\n");
+          if (fn.internal) message = "[INTERNAL TEST] " + message;
+        }
+      } catch (aerr) {}
+      if (attribution) message += attribution;
+
       var fields = [];
       var add = function (n, v) { if (v) fields.push({ name: n, value: String(v) }); };
       add("email", email);
@@ -74,7 +103,8 @@
           body: JSON.stringify({
             name: val(form, "name"), email: email, phone: val(form, "phone"),
             company: val(form, "company"), topic: topic,
-            message: (val(form, "message") + (extras.length ? "\n" + extras.join("\n") : "")).trim(),
+            message: ((fn && fn.internal ? "[INTERNAL TEST] " : "") + val(form, "message")
+              + (extras.length ? "\n" + extras.join("\n") : "") + attribution).trim(),
             page: location.href
           })
         }).catch(function () {});
@@ -94,7 +124,16 @@
         if (btn) { btn.disabled = false; btn.textContent = label; }
         if (res.ok) {
           if (status) { status.style.color = "#39d353"; status.textContent = form.getAttribute("data-success") || "✓ Thanks — your message is in. We’ll reply within one working day."; }
-          try { if (typeof window.gtag === "function") window.gtag("event", "generate_lead", { form_page: location.pathname, form_topic: topic || "(none)" }); } catch (gerr) {}
+          try {
+            if (typeof window.gtag === "function" && !(fn && fn.internal)) {
+              var t1g = fn && fn.attr && fn.attr.first;
+              window.gtag("event", "generate_lead", {
+                form_page: location.pathname, form_topic: topic || "(none)",
+                first_source: (t1g && (t1g.src || (t1g.ref ? "referral" : "direct"))) || "unknown",
+                tools_used: (fn && fn.tools && fn.tools.length) || 0
+              });
+            }
+          } catch (gerr) {}
           form.reset();
           delete form.dataset.slackSent;
         } else if (status) {

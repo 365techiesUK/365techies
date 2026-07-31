@@ -224,7 +224,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-07-30"
+      "dateModified": "2026-07-31"
     },
     {
       "@type": "WebApplication",
@@ -919,6 +919,7 @@
           else if(!spf && !dmarc) verdict={g:'Exposed',cls:'poor',m:'Your domain has little or no protection — scammers can send email that looks exactly like it’s from you. This is how invoice fraud and phishing begin.'};
           else verdict={g:'Partly protected',cls:'avg',m:'You’ve got some protection, but there are gaps a scammer could still exploit. A few tweaks would close them.'};
           root.querySelector('#es-verdict').innerHTML='<div class="es-verdict-box es-'+verdict.cls+'"><p class="es-verdict-dom">'+esc(domain)+'</p><p class="es-verdict-grade">'+verdict.g+'</p><p class="es-verdict-msg">'+verdict.m+'</p></div>';
+          window.ttToolDone&&window.ttToolDone("email-security-checker");
           var ch=''; checks.forEach(function(c){ var icon=c.s==='good'?'✓':(c.s==='avg'?'!':'✗');
             ch+='<div class="es-check es-'+c.s+'"><div class="es-check-h"><span class="es-check-ico">'+icon+'</span><b>'+c.t+'</b></div><p>'+c.m+'</p>'+(c.rec?'<code class="es-rec">'+esc(c.rec.length>140?c.rec.slice(0,138)+'…':c.rec)+'</code>':'')+'</div>'; });
           root.querySelector('#es-checks').innerHTML=ch;
@@ -1255,9 +1256,9 @@
     </div>
   </div>
   <script type="module" src="/js/interior.min.js?v=22"></script>
-  <script src="/js/a11y.min.js?v=6" defer></script>
-  <script src="/js/forms.min.js?v=7" defer></script>
-  <script src="/js/search.min.js?v=2026-07-30" defer></script>
+  <script src="/js/a11y.min.js?v=7" defer></script>
+  <script src="/js/forms.min.js?v=8" defer></script>
+  <script src="/js/search.min.js?v=2026-07-31" defer></script>
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
     <p>We use cookies to power our live chat and understand how the site is used. See our <a href="/cookie-policy/">cookie policy</a>.</p>
     <div class="cookie-banner__actions">

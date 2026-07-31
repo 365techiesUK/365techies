@@ -1046,8 +1046,8 @@ def page(slug, title, desc, og_title, schema_json, content, og_image=None):
     </div>
   </div>
   <script type="module" src="/js/interior.min.js?v=22"></script>
-  <script src="/js/a11y.min.js?v=6" defer></script>
-  <script src="/js/forms.min.js?v=7" defer></script>
+  <script src="/js/a11y.min.js?v=7" defer></script>
+  <script src="/js/forms.min.js?v=8" defer></script>
   <script src="/js/search.min.js?v={TODAY}" defer></script>
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
     <p>We use cookies to power our live chat and understand how the site is used. See our <a href="/cookie-policy/">cookie policy</a>.</p>
@@ -1766,6 +1766,7 @@ WCHECK_TOOL = r'''    <section class="section" aria-label="Free website checker"
           fm.innerHTML=weak.length? ('We spotted room to improve '+listWords(weak)+'. Your local Dorset web &amp; IT team can sort the lot — faster pages, better Google rankings and a site that works beautifully on every device.') : ('Strong scores! If you’d like a second opinion or help keeping it that way, we’re a friendly local Dorset web &amp; IT team and we’re happy to help.');
           elRes.hidden=false;
           requestAnimationFrame(function(){ root.querySelectorAll('.wc-g-val').forEach(function(c){ c.style.strokeDashoffset=c.getAttribute('data-off'); }); });
+          window.ttToolDone&&window.ttToolDone("website-checker");
           try{ elRes.scrollIntoView({behavior:'smooth',block:'start'}); }catch(e){}
           startCompare(S,tu);
         }
@@ -1900,6 +1901,7 @@ EMAILSEC_TOOL = r'''    <section class="section" aria-label="Email security chec
           else if(!spf && !dmarc) verdict={g:'Exposed',cls:'poor',m:'Your domain has little or no protection — scammers can send email that looks exactly like it’s from you. This is how invoice fraud and phishing begin.'};
           else verdict={g:'Partly protected',cls:'avg',m:'You’ve got some protection, but there are gaps a scammer could still exploit. A few tweaks would close them.'};
           root.querySelector('#es-verdict').innerHTML='<div class="es-verdict-box es-'+verdict.cls+'"><p class="es-verdict-dom">'+esc(domain)+'</p><p class="es-verdict-grade">'+verdict.g+'</p><p class="es-verdict-msg">'+verdict.m+'</p></div>';
+          window.ttToolDone&&window.ttToolDone("email-security-checker");
           var ch=''; checks.forEach(function(c){ var icon=c.s==='good'?'✓':(c.s==='avg'?'!':'✗');
             ch+='<div class="es-check es-'+c.s+'"><div class="es-check-h"><span class="es-check-ico">'+icon+'</span><b>'+c.t+'</b></div><p>'+c.m+'</p>'+(c.rec?'<code class="es-rec">'+esc(c.rec.length>140?c.rec.slice(0,138)+'…':c.rec)+'</code>':'')+'</div>'; });
           root.querySelector('#es-checks').innerHTML=ch;
@@ -2009,6 +2011,7 @@ PWNED_TOOL = r'''    <section class="section" aria-label="Password breach checke
             fm.innerHTML='Keep it that way: use a long, unique password for every account and never reuse one. Want to test its strength or get set up with a password manager? We&rsquo;re happy to help.';
           }
           elRes.hidden=false;
+          window.ttToolDone&&window.ttToolDone("password-breach-checker");
           try{ elRes.scrollIntoView({behavior:'smooth',block:'start'}); }catch(e){}
         }
       })();
@@ -2837,6 +2840,7 @@ PCBENCH_TOOL = r'''    <section class="section" aria-label="PC benchmark" id="be
           else fix.innerHTML='<h3>Don&rsquo;t put up with a slow computer</h3><p>We speed up machines like this every week &mdash; deep tune-ups, SSD and memory upgrades, or an honest &ldquo;it&rsquo;s time&rdquo; and a refurbished business-grade Dell from &pound;510. No-fix-no-fee, 12-month warranty.</p><div class="bm-fix-cta"><a class="button primary" href="/contact/">Make mine faster &#8594;</a><a class="button bm-ghost" href="/dell-hardware/">Refurbished Dells</a></div>';
           results.hidden=false;
           root.querySelector('#bm-ring').style.strokeDashoffset=(339.292*(1-overall/100)).toFixed(1);
+          window.ttToolDone&&window.ttToolDone("pc-benchmark");
           requestAnimationFrame(function(){ setTimeout(function(){ root.querySelectorAll('.bm-bar').forEach(function(b){ b.style.width=b.getAttribute('data-w')+'%'; }); },60); });
           try{ results.scrollIntoView({behavior:'smooth',block:'start'}); }catch(e){}
         }
@@ -3200,6 +3204,7 @@ SSLCHECK_TOOL = r'''    <section class="section" aria-label="SSL certificate che
             else if(j.daysLeft<=21) v2={g:'Expiring soon &mdash; '+j.daysLeft+' day'+(j.daysLeft===1?'':'s'),c:'avg',m:'Still working, but renewal time. If auto-renewal is set up properly you&rsquo;ll be fine &mdash; worth confirming now, not after it lapses.'};
             else v2={g:'Valid &amp; trusted',c:'good',m:'The padlock is healthy: trusted issuer, correct domain, and '+j.daysLeft+' days before renewal is due.'};
             root.querySelector('#sl-verdict').innerHTML='<div class="sl-verdict-box '+v2.c+'"><p class="sl-v-dom">'+esc(j.host)+'</p><p class="sl-v-g">'+v2.g+'</p><p class="sl-v-m">'+v2.m+'</p></div>';
+            window.ttToolDone&&window.ttToolDone("ssl-checker");
             function row(k,val){ return '<div class="sl-row"><b>'+k+'</b><span>'+val+'</span></div>'; }
             root.querySelector('#sl-rows').innerHTML=
               row('Issued to',esc(j.subject))+
@@ -3301,6 +3306,7 @@ DOMEXP_TOOL = r'''    <section class="section" aria-label="Domain expiry checker
               row('Registered since',esc(j.created))+
               row('Status',sts);
             res.hidden=false;
+            window.ttToolDone&&window.ttToolDone("domain-expiry-checker");
             try{ res.scrollIntoView({behavior:'smooth',block:'start'}); }catch(x){}
           }).catch(function(){ load.hidden=true; btn.disabled=false; err.innerHTML='We couldn&rsquo;t run the check just now &mdash; please try again.'; err.hidden=false; });
         });
@@ -3831,6 +3837,7 @@ VBUILDER_TOOL = r'''    <section class="section" aria-label="Victron system buil
             return '<div class="vb-phase"><div class="vb-phase-n">'+(i+1)+'</div><div class="vb-phase-b"><p class="vb-phase-t">'+p.t+(p.p?('<span>~'+p.p+'</span>'):'')+'</p><p class="vb-phase-d">'+p.d+'</p></div></div>';
           }).join('');
           root.__kit=items; root.__wiring=wiring; root.__phases=phases;
+          if(root.__ttarm)window.ttToolDone&&window.ttToolDone("victron-system-builder");root.__ttarm=1;
           root.__totals={tLo:tLo,tHi:tHi,unpriced:unpriced,cabLo:cabLo,cabHi:cabHi,whLoss:Math.round(whLoss),liAh:liAh,pvTot:pvTot};
         }
         var TOOLS_ESS=[
@@ -4115,6 +4122,7 @@ PCBUILD_TOOL = r'''    <section class="section" aria-label="Custom PC builder" i
             ? 'Buttons open live searches — prices always come from the retailer, never from us. As an Amazon Associate we earn from qualifying purchases; Scan links are not affiliated.'
             : 'Buttons open live searches on each store — prices always come from the retailer, never from us, and we don&rsquo;t earn anything from these links.';
           root.__build=items; root.__meta={b:state.b,use:state.use,total:total};
+          if(root.__ttarm)window.ttToolDone&&window.ttToolDone("custom-pc-builder");root.__ttarm=1;
         }
         function plain(h){ var d=document.createElement('div'); d.innerHTML=h; return d.textContent; }
         var BUYFIRST=[

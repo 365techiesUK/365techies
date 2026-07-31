@@ -224,7 +224,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-07-30"
+      "dateModified": "2026-07-31"
     },
     {
       "@type": "WebApplication",
@@ -1044,6 +1044,7 @@
           else fix.innerHTML='<h3>Don&rsquo;t put up with a slow computer</h3><p>We speed up machines like this every week &mdash; deep tune-ups, SSD and memory upgrades, or an honest &ldquo;it&rsquo;s time&rdquo; and a refurbished business-grade Dell from &pound;510. No-fix-no-fee, 12-month warranty.</p><div class="bm-fix-cta"><a class="button primary" href="/contact/">Make mine faster &#8594;</a><a class="button bm-ghost" href="/dell-hardware/">Refurbished Dells</a></div>';
           results.hidden=false;
           root.querySelector('#bm-ring').style.strokeDashoffset=(339.292*(1-overall/100)).toFixed(1);
+          window.ttToolDone&&window.ttToolDone("pc-benchmark");
           requestAnimationFrame(function(){ setTimeout(function(){ root.querySelectorAll('.bm-bar').forEach(function(b){ b.style.width=b.getAttribute('data-w')+'%'; }); },60); });
           try{ results.scrollIntoView({behavior:'smooth',block:'start'}); }catch(e){}
         }
@@ -1431,9 +1432,9 @@
     </div>
   </div>
   <script type="module" src="/js/interior.min.js?v=22"></script>
-  <script src="/js/a11y.min.js?v=6" defer></script>
-  <script src="/js/forms.min.js?v=7" defer></script>
-  <script src="/js/search.min.js?v=2026-07-30" defer></script>
+  <script src="/js/a11y.min.js?v=7" defer></script>
+  <script src="/js/forms.min.js?v=8" defer></script>
+  <script src="/js/search.min.js?v=2026-07-31" defer></script>
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
     <p>We use cookies to power our live chat and understand how the site is used. See our <a href="/cookie-policy/">cookie policy</a>.</p>
     <div class="cookie-banner__actions">

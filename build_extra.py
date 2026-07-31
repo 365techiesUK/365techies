@@ -1510,6 +1510,7 @@ def wifi_optimizer():
           jitEl.textContent=off?'\\u2014':jit;
           dropEl.textContent=winDrops;
           paint(off?0:s); drawSpark(); setTrend(s); scheduleTicks(off?0:s); advise(lat,jit,s,null,winDrops,off);
+          if(!off)window.ttToolDone&&window.ttToolDone("wifi-signal-test");
           // read-only snapshot for the survey layer (see the survey script below)
           window.WF_LAST={s:off?0:s,lat:lat,jit:jit,drops:winDrops,off:off,settled:hist.length>=6,run:running,t:Date.now()};
           var s2=$('#wf-score2'); if(s2&&!off) s2.textContent=s;
@@ -4903,6 +4904,7 @@ SPEEDTEST_WIDGET = r'''    <section class="section" aria-label="Live broadband s
           $('#spd-aim-grid').innerHTML=rows; $('#spd-aim').hidden=false;
           res.hidden=false; running=false; btn.disabled=false; btn.textContent='Test again';
           phase.innerHTML='Done &mdash; this is your device&rsquo;s speed right now (Wi-Fi, distance and other devices all affect it).';
+          window.ttToolDone&&window.ttToolDone("broadband-speed-checker");
         }
 
         // ---------- results card + copy ----------
@@ -11456,6 +11458,7 @@ ISITDOWN_TOOL = r'''    <section class="section" aria-label="Is it down checker"
             $('#iid-feednote').hidden=true;
             SVC.forEach(function(sv){ state[sv[0]].srv=j.services[sv[0]]||{s:'unknown',d:''}; paintSrv(sv); });
             summary(); stamp(true);
+            window.ttToolDone&&window.ttToolDone("is-it-down");
           }).catch(function(){failed();});
         }
         function summary(){
@@ -12072,6 +12075,7 @@ SPECCHECK_TOOL = r'''    <section class="section" aria-label="PC spec checker" i
           bits.push('<em>'+Math.round(w*dpr)+'×'+Math.round(h*dpr)+(hz?' @ ~'+hz+'Hz':'')+'</em>');
           v.innerHTML='This machine: '+bits.join(' &middot; ');
           v.hidden=false;
+          window.ttToolDone&&window.ttToolDone("computer-spec-checker");
           var fl=$('#spc-flags');
           if(os.win10)fl.insertAdjacentHTML('beforeend','<div class="spc-flag spc-flag--bad">&#9888;&#65039; <strong>You&rsquo;re on Windows 10 &mdash; it stopped getting security updates in October 2025.</strong> Every day online is riskier. See <a href="/windows-10-end-of-life/">your options</a> &mdash; many machines upgrade free, and we can check yours.</div>');
           if(os.win11)fl.insertAdjacentHTML('beforeend','<div class="spc-flag spc-flag--good">&#10004;&#65039; Windows 11 &mdash; you&rsquo;re on the current, supported Windows. Good.</div>');
@@ -12593,6 +12597,7 @@ GPUBENCH_TOOL = r'''    <section class="section" id="gputool" aria-label="Graphi
           else { $('gpbBest').textContent='Your best on this device: '+prev.toLocaleString()+(prev>score?' — try Extreme, or close other tabs.':''); }
           lastResult={score:score,avg:avg,low1:low1,peak:peak,tier:tier.label,renderer:RENDERER,glver:GLVER,scale:opt.scale,quality:opt.quality};
           $('gpbResults').style.display='grid'; $('gpbIdle').hidden=false;
+          window.ttToolDone&&window.ttToolDone("graphics-card-benchmark");
           $('gpbResults').scrollIntoView({behavior:'smooth',block:'nearest'});
         }
         function verdict(score,avg,tier){
