@@ -465,7 +465,7 @@ th{color:#9fb5d3;font-weight:600;font-size:.75rem;text-transform:uppercase;lette
 .add label{display:block;font-size:.75rem;color:#9fb5d3;margin-bottom:.2rem}
 @media(max-width:720px){.add{grid-template-columns:1fr 1fr}}
 </style></head><body>
-<div class=top><h1>365 PC Manager — customers</h1><a href="?logout=1">Sign out</a></div>
+<div class=top><h1>365 PC Manager — customers</h1><div style="display:flex;gap:1rem;align-items:center"><a href="tm-admin.php">&#9993; Text messages</a><a href="?logout=1">Sign out</a></div></div>
 <div class=kpis>
  <div class=kpi><b><?=count($cust)?></b><span>customers</span></div>
  <div class=kpi><b><?=$pcs?></b><span>machines</span></div>

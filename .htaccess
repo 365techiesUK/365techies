@@ -130,9 +130,12 @@ ErrorDocument 404 /404.html
 <FilesMatch "^(tm-key|tm-lib)\.php$">
   Require all denied
 </FilesMatch>
-<FilesMatch "^(tm-rate|tm-log)\.json(\..*)?$">
+<FilesMatch "^(tm-rate|tm-log|tm-sched)\.json(\..*)?$">
   Require all denied
 </FilesMatch>
+<Files "tm-cron.lock">
+  Require all denied
+</Files>
 <FilesMatch "^(tools-rate|domain-cache|isitdown-cache|wifi-map-rate|wifi-map-pins)\.json(\.tmp|\.lock)?$">
   Require all denied
 </FilesMatch>

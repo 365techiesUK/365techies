@@ -176,6 +176,129 @@ if (!defined('TM_LIB')) {
         return array('ok' => false, 'error' => 'http-' . $code);
     }
 
+    /* ------------------------------------------------------------------
+     * Scheduled + recurring reminders (e.g. "plug your backup drive in")
+     * ------------------------------------------------------------------
+     * Stored in tm-sched.json (gitignored + .htaccess-denied). One record:
+     *   id, to (E.164), label, text, freq(once|weekly|monthly),
+     *   dow(1=Mon..7=Sun), dom(1..28), hour, min, at(once, ts),
+     *   active, optout(bool), created, last, count, next
+     *
+     * Times are Europe/London so the schedule follows the clocks, not UTC -
+     * a 9am reminder must stay 9am through a BST change.
+     */
+    define('TM_SCHED_MIN_HOUR', 8);    // never text before this
+    define('TM_SCHED_MAX_HOUR', 20);   // ...or after it
+    define('TM_SCHED_GRACE', 6 * 3600); // a missed slot older than this is skipped, not fired late
+
+    function tm_sched_file() { return __DIR__ . '/tm-sched.json'; }
+
+    function tm_sched_load() {
+        $f = tm_sched_file();
+        if (!is_file($f)) return array();
+        $j = json_decode((string)@file_get_contents($f), true);
+        return is_array($j) ? $j : array();
+    }
+
+    function tm_sched_save($rows) {
+        $f = tm_sched_file(); $tmp = $f . '.tmp';
+        if (@file_put_contents($tmp, json_encode(array_values($rows))) === false) return false;
+        return @rename($tmp, $f);
+    }
+
+    /**
+     * Next send time at or after $from, in Europe/London.
+     * Monthly is capped at day 28 on purpose: a "31st" reminder would silently
+     * skip February and behave differently every month.
+     */
+    function tm_next_due($s, $from = 0) {
+        $tz = new DateTimeZone('Europe/London');
+        $from = $from ?: time();
+        $freq = isset($s['freq']) ? $s['freq'] : 'weekly';
+        $h = max(TM_SCHED_MIN_HOUR, min(TM_SCHED_MAX_HOUR, (int)(isset($s['hour']) ? $s['hour'] : 9)));
+        $m = (int)(isset($s['min']) ? $s['min'] : 0); $m = ($m >= 0 && $m < 60) ? $m : 0;
+
+        if ($freq === 'once') return (int)(isset($s['at']) ? $s['at'] : 0);
+
+        $d = new DateTime('@' . $from); $d->setTimezone($tz);
+        if ($freq === 'monthly') {
+            $dom = max(1, min(28, (int)(isset($s['dom']) ? $s['dom'] : 1)));
+            for ($i = 0; $i < 60; $i++) {
+                $c = new DateTime($d->format('Y-m-01') . ' 00:00:00', $tz);
+                $c->modify('+' . $i . ' month');
+                $c->setDate((int)$c->format('Y'), (int)$c->format('n'), $dom);
+                $c->setTime($h, $m, 0);
+                if ($c->getTimestamp() > $from) return $c->getTimestamp();
+            }
+            return 0;
+        }
+        // weekly
+        $dow = max(1, min(7, (int)(isset($s['dow']) ? $s['dow'] : 5)));   // default Friday
+        for ($i = 0; $i < 14; $i++) {
+            $c = clone $d; $c->modify('+' . $i . ' day'); $c->setTime($h, $m, 0);
+            if ((int)$c->format('N') === $dow && $c->getTimestamp() > $from) return $c->getTimestamp();
+        }
+        return 0;
+    }
+
+    /**
+     * Run every due schedule. Returns a summary array.
+     * $cap limits sends per run so one bad run cannot empty the account.
+     */
+    function tm_sched_run($cap = 10) {
+        $rows = tm_sched_load();
+        if (!$rows) return array('due' => 0, 'sent' => 0, 'skipped' => 0, 'failed' => 0, 'detail' => array());
+        $now = time(); $sent = 0; $skipped = 0; $failed = 0; $due = 0; $detail = array();
+        $tz = new DateTimeZone('Europe/London');
+
+        foreach ($rows as &$s) {
+            if (empty($s['active'])) continue;
+            $next = (int)(isset($s['next']) ? $s['next'] : 0);
+            if (!$next) { $s['next'] = tm_next_due($s, $now); continue; }
+            if ($next > $now) continue;
+            $due++;
+
+            // A slot we missed by more than the grace window is stale - a Friday
+            // backup nudge arriving Sunday is worse than no nudge. Roll forward.
+            if (($now - $next) > TM_SCHED_GRACE) {
+                $s['next'] = tm_next_due($s, $now);
+                $skipped++; $detail[] = array('id' => $s['id'], 'r' => 'stale');
+                continue;
+            }
+            // Belt and braces on quiet hours (creation already restricts them).
+            $hr = (int)(new DateTime('@' . $now))->setTimezone($tz)->format('G');
+            if ($hr < TM_SCHED_MIN_HOUR || $hr >= TM_SCHED_MAX_HOUR) {
+                $skipped++; $detail[] = array('id' => $s['id'], 'r' => 'quiet-hours');
+                continue;   // leave next alone; it fires when the window opens
+            }
+            if ($sent >= $cap) { $detail[] = array('id' => $s['id'], 'r' => 'cap'); break; }
+
+            $body = (string)$s['text'];
+            if (!empty($s['optout']) && ($s['freq'] ?? '') !== 'once') {
+                $body .= "\n\nTo stop these reminders just let us know - 01202 775566.";
+            }
+            $r = tm_send($s['to'], $body, 'sched:' . $s['id']);
+            if (!empty($r['ok'])) {
+                $sent++; $s['last'] = $now; $s['count'] = (int)(isset($s['count']) ? $s['count'] : 0) + 1;
+                if (($s['freq'] ?? '') === 'once') { $s['active'] = false; $s['next'] = 0; }
+                else $s['next'] = tm_next_due($s, $now);
+                $detail[] = array('id' => $s['id'], 'r' => 'sent');
+            } else {
+                $failed++;
+                $detail[] = array('id' => $s['id'], 'r' => 'fail:' . (isset($r['error']) ? $r['error'] : '?'));
+                // rate-limited? try again next run. Anything else, roll on so a
+                // permanently bad number cannot jam the queue for ever.
+                if (strpos((string)($r['error'] ?? ''), 'rate-') !== 0) {
+                    $s['next'] = tm_next_due($s, $now);
+                }
+            }
+        }
+        unset($s);
+        tm_sched_save($rows);
+        return array('due' => $due, 'sent' => $sent, 'skipped' => $skipped,
+                     'failed' => $failed, 'detail' => $detail);
+    }
+
     /**
      * Audit trail. Records THAT a message went out, never its content -
      * message bodies can carry customer detail and this file is on disk.
