@@ -16,6 +16,7 @@ from build_local import make_customer
 from new_pages_data import NEW_PAGES
 from booking_app import BOOKING_APP   # our own booking UI (replaces the SimplyBook widget)
 from at_a_glance_data import AT_A_GLANCE
+from projects_data import CCB_RELATIONSHIP, jt_html   # the journeys, one source of truth
 from latitude_pages_data import LATITUDE_PAGES, LATITUDE_COMPARE_TABLES
 from optiplex_pages_data import OPTIPLEX_PAGES, OPTIPLEX_COMPARE_TABLES
 from legacy_dell_data import LEGACY_DELL_PAGES
@@ -5428,57 +5429,7 @@ def ccb_case_study():
           <h2 class="section-title section-title--center" data-title>How one broken laptop became
             fifteen years of everything<span class="title-underline title-underline--center"></span></h2>
         </div>
-        <ol class="jt">
-          <li class="jt__item jt__item--done" data-reveal>
-            <span class="jt__node" aria-hidden="true"></span>
-            <p class="jt__when">Over 15 years ago</p>
-            <h3>It started with a broken laptop</h3>
-            <p>A repair, done properly, at a fair price. No contract, no pitch. Trust is built in
-              jobs that small.</p>
-          </li>
-          <li class="jt__item jt__item--done" data-reveal>
-            <span class="jt__node" aria-hidden="true"></span>
-            <p class="jt__when">The years between</p>
-            <h3>From fixing their laptops to running their IT</h3>
-            <p>Dell Latitude business laptops on a planned refresh cycle &mdash; supplied, set up and
-              supported by the same people who answer the phone when something breaks.</p>
-          </li>
-          <li class="jt__item jt__item--done" data-reveal>
-            <span class="jt__node" aria-hidden="true"></span>
-            <p class="jt__when">2022</p>
-            <h3>Website and email brought in-house</h3>
-            <p>Their existing site and email moved onto hosting we manage &mdash; keeping everything,
-              changing who answers when it goes wrong. One team, one number.</p>
-          </li>
-          <li class="jt__item jt__item--done" data-reveal>
-            <span class="jt__node" aria-hidden="true"></span>
-            <p class="jt__when">30 July 2026</p>
-            <h3>The rebuild went live</h3>
-            <p>A complete rebuild of colinclarkbuilders.co.uk &mdash; 79 pages that finally explain
-              the craft, measured against the old site on its last day. The full engineering story,
-              with every number, is the <a href="/website-rebuild-seo-case-study/">measured case
-              study</a>.</p>
-            <ul class="jt__chips"><li>Server response 1,320 &rarr; 106 ms</li><li>20 &rarr; 79 pages</li></ul>
-          </li>
-          <li class="jt__item jt__item--live" data-reveal>
-            <span class="jt__node" aria-hidden="true"></span>
-            <p class="jt__when">Now</p>
-            <h3>Being measured in the open</h3>
-            <p>The day after launch we scored the new site with our own
-              <a href="/website-checker/">free website checker</a> and published the result &mdash;
-              including what it flagged for improvement.</p>
-            <ul class="jt__chips"><li>Lighthouse 99 desktop &middot; 90 mobile</li><li>SEO 100</li></ul>
-          </li>
-          <li class="jt__item jt__item--wait" data-reveal>
-            <span class="jt__node" aria-hidden="true"></span>
-            <p class="jt__when">August 2026 &ndash; January 2027 &middot; Reserved</p>
-            <h3>The results, when they are real</h3>
-            <p>Search Console re-measures at 30, 90 and 180 days, published on the
-              <a href="/website-rebuild-seo-case-study/#journey">measured case study</a> whatever
-              they say. No projections in the meantime.</p>
-            <ul class="jt__chips"><li>Awaiting Search Console data</li></ul>
-          </li>
-        </ol>
+''' + jt_html(CCB_RELATIONSHIP) + '''
       </div>
     </section>''',
 
@@ -20138,6 +20089,33 @@ def write_portal_page():
   #p365app .chip { font-size:.72rem; padding:.18rem .5rem; border-radius:999px; border:1px solid var(--pline); color:var(--pmut); }
   #p365app .chip.g { color:var(--pgood); border-color:rgba(0,206,27,.35); }
   #p365app .chip.w { color:var(--pwarn); border-color:rgba(224,179,65,.4); }
+  /* 365 website projects card. Deliberately NOT the public .jt/.chk classes -
+     those live in the site stylesheet, which the portal does not load; these are
+     the portal's own tokens so the card matches its surroundings rather than
+     importing the marketing site's look into a customer's dashboard. */
+  #p365app .wp-head { display:flex; justify-content:space-between; align-items:center; gap:.6rem; flex-wrap:wrap; margin:0 0 .45rem; }
+  #p365app .wp-sum { margin:0 0 .85rem; }
+  #p365app .wp-shots { display:grid; grid-template-columns:1fr 1fr; gap:.55rem; margin:0 0 1rem; }
+  #p365app .wp-shots figure { margin:0; position:relative; border:1px solid var(--pline); border-radius:10px; overflow:hidden; background:var(--pink); }
+  #p365app .wp-shots img { width:100%; height:auto; display:block; }
+  #p365app .wp-tag { position:absolute; top:.4rem; left:.4rem; font-size:.62rem; letter-spacing:.06em; text-transform:uppercase; padding:.14rem .42rem; border-radius:5px; background:rgba(11,18,38,.82); color:var(--pmut); border:1px solid var(--pline); }
+  #p365app .wp-tag--new { color:var(--pcyan); border-color:rgba(29,151,227,.5); }
+  #p365app .wp-jt { list-style:none; margin:0; padding:0; position:relative; }
+  #p365app .wp-jt::before { content:""; position:absolute; left:6px; top:8px; bottom:8px; width:2px; background:linear-gradient(180deg,var(--pcyan),rgba(125,170,220,.14)); }
+  #p365app .wp-ms { position:relative; padding:0 0 1.05rem 26px; }
+  #p365app .wp-ms:last-child { padding-bottom:0; }
+  #p365app .wp-node { position:absolute; left:0; top:3px; width:14px; height:14px; border-radius:50%; border:2px solid var(--pcyan); background:var(--pink); }
+  #p365app .wp-ms--done .wp-node { border-color:var(--pgood); background:var(--pgood); }
+  #p365app .wp-ms--live .wp-node { background:var(--pcyan); }
+  #p365app .wp-ms--wait .wp-node { border-style:dashed; border-color:rgba(125,170,220,.5); }
+  #p365app .wp-when { font-size:.68rem; letter-spacing:.05em; text-transform:uppercase; color:var(--pcyan); margin:0 0 .12rem; }
+  #p365app .wp-ms--wait .wp-when { color:var(--pmut); }
+  #p365app .wp-ms h3 { font-size:.92rem; margin:0 0 .22rem; color:var(--pwhite); }
+  #p365app .wp-ms p { margin:0; font-size:.84rem; line-height:1.55; }
+  #p365app .wp-chips { margin-top:.4rem; }
+  #p365app .wp-next { margin:.9rem 0 .3rem; font-size:.84rem; }
+  #p365app .wp-foot { margin:.7rem 0 0; font-size:.82rem; }
+  @media (max-width:520px) { #p365app .wp-shots { grid-template-columns:1fr; } }
   #p365app .pill { font-size:.75rem; padding:.2rem .6rem; border-radius:999px; }
   #p365app .pill.pro { background:rgba(0,206,27,.14); color:var(--pgood); }
   #p365app .pill.free { background:rgba(134,182,232,.12); color:var(--psoft); }
@@ -23659,6 +23637,19 @@ def write_portal_page():
       h += '<div class="card"><h2>\\ud83e\\ude7a Quick browser check-up</h2><div id="bcheck"><p class="quiet">Checking what this browser can see\\u2026</p></div>'
         + '<p class="quiet">A browser can only see so much - the free 365 PC Manager app sees the full honest picture (drive health, backup, battery, scams), and <strong>we install it for you</strong>.</p>'
         + '<button class="sm" id="appreq"' + (d.appreq ? ' disabled' : '') + '>' + (d.appreq ? '\\u2713 Requested - we\\u2019ll be in touch' : '\\u2b07 Install the app for me') + '</button></div>';
+      // WEBSITE PROJECTS. Support customers pay us monthly and have never been
+      // shown the web work - this is the only place they meet it. It renders the
+      // SAME journey as the public case study, from /projects-feed.json, which is
+      // generated from projects_data.py at build time. That shared source is the
+      // whole point: three hand-kept copies of the same dates would drift, and the
+      // drift would be silent. Fetched (not inlined) so a re-measure landing does
+      // not force a portal rebuild - the beacon reload and the feed are separate
+      // clocks on purpose.
+      h += '<div class="card" id="wprojCard"><h2>\\ud83c\\udfd7 365 website projects</h2>'
+        + '<p class="quiet">We rebuild websites as well as looking after your computers. '
+        + 'Here is a real one, start to finish, with the measurements published as they happen '
+        + '\\u2014 including the ones we have not taken yet.</p>'
+        + '<div id="wproj"><p class="quiet">Loading the latest\\u2026</p></div></div>';
       h += unlockCard(d);
       if (!freshJoiner) h += needCard;
       // Established members get a gentle, UNCONDITIONAL review ask (never shown to a
@@ -23700,6 +23691,7 @@ def write_portal_page():
         saveS(); showStaff();
       };
       browserCheck();
+      webProjects();
       var ar = document.getElementById('appreq');
       if (ar && !d.appreq) ar.onclick = function () {
         ar.disabled = true;
@@ -24029,6 +24021,99 @@ def write_portal_page():
   }
 
   // honest browser check-up: only claims what a browser can genuinely read
+  // ---- 365 website projects -------------------------------------------------
+  // Renders /projects-feed.json (built from projects_data.py, the same source as
+  // the public case-study pages) into the dashboard. Everything here is REAL and
+  // already public - no LIVE/SAMPLE ambiguity to manage, because none of it is
+  // the customer's own data. It is our portfolio, shown to the people who pay us
+  // monthly and have never seen it.
+  //
+  // A "wait" milestone must never show a figure. projects_data.jt_html() enforces
+  // that at build time; this renderer does not re-derive or infer anything, it
+  // only prints what the feed says - so the rule holds here for free.
+  var WPSEEN = 'p365wp';   // localStorage: last milestone the customer has seen
+  function webProjects() {
+    var w = document.getElementById('wproj'); if (!w) return;
+    // Hourly cache-buster. NOT P365BUILD - that is declared inside the beacon's
+    // own IIFE and is not in scope here; referencing it throws a ReferenceError
+    // that would take the whole dashboard render down with it. An hour is the
+    // right granularity anyway: SiteGround has no purge API, and a re-measure
+    // landing an hour late in the portal harms nobody.
+    fetch('/projects-feed.json?b=' + Math.floor(Date.now() / 36e5), { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (f) {
+        if (!f || !f.projects || !f.projects.length) { hideProjCard(); return; }
+        var p = f.projects[0];
+        if (!p.milestones || !p.milestones.length) { hideProjCard(); return; }
+
+        // "New since you last looked": compare the newest published milestone's
+        // date with what this device last saw. Nothing is stored server-side -
+        // a nudge is not worth a write to the shared customer database.
+        var pub = p.milestones.filter(function (m) { return m.state !== 'wait'; });
+        var newest = pub.length ? (pub[pub.length - 1].iso || '') : '';
+        var seen = '';
+        try { seen = localStorage.getItem(WPSEEN) || ''; } catch (e) {}
+        var isNew = !!(newest && seen && newest > seen);
+
+        var shot = (p.shots && p.shots[0]) || null;
+        var h = '';
+        if (isNew) h += '<p class="chips" style="margin:0 0 .7rem"><span class="chip g">\\u2726 New chapter since you last looked</span></p>';
+        h += '<div class="wp-head"><div><strong>' + esc(p.name) + '</strong>'
+           + '<span class="quiet"> \\u00b7 ' + esc(p.trade) + '</span></div>'
+           + '<span class="chip">' + esc(wpStatus(p.status)) + '</span></div>';
+        h += '<p class="quiet wp-sum">' + esc(p.summary) + '</p>';
+        if (shot) {
+          h += '<div class="wp-shots">'
+             + '<figure><span class="wp-tag">Before</span><img src="' + esc(shot.old) + '" alt="' + esc(shot.alt_old || '') + '" width="1100" height="773" loading="lazy" decoding="async"></figure>'
+             + '<figure><span class="wp-tag wp-tag--new">After</span><img src="' + esc(shot.new) + '" alt="' + esc(shot.alt_new || '') + '" width="1100" height="773" loading="lazy" decoding="async"></figure>'
+             + '</div>';
+        }
+        h += '<ol class="wp-jt">';
+        p.milestones.forEach(function (m) {
+          var st = (m.state === 'done' || m.state === 'live' || m.state === 'wait') ? m.state : 'wait';
+          h += '<li class="wp-ms wp-ms--' + st + '"><span class="wp-node" aria-hidden="true"></span>'
+             + '<p class="wp-when">' + esc(m.when) + '</p>'
+             + '<h3>' + esc(m.title) + '</h3>'
+             + '<p class="quiet">' + esc(m.body) + '</p>';
+          if (m.chips && m.chips.length) {
+            h += '<p class="chips wp-chips">' + m.chips.map(function (c) {
+              return '<span class="chip' + (st === 'wait' ? '' : ' g') + '">' + esc(c) + '</span>';
+            }).join('') + '</p>';
+          }
+          h += '</li>';
+        });
+        h += '</ol>';
+        if (p.nextDue) h += '<p class="quiet wp-next">Next measurement due <strong>' + esc(wpDate(p.nextDue)) + '</strong> \\u2014 it will appear here.</p>';
+        h += '<div class="row" style="border:0"><a class="btn sm ghost" href="' + esc(p.caseStudy) + '" target="_blank" rel="noopener">Read the full case study</a>'
+           + '<a class="btn sm ghost" href="' + esc(p.site) + '" target="_blank" rel="noopener">Visit the site we built</a></div>';
+        h += '<p class="quiet wp-foot">Want to know where your own site stands? Run it through our '
+           + '<a href="/website-checker/" target="_blank" rel="noopener">free website checker</a> '
+           + '\\u2014 the same tool we scored this build with, findings and all.</p>';
+        w.innerHTML = h;
+        try { if (newest) localStorage.setItem(WPSEEN, newest); } catch (e) {}
+      })
+      .catch(function () { hideProjCard(); });
+  }
+  // If the feed cannot be read there is nothing honest to show, so the card goes
+  // rather than sitting there apologising - a permanent error box on someone's
+  // dashboard reads as "their IT company's own site is broken".
+  function hideProjCard() {
+    var c = document.getElementById('wprojCard');
+    if (c && c.parentNode) c.parentNode.removeChild(c);
+  }
+  function wpStatus(s) {
+    return s === 'measuring' ? 'Live \\u00b7 being measured'
+         : s === 'building' ? 'In build'
+         : s === 'complete' ? 'Complete' : 'In progress';
+  }
+  function wpDate(iso) {
+    var M = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    var p = String(iso || '').split('-');
+    if (p.length !== 3) return iso || '';
+    var mi = parseInt(p[1], 10) - 1;
+    return (M[mi] ? M[mi] : '') + ' ' + p[0];
+  }
+
   function browserCheck() {
     var b = document.getElementById('bcheck'); if (!b) return;
     var rows = [];

@@ -750,6 +750,21 @@ import os as _sos
 _ssize = _sos.path.getsize(os.path.join(bp.BASE, "search-index.json"))
 print("Wrote search-index.json with %d pages (%dKB)" % (len(_sindex), _ssize // 1024))
 
+# ---------------- website-projects feed ----------------
+# The journeys as data, for /portal/ to render to signed-in customers - and for
+# anyone else who wants it. Same source as the case-study pages themselves
+# (projects_data.py), so the portal cannot drift out of step with the public
+# pages the way three hand-maintained copies of the dates certainly would.
+# Public on purpose: it contains nothing a visitor cannot already read on
+# /website-rebuild-seo-case-study/, and only clients who agreed to be named are
+# in it (see the permission note at the top of projects_data.py).
+import projects_data as _proj
+_feed = _proj.feed(bp.TODAY)
+with open(os.path.join(bp.BASE, "projects-feed.json"), "w", encoding="utf-8") as f:
+    _sjson.dump(_feed, f, ensure_ascii=False, separators=(",", ":"))
+print("Wrote projects-feed.json (%d project(s), %d milestones)"
+      % (len(_feed["projects"]), sum(len(p["milestones"]) for p in _feed["projects"])))
+
 # ---------------- custom 404 page ----------------
 _404_cards = "".join(
     f'          <a class="post-card" href="{h}"><h3>{l}</h3><span class="post-card__more">Go &#8594;</span></a>\n'

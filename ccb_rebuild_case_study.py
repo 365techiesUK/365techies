@@ -46,6 +46,7 @@ Published with Colin Clark's permission, as with the existing case study.
 """
 from build_pages import (add, graph, crumb, webpage, faqpage, faq_html, cta,
                          hero, bc, SITE, TODAY)
+from projects_data import CCB_REBUILD, jt_html
 from ccb_race import RACE   # the real-time load race - see ccb_race.py for the rules
 
 SLUG = "website-rebuild-seo-case-study"
@@ -207,71 +208,7 @@ def build():
             already reserved, and they will be filled in from Google&rsquo;s own Search Console data
             &mdash; whatever it says.</p>
         </div>
-        <ol class="jt">
-          <li class="jt__item jt__item--done" data-reveal>
-            <span class="jt__node" aria-hidden="true"></span>
-            <p class="jt__when">June &ndash; July 2026 &middot; Done</p>
-            <h3>The research</h3>
-            <p>Before a single page was designed: their Search Console history read line by line, the
-              old site crawled address by address, and the page Google was already showing ten and a
-              half thousand times found and understood. <a href="#research">The research nobody
-              sees</a> is most of the job.</p>
-            <ul class="jt__chips"><li>17 ranking addresses mapped</li><li>100+ hidden addresses found</li></ul>
-          </li>
-          <li class="jt__item jt__item--done" data-reveal>
-            <span class="jt__node" aria-hidden="true"></span>
-            <p class="jt__when">July 2026 &middot; Done</p>
-            <h3>The build</h3>
-            <p>Seventy-nine pages that answer real questions, a full structured-data entity graph, an
-              <code>llms.txt</code> for AI assistants, and the firm&rsquo;s own photographs
-              throughout. Static files &mdash; nothing to hack, nothing to patch.</p>
-            <ul class="jt__chips"><li>79 pages</li><li>1 script</li><li>0 plugins</li></ul>
-          </li>
-          <li class="jt__item jt__item--done" data-reveal>
-            <span class="jt__node" aria-hidden="true"></span>
-            <p class="jt__when">30 July 2026 &middot; Done</p>
-            <h3>Baseline day, then launch</h3>
-            <p>The old WordPress site measured on the last day it existed &mdash; the
-              <a href="#numbers">before column</a> that can never be retaken &mdash; then the swap,
-              with every redirect already rehearsed. Launch day was deliberately boring.</p>
-            <ul class="jt__chips"><li>TTFB 1,320 &rarr; 106 ms</li><li>111 &rarr; 15 requests</li><li>17/17 redirects live</li></ul>
-          </li>
-          <li class="jt__item jt__item--live" data-reveal>
-            <span class="jt__node" aria-hidden="true"></span>
-            <p class="jt__when">31 July 2026 &middot; You are here</p>
-            <h3>Day one &mdash; marked by our own public tool</h3>
-            <p>We pointed our <a href="/website-checker/">free website checker</a> &mdash; the same
-              one anyone can use on any site &mdash; at the site we had just built, and published
-              <a href="#checker">what it returned</a>, including what it told us to improve.</p>
-            <ul class="jt__chips"><li>Lighthouse 99 desktop &middot; 90 mobile</li><li>SEO 100</li><li>0 layout shift</li></ul>
-          </li>
-          <li class="jt__item jt__item--wait" data-reveal>
-            <span class="jt__node" aria-hidden="true"></span>
-            <p class="jt__when">Due late August 2026 &middot; Reserved</p>
-            <h3>30-day re-measure</h3>
-            <p>Clicks, impressions and average position from Search Console, set against the baseline
-              taken the day before launch. This space is deliberately empty until the data exists
-              &mdash; it will be published here whatever it shows.</p>
-            <ul class="jt__chips"><li>Awaiting Search Console data</li></ul>
-          </li>
-          <li class="jt__item jt__item--wait" data-reveal>
-            <span class="jt__node" aria-hidden="true"></span>
-            <p class="jt__when">Due late October 2026 &middot; Reserved</p>
-            <h3>90-day re-measure</h3>
-            <p>Long enough for Google to have recrawled everything and for rankings to start settling.
-              The first read that means much.</p>
-            <ul class="jt__chips"><li>Awaiting Search Console data</li></ul>
-          </li>
-          <li class="jt__item jt__item--wait" data-reveal>
-            <span class="jt__node" aria-hidden="true"></span>
-            <p class="jt__when">Due late January 2027 &middot; Reserved</p>
-            <h3>180-day verdict</h3>
-            <p>The one that counts: two full seasons of search data against the old site&rsquo;s
-              history. If the rebuild worked, this entry proves it. If it fell short, this entry says
-              that instead.</p>
-            <ul class="jt__chips"><li>Awaiting Search Console data</li></ul>
-          </li>
-        </ol>
+''' + jt_html(CCB_REBUILD) + '''
         <div class="hero-buttons hero-buttons--center" data-reveal style="margin-top:1.6rem">
           <button type="button" class="button secondary" data-ttshare
             data-share-title="A website rebuild, measured honestly"
