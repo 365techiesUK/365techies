@@ -70,16 +70,70 @@ function adm($method, $params) {
 
 $limit = isset($_GET['limit']) ? max(10, min(2000, (int)$_GET['limit'])) : 300;
 
-/* getClientList(search, limit) - the client record is where phone lives;
-   getBookings does not carry it. */
-$cr = adm('getClientList', array('', $limit));
-if (isset($cr['_net']) || !isset($cr['result']) || !is_array($cr['result'])) {
-    echo json_encode(array('ok' => false, 'error' => 'client_list_failed',
-                           'detail' => isset($cr['error']['message'])
-                               ? substr((string)$cr['error']['message'], 0, 140) : ''));
+/* Which client method will this API user actually accept? SimplyBook has
+   varied the name across API versions AND gates client data by permission, so
+   "Access denied" on one name does not mean the data is unreachable. Try each,
+   report what happened, and carry on with whichever works. */
+$probe = array();
+$clients = null;
+foreach (array(
+    array('getClientList',  array('', $limit)),
+    array('getClientsList', array('', $limit)),
+    array('getClients',     array(array('limit' => $limit))),
+) as $try) {
+    $r = adm($try[0], $try[1]);
+    if (isset($r['_net']))            { $probe[$try[0]] = 'network error'; continue; }
+    if (isset($r['error']['message'])) { $probe[$try[0]] = substr((string)$r['error']['message'], 0, 90); continue; }
+    if (isset($r['result']) && is_array($r['result'])) {
+        $probe[$try[0]] = 'OK - ' . count($r['result']) . ' records';
+        if ($clients === null) $clients = $r['result'];
+        continue;
+    }
+    $probe[$try[0]] = 'unexpected response';
+}
+
+/* Fallback that needs no client permission at all: read the bookings we can
+   already see and look for a phone on the booking record itself. Also reports
+   the KEY NAMES present, which is the only reliable way to learn the schema. */
+$booking_keys = array();
+$fromBookings = array();
+if ($clients === null) {
+    $br = adm('getBookings', array(array('booking_type' => 'non_cancelled',
+        'date_from' => date('Y-m-d', time() - 86400 * 365),
+        'date_to'   => date('Y-m-d', time() + 86400 * 60),
+        'order'     => 'date_start_desc')));
+    if (isset($br['result']) && is_array($br['result'])) {
+        foreach (array_slice($br['result'], 0, $limit) as $b) {
+            if (!is_array($b)) continue;
+            foreach (array_keys($b) as $k) {
+                $booking_keys[$k] = isset($booking_keys[$k]) ? $booking_keys[$k] + 1 : 1;
+            }
+            /* treat a booking as a pseudo-client record so the counters below work */
+            $row = array();
+            foreach (array('phone', 'client_phone', 'user_phone', 'mobile') as $k) {
+                if (!empty($b[$k]) && is_string($b[$k])) { $row['phone'] = $b[$k]; break; }
+            }
+            if (isset($b['client']) && is_array($b['client']) && !empty($b['client']['phone'])) {
+                $row['phone'] = $b['client']['phone'];
+            }
+            foreach (array('email', 'client_email') as $k) {
+                if (!empty($b[$k]) && is_string($b[$k])) { $row['email'] = $b[$k]; break; }
+            }
+            if ($row) $fromBookings[] = $row;
+        }
+        $clients = $fromBookings;
+        $probe['_fallback'] = 'used getBookings (' . count($fromBookings) . ' records scanned)';
+    }
+}
+
+if ($clients === null) {
+    echo json_encode(array('ok' => false, 'error' => 'no_readable_source',
+                           'method_probe' => $probe,
+                           'hint' => 'The API user can authenticate but cannot read clients or bookings. '
+                                   . 'Check the API user permissions in SimplyBook (Custom Features > API), '
+                                   . 'or use the portal-records figures below.'), JSON_PRETTY_PRINT);
     exit;
 }
-$clients = $cr['result'];
 
 $stat = array(
     'clients_checked' => 0,
@@ -161,6 +215,8 @@ echo json_encode(array(
     'verdict'           => $verdict,
     'phone_fields_seen' => $field_names,   // tells us the REAL field name to read
     'sample_masked'     => $samples,
+    'method_probe'      => $probe,         // which SimplyBook methods this API user may call
+    'booking_keys_seen' => $booking_keys,  // the real booking schema, when we fell back to it
     'portal_records'    => $portal,
     'note' => 'Aggregate only. No names, emails or full numbers are returned or stored.',
 ), JSON_PRETTY_PRINT);
