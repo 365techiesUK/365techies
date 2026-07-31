@@ -219,6 +219,11 @@
   "h": "bd1267ef15434826",
   "last": "2026-07-30"
  },
+ "campervan-wifi-keeps-dropping": {
+  "first": "2026-07-31",
+  "h": "8366b43abf661bf7",
+  "last": "2026-07-31"
+ },
  "cant-open-attachments-in-outlook": {
   "first": "2026-07-28",
   "h": "1e08b808e78dc3e7",
@@ -2641,7 +2646,7 @@
  },
  "ruckus-r510-unreliable-wifi-fix": {
   "first": "2026-07-28",
-  "h": "9e2f3f16c98136f9",
+  "h": "60bcac4b4bf31664",
   "last": "2026-07-31"
  },
  "rural-and-farm-wifi-dorset": {
@@ -3129,6 +3134,11 @@
   "h": "0e42ab106c27a2af",
   "last": "2026-07-30"
  },
+ "wifi-drops-moving-between-access-points": {
+  "first": "2026-07-31",
+  "h": "ac6a8cfc7f3a2cda",
+  "last": "2026-07-31"
+ },
  "wifi-for-a-shepherds-hut": {
   "first": "2026-07-28",
   "h": "83a31f8df2f369dc",
@@ -3149,6 +3159,11 @@
   "h": "9fc7e283a9393c4f",
   "last": "2026-07-30"
  },
+ "wifi-keeps-dropping": {
+  "first": "2026-07-31",
+  "h": "9cb098bc8e47d973",
+  "last": "2026-07-31"
+ },
  "wifi-qr-code-generator": {
   "first": "2026-07-28",
   "h": "f84831e4b671848a",
@@ -3166,8 +3181,8 @@
  },
  "wifi-troubleshooting": {
   "first": "2026-07-28",
-  "h": "cd6c9c2af1a271bf",
-  "last": "2026-07-30"
+  "h": "1f82ae58ce628606",
+  "last": "2026-07-31"
  },
  "wifi-uk-buildings-heat": {
   "first": "2026-07-28",

@@ -2077,3 +2077,33 @@ html.ss-open { overflow: hidden; }
   .apt { font-size: .85rem; }
   .apcall { flex-direction: column; gap: .55rem; }
 }
+
+/* ---------------------------------------------------------------------------
+   Diagnosis playbooks (playbook_pages.py): the triage fork and the family nav.
+   The fork exists to route a reader AWAY when they are on the wrong page, so it
+   has to look like a decision, not a list of links. Left rule + hover shift.
+   --------------------------------------------------------------------------- */
+.pbfork ul { list-style: none; margin: 1.1rem 0 0; padding: 0; }
+.pbfork li { position: relative; margin: 0 0 .7rem; padding: .8rem 1rem .8rem 1.15rem;
+  border: 1px solid var(--line); border-left: 3px solid rgba(29,151,227,.55);
+  border-radius: 0 12px 12px 0; background: rgba(255,255,255,.02);
+  line-height: 1.65; transition: border-left-color .18s ease, transform .18s ease,
+  background .18s ease; }
+.pbfork li:hover, .pbfork li:focus-within { border-left-color: var(--cyan);
+  background: rgba(29,151,227,.05); transform: translateX(2px); }
+.pbfork li strong { color: var(--white, #f0f5fc); }
+.pbfork li:last-child { margin-bottom: 0; }
+
+.pbfam { list-style: none; margin: 1.2rem 0 0; padding: 0; display: grid; gap: .8rem; }
+.pbfam a { display: block; padding: .95rem 1.1rem; border: 1px solid var(--line);
+  border-radius: 14px; background: rgba(255,255,255,.02); text-decoration: none;
+  transition: border-color .18s ease, background .18s ease, transform .18s ease; }
+.pbfam a:hover, .pbfam a:focus-visible { border-color: rgba(29,151,227,.55);
+  background: rgba(29,151,227,.05); transform: translateY(-2px); }
+.pbfam strong { display: block; color: var(--white, #f0f5fc); margin-bottom: .2rem; }
+.pbfam span { display: block; color: var(--muted); font-size: .92rem; line-height: 1.6; }
+@media (min-width: 720px) { .pbfam { grid-template-columns: 1fr 1fr; } }
+@media (prefers-reduced-motion: reduce) {
+  .pbfork li, .pbfam a { transition: none; }
+  .pbfork li:hover, .pbfam a:hover { transform: none; }
+}

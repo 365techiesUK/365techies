@@ -24986,3 +24986,12 @@ _ap_pages.build_all()
 # ---------------------------------------------------------------------------
 import network_pages as _network_pages
 _network_pages.build_all()
+
+# ---------------------------------------------------------------------------
+# WiFi diagnosis playbooks: home / roaming estate / vehicle. Content in
+# playbook_data.py (drafted then hostile-fact-checked), structure in
+# playbook_pages.py. Each page opens by routing readers AWAY if they are on the
+# wrong one - that fork is why three "WiFi dropping" pages do not compete.
+# ---------------------------------------------------------------------------
+import playbook_pages as _playbook_pages
+_playbook_pages.build_all()

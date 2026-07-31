@@ -956,7 +956,9 @@ def s11_r510_playbook():
         'app gets blamed on Wi-Fi constantly. Ask what specifically was slow, and when.</li>',
         '<li><strong>Roaming, not coverage.</strong> Staff walking a large floor while on a call '
         'or a stock lookup will describe a clean handover failure as &ldquo;the Wi-Fi dropping&rdquo;. '
-        'That is a different fault with a different fix.</li>',
+        'That is a different fault with a different fix &mdash; and it has its own playbook: '
+        '<a href="/wifi-drops-moving-between-access-points/">WiFi drops when moving between '
+        'access points</a>.</li>',
         '</ol>',
         '<p>Get one concrete example &mdash; who, where on the floor, what they were doing, and '
         'roughly when. Everything below is faster with one real incident to aim at.</p>',
