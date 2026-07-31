@@ -1518,6 +1518,10 @@ WCHECK_TOOL = r'''    <section class="section" aria-label="Free website checker"
           <div class="wc-results" id="wc-results" hidden>
             <p class="wc-tested">Results for <a id="wc-tested-url" href="#" target="_blank" rel="noopener nofollow"></a> <span id="wc-tested-strat" class="wc-badge"></span></p>
             <div class="wc-gauges" id="wc-gauges"></div>
+            <div class="wc-actions" id="wc-actions">
+              <button type="button" class="button wc-ghost" id="wc-copy">Copy my report</button>
+              <button type="button" class="button wc-ghost" id="wc-share" data-ttshare data-share-title="Website check result" data-share-text="Website check result:">Share my result</button>
+            </div>
             <div id="wc-compare"></div>
             <div id="wc-cwv"></div>
             <div id="wc-checks"></div>
@@ -1528,7 +1532,6 @@ WCHECK_TOOL = r'''    <section class="section" aria-label="Free website checker"
               <div class="wc-fix-cta">
                 <a class="button primary" href="/contact/?topic=website-rebuild">Get my free fix-it plan &#8594;</a>
                 <a class="button wc-ghost" href="/web-design-hosting/">Our web design &amp; hosting</a>
-                <button type="button" class="button wc-ghost" data-ttshare data-share-title="Free Website Checker" data-share-text="Check any website's speed, SEO and security in 30 seconds - free:">Share this free tool</button>
               </div>
             </div>
           </div>
@@ -1589,6 +1592,7 @@ WCHECK_TOOL = r'''    <section class="section" aria-label="Free website checker"
       #wcheck .wc-fix h3{margin:0 0 .5rem;font-size:1.25rem}
       #wcheck .wc-fix p{margin:0 auto 1.1rem;max-width:46ch;color:var(--muted,#9aa6c2);font-size:.95rem;line-height:1.6}
       #wcheck .wc-fix-cta{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center}
+      #wcheck .wc-actions{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center;margin:1.2rem 0 .4rem}
       #wcheck .wc-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}
       #wcheck .wc-powered{text-align:center;font-size:.72rem;color:var(--muted,#9aa6c2);margin:1.4rem 0 0;opacity:.8}
       @media(max-width:560px){#wcheck .wc-gauges{grid-template-columns:repeat(2,1fr)}#wcheck .wc-go{flex:1 1 100%}}
@@ -1771,9 +1775,41 @@ WCHECK_TOOL = r'''    <section class="section" aria-label="Free website checker"
           elRes.hidden=false;
           requestAnimationFrame(function(){ root.querySelectorAll('.wc-g-val').forEach(function(c){ c.style.strokeDashoffset=c.getAttribute('data-off'); }); });
           window.ttToolDone&&window.ttToolDone("website-checker");
+
+          /* --- shareable / copyable report of THIS result -----------------
+             The share button reuses the site-wide [data-ttshare] handler,
+             which reads data-share-text at click time - so we just rewrite
+             that attribute with the real scores. No second handler needed. */
+          var host=tu.replace(/^https?:\/\//,'').replace(/\/$/,'');
+          var strLabel=(strat==='mobile'?'Mobile':'Desktop');
+          var line=[];
+          if(S.performance!=null) line.push('Performance '+S.performance);
+          if(S.seo!=null)         line.push('SEO '+S.seo);
+          if(S.accessibility!=null) line.push('Accessibility '+S.accessibility);
+          if(S.bp!=null)          line.push('Best practices '+S.bp);
+          var oneLine=host+' ('+strLabel+'): '+line.join(', ')+' out of 100.';
+          var sb=root.querySelector('#wc-share');
+          if(sb){ sb.setAttribute('data-share-title','Website check: '+host);
+                  sb.setAttribute('data-share-text',oneLine+' Checked free with'); }
+          lastReport='Website check for '+host+' ('+strLabel+') - 365techies.co.uk\n'
+            + line.map(function(x){return '  '+x+'/100';}).join('\n')
+            + (cw.length? ('\n\nCore Web Vitals:\n'+cw.map(function(m){return '  '+m.l+': '+m.v;}).join('\n')) : '')
+            + (iss.length? ('\n\nTop things to improve:\n'+iss.map(function(it,i){return '  '+(i+1)+'. '+it.t;}).join('\n')) : '')
+            + '\n\nScores come from Google PageSpeed Insights (Lighthouse).'
+            + '\nRe-run this check any time: https://365techies.co.uk/website-checker/';
+
           try{ elRes.scrollIntoView({behavior:'smooth',block:'start'}); }catch(e){}
           startCompare(S,tu);
         }
+        var lastReport='';
+        var copyBtn=root.querySelector('#wc-copy');
+        if(copyBtn) copyBtn.addEventListener('click',function(){
+          if(!lastReport) return;
+          function done(ok){ copyBtn.textContent=ok?'Copied — paste it anywhere':'Press Ctrl+C to copy';
+                             setTimeout(function(){copyBtn.textContent='Copy my report';},2400); }
+          try{ navigator.clipboard.writeText(lastReport).then(function(){done(true);},function(){done(false);}); }
+          catch(e){ done(false); }
+        });
       })();
       </script>
     </section>'''
