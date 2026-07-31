@@ -20124,29 +20124,29 @@ def write_portal_page():
      those live in the site stylesheet, which the portal does not load; these are
      the portal's own tokens so the card matches its surroundings rather than
      importing the marketing site's look into a customer's dashboard. */
-  #p365app .wp-head { display:flex; justify-content:space-between; align-items:center; gap:.6rem; flex-wrap:wrap; margin:0 0 .45rem; }
-  #p365app .wp-sum { margin:0 0 .85rem; }
-  #p365app .wp-shots { display:grid; grid-template-columns:1fr 1fr; gap:.55rem; margin:0 0 1rem; }
-  #p365app .wp-shots figure { margin:0; position:relative; border:1px solid var(--pline); border-radius:10px; overflow:hidden; background:var(--pink); }
-  #p365app .wp-shots img { width:100%; height:auto; display:block; }
-  #p365app .wp-tag { position:absolute; top:.4rem; left:.4rem; font-size:.62rem; letter-spacing:.06em; text-transform:uppercase; padding:.14rem .42rem; border-radius:5px; background:rgba(11,18,38,.82); color:var(--pmut); border:1px solid var(--pline); }
-  #p365app .wp-tag--new { color:var(--pcyan); border-color:rgba(29,151,227,.5); }
-  #p365app .wp-jt { list-style:none; margin:0; padding:0; position:relative; }
-  #p365app .wp-jt::before { content:""; position:absolute; left:6px; top:8px; bottom:8px; width:2px; background:linear-gradient(180deg,var(--pcyan),rgba(125,170,220,.14)); }
-  #p365app .wp-ms { position:relative; padding:0 0 1.05rem 26px; }
-  #p365app .wp-ms:last-child { padding-bottom:0; }
-  #p365app .wp-node { position:absolute; left:0; top:3px; width:14px; height:14px; border-radius:50%; border:2px solid var(--pcyan); background:var(--pink); }
-  #p365app .wp-ms--done .wp-node { border-color:var(--pgood); background:var(--pgood); }
-  #p365app .wp-ms--live .wp-node { background:var(--pcyan); }
-  #p365app .wp-ms--wait .wp-node { border-style:dashed; border-color:rgba(125,170,220,.5); }
-  #p365app .wp-when { font-size:.68rem; letter-spacing:.05em; text-transform:uppercase; color:var(--pcyan); margin:0 0 .12rem; }
-  #p365app .wp-ms--wait .wp-when { color:var(--pmut); }
-  #p365app .wp-ms h3 { font-size:.92rem; margin:0 0 .22rem; color:var(--pwhite); }
-  #p365app .wp-ms p { margin:0; font-size:.84rem; line-height:1.55; }
-  #p365app .wp-chips { margin-top:.4rem; }
-  #p365app .wp-next { margin:.9rem 0 .3rem; font-size:.84rem; }
-  #p365app .wp-foot { margin:.7rem 0 0; font-size:.82rem; }
-  @media (max-width:520px) { #p365app .wp-shots { grid-template-columns:1fr; } }
+  /* View Transitions pacing: overlays crossfade in ~200ms instead of snapping.
+     Root-level pseudos, deliberately NOT #p365app-scoped (they cannot be), so
+     the build's overlay-twinning transform leaves them alone. vtWrap() already
+     refuses to start a transition under prefers-reduced-motion; this block is
+     belt to that braces. */
+  @media (prefers-reduced-motion: no-preference) {
+    ::view-transition-old(root) { animation-duration:.16s; }
+    ::view-transition-new(root) { animation-duration:.22s; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    ::view-transition-old(root), ::view-transition-new(root) { animation:none; }
+  }
+  /* Slim projects strip (2026-08-01): thumb + one line + one link. The full
+     timeline these rules used to style now lives only on the public pages. */
+  #p365app .wp-slim { display:flex; align-items:center; gap:.75rem; }
+  #p365app .wp-slim img { width:76px; height:53px; object-fit:cover; border-radius:8px; border:1px solid var(--pline); flex:none; }
+  #p365app .wp-slim-t { flex:1; min-width:0; }
+  #p365app .wp-slim .btn { flex:none; }
+  @media (max-width:430px) { #p365app .wp-slim { flex-wrap:wrap; } }
+  /* The next visit - the one thing most customers came to check. */
+  #p365app .nextvisit { border:1px solid rgba(29,151,227,.4); background:rgba(29,151,227,.07); border-radius:12px; padding:.8rem .9rem; margin-bottom:.6rem; }
+  #p365app .nv-when { margin:0; font-size:1.12rem; font-weight:700; color:var(--pwhite); }
+  #p365app .nv-what { margin:.15rem 0 .3rem; font-size:.95rem; color:var(--psoft); }
   #p365app .pill { font-size:.75rem; padding:.2rem .6rem; border-radius:999px; }
   #p365app .pill.pro { background:rgba(0,206,27,.14); color:var(--pgood); }
   #p365app .pill.free { background:rgba(134,182,232,.12); color:var(--psoft); }
@@ -20156,12 +20156,12 @@ def write_portal_page():
   #p365app th { text-align:left; color:var(--pmut); font-weight:600; padding:.35rem .4rem; border-bottom:1px solid var(--pline); }
   #p365app td { padding:.42rem .4rem; border-bottom:1px solid rgba(42,59,99,.4); vertical-align:middle; color:var(--pwhite); }
   #p365app .ok { color:var(--pgood); } #p365app .wn { color:var(--pwarn); }
-  #p365app .quiet { color:var(--pmut); font-size:.8rem; line-height:1.5; margin-top:.55rem; }
+  #p365app .quiet { color:var(--pmut); font-size:.95rem; line-height:1.55; margin-top:.55rem; }
   #p365app .tblwrap { overflow-x:auto; }
   #p365app a { color:var(--psoft); }
   #p365app .ptop { display:flex; align-items:center; gap:1rem; }
   #p365app .ptop h1 { flex:1; margin:0; }
-  #p365app .dpill, #p365app .tpill { padding:.3rem .6rem; font-size:.8rem; margin:.2rem .25rem 0 0; }
+  #p365app .dpill, #p365app .tpill { padding:.65rem .85rem; font-size:.9rem; min-height:44px; box-sizing:border-box; margin:.2rem .25rem 0 0; }
   #p365app .mvp { padding:.4rem 0 .8rem; border-bottom:1px solid rgba(42,59,99,.5); }
   @media (min-width:640px) { #p365app .twocol { display:grid; grid-template-columns:1fr 1fr; gap:.9rem; align-items:start; } }
   #p365app .dstrip { display:flex; flex-wrap:wrap; gap:.3rem; margin:.3rem 0 .7rem; }
@@ -21045,7 +21045,7 @@ def write_portal_page():
     if (!jSettled && !JW.loaded && !force) return;
     if (S.back) { jSettled = true; return; }   // staff viewing a customer: never celebrate, never store
     // Never let confetti land on top of an open tool. Hold it and replay from ovShut().
-    if (ovEl) { jPend = { res: res, d: d }; return; }
+    if (ovEl || ovOpening) { jPend = { res: res, d: d }; return; }   // ovOpening: the overlay is a frame away
     jSettled = true;
     var key = jKey(d), prev = jSnapRead();
     var sameMember = prev.k === key && typeof prev.p === 'number';
@@ -21307,7 +21307,7 @@ def write_portal_page():
   // customer mid-task?" - an open overlay or a booking wizard in flight means the
   // beacon must not reload the page out from under them.
   window.p365Busy = function () {
-    if (ovEl) return true;
+    if (ovEl || ovOpening) return true;   // ovOpening: the overlay is a frame away (vtWrap defers the mount)
     var wz = document.getElementById('cbwiz');
     return !!(wz && wz.style.display !== 'none');
   };
@@ -21322,7 +21322,23 @@ def write_portal_page():
     // if we pushed a history entry and we're not closing BECAUSE of a pop, unwind it
     if (!fromPop) { try { if (history.state && history.state.p365ov) { ovPop = true; history.back(); } } catch (e) {} }
   }
+  // Morph, don't snap: overlays open through the View Transitions API when the
+  // browser has it (~88% in 2026) and reduced motion is off. The fallback is
+  // exactly what shipped before - an instant swap - so nothing is lost anywhere.
+  // This is the "next-gen feel" the 2026-08-01 research recommended INSTEAD of
+  // WebGL carousels: object continuity for ~10 lines, at zero GPU cost.
+  function vtWrap(fn) {
+    var ok = false;
+    try { ok = !!document.startViewTransition && !window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+    if (ok) { try { document.startViewTransition(fn); return; } catch (e) {} }
+    fn();
+  }
+  var ovOpening = false;   // true for the ~1 frame between click and the view-transition callback
   function ovShow(title, build, onClose) {
+    ovOpening = true;
+    vtWrap(function () { ovOpening = false; ovShowNow(title, build, onClose); });
+  }
+  function ovShowNow(title, build, onClose) {
     ovShut();
     var o = document.createElement('div');
     o.className = 'p365ov';
@@ -21335,7 +21351,7 @@ def write_portal_page():
     document.body.appendChild(o);           // body, not #p365app - see the stacking note in CSS
     ovEl = o; ovOnClose = onClose || null;
     try { document.documentElement.classList.add('p365-lock'); } catch (e) {}
-    o.querySelector('.p365ov__x').onclick = function () { ovShut(); };
+    o.querySelector('.p365ov__x').onclick = function () { vtWrap(ovShut); };
     SFX.open();
     build(o.querySelector('.p365ov__body'));
     try { history.pushState({ p365ov: 1 }, ''); } catch (e) {}
@@ -23128,6 +23144,21 @@ def write_portal_page():
     if (!arc) return;
     var circ = 2 * Math.PI * 48;
     var target = primary ? Math.max(0, Math.min(100, parseInt(primary.score, 10) || 0)) : 100;
+    // Tween from the score the customer LAST saw, not from zero: a weekly
+    // visitor literally watches their number move 78 -> 82, which is the one
+    // piece of motion on this page that carries information. First visit (or
+    // another device) still sweeps from 0. (Research: "meaningful state
+    // transitions are where dashboards actually earn delight".)
+    // Keyed by MACHINE id, not a single slot: one browser can see many rings -
+    // a customer with two PCs, or a staff member view-as-ing customer after
+    // customer - and a single key would tween customer B's ring from customer
+    // A's number. Wrong, and to a staff eye it looks like a data leak.
+    var from = 0;
+    if (primary) {
+      var skey = 'p365score.' + String(primary.id || '');
+      try { var pv = parseInt(localStorage.getItem(skey) || '', 10); if (pv >= 0 && pv <= 100) from = pv; } catch (e) {}
+      try { localStorage.setItem(skey, String(target)); } catch (e) {}
+    }
     var reduce = false;
     try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
     if (reduce) {
@@ -23135,16 +23166,17 @@ def write_portal_page():
       if (num && primary) num.textContent = target + '%';
       return;
     }
+    arc.setAttribute('stroke-dasharray', (circ * from / 100).toFixed(1) + ' ' + circ.toFixed(1));
     requestAnimationFrame(function () { requestAnimationFrame(function () {
       arc.setAttribute('stroke-dasharray', (circ * target / 100).toFixed(1) + ' ' + circ.toFixed(1));
     }); });
-    if (num && primary) {   // count the number up alongside the arc drawing
+    if (num && primary) {   // count the number alongside the arc drawing
       var t0 = null, dur = 1400;
       var step = function (t) {
         if (t0 === null) t0 = t;
         var p = Math.min(1, (t - t0) / dur);
         var eased = 1 - Math.pow(1 - p, 3);
-        num.textContent = Math.round(target * eased) + '%';
+        num.textContent = Math.round(from + (target - from) * eased) + '%';
         if (p < 1) requestAnimationFrame(step);
       };
       requestAnimationFrame(step);
@@ -23156,6 +23188,7 @@ def write_portal_page():
     if (!open) return;
     open.onclick = function () {
       var box = document.getElementById('pcmfb');
+      box.style.flex = '1 1 100%'; box.style.minWidth = '0';   // full row once opened - the strip's <span> is shrink-to-fit
       box.innerHTML = '<textarea id="pcmfbtx" rows="3" placeholder="What do you think? Anything confusing, missing, or that you love?" style="width:100%;box-sizing:border-box;padding:.55rem .7rem;border-radius:8px;border:1px solid rgba(125,170,220,.4);background:rgba(255,255,255,.04);color:inherit;font:inherit;resize:vertical"></textarea>'
         + '<div class="row" style="border:0;padding:.45rem 0 0;gap:.55rem;align-items:center"><button class="sm" id="pcmfbsend">Send feedback</button><span class="quiet" id="pcmfbmsg" style="margin:0;font-size:.82rem"></span></div>';
       var tx = document.getElementById('pcmfbtx'); if (tx) tx.focus();
@@ -23183,7 +23216,7 @@ def write_portal_page():
       + '<button id="cml" class="sm">\\u2709 Email me a code</button>'
       + '<button id="csm" class="sm ghost">\\ud83d\\udcf1 Text me a code</button>'
       + '</div>'
-      + '<label style="display:flex;align-items:center;gap:.45rem;margin-top:.55rem;cursor:pointer;color:var(--pmut);font-size:.85rem"><input type="checkbox" id="keepin" checked style="width:auto" /> Keep me signed in on this computer <span class="quiet" style="margin:0">&mdash; untick on a shared or public PC</span></label>'
+      + '<label style="display:flex;align-items:center;gap:.45rem;margin-top:.55rem;cursor:pointer;color:var(--pmut);font-size:.85rem"><input type="checkbox" id="keepin" checked style="width:auto" /> Keep me signed in on this computer <span class="quiet" style="margin:0;font-size:.8rem">&mdash; untick on a shared or public PC</span></label>'
       + '<label style="display:flex;align-items:flex-start;gap:.45rem;margin-top:.5rem;cursor:pointer;color:var(--pmut);font-size:.82rem"><input type="checkbox" id="mkt" style="width:auto;margin-top:.15rem;flex:0 0 auto" /> <span>Email me the occasional 365 tip &amp; offer - a few a year at most, unsubscribe any time. Optional, and it will not affect your free membership or your support.</span></label>'
       + '<div class="err" id="serr">' + (msg || '') + '</div>'
       + '<p class="quiet"><a href="#" id="havecode">Already got a code? Type it here</a>'
@@ -23469,14 +23502,21 @@ def write_portal_page():
       }
     }
     var stage = document.getElementById('ngstage'), scene = document.getElementById('ngscene'), device = document.getElementById('ngdevice'), cv = document.getElementById('ngbg');
+    // Phones get ONE painted frame of the ambient glow, not a compositing loop.
+    // The 2026-08-01 audit verified this loop ran unconditionally on every
+    // phone - a full-canvas 'lighter' composite every frame, billed to the
+    // battery of the customer whose kit is already struggling. Desktop keeps
+    // the ambience; rAF's own throttling covers hidden tabs.
+    var coarse = false;
+    try { coarse = window.matchMedia('(pointer: coarse)').matches; } catch (e) {}
     if (cv && stage && cv.getContext) {
       var ctx = cv.getContext('2d'), orbs = [], t = 0, COL = ['29,151,227', '0,206,27', '29,120,200'];
-      function sz() { cv.width = stage.clientWidth; cv.height = stage.clientHeight; }
+      function sz() { cv.width = stage.clientWidth; cv.height = stage.clientHeight; if (coarse && !rm && typeof amb === 'function') amb(); }
       sz();
       if (ngRz) window.removeEventListener('resize', ngRz);
       ngRz = sz; window.addEventListener('resize', ngRz);
       for (var oi = 0; oi < 5; oi++) orbs.push({ x: Math.random(), y: Math.random(), r: 120 + oi * 44, a: .05 + oi * .006, c: COL[oi % 3], dx: (oi % 2 ? 1 : -1) * .00006 * (oi + 1), dy: .00005 * (oi + 1) });
-      (function amb() {
+      var amb = function amb() {
         if (gen !== ngGen) return;
         t++; ctx.clearRect(0, 0, cv.width, cv.height); ctx.globalCompositeOperation = 'lighter';
         for (var k = 0; k < orbs.length; k++) {
@@ -23485,8 +23525,9 @@ def write_portal_page():
           var g = ctx.createRadialGradient(px, py, 0, px, py, o.r); g.addColorStop(0, 'rgba(' + o.c + ',' + o.a + ')'); g.addColorStop(1, 'rgba(' + o.c + ',0)');
           ctx.fillStyle = g; ctx.beginPath(); ctx.arc(px, py, o.r, 0, 7); ctx.fill();
         }
-        if (!rm) requestAnimationFrame(amb);
-      })();
+        if (!rm && !coarse) requestAnimationFrame(amb);   // phones: this one frame is the whole show
+      };
+      amb();
     }
     if (!rm && !small && scene && device) {
       var tx = 0, ty = 0, mx2 = 0, my2 = 0, baseRy = lapRy(m);
@@ -23519,7 +23560,19 @@ def write_portal_page():
           var dmv = navigator.deviceMemory; if (dmv && dmv < 4) cap = false;         // low-RAM devices keep the CSS hero
           var cc = document.createElement('canvas'), gl2 = cc.getContext('webgl2');
           if (!(window.WebGL2RenderingContext && gl2)) cap = false;
-          else { try { var _lc = gl2.getExtension('WEBGL_lose_context'); if (_lc) _lc.loseContext(); } catch (_lx) {} }  // free the probe context
+          else {
+            // SwiftShader/llvmpipe = WebGL "supported" but rendered on the CPU.
+            // That is the silent worst case for exactly this customer base: an
+            // old Intel machine with acceleration off passes every other gate,
+            // then grinds itself hot drawing a decorative laptop. Fail CLOSED
+            // on software renderers (audit 2026-08-01, highest-severity find).
+            try {
+              var dbg = gl2.getExtension('WEBGL_debug_renderer_info');
+              var rndr = dbg ? String(gl2.getParameter(dbg.UNMASKED_RENDERER_WEBGL) || '') : '';
+              if (/swiftshader|llvmpipe|software|basic render/i.test(rndr)) cap = false;
+            } catch (_dr) {}
+            try { var _lc = gl2.getExtension('WEBGL_lose_context'); if (_lc) _lc.loseContext(); } catch (_lx) {}  // free the probe context
+          }
         } catch (_e) { cap = false; }
         if (!cap) return;
         host.__ng3d = true;
@@ -23539,6 +23592,22 @@ def write_portal_page():
           ngGen++;   // cancels the CSS hero's ambient-canvas + parallax rAF loops (they check gen === ngGen)
           try { if (ngPM) { window.removeEventListener('pointermove', ngPM); ngPM = null; } } catch (_p) {}
           try { if (ngRz) { window.removeEventListener('resize', ngRz); ngRz = null; } } catch (_r) {}
+          // A context lost AFTER commit used to leave a dead black rectangle
+          // with no way back - the documented failure mode on the integrated
+          // Intel GPUs this customer base actually runs. Same-origin iframe, so
+          // we can hear the loss and put the (static) CSS hero back.
+          try {
+            var c3 = fr.contentDocument && fr.contentDocument.querySelector('canvas');
+            if (c3) c3.addEventListener('webglcontextlost', function () {
+              try { fr.remove(); } catch (_x) {}
+              host.__ng3d = false; host.style.height = '';
+              if (scn) scn.style.display = ''; if (bg) bg.style.display = '';
+            }, { once: true });
+          } catch (_cl) {}
+          // Measure the reach at last: nobody has ever known how many of the 43
+          // accounts actually see this. If the number is tiny, that is the
+          // budget argument settled by data instead of debate.
+          try { if (window.gtag) gtag('event', 'ng3d_shown'); } catch (_g) {}
         }
         function fallback() {   // capability/load/render failure -> tear the iframe down, CSS hero remains
           if (settled) return; settled = true; if (timer) clearTimeout(timer);
@@ -23585,38 +23654,55 @@ def write_portal_page():
       var heroPrimary = null;
       if (ngLive0.length) { ngLive0.sort(function (a, b) { return (b.seen || '').localeCompare(a.seen || ''); }); heroPrimary = ngLive0[0]; }
       var h = heroBlock(d, heroPrimary);
+      // THE TOP OF THE PAGE IS FOR DOING. The 2026-08-01 portal audit found the
+      // two things a customer actually comes here to DO - see/manage a visit and
+      // ask a question - sitting 6 and 10 screens down a 14-screen page, below
+      // ~3,400px of things that talk AT them. Visits and Message Us now sit
+      // directly under the hero, and everything below is in descending order of
+      // "can the customer act on it".
+      h += '<div class="card" id="visitsCard"><h2>\\ud83d\\udcc5 Your visits</h2>'
+        + '<div id="mybk"><p class="quiet">Loading your visits\\u2026</p></div>'
+        + '<div class="nbwiz" id="cbwiz" style="display:none"></div>'
+        + '<div class="row" style="border:0">'
+        + '<button class="sm" id="cbopen">\\ud83d\\udcc5 Book a service</button>'
+        + '<button class="sm ghost" id="cbsos">\\ud83c\\udd98 Remote help</button>'
+        + '<a class="btn sm ghost" href="tel:+441202775566">Call 01202 775566</a></div></div>';
+      h += '<div class="card" id="msgCard"><h2>\\ud83d\\udcac Message us</h2>'
+        + '<p class="quiet">Ask us anything about your computers, your bookings or your bill \\u2014 '
+        + 'it goes straight to the team. Urgent? Ring <a href="tel:+441202775566">01202 775566</a>.</p>'
+        + '<div id="msgBox"><p class="quiet">Loading\\u2026</p></div></div>';
       var jrn = journeyCard(d);
       h += jrn.html;
       if (S.back) h = '<div class="card" style="border-color:rgba(29,151,227,.55);padding:.6rem .9rem"><div class="row" style="border:0;padding:0"><span class="quiet" style="margin:0">\\ud83d\\udc41 You\\u2019re viewing the portal as <strong>' + esc(d.name || 'this customer') + '</strong> - exactly what they see.</span><button class="sm" id="backstaff">\\u2190 Back to staff</button></div></div>' + h;
       if (d.pending) h += '<div class="card" style="border-color:rgba(224,179,65,.5)"><p class="quiet">We can see a support plan registered to this email. For security we link it to your web login by hand - it usually appears within a day. Need it sooner? Ring 01202 775566.</p></div>';
-      // A BRAND-NEW member (no app checking in, nothing booked) leads with BOOKING:
-      // the one thing they can genuinely do right now. Services render open below,
-      // so "what can I book?" is answered without a single tap.
+      // freshJoiner still gates the review ask below; the standalone "Book a
+      // visit" card it used to position is gone - booking now lives in ONE
+      // card, at the top, for everyone. The audit counted booking entry points
+      // in SIX places; a feature repeated six times is a feature the designer
+      // does not trust the customer to find once.
       var freshJoiner = !d.machines.length && !d.next;
-      var needCard = '<div class="card"' + (freshJoiner ? ' style="border-color:rgba(29,151,227,.5)"' : '') + '><h2>\\ud83d\\udcc5 Book a visit</h2>'
-        + '<p class="quiet" style="margin:0 0 .55rem">Pick a service and a time - it takes about a minute, and you can move or cancel it here whenever you like. Most people start with the <strong>Computer Service &amp; Health Check</strong>.</p>'
-        + '<div class="nbwiz" id="cbwiz" style="display:none"></div>'
-        + '<div class="row">'
-        + '<button class="sm" id="cbopen">\\ud83d\\udcc5 Book a service</button>'
-        + '<button class="sm ghost" id="cbsos">\\ud83c\\udd98 Remote help</button>'
-        + '<a class="btn sm ghost" href="/free-tools/" target="_blank" rel="noopener">Free tools</a>'
-        + '<a class="btn sm ghost" href="tel:+441202775566">Call 01202 775566</a></div></div>';
-      if (freshJoiner) h += needCard;
       // primary PC gets the next-gen 3D hero up top; any others listed compactly beneath
       var ngPrimary = heroPrimary;
       if (ngPrimary) {
-        h += '<div class="card" style="border-color:rgba(29,151,227,.5);background:linear-gradient(135deg,rgba(29,151,227,.1),rgba(0,206,27,.05))"><div class="row" style="border:0;padding:0;gap:.7rem;align-items:flex-start">'
-          + '<span class="pill" style="background:rgba(29,151,227,.16);color:#4fb4f5;border:1px solid rgba(29,151,227,.5);white-space:nowrap">\\ud83e\\uddea BETA PREVIEW</span>'
-          + '<div style="flex:1;min-width:0"><p style="margin:.1rem 0 .4rem"><strong>This is 365 PC Manager \\u2014 an early, live look.</strong></p>'
-          + '<p class="quiet" style="margin:0 0 .55rem">You\\u2019re seeing a work-in-progress preview of <a href="/free-pc-health-check/" target="_blank">365 PC Manager</a>, the free app we\\u2019re building. We\\u2019re perfecting it so we can look after your computer completely \\u2014 and prove a full 365 service, done the very best way we can. As <strong>one of our first testers</strong>, your feedback genuinely shapes it \\u2014 thank you. \\ud83d\\udc99</p>'
-          + '<div id="pcmfb"><button class="sm" id="pcmfbopen">\\ud83d\\udcac Tell us what you think</button> <span class="quiet" style="margin:0;font-size:.8rem">or ring 01202 775566</span></div>'
-          + '</div></div></div>';
+        // One line, not a 300px manifesto: the beta framing stays honest (the
+        // app IS early, and feedback genuinely matters) without lecturing every
+        // customer on every visit.
+        h += '<div class="card" style="padding:.55rem .9rem"><div class="row" style="border:0;padding:0">'
+          + '<span class="quiet" style="margin:0">\\ud83e\\uddea <strong>Early preview</strong> of 365 PC Manager \\u2014 your feedback shapes it.</span>'
+          + '<span id="pcmfb"><button class="sm ghost" id="pcmfbopen">\\ud83d\\udcac Feedback</button></span></div></div>';
         h += ngHero(d, ngPrimary);
         var ngOthers = d.machines.filter(function (mm) { return mm.id !== ngPrimary.id; });
         if (ngOthers.length) h += '<div class="ngh2">Your other computers</div><div class="card">' + ngOthers.map(machineRow).join('') + '</div>';
       } else {
+        // The install-the-app ask lives HERE, in the one place it has a reason
+        // to exist: a customer whose computers we cannot see yet. It used to be
+        // a separate "Quick browser check-up" card shown to EVERYONE - 280px of
+        // navigator chips followed by a paragraph explaining the chips were
+        // inadequate. If the card's own copy has to apologise for the card, the
+        // card is wrong.
         h += '<div class="card"><h2>Your computers</h2>';
-        if (!d.machines.length) h += '<p class="quiet">None checking in yet - our free <a href="/free-pc-health-check/" target="_blank">365 PC Manager</a> app (coming soon) will keep an eye on your PC\\u2019s health and show it here. <a href="/free-pc-health-check/#waitlist" target="_blank">Join the waitlist</a>.</p>';
+        if (!d.machines.length) h += '<p class="quiet">None checking in yet. The free <a href="/free-pc-health-check/" target="_blank">365 PC Manager</a> app shows your computer\\u2019s health here \\u2014 drive, backup, battery, scams \\u2014 and <strong>we install it for you</strong>.</p>'
+          + '<button class="sm" id="appreq"' + (d.appreq ? ' disabled' : '') + '>' + (d.appreq ? '\\u2713 Requested - we\\u2019ll be in touch' : '\\u2b07 Install the app for me') + '</button>';
         h += d.machines.map(machineRow).join('') + '</div>';
       }
       h += tmStaffNote(d);
@@ -23631,7 +23717,6 @@ def write_portal_page():
           : '<p class="quiet">No active Direct Debit found for this email.</p>';
       }
       h += '</div>';
-      h += '<div class="card"><h2>📅 Your bookings</h2><div id="mybk"><p class="quiet">Loading your visits…</p></div></div>';
       // Saved site surveys belong to the account, not to an individual employee, and
       // the server refuses them for a company staff member - so showing this card to
       // one would only be inviting a refusal.
@@ -23664,32 +23749,13 @@ def write_portal_page():
           + '<p class="quiet"><a href="/online-safety-course/" target="_blank" rel="noopener">Start with online safety</a> \\u00b7 <a href="/free-tools/" target="_blank" rel="noopener">see all 11 courses</a></p></div>';
       }
       if (d.fam) h += '<div class="card"><h2>Family view</h2><p class="quiet">\\u2713 Shared with ' + esc(d.fam) + ' - manage it from the app on your PC.</p></div>';
-      // instant browser check-up: honest, no install, fills day one
-      h += '<div class="card"><h2>\\ud83e\\ude7a Quick browser check-up</h2><div id="bcheck"><p class="quiet">Checking what this browser can see\\u2026</p></div>'
-        + '<p class="quiet">A browser can only see so much - the free 365 PC Manager app sees the full honest picture (drive health, backup, battery, scams), and <strong>we install it for you</strong>.</p>'
-        + '<button class="sm" id="appreq"' + (d.appreq ? ' disabled' : '') + '>' + (d.appreq ? '\\u2713 Requested - we\\u2019ll be in touch' : '\\u2b07 Install the app for me') + '</button></div>';
-      // WEBSITE PROJECTS. Support customers pay us monthly and have never been
-      // shown the web work - this is the only place they meet it. It renders the
-      // SAME journey as the public case study, from /projects-feed.json, which is
-      // generated from projects_data.py at build time. That shared source is the
-      // whole point: three hand-kept copies of the same dates would drift, and the
-      // drift would be silent. Fetched (not inlined) so a re-measure landing does
-      // not force a portal rebuild - the beacon reload and the feed are separate
-      // clocks on purpose.
-      h += '<div class="card" id="wprojCard"><h2>\\ud83c\\udfd7 365 website projects</h2>'
-        + '<p class="quiet">We rebuild websites as well as looking after your computers. '
-        + 'Here is a real one, start to finish, with the measurements published as they happen '
-        + '\\u2014 including the ones we have not taken yet.</p>'
-        + '<div id="wproj"><p class="quiet">Loading the latest\\u2026</p></div></div>';
-      // MESSAGE US. Placed high - above the browser check-up and the projects
-      // card - because a customer with something to say should not have to
-      // scroll past our marketing to say it.
-      h += '<div class="card" id="msgCard"><h2>\\ud83d\\udcac Message us</h2>'
-        + '<p class="quiet">Ask us anything about your computers, your bookings or your bill. '
-        + 'This goes straight to the team \\u2014 no ticket numbers, no hold music. '
-        + 'We answer during office hours; if it is urgent, ring '
-        + '<a href="tel:+441202775566">01202 775566</a>.</p>'
-        + '<div id="msgBox"><p class="quiet">Loading\\u2026</p></div></div>';
+      // WEBSITE PROJECTS - now a single slim strip, per the 2026-08-01 audit
+      // (the full journey timeline was ~1,700px of marketing on a service page,
+      // the page's second-biggest block). Starts hidden and is REVEALED on a
+      // good feed rather than removed on a bad one, so the page never reflows
+      // under the customer's thumb. Data still comes from /projects-feed.json,
+      // one source of truth with the public case-study pages.
+      h += '<div class="card" id="wprojCard" hidden style="padding:.65rem .9rem"><div id="wproj"></div></div>';
       // SAVED WEBSITE CHECKS. Rendered only if the customer has actually saved
       // one - an empty "you have no saved checks" box on every dashboard would
       // be clutter for the many to explain a feature to the few. The prompt to
@@ -23698,7 +23764,6 @@ def write_portal_page():
       h += '<div class="card" id="wchkCard" hidden><h2>\\ud83d\\udcc8 Your saved website checks</h2>'
         + '<div id="wchk"></div></div>';
       h += unlockCard(d);
-      if (!freshJoiner) h += needCard;
       // Established members get a gentle, UNCONDITIONAL review ask (never shown to a
       // brand-new joiner, who has nothing to review yet). Reviews are the strongest
       // owner-controllable local-pack signal; the portal is a touchpoint the email
@@ -23737,7 +23802,6 @@ def write_portal_page():
         S = { staff: true, stoken: S.back.stoken, email: S.back.email, trust: S.back.trust };
         saveS(); showStaff();
       };
-      browserCheck();
       webProjects();
       savedChecks();
       msgInit();
@@ -23813,7 +23877,7 @@ def write_portal_page():
     CB = { svc: 0, svcName: '' };
     w.style.display = 'block';
     w.innerHTML = '<h3>1 \\u00b7 What would you like?</h3>'
-      + '<p class="quiet" style="margin:.1rem 0 .55rem">Sent to us by a friend? Pick the <strong>Computer Service &amp; Health Check</strong> - your first one\\u2019s free. Just add their name when you confirm, so we can thank them.</p>'
+      + '<p class="quiet" style="margin:.1rem 0 .55rem">Sent to us by a friend? Pick the <strong>Computer Service &amp; Health Check</strong> - your first one\\u2019s free. Just pop their name in the \u201cAnything we should know?\u201d box when you confirm, so we can thank them.</p>'
       + '<div id="cbsvc"><p class="quiet">Loading our services\\u2026</p></div>'
       + '<p class="quiet"><a href="#" id="cbx">close</a> \\u00b7 prefer the full page? <a href="/book-service/" target="_blank" rel="noopener">book there</a></p>';
     document.getElementById('cbx').onclick = function () { w.style.display = 'none'; return false; };
@@ -23861,16 +23925,28 @@ def write_portal_page():
                 cEl.innerHTML = '<div class="nbsum"><strong>' + esc(CB.svcName) + '</strong> \\u00b7 <strong>' + esc(day.n) + ' at ' + esc(fmtT(t)) + '</strong>'
                   + '<div style="margin:.45rem 0 .1rem"><input id="cbphone" type="tel" inputmode="tel" autocomplete="tel" placeholder="Best number to reach you on (landline is fine)" style="width:100%;max-width:340px;padding:.5rem .6rem;border-radius:9px;border:1px solid var(--pline);background:var(--pink);color:var(--pwhite);font-size:1rem" /></div>'
                   + '<div style="margin:.35rem 0 .5rem"><textarea id="cbnote" rows="2" placeholder="Anything we should know? (optional) - e.g. very slow since an update, and the address if we\\u2019re coming to you" style="width:100%;max-width:340px;box-sizing:border-box;padding:.5rem .6rem;border-radius:9px;border:1px solid var(--pline);background:var(--pink);color:var(--pwhite);font:inherit;resize:vertical"></textarea></div>'
-                  + '<div style="margin:.35rem 0 .5rem"><input id="cbref" type="text" autocomplete="off" placeholder="Did someone recommend us? Their name (optional)" style="width:100%;max-width:340px;box-sizing:border-box;padding:.5rem .6rem;border-radius:9px;border:1px solid var(--pline);background:var(--pink);color:var(--pwhite);font:inherit" /></div>'
                   + '<button class="sm" id="cbgo" style="background:var(--pgood);color:#06220b;font-weight:800">\\u2713 Book it</button> <span class="err" id="cberr" style="display:inline"></span></div>';
+                // No "did someone recommend us?" box HERE: this wizard only
+                // renders for a signed-in existing customer, and asking a
+                // known customer who introduced them - on every single booking
+                // - is a question for our benefit on a form that should carry
+                // nothing but theirs. The public /book-service/ page keeps it;
+                // that is where new customers arrive.
                 document.getElementById('cbgo').onclick = function () {
                   var gb = this; gb.disabled = true; document.getElementById('cberr').textContent = '';
-                  var cbp = document.getElementById('cbphone'), cbn = document.getElementById('cbnote'), cbr = document.getElementById('cbref');
-                  post(BK, { action: 'book', wtoken: S.wtoken, machine: mid(), eventId: CB.svc, date: day.d, time: t, phone: (cbp ? cbp.value.trim() : ''), note: (cbn ? cbn.value.trim() : ''), refby: (cbr ? cbr.value.trim() : '') })
+                  var cbp = document.getElementById('cbphone'), cbn = document.getElementById('cbnote');
+                  post(BK, { action: 'book', wtoken: S.wtoken, machine: mid(), eventId: CB.svc, date: day.d, time: t, phone: (cbp ? cbp.value.trim() : ''), note: (cbn ? cbn.value.trim() : '') })
                     .then(function (r) {
                       if (r && r.ok) {
                         var w2 = document.getElementById('cbwiz');
-                        w2.innerHTML = '<div class="nbsum">\\u2713 Booked - ' + esc(r.when) + (r.pending ? ' (we\\u2019ll confirm it shortly)' : '') + '. A confirmation email is on its way.</div>';
+                        // A recurring service books a SERIES - the customer must
+                        // hear that from the screen, not discover twelve diary
+                        // entries later (the public page already says it; the
+                        // portal did not).
+                        var series = (r.repeats && r.repeats > 1)
+                          ? ' That\\u2019s ' + r.repeats + ' visits in the diary' + (r.last ? ', the last on ' + esc(r.last) : '') + '.'
+                          : '';
+                        w2.innerHTML = '<div class="nbsum">\\u2713 Booked - ' + esc(r.when) + (r.pending ? ' (we\\u2019ll confirm it shortly)' : '') + '.' + series + ' A confirmation email is on its way.</div>';
                         setTimeout(function () { showDash(); }, 3000);
                       } else {
                         gb.disabled = false;
@@ -23980,17 +24056,40 @@ def write_portal_page():
   })();
   function renderBookings(list) {
     var box = document.getElementById('mybk'); if (!box) return;
-    if (!list.length) { box.innerHTML = '<p class="quiet">No upcoming visits booked. Tap “Book a service” below and we’ll come to you.</p>'; return; }
+    if (!list.length) { box.innerHTML = '<p class="quiet">No upcoming visits booked. Tap \\u201cBook a service\\u201d and we\\u2019ll come to you.</p>'; return; }
+    // A company staff member cannot move or cancel the firm's bookings - the
+    // server refuses it. Showing them buttons that walk them into a failure
+    // is worse than telling them who can, before they press anything.
+    var canAct = !(JD && JD.member && !tmIsBoss());
     var hh = '';
     list.forEach(function (b, i) {
-      hh += '<div class="tline"><span class="ttime">📅</span><div class="tblock"><strong>' + esc(b.when) + '</strong><br /><span class="quiet" style="margin:0">' + esc(b.what) + '</span>'
-         + '<div class="bknote" id="bkn' + i + '">' + (b.note
-              ? '<span class="bknotetx">“' + esc(b.note) + '”</span> <button class="linky bknedit" data-i="' + i + '">edit</button>'
-              : '<button class="linky bknedit" data-i="' + i + '">+ Tell us anything we should know</button>') + '</div></div>'
-         + '<div style="display:flex;gap:.4rem;flex-wrap:wrap">'
-         + '<button class="sm ghost bkmove" data-i="' + i + '">↔ Move</button>'
-         + '<button class="sm ghost bkcanc" data-i="' + i + '" style="color:var(--pbad)">✕ Cancel</button></div></div>'
-         + '<div class="mvp" id="bkmv' + i + '" style="display:none"></div>';
+      var first = i === 0;
+      var acts = canAct
+        ? '<button class="sm ghost bkmove" data-i="' + i + '">\\u2194 Move</button>'
+          + '<button class="sm ghost bkcanc" data-i="' + i + '" style="color:var(--pbad)">\\u2715 Cancel</button>'
+          + (first && b.date && b.time ? '<button class="sm ghost bkics" data-i="' + i + '">\\ud83d\\udcc6 Add to calendar</button>' : '')
+        : '<span class="quiet" style="margin:0">Ask whoever manages your account to change this, or ring 01202 775566.</span>';
+      if (first) {
+        // The NEXT visit is the reason most customers open the portal, so it
+        // renders as a proper card: big date, service, their own note, and the
+        // actions - not a slim row they have to squint for.
+        hh += '<div class="nextvisit"><p class="nv-when">' + esc(b.when) + '</p>'
+           + '<p class="nv-what">' + esc(b.what) + '</p>'
+           + '<div class="bknote" id="bkn' + i + '">' + (b.note
+                ? '<span class="bknotetx">\\u201c' + esc(b.note) + '\\u201d</span> <button class="linky bknedit" data-i="' + i + '">edit</button>'
+                : '<button class="linky bknedit" data-i="' + i + '">+ Tell us anything we should know</button>') + '</div>'
+           + '<div class="row" style="border:0;padding:.35rem 0 0">' + acts + '</div></div>'
+           + '<div class="mvp" id="bkmv' + i + '" style="display:none"></div>';
+      } else {
+        hh += '<div class="tline"><span class="ttime">\\ud83d\\udcc5</span><div class="tblock"><strong>' + esc(b.when) + '</strong><br /><span class="quiet" style="margin:0">' + esc(b.what) + '</span>'
+           + '<div class="bknote" id="bkn' + i + '">' + (b.note
+                ? '<span class="bknotetx">\\u201c' + esc(b.note) + '\\u201d</span> <button class="linky bknedit" data-i="' + i + '">edit</button>'
+                : '<button class="linky bknedit" data-i="' + i + '">+ Tell us anything we should know</button>') + '</div></div>'
+           + (canAct ? '<div style="display:flex;gap:.4rem;flex-wrap:wrap">'
+             + '<button class="sm ghost bkmove" data-i="' + i + '">\\u2194 Move</button>'
+             + '<button class="sm ghost bkcanc" data-i="' + i + '" style="color:var(--pbad)">\\u2715 Cancel</button></div>' : '') + '</div>'
+           + '<div class="mvp" id="bkmv' + i + '" style="display:none"></div>';
+      }
     });
     box.innerHTML = hh;
     Array.prototype.forEach.call(box.querySelectorAll('.bknedit'), function (btn) {
@@ -24002,6 +24101,39 @@ def write_portal_page():
     Array.prototype.forEach.call(box.querySelectorAll('.bkcanc'), function (btn) {
       btn.onclick = function () { var i = parseInt(btn.getAttribute('data-i'), 10); custCancel(list[i], btn); };
     });
+    Array.prototype.forEach.call(box.querySelectorAll('.bkics'), function (btn) {
+      btn.onclick = function () { var i = parseInt(btn.getAttribute('data-i'), 10); icsDownload(list[i]); };
+    });
+  }
+  // A real .ics with the Europe/London VTIMEZONE, so a late-October visit does
+  // not land an hour out when the clocks change. The times are the SERVER's
+  // wall-clock strings (date + time fields), stamped TZID=Europe/London -
+  // correct whatever device or timezone the customer opens the file in.
+  function icsDownload(b) {
+    if (!b.date || !b.time) return;
+    var d = b.date.split('-'), tm = b.time.split(':');
+    var startLocal = d[0] + d[1] + d[2] + 'T' + tm[0] + tm[1] + '00';
+    var eh = parseInt(tm[0], 10) + 1;   // one hour; visits never start at 23:xx
+    var endLocal = d[0] + d[1] + d[2] + 'T' + ('0' + eh).slice(-2) + tm[1] + '00';
+    var now = new Date(), z = function (n) { return ('0' + n).slice(-2); };
+    var stamp = now.getUTCFullYear() + z(now.getUTCMonth() + 1) + z(now.getUTCDate()) + 'T' + z(now.getUTCHours()) + z(now.getUTCMinutes()) + z(now.getUTCSeconds()) + 'Z';
+    var ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//365 Techies//Portal//EN',
+      'BEGIN:VTIMEZONE', 'TZID:Europe/London',
+      'BEGIN:DAYLIGHT', 'TZOFFSETFROM:+0000', 'TZOFFSETTO:+0100', 'TZNAME:BST', 'DTSTART:19700329T010000', 'RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU', 'END:DAYLIGHT',
+      'BEGIN:STANDARD', 'TZOFFSETFROM:+0100', 'TZOFFSETTO:+0000', 'TZNAME:GMT', 'DTSTART:19701025T020000', 'RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU', 'END:STANDARD',
+      'END:VTIMEZONE',
+      'BEGIN:VEVENT', 'UID:365techies-' + (b.id || stamp) + '@365techies.co.uk', 'DTSTAMP:' + stamp,
+      'DTSTART;TZID=Europe/London:' + startLocal, 'DTEND;TZID=Europe/London:' + endLocal,
+      'SUMMARY:' + String(b.what || '365 Techies visit').replace(/[\\n,;]/g, ' '),
+      'DESCRIPTION:Move or cancel any time at https://365techies.co.uk/portal/ or ring 01202 775566.',
+      'END:VEVENT', 'END:VCALENDAR'].join('\\r\\n');
+    var blob = new Blob([ics], { type: 'text/calendar' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = '365-techies-visit.ics';
+    document.body.appendChild(a); a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
+    try { if (window.gtag) gtag('event', 'booking_add_to_calendar'); } catch (e) {}
   }
   // let the customer correct what they told us ("actually it's number 21")
   function editNote(b, i) {
@@ -24081,79 +24213,38 @@ def write_portal_page():
   // that at build time; this renderer does not re-derive or infer anything, it
   // only prints what the feed says - so the rule holds here for free.
   var WPSEEN = 'p365wp';   // localStorage: last milestone the customer has seen
+  // Slim strip, not a timeline: the 2026-08-01 audit measured the full journey
+  // at ~1,700px of marketing on a service dashboard. One glance-able line with
+  // the "new chapter" pip intact; the full story lives on the public page where
+  // it belongs. The card is revealed on success, never removed on failure.
   function webProjects() {
     var w = document.getElementById('wproj'); if (!w) return;
-    // Hourly cache-buster. NOT P365BUILD - that is declared inside the beacon's
-    // own IIFE and is not in scope here; referencing it throws a ReferenceError
-    // that would take the whole dashboard render down with it. An hour is the
-    // right granularity anyway: SiteGround has no purge API, and a re-measure
-    // landing an hour late in the portal harms nobody.
     fetch('/projects-feed.json?b=' + Math.floor(Date.now() / 36e5), { cache: 'no-store' })
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (f) {
-        if (!f || !f.projects || !f.projects.length) { hideProjCard(); return; }
+        if (!f || !f.projects || !f.projects.length) return;   // card stays hidden
         var p = f.projects[0];
-        if (!p.milestones || !p.milestones.length) { hideProjCard(); return; }
-
-        // "New since you last looked": compare the newest published milestone's
-        // date with what this device last saw. Nothing is stored server-side -
-        // a nudge is not worth a write to the shared customer database.
-        var pub = p.milestones.filter(function (m) { return m.state !== 'wait'; });
+        var pub = (p.milestones || []).filter(function (m) { return m.state !== 'wait'; });
         var newest = pub.length ? (pub[pub.length - 1].iso || '') : '';
         var seen = '';
         try { seen = localStorage.getItem(WPSEEN) || ''; } catch (e) {}
         var isNew = !!(newest && seen && newest > seen);
-
         var shot = (p.shots && p.shots[0]) || null;
-        var h = '';
-        if (isNew) h += '<p class="chips" style="margin:0 0 .7rem"><span class="chip g">\\u2726 New chapter since you last looked</span></p>';
-        h += '<div class="wp-head"><div><strong>' + esc(p.name) + '</strong>'
-           + '<span class="quiet"> \\u00b7 ' + esc(p.trade) + '</span></div>'
-           + '<span class="chip">' + esc(wpStatus(p.status)) + '</span></div>';
-        h += '<p class="quiet wp-sum">' + esc(p.summary) + '</p>';
-        if (shot) {
-          h += '<div class="wp-shots">'
-             + '<figure><span class="wp-tag">Before</span><img src="' + esc(shot.old) + '" alt="' + esc(shot.alt_old || '') + '" width="1100" height="773" loading="lazy" decoding="async"></figure>'
-             + '<figure><span class="wp-tag wp-tag--new">After</span><img src="' + esc(shot.new) + '" alt="' + esc(shot.alt_new || '') + '" width="1100" height="773" loading="lazy" decoding="async"></figure>'
-             + '</div>';
-        }
-        h += '<ol class="wp-jt">';
-        p.milestones.forEach(function (m) {
-          var st = (m.state === 'done' || m.state === 'live' || m.state === 'wait') ? m.state : 'wait';
-          h += '<li class="wp-ms wp-ms--' + st + '"><span class="wp-node" aria-hidden="true"></span>'
-             + '<p class="wp-when">' + esc(m.when) + '</p>'
-             + '<h3>' + esc(m.title) + '</h3>'
-             + '<p class="quiet">' + esc(m.body) + '</p>';
-          if (m.chips && m.chips.length) {
-            h += '<p class="chips wp-chips">' + m.chips.map(function (c) {
-              return '<span class="chip' + (st === 'wait' ? '' : ' g') + '">' + esc(c) + '</span>';
-            }).join('') + '</p>';
-          }
-          h += '</li>';
-        });
-        h += '</ol>';
-        if (p.nextDue) h += '<p class="quiet wp-next">Next measurement due <strong>' + esc(wpDate(p.nextDue)) + '</strong> \\u2014 it will appear here.</p>';
-        h += '<div class="row" style="border:0"><a class="btn sm ghost" href="' + esc(p.caseStudy) + '" target="_blank" rel="noopener">Read the full case study</a>'
-           + '<a class="btn sm ghost" href="' + esc(p.site) + '" target="_blank" rel="noopener">Visit the site we built</a></div>';
-        h += '<p class="quiet wp-foot">Want to know where your own site stands? Run it through our '
-           + '<a href="/website-checker/" target="_blank" rel="noopener">free website checker</a> '
-           + '\\u2014 the same tool we scored this build with, findings and all.</p>';
+        var live = pub.length ? pub[pub.length - 1] : null;
+        var h = '<div class="wp-slim">';
+        if (shot) h += '<img src="' + esc(shot.new) + '" alt="" width="1100" height="773" loading="lazy" decoding="async">';
+        h += '<div class="wp-slim-t"><strong>We rebuild websites too</strong>'
+          + (isNew ? ' <span class="chip g">✦ New chapter</span>' : '')
+          + '<p class="quiet" style="margin:.15rem 0 0">' + esc(p.name) + ' — '
+          + esc(live ? live.title.toLowerCase() : 'measured start to finish')
+          + (p.nextDue ? ' · next measurement ' + esc(wpDate(p.nextDue)) : '') + '</p></div>'
+          + '<a class="btn sm ghost" href="' + esc(p.caseStudy) + '" target="_blank" rel="noopener">See the journey</a></div>';
         w.innerHTML = h;
+        var card = document.getElementById('wprojCard');
+        if (card) card.hidden = false;
         try { if (newest) localStorage.setItem(WPSEEN, newest); } catch (e) {}
       })
-      .catch(function () { hideProjCard(); });
-  }
-  // If the feed cannot be read there is nothing honest to show, so the card goes
-  // rather than sitting there apologising - a permanent error box on someone's
-  // dashboard reads as "their IT company's own site is broken".
-  function hideProjCard() {
-    var c = document.getElementById('wprojCard');
-    if (c && c.parentNode) c.parentNode.removeChild(c);
-  }
-  function wpStatus(s) {
-    return s === 'measuring' ? 'Live \\u00b7 being measured'
-         : s === 'building' ? 'In build'
-         : s === 'complete' ? 'Complete' : 'In progress';
+      .catch(function () { /* card stays hidden - nothing to apologise for */ });
   }
   function wpDate(iso) {
     var M = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -24351,25 +24442,6 @@ def write_portal_page():
     return d.getDate() + ' ' + M[d.getMonth()] + ' ' + d.getFullYear();
   }
 
-  function browserCheck() {
-    var b = document.getElementById('bcheck'); if (!b) return;
-    var rows = [];
-    try {
-      var ua = navigator.userAgent || '';
-      var w11 = /Windows NT 10/.test(ua);
-      if (/Windows/.test(ua)) {
-        rows.push(['Windows', w11 ? 'Windows 10 or 11 (browsers can\\u2019t tell them apart - the app can)' : 'an older Windows - worth a chat', w11 ? 'g' : 'w']);
-      } else if (/Mac/.test(ua)) rows.push(['System', 'a Mac - our app is Windows-only, but we help with Macs too', '']);
-      if (navigator.deviceMemory) rows.push(['Memory', navigator.deviceMemory >= 8 ? '8 GB or more - healthy' : ('around ' + navigator.deviceMemory + ' GB - a chat about an upgrade may help'), navigator.deviceMemory >= 8 ? 'g' : 'w']);
-      var c = navigator.connection;
-      if (c && c.downlink) rows.push(['Connection', 'roughly ' + c.downlink + ' Mbps to this device' + (c.downlink < 10 ? ' - on the slow side' : ' - decent'), c.downlink < 10 ? 'w' : 'g']);
-      if (screen && screen.width) rows.push(['Screen', screen.width + '\\u00d7' + screen.height, '']);
-    } catch (e) {}
-    if (!rows.length) { b.innerHTML = '<p class="quiet">This browser keeps its details private - the app sees the honest full picture.</p>'; return; }
-    var hh = '<div class="chips">';
-    rows.forEach(function (r2) { hh += '<span class="chip ' + r2[2] + '"><strong>' + r2[0] + ':</strong> ' + r2[1] + '</span>'; });
-    b.innerHTML = hh + '</div>';
-  }
 
   // ---------- staff panel: the daily-operations dashboard ----------
   var AG = null, AG60 = null, selDay = null, FLEET = null, ftab = 'on';
