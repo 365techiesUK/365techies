@@ -33,14 +33,25 @@ if (!defined('TM_LIB')) {
     $TM_RATE_PER_DAY = 60;     // daily ceiling - a runaway loop stops here
     $TM_DRYRUN       = false;  // true = validate + log, never call the API
 
-    /** Read credentials from the server-only key file. Returns [user, key] or ['','']. */
+    /**
+     * Read credentials from the server-only key file. Returns [user, key] or ['',''].
+     *
+     * TWO filenames are accepted, on purpose. api/pcm-textmagic.php came first and
+     * is what the existing SMS reminder cron (pcm-remind.php) requires, using
+     * $TM_USER; api/tm-key.php is the newer name and uses $TM_USERNAME. Reading
+     * both means one key file serves every caller and nobody has to maintain the
+     * same secret twice - whichever exists wins, older convention first.
+     */
     function tm_creds() {
-        $f = __DIR__ . '/tm-key.php';
-        if (!is_file($f)) return array('', '');
-        $src = (string)@file_get_contents($f);
-        $u = preg_match('/\$TM_USERNAME\s*=\s*[\'"]([^\'"]+)[\'"]/', $src, $m1) ? $m1[1] : '';
-        $k = preg_match('/\$TM_KEY\s*=\s*[\'"]([^\'"]+)[\'"]/', $src, $m2) ? $m2[1] : '';
-        return array($u, $k);
+        foreach (array('/pcm-textmagic.php', '/tm-key.php') as $name) {
+            $f = __DIR__ . $name;
+            if (!is_file($f)) continue;
+            $src = (string)@file_get_contents($f);
+            $u = preg_match('/\$TM_USER(?:NAME)?\s*=\s*[\'"]([^\'"]+)[\'"]/', $src, $m1) ? $m1[1] : '';
+            $k = preg_match('/\$TM_KEY\s*=\s*[\'"]([^\'"]+)[\'"]/', $src, $m2) ? $m2[1] : '';
+            if ($u !== '' && $k !== '') return array($u, $k);
+        }
+        return array('', '');
     }
 
     function tm_configured() { list($u, $k) = tm_creds(); return $u !== '' && $k !== ''; }
