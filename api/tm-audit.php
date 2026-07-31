@@ -205,8 +205,9 @@ if (is_readable($DATA)) {
     }
 }
 
+/* format as a string: a raw float serialises as 49.100000000000001421... */
 $pct = $stat['clients_checked'] > 0
-    ? round(100 * $stat['textable_mobile'] / $stat['clients_checked'], 1) : 0;
+    ? (float)number_format(100 * $stat['textable_mobile'] / $stat['clients_checked'], 1, '.', '') : 0;
 
 $verdict = $pct >= 60 ? 'good - SMS is worth wiring'
         : ($pct >= 25 ? 'partial - SMS would reach some, worth a top-up first'
