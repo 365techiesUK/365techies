@@ -830,6 +830,7 @@ def wifi_optimizer():
               <button type="button" class="button primary" id="wf-go">&#9654;&nbsp; Start live test</button>
               <button type="button" class="button ghost" id="wf-sound" aria-pressed="false" title="Tick faster when the signal is better, so you can listen instead of looking">&#128266;&nbsp; Sound off</button>
               <button type="button" class="button ghost" id="wf-mark" disabled>&#128205;&nbsp; Save this room</button>
+              <button type="button" class="button ghost" data-ttshare data-share-title="Free WiFi Signal Test" data-share-text="Find the best WiFi spot in your home - free test, no download:">Share this free tool</button>
             </div>
             <p class="wf__hint mono" id="wf-hint">Tip: turn sound on and walk slowly &mdash; the ticks speed up as the connection improves, so you don&rsquo;t have to stare at the screen.</p>
             <p class="wf__hint mono" style="margin-top:.35rem">A <strong>connection-quality</strong> score from real latency &amp; stability &mdash; not radio bars (no website can read those).</p>
@@ -4749,6 +4750,7 @@ SPEEDTEST_WIDGET = r'''    <section class="section" aria-label="Live broadband s
             <div class="spd-actions">
               <button type="button" class="button spd-ghost" id="spd-copy">Copy results</button>
               <button type="button" class="button spd-ghost" id="spd-save">Download result card</button>
+              <button type="button" class="button spd-ghost" data-ttshare data-share-title="Free Broadband Speed Test" data-share-text="Check your real broadband speed - free, no app needed:">Share this free tool</button>
             </div>
             <div class="spd-fix">
               <h3>Slower than you pay for?</h3>
@@ -11797,6 +11799,7 @@ SPECCHECK_TOOL = r'''    <section class="section" aria-label="PC spec checker" i
               <button type="button" class="button primary" id="spc-dl">Download my spec sheet</button>
               <button type="button" class="button spc-ghost" id="spc-copy">Copy as text</button>
               <button type="button" class="button spc-ghost" id="spc-again">Scan again</button>
+              <button type="button" class="button spc-ghost" data-ttshare data-share-title="Free PC Hardware Checker" data-share-text="See your computer's full spec in one click - free, in your browser:">Share this free tool</button>
             </div>
           </div>
           <div class="spc-grid" id="spc-grid"></div>
@@ -12388,6 +12391,7 @@ GPUBENCH_TOOL = r'''    <section class="section" id="gputool" aria-label="Graphi
               <div class="gpb-actions" style="justify-content:center;margin-top:1rem">
                 <button class="gpb-btn ghost" id="gpbSave">Download score card</button>
                 <button class="gpb-btn ghost" id="gpbCopy">Copy results</button>
+                <button type="button" class="gpb-btn ghost" data-ttshare data-share-title="Free GPU Benchmark" data-share-text="Test your graphics card in your browser - free, no download:">Share this free tool</button>
               </div>
             </div>
             <div class="gpb-verdict" id="gpbVerdict"></div>

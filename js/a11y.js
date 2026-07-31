@@ -285,6 +285,37 @@
     noteTool(slug);
     ev('report_generated', { tool: slug, page: location.pathname });
   };
+
+  /* ---- native share on tool result cards ([data-ttshare] buttons).
+     navigator.share opens the phone's own sheet (WhatsApp/email/SMS);
+     desktop/Firefox fall back to copying an invite + link. No third-party
+     scripts — the GOV.UK lesson is that share WIDGETS go unused, but a
+     personal "send this to someone" on a RESULT is a different animal. ---- */
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-ttshare]');
+    if (!b) return;
+    var url = location.origin + location.pathname;
+    var text = b.getAttribute('data-share-text') || '';
+    var slug = toolPage || location.pathname.replace(/^\/|\/$/g, '');
+    var payload = { title: b.getAttribute('data-share-title') || document.title,
+                    text: text, url: url };
+    if (navigator.share) {
+      navigator.share(payload).then(function () {
+        ev('share', { tool: slug, method: 'native' });
+      }).catch(function () { /* user closed the sheet - not an event */ });
+    } else {
+      var done = function (ok) {
+        var old = b.textContent;
+        b.textContent = ok ? 'Link copied — paste it anywhere' : 'Copy failed — copy the address bar';
+        setTimeout(function () { b.textContent = old; }, 2600);
+        if (ok) ev('share', { tool: slug, method: 'copy' });
+      };
+      try {
+        navigator.clipboard.writeText(text + ' ' + url).then(function () { done(true); },
+          function () { done(false); });
+      } catch (cerr) { done(false); }
+    }
+  });
   document.addEventListener('click', function (e) {
     var a = e.target.closest('a[href], [data-wc-prefill], [data-search-open]');
     if (!a) return;

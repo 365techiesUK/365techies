@@ -1046,7 +1046,7 @@ def page(slug, title, desc, og_title, schema_json, content, og_image=None):
     </div>
   </div>
   <script type="module" src="/js/interior.min.js?v=22"></script>
-  <script src="/js/a11y.min.js?v=7" defer></script>
+  <script src="/js/a11y.min.js?v=8" defer></script>
   <script src="/js/forms.min.js?v=8" defer></script>
   <script src="/js/search.min.js?v={TODAY}" defer></script>
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
@@ -1528,6 +1528,7 @@ WCHECK_TOOL = r'''    <section class="section" aria-label="Free website checker"
               <div class="wc-fix-cta">
                 <a class="button primary" href="/contact/?topic=website-rebuild">Get my free fix-it plan &#8594;</a>
                 <a class="button wc-ghost" href="/web-design-hosting/">Our web design &amp; hosting</a>
+                <button type="button" class="button wc-ghost" data-ttshare data-share-title="Free Website Checker" data-share-text="Check any website's speed, SEO and security in 30 seconds - free:">Share this free tool</button>
               </div>
             </div>
           </div>
@@ -2635,6 +2636,7 @@ PCBENCH_TOOL = r'''    <section class="section" aria-label="PC benchmark" id="be
             <div class="bm-actions">
               <button type="button" class="button bm-ghost" id="bm-dl">Download score card &#8595;</button>
               <button type="button" class="button bm-ghost" id="bm-copy">Copy my results</button>
+              <button type="button" class="button bm-ghost" data-ttshare data-share-title="Free PC Benchmark" data-share-text="Test how fast your computer really is - free, in your browser, no download:">Share this free tool</button>
             </div>
             <div class="bm-fix" id="bm-fix"></div>
           </div>
@@ -3651,6 +3653,7 @@ VBUILDER_TOOL = r'''    <section class="section" aria-label="Victron system buil
           <div class="vb-actions">
             <button type="button" class="button primary" id="vb-dl">Download build sheet &#8595;</button>
             <button type="button" class="button vb-ghost" id="vb-copy">Copy full build list</button>
+            <button type="button" class="button vb-ghost" data-ttshare data-share-title="Free Victron System Builder" data-share-text="Size a campervan solar and battery system honestly - free tool:">Share this free tool</button>
           </div>
           <p class="vb-note">Indicative starter build, not a full design &mdash; battery bank size, alternator limits, run lengths and ventilation all change the answer, and every van, boat and building is different. We check everything before we fit anything.</p>
           <div class="vb-fix">
@@ -4002,6 +4005,7 @@ PCBUILD_TOOL = r'''    <section class="section" aria-label="Custom PC builder" i
           <div class="pb-actions">
             <button type="button" class="button primary" id="pb-dl">Download build sheet &#8595;</button>
             <button type="button" class="button pb-ghost" id="pb-copy">Copy build plan</button>
+            <button type="button" class="button pb-ghost" data-ttshare data-share-title="Free Custom PC Builder" data-share-text="Plan a custom PC build for your budget - free tool:">Share this free tool</button>
           </div>
           <p class="pb-note">Honest guidance, not gospel: component generations move fast, so we point you at the right <em>class</em> of part for your money and link to live listings rather than quoting prices that would be stale by Friday. Sales (and GPU price swings!) can move the sweet spots.</p>
           <div class="pb-fix">
