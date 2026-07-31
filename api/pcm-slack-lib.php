@@ -144,8 +144,11 @@ function slk_plain($s) {
     $s = (string)$s;
     $s = preg_replace('/<https?:[^|>]+\|([^>]*)>/', '$1', $s);   // <url|label> -> label
     $s = preg_replace('/<(https?:[^>]+)>/', '$1', $s);           // <url> -> url
-    // {0,1} not ? on purpose: "?>" here would be inside a string and harmless,
-    // but it reads as a PHP closing tag to every human and half the linters.
+    // {0,1} rather than a bare quantifier here, so this line contains no
+    // question-mark-then-angle-bracket pair. In a STRING that pair is harmless,
+    // but PHP ends a // comment at a closing tag as well as at a newline - so
+    // writing the pair inside a comment silently drops the rest of the file out
+    // of PHP mode. That is exactly how this file first shipped broken.
     $s = preg_replace('/<[@#][A-Z0-9]+(\|[^>]*){0,1}>/', '', $s);  // user/channel mentions
     $s = str_replace(array('&lt;', '&gt;', '&amp;'), array('<', '>', '&'), $s);  // Slack's own escaping
     $s = preg_replace('/[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/', '', $s);
