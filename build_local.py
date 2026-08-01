@@ -8,14 +8,26 @@ from build_pages import (add, graph, crumb, webpage, service, faqpage,
                          faq_html, cta, hero, bc, bc_sub, crumb_sub, tiles, grid_cards, checklist,
                          steps, reviews_block, SITE, write_all)
 
-REVPOOL = [
- ("Can&rsquo;t fault the skill and attention the 365 guys give. Confidence that things keep ticking over with their regular maintenance checks.", "Rob Hazell"),
- ("Your service and support are unbeatable and delivered with patience and a smile.", "John Holloway"),
- ("A friendly team, there to help when needed. Nice to know our laptops are kept up to date and virus free. Worth the monthly fee.", "Alan Bevis"),
- ("The service I get with 365 techies is amazing — always on the other end of the phone.", "Vince Jones"),
- ("Excellent service. Their attention is still brilliant. Highly recommended.", "Peter Moody"),
- ("I&rsquo;m always so grateful for 365&rsquo;s brilliant service and how you come to the rescue immediately I have a problem.", "Free Spirit"),
-]
+# ⚠️ DERIVED, NEVER HAND-WRITTEN. This used to be a second, separately-typed list
+# of the same customers' Google reviews - and it had drifted. All six names in it
+# also appear in build_extra.REVIEWS, and every one differed: four were silently
+# truncated, one paraphrased, and John Holloway had been given words with only
+# 36% overlap with what he actually wrote ("Your service and support are
+# unbeatable and delivered with patience and a smile." against his real "As usual
+# your service and support have been immaculate when required recently.").
+#
+# These are REAL NAMED PEOPLE and the output is marked up as Review structured
+# data for Google. Attributing words to a named customer that they did not write
+# is exactly what the UK fake-review rules now in force prohibit - and it is
+# simply wrong regardless of the law.
+#
+# So there is now ONE source of truth. build_extra.REVIEWS holds (name, quote)
+# verbatim from the live Google profile; reviews_block() wants (quote, name), so
+# the order is flipped here and nothing is re-typed. If a quote needs shortening
+# for layout, shorten it in the ONE list and know that you have edited a real
+# person's words - do not fork it again.
+from reviews_data import REVIEWS as _CANON_REVIEWS
+REVPOOL = [(q, n) for (n, q) in _CANON_REVIEWS]
 
 # ======================================================= LOCAL AREA PAGES
 def local_services(town):
