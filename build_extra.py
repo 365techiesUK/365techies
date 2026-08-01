@@ -29,6 +29,7 @@ from wifi_data import WIFI_PAGES
 from emergency_internet_data import EMERGENCY_PAGES
 from seo_wave_data import SEO_WAVE_PAGES
 from seo_wave4_data import SEO_WAVE4_PAGES
+from seo_wave5_data import SEO_WAVE5_PAGES
 try:
     from new_pages_data import DELL_COMPARE_TABLES
 except ImportError:
@@ -19790,6 +19791,9 @@ for _np in SEO_WAVE_PAGES:
 # Wave 4 kept in its own module rather than appended to SEO_WAVE_PAGES: appending
 # to that list is what produced the `},,` trailing-comma bug in wave 2.
 for _np in SEO_WAVE4_PAGES:
+    build_new_page(_np)
+
+for _np in SEO_WAVE5_PAGES:
     build_new_page(_np)
 
 # ---------------------------------------------------------------------------

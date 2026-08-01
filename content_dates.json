@@ -964,6 +964,10 @@
   "h": "d8ac94fbef2a7e4a",
   "last": "2026-08-01"
  },
+ "fix-shared-folder-error-0x80004005": {
+  "first": "2026-08-01",
+  "h": "37d94f2497e80e62"
+ },
  "former-it-provider-controls-microsoft-365": {
   "first": "2026-07-28",
   "h": "ee6fb1850c447ded",
@@ -2744,10 +2748,18 @@
   "h": "fed21073587d0c77",
   "last": "2026-08-01"
  },
+ "share-files-small-office-without-server": {
+  "first": "2026-08-01",
+  "h": "5815beca72688835"
+ },
  "share-internet-between-two-buildings": {
   "first": "2026-07-28",
   "h": "dd61d6adee26c61c",
   "last": "2026-08-01"
+ },
+ "shared-folder-read-only-cant-save-windows-11": {
+  "first": "2026-08-01",
+  "h": "765804b887aa26f1"
  },
  "shared-folders-not-working-after-windows-11-24h2-update": {
   "first": "2026-07-28",
@@ -3239,10 +3251,18 @@
   "h": "fcb2a086d34dfdda",
   "last": "2026-08-01"
  },
+ "windows-11-cant-access-windows-10-shared-folder": {
+  "first": "2026-08-01",
+  "h": "c5deb74f083448a8"
+ },
  "windows-11-cant-see-network-computers": {
   "first": "2026-07-28",
   "h": "63cc17c2243912eb",
   "last": "2026-08-01"
+ },
+ "windows-11-network-credentials-shared-folder": {
+  "first": "2026-08-01",
+  "h": "215eaccfe217e07f"
  },
  "windows-11-support": {
   "first": "2026-07-28",
