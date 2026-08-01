@@ -741,6 +741,9 @@ SNIPPETS = {
     },
     "firewall-licence-expired-what-happens": {
         "title": "What Happens When Your Firewall Licence Expires, By Vendor",
+        # Title-only entry left the description still being amputated by
+        # _meta_desc at position 6.2. An override must set BOTH keys to fix a cut.
+        "desc": "SonicWall, Fortinet, WatchGuard, Sophos and Cisco Meraki behave differently when a firewall licence lapses. What stops, what keeps working, by vendor.",
     },
     "stop-using-onedrive-without-losing-files": {
         "title": "How to Stop Using OneDrive Without Losing Files",
@@ -778,6 +781,7 @@ SNIPPETS = {
     },
     "starlink-internet": {
         "title": "Starlink Satellite Internet: Residential &amp; Roaming",
+        "desc": "Fast internet anywhere, including rural not-spots. We help you pick the right Starlink plan for how you actually use it, install the dish and support it.",
     },
     "ruckus-access-point-end-of-life": {
         "title": "RUCKUS Access Point End-of-Life Dates: R310 to R770",
@@ -921,6 +925,41 @@ SNIPPETS = {
     "outlook-not-responding": {
         "desc": "Outlook showing Not Responding, frozen or hanging? The safe, ordered fix: safe mode, add-ins, repair Office, then trim the data file down.",
     },
+
+    # ---- local town pages, 1 Aug 2026. These four shared one boilerplate
+    # description ("...no call-out fee, the same two faces every visit, and rated
+    # 4.9 on Google") across every town, so the SERP showed the same sentence for
+    # Blandford, Christchurch and the New Forest. Identical text gives a searcher
+    # no reason to prefer the result that actually covers their town. Each now
+    # names the villages that town page genuinely serves, taken from the lede and
+    # intro in build_local.py (LOCAL) and build_pages.py (REPAIR_TOWNS) - no new
+    # claims, just the ones already on the page surfaced into the snippet.
+    "it-support-blandford-forum": {
+        "title": "IT Support Blandford Forum | North Dorset, No Call-Out Fee",
+        "desc": "IT support across Blandford Forum, Pimperne, Bryanston and the Blackmore Vale. No call-out fee, the same two faces every visit, rated 4.9 on Google.",
+    },
+    "it-support-christchurch": {
+        "title": "IT Support Christchurch and Highcliffe | No Call-Out Fee",
+        "desc": "IT support from the Quay out to Mudeford and Highcliffe. No call-out fee, remote help in minutes, on-site when you need it, rated 4.9 on Google.",
+    },
+    # The one genuine differentiator in the set: the New Forest page already
+    # offers Starlink for rural not-spots, which no rival locally does. Leading
+    # with it earns the click that "IT support, same as everywhere" does not.
+    "it-support-new-forest": {
+        "title": "IT Support New Forest | Starlink for Rural Not-Spots",
+        "desc": "IT support from Lyndhurst and Brockenhurst to Lymington, New Milton and Ringwood, plus Starlink satellite internet where forest broadband is slow.",
+    },
+    "computer-repair-wimborne": {
+        "desc": "Broken or slow computer in Wimborne, Colehill or Corfe Mullen? Free collection, 12-month warranty, and no fix means no fee. Family-run since 1995.",
+    },
+
+    # NB the two remaining amputated descriptions that still sit at a clickable
+    # position - firewall-licence (6.2) and starlink (20.5) - are fixed at their
+    # EXISTING entries above, not repeated here; a second entry for the same slug
+    # silently discards the first. tools_check_snippets.py --gsc finds 101 cut
+    # descriptions in total, but the other 99 rank between position 26 and 88,
+    # where the snippet is not what costs the click. Those are left alone on
+    # purpose - rewriting a snippet for a page nobody sees is churn, not traffic.
 }
 
 

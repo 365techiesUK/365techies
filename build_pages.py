@@ -1101,7 +1101,15 @@ BUSINESS_NODE = {
     "name": "365 Techies", "legalName": "365 Techies Limited", "url": SITE + "/",
     "telephone": "+441202775566", "email": "help@365techies.co.uk", "foundingDate": "1995",
     "image": SITE + "/og-image.jpg", "logo": SITE + "/logo.jpg", "priceRange": "££",
-    "alternateName": "365 Techies Ltd",
+    # Every name real people and real backlinks actually use. "365techies" as one
+    # word is not cosmetic: the 3-month GSC export shows "365 techies" (spaced)
+    # at position 1 but "365techies" at position 29 on 96 impressions - people
+    # searching for this business BY NAME and landing on page three. The site
+    # only ever wrote the spaced form in prose, so nothing told Google they are
+    # the same entity. "365 Computers" is the genuine former trading name (see
+    # /about/, "back when we traded as 365 Computers") and is what Glassdoor,
+    # Tracxn and a pile of directory listings still call the business.
+    "alternateName": ["365 Techies Ltd", "365techies", "365 Computers", "365 Computers Limited"],
     "slogan": "The IT support experts",
     "description": "Family-run, leading Managed Service Provider (MSP) established in 1995 — Dell hardware specialists, Microsoft partners and certified Microsoft Office Specialists. Fully managed monthly IT support, cybersecurity, backups and cloud, plus one-off computer repairs and refurbished Dell hardware, for homes and small businesses across Bournemouth, Poole and Dorset.",
     "currenciesAccepted": "GBP",
@@ -1131,7 +1139,8 @@ BUSINESS_NODE = {
                "https://www.helpandkindness.co.uk/service/7188/patient-computer-%26-tech-help-for-older-people-in-dorset"],
 }
 WEBSITE_NODE = {"@type": "WebSite", "@id": SITE + "/#website", "url": SITE + "/",
-                "name": "365 Techies", "inLanguage": "en-GB", "publisher": {"@id": SITE + "/#business"}}
+                "name": "365 Techies", "alternateName": ["365techies", "365 Techies Ltd"],
+                "inLanguage": "en-GB", "publisher": {"@id": SITE + "/#business"}}
 
 def graph(nodes):
     ids = {n["@id"] for n in nodes if isinstance(n, dict) and n.get("@id")}

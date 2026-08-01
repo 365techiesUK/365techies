@@ -765,6 +765,34 @@ with open(os.path.join(bp.BASE, "projects-feed.json"), "w", encoding="utf-8") as
 print("Wrote projects-feed.json (%d project(s), %d milestones)"
       % (len(_feed["projects"]), sum(len(p["milestones"]) for p in _feed["projects"])))
 
+# ---------------- temporary legacy-URL sitemap ----------------
+# Asks Google to recrawl the old WordPress URLs so it sees the 301s. See
+# legacy_urls.py for the full reasoning. Deliberately NOT referenced from
+# robots.txt or sitemap.xml - it is submitted by hand in Search Console so its
+# coverage can be watched as the progress metric.
+#
+# The expiry is enforced, not suggested: a "temporary" file with no deadline in
+# the code is a permanent file. After EXPIRES the build STOPS, because leaving a
+# sitemap of redirecting URLs up forever asks Google to keep them indexed, which
+# is the exact opposite of why it was created.
+import legacy_urls as _lg
+if bp.TODAY > _lg.EXPIRES:
+    raise SystemExit(
+        "\n*** legacy sitemap expired on %s ***\n"
+        "Delete: legacy_urls.py, this block in build_blog.py, sitemap-legacy.xml,\n"
+        "and remove the sitemap from Search Console. It has done its job (or it\n"
+        "has not, and leaving it up will not help).\n" % _lg.EXPIRES)
+_lgx = ['<?xml version="1.0" encoding="UTF-8"?>',
+        '<!-- TEMPORARY. Old pre-2026-06-16 URLs, listed so Google recrawls them and',
+        '     sees their 301s. Remove after %s. Not linked from robots.txt. -->' % _lg.EXPIRES,
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+for _u, _imp in _lg.LEGACY:
+    _lgx.append("  <url><loc>%s%s</loc><lastmod>%s</lastmod></url>" % (bp.SITE, _u, bp.TODAY))
+_lgx.append("</urlset>")
+with open(os.path.join(bp.BASE, "sitemap-legacy.xml"), "w", encoding="utf-8") as f:
+    f.write("\n".join(_lgx) + "\n")
+print("Wrote sitemap-legacy.xml (%d old URLs, expires %s)" % (len(_lg.LEGACY), _lg.EXPIRES))
+
 # ---------------- custom 404 page ----------------
 _404_cards = "".join(
     f'          <a class="post-card" href="{h}"><h3>{l}</h3><span class="post-card__more">Go &#8594;</span></a>\n'
