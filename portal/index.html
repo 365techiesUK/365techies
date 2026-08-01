@@ -57,7 +57,7 @@
   <meta name="twitter:image" content="https://365techies.co.uk/og-image.jpg" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-  <link rel="manifest" href="/site.webmanifest" />
+  <link rel="manifest" href="/portal/app.webmanifest" />
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preconnect" href="https://fonts.bunny.net" />
   <link rel="preconnect" href="https://fonts.bunny.net" crossorigin />
@@ -640,9 +640,32 @@
   </aside>
 
   <main id="main">
-<section class="section" style="padding-top:6.5rem"><div class="wrap" style="max-width:880px"><div id="p365app"><noscript><p>The customer portal needs JavaScript switched on. Or just ring us: 01202 775566.</p></noscript><p style="color:#9fb5d3">Loading the portal&hellip;</p></div><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">portal build 01 Aug 2026 &middot; 14fb506199</p><script>
+<section class="section" style="padding-top:6.5rem"><div class="wrap" style="max-width:880px"><div id="p365app"><noscript><p>The customer portal needs JavaScript switched on. Or just ring us: 01202 775566.</p></noscript><p style="color:#9fb5d3">Loading the portal&hellip;</p></div><div id="p365inst" hidden style="text-align:center;margin:1rem 0 0"><button type="button" id="p365instb" style="background:transparent;border:1px solid #2a3b63;color:#9fb5d3;border-radius:999px;padding:.5rem 1rem;font:inherit;font-size:.85rem;cursor:pointer">&#128241;&nbsp; Put 365 Techies on your home screen</button><p style="font-size:.75rem;color:#9fb5d3;opacity:.7;margin:.4rem 0 0">Opens straight to your visits and messages. No app store.</p></div><script>
 (function () {
-  var P365BUILD = '14fb506199';
+  // Suppress the browser's own banner, keep the event, and let the customer
+  // decide. Nothing renders unless the browser fires this - so no dead button
+  // on iOS (where installing is a manual Share > Add to Home Screen) and none
+  // once already installed.
+  var saved = null;
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault(); saved = e;
+    var w = document.getElementById('p365inst'); if (w) w.hidden = false;
+  });
+  window.addEventListener('appinstalled', function () {
+    var w = document.getElementById('p365inst'); if (w) w.hidden = true;
+    saved = null;
+    try { if (window.gtag) gtag('event', 'portal_installed'); } catch (e) {}
+  });
+  document.addEventListener('click', function (ev) {
+    var b = ev.target && ev.target.closest ? ev.target.closest('#p365instb') : null;
+    if (!b || !saved) return;
+    saved.prompt();
+    saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
+  });
+})();
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">portal build 01 Aug 2026 &middot; f89f56988b</p><script>
+(function () {
+  var P365BUILD = 'f89f56988b';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.

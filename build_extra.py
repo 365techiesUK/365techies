@@ -25405,6 +25405,42 @@ def write_portal_page():
                + '<p style="color:#9fb5d3">Loading the portal&hellip;</p></div>'
                # the visible build line lets a human answer "am I on the new portal?" in one
                # glance - the recurring stale-tab complaint was undiagnosable without it
+               # "Put this on your phone" - OFFERED, never sprung. The browser's own
+               # install prompt is suppressed and saved, and this button (hidden until
+               # the browser confirms the page is actually installable) fires it on a
+               # deliberate tap. That is the whole difference between the marketing
+               # site's ambush - which the owner himself mistook for a third party -
+               # and something a customer chooses. Sits at the foot, after the
+               # dashboard, where someone who likes the portal will find it.
+               + '<div id="p365inst" hidden style="text-align:center;margin:1rem 0 0">'
+               + '<button type="button" id="p365instb" style="background:transparent;border:1px solid #2a3b63;color:#9fb5d3;'
+               + 'border-radius:999px;padding:.5rem 1rem;font:inherit;font-size:.85rem;cursor:pointer">'
+               + '&#128241;&nbsp; Put 365 Techies on your home screen</button>'
+               + '<p style="font-size:.75rem;color:#9fb5d3;opacity:.7;margin:.4rem 0 0">Opens straight to your visits and messages. No app store.</p></div>'
+               + '''<script>
+(function () {
+  // Suppress the browser's own banner, keep the event, and let the customer
+  // decide. Nothing renders unless the browser fires this - so no dead button
+  // on iOS (where installing is a manual Share > Add to Home Screen) and none
+  // once already installed.
+  var saved = null;
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault(); saved = e;
+    var w = document.getElementById('p365inst'); if (w) w.hidden = false;
+  });
+  window.addEventListener('appinstalled', function () {
+    var w = document.getElementById('p365inst'); if (w) w.hidden = true;
+    saved = null;
+    try { if (window.gtag) gtag('event', 'portal_installed'); } catch (e) {}
+  });
+  document.addEventListener('click', function (ev) {
+    var b = ev.target && ev.target.closest ? ev.target.closest('#p365instb') : null;
+    if (!b || !saved) return;
+    saved.prompt();
+    saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
+  });
+})();
+</script>'''
                + '<p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">'
                + 'portal build __P365DATE__ &middot; __P365BUILD__</p>'
                + beacon
@@ -25416,6 +25452,21 @@ def write_portal_page():
                    "365 Techies customer portal", schema, content)
     html = html.replace('<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />',
                         '<meta name="robots" content="noindex, nofollow" />\\n  <meta name="referrer" content="no-referrer" />', 1)
+    # The portal - and ONLY the portal - is worth installing. The site-wide
+    # manifest declares display:"browser" on purpose: a phone offering to install
+    # the MARKETING site produced a prompt the owner himself mistook for a third
+    # party, and an installed brochure site has no address bar, no back button
+    # and (no service worker) no offline page. The portal is a genuine app: a
+    # customer with a "365 Techies" icon opens straight onto their visits and
+    # messages. Swap in a manifest scoped to /portal/ for this page only.
+    #
+    # ⚠️ DELIBERATELY NO SERVICE WORKER. A service worker caches, and staleness
+    # is this portal's oldest recurring complaint - the freshness beacon exists
+    # solely because of it. Adding a cache layer here would fight the beacon and
+    # risk showing a customer last week's bookings. Installability without a
+    # service worker is browser-dependent, and that trade is the right way round.
+    html = html.replace('<link rel="manifest" href="/site.webmanifest" />',
+                        '<link rel="manifest" href="/portal/app.webmanifest" />', 1)
     import os as _os, hashlib as _hl, re as _re, json as _json, datetime as _dt
     d = _os.path.join(bp.BASE, "portal")
     _os.makedirs(d, exist_ok=True)

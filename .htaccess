@@ -195,13 +195,29 @@ ErrorDocument 404 /404.html
 </FilesMatch>
 
 # ============================================================
+# MIME types Apache does not know by default
+# ============================================================
+# .webmanifest was being served as text/html, which is wrong and which some
+# browsers reject outright. Note the manifest deliberately declares
+# "display": "browser" - that is what stops phones offering to INSTALL the
+# marketing site as an app. It was "standalone", and the owner hit the prompt
+# on his own site and assumed a third party was installing something; a
+# customer would read it far less charitably. There is no service worker, so
+# an installed copy would have had no address bar, no back button and no
+# offline page - strictly worse than a tab. The manifest still earns its keep
+# for the mobile theme colour and the icon/name on a deliberate bookmark.
+<IfModule mod_mime.c>
+  AddType application/manifest+json .webmanifest
+</IfModule>
+
+# ============================================================
 # Performance: compression (Brotli preferred, gzip fallback)
 # ============================================================
 <IfModule mod_brotli.c>
-  AddOutputFilterByType BROTLI_COMPRESS text/html text/css text/plain text/xml application/javascript application/json image/svg+xml
+  AddOutputFilterByType BROTLI_COMPRESS text/html text/css text/plain text/xml application/javascript application/json application/manifest+json image/svg+xml
 </IfModule>
 <IfModule mod_deflate.c>
-  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml application/javascript application/json image/svg+xml
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml application/javascript application/json application/manifest+json image/svg+xml
 </IfModule>
 
 # ============================================================
