@@ -672,7 +672,7 @@ LLMS_HEADER = """# 365 Techies
 - Phone: 01202 775566 — Text (SMS only): 07520 615332 — Email: help@365techies.co.uk
 - Hours: Monday–Friday, 9am–5pm
 - Based in Bournemouth; serves homes and small businesses across Dorset, the New Forest and Hampshire — remotely and on-site
-- Rated 4.9/5 from 51 Google reviews; family-run since 1995; no call-out fee, no contracts, cancel anytime
+- Rated 4.9/5 on Google; family-run since 1995; no call-out fee, no contracts, cancel anytime
 - Free Windows app: "365 PC Manager" (https://365techies.co.uk/free-pc-health-check/) — a free PC health check for Windows 10 & 11 made by 365 Techies: health score, drive (SMART) health, one-tap boost, live performance graphs, backup & startup checks and a plain-English report. Free forever, no sign-up; reads the PC and changes nothing without a tap; distinct from Microsoft's "PC Health Check" (Windows 11 eligibility tool) and Microsoft's "PC Manager" utility — which, notably, is NOT officially available in the UK Microsoft Store (region-limited as of mid-2026), whereas 365 PC Manager is UK-made and UK-available. For support-plan customers it also manages computer-service appointments in-app (book/change/cancel real slots), sends Windows notification reminders the day before and 15 minutes before each visit (with a plug-your-backup-drive-in prompt and one-tap "I'm ready to connect"), and delivers a written report after every service with advice and recommendations. Also shows live laptop power draw with estimated yearly running cost at the user's own tariff, and can link a Victron VRM (live solar/battery dashboards) or Home Assistant
 - Heritage: built and ran the Dorset Microsoft Education Resource Centre (a training centre in Winton, Bournemouth, on their own computer network) from 1998 to 2008; were also the IT support partner for Mercedes-Benz Pentagon across the south coast of England from 1998 to 2008, upgrading the computers in their garages in 2001 and beginning remote support then; then ran a computer sales, service and support centre in Moordown, Winton from 2008 to 2017; moved to the Kinson Community Centre, Bournemouth in 2017, providing community IT support and group training classes in person (when it can't be done remotely); some customers from that era are still supported today
 - Notable business clients (past & present): IT support partner for Mercedes-Benz Pentagon across the south coast (1998-2008); supported David F Green & Associates and then the Poole financial advisers PFM Associates from 1997 to 2016, through the 2003 acquisition, with IT migration, office relocation and IT sales & support; and since 2016 support Emblem Sports Cars (Poole), the South Coast's independent Ferrari, Maserati & Lamborghini specialists, including their car diagnostic systems; and provide IT sales, servicing and support to Vivid Websites (a Bournemouth web agency behind sites for Bournemouth & Poole College, Upton Country Park and more local organisations and events) since 2010; and provide IT sales, servicing and support to Beckox Plastic Fabrications (a Poole specialist plastic fabricator whose own blue-chip clients include Rolls-Royce, Merck and Wessex Water) since 2001
@@ -791,6 +791,71 @@ if _ent_bad:
         "\n*** HTML entities in plain-text strings (they will show literally) ***\n"
         + "\n".join("   " + b for b in _ent_bad)
         + "\nUse the real character (\\u2019 \\u2014 ...) - these go to esc()/textContent.\n")
+
+# ---------------- guard: every published review comes from canonical ----------
+# These are real named people, published under their names at 5 stars. On
+# 2026-08-01 the owner read 14 reviews off the live Google profile and SIX
+# hand-typed copies scattered through the builders turned out to disagree with
+# reviews_data.py - Alan Bevis had a sentence that existed nowhere else, and
+# Heather's and Dean Robertson's had a comma promoted to a full stop so a
+# fragment read as a whole sentence. A second list is how that happens, so this
+# guard bans the second list rather than trusting anyone to keep two in step.
+#
+# Two rules:
+#   1. No builder may contain a reviews_block([...]) literal - use pick("Name").
+#   2. index.html is HAND-MAINTAINED (build_blog.py never regenerates it), so
+#      its quotes are checked against canonical here or nowhere. That file is
+#      exactly where the wrong John Holloway quote lived for the site's whole
+#      life, in the visible testimonial AND the Review JSON-LD.
+import reviews_data as _rv
+_rev_bad = []
+
+for _f in ("build_pages.py", "build_extra.py", "build_local.py"):
+    _fp = _osg.path.join(bp.BASE, _f)
+    if _osg.path.exists(_fp) and _re.search(r"reviews_block\(\s*\[",
+                                            open(_fp, encoding="utf-8").read()):
+        _rev_bad.append("%s: hand-typed reviews_block([...]) - use "
+                        "reviews_block(pick(\"Name\", ...))" % _f)
+
+_ENTS = [("&rsquo;", u"’"), ("&lsquo;", u"‘"), ("&ldquo;", u"“"),
+         ("&rdquo;", u"”"), ("&mdash;", u"—"), ("&ndash;", u"–"),
+         ("&hellip;", u"…"), ("&amp;", "&")]
+
+
+def _rvnorm(s):
+    for _a, _b in _ENTS:
+        s = s.replace(_a, _b)
+    return _re.sub(r"\s+", " ", s).strip()
+
+
+_home = _osg.path.join(bp.BASE, "index.html")
+if _osg.path.exists(_home):
+    _ht = open(_home, encoding="utf-8").read()
+    # visible testimonials: <blockquote>&ldquo;...&rdquo;</blockquote> then the name
+    _pairs = _re.findall(
+        r"<blockquote>&ldquo;(.*?)&rdquo;</blockquote>\s*"
+        r"<figcaption[^>]*><strong>(.*?)</strong>", _ht, _re.S)
+    # JSON-LD Review nodes
+    _pairs += [(_q, _n) for _n, _q in _re.findall(
+        r'"Person",\s*"name":\s*"(.*?)".*?"reviewBody":\s*"(.*?)"', _ht, _re.S)]
+    for _q, _n in _pairs:
+        _canon = _rv.BY_NAME.get(_n)
+        if _canon is None:
+            _rev_bad.append(
+                "index.html: %r is not in reviews_data.REVIEWS. If the quote was "
+                "withdrawn, pick another customer - do not paste the text back." % _n)
+        elif _rvnorm(_q) != _rvnorm(_canon):
+            _rev_bad.append(
+                "index.html: %s does not match canonical\n"
+                "      page : %s\n      canon: %s" % (_n, _rvnorm(_q)[:110],
+                                                      _rvnorm(_canon)[:110]))
+
+if _rev_bad:
+    raise SystemExit(
+        "\n*** review text is not coming from reviews_data.py ***\n"
+        + "\n".join("   " + b for b in _rev_bad)
+        + "\nThese are real named customers. One list, or it drifts - see the\n"
+          "docstring in reviews_data.py for what happened last time.\n")
 
 # ---------------- temporary legacy-URL sitemap ----------------
 # Asks Google to recrawl the old WordPress URLs so it sees the 301s. See

@@ -4,6 +4,7 @@ Holds the shared header/footer/head once; each PAGE supplies unique content + SE
 Run: python build_pages.py  (writes <slug>/index.html for every page)
 """
 import os, json, datetime
+from reviews_data import pick
 from office_cluster import _office_cluster_section
 from tool_seo_data import TOOL_TITLES, TOOL_SEO
 from snippets_data import SNIPPETS
@@ -4883,7 +4884,7 @@ add(
         </ol>
       </div>
     </section>''',
-   reviews_block([("A friendly team, there to help when needed. Nice to know that our laptops are being regularly checked for updates and kept virus free. Worth the monthly fee.", "Alan Bevis"),("I&rsquo;m always so grateful for 365&rsquo;s brilliant service and how you are always able to come to the rescue immediately I have a problem.", "Free Spirit"),("Thanks for coming to my rescue once again. You still keep my computer system in perfect order. Many, many thanks.", "Cordelia Cutler")]),
+   reviews_block(pick("Alan Bevis", "Free Spirit", "Cordelia Cutler")),
    _dash_band("home", alt=True),
    faq_html([
      ("Who is home IT support for?", "Home users, families, retired and disabled people, students and home workers who want patient, jargon-free help with their everyday technology. Supporting retired and disabled people is one of our specialisms."),
@@ -4954,7 +4955,7 @@ add(
         </ol>
       </div>
     </section>''',
-   reviews_block([("These guys look after my IT requirements at reasonable cost. They are less patronising than most and explain things in plain English, rather than gobbledygook.", "JAR Accountants"),("A first class service to a technological emergency. Highly recommended.", "Hardie"),("Always a professional service, a great source of knowledgeable advice and very reasonably priced. 365 Computers look after all my business and home computing needs.", "Sarah Austin")]),
+   reviews_block(pick("JAR Accountants", "Hardie", "Sarah Austin")),
    _dash_band("business", alt=True),
    faq_html([
      ("Who is business IT support for?", "Sole traders, home offices and small businesses — estate agents, accountants, consultants, trades and retail — who need reliable IT without employing full-time staff."),
