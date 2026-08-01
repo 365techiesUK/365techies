@@ -665,7 +665,7 @@ import html as _html
 def _clean(s): return _html.unescape((s or "")).replace("\n", " ").strip()
 LLMS_HEADER = """# 365 Techies
 
-> 365 Techies (365 Techies Limited) is a family-run IT support company and managed service provider, established in 1995, providing monthly IT support and one-off computer & laptop repairs for homes, retired & disabled people, sole traders and small businesses across Bournemouth, Poole and the rest of Dorset, UK. Dell specialists, Microsoft Partner, certified Microsoft Office Specialists and Malwarebytes Partner. Rated 4.9/5 from 51 Google reviews. Phone: 01202 775566. Text (SMS only): 07520 615332.
+> 365 Techies (365 Techies Limited) is a family-run IT support company and managed service provider, established in 1995, providing monthly IT support and one-off computer & laptop repairs for homes, retired & disabled people, sole traders and small businesses across Bournemouth, Poole and the rest of Dorset, UK. Dell specialists, Microsoft Partner, certified Microsoft Office Specialists and Malwarebytes Partner. Rated 4.9/5 on Google. Phone: 01202 775566. Text (SMS only): 07520 615332.
 
 ## Key facts
 - Company: 365 Techies Limited, registered in England & Wales, company number 11073501
