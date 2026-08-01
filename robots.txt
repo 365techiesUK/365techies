@@ -1,6 +1,14 @@
 # robots.txt — 365 Techies (https://365techies.co.uk/)
 # Goal: maximum visibility for search engines AND AI answer engines.
 # Everything is allowed; AI crawlers are explicitly welcomed below.
+#
+# ⚠️ NO Crawl-delay HERE, DELIBERATELY. The live file carried "Crawl-delay: 10"
+# from 2026-06-16 until 2026-08-02 — it was never in this repo, so something
+# added it on the server after migration, and every deploy skipped the file
+# because its hash never changed. Google ignores Crawl-delay, but Bing and
+# others honour it: at 10 seconds a page, one pass over 670 URLs cannot finish
+# in under two hours. That is the exact opposite of the goal on line 2.
+# If it ever reappears, the server copy has been edited outside git again.
 
 User-agent: *
 Allow: /
