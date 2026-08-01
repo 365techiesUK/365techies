@@ -2,13 +2,20 @@
 # Goal: maximum visibility for search engines AND AI answer engines.
 # Everything is allowed; AI crawlers are explicitly welcomed below.
 #
-# ⚠️ NO Crawl-delay HERE, DELIBERATELY. The live file carried "Crawl-delay: 10"
-# from 2026-06-16 until 2026-08-02 — it was never in this repo, so something
-# added it on the server after migration, and every deploy skipped the file
-# because its hash never changed. Google ignores Crawl-delay, but Bing and
-# others honour it: at 10 seconds a page, one pass over 670 URLs cannot finish
-# in under two hours. That is the exact opposite of the goal on line 2.
-# If it ever reappears, the server copy has been edited outside git again.
+# ⚠️ DO NOT WRITE THE THROTTLE DIRECTIVE IN THIS FILE, NOT EVEN INSIDE A COMMENT.
+# SiteGround rewrites robots.txt as it is served: any line containing that
+# directive name FOLLOWED BY A COLON is replaced with its own live "10 seconds"
+# value. Proved on 2026-08-02 — a comment here explaining the problem was itself
+# converted into the directive, while other lines in the same comment that named
+# it WITHOUT a colon survived untouched. So the substitution is keyed on the
+# colon, and writing about it in prose is safe only in this form.
+#
+# The directive is therefore NOT ours and cannot be removed by editing this file
+# — it is injected by the host and has been live since the 2026-06-16 migration.
+# Google ignores it. Bing, Yandex and several AI crawlers honour it, and at ten
+# seconds per request one pass over 670 URLs cannot finish inside two hours.
+# That works directly against the goal on line 2. Changing it needs a SiteGround
+# setting or a support ticket, not a commit.
 
 User-agent: *
 Allow: /
