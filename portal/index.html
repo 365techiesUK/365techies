@@ -57,6 +57,11 @@
   <meta name="twitter:image" content="https://365techies.co.uk/og-image.jpg" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <!-- ?v= bumps past SiteGround's proxy cache. Learned the hard way 2026-08-01:
+       the un-versioned URL was serving a month-old copy (proxy HIT, Last-Modified
+       28 June) because no Cache-Control applied to it. The .htaccess rule now makes
+       these revalidate, but a URL already stuck in the cache stays stuck until its
+       TTL - a new URL is the only immediate escape. BUMP THIS when the manifest changes. -->
   <link rel="manifest" href="/portal/app.webmanifest" />
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preconnect" href="https://fonts.bunny.net" />
@@ -663,9 +668,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">portal build 01 Aug 2026 &middot; f89f56988b</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">portal build 01 Aug 2026 &middot; fef0e61de5</p><script>
 (function () {
-  var P365BUILD = 'f89f56988b';
+  var P365BUILD = 'fef0e61de5';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.

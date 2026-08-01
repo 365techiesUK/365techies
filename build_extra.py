@@ -25465,8 +25465,15 @@ def write_portal_page():
     # solely because of it. Adding a cache layer here would fight the beacon and
     # risk showing a customer last week's bookings. Installability without a
     # service worker is browser-dependent, and that trade is the right way round.
-    html = html.replace('<link rel="manifest" href="/site.webmanifest" />',
-                        '<link rel="manifest" href="/portal/app.webmanifest" />', 1)
+    # NB: must match the versioned href build_pages.py emits. When the ?v= there is
+    # bumped, bump it here too - a silent miss leaves the portal on the SITE manifest
+    # (display:"browser"), which quietly un-installs the one page that should be an app.
+    # A guard follows so that can never be silent.
+    _oldman = '<link rel="manifest" href="/site.webmanifest?v=2" />'
+    if _oldman not in html:
+        raise SystemExit("portal: site manifest link not found to swap - did build_pages.py's "
+                         "manifest href change? Update the string in write_portal_page.")
+    html = html.replace(_oldman, '<link rel="manifest" href="/portal/app.webmanifest" />', 1)
     import os as _os, hashlib as _hl, re as _re, json as _json, datetime as _dt
     d = _os.path.join(bp.BASE, "portal")
     _os.makedirs(d, exist_ok=True)

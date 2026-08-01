@@ -981,7 +981,12 @@ def page(slug, title, desc, og_title, schema_json, content, og_image=None):
   <meta name="twitter:image" content="{og_img}" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-  <link rel="manifest" href="/site.webmanifest" />
+  <!-- ?v= bumps past SiteGround's proxy cache. Learned the hard way 2026-08-01:
+       the un-versioned URL was serving a month-old copy (proxy HIT, Last-Modified
+       28 June) because no Cache-Control applied to it. The .htaccess rule now makes
+       these revalidate, but a URL already stuck in the cache stays stuck until its
+       TTL - a new URL is the only immediate escape. BUMP THIS when the manifest changes. -->
+  <link rel="manifest" href="/site.webmanifest?v=2" />
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preconnect" href="https://fonts.bunny.net" />
   <link rel="preconnect" href="https://fonts.bunny.net" crossorigin />
