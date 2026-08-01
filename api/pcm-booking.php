@@ -33,6 +33,11 @@ $CFG      = __DIR__ . '/pcm-simplybook.php';
 $DATA     = __DIR__ . '/pcm-data.json';
 $CACHE    = __DIR__ . '/pcm-sb-token.json';
 $THROTTLE = __DIR__ . '/pcm-throttle.json';
+/* Abandoned-booking store. TOP LEVEL DELIBERATELY - see the note on the mail
+   library below: an include inside a function scopes its globals to that call
+   and the file then does nothing while reporting success. That exact bug ran in
+   pcm-review.php for months. Nothing here is optional; do not move it. */
+require_once __DIR__ . '/pcm-bkpend-lib.php';
 // Safe-maintenance allow-list - MUST match pcm.php. Only these fixed ids can be queued; the app
 // maps each to a hard-coded, non-destructive routine and ignores anything else. See pcm.php note.
 $PCM_CMDS = array('flushdns','cleartemp','collectlogs');
@@ -1065,6 +1070,17 @@ if ($action === 'join') {
         }
     }
     if (!$sentMail && !$sentSms && !$sentSlack) fail('send_failed');
+    // Park the details so a customer who never finds the code is not invisible.
+    // ⚠️ bk_phone, NEVER $mobile: that variable is an SMS destination governed by
+    // the takeover rules above, and this one is only ever read by a human.
+    // Staff sign-ins are not prospects, so they are not parked.
+    if (!in_array($email, $allowSt, true)) {
+        bkpend_add($email,
+                   isset($in['bk_name']) ? $in['bk_name'] : '',
+                   isset($in['bk_phone']) ? $in['bk_phone'] : '',
+                   array('what' => isset($in['bk_what']) ? $in['bk_what'] : '',
+                         'when' => isset($in['bk_when']) ? $in['bk_when'] : ''));
+    }
     out(array('ok' => true, 'sms' => $sentSms, 'mail' => $sentMail, 'slack' => $sentSlack, 'smshint' => $smsHint));
 }
 
@@ -1688,6 +1704,9 @@ if ($action === 'book') {
     $cur = isset($dbB2['bkrate'][$rk2]['n']) ? (int)$dbB2['bkrate'][$rk2]['n'] : 0;
     $dbB2['bkrate'][$rk2] = array('n' => $cur + 1, 'ts' => time());
     db_save($dbB2); db_close($lkB2);
+
+    // they made it - so they are no longer an abandoned booking
+    bkpend_clear(isset($snap['email']) ? $snap['email'] : '');
 
     // online bookings deserve the same visibility as staff-made ones
     pcm_slack_say(':calendar: *New online booking* - ' . bk_clean($snap['name'] !== '' ? $snap['name'] : $snap['email'])

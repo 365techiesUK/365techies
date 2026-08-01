@@ -364,8 +364,12 @@ BOOKING_APP = r'''    <section class="section section--alt" id="book" aria-label
           if (S.phone.replace(/[^0-9]/g, '').length < 9) { err.textContent = 'Please give us a number we can reach you on.'; document.getElementById('bkp').focus(); return; }
           busyFlag = true; go.disabled = true; err.textContent = ''; go.textContent = 'Sending…';
           // NOTE: the phone is deliberately NOT sent as `mobile` - the server only accepts UK
-          // mobiles there and a landline would block the code email entirely.
-          post({ action: 'join', email: S.email }).then(function (r) {
+          // mobiles there and a landline would block the code email entirely. It goes as
+          // `bk_phone`, which nothing ever texts: it is parked with the name so that a customer
+          // who never finds the code can still be rung back. Before this they left no trace at
+          // all - warmest lead the site makes, straight through the floor.
+          post({ action: 'join', email: S.email, bk_name: S.name, bk_phone: S.phone,
+                 bk_what: S.svcName || '', bk_when: whenTxt() }).then(function (r) {
             busyFlag = false;
             if (r && (r.ok || r.have_code)) return codeBox(r && !r.ok && r.have_code);
             go.disabled = false; go.textContent = 'Send my code';
@@ -385,7 +389,11 @@ BOOKING_APP = r'''    <section class="section section--alt" id="book" aria-label
           document.getElementById('bkre').onclick = function () {
             if (busyFlag) return;
             var e2 = document.getElementById('bkerr'); busyFlag = true; this.disabled = true;
-            post({ action: 'join', email: S.email }).then(function (r) {
+            // send the details on the RESEND too. Someone clicking "send it again" is the
+            // likeliest person in the whole funnel to give up, so this is the last record we
+            // may ever get of them - it must not arrive emptier than the first one.
+            post({ action: 'join', email: S.email, bk_name: S.name, bk_phone: S.phone,
+                   bk_what: S.svcName || '', bk_when: whenTxt() }).then(function (r) {
               busyFlag = false;
               e2.textContent = (r && (r.ok || r.have_code)) ? 'Sent — give it a moment, and do check your junk folder.'
                 : 'We couldn’t send another code just now. Please call 01202 775566.';

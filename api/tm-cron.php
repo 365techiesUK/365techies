@@ -45,9 +45,16 @@ if (!$CLI) {
 
 require_once __DIR__ . '/tm-lib.php';
 
+/* Abandoned bookings. Deliberately ABOVE the SMS gate below: this costs nothing
+   and posts to Slack, so it must not stop running the day the SMS account is
+   unconfigured, out of credit, or switched off. */
+require_once __DIR__ . '/pcm-bkpend-lib.php';
+$bkp = bkpend_sweep();
+
 if (!tm_configured()) {
-    $out = array('ok' => false, 'error' => 'not-configured');
-    echo $CLI ? "sms not configured\n" : json_encode($out);
+    $out = array('ok' => false, 'error' => 'not-configured', 'bkpend' => $bkp);
+    echo $CLI ? ("sms not configured (abandoned bookings reported: " . $bkp['told'] . ")\n")
+              : json_encode($out);
     exit;
 }
 
@@ -62,6 +69,7 @@ if (!$lock || !@flock($lock, LOCK_EX | LOCK_NB)) {
 $res = tm_sched_run(10);
 $res['ok'] = true;
 $res['at'] = date('Y-m-d H:i');
+$res['bkpend'] = $bkp;
 
 /* Heartbeat. Without this there is no way to know the cron is alive until a
    reminder silently fails to arrive - the same blind spot the booking poller
@@ -77,7 +85,8 @@ if (@file_put_contents($tmp, json_encode(array(
 @flock($lock, LOCK_UN); @fclose($lock);
 
 if ($CLI) {
-    echo "due {$res['due']}, sent {$res['sent']}, skipped {$res['skipped']}, failed {$res['failed']}\n";
+    echo "due {$res['due']}, sent {$res['sent']}, skipped {$res['skipped']}, failed {$res['failed']}"
+       . ", abandoned bookings reported {$bkp['told']}\n";
 } else {
     echo json_encode($res);
 }

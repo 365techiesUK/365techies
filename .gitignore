@@ -91,3 +91,6 @@ api/pcm-draftfb-rate.json.lock
 .research/
 api/pcm-feeds-keys.php
 api/pcm-feed-*.json
+api/pcm-bkpend.json
+api/pcm-bkpend.json.*
+api/pcm-bkpend.lock
