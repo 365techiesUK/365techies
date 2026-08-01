@@ -13920,11 +13920,38 @@ info_page(
           <h2>About us</h2>
           <p>These terms apply to IT support and services provided by 365 Techies Limited (company number 11073501), Bournemouth, Dorset. By using our services you agree to these terms.</p>
           <h2>Our services</h2>
-          <p>We provide monthly IT support plans and one-off IT services for homes and businesses, as described on our website. The specifics of your service depend on the plan or work you choose.</p>
+          <p>We provide monthly IT support plans and one-off IT services for homes and businesses, as described on our website. We also supply hardware and software. The specifics of your service depend on the plan or work you choose.</p>
+          <h2>Buying hardware and software from us</h2>
+          <p>We supply refurbished Dell laptops and desktops, new parts and upgrades, and software. Refurbished machines are pre-owned. Each one is professionally checked, cleaned and tested, and we tell you its age, condition and specification before you buy. What you receive is the machine we described &mdash; a good one, honestly sold, not a brand-new one.</p>
           <h2>Plans, payment and Direct Debit</h2>
           <p>Monthly plans are paid in advance by Direct Debit (via GoCardless). One-off work is quoted and agreed before we begin. Prices are shown on our website or in your quote.</p>
-          <h2>Cancellation</h2>
+          <h2>Cancelling a monthly plan</h2>
           <p>Our monthly plans are rolling and cancel-anytime &mdash; there is no long lock-in contract. Just let us know and we&rsquo;ll stop your plan at the end of your current period.</p>
+          <h2>Changing your mind about something you bought &mdash; your 14-day right</h2>
+          <p>If you are a consumer and you bought from us at a distance &mdash; online, by phone, by email, or anywhere other than face to face &mdash; you have the right to change your mind for <strong>14 days</strong>, starting the day after the goods reach you. You do not have to give a reason.</p>
+          <ul>
+            <li><strong>Tell us.</strong> Email <a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a>, call <a href="tel:+441202775566">01202 775566</a>, or write to the address on your invoice. A clear statement that you are cancelling is all we need.</li>
+            <li><strong>Return the goods within 14 days</strong> of telling us. We will collect free of charge anywhere in our normal service area &mdash; the same free collection we offer for repairs.</li>
+            <li><strong>We refund within 14 days</strong> of getting the goods back, or of you showing us proof of postage, whichever comes first. The refund goes back to the way you paid, and includes the standard delivery cost you paid to receive them.</li>
+            <li><strong>Look after them in the meantime.</strong> You are welcome to inspect and set up a machine as you would in a shop. If it comes back damaged or used beyond that, we may reduce the refund to reflect it.</li>
+          </ul>
+          <p>Two things this right does not cover: a computer we built or configured to your own specification, and software once its seal has been broken or its licence activated. If either turns out to be faulty, everything in the next section still applies.</p>
+          <h2>If we have already started work</h2>
+          <p>If you ask us to begin during those 14 days and then change your mind, you pay a fair amount for the work we have already done &mdash; not the whole job. Once we have finished the work you asked for, the 14-day right no longer applies to it.</p>
+          <h2>If something is faulty</h2>
+          <p>Nothing on this page affects your legal rights. Anything we sell you must be of satisfactory quality, fit for purpose and as described. For a refurbished machine that is judged against its age, price and description, not against a new one.</p>
+          <p>If something is faulty you have <strong>30 days</strong> to reject it for a full refund. After that we will repair or replace it, and if that does not put things right you can ask for a refund or a reduction in price. Our own guarantees below sit on top of these rights &mdash; they never replace them.</p>
+          <h2>The promises we make</h2>
+          <p>These are commitments, not marketing. If we ever fall short of one, tell us and we will put it right.</p>
+          <ul>
+            <li><strong>No call-out fee.</strong> We do not charge for travelling to you or for turning up. You pay for the work agreed and nothing else.</li>
+            <li><strong>No fix, no fee.</strong> If we cannot fix your device, you do not pay for the diagnosis.</li>
+            <li><strong>12-month repair warranty</strong> on the work we carry out.</li>
+            <li><strong>5-year guarantee</strong> on the Dell laptops and desktops we supply, for as long as you are on a 365 support plan.</li>
+          </ul>
+          <p>Each one is set out in full on our <a href="/our-guarantees/">guarantees page</a>.</p>
+          <h2>Business customers</h2>
+          <p>The 14-day right to change your mind, and the consumer protections described above, apply to consumers. If you are buying for a business they do not apply, and your rights are those set out in these terms and in the quote or contract we agree with you.</p>
           <h2>Your responsibilities</h2>
           <ul>
             <li>Give us the access and accurate information we need to help you.</li>
