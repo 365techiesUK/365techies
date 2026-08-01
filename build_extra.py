@@ -31,6 +31,7 @@ from seo_wave_data import SEO_WAVE_PAGES
 from seo_wave4_data import SEO_WAVE4_PAGES
 from seo_wave5_data import SEO_WAVE5_PAGES
 from seo_wave6_data import SEO_WAVE6_PAGES
+from seo_wave7_data import SEO_WAVE7_PAGES
 try:
     from new_pages_data import DELL_COMPARE_TABLES
 except ImportError:
@@ -19798,6 +19799,9 @@ for _np in SEO_WAVE5_PAGES:
     build_new_page(_np)
 
 for _np in SEO_WAVE6_PAGES:
+    build_new_page(_np)
+
+for _np in SEO_WAVE7_PAGES:
     build_new_page(_np)
 
 # ---------------------------------------------------------------------------
