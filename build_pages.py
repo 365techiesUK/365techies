@@ -102,7 +102,7 @@ except Exception:
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://365techies.co.uk"
-CSSV = "75"
+CSSV = "76"
 HERITAGE_DIMS = {'heritage-01.jpg': (1400, 787), 'heritage-02.jpg': (787, 1400), 'heritage-03.jpg': (1400, 787), 'heritage-04.jpg': (1400, 787), 'heritage-05.jpg': (787, 1400), 'heritage-07.jpg': (1400, 787), 'heritage-kinson.jpg': (1200, 710), 'heritage-moordown.jpg': (1400, 788), 'heritage-stock.jpg': (1400, 788), 'heritage-storefront.jpg': (1024, 683)}
 try:
     from hero_scenes import SCENES as HERO_SCENES
@@ -3912,7 +3912,7 @@ AVTEST_TOOL = r'''    <section class="section" aria-label="Webcam and microphone
           if(e&&(e.name==='NotAllowedError'||e.name==='PermissionDeniedError')) return 'Permission blocked. Click the camera icon in the address bar (or the padlock) and allow access, then try again.';
           if(e&&(e.name==='NotFoundError'||e.name==='DevicesNotFoundError')) return 'No device found. Check it&rsquo;s plugged in and not disabled in Windows Settings &#8594; Privacy.';
           if(e&&e.name==='NotReadableError') return 'The device is busy &mdash; another app (Teams? Zoom?) is using it. Close that app and try again.';
-          return 'Couldn&rsquo;t start the device &mdash; try a different browser, or ask us.';
+          return 'Couldn’t start the device — try a different browser, or ask us.';
         }
         var camBtn=root.querySelector('#av-cam-btn'), vid=root.querySelector('#av-video'), camSt=root.querySelector('#av-cam-status');
         camBtn.addEventListener('click',function(){
@@ -3967,7 +3967,7 @@ AVTEST_TOOL = r'''    <section class="section" aria-label="Webcam and microphone
               o.start(); setTimeout(function(){ o.stop(); },900);
               spkSt.innerHTML='Playing '+(pan<0?'LEFT':(pan>0?'RIGHT':'BOTH'))+'&hellip; heard it? &#10003;';
               spkSt.className='av-status ok';
-            }catch(e){ spkSt.textContent='Couldn&rsquo;t play a tone in this browser.'; spkSt.className='av-status bad'; }
+            }catch(e){ spkSt.textContent='Couldn’t play a tone in this browser.'; spkSt.className='av-status bad'; }
           });
         });
         window.addEventListener('pagehide',function(){ try{ if(camStream)camStream.getTracks().forEach(function(t){t.stop();}); if(micStream)micStream.getTracks().forEach(function(t){t.stop();}); }catch(e){} });
@@ -5591,7 +5591,7 @@ add(
         <ul class="security-grid" data-stagger>
 {grid_cards([("No-fix-no-fee","If we can&rsquo;t fix it, you don&rsquo;t pay for the diagnosis. No risk to you."),("12-month warranty","Every repair is backed by a full 12-month warranty for total peace of mind."),("Clear quotes first","We always quote clearly and get your go-ahead before any chargeable work."),("Free local collection","We&rsquo;ll collect and return your device across Bournemouth, Poole and Dorset."),("Your data, respected","Handled carefully and confidentially &mdash; with recovery options if needed."),("Plain-English advice","We explain what went wrong and how to stop it happening again.")])}
         </ul>
-        <p style="text-align:center;margin-top:1.8rem" data-reveal><a class="button primary" href="/book-a-collection/">Book a Collection or Drop-off</a></p>
+        <p style="text-align:center;margin-top:1.8rem" data-reveal><a class="button primary" href="/book-a-collection/">Book a free collection</a></p>
       </div>
     </section>''',
    f'''    <section class="repairs section--alt" aria-label="Avoid future problems">

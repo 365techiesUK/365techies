@@ -4947,7 +4947,7 @@ SPEEDTEST_WIDGET = r'''    <section class="section" aria-label="Live broadband s
 
         btn.addEventListener('click',function(){
           if(running) return;
-          if(!(window.fetch&&window.AbortController&&window.ReadableStream)){ phase.textContent='Your browser can&rsquo;t run the live test — please try a modern browser.'; return; }
+          if(!(window.fetch&&window.AbortController&&window.ReadableStream)){ phase.textContent='Your browser can’t run the live test — please try a modern browser.'; return; }
           running=true; btn.disabled=true; res.hidden=true; $('#spd-load').hidden=true; $('#spd-aim').hidden=true; setGauge(0); lab.textContent='Ping'; phase.innerHTML='Measuring latency &amp; jitter&hellip;';
           var pg=0, jit=0, loadPings=[];
           pingTest().then(function(r){ pg=r.min; jit=r.jit; lab.textContent='Download'; phase.innerHTML='Testing download speed&hellip;'; setGauge(0);
@@ -20096,7 +20096,9 @@ def write_portal_page():
   #p365app button, #p365app a.btn { padding:.6rem 1.05rem; border:0; border-radius:9px; background:var(--pcyan); color:#fff; font-size:.93rem; font-weight:600; cursor:pointer; margin-top:.75rem; font-family:inherit; }
   #p365app a.btn { display:inline-block; text-decoration:none; text-align:center; }
   #p365app button.ghost, #p365app a.btn.ghost { background:transparent; border:1px solid var(--pline); color:var(--psoft); }
-  #p365app button.sm, #p365app a.btn.sm { padding:.34rem .68rem; font-size:.8rem; margin:0; }
+  /* .sm was 27-29px tall - below any touch-target guidance, and it is what the
+     portal SIGN-IN buttons use, i.e. the first thing a customer ever taps. */
+  #p365app button.sm, #p365app a.btn.sm { padding:.6rem 1rem; font-size:.92rem; min-height:40px; margin:0; }
   #p365app .err { color:var(--pbad); font-size:.88rem; margin-top:.55rem; min-height:1.2em; }
   #p365app .row { display:flex; gap:.9rem; align-items:center; padding:.55rem 0; border-bottom:1px solid rgba(42,59,99,.5); flex-wrap:wrap; }
   #p365app .row:last-child { border-bottom:0; }

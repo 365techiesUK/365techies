@@ -17,14 +17,28 @@
   var HL_OPEN = String.fromCharCode(1), HL_CLOSE = String.fromCharCode(2);
 
   /* ---- index loading (lazy: only on first open / idle) ---- */
+  var failed = false;
   function load() {
     if (docs) return Promise.resolve(docs);
     if (loading) return loading;
     // cache:"no-cache" forces the browser to revalidate the index with the server
     // (conditional request -> 304 if unchanged), so newly-added pages appear in
     // search without waiting for a cache-bust version to be bumped.
-    loading = fetch(INDEX_URL, { credentials: "omit", cache: "no-cache" })
-      .then(function (r) { return r.json(); })
+    // NO credentials:"omit". It was there and it silently killed site search in
+    // production: SiteGround's WAF answers a cookie-less request with a 201-byte
+    // HTML challenge stub and HTTP 202, so .json() threw, the catch below cached
+    // an EMPTY index, and every query from then on returned "no results" with no
+    // error shown. Same origin, public static file - omitting credentials bought
+    // nothing and guaranteed the challenge. Verified: identical URL with
+    // credentials returns 200 application/json, ~320 KB.
+    loading = fetch(INDEX_URL, { cache: "no-cache" })
+      .then(function (r) {
+        // Check it really is the index. A challenge page is a 2xx with HTML in
+        // it, so status alone does not tell you the truth.
+        var ct = (r.headers.get("content-type") || "").toLowerCase();
+        if (!r.ok || ct.indexOf("json") < 0) throw new Error("index unavailable (" + r.status + " " + ct + ")");
+        return r.json();
+      })
       .then(function (data) {
         docs = (data.pages || []).map(function (p) {
           var hay = (p.t + " " + (p.d || "") + " " + (p.h || "") + " " + p.u.replace(/-/g, " ")).toLowerCase();
@@ -32,7 +46,16 @@
         });
         return docs;
       })
-      .catch(function () { docs = []; return docs; });
+      .catch(function (e) {
+        // FAIL LOUDLY AND RECOVERABLY. Do NOT set docs = [] - load() memoises
+        // docs, so one challenged fetch used to kill search for the whole page
+        // session even after the WAF relented. Leaving docs undefined lets the
+        // next attempt retry; failed=true lets the UI say so instead of lying
+        // to the customer that the site has no page about their problem.
+        loading = null;
+        failed = true;
+        return null;
+      });
     return loading;
   }
 
@@ -90,6 +113,20 @@
       return;
     }
     if (!docs) {
+      // Tell the truth about which of the two states this is. Saying "no
+      // results" when the index never loaded is the failure that hid this bug:
+      // the customer concludes the site has nothing on their problem, when in
+      // fact the site never got to look.
+      if (failed) {
+        list.innerHTML = '<li class="ss-empty" role="presentation">' +
+          "<p>Search isn’t loading just now — sorry.</p>" +
+          '<p class="ss-empty__hint">Everything is still in the menu, or we’ll find it for you: ' +
+          '<a href="tel:+441202775566">call 01202 775566</a> or <a href="sms:+447520615332">text us</a>.</p></li>';
+        statusEl.textContent = "Search unavailable";
+        results = [];
+        load();          // not memoised on failure, so this can genuinely recover
+        return;
+      }
       list.innerHTML = "";
       statusEl.textContent = "Loading search…";
       results = [];
@@ -231,9 +268,10 @@
     }
   });
 
-  // warm the index during idle so the first search is instant
-  if ("requestIdleCallback" in window) requestIdleCallback(load, { timeout: 6000 });
-  else window.addEventListener("load", function () { setTimeout(load, 2500); });
+  // NO idle warm-up. It downloaded the ~84 KB (brotli) index on all 672 pages
+  // for a feature most visitors never open - pure waste on a mobile-heavy,
+  // largely retired audience. The index now loads on the first search-open,
+  // which is the only moment it is needed; open() already awaits load().
 
   window.TTSearch = { open: open, close: close };
 })();

@@ -71,7 +71,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=75" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=76" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -1028,7 +1028,7 @@
 
         btn.addEventListener('click',function(){
           if(running) return;
-          if(!(window.fetch&&window.AbortController&&window.ReadableStream)){ phase.textContent='Your browser can&rsquo;t run the live test — please try a modern browser.'; return; }
+          if(!(window.fetch&&window.AbortController&&window.ReadableStream)){ phase.textContent='Your browser can’t run the live test — please try a modern browser.'; return; }
           running=true; btn.disabled=true; res.hidden=true; $('#spd-load').hidden=true; $('#spd-aim').hidden=true; setGauge(0); lab.textContent='Ping'; phase.innerHTML='Measuring latency &amp; jitter&hellip;';
           var pg=0, jit=0, loadPings=[];
           pingTest().then(function(r){ pg=r.min; jit=r.jit; lab.textContent='Download'; phase.innerHTML='Testing download speed&hellip;'; setGauge(0);

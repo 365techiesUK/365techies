@@ -765,6 +765,33 @@ with open(os.path.join(bp.BASE, "projects-feed.json"), "w", encoding="utf-8") as
 print("Wrote projects-feed.json (%d project(s), %d milestones)"
       % (len(_feed["projects"]), sum(len(p["milestones"]) for p in _feed["projects"])))
 
+# ---------------- guard: entities in plain-text destinations ----------------
+# A string bound for esc() or .textContent is PLAIN TEXT. An HTML entity in it
+# is shown to the customer literally - and every instance found on 2026-08-01
+# was in an ERROR message on the booking page, so the one moment something had
+# already gone wrong was also the moment the site looked broken:
+#     "We couldn&rsquo;t reach our booking system just now."
+# Cheap to write, impossible to spot by eye in a 5,000-line generator.
+import re as _re, os as _osg
+_ENT_PAT = _re.compile(r"&(?:rsquo|lsquo|ldquo|rdquo|mdash|ndash|nbsp|amp|hellip|times);")
+_ent_bad = []
+for _f in ("booking_app.py", "build_pages.py", "build_extra.py"):
+    _fp = _osg.path.join(bp.BASE, _f)
+    if not _osg.path.exists(_fp):
+        continue
+    for _n, _line in enumerate(open(_fp, encoding="utf-8"), 1):
+        # only lines that hand a literal to a plain-text sink
+        if not _re.search(r"\.textContent\s*=\s*'|\boops\('|return '", _line):
+            continue
+        _m = _re.search(r"'([^']*)'", _line)
+        if _m and _ENT_PAT.search(_m.group(1)):
+            _ent_bad.append("%s:%d  %s" % (_f, _n, _m.group(1)[:70]))
+if _ent_bad:
+    raise SystemExit(
+        "\n*** HTML entities in plain-text strings (they will show literally) ***\n"
+        + "\n".join("   " + b for b in _ent_bad)
+        + "\nUse the real character (\\u2019 \\u2014 ...) - these go to esc()/textContent.\n")
+
 # ---------------- temporary legacy-URL sitemap ----------------
 # Asks Google to recrawl the old WordPress URLs so it sees the 301s. See
 # legacy_urls.py for the full reasoning. Deliberately NOT referenced from

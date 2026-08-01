@@ -71,7 +71,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=75" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=76" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -924,8 +924,8 @@
           focusH();
         }
         function netMsg(r) {
-          if (r && r.error === 'busy') return 'We&rsquo;re a bit busy right now &mdash; give it a minute and try again.';
-          return 'We couldn&rsquo;t reach our booking system just now.';
+          if (r && r.error === 'busy') return 'We’re a bit busy right now — give it a minute and try again.';
+          return 'We couldn’t reach our booking system just now.';
         }
         function fmtT(t) {
           var p = String(t).split(':'), h = +p[0], m = p[1] || '00';
@@ -943,7 +943,7 @@
         function step1() {
           rail(1); loading('Loading our services…');
           post({ action: 'pubservices' }).then(function (r) {
-            if (!r || !r.ok || !r.services || !r.services.length) return oops(r && r.error === 'busy' ? netMsg(r) : 'We couldn&rsquo;t load the list of services just now.', step1);
+            if (!r || !r.ok || !r.services || !r.services.length) return oops(r && r.error === 'busy' ? netMsg(r) : 'We couldn’t load the list of services just now.', step1);
             busyFlag = false; say('Step 1 of 4. Choose a service.');
             var h = '<p class="bk__h">What can we help with?</p><p class="bk__sub">Choose the appointment that fits best &mdash; not sure? Pick the closest and we&rsquo;ll sort it on the day.</p><div class="bk__grid">';
             for (var i = 0; i < r.services.length; i++) {
@@ -960,7 +960,7 @@
               step2();
             };
             focusH();
-          }, function () { oops('We couldn&rsquo;t reach our booking system just now.', step1); });
+          }, function () { oops('We couldn’t reach our booking system just now.', step1); });
         }
 
         // ---------- step 2: time ----------
@@ -981,7 +981,7 @@
             }
             say('Step 2 of 4. Choose a day and time.');
             renderDays();
-          }, function () { oops('We couldn&rsquo;t reach our booking system just now.', function () { step2(fresh); }); });
+          }, function () { oops('We couldn’t reach our booking system just now.', function () { step2(fresh); }); });
         }
         function renderDays() {
           var h = '<p class="bk__h">When suits you?</p><p class="bk__sub">' + esc(S.svcName) + ' &middot; about ' + esc(minsTxt(S.mins)) + ' &middot; live availability</p>';

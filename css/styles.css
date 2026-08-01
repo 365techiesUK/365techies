@@ -178,6 +178,16 @@ body.menu-open .site-header { z-index: 70; }
 .status-ticker:focus-within .status-ticker__track { animation-play-state: paused; }
 @media (prefers-reduced-motion: reduce) { .status-ticker__track { animation: none; } }
 
+/* Hidden on phones. The ticker is a continuously scrolling marquee at the very
+   top of every page: WCAG 2.2.2 (Level A) requires a pause/stop/hide control
+   for anything that auto-scrolls for more than five seconds, and hover/focus
+   pausing is not reachable by touch. Its text also measures ~9.9px on a phone.
+   For an audience with many retired and less-confident users, a moving strip of
+   tiny low-contrast text above the content is a cost with no benefit - so it is
+   desktop-only, where hovering CAN pause it. Reduced-motion is honoured above
+   for the desktop case. */
+@media (max-width: 767px) { .status-ticker { display: none; } }
+
 /* A11y hardening: keyboard focus must ALWAYS be visible on form controls,
    including tool widgets whose inline styles suppress :focus outlines.
    !important is deliberate — this is the one place it earns its keep. */
@@ -1171,7 +1181,6 @@ body.menu-open { overflow: hidden; }
   .mobile-cta-bar svg { width: 20px; height: 20px; }
   body { padding-bottom: calc(4.6rem + env(safe-area-inset-bottom)); }
   body.menu-open .mobile-cta-bar { display: none; }
-  .cookie-banner { left: 0.6rem; right: 0.6rem; bottom: calc(5.2rem + env(safe-area-inset-bottom)); }
   .cookie-banner__actions { width: 100%; }
   .cookie-banner__actions .button { flex: 1 1 auto; text-align: center; }
 
@@ -1690,6 +1699,18 @@ body.menu-open { overflow: hidden; }
 .cookie-banner a { color: var(--cyan); }
 .cookie-banner__actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
 .cookie-banner .button { padding: 0.6rem 1.2rem; font-size: 0.85rem; }
+
+/* ⚠️ MUST STAY AFTER the .cookie-banner base rule above. This override used to
+   live ~500 lines earlier inside the mobile media block, where the base rule's
+   later `bottom:1rem` beat it at equal specificity - so on a phone the banner
+   sat ON TOP of the sticky tap-to-call bar. Measured at 375x812: banner
+   y627-796, Call link y751, document.elementFromPoint returned .cookie-banner.
+   The phone number is this audience's primary conversion and it was physically
+   untappable for every first-time visitor on every page. Move this block and it
+   breaks again silently - CSS gives no warning for a rule that simply loses. */
+@media (max-width: 767px) {
+  .cookie-banner { left: 0.6rem; right: 0.6rem; bottom: calc(5.2rem + env(safe-area-inset-bottom)); }
+}
 
 /* ===== Accessibility toolbar ===== */
 .a11y { position: fixed; left: 14px; bottom: 14px; z-index: 1300; }

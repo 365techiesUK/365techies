@@ -71,7 +71,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=75" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=76" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -872,7 +872,7 @@
           if(e&&(e.name==='NotAllowedError'||e.name==='PermissionDeniedError')) return 'Permission blocked. Click the camera icon in the address bar (or the padlock) and allow access, then try again.';
           if(e&&(e.name==='NotFoundError'||e.name==='DevicesNotFoundError')) return 'No device found. Check it&rsquo;s plugged in and not disabled in Windows Settings &#8594; Privacy.';
           if(e&&e.name==='NotReadableError') return 'The device is busy &mdash; another app (Teams? Zoom?) is using it. Close that app and try again.';
-          return 'Couldn&rsquo;t start the device &mdash; try a different browser, or ask us.';
+          return 'Couldn’t start the device — try a different browser, or ask us.';
         }
         var camBtn=root.querySelector('#av-cam-btn'), vid=root.querySelector('#av-video'), camSt=root.querySelector('#av-cam-status');
         camBtn.addEventListener('click',function(){
@@ -927,7 +927,7 @@
               o.start(); setTimeout(function(){ o.stop(); },900);
               spkSt.innerHTML='Playing '+(pan<0?'LEFT':(pan>0?'RIGHT':'BOTH'))+'&hellip; heard it? &#10003;';
               spkSt.className='av-status ok';
-            }catch(e){ spkSt.textContent='Couldn&rsquo;t play a tone in this browser.'; spkSt.className='av-status bad'; }
+            }catch(e){ spkSt.textContent='Couldn’t play a tone in this browser.'; spkSt.className='av-status bad'; }
           });
         });
         window.addEventListener('pagehide',function(){ try{ if(camStream)camStream.getTracks().forEach(function(t){t.stop();}); if(micStream)micStream.getTracks().forEach(function(t){t.stop();}); }catch(e){} });
