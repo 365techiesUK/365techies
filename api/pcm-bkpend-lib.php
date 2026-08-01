@@ -178,6 +178,21 @@ function bkpend_sweep($sender = null) {
         if (call_user_func($sender, $msg)) { $c[$k]['told'] = 1; $told++; }
     }
     bkpend_save($c);
+
+    /* Proof of life. Written HERE rather than in tm-cron.php because that file
+       writes its heartbeat only after its SMS gate, so a sweep that ran while
+       SMS was unconfigured would leave no evidence at all - and "ran fine,
+       found nothing" and "never ran" would look identical. That is exactly how
+       the portal freshness beacon did nothing for a month. */
+    $beat = __DIR__ . '/pcm-bkpend-beat.json';
+    $tmp  = $beat . '.tmp';
+    if (@file_put_contents($tmp, json_encode(array(
+            't' => time(), 'at' => date('Y-m-d H:i'),
+            'told' => $told, 'pending' => count($c),
+            'via' => (php_sapi_name() === 'cli' ? 'cron' : 'http')))) !== false) {
+        @rename($tmp, $beat);
+    }
+
     @flock($lk, LOCK_UN); @fclose($lk);
     return array('told' => $told, 'pending' => count($c));
 }

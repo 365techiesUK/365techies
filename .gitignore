@@ -94,3 +94,5 @@ api/pcm-feed-*.json
 api/pcm-bkpend.json
 api/pcm-bkpend.json.*
 api/pcm-bkpend.lock
+api/pcm-bkpend-beat.json
+api/pcm-bkpend-beat.json.tmp
