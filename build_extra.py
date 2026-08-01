@@ -8104,7 +8104,7 @@ def dell_it_support_hub():
       ("Can you fix my Dell remotely?", "Often, yes. Software, Windows, email, driver, setup and slowdown problems can usually be sorted the same day over a secure remote session you watch on screen &mdash; we always phone first. Physical faults (a screen, battery or port) need hands-on repair, with free local collection. See <a href=\"/dell-remote-support/\">Dell remote support</a>."),
       ("Do you support Dell for businesses as well as homes?", "Both. We look after home users&rsquo; Dell laptops and desktops, and we support small-business Dell fleets &mdash; Latitude, OptiPlex and Precision &mdash; with proactive maintenance, remote and on-site help. See <a href=\"/dell-business-support-dorset/\">Dell business support</a>. Home support is &pound;18.25/month per computer; business from &pound;24.38."),
       ("My Dell is out of warranty &mdash; can you still help?", "Yes &mdash; that&rsquo;s one of the best reasons to use an independent specialist. We repair out-of-warranty Dell laptops and desktops locally, usually far faster than Dell&rsquo;s ship-it-away service, with no-fix-no-fee and a 12-month warranty on the work. See <a href=\"/dell-out-of-warranty-repair/\">Dell out-of-warranty repair</a>."),
-      ("What if my Dell is too old to be worth fixing?", "We&rsquo;ll tell you honestly. If a repair costs more than the machine is worth, we&rsquo;ll suggest a tested, refurbished business-grade Dell from <strong>&pound;510</strong> instead &mdash; with a new Samsung Pro SSD, a clean copy of Windows and our own 5-year guarantee. No pressure either way."),
+      ("What if my Dell is too old to be worth fixing?", "We&rsquo;ll tell you honestly. If a repair costs more than the machine is worth, we&rsquo;ll suggest a tested, refurbished business-grade Dell from <strong>&pound;510</strong> instead &mdash; with a new Samsung Pro SSD, a clean copy of Windows and our own 5-year guarantee on a 365 support plan. No pressure either way."),
     ]
     content = "\n".join([
       hero(bc("Dell"), "// DORSET&rsquo;S INDEPENDENT DELL SPECIALIST &middot; SINCE 1995",
@@ -8175,7 +8175,7 @@ def refurbished_local():
     faqs = [
       ("Where can I buy a refurbished laptop near me in Dorset?", "365 Techies supplies refurbished Dell business laptops and PCs right across Bournemouth, Poole, Christchurch and the wider Dorset area &mdash; set up and supported locally. Tell us what you need and we&rsquo;ll match you one."),
       ("Do you deliver, or do I collect?", "Whatever suits &mdash; collect locally, or we can deliver and set it up across Dorset. Much of the setup we can even do remotely once you&rsquo;re up and running."),
-      ("Are they new or refurbished?", "Professionally refurbished, tested ex-business Dell &mdash; each with a brand-new Samsung Pro SSD, graded A, B or C, and backed by any remaining Dell warranty where applicable plus our own 5-year guarantee (with a support plan). See our <a href=\"/dell-hardware/\">refurbished Dell page</a> for the full detail."),
+      ("Are they new or refurbished?", "Professionally refurbished, tested ex-business Dell &mdash; each with a brand-new Samsung Pro SSD, graded A, B or C, and backed by any remaining Dell warranty where applicable plus our own 5-year guarantee on a 365 support plan (with a support plan). See our <a href=\"/dell-hardware/\">refurbished Dell page</a> for the full detail."),
       ("Which areas do you cover?", "Bournemouth, Poole, Christchurch, Ferndown, Wimborne, Wareham, Dorchester, Weymouth and across Dorset &mdash; remotely and on-site."),
     ]
     content = "\n".join([
@@ -8193,7 +8193,7 @@ def refurbished_local():
           <p>Unlike a faceless online seller, we&rsquo;re a real local family firm: we recommend the right machine, fit a brand-new Samsung Pro SSD, set it up, move your data across and support it for years &mdash; and you can phone, text or email us, or we&rsquo;ll come to you. New to the idea? See whether <a href="/are-refurbished-laptops-any-good/">refurbished laptops are any good</a>, or the full detail on our <a href="/dell-hardware/">refurbished Dell page</a>.</p>
         </div>
         <ul class="checklist" data-stagger>
-{checklist(["Tested ex-business Dell Latitude &amp; OptiPlex","Brand-new Samsung Pro SSD (5-year guarantee)","Dell warranty + our own 5-year guarantee","Graded A, B or C &mdash; you know what you&rsquo;re getting","Set up, data moved across &amp; fully supported","Full repair service if you ever break it"])}
+{checklist(["Tested ex-business Dell Latitude &amp; OptiPlex","Brand-new Samsung Pro SSD (5-year guarantee)","Dell warranty + our own 5-year guarantee on a 365 support plan","Graded A, B or C &mdash; you know what you&rsquo;re getting","Set up, data moved across &amp; fully supported","Full repair service if you ever break it"])}
         </ul>
       </div>
     </section>''',
@@ -10598,7 +10598,7 @@ def dell_3520_guide():
       ("Can I run it in my campervan without an inverter?", "That&rsquo;s the trick this guide is built around: a quality 65W USB-C PD adapter in a 12V socket powers the laptop directly at roughly 90%+ efficiency &mdash; silent, no inverter idle drain, and noticeably more runtime from your leisure battery than the 12V&#8594;230V&#8594;charger route. Pair it with a proper 100W-rated (5A) cable."),
       ("Can the USB-C port drive a monitor too?", "Yes &mdash; it carries DisplayPort video as well as power and data. A USB-C dock or USB-C monitor gives you the one-cable desk: power, screens, wired network and accessories through a single plug."),
       ("How do I make the battery last years?", "Heat and living at 100% are what age batteries. Keep it out of direct sun (especially in a van), and if it&rsquo;s plugged in most of the time, set a charge limit (around 80%) in Dell Power Manager &mdash; we set this up on the machines we supply. Storing it for a while? Leave it around half charged."),
-      ("Is this the laptop 365 Techies sells?", "Yes &mdash; the Latitude 3520 is typical of the refurbished business-grade Dell laptops we supply from &pound;510: tested, securely wiped, fitted with a new 1TB Samsung 990 PRO SSD and covered by our own 5-year guarantee. This guide comes free with every one. See <a href=\"/dell-hardware/\">refurbished Dells</a>."),
+      ("Is this the laptop 365 Techies sells?", "Yes &mdash; the Latitude 3520 is typical of the refurbished business-grade Dell laptops we supply from &pound;510: tested, securely wiped, fitted with a new 1TB Samsung 990 PRO SSD and covered by our own 5-year guarantee on a 365 support plan. This guide comes free with every one. See <a href=\"/dell-hardware/\">refurbished Dells</a>."),
       ("Something&rsquo;s not working &mdash; what now?", "Try the quick fixes above first (Win+P for screens, the F1 mute key for sound, hold the power button 15 seconds for a frozen machine). Still stuck? That&rsquo;s literally what we do &mdash; <a href=\"/remote-it-support/\">remote support</a>, usually within minutes."),
     ]
     content = "\n".join([
@@ -10876,7 +10876,7 @@ def dell_optiplex_guide():
       ("Can I run a desktop in my campervan or off-grid?", "You can &mdash; small-form-factor models need a pure sine wave inverter and drink noticeably more than a laptop, while the tiny OptiPlex Micro can run from 12V via a DC&ndash;DC adapter. Our honest steer: off-grid is laptop territory &mdash; see the <a href=\"/dell-latitude-3520-guide/\">Latitude 3520 guide</a> for the efficient 12V USB-C setup."),
       ("What&rsquo;s the power lead called if I lose it?", "A &ldquo;kettle lead&rdquo; (properly: an IEC C13). Any office has a drawer full; any replacement fits. Push it in firmly &mdash; a half-seated one is a classic cause of &lsquo;dead&rsquo; computers."),
       ("The power light is flashing amber &mdash; what does it mean?", "That&rsquo;s the machine blinking a diagnostic code at you. Count the pattern (e.g. two blinks, pause, three blinks) and tell us &mdash; it identifies the fault before we&rsquo;ve even opened the case."),
-      ("Is this the desktop 365 Techies sells?", "Yes &mdash; refurbished business-grade OptiPlex desktops are half of what we supply (alongside Latitude laptops), from &pound;545: tested, securely wiped, new SSD, our own 5-year guarantee, set up ready to use. See <a href=\"/dell-hardware/\">refurbished Dells</a>."),
+      ("Is this the desktop 365 Techies sells?", "Yes &mdash; refurbished business-grade OptiPlex desktops are half of what we supply (alongside Latitude laptops), from &pound;545: tested, securely wiped, new SSD, our own 5-year guarantee on a 365 support plan, set up ready to use. See <a href=\"/dell-hardware/\">refurbished Dells</a>."),
     ]
     content = "\n".join([
       hero(bc("Dell OptiPlex Guide"), "// THE EASY OWNER&rsquo;S GUIDE",
@@ -13317,7 +13317,7 @@ def repair_pages():
         <p class="eyebrow eyebrow--center mono" data-reveal>/03 &mdash; HOW IT WORKS</p>
         <h2 class="section-title section-title--center" data-title>From broken to brilliant<span class="title-underline title-underline--center"></span></h2>
         <ol class="how__steps">
-{steps([("Tell us what&rsquo;s wrong","Call or message and describe the problem in plain English &mdash; no jargon needed."),("We diagnose it","Remotely, at your home or in our workshop &mdash; and we phone before we connect or set off."),("We fix &amp; explain","We sort it, tell you what happened and how to avoid it, and give a clear price up front."),("Back up and running","You&rsquo;re sorted &mdash; and we&rsquo;re here whenever you need us again.")])}
+{steps([("Tell us what&rsquo;s wrong","Call or message and describe the problem in plain English &mdash; no jargon needed."),("We diagnose it","Remotely, at your home, or in the van &mdash; and we phone before we connect or set off."),("We fix &amp; explain","We sort it, tell you what happened and how to avoid it, and give a clear price up front."),("Back up and running","You&rsquo;re sorted &mdash; and we&rsquo;re here whenever you need us again.")])}
         </ol>
       </div>
     </section>''',
@@ -13996,6 +13996,10 @@ info_page(
         ("Genuine care","A family business since 1995 &mdash; many customers have been with us for over a decade."),
         ("No-fix-no-fee","If we can&rsquo;t fix your device, you don&rsquo;t pay for the diagnosis. Simple as that."),
         ("12-month repair warranty","Every repair is backed by a full 12-month warranty for your peace of mind."),
+        # The 5-year claim appears in 35 places across the site but was absent from
+        # the page that is supposed to DEFINE the guarantees - so a customer who
+        # went looking for the terms found everything except the biggest promise.
+        ("5-year guarantee on Dell computers","Every refurbished Dell laptop and desktop we supply carries our own 5-year guarantee for as long as you are on a 365 support plan &mdash; on top of any remaining Dell warranty and your Consumer Rights Act protection as a UK buyer."),
         ("Windows &amp; Android specialists","We focus on Windows PCs and Android &mdash; the platforms most Dorset homes and businesses actually run &mdash; so you get deep, focused expertise, not a jack-of-all-trades."),
       ]) + '''
         </ul>
@@ -16200,7 +16204,7 @@ info_page(
     ("Should I buy refurbished?","A good refurbished machine from a reputable seller can be excellent value &mdash; just check it has an SSD, enough memory and can run Windows 11. We actually supply <a href=\"/dell-hardware/\">refurbished, business-grade Dell laptops &amp; PCs</a> &mdash; tested, set up and backed by our own warranty &mdash; so we&rsquo;re happy to advise or match you one."),
     ("How do I recycle my old laptop?","Back up and wipe it first, then recycle it responsibly &mdash; see our guide to <a href=\"/how-to-wipe-and-recycle-old-computer/\">wiping and recycling an old computer</a>."),
     ("What is the best laptop for a home-office setup, and are refurbished ones any good?","For a home office running email, the web, video calls and office software, you do not need the latest or most expensive machine &mdash; aim for an SSD, plenty of memory and a screen size that suits your desk. A professionally refurbished, business-grade Dell Latitude or OptiPlex is often the sweet spot here: built for reliable all-day office use, fitted with a brand-new Samsung Pro SSD, and typically around 30&ndash;50% less than an equivalent new machine. See our guide on whether <a href=\"/are-refurbished-laptops-any-good/\">refurbished laptops are any good</a>."),
-    ("Where can I buy a good refurbished laptop near me?","If you are in Bournemouth, Poole, Christchurch or anywhere across Dorset, we supply professionally refurbished, tested ex-business Dell laptops and desktops from &pound;545 &mdash; each with a brand-new Samsung Pro SSD, a clean licensed copy of Windows, and any remaining Dell warranty where applicable and our own 5-year guarantee (with a support plan). See <a href=\"/refurbished-laptops-dorset/\">refurbished laptops in Dorset</a>, or call 01202 775566."),
+    ("Where can I buy a good refurbished laptop near me?","If you are in Bournemouth, Poole, Christchurch or anywhere across Dorset, we supply professionally refurbished, tested ex-business Dell laptops and desktops from &pound;545 &mdash; each with a brand-new Samsung Pro SSD, a clean licensed copy of Windows, and any remaining Dell warranty where applicable and our own 5-year guarantee on a 365 support plan (with a support plan). See <a href=\"/refurbished-laptops-dorset/\">refurbished laptops in Dorset</a>, or call 01202 775566."),
   ],
   cta_args=("Want a hand choosing?","Tell us how you&rsquo;ll use it and your budget, and we&rsquo;ll recommend the right computer &mdash; honestly, with no upselling &mdash; and set it all up for you.",
             ("New Computer Setup","/new-computer-setup/"), ("Talk to a Techie","/contact/")),
