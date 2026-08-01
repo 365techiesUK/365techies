@@ -106,10 +106,12 @@ REVIEWS = [
  # VERIFIED 2026-08-01 - complete review, word for word.
  ("Michael Finch", "Service is one on one with people who know what they are talking about and also what they are selling!"),
  ("Robert Kennard", "Thank you David & Steve for the amazing service on a monthly basis."),
- # VERIFIED 2026-08-01 - complete review. Her own double quotes around
- # "extra mile" are rendered as single quotes because reviews_block wraps every
- # quote in &ldquo;&rdquo;; the words are untouched.
- ("Penny Hanford", "This lovely, friendly family firm are very approachable, dependable and professional. I thank them for going the ‘extra mile’ for me!"),
+ # VERIFIED 2026-08-01 - complete review. ⚠️ Her DOUBLE quotes around "extra
+ # mile" are hers and stay double, even though reviews_block wraps the whole
+ # quote in &ldquo;&rdquo; and British style would nest single inside double.
+ # They were changed to single on the first pass and tools_check_reviews.py
+ # caught it: typography is still text, and this file's rule is her words.
+ ("Penny Hanford", "This lovely, friendly family firm are very approachable, dependable and professional. I thank them for going the “extra mile” for me!"),
  # VERIFIED 2026-08-01 - complete review, word for word.
  ("Marianne Gill", "I think that 365 is a first class service. They are always so competent and obliging."),
 ]
