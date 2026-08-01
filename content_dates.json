@@ -2468,6 +2468,10 @@
   "h": "8a9f6afbc2cbf22c",
   "last": "2026-08-01"
  },
+ "printer-asking-for-admin-password": {
+  "first": "2026-08-01",
+  "h": "2709085cabb9e175"
+ },
  "printer-disappeared-after-windows-update": {
   "first": "2026-07-28",
   "h": "ddbc115b86f942f4",
@@ -2522,6 +2526,10 @@
   "first": "2026-07-28",
   "h": "720b85c68db2a216",
   "last": "2026-08-01"
+ },
+ "printer-wont-scan-to-computer-windows-11": {
+  "first": "2026-08-01",
+  "h": "6a71b08e75cd8a98"
  },
  "privacy-policy": {
   "first": "2026-07-28",
@@ -2702,6 +2710,10 @@
   "first": "2026-07-28",
   "h": "8936335a980685ae",
   "last": "2026-08-01"
+ },
+ "scan-to-folder-stopped-working-after-windows-update": {
+  "first": "2026-08-01",
+  "h": "325705be7ebb50b2"
  },
  "second-hand-office-computers-poole": {
   "first": "2026-07-28",
