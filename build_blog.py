@@ -12,6 +12,7 @@ import victron_business     # Victron for business: resilience, carbon, HMRC-sou
 import home_dashboards      # next-gen home dashboards: CCTV, power, backups on one screen
 import win10_esu_business   # commercial Windows 10 ESU: doubling + cumulative pricing
 import ccb_rebuild_case_study  # measured WordPress->static before/after (CCB rebuild)
+import bournemouth_data     # Bournemouth365 section, page 1 of 5: Friday Fireworks (founding doc in seo-research)
 from build_pages import (add, graph, crumb, webpage, faqpage, faq_html, cta,
                          hero, SITE, write_all)
 

@@ -103,7 +103,7 @@ except Exception:
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://365techies.co.uk"
-CSSV = "76"
+CSSV = "77"
 HERITAGE_DIMS = {'heritage-01.jpg': (1400, 787), 'heritage-02.jpg': (787, 1400), 'heritage-03.jpg': (1400, 787), 'heritage-04.jpg': (1400, 787), 'heritage-05.jpg': (787, 1400), 'heritage-07.jpg': (1400, 787), 'heritage-kinson.jpg': (1200, 710), 'heritage-moordown.jpg': (1400, 788), 'heritage-stock.jpg': (1400, 788), 'heritage-storefront.jpg': (1024, 683)}
 try:
     from hero_scenes import SCENES as HERO_SCENES
@@ -855,6 +855,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/sustainability/">Sustainability</a>
         <a href="/resources/">Resources &amp; Guides</a>
         <a href="/it-advice/">IT Advice</a>
+        <a href="/bournemouth/fireworks/">Bournemouth Fireworks</a>
         <a href="/faqs/">FAQs</a>
         <a href="/contact/">Contact</a>
         <a href="/portal/">Customer portal</a>
