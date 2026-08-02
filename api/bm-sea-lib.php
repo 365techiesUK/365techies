@@ -125,32 +125,49 @@ function bmsea_cco_key() {
 function bmsea_fetch_buoy() {
     $key = bmsea_cco_key();
     if ($key !== '') {
+        // duration=25h -> ~50 half-hourly readings in one call: the newest is
+        // the headline, the rest become the measured 24h trend series.
         $j = bmsea_http_json(
-            'https://coastalmonitoring.org/observations/waves/latest.geojson?key=' . rawurlencode($key) . '&sensor=Boscombe',
-            12, array('Referer: https://365techies.co.uk/'));
-        $p = (is_array($j) && isset($j['features'][0]['properties'])) ? $j['features'][0]['properties'] : null;
-        if ($p && isset($p['date'])) {
-            // CCO timestamp: "YYYYMMDD#HHMMSS" in GMT
-            $ts = preg_match('/^(\d{4})(\d{2})(\d{2})#(\d{2})(\d{2})(\d{2})$/', $p['date'], $m)
-                ? gmdate('c', gmmktime((int)$m[4], (int)$m[5], (int)$m[6], (int)$m[2], (int)$m[3], (int)$m[1])) : null;
-            if ($ts !== null && isset($p['sst']) && isset($p['hs'])) {
-                return array('ok' => true, 'read_at' => $ts,
-                    'tempC' => round((float)$p['sst'], 1), 'hs' => round((float)$p['hs'], 2),
-                    'hmax' => isset($p['hmax']) ? round((float)$p['hmax'], 2) : null,
-                    'tp' => isset($p['tp']) ? round((float)$p['tp'], 1) : null,
-                    'tz' => isset($p['tz']) ? round((float)$p['tz'], 1) : null,
-                    'dirFromMag' => isset($p['pdir']) ? (int)round((float)$p['pdir']) : null,
-                    'station' => 'Boscombe wave buoy', 'source' => 'cco');
+            'https://coastalmonitoring.org/observations/waves/latest.geojson?key=' . rawurlencode($key) . '&sensor=Boscombe&duration=25',
+            15, array('Referer: https://365techies.co.uk/'));
+        $feats = (is_array($j) && isset($j['features']) && is_array($j['features'])) ? $j['features'] : array();
+        $reads = array();
+        foreach ($feats as $f) {
+            $p = isset($f['properties']) ? $f['properties'] : null;
+            if (!is_array($p) || !isset($p['date']) || !isset($p['sst']) || !isset($p['hs'])) continue;
+            if (!preg_match('/^(\d{4})(\d{2})(\d{2})#(\d{2})(\d{2})(\d{2})$/', $p['date'], $m)) continue;
+            $t = gmmktime((int)$m[4], (int)$m[5], (int)$m[6], (int)$m[2], (int)$m[3], (int)$m[1]);
+            $reads[$t] = $p;
+        }
+        if ($reads) {
+            ksort($reads);
+            $times = array_keys($reads);
+            $tN = end($times);
+            $p = $reads[$tN];
+            $series = array();
+            foreach (array_slice($times, -48) as $t) {
+                $r = $reads[$t];
+                $series[] = array(gmdate('c', $t), round((float)$r['sst'], 2), round((float)$r['hs'], 2));
             }
+            return array('ok' => true, 'read_at' => gmdate('c', $tN),
+                'tempC' => round((float)$p['sst'], 1), 'hs' => round((float)$p['hs'], 2),
+                'hmax' => isset($p['hmax']) ? round((float)$p['hmax'], 2) : null,
+                'tp' => isset($p['tp']) ? round((float)$p['tp'], 1) : null,
+                'tz' => isset($p['tz']) ? round((float)$p['tz'], 1) : null,
+                'dirFromMag' => isset($p['pdir']) ? (int)round((float)$p['pdir']) : null,
+                'series' => $series,
+                'station' => 'Boscombe wave buoy', 'source' => 'cco');
         }
         // fall through to the fallback buoy rather than dying with a key present
     }
 
-    // Cefas Poole Bay buoy. :00 readings sometimes carry only Hm0/TEMP/Tz
-    // (hasSpectra false, empty strings elsewhere) - walk back to the newest
-    // reading that has at least height + temperature.
+    // Cefas Poole Bay buoy. The response is already an array of recent
+    // readings; :00 rows sometimes carry only Hm0/TEMP/Tz (hasSpectra false,
+    // empty strings elsewhere). Newest valid row = headline; every valid row
+    // with height + temperature joins the measured trend series.
     $j = bmsea_http_json('https://wavenet-api.cefas.co.uk/api/Detail/Results/POOLEBAYWN/INT?showForecast=false');
     if (is_array($j)) {
+        $reads = array();
         foreach ($j as $row) {
             if (!is_array($row) || empty($row['timestamp']) || !empty($row['isForecast'])) continue;
             $vals = array();
@@ -160,13 +177,27 @@ function bmsea_fetch_buoy() {
                 }
             }
             if (!isset($vals['Hm0']) || !isset($vals['TEMP'])) continue;
+            $t = strtotime($row['timestamp'] . ' UTC');
+            if ($t) $reads[$t] = $vals;
+        }
+        if ($reads) {
+            ksort($reads);
+            $times = array_keys($reads);
+            $tN = end($times);
+            $vals = $reads[$tN];
+            $series = array();
+            foreach (array_slice($times, -48) as $t) {
+                $v = $reads[$t];
+                $series[] = array(gmdate('c', $t), round($v['TEMP'], 2), round($v['Hm0'], 2));
+            }
             return array('ok' => true,
-                'read_at' => gmdate('c', strtotime($row['timestamp'] . ' UTC')),
+                'read_at' => gmdate('c', $tN),
                 'tempC' => round($vals['TEMP'], 1), 'hs' => round($vals['Hm0'], 2),
                 'hmax' => null,
                 'tp' => isset($vals['Tpeak']) ? round($vals['Tpeak'], 1) : null,
                 'tz' => isset($vals['Tz']) ? round($vals['Tz'], 1) : null,
                 'dirFromMag' => isset($vals['W_PDIR']) ? (int)round($vals['W_PDIR']) : null,
+                'series' => $series,
                 'station' => 'Poole Bay wave buoy', 'source' => 'cefas');
         }
     }
@@ -269,7 +300,10 @@ function bmsea_fetch_overflow() {
  * carries that caveat.
  */
 function bmsea_fetch_tide() {
-    $j = bmsea_http_json('https://environment.data.gov.uk/flood-monitoring/id/measures/E71939-level-tidal_level-Mean-15_min-mAOD/readings?_sorted&_limit=4');
+    // 100 x 15-min readings = the last ~25 hours: headline + trend + a full
+    // measured tide curve for the chart (a curve every competitor fakes with
+    // harmonic predictions; ours is the gauge on the pier).
+    $j = bmsea_http_json('https://environment.data.gov.uk/flood-monitoring/id/measures/E71939-level-tidal_level-Mean-15_min-mAOD/readings?_sorted&_limit=100');
     $items = is_array($j) && isset($j['items']) && is_array($j['items']) ? $j['items'] : array();
     $reads = array();
     foreach ($items as $it) {
@@ -284,8 +318,13 @@ function bmsea_fetch_tide() {
         if ($d > 0.03) $trend = 'rising';
         elseif ($d < -0.03) $trend = 'falling';
     }
+    $series = array();
+    foreach (array_reverse(array_slice($reads, 0, 96)) as $r) {   // ascending for drawing
+        $series[] = array($r['t'], round($r['v'], 2));
+    }
     return array('ok' => true, 'read_at' => gmdate('c', strtotime($reads[0]['t'])),
                  'levelMAOD' => round($reads[0]['v'], 2), 'trend' => $trend,
+                 'series' => $series,
                  'station' => 'Bournemouth Pier tide gauge');
 }
 
