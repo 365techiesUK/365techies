@@ -51,6 +51,12 @@ require_once __DIR__ . '/tm-lib.php';
 require_once __DIR__ . '/pcm-bkpend-lib.php';
 $bkp = bkpend_sweep();
 
+/* Bournemouth365 sea conditions. Same placement, same reason: the live data
+   layer must keep refreshing regardless of the SMS account's state. Internally
+   rate-limited (BMSEA_TTL), so the 15-min cron mostly no-ops. */
+require_once __DIR__ . '/bm-sea-lib.php';
+$sea = bm_sea_refresh();
+
 if (!tm_configured()) {
     $out = array('ok' => false, 'error' => 'not-configured', 'bkpend' => $bkp);
     echo $CLI ? ("sms not configured (abandoned bookings reported: " . $bkp['told'] . ")\n")

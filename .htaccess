@@ -145,14 +145,14 @@ ErrorDocument 404 /404.html
 # readable 2026-07-27 - it was never in this list). Any new *-cache/token file the
 # api/ writes MUST be added here; check with a browser fetch, not curl (the bot wall
 # answers 202 to scripted requests and hides a real 200).
-<FilesMatch "^(pcm-data|pcm-sb-token|pcm-bkpoll-cache|pcm-used|pass-used|pcm-throttle|pcm-joincodes|pcm-waitlist|pcm-waitlist-rate|pcm-fb-rate|pcm-reviewq|pcm-pubrate|pcm-draftfb|pcm-draftfb-rate|pcm-bkpend|pcm-bkpend-beat|pcm-wifi-[a-f0-9]+|pcm-msg-[a-f0-9]+|pcm-msg-beat)\.json(\..*)?$">
+<FilesMatch "^(pcm-data|pcm-sb-token|pcm-bkpoll-cache|pcm-used|pass-used|pcm-throttle|pcm-joincodes|pcm-waitlist|pcm-waitlist-rate|pcm-fb-rate|pcm-reviewq|pcm-pubrate|pcm-draftfb|pcm-draftfb-rate|pcm-bkpend|pcm-bkpend-beat|bm-sea-cache|bm-sea-beat|pcm-wifi-[a-f0-9]+|pcm-msg-[a-f0-9]+|pcm-msg-beat)\.json(\..*)?$">
   Require all denied
 </FilesMatch>
 # Portal messaging: the Slack BOT token (the only bot token in the project), the
 # per-install filename salt, the CLI-only cron, and the shared libraries. The
 # cron also refuses non-CLI itself - this is the belt to that braces, because a
 # lost .htaccess has happened here before.
-<FilesMatch "^(pcm-slack-bot|pcm-msg-salt|pcm-slack-lib|pcm-msg-lib|pcm-msg-poll|pcm-bkpend-lib|pcm-bkpend-test)\.php$">
+<FilesMatch "^(pcm-slack-bot|pcm-msg-salt|pcm-slack-lib|pcm-msg-lib|pcm-msg-poll|pcm-bkpend-lib|pcm-bkpend-test|bm-sea-lib|bm-sea-key)\.php$">
   Require all denied
 </FilesMatch>
 <Files "pcm-msg-cron.lock">
