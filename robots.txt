@@ -2,20 +2,34 @@
 # Goal: maximum visibility for search engines AND AI answer engines.
 # Everything is allowed; AI crawlers are explicitly welcomed below.
 #
-# ⚠️ DO NOT WRITE THE THROTTLE DIRECTIVE IN THIS FILE, NOT EVEN INSIDE A COMMENT.
-# SiteGround rewrites robots.txt as it is served: any line containing that
-# directive name FOLLOWED BY A COLON is replaced with its own live "10 seconds"
-# value. Proved on 2026-08-02 — a comment here explaining the problem was itself
-# converted into the directive, while other lines in the same comment that named
-# it WITHOUT a colon survived untouched. So the substitution is keyed on the
-# colon, and writing about it in prose is safe only in this form.
+# ⚠️ A THROTTLE DIRECTIVE YOU DID NOT WRITE WILL APPEAR IN THE SERVED FILE.
+# SiteGround answers ANY request whose URI contains "robots.txt" from a
+# platform handler — /myrobots.txt and /xrobots.txt are answered too, and no
+# such files exist. It inserts its documented server default (10) into the
+# wildcard group at serve time. The file on disk is innocent; git is innocent.
+# Their KB documents both the 10 default and a minimum permitted value of 1.
 #
-# The directive is therefore NOT ours and cannot be removed by editing this file
-# — it is injected by the host and has been live since the 2026-06-16 migration.
-# Google ignores it. Bing, Yandex and several AI crawlers honour it, and at ten
-# seconds per request one pass over 670 URLs cannot finish inside two hours.
-# That works directly against the goal on line 2. Changing it needs a SiteGround
-# setting or a support ticket, not a commit.
+# ⚠️ Don't write the directive name with a colon in a COMMENT here — a comment
+# doing exactly that was replaced by a live directive on 2026-08-02. Whether
+# that is a colon-keyed rewrite or a blunt overwrite is NOT established, so
+# treat it as an operational hazard, not a known mechanism.
+#
+# ⚠️ SUSPECTED SELF-INFLICTED, NOT the host's fault by default: this file is
+# served via Apache (X-Proxy-Cache-Info "UP:") rather than nginx Direct
+# Delivery ("DT:1"), and the injector only sits on the Apache path.
+# colinclarkbuilders.co.uk on the SAME platform serves its real robots.txt
+# clean — and its .htaccess has no rule touching .txt, while ours added
+# <FilesMatch "\.(webmanifest|json|xml|txt)$"> on 2026-08-01. Dropping txt from
+# that FilesMatch is the likely fix, at the cost of robots.txt inheriting the
+# 180-day proxy default. Unproven; do not assert it to support as fact.
+#
+# HONEST IMPACT, because three earlier claims here were wrong: Google ignores
+# crawl-delay outright and Yandex dropped it in 2018. Every AI crawler below has
+# its OWN group, and under RFC 9309 a crawler obeys only its most specific
+# matching group — so none of them ever reads the wildcard group this lands in.
+# The real cost is Bing freshness (and the Copilot/DuckDuckGo surfaces behind
+# it), plus crawlers with no section of their own. At 670 URLs a full pass is
+# about 1h52m, so this is a freshness annoyance, not a coverage problem.
 
 User-agent: *
 Allow: /
