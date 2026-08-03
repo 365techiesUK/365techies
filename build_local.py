@@ -86,11 +86,61 @@ BIZ_LINKS = {
 
 REPAIR_SLUGS = {s for _t, s, _n, _it in bp.REPAIR_TOWNS}  # towns that have a computer-repair page
 
+
+# ---- Real local evidence, per town (see this file's header for the rules) ----
+# Named work, dated, already published elsewhere on the site. No counts, no
+# customer data, nothing that decays into a lie when a relationship changes.
+LOCAL_PROOF = {
+ "it-support-bournemouth": (
+   "We have worked in this town for three decades, not from a call centre",
+   "<p>From 1998 to 2008 we built and ran the <strong>Dorset Microsoft Education Resource Centre</strong> in Winton &mdash; a training centre on our own computer network. From 2008 to 2017 we ran a computer sales, service and support centre in <strong>Moordown</strong>, and today we are at the <strong>Kinson Community Centre</strong>. Some of the customers we picked up in Winton are still with us.</p>"
+   "<p>We have also provided the IT sales, servicing and support for <strong><a href=\"https://vividwebsites.co.uk/\" target=\"_blank\" rel=\"noopener\">Vivid Websites</a></strong>, the Bournemouth web agency behind sites for Bournemouth &amp; Poole College and Upton Country Park, <strong>since 2010</strong>.</p>"),
+
+ "it-support-poole": (
+   "Poole businesses we have looked after for years",
+   "<p><strong>Emblem Sports Cars</strong>, the South Coast&rsquo;s independent Ferrari, Maserati and Lamborghini specialists &mdash; we have been their IT support <strong>since 2016</strong>, including the diagnostic systems in the workshop. <strong>Beckox Plastic Fabrications</strong>, whose own clients include Rolls-Royce, Merck and Wessex Water &mdash; <strong>since 2001</strong>. And we supported the Poole financial advisers <strong>PFM Associates from 1997 to 2016</strong>, through an acquisition, an office relocation and every machine in between.</p>"
+   "<p>Two decades with the same firms is the only IT reference that means anything.</p>"),
+
+ "it-support-christchurch": (
+   "The link we built across the River Avon",
+   "<p>In 2015 we installed a point-to-point wireless link spanning the <strong>River Avon at Knapp Mill</strong> for the <strong>Environment Agency</strong>, carrying the data for the river&rsquo;s fish counter across water where a cable was not an option. <strong>We still support it today.</strong></p>"
+   "<p>Two aerials, clear air between them, one connection that has to keep working &mdash; the same thinking we bring to a Christchurch home&rsquo;s troublesome Wi-Fi.</p>"),
+
+ "it-support-dorset": (
+   "Thirty years of Dorset work, named",
+   "<p>We were the IT support partner for <strong>Mercedes-Benz Pentagon</strong> across the south coast from 1998 to 2008 &mdash; upgrading the computers in their garages in 2001 and starting remote support back then, when it was still unusual. We built and ran the <strong>Dorset Microsoft Education Resource Centre</strong> in Bournemouth over the same decade.</p>"
+   "<p>Today that continues with firms like <strong>Emblem Sports Cars</strong> and <strong>Beckox</strong> in Poole, and the <strong>Environment Agency</strong>&rsquo;s river link at Christchurch &mdash; installed in 2015 and still supported.</p>"),
+}
+
+# ---- Bournemouth365: the free local pages this section earns links with ------
+# Only where the geography is genuinely true. The sea page reads a buoy in
+# POOLE BAY and covers seven beaches from Alum Chine to Southbourne, so Poole
+# and Bournemouth are honest; Christchurch is the next bay east and is framed
+# as such, not claimed as covered.
+B365_LINKS = {
+ "it-support-bournemouth": "<p>Not looking for IT help today? We also run <a href=\"/bournemouth/\">Bournemouth365</a> &mdash; live measured sea conditions from the bay&rsquo;s buoy and the tide gauge on the pier, the Friday fireworks answered honestly, and the best sunrise and sunset spots, photographed by us. Free, no ads, and the same people behind it.</p>",
+ "it-support-poole": "<p>While you are here: the buoy behind our free <a href=\"/bournemouth/sea-today/\">live sea conditions page</a> sits in Poole Bay, and Sandbanks is one of the spots on our <a href=\"/bournemouth/sunrise-sunset/\">sunrise and sunset guide</a> &mdash; part of <a href=\"/bournemouth/\">Bournemouth365</a>, the local pages we run alongside the day job.</p>",
+ "it-support-christchurch": "<p>We also run <a href=\"/bournemouth/\">Bournemouth365</a>, which measures the sea in the next bay west &mdash; and if you have ever wondered why the tide here behaves so strangely, our <a href=\"/bournemouth/sea-today/\">live tide curve from the pier gauge</a> explains the double high water Christchurch is known for.</p>",
+ "it-support-dorset": "<p>Alongside the day job we run <a href=\"/bournemouth/\">Bournemouth365</a> &mdash; free local pages with live measured sea conditions, the Friday fireworks and the coast photographed by us. No ads, no paywall.</p>",
+}
+
 def make_local(i, slug, town, region, lede, intro_para, nearby):
     crumb_name = f"IT Support {town}"
     repair_slug = ("computer-repair-" + slug[len("it-support-"):]) if slug.startswith("it-support-") else ""
     repair_link = (f'\n          <p>Just need a one-off fix rather than a plan? See our <a href="/{repair_slug}/">computer &amp; laptop repair in {town}</a> &mdash; home visits, fast remote help and no call-out fee.</p>'
                    if repair_slug in REPAIR_SLUGS else "")
+    # Real named local work, where we have it and it is already public.
+    _pf = LOCAL_PROOF.get(slug)
+    proof_block = (f'''    <section class="section section--alt" aria-label="Our work in {town}">
+      <div class="wrap">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">// LOCAL TRACK RECORD</p>
+          <h2 class="section-title" data-title>{_pf[0]}<span class="title-underline"></span></h2>
+          {_pf[1]}
+        </div>
+      </div>
+    </section>''' if _pf else "")
+    b365_link = ("\n          " + B365_LINKS[slug]) if slug in B365_LINKS else ""
     biz_link = (f'\n          <p>Running a business in {town}? See our dedicated <a href="{BIZ_LINKS[slug][0]}">{BIZ_LINKS[slug][1]}</a> &mdash; fully managed IT, Microsoft 365, cybersecurity and support for one monthly cost per computer.</p>'
                 if slug in BIZ_LINKS else "")
     # GSC, 28 Jul 2026: these town pages rank but are never clicked - /it-support-blandford-forum/
@@ -166,11 +216,12 @@ def make_local(i, slug, town, region, lede, intro_para, nearby):
           <h2 class="section-title" data-title>Your local {town} techies<span class="title-underline"></span></h2>
           <p>{intro_para}</p>
           <p>As your local IT company, we cover it all &mdash; IT support and business IT services, computer and laptop repairs, Microsoft 365, cybersecurity and practical IT solutions for {town} homes and businesses.</p>
-          <p><strong>Most problems are solved remotely in minutes</strong> — and when you need someone in person, we&rsquo;re close by. Local knowledge, no call-centres, no jargon.</p>{repair_link}{biz_link}
+          <p><strong>Most problems are solved remotely in minutes</strong> — and when you need someone in person, we&rsquo;re close by. Local knowledge, no call-centres, no jargon.</p>{repair_link}{biz_link}{b365_link}
         </div>
         {local_col}
       </div>
     </section>''',
+      proof_block,
       f'''    <section class="section section--alt" aria-label="How we help">
       <div class="wrap">
         <div class="section-head">
