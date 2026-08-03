@@ -88,12 +88,14 @@ _URL = SITE + "/" + _SLUG + "/"
 # ---- the "is it on tonight?" panel (client-side date arithmetic only) --------
 _JS_DATES = ",".join('["%s","%s"]' % (d, lbl) for d, lbl in FRIDAYS)
 
-_STATUS = f'''    <section class="section" id="tonight" aria-label="Next fireworks display">
+_STATUS = f'''    <section class="section b365 b365--dusk" id="tonight" aria-label="Next fireworks display">
       <div class="wrap">
         <div class="tile-grid" data-stagger style="grid-template-columns:1fr">
-          <div class="tile" id="bmfw-tile">
+          <div class="b365-tile b365-tile--dusk" id="bmfw-tile">
+            <p class="b365-state" id="bmfw-state">FRIDAY FIREWORKS &middot; 2026</p>
             <h3 id="bmfw-head">Fireworks every Friday at 10pm until 28 August 2026</h3>
             <p id="bmfw-sub">Free, from the seafront just east of Bournemouth Pier. This panel needs JavaScript to count down to the next display &mdash; the full date list is just below.</p>
+            <p class="b365-sub" id="bmfw-live"></p>
           </div>
         </div>
         <p class="mono" style="margin-top:.8rem" data-reveal>Displays are weather-dependent. Cancellations are announced by the organisers on <a href="https://www.bournemouth.co.uk/event/bournemouth-friday-fireworks" target="_blank" rel="noopener">bournemouth.co.uk</a> and the official Love Bournemouth social channels &mdash; if the wind is up, check there before you set off.</p>
@@ -152,7 +154,7 @@ _DATES = f'''          <h2 id="dates">Every 2026 date</h2>
 {_ROWS}
             </tbody>
           </table>
-          <p class="mono">Dates and the 10pm start are as published by the organisers, BCP Council&rsquo;s events team, for 2026.</p>'''
+          <p class="mono">Dates and the 10pm start are as published by the organisers, BCP Council&rsquo;s events team, for 2026. Last verified against the organisers&rsquo; listings: 2 August 2026.</p>'''
 
 # ---- where to stand ----------------------------------------------------------
 _WHERE = '''          <h2 id="where">Where to stand</h2>
@@ -172,6 +174,10 @@ _PRACTICAL = '''          <h2 id="practical">Getting there and back</h2>
           <p><strong>Arrive well before 10.</strong> On a warm Friday the seafront fills through the evening; being settled by half nine beats hunting for a gap in the dark.</p>
           <p><strong>Buses:</strong> Morebus has run extra &ldquo;Firework Fridays&rdquo; services in recent seasons &mdash; check <a href="https://www.morebus.co.uk" target="_blank" rel="noopener">morebus.co.uk</a> for this year&rsquo;s times. <strong>Parking:</strong> the seafront and clifftop car parks fill early on fireworks nights; allow more time than feels sensible, or take the bus. An honest local guide to beach parking is coming to this section soon.</p>
           <p><strong>Afterwards:</strong> it is dark, the paths are busy, and small legs are tired &mdash; the overcliff exits thin the crowd out fastest. Take your litter home, and keep clear of any cordoned area near the firing site on the beach.</p>
+          <h2 id="history">130 years of summer light</h2>
+          <p>Bournemouth&rsquo;s habit of lighting up its seafront on summer evenings has a recorded origin: the candlelight illuminations of the Lower Gardens, first staged in 1896 &mdash; the year the Empress Eug&eacute;nie visited &mdash; and extended in 1897 for Queen Victoria&rsquo;s Diamond Jubilee, when some fifteen thousand coloured candles were lit through the gardens. The tradition survives in two forms today: the gardens&rsquo; candlelight nights, and the Friday fireworks &mdash; fired by the council&rsquo;s events team from a barge just east of the pier, part-funded by the town&rsquo;s Coastal BID to keep summer evenings on the seafront busy. Same idea as 1896: give everyone on the beach a reason to stay for dusk.</p>
+          <p class="mono">History: recorded origin per Bournemouth Parks &amp; Gardens histories and visitor-guide archives (the 1896 date and the Jubilee candle count are corroborated across independent local accounts); today&rsquo;s operation per BCP Council&rsquo;s event listings.</p>
+
           <h2 id="winter">November 5th and New Year</h2>
           <p>Organised autumn and New Year displays around Bournemouth vary year to year, and nothing has been announced for late 2026 yet. We will update this page when the organisers confirm anything &mdash; the Friday Fireworks above are the seafront&rsquo;s regular fixture.</p>
           <h2>What happened to the Air Festival?</h2>
@@ -187,6 +193,7 @@ _B365 = '''    <section class="section" aria-label="About Bournemouth365">
         <div class="prose" data-reveal>
           <p>Bournemouth365 is the web home of our <a href="https://www.facebook.com/bournemouth365" target="_blank" rel="noopener">Bournemouth Live Facebook page</a>, where 39,000 of you watch the seafront with us every day. More pages are on the way: live sea conditions measured at the Boscombe wave buoy, an honest local guide to parking for the beach, and the best sunrise and sunset spots &mdash; photographed by us, not stock.</p>
           <p class="mono">Built in Bournemouth by <a href="/">365 Techies</a> &mdash; the family firm that has looked after the town&rsquo;s computers since 1995.</p>
+          <p class="b365-foot">No ads. No paywall. No consent wall. Built to load fast on beach 4G.</p>
         </div>
       </div>
     </section>'''
@@ -305,22 +312,68 @@ _ST_CLIMATE_ROWS = "\n".join(
 # The live panel: six tiles the JS fills from /api/bm-sea.php. Every tile has
 # an honest no-data state baked into the HTML, so a fetch failure needs no JS
 # at all to be truthful.
-_ST_PANEL = '''    <section class="section" id="now" aria-label="Live sea conditions">
+_ST_PANEL ='''    <section class="section b365" id="now" aria-label="Live sea conditions">
       <div class="wrap">
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>// MEASURED, NOT MODELLED</p>
           <h2 class="section-title section-title--center" data-title>The sea right now<span class="title-underline title-underline--center"></span></h2>
         </div>
+        <p class="b365-verdict" id="st-verdict" data-reveal></p>
+        <p class="mono" id="st-line" data-reveal style="margin:0 0 1rem"></p>
+        <div class="b365-hero" data-stagger>
+          <div class="b365-tile" id="st-tile-temp">
+            <span class="chip-m" id="st-temp-chip">SEA TEMPERATURE</span>
+            <div class="b365-num" id="st-temp">&mdash;<small>&deg;C</small></div>
+            <svg class="b365-spark" id="st-spark-t" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true"></svg>
+            <p class="b365-sub" id="st-temp-sub">Waiting for the buoy&hellip; if this message stays, the live feed is down and we&rsquo;d rather say so than guess.</p>
+          </div>
+          <div class="b365-tile" id="st-tile-waves">
+            <span class="chip-m" id="st-waves-chip">WAVE HEIGHT</span>
+            <div class="b365-num" id="st-waves">&mdash;<small>m</small></div>
+            <svg class="b365-spark" id="st-spark-w" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true"></svg>
+            <p class="b365-sub" id="st-waves-sub">Waiting for the buoy&hellip;</p>
+          </div>
+          <div class="b365-tile" id="st-tile-tide">
+            <span class="chip-m" id="st-tide-chip">TIDE &middot; PIER GAUGE</span>
+            <div class="b365-num" id="st-tide">&mdash;</div>
+            <p class="b365-sub" id="st-tide-sub">Waiting for the pier gauge&hellip;</p>
+          </div>
+        </div>
+        <div class="b365-tile" id="st-tile-curve" data-reveal>
+          <span class="chip-m" id="st-curve-chip">THE LAST 24 HOURS OF TIDE, MEASURED ON BOURNEMOUTH PIER</span>
+          <svg class="b365-curve" id="st-curve" viewBox="0 0 600 150" preserveAspectRatio="none" aria-hidden="true"></svg>
+          <p class="b365-sub" id="st-curve-note">The measured curve from the Environment Agency gauge mounted on the pier &mdash; not a tide-table prediction. Not for navigation or safety-critical use.</p>
+        </div>
+        <div class="b365-bands" id="st-bands" data-reveal aria-label="Swimmer temperature bands">
+          <span data-band="0">0&ndash;6&deg; Baltic</span><span data-band="1">6&ndash;11&deg; Freezing</span><span data-band="2">12&ndash;16&deg; Fresh</span><span data-band="3">17&ndash;20&deg; Summer</span><span data-band="4">21&deg;+ Warm</span>
+        </div>
+        <p class="b365-sub" id="st-band-note" data-reveal style="margin-bottom:1rem">The Outdoor Swimming Society&rsquo;s bands &mdash; anecdotal, not scientific, as the OSS itself says. The highlight follows the live measured reading.</p>
         <div class="tile-grid" data-stagger>
-          <div class="tile"><h3 id="st-temp">Sea temperature</h3><p id="st-temp-sub">Waiting for the buoy&hellip; if this message stays, the live feed is down and we&rsquo;d rather say so than guess.</p></div>
-          <div class="tile"><h3 id="st-waves">Waves</h3><p id="st-waves-sub">Waiting for the buoy&hellip;</p></div>
-          <div class="tile"><h3 id="st-tide">Tide</h3><p id="st-tide-sub">Waiting for the pier gauge&hellip;</p></div>
-          <div class="tile"><h3 id="st-quality">Water quality</h3><p id="st-quality-sub">Waiting for the Environment Agency feed&hellip;</p></div>
-          <div class="tile"><h3 id="st-overflow">Storm overflows</h3><p id="st-overflow-sub">Waiting for the monitor feed&hellip;</p></div>
+          <div class="tile" id="st-tile-quality"><h3 id="st-quality">Water quality</h3><p id="st-quality-sub">Waiting for the Environment Agency feed&hellip;</p></div>
+          <div class="tile" id="st-tile-overflow"><h3 id="st-overflow">Storm overflows</h3><p id="st-overflow-sub">Waiting for the monitor feed&hellip;</p></div>
           <div class="tile"><h3 id="st-sun">Sun</h3><p id="st-sun-sub">Today&rsquo;s sunrise and sunset, computed for the seafront.</p></div>
         </div>
+        <div class="b365-months" id="st-months" data-reveal aria-label="Long-term monthly sea temperature averages">
+          <span data-mo="0">Jan<b>7.4&deg;</b></span>
+          <span data-mo="1">Feb<b>6.8&deg;</b></span>
+          <span data-mo="2">Mar<b>7.4&deg;</b></span>
+          <span data-mo="3">Apr<b>8.9&deg;</b></span>
+          <span data-mo="4">May<b>11.8&deg;</b></span>
+          <span data-mo="5">Jun<b>14.9&deg;</b></span>
+          <span data-mo="6">Jul<b>17.4&deg;</b></span>
+          <span data-mo="7">Aug<b>18.4&deg;</b></span>
+          <span data-mo="8">Sep<b>16.8&deg;</b></span>
+          <span data-mo="9">Oct<b>14.2&deg;</b></span>
+          <span data-mo="10">Nov<b>11.2&deg;</b></span>
+          <span data-mo="11">Dec<b>8.7&deg;</b></span>
+        </div>
+        <p class="b365-sub" id="st-lag-note" data-reveal>Long-term monthly averages (Cefas station 23 &ldquo;Bournemouth&rdquo;, 1971&ndash;2000). The sea lags the air by about two months &mdash; September beats June.</p>
+        <details data-reveal style="margin-top:1rem"><summary class="mono">Why our number can differ from what Google shows</summary>
+          <p class="b365-sub" style="margin-top:.5rem">Most sea-temperature sites publish satellite-derived estimates of open water, sometimes updated daily, sometimes modelled from long-term analysis &mdash; and nearshore water can differ from those estimates by several degrees, as those sites&rsquo; own disclaimers note. The number above is a physical instrument in the bay reporting a measurement, with the time it was taken. When the instrument is down, we say so rather than switching to a model.</p>
+        </details>
         <p class="mono" id="st-asof" style="margin-top:.8rem" data-reveal></p>
         <p class="mono" id="st-attrib" style="margin-top:.4rem" data-reveal>Sources: the bay&rsquo;s wave buoy, the Environment Agency tide gauge at Bournemouth Pier and bathing-water service, and Wessex Water&rsquo;s storm-overflow monitors &mdash; details at the foot of this page.</p>
+        <p class="b365-foot" data-reveal style="margin-top:1.2rem">No ads. No paywall. No consent wall. Every reading carries its instrument and its measurement time &mdash; built in Bournemouth to load fast on beach 4G.</p>
       </div>
     </section>'''
 
@@ -387,10 +440,104 @@ _ST_JS = '''      <script>
           return ['\\u201cBaltic\\u201d', 'a few minutes is an achievement, even for the experienced'];
         }
 
+
+        function setChip(id, kind, txt) {
+          var e = document.getElementById(id);
+          if (e) { e.className = kind; e.textContent = txt; }
+        }
+        function tileState(id, cls) {
+          var e = document.getElementById(id);
+          if (e) { e.classList.remove('b365-fresh', 'b365-stale', 'b365-down'); if (cls) e.classList.add(cls); }
+        }
+        function fmtNum(id, val, unit) {
+          var e = document.getElementById(id);
+          if (e) e.innerHTML = val + '<small>' + unit + '</small>';
+        }
+        function spark(id, series, idx) {
+          var svg = document.getElementById(id);
+          if (!svg || !series || series.length < 3) return;
+          var vals = [], times = [];
+          for (var i = 0; i < series.length; i++) { vals.push(series[i][idx]); times.push(new Date(series[i][0]).getTime()); }
+          var mn = Math.min.apply(null, vals), mx = Math.max.apply(null, vals);
+          if (mx - mn < 0.15) { var mid = (mx + mn) / 2; mn = mid - 0.1; mx = mid + 0.1; }
+          var t0 = times[0], t1 = times[times.length - 1], span = Math.max(1, t1 - t0);
+          var d = '', pen = false;
+          for (var j = 0; j < vals.length; j++) {
+            var x = 2 + 96 * (times[j] - t0) / span;
+            var y = 27 - 24 * (vals[j] - mn) / (mx - mn);
+            // draw the gap when the instrument went quiet - never interpolate it
+            if (j > 0 && times[j] - times[j - 1] > 45 * 60000) pen = false;
+            d += (pen ? ' L' : ' M') + x.toFixed(1) + ' ' + y.toFixed(1);
+            pen = true;
+          }
+          var lx = 2 + 96, ly = 27 - 24 * (vals[vals.length - 1] - mn) / (mx - mn);
+          svg.innerHTML = '<path class="l" d="' + d + '"/><circle class="now" cx="98" cy="' + ly.toFixed(1) + '" r="2.4"/>';
+          if (!window.matchMedia || !window.matchMedia('(prefers-reduced-motion: reduce)').matches) svg.classList.add('b365-draw');
+        }
+        function tideCurve(series) {
+          var svg = document.getElementById('st-curve'), note = document.getElementById('st-curve-note');
+          if (!svg || !series || series.length < 8) return;
+          var W = 600, H = 150, L = 34, R = 12, T = 14, B = 22;
+          var vals = [], times = [];
+          for (var i = 0; i < series.length; i++) { vals.push(series[i][1]); times.push(new Date(series[i][0]).getTime()); }
+          var mn = Math.min.apply(null, vals), mx = Math.max.apply(null, vals);
+          var pad = Math.max(0.1, (mx - mn) * 0.12); mn -= pad; mx += pad;
+          var t0 = times[0], t1 = times[times.length - 1], span = Math.max(1, t1 - t0);
+          function X(tm) { return L + (W - L - R) * (tm - t0) / span; }
+          function Y(v) { return T + (H - T - B) * (1 - (v - mn) / (mx - mn)); }
+          var d = '', pen = false;
+          for (var j = 0; j < vals.length; j++) {
+            if (j > 0 && times[j] - times[j - 1] > 25 * 60000) pen = false;
+            d += (pen ? ' L' : ' M') + X(times[j]).toFixed(1) + ' ' + Y(vals[j]).toFixed(1);
+            pen = true;
+          }
+          // local extremes over a +/-5-point window (75 min)
+          var marks = [], maxima = [];
+          for (var k = 5; k < vals.length - 5; k++) {
+            var hi = true, lo = true;
+            for (var w = -5; w <= 5; w++) {
+              if (vals[k + w] > vals[k]) hi = false;
+              if (vals[k + w] < vals[k]) lo = false;
+            }
+            if (hi) { marks.push([k, 'high']); maxima.push(k); k += 5; }
+            else if (lo) { marks.push([k, 'low']); k += 5; }
+          }
+          var g = '<line class="grid" x1="' + L + '" y1="' + Y(0) + '" x2="' + (W - R) + '" y2="' + Y(0) + '"/>' +
+                  '<text x="2" y="' + (Y(0) + 3) + '">0m</text>';
+          var html = g + '<path class="l" d="' + d + '"/>';
+          for (var m = 0; m < marks.length && m < 4; m++) {
+            var ki = marks[m][0];
+            var lab = vals[ki].toFixed(1) + 'm ' + hm(new Date(times[ki]));
+            var ty = marks[m][1] === 'high' ? Y(vals[ki]) - 5 : Y(vals[ki]) + 13;
+            html += '<text x="' + Math.min(X(times[ki]), W - 70).toFixed(1) + '" y="' + ty.toFixed(1) + '">' + lab + '</text>';
+          }
+          html += '<circle class="now" cx="' + X(times[times.length - 1]).toFixed(1) + '" cy="' + Y(vals[vals.length - 1]).toFixed(1) + '" r="3.5"/>';
+          svg.innerHTML = html;
+          if (!window.matchMedia || !window.matchMedia('(prefers-reduced-motion: reduce)').matches) svg.classList.add('b365-draw');
+          // the famous stand/double-hump - annotate ONLY when the data shows it
+          if (note && maxima.length >= 2) {
+            var kA = maxima[maxima.length - 2], kB = maxima[maxima.length - 1];
+            if (times[kB] - times[kA] < 8 * 3600000) {
+              var dip = Math.min.apply(null, vals.slice(kA, kB + 1));
+              if (Math.min(vals[kA], vals[kB]) - dip < 0.25 && Math.min(vals[kA], vals[kB]) - dip > 0.02) {
+                note.textContent = 'The double hump in the measured curve is real: Bournemouth\u2019s tide holds a long stand around high water \u2014 a quirk of the English Channel\u2019s standing wave, explained below. Curve from the Environment Agency gauge on the pier; not for navigation.';
+              }
+            }
+          }
+        }
+        function verdictWord(hs, temp) {
+          if (hs >= 1.5) return ['ROUGH', 'v-rough'];
+          if (hs >= 0.75) return ['CHOPPY', 'v-choppy'];
+          if (hs >= 0.25) return temp < 12 ? ['BRACING', 'v-bracing'] : ['FRESH', 'v-fresh'];
+          return ['CALM', 'v-calm'];
+        }
+
         // highlight this month in the climate table - independent of the feed
         var mo0 = new Date().getMonth();
         var hrow = document.querySelector('[data-mo="' + mo0 + '"]');
         if (hrow) hrow.style.fontWeight = '600';
+        var mcell = document.querySelector('.b365-months [data-mo="' + mo0 + '"]');
+        if (mcell) mcell.classList.add('on');
 
         fetch('/api/bm-sea.php', { cache: 'no-cache' })
           .then(function (r) { if (!r.ok) throw new Error('feed'); return r.json(); })
@@ -399,16 +546,41 @@ _ST_JS = '''      <script>
 
             if (d.sea && d.sea.ok) {
               var s = d.sea;
-              el('st-temp').textContent = s.tempC.toFixed(1) + '\\u00b0C sea temperature';
+              var ageMin = Math.round((Date.now() - new Date(s.read_at).getTime()) / 60000);
+              var seaState = s.stale ? 'b365-stale' : (ageMin <= 105 ? 'b365-fresh' : '');
+              tileState('st-tile-temp', seaState); tileState('st-tile-waves', seaState);
+              fmtNum('st-temp', s.tempC.toFixed(1), '\u00b0C');
+              fmtNum('st-waves', s.hs.toFixed(2), 'm');
+              var chipTxt = (s.stale ? 'LAST HEARD ' : 'MEASURED ') + ago(s.read_at).toUpperCase() + ' \u00b7 ' + s.station.toUpperCase();
+              setChip('st-temp-chip', 'chip-m', chipTxt);
+              setChip('st-waves-chip', 'chip-m', chipTxt);
               var band = ossBand(s.tempC);
               el('st-temp-sub').textContent = (s.stale
-                ? 'Last reading ' + readAt(s.read_at) + ' from the ' + s.station + ' \\u2014 the buoy has not reported since.'
-                : 'Measured ' + readAt(s.read_at) + ' by the ' + s.station + '. ' + band[0] + ' on the swimmers\\u2019 scale \\u2014 ' + band[1] + '.');
-              el('st-waves').textContent = s.hs.toFixed(2) + ' m waves';
+                ? 'The buoy has not reported since ' + readAt(s.read_at) + ' \u2014 this is its last reading, not a current one.'
+                : band[0] + ' on the swimmers\u2019 scale \u2014 ' + band[1] + '.');
               var wtxt = 'Significant height, measured. ';
               if (s.tz) wtxt += 'Mean period ' + s.tz.toFixed(1) + 's. ';
-              if (s.dirFromMag !== null && s.dirFromMag !== undefined) wtxt += 'From ' + s.dirFromMag + '\\u00b0 magnetic. ';
-              el('st-waves-sub').textContent = wtxt + (s.stale ? 'Reading ' + readAt(s.read_at) + '.' : '');
+              if (s.dirFromMag !== null && s.dirFromMag !== undefined) wtxt += 'From ' + s.dirFromMag + '\u00b0 magnetic. ';
+              el('st-waves-sub').textContent = wtxt;
+              if (s.series) { spark('st-spark-t', s.series, 1); spark('st-spark-w', s.series, 2); }
+              // verdict: sea-state words only, and never on stale data
+              if (!s.stale) {
+                var v = verdictWord(s.hs, s.tempC), ve = el('st-verdict');
+                ve.textContent = v[0] + ' \u00b7 SEA STATE, MEASURED';
+                ve.className = 'b365-verdict ' + v[1];
+                el('st-line').textContent = 'Computed from the latest readings: ' + s.tempC.toFixed(1) + '\u00b0 water, ' + s.hs.toFixed(2) + 'm waves \u2014 measured ' + ago(s.read_at) + '.';
+              }
+              // cold-water band strip follows the instrument
+              var bi = s.tempC >= 21 ? 4 : s.tempC >= 17 ? 3 : s.tempC >= 12 ? 2 : s.tempC >= 6 ? 1 : 0;
+              var bspan = document.querySelector('.b365-bands [data-band="' + bi + '"]');
+              if (bspan) bspan.classList.add('on');
+              var bn = el('st-band-note');
+              if (bn && !s.stale) bn.textContent = 'At ' + s.tempC.toFixed(1) + '\u00b0C measured now: ' + band[0].replace(/\u201c|\u201d/g, '') + ' \u2014 ' + band[1] + '. Bands: the Outdoor Swimming Society\u2019s guide (anecdotal, as the OSS itself says).';
+              // thermal lag: live reading vs this month's long-term average
+              var norms = [7.4, 6.8, 7.4, 8.9, 11.8, 14.9, 17.4, 18.4, 16.8, 14.2, 11.2, 8.7];
+              var moNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+              var dlt = s.tempC - norms[mo0], ln = el('st-lag-note');
+              if (ln && !s.stale) ln.textContent = 'Measured now: ' + s.tempC.toFixed(1) + '\u00b0 \u2014 ' + Math.abs(dlt).toFixed(1) + '\u00b0 ' + (dlt >= 0 ? 'above' : 'below') + ' the ' + moNames[mo0] + ' long-term average (Cefas station 23, 1971\u20132000). The sea lags the air by about two months \u2014 September beats June.';
               var a = el('st-attrib');
               if (s.source === 'cco') {
                 a.innerHTML = 'Real time data displayed on this page are from the <a href="https://coastalmonitoring.org/" target="_blank" rel="noopener">Regional Coastal Monitoring Programme</a>, made freely available under the terms of the <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" target="_blank" rel="noopener">Open Government Licence</a>. Please note that these are real-time data and are not quality-controlled. Full source list at the foot of the page.';
@@ -416,15 +588,24 @@ _ST_JS = '''      <script>
                 a.textContent = 'Wave and temperature data: Cefas Poole Bay wave buoy (Open Government Licence, acknowledgement to Cefas). Full source list at the foot of the page.';
               }
             } else {
-              el('st-temp-sub').textContent = 'The wave buoy is not reporting right now \\u2014 no reading is better than a guessed one. Try again in half an hour.';
-              el('st-waves-sub').textContent = 'No current wave data \\u2014 the buoy feed is down.';
+              tileState('st-tile-temp', 'b365-down'); tileState('st-tile-waves', 'b365-down');
+              setChip('st-temp-chip', 'chip-m', 'BUOY OFFLINE');
+              setChip('st-waves-chip', 'chip-m', 'BUOY OFFLINE');
+              el('st-temp-sub').textContent = 'The wave buoy is not reporting right now \u2014 no reading is better than a guessed one. Try again in half an hour.';
+              el('st-waves-sub').textContent = 'No current wave data \u2014 the buoy feed is down.';
             }
 
             if (d.tide && d.tide.ok) {
-              var t = d.tide;
-              el('st-tide').textContent = 'Tide ' + t.trend;
-              el('st-tide-sub').textContent = 'Water level ' + t.levelMAOD.toFixed(2) + ' m (vs Ordnance Datum), measured ' + readAt(t.read_at) + ' by the gauge on Bournemouth Pier itself \\u2014 a real instrument, not a prediction. Not for navigation or safety-critical use.';
+              var tt = d.tide;
+              var tAge = Math.round((Date.now() - new Date(tt.read_at).getTime()) / 60000);
+              tileState('st-tile-tide', tt.stale ? 'b365-stale' : (tAge <= 75 ? 'b365-fresh' : ''));
+              el('st-tide').textContent = tt.trend.charAt(0).toUpperCase() + tt.trend.slice(1);
+              setChip('st-tide-chip', 'chip-m', (tt.stale ? 'LAST HEARD ' : 'MEASURED ') + ago(tt.read_at).toUpperCase() + ' \u00b7 GAUGE ON THE PIER');
+              el('st-tide-sub').textContent = 'Water level ' + tt.levelMAOD.toFixed(2) + ' m (vs Ordnance Datum) \u2014 a real instrument on Bournemouth Pier, not a prediction. Not for navigation or safety-critical use.';
+              if (tt.series) tideCurve(tt.series);
             } else {
+              tileState('st-tile-tide', 'b365-down');
+              setChip('st-tide-chip', 'chip-m', 'GAUGE OFFLINE');
               el('st-tide-sub').textContent = 'The pier tide gauge is not reporting right now.';
             }
 
@@ -496,6 +677,9 @@ _ST_PROSE = f'''          <h2 id="swim">Can you swim today?</h2>
             </tbody>
           </table>
           <p>The pattern worth knowing: the sea lags the air by around two months. June sunshine sits on May-chilled water, while a grey October day can still offer a 15&deg;C swim &mdash; warmer than anything before mid-June. The warmest sea of the year is late August; the coldest is February.</p>
+
+          <h2 id="tide">Bournemouth&rsquo;s odd tide, live from the pier</h2>
+          <p>The tide curve above often shows something tide tables flatten out: a long <em>stand</em> around high water, sometimes a visible double hump. It is not a faulty gauge &mdash; it is the English Channel&rsquo;s geometry. The Channel behaves as a standing-wave system with a node near this coast, and in shallow water the tide&rsquo;s harmonics distort the simple twice-a-day curve: Christchurch Harbour gets a true double high water on each tide, and Poole shows double highs at springs and a long stand at neaps (Humphreys, <em>Salinity and Tides in Poole Harbour</em>, Proceedings in Marine Science, 2005). Bournemouth sits between the two. Practical upshot: high water hangs around for hours &mdash; generous for swimmers, and the reason the beach can feel narrow all afternoon.</p>
 
           <h2 id="quality">Water quality, beach by beach</h2>
           <p>The Environment Agency classifies seven bathing waters along this seafront &mdash; Alum Chine, Durley Chine, Bournemouth Pier, Boscombe Pier, Manor Steps, Fisherman&rsquo;s Walk and Southbourne &mdash; and samples each through the May&ndash;September season. In season it also issues a daily pollution-risk forecast. The live panel above summarises; this table is per beach:</p>

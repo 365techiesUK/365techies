@@ -858,6 +858,37 @@ if _rev_bad:
         + "\nThese are real named customers. One list, or it drifts - see the\n"
           "docstring in reviews_data.py for what happened last time.\n")
 
+# ---------------- guard: Bournemouth365 pages stay fast and clean -------------
+# The section's footer states "No ads. No paywall. No consent wall... built to
+# load fast on beach 4G." That claim must stay true unattended, so it is
+# enforced, not hoped: each /bournemouth/ page must stay under 300KB of HTML,
+# load at most 15 resources, and fetch from no third-party host beyond the
+# site's existing analytics. If this fires, remove weight - don't raise the cap.
+import glob as _bmglob
+_bm_bad = []
+_BM_ALLOWED_HOSTS = {"365techies.co.uk", "www.googletagmanager.com",
+                     "www.google-analytics.com", "region1.google-analytics.com",
+                     # the site's font CDN - the privacy-first EU host chosen
+                     # deliberately in the GDPR fix; not an ad or tracker host
+                     "fonts.bunny.net"}
+for _fp in _bmglob.glob(_osg.path.join(bp.BASE, "bournemouth", "*", "index.html")):
+    _html = open(_fp, encoding="utf-8").read()
+    _rel = _osg.path.relpath(_fp, bp.BASE)
+    if len(_html.encode("utf-8")) > 300 * 1024:
+        _bm_bad.append("%s: %d KB of HTML (cap 300)" % (_rel, len(_html.encode("utf-8")) // 1024))
+    _res = _re.findall(r'<(?:script[^>]+src|link[^>]+href|img[^>]+src)="([^"]+)"', _html)
+    if len(_res) > 15:
+        _bm_bad.append("%s: %d resource loads (cap 15)" % (_rel, len(_res)))
+    for _u in _res:
+        _m2 = _re.match(r"https?://([^/]+)/", _u)
+        if _m2 and _m2.group(1) not in _BM_ALLOWED_HOSTS:
+            _bm_bad.append("%s: third-party resource host %s" % (_rel, _m2.group(1)))
+if _bm_bad:
+    raise SystemExit(
+        "\n*** Bournemouth365 speed/cleanliness guard failed ***\n"
+        + "\n".join("   " + b for b in _bm_bad)
+        + "\nThe pages' own footer promises this. Remove weight; never raise the cap.\n")
+
 # ---------------- temporary legacy-URL sitemap ----------------
 # Asks Google to recrawl the old WordPress URLs so it sees the 301s. See
 # legacy_urls.py for the full reasoning. Deliberately NOT referenced from

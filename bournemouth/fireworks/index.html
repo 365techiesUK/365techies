@@ -71,7 +71,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=77" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=78" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -238,7 +238,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-08-02"
+      "dateModified": "2026-08-03"
     },
     {
       "@type": "FAQPage",
@@ -875,12 +875,14 @@
         <ul class="page-hero__chips mono"><li>&#9679; Free &mdash; no tickets</li><li>&#9679; Fridays at 10pm</li><li>&#9679; East of Bournemouth Pier</li></ul>
       </div>
     </section>
-    <section class="section" id="tonight" aria-label="Next fireworks display">
+    <section class="section b365 b365--dusk" id="tonight" aria-label="Next fireworks display">
       <div class="wrap">
         <div class="tile-grid" data-stagger style="grid-template-columns:1fr">
-          <div class="tile" id="bmfw-tile">
+          <div class="b365-tile b365-tile--dusk" id="bmfw-tile">
+            <p class="b365-state" id="bmfw-state">FRIDAY FIREWORKS &middot; 2026</p>
             <h3 id="bmfw-head">Fireworks every Friday at 10pm until 28 August 2026</h3>
             <p id="bmfw-sub">Free, from the seafront just east of Bournemouth Pier. This panel needs JavaScript to count down to the next display &mdash; the full date list is just below.</p>
+            <p class="b365-sub" id="bmfw-live"></p>
           </div>
         </div>
         <p class="mono" style="margin-top:.8rem" data-reveal>Displays are weather-dependent. Cancellations are announced by the organisers on <a href="https://www.bournemouth.co.uk/event/bournemouth-friday-fireworks" target="_blank" rel="noopener">bournemouth.co.uk</a> and the official Love Bournemouth social channels &mdash; if the wind is up, check there before you set off.</p>
@@ -941,7 +943,7 @@
             <tr data-fw="2026-08-28"><td>Friday 28 August</td><td>10pm</td><td>&asymp; 8:02 pm</td></tr>
             </tbody>
           </table>
-          <p class="mono">Dates and the 10pm start are as published by the organisers, BCP Council&rsquo;s events team, for 2026.</p>
+          <p class="mono">Dates and the 10pm start are as published by the organisers, BCP Council&rsquo;s events team, for 2026. Last verified against the organisers&rsquo; listings: 2 August 2026.</p>
           <h2 id="where">Where to stand</h2>
           <p>The fireworks go up from the shore <strong>just east of Bournemouth Pier</strong>, over the water. That one fact picks your spot for you:</p>
           <h3>The beach east of the pier</h3>
@@ -957,6 +959,10 @@
           <p><strong>Arrive well before 10.</strong> On a warm Friday the seafront fills through the evening; being settled by half nine beats hunting for a gap in the dark.</p>
           <p><strong>Buses:</strong> Morebus has run extra &ldquo;Firework Fridays&rdquo; services in recent seasons &mdash; check <a href="https://www.morebus.co.uk" target="_blank" rel="noopener">morebus.co.uk</a> for this year&rsquo;s times. <strong>Parking:</strong> the seafront and clifftop car parks fill early on fireworks nights; allow more time than feels sensible, or take the bus. An honest local guide to beach parking is coming to this section soon.</p>
           <p><strong>Afterwards:</strong> it is dark, the paths are busy, and small legs are tired &mdash; the overcliff exits thin the crowd out fastest. Take your litter home, and keep clear of any cordoned area near the firing site on the beach.</p>
+          <h2 id="history">130 years of summer light</h2>
+          <p>Bournemouth&rsquo;s habit of lighting up its seafront on summer evenings has a recorded origin: the candlelight illuminations of the Lower Gardens, first staged in 1896 &mdash; the year the Empress Eug&eacute;nie visited &mdash; and extended in 1897 for Queen Victoria&rsquo;s Diamond Jubilee, when some fifteen thousand coloured candles were lit through the gardens. The tradition survives in two forms today: the gardens&rsquo; candlelight nights, and the Friday fireworks &mdash; fired by the council&rsquo;s events team from a barge just east of the pier, part-funded by the town&rsquo;s Coastal BID to keep summer evenings on the seafront busy. Same idea as 1896: give everyone on the beach a reason to stay for dusk.</p>
+          <p class="mono">History: recorded origin per Bournemouth Parks &amp; Gardens histories and visitor-guide archives (the 1896 date and the Jubilee candle count are corroborated across independent local accounts); today&rsquo;s operation per BCP Council&rsquo;s event listings.</p>
+
           <h2 id="winter">November 5th and New Year</h2>
           <p>Organised autumn and New Year displays around Bournemouth vary year to year, and nothing has been announced for late 2026 yet. We will update this page when the organisers confirm anything &mdash; the Friday Fireworks above are the seafront&rsquo;s regular fixture.</p>
           <h2>What happened to the Air Festival?</h2>
@@ -1001,6 +1007,7 @@
         <div class="prose" data-reveal>
           <p>Bournemouth365 is the web home of our <a href="https://www.facebook.com/bournemouth365" target="_blank" rel="noopener">Bournemouth Live Facebook page</a>, where 39,000 of you watch the seafront with us every day. More pages are on the way: live sea conditions measured at the Boscombe wave buoy, an honest local guide to parking for the beach, and the best sunrise and sunset spots &mdash; photographed by us, not stock.</p>
           <p class="mono">Built in Bournemouth by <a href="/">365 Techies</a> &mdash; the family firm that has looked after the town&rsquo;s computers since 1995.</p>
+          <p class="b365-foot">No ads. No paywall. No consent wall. Built to load fast on beach 4G.</p>
         </div>
       </div>
     </section>
@@ -1254,7 +1261,7 @@
   <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=8" defer></script>
   <script src="/js/forms.min.js?v=8" defer></script>
-  <script src="/js/search.min.js?v=2026-08-02" defer></script>
+  <script src="/js/search.min.js?v=2026-08-03" defer></script>
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
     <p>We use cookies to power our live chat and understand how the site is used. See our <a href="/cookie-policy/">cookie policy</a>.</p>
     <div class="cookie-banner__actions">
