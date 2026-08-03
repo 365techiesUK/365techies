@@ -813,10 +813,19 @@ _rev_bad = []
 
 for _f in ("build_pages.py", "build_extra.py", "build_local.py"):
     _fp = _osg.path.join(bp.BASE, _f)
-    if _osg.path.exists(_fp) and _re.search(r"reviews_block\(\s*\[",
-                                            open(_fp, encoding="utf-8").read()):
+    if not _osg.path.exists(_fp):
+        continue
+    _src = open(_fp, encoding="utf-8").read()
+    if _re.search(r"reviews_block\(\s*\[", _src):
         _rev_bad.append("%s: hand-typed reviews_block([...]) - use "
                         "reviews_block(pick(\"Name\", ...))" % _f)
+    # The quote="..." form escaped the first refactor and drifted for months:
+    # the case-studies page had Vince Jones with an invented em-dash and a
+    # silently capitalised "Without", and David Hagner missing a whole sentence
+    # with no ellipsis. Any literal longer than a few words is a retyped review.
+    for _m3 in _re.finditer(r'quote="([^"]{40,})"', _src):
+        _rev_bad.append("%s: hand-typed quote=\"%s...\" - use quote=BY_NAME[\"Name\"]"
+                        % (_f, _m3.group(1)[:52]))
 
 _ENTS = [("&rsquo;", u"’"), ("&lsquo;", u"‘"), ("&ldquo;", u"“"),
          ("&rdquo;", u"”"), ("&mdash;", u"—"), ("&ndash;", u"–"),

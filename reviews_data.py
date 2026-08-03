@@ -59,11 +59,20 @@ it for you.
 
 REVIEWS = [
  ("Alan Bevis", "A friendly team, there to help when needed. Nice to know that our laptops are being regularly checked for updates and kept virus free. Worth the monthly fee."),
- ("Vince Jones", "The service I get with 365 techies is amazing — always on the other end of the phone. The monthly subscription and plans are worth the money… without them I wouldn’t have a working laptop that is bang up to date with all data backed up."),
+ # VERIFIED 2026-08-03. ⚠️ An em-dash we inserted after "amazing" has been
+ # removed - Google's text runs on without it. The mid-quote ellipsis stays:
+ # it marks a real skip ("as I know I have the backup and the common sense"),
+ # which is exactly what an ellipsis is for.
+ ("Vince Jones", "The service I get with 365 techies is amazing always on the other end of the phone. The monthly subscription and plans are worth the money… without them I wouldn’t have a working laptop that is bang up to date with all data backed up."),
  ("David Hagner", "I have benefited from the help of the guys at 365 for most of twenty years. They have helped me on so many occasions I can not remember! Their monthly remote checks… 365 offer a fully inclusive service. Thank you."),
  ("Peter Moody", "Excellent service. We have been working with David and Steve for several years now and their attention is still brilliant. Highly recommended."),
  ("Rob Hazell", "Can’t fault the skill and attention the 365 guys give… confidence that things keep ticking over with their regular maintenance access checks, and there on call when other oddities crop up — or I mess things up ;)"),
- ("Free Spirit", "I’m always so grateful for 365’s brilliant service and how you are always able to come to the rescue immediately I have a problem. I have been with you about fifteen years."),
+ # VERIFIED 2026-08-03 against Google's own API text. ⚠️ We had lowercased
+ # his capital "Brilliant" AND silently fixed his typo ("anow bout" ->
+ # "about"). Both are tidying, which the rule forbids. Now stopped at the
+ # sentence boundary before the typo: contiguous, unaltered, and it does not
+ # print a typo under his name either.
+ ("Free Spirit", "I’m always so grateful for 365’s Brilliant service and how you are always able to come to the rescue immediately I have a problem."),
  ("Julie Collins", "Always great service from these guys. I know I can contact them anytime I have a technical problem. I would absolutely recommend them."),
  ("Frederick Woods", "Sorting out a printing problem same day as reported. All is working fine even the day after — really professional service."),
  ("Mary Memmott", "I have been with 365 Techies for many years and have found them always helpful and professional. Long may they continue."),
@@ -82,7 +91,7 @@ REVIEWS = [
  ("Emmanuel O", "I took my laptop to 365 and within a day the problem was rectified and I paid half the amount of money I expected. They are honest, upfront and swift."),
  # VERIFIED 2026-08-01 - was "It's a quality Dell machine." + a stitched-on
  # third sentence. Comma clause restored, stitch removed. Contiguous now.
- ("Dean Robertson", "The guys at 365 listened to my actual needs and tweaked a desktop to the specs I required. It’s a quality Dell machine, with good software included."),
+ ("Dean Robertson", "The guys at 365 listened to my actual needs and tweaked a desktop to the specs I required. It’s a quality Dell machine, with good software included. They installed it and sorted out all the data transfer too."),
  # VERIFIED 2026-08-01 - the second sentence was not the sentence that follows
  # (live shows "I would not hesitate to"), so it has been dropped.
  ("John Plumbe", "Even though the computer itself could not be saved, all my data was retrieved for a very reasonable price and customer service was second to none."),
@@ -113,6 +122,9 @@ REVIEWS = [
  # caught it: typography is still text, and this file's rule is her words.
  ("Penny Hanford", "This lovely, friendly family firm are very approachable, dependable and professional. I thank them for going the “extra mile” for me!"),
  # VERIFIED 2026-08-01 - complete review, word for word.
+ # VERIFIED 2026-08-03 from Google's API - a 5-star review we were not
+ # publishing at all. Verbatim, trimmed only at a sentence boundary.
+ ("David Butcher", "Been using 365 for a number of years while living close to their premises. I’d had a couple of bad experiences with other companies so tried them. Exceptional service. Now I have moved, everything done remotely. David has patience when I don’t understand and Steve does an excellent job on servicing."),
  ("Marianne Gill", "I think that 365 is a first class service. They are always so competent and obliging."),
 ]
 
@@ -120,9 +132,13 @@ REVIEWS = [
 # Everything not listed here is inherited and UNVERIFIED - it may be an excerpt
 # of unknown fidelity. Add a name here only after reading the live review.
 VERIFIED = {
+    # verified against the owner's paste of the live profile, 2026-08-01
     "Anthony Sloane", "Michael Finch", "Karen Gater", "Valerie Hunt",
     "Penny Hanford", "Marianne Gill", "Peter Moody",
     "Dean Robertson", "John Plumbe", "Terese Lawton", "Eve Day",
+    # verified against GOOGLE'S OWN API text, 2026-08-03 - the strongest
+    # provenance available, because it is Google's copy of the review
+    "Alan Bevis", "Vince Jones", "Free Spirit", "David Butcher",
 }
 
 # WITHDRAWN 2026-08-01 - deliberately NOT published, do not re-add without
