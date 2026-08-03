@@ -855,7 +855,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/sustainability/">Sustainability</a>
         <a href="/resources/">Resources &amp; Guides</a>
         <a href="/it-advice/">IT Advice</a>
-        <a href="/bournemouth/fireworks/">Bournemouth Fireworks</a>
+        <a href="/bournemouth/">Bournemouth365</a>
         <a href="/faqs/">FAQs</a>
         <a href="/contact/">Contact</a>
         <a href="/portal/">Customer portal</a>

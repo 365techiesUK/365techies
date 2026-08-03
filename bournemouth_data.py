@@ -38,7 +38,7 @@ soften the page rather than deleting it (the Air Festival precedent).
 import math
 import datetime as _dt
 
-from build_pages import add, graph, crumb, webpage, faqpage, faq_html, hero, bc, SITE
+from build_pages import add, graph, crumb, webpage, faqpage, faq_html, hero, bc, bc_sub, SITE
 
 # The published 2026 season. (date, "Friday N Month" label)
 FRIDAYS = [
@@ -212,6 +212,7 @@ _B365 = '''    <section class="section" aria-label="About Bournemouth365">
         </div>
         <div class="prose" data-reveal>
           <p>Bournemouth365 is the web home of our <a href="https://www.facebook.com/bournemouth365" target="_blank" rel="noopener">Bournemouth Live Facebook page</a>, where 39,000 of you watch the seafront with us every day. More pages are on the way: live sea conditions measured at the Boscombe wave buoy, an honest local guide to parking for the beach, and the best sunrise and sunset spots &mdash; photographed by us, not stock.</p>
+          <p class="mono" style="margin-bottom:.6rem"><a href="/bournemouth/">Bournemouth365 home</a> &middot; <a href="/bournemouth/sea-today/">The sea right now</a> &middot; <a href="/bournemouth/fireworks/">Friday fireworks</a> &middot; <a href="/bournemouth/sunrise-sunset/">Sunrise &amp; sunset</a></p>
           <p class="mono">Built in Bournemouth by <a href="/">365 Techies</a> &mdash; the family firm that has looked after the town&rsquo;s computers since 1995.</p>
           <p class="b365-foot">No ads. No paywall. No consent wall. Built to load fast on beach 4G.</p>
         </div>
@@ -267,7 +268,7 @@ def _schema(s):
 
 
 _CONTENT = "\n".join([
-    hero(bc("Bournemouth Friday Fireworks"),
+    hero(bc_sub("Bournemouth365", "/bournemouth/", "Friday Fireworks"),
          "// BOURNEMOUTH365",
          'Bournemouth Friday <em class="grad grad--cyan">fireworks</em>',
          "Free fireworks over the sea every Friday of the summer holidays &mdash; 10pm, fired just east of Bournemouth Pier, until 28 August 2026. Every date, the best places to stand, and whether it&rsquo;s on tonight.",
@@ -745,7 +746,7 @@ def _st_schema(s):
 
 
 _ST_CONTENT = "\n".join([
-    hero(bc("Bournemouth Sea Conditions"),
+    hero(bc_sub("Bournemouth365", "/bournemouth/", "Sea Conditions"),
          "// BOURNEMOUTH365",
          'The sea at Bournemouth, <em class="grad grad--cyan">measured right now</em>',
          "Sea temperature from the bay&rsquo;s wave buoy. Tide from the gauge on the pier itself. Water quality from the Environment Agency, storm overflows from Wessex Water&rsquo;s live monitors. Every reading timestamped &mdash; and when a feed is down, we say so.",
@@ -885,7 +886,7 @@ def _ss_schema(s):
 
 
 _SS_CONTENT = "\n".join([
-    hero(bc("Bournemouth Sunrise &amp; Sunset"),
+    hero(bc_sub("Bournemouth365", "/bournemouth/", "Sunrise &amp; Sunset"),
          "// BOURNEMOUTH365",
          'Sunrise and sunset in <em class="grad grad--cyan">Bournemouth</em>',
          "Today&rsquo;s times, computed for the seafront &mdash; and every good spot to watch from, photographed by us on this coastline. Not stock, and each caption says only what the frame shows.",
@@ -905,5 +906,85 @@ add(
     og_title="Sunrise and sunset in Bournemouth \u2014 photographed, not stock",
     schema=_ss_schema,
     content=_SS_CONTENT,
+    og_image="/bournemouth/media/og-sunrise-sunset.jpg",
+)
+
+
+# ============================================================================
+# THE HUB: /bournemouth/ - the Bournemouth365 landing. Built once three pages
+# were live (a hub for one page would have been thin). Cards use the og images
+# already in media/ so no new weight.
+# ============================================================================
+
+_HUB_SLUG = "bournemouth"
+
+_HUB_CARDS = [
+    ("/bournemouth/sea-today/", "/bournemouth/media/og-sunrise-sunset.jpg",
+     "The sea right now", "Sea temperature and waves measured by the bay&rsquo;s buoy, tide from the gauge on the pier, water quality for all seven beaches &mdash; live, timestamped, never modelled."),
+    ("/bournemouth/fireworks/", "/bournemouth/media/og-fireworks.jpg",
+     "Friday fireworks", "Every 2026 date, the best places to stand, and whether it&rsquo;s on tonight &mdash; with our own frames of the display."),
+    ("/bournemouth/sunrise-sunset/", "/bournemouth/media/beach-sunrise.jpg",
+     "Sunrise &amp; sunset", "Today&rsquo;s times computed for the seafront, and every good spot to watch from &mdash; photographed by us, not stock."),
+]
+
+_HUB_CARD_HTML = "\n".join(
+    f'''        <a class="b365-tile" href="{u}" data-reveal style="display:block;text-decoration:none;padding:0;overflow:hidden">
+          <img src="{img}" alt="" loading="lazy" width="1200" height="630" style="width:100%;height:auto;display:block;aspect-ratio:1200/630;object-fit:cover" />
+          <div style="padding:1rem 1.1rem 1.1rem"><strong style="color:var(--b365-foam);font-size:1.1rem">{h}</strong>
+          <p class="b365-sub" style="margin:.3rem 0 0">{d}</p></div>
+        </a>''' for u, img, h, d in _HUB_CARDS)
+
+_HUB_CONTENT = "\n".join([
+    hero(bc("Bournemouth365"),
+         "// BOURNEMOUTH365",
+         'Bournemouth, <em class="grad grad--cyan">365 days a year</em>',
+         "The web home of our Bournemouth365 Facebook page, where 39,000 of you watch this seafront with us every day. Here: the sea measured live, the fireworks answered honestly, and the coastline photographed as it actually is &mdash; no ads, no paywall, nothing modelled and sold as measured.",
+         cta1=("The sea right now", "/bournemouth/sea-today/"),
+         cta2=("Friday fireworks", "/bournemouth/fireworks/"),
+         chips=["Measured, not modelled", "Our own photography", "No ads, ever"]),
+    f'''    <section class="section b365" aria-label="Bournemouth365 pages">
+      <div class="wrap">
+        <p class="mono" id="hub-live" data-reveal style="margin:0 0 1rem"></p>
+        <div class="b365-hero" data-stagger>
+{_HUB_CARD_HTML}
+        </div>
+        <div class="prose" data-reveal style="margin-top:1.6rem">
+          <h2>What this is</h2>
+          <p>For years our <a href="https://www.facebook.com/bournemouth365" target="_blank" rel="noopener">Bournemouth365 Facebook page</a> (born Bournemouth Live) has filmed this coastline daily &mdash; the calm mornings, the storms, the fireworks, the light. These pages bring that to the open web and add the thing social media can&rsquo;t: live measured data with its provenance shown. The sea page reads real instruments &mdash; the bay&rsquo;s wave buoy, the Environment Agency&rsquo;s tide gauge mounted on Bournemouth Pier &mdash; and every reading carries the time it was taken. When a feed is down, the page says so rather than guessing.</p>
+          <p>More is coming: an honest local guide to parking for the beach, and a page on Westover Road in 1985 &mdash; the cinemas, the ice rink and the cruising loop &mdash; built from sourced local history. <span class="mono">Built in Bournemouth by <a href="/">365 Techies</a>, the family firm that has looked after the town&rsquo;s computers since 1995.</span></p>
+        </div>
+        <p class="b365-foot" data-reveal style="margin-top:1rem">No ads. No paywall. No consent wall. Every reading carries its instrument and its measurement time.</p>
+      </div>
+      <script>
+      (function () {{
+        var el = document.getElementById('hub-live');
+        if (!el || !window.fetch) return;
+        fetch('/api/bm-sea.php', {{ cache: 'no-cache' }}).then(function (r) {{ return r.json(); }}).then(function (d) {{
+          if (d.sea && d.sea.ok && !d.sea.stale) {{
+            el.textContent = 'Right now in the bay: ' + d.sea.tempC.toFixed(1) + '\u00b0 water, ' + d.sea.hs.toFixed(2) + 'm waves \u2014 measured by the ' + d.sea.station + '.';
+          }}
+        }}).catch(function () {{}});
+      }})();
+      </script>
+    </section>''',
+])
+
+
+def _hub_schema(s):
+    return graph([
+        crumb(s, "Bournemouth365"),
+        webpage(s, "Bournemouth365",
+                "Bournemouth, 365 days a year: live measured sea conditions, the Friday fireworks, sunrise and sunset spots - from the team behind the Bournemouth365 Facebook page.",
+                wtype="CollectionPage"),
+    ])
+
+
+add(
+    slug=_HUB_SLUG,
+    title="Bournemouth365 \u2014 the Sea, the Fireworks & the Light",
+    desc="Bournemouth, 365 days a year: live measured sea conditions, Friday fireworks answered honestly, and sunrise spots photographed by us. From the 39K-follower Bournemouth365 page.",
+    og_title="Bournemouth365 \u2014 Bournemouth, every day of the year",
+    schema=_hub_schema,
+    content=_HUB_CONTENT,
     og_image="/bournemouth/media/og-sunrise-sunset.jpg",
 )

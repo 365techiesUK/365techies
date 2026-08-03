@@ -871,7 +871,10 @@ _BM_ALLOWED_HOSTS = {"365techies.co.uk", "www.googletagmanager.com",
                      # the site's font CDN - the privacy-first EU host chosen
                      # deliberately in the GDPR fix; not an ad or tracker host
                      "fonts.bunny.net"}
-for _fp in _bmglob.glob(_osg.path.join(bp.BASE, "bournemouth", "*", "index.html")):
+for _fp in (_bmglob.glob(_osg.path.join(bp.BASE, "bournemouth", "*", "index.html"))
+             + [_osg.path.join(bp.BASE, "bournemouth", "index.html")]):
+    if not _osg.path.exists(_fp):
+        continue
     _html = open(_fp, encoding="utf-8").read()
     _rel = _osg.path.relpath(_fp, bp.BASE)
     if len(_html.encode("utf-8")) > 300 * 1024:
