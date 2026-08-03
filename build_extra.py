@@ -206,19 +206,33 @@ def reviews_page():
       cta("Join our happy customers", "Reliable monthly IT support for homes and businesses across Dorset. See why people stay for years.",
           primary=("View Monthly Plans", "/monthly-it-support/"), secondary=("Contact Us", "/contact/")),
     ])
-    review_nodes = [{"@type": "Review", "author": {"@type": "Person", "name": n},
-                     "reviewRating": {"@type": "Rating", "ratingValue": "5", "bestRating": "5"},
-                     "reviewBody": t, "publisher": {"@type": "Organization", "name": "Google"}} for n, t in REVIEWS]
-    def schema(s, _desc=desc, _cn=crumb_name, _rev=review_nodes):
+    # ⚠️ NO Review NODES HERE, DELIBERATELY - do not "restore" them.
+    # Google flagged this page on 2026-08-02: "Multiple reviews without
+    # aggregateRating object", a CRITICAL Review-snippet error. The fix is
+    # removal, not adding aggregateRating, because:
+    #   1. Review markup about the business ON the business own site is
+    #      SELF-SERVING and has never been eligible for review rich results.
+    #      These nodes could not have produced stars even when well-formed -
+    #      Google was reporting a broken implementation of something that
+    #      earns nothing.
+    #   2. Adding aggregateRating would mean publishing a machine-readable
+    #      rating we have not verified (the 4.9 is unchecked) plus a review
+    #      count that goes stale weekly now the review ask is live.
+    #   3. The nodes asserted, under real customers full names, that a given
+    #      string was their exact review text at 5 stars - and only 12 of the
+    #      37 are verified against the live profile. That is liability with
+    #      zero SEO upside.
+    # The VISIBLE testimonials stay: they are honest on-page quotes, they are
+    # guarded against drift in build_blog.py, and the page links out to the
+    # real Google profile, which is the actual source of truth.
+    def schema(s, _desc=desc, _cn=crumb_name):
         return graph([crumb(s, _cn), webpage(s, "Customer Reviews", _desc),
                       {"@type": "LocalBusiness", "@id": SITE + "/#business", "name": "365 Techies",
                        "image": SITE + "/og-image.jpg", "url": SITE + "/",
                        "hasMap": "https://www.google.com/maps?cid=5924622613303465737",
                        "sameAs": ["https://www.google.com/maps?cid=5924622613303465737"],
-                       # no aggregateRating: Google ignores self-serving LocalBusiness
-                       # stars, and a hard reviewCount goes stale weekly now the
-                       # review ask is live. The linked profile is the source of truth.
-                       "review": _rev}])
+                       # no aggregateRating and no review array - see the note above.
+                       }])
     add(slug=slug, title="Customer Reviews | 365 Techies — Rated 4.9 on Google",
         desc=desc, og_title="Customer Reviews | 365 Techies", schema=schema, content=content)
 reviews_page()
