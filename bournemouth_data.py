@@ -120,16 +120,34 @@ _STATUS = f'''    <section class="section b365 b365--dusk" id="tonight" aria-lab
           if (row) row.classList.add('bm-past');
         }}
         if (!next) {{
+          var se = document.getElementById('bmfw-state');
+          if (se) {{ se.textContent = 'SEASON FINISHED \\u2014 BACK JULY 2027 (EXPECTED)'; se.classList.add('off'); }}
           head.textContent = 'That was the last one \\u2014 the 2026 season has finished';
           sub.textContent = 'The final display was Friday 28 August. The Friday Fireworks are expected back in July 2027 \\u2014 dates are announced by BCP Council in spring, and this page will be updated when they are.';
           return;
         }}
         var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         var days = Math.round((next.date - today) / 86400000);
+        var stateEl = document.getElementById('bmfw-state');
         if (days === 0) {{
+          if (stateEl) {{
+            var togo = Math.max(0, Math.round((new Date(next.date.getFullYear(), next.date.getMonth(), next.date.getDate(), 22, 0) - now) / 60000));
+            stateEl.textContent = 'TONIGHT \\u2014 10PM \\u00b7 ' + Math.floor(togo / 60) + 'H ' + (togo % 60) + 'M TO GO';
+          }}
+          // show night: the one input everyone wants, measured. Never a
+          // cancellation prediction - the copy says whose call that is.
+          var lv = document.getElementById('bmfw-live');
+          if (lv) fetch('/api/bm-sea.php', {{ cache: 'no-cache' }}).then(function (r) {{ return r.json(); }}).then(function (d) {{
+            if (d.sea && d.sea.ok && !d.sea.stale) {{
+              var txt = 'Measured at the seafront right now: ' + d.sea.hs.toFixed(2) + 'm waves \\u00b7 sea ' + d.sea.tempC.toFixed(1) + '\\u00b0';
+              if (d.tide && d.tide.ok && !d.tide.stale) txt += ' \\u00b7 tide ' + d.tide.trend;
+              lv.textContent = txt + '. Cancellation is the organisers\\u2019 call, announced on the day \\u2014 check the official channels below if it is blowing a gale.';
+            }}
+          }}).catch(function () {{}});
           head.textContent = 'Yes \\u2014 fireworks TONIGHT at 10pm';
           sub.textContent = 'Fired from the seafront just east of Bournemouth Pier, weather permitting \\u2014 if it is blowing a gale, check the official channels below before you set off. Free, no tickets, just turn up.';
         }} else {{
+          if (stateEl) stateEl.textContent = 'NEXT SHOW: ' + next.label.toUpperCase() + ' (' + days + (days === 1 ? ' DAY)' : ' DAYS)');
           head.textContent = 'Next display: ' + next.label + ' \\u2014 10pm';
           sub.textContent = (days === 1 ? 'That is tomorrow night.' : 'That is ' + days + ' nights away.') +
             ' Free, from the seafront just east of Bournemouth Pier \\u2014 weather permitting.';
