@@ -38,7 +38,7 @@ soften the page rather than deleting it (the Air Festival precedent).
 import math
 import datetime as _dt
 
-from build_pages import add, graph, crumb, webpage, faqpage, faq_html, hero, bc, bc_sub, SITE
+from build_pages import add, graph, crumb, crumb_sub, webpage, faqpage, faq_html, hero, bc, bc_sub, SITE
 
 # The published 2026 season. (date, "Friday N Month" label)
 FRIDAYS = [
@@ -212,7 +212,7 @@ _B365 = '''    <section class="section" aria-label="About Bournemouth365">
         </div>
         <div class="prose" data-reveal>
           <p>Bournemouth365 is the web home of our <a href="https://www.facebook.com/bournemouth365" target="_blank" rel="noopener">Bournemouth Live Facebook page</a>, where 39,000 of you watch the seafront with us every day. More pages are on the way: live sea conditions measured at the Boscombe wave buoy, an honest local guide to parking for the beach, and the best sunrise and sunset spots &mdash; photographed by us, not stock.</p>
-          <p class="mono" style="margin-bottom:.6rem"><a href="/bournemouth/">Bournemouth365 home</a> &middot; <a href="/bournemouth/sea-today/">The sea right now</a> &middot; <a href="/bournemouth/fireworks/">Friday fireworks</a> &middot; <a href="/bournemouth/sunrise-sunset/">Sunrise &amp; sunset</a></p>
+          <p class="mono" style="margin-bottom:.6rem"><a href="/bournemouth/">Bournemouth365 home</a> &middot; <a href="/bournemouth/sea-today/">The sea right now</a> &middot; <a href="/bournemouth/fireworks/">Friday fireworks</a> &middot; <a href="/bournemouth/sunrise-sunset/">Sunrise &amp; sunset</a> &middot; <a href="/bournemouth/beach-parking/">Beach parking</a></p>
           <p class="mono">Built in Bournemouth by <a href="/">365 Techies</a> &mdash; the family firm that has looked after the town&rsquo;s computers since 1995.</p>
           <p class="b365-foot">No ads. No paywall. No consent wall. Built to load fast on beach 4G.</p>
         </div>
@@ -925,6 +925,8 @@ _HUB_CARDS = [
      "Friday fireworks", "Every 2026 date, the best places to stand, and whether it&rsquo;s on tonight &mdash; with our own frames of the display."),
     ("/bournemouth/sunrise-sunset/", "/bournemouth/media/beach-sunrise.jpg",
      "Sunrise &amp; sunset", "Today&rsquo;s times computed for the seafront, and every good spot to watch from &mdash; photographed by us, not stock."),
+    ("/bournemouth/beach-parking/", "/bournemouth/media/durley-chine-sunset.jpg",
+     "Beach parking, honestly", "What it really costs, where it is far cheaper, and the rules that catch people out &mdash; every price from BCP&rsquo;s own pages, dated."),
 ]
 
 _HUB_CARD_HTML = "\n".join(
@@ -986,5 +988,141 @@ add(
     og_title="Bournemouth365 \u2014 Bournemouth, every day of the year",
     schema=_hub_schema,
     content=_HUB_CONTENT,
+    og_image="/bournemouth/media/og-sunrise-sunset.jpg",
+)
+
+
+# ============================================================================
+# PAGE 4: /bournemouth/beach-parking/ - the honest guide. Google currently
+# ranks a 2012 Tripadvisor thread and a Reddit thread for these queries
+# because no page answers them. Everything here is sourced from BCP's own
+# pages, dated, and says so. See this module's header for the do-not list.
+# ============================================================================
+
+_PK_SLUG = "bournemouth/beach-parking"
+_PK_CHECKED = "3 August 2026"
+
+# BCP's three distinct seafront tariff bands - assuming one price for "the
+# seafront" is the biggest factual trap on this subject.
+_PK_BANDS = [
+    ("Seafront band", "Alum Chine, Durley Chine, Overstrand, Warren Edge, Solent Beach, Hengistbury Head",
+     "&pound;3.20 for 1 hour, &pound;9.60 for 4, &pound;23.60 for 24", "&pound;2.70 for 2 hours, &pound;5.30 for 24"),
+    ("Pier and town band", "Bath Road North, Bath Road South, Pavilion",
+     "&pound;3.80 for 1 hour, &pound;15.40 for 4, &pound;28.00 for 24", "&pound;2.40 for 1 hour, &pound;20.90 for 24"),
+    ("Boscombe Undercliff", "the big one at Boscombe &mdash; 355 spaces, and priced on when you arrive",
+     "2 Jul&ndash;2 Sep: &pound;19.10 before 2pm, &pound;13 from 2&ndash;4pm, &pound;8.20 after 4pm, &pound;4.10 after 6pm",
+     "29 Oct&ndash;31 Mar: &pound;2.70 up to 2 hours, &pound;5.30 over"),
+]
+
+_PK_BAND_ROWS = "\n".join(
+    f'            <tr><td><strong>{n}</strong><br /><span class="mono">{w}</span></td><td>{s}</td><td>{win}</td></tr>'
+    for n, w, s, win in _PK_BANDS)
+
+_PK_ALERT = '''    <section class="section b365 b365--dusk" id="fines" aria-label="Parking penalty trial">
+      <div class="wrap">
+        <div class="b365-tile b365-tile--dusk" data-reveal>
+          <p class="b365-state" id="pk-state">HIGHER PARKING FINES ON THE SEAFRONT</p>
+          <p class="b365-sub" id="pk-alert">BCP Council is running a trial of London-level penalty charges on every road from Sandbanks to Southbourne, from 4 to 31 August 2026. A ticket for parking somewhere you are not allowed at all &mdash; double yellows, a junction, a disabled bay without a badge &mdash; is <strong>&pound;160</strong>, or &pound;80 if you pay within 14 days. Overstaying or mis-parking in a legal bay is <strong>&pound;110</strong>, or &pound;55 within 14 days. Being towed costs &pound;280 to release, plus &pound;55 a day storage. Outside the trial the same tickets are &pound;70 and &pound;50.</p>
+          <p class="mono" style="margin-top:.6rem"><a href="https://www.bcpcouncil.gov.uk/parking/trial-for-increased-parking-fines-and-penalty-charge-notices-pcn" target="_blank" rel="noopener">BCP&rsquo;s own page on the trial, including the map of affected roads &rarr;</a></p>
+        </div>
+      </div>
+      <script>
+      (function () {{
+        // The trial is hard-dated. On 1 September this flips itself to the
+        // general warning rather than shouting a price that no longer applies.
+        var END = new Date(2026, 7, 31, 23, 59), st = document.getElementById('pk-state'), al = document.getElementById('pk-alert');
+        if (!st || !al || new Date() <= END) return;
+        st.textContent = 'PARKING FINES ON THE SEAFRONT';
+        st.classList.add('off');
+        al.innerHTML = 'BCP ran a trial of London-level penalty charges along the seafront in August 2026 (and August 2025 before it), so check before you travel in high summer &mdash; it may well run again. Outside any trial, a ticket for parking somewhere you are not allowed at all is <strong>&pound;70</strong> (&pound;35 within 14 days) and overstaying in a legal bay is <strong>&pound;50</strong> (&pound;25 within 14 days).';
+      }})();
+      </script>
+    </section>'''
+
+_PK_PROSE = f'''          <h2 id="carparks">What the seafront car parks actually cost</h2>
+          <p>There is no single &ldquo;seafront price&rdquo; &mdash; BCP runs three different tariff bands along this coast, and the gap between them is wide. All prices below are as published by BCP on <strong>{_PK_CHECKED}</strong>; the council sets them in its February budget and changed them last on 16 March 2026.</p>
+          <table>
+            <thead><tr><th>Band</th><th>Summer (15 Mar&ndash;31 Oct)</th><th>Winter</th></tr></thead>
+            <tbody>
+{_PK_BAND_ROWS}
+            </tbody>
+          </table>
+          <p><strong>Two things worth knowing before you drive down.</strong> Boscombe Undercliff &mdash; the biggest car park on this stretch, 355 spaces &mdash; charges by <em>arrival time</em> in high summer, so turning up after 4pm costs &pound;8.20 instead of &pound;19.10. And at the time of checking, BCP&rsquo;s own page for it carried a live notice: <em>&ldquo;We are currently unable to accept card payments at this location.&rdquo;</em> Cash or the app only. That is described as a fault rather than a policy, so check the page before you rely on it.</p>
+          <p>Alumhurst Road, five minutes from Alum Chine, is the cheap outlier at <strong>&pound;5.80 for its four-hour maximum</strong> &mdash; no seasonal uplift, and a rare short-stay bargain within walking distance of sand.</p>
+
+          <h2 id="cheaper">The cheaper ways, in order of how much they save</h2>
+          <p><strong>The station on a weekend.</strong> Bournemouth station car park is <strong>&pound;3.00 all day on Saturdays, Sundays and bank holidays</strong> (APCOA, 362 spaces) &mdash; about an eighth of a seafront day, and roughly 1.6 miles from the beach by BCP&rsquo;s own reckoning. It is the least-published useful fact about parking here.</p>
+          <p><strong>Avenue Road, in town.</strong> BCP&rsquo;s own recommended overflow: 900 spaces at <strong>&pound;12.90 for 24 hours</strong>, no seasonal uplift, about fifteen minutes&rsquo; walk down through the Gardens to the pier. On a busy Saturday it is usually still taking cars long after the seafront has stopped.</p>
+          <p><strong>The Beach Breezer.</strong> Morebus&rsquo;s seafront bus, the 70, runs <strong>23 May to 13 September 2026</strong> from Rockley Park to Mudeford &mdash; Alum Chine, Bournemouth, Boscombe Pier, Hengistbury Head. Zone A fares, single fares capped at &pound;3, contactless accepted, and a Zone A Dayrider covers up to five people together.</p>
+          <p><strong>If you live here.</strong> BCP&rsquo;s evening and weekend car park permits run 5pm&ndash;8am on weekdays and all day at weekends. Alumhurst Road is on the list at &pound;290 a year &mdash; effectively a beach season ticket that nobody markets as one.</p>
+
+          <h2 id="onstreet">&ldquo;Where can I park for free?&rdquo; &mdash; the honest answer</h2>
+          <p>We are not going to send you to somebody&rsquo;s street. This month in particular, guessing wrong costs &pound;110.</p>
+          <p>What is true is that Bournemouth has no seafront-wide controlled parking zone. The residents&rsquo; permit zones here are <strong>small and specific</strong> &mdash; one of them covers little more than Windsor Road and part of Cecil Road &mdash; and they are signed at the kerb. Everything else is governed by the lines and the plates, which is exactly why the council keeps consulting on changing it.</p>
+          <p>The mistake that actually catches people out is not the seafront at all. In the year to May 2026 the single biggest fine-earning road in the whole area was <strong>St Stephen&rsquo;s Road in the town centre &mdash; 389 tickets, &pound;24,160</strong> &mdash; a permit-zone street that visitors drift into while hunting for something free. If you want certainty, take the &pound;3 station option or the bus; if you want to read the actual restriction on any given street, BCP publishes the authoritative map at <a href="https://bcp.traffweb.app/" target="_blank" rel="noopener">bcp.traffweb.app</a>.</p>
+
+          <h2 id="busy">When it fills up &mdash; and what the council does about it</h2>
+          <p>BCP&rsquo;s own account of the hottest weekend of July 2025 is the clearest picture anyone has published: <em>&ldquo;Seafront car parks at Sandbanks and Boscombe were full by 10am on both days.&rdquo;</em> Across that Saturday and Sunday, 1,702 tickets were issued and 18 vehicles were towed.</p>
+          <p>There is a published trigger, too: when Undercliff and Overstrand fill, <strong>Sea Road in Boscombe is closed at the junction with The Marina</strong>, and the signs on the A338 on the way in start showing which car parks still have spaces. Believe those signs &mdash; by the time you are on the seafront looking, the answer is usually no.</p>
+          <p>The practical version: before 9.30am or after 4pm on a hot day, or park inland and walk down.</p>
+
+          <h2 id="access">Blue Badge, and getting onto the sand</h2>
+          <p>Here is a gap we are not going to paper over. <strong>BCP does not publish whether a Blue Badge gives you free or extended parking in its own car parks.</strong> Both relevant council pages decline to say &mdash; one states only that &ldquo;the badge can only be used for on-street parking. Different rules apply to off-street car parks&rdquo;, and the other tells you that off-street rules &ldquo;vary between councils&rdquo; and that you should check the signs on display. So: read the sign at the machine before you pay, because that is literally the council&rsquo;s own instruction. The accessible bays themselves are marked on each car park&rsquo;s page &mdash; Boscombe Undercliff has 23, Durley Chine 7, Alum Chine 6.</p>
+          <p><strong>Beach wheelchairs</strong> are free to borrow from the Bournemouth, Boscombe and Sandbanks beach offices, 9.30am&ndash;4.30pm, May to September, first come first served &mdash; but on a <strong>&pound;50 cash deposit</strong>, and there is one chair at each office. Take notes; nobody carries &pound;50 in cash to the beach.</p>
+          <p>The <strong>West Cliff and Fisherman&rsquo;s Walk cliff lifts</strong> are running at &pound;3.00 a single (card only; a carer with a paying disabled passenger travels free). The <strong>East Cliff lift remains out of action</strong> after the cliff slide, with no reopening date published &mdash; so do not plan a route that depends on it.</p>
+
+          <h2 id="paying">Paying, and one scam to know about</h2>
+          <p>BCP moved to <strong>RingGo only</strong> in September 2025 &mdash; PayByPhone and JustPark no longer work here, whatever older pages say (including, at the time of writing, some of the council&rsquo;s own). Machines take card at most car parks, with the Boscombe Undercliff exception above.</p>
+          <p>And BCP&rsquo;s own warning, worth repeating exactly: <em>&ldquo;RingGo does not use QR codes. If you see a QR code on a RingGo sign, do not scan it.&rdquo;</em> Fake QR stickers on parking signs are a real and current scam &mdash; they take you to a convincing payment page and harvest your card. If a sign has a code on it, ignore it and open the app yourself.</p>
+
+          <h2 id="motorhomes">Motorhomes and coaches</h2>
+          <p>The one clearly published option: <strong>Queen&rsquo;s Road car park is open 24 hours and accepts motorhomes and coaches</strong>, at &pound;6.40 for 24 hours. Whether you may <em>sleep</em> overnight in a vehicle on the seafront is genuinely contested in the sources we could find, so we are not going to tell you either way &mdash; ring BCP on 01202&nbsp;451451 before you plan a night in the van.</p>'''
+
+_PK_FAQS = [
+    ("How much is parking at Bournemouth beach?",
+     f"It depends which car park. As published by BCP on {_PK_CHECKED}: the seafront band (Alum Chine, Durley Chine, Overstrand, Hengistbury Head and others) is &pound;3.20 for an hour and &pound;23.60 for 24 hours in summer; the pier-side car parks (Bath Road North and South, Pavilion) are dearer at &pound;3.80 an hour and &pound;28 for 24 hours. Winter prices are far lower &mdash; &pound;5.30 for 24 hours in the seafront band."),
+    ("Where is the cheapest place to park for Bournemouth beach?",
+     "On a Saturday, Sunday or bank holiday, Bournemouth station car park at &pound;3.00 all day is the cheapest realistic option &mdash; about 1.6 miles from the beach. In town, Avenue Road is &pound;12.90 for 24 hours with 900 spaces. Alumhurst Road, five minutes from Alum Chine, is &pound;5.80 for its four-hour maximum."),
+    ("Is there any free parking near Bournemouth beach?",
+     "There is no seafront-wide controlled zone, and the residents&rsquo; permit zones here are small and clearly signed &mdash; but we won&rsquo;t point you at particular streets, because the restrictions are set by the lines and the plates and getting it wrong is expensive. During August 2026 in particular, a wrongly-parked car on any road from Sandbanks to Southbourne costs &pound;110 or &pound;160. BCP&rsquo;s traffic-restriction map at bcp.traffweb.app shows the actual rules street by street."),
+    ("What time do Bournemouth beach car parks fill up?",
+     "On hot summer weekends, early. BCP reported that on the busiest weekend of July 2025 the Sandbanks and Boscombe car parks were full by 10am on both days. When Boscombe&rsquo;s car parks fill, Sea Road is closed at The Marina junction and the A338 signs show which car parks still have space."),
+    ("Do Blue Badge holders park free in Bournemouth car parks?",
+     "BCP does not publish an answer, and we are not going to guess one. The council&rsquo;s own guidance says a Blue Badge covers on-street parking and that &ldquo;different rules apply to off-street car parks&rdquo;, which &ldquo;vary between councils&rdquo; &mdash; and tells you to check the signs on display. So read the sign at the machine before paying."),
+    ("How do I pay for parking in Bournemouth?",
+     "Card at most machines, or the RingGo app &mdash; BCP switched to RingGo only in September 2025, so PayByPhone and JustPark no longer work. Boscombe Undercliff was unable to take card payments at the time we checked, so cash or app there. And note BCP&rsquo;s warning: RingGo does not use QR codes, so do not scan a QR code on a parking sign."),
+]
+
+
+def _pk_schema(s):
+    return graph([
+        crumb_sub(s, "Bournemouth365", "bournemouth", "Beach Parking"),
+        webpage(s, "Parking for Bournemouth Beach",
+                "What Bournemouth beach parking actually costs, where it is cheaper, and the rules that catch people out - sourced from BCP Council and dated."),
+        faqpage(s, _PK_FAQS),
+    ])
+
+
+_PK_CONTENT = "\n".join([
+    hero(bc_sub("Bournemouth365", "/bournemouth/", "Beach Parking"),
+         "// BOURNEMOUTH365",
+         'Parking for <em class="grad grad--cyan">Bournemouth beach</em>',
+         f"What it actually costs, where it is cheaper, and the rules that catch people out &mdash; every price taken from BCP Council&rsquo;s own pages on {_PK_CHECKED}, and dated so you can see how fresh it is.",
+         cta1=("This month&rsquo;s higher fines", "#fines"),
+         cta2=("The cheaper options", "#cheaper"),
+         chips=["Prices from BCP, dated", "No made-up free-parking tips", "Written by locals"]),
+    _PK_ALERT,
+    f'    <section class="section">\n      <div class="wrap">\n        <div class="prose" data-reveal>\n{_PK_PROSE}\n        </div>\n      </div>\n    </section>',
+    faq_html(_PK_FAQS),
+    _B365,
+])
+
+add(
+    slug=_PK_SLUG,
+    title="Bournemouth Beach Parking \u2014 Real Prices & Cheaper Options",
+    desc=f"What Bournemouth beach parking costs in {_PK_CHECKED[-4:]}, where it is far cheaper, and the rules that catch people out \u2014 taken from BCP Council's own pages and dated.",
+    og_title="Parking for Bournemouth beach \u2014 the honest guide",
+    schema=_pk_schema,
+    content=_PK_CONTENT,
     og_image="/bournemouth/media/og-sunrise-sunset.jpg",
 )

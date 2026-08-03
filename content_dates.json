@@ -111,21 +111,27 @@
  },
  "bournemouth": {
   "first": "2026-08-03",
-  "h": "987fce7ec6457ba1"
+  "h": "12da38b9f32bf939",
+  "last": "2026-08-03"
+ },
+ "bournemouth/beach-parking": {
+  "first": "2026-08-03",
+  "h": "626c260fecb09be5",
+  "last": "2026-08-03"
  },
  "bournemouth/fireworks": {
   "first": "2026-08-02",
-  "h": "7e8b401bd99b20f8",
+  "h": "2b4589820b043c91",
   "last": "2026-08-03"
  },
  "bournemouth/sea-today": {
   "first": "2026-08-02",
-  "h": "35854ce297d68f7a",
+  "h": "a7a4277700f5e0d7",
   "last": "2026-08-03"
  },
  "bournemouth/sunrise-sunset": {
   "first": "2026-08-03",
-  "h": "6d831bf462d76e20",
+  "h": "78b5df1588bf7528",
   "last": "2026-08-03"
  },
  "break-fix-vs-managed-it": {
