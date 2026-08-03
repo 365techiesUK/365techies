@@ -185,6 +185,8 @@ _WHERE = '''          <h2 id="where">Where to stand</h2>
           <p>Up on the clifftop you trade closeness for the full sweep of the bay &mdash; and a much easier exit. It is noticeably cooler than the beach even in August, so bring a layer, and stick to the lit routes rather than the dark zigzag paths once the show ends.</p>
           <h3>From the Boscombe side</h3>
           <p>Walking up from Boscombe Pier keeps you clear of the biggest crowds, looking west at the display with Bournemouth Pier glowing behind it. A good shout with a pushchair.</p>
+          <figure style="margin:1.2rem 0"><img src="/bournemouth/media/fireworks-2024.jpg" alt="Bournemouth Friday fireworks firing from the sea platform east of the pier, reflected in the water" loading="lazy" width="1080" height="1920" style="max-width:min(420px,100%);height:auto;border-radius:12px" />
+          <figcaption class="mono" style="margin-top:.4rem">One of our own frames: the display firing from the sea platform east of the pier — 31 August 2024, 10.47pm.</figcaption></figure>
           <p>We film most Friday displays for our <a href="https://www.facebook.com/bournemouth365" target="_blank" rel="noopener">Bournemouth365 Facebook page</a> &mdash; the clips are an honest way to judge the vantage points before you pick one.</p>'''
 
 # ---- practical ---------------------------------------------------------------
@@ -285,6 +287,7 @@ add(
     og_title="Bournemouth Friday Fireworks 2026 \u2014 every date, 10pm, free",
     schema=_schema,
     content=_CONTENT,
+    og_image="/bournemouth/media/og-fireworks.jpg",
 )
 
 
@@ -763,4 +766,144 @@ add(
     og_title="The sea at Bournemouth, measured right now",
     schema=_st_schema,
     content=_ST_CONTENT,
+)
+
+
+# ============================================================================
+# PAGE 3: /bournemouth/sunrise-sunset/ - every spot, photographed, plus today's
+# times. The photography is the differentiation: every frame is the owner's own,
+# visually verified (seo-research/b365-photo-manifest.md), captioned with only
+# what the frame shows. The times are computed astronomy - the one block of the
+# section that can never go stale.
+# ============================================================================
+
+_SS_SLUG = "bournemouth/sunrise-sunset"
+
+_SS_SPOTS = [
+    ("beach-sunrise.jpg", "Sunrise on the beach",
+     "Looking east along the sand towards Boscombe, the sun just up over the surf. In winter it rises over the sea; by midsummer it comes up behind the town, so the beach gets its light first.", 1600, 1067),
+    ("pier-sunset-deck.jpg", "Bournemouth Pier deck",
+     "From the boards of the pier looking back at the beach: the West Cliff goes to silhouette, the caf&eacute;s light up, and the wet sand carries the colour twice.", 1080, 1920),
+    ("durley-chine-sunset.jpg", "Durley Chine",
+     "The Deck beach bar in the foreground, the sun dropping towards the Purbeck hills. West of the pier the evening light lasts longest &mdash; and the swim group meets on this beach.", 1600, 900),
+    ("beach-groyne-sunset.jpg", "The groynes, mid-beach",
+     "Any groyne between the piers gives you this: the marker post in silhouette, the sun path on the wet sand at low tide. The emptiest good view on the seafront.", 1600, 900),
+    ("hengistbury-beach-sunset.jpg", "The beach below Hengistbury Head",
+     "From the eastern end of the bay looking west, the whole sweep of coast to the Purbecks in one frame. Worth the walk out; bring a torch back.", 1600, 900),
+    ("sandbanks-harbour-dusk.jpg", "Sandbanks, harbour side",
+     "Cross to the harbour side and dusk happens twice &mdash; once in the sky, once on the still water between the moorings.", 1600, 900),
+]
+
+_SS_FIGS = "\n".join(
+    f'''        <figure class="b365-tile" data-reveal style="margin:0 0 1rem;padding:0;overflow:hidden">
+          <img src="/bournemouth/media/{f}" alt="{h} \u2014 Bournemouth" loading="lazy" width="{w}" height="{ht}" style="width:100%;height:auto;display:block" />
+          <figcaption style="padding:.9rem 1.1rem 1rem"><strong style="color:var(--b365-foam)">{h}</strong>
+          <p class="b365-sub" style="margin:.25rem 0 0">{d}</p></figcaption>
+        </figure>''' for f, h, d, w, ht in _SS_SPOTS)
+
+_SS_PANEL = f'''    <section class="section b365 b365--dusk" id="times" aria-label="Today's sun times">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// COMPUTED FOR THE SEAFRONT &middot; NEVER GOES STALE</p>
+          <h2 class="section-title section-title--center" data-title>Today&rsquo;s light<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="b365-hero" data-stagger>
+          <div class="b365-tile b365-tile--dusk"><span class="chip-m" id="ss-rise-chip">SUNRISE</span><div class="b365-num" id="ss-rise">&mdash;</div><p class="b365-sub">Golden hour runs roughly the hour after.</p></div>
+          <div class="b365-tile b365-tile--dusk"><span class="chip-m" id="ss-set-chip">SUNSET</span><div class="b365-num" id="ss-set">&mdash;</div><p class="b365-sub">Golden hour runs roughly the hour before.</p></div>
+          <div class="b365-tile b365-tile--dusk"><span class="chip-m">DAY LENGTH</span><div class="b365-num" id="ss-len">&mdash;</div><p class="b365-sub" id="ss-len-sub">Computed for the seafront (NOAA solar position, &plusmn;2 minutes). Needs JavaScript; nothing here is fetched or forecast.</p></div>
+        </div>
+        <div class="tile-grid" data-stagger style="margin-top:1rem">
+{_SS_FIGS}
+        </div>
+        <p class="b365-foot" data-reveal style="margin-top:1rem">Every frame on this page is ours, shot on this coastline, and says only what it shows. No ads. No paywall. No consent wall.</p>
+      </div>
+      <script>
+      (function () {{
+        var LAT = 50.7166, LON = -1.8757;
+        function sunUT(riseNotSet) {{
+          var now = new Date();
+          var start = Date.UTC(now.getUTCFullYear(), 0, 0);
+          var n = Math.floor((Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()) - start) / 86400000);
+          var lngHour = LON / 15, rad = Math.PI / 180;
+          var t = n + (((riseNotSet ? 6 : 18) - lngHour) / 24);
+          var M = (0.9856 * t) - 3.289;
+          var L = M + (1.916 * Math.sin(M * rad)) + (0.020 * Math.sin(2 * M * rad)) + 282.634;
+          L = ((L % 360) + 360) % 360;
+          var RA = Math.atan(0.91764 * Math.tan(L * rad)) / rad;
+          RA = ((RA % 360) + 360) % 360;
+          RA += (Math.floor(L / 90) * 90) - (Math.floor(RA / 90) * 90);
+          RA /= 15;
+          var sinDec = 0.39782 * Math.sin(L * rad), cosDec = Math.cos(Math.asin(sinDec));
+          var cosH = (Math.cos(90.833 * rad) - (sinDec * Math.sin(LAT * rad))) / (cosDec * Math.cos(LAT * rad));
+          if (cosH > 1 || cosH < -1) return null;
+          var H = Math.acos(cosH) / rad;
+          if (riseNotSet) H = 360 - H;
+          var T = (H / 15) + RA - (0.06571 * t) - 6.622;
+          var UT = ((T - lngHour) % 24 + 24) % 24;
+          var d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+          d.setUTCMinutes(Math.round(UT * 60));
+          return d;
+        }}
+        function hm(d) {{ return d.toLocaleTimeString('en-GB', {{ hour: '2-digit', minute: '2-digit', timeZone: 'Europe/London' }}); }}
+        var rise = sunUT(true), set = sunUT(false);
+        if (rise && set) {{
+          document.getElementById('ss-rise').textContent = hm(rise);
+          document.getElementById('ss-set').textContent = hm(set);
+          var mins = Math.round((set - rise) / 60000);
+          document.getElementById('ss-len').textContent = Math.floor(mins / 60) + 'h ' + (mins % 60) + 'm';
+          var today = new Date().toLocaleDateString('en-GB', {{ day: 'numeric', month: 'long' }});
+          document.getElementById('ss-rise-chip').textContent = 'SUNRISE \u00b7 ' + today.toUpperCase();
+          document.getElementById('ss-set-chip').textContent = 'SUNSET \u00b7 ' + today.toUpperCase();
+        }}
+      }})();
+      </script>
+    </section>'''
+
+_SS_PROSE = '''          <h2 id="where">Where the sun actually rises and sets here</h2>
+          <p>Bournemouth&rsquo;s beach faces south, which is why it gets both ends of the day. In <strong>winter</strong> the sun rises over the sea to the south-east and sets over the sea to the south-west &mdash; over the Purbeck hills, which is when the pier and groyne silhouettes are at their best. By <strong>midsummer</strong> both ends have swung inland: the sun comes up behind the town to the north-east and drops behind the West Cliff to the north-west, so the classic over-the-water sunset belongs to autumn, winter and spring. Golden hour &mdash; roughly the hour after sunrise and before sunset &mdash; is when the cliff face goes copper and the wet sand doubles everything.</p>
+          <p>Quiet practical notes: the beach is at its widest for walking an hour or two either side of low water; the zig-zag paths are unlit, so use the lit chine roads after dark; and in high summer sunrise is before 5am &mdash; check the computed times above before you set an alarm.</p>'''
+
+_SS_FAQS = [
+    ("What time is sunset in Bournemouth today?",
+     "The panel at the top of this page computes it for the seafront every day (NOAA solar position, accurate to a couple of minutes) &mdash; no forecast, no feed, it cannot go stale."),
+    ("Where is the best place to watch the sunset in Bournemouth?",
+     "For over-the-water sunsets: west of the pier &mdash; Durley Chine and the beach groynes &mdash; looking towards the Purbeck hills, best from autumn to spring. In midsummer the sun sets inland behind the West Cliff, so the pier deck looking back at the lit seafront is the better evening view."),
+    ("Where can I watch the sunrise in Bournemouth?",
+     "The open beach anywhere east of the pier: in winter the sun comes up over the sea towards Hengistbury Head; in summer it rises behind the town and the beach catches the first light. The photographs on this page show exactly what each spot gives you."),
+    ("Are these photos really Bournemouth?",
+     "Yes &mdash; every frame is our own, shot on this coastline over years of filming it daily for our Bournemouth365 page, and each caption says where it was taken. No stock, no AI imagery, anywhere on these pages."),
+]
+
+
+def _ss_schema(s):
+    return graph([
+        crumb(s, "Bournemouth Sunrise & Sunset"),
+        webpage(s, "Sunrise and Sunset in Bournemouth",
+                "Today's computed sunrise and sunset times for Bournemouth seafront, and the best spots to watch - photographed by us, not stock."),
+        faqpage(s, _SS_FAQS),
+    ])
+
+
+_SS_CONTENT = "\n".join([
+    hero(bc("Bournemouth Sunrise &amp; Sunset"),
+         "// BOURNEMOUTH365",
+         'Sunrise and sunset in <em class="grad grad--cyan">Bournemouth</em>',
+         "Today&rsquo;s times, computed for the seafront &mdash; and every good spot to watch from, photographed by us on this coastline. Not stock, and each caption says only what the frame shows.",
+         cta1=("Today's times", "#times"),
+         cta2=("The spots", "#where"),
+         chips=["Computed times &mdash; never stale", "Our own photographs", "Every spot named"]),
+    _SS_PANEL,
+    f'    <section class="section">\n      <div class="wrap">\n        <div class="prose" data-reveal>\n{_SS_PROSE}\n        </div>\n      </div>\n    </section>',
+    faq_html(_SS_FAQS),
+    _B365,
+])
+
+add(
+    slug=_SS_SLUG,
+    title="Sunrise & Sunset in Bournemouth \u2014 Times & Best Spots",
+    desc="Today's sunrise and sunset times for Bournemouth seafront, computed live \u2014 plus the best places to watch, photographed by us: the pier, Durley Chine, the groynes, Hengistbury and Sandbanks.",
+    og_title="Sunrise and sunset in Bournemouth \u2014 photographed, not stock",
+    schema=_ss_schema,
+    content=_SS_CONTENT,
+    og_image="/bournemouth/media/og-sunrise-sunset.jpg",
 )

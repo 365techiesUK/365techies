@@ -111,13 +111,17 @@
  },
  "bournemouth/fireworks": {
   "first": "2026-08-02",
-  "h": "e2b32122969d8012",
+  "h": "31dad83335d9d76e",
   "last": "2026-08-03"
  },
  "bournemouth/sea-today": {
   "first": "2026-08-02",
   "h": "40757e52f3f14a17",
   "last": "2026-08-03"
+ },
+ "bournemouth/sunrise-sunset": {
+  "first": "2026-08-03",
+  "h": "282ef89a037a08dd"
  },
  "break-fix-vs-managed-it": {
   "first": "2026-07-28",
