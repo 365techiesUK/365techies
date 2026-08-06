@@ -87,10 +87,15 @@ em { font-style: normal; }
 
 ::selection { background: var(--cyan); color: var(--ink-inverse); }
 
-::-webkit-scrollbar { width: 10px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: #1c244b; border-radius: var(--r-pill); border: 2px solid var(--bg); }
-::-webkit-scrollbar-thumb:hover { background: #324a6d; }
+/* Scrollbar: a customer on a laptop could not SEE the old navy-on-black
+   thumb (#1c244b on #070d22 is ~1.3:1 - invisible at an angle). UI
+   components need 3:1: this thumb measures ~3.4:1 against its track and
+   widens to 14px. Do not darken it back for looks. */
+::-webkit-scrollbar { width: 14px; }
+::-webkit-scrollbar-track { background: var(--bg-2); }
+::-webkit-scrollbar-thumb { background: #5b7ea9; border-radius: var(--r-pill); border: 3px solid var(--bg-2); }
+::-webkit-scrollbar-thumb:hover { background: var(--cyan-soft); }
+html { scrollbar-color: #5b7ea9 var(--bg-2); scrollbar-width: auto; }
 
 :focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; border-radius: var(--r-xs); }
 
