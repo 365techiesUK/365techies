@@ -252,6 +252,14 @@ function bmsea_fetch_bathing() {
         $site = array('name' => $name, 'id' => $id,
                       'class' => is_string($cls) ? $cls : null, 'classYear' => $yr,
                       'heavyRain' => (bool)bmsea_lda($p, array('waterQualityImpactedByHeavyRain')));
+        // EA's own sampling-point position - powers the nearest-monitor
+        // attribution on the page. EA data, not our estimate.
+        $slat = bmsea_lda($p, array('samplingPoint', 'lat'));
+        $slng = bmsea_lda($p, array('samplingPoint', 'long'));
+        if (is_numeric($slat) && is_numeric($slng)) {
+            $site['lat'] = round((float)$slat, 5);
+            $site['lng'] = round((float)$slng, 5);
+        }
         $lvl = bmsea_lda($p, array('latestRiskPrediction', 'riskLevel', 'name'));
         $exp = bmsea_lda($p, array('latestRiskPrediction', 'expiresAt'));
         if (is_string($lvl) && is_string($exp)) {
@@ -285,8 +293,21 @@ function bmsea_fetch_overflow() {
         $since = isset($a['StatusStart']) ? (int)($a['StatusStart'] / 1000) : 0;
         $upd = isset($a['LastUpdated']) ? (int)($a['LastUpdated'] / 1000) : 0;
         if ($upd > $newest) $newest = $upd;
-        $mons[] = array('id' => isset($a['Id']) ? $a['Id'] : '?', 'status' => $st,
-                        'since' => $since ? gmdate('c', $since) : null);
+        $mon = array('id' => isset($a['Id']) ? $a['Id'] : '?', 'status' => $st,
+                     'since' => $since ? gmdate('c', $since) : null);
+        // Position + receiving watercourse (both Wessex's own fields, probed
+        // live 2026-08-06): the page attributes each SEA-receiving monitor to
+        // its nearest beach with the distance stated, and lists river
+        // monitors (Stour/Avon) separately - a Stour discharge is not an
+        // Alum Chine discharge and must never be presented as one.
+        if (isset($a['Latitude'], $a['Longitude']) && is_numeric($a['Latitude']) && is_numeric($a['Longitude'])) {
+            $mon['lat'] = round((float)$a['Latitude'], 5);
+            $mon['lng'] = round((float)$a['Longitude'], 5);
+        }
+        if (isset($a['ReceivingWaterCourse']) && is_string($a['ReceivingWaterCourse'])) {
+            $mon['water'] = $a['ReceivingWaterCourse'];
+        }
+        $mons[] = $mon;
     }
     if (!$mons) return array('ok' => false, 'error' => 'no monitors in range');
     return array('ok' => true, 'read_at' => $newest ? gmdate('c', $newest) : gmdate('c'),
