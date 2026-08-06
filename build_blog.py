@@ -924,6 +924,28 @@ for _fp in (_bmglob.glob(_osg.path.join(bp.BASE, "bournemouth", "*", "index.html
         _m2 = _re.match(r"https?://([^/]+)/", _u)
         if _m2 and _m2.group(1) not in _BM_ALLOWED_HOSTS:
             _bm_bad.append("%s: third-party resource host %s" % (_rel, _m2.group(1)))
+# provenance guard (G1/G3 from the approved plan): every data tile on
+# sea-today carries a chip, no official/computed chip may use the measured
+# class, the warning strip and test hooks exist, and the fireworks page
+# keeps its season-finished branch. String-level, deliberately dumb - it
+# catches the regression class we actually shipped once (chipless tiles).
+_st_fp = _osg.path.join(bp.BASE, "bournemouth", "sea-today", "index.html")
+_fw_fp = _osg.path.join(bp.BASE, "bournemouth", "fireworks", "index.html")
+if _osg.path.exists(_st_fp):
+    _st_html = open(_st_fp, encoding="utf-8").read()
+    for _need in ("st-temp-chip", "st-waves-chip", "st-tide-chip", "st-curve-chip",
+                  "st-quality-chip", "st-overflow-chip", "st-sun-chip",
+                  "st-warn", "b365test"):
+        if _need not in _st_html:
+            _bm_bad.append("sea-today: provenance guard - missing %s" % _need)
+    for _forbidden in ("setChip('st-quality-chip', 'chip-m'",
+                       "setChip('st-overflow-chip', 'chip-m'",
+                       "setChip('st-sun-chip', 'chip-m'"):
+        if _forbidden in _st_html:
+            _bm_bad.append("sea-today: official/computed chip wearing the measured class: %s" % _forbidden)
+if _osg.path.exists(_fw_fp):
+    if "SEASON FINISHED" not in open(_fw_fp, encoding="utf-8").read():
+        _bm_bad.append("fireworks: season-finished branch missing (G3)")
 if _bm_bad:
     raise SystemExit(
         "\n*** Bournemouth365 speed/cleanliness guard failed ***\n"

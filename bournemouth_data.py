@@ -172,7 +172,7 @@ _DATES = f'''          <h2 id="dates">Every 2026 date</h2>
 {_ROWS}
             </tbody>
           </table>
-          <p class="mono">Dates and the 10pm start are as published by the organisers, BCP Council&rsquo;s events team, for 2026. Last verified against the organisers&rsquo; listings: 2 August 2026.</p>'''
+          <p class="mono">Dates and the 10pm start are as published by the organisers, BCP Council&rsquo;s events team, for 2026. Last verified against the organisers&rsquo; listings: 6 August 2026.</p>'''
 
 # ---- where to stand ----------------------------------------------------------
 _WHERE = '''          <h2 id="where">Where to stand</h2>
@@ -341,6 +341,7 @@ _ST_PANEL ='''    <section class="section b365" id="now" aria-label="Live sea co
           <h2 class="section-title section-title--center" data-title>The sea right now<span class="title-underline title-underline--center"></span></h2>
         </div>
         <p class="b365-verdict" id="st-verdict" data-reveal></p>
+        <div class="b365-warn" id="st-warn" hidden></div>
         <p class="mono" id="st-line" data-reveal style="margin:0 0 1rem"></p>
         <div class="b365-hero" data-stagger>
           <div class="b365-tile" id="st-tile-temp">
@@ -371,9 +372,9 @@ _ST_PANEL ='''    <section class="section b365" id="now" aria-label="Live sea co
         </div>
         <p class="b365-sub" id="st-band-note" data-reveal style="margin-bottom:1rem">The Outdoor Swimming Society&rsquo;s bands &mdash; anecdotal, not scientific, as the OSS itself says. The highlight follows the live measured reading.</p>
         <div class="tile-grid" data-stagger>
-          <div class="tile" id="st-tile-quality"><h3 id="st-quality">Water quality</h3><p id="st-quality-sub">Waiting for the Environment Agency feed&hellip;</p></div>
-          <div class="tile" id="st-tile-overflow"><h3 id="st-overflow">Storm overflows</h3><p id="st-overflow-sub">Waiting for the monitor feed&hellip;</p></div>
-          <div class="tile"><h3 id="st-sun">Sun</h3><p id="st-sun-sub">Today&rsquo;s sunrise and sunset, computed for the seafront.</p></div>
+          <div class="tile" id="st-tile-quality"><span class="chip-f" id="st-quality-chip">EA BATHING WATER SERVICE</span><h3 id="st-quality">Water quality</h3><p id="st-quality-sub">Waiting for the Environment Agency feed&hellip;</p></div>
+          <div class="tile" id="st-tile-overflow"><span class="chip-f" id="st-overflow-chip">WESSEX WATER MONITORS</span><h3 id="st-overflow">Storm overflows</h3><p id="st-overflow-sub">Waiting for the monitor feed&hellip;</p></div>
+          <div class="tile"><span class="chip-f" id="st-sun-chip">COMPUTED &middot; ASTRONOMY</span><h3 id="st-sun">Sun</h3><p id="st-sun-sub">Today&rsquo;s sunrise and sunset, computed for the seafront.</p></div>
         </div>
         <div class="b365-months" id="st-months" data-reveal aria-label="Long-term monthly sea temperature averages">
           <span data-mo="0">Jan<b>7.4&deg;</b></span>
@@ -565,6 +566,14 @@ _ST_JS = '''      <script>
           .then(function (r) { if (!r.ok) throw new Error('feed'); return r.json(); })
           .then(function (d) {
             var el = function (id) { return document.getElementById(id); };
+            // acceptance-test hooks: ?b365test=stale forces the stale
+            // presentation of REAL data (nothing is invented); ?b365test=warn
+            // adds a clearly-labelled simulated warning. Both are harmless
+            // in public and required by acceptance tests A1/A2.
+            if (location.search.indexOf('b365test=stale') > -1) {
+              if (d.sea && d.sea.ok) d.sea.stale = true;
+              if (d.tide && d.tide.ok) d.tide.stale = true;
+            }
 
             if (d.sea && d.sea.ok) {
               var s = d.sea;
@@ -588,14 +597,16 @@ _ST_JS = '''      <script>
               // verdict: sea-state words only, and never on stale data
               if (!s.stale) {
                 var v = verdictWord(s.hs, s.tempC), ve = el('st-verdict');
-                ve.textContent = v[0] + ' \u00b7 SEA STATE, MEASURED';
+                ve.textContent = v[0] + ' \u00b7 SEA STATE \u00b7 BANDED FROM MEASURED READINGS';
                 ve.className = 'b365-verdict ' + v[1];
                 el('st-line').textContent = 'Computed from the latest readings: ' + s.tempC.toFixed(1) + '\u00b0 water, ' + s.hs.toFixed(2) + 'm waves \u2014 measured ' + ago(s.read_at) + '.';
               }
               // cold-water band strip follows the instrument
-              var bi = s.tempC >= 21 ? 4 : s.tempC >= 17 ? 3 : s.tempC >= 12 ? 2 : s.tempC >= 6 ? 1 : 0;
-              var bspan = document.querySelector('.b365-bands [data-band="' + bi + '"]');
-              if (bspan) bspan.classList.add('on');
+              if (!s.stale) {
+                var bi = s.tempC >= 21 ? 4 : s.tempC >= 17 ? 3 : s.tempC >= 12 ? 2 : s.tempC >= 6 ? 1 : 0;
+                var bspan = document.querySelector('.b365-bands [data-band="' + bi + '"]');
+                if (bspan) bspan.classList.add('on');
+              }
               var bn = el('st-band-note');
               if (bn && !s.stale) bn.textContent = 'At ' + s.tempC.toFixed(1) + '\u00b0C measured now: ' + band[0].replace(/\u201c|\u201d/g, '') + ' \u2014 ' + band[1] + '. Bands: the Outdoor Swimming Society\u2019s guide (anecdotal, as the OSS itself says).';
               // thermal lag: live reading vs this month's long-term average
@@ -648,6 +659,7 @@ _ST_JS = '''      <script>
                 q += 'Pollution risk forecasts are issued daily May\\u2013September; none is in force right now.';
               }
               el('st-quality-sub').textContent = q;
+              setChip('st-quality-chip', 'chip-f', 'EA SERVICE \u00b7 CHECKED ' + ago(d.bathing.read_at).toUpperCase());
               var tbody = document.getElementById('st-sites');
               if (tbody) {
                 tbody.innerHTML = '';
@@ -663,19 +675,42 @@ _ST_JS = '''      <script>
               }
             } else {
               el('st-quality-sub').textContent = 'The Environment Agency feed is not responding right now.';
+              setChip('st-quality-chip', 'chip-f', 'EA FEED DOWN');
             }
 
             if (d.overflow && d.overflow.ok) {
               var o = d.overflow;
+              setChip('st-overflow-chip', 'chip-f', 'WESSEX MONITORS \u00b7 CHECKED ' + ago(o.read_at).toUpperCase());
               if (o.discharging > 0) {
                 el('st-overflow').textContent = o.discharging + ' overflow' + (o.discharging > 1 ? 's' : '') + ' discharging';
-                el('st-overflow-sub').textContent = 'Of ' + o.total + ' monitored storm overflows on this stretch of coast, ' + o.discharging + ' is reporting a discharge right now. After heavy rain, consider swimming another day.';
+                el('st-overflow-sub').textContent = 'Of ' + o.total + ' monitored storm overflows on this stretch of coast, ' + o.discharging + ' is reporting a discharge right now. Monitor reported ' + readAt(o.read_at) + '. After heavy rain, consider swimming another day.';
               } else {
                 el('st-overflow').textContent = 'No overflows discharging';
                 el('st-overflow-sub').textContent = 'All ' + o.total + ' monitored storm overflows on this stretch are reporting no discharge' + (o.offline > 0 ? ' (' + o.offline + ' monitor' + (o.offline > 1 ? 's' : '') + ' offline)' : '') + '. Checked ' + readAt(o.read_at) + '.';
               }
             } else {
               el('st-overflow-sub').textContent = 'The storm-overflow monitor feed is not responding right now.';
+              setChip('st-overflow-chip', 'chip-f', 'MONITOR FEED DOWN');
+            }
+
+            // Rule #7: official warnings outrank every derived element.
+            // prfLevel is var-scoped from the bathing block above (guarded).
+            var warns = [];
+            if (typeof prfLevel !== 'undefined' && prfLevel) {
+              warns.push('Official warning \u2014 today\u2019s Environment Agency pollution-risk forecast is \u201c' + prfLevel + '\u201d at one or more beaches. See water quality below.');
+            }
+            if (d.overflow && d.overflow.ok && d.overflow.discharging > 0) {
+              warns.push('A storm-overflow monitor on this stretch is reporting a discharge. See storm overflows below.');
+            }
+            if (location.search.indexOf('b365test=warn') > -1) {
+              warns.push('TEST WARNING \u2014 simulated for acceptance testing; ignore.');
+            }
+            var we = el('st-warn');
+            if (we && warns.length) {
+              we.hidden = false;
+              we.textContent = warns.join(' ');
+              var sl = el('st-line');
+              if (sl && sl.textContent) sl.textContent += ' \u2014 official warning in force, see below.';
             }
 
             var asof = el('st-asof');

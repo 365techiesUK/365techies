@@ -2247,6 +2247,10 @@ html.ss-open { overflow: hidden; }
 .b365-stale .chip-m::before { background: var(--b365-mute); animation: none; }
 .b365-down .b365-num { color: var(--b365-mute); }
 @keyframes b365pulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+/* official warnings outrank every derived element (rule #7) */
+.b365-warn { border: 1px solid var(--b365-dusk); border-left-width: 4px;
+  color: var(--b365-foam); background: rgba(255, 176, 102, .08);
+  padding: .6rem .9rem; margin: 0 0 1rem; font-size: .95rem; }
 /* hero numerals — the readings ARE the design */
 .b365-verdict { font-family: var(--mono, ui-monospace, monospace);
   font-size: clamp(1rem, 2.6vw, 1.3rem); letter-spacing: .28em;

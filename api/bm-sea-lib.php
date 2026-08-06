@@ -32,8 +32,10 @@
  *   array('ok' => true, 'read_at' => <ISO8601 of the MEASUREMENT>, ...data)
  * or
  *   array('ok' => false, 'error' => '<short reason>')
- * and never throws. Attribution strings live beside each fetcher and are
- * emitted in the JSON so the page can render them - the licences require it.
+ * and never throws. Attribution: the feed carries station/source labels only;
+ * the mandated CCO/Cefas/EA/Wessex attribution SENTENCES are rendered by the
+ * page itself (bournemouth_data.py) - they are licence conditions, and the
+ * page, not this feed, is the licensed display surface.
  */
 
 if (!defined('BMSEA_TTL'))   define('BMSEA_TTL', 20 * 60);    // refresh cadence
@@ -397,6 +399,16 @@ function bm_sea_public() {
         unset($pub['fetched_at'], $pub['fail_since'], $pub['last_error']);
         $read = isset($blk['read_at']) ? strtotime($blk['read_at']) : 0;
         $pub['stale'] = ($read > 0) ? (($now - $read) > BMSEA_STALE) : true;
+        // A pollution-risk forecast past its own expiry must never reach the
+        // page. The page JS also checks - this is defence in depth, and makes
+        // the comment at the prf fetcher true on the server as well.
+        if ($key === 'bathing' && isset($pub['sites']) && is_array($pub['sites'])) {
+            foreach ($pub['sites'] as $si => $sv) {
+                if (isset($sv['prf']['expires']) && strtotime($sv['prf']['expires']) <= $now) {
+                    unset($pub['sites'][$si]['prf']);
+                }
+            }
+        }
         if (!empty($blk['fail_since'])) $pub['failing_since'] = date('c', $blk['fail_since']);
         $out[$key] = $pub;
     }
