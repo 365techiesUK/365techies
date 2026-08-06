@@ -238,7 +238,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-08-03"
+      "dateModified": "2026-08-06"
     },
     {
       "@type": "Service",
@@ -891,7 +891,12 @@
             localStorage.setItem('p365', JSON.stringify(m));
           } catch (e) {}
         }
-        function dropSess() { try { localStorage.removeItem('p365'); } catch (e) {} }
+        function dropSess() {
+          try { localStorage.removeItem('p365'); } catch (e) {}
+          // clear the HttpOnly session cookie too, or the portal's next boot
+          // re-adopts the session this person just walked away from
+          post({ action: 'weblogout' }).catch(function () {});
+        }
         function esc(s) { var d = document.createElement('div'); d.textContent = String(s == null ? '' : s); return d.innerHTML.split('"').join('&quot;').split("'").join('&#39;'); }
         function say(m) { if (ST) ST.textContent = m || ''; }
         function post(body) {
@@ -1576,7 +1581,7 @@
   <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=8" defer></script>
   <script src="/js/forms.min.js?v=8" defer></script>
-  <script src="/js/search.min.js?v=2026-08-03" defer></script>
+  <script src="/js/search.min.js?v=2026-08-06" defer></script>
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
     <p>We use cookies to power our live chat and understand how the site is used. See our <a href="/cookie-policy/">cookie policy</a>.</p>
     <div class="cookie-banner__actions">

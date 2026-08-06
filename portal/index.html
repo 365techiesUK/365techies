@@ -220,7 +220,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-08-03"
+      "dateModified": "2026-08-06"
     }
   ]
 }
@@ -677,9 +677,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">portal build 03 Aug 2026 &middot; 3a02b816d7</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">portal build 06 Aug 2026 &middot; 479c5b89c3</p><script>
 (function () {
-  var P365BUILD = '3a02b816d7';
+  var P365BUILD = '479c5b89c3';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -5881,7 +5881,18 @@
 
   if (S.stoken) showStaff();
   else if (S.wtoken) showDash();
-  else showSignin();
+  else {
+    // Safari wipes localStorage after 7 days away, which used to sign
+    // customers out for good. The session also rides in an HttpOnly cookie
+    // that the purge cannot touch - adopt it before showing the sign-in.
+    post(BK, { action: 'wsession', machine: mid() }).then(function (j) {
+      if (j && j.ok && j.wtoken) {
+        S = { wtoken: j.wtoken, customer: j.customer || '', tier: j.tier || 'free' };
+        if (j.member) { S.member = j.member; S.mstaff = !!j.mstaff; }
+        saveS(); showDash();
+      } else { showSignin(); }
+    }).catch(function () { showSignin(); });
+  }
 })();
 </script>
   </main>
@@ -6134,7 +6145,7 @@
   <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=8" defer></script>
   <script src="/js/forms.min.js?v=8" defer></script>
-  <script src="/js/search.min.js?v=2026-08-03" defer></script>
+  <script src="/js/search.min.js?v=2026-08-06" defer></script>
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
     <p>We use cookies to power our live chat and understand how the site is used. See our <a href="/cookie-policy/">cookie policy</a>.</p>
     <div class="cookie-banner__actions">

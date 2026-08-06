@@ -88,6 +88,24 @@ $action  = isset($in['action'])  ? preg_replace('/[^a-z]/', '', $in['action']) :
 $key     = isset($in['key'])     ? strtoupper(preg_replace('/[^A-Za-z0-9\-]/', '', $in['key'])) : '';
 $machine = isset($in['machine']) ? preg_replace('/[^a-f0-9]/', '', substr($in['machine'], 0, 32)) : '';
 
+/* The customer session cookie. HttpOnly (script cannot read it - which is the
+   point: Safari's 7-day storage purge and cleared localStorage cannot touch
+   it), Secure, SameSite=Lax (never sent on cross-site fetches/POSTs, so no
+   CSRF surface opens), scoped to /api/ only. Staff and view-as sessions never
+   get one - their short lives are deliberate. $persist=false -> a browser-
+   session cookie for "shared computer" sign-ins. */
+function wcookie_set($wt, $persist = true) {
+    @setcookie('p365w', $wt, array('expires' => $persist ? time() + 31536000 : 0,
+        'path' => '/api/', 'secure' => true, 'httponly' => true, 'samesite' => 'Lax'));
+}
+function wcookie_clear() {
+    @setcookie('p365w', '', array('expires' => time() - 86400,
+        'path' => '/api/', 'secure' => true, 'httponly' => true, 'samesite' => 'Lax'));
+}
+function wcookie_get() {
+    return isset($_COOKIE['p365w']) ? preg_replace('/[^a-f0-9]/', '', (string)$_COOKIE['p365w']) : '';
+}
+
 // ---------------------------------------------------------------- SimplyBook JSON-RPC
 // Returns array on success; array('_net'=>true) on a transport failure so callers can
 // tell "the booking system said no" apart from "we couldn't reach the booking system".
@@ -348,21 +366,52 @@ function customer_snapshot() {
 function web_snapshot() {
     global $in, $machine;
     $wt = isset($in['wtoken']) ? preg_replace('/[^a-f0-9]/', '', (string)$in['wtoken']) : '';
+    $via_cookie = false;
+    if ($wt === '') { $wt = wcookie_get(); $via_cookie = ($wt !== ''); }
     if ($wt === '') fail('expired');
     list($lk, $db) = db_open(); db_close($lk);
     $ws = isset($db['websessions'][$wt]) ? $db['websessions'][$wt] : null;
-    if (!$ws) fail('expired');
+    if (!$ws) { if ($via_cookie) wcookie_clear(); fail('expired'); }
+    // a view-as session must never be adopted from a cookie (it is staff
+    // impersonation, sessionStorage-only by design; no cookie is ever set
+    // for one - refusing here is belt to that braces)
+    if ($via_cookie && !empty($ws['viewas'])) fail('expired');
     $slide = !empty($ws['forever']) ? 31536000 : (!empty($ws['long']) ? 5184000 : 43200);
     $capOK = !empty($ws['forever']) ? true : (intval(isset($ws['iat']) ? $ws['iat'] : 0) > time() - (!empty($ws['long']) ? 7776000 : 86400));
     if (intval(isset($ws['ts']) ? $ws['ts'] : 0) <= time() - $slide || !$capOK) fail('expired');
     // fail CLOSED: a machine-bound session must present its matching machine. Omitting the
     // field (so $machine === '') must NOT skip the check, or a stolen bearer wtoken could be
     // replayed from any device against the destructive cancel/change endpoints.
-    if (!empty($ws['machine']) && $ws['machine'] !== $machine) fail('expired');
+    if (!empty($ws['machine']) && $ws['machine'] !== $machine) {
+        /* Body-token requests keep the strict check: a stolen BEARER token
+           must not be replayable from another device. But a session carried
+           by the HttpOnly cookie proves the browser itself is the one we set
+           it on - script cannot read or exfiltrate it - and Safari's storage
+           purge REGENERATES the machine id on the same legitimate device.
+           So: cookie-carried auth rebinds to the presented machine id. */
+        if (!($via_cookie && $machine !== '')) fail('expired');
+        list($lk2, $db2) = db_open();
+        if (isset($db2['websessions'][$wt])) {
+            $db2['websessions'][$wt]['machine'] = $machine;
+            $db2['websessions'][$wt]['ts'] = time();
+            db_save($db2);
+        }
+        db_close($lk2);
+        $ws['machine'] = $machine;
+    } elseif (intval(isset($ws['ts']) ? $ws['ts'] : 0) < time() - 86400) {
+        // make the sliding window actually slide - nothing ever refreshed ts
+        // before this, so "60-day sliding" sessions died a fixed 60 days
+        // after sign-in however often the customer visited. One write a day.
+        list($lk3, $db3) = db_open();
+        if (isset($db3['websessions'][$wt])) { $db3['websessions'][$wt]['ts'] = time(); db_save($db3); }
+        db_close($lk3);
+    }
     $key2 = (string)$ws['key'];
     if (!isset($db['customers'][$key2])) fail('expired');
     $c = $db['customers'][$key2];
     return array('key' => $key2,
+        'wtoken' => $wt,
+        'tier' => ((isset($c['tier']) && $c['tier'] === 'pro') ? 'pro' : 'free'),
         'cid' => intval(isset($c['sb_client_id']) ? $c['sb_client_id'] : 0),
         'name' => (string)(isset($c['sb_name']) ? $c['sb_name'] : (isset($c['name']) ? $c['name'] : '')),
         'email' => (string)(isset($c['sb_email']) ? $c['sb_email'] : (isset($c['email']) ? $c['email'] : '')),
@@ -1157,6 +1206,7 @@ if ($action === 'verifycode') {
         $dbT['websessions'][$wtokT] = array('key'=>$orgKey, 'member'=>$memEmail, 'ts'=>time(), 'iat'=>time(),
             'long'=>true, 'forever'=>empty($in['shared']), 'machine'=>$machine);
         db_save($dbT); db_close($lkT);
+        wcookie_set($wtokT, empty($in['shared']));
         if ($isNewMember) {
             $who = $jname !== '' ? $jname . ' (' . $memEmail . ')' : $memEmail;
             pcm_slack_say(":bust_in_silhouette: *New team member joined a company portal* - " . $who
@@ -1299,6 +1349,7 @@ if ($action === 'verifycode') {
         if ((isset($wv['ts']) ? $wv['ts'] : 0) < time() - $lim) unset($db['websessions'][$wk]);
     }
     $db['websessions'][$wtok] = array('key' => $target, 'ts' => time(), 'iat' => time(), 'long' => true, 'forever' => empty($in['shared']), 'machine' => $machine);
+    wcookie_set($wtok, empty($in['shared']));   // shared device -> cookie dies with the browser
     pcm_welcome_maybe($c, $target, $email, $cname !== '' ? $cname : (isset($c['name']) ? $c['name'] : ''));
     db_save($db); db_close($lk);
 
@@ -1442,6 +1493,7 @@ if ($action === 'signin') {
         }
         // customers get a long device session (60d sliding / 90d cap, server-revocable)
         $db['websessions'][$wtok] = array('key' => $target, 'ts' => time(), 'iat' => time(), 'long' => true, 'forever' => empty($in['shared']), 'machine' => $machine);
+    wcookie_set($wtok, empty($in['shared']));   // shared device -> cookie dies with the browser
         // inside the web branch on purpose: an app sign-in is not a portal sign-in
         pcm_welcome_maybe($c, $target, $cemail, $cname);
     }
@@ -1458,8 +1510,20 @@ if ($action === 'signin') {
 // web portal sign-out: destroy the customer web session server-side
 if ($action === 'weblogout') {
     $wt = isset($in['wtoken']) ? preg_replace('/[^a-f0-9]/', '', (string)$in['wtoken']) : '';
+    if ($wt === '') $wt = wcookie_get();   // signed out after a storage wipe: the cookie is all they have
     if ($wt !== '') { list($lk, $db) = db_open(); if (isset($db['websessions'][$wt])) { unset($db['websessions'][$wt]); db_save($db); } db_close($lk); }
+    wcookie_clear();
     out(array('ok' => true));
+}
+
+// Adopt the cookie session: called by the portal when localStorage is empty
+// (Safari purges it after 7 days away). Returns enough to rebuild the local
+// state. view-as sessions are refused inside web_snapshot for cookie auth.
+if ($action === 'wsession') {
+    $snap = web_snapshot();
+    if (!empty($snap['viewas'])) fail('expired');
+    out(array('ok' => true, 'wtoken' => $snap['wtoken'], 'customer' => $snap['name'],
+              'tier' => $snap['tier'], 'member' => $snap['member'], 'mstaff' => !empty($snap['mstaff'])));
 }
 
 if ($action === 'services') {

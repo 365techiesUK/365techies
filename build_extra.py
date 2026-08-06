@@ -25300,7 +25300,18 @@ def write_portal_page():
 
   if (S.stoken) showStaff();
   else if (S.wtoken) showDash();
-  else showSignin();
+  else {
+    // Safari wipes localStorage after 7 days away, which used to sign
+    // customers out for good. The session also rides in an HttpOnly cookie
+    // that the purge cannot touch - adopt it before showing the sign-in.
+    post(BK, { action: 'wsession', machine: mid() }).then(function (j) {
+      if (j && j.ok && j.wtoken) {
+        S = { wtoken: j.wtoken, customer: j.customer || '', tier: j.tier || 'free' };
+        if (j.member) { S.member = j.member; S.mstaff = !!j.mstaff; }
+        saveS(); showDash();
+      } else { showSignin(); }
+    }).catch(function () { showSignin(); });
+  }
 })();
 </script>'''
     # --- Live System Monitoring: a demo teaser card above the portal app (sibling of #p365app, untouched by the client app) ---

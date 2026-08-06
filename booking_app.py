@@ -160,7 +160,12 @@ BOOKING_APP = r'''    <section class="section section--alt" id="book" aria-label
             localStorage.setItem('p365', JSON.stringify(m));
           } catch (e) {}
         }
-        function dropSess() { try { localStorage.removeItem('p365'); } catch (e) {} }
+        function dropSess() {
+          try { localStorage.removeItem('p365'); } catch (e) {}
+          // clear the HttpOnly session cookie too, or the portal's next boot
+          // re-adopts the session this person just walked away from
+          post({ action: 'weblogout' }).catch(function () {});
+        }
         function esc(s) { var d = document.createElement('div'); d.textContent = String(s == null ? '' : s); return d.innerHTML.split('"').join('&quot;').split("'").join('&#39;'); }
         function say(m) { if (ST) ST.textContent = m || ''; }
         function post(body) {
