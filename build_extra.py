@@ -24569,6 +24569,8 @@ def write_portal_page():
         + '<button class="sm ghost" id="aipipe">\\ud83e\\udd16 AI pipeline</button>'
         + '<a class="btn sm ghost" href="/book-service/" target="_blank" rel="noopener">Booking page</a></div>'
         + '<p class="quiet">Everything opens in a new tab - this page stays put. The consoles sign in with your staff session, no passphrase. Comms inbox = voicemails + texts, threaded per customer; AI pipeline = every AI enquiry from /ai/.</p></div>';
+      h += '<div class="card"><h2>\\ud83c\\udf10 Live on the sites</h2><div id="vislive" class="quiet">Loading\\u2026</div>'
+        + '<p class="quiet" style="margin-top:.5rem">Cookieless first-party count, refreshed every 30s \\u2013 visitors active in the last 5 minutes, what they\\u2019re reading and roughly where from.</p></div>';
       h += '<div class="card"><h2>PC Manager licences</h2><div class="tblwrap"><table><tr><th>Customer</th><th>Plan</th><th>PCs</th><th>Health</th><th>Seen</th><th>App</th><th></th></tr>';
       (d.customers || []).sort(function (a, b) { return (b.seen || '').localeCompare(a.seen || ''); }).forEach(function (c) {
         h += '<tr><td><strong>' + esc(c.name) + '</strong>' + (c.fam ? ' \\ud83d\\udc6a' : '') + '<br /><span class="quiet mono" id="kv' + esc(c.id) + '">' + esc(c.keymask) + '</span> <button class="sm ghost kb" data-cid="' + esc(c.id) + '" title="Show + copy their activation key">\\ud83d\\udd11</button> <button class="sm ghost vw" data-cid="' + esc(c.id) + '" title="View the portal as this customer">\\ud83d\\udc41</button></td>'
@@ -24582,8 +24584,33 @@ def write_portal_page():
       h += '</table></div></div>';
       el.innerHTML = h;
       bindOut();
+      function loadVis() {
+        fetch('/api/visitors.php', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+               body: JSON.stringify({ stoken: S.stoken, machine: mid() }) })
+          .then(function (r) { return r.json(); }).then(function (d) {
+            var vl = document.getElementById('vislive'); if (!vl) return;
+            if (!d || !d.ok) { vl.textContent = 'Live view not configured yet \\u2013 the collector Worker needs deploying (see visitors-live-worker.js).'; return; }
+            var vh = '';
+            Object.keys(d.sites).forEach(function (k) {
+              var sv = d.sites[k];
+              if (sv.visitors < 0) { vh += '<div><strong>' + esc(sv.label) + '</strong> \\u2014 <span class="quiet">unreachable</span></div>'; return; }
+              var pg = Object.keys(sv.pages || {}).sort(function (a, b) { return sv.pages[b] - sv.pages[a]; }).slice(0, 4)
+                .map(function (p) { return esc(p) + ' \\u00d7' + sv.pages[p]; }).join(' \\u00b7 ');
+              var pl = Object.keys(sv.places || {}).slice(0, 4).map(esc).join(' \\u00b7 ');
+              vh += '<div style="margin-bottom:.5rem"><strong>' + esc(sv.label) + '</strong> \\u2014 ' + sv.visitors + ' on now'
+                  + (pg ? '<br><span class="quiet">' + pg + '</span>' : '')
+                  + (pl ? '<br><span class="quiet">' + pl + '</span>' : '') + '</div>';
+            });
+            vl.innerHTML = vh || '<span class="quiet">Nobody on right now.</span>';
+          }).catch(function () {});
+      }
       loadDiary(); loadFleet();
       loadSosq();
+      loadVis();
+      var visiv = setInterval(function () {
+        if (!document.getElementById('vislive')) { clearInterval(visiv); return; }
+        loadVis();
+      }, 30000);
       // keep the inbox fresh while the console is open; the interval dies with the card
       var sqiv = setInterval(function () {
         if (!document.getElementById('sosqcard')) { clearInterval(sqiv); return; }

@@ -113,6 +113,11 @@ HUBSPOT_ID = "148562638"
 # Public URL of the deployed 365 AI OS. When set, the /365-ai-os/ page shows a
 # prominent "Launch the live demo" button. Leave empty ("") to hide it.
 AI_OS_URL = ""
+# Live-visitors beacon (Cloudflare Worker collector, see visitors-live-worker.js).
+# Empty = no beacon is emitted anywhere. Set to the deployed Worker URL (no
+# trailing slash) and rebuild; the staff portal's "Live on the sites" card reads
+# the same Worker via api/visitors.php + the server-only api/visitors-key.php.
+VISITORS_WORKER = ""
 # Public URL of the deployed broadband-coverage proxy (the AI OS server's
 # /api/broadband endpoint). When set, the broadband checker shows live Ofcom
 # coverage for the entered postcode. Leave empty ("") for signposting only.
@@ -912,6 +917,15 @@ def _meta_desc(d, limit=158):
             cut = cut[:amp]
     return cut.rstrip(" ,.;:&-—") + "&hellip;"
 
+# Cookieless one-ping-per-pageview beacon. text/plain keeps the request
+# "simple" (no CORS preflight); the Worker parses the body as JSON regardless.
+# Respects Do Not Track. Emitted only when VISITORS_WORKER is configured.
+VIS_BEACON = "" if not VISITORS_WORKER else (
+    '  <script>(function(){try{if(navigator.doNotTrack==="1")return;'
+    'fetch("' + VISITORS_WORKER + '/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},'
+    'body:JSON.stringify({site:"t365",path:location.pathname}),keepalive:true});}catch(e){}})();</script>\n')
+
+
 def page(slug, title, desc, og_title, schema_json, content, og_image=None):
     canon = f"{SITE}/{slug}/"
     # Article counts too, not just BlogPosting. The case study declares Article (there
@@ -1096,7 +1110,7 @@ def page(slug, title, desc, og_title, schema_json, content, og_image=None):
     }});
   }})();
   </script>
-</body>
+{VIS_BEACON}</body>
 </html>
 '''
 

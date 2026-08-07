@@ -154,6 +154,11 @@ ErrorDocument 404 /404.html
 <FilesMatch "^(comms-data\.json(\..*)?|comms-lib\.php|vm-imap\.php|vm-audio-[A-Za-z0-9\-]+\.(mp3|wav))$">
   Require all denied
 </FilesMatch>
+# Live-visitors: the Worker read token is a credential; the cache is internal.
+# visitors.php itself stays served - it authenticates per request.
+<FilesMatch "^(visitors-key\.php|visitors-cache\.json(\..*)?)$">
+  Require all denied
+</FilesMatch>
 # 365 PC Manager + Service Pass server-only data/secret files - NEVER serve over HTTP.
 # (The endpoints pcm.php, pcm-admin.php, pcm-sb-callback.php, pass.php stay served - not matched here.)
 # NB pcm-bkpoll-cache.json holds a LIVE SimplyBook admin token (found publicly
