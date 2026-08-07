@@ -119,7 +119,12 @@ def _intake_page(bp):
           <h1 class="section-title" data-title>Tell us what&rsquo;s wasting your team&rsquo;s time<span class="title-underline"></span></h1>
           <p class="lede">Describe the job in your own words &mdash; the repeated copying, the missed calls, the chasing. You don&rsquo;t need to know what an AI agent is, and nothing here commits you to anything. A person from our Bournemouth team reads every enquiry and replies personally.</p>
         </div>
-        <form class="contact-form ai-intake" id="ai-intake" novalidate>
+        <style>/* the .contact-form card look, WITHOUT the .contact-form class:
+          js/forms.js binds every form.contact-form and would double-submit this
+          form into the HubSpot/slack-lead relay (proven live on the launch test
+          - two Slack pings for one enquiry). Route-scoped rule instead. */
+        .ai-intake { padding: clamp(1.6rem, 3vw, 2.4rem); border: 1px solid var(--line); border-radius: var(--r-xl); background: var(--glass); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }</style>
+        <form class="ai-intake" id="ai-intake" novalidate>
           <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" />
           <label class="field"><span>What&rsquo;s the repetitive work, delay or problem you want to improve?</span>
             <textarea name="problem" rows="5" required aria-describedby="ai-priv"></textarea></label>
