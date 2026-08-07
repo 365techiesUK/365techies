@@ -36,7 +36,8 @@
  },
  "ai": {
   "first": "2026-08-07",
-  "h": "ae38ef1212bd9438"
+  "h": "63ffba99ba271e4b",
+  "last": "2026-08-07"
  },
  "ai-for-beginners-course": {
   "first": "2026-07-28",
@@ -60,35 +61,47 @@
  },
  "ai/agents": {
   "first": "2026-08-07",
-  "h": "6ef00936f99f2406"
+  "h": "e8abba80877c828e",
+  "last": "2026-08-07"
  },
  "ai/automations": {
   "first": "2026-08-07",
-  "h": "4451f3ec27a463e1"
+  "h": "5ae25d9ceadb91cb",
+  "last": "2026-08-07"
  },
  "ai/consultancy": {
   "first": "2026-08-07",
-  "h": "6a51e0c068f1ca3e"
+  "h": "6573c53039d7a71c",
+  "last": "2026-08-07"
  },
  "ai/industries": {
   "first": "2026-08-07",
-  "h": "d7d2e86798a5a3f5"
+  "h": "194bfa090fa5e2bc",
+  "last": "2026-08-07"
  },
  "ai/learn": {
   "first": "2026-08-07",
-  "h": "38a6e27b023842f9"
+  "h": "912a3b0b661becb4",
+  "last": "2026-08-07"
+ },
+ "ai/start": {
+  "first": "2026-08-07",
+  "h": "5bc4f849ae242927"
  },
  "ai/tools": {
   "first": "2026-08-07",
-  "h": "498bc5b70eee6332"
+  "h": "b1146fcb545fc076",
+  "last": "2026-08-07"
  },
  "ai/training": {
   "first": "2026-08-07",
-  "h": "cfdaad97ad2f56f6"
+  "h": "868536fbefbaeb49",
+  "last": "2026-08-07"
  },
  "ai/voice-agents": {
   "first": "2026-08-07",
-  "h": "8e2cb2f31d96a823"
+  "h": "760d9a4d8c3e6ee1",
+  "last": "2026-08-07"
  },
  "alienware-dell-g-series-repair-bournemouth": {
   "first": "2026-07-28",
