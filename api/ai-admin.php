@@ -9,7 +9,17 @@
  * written reason), work state, owner, next action, notes. The audit trail on
  * each record is append-only and shown in full. NO closing tag in this file.
  */
+/* Sliding 12-hour console session + raised gc lifetime - see comms.php note. */
+@ini_set('session.gc_maxlifetime', '43200');
+@session_set_cookie_params(43200);
 session_start();
+if (!empty($_SESSION['pcm_ok'])) {
+    if (isset($_SESSION['t']) && (time() - (int)$_SESSION['t']) > 43200) {
+        session_unset(); session_destroy(); session_start();
+    } else {
+        $_SESSION['t'] = time();
+    }
+}
 header('X-Robots-Tag: noindex, nofollow');
 header('Cache-Control: no-store');
 $SECRET = __DIR__ . '/pcm-admin-secret.php';
@@ -41,6 +51,9 @@ if (empty($_SESSION['csrf'])) $_SESSION['csrf'] = bin2hex(random_bytes(16));
 $CSRF = $_SESSION['csrf'];
 if ((isset($_POST['do']) ? $_POST['do'] : '') !== '' && !hash_equals($CSRF, (string)(isset($_POST['csrf']) ? $_POST['csrf'] : ''))) { http_response_code(403); exit('bad token'); }
 if (empty($_SESSION['pcm_ok'])) {
+    if ($_SERVER['REQUEST_METHOD'] === 'GET' && !isset($_GET['sso']) && !isset($_GET['login'])) {
+        header('Location: /portal/?console=ai'); exit;
+    }
     echo '<!doctype html><meta name=viewport content="width=device-width,initial-scale=1"><title>365 AI pipeline</title>';
     echo '<body style="font-family:system-ui;background:#0b1226;color:#eef;display:grid;place-items:center;height:100vh;margin:0">';
     echo '<form method=post style="background:#0d1530;padding:2rem;border-radius:14px;border:1px solid #2a3b63;min-width:300px">';
@@ -48,7 +61,7 @@ if (empty($_SESSION['pcm_ok'])) {
     if (isset($_GET['sso'])) {
         echo '<p style="margin:0 0 1rem;padding:.6rem .8rem;border:1px solid #e3b71d;border-radius:8px;color:#ffe9a8;font-size:.88rem">'
            . 'Your portal staff session has expired (they last 12 hours). '
-           . '<a href="/portal/" style="color:#6fc7ff">Open the portal</a>, sign in as staff again, and the button will bring you straight here &mdash; or use the passphrase below.</p>';
+           . '<a href="/portal/?staffexpired=1&amp;console=ai" style="color:#6fc7ff">Sign in at the portal again</a> and you&rsquo;ll land straight back here &mdash; or use the passphrase below.</p>';
     }
     echo '<input type=password name=pass placeholder=Passphrase autofocus style="width:100%;padding:.7rem;border-radius:8px;border:1px solid #2a3b63;background:#0b1226;color:#fff;box-sizing:border-box">';
     echo '<button style="margin-top:1rem;width:100%;padding:.7rem;border:0;border-radius:8px;background:#1d97e3;color:#fff;font-size:1rem;cursor:pointer">Sign in</button></form>';

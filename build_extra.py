@@ -24526,6 +24526,20 @@ def write_portal_page():
     bindOut();
     post(BK, { action: 'staffcustomers', stoken: S.stoken, machine: mid() }).then(function (d) {
       if (!d || !d.ok) { showSignin('Staff session expired (12h) - sign in again.'); return; }
+      // ?console= deep link: a console bounced here to get signed in. The staff
+      // session is now PROVEN live (the call above succeeded), so hand straight
+      // back with a fresh SSO post - this is what makes a portal sign-in renew
+      // the consoles: any console visit routes through here and returns signed
+      // in, with the existing stale-token path above forcing a re-sign-in first
+      // when needed. Same-tab on purpose; the console replaces the portal view.
+      var cq = /[?&]console=([a-z]+)/.exec(location.search);
+      var cmap = { comms: '/api/comms.php', ai: '/api/ai-admin.php', pcm: '/api/pcm-admin.php' };
+      if (cq && cmap[cq[1]]) {
+        var cf = document.createElement('form'); cf.method = 'POST'; cf.action = cmap[cq[1]];
+        var c1 = document.createElement('input'); c1.type = 'hidden'; c1.name = 'stoken'; c1.value = S.stoken; cf.appendChild(c1);
+        var c2 = document.createElement('input'); c2.type = 'hidden'; c2.name = 'machine'; c2.value = mid(); cf.appendChild(c2);
+        document.body.appendChild(cf); cf.submit(); return;
+      }
       var h = topRow('365 staff \\u00b7 ' + esc(S.email || ''));
       h += '<div class="card"><h2>\\ud83d\\udcc5 Diary <span class="dlive" id="dlive" title="Booking statuses update automatically \\u2013 no need to refresh"><i></i>Live</span></h2>'
         + '<button class="nbbtn" id="nbopen">\\u2795 Book a new job</button>'
