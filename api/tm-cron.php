@@ -57,6 +57,14 @@ $bkp = bkpend_sweep();
 require_once __DIR__ . '/bm-sea-lib.php';
 $sea = bm_sea_refresh();
 
+/* Comms hub: inbound texts (Textmagic replies) + the Voipfone voicemail relay
+   mailbox. Same placement, same reason: the inbox must keep filling whatever
+   state the scheduled-SMS account is in. Each poller no-ops cleanly when its
+   config is absent (no tm creds / no vm-imap.php), so this line is safe on
+   day one and simply starts working as each credential lands on the server. */
+require_once __DIR__ . '/comms-lib.php';
+$cm = comms_sweep();
+
 if (!tm_configured()) {
     $out = array('ok' => false, 'error' => 'not-configured', 'bkpend' => $bkp);
     echo $CLI ? ("sms not configured (abandoned bookings reported: " . $bkp['told'] . ")\n")
@@ -92,7 +100,9 @@ if (@file_put_contents($tmp, json_encode(array(
 
 if ($CLI) {
     echo "due {$res['due']}, sent {$res['sent']}, skipped {$res['skipped']}, failed {$res['failed']}"
-       . ", abandoned bookings reported {$bkp['told']}\n";
+       . ", abandoned bookings reported {$bkp['told']}"
+       . ", comms " . json_encode($cm) . "\n";
 } else {
+    $res['comms'] = $cm;
     echo json_encode($res);
 }

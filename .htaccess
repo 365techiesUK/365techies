@@ -148,6 +148,12 @@ ErrorDocument 404 /404.html
 <FilesMatch "^(ai-pipeline\.json(\..*)?|ai-lead-rate\.json|ai-lead-lib\.php)$">
   Require all denied
 </FilesMatch>
+# Comms hub: the inbox store holds message bodies + full numbers, the IMAP
+# config is a credential, and voicemail audio is customer voice - all denied.
+# Audio is streamed ONLY through the staff-authed comms.php console.
+<FilesMatch "^(comms-data\.json(\..*)?|comms-lib\.php|vm-imap\.php|vm-audio-[A-Za-z0-9\-]+\.(mp3|wav))$">
+  Require all denied
+</FilesMatch>
 # 365 PC Manager + Service Pass server-only data/secret files - NEVER serve over HTTP.
 # (The endpoints pcm.php, pcm-admin.php, pcm-sb-callback.php, pass.php stay served - not matched here.)
 # NB pcm-bkpoll-cache.json holds a LIVE SimplyBook admin token (found publicly
