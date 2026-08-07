@@ -24551,8 +24551,10 @@ def write_portal_page():
       h += '<div class="card"><h2>Quick links</h2><div class="row">'
         + '<a class="btn sm ghost" href="https://365techies.secure.simplybook.it/v2/management/" target="_blank" rel="noopener">SimplyBook admin</a>'
         + '<button class="sm ghost" id="pcmadm">Full PCM console</button>'
+        + '<button class="sm ghost" id="commsadm">\\ud83d\\udcde Comms inbox</button>'
+        + '<button class="sm ghost" id="aipipe">\\ud83e\\udd16 AI pipeline</button>'
         + '<a class="btn sm ghost" href="/book-service/" target="_blank" rel="noopener">Booking page</a></div>'
-        + '<p class="quiet">Everything opens in a new tab - this page stays put. The PCM console signs in with your staff session, no passphrase.</p></div>';
+        + '<p class="quiet">Everything opens in a new tab - this page stays put. The consoles sign in with your staff session, no passphrase. Comms inbox = voicemails + texts, threaded per customer; AI pipeline = every AI enquiry from /ai/.</p></div>';
       h += '<div class="card"><h2>PC Manager licences</h2><div class="tblwrap"><table><tr><th>Customer</th><th>Plan</th><th>PCs</th><th>Health</th><th>Seen</th><th>App</th><th></th></tr>';
       (d.customers || []).sort(function (a, b) { return (b.seen || '').localeCompare(a.seen || ''); }).forEach(function (c) {
         h += '<tr><td><strong>' + esc(c.name) + '</strong>' + (c.fam ? ' \\ud83d\\udc6a' : '') + '<br /><span class="quiet mono" id="kv' + esc(c.id) + '">' + esc(c.keymask) + '</span> <button class="sm ghost kb" data-cid="' + esc(c.id) + '" title="Show + copy their activation key">\\ud83d\\udd11</button> <button class="sm ghost vw" data-cid="' + esc(c.id) + '" title="View the portal as this customer">\\ud83d\\udc41</button></td>'
@@ -24580,12 +24582,15 @@ def write_portal_page():
         clearTimeout(st);
         st = setTimeout(function () { doSearch(q); }, 300);
       });
-      document.getElementById('pcmadm').onclick = function () {
-        var f = document.createElement('form'); f.method = 'POST'; f.action = '/api/pcm-admin.php'; f.target = '_blank';
+      var ssoOpen = function (action) {
+        var f = document.createElement('form'); f.method = 'POST'; f.action = action; f.target = '_blank';
         var i1 = document.createElement('input'); i1.type = 'hidden'; i1.name = 'stoken'; i1.value = S.stoken; f.appendChild(i1);
         var i2 = document.createElement('input'); i2.type = 'hidden'; i2.name = 'machine'; i2.value = mid(); f.appendChild(i2);
         document.body.appendChild(f); f.submit(); f.remove();
       };
+      document.getElementById('pcmadm').onclick = function () { ssoOpen('/api/pcm-admin.php'); };
+      document.getElementById('commsadm').onclick = function () { ssoOpen('/api/comms.php'); };
+      document.getElementById('aipipe').onclick = function () { ssoOpen('/api/ai-admin.php'); };
       document.getElementById('ab').onclick = function () {
         var b = this; b.disabled = true; document.getElementById('aerr').textContent = '';
         post(BK, { action: 'staffadd', stoken: S.stoken, machine: mid(),
