@@ -28,7 +28,8 @@ if (isset($_POST['stoken']) && empty($_SESSION['pcm_ok'])) {
             session_regenerate_id(true); $_SESSION['pcm_ok'] = 1;
         }
     }
-    header('Location: comms.php'); exit;
+    // expired/unknown token -> say so, instead of a mute passphrase prompt
+    header('Location: comms.php' . (empty($_SESSION['pcm_ok']) ? '?sso=expired' : '')); exit;
 }
 if (isset($_GET['logout'])) { session_destroy(); header('Location: comms.php'); exit; }
 if (empty($_SESSION['csrf'])) $_SESSION['csrf'] = bin2hex(random_bytes(16));
@@ -37,8 +38,14 @@ if ((isset($_POST['do']) ? $_POST['do'] : '') !== '' && !hash_equals($CSRF, (str
 if (empty($_SESSION['pcm_ok'])) {
     echo '<!doctype html><meta name=viewport content="width=device-width,initial-scale=1"><title>365 comms inbox</title>';
     echo '<body style="font-family:system-ui;background:#0b1226;color:#eef;display:grid;place-items:center;height:100vh;margin:0">';
-    echo '<form method=post style="background:#0d1530;padding:2rem;border-radius:14px;border:1px solid #2a3b63;min-width:300px">';
-    echo '<h2 style="margin:0 0 1rem">365 comms inbox</h2><input type=password name=pass placeholder=Passphrase autofocus style="width:100%;padding:.7rem;border-radius:8px;border:1px solid #2a3b63;background:#0b1226;color:#fff;box-sizing:border-box">';
+    echo '<form method=post style="background:#0d1530;padding:2rem;border-radius:14px;border:1px solid #2a3b63;min-width:300px;max-width:360px">';
+    echo '<h2 style="margin:0 0 1rem">365 comms inbox</h2>';
+    if (isset($_GET['sso'])) {
+        echo '<p style="margin:0 0 1rem;padding:.6rem .8rem;border:1px solid #e3b71d;border-radius:8px;color:#ffe9a8;font-size:.88rem">'
+           . 'Your portal staff session has expired (they last 12 hours). '
+           . '<a href="/portal/" style="color:#6fc7ff">Open the portal</a>, sign in as staff again, and the button will bring you straight here &mdash; or use the passphrase below.</p>';
+    }
+    echo '<input type=password name=pass placeholder=Passphrase autofocus style="width:100%;padding:.7rem;border-radius:8px;border:1px solid #2a3b63;background:#0b1226;color:#fff;box-sizing:border-box">';
     echo '<button style="margin-top:1rem;width:100%;padding:.7rem;border:0;border-radius:8px;background:#1d97e3;color:#fff;font-size:1rem;cursor:pointer">Sign in</button></form>';
     exit;
 }
