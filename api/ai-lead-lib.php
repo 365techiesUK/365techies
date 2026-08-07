@@ -130,6 +130,109 @@ function ai_pipe_mark_sync($id, $channel, $state) {
     });
 }
 
+/* ---- staff operations (doc 06 s3/s4): stages, work states, audited updates ---- */
+
+/* Canonical commercial stages (doc 06 s4) and where each may move next. Reopening
+ * a terminal stage is allowed but always demands a note (audited reason). */
+function ai_pipe_stages() {
+    return [
+        'NEW'                  => ['TRIAGE'],
+        'TRIAGE'               => ['DISCOVERY', 'DEFERRED', 'CLOSED_NOT_PURSUED'],
+        'DISCOVERY'            => ['SOLUTION_SCOPE', 'DEFERRED', 'CLOSED_NOT_PURSUED'],
+        'SOLUTION_SCOPE'       => ['QUOTE', 'DISCOVERY', 'DEFERRED'],
+        'QUOTE'                => ['WON', 'LOST', 'DEFERRED', 'SOLUTION_SCOPE'],
+        'WON'                  => ['HANDOFF'],
+        'HANDOFF'              => ['DELIVERY_TRANSFERRED'],
+        'DELIVERY_TRANSFERRED' => [],
+        'DEFERRED'             => ['TRIAGE', 'DISCOVERY', 'SOLUTION_SCOPE', 'QUOTE'],
+        'LOST'                 => [],
+        'CLOSED_NOT_PURSUED'   => [],
+    ];
+}
+
+function ai_pipe_work_states() {
+    return ['INTERNAL_ACTION_REQUIRED', 'WAITING_ON_CUSTOMER', 'WAITING_ON_THIRD_PARTY',
+            'WAITING_ON_OWNER_DECISION', 'SCHEDULED', 'NO_ACTION_CURRENTLY', 'COMPLETE'];
+}
+
+/* Stages whose ENTRY always requires a written reason (doc 06 s4.1), plus WON:
+ * v1 has no quote-version model yet, so acceptance evidence must be described
+ * in the note - never set from enthusiasm alone. */
+function ai_pipe_note_required($from, $to) {
+    if (in_array($to, ['DEFERRED', 'LOST', 'CLOSED_NOT_PURSUED', 'WON'], true)) return true;
+    $terminal = ['DELIVERY_TRANSFERRED', 'LOST', 'CLOSED_NOT_PURSUED'];
+    if (in_array($from, $terminal, true)) return true;   // reopening terminal history
+    return false;
+}
+
+function ai_pipe_get($id) {
+    return ai_pipe_locked(function ($data) use ($id) {
+        foreach ($data['opportunities'] as $o) {
+            if ($o['id'] === $id) return ['__result' => $o];
+        }
+        return ['__result' => null];
+    });
+}
+
+/*
+ * Audited staff update. $chg may carry: stage, work_state, owner, next_action,
+ * note. Returns [true, updatedRecord] or [false, 'human-readable reason'].
+ * Every material change appends to the record's audit trail with the actor.
+ */
+function ai_pipe_update($id, $chg, $actor) {
+    $stages = ai_pipe_stages();
+    $wstates = ai_pipe_work_states();
+    list($ok, $res) = ai_pipe_locked(function ($data) use ($id, $chg, $actor, $stages, $wstates) {
+        foreach ($data['opportunities'] as $i => $o) {
+            if ($o['id'] !== $id) continue;
+            $now = gmdate('c');
+            $events = [];
+            $note = trim((string)(isset($chg['note']) ? $chg['note'] : ''));
+
+            if (isset($chg['stage']) && $chg['stage'] !== '' && $chg['stage'] !== $o['stage']) {
+                $to = (string)$chg['stage'];
+                if (!isset($stages[$to])) return ['__result' => ['err' => 'unknown stage ' . $to]];
+                $allowed = isset($stages[$o['stage']]) ? $stages[$o['stage']] : [];
+                $normal = in_array($to, $allowed, true);
+                if (!$normal && $note === '') {
+                    return ['__result' => ['err' => $o['stage'] . ' does not normally move to ' . $to .
+                        ' - add a note explaining why to override']];
+                }
+                if (ai_pipe_note_required($o['stage'], $to) && $note === '') {
+                    return ['__result' => ['err' => 'moving to ' . $to . ' requires a note (reason/evidence)']];
+                }
+                $events[] = 'stage ' . $o['stage'] . ' -> ' . $to . ($normal ? '' : ' (override)');
+                $o['stage'] = $to;
+            }
+            if (isset($chg['work_state']) && $chg['work_state'] !== '' && $chg['work_state'] !== $o['work_state']) {
+                if (!in_array($chg['work_state'], $wstates, true)) return ['__result' => ['err' => 'unknown work state']];
+                $events[] = 'work_state -> ' . $chg['work_state'];
+                $o['work_state'] = (string)$chg['work_state'];
+            }
+            if (isset($chg['owner']) && (string)$chg['owner'] !== $o['owner']) {
+                $events[] = 'owner -> ' . ((string)$chg['owner'] === '' ? '(none)' : (string)$chg['owner']);
+                $o['owner'] = (string)$chg['owner'];
+            }
+            if (isset($chg['next_action']) && (string)$chg['next_action'] !== $o['next_action']) {
+                $events[] = 'next action: ' . (string)$chg['next_action'];
+                $o['next_action'] = (string)$chg['next_action'];
+            }
+            if ($note !== '') $events[] = 'note: ' . $note;
+            if (!$events) return ['__result' => ['err' => 'nothing to change']];
+
+            foreach ($events as $ev) {
+                $o['audit'][] = ['t' => $now, 'by' => $actor, 'ev' => $ev];
+            }
+            $data['opportunities'][$i] = $o;
+            return ['__data' => $data, '__result' => ['rec' => $o]];
+        }
+        return ['__result' => ['err' => 'not found: ' . $id]];
+    });
+    if (!$ok) return [false, 'store error: ' . $res];
+    if (isset($res['err'])) return [false, $res['err']];
+    return [true, $res['rec']];
+}
+
 /* CLI helper: `php ai-lead-lib.php --list` prints a compact pipeline view.
  * Refuses to run over HTTP (the file is .htaccess-denied as well - belt and braces). */
 if (PHP_SAPI === 'cli' && isset($argv) && basename(__FILE__) === basename((string)$argv[0])) {
