@@ -96,6 +96,12 @@ em { font-style: normal; }
 ::-webkit-scrollbar-thumb { background: #5b7ea9; border-radius: var(--r-pill); border: 3px solid var(--bg-2); }
 ::-webkit-scrollbar-thumb:hover { background: var(--cyan-soft); }
 html { scrollbar-color: #5b7ea9 var(--bg-2); scrollbar-width: auto; }
+/* Customer portal only: the scrollbar there is a primary control for a
+   less-technical audience, not chrome. Wider bar + thinner border nets a
+   ~16px visible thumb (the site-wide 14px bar nets only ~8px). Firefox
+   cannot widen beyond its native "auto" - it keeps the colours above. */
+html:has(#p365app)::-webkit-scrollbar { width: 20px; }
+html:has(#p365app)::-webkit-scrollbar-thumb { border-width: 2px; }
 
 :focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; border-radius: var(--r-xs); }
 
