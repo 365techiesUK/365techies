@@ -19,7 +19,7 @@
 # page says "Monthly service — confirmed with your quote". The build guard
 # (tools_check_ai_commercial.py) scans everything under ai/ once emitted.
 
-AI_LAUNCH = False   # ← flip only in the owner-authorised release commit
+AI_LAUNCH = True    # launched 2026-08-08 on the owner's explicit word ("launch it")
 
 
 def register():

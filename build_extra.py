@@ -48,7 +48,8 @@ except Exception:
 
 # ── Competitive prices for the new AI offerings (owner-approved 2026-06-17; edit here) ──
 AI_VOICE_FROM = "95"   # AI voice receptionist agent, £/month
-AI_PILOT_FROM = "495"  # AI Starter pilot, one-off £
+# (AI Starter pilot retired 2026-08-07: one-off AI build work is quoted by
+#  complexity; the running service is a monthly subscription. Guard-enforced.)
 
 # ── Victron VRM public "Share your site" embed (off-grid page). PASTE the iframe src
 # URL from VRM Portal -> Share -> Embed here to show the live VRM dashboard. Leave ""
@@ -7119,7 +7120,7 @@ def services_overview():
         ("365 Web Care", "/web-care/", "One simple monthly plan &mdash; we host, secure, back up and look after your website, so you never worry about it."),
         ("Agentic AI Systems", "/agentic-ai-systems/", "Custom-built agentic AI operating systems that automate and streamline your business-specific processes."),
         ("365 AI OS", "/365-ai-os/", "A real browser desktop with a built-in AI assistant that takes action &mdash; a working demo of the custom systems we build."),
-        ("AI Voice Agents", "/ai-voice-agents/", "An AI receptionist that answers calls 24/7, captures enquiries and books callbacks &mdash; from &pound;95/month."),
+        ("AI Voice Agents", "/ai-voice-agents/", f"An AI receptionist that answers calls 24/7, captures enquiries and books callbacks &mdash; from &pound;{AI_VOICE_FROM}/month."),
         ("AI Training &amp; Adoption", "/ai-training/", "Practical training to get safe, real value from Copilot, ChatGPT and AI tools."),
         ("VoIP Business Phones", "/voip-business-phones/", "Business phone systems powered by Voipfone &mdash; lower bills, work-from-anywhere calls, set up &amp; supported."),
         ("CCTV &amp; Smart Home", "/cctv-smart-home/", "CCTV, video doorbells, smart lighting and home automation, set up and secured."),
@@ -8674,10 +8675,10 @@ def agentic_systems():
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>/10 &mdash; WAYS TO START</p>
           <h2 class="section-title section-title--center" data-title>Start small, with no risk<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>You don&rsquo;t commit to a big project. Begin with a free look at where AI would help most, then prove it on one real process.</p>
+          <p class="lede lede--center" data-reveal>You don&rsquo;t commit to a big project. It starts with a conversation about one real process &mdash; and you see the full figure before anything is built.</p>
         </div>
         <ul class="security-grid" data-stagger>
-{grid_cards([("1 &middot; Free AI opportunity review","A no-obligation chat where we map your most time-consuming process and give you an honest estimate of the time and money it could save. Free."),("2 &middot; AI Starter pilot &mdash; from &pound;" + AI_PILOT_FROM,"A fixed-price first project: we automate one real process end to end, with light training, so you see it working on your own business before going further."),("3 &middot; Full custom build","Once you&rsquo;ve seen the value, we build out your wider agentic system around your tools and processes &mdash; scoped clearly with a tailored quote, no runaway costs.")])}
+{grid_cards([("1 &middot; Talk to us","Describe the process that eats your team&rsquo;s time. We map it with you and tell you honestly whether AI helps &mdash; or whether plain automation does the job better."),("2 &middot; Scoped design &amp; build","A one-off design and build, quoted by complexity once the process is mapped &mdash; so you see exactly what it costs before you commit to anything."),("3 &middot; Running service","Your system goes live on a monthly service subscription &mdash; hosted, monitored and supported by the same local team that built it, and tuned as your business changes.")])}
         </ul>
         <p class="lede lede--center" data-reveal style="margin-top:1.4rem">Curious what you&rsquo;d save? Try our <a href="/ai-roi-calculator/">AI ROI calculator</a>.</p>
       </div>
@@ -9667,8 +9668,8 @@ def ai_os():
           <p class="eyebrow mono">// FOR YOUR BUSINESS</p>
           <h2 class="section-title" data-title>Your own branded AI OS for your team<span class="title-underline"></span></h2>
           <p>Beyond the demo, we can host a private, <strong>branded version of the 365 AI OS for your business</strong> &mdash; your logo and colours, your team&rsquo;s own logins, and an AI assistant set up around your tools and ways of working.</p>
-          <p>It&rsquo;s built on the same secure foundation as everything we do, hosted and supported by your local team. We scope it to your needs with a clear, tailored quote after a free review &mdash; no per-credit surprises.</p>
-          <p style="margin-top:1.1rem"><a href="/contact/" class="button secondary">Book a free review &#8594;</a></p>
+          <p>It&rsquo;s built on the same secure foundation as everything we do, hosted and supported by your local team. We scope it to your needs and quote the design and build by complexity &mdash; no per-credit surprises.</p>
+          <p style="margin-top:1.1rem"><a href="/contact/" class="button secondary">Talk to us about AI &#8594;</a></p>
         </div>
         <ul class="checklist" data-stagger>
 {checklist(["Your branding &amp; your team&rsquo;s logins","An assistant set up around your tools","Hosted &amp; supported locally","Secure &amp; UK / GDPR-aware","Your data stays yours","Tailored quote &mdash; no credit meters"])}
@@ -12931,7 +12932,7 @@ def ai_voice():
       hero(bc("AI Voice Agents"), "// AI VOICE &amp; PHONE ANSWERING",
            'Never miss a call &mdash; your <em class="grad grad--cyan">AI receptionist</em>',
            "An AI voice agent answers your phone day and night &mdash; greeting callers in your name, answering the routine questions, taking details and booking callbacks &mdash; then hands anything that needs a person to your team. Set up, secured and supported by your local Dorset IT team.",
-           cta1=("Book a Free Demo Call", "/contact/"), cta2=("Call 01202 775566", "tel:+441202775566"),
+           cta1=("Talk to us about AI", "/contact/"), cta2=("Call 01202 775566", "tel:+441202775566"),
            chips=[f"From &pound;{AI_VOICE_FROM}/month", "Answers 24/7", "You stay in control"]),
       f'''    <section class="section" aria-label="What it is">
       <div class="wrap split-2">
@@ -12983,7 +12984,7 @@ def ai_voice():
         <h2 class="section-title section-title--center" data-title>From &pound;{AI_VOICE_FROM} a month<span class="title-underline title-underline--center"></span></h2>
         <p class="lede lede--center" data-reveal>A clear monthly price based on your call volumes and what you&rsquo;d like the agent to handle &mdash; set up and supported by your local team, with no surprise per-minute bills. We&rsquo;ll confirm your exact price after a quick chat.</p>
         <div class="hero-buttons hero-buttons--center" data-reveal style="margin-top:1.4rem">
-          <a href="/contact/" class="button primary button--lg">Book a Free Demo Call</a>
+          <a href="/contact/" class="button primary button--lg">Request an AI quote</a>
           <a href="/cost-calculator/" class="button secondary button--lg">Cost Calculator</a>
         </div>
       </div>
@@ -12992,7 +12993,7 @@ def ai_voice():
       faq_html(faqs),
       cta("Stop missing calls",
           "Let&rsquo;s set up an AI voice agent that answers every call, captures every enquiry and books the work &mdash; while you get on with the job.",
-          primary=("Book a Free Demo Call", "/contact/"), secondary=("See Agentic AI", "/agentic-ai-systems/")),
+          primary=("Talk to us about AI", "/contact/"), secondary=("See Agentic AI", "/agentic-ai-systems/")),
     ])
     def schema(s, _desc=desc, _faqs=faqs):
         return graph([crumb(s, "AI Voice Agents"), webpage(s, "AI Voice Agents & Phone Answering", _desc),
@@ -13007,10 +13008,10 @@ def ai_roi():
     slug = "ai-roi-calculator"
     desc = "Free AI ROI calculator — estimate the hours and money an AI agent could save your business by taking on a repetitive task. Set your team size, hours spent and hourly cost and see your potential yearly saving. 365 Techies, Dorset."
     faqs = [
-      ("How accurate is this estimate?", "It&rsquo;s a guide to show the scale of the opportunity, based on the numbers you put in. The real figure depends on your exact process &mdash; which is what our free AI opportunity review works out properly, with no obligation."),
+      ("How accurate is this estimate?", "It&rsquo;s a guide to show the scale of the opportunity, based on the numbers you put in. The real figure depends on your exact process &mdash; which is what a proper scoping conversation works out."),
       ("What counts as a repetitive task?", "Anything your team does over and over: answering similar enquiries, copying data between systems, chasing invoices, booking appointments, filing documents. These are exactly what an agent handles well."),
       ("Will AI replace my staff?", "No &mdash; the goal is to give your team their time back from repetitive work so they can focus on what genuinely needs a human. You stay in control, with a person approving anything that matters."),
-      ("What do I do with the result?", "Book a free AI opportunity review and we&rsquo;ll confirm a realistic saving and show you exactly how an agent would do it &mdash; see <a href=\"/agentic-ai-systems/\">agentic AI systems</a>."),
+      ("What do I do with the result?", "Talk to us about the process behind your numbers and we&rsquo;ll confirm a realistic saving and show you exactly how an agent would do it &mdash; see <a href=\"/agentic-ai-systems/\">agentic AI systems</a>."),
     ]
     roi = r'''    <section class="section" aria-label="ROI calculator">
       <div class="wrap">
@@ -13031,8 +13032,8 @@ def ai_roi():
               <p class="cc-summary__cap">Estimated saving</p>
               <p class="cc-big"><span id="r-year">&pound;0</span><i>/year</i></p>
               <ul class="cc-lines" id="r-lines"></ul>
-              <a class="button primary" href="/contact/">Book a free review</a>
-              <p class="cc-note">A guide based on your numbers, to show the opportunity. We confirm a realistic figure &mdash; with no obligation &mdash; in a free AI opportunity review.</p>
+              <a class="button primary" href="/contact/">Talk to us about AI</a>
+              <p class="cc-note">A guide based on your numbers, to show the opportunity. We confirm a realistic figure when we scope your exact process.</p>
             </aside>
           </div>
         </div>
@@ -13079,13 +13080,13 @@ def ai_roi():
       hero(bc("AI ROI Calculator"), "// AI ROI CALCULATOR",
            'What could AI <em class="grad grad--cyan">save you?</em>',
            "Put rough numbers on a repetitive task your team does every week, and see the hours and money an AI agent could give you back. A free, no-obligation estimate &mdash; we confirm the real figure in a friendly review.",
-           cta1=("Book a Free Review", "/contact/"), cta2=("See Agentic AI", "/agentic-ai-systems/"),
-           chips=["Free estimate","No obligation","Confirmed in a free review"]),
+           cta1=("Talk to us about AI", "/contact/"), cta2=("See Agentic AI", "/agentic-ai-systems/"),
+           chips=["Free estimator","No obligation","Confirmed when we scope it"]),
       roi,
       faq_html(faqs),
       cta("See what AI could save you",
-          "Book a free AI opportunity review &mdash; we&rsquo;ll map your biggest time-drain and show you a realistic, honest saving.",
-          primary=("Book a Free Review", "/contact/"), secondary=("Agentic AI Systems", "/agentic-ai-systems/")),
+          "Tell us about your biggest time-drain &mdash; we&rsquo;ll map it and show you a realistic, honest saving.",
+          primary=("Talk to us about AI", "/contact/"), secondary=("Agentic AI Systems", "/agentic-ai-systems/")),
     ])
     def schema(s, _desc=desc, _faqs=faqs):
         return graph([crumb(s, "AI ROI Calculator"), webpage(s, "AI ROI Calculator", _desc), faqpage(s, _faqs)])

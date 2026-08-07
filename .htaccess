@@ -34,8 +34,9 @@ RewriteRule ^shop/?$ /dell-hardware/ [R=301,L]
 # so they must never break.
 RewriteRule ^review/?$   /leave-a-review/ [R=301,L]
 RewriteRule ^reviewus/?$ /leave-a-review/ [R=301,L]
-# "365techies.co.uk/ai" - short sayable URL for the 365 AI OS page.
-RewriteRule ^ai/?$       /365-ai-os/ [R=301,L]
+# /ai is a real page now (the AI & Automation hub) - the temporary shortcut
+# redirect to /365-ai-os/ was removed at launch (2026-08-08). Do not re-add:
+# a rewrite here shadows the hub's own index.html.
 
 # /sos/ is now a real on-site page (built by build_extra.py sos_page) with the
 # Splashtop direct-download links embedded - no redirect needed.

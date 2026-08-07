@@ -17,7 +17,7 @@
 - Business IT support: from £24.38/month per computer (tailored to the team)
 - One-off computer & laptop repairs: no subscription — free diagnosis, no-fix-no-fee, 12-month warranty, no call-out fee
 - Microsoft 365: £4.85 per user/month
-- AI voice receptionist: from £95/month — AI Starter pilot: from £495 one-off
+- AI voice receptionist: from £95/month — other AI services: monthly service subscription, with the one-off design/build quoted by complexity
 
 ## Pages
 
@@ -647,6 +647,15 @@
 - [Sunrise & Sunset in Bournemouth — Times & Best Spots](https://365techies.co.uk/bournemouth/sunrise-sunset/): Today's sunrise and sunset times for Bournemouth seafront, computed live — plus the best places to watch, photographed by us: the pier, Durley Chine, the groynes, Hengistbury and Sandbanks.
 - [Bournemouth365 — the Sea, the Fireworks & the Light](https://365techies.co.uk/bournemouth/): Bournemouth, 365 days a year: live measured sea conditions, Friday fireworks answered honestly, and sunrise spots photographed by us. From the 39K-follower Bournemouth365 page.
 - [Bournemouth Beach Parking — Real Prices & Cheaper Options](https://365techies.co.uk/bournemouth/beach-parking/): What Bournemouth beach parking costs in 2026, where it is far cheaper, and the rules that catch people out — taken from BCP Council's own pages and dated.
+- [AI & Automation for Dorset Businesses | 365 Techies](https://365techies.co.uk/ai/): AI and automation from a family-run Bournemouth IT team. Working demos, straightforward monthly service pricing and human control on every system we build.
+- [Workflow Automation for Dorset Businesses | 365 Techies](https://365techies.co.uk/ai/automations/): Connect your systems and remove repetitive admin. Workflow automation built and supported in Bournemouth by a team that runs it in their own business.
+- [Custom AI Agents, Built Around Your Systems | 365 Techies](https://365techies.co.uk/ai/agents/): Custom AI agents that take bounded, approved actions in your real systems — built and supported by a family-run Dorset IT team, trading since 1995.
+- [AI Voice Agents from £95/month | 365 Techies](https://365techies.co.uk/ai/voice-agents/): An AI voice agent that answers after-hours and overflow calls, captures enquiries and books callbacks. From £95/month, supported by our Dorset team.
+- [AI Consultancy Bournemouth & Dorset | 365 Techies](https://365techies.co.uk/ai/consultancy/): Not sure where to start with AI? We map your processes, measure a baseline and tell you honestly what is worth automating. Advice from a Dorset IT team.
+- [AI Training for Teams in Dorset | 365 Techies](https://365techies.co.uk/ai/training/): Role-based AI training for business teams across Dorset. Safe-use policy, approved tools and real follow-up, from a local team that uses AI every day.
+- [AI Tools & Live Demos | 365 Techies](https://365techies.co.uk/ai/tools/): Try our free AI ROI estimator, the 365 AI OS prototype demo and a live 3D monitoring dashboard. Built in-house in Bournemouth and honestly labelled.
+- [AI by Industry for Dorset Businesses | 365 Techies](https://365techies.co.uk/ai/industries/): How AI and automation fit real workflows in professional services, trades, and manufacturing, marine and energy businesses across Dorset.
+- [AI Learning Hub: Free Course and Guides | 365 Techies](https://365techies.co.uk/ai/learn/): Free, plain-English AI learning for business owners: a beginners course, a safe-use guide, and honest answers from a Bournemouth IT team.
 - [Are Refurbished Laptops Any Good? | 365 Techies](https://365techies.co.uk/are-refurbished-laptops-any-good/): Yes — a professionally refurbished business-grade laptop can be genuinely excellent value, and it often outlasts a brand-new budget machine. Here's the honest guide.
 - [Refurbished vs New Laptop: Which Should You Buy?](https://365techies.co.uk/refurbished-vs-new-laptop/): Should you save money with a refurbished laptop, or pay more for new? Here is an honest, plain-English comparison — on price, reliability, warranty and even the planet — to help you decide.
 - [Is It Safe to Buy a Refurbished Laptop? | 365 Techies](https://365techies.co.uk/is-it-safe-to-buy-a-refurbished-laptop/): Worried a refurbished laptop might be a risk? A fair question. The honest answer, the real risks to avoid, and how to buy one safely in the UK.

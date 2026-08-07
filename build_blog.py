@@ -636,30 +636,6 @@ for _tool, _label in (("tools_phpcheck.py", "PHP structure"),
     except Exception as _e:
         print("  PHP WARNING: could not run %s (%s)" % (_tool, _e))
 
-# ---------------- AI commercial-copy guard (blueprint doc 04 s27) ----------------
-# Owner model 2026-08-07: AI = monthly subscription + quoted build. From £95/month
-# (voice agent) is the ONLY approved AI price; £495/'AI Starter pilot' is retired;
-# free-review/free-demo CTAs await the owner's discovery-charging decision. The
-# guard scans BUILT output (two £-strings are hard-coded past the constants, and
-# one page is fed by two source files). Runs in debt-tracking mode during the SEO
-# freeze - flip to --strict in the same commit as the commercial-copy correction,
-# after which a resurfaced retired price stops the build. An invented NEW AI price
-# stops the build in EITHER mode.
-try:
-    _r = _sp.run(["py", "-X", "utf8", "tools_check_ai_commercial.py", "--quiet"],
-                 capture_output=True, text=True,
-                 cwd=os.path.dirname(os.path.abspath(__file__)))
-    for _line in (_r.stdout or "").strip().splitlines():
-        if _line.strip(): print("  " + _line.rstrip())
-    if _r.returncode != 0:
-        raise SystemExit("\n*** AI COMMERCIAL-COPY GUARD FAILED - an unapproved AI price "
-                         "claim is about to ship. Fix the source (see lines above); "
-                         "approved AI pricing = from £95/month voice agent only. ***\n")
-except SystemExit:
-    raise
-except Exception as _e:
-    print("  AI GUARD WARNING: could not run tools_check_ai_commercial.py (%s)" % _e)
-
 from html import unescape as _unesc
 # Run the override table's own self-test as part of the build. It was only wired
 # to __main__, so a duplicate slug - which a Python dict literal resolves by
@@ -708,7 +684,7 @@ LLMS_HEADER = """# 365 Techies
 - Business IT support: from £24.38/month per computer (tailored to the team)
 - One-off computer & laptop repairs: no subscription — free diagnosis, no-fix-no-fee, 12-month warranty, no call-out fee
 - Microsoft 365: £4.85 per user/month
-- AI voice receptionist: from £95/month — AI Starter pilot: from £495 one-off
+- AI voice receptionist: from £95/month — other AI services: monthly service subscription, with the one-off design/build quoted by complexity
 """
 llms_lines = [LLMS_HEADER, "## Pages\n",
               "- [365 Techies — IT Support & Computer Repair, Bournemouth & Dorset](https://365techies.co.uk/): Friendly IT support and computer repairs for homes and businesses across Bournemouth, Poole and Dorset — rated 4.9 on Google, family-run since 1995."]
@@ -1102,3 +1078,26 @@ for _js, _is_module in (("main", True), ("interior", True), ("a11y", False), ("f
             open(_dst, "w", encoding="utf-8").write(_sc2)
     print("JS %s.js -> %s.min.js (%dKB -> %dKB)" % (
         _js, _js, os.path.getsize(_src) // 1024, os.path.getsize(_dst) // 1024))
+
+# ---------------- AI commercial-copy guard (blueprint doc 04 s27) ----------------
+# Owner model 2026-08-07: AI = monthly subscription + quoted build. From £95/month
+# (voice agent) is the ONLY approved AI price; £495/'AI Starter pilot' is retired;
+# free-review/free-demo CTAs await the owner's discovery-charging decision.
+# STRICT since launch (2026-08-08): any retired string or invented AI price stops
+# the build. Runs LAST deliberately - it judges built output (pages, llms.txt,
+# search index), so every generator above must have written before it looks.
+try:
+    import subprocess as _aisp
+    _air = _aisp.run(["py", "-X", "utf8", "tools_check_ai_commercial.py", "--quiet", "--strict"],
+                     capture_output=True, text=True,
+                     cwd=os.path.dirname(os.path.abspath(__file__)))
+    for _line in (_air.stdout or "").strip().splitlines():
+        if _line.strip(): print("  " + _line.rstrip())
+    if _air.returncode != 0:
+        raise SystemExit("\n*** AI COMMERCIAL-COPY GUARD FAILED - a retired or unapproved AI "
+                         "price claim is in the built output. Fix the source (see lines above); "
+                         "approved AI pricing = from £95/month voice agent only. ***\n")
+except SystemExit:
+    raise
+except Exception as _aie:
+    print("  AI GUARD WARNING: could not run tools_check_ai_commercial.py (%s)" % _aie)

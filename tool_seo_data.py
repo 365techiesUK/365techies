@@ -49,7 +49,7 @@ TOOL_SEO = {'ai-roi-calculator': {'answer': 'This free ROI calculator estimates 
                                  'then by 12 for the yearly figure. It shows the labour saving only &mdash; a real review also weighs the setup and running cost of the automation.'],
                                 ['Is an AI automation ROI calculator accurate?',
                                  'It is a guide that shows the scale of the opportunity from the numbers you enter, not a precise forecast. The real return depends on your exact process, how cleanly the task can be automated and the share '
-                                 'an agent can safely handle &mdash; which is what our free AI opportunity review works out properly, with no obligation.'],
+                                 'an agent can safely handle &mdash; which is what a proper scoping conversation works out, with no obligation.'],
                                 ['Which tasks give the best return when automated with AI?',
                                  'High-volume repetitive work usually pays back fastest &mdash; answering similar enquiries, copying data between systems, chasing invoices, booking appointments and filing documents. Put one of those into '
                                  'the calculator with a realistic automation share to see its potential yearly saving.']],
@@ -58,7 +58,7 @@ TOOL_SEO = {'ai-roi-calculator': {'answer': 'This free ROI calculator estimates 
                                            ['Add the hours', 'Set &lsquo;Hours each spends on it per week&rsquo; to the time each person loses to that task (1&ndash;40 hours).'],
                                            ['Set the hourly cost', 'Move the &lsquo;Average hourly cost&rsquo; slider to what an hour of that time is worth to the business (&pound;11&ndash;&pound;60).'],
                                            ['Set the automation share', 'Set &lsquo;How much an agent could take on&rsquo; to a realistic percentage the AI would handle (20%&ndash;90%).'],
-                                           ['Read the saving', 'The panel shows hours saved per week plus money saved per month and per year; book a free AI opportunity review to confirm a realistic figure for your exact process.']]},
+                                           ['Read the saving', 'The panel shows hours saved per week plus money saved per month and per year; talk to us and we&rsquo;ll confirm a realistic figure for your exact process.']]},
                        'keyfacts': '<p><strong>How this AI ROI calculator works:</strong></p><ul><li><strong>Hours saved / week</strong> = people &times; hours each per week &times; the share an agent takes on '
                                    '(20%&ndash;90%).</li><li><strong>Saved / month</strong> = hours saved per week &times; 4.33 weeks &times; average hourly cost.</li><li><strong>Saved / year</strong> = monthly saving &times; '
                                    '12.</li></ul><p>Input ranges: people 1&ndash;20, hours each per week 1&ndash;40, average hourly cost &pound;11&ndash;&pound;60, automation share 20%&ndash;90%. The result is the labour saving only '
