@@ -635,6 +635,30 @@ for _tool, _label in (("tools_phpcheck.py", "PHP structure"),
     except Exception as _e:
         print("  PHP WARNING: could not run %s (%s)" % (_tool, _e))
 
+# ---------------- AI commercial-copy guard (blueprint doc 04 s27) ----------------
+# Owner model 2026-08-07: AI = monthly subscription + quoted build. From £95/month
+# (voice agent) is the ONLY approved AI price; £495/'AI Starter pilot' is retired;
+# free-review/free-demo CTAs await the owner's discovery-charging decision. The
+# guard scans BUILT output (two £-strings are hard-coded past the constants, and
+# one page is fed by two source files). Runs in debt-tracking mode during the SEO
+# freeze - flip to --strict in the same commit as the commercial-copy correction,
+# after which a resurfaced retired price stops the build. An invented NEW AI price
+# stops the build in EITHER mode.
+try:
+    _r = _sp.run(["py", "-X", "utf8", "tools_check_ai_commercial.py", "--quiet"],
+                 capture_output=True, text=True,
+                 cwd=os.path.dirname(os.path.abspath(__file__)))
+    for _line in (_r.stdout or "").strip().splitlines():
+        if _line.strip(): print("  " + _line.rstrip())
+    if _r.returncode != 0:
+        raise SystemExit("\n*** AI COMMERCIAL-COPY GUARD FAILED - an unapproved AI price "
+                         "claim is about to ship. Fix the source (see lines above); "
+                         "approved AI pricing = from £95/month voice agent only. ***\n")
+except SystemExit:
+    raise
+except Exception as _e:
+    print("  AI GUARD WARNING: could not run tools_check_ai_commercial.py (%s)" % _e)
+
 from html import unescape as _unesc
 # Run the override table's own self-test as part of the build. It was only wired
 # to __main__, so a duplicate slug - which a Python dict literal resolves by
