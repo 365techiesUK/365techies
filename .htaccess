@@ -141,6 +141,12 @@ ErrorDocument 404 /404.html
 <FilesMatch "^(tools-rate|domain-cache|isitdown-cache|wifi-map-rate|wifi-map-pins)\.json(\.tmp|\.lock)?$">
   Require all denied
 </FilesMatch>
+# AI opportunity pipeline (blueprint doc 06): the store holds enquiry PII and
+# must never be served; the lib is include-only; the rate counter is internal.
+# ai-lead.php itself stays served - it is the public intake endpoint.
+<FilesMatch "^(ai-pipeline\.json(\..*)?|ai-lead-rate\.json|ai-lead-lib\.php)$">
+  Require all denied
+</FilesMatch>
 # 365 PC Manager + Service Pass server-only data/secret files - NEVER serve over HTTP.
 # (The endpoints pcm.php, pcm-admin.php, pcm-sb-callback.php, pass.php stay served - not matched here.)
 # NB pcm-bkpoll-cache.json holds a LIVE SimplyBook admin token (found publicly
