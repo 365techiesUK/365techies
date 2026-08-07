@@ -12,13 +12,17 @@
  *   - comms_sms_poll(): polls Textmagic GET /api/v2/replies (inbound texts to
  *     the 07520 number) with a lastId checkpoint. Needs tm creds; no-ops clean
  *     when unconfigured.
- *   - comms_vm_poll(): polls the voicemail relay mailbox over IMAP when
- *     api/vm-imap.php exists (server-only, gitignored):
- *         <?php $VM_HOST='...'; $VM_USER='...'; $VM_PASS='...';
+ *   - comms_vm_poll(): polls the EXISTING voice-mail@365techies.co.uk mailbox
+ *     over IMAP when api/vm-imap.php exists (server-only, gitignored):
+ *         <?php $VM_HOST='...'; $VM_USER='voice-mail@365techies.co.uk'; $VM_PASS='...';
  *         // optional: $VM_FOLDER='INBOX';
- *     Voipfone's voicemail-to-email lands there with the MP3/WAV attached;
- *     audio is saved as api/vm-audio-<id>.<ext> (denied; streamed only through
- *     the staff console) and the mail is flagged \Seen for idempotency.
+ *     Voipfone's voicemail-to-email already lands there with the MP3/WAV
+ *     attached. The poller is a PURE OBSERVER of that mailbox: staff actively
+ *     use it and rely on unread state to spot new voicemails, so it NEVER
+ *     changes flags - idempotency is a UIDVALIDITY+UID checkpoint plus the
+ *     store's ext_id dedupe, and the first activation only looks back
+ *     VM_LOOKBACK_DAYS so years of history cannot flood Slack. Audio is saved
+ *     as api/vm-audio-<id>.<ext> (denied; streamed only via the staff console).
  *
  * Content note: unlike tm-log (masked, body-free), this store DOES hold
  * message bodies and full numbers - that is its purpose as an inbox. It is
@@ -207,22 +211,41 @@ function comms_vm_config() {
     return array('host' => $host, 'user' => $user, 'pass' => $pass, 'folder' => $folder);
 }
 
+define('VM_LOOKBACK_DAYS', 7);   // first-activation flood guard
+
 function comms_vm_poll() {
     $cfg = comms_vm_config();
     if (!$cfg) return array('skipped' => 'vm-not-configured');
     if (!function_exists('imap_open')) return array('error' => 'imap-extension-missing');
 
     $mbox = '{' . $cfg['host'] . ':993/imap/ssl/novalidate-cert}' . $cfg['folder'];
-    $im = @imap_open($mbox, $cfg['user'], $cfg['pass'], 0, 1);
+    $im = @imap_open($mbox, $cfg['user'], $cfg['pass'], OP_READONLY, 1);
     if (!$im) return array('error' => 'imap-connect');
 
-    $unseen = @imap_search($im, 'UNSEEN');
-    $new = 0; $examined = 0;
-    if (is_array($unseen)) {
-        foreach (array_slice($unseen, 0, 20) as $msgno) {
+    // UIDVALIDITY guards the UID checkpoint: if the server renumbers the
+    // mailbox, UIDs restart and the checkpoint must reset (ext_id still
+    // carries validity+uid, so nothing can double-ingest even then).
+    $status = @imap_status($im, $mbox, SA_UIDVALIDITY);
+    $validity = ($status && isset($status->uidvalidity)) ? (int)$status->uidvalidity : 0;
+    list($okc, $cp) = comms_locked(function ($d) {
+        return array('__result' => isset($d['checkpoints']['vm']) ? $d['checkpoints']['vm'] : array('validity' => 0, 'uid' => 0));
+    });
+    if (!$okc) { @imap_close($im); return array('error' => 'checkpoint'); }
+    $lastUid = ($validity !== 0 && (int)$cp['validity'] === $validity) ? (int)$cp['uid'] : 0;
+
+    $since = date('j-M-Y', time() - VM_LOOKBACK_DAYS * 86400);
+    $found = @imap_search($im, 'SINCE "' . $since . '"');
+    $new = 0; $examined = 0; $maxUid = $lastUid;
+    if (is_array($found)) {
+        // oldest first; only UIDs above the checkpoint count against the
+        // per-run cap (processed items, not skipped ones)
+        sort($found);
+        foreach ($found as $msgno) {
+            $uid = (int)@imap_uid($im, $msgno);
+            if ($uid <= $lastUid) continue;
+            if ($examined >= 40) break;
             $examined++;
             $ov = @imap_headerinfo($im, $msgno);
-            $uid = @imap_uid($im, $msgno);
             $subject = isset($ov->subject) ? @imap_utf8($ov->subject) : '';
             $when = isset($ov->udate) ? gmdate('c', (int)$ov->udate) : gmdate('c');
 
@@ -265,13 +288,13 @@ function comms_vm_poll() {
             $e164 = tm_number($caller);
             $match = comms_match_customer($e164);
             list($ok, $res) = comms_add_item(array(
-                'type' => 'voicemail', 'ext_id' => 'vm-' . $uid, 'at' => $when,
+                'type' => 'voicemail', 'ext_id' => 'vm-' . $validity . '-' . $uid, 'at' => $when,
                 'number' => $e164 !== '' ? $e164 : ($caller !== '' ? $caller : 'unknown'),
                 'body' => 'Voicemail' . ($subject !== '' ? ' - ' . mb_substr($subject, 0, 120) : ''),
                 'audio' => $audioFile, 'duration' => $duration,
                 'match' => $match, 'handled' => false, 'handled_by' => '', 'handled_at' => '',
             ));
-            @imap_setflag_full($im, (string)$msgno, '\\Seen');
+            if ($uid > $maxUid) $maxUid = $uid;
             if ($ok && empty($res['duplicate'])) {
                 $new++;
                 $who = $match['status'] === 'MATCH' ? $match['name'] . ' (' . $e164 . ')' : ($e164 !== '' ? $e164 : 'unknown caller');
@@ -281,6 +304,12 @@ function comms_vm_poll() {
         }
     }
     @imap_close($im);
+    if ($validity !== 0 && $maxUid > $lastUid) {
+        comms_locked(function ($d) use ($validity, $maxUid) {
+            $d['checkpoints']['vm'] = array('validity' => $validity, 'uid' => $maxUid);
+            return array('__data' => $d, '__result' => true);
+        });
+    }
     return array('new' => $new, 'examined' => $examined);
 }
 
