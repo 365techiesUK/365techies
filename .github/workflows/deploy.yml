@@ -57,6 +57,7 @@ jobs:
             victron-vrm-proxy.js
             website-checker-proxy.js
             safe-browsing-proxy.js
+            visitors-live-worker.js
             LICENSE*
             .gitignore
             src/**
