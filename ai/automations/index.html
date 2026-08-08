@@ -244,7 +244,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-08-07"
+      "dateModified": "2026-08-08"
     },
     {
       "@type": "Service",
@@ -749,6 +749,117 @@
   </aside>
 
   <main id="main">
+<style>
+/* ---- /ai/ premium layer (route-scoped; see ai_visual.py) ---- */
+.ai-sec{position:relative}
+.ai-sec__head{display:flex;align-items:flex-start;gap:.95rem;margin-bottom:1.05rem}
+.ai-badge{flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
+  background:linear-gradient(150deg,rgba(29,151,227,.18),rgba(29,151,227,.04));
+  border:1px solid rgba(108,196,245,.28);box-shadow:0 6px 18px rgba(3,12,30,.45);position:relative}
+.ai-badge svg{width:23px;height:23px;color:var(--cyan-soft);position:relative;z-index:1}
+.ai-badge::after{content:"";position:absolute;inset:-1px;border-radius:inherit;
+  border:1px solid rgba(108,196,245,.5);opacity:0;animation:aiRing 4.5s ease-out infinite;animation-delay:var(--d,0s)}
+@keyframes aiRing{0%{opacity:.55;transform:scale(1)}55%,100%{opacity:0;transform:scale(1.28)}}
+.ai-sec__head h2{margin:0;flex:1}
+.ai-sec__head .title-underline{display:block}
+
+/* card grid - one concept per card, icon leads */
+.ai-cards{list-style:none;margin:1.2rem 0 0;padding:0;display:grid;gap:1rem;
+  grid-template-columns:repeat(auto-fit,minmax(255px,1fr))}
+.ai-cards li{position:relative;padding:1.25rem 1.3rem;border-radius:var(--r-lg);
+  background:var(--glass-deep);border:1px solid var(--line);overflow:hidden;
+  transition:transform .28s ease,border-color .28s ease,box-shadow .28s ease}
+.ai-cards li::before{content:"";position:absolute;left:0;top:0;height:2px;width:100%;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+  transform:translateX(-100%);transition:transform .5s ease}
+.ai-cards li:hover,.ai-cards li:focus-within{transform:translateY(-4px);
+  border-color:rgba(108,196,245,.42);box-shadow:0 18px 40px rgba(3,10,26,.5)}
+.ai-cards li:hover::before,.ai-cards li:focus-within::before{transform:translateX(0)}
+.ai-cards .ai-cardico{width:30px;height:30px;color:var(--cyan-soft);margin-bottom:.7rem;display:block}
+.ai-cards li:hover .ai-cardico{animation:aiNudge .6s ease}
+@keyframes aiNudge{40%{transform:translateY(-3px) rotate(-4deg)}100%{transform:none}}
+.ai-cards h3{font-size:1.06rem;color:#fff;margin:0 0 .45rem;line-height:1.3}
+.ai-cards p,.ai-cards li>span{font-size:.95rem;color:var(--muted);margin:0;display:block;line-height:1.6}
+.ai-cards a{color:var(--cyan-soft)}
+
+/* checklist with a drawn tick */
+.ai-checks{list-style:none;margin:1.1rem 0 0;padding:0;display:grid;gap:.72rem}
+.ai-checks li{position:relative;padding-left:2.1rem;color:var(--ink-3);font-size:.97rem;line-height:1.6}
+.ai-checks li svg{position:absolute;left:0;top:.15rem;width:19px;height:19px;color:var(--green-soft)}
+.ai-checks li svg path{stroke-dasharray:26;stroke-dashoffset:26;animation:aiTick .7s ease forwards;animation-delay:var(--d,0s)}
+@keyframes aiTick{to{stroke-dashoffset:0}}
+
+/* numbered step rail */
+.ai-steps{list-style:none;margin:1.3rem 0 0;padding:0;display:grid;gap:.85rem;position:relative}
+.ai-steps::before{content:"";position:absolute;left:19px;top:12px;bottom:12px;width:2px;
+  background:linear-gradient(180deg,transparent,rgba(108,196,245,.34),transparent)}
+.ai-steps li{position:relative;padding:.95rem 1.15rem .95rem 3.35rem;border-radius:var(--r-md);
+  background:rgba(12,22,48,.5);border:1px solid var(--line)}
+.ai-steps .ai-step__n{position:absolute;left:8px;top:.95rem;width:24px;height:24px;border-radius:50%;
+  display:grid;place-items:center;font-family:var(--font-mono);font-size:.72rem;color:var(--bg);
+  background:var(--cyan-soft);box-shadow:0 0 0 4px rgba(7,13,34,1),0 0 14px rgba(108,196,245,.5)}
+.ai-steps h3{font-size:1rem;color:#fff;margin:0 0 .3rem}
+.ai-steps p{font-size:.94rem;color:var(--muted);margin:0;line-height:1.6}
+
+/* hero + section scenes */
+.ai-scene{position:relative;aspect-ratio:5/3;border-radius:var(--r-lg);overflow:hidden;
+  background:radial-gradient(120% 100% at 70% 10%,rgba(29,151,227,.13),transparent 62%),
+  linear-gradient(165deg,rgba(13,27,52,.8),rgba(7,15,32,.9));border:1px solid var(--line)}
+.ai-scene svg{position:absolute;inset:0;width:100%;height:100%}
+.ai-nd{fill:#0b1d3a;stroke:#6cc4f5;stroke-width:2}
+.ai-ln{stroke:rgba(108,196,245,.42);stroke-width:2;fill:none}
+.ai-tx{fill:#9fb5d3;font-family:'IBM Plex Mono',monospace;font-size:9px}
+.ai-tx--hi{fill:#eaf4ff}
+.ai-glow{filter:drop-shadow(0 0 6px rgba(108,196,245,.6))}
+.ai-dash{stroke-dasharray:5 9;animation:aiRun 2.6s linear infinite}
+@keyframes aiRun{to{stroke-dashoffset:-56}}
+.ai-pulse{animation:aiPulse 3.2s ease-in-out infinite;animation-delay:var(--d,0s);transform-origin:center}
+@keyframes aiPulse{0%,100%{opacity:.55}50%{opacity:1}}
+.ai-beat{animation:aiBeat 3.6s ease-in-out infinite;animation-delay:var(--d,0s);transform-origin:center}
+@keyframes aiBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.09)}}
+.ai-rise{animation:aiRise 5s ease-in-out infinite;animation-delay:var(--d,0s)}
+@keyframes aiRise{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.ai-draw{stroke-dasharray:var(--len,120);stroke-dashoffset:var(--len,120);
+  animation:aiDraw 2.4s ease forwards;animation-delay:var(--d,.2s)}
+@keyframes aiDraw{to{stroke-dashoffset:0}}
+.ai-fade{opacity:0;animation:aiFade .7s ease forwards;animation-delay:var(--d,1s)}
+@keyframes aiFade{to{opacity:1}}
+.ai-travel{offset-path:var(--path);animation:aiTravel 4s linear infinite;animation-delay:var(--d,0s)}
+@keyframes aiTravel{0%{offset-distance:0%;opacity:0}
+  8%{opacity:1}88%{opacity:1}100%{offset-distance:100%;opacity:0}}
+
+/* showcase - a section that IS one real asset gets a panel and a way in */
+.ai-show{position:relative;padding:1.4rem 1.5rem;border-radius:var(--r-lg);
+  background:linear-gradient(158deg,rgba(16,32,62,.72),rgba(8,16,36,.86));
+  border:1px solid rgba(108,196,245,.24);overflow:hidden}
+.ai-show::after{content:"";position:absolute;right:-40px;top:-40px;width:150px;height:150px;border-radius:50%;
+  background:radial-gradient(circle,rgba(29,151,227,.18),transparent 68%);pointer-events:none}
+.ai-show p{position:relative;z-index:1}
+.ai-show__go{display:inline-flex;align-items:center;gap:.5rem;margin-top:.9rem;padding:.6rem 1.05rem;
+  border-radius:var(--r-pill);background:rgba(29,151,227,.14);border:1px solid rgba(108,196,245,.42);
+  color:var(--cyan-soft);font-size:.93rem;text-decoration:none;position:relative;z-index:1;
+  transition:background .25s ease,transform .25s ease}
+.ai-show__go:hover{background:rgba(29,151,227,.25);transform:translateX(3px)}
+.ai-show__go svg{width:16px;height:16px}
+.ai-show__go .ai-arrow{animation:aiArrow 1.9s ease-in-out infinite}
+@keyframes aiArrow{0%,100%{transform:translateX(0)}50%{transform:translateX(3px)}}
+
+/* proof strip */
+.ai-proof{display:grid;gap:.8rem;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));margin:1.2rem 0 0;
+  list-style:none;padding:0}
+.ai-proof li{padding:.9rem 1rem;border-radius:var(--r-md);border:1px dashed rgba(108,196,245,.3);
+  background:rgba(11,20,44,.45);font-size:.92rem;color:var(--ink-3)}
+.ai-proof strong{display:block;color:#fff;font-size:.98rem;margin-bottom:.25rem}
+
+@media (prefers-reduced-motion:reduce){
+  .ai-badge::after,.ai-dash,.ai-pulse,.ai-beat,.ai-rise,.ai-travel,.ai-show__go .ai-arrow{animation:none}
+  .ai-show__go{transition:none}
+  .ai-cards li:hover .ai-cardico{animation:none}
+  .ai-draw,.ai-checks li svg path{animation:none;stroke-dashoffset:0}
+  .ai-fade{animation:none;opacity:1}
+  .ai-cards li{transition:none}
+}
+</style>
     <section class="page-hero" aria-label="Introduction">
       <div class="page-hero__inner">
         <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">AI Automations</span></nav>
@@ -762,88 +873,121 @@
         <ul class="page-hero__chips mono"><li>&#9679; Trading since 1995</li><li>&#9679; 4.9-star Google rating</li><li>&#9679; Run in our own business daily</li></ul>
       </div>
     </section>
-    <section class="section" aria-label="The repetitive work we remove">
+    <div class="wrap wrap--narrow"><div class="ai-scene" data-reveal aria-hidden="true"><svg class="ai-scene__svg" viewBox="0 0 400 240" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><text class="ai-tx" x="24" y="26">BEFORE &#183; MANUAL</text><g class="" style="--d:0s"><rect x="30" y="36" width="62" height="40" rx="7" fill="#0a1a35" stroke="#3f6ea3" stroke-width="1.6"/><rect x="40" y="52" width="42" height="4" rx="2" fill="#24456f"/><rect x="40" y="63" width="28" height="4" rx="2" fill="#24456f"/></g><g class="ai-rise" style="--d:0.0s"><circle cx="61" cy="91.8" r="3.5" fill="none" stroke="#9fb5d3" stroke-width="1.8"/><path d="M55.4 101.6 a5.6 5.6 0 0 1 11.2 0" fill="none" stroke="#9fb5d3" stroke-width="1.8" stroke-linecap="round"/></g><g class="" style="--d:0s"><rect x="110" y="36" width="62" height="40" rx="7" fill="#0a1a35" stroke="#3f6ea3" stroke-width="1.6"/><rect x="120" y="52" width="42" height="4" rx="2" fill="#24456f"/><rect x="120" y="63" width="28" height="4" rx="2" fill="#24456f"/></g><g class="ai-rise" style="--d:0.4s"><circle cx="141" cy="91.8" r="3.5" fill="none" stroke="#9fb5d3" stroke-width="1.8"/><path d="M135.4 101.6 a5.6 5.6 0 0 1 11.2 0" fill="none" stroke="#9fb5d3" stroke-width="1.8" stroke-linecap="round"/></g><g class="" style="--d:0s"><rect x="190" y="36" width="62" height="40" rx="7" fill="#0a1a35" stroke="#3f6ea3" stroke-width="1.6"/><rect x="200" y="52" width="42" height="4" rx="2" fill="#24456f"/><rect x="200" y="63" width="28" height="4" rx="2" fill="#24456f"/></g><g class="ai-rise" style="--d:0.8s"><circle cx="221" cy="91.8" r="3.5" fill="none" stroke="#9fb5d3" stroke-width="1.8"/><path d="M215.4 101.6 a5.6 5.6 0 0 1 11.2 0" fill="none" stroke="#9fb5d3" stroke-width="1.8" stroke-linecap="round"/></g><text class="ai-tx ai-tx--hi" x="24" y="128">AFTER &#183; CONNECTED</text><path class="ai-ln ai-dash" style="--d:0s" d="M60 176 H150"/><path class="ai-ln ai-dash" style="--d:0.5s" d="M210 176 H300"/><g class="ai-beat" style="--d:0s"><circle class="ai-nd ai-glow" cx="60" cy="176" r="17"/><text class="ai-tx ai-tx--hi" x="60" y="180" text-anchor="middle">@</text></g><g class="ai-beat" style="--d:0.3s"><circle class="ai-nd ai-glow" cx="180" cy="176" r="21"/><text class="ai-tx ai-tx--hi" x="180" y="180" text-anchor="middle">flow</text></g><g class="ai-beat" style="--d:0.6s"><circle class="ai-nd ai-glow" cx="320" cy="176" r="17"/><text class="ai-tx ai-tx--hi" x="320" y="180" text-anchor="middle">CRM</text></g><path class="ai-ln" style="--d:0s" d="M180 155 V138"/><g class="ai-fade" style="--d:1.5s"><circle cx="180" cy="126" r="11" fill="rgba(0,206,27,.14)" stroke="#5fe07a" stroke-width="1.8"/><path d="M175 126 l3.4 3.6 L186 121.4" fill="none" stroke="#5fe07a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></g><text class="ai-tx" x="246" y="60">no re-typing,</text><text class="ai-tx" x="246" y="74">no chasing,</text><text class="ai-tx ai-tx--hi" x="246" y="88">same every time</text></svg></div></div>
+    <section class="section ai-sec" aria-label="The repetitive work we remove">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/01 &mdash; THE REPETITIVE WORK WE REMOVE</p>
-          <h2 class="section-title" data-title>The repetitive work we remove<span class="title-underline"></span></h2>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:0.4s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></span>
+            <h2 class="section-title" data-title>The repetitive work we remove<span class="title-underline"></span></h2>
+          </div>
 <p>Somewhere in your business, someone is copying an enquiry out of an inbox and typing it into another system. Someone else is emailing a customer for the third time to ask for a document. At month end, someone spends an afternoon pulling numbers out of three places to build the same report they built last month.</p><p>None of this is skilled work. It is relay work &mdash; moving information from where it lands to where it needs to be &mdash; and it quietly absorbs hours every week while the jobs that actually earn money wait. Workflow automation means building a system that does the relay for you: reliably, immediately, and without forgetting. It is the most practical place to start with <a href="/ai/">AI and automation</a>, because the problems are easy to recognise and the results are easy to check.</p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Proof before promises: the automations we run ourselves">
+    <section class="section section--alt ai-sec" aria-label="Proof before promises: the automations we run ourselves">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/02 &mdash; PROOF BEFORE PROMISES: THE AUTOMATIONS WE RUN OURSELVES</p>
-          <h2 class="section-title" data-title>Proof before promises: the automations we run ourselves<span class="title-underline"></span></h2>
-<p>We are cautious about promises, so here is our evidence: we run these automations in our own business every day. When a customer books a service, the booking flows into our diary and our records without anyone re-typing it &mdash; and if someone starts a booking but walks away, a polite follow-up goes out automatically. When a job is marked complete, a review request is queued and sent at a sensible hour. New enquiries arrive in our Slack channels with the details already attached. Our <a href="/365-ai-os/">365 AI OS demo</a> shows the same thinking applied to a working AI desktop &mdash; a scripted demonstration, honestly labelled, that you can try before you talk to us.</p><p>We built all of this in-house and we support it ourselves. It has to work, because we depend on it &mdash; and that is the standard your build gets.</p>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:0.8s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></span>
+            <h2 class="section-title" data-title>Proof before promises: the automations we run ourselves<span class="title-underline"></span></h2>
+          </div>
+<div class="ai-show"><p>We are cautious about promises, so here is our evidence: we run these automations in our own business every day. When a customer books a service, the booking flows into our diary and our records without anyone re-typing it &mdash; and if someone starts a booking but walks away, a polite follow-up goes out automatically. When a job is marked complete, a review request is queued and sent at a sensible hour. New enquiries arrive in our Slack channels with the details already attached. Our <a href="/365-ai-os/">365 AI OS demo</a> shows the same thinking applied to a working AI desktop &mdash; a scripted demonstration, honestly labelled, that you can try before you talk to us.</p><p>We built all of this in-house and we support it ourselves. It has to work, because we depend on it &mdash; and that is the standard your build gets.</p><a class="ai-show__go" href="/365-ai-os/">Open the 365 AI OS demo<svg class="ai-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a></div>
         </div>
       </div>
     </section>
-    <section class="section" aria-label="Before and after: one enquiry, two ways">
+    <section class="section ai-sec" aria-label="Before and after: one enquiry, two ways">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/03 &mdash; BEFORE AND AFTER: ONE ENQUIRY, TWO WAYS</p>
-          <h2 class="section-title" data-title>Before and after: one enquiry, two ways<span class="title-underline"></span></h2>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:1.2s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span>
+            <h2 class="section-title" data-title>Before and after: one enquiry, two ways<span class="title-underline"></span></h2>
+          </div>
 <p><strong>Before.</strong> A form enquiry arrives by email on Tuesday morning. It sits until someone has a minute. They read it, copy the details into the job system, and notice the customer left no phone number. They email to ask, mean to chase it, and get pulled onto something else. On Friday the customer, still waiting, calls someone else.</p><p><strong>After.</strong> The same enquiry creates a record in your system the moment it arrives. A check spots the missing phone number and sends a courteous request straight back, with a reminder two days later if nothing comes in. When the customer replies, the record updates itself and the right person gets a notification with everything attached &mdash; original message, contact details, history. The human attention the enquiry needs drops from a scattered afternoon to a couple of minutes, spent on the one decision only a person can make: do we want this job, and what do we quote?</p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Four workflows we build most often">
+    <section class="section section--alt ai-sec" aria-label="Four workflows we build most often">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/04 &mdash; FOUR WORKFLOWS WE BUILD MOST OFTEN</p>
-          <h2 class="section-title" data-title>Four workflows we build most often<span class="title-underline"></span></h2>
-<p>Most of what we build falls into four patterns. Yours will be tailored to your systems, but these show the shape of the work.</p><ul><li><strong>Enquiry to action.</strong> A new enquiry &mdash; web form, email, or a note from a call &mdash; is read, categorised and turned into a record in your system. An acknowledgement goes to the customer at once, and the right person on your team is notified with the details already in place. AI helps with one step: reading the free-text message and pulling out what matters. Fixed rules handle everything else.</li><li><strong>Missing-information chasing.</strong> The workflow knows what a complete job, file or application needs. When something is missing &mdash; a document, a signature, a reference &mdash; it asks for it, reminds politely on a schedule you set, and stops the moment the item arrives. Nobody has to remember to chase, so nothing is chased twice and nothing is forgotten.</li><li><strong>Quote and admin orchestration.</strong> When a quote is accepted, the follow-on admin happens in order without re-keying: the job is scheduled, confirmations go out, the paperwork is raised, and your records stay in step across quoting, calendar and invoicing. One event triggers the chain, and the chain does not skip steps.</li><li><strong>Management reporting.</strong> The figures you look at every week or month are collected from the systems that hold them and assembled into the same report, on schedule, without an afternoon of copy-and-paste. Where it helps, AI adds a short plain-English summary of what changed &mdash; clearly labelled as generated, with the underlying numbers always shown.</li></ul>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:1.6s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span>
+            <h2 class="section-title" data-title>Four workflows we build most often<span class="title-underline"></span></h2>
+          </div>
+<p>Most of what we build falls into four patterns. Yours will be tailored to your systems, but these show the shape of the work.</p><ul class="ai-cards" data-stagger>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg><h3>Enquiry to action.</h3><p>A new enquiry &mdash; web form, email, or a note from a call &mdash; is read, categorised and turned into a record in your system. An acknowledgement goes to the customer at once, and the right person on your team is notified with the details already in place. AI helps with one step: reading the free-text message and pulling out what matters. Fixed rules handle everything else.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M7 7.5h.01M7 16.5h.01"/></svg><h3>Missing-information chasing.</h3><p>The workflow knows what a complete job, file or application needs. When something is missing &mdash; a document, a signature, a reference &mdash; it asks for it, reminds politely on a schedule you set, and stops the moment the item arrives. Nobody has to remember to chase, so nothing is chased twice and nothing is forgotten.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg><h3>Quote and admin orchestration.</h3><p>When a quote is accepted, the follow-on admin happens in order without re-keying: the job is scheduled, confirmations go out, the paperwork is raised, and your records stay in step across quoting, calendar and invoicing. One event triggers the chain, and the chain does not skip steps.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg><h3>Management reporting.</h3><p>The figures you look at every week or month are collected from the systems that hold them and assembled into the same report, on schedule, without an afternoon of copy-and-paste. Where it helps, AI adds a short plain-English summary of what changed &mdash; clearly labelled as generated, with the underlying numbers always shown.</p></li>
+</ul>
         </div>
       </div>
     </section>
-    <section class="section" aria-label="Where plain rules do the work — and where AI helps">
+    <section class="section ai-sec" aria-label="Where plain rules do the work — and where AI helps">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/05 &mdash; WHERE PLAIN RULES DO THE WORK — AND WHERE AI HELPS</p>
-          <h2 class="section-title" data-title>Where plain rules do the work — and where AI helps<span class="title-underline"></span></h2>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:2.0s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg></span>
+            <h2 class="section-title" data-title>Where plain rules do the work — and where AI helps<span class="title-underline"></span></h2>
+          </div>
 <p>An honest split matters here. Most of a good workflow is deterministic automation &mdash; fixed rules and code that behave exactly the same way every time. Moving data between systems, checking whether a field is filled in, sending a message at a set time: these must be exact, so we build them with rules, not AI. Rules are faster, cheaper to run, and never have an off day.</p><p>AI earns its place only at the steps that involve reading or writing ordinary language: understanding what a free-text enquiry is actually about, drafting a reply for a person to approve, summarising a month of figures into three sentences. If a step does not need AI, we do not use it. And when a job needs AI to carry more of the load &mdash; holding a conversation, working through a task with judgement &mdash; that is an <a href="/ai/agents/">AI agent</a>, which we build and price as its own service.</p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Exceptions, approvals and retries">
+    <section class="section section--alt ai-sec" aria-label="Exceptions, approvals and retries">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/06 &mdash; EXCEPTIONS, APPROVALS AND RETRIES</p>
-          <h2 class="section-title" data-title>Exceptions, approvals and retries<span class="title-underline"></span></h2>
-<p>Automation is only trustworthy if you can see and control what it does, so three safeguards are part of every build rather than optional extras.</p><ul><li><strong>Approvals.</strong> Any consequential action &mdash; a message to a customer, a change to a record that matters &mdash; can be routed through a human first. The workflow prepares the work; a person clicks to release it.</li><li><strong>Exceptions.</strong> When a workflow meets something it does not recognise, it stops and tells a person instead of guessing. An unusual enquiry lands with your team, flagged, with everything gathered so far.</li><li><strong>Retries and logs.</strong> If a step fails &mdash; a system briefly offline, an email bouncing &mdash; it retries sensibly and alerts us if it keeps failing. Every run is logged, so there is always an answer to &ldquo;what happened to that enquiry?&rdquo;</li></ul>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:2.4s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+            <h2 class="section-title" data-title>Exceptions, approvals and retries<span class="title-underline"></span></h2>
+          </div>
+<p>Automation is only trustworthy if you can see and control what it does, so three safeguards are part of every build rather than optional extras.</p><ul class="ai-cards" data-stagger>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg><h3>Approvals.</h3><p>Any consequential action &mdash; a message to a customer, a change to a record that matters &mdash; can be routed through a human first. The workflow prepares the work; a person clicks to release it.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg><h3>Exceptions.</h3><p>When a workflow meets something it does not recognise, it stops and tells a person instead of guessing. An unusual enquiry lands with your team, flagged, with everything gathered so far.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg><h3>Retries and logs.</h3><p>If a step fails &mdash; a system briefly offline, an email bouncing &mdash; it retries sensibly and alerts us if it keeps failing. Every run is logged, so there is always an answer to &ldquo;what happened to that enquiry?&rdquo;</p></li>
+</ul>
         </div>
       </div>
     </section>
-    <section class="section" aria-label="The systems we typically connect">
+    <section class="section ai-sec" aria-label="The systems we typically connect">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/07 &mdash; THE SYSTEMS WE TYPICALLY CONNECT</p>
-          <h2 class="section-title" data-title>The systems we typically connect<span class="title-underline"></span></h2>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:2.8s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></span>
+            <h2 class="section-title" data-title>The systems we typically connect<span class="title-underline"></span></h2>
+          </div>
 <p>We connect the systems you already have rather than asking you to change them. Typical connections for Dorset businesses include Microsoft 365 email and calendars, website contact forms, booking systems, spreadsheets, accounting packages, CRMs (customer relationship management systems &mdash; the software that holds your customer records), SMS, and Slack or Teams. As a Microsoft Partner supporting Microsoft 365 every day, that side is home ground for us.</p><p>Some systems offer a proper API &mdash; a built-in way for software to exchange information directly &mdash; and some only offer exports or an email inbox. We work with either; it simply affects how the workflow is built and what it costs. You never need to pick a technology: describe the workflow, and choosing the right tools is our job.</p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="How we measure whether it is working">
+    <section class="section section--alt ai-sec" aria-label="How we measure whether it is working">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/08 &mdash; HOW WE MEASURE WHETHER IT IS WORKING</p>
-          <h2 class="section-title" data-title>How we measure whether it is working<span class="title-underline"></span></h2>
-<p>Before we build anything, we agree what &ldquo;working&rdquo; means in numbers you can check yourself:</p><ul><li><strong>Response time</strong> &mdash; how long a new enquiry waits before the customer hears something.</li><li><strong>Manual touches</strong> &mdash; how many times a person handles a job&rsquo;s admin between enquiry and invoice.</li><li><strong>Missed follow-ups</strong> &mdash; chases that should have happened and did not.</li><li><strong>Reporting time</strong> &mdash; the hours spent assembling regular reports by hand.</li></ul><p>We take a baseline before the workflow goes live and compare afterwards. We will not promise a percentage saving before we have seen your workflow &mdash; anyone who does is guessing &mdash; but you will know, from your own numbers, whether it is earning its keep.</p>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:3.2s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span>
+            <h2 class="section-title" data-title>How we measure whether it is working<span class="title-underline"></span></h2>
+          </div>
+<p>Before we build anything, we agree what &ldquo;working&rdquo; means in numbers you can check yourself:</p><ul class="ai-cards" data-stagger>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg><h3>Response time</h3><p>how long a new enquiry waits before the customer hears something.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><h3>Manual touches</h3><p>how many times a person handles a job&rsquo;s admin between enquiry and invoice.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg><h3>Missed follow-ups</h3><p>chases that should have happened and did not.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg><h3>Reporting time</h3><p>the hours spent assembling regular reports by hand.</p></li>
+</ul><p>We take a baseline before the workflow goes live and compare afterwards. We will not promise a percentage saving before we have seen your workflow &mdash; anyone who does is guessing &mdash; but you will know, from your own numbers, whether it is earning its keep.</p>
         </div>
       </div>
     </section>
-    <section class="section" aria-label="What shapes your quote">
+    <section class="section ai-sec" aria-label="What shapes your quote">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/09 &mdash; WHAT SHAPES YOUR QUOTE</p>
-          <h2 class="section-title" data-title>What shapes your quote<span class="title-underline"></span></h2>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:3.6s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span>
+            <h2 class="section-title" data-title>What shapes your quote<span class="title-underline"></span></h2>
+          </div>
 <p>Every build is quoted individually, and the quote is shaped by a short list of factors you can sanity-check yourself: how many systems are involved and how well they connect; how much volume flows through the workflow; how many exception paths need handling; whether approval steps are required; and what reporting you want on top. A two-system workflow with one happy path is a small build. A chain that orchestrates quoting, scheduling, paperwork and invoicing across four systems is a larger one.</p><p>The pattern is always the same: a monthly service subscription that keeps the workflow hosted, monitored and supported by the same local team that looks after your IT, plus a one-off design and build, quoted by complexity, in writing, before work starts. <a href="/contact/">Tell us what&rsquo;s wasting your team&rsquo;s time</a> and we will map the workflow with you.</p>
         </div>
       </div>
     </section>
-    <section class="section" aria-label="Service and build pricing">
+    <section class="section ai-sec" aria-label="Service and build pricing">
       <div class="wrap wrap--narrow" style="text-align:center">
         <p class="eyebrow eyebrow--center mono" data-reveal>// SERVICE &amp; BUILD</p>
         <h2 class="section-title section-title--center" data-title>Monthly service — confirmed with your quote<span class="title-underline title-underline--center"></span></h2>
@@ -1148,7 +1292,7 @@
   <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=8" defer></script>
   <script src="/js/forms.min.js?v=8" defer></script>
-  <script src="/js/search.min.js?v=2026-08-07" defer></script>
+  <script src="/js/search.min.js?v=2026-08-08" defer></script>
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
     <p>We use cookies to power our live chat and understand how the site is used. See our <a href="/cookie-policy/">cookie policy</a>.</p>
     <div class="cookie-banner__actions">

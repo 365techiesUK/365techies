@@ -238,7 +238,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-08-07"
+      "dateModified": "2026-08-08"
     },
     {
       "@type": "Service",
@@ -743,6 +743,117 @@
   </aside>
 
   <main id="main">
+<style>
+/* ---- /ai/ premium layer (route-scoped; see ai_visual.py) ---- */
+.ai-sec{position:relative}
+.ai-sec__head{display:flex;align-items:flex-start;gap:.95rem;margin-bottom:1.05rem}
+.ai-badge{flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
+  background:linear-gradient(150deg,rgba(29,151,227,.18),rgba(29,151,227,.04));
+  border:1px solid rgba(108,196,245,.28);box-shadow:0 6px 18px rgba(3,12,30,.45);position:relative}
+.ai-badge svg{width:23px;height:23px;color:var(--cyan-soft);position:relative;z-index:1}
+.ai-badge::after{content:"";position:absolute;inset:-1px;border-radius:inherit;
+  border:1px solid rgba(108,196,245,.5);opacity:0;animation:aiRing 4.5s ease-out infinite;animation-delay:var(--d,0s)}
+@keyframes aiRing{0%{opacity:.55;transform:scale(1)}55%,100%{opacity:0;transform:scale(1.28)}}
+.ai-sec__head h2{margin:0;flex:1}
+.ai-sec__head .title-underline{display:block}
+
+/* card grid - one concept per card, icon leads */
+.ai-cards{list-style:none;margin:1.2rem 0 0;padding:0;display:grid;gap:1rem;
+  grid-template-columns:repeat(auto-fit,minmax(255px,1fr))}
+.ai-cards li{position:relative;padding:1.25rem 1.3rem;border-radius:var(--r-lg);
+  background:var(--glass-deep);border:1px solid var(--line);overflow:hidden;
+  transition:transform .28s ease,border-color .28s ease,box-shadow .28s ease}
+.ai-cards li::before{content:"";position:absolute;left:0;top:0;height:2px;width:100%;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+  transform:translateX(-100%);transition:transform .5s ease}
+.ai-cards li:hover,.ai-cards li:focus-within{transform:translateY(-4px);
+  border-color:rgba(108,196,245,.42);box-shadow:0 18px 40px rgba(3,10,26,.5)}
+.ai-cards li:hover::before,.ai-cards li:focus-within::before{transform:translateX(0)}
+.ai-cards .ai-cardico{width:30px;height:30px;color:var(--cyan-soft);margin-bottom:.7rem;display:block}
+.ai-cards li:hover .ai-cardico{animation:aiNudge .6s ease}
+@keyframes aiNudge{40%{transform:translateY(-3px) rotate(-4deg)}100%{transform:none}}
+.ai-cards h3{font-size:1.06rem;color:#fff;margin:0 0 .45rem;line-height:1.3}
+.ai-cards p,.ai-cards li>span{font-size:.95rem;color:var(--muted);margin:0;display:block;line-height:1.6}
+.ai-cards a{color:var(--cyan-soft)}
+
+/* checklist with a drawn tick */
+.ai-checks{list-style:none;margin:1.1rem 0 0;padding:0;display:grid;gap:.72rem}
+.ai-checks li{position:relative;padding-left:2.1rem;color:var(--ink-3);font-size:.97rem;line-height:1.6}
+.ai-checks li svg{position:absolute;left:0;top:.15rem;width:19px;height:19px;color:var(--green-soft)}
+.ai-checks li svg path{stroke-dasharray:26;stroke-dashoffset:26;animation:aiTick .7s ease forwards;animation-delay:var(--d,0s)}
+@keyframes aiTick{to{stroke-dashoffset:0}}
+
+/* numbered step rail */
+.ai-steps{list-style:none;margin:1.3rem 0 0;padding:0;display:grid;gap:.85rem;position:relative}
+.ai-steps::before{content:"";position:absolute;left:19px;top:12px;bottom:12px;width:2px;
+  background:linear-gradient(180deg,transparent,rgba(108,196,245,.34),transparent)}
+.ai-steps li{position:relative;padding:.95rem 1.15rem .95rem 3.35rem;border-radius:var(--r-md);
+  background:rgba(12,22,48,.5);border:1px solid var(--line)}
+.ai-steps .ai-step__n{position:absolute;left:8px;top:.95rem;width:24px;height:24px;border-radius:50%;
+  display:grid;place-items:center;font-family:var(--font-mono);font-size:.72rem;color:var(--bg);
+  background:var(--cyan-soft);box-shadow:0 0 0 4px rgba(7,13,34,1),0 0 14px rgba(108,196,245,.5)}
+.ai-steps h3{font-size:1rem;color:#fff;margin:0 0 .3rem}
+.ai-steps p{font-size:.94rem;color:var(--muted);margin:0;line-height:1.6}
+
+/* hero + section scenes */
+.ai-scene{position:relative;aspect-ratio:5/3;border-radius:var(--r-lg);overflow:hidden;
+  background:radial-gradient(120% 100% at 70% 10%,rgba(29,151,227,.13),transparent 62%),
+  linear-gradient(165deg,rgba(13,27,52,.8),rgba(7,15,32,.9));border:1px solid var(--line)}
+.ai-scene svg{position:absolute;inset:0;width:100%;height:100%}
+.ai-nd{fill:#0b1d3a;stroke:#6cc4f5;stroke-width:2}
+.ai-ln{stroke:rgba(108,196,245,.42);stroke-width:2;fill:none}
+.ai-tx{fill:#9fb5d3;font-family:'IBM Plex Mono',monospace;font-size:9px}
+.ai-tx--hi{fill:#eaf4ff}
+.ai-glow{filter:drop-shadow(0 0 6px rgba(108,196,245,.6))}
+.ai-dash{stroke-dasharray:5 9;animation:aiRun 2.6s linear infinite}
+@keyframes aiRun{to{stroke-dashoffset:-56}}
+.ai-pulse{animation:aiPulse 3.2s ease-in-out infinite;animation-delay:var(--d,0s);transform-origin:center}
+@keyframes aiPulse{0%,100%{opacity:.55}50%{opacity:1}}
+.ai-beat{animation:aiBeat 3.6s ease-in-out infinite;animation-delay:var(--d,0s);transform-origin:center}
+@keyframes aiBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.09)}}
+.ai-rise{animation:aiRise 5s ease-in-out infinite;animation-delay:var(--d,0s)}
+@keyframes aiRise{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.ai-draw{stroke-dasharray:var(--len,120);stroke-dashoffset:var(--len,120);
+  animation:aiDraw 2.4s ease forwards;animation-delay:var(--d,.2s)}
+@keyframes aiDraw{to{stroke-dashoffset:0}}
+.ai-fade{opacity:0;animation:aiFade .7s ease forwards;animation-delay:var(--d,1s)}
+@keyframes aiFade{to{opacity:1}}
+.ai-travel{offset-path:var(--path);animation:aiTravel 4s linear infinite;animation-delay:var(--d,0s)}
+@keyframes aiTravel{0%{offset-distance:0%;opacity:0}
+  8%{opacity:1}88%{opacity:1}100%{offset-distance:100%;opacity:0}}
+
+/* showcase - a section that IS one real asset gets a panel and a way in */
+.ai-show{position:relative;padding:1.4rem 1.5rem;border-radius:var(--r-lg);
+  background:linear-gradient(158deg,rgba(16,32,62,.72),rgba(8,16,36,.86));
+  border:1px solid rgba(108,196,245,.24);overflow:hidden}
+.ai-show::after{content:"";position:absolute;right:-40px;top:-40px;width:150px;height:150px;border-radius:50%;
+  background:radial-gradient(circle,rgba(29,151,227,.18),transparent 68%);pointer-events:none}
+.ai-show p{position:relative;z-index:1}
+.ai-show__go{display:inline-flex;align-items:center;gap:.5rem;margin-top:.9rem;padding:.6rem 1.05rem;
+  border-radius:var(--r-pill);background:rgba(29,151,227,.14);border:1px solid rgba(108,196,245,.42);
+  color:var(--cyan-soft);font-size:.93rem;text-decoration:none;position:relative;z-index:1;
+  transition:background .25s ease,transform .25s ease}
+.ai-show__go:hover{background:rgba(29,151,227,.25);transform:translateX(3px)}
+.ai-show__go svg{width:16px;height:16px}
+.ai-show__go .ai-arrow{animation:aiArrow 1.9s ease-in-out infinite}
+@keyframes aiArrow{0%,100%{transform:translateX(0)}50%{transform:translateX(3px)}}
+
+/* proof strip */
+.ai-proof{display:grid;gap:.8rem;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));margin:1.2rem 0 0;
+  list-style:none;padding:0}
+.ai-proof li{padding:.9rem 1rem;border-radius:var(--r-md);border:1px dashed rgba(108,196,245,.3);
+  background:rgba(11,20,44,.45);font-size:.92rem;color:var(--ink-3)}
+.ai-proof strong{display:block;color:#fff;font-size:.98rem;margin-bottom:.25rem}
+
+@media (prefers-reduced-motion:reduce){
+  .ai-badge::after,.ai-dash,.ai-pulse,.ai-beat,.ai-rise,.ai-travel,.ai-show__go .ai-arrow{animation:none}
+  .ai-show__go{transition:none}
+  .ai-cards li:hover .ai-cardico{animation:none}
+  .ai-draw,.ai-checks li svg path{animation:none;stroke-dashoffset:0}
+  .ai-fade{animation:none;opacity:1}
+  .ai-cards li{transition:none}
+}
+</style>
     <section class="page-hero" aria-label="Introduction">
       <div class="page-hero__inner">
         <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">AI & Automation</span></nav>
@@ -756,106 +867,147 @@
         <ul class="page-hero__chips mono"><li>&#9679; Family-run since 1995</li><li>&#9679; 4.9-star Google rating</li><li>&#9679; We run these systems ourselves</li></ul>
       </div>
     </section>
-    <section class="section" aria-label="The same local team that looks after your IT">
+    <div class="wrap wrap--narrow"><div class="ai-scene" data-reveal aria-hidden="true"><svg class="ai-scene__svg" viewBox="0 0 400 240" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><text class="ai-tx" x="28" y="30">ENQUIRY IN</text><g class="ai-rise" style="--d:0s"><rect x="24" y="40" width="96" height="62" rx="7" fill="#0a1a35" stroke="#3f6ea3" stroke-width="1.6"/><text class="ai-tx ai-tx--hi" x="34" y="57">email</text><rect x="34" y="68" width="76" height="4" rx="2" fill="#24456f"/><rect x="34" y="79" width="62" height="4" rx="2" fill="#24456f"/><rect x="34" y="90" width="76" height="4" rx="2" fill="#24456f"/></g><path class="ai-ln ai-dash" style="--d:0s" d="M126 72 H176"/><g class="ai-beat" style="--d:0.2s"><circle class="ai-nd ai-glow" cx="196" cy="72" r="20"/><text class="ai-tx ai-tx--hi" x="196" y="76" text-anchor="middle">AI</text></g><path class="ai-ln ai-dash" style="--d:0.6s" d="M216 72 H268"/><text class="ai-tx ai-tx--hi" x="268" y="30">STRUCTURED TASK</text><g class="" style="--d:0s"><rect x="266" y="40" width="110" height="62" rx="7" fill="#0a1a35" stroke="#3f6ea3" stroke-width="1.6"/><text class="ai-tx ai-tx--hi" x="276" y="57">job #1042</text><rect x="276" y="68" width="90" height="4" rx="2" fill="#24456f"/><rect x="276" y="79" width="76" height="4" rx="2" fill="#24456f"/><rect x="276" y="90" width="90" height="4" rx="2" fill="#24456f"/></g><path class="ai-ln" style="--d:0s" d="M196 92 V132"/><text class="ai-tx" x="150" y="152">HUMAN APPROVES</text><g class="ai-fade" style="--d:1.4s"><circle cx="196" cy="150" r="15" fill="rgba(0,206,27,.14)" stroke="#5fe07a" stroke-width="1.8"/><path d="M191 150 l3.4 3.6 L202 145.4" fill="none" stroke="#5fe07a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></g><path class="ai-ln ai-dash" style="--d:1.1s" d="M216 150 H300"/><g class="" style="--d:0s"><rect x="300" y="128" width="76" height="44" rx="7" fill="#0a1a35" stroke="#3f6ea3" stroke-width="1.6"/><text class="ai-tx ai-tx--hi" x="310" y="145">CRM</text><rect x="310" y="156" width="56" height="4" rx="2" fill="#24456f"/><rect x="310" y="167" width="42" height="4" rx="2" fill="#24456f"/></g><text class="ai-tx" x="24" y="208">one request &#183; one path &#183; one record</text></svg></div></div>
+    <section class="section ai-sec" aria-label="The same local team that looks after your IT">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/01 &mdash; THE SAME LOCAL TEAM THAT LOOKS AFTER YOUR IT</p>
-          <h2 class="section-title" data-title>The same local team that looks after your IT<span class="title-underline"></span></h2>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:0.4s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M22 21v-1a5 5 0 0 0-3-4.6"/></svg></span>
+            <h2 class="section-title" data-title>The same local team that looks after your IT<span class="title-underline"></span></h2>
+          </div>
 <p>365 Techies is a family-run IT support business, trading in Bournemouth since 1995, with a 4.9-star Google rating. We&rsquo;re a Microsoft Partner and a Victron Recommended Software Integrator, and every AI system we build is supported by the same local team that looks after your computers, email and network &mdash; not a faceless platform. We serve Bournemouth, Poole, Christchurch and the wider Dorset area, and work remotely UK-wide where that suits.</p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Start with the problem, not the technology">
+    <section class="section section--alt ai-sec" aria-label="Start with the problem, not the technology">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/02 &mdash; START WITH THE PROBLEM, NOT THE TECHNOLOGY</p>
-          <h2 class="section-title" data-title>Start with the problem, not the technology<span class="title-underline"></span></h2>
-<p>You don&rsquo;t need to know what an &ldquo;AI agent&rdquo; is to talk to us. Find the problem that sounds like yours and we&rsquo;ll take it from there.</p><ul><li><strong>Enquiries pile up and quotes go out late.</strong> Automation can log every enquiry, draft the reply and chase the quote &mdash; see <a href="/ai/automations/">AI automations</a>.</li><li><strong>The phone rings more than you can answer.</strong> An <a href="/ai/voice-agents/">AI voice agent</a> answers politely, takes the details and books the job, day or night.</li><li><strong>Someone retypes the same information all day.</strong> Data entry between systems is the first thing <a href="/ai/automations/">automation</a> removes.</li><li><strong>Documents arrive half-finished and someone has to chase.</strong> An automation can read what came in, spot what&rsquo;s missing and request it.</li><li><strong>Reports take a day to assemble.</strong> Automated reporting pulls the numbers together on schedule, the same way every time.</li><li><strong>Your systems don&rsquo;t talk to each other.</strong> We connect them &mdash; with an <a href="/ai/agents/">AI agent</a> where judgement is needed, plain automation where it isn&rsquo;t.</li><li><strong>Not sure where AI fits?</strong> That&rsquo;s the most common starting point. <a href="/ai/consultancy/">AI consultancy</a> starts from your processes, not a product.</li></ul>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:0.8s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></span>
+            <h2 class="section-title" data-title>Start with the problem, not the technology<span class="title-underline"></span></h2>
+          </div>
+<p>You don&rsquo;t need to know what an &ldquo;AI agent&rdquo; is to talk to us. Find the problem that sounds like yours and we&rsquo;ll take it from there.</p><ul class="ai-cards" data-stagger>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg><h3>Enquiries pile up and quotes go out late.</h3><p>Automation can log every enquiry, draft the reply and chase the quote &mdash; see <a href="/ai/automations/">AI automations</a>.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg><h3>The phone rings more than you can answer.</h3><p>An <a href="/ai/voice-agents/">AI voice agent</a> answers politely, takes the details and books the job, day or night.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg><h3>Someone retypes the same information all day.</h3><p>Data entry between systems is the first thing <a href="/ai/automations/">automation</a> removes.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M7 7.5h.01M7 16.5h.01"/></svg><h3>Documents arrive half-finished and someone has to chase.</h3><p>An automation can read what came in, spot what&rsquo;s missing and request it.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg><h3>Reports take a day to assemble.</h3><p>Automated reporting pulls the numbers together on schedule, the same way every time.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><path d="M6 8v1a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8M12 13v3"/></svg><h3>Your systems don&rsquo;t talk to each other.</h3><p>We connect them &mdash; with an <a href="/ai/agents/">AI agent</a> where judgement is needed, plain automation where it isn&rsquo;t.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg><h3>Not sure where AI fits?</h3><p>That&rsquo;s the most common starting point. <a href="/ai/consultancy/">AI consultancy</a> starts from your processes, not a product.</p></li>
+</ul>
         </div>
       </div>
     </section>
-    <section class="section" aria-label="Five ways we put AI to work">
+    <section class="section ai-sec" aria-label="Five ways we put AI to work">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/03 &mdash; FIVE WAYS WE PUT AI TO WORK</p>
-          <h2 class="section-title" data-title>Five ways we put AI to work<span class="title-underline"></span></h2>
-<ul><li><a href="/ai/automations/"><strong>AI automations</strong></a> &mdash; joined-up workflows that move information between your systems automatically, with AI used only for the steps that genuinely need it.</li><li><a href="/ai/agents/"><strong>AI agents</strong></a> &mdash; software that can read, decide and act across several systems to complete a whole task, with human approval where it matters.</li><li><a href="/ai/voice-agents/"><strong>AI voice agents</strong></a> &mdash; a natural-sounding assistant that answers your phone, takes messages and books appointments, so callers never hit voicemail.</li><li><a href="/ai/consultancy/"><strong>AI consultancy</strong></a> &mdash; a structured look at where AI genuinely helps your business, and where it doesn&rsquo;t.</li><li><a href="/ai/training/"><strong>AI training</strong></a> &mdash; practical sessions so your team can use AI tools confidently and safely.</li></ul>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:1.2s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg></span>
+            <h2 class="section-title" data-title>Five ways we put AI to work<span class="title-underline"></span></h2>
+          </div>
+<ul class="ai-cards" data-stagger>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg><h3><a href="/ai/automations/">AI automations</a></h3><p>joined-up workflows that move information between your systems automatically, with AI used only for the steps that genuinely need it.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="8" width="16" height="11" rx="2"/><circle cx="9" cy="13" r="1.2"/><circle cx="15" cy="13" r="1.2"/><path d="M12 4v4M8 19v2M16 19v2M2 12v3M22 12v3"/></svg><h3><a href="/ai/agents/">AI agents</a></h3><p>software that can read, decide and act across several systems to complete a whole task, with human approval where it matters.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="8" width="16" height="11" rx="2"/><circle cx="9" cy="13" r="1.2"/><circle cx="15" cy="13" r="1.2"/><path d="M12 4v4M8 19v2M16 19v2M2 12v3M22 12v3"/></svg><h3><a href="/ai/voice-agents/">AI voice agents</a></h3><p>a natural-sounding assistant that answers your phone, takes messages and books appointments, so callers never hit voicemail.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg><h3><a href="/ai/consultancy/">AI consultancy</a></h3><p>a structured look at where AI genuinely helps your business, and where it doesn&rsquo;t.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg><h3><a href="/ai/training/">AI training</a></h3><p>practical sessions so your team can use AI tools confidently and safely.</p></li>
+</ul>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="How we work: from problem to running system">
+    <section class="section section--alt ai-sec" aria-label="How we work: from problem to running system">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/04 &mdash; HOW WE WORK: FROM PROBLEM TO RUNNING SYSTEM</p>
-          <h2 class="section-title" data-title>How we work: from problem to running system<span class="title-underline"></span></h2>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:1.6s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></span>
+            <h2 class="section-title" data-title>How we work: from problem to running system<span class="title-underline"></span></h2>
+          </div>
 <p>Every project follows the same six steps. <strong>Problem</strong> &mdash; you describe the job in your own words. <strong>Scope</strong> &mdash; we map it and quote the build by complexity, so you see the full figure before anything starts. <strong>Build</strong> &mdash; we design and build the system, testing it against real examples from your business. <strong>Safeguard</strong> &mdash; approval steps, records and sensible limits go in before it goes live. <strong>Measure</strong> &mdash; we agree what &ldquo;working&rdquo; means and check against it. <strong>Support</strong> &mdash; your monthly service keeps it hosted, monitored and up to date, with a local team who answer when something changes.</p><p>Commercially it&rsquo;s two parts: a one-off design and build, quoted by complexity, plus a monthly service subscription that keeps the system running and watched. No tiers, no surprises.</p>
         </div>
       </div>
     </section>
-    <section class="section" aria-label="Works with the systems you already use">
+    <section class="section ai-sec" aria-label="Works with the systems you already use">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/05 &mdash; WORKS WITH THE SYSTEMS YOU ALREADY USE</p>
-          <h2 class="section-title" data-title>Works with the systems you already use<span class="title-underline"></span></h2>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:2.0s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><path d="M6 8v1a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8M12 13v3"/></svg></span>
+            <h2 class="section-title" data-title>Works with the systems you already use<span class="title-underline"></span></h2>
+          </div>
 <p>We connect AI and automation to the tools most Dorset businesses already run: Microsoft 365, email, calendars, CRMs, accounting software, booking systems and phone systems. We won&rsquo;t show you a wall of logos. The honest answer is that if a system offers a way in, we can usually connect it &mdash; and if it doesn&rsquo;t, we&rsquo;ll tell you at scoping, not after you&rsquo;ve paid for a build.</p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="A human stays in charge">
+    <section class="section section--alt ai-sec" aria-label="A human stays in charge">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/06 &mdash; A HUMAN STAYS IN CHARGE</p>
-          <h2 class="section-title" data-title>A human stays in charge<span class="title-underline"></span></h2>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:2.4s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+            <h2 class="section-title" data-title>A human stays in charge<span class="title-underline"></span></h2>
+          </div>
 <p>AI is used only for the steps where it genuinely helps &mdash; reading a message, drafting a reply, spotting what&rsquo;s missing. Everything else runs on plain, deterministic automation that does the same thing every time. For consequential actions &mdash; sending a quote, changing a booking, contacting a customer &mdash; we can add a human approval step, so nothing important happens without someone on your team saying yes. Every system keeps a record of what it did, so you can always check its work.</p>
         </div>
       </div>
     </section>
-    <section class="section" aria-label="Proof you can actually see">
+    <section class="section ai-sec" aria-label="Proof you can actually see">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/07 &mdash; PROOF YOU CAN ACTUALLY SEE</p>
-          <h2 class="section-title" data-title>Proof you can actually see<span class="title-underline"></span></h2>
-<p>We&rsquo;d rather show you than tell you. The <a href="/365-ai-os/">365 AI OS</a> is a working Claude-powered AI desktop we built, with a live demo on this site &mdash; a scripted demonstration, and honestly labelled as one. Beyond the demo, the automations we sell are the ones we run in our own business every day: booking automation, review-request automation, SMS scheduling and Slack-connected workflows, alongside our own <strong>365 PC Manager</strong> Windows app, a live customer portal and real-time monitoring dashboards. We haven&rsquo;t published AI customer case studies yet, and we won&rsquo;t invent any &mdash; what you see running is what we actually built.</p>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:2.8s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></span>
+            <h2 class="section-title" data-title>Proof you can actually see<span class="title-underline"></span></h2>
+          </div>
+<div class="ai-show"><p>We&rsquo;d rather show you than tell you. The <a href="/365-ai-os/">365 AI OS</a> is a working Claude-powered AI desktop we built, with a live demo on this site &mdash; a scripted demonstration, and honestly labelled as one. Beyond the demo, the automations we sell are the ones we run in our own business every day: booking automation, review-request automation, SMS scheduling and Slack-connected workflows, alongside our own <strong>365 PC Manager</strong> Windows app, a live customer portal and real-time monitoring dashboards. We haven&rsquo;t published AI customer case studies yet, and we won&rsquo;t invent any &mdash; what you see running is what we actually built.</p><a class="ai-show__go" href="/365-ai-os/">Open the 365 AI OS demo<svg class="ai-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a></div>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Where our proof already lives">
+    <section class="section section--alt ai-sec" aria-label="Where our proof already lives">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/08 &mdash; WHERE OUR PROOF ALREADY LIVES</p>
-          <h2 class="section-title" data-title>Where our proof already lives<span class="title-underline"></span></h2>
-<p>Three kinds of business map straight onto systems we already run or have built:</p><ul><li><strong>Trades and service businesses</strong> &mdash; booking, quoting, reminders and follow-up automation is exactly what we run for ourselves.</li><li><strong>Marine and off-grid energy</strong> &mdash; we&rsquo;re a Victron Recommended Software Integrator, building live telemetry dashboards for boats and vehicles.</li><li><strong>Office-based firms</strong> &mdash; document handling, reporting and Microsoft 365 automation, delivered by a Microsoft Partner.</li></ul>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:3.2s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></span>
+            <h2 class="section-title" data-title>Where our proof already lives<span class="title-underline"></span></h2>
+          </div>
+<p>Three kinds of business map straight onto systems we already run or have built:</p><ul class="ai-cards" data-stagger>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8h12l4 4h4v4h-2M2 8v8h2m4 0h6"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg><h3>Trades and service businesses</h3><p>booking, quoting, reminders and follow-up automation is exactly what we run for ourselves.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8h12l4 4h4v4h-2M2 8v8h2m4 0h6"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg><h3>Marine and off-grid energy</h3><p>we&rsquo;re a Victron Recommended Software Integrator, building live telemetry dashboards for boats and vehicles.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg><h3>Office-based firms</h3><p>document handling, reporting and Microsoft 365 automation, delivered by a Microsoft Partner.</p></li>
+</ul>
         </div>
       </div>
     </section>
-    <section class="section" aria-label="What shapes your quote">
+    <section class="section ai-sec" aria-label="What shapes your quote">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/09 &mdash; WHAT SHAPES YOUR QUOTE</p>
-          <h2 class="section-title" data-title>What shapes your quote<span class="title-underline"></span></h2>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:3.6s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span>
+            <h2 class="section-title" data-title>What shapes your quote<span class="title-underline"></span></h2>
+          </div>
 <p>Build quotes are set by complexity, not a rate card. The main factors: how many systems we&rsquo;re connecting, how much volume flows through them, whether a human approval step is needed, how tidy your existing data is, and whether your team needs a screen to work in or something that runs quietly in the background. Scoping settles all of this before you commit &mdash; <a href="/contact/">request an AI quote</a> and we&rsquo;ll come back with a figure you can plan around.</p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Not ready to talk yet?">
+    <section class="section section--alt ai-sec" aria-label="Not ready to talk yet?">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/10 &mdash; NOT READY TO TALK YET?</p>
-          <h2 class="section-title" data-title>Not ready to talk yet?<span class="title-underline"></span></h2>
-<p>Fair enough. <a href="/365-ai-os/">Try the AI OS demo</a> to see the technology working, browse our <a href="/ai/tools/">free online tools</a>, or look at <a href="/ai/training/">AI training</a> if you&rsquo;d rather build confidence in-house first. When a job in your business starts to look automatable, you&rsquo;ll know where we are.</p>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:4.0s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 13l2 2 3-3 3 3 2-2M2 12l4-4 4 2 4-2 4 4M6 8V6h4M18 8V6h-4"/></svg></span>
+            <h2 class="section-title" data-title>Not ready to talk yet?<span class="title-underline"></span></h2>
+          </div>
+<div class="ai-show"><p>Fair enough. <a href="/365-ai-os/">Try the AI OS demo</a> to see the technology working, browse our <a href="/ai/tools/">free online tools</a>, or look at <a href="/ai/training/">AI training</a> if you&rsquo;d rather build confidence in-house first. When a job in your business starts to look automatable, you&rsquo;ll know where we are.</p><a class="ai-show__go" href="/365-ai-os/">Open the 365 AI OS demo<svg class="ai-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a></div>
         </div>
       </div>
     </section>
-    <section class="section" aria-label="Tell us what&rsquo;s wasting your team&rsquo;s time">
+    <section class="section ai-sec" aria-label="Tell us what&rsquo;s wasting your team&rsquo;s time">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/11 &mdash; TELL US WHAT'S WASTING YOUR TEAM'S TIME</p>
-          <h2 class="section-title" data-title>Tell us what&rsquo;s wasting your team&rsquo;s time<span class="title-underline"></span></h2>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:4.4s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M22 21v-1a5 5 0 0 0-3-4.6"/></svg></span>
+            <h2 class="section-title" data-title>Tell us what&rsquo;s wasting your team&rsquo;s time<span class="title-underline"></span></h2>
+          </div>
 <p>You don&rsquo;t need a specification, a budget or the right vocabulary &mdash; just describe the job that eats your team&rsquo;s week. We&rsquo;ll tell you honestly whether AI helps, what plain automation could do instead, and what a build would cost if it does. <a href="/contact/">Talk to us about AI</a> &mdash; a real conversation with the local team that would actually build it.</p>
         </div>
       </div>
     </section>
-    <section class="section" aria-label="Service and build pricing">
+    <section class="section ai-sec" aria-label="Service and build pricing">
       <div class="wrap wrap--narrow" style="text-align:center">
         <p class="eyebrow eyebrow--center mono" data-reveal>// SERVICE &amp; BUILD</p>
         <h2 class="section-title section-title--center" data-title>Monthly service — confirmed with your quote<span class="title-underline title-underline--center"></span></h2>
@@ -1160,7 +1312,7 @@
   <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=8" defer></script>
   <script src="/js/forms.min.js?v=8" defer></script>
-  <script src="/js/search.min.js?v=2026-08-07" defer></script>
+  <script src="/js/search.min.js?v=2026-08-08" defer></script>
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
     <p>We use cookies to power our live chat and understand how the site is used. See our <a href="/cookie-policy/">cookie policy</a>.</p>
     <div class="cookie-banner__actions">

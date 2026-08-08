@@ -244,7 +244,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-08-07"
+      "dateModified": "2026-08-08"
     },
     {
       "@type": "Service",
@@ -749,6 +749,117 @@
   </aside>
 
   <main id="main">
+<style>
+/* ---- /ai/ premium layer (route-scoped; see ai_visual.py) ---- */
+.ai-sec{position:relative}
+.ai-sec__head{display:flex;align-items:flex-start;gap:.95rem;margin-bottom:1.05rem}
+.ai-badge{flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
+  background:linear-gradient(150deg,rgba(29,151,227,.18),rgba(29,151,227,.04));
+  border:1px solid rgba(108,196,245,.28);box-shadow:0 6px 18px rgba(3,12,30,.45);position:relative}
+.ai-badge svg{width:23px;height:23px;color:var(--cyan-soft);position:relative;z-index:1}
+.ai-badge::after{content:"";position:absolute;inset:-1px;border-radius:inherit;
+  border:1px solid rgba(108,196,245,.5);opacity:0;animation:aiRing 4.5s ease-out infinite;animation-delay:var(--d,0s)}
+@keyframes aiRing{0%{opacity:.55;transform:scale(1)}55%,100%{opacity:0;transform:scale(1.28)}}
+.ai-sec__head h2{margin:0;flex:1}
+.ai-sec__head .title-underline{display:block}
+
+/* card grid - one concept per card, icon leads */
+.ai-cards{list-style:none;margin:1.2rem 0 0;padding:0;display:grid;gap:1rem;
+  grid-template-columns:repeat(auto-fit,minmax(255px,1fr))}
+.ai-cards li{position:relative;padding:1.25rem 1.3rem;border-radius:var(--r-lg);
+  background:var(--glass-deep);border:1px solid var(--line);overflow:hidden;
+  transition:transform .28s ease,border-color .28s ease,box-shadow .28s ease}
+.ai-cards li::before{content:"";position:absolute;left:0;top:0;height:2px;width:100%;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+  transform:translateX(-100%);transition:transform .5s ease}
+.ai-cards li:hover,.ai-cards li:focus-within{transform:translateY(-4px);
+  border-color:rgba(108,196,245,.42);box-shadow:0 18px 40px rgba(3,10,26,.5)}
+.ai-cards li:hover::before,.ai-cards li:focus-within::before{transform:translateX(0)}
+.ai-cards .ai-cardico{width:30px;height:30px;color:var(--cyan-soft);margin-bottom:.7rem;display:block}
+.ai-cards li:hover .ai-cardico{animation:aiNudge .6s ease}
+@keyframes aiNudge{40%{transform:translateY(-3px) rotate(-4deg)}100%{transform:none}}
+.ai-cards h3{font-size:1.06rem;color:#fff;margin:0 0 .45rem;line-height:1.3}
+.ai-cards p,.ai-cards li>span{font-size:.95rem;color:var(--muted);margin:0;display:block;line-height:1.6}
+.ai-cards a{color:var(--cyan-soft)}
+
+/* checklist with a drawn tick */
+.ai-checks{list-style:none;margin:1.1rem 0 0;padding:0;display:grid;gap:.72rem}
+.ai-checks li{position:relative;padding-left:2.1rem;color:var(--ink-3);font-size:.97rem;line-height:1.6}
+.ai-checks li svg{position:absolute;left:0;top:.15rem;width:19px;height:19px;color:var(--green-soft)}
+.ai-checks li svg path{stroke-dasharray:26;stroke-dashoffset:26;animation:aiTick .7s ease forwards;animation-delay:var(--d,0s)}
+@keyframes aiTick{to{stroke-dashoffset:0}}
+
+/* numbered step rail */
+.ai-steps{list-style:none;margin:1.3rem 0 0;padding:0;display:grid;gap:.85rem;position:relative}
+.ai-steps::before{content:"";position:absolute;left:19px;top:12px;bottom:12px;width:2px;
+  background:linear-gradient(180deg,transparent,rgba(108,196,245,.34),transparent)}
+.ai-steps li{position:relative;padding:.95rem 1.15rem .95rem 3.35rem;border-radius:var(--r-md);
+  background:rgba(12,22,48,.5);border:1px solid var(--line)}
+.ai-steps .ai-step__n{position:absolute;left:8px;top:.95rem;width:24px;height:24px;border-radius:50%;
+  display:grid;place-items:center;font-family:var(--font-mono);font-size:.72rem;color:var(--bg);
+  background:var(--cyan-soft);box-shadow:0 0 0 4px rgba(7,13,34,1),0 0 14px rgba(108,196,245,.5)}
+.ai-steps h3{font-size:1rem;color:#fff;margin:0 0 .3rem}
+.ai-steps p{font-size:.94rem;color:var(--muted);margin:0;line-height:1.6}
+
+/* hero + section scenes */
+.ai-scene{position:relative;aspect-ratio:5/3;border-radius:var(--r-lg);overflow:hidden;
+  background:radial-gradient(120% 100% at 70% 10%,rgba(29,151,227,.13),transparent 62%),
+  linear-gradient(165deg,rgba(13,27,52,.8),rgba(7,15,32,.9));border:1px solid var(--line)}
+.ai-scene svg{position:absolute;inset:0;width:100%;height:100%}
+.ai-nd{fill:#0b1d3a;stroke:#6cc4f5;stroke-width:2}
+.ai-ln{stroke:rgba(108,196,245,.42);stroke-width:2;fill:none}
+.ai-tx{fill:#9fb5d3;font-family:'IBM Plex Mono',monospace;font-size:9px}
+.ai-tx--hi{fill:#eaf4ff}
+.ai-glow{filter:drop-shadow(0 0 6px rgba(108,196,245,.6))}
+.ai-dash{stroke-dasharray:5 9;animation:aiRun 2.6s linear infinite}
+@keyframes aiRun{to{stroke-dashoffset:-56}}
+.ai-pulse{animation:aiPulse 3.2s ease-in-out infinite;animation-delay:var(--d,0s);transform-origin:center}
+@keyframes aiPulse{0%,100%{opacity:.55}50%{opacity:1}}
+.ai-beat{animation:aiBeat 3.6s ease-in-out infinite;animation-delay:var(--d,0s);transform-origin:center}
+@keyframes aiBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.09)}}
+.ai-rise{animation:aiRise 5s ease-in-out infinite;animation-delay:var(--d,0s)}
+@keyframes aiRise{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.ai-draw{stroke-dasharray:var(--len,120);stroke-dashoffset:var(--len,120);
+  animation:aiDraw 2.4s ease forwards;animation-delay:var(--d,.2s)}
+@keyframes aiDraw{to{stroke-dashoffset:0}}
+.ai-fade{opacity:0;animation:aiFade .7s ease forwards;animation-delay:var(--d,1s)}
+@keyframes aiFade{to{opacity:1}}
+.ai-travel{offset-path:var(--path);animation:aiTravel 4s linear infinite;animation-delay:var(--d,0s)}
+@keyframes aiTravel{0%{offset-distance:0%;opacity:0}
+  8%{opacity:1}88%{opacity:1}100%{offset-distance:100%;opacity:0}}
+
+/* showcase - a section that IS one real asset gets a panel and a way in */
+.ai-show{position:relative;padding:1.4rem 1.5rem;border-radius:var(--r-lg);
+  background:linear-gradient(158deg,rgba(16,32,62,.72),rgba(8,16,36,.86));
+  border:1px solid rgba(108,196,245,.24);overflow:hidden}
+.ai-show::after{content:"";position:absolute;right:-40px;top:-40px;width:150px;height:150px;border-radius:50%;
+  background:radial-gradient(circle,rgba(29,151,227,.18),transparent 68%);pointer-events:none}
+.ai-show p{position:relative;z-index:1}
+.ai-show__go{display:inline-flex;align-items:center;gap:.5rem;margin-top:.9rem;padding:.6rem 1.05rem;
+  border-radius:var(--r-pill);background:rgba(29,151,227,.14);border:1px solid rgba(108,196,245,.42);
+  color:var(--cyan-soft);font-size:.93rem;text-decoration:none;position:relative;z-index:1;
+  transition:background .25s ease,transform .25s ease}
+.ai-show__go:hover{background:rgba(29,151,227,.25);transform:translateX(3px)}
+.ai-show__go svg{width:16px;height:16px}
+.ai-show__go .ai-arrow{animation:aiArrow 1.9s ease-in-out infinite}
+@keyframes aiArrow{0%,100%{transform:translateX(0)}50%{transform:translateX(3px)}}
+
+/* proof strip */
+.ai-proof{display:grid;gap:.8rem;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));margin:1.2rem 0 0;
+  list-style:none;padding:0}
+.ai-proof li{padding:.9rem 1rem;border-radius:var(--r-md);border:1px dashed rgba(108,196,245,.3);
+  background:rgba(11,20,44,.45);font-size:.92rem;color:var(--ink-3)}
+.ai-proof strong{display:block;color:#fff;font-size:.98rem;margin-bottom:.25rem}
+
+@media (prefers-reduced-motion:reduce){
+  .ai-badge::after,.ai-dash,.ai-pulse,.ai-beat,.ai-rise,.ai-travel,.ai-show__go .ai-arrow{animation:none}
+  .ai-show__go{transition:none}
+  .ai-cards li:hover .ai-cardico{animation:none}
+  .ai-draw,.ai-checks li svg path{animation:none;stroke-dashoffset:0}
+  .ai-fade{animation:none;opacity:1}
+  .ai-cards li{transition:none}
+}
+</style>
     <section class="page-hero" aria-label="Introduction">
       <div class="page-hero__inner">
         <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">AI Consultancy</span></nav>
@@ -762,61 +873,93 @@
         <ul class="page-hero__chips mono"><li>&#9679; Trading since 1995</li><li>&#9679; 4.9-star Google rating</li><li>&#9679; Family-run in Bournemouth</li></ul>
       </div>
     </section>
-    <section class="section" aria-label="The signs a process is worth a look">
+    <div class="wrap wrap--narrow"><div class="ai-scene" data-reveal aria-hidden="true"><svg class="ai-scene__svg" viewBox="0 0 400 240" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><text class="ai-tx" x="24" y="26">YOUR PROCESS TODAY</text><g class="ai-beat" style="--d:0.0s"><circle class="ai-nd ai-glow" cx="40" cy="74" r="15"/><text class="ai-tx ai-tx--hi" x="40" y="78" text-anchor="middle">1</text></g><path class="ai-ln ai-dash" style="--d:0.0s" d="M55 74 H93"/><g class="ai-beat" style="--d:0.35s"><circle class="ai-nd ai-glow" cx="108" cy="74" r="15"/><text class="ai-tx ai-tx--hi" x="108" y="78" text-anchor="middle">2</text></g><path class="ai-ln ai-dash" style="--d:0.3s" d="M123 74 H161"/><g class="ai-beat" style="--d:0.7s"><circle class="ai-nd ai-glow" cx="176" cy="74" r="15"/><text class="ai-tx ai-tx--hi" x="176" y="78" text-anchor="middle">3</text></g><path class="ai-ln ai-dash" style="--d:0.6s" d="M191 74 H229"/><g class="ai-beat" style="--d:1.0499999999999998s"><circle class="ai-nd ai-glow" cx="244" cy="74" r="15"/><text class="ai-tx ai-tx--hi" x="244" y="78" text-anchor="middle">4</text></g><path class="ai-ln ai-dash" style="--d:0.8999999999999999s" d="M259 74 H297"/><g class="ai-beat" style="--d:1.4s"><circle class="ai-nd ai-glow" cx="312" cy="74" r="15"/><text class="ai-tx ai-tx--hi" x="312" y="78" text-anchor="middle">5</text></g><circle class="ai-beat" cx="176" cy="74" r="27" fill="none" stroke="#5fe07a" stroke-width="1.8" stroke-dasharray="4 5"/><text class="ai-tx ai-tx--hi" x="120" y="128">bottleneck found</text><text class="ai-tx" x="24" y="168">BASELINE MEASURED</text><path class="ai-draw ai-ln" style="--len:300;--d:.6s" stroke="#5fe07a" fill="none" d="M28 208 L100 200 L172 186 L244 190 L316 166"/><g class="" style="--d:0s"><rect x="292" y="96" width="84" height="48" rx="7" fill="#0a1a35" stroke="#3f6ea3" stroke-width="1.6"/><text class="ai-tx ai-tx--hi" x="302" y="113">hrs / week</text><rect x="302" y="124" width="64" height="4" rx="2" fill="#24456f"/><rect x="302" y="135" width="50" height="4" rx="2" fill="#24456f"/></g></svg></div></div>
+    <section class="section ai-sec" aria-label="The signs a process is worth a look">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/01 &mdash; THE SIGNS A PROCESS IS WORTH A LOOK</p>
-          <h2 class="section-title" data-title>The signs a process is worth a look<span class="title-underline"></span></h2>
-<p>You don&rsquo;t need to arrive with a shortlist of technologies, and you certainly don&rsquo;t need to know what a large language model is. The useful starting point is much simpler: where does your team&rsquo;s week actually go? In most of the businesses we look after, the candidates announce themselves:</p><ul><li><strong>Repeated copying.</strong> Someone re-types the same details from an email into a spreadsheet, then into an invoice, then into a job sheet &mdash; several times a day, every day.</li><li><strong>Chasing.</strong> Quotes that need a follow-up, invoices that need a nudge, customers who said &ldquo;call me next week&rdquo; &mdash; all held in one person&rsquo;s head or on a to-do list that never empties.</li><li><strong>Missed enquiries.</strong> Calls and web enquiries that land at 6pm on a Friday and wait until Monday, by which point the customer has phoned someone else.</li><li><strong>Spreadsheet glue.</strong> A spreadsheet that quietly holds two systems together, maintained by the one person who understands it &mdash; and who occasionally goes on holiday.</li><li><strong>The same questions, again.</strong> Opening hours, prices, booking steps, &ldquo;where are we with my job&rdquo; &mdash; answered by hand, dozens of times a week.</li></ul><p>If any of those sound familiar, there&rsquo;s probably something worth examining. Whether the fix involves AI at all is a separate question &mdash; and one we answer with evidence, not enthusiasm.</p>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:0.4s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span>
+            <h2 class="section-title" data-title>The signs a process is worth a look<span class="title-underline"></span></h2>
+          </div>
+<p>You don&rsquo;t need to arrive with a shortlist of technologies, and you certainly don&rsquo;t need to know what a large language model is. The useful starting point is much simpler: where does your team&rsquo;s week actually go? In most of the businesses we look after, the candidates announce themselves:</p><ul class="ai-cards" data-stagger>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><h3>Repeated copying.</h3><p>Someone re-types the same details from an email into a spreadsheet, then into an invoice, then into a job sheet &mdash; several times a day, every day.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg><h3>Chasing.</h3><p>Quotes that need a follow-up, invoices that need a nudge, customers who said &ldquo;call me next week&rdquo; &mdash; all held in one person&rsquo;s head or on a to-do list that never empties.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg><h3>Missed enquiries.</h3><p>Calls and web enquiries that land at 6pm on a Friday and wait until Monday, by which point the customer has phoned someone else.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg><h3>Spreadsheet glue.</h3><p>A spreadsheet that quietly holds two systems together, maintained by the one person who understands it &mdash; and who occasionally goes on holiday.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg><h3>The same questions, again.</h3><p>Opening hours, prices, booking steps, &ldquo;where are we with my job&rdquo; &mdash; answered by hand, dozens of times a week.</p></li>
+</ul><p>If any of those sound familiar, there&rsquo;s probably something worth examining. Whether the fix involves AI at all is a separate question &mdash; and one we answer with evidence, not enthusiasm.</p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="How discovery works">
+    <section class="section section--alt ai-sec" aria-label="How discovery works">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/02 &mdash; HOW DISCOVERY WORKS</p>
-          <h2 class="section-title" data-title>How discovery works<span class="title-underline"></span></h2>
-<p>Consultancy with us is a structured piece of work, not a sales meeting with slides. It&rsquo;s the same method we used to automate our own business, and it runs in a fixed order because each step depends on the one before it:</p><ul><li><strong>Process interviews.</strong> We sit with the people who actually do the work &mdash; not just the owner &mdash; and walk through a real week. The exceptions and workarounds they mention in passing are usually where the time goes.</li><li><strong>Workflow mapping.</strong> We draw each process as it really runs: every handover, every wait, every &ldquo;then I copy it into the other system&rdquo;. You see the map and correct it before we go any further.</li><li><strong>Systems and data inventory.</strong> We list the software you use, where your data lives, and which systems have an API &mdash; the plumbing that lets one system talk to another. This decides what can be connected cheaply and what can&rsquo;t.</li><li><strong>Baseline measurement.</strong> We count and time the work as it stands today: how many enquiries a week, how long a quote takes, how often invoices get chased. Real numbers, taken from your systems and your people.</li><li><strong>Risk and approval mapping.</strong> For each candidate process we agree what a human must check before anything is sent, changed or paid. Consequential actions get an approval step designed in from the start; routine ones don&rsquo;t need one.</li><li><strong>Prioritised opportunity list.</strong> Everything we find, ranked by measured time against build effort &mdash; with a plain-English solution outline for the items worth doing first.</li></ul>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:0.8s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg></span>
+            <h2 class="section-title" data-title>How discovery works<span class="title-underline"></span></h2>
+          </div>
+<p>Consultancy with us is a structured piece of work, not a sales meeting with slides. It&rsquo;s the same method we used to automate our own business, and it runs in a fixed order because each step depends on the one before it:</p><ul class="ai-cards" data-stagger>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg><h3>Process interviews.</h3><p>We sit with the people who actually do the work &mdash; not just the owner &mdash; and walk through a real week. The exceptions and workarounds they mention in passing are usually where the time goes.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg><h3>Workflow mapping.</h3><p>We draw each process as it really runs: every handover, every wait, every &ldquo;then I copy it into the other system&rdquo;. You see the map and correct it before we go any further.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><path d="M6 8v1a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8M12 13v3"/></svg><h3>Systems and data inventory.</h3><p>We list the software you use, where your data lives, and which systems have an API &mdash; the plumbing that lets one system talk to another. This decides what can be connected cheaply and what can&rsquo;t.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg><h3>Baseline measurement.</h3><p>We count and time the work as it stands today: how many enquiries a week, how long a quote takes, how often invoices get chased. Real numbers, taken from your systems and your people.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg><h3>Risk and approval mapping.</h3><p>For each candidate process we agree what a human must check before anything is sent, changed or paid. Consequential actions get an approval step designed in from the start; routine ones don&rsquo;t need one.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg><h3>Prioritised opportunity list.</h3><p>Everything we find, ranked by measured time against build effort &mdash; with a plain-English solution outline for the items worth doing first.</p></li>
+</ul>
         </div>
       </div>
     </section>
-    <section class="section" aria-label="Why we measure before we promise">
+    <section class="section ai-sec" aria-label="Why we measure before we promise">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/03 &mdash; WHY WE MEASURE BEFORE WE PROMISE</p>
-          <h2 class="section-title" data-title>Why we measure before we promise<span class="title-underline"></span></h2>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:1.2s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span>
+            <h2 class="section-title" data-title>Why we measure before we promise<span class="title-underline"></span></h2>
+          </div>
 <p>A lot of AI marketing leads with a percentage: hours saved, costs cut, productivity up. We don&rsquo;t, because without a baseline those numbers are fiction. If nobody has measured how long your invoicing run takes today, any claim about how much faster it could be is a guess dressed up as a promise.</p><p>So we measure first. The baseline does three jobs: it tells us whether a process is worth automating at all, it lets us rank opportunities on evidence rather than novelty, and &mdash; most importantly &mdash; it gives you something to hold us to. If we go on to build a system, you can compare the numbers after go-live with the numbers before, in your own figures, and see whether it earned its keep.</p><p>It&rsquo;s the standard we apply to ourselves. The booking automation, review requests and SMS scheduling that run inside 365 Techies every day were built the same way &mdash; look at the numbers first, build second, then check the numbers again.</p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="What you get at the end">
+    <section class="section section--alt ai-sec" aria-label="What you get at the end">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/04 &mdash; WHAT YOU GET AT THE END</p>
-          <h2 class="section-title" data-title>What you get at the end<span class="title-underline"></span></h2>
-<p>Discovery finishes with something you can hold, read and act on &mdash; whether or not you act on it with us:</p><ul><li>A <strong>map of each process</strong> we examined, drawn as it actually runs today.</li><li>Your <strong>baseline figures</strong> &mdash; the counts and timings that describe what each process currently costs you.</li><li>A <strong>prioritised opportunity list</strong>, with every item honestly labelled: a job for AI, a job for rules-based automation, a process change, or leave it alone.</li><li>A <strong>solution outline</strong> for the top items &mdash; what the system would do, which of your existing tools it connects to, and exactly where a human approves before anything consequential happens.</li><li>A <strong>quote</strong> &mdash; a one-off design and build figure based on complexity, plus the monthly service subscription that keeps the system monitored, maintained and supported once it&rsquo;s live.</li></ul><p>From there the decision is yours: start with the top item, hand us the whole list, or decide the honest answer is &ldquo;not yet&rdquo; &mdash; the map and the numbers are still yours to keep. And if you already know which process you want examined, you can <a href="/contact/">request an AI quote</a> and go straight to scoping.</p>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:1.6s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg></span>
+            <h2 class="section-title" data-title>What you get at the end<span class="title-underline"></span></h2>
+          </div>
+<p>Discovery finishes with something you can hold, read and act on &mdash; whether or not you act on it with us:</p><ul class="ai-checks" data-stagger>
+<li style="--d:0.15s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"/></svg><span>A <strong>map of each process</strong> we examined, drawn as it actually runs today.</span></li>
+<li style="--d:0.27s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"/></svg><span>Your <strong>baseline figures</strong> &mdash; the counts and timings that describe what each process currently costs you.</span></li>
+<li style="--d:0.39s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"/></svg><span>A <strong>prioritised opportunity list</strong>, with every item honestly labelled: a job for AI, a job for rules-based automation, a process change, or leave it alone.</span></li>
+<li style="--d:0.51s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"/></svg><span>A <strong>solution outline</strong> for the top items &mdash; what the system would do, which of your existing tools it connects to, and exactly where a human approves before anything consequential happens.</span></li>
+<li style="--d:0.63s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"/></svg><span>A <strong>quote</strong> &mdash; a one-off design and build figure based on complexity, plus the monthly service subscription that keeps the system monitored, maintained and supported once it&rsquo;s live.</span></li>
+</ul><p>From there the decision is yours: start with the top item, hand us the whole list, or decide the honest answer is &ldquo;not yet&rdquo; &mdash; the map and the numbers are still yours to keep. And if you already know which process you want examined, you can <a href="/contact/">request an AI quote</a> and go straight to scoping.</p>
         </div>
       </div>
     </section>
-    <section class="section" aria-label="Sometimes the answer isn&rsquo;t AI">
+    <section class="section ai-sec" aria-label="Sometimes the answer isn&rsquo;t AI">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/05 &mdash; SOMETIMES THE ANSWER ISN'T AI</p>
-          <h2 class="section-title" data-title>Sometimes the answer isn&rsquo;t AI<span class="title-underline"></span></h2>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:2.0s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg></span>
+            <h2 class="section-title" data-title>Sometimes the answer isn&rsquo;t AI<span class="title-underline"></span></h2>
+          </div>
 <p>This is the part of the conversation most AI companies skip. A good share of the problems we&rsquo;re shown don&rsquo;t need AI at all &mdash; they need <strong>deterministic automation</strong>: rules-based systems where the same input always produces the same output. If a booking should always create a calendar entry, send a confirmation and add the job to a list, that&rsquo;s a rule, not a judgement. Rules are cheaper to build, simple to test, and they never have an off day.</p><p>AI earns its place where a step needs judgement over messy input &mdash; reading an enquiry and drafting a sensible reply, summarising a long email thread, answering a phone call in natural language. In the systems we design, AI does that one step and deterministic automation does everything around it. Most of the working systems on our <a href="/ai/automations/">automation page</a> are exactly this shape, and we&rsquo;ll always tell you which parts are which.</p><p>Sometimes the answer is a process change and no software at all. If discovery shows a form asks for information nobody ever uses, the recommendation is to delete the field &mdash; not to build a robot to fill it in. You&rsquo;ll get that advice just as readily, because advice you can trust is the entire point of asking for it.</p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Advice from people who run these systems every day">
+    <section class="section section--alt ai-sec" aria-label="Advice from people who run these systems every day">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/06 &mdash; ADVICE FROM PEOPLE WHO RUN THESE SYSTEMS EVERY DAY</p>
-          <h2 class="section-title" data-title>Advice from people who run these systems every day<span class="title-underline"></span></h2>
-<p>There&rsquo;s no shortage of AI consultants at the moment. What&rsquo;s rarer is one who can show you the things they&rsquo;re describing actually running in their own business. We can. The booking automation, review-request emails, SMS scheduling and Slack-connected workflows we recommend are the same ones running inside 365 Techies today &mdash; built in-house, in production, doing real work. Our <a href="/365-ai-os/">365 AI OS demo</a> shows a Claude-powered AI desktop we built ourselves (a scripted demonstration, and clearly labelled as one), and our monitoring dashboards run live on this site.</p><p>We&rsquo;re not new to unglamorous, reliable systems either. We&rsquo;ve been a family-run IT support business in Bournemouth since 1995, we hold a 4.9-star Google rating, we&rsquo;re a Microsoft Partner, and our telemetry work earned Victron Energy&rsquo;s Recommended Software Integrator status. Whatever comes out of your discovery is supported by the same local team that looks after your IT &mdash; across Bournemouth, Poole, Christchurch and the wider Dorset area, and remotely across the UK where that suits. If you&rsquo;d like to see what the builds themselves look like, start with our <a href="/ai/">AI services overview</a>.</p>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:2.4s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M22 21v-1a5 5 0 0 0-3-4.6"/></svg></span>
+            <h2 class="section-title" data-title>Advice from people who run these systems every day<span class="title-underline"></span></h2>
+          </div>
+<div class="ai-show"><p>There&rsquo;s no shortage of AI consultants at the moment. What&rsquo;s rarer is one who can show you the things they&rsquo;re describing actually running in their own business. We can. The booking automation, review-request emails, SMS scheduling and Slack-connected workflows we recommend are the same ones running inside 365 Techies today &mdash; built in-house, in production, doing real work. Our <a href="/365-ai-os/">365 AI OS demo</a> shows a Claude-powered AI desktop we built ourselves (a scripted demonstration, and clearly labelled as one), and our monitoring dashboards run live on this site.</p><p>We&rsquo;re not new to unglamorous, reliable systems either. We&rsquo;ve been a family-run IT support business in Bournemouth since 1995, we hold a 4.9-star Google rating, we&rsquo;re a Microsoft Partner, and our telemetry work earned Victron Energy&rsquo;s Recommended Software Integrator status. Whatever comes out of your discovery is supported by the same local team that looks after your IT &mdash; across Bournemouth, Poole, Christchurch and the wider Dorset area, and remotely across the UK where that suits. If you&rsquo;d like to see what the builds themselves look like, start with our <a href="/ai/">AI services overview</a>.</p><a class="ai-show__go" href="/365-ai-os/">Open the 365 AI OS demo<svg class="ai-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a></div>
         </div>
       </div>
     </section>
-    <section class="section" aria-label="Service and build pricing">
+    <section class="section ai-sec" aria-label="Service and build pricing">
       <div class="wrap wrap--narrow" style="text-align:center">
         <p class="eyebrow eyebrow--center mono" data-reveal>// SERVICE &amp; BUILD</p>
         <h2 class="section-title section-title--center" data-title>Monthly service &mdash; confirmed with your quote<span class="title-underline title-underline--center"></span></h2>
@@ -1121,7 +1264,7 @@
   <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=8" defer></script>
   <script src="/js/forms.min.js?v=8" defer></script>
-  <script src="/js/search.min.js?v=2026-08-07" defer></script>
+  <script src="/js/search.min.js?v=2026-08-08" defer></script>
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
     <p>We use cookies to power our live chat and understand how the site is used. See our <a href="/cookie-policy/">cookie policy</a>.</p>
     <div class="cookie-banner__actions">

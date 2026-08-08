@@ -244,7 +244,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-08-07"
+      "dateModified": "2026-08-08"
     },
     {
       "@type": "Service",
@@ -749,6 +749,117 @@
   </aside>
 
   <main id="main">
+<style>
+/* ---- /ai/ premium layer (route-scoped; see ai_visual.py) ---- */
+.ai-sec{position:relative}
+.ai-sec__head{display:flex;align-items:flex-start;gap:.95rem;margin-bottom:1.05rem}
+.ai-badge{flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
+  background:linear-gradient(150deg,rgba(29,151,227,.18),rgba(29,151,227,.04));
+  border:1px solid rgba(108,196,245,.28);box-shadow:0 6px 18px rgba(3,12,30,.45);position:relative}
+.ai-badge svg{width:23px;height:23px;color:var(--cyan-soft);position:relative;z-index:1}
+.ai-badge::after{content:"";position:absolute;inset:-1px;border-radius:inherit;
+  border:1px solid rgba(108,196,245,.5);opacity:0;animation:aiRing 4.5s ease-out infinite;animation-delay:var(--d,0s)}
+@keyframes aiRing{0%{opacity:.55;transform:scale(1)}55%,100%{opacity:0;transform:scale(1.28)}}
+.ai-sec__head h2{margin:0;flex:1}
+.ai-sec__head .title-underline{display:block}
+
+/* card grid - one concept per card, icon leads */
+.ai-cards{list-style:none;margin:1.2rem 0 0;padding:0;display:grid;gap:1rem;
+  grid-template-columns:repeat(auto-fit,minmax(255px,1fr))}
+.ai-cards li{position:relative;padding:1.25rem 1.3rem;border-radius:var(--r-lg);
+  background:var(--glass-deep);border:1px solid var(--line);overflow:hidden;
+  transition:transform .28s ease,border-color .28s ease,box-shadow .28s ease}
+.ai-cards li::before{content:"";position:absolute;left:0;top:0;height:2px;width:100%;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+  transform:translateX(-100%);transition:transform .5s ease}
+.ai-cards li:hover,.ai-cards li:focus-within{transform:translateY(-4px);
+  border-color:rgba(108,196,245,.42);box-shadow:0 18px 40px rgba(3,10,26,.5)}
+.ai-cards li:hover::before,.ai-cards li:focus-within::before{transform:translateX(0)}
+.ai-cards .ai-cardico{width:30px;height:30px;color:var(--cyan-soft);margin-bottom:.7rem;display:block}
+.ai-cards li:hover .ai-cardico{animation:aiNudge .6s ease}
+@keyframes aiNudge{40%{transform:translateY(-3px) rotate(-4deg)}100%{transform:none}}
+.ai-cards h3{font-size:1.06rem;color:#fff;margin:0 0 .45rem;line-height:1.3}
+.ai-cards p,.ai-cards li>span{font-size:.95rem;color:var(--muted);margin:0;display:block;line-height:1.6}
+.ai-cards a{color:var(--cyan-soft)}
+
+/* checklist with a drawn tick */
+.ai-checks{list-style:none;margin:1.1rem 0 0;padding:0;display:grid;gap:.72rem}
+.ai-checks li{position:relative;padding-left:2.1rem;color:var(--ink-3);font-size:.97rem;line-height:1.6}
+.ai-checks li svg{position:absolute;left:0;top:.15rem;width:19px;height:19px;color:var(--green-soft)}
+.ai-checks li svg path{stroke-dasharray:26;stroke-dashoffset:26;animation:aiTick .7s ease forwards;animation-delay:var(--d,0s)}
+@keyframes aiTick{to{stroke-dashoffset:0}}
+
+/* numbered step rail */
+.ai-steps{list-style:none;margin:1.3rem 0 0;padding:0;display:grid;gap:.85rem;position:relative}
+.ai-steps::before{content:"";position:absolute;left:19px;top:12px;bottom:12px;width:2px;
+  background:linear-gradient(180deg,transparent,rgba(108,196,245,.34),transparent)}
+.ai-steps li{position:relative;padding:.95rem 1.15rem .95rem 3.35rem;border-radius:var(--r-md);
+  background:rgba(12,22,48,.5);border:1px solid var(--line)}
+.ai-steps .ai-step__n{position:absolute;left:8px;top:.95rem;width:24px;height:24px;border-radius:50%;
+  display:grid;place-items:center;font-family:var(--font-mono);font-size:.72rem;color:var(--bg);
+  background:var(--cyan-soft);box-shadow:0 0 0 4px rgba(7,13,34,1),0 0 14px rgba(108,196,245,.5)}
+.ai-steps h3{font-size:1rem;color:#fff;margin:0 0 .3rem}
+.ai-steps p{font-size:.94rem;color:var(--muted);margin:0;line-height:1.6}
+
+/* hero + section scenes */
+.ai-scene{position:relative;aspect-ratio:5/3;border-radius:var(--r-lg);overflow:hidden;
+  background:radial-gradient(120% 100% at 70% 10%,rgba(29,151,227,.13),transparent 62%),
+  linear-gradient(165deg,rgba(13,27,52,.8),rgba(7,15,32,.9));border:1px solid var(--line)}
+.ai-scene svg{position:absolute;inset:0;width:100%;height:100%}
+.ai-nd{fill:#0b1d3a;stroke:#6cc4f5;stroke-width:2}
+.ai-ln{stroke:rgba(108,196,245,.42);stroke-width:2;fill:none}
+.ai-tx{fill:#9fb5d3;font-family:'IBM Plex Mono',monospace;font-size:9px}
+.ai-tx--hi{fill:#eaf4ff}
+.ai-glow{filter:drop-shadow(0 0 6px rgba(108,196,245,.6))}
+.ai-dash{stroke-dasharray:5 9;animation:aiRun 2.6s linear infinite}
+@keyframes aiRun{to{stroke-dashoffset:-56}}
+.ai-pulse{animation:aiPulse 3.2s ease-in-out infinite;animation-delay:var(--d,0s);transform-origin:center}
+@keyframes aiPulse{0%,100%{opacity:.55}50%{opacity:1}}
+.ai-beat{animation:aiBeat 3.6s ease-in-out infinite;animation-delay:var(--d,0s);transform-origin:center}
+@keyframes aiBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.09)}}
+.ai-rise{animation:aiRise 5s ease-in-out infinite;animation-delay:var(--d,0s)}
+@keyframes aiRise{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.ai-draw{stroke-dasharray:var(--len,120);stroke-dashoffset:var(--len,120);
+  animation:aiDraw 2.4s ease forwards;animation-delay:var(--d,.2s)}
+@keyframes aiDraw{to{stroke-dashoffset:0}}
+.ai-fade{opacity:0;animation:aiFade .7s ease forwards;animation-delay:var(--d,1s)}
+@keyframes aiFade{to{opacity:1}}
+.ai-travel{offset-path:var(--path);animation:aiTravel 4s linear infinite;animation-delay:var(--d,0s)}
+@keyframes aiTravel{0%{offset-distance:0%;opacity:0}
+  8%{opacity:1}88%{opacity:1}100%{offset-distance:100%;opacity:0}}
+
+/* showcase - a section that IS one real asset gets a panel and a way in */
+.ai-show{position:relative;padding:1.4rem 1.5rem;border-radius:var(--r-lg);
+  background:linear-gradient(158deg,rgba(16,32,62,.72),rgba(8,16,36,.86));
+  border:1px solid rgba(108,196,245,.24);overflow:hidden}
+.ai-show::after{content:"";position:absolute;right:-40px;top:-40px;width:150px;height:150px;border-radius:50%;
+  background:radial-gradient(circle,rgba(29,151,227,.18),transparent 68%);pointer-events:none}
+.ai-show p{position:relative;z-index:1}
+.ai-show__go{display:inline-flex;align-items:center;gap:.5rem;margin-top:.9rem;padding:.6rem 1.05rem;
+  border-radius:var(--r-pill);background:rgba(29,151,227,.14);border:1px solid rgba(108,196,245,.42);
+  color:var(--cyan-soft);font-size:.93rem;text-decoration:none;position:relative;z-index:1;
+  transition:background .25s ease,transform .25s ease}
+.ai-show__go:hover{background:rgba(29,151,227,.25);transform:translateX(3px)}
+.ai-show__go svg{width:16px;height:16px}
+.ai-show__go .ai-arrow{animation:aiArrow 1.9s ease-in-out infinite}
+@keyframes aiArrow{0%,100%{transform:translateX(0)}50%{transform:translateX(3px)}}
+
+/* proof strip */
+.ai-proof{display:grid;gap:.8rem;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));margin:1.2rem 0 0;
+  list-style:none;padding:0}
+.ai-proof li{padding:.9rem 1rem;border-radius:var(--r-md);border:1px dashed rgba(108,196,245,.3);
+  background:rgba(11,20,44,.45);font-size:.92rem;color:var(--ink-3)}
+.ai-proof strong{display:block;color:#fff;font-size:.98rem;margin-bottom:.25rem}
+
+@media (prefers-reduced-motion:reduce){
+  .ai-badge::after,.ai-dash,.ai-pulse,.ai-beat,.ai-rise,.ai-travel,.ai-show__go .ai-arrow{animation:none}
+  .ai-show__go{transition:none}
+  .ai-cards li:hover .ai-cardico{animation:none}
+  .ai-draw,.ai-checks li svg path{animation:none;stroke-dashoffset:0}
+  .ai-fade{animation:none;opacity:1}
+  .ai-cards li{transition:none}
+}
+</style>
     <section class="page-hero" aria-label="Introduction">
       <div class="page-hero__inner">
         <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">AI Agents</span></nav>
@@ -762,79 +873,120 @@
         <ul class="page-hero__chips mono"><li>&#9679; Trading since 1995</li><li>&#9679; 4.9-star Google rating</li><li>&#9679; Human approval built in</li></ul>
       </div>
     </section>
-    <section class="section" aria-label="The jobs that quietly eat the week">
+    <div class="wrap wrap--narrow"><div class="ai-scene" data-reveal aria-hidden="true"><svg class="ai-scene__svg" viewBox="0 0 400 240" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><g class="ai-beat" style="--d:0s"><circle class="ai-nd ai-glow" cx="120" cy="120" r="30"/><text class="ai-tx ai-tx--hi" x="120" y="124" text-anchor="middle">agent</text></g><path class="ai-ln ai-dash" style="--d:0.0s" d="M150 120 Q200.0 86.0 230 52"/><g class="ai-beat" style="--d:0.3s"><circle class="ai-nd ai-glow" cx="250" cy="52" r="18"/><text class="ai-tx ai-tx--hi" x="250" y="56" text-anchor="middle">mail</text></g><path class="ai-ln ai-dash" style="--d:0.7s" d="M150 120 Q223.0 120.0 276 120"/><g class="ai-beat" style="--d:0.7s"><circle class="ai-nd ai-glow" cx="296" cy="120" r="18"/><text class="ai-tx ai-tx--hi" x="296" y="124" text-anchor="middle">CRM</text></g><path class="ai-ln ai-dash" style="--d:1.4s" d="M150 120 Q200.0 154.0 230 188"/><g class="ai-beat" style="--d:1.1s"><circle class="ai-nd ai-glow" cx="250" cy="188" r="18"/><text class="ai-tx ai-tx--hi" x="250" y="192" text-anchor="middle">docs</text></g><path class="ai-ln" style="--d:0s" d="M120 90 V56"/><text class="ai-tx" x="58" y="40">BOUNDED BY YOUR RULES</text><g class="ai-fade" style="--d:1.2s"><circle cx="120" cy="44" r="13" fill="rgba(0,206,27,.14)" stroke="#5fe07a" stroke-width="1.8"/><path d="M115 44 l3.4 3.6 L126 39.4" fill="none" stroke="#5fe07a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></g><text class="ai-tx" x="58" y="186">asks before it acts</text><text class="ai-tx ai-tx--hi" x="58" y="200">on anything that counts</text></svg></div></div>
+    <section class="section ai-sec" aria-label="The jobs that quietly eat the week">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/01 &mdash; THE JOBS THAT QUIETLY EAT THE WEEK</p>
-          <h2 class="section-title" data-title>The jobs that quietly eat the week<span class="title-underline"></span></h2>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:0.4s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></span>
+            <h2 class="section-title" data-title>The jobs that quietly eat the week<span class="title-underline"></span></h2>
+          </div>
 <p>Every business has them. Enquiries that sit in an inbox until someone has a spare minute. Details typed into one system, then retyped into another. Replies that start the same way every single time. None of it is difficult &mdash; it&rsquo;s just constant, and it lands on whoever happens to be nearest.</p><p>An AI agent is a practical way to hand that work over. Not a chatbot bolted onto your website, and not a promise to &ldquo;transform&rdquo; anything &mdash; a piece of software, built around the systems you already use, that does the repetitive middle steps of a job and brings a human in at the moments that matter. This page explains what that means in plain terms, walks through a worked example, and is honest about the limits. If you&rsquo;d rather start with the bigger picture, our <a href="/ai/">AI services overview</a> covers everything we build.</p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="What we mean by a bounded agent">
+    <section class="section section--alt ai-sec" aria-label="What we mean by a bounded agent">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/02 &mdash; WHAT WE MEAN BY A BOUNDED AGENT</p>
-          <h2 class="section-title" data-title>What we mean by a bounded agent<span class="title-underline"></span></h2>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:0.8s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="8" width="16" height="11" rx="2"/><circle cx="9" cy="13" r="1.2"/><circle cx="15" cy="13" r="1.2"/><path d="M12 4v4M8 19v2M16 19v2M2 12v3M22 12v3"/></svg></span>
+            <h2 class="section-title" data-title>What we mean by a bounded agent<span class="title-underline"></span></h2>
+          </div>
 <p>&ldquo;Agent&rdquo; has become one of those words that means whatever the person selling it wants it to mean, so here is our definition. An agent is software that can <strong>read</strong> information &mdash; an email, a form, a record &mdash; <strong>decide</strong> what it means using AI, and then <strong>act</strong> on it: draft a reply, update a record, schedule a message, book a slot.</p><p><strong>Bounded</strong> means the acting part is deliberately limited. Every agent we build works from a fixed list of allowed actions, in named systems, under rules you set. It cannot invent new abilities, touch anything outside its brief, or send anything consequential without approval. If a job falls outside its list, it stops and hands over to a person &mdash; it never improvises.</p><p>That constraint isn&rsquo;t a limitation to apologise for. It&rsquo;s the reason the whole thing is trustworthy enough to put anywhere near your customers.</p>
         </div>
       </div>
     </section>
-    <section class="section" aria-label="An agent is not a chatbot">
+    <section class="section ai-sec" aria-label="An agent is not a chatbot">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/03 &mdash; AN AGENT IS NOT A CHATBOT</p>
-          <h2 class="section-title" data-title>An agent is not a chatbot<span class="title-underline"></span></h2>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:1.2s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="8" width="16" height="11" rx="2"/><circle cx="9" cy="13" r="1.2"/><circle cx="15" cy="13" r="1.2"/><path d="M12 4v4M8 19v2M16 19v2M2 12v3M22 12v3"/></svg></span>
+            <h2 class="section-title" data-title>An agent is not a chatbot<span class="title-underline"></span></h2>
+          </div>
 <p>A chatbot answers questions &mdash; someone asks about opening hours, it replies, and that&rsquo;s the whole job. An agent completes tasks. It might never talk to anyone: it can sit behind a shared inbox reading, sorting, drafting and updating records all day without a chat window in sight.</p><p>The two can work together &mdash; a website assistant that answers questions and then actually books the appointment is a chatbot front with an agent behind it. But you don&rsquo;t need to pick a technology, and we&rsquo;d rather you didn&rsquo;t try. Describe the job in ordinary words &mdash; &ldquo;quotes take too long to go out&rdquo;, &ldquo;nobody updates the spreadsheet&rdquo; &mdash; and we&rsquo;ll tell you which parts suit an agent, which suit ordinary automation, and which should stay with a human.</p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="A worked example, step by step">
+    <section class="section section--alt ai-sec" aria-label="A worked example, step by step">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/04 &mdash; A WORKED EXAMPLE, STEP BY STEP</p>
-          <h2 class="section-title" data-title>A worked example, step by step<span class="title-underline"></span></h2>
-<p>Here is a workflow we build variations of, shown honestly, approval gate included:</p><ul><li><strong>An enquiry arrives</strong> &mdash; a web form or email, at 9pm on a Tuesday, long after everyone has gone home.</li><li><strong>The agent reads it</strong> and extracts the useful details: who it&rsquo;s from, how to reach them, what they&rsquo;re asking for and how urgent it sounds &mdash; even when the message is three rambling paragraphs.</li><li><strong>It drafts a reply</strong> in your tone, answering what can be answered and asking for whatever is missing.</li><li><strong>Nothing is sent.</strong> The draft waits for approval &mdash; a one-tap yes, or a quick edit, from a phone over morning coffee.</li><li><strong>On approval</strong>, the reply goes out, the enquiry is logged in your CRM or job sheet with every detail captured, and the right person is notified to follow up.</li></ul><p>Notice where AI actually sits in that chain: reading a messy email and drafting a decent reply &mdash; the steps that need judgement. Everything else &mdash; sending, logging, notifying &mdash; is deterministic automation, meaning the same input produces the same result every time. We use AI only for the steps where it genuinely helps and reliable, boring automation for the rest, and we&rsquo;ll always tell you which is which.</p>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:1.6s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span>
+            <h2 class="section-title" data-title>A worked example, step by step<span class="title-underline"></span></h2>
+          </div>
+<p>Here is a workflow we build variations of, shown honestly, approval gate included:</p><ol class="ai-steps" data-stagger>
+<li><span class="ai-step__n mono">1</span><h3>An enquiry arrives</h3><p>a web form or email, at 9pm on a Tuesday, long after everyone has gone home.</p></li>
+<li><span class="ai-step__n mono">2</span><h3>The agent reads it</h3><p>and extracts the useful details: who it&rsquo;s from, how to reach them, what they&rsquo;re asking for and how urgent it sounds &mdash; even when the message is three rambling paragraphs.</p></li>
+<li><span class="ai-step__n mono">3</span><h3>It drafts a reply</h3><p>in your tone, answering what can be answered and asking for whatever is missing.</p></li>
+<li><span class="ai-step__n mono">4</span><h3>Nothing is sent.</h3><p>The draft waits for approval &mdash; a one-tap yes, or a quick edit, from a phone over morning coffee.</p></li>
+<li><span class="ai-step__n mono">5</span><h3>On approval</h3><p>, the reply goes out, the enquiry is logged in your CRM or job sheet with every detail captured, and the right person is notified to follow up.</p></li>
+</ol><p>Notice where AI actually sits in that chain: reading a messy email and drafting a decent reply &mdash; the steps that need judgement. Everything else &mdash; sending, logging, notifying &mdash; is deterministic automation, meaning the same input produces the same result every time. We use AI only for the steps where it genuinely helps and reliable, boring automation for the rest, and we&rsquo;ll always tell you which is which.</p>
         </div>
       </div>
     </section>
-    <section class="section" aria-label="The systems agents plug into">
+    <section class="section ai-sec" aria-label="The systems agents plug into">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/05 &mdash; THE SYSTEMS AGENTS PLUG INTO</p>
-          <h2 class="section-title" data-title>The systems agents plug into<span class="title-underline"></span></h2>
-<p>Agents are built around what you already run &mdash; we don&rsquo;t start by asking you to change software. Typical connections include:</p><ul><li>Email and shared inboxes &mdash; reading, sorting, drafting</li><li>Website forms and enquiry pages</li><li>Calendars and booking systems</li><li>CRMs, job sheets and customer records</li><li>Spreadsheets and simple databases</li><li>Messaging &mdash; Slack, Teams and SMS &mdash; for notifications and approvals</li></ul><p>Where a system has a proper integration, we use it. Where it doesn&rsquo;t, there is usually a sensible route in &mdash; a monitored inbox, an export, a form. Occasionally the honest answer is that a system can&rsquo;t be connected safely, in which case we say so before you spend anything. And these aren&rsquo;t hypothetical connections: booking automation, review requests, SMS scheduling and Slack-connected workflows all run in our own business every day, built and maintained in-house.</p>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:2.0s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><path d="M6 8v1a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8M12 13v3"/></svg></span>
+            <h2 class="section-title" data-title>The systems agents plug into<span class="title-underline"></span></h2>
+          </div>
+<p>Agents are built around what you already run &mdash; we don&rsquo;t start by asking you to change software. Typical connections include:</p><ul class="ai-checks" data-stagger>
+<li style="--d:0.15s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"/></svg><span>Email and shared inboxes &mdash; reading, sorting, drafting</span></li>
+<li style="--d:0.27s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"/></svg><span>Website forms and enquiry pages</span></li>
+<li style="--d:0.39s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"/></svg><span>Calendars and booking systems</span></li>
+<li style="--d:0.51s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"/></svg><span>CRMs, job sheets and customer records</span></li>
+<li style="--d:0.63s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"/></svg><span>Spreadsheets and simple databases</span></li>
+<li style="--d:0.75s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"/></svg><span>Messaging &mdash; Slack, Teams and SMS &mdash; for notifications and approvals</span></li>
+</ul><p>Where a system has a proper integration, we use it. Where it doesn&rsquo;t, there is usually a sensible route in &mdash; a monitored inbox, an export, a form. Occasionally the honest answer is that a system can&rsquo;t be connected safely, in which case we say so before you spend anything. And these aren&rsquo;t hypothetical connections: booking automation, review requests, SMS scheduling and Slack-connected workflows all run in our own business every day, built and maintained in-house.</p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Limits, approvals and the paper trail">
+    <section class="section section--alt ai-sec" aria-label="Limits, approvals and the paper trail">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/06 &mdash; LIMITS, APPROVALS AND THE PAPER TRAIL</p>
-          <h2 class="section-title" data-title>Limits, approvals and the paper trail<span class="title-underline"></span></h2>
-<p>Human control isn&rsquo;t a feature we bolt on if you ask for it &mdash; it&rsquo;s how every agent is designed from the first conversation. Each one comes with:</p><ul><li><strong>An allowed-actions list</strong> &mdash; the complete set of things it can do, agreed with you before anything is built.</li><li><strong>Approval gates</strong> on consequential steps &mdash; anything sent to a customer, and anything that commits money or time, waits for a human yes.</li><li><strong>A log</strong> of what it did, when, and what it was acting on, so its work can be checked.</li><li><strong>A pause switch</strong> &mdash; the whole agent can be stopped at any time without breaking anything else.</li></ul><p>You choose where the gates sit. Some businesses keep approval on every outgoing message; others let routine steps run on their own and review only the exceptions. Either is fine, and it can be adjusted as your confidence grows &mdash; that&rsquo;s a conversation, not a rebuild.</p>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:2.4s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+            <h2 class="section-title" data-title>Limits, approvals and the paper trail<span class="title-underline"></span></h2>
+          </div>
+<p>Human control isn&rsquo;t a feature we bolt on if you ask for it &mdash; it&rsquo;s how every agent is designed from the first conversation. Each one comes with:</p><ul class="ai-cards" data-stagger>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg><h3>An allowed-actions list</h3><p>the complete set of things it can do, agreed with you before anything is built.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg><h3>Approval gates</h3><p>on consequential steps &mdash; anything sent to a customer, and anything that commits money or time, waits for a human yes.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg><h3>A log</h3><p>of what it did, when, and what it was acting on, so its work can be checked.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg><h3>A pause switch</h3><p>the whole agent can be stopped at any time without breaking anything else.</p></li>
+</ul><p>You choose where the gates sit. Some businesses keep approval on every outgoing message; others let routine steps run on their own and review only the exceptions. Either is fine, and it can be adjusted as your confidence grows &mdash; that&rsquo;s a conversation, not a rebuild.</p>
         </div>
       </div>
     </section>
-    <section class="section" aria-label="Proof you can look at today">
+    <section class="section ai-sec" aria-label="Proof you can look at today">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/07 &mdash; PROOF YOU CAN LOOK AT TODAY</p>
-          <h2 class="section-title" data-title>Proof you can look at today<span class="title-underline"></span></h2>
-<p>We&rsquo;ll be straight with you: AI agents are new enough that we don&rsquo;t yet have years of customer case studies to point at, and we won&rsquo;t invent any. What we can show you is working software.</p><p>The <a href="/365-ai-os/">365 AI OS</a> is our Claude-powered AI desktop prototype &mdash; a live, honestly-labelled scripted demonstration of an agent carrying out multi-step work, which you can watch in your browser right now. Our custom monitoring dashboards and the 365 PC Manager app are real products we built and run, and the automations described above &mdash; bookings, review requests, SMS, Slack workflows &mdash; handle our own daily operations. We use this technology on ourselves first.</p><p>Behind it is a family-run firm trading since 1995 with a 4.9-star Google rating, a Microsoft Partner, recognised as a Victron Recommended Software Integrator for our telemetry integration work. If your agent misbehaves at 9am on a Monday, you phone the same local people who look after your IT &mdash; not a ticket queue in another timezone.</p>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:2.8s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></span>
+            <h2 class="section-title" data-title>Proof you can look at today<span class="title-underline"></span></h2>
+          </div>
+<div class="ai-show"><p>We&rsquo;ll be straight with you: AI agents are new enough that we don&rsquo;t yet have years of customer case studies to point at, and we won&rsquo;t invent any. What we can show you is working software.</p><p>The <a href="/365-ai-os/">365 AI OS</a> is our Claude-powered AI desktop prototype &mdash; a live, honestly-labelled scripted demonstration of an agent carrying out multi-step work, which you can watch in your browser right now. Our custom monitoring dashboards and the 365 PC Manager app are real products we built and run, and the automations described above &mdash; bookings, review requests, SMS, Slack workflows &mdash; handle our own daily operations. We use this technology on ourselves first.</p><p>Behind it is a family-run firm trading since 1995 with a 4.9-star Google rating, a Microsoft Partner, recognised as a Victron Recommended Software Integrator for our telemetry integration work. If your agent misbehaves at 9am on a Monday, you phone the same local people who look after your IT &mdash; not a ticket queue in another timezone.</p><a class="ai-show__go" href="/365-ai-os/">Open the 365 AI OS demo<svg class="ai-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a></div>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="What shapes the quote">
+    <section class="section section--alt ai-sec" aria-label="What shapes the quote">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/08 &mdash; WHAT SHAPES THE QUOTE</p>
-          <h2 class="section-title" data-title>What shapes the quote<span class="title-underline"></span></h2>
-<p>Every agent is priced the same way: a monthly service subscription that keeps it running, monitored and supported, plus a one-off design and build quoted by complexity. There are no tiers to decode, and no figure on this page we&rsquo;d quietly change later &mdash; the build price depends on the job, so we confirm it with your quote.</p><p>What moves the number:</p><ul><li>How many systems the agent connects to, and whether ready-made integrations exist</li><li>How many distinct actions it performs</li><li>Where the approval gates sit, and how many people are involved in them</li><li>Volume &mdash; ten enquiries a week is a different build from two hundred a day</li><li>How sensitive the data is, and what handling that demands</li></ul><p>The first conversation doesn&rsquo;t require you to know any of the vocabulary on this page. <a href="/contact/">Tell us what&rsquo;s wasting your team&rsquo;s time</a> and we&rsquo;ll come back with what an agent could take off it &mdash; and, just as honestly, what it shouldn&rsquo;t.</p>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:3.2s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span>
+            <h2 class="section-title" data-title>What shapes the quote<span class="title-underline"></span></h2>
+          </div>
+<p>Every agent is priced the same way: a monthly service subscription that keeps it running, monitored and supported, plus a one-off design and build quoted by complexity. There are no tiers to decode, and no figure on this page we&rsquo;d quietly change later &mdash; the build price depends on the job, so we confirm it with your quote.</p><p>What moves the number:</p><ul class="ai-checks" data-stagger>
+<li style="--d:0.15s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"/></svg><span>How many systems the agent connects to, and whether ready-made integrations exist</span></li>
+<li style="--d:0.27s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"/></svg><span>How many distinct actions it performs</span></li>
+<li style="--d:0.39s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"/></svg><span>Where the approval gates sit, and how many people are involved in them</span></li>
+<li style="--d:0.51s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"/></svg><span>Volume &mdash; ten enquiries a week is a different build from two hundred a day</span></li>
+<li style="--d:0.63s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"/></svg><span>How sensitive the data is, and what handling that demands</span></li>
+</ul><p>The first conversation doesn&rsquo;t require you to know any of the vocabulary on this page. <a href="/contact/">Tell us what&rsquo;s wasting your team&rsquo;s time</a> and we&rsquo;ll come back with what an agent could take off it &mdash; and, just as honestly, what it shouldn&rsquo;t.</p>
         </div>
       </div>
     </section>
-    <section class="section" aria-label="Service and build pricing">
+    <section class="section ai-sec" aria-label="Service and build pricing">
       <div class="wrap wrap--narrow" style="text-align:center">
         <p class="eyebrow eyebrow--center mono" data-reveal>// SERVICE &amp; BUILD</p>
         <h2 class="section-title section-title--center" data-title>Monthly service — confirmed with your quote<span class="title-underline title-underline--center"></span></h2>
@@ -1139,7 +1291,7 @@
   <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=8" defer></script>
   <script src="/js/forms.min.js?v=8" defer></script>
-  <script src="/js/search.min.js?v=2026-08-07" defer></script>
+  <script src="/js/search.min.js?v=2026-08-08" defer></script>
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
     <p>We use cookies to power our live chat and understand how the site is used. See our <a href="/cookie-policy/">cookie policy</a>.</p>
     <div class="cookie-banner__actions">

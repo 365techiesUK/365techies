@@ -244,7 +244,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-08-07"
+      "dateModified": "2026-08-08"
     },
     {
       "@type": "FAQPage",
@@ -726,6 +726,117 @@
   </aside>
 
   <main id="main">
+<style>
+/* ---- /ai/ premium layer (route-scoped; see ai_visual.py) ---- */
+.ai-sec{position:relative}
+.ai-sec__head{display:flex;align-items:flex-start;gap:.95rem;margin-bottom:1.05rem}
+.ai-badge{flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
+  background:linear-gradient(150deg,rgba(29,151,227,.18),rgba(29,151,227,.04));
+  border:1px solid rgba(108,196,245,.28);box-shadow:0 6px 18px rgba(3,12,30,.45);position:relative}
+.ai-badge svg{width:23px;height:23px;color:var(--cyan-soft);position:relative;z-index:1}
+.ai-badge::after{content:"";position:absolute;inset:-1px;border-radius:inherit;
+  border:1px solid rgba(108,196,245,.5);opacity:0;animation:aiRing 4.5s ease-out infinite;animation-delay:var(--d,0s)}
+@keyframes aiRing{0%{opacity:.55;transform:scale(1)}55%,100%{opacity:0;transform:scale(1.28)}}
+.ai-sec__head h2{margin:0;flex:1}
+.ai-sec__head .title-underline{display:block}
+
+/* card grid - one concept per card, icon leads */
+.ai-cards{list-style:none;margin:1.2rem 0 0;padding:0;display:grid;gap:1rem;
+  grid-template-columns:repeat(auto-fit,minmax(255px,1fr))}
+.ai-cards li{position:relative;padding:1.25rem 1.3rem;border-radius:var(--r-lg);
+  background:var(--glass-deep);border:1px solid var(--line);overflow:hidden;
+  transition:transform .28s ease,border-color .28s ease,box-shadow .28s ease}
+.ai-cards li::before{content:"";position:absolute;left:0;top:0;height:2px;width:100%;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+  transform:translateX(-100%);transition:transform .5s ease}
+.ai-cards li:hover,.ai-cards li:focus-within{transform:translateY(-4px);
+  border-color:rgba(108,196,245,.42);box-shadow:0 18px 40px rgba(3,10,26,.5)}
+.ai-cards li:hover::before,.ai-cards li:focus-within::before{transform:translateX(0)}
+.ai-cards .ai-cardico{width:30px;height:30px;color:var(--cyan-soft);margin-bottom:.7rem;display:block}
+.ai-cards li:hover .ai-cardico{animation:aiNudge .6s ease}
+@keyframes aiNudge{40%{transform:translateY(-3px) rotate(-4deg)}100%{transform:none}}
+.ai-cards h3{font-size:1.06rem;color:#fff;margin:0 0 .45rem;line-height:1.3}
+.ai-cards p,.ai-cards li>span{font-size:.95rem;color:var(--muted);margin:0;display:block;line-height:1.6}
+.ai-cards a{color:var(--cyan-soft)}
+
+/* checklist with a drawn tick */
+.ai-checks{list-style:none;margin:1.1rem 0 0;padding:0;display:grid;gap:.72rem}
+.ai-checks li{position:relative;padding-left:2.1rem;color:var(--ink-3);font-size:.97rem;line-height:1.6}
+.ai-checks li svg{position:absolute;left:0;top:.15rem;width:19px;height:19px;color:var(--green-soft)}
+.ai-checks li svg path{stroke-dasharray:26;stroke-dashoffset:26;animation:aiTick .7s ease forwards;animation-delay:var(--d,0s)}
+@keyframes aiTick{to{stroke-dashoffset:0}}
+
+/* numbered step rail */
+.ai-steps{list-style:none;margin:1.3rem 0 0;padding:0;display:grid;gap:.85rem;position:relative}
+.ai-steps::before{content:"";position:absolute;left:19px;top:12px;bottom:12px;width:2px;
+  background:linear-gradient(180deg,transparent,rgba(108,196,245,.34),transparent)}
+.ai-steps li{position:relative;padding:.95rem 1.15rem .95rem 3.35rem;border-radius:var(--r-md);
+  background:rgba(12,22,48,.5);border:1px solid var(--line)}
+.ai-steps .ai-step__n{position:absolute;left:8px;top:.95rem;width:24px;height:24px;border-radius:50%;
+  display:grid;place-items:center;font-family:var(--font-mono);font-size:.72rem;color:var(--bg);
+  background:var(--cyan-soft);box-shadow:0 0 0 4px rgba(7,13,34,1),0 0 14px rgba(108,196,245,.5)}
+.ai-steps h3{font-size:1rem;color:#fff;margin:0 0 .3rem}
+.ai-steps p{font-size:.94rem;color:var(--muted);margin:0;line-height:1.6}
+
+/* hero + section scenes */
+.ai-scene{position:relative;aspect-ratio:5/3;border-radius:var(--r-lg);overflow:hidden;
+  background:radial-gradient(120% 100% at 70% 10%,rgba(29,151,227,.13),transparent 62%),
+  linear-gradient(165deg,rgba(13,27,52,.8),rgba(7,15,32,.9));border:1px solid var(--line)}
+.ai-scene svg{position:absolute;inset:0;width:100%;height:100%}
+.ai-nd{fill:#0b1d3a;stroke:#6cc4f5;stroke-width:2}
+.ai-ln{stroke:rgba(108,196,245,.42);stroke-width:2;fill:none}
+.ai-tx{fill:#9fb5d3;font-family:'IBM Plex Mono',monospace;font-size:9px}
+.ai-tx--hi{fill:#eaf4ff}
+.ai-glow{filter:drop-shadow(0 0 6px rgba(108,196,245,.6))}
+.ai-dash{stroke-dasharray:5 9;animation:aiRun 2.6s linear infinite}
+@keyframes aiRun{to{stroke-dashoffset:-56}}
+.ai-pulse{animation:aiPulse 3.2s ease-in-out infinite;animation-delay:var(--d,0s);transform-origin:center}
+@keyframes aiPulse{0%,100%{opacity:.55}50%{opacity:1}}
+.ai-beat{animation:aiBeat 3.6s ease-in-out infinite;animation-delay:var(--d,0s);transform-origin:center}
+@keyframes aiBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.09)}}
+.ai-rise{animation:aiRise 5s ease-in-out infinite;animation-delay:var(--d,0s)}
+@keyframes aiRise{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.ai-draw{stroke-dasharray:var(--len,120);stroke-dashoffset:var(--len,120);
+  animation:aiDraw 2.4s ease forwards;animation-delay:var(--d,.2s)}
+@keyframes aiDraw{to{stroke-dashoffset:0}}
+.ai-fade{opacity:0;animation:aiFade .7s ease forwards;animation-delay:var(--d,1s)}
+@keyframes aiFade{to{opacity:1}}
+.ai-travel{offset-path:var(--path);animation:aiTravel 4s linear infinite;animation-delay:var(--d,0s)}
+@keyframes aiTravel{0%{offset-distance:0%;opacity:0}
+  8%{opacity:1}88%{opacity:1}100%{offset-distance:100%;opacity:0}}
+
+/* showcase - a section that IS one real asset gets a panel and a way in */
+.ai-show{position:relative;padding:1.4rem 1.5rem;border-radius:var(--r-lg);
+  background:linear-gradient(158deg,rgba(16,32,62,.72),rgba(8,16,36,.86));
+  border:1px solid rgba(108,196,245,.24);overflow:hidden}
+.ai-show::after{content:"";position:absolute;right:-40px;top:-40px;width:150px;height:150px;border-radius:50%;
+  background:radial-gradient(circle,rgba(29,151,227,.18),transparent 68%);pointer-events:none}
+.ai-show p{position:relative;z-index:1}
+.ai-show__go{display:inline-flex;align-items:center;gap:.5rem;margin-top:.9rem;padding:.6rem 1.05rem;
+  border-radius:var(--r-pill);background:rgba(29,151,227,.14);border:1px solid rgba(108,196,245,.42);
+  color:var(--cyan-soft);font-size:.93rem;text-decoration:none;position:relative;z-index:1;
+  transition:background .25s ease,transform .25s ease}
+.ai-show__go:hover{background:rgba(29,151,227,.25);transform:translateX(3px)}
+.ai-show__go svg{width:16px;height:16px}
+.ai-show__go .ai-arrow{animation:aiArrow 1.9s ease-in-out infinite}
+@keyframes aiArrow{0%,100%{transform:translateX(0)}50%{transform:translateX(3px)}}
+
+/* proof strip */
+.ai-proof{display:grid;gap:.8rem;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));margin:1.2rem 0 0;
+  list-style:none;padding:0}
+.ai-proof li{padding:.9rem 1rem;border-radius:var(--r-md);border:1px dashed rgba(108,196,245,.3);
+  background:rgba(11,20,44,.45);font-size:.92rem;color:var(--ink-3)}
+.ai-proof strong{display:block;color:#fff;font-size:.98rem;margin-bottom:.25rem}
+
+@media (prefers-reduced-motion:reduce){
+  .ai-badge::after,.ai-dash,.ai-pulse,.ai-beat,.ai-rise,.ai-travel,.ai-show__go .ai-arrow{animation:none}
+  .ai-show__go{transition:none}
+  .ai-cards li:hover .ai-cardico{animation:none}
+  .ai-draw,.ai-checks li svg path{animation:none;stroke-dashoffset:0}
+  .ai-fade{animation:none;opacity:1}
+  .ai-cards li{transition:none}
+}
+</style>
     <section class="page-hero" aria-label="Introduction">
       <div class="page-hero__inner">
         <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">Learn AI</span></nav>
@@ -739,39 +850,53 @@
         <ul class="page-hero__chips mono"><li>&#9679; Genuinely free course</li><li>&#9679; Trading since 1995</li><li>&#9679; 4.9-star Google rating</li></ul>
       </div>
     </section>
-    <section class="section" aria-label="Start here: four questions we hear most">
+    <div class="wrap wrap--narrow"><div class="ai-scene" data-reveal aria-hidden="true"><svg class="ai-scene__svg" viewBox="0 0 400 240" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><g class="ai-rise" style="--d:0.0s"><rect x="30" y="150" width="190" height="34" rx="7" fill="#0a1a35" stroke="#3f6ea3" stroke-width="1.6"/><rect x="40" y="166" width="170" height="4" rx="2" fill="#24456f"/></g><g class="ai-rise" style="--d:0.4s"><rect x="42" y="120" width="190" height="34" rx="7" fill="#0a1a35" stroke="#3f6ea3" stroke-width="1.6"/><rect x="52" y="136" width="170" height="4" rx="2" fill="#24456f"/></g><g class="ai-rise" style="--d:0.8s"><rect x="54" y="90" width="190" height="34" rx="7" fill="#0a1a35" stroke="#3f6ea3" stroke-width="1.6"/><rect x="64" y="106" width="170" height="4" rx="2" fill="#24456f"/></g><g class="ai-rise" style="--d:1.2000000000000002s"><rect x="66" y="60" width="190" height="34" rx="7" fill="#0a1a35" stroke="#3f6ea3" stroke-width="1.6"/><rect x="76" y="76" width="170" height="4" rx="2" fill="#24456f"/></g><g class="ai-beat" style="--d:0.2s"><circle class="ai-nd ai-glow" cx="320" cy="76" r="22"/><text class="ai-tx ai-tx--hi" x="320" y="80" text-anchor="middle">?</text></g><path class="ai-ln ai-dash" style="--d:0.3s" d="M298 76 H240"/><g class="ai-fade" style="--d:1.3s"><circle cx="320" cy="150" r="14" fill="rgba(0,206,27,.14)" stroke="#5fe07a" stroke-width="1.8"/><path d="M315 150 l3.4 3.6 L326 145.4" fill="none" stroke="#5fe07a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></g><text class="ai-tx" x="276" y="196">start here</text><text class="ai-tx ai-tx--hi" x="24" y="224">no jargon, no sales pitch</text></svg></div></div>
+    <section class="section ai-sec" aria-label="Start here: four questions we hear most">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/01 &mdash; START HERE: FOUR QUESTIONS WE HEAR MOST</p>
-          <h2 class="section-title" data-title>Start here: four questions we hear most<span class="title-underline"></span></h2>
-<p>If you&rsquo;re a business owner wondering whether any of this applies to you, these four answers are the honest place to begin.</p><p><strong>What can AI actually do for a small business?</strong> Today, reliably: draft and tidy written work, summarise long documents, answer repeat questions from your own information, and pull details out of emails and forms so nobody retypes them. Think of it as a capable assistant for well-defined steps &mdash; not a replacement for your judgement, and not something you switch on across the whole business at once.</p><p><strong>What should never go into a chatbot?</strong> Passwords, card details and customers&rsquo; personal information have no place in a public AI tool &mdash; nor does anything commercially sensitive you wouldn&rsquo;t email to an outside contractor. Free tools may use what you type to improve their models. Our <a href="/using-ai-safely/">Using AI Safely guide</a> gives your team simple ground rules.</p><p><strong>When is plain automation better than AI?</strong> When a task follows fixed rules &mdash; send the reminder, copy the record, raise the invoice &mdash; ordinary automation is faster, cheaper and never has an off day. AI earns its place only where a step needs reading, judgement or writing. Most systems we build are mostly straightforward automation, with AI on the one or two steps that genuinely need it &mdash; <a href="/ai/automations/">our automation service</a> shows how that looks in practice.</p><p><strong>How do I know if a process is worth automating?</strong> Three signs: it happens often, it follows a pattern you could explain to a new starter, and it eats time or causes mistakes when it&rsquo;s rushed. If a job ticks all three, it&rsquo;s a strong candidate; if it ticks none, leave it with a human. <a href="/ai/consultancy/">Our AI consultancy</a> exists to work through exactly this question with you.</p>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:0.4s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg></span>
+            <h2 class="section-title" data-title>Start here: four questions we hear most<span class="title-underline"></span></h2>
+          </div>
+<p>If you&rsquo;re a business owner wondering whether any of this applies to you, these four answers are the honest place to begin.</p><ul class="ai-cards" data-stagger>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg><h3>What can AI actually do for a small business?</h3><p>Today, reliably: draft and tidy written work, summarise long documents, answer repeat questions from your own information, and pull details out of emails and forms so nobody retypes them. Think of it as a capable assistant for well-defined steps &mdash; not a replacement for your judgement, and not something you switch on across the whole business at once.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg><h3>What should never go into a chatbot?</h3><p>Passwords, card details and customers&rsquo; personal information have no place in a public AI tool &mdash; nor does anything commercially sensitive you wouldn&rsquo;t email to an outside contractor. Free tools may use what you type to improve their models. Our <a href="/using-ai-safely/">Using AI Safely guide</a> gives your team simple ground rules.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg><h3>When is plain automation better than AI?</h3><p>When a task follows fixed rules &mdash; send the reminder, copy the record, raise the invoice &mdash; ordinary automation is faster, cheaper and never has an off day. AI earns its place only where a step needs reading, judgement or writing. Most systems we build are mostly straightforward automation, with AI on the one or two steps that genuinely need it &mdash; <a href="/ai/automations/">our automation service</a> shows how that looks in practice.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg><h3>How do I know if a process is worth automating?</h3><p>Three signs: it happens often, it follows a pattern you could explain to a new starter, and it eats time or causes mistakes when it&rsquo;s rushed. If a job ticks all three, it&rsquo;s a strong candidate; if it ticks none, leave it with a human. <a href="/ai/consultancy/">Our AI consultancy</a> exists to work through exactly this question with you.</p></li>
+</ul>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Using AI safely">
+    <section class="section section--alt ai-sec" aria-label="Using AI safely">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/02 &mdash; USING AI SAFELY</p>
-          <h2 class="section-title" data-title>Using AI safely<span class="title-underline"></span></h2>
-<p>The AI risks that actually bite small firms are ordinary ones: customer details pasted into a free tool, a confident answer that turned out to be wrong, an email sent without a person reading it first. None of them needs a security department to prevent &mdash; they need a few plain rules everyone in the business understands.</p><p>The <a href="/using-ai-safely/">Using AI Safely guide</a> covers what to keep out of AI tools, how to check answers before you act on them, and where to keep a person in charge of the outcome. It&rsquo;s the same approach we take in the systems we build: on anything consequential, a human approves before anything happens. Plain English throughout, no scare stories, and we keep it current as the tools change.</p>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:0.8s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>
+            <h2 class="section-title" data-title>Using AI safely<span class="title-underline"></span></h2>
+          </div>
+<div class="ai-show"><p>The AI risks that actually bite small firms are ordinary ones: customer details pasted into a free tool, a confident answer that turned out to be wrong, an email sent without a person reading it first. None of them needs a security department to prevent &mdash; they need a few plain rules everyone in the business understands.</p><p>The <a href="/using-ai-safely/">Using AI Safely guide</a> covers what to keep out of AI tools, how to check answers before you act on them, and where to keep a person in charge of the outcome. It&rsquo;s the same approach we take in the systems we build: on anything consequential, a human approves before anything happens. Plain English throughout, no scare stories, and we keep it current as the tools change.</p><a class="ai-show__go" href="/using-ai-safely/">Read the safety guide<svg class="ai-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a></div>
         </div>
       </div>
     </section>
-    <section class="section" aria-label="AI for Beginners: a genuinely free course">
+    <section class="section ai-sec" aria-label="AI for Beginners: a genuinely free course">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/03 &mdash; AI FOR BEGINNERS: A GENUINELY FREE COURSE</p>
-          <h2 class="section-title" data-title>AI for Beginners: a genuinely free course<span class="title-underline"></span></h2>
-<p>If you&rsquo;d rather learn properly than piece things together from headlines, the <a href="/ai-for-beginners-course/">AI for Beginners course</a> starts from zero: what these tools actually are, what they&rsquo;re genuinely good at, where they fail, and how to try them without putting anything important at risk. It&rsquo;s written in plain English for people who run a business, not for developers.</p><p>It&rsquo;s genuinely free. We built it because most owners we speak to want to understand AI before they spend a penny on it, and we&rsquo;d rather you arrived at any conversation knowing exactly what you&rsquo;re asking for. Work through it at your own pace &mdash; there&rsquo;s no time limit and nothing to buy at the end.</p>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:1.2s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg></span>
+            <h2 class="section-title" data-title>AI for Beginners: a genuinely free course<span class="title-underline"></span></h2>
+          </div>
+<div class="ai-show"><p>If you&rsquo;d rather learn properly than piece things together from headlines, the <a href="/ai-for-beginners-course/">AI for Beginners course</a> starts from zero: what these tools actually are, what they&rsquo;re genuinely good at, where they fail, and how to try them without putting anything important at risk. It&rsquo;s written in plain English for people who run a business, not for developers.</p><p>It&rsquo;s genuinely free. We built it because most owners we speak to want to understand AI before they spend a penny on it, and we&rsquo;d rather you arrived at any conversation knowing exactly what you&rsquo;re asking for. Work through it at your own pace &mdash; there&rsquo;s no time limit and nothing to buy at the end.</p><a class="ai-show__go" href="/ai-for-beginners-course/">Start the free course<svg class="ai-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a></div>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Learn from systems that actually run">
+    <section class="section section--alt ai-sec" aria-label="Learn from systems that actually run">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/04 &mdash; LEARN FROM SYSTEMS THAT ACTUALLY RUN</p>
-          <h2 class="section-title" data-title>Learn from systems that actually run<span class="title-underline"></span></h2>
-<p>Reading only takes you so far, and we&rsquo;d rather show than tell. The <a href="/365-ai-os/">365 AI OS demo</a> is a working, Claude-powered AI desktop we built ourselves &mdash; a scripted demonstration, honestly labelled as one, so you can watch an AI-assisted workflow run rather than imagine it.</p><p>Behind it sit the systems we run on our own business every day: booking automation, review requests, SMS scheduling and Slack-connected workflows, all built in-house. That matters for learning too. These guides are written by the family-run Bournemouth team that has looked after local IT since 1995 and lives with these tools daily &mdash; not by a content agency.</p><p>And when the reading turns into a specific idea &mdash; a task you&rsquo;d like off your team&rsquo;s plate &mdash; <a href="/contact/">tell us what&rsquo;s wasting your team&rsquo;s time</a>. We&rsquo;ll say honestly whether it&rsquo;s an AI job, a plain automation job, or not worth doing at all.</p>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:1.6s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><path d="M6 8v1a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8M12 13v3"/></svg></span>
+            <h2 class="section-title" data-title>Learn from systems that actually run<span class="title-underline"></span></h2>
+          </div>
+<div class="ai-show"><p>Reading only takes you so far, and we&rsquo;d rather show than tell. The <a href="/365-ai-os/">365 AI OS demo</a> is a working, Claude-powered AI desktop we built ourselves &mdash; a scripted demonstration, honestly labelled as one, so you can watch an AI-assisted workflow run rather than imagine it.</p><p>Behind it sit the systems we run on our own business every day: booking automation, review requests, SMS scheduling and Slack-connected workflows, all built in-house. That matters for learning too. These guides are written by the family-run Bournemouth team that has looked after local IT since 1995 and lives with these tools daily &mdash; not by a content agency.</p><p>And when the reading turns into a specific idea &mdash; a task you&rsquo;d like off your team&rsquo;s plate &mdash; <a href="/contact/">tell us what&rsquo;s wasting your team&rsquo;s time</a>. We&rsquo;ll say honestly whether it&rsquo;s an AI job, a plain automation job, or not worth doing at all.</p><a class="ai-show__go" href="/365-ai-os/">Open the 365 AI OS demo<svg class="ai-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a></div>
         </div>
       </div>
     </section>
@@ -1065,7 +1190,7 @@
   <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=8" defer></script>
   <script src="/js/forms.min.js?v=8" defer></script>
-  <script src="/js/search.min.js?v=2026-08-07" defer></script>
+  <script src="/js/search.min.js?v=2026-08-08" defer></script>
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
     <p>We use cookies to power our live chat and understand how the site is used. See our <a href="/cookie-policy/">cookie policy</a>.</p>
     <div class="cookie-banner__actions">

@@ -244,7 +244,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-08-07"
+      "dateModified": "2026-08-08"
     },
     {
       "@type": "FAQPage",
@@ -726,6 +726,117 @@
   </aside>
 
   <main id="main">
+<style>
+/* ---- /ai/ premium layer (route-scoped; see ai_visual.py) ---- */
+.ai-sec{position:relative}
+.ai-sec__head{display:flex;align-items:flex-start;gap:.95rem;margin-bottom:1.05rem}
+.ai-badge{flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
+  background:linear-gradient(150deg,rgba(29,151,227,.18),rgba(29,151,227,.04));
+  border:1px solid rgba(108,196,245,.28);box-shadow:0 6px 18px rgba(3,12,30,.45);position:relative}
+.ai-badge svg{width:23px;height:23px;color:var(--cyan-soft);position:relative;z-index:1}
+.ai-badge::after{content:"";position:absolute;inset:-1px;border-radius:inherit;
+  border:1px solid rgba(108,196,245,.5);opacity:0;animation:aiRing 4.5s ease-out infinite;animation-delay:var(--d,0s)}
+@keyframes aiRing{0%{opacity:.55;transform:scale(1)}55%,100%{opacity:0;transform:scale(1.28)}}
+.ai-sec__head h2{margin:0;flex:1}
+.ai-sec__head .title-underline{display:block}
+
+/* card grid - one concept per card, icon leads */
+.ai-cards{list-style:none;margin:1.2rem 0 0;padding:0;display:grid;gap:1rem;
+  grid-template-columns:repeat(auto-fit,minmax(255px,1fr))}
+.ai-cards li{position:relative;padding:1.25rem 1.3rem;border-radius:var(--r-lg);
+  background:var(--glass-deep);border:1px solid var(--line);overflow:hidden;
+  transition:transform .28s ease,border-color .28s ease,box-shadow .28s ease}
+.ai-cards li::before{content:"";position:absolute;left:0;top:0;height:2px;width:100%;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+  transform:translateX(-100%);transition:transform .5s ease}
+.ai-cards li:hover,.ai-cards li:focus-within{transform:translateY(-4px);
+  border-color:rgba(108,196,245,.42);box-shadow:0 18px 40px rgba(3,10,26,.5)}
+.ai-cards li:hover::before,.ai-cards li:focus-within::before{transform:translateX(0)}
+.ai-cards .ai-cardico{width:30px;height:30px;color:var(--cyan-soft);margin-bottom:.7rem;display:block}
+.ai-cards li:hover .ai-cardico{animation:aiNudge .6s ease}
+@keyframes aiNudge{40%{transform:translateY(-3px) rotate(-4deg)}100%{transform:none}}
+.ai-cards h3{font-size:1.06rem;color:#fff;margin:0 0 .45rem;line-height:1.3}
+.ai-cards p,.ai-cards li>span{font-size:.95rem;color:var(--muted);margin:0;display:block;line-height:1.6}
+.ai-cards a{color:var(--cyan-soft)}
+
+/* checklist with a drawn tick */
+.ai-checks{list-style:none;margin:1.1rem 0 0;padding:0;display:grid;gap:.72rem}
+.ai-checks li{position:relative;padding-left:2.1rem;color:var(--ink-3);font-size:.97rem;line-height:1.6}
+.ai-checks li svg{position:absolute;left:0;top:.15rem;width:19px;height:19px;color:var(--green-soft)}
+.ai-checks li svg path{stroke-dasharray:26;stroke-dashoffset:26;animation:aiTick .7s ease forwards;animation-delay:var(--d,0s)}
+@keyframes aiTick{to{stroke-dashoffset:0}}
+
+/* numbered step rail */
+.ai-steps{list-style:none;margin:1.3rem 0 0;padding:0;display:grid;gap:.85rem;position:relative}
+.ai-steps::before{content:"";position:absolute;left:19px;top:12px;bottom:12px;width:2px;
+  background:linear-gradient(180deg,transparent,rgba(108,196,245,.34),transparent)}
+.ai-steps li{position:relative;padding:.95rem 1.15rem .95rem 3.35rem;border-radius:var(--r-md);
+  background:rgba(12,22,48,.5);border:1px solid var(--line)}
+.ai-steps .ai-step__n{position:absolute;left:8px;top:.95rem;width:24px;height:24px;border-radius:50%;
+  display:grid;place-items:center;font-family:var(--font-mono);font-size:.72rem;color:var(--bg);
+  background:var(--cyan-soft);box-shadow:0 0 0 4px rgba(7,13,34,1),0 0 14px rgba(108,196,245,.5)}
+.ai-steps h3{font-size:1rem;color:#fff;margin:0 0 .3rem}
+.ai-steps p{font-size:.94rem;color:var(--muted);margin:0;line-height:1.6}
+
+/* hero + section scenes */
+.ai-scene{position:relative;aspect-ratio:5/3;border-radius:var(--r-lg);overflow:hidden;
+  background:radial-gradient(120% 100% at 70% 10%,rgba(29,151,227,.13),transparent 62%),
+  linear-gradient(165deg,rgba(13,27,52,.8),rgba(7,15,32,.9));border:1px solid var(--line)}
+.ai-scene svg{position:absolute;inset:0;width:100%;height:100%}
+.ai-nd{fill:#0b1d3a;stroke:#6cc4f5;stroke-width:2}
+.ai-ln{stroke:rgba(108,196,245,.42);stroke-width:2;fill:none}
+.ai-tx{fill:#9fb5d3;font-family:'IBM Plex Mono',monospace;font-size:9px}
+.ai-tx--hi{fill:#eaf4ff}
+.ai-glow{filter:drop-shadow(0 0 6px rgba(108,196,245,.6))}
+.ai-dash{stroke-dasharray:5 9;animation:aiRun 2.6s linear infinite}
+@keyframes aiRun{to{stroke-dashoffset:-56}}
+.ai-pulse{animation:aiPulse 3.2s ease-in-out infinite;animation-delay:var(--d,0s);transform-origin:center}
+@keyframes aiPulse{0%,100%{opacity:.55}50%{opacity:1}}
+.ai-beat{animation:aiBeat 3.6s ease-in-out infinite;animation-delay:var(--d,0s);transform-origin:center}
+@keyframes aiBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.09)}}
+.ai-rise{animation:aiRise 5s ease-in-out infinite;animation-delay:var(--d,0s)}
+@keyframes aiRise{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.ai-draw{stroke-dasharray:var(--len,120);stroke-dashoffset:var(--len,120);
+  animation:aiDraw 2.4s ease forwards;animation-delay:var(--d,.2s)}
+@keyframes aiDraw{to{stroke-dashoffset:0}}
+.ai-fade{opacity:0;animation:aiFade .7s ease forwards;animation-delay:var(--d,1s)}
+@keyframes aiFade{to{opacity:1}}
+.ai-travel{offset-path:var(--path);animation:aiTravel 4s linear infinite;animation-delay:var(--d,0s)}
+@keyframes aiTravel{0%{offset-distance:0%;opacity:0}
+  8%{opacity:1}88%{opacity:1}100%{offset-distance:100%;opacity:0}}
+
+/* showcase - a section that IS one real asset gets a panel and a way in */
+.ai-show{position:relative;padding:1.4rem 1.5rem;border-radius:var(--r-lg);
+  background:linear-gradient(158deg,rgba(16,32,62,.72),rgba(8,16,36,.86));
+  border:1px solid rgba(108,196,245,.24);overflow:hidden}
+.ai-show::after{content:"";position:absolute;right:-40px;top:-40px;width:150px;height:150px;border-radius:50%;
+  background:radial-gradient(circle,rgba(29,151,227,.18),transparent 68%);pointer-events:none}
+.ai-show p{position:relative;z-index:1}
+.ai-show__go{display:inline-flex;align-items:center;gap:.5rem;margin-top:.9rem;padding:.6rem 1.05rem;
+  border-radius:var(--r-pill);background:rgba(29,151,227,.14);border:1px solid rgba(108,196,245,.42);
+  color:var(--cyan-soft);font-size:.93rem;text-decoration:none;position:relative;z-index:1;
+  transition:background .25s ease,transform .25s ease}
+.ai-show__go:hover{background:rgba(29,151,227,.25);transform:translateX(3px)}
+.ai-show__go svg{width:16px;height:16px}
+.ai-show__go .ai-arrow{animation:aiArrow 1.9s ease-in-out infinite}
+@keyframes aiArrow{0%,100%{transform:translateX(0)}50%{transform:translateX(3px)}}
+
+/* proof strip */
+.ai-proof{display:grid;gap:.8rem;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));margin:1.2rem 0 0;
+  list-style:none;padding:0}
+.ai-proof li{padding:.9rem 1rem;border-radius:var(--r-md);border:1px dashed rgba(108,196,245,.3);
+  background:rgba(11,20,44,.45);font-size:.92rem;color:var(--ink-3)}
+.ai-proof strong{display:block;color:#fff;font-size:.98rem;margin-bottom:.25rem}
+
+@media (prefers-reduced-motion:reduce){
+  .ai-badge::after,.ai-dash,.ai-pulse,.ai-beat,.ai-rise,.ai-travel,.ai-show__go .ai-arrow{animation:none}
+  .ai-show__go{transition:none}
+  .ai-cards li:hover .ai-cardico{animation:none}
+  .ai-draw,.ai-checks li svg path{animation:none;stroke-dashoffset:0}
+  .ai-fade{animation:none;opacity:1}
+  .ai-cards li{transition:none}
+}
+</style>
     <section class="page-hero" aria-label="Introduction">
       <div class="page-hero__inner">
         <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">AI Tools & Demos</span></nav>
@@ -739,52 +850,63 @@
         <ul class="page-hero__chips mono"><li>&#9679; Three tools, free to try</li><li>&#9679; Built and run in-house</li><li>&#9679; 4.9-star Google rating</li></ul>
       </div>
     </section>
-    <section class="section" aria-label="Why we publish working demos">
+    <div class="wrap wrap--narrow"><div class="ai-scene" data-reveal aria-hidden="true"><svg class="ai-scene__svg" viewBox="0 0 400 240" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><g class="" style="--d:0s"><rect x="24" y="34" width="150" height="60" rx="7" fill="#0a1a35" stroke="#3f6ea3" stroke-width="1.6"/><text class="ai-tx ai-tx--hi" x="34" y="51">estimator</text><rect x="34" y="62" width="130" height="4" rx="2" fill="#24456f"/><rect x="34" y="73" width="116" height="4" rx="2" fill="#24456f"/></g><g class="" style="--d:0.2s"><rect x="24" y="106" width="150" height="60" rx="7" fill="#0a1a35" stroke="#3f6ea3" stroke-width="1.6"/><text class="ai-tx ai-tx--hi" x="34" y="123">AI OS demo</text><rect x="34" y="134" width="130" height="4" rx="2" fill="#24456f"/><rect x="34" y="145" width="116" height="4" rx="2" fill="#24456f"/></g><rect x="192" y="34" width="184" height="132" rx="9" fill="#0a1a35" stroke="#3f6ea3" stroke-width="1.6"/><text class="ai-tx ai-tx--hi" x="204" y="52">LIVE DASHBOARD</text><path class="ai-draw" style="--len:260;--d:.4s" fill="none" stroke="#6cc4f5" stroke-width="2.2" stroke-linecap="round" d="M204 140 L236 118 L268 126 L300 96 L332 104 L364 74"/><circle class="ai-fade" style="--d:1.2s" cx="236" cy="118" r="3" fill="#6cc4f5"/><circle class="ai-fade" style="--d:1.3199999999999998s" cx="268" cy="126" r="3" fill="#6cc4f5"/><circle class="ai-fade" style="--d:1.44s" cx="300" cy="96" r="3" fill="#6cc4f5"/><circle class="ai-fade" style="--d:1.56s" cx="332" cy="104" r="3" fill="#6cc4f5"/><circle class="ai-fade" style="--d:1.68s" cx="364" cy="74" r="3" fill="#6cc4f5"/><text class="ai-tx" x="24" y="196">try them yourself &#8212; nothing to install</text><g class="ai-fade" style="--d:1.6s"><circle cx="352" cy="190" r="12" fill="rgba(0,206,27,.14)" stroke="#5fe07a" stroke-width="1.8"/><path d="M347 190 l3.4 3.6 L358 185.4" fill="none" stroke="#5fe07a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></g></svg></div></div>
+    <section class="section ai-sec" aria-label="Why we publish working demos">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/01 &mdash; WHY WE PUBLISH WORKING DEMOS</p>
-          <h2 class="section-title" data-title>Why we publish working demos<span class="title-underline"></span></h2>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:0.4s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span>
+            <h2 class="section-title" data-title>Why we publish working demos<span class="title-underline"></span></h2>
+          </div>
 <p>Plenty of firms will tell you what AI could do for your business. Very few will show you anything actually running. We&rsquo;ve taken the opposite approach: everything on this page is something we built ourselves and use in our own business &mdash; the same team that runs booking, review-request and messaging automations to keep 365 Techies going day to day.</p><p>Nothing here asks for your email address or books you into a sales call. Try the tools, watch the demos, and if something looks useful, <a href="/contact/">tell us what&rsquo;s wasting your team&rsquo;s time</a>.</p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="The AI ROI calculator">
+    <section class="section section--alt ai-sec" aria-label="The AI ROI calculator">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/02 &mdash; THE AI ROI CALCULATOR</p>
-          <h2 class="section-title" data-title>The AI ROI calculator<span class="title-underline"></span></h2>
-<p>The <a href="/ai-roi-calculator/">AI ROI calculator</a> is a free estimator. You put in the repetitive jobs your team does &mdash; how often they come up, how long they take, and roughly what an hour of that person&rsquo;s time costs &mdash; and it works out what automating those steps might be worth over a month and a year.</p><p><strong>What it is:</strong> honest arithmetic based on the numbers you type in. <strong>What it isn&rsquo;t:</strong> a promise. The results are estimates only, not customer outcomes, and we&rsquo;ll always confirm what&rsquo;s realistic for your business before quoting for a build. Nothing you enter is stored unless you choose to send it to us.</p>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:0.8s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9" y="9" width="6" height="6" rx="1"/><path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2"/></svg></span>
+            <h2 class="section-title" data-title>The AI ROI calculator<span class="title-underline"></span></h2>
+          </div>
+<div class="ai-show"><p>The <a href="/ai-roi-calculator/">AI ROI calculator</a> is a free estimator. You put in the repetitive jobs your team does &mdash; how often they come up, how long they take, and roughly what an hour of that person&rsquo;s time costs &mdash; and it works out what automating those steps might be worth over a month and a year.</p><p><strong>What it is:</strong> honest arithmetic based on the numbers you type in. <strong>What it isn&rsquo;t:</strong> a promise. The results are estimates only, not customer outcomes, and we&rsquo;ll always confirm what&rsquo;s realistic for your business before quoting for a build. Nothing you enter is stored unless you choose to send it to us.</p><a class="ai-show__go" href="/ai-roi-calculator/">Open the ROI calculator<svg class="ai-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a></div>
         </div>
       </div>
     </section>
-    <section class="section" aria-label="The 365 AI OS demo">
+    <section class="section ai-sec" aria-label="The 365 AI OS demo">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/03 &mdash; THE 365 AI OS DEMO</p>
-          <h2 class="section-title" data-title>The 365 AI OS demo<span class="title-underline"></span></h2>
-<p>The <a href="/365-ai-os/">365 AI OS</a> is our working prototype of a Claude-powered AI desktop &mdash; an assistant that can see what&rsquo;s on screen and work across applications rather than sitting in a single chat box. The demo on that page is a scripted demonstration, and it says so plainly: it walks through a short scripted sequence so you can see how the prototype behaves without waiting for anything to load or go wrong.</p><p>It&rsquo;s free to watch, there&rsquo;s no sign-up, and because it&rsquo;s a demonstration it never touches your files or your data. If it sparks ideas, our <a href="/ai/agents/">AI agents</a> page explains how the same thinking applies to everyday business jobs.</p>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:1.2s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9" y="9" width="6" height="6" rx="1"/><path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2"/></svg></span>
+            <h2 class="section-title" data-title>The 365 AI OS demo<span class="title-underline"></span></h2>
+          </div>
+<div class="ai-show"><p>The <a href="/365-ai-os/">365 AI OS</a> is our working prototype of a Claude-powered AI desktop &mdash; an assistant that can see what&rsquo;s on screen and work across applications rather than sitting in a single chat box. The demo on that page is a scripted demonstration, and it says so plainly: it walks through a short scripted sequence so you can see how the prototype behaves without waiting for anything to load or go wrong.</p><p>It&rsquo;s free to watch, there&rsquo;s no sign-up, and because it&rsquo;s a demonstration it never touches your files or your data. If it sparks ideas, our <a href="/ai/agents/">AI agents</a> page explains how the same thinking applies to everyday business jobs.</p><a class="ai-show__go" href="/365-ai-os/">Open the 365 AI OS demo<svg class="ai-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a></div>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="The live 3D system-monitoring demo">
+    <section class="section section--alt ai-sec" aria-label="The live 3D system-monitoring demo">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/04 &mdash; THE LIVE 3D SYSTEM-MONITORING DEMO</p>
-          <h2 class="section-title" data-title>The live 3D system-monitoring demo<span class="title-underline"></span></h2>
-<p>The <a href="/system-monitoring-demo/">live 3D system-monitoring demo</a> shows our dashboards product doing its actual job: a fully interactive 3D dashboard running on clearly labelled sample data &mdash; exactly how a customer&rsquo;s own version looks and moves. This is the same product we build for customers &mdash; from office PCs through to marine and off-grid energy systems, where we&rsquo;re a Victron Recommended Software Integrator.</p><p>The demo is view-only. It runs on sample data &mdash; nothing connects to your systems, and the page says so, and it neither asks for nor stores anything of yours.</p>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:1.6s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></span>
+            <h2 class="section-title" data-title>The live 3D system-monitoring demo<span class="title-underline"></span></h2>
+          </div>
+<div class="ai-show"><p>The <a href="/system-monitoring-demo/">live 3D system-monitoring demo</a> shows our dashboards product doing its actual job: a fully interactive 3D dashboard running on clearly labelled sample data &mdash; exactly how a customer&rsquo;s own version looks and moves. This is the same product we build for customers &mdash; from office PCs through to marine and off-grid energy systems, where we&rsquo;re a Victron Recommended Software Integrator.</p><p>The demo is view-only. It runs on sample data &mdash; nothing connects to your systems, and the page says so, and it neither asks for nor stores anything of yours.</p><a class="ai-show__go" href="/system-monitoring-demo/">Open the live dashboard demo<svg class="ai-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a></div>
         </div>
       </div>
     </section>
-    <section class="section" aria-label="Where these tools lead">
+    <section class="section ai-sec" aria-label="Where these tools lead">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/05 &mdash; WHERE THESE TOOLS LEAD</p>
-          <h2 class="section-title" data-title>Where these tools lead<span class="title-underline"></span></h2>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:2.0s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9" y="9" width="6" height="6" rx="1"/><path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2"/></svg></span>
+            <h2 class="section-title" data-title>Where these tools lead<span class="title-underline"></span></h2>
+          </div>
 <p>These tools exist to make the next conversation easier, not to replace it. If the calculator surfaces a job worth automating, the <a href="/ai/">AI services section</a> shows how we&rsquo;d approach it, and the <a href="/ai/agents/">AI agents</a> page covers work that needs judgement as well as repetition.</p><p>Two things stay true across everything we build. First, AI only does a step where it genuinely helps; ordinary rule-based automation handles the rest, and we&rsquo;ll tell you which is which. Second, a human can stay in the loop &mdash; consequential actions can wait for your approval rather than happening silently.</p><p>Every service works the same way commercially: a monthly service subscription plus a one-off design and build, quoted by complexity once we understand the job. No tiers to decode and no technology for you to pick &mdash; just <a href="/contact/">tell us what you want to automate</a> and we&rsquo;ll come back with a plain-English plan and a price.</p>
         </div>
       </div>
     </section>
-    <section class="section" aria-label="Service and build pricing">
+    <section class="section ai-sec" aria-label="Service and build pricing">
       <div class="wrap wrap--narrow" style="text-align:center">
         <p class="eyebrow eyebrow--center mono" data-reveal>// SERVICE &amp; BUILD</p>
         <h2 class="section-title section-title--center" data-title>Monthly service &mdash; confirmed with your quote<span class="title-underline title-underline--center"></span></h2>
@@ -1085,7 +1207,7 @@
   <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=8" defer></script>
   <script src="/js/forms.min.js?v=8" defer></script>
-  <script src="/js/search.min.js?v=2026-08-07" defer></script>
+  <script src="/js/search.min.js?v=2026-08-08" defer></script>
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
     <p>We use cookies to power our live chat and understand how the site is used. See our <a href="/cookie-policy/">cookie policy</a>.</p>
     <div class="cookie-banner__actions">

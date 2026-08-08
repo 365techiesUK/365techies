@@ -244,7 +244,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-08-07"
+      "dateModified": "2026-08-08"
     },
     {
       "@type": "Service",
@@ -749,6 +749,117 @@
   </aside>
 
   <main id="main">
+<style>
+/* ---- /ai/ premium layer (route-scoped; see ai_visual.py) ---- */
+.ai-sec{position:relative}
+.ai-sec__head{display:flex;align-items:flex-start;gap:.95rem;margin-bottom:1.05rem}
+.ai-badge{flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
+  background:linear-gradient(150deg,rgba(29,151,227,.18),rgba(29,151,227,.04));
+  border:1px solid rgba(108,196,245,.28);box-shadow:0 6px 18px rgba(3,12,30,.45);position:relative}
+.ai-badge svg{width:23px;height:23px;color:var(--cyan-soft);position:relative;z-index:1}
+.ai-badge::after{content:"";position:absolute;inset:-1px;border-radius:inherit;
+  border:1px solid rgba(108,196,245,.5);opacity:0;animation:aiRing 4.5s ease-out infinite;animation-delay:var(--d,0s)}
+@keyframes aiRing{0%{opacity:.55;transform:scale(1)}55%,100%{opacity:0;transform:scale(1.28)}}
+.ai-sec__head h2{margin:0;flex:1}
+.ai-sec__head .title-underline{display:block}
+
+/* card grid - one concept per card, icon leads */
+.ai-cards{list-style:none;margin:1.2rem 0 0;padding:0;display:grid;gap:1rem;
+  grid-template-columns:repeat(auto-fit,minmax(255px,1fr))}
+.ai-cards li{position:relative;padding:1.25rem 1.3rem;border-radius:var(--r-lg);
+  background:var(--glass-deep);border:1px solid var(--line);overflow:hidden;
+  transition:transform .28s ease,border-color .28s ease,box-shadow .28s ease}
+.ai-cards li::before{content:"";position:absolute;left:0;top:0;height:2px;width:100%;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+  transform:translateX(-100%);transition:transform .5s ease}
+.ai-cards li:hover,.ai-cards li:focus-within{transform:translateY(-4px);
+  border-color:rgba(108,196,245,.42);box-shadow:0 18px 40px rgba(3,10,26,.5)}
+.ai-cards li:hover::before,.ai-cards li:focus-within::before{transform:translateX(0)}
+.ai-cards .ai-cardico{width:30px;height:30px;color:var(--cyan-soft);margin-bottom:.7rem;display:block}
+.ai-cards li:hover .ai-cardico{animation:aiNudge .6s ease}
+@keyframes aiNudge{40%{transform:translateY(-3px) rotate(-4deg)}100%{transform:none}}
+.ai-cards h3{font-size:1.06rem;color:#fff;margin:0 0 .45rem;line-height:1.3}
+.ai-cards p,.ai-cards li>span{font-size:.95rem;color:var(--muted);margin:0;display:block;line-height:1.6}
+.ai-cards a{color:var(--cyan-soft)}
+
+/* checklist with a drawn tick */
+.ai-checks{list-style:none;margin:1.1rem 0 0;padding:0;display:grid;gap:.72rem}
+.ai-checks li{position:relative;padding-left:2.1rem;color:var(--ink-3);font-size:.97rem;line-height:1.6}
+.ai-checks li svg{position:absolute;left:0;top:.15rem;width:19px;height:19px;color:var(--green-soft)}
+.ai-checks li svg path{stroke-dasharray:26;stroke-dashoffset:26;animation:aiTick .7s ease forwards;animation-delay:var(--d,0s)}
+@keyframes aiTick{to{stroke-dashoffset:0}}
+
+/* numbered step rail */
+.ai-steps{list-style:none;margin:1.3rem 0 0;padding:0;display:grid;gap:.85rem;position:relative}
+.ai-steps::before{content:"";position:absolute;left:19px;top:12px;bottom:12px;width:2px;
+  background:linear-gradient(180deg,transparent,rgba(108,196,245,.34),transparent)}
+.ai-steps li{position:relative;padding:.95rem 1.15rem .95rem 3.35rem;border-radius:var(--r-md);
+  background:rgba(12,22,48,.5);border:1px solid var(--line)}
+.ai-steps .ai-step__n{position:absolute;left:8px;top:.95rem;width:24px;height:24px;border-radius:50%;
+  display:grid;place-items:center;font-family:var(--font-mono);font-size:.72rem;color:var(--bg);
+  background:var(--cyan-soft);box-shadow:0 0 0 4px rgba(7,13,34,1),0 0 14px rgba(108,196,245,.5)}
+.ai-steps h3{font-size:1rem;color:#fff;margin:0 0 .3rem}
+.ai-steps p{font-size:.94rem;color:var(--muted);margin:0;line-height:1.6}
+
+/* hero + section scenes */
+.ai-scene{position:relative;aspect-ratio:5/3;border-radius:var(--r-lg);overflow:hidden;
+  background:radial-gradient(120% 100% at 70% 10%,rgba(29,151,227,.13),transparent 62%),
+  linear-gradient(165deg,rgba(13,27,52,.8),rgba(7,15,32,.9));border:1px solid var(--line)}
+.ai-scene svg{position:absolute;inset:0;width:100%;height:100%}
+.ai-nd{fill:#0b1d3a;stroke:#6cc4f5;stroke-width:2}
+.ai-ln{stroke:rgba(108,196,245,.42);stroke-width:2;fill:none}
+.ai-tx{fill:#9fb5d3;font-family:'IBM Plex Mono',monospace;font-size:9px}
+.ai-tx--hi{fill:#eaf4ff}
+.ai-glow{filter:drop-shadow(0 0 6px rgba(108,196,245,.6))}
+.ai-dash{stroke-dasharray:5 9;animation:aiRun 2.6s linear infinite}
+@keyframes aiRun{to{stroke-dashoffset:-56}}
+.ai-pulse{animation:aiPulse 3.2s ease-in-out infinite;animation-delay:var(--d,0s);transform-origin:center}
+@keyframes aiPulse{0%,100%{opacity:.55}50%{opacity:1}}
+.ai-beat{animation:aiBeat 3.6s ease-in-out infinite;animation-delay:var(--d,0s);transform-origin:center}
+@keyframes aiBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.09)}}
+.ai-rise{animation:aiRise 5s ease-in-out infinite;animation-delay:var(--d,0s)}
+@keyframes aiRise{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.ai-draw{stroke-dasharray:var(--len,120);stroke-dashoffset:var(--len,120);
+  animation:aiDraw 2.4s ease forwards;animation-delay:var(--d,.2s)}
+@keyframes aiDraw{to{stroke-dashoffset:0}}
+.ai-fade{opacity:0;animation:aiFade .7s ease forwards;animation-delay:var(--d,1s)}
+@keyframes aiFade{to{opacity:1}}
+.ai-travel{offset-path:var(--path);animation:aiTravel 4s linear infinite;animation-delay:var(--d,0s)}
+@keyframes aiTravel{0%{offset-distance:0%;opacity:0}
+  8%{opacity:1}88%{opacity:1}100%{offset-distance:100%;opacity:0}}
+
+/* showcase - a section that IS one real asset gets a panel and a way in */
+.ai-show{position:relative;padding:1.4rem 1.5rem;border-radius:var(--r-lg);
+  background:linear-gradient(158deg,rgba(16,32,62,.72),rgba(8,16,36,.86));
+  border:1px solid rgba(108,196,245,.24);overflow:hidden}
+.ai-show::after{content:"";position:absolute;right:-40px;top:-40px;width:150px;height:150px;border-radius:50%;
+  background:radial-gradient(circle,rgba(29,151,227,.18),transparent 68%);pointer-events:none}
+.ai-show p{position:relative;z-index:1}
+.ai-show__go{display:inline-flex;align-items:center;gap:.5rem;margin-top:.9rem;padding:.6rem 1.05rem;
+  border-radius:var(--r-pill);background:rgba(29,151,227,.14);border:1px solid rgba(108,196,245,.42);
+  color:var(--cyan-soft);font-size:.93rem;text-decoration:none;position:relative;z-index:1;
+  transition:background .25s ease,transform .25s ease}
+.ai-show__go:hover{background:rgba(29,151,227,.25);transform:translateX(3px)}
+.ai-show__go svg{width:16px;height:16px}
+.ai-show__go .ai-arrow{animation:aiArrow 1.9s ease-in-out infinite}
+@keyframes aiArrow{0%,100%{transform:translateX(0)}50%{transform:translateX(3px)}}
+
+/* proof strip */
+.ai-proof{display:grid;gap:.8rem;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));margin:1.2rem 0 0;
+  list-style:none;padding:0}
+.ai-proof li{padding:.9rem 1rem;border-radius:var(--r-md);border:1px dashed rgba(108,196,245,.3);
+  background:rgba(11,20,44,.45);font-size:.92rem;color:var(--ink-3)}
+.ai-proof strong{display:block;color:#fff;font-size:.98rem;margin-bottom:.25rem}
+
+@media (prefers-reduced-motion:reduce){
+  .ai-badge::after,.ai-dash,.ai-pulse,.ai-beat,.ai-rise,.ai-travel,.ai-show__go .ai-arrow{animation:none}
+  .ai-show__go{transition:none}
+  .ai-cards li:hover .ai-cardico{animation:none}
+  .ai-draw,.ai-checks li svg path{animation:none;stroke-dashoffset:0}
+  .ai-fade{animation:none;opacity:1}
+  .ai-cards li{transition:none}
+}
+</style>
     <section class="page-hero" aria-label="Introduction">
       <div class="page-hero__inner">
         <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">AI Training</span></nav>
@@ -762,70 +873,91 @@
         <ul class="page-hero__chips mono"><li>&#9679; Trading since 1995</li><li>&#9679; 4.9-star Google rating</li><li>&#9679; In person across Dorset or remote</li></ul>
       </div>
     </section>
-    <section class="section" aria-label="Who this training is for">
+    <div class="wrap wrap--narrow"><div class="ai-scene" data-reveal aria-hidden="true"><svg class="ai-scene__svg" viewBox="0 0 400 240" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><g class="" style="--d:0s"><rect x="112" y="44" width="176" height="96" rx="7" fill="#0a1a35" stroke="#3f6ea3" stroke-width="1.6"/><text class="ai-tx ai-tx--hi" x="122" y="61">your workflow</text><rect x="122" y="72" width="156" height="4" rx="2" fill="#24456f"/><rect x="122" y="83" width="142" height="4" rx="2" fill="#24456f"/><rect x="122" y="94" width="156" height="4" rx="2" fill="#24456f"/><rect x="122" y="105" width="142" height="4" rx="2" fill="#24456f"/></g><g class="ai-rise" style="--d:0.0s"><circle cx="72" cy="179.1" r="5.75" fill="none" stroke="#9fb5d3" stroke-width="1.8"/><path d="M62.8 195.2 a9.2 9.2 0 0 1 18.4 0" fill="none" stroke="#9fb5d3" stroke-width="1.8" stroke-linecap="round"/></g><g class="ai-rise" style="--d:0.5s"><circle cx="200" cy="179.1" r="5.75" fill="none" stroke="#9fb5d3" stroke-width="1.8"/><path d="M190.8 195.2 a9.2 9.2 0 0 1 18.4 0" fill="none" stroke="#9fb5d3" stroke-width="1.8" stroke-linecap="round"/></g><g class="ai-rise" style="--d:1.0s"><circle cx="328" cy="179.1" r="5.75" fill="none" stroke="#9fb5d3" stroke-width="1.8"/><path d="M318.8 195.2 a9.2 9.2 0 0 1 18.4 0" fill="none" stroke="#9fb5d3" stroke-width="1.8" stroke-linecap="round"/></g><path class="ai-ln" style="--d:0s" d="M72 168 V150"/><path class="ai-ln" style="--d:0s" d="M200 168 V146"/><path class="ai-ln" style="--d:0s" d="M328 168 V150"/><path class="ai-ln ai-dash" style="--d:0.2s" d="M112 92 H72 V150"/><path class="ai-ln ai-dash" style="--d:0.5s" d="M288 92 H328 V150"/><g class="ai-fade" style="--d:1.2s"><circle cx="200" cy="118" r="13" fill="rgba(0,206,27,.14)" stroke="#5fe07a" stroke-width="1.8"/><path d="M195 118 l3.4 3.6 L206 113.4" fill="none" stroke="#5fe07a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></g><text class="ai-tx ai-tx--hi" x="24" y="30">SAFE, PRACTICAL HABITS</text><text class="ai-tx" x="148" y="224">on your real jobs</text></svg></div></div>
+    <section class="section ai-sec" aria-label="Who this training is for">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/01 &mdash; WHO THIS TRAINING IS FOR</p>
-          <h2 class="section-title" data-title>Who this training is for<span class="title-underline"></span></h2>
-<p>This page is for owners and managers who want a whole team using AI properly &mdash; not one enthusiast quietly experimenting while everyone else waits to be told what&rsquo;s allowed. Perhaps you&rsquo;re weighing up Microsoft Copilot licences. Perhaps half your staff already paste things into ChatGPT and you&rsquo;re not entirely sure what. Either way, the questions are the same: which tools, for which jobs, with what rules?</p><p>We train teams across Bournemouth, Poole, Christchurch and the wider Dorset area &mdash; and remotely across the UK where that suits better &mdash; on Copilot, ChatGPT and Claude, using your own workflows as the course material. If you&rsquo;re an individual who just wants a friendly starting point, our free <a href="/ai-for-beginners-course/">AI for Beginners course</a> is the better fit. This page is about scoped, quoted enablement for a team.</p>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:0.4s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg></span>
+            <h2 class="section-title" data-title>Who this training is for<span class="title-underline"></span></h2>
+          </div>
+<div class="ai-show"><p>This page is for owners and managers who want a whole team using AI properly &mdash; not one enthusiast quietly experimenting while everyone else waits to be told what&rsquo;s allowed. Perhaps you&rsquo;re weighing up Microsoft Copilot licences. Perhaps half your staff already paste things into ChatGPT and you&rsquo;re not entirely sure what. Either way, the questions are the same: which tools, for which jobs, with what rules?</p><p>We train teams across Bournemouth, Poole, Christchurch and the wider Dorset area &mdash; and remotely across the UK where that suits better &mdash; on Copilot, ChatGPT and Claude, using your own workflows as the course material. If you&rsquo;re an individual who just wants a friendly starting point, our free <a href="/ai-for-beginners-course/">AI for Beginners course</a> is the better fit. This page is about scoped, quoted enablement for a team.</p><a class="ai-show__go" href="/ai-for-beginners-course/">Start the free course<svg class="ai-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a></div>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Sessions built on your real workflows">
+    <section class="section section--alt ai-sec" aria-label="Sessions built on your real workflows">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/02 &mdash; SESSIONS BUILT ON YOUR REAL WORKFLOWS</p>
-          <h2 class="section-title" data-title>Sessions built on your real workflows<span class="title-underline"></span></h2>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:0.8s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span>
+            <h2 class="section-title" data-title>Sessions built on your real workflows<span class="title-underline"></span></h2>
+          </div>
 <p>Generic AI courses teach prompts in the abstract, and the learning evaporates by Friday. We start from the other end: what does your team actually do all day? Quotes and estimates, customer emails, job sheets, meeting notes, reports, spreadsheets, chasing invoices &mdash; every business has a different list, and every role on the team has a different slice of it.</p><p>We build role-based sessions around that list. What your office administrator needs from Copilot is not what your estimator or your director needs, so we don&rsquo;t sit them through the same slides. Each person practises on realistic examples from their own job &mdash; agreed with you in advance, so nothing sensitive ends up on a screen &mdash; and leaves with working patterns they can use the next morning.</p><p>We&rsquo;re also honest about the limits. Some tasks shouldn&rsquo;t be a person prompting a chatbot at all &mdash; they should be a quiet automation running reliably in the background. When training uncovers one of those, we say so; building them is what our <a href="/ai/">wider AI services</a> are for.</p>
         </div>
       </div>
     </section>
-    <section class="section" aria-label="Safe use: the habits and the policy">
+    <section class="section ai-sec" aria-label="Safe use: the habits and the policy">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/03 &mdash; SAFE USE: THE HABITS AND THE POLICY</p>
-          <h2 class="section-title" data-title>Safe use: the habits and the policy<span class="title-underline"></span></h2>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:1.2s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>
+            <h2 class="section-title" data-title>Safe use: the habits and the policy<span class="title-underline"></span></h2>
+          </div>
 <p>Before anyone gets faster with AI, they need to know where the edges are. The most valuable hour of the programme is usually the one about what <strong>never</strong> goes into an AI tool: customer names and personal details, passwords and access keys, card or bank information, unreleased financial figures, anything covered by an NDA.</p><p>There&rsquo;s a plain reason why. Some free, consumer-grade chatbot plans can use what you type to improve their models unless the settings say otherwise. Business-grade tools handle data differently &mdash; which is exactly why choosing the right tier matters. We explain your data-protection responsibilities in plain English, including what UK GDPR means for pasting customer information into a chatbot, without pretending a training day makes compliance somebody else&rsquo;s problem.</p><p>You also leave with a short, readable AI use policy written for your business: which tools are approved, what the data rules are, when to disclose that AI was involved, and the habit that underpins everything &mdash; AI drafts, a person decides. Outputs get checked by a human before they reach a customer, a contract or a set of accounts.</p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Approved tools, chosen for how you work">
+    <section class="section section--alt ai-sec" aria-label="Approved tools, chosen for how you work">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/04 &mdash; APPROVED TOOLS, CHOSEN FOR HOW YOU WORK</p>
-          <h2 class="section-title" data-title>Approved tools, chosen for how you work<span class="title-underline"></span></h2>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:1.6s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9" y="9" width="6" height="6" rx="1"/><path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2"/></svg></span>
+            <h2 class="section-title" data-title>Approved tools, chosen for how you work<span class="title-underline"></span></h2>
+          </div>
 <p>You shouldn&rsquo;t have to become a technology analyst to choose between Copilot, ChatGPT and Claude &mdash; that&rsquo;s our job. We recommend tools based on what you already pay for, how each one handles your data, and what the actual work is. Often the honest answer is a mix: Copilot where it lives naturally inside Microsoft 365, a different tool where it&rsquo;s simply better at the task in hand.</p><p>As a Microsoft Partner we&rsquo;ll also tell you who on the team would genuinely use a Copilot licence and who wouldn&rsquo;t &mdash; it&rsquo;s a paid add-on per user, and there&rsquo;s no sense paying for seats that will sit idle. The approved-tools list we hand over names specific tools and tiers, so nobody on your team has to guess what&rsquo;s allowed.</p>
         </div>
       </div>
     </section>
-    <section class="section" aria-label="After the sessions: adoption, not a certificate">
+    <section class="section ai-sec" aria-label="After the sessions: adoption, not a certificate">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/05 &mdash; AFTER THE SESSIONS: ADOPTION, NOT A CERTIFICATE</p>
-          <h2 class="section-title" data-title>After the sessions: adoption, not a certificate<span class="title-underline"></span></h2>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:2.0s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M22 21v-1a5 5 0 0 0-3-4.6"/></svg></span>
+            <h2 class="section-title" data-title>After the sessions: adoption, not a certificate<span class="title-underline"></span></h2>
+          </div>
 <p>Most workplace training fades within a fortnight, which is why we don&rsquo;t sell training days and disappear. The monthly service that sits behind every programme covers the part that actually changes behaviour: check-ins with the team, a simple agreed measure of which workflows have genuinely moved across, refresher sessions when the tools change &mdash; and they change constantly &mdash; and updates to your policy and approved-tools list as new features arrive.</p><p>It also keeps a door open. When follow-up shows a task that&rsquo;s still eating time, sometimes the answer is another session &mdash; and sometimes it&rsquo;s handing the task to an <a href="/ai/agents/">AI agent or automation</a> instead. Because the same team does both, your training feeds implementation rather than stopping at a certificate.</p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Taught by people who use this every day">
+    <section class="section section--alt ai-sec" aria-label="Taught by people who use this every day">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/06 &mdash; TAUGHT BY PEOPLE WHO USE THIS EVERY DAY</p>
-          <h2 class="section-title" data-title>Taught by people who use this every day<span class="title-underline"></span></h2>
-<p>Plenty of AI training is delivered by people who have never run these tools outside a classroom. We&rsquo;re an IT support firm, family-run and trading since 1995, and we use AI and automation in our own business every day: our booking automation, review requests, SMS scheduling and Slack-connected workflows were all built in-house and are running right now &mdash; for us. When we show your team a workflow, it&rsquo;s one we operate, not one we read about.</p><p>You can see the sharp end of that on our <a href="/365-ai-os/">365 AI OS demo</a> &mdash; a working, Claude-powered AI desktop prototype, honestly labelled as a scripted demonstration. And after the training, your team is supported by the same local people who look after your IT, backed by a 4.9-star Google rating.</p>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:2.4s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M22 21v-1a5 5 0 0 0-3-4.6"/></svg></span>
+            <h2 class="section-title" data-title>Taught by people who use this every day<span class="title-underline"></span></h2>
+          </div>
+<div class="ai-show"><p>Plenty of AI training is delivered by people who have never run these tools outside a classroom. We&rsquo;re an IT support firm, family-run and trading since 1995, and we use AI and automation in our own business every day: our booking automation, review requests, SMS scheduling and Slack-connected workflows were all built in-house and are running right now &mdash; for us. When we show your team a workflow, it&rsquo;s one we operate, not one we read about.</p><p>You can see the sharp end of that on our <a href="/365-ai-os/">365 AI OS demo</a> &mdash; a working, Claude-powered AI desktop prototype, honestly labelled as a scripted demonstration. And after the training, your team is supported by the same local people who look after your IT, backed by a 4.9-star Google rating.</p><a class="ai-show__go" href="/365-ai-os/">Open the 365 AI OS demo<svg class="ai-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a></div>
         </div>
       </div>
     </section>
-    <section class="section" aria-label="How it works">
+    <section class="section ai-sec" aria-label="How it works">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/07 &mdash; HOW IT WORKS</p>
-          <h2 class="section-title" data-title>How it works<span class="title-underline"></span></h2>
-<p>No jargon required at any stage &mdash; you describe the work, we bring the technology.</p><ul><li><strong>Tell us about the team.</strong> A conversation about roles, workflows and where the time goes.</li><li><strong>We scope and quote.</strong> A written quote per team: one-off programme design and delivery, quoted by complexity, plus the monthly follow-up service.</li><li><strong>Sessions run.</strong> In person at your premises across Bournemouth, Poole, Christchurch and wider Dorset, or remotely UK-wide.</li><li><strong>Policy and tools handed over.</strong> Your AI use policy and approved-tools list, written for your business.</li><li><strong>Follow-up begins.</strong> Check-ins, measurement and refreshers under the monthly service.</li></ul><p>This isn&rsquo;t hourly tutoring, and it isn&rsquo;t a webinar. Tutors teach one person to prompt; this is enablement scoped to a whole team, tied to the systems that team uses &mdash; and, where it helps, to the automations behind them.</p>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:2.8s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg></span>
+            <h2 class="section-title" data-title>How it works<span class="title-underline"></span></h2>
+          </div>
+<p>No jargon required at any stage &mdash; you describe the work, we bring the technology.</p><ol class="ai-steps" data-stagger>
+<li><span class="ai-step__n mono">1</span><h3>Tell us about the team.</h3><p>A conversation about roles, workflows and where the time goes.</p></li>
+<li><span class="ai-step__n mono">2</span><h3>We scope and quote.</h3><p>A written quote per team: one-off programme design and delivery, quoted by complexity, plus the monthly follow-up service.</p></li>
+<li><span class="ai-step__n mono">3</span><h3>Sessions run.</h3><p>In person at your premises across Bournemouth, Poole, Christchurch and wider Dorset, or remotely UK-wide.</p></li>
+<li><span class="ai-step__n mono">4</span><h3>Policy and tools handed over.</h3><p>Your AI use policy and approved-tools list, written for your business.</p></li>
+<li><span class="ai-step__n mono">5</span><h3>Follow-up begins.</h3><p>Check-ins, measurement and refreshers under the monthly service.</p></li>
+</ol><p>This isn&rsquo;t hourly tutoring, and it isn&rsquo;t a webinar. Tutors teach one person to prompt; this is enablement scoped to a whole team, tied to the systems that team uses &mdash; and, where it helps, to the automations behind them.</p>
         </div>
       </div>
     </section>
-    <section class="section" aria-label="Service and build pricing">
+    <section class="section ai-sec" aria-label="Service and build pricing">
       <div class="wrap wrap--narrow" style="text-align:center">
         <p class="eyebrow eyebrow--center mono" data-reveal>// SERVICE &amp; BUILD</p>
         <h2 class="section-title section-title--center" data-title>Monthly service &mdash; confirmed with your quote<span class="title-underline title-underline--center"></span></h2>
@@ -1130,7 +1262,7 @@
   <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=8" defer></script>
   <script src="/js/forms.min.js?v=8" defer></script>
-  <script src="/js/search.min.js?v=2026-08-07" defer></script>
+  <script src="/js/search.min.js?v=2026-08-08" defer></script>
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
     <p>We use cookies to power our live chat and understand how the site is used. See our <a href="/cookie-policy/">cookie policy</a>.</p>
     <div class="cookie-banner__actions">

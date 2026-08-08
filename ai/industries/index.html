@@ -244,7 +244,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-08-07"
+      "dateModified": "2026-08-08"
     },
     {
       "@type": "FAQPage",
@@ -734,6 +734,117 @@
   </aside>
 
   <main id="main">
+<style>
+/* ---- /ai/ premium layer (route-scoped; see ai_visual.py) ---- */
+.ai-sec{position:relative}
+.ai-sec__head{display:flex;align-items:flex-start;gap:.95rem;margin-bottom:1.05rem}
+.ai-badge{flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
+  background:linear-gradient(150deg,rgba(29,151,227,.18),rgba(29,151,227,.04));
+  border:1px solid rgba(108,196,245,.28);box-shadow:0 6px 18px rgba(3,12,30,.45);position:relative}
+.ai-badge svg{width:23px;height:23px;color:var(--cyan-soft);position:relative;z-index:1}
+.ai-badge::after{content:"";position:absolute;inset:-1px;border-radius:inherit;
+  border:1px solid rgba(108,196,245,.5);opacity:0;animation:aiRing 4.5s ease-out infinite;animation-delay:var(--d,0s)}
+@keyframes aiRing{0%{opacity:.55;transform:scale(1)}55%,100%{opacity:0;transform:scale(1.28)}}
+.ai-sec__head h2{margin:0;flex:1}
+.ai-sec__head .title-underline{display:block}
+
+/* card grid - one concept per card, icon leads */
+.ai-cards{list-style:none;margin:1.2rem 0 0;padding:0;display:grid;gap:1rem;
+  grid-template-columns:repeat(auto-fit,minmax(255px,1fr))}
+.ai-cards li{position:relative;padding:1.25rem 1.3rem;border-radius:var(--r-lg);
+  background:var(--glass-deep);border:1px solid var(--line);overflow:hidden;
+  transition:transform .28s ease,border-color .28s ease,box-shadow .28s ease}
+.ai-cards li::before{content:"";position:absolute;left:0;top:0;height:2px;width:100%;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+  transform:translateX(-100%);transition:transform .5s ease}
+.ai-cards li:hover,.ai-cards li:focus-within{transform:translateY(-4px);
+  border-color:rgba(108,196,245,.42);box-shadow:0 18px 40px rgba(3,10,26,.5)}
+.ai-cards li:hover::before,.ai-cards li:focus-within::before{transform:translateX(0)}
+.ai-cards .ai-cardico{width:30px;height:30px;color:var(--cyan-soft);margin-bottom:.7rem;display:block}
+.ai-cards li:hover .ai-cardico{animation:aiNudge .6s ease}
+@keyframes aiNudge{40%{transform:translateY(-3px) rotate(-4deg)}100%{transform:none}}
+.ai-cards h3{font-size:1.06rem;color:#fff;margin:0 0 .45rem;line-height:1.3}
+.ai-cards p,.ai-cards li>span{font-size:.95rem;color:var(--muted);margin:0;display:block;line-height:1.6}
+.ai-cards a{color:var(--cyan-soft)}
+
+/* checklist with a drawn tick */
+.ai-checks{list-style:none;margin:1.1rem 0 0;padding:0;display:grid;gap:.72rem}
+.ai-checks li{position:relative;padding-left:2.1rem;color:var(--ink-3);font-size:.97rem;line-height:1.6}
+.ai-checks li svg{position:absolute;left:0;top:.15rem;width:19px;height:19px;color:var(--green-soft)}
+.ai-checks li svg path{stroke-dasharray:26;stroke-dashoffset:26;animation:aiTick .7s ease forwards;animation-delay:var(--d,0s)}
+@keyframes aiTick{to{stroke-dashoffset:0}}
+
+/* numbered step rail */
+.ai-steps{list-style:none;margin:1.3rem 0 0;padding:0;display:grid;gap:.85rem;position:relative}
+.ai-steps::before{content:"";position:absolute;left:19px;top:12px;bottom:12px;width:2px;
+  background:linear-gradient(180deg,transparent,rgba(108,196,245,.34),transparent)}
+.ai-steps li{position:relative;padding:.95rem 1.15rem .95rem 3.35rem;border-radius:var(--r-md);
+  background:rgba(12,22,48,.5);border:1px solid var(--line)}
+.ai-steps .ai-step__n{position:absolute;left:8px;top:.95rem;width:24px;height:24px;border-radius:50%;
+  display:grid;place-items:center;font-family:var(--font-mono);font-size:.72rem;color:var(--bg);
+  background:var(--cyan-soft);box-shadow:0 0 0 4px rgba(7,13,34,1),0 0 14px rgba(108,196,245,.5)}
+.ai-steps h3{font-size:1rem;color:#fff;margin:0 0 .3rem}
+.ai-steps p{font-size:.94rem;color:var(--muted);margin:0;line-height:1.6}
+
+/* hero + section scenes */
+.ai-scene{position:relative;aspect-ratio:5/3;border-radius:var(--r-lg);overflow:hidden;
+  background:radial-gradient(120% 100% at 70% 10%,rgba(29,151,227,.13),transparent 62%),
+  linear-gradient(165deg,rgba(13,27,52,.8),rgba(7,15,32,.9));border:1px solid var(--line)}
+.ai-scene svg{position:absolute;inset:0;width:100%;height:100%}
+.ai-nd{fill:#0b1d3a;stroke:#6cc4f5;stroke-width:2}
+.ai-ln{stroke:rgba(108,196,245,.42);stroke-width:2;fill:none}
+.ai-tx{fill:#9fb5d3;font-family:'IBM Plex Mono',monospace;font-size:9px}
+.ai-tx--hi{fill:#eaf4ff}
+.ai-glow{filter:drop-shadow(0 0 6px rgba(108,196,245,.6))}
+.ai-dash{stroke-dasharray:5 9;animation:aiRun 2.6s linear infinite}
+@keyframes aiRun{to{stroke-dashoffset:-56}}
+.ai-pulse{animation:aiPulse 3.2s ease-in-out infinite;animation-delay:var(--d,0s);transform-origin:center}
+@keyframes aiPulse{0%,100%{opacity:.55}50%{opacity:1}}
+.ai-beat{animation:aiBeat 3.6s ease-in-out infinite;animation-delay:var(--d,0s);transform-origin:center}
+@keyframes aiBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.09)}}
+.ai-rise{animation:aiRise 5s ease-in-out infinite;animation-delay:var(--d,0s)}
+@keyframes aiRise{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.ai-draw{stroke-dasharray:var(--len,120);stroke-dashoffset:var(--len,120);
+  animation:aiDraw 2.4s ease forwards;animation-delay:var(--d,.2s)}
+@keyframes aiDraw{to{stroke-dashoffset:0}}
+.ai-fade{opacity:0;animation:aiFade .7s ease forwards;animation-delay:var(--d,1s)}
+@keyframes aiFade{to{opacity:1}}
+.ai-travel{offset-path:var(--path);animation:aiTravel 4s linear infinite;animation-delay:var(--d,0s)}
+@keyframes aiTravel{0%{offset-distance:0%;opacity:0}
+  8%{opacity:1}88%{opacity:1}100%{offset-distance:100%;opacity:0}}
+
+/* showcase - a section that IS one real asset gets a panel and a way in */
+.ai-show{position:relative;padding:1.4rem 1.5rem;border-radius:var(--r-lg);
+  background:linear-gradient(158deg,rgba(16,32,62,.72),rgba(8,16,36,.86));
+  border:1px solid rgba(108,196,245,.24);overflow:hidden}
+.ai-show::after{content:"";position:absolute;right:-40px;top:-40px;width:150px;height:150px;border-radius:50%;
+  background:radial-gradient(circle,rgba(29,151,227,.18),transparent 68%);pointer-events:none}
+.ai-show p{position:relative;z-index:1}
+.ai-show__go{display:inline-flex;align-items:center;gap:.5rem;margin-top:.9rem;padding:.6rem 1.05rem;
+  border-radius:var(--r-pill);background:rgba(29,151,227,.14);border:1px solid rgba(108,196,245,.42);
+  color:var(--cyan-soft);font-size:.93rem;text-decoration:none;position:relative;z-index:1;
+  transition:background .25s ease,transform .25s ease}
+.ai-show__go:hover{background:rgba(29,151,227,.25);transform:translateX(3px)}
+.ai-show__go svg{width:16px;height:16px}
+.ai-show__go .ai-arrow{animation:aiArrow 1.9s ease-in-out infinite}
+@keyframes aiArrow{0%,100%{transform:translateX(0)}50%{transform:translateX(3px)}}
+
+/* proof strip */
+.ai-proof{display:grid;gap:.8rem;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));margin:1.2rem 0 0;
+  list-style:none;padding:0}
+.ai-proof li{padding:.9rem 1rem;border-radius:var(--r-md);border:1px dashed rgba(108,196,245,.3);
+  background:rgba(11,20,44,.45);font-size:.92rem;color:var(--ink-3)}
+.ai-proof strong{display:block;color:#fff;font-size:.98rem;margin-bottom:.25rem}
+
+@media (prefers-reduced-motion:reduce){
+  .ai-badge::after,.ai-dash,.ai-pulse,.ai-beat,.ai-rise,.ai-travel,.ai-show__go .ai-arrow{animation:none}
+  .ai-show__go{transition:none}
+  .ai-cards li:hover .ai-cardico{animation:none}
+  .ai-draw,.ai-checks li svg path{animation:none;stroke-dashoffset:0}
+  .ai-fade{animation:none;opacity:1}
+  .ai-cards li{transition:none}
+}
+</style>
     <section class="page-hero" aria-label="Introduction">
       <div class="page-hero__inner">
         <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">AI by Industry</span></nav>
@@ -747,61 +858,86 @@
         <ul class="page-hero__chips mono"><li>&#9679; Trading since 1995</li><li>&#9679; 4.9-star Google rating</li><li>&#9679; Victron Recommended Integrator</li></ul>
       </div>
     </section>
-    <section class="section" aria-label="Start with the workflow, not the technology">
+    <div class="wrap wrap--narrow"><div class="ai-scene" data-reveal aria-hidden="true"><svg class="ai-scene__svg" viewBox="0 0 400 240" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><path class="ai-ln" style="--d:0s" d="M200 44 V196"/><path class="ai-ln ai-dash" style="--d:0.0s" d="M200 66 H126"/><g class="ai-beat" style="--d:0.2s"><circle class="ai-nd ai-glow" cx="108" cy="66" r="18"/></g><text class="ai-tx" x="56" y="70">professional</text><path class="ai-ln ai-dash" style="--d:0.5s" d="M200 120 H274"/><g class="ai-beat" style="--d:0.6000000000000001s"><circle class="ai-nd ai-glow" cx="292" cy="120" r="18"/></g><text class="ai-tx" x="318" y="124">property &amp; trades</text><path class="ai-ln ai-dash" style="--d:1.0s" d="M200 174 H126"/><g class="ai-beat" style="--d:1.0s"><circle class="ai-nd ai-glow" cx="108" cy="174" r="18"/></g><text class="ai-tx" x="56" y="178">marine &amp; energy</text><g class="ai-beat" style="--d:0s"><circle class="ai-nd ai-glow" cx="200" cy="44" r="14"/></g><g class="ai-beat" style="--d:0.6s"><circle class="ai-nd ai-glow" cx="200" cy="196" r="14"/></g><text class="ai-tx ai-tx--hi" x="150" y="224">same rails, different work</text></svg></div></div>
+    <section class="section ai-sec" aria-label="Start with the workflow, not the technology">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/01 &mdash; START WITH THE WORKFLOW, NOT THE TECHNOLOGY</p>
-          <h2 class="section-title" data-title>Start with the workflow, not the technology<span class="title-underline"></span></h2>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:0.4s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span>
+            <h2 class="section-title" data-title>Start with the workflow, not the technology<span class="title-underline"></span></h2>
+          </div>
 <p>Every page in our <a href="/ai/">AI services</a> section works the same way: you describe a job that eats your team&rsquo;s time, and we work out which parts a computer should do. Sometimes that means AI &mdash; reading a document, drafting a reply, answering a phone call. Just as often it means plain, deterministic automation: rules that fire the same way every time, with no guesswork involved. We use AI only for the steps where it genuinely helps, and we&rsquo;ll tell you which is which.</p><p>The three lanes below are where the workflows we build show up most often in Dorset businesses. You don&rsquo;t need to pick a technology, and your business doesn&rsquo;t need to match a lane exactly &mdash; the patterns travel well.</p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Professional and business services">
+    <section class="section section--alt ai-sec" aria-label="Professional and business services">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/02 &mdash; PROFESSIONAL AND BUSINESS SERVICES</p>
-          <h2 class="section-title" data-title>Professional and business services<span class="title-underline"></span></h2>
-<p>Accountancy practices, legal firms, agencies and consultancies run on documents, deadlines and client communication &mdash; and most of the wasted time sits in the gaps between them. Chasing clients for records ahead of a filing deadline. Copying details from an email into a practice management system. Writing the same status update for the tenth time this week.</p><p>Typical systems we connect to: Microsoft 365 and Outlook, practice or case management software, and accounting packages such as Xero, QuickBooks or Sage. What changes when the workflow is automated:</p><ul><li><strong>Document chasing runs itself</strong> &mdash; polite, scheduled reminders that stop the moment the client responds.</li><li><strong>Deadlines drive the diary</strong> &mdash; work is queued and flagged from real dates, not from someone remembering.</li><li><strong>Routine drafts arrive ready for review</strong> &mdash; an <a href="/ai/agents/">AI agent</a> prepares the email or summary; a person approves it before anything is sent.</li></ul><p>Evidence status, honestly: we have no client case studies in this lane yet. What we can show you is the same pattern running in our own business &mdash; automated booking confirmations, review requests and follow-ups that go out every day without anyone touching them.</p>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:0.8s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg></span>
+            <h2 class="section-title" data-title>Professional and business services<span class="title-underline"></span></h2>
+          </div>
+<p>Accountancy practices, legal firms, agencies and consultancies run on documents, deadlines and client communication &mdash; and most of the wasted time sits in the gaps between them. Chasing clients for records ahead of a filing deadline. Copying details from an email into a practice management system. Writing the same status update for the tenth time this week.</p><p>Typical systems we connect to: Microsoft 365 and Outlook, practice or case management software, and accounting packages such as Xero, QuickBooks or Sage. What changes when the workflow is automated:</p><ul class="ai-cards" data-stagger>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M7 7.5h.01M7 16.5h.01"/></svg><h3>Document chasing runs itself</h3><p>polite, scheduled reminders that stop the moment the client responds.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><h3>Deadlines drive the diary</h3><p>work is queued and flagged from real dates, not from someone remembering.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 13l2 2 3-3 3 3 2-2M2 12l4-4 4 2 4-2 4 4M6 8V6h4M18 8V6h-4"/></svg><h3>Routine drafts arrive ready for review</h3><p>an <a href="/ai/agents/">AI agent</a> prepares the email or summary; a person approves it before anything is sent.</p></li>
+</ul><p>Evidence status, honestly: we have no client case studies in this lane yet. What we can show you is the same pattern running in our own business &mdash; automated booking confirmations, review requests and follow-ups that go out every day without anyone touching them.</p>
         </div>
       </div>
     </section>
-    <section class="section" aria-label="Property, trades and field services">
+    <section class="section ai-sec" aria-label="Property, trades and field services">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/03 &mdash; PROPERTY, TRADES AND FIELD SERVICES</p>
-          <h2 class="section-title" data-title>Property, trades and field services<span class="title-underline"></span></h2>
-<p>Estate and lettings agents, builders, plumbers, electricians, heating engineers, landscapers &mdash; businesses where the person who wins the work is also up a ladder when the phone rings. The expensive problems are familiar: missed calls that become someone else&rsquo;s customer, quotes that never get a follow-up, job sheets that live on paper until Friday night.</p><p>Typical systems: a mobile phone, WhatsApp, a shared calendar, and often a job management app. What changes:</p><ul><li><strong>Missed calls get answered</strong> &mdash; an <a href="/ai/voice-agents/">AI voice agent</a> takes the caller&rsquo;s details, explains when you&rsquo;ll call back, and can book an appointment straight into your diary.</li><li><strong>Quotes are followed up on a schedule</strong> &mdash; a courteous nudge at the right interval, stopped automatically when the customer replies.</li><li><strong>Job details reach the office the same day</strong> &mdash; photos and notes from site filed against the right job, not lost in a message thread.</li></ul><p>Evidence status: no trade-customer case studies yet either. But the booking automation, SMS scheduling and abandoned-enquiry follow-ups described here are the exact systems we built for ourselves and run in production every day.</p>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:1.2s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8h12l4 4h4v4h-2M2 8v8h2m4 0h6"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg></span>
+            <h2 class="section-title" data-title>Property, trades and field services<span class="title-underline"></span></h2>
+          </div>
+<p>Estate and lettings agents, builders, plumbers, electricians, heating engineers, landscapers &mdash; businesses where the person who wins the work is also up a ladder when the phone rings. The expensive problems are familiar: missed calls that become someone else&rsquo;s customer, quotes that never get a follow-up, job sheets that live on paper until Friday night.</p><p>Typical systems: a mobile phone, WhatsApp, a shared calendar, and often a job management app. What changes:</p><ul class="ai-cards" data-stagger>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg><h3>Missed calls get answered</h3><p>an <a href="/ai/voice-agents/">AI voice agent</a> takes the caller&rsquo;s details, explains when you&rsquo;ll call back, and can book an appointment straight into your diary.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg><h3>Quotes are followed up on a schedule</h3><p>a courteous nudge at the right interval, stopped automatically when the customer replies.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg><h3>Job details reach the office the same day</h3><p>photos and notes from site filed against the right job, not lost in a message thread.</p></li>
+</ul><p>Evidence status: no trade-customer case studies yet either. But the booking automation, SMS scheduling and abandoned-enquiry follow-ups described here are the exact systems we built for ourselves and run in production every day.</p>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="Manufacturing, engineering, marine and energy services">
+    <section class="section section--alt ai-sec" aria-label="Manufacturing, engineering, marine and energy services">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/04 &mdash; MANUFACTURING, ENGINEERING, MARINE AND ENERGY SERVICES</p>
-          <h2 class="section-title" data-title>Manufacturing, engineering, marine and energy services<span class="title-underline"></span></h2>
-<p>Workshops, engineering firms, marine services and off-grid energy installers share a shape: physical assets, service history, and equipment that tells you things &mdash; if anything is listening. Job cards get filled in from memory. A machine&rsquo;s history lives in three heads and a filing cabinet. Faults are discovered by the customer rather than by the readings.</p><p>This is the lane where our evidence is strongest, and we&rsquo;ll say so plainly: 365 Techies is a <strong>Victron Recommended Software Integrator</strong>, and we build and run live telemetry dashboards for marine and off-grid energy systems &mdash; real battery, solar and power data from real installations, presented so a person can act on it. The same approach extends to service intelligence for other equipment:</p><ul><li><strong>Job cards become searchable history</strong> &mdash; every visit, part and reading filed against the asset, so the next engineer starts informed.</li><li><strong>Telemetry raises the flag first</strong> &mdash; dashboards and alerts built from live readings, so servicing is triggered by evidence rather than the calendar alone.</li><li><strong>Reports write their own first draft</strong> &mdash; service summaries assembled from the data, checked by an engineer before they go out.</li></ul>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:1.6s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></span>
+            <h2 class="section-title" data-title>Manufacturing, engineering, marine and energy services<span class="title-underline"></span></h2>
+          </div>
+<p>Workshops, engineering firms, marine services and off-grid energy installers share a shape: physical assets, service history, and equipment that tells you things &mdash; if anything is listening. Job cards get filled in from memory. A machine&rsquo;s history lives in three heads and a filing cabinet. Faults are discovered by the customer rather than by the readings.</p><p>This is the lane where our evidence is strongest, and we&rsquo;ll say so plainly: 365 Techies is a <strong>Victron Recommended Software Integrator</strong>, and we build and run live telemetry dashboards for marine and off-grid energy systems &mdash; real battery, solar and power data from real installations, presented so a person can act on it. The same approach extends to service intelligence for other equipment:</p><ul class="ai-cards" data-stagger>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg><h3>Job cards become searchable history</h3><p>every visit, part and reading filed against the asset, so the next engineer starts informed.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg><h3>Telemetry raises the flag first</h3><p>dashboards and alerts built from live readings, so servicing is triggered by evidence rather than the calendar alone.</p></li>
+<li><svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg><h3>Reports write their own first draft</h3><p>service summaries assembled from the data, checked by an engineer before they go out.</p></li>
+</ul>
         </div>
       </div>
     </section>
-    <section class="section" aria-label="Where our proof comes from">
+    <section class="section ai-sec" aria-label="Where our proof comes from">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/05 &mdash; WHERE OUR PROOF COMES FROM</p>
-          <h2 class="section-title" data-title>Where our proof comes from<span class="title-underline"></span></h2>
-<p>We&rsquo;re not going to show you invented case studies, and the honest position is that our AI services are new enough that named customer stories don&rsquo;t exist yet. What does exist: the automations we run in our own business every day &mdash; bookings, reminders, review requests, Slack-connected workflows &mdash; the monitoring dashboards behind our Victron integrator work, and the <a href="/365-ai-os/">365 AI OS demo</a>, a scripted demonstration of a Claude-powered AI desktop we built, labelled honestly as exactly that. Judge us on working systems you can see, not on claims.</p>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:2.0s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></span>
+            <h2 class="section-title" data-title>Where our proof comes from<span class="title-underline"></span></h2>
+          </div>
+<div class="ai-show"><p>We&rsquo;re not going to show you invented case studies, and the honest position is that our AI services are new enough that named customer stories don&rsquo;t exist yet. What does exist: the automations we run in our own business every day &mdash; bookings, reminders, review requests, Slack-connected workflows &mdash; the monitoring dashboards behind our Victron integrator work, and the <a href="/365-ai-os/">365 AI OS demo</a>, a scripted demonstration of a Claude-powered AI desktop we built, labelled honestly as exactly that. Judge us on working systems you can see, not on claims.</p><a class="ai-show__go" href="/365-ai-os/">Open the 365 AI OS demo<svg class="ai-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a></div>
         </div>
       </div>
     </section>
-    <section class="section section--alt" aria-label="The next step is one workflow">
+    <section class="section section--alt ai-sec" aria-label="The next step is one workflow">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/06 &mdash; THE NEXT STEP IS ONE WORKFLOW</p>
-          <h2 class="section-title" data-title>The next step is one workflow<span class="title-underline"></span></h2>
+          <div class="ai-sec__head"><span class="ai-badge" style="--d:2.4s" aria-hidden="true"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span>
+            <h2 class="section-title" data-title>The next step is one workflow<span class="title-underline"></span></h2>
+          </div>
 <p>Pick the single workflow that wastes the most time in your business &mdash; the chasing, the missed calls, the job cards &mdash; and <a href="/contact/">tell us about it</a>. We&rsquo;ll come back with a plain-English plan, a clear line showing what stays human, and a quote. Every AI service runs as a monthly subscription with the design and build quoted separately by complexity, supported by the same local team that looks after your IT.</p>
         </div>
       </div>
     </section>
-    <section class="section" aria-label="Service and build pricing">
+    <section class="section ai-sec" aria-label="Service and build pricing">
       <div class="wrap wrap--narrow" style="text-align:center">
         <p class="eyebrow eyebrow--center mono" data-reveal>// SERVICE &amp; BUILD</p>
         <h2 class="section-title section-title--center" data-title>Monthly service — confirmed with your quote<span class="title-underline title-underline--center"></span></h2>
@@ -1106,7 +1242,7 @@
   <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=8" defer></script>
   <script src="/js/forms.min.js?v=8" defer></script>
-  <script src="/js/search.min.js?v=2026-08-07" defer></script>
+  <script src="/js/search.min.js?v=2026-08-08" defer></script>
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
     <p>We use cookies to power our live chat and understand how the site is used. See our <a href="/cookie-policy/">cookie policy</a>.</p>
     <div class="cookie-banner__actions">

@@ -1,23 +1,31 @@
 # /ai/ section — foundation pages (blueprint docs 04 s34-35, 05 v1.1 s27.5/s48).
 #
-# Copy lives in ai_pages_data.py (the house content-pack pattern); this module
-# renders it through the standard build_pages/build_extra vocabulary and
-# registers via add(). Nested slugs ("ai/agents") work natively: write_all()
-# os.path.joins the slug and makedirs the tree.
+# Copy lives in ai_pages_data.py (the house content-pack pattern); the premium
+# visual layer (route-scoped CSS, animated hero scenes, icon mapping) lives in
+# ai_visual.py. This module renders one into the other through the standard
+# build_pages vocabulary and registers via add(). Nested slugs ("ai/agents")
+# work natively: write_all() os.path.joins the slug and makedirs the tree.
+#
+# LAYOUT: each section's copy is classified and rendered as the component that
+# actually fits it, instead of a wall of prose -
+#   * list of "<strong>Title</strong> - description" items  -> animated card grid
+#   * plain list items                                      -> drawn-tick checklist
+#   * a numbered/worked example                             -> numbered step rail
+#   * everything else                                       -> prose, with an
+#     animated icon badge beside the heading
+# The classifier reads the copy; it never rewrites it, so ai_pages_data.py
+# remains the single source of the words.
 #
 # ⚠ AI_LAUNCH GATE: False = register() is a no-op and the build output is
 # byte-identical to a build without this module (freeze-safe by construction).
-# The owner-authorised release commit flips this to True AND, in the SAME
-# commit, deletes the .htaccess line 38 shortcut `RewriteRule ^ai/?$ ...`
-# (otherwise the live 301 shadows the new hub and /ai/ is unreachable) and
-# applies the commercial-copy correction changeset
-# (see C:\claude\seo-research\ai-ia\migration-manifest.json).
 #
 # Commercial rules baked in (owner decision 2026-08-07): monthly service
 # subscription + separately quoted design/build; the ONLY published AI price is
 # the voice page's From £95/month (AI_VOICE_FROM in build_extra); every other
 # page says "Monthly service — confirmed with your quote". The build guard
 # (tools_check_ai_commercial.py) scans everything under ai/ once emitted.
+
+import re
 
 AI_LAUNCH = True    # launched 2026-08-08 on the owner's explicit word ("launch it")
 
@@ -33,37 +41,175 @@ def register():
     _intake_page(bp)
 
 
-def _emit(p, bp):
-    slug = p["slug"]
-    is_hub = slug == "ai"
-    nsec = [0]
+# ---------------------------------------------------------------- classifier
+_LI = re.compile(r"<li>(.*?)</li>", re.S)
+_TITLED = re.compile(r"^\s*(?:<a href=\"([^\"]+)\">)?<strong>(.*?)</strong>(?:</a>)?\s*(.*)$", re.S)
+_UL = re.compile(r"<ul>.*?</ul>", re.S)
 
-    def section_block(h2, body_html, alt):
-        nsec[0] += 1
-        klass = "section section--alt" if alt else "section"
-        eyebrow = "/%02d &mdash; %s" % (nsec[0], _eyebrow(h2))
-        return f'''    <section class="{klass}" aria-label="{_attr(h2)}">
+
+def _split_list(html):
+    """Return (before, items, after). items is [] when there is no single list."""
+    m = _UL.search(html)
+    if not m:
+        return html, [], ""
+    items = _LI.findall(m.group(0))
+    return html[:m.start()], items, html[m.end():]
+
+
+def _parse_titled(item):
+    """'<strong>Title</strong> — body' (optionally link-wrapped) -> (title, href, body)."""
+    m = _TITLED.match(item)
+    if not m:
+        return None
+    href, title, body = m.group(1), m.group(2), m.group(3)
+    body = re.sub(r"^\s*(?:&mdash;|&ndash;|-|:)\s*", "", body.strip())
+    return title.strip(), href, body.strip()
+
+
+def _cards_html(items, bp):
+    from ai_visual import icon_for
+    out = ['<ul class="ai-cards" data-stagger>']
+    for it in items:
+        title, href, body = it
+        head = f'<a href="{href}">{title}</a>' if href else title
+        out.append('<li>' + bp.ico(icon_for(title), "ai-cardico")
+                   + f'<h3>{head}</h3><p>{body}</p></li>')
+    out.append("</ul>")
+    return "\n".join(out)
+
+
+def _checks_html(items):
+    tick = ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"'
+            ' stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+            '<path d="M4 12.5l5 5L20 6.5"/></svg>')
+    out = ['<ul class="ai-checks" data-stagger>']
+    for i, it in enumerate(items):
+        out.append(f'<li style="--d:{0.15 + i * 0.12:.2f}s">{tick}<span>{it.strip()}</span></li>')
+    out.append("</ul>")
+    return "\n".join(out)
+
+
+def _steps_html(items):
+    out = ['<ol class="ai-steps" data-stagger>']
+    for n, it in enumerate(items, 1):
+        parsed = _parse_titled(it)
+        if parsed:
+            title, href, body = parsed
+            head = f'<a href="{href}">{title}</a>' if href else title
+            out.append(f'<li><span class="ai-step__n mono">{n}</span><h3>{head}</h3><p>{body}</p></li>')
+        else:
+            out.append(f'<li><span class="ai-step__n mono">{n}</span><p>{it.strip()}</p></li>')
+    out.append("</ol>")
+    return "\n".join(out)
+
+
+_PSTRONG = re.compile(r"<p><strong>(.*?)</strong>\s*(.*?)</p>", re.S)
+
+# Sections that ARE one real asset get a panel with a way straight into it.
+_SHOWCASE = {
+    "/ai-roi-calculator/": "Open the ROI calculator",
+    "/365-ai-os/": "Open the 365 AI OS demo",
+    "/system-monitoring-demo/": "Open the live dashboard demo",
+    "/ai-for-beginners-course/": "Start the free course",
+    "/using-ai-safely/": "Read the safety guide",
+}
+
+
+def _para_cards(html):
+    """3+ '<p><strong>Question</strong> answer</p>' blocks -> card grid."""
+    blocks = _PSTRONG.findall(html)
+    if len(blocks) < 3:
+        return None, html
+    intro = html[:_PSTRONG.search(html).start()]
+    tail = html[_PSTRONG.search(html).end() if len(blocks) == 1 else
+                [m.end() for m in _PSTRONG.finditer(html)][-1]:]
+    return [(t.strip(), None, b.strip()) for t, b in blocks], intro + "" + tail
+
+
+def _showcase_for(html):
+    """The first known asset link in the copy, if this section showcases one."""
+    for href, label in _SHOWCASE.items():
+        if f'href="{href}"' in html:
+            return href, label
+    return None, None
+
+
+def _is_stepwise(h2):
+    h = h2.lower()
+    return any(k in h for k in ("step by step", "worked example", "how we work", "how it works",
+                                "what happens", "from problem to"))
+
+
+def _section(h2, html, idx, alt, bp):
+    """Render one section as the component its copy actually calls for."""
+    from ai_visual import icon_for
+    before, items, after = _split_list(html)
+    body = before
+
+    if items:
+        titled = [_parse_titled(i) for i in items]
+        if all(t is not None for t in titled):
+            body += _steps_html(items) if _is_stepwise(h2) else _cards_html(titled, bp)
+        else:
+            body += _checks_html(items)
+        body += after
+    else:
+        # no list: maybe strong-led Q&A paragraphs, or a single showcased asset
+        cards, rest = _para_cards(html)
+        if cards:
+            body = rest + _cards_html(cards, bp)
+        else:
+            href, label = _showcase_for(html)
+            if href:
+                arrow = ('<svg class="ai-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor"'
+                         ' stroke-width="2" stroke-linecap="round" stroke-linejoin="round"'
+                         ' aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg>')
+                body = (f'<div class="ai-show">{html}'
+                        f'<a class="ai-show__go" href="{href}">{label}{arrow}</a></div>')
+        # otherwise the prose stays exactly as written
+
+    klass = "section section--alt ai-sec" if alt else "section ai-sec"
+    eyebrow = "/%02d &mdash; %s" % (idx, _eyebrow(h2))
+    badge = ('<span class="ai-badge" style="--d:%.1fs" aria-hidden="true">%s</span>'
+             % (idx * 0.4, bp.ico(icon_for(h2), "")))
+    return f'''    <section class="{klass}" aria-label="{_attr(h2)}">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">{eyebrow}</p>
-          <h2 class="section-title" data-title>{h2}<span class="title-underline"></span></h2>
-{body_html}
+          <div class="ai-sec__head">{badge}
+            <h2 class="section-title" data-title>{h2}<span class="title-underline"></span></h2>
+          </div>
+{body}
         </div>
       </div>
     </section>'''
 
-    parts = [bp.hero(bp.bc(p["name"]), p["eyebrow"], p["h1"], p["hero_lede"],
+
+# ------------------------------------------------------------------ page emit
+def _emit(p, bp):
+    from ai_visual import AI_CSS, SCENES
+
+    slug = p["slug"]
+    is_hub = slug == "ai"
+    scene = SCENES.get(slug)
+
+    parts = [AI_CSS,
+             bp.hero(bp.bc(p["name"]), p["eyebrow"], p["h1"], p["hero_lede"],
                      cta1=(p["cta_primary"]["label"], p["cta_primary"]["href"]),
                      cta2=(p["cta_secondary"]["label"], p["cta_secondary"]["href"]),
                      chips=p.get("chips") or None)]
+    if scene:
+        parts.append('    <div class="wrap wrap--narrow"><div class="ai-scene" data-reveal '
+                     'aria-hidden="true">' + scene + "</div></div>")
+
     alt = False
-    for s in p["sections"]:
-        parts.append(section_block(s["h2"], s["html"], alt))
+    for i, s in enumerate(p["sections"], 1):
+        parts.append(_section(s["h2"], s["html"], i, alt, bp))
         alt = not alt
 
     pb = p.get("pricing")
     if pb:
-        parts.append(f'''    <section class="section" aria-label="Service and build pricing">
+        parts.append(f'''    <section class="section ai-sec" aria-label="Service and build pricing">
       <div class="wrap wrap--narrow" style="text-align:center">
         <p class="eyebrow eyebrow--center mono" data-reveal>// SERVICE &amp; BUILD</p>
         <h2 class="section-title section-title--center" data-title>{pb["subscription_line"]}<span class="title-underline title-underline--center"></span></h2>
@@ -109,16 +255,20 @@ def _intake_page(bp):
     Deliberately NOT class=contact-form: js/forms.js would hijack the submit
     into the HubSpot/slack-lead relay; this form has its own route-scoped
     script (doc 05 s38.2 - no global bundle impact)."""
+    from ai_visual import AI_CSS, SCENES
+
     slug = "ai/start"
     desc = ("Tell us about the repetitive work, missed calls or copy-and-paste jobs eating "
             "your team&rsquo;s week. We&rsquo;ll map the process and reply personally &mdash; no obligation.")
-    content = '''    <section class="section" aria-label="Start an AI enquiry">
+    content = AI_CSS + '''
+    <section class="section ai-sec" aria-label="Start an AI enquiry">
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">// START AN AI ENQUIRY</p>
           <h1 class="section-title" data-title>Tell us what&rsquo;s wasting your team&rsquo;s time<span class="title-underline"></span></h1>
           <p class="lede">Describe the job in your own words &mdash; the repeated copying, the missed calls, the chasing. You don&rsquo;t need to know what an AI agent is, and nothing here commits you to anything. A person from our Bournemouth team reads every enquiry and replies personally.</p>
         </div>
+        <div class="ai-scene" data-reveal aria-hidden="true" style="max-width:460px;margin:1.6rem auto 2rem">''' + SCENES["ai/start"] + '''</div>
         <style>/* the .contact-form card look, WITHOUT the .contact-form class:
           js/forms.js binds every form.contact-form and would double-submit this
           form into the HubSpot/slack-lead relay (proven live on the launch test
@@ -206,14 +356,12 @@ def _intake_page(bp):
 
 
 def _eyebrow(h2):
-    import re
     t = re.sub(r"<[^>]+>", "", h2)
     t = t.replace("&rsquo;", "'").replace("&amp;", "&").replace("&mdash;", "-")
     return t.upper()
 
 
 def _attr(h2):
-    import re
     return re.sub(r"<[^>]+>", "", h2).replace('"', "")
 
 
