@@ -50,7 +50,8 @@ if ($method === 'GET') {
 // ── POST: append one reading (van only, token-gated) ─────────────────────────
 if ($method === 'POST') {
     $token = $_SERVER['HTTP_X_TOKEN'] ?? '';
-    if (!SHARED_TOKEN !== '' && hash_equals(SHARED_TOKEN, $token)) {
+    // Reject if the server token is unset (file not placed) OR doesn't match.
+    if (SHARED_TOKEN === '' || !hash_equals(SHARED_TOKEN, (string)$token)) {
         http_response_code(401);
         echo json_encode(['ok' => false, 'error' => 'bad token']);
         exit;
