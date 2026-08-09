@@ -5917,79 +5917,117 @@ add(
 )
 
 # ---- write ----
-VAN_SIGNAL_MAP_CONTENT = r'''    <link rel="stylesheet" href="/vendor/leaflet/leaflet.css" />
-    <style>
-      .sigmap-wrap{position:relative;border-radius:16px;overflow:hidden;border:1px solid rgba(125,170,220,.18);margin-top:1.25rem}
-      #sigmap{height:min(68vh,620px);width:100%;background:#0b1020}
-      .leaflet-container{background:#0b1020;font:inherit}
-      .osm-tiles{filter:brightness(.62) contrast(1.05) hue-rotate(180deg) invert(1)}
-      .sigmap-status{position:absolute;top:10px;left:10px;z-index:500;background:rgba(10,16,32,.82);
-        border:1px solid rgba(125,170,220,.22);border-radius:9px;padding:6px 10px;font-size:.78rem;
-        color:#cfe0f5;display:flex;align-items:center;gap:7px}
-      .sigmap-dot{width:8px;height:8px;border-radius:50%;background:#3fb950;box-shadow:0 0 0 0 rgba(63,185,80,.7);animation:sigpulse 2.2s infinite}
-      @keyframes sigpulse{70%{box-shadow:0 0 0 7px rgba(63,185,80,0)}100%{box-shadow:0 0 0 0 rgba(63,185,80,0)}}
-      .sigmap-legend{background:rgba(10,16,32,.9);color:#cfe0f5;padding:8px 10px;border-radius:8px;
-        border:1px solid rgba(125,170,220,.22);font-size:.72rem;line-height:1.5}
-      .sigmap-legend .bar{display:inline-block;width:92px;height:9px;border-radius:5px;vertical-align:middle;background:linear-gradient(90deg,#f85149,#d29922,#3fb950)}
-      .leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#141b2e;color:#e6edf3}
-      .sigmap-empty{color:var(--muted,#8b949e);font-size:.85rem;margin:.75rem 0 0}
-    </style>
+def _signal_scene():
+    # A route drawing itself across a faint map, signal readings fading in along
+    # it (green strong -> red weak), a live pulse at the van's head. Same ai-*
+    # animation classes as the /ai/ scenes, so it animates for free.
+    pins = [(70, 176, "#3fb950", 1.1), (116, 168, "#3fb950", 1.3), (168, 150, "#d29922", 1.5),
+            (214, 133, "#f85149", 1.7), (268, 112, "#d29922", 1.9), (320, 86, "#3fb950", 2.1)]
+    dots = "".join(
+        '<circle class="ai-fade" style="--d:%ss" cx="%s" cy="%s" r="4.5" fill="%s" stroke="#0b1020" stroke-width="1.4"/>'
+        % (d, x, y, c) for x, y, c, d in pins)
+    grid = "".join(
+        '<circle cx="%s" cy="%s" r="1.1" fill="#24456f" opacity=".5"/>' % (gx, gy)
+        for gx in range(28, 392, 34) for gy in range(28, 224, 34))
+    return (
+        '<div class="ai-scene" data-reveal aria-hidden="true">'
+        '<svg class="ai-scene__svg" viewBox="0 0 400 240" aria-hidden="true" focusable="false">'
+        + grid
+        + '<path class="ai-draw" style="--len:360;--d:.3s" fill="none" stroke="#58a6ff" '
+          'stroke-width="2.6" stroke-linecap="round" '
+          'd="M40 198 C 98 156 138 178 196 138 S 306 92 356 60"/>'
+        + dots
+        + '<g class="ai-beat" style="--d:0s">'
+          '<circle class="ai-nd ai-glow" cx="356" cy="60" r="8" fill="#3fb950"/>'
+          '<circle cx="356" cy="60" r="4" fill="#eafff1"/></g>'
+          '<path class="ai-fade" style="--d:2.3s" d="M366 50 a16 16 0 0 1 0 20" fill="none" '
+          'stroke="#3fb950" stroke-width="2" stroke-linecap="round" opacity=".8"/>'
+          '<path class="ai-fade" style="--d:2.5s" d="M373 43 a26 26 0 0 1 0 34" fill="none" '
+          'stroke="#3fb950" stroke-width="1.8" stroke-linecap="round" opacity=".5"/>'
+          '<text class="ai-tx ai-tx--hi" x="30" y="30">MEASURED SIGNAL</text>'
+          '<text class="ai-tx" x="30" y="46">as the van drives</text>'
+        '</svg></div>')
 
+
+VAN_SIGNAL_MAP_MAP = r"""
+    <link rel="stylesheet" href="/vendor/leaflet/leaflet.css" />
+    <style>
+      .sigmap-wrap{position:relative;border-radius:18px;overflow:hidden;border:1px solid rgba(125,170,220,.18);box-shadow:0 24px 60px -30px rgba(0,0,0,.7)}
+      #sigmap{height:min(66vh,600px);width:100%;background:#0b1020}
+      .leaflet-container{background:#0b1020;font:inherit}
+      .osm-tiles{filter:brightness(.6) contrast(1.06) hue-rotate(180deg) invert(1)}
+      .sigmap-status{position:absolute;top:12px;left:12px;z-index:500;background:rgba(10,16,32,.85);border:1px solid rgba(125,170,220,.22);border-radius:10px;padding:7px 12px;font-size:.8rem;color:#cfe0f5;display:flex;align-items:center;gap:8px;backdrop-filter:blur(6px)}
+      .sigmap-dot{width:9px;height:9px;border-radius:50%;background:#3fb950;box-shadow:0 0 0 0 rgba(63,185,80,.7);animation:sigpulse 2.2s infinite}
+      @keyframes sigpulse{70%{box-shadow:0 0 0 8px rgba(63,185,80,0)}100%{box-shadow:0 0 0 0 rgba(63,185,80,0)}}
+      .sigmap-legend{background:rgba(10,16,32,.9);color:#cfe0f5;padding:9px 11px;border-radius:9px;border:1px solid rgba(125,170,220,.22);font-size:.74rem;line-height:1.5}
+      .sigmap-legend .bar{display:inline-block;width:96px;height:9px;border-radius:5px;vertical-align:middle;background:linear-gradient(90deg,#f85149,#d29922,#3fb950)}
+      .leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#141b2e;color:#e6edf3}
+      .sigmap-empty{color:var(--muted,#8b949e);font-size:.85rem;margin:.85rem 0 0;text-align:center}
+    </style>
     <section class="section" aria-label="Live measured signal map">
       <div class="wrap">
-        <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// LIVE FROM THE 365 CRAFTER</p>
-          <h1 class="section-title section-title--center" data-title>Measured 4G&thinsp;/&thinsp;5G signal &mdash; our own campervan<span class="title-underline title-underline--center"></span></h1>
-        </div>
-        <p class="prose" style="max-width:64ch;margin:0 auto;text-align:center" data-reveal>
-          Not a modelled coverage prediction &mdash; the real 4G/5G signal our demonstration
-          campervan&rsquo;s router measured, plotted exactly where it measured it, as it drives
-          around Dorset and the South-West. Green is strong, red is weak. One van, one network
-          (Three UK), read live by <a href="/off-grid-victron-energy/">Home Assistant</a>.
-        </p>
-
         <div class="sigmap-wrap">
           <div class="sigmap-status"><span class="sigmap-dot"></span><span id="sigmap-status">loading&hellip;</span></div>
           <div id="sigmap"></div>
         </div>
-        <p class="sigmap-empty" id="sigmap-empty" hidden>
-          No location-tagged readings yet &mdash; the map fills in as the van drives.
-        </p>
+        <p class="sigmap-empty" id="sigmap-empty" hidden>No location-tagged readings yet &mdash; the map fills in as the van drives.</p>
       </div>
     </section>
-
     <script src="/vendor/leaflet/leaflet.js" defer></script>
     <script>
-    (function(){
-      var ENDPOINT='/api/signal-log.php', REFRESH=15000, GOOD=-80, BAD=-110;
-      function start(){
-        if(typeof L==='undefined'){return setTimeout(start,200);}
+    (function(){var ENDPOINT='/api/signal-log.php',REFRESH=15000,GOOD=-80,BAD=-110;
+      function start(){if(typeof L==='undefined'){return setTimeout(start,200);}
         var map=L.map('sigmap',{zoomControl:true}).setView([50.72,-1.88],10);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,className:'osm-tiles',attribution:'&copy; OpenStreetMap'}).addTo(map);
-        var legend=L.control({position:'bottomright'});
-        legend.onAdd=function(){var d=L.DomUtil.create('div','sigmap-legend');d.innerHTML='<b>Signal (RSRP)</b><br>weak <span class="bar"></span> strong<br>&minus;110 &rarr; &minus;80 dBm';return d;};
-        legend.addTo(map);
+        var lg=L.control({position:'bottomright'});lg.onAdd=function(){var d=L.DomUtil.create('div','sigmap-legend');d.innerHTML='<b>Signal (RSRP)</b><br>weak <span class=\'bar\'></span> strong<br>&minus;110 &rarr; &minus;80 dBm';return d;};lg.addTo(map);
         function col(r){if(r==null)return '#6e7681';var t=Math.max(0,Math.min(1,(r-BAD)/(GOOD-BAD)));var R=t<.5?248:Math.round(248-(t-.5)*2*185),G=t<.5?Math.round(81+t*2*104):185;return 'rgb('+R+','+G+',80)';}
         var layer=L.layerGroup().addTo(map),live=null,fitted=false;
-        function refresh(){
-          fetch(ENDPOINT+'?_='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
-            var pts=(j.points||[]).filter(function(p){return p.lat!=null&&p.lon!=null;});
-            document.getElementById('sigmap-empty').hidden=pts.length>0;
-            document.getElementById('sigmap-status').textContent=pts.length?(pts.length+' readings'):'logging (no fix yet)';
-            layer.clearLayers();var ll=[];
-            pts.forEach(function(p){ll.push([p.lat,p.lon]);L.circleMarker([p.lat,p.lon],{radius:5,color:col(p.rsrp),fillColor:col(p.rsrp),fillOpacity:.85,weight:1}).bindPopup('<b>'+(p.rsrp==null?'&mdash;':p.rsrp+' dBm')+'</b> '+(p.net||'')+' '+(p.band||'')+'<br>'+new Date(p.t*1000).toLocaleString()).addTo(layer);});
-            if(ll.length>1)L.polyline(ll,{color:'#58a6ff',weight:2,opacity:.35}).addTo(layer);
-            var last=pts[pts.length-1];
-            if(last){if(live)map.removeLayer(live);live=L.circleMarker([last.lat,last.lon],{radius:9,color:'#fff',weight:2,fillColor:col(last.rsrp),fillOpacity:1}).addTo(map);}
-            if(!fitted&&ll.length){map.fitBounds(ll,{padding:[40,40],maxZoom:14});fitted=true;}
-            map.invalidateSize();
-          }).catch(function(){document.getElementById('sigmap-status').textContent='offline';});
-        }
-        refresh();setInterval(refresh,REFRESH);
-      }
+        function refresh(){fetch(ENDPOINT+'?_='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
+          var pts=(j.points||[]).filter(function(p){return p.lat!=null&&p.lon!=null;});
+          document.getElementById('sigmap-empty').hidden=pts.length>0;
+          document.getElementById('sigmap-status').textContent=pts.length?(pts.length+' readings'):'logging (no fix yet)';
+          layer.clearLayers();var ll=[];
+          pts.forEach(function(p){ll.push([p.lat,p.lon]);L.circleMarker([p.lat,p.lon],{radius:5,color:col(p.rsrp),fillColor:col(p.rsrp),fillOpacity:.85,weight:1}).bindPopup('<b>'+(p.rsrp==null?'&mdash;':p.rsrp+' dBm')+'</b> '+(p.net||'')+' '+(p.band||'')+'<br>'+new Date(p.t*1000).toLocaleString()).addTo(layer);});
+          if(ll.length>1)L.polyline(ll,{color:'#58a6ff',weight:2,opacity:.35}).addTo(layer);
+          var last=pts[pts.length-1];if(last){if(live)map.removeLayer(live);live=L.circleMarker([last.lat,last.lon],{radius:9,color:'#fff',weight:2,fillColor:col(last.rsrp),fillOpacity:1}).addTo(map);}
+          if(!fitted&&ll.length){map.fitBounds(ll,{padding:[40,40],maxZoom:14});fitted=true;}map.invalidateSize();
+        }).catch(function(){document.getElementById('sigmap-status').textContent='offline';});}
+        refresh();setInterval(refresh,REFRESH);}
       if(document.readyState!=='loading')start();else document.addEventListener('DOMContentLoaded',start);
     })();
-    </script>'''
+    </script>
+"""
+
+
+VAN_SIGNAL_MAP_CARDS = r"""
+    <section class="section section--alt" aria-label="How the map is made">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/ HOW IT WORKS</p>
+          <h2 class="section-title section-title--center" data-title>Measured, not modelled<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ul class="ai-cards" data-stagger>
+          <li>
+            <svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+            <h3>The van measures</h3>
+            <p>A router in the campervan reads the live 4G/5G signal &mdash; strength, band, network &mdash; and Home Assistant logs it every few seconds while driving.</p>
+          </li>
+          <li>
+            <svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 2v10l6 3"/></svg>
+            <h3>Tagged to the spot</h3>
+            <p>Each reading is pinned to exactly where it was taken, so you see the real signal at a real place &mdash; not a coverage prediction averaged over a grid square.</p>
+          </li>
+          <li>
+            <svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <h3>Plotted live</h3>
+            <p>The route paints itself on the map, green where signal is strong and red where it drops &mdash; the honest picture of what one real van, on one network, actually gets.</p>
+          </li>
+        </ul>
+        <p class="prose" style="max-width:60ch;margin:1.5rem auto 0;text-align:center;color:var(--muted,#8b949e)" data-reveal>Built by <a href="/off-grid-victron-energy/">365 Techies</a> with Home Assistant and a 5G router &mdash; the same off-grid monitoring we build for campervans, boats and remote sites.</p>
+      </div>
+    </section>
+"""
+
 
 # ====================================================== VAN SIGNAL MAP (showcase)
 # Our own campervan's measured 4G/5G signal, plotted where it was measured. Data
@@ -6000,12 +6038,21 @@ add(
  slug="van-signal-map",
  title="Live Campervan Signal Map | Measured 4G/5G | 365 Techies",
  desc="A live map of the real 4G/5G signal our demonstration campervan measured across Dorset and the South-West. Measured, not modelled. Built with Home Assistant by 365 Techies.",
- og_title="Live Campervan Signal Map — Measured 4G/5G",
+ og_title="Live Campervan Signal Map \u2014 Measured 4G/5G",
  schema=lambda s: graph([
    crumb(s, "Campervan Signal Map"),
-   webpage(s, "Live Campervan Signal Map", "A live map of the real 4G/5G signal our demonstration campervan measured across Dorset and the South-West — measured, not modelled."),
+   webpage(s, "Live Campervan Signal Map", "A live map of the real 4G/5G signal our demonstration campervan measured across Dorset and the South-West \u2014 measured, not modelled."),
  ]),
- content=VAN_SIGNAL_MAP_CONTENT,
+ content="\n".join([
+   hero(bc("Campervan Signal Map"), "// LIVE FROM THE 365 CRAFTER",
+        'Measured 4G&thinsp;/&thinsp;5G signal <em class="grad grad--cyan">across Dorset</em>',
+        "The real signal our demonstration campervan measured, plotted exactly where it measured it. Measured, not modelled &mdash; one van, one network, read live by Home Assistant.",
+        cta1=("How it\u2019s built", "/off-grid-victron-energy/"), cta2=("Talk to us", "/contact/"),
+        chips=["Measured, not modelled", "Live from the van", "Three UK 4G/5G"],
+        scene=_signal_scene()),
+   VAN_SIGNAL_MAP_MAP,
+   VAN_SIGNAL_MAP_CARDS,
+ ]),
 )
 
 
