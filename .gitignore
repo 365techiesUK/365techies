@@ -102,3 +102,6 @@ api/bm-sea-beat.json
 api/bm-sea-beat.json.tmp
 api/bm-sea.lock
 api/bm-sea-key.php
+api/signal-token.php
+api/signal-data.json
+api/signal-data.json.tmp
