@@ -103,7 +103,7 @@ except Exception:
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://365techies.co.uk"
-CSSV = "81"
+CSSV = "82"
 HERITAGE_DIMS = {'heritage-01.jpg': (1400, 787), 'heritage-02.jpg': (787, 1400), 'heritage-03.jpg': (1400, 787), 'heritage-04.jpg': (1400, 787), 'heritage-05.jpg': (787, 1400), 'heritage-07.jpg': (1400, 787), 'heritage-kinson.jpg': (1200, 710), 'heritage-moordown.jpg': (1400, 788), 'heritage-stock.jpg': (1400, 788), 'heritage-storefront.jpg': (1024, 683)}
 try:
     from hero_scenes import SCENES as HERO_SCENES
@@ -5998,6 +5998,23 @@ VAN_SIGNAL_MAP_MAP = r"""
 
 
 VAN_SIGNAL_MAP_CARDS = r"""
+    <style>
+      /* .ai-cards lives INLINE on the /ai/ pages, not in the global stylesheet —
+         any page reusing the markup must carry these rules or the icons render
+         full-width (the 497px-giant-SVG bug). Vars are all global :root. */
+      .ai-cards{list-style:none;margin:1.2rem 0 0;padding:0;display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(255px,1fr))}
+      .ai-cards li{position:relative;padding:1.25rem 1.3rem;border-radius:var(--r-lg);background:var(--glass-deep);border:1px solid var(--line);overflow:hidden;transition:transform .28s ease,border-color .28s ease,box-shadow .28s ease}
+      .ai-cards li::before{content:"";position:absolute;left:0;top:0;height:2px;width:100%;background:linear-gradient(90deg,transparent,var(--cyan),transparent);transform:translateX(-100%);transition:transform .5s ease}
+      .ai-cards li:hover,.ai-cards li:focus-within{transform:translateY(-4px);border-color:rgba(108,196,245,.42);box-shadow:0 18px 40px rgba(3,10,26,.5)}
+      .ai-cards li:hover::before,.ai-cards li:focus-within::before{transform:translateX(0)}
+      .ai-cards .ai-cardico{width:30px;height:30px;color:var(--cyan-soft);margin-bottom:.7rem;display:block}
+      .ai-cards li:hover .ai-cardico{animation:aiNudge .6s ease}
+      @keyframes aiNudge{40%{transform:translateY(-3px) rotate(-4deg)}100%{transform:none}}
+      .ai-cards h3{font-size:1.06rem;color:#fff;margin:0 0 .45rem;line-height:1.3}
+      .ai-cards p{font-size:.95rem;color:var(--muted);margin:0;line-height:1.6}
+      .ai-cards a{color:var(--cyan-soft)}
+      @media (prefers-reduced-motion:reduce){.ai-cards li{transition:none}.ai-cards li:hover .ai-cardico{animation:none}}
+    </style>
     <section class="section section--alt" aria-label="How the map is made">
       <div class="wrap">
         <div class="section-head">

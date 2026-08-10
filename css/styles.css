@@ -462,7 +462,17 @@ html.no-motion body.menu-open .menu-backdrop { transition-delay: 0s, 0s; }
 .m-group > summary:hover { color: var(--cyan); }
 .m-group > summary::after { transition: transform .3s cubic-bezier(.22,1,.36,1), margin .3s ease; }
 @media (max-width: 919px) {
-  /* phones: no remote support on mobiles, and the SOS pill was crowding the hamburger */
+  /* The SOS pill STAYS at this width. A customer's laptop at Windows'
+     default 150% display scaling lands in this range (~911 CSS px), and a
+     customer being talked through on the phone MUST find the red button
+     top-right - one couldn't, on 2026-08-08, which is why this rule
+     changed. Compact padding so it doesn't crowd the hamburger (the old
+     reason it was hidden). */
+  .nav-sos { padding: 0.5rem 0.7rem; letter-spacing: 0.08em; }
+}
+@media (max-width: 479px) {
+  /* small phones only: SOS can't run ON a phone anyway - it lives in the
+     mobile menu and /sos/ for those. */
   .nav-sos { display: none !important; }
 }
 .m-group__links { display: none; flex-direction: column; padding: 0.1rem 0 0.7rem 0.9rem; }

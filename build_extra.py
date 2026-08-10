@@ -6029,6 +6029,78 @@ def off_grid():
         </div>
       </div>
     </section>
+    <section class="section" aria-label="Beyond the electrics — Home Assistant readings from the van">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// BEYOND THE ELECTRICS</p>
+          <h2 class="section-title section-title--center" data-title>The same van, through Home Assistant<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>The Victron dashboard above reads the van&rsquo;s <em>power</em>. Home Assistant reads <em>everything else</em> &mdash; and pushes a live snapshot here every 30 seconds: the 4G/5G signal the van&rsquo;s router is actually getting, the real internet speed behind it, and roughly where the van is (town only &mdash; never the exact spot).</p>
+        </div>
+        <style>
+          /* .vhx-* namespace — .vlive is already owned by the VRM dashboard above */
+          .vhx{max-width:940px;margin:0 auto}
+          .vhx-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:0 2px 14px;font:600 .66rem/1.3 ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;color:#a9bacd}
+          .vhx-live{display:inline-flex;align-items:center;gap:8px;color:#39d353}
+          .vhx-dot{width:9px;height:9px;border-radius:50%;background:#39d353;position:relative}
+          .vhx-dot::after{content:"";position:absolute;inset:-2px;border-radius:50%;border:2px solid rgba(57,211,83,.55);animation:vhxping 2.4s cubic-bezier(0,0,.2,1) infinite}
+          @keyframes vhxping{0%{transform:scale(.6);opacity:1}75%,100%{transform:scale(2.1);opacity:0}}
+          .vhx-upd{font-variant-numeric:tabular-nums;opacity:.9}
+          .vhx-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px}
+          .vhx-tile{background:var(--glass-deep);border:1px solid var(--line);border-radius:var(--r-lg);padding:16px 18px 14px}
+          .vhx-k{margin:0;color:var(--muted);font-size:.72rem;letter-spacing:.09em;text-transform:uppercase}
+          .vhx-v{margin:.3rem 0 0;font-size:1.9rem;font-weight:750;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
+          .vhx-v--sm{font-size:1.3rem;line-height:1.15}
+          .vhx-u{font-size:.85rem;font-weight:600;color:var(--muted);margin-left:3px}
+          .vhx-sub{margin:.5rem 0 0;color:#9db3cf;font-size:.8rem}
+          .vhx[data-state=stale]{opacity:.5;filter:grayscale(.65)}
+          .vhx[data-state=stale] .vhx-dot{background:#6e7681}
+          .vhx[data-state=stale] .vhx-dot::after{animation:none}
+          .vhx-more{text-align:center;margin:1.2rem 0 0}
+          @media (prefers-reduced-motion:reduce){.vhx-dot::after{animation:none}}
+        </style>
+        <div class="vhx" id="vhx" data-state="loading">
+          <div class="vhx-bar">
+            <span class="vhx-live"><span class="vhx-dot"></span><span id="vhx-state">connecting&hellip;</span></span>
+            <span class="vhx-upd" id="vhx-upd"></span>
+          </div>
+          <div class="vhx-grid">
+            <div class="vhx-tile">
+              <p class="vhx-k">Mobile signal</p>
+              <p class="vhx-v"><span id="vhx-rsrp">&mdash;</span><span class="vhx-u">dBm</span></p>
+              <p class="vhx-sub"><span id="vhx-net">&mdash;</span> &middot; <span id="vhx-band">&mdash;</span></p>
+            </div>
+            <div class="vhx-tile">
+              <p class="vhx-k">Internet</p>
+              <p class="vhx-v"><span id="vhx-dl">&mdash;</span><span class="vhx-u">Mbps</span></p>
+              <p class="vhx-sub"><span id="vhx-status">&mdash;</span> &middot; <span id="vhx-latency">&mdash;</span> ms</p>
+            </div>
+            <div class="vhx-tile">
+              <p class="vhx-k">Near</p>
+              <p class="vhx-v vhx-v--sm" id="vhx-town">&mdash;</p>
+              <p class="vhx-sub">town level only</p>
+            </div>
+          </div>
+          <p class="vhx-more"><a class="button secondary" href="/van-signal-map/">See the live signal map &rarr;</a></p>
+        </div>
+      </div>
+    </section>
+    <script>
+    (function(){var EP='/api/van-live.php',T=30000;
+      function el(i){return document.getElementById(i);}
+      function set(i,v){var e=el(i);if(e)e.textContent=(v===null||v===undefined||v==='')?'—':v;}
+      function ago(s){s=Math.max(0,s|0);if(s<60)return s+'s ago';var m=(s/60)|0;return m<60?m+'m ago':((m/60)|0)+'h ago';}
+      function go(){fetch(EP+'?_='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
+        var b=el('vhx');if(!b)return;
+        if(!j||j.live===false||j.t==null){b.setAttribute('data-state','stale');set('vhx-state','van offline');el('vhx-upd').textContent='';return;}
+        b.setAttribute('data-state','live');set('vhx-state','live');el('vhx-upd').textContent='updated '+ago(j.age_s);
+        set('vhx-rsrp',j.rsrp);set('vhx-net',j.net);set('vhx-band',j.band);
+        set('vhx-dl',j.dl);set('vhx-status',j.net_status);set('vhx-latency',j.latency==null?'—':Math.round(j.latency));
+        set('vhx-town',j.town||'hidden');
+      }).catch(function(){var b=el('vhx');if(b){b.setAttribute('data-state','stale');set('vhx-state','offline');}});}
+      function st(){go();setInterval(go,T);}
+      if(document.readyState!=='loading')st();else document.addEventListener('DOMContentLoaded',st);
+    })();
+    </script>
     <script>
     (function(){
       var PROXY="/api/vrm.php"; /* Same-origin PHP proxy on SiteGround; token lives server-side in api/vrm-token.php (never in git). */
