@@ -38,6 +38,8 @@ def register():
 
     for p in PAGES:
         _emit(p, bp)
+    from ai_case_studies_data import PAGE as _CS
+    _emit(_CS, bp)
     _intake_page(bp)
 
 
@@ -196,8 +198,8 @@ _STRIP = [
     ("Automate", [("/ai/automations/", "Automations"), ("/ai/agents/", "Agents"),
                   ("/ai/voice-agents/", "Voice agents")]),
     ("Plan &amp; adopt", [("/ai/consultancy/", "Consultancy"), ("/ai/training/", "Training")]),
-    ("Explore", [("/ai/industries/", "Industries"), ("/ai/tools/", "Tools"),
-                 ("/ai/learn/", "Learn")]),
+    ("Explore", [("/ai/case-studies/", "Case studies"), ("/ai/industries/", "Industries"),
+                 ("/ai/tools/", "Tools"), ("/ai/learn/", "Learn")]),
 ]
 
 _STRIP_CSS = '''<style>
