@@ -110,3 +110,4 @@ api/van-live-data.json
 api/van-live-data.json.tmp
 api/van-live-geo.json
 api/van-live-geo.json.tmp
+api/geo-fence.php

@@ -309,7 +309,7 @@ def _intake_page(bp):
       <div class="wrap wrap--narrow">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">// START AN AI ENQUIRY</p>
-          <h1 class="section-title" data-title>Tell us what&rsquo;s wasting your team&rsquo;s time<span class="title-underline"></span></h1>
+          <h1 class="section-title" data-title>Tell us what&rsquo;s wasting your time<span class="title-underline"></span></h1>
           <p class="lede">Describe the job in your own words &mdash; the repeated copying, the missed calls, the chasing. You don&rsquo;t need to know what an AI agent is, and nothing here commits you to anything. A person from our Bournemouth team reads every enquiry and replies personally.</p>
         </div>
         <div class="ai-scene" data-reveal aria-hidden="true" style="max-width:460px;margin:1.6rem auto 2rem">''' + SCENES["ai/start"] + '''</div>
@@ -322,7 +322,7 @@ def _intake_page(bp):
           <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" />
           <label class="field"><span>What&rsquo;s the repetitive work, delay or problem you want to improve?</span>
             <textarea name="problem" rows="5" required aria-describedby="ai-priv"></textarea></label>
-          <p class="cc-note" id="ai-priv">Please describe the process, but don&rsquo;t include passwords, API keys or sensitive customer information.</p>
+          <p class="cc-note" id="ai-priv">Describe the process in everyday words &mdash; how the work arrives, what someone does with it, where it goes. No passwords, account logins or confidential customer details are needed at this stage.</p>
           <label class="field"><span>Which is closest? (optional)</span>
             <select name="category">
               <option value="">Choose one if it helps&hellip;</option>

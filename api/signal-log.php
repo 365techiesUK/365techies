@@ -25,6 +25,16 @@ const COORD_DP    = 5;              // ~1.1 m; rounding limits precision on disk
 // Token lives in a gitignored include, like api/tm-key.php on the live site.
 $__t = @include __DIR__ . '/signal-token.php';
 define('SHARED_TOKEN', is_string($__t) ? $__t : '');
+// Optional PRIVATE EXCLUSION ZONE (owner's home). Server-only, gitignored —
+// the coordinates must never exist in this public repo. To enable, create
+// api/geo-fence.php via File Manager containing:
+//     <?php return [50.0000, -1.0000, 300];   // lat, lon, radius in metres
+// Points inside the fence keep their signal reading but have their location
+// STRIPPED — at POST (future points) AND at GET (points stored before the
+// fence existed), so enabling it retroactively hides history too.
+$__f = @include __DIR__ . '/geo-fence.php';
+define('GEO_FENCE', (is_array($__f) && count($__f) === 3
+    && is_numeric($__f[0]) && is_numeric($__f[1]) && is_numeric($__f[2])) ? $__f : null);
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -40,6 +50,9 @@ if ($method === 'GET') {
     // live tracker without this. Flagged by the owner 2026-08-10. Do not lower.
     $cutoff = time() - 24 * 3600;
     $points = array_values(array_filter($points, fn($p) => ($p['t'] ?? 0) < $cutoff));
+    // Private exclusion zone: strip location from any stored point inside the
+    // fence (covers points recorded before the fence file existed).
+    $points = array_map('strip_if_fenced', $points);
     if ($since > 0) {
         $points = array_values(array_filter($points, fn($p) => ($p['t'] ?? 0) > $since));
     }
@@ -94,7 +107,8 @@ if ($method === 'POST') {
         $lat = (float)$in['lat'];
         $lon = (float)$in['lon'];
         if ($lat >= -90 && $lat <= 90 && $lon >= -180 && $lon <= 180
-            && !($lat == 0.0 && $lon == 0.0)) {
+            && !($lat == 0.0 && $lon == 0.0)
+            && !in_fence($lat, $lon)) {   // never store a location inside the private zone
             $p['lat'] = round($lat, COORD_DP);
             $p['lon'] = round($lon, COORD_DP);
         }
@@ -118,6 +132,22 @@ function str_clip($v, int $max) {
     if ($v === null) return null;
     $v = trim((string)$v);
     return $v === '' ? null : mb_substr($v, 0, $max);
+}
+function in_fence($lat, $lon): bool {
+    if (GEO_FENCE === null || !is_numeric($lat) || !is_numeric($lon)) return false;
+    [$flat, $flon, $fr] = GEO_FENCE;
+    $R = 6371000.0;
+    $dlat = deg2rad((float)$lat - (float)$flat);
+    $dlon = deg2rad((float)$lon - (float)$flon);
+    $a = sin($dlat / 2) ** 2
+       + cos(deg2rad((float)$flat)) * cos(deg2rad((float)$lat)) * sin($dlon / 2) ** 2;
+    return ($R * 2 * atan2(sqrt($a), sqrt(1 - $a))) < (float)$fr;
+}
+function strip_if_fenced(array $p): array {
+    if (isset($p['lat'], $p['lon']) && in_fence($p['lat'], $p['lon'])) {
+        unset($p['lat'], $p['lon']);
+    }
+    return $p;
 }
 function load_points(): array {
     if (!is_file(DATA_FILE)) return [];
