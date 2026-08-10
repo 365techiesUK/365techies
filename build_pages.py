@@ -5961,11 +5961,19 @@ VAN_SIGNAL_MAP_MAP = r"""
       .sigmap-legend .bar{display:inline-block;width:96px;height:9px;border-radius:5px;vertical-align:middle;background:linear-gradient(90deg,#f85149,#d29922,#3fb950)}
       .leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#141b2e;color:#e6edf3}
       .sigmap-empty{color:var(--muted,#8b949e);font-size:.85rem;margin:.85rem 0 0;text-align:center}
+      .sigmap-mode{position:absolute;top:12px;right:12px;z-index:500;display:flex;background:rgba(10,16,32,.85);border:1px solid rgba(125,170,220,.22);border-radius:10px;overflow:hidden;backdrop-filter:blur(6px)}
+      .sigmap-mode button{appearance:none;border:0;background:transparent;color:#9db3cf;font:600 .74rem/1 inherit;font-family:inherit;padding:9px 13px;cursor:pointer;letter-spacing:.03em}
+      .sigmap-mode button[aria-pressed=true]{background:rgba(29,151,227,.28);color:#fff}
+      .sigmap-mode button:focus-visible{outline:2px solid #6cc4f5;outline-offset:-2px}
     </style>
     <section class="section" aria-label="Live measured signal map">
       <div class="wrap">
         <div class="sigmap-wrap">
           <div class="sigmap-status"><span class="sigmap-dot"></span><span id="sigmap-status">loading&hellip;</span></div>
+          <div class="sigmap-mode" role="group" aria-label="Colour the map by">
+            <button type="button" id="sigmode-rsrp" aria-pressed="true">Signal</button>
+            <button type="button" id="sigmode-speed" aria-pressed="false">Speed</button>
+          </div>
           <div id="sigmap"></div>
         </div>
         <p class="sigmap-empty" id="sigmap-empty" hidden>No location-tagged readings yet &mdash; the map fills in as the van drives.</p>
@@ -5975,21 +5983,49 @@ VAN_SIGNAL_MAP_MAP = r"""
     <script src="/vendor/leaflet/leaflet.js" defer></script>
     <script>
     (function(){var ENDPOINT='/api/signal-log.php',REFRESH=15000,GOOD=-80,BAD=-110;
+      /* Speed view: a point only counts as "speed tested here" when the test ran
+         within FRESH_S of the point (dl_age, stamped by the van). Older speed
+         values are NOT shown against locations they weren't measured at — the
+         hourly background test would otherwise smear one number along an hour
+         of road. The van tests every 5 min while driving. */
+      var FRESH_S=420,SPD_MAX=50;
       function start(){if(typeof L==='undefined'){return setTimeout(start,200);}
         var map=L.map('sigmap',{zoomControl:true}).setView([50.72,-1.88],10);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,className:'osm-tiles',attribution:'&copy; OpenStreetMap'}).addTo(map);
-        var lg=L.control({position:'bottomright'});lg.onAdd=function(){var d=L.DomUtil.create('div','sigmap-legend');d.innerHTML='<b>Signal (RSRP)</b><br>weak <span class=\'bar\'></span> strong<br>&minus;110 &rarr; &minus;80 dBm';return d;};lg.addTo(map);
+        var mode='rsrp';
+        var lg=L.control({position:'bottomright'});var lgDiv=null;
+        lg.onAdd=function(){lgDiv=L.DomUtil.create('div','sigmap-legend');legend();return lgDiv;};lg.addTo(map);
+        function legend(){if(!lgDiv)return;lgDiv.innerHTML=(mode==='rsrp')
+          ?'<b>Signal (RSRP)</b><br>weak <span class=\'bar\'></span> strong<br>&minus;110 &rarr; &minus;80 dBm'
+          :'<b>Download speed</b><br>slow <span class=\'bar\'></span> fast<br>0 &rarr; '+SPD_MAX+'+ Mbps &middot; grey = not tested at that spot';}
         function col(r){if(r==null)return '#6e7681';var t=Math.max(0,Math.min(1,(r-BAD)/(GOOD-BAD)));var R=t<.5?248:Math.round(248-(t-.5)*2*185),G=t<.5?Math.round(81+t*2*104):185;return 'rgb('+R+','+G+',80)';}
-        var layer=L.layerGroup().addTo(map),live=null,fitted=false;
-        function refresh(){fetch(ENDPOINT+'?_='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
-          var pts=(j.points||[]).filter(function(p){return p.lat!=null&&p.lon!=null;});
-          document.getElementById('sigmap-empty').hidden=pts.length>0;
-          document.getElementById('sigmap-status').textContent=pts.length?(pts.length+' readings'):'logging (no fix yet)';
-          layer.clearLayers();var ll=[];
-          pts.forEach(function(p){ll.push([p.lat,p.lon]);L.circleMarker([p.lat,p.lon],{radius:5,color:col(p.rsrp),fillColor:col(p.rsrp),fillOpacity:.85,weight:1}).bindPopup('<b>'+(p.rsrp==null?'&mdash;':p.rsrp+' dBm')+'</b> '+(p.net||'')+' '+(p.band||'')+'<br>'+new Date(p.t*1000).toLocaleString()).addTo(layer);});
+        function spdcol(m){if(m==null)return '#6e7681';var t=Math.max(0,Math.min(1,m/SPD_MAX));var R=t<.5?248:Math.round(248-(t-.5)*2*185),G=t<.5?Math.round(81+t*2*104):185;return 'rgb('+R+','+G+',80)';}
+        function freshDl(p){return (p.dl!=null&&p.dl_age!=null&&p.dl_age<FRESH_S)?p.dl:null;}
+        function pcol(p){if(mode==='rsrp')return col(p.rsrp);return spdcol(freshDl(p));}
+        var layer=L.layerGroup().addTo(map),live=null,fitted=false,cache=[];
+        function popup(p){var s='<b>'+(p.rsrp==null?'&mdash;':p.rsrp+' dBm')+'</b> '+(p.net||'')+' '+(p.band||'');
+          var f=freshDl(p);if(f!=null)s+='<br><b>'+f+' Mbps</b> download &middot; tested near this spot';
+          return s+'<br>'+new Date(p.t*1000).toLocaleString();}
+        function render(){var pts=cache;layer.clearLayers();var ll=[];
+          pts.forEach(function(p){ll.push([p.lat,p.lon]);
+            var tested=(mode==='speed'&&freshDl(p)!=null);
+            L.circleMarker([p.lat,p.lon],{radius:tested?7:5,color:pcol(p),fillColor:pcol(p),fillOpacity:(mode==='speed'&&!tested)?.35:.85,weight:1}).bindPopup(popup(p)).addTo(layer);});
           if(ll.length>1)L.polyline(ll,{color:'#58a6ff',weight:2,opacity:.35}).addTo(layer);
-          var last=pts[pts.length-1];if(last){if(live)map.removeLayer(live);live=L.circleMarker([last.lat,last.lon],{radius:9,color:'#fff',weight:2,fillColor:col(last.rsrp),fillOpacity:1}).addTo(map);}
-          if(!fitted&&ll.length){map.fitBounds(ll,{padding:[40,40],maxZoom:14});fitted=true;}map.invalidateSize();
+          var last=pts[pts.length-1];if(live){map.removeLayer(live);live=null;}
+          if(last){live=L.circleMarker([last.lat,last.lon],{radius:9,color:'#fff',weight:2,fillColor:pcol(last),fillOpacity:1}).addTo(map);}
+          if(!fitted&&ll.length){map.fitBounds(ll,{padding:[40,40],maxZoom:14});fitted=true;}map.invalidateSize();}
+        function setMode(m){mode=m;
+          document.getElementById('sigmode-rsrp').setAttribute('aria-pressed',m==='rsrp');
+          document.getElementById('sigmode-speed').setAttribute('aria-pressed',m==='speed');
+          legend();render();}
+        document.getElementById('sigmode-rsrp').addEventListener('click',function(){setMode('rsrp');});
+        document.getElementById('sigmode-speed').addEventListener('click',function(){setMode('speed');});
+        function refresh(){fetch(ENDPOINT+'?_='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
+          cache=(j.points||[]).filter(function(p){return p.lat!=null&&p.lon!=null;});
+          document.getElementById('sigmap-empty').hidden=cache.length>0;
+          var nSpd=cache.filter(function(p){return p.dl!=null&&p.dl_age!=null&&p.dl_age<FRESH_S;}).length;
+          document.getElementById('sigmap-status').textContent=cache.length?(cache.length+' readings'+(nSpd?(' · '+nSpd+' speed tests'):'')):'logging (no fix yet)';
+          render();
         }).catch(function(){document.getElementById('sigmap-status').textContent='offline';});}
         refresh();setInterval(refresh,REFRESH);}
       if(document.readyState!=='loading')start();else document.addEventListener('DOMContentLoaded',start);

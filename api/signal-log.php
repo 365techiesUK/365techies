@@ -79,6 +79,12 @@ if ($method === 'POST') {
         'net'  => str_clip($in['net'] ?? null, 12),
         'band' => str_clip($in['band'] ?? null, 20),
         'dl'   => num($in['dl'] ?? null),
+        // Age of the speed reading in seconds when this point was recorded.
+        // The base sensor only retests hourly; a drive automation forces a
+        // test every 5 min. The map treats dl as "tested near this spot" only
+        // when dl_age is small — otherwise an hour-old number gets silently
+        // attributed to every location driven through since.
+        'dl_age' => num($in['dl_age'] ?? null),
     ];
     // Location is optional — until the Cerbo GPS dongle is fitted it may be null.
     if (isset($in['lat'], $in['lon'])) {
