@@ -40,6 +40,8 @@ def register():
         _emit(p, bp)
     from ai_case_studies_data import PAGE as _CS
     _emit(_CS, bp)
+    from ai_voice_cost_data import PAGE as _VC
+    _emit(_VC, bp)
     _intake_page(bp)
 
 
@@ -196,7 +198,7 @@ def _section(h2, html, idx, alt, bp):
 _STRIP = [
     ("Overview", [("/ai/", "AI overview")]),
     ("Automate", [("/ai/automations/", "Automations"), ("/ai/agents/", "Agents"),
-                  ("/ai/voice-agents/", "Voice agents")]),
+                  ("/ai/voice-agents/", "Voice agents"), ("/ai/voice-agents/cost/", "Voice agent cost")]),
     ("Plan &amp; adopt", [("/ai/consultancy/", "Consultancy"), ("/ai/training/", "Training")]),
     ("Explore", [("/ai/case-studies/", "Case studies"), ("/ai/industries/", "Industries"),
                  ("/ai/tools/", "Tools"), ("/ai/learn/", "Learn")]),

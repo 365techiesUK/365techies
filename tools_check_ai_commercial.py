@@ -90,6 +90,16 @@ def ai_built_files():
     return files
 
 
+# Per-page extra price allowances beyond APPROVED_AI_PRICES. The cost page's
+# single anonymous market-range sentence ("roughly £49 to £200 a month") is
+# NOT a 365 price - it is live-verified market evidence, recorded with
+# provider/URL/date in seo-research/ai-ia/EVIDENCE-market-range-2026-08-10.md.
+# If that sentence changes, this allowance and the evidence file change with it.
+PAGE_PRICE_ALLOWANCES = {
+    "ai/voice-agents/cost/index.html": {"49", "200"},
+}
+
+
 def scan_text(rel, text, price_only, retired_hits, unresolved_hits, price_hits):
     for rx, label in RETIRED:
         n = len(rx.findall(text))
@@ -100,9 +110,10 @@ def scan_text(rel, text, price_only, retired_hits, unresolved_hits, price_hits):
             n = len(rx.findall(text))
             if n:
                 unresolved_hits.append("%s: %s x%d" % (rel, label, n))
+    page_extra = PAGE_PRICE_ALLOWANCES.get(rel.replace("\\", "/"), set())
     for rx in PRICE_RES:
         for m in rx.finditer(text):
-            if m.group(1) not in APPROVED_AI_PRICES and m.group(1) != "495":
+            if m.group(1) not in APPROVED_AI_PRICES and m.group(1) != "495" and m.group(1) not in page_extra:
                 # 495 already reported as retired; anything else is an
                 # INVENTED price - the class of defect that must stop a build.
                 price_hits.append("%s: unapproved AI price claim %r" % (rel, m.group(0)))
@@ -154,7 +165,7 @@ def main():
         # exception as render_test); every other price claim is banned here.
         for rx in PRICE_RES:
             for m in rx.finditer(blob):
-                if u == "ai/voice-agents" and "".join(c for c in m.group(0) if c.isdigit()) == "95":
+                if u in ("ai/voice-agents", "ai/voice-agents/cost") and "".join(c for c in m.group(0) if c.isdigit()) == "95":
                     continue
                 price_hits.append("%s: price claim %r must not enter the search index" % (label, m.group(0)))
         for rx, lab in RETIRED:
