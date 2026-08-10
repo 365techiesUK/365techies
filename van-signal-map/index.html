@@ -890,16 +890,21 @@
           var last=pts[pts.length-1];if(live){map.removeLayer(live);live=null;}
           if(last){live=L.circleMarker([last.lat,last.lon],{radius:9,color:'#fff',weight:2,fillColor:pcol(last),fillOpacity:1}).addTo(map);}
           if(!fitted&&ll.length){map.fitBounds(ll,{padding:[40,40],maxZoom:14});fitted=true;}map.invalidateSize();}
+        var userChose=false;
         function setMode(m){mode=m;
           ['rsrp','speed','best'].forEach(function(x){document.getElementById('sigmode-'+x).setAttribute('aria-pressed',m===x);});
           legend();render();}
-        ['rsrp','speed','best'].forEach(function(x){document.getElementById('sigmode-'+x).addEventListener('click',function(){setMode(x);});});
+        ['rsrp','speed','best'].forEach(function(x){document.getElementById('sigmode-'+x).addEventListener('click',function(){userChose=true;setMode(x);});});
+        var firstLoad=true;
         function refresh(){fetch(ENDPOINT+'?_='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
           cache=(j.points||[]).filter(function(p){return p.lat!=null&&p.lon!=null;});
           document.getElementById('sigmap-empty').hidden=cache.length>0;
           var nSpd=cache.filter(function(p){return p.dl!=null&&p.dl_age!=null&&p.dl_age<FRESH_S;}).length;
           document.getElementById('sigmap-status').textContent=cache.length?(cache.length+' readings'+(nSpd?(' · '+nSpd+' speed tests'):'')):'logging (no fix yet)';
-          render();
+          /* Once enough places have real speed tests, the GUIDE is the point of
+             the page — open on Best spots (unless the visitor picked a view). */
+          if(firstLoad&&!userChose&&bestCells().length>=3){setMode('best');firstLoad=false;return;}
+          firstLoad=false;render();
         }).catch(function(){document.getElementById('sigmap-status').textContent='offline';});}
         refresh();setInterval(refresh,REFRESH);}
       if(document.readyState!=='loading')start();else document.addEventListener('DOMContentLoaded',start);

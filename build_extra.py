@@ -6029,12 +6029,36 @@ def off_grid():
         </div>
       </div>
     </section>
-    <section class="section" aria-label="Beyond the electrics — Home Assistant readings from the van">
+    <section class="section" aria-label="Beyond the electrics — the van's Home Assistant brain">
       <div class="wrap">
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>// BEYOND THE ELECTRICS</p>
-          <h2 class="section-title section-title--center" data-title>The same van, through Home Assistant<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>The Victron dashboard above reads the van&rsquo;s <em>power</em>. Home Assistant reads <em>everything else</em> &mdash; and pushes a live snapshot here every 30 seconds: the 4G/5G signal the van&rsquo;s router is actually getting, the real internet speed behind it, and roughly where the van is (town only &mdash; never the exact spot).</p>
+          <h2 class="section-title section-title--center" data-title>The whole van has a brain: Home Assistant<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>The Victron dashboard above reads the van&rsquo;s <em>power</em>. <strong>Home Assistant reads everything</strong> &mdash; the same Cerbo GX over local MQTT, plus the 4G/5G router, internet speed tests, GPS and more &mdash; and it doesn&rsquo;t just watch: it <em>acts</em>, cutting heavy loads before the battery hurts and speed-testing the mobile network as the van drives. A snapshot lands on this page every 30 seconds.</p>
+        </div>
+        <style>
+          .vhx-stats{display:flex;justify-content:center;gap:2.2rem;flex-wrap:wrap;margin:0 0 1.3rem;text-align:center}
+          .vhx-stats b{display:block;font-size:1.9rem;font-weight:750;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.1}
+          .vhx-stats span{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+          /* .ai-cards is inline-only on pages that use it (NOT in the global
+             stylesheet) — omitting this block reproduces the giant-icon bug. */
+          .ai-cards{list-style:none;margin:1.4rem 0 0;padding:0;display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(255px,1fr))}
+          .ai-cards li{position:relative;padding:1.25rem 1.3rem;border-radius:var(--r-lg);background:var(--glass-deep);border:1px solid var(--line);overflow:hidden;transition:transform .28s ease,border-color .28s ease,box-shadow .28s ease}
+          .ai-cards li::before{content:"";position:absolute;left:0;top:0;height:2px;width:100%;background:linear-gradient(90deg,transparent,var(--cyan),transparent);transform:translateX(-100%);transition:transform .5s ease}
+          .ai-cards li:hover,.ai-cards li:focus-within{transform:translateY(-4px);border-color:rgba(108,196,245,.42);box-shadow:0 18px 40px rgba(3,10,26,.5)}
+          .ai-cards li:hover::before,.ai-cards li:focus-within::before{transform:translateX(0)}
+          .ai-cards .ai-cardico{width:30px;height:30px;color:var(--cyan-soft);margin-bottom:.7rem;display:block}
+          .ai-cards li:hover .ai-cardico{animation:aiNudge .6s ease}
+          @keyframes aiNudge{40%{transform:translateY(-3px) rotate(-4deg)}100%{transform:none}}
+          .ai-cards h3{font-size:1.06rem;color:#fff;margin:0 0 .45rem;line-height:1.3}
+          .ai-cards p{font-size:.95rem;color:var(--muted);margin:0;line-height:1.6}
+          @media (prefers-reduced-motion:reduce){.ai-cards li{transition:none}.ai-cards li:hover .ai-cardico{animation:none}}
+        </style>
+        <div class="vhx-stats" data-reveal>
+          <div><b>141</b><span>live entities</span></div>
+          <div><b>9</b><span>devices integrated</span></div>
+          <div><b>3</b><span>official Victron integrations</span></div>
+          <div><b>30s</b><span>to this page</span></div>
         </div>
         <style>
           /* .vhx-* namespace — .vlive is already owned by the VRM dashboard above */
@@ -6080,8 +6104,28 @@ def off_grid():
               <p class="vhx-sub">town level only</p>
             </div>
           </div>
-          <p class="vhx-more"><a class="button secondary" href="/van-signal-map/">See the live signal map &rarr;</a></p>
-          <p class="prose" style="text-align:center;max-width:62ch;margin:1.1rem auto 0;color:var(--muted)">Sizing your own system? Our free <a href="/solar-battery-calculator/">campervan solar &amp; battery calculator</a> gives you an honest lithium size and panel wattage from what you actually run. Want your Victron kit talking to Home Assistant like this? Here&rsquo;s <a href="/home-assistant-victron-cerbo-gx/">exactly how we wired the Cerbo GX into Home Assistant</a>.</p>
+          <ul class="ai-cards" data-stagger>
+            <li>
+              <svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              <h3>It acts, not just watches</h3>
+              <p>Victron data driving non-Victron kit: when the battery drops below a threshold, Home Assistant cuts the projector &mdash; the biggest discretionary load in the van. VRM can see the battery; it can&rsquo;t reach the projector. Home Assistant does both.</p>
+            </li>
+            <li>
+              <svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+              <h3>Every sensor, one brain</h3>
+              <p>Solar and batteries next to 4G/5G signal, real speed tests, ping and GPS &mdash; one system sees it all, which is how the van maps <a href="/van-signal-map/">the best places to park and work</a> automatically as it drives.</p>
+            </li>
+            <li>
+              <svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M8 7V5a4 4 0 0 1 8 0v2"/></svg>
+              <h3>No internet? Still works</h3>
+              <p>The Victron link is local MQTT on the van&rsquo;s own network &mdash; in a field with zero signal, monitoring and automations carry on. Cloud dashboards can&rsquo;t say that.</p>
+            </li>
+          </ul>
+          <p class="vhx-more" style="margin-top:1.4rem">
+            <a class="button primary" href="/home-assistant-victron-cerbo-gx/">How we wired it &mdash; the full guide &rarr;</a>
+            <a class="button secondary" href="/van-signal-map/" style="margin-left:.6rem">Live signal map</a>
+          </p>
+          <p class="prose" style="text-align:center;max-width:62ch;margin:1.1rem auto 0;color:var(--muted)">Sizing your own system? Our free <a href="/solar-battery-calculator/">campervan solar &amp; battery calculator</a> gives you an honest lithium size and panel wattage from what you actually run.</p>
         </div>
       </div>
     </section>
