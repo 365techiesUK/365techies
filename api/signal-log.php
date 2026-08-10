@@ -34,6 +34,12 @@ $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 if ($method === 'GET') {
     $since = isset($_GET['since']) ? (float)$_GET['since'] : 0.0;
     $points = load_points();
+    // PRIVACY EMBARGO: never publish points younger than 24 h. Recording is
+    // live (POSTs store immediately) but the public map must NOT reveal where
+    // the van is right now — the newest point on the trail is effectively a
+    // live tracker without this. Flagged by the owner 2026-08-10. Do not lower.
+    $cutoff = time() - 24 * 3600;
+    $points = array_values(array_filter($points, fn($p) => ($p['t'] ?? 0) < $cutoff));
     if ($since > 0) {
         $points = array_values(array_filter($points, fn($p) => ($p['t'] ?? 0) > $since));
     }
