@@ -795,19 +795,30 @@
       .sigmap-mode button{appearance:none;border:0;background:transparent;color:#9db3cf;font:600 .74rem/1 inherit;font-family:inherit;padding:9px 13px;cursor:pointer;letter-spacing:.03em}
       .sigmap-mode button[aria-pressed=true]{background:rgba(29,151,227,.28);color:#fff}
       .sigmap-mode button:focus-visible{outline:2px solid #6cc4f5;outline-offset:-2px}
+      .sigmap-rank{background:#1d97e3;color:#fff;border:2px solid #fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font:700 .8rem/1 inherit;box-shadow:0 2px 8px rgba(0,0,0,.5)}
+      .sigmap-best{max-width:680px;margin:1rem auto 0;padding:0;list-style:none;display:grid;gap:.5rem}
+      .sigmap-best li{display:flex;align-items:center;gap:.8rem;background:rgba(20,27,46,.55);border:1px solid rgba(125,170,220,.18);border-radius:12px;padding:.65rem .9rem;cursor:pointer;transition:border-color .2s}
+      .sigmap-best li:hover{border-color:rgba(108,196,245,.45)}
+      .sigmap-best .rk{flex:0 0 auto;background:#1d97e3;color:#fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font:700 .8rem/1 inherit}
+      .sigmap-best .mb{font-weight:750;color:#e6edf3;font-variant-numeric:tabular-nums;min-width:74px}
+      .sigmap-best .meta{color:#9db3cf;font-size:.82rem}
+      .sigmap-best .wr{margin-left:auto;font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+      .sigmap-best .wr--good{color:#3fb950}.sigmap-best .wr--ok{color:#d29922}.sigmap-best .wr--bad{color:#f85149}
     </style>
     <section class="section" aria-label="Live measured signal map">
       <div class="wrap">
         <div class="sigmap-wrap">
           <div class="sigmap-status"><span class="sigmap-dot"></span><span id="sigmap-status">loading&hellip;</span></div>
-          <div class="sigmap-mode" role="group" aria-label="Colour the map by">
+          <div class="sigmap-mode" role="group" aria-label="Map view">
             <button type="button" id="sigmode-rsrp" aria-pressed="true">Signal</button>
             <button type="button" id="sigmode-speed" aria-pressed="false">Speed</button>
+            <button type="button" id="sigmode-best" aria-pressed="false">Best spots</button>
           </div>
           <div id="sigmap"></div>
         </div>
+        <ol class="sigmap-best" id="sigmap-best" hidden aria-label="Best measured places for fast internet"></ol>
         <p class="sigmap-empty" id="sigmap-empty" hidden>No location-tagged readings yet &mdash; the map fills in as the van drives.</p>
-        <p style="text-align:center;font-size:.8rem;color:var(--muted,#8b949e);margin:.7rem 0 0">Readings appear after a 24-hour delay &mdash; the map shows where the van <em>has been</em>, never where it is right now.</p>
+        <p style="text-align:center;font-size:.8rem;color:var(--muted,#8b949e);margin:.7rem 0 0">Readings appear after a 24-hour delay &mdash; the map shows where the van <em>has been</em>, never where it is right now. <strong>Best spots</strong> ranks the places our own speed tests measured fastest &mdash; how we choose where to park and work.</p>
       </div>
     </section>
     <script src="/vendor/leaflet/leaflet.js" defer></script>
@@ -827,7 +838,9 @@
         lg.onAdd=function(){lgDiv=L.DomUtil.create('div','sigmap-legend');legend();return lgDiv;};lg.addTo(map);
         function legend(){if(!lgDiv)return;lgDiv.innerHTML=(mode==='rsrp')
           ?'<b>Signal (RSRP)</b><br>weak <span class=\'bar\'></span> strong<br>&minus;110 &rarr; &minus;80 dBm'
-          :'<b>Download speed</b><br>slow <span class=\'bar\'></span> fast<br>0 &rarr; '+SPD_MAX+'+ Mbps &middot; grey = not tested at that spot';}
+          :(mode==='speed')
+          ?'<b>Download speed</b><br>slow <span class=\'bar\'></span> fast<br>0 &rarr; '+SPD_MAX+'+ Mbps &middot; grey = not tested at that spot'
+          :'<b>Best measured spots</b><br>median download where we tested<br>bigger circle = more tests &middot; top 5 numbered';}
         function col(r){if(r==null)return '#6e7681';var t=Math.max(0,Math.min(1,(r-BAD)/(GOOD-BAD)));var R=t<.5?248:Math.round(248-(t-.5)*2*185),G=t<.5?Math.round(81+t*2*104):185;return 'rgb('+R+','+G+',80)';}
         function spdcol(m){if(m==null)return '#6e7681';var t=Math.max(0,Math.min(1,m/SPD_MAX));var R=t<.5?248:Math.round(248-(t-.5)*2*185),G=t<.5?Math.round(81+t*2*104):185;return 'rgb('+R+','+G+',80)';}
         function freshDl(p){return (p.dl!=null&&p.dl_age!=null&&p.dl_age<FRESH_S)?p.dl:null;}
@@ -835,8 +848,41 @@
         var layer=L.layerGroup().addTo(map),live=null,fitted=false,cache=[];
         function popup(p){var s='<b>'+(p.rsrp==null?'&mdash;':p.rsrp+' dBm')+'</b> '+(p.net||'')+' '+(p.band||'');
           var f=freshDl(p);if(f!=null)s+='<br><b>'+f+' Mbps</b> download &middot; tested near this spot';
+          if(p.latency!=null)s+='<br>'+Math.round(p.latency)+' ms ping';
           return s+'<br>'+new Date(p.t*1000).toLocaleString();}
-        function render(){var pts=cache;layer.clearLayers();var ll=[];
+        function median(a){if(!a.length)return null;a=a.slice().sort(function(x,y){return x-y;});var m=a.length>>1;return a.length%2?a[m]:(a[m-1]+a[m])/2;}
+        /* Best spots: aggregate speed-TESTED points into ~220m grid cells and
+           rank by median measured download. Only fresh tests count — a cell is
+           a real "we measured fast internet here", never an inference. */
+        function bestCells(){var cells={};
+          cache.forEach(function(p){var f=freshDl(p);if(f==null)return;
+            var k=(Math.round(p.lat*500)/500)+','+(Math.round(p.lon*333)/333);
+            (cells[k]=cells[k]||{lat:[],lon:[],dl:[],lat_ms:[],net:{}}).dl.push(f);
+            cells[k].lat.push(p.lat);cells[k].lon.push(p.lon);
+            if(p.latency!=null)cells[k].lat_ms.push(p.latency);
+            if(p.net)cells[k].net[p.net]=(cells[k].net[p.net]||0)+1;});
+          return Object.keys(cells).map(function(k){var c=cells[k];
+            var net=Object.keys(c.net).sort(function(a,b){return c.net[b]-c.net[a];})[0]||'';
+            return {lat:median(c.lat),lon:median(c.lon),dl:median(c.dl),ms:median(c.lat_ms),n:c.dl.length,net:net};
+          }).sort(function(a,b){return b.dl-a.dl;});}
+        function wr(dl){return dl>=25?['Great for work','wr--good']:(dl>=10?['Calls OK','wr--ok']:['Struggles','wr--bad']);}
+        function render(){var pts=cache;layer.clearLayers();
+          var list=document.getElementById('sigmap-best');
+          if(mode==='best'){list.hidden=false;list.innerHTML='';
+            var cells=bestCells();
+            if(!cells.length){list.innerHTML='<li style="cursor:default"><span class="meta">No speed-tested spots yet &mdash; they appear after drives (tests run every 5 minutes on the road).</span></li>';}
+            cells.forEach(function(c,i){
+              var mk=L.circleMarker([c.lat,c.lon],{radius:Math.min(9+c.n,16),color:spdcol(c.dl),fillColor:spdcol(c.dl),fillOpacity:.8,weight:2})
+                .bindPopup('<b>'+Math.round(c.dl)+' Mbps</b> median download &middot; '+c.n+' test'+(c.n>1?'s':'')+(c.ms!=null?('<br>'+Math.round(c.ms)+' ms ping'):'')+(c.net?('<br>'+c.net):'')).addTo(layer);
+              if(i<5){L.marker([c.lat,c.lon],{icon:L.divIcon({className:'',html:'<div class="sigmap-rank">'+(i+1)+'</div>',iconSize:[26,26],iconAnchor:[13,13]}),interactive:false}).addTo(layer);}
+              if(i<8){var li=document.createElement('li');var w=wr(c.dl);
+                li.innerHTML='<span class="rk">'+(i+1)+'</span><span class="mb">'+Math.round(c.dl)+' Mbps</span><span class="meta">'+(c.ms!=null?(Math.round(c.ms)+' ms &middot; '):'')+(c.net?(c.net+' &middot; '):'')+c.n+' test'+(c.n>1?'s':'')+'</span><span class="wr '+w[1]+'">'+w[0]+'</span>';
+                li.addEventListener('click',function(){map.setView([c.lat,c.lon],15);});
+                list.appendChild(li);}});
+            if(live){map.removeLayer(live);live=null;}
+            map.invalidateSize();return;}
+          list.hidden=true;
+          var ll=[];
           pts.forEach(function(p){ll.push([p.lat,p.lon]);
             var tested=(mode==='speed'&&freshDl(p)!=null);
             L.circleMarker([p.lat,p.lon],{radius:tested?7:5,color:pcol(p),fillColor:pcol(p),fillOpacity:(mode==='speed'&&!tested)?.35:.85,weight:1}).bindPopup(popup(p)).addTo(layer);});
@@ -845,11 +891,9 @@
           if(last){live=L.circleMarker([last.lat,last.lon],{radius:9,color:'#fff',weight:2,fillColor:pcol(last),fillOpacity:1}).addTo(map);}
           if(!fitted&&ll.length){map.fitBounds(ll,{padding:[40,40],maxZoom:14});fitted=true;}map.invalidateSize();}
         function setMode(m){mode=m;
-          document.getElementById('sigmode-rsrp').setAttribute('aria-pressed',m==='rsrp');
-          document.getElementById('sigmode-speed').setAttribute('aria-pressed',m==='speed');
+          ['rsrp','speed','best'].forEach(function(x){document.getElementById('sigmode-'+x).setAttribute('aria-pressed',m===x);});
           legend();render();}
-        document.getElementById('sigmode-rsrp').addEventListener('click',function(){setMode('rsrp');});
-        document.getElementById('sigmode-speed').addEventListener('click',function(){setMode('speed');});
+        ['rsrp','speed','best'].forEach(function(x){document.getElementById('sigmode-'+x).addEventListener('click',function(){setMode(x);});});
         function refresh(){fetch(ENDPOINT+'?_='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
           cache=(j.points||[]).filter(function(p){return p.lat!=null&&p.lon!=null;});
           document.getElementById('sigmap-empty').hidden=cache.length>0;

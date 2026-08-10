@@ -78,6 +78,9 @@ if ($method === 'POST') {
         'sinr' => num($in['sinr'] ?? null),
         'net'  => str_clip($in['net'] ?? null, 12),
         'band' => str_clip($in['band'] ?? null, 20),
+        // Fresh every 30s (unlike dl), so it genuinely belongs to this point's
+        // location — and it's what decides if a spot works for video calls.
+        'latency' => num($in['latency'] ?? null),
         'dl'   => num($in['dl'] ?? null),
         // Age of the speed reading in seconds when this point was recorded.
         // The base sensor only retests hourly; a drive automation forces a
