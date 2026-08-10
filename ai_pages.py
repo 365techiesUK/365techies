@@ -186,6 +186,49 @@ def _section(h2, html, idx, alt, bp):
 
 
 # ------------------------------------------------------------------ page emit
+# ---- AI section strip: one consistent way around the section on every page.
+# Doc 05 s7.3 grouping (Overview / Automate / Plan & adopt / Explore) with the
+# current page marked. Deliberately in this file, not ai_visual.py, and in its
+# own <style> so it composes with AI_CSS without touching it. No animation,
+# so nothing to neutralise for reduced motion.
+_STRIP = [
+    ("Overview", [("/ai/", "AI overview")]),
+    ("Automate", [("/ai/automations/", "Automations"), ("/ai/agents/", "Agents"),
+                  ("/ai/voice-agents/", "Voice agents")]),
+    ("Plan &amp; adopt", [("/ai/consultancy/", "Consultancy"), ("/ai/training/", "Training")]),
+    ("Explore", [("/ai/industries/", "Industries"), ("/ai/tools/", "Tools"),
+                 ("/ai/learn/", "Learn")]),
+]
+
+_STRIP_CSS = '''<style>
+.ai-strip{display:flex;flex-wrap:wrap;gap:.4rem 1.6rem;justify-content:center;
+  padding:.9rem 1.2rem;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.ai-strip__group{display:flex;align-items:center;flex-wrap:wrap;gap:.4rem .8rem}
+.ai-strip__label{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted)}
+.ai-strip a{color:var(--ink-3);text-decoration:none;font-size:.92rem;
+  padding:.55rem .7rem;border-radius:var(--r-sm)}
+.ai-strip a:hover{color:var(--cyan-soft)}
+.ai-strip a[aria-current="page"]{color:var(--cyan-soft);background:rgba(29,151,227,.12)}
+</style>'''
+
+
+def _strip_html(slug):
+    groups = []
+    for label, links in _STRIP:
+        a = "".join(
+            '<a href="%s"%s>%s</a>' % (
+                href,
+                ' aria-current="page"' if href.strip("/") == slug else "",
+                txt)
+            for href, txt in links)
+        groups.append('<span class="ai-strip__group"><span class="ai-strip__label">%s</span>%s</span>'
+                      % (label, a))
+    return ('    <nav class="ai-strip" aria-label="AI &amp; Automation section">'
+            + "".join(groups)
+            + '<span class="ai-strip__group"><a href="/ai/start/">Start an enquiry &#8594;</a></span></nav>')
+
+
 def _emit(p, bp):
     from ai_visual import AI_CSS, SCENES
 
@@ -201,6 +244,7 @@ def _emit(p, bp):
     if scene:
         parts.append('    <div class="wrap wrap--narrow"><div class="ai-scene" data-reveal '
                      'aria-hidden="true">' + scene + "</div></div>")
+    parts.append(_STRIP_CSS + "\n" + _strip_html(slug))
 
     alt = False
     for i, s in enumerate(p["sections"], 1):
