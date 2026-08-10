@@ -6081,6 +6081,7 @@ def off_grid():
             </div>
           </div>
           <p class="vhx-more"><a class="button secondary" href="/van-signal-map/">See the live signal map &rarr;</a></p>
+          <p class="prose" style="text-align:center;max-width:62ch;margin:1.1rem auto 0;color:var(--muted)">Sizing your own system? Our free <a href="/solar-battery-calculator/">campervan solar &amp; battery calculator</a> gives you an honest lithium size and panel wattage from what you actually run.</p>
         </div>
       </div>
     </section>
@@ -10347,7 +10348,7 @@ def solar_battery_calculator():
     ]
     content = "\n".join([
       hero(bc("Battery &amp; Solar Calculator"), "// FREE OFF-GRID CALCULATOR",
-           'Size your <em class="grad grad--green">battery &amp; solar</em> honestly',
+           'Size your campervan <em class="grad grad--green">battery &amp; solar</em> honestly',
            "Campervan, boat, cabin or off-grid build &mdash; tick what you run, and get a realistic lithium battery size and solar panel wattage for UK conditions. No sales inflation, no guesswork.",
            cta1=("Size My System", "#soltool"), cta2=("Our Off-Grid Work", "/off-grid-victron-energy/"),
            chips=["UK sun figures","Lithium &amp; AGM","Victron installers"]),
