@@ -689,6 +689,97 @@
       </div>
     </section>
 
+    <style>
+      .vlive{max-width:980px;margin:0 auto}
+      .vlive-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:0 2px 16px;font-size:.82rem}
+      .vlive-live{display:inline-flex;align-items:center;gap:8px;color:#cfe0f5;font-weight:600;letter-spacing:.03em;text-transform:uppercase}
+      .vlive-dot{width:9px;height:9px;border-radius:50%;background:#3fb950;box-shadow:0 0 0 0 rgba(63,185,80,.7);animation:vlpulse 2.2s infinite}
+      @keyframes vlpulse{70%{box-shadow:0 0 0 8px rgba(63,185,80,0)}100%{box-shadow:0 0 0 0 rgba(63,185,80,0)}}
+      .vlive-updated{color:#8b949e;font-variant-numeric:tabular-nums}
+      .vlive-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:14px}
+      .vlive-tile{background:rgba(20,27,46,.55);border:1px solid rgba(125,170,220,.18);border-radius:16px;padding:18px 18px 16px;box-shadow:0 18px 40px -28px rgba(0,0,0,.7)}
+      .vlive-k{margin:0;color:#8b949e;font-size:.72rem;letter-spacing:.09em;text-transform:uppercase}
+      .vlive-v{margin:.3rem 0 0;font-size:2.1rem;font-weight:750;line-height:1;color:#e6edf3;font-variant-numeric:tabular-nums}
+      .vlive-v--sm{font-size:1.35rem;line-height:1.15}
+      .vlive-u{font-size:.9rem;font-weight:600;color:#8b949e;margin-left:3px}
+      .vlive-sub{margin:.55rem 0 0;color:#9db3cf;font-size:.82rem}
+      .vlive-meter{margin:.65rem 0 .15rem;height:7px;border-radius:5px;background:rgba(125,170,220,.16);overflow:hidden}
+      .vlive-meter i{display:block;height:100%;width:0;border-radius:5px;background:#3fb950;transition:width .6s ease,background .6s ease}
+      .vlive[data-state=stale]{opacity:.5;filter:grayscale(.65)}
+      .vlive[data-state=stale] .vlive-dot{background:#6e7681;animation:none}
+      .vlive[data-state=loading] .vlive-updated{opacity:0}
+    </style>
+    <section class="section" aria-label="The van right now">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/ LIVE TELEMETRY</p>
+          <h2 class="section-title section-title--center" data-title>The van, right now<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="vlive" id="vlive" data-state="loading">
+          <div class="vlive-bar">
+            <span class="vlive-live"><span class="vlive-dot"></span><span id="vlive-state">connecting&hellip;</span></span>
+            <span class="vlive-updated" id="vlive-updated"></span>
+          </div>
+          <div class="vlive-grid">
+            <div class="vlive-tile">
+              <p class="vlive-k">Leisure battery</p>
+              <p class="vlive-v"><span id="vl-soc">&mdash;</span><span class="vlive-u">%</span></p>
+              <div class="vlive-meter"><i id="vl-soc-bar"></i></div>
+              <p class="vlive-sub" id="vl-batt">&mdash;</p>
+            </div>
+            <div class="vlive-tile">
+              <p class="vlive-k">Solar now</p>
+              <p class="vlive-v"><span id="vl-solar">&mdash;</span><span class="vlive-u">W</span></p>
+              <p class="vlive-sub"><span id="vl-solar-kwh">&mdash;</span> kWh today</p>
+            </div>
+            <div class="vlive-tile">
+              <p class="vlive-k">Time to go</p>
+              <p class="vlive-v vlive-v--sm" id="vl-ttg">&mdash;</p>
+              <p class="vlive-sub">at this draw</p>
+            </div>
+            <div class="vlive-tile">
+              <p class="vlive-k">Mobile signal</p>
+              <p class="vlive-v"><span id="vl-rsrp">&mdash;</span><span class="vlive-u">dBm</span></p>
+              <p class="vlive-sub"><span id="vl-net">&mdash;</span> &middot; <span id="vl-band">&mdash;</span></p>
+            </div>
+            <div class="vlive-tile">
+              <p class="vlive-k">Internet</p>
+              <p class="vlive-v"><span id="vl-dl">&mdash;</span><span class="vlive-u">Mbps</span></p>
+              <p class="vlive-sub"><span id="vl-status">&mdash;</span> &middot; <span id="vl-latency">&mdash;</span> ms</p>
+            </div>
+            <div class="vlive-tile">
+              <p class="vlive-k">Near</p>
+              <p class="vlive-v vlive-v--sm" id="vl-town">&mdash;</p>
+              <p class="vlive-sub">town level only</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <script>
+    (function(){var EP='/api/van-live.php',REFRESH=30000;
+      function el(id){return document.getElementById(id);}
+      function set(id,v){var e=el(id);if(e)e.textContent=(v===null||v===undefined||v==='')?'—':v;}
+      function ago(s){s=Math.max(0,s|0);if(s<60)return s+'s ago';var m=(s/60)|0;if(m<60)return m+'m ago';return ((m/60)|0)+'h ago';}
+      function socCol(v){if(v==null)return '#6e7681';return v>=60?'#3fb950':(v>=30?'#d29922':'#f85149');}
+      function refresh(){fetch(EP+'?_='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
+        var box=el('vlive');
+        if(!j||j.live===false||j.t==null){box.setAttribute('data-state','stale');set('vlive-state','van offline');el('vlive-updated').textContent='';return;}
+        box.setAttribute('data-state','live');set('vlive-state','live');el('vlive-updated').textContent='updated '+ago(j.age_s);
+        var soc=j.soc;set('vl-soc',soc==null?'—':Math.round(soc));
+        var bar=el('vl-soc-bar');if(bar){bar.style.width=(soc==null?0:Math.max(0,Math.min(100,soc)))+'%';bar.style.background=socCol(soc);}
+        var bw=j.batt_w;set('vl-batt',bw==null?'—':(bw>1?('charging '+Math.round(bw)+' W'):(bw<-1?('using '+Math.round(-bw)+' W'):'idle')));
+        set('vl-solar',j.solar_w==null?'—':Math.round(j.solar_w));set('vl-solar-kwh',j.solar_kwh==null?'—':j.solar_kwh);
+        set('vl-ttg',j.ttg);set('vl-rsrp',j.rsrp);set('vl-net',j.net);set('vl-band',j.band);
+        set('vl-dl',j.dl);set('vl-status',j.net_status);set('vl-latency',j.latency==null?'—':Math.round(j.latency));
+        set('vl-town',j.town||'hidden');
+      }).catch(function(){var box=el('vlive');if(box){box.setAttribute('data-state','stale');set('vlive-state','offline');}});}
+      function start(){refresh();setInterval(refresh,REFRESH);}
+      if(document.readyState!=='loading')start();else document.addEventListener('DOMContentLoaded',start);
+    })();
+    </script>
+
+
     <link rel="stylesheet" href="/vendor/leaflet/leaflet.css" />
     <style>
       .sigmap-wrap{position:relative;border-radius:18px;overflow:hidden;border:1px solid rgba(125,170,220,.18);box-shadow:0 24px 60px -30px rgba(0,0,0,.7)}

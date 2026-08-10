@@ -105,3 +105,8 @@ api/bm-sea-key.php
 api/signal-token.php
 api/signal-data.json
 api/signal-data.json.tmp
+api/live-token.php
+api/van-live-data.json
+api/van-live-data.json.tmp
+api/van-live-geo.json
+api/van-live-geo.json.tmp
