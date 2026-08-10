@@ -7237,8 +7237,8 @@ def services_overview():
         ("365 Web Care", "/web-care/", "One simple monthly plan &mdash; we host, secure, back up and look after your website, so you never worry about it."),
         ("Agentic AI Systems", "/agentic-ai-systems/", "Custom-built agentic AI operating systems that automate and streamline your business-specific processes."),
         ("365 AI OS", "/365-ai-os/", "A real browser desktop with a built-in AI assistant that takes action &mdash; a working demo of the custom systems we build."),
-        ("AI Voice Agents", "/ai-voice-agents/", f"An AI receptionist that answers calls 24/7, captures enquiries and books callbacks &mdash; from &pound;{AI_VOICE_FROM}/month."),
-        ("AI Training &amp; Adoption", "/ai-training/", "Practical training to get safe, real value from Copilot, ChatGPT and AI tools."),
+        ("AI Voice Agents", "/ai/voice-agents/", f"An AI receptionist that answers calls 24/7, captures enquiries and books callbacks &mdash; from &pound;{AI_VOICE_FROM}/month."),
+        ("AI Training &amp; Adoption", "/ai/training/", "Practical training to get safe, real value from Copilot, ChatGPT and AI tools."),
         ("VoIP Business Phones", "/voip-business-phones/", "Business phone systems powered by Voipfone &mdash; lower bills, work-from-anywhere calls, set up &amp; supported."),
         ("CCTV &amp; Smart Home", "/cctv-smart-home/", "CCTV, video doorbells, smart lighting and home automation, set up and secured."),
         ("Home Cinema &amp; Entertainment", "/home-cinema-entertainment/", "Richer Sounds partner &mdash; 4K projectors, Dolby sound, smart TVs and multi-room audio."),
@@ -8832,7 +8832,7 @@ def unitree_robots():
       ("Can you really supply Unitree robots?", "Yes &mdash; we&rsquo;re a Scan partner, so we can supply the full Unitree range, from Go2 quadrupeds to G1 and H1 humanoids, with expert advice and ongoing support."),
       ("What&rsquo;s the difference between the quadruped and humanoid robots?", "Quadrupeds (&lsquo;robot dogs&rsquo; like Go2 and B2) excel at mobility, inspection and rugged terrain; humanoids (like G1 and H1) are built for research into human-like movement, manipulation and embodied AI."),
       ("Who are these robots for?", "Researchers, universities, educators, industrial and security operators, and developers &mdash; anyone exploring robotics and AI."),
-      ("Do you help set them up and develop on them?", "Yes &mdash; we set up the robot, prepare the SDK and development environment, and provide ongoing support. It pairs naturally with our <a href=\"/agentic-ai-systems/\">agentic AI</a> and <a href=\"/ai-training/\">AI training</a> services."),
+      ("Do you help set them up and develop on them?", "Yes &mdash; we set up the robot, prepare the SDK and development environment, and provide ongoing support. It pairs naturally with our <a href=\"/agentic-ai-systems/\">agentic AI</a> and <a href=\"/ai/training/\">AI training</a> services."),
       ("How do I get a price?", "Get in touch and we&rsquo;ll provide a quote through our Scan partnership for the model you need."),
     ]
     content = "\n".join([
@@ -9773,7 +9773,7 @@ def ai_os():
           <h2 class="section-title" data-title>A genuine product, not a mock-up<span class="title-underline"></span></h2>
           <p>The 365 AI OS is something we&rsquo;ve actually built &mdash; a working prototype that shows what a modern, AI-powered workspace can be: sign-in, your own saved profile, real apps, and an assistant that does the work rather than just talking about it.</p>
           <p>When others say &lsquo;AI OS&rsquo; they usually mean a chatbot or a rebranded web app. This is a <strong>genuine desktop you sign into</strong>, with a <strong>Claude-powered</strong> assistant that operates it &mdash; built and hosted in-house in Dorset, not aspirational branding.</p>
-          <p>It&rsquo;s also a living demonstration of the <a href="/agentic-ai-systems/">custom agentic AI systems</a> we design and build for businesses, and it pairs naturally with our <a href="/ai-training/">AI training &amp; adoption</a> service. As with everything we do, it&rsquo;s built with security first &mdash; in line with our <a href="/cybersecurity-support/">cybersecurity</a> approach &mdash; and explained in plain English.</p>
+          <p>It&rsquo;s also a living demonstration of the <a href="/agentic-ai-systems/">custom agentic AI systems</a> we design and build for businesses, and it pairs naturally with our <a href="/ai/training/">AI training &amp; adoption</a> service. As with everything we do, it&rsquo;s built with security first &mdash; in line with our <a href="/cybersecurity-support/">cybersecurity</a> approach &mdash; and explained in plain English.</p>
           <p>It even includes a live <a href="/off-grid-victron-energy/">off-grid power dashboard</a> &mdash; read your Victron solar and battery system (charge, solar, loads and tank levels) from any browser, ideal for off-grid homes, campervans, motorhomes and boats.</p>
           <p>Want a version shaped around your business &mdash; your apps, your data, your brand? <a href="/contact/">Get in touch</a> and we&rsquo;ll show you what&rsquo;s possible.</p>
         </div>
@@ -13118,7 +13118,11 @@ def ai_voice():
                       faqpage(s, _faqs)])
     add(slug=slug, title="AI Voice Agents & AI Receptionist Dorset | 365 Techies",
         desc=desc, og_title="AI Voice Agents & Phone Answering | 365 Techies", schema=schema, content=content)
-ai_voice()
+# ai_voice() — RETIRED 2026-08-10: /ai-voice-agents/ 301s to /ai/voice-agents/
+# (.htaccess). Two live self-canonical pages for one intent were splitting link
+# equity — the 2026-08-10 competitor audit found the legacy pages outranking the
+# new /ai/ estate. Function kept above for its copy (the "AI receptionist"
+# framing is worth merging into /ai/voice-agents/ when ai_pages.py is quiet).
 
 # ===================================================== AI ROI CALCULATOR (interactive)
 def ai_roi():
@@ -14868,15 +14872,15 @@ info_page(
             <li><strong>Avoid:</strong> pasting in anything private, confidential or regulated.</li>
           </ul>
           <h2>We&rsquo;ll help you use it well</h2>
-          <p>We help homes and businesses adopt AI confidently and safely &mdash; see our <a href="/ai-training/">AI training &amp; adoption</a> service, or our <a href="/agentic-ai-systems/">custom agentic AI systems</a> that automate real business tasks.</p>""",
+          <p>We help homes and businesses adopt AI confidently and safely &mdash; see our <a href="/ai/training/">AI training &amp; adoption</a> service, or our <a href="/agentic-ai-systems/">custom agentic AI systems</a> that automate real business tasks.</p>""",
   faqs=[
     ("Is ChatGPT safe to use?", "Yes for everyday drafting and learning &mdash; as long as you never paste in private, confidential or sensitive information and you check important answers. For business data, use a business-grade tool like Microsoft 365 Copilot."),
     ("What is an AI &ldquo;hallucination&rdquo;?", "It&rsquo;s when an AI gives a confident answer that&rsquo;s actually wrong or made up. Always verify anything that matters before relying on it."),
     ("Can AI be used to scam me?", "Yes &mdash; criminals use AI to write convincing scam emails and even imitate voices, so be extra wary of urgent or unexpected requests. Our <a href=\"/spot-the-scam/\">Spot the Scam quiz</a> helps you practise spotting them."),
-    ("Can you train our team to use AI safely?", "Absolutely &mdash; that&rsquo;s exactly what our <a href=\"/ai-training/\">AI training</a> service does, tailored to how your team works."),
+    ("Can you train our team to use AI safely?", "Absolutely &mdash; that&rsquo;s exactly what our <a href=\"/ai/training/\">AI training</a> service does, tailored to how your team works."),
   ],
   cta_args=("Want to use AI with confidence?", "We&rsquo;ll show you and your team how to get real value from AI, safely.",
-            ("Explore AI Training", "/ai-training/"), ("Talk to a Techie", "/contact/")),
+            ("Explore AI Training", "/ai/training/"), ("Talk to a Techie", "/contact/")),
 )
 
 # ---- Plain-English hub

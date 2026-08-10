@@ -29,6 +29,13 @@ RewriteRule ^(.*)$ /$1? [R=301,L]
 RewriteRule ^(members|members-2|activity|activity-2|groups|forums|register|register-2|profile|moderation|messages|notifications|videos|documents|photos|password-reset|password-recover|external-link|sidebar|gutenberg|remote-jobs|365live|my-account|my-account-2|cart|checkout|checkout-2|shop-2)/?$ - [G]
 RewriteRule ^shop/?$ /dell-hardware/ [R=301,L]
 
+# --- AI estate consolidation (2026-08-10) ---
+# Two intents each had TWO live self-canonical pages (legacy top-level + the
+# /ai/ estate), splitting link equity — the audit found the legacy pages
+# outranking the new hub. One URL per intent: the /ai/ estate wins.
+RewriteRule ^ai-voice-agents/?$ /ai/voice-agents/ [R=301,L]
+RewriteRule ^ai-training/?$ /ai/training/ [R=301,L]
+
 # Short, sayable URLs for the review ask - "just go to 365techies.co.uk/review".
 # The team says these on the phone and they are printed on the referral cards,
 # so they must never break.

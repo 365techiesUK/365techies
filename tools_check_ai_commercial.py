@@ -37,9 +37,9 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 # pillar pages are guarded the day they are first built.
 AI_SLUGS = [
     "agentic-ai-systems",
-    "ai-voice-agents",
+    "ai/voice-agents",
     "365-ai-os",
-    "ai-training",
+    "ai/training",
     "ai-for-beginners-course",
     "ai-roi-calculator",
     "using-ai-safely",
