@@ -103,7 +103,7 @@ except Exception:
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://365techies.co.uk"
-CSSV = "82"
+CSSV = "83"   # bumped 2026-08-11: new URL also rescues any browser holding a bad, immutable-cached copy
 HERITAGE_DIMS = {'heritage-01.jpg': (1400, 787), 'heritage-02.jpg': (787, 1400), 'heritage-03.jpg': (1400, 787), 'heritage-04.jpg': (1400, 787), 'heritage-05.jpg': (787, 1400), 'heritage-07.jpg': (1400, 787), 'heritage-kinson.jpg': (1200, 710), 'heritage-moordown.jpg': (1400, 788), 'heritage-stock.jpg': (1400, 788), 'heritage-storefront.jpg': (1024, 683)}
 try:
     from hero_scenes import SCENES as HERO_SCENES
@@ -1013,6 +1013,53 @@ def page(slug, title, desc, og_title, schema_json, content, og_image=None):
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
   <link rel="stylesheet" href="/css/styles.min.css?v={CSSV}" />
+  <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
+    or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
+    failed page readable instead of raw giant-serif HTML. */
+  html.css-sos{{background:#070d22;color:#eaf4ff;font:16px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}}
+  html.css-sos body{{max-width:44rem;margin:0 auto;padding:1rem 1.1rem 3rem}}
+  html.css-sos a{{color:#6cc4f5}}
+  html.css-sos svg,html.css-sos img{{max-width:100%;max-height:64px;height:auto}}
+  html.css-sos .status-ticker,html.css-sos canvas{{display:none!important}}
+  html.css-sos h1{{font-size:1.55rem;line-height:1.25}}
+  html.css-sos h2{{font-size:1.2rem}}
+  html.css-sos nav a,html.css-sos .button{{display:inline-block;padding:.4rem .55rem}}
+  </style>
+  <script>
+  /* Stylesheet insurance (2026-08-11, owner reported customers seeing raw HTML).
+     A render-blocking <link> means a SLOW stylesheet only delays paint - it cannot
+     produce an unstyled page. Unstyled means the response was UNUSABLE: 404/403, a
+     bot-wall HTML body served for a .css request, a dropped connection, or a copy
+     truncated by a deploy overwriting the file mid-flight (FTPS writes in place).
+     And because .htaccess serves css/js as immutable for a year, one bad copy then
+     STICKS on that machine until the version string changes - which is how a single
+     bad second turned into customers repeatedly seeing an unstyled site.
+     Scripts wait for pending stylesheets, so by the time this runs the sheet has
+     applied or failed. Missing sentinel => make the page readable at once, then
+     re-request the stylesheet with a cache-busting parameter, which bypasses the
+     poisoned cache entry and usually repairs the page before anyone notices.
+     Bounded to 2 attempts per tab. Never reloads the page. */
+  (function () {{
+    try {{
+      var R = document.documentElement;
+      if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') return;
+      R.className += ' css-sos';
+      var n = 0;
+      try {{ n = parseInt(sessionStorage.getItem('tt_css_sos') || '0', 10) || 0; }} catch (e) {{}}
+      if (n >= 2) return;
+      try {{ sessionStorage.setItem('tt_css_sos', String(n + 1)); }} catch (e) {{}}
+      var l = document.createElement('link');
+      l.rel = 'stylesheet';
+      l.href = '/css/styles.min.css?v={CSSV}&sos=' + Date.now();
+      l.onload = function () {{
+        if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {{
+          R.className = R.className.replace(/\\s*css-sos/, '');
+        }}
+      }};
+      document.head.appendChild(l);
+    }} catch (e) {{}}
+  }})();
+  </script>
   <script type="application/ld+json">
 {schema_json}
   </script>

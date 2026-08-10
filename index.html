@@ -95,7 +95,45 @@
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
 
-  <link rel="stylesheet" href="css/styles.min.css?v=82" />
+  <link rel="stylesheet" href="css/styles.min.css?v=83" />
+  <style>/* Emergency styles - see the SENTINEL rule at the foot of styles.css.
+    ⚠️ This homepage is hand-maintained: keep this block in step with the copy in
+    build_pages.py that every generated page gets. */
+  html.css-sos{background:#070d22;color:#eaf4ff;font:16px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+  html.css-sos body{max-width:44rem;margin:0 auto;padding:1rem 1.1rem 3rem}
+  html.css-sos a{color:#6cc4f5}
+  html.css-sos svg,html.css-sos img{max-width:100%;max-height:64px;height:auto}
+  html.css-sos .status-ticker,html.css-sos canvas{display:none!important}
+  html.css-sos h1{font-size:1.55rem;line-height:1.25}
+  html.css-sos h2{font-size:1.2rem}
+  html.css-sos nav a,html.css-sos .button{display:inline-block;padding:.4rem .55rem}
+  </style>
+  <script>
+  /* Stylesheet insurance - full reasoning in build_pages.py. Unstyled page means
+     the css response was unusable (404/403, bot-wall HTML, dropped connection, or a
+     copy truncated by a deploy writing in place); immutable caching then makes it
+     stick on that machine. Recover with one cache-busting re-request. */
+  (function () {
+    try {
+      var R = document.documentElement;
+      if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') return;
+      R.className += ' css-sos';
+      var n = 0;
+      try { n = parseInt(sessionStorage.getItem('tt_css_sos') || '0', 10) || 0; } catch (e) {}
+      if (n >= 2) return;
+      try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
+      var l = document.createElement('link');
+      l.rel = 'stylesheet';
+      l.href = '/css/styles.min.css?v=83&sos=' + Date.now();
+      l.onload = function () {
+        if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
+          R.className = R.className.replace(/\s*css-sos/, '');
+        }
+      };
+      document.head.appendChild(l);
+    } catch (e) {}
+  })();
+  </script>
 
   <script type="application/ld+json">
   {

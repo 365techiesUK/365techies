@@ -2349,3 +2349,14 @@ html.ss-open { overflow: hidden; }
   .b365-fresh .chip-m::before { animation: none; }
   .b365-draw path.l { animation: none; stroke-dashoffset: 0; }
 }
+
+/* ============================================================
+   SENTINEL — must stay the LAST rule in this file.
+   The head's guard reads --css-ok; if it is absent the browser
+   either never got this stylesheet or got a truncated copy (a
+   deploy overwriting it mid-flight, a bot-wall HTML response, a
+   dropped connection). Missing sentinel => emergency styles +
+   one cache-busting retry. Do not add rules below this line and
+   do not "tidy" it away.
+   ============================================================ */
+:root { --css-ok: 1; }
