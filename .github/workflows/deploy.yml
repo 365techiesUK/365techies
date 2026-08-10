@@ -37,7 +37,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # SiteGround's FTPS is slow to accept connections under load: 3 of 4 runs on
+      # 2026-08-10 died with "Timeout (control socket)" at the action's 30 s default.
+      # Two defences: a 120 s control-socket timeout, and a full second attempt if
+      # the first fails (cheap — the sync-state file means the retry only uploads
+      # whatever the first attempt didn't finish).
       - name: Deploy via FTPS
+        id: ftps1
+        continue-on-error: true
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_HOST }}
@@ -45,6 +52,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: ./
           protocol: ftps
+          timeout: 120000
           dry-run: ${{ inputs.dry_run || false }}
           # Upload the built website only - never the source/dev files.
           exclude: |
@@ -63,6 +71,41 @@ jobs:
             src/**
             *.bat
             index-classic.html
+
+      - name: Deploy via FTPS (retry after connection failure)
+        id: ftps2
+        if: ${{ steps.ftps1.outcome == 'failure' }}
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ./
+          protocol: ftps
+          timeout: 120000
+          dry-run: ${{ inputs.dry_run || false }}
+          exclude: |
+            **/.git*
+            **/.git*/**
+            .github/**
+            **/*.py
+            **/*.md
+            wrangler.toml
+            victron-vrm-proxy.js
+            website-checker-proxy.js
+            safe-browsing-proxy.js
+            visitors-live-worker.js
+            LICENSE*
+            .gitignore
+            src/**
+            *.bat
+            index-classic.html
+
+      - name: Fail if both FTPS attempts failed
+        if: ${{ steps.ftps1.outcome == 'failure' && steps.ftps2.outcome == 'failure' }}
+        run: |
+          echo "::error title=FTPS deploy failed twice::Both attempts hit connection errors — SiteGround FTPS likely down or throttling. Re-run the workflow."
+          exit 1
 
       # The portal is the page people keep open, and its updates have "got stuck" before.
       # After every deploy, confirm the LIVE site serves this commit's builds. Outcomes
