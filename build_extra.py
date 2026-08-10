@@ -15198,6 +15198,16 @@ SOS_DL_WIN = "https://download.splashtop.com/sos/SplashtopSOS.exe"          # Gl
 # SOS_DL_WIN = "https://download.splashtop.com/sos/eu/SplashtopSOS.exe"     # EU stack
 SOS_DL_ANDROID = "https://play.google.com/store/apps/details?id=com.splashtop.sos"
 
+# ---- Splashtop STREAMER (unattended access - support-plan customers) --------
+# ⚠️ OWNER ACTION: paste the team deployment link from the Splashtop console
+# (Management -> Deployment -> your deployment package -> copy link; it looks
+# like https://my.splashtop.com/team_deployment/download/XXXXXXXXXXXX).
+# While this is "" the whole Streamer section stays OFF the page.
+# NEVER use a generic streamer download here: only the deployment link joins
+# the machine to OUR team with OUR settings. The deployment CODE also decides
+# which group the machine lands in - pick the package deliberately.
+STREAMER_DEPLOY_URL = ""
+
 def sos_page():
     slug = "sos"
     desc = ("Start a secure 365 Techies remote-support session: download the support tool, open it, and read us "
@@ -15263,6 +15273,20 @@ def sos_page():
         </div>
       </div>
     </section>''',
+      (f'''    <section class="section section--alt" id="streamer" aria-label="Streamer install for support-plan customers">
+      <div class="wrap" style="max-width:820px;margin:0 auto;text-align:center">
+        <p class="eyebrow eyebrow--center mono" data-reveal>// ON A SUPPORT PLAN? &middot; ONLY IF WE&rsquo;VE ASKED YOU TO</p>
+        <h2 class="section-title section-title--center" data-title>Setting up ongoing access &mdash; the Streamer<span class="title-underline title-underline--center"></span></h2>
+        <div class="prose" data-reveal style="text-align:left;max-width:640px;margin:0 auto;font-size:1.05rem;line-height:1.65">
+          <p>This one is different from the support tool above &mdash; and we want to be straight about how. The <strong>Streamer installs permanently</strong> and links this computer to 365 Techies, so if you&rsquo;re on one of our support plans we can look after it without the download-and-code routine every time.</p>
+          <p><strong>Please only install it while you&rsquo;re talking to us</strong> and we&rsquo;ve asked you to &mdash; it&rsquo;s part of how we set up a support plan, not something you need for a one-off fix. You stay in control: it sits visibly in the corner of your screen by the clock, you can see when we connect, and it can be uninstalled like any other program.</p>
+        </div>
+        <p style="margin:1.6rem 0 0.8rem" data-reveal>
+          <a class="button primary button--lg" href="{STREAMER_DEPLOY_URL}" target="_blank" rel="noopener">&#11015;&#65039; Download the 365 Techies Streamer</a>
+        </p>
+        <p class="mono" style="color:var(--muted);font-size:0.8rem">// INSTALLS PERMANENTLY &middot; JOINS THIS COMPUTER TO OUR SUPPORT SYSTEM &middot; WINDOWS</p>
+      </div>
+    </section>''' if STREAMER_DEPLOY_URL else ""),
       '''    <script>
     /* Auto-start the download once per visit — belt for the button's braces.
        Guarded so back-navigation doesn't re-trigger it. */

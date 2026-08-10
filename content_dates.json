@@ -2951,8 +2951,8 @@
  },
  "sos": {
   "first": "2026-07-28",
-  "h": "71a60e5889d7ef89",
-  "last": "2026-08-07"
+  "h": "2a91aa72e1ef4109",
+  "last": "2026-08-10"
  },
  "splashtop-business-guide": {
   "first": "2026-07-28",
@@ -3058,6 +3058,10 @@
   "first": "2026-07-28",
   "h": "6327c40b39ea4fb0",
   "last": "2026-08-07"
+ },
+ "van-signal-map": {
+  "first": "2026-08-10",
+  "h": "9550e550e19ed2cf"
  },
  "victron-boat-gps-tracking": {
   "first": "2026-07-28",
