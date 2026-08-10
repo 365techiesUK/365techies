@@ -109,7 +109,7 @@ def scan_text(rel, text, price_only, retired_hits, unresolved_hits, price_hits):
 
 
 def search_index_entries():
-    """Yield (label, concatenated-strings) for AI entries in search-index.json."""
+    """Yield (label, entry-slug, concatenated-strings) for AI entries in search-index.json."""
     p = os.path.join(ROOT, "search-index.json")
     if not os.path.exists(p):
         return
@@ -117,7 +117,7 @@ def search_index_entries():
         with open(p, encoding="utf-8") as f:
             data = json.load(f)
     except Exception as e:
-        yield ("search-index.json", "PARSE-ERROR %s" % e)
+        yield ("search-index.json", "", "PARSE-ERROR %s" % e)
         return
     items = data if isinstance(data, list) else data.get("pages", []) if isinstance(data, dict) else []
     for item in items:
@@ -125,7 +125,7 @@ def search_index_entries():
             continue
         blob = " ".join(str(v) for v in item.values() if isinstance(v, str))
         if any(slug in blob for slug in AI_SLUGS) or "/ai/" in blob:
-            yield ("search-index.json (AI entry)", blob)
+            yield ("search-index.json (AI entry)", str(item.get("u", "")), blob)
 
 
 def main():
@@ -145,15 +145,17 @@ def main():
                 ai_lines = "\n".join(ln for ln in f.read().splitlines() if AI_LINE.search(ln))
             scan_text(rel, ai_lines, True, retired_hits, unresolved_hits, price_hits)
 
-    for label, blob in search_index_entries():
+    for label, u, blob in search_index_entries():
         if blob.startswith("PARSE-ERROR"):
             print("AI GUARD WARNING: could not parse search-index.json (%s)" % blob)
             continue
-        # the search index must carry no AI price claims at all - today it is
-        # clean only because descriptions truncate at ~200 chars just before
-        # 'From £95/month'; if a desc is shortened the price slips in.
+        # search-index entries are metadata OF their page, so the voice page's
+        # entry may carry the one approved voice price (same slug-scoped
+        # exception as render_test); every other price claim is banned here.
         for rx in PRICE_RES:
             for m in rx.finditer(blob):
+                if u == "ai/voice-agents" and "".join(c for c in m.group(0) if c.isdigit()) == "95":
+                    continue
                 price_hits.append("%s: price claim %r must not enter the search index" % (label, m.group(0)))
         for rx, lab in RETIRED:
             if rx.search(blob):

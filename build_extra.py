@@ -8611,7 +8611,7 @@ def agentic_systems():
       hero(bc("Agentic AI Systems"), "// AGENTIC AI SYSTEMS",
            'Custom <em class="grad grad--cyan">agentic operating systems</em>',
            "We design and build bespoke agentic AI systems that run your business&rsquo;s specific processes end to end &mdash; intelligent agents that work alongside your team, automating the repetitive, connecting your tools, and freeing your people to do what actually matters.",
-           cta1=("Book a Discovery Call", "/contact/"), cta2=("Call 01202 775566", "tel:+441202775566"),
+           cta1=("Book a Discovery Call", "/ai/start/"), cta2=("Call 01202 775566", "tel:+441202775566"),
            chips=["Custom-built for you","Process-specific","Human-in-the-loop"]),
       f'''    <section class="section" aria-label="What it is">
       <div class="wrap split-2">
@@ -8814,13 +8814,13 @@ def agentic_systems():
       faq_html(faqs),
       cta("Build your agentic operating system",
           "Tell us about a process that&rsquo;s eating your team&rsquo;s time, and we&rsquo;ll show you what a custom agentic system could do for your business.",
-          primary=("Book a Discovery Call", "/contact/"), secondary=("Call 01202 775566", "tel:+441202775566")),
+          primary=("Book a Discovery Call", "/ai/start/"), secondary=("Call 01202 775566", "tel:+441202775566")),
     ])
     def schema(s, _desc=desc, _faqs=faqs):
         return graph([crumb(s, "Agentic AI Systems"), webpage(s, "Custom Agentic AI Operating Systems", _desc),
                       service(s, "Agentic AI Systems", "Custom-built agentic AI operating systems that automate and streamline business-specific processes for companies.", "Agentic AI systems and business automation"),
                       faqpage(s, _faqs)])
-    add(slug=slug, title="Agentic AI Systems & AI Automation Agency Dorset | 365 Techies",
+    add(slug=slug, title="Agentic AI Systems &amp; AI Automation Agency Dorset | 365 Techies",
         desc=desc, og_title="Custom Agentic AI Systems | 365 Techies", schema=schema, content=content)
 agentic_systems()
 
@@ -9673,7 +9673,7 @@ def ai_os():
       hero(bc("365 AI OS"), "// 365 AI OS",
            'Your own <em class="grad grad--cyan">AI desktop</em>',
            "The 365 AI OS is a real desktop that lives in your browser &mdash; sign in to your own profile and meet a built-in AI assistant that doesn&rsquo;t just chat, but actually takes notes, manages your tasks and runs your desktop for you.",
-           cta1=("Book a Discovery Call", "/contact/"), cta2=("See Agentic AI", "/agentic-ai-systems/"),
+           cta1=("Book a Discovery Call", "/ai/start/"), cta2=("See Agentic AI", "/agentic-ai-systems/"),
            chips=["Runs in your browser","Powered by Claude","Built in Dorset"]),
       launch_band,
       f'''    <section class="section" aria-label="What it is">
@@ -9796,13 +9796,13 @@ def ai_os():
       faq_html(faqs),
       cta("Want your own AI desktop?",
           "See the working prototype and let&rsquo;s talk about a version built around your business.",
-          primary=("Book a Discovery Call", "/contact/"), secondary=("Agentic AI Systems", "/agentic-ai-systems/")),
+          primary=("Book a Discovery Call", "/ai/start/"), secondary=("Agentic AI Systems", "/agentic-ai-systems/")),
     ] if p])
     def schema(s, _desc=desc, _faqs=faqs):
         return graph([crumb(s, "365 AI OS"), webpage(s, "365 AI OS — Your Own AI Desktop", _desc),
                       service(s, "365 AI OS", "A real, browser-based AI desktop with a built-in agentic assistant, built in-house by 365 Techies.", "Agentic AI software"),
                       faqpage(s, _faqs)])
-    add(slug="365-ai-os", title="365 AI OS — Your Own AI Desktop & Assistant | 365 Techies",
+    add(slug="365-ai-os", title="365 AI OS &mdash; Your Own AI Desktop &amp; Assistant | 365 Techies",
         desc=desc, og_title="365 AI OS | 365 Techies", schema=schema, content=content)
 ai_os()
 
@@ -13049,7 +13049,7 @@ def ai_voice():
       hero(bc("AI Voice Agents"), "// AI VOICE &amp; PHONE ANSWERING",
            'Never miss a call &mdash; your <em class="grad grad--cyan">AI receptionist</em>',
            "An AI voice agent answers your phone day and night &mdash; greeting callers in your name, answering the routine questions, taking details and booking callbacks &mdash; then hands anything that needs a person to your team. Set up, secured and supported by your local Dorset IT team.",
-           cta1=("Talk to us about AI", "/contact/"), cta2=("Call 01202 775566", "tel:+441202775566"),
+           cta1=("Talk to us about AI", "/ai/start/"), cta2=("Call 01202 775566", "tel:+441202775566"),
            chips=[f"From &pound;{AI_VOICE_FROM}/month", "Answers 24/7", "You stay in control"]),
       f'''    <section class="section" aria-label="What it is">
       <div class="wrap split-2">
@@ -13110,7 +13110,7 @@ def ai_voice():
       faq_html(faqs),
       cta("Stop missing calls",
           "Let&rsquo;s set up an AI voice agent that answers every call, captures every enquiry and books the work &mdash; while you get on with the job.",
-          primary=("Talk to us about AI", "/contact/"), secondary=("See Agentic AI", "/agentic-ai-systems/")),
+          primary=("Talk to us about AI", "/ai/start/"), secondary=("See Agentic AI", "/agentic-ai-systems/")),
     ])
     def schema(s, _desc=desc, _faqs=faqs):
         return graph([crumb(s, "AI Voice Agents"), webpage(s, "AI Voice Agents & Phone Answering", _desc),
@@ -13201,13 +13201,13 @@ def ai_roi():
       hero(bc("AI ROI Calculator"), "// AI ROI CALCULATOR",
            'What could AI <em class="grad grad--cyan">save you?</em>',
            "Put rough numbers on a repetitive task your team does every week, and see the hours and money an AI agent could give you back. A free, no-obligation estimate &mdash; we confirm the real figure in a friendly review.",
-           cta1=("Talk to us about AI", "/contact/"), cta2=("See Agentic AI", "/agentic-ai-systems/"),
+           cta1=("Talk to us about AI", "/ai/start/"), cta2=("See Agentic AI", "/agentic-ai-systems/"),
            chips=["Free estimator","No obligation","Confirmed when we scope it"]),
       roi,
       faq_html(faqs),
       cta("See what AI could save you",
           "Tell us about your biggest time-drain &mdash; we&rsquo;ll map it and show you a realistic, honest saving.",
-          primary=("Talk to us about AI", "/contact/"), secondary=("Agentic AI Systems", "/agentic-ai-systems/")),
+          primary=("Talk to us about AI", "/ai/start/"), secondary=("Agentic AI Systems", "/agentic-ai-systems/")),
     ])
     def schema(s, _desc=desc, _faqs=faqs):
         return graph([crumb(s, "AI ROI Calculator"), webpage(s, "AI ROI Calculator", _desc), faqpage(s, _faqs)])
