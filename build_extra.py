@@ -15206,7 +15206,7 @@ SOS_DL_ANDROID = "https://play.google.com/store/apps/details?id=com.splashtop.so
 # NEVER use a generic streamer download here: only the deployment link joins
 # the machine to OUR team with OUR settings. The deployment CODE also decides
 # which group the machine lands in - pick the package deliberately.
-STREAMER_DEPLOY_URL = ""
+STREAMER_DEPLOY_URL = "https://my.splashtop.com/team_deployment/download/ZWPWS2LX4WT3"  # owner-supplied 2026-08-07, verified live: names "365 Techies / 365 Computers UK"
 
 def sos_page():
     slug = "sos"
