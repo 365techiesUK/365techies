@@ -6081,7 +6081,7 @@ def off_grid():
             </div>
           </div>
           <p class="vhx-more"><a class="button secondary" href="/van-signal-map/">See the live signal map &rarr;</a></p>
-          <p class="prose" style="text-align:center;max-width:62ch;margin:1.1rem auto 0;color:var(--muted)">Sizing your own system? Our free <a href="/solar-battery-calculator/">campervan solar &amp; battery calculator</a> gives you an honest lithium size and panel wattage from what you actually run.</p>
+          <p class="prose" style="text-align:center;max-width:62ch;margin:1.1rem auto 0;color:var(--muted)">Sizing your own system? Our free <a href="/solar-battery-calculator/">campervan solar &amp; battery calculator</a> gives you an honest lithium size and panel wattage from what you actually run. Want your Victron kit talking to Home Assistant like this? Here&rsquo;s <a href="/home-assistant-victron-cerbo-gx/">exactly how we wired the Cerbo GX into Home Assistant</a>.</p>
         </div>
       </div>
     </section>
@@ -19909,6 +19909,12 @@ for _np in SEO_WAVE6_PAGES:
     build_new_page(_np)
 
 for _np in SEO_WAVE7_PAGES:
+    build_new_page(_np)
+
+# The gated 2-page Home Assistant x Victron test (own module per the wave rule;
+# wave 2 only if these earn measured clicks — see ha_victron_data.py docstring).
+from ha_victron_data import HA_VICTRON_PAGES
+for _np in HA_VICTRON_PAGES:
     build_new_page(_np)
 
 # ---------------------------------------------------------------------------
