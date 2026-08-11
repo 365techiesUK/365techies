@@ -580,8 +580,10 @@ function bf_subject() { return 'A small favour, if you have 30 seconds'; }
 function bf_body($first, $to = '', $salt = '') {
     global $RV_REVIEW_URL;
     return 'Hi ' . $first . ",\r\n\r\n"
-    . "This is Steve and David at 365 Techies - the family-run computer shop\r\n"
-    . "you've had looking after your tech.\r\n\r\n"
+    // NEVER call us a shop here: there is no walk-in premises, and a customer who
+    // reads "shop" may turn up at a door that isn't there (see the premises truth).
+    . "This is Steve and David at 365 Techies - the family-run team in\r\n"
+    . "Bournemouth who've been looking after your computers.\r\n\r\n"
     . "We've never got round to asking, so here it is: would you leave us a\r\n"
     . "Google review? It takes about 30 seconds, we read every one, and it is\r\n"
     . "genuinely how other local people decide who to trust with their\r\n"
