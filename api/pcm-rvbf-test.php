@@ -46,7 +46,20 @@ $RV_Q = $RV_TMPQ;                    // after include: point the queue at the th
    that need to see live-path behaviour flip them locally and put them back. */
 $RV_LIVE = false;
 $BF_LIVE = false;
-date_default_timezone_set('Asia/Tokyo');   // put the clock inside the 9-20 send window
+/* The senders only run between 09:00 and 20:00 local. Rather than hardcode a
+   timezone that happens to be daytime when the suite was written (Asia/Tokyo was
+   fine at 1am UK and broke the whole suite by mid-afternoon), find one that puts
+   the clock where we need it, whenever this runs. */
+function tz_where_hour_is($lo, $hi) {
+    for ($off = -11; $off <= 12; $off++) {
+        $tz = 'Etc/GMT' . ($off <= 0 ? '+' . (-$off) : '-' . $off);   // Etc/GMT signs are inverted
+        date_default_timezone_set($tz);
+        $h = (int)date('G');
+        if ($h >= $lo && $h <= $hi) return $tz;
+    }
+    return 'UTC';
+}
+tz_where_hour_is(10, 18);                  // inside the send window, with margin
 
 $fail = 0;
 function ck($name, $cond, $extra = '') {
@@ -160,14 +173,24 @@ $q['bf_ts'] = time() - 120;
 rvq_save($q); rvq_close($lk);
 ck('ledger clean again after the rail test', (isset(bf_process(3)['skip']) ? bf_process(3)['skip'] : '') !== 'segment_implausible');
 
+/* ---- 6c. Slack lines must name who was asked -------------------------- */
+/* Owner-reported: "review asks sent 3" told him nothing about WHO. */
+ck('empty list adds nothing', rv_name_list(array()) === '');
+ck('names are listed', rv_name_list(array('Margaret Hall', 'Brian Webb')) === ' - Margaret Hall, Brian Webb',
+   rv_name_list(array('Margaret Hall', 'Brian Webb')));
+ck('blank entries are dropped', rv_name_list(array('Margaret Hall', '', '  ')) === ' - Margaret Hall');
+$many = array_map(function ($i) { return 'Person ' . $i; }, range(1, 11));
+ck('long lists are capped with a count', strpos(rv_name_list($many, 8), 'and 3 more') !== false, rv_name_list($many, 8));
+ck('capped list shows exactly 8 names', substr_count(rv_name_list($many, 8), 'Person ') === 8, rv_name_list($many, 8));
+
 /* ---- 7. quiet hours still guard --------------------------------------- */
-date_default_timezone_set('Etc/GMT-3');
+tz_where_hour_is(0, 5);                    // somewhere it is the small hours
 $hr = (int)date('G');
 if ($hr < 9 || $hr >= 20) {
     $rq = bf_process(3);
     ck('quiet hours block sends', (isset($rq['skip']) ? $rq['skip'] : '') === 'quiet_hours', json_encode($rq));
 } else {
-    echo "skip  quiet-hours test (local hour $hr is inside the window)\n";
+    echo "skip  quiet-hours test (no timezone found outside the send window)\n";
 }
 
 echo "\n" . ($fail === 0 ? "ALL TESTS PASSED\n" : "$fail TEST(S) FAILED\n");

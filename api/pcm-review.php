@@ -572,6 +572,20 @@ function cf_notify($bid, $type, $email, $name, $sv, $ts, $ets, $code) {
 }
 
 // ---- best-effort Slack ping (send failures + daily summaries) - never blocks ----
+/* " - Margaret Hall, Brian Webb and 3 more". Empty list -> empty string, so the
+   caller's message reads exactly as before when there is nothing to name. */
+function rv_name_list($names, $cap = 8) {
+    $clean = array();
+    foreach ((array)$names as $n) {
+        $n = trim((string)$n);
+        if ($n !== '') $clean[] = $n;
+    }
+    if (!$clean) return '';
+    $extra = count($clean) - $cap;
+    if ($extra > 0) $clean = array_slice($clean, 0, $cap);
+    return ' - ' . implode(', ', $clean) . ($extra > 0 ? ' and ' . $extra . ' more' : '');
+}
+
 function rv_slack($text) {
     $f = __DIR__ . '/slack-webhook.php';
     if (!file_exists($f)) return;
@@ -754,9 +768,10 @@ function bf_process($cap = 0) {
                      'day_cap' => (int)$BF_DAY_CAP, 'sent_today' => $sentToday);
     }
 
-    $sent = 0; $failed = 0;
+    $sent = 0; $failed = 0; $who = array();
     foreach ($picked as $ckey => $p) {
         $ok = rv_send($p['em'], $p['nm'], 'backfill');
+        if ($ok) $who[] = ($p['nm'] !== '' ? $p['nm'] : $p['em']);
         list($lk2, $q2) = rvq_open();
         if (!$lk2) continue;
         if (isset($q2['bf'][$ckey]) && (isset($q2['bf'][$ckey]['st']) ? $q2['bf'][$ckey]['st'] : '') === 'sending') {
@@ -777,7 +792,8 @@ function bf_process($cap = 0) {
         rvq_close($lk2);
     }
     if ($sent > 0 || $failed > 0)
-        rv_slack('Review backfill: ' . $sent . ' sent, ' . $failed . ' failed, ' . $due . ' still eligible.');
+        rv_slack('Review backfill: ' . $sent . ' sent' . rv_name_list($who) . ', '
+            . $failed . ' failed, ' . $due . ' still eligible.');
     return array('mode' => 'live', 'sent' => $sent, 'failed' => $failed, 'eligible_now' => $due,
                  'by_segment' => $counts, 'day_cap' => (int)$BF_DAY_CAP);
 }
@@ -1393,9 +1409,10 @@ function rv_process($cap = 5) {
 
     if (!$RV_LIVE) return array('mode' => 'safe', 'due_waiting' => $due, 'sent' => 0);
 
-    $sent = 0; $failed = 0;
+    $sent = 0; $failed = 0; $who = array();
     foreach ($picked as $bid => $p) {
         $ok = rv_send($p['em'], $p['nm']);
+        if ($ok) $who[] = ($p['nm'] !== '' ? $p['nm'] : $p['em']);
         list($lk2, $q2) = rvq_open();
         if (!$lk2) continue;
         // only transition if still 'sending': a cancel webhook that landed during the
@@ -1427,7 +1444,8 @@ function rv_process($cap = 5) {
         rvq_save($q2);
         rvq_close($lk2);
     }
-    if ($sent > 0 || $failed > 0) rv_slack(':love_letter: 365 mail: review asks sent ' . $sent . ($failed ? (', FAILED ' . $failed . ' - check pcm-review') : ''));
+    if ($sent > 0 || $failed > 0) rv_slack(':love_letter: 365 mail: review asks sent ' . $sent
+        . rv_name_list($who) . ($failed ? (', FAILED ' . $failed . ' - check pcm-review') : ''));
     return array('mode' => 'live', 'due' => $due, 'sent' => $sent, 'failed' => $failed);
 }
 
