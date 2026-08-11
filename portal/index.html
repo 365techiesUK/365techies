@@ -724,9 +724,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">portal build 11 Aug 2026 &middot; 48f3f47ab7</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">portal build 11 Aug 2026 &middot; 9a076a3570</p><script>
 (function () {
-  var P365BUILD = '48f3f47ab7';
+  var P365BUILD = '9a076a3570';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -1554,7 +1554,7 @@
   }
 </style><script>
 (function () {
-  var BK = '/api/pcm-booking.php', PCM = '/api/pcm.php', DASH = '/api/pcm-dash.php', TEAM = '/api/pcm-team.php', CONN = '/api/pcm-connect.php', FEEDS = '/api/pcm-feeds.php', WCHK = '/api/pcm-wcheck.php', MSG = '/api/pcm-msg.php';
+  var BK = '/api/pcm-booking.php', PCM = '/api/pcm.php', DASH = '/api/pcm-dash.php', TEAM = '/api/pcm-team.php', CONN = '/api/pcm-connect.php', FEEDS = '/api/pcm-feeds.php', WCHK = '/api/pcm-wcheck.php', MSG = '/api/pcm-msg.php', QBO = '/api/pcm-qbo.php';
   var el = document.getElementById('p365app');
   var S = {};
   try { S = JSON.parse(sessionStorage.getItem('p365s') || 'null') || JSON.parse(localStorage.getItem('p365') || '{}'); } catch (e) { S = {}; }
@@ -5548,7 +5548,63 @@
     } else {
       out += '<div class="quiet">No postal address on file \u2014 they can add it themselves in their portal, or type it into SimplyBook.</div>';
     }
+    /* Matched on email, because that is what QuickBooks is searched by. No email,
+       no button - guessing by name would merge two Smiths into one ledger. */
+    if (c.email) {
+      out += '<div class="qbowrap" data-em="' + esc(c.email) + '" data-nm="' + esc(c.name || '')
+        + '" data-ph="' + esc(c.phone || '') + '" style="margin-top:.45rem">'
+        + '<button class="sm ghost qbob" style="margin:0;padding:.3rem .65rem;font-size:.82rem">\ud83d\udcb7 Invoice in QuickBooks</button></div>';
+    }
     return out;
+  }
+  /* Two steps on purpose: the first click only opens the form, so a stray tap on
+     a contact card can never reach the accounts. */
+  function bindQbo(panel) {
+    var w = panel.querySelector('.qbowrap'); if (!w) return;
+    var b = w.querySelector('.qbob'); if (!b) return;
+    b.onclick = function () {
+      w.innerHTML = '<div style="margin:.2rem 0 .3rem"><input class="qdesc" type="text" maxlength="200" placeholder="What was the job? (goes on the invoice)" style="width:100%;max-width:320px"></div>'
+        + '<div style="margin:0 0 .35rem"><input class="qamt" type="text" inputmode="decimal" placeholder="Amount \u00a3 (leave blank to just add them)" style="width:100%;max-width:320px"></div>'
+        + '<button class="sm qgo" style="margin:0;padding:.3rem .7rem;font-size:.82rem">Create in QuickBooks</button> '
+        + '<span class="quiet qmsg"></span>';
+      var msg = w.querySelector('.qmsg');
+      w.querySelector('.qgo').onclick = function () {
+        var go = this; go.disabled = true; msg.textContent = 'Working\u2026';
+        post(QBO, { action: 'qbostart', stoken: S.stoken, machine: mid(), live: 1,
+                    email: w.getAttribute('data-em'), name: w.getAttribute('data-nm'), phone: w.getAttribute('data-ph'),
+                    desc: (w.querySelector('.qdesc').value || ''), amount: (w.querySelector('.qamt').value || '') })
+          .then(function (r) {
+            go.disabled = false;
+            if (!r || !r.ok) { msg.innerHTML = qboErr(r); return; }
+            if (r.mode === 'DRY-RUN' && r.would) {   // no 'would' = nothing needed writing
+              msg.innerHTML = '<strong>Nothing written.</strong> QuickBooks is in dry-run \u2014 it would '
+                + esc(r.would || 'create the record') + '. Switch QBO_LIVE_ENABLED on to go live.';
+              return;
+            }
+            var bits = [r.existed ? 'Customer already in QuickBooks.' : '\u2713 Customer added to QuickBooks.'];
+            if (r.plan && r.plan.address_added) bits.push('Address filled in.');
+            if (r.invoice_id) bits.push('\u2713 Draft invoice created \u2014 <a href="' + esc(r.invoice_url) + '" target="_blank" rel="noopener">open it</a> (#' + esc(r.invoice_id) + ').');
+            else if (r.invoice_error) bits.push('Invoice didn\u2019t save: ' + esc(r.invoice_error));
+            else bits.push('<a href="' + esc(r.customer_url) + '" target="_blank" rel="noopener">Open them in QuickBooks</a>.');
+            msg.innerHTML = bits.join(' ');
+          })
+          .catch(function () { go.disabled = false; msg.textContent = 'Couldn\u2019t reach the server.'; });
+      };
+    };
+  }
+  function qboErr(r) {
+    var e = r && r.error;
+    if (e === 'no_config' || e === 'config_incomplete') return 'QuickBooks isn\u2019t connected on the server yet.';
+    if (e === 'qbo_auth') return 'QuickBooks sign-in has lapsed \u2014 it needs re-authorising on the server.';
+    if (e === 'busy') return 'The monthly QuickBooks run is going. Try again in a minute.';
+    /* The one error worth spelling out: QuickBooks refuses a second customer with
+       the same display name, and the fix is a ten-second edit there, not here. */
+    if (e === 'duplicate_name') return 'QuickBooks already has someone called <strong>' + esc(r.name || '')
+      + '</strong>. Open that record in QuickBooks and put this email address on it, then try again.';
+    if (e === 'no_item') return 'QuickBooks needs a product/service set as QBO_ITEM_ID before it will take an invoice line.';
+    if (e === 'not_staff') return 'Your staff sign-in expired \u2014 sign in again.';
+    if (e === 'bad_amount') return 'That amount doesn\u2019t look right.';
+    return 'Couldn\u2019t do that' + (r && r.why ? ' \u2014 ' + esc(r.why) : '') + '.';
   }
   function bookingRow(b, i, prefix) {
     var cls = stCls(b.st);
@@ -5606,6 +5662,7 @@
           .then(function (r) {
             if (!r || !r.ok || !r.client) { panel.innerHTML = '<span class="quiet">Couldn\u2019t load contact details.</span>'; return; }
             panel.innerHTML = clientCard(r.client); panel.setAttribute('data-loaded', '1');
+            bindQbo(panel);
           })
           .catch(function () { panel.innerHTML = '<span class="quiet">Couldn\u2019t reach the server.</span>'; });
       };

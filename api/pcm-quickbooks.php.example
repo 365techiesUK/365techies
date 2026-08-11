@@ -24,5 +24,9 @@ $QBO_GUARD         = '';        // e.g. run once:  php -r "echo bin2hex(random_b
 $QBO_ITEM_ID       = '';
 
 // --- SAFETY GATES (leave these until you've tested — see the setup guide) ---
+// NB this one gate covers BOTH writers: the monthly run (pcm-invoice.php) and the
+// "Invoice in QuickBooks" button on the staff diary's contact card (pcm-qbo.php).
+// While it is false that button still works — it reports what it WOULD do and
+// writes nothing, which is the intended way to try it.
 $QBO_LIVE_ENABLED  = false;     // must be true AND the call must use live=1 before ANY real invoice is created
 $QBO_ONLY_KEY      = '';        // set to ONE licence key (e.g. 'ABCD-EFGH-JKLM') to invoice just that customer first

@@ -61,10 +61,11 @@ api/pcm-gc-cache.json
 api/pcm-gc-cache.json.tmp
 # QuickBooks auto-invoicing (phase 2, server-only): OAuth secrets, rotating token store, state, logs
 api/pcm-quickbooks.php
-api/pcm-qbo-token.json
-api/pcm-qbo-token.json.tmp
-api/pcm-invoice-state.json
-api/pcm-invoice-state.json.tmp
+# Globs, not a fixed .tmp: both writers use tmp+rename with the PID in the name
+# (pcm-qbo-token.json.12345.tmp), so the exact-name pattern matched nothing a
+# crash could actually leave behind - and this repo is PUBLIC.
+api/pcm-qbo-token.json*
+api/pcm-invoice-state.json*
 api/pcm-invoice.log
 api/pcm-invoice.lock
 # SimplyBook->portal status poll (cron): lock + admin-token cache

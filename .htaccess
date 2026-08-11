@@ -200,7 +200,19 @@ ErrorDocument 404 /404.html
 <FilesMatch "^pcm-log-[a-f0-9\-]+\.txt$">
   Require all denied
 </FilesMatch>
-<FilesMatch "^(pcm-admin-secret|pcm-simplybook|pcm-textmagic|pass-secret|pcm-gocardless|pcm-feeds-keys)\.php$">
+<FilesMatch "^(pcm-admin-secret|pcm-simplybook|pcm-textmagic|pass-secret|pcm-gocardless|pcm-feeds-keys|pcm-quickbooks)\.php$">
+  Require all denied
+</FilesMatch>
+# QuickBooks. pcm-qbo-token.json holds a LIVE Intuit OAuth refresh token - the
+# same class of miss as pcm-bkpoll-cache.json above, and it was never listed
+# either. pcm-invoice-state.json maps customer emails to QuickBooks ids, and the
+# log names customers and amounts. The endpoints pcm-invoice.php and pcm-qbo.php
+# stay served; only their data does not. Note the (\..*)? tail - the writers use
+# tmp+rename with the pid in the name, so a crash can leave a .12345.tmp behind.
+<FilesMatch "^(pcm-qbo-token|pcm-invoice-state)\.json(\..*)?$">
+  Require all denied
+</FilesMatch>
+<FilesMatch "^pcm-invoice\.(log|lock)$">
   Require all denied
 </FilesMatch>
 # Coast & sky feed caches. The space-weather ones are public domain, but the tide
