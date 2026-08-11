@@ -21,6 +21,13 @@ declare(strict_types=1);
 // ── config ──────────────────────────────────────────────────────────────────
 const DATA_FILE   = __DIR__ . '/signal-data.json';  // gitignored, like api/*-cache.json
 const MAX_POINTS  = 20000;          // ~1 week at 30 s; oldest trimmed
+// PRIVACY EMBARGO: points younger than this are recorded but NOT published, so
+// the public map can't act as a live tracker of where the van is right now.
+// Owner set this to 1 hour on 2026-08-12 (was 24 h) so the map is useful the
+// same day. ⚠️ The home address is protected separately and unconditionally by
+// the geo-fence below, which strips location entirely inside it — that does NOT
+// depend on this delay. Trade-off accepted: at 1 h, a long stop is inferable.
+const EMBARGO_S   = 3600;           // 1 hour
 const COORD_DP    = 5;              // ~1.1 m; rounding limits precision on disk
 // Token lives in a gitignored include, like api/tm-key.php on the live site.
 $__t = @include __DIR__ . '/signal-token.php';
@@ -44,11 +51,8 @@ $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 if ($method === 'GET') {
     $since = isset($_GET['since']) ? (float)$_GET['since'] : 0.0;
     $points = load_points();
-    // PRIVACY EMBARGO: never publish points younger than 24 h. Recording is
-    // live (POSTs store immediately) but the public map must NOT reveal where
-    // the van is right now — the newest point on the trail is effectively a
-    // live tracker without this. Flagged by the owner 2026-08-10. Do not lower.
-    $cutoff = time() - 24 * 3600;
+    // PRIVACY EMBARGO — see EMBARGO_S at the top of this file.
+    $cutoff = time() - EMBARGO_S;
     $points = array_values(array_filter($points, fn($p) => ($p['t'] ?? 0) < $cutoff));
     // Private exclusion zone: strip location from any stored point inside the
     // fence (covers points recorded before the fence file existed).

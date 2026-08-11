@@ -6036,7 +6036,7 @@ VAN_SIGNAL_MAP_MAP = r"""
         </div>
         <ol class="sigmap-best" id="sigmap-best" hidden aria-label="Best measured places for fast internet"></ol>
         <p class="sigmap-empty" id="sigmap-empty" hidden>No location-tagged readings yet &mdash; the map fills in as the van drives.</p>
-        <p style="text-align:center;font-size:.8rem;color:var(--muted,#8b949e);margin:.7rem 0 0">Readings appear after a 24-hour delay &mdash; the map shows where the van <em>has been</em>, never where it is right now. <strong>Best spots</strong> ranks the places our own speed tests measured fastest &mdash; how we choose where to park and work.</p>
+        <p style="text-align:center;font-size:.8rem;color:var(--muted,#8b949e);margin:.7rem 0 0">Readings appear after a short delay &mdash; the map shows where the van <em>has been</em>, never where it is right now. <strong>Best spots</strong> ranks the places our own speed tests measured fastest &mdash; how we choose where to park and work.</p>
         <div class="prose" style="max-width:64ch;margin:1.6rem auto 0" data-reveal>
           <h3 style="font-size:1.05rem;margin:0 0 .5rem">Why &ldquo;full bars&rdquo; can still be slow</h3>
           <p style="font-size:.92rem;color:var(--muted,#8b949e);margin:0">Every reading here carries <strong>SINR</strong> &mdash; signal-to-interference-plus-noise ratio. Signal strength only tells you how <em>loud</em> the mast is; SINR tells you how much of that is actually <em>usable</em> rather than drowned in interference from other traffic. It&rsquo;s why a spot showing four bars can crawl while a weaker-looking one flies: our own van has measured <strong>4 bars at 2&ndash;12&nbsp;Mbps</strong> parked in one place and <strong>75&nbsp;Mbps</strong> in another. Click any point to see its SINR &mdash; roughly <em>20+ excellent, 13+ good, 5+ fair, below that poor</em>.</p>
@@ -6063,7 +6063,9 @@ VAN_SIGNAL_MAP_MAP = r"""
            silently broken map on a marketing page is the risk that justified the
            move. No account, no per-tile cost, no third party who can switch us off.
            Vector tiles render natively dark, so the old CSS invert hack is gone. */
-        protomapsL.leafletLayer({url:'/vendor/protomaps/dorset.pmtiles',theme:'dark',maxDataZoom:14,
+        /* NB: the option is `flavor`, NOT `theme` — protomaps-leaflet ignores an
+           unknown key silently, which paints nothing and logs no error. */
+        protomapsL.leafletLayer({url:'/vendor/protomaps/dorset.pmtiles',flavor:'dark',maxDataZoom:14,
           attribution:'<a href="https://protomaps.com" target="_blank" rel="noopener">Protomaps</a> &copy; <a href="https://openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'}).addTo(map);
         var mode='rsrp';
         var lg=L.control({position:'bottomright'});var lgDiv=null;
