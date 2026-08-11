@@ -24151,6 +24151,55 @@ def write_portal_page():
       else { var sv = document.getElementById('cbsvc'); if (sv) sv.innerHTML = '<p class="quiet">Couldn\\u2019t load services - <a href="/book-service/" target="_blank" rel="noopener">use the booking page</a> or ring 01202 775566.</p>'; }
     }).catch(function () { var sv = document.getElementById('cbsvc'); if (sv) sv.innerHTML = '<p class="quiet">Couldn\\u2019t reach the server - try the <a href="/book-service/" target="_blank" rel="noopener">booking page</a>.</p>'; });
   }
+  /* Reads the account address straight off the last overview payload (JD) rather
+     than keeping a second copy in S - one source, so it can't go stale. A team
+     member never sees this: the server refuses their custaddr save, and the
+     address belongs to the account holder. */
+  function addrOnFile() {
+    var a = (JD && JD.addr) ? JD.addr : {};
+    return (a.line1 || a.city || a.postcode) ? a : null;
+  }
+  function addrOneLine(a) {
+    return [a.line1, a.line2, a.city, a.postcode].filter(function (x) { return x && String(x).trim(); }).join(', ');
+  }
+  function addrStep() {
+    if (JD && JD.member) return '';                       // account data is the director's
+    var a = addrOnFile();
+    return '<div id="cbaddwrap" style="margin:.35rem 0 .5rem;max-width:340px">'
+      + (a
+         ? '<p class="quiet" style="margin:0">\\ud83d\\udccd If we\\u2019re coming to you: <strong>' + esc(addrOneLine(a))
+           + '</strong> <button class="sm ghost" id="cbaded" style="margin:0 0 0 .3rem;padding:.15rem .5rem;font-size:.8rem">change</button></p>'
+         : '<button class="sm ghost" id="cbaded" style="margin:0;padding:.35rem .7rem;font-size:.85rem">+ Add your address, if we\\u2019re coming to you</button>')
+      + '</div>';
+  }
+  function bindAddrStep() {
+    var b = document.getElementById('cbaded'); if (!b) return;
+    b.onclick = function () {
+      var w = document.getElementById('cbaddwrap'); if (!w) return;
+      var a = addrOnFile() || {};
+      var f = function (id, label, val, max) {
+        return '<label class="fld"><span>' + label + '</span><input id="' + id + '" type="text" maxlength="' + max + '" value="' + esc(val || '') + '"></label>';
+      };
+      w.innerHTML = '<p class="quiet" style="margin:0 0 .3rem">Only needed if we\\u2019re coming to you \\u2014 leave it blank for remote help.</p>'
+        + '<div class="addrform">' + f('adr1', 'Address line 1', a.line1, 90) + f('adr2', 'Address line 2 (optional)', a.line2, 90)
+        + f('adrc', 'Town or city', a.city, 60) + f('adrp', 'Postcode', a.postcode, 12) + '</div>';
+    };
+  }
+  /* Resolves whatever happens - never rejects - so the booking that follows is
+     never blocked by an address problem. */
+  function saveAddrStep() {
+    var e1 = document.getElementById('adr1');
+    if (!e1) return Promise.resolve();                    // never opened, nothing to save
+    var body = { action: 'custaddr', wtoken: S.wtoken, machine: mid(),
+                 line1: e1.value || '', line2: (document.getElementById('adr2') || {}).value || '',
+                 city: (document.getElementById('adrc') || {}).value || '',
+                 postcode: (document.getElementById('adrp') || {}).value || '' };
+    if (!(body.line1 + body.city + body.postcode).trim()) return Promise.resolve();
+    return post(PCM, body).then(function (r) {
+      if (r && r.ok && JD) JD.addr = r.addr;              // keep the page honest without a reload
+    }).catch(function () {});
+  }
+
   function custWhen() {
     var w = document.getElementById('cbwiz'); if (!w) return;
     w.innerHTML = '<h3>1 \\u00b7 ' + esc(CB.svcName) + ' \\u00b7 2 \\u00b7 When suits you?</h3>'
@@ -24174,7 +24223,8 @@ def write_portal_page():
                 var cEl = document.getElementById('cbconf'); if (!cEl) return;
                 cEl.innerHTML = '<div class="nbsum"><strong>' + esc(CB.svcName) + '</strong> \\u00b7 <strong>' + esc(day.n) + ' at ' + esc(fmtT(t)) + '</strong>'
                   + '<div style="margin:.45rem 0 .1rem"><input id="cbphone" type="tel" inputmode="tel" autocomplete="tel" placeholder="Best number to reach you on (landline is fine)" style="width:100%;max-width:340px;padding:.5rem .6rem;border-radius:9px;border:1px solid var(--pline);background:var(--pink);color:var(--pwhite);font-size:1rem" /></div>'
-                  + '<div style="margin:.35rem 0 .5rem"><textarea id="cbnote" rows="2" placeholder="Anything we should know? (optional) - e.g. very slow since an update, and the address if we\\u2019re coming to you" style="width:100%;max-width:340px;box-sizing:border-box;padding:.5rem .6rem;border-radius:9px;border:1px solid var(--pline);background:var(--pink);color:var(--pwhite);font:inherit;resize:vertical"></textarea></div>'
+                  + addrStep()
+                  + '<div style="margin:.35rem 0 .5rem"><textarea id="cbnote" rows="2" placeholder="Anything we should know? (optional) - e.g. very slow since an update" style="width:100%;max-width:340px;box-sizing:border-box;padding:.5rem .6rem;border-radius:9px;border:1px solid var(--pline);background:var(--pink);color:var(--pwhite);font:inherit;resize:vertical"></textarea></div>'
                   + '<button class="sm" id="cbgo" style="background:var(--pgood);color:#06220b;font-weight:800">\\u2713 Book it</button> <span class="err" id="cberr" style="display:inline"></span></div>';
                 // No "did someone recommend us?" box HERE: this wizard only
                 // renders for a signed-in existing customer, and asking a
@@ -24182,9 +24232,14 @@ def write_portal_page():
                 // - is a question for our benefit on a form that should carry
                 // nothing but theirs. The public /book-service/ page keeps it;
                 // that is where new customers arrive.
+                bindAddrStep();
                 document.getElementById('cbgo').onclick = function () {
                   var gb = this; gb.disabled = true; document.getElementById('cberr').textContent = '';
                   var cbp = document.getElementById('cbphone'), cbn = document.getElementById('cbnote');
+                  /* Save the address FIRST if they typed one, then book regardless of how
+                     that went. A failed address save must never cost them the slot - they
+                     came here to book, and the address is a bonus we asked for. */
+                  saveAddrStep().then(function () {
                   post(BK, { action: 'book', wtoken: S.wtoken, machine: mid(), eventId: CB.svc, date: day.d, time: t, phone: (cbp ? cbp.value.trim() : ''), note: (cbn ? cbn.value.trim() : '') })
                     .then(function (r) {
                       if (r && r.ok) {
@@ -24212,6 +24267,7 @@ def write_portal_page():
                       }
                     })
                     .catch(function () { gb.disabled = false; document.getElementById('cberr').textContent = 'Couldn\\u2019t reach the server.'; });
+                  });
                 };
               };
               timesEl.appendChild(tb);
