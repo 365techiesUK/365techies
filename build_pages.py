@@ -6128,9 +6128,11 @@ VAN_SIGNAL_MAP_MAP = r"""
           pts.forEach(function(p){ll.push([p.lat,p.lon]);
             var tested=(mode==='speed'&&freshDl(p)!=null);
             L.circleMarker([p.lat,p.lon],{radius:tested?7:5,color:pcol(p),fillColor:pcol(p),fillOpacity:(mode==='speed'&&!tested)?.35:.85,weight:1}).bindPopup(popup(p)).addTo(layer);});
-          if(ll.length>1)L.polyline(ll,{color:'#58a6ff',weight:2,opacity:.35}).addTo(layer);
-          var last=pts[pts.length-1];if(live){map.removeLayer(live);live=null;}
-          if(last){live=L.circleMarker([last.lat,last.lon],{radius:9,color:'#fff',weight:2,fillColor:pcol(last),fillOpacity:1}).addTo(map);}
+          /* No connecting polyline. This map answers "where is the signal good",
+             not "where did the van drive" — and joining the dots would draw the
+             actual route, which is more revealing than the readings themselves.
+             `ll` is still collected, but only to fit the view. */
+          if(live){map.removeLayer(live);live=null;}
           if(!fitted&&ll.length){map.fitBounds(ll,{padding:[40,40],maxZoom:14});fitted=true;}map.invalidateSize();}
         var userChose=false;
         function setMode(m){mode=m;
