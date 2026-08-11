@@ -86,13 +86,24 @@ $RV_REVIEW_URL = 'https://search.google.com/local/writereview?placeid=ChIJlTb8YR
 /* ---- BACKFILL (see the header note) --------------------------------------
    Ships OFF. While false, bf_process() still walks the real customer list and
    reports what it WOULD do - a census - but sends nothing. */
-$BF_LIVE = false;
+$BF_LIVE = true;    // LIVE 2026-08-11 on the owner's word: "5 a day and no back catalogue"
 /* Who is eligible. 'plan' = a current paying relationship. 'catalogue' = dormant
    past customers; adding it is the owner's relationship call, not a code change
-   we make for them. */
+   we make for them. OWNER DECIDED 2026-08-11: plan only, no back catalogue. Do
+   not add 'catalogue' without asking again. */
 $BF_SEGMENTS = array('plan');
-/* Sends per calendar day across the whole backfill. Judgement, not policy. */
-$BF_DAY_CAP = 10;
+/* Sends per calendar day across the whole backfill. Judgement, not policy - no
+   primary source gives a safe rate. Owner set 5 on 2026-08-11. */
+$BF_DAY_CAP = 5;
+
+/* Plausibility rail on the segmentation guess. bf_seed() decides who is a 'plan'
+   customer by reading field names this code has never seen in the real database.
+   If that guess is too generous, dormant back-catalogue customers get classified
+   as 'plan' and emailed - precisely what the owner excluded. GoCardless carries
+   roughly 93 per-PC Direct Debit customers, so a plan segment far above that means
+   the guess is wrong. Refuse to send and say so, rather than finding out from a
+   customer's inbox. Raise this only after confirming the real figure. */
+$BF_PLAN_MAX = 150;
 /* Never ask these addresses (family, friends, staff, our own accounts): conflict
    -of-interest reviews are removable by Google. Lower-case, one per line. */
 $BF_EXCLUDE = array('info@365techies.co.uk');
@@ -652,7 +663,7 @@ function bf_seed() {
    lock, stamp a provisional dedupe, RELEASE the lock before SMTP, then transition.
    Returns what it did (or, while $BF_LIVE is false, what it would have done). */
 function bf_process($cap = 0) {
-    global $BF_LIVE, $BF_SEGMENTS, $BF_DAY_CAP, $RV_LIVE;
+    global $BF_LIVE, $BF_SEGMENTS, $BF_DAY_CAP, $BF_PLAN_MAX, $RV_LIVE;
     $h = (int)date('G');
     if ($h < 9 || $h >= 20) return array('skip' => 'quiet_hours');
     $cap = $cap > 0 ? $cap : 3;                       // per run; the day cap is the real brake
@@ -660,6 +671,22 @@ function bf_process($cap = 0) {
     if (!$lk) return array('skip' => 'locked');
     if ((isset($q['bf_ts']) ? $q['bf_ts'] : 0) > time() - 60) { rvq_close($lk); return array('skip' => 'ran_recently'); }
     $q['bf_ts'] = time();
+
+    /* Segmentation plausibility rail (see $BF_PLAN_MAX). Counted from the ledger
+       before anything is picked, so a wrong field-name guess stops here instead of
+       in somebody's inbox. Warned at most twice a day - this runs 2-hourly. */
+    $planN = 0;
+    foreach ($q['bf'] as $e0) if ((isset($e0['seg']) ? $e0['seg'] : '') === 'plan') $planN++;
+    if ($planN > (int)$BF_PLAN_MAX) {
+        $warn = (isset($q['bf_warn_ts']) ? $q['bf_warn_ts'] : 0) < time() - 43200;
+        if ($warn) $q['bf_warn_ts'] = time();
+        rvq_save($q);
+        rvq_close($lk);
+        if ($warn) rv_slack('Review backfill HELD: ' . $planN . ' customers classified as "plan" but the'
+            . ' expected figure is about 93. The segmentation field guess in bf_seed() is probably wrong,'
+            . ' so nothing has been sent. Check pcm-data.json field names before raising $BF_PLAN_MAX.');
+        return array('skip' => 'segment_implausible', 'plan_in_ledger' => $planN, 'max' => (int)$BF_PLAN_MAX);
+    }
 
     $today = date('Y-m-d');
     foreach ($q['bf_day'] as $d => $n) if ($d < date('Y-m-d', time() - 2592000)) unset($q['bf_day'][$d]);

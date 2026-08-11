@@ -41,6 +41,11 @@ register_shutdown_function(function () {
 define('RV_LIB', 1);                 // stops pcm-review.php's HTTP entry point firing
 require __DIR__ . '/pcm-review.php';
 $RV_Q = $RV_TMPQ;                    // after include: point the queue at the throwaway
+/* HARD SAFETY: this suite must never send an email, whatever the live config says.
+   Both flags are forced off here, so rv_send() is never reached. Individual tests
+   that need to see live-path behaviour flip them locally and put them back. */
+$RV_LIVE = false;
+$BF_LIVE = false;
 date_default_timezone_set('Asia/Tokyo');   // put the clock inside the 9-20 send window
 
 $fail = 0;
@@ -63,9 +68,9 @@ $seed2 = bf_seed();
 ck('re-seed adds nobody', $seed2['added'] === 0, 'added=' . $seed2['added']);
 ck('re-seed sees them as already known', $seed2['already'] === 5, 'already=' . $seed2['already']);
 
-/* ---- 3. census mode: BF_LIVE=false must send nothing ------------------- */
+/* ---- 3. census mode: safe mode must send nothing ---------------------- */
 $r = bf_process(3);
-ck('census mode while BF_LIVE=false', (isset($r['mode']) ? $r['mode'] : '') === 'census', json_encode($r));
+ck('census mode when not live', (isset($r['mode']) ? $r['mode'] : '') === 'census', json_encode($r));
 ck('only the enabled segment is eligible', (isset($r['eligible_now']) ? $r['eligible_now'] : -1) === 2, json_encode($r));
 ck('catalogue held back', !isset($r['by_segment']['catalogue']), json_encode($r['by_segment']));
 
@@ -102,6 +107,26 @@ $rb = rv_body('Steve', 'a@b.com', $salt);
 ck('normal ask uses the URL constant', strpos($rb, 'writereview?placeid=') !== false);
 ck('normal ask gained the one-click unsub', strpos($rb, 'pcm-review.php?u=') !== false);
 ck('normal ask keeps the reply opt-out route', stripos($rb, 'no thanks') !== false);
+
+/* ---- 6b. the segmentation plausibility rail --------------------------- */
+/* If bf_seed()'s field-name guess is too generous, dormant customers would be
+   classified 'plan' and emailed - the thing the owner explicitly excluded. The rail
+   must stop that BEFORE any pick, and it must fire regardless of the live flags. */
+list($lk, $q) = rvq_open();
+for ($i = 0; $i < $BF_PLAN_MAX + 1; $i++)
+    $q['bf']['RAIL' . $i] = array('em' => 'rail' . $i . '@example.com', 'nm' => 'Rail ' . $i,
+                                  'seg' => 'plan', 'st' => 'pending', 'ts' => time(), 'tries' => 0);
+$q['bf_ts'] = time() - 120;
+rvq_save($q); rvq_close($lk);
+$rr = bf_process(3);
+ck('implausible plan segment refuses to send', (isset($rr['skip']) ? $rr['skip'] : '') === 'segment_implausible', json_encode($rr));
+ck('rail reports the count it saw', (isset($rr['plan_in_ledger']) ? $rr['plan_in_ledger'] : 0) > $BF_PLAN_MAX, json_encode($rr));
+/* tidy the rail entries back out so the later tests see a clean ledger */
+list($lk, $q) = rvq_open();
+foreach ($q['bf'] as $k => $v) if (strpos($k, 'RAIL') === 0) unset($q['bf'][$k]);
+$q['bf_ts'] = time() - 120;
+rvq_save($q); rvq_close($lk);
+ck('ledger clean again after the rail test', (isset(bf_process(3)['skip']) ? bf_process(3)['skip'] : '') !== 'segment_implausible');
 
 /* ---- 7. quiet hours still guard --------------------------------------- */
 date_default_timezone_set('Etc/GMT-3');
