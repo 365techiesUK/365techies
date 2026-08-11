@@ -866,6 +866,10 @@
         <ol class="sigmap-best" id="sigmap-best" hidden aria-label="Best measured places for fast internet"></ol>
         <p class="sigmap-empty" id="sigmap-empty" hidden>No location-tagged readings yet &mdash; the map fills in as the van drives.</p>
         <p style="text-align:center;font-size:.8rem;color:var(--muted,#8b949e);margin:.7rem 0 0">Readings appear after a 24-hour delay &mdash; the map shows where the van <em>has been</em>, never where it is right now. <strong>Best spots</strong> ranks the places our own speed tests measured fastest &mdash; how we choose where to park and work.</p>
+        <div class="prose" style="max-width:64ch;margin:1.6rem auto 0" data-reveal>
+          <h3 style="font-size:1.05rem;margin:0 0 .5rem">Why &ldquo;full bars&rdquo; can still be slow</h3>
+          <p style="font-size:.92rem;color:var(--muted,#8b949e);margin:0">Every reading here carries <strong>SINR</strong> &mdash; signal-to-interference-plus-noise ratio. Signal strength only tells you how <em>loud</em> the mast is; SINR tells you how much of that is actually <em>usable</em> rather than drowned in interference from other traffic. It&rsquo;s the number that predicts real speed, and it&rsquo;s why a spot showing four bars can crawl while a weaker-looking one flies. Our own van has measured <strong>4 bars at 2&ndash;12&nbsp;Mbps</strong> in one place and <strong>75&nbsp;Mbps</strong> in another. Click any point to see its SINR: roughly <em>20+ excellent, 13+ good, 5+ fair, below that poor</em>.</p>
+        </div>
       </div>
     </section>
     <script src="/vendor/leaflet/leaflet.js" defer></script>
@@ -893,7 +897,14 @@
         function freshDl(p){return (p.dl!=null&&p.dl_age!=null&&p.dl_age<FRESH_S)?p.dl:null;}
         function pcol(p){if(mode==='rsrp')return col(p.rsrp);return spdcol(freshDl(p));}
         var layer=L.layerGroup().addTo(map),live=null,fitted=false,cache=[];
+        /* SINR (signal-to-interference-plus-noise) is the number that actually
+           predicts usable speed — a strong signal full of interference is slow.
+           It was being collected on every reading and never shown. Bands are the
+           conventional LTE reading of it. */
+        function sinrWord(s){if(s==null)return null;return s>=20?['excellent','#3fb950']:(s>=13?['good','#3fb950']:(s>=5?['fair','#d29922']:['poor','#f85149']));}
         function popup(p){var s='<b>'+(p.rsrp==null?'&mdash;':p.rsrp+' dBm')+'</b> '+(p.net||'')+' '+(p.band||'');
+          var q=sinrWord(p.sinr);
+          if(q)s+='<br>SINR <b>'+p.sinr+' dB</b> <span style="color:'+q[1]+'">'+q[0]+'</span> <span style="opacity:.7">(signal quality)</span>';
           var f=freshDl(p);if(f!=null)s+='<br><b>'+f+' Mbps</b> download &middot; tested near this spot';
           if(p.latency!=null)s+='<br>'+Math.round(p.latency)+' ms ping';
           return s+'<br>'+new Date(p.t*1000).toLocaleString();}
@@ -904,13 +915,14 @@
         function bestCells(){var cells={};
           cache.forEach(function(p){var f=freshDl(p);if(f==null)return;
             var k=(Math.round(p.lat*500)/500)+','+(Math.round(p.lon*333)/333);
-            (cells[k]=cells[k]||{lat:[],lon:[],dl:[],lat_ms:[],net:{}}).dl.push(f);
+            (cells[k]=cells[k]||{lat:[],lon:[],dl:[],lat_ms:[],sinr:[],net:{}}).dl.push(f);
             cells[k].lat.push(p.lat);cells[k].lon.push(p.lon);
             if(p.latency!=null)cells[k].lat_ms.push(p.latency);
+            if(p.sinr!=null)cells[k].sinr.push(p.sinr);
             if(p.net)cells[k].net[p.net]=(cells[k].net[p.net]||0)+1;});
           return Object.keys(cells).map(function(k){var c=cells[k];
             var net=Object.keys(c.net).sort(function(a,b){return c.net[b]-c.net[a];})[0]||'';
-            return {lat:median(c.lat),lon:median(c.lon),dl:median(c.dl),ms:median(c.lat_ms),n:c.dl.length,net:net};
+            return {lat:median(c.lat),lon:median(c.lon),dl:median(c.dl),ms:median(c.lat_ms),sinr:median(c.sinr),n:c.dl.length,net:net};
           }).sort(function(a,b){return b.dl-a.dl;});}
         function wr(dl){return dl>=25?['Great for work','wr--good']:(dl>=10?['Calls OK','wr--ok']:['Struggles','wr--bad']);}
         function render(){var pts=cache;layer.clearLayers();
@@ -920,10 +932,10 @@
             if(!cells.length){list.innerHTML='<li style="cursor:default"><span class="meta">No speed-tested spots yet &mdash; they appear after drives (tests run every 5 minutes on the road).</span></li>';}
             cells.forEach(function(c,i){
               var mk=L.circleMarker([c.lat,c.lon],{radius:Math.min(9+c.n,16),color:spdcol(c.dl),fillColor:spdcol(c.dl),fillOpacity:.8,weight:2})
-                .bindPopup('<b>'+Math.round(c.dl)+' Mbps</b> median download &middot; '+c.n+' test'+(c.n>1?'s':'')+(c.ms!=null?('<br>'+Math.round(c.ms)+' ms ping'):'')+(c.net?('<br>'+c.net):'')).addTo(layer);
+                .bindPopup('<b>'+Math.round(c.dl)+' Mbps</b> median download &middot; '+c.n+' test'+(c.n>1?'s':'')+(c.ms!=null?('<br>'+Math.round(c.ms)+' ms ping'):'')+(c.sinr!=null?('<br>SINR '+Math.round(c.sinr)+' dB'):'')+(c.net?('<br>'+c.net):'')).addTo(layer);
               if(i<5){L.marker([c.lat,c.lon],{icon:L.divIcon({className:'',html:'<div class="sigmap-rank">'+(i+1)+'</div>',iconSize:[26,26],iconAnchor:[13,13]}),interactive:false}).addTo(layer);}
               if(i<8){var li=document.createElement('li');var w=wr(c.dl);
-                li.innerHTML='<span class="rk">'+(i+1)+'</span><span class="mb">'+Math.round(c.dl)+' Mbps</span><span class="meta">'+(c.ms!=null?(Math.round(c.ms)+' ms &middot; '):'')+(c.net?(c.net+' &middot; '):'')+c.n+' test'+(c.n>1?'s':'')+'</span><span class="wr '+w[1]+'">'+w[0]+'</span>';
+                li.innerHTML='<span class="rk">'+(i+1)+'</span><span class="mb">'+Math.round(c.dl)+' Mbps</span><span class="meta">'+(c.ms!=null?(Math.round(c.ms)+' ms &middot; '):'')+(c.sinr!=null?('SINR '+Math.round(c.sinr)+' dB &middot; '):'')+(c.net?(c.net+' &middot; '):'')+c.n+' test'+(c.n>1?'s':'')+'</span><span class="wr '+w[1]+'">'+w[0]+'</span>';
                 li.addEventListener('click',function(){map.setView([c.lat,c.lon],15);});
                 list.appendChild(li);}});
             if(live){map.removeLayer(live);live=null;}
