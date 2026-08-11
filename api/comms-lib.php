@@ -72,23 +72,61 @@ function comms_new_id() {
  * Match an E.164 number against the customer base. Exact normalised equality
  * only. Returns ['status' => MATCH|MULTIPLE|NO_MATCH|NOT_CHECKED, 'name', 'cid'].
  */
+/* Every field a customer's number has been known to land in. The booking flow, the
+   portal join, the SimplyBook mirror and the team/org records all name it differently,
+   and a number we hold but do not search is a name we fail to show. Additive by
+   design: adding a field can only ever produce MORE matches. */
+function comms_match_fields() {
+    return array('phone', 'sb_phone', 'mobile', 'tel', 'telephone', 'bk_phone', 'sms', 'contact_phone');
+}
+
 function comms_match_customer($e164) {
     $f = __DIR__ . '/pcm-data.json';
-    if ($e164 === '' || !is_file($f)) return array('status' => 'NOT_CHECKED', 'name' => '', 'cid' => '');
+    if ($e164 === '' || !is_file($f)) return array('status' => 'NOT_CHECKED', 'name' => '', 'cid' => '', 'why' => 'no customer file');
     $db = @json_decode((string)@file_get_contents($f), true);
-    if (!is_array($db) || empty($db['customers'])) return array('status' => 'NOT_CHECKED', 'name' => '', 'cid' => '');
+    if (!is_array($db) || empty($db['customers'])) return array('status' => 'NOT_CHECKED', 'name' => '', 'cid' => '', 'why' => 'customer list unreadable or empty');
+    $fields = comms_match_fields();
     $hits = array();
     foreach ($db['customers'] as $cid => $c) {
-        foreach (array('phone', 'sb_phone') as $k) {
-            if (!empty($c[$k]) && tm_number($c[$k]) === $e164) {
-                $hits[$cid] = isset($c['name']) ? (string)$c['name'] : (string)$cid;
-                break;
+        if (!is_array($c)) continue;
+        $nm = isset($c['name']) ? (string)$c['name'] : (string)$cid;
+        foreach ($fields as $k) {
+            if (!empty($c[$k]) && is_scalar($c[$k]) && tm_number((string)$c[$k]) === $e164) {
+                $hits[$cid] = $nm;
+                continue 2;
+            }
+        }
+        /* A director's staff members have their own numbers on the org record - a text
+           from one of them is still this customer, named as the member. */
+        if (!empty($c['org']['members']) && is_array($c['org']['members'])) {
+            foreach ($c['org']['members'] as $mk => $m) {
+                if (!is_array($m)) continue;
+                foreach ($fields as $k) {
+                    if (!empty($m[$k]) && is_scalar($m[$k]) && tm_number((string)$m[$k]) === $e164) {
+                        $who = !empty($m['name']) ? (string)$m['name'] : (string)$mk;
+                        $hits[$cid . '/' . $mk] = $who . ' at ' . $nm;
+                        continue 3;
+                    }
+                }
+            }
+        }
+        /* Booking metadata keeps the number the customer actually typed, which is
+           often the only place a one-off repair customer's mobile exists. */
+        if (!empty($c['bkmeta']) && is_array($c['bkmeta'])) {
+            foreach ($c['bkmeta'] as $bm) {
+                if (!is_array($bm)) continue;
+                foreach ($fields as $k) {
+                    if (!empty($bm[$k]) && is_scalar($bm[$k]) && tm_number((string)$bm[$k]) === $e164) {
+                        $hits[$cid] = $nm;
+                        continue 3;
+                    }
+                }
             }
         }
     }
-    if (count($hits) === 1) return array('status' => 'MATCH', 'name' => reset($hits), 'cid' => (string)key($hits));
-    if (count($hits) > 1)  return array('status' => 'MULTIPLE', 'name' => implode(' / ', array_slice(array_values($hits), 0, 3)), 'cid' => '');
-    return array('status' => 'NO_MATCH', 'name' => '', 'cid' => '');
+    if (count($hits) === 1) return array('status' => 'MATCH', 'name' => reset($hits), 'cid' => (string)key($hits), 'why' => '');
+    if (count($hits) > 1)  return array('status' => 'MULTIPLE', 'name' => implode(' / ', array_slice(array_values($hits), 0, 3)), 'cid' => '', 'why' => 'more than one customer has this number');
+    return array('status' => 'NO_MATCH', 'name' => '', 'cid' => '', 'why' => 'no customer record holds this number');
 }
 
 /* Add one item; dedupe on (type, ext_id). Returns [ok, id-or-'duplicate']. */
@@ -181,7 +219,19 @@ function comms_sms_poll() {
         ));
         if ($ok && empty($res['duplicate'])) {
             $new++;
-            $who = $match['status'] === 'MATCH' ? $match['name'] . ' (' . $from . ')' : $from;
+            /* Show the name whenever we have one. A MULTIPLE is labelled "possible" -
+               doc-06 forbids silently MERGING identities, not telling a human what the
+               candidates are - and an unknown number says WHY, so a broken matcher can
+               never masquerade as an unrecognised caller. */
+            if ($match['status'] === 'MATCH') {
+                $who = $match['name'] . ' (' . $from . ')';
+            } elseif ($match['status'] === 'MULTIPLE') {
+                $who = $from . ' - possibly ' . $match['name'];
+            } elseif ($match['status'] === 'NOT_CHECKED') {
+                $who = $from . ' (not matched: ' . (isset($match['why']) ? $match['why'] : 'lookup unavailable') . ')';
+            } else {
+                $who = $from . ' (not a number we hold)';
+            }
             comms_slack("\xF0\x9F\x92\xAC Text from " . $who . ': ' . mb_substr($text, 0, 200)
                 . "\nReply from the portal comms inbox (/api/comms.php).");
         }

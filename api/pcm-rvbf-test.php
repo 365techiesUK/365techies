@@ -108,6 +108,38 @@ ck('normal ask uses the URL constant', strpos($rb, 'writereview?placeid=') !== f
 ck('normal ask gained the one-click unsub', strpos($rb, 'pcm-review.php?u=') !== false);
 ck('normal ask keeps the reply opt-out route', stripos($rb, 'no thanks') !== false);
 
+/* ---- 6a. cooldown + the 'already reviewed' marker --------------------- */
+/* The owner's 6-weekly customers were being asked after every visit because the
+   cooldown was 14 days. These pin the fix: a 30-day-old stamp must still block. */
+list($lk, $q) = rvq_open();
+$q['last'][sha1('plan.two@example.com')] = time() - (30 * 86400);
+$q['bf_ts'] = time() - 120;
+rvq_save($q); rvq_close($lk);
+$rc = bf_process(3);
+ck('30-day-old ask still blocks (12-month cooldown)', (isset($rc['eligible_now']) ? $rc['eligible_now'] : -1) === 0, json_encode($rc));
+
+/* the marker suppresses asks permanently, and seeding reports it */
+list($lk, $q) = rvq_open();
+unset($q['last'][sha1('plan.two@example.com')]);
+$q['reviewed'][sha1('plan.two@example.com')] = time();
+foreach ($q['bf'] as $k => $v) if ($v['em'] === 'plan.two@example.com') unset($q['bf'][$k]);
+$q['bf_ts'] = time() - 120;
+rvq_save($q); rvq_close($lk);
+$seed4 = bf_seed();
+ck('seed skips an already-reviewed customer', (isset($seed4['reviewed']) ? $seed4['reviewed'] : 0) === 1, json_encode($seed4));
+$rm2 = bf_process(3);
+ck('already-reviewed customer never eligible', (isset($rm2['eligible_now']) ? $rm2['eligible_now'] : -1) === 0, json_encode($rm2));
+
+/* the dedupe prune MUST outlive the cooldown, or the cooldown silently fails */
+list($lk, $q) = rvq_open();
+$q['last'][sha1('ancient@example.com')] = time() - (100 * 86400);
+rvq_save($q); rvq_close($lk);
+rv_record('900001', 'prune.probe@example.com', 'Prune Probe', time(), 'create');   // rv_record prunes $q['last']
+list($lk, $q) = rvq_open();
+$survived = isset($q['last'][sha1('ancient@example.com')]);
+rvq_close($lk);
+ck('a 100-day-old ask stamp survives the prune', $survived, 'prune window must exceed the 365-day cooldown');
+
 /* ---- 6b. the segmentation plausibility rail --------------------------- */
 /* If bf_seed()'s field-name guess is too generous, dormant customers would be
    classified 'plan' and emailed - the thing the owner explicitly excluded. The rail

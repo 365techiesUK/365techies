@@ -45,6 +45,9 @@
  *  6. RECOMMENDED: set the SiteGround cron for pcm-bkpoll.php (every 5 min) - it
  *     is the near-real-time engine for job-done emails after a booking is marked
  *     Completed. Without it, sends ride the 2-hourly GitHub cron + booking events.
+ *   ?reviewed=<email>&s=<admin pass>        - record that they have already left a
+ *   ?reviewed=<email>&undo=1&s=<admin pass>   review, so we stop asking (Google
+ *                                             allows only one per customer)
  *   ?optout=<email>&s=<admin pass>          - suppress an address (a "no thanks"
  *   ?optout=<email>&undo=1&s=<admin pass>     reply); undo re-allows it.
  *
@@ -77,6 +80,16 @@ $RV_ASK_WINDOW = 1209600;   // visits stay askable for 14 days after they end; o
    still waits for the next cron tick (~5 min). Raise it if asks ever start
    feeling pushy - one number, nothing else to change. */
 $RV_ASK_DELAY = 1800;
+
+/* How long before the SAME person may be asked for a review again. Google allows
+   one review per customer, EVER - so a customer on 6-weekly service who has already
+   reviewed us cannot leave another however often we ask. At the old 14 days they
+   were asked after every single visit, roughly nine times a year, for something they
+   had already done. Twelve months means at most one ask a year, and the 'reviewed'
+   marker below stops it entirely for anyone we know has left one.
+   ⚠️ MUST stay smaller than the $q['last'] prune window in rv_record() - if stamps
+   are pruned before the cooldown expires, the cooldown silently stops working. */
+$RV_ASK_COOLDOWN = 31536000;   // 365 days
 
 /* The review link, in ONE place. This is the documented writereview form built on
    our verified Place ID. If the owner prefers the short link Google generates at
@@ -144,6 +157,10 @@ function rvq_open() {
     if (!isset($q['q']) || !is_array($q['q'])) $q['q'] = array();
     if (!isset($q['last']) || !is_array($q['last'])) $q['last'] = array();
     if (!isset($q['optout']) || !is_array($q['optout'])) $q['optout'] = array();
+    /* Customers known to have left a review already. Keyed by sha1(email) like the
+       opt-out list. Suppresses REVIEW ASKS ONLY - confirmations, reminders and
+       job-done emails are unaffected. Set via ?reviewed=<email> (admin). */
+    if (!isset($q['reviewed']) || !is_array($q['reviewed'])) $q['reviewed'] = array();
     if (!isset($q['bf']) || !is_array($q['bf'])) $q['bf'] = array();          // backfill ledger, keyed by customer key
     if (!isset($q['bf_day']) || !is_array($q['bf_day'])) $q['bf_day'] = array();   // date => sends, for the daily cap
     /* Per-install salt for unsubscribe tokens, generated once on first use so the
@@ -197,7 +214,9 @@ function rv_record($bid, $email, $name, $endTs, $type, $startTs = 0, $svc = '') 
         $age = max((isset($v['ts']) ? $v['ts'] : 0), (isset($v['end']) ? $v['end'] : 0));
         if ($age < time() - 7776000) unset($q['q'][$k]);
     }
-    foreach ($q['last'] as $k => $v) if ($v < time() - 5184000) unset($q['last'][$k]);
+    /* Keep ask stamps longer than $RV_ASK_COOLDOWN (400 days vs 365): pruning a stamp
+       while its cooldown is still running would let the same customer be asked again. */
+    foreach ($q['last'] as $k => $v) if ($v < time() - 34560000) unset($q['last'][$k]);
     $cur = isset($q['q'][$bid]) ? $q['q'][$bid] : null;
     if ($type === 'cancel') {
         if ($cur && (!isset($cur['st']) || $cur['st'] !== 'sent')) { $q['q'][$bid]['st'] = 'cancelled'; rvq_save($q); }
@@ -607,10 +626,10 @@ function bf_body($first, $to = '', $salt = '') {
    this file must not assume the portal's exact schema; a customer we cannot read
    an email address for is simply skipped and counted. */
 function bf_seed() {
-    global $BF_EXCLUDE;
+    global $BF_EXCLUDE, $RV_ASK_COOLDOWN;
     $db_file = __DIR__ . '/pcm-data.json';
     $out = array('scanned' => 0, 'no_email' => 0, 'already' => 0, 'optout' => 0,
-                 'recent' => 0, 'excluded' => 0, 'added' => 0, 'by_segment' => array());
+                 'reviewed' => 0, 'recent' => 0, 'excluded' => 0, 'added' => 0, 'by_segment' => array());
     if (!is_readable($db_file)) return array('error' => 'no_db') + $out;
     $raw = (string)@file_get_contents($db_file);
     if ($raw === '') return array('error' => 'db_empty') + $out;
@@ -636,7 +655,8 @@ function bf_seed() {
         if (isset($q['optout'][$eh]))         { $out['optout']++;   continue; }
         if (isset($q['bf'][$ckey]))           { $out['already']++;  continue; }
         // already asked (by ANY route) inside the shared 14-day dedupe window
-        if ((isset($q['last'][$eh]) ? $q['last'][$eh] : 0) > time() - 1209600) { $out['recent']++; continue; }
+        if (isset($q['reviewed'][$eh]))       { $out['reviewed']++; continue; }
+        if ((isset($q['last'][$eh]) ? $q['last'][$eh] : 0) > time() - $RV_ASK_COOLDOWN) { $out['recent']++; continue; }
 
         /* Segment. 'plan' means a current paying relationship - the group whose
            PECR "similar services" basis is unarguable. Read broadly rather than
@@ -665,7 +685,7 @@ function bf_seed() {
    lock, stamp a provisional dedupe, RELEASE the lock before SMTP, then transition.
    Returns what it did (or, while $BF_LIVE is false, what it would have done). */
 function bf_process($cap = 0) {
-    global $BF_LIVE, $BF_SEGMENTS, $BF_DAY_CAP, $BF_PLAN_MAX, $RV_LIVE;
+    global $BF_LIVE, $BF_SEGMENTS, $BF_DAY_CAP, $BF_PLAN_MAX, $RV_LIVE, $RV_ASK_COOLDOWN;
     $h = (int)date('G');
     if ($h < 9 || $h >= 20) return array('skip' => 'quiet_hours');
     $cap = $cap > 0 ? $cap : 3;                       // per run; the day cap is the real brake
@@ -708,7 +728,8 @@ function bf_process($cap = 0) {
         if ($em === '' || !filter_var($em, FILTER_VALIDATE_EMAIL)) continue;
         $eh = sha1($em);
         if (isset($q['optout'][$eh])) continue;
-        if ((isset($q['last'][$eh]) ? $q['last'][$eh] : 0) > time() - 1209600) continue;
+        if (isset($q['reviewed'][$eh])) continue;                       // already left one
+        if ((isset($q['last'][$eh]) ? $q['last'][$eh] : 0) > time() - $RV_ASK_COOLDOWN) continue;
         if (isset($batchEm[$eh])) continue;
         $due++;
         if (!isset($counts[$seg])) $counts[$seg] = 0;
@@ -1329,7 +1350,7 @@ function wc_process($cap = 5) {
 // ---- queue processor. Sends entries whose appointment ended >24h ago. ----
 // Returns a small stats array. Never throws; safe to call from the callback.
 function rv_process($cap = 5) {
-    global $RV_LIVE, $RV_ASK_WINDOW, $RV_ASK_DELAY;
+    global $RV_LIVE, $RV_ASK_WINDOW, $RV_ASK_DELAY, $RV_ASK_COOLDOWN;
     $h = (int)date('G');
     if ($h < 9 || $h >= 20) return array('skip' => 'quiet_hours');   // no 3am review asks
     list($lk, $q) = rvq_open();
@@ -1351,7 +1372,8 @@ function rv_process($cap = 5) {
         if ($em === '' || !filter_var($em, FILTER_VALIDATE_EMAIL)) continue;
         $eh = sha1($em);
         if (isset($q['optout'][$eh])) continue;                        // they said no thanks
-        if ((isset($q['last'][$eh]) ? $q['last'][$eh] : 0) > time() - 1209600) continue;   // asked <14 days ago
+        if (isset($q['reviewed'][$eh])) continue;                      // already left one; Google allows only one
+        if ((isset($q['last'][$eh]) ? $q['last'][$eh] : 0) > time() - $RV_ASK_COOLDOWN) continue;   // asked too recently
         if (isset($batchEm[$eh])) continue;                            // two bookings, one email
         $due++;
         if ($RV_LIVE && count($picked) < $cap) {
@@ -1537,6 +1559,23 @@ if (!defined('RV_LIB')) {
     if ($rv_s !== '' && is_readable(__DIR__ . '/pcm-admin-secret.php')) {
         require __DIR__ . '/pcm-admin-secret.php';   // $PCM_ADMIN_PASS
         if (!empty($PCM_ADMIN_PASS) && hash_equals($PCM_ADMIN_PASS, $rv_s)) $rv_admin = true;
+    }
+
+    /* Mark a customer as having already left a review, so we stop asking. Google
+       allows one per person, so this is good manners rather than a filter - and it is
+       NOT sentiment gating: it records a fact, not a guess about their opinion. */
+    if (isset($_GET['reviewed'])) {
+        if (!$rv_admin) { http_response_code(403); echo json_encode(array('ok' => false, 'error' => 'denied')); exit; }
+        $em = strtolower(trim((string)$_GET['reviewed']));
+        if (!filter_var($em, FILTER_VALIDATE_EMAIL)) { echo json_encode(array('ok' => false, 'error' => 'bad_email')); exit; }
+        list($lk, $q) = rvq_open();
+        if (!$lk) { echo json_encode(array('ok' => false, 'error' => 'locked')); exit; }
+        $eh = sha1($em);
+        if (isset($_GET['undo'])) unset($q['reviewed'][$eh]); else $q['reviewed'][$eh] = time();
+        rvq_save($q);
+        rvq_close($lk);
+        echo json_encode(array('ok' => true, 'reviewed' => !isset($_GET['undo'])));
+        exit;
     }
 
     if (isset($_GET['optout'])) {
