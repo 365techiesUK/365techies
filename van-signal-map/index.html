@@ -830,7 +830,7 @@
       .sigmap-wrap{position:relative;border-radius:18px;overflow:hidden;border:1px solid rgba(125,170,220,.18);box-shadow:0 24px 60px -30px rgba(0,0,0,.7)}
       #sigmap{height:min(66vh,600px);width:100%;background:#0b1020}
       .leaflet-container{background:#0b1020;font:inherit}
-      .osm-tiles{filter:brightness(.6) contrast(1.06) hue-rotate(180deg) invert(1)}
+      /* (the old .osm-tiles invert filter is gone — Protomaps renders dark natively) */
       .sigmap-status{position:absolute;top:12px;left:12px;z-index:500;background:rgba(10,16,32,.85);border:1px solid rgba(125,170,220,.22);border-radius:10px;padding:7px 12px;font-size:.8rem;color:#cfe0f5;display:flex;align-items:center;gap:8px;backdrop-filter:blur(6px)}
       .sigmap-dot{width:9px;height:9px;border-radius:50%;background:#3fb950;box-shadow:0 0 0 0 rgba(63,185,80,.7);animation:sigpulse 2.2s infinite}
       @keyframes sigpulse{70%{box-shadow:0 0 0 8px rgba(63,185,80,0)}100%{box-shadow:0 0 0 0 rgba(63,185,80,0)}}
@@ -873,6 +873,7 @@
       </div>
     </section>
     <script src="/vendor/leaflet/leaflet.js" defer></script>
+    <script src="/vendor/protomaps/protomaps-leaflet.js" defer></script>
     <script>
     (function(){var ENDPOINT='/api/signal-log.php',REFRESH=15000,GOOD=-80,BAD=-110;
       /* Speed view: a point only counts as "speed tested here" when the test ran
@@ -883,7 +884,15 @@
       var FRESH_S=420,SPD_MAX=50;
       function start(){if(typeof L==='undefined'){return setTimeout(start,200);}
         var map=L.map('sigmap',{zoomControl:true}).setView([50.72,-1.88],10);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,className:'osm-tiles',attribution:'&copy; OpenStreetMap'}).addTo(map);
+        /* Basemap: a self-hosted Protomaps PMTiles archive (Dorset extract, z0-14,
+           25MB) served as ONE static file over HTTP range requests from our own
+           hosting. Replaces tile.openstreetmap.org, whose usage policy warns
+           commercial services that access "may be withdrawn at any point" — a
+           silently broken map on a marketing page is the risk that justified the
+           move. No account, no per-tile cost, no third party who can switch us off.
+           Vector tiles render natively dark, so the old CSS invert hack is gone. */
+        protomapsL.leafletLayer({url:'/vendor/protomaps/dorset.pmtiles',theme:'dark',maxDataZoom:14,
+          attribution:'<a href="https://protomaps.com" target="_blank" rel="noopener">Protomaps</a> &copy; <a href="https://openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'}).addTo(map);
         var mode='rsrp';
         var lg=L.control({position:'bottomright'});var lgDiv=null;
         lg.onAdd=function(){lgDiv=L.DomUtil.create('div','sigmap-legend');legend();return lgDiv;};lg.addTo(map);
