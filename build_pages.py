@@ -2992,6 +2992,7 @@ TOOLS = {
   "scamquiz":     ("Spot the Scam Quiz", "/spot-the-scam/", "Can you tell a scam from the real thing? Take the free 6-round quiz."),
   "speed":        ("Live Broadband Speed Test", "/broadband-speed-checker/", "Measure your real download, upload and ping right now on a live animated gauge."),
   "wifisig":      ("365 WiFi Optimizer", "/wifi-signal-test/", "Walk around your home and watch the signal get stronger or weaker live &mdash; find your best spot, then get honest advice."),
+  "vanmap":       ("Campervan Signal Map", "/van-signal-map/", "Real 4G/5G speeds our own campervan measured around Dorset &mdash; and the spots that tested fastest for working on the road."),
   "wifiqr":       ("Wi-Fi QR Code Generator", "/wifi-qr-code-generator/", "Make a QR code guests scan to join your Wi-Fi &mdash; no typing the password."),
   "qrgen":        ("QR Code Generator", "/qr-code-generator/", "Turn any link, text, email or phone number into a scannable QR code &mdash; download &amp; print."),
   "emailsig":     ("Email Signature Generator", "/email-signature-generator/", "Create a professional email signature in one minute &mdash; live preview, copy straight into Outlook or Gmail."),

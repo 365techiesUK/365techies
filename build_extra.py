@@ -12976,7 +12976,7 @@ def free_tools_hub():
       ("Security &amp; privacy", "Check you&rsquo;re safe &mdash; and lock things down.",
        ["emailsec","breach","pwgen","pwstrength","scamlink","privacy","scamquiz","whatlose"]),
       ("Speed &amp; connectivity", "Test your connection and get everyone online.",
-       ["wifisig","isitdown","speed","broadbandcheck","wifiqr","qrgen","coverage"]),
+       ["wifisig","isitdown","speed","vanmap","broadbandcheck","wifiqr","qrgen","coverage"]),
       ("Website, domain &amp; email", "See how your website, domain and email really perform.",
        ["website","ssl","domainexp","dns","emailsig"]),
       ("Your computer", "Test it, diagnose it, and make smart decisions.",
