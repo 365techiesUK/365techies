@@ -93,8 +93,8 @@ $BF_LIVE = true;    // LIVE 2026-08-11 on the owner's word: "5 a day and no back
    not add 'catalogue' without asking again. */
 $BF_SEGMENTS = array('plan');
 /* Sends per calendar day across the whole backfill. Judgement, not policy - no
-   primary source gives a safe rate. Owner set 5 on 2026-08-11. */
-$BF_DAY_CAP = 5;
+   primary source gives a safe rate. Owner set 5, then 10, on 2026-08-11. */
+$BF_DAY_CAP = 10;
 
 /* Plausibility rail on the segmentation guess. bf_seed() decides who is a 'plan'
    customer by reading field names this code has never seen in the real database.
