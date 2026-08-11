@@ -179,7 +179,7 @@ ErrorDocument 404 /404.html
 # per-install filename salt, the CLI-only cron, and the shared libraries. The
 # cron also refuses non-CLI itself - this is the belt to that braces, because a
 # lost .htaccess has happened here before.
-<FilesMatch "^(pcm-slack-bot|pcm-msg-salt|pcm-slack-lib|pcm-msg-lib|pcm-msg-poll|pcm-bkpend-lib|pcm-bkpend-test|bm-sea-lib|bm-sea-key)\.php$">
+<FilesMatch "^(pcm-slack-bot|pcm-msg-salt|pcm-slack-lib|pcm-msg-lib|pcm-msg-poll|pcm-bkpend-lib|pcm-bkpend-test|pcm-rvbf-test|bm-sea-lib|bm-sea-key)\.php$">
   Require all denied
 </FilesMatch>
 <Files "pcm-msg-cron.lock">
