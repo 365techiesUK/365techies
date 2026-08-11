@@ -153,6 +153,49 @@ if ($action === 'ready') {
 
 // Portal overview: everything the signed-in customer's dashboard shows. Web sessions present
 // an expiring wtoken (minted at sign-in, resolved + slid here); the app may use its key.
+/* The customer's own postal address. Saved by them, so David is not chasing it at
+   invoicing time. Account-level data belongs to the account holder: a company team
+   member is refused, exactly like billing above.
+   ⚠ Action names are sanitised to lowercase letters only upstream - 'custaddr' is
+   safe, 'cust_addr' or 'setAddr' would silently become something else. */
+if ($action === 'custaddr') {
+    $wt = isset($in['wtoken']) ? preg_replace('/[^a-f0-9]/','', (string)$in['wtoken']) : '';
+    if ($wt === '') out(array('ok'=>false,'error'=>'expired'));
+    $ws = isset($db['websessions'][$wt]) ? $db['websessions'][$wt] : null;
+    if ($ws && !empty($ws['forever'])) { $slide = 31536000; $cap = PHP_INT_MAX; }
+    else { $slide = ($ws && !empty($ws['long'])) ? 5184000 : 43200; $cap = ($ws && !empty($ws['long'])) ? 7776000 : 86400; }
+    $fresh = $ws && intval($ws['ts'] ?? 0) > time() - $slide && ($cap === PHP_INT_MAX || intval($ws['iat'] ?? 0) > time() - $cap);
+    if ($fresh && !empty($ws['machine']) && $ws['machine'] !== $machine) $fresh = false;
+    if (!$fresh) { if ($ws) { unset($db['websessions'][$wt]); save($DATA,$db); } out(array('ok'=>false,'error'=>'expired')); }
+    if (!empty($ws['viewas'])) out(array('ok'=>false,'error'=>'expired'));           // staff impersonation never writes
+    if (!empty($ws['member'])) out(array('ok'=>false,'error'=>'ask_your_manager'));  // account data is the director's
+    $key = (string)$ws['key'];
+    if (!isset($db['customers'][$key])) out(array('ok'=>false,'error'=>'unknown_key'));
+
+    $clean = function ($v, $max) {
+        $s = trim(preg_replace('/[\x00-\x1F\x7F]+/', ' ', (string)$v));
+        $s = preg_replace('/\s{2,}/', ' ', $s);
+        return function_exists('mb_substr') ? mb_substr($s, 0, $max, 'UTF-8') : substr($s, 0, $max);
+    };
+    $line1 = $clean(isset($in['line1']) ? $in['line1'] : '', 90);
+    $line2 = $clean(isset($in['line2']) ? $in['line2'] : '', 90);
+    $city  = $clean(isset($in['city'])  ? $in['city']  : '', 60);
+    $pc    = strtoupper($clean(isset($in['postcode']) ? $in['postcode'] : '', 12));
+    // normalise the space in a UK postcode, but never REJECT one - overseas customers
+    // and BFPO exist, and a refused address is worse than an odd-looking one
+    $pcSquash = preg_replace('/\s+/', '', $pc);
+    if (preg_match('/^([A-Z]{1,2}[0-9][A-Z0-9]?)([0-9][A-Z]{2})$/', $pcSquash, $pm)) $pc = $pm[1] . ' ' . $pm[2];
+
+    if ($line1 === '' && $line2 === '' && $city === '' && $pc === '') {
+        unset($db['customers'][$key]['addr']);                                       // cleared on purpose
+    } else {
+        $db['customers'][$key]['addr'] = array('line1'=>$line1, 'line2'=>$line2, 'city'=>$city,
+            'postcode'=>$pc, 'ts'=>time(), 'by'=>'customer');
+    }
+    save($DATA,$db);
+    out(array('ok'=>true, 'addr'=>array('line1'=>$line1,'line2'=>$line2,'city'=>$city,'postcode'=>$pc)));
+}
+
 if ($action === 'overview') {
     $wt = isset($in['wtoken']) ? preg_replace('/[^a-f0-9]/','', (string)$in['wtoken']) : '';
     $member = '';                     // set only for a company team member's session
@@ -233,6 +276,10 @@ if ($action === 'overview') {
         'org'=>(string)($c['org']['name'] ?? ''), 'company'=>(string)($c['name'] ?? ''),
         'team'=>$teamN, 'domains'=>array_values((array)($c['org']['domains'] ?? array())),
         'next'=>(string)($c['next'] ?? ''), 'next_ts'=>intval($c['next_ts'] ?? 0),
+        // the account holder's postal address - a team member never sees or edits it
+        'addr'=>($member === '' && isset($c['addr']) && is_array($c['addr'])) ? array(
+            'line1'=>(string)($c['addr']['line1'] ?? ''), 'line2'=>(string)($c['addr']['line2'] ?? ''),
+            'city'=>(string)($c['addr']['city'] ?? ''), 'postcode'=>(string)($c['addr']['postcode'] ?? '')) : null,
         'machines'=>$ms, 'fam'=>($member === '' ? $fam : ''), 'pending'=>$pend, 'appreq'=>(string)($c['app_req'] ?? ''),
         // billing is the account holder's business and nobody else's
         'gc'=>($ownerMade && $member === '') ? pcm_gc_summary((string)($c['email'] ?? '')) : null));

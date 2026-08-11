@@ -2293,10 +2293,33 @@ if ($action === 'clientinfo') {
     if (sb_net($r)) fail('sb_unavailable');
     $c = isset($r['result']) && is_array($r['result']) ? $r['result'] : array();
     $g = function ($k) use ($c) { return isset($c[$k]) ? trim(preg_replace('/[\x00-\x1F\x7F]+/', ' ', (string)$c[$k])) : ''; };
+    /* SimplyBook only has an address if somebody typed one there. When it is blank,
+       fall back to the address the customer gave us in their own portal - David needs
+       AN address to invoice, not a particular system's copy of one. Ours is marked so
+       the card can say where it came from. */
+    $ours = array('line1'=>'', 'line2'=>'', 'city'=>'', 'postcode'=>'', 'ts'=>0);
+    if ($cid > 0) {
+        list($lkA, $dbA) = db_open(); db_close($lkA);
+        foreach ((array)(isset($dbA['customers']) ? $dbA['customers'] : array()) as $cRec) {
+            if (!is_array($cRec) || (int)(isset($cRec['sb_client_id']) ? $cRec['sb_client_id'] : 0) !== $cid) continue;
+            if (!empty($cRec['addr']) && is_array($cRec['addr'])) {
+                $ours = array('line1'=>(string)($cRec['addr']['line1'] ?? ''), 'line2'=>(string)($cRec['addr']['line2'] ?? ''),
+                              'city'=>(string)($cRec['addr']['city'] ?? ''), 'postcode'=>(string)($cRec['addr']['postcode'] ?? ''),
+                              'ts'=>(int)($cRec['addr']['ts'] ?? 0));
+            }
+            break;
+        }
+    }
+    $sbHas = ($g('address1') !== '' || $g('city') !== '' || $g('zip') !== '');
+    $oursHas = ($ours['line1'] !== '' || $ours['city'] !== '' || $ours['postcode'] !== '');
     out(array('ok' => true, 'client' => array(
         'name' => $g('name'), 'email' => $g('email'), 'phone' => $g('phone'),
-        'address1' => $g('address1'), 'address2' => $g('address2'),
-        'city' => $g('city'), 'zip' => $g('zip')
+        'address1' => $sbHas ? $g('address1') : $ours['line1'],
+        'address2' => $sbHas ? $g('address2') : $ours['line2'],
+        'city' => $sbHas ? $g('city') : $ours['city'],
+        'zip' => $sbHas ? $g('zip') : $ours['postcode'],
+        'addr_src' => $sbHas ? 'simplybook' : ($oursHas ? 'portal' : ''),
+        'addr_ts' => $sbHas ? 0 : (int)$ours['ts']
     )));
 }
 

@@ -20252,6 +20252,15 @@ def write_portal_page():
   #p365app .lede { color:var(--pmut); font-size:.93rem; margin-bottom:1.05rem; line-height:1.55; }
   #p365app label { display:block; color:var(--pmut); font-size:.85rem; margin:.6rem 0 .25rem; }
   #p365app input, #p365app select { width:100%; padding:.62rem .7rem; border-radius:9px; border:1px solid var(--pline); background:var(--pink); color:var(--pwhite); font-size:1rem; }
+  /* Address form. The grid owns the vertical rhythm, so the label's own margin is
+     zeroed - keeping both gives a doubled gap. Two columns from 560px because
+     town and postcode are short fields that read badly full-width. */
+  #p365app .addrform { display:grid; gap:.55rem; margin:.4rem 0 .2rem; }
+  #p365app .addrform .fld { margin:0; }
+  #p365app .addrform .fld span { display:block; margin-bottom:.25rem; }
+  @media (min-width:560px) { #p365app .addrform { grid-template-columns:1fr 1fr; }
+    #p365app .addrform .fld:nth-child(1), #p365app .addrform .fld:nth-child(2) { grid-column:1 / -1; } }
+  #p365app .addrshow { margin:.15rem 0 .5rem; line-height:1.6; font-size:1rem; }
   /* a.btn = links dressed as buttons (a <button> inside an <a> is invalid HTML,
      a double tab stop, and double-announced by screen readers - same fix as SOS) */
   #p365app button, #p365app a.btn { padding:.6rem 1.05rem; border:0; border-radius:9px; background:var(--pcyan); color:#fff; font-size:.93rem; font-weight:600; cursor:pointer; margin-top:.75rem; font-family:inherit; }
@@ -23809,6 +23818,51 @@ def write_portal_page():
   function lapRy(m) { return m.batt > 0 ? -16 : -14; }
 
   // ---------- customer dashboard ----------
+  /* The address editor. Deliberately four plain fields rather than a postcode
+     lookup: a lookup means a third-party script and a per-lookup cost, on a form
+     most customers touch once. */
+  function bindAddr(cur) {
+    var btn = document.getElementById('addred');
+    if (!btn) return;
+    btn.onclick = function () {
+      var box = document.getElementById('myaddr');
+      if (!box) return;
+      var f = function (id, label, val, max) {
+        return '<label class="fld"><span>' + label + '</span>'
+             + '<input id="' + id + '" type="text" maxlength="' + max + '" value="' + esc(val || '') + '"></label>';
+      };
+      box.innerHTML = '<div class="addrform">'
+        + f('adr1', 'Address line 1', cur.line1, 90)
+        + f('adr2', 'Address line 2 (optional)', cur.line2, 90)
+        + f('adrc', 'Town or city', cur.city, 60)
+        + f('adrp', 'Postcode', cur.postcode, 12)
+        + '</div>'
+        + '<p><button class="btn sm" id="adrsave">Save</button> '
+        + '<button class="btn sm ghost" id="adrcancel">Cancel</button> '
+        + '<span class="quiet" id="adrmsg"></span></p>';
+      var msg = document.getElementById('adrmsg');
+      document.getElementById('adrcancel').onclick = function () { showDash(); };
+      document.getElementById('adrsave').onclick = function () {
+        var body = { action: 'custaddr', wtoken: S.wtoken, machine: mid(),
+                     line1: (document.getElementById('adr1').value || ''),
+                     line2: (document.getElementById('adr2').value || ''),
+                     city:  (document.getElementById('adrc').value || ''),
+                     postcode: (document.getElementById('adrp').value || '') };
+        msg.textContent = 'Saving\u2026';
+        post(PCM, body).then(function (r) {
+          if (r && r.ok) { msg.textContent = 'Saved.'; showDash(); return; }
+          msg.textContent = (r && r.error === 'expired')
+            ? 'Your sign-in expired \u2014 please refresh the page and sign in again.'
+            : (r && r.error === 'ask_your_manager')
+              ? 'Your account holder looks after the address.'
+              : 'Sorry \u2014 that didn\u2019t save. Please try again, or call 01202 775566.';
+        }).catch(function () {
+          msg.textContent = 'Sorry \u2014 that didn\u2019t save. Please try again, or call 01202 775566.';
+        });
+      };
+    };
+  }
+
   function showDash() {
     el.innerHTML = topRow('Hello' + (S.name ? ' ' + esc(S.name.split(' ')[0]) : '')) + '<p class="lede">Loading your dashboard\\u2026</p>';
     bindOut();
@@ -23898,6 +23952,20 @@ def write_portal_page():
           : '<p class="quiet">No active Direct Debit found for this email.</p>';
       }
       h += '</div>';
+      /* Where we send an engineer and where the invoice goes. Shown only to the
+         account holder - the server refuses a team member, so offering it to one
+         would only be inviting a refusal. Never mandatory: plenty of our work is
+         remote and needs no address at all. */
+      if (!d.member) {
+        var A = d.addr || {};
+        var hasA = !!(A.line1 || A.city || A.postcode);
+        h += '<div class="card"><h2>\\ud83c\\udfe0 Your address</h2><div id="myaddr">'
+          + (hasA
+             ? '<p class="addrshow">' + [A.line1, A.line2, A.city, A.postcode].filter(function (x) { return x && String(x).trim(); }).map(esc).join('<br>') + '</p>'
+             : '<p class="quiet">We don\u2019t have your address yet. Adding it saves us asking when we come out to you \u2014 and saves you a phone call when we invoice.</p>')
+          + '<p><button class="btn sm ghost" id="addred">' + (hasA ? 'Change address' : 'Add your address') + '</button></p>'
+          + '</div></div>';
+      }
       // Saved site surveys belong to the account, not to an individual employee, and
       // the server refuses them for a company staff member - so showing this card to
       // one would only be inviting a refusal.
@@ -24031,6 +24099,7 @@ def write_portal_page():
       loadWifi();
       loadDash();
       tmLoad();
+      bindAddr(d.addr || {});
       Array.prototype.forEach.call(document.querySelectorAll('#p365app .repb'), function (btn) {
         btn.onclick = function () {
           btn.disabled = true;
@@ -24941,9 +25010,14 @@ def write_portal_page():
     if (addr.length) {
       var a = addr.map(function (x) { return esc(x); }).join(', ');
       var q = encodeURIComponent(addr.join(', '));
-      out += '<div>\\ud83d\\udccd ' + a + ' &middot; <a href="https://www.google.com/maps/search/?api=1&query=' + q + '" target="_blank" rel="noopener">Open in Maps</a></div>';
+      out += '<div>\\ud83d\\udccd ' + a + ' &middot; <a href="https://www.google.com/maps/search/?api=1&query=' + q + '" target="_blank" rel="noopener">Open in Maps</a>'
+        /* Say where it came from. SimplyBook is the one somebody typed for us;
+           "their portal" is the customer's own, which is the one to trust when
+           the two disagree - they know where they live. */
+        + (c.addr_src === 'portal' ? ' <span class="quiet">(from their portal)</span>' : '')
+        + '</div>';
     } else {
-      out += '<div class="quiet">No postal address on file \\u2014 add it in SimplyBook.</div>';
+      out += '<div class="quiet">No postal address on file \\u2014 they can add it themselves in their portal, or type it into SimplyBook.</div>';
     }
     return out;
   }
