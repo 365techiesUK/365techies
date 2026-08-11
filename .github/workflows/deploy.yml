@@ -7,12 +7,14 @@
 #   (The FTP account's home directory is set to public_html in SiteGround — i.e. the
 #    web root — so files deploy straight into it. No path secret needed.)
 #
-# Trigger: manual only (Actions tab -> Deploy to SiteGround -> Run workflow).
-# The "dry_run" input defaults to TRUE: the first run only tests the connection and
-# logs what it WOULD upload, touching nothing on the server. Set it to false to do a
-# real deploy. This is deliberate so a push can't blast the static site onto the LIVE
-# WordPress site before redirects + the contact form are ready. After cutover we add
-# "on: push" so every edit I push goes live automatically.
+# Trigger: every push to master, plus manual (Actions tab -> Run workflow).
+# The "dry_run" input tests the connection and logs what it WOULD upload, touching
+# nothing on the server. It now defaults to FALSE: it defaulted to TRUE to protect
+# the pre-cutover WordPress site, which was replaced in June 2026, and that stale
+# default meant a manual run left at its defaults produced a fully GREEN run that
+# uploaded nothing AND skipped the live-site verify - during an incident that reads
+# as "deploy fixed". Pushes were never affected: on a push event the `inputs`
+# context is empty, so `inputs.dry_run || false` already evaluated to false.
 name: Deploy to SiteGround
 
 on:
@@ -23,7 +25,7 @@ on:
       dry_run:
         description: "Dry run (test connection only, upload nothing)"
         type: boolean
-        default: true
+        default: false
 
 concurrency:
   group: deploy-siteground
@@ -32,17 +34,57 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    # Three upload attempts plus backoff can outlast 20 minutes on a slow full
+    # sync, and a timeout kill mid-upload is the worst outcome available.
+    timeout-minutes: 30
+    # ONE copy of the exclude list. It was duplicated per attempt, and a third
+    # copy would have made drift near-certain - a list that silently loses
+    # "**/*.py" uploads our source to the live web root.
+    env:
+      FTP_EXCLUDE: |
+        **/.git*
+        **/.git*/**
+        .github/**
+        **/*.py
+        **/*.md
+        wrangler.toml
+        victron-vrm-proxy.js
+        website-checker-proxy.js
+        safe-browsing-proxy.js
+        visitors-live-worker.js
+        LICENSE*
+        .gitignore
+        src/**
+        *.bat
+        index-classic.html
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # SiteGround's FTPS is slow to accept connections under load: 3 of 4 runs on
-      # 2026-08-10 died with "Timeout (control socket)" at the action's 30 s default.
-      # Two defences: a 120 s control-socket timeout, and a full second attempt if
-      # the first fails (cheap — the sync-state file means the retry only uploads
-      # whatever the first attempt didn't finish).
-      - name: Deploy via FTPS
+      # Fail loudly if the exclude list ever resolves to nothing. Belt to the
+      # braces of .htaccess denying .py/.toml/.yml: an empty list would also add
+      # .git and src/** to the sync, widening a 23 MB upload enough to hit the
+      # timeout. A silent widening is the one failure here with no other alarm.
+      - name: Sanity-check the exclude list
+        run: |
+          n=$(printf '%s\n' "$FTP_EXCLUDE" | grep -c '[^[:space:]]' || true)
+          echo "exclude patterns: $n"
+          if [ "$n" -lt 10 ]; then
+            echo "::error title=Exclude list broken::env.FTP_EXCLUDE resolved to $n patterns (expected 15). Refusing to deploy rather than upload source to the live server."
+            exit 1
+          fi
+
+      # SiteGround's FTPS refuses connections under load: 3 of 4 runs on
+      # 2026-08-10 and 2 of 5 on 2026-08-11 died with "Timeout (control socket)".
+      # Three attempts with backoff, because two proved not to be enough.
+      #
+      # ⚠ EVERY attempt carries continue-on-error: true. Without it on the LAST
+      # one, that step failing ends the job there - which is exactly how run
+      # 31496615312 skipped BOTH the "all attempts failed" annotation and the
+      # live-site verify, leaving a bare red X and an unchanged live site.
+      # continue-on-error keeps the job alive so the gate below is the ONE place
+      # that decides pass/fail.
+      - name: Deploy via FTPS (attempt 1)
         id: ftps1
         continue-on-error: true
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -54,26 +96,19 @@ jobs:
           protocol: ftps
           timeout: 120000
           dry-run: ${{ inputs.dry_run || false }}
-          # Upload the built website only - never the source/dev files.
-          exclude: |
-            **/.git*
-            **/.git*/**
-            .github/**
-            **/*.py
-            **/*.md
-            wrangler.toml
-            victron-vrm-proxy.js
-            website-checker-proxy.js
-            safe-browsing-proxy.js
-            visitors-live-worker.js
-            LICENSE*
-            .gitignore
-            src/**
-            *.bat
-            index-classic.html
+          # The built website only - never source/dev files. Defined once as
+          # env.FTP_EXCLUDE at job level so the three attempts cannot drift.
+          exclude: ${{ env.FTP_EXCLUDE }}
 
-      - name: Deploy via FTPS (retry after connection failure)
+      # Backoff, not an instant retry: the failure mode is throttling, and
+      # hammering the same refusing socket is what made attempt 2 fail too.
+      - name: Wait before attempt 2
+        if: ${{ steps.ftps1.outcome == 'failure' }}
+        run: sleep 45
+
+      - name: Deploy via FTPS (attempt 2)
         id: ftps2
+        continue-on-error: true
         if: ${{ steps.ftps1.outcome == 'failure' }}
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -84,27 +119,37 @@ jobs:
           protocol: ftps
           timeout: 120000
           dry-run: ${{ inputs.dry_run || false }}
-          exclude: |
-            **/.git*
-            **/.git*/**
-            .github/**
-            **/*.py
-            **/*.md
-            wrangler.toml
-            victron-vrm-proxy.js
-            website-checker-proxy.js
-            safe-browsing-proxy.js
-            visitors-live-worker.js
-            LICENSE*
-            .gitignore
-            src/**
-            *.bat
-            index-classic.html
+          # The built website only - never source/dev files. Defined once as
+          # env.FTP_EXCLUDE at job level so the three attempts cannot drift.
+          exclude: ${{ env.FTP_EXCLUDE }}
 
-      - name: Fail if both FTPS attempts failed
+      - name: Wait before attempt 3
         if: ${{ steps.ftps1.outcome == 'failure' && steps.ftps2.outcome == 'failure' }}
+        run: sleep 90
+
+      - name: Deploy via FTPS (attempt 3)
+        id: ftps3
+        continue-on-error: true
+        if: ${{ steps.ftps1.outcome == 'failure' && steps.ftps2.outcome == 'failure' }}
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ./
+          protocol: ftps
+          timeout: 120000
+          dry-run: ${{ inputs.dry_run || false }}
+          # The built website only - never source/dev files. Defined once as
+          # env.FTP_EXCLUDE at job level so the three attempts cannot drift.
+          exclude: ${{ env.FTP_EXCLUDE }}
+
+      # The ONE gate. A skipped attempt has outcome 'skipped', not 'failure', so
+      # this fires only when all three genuinely ran and all three failed.
+      - name: Fail if every FTPS attempt failed
+        if: ${{ steps.ftps1.outcome == 'failure' && steps.ftps2.outcome == 'failure' && steps.ftps3.outcome == 'failure' }}
         run: |
-          echo "::error title=FTPS deploy failed twice::Both attempts hit connection errors — SiteGround FTPS likely down or throttling. Re-run the workflow."
+          echo "::error title=FTPS deploy failed 3x::SiteGround FTPS refused all three attempts — likely down or throttling. Re-run the workflow (Actions -> this run -> Re-run failed jobs)."
           exit 1
 
       # The portal is the page people keep open, and its updates have "got stuck" before.
