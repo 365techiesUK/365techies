@@ -25071,6 +25071,9 @@ def write_portal_page():
            "their portal" is the customer's own, which is the one to trust when
            the two disagree - they know where they live. */
         + (c.addr_src === 'portal' ? ' <span class="quiet">(from their portal)</span>' : '')
+        /* data-a carries the multi-line form: an invoice address block, not the
+           comma-joined line the card shows to stay compact. */
+        + ' <button class="sm ghost addrcopy" data-a="' + esc(addr.join('\\n')) + '" style="margin:0;padding:.15rem .5rem;font-size:.78rem">copy</button>'
         + '</div>';
     } else {
       out += '<div class="quiet">No postal address on file \\u2014 they can add it themselves in their portal, or type it into SimplyBook.</div>';
@@ -25086,6 +25089,18 @@ def write_portal_page():
   }
   /* Two steps on purpose: the first click only opens the form, so a stray tap on
      a contact card can never reach the accounts. */
+  function bindAddrCopy(panel) {
+    var b = panel.querySelector('.addrcopy'); if (!b) return;
+    b.onclick = function () {
+      /* data-a already holds real newlines: HTML keeps them in an attribute
+         value, and getAttribute gives them back unchanged. */
+      var txt = b.getAttribute('data-a') || '';
+      navigator.clipboard.writeText(txt).then(function () {
+        b.textContent = '\\u2713 copied';
+        setTimeout(function () { b.textContent = 'copy'; }, 1600);
+      }, function () { b.textContent = 'copy failed'; });
+    };
+  }
   function bindQbo(panel) {
     var w = panel.querySelector('.qbowrap'); if (!w) return;
     var b = w.querySelector('.qbob'); if (!b) return;
@@ -25189,7 +25204,7 @@ def write_portal_page():
           .then(function (r) {
             if (!r || !r.ok || !r.client) { panel.innerHTML = '<span class="quiet">Couldn\\u2019t load contact details.</span>'; return; }
             panel.innerHTML = clientCard(r.client); panel.setAttribute('data-loaded', '1');
-            bindQbo(panel);
+            bindQbo(panel); bindAddrCopy(panel);
           })
           .catch(function () { panel.innerHTML = '<span class="quiet">Couldn\\u2019t reach the server.</span>'; });
       };

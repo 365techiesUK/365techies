@@ -239,17 +239,40 @@ function sb_adm_headers() {
 // succeeds or the error stops being a fillable custom field. Discovered live
 // 2026-07-26 via the sbdiag dry run; do not "simplify" back to a single call.
 function sb_add_client_smart($cd, &$filled = null) {
-    $cf = array(); $r = array('_net' => true);
+    $cf = array(); $r = array('_net' => true); $droppedAddr = false;
+    $addrKeys = array('address1', 'address2', 'city', 'zip');
     for ($i = 0; $i < 8; $i++) {
         $p = $cd; if (count($cf)) $p['client_fields'] = $cf;
         $r = sb_adm('addClient', array($p, false));
         if (sb_net($r) || !empty($r['result'])) break;
         $f = isset($r['error']['data']['field']) ? (string)$r['error']['data']['field'] : '';
         if (preg_match('#^client_fields/([a-f0-9]{32})$#', $f, $m) && !isset($cf[$m[1]])) { $cf[$m[1]] = '-'; continue; }
+        /* The address is a nice-to-have riding on a call that sits on the critical
+           path of every first booking. If SimplyBook objects for any reason we
+           can't otherwise fix, drop it and try once more: a customer must never
+           lose a booking over an optional field. */
+        if (!$droppedAddr) {
+            $droppedAddr = true;
+            $had = false;
+            foreach ($addrKeys as $ak) if (isset($cd[$ak])) { unset($cd[$ak]); $had = true; }
+            if ($had) continue;
+        }
         break;
     }
     $filled = array_keys($cf);
     return $r;
+}
+// Our stored address -> SimplyBook's own client field names (the same four that
+// getClientInfo returns, so the diary card reads them back unchanged).
+function addr_for_sb($a) {
+    if (!is_array($a)) return array();
+    $g = function ($k) use ($a) { return trim(substr((string)(isset($a[$k]) ? $a[$k] : ''), 0, 90)); };
+    $o = array();
+    if ($g('line1') !== '')    $o['address1'] = $g('line1');
+    if ($g('line2') !== '')    $o['address2'] = $g('line2');
+    if ($g('city') !== '')     $o['city'] = $g('city');
+    if ($g('postcode') !== '') $o['zip'] = $g('postcode');
+    return $o;
 }
 
 function sb_adm($method, $params) {
@@ -358,6 +381,7 @@ function customer_snapshot() {
         'name'  => (string)(isset($c['sb_name']) ? $c['sb_name'] : (isset($c['name']) ? $c['name'] : '')),
         'email' => (string)(isset($c['sb_email']) ? $c['sb_email'] : (isset($c['email']) ? $c['email'] : '')),
         'phone' => (string)(isset($c['sb_phone']) ? $c['sb_phone'] : (isset($c['phone']) ? $c['phone'] : '')),
+        'addr'  => (!empty($c['addr']) && is_array($c['addr'])) ? $c['addr'] : null,
     );
 }
 // re-open, mutate this customer's next-service, save, release
@@ -416,6 +440,7 @@ function web_snapshot() {
         'name' => (string)(isset($c['sb_name']) ? $c['sb_name'] : (isset($c['name']) ? $c['name'] : '')),
         'email' => (string)(isset($c['sb_email']) ? $c['sb_email'] : (isset($c['email']) ? $c['email'] : '')),
         'phone' => (string)(isset($c['sb_phone']) ? $c['sb_phone'] : (isset($c['phone']) ? $c['phone'] : '')),
+        'addr' => (!empty($c['addr']) && is_array($c['addr'])) ? $c['addr'] : null,
         // a company team member: bookings still run through the COMPANY's one
         // SimplyBook client above, but who is asking decides what they may do
         'member' => isset($ws['member']) ? strtolower((string)$ws['member']) : '',
@@ -531,11 +556,16 @@ function ensure_client_id($ckey, $snap) {
     if ($cd['name'] === '') { $GLOBALS['nc_why'] = 'no_name'; return 0; }
     if ($snap['email'] !== '') $cd['email'] = $snap['email'];
     if ($snap['phone'] !== '') $cd['phone'] = $snap['phone'];
+    // Give SimplyBook the address the customer gave US, so the diary card shows it
+    // from SimplyBook's own record instead of relying on our fallback for ever.
+    $sbAddr = addr_for_sb(isset($snap['addr']) ? $snap['addr'] : null);
+    foreach ($sbAddr as $ak => $av) $cd[$ak] = $av;
     $ac = sb_add_client_smart($cd, $cfFilled);
     if (sb_net($ac) || empty($ac['result'])) {
         $GLOBALS['nc_why'] = 'create_failed' . (isset($ac['error']['message']) ? ':' . substr(preg_replace('/[^\x20-\x7E]/', '', (string)$ac['error']['message']), 0, 80) : '');
         sb_alarm('creating the customer for a BOOKING (addClient) failed', sb_why($ac)
             . ' [sent: name' . (isset($cd['email']) ? '+email' : '') . (isset($cd['phone']) ? '+phone' : '')
+            . (count($sbAddr) ? '+address' : '')
             . (count($cfFilled) ? '; auto-filled ' . count($cfFilled) . ' required custom field(s)' : '') . ']'
             . "\n> Built-in requirements: " . sb_required_client_fields()
             . "\n> Raw refusal: " . substr(preg_replace('/[^\x20-\x7E]/', '', json_encode(isset($ac['error']) ? $ac['error'] : $ac)), 0, 220));
