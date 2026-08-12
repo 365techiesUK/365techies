@@ -20249,8 +20249,8 @@ def write_portal_page():
   #p365app .card { background:var(--ppanel); border:1px solid var(--pline); border-radius:14px; padding:1.05rem 1.15rem; margin-bottom:.95rem; }
   #p365app .card h2 { font-size:1.02rem; margin:0 0 .6rem; color:var(--pwhite); }
   #p365app h1 { font-size:1.45rem; margin:.1rem 0 .45rem; color:var(--pwhite); }
-  #p365app .lede { color:var(--pmut); font-size:.93rem; margin-bottom:1.05rem; line-height:1.55; }
-  #p365app label { display:block; color:var(--pmut); font-size:.85rem; margin:.6rem 0 .25rem; }
+  #p365app .lede { color:var(--pmut); font-size: 0.95rem; margin-bottom:1.05rem; line-height:1.55; }
+  #p365app label { display:block; color:var(--pmut); font-size: 0.9rem; margin:.6rem 0 .25rem; }
   #p365app input, #p365app select { width:100%; padding:.62rem .7rem; border-radius:9px; border:1px solid var(--pline); background:var(--pink); color:var(--pwhite); font-size:1rem; }
   /* Address form. The grid owns the vertical rhythm, so the label's own margin is
      zeroed - keeping both gives a doubled gap. Two columns from 560px because
@@ -20263,39 +20263,39 @@ def write_portal_page():
   #p365app .addrshow { margin:.15rem 0 .5rem; line-height:1.6; font-size:1rem; }
   /* a.btn = links dressed as buttons (a <button> inside an <a> is invalid HTML,
      a double tab stop, and double-announced by screen readers - same fix as SOS) */
-  #p365app button, #p365app a.btn { padding:.6rem 1.05rem; border:0; border-radius:9px; background:var(--pcyan); color:#fff; font-size:.93rem; font-weight:600; cursor:pointer; margin-top:.75rem; font-family:inherit; }
+  #p365app button, #p365app a.btn { padding:.6rem 1.05rem; border:0; border-radius:9px; background:var(--pcyan); color:#fff; font-size: 0.95rem; font-weight:600; cursor:pointer; margin-top:.75rem; font-family:inherit; }
   #p365app a.btn { display:inline-block; text-decoration:none; text-align:center; }
   #p365app button.ghost, #p365app a.btn.ghost { background:transparent; border:1px solid var(--pline); color:var(--psoft); }
   /* .sm was 27-29px tall - below any touch-target guidance, and it is what the
      portal SIGN-IN buttons use, i.e. the first thing a customer ever taps. */
-  #p365app button.sm, #p365app a.btn.sm { padding:.6rem 1rem; font-size:.92rem; min-height:40px; margin:0; }
-  #p365app .err { color:var(--pbad); font-size:.88rem; margin-top:.55rem; min-height:1.2em; }
+  #p365app button.sm, #p365app a.btn.sm { padding:.6rem 1rem; font-size: 0.95rem; min-height:40px; margin:0; }
+  #p365app .err { color:var(--pbad); font-size: 0.9rem; margin-top:.55rem; min-height:1.2em; }
   #p365app .row { display:flex; gap:.9rem; align-items:center; padding:.55rem 0; border-bottom:1px solid rgba(42,59,99,.5); flex-wrap:wrap; }
   #p365app .row:last-child { border-bottom:0; }
   #p365app .ringS { position:relative; width:56px; height:56px; flex:0 0 56px; }
   #p365app .ringS svg { transform:rotate(-90deg); display:block; }
-  #p365app .ringS b { position:absolute; inset:0; display:grid; place-items:center; font-size:.85rem; color:var(--pwhite); }
+  #p365app .ringS b { position:absolute; inset:0; display:grid; place-items:center; font-size: 0.9rem; color:var(--pwhite); }
   #p365app .chips { display:flex; flex-wrap:wrap; gap:.35rem; margin-top:.25rem; }
-  #p365app .chip { font-size:.72rem; padding:.18rem .5rem; border-radius:999px; border:1px solid var(--pline); color:var(--pmut); }
+  #p365app .chip { font-size: 0.78rem; padding:.18rem .5rem; border-radius:999px; border:1px solid var(--pline); color:var(--pmut); }
   #p365app .chip.g { color:var(--pgood); border-color:rgba(0,206,27,.35); }
   #p365app .chip.w { color:var(--pwarn); border-color:rgba(224,179,65,.4); }
   #p365app .chip.b { color:var(--pbad); border-color:rgba(232,99,126,.4); }
   /* Message us. A conversation, not a form: the customer's own words sit right,
      ours sit left, so a glance tells them who said what without reading. */
   #p365app .msg-thread { max-height:340px; overflow-y:auto; padding:.2rem .1rem .4rem; margin-bottom:.7rem; }
-  #p365app .msg-day { text-align:center; font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--pmut); margin:.7rem 0 .5rem; }
+  #p365app .msg-day { text-align:center; font-size: 0.78rem; letter-spacing:.06em; text-transform:uppercase; color:var(--pmut); margin:.7rem 0 .5rem; }
   #p365app .msg { max-width:82%; border:1px solid var(--pline); border-radius:12px; padding:.5rem .7rem; margin-bottom:.5rem; }
   #p365app .msg--them { background:var(--ppanel); }
   #p365app .msg--you { margin-left:auto; background:rgba(29,151,227,.10); border-color:rgba(29,151,227,.34); }
-  #p365app .msg-who { font-size:.68rem; letter-spacing:.05em; text-transform:uppercase; color:var(--pcyan); margin:0 0 .18rem; }
+  #p365app .msg-who { font-size: 0.78rem; letter-spacing:.05em; text-transform:uppercase; color:var(--pcyan); margin:0 0 .18rem; }
   #p365app .msg--you .msg-who { color:var(--psoft); }
-  #p365app .msg-x { margin:0; font-size:.9rem; line-height:1.55; overflow-wrap:anywhere; }
-  #p365app .msg-t { margin:.25rem 0 0; font-size:.68rem; color:var(--pmut); }
+  #p365app .msg-x { margin:0; font-size: 0.95rem; line-height:1.55; overflow-wrap:anywhere; }
+  #p365app .msg-t { margin:.25rem 0 0; font-size: 0.78rem; color:var(--pmut); }
   #p365app .msg-empty { margin:.2rem 0 .8rem; }
-  #p365app .msg-lbl { display:block; font-size:.75rem; color:var(--pmut); margin-bottom:.3rem; }
-  #p365app #msgText { width:100%; box-sizing:border-box; font:inherit; font-size:.92rem; padding:.6rem .7rem; border-radius:10px; border:1px solid var(--pline); background:rgba(0,0,0,.25); color:inherit; resize:vertical; }
+  #p365app .msg-lbl { display:block; font-size: 0.8rem; color:var(--pmut); margin-bottom:.3rem; }
+  #p365app #msgText { width:100%; box-sizing:border-box; font:inherit; font-size: 0.95rem; padding:.6rem .7rem; border-radius:10px; border:1px solid var(--pline); background:rgba(0,0,0,.25); color:inherit; resize:vertical; }
   #p365app #msgText:focus { outline:none; border-color:var(--pcyan); }
-  #p365app #msgNote { font-size:.8rem; }
+  #p365app #msgNote { font-size: 0.85rem; }
   /* Saved website checks. Lighthouse's own thresholds decide the colour:
      90+ green, 50-89 amber, under 50 red - so a customer reading their own
      saved result sees the same verdict Google gives, not our opinion of it. */
@@ -20303,13 +20303,13 @@ def write_portal_page():
   #p365app .chk-row:last-of-type { margin-bottom:0; }
   #p365app .chk-top { display:flex; align-items:center; gap:.5rem; flex-wrap:wrap; margin-bottom:.4rem; }
   #p365app .chk-top strong { word-break:break-all; }
-  #p365app .chk-meta { font-size:.78rem; }
+  #p365app .chk-meta { font-size: 0.8rem; }
   /* button.chk-del, not .chk-del: the shared #p365app button.sm rule above sets
      margin:0 at higher specificity and would win, leaving Remove bunched up
      against the date instead of at the right edge. */
   #p365app button.chk-del { margin-left:auto; }
   #p365app .chk-vit { margin-top:.3rem; opacity:.9; }
-  #p365app .chk-iss { font-size:.8rem; margin:.45rem 0 0; }
+  #p365app .chk-iss { font-size: 0.85rem; margin:.45rem 0 0; }
   /* 365 website projects card. Deliberately NOT the public .jt/.chk classes -
      those live in the site stylesheet, which the portal does not load; these are
      the portal's own tokens so the card matches its surroundings rather than
@@ -20337,12 +20337,12 @@ def write_portal_page():
   #p365app .nextvisit { border:1px solid rgba(29,151,227,.4); background:rgba(29,151,227,.07); border-radius:12px; padding:.8rem .9rem; margin-bottom:.6rem; }
   #p365app .nv-when { margin:0; font-size:1.12rem; font-weight:700; color:var(--pwhite); }
   #p365app .nv-what { margin:.15rem 0 .3rem; font-size:.95rem; color:var(--psoft); }
-  #p365app .pill { font-size:.75rem; padding:.2rem .6rem; border-radius:999px; }
+  #p365app .pill { font-size: 0.8rem; padding:.2rem .6rem; border-radius:999px; }
   #p365app .pill.pro { background:rgba(0,206,27,.14); color:var(--pgood); }
   #p365app .pill.free { background:rgba(134,182,232,.12); color:var(--psoft); }
   #p365app .big { font-size:1.5rem; font-weight:700; color:var(--pwhite); }
   #p365app .mono { font-family:Consolas,monospace; }
-  #p365app table { width:100%; border-collapse:collapse; font-size:.85rem; }
+  #p365app table { width:100%; border-collapse:collapse; font-size: 0.9rem; }
   #p365app th { text-align:left; color:var(--pmut); font-weight:600; padding:.35rem .4rem; border-bottom:1px solid var(--pline); }
   #p365app td { padding:.42rem .4rem; border-bottom:1px solid rgba(42,59,99,.4); vertical-align:middle; color:var(--pwhite); }
   #p365app .ok { color:var(--pgood); } #p365app .wn { color:var(--pwarn); }
@@ -20351,39 +20351,39 @@ def write_portal_page():
   #p365app a { color:var(--psoft); }
   #p365app .ptop { display:flex; align-items:center; gap:1rem; }
   #p365app .ptop h1 { flex:1; margin:0; }
-  #p365app .dpill, #p365app .tpill { padding:.65rem .85rem; font-size:.9rem; min-height:44px; box-sizing:border-box; margin:.2rem .25rem 0 0; }
+  #p365app .dpill, #p365app .tpill { padding:.65rem .85rem; font-size: 0.95rem; min-height:44px; box-sizing:border-box; margin:.2rem .25rem 0 0; }
   #p365app .mvp { padding:.4rem 0 .8rem; border-bottom:1px solid rgba(42,59,99,.5); }
   @media (min-width:640px) { #p365app .twocol { display:grid; grid-template-columns:1fr 1fr; gap:.9rem; align-items:start; } }
   #p365app .dstrip { display:flex; flex-wrap:wrap; gap:.3rem; margin:.3rem 0 .7rem; }
-  #p365app .dpill { padding:.34rem .6rem; font-size:.8rem; margin:0; background:transparent; border:1px solid var(--pline); color:var(--pmut); border-radius:9px; }
+  #p365app .dpill { padding:.34rem .6rem; font-size: 0.85rem; margin:0; background:transparent; border:1px solid var(--pline); color:var(--pmut); border-radius:9px; }
   #p365app .dpill.em { font-weight:700; color:var(--pwhite); }
   #p365app .dpill.on { background:var(--pcyan); border-color:var(--pcyan); color:#fff; }
-  #p365app .dpill b { background:rgba(255,255,255,.22); border-radius:999px; padding:0 .38rem; margin-left:.25rem; font-size:.72rem; }
+  #p365app .dpill b { background:rgba(255,255,255,.22); border-radius:999px; padding:0 .38rem; margin-left:.25rem; font-size: 0.78rem; }
   #p365app .dpill:not(.on) b { background:rgba(29,151,227,.25); color:var(--psoft); }
   #p365app .tline { display:flex; gap:.7rem; padding:.4rem 0; border-bottom:1px solid rgba(42,59,99,.45); animation:p365popIn .4s ease both; align-items:flex-start; flex-wrap:wrap; }
   #p365app .tline:last-child { border-bottom:0; }
   #p365app .ttime { flex:0 0 62px; color:var(--pcyan); font-weight:700; font-size:.95rem; padding-top:.1rem; }
   #p365app .tblock { flex:1; min-width:180px; }
-  #p365app .tgroup { color:var(--psoft); font-weight:600; font-size:.85rem; margin:.7rem 0 .2rem; }
+  #p365app .tgroup { color:var(--psoft); font-weight:600; font-size: 0.9rem; margin:.7rem 0 .2rem; }
   #p365app .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(96px,1fr)); gap:.5rem; margin-bottom:.7rem; }
   #p365app .stat { background:var(--pink); border:1px solid var(--pline); border-radius:11px; padding:.55rem .6rem; text-align:center; animation:p365popIn .5s ease both; }
   #p365app .stat b { display:block; font-size:1.45rem; color:var(--pwhite); font-variant-numeric:tabular-nums; }
-  #p365app .stat span { font-size:.72rem; color:var(--pmut); }
+  #p365app .stat span { font-size: 0.78rem; color:var(--pmut); }
   #p365app .stat.g b { color:var(--pgood); } #p365app .stat.w b { color:var(--pwarn); }
   #p365app .ftabs { display:flex; gap:.35rem; margin:.2rem 0 .55rem; flex-wrap:wrap; }
-  #p365app .ftabs button { margin:0; padding:.32rem .68rem; font-size:.8rem; background:transparent; border:1px solid var(--pline); color:var(--pmut); }
+  #p365app .ftabs button { margin:0; padding:.32rem .68rem; font-size: 0.85rem; background:transparent; border:1px solid var(--pline); color:var(--pmut); }
   #p365app .ftabs button.on { background:var(--pcyan); border-color:var(--pcyan); color:#fff; }
   #p365app .chip.b { color:var(--pbad); border-color:rgba(232,99,126,.4); }
   #p365app .dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:.3rem; }
   #p365app .amenu { position:relative; }
   #p365app .adrop { display:none; position:absolute; right:0; top:calc(100% + 4px); background:var(--ppanel); border:1px solid var(--pline); border-radius:10px; min-width:172px; z-index:50; box-shadow:0 12px 30px rgba(0,0,0,.45); overflow:hidden; }
   #p365app .adrop.open { display:block; animation:p365popIn .18s ease both; }
-  #p365app .adrop button { display:block; width:100%; text-align:left; background:transparent; border:0; border-radius:0; color:var(--pwhite); padding:.55rem .8rem; margin:0; font-size:.85rem; }
+  #p365app .adrop button { display:block; width:100%; text-align:left; background:transparent; border:0; border-radius:0; color:var(--pwhite); padding:.55rem .8rem; margin:0; font-size: 0.9rem; }
   #p365app .adrop button:hover { background:rgba(29,151,227,.16); transform:none; }
   #p365app .tphone { font-size:.95rem; font-weight:600; color:var(--psoft); }
   #p365app .tline.confd { background:rgba(0,206,27,.05); border-radius:8px; padding-left:.4rem; padding-right:.4rem; }
   #p365app .chip.c { color:var(--pcyan); border-color:rgba(29,151,227,.4); }
-  #p365app .bkchip { display:inline-flex; align-items:center; gap:.28rem; font-size:.72rem; font-weight:600; letter-spacing:.01em; padding:.2rem .6rem; border-radius:999px; border:1px solid var(--pline); color:var(--pmut); background:rgba(125,170,220,.06); vertical-align:middle; white-space:nowrap; transition:background .3s,color .3s,border-color .3s; }
+  #p365app .bkchip { display:inline-flex; align-items:center; gap:.28rem; font-size: 0.78rem; font-weight:600; letter-spacing:.01em; padding:.2rem .6rem; border-radius:999px; border:1px solid var(--pline); color:var(--pmut); background:rgba(125,170,220,.06); vertical-align:middle; white-space:nowrap; transition:background .3s,color .3s,border-color .3s; }
   #p365app .bkchip.conf { color:var(--pgood); border-color:rgba(0,206,27,.42); background:rgba(0,206,27,.11); }
   #p365app .bkchip.done { color:var(--pcyan); border-color:rgba(29,151,227,.42); background:rgba(29,151,227,.11); }
   #p365app .sm.cdb { color:var(--pgood); border-color:rgba(0,206,27,.45); font-weight:600; }
@@ -20391,7 +20391,7 @@ def write_portal_page():
   #p365app .bkchip.pend { color:var(--pmut); border-color:var(--pline); background:rgba(125,170,220,.05); }
   #p365app .tline.bkflash { animation:bkflash 1.5s ease; border-radius:8px; }
   @keyframes bkflash { 0%{ box-shadow:0 0 0 0 rgba(29,151,227,.55); background:rgba(29,151,227,.13); } 45%{ box-shadow:0 0 0 4px rgba(29,151,227,.22); } 100%{ box-shadow:0 0 0 0 rgba(29,151,227,0); background:transparent; } }
-  #p365app .dlive { display:inline-flex; align-items:center; gap:.34rem; font-size:.58rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--pmut); vertical-align:middle; margin-left:.5rem; }
+  #p365app .dlive { display:inline-flex; align-items:center; gap:.34rem; font-size: 0.78rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--pmut); vertical-align:middle; margin-left:.5rem; }
   #p365app .dlive i { width:7px; height:7px; border-radius:50%; background:var(--pgood); animation:dlivep 2.2s ease-in-out infinite; }
   @keyframes dlivep { 0%,100%{ opacity:.4; box-shadow:0 0 0 0 rgba(0,206,27,.5); } 50%{ opacity:1; box-shadow:0 0 5px 1px rgba(0,206,27,.55); } }
   @media (prefers-reduced-motion:reduce){ #p365app .dlive i,#p365app .tline.bkflash{ animation:none; } }
@@ -20405,13 +20405,13 @@ def write_portal_page():
   #p365app .svccard { text-align:left; width:100%; margin:0; padding:.7rem .8rem; min-height:56px; background:var(--pink); border:1px solid var(--pline); border-radius:12px; color:var(--pwhite); transition:border-color .2s, background .2s, transform .2s; }
   #p365app .svccard:hover, #p365app .svccard:focus-visible { border-color:var(--pcyan); background:rgba(29,151,227,.1); transform:translateY(-1px); }
   #p365app .svccard strong { display:block; font-size:.95rem; margin-bottom:.1rem; }
-  #p365app .svccard em { font-style:normal; font-size:.78rem; color:var(--pmut); }
-  #p365app .svccard .svcd { display:block; font-size:.8rem; line-height:1.4; color:var(--pmut); margin:.1rem 0 .25rem; }
-  #p365app .bknote { margin-top:.3rem; font-size:.82rem; }
+  #p365app .svccard em { font-style:normal; font-size: 0.8rem; color:var(--pmut); }
+  #p365app .svccard .svcd { display:block; font-size: 0.85rem; line-height:1.4; color:var(--pmut); margin:.1rem 0 .25rem; }
+  #p365app .bknote { margin-top:.3rem; font-size: 0.9rem; }
   #p365app .bknotetx { color:var(--psoft); }
-  #p365app .linky { background:none; border:0; padding:0; margin:0; color:var(--psoft); font:inherit; font-size:.82rem; text-decoration:underline; cursor:pointer; }
+  #p365app .linky { background:none; border:0; padding:0; margin:0; color:var(--psoft); font:inherit; font-size: 0.9rem; text-decoration:underline; cursor:pointer; }
   #p365app .linky:hover { color:var(--pwhite); }
-  #p365app .nbwiz h3 { font-size:.9rem; color:var(--psoft); margin:.5rem 0 .3rem; }
+  #p365app .nbwiz h3 { font-size: 0.95rem; color:var(--psoft); margin:.5rem 0 .3rem; }
   #p365app .nbwiz h3:first-child { margin-top:0; }
   #p365app .cres { border:1px solid var(--pline); border-radius:9px; overflow:hidden; margin-top:.35rem; }
   #p365app .cres button { display:block; width:100%; text-align:left; background:transparent; border:0; border-radius:0; border-bottom:1px solid rgba(42,59,99,.5); color:var(--pwhite); padding:.5rem .7rem; margin:0; font-weight:400; }
@@ -20439,7 +20439,7 @@ def write_portal_page():
     animation:p365drift 14s ease-in-out infinite alternate; pointer-events:none; }
   #p365app .hero__top { display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; position:relative; z-index:2; }
   #p365app .hero__hi { font-family:inherit; font-weight:700; font-size:clamp(1.5rem,4.4vw,2.05rem); line-height:1.15; letter-spacing:-.02em; margin:0; color:var(--pwhite); }
-  #p365app .hero__sub { color:var(--psoft); font-size:.92rem; margin:.3rem 0 0; }
+  #p365app .hero__sub { color:var(--psoft); font-size: 0.95rem; margin:.3rem 0 0; }
   #p365app .hero__body { display:flex; align-items:center; gap:1.4rem; margin-top:1.15rem; position:relative; z-index:2; flex-wrap:wrap; }
   #p365app .hero__ring { position:relative; width:112px; height:112px; flex:0 0 112px; }
   #p365app .hero__ring svg { transform:rotate(-90deg); display:block; }
@@ -20449,18 +20449,18 @@ def write_portal_page():
     font:600 .58rem/1 ui-monospace,Consolas,monospace; letter-spacing:.14em; color:var(--pmut); text-transform:uppercase; }
   #p365app .hero__say { flex:1; min-width:210px; }
   #p365app .hero__verdict { font-family:inherit; font-weight:700; font-size:1.22rem; line-height:1.3; letter-spacing:-.01em; margin:0 0 .3rem; }
-  #p365app .hero__note { color:var(--pmut); font-size:.93rem; margin:0; line-height:1.55; }
+  #p365app .hero__note { color:var(--pmut); font-size: 0.95rem; margin:0; line-height:1.55; }
   #p365app .hero__note strong { color:var(--pwhite); }
   #p365app .hero__when { display:inline-flex; align-items:center; gap:.45rem; margin-top:.7rem;
     background:rgba(29,151,227,.14); border:1px solid rgba(29,151,227,.42); border-radius:999px;
-    padding:.4rem .85rem; font-size:.88rem; color:#cfe6fa; }
+    padding:.4rem .85rem; font-size: 0.9rem; color:#cfe6fa; }
   #p365app .hero__when b { color:#fff; font-weight:700; }
-  #p365app .hero__cd { background:var(--pcyan); color:#fff; border-radius:999px; padding:.08rem .5rem; font-family:inherit; font-weight:700; font-size:.78rem; line-height:1.5; }
+  #p365app .hero__cd { background:var(--pcyan); color:#fff; border-radius:999px; padding:.08rem .5rem; font-family:inherit; font-weight:700; font-size: 0.8rem; line-height:1.5; }
   /* quick actions - the four things people actually come here to do */
   #p365app .qacts { display:grid; grid-template-columns:repeat(auto-fit,minmax(112px,1fr)); gap:.55rem; margin-top:1.2rem; position:relative; z-index:2; }
   #p365app .qact { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.35rem;
     background:rgba(255,255,255,.055); border:1px solid rgba(125,170,220,.3); border-radius:14px; padding:.8rem .5rem;
-    color:var(--pwhite); font-family:inherit; font-weight:600; font-size:.84rem; line-height:1.2; text-decoration:none; cursor:pointer; min-height:74px;
+    color:var(--pwhite); font-family:inherit; font-weight:600; font-size: 0.9rem; line-height:1.2; text-decoration:none; cursor:pointer; min-height:74px;
     transition:transform .18s ease, background .18s ease, border-color .18s ease; animation:p365popIn .5s ease both; }
   #p365app .qact:nth-child(2){animation-delay:.06s} #p365app .qact:nth-child(3){animation-delay:.12s} #p365app .qact:nth-child(4){animation-delay:.18s}
   #p365app .qact:hover, #p365app .qact:focus-visible { transform:translateY(-3px); background:rgba(29,151,227,.16); border-color:var(--pcyan); outline:none; }
@@ -20491,7 +20491,7 @@ def write_portal_page():
   #p365app .jrn__fill { height:100%; width:0; border-radius:99px;
     background:linear-gradient(90deg,#1d97e3,#00ce1b); transition:width 1.5s cubic-bezier(.22,.7,.25,1);
     box-shadow:0 0 16px rgba(29,151,227,.6); }
-  #p365app .jrn__hint { color:var(--pmut); font-size:.86rem; margin:0 0 .3rem; }
+  #p365app .jrn__hint { color:var(--pmut); font-size: 0.9rem; margin:0 0 .3rem; }
   #p365app .jrn__hint b { color:var(--psoft); }
   #p365app .jrn__list { list-style:none; margin:.85rem 0 0; padding:0; }
   #p365app .jrn__row { display:flex; align-items:center; gap:.75rem; padding:.6rem .7rem; border-radius:12px;
@@ -20504,20 +20504,20 @@ def write_portal_page():
     transition:transform .18s ease, background .18s ease, border-color .18s ease; }
   #p365app .jrn__row.go:hover { transform:translateX(3px); background:rgba(29,151,227,.17); border-color:var(--pcyan); }
   #p365app .jrn__row.lock { opacity:.62; }
-  #p365app .jrn__ic { flex:0 0 auto; width:28px; height:28px; border-radius:50%; display:grid; place-items:center; font-size:.9rem;
+  #p365app .jrn__ic { flex:0 0 auto; width:28px; height:28px; border-radius:50%; display:grid; place-items:center; font-size: 0.95rem;
     background:rgba(125,170,220,.14); border:1px solid rgba(125,170,220,.3); }
   #p365app .jrn__row.done .jrn__ic { background:rgba(0,206,27,.18); border-color:rgba(0,206,27,.55); color:#39e05c;
     animation:p365tick .5s cubic-bezier(.2,1.5,.4,1) both; }
   #p365app .jrn__row.go .jrn__ic { background:rgba(29,151,227,.2); border-color:var(--pcyan); color:#67c1f5;
     animation:p365pulse 2.6s ease-in-out infinite; }
-  #p365app .jrn__tx { flex:1; min-width:0; font-size:.93rem; }
-  #p365app .jrn__tx small { display:block; color:var(--pmut); font-size:.79rem; line-height:1.45; margin-top:.1rem; }
+  #p365app .jrn__tx { flex:1; min-width:0; font-size: 0.95rem; }
+  #p365app .jrn__tx small { display:block; color:var(--pmut); font-size: 0.8rem; line-height:1.45; margin-top:.1rem; }
   #p365app .jrn__pt { flex:0 0 auto; font:700 .78rem/1 ui-monospace,Consolas,monospace; color:var(--pmut); }
   #p365app .jrn__row.done .jrn__pt { color:#39e05c; }
   #p365app .jrn__row.go .jrn__pt { color:var(--pcyan); }
-  #p365app .jrn__row.lock .jrn__pt { color:var(--pmut); font-size:.7rem; letter-spacing:.04em; }
+  #p365app .jrn__row.lock .jrn__pt { color:var(--pmut); font-size: 0.78rem; letter-spacing:.04em; }
   #p365app .jrn__tip { margin-top:.9rem; padding:.7rem .85rem; border-radius:12px; background:rgba(224,179,65,.09);
-    border:1px solid rgba(224,179,65,.3); font-size:.86rem; color:#f0dcae; animation:p365fadeUp .6s ease both; animation-delay:.35s; }
+    border:1px solid rgba(224,179,65,.3); font-size: 0.9rem; color:#f0dcae; animation:p365fadeUp .6s ease both; animation-delay:.35s; }
   #p365app .jrn__tip b { color:#ffe6ac; }
   @keyframes p365tick { from { transform:scale(0) rotate(-25deg); opacity:0 } to { transform:none; opacity:1 } }
   @keyframes p365pulse { 0%,100% { box-shadow:0 0 0 0 rgba(29,151,227,.5) } 60% { box-shadow:0 0 0 9px rgba(29,151,227,0) } }
@@ -20539,8 +20539,8 @@ def write_portal_page():
     font:inherit; cursor:default; opacity:0; transform:translateY(8px);
     animation:unlIn .45s cubic-bezier(.2,.9,.3,1) both; }
   #p365app .unl__t .unl__ic { display:block; font-size:1.2rem; line-height:1; margin-bottom:.3rem; }
-  #p365app .unl__t strong { display:block; color:var(--pwhite); font-size:.87rem; line-height:1.25; }
-  #p365app .unl__t small { display:block; color:var(--pmut); font-size:.75rem; line-height:1.35; margin-top:.2rem; }
+  #p365app .unl__t strong { display:block; color:var(--pwhite); font-size: 0.9rem; line-height:1.25; }
+  #p365app .unl__t small { display:block; color:var(--pmut); font-size: 0.8rem; line-height:1.35; margin-top:.2rem; }
   #p365app .unl__st { display:inline-block; margin-top:.45rem; font:700 .62rem/1 ui-monospace,Consolas,monospace;
     letter-spacing:.1em; text-transform:uppercase; padding:.28rem .45rem; border-radius:999px; }
   #p365app .unl__t.have { border-color:rgba(0,206,27,.35); background:rgba(0,206,27,.07); }
@@ -20553,7 +20553,7 @@ def write_portal_page():
   #p365app .unl__t.lock .unl__st { color:#e0b341; background:rgba(224,179,65,.14); }
   /* literal emoji, NOT a \\uXXXX escape: CSS content escapes are codepoint-style
      (\\1F512), so a JS surrogate pair renders as the letters "ud83dudd12" */
-  #p365app .unl__t.lock::after { content:'\U0001F512'; position:absolute; top:.5rem; right:.55rem; font-size:.8rem; }
+  #p365app .unl__t.lock::after { content:'\U0001F512'; position:absolute; top:.5rem; right:.55rem; font-size: 0.85rem; }
   #p365app .unl__t.add:hover, #p365app .unl__t.add:focus-visible { transform:translateY(-2px); border-color:var(--pcyan); }
   #p365app .unl__t.lock:hover, #p365app .unl__t.lock:focus-visible { filter:none; transform:translateY(-2px);
     border-color:rgba(224,179,65,.7); background:rgba(224,179,65,.09); }
@@ -20591,7 +20591,7 @@ def write_portal_page():
     transition:transform .18s ease, box-shadow .18s ease; }
   #p365app-sos .sos__go:hover, #p365app-sos .sos__go:focus-visible { transform:translateY(-2px); box-shadow:0 16px 36px rgba(0,206,27,.3); color:#fff; }
   #p365app-sos .sos__go.blue { background:linear-gradient(135deg,#116ba6,#0d5490); box-shadow:0 12px 30px rgba(29,151,227,.24); }
-  #p365app-sos .sos__go small { display:block; font-family:inherit; font-weight:600; font-size:.9rem; line-height:1.4; color:#fff; margin-top:.15rem; }
+  #p365app-sos .sos__go small { display:block; font-family:inherit; font-weight:600; font-size: 0.95rem; line-height:1.4; color:#fff; margin-top:.15rem; }
   #p365app-sos .sos__alt { display:block; width:100%; background:none; border:1px solid rgba(125,170,220,.35); color:#9fc4ec; text-align:center; text-decoration:none;
     border-radius:14px; padding:.85rem 1rem; font-family:inherit; font-weight:600; font-size:1rem; line-height:1.3; cursor:pointer; margin:0 0 .8rem; box-sizing:border-box; }
   #p365app-sos .sos__alt:hover { border-color:#1d97e3; color:#f0f5fc; }
@@ -20626,7 +20626,7 @@ def write_portal_page():
     color:#eafff0; max-width:min(420px,90vw); opacity:0; transition:opacity .35s ease, transform .35s cubic-bezier(.2,1.3,.4,1); }
   .p365toast.in { opacity:1; transform:translate(-50%,0); }
   .p365toast b { display:block; font:800 1.25rem/1.25 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; margin-bottom:.25rem; }
-  .p365toast span { color:#a8dfbc; font-size:.92rem; }
+  .p365toast span { color:#a8dfbc; font-size: 0.95rem; }
   .p365toast .big { font-size:2.1rem; display:block; margin-bottom:.35rem; animation:p365pop .6s cubic-bezier(.2,1.5,.4,1) both; }
   /* the sound toggle sits inside the uppercase monospace "POINTS" label, so it has to
      opt out of that inheritance or it reads as shouting */
@@ -20655,7 +20655,7 @@ def write_portal_page():
   .p365ov__ttl { font:700 1.05rem/1.3 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
     color:#eef5fd; margin:0; display:flex; align-items:center; gap:.55rem; }
   .p365ov__x { background:rgba(255,255,255,.08); border:1px solid rgba(125,170,220,.36); color:#eef5fd;
-    border-radius:999px; padding:.55rem 1.1rem; font-family:inherit; font-weight:600; font-size:.9rem; line-height:1; cursor:pointer; min-height:44px;
+    border-radius:999px; padding:.55rem 1.1rem; font-family:inherit; font-weight:600; font-size: 0.95rem; line-height:1; cursor:pointer; min-height:44px;
     transition:background .18s ease, transform .18s ease; }
   .p365ov__x:hover { background:rgba(232,99,126,.22); border-color:#e8637e; transform:translateY(-1px); }
   .p365ov__body { flex:1; min-height:0; overflow:auto; -webkit-overflow-scrolling:touch; }
@@ -20696,10 +20696,10 @@ def write_portal_page():
   #p365app .tmodal h3 { margin:0; font-size:1.15rem; color:var(--pwhite); }
   #p365app .tacts { display:flex; flex-wrap:wrap; gap:.5rem; margin:.9rem 0 .3rem; }
   #p365app .tacts button { flex:1 1 46%; min-width:150px; }
-  #p365app .tnote { font-size:.86rem; color:var(--pwarn); background:rgba(224,179,65,.1); border:1px solid rgba(224,179,65,.35); border-radius:9px; padding:.55rem .7rem; margin:.7rem 0; }
-  #p365app .tstat { min-height:1.3em; font-size:.9rem; margin:.4rem 0; }
+  #p365app .tnote { font-size: 0.9rem; color:var(--pwarn); background:rgba(224,179,65,.1); border:1px solid rgba(224,179,65,.35); border-radius:9px; padding:.55rem .7rem; margin:.7rem 0; }
+  #p365app .tstat { min-height:1.3em; font-size: 0.95rem; margin:.4rem 0; }
   #p365app pre.tdiag { background:var(--pink); border:1px solid var(--pline); border-radius:9px; padding:.7rem; max-height:300px; overflow:auto; font:12px/1.5 Consolas,monospace; color:var(--psoft); white-space:pre-wrap; word-break:break-word; margin:.5rem 0 0; }
-  #p365app .tlog { margin-top:.6rem; font-size:.82rem; max-height:180px; overflow:auto; }
+  #p365app .tlog { margin-top:.6rem; font-size: 0.9rem; max-height:180px; overflow:auto; }
   #p365app .tlog .lr { display:flex; gap:.5rem; padding:.32rem 0; border-bottom:1px solid rgba(42,59,99,.4); align-items:baseline; }
   #p365app .tlog .lr:last-child { border-bottom:0; }
 
@@ -20707,10 +20707,10 @@ def write_portal_page():
   #p365app { --ngcard:#111a3c; --ngraised:#16214a; --ngline:rgba(255,255,255,.10); --ngmut:#6d82ad; --ngspring:cubic-bezier(.34,1.56,.4,1); }
   #p365app .ngnum { font-family:ui-monospace,"Cascadia Mono",Consolas,monospace; font-variant-numeric:tabular-nums; letter-spacing:-.02em; }
   #p365app .ngtop { display:flex; align-items:center; gap:.7rem; flex-wrap:wrap; margin:.1rem .1rem 1rem; }
-  #p365app .nglogo { width:38px; height:38px; border-radius:11px; background:linear-gradient(150deg,var(--pcyan),#0f6bb0); display:grid; place-items:center; font-weight:800; color:#fff; font-size:.8rem; box-shadow:0 8px 22px rgba(29,151,227,.4); }
+  #p365app .nglogo { width:38px; height:38px; border-radius:11px; background:linear-gradient(150deg,var(--pcyan),#0f6bb0); display:grid; place-items:center; font-weight:800; color:#fff; font-size: 0.85rem; box-shadow:0 8px 22px rgba(29,151,227,.4); }
   #p365app .ngname { font-size:1.05rem; font-weight:650; color:var(--pwhite); }
-  #p365app .ngseen { font-size:.8rem; color:var(--ngmut); }
-  #p365app .ngchip { display:inline-flex; align-items:center; gap:.3rem; font-size:.72rem; padding:.2rem .55rem; border-radius:999px; border:1px solid var(--pline); color:var(--psoft); background:rgba(17,26,60,.5); }
+  #p365app .ngseen { font-size: 0.85rem; color:var(--ngmut); }
+  #p365app .ngchip { display:inline-flex; align-items:center; gap:.3rem; font-size: 0.78rem; padding:.2rem .55rem; border-radius:999px; border:1px solid var(--pline); color:var(--psoft); background:rgba(17,26,60,.5); }
   #p365app .ngchip.ok { color:var(--pgood); border-color:rgba(0,206,27,.3); }
   #p365app .ngstage { position:relative; perspective:1400px; perspective-origin:50% 40%; margin:.3rem 0 1.5rem; height:clamp(300px,40vw,420px); }
   #p365app .ngbg { position:absolute; inset:0; z-index:0; display:block; border-radius:16px; }
@@ -20736,23 +20736,23 @@ def write_portal_page():
   #p365app .ngring .arc { fill:none; stroke:var(--nghue,var(--pgood)); stroke-width:11; stroke-linecap:round; filter:drop-shadow(0 0 5px var(--nghue,var(--pgood))); transition:stroke-dashoffset 1.15s cubic-bezier(.2,.7,.2,1),stroke .8s; }
   #p365app .ngctr { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
   #p365app .ngctr .sc { font-size:2.4rem; font-weight:750; line-height:1; color:var(--pwhite); }
-  #p365app .ngctr .of { font-size:.6rem; color:var(--ngmut); letter-spacing:.05em; }
-  #p365app .ngscr .vd { font-size:.72rem; color:var(--psoft); margin-top:.3rem; max-width:210px; text-align:center; padding:0 8px; }
+  #p365app .ngctr .of { font-size: 0.78rem; color:var(--ngmut); letter-spacing:.05em; }
+  #p365app .ngscr .vd { font-size: 0.78rem; color:var(--psoft); margin-top:.3rem; max-width:210px; text-align:center; padding:0 8px; }
   #p365app .ngfloat { position:absolute; transform-style:preserve-3d; transition:transform .3s ease-out; z-index:2; }
   #p365app .ngfchip { background:rgba(17,26,60,.82); border:1px solid var(--ngline); backdrop-filter:blur(6px); border-radius:12px; padding:.5rem .65rem; box-shadow:0 14px 30px rgba(0,0,0,.4); animation:nghover 6s ease-in-out infinite; }
-  #p365app .ngfchip .k { font-size:.64rem; color:var(--psoft); display:flex; gap:.3rem; align-items:center; }
+  #p365app .ngfchip .k { font-size: 0.78rem; color:var(--psoft); display:flex; gap:.3rem; align-items:center; }
   #p365app .ngfchip .v { font-weight:700; font-size:1rem; color:var(--pwhite); }
   @keyframes nghover { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-7px); } }
   #p365app .ngverdline { font-size:1.3rem; font-weight:650; text-align:center; margin:0 0 .3rem; color:var(--pwhite); }
-  #p365app .ngh2 { font-size:.74rem; letter-spacing:.1em; text-transform:uppercase; color:var(--psoft); margin:1.5rem .1rem .55rem; font-weight:700; }
+  #p365app .ngh2 { font-size: 0.8rem; letter-spacing:.1em; text-transform:uppercase; color:var(--psoft); margin:1.5rem .1rem .55rem; font-weight:700; }
   #p365app .nggrid { display:grid; grid-template-columns:repeat(6,1fr); gap:.8rem; perspective:900px; }
   #p365app .ngc { background:var(--ngcard); border:1px solid var(--pline); border-top-color:var(--ngline); border-radius:15px; padding:.95rem 1rem; transition:transform .32s var(--ngspring),box-shadow .32s ease,background .3s; transform-style:preserve-3d; position:relative; }
   #p365app .ngc.hx { cursor:default; }
   #p365app .ngc.hx:hover { transform:translateZ(30px) translateY(-4px) scale(1.02); box-shadow:0 26px 50px rgba(0,0,0,.5),0 0 0 1px rgba(77,180,247,.25); background:var(--ngraised); z-index:3; }
-  #p365app .ngc .lab { font-size:.72rem; color:var(--psoft); display:flex; gap:.35rem; align-items:center; margin-bottom:.45rem; }
+  #p365app .ngc .lab { font-size: 0.78rem; color:var(--psoft); display:flex; gap:.35rem; align-items:center; margin-bottom:.45rem; }
   #p365app .ngc .val { font-size:1.4rem; font-weight:700; color:var(--pwhite); }
-  #p365app .ngc .note { font-size:.73rem; color:var(--ngmut); margin-top:.1rem; }
-  #p365app .ngc .more { max-height:0; overflow:hidden; opacity:0; transition:max-height .35s ease,opacity .3s ease; font-size:.79rem; color:var(--psoft); }
+  #p365app .ngc .note { font-size: 0.8rem; color:var(--ngmut); margin-top:.1rem; }
+  #p365app .ngc .more { max-height:0; overflow:hidden; opacity:0; transition:max-height .35s ease,opacity .3s ease; font-size: 0.8rem; color:var(--psoft); }
   #p365app .ngc.hx:hover .more { max-height:140px; opacity:1; margin-top:.5rem; }
   #p365app .ng-s2 { grid-column:span 2; } #p365app .ng-s3 { grid-column:span 3; } #p365app .ng-s6 { grid-column:span 6; }
   #p365app .ngbadge { width:30px; height:30px; border-radius:8px; display:grid; place-items:center; font-size:.95rem; flex:0 0 auto; }
@@ -20768,7 +20768,7 @@ def write_portal_page():
   #p365app .ngledger .row:last-child { border-bottom:0; }
   #p365app .ngledger .dot { width:8px; height:8px; border-radius:50%; flex:0 0 auto; transform:translateY(3px); }
   #p365app .ngledger .dot.ok { background:var(--pgood); box-shadow:0 0 0 3px rgba(0,206,27,.12); } #p365app .ngledger .dot.no { background:var(--pbad); box-shadow:0 0 0 3px rgba(232,99,126,.12); }
-  #p365app .ngledger .h { font-weight:600; font-size:.88rem; color:var(--pwhite); } #p365app .ngledger .m { font-size:.75rem; color:var(--ngmut); } #p365app .ngledger .y { color:var(--psoft); }
+  #p365app .ngledger .h { font-weight:600; font-size: 0.9rem; color:var(--pwhite); } #p365app .ngledger .m { font-size: 0.8rem; color:var(--ngmut); } #p365app .ngledger .y { color:var(--psoft); }
   #p365app .ngsw { width:42px; height:24px; border-radius:14px; position:relative; flex:0 0 auto; }
   #p365app .ngsw.on { background:var(--pgood); } #p365app .ngsw.off { background:#33406e; }
   #p365app .ngsw i { position:absolute; top:3px; width:18px; height:18px; border-radius:50%; background:#fff; transition:left .2s; }
@@ -20798,10 +20798,10 @@ def write_portal_page():
   #p365app .tmwho strong { color:var(--pwhite); }
   #p365app .tmacts { display:flex; gap:.3rem; flex-wrap:wrap; align-items:flex-start; }
   #p365app .tmpick { flex-basis:100%; background:var(--pink); border:1px solid var(--pline); border-radius:10px; padding:.6rem .8rem; margin-top:.5rem; }
-  #p365app .tmck { display:block; color:var(--psoft); font-size:.85rem; padding:.22rem 0; cursor:pointer; }
+  #p365app .tmck { display:block; color:var(--psoft); font-size: 0.9rem; padding:.22rem 0; cursor:pointer; }
   #p365app .tmck input { width:auto; margin-right:.4rem; }
   #p365app .tmadd { border-top:1px solid rgba(42,59,99,.5); padding-top:.7rem; margin-top:.4rem; }
-  #p365app .tmadd h3 { font-size:.78rem; letter-spacing:.1em; text-transform:uppercase; color:var(--psoft); margin:0 0 .45rem; }
+  #p365app .tmadd h3 { font-size: 0.8rem; letter-spacing:.1em; text-transform:uppercase; color:var(--psoft); margin:0 0 .45rem; }
   /* ---------- DASHBOARD STUDIO (playable demo) --------------------------------
      Every rule here is written against #p365app so the build-time transform below
      twins it onto .p365ov - the studio lives in the overlay, outside #p365app, and
@@ -20817,23 +20817,23 @@ def write_portal_page():
   #p365app .ds__eye { margin:0 0 .25rem; font:700 .6rem/1 ui-monospace,Consolas,monospace; letter-spacing:.18em;
     text-transform:uppercase; color:var(--pcyan); }
   #p365app .ds__head h2 { margin:0; font-size:clamp(1.15rem,3vw,1.5rem); line-height:1.2; letter-spacing:-.02em; color:var(--pwhite); }
-  #p365app .ds__plan { display:inline-flex; align-items:center; gap:.4rem; font-size:.76rem; font-weight:700;
+  #p365app .ds__plan { display:inline-flex; align-items:center; gap:.4rem; font-size: 0.8rem; font-weight:700;
     padding:.4rem .85rem; border-radius:999px; white-space:nowrap; align-self:flex-start;
     background:rgba(134,182,232,.12); color:var(--psoft); border:1px solid var(--pline); }
   #p365app .ds__plan.home { background:rgba(0,206,27,.13); color:var(--pgood); border-color:rgba(0,206,27,.42); }
   #p365app .ds__plan.biz { background:rgba(29,151,227,.16); color:#5cbcf7; border-color:rgba(29,151,227,.5); }
-  #p365app .ds__lede { color:var(--pmut); font-size:.88rem; line-height:1.6; margin:.45rem 0 0; max-width:66ch; }
+  #p365app .ds__lede { color:var(--pmut); font-size: 0.9rem; line-height:1.6; margin:.45rem 0 0; max-width:66ch; }
   #p365app .ds__lede strong { color:var(--pwhite); }
   #p365app .ds__modes { display:inline-flex; gap:.25rem; padding:.25rem; border-radius:12px;
     background:var(--pink); border:1px solid var(--pline); margin:0 0 .7rem; flex-wrap:wrap; }
-  #p365app .ds__modes button { margin:0; padding:.42rem .9rem; font-size:.83rem; border-radius:9px;
+  #p365app .ds__modes button { margin:0; padding:.42rem .9rem; font-size: 0.9rem; border-radius:9px;
     background:transparent; color:var(--pmut); }
   #p365app .ds__modes button.on { background:var(--pcyan); color:#fff; box-shadow:0 6px 16px rgba(29,151,227,.35); }
-  #p365app .ds__legend { display:flex; align-items:center; gap:.4rem; flex-wrap:wrap; font-size:.78rem;
+  #p365app .ds__legend { display:flex; align-items:center; gap:.4rem; flex-wrap:wrap; font-size: 0.8rem;
     color:var(--pmut); margin:0 0 .8rem; line-height:1.6; }
   /* the whole product in two chips: a tile is either reading their account or it is
      a demo, and it says which. these must never be styled to look alike */
-  #p365app .ds__tag { display:inline-flex; align-items:center; gap:.3rem; font-size:.58rem; font-weight:800;
+  #p365app .ds__tag { display:inline-flex; align-items:center; gap:.3rem; font-size: 0.78rem; font-weight:800;
     letter-spacing:.09em; text-transform:uppercase; padding:.18rem .45rem; border-radius:999px; white-space:nowrap; }
   #p365app .ds__tag.live { background:rgba(0,206,27,.14); color:var(--pgood); border:1px solid rgba(0,206,27,.4); }
   #p365app .ds__tag.live i { width:6px; height:6px; border-radius:50%; background:var(--pgood); animation:dlivep 2.2s ease-in-out infinite; }
@@ -20841,19 +20841,19 @@ def write_portal_page():
   #p365app .ds__up { margin-top:1.2rem; border-radius:16px; padding:1.05rem 1.15rem;
     border:1px solid rgba(0,206,27,.3); background:linear-gradient(160deg,rgba(0,206,27,.09),rgba(13,21,48,.6)); }
   #p365app .ds__up h3 { margin:0 0 .4rem; font-size:.95rem; color:var(--pwhite); }
-  #p365app .ds__up p { margin:0; font-size:.85rem; line-height:1.65; color:var(--psoft); }
+  #p365app .ds__up p { margin:0; font-size: 0.9rem; line-height:1.65; color:var(--psoft); }
   #p365app .ds__up strong { color:var(--pwhite); }
   #p365app .ds__up .row { border:0; padding:.7rem 0 0; }
-  #p365app .ds__ask { width:100%; margin:.5rem 0 0; padding:.32rem .5rem; font-size:.72rem; font-weight:600;
+  #p365app .ds__ask { width:100%; margin:.5rem 0 0; padding:.32rem .5rem; font-size: 0.78rem; font-weight:600;
     background:transparent; border:1px dashed rgba(29,151,227,.45); color:var(--psoft); border-radius:9px; }
   #p365app .ds__ask:hover { background:rgba(29,151,227,.12); border-style:solid; color:var(--pwhite); }
   #p365app .ds__dot { width:7px; height:7px; border-radius:50%; background:var(--pgood); display:inline-block; margin-left:.1rem; }
   #p365app .ds__bar { display:flex; gap:.4rem; flex-wrap:wrap; align-items:center; margin:.8rem 0 .6rem; }
   #p365app .ds__bar button, #p365app .ds__bar a.btn { margin:0; }
-  #p365app .ds__nm { flex:1 1 190px; min-width:150px; max-width:280px; padding:.42rem .6rem; font-size:.88rem; }
+  #p365app .ds__nm { flex:1 1 190px; min-width:150px; max-width:280px; padding:.42rem .6rem; font-size: 0.9rem; }
   #p365app .ds__props { display:flex; gap:.35rem; flex-wrap:wrap; margin:.2rem 0 .9rem; }
   #p365app .ds__prop { background:transparent; border:1px solid var(--pline); color:var(--pmut); border-radius:999px;
-    padding:.34rem .74rem; font-size:.8rem; margin:0; display:inline-flex; align-items:center; gap:.35rem; }
+    padding:.34rem .74rem; font-size: 0.85rem; margin:0; display:inline-flex; align-items:center; gap:.35rem; }
   #p365app .ds__prop.on { background:var(--pcyan); border-color:var(--pcyan); color:#fff; }
   #p365app .ds__grid { display:grid; grid-template-columns:repeat(4,1fr); gap:.7rem; align-items:stretch; }
   #p365app .ds__t { position:relative; background:linear-gradient(165deg,#101c3c,#0b1327); border:1px solid var(--pline);
@@ -20880,22 +20880,22 @@ def write_portal_page():
   #p365app .ds__t.settling { z-index:5; }
   #p365app .ds__th { display:flex; align-items:center; gap:.4rem; margin-bottom:.5rem; }
   #p365app .ds__ico { font-size:.98rem; line-height:1; }
-  #p365app .ds__ttl { font-size:.76rem; font-weight:700; letter-spacing:.02em; color:var(--psoft); flex:1; min-width:0;
+  #p365app .ds__ttl { font-size: 0.8rem; font-weight:700; letter-spacing:.02em; color:var(--psoft); flex:1; min-width:0;
     overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  #p365app .ds__grip { cursor:grab; color:var(--pmut); font-size:.85rem; border-radius:8px; display:inline-grid;
+  #p365app .ds__grip { cursor:grab; color:var(--pmut); font-size: 0.9rem; border-radius:8px; display:inline-grid;
     place-items:center; min-width:34px; min-height:30px; margin:-.3rem -.35rem -.3rem 0;
     touch-action:none; user-select:none; -webkit-user-select:none; }
   #p365app .ds__grip:hover, #p365app .ds__grip:focus-visible { color:var(--pwhite); background:rgba(29,151,227,.14); }
   #p365app .ds__grip:active { cursor:grabbing; }
   #p365app .ds__body { flex:1; display:flex; flex-direction:column; justify-content:center; }
   #p365app .ds__big { font-size:1.62rem; font-weight:700; color:var(--pwhite); line-height:1.05; font-variant-numeric:tabular-nums; }
-  #p365app .ds__big em { font-style:normal; font-size:.72rem; font-weight:600; color:var(--pmut); margin-left:.3rem; letter-spacing:.04em; }
-  #p365app .ds__sub { font-size:.73rem; color:var(--pmut); margin:.35rem 0 0; line-height:1.45; }
+  #p365app .ds__big em { font-style:normal; font-size: 0.78rem; font-weight:600; color:var(--pmut); margin-left:.3rem; letter-spacing:.04em; }
+  #p365app .ds__sub { font-size: 0.8rem; color:var(--pmut); margin:.35rem 0 0; line-height:1.45; }
   #p365app .ds__bar2 { height:7px; border-radius:5px; background:#182449; overflow:hidden; margin:.5rem 0 0; }
   #p365app .ds__bar2 i { display:block; height:100%; border-radius:5px; background:var(--pgood); transition:width .9s cubic-bezier(.2,.7,.2,1); }
   #p365app .ds__tools { display:flex; gap:.2rem; justify-content:flex-end; margin-top:.55rem; opacity:.55; transition:opacity .2s; }
   #p365app .ds__t:hover .ds__tools, #p365app .ds__t:focus-within .ds__tools { opacity:1; }
-  #p365app .ds__tools button { margin:0; padding:.16rem .4rem; font-size:.72rem; background:transparent;
+  #p365app .ds__tools button { margin:0; padding:.16rem .4rem; font-size: 0.78rem; background:transparent;
     border:1px solid var(--pline); color:var(--pmut); border-radius:7px; line-height:1.3; }
   #p365app .ds__tools button:hover { color:var(--pwhite); border-color:var(--pcyan); }
   /* a finger is not a mouse pointer, and a good half of these members are in their
@@ -20904,7 +20904,7 @@ def write_portal_page():
   @media (pointer:coarse) {
     #p365app .ds__grip { min-width:44px; min-height:40px; }
     #p365app .ds__tools { opacity:1; gap:.3rem; }
-    #p365app .ds__tools button { min-width:38px; min-height:32px; font-size:.86rem; }
+    #p365app .ds__tools button { min-width:38px; min-height:32px; font-size: 0.9rem; }
   }
   /* fixed row height, NOT aspect-ratio: a 2-wide camera tile on a desktop grid is
      ~550px across, and 16/10 panes made it three times the height of every other
@@ -20915,18 +20915,18 @@ def write_portal_page():
     background:linear-gradient(150deg,#16233f,#0c142b 90%); }
   #p365app .ds__cam i { position:absolute; inset:0; background:linear-gradient(180deg,transparent,rgba(29,151,227,.16));
     animation:dsScan 5.5s linear infinite; }
-  #p365app .ds__cam b { position:absolute; left:4px; bottom:2px; font-size:.52rem; font-weight:600; color:#9fb5d3; letter-spacing:.05em; }
+  #p365app .ds__cam b { position:absolute; left:4px; bottom:2px; font-size: 0.78rem; font-weight:600; color:#9fb5d3; letter-spacing:.05em; }
   @keyframes dsScan { 0%{ transform:translateY(-100%); } 100%{ transform:translateY(100%); } }
   #p365app .ds__spark { width:100%; height:38px; display:block; margin-top:.3rem; }
   #p365app .ds__spark path { fill:none; stroke:var(--pcyan); stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
-  #p365app .ds__feed { font-size:.72rem; color:var(--pmut); line-height:1.6; }
+  #p365app .ds__feed { font-size: 0.78rem; color:var(--pmut); line-height:1.6; }
   #p365app .ds__feed span { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   #p365app .ds__feed b { color:var(--psoft); font-weight:600; }
   #p365app .ds__pips { display:flex; gap:.3rem; margin-top:.45rem; flex-wrap:wrap; }
   #p365app .ds__pip { width:9px; height:9px; border-radius:50%; background:var(--pgood); box-shadow:0 0 0 3px rgba(0,206,27,.1); }
   #p365app .ds__pip.w { background:var(--pwarn); box-shadow:0 0 0 3px rgba(224,179,65,.12); }
   #p365app .ds__days { display:flex; gap:.5rem; margin-top:.45rem; }
-  #p365app .ds__day { text-align:center; font-size:.66rem; color:var(--pmut); }
+  #p365app .ds__day { text-align:center; font-size: 0.78rem; color:var(--pmut); }
   #p365app .ds__day b { display:block; font-size:.95rem; color:var(--pwhite); font-weight:600; }
   /* ---------- trackers: maps, KPIs and zones -------------------------------
      Deliberately tile-free. Commercial use of OpenStreetMap's tile servers is
@@ -20946,13 +20946,13 @@ def write_portal_page():
   #p365app .ds__kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:.4rem; margin:.55rem 0 .1rem; }
   #p365app .ds__kpis div { background:rgba(125,170,220,.06); border:1px solid var(--pline); border-radius:9px; padding:.4rem .3rem; text-align:center; }
   #p365app .ds__kpis b { display:block; font-size:1.05rem; color:var(--pwhite); font-variant-numeric:tabular-nums; line-height:1.15; }
-  #p365app .ds__kpis b em { font-style:normal; font-size:.68rem; color:var(--pmut); margin-left:.05rem; }
-  #p365app .ds__kpis span { font-size:.62rem; color:var(--pmut); letter-spacing:.02em; }
+  #p365app .ds__kpis b em { font-style:normal; font-size: 0.78rem; color:var(--pmut); margin-left:.05rem; }
+  #p365app .ds__kpis span { font-size: 0.78rem; color:var(--pmut); letter-spacing:.02em; }
   #p365app .ds__zlist { display:flex; flex-direction:column; gap:.4rem; }
   #p365app .ds__z { display:grid; grid-template-columns:auto 1fr; gap:.1rem .5rem; align-items:center; }
   #p365app .ds__z i { grid-row:span 2; }
-  #p365app .ds__z b { color:var(--pwhite); font-size:.83rem; }
-  #p365app .ds__z span { color:var(--pmut); font-size:.72rem; line-height:1.4; }
+  #p365app .ds__z b { color:var(--pwhite); font-size: 0.9rem; }
+  #p365app .ds__z span { color:var(--pmut); font-size: 0.78rem; line-height:1.4; }
   /* ---------- coast & sky --------------------------------------------------- */
   #p365app .ds__tide { width:100%; height:54px; display:block; margin:.3rem 0 0; }
   #p365app .ds__tide--big { height:64px; }
@@ -21006,22 +21006,22 @@ def write_portal_page():
   #p365app .ds__j { display:grid; grid-template-columns:1fr auto; gap:0 .6rem; align-items:baseline;
     padding:.4rem 0; border-bottom:1px solid rgba(42,59,99,.45); }
   #p365app .ds__j:last-child { border-bottom:0; }
-  #p365app .ds__j b { color:var(--pwhite); font-size:.84rem; }
-  #p365app .ds__j span { grid-column:1; font-size:.71rem; color:var(--pmut); }
+  #p365app .ds__j b { color:var(--pwhite); font-size: 0.9rem; }
+  #p365app .ds__j span { grid-column:1; font-size: 0.78rem; color:var(--pmut); }
   #p365app .ds__j u { grid-row:span 2; align-self:center; text-decoration:none; font-size:1.05rem;
     font-weight:700; color:var(--pcyan); font-variant-numeric:tabular-nums; }
   #p365app .ds__bars { display:flex; align-items:flex-end; gap:.28rem; height:46px; margin:.5rem 0 .1rem; }
   #p365app .ds__bars i { flex:1; background:linear-gradient(180deg,var(--pcyan),rgba(29,151,227,.3)); border-radius:3px 3px 0 0; min-height:3px; }
   #p365app .ds__cams--big { grid-template-columns:repeat(4,1fr); grid-auto-rows:66px; }
-  #p365app .ds__cam u { position:absolute; right:4px; top:3px; font-size:.48rem; font-weight:800; letter-spacing:.08em;
+  #p365app .ds__cam u { position:absolute; right:4px; top:3px; font-size: 0.78rem; font-weight:800; letter-spacing:.08em;
     color:var(--pbad); text-decoration:none; }
   @media (max-width:430px) { #p365app .ds__kpis { grid-template-columns:repeat(2,1fr); } #p365app .ds__cams--big { grid-template-columns:repeat(2,1fr); } }
   #p365app .ds__shelf { margin-top:1.1rem; border:1px dashed var(--pline); border-radius:14px; padding:.85rem .9rem; }
-  #p365app .ds__shelf h3 { margin:0 0 .2rem; font-size:.78rem; letter-spacing:.1em; text-transform:uppercase; color:var(--psoft); }
-  #p365app .ds__shelf p { margin:0 0 .6rem; font-size:.78rem; color:var(--pmut); line-height:1.5; }
+  #p365app .ds__shelf h3 { margin:0 0 .2rem; font-size: 0.8rem; letter-spacing:.1em; text-transform:uppercase; color:var(--psoft); }
+  #p365app .ds__shelf p { margin:0 0 .6rem; font-size: 0.8rem; color:var(--pmut); line-height:1.5; }
   #p365app .ds__adds { display:flex; gap:.35rem; flex-wrap:wrap; }
   #p365app .ds__add { background:transparent; border:1px solid var(--pline); color:var(--psoft); border-radius:10px;
-    padding:.38rem .7rem; font-size:.8rem; margin:0; display:inline-flex; align-items:center; gap:.35rem; }
+    padding:.38rem .7rem; font-size: 0.85rem; margin:0; display:inline-flex; align-items:center; gap:.35rem; }
   #p365app .ds__add:hover { border-color:var(--pcyan); color:var(--pwhite); background:rgba(29,151,227,.1); }
   #p365app .ds__add.islive { border-color:rgba(0,206,27,.4); color:var(--pwhite); }
   #p365app .ds.wall .ds__head, #p365app .ds.wall .ds__modes, #p365app .ds.wall .ds__legend,
@@ -21033,32 +21033,32 @@ def write_portal_page():
   #p365app .ds__cnhead h3 { margin:0; font-size:1rem; color:var(--pwhite); }
   #p365app .ds__cnhead > div { flex:1; min-width:0; }
   #p365app .ds__cnico { font-size:1.5rem; line-height:1.2; }
-  #p365app .ds__route { display:inline-block; margin-top:.25rem; font-size:.62rem; font-weight:800; letter-spacing:.08em;
+  #p365app .ds__route { display:inline-block; margin-top:.25rem; font-size: 0.78rem; font-weight:800; letter-spacing:.08em;
     text-transform:uppercase; padding:.16rem .5rem; border-radius:999px; }
   #p365app .ds__route.invite { background:rgba(0,206,27,.14); color:var(--pgood); border:1px solid rgba(0,206,27,.4); }
   #p365app .ds__route.key { background:rgba(224,179,65,.13); color:var(--pwarn); border:1px solid rgba(224,179,65,.4); }
   #p365app .ds__route.onsite { background:rgba(29,151,227,.14); color:#5cbcf7; border:1px solid rgba(29,151,227,.45); }
   #p365app .ds__route.ours { background:rgba(134,182,232,.14); color:var(--psoft); border:1px solid var(--pline); }
-  #p365app .ds__cnhow { font-size:.85rem; line-height:1.65; color:var(--psoft); margin:0 0 .5rem; }
+  #p365app .ds__cnhow { font-size: 0.9rem; line-height:1.65; color:var(--psoft); margin:0 0 .5rem; }
   #p365app .ds__cnhow b { color:var(--pwhite); }
-  #p365app .ds__cnnote { font-size:.79rem; line-height:1.55; color:var(--pmut); margin:0 0 .7rem;
+  #p365app .ds__cnnote { font-size: 0.8rem; line-height:1.55; color:var(--pmut); margin:0 0 .7rem;
     padding-left:.7rem; border-left:2px solid var(--pline); }
   #p365app .ds__cnfields { display:grid; gap:.5rem; margin-bottom:.6rem; }
   @media (min-width:620px) { #p365app .ds__cnfields { grid-template-columns:1fr 1fr; } #p365app .ds__cnf:last-child { grid-column:1 / -1; } }
-  #p365app .ds__cnf span { display:block; font-size:.78rem; color:var(--psoft); margin-bottom:.2rem; }
-  #p365app .ds__cnf em { display:block; font-style:normal; font-size:.7rem; color:var(--pmut); margin-top:.2rem; }
-  #p365app .ds__cnsafe { font-size:.78rem; line-height:1.6; color:var(--pmut); background:rgba(232,99,126,.07);
+  #p365app .ds__cnf span { display:block; font-size: 0.8rem; color:var(--psoft); margin-bottom:.2rem; }
+  #p365app .ds__cnf em { display:block; font-style:normal; font-size: 0.78rem; color:var(--pmut); margin-top:.2rem; }
+  #p365app .ds__cnsafe { font-size: 0.8rem; line-height:1.6; color:var(--pmut); background:rgba(232,99,126,.07);
     border:1px solid rgba(232,99,126,.3); border-radius:10px; padding:.6rem .75rem; margin:0 0 .6rem; }
   #p365app .ds__cnsafe strong { color:var(--pwhite); }
   #p365app .ds__cn { display:flex; gap:.6rem; align-items:flex-start; padding:.5rem 0; border-bottom:1px solid rgba(42,59,99,.5); }
   #p365app .ds__cn:last-child { border-bottom:0; }
   #p365app .ds__cn > span { font-size:1.15rem; line-height:1.3; }
   #p365app .ds__cn > div { flex:1; min-width:0; }
-  #p365app .ds__cn b { color:var(--pwhite); font-size:.87rem; margin-right:.4rem; }
-  #p365app .ds__cn span { display:block; font-size:.74rem; color:var(--pmut); line-height:1.45; }
-  #p365app .ds__msg { font-size:.8rem; color:var(--psoft); min-height:1.2em; margin:.6rem 0 0; }
+  #p365app .ds__cn b { color:var(--pwhite); font-size: 0.9rem; margin-right:.4rem; }
+  #p365app .ds__cn span { display:block; font-size: 0.8rem; color:var(--pmut); line-height:1.45; }
+  #p365app .ds__msg { font-size: 0.85rem; color:var(--psoft); min-height:1.2em; margin:.6rem 0 0; }
   #p365app .ds__truth { margin-top:1.2rem; border-left:3px solid var(--pcyan); background:var(--ppanel);
-    border-radius:0 12px 12px 0; padding:.85rem 1rem; font-size:.83rem; line-height:1.62; color:var(--psoft); }
+    border-radius:0 12px 12px 0; padding:.85rem 1rem; font-size: 0.9rem; line-height:1.62; color:var(--psoft); }
   #p365app .ds__truth strong { color:var(--pwhite); }
   #p365app .ds__truth .row { border:0; padding:.6rem 0 0; }
   #p365app .ds.wall .ds__bar, #p365app .ds.wall .ds__props, #p365app .ds.wall .ds__shelf,

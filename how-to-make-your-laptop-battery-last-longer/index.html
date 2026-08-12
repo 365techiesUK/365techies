@@ -71,11 +71,11 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=84" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=85" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
-  html.css-sos{background:#070d22;color:#eaf4ff;font:16px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
   html.css-sos body{max-width:44rem;margin:0 auto;padding:1rem 1.1rem 3rem}
   html.css-sos a{color:#6cc4f5}
   html.css-sos svg,html.css-sos img{max-width:100%;max-height:64px;height:auto}
@@ -109,7 +109,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=84&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=85&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');

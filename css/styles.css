@@ -62,7 +62,20 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+/* Customers told us the writing was too small and hard to read (owner report,
+   2026-08-12), and our audience skews elderly. Measured on the live homepage at
+   the time: 452 of 571 visible text elements (79%) computed BELOW 16px, with the
+   biggest single bucket 246 elements at 15.2px (0.95rem).
+
+   A PERCENTAGE root, not px: a px root silently discards the reader's own browser
+   font-size setting, which is the one control a low-vision user has already set.
+   106.25% = 17px against the usual 16px default, and every rem in this sheet
+   scales with it - so the 0.95rem bucket clears 16px with no per-rule edits.
+   Container dimensions here are px/%/vw/ch/clamp, never rem, so nothing widens;
+   only type and rem spacing grow (~6%).
+   ⚠ Nav items ARE rem-sized, so this raises header demand - see the SOS
+   breakpoint note further down, and re-run that width sweep if you change this. */
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; font-size: 106.25%; }
 
 body {
   margin: 0;
@@ -122,7 +135,7 @@ a, button, .button, .quiz__opt, .hub-chip, summary, .nav-cta, .nav-sos, .nav-boo
 
 .mono {
   font-family: var(--font-mono);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 500;
   letter-spacing: 0.1em;
   color: var(--muted);
@@ -136,7 +149,7 @@ a, button, .button, .quiz__opt, .hub-chip, summary, .nav-cta, .nav-sos, .nav-boo
 .affiliate-cta .affiliate-lead { color: var(--muted); margin: 0 0 0.9rem; }
 .affiliate-banner { display: inline-block; line-height: 0; }
 .affiliate-banner img { max-width: 100%; height: auto; border: 0; border-radius: var(--r-md); }
-.affiliate-note { font-size: 0.72rem; color: var(--muted); margin: 0.6rem 0 0; letter-spacing: 0.04em; }
+.affiliate-note { font-size: 0.9rem; color: var(--muted); margin: 0.6rem 0 0; letter-spacing: 0.04em; }
 
 /* ==========================================================================
    BACKGROUND LAYERS
@@ -218,7 +231,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
 .status-ticker__track span {
   white-space: nowrap;
   font-family: var(--font-mono);
-  font-size: 0.62rem;
+  font-size: 0.78rem;
   letter-spacing: 0.18em;
   color: #44608a;
 }
@@ -247,7 +260,16 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
 }
 .logo__text em { color: var(--cyan); }
 
-.desktop-nav { display: flex; align-items: center; gap: 0.15rem; }
+/* SAFETY NET for the red SOS button. The breakpoints below hide the nav until it
+   fits at the DEFAULT root, but px media queries cannot see root font-size, so any
+   html.a11y-text-N step widens these rem-sized nav items with the breakpoints
+   staying put. Rather than let that shove the emergency button off the screen
+   again (see the note at the nav breakpoint), make the NAV the thing that gives:
+   min-width:0 lets it shrink past its content width and overflow:hidden clips the
+   surplus links, while .header-actions refuses to shrink at all. Losing the tail of
+   a nav list is recoverable; losing the SOS button is what customers reported. */
+.desktop-nav { display: flex; align-items: center; gap: 0.15rem; min-width: 0; overflow: hidden; }
+.header-actions { flex-shrink: 0; }
 .desktop-nav > a, .nav-item > a {
   position: relative;
   display: inline-flex; align-items: center; gap: 0.35rem;
@@ -262,7 +284,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
    to 0.94rem and .header-bar demands 1814px against 1805px available, leaving
    .nav-sos just 6px inside the right edge. 1919px keeps the tight treatment
    through the whole risky band; at >=1920px there is ~90px of slack. */
-@media (max-width: 1919px) {
+@media (max-width: 1959px) {
   .desktop-nav > a, .nav-item > a { padding: 0.55rem 0.45rem; font-size: 0.9rem; }
   .nav-cta { padding: 0.55rem 1.1rem !important; margin-left: 0.4rem; }
   .nav-sos { padding: 0.55rem 0.8rem; }
@@ -374,7 +396,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
    to match the nav-tightening block and the search-label rule: all three used to
    expand the row at exactly 1800px at once, which is what pushed .nav-sos to
    within 6px of the right edge at 1820px. They must share one threshold. */
-@media (max-width: 1919px) { .nav-sos__long { display: none; } }
+@media (max-width: 1959px) { .nav-sos__long { display: none; } }
 
 /* Hamburger */
 .mobile-menu-button {
@@ -640,7 +662,7 @@ body.menu-open { overflow: hidden; }
 .hero__console ul li {
   display: flex; justify-content: space-between; align-items: center; gap: 1rem;
   padding: 0.42rem 0;
-  font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.04em;
+  font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.04em;
 }
 .hero__console .k { color: var(--muted); }
 .hero__console .v { color: var(--ink-3); display: inline-flex; align-items: center; }
@@ -731,7 +753,7 @@ body.menu-open { overflow: hidden; }
   border: 1px solid rgba(125, 170, 220, 0.2);
   border-radius: var(--r-pill);
   background: rgba(10, 22, 44, 0.5);
-  font-size: 0.85rem; font-weight: 500; color: var(--ink-3);
+  font-size: 0.9rem; font-weight: 500; color: var(--ink-3);
 }
 .feature-chips li::before { content: "\2713\2002"; color: var(--green); font-weight: 700; }
 
@@ -788,7 +810,7 @@ body.menu-open { overflow: hidden; }
 @media (max-width: 980px) { .repairs__card .course-scene { width: 100%; max-width: 400px; } }
 /* Course progress badge (hub cards) */
 .crs-badge { display: inline-block; margin: 0 0 0.55rem; padding: 0.22rem 0.65rem; border-radius: var(--r-pill);
-  font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.06em;
+  font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.06em;
   border: 1px solid rgba(29, 151, 227, 0.45); color: #8fc6ef; background: rgba(29, 151, 227, 0.1); }
 .crs-badge--done { border-color: rgba(0, 206, 27, 0.45); color: #7fe08c; background: rgba(0, 206, 27, 0.1); }
 @media (prefers-reduced-motion: reduce) {
@@ -810,7 +832,7 @@ body.menu-open { overflow: hidden; }
 
 /* Dell hub: compact "Everything Dell" directory (replaces the tall 30-card wall) */
 .dell-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; margin: 0 0 2rem; }
-.dell-chips a { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.04em; text-transform: uppercase;
+.dell-chips a { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.04em; text-transform: uppercase;
   padding: 0.4rem 0.85rem; border-radius: var(--r-pill); text-decoration: none; color: #8fc6ef;
   border: 1px solid rgba(29, 151, 227, 0.35); background: rgba(29, 151, 227, 0.08);
   transition: background-color 0.2s ease, border-color 0.2s ease; }
@@ -823,18 +845,18 @@ body.menu-open { overflow: hidden; }
   border: 1px solid transparent; transition: background-color 0.18s ease, border-color 0.18s ease; }
 .dell-dir a:hover { background: rgba(29, 151, 227, 0.07); border-color: rgba(29, 151, 227, 0.3); }
 .dell-dir a strong { display: block; font-weight: 600; font-size: 0.95rem; color: var(--ink-2); }
-.dell-dir a span { display: block; color: var(--muted); font-size: 0.85rem; line-height: 1.4; margin-top: 0.15rem; }
+.dell-dir a span { display: block; color: var(--muted); font-size: 0.9rem; line-height: 1.4; margin-top: 0.15rem; }
 
 /* Nav dropdown sub-group label (findability - lets clusters like Dell stand out) */
 .dropdown__label { display: block; padding: 0.55rem 0.9rem 0.2rem; font-family: var(--font-mono);
-  font-size: 0.62rem; letter-spacing: 0.11em; text-transform: uppercase; color: var(--muted); }
+  font-size: 0.78rem; letter-spacing: 0.11em; text-transform: uppercase; color: var(--muted); }
 .dropdown__label--sep { margin-top: 0.35rem; border-top: 1px solid rgba(125, 170, 220, 0.12); padding-top: 0.65rem; }
 
 /* Heritage certification gallery (About page) */
 .heritage-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1.1rem; max-width: 1000px; margin: 0 auto; }
 .heritage-card { margin: 0; background: rgba(10, 22, 44, 0.55); border: 1px solid var(--line); border-radius: var(--r-md); padding: 0.7rem; text-align: center; }
 .heritage-card img { width: 100%; height: 168px; object-fit: contain; border-radius: var(--r-sm); display: block; background: #0a1830; }
-.heritage-card figcaption { margin-top: 0.55rem; font-size: 0.72rem; color: var(--muted); letter-spacing: 0.05em; }
+.heritage-card figcaption { margin-top: 0.55rem; font-size: 0.85rem; color: var(--muted); letter-spacing: 0.05em; }
 
 /* ==========================================================================
    PLANS
@@ -878,7 +900,7 @@ body.menu-open { overflow: hidden; }
   padding: 0.4rem 0.85rem;
   border-radius: var(--r-pill);
   background: linear-gradient(90deg, var(--cyan), var(--green));
-  color: var(--ink-inverse); font-weight: 600; font-size: 0.62rem;
+  color: var(--ink-inverse); font-weight: 600; font-size: 0.78rem;
 }
 
 .plan-card__icons { position: absolute; inset: 0; pointer-events: none; }
@@ -912,7 +934,7 @@ body.menu-open { overflow: hidden; }
   font-family: var(--font-display); font-weight: 600;
   font-size: 2.9rem; color: #fff; line-height: 1;
 }
-.plan-card__price .from { vertical-align: 0.9em; margin-right: 0.4em; font-size: 0.62rem; }
+.plan-card__price .from { vertical-align: 0.9em; margin-right: 0.4em; font-size: 0.78rem; }
 .plan-card__price .per { font-family: var(--font-body); font-weight: 400; font-size: 1rem; color: var(--muted); }
 
 .plan-card__features { margin: 1.4rem 0 2rem; position: relative; }
@@ -1059,7 +1081,7 @@ body.menu-open { overflow: hidden; }
   -webkit-backdrop-filter: blur(14px);
   backdrop-filter: blur(14px);
 }
-.review__stars { color: var(--gold); letter-spacing: 0.25em; margin-bottom: 1rem; font-size: 0.85rem; }
+.review__stars { color: var(--gold); letter-spacing: 0.25em; margin-bottom: 1rem; font-size: 0.9rem; }
 
 .reviews__badge {
   display: inline-flex; align-items: center;
@@ -1084,7 +1106,7 @@ body.menu-open { overflow: hidden; }
   background: linear-gradient(135deg, var(--cyan), var(--green));
 }
 .review figcaption strong { display: block; font-family: var(--font-display); font-weight: 600; color: #fff; }
-.review figcaption .mono { font-size: 0.62rem; }
+.review figcaption .mono { font-size: 0.78rem; }
 
 /* ==========================================================================
    FAQ
@@ -1182,7 +1204,7 @@ body.menu-open { overflow: hidden; }
 }
 .site-footer__brand p { margin-top: 1.1rem; max-width: 34ch; color: var(--muted); font-size: 0.95rem; }
 .site-footer__head { margin-bottom: 1rem; }
-.site-footer__subhead { margin: 1.15rem 0 0.3rem; font-family: var(--font-mono); font-size: 0.62rem;
+.site-footer__subhead { margin: 1.15rem 0 0.3rem; font-family: var(--font-mono); font-size: 0.78rem;
   letter-spacing: 0.11em; text-transform: uppercase; color: var(--muted); }
 .site-footer__grid nav a {
   display: block;
@@ -1204,7 +1226,7 @@ body.menu-open { overflow: hidden; }
   }
   .mobile-cta-bar a {
     display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.2rem;
-    min-height: 56px; padding: 0.6rem 0.3rem; font-size: 0.72rem; font-weight: 600; color: var(--ink-2); text-decoration: none;
+    min-height: 56px; padding: 0.6rem 0.3rem; font-size: 0.8rem; font-weight: 600; color: var(--ink-2); text-decoration: none;
     border-right: 1px solid rgba(125, 170, 220, 0.12); letter-spacing: 0.02em;
   }
   .mobile-cta-bar a:last-child { border-right: 0; }
@@ -1233,9 +1255,9 @@ body.menu-open { overflow: hidden; }
   max-width: 1320px; margin: 0 auto 2.4rem; padding-bottom: 2rem;
   border-bottom: 1px solid rgba(125, 170, 220, 0.08); text-align: center;
 }
-.footer-areas__head { font-size: 0.72rem; letter-spacing: 0.12em; color: var(--muted); margin: 0 0 1rem; }
+.footer-areas__head { font-size: 0.78rem; letter-spacing: 0.12em; color: var(--muted); margin: 0 0 1rem; }
 .footer-areas__links { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem 0.9rem; }
-.footer-areas__links a { font-size: 0.8rem; color: var(--muted); text-decoration: none; }
+.footer-areas__links a { font-size: 0.85rem; color: var(--muted); text-decoration: none; }
 .footer-areas__links a:hover { color: #fff; }
 .footer-areas__links a.footer-areas__all { color: var(--cyan); }
 .site-footer__legal-links {
@@ -1247,7 +1269,7 @@ body.menu-open { overflow: hidden; }
   flex-wrap: wrap;
   justify-content: center;
   gap: 0.6rem 1.6rem;
-  font-size: 0.72rem;
+  font-size: 0.85rem;
   letter-spacing: 0.04em;
 }
 .site-footer__legal-links a { color: var(--muted); text-decoration: none; }
@@ -1258,7 +1280,7 @@ body.menu-open { overflow: hidden; }
   padding-top: 1.6rem;
   border-top: 1px solid rgba(125, 170, 220, 0.08);
   text-align: center;
-  font-size: 0.62rem;
+  font-size: 0.78rem;
 }
 
 /* ==========================================================================
@@ -1291,7 +1313,7 @@ body.menu-open { overflow: hidden; }
    raises this demand and this number must be re-measured. Check
    .header-bar.scrollWidth <= .header-bar.clientWidth at 1460 and at each
    html.a11y-text-N step before lowering it. */
-@media (max-width: 1459px) {
+@media (max-width: 1559px) {
   .desktop-nav { display: none; }
   .mobile-menu-button { display: flex; }
 }
@@ -1347,7 +1369,7 @@ body.menu-open { overflow: hidden; }
 .breadcrumb {
   display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;
   margin-bottom: 1.5rem; font-family: var(--font-mono);
-  font-size: 0.72rem; letter-spacing: 0.1em; color: var(--muted);
+  font-size: 0.78rem; letter-spacing: 0.1em; color: var(--muted);
 }
 .breadcrumb a { color: var(--muted); transition: color 0.2s ease; }
 .breadcrumb a:hover { color: var(--cyan); }
@@ -1420,7 +1442,7 @@ body.menu-open { overflow: hidden; }
   vertical-align: top;
 }
 .price-table thead th .price { display: block; color: var(--cyan); font-size: 1.5rem; margin-top: 0.3rem; }
-.price-table thead th .per { font-family: var(--font-body); font-size: 0.8rem; color: var(--muted); font-weight: 400; }
+.price-table thead th .per { font-family: var(--font-body); font-size: 0.85rem; color: var(--muted); font-weight: 400; }
 .price-table thead th.pop { color: var(--green); }
 .price-table thead th.pop .price { color: var(--green); }
 .price-table tbody th { text-align: left; font-weight: 500; color: var(--muted); }
@@ -1456,7 +1478,7 @@ body.menu-open { overflow: hidden; }
 .field textarea { resize: vertical; min-height: 130px; }
 .contact-info li { display: flex; flex-direction: column; gap: 0.15rem; padding: 0.85rem 0; border-bottom: 1px solid var(--line); }
 .contact-info li:last-child { border-bottom: 0; }
-.contact-info .k { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.12em; color: var(--muted); text-transform: uppercase; }
+.contact-info .k { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.12em; color: var(--muted); text-transform: uppercase; }
 .contact-info .v { color: var(--ink); font-size: 1.05rem; }
 .contact-info .v a { color: var(--cyan); }
 
@@ -1529,7 +1551,7 @@ body.menu-open { overflow: hidden; }
   display: inline-flex; align-items: center; gap: 0.5rem;
   padding: 0.5rem 0.9rem; border-radius: var(--r-pill);
   border: 1px solid var(--line); background: rgba(10, 22, 44, 0.5);
-  font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.1em;
+  font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.1em;
   text-transform: uppercase; color: var(--ink-3);
 }
 .partner-badge svg { width: 14px; height: 14px; color: var(--cyan); flex: none; }
@@ -1564,10 +1586,10 @@ body.menu-open { overflow: hidden; }
   transition: border-color 0.3s ease, transform 0.3s ease;
 }
 .post-card:hover { border-color: rgba(29, 151, 227, 0.45); transform: translateY(-4px); }
-.post-card__cat { font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 0.7rem; }
+.post-card__cat { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 0.7rem; }
 .post-card h3 { font-size: 1.12rem; line-height: 1.25; color: #fff; margin: 0 0 0.6rem; }
 .post-card p { font-size: 0.95rem; color: var(--muted); margin: 0 0 1rem; flex: 1; }
-.post-card__more { font-family: var(--font-body); font-weight: 600; font-size: 0.85rem; color: var(--cyan); }
+.post-card__more { font-family: var(--font-body); font-weight: 600; font-size: 0.9rem; color: var(--cyan); }
 .post-card:hover .post-card__more { color: #fff; }
 
 /* article */
@@ -1585,7 +1607,7 @@ body.menu-open { overflow: hidden; }
 }
 .article__callout p { margin: 0; color: var(--ink-3); }
 .related { max-width: 760px; margin: 3rem auto 0; }
-.related__head { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 1rem; }
+.related__head { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 1rem; }
 .related__links { display: grid; gap: 0.6rem; }
 .related__links a {
   display: flex; align-items: center; gap: 0.6rem; padding: 0.9rem 1.1rem;
@@ -1605,7 +1627,7 @@ body.menu-open { overflow: hidden; }
    iframe would otherwise collapse to the 150px browser default inside our
    620px container and read as "blank". */
 #sbw-widget iframe { width: 100% !important; min-height: 680px; border: 0; border-radius: var(--r-lg); background: var(--glass); }
-.booking-fallback { text-align: center; margin-top: 1.2rem; color: var(--muted); font-size: 0.85rem; font-family: var(--font-mono); letter-spacing: 0.04em; }
+.booking-fallback { text-align: center; margin-top: 1.2rem; color: var(--muted); font-size: 0.9rem; font-family: var(--font-mono); letter-spacing: 0.04em; }
 .booking-fallback a { color: var(--cyan); }
 
 /* ==========================================================================
@@ -1628,10 +1650,10 @@ body.menu-open { overflow: hidden; }
 .quiz__opt:hover { border-color: var(--cyan); transform: translateY(-2px); background: rgba(29, 151, 227, 0.08); }
 .quiz__opt span.q-ico { width: 26px; height: 26px; color: var(--cyan); flex: none; }
 .quiz__back { margin-top: 1.5rem; text-align: center; }
-.quiz__back button { background: none; border: 0; color: var(--muted); font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; }
+.quiz__back button { background: none; border: 0; color: var(--muted); font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; }
 .quiz__back button:hover { color: var(--cyan); }
 .quiz__result { max-width: 520px; margin: 0 auto; text-align: center; padding: 2.2rem; border-radius: var(--r-xl); background: linear-gradient(165deg, rgba(13,27,52,0.86), rgba(7,15,32,0.92)) padding-box, linear-gradient(135deg, rgba(29,151,227,0.85), rgba(0,206,27,0.85)) border-box; border: 1px solid transparent; }
-.quiz__result .tag { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.14em; color: var(--cyan); text-transform: uppercase; }
+.quiz__result .tag { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.14em; color: var(--cyan); text-transform: uppercase; }
 .quiz__result h3 { font-family: var(--font-display); font-weight: 600; font-size: 1.9rem; color: #fff; margin: 0.5rem 0; }
 .quiz__result .price { font-family: var(--font-display); font-weight: 600; font-size: 2.4rem; color: #fff; margin: 0.4rem 0; }
 .quiz__result .price .per { font-family: var(--font-body); font-size: 1rem; font-weight: 400; color: var(--muted); }
@@ -1653,13 +1675,13 @@ body.menu-open { overflow: hidden; }
 .hc-actions a { display: block; padding: 0.75rem 1rem; border: 1px solid var(--line); border-radius: var(--r-md); background: rgba(10, 22, 44, 0.5); color: var(--ink); font-weight: 500; transition: border-color 0.2s ease, background-color 0.2s ease; }
 .hc-actions a:hover { border-color: var(--cyan); background: rgba(29, 151, 227, 0.08); }
 .hc-actions li { color: var(--ink-2); }
-.hc-note { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.08em; color: var(--muted); margin: 0.2rem 0 1.2rem; }
-.hc-disclaimer { font-size: 0.8rem; color: var(--muted); margin-top: 1rem; }
+.hc-note { font-family: var(--font-mono); font-size: 0.9rem; letter-spacing: 0.08em; color: var(--muted); margin: 0.2rem 0 1.2rem; }
+.hc-disclaimer { font-size: 0.85rem; color: var(--muted); margin-top: 1rem; }
 
 /* quick-quote form */
 .quote-form { text-align: left; display: grid; gap: 0.9rem; max-width: 520px; margin: 0 auto; }
 .quote-form .field { display: grid; gap: 0.35rem; }
-.quote-form label { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.quote-form label { font-family: var(--font-mono); font-size: 0.9rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
 .quote-form input, .quote-form textarea { width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--line); border-radius: var(--r-md); background: rgba(10, 22, 44, 0.5); color: var(--ink); font-family: var(--font-body); font-size: 1rem; }
 .quote-form input:focus, .quote-form textarea:focus { outline: none; border-color: var(--cyan); }
 .quote-form .button { justify-self: start; }
@@ -1675,7 +1697,7 @@ body.menu-open { overflow: hidden; }
 /* homepage situation router helper lines */
 .router-prevent { text-align: center; margin: 1.8rem auto 0; max-width: 660px; color: var(--muted); font-size: 1rem; }
 .router-prevent a { color: var(--cyan); }
-.router-customer { text-align: center; margin: 1.4rem auto 0; max-width: 660px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 1.2rem; font-size: 0.72rem; letter-spacing: 0.06em; }
+.router-customer { text-align: center; margin: 1.4rem auto 0; max-width: 660px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 1.2rem; font-size: 0.9rem; letter-spacing: 0.06em; }
 .router-customer a { color: var(--cyan-soft); }
 
 /* comparison tables (pricing) */
@@ -1689,10 +1711,10 @@ body.menu-open { overflow: hidden; }
 .cmp-table .no { color: var(--muted); }
 .cmp-table .hi { color: #fff; background: rgba(0, 206, 27, 0.07); font-weight: 600; }
 .cmp-table .cmp-price td { font-family: var(--font-display); font-weight: 600; color: #fff; font-size: 1.12rem; }
-.cmp-table .cmp-price td span { font-family: var(--font-body); font-size: 0.8rem; font-weight: 400; color: var(--muted); }
-.cmp-table .cmp-cta td a { color: var(--cyan); font-weight: 600; font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; }
+.cmp-table .cmp-price td span { font-family: var(--font-body); font-size: 0.85rem; font-weight: 400; color: var(--muted); }
+.cmp-table .cmp-cta td a { color: var(--cyan); font-weight: 600; font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; }
 .cmp-table tr:last-child th, .cmp-table tr:last-child td { border-bottom: 0; }
-.cmp-foot { text-align: center; color: var(--muted); font-size: 0.8rem; margin-top: 1rem; }
+.cmp-foot { text-align: center; color: var(--muted); font-size: 0.85rem; margin-top: 1rem; }
 .cmp-foot a { color: var(--cyan); }
 .incl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; max-width: 880px; margin: 0 auto; }
 @media (max-width: 760px) { .incl-grid { grid-template-columns: 1fr; } }
@@ -1705,22 +1727,22 @@ body.menu-open { overflow: hidden; }
 
 /* faceted filter chips (advice hub, case studies) */
 .hub-filter { display: flex; flex-wrap: wrap; gap: 0.6rem; justify-content: center; margin: 0 auto 1.5rem; max-width: 760px; }
-.hub-chip { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.06em; padding: 0.55rem 1.1rem; border: 1px solid var(--line); border-radius: var(--r-pill); background: rgba(10, 22, 44, 0.5); color: var(--muted); cursor: pointer; transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease; }
+.hub-chip { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.06em; padding: 0.55rem 1.1rem; border: 1px solid var(--line); border-radius: var(--r-pill); background: rgba(10, 22, 44, 0.5); color: var(--muted); cursor: pointer; transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease; }
 .hub-chip:hover { border-color: var(--cyan); color: var(--ink); }
 .hub-chip.is-active { background: var(--cyan); border-color: var(--cyan); color: var(--ink-inverse); font-weight: 600; }
-.stats__note { text-align: center; color: var(--muted); margin-top: 1rem; font-size: 0.72rem; letter-spacing: 0.08em; }
+.stats__note { text-align: center; color: var(--muted); margin-top: 1rem; font-size: 0.9rem; letter-spacing: 0.08em; }
 
 /* case studies */
 .case { padding: 1.9rem 1.8rem; border-radius: var(--r-lg); background: var(--glass); border: 1px solid var(--line); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
 .case + .case { margin-top: 1.4rem; }
-.case__tag { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 1rem; }
+.case__tag { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 1rem; }
 .case__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; margin: 1.2rem 0; }
 @media (max-width: 760px) { .case__grid { grid-template-columns: 1fr; gap: 0.8rem; } }
-.case__grid h4 { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin: 0 0 0.4rem; }
+.case__grid h4 { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin: 0 0 0.4rem; }
 .case__grid p { color: var(--ink-3); font-size: 0.95rem; margin: 0; }
 .case h3 { font-family: var(--font-display); font-weight: 600; font-size: 1.5rem; color: #fff; margin: 0 0 0.3rem; }
 .case blockquote { margin: 1.2rem 0 0; padding-top: 1.1rem; border-top: 1px solid var(--line); color: var(--ink-2); font-style: italic; }
-.case blockquote cite { display: block; margin-top: 0.6rem; font-style: normal; font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.1em; color: var(--muted); }
+.case blockquote cite { display: block; margin-top: 0.6rem; font-style: normal; font-family: var(--font-mono); font-size: 0.9rem; letter-spacing: 0.1em; color: var(--muted); }
 
 /* ==========================================================================
    REDUCED MOTION
@@ -1751,7 +1773,7 @@ body.menu-open { overflow: hidden; }
 .cookie-banner p { margin: 0; flex: 1 1 320px; font-size: 0.95rem; color: var(--muted); line-height: 1.55; }
 .cookie-banner a { color: var(--cyan); }
 .cookie-banner__actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
-.cookie-banner .button { padding: 0.6rem 1.2rem; font-size: 0.85rem; }
+.cookie-banner .button { padding: 0.6rem 1.2rem; font-size: 0.9rem; }
 
 /* ⚠️ MUST STAY AFTER the .cookie-banner base rule above. This override used to
    live ~500 lines earlier inside the mobile media block, where the base rule's
@@ -1793,10 +1815,18 @@ body.menu-open { overflow: hidden; }
 .a11y__opt:hover, .a11y__reset:hover, .a11y__btns button:hover { border-color: var(--cyan); }
 .a11y__reset { text-align: center; color: var(--muted); }
 
-/* Text-size modes (root scales; body uses rem) */
-html.a11y-text-1 { font-size: 112%; }
-html.a11y-text-2 { font-size: 125%; }
-html.a11y-text-3 { font-size: 140%; }
+/* Text-size modes (root scales; body uses rem)
+   ⚠ RE-BASED 2026-08-12 with the default root move to 106.25%/17px. A percentage
+   font-size on the root resolves against the BROWSER default (16px), not against
+   our own html rule, and html.a11y-text-N (specificity 0,1,1) OVERRIDES bare html
+   (0,0,1) rather than multiplying it. So the old ladder would have broken:
+     with a 17px default, old step 1 = 17.92px -> pressing A+ gained 0.92px
+     with an 18px default, old step 1 = 17.92px -> pressing A+ made text SMALLER
+   These values keep each press worth about +2px from the new 17px default.
+   Steps stay 0..3 and the class names are unchanged, so js/a11y.js needs no edit. */
+html.a11y-text-1 { font-size: 118.75%; }   /* 19px */
+html.a11y-text-2 { font-size: 131.25%; }   /* 21px */
+html.a11y-text-3 { font-size: 143.75%; }   /* 23px */
 
 /* Readable font mode */
 html.a11y-readable body, html.a11y-readable p, html.a11y-readable li, html.a11y-readable a,
@@ -1834,7 +1864,7 @@ html.a11y-contrast .button *, html.a11y-contrast .nav-cta * { color: #000 !impor
   position: absolute; left: 50%; bottom: 145%; transform: translateX(-50%);
   width: max-content; max-width: 260px; padding: 0.6rem 0.8rem; border-radius: var(--r-md);
   background: #0c1430; border: 1px solid var(--cyan); color: var(--ink);
-  font-size: 0.85rem; line-height: 1.45; font-weight: 400; letter-spacing: normal;
+  font-size: 0.9rem; line-height: 1.45; font-weight: 400; letter-spacing: normal;
   box-shadow: var(--shadow-1);
   opacity: 0; visibility: hidden; transition: opacity 0.15s ease; z-index: 50; pointer-events: none;
 }
@@ -1866,9 +1896,9 @@ html.a11y-contrast .button *, html.a11y-contrast .nav-cta * { color: #000 !impor
 .robot-card p { color: var(--muted); margin: 0; }
 
 /* ===== Case study enhancements ===== */
-.case__outcome { display: inline-block; margin: 0.1rem 0 1.1rem; padding: 0.4rem 0.95rem; border-radius: var(--r-pill); background: rgba(0, 206, 27, 0.12); border: 1px solid rgba(0, 206, 27, 0.3); color: var(--green-soft); font-size: 0.85rem; font-weight: 600; }
+.case__outcome { display: inline-block; margin: 0.1rem 0 1.1rem; padding: 0.4rem 0.95rem; border-radius: var(--r-pill); background: rgba(0, 206, 27, 0.12); border: 1px solid rgba(0, 206, 27, 0.3); color: var(--green-soft); font-size: 0.9rem; font-weight: 600; }
 .case__services { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.2rem; }
-.case__services span { font-size: 0.72rem; letter-spacing: 0.03em; padding: 0.34rem 0.72rem; border: 1px solid rgba(125, 170, 220, 0.22); border-radius: var(--r-pill); color: var(--muted); }
+.case__services span { font-size: 0.78rem; letter-spacing: 0.03em; padding: 0.34rem 0.72rem; border: 1px solid rgba(125, 170, 220, 0.22); border-radius: var(--r-pill); color: var(--muted); }
 
 /* ==========================================================================
    SITE SEARCH — command-palette overlay + triggers (js/search.js)
@@ -1897,7 +1927,7 @@ html.ss-open { overflow: hidden; }
    .nav-sos__long; three rules expanding the row at once was the 1820px squeeze. */
 .nav-search__label { display: none; }
 .nav-search__k { display: none; }
-@media (min-width: 1920px) { .nav-search__label { display: inline; } .nav-search__k { display: inline-flex; } }
+@media (min-width: 1960px) { .nav-search__label { display: inline; } .nav-search__k { display: inline-flex; } }
 @media (max-width: 620px) { .nav-search kbd, .nav-search .nav-search__k { display: none; } .nav-search { padding: 0 0.6rem; } }
 
 /* big search box (homepage + hubs) */
@@ -1945,21 +1975,21 @@ html.ss-open { overflow: hidden; }
 .ss-close:hover kbd { color: var(--ink); border-color: rgba(29, 151, 227, 0.5); }
 
 .ss-list { list-style: none; margin: 0; padding: 0.4rem; overflow-y: auto; flex: 1; }
-.ss-group { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); padding: 0.8rem 0.8rem 0.35rem; }
+.ss-group { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); padding: 0.8rem 0.8rem 0.35rem; }
 .ss-item { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; padding: 0.6rem 0.8rem; border-radius: var(--r-md); cursor: pointer; }
 .ss-item__t { flex: 1 0 100%; color: var(--ink); font-size: 1rem; font-weight: 600; line-height: 1.35; order: 1; }
-.ss-item__d { flex: 1 1 100%; color: var(--muted); font-size: 0.85rem; line-height: 1.4; order: 3; }
+.ss-item__d { flex: 1 1 100%; color: var(--muted); font-size: 0.9rem; line-height: 1.4; order: 3; }
 .ss-item__go { color: var(--cyan); opacity: 0; font-size: 1.12rem; order: 2; margin-left: auto; transition: opacity 0.15s ease; }
 .ss-item.is-active { background: rgba(29, 151, 227, 0.14); box-shadow: inset 0 0 0 1px rgba(29, 151, 227, 0.3); }
 .ss-item.is-active .ss-item__go { opacity: 1; }
 .ss-item mark { background: rgba(29, 151, 227, 0.26); color: var(--ink-3); border-radius: 3px; padding: 0 1px; }
 .ss-empty { padding: 1.4rem 1rem; text-align: center; }
 .ss-empty p { margin: 0 0 0.5rem; color: var(--muted); }
-.ss-empty__hint { font-size: 0.9rem; }
+.ss-empty__hint { font-size: 0.95rem; }
 .ss-empty a { color: var(--cyan); }
 
-.ss-status { margin: 0; padding: 0.45rem 1rem; font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.04em; color: var(--muted); border-top: 1px solid var(--line); }
-.ss-foot { display: flex; flex-wrap: wrap; gap: 0.4rem 1.1rem; align-items: center; padding: 0.55rem 1rem 0.7rem; font-size: 0.72rem; color: var(--muted); }
+.ss-status { margin: 0; padding: 0.45rem 1rem; font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.04em; color: var(--muted); border-top: 1px solid var(--line); }
+.ss-foot { display: flex; flex-wrap: wrap; gap: 0.4rem 1.1rem; align-items: center; padding: 0.55rem 1rem 0.7rem; font-size: 0.78rem; color: var(--muted); }
 .ss-foot kbd { font-family: var(--font-mono); font-size: 0.62rem; padding: 2px 5px; color: var(--muted); background: rgba(125, 170, 220, 0.1); border: 1px solid var(--line); border-radius: var(--r-xs); margin-right: 2px; }
 .ss-foot__brand { margin-left: auto; font-family: var(--font-mono); letter-spacing: 0.08em; opacity: 0.7; }
 @media (max-width: 520px) { .ss-foot span:not(.ss-foot__brand) { display: none; } }
@@ -1970,7 +2000,7 @@ html.ss-open { overflow: hidden; }
    ========================================================================== */
 .hero-trustbar {
   display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1.4rem;
-  margin: 1.1rem 0 0; font-size: 0.85rem; color: var(--ink-3);
+  margin: 1.1rem 0 0; font-size: 0.9rem; color: var(--ink-3);
 }
 .hero-trustbar a { color: var(--ink); text-decoration: none; }
 .hero-trustbar a:hover { color: #fff; text-decoration: underline; }
@@ -1982,7 +2012,7 @@ html.ss-open { overflow: hidden; }
   font-weight: 700;
 }
 .next-strip {
-  margin: 0.9rem 0 0; font-size: 0.72rem; letter-spacing: 0.08em;
+  margin: 0.9rem 0 0; font-size: 0.78rem; letter-spacing: 0.08em;
   color: var(--muted); text-align: center;
 }
 
@@ -1995,12 +2025,12 @@ html.ss-open { overflow: hidden; }
   transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 .qpick__card:hover { transform: translateY(-3px); border-color: rgba(29, 151, 227, 0.55); box-shadow: var(--glow-cyan); }
-.qpick__series { margin: 0 0 0.4rem; font-size: 0.72rem; letter-spacing: 0.12em; color: var(--cyan); }
+.qpick__series { margin: 0 0 0.4rem; font-size: 0.78rem; letter-spacing: 0.12em; color: var(--cyan); }
 .qpick__card h3 { margin: 0 0 0.35rem; font-family: var(--font-display); font-weight: 600; font-size: 1.25rem; color: #fff; }
-.qpick__meta { margin: 0 0 0.6rem; font-size: 0.85rem; color: var(--muted); }
+.qpick__meta { margin: 0 0 0.6rem; font-size: 0.9rem; color: var(--muted); }
 .qpick__price { margin: 0 0 0.8rem; font-size: 0.95rem; color: var(--ink-3); }
 .qpick__price strong { font-family: var(--font-display); font-size: 1.5rem; color: var(--green); }
-.qpick__go { margin: 0; font-size: 0.72rem; letter-spacing: 0.1em; color: var(--cyan); }
+.qpick__go { margin: 0; font-size: 0.78rem; letter-spacing: 0.1em; color: var(--cyan); }
 
 /* Bournemouth heritage photo column */
 .heritage-card--photo img { height: auto; object-fit: cover; aspect-ratio: 1024 / 683; }
@@ -2016,7 +2046,7 @@ html.ss-open { overflow: hidden; }
 @media (max-width: 640px) {
   .price-table-wrap:has(th.pop)::before {
     content: "\2190\00a0 swipe to compare \00a0\2192"; display: block; position: sticky; left: 0;
-    padding: 0.5rem 1.25rem 0; font-family: var(--font-mono); font-size: 0.72rem;
+    padding: 0.5rem 1.25rem 0; font-family: var(--font-mono); font-size: 0.78rem;
     letter-spacing: 0.1em; color: var(--muted);
   }
 }
@@ -2028,7 +2058,7 @@ html.ss-open { overflow: hidden; }
   .hero__console-mini {
     display: block; margin: 1.3rem 0 0; padding: 0.9rem 1.1rem;
     background: var(--glass); border: 1px solid var(--line); border-radius: var(--r-md);
-    font-family: var(--font-mono); font-size: 0.72rem; line-height: 1.9; color: var(--ink-3);
+    font-family: var(--font-mono); font-size: 0.78rem; line-height: 1.9; color: var(--ink-3);
   }
   .hero__console-mini .ok { color: var(--green); font-weight: 700; }
   .hero__console-mini .dim { color: var(--muted); }
@@ -2036,7 +2066,7 @@ html.ss-open { overflow: hidden; }
 @media (max-width: 680px) { .hero__sub-more { display: none; } }
 /* priceless plan-card price row (tier shares the headline price): compact metrics line */
 .plan-card__price--flat { line-height: 1.5; }
-.plan-card__price--flat .per { display: inline; font-size: 0.85rem; }
+.plan-card__price--flat .per { display: inline; font-size: 0.9rem; }
 
 /* ==========================================================================
    Phase-2 mass-template premium kit (2026-07-24): callout, TOC chips,
@@ -2056,7 +2086,7 @@ html.ss-open { overflow: hidden; }
 }
 .toc a {
   padding: 0.4rem 0.9rem; border: 1px solid var(--line); border-radius: var(--r-pill);
-  font-size: 0.62rem; letter-spacing: 0.09em; text-transform: uppercase;
+  font-size: 0.78rem; letter-spacing: 0.09em; text-transform: uppercase;
   color: var(--muted); text-decoration: none; background: rgba(10, 22, 44, 0.5);
   transition: color 0.3s ease, border-color 0.3s ease;
 }
@@ -2067,7 +2097,7 @@ html.ss-open { overflow: hidden; }
 /* trust facts line before the FAQ */
 .trust-line {
   margin: 3rem auto 0; padding: 0 var(--pad-x); max-width: 1100px; text-align: center;
-  font-size: 0.72rem; letter-spacing: 0.1em; color: var(--muted); line-height: 2.1;
+  font-size: 0.78rem; letter-spacing: 0.1em; color: var(--muted); line-height: 2.1;
 }
 .trust-line span { white-space: nowrap; }
 
@@ -2076,7 +2106,7 @@ html.ss-open { overflow: hidden; }
 .prose ol:not([class]) > li { counter-increment: prose-step; position: relative; padding-left: 2.5rem; margin: 0 0 0.85rem; }
 .prose ol:not([class]) > li::before {
   content: counter(prose-step, decimal-leading-zero); position: absolute; left: 0; top: 0.12rem;
-  font-family: var(--font-mono); font-size: 0.8rem; font-weight: 600; color: var(--cyan);
+  font-family: var(--font-mono); font-size: 0.85rem; font-weight: 600; color: var(--cyan);
 }
 .prose ul:not([class]) { list-style: none; padding-left: 0; }
 .prose ul:not([class]) > li { position: relative; padding-left: 1.35rem; margin: 0 0 0.55rem; }

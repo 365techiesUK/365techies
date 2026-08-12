@@ -103,7 +103,7 @@ except Exception:
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://365techies.co.uk"
-CSSV = "84"   # bumped 2026-08-12: SOS nav breakpoint fix; a new URL is the ONLY way past immutable caching
+CSSV = "85"   # bumped 2026-08-12: bigger type site-wide; a new URL is the ONLY way past immutable caching
 HERITAGE_DIMS = {'heritage-01.jpg': (1400, 787), 'heritage-02.jpg': (787, 1400), 'heritage-03.jpg': (1400, 787), 'heritage-04.jpg': (1400, 787), 'heritage-05.jpg': (787, 1400), 'heritage-07.jpg': (1400, 787), 'heritage-kinson.jpg': (1200, 710), 'heritage-moordown.jpg': (1400, 788), 'heritage-stock.jpg': (1400, 788), 'heritage-storefront.jpg': (1024, 683)}
 try:
     from hero_scenes import SCENES as HERO_SCENES
@@ -1016,7 +1016,7 @@ def page(slug, title, desc, og_title, schema_json, content, og_image=None):
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
-  html.css-sos{{background:#070d22;color:#eaf4ff;font:16px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}}
+  html.css-sos{{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}}
   html.css-sos body{{max-width:44rem;margin:0 auto;padding:1rem 1.1rem 3rem}}
   html.css-sos a{{color:#6cc4f5}}
   html.css-sos svg,html.css-sos img{{max-width:100%;max-height:64px;height:auto}}
