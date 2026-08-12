@@ -1790,12 +1790,27 @@ body.menu-open { overflow: hidden; }
 /* ===== Accessibility toolbar ===== */
 .a11y { position: fixed; left: 14px; bottom: 14px; z-index: 1300; }
 @media (max-width: 767px) { .a11y { left: 10px; bottom: calc(4.7rem + env(safe-area-inset-bottom)); } }
+/* ⚠ This used to be a bare 48px circle with only the accessibility glyph inside.
+   Customers who told us the site was too small to read had never found it - there
+   was nothing on screen saying the text-size control was in here (owner report,
+   2026-08-12). It now carries a visible "Text size" label, which is the wording
+   people are actually looking for. The accessible name starts with the same words
+   so it satisfies WCAG 2.5.3 Label in Name for anyone using voice control. */
 .a11y__toggle {
-  width: 48px; height: 48px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2);
-  background: var(--cyan); color: var(--ink-inverse); display: flex; align-items: center; justify-content: center;
+  min-height: 48px; padding: 0 0.9rem 0 0.7rem; border-radius: var(--r-pill);
+  border: 1px solid rgba(255,255,255,0.2);
+  background: var(--cyan); color: var(--ink-inverse);
+  display: inline-flex; align-items: center; gap: 0.45rem;
   cursor: pointer; box-shadow: var(--shadow-1);
+  font-family: inherit; font-size: 0.95rem; font-weight: 600; line-height: 1;
 }
-.a11y__toggle svg { width: 24px; height: 24px; }
+.a11y__toggle svg { width: 24px; height: 24px; flex: 0 0 auto; }
+.a11y__togglelabel { white-space: nowrap; }
+/* Narrow phones: keep the pill from crowding the screen edge, but never drop the
+   label - it is the whole reason for this change. */
+@media (max-width: 380px) {
+  .a11y__toggle { font-size: 0.9rem; padding: 0 0.7rem 0 0.55rem; }
+}
 .a11y__panel {
   position: absolute; left: 0; bottom: 58px; width: 232px;
   background: var(--glass-strong); border: 1px solid var(--line); border-radius: var(--r-lg);
@@ -1806,7 +1821,10 @@ body.menu-open { overflow: hidden; }
 .a11y__title { margin: 0 0 0.2rem; color: var(--muted); }
 .a11y__rowsize { display: flex; align-items: center; justify-content: space-between; color: var(--ink); font-size: 0.95rem; }
 .a11y__btns { display: inline-flex; gap: 0.4rem; }
-.a11y__btns button { width: 38px; height: 36px; border-radius: var(--r-sm); border: 1px solid var(--line); background: rgba(10,22,44,0.6); color: var(--ink); cursor: pointer; font-weight: 700; }
+/* 44px minimum: these were 38x36, under the target size the rest of the site
+   holds to - and they are the two buttons a reader with poor eyesight most needs
+   to hit. Font raised too, so A- and A+ read clearly at arm's length. */
+.a11y__btns button { min-width: 44px; height: 44px; border-radius: var(--r-sm); border: 1px solid var(--line); background: rgba(10,22,44,0.6); color: var(--ink); cursor: pointer; font-weight: 700; font-size: 1.05rem; font-family: inherit; }
 .a11y__opt, .a11y__reset {
   text-align: left; padding: 0.62rem 0.8rem; border-radius: var(--r-md); border: 1px solid var(--line);
   background: rgba(10,22,44,0.6); color: var(--ink); cursor: pointer; font-size: 0.95rem;

@@ -103,7 +103,7 @@ except Exception:
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://365techies.co.uk"
-CSSV = "85"   # bumped 2026-08-12: bigger type site-wide; a new URL is the ONLY way past immutable caching
+CSSV = "86"   # bumped 2026-08-12: bigger type site-wide; a new URL is the ONLY way past immutable caching
 HERITAGE_DIMS = {'heritage-01.jpg': (1400, 787), 'heritage-02.jpg': (787, 1400), 'heritage-03.jpg': (1400, 787), 'heritage-04.jpg': (1400, 787), 'heritage-05.jpg': (787, 1400), 'heritage-07.jpg': (1400, 787), 'heritage-kinson.jpg': (1200, 710), 'heritage-moordown.jpg': (1400, 788), 'heritage-stock.jpg': (1400, 788), 'heritage-storefront.jpg': (1024, 683)}
 try:
     from hero_scenes import SCENES as HERO_SCENES
@@ -1101,8 +1101,8 @@ def page(slug, title, desc, og_title, schema_json, content, og_image=None):
     <a href="#" data-open-chat><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.5 7.5L3 21l2-5.5A8.5 8.5 0 1 1 21 11.5z"/></svg>Chat</a>
   </nav>
   <div class="a11y" id="a11y">
-    <button type="button" class="a11y__toggle" id="a11y-toggle" aria-expanded="false" aria-controls="a11y-panel" aria-label="Accessibility tools" title="Accessibility tools">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="3.6" r="1.6"/><path d="M3.5 8h17M12 8v6m0 0-3.2 6.4M12 14l3.2 6.4"/></svg>
+    <button type="button" class="a11y__toggle" id="a11y-toggle" aria-expanded="false" aria-controls="a11y-panel" aria-label="Text size and accessibility options" title="Text size and accessibility options">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="3.6" r="1.6"/><path d="M3.5 8h17M12 8v6m0 0-3.2 6.4M12 14l3.2 6.4"/></svg><span class="a11y__togglelabel">Text size</span>
     </button>
     <div class="a11y__panel" id="a11y-panel" role="region" aria-label="Accessibility options" hidden>
       <p class="a11y__title mono">Accessibility</p>
