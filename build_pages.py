@@ -6170,6 +6170,179 @@ VAN_SIGNAL_MAP_MAP = r"""
 """
 
 
+def _van_map_findings():
+    """Server-rendered summary of the measured spots, plus methodology.
+
+    The ranked spots are drawn by JavaScript, and AI crawlers (GPTBot,
+    ClaudeBot, PerplexityBot) do not run JavaScript — so without this block the
+    page's one uniquely-owned, quotable asset is invisible to exactly the
+    channel that is already working for this firm. Numbers come from a dated
+    snapshot in van_map_data.py (refresh with refresh_van_summary.py).
+
+    Everything here states its own limits. A dataset this small is defensible
+    when it is transparent and indefensible when it implies coverage it lacks.
+    """
+    import html as _html
+
+    def esc(v):
+        return _html.escape(str(v), quote=False)
+
+    try:
+        from van_map_data import VAN_MAP_SUMMARY as S
+    except Exception:
+        return ""   # no snapshot yet: emit nothing rather than an empty promise
+
+    spots = S.get("spots") or []
+    tested, days = S.get("tested", 0), S.get("days", 0)
+    total, named = S.get("spots_total", 0), S.get("spots_named", len(spots))
+    area = S.get("area_km") or None
+    first, last = S.get("first_day"), S.get("last_day")
+
+    def _d(iso):
+        try:
+            return datetime.datetime.strptime(iso, "%Y-%m-%d").strftime("%-d %B %Y")
+        except Exception:
+            try:
+                return datetime.datetime.strptime(iso, "%Y-%m-%d").strftime("%d %B %Y").lstrip("0")
+            except Exception:
+                return iso or ""
+
+    when = _d(first) if first == last else "%s to %s" % (_d(first), _d(last))
+    area_txt = ("about %s&thinsp;&times;&thinsp;%s&nbsp;km" % (area[0], area[1])) if area else "a small area"
+
+    rows = ""
+    for i, s in enumerate(spots, 1):
+        bits = []
+        if s.get("ms") is not None:   bits.append("%d&nbsp;ms ping" % s["ms"])
+        if s.get("sinr") is not None: bits.append("SINR %d&nbsp;dB" % s["sinr"])
+        if s.get("net"):              bits.append(esc(str(s["net"])))
+        bits.append("%d test%s" % (s.get("tests", 0), "" if s.get("tests") == 1 else "s"))
+        verdict = ("Great for work" if s.get("dl", 0) >= 25
+                   else ("Calls OK" if s.get("dl", 0) >= 10 else "Struggles"))
+        rows += ('          <li><span class="vmf-rk">%d</span>'
+                 '<span class="vmf-mb">%s&nbsp;Mbps</span>'
+                 '<span class="vmf-nm">%s</span>'
+                 '<span class="vmf-me">%s</span>'
+                 '<span class="vmf-vd">%s</span></li>\n'
+                 % (i, s.get("dl"), esc(str(s.get("name"))), " &middot; ".join(bits), verdict))
+
+    withheld = max(0, total - named)
+    withheld_txt = ("" if withheld <= 0 else
+        " A further %d measured spot%s %s not named here, because %s too close to "
+        "where the van is routinely kept &mdash; they still count in the totals."
+        % (withheld, "" if withheld == 1 else "s",
+           "is" if withheld == 1 else "are", "it sits" if withheld == 1 else "they sit"))
+
+    listing = ('        <ol class="vmf-list">\n%s        </ol>\n' % rows) if rows else (
+        '        <p class="vmf-none">No spots can be named yet &mdash; everything measured so far '
+        'sits too close to where the van is kept. The list fills in as the van covers more ground.</p>\n')
+
+    return ("""
+    <section class="section section--alt" aria-label="What we have measured so far">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/ WHAT WE'VE MEASURED</p>
+          <h2 class="section-title section-title--center" data-title>Where our van got the fastest internet<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <p class="vmf-lede" data-reveal>Across <strong>%d speed tests</strong> at <strong>%d place%s</strong>
+        over %s, covering %s, these are the localities where our campervan measured the fastest
+        download. Every figure is a median of real tests taken at that place &mdash; not a prediction,
+        not an average of a grid square.%s</p>
+%s        <p class="vmf-note">Snapshot taken %s. The live map above is always current.</p>
+      </div>
+    </section>
+""" % (tested, total, "" if total == 1 else "s", when, area_txt, withheld_txt, listing,
+       esc(str(S.get("_refreshed", "")))))
+
+
+VAN_MAP_METHOD = r"""
+    <section class="section" aria-label="How this was measured">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/ METHOD &amp; LIMITS</p>
+          <h2 class="section-title section-title--center" data-title>How we measured it &mdash; and what it can&rsquo;t tell you<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="vmf-cols">
+          <div>
+            <h3>The method</h3>
+            <ul class="vmf-ul">
+              <li>A <strong>Netgear Nighthawk M5</strong> router in the van, on a <strong>Three UK</strong> SIM, reporting signal strength, quality (SINR), band and network type.</li>
+              <li><strong>Home Assistant</strong> records a reading every <strong>30 seconds</strong> while the van is out, and runs a <strong>full download speed test every 5 minutes</strong>.</li>
+              <li>Each reading is pinned to where it was taken. A speed test only counts towards a place if it ran within about seven minutes of that reading.</li>
+              <li>Places are grouped into roughly <strong>220-metre</strong> cells and reported as a <strong>median</strong>, so one lucky or unlucky test can&rsquo;t set the figure.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>The limits, plainly</h3>
+            <ul class="vmf-ul">
+              <li><strong>One van, one network.</strong> Three UK only. Another network at the same spot may be better or worse, and we have not tested it.</li>
+              <li><strong>One vehicle&rsquo;s routes.</strong> This is where our support van actually goes &mdash; not a survey grid. Coverage is uneven by construction.</li>
+              <li><strong>A moment in time.</strong> Mobile speed varies with congestion, weather and the mast&rsquo;s own load. A spot measured once at 09:00 may differ at 18:00.</li>
+              <li><strong>Signal strength is not speed.</strong> We publish SINR because a strong-looking signal full of interference is slow &mdash; see the explanation above the map.</li>
+              <li><strong>Not a coverage map.</strong> Ofcom and the networks publish modelled coverage for the whole country. We publish a small number of real measurements. Those are different things, and theirs is broader.</li>
+            </ul>
+          </div>
+        </div>
+        <p class="vmf-credit" data-reveal><strong>Credit where it&rsquo;s due:</strong> Dorset Council and
+        <a href="https://streetwave.co/" target="_blank" rel="noopener">Streetwave</a> have measured mobile coverage
+        across the Dorset Council area using their refuse fleet &mdash; a far larger survey than ours. Their work
+        does not cover the Bournemouth, Christchurch and Poole council area, which is where our van mostly drives.</p>
+      </div>
+    </section>
+"""
+
+VAN_MAP_REUSE = r"""
+    <section class="section section--alt" aria-label="Use this data">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/ USE IT YOURSELF</p>
+          <h2 class="section-title section-title--center" data-title>Take the data &mdash; it&rsquo;s free<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <p class="vmf-lede" data-reveal>Every reading is published under <strong>Creative Commons BY&nbsp;4.0</strong>.
+        Use it in an article, a study, an app or a dissertation &mdash; commercially or not &mdash; for free.
+        The only condition is that you credit us and link back, so readers can check the source for themselves.</p>
+        <div class="vmf-reuse">
+          <a class="button primary" href="/api/signal-log.php?format=csv">Download the readings (CSV)</a>
+          <a class="button secondary" href="/api/signal-log.php?summary=1" target="_blank" rel="noopener">Summary as JSON</a>
+        </div>
+        <p class="vmf-lede" style="margin-top:1.4rem"><strong>Journalists and researchers:</strong> the methodology and
+        its limits are set out above, and we&rsquo;ll happily answer questions about how it was built or
+        provide the raw figures for a specific place &mdash; <a href="/contact/">get in touch</a>.</p>
+        <div class="vmf-credit-box">
+          <p class="vmf-credit-lbl">Credit line to copy:</p>
+          <code class="vmf-code">Data: &lt;a href="https://365techies.co.uk/van-signal-map/"&gt;365 Techies campervan signal measurements&lt;/a&gt; (CC BY 4.0)</code>
+        </div>
+      </div>
+    </section>
+"""
+
+VAN_MAP_CARDS_CSS = r"""
+    <style>
+      .vmf-reuse{display:flex;gap:.7rem;justify-content:center;flex-wrap:wrap;margin:.2rem 0 0}
+      .vmf-credit-box{max-width:760px;margin:1.5rem auto 0;background:rgba(20,27,46,.5);border:1px solid rgba(125,170,220,.16);border-radius:12px;padding:1rem 1.1rem}
+      .vmf-credit-lbl{margin:0 0 .45rem;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:#8b949e}
+      .vmf-code{display:block;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;line-height:1.6;color:#cfe0f5;white-space:pre-wrap;word-break:break-word}
+      .vmf-lede{max-width:70ch;margin:0 auto 1.4rem;text-align:center;color:var(--muted,#8b949e);font-size:.95rem;line-height:1.65}
+      .vmf-list{max-width:720px;margin:0 auto;padding:0;list-style:none;display:grid;gap:.5rem;counter-reset:none}
+      .vmf-list li{display:grid;grid-template-columns:26px 104px 1fr auto;align-items:center;gap:.75rem;background:rgba(20,27,46,.5);border:1px solid rgba(125,170,220,.16);border-radius:12px;padding:.7rem .95rem}
+      .vmf-rk{background:#1d97e3;color:#fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font:700 .78rem/1 inherit}
+      .vmf-mb{font-weight:750;color:#e6edf3;font-variant-numeric:tabular-nums}
+      .vmf-nm{color:#e6edf3;font-weight:600}
+      .vmf-me{color:#9db3cf;font-size:.82rem}
+      .vmf-vd{font-size:.7rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#3fb950;white-space:nowrap}
+      .vmf-none{max-width:60ch;margin:0 auto;text-align:center;color:var(--muted,#8b949e);font-size:.9rem}
+      .vmf-note{text-align:center;color:var(--muted,#8b949e);font-size:.78rem;margin:1.1rem 0 0;opacity:.8}
+      .vmf-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.6rem;max-width:960px;margin:0 auto}
+      .vmf-cols h3{font-size:1.05rem;margin:0 0 .6rem}
+      .vmf-ul{margin:0;padding-left:1.1rem;color:var(--muted,#8b949e);font-size:.9rem;line-height:1.7}
+      .vmf-ul li{margin-bottom:.5rem}
+      .vmf-ul strong{color:#cfe0f5}
+      .vmf-credit{max-width:70ch;margin:1.6rem auto 0;text-align:center;color:var(--muted,#8b949e);font-size:.86rem;line-height:1.6}
+      @media (max-width:560px){.vmf-list li{grid-template-columns:24px 1fr;row-gap:.25rem}.vmf-me,.vmf-vd{grid-column:2}}
+    </style>
+"""
+
+
 VAN_SIGNAL_MAP_CARDS = r"""
     <style>
       /* .ai-cards lives INLINE on the /ai/ pages, not in the global stylesheet —
@@ -6343,6 +6516,10 @@ add(
         scene=_signal_scene()),
    VAN_LIVE_PANEL,
    VAN_SIGNAL_MAP_MAP,
+   VAN_MAP_CARDS_CSS,
+   _van_map_findings(),   # server-rendered so AI crawlers can read the numbers
+   VAN_MAP_METHOD,
+   VAN_MAP_REUSE,
    VAN_SIGNAL_MAP_CARDS,
  ]),
 )

@@ -87,6 +87,32 @@ if ($method === 'GET') {
         echo json_encode(build_summary($points));
         exit;
     }
+    // CSV download. Offering the data openly under CC BY 4.0 is deliberate:
+    // it makes attribution a condition of reuse, which is the only link
+    // mechanism here that needs no outreach at all.
+    if (isset($_GET['format']) && $_GET['format'] === 'csv') {
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="365techies-van-signal-readings.csv"');
+        header('Cache-Control: no-store, max-age=0');
+        $out = fopen('php://output', 'w');
+        fwrite($out, "# 365 Techies campervan signal readings\n");
+        fwrite($out, "# Source: https://365techies.co.uk/van-signal-map/\n");
+        fwrite($out, "# Licence: CC BY 4.0 - free to reuse with attribution to 365 Techies\n");
+        fwrite($out, "# One van, one network (Three UK). Measured, not modelled.\n");
+        fwrite($out, "# Readings within a private zone have no coordinates by design.\n");
+        fputcsv($out, ['utc_time','lat','lon','download_mbps','speed_test_age_s','latency_ms','rsrp_dbm','sinr_db','network','band']);
+        foreach ($points as $p) {
+            fputcsv($out, [
+                gmdate('c', (int)($p['t'] ?? 0)),
+                $p['lat'] ?? '', $p['lon'] ?? '',
+                $p['dl'] ?? '', $p['dl_age'] ?? '', $p['latency'] ?? '',
+                $p['rsrp'] ?? '', $p['sinr'] ?? '',
+                $p['net'] ?? '', $p['band'] ?? '',
+            ]);
+        }
+        fclose($out);
+        exit;
+    }
     if ($since > 0) {
         $points = array_values(array_filter($points, fn($p) => ($p['t'] ?? 0) > $since));
     }
