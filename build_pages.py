@@ -6185,7 +6185,7 @@ VAN_SIGNAL_MAP_CARDS = r"""
           <li>
             <svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
             <h3>The van measures</h3>
-            <p>A router in the campervan reads the live 4G/5G signal &mdash; strength, band, network &mdash; and Home Assistant logs it every few seconds while driving.</p>
+            <p>A router in the campervan reads the live 4G/5G signal &mdash; strength, quality, band, network &mdash; and Home Assistant logs it every 30 seconds while driving, running a full download speed test every five minutes.</p>
           </li>
           <li>
             <svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 2v10l6 3"/></svg>
@@ -6194,8 +6194,8 @@ VAN_SIGNAL_MAP_CARDS = r"""
           </li>
           <li>
             <svg class="ai-cardico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            <h3>Plotted live</h3>
-            <p>The route paints itself on the map, green where signal is strong and red where it drops &mdash; the honest picture of what one real van, on one network, actually gets.</p>
+            <h3>Ranked, not traced</h3>
+            <p>Each reading lands on the map as its own point &mdash; green where it was fast, red where it wasn&rsquo;t &mdash; and the places that tested best are ranked for you. We plot the measurements, not the journey.</p>
           </li>
         </ul>
         <p class="prose" style="max-width:60ch;margin:1.5rem auto 0;text-align:center;color:var(--muted,#8b949e)" data-reveal>Built by <a href="/off-grid-victron-energy/">365 Techies</a> with Home Assistant and a 5G router &mdash; the same off-grid monitoring we build for campervans, boats and remote sites.</p>
