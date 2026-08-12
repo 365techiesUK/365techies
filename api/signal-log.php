@@ -276,29 +276,48 @@ function build_summary(array $points): array {
         $minLo = min($minLo, $p['lon']); $maxLo = max($maxLo, $p['lon']);
     }
 
-    $spots = [];
+    // Name each qualifying cell, then MERGE cells that resolve to the same
+    // locality — three separate rows all reading "Bournemouth" is noise, and
+    // pooling their raw readings gives a truer median for the place.
+    $byName = [];
+    $qualifying = 0;      // cells with enough tests to count as a "spot" at all
     foreach ($cells as $c) {
         $n = count($c['dl']);
         if ($n < SUMMARY_MIN_TESTS) continue;
+        $qualifying++;
         $lat = median_of($c['lat']); $lon = median_of($c['lon']);
-        $named = true;
         if (GEO_FENCE && NO_NAME_M > 0
             && metres_between((float)GEO_FENCE[0], (float)GEO_FENCE[1], (float)$lat, (float)$lon) < NO_NAME_M) {
-            $named = false;   // ranked, but never labelled
+            continue;         // ranked in spots_total, but never named or listed
         }
-        arsort($c['net']);
-        $spots[] = [
-            'name'  => $named ? locality_for((float)$lat, (float)$lon) : null,
-            'dl'    => round((float)median_of($c['dl']), 1),
-            'ms'    => $c['ms']   ? (int)round((float)median_of($c['ms']))   : null,
-            'sinr'  => $c['sinr'] ? (int)round((float)median_of($c['sinr'])) : null,
-            'net'   => $c['net'] ? (string)array_key_first($c['net']) : null,
-            'tests' => $n,
-            'days'  => count($c['days']),
+        $name = locality_for((float)$lat, (float)$lon);
+        if ($name === null || $name === '') continue;
+        if (!isset($byName[$name])) $byName[$name] = ['dl'=>[], 'ms'=>[], 'sinr'=>[], 'net'=>[], 'days'=>[], 'cells'=>0];
+        $b =& $byName[$name];
+        $b['dl']   = array_merge($b['dl'], $c['dl']);
+        $b['ms']   = array_merge($b['ms'], $c['ms']);
+        $b['sinr'] = array_merge($b['sinr'], $c['sinr']);
+        foreach ($c['net']  as $k => $v) $b['net'][$k]  = ($b['net'][$k] ?? 0) + $v;
+        foreach ($c['days'] as $k => $v) $b['days'][$k] = 1;
+        $b['cells']++;
+        unset($b);
+    }
+
+    $named_spots = [];
+    foreach ($byName as $name => $b) {
+        arsort($b['net']);
+        $named_spots[] = [
+            'name'  => $name,
+            'dl'    => round((float)median_of($b['dl']), 1),
+            'ms'    => $b['ms']   ? (int)round((float)median_of($b['ms']))   : null,
+            'sinr'  => $b['sinr'] ? (int)round((float)median_of($b['sinr'])) : null,
+            'net'   => $b['net'] ? (string)array_key_first($b['net']) : null,
+            'tests' => count($b['dl']),
+            'days'  => count($b['days']),
         ];
     }
-    usort($spots, fn($a, $b) => $b['dl'] <=> $a['dl']);
-    $named_spots = array_values(array_filter($spots, fn($s) => $s['name'] !== null));
+    usort($named_spots, fn($a, $b) => $b['dl'] <=> $a['dl']);
+    $spots = $named_spots;
 
     $kmLat = ($maxLa > -INF) ? ($maxLa - $minLa) * 111.32 : 0;
     $kmLon = ($maxLa > -INF) ? ($maxLo - $minLo) * 111.32 * cos(deg2rad($minLa)) : 0;
@@ -310,7 +329,8 @@ function build_summary(array $points): array {
         'generated'   => gmdate('c'),
         'points'      => count($points),
         'tested'      => count($tested),
-        'spots_total' => count($spots),
+        'spots_total' => $qualifying,          // measured spots, named or not
+        'spots_named' => count($spots),        // the rest sit inside the no-name radius
         'days'        => count($dayKeys),
         'first_day'   => $dayKeys ? $dayKeys[0] : null,
         'last_day'    => $dayKeys ? end($dayKeys) : null,
