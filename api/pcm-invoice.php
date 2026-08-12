@@ -21,8 +21,17 @@
  *    same rule as pcm.php's payment lookup - so they're skipped).
  *  - Never auto-emails the customer (invoices are created, not sent).
  *
- * ROLLOUT: dry-run -> sandbox ($QBO_ENV='sandbox') -> live one customer
- *          ($QBO_ONLY_KEY='ABCD-...') -> live all. Never jump straight to all.
+ * ROLLOUT: dry-run -> live ONE customer ($QBO_ONLY_KEY='ABCD-...') -> live all.
+ * Never jump straight to all.
+ * ⚠ DO NOT insert a sandbox stage. It was in this comment until 2026-08-12 and it
+ * is the most dangerous route available: pcm-invoice-state.json is now namespaced
+ * by realm, but a sandbox pass still fills it with ids and month stamps for a
+ * DIFFERENT company, and sandbox cannot prove any of the things that actually go
+ * wrong here - matching the 93 real customers, the real company's VAT setting, or
+ * the GoCardless reconciliation app, which is not installed in a sandbox. What it
+ * would prove (the JSON body is shaped right, OAuth refresh persists) the dry run
+ * and one real customer already prove. If you ever DO use sandbox, delete
+ * pcm-invoice-state.json before switching to production.
  *
  * RUN (SiteGround cron, monthly, e.g. 07:00 on the 1st):
  *   php .../api/pcm-invoice.php                      # CLI dry-run
@@ -151,7 +160,13 @@ function qbo_api($method, $path, $body, $access){
 }
 // Find (by email) or create a QBO customer; returns id or null. Caches id in state.
 function qbo_customer_id($email, $name, $access, &$state, $live){
-    $ek = sha1(strtolower($email));
+    global $QBO_REALM_ID;
+    /* ⚠ NAMESPACED BY COMPANY. Keyed on the email alone, a QBO customer id cached
+       from one company (e.g. a sandbox) would be handed straight to another. Ids
+       are small per-company integers, so the collision resolves to a real but
+       DIFFERENT person rather than erroring. pcm-qbo.php derives this key the
+       SAME way - change one, change both, or you get duplicate QBO customers. */
+    $ek = sha1(strtolower($email) . '|' . (string)$QBO_REALM_ID);
     if (!empty($state['cust'][$ek])) return $state['cust'][$ek];
     $q = "select Id from Customer where PrimaryEmailAddr = '" . str_replace("'", "\\'", $email) . "'";
     $res = qbo_api('GET', '/query?query=' . rawurlencode($q), null, $access);
@@ -189,7 +204,10 @@ foreach ($db['customers'] as $key => $c) {
     $name  = trim((string)($c['name'] ?? ''));
     if ($email === '') { continue; }
     if ((($c['via'] ?? '') === 'signin')) { continue; }              // unverified self-serve email
-    $stampKey = $key . '|' . $MKEY;
+    // Realm-qualified for the same reason as the id cache above: without it a
+    // test against another company silently suppresses a REAL invoice here and
+    // reports it as 'skipped_already_invoiced', which looks like correct idempotency.
+    $stampKey = $key . '|' . $MKEY . '|' . (string)$QBO_REALM_ID;
     if (!empty($state['invoiced'][$stampKey])) { $skipped++; continue; }  // already invoiced this month
 
     $lines = gc_lines($email);
@@ -210,8 +228,21 @@ foreach ($db['customers'] as $key => $c) {
     foreach ($lines as $l) $qbLines[] = array('DetailType'=>'SalesItemLineDetail', 'Amount'=>$l['amount'],
         'Description'=>$l['name'] . ' - ' . date('F Y', strtotime($MONTH . '-01')) . ' (collected by Direct Debit / GoCardless)',
         'SalesItemLineDetail'=>array('ItemRef'=>array('value'=>(string)$QBO_ITEM_ID), 'Qty'=>1, 'UnitPrice'=>$l['amount']));
+    /* ⚠ DocNumber's documented max is 21 chars. This USED to be
+       substr('DD-' . $key . '-' . $MKEY, 0, 21), and since a licence key is 14
+       chars the string was 24 and the cut amputated the MONTH: every month of the
+       decade produced the identical 'DD-XXXX-XXXX-XXXX-202'. Month first now, and
+       the key's hyphens dropped, so both survive losslessly in exactly 21:
+       'DD202608-ABCDEFGHJKLM'. Sortable by month, unique per customer per month.
+       And no substr() - if it ever exceeds 21 that is a config error worth seeing,
+       not something to silently shorten into a collision. */
+    $doc = 'DD' . $MKEY . '-' . substr(str_replace('-', '', $key), 0, 12);
+    if (strlen($doc) > 21) {
+        $errors++; lg('DocNumber too long for ' . $email . ' (' . $doc . ') - skipped, check the licence key format');
+        $row['action'] = 'ERROR: DocNumber length'; $plan[] = $row; continue;
+    }
     $inv = array('CustomerRef'=>array('value'=>$cid), 'Line'=>$qbLines,
-                 'TxnDate'=>gmdate('Y-m-d'), 'DocNumber'=>substr('DD-' . $key . '-' . $MKEY, 0, 21),
+                 'TxnDate'=>gmdate('Y-m-d'), 'DocNumber'=>$doc,
                  'CustomerMemo'=>array('value'=>'Paid automatically by Direct Debit via GoCardless - no action needed.'));
     // Non-VAT: no TaxCodeRef / no VAT lines (requires the QBO VAT centre to be OFF).
     $res = qbo_api('POST', '/invoice', $inv, $access);

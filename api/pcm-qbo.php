@@ -95,6 +95,12 @@ if (empty($QBO_CLIENT_ID) || empty($QBO_CLIENT_SECRET) || empty($QBO_REALM_ID)) 
 $SANDBOX  = (isset($QBO_ENV) && $QBO_ENV === 'sandbox');
 $API_BASE = $SANDBOX ? 'https://sandbox-quickbooks.api.intuit.com' : 'https://quickbooks.api.intuit.com';
 $LIVE = !empty($in['live']) && !empty($QBO_LIVE_ENABLED);
+/* ⚠ $QBO_ONLY_KEY used to restrict the monthly cron ONLY, while this button shared
+   the same $QBO_LIVE_ENABLED flag - so the deliberately cautious "go live for one
+   customer" step armed this button for EVERY customer at the same time. While
+   ONLY_KEY is set, this button stays in dry-run for anyone whose record does not
+   carry that licence key, and says why. */
+$ONLY = trim((string)(isset($QBO_ONLY_KEY) ? $QBO_ONLY_KEY : ''));
 
 // ---- QuickBooks primitives ----------------------------------------------
 // Mirrors pcm-invoice.php. Kept here rather than shared because that file is the
@@ -230,12 +236,13 @@ if ($action === 'qboitems') {
 $email = strtolower(trim((string)(isset($in['email']) ? $in['email'] : '')));
 if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) fail('bad_email');
 
-$ourName = ''; $ourPhone = ''; $ourAddr = null;
-foreach ((array)(isset($db['customers']) ? $db['customers'] : array()) as $c) {
+$ourName = ''; $ourPhone = ''; $ourAddr = null; $ourKey = '';
+foreach ((array)(isset($db['customers']) ? $db['customers'] : array()) as $ckey => $c) {
     if (!is_array($c) || strtolower(trim((string)(isset($c['email']) ? $c['email'] : ''))) !== $email) continue;
     $ourName  = trim((string)(isset($c['name']) ? $c['name'] : ''));
     $ourPhone = trim((string)(isset($c['phone']) ? $c['phone'] : (isset($c['sb_phone']) ? $c['sb_phone'] : '')));
     if (!empty($c['addr']) && is_array($c['addr'])) $ourAddr = $c['addr'];
+    $ourKey = (string)$ckey;
     break;
 }
 // The staff card can pass what it is displaying (a SimplyBook-only client has no
@@ -245,6 +252,11 @@ if ($ourName === '')  $ourName  = trim(substr((string)(isset($in['name']) ? $in[
 if ($ourPhone === '') $ourPhone = trim(substr((string)(isset($in['phone']) ? $in['phone'] : ''), 0, 30));
 if (!$ourAddr && !empty($in['addr']) && is_array($in['addr'])) $ourAddr = $in['addr'];
 if ($ourName === '') $ourName = $email;
+/* The one-customer safety valve, applied to THIS writer too (see $ONLY above).
+   Not an error - it silently stays in dry-run and the response says so, which is
+   the same contract as $QBO_LIVE_ENABLED being off. */
+$onlyBlocked = false;
+if ($LIVE && $ONLY !== '' && strcasecmp($ourKey, $ONLY) !== 0) { $LIVE = false; $onlyBlocked = true; }
 
 function addr_block($a) {
     if (!is_array($a)) return null;
@@ -267,7 +279,9 @@ $state = @json_decode((string)@file_get_contents($STATEF), true);
 if (!is_array($state)) $state = array('cust' => array(), 'invoiced' => array());
 if (!isset($state['cust'])) $state['cust'] = array();
 if (!isset($state['invoiced'])) $state['invoiced'] = array();
-$ekey = sha1($email);   // == sha1(strtolower($email)) in pcm-invoice.php; $email is already lowered
+// MUST match pcm-invoice.php's qbo_customer_id() exactly: email + realm. $email
+// is already lowered. Diverge and the two writers create duplicate QBO customers.
+$ekey = sha1($email . '|' . (string)$QBO_REALM_ID);
 function state_save() {
     global $STATEF, $state;
     $tmp = $STATEF . '.' . getmypid() . '.tmp';
@@ -324,7 +338,7 @@ if ($action === 'qbostart') {
     }
     if ($cid === '' && !$LIVE) {
         done(array('ok' => true, 'mode' => 'DRY-RUN', 'live_enabled' => !empty($QBO_LIVE_ENABLED),
-                   'would' => 'create the customer' . ($amount > 0 ? ' and a draft invoice' : ''), 'plan' => $plan));
+                   'only_key_blocked' => $onlyBlocked, 'would' => 'create the customer' . ($amount > 0 ? ' and a draft invoice' : ''), 'plan' => $plan));
     }
     if ($cid === '') {
         $body = array('DisplayName' => $ourName, 'PrimaryEmailAddr' => array('Address' => $email));
@@ -365,7 +379,7 @@ if ($action === 'qbostart') {
     if ($amount > 0) {
         if (!$LIVE) {
             done(array('ok' => true, 'mode' => 'DRY-RUN', 'live_enabled' => !empty($QBO_LIVE_ENABLED),
-                       'qbo_id' => $cid, 'existed' => $wasThere, 'would' => 'create a draft invoice', 'plan' => $plan));
+                       'qbo_id' => $cid, 'existed' => $wasThere, 'only_key_blocked' => $onlyBlocked, 'would' => 'create a draft invoice', 'plan' => $plan));
         }
         if (empty($QBO_ITEM_ID)) done(array('ok' => false, 'error' => 'no_item', 'qbo_id' => $cid,
             'hint' => 'Set QBO_ITEM_ID in the server config - QuickBooks needs a product/service to put on the line.'));
