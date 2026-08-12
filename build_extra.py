@@ -24798,6 +24798,70 @@ def write_portal_page():
       });
     }).catch(function () {});
   }
+  /* Reads its own state on open. Errors are shown as the plain reason, never a
+     bare "failed" - this card exists to tell the owner what to do next. */
+  function qboSetup() {
+    var card = document.getElementById('qbosetup'), box = document.getElementById('qbostate');
+    if (!card || !box) return;
+    var paint = function (r) {
+      if (!r || !r.ok) {
+        // no_config is the expected state before the server file exists at all
+        var e = r && r.error;
+        card.style.display = '';
+        box.innerHTML = (e === 'no_config' || e === 'config_incomplete')
+          ? 'Not connected yet \\u2014 <strong>api/pcm-quickbooks.php</strong> is not on the server. Copy pcm-quickbooks.php.example to it and fill it in.'
+          : (e === 'not_staff' ? 'Your staff sign-in expired \\u2014 sign in again.'
+            : 'Couldn\\u2019t check' + (r && r.why ? ' \\u2014 ' + esc(r.why) : '') + '.');
+        return;
+      }
+      var done = !r.still_needed.length && r.live_enabled;
+      if (done) { card.style.display = 'none'; return; }      // finished: hide it
+      card.style.display = '';
+      var bits = ['Environment: <strong>' + esc(r.env) + '</strong>'];
+      bits.push(r.live_enabled ? 'Live writing: <strong>ON</strong>'
+                               : 'Live writing: <strong>OFF</strong> (it reports what it would do and writes nothing)');
+      if (r.only_key) bits.push('Limited to one customer: <strong>' + esc(r.only_key) + '</strong>');
+      var h = '<p style="margin:0 0 .4rem">' + bits.join(' \\u00b7 ') + '</p>';
+      if (r.still_needed.length) {
+        h += '<p style="margin:0 0 .2rem">Still needed:</p><ul style="margin:0 0 .2rem 1.1rem">';
+        r.still_needed.forEach(function (s) { h += '<li>' + esc(s) + '</li>'; });
+        h += '</ul>';
+      } else {
+        h += '<p style="margin:0">Everything is filled in. Set <strong>$QBO_LIVE_ENABLED = true</strong> when you are ready for it to write for real.</p>';
+      }
+      if (r.ready_to_dry_run) h += '<p class="quiet" style="margin:.3rem 0 0">Ready for a dry run.</p>';
+      box.innerHTML = h;
+    };
+    var go = function () {
+      box.textContent = 'Checking\\u2026';
+      post(QBO, { action: 'qbostatus', stoken: S.stoken, machine: mid() })
+        .then(paint).catch(function () { card.style.display = ''; box.textContent = 'Couldn\\u2019t reach the server.'; });
+    };
+    var cb = document.getElementById('qbocheck'); if (cb) cb.onclick = go;
+    var lb = document.getElementById('qbolist');
+    if (lb) lb.onclick = function () {
+      var out = document.getElementById('qboitems');
+      out.innerHTML = '<span class="quiet">Asking QuickBooks\\u2026</span>';
+      post(QBO, { action: 'qboitems', stoken: S.stoken, machine: mid() }).then(function (r) {
+        if (!r || !r.ok) {
+          out.innerHTML = '<span class="quiet">' + (r && r.error === 'qbo_auth'
+            ? 'QuickBooks hasn\\u2019t been authorised yet \\u2014 create api/pcm-qbo-token.json with a refresh token first.'
+            : ('Couldn\\u2019t list them' + (r && r.why ? ' \\u2014 ' + esc(r.why) : '') + '.')) + '</span>';
+          return;
+        }
+        if (!r.count) { out.innerHTML = '<p class="quiet">' + esc(r.hint) + '</p>'; return; }
+        var h = '<p class="quiet" style="margin:.5rem 0 .2rem">' + esc(r.hint) + '</p><div class="tblwrap"><table><tr><th>Id</th><th>Name</th><th>Type</th></tr>';
+        r.items.forEach(function (it) {
+          var mine = (r.current_item_id && it.id === r.current_item_id);
+          h += '<tr' + (mine ? ' style="outline:1px solid var(--pgood)"' : '') + '><td><strong>' + esc(it.id) + '</strong>'
+            + (mine ? ' \\u2713 in use' : '') + '</td><td>' + esc(it.name) + '</td><td class="quiet">' + esc(it.type) + '</td></tr>';
+        });
+        out.innerHTML = h + '</table></div>';
+      }).catch(function () { out.innerHTML = '<span class="quiet">Couldn\\u2019t reach the server.</span>'; });
+    };
+    go();
+  }
+
   function showStaff() {
     el.innerHTML = topRow('365 staff') + '<p class="lede">Loading\\u2026</p>';
     bindOut();
@@ -24839,6 +24903,14 @@ def write_portal_page():
         + '<label>Email (optional - links their booking login + Direct Debit)</label><input id="ae" type="email" />'
         + '<label>Plan</label><select id="at"><option value="pro">On support (Pro)</option><option value="free">Free</option></select>'
         + '<button id="ab">Create activation key</button><div class="err" id="aerr"></div><div id="ares"></div></div>';
+      /* Only worth showing while it is not finished - once QuickBooks is live
+         this is clutter on a screen the standing rules say must stay
+         actionable-first. It re-appears if the token ever goes stale. */
+      h += '<div class="card" id="qbosetup" style="display:none"><h2>\\ud83d\\udcd7 QuickBooks setup</h2>'
+        + '<div id="qbostate" class="quiet">Checking\\u2026</div>'
+        + '<p style="margin:.5rem 0 0"><button class="sm ghost" id="qbocheck">Check setup</button> '
+        + '<button class="sm ghost" id="qbolist">List QuickBooks items</button></p>'
+        + '<div id="qboitems"></div></div>';
       h += '<div class="card"><h2>Quick links</h2><div class="row">'
         + '<a class="btn sm ghost" href="https://365techies.secure.simplybook.it/v2/management/" target="_blank" rel="noopener">SimplyBook admin</a>'
         + '<button class="sm ghost" id="pcmadm">Full PCM console</button>'
@@ -24884,6 +24956,7 @@ def write_portal_page():
       loadDiary(); loadFleet();
       loadSosq();
       loadVis();
+      qboSetup();
       var visiv = setInterval(function () {
         if (!document.getElementById('vislive')) { clearInterval(visiv); return; }
         loadVis();

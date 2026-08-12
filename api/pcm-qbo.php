@@ -144,6 +144,86 @@ function qbo_why($res) {
 }
 function qbo_code($res) { return (string)(isset($res['json']['Fault']['Error'][0]['code']) ? $res['json']['Fault']['Error'][0]['code'] : ''); }
 
+/* ---- SETUP HELPERS -------------------------------------------------------
+   These two exist so switching QuickBooks on does not require a developer. They
+   run BEFORE the customer lookup because neither needs a customer, and both are
+   read-only: `qbostatus` answers "what is still missing?" and `qboitems` lists
+   the Products/Services with their Ids, which is the one value the owner would
+   otherwise have to dig out of the QuickBooks UI or the API by hand.
+   ⚠ Deliberately returns NO secret: booleans, the environment, and the item
+   list only. Never the client id, secret, guard, realm or any token. */
+if ($action === 'qbostatus') {
+    $tok = @json_decode((string)@file_get_contents($TOKENF), true);
+    $hasRefresh = is_array($tok) && !empty($tok['refresh_token']);
+    $st = array(
+        'ok' => true,
+        'config_file' => true,                                  // we got here, so it loaded
+        'env' => ($SANDBOX ? 'sandbox' : 'production'),
+        'client_id_set' => !empty($QBO_CLIENT_ID),
+        'client_secret_set' => !empty($QBO_CLIENT_SECRET),
+        'realm_set' => !empty($QBO_REALM_ID),
+        'guard_set' => !empty($QBO_GUARD),
+        'item_id_set' => !empty($QBO_ITEM_ID),
+        'live_enabled' => !empty($QBO_LIVE_ENABLED),
+        'only_key' => (string)(isset($QBO_ONLY_KEY) ? $QBO_ONLY_KEY : ''),
+        'token_file' => $hasRefresh,
+    );
+    // Prove the token actually WORKS rather than merely existing - a stale refresh
+    // token is the failure that silently kills monthly invoicing.
+    if ($hasRefresh) {
+        $t = qbo_token();
+        $st['token_valid'] = !empty($t['access_token']);
+        if (empty($t['access_token'])) $st['token_error'] = (string)(isset($t['err']) ? $t['err'] : 'unknown');
+    } else {
+        $st['token_valid'] = false;
+        $st['token_error'] = 'no_token';
+    }
+    /* Plain English, because the person reading this is the owner, not a
+       developer - each string says what to go and do. */
+    $LABEL = array(
+        'client_id_set'     => 'Client ID from your Intuit Developer app',
+        'client_secret_set' => 'Client Secret from your Intuit Developer app',
+        'realm_set'         => 'QuickBooks company (realm) ID',
+        'guard_set'         => 'QBO_GUARD - invent any long random string',
+        'item_id_set'       => 'QBO_ITEM_ID - run the "List QuickBooks items" check to get it',
+        'token_file'        => 'api/pcm-qbo-token.json with a refresh_token in it',
+        'token_valid'       => 'a refresh token QuickBooks still accepts (re-authorise if stale)',
+    );
+    $missing = array(); $keys = array();
+    foreach (array_keys($LABEL) as $k) if (empty($st[$k])) { $missing[] = $LABEL[$k]; $keys[] = $k; }
+    $st['still_needed'] = $missing;
+    $st['still_needed_keys'] = $keys;                       // stable ids for the UI/tests
+    // The item id is the ONE thing you cannot look up until the token works, so a
+    // dry run is reachable without it.
+    $st['ready_to_dry_run'] = !count(array_diff($keys, array('item_id_set')));
+    $st['ready_for_live'] = (!count($keys) && !empty($QBO_LIVE_ENABLED));
+    out($st);
+}
+
+if ($action === 'qboitems') {
+    $tk = qbo_token();
+    if (empty($tk['access_token'])) out(array('ok'=>false, 'error'=>'qbo_auth',
+        'detail'=>(string)(isset($tk['err']) ? $tk['err'] : 'unknown'),
+        'hint'=>'The OAuth token is missing or stale - create api/pcm-qbo-token.json with a fresh refresh_token.'));
+    // Active items only, newest first. Name is quoted by QBO's own escaping rules;
+    // there is no user input in this query, so nothing to inject.
+    $q = "select Id, Name, Type, Active from Item where Active = true maxresults 200";
+    $res = qbo_api('GET', '/query?query=' . rawurlencode($q), null, $tk['access_token']);
+    if (!qbo_ok($res)) out(array('ok'=>false, 'error'=>'qbo_query', 'why'=>qbo_why($res)));
+    $rows = array();
+    foreach ((array)(isset($res['json']['QueryResponse']['Item']) ? $res['json']['QueryResponse']['Item'] : array()) as $it) {
+        if (!is_array($it)) continue;
+        $rows[] = array('id' => (string)(isset($it['Id']) ? $it['Id'] : ''),
+                        'name' => (string)(isset($it['Name']) ? $it['Name'] : ''),
+                        'type' => (string)(isset($it['Type']) ? $it['Type'] : ''));
+    }
+    out(array('ok' => true, 'env' => ($SANDBOX ? 'sandbox' : 'production'),
+              'current_item_id' => (string)(isset($QBO_ITEM_ID) ? $QBO_ITEM_ID : ''),
+              'count' => count($rows), 'items' => $rows,
+              'hint' => $rows ? 'Copy the id of the Service you want on invoice lines into $QBO_ITEM_ID.'
+                              : 'No active items yet - create one in QuickBooks: Gear > Products and services > New > Service.'));
+}
+
 // ---- find our customer record -------------------------------------------
 // Matched on the email the staff card already shows, so the thing David sees is
 // the thing we act on. Never on a name - two Smiths would silently merge.

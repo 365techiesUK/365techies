@@ -56,9 +56,19 @@ function jout($a){ global $CLI; $s = json_encode($a, JSON_PRETTY_PRINT|JSON_UNES
 function lg($m){ global $LOGF; @file_put_contents($LOGF, '[' . gmdate('Y-m-d H:i:s') . 'Z] ' . $m . "\n", FILE_APPEND|LOCK_EX); }
 
 // ---- config -------------------------------------------------------------
-if (!is_readable($CFG)) jout(array('ok'=>false, 'error'=>'no_config', 'hint'=>'copy pcm-quickbooks.php.example to pcm-quickbooks.php and fill it'));
+// The guard lives INSIDE the config, so the config must load before we can check
+// it - which means these two failures are reachable before any authentication.
+// Over HTTP they therefore answer a flat 403 and say nothing about whether
+// QuickBooks is configured; a stranger probing this URL learns nothing. CLI is
+// already privileged, so there it keeps the diagnostic that makes setup possible.
+$cfgFail = function ($err, $hint = '') use (&$CLI) {
+    if ($CLI) jout(array('ok'=>false, 'error'=>$err, 'hint'=>$hint));
+    http_response_code(403);
+    jout(array('ok'=>false, 'error'=>'forbidden'));
+};
+if (!is_readable($CFG)) $cfgFail('no_config', 'copy pcm-quickbooks.php.example to pcm-quickbooks.php and fill it');
 require $CFG;   // $QBO_CLIENT_ID $QBO_CLIENT_SECRET $QBO_REALM_ID $QBO_ENV $QBO_GUARD $QBO_ITEM_ID(or _NAME) $QBO_LIVE_ENABLED [$QBO_ONLY_KEY]
-if (empty($QBO_CLIENT_ID) || empty($QBO_CLIENT_SECRET) || empty($QBO_REALM_ID) || empty($QBO_GUARD)) jout(array('ok'=>false,'error'=>'config_incomplete'));
+if (empty($QBO_CLIENT_ID) || empty($QBO_CLIENT_SECRET) || empty($QBO_REALM_ID) || empty($QBO_GUARD)) $cfgFail('config_incomplete');
 $SANDBOX = (isset($QBO_ENV) && $QBO_ENV === 'sandbox');
 $API_BASE = $SANDBOX ? 'https://sandbox-quickbooks.api.intuit.com' : 'https://quickbooks.api.intuit.com';
 
