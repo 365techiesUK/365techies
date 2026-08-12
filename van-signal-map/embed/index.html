@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,follow">
+<title>Measured 4G/5G signal map &mdash; 365 Techies campervan</title>
+<link rel="stylesheet" href="/vendor/leaflet/leaflet.css" />
+<style>
+      .sigmap-wrap{position:relative;border-radius:18px;overflow:hidden;border:1px solid rgba(125,170,220,.18);box-shadow:0 24px 60px -30px rgba(0,0,0,.7)}
+      #sigmap{height:min(66vh,600px);width:100%;background:#0b1020}
+      .leaflet-container{background:#0b1020;font:inherit}
+      /* (the old .osm-tiles invert filter is gone — Protomaps renders dark natively) */
+      .sigmap-status{position:absolute;top:12px;left:12px;z-index:500;background:rgba(10,16,32,.85);border:1px solid rgba(125,170,220,.22);border-radius:10px;padding:7px 12px;font-size:.8rem;color:#cfe0f5;display:flex;align-items:center;gap:8px;backdrop-filter:blur(6px)}
+      .sigmap-dot{width:9px;height:9px;border-radius:50%;background:#3fb950;box-shadow:0 0 0 0 rgba(63,185,80,.7);animation:sigpulse 2.2s infinite}
+      @keyframes sigpulse{70%{box-shadow:0 0 0 8px rgba(63,185,80,0)}100%{box-shadow:0 0 0 0 rgba(63,185,80,0)}}
+      .sigmap-legend{background:rgba(10,16,32,.9);color:#cfe0f5;padding:9px 11px;border-radius:9px;border:1px solid rgba(125,170,220,.22);font-size:.74rem;line-height:1.5}
+      .sigmap-legend .bar{display:inline-block;width:96px;height:9px;border-radius:5px;vertical-align:middle;background:linear-gradient(90deg,#f85149,#d29922,#3fb950)}
+      .leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#141b2e;color:#e6edf3}
+      .sigmap-empty{color:var(--muted,#8b949e);font-size:.85rem;margin:.85rem 0 0;text-align:center}
+      .sigmap-mode{position:absolute;top:12px;right:12px;z-index:500;display:flex;background:rgba(10,16,32,.85);border:1px solid rgba(125,170,220,.22);border-radius:10px;overflow:hidden;backdrop-filter:blur(6px)}
+      .sigmap-mode button{appearance:none;border:0;background:transparent;color:#9db3cf;font:600 .74rem/1 inherit;font-family:inherit;padding:9px 13px;cursor:pointer;letter-spacing:.03em}
+      .sigmap-mode button[aria-pressed=true]{background:rgba(29,151,227,.28);color:#fff}
+      .sigmap-mode button:focus-visible{outline:2px solid #6cc4f5;outline-offset:-2px}
+      .sigmap-rank{background:#1d97e3;color:#fff;border:2px solid #fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font:700 .8rem/1 inherit;box-shadow:0 2px 8px rgba(0,0,0,.5)}
+      .sigmap-legend-cards{list-style:none;margin:0 0 1.15rem;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+      .sigmap-legend-cards li{background:rgba(20,27,46,.5);border:1px solid rgba(125,170,220,.16);border-radius:13px;padding:14px 16px}
+      .sigmap-legend-cards b{display:block;color:#e6edf3;font-size:.95rem;margin-bottom:.28rem}
+      .sigmap-legend-cards span{display:block;color:#9db3cf;font-size:.84rem;line-height:1.5}
+      .sigmap-best{max-width:680px;margin:1rem auto 0;padding:0;list-style:none;display:grid;gap:.5rem}
+      .sigmap-best li{display:flex;align-items:center;gap:.8rem;background:rgba(20,27,46,.55);border:1px solid rgba(125,170,220,.18);border-radius:12px;padding:.65rem .9rem;cursor:pointer;transition:border-color .2s}
+      .sigmap-best li:hover{border-color:rgba(108,196,245,.45)}
+      .sigmap-best .rk{flex:0 0 auto;background:#1d97e3;color:#fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font:700 .8rem/1 inherit}
+      .sigmap-best .mb{font-weight:750;color:#e6edf3;font-variant-numeric:tabular-nums;min-width:74px}
+      .sigmap-best .meta{color:#9db3cf;font-size:.82rem}
+      .sigmap-best .wr{margin-left:auto;font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+      .sigmap-best .wr--good{color:#3fb950}.sigmap-best .wr--ok{color:#d29922}.sigmap-best .wr--bad{color:#f85149}
+    </style>
+<style>
+  html,body{margin:0;padding:0;background:#0b1020;color:#cfe0f5;
+    font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
+  .sigmap-wrap{border-radius:0;border:0;box-shadow:none}
+  /* fill the frame, less the credit strip */
+  #sigmap{height:calc(100vh - 40px);min-height:260px}
+  /* the ranked list would need scrolling inside a frame - the numbered pins on
+     the map carry the same ranking, so hide the list rather than trap it */
+  .sigmap-best{display:none}
+  .vembed-credit{height:40px;display:flex;align-items:center;justify-content:center;
+    gap:.5rem;font-size:12.5px;background:#0b1020;border-top:1px solid rgba(125,170,220,.18)}
+  .vembed-credit a{color:#6cc4f5;text-decoration:none;font-weight:600}
+  .vembed-credit a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="sigmap-wrap">
+          <div class="sigmap-status"><span class="sigmap-dot"></span><span id="sigmap-status">loading&hellip;</span></div>
+          <div class="sigmap-mode" role="group" aria-label="Map view">
+            <button type="button" id="sigmode-rsrp" aria-pressed="true">Signal</button>
+            <button type="button" id="sigmode-speed" aria-pressed="false">Speed</button>
+            <button type="button" id="sigmode-best" aria-pressed="false">Best spots</button>
+          </div>
+          <div id="sigmap"></div>
+        </div>
+        <ol class="sigmap-best" id="sigmap-best" hidden aria-label="Best measured places for fast internet"></ol>
+        <p class="sigmap-empty" id="sigmap-empty" hidden>No location-tagged readings yet &mdash; the map fills in as the van drives.</p>
+<div class="vembed-credit">Measured by
+  <a href="https://365techies.co.uk/van-signal-map/" target="_blank" rel="noopener">365 Techies</a>
+  <span style="opacity:.6">&middot; CC BY 4.0</span>
+</div>
+<script src="/vendor/leaflet/leaflet.js" defer></script>
+    <script src="/vendor/protomaps/protomaps-leaflet.js" defer></script>
+    <script>
+    (function(){var ENDPOINT='/api/signal-log.php',REFRESH=15000,GOOD=-80,BAD=-110;
+      /* Speed view: a point only counts as "speed tested here" when the test ran
+         within FRESH_S of the point (dl_age, stamped by the van). Older speed
+         values are NOT shown against locations they weren't measured at — the
+         hourly background test would otherwise smear one number along an hour
+         of road. The van tests every 5 min while driving. */
+      var FRESH_S=420,SPD_MAX=50;
+      function start(){if(typeof L==='undefined'){return setTimeout(start,200);}
+        var map=L.map('sigmap',{zoomControl:true}).setView([50.72,-1.88],10);
+        /* Basemap: a self-hosted Protomaps PMTiles archive (Dorset extract, z0-14,
+           25MB) served as ONE static file over HTTP range requests from our own
+           hosting. Replaces tile.openstreetmap.org, whose usage policy warns
+           commercial services that access "may be withdrawn at any point" — a
+           silently broken map on a marketing page is the risk that justified the
+           move. No account, no per-tile cost, no third party who can switch us off.
+           Vector tiles render natively dark, so the old CSS invert hack is gone. */
+        /* NB: the option is `flavor`, NOT `theme` — protomaps-leaflet ignores an
+           unknown key silently, which paints nothing and logs no error. */
+        protomapsL.leafletLayer({url:'/vendor/protomaps/dorset.pmtiles',flavor:'dark',maxDataZoom:14,
+          attribution:'<a href="https://protomaps.com" target="_blank" rel="noopener">Protomaps</a> &copy; <a href="https://openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'}).addTo(map);
+        var mode='rsrp';
+        var lg=L.control({position:'bottomright'});var lgDiv=null;
+        lg.onAdd=function(){lgDiv=L.DomUtil.create('div','sigmap-legend');legend();return lgDiv;};lg.addTo(map);
+        function legend(){if(!lgDiv)return;lgDiv.innerHTML=(mode==='rsrp')
+          ?'<b>Signal (RSRP)</b><br>weak <span class=\'bar\'></span> strong<br>&minus;110 &rarr; &minus;80 dBm'
+          :(mode==='speed')
+          ?'<b>Download speed</b><br>slow <span class=\'bar\'></span> fast<br>0 &rarr; '+SPD_MAX+'+ Mbps &middot; grey = not tested at that spot'
+          :'<b>Best measured spots</b><br>median download where we tested<br>bigger circle = more tests &middot; top 5 numbered';}
+        function col(r){if(r==null)return '#6e7681';var t=Math.max(0,Math.min(1,(r-BAD)/(GOOD-BAD)));var R=t<.5?248:Math.round(248-(t-.5)*2*185),G=t<.5?Math.round(81+t*2*104):185;return 'rgb('+R+','+G+',80)';}
+        function spdcol(m){if(m==null)return '#6e7681';var t=Math.max(0,Math.min(1,m/SPD_MAX));var R=t<.5?248:Math.round(248-(t-.5)*2*185),G=t<.5?Math.round(81+t*2*104):185;return 'rgb('+R+','+G+',80)';}
+        function freshDl(p){return (p.dl!=null&&p.dl_age!=null&&p.dl_age<FRESH_S)?p.dl:null;}
+        function pcol(p){if(mode==='rsrp')return col(p.rsrp);return spdcol(freshDl(p));}
+        var layer=L.layerGroup().addTo(map),live=null,fitted=false,cache=[];
+        /* SINR (signal-to-interference-plus-noise) is the number that actually
+           predicts usable speed — a strong signal full of interference is slow.
+           It was being collected on every reading and never shown. Bands are the
+           conventional LTE reading of it. */
+        function sinrWord(s){if(s==null)return null;return s>=20?['excellent','#3fb950']:(s>=13?['good','#3fb950']:(s>=5?['fair','#d29922']:['poor','#f85149']));}
+        function popup(p){var s='<b>'+(p.rsrp==null?'&mdash;':p.rsrp+' dBm')+'</b> '+(p.net||'')+' '+(p.band||'');
+          var q=sinrWord(p.sinr);
+          if(q)s+='<br>SINR <b>'+p.sinr+' dB</b> <span style="color:'+q[1]+'">'+q[0]+'</span> <span style="opacity:.7">(signal quality)</span>';
+          var f=freshDl(p);if(f!=null)s+='<br><b>'+f+' Mbps</b> download &middot; tested near this spot';
+          if(p.latency!=null)s+='<br>'+Math.round(p.latency)+' ms ping';
+          return s+'<br>'+new Date(p.t*1000).toLocaleString();}
+        function median(a){if(!a.length)return null;a=a.slice().sort(function(x,y){return x-y;});var m=a.length>>1;return a.length%2?a[m]:(a[m-1]+a[m])/2;}
+        /* Best spots: aggregate speed-TESTED points into ~220m grid cells and
+           rank by median measured download. Only fresh tests count — a cell is
+           a real "we measured fast internet here", never an inference. */
+        function bestCells(){var cells={};
+          cache.forEach(function(p){var f=freshDl(p);if(f==null)return;
+            var k=(Math.round(p.lat*500)/500)+','+(Math.round(p.lon*333)/333);
+            (cells[k]=cells[k]||{lat:[],lon:[],dl:[],lat_ms:[],sinr:[],net:{}}).dl.push(f);
+            cells[k].lat.push(p.lat);cells[k].lon.push(p.lon);
+            if(p.latency!=null)cells[k].lat_ms.push(p.latency);
+            if(p.sinr!=null)cells[k].sinr.push(p.sinr);
+            if(p.net)cells[k].net[p.net]=(cells[k].net[p.net]||0)+1;});
+          return Object.keys(cells).map(function(k){var c=cells[k];
+            var net=Object.keys(c.net).sort(function(a,b){return c.net[b]-c.net[a];})[0]||'';
+            return {lat:median(c.lat),lon:median(c.lon),dl:median(c.dl),ms:median(c.lat_ms),sinr:median(c.sinr),n:c.dl.length,net:net};
+          }).sort(function(a,b){return b.dl-a.dl;});}
+        function wr(dl){return dl>=25?['Great for work','wr--good']:(dl>=10?['Calls OK','wr--ok']:['Struggles','wr--bad']);}
+        function render(){var pts=cache;layer.clearLayers();
+          var list=document.getElementById('sigmap-best');
+          if(mode==='best'){list.hidden=false;list.innerHTML='';
+            var cells=bestCells();
+            if(!cells.length){list.innerHTML='<li style="cursor:default"><span class="meta">No speed-tested spots yet &mdash; they appear after drives (tests run every 5 minutes on the road).</span></li>';}
+            cells.forEach(function(c,i){
+              var mk=L.circleMarker([c.lat,c.lon],{radius:Math.min(9+c.n,16),color:spdcol(c.dl),fillColor:spdcol(c.dl),fillOpacity:.8,weight:2})
+                .bindPopup('<b>'+Math.round(c.dl)+' Mbps</b> median download &middot; '+c.n+' test'+(c.n>1?'s':'')+(c.ms!=null?('<br>'+Math.round(c.ms)+' ms ping'):'')+(c.sinr!=null?('<br>SINR '+Math.round(c.sinr)+' dB'):'')+(c.net?('<br>'+c.net):'')).addTo(layer);
+              if(i<5){L.marker([c.lat,c.lon],{icon:L.divIcon({className:'',html:'<div class="sigmap-rank">'+(i+1)+'</div>',iconSize:[26,26],iconAnchor:[13,13]}),interactive:false}).addTo(layer);}
+              if(i<8){var li=document.createElement('li');var w=wr(c.dl);
+                li.innerHTML='<span class="rk">'+(i+1)+'</span><span class="mb">'+Math.round(c.dl)+' Mbps</span><span class="meta">'+(c.ms!=null?(Math.round(c.ms)+' ms &middot; '):'')+(c.sinr!=null?('SINR '+Math.round(c.sinr)+' dB &middot; '):'')+(c.net?(c.net+' &middot; '):'')+c.n+' test'+(c.n>1?'s':'')+'</span><span class="wr '+w[1]+'">'+w[0]+'</span>';
+                li.addEventListener('click',function(){map.setView([c.lat,c.lon],15);});
+                list.appendChild(li);}});
+            if(live){map.removeLayer(live);live=null;}
+            map.invalidateSize();return;}
+          list.hidden=true;
+          var ll=[];
+          pts.forEach(function(p){ll.push([p.lat,p.lon]);
+            var tested=(mode==='speed'&&freshDl(p)!=null);
+            L.circleMarker([p.lat,p.lon],{radius:tested?7:5,color:pcol(p),fillColor:pcol(p),fillOpacity:(mode==='speed'&&!tested)?.35:.85,weight:1}).bindPopup(popup(p)).addTo(layer);});
+          /* No connecting polyline. This map answers "where is the signal good",
+             not "where did the van drive" — and joining the dots would draw the
+             actual route, which is more revealing than the readings themselves.
+             `ll` is still collected, but only to fit the view. */
+          if(live){map.removeLayer(live);live=null;}
+          if(!fitted&&ll.length){map.fitBounds(ll,{padding:[40,40],maxZoom:14});fitted=true;}map.invalidateSize();}
+        var userChose=false;
+        function setMode(m){mode=m;
+          ['rsrp','speed','best'].forEach(function(x){document.getElementById('sigmode-'+x).setAttribute('aria-pressed',m===x);});
+          legend();render();}
+        ['rsrp','speed','best'].forEach(function(x){document.getElementById('sigmode-'+x).addEventListener('click',function(){userChose=true;setMode(x);});});
+        var firstLoad=true;
+        function refresh(){fetch(ENDPOINT+'?_='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
+          cache=(j.points||[]).filter(function(p){return p.lat!=null&&p.lon!=null;});
+          document.getElementById('sigmap-empty').hidden=cache.length>0;
+          var nSpd=cache.filter(function(p){return p.dl!=null&&p.dl_age!=null&&p.dl_age<FRESH_S;}).length;
+          document.getElementById('sigmap-status').textContent=cache.length?(cache.length+' readings'+(nSpd?(' · '+nSpd+' speed tests'):'')):'logging (no fix yet)';
+          /* Once enough places have real speed tests, the GUIDE is the point of
+             the page — open on Best spots (unless the visitor picked a view). */
+          if(firstLoad&&!userChose&&bestCells().length>=3){setMode('best');firstLoad=false;return;}
+          firstLoad=false;render();
+        }).catch(function(){document.getElementById('sigmap-status').textContent='offline';});}
+        refresh();setInterval(refresh,REFRESH);}
+      if(document.readyState!=='loading')start();else document.addEventListener('DOMContentLoaded',start);
+    })();
+    </script>
+
+</body>
+</html>
