@@ -256,12 +256,18 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
   white-space: nowrap;
   transition: color 0.25s ease, text-shadow 0.25s ease;
 }
-@media (max-width: 1799px) {
+/* Keep everything (incl. the red SOS button) on screen on mid-width desktops.
+   ⚠ The upper bound was 1799px, which released the tighter spacing exactly where
+   it was still needed: measured 2026-08-12 at a 1820px viewport, nav font returns
+   to 0.94rem and .header-bar demands 1814px against 1805px available, leaving
+   .nav-sos just 6px inside the right edge. 1919px keeps the tight treatment
+   through the whole risky band; at >=1920px there is ~90px of slack. */
+@media (max-width: 1919px) {
   .desktop-nav > a, .nav-item > a { padding: 0.55rem 0.45rem; font-size: 0.9rem; }
   .nav-cta { padding: 0.55rem 1.1rem !important; margin-left: 0.4rem; }
   .nav-sos { padding: 0.55rem 0.8rem; }
   .header-actions { gap: 0.5rem; }
-  .header-bar { padding: 0 clamp(1.1rem, 3vw, 2.6rem); }  /* keep everything (incl. SOS) on screen on mid-width desktops */
+  .header-bar { padding: 0 clamp(1.1rem, 3vw, 2.6rem); }
 }
 .desktop-nav > a::after, .nav-item > a::after {
   content: "";
@@ -364,7 +370,11 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
   box-shadow: var(--glow-sos);
 }
 
-@media (max-width: 1799px) { .nav-sos__long { display: none; } }
+/* Keep the SOS label short while the header row is still tight. Moved 1799 -> 1919
+   to match the nav-tightening block and the search-label rule: all three used to
+   expand the row at exactly 1800px at once, which is what pushed .nav-sos to
+   within 6px of the right edge at 1820px. They must share one threshold. */
+@media (max-width: 1919px) { .nav-sos__long { display: none; } }
 
 /* Hamburger */
 .mobile-menu-button {
@@ -1259,10 +1269,29 @@ body.menu-open { overflow: hidden; }
   .hero__console { display: none; }
 }
 
-/* full nav only shows when it comfortably fits; below 1360px it would push the red
+/* full nav only shows when it comfortably fits; below this it would push the red
    SOS button off the right edge, so use the hamburger there instead
-   (placed here, after the base .mobile-menu-button rule, so it wins the cascade) */
-@media (max-width: 1359px) {
+   (placed here, after the base .mobile-menu-button rule, so it wins the cascade)
+
+   ⚠ 1359px was TOO LOW and the bug it describes was live. Measured on the live
+   site 2026-08-12: at a 1360px viewport the nav switches on and .header-bar
+   demands 1432px against 1345px available, putting .nav-sos at x=1355-1432 -
+   72px PAST the right edge. elementFromPoint at its own centre returned nothing:
+   the red emergency button was invisible AND unclickable from 1360px to ~1435px,
+   which includes 1366x768, the commonest Windows laptop width. At 1440px it
+   cleared by only 7px.
+
+   It hid because body has overflow-x:hidden (line 77), so the row is CLIPPED
+   rather than scrolled - document.scrollWidth equals the viewport and every
+   "does the page scroll sideways?" check passes while the button is off-screen.
+   Real demand is 1433px + ~15px padding, so the nav needs ~1450px. 1459 leaves
+   ~25px of headroom at 1460.
+
+   ⚠ Nav items are rem-sized, so ANY rise in root font-size or nav font-size
+   raises this demand and this number must be re-measured. Check
+   .header-bar.scrollWidth <= .header-bar.clientWidth at 1460 and at each
+   html.a11y-text-N step before lowering it. */
+@media (max-width: 1459px) {
   .desktop-nav { display: none; }
   .mobile-menu-button { display: flex; }
 }
@@ -1860,13 +1889,15 @@ html.ss-open { overflow: hidden; }
   font-family: var(--font-mono); font-size: 0.72rem; line-height: 1; padding: 3px 5px; color: var(--muted);
   background: rgba(125, 170, 220, 0.12); border: 1px solid var(--line); border-radius: var(--r-sm);
 }
-/* Search stays icon-only through the mid-width desktop band (1360-1799px): a Dell
-   top-level link now sits in the nav, and keeping the magnifier compact stops the
+/* Search stays icon-only through the mid-width desktop band (now 1460-1919px): a
+   Dell top-level link sits in the nav, and keeping the magnifier compact stops the
    header row from pushing the red SOS button off the right edge. The "Search" word
-   and the kbd hint both return at >=1800px, where there is ample room. */
+   and the kbd hint both return at >=1920px, where there is ample room.
+   ⚠ 1800 -> 1920 so this shares the one threshold with the nav-tightening block and
+   .nav-sos__long; three rules expanding the row at once was the 1820px squeeze. */
 .nav-search__label { display: none; }
 .nav-search__k { display: none; }
-@media (min-width: 1800px) { .nav-search__label { display: inline; } .nav-search__k { display: inline-flex; } }
+@media (min-width: 1920px) { .nav-search__label { display: inline; } .nav-search__k { display: inline-flex; } }
 @media (max-width: 620px) { .nav-search kbd, .nav-search .nav-search__k { display: none; } .nav-search { padding: 0 0.6rem; } }
 
 /* big search box (homepage + hubs) */
