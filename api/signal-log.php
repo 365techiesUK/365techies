@@ -39,9 +39,27 @@ define('SHARED_TOKEN', is_string($__t) ? $__t : '');
 // Points inside the fence keep their signal reading but have their location
 // STRIPPED — at POST (future points) AND at GET (points stored before the
 // fence existed), so enabling it retroactively hides history too.
+// An optional 4th element widens the zone in which a spot may be PLOTTED but
+// never NAMED. Plotting an anonymous dot near base is harmless; printing
+// "Bear Cross — 61 Mbps, 98 tests" is not, because a high test count is a
+// habitual-parking tell. Falls back to 5x the strip radius if not given.
+//     <?php return [50.0000, -1.0000, 300, 2000];   // lat, lon, strip m, no-name m
 $__f = @include __DIR__ . '/geo-fence.php';
-define('GEO_FENCE', (is_array($__f) && count($__f) === 3
+define('GEO_FENCE', (is_array($__f) && count($__f) >= 3
     && is_numeric($__f[0]) && is_numeric($__f[1]) && is_numeric($__f[2])) ? $__f : null);
+define('NO_NAME_M', GEO_FENCE ? (float)(GEO_FENCE[3] ?? GEO_FENCE[2] * 5) : 0.0);
+
+// ── summary mode: ?summary=1 ────────────────────────────────────────────────
+// Returns a small, PLACE-NAMED, privacy-filtered digest of the best-measured
+// spots. Exists so the public page can be SERVER-RENDERED with real place
+// names and numbers: AI crawlers (GPTBot, ClaudeBot, PerplexityBot) do not run
+// JavaScript, so anything only drawn by the map is invisible to them — and the
+// ranked spots are the one uniquely-owned, quotable thing here.
+const SUMMARY_CELL_LAT = 500;    // ~220 m cells, same grid the map ranks on
+const SUMMARY_CELL_LON = 333;
+const SUMMARY_MIN_TESTS = 2;     // a single reading is noise, not a "spot"
+const SUMMARY_FRESH_S  = 420;    // a speed test only counts at the place it ran
+const SUMMARY_MAX      = 8;
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -64,6 +82,11 @@ if ($method === 'GET') {
         $net = strtoupper((string)($p['net'] ?? ''));
         return $net !== 'FENCEPROBE' && $net !== 'TOKENTEST' && $net !== 'TEST';
     }));
+    if (isset($_GET['summary'])) {
+        header('Cache-Control: no-store, max-age=0');
+        echo json_encode(build_summary($points));
+        exit;
+    }
     if ($since > 0) {
         $points = array_values(array_filter($points, fn($p) => ($p['t'] ?? 0) > $since));
     }
@@ -160,6 +183,142 @@ function strip_if_fenced(array $p): array {
     }
     return $p;
 }
+/**
+ * Distance in metres between two lat/lon pairs (haversine).
+ */
+function metres_between(float $la1, float $lo1, float $la2, float $lo2): float {
+    $R = 6371000.0;
+    $dLat = deg2rad($la2 - $la1);
+    $dLon = deg2rad($lo2 - $lo1);
+    $a = sin($dLat / 2) ** 2
+       + cos(deg2rad($la1)) * cos(deg2rad($la2)) * sin($dLon / 2) ** 2;
+    return $R * 2 * atan2(sqrt($a), sqrt(1 - $a));
+}
+
+function median_of(array $a) {
+    if (!$a) return null;
+    sort($a);
+    $n = count($a); $m = intdiv($n, 2);
+    return $n % 2 ? $a[$m] : ($a[$m - 1] + $a[$m]) / 2;
+}
+
+/**
+ * Locality name for a coordinate, reusing the same Nominatim + grid-cache
+ * approach as van-live.php. Deliberately LOCALITY level (zoom 12) — never a
+ * road — so a named spot cannot pinpoint a parking place.
+ */
+function locality_for(float $lat, float $lon) {
+    $cacheFile = __DIR__ . '/signal-geo.json';
+    $key = round($lat, 2) . ',' . round($lon, 2);
+    $cache = [];
+    if (is_file($cacheFile)) {
+        $d = json_decode((string)file_get_contents($cacheFile), true);
+        if (is_array($d)) $cache = $d;
+    }
+    if (array_key_exists($key, $cache)) {
+        return $cache[$key] !== '' ? $cache[$key] : null;
+    }
+    $name = null;
+    if (function_exists('curl_init')) {
+        $url = 'https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=14'
+             . '&lat=' . rawurlencode((string)$lat) . '&lon=' . rawurlencode((string)$lon);
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT        => 6,
+            CURLOPT_USERAGENT      => '365Techies-SignalMap/1.0 (info@365techies.co.uk)',
+        ]);
+        $raw = curl_exec($ch);
+        curl_close($ch);
+        $d = json_decode((string)$raw, true);
+        $a = (is_array($d) && isset($d['address']) && is_array($d['address'])) ? $d['address'] : [];
+        foreach (['suburb', 'village', 'town', 'city_district', 'city', 'municipality'] as $k) {
+            if (!empty($a[$k])) { $name = mb_substr((string)$a[$k], 0, 40); break; }
+        }
+    }
+    $cache[$key] = $name ?? '';
+    if (count($cache) > 500) $cache = array_slice($cache, -500, null, true);
+    $tmp = $cacheFile . '.tmp';
+    if (file_put_contents($tmp, json_encode($cache), LOCK_EX) !== false) @rename($tmp, $cacheFile);
+    return $name;
+}
+
+/**
+ * Place-named digest of the best-measured spots, for SERVER-RENDERING into the
+ * public page. Everything here is deliberately conservative:
+ *  - only points whose speed test actually ran at that place are counted
+ *  - a spot needs more than one test to appear at all
+ *  - spots inside NO_NAME_M of the private zone are ranked but NOT named
+ *  - names are locality level, never road level
+ * Also reports the honest shape of the dataset (area, days, counts) so the page
+ * can state its own limitations instead of implying coverage it doesn't have.
+ */
+function build_summary(array $points): array {
+    $tested = array_values(array_filter($points, fn($p) =>
+        isset($p['lat'], $p['lon'], $p['dl'], $p['dl_age'])
+        && $p['dl'] !== null && $p['dl_age'] !== null && $p['dl_age'] < SUMMARY_FRESH_S));
+
+    $cells = [];
+    $days  = [];
+    $minLa = $minLo = INF; $maxLa = $maxLo = -INF;
+    foreach ($tested as $p) {
+        $k = round($p['lat'] * SUMMARY_CELL_LAT) . ',' . round($p['lon'] * SUMMARY_CELL_LON);
+        if (!isset($cells[$k])) $cells[$k] = ['lat'=>[], 'lon'=>[], 'dl'=>[], 'ms'=>[], 'sinr'=>[], 'net'=>[], 'days'=>[]];
+        $c =& $cells[$k];
+        $c['lat'][] = $p['lat']; $c['lon'][] = $p['lon']; $c['dl'][] = (float)$p['dl'];
+        if (isset($p['latency']) && $p['latency'] !== null) $c['ms'][]   = (float)$p['latency'];
+        if (isset($p['sinr'])    && $p['sinr']    !== null) $c['sinr'][] = (float)$p['sinr'];
+        if (!empty($p['net'])) $c['net'][(string)$p['net']] = (($c['net'][(string)$p['net']] ?? 0) + 1);
+        $d = gmdate('Y-m-d', (int)$p['t']);
+        $c['days'][$d] = 1; $days[$d] = 1;
+        unset($c);
+        $minLa = min($minLa, $p['lat']); $maxLa = max($maxLa, $p['lat']);
+        $minLo = min($minLo, $p['lon']); $maxLo = max($maxLo, $p['lon']);
+    }
+
+    $spots = [];
+    foreach ($cells as $c) {
+        $n = count($c['dl']);
+        if ($n < SUMMARY_MIN_TESTS) continue;
+        $lat = median_of($c['lat']); $lon = median_of($c['lon']);
+        $named = true;
+        if (GEO_FENCE && NO_NAME_M > 0
+            && metres_between((float)GEO_FENCE[0], (float)GEO_FENCE[1], (float)$lat, (float)$lon) < NO_NAME_M) {
+            $named = false;   // ranked, but never labelled
+        }
+        arsort($c['net']);
+        $spots[] = [
+            'name'  => $named ? locality_for((float)$lat, (float)$lon) : null,
+            'dl'    => round((float)median_of($c['dl']), 1),
+            'ms'    => $c['ms']   ? (int)round((float)median_of($c['ms']))   : null,
+            'sinr'  => $c['sinr'] ? (int)round((float)median_of($c['sinr'])) : null,
+            'net'   => $c['net'] ? (string)array_key_first($c['net']) : null,
+            'tests' => $n,
+            'days'  => count($c['days']),
+        ];
+    }
+    usort($spots, fn($a, $b) => $b['dl'] <=> $a['dl']);
+    $named_spots = array_values(array_filter($spots, fn($s) => $s['name'] !== null));
+
+    $kmLat = ($maxLa > -INF) ? ($maxLa - $minLa) * 111.32 : 0;
+    $kmLon = ($maxLa > -INF) ? ($maxLo - $minLo) * 111.32 * cos(deg2rad($minLa)) : 0;
+    ksort($days);
+    $dayKeys = array_keys($days);
+
+    return [
+        'ok'          => true,
+        'generated'   => gmdate('c'),
+        'points'      => count($points),
+        'tested'      => count($tested),
+        'spots_total' => count($spots),
+        'days'        => count($dayKeys),
+        'first_day'   => $dayKeys ? $dayKeys[0] : null,
+        'last_day'    => $dayKeys ? end($dayKeys) : null,
+        'area_km'     => $kmLat ? [round($kmLat, 1), round($kmLon, 1)] : null,
+        'spots'       => array_slice($named_spots, 0, SUMMARY_MAX),
+    ];
+}
+
 function load_points(): array {
     if (!is_file(DATA_FILE)) return [];
     $raw = file_get_contents(DATA_FILE);

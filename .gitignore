@@ -112,3 +112,5 @@ api/van-live-data.json.tmp
 api/van-live-geo.json
 api/van-live-geo.json.tmp
 api/geo-fence.php
+api/signal-geo.json
+api/signal-geo.json.tmp
