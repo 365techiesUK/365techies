@@ -2992,7 +2992,7 @@ TOOLS = {
   "scamquiz":     ("Spot the Scam Quiz", "/spot-the-scam/", "Can you tell a scam from the real thing? Take the free 6-round quiz."),
   "speed":        ("Live Broadband Speed Test", "/broadband-speed-checker/", "Measure your real download, upload and ping right now on a live animated gauge."),
   "wifisig":      ("365 WiFi Optimizer", "/wifi-signal-test/", "Walk around your home and watch the signal get stronger or weaker live &mdash; find your best spot, then get honest advice."),
-  "vanmap":       ("Campervan Signal Map", "/van-signal-map/", "Real 4G/5G speeds our own campervan measured around Dorset &mdash; and the spots that tested fastest for working on the road."),
+  "vanmap":       ("Campervan Signal Map", "/van-signal-map/", "Real 4G/5G speeds our own campervan measured around Bournemouth &mdash; and the spots that tested fastest for working on the road."),
   "wifiqr":       ("Wi-Fi QR Code Generator", "/wifi-qr-code-generator/", "Make a QR code guests scan to join your Wi-Fi &mdash; no typing the password."),
   "qrgen":        ("QR Code Generator", "/qr-code-generator/", "Turn any link, text, email or phone number into a scannable QR code &mdash; download &amp; print."),
   "emailsig":     ("Email Signature Generator", "/email-signature-generator/", "Create a professional email signature in one minute &mdash; live preview, copy straight into Outlook or Gmail."),
@@ -6322,12 +6322,17 @@ VAN_LIVE_PANEL = r"""
 # OSM tiles. Honest framing: measured, not modelled; one van, one network.
 add(
  slug="van-signal-map",
- title="Live Campervan Signal Map | Measured 4G/5G | 365 Techies",
- desc="A live map of the real 4G/5G signal our demonstration campervan measured across Dorset and the South-West. Measured, not modelled. Built with Home Assistant by 365 Techies.",
- og_title="Live Campervan Signal Map \u2014 Measured 4G/5G",
+ # \u26a0\ufe0f Title/desc must match the H1 and must NOT over-claim the area. Every
+ # published reading so far sits in an ~9x7km box over north Bournemouth,
+ # gathered across a couple of days \u2014 "across Dorset and the South-West" was
+ # not supportable and has been removed. Widen the wording only once the van
+ # has actually driven the area being claimed.
+ title="Where You Can Work From a Campervan | Measured 4G/5G",
+ desc="Real 4G/5G speed tests from our own campervan around Bournemouth, pinned to where we took them and ranked by measured download. Measured, not modelled.",
+ og_title="Where You Can Work From a Campervan \u2014 Measured 4G/5G",
  schema=lambda s: graph([
    crumb(s, "Campervan Signal Map"),
-   webpage(s, "Live Campervan Signal Map", "A live map of the real 4G/5G signal our demonstration campervan measured across Dorset and the South-West \u2014 measured, not modelled."),
+   webpage(s, "Where You Can Work From a Campervan", "Real 4G/5G speed tests our demonstration campervan measured around Bournemouth, pinned to where we took them and ranked by measured download \u2014 measured, not modelled."),
  ]),
  content="\n".join([
    hero(bc("Campervan Signal Map"), "// LIVE FROM THE 365 CRAFTER",

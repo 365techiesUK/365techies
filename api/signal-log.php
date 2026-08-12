@@ -57,6 +57,13 @@ if ($method === 'GET') {
     // Private exclusion zone: strip location from any stored point inside the
     // fence (covers points recorded before the fence file existed).
     $points = array_map('strip_if_fenced', $points);
+    // Drop synthetic records from endpoint testing. The whole value of this
+    // dataset is that every row is a real measurement, and it may be offered
+    // as a download later — one fake row would poison it.
+    $points = array_values(array_filter($points, function ($p) {
+        $net = strtoupper((string)($p['net'] ?? ''));
+        return $net !== 'FENCEPROBE' && $net !== 'TOKENTEST' && $net !== 'TEST';
+    }));
     if ($since > 0) {
         $points = array_values(array_filter($points, fn($p) => ($p['t'] ?? 0) > $since));
     }
