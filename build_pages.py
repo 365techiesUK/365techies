@@ -5964,34 +5964,73 @@ add(
 
 # ---- write ----
 def _signal_scene():
-    # A route drawing itself across a faint map, signal readings fading in along
-    # it (green strong -> red weak), a live pulse at the van's head. Same ai-*
-    # animation classes as the /ai/ scenes, so it animates for free.
-    pins = [(70, 176, "#3fb950", 1.1), (116, 168, "#3fb950", 1.3), (168, 150, "#d29922", 1.5),
-            (214, 133, "#f85149", 1.7), (268, 112, "#d29922", 1.9), (320, 86, "#3fb950", 2.1)]
+    # Scattered measurement points on a faint map grid, the three best ringed.
+    #
+    # Deliberately NO line joining them and NO pulse at a "current position":
+    # this page ranks places, it does not trace a route, and it promises further
+    # down that it never shows where the van is right now. The old version drew
+    # both, which contradicted the page twice over and read as a trend chart.
+    #
+    # The callout carries the real top measured download from van_map_data.py,
+    # so the number moves with the data instead of being drawn in by hand.
+    # Same ai-* animation classes as the /ai/ scenes, so it animates for free.
+    try:
+        from van_map_data import VAN_MAP_SUMMARY as _S
+        _spots = _S.get("spots") or []
+        best_dl = max((s.get("dl") or 0) for s in _spots) if _spots else 0
+    except Exception:                                        # noqa: BLE001
+        best_dl = 0
+
+    # SELF-CONTAINED STYLING. This scene originally borrowed the .ai-* classes
+    # from ai_visual.py, but that CSS only ships on the /ai/ pages — here it was
+    # never loaded, so every <text> fell back to black fill on a navy panel
+    # (invisible) and the fades never ran. Own class names, own rules, no
+    # dependency on any other page's stylesheet.
+    css = (
+        '<style>'
+        '.vsig{position:relative;aspect-ratio:5/3;border-radius:var(--r-lg,16px);overflow:hidden;'
+        'background:radial-gradient(120% 100% at 70% 10%,rgba(29,151,227,.13),transparent 62%),'
+        'linear-gradient(165deg,rgba(13,27,52,.8),rgba(7,15,32,.9));'
+        'border:1px solid var(--line,rgba(125,170,220,.18))}'
+        '.vsig svg{position:absolute;inset:0;width:100%;height:100%}'
+        '.vsig text{fill:#9fb5d3;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:9px}'
+        '.vsig text.hi{fill:#eaf4ff}'
+        '.vsig .fade{opacity:0;animation:vsigFade .7s ease forwards;animation-delay:var(--d,1s)}'
+        '@keyframes vsigFade{to{opacity:1}}'
+        '@media (prefers-reduced-motion:reduce){.vsig .fade{animation:none;opacity:1}}'
+        '</style>')
+
+    GREEN, AMBER, RED = "#3fb950", "#d29922", "#f85149"
+    # Ordinary readings. Scattered on purpose - no arrangement that implies an
+    # order, a direction of travel, or a trend.
+    pins = [(72, 110, AMBER, .35), (118, 74, GREEN, .5), (150, 108, AMBER, .65),
+            (200, 96, AMBER, .8), (226, 148, GREEN, .95), (246, 60, GREEN, 1.1),
+            (186, 196, RED, 1.25), (272, 208, RED, 1.4), (330, 148, AMBER, 1.55),
+            (356, 206, GREEN, 1.7)]
     dots = "".join(
-        '<circle class="ai-fade" style="--d:%ss" cx="%s" cy="%s" r="4.5" fill="%s" stroke="#0b1020" stroke-width="1.4"/>'
-        % (d, x, y, c) for x, y, c, d in pins)
+        '<circle class="fade" style="--d:%ss" cx="%s" cy="%s" r="4.5" fill="%s" '
+        'stroke="#0b1020" stroke-width="1.4"/>' % (d, x, y, c) for x, y, c, d in pins)
+
+    # The three best spots: larger, ringed, arriving last so the eye lands there.
+    best = [(292, 96, 1.9), (150, 152, 2.05), (96, 206, 2.2)]
+    rings = "".join(
+        '<g class="fade" style="--d:%ss">'
+        '<circle cx="%s" cy="%s" r="13" fill="none" stroke="%s" stroke-width="1.4" opacity=".55"/>'
+        '<circle cx="%s" cy="%s" r="7" fill="%s" stroke="#0b1020" stroke-width="1.6"/></g>'
+        % (d, x, y, GREEN, x, y, GREEN) for x, y, d in best)
+
+    callout = ('<text class="hi fade" style="--d:2.45s" x="312" y="99">'
+               '%g Mbps</text>' % best_dl) if best_dl else ""
+
     grid = "".join(
         '<circle cx="%s" cy="%s" r="1.1" fill="#24456f" opacity=".5"/>' % (gx, gy)
         for gx in range(28, 392, 34) for gy in range(28, 224, 34))
     return (
-        '<div class="ai-scene" data-reveal aria-hidden="true">'
-        '<svg class="ai-scene__svg" viewBox="0 0 400 240" aria-hidden="true" focusable="false">'
-        + grid
-        + '<path class="ai-draw" style="--len:360;--d:.3s" fill="none" stroke="#58a6ff" '
-          'stroke-width="2.6" stroke-linecap="round" '
-          'd="M40 198 C 98 156 138 178 196 138 S 306 92 356 60"/>'
-        + dots
-        + '<g class="ai-beat" style="--d:0s">'
-          '<circle class="ai-nd ai-glow" cx="356" cy="60" r="8" fill="#3fb950"/>'
-          '<circle cx="356" cy="60" r="4" fill="#eafff1"/></g>'
-          '<path class="ai-fade" style="--d:2.3s" d="M366 50 a16 16 0 0 1 0 20" fill="none" '
-          'stroke="#3fb950" stroke-width="2" stroke-linecap="round" opacity=".8"/>'
-          '<path class="ai-fade" style="--d:2.5s" d="M373 43 a26 26 0 0 1 0 34" fill="none" '
-          'stroke="#3fb950" stroke-width="1.8" stroke-linecap="round" opacity=".5"/>'
-          '<text class="ai-tx ai-tx--hi" x="30" y="30">MEASURED SIGNAL</text>'
-          '<text class="ai-tx" x="30" y="46">as the van drives</text>'
+        css + '<div class="vsig" data-reveal aria-hidden="true">'
+        '<svg viewBox="0 0 400 240" aria-hidden="true" focusable="false">'
+        + grid + dots + rings + callout
+        + '<text class="hi" x="30" y="30">MEASURED SIGNAL</text>'
+          '<text x="30" y="46">best spots, ranked</text>'
         '</svg></div>')
 
 
