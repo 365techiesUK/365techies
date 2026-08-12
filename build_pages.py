@@ -6014,6 +6014,10 @@ VAN_SIGNAL_MAP_MAP = r"""
       .sigmap-mode button[aria-pressed=true]{background:rgba(29,151,227,.28);color:#fff}
       .sigmap-mode button:focus-visible{outline:2px solid #6cc4f5;outline-offset:-2px}
       .sigmap-rank{background:#1d97e3;color:#fff;border:2px solid #fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font:700 .8rem/1 inherit;box-shadow:0 2px 8px rgba(0,0,0,.5)}
+      .sigmap-legend-cards{list-style:none;margin:0 0 1.15rem;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+      .sigmap-legend-cards li{background:rgba(20,27,46,.5);border:1px solid rgba(125,170,220,.16);border-radius:13px;padding:14px 16px}
+      .sigmap-legend-cards b{display:block;color:#e6edf3;font-size:.95rem;margin-bottom:.28rem}
+      .sigmap-legend-cards span{display:block;color:#9db3cf;font-size:.84rem;line-height:1.5}
       .sigmap-best{max-width:680px;margin:1rem auto 0;padding:0;list-style:none;display:grid;gap:.5rem}
       .sigmap-best li{display:flex;align-items:center;gap:.8rem;background:rgba(20,27,46,.55);border:1px solid rgba(125,170,220,.18);border-radius:12px;padding:.65rem .9rem;cursor:pointer;transition:border-color .2s}
       .sigmap-best li:hover{border-color:rgba(108,196,245,.45)}
@@ -6025,6 +6029,15 @@ VAN_SIGNAL_MAP_MAP = r"""
     </style>
     <section class="section" aria-label="Live measured signal map">
       <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/ THE MAP</p>
+          <h2 class="section-title section-title--center" data-title>Three ways to read it<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ul class="sigmap-legend-cards" data-stagger>
+          <li><b>Best spots</b><span>Everywhere we ran a speed test, ranked by the download we actually measured. Start here.</span></li>
+          <li><b>Speed</b><span>Every reading, coloured by measured download &mdash; grey where we passed through without testing.</span></li>
+          <li><b>Signal</b><span>Raw signal strength. Useful, but weaker than it looks &mdash; see below for why.</span></li>
+        </ul>
         <div class="sigmap-wrap">
           <div class="sigmap-status"><span class="sigmap-dot"></span><span id="sigmap-status">loading&hellip;</span></div>
           <div class="sigmap-mode" role="group" aria-label="Map view">
@@ -6318,10 +6331,10 @@ add(
  ]),
  content="\n".join([
    hero(bc("Campervan Signal Map"), "// LIVE FROM THE 365 CRAFTER",
-        'Measured 4G&thinsp;/&thinsp;5G signal <em class="grad grad--cyan">across Dorset</em>',
-        "The real signal our demonstration campervan measured, plotted exactly where it measured it. Measured, not modelled &mdash; one van, one network, read live by Home Assistant.",
+        'Where you can actually <em class="grad grad--cyan">work</em> from a campervan',
+        "Our demonstration van runs a real 4G&thinsp;/&thinsp;5G speed test every five minutes as it drives, and pins the result to the spot. This map ranks the places that measured fastest &mdash; the honest version, from one van on one network, read live by Home Assistant.",
         cta1=("How it\u2019s built", "/off-grid-victron-energy/"), cta2=("Talk to us", "/contact/"),
-        chips=["Measured, not modelled", "Live from the van", "Three UK 4G/5G"],
+        chips=["Measured, not modelled", "Speed test every 5 min", "Ranked best spots"],
         scene=_signal_scene()),
    VAN_LIVE_PANEL,
    VAN_SIGNAL_MAP_MAP,
