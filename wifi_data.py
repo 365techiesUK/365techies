@@ -554,7 +554,7 @@ WIFI_PAGES = [
                    '<a href="/wifi-troubleshooting/">fix WiFi that is already misbehaving</a> &middot; '
                    '<a href="/wifi-uk-buildings-heat/">why UK walls and hot weather break WiFi</a> &middot; '
                    '<a href="/business-wifi-installation/">business WiFi in Dorset</a> &middot; '
-                   '<a href="/wifi-signal-test/">test your signal live, free</a></p>'},
+                   '<a href="/wifi-signal-test/">test your signal live, free</a> &middot; <a href="/printer-wont-connect-to-mesh-wifi/">printer won&rsquo;t connect to mesh</a></p>'},
 
 # ===========================================================================
 # 2. SETUP GUIDE (HowTo schema)
@@ -810,7 +810,7 @@ WIFI_PAGES = [
  'crossLinksHtml': '<p><strong>Related:</strong> <a href="/mesh-wifi-systems-uk/">which mesh system to buy</a> &middot; '
                    '<a href="/wifi-troubleshooting/">fault-finding when it goes wrong</a> &middot; '
                    '<a href="/wifi-uk-buildings-heat/">walls, insulation and hot weather</a> &middot; '
-                   '<a href="/wifi-signal-test/">measure your signal, free</a></p>'},
+                   '<a href="/wifi-signal-test/">measure your signal, free</a> &middot; <a href="/printer-wont-connect-to-mesh-wifi/">printer won&rsquo;t join the mesh</a></p>'},
 
 # ===========================================================================
 # 3. TROUBLESHOOTING
@@ -1117,7 +1117,7 @@ WIFI_PAGES = [
  'crossLinksHtml': '<p><strong>Related:</strong> <a href="/monthly-it-support/">monthly IT support for business</a> &middot; '
                    '<a href="/wifi-uk-buildings-heat/">building fabric and heat</a> &middot; '
                    '<a href="/mesh-wifi-setup-guide/">setup guide</a> &middot; '
-                   '<a href="/wifi-troubleshooting/">fault-finding</a></p>'},
+                   '<a href="/wifi-troubleshooting/">fault-finding</a> &middot; <a href="/business-wifi-health-check-dorset/">business WiFi health check</a></p>'},
 
 # ===========================================================================
 # 5. UK BUILDINGS + HOT WEATHER

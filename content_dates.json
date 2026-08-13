@@ -1,7 +1,7 @@
 {
  "365-ai-os": {
   "first": "2026-07-28",
-  "h": "0caacc0e72e6c0ff",
+  "h": "3af239b435853199",
   "last": "2026-08-13"
  },
  "about": {
@@ -36,7 +36,7 @@
  },
  "ai": {
   "first": "2026-08-07",
-  "h": "4c36290b74176c18",
+  "h": "e67d43880a39cc47",
   "last": "2026-08-13"
  },
  "ai-for-beginners-course": {
@@ -76,7 +76,7 @@
  },
  "ai/consultancy": {
   "first": "2026-08-07",
-  "h": "8f9734aa39dd2788",
+  "h": "5fe5234001e89e8c",
   "last": "2026-08-13"
  },
  "ai/industries": {
@@ -91,7 +91,7 @@
  },
  "ai/start": {
   "first": "2026-08-07",
-  "h": "bce644d486db6394",
+  "h": "58a46c16af32faa3",
   "last": "2026-08-13"
  },
  "ai/tools": {
@@ -101,7 +101,7 @@
  },
  "ai/training": {
   "first": "2026-08-07",
-  "h": "0f24bc5743ca53df",
+  "h": "96b4af7b8b2b113b",
   "last": "2026-08-13"
  },
  "ai/voice-agents": {
@@ -236,7 +236,7 @@
  },
  "business-access-point-end-of-life": {
   "first": "2026-07-28",
-  "h": "95ae03498656f582",
+  "h": "fa9f1d5067e78012",
   "last": "2026-08-13"
  },
  "business-broadband-connectivity": {
@@ -296,7 +296,7 @@
  },
  "business-it-support-subscriptions": {
   "first": "2026-07-28",
-  "h": "092950aee71a69b7",
+  "h": "101c59091ee64411",
   "last": "2026-08-13"
  },
  "business-wifi-health-check-dorset": {
@@ -306,7 +306,7 @@
  },
  "business-wifi-installation": {
   "first": "2026-07-28",
-  "h": "79ff9842cd4a97c9",
+  "h": "5b82b91e7a15d902",
   "last": "2026-08-13"
  },
  "campervan-wifi-keeps-dropping": {
@@ -336,7 +336,7 @@
  },
  "cctv-in-detached-garage-connect-to-house": {
   "first": "2026-07-28",
-  "h": "15cf79314069df0e",
+  "h": "6f1bb917ccf0941f",
   "last": "2026-08-13"
  },
  "cctv-not-working-after-changing-broadband": {
@@ -346,7 +346,7 @@
  },
  "cctv-smart-home": {
   "first": "2026-07-28",
-  "h": "d0ea51db61ea3f4c",
+  "h": "de79718833ad89fd",
   "last": "2026-08-13"
  },
  "cerbo-gx-gps": {
@@ -676,7 +676,7 @@
  },
  "cybersecurity-support": {
   "first": "2026-07-28",
-  "h": "b7d5e5a92314fd0a",
+  "h": "97f8c4ff5d7b406b",
   "last": "2026-08-13"
  },
  "data-breaches": {
@@ -751,7 +751,7 @@
  },
  "dell-laptop-battery-replacement-dorset": {
   "first": "2026-07-28",
-  "h": "2dcb4d320e5de61c",
+  "h": "126f6b6caf4432e7",
   "last": "2026-08-13"
  },
  "dell-laptop-hinge-repair": {
@@ -761,7 +761,7 @@
  },
  "dell-laptop-repair-bournemouth": {
   "first": "2026-07-28",
-  "h": "96f88516e9c025fa",
+  "h": "37641583fb3a7ae6",
   "last": "2026-08-13"
  },
  "dell-laptop-repair-poole": {
@@ -876,7 +876,7 @@
  },
  "dell-out-of-warranty-repair": {
   "first": "2026-07-28",
-  "h": "f646f27695f41d07",
+  "h": "6522946e7e6ca0f2",
   "last": "2026-08-13"
  },
  "dell-precision-vs-latitude": {
@@ -926,7 +926,7 @@
  },
  "dell-xps-repair-bournemouth": {
   "first": "2026-07-28",
-  "h": "345a0cd793460759",
+  "h": "adb70720494f33f3",
   "last": "2026-08-13"
  },
  "dell-xps-swollen-battery": {
@@ -1016,7 +1016,7 @@
  },
  "employee-left-dont-know-computer-password": {
   "first": "2026-07-28",
-  "h": "09f69e3d48609a45",
+  "h": "75fe10e65f1b85ec",
   "last": "2026-08-13"
  },
  "event-wifi-dorset": {
@@ -1241,7 +1241,7 @@
  },
  "how-to-make-your-laptop-battery-last-longer": {
   "first": "2026-06-16",
-  "h": "0542de43b62d283c",
+  "h": "b259fa0d802605cc",
   "last": "2026-08-13"
  },
  "how-to-prepare-business-for-windows-11": {
@@ -1341,7 +1341,7 @@
  },
  "how-to-wipe-and-recycle-old-computer": {
   "first": "2026-07-28",
-  "h": "a8231bdf18a6bd78",
+  "h": "b35f09de53645e22",
   "last": "2026-08-13"
  },
  "how-we-price": {
@@ -1881,17 +1881,17 @@
  },
  "landline-switch-off-help": {
   "first": "2026-07-28",
-  "h": "61b1ad2d16fb3d9b",
+  "h": "fc4332c0e46c8e01",
   "last": "2026-08-13"
  },
  "laptop-clicking-noise-wont-turn-on": {
   "first": "2026-07-28",
-  "h": "0e5a5eb1e5e1c3f5",
+  "h": "18aca328f0d4cf8e",
   "last": "2026-08-13"
  },
  "laptop-repair": {
   "first": "2026-07-28",
-  "h": "175f359a91ff77ed",
+  "h": "4cd11a5354ebed99",
   "last": "2026-08-13"
  },
  "laptop-screen-flickers-then-goes-black": {
@@ -1901,12 +1901,12 @@
  },
  "laptop-screen-repair": {
   "first": "2026-07-28",
-  "h": "bc3c36b3ed67174c",
+  "h": "aa5d456fbdd3e6bb",
   "last": "2026-08-13"
  },
  "laptop-screen-repair-cost-bournemouth": {
   "first": "2026-07-28",
-  "h": "5829e2851b03e721",
+  "h": "5754ab0e7cca4ccd",
   "last": "2026-08-13"
  },
  "laptop-set-up-for-elderly-parent": {
@@ -1936,12 +1936,12 @@
  },
  "laptop-turns-off-when-unplugged": {
   "first": "2026-07-28",
-  "h": "623481416b1ff8b8",
+  "h": "fe86891a31bbc101",
   "last": "2026-08-13"
  },
  "laptop-wont-turn-on-no-lights": {
   "first": "2026-07-28",
-  "h": "baa123ba2447cfe2",
+  "h": "560f5a8fc1dce75f",
   "last": "2026-08-13"
  },
  "leave-a-review": {
@@ -2006,12 +2006,12 @@
  },
  "mesh-wifi-setup-guide": {
   "first": "2026-07-28",
-  "h": "3cf5da1b29b756f4",
+  "h": "bb2df3de84036e17",
   "last": "2026-08-13"
  },
  "mesh-wifi-systems-uk": {
   "first": "2026-07-28",
-  "h": "1b40191a2a27c2cb",
+  "h": "b058ee870f24754b",
   "last": "2026-08-13"
  },
  "microsoft-365-backup-do-you-need-it": {
@@ -2086,7 +2086,7 @@
  },
  "new-laptop-set-up-bournemouth": {
   "first": "2026-07-28",
-  "h": "4cc379c80614bd6f",
+  "h": "5fff122fe8c98576",
   "last": "2026-08-13"
  },
  "new-outlook-blank-screen": {
@@ -2596,17 +2596,17 @@
  },
  "printer-stopped-working-after-changing-wifi-password": {
   "first": "2026-07-28",
-  "h": "fed11433f847909b",
+  "h": "315e3bdddc350645",
   "last": "2026-08-13"
  },
  "printer-support": {
   "first": "2026-07-28",
-  "h": "ee3ae4fa9008258d",
+  "h": "52491acdfe0e31a3",
   "last": "2026-08-13"
  },
  "printer-wont-connect-after-changing-broadband": {
   "first": "2026-07-28",
-  "h": "fcdd60d6d82f6a04",
+  "h": "8580ec8cbb80e4c5",
   "last": "2026-08-13"
  },
  "printer-wont-connect-after-moving-house": {
@@ -2661,7 +2661,7 @@
  },
  "quickbooks-sage-running-slow": {
   "first": "2026-07-28",
-  "h": "4f8a59441ea1e376",
+  "h": "aa5aefe04504378d",
   "last": "2026-08-13"
  },
  "ransomware": {
@@ -2676,7 +2676,7 @@
  },
  "recover-photos-deceased-relatives-laptop": {
   "first": "2026-07-28",
-  "h": "3ebe64ff431ea320",
+  "h": "ec23ddbe159fd581",
   "last": "2026-08-13"
  },
  "recreate-outlook-profile-without-losing-emails": {
@@ -2801,7 +2801,7 @@
  },
  "sage-50-multi-user-cannot-connect": {
   "first": "2026-07-28",
-  "h": "68c5a134dd901a3e",
+  "h": "494955aef0b61c12",
   "last": "2026-08-13"
  },
  "sage-50-wont-email-invoices-outlook": {
@@ -2811,7 +2811,7 @@
  },
  "sage-50-wont-print-to-pdf-windows-11": {
   "first": "2026-07-28",
-  "h": "e4e4d1a298b9409c",
+  "h": "08f484caa614b0c8",
   "last": "2026-08-13"
  },
  "sage-instant-accounts-windows-11": {
@@ -2836,7 +2836,7 @@
  },
  "secure-it-disposal": {
   "first": "2026-07-28",
-  "h": "25472147fe924035",
+  "h": "dbc0e222c4c1b24d",
   "last": "2026-08-13"
  },
  "security-awareness-training": {
@@ -2946,7 +2946,7 @@
  },
  "small-business-it-support": {
   "first": "2026-07-28",
-  "h": "a3f471ea57007d41",
+  "h": "a88a1527b971bb89",
   "last": "2026-08-13"
  },
  "smart-tv-streaming-setup-help": {
@@ -3141,7 +3141,7 @@
  },
  "voip-business-phones": {
   "first": "2026-07-28",
-  "h": "ba8267085c2b1344",
+  "h": "d2f758849167ad96",
   "last": "2026-08-13"
  },
  "web-care": {
@@ -3216,7 +3216,7 @@
  },
  "what-to-do-when-an-employee-leaves": {
   "first": "2026-06-16",
-  "h": "fd5c308d5b8d20f6",
+  "h": "09b5c9ac3618913c",
   "last": "2026-08-13"
  },
  "what-websites-know": {
@@ -3276,7 +3276,7 @@
  },
  "why-does-my-printer-keep-disconnecting": {
   "first": "2026-06-16",
-  "h": "07e7a4ca0d505455",
+  "h": "f3d4f7deaa393be2",
   "last": "2026-08-13"
  },
  "why-home-users-need-regular-maintenance": {
@@ -3306,7 +3306,7 @@
  },
  "wifi-controller-end-of-life": {
   "first": "2026-07-28",
-  "h": "59a5f3220fd73c04",
+  "h": "8bb11b3f7379a98b",
   "last": "2026-08-13"
  },
  "wifi-drops-moving-between-access-points": {
@@ -3346,12 +3346,12 @@
  },
  "wifi-signal-test": {
   "first": "2026-07-28",
-  "h": "313f69f474fef200",
+  "h": "15f1577eceabbc49",
   "last": "2026-08-13"
  },
  "wifi-support": {
   "first": "2026-07-28",
-  "h": "ff61be748ec3d131",
+  "h": "0db279550493dda4",
   "last": "2026-08-13"
  },
  "wifi-troubleshooting": {
@@ -3376,7 +3376,7 @@
  },
  "windows-10-end-of-life": {
   "first": "2026-07-28",
-  "h": "5a20d7e3809f6b68",
+  "h": "71e1b785ca928f10",
   "last": "2026-08-13"
  },
  "windows-10-esu-business-cost": {
@@ -3386,12 +3386,12 @@
  },
  "windows-10-esu-free-enrolment-help": {
   "first": "2026-07-28",
-  "h": "235f0cb28aaa7d89",
+  "h": "e6f53d2ba25c323f",
   "last": "2026-08-13"
  },
  "windows-10-esu-or-upgrade-your-dell": {
   "first": "2026-07-28",
-  "h": "e0f0aa8e3dc47d00",
+  "h": "165667a0a45de9ca",
   "last": "2026-08-13"
  },
  "windows-11-cant-access-windows-10-shared-folder": {

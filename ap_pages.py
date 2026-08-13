@@ -148,7 +148,7 @@ def pillar():
              "it cannot do &mdash; and if the answer is nothing, do nothing."),
             ("shield", "It works but can't be patched",
              "That is a risk decision somebody in the business has to take knowingly. "
-             "<a href=\"/unsupported-access-point-security-risk/\">Here is how to weigh it</a>."),
+             "<a href=\"/unsupported-access-point-security-risk/\">Here is how to weigh it</a>. The same decision arrives when <a href=\"/firewall-licence-expired-what-happens/\">a firewall licence expires</a>."),
             ("clock", "The controller is out of support",
              "This is usually the real deadline, and it is not the access points. "
              "<a href=\"/wifi-controller-end-of-life/\">Why the controller decides</a>."),
@@ -680,7 +680,7 @@ def s7_controller():
              "second, and buys you years."),
             ("users", "Ask who is on the vendor's email list",
              "If licence and end-of-life notices go to someone who left, or to the company that "
-             "installed it in 2016, fix that today. It is free and it prevents surprises."),
+             "installed it in 2016, fix that today. It is free and it prevents surprises. The same clock runs on your firewall &mdash; see <a href=\"/firewall-licence-expired-what-happens/\">what happens when a firewall licence expires</a>."),
         ]),
         '</div></section>',
     ])
