@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Water effects — private demo | 365 Techies</title>
+<style>
+  /* Private demo page - deliberately standalone (no site chrome), site palette. */
+  :root{
+    --bg:#070d22; --ink:#eaf4ff; --mut:#9fb5d3; --line:rgba(125,170,220,.22);
+    --cyan:#1d97e3; --deep:#0b73b5; --teal:#0fb5a6; --card:rgba(13,27,52,.72);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:900px;margin:0 auto;padding:2.2rem 1.2rem 5rem}
+  h1{font-size:clamp(1.6rem,4vw,2.3rem);line-height:1.2;margin:0 0 .6rem}
+  h2{font-size:1.25rem;margin:2.6rem 0 .5rem}
+  p{margin:.4rem 0;max-width:64ch;color:var(--mut)}
+  strong{color:var(--ink)}
+  .tag{display:inline-block;font:600 .68rem/1 ui-monospace,Consolas,monospace;letter-spacing:.1em;text-transform:uppercase;
+       border:1px solid var(--cyan);color:var(--cyan);border-radius:999px;padding:.3rem .6rem;margin:0 .4rem .4rem 0}
+  .tag.ok{border-color:var(--teal);color:var(--teal)}
+  .tag.warn{border-color:#e0b341;color:#e0b341}
+
+  /* ---------- DEMO 1: the contained fluid panel ---------- */
+  .fluidbox{position:relative;height:min(62vh,540px);border:1px solid var(--line);border-radius:14px;
+            overflow:hidden;background:var(--bg);margin:.8rem 0 0}
+  .fluidbox canvas{width:100%;height:100%;display:block;touch-action:none}
+  .fluidbox .hint{position:absolute;inset:auto 0 .9rem 0;text-align:center;font-size:.85rem;color:var(--mut);
+                  pointer-events:none;text-shadow:0 1px 8px rgba(0,0,0,.8)}
+  .fluidbox .hero-demo{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;text-align:center;padding:1rem}
+  .fluidbox .hero-demo h3{font-size:clamp(1.4rem,4.5vw,2.4rem);margin:0;text-shadow:0 2px 24px rgba(0,0,0,.65)}
+  .fluidbox .hero-demo p{color:var(--ink);opacity:.85;text-shadow:0 1px 12px rgba(0,0,0,.8)}
+  .rm-note{display:none;border:1px solid var(--line);border-radius:14px;padding:1.2rem;margin:.8rem 0 0;color:var(--mut)}
+  @media (prefers-reduced-motion: reduce){
+    .fluidbox{display:none}
+    .rm-note{display:block}
+  }
+
+  /* ---------- DEMO 2: wave dividers (the works-everywhere tier) ---------- */
+  .band{padding:3rem 1.2rem;text-align:center}
+  .band--tint{background:linear-gradient(180deg,rgba(11,115,181,.10),rgba(15,181,166,.05))}
+  .waves{display:block;width:100%;height:70px;margin:-1px 0}
+  .waves path{fill:rgba(29,151,227,.10)}
+  .waves .w2{fill:rgba(29,151,227,.16)}
+  .waves .w3{fill:rgba(15,181,166,.12)}
+  @media (prefers-reduced-motion: no-preference){
+    .wavedrift .w1{animation:drift 26s linear infinite}
+    .wavedrift .w2{animation:drift 19s linear infinite reverse}
+    .wavedrift .w3{animation:drift 13s linear infinite}
+  }
+  @keyframes drift{from{transform:translateX(0)}to{transform:translateX(-220px)}}
+
+  /* ---------- DEMO 3: click ripples ---------- */
+  .ripplezone{position:relative;border:1px solid var(--line);border-radius:14px;overflow:hidden;
+              height:220px;display:grid;place-items:center;background:var(--card);cursor:pointer}
+  .ripplezone p{pointer-events:none}
+  .ripple{position:absolute;border:2px solid rgba(29,151,227,.55);border-radius:50%;
+          transform:translate(-50%,-50%);pointer-events:none;animation:rip 1.1s ease-out forwards}
+  .ripple.r2{border-color:rgba(15,181,166,.4);animation-duration:1.5s;animation-delay:.12s}
+  @keyframes rip{from{width:12px;height:12px;opacity:.9}to{width:340px;height:340px;opacity:0}}
+  @media (prefers-reduced-motion: reduce){.ripple{display:none}}
+  footer{margin-top:3rem;border-top:1px solid var(--line);padding-top:1rem;font-size:.85rem;color:var(--mut)}
+  a{color:var(--cyan)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p style="font:600 .7rem/1 ui-monospace,Consolas,monospace;letter-spacing:.14em;color:var(--mut)">// PRIVATE DEMO &middot; NOT LINKED &middot; NOT INDEXED</p>
+  <h1>Bridgewater water effects &mdash; try all three tiers</h1>
+  <p>Three candidate treatments, cheapest last. Judge them on this iPad and on the desktop &mdash; especially <strong>how they feel after thirty seconds</strong>, not three. Everything here honours the system Reduce&nbsp;Motion setting: turn it on and the water goes still.</p>
+
+  <h2>1 &middot; The showpiece: interactive water ink <span class="tag warn">homepage hero only &middot; gated</span></h2>
+  <p><strong>Drag a finger (or the mouse) through the panel.</strong> This is a real fluid simulation running on the graphics chip &mdash; retuned from its neon defaults to slow brand-blue ink. In production it would sit <em>behind the hero heading</em> like this mock, load only after the page is fully interactive, pause when off-screen, and switch off entirely for Reduce-Motion users.</p>
+  <div class="fluidbox" id="fluidbox">
+    <canvas></canvas>
+    <div class="hero-demo">
+      <div>
+        <h3>IT support that flows.</h3>
+        <p>Family-run since 1995 &middot; Bridgewater &amp; sons, Bournemouth</p>
+      </div>
+    </div>
+    <p class="hint">touch the water</p>
+  </div>
+  <div class="rm-note">Reduce Motion is on, so the water demo is hidden &mdash; exactly what would happen on the live site. The hero would show its normal still background instead.</div>
+
+  <h2>2 &middot; The foundation: wave dividers <span class="tag ok">every page &middot; every device</span></h2>
+  <p>Layered waves between sections, drifting very slowly (and standing still under Reduce&nbsp;Motion). Costs almost nothing, works on every phone, and carries the water theme site-wide even where the showpiece never runs. This is the tier the research recommends shipping first.</p>
+</div>
+
+<div class="band band--tint">
+  <p style="margin:0 auto">&hellip;a normal content section ends here&hellip;</p>
+</div>
+<svg class="waves wavedrift" viewBox="0 0 1440 70" preserveAspectRatio="none" aria-hidden="true">
+  <g class="w1"><path d="M0,40 C120,60 240,20 360,38 C480,56 600,24 720,40 C840,56 960,22 1080,38 C1200,54 1320,26 1440,40 L1660,40 L1660,70 L0,70 Z"/></g>
+  <g class="w2"><path class="w2" d="M0,50 C160,34 320,62 480,48 C640,34 800,60 960,50 C1120,40 1280,58 1440,48 L1660,48 L1660,70 L0,70 Z"/></g>
+  <g class="w3"><path class="w3" d="M0,58 C180,66 360,50 540,58 C720,66 900,52 1080,60 C1260,66 1400,56 1440,58 L1660,58 L1660,70 L0,70 Z"/></g>
+</svg>
+<div class="band">
+  <p style="margin:0 auto">&hellip;and the next section begins here, the join dressed as water.</p>
+</div>
+
+<div class="wrap" style="padding-top:0">
+  <h2>3 &middot; The detail: raindrop ripples <span class="tag ok">cheap &middot; charming</span></h2>
+  <p><strong>Tap anywhere in this panel.</strong> A ripple like a raindrop on still water &mdash; usable on buttons, the hero, or as a site-wide click flourish. Pure CSS, nothing to download.</p>
+  <div class="ripplezone" id="ripplezone"><p>tap the water</p></div>
+
+  <footer>
+    <p>Demo 1 uses <a href="https://github.com/PavelDoGreat/WebGL-Fluid-Simulation" rel="noopener">WebGL-Fluid-Simulation</a> by Pavel Dobryakov, MIT licence (bundled unmodified as fluid.js; retuned at runtime). Waves and ripples are original. This page is noindexed and linked from nowhere.</p>
+  </footer>
+</div>
+
+<script>
+  // ---------- demo 3: ripples ----------
+  (function(){
+    var z=document.getElementById('ripplezone');
+    z.addEventListener('pointerdown',function(e){
+      var r=z.getBoundingClientRect();
+      ['','r2'].forEach(function(cls){
+        var s=document.createElement('span');
+        s.className='ripple '+cls;
+        s.style.left=(e.clientX-r.left)+'px'; s.style.top=(e.clientY-r.top)+'px';
+        z.appendChild(s); setTimeout(function(){s.remove();},1600);
+      });
+    });
+  })();
+</script>
+<script>
+  // ---------- demo 1: load + retune the fluid sim (skip under reduced motion) ----------
+  (function(){
+    if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var s=document.createElement('script');
+    s.src='fluid.js';
+    s.onload=function(){
+      try{
+        /* retune from neon-toy to brand water (the sim exposes plain globals) */
+        config.BACK_COLOR={r:7,g:13,b:34};        /* site navy, not black */
+        config.BLOOM=false;                        /* no neon glow */
+        config.SUNRAYS=true;                       /* soft underwater light */
+        config.DENSITY_DISSIPATION=1.6;            /* ink fades sooner = calmer */
+        config.VELOCITY_DISSIPATION=0.55;
+        config.CURL=18;
+        config.SPLAT_RADIUS=0.16;
+        config.SPLAT_FORCE=3800;
+        config.COLORFUL=false;
+        /* brand-water palette instead of random rainbow */
+        var palette=[{r:.031,g:.24,b:.44},{r:.02,g:.34,b:.55},{r:.02,g:.40,b:.37},{r:.05,g:.20,b:.50}];
+        generateColor=function(){var c=palette[Math.floor(Math.random()*palette.length)];return {r:c.r*0.6,g:c.g*0.6,b:c.b*0.6};};
+        /* a gentle life of its own: one soft swirl every few seconds, only while visible */
+        var box=document.getElementById('fluidbox'), seen=true;
+        if('IntersectionObserver' in window){
+          new IntersectionObserver(function(en){seen=en[0].isIntersecting;}).observe(box);
+        }
+        setInterval(function(){
+          if(!seen || document.hidden) return;
+          try{ multipleSplats(1); }catch(e){}
+        }, 4200);
+        try{ multipleSplats(3); }catch(e){}
+      }catch(e){ /* if the sim fails, the still hero simply remains */ }
+    };
+    document.body.appendChild(s);
+  })();
+</script>
+</body>
+</html>
