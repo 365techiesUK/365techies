@@ -7528,3 +7528,92 @@ DELL_COMPARE_TABLES = {
   'windows-10-esu-or-upgrade-your-dell': ('Windows 10 ESU vs a free Windows 11 upgrade vs a refurbished Dell', '''<div class="cmp-wrap"><table class="cmp-table cmp-table--vs"><thead><tr><th>&nbsp;</th><th>Free Windows 11 upgrade</th><th>Windows 10 ESU</th><th>Refurbished Dell</th></tr></thead><tbody><tr><th>Best for</th><td>A Dell that passes the check &mdash; roughly 2018 onward</td><td>A good, quick Dell that just fails the Windows 11 check</td><td>A tired, slow or pre-2018 Dell not worth propping up</td></tr><tr><th>Cost from</th><td class="hi">Free</td><td>Free with Windows Backup, 1,000 Rewards points, or a small one-off fee</td><td>From &pound;510</td></tr><tr><th>What you get</th><td class="hi">Full Windows 11 &mdash; supported for years</td><td>Security patches only &mdash; no new features, fixes or support</td><td>Newer Dell with a new SSD &amp; licensed Windows 11</td></tr><tr><th>How long it lasts</th><td>Years &mdash; a proper long-term fix</td><td>Runs to October 2027, then stops</td><td class="hi">Years, plus a 365 Techies 5-year guarantee (with a support plan)</td></tr><tr><th>Bottom line</th><td class="hi">Best if it passes &mdash; skip ESU, upgrade free</td><td>A cheap bridge while you plan your upgrade</td><td>Best value for a tired or ageing Dell</td></tr></tbody></table></div>'''),
   'dell-business-support-dorset': ('In-house DIY vs 365 Techies Dell support at a glance', '''<div class="cmp-wrap"><table class="cmp-table cmp-table--vs"><thead><tr><th>&nbsp;</th><th>Keep it in-house</th><th>365 Techies plan</th></tr></thead><tbody><tr><th>Best for</th><td>In-house teams with time to keep every Dell patched &amp; backed up themselves</td><td>Dorset SMEs who just want their Latitude &amp; OptiPlex fleet looked after</td></tr><tr><th>Who you phone</th><td>Your own staff, squeezed around the day job</td><td class="hi">One local team you can phone &mdash; same faces every time &mdash; on 01202 775566</td></tr><tr><th>What it covers</th><td>Whatever you find time for</td><td class="hi">Monitoring, patching, health checks, security &amp; backups &mdash; six-weekly</td></tr><tr><th>On-site in Dorset</th><td>In-house only</td><td class="hi">Bournemouth, Poole &amp; Christchurch, or free local collection &mdash; no call-out fee</td></tr><tr><th>When a Dell dies</th><td>Shop around online &mdash; risk a worn battery &amp; mystery Windows install</td><td class="hi">Refurbished business-grade Dell from &pound;510 &mdash; new SSD, clean licensed Windows, 5-year guarantee</td></tr><tr><th>Price from</th><td>Staff time &mdash; hard to pin down</td><td class="hi">&pound;24.38 per computer a month from an independent Dell specialist &mdash; no VAT, no tie-in</td></tr></tbody></table></div>'''),
 }
+
+
+# ---------------------------------------------------------------------------
+# /working-from-a-campervan/ - our mobile office, first person. Appended via
+# .append() so this block never has to touch the literal above.
+# ---------------------------------------------------------------------------
+NEW_PAGES.append({
+ 'slug': 'working-from-a-campervan',
+ 'title': 'Working From a Campervan: We Run an IT Firm From Ours',
+ 'metaDesc': 'We run our IT business from an off-grid VW Crafter - 5G-first internet with '
+             'Starlink backup and Victron power, with live dashboards to prove it. What '
+             'actually works, from people who do it daily.',
+ 'ogTitle': 'Working from a campervan - we run an IT business from ours',
+ 'crumbName': 'Working From a Campervan',
+ 'eyebrow': '// OUR MOBILE OFFICE',
+ 'h1': 'Working from a campervan &mdash; <em class="grad grad--cyan">we run an IT business from ours</em>',
+ 'lede': 'The 365 Crafter is our mobile office: an off-grid VW Crafter campervan powered by a Victron '
+         'system, online through a Netgear 5G router with Starlink as backup. We work from it most days '
+         '&mdash; remote support, admin, the lot &mdash; and its power system publishes a live public '
+         'dashboard, so none of this is a brochure claim.',
+ 'chips': ['5G-first, satellite backup', 'Victron off-grid power', 'Live dashboards as proof'],
+ 'primaryCta': ['IT Support for Remote Workers', '/it-support-for-digital-nomads/'],
+ 'secondaryCta': ['Call 01202 775566', 'tel:+441202775566'],
+ 'ctaHead': 'Your office moves too?',
+ 'ctaSub': 'Whether you work from a van, a spare room or three countries a year, the IT problems are the '
+           'same &mdash; and we fix them remotely, from our van to wherever yours is parked. Plain English, '
+           'family-run since 1995.',
+ 'schemaKind': 'faq',
+ 'sections': [
+  {'eyebrow': '/01 — THE VAN',
+   'h2': 'A working office that happens to have wheels',
+   'html': '<p>The <strong>365 Crafter</strong> isn&rsquo;t a showroom or a marketing prop &mdash; it&rsquo;s '
+           'where a good chunk of 365 Techies actually happens. Remote support sessions, bookings, invoices, '
+           'the writing of pages like this one: done from the van, parked wherever the day&rsquo;s work has '
+           'taken us around Dorset.</p>'
+           '<p>It runs entirely off-grid on a <strong>Victron power system</strong> charged by solar &mdash; '
+           'no campsite hook-up, no generator. And because we&rsquo;d rather show you than tell you, the '
+           'van&rsquo;s power system streams to a <a href="/off-grid-victron-energy/">live public dashboard</a>: '
+           'real state of charge, real solar yield, right now. If the office were flat, you&rsquo;d see it.</p>'},
+  {'eyebrow': '/02 — THE INTERNET',
+   'h2': '5G first, satellite second &mdash; and honest about why',
+   'html': '<p>The setup people always ask about. Our daily connection is a <strong>Netgear 5G router</strong> '
+           '&mdash; for most of Dorset, mobile broadband is quick, low-faff and easily enough to run remote '
+           'support sessions all day. <strong>Starlink is the backup</strong>, on a Business Priority service: '
+           'it earns its keep in the deep not-spots, at outdoor events, and on the days a mast lets us down.</p>'
+           '<p>Two links, not one, because our diary doesn&rsquo;t care which mast is congested. That&rsquo;s '
+           'the same advice we give <a href="/business-continuity-internet/">businesses about backup '
+           'internet</a> &mdash; we just live it in miniature.</p>'
+           '<p>Depending on mobile signal daily also made us slightly obsessive about measuring it: the van '
+           'logs signal as we drive, and we publish the results on our free '
+           '<a href="/van-signal-map/">Dorset mobile signal map</a>.</p>'},
+  {'eyebrow': '/03 — WHAT WE&rsquo;VE LEARNED',
+   'h2': 'Advice we&rsquo;d give anyone working from a van',
+   'html': '<ul>'
+           '<li><strong>Signal beats speed.</strong> A steady 30&nbsp;Mbps you can hold a video call on is worth '
+           'more than a flaky 300. Park for signal first, view second &mdash; you get used to it.</li>'
+           '<li><strong>Carry a second way online.</strong> It doesn&rsquo;t have to be satellite &mdash; even a '
+           'different network&rsquo;s SIM in a phone covers most failures. One link is a promise to be let down.</li>'
+           '<li><strong>Budget power like money.</strong> Laptops, router and screens all day is a real load. '
+           'Know what you use before you depend on it &mdash; our <a href="/off-grid-victron-energy/">live '
+           'dashboard</a> is exactly that discipline, made visible.</li>'
+           '<li><strong>Rehearse the bad day.</strong> Turn the main link off deliberately and see whether work '
+           'still happens. If the answer is no, fix that before it&rsquo;s a customer call you&rsquo;re dropping.</li>'
+           '</ul>'
+           '<p>And to be straight about what we <em>don&rsquo;t</em> do: we&rsquo;re not a motorhome fit-out '
+           'shop, and we won&rsquo;t sell you a van kit. Where we can help is everything on the laptop side of '
+           'the equation &mdash; <a href="/it-support-for-digital-nomads/">secure remote-work setups</a>, '
+           'cloud, backups and <a href="/remote-support/">fast remote support</a> wherever you&rsquo;re parked.</p>'},
+ ],
+ 'faqs': [
+  {'q': 'Is 5G really enough to run a business from a campervan?',
+   'a': 'For us, in Dorset, most days: yes. A decent 5G router handles remote support sessions, calls and '
+        'cloud work comfortably where signal is good &mdash; the catch is the &ldquo;where&rdquo;. Coverage '
+        'varies street to street, which is why we log signal as we drive and publish it on our free '
+        '<a href="/van-signal-map/">Dorset signal map</a>.'},
+  {'q': 'Why keep Starlink if 5G is the main connection?',
+   'a': 'Because two links fail differently. Mobile signal has not-spots and busy-mast days; satellite '
+        'doesn&rsquo;t care about either. Starlink is our backup and our events link &mdash; most days it '
+        'stays in its box, which is exactly what a backup is for.'},
+  {'q': 'Do you install internet or power kit in campervans?',
+   'a': 'No &mdash; we&rsquo;re not a motorhome fit-out business, and we&rsquo;d rather say so than sell you '
+        'something half-hearted. Our lane is the IT: secure laptops, cloud, backups and remote support for '
+        'people who work from anywhere, plus <a href="/emergency-internet/">emergency connectivity</a> for '
+        'businesses when their broadband dies.'},
+  {'q': 'Is the van genuinely off-grid?',
+   'a': 'Yes &mdash; solar and a Victron battery system, no hook-up. We publish the van&rsquo;s '
+        '<a href="/off-grid-victron-energy/">live power dashboard</a>, so you can check the state of charge '
+        'yourself right now rather than take our word for it.'},
+ ]})

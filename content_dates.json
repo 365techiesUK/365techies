@@ -1636,7 +1636,7 @@
  },
  "it-support-for-digital-nomads": {
   "first": "2026-07-28",
-  "h": "269bb5955f19d25c",
+  "h": "ee37be5b3c77c300",
   "last": "2026-08-13"
  },
  "it-support-for-disabled-people": {
@@ -2156,8 +2156,8 @@
  },
  "off-grid-victron-energy": {
   "first": "2026-07-28",
-  "h": "2ab1bb6dbceaaa97",
-  "last": "2026-08-12"
+  "h": "dc303b3ef573f5c5",
+  "last": "2026-08-13"
  },
  "office-moves-it-relocation": {
   "first": "2026-07-28",
@@ -3428,6 +3428,10 @@
   "first": "2026-08-01",
   "h": "4dd2a96ac18a3db4",
   "last": "2026-08-12"
+ },
+ "working-from-a-campervan": {
+  "first": "2026-08-13",
+  "h": "1bcfa0a2f4c03c13"
  },
  "worried-about-a-parent-being-scammed": {
   "first": "2026-07-28",
