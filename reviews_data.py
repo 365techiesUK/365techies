@@ -122,9 +122,28 @@ REVIEWS = [
  # caught it: typography is still text, and this file's rule is her words.
  ("Penny Hanford", "This lovely, friendly family firm are very approachable, dependable and professional. I thank them for going the “extra mile” for me!"),
  # VERIFIED 2026-08-01 - complete review, word for word.
- # VERIFIED 2026-08-03 from Google's API - a 5-star review we were not
- # publishing at all. Verbatim, trimmed only at a sentence boundary.
- ("David Butcher", "Been using 365 for a number of years while living close to their premises. I’d had a couple of bad experiences with other companies so tried them. Exceptional service. Now I have moved, everything done remotely. David has patience when I don’t understand and Steve does an excellent job on servicing."),
+ # ⚠️ REPLACED 2026-08-13, NOT a second entry. He rewrote his review (owner's
+ # screenshot of the live reply screen, timestamped "3 hours ago"), and Google
+ # allows only ONE review per person per business - so the 2026-08-03 text
+ # below is what he WROTE THEN, not what stands under his name now:
+ #   "Been using 365 for a number of years while living close to their
+ #    premises. I'd had a couple of bad experiences with other companies so
+ #    tried them. Exceptional service. Now I have moved, everything done
+ #    remotely. David has patience when I don't understand and Steve does an
+ #    excellent job on servicing."
+ # It was live on /reviews/ and /server-network-support/. Keeping it would have
+ # published words he has since replaced, and the next profile paste would have
+ # flagged it BROKEN with no obvious cause.
+ #
+ # Two deliberate choices in the new quote:
+ #   * starts at his THIRD sentence, because his first says "375 Techies Ltd"
+ #     (his typo). The rule forbids tidying it and we will not print a typo
+ #     under his name - same call as Free Spirit's "anow bout".
+ #   * the … marks a real skip of one sentence ("When I have had problems...
+ #     normally down to me, their response time to sort it again is
+ #     excellent."), which also avoids transcribing his own mid-sentence dots
+ #     from a screenshot. Skipping it distorts nothing - it is praise too.
+ ("David Butcher", "Their service has been excellent. I use computers all the time but am useless in the way the things work. Steve at 365 built my latest laptop which has been faultless for several years now. The monthly maintenance call means it’s kept in great condition… I highly recommend this excellent company."),
  ("Marianne Gill", "I think that 365 is a first class service. They are always so competent and obliging."),
 ]
 
@@ -138,7 +157,13 @@ VERIFIED = {
     "Dean Robertson", "John Plumbe", "Terese Lawton", "Eve Day",
     # verified against GOOGLE'S OWN API text, 2026-08-03 - the strongest
     # provenance available, because it is Google's copy of the review
-    "Alan Bevis", "Vince Jones", "Free Spirit", "David Butcher",
+    "Alan Bevis", "Vince Jones", "Free Spirit",
+    # ⚠️ David Butcher REWROTE his review on 2026-08-13, so the 2026-08-03 API
+    # verification no longer covers the text we publish. Re-verified against the
+    # owner's screenshot of the live reply screen that same day - good
+    # provenance (it is Google's own rendering) but NOT API text. Re-check him
+    # on the next profile paste.
+    "David Butcher",
 }
 
 # WITHDRAWN 2026-08-01 - deliberately NOT published, do not re-add without
