@@ -102,6 +102,11 @@ REVIEWS = [
  # review makes tools_check_reviews.py return "exact - word for word" rather
  # than merely contiguous. Google shows him lowercase as "mark lemon"; the
  # checker now matches names case-insensitively so this can read properly.
+ # RESTORED 2026-08-13 after 12 days withdrawn. Read off the live profile in the
+ # owner's Chrome ("Edited a month ago") and it is word for word what this file
+ # always held - the suspicion that the homepage version was the true one was
+ # wrong. Complete and verbatim. See the WITHDRAWN note at the bottom.
+ ("John Holloway", "As usual your service and support have been immaculate when required recently. I cannot thank you enough."),
  ("Mark Lemon", "These guys at 365 have been keeping me going for over 14 years. No need to search for someone new as they must be number one. Always sorted any problems I’ve had and very quickly. First class"),
  # NEW 2026-08-13, owner's screenshot of the live reply screen ("yesterday",
  # 5 stars). Genuinely new, not a rewrite. Complete and verbatim.
@@ -140,10 +145,23 @@ REVIEWS = [
  # print a typo under his name either.
  ("Free Spirit", "I’m always so grateful for 365’s Brilliant service and how you are always able to come to the rescue immediately I have a problem."),
  ("Julie Collins", "Always great service from these guys. I know I can contact them anytime I have a technical problem. I would absolutely recommend them."),
- ("Frederick Woods", "Sorting out a printing problem same day as reported. All is working fine even the day after — really professional service."),
+ # ⚠️ FIXED 2026-08-13 from the live profile. What we published had FOUR edits
+ # stacked on one short review: his comma promoted to a full stop, an em-dash
+ # inserted, his capital "Service" lowercased, and - worst - his typo silently
+ # corrected. Now a contiguous run of his second line only, which sidesteps the
+ # typo entirely rather than either printing it or fixing it (the Free Spirit
+ # precedent). His sign-off "Woodsy." is dropped by stopping early, which is
+ # allowed. ➜ His first line still needs a character-exact read before it can
+ # ever be quoted: it was legible only in a screenshot, and the one word in
+ # question is precisely the one that must not be guessed.
+ ("Frederick Woods", "All is working fine even the day after, really professional Service."),
  ("Mary Memmott", "I have been with 365 Techies for many years and have found them always helpful and professional. Long may they continue."),
  ("Anne Lewis", "Always delighted with the support given by David, Steve and Becky. I couldn’t ask for any more."),
- ("Edward Clough", "Always a prompt and first class service, unable to fault."),
+ # ⚠️ FIXED 2026-08-13 from the live profile (owner's Chrome, GBP reviews panel).
+ # He wrote it in BLOCK CAPITALS and with no comma: we had lowercased the whole
+ # thing AND inserted a comma he never typed. Both are tidying. Caps are how he
+ # said it - same principle that preserved Free Spirit's capital "Brilliant".
+ ("Edward Clough", "ALWAYS A PROMPT AND FIRST CLASS SERVICE UNABLE TO FAULT."),
  ("Cordelia Cutler", "Thanks for coming to my rescue once again. You still keep my computer system in perfect order. Many, many thanks."),
  ("John Ridd", "Efficient and helpful people."),
  ("Heather", "I have trusted 365 with my IT support since 2001 and cannot recommend them highly enough. I’ve lost count of the number of PCs, tablets, laptops I’ve bought from them. Living 60 miles away has not been a problem either."),
@@ -180,7 +198,12 @@ REVIEWS = [
  ("Hardie", "A first class service to a technological emergency. Highly recommended."),
  # VERIFIED 2026-08-01 - complete review, word for word.
  ("Michael Finch", "Service is one on one with people who know what they are talking about and also what they are selling!"),
- ("Robert Kennard", "Thank you David & Steve for the amazing service on a monthly basis."),
+ # ⚠️ FIXED 2026-08-13 - he ended with no full stop and we had added one.
+ # Google shows him as "robert thomas kennard"; case-insensitive name matching
+ # will NOT bridge that, so a profile paste will report him UNUSED until the
+ # name here is reconciled. Left as-is pending the owner's call on which name
+ # to display.
+ ("Robert Kennard", "Thank you David & Steve for the amazing service on a monthly basis"),
  # VERIFIED 2026-08-01 - complete review. ⚠️ Her DOUBLE quotes around "extra
  # mile" are hers and stay double, even though reviews_block wraps the whole
  # quote in &ldquo;&rdquo; and British style would nest single inside double.
@@ -255,13 +278,15 @@ VERIFIED = {
 # WITHDRAWN 2026-08-01 - deliberately NOT published, do not re-add without
 # reading the live review first:
 #
-#   John Holloway  - two different texts were live at once under his name. The
-#                    homepage said "Your service and support are unbeatable and
-#                    delivered with patience and a smile."; this file said "As
-#                    usual your service and support have been immaculate when
-#                    required recently. I cannot thank you enough." They share
-#                    almost no wording, so at most one can be his. Neither is
-#                    published until someone reads his review.
+#   John Holloway  - RESOLVED 2026-08-13 and RESTORED to the list above; kept
+#                    here only as the record. Two texts were live at once and
+#                    the standing guess was that the HOMEPAGE version ("Your
+#                    service and support are unbeatable and delivered with
+#                    patience and a smile.") was the true one. That guess was
+#                    WRONG. Read off the live profile in the owner's own Chrome,
+#                    his review - marked "Edited a month ago" - is word for word
+#                    the version THIS FILE held. The homepage text appears
+#                    nowhere on his review and must never be republished.
 #   Vicky Bailey   - every word we published sits past Google's "...More" cut,
 #                    so none of it is checkable, and the visible part is not the
 #                    endorsement we presented: she describes an unrequested
