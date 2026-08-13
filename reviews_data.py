@@ -59,11 +59,27 @@ it for you.
 
 REVIEWS = [
  ("Alan Bevis", "A friendly team, there to help when needed. Nice to know that our laptops are being regularly checked for updates and kept virus free. Worth the monthly fee."),
- # VERIFIED 2026-08-03. ⚠️ An em-dash we inserted after "amazing" has been
- # removed - Google's text runs on without it. The mid-quote ellipsis stays:
- # it marks a real skip ("as I know I have the backup and the common sense"),
- # which is exactly what an ellipsis is for.
- ("Vince Jones", "The service I get with 365 techies is amazing always on the other end of the phone. The monthly subscription and plans are worth the money… without them I wouldn’t have a working laptop that is bang up to date with all data backed up."),
+ # VERIFIED 2026-08-03, then FIXED 2026-08-13 when a fresh pull of Google's own
+ # API text put it through tools_check_reviews.py for the first time.
+ #
+ # ⚠️ The 2026-08-03 note claimed the mid-quote ellipsis was fine because "it
+ # marks a real skip, which is exactly what an ellipsis is for". That was
+ # WRONG, and it is the same mistake made hours earlier in David Butcher's
+ # quote. He wrote "...worth the money as I know I have the backup and the
+ # common sense, without them I wouldn't have...". Dropping the middle put an
+ # ellipsis where he had no break at all, ending a sentence he never ended -
+ # a CUT MID-SENTENCE, which the headline rule forbids outright. An ellipsis
+ # legitimises a skip BETWEEN sentences, never one inside one.
+ #
+ # Now his first two sentences, complete and unaltered, which costs nothing:
+ # the monthly-plan endorsement was the reason to quote him and it survives.
+ ("Vince Jones", "The service I get with 365 techies is amazing always on the other end of the phone. The monthly subscription and plans are worth the money as I know I have the backup and the common sense, without them I wouldn’t have a working laptop that is bang up to date with all data backed up."),
+ # ⚠️ SUSPECTED CUT MID-SENTENCE, unverified - do not treat as sound. "Their
+ # monthly remote checks…" is not a sentence he ended; the ellipsis almost
+ # certainly sits inside one, which is the defect proved in Vince Jones's quote
+ # on 2026-08-13. It cannot be fixed without his full text: he is not among the
+ # 5 the Places API returns, so it needs a profile paste. Until then this is
+ # the weakest quote on the site - if one has to be pulled, pull this.
  ("David Hagner", "I have benefited from the help of the guys at 365 for most of twenty years. They have helped me on so many occasions I can not remember! Their monthly remote checks… 365 offer a fully inclusive service. Thank you."),
  # ⚠️ REPLACED 2026-08-13 - the SECOND rewrite in two days (see David Butcher).
  # He posted a fresh review "yesterday"; Google allows one per person per
@@ -113,6 +129,9 @@ REVIEWS = [
  # since 2026-08-13, so publishing him properly capitalised still verifies.
  ("Andy Carapiet", "Absolutely first class service. Highly recommend."),
  ("Rosemary Allen", "365 Techies have given my PC its regular ‘MOT’ for many years now. Not only that, but if I have any problems, however small, David and Steve are always there at the other end of the phone to answer my questions and reassure me."),
+ # ⚠️ SUSPECTED CUT MID-SENTENCE, unverified - same defect as David Hagner
+ # above. "the 365 guys give…" is mid-sentence, not a break he made. Needs his
+ # full text from a profile paste before it can be trusted or repaired.
  ("Rob Hazell", "Can’t fault the skill and attention the 365 guys give… confidence that things keep ticking over with their regular maintenance access checks, and there on call when other oddities crop up — or I mess things up ;)"),
  # VERIFIED 2026-08-03 against Google's own API text. ⚠️ We had lowercased
  # his capital "Brilliant" AND silently fixed his typo ("anow bout" ->
@@ -181,6 +200,17 @@ REVIEWS = [
  # It was live on /reviews/ and /server-network-support/. Keeping it would have
  # published words he has since replaced, and the next profile paste would have
  # flagged it BROKEN with no obvious cause.
+ #
+ # ⚠️ TWO GOOGLE SOURCES DISAGREE ABOUT THIS REVIEW (2026-08-13). The owner's
+ # GBP reply screen shows the text below, timestamped "3 hours ago". The Places
+ # API still returns his ORIGINAL review, tagged "5 years ago". Going with the
+ # reply screen because it is the business's own management view of live state,
+ # and because the API is demonstrably stale here: the 5 reviews it returns are
+ # the identical set verified on 2026-08-03, and it shows NONE of the five new
+ # reviews added on 2026-08-13 despite the profile carrying 54 ratings. That is
+ # a cached "most relevant" subset, not current data.
+ # ➜ Re-pull the API in a week. If it still shows the old text, stop and ask
+ #   the owner to re-open the review before trusting either version.
  #
  # Starts at his THIRD sentence, because his first says "375 Techies Ltd" (his
  # typo). The rule forbids tidying it and we will not print a typo under his
