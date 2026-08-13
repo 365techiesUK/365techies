@@ -79,6 +79,14 @@ REVIEWS = [
  # line in it - that regular checks are WHY his issues are rare, which is the
  # monthly plan proving itself in a customer's own words.
  ("Peter Moody", "We have asked Steve and David from 365 to help us with computing for many years now and found their service and responses to be brilliant. When we have had issues (which because they regularly check us issues are rare) they are perfect. Highly recommend 365."),
+ # NEW 2026-08-13, from the owner's screenshot of the live reply screen
+ # ("yesterday", 5 stars). Genuinely new - he was not published before.
+ # COMPLETE and verbatim, which is why it has no full stop at the end: he
+ # didn't write one. Adding it would be tidying, and publishing the whole
+ # review makes tools_check_reviews.py return "exact - word for word" rather
+ # than merely contiguous. Google shows him lowercase as "mark lemon"; the
+ # checker now matches names case-insensitively so this can read properly.
+ ("Mark Lemon", "These guys at 365 have been keeping me going for over 14 years. No need to search for someone new as they must be number one. Always sorted any problems I’ve had and very quickly. First class"),
  ("Rob Hazell", "Can’t fault the skill and attention the 365 guys give… confidence that things keep ticking over with their regular maintenance access checks, and there on call when other oddities crop up — or I mess things up ;)"),
  # VERIFIED 2026-08-03 against Google's own API text. ⚠️ We had lowercased
  # his capital "Brilliant" AND silently fixed his typo ("anow bout" ->
@@ -148,15 +156,20 @@ REVIEWS = [
  # published words he has since replaced, and the next profile paste would have
  # flagged it BROKEN with no obvious cause.
  #
- # Two deliberate choices in the new quote:
- #   * starts at his THIRD sentence, because his first says "375 Techies Ltd"
- #     (his typo). The rule forbids tidying it and we will not print a typo
- #     under his name - same call as Free Spirit's "anow bout".
- #   * the … marks a real skip of one sentence ("When I have had problems...
- #     normally down to me, their response time to sort it again is
- #     excellent."), which also avoids transcribing his own mid-sentence dots
- #     from a screenshot. Skipping it distorts nothing - it is praise too.
- ("David Butcher", "Their service has been excellent. I use computers all the time but am useless in the way the things work. Steve at 365 built my latest laptop which has been faultless for several years now. The monthly maintenance call means it’s kept in great condition… I highly recommend this excellent company."),
+ # Starts at his THIRD sentence, because his first says "375 Techies Ltd" (his
+ # typo). The rule forbids tidying it and we will not print a typo under his
+ # name - same call as Free Spirit's "anow bout". From there it runs unbroken
+ # to the end of his review.
+ #
+ # ⚠️ FIXED 2026-08-13, hours after first publishing it. The first version
+ # skipped his "When I have had problems..." sentence and marked the gap with …
+ # - but to do that it replaced the full stop HE wrote after "condition" with
+ # an ellipsis, which is exactly the altered-terminator edit rule 2 forbids.
+ # tools_check_reviews.py caught it as CUT MID-SENTENCE. No skip is needed at
+ # all: starting late and running to the end is contiguous, keeps every
+ # terminator he used, and keeps his closing recommendation. His own "..." is
+ # safe to carry because canonical_chars folds … and ... together.
+ ("David Butcher", "Their service has been excellent. I use computers all the time but am useless in the way the things work. Steve at 365 built my latest laptop which has been faultless for several years now. The monthly maintenance call means it’s kept in great condition. When I have had problems... normally down to me, their response time to sort it again is excellent. I highly recommend this excellent company."),
  ("Marianne Gill", "I think that 365 is a first class service. They are always so competent and obliging."),
 ]
 
@@ -177,6 +190,9 @@ VERIFIED = {
     # provenance (it is Google's own rendering) but NOT API text. Re-check him
     # on the next profile paste.
     "David Butcher",
+    # verified against the owner's screenshots of the live reply screen,
+    # 2026-08-13, and re-checked with tools_check_reviews.py
+    "Peter Moody", "Mark Lemon",
 }
 
 # WITHDRAWN 2026-08-01 - deliberately NOT published, do not re-add without

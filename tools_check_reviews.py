@@ -46,9 +46,23 @@ except ImportError:
     sys.exit("run me from the repo root (where reviews_data.py lives)")
 
 CANON = dict(REVIEWS)
+# Reviewer names match case-INSENSITIVELY. Google renders a display name however
+# the reviewer typed it - "mark lemon" - and making this file copy that exactly,
+# purely so the lookup matched, would put a lowercase name on the testimonial
+# pages. QUOTE TEXT stays byte-exact; that is the integrity guarantee this tool
+# exists for. How a person capitalised their own name is not.
+CANON_CI = {n.casefold(): n for n in CANON}
 MORE = re.compile(r"(?:…|\.\.\.)\s*More\s*$")
 CREDITS = re.compile(r"^(?:Local Guide\s*[·•]\s*)?\d+\s+review", re.I)
-AGO = re.compile(r"^(?:a|an|\d+)\s+\w+\s+ago\s*$", re.I)
+# Google's relative timestamp, which marks where a review's text begins.
+# ⚠️ "Yesterday" and "Today" carry no "ago" and used to fall through here, so the
+# parser ran to the end of the file looking for a date line, captured an EMPTY
+# body, and reported the review BROKEN with "NOT IN THEIR REVIEW AT ALL" against
+# every sentence. That is the worst possible failure for this tool: it accuses a
+# correct quote of being fabricated, and it fires precisely on the NEWEST
+# reviews - the ones most likely to have just been rewritten and to actually
+# need checking.
+AGO = re.compile(r"^(?:(?:a|an|\d+)\s+\w+\s+ago|yesterday|today)\s*$", re.I)
 OWNER = "365 Techies Ltd (owner)"
 
 
@@ -155,9 +169,11 @@ def main(path):
 
     rows, broken, newly_ok = [], 0, []
     for name, text, cut in live:
-        if name not in CANON:
+        canon_name = CANON_CI.get(name.casefold())
+        if canon_name is None:
             rows.append(("UNUSED", name, ["on the profile, not published - fine"]))
             continue
+        name = canon_name          # report under the spelling we publish
         verdict, details = check(CANON[name], text, cut)
         rows.append((verdict, name, details))
         if verdict == "BROKEN":
