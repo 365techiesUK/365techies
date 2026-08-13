@@ -95,7 +95,7 @@
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
 
-  <link rel="stylesheet" href="css/styles.min.css?v=86" />
+  <link rel="stylesheet" href="css/styles.min.css?v=87" />
   <style>/* Emergency styles - see the SENTINEL rule at the foot of styles.css.
     ⚠️ This homepage is hand-maintained: keep this block in step with the copy in
     build_pages.py that every generated page gets. */
@@ -124,7 +124,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=86&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=87&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -1047,7 +1047,7 @@
           <p class="eyebrow eyebrow--center mono" data-reveal>// FREE &middot; NO CATCH</p>
           <h2 class="section-title section-title--center" data-title>Free extras, for everyone<span class="title-underline title-underline--center"></span></h2>
         </div>
-        <div class="blog-grid">
+        <div class="blog-grid blog-grid--four">
           <div class="post-card" id="join-club" data-reveal>
             <p class="post-card__cat mono">FREE MEMBERSHIP</p>
             <h3>Join the 365 Club</h3>
@@ -1146,7 +1146,7 @@
           <h2 class="section-title section-title--center" data-title>More than just IT support<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>The same friendly, local team also powers and protects your world in other ways.</p>
         </div>
-        <div class="blog-grid" data-stagger>
+        <div class="blog-grid blog-grid--four" data-stagger>
           <a class="post-card" href="/off-grid-victron-energy/">
             <p class="post-card__cat">Off-Grid Energy</p>
             <h3>Off-Grid &amp; Victron Energy</h3>
@@ -1189,6 +1189,7 @@
             <p>Test your broadband live, check your website and email security, see if your password has leaked, make a Wi-Fi QR code and more — all free, no sign-up.</p>
             <span class="post-card__more">Try the free tools &#8594;</span>
           </a>
+          <a class="post-card" href="/emergency-internet/"><p class="post-card__cat mono">CONNECTIVITY</p><h3>Emergency &amp; Event Internet</h3><p>Broadband down, or an outdoor event with no power? The 365 Crafter brings the connection <em>and</em> the power.</p><span class="post-card__more">How it works &#8594;</span></a>
         </div>
       </div>
       <p style="text-align:center;margin-top:1.6rem" data-reveal><a class="text-link" href="/services/">See all our services <span aria-hidden="true">&#8594;</span></a></p>
