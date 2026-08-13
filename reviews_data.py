@@ -65,7 +65,20 @@ REVIEWS = [
  # which is exactly what an ellipsis is for.
  ("Vince Jones", "The service I get with 365 techies is amazing always on the other end of the phone. The monthly subscription and plans are worth the money… without them I wouldn’t have a working laptop that is bang up to date with all data backed up."),
  ("David Hagner", "I have benefited from the help of the guys at 365 for most of twenty years. They have helped me on so many occasions I can not remember! Their monthly remote checks… 365 offer a fully inclusive service. Thank you."),
- ("Peter Moody", "Excellent service. We have been working with David and Steve for several years now and their attention is still brilliant. Highly recommended."),
+ # ⚠️ REPLACED 2026-08-13 - the SECOND rewrite in two days (see David Butcher).
+ # He posted a fresh review "yesterday"; Google allows one per person per
+ # business, so this supersedes what he wrote before:
+ #   "Excellent service. We have been working with David and Steve for several
+ #    years now and their attention is still brilliant. Highly recommended."
+ # That text was on TEN pages including the hand-maintained homepage, which
+ # build_blog.py hard-fails on if it drifts from this file - index.html was
+ # edited in the same commit.
+ #
+ # Published COMPLETE and verbatim, including the clumsy parenthetical. It is
+ # how he speaks, it is not a typo, and stopping early would have cost the best
+ # line in it - that regular checks are WHY his issues are rare, which is the
+ # monthly plan proving itself in a customer's own words.
+ ("Peter Moody", "We have asked Steve and David from 365 to help us with computing for many years now and found their service and responses to be brilliant. When we have had issues (which because they regularly check us issues are rare) they are perfect. Highly recommend 365."),
  ("Rob Hazell", "Can’t fault the skill and attention the 365 guys give… confidence that things keep ticking over with their regular maintenance access checks, and there on call when other oddities crop up — or I mess things up ;)"),
  # VERIFIED 2026-08-03 against Google's own API text. ⚠️ We had lowercased
  # his capital "Brilliant" AND silently fixed his typo ("anow bout" ->
