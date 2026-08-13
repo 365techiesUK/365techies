@@ -6711,6 +6711,164 @@ def write_embed_page():
     return "van-signal-map/embed/index.html"
 
 
+def write_press_page():
+    """Write /van-signal-map/data/ - the dataset, for journalists and researchers.
+
+    WHY A SEPARATE PAGE. The main map page is wrapped in service navigation,
+    pricing links and calls to action. For a newsroom that is a real obstacle,
+    not a matter of taste: BBC Editorial Guidelines 15.4.1 (undue prominence)
+    and 15.4.22 (linking to commercial platforms) make it hard to link to a page
+    that doubles as a sales pitch, and at a Newsquest title it reads as
+    advertorial and gets routed away from news. So this page carries the data
+    and nothing that sells anything: no nav, no prices, no CTAs, one modest
+    line at the bottom saying who we are.
+
+    Everything is EXTRACTED from the constants the main page uses, so the two
+    can never drift. A press page that quietly disagreed with the live map
+    would be worse than no press page.
+
+    noindex,follow: it deliberately duplicates the map, so it must not compete
+    with the page that earns the search traffic - but a link a journalist gives
+    us should still be followed.
+    """
+    from van_map_data import VAN_MAP_SUMMARY as S
+
+    src = VAN_SIGNAL_MAP_MAP
+    map_style = re.search(r'<style>.*?</style>', src, re.S).group(0)
+    map_body = re.search(r'<div class="sigmap-wrap">.*?<p class="sigmap-empty".*?</p>',
+                         src, re.S).group(0)
+    map_js = src[src.index('<script src="/vendor/leaflet/leaflet.js"'):]
+
+    # Method + limits come from the live page's own words, not a retelling.
+    blocks = re.findall(r'<h3>(.*?)</h3>\s*<ul class="vmf-ul">(.*?)</ul>',
+                        VAN_MAP_METHOD, re.S)
+    method_html = "".join(
+        '<h2>%s</h2><ul>%s</ul>' % (h, items) for h, items in blocks)
+
+    spots = "".join(
+        '<tr><td>%s</td><td class="num">%.1f</td><td class="num">%d</td>'
+        '<td class="num">%s</td></tr>'
+        % (s['name'], s['dl'], s['tests'], s.get('sinr', '&mdash;'))
+        for s in S.get('spots', []))
+
+    html = """<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,follow">
+<title>Measured 4G/5G data, Bournemouth &mdash; for journalists and researchers</title>
+<meta name="description" content="Open data: real 4G/5G speed tests measured from a campervan around Bournemouth. Method, limits, CSV and JSON under CC BY 4.0.">
+<link rel="stylesheet" href="/vendor/leaflet/leaflet.css" />
+%s
+<style>
+  :root{--bg:#0b1020;--panel:#141b2e;--ink:#e6edf3;--muted:#9db3cf;--line:rgba(125,170,220,.18);--cyan:#6cc4f5}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);
+    font:16px/1.65 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
+  .wrap{max-width:760px;margin:0 auto;padding:2.4rem 1.2rem 3.5rem}
+  h1{font-size:1.7rem;line-height:1.25;margin:0 0 .6rem}
+  h2{font-size:1.06rem;margin:2.2rem 0 .6rem}
+  p{margin:0 0 1rem}
+  .lede{color:var(--muted);font-size:1.02rem}
+  a{color:var(--cyan)}
+  ul{margin:0 0 1rem;padding-left:1.15rem}
+  li{margin:0 0 .5rem}
+  .facts{border:1px solid var(--line);border-radius:12px;padding:1rem 1.2rem;margin:1.4rem 0;
+    background:rgba(20,27,46,.55)}
+  .facts dl{display:grid;grid-template-columns:auto 1fr;gap:.35rem 1.1rem;margin:0;font-size:.94rem}
+  .facts dt{color:var(--muted)}
+  .facts dd{margin:0;font-variant-numeric:tabular-nums}
+  .stamp{font-size:.82rem;color:var(--muted);margin:.8rem 0 0}
+  table{width:100%%;border-collapse:collapse;font-size:.94rem;margin:0 0 1rem}
+  th,td{text-align:left;padding:.5rem .6rem;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-weight:600;font-size:.84rem;text-transform:uppercase;letter-spacing:.04em}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+  .dl{display:flex;gap:.7rem;flex-wrap:wrap;margin:0 0 1rem}
+  .dl a{display:inline-block;padding:.6rem 1rem;border:1px solid var(--line);border-radius:999px;
+    text-decoration:none;background:rgba(20,27,46,.55)}
+  code{background:rgba(20,27,46,.8);border:1px solid var(--line);border-radius:6px;
+    padding:.15rem .4rem;font-size:.86rem;word-break:break-all}
+  .who{margin-top:2.6rem;padding-top:1.1rem;border-top:1px solid var(--line);
+    font-size:.88rem;color:var(--muted)}
+  .sigmap-wrap{margin:1.2rem 0}
+  #sigmap{height:min(58vh,460px)}
+  .sigmap-best{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Measured 4G/5G data, around Bournemouth</h1>
+  <p class="lede">A working campervan runs a real download speed test every five minutes as it
+  drives, and pins each result to the spot it was taken. This page is the dataset, the method
+  and the limits &mdash; for anyone who wants to check it or use it.</p>
+
+  <div class="facts">
+    <dl>
+      <dt>Readings</dt><dd>%s</dd>
+      <dt>Speed tests</dt><dd>%s</dd>
+      <dt>Places measured</dt><dd>%s (%s named publicly)</dd>
+      <dt>Days driven</dt><dd>%s (%s to %s)</dd>
+      <dt>Area covered</dt><dd>about %s &times; %s km</dd>
+      <dt>Network</dt><dd>Three UK only</dd>
+      <dt>Licence</dt><dd>CC BY 4.0</dd>
+    </dl>
+    <p class="stamp">Figures frozen at <strong>%s</strong>. The live map keeps moving, so
+    quote these and cite the timestamp.</p>
+  </div>
+
+  <h2>The map</h2>
+  %s
+
+  <h2>Best measured places so far</h2>
+  <table>
+    <thead><tr><th>Place</th><th class="num">Median down (Mbps)</th>
+    <th class="num">Tests</th><th class="num">SINR (dB)</th></tr></thead>
+    <tbody>%s</tbody>
+  </table>
+  <p class="stamp">Ten further measured places are withheld because they sit close to where the
+  van is kept. They are counted in the totals above but not named.</p>
+
+  %s
+
+  <h2>Take the data</h2>
+  <div class="dl">
+    <a href="/api/signal-log.php?format=csv">Every reading (CSV)</a>
+    <a href="/api/signal-log.php?summary=1">Ranked summary (JSON)</a>
+  </div>
+  <p>Published under <a href="https://creativecommons.org/licenses/by/4.0/" rel="license">Creative
+  Commons BY 4.0</a>. Use it commercially or not, in an article, a study or an app. The only
+  condition is a credit and a link, so your readers can check the source:</p>
+  <p><code>Data: &lt;a href="https://365techies.co.uk/van-signal-map/"&gt;365 Techies campervan
+  signal measurements&lt;/a&gt; (CC BY 4.0)</code></p>
+
+  <h2>Questions</h2>
+  <p>We will happily talk through how it was built, share raw figures for a specific place, or
+  explain anything above that is unclear: <a href="/contact/">get in touch</a>.
+  We measure one network &mdash; the one in the van &mdash; and we do not publish operator
+  comparisons or league tables.</p>
+
+  <p class="who">Measured and published by 365 Techies, an IT firm in Bournemouth, using its own
+  demonstration van. Independent &mdash; not affiliated with, endorsed by or funded by any mobile
+  network. <a href="/van-signal-map/">The public version of this map</a>.</p>
+</div>
+%s
+</body>
+</html>""" % (map_style,
+              S.get('points'), S.get('tested'),
+              S.get('spots_total'), S.get('spots_named'),
+              S.get('days'), S.get('first_day'), S.get('last_day'),
+              S.get('area_km', [0, 0])[0], S.get('area_km', [0, 0])[1],
+              S.get('_refreshed', 'unknown'),
+              map_body, spots, method_html, map_js)
+
+    d = os.path.join(BASE, "van-signal-map", "data")
+    os.makedirs(d, exist_ok=True)
+    with open(os.path.join(d, "index.html"), "w", encoding="utf-8") as f:
+        f.write(html)
+    return "van-signal-map/data/index.html"
+
+
 def write_all():
     written = []
     for p in PAGES:
@@ -6725,6 +6883,7 @@ def write_all():
         note_content(slug, html)
         written.append(slug + "/index.html")
     written.append(write_embed_page())
+    written.append(write_press_page())
     save_content_dates()
     return written
 
