@@ -94,6 +94,18 @@ REVIEWS = [
  # for its report - evidence the language lands with the people it is for.
  # Her quote marks around MOT are hers; canonical_chars folds ‘ ’ to ' so the
  # typographic form here still verifies against whatever Google returns.
+ # NEW 2026-08-13, owner's screenshot of the live reply screen ("2 days ago",
+ # 5 stars). Genuinely new. Complete and verbatim.
+ #
+ # The & is stored raw, matching Valerie Hunt and Robert Kennard, and
+ # canonical_chars folds & to "and" so it still verifies. NOTE for whoever
+ # touches the render path: these quotes reach the HTML as a bare & rather than
+ # &amp;. That is technically invalid HTML5, but harmless here and left alone
+ # deliberately - every instance is "& " followed by a space, which no browser
+ # can mistake for an entity reference, and none of them land inside JSON-LD
+ # (checked: no ld+json block contains one, so no structured data is at risk).
+ # Escape it at the render layer if ever fixed, never by editing these quotes.
+ ("David Young", "Thank you David & Steve for the usual service and sorting out the problem I told you about. Excellent work as usual."),
  ("Rosemary Allen", "365 Techies have given my PC its regular ‘MOT’ for many years now. Not only that, but if I have any problems, however small, David and Steve are always there at the other end of the phone to answer my questions and reassure me."),
  ("Rob Hazell", "Can’t fault the skill and attention the 365 guys give… confidence that things keep ticking over with their regular maintenance access checks, and there on call when other oddities crop up — or I mess things up ;)"),
  # VERIFIED 2026-08-03 against Google's own API text. ⚠️ We had lowercased
@@ -200,7 +212,7 @@ VERIFIED = {
     "David Butcher",
     # verified against the owner's screenshots of the live reply screen,
     # 2026-08-13, and re-checked with tools_check_reviews.py
-    "Peter Moody", "Mark Lemon", "Rosemary Allen",
+    "Peter Moody", "Mark Lemon", "Rosemary Allen", "David Young",
 }
 
 # WITHDRAWN 2026-08-01 - deliberately NOT published, do not re-add without
