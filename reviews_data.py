@@ -106,6 +106,12 @@ REVIEWS = [
  # (checked: no ld+json block contains one, so no structured data is at risk).
  # Escape it at the render layer if ever fixed, never by editing these quotes.
  ("David Young", "Thank you David & Steve for the usual service and sorting out the problem I told you about. Excellent work as usual."),
+ # NEW 2026-08-13, owner's screenshot of the live reply screen ("2 weeks ago",
+ # 5 stars). Genuinely new. Complete and verbatim - short, but John Ridd's is
+ # shorter still, and a real short review beats a padded one. Google shows him
+ # lowercase as "andy carapiet"; the checker matches names case-insensitively
+ # since 2026-08-13, so publishing him properly capitalised still verifies.
+ ("Andy Carapiet", "Absolutely first class service. Highly recommend."),
  ("Rosemary Allen", "365 Techies have given my PC its regular ‘MOT’ for many years now. Not only that, but if I have any problems, however small, David and Steve are always there at the other end of the phone to answer my questions and reassure me."),
  ("Rob Hazell", "Can’t fault the skill and attention the 365 guys give… confidence that things keep ticking over with their regular maintenance access checks, and there on call when other oddities crop up — or I mess things up ;)"),
  # VERIFIED 2026-08-03 against Google's own API text. ⚠️ We had lowercased
@@ -213,6 +219,7 @@ VERIFIED = {
     # verified against the owner's screenshots of the live reply screen,
     # 2026-08-13, and re-checked with tools_check_reviews.py
     "Peter Moody", "Mark Lemon", "Rosemary Allen", "David Young",
+    "Andy Carapiet",
 }
 
 # WITHDRAWN 2026-08-01 - deliberately NOT published, do not re-add without
