@@ -153,14 +153,14 @@ def why_choose():
     </section>''',
       f'''    <section class="stats section--alt" aria-label="By the numbers">
       <div class="stats__grid">
-        <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="4.9" data-decimals="1">0</span></p><p class="stat__label mono">GOOGLE RATING</p></div>
+        <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="4.9" data-decimals="1">4.9</span></p><p class="stat__label mono">GOOGLE RATING</p></div>
         <!-- A hardcoded review COUNT lived here. It goes stale every time we earn a
              review, and it survived the 2026-07-31 sweep that stripped the counts
              everywhere else because the number sits in a data-count ATTRIBUTE rather
              than in visible text. The linked Google profile is the only source of
              truth for how many; the 4.9 rating beside this is verified and stays. -->
-        <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="28">0</span><span class="stat__suffix">+</span></p><p class="stat__label mono">DORSET AREAS</p></div>
-        <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="6">0</span><span class="stat__suffix">wk</span></p><p class="stat__label mono">SERVICE CYCLE</p></div>
+        <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="28">28</span><span class="stat__suffix">+</span></p><p class="stat__label mono">DORSET AREAS</p></div>
+        <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="6">6</span><span class="stat__suffix">wk</span></p><p class="stat__label mono">SERVICE CYCLE</p></div>
       </div>
     </section>''',
       reviews_block(pick("Vince Jones", "Alan Bevis", "Peter Moody")),
@@ -5266,14 +5266,14 @@ def case_studies():
            chips=["Rated 4.9 on Google","Homes &amp; businesses","30+ years' experience"]),
       '''    <section class="stats section--alt" aria-label="By the numbers">
       <div class="stats__grid">
-        <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="4.9" data-decimals="1">0</span></p><p class="stat__label mono">GOOGLE RATING</p></div>
+        <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="4.9" data-decimals="1">4.9</span></p><p class="stat__label mono">GOOGLE RATING</p></div>
         <!-- A hardcoded review COUNT lived here. It goes stale every time we earn a
              review, and it survived the 2026-07-31 sweep that stripped the counts
              everywhere else because the number sits in a data-count ATTRIBUTE rather
              than in visible text. The linked Google profile is the only source of
              truth for how many; the 4.9 rating beside this is verified and stays. -->
-        <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="30">0</span><span class="stat__suffix">+ yrs</span></p><p class="stat__label mono">SINCE 1995</p></div>
-        <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="6">0</span><span class="stat__suffix">wk</span></p><p class="stat__label mono">SERVICE CYCLE</p></div>
+        <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="30">30</span><span class="stat__suffix">+ yrs</span></p><p class="stat__label mono">SINCE 1995</p></div>
+        <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="6">6</span><span class="stat__suffix">wk</span></p><p class="stat__label mono">SERVICE CYCLE</p></div>
       </div>
     </section>''',
       # The hub was entirely text. This is the one story we hold real, permitted
@@ -14249,14 +14249,14 @@ info_page(
     </section>
     <section class="stats" aria-label="By the numbers">
       <div class="stats__grid">
-        <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="4.9" data-decimals="1">0</span></p><p class="stat__label mono">GOOGLE RATING</p></div>
+        <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="4.9" data-decimals="1">4.9</span></p><p class="stat__label mono">GOOGLE RATING</p></div>
         <!-- A hardcoded review COUNT lived here. It goes stale every time we earn a
              review, and it survived the 2026-07-31 sweep that stripped the counts
              everywhere else because the number sits in a data-count ATTRIBUTE rather
              than in visible text. The linked Google profile is the only source of
              truth for how many; the 4.9 rating beside this is verified and stays. -->
-        <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="30">0</span><span class="stat__suffix">+ yrs</span></p><p class="stat__label mono">SINCE 1995</p></div>
-        <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="28">0</span><span class="stat__suffix">+</span></p><p class="stat__label mono">AREAS COVERED</p></div>
+        <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="30">30</span><span class="stat__suffix">+ yrs</span></p><p class="stat__label mono">SINCE 1995</p></div>
+        <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="28">28</span><span class="stat__suffix">+</span></p><p class="stat__label mono">AREAS COVERED</p></div>
       </div>
       <p class="stats__note mono">12-month repair warranty &middot; No-fix-no-fee repairs &middot; No long contracts</p>
     </section>
