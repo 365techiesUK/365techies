@@ -326,6 +326,8 @@
     else if (href.indexOf('sms:') === 0) ev('sms_click', { link_url: href, page: location.pathname });
     else if (href.indexOf('mailto:') === 0) ev('email_click', { link_url: href, page: location.pathname });
     else if (href.indexOf('sos.splashtop.com') !== -1 || href.indexOf('/sos/') !== -1) ev('sos_click', { page: location.pathname });
+    /* the click that starts a paying Direct Debit plan - the core product's one conversion action */
+    else if (href.indexOf('pay.gocardless.com') !== -1) ev('start_plan_click', { link_url: href, page: location.pathname });
   }, true);
   document.addEventListener('submit', function (e) {
     var f = e.target;

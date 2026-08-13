@@ -126,8 +126,8 @@
  },
  "are-dell-latitude-laptops-good": {
   "first": "2026-07-28",
-  "h": "f467dc43d13a4e64",
-  "last": "2026-08-12"
+  "h": "b6a35856ed77ed1f",
+  "last": "2026-08-13"
  },
  "are-refurbished-laptops-any-good": {
   "first": "2026-06-19",
@@ -166,8 +166,8 @@
  },
  "book-service": {
   "first": "2026-07-28",
-  "h": "54a8def7ee57f971",
-  "last": "2026-08-12"
+  "h": "d1ae49f65dc309d8",
+  "last": "2026-08-13"
  },
  "bournemouth": {
   "first": "2026-08-03",
@@ -222,7 +222,7 @@
  "broadband-speed-checker": {
   "first": "2026-07-28",
   "h": "a6bd3ae6c31a7b3d",
-  "last": "2026-08-12"
+  "last": "2026-08-13"
  },
  "broadband-to-a-boat-mooring": {
   "first": "2026-07-28",
@@ -356,8 +356,8 @@
  },
  "cerbo-gx-mqtt-dashboard": {
   "first": "2026-07-28",
-  "h": "05f15fc0d38e2613",
-  "last": "2026-08-12"
+  "h": "eec4d8d8eb770efb",
+  "last": "2026-08-13"
  },
  "cerbo-gx-not-connecting-to-vrm": {
   "first": "2026-08-10",
@@ -916,8 +916,8 @@
  },
  "dell-this-pc-cant-run-windows-11": {
   "first": "2026-07-28",
-  "h": "43828f9215074963",
-  "last": "2026-08-12"
+  "h": "dd0894178b872aa4",
+  "last": "2026-08-13"
  },
  "dell-vostro-repair-support-dorset": {
   "first": "2026-07-28",
@@ -946,8 +946,8 @@
  },
  "disaster-recovery": {
   "first": "2026-07-28",
-  "h": "e8393c60220ea9c9",
-  "last": "2026-08-12"
+  "h": "e0c7fe852679f3bd",
+  "last": "2026-08-13"
  },
  "dns-lookup": {
   "first": "2026-07-28",
@@ -961,8 +961,8 @@
  },
  "downtime-cost-calculator": {
   "first": "2026-07-28",
-  "h": "f62ce75baf8fc086",
-  "last": "2026-08-12"
+  "h": "4755db0131a2ea85",
+  "last": "2026-08-13"
  },
  "email-basics-course": {
   "first": "2026-07-28",
@@ -1351,8 +1351,8 @@
  },
  "how-we-rebuilt-our-website": {
   "first": "2026-07-28",
-  "h": "88cddb36084cda94",
-  "last": "2026-08-12"
+  "h": "95de34e10cfb4552",
+  "last": "2026-08-13"
  },
  "i-think-ive-been-hacked": {
   "first": "2026-07-28",
@@ -2156,7 +2156,7 @@
  },
  "off-grid-victron-energy": {
   "first": "2026-07-28",
-  "h": "dc303b3ef573f5c5",
+  "h": "0a41d5665d6e645e",
   "last": "2026-08-13"
  },
  "office-moves-it-relocation": {
@@ -2551,8 +2551,8 @@
  },
  "plan-finder": {
   "first": "2026-07-28",
-  "h": "af32d355a182e850",
-  "last": "2026-08-12"
+  "h": "8faeacb880d6710f",
+  "last": "2026-08-13"
  },
  "plusnet-email-wont-add-to-new-outlook": {
   "first": "2026-07-28",
@@ -2857,7 +2857,7 @@
  "server-or-cloud-picker": {
   "first": "2026-07-28",
   "h": "e27f493775ac5bb8",
-  "last": "2026-08-12"
+  "last": "2026-08-13"
  },
  "service-level-agreement": {
   "first": "2026-07-28",
@@ -3086,8 +3086,8 @@
  },
  "victron-boat-gps-tracking": {
   "first": "2026-07-28",
-  "h": "409a0b7c65ecc312",
-  "last": "2026-08-12"
+  "h": "af562b7f11335b77",
+  "last": "2026-08-13"
  },
  "victron-for-business": {
   "first": "2026-07-28",
@@ -3096,8 +3096,8 @@
  },
  "victron-gps-tracking": {
   "first": "2026-07-28",
-  "h": "296145138d18b6ba",
-  "last": "2026-08-12"
+  "h": "55b8a5fb3a2f367b",
+  "last": "2026-08-13"
  },
  "victron-grafana-dashboard-service": {
   "first": "2026-07-28",
@@ -3146,13 +3146,13 @@
  },
  "web-care": {
   "first": "2026-07-28",
-  "h": "ded52bebac6d953d",
-  "last": "2026-08-12"
+  "h": "158b332f74c7fd11",
+  "last": "2026-08-13"
  },
  "web-design-hosting": {
   "first": "2026-07-28",
-  "h": "5cbf1db5083b2f12",
-  "last": "2026-08-12"
+  "h": "4d9efbb9471437e3",
+  "last": "2026-08-13"
  },
  "web-designer-disappeared": {
   "first": "2026-07-28",
@@ -3186,8 +3186,12 @@
  },
  "website-rebuild": {
   "first": "2026-07-28",
-  "h": "94f28a13c11e4fdb",
-  "last": "2026-08-12"
+  "h": "3262742a979349f7",
+  "last": "2026-08-13"
+ },
+ "website-rebuild-case-study-beckox": {
+  "first": "2026-08-13",
+  "h": "3fddcab4279b540d"
  },
  "website-rebuild-seo-case-study": {
   "first": "2026-07-30",

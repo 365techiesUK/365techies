@@ -4171,6 +4171,8 @@ PLAN_FINDER_WIDGET = '''    <section class="section section--alt" aria-label="Pl
           var primary = custom
             ? '<a href="/contact/" class="button primary">Get a Quote</a>'
             : '<a href="' + p.href + '" class="button primary">See this plan</a>';
+          window.ttToolDone&&window.ttToolDone('plan-finder');
+          try { if (window.gtag && localStorage.getItem('tt_internal') !== '1') gtag('event', 'plan_recommended', { plan: key }); } catch (e) {}
           document.getElementById('quiz-result').innerHTML =
             '<p class="tag">Recommended for you</p>' +
             '<h3>' + p.name + '</h3>' +
@@ -6617,7 +6619,7 @@ def off_grid():
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>// WE PRACTISE WHAT WE PREACH</p>
           <h2 class="section-title section-title--center" data-title>Clean, mobile, completely off-grid<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>Our 365 Crafter isn&rsquo;t a showroom &mdash; it&rsquo;s how we work. A fully mobile support centre that runs on sunshine, so we can reach you anywhere in Dorset and beyond without a drop of mains power. It&rsquo;s our mobile office too &mdash; online through a 5G router with Starlink as backup, we <a href="/working-from-a-campervan/">work from it most days</a>. Proud members of <a href="https://www.sustainabledorset.org/" target="_blank" rel="noopener">Sustainable Dorset</a>.</p>
+          <p class="lede lede--center" data-reveal>Our 365 Crafter isn&rsquo;t a showroom &mdash; it&rsquo;s how we work. A fully mobile support centre that runs on sunshine, so we can reach you anywhere in Dorset and beyond without a drop of mains power. It&rsquo;s our mobile office too &mdash; online through a 5G router with Starlink as backup, we <a href="/working-from-a-campervan/">work from it most days</a>. Running Victron commercially? See <a href="/victron-for-business/">Victron for business</a>. Proud members of <a href="https://www.sustainabledorset.org/" target="_blank" rel="noopener">Sustainable Dorset</a>.</p>
         </div>
         <div class="tile-grid" data-stagger>
 {tiles([("leaf","Clean energy, for real","Our own van runs on solar and stored battery power &mdash; quiet, emissions-free, no generator humming away. The same clean systems we design for you."),("van","Completely mobile","Power and tools that travel with us. We can survey, support and install anywhere &mdash; a remote farm, a boatyard, a festival field &mdash; fully self-sufficient."),("heart","Sustainable Dorset members","We&rsquo;re part of the county&rsquo;s sustainable-business community, and clean off-grid power and refurbished kit are woven through everything we do."),("globe","Independent &amp; resilient","Off-grid means no power cuts, no fuel runs, no bills creeping up &mdash; just your own clean energy, monitored so you always know where you stand."),("sun","Less carbon, lower bills","Every kWh from the roof is a kWh you didn&rsquo;t buy or burn. We size systems to pay back in savings and shrink your footprint at the same time."),("shield","Monitored, like everything we do","Because we&rsquo;re an IT &amp; monitoring company, every system &mdash; ours and yours &mdash; is watched over on Victron VRM, so small issues never become big ones.")])}
@@ -15113,7 +15115,7 @@ info_page(
           <h2>What we do</h2>
           <p>We put verified, off-site, ransomware-safe backups in place, build a clear recovery and business-continuity plan around your business, and &mdash; crucially &mdash; <strong>test it</strong> so you know it works. If disaster strikes, we act fast to restore your data and get you operational again.</p>
           <h2>Who it&rsquo;s for</h2>
-          <p>Any business that can&rsquo;t afford to lose its data or stop trading &mdash; especially regulated sectors like <a href="/it-support-for-solicitors/">solicitors</a>, <a href="/it-support-for-accountants/">accountants</a>, <a href="/it-support-for-care-homes/">care homes</a> and <a href="/it-support-for-dental-medical/">dental &amp; medical practices</a>. It builds on our <a href="/backup-support/">backup &amp; recovery</a> and <a href="/cybersecurity-support/">cybersecurity</a> services.</p>""",
+          <p>Any business that can&rsquo;t afford to lose its data or stop trading &mdash; especially regulated sectors like <a href="/it-support-for-solicitors/">solicitors</a>, <a href="/it-support-for-accountants/">accountants</a>, <a href="/it-support-for-care-homes/">care homes</a> <a href="/it-support-for-sole-traders/">sole traders</a> and <a href="/it-support-for-dental-medical/">dental &amp; medical practices</a>. It builds on our <a href="/backup-support/">backup &amp; recovery</a> and <a href="/cybersecurity-support/">cybersecurity</a> services.</p>""",
   cta_args=("Be ready for anything", "Get verified backups and a tested recovery plan, so a disaster is a hiccup &mdash; not a catastrophe.",
             ("Get a Continuity Plan", "/contact/"), ("Backup & Recovery", "/backup-support/")),
 )
@@ -17336,7 +17338,7 @@ DOWNTIME_WIDGET = '''    <section class="section section--alt" aria-label="Downt
           var cls = annual<500?'hc--good':(annual<2000?'hc--good':'hc--risk');
           var times=Math.round(annual/219);
           var ctx = times>=2 ? ' That is around <strong>'+times+' times</strong> the annual cost of our home support plan &mdash; and preventing downtime is exactly what a plan is for.' : ' A monthly plan (from &pound;18.25/month per computer) is built to prevent exactly this kind of lost time.';
-          document.getElementById('dt-result').innerHTML=
+          window.ttToolDone&&window.ttToolDone('downtime-cost-calculator');document.getElementById('dt-result').innerHTML=
             '<p class="hc-bandlabel '+cls+'">About &pound;'+annual.toLocaleString()+' a year in lost time</p>'+
             '<p>Based on your own numbers, IT downtime could be costing your business roughly <strong>&pound;'+annual.toLocaleString()+' a year</strong> in lost working time alone &mdash; before counting lost data, missed deadlines or stress.'+ctx+'</p>'+
             '<div class="quiz__actions"><a href="/monthly-it-support/" class="button primary">Prevent downtime</a><a href="/quick-quote/" class="button secondary">Get a quick quote</a></div>'+

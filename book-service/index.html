@@ -997,6 +997,7 @@
           post({ action: 'pubservices' }).then(function (r) {
             if (!r || !r.ok || !r.services || !r.services.length) return oops(r && r.error === 'busy' ? netMsg(r) : 'We couldn’t load the list of services just now.', step1);
             busyFlag = false; say('Step 1 of 4. Choose a service.');
+            try { if (window.gtag && localStorage.getItem('tt_internal') !== '1') gtag('event', 'booking_start', {}); } catch (e) {}
             var h = '<p class="bk__h">What can we help with?</p><p class="bk__sub">Choose the appointment that fits best &mdash; not sure? Pick the closest and we&rsquo;ll sort it on the day.</p><div class="bk__grid">';
             for (var i = 0; i < r.services.length; i++) {
               var s = r.services[i];
@@ -1081,6 +1082,7 @@
         }
         function step3(msg) {
           rail(3); busyFlag = false;
+          try { if (window.gtag && localStorage.getItem('tt_internal') !== '1') gtag('event', 'booking_slot_picked', {}); } catch (e) {}
           var s = sess();
           if (s && s.wtoken) {
             say('Step 3 of 4. Confirm your booking.');
@@ -1154,7 +1156,10 @@
           post({ action: 'join', email: S.email, bk_name: S.name, bk_phone: S.phone,
                  bk_what: S.svcName || '', bk_when: whenTxt() }).then(function (r) {
             busyFlag = false;
-            if (r && (r.ok || r.have_code)) return codeBox(r && !r.ok && r.have_code);
+            if (r && (r.ok || r.have_code)) {
+              try { if (window.gtag && localStorage.getItem('tt_internal') !== '1') gtag('event', 'booking_code_sent', {}); } catch (e) {}
+              return codeBox(r && !r.ok && r.have_code);
+            }
             go.disabled = false; go.textContent = 'Send my code';
             err.textContent = (r && r.error === 'throttled') ? 'That’s a few codes now — please wait a little, or call 01202 775566 and we’ll book it for you.'
               : 'We couldn’t send your code. Please check the address, or call 01202 775566.';
@@ -1175,12 +1180,13 @@
             // send the details on the RESEND too. Someone clicking "send it again" is the
             // likeliest person in the whole funnel to give up, so this is the last record we
             // may ever get of them - it must not arrive emptier than the first one.
+            var reBtn = this;
             post({ action: 'join', email: S.email, bk_name: S.name, bk_phone: S.phone,
                    bk_what: S.svcName || '', bk_when: whenTxt() }).then(function (r) {
-              busyFlag = false;
+              busyFlag = false; reBtn.disabled = false;
               e2.textContent = (r && (r.ok || r.have_code)) ? 'Sent — give it a moment, and do check your junk folder.'
-                : 'We couldn’t send another code just now. Please call 01202 775566.';
-            }, function () { busyFlag = false; e2.textContent = 'We couldn’t send another code just now.'; });
+                : 'We couldn’t send another code just now. If the email address above is wrong, tap “Change my details”. Or call 01202 775566.';
+            }, function () { busyFlag = false; reBtn.disabled = false; e2.textContent = 'We couldn’t send another code just now — try again in a moment, or call 01202 775566.'; });
           };
           document.getElementById('bkgo').onclick = verify;
           var c = document.getElementById('bkc');
@@ -1286,7 +1292,7 @@
             '<p class="bk__note">Your portal is where you can move or cancel this appointment, see any reports we write for you, and use our free tools.</p>';
           document.getElementById('bkb').onclick = function () { S.date = ''; S.time = ''; S.note = ''; step1(); };
           focusH();
-          try { if (window.gtag) gtag('event', 'booking_complete', { service: S.svcName }); } catch (e) {}
+          try { if (window.gtag && localStorage.getItem('tt_internal') !== '1') gtag('event', 'booking_complete', { service: S.svcName }); } catch (e) {}
         }
 
         step1();
@@ -1627,7 +1633,7 @@
     </div>
   </div>
   <script type="module" src="/js/interior.min.js?v=22"></script>
-  <script src="/js/a11y.min.js?v=8" defer></script>
+  <script src="/js/a11y.min.js?v=9" defer></script>
   <script src="/js/forms.min.js?v=8" defer></script>
   <script src="/js/search.min.js?v=2026-08-13" defer></script>
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>

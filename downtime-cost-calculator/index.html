@@ -893,7 +893,7 @@
           var cls = annual<500?'hc--good':(annual<2000?'hc--good':'hc--risk');
           var times=Math.round(annual/219);
           var ctx = times>=2 ? ' That is around <strong>'+times+' times</strong> the annual cost of our home support plan &mdash; and preventing downtime is exactly what a plan is for.' : ' A monthly plan (from &pound;18.25/month per computer) is built to prevent exactly this kind of lost time.';
-          document.getElementById('dt-result').innerHTML=
+          window.ttToolDone&&window.ttToolDone('downtime-cost-calculator');document.getElementById('dt-result').innerHTML=
             '<p class="hc-bandlabel '+cls+'">About &pound;'+annual.toLocaleString()+' a year in lost time</p>'+
             '<p>Based on your own numbers, IT downtime could be costing your business roughly <strong>&pound;'+annual.toLocaleString()+' a year</strong> in lost working time alone &mdash; before counting lost data, missed deadlines or stress.'+ctx+'</p>'+
             '<div class="quiz__actions"><a href="/monthly-it-support/" class="button primary">Prevent downtime</a><a href="/quick-quote/" class="button secondary">Get a quick quote</a></div>'+
@@ -1211,7 +1211,7 @@
     </div>
   </div>
   <script type="module" src="/js/interior.min.js?v=22"></script>
-  <script src="/js/a11y.min.js?v=8" defer></script>
+  <script src="/js/a11y.min.js?v=9" defer></script>
   <script src="/js/forms.min.js?v=8" defer></script>
   <script src="/js/search.min.js?v=2026-08-13" defer></script>
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
