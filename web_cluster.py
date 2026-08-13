@@ -17,6 +17,7 @@ _WEB_CLUSTER = [
  ]),
  ("Proof &amp; performance", [
    ("website-rebuild-seo-case-study", "A rebuild, measured", "A client&rsquo;s WordPress site and its replacement, measured the day before the old one died."),
+   ("website-rebuild-case-study-beckox", "Beckox of Poole, named", "A 44-year-old manufacturer rebuilt and measured &mdash; same Lighthouse, same address: 37 to 88."),
    ("how-we-rebuilt-our-website", "How we rebuilt our own site", "WordPress to hand-built &mdash; the numbers, honestly."),
    ("website-speed-local-seo", "Speed &amp; local SEO", "Why a fast site wins local customers &mdash; and how to check yours."),
    ("website-checker", "Free website checker", "Speed, SSL and health in about a minute, no sign-up."),
