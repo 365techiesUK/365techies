@@ -87,6 +87,14 @@ REVIEWS = [
  # than merely contiguous. Google shows him lowercase as "mark lemon"; the
  # checker now matches names case-insensitively so this can read properly.
  ("Mark Lemon", "These guys at 365 have been keeping me going for over 14 years. No need to search for someone new as they must be number one. Always sorted any problems I’ve had and very quickly. First class"),
+ # NEW 2026-08-13, owner's screenshot of the live reply screen ("yesterday",
+ # 5 stars). Genuinely new, not a rewrite. Complete and verbatim.
+ # Worth noting: she is the FIRST customer to reach for the "MOT" framing
+ # unprompted, which is the same metaphor the Service Pass tool already uses
+ # for its report - evidence the language lands with the people it is for.
+ # Her quote marks around MOT are hers; canonical_chars folds ‘ ’ to ' so the
+ # typographic form here still verifies against whatever Google returns.
+ ("Rosemary Allen", "365 Techies have given my PC its regular ‘MOT’ for many years now. Not only that, but if I have any problems, however small, David and Steve are always there at the other end of the phone to answer my questions and reassure me."),
  ("Rob Hazell", "Can’t fault the skill and attention the 365 guys give… confidence that things keep ticking over with their regular maintenance access checks, and there on call when other oddities crop up — or I mess things up ;)"),
  # VERIFIED 2026-08-03 against Google's own API text. ⚠️ We had lowercased
  # his capital "Brilliant" AND silently fixed his typo ("anow bout" ->
@@ -192,7 +200,7 @@ VERIFIED = {
     "David Butcher",
     # verified against the owner's screenshots of the live reply screen,
     # 2026-08-13, and re-checked with tools_check_reviews.py
-    "Peter Moody", "Mark Lemon",
+    "Peter Moody", "Mark Lemon", "Rosemary Allen",
 }
 
 # WITHDRAWN 2026-08-01 - deliberately NOT published, do not re-add without
