@@ -20,8 +20,22 @@ $QBO_ENV           = 'sandbox';
 $QBO_GUARD         = '';        // e.g. run once:  php -r "echo bin2hex(random_bytes(16));"
 
 // --- The QuickBooks Product/Service item every invoice line points at ------
-// Create ONE service item in QBO (e.g. "Monthly IT Support"), then paste its Id.
+// Create ONE service item in QBO (Gear > Products and services > New > Service),
+// then read its Id from the staff portal's "List QuickBooks items" button.
+// ⚠ NOT from the browser address bar (that trick is the CUSTOMER page, not items)
+// and NOT the SKU — the SKU is a different, company-defined field.
 $QBO_ITEM_ID       = '';
+
+// --- VAT: read this before your first live invoice --------------------------
+// ⚠ Leaving this blank is NOT the same as charging no VAT. Intuit UK cannot turn
+// the VAT centre off once it has been set up (only default it to "No VAT"), and
+// outside the US a line with a BLANK tax code is treated as TAXABLE, not exempt.
+// So if VAT is enabled in your QuickBooks company, put the Id of its ACTIVE
+// "No VAT" tax code here. The staff portal's "Check setup" tells you whether VAT
+// is on in your company and lists the candidate codes with their Ids.
+// Per-company: this Id differs between a sandbox and your real books.
+// Confirm the choice with your accountant — it decides what your books say.
+$QBO_TAX_CODE_ID   = '';        // e.g. the Id of "No VAT"; blank only if VAT was never enabled
 
 // --- SAFETY GATES (leave these until you've tested — see the setup guide) ---
 // NB this one gate covers BOTH writers: the monthly run (pcm-invoice.php) and the

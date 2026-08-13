@@ -15,7 +15,10 @@
  *    what it WOULD invoice - review that first.
  *  - IDEMPOTENT: a customer already invoiced for the target YYYY-MM is skipped,
  *    so re-running (or the cron double-firing) never double-invoices.
- *  - No VAT lines (365 Techies is not VAT registered - keep the VAT centre OFF).
+ *  - Not VAT registered. ⚠ But QBO UK cannot switch VAT off once set up, and a
+ *    BLANK tax code is treated as taxable, not exempt - so $QBO_TAX_CODE_ID must
+ *    name the company's active 'No VAT' code. Verified against Intuit UK docs
+ *    2026-08-12; the old comment here was wrong on both counts.
  *  - Amounts come ONLY from GoCardless, so invoice total == amount collected.
  *  - Owner-created records only (self-serve 'signin' emails are unverified -
  *    same rule as pcm.php's payment lookup - so they're skipped).
@@ -76,7 +79,7 @@ $cfgFail = function ($err, $hint = '') use (&$CLI) {
     jout(array('ok'=>false, 'error'=>'forbidden'));
 };
 if (!is_readable($CFG)) $cfgFail('no_config', 'copy pcm-quickbooks.php.example to pcm-quickbooks.php and fill it');
-require $CFG;   // $QBO_CLIENT_ID $QBO_CLIENT_SECRET $QBO_REALM_ID $QBO_ENV $QBO_GUARD $QBO_ITEM_ID(or _NAME) $QBO_LIVE_ENABLED [$QBO_ONLY_KEY]
+require $CFG;   // $QBO_CLIENT_ID $QBO_CLIENT_SECRET $QBO_REALM_ID $QBO_ENV $QBO_GUARD $QBO_ITEM_ID [$QBO_TAX_CODE_ID] $QBO_LIVE_ENABLED [$QBO_ONLY_KEY]
 if (empty($QBO_CLIENT_ID) || empty($QBO_CLIENT_SECRET) || empty($QBO_REALM_ID) || empty($QBO_GUARD)) $cfgFail('config_incomplete');
 $SANDBOX = (isset($QBO_ENV) && $QBO_ENV === 'sandbox');
 $API_BASE = $SANDBOX ? 'https://sandbox-quickbooks.api.intuit.com' : 'https://quickbooks.api.intuit.com';
@@ -244,7 +247,14 @@ foreach ($db['customers'] as $key => $c) {
     $inv = array('CustomerRef'=>array('value'=>$cid), 'Line'=>$qbLines,
                  'TxnDate'=>gmdate('Y-m-d'), 'DocNumber'=>$doc,
                  'CustomerMemo'=>array('value'=>'Paid automatically by Direct Debit via GoCardless - no action needed.'));
-    // Non-VAT: no TaxCodeRef / no VAT lines (requires the QBO VAT centre to be OFF).
+    /* ⚠ This used to say "no TaxCodeRef ... requires the QBO VAT centre to be OFF".
+       Both halves were wrong: Intuit UK cannot turn VAT off once set up (only
+       default it to No VAT), and outside the US a line with a BLANK tax code is
+       treated as taxable, not exempt. So if this company has VAT enabled,
+       $QBO_TAX_CODE_ID must name its active 'No VAT' code. Blank = unchanged
+       behaviour, for a company with VAT genuinely never enabled. */
+    if (!empty($QBO_TAX_CODE_ID)) foreach ($qbLines as &$_ql) $_ql['SalesItemLineDetail']['TaxCodeRef'] = array('value' => (string)$QBO_TAX_CODE_ID);
+    unset($_ql);
     $res = qbo_api('POST', '/invoice', $inv, $access);
     if (($res['code'] ?? 0) >= 200 && $res['code'] < 300 && !empty($res['json']['Invoice']['Id'])) {
         $state['invoiced'][$stampKey] = array('id'=>(string)$res['json']['Invoice']['Id'], 'ts'=>time(), 'total'=>round($total, 2));

@@ -30,7 +30,8 @@
  *    live=1 AND $QBO_LIVE_ENABLED is true in the server-only config.
  *  - Staff only. A customer session cannot reach any of it.
  *  - Invoices are CREATED, never SENT - no email goes to the customer from here.
- *  - No VAT lines: 365 Techies is not VAT registered (keep the VAT centre OFF).
+ *  - Not VAT registered. ⚠ 'No TaxCodeRef' does NOT mean no VAT outside the US,
+ *    and QBO UK cannot turn the VAT centre off - see $QBO_TAX_CODE_ID.
  *
  * SECRETS (server-only, gitignored, .htaccess-denied):
  *   api/pcm-quickbooks.php     -> $QBO_* (see pcm-quickbooks.php.example)
@@ -195,6 +196,35 @@ if ($action === 'qbostatus') {
         'token_file'        => 'api/pcm-qbo-token.json with a refresh_token in it',
         'token_valid'       => 'a refresh token QuickBooks still accepts (re-authorise if stale)',
     );
+    /* THE VAT FACT, read from the company itself rather than assumed. Both writers
+       used to carry "requires the QBO VAT centre to be OFF" - but Intuit UK is
+       explicit that once VAT is set up in QuickBooks Online it CANNOT be turned
+       off, only defaulted to 'No VAT'. And a line with no TaxCodeRef is not
+       treated as zero-VAT outside the US; Intuit's own forum says a blank tax code
+       makes the line TAXABLE. So state the truth on screen and let the accountant
+       decide, instead of shipping an assumption into the books. */
+    if ($hasRefresh && !empty($st['token_valid'])) {
+        $pr = qbo_api('GET', '/preferences', null, $t['access_token']);
+        if (qbo_ok($pr) && isset($pr['json']['Preferences'])) {
+            $tp = isset($pr['json']['Preferences']['TaxPrefs']) ? $pr['json']['Preferences']['TaxPrefs'] : array();
+            $st['vat_enabled'] = !empty($tp['UsingSalesTax']);
+            $st['vat_note'] = !empty($tp['UsingSalesTax'])
+                ? 'VAT is ON in this QuickBooks company. It cannot be switched off - only defaulted to No VAT. Leaving a tax code blank does NOT mean zero VAT, so set $QBO_TAX_CODE_ID to the company active No VAT code. Check with the accountant before any live invoice.'
+                : 'VAT is not enabled in this company - invoice lines need no tax code.';
+            // Offer the candidate codes so nobody has to guess the id
+            $tq = qbo_api('GET', '/query?query=' . rawurlencode('select Id, Name, Active from TaxCode maxresults 50'), null, $t['access_token']);
+            if (qbo_ok($tq)) {
+                $codes = array();
+                foreach ((array)(isset($tq['json']['QueryResponse']['TaxCode']) ? $tq['json']['QueryResponse']['TaxCode'] : array()) as $tc) {
+                    if (!is_array($tc) || empty($tc['Active'])) continue;   // an inactive code cannot be referenced by the API
+                    $codes[] = array('id' => (string)(isset($tc['Id']) ? $tc['Id'] : ''), 'name' => (string)(isset($tc['Name']) ? $tc['Name'] : ''));
+                }
+                $st['tax_codes'] = $codes;
+            }
+        }
+    }
+    $st['tax_code_id_set'] = !empty($QBO_TAX_CODE_ID);
+
     $missing = array(); $keys = array();
     foreach (array_keys($LABEL) as $k) if (empty($st[$k])) { $missing[] = $LABEL[$k]; $keys[] = $k; }
     $st['still_needed'] = $missing;
@@ -386,7 +416,10 @@ if ($action === 'qbostart') {
         $line = array('DetailType' => 'SalesItemLineDetail', 'Amount' => $amount,
                       'Description' => ($desc !== '' ? $desc : 'Work carried out'),
                       'SalesItemLineDetail' => array('ItemRef' => array('value' => (string)$QBO_ITEM_ID), 'Qty' => 1, 'UnitPrice' => $amount));
-        // No TaxCodeRef and no VAT lines - not VAT registered.
+        /* Opt-in: blank leaves the payload byte-identical to before. Set only once
+           the accountant has confirmed WHICH code, because a blank tax code is not
+           the same as zero VAT in a UK company (see qbostatus vat_note). */
+        if (!empty($QBO_TAX_CODE_ID)) $line['SalesItemLineDetail']['TaxCodeRef'] = array('value' => (string)$QBO_TAX_CODE_ID);
         $inv = array('CustomerRef' => array('value' => $cid), 'Line' => array($line), 'TxnDate' => gmdate('Y-m-d'));
         if ($bill) $inv['BillAddr'] = $bill;
         $res = qbo_api('POST', '/invoice', $inv, $access);
