@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="/css/styles.min.css?v=87">
 <style>
   .hero{position:relative;overflow:hidden}
-  .hero .waterfx{position:absolute;inset:0;width:100%;height:100%;z-index:0;touch-action:none}
+  .hero .waterfx{position:absolute;inset:0;width:100%;height:100%;z-index:0;touch-action:pan-y}
   .hero__inner{position:relative;z-index:1;pointer-events:none}
   .hero__inner a, .hero__inner button{pointer-events:auto}
   .demo-note{max-width:900px;margin:2rem auto;padding:0 1.2rem;color:var(--muted)}
@@ -282,23 +282,27 @@
   (function(){
     if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     var s=document.createElement('script');
-    s.src='../fluid.js?v=2';
+    s.src='../fluid.js?v=3';
     s.onload=function(){
       try{
         config.BACK_COLOR={r:7,g:13,b:34};
         config.BLOOM=false; config.SUNRAYS=true;
-        config.DENSITY_DISSIPATION=1.6; config.VELOCITY_DISSIPATION=0.55;
-        config.CURL=18; config.SPLAT_RADIUS=0.16; config.SPLAT_FORCE=3800;
-        config.COLORFUL=true; config.COLOR_UPDATE_SPEED=6;
+        config.DENSITY_DISSIPATION=2.2;    /* trails fade sooner = calmer */
+        config.VELOCITY_DISSIPATION=0.8;
+        config.CURL=12;                     /* less turbulence */
+        config.SPLAT_RADIUS=0.12;
+        config.SPLAT_FORCE=2600;
+        config.COLORFUL=true; config.COLOR_UPDATE_SPEED=5;
+        /* bluer: cyan-blue through true blue, flashes as bright cyan */
         generateColor=function(){
-          var h=0.45+Math.random()*0.30, v=0.16;
-          if(Math.random()<0.18){h=0.42+Math.random()*0.06;v=0.24;}
+          var h=0.55+Math.random()*0.12, v=0.15;
+          if(Math.random()<0.15){h=0.50+Math.random()*0.05;v=0.22;}
           var c=HSVtoRGB(h,0.95,1.0);
           return {r:c.r*v*6,g:c.g*v*6,b:c.b*v*6};
         };
         var seen=true, heroEl=document.querySelector('.hero');
         if('IntersectionObserver' in window) new IntersectionObserver(function(en){seen=en[0].isIntersecting;}).observe(heroEl);
-        setInterval(function(){ if(seen && !document.hidden){ try{ multipleSplats(1); }catch(e){} } }, 4200);
+        setInterval(function(){ if(seen && !document.hidden){ try{ multipleSplats(1); }catch(e){} } }, 7000);
         try{ multipleSplats(3); }catch(e){}
       }catch(e){}
     };

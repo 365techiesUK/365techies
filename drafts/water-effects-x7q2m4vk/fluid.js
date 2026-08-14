@@ -1456,7 +1456,9 @@ window.addEventListener('mouseup', () => {
 });
 
 canvas.addEventListener('touchstart', e => {
-    e.preventDefault();
+    /* [365 Techies] no preventDefault here: with CSS touch-action:pan-y the
+       browser keeps vertical swipes for SCROLLING - a full preventDefault on
+       touchstart trapped users inside the hero on touch devices. */
     const touches = e.targetTouches;
     const rect = canvas.getBoundingClientRect();   /* [365 Techies] contained-canvas fix */
     while (touches.length >= pointers.length)
@@ -1469,7 +1471,7 @@ canvas.addEventListener('touchstart', e => {
 });
 
 canvas.addEventListener('touchmove', e => {
-    e.preventDefault();
+    if (e.cancelable) e.preventDefault();   /* [365 Techies] horizontal strokes only - vertical pans stay native */
     const touches = e.targetTouches;
     const rect = canvas.getBoundingClientRect();   /* [365 Techies] contained-canvas fix */
     for (let i = 0; i < touches.length; i++) {
