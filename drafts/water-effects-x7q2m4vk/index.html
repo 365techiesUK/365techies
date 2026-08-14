@@ -131,7 +131,7 @@
   (function(){
     if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     var s=document.createElement('script');
-    s.src='fluid.js';
+    s.src='fluid.js?v=2';
     s.onload=function(){
       try{
         /* retune from neon-toy to brand water (the sim exposes plain globals) */
