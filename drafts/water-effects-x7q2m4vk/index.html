@@ -143,10 +143,18 @@
         config.CURL=18;
         config.SPLAT_RADIUS=0.16;
         config.SPLAT_FORCE=3800;
-        config.COLORFUL=false;
-        /* brand-water palette instead of random rainbow */
-        var palette=[{r:.031,g:.24,b:.44},{r:.02,g:.34,b:.55},{r:.02,g:.40,b:.37},{r:.05,g:.20,b:.50}];
-        generateColor=function(){var c=palette[Math.floor(Math.random()*palette.length)];return {r:c.r*0.6,g:c.g*0.6,b:c.b*0.6};};
+        config.COLORFUL=true;              /* colours drift as you drag */
+        config.COLOR_UPDATE_SPEED=6;
+        /* the whole watery band instead of four fixed blues: teal -> cyan ->
+           blue -> indigo, with an occasional brighter aqua flash. Uses the
+           sim's own HSVtoRGB so hues stay true. */
+        generateColor=function(){
+          var h = 0.45 + Math.random()*0.30;          /* teal..indigo */
+          var v = 0.16;
+          if (Math.random() < 0.18) { h = 0.42 + Math.random()*0.06; v = 0.24; }  /* aqua flash */
+          var c = HSVtoRGB(h, 0.95, 1.0);
+          return { r: c.r*v*6, g: c.g*v*6, b: c.b*v*6 };
+        };
         /* a gentle life of its own: one soft swirl every few seconds, only while visible */
         var box=document.getElementById('fluidbox'), seen=true;
         if('IntersectionObserver' in window){
