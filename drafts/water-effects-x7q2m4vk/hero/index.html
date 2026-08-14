@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Water on the real page — private demo | 365 Techies</title>
+<link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
+<link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/css/styles.min.css?v=87">
+<style>
+  .hero{position:relative;overflow:hidden}
+  .hero .waterfx{position:absolute;inset:0;width:100%;height:100%;z-index:0;touch-action:none}
+  .hero__inner{position:relative;z-index:1;pointer-events:none}
+  .hero__inner a, .hero__inner button{pointer-events:auto}
+  .demo-note{max-width:900px;margin:2rem auto;padding:0 1.2rem;color:var(--muted)}
+  .demo-note strong{color:var(--ink)}
+  .waterripple{position:fixed;border:2px solid rgba(29,151,227,.5);border-radius:50%;
+    transform:translate(-50%,-50%);pointer-events:none;z-index:9999;animation:wrip 1.1s ease-out forwards}
+  .waterripple.r2{border-color:rgba(15,181,166,.35);animation-duration:1.5s;animation-delay:.1s}
+  @keyframes wrip{from{width:10px;height:10px;opacity:.85}to{width:300px;height:300px;opacity:0}}
+  @media (prefers-reduced-motion: reduce){
+    .hero .waterfx{display:none}
+    .waterripple{display:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+    <div class="status-ticker" aria-hidden="true">
+      <div class="status-ticker__track">
+        <span>&#9679; CALL 01202 775566&ensp;//&ensp;FAMILY BUSINESS SINCE 1995&ensp;//&ensp;DORSET MICROSOFT EDUCATION RESOURCE CENTRE 1998&ndash;2008&ensp;//&ensp;IT SUPPORT FOR MERCEDES-BENZ PENTAGON 1998&ndash;2008&ensp;//&ensp;COMPUTER SALES &amp; SERVICE CENTRE 2008&ndash;2017&ensp;//&ensp;KINSON COMMUNITY CENTRE 2017&ndash;NOW&ensp;//&ensp;ENVIRONMENT AGENCY RIVER AVON WIRELESS LINK SINCE 2015&ensp;//&ensp;DELL SPECIALISTS&ensp;//&ensp;WEBSITE DESIGN, HOSTING &amp; EMAIL&ensp;//&ensp;WORK FROM ANYWHERE &mdash; REMOTE PC ACCESS FOR SUPPORT CUSTOMERS&ensp;//&ensp;MICROSOFT PARTNER &amp; OFFICE SPECIALISTS&ensp;//&ensp;WINDOWS &amp; ANDROID SPECIALISTS&ensp;//&ensp;SAME-DAY RESPONSE &middot; USUALLY MINUTES REMOTELY&ensp;//&ensp;<a href="/heatwave-tech-guide/" tabindex="-1">HEATWAVE? KEEP YOUR TECH COOL &mdash; FREE GUIDE</a>&ensp;//&ensp;<a href="/is-it-down/" tabindex="-1">IS IT DOWN, OR IS IT JUST YOU? CHECK LIVE</a>&ensp;//&ensp;REMOTE IT SUPPORT ACROSS THE WHOLE UK&ensp;//&ensp;MALWAREBYTES PARTNER&ensp;//&ensp;NVIDIA &amp; SCAN PARTNER&ensp;//&ensp;RICHER SOUNDS PARTNER&ensp;//&ensp;BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;//&ensp;IT SUPPORT PLANS FROM &pound;18.25/MO&ensp;//&ensp;MON&ndash;FRI 9AM&ndash;5PM&ensp;//&ensp;</span>
+        <span>&#9679; CALL 01202 775566&ensp;//&ensp;FAMILY BUSINESS SINCE 1995&ensp;//&ensp;DORSET MICROSOFT EDUCATION RESOURCE CENTRE 1998&ndash;2008&ensp;//&ensp;IT SUPPORT FOR MERCEDES-BENZ PENTAGON 1998&ndash;2008&ensp;//&ensp;COMPUTER SALES &amp; SERVICE CENTRE 2008&ndash;2017&ensp;//&ensp;KINSON COMMUNITY CENTRE 2017&ndash;NOW&ensp;//&ensp;ENVIRONMENT AGENCY RIVER AVON WIRELESS LINK SINCE 2015&ensp;//&ensp;DELL SPECIALISTS&ensp;//&ensp;WEBSITE DESIGN, HOSTING &amp; EMAIL&ensp;//&ensp;WORK FROM ANYWHERE &mdash; REMOTE PC ACCESS FOR SUPPORT CUSTOMERS&ensp;//&ensp;MICROSOFT PARTNER &amp; OFFICE SPECIALISTS&ensp;//&ensp;WINDOWS &amp; ANDROID SPECIALISTS&ensp;//&ensp;SAME-DAY RESPONSE &middot; USUALLY MINUTES REMOTELY&ensp;//&ensp;<a href="/heatwave-tech-guide/" tabindex="-1">HEATWAVE? KEEP YOUR TECH COOL &mdash; FREE GUIDE</a>&ensp;//&ensp;<a href="/is-it-down/" tabindex="-1">IS IT DOWN, OR IS IT JUST YOU? CHECK LIVE</a>&ensp;//&ensp;REMOTE IT SUPPORT ACROSS THE WHOLE UK&ensp;//&ensp;MALWAREBYTES PARTNER&ensp;//&ensp;NVIDIA &amp; SCAN PARTNER&ensp;//&ensp;RICHER SOUNDS PARTNER&ensp;//&ensp;BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;//&ensp;IT SUPPORT PLANS FROM &pound;18.25/MO&ensp;//&ensp;MON&ndash;FRI 9AM&ndash;5PM&ensp;//&ensp;</span>
+      </div>
+    </div>
+
+    <div class="header-bar">
+      <a class="logo" href="/" aria-label="365techies — home">
+        <svg class="logo__mark" viewBox="0 0 32 32" aria-hidden="true">
+          <circle cx="16" cy="16" r="13.4" fill="none" stroke="#8fb3d9" stroke-width="2" stroke-linecap="round" stroke-dasharray="63 22" transform="rotate(-55 16 16)"/>
+          <circle cx="16" cy="16" r="9.4" fill="none" stroke="#1d97e3" stroke-width="2" stroke-linecap="round" stroke-dasharray="46 14" transform="rotate(115 16 16)"/>
+          <path d="M12.4 18.4l3.6-5.8 3.4 5.1z" fill="none" stroke="#8fb3d9" stroke-width="1.2"/>
+          <circle cx="12.4" cy="18.4" r="1.6" fill="#00ce1b"/>
+          <circle cx="16" cy="12.6" r="1.6" fill="#1d97e3"/>
+          <circle cx="19.4" cy="17.7" r="1.6" fill="#1d97e3"/>
+        </svg>
+        <span class="logo__text"><em>365</em>techies</span>
+      </a>
+
+      <nav class="desktop-nav" aria-label="Primary">
+        <a href="/dell-it-support-dorset/">Dell</a>
+        <div class="nav-item has-dropdown">
+          <a href="/home-it-support-subscriptions/" aria-haspopup="true">For Home
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/home-it-support-subscriptions/">Home IT Support</a>
+            <a href="/home-it-support-plans/">Home Support Plans</a>
+            <a href="/it-support-for-home-workers/">Home Workers</a>
+            <a href="/family-it-support/">Families</a>
+            <a href="/it-support-for-retired-users/">Retired Users</a>
+            <a href="/it-support-for-disabled-people/">Disabled People</a>
+            <a href="/computer-help-for-seniors/">Help for Seniors</a>
+            <a href="/free-courses/">Free Courses</a>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown">
+          <a href="/business-it-support-subscriptions/" aria-haspopup="true">For Business
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/business-it-support-subscriptions/">Business IT Support</a>
+            <a href="/business-it-support-plans/">Business Support Plans</a>
+            <a href="/small-business-it-support/">Small Businesses</a>
+            <a href="/it-support-for-sole-traders/">Sole Traders</a>
+            <a href="/it-support-for-education/">Schools &amp; Education</a>
+            <a href="/it-support-by-industry/">IT Support by Industry</a>
+            <a href="/business-wifi-installation/">Business WiFi</a>
+            <a href="/business-continuity-internet/">Broadband Emergency Plan</a>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown">
+          <a href="/services/" aria-haspopup="true">Services
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/services/">All Services &#8594;</a>
+            <span class="dropdown__label dropdown__label--sep">Everyday support</span>
+            <a href="/remote-it-support/">Remote IT Support</a>
+            <a href="/computer-repairs/">Computer Repairs</a>
+            <a href="/preventative-maintenance/">Preventative Maintenance</a>
+            <a href="/microsoft-365-support/">Microsoft 365</a>
+            <a href="/cybersecurity-support/">Cybersecurity</a>
+            <a href="/email-support/">Email Support</a>
+            <a href="/printer-support/">Printer Support</a>
+            <a href="/backup-support/">Backup Support</a>
+            <span class="dropdown__label dropdown__label--sep">WiFi &amp; internet</span>
+            <a href="/wifi-support/">Wi-Fi Support</a>
+            <a href="/starlink-internet/">Starlink Internet</a>
+            <a href="/emergency-internet/">365 Emergency Internet</a>
+            <span class="dropdown__label dropdown__label--sep">Computers &amp; hardware</span>
+            <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
+            <a href="/custom-pc-builds/">Custom-Built PCs</a>
+            <span class="dropdown__label dropdown__label--sep">Web, AI &amp; off-grid</span>
+            <a href="/ai/">AI &amp; Automation</a>
+            <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
+            <a href="/web-care/">365 Web Care</a>
+            <a href="/agentic-ai-systems/">Agentic AI &amp; Automation</a>
+            <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
+            <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
+            <span class="dropdown__label dropdown__label--sep">By sector</span>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown">
+          <a href="/free-tools/" aria-haspopup="true">Free Tools
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/free-tools/">All Free Tools &#8594;</a>
+            <span class="dropdown__label dropdown__label--sep">Test your setup</span>
+            <a href="/broadband-speed-checker/">Broadband Speed Test</a>
+            <a href="/wifi-signal-test/">365 WiFi Optimizer</a>
+            <a href="/pc-benchmark/">PC Benchmark</a>
+            <a href="/computer-spec-checker/">PC Hardware Checker</a>
+            <a href="/website-checker/">Website Checker</a>
+            <a href="/is-it-down/">Is It Down? Status Checker</a>
+            <span class="dropdown__label dropdown__label--sep">Stay safe</span>
+            <a href="/email-security-checker/">Email Security Checker</a>
+            <a href="/password-breach-checker/">Password Breach Checker</a>
+            <a href="/link-safety-checker/">Link Safety Checker</a>
+            <a href="/spot-the-scam/">Spot the Scam Quiz</a>
+            <a href="/online-safety-course/">Free Online Safety Course</a>
+            <span class="dropdown__label dropdown__label--sep">Apps &amp; builders</span>
+            <a href="/free-pc-health-check/">Free PC Health Check App</a>
+            <a href="/custom-pc-builder/">Custom PC Builder</a>
+            <a href="/victron-system-builder/">Victron System Builder</a>
+            <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown">
+          <a href="/book-service/" aria-haspopup="true">Get Help
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/contact/">Contact Us &#8594;</a>
+            <span class="dropdown__label dropdown__label--sep">Right now</span>
+            <a href="/remote-support/">Start Remote Support</a>
+            <a href="/emergency-it-help/">Emergency IT Help</a>
+            <a href="/scam-pop-up-help-poole/">Scam Pop-up Help</a>
+            <span class="dropdown__label dropdown__label--sep">Book &amp; pay</span>
+            <a href="/book-service/">Book a Service</a>
+            <a href="/book-a-collection/">Book a Collection</a>
+            <a href="/quick-quote/">Quick Quote</a>
+            <a href="/pay/">Pay Us</a>
+            <span class="dropdown__label dropdown__label--sep">Plans &amp; pricing</span>
+            <a href="/monthly-it-support/">Monthly IT Support</a>
+            <a href="/plan-finder/">Plan Finder</a>
+            <a href="/switching-it-provider/">Switching to Us</a>
+            <span class="dropdown__label dropdown__label--sep">Fix it yourself</span>
+            <a href="/wifi-troubleshooting/">WiFi Troubleshooting</a>
+            <a href="/broadband-down/">Broadband Down? Start Here</a>
+          </div>
+        </div>
+        <a href="/pricing/">Pricing</a>
+        <div class="nav-item has-dropdown">
+          <a href="/about/" aria-haspopup="true">About
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <span class="dropdown__label dropdown__label--sep">Who we are</span>
+            <a href="/about/">About 365 Techies</a>
+            <a href="/meet-the-team/">Meet the Team</a>
+            <a href="/why-choose-365-techies/">Why Choose Us</a>
+            <span class="dropdown__label dropdown__label--sep">Proof</span>
+            <a href="/reviews/">Reviews</a>
+            <a href="/case-studies/">Case Studies</a>
+            <a href="/our-guarantees/">Our Guarantees</a>
+            <a href="/accreditations/">Accreditations</a>
+            <span class="dropdown__label dropdown__label--sep">Where we work</span>
+            <a href="/areas-covered/">Areas Covered</a>
+          </div>
+        </div>
+        <a href="/contact/">Contact</a>
+      </nav>
+
+      <div class="header-actions">
+        <button type="button" class="nav-search" data-search-open aria-label="Search this website" aria-keyshortcuts="/ Control+K">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <span class="nav-search__label">Search</span>
+          <span class="nav-search__k" aria-hidden="true"><kbd>/</kbd></span>
+        </button>
+        <a href="tel:+441202775566" class="nav-phone" aria-label="Call 365 Techies on 01202 775566">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg><span class="nav-phone__num">01202 775566</span>
+        </a>
+        <a href="/portal/" class="nav-signin" aria-label="Sign in to your 365 customer portal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="nav-signin__t">Sign in</span>
+        </a>
+        <a href="/book-service/" class="nav-book" aria-label="Book a computer service">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v3M17 3v3M4 8h16M5 6h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z"/></svg>Book
+        </a>
+        <a href="/sos/" class="nav-sos" target="_blank" rel="noopener" aria-label="SOS emergency remote support — download Splashtop SOS">
+          <span class="sos-dot" aria-hidden="true"></span>SOS<span class="nav-sos__long">&nbsp;REMOTE SUPPORT</span>
+        </a>
+        <button class="mobile-menu-button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+<section class="hero" id="hero">
+      <canvas class="waterfx" aria-hidden="true"></canvas>
+  <div class="hero__inner">
+        <p class="hero__eyebrow mono"><span class="pulse-dot"></span> FRIENDLY IT SUPPORT &mdash; BOURNEMOUTH &middot; DORSET &middot; SINCE 1995</p>
+        <h1 class="hero__title">
+          <span class="line"><span class="line-inner">Friendly IT support</span></span>
+          <span class="line"><span class="line-inner">that <em class="grad grad--cyan">just works</em></span></span>
+          <span class="line"><span class="line-inner">for <em class="grad grad--cyan">homes</em> &amp; <em class="grad grad--green">businesses</em>.</span></span>
+        </h1>
+        <p class="hero__sub">Friendly, local IT support and repairs for home users, families and small businesses across Dorset &mdash; plus fast, secure remote IT support anywhere in the UK. <span class="hero__sub-more">We look after your computers, email, security and backups, and explain everything in plain English. </span>Rated 4.9 on Google, family-run since 1995.</p>
+        <div class="hero-buttons">
+          <a href="#plans" class="button primary">See Plans &amp; Prices</a>
+          <a href="#cta" class="button secondary">Talk to a Techie</a>
+        </div>
+        <aside class="hero__console-mini" aria-hidden="true">
+          <span class="dim">EXAMPLE &middot; WHAT WE MONITOR &mdash;</span> <span class="dim">device</span> HOME-LAPTOP-07 &nbsp;&middot;&nbsp; <span class="ok">&#10003; protected</span> &nbsp;&middot;&nbsp; <span class="dim">backup</span> <span class="ok">verified 03:00</span><br />
+          <span class="dim">365techies@noc:~$</span> looking after 200+ computers across Dorset
+        </aside>
+        <ul class="hero__chips mono">
+          <li>&#9679; Rated 4.9 on Google</li>
+          <li>&#9679; Family-run since 1995</li>
+          <li>&#9679; UK-wide remote support</li>
+          <li>&#9679; No call-out fee</li>
+          <li>&#9679; Cancel anytime</li>
+        </ul>
+        <button type="button" class="search-box search-box--hero" data-search-open>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <span class="search-box__txt">Search 400+ help pages, tools &amp; guides&hellip;</span>
+          <kbd>/</kbd>
+        </button>
+      </div>
+
+      <aside class="hero__console" aria-hidden="true">
+        <p class="hero__console-head mono"><span class="rec-dot"></span> REMOTE SESSION &mdash; LIVE</p>
+        <ul class="mono">
+          <li><span class="k">device</span><span class="v">HOME-LAPTOP-07</span></li>
+          <li><span class="k">status</span><span class="v ok">&#10003; protected</span></li>
+          <li><span class="k">tune-up</span><span class="v"><span class="bar"><span class="bar__fill"></span></span>&nbsp;68%</span></li>
+          <li><span class="k">backup</span><span class="v ok">verified 03:00</span></li>
+          <li><span class="k">threats blocked</span><span class="v warn">12 this month</span></li>
+        </ul>
+        <p class="hero__console-foot mono">365techies@noc:~$ <span class="cursor"></span></p>
+      </aside>
+
+      <a class="scroll-hint mono" href="#stats" aria-label="Scroll down">SCROLL<span class="scroll-hint__line"></span></a>
+    </section>
+
+<div class="demo-note">
+  <p><strong>This is the real homepage hero</strong> &mdash; real stylesheet, real copy, real buttons &mdash; with the water ink living behind the heading and raindrop ripples on every tap below the hero. The menu above is real but its dropdowns are decorative on this demo. Scroll: the water stays in the hero; the rest of the page is calm.</p>
+</div>
+
+<section class="section section--alt" aria-label="Mock section">
+  <div class="wrap" style="text-align:center;padding:3rem 1.2rem">
+    <h2 class="section-title section-title--center">A normal section, for scrolling feel<span class="title-underline title-underline--center"></span></h2>
+    <p class="lede lede--center">Tap anywhere around this text &mdash; the raindrop ripple is the site-wide flourish; the water ink stays contained to the hero above.</p>
+  </div>
+</section>
+
+<script>
+  document.addEventListener('pointerdown', function(e){
+    if (e.target.closest('.hero')) return;
+    ['','r2'].forEach(function(cls){
+      var s=document.createElement('span');
+      s.className='waterripple '+cls;
+      s.style.left=e.clientX+'px'; s.style.top=e.clientY+'px';
+      document.body.appendChild(s); setTimeout(function(){s.remove();},1600);
+    });
+  });
+</script>
+<script>
+  (function(){
+    if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var s=document.createElement('script');
+    s.src='../fluid.js?v=2';
+    s.onload=function(){
+      try{
+        config.BACK_COLOR={r:7,g:13,b:34};
+        config.BLOOM=false; config.SUNRAYS=true;
+        config.DENSITY_DISSIPATION=1.6; config.VELOCITY_DISSIPATION=0.55;
+        config.CURL=18; config.SPLAT_RADIUS=0.16; config.SPLAT_FORCE=3800;
+        config.COLORFUL=true; config.COLOR_UPDATE_SPEED=6;
+        generateColor=function(){
+          var h=0.45+Math.random()*0.30, v=0.16;
+          if(Math.random()<0.18){h=0.42+Math.random()*0.06;v=0.24;}
+          var c=HSVtoRGB(h,0.95,1.0);
+          return {r:c.r*v*6,g:c.g*v*6,b:c.b*v*6};
+        };
+        var seen=true, heroEl=document.querySelector('.hero');
+        if('IntersectionObserver' in window) new IntersectionObserver(function(en){seen=en[0].isIntersecting;}).observe(heroEl);
+        setInterval(function(){ if(seen && !document.hidden){ try{ multipleSplats(1); }catch(e){} } }, 4200);
+        try{ multipleSplats(3); }catch(e){}
+      }catch(e){}
+    };
+    document.body.appendChild(s);
+  })();
+</script>
+</body>
+</html>
