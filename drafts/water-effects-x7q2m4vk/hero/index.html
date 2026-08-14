@@ -282,28 +282,39 @@
   (function(){
     if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     var s=document.createElement('script');
-    s.src='../fluid.js?v=3';
+    s.src='../fluid.js?v=4';
     s.onload=function(){
       try{
         config.BACK_COLOR={r:7,g:13,b:34};
-        config.BLOOM=false; config.SUNRAYS=true;
-        config.DENSITY_DISSIPATION=2.2;    /* trails fade sooner = calmer */
-        config.VELOCITY_DISSIPATION=0.8;
-        config.CURL=12;                     /* less turbulence */
-        config.SPLAT_RADIUS=0.12;
-        config.SPLAT_FORCE=2600;
-        config.COLORFUL=true; config.COLOR_UPDATE_SPEED=5;
-        /* bluer: cyan-blue through true blue, flashes as bright cyan */
+        config.BLOOM=false; config.SUNRAYS=true; config.SUNRAYS_WEIGHT=0.5;
+        config.DENSITY_DISSIPATION=3.0;    /* ink dissolves quickly - a trace, not a painting */
+        config.VELOCITY_DISSIPATION=0.9;   /* water settles fast */
+        config.CURL=8;                     /* barely turbulent */
+        config.SPLAT_RADIUS=0.09;
+        config.SPLAT_FORCE=2200;
+        config.COLORFUL=false;             /* one family, held - classier than a hue tour */
+        /* monochrome deep-water blues: navy through azure, low light. The rare
+           lighter steel-blue is the only accent. */
         generateColor=function(){
-          var h=0.55+Math.random()*0.12, v=0.15;
-          if(Math.random()<0.15){h=0.50+Math.random()*0.05;v=0.22;}
-          var c=HSVtoRGB(h,0.95,1.0);
+          var h=0.56+Math.random()*0.06;   /* true blue band only */
+          var v=0.085;
+          if(Math.random()<0.12) v=0.13;   /* occasional lighter thread */
+          var c=HSVtoRGB(h,0.9,1.0);
           return {r:c.r*v*6,g:c.g*v*6,b:c.b*v*6};
         };
-        var seen=true, heroEl=document.querySelector('.hero');
-        if('IntersectionObserver' in window) new IntersectionObserver(function(en){seen=en[0].isIntersecting;}).observe(heroEl);
-        setInterval(function(){ if(seen && !document.hidden){ try{ multipleSplats(1); }catch(e){} } }, 7000);
-        try{ multipleSplats(3); }catch(e){}
+        /* ambient life: ONE slow, dim current every ~9s. multipleSplats() multiplies
+           colour x10 (loud) - so drive splat() directly, quietly. */
+        var seen=true, host=document.querySelector('.hero')||document.getElementById('fluidbox');
+        if(host && 'IntersectionObserver' in window)
+          new IntersectionObserver(function(en){seen=en[0].isIntersecting;}).observe(host);
+        setInterval(function(){
+          if(!seen || document.hidden) return;
+          try{
+            var c=generateColor(); c.r*=4; c.g*=4; c.b*=4;
+            splat(Math.random(), 0.3+Math.random()*0.4, (Math.random()-0.5)*600, (Math.random()-0.5)*300, c);
+          }catch(e){}
+        }, 9000);
+        try{ var c0=generateColor(); c0.r*=4; c0.g*=4; c0.b*=4; splat(0.5,0.5,300,120,c0); }catch(e){}
       }catch(e){}
     };
     document.body.appendChild(s);

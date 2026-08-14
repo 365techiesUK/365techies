@@ -1455,15 +1455,23 @@ window.addEventListener('mouseup', () => {
     updatePointerUpData(pointers[0]);
 });
 
+/* [365 Techies] SCROLL-SAFE TOUCH. The upstream handlers preventDefault on
+   every touch, which traps the page: on iPadOS even touch-action:pan-y cannot
+   rescue the scroll, because the FIRST touchmove arrives cancelable before
+   Safari commits to the pan, and cancelling it kills the native scroll.
+   So the gesture is classified in JS instead:
+     - vertical intent  -> release the touch to the browser (page scrolls,
+                           the ink is left alone),
+     - horizontal intent -> claim it (preventDefault) and paint.
+   A plain tap still splats on touchstart, which needs no preventDefault. */
+const ttGesture = {};   /* per-touch: 'paint' | 'scroll' | undefined + start x/y */
 canvas.addEventListener('touchstart', e => {
-    /* [365 Techies] no preventDefault here: with CSS touch-action:pan-y the
-       browser keeps vertical swipes for SCROLLING - a full preventDefault on
-       touchstart trapped users inside the hero on touch devices. */
     const touches = e.targetTouches;
-    const rect = canvas.getBoundingClientRect();   /* [365 Techies] contained-canvas fix */
+    const rect = canvas.getBoundingClientRect();
     while (touches.length >= pointers.length)
         pointers.push(new pointerPrototype());
     for (let i = 0; i < touches.length; i++) {
+        ttGesture[touches[i].identifier] = { x: touches[i].clientX, y: touches[i].clientY, mode: undefined };
         let posX = scaleByPixelRatio(touches[i].clientX - rect.left);
         let posY = scaleByPixelRatio(touches[i].clientY - rect.top);
         updatePointerDownData(pointers[i + 1], touches[i].identifier, posX, posY);
@@ -1471,27 +1479,39 @@ canvas.addEventListener('touchstart', e => {
 });
 
 canvas.addEventListener('touchmove', e => {
-    if (e.cancelable) e.preventDefault();   /* [365 Techies] horizontal strokes only - vertical pans stay native */
     const touches = e.targetTouches;
-    const rect = canvas.getBoundingClientRect();   /* [365 Techies] contained-canvas fix */
+    const rect = canvas.getBoundingClientRect();
     for (let i = 0; i < touches.length; i++) {
+        const g = ttGesture[touches[i].identifier];
         let pointer = pointers[i + 1];
-        if (!pointer.down) continue;
+        if (!g || !pointer.down) continue;
+        if (g.mode === undefined) {
+            const dx = Math.abs(touches[i].clientX - g.x);
+            const dy = Math.abs(touches[i].clientY - g.y);
+            if (Math.max(dx, dy) < 6) continue;             /* too early to tell */
+            g.mode = (dy > dx) ? 'scroll' : 'paint';
+            if (g.mode === 'scroll') { updatePointerUpData(pointer); continue; }
+        }
+        if (g.mode !== 'paint') continue;
+        if (e.cancelable) e.preventDefault();               /* ours now - stop the pan */
         let posX = scaleByPixelRatio(touches[i].clientX - rect.left);
         let posY = scaleByPixelRatio(touches[i].clientY - rect.top);
         updatePointerMoveData(pointer, posX, posY);
     }
 }, false);
 
-window.addEventListener('touchend', e => {
+function ttEndTouches (e) {
     const touches = e.changedTouches;
     for (let i = 0; i < touches.length; i++)
     {
+        delete ttGesture[touches[i].identifier];
         let pointer = pointers.find(p => p.id == touches[i].identifier);
         if (pointer == null) continue;
         updatePointerUpData(pointer);
     }
-});
+}
+window.addEventListener('touchend', ttEndTouches);
+window.addEventListener('touchcancel', ttEndTouches);   /* [365 Techies] Safari fires this when it takes the pan */
 
 window.addEventListener('keydown', e => {
     if (e.code === 'KeyP')
