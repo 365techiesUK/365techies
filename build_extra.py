@@ -15344,10 +15344,10 @@ def sos_page():
            chips=["We stay on the phone with you", "Nothing installs permanently", "You watch everything"]),
       '''    <section class="section" aria-label="New to 365 Techies">
       <div class="wrap" style="max-width:860px;margin:0 auto">
-        <div class="repairs__card" data-reveal style="border-color:rgba(29,151,227,.4)">
+        <div class="repairs__card" data-reveal style="border-color:rgba(29,151,227,.4);flex-direction:column;align-items:flex-start;gap:1.4rem">
           <div>
             <p class="eyebrow mono">// NEW TO 365 TECHIES?</p>
-            <h2 class="repairs__title">We check the fault for free &mdash; then quote before we fix</h2>
+            <h2 class="repairs__title" style="max-width:none">We check the fault for free &mdash; then quote before we fix</h2>
             <p class="lede">The <strong>only</strong> thing that&rsquo;s free is connecting in to check the problem, so a senior techie can give you a <strong>realistic quote</strong> &mdash; what needs doing, how long it&rsquo;ll take and what it&rsquo;ll cost. The fix itself is quoted up front and only done once you&rsquo;ve agreed the price. We never charge for a fix you haven&rsquo;t approved.</p>
           </div>
           <a href="/remote-support/" class="button primary">See pricing &amp; how it works</a>
