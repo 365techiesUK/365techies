@@ -14013,7 +14013,7 @@ info_page(
   chips=["Your data, respected","UK GDPR","Plain English"],
   inner="""          <p class="mono" style="color:var(--cyan)">%s</p>
           <h2>Who we are</h2>
-          <p>365 Techies Limited (&ldquo;we&rdquo;, &ldquo;us&rdquo;) is an IT support company registered in England &amp; Wales (company number 11073501), based in Bournemouth, Dorset. We are the data controller for the personal information described in this policy. You can reach us at <a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a> or on <a href="tel:+441202775566">01202 775566</a>.</p>
+          <p>365 Techies Limited (&ldquo;we&rdquo;, &ldquo;us&rdquo;) is an IT support company registered in England &amp; Wales (company number 11073501), based in Bournemouth, Dorset. Our registered office is 71-75 Shelton Street, London, Greater London, WC2H 9JQ, United Kingdom, and we operate this website, 365techies.co.uk. We are the data controller for the personal information described in this policy. You can reach us at <a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a> or on <a href="tel:+441202775566">01202 775566</a>.</p>
           <h2>What information we collect</h2>
           <ul>
             <li>Contact details you give us &mdash; such as your name, email address, phone number and address.</li>
@@ -14056,7 +14056,7 @@ info_page(
   chips=["Clear &amp; fair","No lock-in","Plain English"],
   inner="""          <p class="mono" style="color:var(--cyan)">%s</p>
           <h2>About us</h2>
-          <p>These terms apply to IT support and services provided by 365 Techies Limited (company number 11073501), Bournemouth, Dorset. By using our services you agree to these terms.</p>
+          <p>These terms apply to IT support and services provided by 365 Techies Limited (company number 11073501), Bournemouth, Dorset. Our registered office is 71-75 Shelton Street, London, Greater London, WC2H 9JQ, United Kingdom, and this website is 365techies.co.uk. By using our services you agree to these terms.</p>
           <h2>Our services</h2>
           <p>We provide monthly IT support plans and one-off IT services for homes and businesses, as described on our website. We also supply hardware and software. The specifics of your service depend on the plan or work you choose.</p>
           <h2>Buying hardware and software from us</h2>
