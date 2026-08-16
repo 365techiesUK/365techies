@@ -6414,7 +6414,13 @@ VAN_MAP_CARDS_CSS = r"""
       .vmf-code{display:block;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;line-height:1.6;color:#cfe0f5;white-space:pre-wrap;word-break:break-word}
       .vmf-lede{max-width:70ch;margin:0 auto 1.4rem;text-align:center;color:var(--muted,#8b949e);font-size:.95rem;line-height:1.65}
       .vmf-list{max-width:720px;margin:0 auto;padding:0;list-style:none;display:grid;gap:.5rem;counter-reset:none}
-      .vmf-list li{display:grid;grid-template-columns:26px 104px 1fr auto;align-items:center;gap:.75rem;background:rgba(20,27,46,.5);border:1px solid rgba(125,170,220,.16);border-radius:12px;padding:.7rem .95rem}
+      /* ⚠️ FIVE columns for FIVE spans (rank, Mbps, name, meta, verdict). It was
+         four, so the verdict wrapped onto an implicit second row and landed in
+         column 1 - the 26px rank column - where white-space:nowrap pushed
+         118px of "GREAT FOR WORK" straight out of the card. Broken at every
+         width above the 560px mobile rule, i.e. tablet AND desktop. If a span
+         is ever added here, add its column too. */
+      .vmf-list li{display:grid;grid-template-columns:26px 104px 1fr auto auto;align-items:center;gap:.75rem;background:rgba(20,27,46,.5);border:1px solid rgba(125,170,220,.16);border-radius:12px;padding:.7rem .95rem}
       .vmf-rk{background:#1d97e3;color:#fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font:700 .78rem/1 inherit}
       .vmf-mb{font-weight:750;color:#e6edf3;font-variant-numeric:tabular-nums}
       .vmf-nm{color:#e6edf3;font-weight:600}
@@ -6496,7 +6502,11 @@ VAN_LIVE_PANEL = r"""
       .vlive-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:14px}
       .vlive-tile{background:rgba(20,27,46,.55);border:1px solid rgba(125,170,220,.18);border-radius:16px;padding:18px 18px 16px;box-shadow:0 18px 40px -28px rgba(0,0,0,.7)}
       .vlive-k{margin:0;color:#8b949e;font-size:.72rem;letter-spacing:.09em;text-transform:uppercase}
-      .vlive-v{margin:.3rem 0 0;font-size:2.1rem;font-weight:750;line-height:1;color:#e6edf3;font-variant-numeric:tabular-nums}
+      /* overflow-wrap: the tiles are minmax(148px,1fr) but hold live TEXT as
+         well as numbers - a town name like "Christchurch" or "Bournemouth" at
+         1.35rem is wider than the tile and was spilling out of the card on
+         tablet. Numbers are unaffected (they never need breaking). */
+      .vlive-v{margin:.3rem 0 0;font-size:2.1rem;font-weight:750;line-height:1;color:#e6edf3;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
       .vlive-v--sm{font-size:1.35rem;line-height:1.15}
       .vlive-u{font-size:.9rem;font-weight:600;color:#8b949e;margin-left:3px}
       .vlive-sub{margin:.55rem 0 0;color:#9db3cf;font-size:.82rem}
