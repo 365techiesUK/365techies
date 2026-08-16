@@ -1031,6 +1031,8 @@ _HUB_CARDS = [
      "Sunrise &amp; sunset", "Today&rsquo;s times computed for the seafront, and every good spot to watch from &mdash; photographed by us, not stock."),
     ("/bournemouth/beach-parking/", "/bournemouth/media/durley-chine-sunset.jpg",
      "Beach parking, honestly", "What it really costs, where it is far cheaper, and the rules that catch people out &mdash; every price from BCP&rsquo;s own pages, dated."),
+    ("/van-signal-map/", "/bournemouth/media/pier-golden-hour.jpg",
+     "Mobile signal, measured", "Real 4G/5G speeds our own van logs as it drives around Bournemouth and Poole &mdash; the spots that tested fastest, and the not-spots, on a map you can check before you rely on it."),
 ]
 
 _HUB_CARD_HTML = "\n".join(
