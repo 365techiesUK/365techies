@@ -254,11 +254,17 @@ function locality_for(float $lat, float $lon) {
     // returned "Bournemouth" for the whole seafront. Without bumping this
     // prefix every one of those would keep being served from cache and the fix
     // would appear to do nothing. Bump it whenever the naming rules change.
-    // v3 = zoom 16. Every bump invalidates the live server's signal-geo.json,
-    // which is essential: v2 entries are zoom-14 answers ("Bournemouth" for the
-    // whole seafront) and would otherwise be served from cache forever.
-    // Key is 2 dp (~1.1 km) - finer than a suburb would just burn lookups.
-    $key = 'v3:' . round($lat, 2) . ',' . round($lon, 2);
+    // ⚠️ HELD AT v2 DELIBERATELY - DO NOT BUMP THIS WITHOUT READING THIS NOTE.
+    // 2026-08-16: bumping to v3 (for zoom 16) took the page from 4 named spots
+    // to ZERO. Not a code fault - zoom 16 returns the right answer when queried
+    // from any other IP. Nominatim had rate-limited THIS SERVER after the cache
+    // was warmed with repeated full passes, so every fresh lookup came back
+    // empty and, worse, that emptiness was cached.
+    // A version bump is therefore only safe when lookups are known to be
+    // working: it discards every good name in one go and rebuilds them from a
+    // service that may be refusing us. v2 still holds 30 valid names, so
+    // staying on it restores the page instantly with no outbound calls at all.
+    $key = 'v2:' . round($lat, 2) . ',' . round($lon, 2);
     $cache = [];
     if (is_file($cacheFile)) {
         $d = json_decode((string)file_get_contents($cacheFile), true);
@@ -286,7 +292,12 @@ function locality_for(float $lat, float $lon) {
         // never read it and it must never be added to the list below: a suburb
         // is a district, a road is a parking place. That distinction is the
         // whole privacy guarantee of this endpoint.
-        $url = 'https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=16'
+        // Back to 14 to match the v2 cache. Zoom 16 IS the right answer - it
+        // returns Boscombe, Southbourne, Sandbanks, Westbourne, Lilliput where
+        // 14 returns "Bournemouth" - but it cannot be adopted until the server
+        // can reach Nominatim again, and the switch must be made the same day
+        // the key is bumped. See the note on $key above.
+        $url = 'https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=14'
              . '&lat=' . rawurlencode((string)$lat) . '&lon=' . rawurlencode((string)$lon);
         $ch = curl_init($url);
         curl_setopt_array($ch, [
