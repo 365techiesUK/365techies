@@ -114,3 +114,6 @@ api/van-live-geo.json.tmp
 api/geo-fence.php
 api/signal-geo.json
 api/signal-geo.json.tmp
+
+# laptop-side geocode cache for refresh_van_summary.py (derived from real coords)
+seo-research-cache/

@@ -60,9 +60,9 @@ const SUMMARY_CELL_LON = 333;
 const SUMMARY_MIN_TESTS = 2;     // a single reading is noise, not a "spot"
 const SUMMARY_FRESH_S  = 420;    // a speed test only counts at the place it ran
 const SUMMARY_MAX      = 8;
-// New Nominatim lookups allowed per request (cached ones are free). Keeps us
-// inside OSM's 1-req/sec policy on a cold cache - see locality_for().
-const GEO_LOOKUP_BUDGET = 20;
+// (GEO_LOOKUP_BUDGET removed 2026-08-16: this endpoint no longer calls
+//  Nominatim at all - see locality_cached_only(). Naming is done on the laptop
+//  by refresh_van_summary.py.)
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -232,102 +232,38 @@ function median_of(array $a) {
 }
 
 /**
- * Locality name for a coordinate, reusing the same Nominatim + grid-cache
- * approach as van-live.php. Deliberately LOCALITY level (zoom 12) — never a
- * road — so a named spot cannot pinpoint a parking place.
+ * Locality name for a coordinate - FROM THE LOCAL CACHE ONLY.
+ *
+ * ⚠️ THIS FUNCTION NEVER CALLS NOMINATIM. It used to, once per uncached cell,
+ * inside a public request. On 2026-08-16 that got this server rate-limited
+ * (74 spots on a cold cache), every lookup came back empty, and the emptiness
+ * was cached - the page went from 4 named spots to 0. A public endpoint with
+ * an execution limit is the wrong place to talk to a 1-req/s external service.
+ *
+ * Naming now happens on the laptop in refresh_van_summary.py: it pulls the
+ * nameable cells from ?summary=1&cells=1, geocodes them at zoom 16 with proper
+ * pacing and a persistent local cache, and bakes the named list straight into
+ * van_map_data.py - which is what the page renders from. Nothing is written
+ * back here. This function only serves the LEGACY 'spots' list from whatever
+ * signal-geo.json already holds, so the old ?summary=1 shape keeps working for
+ * anyone who consumes it; the page itself no longer depends on it.
+ *
+ * Key format is 'v2:' + 2 dp (~1.1 km) - kept for compatibility with the 30
+ * good names already on the server. locality level, never a road.
  */
-function locality_for(float $lat, float $lon) {
-    // ⚠️ NOMINATIM ALLOWS 1 REQUEST PER SECOND, and this is called once per
-    // uncached cell. Before the seafront drive that was a handful of calls; the
-    // dataset now has 72 spots, so an un-warmed cache would fire dozens of
-    // requests back to back and risk the OSM servers blocking our IP - which
-    // would silently strip every name off the public page.
-    // Two guards: at most GEO_LOOKUP_BUDGET new lookups per request, spaced a
-    // second apart. Names therefore fill in over successive refreshes rather
-    // than all at once - run refresh_van_summary.py a few times after a big
-    // drive. Cached lookups are free and unaffected.
-    static $spent = 0;
-    static $last  = 0.0;
-    $cacheFile = __DIR__ . '/signal-geo.json';
-    // ⚠️ VERSIONED KEY. signal-geo.json on the live server is full of names
-    // resolved under the OLD preference order (suburb-first), which is what
-    // returned "Bournemouth" for the whole seafront. Without bumping this
-    // prefix every one of those would keep being served from cache and the fix
-    // would appear to do nothing. Bump it whenever the naming rules change.
-    // ⚠️ HELD AT v2 DELIBERATELY - DO NOT BUMP THIS WITHOUT READING THIS NOTE.
-    // 2026-08-16: bumping to v3 (for zoom 16) took the page from 4 named spots
-    // to ZERO. Not a code fault - zoom 16 returns the right answer when queried
-    // from any other IP. Nominatim had rate-limited THIS SERVER after the cache
-    // was warmed with repeated full passes, so every fresh lookup came back
-    // empty and, worse, that emptiness was cached.
-    // A version bump is therefore only safe when lookups are known to be
-    // working: it discards every good name in one go and rebuilds them from a
-    // service that may be refusing us. v2 still holds 30 valid names, so
-    // staying on it restores the page instantly with no outbound calls at all.
-    $key = 'v2:' . round($lat, 2) . ',' . round($lon, 2);
-    $cache = [];
-    if (is_file($cacheFile)) {
-        $d = json_decode((string)file_get_contents($cacheFile), true);
-        if (is_array($d)) $cache = $d;
-    }
-    if (array_key_exists($key, $cache)) {
-        return $cache[$key] !== '' ? $cache[$key] : null;
-    }
-    $name = null;
-    if ($spent >= GEO_LOOKUP_BUDGET) {
-        return null;                    // budget spent - try again next refresh
-    }
-    if (function_exists('curl_init')) {
-        $spent++;
-        $wait = 1.05 - (microtime(true) - $last);   // honour 1 req/sec
-        if ($last > 0.0 && $wait > 0) usleep((int)($wait * 1e6));
-        $last = microtime(true);
-        // ⚠️ ZOOM 16, NOT 14 - measured against this exact coastline 2026-08-16:
-        //   zoom 14  Boscombe -> "suburb=Bournemouth"   (the TOWN wearing a
-        //            suburb label; Sandbanks -> "Poole", Westbourne -> "Bournemouth")
-        //   zoom 16  Boscombe -> "suburb=Boscombe", Southbourne, Sandbanks,
-        //            Westbourne, Lilliput, West Cliff - the real places.
-        // Zoom 14 is why 72 measured spots collapsed into 4 names.
-        // ⚠️ Zoom 16 ALSO returns a "road" key (e.g. road=Panorama Road). We
-        // never read it and it must never be added to the list below: a suburb
-        // is a district, a road is a parking place. That distinction is the
-        // whole privacy guarantee of this endpoint.
-        // Back to 14 to match the v2 cache. Zoom 16 IS the right answer - it
-        // returns Boscombe, Southbourne, Sandbanks, Westbourne, Lilliput where
-        // 14 returns "Bournemouth" - but it cannot be adopted until the server
-        // can reach Nominatim again, and the switch must be made the same day
-        // the key is bumped. See the note on $key above.
-        $url = 'https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=14'
-             . '&lat=' . rawurlencode((string)$lat) . '&lon=' . rawurlencode((string)$lon);
-        $ch = curl_init($url);
-        curl_setopt_array($ch, [
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_TIMEOUT        => 6,
-            CURLOPT_USERAGENT      => '365Techies-SignalMap/1.0 (info@365techies.co.uk)',
-        ]);
-        $raw = curl_exec($ch);
-        curl_close($ch);
-        $d = json_decode((string)$raw, true);
-        $a = (is_array($d) && isset($d['address']) && is_array($d['address'])) ? $d['address'] : [];
-        // ⚠️ ORDER IS THE WHOLE GAME. It used to start at 'suburb', so anywhere
-        // Nominatim returned no suburb fell straight through to 'town'/'city'
-        // and came back "Bournemouth". After the seafront drive that collapsed
-        // 72 measured spots into 4 names, with 394 tests pooled under one
-        // "Bournemouth" row - useless to a reader choosing where to park, and
-        // short of the 25-30 nameable places the press plan needs.
-        // neighbourhood/quarter come FIRST so Boscombe, Southbourne, Westbourne,
-        // Canford Cliffs and Sandbanks surface as themselves. Still zoom 14, so
-        // still never a road: a named spot cannot pinpoint a parking place.
-        foreach (['neighbourhood', 'quarter', 'suburb', 'village', 'hamlet',
-                  'town', 'city_district', 'city', 'municipality'] as $k) {
-            if (!empty($a[$k])) { $name = mb_substr((string)$a[$k], 0, 40); break; }
+function locality_cached_only(float $lat, float $lon) {
+    static $cache = null;
+    if ($cache === null) {
+        $cache = [];
+        $cacheFile = __DIR__ . '/signal-geo.json';
+        if (is_file($cacheFile)) {
+            $d = json_decode((string)file_get_contents($cacheFile), true);
+            if (is_array($d)) $cache = $d;
         }
     }
-    $cache[$key] = $name ?? '';
-    if (count($cache) > 500) $cache = array_slice($cache, -500, null, true);
-    $tmp = $cacheFile . '.tmp';
-    if (file_put_contents($tmp, json_encode($cache), LOCK_EX) !== false) @rename($tmp, $cacheFile);
-    return $name;
+    $key = 'v2:' . round($lat, 2) . ',' . round($lon, 2);
+    if (array_key_exists($key, $cache) && $cache[$key] !== '') return $cache[$key];
+    return null;
 }
 
 /**
@@ -367,6 +303,7 @@ function build_summary(array $points): array {
     // locality — three separate rows all reading "Bournemouth" is noise, and
     // pooling their raw readings gives a truer median for the place.
     $byName = [];
+    $cellRows = [];       // nameable cells + stats, for the laptop to name
     $qualifying = 0;      // cells with enough tests to count as a "spot" at all
     foreach ($cells as $c) {
         $n = count($c['dl']);
@@ -377,7 +314,32 @@ function build_summary(array $points): array {
             && metres_between((float)GEO_FENCE[0], (float)GEO_FENCE[1], (float)$lat, (float)$lon) < NO_NAME_M) {
             continue;         // ranked in spots_total, but never named or listed
         }
-        $name = locality_for((float)$lat, (float)$lon);
+        // ── NAMING MOVED OFF THE SERVER (2026-08-16) ──────────────────────
+        // This used to call Nominatim here, once per uncached cell. It got the
+        // server rate-limited (74 spots on a cold cache) and, worse, cached the
+        // resulting emptiness - the page went from 4 named spots to 0. It also
+        // ran inside a public request with a hard execution limit, so it could
+        // never do the job properly.
+        //
+        // The server keeps the two things ONLY it can decide - which cells are
+        // NAMEABLE (outside NO_NAME_M of home) and what their stats are - and
+        // returns each nameable cell's centre + stats under ?cells=1. Naming is
+        // done by refresh_van_summary.py on the laptop: no execution limit,
+        // proper 1 req/s pacing, a persistent local cache, and a real error
+        // message when something is wrong instead of a silent blank list.
+        //
+        // The old ?summary=1 shape is kept for compatibility, still served from
+        // the (frozen) cache only - it never calls Nominatim again.
+        $cellRows[] = [
+            'lat'   => round((float)$lat, 4),      // ~11 m: enough to name a
+            'lon'   => round((float)$lon, 4),      // district, never a doorway
+            'dl'    => array_map('floatval', $c['dl']),
+            'ms'    => array_values($c['ms']),
+            'sinr'  => array_values($c['sinr']),
+            'net'   => $c['net'],
+            'days'  => array_keys($c['days']),
+        ];
+        $name = locality_cached_only((float)$lat, (float)$lon);
         if ($name === null || $name === '') continue;
         if (!isset($byName[$name])) $byName[$name] = ['dl'=>[], 'ms'=>[], 'sinr'=>[], 'net'=>[], 'days'=>[], 'cells'=>0];
         $b =& $byName[$name];
@@ -423,6 +385,11 @@ function build_summary(array $points): array {
         'last_day'    => $dayKeys ? end($dayKeys) : null,
         'area_km'     => $kmLat ? [round($kmLat, 1), round($kmLon, 1)] : null,
         'spots'       => array_slice($named_spots, 0, SUMMARY_MAX),
+        // Nameable cells with their raw stats, only when asked (?cells=1).
+        // Cells inside NO_NAME_M were `continue`d above and are NOT here - the
+        // server stays the sole authority on what may be named. Coordinates are
+        // 4 dp cell CENTRES (~11 m) - a district, never a parking place.
+        'cells'       => (isset($_GET['cells']) && $_GET['cells'] === '1') ? $cellRows : null,
     ];
 }
 
