@@ -52,6 +52,9 @@ UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/140.0 Safari/537.36")
 NOMINATIM_UA = "365Techies-SignalMap/1.0 (info@365techies.co.uk)"
 MAX_SPOTS = 30                # the press plan wants 25-30 nameable places
+MIN_TESTS_TO_NAME = 10        # a place needs evidence: 2 tests is a drive-by,
+                              # not a measurement, and BBC 11.4.10 steers away
+                              # from rankings under material uncertainty
 NOMINATIM_GAP_S = 1.05        # policy: 1 request per second, no exceptions
 
 # Preference order. neighbourhood/quarter FIRST so districts win over towns.
@@ -61,8 +64,13 @@ NAME_KEYS = ["neighbourhood", "quarter", "suburb", "village", "hamlet",
 
 
 def fetch_json(url, timeout=60):
+    # ⚠️ Always cache-bust. SiteGround's proxy caches the bare URL and will
+    # happily serve a response from before the last deploy - which is exactly
+    # how a fresh server build once reported "did not return cells" here.
+    url += ("&" if "?" in url else "?") + "cb=%d" % int(time.time() * 1000)
     req = urllib.request.Request(url, headers={"User-Agent": UA,
-                                               "Accept": "application/json"})
+                                               "Accept": "application/json",
+                                               "Cache-Control": "no-cache"})
     with urllib.request.urlopen(req, timeout=timeout) as r:
         return json.loads(r.read().decode("utf-8", "replace"))
 
@@ -140,9 +148,13 @@ def name_and_rank(cells, cache):
             b["net"][k] = b["net"].get(k, 0) + v
         b["days"].update(c.get("days") or [])
     spots = []
+    thin = []
     for name, b in by.items():
         if not b["dl"]:
             continue
+        if len(b["dl"]) < MIN_TESTS_TO_NAME:
+            thin.append((name, len(b["dl"])))
+            continue                       # measured, but not enough to publish
         net = max(b["net"], key=b["net"].get) if b["net"] else None
         spots.append({
             "name": name,
@@ -154,6 +166,9 @@ def name_and_rank(cells, cache):
             "days": len(b["days"]),
         })
     spots.sort(key=lambda s: -s["dl"])
+    if thin:
+        print("   held back (under %d tests): %s"
+              % (MIN_TESTS_TO_NAME, ", ".join("%s (%d)" % t for t in sorted(thin))))
     return spots, unnamed
 
 
