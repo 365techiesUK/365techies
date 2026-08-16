@@ -60,6 +60,9 @@ const SUMMARY_CELL_LON = 333;
 const SUMMARY_MIN_TESTS = 2;     // a single reading is noise, not a "spot"
 const SUMMARY_FRESH_S  = 420;    // a speed test only counts at the place it ran
 const SUMMARY_MAX      = 8;
+// New Nominatim lookups allowed per request (cached ones are free). Keeps us
+// inside OSM's 1-req/sec policy on a cold cache - see locality_for().
+const GEO_LOOKUP_BUDGET = 20;
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -234,8 +237,24 @@ function median_of(array $a) {
  * road — so a named spot cannot pinpoint a parking place.
  */
 function locality_for(float $lat, float $lon) {
+    // ⚠️ NOMINATIM ALLOWS 1 REQUEST PER SECOND, and this is called once per
+    // uncached cell. Before the seafront drive that was a handful of calls; the
+    // dataset now has 72 spots, so an un-warmed cache would fire dozens of
+    // requests back to back and risk the OSM servers blocking our IP - which
+    // would silently strip every name off the public page.
+    // Two guards: at most GEO_LOOKUP_BUDGET new lookups per request, spaced a
+    // second apart. Names therefore fill in over successive refreshes rather
+    // than all at once - run refresh_van_summary.py a few times after a big
+    // drive. Cached lookups are free and unaffected.
+    static $spent = 0;
+    static $last  = 0.0;
     $cacheFile = __DIR__ . '/signal-geo.json';
-    $key = round($lat, 2) . ',' . round($lon, 2);
+    // ⚠️ VERSIONED KEY. signal-geo.json on the live server is full of names
+    // resolved under the OLD preference order (suburb-first), which is what
+    // returned "Bournemouth" for the whole seafront. Without bumping this
+    // prefix every one of those would keep being served from cache and the fix
+    // would appear to do nothing. Bump it whenever the naming rules change.
+    $key = 'v2:' . round($lat, 2) . ',' . round($lon, 2);
     $cache = [];
     if (is_file($cacheFile)) {
         $d = json_decode((string)file_get_contents($cacheFile), true);
@@ -245,7 +264,14 @@ function locality_for(float $lat, float $lon) {
         return $cache[$key] !== '' ? $cache[$key] : null;
     }
     $name = null;
+    if ($spent >= GEO_LOOKUP_BUDGET) {
+        return null;                    // budget spent - try again next refresh
+    }
     if (function_exists('curl_init')) {
+        $spent++;
+        $wait = 1.05 - (microtime(true) - $last);   // honour 1 req/sec
+        if ($last > 0.0 && $wait > 0) usleep((int)($wait * 1e6));
+        $last = microtime(true);
         $url = 'https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=14'
              . '&lat=' . rawurlencode((string)$lat) . '&lon=' . rawurlencode((string)$lon);
         $ch = curl_init($url);
@@ -258,7 +284,17 @@ function locality_for(float $lat, float $lon) {
         curl_close($ch);
         $d = json_decode((string)$raw, true);
         $a = (is_array($d) && isset($d['address']) && is_array($d['address'])) ? $d['address'] : [];
-        foreach (['suburb', 'village', 'town', 'city_district', 'city', 'municipality'] as $k) {
+        // ⚠️ ORDER IS THE WHOLE GAME. It used to start at 'suburb', so anywhere
+        // Nominatim returned no suburb fell straight through to 'town'/'city'
+        // and came back "Bournemouth". After the seafront drive that collapsed
+        // 72 measured spots into 4 names, with 394 tests pooled under one
+        // "Bournemouth" row - useless to a reader choosing where to park, and
+        // short of the 25-30 nameable places the press plan needs.
+        // neighbourhood/quarter come FIRST so Boscombe, Southbourne, Westbourne,
+        // Canford Cliffs and Sandbanks surface as themselves. Still zoom 14, so
+        // still never a road: a named spot cannot pinpoint a parking place.
+        foreach (['neighbourhood', 'quarter', 'suburb', 'village', 'hamlet',
+                  'town', 'city_district', 'city', 'municipality'] as $k) {
             if (!empty($a[$k])) { $name = mb_substr((string)$a[$k], 0, 40); break; }
         }
     }
