@@ -6434,7 +6434,12 @@ VAN_MAP_CARDS_CSS = r"""
       .vmf-ul li{margin-bottom:.5rem}
       .vmf-ul strong{color:#cfe0f5}
       .vmf-credit{max-width:70ch;margin:1.6rem auto 0;text-align:center;color:var(--muted,#8b949e);font-size:.86rem;line-height:1.6}
-      @media (max-width:560px){.vmf-list li{grid-template-columns:24px 1fr;row-gap:.25rem}.vmf-me,.vmf-vd{grid-column:2}}
+      /* ⚠️ .vmf-nm MUST be listed here too. This rule drops the row to two
+         columns but only re-homed .vmf-me and .vmf-vd, so the PLACE NAME fell
+         into column 1 - the 24px rank column - and spilled up to 84px out of
+         the card on a phone. Same failure as the desktop four-column bug, a
+         different element. Every span after .vmf-mb belongs in column 2. */
+      @media (max-width:560px){.vmf-list li{grid-template-columns:24px 1fr;row-gap:.25rem}.vmf-nm,.vmf-me,.vmf-vd{grid-column:2}}
     </style>
 """
 
