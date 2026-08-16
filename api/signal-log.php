@@ -254,7 +254,11 @@ function locality_for(float $lat, float $lon) {
     // returned "Bournemouth" for the whole seafront. Without bumping this
     // prefix every one of those would keep being served from cache and the fix
     // would appear to do nothing. Bump it whenever the naming rules change.
-    $key = 'v2:' . round($lat, 2) . ',' . round($lon, 2);
+    // v3 = zoom 16. Every bump invalidates the live server's signal-geo.json,
+    // which is essential: v2 entries are zoom-14 answers ("Bournemouth" for the
+    // whole seafront) and would otherwise be served from cache forever.
+    // Key is 2 dp (~1.1 km) - finer than a suburb would just burn lookups.
+    $key = 'v3:' . round($lat, 2) . ',' . round($lon, 2);
     $cache = [];
     if (is_file($cacheFile)) {
         $d = json_decode((string)file_get_contents($cacheFile), true);
@@ -272,7 +276,17 @@ function locality_for(float $lat, float $lon) {
         $wait = 1.05 - (microtime(true) - $last);   // honour 1 req/sec
         if ($last > 0.0 && $wait > 0) usleep((int)($wait * 1e6));
         $last = microtime(true);
-        $url = 'https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=14'
+        // ⚠️ ZOOM 16, NOT 14 - measured against this exact coastline 2026-08-16:
+        //   zoom 14  Boscombe -> "suburb=Bournemouth"   (the TOWN wearing a
+        //            suburb label; Sandbanks -> "Poole", Westbourne -> "Bournemouth")
+        //   zoom 16  Boscombe -> "suburb=Boscombe", Southbourne, Sandbanks,
+        //            Westbourne, Lilliput, West Cliff - the real places.
+        // Zoom 14 is why 72 measured spots collapsed into 4 names.
+        // ⚠️ Zoom 16 ALSO returns a "road" key (e.g. road=Panorama Road). We
+        // never read it and it must never be added to the list below: a suburb
+        // is a district, a road is a parking place. That distinction is the
+        // whole privacy guarantee of this endpoint.
+        $url = 'https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=16'
              . '&lat=' . rawurlencode((string)$lat) . '&lon=' . rawurlencode((string)$lon);
         $ch = curl_init($url);
         curl_setopt_array($ch, [
