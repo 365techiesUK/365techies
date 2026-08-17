@@ -172,7 +172,39 @@ def name_and_rank(cells, cache):
     return spots, unnamed
 
 
+BACKUP_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                          "seo-research-cache", "signal-backups")
+BACKUP_KEEP = 30              # dated full copies of the raw feed
+
+
+def backup_raw_feed():
+    """Keep a dated copy of EVERY published reading, on the laptop.
+
+    The whole dataset - now 1,800+ points and a week of driving - lives in one
+    JSON file on SiteGround. One wiped host, one bad deploy, and it is gone.
+    We already fetch the full feed to build the summary, so saving it costs one
+    extra request. Rolling 30 days; never fails the refresh if it can't write.
+    """
+    try:
+        raw = fetch_json("https://365techies.co.uk/api/signal-log.php")
+        pts = raw.get("points") if isinstance(raw, dict) else raw
+        if not pts:
+            return
+        os.makedirs(BACKUP_DIR, exist_ok=True)
+        stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        path = os.path.join(BACKUP_DIR, "signal-%s.json" % stamp)
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(pts, f, separators=(",", ":"))
+        old = sorted(x for x in os.listdir(BACKUP_DIR) if x.startswith("signal-"))
+        for x in old[:-BACKUP_KEEP]:
+            os.remove(os.path.join(BACKUP_DIR, x))
+        print("backup: %d points -> %s" % (len(pts), os.path.basename(path)))
+    except Exception as e:                                # noqa: BLE001
+        print("backup skipped: %s" % e)
+
+
 def main():
+    backup_raw_feed()
     try:
         d = fetch_json(URL)
     except Exception as e:                      # noqa: BLE001 - report and stop

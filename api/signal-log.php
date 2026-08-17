@@ -103,10 +103,13 @@ if ($method === 'GET') {
         fwrite($out, "# Licence: CC BY 4.0 - free to reuse with attribution to 365 Techies\n");
         fwrite($out, "# One van, one network (Three UK). Measured, not modelled.\n");
         fwrite($out, "# Readings within a private zone have no coordinates by design.\n");
-        fputcsv($out, ['utc_time','lat','lon','download_mbps','speed_test_age_s','latency_ms','rsrp_dbm','sinr_db','network','band']);
+        // 'source' column: van (roof-mounted M5) or phone (on foot). Anyone
+        // reusing this under CC BY can tell the two apart - and should.
+        fputcsv($out, ['utc_time','source','lat','lon','download_mbps','speed_test_age_s','latency_ms','rsrp_dbm','sinr_db','network','band']);
         foreach ($points as $p) {
             fputcsv($out, [
                 gmdate('c', (int)($p['t'] ?? 0)),
+                $p['src'] ?? 'van',
                 $p['lat'] ?? '', $p['lon'] ?? '',
                 $p['dl'] ?? '', $p['dl_age'] ?? '', $p['latency'] ?? '',
                 $p['rsrp'] ?? '', $p['sinr'] ?? '',
@@ -164,6 +167,16 @@ if ($method === 'POST') {
         // when dl_age is small — otherwise an hour-old number gets silently
         // attributed to every location driven through since.
         'dl_age' => num($in['dl_age'] ?? null),
+        // WHO measured it. 'van' = the M5 on the roof (the default, and every
+        // point before 2026-08-17). 'phone' = the owner's handset on foot, same
+        // Three SIM, same 10 MB Cloudflare test, where the van can't go (the
+        // beach). Anything else is coerced to 'van' so an unknown source can
+        // never smuggle a reading in under a label the map doesn't understand.
+        // ⚠️ The ranked spots and the press figures are VAN-ONLY: build_summary
+        // filters on this. A phone at head height on a beach is not measuring
+        // the same thing as a roof antenna in a lay-by, and pooling them would
+        // quietly corrupt the one number the press pitch rests on.
+        'src'  => (($in['src'] ?? 'van') === 'phone') ? 'phone' : 'van',
     ];
     // Location is optional — until the Cerbo GPS dongle is fitted it may be null.
     if (isset($in['lat'], $in['lon'])) {
@@ -277,8 +290,12 @@ function locality_cached_only(float $lat, float $lon) {
  * can state its own limitations instead of implying coverage it doesn't have.
  */
 function build_summary(array $points): array {
+    // VAN-ONLY. On-foot phone readings ('src' => 'phone') are shown on the map
+    // with their own marker but are never pooled into the ranked places or the
+    // frozen press figures - see the note on 'src' in the POST handler.
     $tested = array_values(array_filter($points, fn($p) =>
-        isset($p['lat'], $p['lon'], $p['dl'], $p['dl_age'])
+        (($p['src'] ?? 'van') === 'van')
+        && isset($p['lat'], $p['lon'], $p['dl'], $p['dl_age'])
         && $p['dl'] !== null && $p['dl_age'] !== null && $p['dl_age'] < SUMMARY_FRESH_S));
 
     $cells = [];

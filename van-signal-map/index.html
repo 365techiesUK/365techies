@@ -891,7 +891,15 @@
            It was being collected on every reading and never shown. Bands are the
            conventional LTE reading of it. */
         function sinrWord(s){if(s==null)return null;return s>=20?['excellent','#3fb950']:(s>=13?['good','#3fb950']:(s>=5?['fair','#d29922']:['poor','#f85149']));}
-        function popup(p){var s='<b>'+(p.rsrp==null?'&mdash;':p.rsrp+' dBm')+'</b> '+(p.net||'')+' '+(p.band||'');
+        /* On-foot readings (src==='phone'): the owner's handset where the van
+           can't go, same Three SIM, same 10 MB test. Shown honestly as what
+           they are - "on foot" - and NEVER pooled into the ranked places. */
+        function onFoot(p){return p.src==='phone';}
+        function popup(p){if(onFoot(p)){var s2='<b>On foot</b> &middot; phone, same network';
+            var f2=freshDl(p);if(f2!=null)s2+='<br><b>'+f2+' Mbps</b> download';
+            if(p.latency!=null)s2+='<br>'+Math.round(p.latency)+' ms ping';
+            return s2+'<br>'+new Date(p.t*1000).toLocaleString();}
+          var s='<b>'+(p.rsrp==null?'&mdash;':p.rsrp+' dBm')+'</b> '+(p.net||'')+' '+(p.band||'');
           var q=sinrWord(p.sinr);
           if(q)s+='<br>SINR <b>'+p.sinr+' dB</b> <span style="color:'+q[1]+'">'+q[0]+'</span> <span style="opacity:.7">(signal quality)</span>';
           var f=freshDl(p);if(f!=null)s+='<br><b>'+f+' Mbps</b> download &middot; tested near this spot';
@@ -902,7 +910,8 @@
            rank by median measured download. Only fresh tests count — a cell is
            a real "we measured fast internet here", never an inference. */
         function bestCells(){var cells={};
-          cache.forEach(function(p){var f=freshDl(p);if(f==null)return;
+          cache.forEach(function(p){if(onFoot(p))return;   /* van-only ranking */
+            var f=freshDl(p);if(f==null)return;
             var k=(Math.round(p.lat*500)/500)+','+(Math.round(p.lon*333)/333);
             (cells[k]=cells[k]||{lat:[],lon:[],dl:[],lat_ms:[],sinr:[],net:{}}).dl.push(f);
             cells[k].lat.push(p.lat);cells[k].lon.push(p.lon);
@@ -933,6 +942,10 @@
           var ll=[];
           pts.forEach(function(p){ll.push([p.lat,p.lon]);
             var tested=(mode==='speed'&&freshDl(p)!=null);
+            if(onFoot(p)){ /* a small square, not a dot: visibly a different instrument */
+              var fc=spdcol(freshDl(p));
+              L.marker([p.lat,p.lon],{icon:L.divIcon({className:'',html:'<div style="width:11px;height:11px;background:'+fc+';border:2px solid #0b1020;border-radius:2px;transform:rotate(45deg)"></div>',iconSize:[11,11],iconAnchor:[6,6]})}).bindPopup(popup(p)).addTo(layer);
+              return;}
             L.circleMarker([p.lat,p.lon],{radius:tested?7:5,color:pcol(p),fillColor:pcol(p),fillOpacity:(mode==='speed'&&!tested)?.35:.85,weight:1}).bindPopup(popup(p)).addTo(layer);});
           /* No connecting polyline. This map answers "where is the signal good",
              not "where did the van drive" — and joining the dots would draw the
@@ -1104,6 +1117,7 @@
             <h3>The limits, plainly</h3>
             <ul class="vmf-ul">
               <li><strong>One van, one network.</strong> Three UK only. Another network at the same spot may be better or worse, and we have not tested it.</li>
+              <li><strong>A few readings were taken on foot</strong> &mdash; a phone on the same network, running the same 10&nbsp;MB test, in places the van can&rsquo;t reach, such as the beach. They&rsquo;re drawn as small diamonds, marked &ldquo;on foot&rdquo;, and are <em>never</em> pooled into the ranked places or the published figures.</li>
               <li><strong>One vehicle&rsquo;s routes.</strong> This is where our support van actually goes &mdash; not a survey grid. Coverage is uneven by construction.</li>
               <li><strong>A moment in time.</strong> Mobile speed varies with congestion, weather and the mast&rsquo;s own load. A spot measured once at 09:00 may differ at 18:00.</li>
               <li><strong>Signal strength is not speed.</strong> We publish SINR because a strong-looking signal full of interference is slow &mdash; see the explanation above the map.</li>
