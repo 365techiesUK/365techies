@@ -265,10 +265,16 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
    html.a11y-text-N step widens these rem-sized nav items with the breakpoints
    staying put. Rather than let that shove the emergency button off the screen
    again (see the note at the nav breakpoint), make the NAV the thing that gives:
-   min-width:0 lets it shrink past its content width and overflow:hidden clips the
+   min-width:0 lets it shrink past its content width and the clip-path hides the
    surplus links, while .header-actions refuses to shrink at all. Losing the tail of
-   a nav list is recoverable; losing the SOS button is what customers reported. */
-.desktop-nav { display: flex; align-items: center; gap: 0.15rem; min-width: 0; overflow: hidden; }
+   a nav list is recoverable; losing the SOS button is what customers reported.
+   ⚠ 2026-08-17: this was overflow:hidden, which ALSO clipped the dropdown panels
+   (they hang below the 44px bar) - every desktop menu opened invisibly for days.
+   overflow-x:hidden is no better (it forces overflow-y to auto). clip-path with a
+   huge vertical inset clips horizontally only and leaves the menus free. Measured:
+   the SOS button stays on-screen at the A+++ text step either way - min-width:0 is
+   what protects it, not the clip. */
+.desktop-nav { display: flex; align-items: center; gap: 0.15rem; min-width: 0; clip-path: inset(-100vh 0 -100vh 0); }
 .header-actions { flex-shrink: 0; }
 .desktop-nav > a, .nav-item > a {
   position: relative;
