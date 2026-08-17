@@ -121,3 +121,7 @@ api/signal-check-data.json
 api/signal-check-data.json.tmp
 api/signal-check-rate.json
 api/signal-check-rate.json.tmp
+api/broadband-compare-data.json
+api/broadband-compare-data.json.tmp
+api/broadband-compare-rate.json
+api/broadband-compare-rate.json.tmp

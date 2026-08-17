@@ -4900,6 +4900,7 @@ SPEEDTEST_WIDGET = r'''    <section class="section" aria-label="Live broadband s
           res.hidden=false; running=false; btn.disabled=false; btn.textContent='Test again';
           phase.innerHTML='Done &mdash; this is your device&rsquo;s speed right now (Wi-Fi, distance and other devices all affect it).';
           window.ttToolDone&&window.ttToolDone("broadband-speed-checker");
+          if(window.bbCompareReady)window.bbCompareReady(RESULT);
         }
 
         // ---------- results card + copy ----------
@@ -4946,12 +4947,104 @@ SPEEDTEST_WIDGET = r'''    <section class="section" aria-label="Live broadband s
       </script>
     </section>'''
 
+# The MEMORY for the speed test: after a result, "how does that compare with
+# other homes / businesses in my postcode district?" Feeds
+# api/broadband-compare.php - its own store, district-level only, compared
+# LIKE WITH LIKE on how the reading was taken (wired / WiFi same room / WiFi
+# elsewhere), because a garden-WiFi reading on full fibre is a WiFi problem,
+# not a line problem - and saying so honestly is the whole point.
+BBCOMPARE_WIDGET = r'''    <section class="section section--alt" id="bbcompare" aria-label="Compare your broadband with your area" hidden>
+      <div class="wrap">
+        <style>
+          .bbc{max-width:600px;margin:0 auto}
+          .bbc h2{font-size:1.25rem;margin:0 0 .3rem;text-align:center}
+          .bbc .lede{color:var(--muted,#9db3cf);text-align:center;font-size:.95rem;margin:0 0 1.1rem}
+          .bbc__f{display:grid;gap:.7rem;background:rgba(20,27,46,.55);border:1px solid rgba(125,170,220,.18);border-radius:14px;padding:1rem 1.1rem;margin:0 0 .9rem}
+          .bbc__f label{font-size:.82rem;color:var(--muted,#9db3cf);text-transform:uppercase;letter-spacing:.05em;display:block;margin:0 0 .3rem}
+          .bbc__f input,.bbc__f select{width:100%;padding:.7rem .85rem;border-radius:10px;border:1px solid rgba(125,170,220,.28);background:#0b1020;color:#e6edf3;font:inherit}
+          .bbc__seg{display:flex;gap:.4rem;flex-wrap:wrap}
+          .bbc__seg button{flex:1;min-width:110px;padding:.65rem .5rem;border-radius:10px;border:1px solid rgba(125,170,220,.28);background:#0b1020;color:#cfe0f5;font:600 .86rem/1.2 inherit;cursor:pointer}
+          .bbc__seg button[aria-pressed=true]{background:rgba(29,151,227,.28);border-color:#6cc4f5;color:#fff}
+          .bbc__go{display:block;width:100%;padding:.95rem 1rem;border:0;border-radius:12px;background:linear-gradient(135deg,#1d97e3,#3fb950);color:#061019;font:800 1.05rem/1.1 inherit;cursor:pointer}
+          .bbc__go:disabled{opacity:.55;cursor:default}
+          .bbc__st{min-height:1.4em;text-align:center;color:var(--muted,#9db3cf);font-size:.9rem;margin:.6rem 0 0}
+          .bbc__st.ok{color:#3fb950}.bbc__st.bad{color:#f85149}.bbc__st.warn{color:#d29922}
+          .bbc__out{background:rgba(20,27,46,.55);border:1px solid rgba(125,170,220,.18);border-radius:14px;padding:1rem 1.1rem;margin:.9rem 0 0}
+          .bbc__out h3{font-size:.8rem;margin:0 0 .5rem;color:var(--muted,#9db3cf);text-transform:uppercase;letter-spacing:.06em}
+          .bbc__row{display:flex;justify-content:space-between;font-size:.92rem;padding:.35rem 0;border-top:1px solid rgba(125,170,220,.12)}
+          .bbc__verdict{font-size:1.02rem;color:#e6edf3;margin:0 0 .5rem}
+          .bbc__note{font-size:.84rem;color:var(--muted,#9db3cf);margin:.7rem 0 0}
+        </style>
+        <div class="bbc">
+          <h2>How does that compare with your area?</h2>
+          <p class="lede">Add your result and see how it sits against other homes and businesses in your postcode district &mdash; compared fairly, like with like.</p>
+          <div class="bbc__f">
+            <div><label for="bbc-pc">Postcode district (e.g. BH8, BH12, DT1)</label><input id="bbc-pc" inputmode="text" autocomplete="postal-code" placeholder="BH8" maxlength="8"></div>
+            <div><label>This connection is</label>
+              <div class="bbc__seg" id="bbc-kind" role="group"><button type="button" data-v="home" aria-pressed="true">A home</button><button type="button" data-v="business" aria-pressed="false">A business</button></div></div>
+            <div id="bbc-people-wrap" hidden><label for="bbc-people">Roughly how many people share it?</label>
+              <select id="bbc-people"><option value="2">1&ndash;3</option><option value="6">4&ndash;10</option><option value="15">11&ndash;25</option><option value="30">26+</option></select></div>
+            <div><label>How is this device connected right now?</label>
+              <div class="bbc__seg" id="bbc-conn" role="group"><button type="button" data-v="wired" aria-pressed="false">Plugged in (cable)</button><button type="button" data-v="wifi_near" aria-pressed="true">Wi-Fi, same room as router</button><button type="button" data-v="wifi_far" aria-pressed="false">Wi-Fi, another room / outside</button></div></div>
+            <button type="button" class="bbc__go" id="bbc-go">Compare my result</button>
+            <p class="bbc__st" id="bbc-st" role="status" aria-live="polite">We store your district and the numbers &mdash; never your full postcode, address, provider or anything that identifies you.</p>
+          </div>
+          <div class="bbc__out" id="bbc-out" hidden></div>
+        </div>
+      </div>
+      <script>
+      (function(){
+        var API='/api/broadband-compare.php', R=null;
+        var $=function(i){return document.getElementById(i);};
+        var sec=$('bbcompare'),st=$('bbc-st'),out=$('bbc-out');
+        function say(m,c){st.textContent=m;st.className='bbc__st '+(c||'');}
+        function seg(id){var b=$(id).querySelectorAll('button');b.forEach(function(x){x.addEventListener('click',function(){b.forEach(function(y){y.setAttribute('aria-pressed','false');});x.setAttribute('aria-pressed','true');
+          if(id==='bbc-kind')$('bbc-people-wrap').hidden=(x.dataset.v!=='business');});});
+          return function(){var p=$(id).querySelector('[aria-pressed=true]');return p?p.dataset.v:null;};}
+        var kind=seg('bbc-kind'),conn=seg('bbc-conn');
+        window.bbCompareReady=function(res){R=res;sec.hidden=false;
+          /* the test finished elsewhere on the page - bring the compare into view gently */
+          setTimeout(function(){sec.scrollIntoView({behavior:'smooth',block:'nearest'});},400);};
+        var CONN_WORDS={wired:'plugged in',wifi_near:'on Wi-Fi in the same room',wifi_far:'on Wi-Fi elsewhere'};
+        function render(j){
+          var k=j.kind==='business'?'businesses':'homes',cw=CONN_WORDS[j.conn]||j.conn;
+          if(!j.enough){out.innerHTML='<h3>'+j.district+' &middot; '+k+' &middot; '+cw+'</h3>'+
+            '<p class="bbc__verdict">Not enough readings from '+k+' in '+j.district+' tested '+cw+' to compare yet &mdash; you&rsquo;re one of the first (<b>'+j.n+'</b> so far; we compare from '+j.need+').</p>'+
+            '<p class="bbc__note">Thanks for adding yours &mdash; this gets useful as neighbours add theirs.'+(j.conn!=='wired'?' If you can, run it again plugged into the router: that measures the <em>line</em>, and it&rsquo;s the number worth comparing.':'')+'</p>';}
+          else{var you=j.you.dl,rel=j.you_pct>=75?'faster than most':(j.you_pct>=25?'about typical for':'slower than most');
+            out.innerHTML='<h3>'+j.district+' &middot; '+k+' &middot; '+cw+'</h3>'+
+              '<p class="bbc__verdict"><b>'+you+' Mbps</b> &mdash; '+rel+' '+k+' in '+j.district+' tested '+cw+' <span style="color:var(--muted,#9db3cf)">(faster than '+j.you_pct+'% of '+j.n+' readings)</span>.</p>'+
+              '<div class="bbc__row"><span>Typical (median)</span><b>'+j.median+' Mbps</b></div>'+
+              '<div class="bbc__row"><span>Middle half of readings</span><b>'+j.p25+' &ndash; '+j.p75+' Mbps</b></div>'+
+              '<div class="bbc__row"><span>Best seen</span><b>'+j.best+' Mbps</b></div>'+
+              (j.ul_median!=null?'<div class="bbc__row"><span>Typical upload</span><b>'+j.ul_median+' Mbps</b></div>':'')+
+              '<p class="bbc__note">'+(j.conn==='wired'
+                ?'Plugged-in readings measure the line itself, so this is a fair comparison of what people in '+j.district+' actually get.'
+                :'Wi-Fi readings mostly measure the Wi-Fi, not the line. If yours looks low, the router and its position are the first suspects &mdash; often fixable without changing provider.')+'</p>';}
+          out.hidden=false;}
+        $('bbc-go').addEventListener('click',function(){
+          if(!R){say('Run the speed test above first.','warn');return;}
+          var pc=$('bbc-pc').value.trim();if(!pc){say('Pop in your postcode district (just the first part, like BH8).','warn');$('bbc-pc').focus();return;}
+          var body={dl:R.dl,ul:R.ul,ping:R.ping,district:pc,kind:kind(),conn:conn()};
+          if(body.kind==='business')body.people=parseInt($('bbc-people').value,10);
+          $('bbc-go').disabled=true;say('Comparing…');
+          fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
+            .then(function(r){return r.json();})
+            .then(function(j){if(!j.ok){say(j.error||'Could not compare that.','bad');return;}render(j);say('Added &mdash; thank you.','ok');})
+            .catch(function(e){say('Could not reach the compare service.','bad');})
+            .then(function(){$('bbc-go').disabled=false;});
+        });
+      })();
+      </script>
+    </section>'''
+
 def broadband_advisor():
     slug = "broadband-speed-checker"
     desc = "Test your real broadband speed live — download, upload and ping — free and instant. Plus a plain-English recommendation for the speed your home needs, and what to do if you're falling short (including Starlink for rural Dorset). From 365 Techies."
     faqs = [
       ("How do I find my current broadband speed?", "Just use the live speed test at the top of this page &mdash; it measures your real download, upload and ping in a few seconds, for free. The download figure (in Mbps) is the headline number."),
       ("Why is the test slower than the speed I pay for?", "Usually Wi-Fi. This test measures your <em>device&rsquo;s</em> speed right now, so distance from the router, walls, and other devices all take their toll. Testing next to the router (or on a cable) shows your true line speed &mdash; and if there&rsquo;s a big gap, better Wi-Fi is the fix."),
+      ("How does &lsquo;compare with your area&rsquo; work?", "After a test you can add your result with just your postcode district (BH8, say &mdash; never your full postcode or address) and how you were connected. We then show how it sits against other homes or businesses in that district tested the <em>same way</em> &mdash; plugged in against plugged in, Wi-Fi against Wi-Fi &mdash; because a Wi-Fi reading mostly measures the Wi-Fi. We don&rsquo;t collect your provider and don&rsquo;t rank providers. We only show a comparison once a district has eight or more readings, so early on you may be one of the first."),
       ("Is slow internet the same as a slow computer?", "Not always &mdash; a slow computer or weak Wi-Fi often gets blamed on the broadband. Our free <a href=\"/it-health-check-tool/\">health check</a> and a quick look can tell which it is."),
       ("What if fast fibre isn&rsquo;t available where I live?", "In rural parts of Dorset and the New Forest, <a href=\"/starlink-internet/\">Starlink satellite internet</a> is often the best option &mdash; we advise on the right plan, install it and support it."),
     ]
@@ -4962,6 +5055,7 @@ def broadband_advisor():
            cta1=("Run the Speed Test", "#speedtool"), cta2=("Starlink for Rural Areas", "/starlink-internet/"),
            chips=["Real live test", "Download &middot; Upload &middot; Ping", "No sign-up"]),
       SPEEDTEST_WIDGET,
+      BBCOMPARE_WIDGET,
       BROADBAND_WIDGET,
       faq_html(faqs),
       tools_strip(["isitdown", "broadbandcheck", "coverage"], title="Slow &mdash; or actually down?", alt=False),
