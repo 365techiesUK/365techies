@@ -837,8 +837,8 @@
       <div class="wrap">
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>/ EVERYONE&rsquo;S READINGS</p>
-          <h2 class="section-title section-title--center" data-title>The picture so far<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>Each square is a ~500&nbsp;m area, coloured by the typical (median) mobile-data speed people measured there. A square only appears once an area has enough readings &mdash; so if yours is blank, you&rsquo;re the one who fills it in.</p>
+          <h2 class="section-title section-title--center" data-title>The picture so far &mdash; Bournemouth, Christchurch &amp; Poole<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Each square is a ~500&nbsp;m area, coloured by the typical (median) mobile-data speed people measured there. A square only appears once an area has enough readings &mdash; so if yours is blank, you&rsquo;re the one who fills it in. The test works anywhere in the UK; this map shows the BCP area.</p>
         </div>
         <link rel="stylesheet" href="/vendor/leaflet/leaflet.css" />
         <style>
@@ -995,7 +995,16 @@
                 :(mine<vs?('You got <b>'+mine+'</b> — they got '+vs+'. <b>They win this round.</b> Try again somewhere with better signal.')
                 :('Dead heat at <b>'+mine+' Mbps</b>. Rematch?'));}
             /* share card: area name first (one lookup), then show */
-            areaName(c.latitude,c.longitude).then(function(where){showShare(j.you.dl,where);});})
+            areaName(c.latitude,c.longitude).then(function(where){showShare(j.you.dl,where);});
+            /* Outside the map's coverage? Say so honestly rather than let them
+               scroll to a black void. The basemap is a self-hosted Dorset-only
+               tile set - deliberately, so no external map service is loaded.
+               Their reading still counts, their compare is still against
+               their own area, and the share loop still works. */
+            var inMap=c.latitude>50.55&&c.latitude<50.95&&c.longitude>-2.35&&c.longitude<-1.55;
+            if(!inMap){var n=document.createElement('p');n.className='sck__small';n.style.cssText='margin-top:.9rem;padding:.7rem .9rem;border:1px solid rgba(210,153,34,.45);border-radius:10px;color:#e6edf3';
+              n.innerHTML='<b>Recorded — thank you.</b> The map on this page only shows Bournemouth, Christchurch and Poole, so you won&rsquo;t see your square there — but your reading counts, your comparison is against your own area, and you can still share it and challenge people wherever they are.';
+              $('sck-cmp').parentNode.insertBefore(n,$('sck-share'));}})
           .catch(function(e){say(e.message||String(e),'bad');})
           .then(function(){go.disabled=false;});
         });
