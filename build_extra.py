@@ -19067,6 +19067,40 @@ def _wants_sos_band(slug):
         return False
     return any(w in slug for w in _SOS_WORDS)
 
+# Dell-guide funnel (2026-08-17): GSC's Generative-AI report shows the Dell explainers
+# are what Google's AI Overviews cite for "which Latitude" questions - e.g.
+# are-dell-latitude-laptops-good: 836 AI-feature impressions and 2,023 web impressions
+# for 2 clicks. The summary answers the question; the reader rarely arrives. So the
+# guides that DO get a visitor say, right after section 1, the one thing an Overview
+# can't: there is real, tested stock here, from a firm that will bring it to you.
+# Every claim below already lives on the refurb pages (from-price, the 990 PRO, the
+# bring-it-to-you promise) - nothing new is asserted.
+_DELL_GUIDE_STOCK_SLUGS = {
+    "are-dell-latitude-laptops-good", "dell-latitude-series-explained-3000-5000-7000",
+    "dell-latitude-5420-vs-5430-which-to-buy", "dell-precision-vs-latitude",
+    "how-long-do-dell-latitude-laptops-last", "dell-latitude-5000-guide",
+    "dell-latitude-7000-guide",
+    "dell-optiplex-micro-sff-tower-which-to-buy", "dell-optiplex-vs-inspiron-desktop",
+    "why-computer-prices-have-gone-up",
+    # NOT dell-latitude-3520-guide / dell-optiplex-guide: those are hand-built owner's
+    # guides (not pack pages) and already carry the from-&pound;510 CTA in their own hero.
+}
+DELL_GUIDE_STOCK_BAND = '''    <section class="section" aria-label="Real refurbished Dell stock">
+      <div class="wrap" style="max-width:960px;margin:0 auto">
+        <div class="repairs__card" data-reveal style="border-color:rgba(29,151,227,.4);flex-direction:column;align-items:flex-start;gap:1.2rem">
+          <div>
+            <p class="eyebrow mono">// NOT JUST A GUIDE</p>
+            <h2 class="repairs__title" style="max-width:none">We sell the machines this page describes &mdash; and bring them to you first</h2>
+            <p class="lede">Real, tested ex-business Latitude laptops and OptiPlex desktops from <strong>&pound;510</strong>, each with a new 1TB Samsung 990&nbsp;PRO drive, set up and supported by the same Bournemouth techies who wrote this. We bring it to you to see before you decide, home or business, across Dorset.</p>
+          </div>
+          <p style="margin:0;display:flex;flex-wrap:wrap;gap:.7rem">
+            <a href="/dell-hardware/" class="button primary">See what&rsquo;s in stock</a>
+            <a href="/refurbished-dell-laptops-bournemouth/" class="button secondary">Refurbished Latitudes explained</a>
+          </p>
+        </div>
+      </div>
+    </section>'''
+
 # Free-courses funnel: gentle/how-to/beginner pages promote the courses at the
 # END of the page (reader got their answer; now offer to build their confidence).
 # Never stacked with the SOS band - urgent pages stay urgent.
@@ -19364,6 +19398,11 @@ def build_new_page(d):
     # learning funnel: gentle pages promote the free courses at the end
     if _wants_courses_band(d['slug']):
         _blocks.append(bp.COURSES_BAND)
+    # Dell-guide funnel: AI-cited explainers get the real-stock band after section 1
+    # (inserted BEFORE the compare table below, which also inserts at 1, so the final
+    # order reads section 1 -> at-a-glance table -> stock band)
+    if d['slug'] in _DELL_GUIDE_STOCK_SLUGS and len(_blocks) > 1:
+        _blocks.insert(1, DELL_GUIDE_STOCK_BAND)
     # AEO comparison table: high-value "vs"/"which" pages get an at-a-glance table after section 1
     _cmp = DELL_COMPARE_TABLES.get(d['slug'])
     if _cmp:

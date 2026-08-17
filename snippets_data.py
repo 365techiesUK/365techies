@@ -45,7 +45,16 @@ SNIPPETS = {
         "desc": "Yes, with caveats. A 30-year Dell specialist on build quality, real lifespan, and why a refurbished Latitude beats a new budget laptop every time.",
     },
     "dell-latitude-series-explained-3000-5000-7000": {
+        # GSC 17 Aug: the head term "dell latitude" (671 imps, pos 7, 0 clicks) lands
+        # here - lead the title with the term people typed, then the decision.
+        "title": "Dell Latitude Explained: 3000 vs 5000 vs 7000, Which to Buy",
         "desc": "3000 for everyday work, 5000 for mainstream business, 7000 for premium ultralight. What you gain at each tier, and where the extra money is wasted.",
+    },
+    "password-generator": {
+        # GSC 17 Aug: "password generator" 528 imps at pos 4, 0 clicks - the old title
+        # narrowed the tool to "three random words"; the page does both, so say so.
+        "title": "Free Password Generator: Random or Three-Word Passphrase",
+        "desc": "Free password generator. Make a strong random password or an easy-to-remember three-word passphrase in one click - made in your browser, never sent anywhere.",
     },
     "dell-optiplex-micro-sff-tower-which-to-buy": {
         "desc": "Micro hides behind the monitor, SFF still takes a graphics card, Tower upgrades for years. Choose by what you will add later, not just desk space.",
