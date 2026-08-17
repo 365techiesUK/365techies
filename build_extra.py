@@ -4977,6 +4977,136 @@ def broadband_advisor():
         desc=desc, og_title="Broadband Speed Checker | 365 Techies", schema=schema, content=content)
 broadband_advisor()
 
+# ===================================================== MOBILE SIGNAL CHECK
+# The PUBLIC counterpart to the van map. One tap on the visitor's phone: their
+# real mobile-data download, right where they're standing, then "how does that
+# compare with other readings from your area". Feeds api/signal-check.php -
+# its OWN store, binned to ~500 m cells, never a house pin, never pooled into
+# the van dataset. Shows the user their network (it's their result) and never
+# shows any network-vs-network table anywhere - see the endpoint header.
+SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mobile signal check">
+      <div class="wrap">
+        <style>
+          .sck{max-width:560px;margin:0 auto}
+          .sck__go{display:block;width:100%;padding:1.35rem 1rem;margin:0 0 .9rem;border:0;border-radius:18px;
+            background:linear-gradient(135deg,#1d97e3,#3fb950);color:#061019;font:800 1.35rem/1.1 inherit;cursor:pointer;
+            box-shadow:0 14px 40px -14px rgba(29,151,227,.7);transition:transform .15s}
+          .sck__go:hover{transform:translateY(-1px)} .sck__go:disabled{opacity:.55;cursor:default;box-shadow:none;transform:none}
+          .sck__st{min-height:1.5em;text-align:center;color:var(--muted,#9db3cf);font-size:.95rem;margin:0 0 .8rem}
+          .sck__st.ok{color:#3fb950}.sck__st.bad{color:#f85149}.sck__st.warn{color:#d29922}
+          .sck__you{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin:0 0 .9rem}
+          .sck__you div{background:rgba(20,27,46,.55);border:1px solid rgba(125,170,220,.18);border-radius:12px;padding:.8rem .6rem;text-align:center}
+          .sck__you b{display:block;font-size:1.45rem;color:#e6edf3;font-variant-numeric:tabular-nums}
+          .sck__you span{font-size:.74rem;color:var(--muted,#9db3cf);text-transform:uppercase;letter-spacing:.05em}
+          .sck__cmp{background:rgba(20,27,46,.55);border:1px solid rgba(125,170,220,.18);border-radius:14px;padding:1rem 1.1rem;margin:0 0 .9rem}
+          .sck__cmp h3{font-size:.8rem;margin:0 0 .6rem;color:var(--muted,#9db3cf);text-transform:uppercase;letter-spacing:.06em}
+          .sck__bar{position:relative;height:14px;border-radius:7px;background:linear-gradient(90deg,#f85149,#d29922,#3fb950);margin:.9rem 0 .4rem}
+          .sck__pin{position:absolute;top:-6px;width:4px;height:26px;background:#fff;border-radius:2px;transform:translateX(-2px);box-shadow:0 0 0 2px #0b1020}
+          .sck__pin::after{content:attr(data-l);position:absolute;top:28px;left:50%;transform:translateX(-50%);font-size:.72rem;color:#e6edf3;white-space:nowrap}
+          .sck__row{display:flex;justify-content:space-between;font-size:.9rem;padding:.3rem 0;border-top:1px solid rgba(125,170,220,.12)}
+          .sck__verdict{font-size:1rem;color:#e6edf3;margin:.8rem 0 0}
+          .sck__small{font-size:.82rem;color:var(--muted,#9db3cf);margin:.6rem 0 0}
+        </style>
+        <div class="sck">
+          <button type="button" class="sck__go" id="sck-go">Test my signal here</button>
+          <p class="sck__st" id="sck-st" role="status" aria-live="polite">Mobile data only &mdash; turn WiFi off first. Takes about ten seconds.</p>
+          <div class="sck__you" id="sck-you" hidden>
+            <div><b id="sck-dl">&mdash;</b><span>Mbps down</span></div>
+            <div><b id="sck-ms">&mdash;</b><span>ms ping</span></div>
+            <div><b id="sck-net">&mdash;</b><span>your network</span></div>
+          </div>
+          <div class="sck__cmp" id="sck-cmp" hidden>
+            <h3>How your area compares</h3>
+            <div id="sck-cmp-body"></div>
+          </div>
+          <p class="sck__small">We keep your reading as part of a ~500&nbsp;m area, never your exact spot, and nothing that identifies you. We show <em>you</em> your network because it&rsquo;s your result &mdash; we don&rsquo;t publish network league tables. <a href="/van-signal-map/">See the van map</a> for our own measured places.</p>
+        </div>
+      </div>
+      <script>
+      (function(){
+        var API='/api/signal-check.php', CF='https://speed.cloudflare.com/__down?bytes=';
+        var $=function(i){return document.getElementById(i);};
+        var go=$('sck-go'),st=$('sck-st');
+        function say(m,c){st.textContent=m;st.className='sck__st '+(c||'');}
+        function conn(){var c=navigator.connection||navigator.mozConnection||navigator.webkitConnection;return c?c.type:null;}
+        function pos(){return new Promise(function(ok,no){if(!navigator.geolocation)return no(new Error('This phone will not share its location.'));
+          navigator.geolocation.getCurrentPosition(function(p){ok(p.coords);},function(e){no(new Error('Location: '+e.message));},{enableHighAccuracy:true,timeout:20000,maximumAge:0});});}
+        function ping(){var r=[];function one(){var t=performance.now();return fetch(CF+'0&_='+Math.random(),{cache:'no-store'}).then(function(){r.push(performance.now()-t);});}
+          return one().then(one).then(one).then(function(){r.sort(function(a,b){return a-b;});return Math.round(r[1]);});}
+        function dl(){var t=performance.now();return fetch(CF+'10000000&_='+Math.random(),{cache:'no-store'}).then(function(r){return r.arrayBuffer();})
+          .then(function(b){var s=(performance.now()-t)/1000;return Math.round(b.byteLength*8/s/1e6*10)/10;});}
+        /* Network name: browsers do not expose the carrier. We ask the visitor
+           - it's their result and they know it. Optional; 'unknown' otherwise. */
+        function netName(){var n=(prompt('Which network is this phone on? (EE, O2, Three, Vodafone, giffgaff…)  Optional.')||'').trim();return n.slice(0,20);}
+        function word(d){return d>=25?['Great for working','#3fb950']:(d>=10?['Fine for calls and email','#d29922']:['Struggles','#f85149']);}
+        function render(j){
+          $('sck-dl').textContent=j.you.dl;$('sck-ms').textContent=j.you.ms==null?'—':j.you.ms;$('sck-net').textContent=j.you.net||'—';$('sck-you').hidden=false;
+          var b=$('sck-cmp-body'),w=word(j.you.dl);
+          if(!j.enough){b.innerHTML='<p class="sck__verdict"><b style="color:'+w[1]+'">'+w[0]+'</b> — '+j.you.dl+' Mbps.</p>'+
+            '<p class="sck__small">Not enough readings from this area yet to compare — you’re one of the first (<b>'+j.n+'</b> so far, we show a comparison from '+j.need+'). Thanks for adding yours.</p>';}
+          else{var lo=Math.min(j.p25,j.you.dl,1),hi=Math.max(j.best,j.you.dl,50);var pct=function(v){return Math.max(2,Math.min(98,(v-lo)/(hi-lo)*100));};
+            var rel=j.you.dl>=j.p75?'faster than most readings here':(j.you.dl>=j.p25?'about typical for this area':'slower than most readings here');
+            b.innerHTML='<p class="sck__verdict"><b style="color:'+w[1]+'">'+w[0]+'</b> — '+rel+'.</p>'+
+              '<div class="sck__bar"><div class="sck__pin" style="left:'+pct(j.median)+'%" data-l="area typical '+j.median+'"></div><div class="sck__pin" style="left:'+pct(j.you.dl)+'%;background:#6cc4f5" data-l="you '+j.you.dl+'"></div></div>'+
+              '<div style="height:1.4rem"></div>'+
+              '<div class="sck__row"><span>Readings from this area</span><b>'+j.n+'</b></div>'+
+              '<div class="sck__row"><span>Typical (median)</span><b>'+j.median+' Mbps</b></div>'+
+              '<div class="sck__row"><span>Middle half of readings</span><b>'+j.p25+' – '+j.p75+' Mbps</b></div>'+
+              '<div class="sck__row"><span>Best seen here</span><b>'+j.best+' Mbps</b></div>';}
+          $('sck-cmp').hidden=false;}
+        go.addEventListener('click',function(){
+          if(conn()==='wifi'){say('You’re on WiFi — turn it off so we measure your mobile data, not a router.','bad');return;}
+          go.disabled=true;$('sck-you').hidden=true;$('sck-cmp').hidden=true;
+          var c,ms,d;
+          say('Finding where you are…');
+          pos().then(function(x){c=x;say('Measuring ping…');return ping();})
+          .then(function(m){ms=m;say('Downloading 10 MB — stay put…');return dl();})
+          .then(function(x){d=x;var net=netName();say('Comparing with your area…');
+            return fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},
+              body:JSON.stringify({dl:d,latency:ms,lat:c.latitude,lon:c.longitude,net:net,conn:'cellular'})});})
+          .then(function(r){return r.json();})
+          .then(function(j){if(!j.ok){say(j.error||'Could not record that reading.','warn');
+              if(d!=null){$('sck-dl').textContent=d;$('sck-ms').textContent=ms;$('sck-net').textContent='—';$('sck-you').hidden=false;}return;}
+            render(j);say('Recorded — thank you. Try again somewhere else later.','ok');
+            if(window.ttToolDone)window.ttToolDone('mobile-signal-check');})
+          .catch(function(e){say(e.message||String(e),'bad');})
+          .then(function(){go.disabled=false;});
+        });
+      })();
+      </script>
+    </section>'''
+
+def mobile_signal_check():
+    slug = "mobile-signal-check"
+    desc = "Test your phone's real mobile data speed right where you're standing, then see how it compares with other readings from your part of Bournemouth, Christchurch and Poole. Free, ten seconds, no sign-up."
+    faqs = [
+      ("Why do I have to turn WiFi off?", "Because otherwise you&rsquo;d be measuring the router you&rsquo;re connected to, not your phone&rsquo;s mobile signal. The test refuses to run on WiFi for exactly that reason."),
+      ("Where does my reading go?", "It&rsquo;s kept as part of a ~500&nbsp;m area &mdash; never your exact spot &mdash; with the speed, the time of day and the network you told us. Nothing that identifies you. It goes into a pool that only ever compares <em>you</em> against <em>your area</em>."),
+      ("Do you rank the networks against each other?", "No, and we won&rsquo;t. We show you your own network because it&rsquo;s your result. We don&rsquo;t publish network league tables &mdash; every network has good and bad patches, and one phone on one day can&rsquo;t settle that fairly."),
+      ("How is this different from the campervan map?", "The <a href=\"/van-signal-map/\">van map</a> is one instrument &mdash; a roof-mounted router on one network &mdash; measured the same way every time, which is what makes its ranked places citable. This page is everyone&rsquo;s phones. Different data, kept separate on purpose."),
+      ("Why does it say &lsquo;not enough readings yet&rsquo;?", "Two people isn&rsquo;t &lsquo;typical for your area&rsquo; &mdash; it&rsquo;s two people. We only show a comparison once an area has eight or more readings, so early on you might be one of the first. That&rsquo;s the point of adding yours."),
+    ]
+    content = "\n".join([
+      hero(bc("Mobile Signal Check"), "// YOUR PHONE &middot; RIGHT HERE &middot; FREE",
+           'How good is your <em class="grad grad--cyan">mobile signal</em> where you&rsquo;re standing?',
+           "One tap tests your phone&rsquo;s real mobile-data speed on the spot, then shows how it compares with other readings from your part of town. Help build a real picture of where you can actually work, call and stream around Bournemouth, Christchurch and Poole.",
+           cta1=("Test my signal", "#sigcheck"), cta2=("See the van map", "/van-signal-map/"),
+           chips=["Ten seconds", "No sign-up", "Compares with your area"]),
+      SIGCHECK_WIDGET,
+      faq_html(faqs),
+      tools_strip(["vanmap", "speed", "isitdown"], title="Working from anywhere in Bournemouth", alt=False),
+      cta("Poor signal where you live or work?",
+          "Often it&rsquo;s fixable &mdash; the right router, an external antenna, or a better home setup. Local, honest advice.",
+          primary=("Book a Free Chat", "/book-service/"), secondary=("Wi-Fi Support", "/wifi-support/")),
+    ])
+    def schema(s, _d=desc, _f=faqs):
+        return graph([crumb(s, "Mobile Signal Check"), webpage(s, "Mobile Signal Check", _d), faqpage(s, _f),
+                      {"@type": "WebApplication", "name": "365 Techies Mobile Signal Check", "applicationCategory": "UtilitiesApplication",
+                       "operatingSystem": "Web", "url": SITE + "/mobile-signal-check/", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "GBP"}, "provider": {"@id": SITE + "/#business"}}])
+    add(slug=slug, title="Mobile Signal Check — Test Your Phone Where You Stand | 365 Techies",
+        desc=desc, og_title="Mobile Signal Check | 365 Techies", schema=schema, content=content)
+mobile_signal_check()
+
 # ===================================================== SPOT THE SCAM QUIZ
 SCAM_WIDGET = '''    <section class="section section--alt" aria-label="Spot the scam quiz">
       <div class="wrap">
@@ -12978,7 +13108,7 @@ def free_tools_hub():
       ("Security &amp; privacy", "Check you&rsquo;re safe &mdash; and lock things down.",
        ["emailsec","breach","pwgen","pwstrength","scamlink","privacy","scamquiz","whatlose"]),
       ("Speed &amp; connectivity", "Test your connection and get everyone online.",
-       ["wifisig","isitdown","speed","vanmap","broadbandcheck","wifiqr","qrgen","coverage"]),
+       ["wifisig","isitdown","speed","vanmap","sigcheck","broadbandcheck","wifiqr","qrgen","coverage"]),
       ("Website, domain &amp; email", "See how your website, domain and email really perform.",
        ["website","ssl","domainexp","dns","emailsig"]),
       ("Your computer", "Test it, diagnose it, and make smart decisions.",

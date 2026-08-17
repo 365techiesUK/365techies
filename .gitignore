@@ -117,3 +117,7 @@ api/signal-geo.json.tmp
 
 # laptop-side geocode cache for refresh_van_summary.py (derived from real coords)
 seo-research-cache/
+api/signal-check-data.json
+api/signal-check-data.json.tmp
+api/signal-check-rate.json
+api/signal-check-rate.json.tmp
