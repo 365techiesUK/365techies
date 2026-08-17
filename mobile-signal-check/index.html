@@ -870,8 +870,13 @@
           var leg=L.control({position:'bottomright'});
           leg.onAdd=function(){var d=L.DomUtil.create('div','sckm__leg');d.innerHTML='<span class="bar"></span><br>slow &nbsp;&middot;&nbsp; fine for calls &nbsp;&middot;&nbsp; great for work<br><span style="opacity:.75">median of everyone&rsquo;s readings in each ~500&nbsp;m square</span><br><span style="opacity:.75">dashed &amp; faint = early days &middot; solid = 8+ readings</span>';return d;};
           leg.addTo(map);
+          var fitted=false;
           function draw(j){layer.clearLayers();
             var ready=0;
+            /* First load with data: frame the readings, not all of Dorset - on a
+               phone the default view leaves the squares as specks at the edge. */
+            if(!fitted&&j.cells.length){var b=L.latLngBounds(j.cells.map(function(c){return [c.lat,c.lon];}));
+              map.fitBounds(b.pad(.35),{maxZoom:13});fitted=true;}
             j.cells.forEach(function(c){
               var h=0.5/CELL_LAT, w=0.5/CELL_LON;   /* half a cell each way */
               /* Coloured from the FIRST reading - that's the moment people share.
@@ -891,9 +896,21 @@
             document.getElementById('sckm-st').textContent=j.cells.length+' area'+(j.cells.length===1?'':'s')+' on the map';
             var pend=j.pending?(' &middot; '+j.pending+' area'+(j.pending===1?'':'s')+' still early days (under '+j.need+' readings)'):'';
             document.getElementById('sckm-count').innerHTML='<b>'+j.total+'</b> reading'+(j.total===1?'':'s')+' from people so far'+pend+'. Add yours above.';}
-          function load(){fetch(API+'&_='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){if(j&&j.ok)draw(j);}).catch(function(){});}
+          function load(){fetch(API+'&_='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){if(j&&j.ok){draw(j);map.invalidateSize();}}).catch(function(){});}
           load();setInterval(load,REFRESH);
           window.sckMapReload=load;
+          /* On phones this section is below the fold when Leaflet initialises,
+             so it measures the container once, draws ONE 256px tile top-left,
+             and never re-measures - the map looks black with squares floating on
+             it. Re-measure whenever the section actually comes into view, on
+             resize/orientation change, and once after first paint. */
+          if('IntersectionObserver' in window){
+            new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){map.invalidateSize();}});},{threshold:.05})
+              .observe(document.getElementById('sckmap'));}
+          window.addEventListener('resize',function(){map.invalidateSize();});
+          window.addEventListener('orientationchange',function(){setTimeout(function(){map.invalidateSize();},350);});
+          setTimeout(function(){map.invalidateSize();},600);
+          setTimeout(function(){map.invalidateSize();},2000);
         }
         if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
       })();
