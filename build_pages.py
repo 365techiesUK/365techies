@@ -6060,6 +6060,7 @@ VAN_SIGNAL_MAP_MAP = r"""
       </div>
     </section>
     <script src="/vendor/leaflet/leaflet.js" defer></script>
+    <script src="/vendor/leaflet/touch-friendly.js" defer></script>
     <script src="/vendor/protomaps/protomaps-leaflet.js" defer></script>
     <script>
     (function(){var ENDPOINT='/api/signal-log.php',REFRESH=15000,GOOD=-80,BAD=-110;
@@ -6071,6 +6072,7 @@ VAN_SIGNAL_MAP_MAP = r"""
       var FRESH_S=420,SPD_MAX=50;
       function start(){if(typeof L==='undefined'){return setTimeout(start,200);}
         var map=L.map('sigmap',{zoomControl:true}).setView([50.72,-1.88],10);
+        if(window.makeTouchFriendly)makeTouchFriendly(map);   /* one finger scrolls the page, two move the map */
         /* Basemap: a self-hosted Protomaps PMTiles archive (Dorset extract, z0-14,
            25MB) served as ONE static file over HTTP range requests from our own
            hosting. Replaces tile.openstreetmap.org, whose usage policy warns

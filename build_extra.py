@@ -5182,6 +5182,7 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
         <p class="sckm__count" id="sckm-count"></p>
       </div>
       <script src="/vendor/leaflet/leaflet.js" defer></script>
+    <script src="/vendor/leaflet/touch-friendly.js" defer></script>
       <script src="/vendor/protomaps/protomaps-leaflet.js" defer></script>
       <script>
       (function(){
@@ -5190,6 +5191,7 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
         function boot(){
           if(!window.L||!window.protomapsL){setTimeout(boot,120);return;}
           var map=L.map('sckmap',{zoomControl:true,attributionControl:true}).setView([50.735,-1.86],11);
+        if(window.makeTouchFriendly)makeTouchFriendly(map);   /* one finger scrolls the page, two move the map */
           protomapsL.leafletLayer({url:'/vendor/protomaps/dorset.pmtiles',flavor:'dark',maxDataZoom:14,attribution:'&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> &middot; <a href="https://protomaps.com">Protomaps</a>'}).addTo(map);
           var layer=L.layerGroup().addTo(map);
           var leg=L.control({position:'bottomright'});
