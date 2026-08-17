@@ -39,7 +39,7 @@
 const DATA_FILE   = __DIR__ . '/signal-check-data.json';    // gitignored
 const RATE_FILE   = __DIR__ . '/signal-check-rate.json';    // gitignored
 const MAX_ROWS    = 50000;
-const RATE_S      = 600;      // one reading per device per 10 min
+const RATE_S      = 300;      // one reading per device per 5 min (was 10)
 const CELL_DAY_MAX= 200;      // per cell per day - a busy town centre, not a bot
 const MIN_FOR_COMPARE = 8;    // below this we say "not enough readings yet"
 const CELL_LAT    = 200;      // ~550 m; a district, not a doorway
@@ -173,7 +173,7 @@ if ($method === 'POST') {
     if (($rate['day'] ?? '') !== $day) $rate = ['day' => $day, 'ip' => [], 'cell' => []];
     $now = time();
     if (isset($rate['ip'][$who]) && ($now - $rate['ip'][$who]) < RATE_S) {
-        echo json_encode(['ok' => false, 'error' => 'one reading per 10 minutes']); exit;
+        echo json_encode(['ok' => false, 'error' => 'one reading per 5 minutes']); exit;
     }
     [$cla, $clo] = cell_of($lat, $lon);
     $ck = "$cla,$clo";
