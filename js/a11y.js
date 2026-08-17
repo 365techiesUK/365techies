@@ -373,3 +373,56 @@
     if (e.key === "Escape") closeAll(null);
   });
 })();
+
+/* ==========================================================================
+   STATUS STRIP (2026-08-17): the live first slot + a real pause control.
+   - Live slot: the Boscombe wave-buoy sea temperature from /api/bm-sea.php,
+     shown ONLY when the feed says ok and the reading is under 3h old, always
+     with the time it was MEASURED (the sea page's own doctrine). Otherwise the
+     slot stays hidden and the strip is simply the seven static items.
+   - Pause: WCAG 2.2.2 wants a control for anything that auto-moves >5s;
+     hover-pause is unreachable by touch/keyboard. Remembered per session.
+   Desktop only by CSS (the strip is display:none under 768px), so no work is
+   done on phones: the fetch is skipped when the strip has no layout box.
+   ========================================================================== */
+(function () {
+  var strip = document.querySelector(".status-ticker");
+  if (!strip) return;
+  var btn = strip.querySelector("[data-tk-pause]");
+  var PKEY = "tt_strip_paused";
+  function setPaused(on) {
+    strip.classList.toggle("is-paused", !!on);
+    if (btn) { btn.setAttribute("aria-pressed", on ? "true" : "false"); btn.setAttribute("aria-label", on ? "Play the scrolling strip" : "Pause the scrolling strip"); }
+    try { if (on) sessionStorage.setItem(PKEY, "1"); else sessionStorage.removeItem(PKEY); } catch (e) {}
+  }
+  if (btn) {
+    btn.addEventListener("click", function () { setPaused(!strip.classList.contains("is-paused")); });
+    try { if (sessionStorage.getItem(PKEY) === "1") setPaused(true); } catch (e) {}
+  }
+  // Live slot - only if the strip is actually rendered (desktop) and fetch exists.
+  if (!("fetch" in window) || strip.offsetParent === null) return;
+  var lives = strip.querySelectorAll("[data-tk-live]");
+  if (!lives.length) return;
+  function show(text) {
+    for (var i = 0; i < lives.length; i++) {
+      var t = lives[i].querySelector("[data-tk-live-text]");
+      if (t) t.textContent = text;
+      lives[i].hidden = false;
+    }
+  }
+  function hhmm(iso) {
+    var d = new Date(iso); if (isNaN(d)) return "";
+    return d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+  }
+  var run = function () {
+    fetch("/api/bm-sea.php", { cache: "no-cache" }).then(function (r) { return r.json(); }).then(function (d) {
+      var s = d && d.sea;
+      if (!s || !s.ok || typeof s.tempC !== "number" || !s.read_at) return;
+      var age = Date.now() - new Date(s.read_at).getTime();
+      if (!(age >= 0 && age < 3 * 3600 * 1000)) return;           // stale readings stay off the strip
+      var temp = (Math.round(s.tempC * 10) / 10).toFixed(1).replace(/\.0$/, "");
+      show("SEA " + temp + "°C · BOSCOMBE BUOY " + hhmm(s.read_at));
+    }).catch(function () {});
+  };
+  if ("requestIdleCallback" in window) requestIdleCallback(run, { timeout: 4000 }); else setTimeout(run, 1200);
+})();

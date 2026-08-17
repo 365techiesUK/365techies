@@ -103,7 +103,7 @@ except Exception:
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://365techies.co.uk"
-CSSV = "89"   # bumped 2026-08-17: v88 was poisoned in the SiteGround proxy by a pre-deploy probe (see deploy-hash-sync-blindspot); NEVER request a new ?v= URL before the deploy that ships it is confirmed complete
+CSSV = "90"   # bumped 2026-08-17 (status strip rebuild). Earlier the same day: v88 was poisoned in the SiteGround proxy by a pre-deploy probe (see deploy-hash-sync-blindspot); NEVER request a new ?v= URL before the deploy that ships it is confirmed complete
 HERITAGE_DIMS = {'heritage-01.jpg': (1400, 787), 'heritage-02.jpg': (787, 1400), 'heritage-03.jpg': (1400, 787), 'heritage-04.jpg': (1400, 787), 'heritage-05.jpg': (787, 1400), 'heritage-07.jpg': (1400, 787), 'heritage-kinson.jpg': (1200, 710), 'heritage-moordown.jpg': (1400, 788), 'heritage-stock.jpg': (1400, 788), 'heritage-storefront.jpg': (1024, 683)}
 try:
     from hero_scenes import SCENES as HERO_SCENES
@@ -236,11 +236,12 @@ def ico(name, cls="tile__ico"):
 
 # ---- shared chrome ----
 HEADER = '''  <header class="site-header">
-    <div class="status-ticker" aria-hidden="true">
-      <div class="status-ticker__track">
-        <span>&#9679; CALL 01202 775566&ensp;//&ensp;FAMILY BUSINESS SINCE 1995&ensp;//&ensp;DORSET MICROSOFT EDUCATION RESOURCE CENTRE 1998&ndash;2008&ensp;//&ensp;IT SUPPORT FOR MERCEDES-BENZ PENTAGON 1998&ndash;2008&ensp;//&ensp;COMPUTER SALES &amp; SERVICE CENTRE 2008&ndash;2017&ensp;//&ensp;KINSON COMMUNITY CENTRE 2017&ndash;NOW&ensp;//&ensp;ENVIRONMENT AGENCY RIVER AVON WIRELESS LINK SINCE 2015&ensp;//&ensp;DELL SPECIALISTS&ensp;//&ensp;WEBSITE DESIGN, HOSTING &amp; EMAIL&ensp;//&ensp;WORK FROM ANYWHERE &mdash; REMOTE PC ACCESS FOR SUPPORT CUSTOMERS&ensp;//&ensp;MICROSOFT PARTNER &amp; OFFICE SPECIALISTS&ensp;//&ensp;WINDOWS &amp; ANDROID SPECIALISTS&ensp;//&ensp;SAME-DAY RESPONSE &middot; USUALLY MINUTES REMOTELY&ensp;//&ensp;<a href="/heatwave-tech-guide/" tabindex="-1">HEATWAVE? KEEP YOUR TECH COOL &mdash; FREE GUIDE</a>&ensp;//&ensp;<a href="/is-it-down/" tabindex="-1">IS IT DOWN, OR IS IT JUST YOU? CHECK LIVE</a>&ensp;//&ensp;REMOTE IT SUPPORT ACROSS THE WHOLE UK&ensp;//&ensp;MALWAREBYTES PARTNER&ensp;//&ensp;NVIDIA &amp; SCAN PARTNER&ensp;//&ensp;RICHER SOUNDS PARTNER&ensp;//&ensp;BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;//&ensp;IT SUPPORT PLANS FROM &pound;18.25/MO&ensp;//&ensp;MON&ndash;FRI 9AM&ndash;5PM&ensp;//&ensp;</span>
-        <span>&#9679; CALL 01202 775566&ensp;//&ensp;FAMILY BUSINESS SINCE 1995&ensp;//&ensp;DORSET MICROSOFT EDUCATION RESOURCE CENTRE 1998&ndash;2008&ensp;//&ensp;IT SUPPORT FOR MERCEDES-BENZ PENTAGON 1998&ndash;2008&ensp;//&ensp;COMPUTER SALES &amp; SERVICE CENTRE 2008&ndash;2017&ensp;//&ensp;KINSON COMMUNITY CENTRE 2017&ndash;NOW&ensp;//&ensp;ENVIRONMENT AGENCY RIVER AVON WIRELESS LINK SINCE 2015&ensp;//&ensp;DELL SPECIALISTS&ensp;//&ensp;WEBSITE DESIGN, HOSTING &amp; EMAIL&ensp;//&ensp;WORK FROM ANYWHERE &mdash; REMOTE PC ACCESS FOR SUPPORT CUSTOMERS&ensp;//&ensp;MICROSOFT PARTNER &amp; OFFICE SPECIALISTS&ensp;//&ensp;WINDOWS &amp; ANDROID SPECIALISTS&ensp;//&ensp;SAME-DAY RESPONSE &middot; USUALLY MINUTES REMOTELY&ensp;//&ensp;<a href="/heatwave-tech-guide/" tabindex="-1">HEATWAVE? KEEP YOUR TECH COOL &mdash; FREE GUIDE</a>&ensp;//&ensp;<a href="/is-it-down/" tabindex="-1">IS IT DOWN, OR IS IT JUST YOU? CHECK LIVE</a>&ensp;//&ensp;REMOTE IT SUPPORT ACROSS THE WHOLE UK&ensp;//&ensp;MALWAREBYTES PARTNER&ensp;//&ensp;NVIDIA &amp; SCAN PARTNER&ensp;//&ensp;RICHER SOUNDS PARTNER&ensp;//&ensp;BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;//&ensp;IT SUPPORT PLANS FROM &pound;18.25/MO&ensp;//&ensp;MON&ndash;FRI 9AM&ndash;5PM&ensp;//&ensp;</span>
+    <div class="status-ticker">
+      <div class="status-ticker__track" aria-hidden="true">
+        <span><b class="tk-live" data-tk-live hidden><i class="tk-dot" aria-hidden="true"></i>LIVE&ensp;<span data-tk-live-text></span>&ensp;<em class="tk-sep">//</em>&ensp;</b><a href="tel:+441202775566" tabindex="-1">CALL 01202 775566</a>&ensp;<em class="tk-sep">//</em>&ensp;MON&ndash;FRI 9&ndash;5 &middot; SAME-DAY, USUALLY MINUTES REMOTELY&ensp;<em class="tk-sep">//</em>&ensp;<a href="/pricing/" tabindex="-1">IT SUPPORT PLANS FROM &pound;18.25/MO</a>&ensp;<em class="tk-sep">//</em>&ensp;FAMILY BUSINESS SINCE 1995 &middot; BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;<em class="tk-sep">//</em>&ensp;<a href="/is-it-down/" tabindex="-1">IS IT DOWN, OR JUST YOU? CHECK LIVE</a>&ensp;<em class="tk-sep">//</em>&ensp;<a href="/sos/" tabindex="-1">SOS REMOTE SUPPORT &mdash; WE&rsquo;LL DO IT TOGETHER</a>&ensp;<em class="tk-sep">//</em>&ensp;<a href="/van-signal-map/" tabindex="-1"><b class="tk-new">NEW</b>&thinsp;BOURNEMOUTH MOBILE SIGNAL MAP</a>&ensp;<em class="tk-sep">//</em>&ensp;</span>
+        <span><b class="tk-live" data-tk-live hidden><i class="tk-dot" aria-hidden="true"></i>LIVE&ensp;<span data-tk-live-text></span>&ensp;<em class="tk-sep">//</em>&ensp;</b><a href="tel:+441202775566" tabindex="-1">CALL 01202 775566</a>&ensp;<em class="tk-sep">//</em>&ensp;MON&ndash;FRI 9&ndash;5 &middot; SAME-DAY, USUALLY MINUTES REMOTELY&ensp;<em class="tk-sep">//</em>&ensp;<a href="/pricing/" tabindex="-1">IT SUPPORT PLANS FROM &pound;18.25/MO</a>&ensp;<em class="tk-sep">//</em>&ensp;FAMILY BUSINESS SINCE 1995 &middot; BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;<em class="tk-sep">//</em>&ensp;<a href="/is-it-down/" tabindex="-1">IS IT DOWN, OR JUST YOU? CHECK LIVE</a>&ensp;<em class="tk-sep">//</em>&ensp;<a href="/sos/" tabindex="-1">SOS REMOTE SUPPORT &mdash; WE&rsquo;LL DO IT TOGETHER</a>&ensp;<em class="tk-sep">//</em>&ensp;<a href="/van-signal-map/" tabindex="-1"><b class="tk-new">NEW</b>&thinsp;BOURNEMOUTH MOBILE SIGNAL MAP</a>&ensp;<em class="tk-sep">//</em>&ensp;</span>
       </div>
+      <button type="button" class="tk-pause" data-tk-pause aria-label="Pause the scrolling strip" aria-pressed="false" title="Pause / play"><svg viewBox="0 0 12 12" width="10" height="10" aria-hidden="true"><rect x="2" y="1.5" width="3" height="9" rx="0.6"/><rect x="7" y="1.5" width="3" height="9" rx="0.6"/></svg></button>
     </div>
     <div class="header-bar">
       <a class="logo" href="/" aria-label="365techies — home">
@@ -1076,7 +1077,7 @@ def page(slug, title, desc, og_title, schema_json, content, og_image=None):
     </div>
   </div>
   <script type="module" src="/js/interior.min.js?v=22"></script>
-  <script src="/js/a11y.min.js?v=9" defer></script>
+  <script src="/js/a11y.min.js?v=10" defer></script>
   <script src="/js/forms.min.js?v=8" defer></script>
   <script src="/js/search.min.js?v={TODAY}" defer></script>
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
