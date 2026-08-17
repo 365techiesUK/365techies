@@ -46,15 +46,15 @@
   <meta property="og:site_name" content="365 Techies" />
   <meta property="og:locale" content="en_GB" />
   <meta property="og:url" content="https://365techies.co.uk/mobile-signal-check/" />
-  <meta property="og:title" content="Mobile Signal Check | 365 Techies" />
+  <meta property="og:title" content="How good is your mobile signal where you're standing?" />
   <meta property="og:description" content="Test your phone's real mobile data speed right where you're standing, then see how it compares with other readings from your part of Bournemouth, Christchurch and Poole. Free, ten seconds, no sign-up." />
-  <meta property="og:image" content="https://365techies.co.uk/og-image.jpg" />
+  <meta property="og:image" content="https://365techies.co.uk/og-mobile-signal-check.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Mobile Signal Check | 365 Techies" />
+  <meta name="twitter:title" content="How good is your mobile signal where you're standing?" />
   <meta name="twitter:description" content="Test your phone's real mobile data speed right where you're standing, then see how it compares with other readings from your part of Bournemouth, Christchurch and Poole. Free, ten seconds, no sign-up." />
-  <meta name="twitter:image" content="https://365techies.co.uk/og-image.jpg" />
+  <meta name="twitter:image" content="https://365techies.co.uk/og-mobile-signal-check.jpg" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <!-- ?v= bumps past SiteGround's proxy cache. Learned the hard way 2026-08-01:
@@ -775,6 +775,23 @@
           .sck__row{display:flex;justify-content:space-between;font-size:.9rem;padding:.3rem 0;border-top:1px solid rgba(125,170,220,.12)}
           .sck__verdict{font-size:1rem;color:#e6edf3;margin:.8rem 0 0}
           .sck__small{font-size:.82rem;color:var(--muted,#9db3cf);margin:.6rem 0 0}
+          /* result card - drawn as HTML, snapshotted to PNG for "save picture" */
+          .sck__share{margin:1rem 0 0}
+          .sck__card{background:linear-gradient(160deg,#122040,#0b1020);border:1px solid rgba(108,196,245,.35);border-radius:18px;padding:1.2rem 1.3rem;text-align:left;
+            box-shadow:0 20px 50px -24px rgba(29,151,227,.6)}
+          .sck__card-eyebrow{font:600 .68rem/1 inherit;letter-spacing:.12em;color:#6cc4f5;margin:0 0 .7rem}
+          .sck__card-big{font:800 3.4rem/1 inherit;color:#fff;font-variant-numeric:tabular-nums}
+          .sck__card-big small{font-size:1.1rem;font-weight:600;color:#9db3cf}
+          .sck__card-where{font:700 1.15rem/1.2 inherit;color:#e6edf3;margin:.45rem 0 .2rem}
+          .sck__card-verdict{font-size:.98rem;color:#3fb950;font-weight:700}
+          .sck__card-foot{margin:.9rem 0 0;padding-top:.7rem;border-top:1px solid rgba(125,170,220,.18);font-size:.8rem;color:#9db3cf}
+          .sck__share-lede{text-align:center;font-size:.92rem;color:var(--muted,#9db3cf);margin:.9rem 0 .5rem}
+          .sck__btns{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin:0;padding:0;list-style:none}
+          .sck__btns a,.sck__btns button{display:inline-flex;align-items:center;gap:.45rem;padding:.6rem .95rem;border-radius:999px;border:1px solid rgba(125,170,220,.3);
+            background:rgba(20,27,46,.55);color:#cfe0f5;font:600 .88rem/1 inherit;font-family:inherit;text-decoration:none;cursor:pointer;transition:border-color .2s,background .2s}
+          .sck__btns a:hover,.sck__btns button:hover{border-color:rgba(108,196,245,.6);background:rgba(29,151,227,.16)}
+          .sck__btns svg{width:16px;height:16px;fill:currentColor}
+          .sck__share-said{min-height:1.3em;text-align:center;font-size:.85rem;color:#3fb950;margin:.6rem 0 0}
         </style>
         <div class="sck">
           <button type="button" class="sck__go" id="sck-go">Test my signal here</button>
@@ -787,6 +804,30 @@
           <div class="sck__cmp" id="sck-cmp" hidden>
             <h3>How your area compares</h3>
             <div id="sck-cmp-body"></div>
+          </div>
+          <!-- "your mate got X" banner: shown when the page opens with ?vs= -->
+          <div class="sck__cmp" id="sck-vs" hidden style="border-color:rgba(108,196,245,.5)">
+            <h3>Challenge</h3>
+            <p class="sck__verdict" id="sck-vs-txt"></p>
+          </div>
+          <!-- share card + buttons: appears after a reading -->
+          <div class="sck__share" id="sck-share" hidden>
+            <div class="sck__card" id="sck-card" aria-label="Your result card">
+              <div class="sck__card-eyebrow">MY MOBILE SIGNAL &middot; 365TECHIES.CO.UK</div>
+              <div class="sck__card-big"><span id="sck-card-dl">&mdash;</span><small> Mbps</small></div>
+              <div class="sck__card-where" id="sck-card-where">&mdash;</div>
+              <div class="sck__card-verdict" id="sck-card-verdict">&mdash;</div>
+              <div class="sck__card-foot">What do you get where you are? &rarr; 365techies.co.uk/mobile-signal-check</div>
+            </div>
+            <p class="sck__share-lede">Share your result &mdash; see if your mates can beat it.</p>
+            <ul class="sck__btns">
+              <li><button type="button" id="sck-sh-native" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 100-6 3 3 0 00-3 3c0 .24.04.47.09.7L8.04 9.81A3 3 0 003 12a3 3 0 003 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65a2.92 2.92 0 105.92 0 2.92 2.92 0 00-3-2.92z"/></svg>Share</button></li>
+              <li><a id="sck-sh-wa" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.52 3.49A11.53 11.53 0 0012.05 0C5.6 0 .35 5.24.34 11.69c0 2.06.54 4.07 1.56 5.85L.24 24l6.6-1.73a11.71 11.71 0 005.2 1.32h.01c6.45 0 11.7-5.24 11.7-11.69a11.6 11.6 0 00-3.23-8.41zm-8.47 18.21h-.01a9.6 9.6 0 01-4.9-1.34l-.35-.21-3.64.96.97-3.55-.23-.36a9.62 9.62 0 01-1.47-5.13c0-5.31 4.33-9.63 9.65-9.63a9.58 9.58 0 016.81 2.83 9.53 9.53 0 012.82 6.81c0 5.31-4.33 9.62-9.65 9.62z"/></svg>WhatsApp</a></li>
+              <li><a id="sck-sh-fb" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.69.24 2.69.24v2.96h-1.52c-1.49 0-1.96.93-1.96 1.89v2.26h3.33l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07z"/></svg>Facebook</a></li>
+              <li><button type="button" id="sck-sh-img"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>Save picture</button></li>
+              <li><button type="button" id="sck-sh-copy"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.9 12a5 5 0 015-5h3v1.9h-3a3.1 3.1 0 000 6.2h3V17h-3a5 5 0 01-5-5zm5.1-1h6v2H9v-2zm4-4h3a5 5 0 010 10h-3v-1.9h3a3.1 3.1 0 000-6.2h-3V7z"/></svg>Copy link</button></li>
+            </ul>
+            <p class="sck__share-said" id="sck-share-said" role="status" aria-live="polite"></p>
           </div>
           <p class="sck__small">We keep your reading as part of a ~500&nbsp;m area, never your exact spot, and nothing that identifies you. We show <em>you</em> your network because it&rsquo;s your result &mdash; we don&rsquo;t publish network league tables. <a href="/van-signal-map/">See the van map</a> for our own measured places.</p>
         </div>
@@ -862,6 +903,61 @@
            - it's their result and they know it. Optional; 'unknown' otherwise. */
         function netName(){var n=(prompt('Which network is this phone on? (EE, O2, Three, Vodafone, giffgaff…)  Optional.')||'').trim();return n.slice(0,20);}
         function word(d){return d>=25?['Great for working','#3fb950']:(d>=10?['Fine for calls and email','#d29922']:['Struggles','#f85149']);}
+
+        /* ---- share layer ------------------------------------------------
+           The thing that travels is the RESULT: number + area + a challenge.
+           The area is a district/suburb from reverse geocoding (Boscombe,
+           Sandbanks) - never a road. The share text carries the speed and the
+           area and NEVER the network: shared "Three, 87, Boscombe" messages
+           would build the operator league table for us one WhatsApp at a
+           time, and that is the one thing this project does not publish. */
+        var PAGE='https://365techies.co.uk/mobile-signal-check/';
+        var LAST=null;   /* {dl, where} of the reading just taken */
+        function areaName(lat,lon){
+          var u='https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=16&lat='+lat+'&lon='+lon;
+          return fetch(u,{headers:{'Accept':'application/json'}}).then(function(r){return r.json();}).then(function(j){
+            var a=(j&&j.address)||{};var ks=['neighbourhood','quarter','suburb','village','hamlet','town','city_district','city'];
+            for(var i=0;i<ks.length;i++){if(a[ks[i]])return String(a[ks[i]]).slice(0,40);}return null;}).catch(function(){return null;});}
+        function shareText(){return 'I got '+LAST.dl+' Mbps on my phone'+(LAST.where?(' in '+LAST.where):' in Bournemouth')+' — what do you get where you are?';}
+        function shareUrl(){return PAGE+'?vs='+encodeURIComponent(LAST.dl)+(LAST.where?('&in='+encodeURIComponent(LAST.where)):'');}
+        function said(m){var e=$('sck-share-said');e.textContent=m;setTimeout(function(){if(e.textContent===m)e.textContent='';},2600);}
+        function copyText(t,m){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(function(){said(m);},function(){said('Press and hold to copy.');});}else{said('Press and hold to copy.');}}
+        function showShare(dl,where){LAST={dl:dl,where:where};var w=word(dl);
+          $('sck-card-dl').textContent=dl;$('sck-card-where').textContent=where?('in '+where):'in Bournemouth';
+          var v=$('sck-card-verdict');v.textContent=w[0];v.style.color=w[1];
+          var t=encodeURIComponent(shareText()),u=encodeURIComponent(shareUrl());
+          $('sck-sh-wa').href='https://wa.me/?text='+t+'%20'+u;
+          $('sck-sh-fb').href='https://www.facebook.com/sharer/sharer.php?u='+u+'&quote='+t;
+          var nat=$('sck-sh-native');if(navigator.share){nat.hidden=false;}
+          $('sck-share').hidden=false;}
+        $('sck-sh-native').addEventListener('click',function(){if(!LAST)return;navigator.share({title:'My mobile signal',text:shareText(),url:shareUrl()})['catch'](function(){});});
+        $('sck-sh-copy').addEventListener('click',function(){if(!LAST)return;copyText(shareText()+' '+shareUrl(),'Copied — paste it anywhere.');});
+        /* "Save picture": draw the card to a canvas and hand over a PNG. Done
+           by hand rather than with a library so nothing external is loaded. */
+        $('sck-sh-img').addEventListener('click',function(){if(!LAST)return;
+          var W=1080,H=1080,c=document.createElement('canvas');c.width=W;c.height=H;var x=c.getContext('2d');
+          var g=x.createLinearGradient(0,0,W,H);g.addColorStop(0,'#122040');g.addColorStop(1,'#0b1020');x.fillStyle=g;x.fillRect(0,0,W,H);
+          x.fillStyle='#24456f';for(var gx=60;gx<W;gx+=60)for(var gy=60;gy<H;gy+=60){x.beginPath();x.arc(gx,gy,2.5,0,7);x.fill();}
+          x.fillStyle='#6cc4f5';x.font='600 30px system-ui,Segoe UI,Roboto,sans-serif';x.fillText('MY MOBILE SIGNAL  ·  365TECHIES.CO.UK',80,150);
+          x.fillStyle='#ffffff';x.font='800 220px system-ui,Segoe UI,Roboto,sans-serif';x.fillText(String(LAST.dl),80,420);
+          var bigW=x.measureText(String(LAST.dl)).width;
+          x.fillStyle='#9db3cf';x.font='600 60px system-ui,Segoe UI,Roboto,sans-serif';x.fillText('Mbps',80+bigW+30,420);
+          x.fillStyle='#e6edf3';x.font='700 64px system-ui,Segoe UI,Roboto,sans-serif';x.fillText(LAST.where?('in '+LAST.where):'in Bournemouth',80,540);
+          var w2=word(LAST.dl);x.fillStyle=w2[1];x.font='700 52px system-ui,Segoe UI,Roboto,sans-serif';x.fillText(w2[0],80,630);
+          x.strokeStyle='rgba(125,170,220,.3)';x.lineWidth=2;x.beginPath();x.moveTo(80,760);x.lineTo(W-80,760);x.stroke();
+          x.fillStyle='#9db3cf';x.font='500 40px system-ui,Segoe UI,Roboto,sans-serif';x.fillText('What do you get where you are?',80,840);
+          x.fillStyle='#6cc4f5';x.font='700 40px system-ui,Segoe UI,Roboto,sans-serif';x.fillText('365techies.co.uk/mobile-signal-check',80,910);
+          c.toBlob(function(b){
+            var f=new File([b],'my-mobile-signal.png',{type:'image/png'});
+            if(navigator.canShare&&navigator.canShare({files:[f]})){navigator.share({files:[f],title:'My mobile signal',text:shareText()})['catch'](function(){});return;}
+            var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='my-mobile-signal.png';document.body.appendChild(a);a.click();document.body.removeChild(a);said('Saved — post it anywhere.');
+          },'image/png');});
+        /* Arriving via a shared link: show the challenge up front. */
+        (function(){var q=new URLSearchParams(location.search);var vs=parseFloat(q.get('vs'));if(!(vs>0))return;
+          var where=(q.get('in')||'').replace(/[<>&"']/g,'').slice(0,40);
+          $('sck-vs-txt').innerHTML='Someone got <b>'+vs+' Mbps</b>'+(where?(' in <b>'+where+'</b>'):'')+'. Can you beat it? Test yours below.';
+          $('sck-vs').hidden=false;window.SCK_VS=vs;})();
+
         function render(j){
           $('sck-dl').textContent=j.you.dl;$('sck-ms').textContent=j.you.ms==null?'—':j.you.ms;$('sck-net').textContent=j.you.net||'—';$('sck-you').hidden=false;
           var b=$('sck-cmp-body'),w=word(j.you.dl);
@@ -892,7 +988,14 @@
               if(d!=null){$('sck-dl').textContent=d;$('sck-ms').textContent=ms;$('sck-net').textContent='—';$('sck-you').hidden=false;}return;}
             render(j);say('Recorded — thank you. Try again somewhere else later.','ok');
             if(window.sckMapReload)window.sckMapReload();   /* your square may just have appeared */
-            if(window.ttToolDone)window.ttToolDone('mobile-signal-check');})
+            if(window.ttToolDone)window.ttToolDone('mobile-signal-check');
+            /* challenge verdict, if they arrived via a shared link */
+            if(window.SCK_VS){var vs=window.SCK_VS,mine=j.you.dl,el=$('sck-vs-txt');
+              el.innerHTML=mine>vs?('You got <b>'+mine+'</b> — they got '+vs+'. <b>You win this round.</b> Share yours and see who bites.')
+                :(mine<vs?('You got <b>'+mine+'</b> — they got '+vs+'. <b>They win this round.</b> Try again somewhere with better signal.')
+                :('Dead heat at <b>'+mine+' Mbps</b>. Rematch?'));}
+            /* share card: area name first (one lookup), then show */
+            areaName(c.latitude,c.longitude).then(function(where){showShare(j.you.dl,where);});})
           .catch(function(e){say(e.message||String(e),'bad');})
           .then(function(){go.disabled=false;});
         });
