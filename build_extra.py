@@ -5116,7 +5116,61 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
           <p class="sck__small">We keep your reading as part of a ~500&nbsp;m area, never your exact spot, and nothing that identifies you. We show <em>you</em> your network because it&rsquo;s your result &mdash; we don&rsquo;t publish network league tables. <a href="/van-signal-map/">See the van map</a> for our own measured places.</p>
         </div>
       </div>
+    </section>
+    <section class="section section--alt" id="sigcheck-map" aria-label="Everyone's readings so far">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/ EVERYONE&rsquo;S READINGS</p>
+          <h2 class="section-title section-title--center" data-title>The picture so far<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Each square is a ~500&nbsp;m area, coloured by the typical (median) mobile-data speed people measured there. A square only appears once an area has enough readings &mdash; so if yours is blank, you&rsquo;re the one who fills it in.</p>
+        </div>
+        <link rel="stylesheet" href="/vendor/leaflet/leaflet.css" />
+        <style>
+          .sckm{position:relative;border-radius:18px;overflow:hidden;border:1px solid rgba(125,170,220,.18);box-shadow:0 24px 60px -30px rgba(0,0,0,.7)}
+          #sckmap{height:min(60vh,520px);width:100%;background:#0b1020}
+          .sckm__st{position:absolute;top:12px;left:12px;z-index:500;background:rgba(10,16,32,.85);border:1px solid rgba(125,170,220,.22);border-radius:10px;padding:7px 12px;font-size:.8rem;color:#cfe0f5;backdrop-filter:blur(6px)}
+          .sckm__leg{background:rgba(10,16,32,.9);color:#cfe0f5;padding:9px 11px;border-radius:9px;border:1px solid rgba(125,170,220,.22);font-size:.74rem;line-height:1.5}
+          .sckm__leg .bar{display:inline-block;width:96px;height:9px;border-radius:5px;vertical-align:middle;background:linear-gradient(90deg,#f85149,#d29922,#3fb950)}
+          .leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#141b2e;color:#e6edf3}
+          .sckm__count{text-align:center;font-size:.86rem;color:var(--muted,#9db3cf);margin:.7rem 0 0}
+        </style>
+        <div class="sckm">
+          <div class="sckm__st" id="sckm-st">loading&hellip;</div>
+          <div id="sckmap"></div>
+        </div>
+        <p class="sckm__count" id="sckm-count"></p>
+      </div>
+      <script src="/vendor/leaflet/leaflet.js" defer></script>
+      <script src="/vendor/protomaps/protomaps-leaflet.js" defer></script>
       <script>
+      (function(){
+        var API='/api/signal-check.php?map=1', REFRESH=60000, CELL_LAT=200, CELL_LON=125;
+        function col(d){return d>=25?'#3fb950':(d>=10?'#d29922':'#f85149');}
+        function boot(){
+          if(!window.L||!window.protomapsL){setTimeout(boot,120);return;}
+          var map=L.map('sckmap',{zoomControl:true,attributionControl:true}).setView([50.735,-1.86],11);
+          protomapsL.leafletLayer({url:'/vendor/protomaps/dorset.pmtiles',flavor:'dark',maxDataZoom:14,attribution:'&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> &middot; <a href="https://protomaps.com">Protomaps</a>'}).addTo(map);
+          var layer=L.layerGroup().addTo(map);
+          var leg=L.control({position:'bottomright'});
+          leg.onAdd=function(){var d=L.DomUtil.create('div','sckm__leg');d.innerHTML='<span class="bar"></span><br>slow &nbsp;&middot;&nbsp; fine for calls &nbsp;&middot;&nbsp; great for work<br><span style="opacity:.75">median of everyone&rsquo;s readings in each ~500&nbsp;m square</span>';return d;};
+          leg.addTo(map);
+          function draw(j){layer.clearLayers();
+            j.cells.forEach(function(c){
+              var h=0.5/CELL_LAT, w=0.5/CELL_LON;   /* half a cell each way */
+              L.rectangle([[c.lat-h,c.lon-w],[c.lat+h,c.lon+w]],{color:col(c.dl),weight:1,fillColor:col(c.dl),fillOpacity:.45})
+                .bindPopup('<b>'+c.dl+' Mbps</b> typical here<br>'+c.n+' reading'+(c.n>1?'s':'')+' from people&rsquo;s phones').addTo(layer);});
+            document.getElementById('sckm-st').textContent=j.cells.length+' area'+(j.cells.length===1?'':'s')+' shown';
+            var pend=j.pending?(' &middot; '+j.pending+' more area'+(j.pending===1?'':'s')+' still filling in (under '+j.need+' readings)'):'';
+            document.getElementById('sckm-count').innerHTML='<b>'+j.total+'</b> reading'+(j.total===1?'':'s')+' from people so far'+pend+'. Add yours above.';}
+          function load(){fetch(API+'&_='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){if(j&&j.ok)draw(j);}).catch(function(){});}
+          load();setInterval(load,REFRESH);
+          window.sckMapReload=load;
+        }
+        if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+      })();
+      </script>
+      <script>
+      /* the tester itself - kept after the map so a fresh reading can nudge it */
       (function(){
         var API='/api/signal-check.php', CF='https://speed.cloudflare.com/__down?bytes=';
         var $=function(i){return document.getElementById(i);};
@@ -5162,6 +5216,7 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
           .then(function(j){if(!j.ok){say(j.error||'Could not record that reading.','warn');
               if(d!=null){$('sck-dl').textContent=d;$('sck-ms').textContent=ms;$('sck-net').textContent='—';$('sck-you').hidden=false;}return;}
             render(j);say('Recorded — thank you. Try again somewhere else later.','ok');
+            if(window.sckMapReload)window.sckMapReload();   /* your square may just have appeared */
             if(window.ttToolDone)window.ttToolDone('mobile-signal-check');})
           .catch(function(e){say(e.message||String(e),'bad');})
           .then(function(){go.disabled=false;});

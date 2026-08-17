@@ -102,6 +102,35 @@ function compare_for(array $rows, array $cell): array {
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
 if ($method === 'GET') {
+    // ?map=1 → every cell that has enough readings to show, for the crowd map.
+    // CELLS ONLY, never points: each is a ~500 m square with a median and a
+    // count. That is honest by construction (nobody's reading is a house pin)
+    // and it is the same threshold as the compare - a cell with 2 readings is
+    // not a result, so it is not drawn. NO per-network breakdown is emitted:
+    // the map shows the crowd's median, not any operator's.
+    if (isset($_GET['map']) && $_GET['map'] === '1') {
+        $rows = jload(DATA_FILE);
+        $cells = [];
+        foreach ($rows as $r) {
+            $k = $r['cla'] . ',' . $r['clo'];
+            $cells[$k]['lat'] = $r['cla']; $cells[$k]['lon'] = $r['clo'];
+            $cells[$k]['dl'][] = $r['dl'];
+        }
+        $out = [];
+        foreach ($cells as $c) {
+            $n = count($c['dl']);
+            if ($n < MIN_FOR_COMPARE) continue;
+            $out[] = ['lat' => $c['lat'], 'lon' => $c['lon'], 'n' => $n,
+                      'dl' => round(median($c['dl']), 1)];
+        }
+        // pending = cells that exist but are still below the floor: shown as
+        // "readings coming in here" so people see where help is needed
+        $pending = 0;
+        foreach ($cells as $c) if (count($c['dl']) < MIN_FOR_COMPARE) $pending++;
+        echo json_encode(['ok' => true, 'cells' => $out, 'pending' => $pending,
+                          'total' => count($rows), 'need' => MIN_FOR_COMPARE]);
+        exit;
+    }
     if (empty($_GET['cell'])) { echo json_encode(['ok' => false, 'error' => 'cell required']); exit; }
     [$la, $lo] = array_map('floatval', explode(',', $_GET['cell']) + [0, 0]);
     if (!$la || !$lo) { echo json_encode(['ok' => false, 'error' => 'bad cell']); exit; }
