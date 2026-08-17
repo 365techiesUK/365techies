@@ -125,6 +125,13 @@ if ($method === 'GET') {
         // with 'ready' => false and NO median, so the page can draw them as
         // "readings coming in here - N so far" without colouring a verdict it
         // can't stand behind. Honest AND rewarding for the first tester.
+        // ⚠️ CHANGED AGAIN 2026-08-17: the median is now emitted from the FIRST
+        // reading, so a square can be COLOURED at once - most people test once,
+        // and a colour appearing is what makes them share. But one reading is
+        // a picture of one phone, not of an area: a single indoor test must not
+        // paint 500 m red for everyone. So 'ready' still marks the 8-reading
+        // floor and the page draws under-floor squares faint + dashed, firming
+        // up as readings arrive. Colour from one; conviction from eight.
         $out = [];
         $pending = 0;
         foreach ($cells as $c) {
@@ -132,7 +139,7 @@ if ($method === 'GET') {
             $ready = $n >= MIN_FOR_COMPARE;
             if (!$ready) $pending++;
             $out[] = ['lat' => $c['lat'], 'lon' => $c['lon'], 'n' => $n, 'ready' => $ready,
-                      'dl' => $ready ? round(median($c['dl']), 1) : null];
+                      'dl' => round(median($c['dl']), 1)];
         }
         echo json_encode(['ok' => true, 'cells' => $out, 'pending' => $pending,
                           'total' => count($rows), 'need' => MIN_FOR_COMPARE]);

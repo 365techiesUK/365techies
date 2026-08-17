@@ -838,7 +838,7 @@
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>/ EVERYONE&rsquo;S READINGS</p>
           <h2 class="section-title section-title--center" data-title>The picture so far &mdash; Bournemouth, Christchurch &amp; Poole<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>Each square is a ~500&nbsp;m area. Your reading appears the moment you add it &mdash; dashed while an area is still filling in, then coloured by the typical (median) speed once it has enough readings to be fair. If your area&rsquo;s not on the map yet, you&rsquo;re the one who puts it there. The test works anywhere in the UK; this map shows the BCP area.</p>
+          <p class="lede lede--center" data-reveal>Each square is a ~500&nbsp;m area, coloured by the typical (median) mobile-data speed people measured there &mdash; from the very first reading. Faint and dashed means early days (one or two phones); it firms up as more people add theirs. If your area&rsquo;s not on the map yet, you&rsquo;re the one who puts it there. The test works anywhere in the UK; this map shows the BCP area.</p>
         </div>
         <link rel="stylesheet" href="/vendor/leaflet/leaflet.css" />
         <style>
@@ -868,22 +868,28 @@
           protomapsL.leafletLayer({url:'/vendor/protomaps/dorset.pmtiles',flavor:'dark',maxDataZoom:14,attribution:'&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> &middot; <a href="https://protomaps.com">Protomaps</a>'}).addTo(map);
           var layer=L.layerGroup().addTo(map);
           var leg=L.control({position:'bottomright'});
-          leg.onAdd=function(){var d=L.DomUtil.create('div','sckm__leg');d.innerHTML='<span class="bar"></span><br>slow &nbsp;&middot;&nbsp; fine for calls &nbsp;&middot;&nbsp; great for work<br><span style="opacity:.75">median of everyone&rsquo;s readings in each ~500&nbsp;m square</span><br><span style="color:#6cc4f5">&#9633; dashed = filling in (needs 8 to colour)</span>';return d;};
+          leg.onAdd=function(){var d=L.DomUtil.create('div','sckm__leg');d.innerHTML='<span class="bar"></span><br>slow &nbsp;&middot;&nbsp; fine for calls &nbsp;&middot;&nbsp; great for work<br><span style="opacity:.75">median of everyone&rsquo;s readings in each ~500&nbsp;m square</span><br><span style="opacity:.75">dashed &amp; faint = early days &middot; solid = 8+ readings</span>';return d;};
           leg.addTo(map);
           function draw(j){layer.clearLayers();
             var ready=0;
             j.cells.forEach(function(c){
               var h=0.5/CELL_LAT, w=0.5/CELL_LON;   /* half a cell each way */
+              /* Coloured from the FIRST reading - that's the moment people share.
+                 But confidence is drawn too: opacity climbs with the count, and
+                 under-floor squares stay dashed with an N/8 badge, so one indoor
+                 phone can't look like a verdict on a whole area. */
+              var conf=Math.min(1,c.n/j.need);                 /* 0..1 */
+              var fill=.16+.32*conf;                           /* .16 at 1 reading -> .48 at 8 */
               if(c.ready){ready++;
-                L.rectangle([[c.lat-h,c.lon-w],[c.lat+h,c.lon+w]],{color:col(c.dl),weight:1,fillColor:col(c.dl),fillOpacity:.45})
+                L.rectangle([[c.lat-h,c.lon-w],[c.lat+h,c.lon+w]],{color:col(c.dl),weight:1.5,fillColor:col(c.dl),fillOpacity:fill})
                   .bindPopup('<b>'+c.dl+' Mbps</b> typical here<br>'+c.n+' reading'+(c.n>1?'s':'')+' from people&rsquo;s phones').addTo(layer);}
-              else{ /* filling in: visible from the FIRST reading, no verdict colour yet */
-                L.rectangle([[c.lat-h,c.lon-w],[c.lat+h,c.lon+w]],{color:'#6cc4f5',weight:1.5,dashArray:'4 4',fillColor:'#6cc4f5',fillOpacity:.14})
-                  .bindPopup('<b>Filling in</b> &mdash; '+c.n+' reading'+(c.n>1?'s':'')+' so far<br>Shows a typical speed at '+j.need+'. Add yours!').addTo(layer);
-                L.marker([c.lat,c.lon],{icon:L.divIcon({className:'',html:'<div style="background:#0b1020;color:#6cc4f5;border:1px solid #6cc4f5;border-radius:999px;font:700 11px/1 system-ui;padding:3px 6px;white-space:nowrap">'+c.n+'/'+j.need+'</div>',iconSize:[0,0],iconAnchor:[14,8]}),interactive:false}).addTo(layer);}
+              else{
+                L.rectangle([[c.lat-h,c.lon-w],[c.lat+h,c.lon+w]],{color:col(c.dl),weight:1.5,dashArray:'5 4',fillColor:col(c.dl),fillOpacity:fill})
+                  .bindPopup('<b>'+c.dl+' Mbps</b> so far &mdash; from '+c.n+' reading'+(c.n>1?'s':'')+'<br><span style="opacity:.8">Early days: firms up at '+j.need+'. Add yours!</span>').addTo(layer);
+                L.marker([c.lat,c.lon],{icon:L.divIcon({className:'',html:'<div style="background:#0b1020;color:#e6edf3;border:1px solid rgba(125,170,220,.5);border-radius:999px;font:700 11px/1 system-ui;padding:3px 6px;white-space:nowrap">'+c.n+'/'+j.need+'</div>',iconSize:[0,0],iconAnchor:[14,8]}),interactive:false}).addTo(layer);}
             });
             document.getElementById('sckm-st').textContent=j.cells.length+' area'+(j.cells.length===1?'':'s')+' on the map';
-            var pend=j.pending?(' &middot; <span style="color:#6cc4f5">'+j.pending+' area'+(j.pending===1?'':'s')+' filling in</span> (dashed, coloured at '+j.need+' readings)'):'';
+            var pend=j.pending?(' &middot; '+j.pending+' area'+(j.pending===1?'':'s')+' still early days (under '+j.need+' readings)'):'';
             document.getElementById('sckm-count').innerHTML='<b>'+j.total+'</b> reading'+(j.total===1?'':'s')+' from people so far'+pend+'. Add yours above.';}
           function load(){fetch(API+'&_='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){if(j&&j.ok)draw(j);}).catch(function(){});}
           load();setInterval(load,REFRESH);
