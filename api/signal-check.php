@@ -116,17 +116,24 @@ if ($method === 'GET') {
             $cells[$k]['lat'] = $r['cla']; $cells[$k]['lon'] = $r['clo'];
             $cells[$k]['dl'][] = $r['dl'];
         }
+        // ⚠️ CHANGED 2026-08-17. Every cell is emitted from its FIRST reading.
+        // The old rule (only cells with 8+) made the map look broken: people
+        // tested, saw nothing appear, and stopped - the owner included. A blank
+        // map is the one thing that kills a crowd tool. The 8-reading floor is
+        // still right for the COMPARISON (a 3-reading median misleads) and it
+        // still applies there; on the map, cells under the floor are emitted
+        // with 'ready' => false and NO median, so the page can draw them as
+        // "readings coming in here - N so far" without colouring a verdict it
+        // can't stand behind. Honest AND rewarding for the first tester.
         $out = [];
+        $pending = 0;
         foreach ($cells as $c) {
             $n = count($c['dl']);
-            if ($n < MIN_FOR_COMPARE) continue;
-            $out[] = ['lat' => $c['lat'], 'lon' => $c['lon'], 'n' => $n,
-                      'dl' => round(median($c['dl']), 1)];
+            $ready = $n >= MIN_FOR_COMPARE;
+            if (!$ready) $pending++;
+            $out[] = ['lat' => $c['lat'], 'lon' => $c['lon'], 'n' => $n, 'ready' => $ready,
+                      'dl' => $ready ? round(median($c['dl']), 1) : null];
         }
-        // pending = cells that exist but are still below the floor: shown as
-        // "readings coming in here" so people see where help is needed
-        $pending = 0;
-        foreach ($cells as $c) if (count($c['dl']) < MIN_FOR_COMPARE) $pending++;
         echo json_encode(['ok' => true, 'cells' => $out, 'pending' => $pending,
                           'total' => count($rows), 'need' => MIN_FOR_COMPARE]);
         exit;
