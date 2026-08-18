@@ -1,7 +1,7 @@
 {
-  "ver": 17,
-  "version": "1.0.17",
-  "url": "https://365techies.co.uk/downloads/pcm/pcm-v17.exe",
-  "sha256": "291310b20f52f7ce01f19bb25e430a9c676f44d0ae6d7af99b5f6ea60e1c06e4",
-  "notes": "Proper app icon embedded, so the taskbar and Start-menu icon show correctly."
+  "ver": 18,
+  "version": "1.0.18",
+  "url": "https://365techies.co.uk/downloads/pcm/pcm-v18.exe",
+  "sha256": "63c91cce8850bb2dfc62e70f5a97cdc258d18e503e0277bf3664d8500b7026b9",
+  "notes": "Now digitally signed by 365 Techies Ltd, so Windows and antivirus recognise it as ours. Plus a leaner, faster app: fewer permission prompts, DNS refresh without a command window, and small fixes throughout."
 }
