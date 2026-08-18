@@ -270,6 +270,7 @@ HEADER = '''  <header class="site-header">
             <a href="/it-support-for-disabled-people/">Disabled People</a>
             <a href="/computer-help-for-seniors/">Help for Seniors</a>
             <a href="/free-courses/">Free Courses</a>
+            <a href="/parents-guide-online-safety/">Parents&rsquo; Online Safety Guide</a>
           </div>
         </div>
         <div class="nav-item has-dropdown">
@@ -464,6 +465,7 @@ HEADER = '''  <header class="site-header">
           <a href="/it-support-for-disabled-people/">Disabled People</a>
           <a href="/computer-help-for-seniors/">Help for Seniors</a>
           <a href="/free-courses/">Free Courses</a>
+          <a href="/parents-guide-online-safety/">Parents&rsquo; Online Safety Guide</a>
         </div>
       </details>
       <details class="m-group">

@@ -18030,7 +18030,7 @@ def back_to_school_hub():
     desc="Getting set for the new school year? A friendly hub to help families choose a laptop, keep children safe online, set up devices and support learning - from 365 Techies, Dorset."
     items=[
       ("Buying","How to choose a laptop","Pick the right laptop for school or college, jargon-free.","/how-to-choose-a-laptop/"),
-      ("Safety","Keep children safe online","Set up free parental controls, step by step.","/how-to-keep-children-safe-online/"),
+      ("Safety","Keep children safe online","Parental controls for every app, console and phone &mdash; checked against the makers&rsquo; own steps.","/parents-guide-online-safety/"),
       ("Setup","New computer setup","We set up a new device properly, with files moved across.","/new-computer-setup/"),
       ("Family","Family IT support","Friendly help for the whole household&rsquo;s technology.","/family-it-support/"),
       ("Online safety","Online safety hub","Threats, a scam quiz and simple habits in one place.","/online-safety/"),
@@ -18817,6 +18817,12 @@ def online_safety_course():
       </div>
     </section>''',
       faq_html(faqs),
+      '''    <section class="section" aria-label="For parents">
+      <div class="wrap prose" data-reveal style="max-width:860px">
+        <p class="eyebrow mono">// GOT CHILDREN OR GRANDCHILDREN?</p>
+        <p>This course is about keeping <em>you</em> safe. For the children in your life there&rsquo;s a separate, free guide: <a href="/parents-guide-online-safety/"><strong>parental controls for every app, console and phone</strong></a> &mdash; YouTube, Xbox, PlayStation, Switch, Minecraft, iPhone and Android &mdash; with every step checked against the makers&rsquo; own instructions and dated, plus Dorset Police&rsquo;s guide to the social apps.</p>
+      </div>
+    </section>''',
       tools_strip(["scamquiz", "scamlink", "breach", "pwgen"], title="Keep going &mdash; more free safety tools", alt=False),
       cta("Worried about a scam? Talk to a real person.",
           "Whether it&rsquo;s a dodgy email, a strange phone call, or you think you&rsquo;ve been caught out &mdash; we&rsquo;re friendly, local, and we never judge. Helping Dorset stay safe online since 1995.",
@@ -20393,6 +20399,13 @@ custom_dashboards()
 
 
 for _np in NEW_PAGES:
+    build_new_page(_np)
+
+# Parents' online-safety guide: hub + the six platforms Dorset Police's guide skips
+# (data + the "checked against the maker's own instructions" discipline live in
+# parents_guide_data.py; re-verify + bump CHECKED_ON there, never here).
+from parents_guide_data import PARENTS_PAGES
+for _np in PARENTS_PAGES:
     build_new_page(_np)
 
 for _np in LATITUDE_PAGES:

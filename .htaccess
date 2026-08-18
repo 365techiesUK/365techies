@@ -98,6 +98,8 @@ RewriteRule ^computer-repair-near-me                          /areas-covered/ [R
 
 # --- Blog / articles -> nearest new page ---
 RewriteRule ^blog/?$                                          /it-advice/ [R=301,L]
+# 2026-08-18: the short children-online blog post is superseded by the parents' guide hub
+RewriteRule ^how-to-keep-children-safe-online/?$              /parents-guide-online-safety/ [R=301,L]
 RewriteRule ^top-20-advantages-of-remote-computer-support/?$ /remote-it-support/ [R=301,L]
 RewriteRule ^avoid-temptation-to-turn-off-your-wifi-at-night-to-try-and-save-on-energy-bills/?$ /wifi-support/ [R=301,L]
 RewriteRule ^impacts-of-remote-work/?$                        /it-support-for-home-workers/ [R=301,L]

@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Google tag (gtag.js) - Consent Mode v2: denied by default, granted on cookie-accept.
+       The library itself loads lazily (first interaction, or idle ~4s) so its ~90KB never
+       competes with LCP; calls below queue into dataLayer and replay when it arrives. -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', { ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'denied', wait_for_update: 500 });
+    try { if (localStorage.getItem('tt_consent') === 'accepted') gtag('consent', 'update', { ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted', analytics_storage: 'granted' }); } catch (e) {}
+    gtag('js', new Date());
+    gtag('config', 'G-EBLTJ9WJXZ');
+    (function () {
+      function loadGtagLib() {
+        if (window.__gtagLibLoaded) return; window.__gtagLibLoaded = true;
+        var g = document.createElement('script'); g.async = true;
+        g.src = 'https://www.googletagmanager.com/gtag/js?id=G-EBLTJ9WJXZ';
+        document.head.appendChild(g);
+      }
+      // Load on the first sign of a real person: mousemove/wheel cover desktop
+      // readers who never click, touch/scroll cover mobile. Lab runs (Lighthouse,
+      // PSI) never interact, so gtag stays out of TBT/TTI entirely. The 30s
+      // fallback outlives any lab trace window (a 9s timer landed INSIDE PSI's
+      // observation window and dragged TTI out — TBT 2.5s. Never shorten it).
+      ['pointerdown', 'keydown', 'touchstart', 'scroll', 'mousemove', 'wheel'].forEach(function (evt) {
+        window.addEventListener(evt, loadGtagLib, { once: true, passive: true });
+      });
+      window.addEventListener('load', function () { setTimeout(loadGtagLib, 30000); });
+    })();
+  </script>
+  <title>Parental Controls Guide UK: Every App, Console & Device</title>
+  <meta name="description" content="Which apps does your child use? Pick them and get today's parental-control steps: YouTube, Xbox, PlayStation, Switch, Minecraft, iPhone & Android." />
+  <link rel="canonical" href="https://365techies.co.uk/parents-guide-online-safety/" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <meta name="author" content="365 Techies Limited" />
+  <meta name="geo.region" content="GB-BCP" />
+  <meta name="geo.placename" content="Bournemouth, Dorset" />
+  <meta name="geo.position" content="50.7192;-1.8808" />
+  <meta name="ICBM" content="50.7192, -1.8808" />
+  <meta name="theme-color" content="#070d22" />
+  <meta name="color-scheme" content="dark" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="365 Techies" />
+  <meta property="og:locale" content="en_GB" />
+  <meta property="og:url" content="https://365techies.co.uk/parents-guide-online-safety/" />
+  <meta property="og:title" content="The parents&rsquo; guide to parental controls &mdash; every app, console and device" />
+  <meta property="og:description" content="Which apps does your child use? Pick them and get today's parental-control steps: YouTube, Xbox, PlayStation, Switch, Minecraft, iPhone & Android. Checked against the makers' own help." />
+  <meta property="og:image" content="https://365techies.co.uk/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="The parents&rsquo; guide to parental controls &mdash; every app, console and device" />
+  <meta name="twitter:description" content="Which apps does your child use? Pick them and get today's parental-control steps: YouTube, Xbox, PlayStation, Switch, Minecraft, iPhone & Android. Checked against the makers' own help." />
+  <meta name="twitter:image" content="https://365techies.co.uk/og-image.jpg" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <!-- ?v= bumps past SiteGround's proxy cache. Learned the hard way 2026-08-01:
+       the un-versioned URL was serving a month-old copy (proxy HIT, Last-Modified
+       28 June) because no Cache-Control applied to it. The .htaccess rule now makes
+       these revalidate, but a URL already stuck in the cache stays stuck until its
+       TTL - a new URL is the only immediate escape. BUMP THIS when the manifest changes. -->
+  <link rel="manifest" href="/site.webmanifest?v=2" />
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+  <link rel="preconnect" href="https://fonts.bunny.net" />
+  <link rel="preconnect" href="https://fonts.bunny.net" crossorigin />
+  <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
+  <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
+  <noscript>
+    <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
+  </noscript>
+  <link rel="stylesheet" href="/css/styles.min.css?v=90" />
+  <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
+    or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
+    failed page readable instead of raw giant-serif HTML. */
+  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+  html.css-sos body{max-width:44rem;margin:0 auto;padding:1rem 1.1rem 3rem}
+  html.css-sos a{color:#6cc4f5}
+  html.css-sos svg,html.css-sos img{max-width:100%;max-height:64px;height:auto}
+  html.css-sos .status-ticker,html.css-sos canvas{display:none!important}
+  html.css-sos h1{font-size:1.55rem;line-height:1.25}
+  html.css-sos h2{font-size:1.2rem}
+  html.css-sos nav a,html.css-sos .button{display:inline-block;padding:.4rem .55rem}
+  </style>
+  <script>
+  /* Stylesheet insurance (2026-08-11, owner reported customers seeing raw HTML).
+     A render-blocking <link> means a SLOW stylesheet only delays paint - it cannot
+     produce an unstyled page. Unstyled means the response was UNUSABLE: 404/403, a
+     bot-wall HTML body served for a .css request, a dropped connection, or a copy
+     truncated by a deploy overwriting the file mid-flight (FTPS writes in place).
+     And because .htaccess serves css/js as immutable for a year, one bad copy then
+     STICKS on that machine until the version string changes - which is how a single
+     bad second turned into customers repeatedly seeing an unstyled site.
+     Scripts wait for pending stylesheets, so by the time this runs the sheet has
+     applied or failed. Missing sentinel => make the page readable at once, then
+     re-request the stylesheet with a cache-busting parameter, which bypasses the
+     poisoned cache entry and usually repairs the page before anyone notices.
+     Bounded to 2 attempts per tab. Never reloads the page. */
+  (function () {
+    try {
+      var R = document.documentElement;
+      if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') return;
+      R.className += ' css-sos';
+      var n = 0;
+      try { n = parseInt(sessionStorage.getItem('tt_css_sos') || '0', 10) || 0; } catch (e) {}
+      if (n >= 2) return;
+      try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
+      var l = document.createElement('link');
+      l.rel = 'stylesheet';
+      l.href = '/css/styles.min.css?v=90&sos=' + Date.now();
+      l.onload = function () {
+        if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
+          R.className = R.className.replace(/\s*css-sos/, '');
+        }
+      };
+      document.head.appendChild(l);
+    } catch (e) {}
+  })();
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://365techies.co.uk/#website",
+      "url": "https://365techies.co.uk/",
+      "name": "365 Techies",
+      "alternateName": [
+        "365techies",
+        "365 Techies Ltd"
+      ],
+      "inLanguage": "en-GB",
+      "publisher": {
+        "@id": "https://365techies.co.uk/#business"
+      }
+    },
+    {
+      "@type": [
+        "LocalBusiness",
+        "ProfessionalService"
+      ],
+      "@id": "https://365techies.co.uk/#business",
+      "name": "365 Techies",
+      "legalName": "365 Techies Limited",
+      "url": "https://365techies.co.uk/",
+      "telephone": "+441202775566",
+      "email": "help@365techies.co.uk",
+      "foundingDate": "1995",
+      "image": "https://365techies.co.uk/og-image.jpg",
+      "logo": "https://365techies.co.uk/logo.jpg",
+      "priceRange": "££",
+      "alternateName": [
+        "365 Techies Ltd",
+        "365techies",
+        "365 Computers",
+        "365 Computers Limited"
+      ],
+      "slogan": "The IT support experts",
+      "description": "Family-run, leading Managed Service Provider (MSP) established in 1995 — Dell hardware specialists, Microsoft partners and certified Microsoft Office Specialists. Fully managed monthly IT support, cybersecurity, backups and cloud, plus one-off computer repairs and refurbished Dell hardware, for homes and small businesses across Bournemouth, Poole and Dorset.",
+      "currenciesAccepted": "GBP",
+      "paymentAccepted": "Direct Debit (GoCardless), Bank Transfer, Credit Card, Debit Card",
+      "identifier": {
+        "@type": "PropertyValue",
+        "name": "Company registration number",
+        "value": "11073501"
+      },
+      "memberOf": {
+        "@type": "Organization",
+        "name": "Sustainable Dorset",
+        "url": "https://www.sustainabledorset.org/"
+      },
+      "knowsAbout": [
+        "IT support",
+        "Computer repair",
+        "Laptop repair",
+        "Microsoft 365",
+        "Cybersecurity",
+        "Data backup",
+        "Network security",
+        "Wi-Fi",
+        "Remote support",
+        "Dell hardware",
+        "Dell Latitude laptops",
+        "Dell OptiPlex desktops",
+        "Refurbished computers",
+        "Malwarebytes Premium",
+        "VPN",
+        "Online safety",
+        "Accessible IT support",
+        "IT support for retired people",
+        "IT support for disabled people",
+        "Website design",
+        "Web hosting",
+        "Business email",
+        "Managed service provider",
+        "Managed IT services",
+        "MSP",
+        "New Forest IT support"
+      ],
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Kinson Community Centre, Millhams Road, Kinson",
+        "addressLocality": "Bournemouth",
+        "addressRegion": "Dorset",
+        "postalCode": "BH10 7LH",
+        "addressCountry": "GB"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 50.7192,
+        "longitude": -1.8808
+      },
+      "areaServed": [
+        {
+          "@type": "AdministrativeArea",
+          "name": "Dorset"
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "Bournemouth, Christchurch and Poole"
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "New Forest"
+        }
+      ],
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday"
+        ],
+        "opens": "09:00",
+        "closes": "17:00"
+      },
+      "hasMap": "https://www.google.com/maps/place/?q=place_id:ChIJlTb8YRuic0gRCRczduB8OFI",
+      "sameAs": [
+        "https://www.facebook.com/365computersuk",
+        "https://www.google.com/maps/place/?q=place_id:ChIJlTb8YRuic0gRCRczduB8OFI",
+        "https://find-and-update.company-information.service.gov.uk/company/11073501",
+        "https://www.helpandkindness.co.uk/service/7188/patient-computer-%26-tech-help-for-older-people-in-dorset"
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://365techies.co.uk/parents-guide-online-safety/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://365techies.co.uk/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Parents&rsquo; Online Safety Guide",
+          "item": "https://365techies.co.uk/parents-guide-online-safety/"
+        }
+      ]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://365techies.co.uk/parents-guide-online-safety/#webpage",
+      "url": "https://365techies.co.uk/parents-guide-online-safety/",
+      "name": "Parents&rsquo; Online Safety Guide",
+      "description": "Which apps does your child use? Pick them and get today's parental-control steps: YouTube, Xbox, PlayStation, Switch, Minecraft, iPhone & Android. Checked against the makers' own help.",
+      "inLanguage": "en-GB",
+      "isPartOf": {
+        "@id": "https://365techies.co.uk/#website"
+      },
+      "about": {
+        "@id": "https://365techies.co.uk/#business"
+      },
+      "breadcrumb": {
+        "@id": "https://365techies.co.uk/parents-guide-online-safety/#breadcrumb"
+      },
+      "primaryImageOfPage": {
+        "@type": "ImageObject",
+        "url": "https://365techies.co.uk/og-image.jpg"
+      },
+      "dateModified": "2026-08-18"
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://365techies.co.uk/parents-guide-online-safety/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Why did you write this when Dorset Police just published a guide?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Because theirs is good and ours is different. Dorset Police cover the twelve social and chat apps thoroughly, in a PDF. We&rsquo;ve linked it and not repeated it. Ours covers what theirs doesn&rsquo;t &mdash; YouTube, the games consoles, Minecraft, and the phone-level controls &mdash; on the web, one page per app, with the date each page was checked. Use both."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I know these steps are current?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Each page has a &ldquo;checked against the maker&rsquo;s own instructions&rdquo; box with the date (18 August 2026 at launch) and links to the exact official help pages the steps came from. When an app changes, we update the page and the date. If you spot a step that no longer matches your screen, ring us and we&rsquo;ll fix it that day."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "My child is 15 and will just turn all this off. Is there any point?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, but a different one. For a 15-year-old, controls are less about locking and more about defaults, visibility and a conversation: bedtime downtime that both of you agreed to, spending that asks first, and supervision they consented to (YouTube&rsquo;s teen supervision, for instance, is designed to be agreed by both sides). Google&rsquo;s own rule is that a supervised child needs parental approval to stop supervision until 18 &mdash; but the honest answer is that trust and talking do most of the work at that age."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Will you come and set this all up for us?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes &mdash; that&rsquo;s a normal job for us. Remotely, or at home across Bournemouth, Poole, Christchurch and Dorset. We set the controls up on the actual devices, write down where they live and what the passcodes are (for you, not us), and show you how to change them. Free 15-minute phone chat first on 01202 775566."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is any of this a substitute for talking to my child?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No, and we&rsquo;d be lying if we said so. Controls remove accidents and buy time; the conversation is what keeps children safe. Dorset Police&rsquo;s guide and the NSPCC&rsquo;s online-safety pages are both good on how to have it."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>
+    /* Motion gate: GSAP + ScrollTrigger are DESKTOP-ONLY. Phones, tablets and
+       reduced-motion users skip the ~90KB download and all the ScrollTrigger
+       layout work (the main mobile TBT cost) — reveals just render visible.
+       main.js boots the animations on the motion-ready event. */
+    (function () {
+      var wantMotion = window.innerWidth >= 920
+        && window.matchMedia('(hover: hover)').matches
+        && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!wantMotion) { document.documentElement.classList.add('no-motion'); return; }
+      function inject(src, onload) {
+        var s = document.createElement('script');
+        s.src = src; s.async = true; s.onload = onload;
+        document.head.appendChild(s);
+      }
+      inject('/js/vendor/gsap-3.12.5-gsap.min.js?v=1', function () {
+        inject('/js/vendor/gsap-3.12.5-ScrollTrigger.min.js?v=1', function () {
+          window.dispatchEvent(new Event('motion-ready'));
+        });
+      });
+    })();
+  </script>
+</head>
+<body id="top">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="grid-overlay" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <header class="site-header">
+    <div class="status-ticker">
+      <div class="status-ticker__track" aria-hidden="true">
+        <span><b class="tk-live" data-tk-live hidden><i class="tk-dot" aria-hidden="true"></i>LIVE&ensp;<span data-tk-live-text></span>&ensp;<em class="tk-sep">//</em>&ensp;</b><a href="tel:+441202775566" tabindex="-1">CALL 01202 775566</a>&ensp;<em class="tk-sep">//</em>&ensp;MON&ndash;FRI 9&ndash;5 &middot; SAME-DAY, USUALLY MINUTES REMOTELY&ensp;<em class="tk-sep">//</em>&ensp;<a href="/pricing/" tabindex="-1">IT SUPPORT PLANS FROM &pound;18.25/MO</a>&ensp;<em class="tk-sep">//</em>&ensp;FAMILY BUSINESS SINCE 1995 &middot; VERIFIED MICROSOFT PARTNER &middot; BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;<em class="tk-sep">//</em>&ensp;<a href="/is-it-down/" tabindex="-1">IS IT DOWN, OR JUST YOU? CHECK LIVE</a>&ensp;<em class="tk-sep">//</em>&ensp;<a href="/sos/" tabindex="-1">SOS REMOTE SUPPORT &mdash; WE&rsquo;LL DO IT TOGETHER</a>&ensp;<em class="tk-sep">//</em>&ensp;<a href="/van-signal-map/" tabindex="-1"><b class="tk-new">NEW</b>&thinsp;BOURNEMOUTH MOBILE SIGNAL MAP</a>&ensp;<em class="tk-sep">//</em>&ensp;</span>
+        <span><b class="tk-live" data-tk-live hidden><i class="tk-dot" aria-hidden="true"></i>LIVE&ensp;<span data-tk-live-text></span>&ensp;<em class="tk-sep">//</em>&ensp;</b><a href="tel:+441202775566" tabindex="-1">CALL 01202 775566</a>&ensp;<em class="tk-sep">//</em>&ensp;MON&ndash;FRI 9&ndash;5 &middot; SAME-DAY, USUALLY MINUTES REMOTELY&ensp;<em class="tk-sep">//</em>&ensp;<a href="/pricing/" tabindex="-1">IT SUPPORT PLANS FROM &pound;18.25/MO</a>&ensp;<em class="tk-sep">//</em>&ensp;FAMILY BUSINESS SINCE 1995 &middot; VERIFIED MICROSOFT PARTNER &middot; BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;<em class="tk-sep">//</em>&ensp;<a href="/is-it-down/" tabindex="-1">IS IT DOWN, OR JUST YOU? CHECK LIVE</a>&ensp;<em class="tk-sep">//</em>&ensp;<a href="/sos/" tabindex="-1">SOS REMOTE SUPPORT &mdash; WE&rsquo;LL DO IT TOGETHER</a>&ensp;<em class="tk-sep">//</em>&ensp;<a href="/van-signal-map/" tabindex="-1"><b class="tk-new">NEW</b>&thinsp;BOURNEMOUTH MOBILE SIGNAL MAP</a>&ensp;<em class="tk-sep">//</em>&ensp;</span>
+      </div>
+      <button type="button" class="tk-pause" data-tk-pause aria-label="Pause the scrolling strip" aria-pressed="false" title="Pause / play"><svg viewBox="0 0 12 12" width="10" height="10" aria-hidden="true"><rect x="2" y="1.5" width="3" height="9" rx="0.6"/><rect x="7" y="1.5" width="3" height="9" rx="0.6"/></svg></button>
+    </div>
+    <div class="header-bar">
+      <a class="logo" href="/" aria-label="365techies — home">
+        <svg class="logo__mark" viewBox="0 0 32 32" aria-hidden="true">
+          <circle cx="16" cy="16" r="13.4" fill="none" stroke="#8fb3d9" stroke-width="2" stroke-linecap="round" stroke-dasharray="63 22" transform="rotate(-55 16 16)"/>
+          <circle cx="16" cy="16" r="9.4" fill="none" stroke="#1d97e3" stroke-width="2" stroke-linecap="round" stroke-dasharray="46 14" transform="rotate(115 16 16)"/>
+          <path d="M12.4 18.4l3.6-5.8 3.4 5.1z" fill="none" stroke="#8fb3d9" stroke-width="1.2"/>
+          <circle cx="12.4" cy="18.4" r="1.6" fill="#00ce1b"/>
+          <circle cx="16" cy="12.6" r="1.6" fill="#1d97e3"/>
+          <circle cx="19.4" cy="17.7" r="1.6" fill="#1d97e3"/>
+        </svg>
+        <span class="logo__text"><em>365</em>techies</span>
+      </a>
+      <nav class="desktop-nav" aria-label="Primary">
+        <a href="/dell-it-support-dorset/">Dell</a>
+        <div class="nav-item has-dropdown">
+          <a href="/home-it-support-subscriptions/" aria-haspopup="true">For Home
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/home-it-support-subscriptions/">Home IT Support</a>
+            <a href="/home-it-support-plans/">Home Support Plans</a>
+            <a href="/it-support-for-home-workers/">Home Workers</a>
+            <a href="/family-it-support/">Families</a>
+            <a href="/it-support-for-retired-users/">Retired Users</a>
+            <a href="/it-support-for-disabled-people/">Disabled People</a>
+            <a href="/computer-help-for-seniors/">Help for Seniors</a>
+            <a href="/free-courses/">Free Courses</a>
+            <a href="/parents-guide-online-safety/">Parents&rsquo; Online Safety Guide</a>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown">
+          <a href="/business-it-support-subscriptions/" aria-haspopup="true">For Business
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/business-it-support-subscriptions/">Business IT Support</a>
+            <a href="/business-it-support-plans/">Business Support Plans</a>
+            <a href="/small-business-it-support/">Small Businesses</a>
+            <a href="/it-support-for-sole-traders/">Sole Traders</a>
+            <a href="/it-support-for-education/">Schools &amp; Education</a>
+            <a href="/it-support-by-industry/">IT Support by Industry</a>
+            <a href="/business-wifi-installation/">Business WiFi</a>
+            <a href="/business-continuity-internet/">Broadband Emergency Plan</a>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown">
+          <a href="/services/" aria-haspopup="true">Services
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/services/">All Services &#8594;</a>
+            <span class="dropdown__label dropdown__label--sep">Everyday support</span>
+            <a href="/remote-it-support/">Remote IT Support</a>
+            <a href="/computer-repairs/">Computer Repairs</a>
+            <a href="/preventative-maintenance/">Preventative Maintenance</a>
+            <a href="/microsoft-365-support/">Microsoft 365</a>
+            <a href="/cybersecurity-support/">Cybersecurity</a>
+            <a href="/email-support/">Email Support</a>
+            <a href="/printer-support/">Printer Support</a>
+            <a href="/backup-support/">Backup Support</a>
+            <span class="dropdown__label dropdown__label--sep">WiFi &amp; internet</span>
+            <a href="/wifi-support/">Wi-Fi Support</a>
+            <a href="/starlink-internet/">Starlink Internet</a>
+            <a href="/emergency-internet/">365 Emergency Internet</a>
+            <span class="dropdown__label dropdown__label--sep">Computers &amp; hardware</span>
+            <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
+            <a href="/custom-pc-builds/">Custom-Built PCs</a>
+            <span class="dropdown__label dropdown__label--sep">Web, AI &amp; off-grid</span>
+            <a href="/ai/">AI &amp; Automation</a>
+            <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
+            <a href="/web-care/">365 Web Care</a>
+            <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
+            <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
+            <span class="dropdown__label dropdown__label--sep">By sector</span>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown">
+          <a href="/free-tools/" aria-haspopup="true">Free Tools
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/free-tools/">All Free Tools &#8594;</a>
+            <span class="dropdown__label dropdown__label--sep">Test your setup</span>
+            <a href="/broadband-speed-checker/">Broadband Speed Test</a>
+            <a href="/wifi-signal-test/">365 WiFi Optimizer</a>
+            <a href="/van-signal-map/">Bournemouth Signal Map</a>
+            <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
+            <a href="/pc-benchmark/">PC Benchmark</a>
+            <a href="/computer-spec-checker/">PC Hardware Checker</a>
+            <a href="/website-checker/">Website Checker</a>
+            <a href="/is-it-down/">Is It Down? Status Checker</a>
+            <span class="dropdown__label dropdown__label--sep">Stay safe</span>
+            <a href="/email-security-checker/">Email Security Checker</a>
+            <a href="/password-breach-checker/">Password Breach Checker</a>
+            <a href="/link-safety-checker/">Link Safety Checker</a>
+            <a href="/spot-the-scam/">Spot the Scam Quiz</a>
+            <a href="/online-safety-course/">Free Online Safety Course</a>
+            <span class="dropdown__label dropdown__label--sep">Apps &amp; builders</span>
+            <a href="/free-pc-health-check/">Free PC Health Check App</a>
+            <a href="/custom-pc-builder/">Custom PC Builder</a>
+            <a href="/victron-system-builder/">Victron System Builder</a>
+            <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown">
+          <a href="/book-service/" aria-haspopup="true">Get Help
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/contact/">Contact Us &#8594;</a>
+            <span class="dropdown__label dropdown__label--sep">Right now</span>
+            <a href="/remote-support/">Start Remote Support</a>
+            <a href="/emergency-it-help/">Emergency IT Help</a>
+            <a href="/scam-pop-up-help-poole/">Scam Pop-up Help</a>
+            <span class="dropdown__label dropdown__label--sep">Book &amp; pay</span>
+            <a href="/book-service/">Book a Service</a>
+            <a href="/book-a-collection/">Book a Collection</a>
+            <a href="/quick-quote/">Quick Quote</a>
+            <a href="/pay/">Pay Us</a>
+            <span class="dropdown__label dropdown__label--sep">Plans &amp; pricing</span>
+            <a href="/monthly-it-support/">Monthly IT Support</a>
+            <a href="/plan-finder/">Plan Finder</a>
+            <a href="/switching-it-provider/">Switching to Us</a>
+            <span class="dropdown__label dropdown__label--sep">Fix it yourself</span>
+            <a href="/wifi-troubleshooting/">WiFi Troubleshooting</a>
+            <a href="/broadband-down/">Broadband Down? Start Here</a>
+          </div>
+        </div>
+        <a href="/pricing/">Pricing</a>
+        <div class="nav-item has-dropdown">
+          <a href="/about/" aria-haspopup="true">About
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <span class="dropdown__label dropdown__label--sep">Who we are</span>
+            <a href="/about/">About 365 Techies</a>
+            <a href="/meet-the-team/">Meet the Team</a>
+            <a href="/why-choose-365-techies/">Why Choose Us</a>
+            <span class="dropdown__label dropdown__label--sep">Proof</span>
+            <a href="/reviews/">Reviews</a>
+            <a href="/case-studies/">Case Studies</a>
+            <a href="/our-guarantees/">Our Guarantees</a>
+            <a href="/accreditations/">Accreditations</a>
+            <span class="dropdown__label dropdown__label--sep">Where we work</span>
+            <a href="/areas-covered/">Areas Covered</a>
+          </div>
+        </div>
+        <a href="/contact/">Contact</a>
+      </nav>
+      <div class="header-actions">
+        <button type="button" class="nav-search" data-search-open aria-label="Search this website" aria-keyshortcuts="/ Control+K">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <span class="nav-search__label">Search</span>
+          <span class="nav-search__k" aria-hidden="true"><kbd>/</kbd></span>
+        </button>
+        <a href="tel:+441202775566" class="nav-phone" aria-label="Call 365 Techies on 01202 775566">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg><span class="nav-phone__num">01202 775566</span>
+        </a>
+        <a href="/portal/" class="nav-signin" aria-label="Sign in to your 365 customer portal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="nav-signin__t">Sign in</span>
+        </a>
+        <a href="/book-service/" class="nav-book" aria-label="Book a computer service">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v3M17 3v3M4 8h16M5 6h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z"/></svg>Book
+        </a>
+        <a href="/sos/" class="nav-sos" target="_blank" rel="noopener" aria-label="SOS emergency remote support — download Splashtop SOS">
+          <span class="sos-dot" aria-hidden="true"></span>SOS<span class="nav-sos__long">&nbsp;REMOTE SUPPORT</span>
+        </a>
+        <button class="mobile-menu-button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+  <script>
+  /* Header sign-in state. Telling a signed-in customer to "Sign in" reads as broken -
+     and telling a first-time visitor only "Sign in" reads as members-only, hiding the
+     free membership from the people we most want to join. So: signed OUT invites
+     joining (in the drawer, where there is room); signed IN says where the button
+     actually goes. Inline and tiny so it settles before anyone reads the header.
+     Session shapes match the portal: customer = localStorage p365 with a wtoken;
+     staff/view-as = sessionStorage p365s. Never render the person's name here - on a
+     shared computer that would announce who last used it. */
+  (function () {
+    var cust = false, staff = false;
+    try {
+      var a = JSON.parse(localStorage.getItem('p365') || '{}') || {};
+      var b = JSON.parse(sessionStorage.getItem('p365s') || '{}') || {};
+      staff = !!(a.staff || a.stoken || b.staff || b.stoken);
+      cust = !staff && !!a.wtoken;
+    } catch (e) { return; }
+    if (!cust && !staff) return;
+    var label = staff ? 'Staff area' : 'Your portal';
+    var aria = staff ? 'Open the 365 staff area' : 'Go to your 365 portal';
+    var t = document.querySelector('.nav-signin .nav-signin__t');
+    if (t) t.textContent = label;
+    var a2 = document.querySelector('.nav-signin');
+    if (a2) a2.setAttribute('aria-label', aria);
+    var m = document.querySelector('.mobile-menu .m-signin');
+    if (m) m.textContent = label;
+  })();
+  </script>
+
+  <div class="menu-backdrop" aria-hidden="true"></div>
+  <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
+    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <nav class="mobile-menu__nav" aria-label="Mobile">
+      <a href="/">Home</a>
+      <a href="/dell-it-support-dorset/">Dell</a>
+      <a href="/pricing/">Pricing</a>
+      <a href="/contact/">Contact</a>
+      <a href="/portal/" class="m-signin">Sign in or join free</a>
+      <details class="m-group">
+        <summary>For Home</summary>
+        <div class="m-group__links">
+          <a href="/home-it-support-subscriptions/">Home IT Support</a>
+          <a href="/home-it-support-plans/">Home Support Plans</a>
+          <a href="/it-support-for-home-workers/">Home Workers</a>
+          <a href="/family-it-support/">Families</a>
+          <a href="/it-support-for-retired-users/">Retired Users</a>
+          <a href="/it-support-for-disabled-people/">Disabled People</a>
+          <a href="/computer-help-for-seniors/">Help for Seniors</a>
+          <a href="/free-courses/">Free Courses</a>
+          <a href="/parents-guide-online-safety/">Parents&rsquo; Online Safety Guide</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>For Business</summary>
+        <div class="m-group__links">
+          <a href="/business-it-support-subscriptions/">Business IT Support</a>
+          <a href="/business-it-support-plans/">Business Support Plans</a>
+          <a href="/small-business-it-support/">Small Businesses</a>
+          <a href="/it-support-for-sole-traders/">Sole Traders</a>
+          <a href="/it-support-for-education/">Schools &amp; Education</a>
+          <a href="/it-support-by-industry/">IT Support by Industry</a>
+          <a href="/business-wifi-installation/">Business WiFi</a>
+          <a href="/business-continuity-internet/">Broadband Emergency Plan</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>Services</summary>
+        <div class="m-group__links">
+          <a href="/services/">All Services &#8594;</a>
+          <span class="dropdown__label dropdown__label--sep">Everyday support</span>
+          <a href="/remote-it-support/">Remote IT Support</a>
+          <a href="/computer-repairs/">Computer Repairs</a>
+          <a href="/preventative-maintenance/">Preventative Maintenance</a>
+          <a href="/microsoft-365-support/">Microsoft 365</a>
+          <a href="/cybersecurity-support/">Cybersecurity</a>
+          <a href="/email-support/">Email Support</a>
+          <a href="/printer-support/">Printer Support</a>
+          <a href="/backup-support/">Backup Support</a>
+          <span class="dropdown__label dropdown__label--sep">WiFi &amp; internet</span>
+          <a href="/wifi-support/">Wi-Fi Support</a>
+          <a href="/starlink-internet/">Starlink Internet</a>
+          <a href="/emergency-internet/">365 Emergency Internet</a>
+          <span class="dropdown__label dropdown__label--sep">Computers &amp; hardware</span>
+          <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
+          <a href="/custom-pc-builds/">Custom-Built PCs</a>
+          <span class="dropdown__label dropdown__label--sep">Web, AI &amp; off-grid</span>
+          <a href="/ai/">AI &amp; Automation</a>
+          <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
+          <a href="/web-care/">365 Web Care</a>
+          <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
+          <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
+          <span class="dropdown__label dropdown__label--sep">By sector</span>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>Free Tools</summary>
+        <div class="m-group__links">
+          <a href="/free-tools/">All Free Tools &#8594;</a>
+          <span class="dropdown__label dropdown__label--sep">Test your setup</span>
+          <a href="/broadband-speed-checker/">Broadband Speed Test</a>
+          <a href="/wifi-signal-test/">365 WiFi Optimizer</a>
+          <a href="/van-signal-map/">Bournemouth Signal Map</a>
+          <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
+          <a href="/pc-benchmark/">PC Benchmark</a>
+          <a href="/computer-spec-checker/">PC Hardware Checker</a>
+          <a href="/website-checker/">Website Checker</a>
+          <a href="/is-it-down/">Is It Down? Status Checker</a>
+          <span class="dropdown__label dropdown__label--sep">Stay safe</span>
+          <a href="/email-security-checker/">Email Security Checker</a>
+          <a href="/password-breach-checker/">Password Breach Checker</a>
+          <a href="/link-safety-checker/">Link Safety Checker</a>
+          <a href="/spot-the-scam/">Spot the Scam Quiz</a>
+          <a href="/online-safety-course/">Free Online Safety Course</a>
+          <span class="dropdown__label dropdown__label--sep">Apps &amp; builders</span>
+          <a href="/free-pc-health-check/">Free PC Health Check App</a>
+          <a href="/custom-pc-builder/">Custom PC Builder</a>
+          <a href="/victron-system-builder/">Victron System Builder</a>
+          <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>Get Help</summary>
+        <div class="m-group__links">
+          <a href="/contact/">Contact Us &#8594;</a>
+          <span class="dropdown__label dropdown__label--sep">Right now</span>
+          <a href="/remote-support/">Start Remote Support</a>
+          <a href="/emergency-it-help/">Emergency IT Help</a>
+          <a href="/scam-pop-up-help-poole/">Scam Pop-up Help</a>
+          <span class="dropdown__label dropdown__label--sep">Book &amp; pay</span>
+          <a href="/book-service/">Book a Service</a>
+          <a href="/book-a-collection/">Book a Collection</a>
+          <a href="/quick-quote/">Quick Quote</a>
+          <a href="/pay/">Pay Us</a>
+          <span class="dropdown__label dropdown__label--sep">Plans &amp; pricing</span>
+          <a href="/monthly-it-support/">Monthly IT Support</a>
+          <a href="/plan-finder/">Plan Finder</a>
+          <a href="/switching-it-provider/">Switching to Us</a>
+          <span class="dropdown__label dropdown__label--sep">Fix it yourself</span>
+          <a href="/wifi-troubleshooting/">WiFi Troubleshooting</a>
+          <a href="/broadband-down/">Broadband Down? Start Here</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>About &amp; Trust</summary>
+        <div class="m-group__links">
+          <span class="dropdown__label dropdown__label--sep">Who we are</span>
+          <a href="/about/">About 365 Techies</a>
+          <a href="/meet-the-team/">Meet the Team</a>
+          <a href="/why-choose-365-techies/">Why Choose Us</a>
+          <span class="dropdown__label dropdown__label--sep">Proof</span>
+          <a href="/reviews/">Reviews</a>
+          <a href="/case-studies/">Case Studies</a>
+          <a href="/our-guarantees/">Our Guarantees</a>
+          <a href="/accreditations/">Accreditations</a>
+          <span class="dropdown__label dropdown__label--sep">Where we work</span>
+          <a href="/areas-covered/">Areas Covered</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>Resources &amp; Info</summary>
+        <div class="m-group__links">
+          <a href="/resources/">Resources &amp; Guides</a>
+          <a href="/it-advice/">IT Advice</a>
+          <a href="/it-support-cost-guide/">IT Cost Guide</a>
+          <a href="/it-jargon-buster/">IT Jargon Buster</a>
+          <a href="/cybersecurity-checklist/">Cybersecurity Checklist</a>
+          <a href="/cyber-threats/">Cyber Threats Explained</a>
+          <a href="/faqs/">FAQs</a>
+          <a href="/system-status/">System Status</a>
+          <a href="/privacy-policy/">Privacy Policy</a>
+          <a href="/cookie-policy/">Cookie Policy</a>
+          <a href="/terms/">Terms of Service</a>
+          <a href="/accessibility-statement/">Accessibility</a>
+        </div>
+      </details>
+    </nav>
+    <div class="mobile-menu__plans">
+      <a class="button sos" href="/sos/" target="_blank" rel="noopener"><span class="sos-dot" aria-hidden="true"></span>SOS Remote Support</a>
+      <a class="button primary" href="/book-service/">Book a Service</a>
+      <a class="button secondary" href="/home-it-support-plans/">Home Plans</a>
+      <a class="button secondary" href="/business-it-support-plans/">Business Plans</a>
+    </div>
+    <p class="mobile-menu__foot mono"><a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a><br /><a href="tel:+441202775566">01202 775566</a><br /><a href="sms:+447520615332">Text only: 07520 615332</a></p>
+  </aside>
+
+  <main id="main">
+    <section class="page-hero" aria-label="Introduction">
+      <div class="page-hero__inner">
+        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">Parents&rsquo; Online Safety Guide</span></nav>
+        <p class="eyebrow mono">// PARENTS&rsquo; GUIDE &middot; CHECKED 18 AUGUST 2026</p>
+        <h1>Parental controls, app by app &mdash; the steps as they are <em class="grad grad--cyan">today</em></h1>
+        <p class="lede">Every app and console has parental controls. Almost nobody sets them up, because the menus move, the guides go stale, and it always seems like a job for a rainy Sunday. This is the guide we wish existed: <strong>one page per app, the exact menu names as they are right now, checked against the maker&rsquo;s own instructions on the date shown</strong>, and honest about what a control does and doesn&rsquo;t do. Dorset Police published an excellent guide to the social apps this week &mdash; we&rsquo;ve linked it, and covered the things it doesn&rsquo;t: YouTube, the games consoles, Minecraft, and the phone-level controls that do more than any single app. Rated 4.9 on Google.</p>
+        <div class="page-hero__cta">
+          <a href="#picker" class="button primary button--lg">Pick your child&rsquo;s apps</a>
+          <a href="tel:+441202775566" class="button secondary button--lg">Call 01202 775566</a>
+        </div>
+        <ul class="page-hero__chips mono"><li>&#9679; Checked 18 August 2026</li><li>&#9679; UK ages &amp; law</li><li>&#9679; Family-run since 1995</li></ul>
+      </div>
+    </section>
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; START HERE</a><a href="#s2">02 &mdash; THE ORDER THAT WORKS</a><a href="#s3">03 &mdash; UK AGES AND THE LAW</a><a href="#s4">04 &mdash; WHEN IT&rsquo;S ALREADY GONE WRONG</a></nav>
+    <section id="s1" class="section" aria-label="Which apps and devices does your child actually use?">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">/01 &mdash; START HERE</p>
+        <h2 class="section-title" data-title>Which apps and devices does your child actually use?<span class="title-underline"></span></h2>
+<p>Don&rsquo;t read all of this. Tick what&rsquo;s in your house and go straight to those pages &mdash; each one stands alone, and each one is short enough to do with the device in your other hand.</p><div id="picker" class="tile-grid" data-stagger style="margin:1rem 0 1.4rem"><a class="tile" href="/youtube-parental-controls/" style="text-decoration:none"><h3>&#9654;&#65039; YouTube &amp; YouTube Kids</h3><p>Supervised accounts, the three content levels, the Kids app timer and passcode, and the new teen supervision. The app most under-13s use most.</p></a><a class="tile" href="/xbox-parental-controls-uk/" style="text-decoration:none"><h3>&#127918; Xbox</h3><p>Family group, screen time, age limits, &ldquo;ask a parent&rdquo; spending, who can talk to them &mdash; console, app and web, in the right order.</p></a><a class="tile" href="/playstation-parental-controls-uk/" style="text-decoration:none"><h3>&#127918; PlayStation 5 &amp; 4</h3><p>Child accounts under a family manager, age level, monthly spend (default &pound;0), play time, and locking the console so it can&rsquo;t be undone.</p></a><a class="tile" href="/nintendo-switch-parental-controls/" style="text-decoration:none"><h3>&#127918; Nintendo Switch &amp; Switch 2</h3><p>The Parental Controls app: play-time limit, bedtime, restriction level, and the Switch 2 GameChat gate for under-16s.</p></a><a class="tile" href="/minecraft-parental-controls/" style="text-decoration:none"><h3>&#9635;&#65039; Minecraft</h3><p>Why it&rsquo;s really an Xbox-account setting even on a phone or PC: multiplayer, chat, Realms and Marketplace spending.</p></a><a class="tile" href="/screen-time-and-family-link-parental-controls/" style="text-decoration:none"><h3>&#128241; iPhone / iPad &amp; Android</h3><p>Apple Screen Time and Google Family Link &mdash; the device-level controls that sit under every app. Set these first.</p></a></div><p><strong>Dorset Police have covered the social apps in their own guide</strong> &mdash; the step-by-step for Instagram, Facebook, Messenger Kids, TikTok, X, Reddit, Discord, Snapchat, WhatsApp, Telegram, Fortnite and Roblox. It&rsquo;s good and it&rsquo;s official; <a href="https://www.dorset.police.uk/police-forces/dorset-police/areas/campaigns/campaigns/social-media-user-guide/" target="_blank" rel="noopener">read it here</a>. This page covers what it doesn&rsquo;t.</p>
+      </div>
+    </section>
+    <section id="s2" class="section section--alt" aria-label="Do it in this order and it takes an evening, not a month">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">/02 &mdash; THE ORDER THAT WORKS</p>
+        <h2 class="section-title" data-title>Do it in this order and it takes an evening, not a month<span class="title-underline"></span></h2>
+<ol><li><strong>The device first.</strong> Apple Screen Time or Google Family Link governs <em>every</em> app on the phone or tablet at once &mdash; downtime, app limits, web filtering, purchases, who can message. Ten minutes here does more than an hour inside individual apps. <a href="/screen-time-and-family-link-parental-controls/">Start here.</a></li><li><strong>Then the console</strong>, if there is one. Xbox, PlayStation and Switch each have a proper family system with play-time limits and spending caps &mdash; and every one of them can be locked with a PIN so the settings stay set. <a href="/xbox-parental-controls-uk/">Xbox</a> &middot; <a href="/playstation-parental-controls-uk/">PlayStation</a> &middot; <a href="/nintendo-switch-parental-controls/">Switch</a>.</li><li><strong>Then the two or three apps that matter most</strong> in your house &mdash; usually YouTube plus whatever they talk to friends on. Don&rsquo;t try to do all twelve social apps in one go; do the ones they open every day.</li><li><strong>Then the conversation.</strong> Every control on these pages can be undone by a determined teenager, and that&rsquo;s fine &mdash; the controls buy you time and remove the accidents; the conversation is what actually keeps them safe. Dorset Police&rsquo;s guide is good on this, and the NSPCC&rsquo;s <a href="https://www.nspcc.org.uk/keeping-children-safe/online-safety/" target="_blank" rel="noopener">online safety hub</a> is the best plain-English resource we know for talking about it.</li></ol><p>One honest thing before you start: <strong>none of this is a substitute for knowing what your child is doing</strong>. A control that&rsquo;s set and never revisited is a control that stopped working the day the app updated. Set them, then look again every school holiday &mdash; that&rsquo;s the whole trick.</p>
+      </div>
+    </section>
+    <section id="s3" class="section" aria-label="The age rules you&rsquo;ll bump into (and the new age checks)">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">/03 &mdash; UK AGES AND THE LAW</p>
+        <h2 class="section-title" data-title>The age rules you&rsquo;ll bump into (and the new age checks)<span class="title-underline"></span></h2>
+<p>A few things trip parents up because they&rsquo;re UK-specific and recent:</p><ul><li><strong>Under 13.</strong> Apple (in the UK) and Google both say a child under 13 can&rsquo;t hold an ordinary account: it has to be created by a parent and sit inside a family group (Apple Family Sharing / Google Family Link). That&rsquo;s the door to <em>every</em> control on these pages, so it&rsquo;s worth doing properly rather than letting a child fib about a birth year &mdash; a fake age turns all the child protections off.</li><li><strong>13 to 17.</strong> Teens can hold their own accounts, and supervision changes: Google emails both of you at 13, and (as Google puts it) &ldquo;children need parent approval to stop supervision until they turn 18&rdquo;. YouTube now offers a specific supervised teen account both sides agree to. Apple lets you set Screen Time on a teen&rsquo;s device from your own.</li><li><strong>Age checks since July 2025.</strong> Under the UK Online Safety Act, platforms now have to check ages for adult content, so adults are being asked to prove they&rsquo;re over 18 &mdash; on Xbox (UK players started seeing prompts from July 2025), on Apple (a passport, driving licence, credit card or a PASS card such as CitizenCard), on YouTube (an age-estimation model, with ID or a selfie to prove otherwise). If <em>your</em> account gets prompted, that&rsquo;s this law working as intended, not a scam &mdash; but do it on the platform&rsquo;s own site or app, never from a link in a message.</li><li><strong>Games ratings.</strong> The UK uses <strong>PEGI</strong> (3, 7, 12, 16, 18). Console age limits work off it; set the limit to your child&rsquo;s age and anything above needs your say-so.</li></ul>
+      </div>
+    </section>
+    <section id="s4" class="section section--alt" aria-label="The people to call, in order">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">/04 &mdash; WHEN IT&rsquo;S ALREADY GONE WRONG</p>
+        <h2 class="section-title" data-title>The people to call, in order<span class="title-underline"></span></h2>
+<div class="prose" style="border:1px solid rgba(232,99,126,.35);border-radius:14px;padding:1.1rem 1.3rem;margin:1.4rem 0;background:rgba(232,99,126,.06)"><p class="eyebrow mono" style="margin-top:0">// IF SOMETHING HAS ALREADY GONE WRONG</p><ul style="margin:.4rem 0 0"><li><strong>A child is in immediate danger:</strong> call <strong>999</strong>. Otherwise Dorset Police on <strong>101</strong> or online at <a href="https://www.dorset.police.uk/" target="_blank" rel="noopener">dorset.police.uk</a>.</li><li><strong>Someone online is talking to your child in a sexual way, or asking for images:</strong> report to <strong>CEOP</strong> (the police&rsquo;s child-protection command) at <a href="https://www.ceop.police.uk/Safety-Centre/" target="_blank" rel="noopener">ceop.police.uk</a>.</li><li><strong>A nude or sexual image of an under-18 is online:</strong> <a href="https://www.childline.org.uk/info-advice/bullying-abuse-safety/online-mobile-safety/remove-nude-image-shared-online/" target="_blank" rel="noopener">Childline&rsquo;s Report Remove</a> can get it taken down, confidentially.</li><li><strong>You want to talk it through with someone:</strong> the <strong>NSPCC helpline</strong> 0808 800 5000 for adults; <strong>Childline</strong> 0800 1111 for children and young people.</li><li><strong>Bullying, scams or a compromised account:</strong> screenshot everything before you delete anything, then use the platform&rsquo;s report tool &mdash; and if the account is one we look after, ring us.</li></ul></div><p>And us. We&rsquo;re an IT firm, not a helpline &mdash; but if the problem is a device or an account (something installed, a login taken over, a child&rsquo;s photos somewhere they shouldn&rsquo;t be), that <em>is</em> our job, and we&rsquo;ve done it gently for Dorset families since 1995. <strong>01202 775566</strong>.</p>
+      </div>
+    </section>
+    <section class="section" aria-label="Free courses for beginners">
+      <div class="wrap" style="max-width:860px;margin:0 auto">
+        <div class="callout callout--info callout--center" data-reveal>
+          <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// FREE &middot; LEARN SOMETHING NEW</p>
+          <p id="crs-band-txt" class="callout__lede"><strong>11 free, friendly online courses</strong> for beginners and older learners &mdash; computer basics, email, WhatsApp, staying safe online and more. Short plain-English lessons, a printable certificate at the end, and never a sign-up form.</p>
+          <p class="callout__row">
+            <a class="button primary" id="crs-band-go" href="/free-courses/">Browse the Free Courses</a>
+            <a class="button secondary" href="/contact/?topic=computer-lessons">Ask About In-Person Lessons</a>
+          </p>
+        </div>
+      </div>
+      <script>(function(){try{var M=[{"k": "osc_progress_v1", "u": "/online-safety-course/", "t": "Staying Safe Online", "n": 6}, {"k": "crs_ai_for_beginners_course_v1", "u": "/ai-for-beginners-course/", "t": "AI, Without the Mystery", "n": 7}, {"k": "crs_whatsapp_course_for_beginners_v1", "u": "/whatsapp-course-for-beginners/", "t": "WhatsApp, Step by Step", "n": 7}, {"k": "crs_android_phone_course_for_beginners_v1", "u": "/android-phone-course-for-beginners/", "t": "Your Android Phone, Tamed", "n": 7}, {"k": "crs_online_banking_safely_course_v1", "u": "/online-banking-safely-course/", "t": "Online Banking, Safely", "n": 7}, {"k": "crs_video_calling_course_for_beginners_v1", "u": "/video-calling-course-for-beginners/", "t": "See Their Faces: Video Calling", "n": 6}, {"k": "crs_computer_basics_course_v1", "u": "/computer-basics-course/", "t": "Computer Basics, Without the Fear", "n": 7}, {"k": "crs_email_basics_course_v1", "u": "/email-basics-course/", "t": "Email, Comfortably", "n": 7}, {"k": "crs_nhs_app_course_v1", "u": "/nhs-app-course/", "t": "The NHS App, Gently", "n": 7}, {"k": "crs_digital_photos_course_v1", "u": "/digital-photos-course/", "t": "Your Photos, Safe and Sorted", "n": 6}, {"k": "crs_online_shopping_safely_course_v1", "u": "/online-shopping-safely-course/", "t": "Online Shopping, Safely", "n": 7}];var go=null,fin=null;for(var i=0;i<M.length;i++){var s=null;try{s=JSON.parse(localStorage.getItem(M[i].k)||"null")}catch(e){}if(!s)continue;if(s.m>0&&s.m<M[i].n&&!go){go=M[i];go.next=s.m+1}else if(s.m>=M[i].n&&!fin){fin=M[i]}}var tx=document.getElementById("crs-band-txt"),bt=document.getElementById("crs-band-go");if(!tx||!bt)return;if(go){tx.innerHTML="<strong>Welcome back!</strong> You&rsquo;re part-way through <strong>"+go.t+"</strong> &mdash; lesson "+go.next+" of "+go.n+" is ready when you are.";bt.href=go.u;bt.textContent="Continue where I left off \u2192";}else if(fin){tx.innerHTML="<strong>Welcome back!</strong> You finished <strong>"+fin.t+"</strong> \ud83c\udf89 &mdash; ready to pick your next free course?";bt.textContent="Pick my next course \u2192";}}catch(e){}})();</script>
+    </section>
+    <section class="section" aria-label="Related">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">// RELATED</p>
+<p>Related: our free <a href="/online-safety-course/">Staying Safe Online course</a> (scams, passwords, shopping safely &mdash; for grown-ups), <a href="/family-it-support/">IT support for families</a>, and the <a href="/family/">365 Family View</a> for keeping a quiet eye on a relative&rsquo;s PC.</p>
+      </div>
+    </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
+    <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
+      <div class="wrap">
+        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
+        <div class="faq-wrap">
+        <details class="faq" data-reveal>
+          <summary>Why did you write this when Dorset Police just published a guide?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Because theirs is good and ours is different. Dorset Police cover the twelve social and chat apps thoroughly, in a PDF. We&rsquo;ve linked it and not repeated it. Ours covers what theirs doesn&rsquo;t &mdash; YouTube, the games consoles, Minecraft, and the phone-level controls &mdash; on the web, one page per app, with the date each page was checked. Use both.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>How do I know these steps are current?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Each page has a &ldquo;checked against the maker&rsquo;s own instructions&rdquo; box with the date (18 August 2026 at launch) and links to the exact official help pages the steps came from. When an app changes, we update the page and the date. If you spot a step that no longer matches your screen, ring us and we&rsquo;ll fix it that day.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>My child is 15 and will just turn all this off. Is there any point?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Yes, but a different one. For a 15-year-old, controls are less about locking and more about defaults, visibility and a conversation: bedtime downtime that both of you agreed to, spending that asks first, and supervision they consented to (YouTube&rsquo;s teen supervision, for instance, is designed to be agreed by both sides). Google&rsquo;s own rule is that a supervised child needs parental approval to stop supervision until 18 &mdash; but the honest answer is that trust and talking do most of the work at that age.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Will you come and set this all up for us?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Yes &mdash; that&rsquo;s a normal job for us. Remotely, or at home across Bournemouth, Poole, Christchurch and Dorset. We set the controls up on the actual devices, write down where they live and what the passcodes are (for you, not us), and show you how to change them. Free 15-minute phone chat first on 01202 775566.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Is any of this a substitute for talking to my child?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>No, and we&rsquo;d be lying if we said so. Controls remove accidents and buy time; the conversation is what keeps children safe. Dorset Police&rsquo;s guide and the NSPCC&rsquo;s online-safety pages are both good on how to have it.</p></div>
+        </details>
+        </div>
+      </div>
+    </section>
+    <section class="cta-band" aria-label="Get started">
+      <div class="cta-band__inner">
+        <h2 data-title>Rather we set it up on the actual devices?<span class="title-underline title-underline--center"></span></h2>
+        <p class="lede lede--center" data-reveal>Call 01202 775566 or text 07520 615332, Mon&ndash;Fri 9&ndash;5. We&rsquo;ll set the controls up properly on your child&rsquo;s phone, tablet, console or PC &mdash; remotely, or at home across Bournemouth, Poole, Christchurch &amp; Dorset &mdash; and show you where everything lives, so you&rsquo;re in charge afterwards, not us. Free 15-minute phone chat first; no charge for advice.</p>
+        <div class="hero-buttons hero-buttons--center" data-reveal>
+          <a href="#picker" class="button primary button--lg">Pick your child&rsquo;s apps</a>
+          <a href="tel:+441202775566" class="button secondary button--lg">Call 01202 775566</a>
+        </div>
+        <p class="cta__contact mono" data-reveal>01202 775566 &middot; help@365techies.co.uk &middot; MON&ndash;FRI 9AM&ndash;5PM</p>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <div class="footer-areas">
+      <p class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</p>
+      <nav class="footer-areas__links" aria-label="Areas we cover">
+        <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
+        <a href="/it-support-bournemouth/">Bournemouth</a>
+        <a href="/it-support-poole/">Poole</a>
+        <a href="/it-support-christchurch/">Christchurch</a>
+        <a href="/it-support-ferndown/">Ferndown</a>
+        <a href="/it-support-wimborne/">Wimborne</a>
+        <a href="/it-support-broadstone/">Broadstone</a>
+        <a href="/it-support-verwood/">Verwood</a>
+        <a href="/it-support-ringwood/">Ringwood</a>
+        <a href="/it-support-wareham/">Wareham</a>
+        <a href="/it-support-swanage/">Swanage</a>
+        <a href="/it-support-weymouth/">Weymouth</a>
+        <a href="/it-support-dorchester/">Dorchester</a>
+        <a href="/it-support-blandford-forum/">Blandford Forum</a>
+        <a href="/it-support-shaftesbury/">Shaftesbury</a>
+        <a href="/it-support-gillingham/">Gillingham</a>
+        <a href="/it-support-sherborne/">Sherborne</a>
+        <a href="/it-support-new-forest/">New Forest</a>
+        <a href="/it-support-lymington/">Lymington</a>
+        <a href="/it-support-new-milton/">New Milton</a>
+        <a href="/it-support-brockenhurst/">Brockenhurst</a>
+        <a href="/it-support-southampton/">Southampton</a>
+        <a class="footer-areas__all" href="/areas-covered/">View all areas &#8594;</a>
+      </nav>
+    </div>
+    <div class="site-footer__grid">
+      <div class="site-footer__brand">
+        <a class="logo" href="/">
+          <svg class="logo__mark" viewBox="0 0 32 32" aria-hidden="true">
+            <circle cx="16" cy="16" r="13.4" fill="none" stroke="#8fb3d9" stroke-width="2" stroke-linecap="round" stroke-dasharray="63 22" transform="rotate(-55 16 16)"/>
+            <circle cx="16" cy="16" r="9.4" fill="none" stroke="#1d97e3" stroke-width="2" stroke-linecap="round" stroke-dasharray="46 14" transform="rotate(115 16 16)"/>
+            <path d="M12.4 18.4l3.6-5.8 3.4 5.1z" fill="none" stroke="#8fb3d9" stroke-width="1.2"/>
+            <circle cx="12.4" cy="18.4" r="1.6" fill="#00ce1b"/>
+            <circle cx="16" cy="12.6" r="1.6" fill="#1d97e3"/>
+            <circle cx="19.4" cy="17.7" r="1.6" fill="#1d97e3"/>
+          </svg>
+          <span class="logo__text"><em>365</em>techies</span>
+        </a>
+        <p>The IT support experts. A family-run business established in 1995 — Dell hardware specialists, Microsoft partners and certified Microsoft Office Specialists, providing monthly IT support for homes and businesses across Bournemouth, Poole and Dorset.</p>
+        <div class="partner-badges" aria-label="Accreditations">
+          <span class="partner-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="8" r="5"/><path d="M8.5 12.5 7 21l5-2.5L17 21l-1.5-8.5"/></svg>Family Business &middot; Est. 1995</span>
+          <span class="partner-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 18h18M9 22h6"/></svg>Dell Specialist</span>
+          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>Microsoft Partner</span>
+          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>Microsoft Office Specialist</span>
+          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>Malwarebytes Partner</span>
+          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/></svg>NVIDIA &amp; Scan Partner</span>
+          <a class="partner-badge partner-badge--gold" href="https://www.google.com/maps?cid=5924622613303465737" target="_blank" rel="noopener" title="See our 4.9-star reviews on Google"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.5 1.6 6.7L12 17l-6.2 3.6 1.6-6.7L2.2 8.9l6.9-.6z"/></svg>4.9 on Google</a>
+          <a class="partner-badge partner-badge--green" href="/sustainability/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 20c0-9 7-16 16-16 0 9-7 16-16 16z"/><path d="M4 20C9 15 13 11 18 9"/></svg>Sustainable Dorset Member</a>
+          <a class="partner-badge partner-badge--green" href="/help-in-dorset/" title="Patient computer &amp; tech help for older people — listed on Dorset's community help directory"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 21C8 17 3 13.5 3 8.8 3 6 5.2 4 7.8 4c1.7 0 3.2.9 4.2 2.4C13 4.9 14.5 4 16.2 4 18.8 4 21 6 21 8.8c0 4.7-5 8.2-9 12.2z"/></svg>Listed on #HelpAndKindness</a>
+        </div>
+      </div>
+      <nav aria-label="Support links">
+        <p class="site-footer__head mono">SUPPORT</p>
+        <a href="/join/">Join the 365 Club &mdash; Free</a>
+        <a href="/book-service/">Book a Service</a>
+        <a href="/book-a-collection/">Book a Collection</a>
+        <a href="/pay/">Pay Us</a>
+        <a href="/remote-support/">Start Remote Support</a>
+        <a href="/emergency-it-help/">Emergency IT Help</a>
+        <a href="/ive-been-scammed-what-to-do/">I&rsquo;ve Been Scammed</a>
+        <a href="/i-think-ive-been-hacked/">If You&rsquo;ve Been Hacked</a>
+        <a href="/scam-pop-up-help-poole/">Scam Pop-up Help (Poole)</a>
+        <a href="/virus-removal-christchurch/">Virus Removal (Christchurch)</a>
+        <a href="/outlook-problems/">Outlook Problems &amp; Fixes</a>
+        <a href="/is-it-down/">Is Something Down?</a>
+        <a href="/support-portal/">Support Portal</a>
+        <a href="/splashtop-business-guide/">Remote Access Guide</a>
+        <a href="/dell-latitude-3520-guide/">Dell Laptop Guide</a>
+            <a href="/dell-latitude-5000-guide/">Latitude 5000 Guide</a>
+            <a href="/dell-latitude-7000-guide/">Latitude 7000 Guide</a>
+        <a href="/dell-optiplex-guide/">Dell Desktop Guide</a>
+        <a href="/heatwave-tech-guide/">Heatwave Tech Guide</a>
+            <a href="/why-computer-prices-have-gone-up/">Why Prices Went Up</a>
+        <a href="/monthly-it-support/">Monthly IT Support</a>
+        <a href="/home-it-support-subscriptions/">Home IT Support</a>
+        <a href="/business-it-support-subscriptions/">Business IT Support</a>
+        <a href="/computer-repairs/">Computer Repairs</a>
+        <a href="/switching-it-provider/">Switching to Us</a>
+        <a href="/pricing/">Pricing</a>
+        <a href="/quick-quote/">Quick Quote</a>
+        <a href="/free-it-health-check/">Free IT Health Check</a>
+      </nav>
+      <nav aria-label="Free tools links">
+        <p class="site-footer__head mono">FREE TOOLS</p>
+        <a href="/free-courses/">Free Courses</a>
+        <a href="/free-tools/">All Free Tools &#8594;</a>
+        <a href="/free-pc-health-check/">Free PC Health Check App</a>
+        <a href="/online-safety-course/">Free Online Safety Course</a>
+        <a href="/broadband-speed-checker/">Broadband Speed Test</a>
+        <a href="/wifi-signal-test/">365 WiFi Optimizer</a>
+        <a href="/van-signal-map/">Bournemouth Signal Map</a>
+        <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
+        <a href="/pc-benchmark/">PC Benchmark</a>
+        <a href="/website-checker/">Website Checker</a>
+        <a href="/email-security-checker/">Email Security Checker</a>
+        <a href="/password-breach-checker/">Password Breach Checker</a>
+        <a href="/link-safety-checker/">Link Safety Checker</a>
+        <a href="/password-generator/">Password Generator</a>
+        <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
+        <a href="/custom-pc-builder/">Custom PC Builder</a>
+        <a href="/victron-system-builder/">Victron System Builder</a>
+        <a href="/solar-battery-calculator/">Battery &amp; Solar Calculator</a>
+        <a href="/cost-calculator/">Cost Calculator</a>
+        <a href="/plan-finder/">Plan Finder</a>
+        <a href="/spot-the-scam/">Spot the Scam Quiz</a>
+        <a href="/is-it-down/">Is It Down? Status Checker</a>
+        <a href="/computer-spec-checker/">PC Hardware Checker</a>
+      </nav>
+      <nav aria-label="Services links">
+        <p class="site-footer__head mono">SERVICES</p>
+        <a href="/services/">All Services</a>
+        <a href="/it-support-by-industry/">IT Support by Industry</a>
+        <p class="site-footer__subhead mono">Support &amp; security</p>
+        <a href="/preventative-maintenance/">Preventative Maintenance</a>
+        <a href="/remote-it-support/">Remote IT Support</a>
+        <a href="/microsoft-365-support/">Microsoft 365</a>
+        <a href="/cybersecurity-support/">Cybersecurity</a>
+        <a href="/malwarebytes-premium/">Malwarebytes Premium &amp; VPN</a>
+        <a href="/disaster-recovery/">Disaster Recovery</a>
+        <a href="/gdpr-it-compliance/">GDPR &amp; IT Compliance</a>
+        <a href="/windows-11-support/">Windows 11</a>
+        <a href="/windows-10-end-of-life/">Windows 10 End of Life</a>
+        <a href="/email-support/">Email Support</a>
+        <a href="/wifi-support/">Wi-Fi Support</a>
+        <a href="/printer-support/">Printer Support</a>
+        <a href="/backup-support/">Backup Support</a>
+        <p class="site-footer__subhead mono">Hardware &amp; setup</p>
+        <a href="/new-computer-setup/">New Computer Setup</a>
+        <a href="/new-laptop-set-up-bournemouth/">New Laptop Set Up for You</a>
+        <a href="/transfer-photos-to-a-new-computer-bournemouth/">Transfer Files to a New PC</a>
+        <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
+        <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
+            <a href="/refurbished-dell-latitude-3000/">Latitude 3000 Series</a>
+            <a href="/refurbished-dell-latitude-5000/">Latitude 5000 Series</a>
+            <a href="/refurbished-dell-latitude-7000/">Latitude 7000 Series</a>
+            <a href="/refurbished-dell-optiplex-3000/">OptiPlex 3000 Tier</a>
+            <a href="/refurbished-dell-optiplex-5000/">OptiPlex 5000 Tier</a>
+            <a href="/refurbished-dell-optiplex-7000/">OptiPlex 7000 Tier</a>
+        <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
+        <a href="/dell-support-bournemouth/">Dell Support Bournemouth</a>
+        <a href="/dell-support-poole/">Dell Support Poole</a>
+        <a href="/refurbished-dell-laptops-bournemouth/">Refurbished Dell Laptops</a>
+        <a href="/second-hand-office-computers-poole/">Refurbished Office Computers</a>
+        <a href="/custom-pc-builds/">Custom-Built PCs</a>
+        <a href="/threadripper-workstations/">Threadripper Workstations</a>
+        <a href="/gaming-pcs/">Gaming PCs</a>
+        <a href="/content-creator-pcs/">Content Creator PCs</a>
+        <a href="/home-cinema-entertainment/">Home Cinema &amp; AV</a>
+        <p class="site-footer__subhead mono">Connectivity &amp; energy</p>
+        <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
+        <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
+        <a href="/simplybook-integration/">Custom Booking Systems</a>
+        <a href="/lithium-battery-installs-dorset/">Leisure &amp; Marine Batteries</a>
+        <a href="/rural-and-farm-wifi-dorset/">Rural &amp; Farm Wi-Fi</a>
+        <a href="/broadband-to-a-boat-mooring/">Broadband to a Boat Mooring</a>
+        <a href="/wifi-for-a-shepherds-hut/">Wi-Fi for a Shepherd&rsquo;s Hut</a>
+        <a href="/starlink-internet/">Starlink Internet</a>
+        <p class="site-footer__subhead mono">Web, AI &amp; robotics</p>
+        <a href="/ai/">AI &amp; Automation</a>
+        <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
+        <a href="/agentic-ai-systems/">Agentic AI Systems</a>
+        <a href="/365-ai-os/">365 AI OS</a>
+        <a href="/ai/voice-agents/">AI Voice Agents</a>
+        <a href="/unitree-robots/">Unitree Robots</a>
+        <p class="site-footer__subhead mono">IT support by industry</p>
+        <a href="/it-support-for-hotels-holiday-lets/">Hotels &amp; Holiday Lets</a>
+        <a href="/it-support-for-vets/">Veterinary Practices</a>
+        <a href="/it-support-for-salons-beauty/">Salons &amp; Beauty</a>
+        <a href="/it-support-for-financial-advisers/">Financial Advisers</a>
+        <a href="/it-support-for-recruitment-agencies/">Recruitment Agencies</a>
+        <a href="/it-support-for-garages-automotive/">Garages &amp; Automotive</a>
+        <a href="/it-support-for-gyms-fitness/">Gyms &amp; Fitness</a>
+        <a href="/it-support-for-ecommerce/">E-commerce &amp; Online Retail</a>
+        <a href="/it-support-for-property-management/">Property Management</a>
+        <a href="/it-support-for-manufacturing/">Manufacturing &amp; Engineering</a>
+        <a href="/it-support-for-nurseries-dorset/">Nurseries &amp; Childcare</a>
+        <a href="/it-support-for-churches-faith/">Churches &amp; Faith Groups</a>
+      </nav>
+      <nav aria-label="Who we help links">
+        <p class="site-footer__head mono">WHO WE HELP</p>
+        <a href="/family-it-support/">Families</a>
+        <a href="/it-support-for-retired-users/">Retired Users</a>
+        <a href="/it-support-for-disabled-people/">Disabled People</a>
+        <a href="/computer-help-for-seniors/">Help for Seniors</a>
+        <a href="/it-support-for-home-workers/">Home Workers</a>
+        <a href="/it-support-for-digital-nomads/">Digital Nomads</a>
+        <a href="/it-support-for-sole-traders/">Sole Traders</a>
+        <a href="/small-business-it-support/">Small Businesses</a>
+      </nav>
+      <nav aria-label="Company links">
+        <p class="site-footer__head mono">COMPANY</p>
+        <a href="/about/">About</a>
+        <a href="/meet-the-team/">Meet the Team</a>
+        <a href="/why-choose-365-techies/">Why Choose Us</a>
+        <a href="/our-guarantees/">Our Guarantees</a>
+        <a href="/our-values/">Our Values &amp; Promises</a>
+        <a href="/how-we-price/">How We Price</a>
+        <a href="/case-studies/">Case Studies</a>
+        <a href="/reviews/">Reviews</a>
+        <a href="/areas-covered/">Areas Covered</a>
+        <a href="/plan-finder/">Plan Finder</a>
+        <a href="/refer-a-friend/">Refer a Friend</a>
+        <a href="/sustainability/">Sustainability</a>
+        <a href="/resources/">Resources &amp; Guides</a>
+        <a href="/it-advice/">IT Advice</a>
+        <a href="/bournemouth/">Bournemouth365</a>
+        <a href="/faqs/">FAQs</a>
+        <a href="/contact/">Contact</a>
+        <a href="/portal/">Customer portal</a>
+        <a href="tel:+441202775566">01202 775566</a>
+        <a href="sms:+447520615332">Text only: 07520 615332</a>
+        <a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a>
+      </nav>
+    </div>
+    <nav class="site-footer__legal-links mono" aria-label="Legal and policies">
+      <a href="/privacy-policy/">Privacy Policy</a>
+      <a href="/cookie-policy/">Cookie Policy</a>
+      <a href="/terms/">Terms of Service</a>
+      <a href="/service-level-agreement/">SLA</a>
+      <a href="/accessibility-statement/">Accessibility</a>
+      <a href="/accreditations/">Accreditations</a>
+      <a href="/system-status/">System Status</a>
+    </nav>
+    <p class="site-footer__legal mono">&copy; 2026 365 TECHIES LIMITED &middot; REGISTERED IN ENGLAND &amp; WALES 11073501 &middot; ALL SYSTEMS OPERATIONAL <span class="pulse-dot pulse-dot--green"></span></p>
+  </footer>
+
+  <nav class="mobile-cta-bar" aria-label="Quick contact">
+    <a href="tel:+441202775566"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>Call</a>
+    <a href="/book-service/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v3M17 3v3M4 8h16M5 6h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z"/></svg>Book</a>
+    <a href="#" data-open-chat><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.5 7.5L3 21l2-5.5A8.5 8.5 0 1 1 21 11.5z"/></svg>Chat</a>
+  </nav>
+  <div class="a11y" id="a11y">
+    <button type="button" class="a11y__toggle" id="a11y-toggle" aria-expanded="false" aria-controls="a11y-panel" aria-label="Text size and accessibility options" title="Text size and accessibility options">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="3.6" r="1.6"/><path d="M3.5 8h17M12 8v6m0 0-3.2 6.4M12 14l3.2 6.4"/></svg><span class="a11y__togglelabel">Text size</span>
+    </button>
+    <div class="a11y__panel" id="a11y-panel" role="region" aria-label="Accessibility options" hidden>
+      <p class="a11y__title mono">Accessibility</p>
+      <div class="a11y__rowsize"><span>Text size</span><span class="a11y__btns"><button type="button" data-a11y="text-down" aria-label="Decrease text size">A&minus;</button><button type="button" data-a11y="text-up" aria-label="Increase text size">A+</button></span></div>
+      <button type="button" class="a11y__opt" data-a11y="contrast" aria-pressed="false">High contrast</button>
+      <button type="button" class="a11y__opt" data-a11y="readable" aria-pressed="false">Readable font</button>
+      <button type="button" class="a11y__opt" data-a11y="reduce" aria-pressed="false">Reduce motion</button>
+      <button type="button" class="a11y__opt" data-a11y="read" aria-pressed="false">Read this page aloud</button>
+      <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
+    </div>
+  </div>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
+  <script src="/js/a11y.min.js?v=10" defer></script>
+  <script src="/js/forms.min.js?v=8" defer></script>
+  <script src="/js/search.min.js?v=2026-08-18" defer></script>
+  <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
+    <p>We use cookies to power our live chat and understand how the site is used. See our <a href="/cookie-policy/">cookie policy</a>.</p>
+    <div class="cookie-banner__actions">
+      <button type="button" class="button secondary" data-cookie="decline">Decline</button>
+      <button type="button" class="button primary" data-cookie="accept">Accept</button>
+    </div>
+  </div>
+  <!-- Consent-gated chat / analytics (HubSpot loads only after consent) -->
+  <script>
+  (function () {
+    var KEY = "tt_consent";
+    function loadConsented() {
+      if (!document.getElementById("hs-script-loader")) {
+        var s = document.createElement("script");
+        s.id = "hs-script-loader"; s.async = true; s.defer = true;
+        s.src = "//js-eu1.hs-scripts.com/148562638.js";
+        document.body.appendChild(s);
+      }
+      if (window.ANALYTICS_SRC && !window.__analyticsLoaded) {
+        window.__analyticsLoaded = true;
+        var a = document.createElement("script"); a.async = true; a.src = window.ANALYTICS_SRC;
+        document.head.appendChild(a);
+      }
+    }
+    var c = null;
+    try { c = localStorage.getItem(KEY); } catch (e) {}
+    if (c === "accepted") { loadConsented(); }
+    else if (c !== "declined") { var b = document.getElementById("cookie-banner"); if (b) b.hidden = false; }
+    document.addEventListener("click", function (e) {
+      var t = e.target.closest("[data-cookie]"); if (!t) return;
+      var v = t.getAttribute("data-cookie") === "accept" ? "accepted" : "declined";
+      try { localStorage.setItem(KEY, v); } catch (e) {}
+      var b = document.getElementById("cookie-banner"); if (b) b.hidden = true;
+      if (v === "accepted") { if (window.gtag) gtag('consent', 'update', { ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted', analytics_storage: 'granted' }); loadConsented(); }
+    });
+  })();
+  </script>
+</body>
+</html>
