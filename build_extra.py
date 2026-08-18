@@ -5182,7 +5182,7 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
         <p class="sckm__count" id="sckm-count"></p>
       </div>
       <script src="/vendor/leaflet/leaflet.js" defer></script>
-    <script src="/vendor/leaflet/touch-friendly.js" defer></script>
+    <script src="/vendor/leaflet/touch-friendly.js?v=2" defer></script>
       <script src="/vendor/protomaps/protomaps-leaflet.js" defer></script>
       <script>
       (function(){

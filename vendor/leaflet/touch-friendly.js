@@ -1,17 +1,22 @@
-/* touch-friendly.js - stop a Leaflet map from swallowing the page on phones.
+/* touch-friendly.js - stop a Leaflet map from swallowing the page on phones,
+ * WITHOUT breaking the mouse on a PC.
  *
  * THE PROBLEM. On touch, Leaflet claims every one-finger drag as a pan. Once a
  * map has been zoomed and fills the screen there is nothing left to grab, so
  * the visitor is trapped: every swipe moves the map, the page never scrolls.
- * The owner hit this on both the van map and the crowd map.
  *
  * THE FIX (the convention Google Maps embeds use, so people already know it):
  *   - ONE finger  -> scrolls the page. The map does not pan.
  *   - TWO fingers -> pans and pinch-zooms the map.
- *   - a short hint appears the first time someone one-finger-drags on the map,
- *     so it never feels broken.
- * Mouse and trackpad behaviour is unchanged: the trap only exists on touch, so
- * on desktop this function does nothing at all.
+ *   - a short hint appears the first time someone one-finger-drags on the map.
+ *   - MOUSE drag ALWAYS pans, on every device.
+ *
+ * ⚠️ v1 OF THIS FILE GOT THAT LAST LINE WRONG. It decided "is this a touch
+ * device?" from navigator.maxTouchPoints and, if so, disabled Leaflet's
+ * dragging outright - which killed the MOUSE on any Windows PC or laptop with
+ * a touchscreen (maxTouchPoints=10 on the owner's own machine). The map could
+ * not be moved with a mouse at all. Lesson: never gate on "has touch hardware".
+ * Decide per GESTURE: mouse events pan; touch events follow the finger rules.
  *
  * Usage:  L.map(...) then  makeTouchFriendly(map)
  * Self-hosted, no dependencies beyond Leaflet itself.
@@ -19,16 +24,12 @@
 (function () {
   function makeTouchFriendly(map) {
     var el = map.getContainer();
-    var isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-    if (!isTouch) return;                       /* desktop: nothing to fix */
 
-    /* One finger must NOT drag the map, so the browser keeps it for scrolling. */
-    map.dragging.disable();
-    if (map.tap) map.tap.disable();
-    map.touchZoom.enable();                     /* two-finger pinch still zooms */
-    el.style.touchAction = 'pan-y';             /* browser: vertical scroll is yours */
+    /* Leaflet's own drag handler stays ENABLED (that is what the mouse uses).
+       We only steer TOUCH: let the browser keep one-finger vertical scroll,
+       and stop Leaflet's touch-drag from firing on a single finger. */
+    el.style.touchAction = 'pan-y';
 
-    /* Two-finger pan: turn dragging on only while two fingers are down. */
     var hint = null, hintTimer = null;
     function showHint() {
       if (!hint) {
@@ -45,21 +46,36 @@
       clearTimeout(hintTimer);
       hintTimer = setTimeout(function () { hint.style.opacity = '0'; }, 1400);
     }
+
+    /* Track how many fingers are down. With ONE finger we stop Leaflet's drag
+       from starting (capture phase, before Leaflet sees it) so the browser
+       scrolls the page instead. With TWO we let everything through: Leaflet's
+       drag + pinch handle it. Mouse events never enter this code path. */
+    var fingers = 0;
     el.addEventListener('touchstart', function (e) {
-      if (e.touches.length >= 2) {
-        map.dragging.enable();
+      fingers = e.touches.length;
+      if (fingers >= 2) {
         el.style.touchAction = 'none';          /* two fingers: the map owns it */
+      } else {
+        el.style.touchAction = 'pan-y';         /* one finger: the page owns it */
       }
-    }, { passive: true });
+    }, { passive: true, capture: true });
     el.addEventListener('touchmove', function (e) {
-      if (e.touches.length === 1 && !map.dragging.enabled()) showHint();
-    }, { passive: true });
-    el.addEventListener('touchend', function (e) {
-      if (e.touches.length < 2) {
-        map.dragging.disable();
-        el.style.touchAction = 'pan-y';
+      if (e.touches.length === 1) {
+        /* One-finger move: don't let Leaflet pan. Stop it reaching Leaflet's
+           handlers; the browser still gets the gesture for page scroll because
+           touch-action is pan-y and we never preventDefault. */
+        e.stopImmediatePropagation();
+        showHint();
       }
-    }, { passive: true });
+    }, { passive: true, capture: true });
+    el.addEventListener('touchend', function (e) {
+      fingers = e.touches.length;
+      if (fingers < 2) el.style.touchAction = 'pan-y';
+    }, { passive: true, capture: true });
+    el.addEventListener('touchcancel', function () {
+      fingers = 0; el.style.touchAction = 'pan-y';
+    }, { passive: true, capture: true });
   }
   window.makeTouchFriendly = makeTouchFriendly;
 })();
