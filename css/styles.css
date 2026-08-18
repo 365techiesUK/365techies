@@ -1841,8 +1841,24 @@ body.menu-open { overflow: hidden; }
 }
 
 /* ===== Accessibility toolbar ===== */
-.a11y { position: fixed; left: 14px; bottom: 14px; z-index: 1300; }
+.a11y { position: fixed; left: 14px; bottom: 14px; z-index: 1300; transition: opacity .25s ease, transform .25s ease; }
 @media (max-width: 767px) { .a11y { left: 10px; bottom: calc(4.7rem + env(safe-area-inset-bottom)); } }
+/* A map is on screen (body.map-in-view, set by the map pages via
+   IntersectionObserver): the fixed text-size pill was sitting over the map on
+   phones. Shrink it to the icon only and tuck it into the corner while the map
+   is visible; it comes back to full size the moment the map scrolls away. It
+   never disappears - it's an accessibility control. */
+@media (max-width: 1024px) {
+  body.map-in-view .a11y { transform: translateX(-4px); opacity: .55; }
+  body.map-in-view .a11y:hover, body.map-in-view .a11y:focus-within { opacity: 1; }
+  body.map-in-view .a11y__togglelabel { display: none; }
+  body.map-in-view .a11y__toggle { padding: 0 .45rem; }
+}
+/* Landscape phone: the CTA bar is hidden (see above), so drop the pill to the
+   real bottom instead of hovering where the bar used to be. */
+@media (max-width: 1024px) and (max-height: 500px) and (orientation: landscape) {
+  .a11y { bottom: 10px; }
+}
 /* ⚠ This used to be a bare 48px circle with only the accessibility glyph inside.
    Customers who told us the site was too small to read had never found it - there
    was nothing on screen saying the text-size control was in here (owner report,

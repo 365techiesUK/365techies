@@ -76,6 +76,59 @@
     el.addEventListener('touchcancel', function () {
       fingers = 0; el.style.touchAction = 'pan-y';
     }, { passive: true, capture: true });
+
+    /* ---- Two more phone niceties, both about the map being THE thing ------
+
+       1. body.map-in-view while any map is on screen. The site's fixed
+          text-size pill (an accessibility control, so it must stay) was
+          floating over the map on phones; CSS uses this class to shrink it
+          to an icon in the corner while a map is visible.
+
+       2. Rotation. Portrait -> landscape reflows the page to roughly half its
+          height, but the browser keeps the PIXEL scroll offset, so you land
+          somewhere else entirely. If people rotate on a map page, it is to
+          see the map - so if a map was on screen before the rotation, snap
+          back to it afterwards; otherwise restore whatever was centred. */
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (es) {
+        es.forEach(function (e) {
+          el.__inView = e.isIntersecting;
+          var any = [].slice.call(document.querySelectorAll('.leaflet-container')).some(function (c) { return c.__inView; });
+          document.body.classList.toggle('map-in-view', any);
+        });
+      }, { threshold: 0.15 });
+      io.observe(el);
+    }
+    if (!window.__mapRotateHooked) {
+      window.__mapRotateHooked = true;
+      var lastW = window.innerWidth, anchor = null;
+      /* Remember what's mid-screen BEFORE any reflow - by the time 'resize'
+         fires the layout has already moved and elementFromPoint would tell us
+         about the wrong place. Sampled on scroll, cheaply. */
+      var sampleT = null;
+      window.addEventListener('scroll', function () {
+        if (sampleT) return;
+        sampleT = setTimeout(function () { sampleT = null;
+          anchor = document.elementFromPoint(window.innerWidth / 2, window.innerHeight / 2); }, 150);
+      }, { passive: true });
+      window.addEventListener('resize', function () {
+        var w = window.innerWidth;
+        if (Math.abs(w - lastW) < 120) return;        /* not a rotation - address bar etc. */
+        lastW = w;
+        var target = [].slice.call(document.querySelectorAll('.leaflet-container')).filter(function (c) { return c.__inView; })[0];
+        if (!target) {
+          var a = anchor;
+          if (a && a.isConnected) setTimeout(function () { a.scrollIntoView({ block: 'center' }); }, 60);
+          return;
+        }
+        setTimeout(function () {
+          target.scrollIntoView({ block: 'start', behavior: 'auto' });
+          /* Leaflet must re-measure after the container changed shape */
+          if (target.__leafletMap) target.__leafletMap.invalidateSize();
+        }, 120);
+      });
+    }
+    el.__leafletMap = map;
   }
   window.makeTouchFriendly = makeTouchFriendly;
 })();
