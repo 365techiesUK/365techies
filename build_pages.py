@@ -328,6 +328,7 @@ HEADER = '''  <header class="site-header">
             <a href="/broadband-speed-checker/">Broadband Speed Test</a>
             <a href="/wifi-signal-test/">365 WiFi Optimizer</a>
             <a href="/van-signal-map/">Bournemouth Signal Map</a>
+            <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
             <a href="/pc-benchmark/">PC Benchmark</a>
             <a href="/computer-spec-checker/">PC Hardware Checker</a>
             <a href="/website-checker/">Website Checker</a>
@@ -515,6 +516,7 @@ HEADER = '''  <header class="site-header">
           <a href="/broadband-speed-checker/">Broadband Speed Test</a>
           <a href="/wifi-signal-test/">365 WiFi Optimizer</a>
           <a href="/van-signal-map/">Bournemouth Signal Map</a>
+          <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
           <a href="/pc-benchmark/">PC Benchmark</a>
           <a href="/computer-spec-checker/">PC Hardware Checker</a>
           <a href="/website-checker/">Website Checker</a>
@@ -710,6 +712,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/broadband-speed-checker/">Broadband Speed Test</a>
         <a href="/wifi-signal-test/">365 WiFi Optimizer</a>
         <a href="/van-signal-map/">Bournemouth Signal Map</a>
+        <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
         <a href="/pc-benchmark/">PC Benchmark</a>
         <a href="/website-checker/">Website Checker</a>
         <a href="/email-security-checker/">Email Security Checker</a>
