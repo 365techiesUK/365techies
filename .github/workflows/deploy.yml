@@ -57,6 +57,8 @@ jobs:
         src/**
         *.bat
         index-classic.html
+        tools/**
+        .smoke/**
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -70,7 +72,7 @@ jobs:
           n=$(printf '%s\n' "$FTP_EXCLUDE" | grep -c '[^[:space:]]' || true)
           echo "exclude patterns: $n"
           if [ "$n" -lt 10 ]; then
-            echo "::error title=Exclude list broken::env.FTP_EXCLUDE resolved to $n patterns (expected 15). Refusing to deploy rather than upload source to the live server."
+            echo "::error title=Exclude list broken::env.FTP_EXCLUDE resolved to $n patterns (expected 17). Refusing to deploy rather than upload source to the live server."
             exit 1
           fi
 
@@ -227,3 +229,35 @@ jobs:
             *no-store*) : ;;
             *) echo "::warning title=no-store regressed::/portal/ is no longer served with no-store - check the .htaccess FilesMatch ordering." ;;
           esac
+
+      # ---- 4. header smoke test: open a REAL dropdown on the LIVE homepage --------------
+      # Added 2026-08-18 after the 12-17 Aug breakage: a .desktop-nav overflow:hidden
+      # clipped every dropdown panel for five days while every check passed, because none
+      # of them opened a menu. This one does, in headless Chromium, at 1600 and 1366px, and
+      # hit-tests inside the panel (an invisible/clipped panel can never win a hit-test).
+      # It also re-checks the SOS button stays on screen. Runs only when a deploy actually
+      # happened (the FTPS gate above passed). Browser install is separate + tolerant so a
+      # CDN hiccup reads as "smoke skipped", not "site broken".
+      - name: Install headless Chromium for the smoke test
+        if: ${{ !(inputs.dry_run || false) }}
+        id: chromium
+        continue-on-error: true
+        shell: bash
+        run: |
+          mkdir -p .smoke && cd .smoke
+          npm init -y >/dev/null 2>&1
+          npm i --no-audit --no-fund playwright@1.47.2 >/dev/null 2>&1
+          npx playwright install --with-deps chromium >/dev/null 2>&1
+          echo "installed"
+
+      - name: Header smoke test (dropdowns open, SOS on screen)
+        if: ${{ !(inputs.dry_run || false) && steps.chromium.outcome == 'success' }}
+        shell: bash
+        run: |
+          cp tools/smoke-header.mjs .smoke/smoke-header.mjs
+          cd .smoke && node smoke-header.mjs
+
+      - name: Smoke test skipped
+        if: ${{ !(inputs.dry_run || false) && steps.chromium.outcome != 'success' }}
+        shell: bash
+        run: echo "::warning title=Header smoke skipped::Chromium install failed on the runner; the dropdown/SOS smoke test did not run. Check the header by hand (open a menu)."
