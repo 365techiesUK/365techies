@@ -163,7 +163,12 @@
          of road. The van tests every 5 min while driving. */
       var FRESH_S=420,SPD_MAX=50;
       function start(){if(typeof L==='undefined'){return setTimeout(start,200);}
-        var map=L.map('sigmap',{zoomControl:true}).setView([50.72,-1.88],10);
+        var map=L.map('sigmap',{zoomControl:true});
+        /* Open on the whole BCP conurbation - Sandbanks to Hengistbury Head, coast
+           to the A31 - so every local result is on screen at once. A fixed frame,
+           not fit-to-data: one far-away point must not zoom the whole map out. */
+        var BCP_FRAME=[[50.68,-2.02],[50.80,-1.72]];
+        map.fitBounds(BCP_FRAME,{padding:[10,10]});
         if(window.makeTouchFriendly)makeTouchFriendly(map);   /* one finger scrolls the page, two move the map */
         /* Basemap: a self-hosted Protomaps PMTiles archive (Dorset extract, z0-14,
            25MB) served as ONE static file over HTTP range requests from our own
@@ -255,7 +260,7 @@
              actual route, which is more revealing than the readings themselves.
              `ll` is still collected, but only to fit the view. */
           if(live){map.removeLayer(live);live=null;}
-          if(!fitted&&ll.length){map.fitBounds(ll,{padding:[40,40],maxZoom:14});fitted=true;}map.invalidateSize();}
+          if(!fitted){fitted=true;/* keep the BCP frame set at init; do not re-fit to data */}map.invalidateSize();}
         var userChose=false;
         function setMode(m){mode=m;
           ['rsrp','speed','best'].forEach(function(x){document.getElementById('sigmode-'+x).setAttribute('aria-pressed',m===x);});

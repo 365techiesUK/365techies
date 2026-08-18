@@ -5205,7 +5205,11 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
         function col(d){return d>=25?'#3fb950':(d>=10?'#d29922':'#f85149');}
         function boot(){
           if(!window.L||!window.protomapsL){setTimeout(boot,120);return;}
-          var map=L.map('sckmap',{zoomControl:true,attributionControl:true}).setView([50.735,-1.86],11);
+          var map=L.map('sckmap',{zoomControl:true,attributionControl:true});
+          /* Same BCP frame as the van map, for the same reason: show every local
+             square at once, and never let an out-of-area reading zoom us out. */
+          var BCP_FRAME=[[50.68,-2.02],[50.80,-1.72]];
+          map.fitBounds(BCP_FRAME,{padding:[10,10]});
         if(window.makeTouchFriendly)makeTouchFriendly(map);   /* one finger scrolls the page, two move the map */
           protomapsL.leafletLayer({url:'/vendor/protomaps/dorset.pmtiles',flavor:'dark',maxDataZoom:14,attribution:'&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> &middot; <a href="https://protomaps.com">Protomaps</a>'}).addTo(map);
           var layer=L.layerGroup().addTo(map);
@@ -5217,8 +5221,7 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
             var ready=0;
             /* First load with data: frame the readings, not all of Dorset - on a
                phone the default view leaves the squares as specks at the edge. */
-            if(!fitted&&j.cells.length){var b=L.latLngBounds(j.cells.map(function(c){return [c.lat,c.lon];}));
-              map.fitBounds(b.pad(.35),{maxZoom:13});fitted=true;}
+            if(!fitted){fitted=true;/* BCP frame set at init; do not re-fit to data */}
             j.cells.forEach(function(c){
               var h=0.5/CELL_LAT, w=0.5/CELL_LON;   /* half a cell each way */
               /* Coloured from the FIRST reading - that's the moment people share.
