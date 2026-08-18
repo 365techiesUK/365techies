@@ -46,7 +46,17 @@ try {
     }
     const trig = page.locator(".desktop-nav .has-dropdown [aria-haspopup]").first();
     await trig.hover();
-    await page.waitForTimeout(500);   // let the opacity transition finish
+    // Wait for the fade-in to actually FINISH rather than a fixed sleep: poll opacity until it
+    // stops changing (the first CI run caught it at 0.998756, 1.2ms before the end of a 0.28s
+    // transition, and red-flagged a healthy site). Cap at 3s.
+    await page.waitForFunction(() => {
+      const li = document.querySelector(".desktop-nav .has-dropdown"); const p = li && li.querySelector(".dropdown");
+      if (!p) return true;
+      const o = parseFloat(getComputedStyle(p).opacity);
+      const prev = p.__smokePrev; p.__smokePrev = o;
+      return prev !== undefined && Math.abs(o - prev) < 0.0005 && o > 0.9;
+    }, null, { timeout: 3000, polling: 100 }).catch(() => {});
+    await page.waitForTimeout(150);
     const r = await page.evaluate(() => {
       const li = document.querySelector(".desktop-nav .has-dropdown");
       const nav = document.querySelector(".desktop-nav");
@@ -65,7 +75,7 @@ try {
     });
     if (r.missing) { fail(`${w}px: header structure missing (.desktop-nav/.has-dropdown/.dropdown/.nav-sos)`); await page.close(); continue; }
     const tag = `${w}px "${(r.trigger || "").trim()}"`;
-    if (r.opacity !== "1") fail(`${tag}: dropdown opacity is ${r.opacity}, expected 1`); else ok(`${tag}: dropdown opacity 1`);
+    if (!(parseFloat(r.opacity) >= 0.98)) fail(`${tag}: dropdown opacity is ${r.opacity}, expected ~1`); else ok(`${tag}: dropdown opacity ${r.opacity}`);
     if (!(r.panelBottom > r.navBottom + 40)) fail(`${tag}: dropdown panel does not extend below the nav bar (panelBottom ${r.panelBottom|0} vs navBottom ${r.navBottom|0})`); else ok(`${tag}: panel hangs below the bar`);
     if (!r.hitInside) fail(`${tag}: hit-test inside the dropdown did NOT land in the panel - it is invisible or clipped`); else ok(`${tag}: hit-test lands inside the panel`);
     if (r.clippedBy) fail(`${tag}: dropdown is clipped by ancestor ${r.clippedBy} (overflow not visible)`); else ok(`${tag}: no clipping ancestor`);
