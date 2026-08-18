@@ -5181,7 +5181,11 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
           .sckm{position:relative;border-radius:18px;overflow:hidden;border:1px solid rgba(125,170,220,.18);box-shadow:0 24px 60px -30px rgba(0,0,0,.7)}
           #sckmap{height:min(60vh,520px);width:100%;background:#0b1020}
           .sckm__st{position:absolute;top:12px;left:12px;z-index:500;background:rgba(10,16,32,.85);border:1px solid rgba(125,170,220,.22);border-radius:10px;padding:7px 12px;font-size:.8rem;color:#cfe0f5;backdrop-filter:blur(6px)}
-          .sckm__leg{background:rgba(10,16,32,.9);color:#cfe0f5;padding:9px 11px;border-radius:9px;border:1px solid rgba(125,170,220,.22);font-size:.74rem;line-height:1.5}
+          .sckm__leg{background:rgba(10,16,32,.9);color:#cfe0f5;padding:9px 11px;border-radius:9px;border:1px solid rgba(125,170,220,.22);font-size:.74rem;line-height:1.5;max-width:220px}
+          /* Phones: the full legend was 318px wide on a 328px map - a text box over
+             a quarter of it, three lines deep. Collapse to the bar + three words. */
+          @media (max-width:640px){.sckm__leg{padding:5px 8px;font-size:.66rem;line-height:1.3;max-width:170px}
+            .sckm__leg .bar{width:70px;height:7px}.sckm__leg .sckm__leg-more{display:none}}
           .sckm__leg .bar{display:inline-block;width:96px;height:9px;border-radius:5px;vertical-align:middle;background:linear-gradient(90deg,#f85149,#d29922,#3fb950)}
           .leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#141b2e;color:#e6edf3}
           .sckm__count{text-align:center;font-size:.86rem;color:var(--muted,#9db3cf);margin:.7rem 0 0}
@@ -5206,7 +5210,7 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
           protomapsL.leafletLayer({url:'/vendor/protomaps/dorset.pmtiles',flavor:'dark',maxDataZoom:14,attribution:'&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> &middot; <a href="https://protomaps.com">Protomaps</a>'}).addTo(map);
           var layer=L.layerGroup().addTo(map);
           var leg=L.control({position:'bottomright'});
-          leg.onAdd=function(){var d=L.DomUtil.create('div','sckm__leg');d.innerHTML='<span class="bar"></span><br>slow &nbsp;&middot;&nbsp; fine for calls &nbsp;&middot;&nbsp; great for work<br><span style="opacity:.75">median of everyone&rsquo;s readings in each ~500&nbsp;m square</span><br><span style="opacity:.75">dashed &amp; faint = early days &middot; solid = 8+ readings</span>';return d;};
+          leg.onAdd=function(){var d=L.DomUtil.create('div','sckm__leg');d.innerHTML='<span class="bar"></span><br>slow &nbsp;&middot;&nbsp; fine for calls &nbsp;&middot;&nbsp; great for work<span class="sckm__leg-more"><br><span style="opacity:.75">median of everyone&rsquo;s readings in each ~500&nbsp;m square</span><br><span style="opacity:.75">dashed &amp; faint = early days &middot; solid = 8+ readings</span></span>';return d;};
           leg.addTo(map);
           var fitted=false;
           function draw(j){layer.clearLayers();

@@ -1271,6 +1271,16 @@ body.menu-open { overflow: hidden; }
   .mobile-cta-bar svg { width: 20px; height: 20px; }
   body { padding-bottom: calc(4.6rem + env(safe-area-inset-bottom)); }
   body.menu-open .mobile-cta-bar { display: none; }
+}
+/* Phone in LANDSCAPE: the width test above still matches (a sideways phone is
+   ~812x375) but now HEIGHT is what's scarce - a fixed 67px bar plus the
+   browser's own chrome ate a third of the screen. Hide it when the viewport is
+   short; the same three actions are one tap away in the menu. */
+@media (max-width: 1024px) and (max-height: 500px) and (orientation: landscape) {
+  .mobile-cta-bar { display: none !important; }
+  body { padding-bottom: 0; }
+}
+@media (max-width: 767px) {
   .cookie-banner__actions { width: 100%; }
   .cookie-banner__actions .button { flex: 1 1 auto; text-align: center; }
 
