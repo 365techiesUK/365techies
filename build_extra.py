@@ -14442,6 +14442,7 @@ info_page(
           <ul>
             <li>Contact details you give us &mdash; such as your name, email address, phone number and address.</li>
             <li>Details of your enquiry, your devices and your IT systems, so we can provide support.</li>
+            <li>On a support plan, the results of the broadband speed test we run at each service visit from 365 PC Manager (download, upload, response time, whether the test was wired or Wi-Fi, and your provider), kept on your service record so we can tell a slowing line from a slowing PC. We also use these readings <strong>anonymously</strong> in an aggregate local broadband map: only your postcode district (for example BH9, never the full postcode) is stored alongside a reading, and no figure is ever published for an area or provider with fewer than five readings, so no household can be identified.</li>
             <li>Account and billing information needed to manage your plan.</li>
             <li>Information collected automatically when you use our website, such as cookies and basic analytics.</li>
           </ul>
@@ -24434,6 +24435,11 @@ def write_portal_page():
       // Saved site surveys belong to the account, not to an individual employee, and
       // the server refuses them for a company staff member - so showing this card to
       // one would only be inviting a refusal.
+      // Broadband: the six-weekly service speed test, logged per visit from 365 PC
+      // Manager (Service tab, "Test my broadband"). A line speed is a property of the
+      // premises, so team members see it too. Only shown once there is a reading.
+      h += '<div class="card" id="mybb-card" hidden><h2>\\ud83c\\udf10 Your broadband</h2><div id="mybb"><p class="quiet">Loading…</p></div>'
+        + '<p class="quiet">Measured on this connection at each service visit from <strong>365 PC Manager</strong> (Service tab \\u2192 Test my broadband), so we can tell a line that has slowed from a PC that has. Wired-to-router readings are the honest line figure; Wi-Fi readings measure your Wi-Fi.</p></div>';
       if (!(d.member && !tmIsBoss()))
       h += '<div class="card"><h2>📶 Your WiFi surveys</h2><div id="mywifi"><p class="quiet">Loading…</p></div>'
         + '<p class="quiet">Surveys you save from our free <a href="/wifi-signal-test/" target="_blank" rel="noopener">WiFi Optimizer</a> live here on your account — rooms, history and photos — so you can restore them on any device and our team can see them when they help you. '
@@ -24562,6 +24568,7 @@ def write_portal_page():
       if (freshJoiner) custWiz();
       loadMyBookings();
       loadWifi();
+      loadBroadband();
       loadDash();
       tmLoad();
       bindAddr(d.addr || {});
@@ -24766,6 +24773,36 @@ def write_portal_page():
       if (!d || !d.ok) { box.innerHTML = '<p class="quiet">Couldn’t load your visits just now - <a href="/book-service/" target="_blank" rel="noopener">see them on the booking page</a>.</p>'; return; }
       renderBookings(d.bookings || []);
     }).catch(function () { box.innerHTML = '<p class="quiet">Couldn’t load your visits - try again shortly.</p>'; });
+  }
+  // Broadband readings logged at service visits by 365 PC Manager. The card stays
+  // hidden until there is at least one reading - an empty "your broadband" box on a
+  // free member's dashboard would just be a nag. Trend = the readings, newest first,
+  // with the change vs the previous reading spelled out in words, not a sparkline.
+  var BB = '/api/pcm-broadband.php';
+  function loadBroadband() {
+    var card = document.getElementById('mybb-card'), box = document.getElementById('mybb'); if (!card || !box) return;
+    post(BB, { action: 'list', wtoken: S.wtoken, machine: mid() }).then(function (d) {
+      if (!d || !d.ok || !d.readings || !d.readings.length) return;   // stays hidden
+      card.hidden = false;
+      var rs = d.readings, latest = rs[0], prev = rs.length > 1 ? rs[1] : null;
+      var h = '<p style="font-size:1.05rem;margin:0 0 .5rem"><strong>' + Number(latest.down).toFixed(latest.down >= 100 ? 0 : 1) + ' Mbps</strong> down \\u00b7 <strong>' + Number(latest.up).toFixed(latest.up >= 100 ? 0 : 1) + ' Mbps</strong> up \\u00b7 ' + Math.round(latest.ping) + ' ms'
+        + (latest.isp && latest.isp !== 'other' ? ' \\u00b7 ' + String(latest.isp).toUpperCase() : '')
+        + ' <span class="quiet">(' + (latest.wired ? 'wired' : 'Wi-Fi') + ', ' + String(latest.t).slice(0, 10) + ')</span></p>';
+      if (prev && Number(prev.down) > 0) {
+        var delta = Number(latest.down) - Number(prev.down), pct = Math.round(delta / Number(prev.down) * 100);
+        var word = pct <= -30 ? 'noticeably slower' : pct <= -10 ? 'a little slower' : pct >= 30 ? 'noticeably faster' : pct >= 10 ? 'a little faster' : 'about the same';
+        h += '<p style="margin:0 0 .6rem">Since the previous reading (' + String(prev.t).slice(0, 10) + ', ' + Number(prev.down).toFixed(1) + ' Mbps): <strong>' + word + '</strong>' + (pct !== 0 ? ' (' + (pct > 0 ? '+' : '') + pct + '%)' : '') + '.'
+          + (pct <= -30 && latest.wired && prev.wired ? ' Two wired readings that far apart point at the line, not the PC \\u2014 worth a word with your provider; we can help with what to say.' : '') + '</p>';
+      }
+      if (rs.length > 2) {
+        h += '<table style="width:100%;font-size:.95rem;border-collapse:collapse"><thead><tr><th style="text-align:left;padding:.25rem 0">Visit</th><th style="text-align:right">Down</th><th style="text-align:right">Up</th><th style="text-align:right">Ping</th><th style="text-align:right">How</th></tr></thead><tbody>';
+        rs.slice(0, 8).forEach(function (r) {
+          h += '<tr><td style="padding:.25rem 0">' + String(r.t).slice(0, 10) + '</td><td style="text-align:right">' + Number(r.down).toFixed(1) + '</td><td style="text-align:right">' + Number(r.up).toFixed(1) + '</td><td style="text-align:right">' + Math.round(r.ping) + ' ms</td><td style="text-align:right">' + (r.wired ? 'wired' : 'Wi-Fi') + '</td></tr>';
+        });
+        h += '</tbody></table>';
+      }
+      box.innerHTML = h;
+    }).catch(function () {});
   }
   // WiFi surveys saved from the free optimizer tool: list, open-in-tool, delete, upload
   var WIFI = '/api/pcm-wifi.php';
