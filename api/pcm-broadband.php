@@ -86,6 +86,18 @@ function outward($pc){
 }
 function median($a){ sort($a); $n = count($a); if (!$n) return null; return $n % 2 ? $a[intdiv($n,2)] : round(($a[$n/2-1] + $a[$n/2]) / 2, 1); }
 
+// ---------------------------------------------------------------- upload SINK (public, stateless)
+// The app's upload test POSTs random bytes here for ~5s. We read them from the socket in
+// chunks (that IS the measurement - the client times its own writes) and discard. No auth:
+// nothing is stored, nothing is returned but ok. Bounded at 64MB per request so it can't
+// be turned into a free bandwidth sink, and it never touches the DB or its lock.
+if ((isset($_GET['action']) && $_GET['action'] === 'sink') && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    $in = fopen('php://input', 'rb'); $n = 0; $cap = 64 * 1024 * 1024;
+    if ($in) { while (!feof($in) && $n < $cap) { $c = fread($in, 262144); if ($c === false || $c === '') break; $n += strlen($c); } fclose($in); }
+    out(array('ok'=>true, 'bytes'=>$n));
+}
+if ((isset($_GET['action']) && $_GET['action'] === 'sink')) { header('Allow: POST, HEAD'); out(array('ok'=>true)); }   // HEAD/GET: cheap 200 for the latency probe
+
 $raw = file_get_contents('php://input');
 if (strlen($raw) > $MAX_RAW) out(array('ok'=>false,'error'=>'too_big'));
 $in = json_decode($raw, true);

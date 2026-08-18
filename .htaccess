@@ -166,6 +166,15 @@ ErrorDocument 404 /404.html
 <FilesMatch "^(visitors-key\.php|visitors-cache\.json(\..*)?)$">
   Require all denied
 </FilesMatch>
+# 365 PC Manager broadband speed test payload (downloads/speedtest/*.bin): random bytes,
+# so no compression, and NEVER cached - a cached payload measures the proxy, not the line.
+# Explicitly public: it must be fetchable by every customer PC. Added 2026-08-18.
+<FilesMatch "^[0-9]+mb\.bin$">
+  Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+  Header set Content-Type "application/octet-stream"
+  SetEnv no-gzip 1
+  SetEnv no-brotli 1
+</FilesMatch>
 # 365 PC Manager + Service Pass server-only data/secret files - NEVER serve over HTTP.
 # (The endpoints pcm.php, pcm-admin.php, pcm-sb-callback.php, pass.php stay served - not matched here.)
 # NB pcm-bkpoll-cache.json holds a LIVE SimplyBook admin token (found publicly
