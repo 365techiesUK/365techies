@@ -193,7 +193,7 @@ GC_NOTE = '''    <section class="section section--alt" aria-label="Direct Debit 
     </section>'''
 HUBSPOT_REGION = "eu1"
 
-IMPORTMAP = '{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js" } }'
+IMPORTMAP = '{ "imports": { "three": "/js/vendor/three-0.165.0-three.module.js?v=1" } }'
 
 # ---- shared icons ----
 IC = {
@@ -1040,8 +1040,8 @@ def page(slug, title, desc, og_title, schema_json, content, og_image=None):
         s.src = src; s.async = true; s.onload = onload;
         document.head.appendChild(s);
       }}
-      inject('https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js', function () {{
-        inject('https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js', function () {{
+      inject('/js/vendor/gsap-3.12.5-gsap.min.js?v=1', function () {{
+        inject('/js/vendor/gsap-3.12.5-ScrollTrigger.min.js?v=1', function () {{
           window.dispatchEvent(new Event('motion-ready'));
         }});
       }});
@@ -2825,7 +2825,7 @@ WIFIQR_TOOL = r'''    <section class="section" aria-label="Wi-Fi QR code generat
       <script>
       (function(){
         var root=document.getElementById('wq'); if(!root) return;
-        var LIB='https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js', libp=null;
+        var LIB='/js/vendor/qrcode-generator-1.4.4-qrcode.js?v=1', libp=null;
         var form=root.querySelector('#wq-form'), ssid=root.querySelector('#wq-ssid'), pass=root.querySelector('#wq-pass'), sec=root.querySelector('#wq-sec'), hid=root.querySelector('#wq-hidden'), pwrap=root.querySelector('#wq-pwrap');
         var ph=root.querySelector('#wq-ph'), card=root.querySelector('#wq-card'), qrbox=root.querySelector('#wq-qr'), ssidlabel=root.querySelector('#wq-ssidlabel'), dl=root.querySelector('#wq-dl');
         sec.addEventListener('change',function(){ pwrap.style.display = sec.value==='nopass'?'none':''; });
@@ -3385,7 +3385,7 @@ QRGEN_TOOL = r'''    <section class="section" aria-label="QR code generator" id=
       <script>
       (function(){
         var root=document.getElementById('qg'); if(!root) return;
-        var LIB='https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js', libp=null;
+        var LIB='/js/vendor/qrcode-generator-1.4.4-qrcode.js?v=1', libp=null;
         var REVIEW='https://search.google.com/local/writereview?placeid=ChIJlTb8YRuic0gRCRczduB8OFI';
         var typ=root.querySelector('#qg-type'), main=root.querySelector('#qg-main'), mainLbl=root.querySelector('#qg-main-label');
         var extraWrap=root.querySelector('#qg-extra-wrap'), extra=root.querySelector('#qg-extra'), extraLbl=root.querySelector('#qg-extra-label');

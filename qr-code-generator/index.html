@@ -427,8 +427,8 @@
         s.src = src; s.async = true; s.onload = onload;
         document.head.appendChild(s);
       }
-      inject('https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js', function () {
-        inject('https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js', function () {
+      inject('/js/vendor/gsap-3.12.5-gsap.min.js?v=1', function () {
+        inject('/js/vendor/gsap-3.12.5-ScrollTrigger.min.js?v=1', function () {
           window.dispatchEvent(new Event('motion-ready'));
         });
       });
@@ -880,7 +880,7 @@
       <script>
       (function(){
         var root=document.getElementById('qg'); if(!root) return;
-        var LIB='https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js', libp=null;
+        var LIB='/js/vendor/qrcode-generator-1.4.4-qrcode.js?v=1', libp=null;
         var REVIEW='https://search.google.com/local/writereview?placeid=ChIJlTb8YRuic0gRCRczduB8OFI';
         var typ=root.querySelector('#qg-type'), main=root.querySelector('#qg-main'), mainLbl=root.querySelector('#qg-main-label');
         var extraWrap=root.querySelector('#qg-extra-wrap'), extra=root.querySelector('#qg-extra'), extraLbl=root.querySelector('#qg-extra-label');

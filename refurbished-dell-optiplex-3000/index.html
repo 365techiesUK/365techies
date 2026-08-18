@@ -479,8 +479,8 @@
         s.src = src; s.async = true; s.onload = onload;
         document.head.appendChild(s);
       }
-      inject('https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js', function () {
-        inject('https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js', function () {
+      inject('/js/vendor/gsap-3.12.5-gsap.min.js?v=1', function () {
+        inject('/js/vendor/gsap-3.12.5-ScrollTrigger.min.js?v=1', function () {
           window.dispatchEvent(new Event('motion-ready'));
         });
       });

@@ -87,7 +87,6 @@
   <!-- Resource hints -->
   <link rel="preconnect" href="https://fonts.bunny.net" />
   <link rel="preconnect" href="https://fonts.bunny.net" crossorigin />
-  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" fetchpriority="high" crossorigin />
   <link rel="preload" href="/fonts/clash-display-700.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
@@ -322,7 +321,7 @@
   </script>
 
   <script type="importmap">
-    { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js" } }
+    { "imports": { "three": "/js/vendor/three-0.165.0-three.module.js?v=1" } }
   </script>
   <script>
     /* Motion gate: GSAP + ScrollTrigger are DESKTOP-ONLY. Phones, tablets and
@@ -339,8 +338,8 @@
         s.src = src; s.async = true; s.onload = onload;
         document.head.appendChild(s);
       }
-      inject('https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js', function () {
-        inject('https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js', function () {
+      inject('/js/vendor/gsap-3.12.5-gsap.min.js?v=1', function () {
+        inject('/js/vendor/gsap-3.12.5-ScrollTrigger.min.js?v=1', function () {
           window.dispatchEvent(new Event('motion-ready'));
         });
       });

@@ -287,8 +287,8 @@
         s.src = src; s.async = true; s.onload = onload;
         document.head.appendChild(s);
       }
-      inject('https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js', function () {
-        inject('https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js', function () {
+      inject('/js/vendor/gsap-3.12.5-gsap.min.js?v=1', function () {
+        inject('/js/vendor/gsap-3.12.5-ScrollTrigger.min.js?v=1', function () {
           window.dispatchEvent(new Event('motion-ready'));
         });
       });
@@ -685,9 +685,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">portal build 18 Aug 2026 &middot; ec5fd64273</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">portal build 18 Aug 2026 &middot; e822281cca</p><script>
 (function () {
-  var P365BUILD = 'ec5fd64273';
+  var P365BUILD = 'e822281cca';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.

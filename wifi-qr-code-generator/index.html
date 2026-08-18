@@ -427,8 +427,8 @@
         s.src = src; s.async = true; s.onload = onload;
         document.head.appendChild(s);
       }
-      inject('https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js', function () {
-        inject('https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js', function () {
+      inject('/js/vendor/gsap-3.12.5-gsap.min.js?v=1', function () {
+        inject('/js/vendor/gsap-3.12.5-ScrollTrigger.min.js?v=1', function () {
           window.dispatchEvent(new Event('motion-ready'));
         });
       });
@@ -877,7 +877,7 @@
       <script>
       (function(){
         var root=document.getElementById('wq'); if(!root) return;
-        var LIB='https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js', libp=null;
+        var LIB='/js/vendor/qrcode-generator-1.4.4-qrcode.js?v=1', libp=null;
         var form=root.querySelector('#wq-form'), ssid=root.querySelector('#wq-ssid'), pass=root.querySelector('#wq-pass'), sec=root.querySelector('#wq-sec'), hid=root.querySelector('#wq-hidden'), pwrap=root.querySelector('#wq-pwrap');
         var ph=root.querySelector('#wq-ph'), card=root.querySelector('#wq-card'), qrbox=root.querySelector('#wq-qr'), ssidlabel=root.querySelector('#wq-ssidlabel'), dl=root.querySelector('#wq-dl');
         sec.addEventListener('change',function(){ pwrap.style.display = sec.value==='nopass'?'none':''; });
