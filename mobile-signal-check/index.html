@@ -906,6 +906,18 @@
           function load(){fetch(API+'&_='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){if(j&&j.ok){draw(j);map.invalidateSize();}}).catch(function(){});}
           load();setInterval(load,REFRESH);
           window.sckMapReload=load;
+          /* After YOUR reading: fly to your square and pulse it. The area name
+             on the card can legitimately repeat (OSM draws West Cliff as one
+             long polygon along the front), which made the owner think readings
+             were stuck when they were landing in different squares. Seeing
+             the square light up is the proof the name can't give. */
+          window.sckMapShowMine=function(lat,lon){
+            var cla=Math.round(lat*CELL_LAT)/CELL_LAT, clo=Math.round(lon*CELL_LON)/CELL_LON;
+            var h=0.5/CELL_LAT, w=0.5/CELL_LON;
+            var ring=L.rectangle([[cla-h,clo-w],[cla+h,clo+w]],{color:'#ffffff',weight:3,fill:false,className:'sck-pulse'}).addTo(map);
+            map.flyTo([cla,clo],Math.max(map.getZoom(),14),{duration:.9});
+            var n=0,t=setInterval(function(){ring.setStyle({opacity:(n++%2)?1:.25});if(n>7){clearInterval(t);map.removeLayer(ring);}},350);
+          };
           /* On phones this section is below the fold when Leaflet initialises,
              so it measures the container once, draws ONE 256px tile top-left,
              and never re-measures - the map looks black with squares floating on
@@ -961,6 +973,11 @@
         function copyText(t,m){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(function(){said(m);},function(){said('Press and hold to copy.');});}else{said('Press and hold to copy.');}}
         function showShare(dl,where){LAST={dl:dl,where:where};var w=word(dl);
           $('sck-card-dl').textContent=dl;$('sck-card-where').textContent=where?('in '+where):'in Bournemouth';
+          /* Same area name as your last test? Say so, so it doesn't read as stuck:
+             the map square underneath is what actually moved. */
+          try{var prev=sessionStorage.getItem('sck_last_where');
+            $('sck-card-where').title=(prev&&prev===where)?'Same area name as your last test - it covers a big patch. Your square on the map below is the precise spot.':'';
+            sessionStorage.setItem('sck_last_where',where||'');}catch(e){}
           var v=$('sck-card-verdict');v.textContent=w[0];v.style.color=w[1];
           var t=encodeURIComponent(shareText()),u=encodeURIComponent(shareUrl());
           $('sck-sh-wa').href='https://wa.me/?text='+t+'%20'+u;
@@ -1025,6 +1042,7 @@
               if(d!=null){$('sck-dl').textContent=d;$('sck-ms').textContent=ms;$('sck-net').textContent='—';$('sck-you').hidden=false;}return;}
             render(j);say('Recorded — thank you. Try again somewhere else later.','ok');
             if(window.sckMapReload)window.sckMapReload();   /* your square may just have appeared */
+            if(window.sckMapShowMine)setTimeout(function(){window.sckMapShowMine(c.latitude,c.longitude);},700);
             if(window.ttToolDone)window.ttToolDone('mobile-signal-check');
             /* challenge verdict, if they arrived via a shared link */
             if(window.SCK_VS){var vs=window.SCK_VS,mine=j.you.dl,el=$('sck-vs-txt');
