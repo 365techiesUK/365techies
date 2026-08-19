@@ -1146,6 +1146,49 @@ body.menu-open { overflow: hidden; }
 .review figcaption .mono { font-size: 0.78rem; }
 
 /* ==========================================================================
+   PROOF BAR - the rating rail that sits between the plans and How it works.
+   Built as a hairline-ruled single line, NOT from .reviews/.review, on purpose:
+   the card section lower down owns that look, and when this slot also used it
+   the page read as the review section twice (owner spotted it, 2026-08-19).
+   Keep them visually different or the twin problem comes straight back.
+   ========================================================================== */
+
+.proofbar { padding: 0 var(--pad-x); }
+.proofbar__inner {
+  display: flex; align-items: center; justify-content: center; flex-wrap: wrap;
+  gap: 1rem 2.6rem;
+  max-width: 1120px; margin: 0 auto;
+  padding: 1.5rem 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.proofbar__score { display: flex; align-items: center; gap: 0.7rem; flex: 0 0 auto; }
+.proofbar__num {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 2.15rem; line-height: 1; color: var(--gold);
+  font-variant-numeric: tabular-nums;
+}
+.proofbar__of { display: flex; flex-direction: column; gap: 0.3rem; }
+.proofbar__stars { color: var(--gold); letter-spacing: 0.16em; font-size: 0.78rem; line-height: 1; }
+.proofbar__of .mono { font-size: 0.72rem; line-height: 1; }
+.proofbar__quote { flex: 1 1 20rem; min-width: 0; margin: 0; text-align: left; }
+.proofbar__quote blockquote { font-size: 0.95rem; color: var(--ink-2); line-height: 1.55; }
+.proofbar__quote figcaption { margin-top: 0.35rem; }
+.proofbar__quote figcaption strong {
+  font-family: var(--font-mono); font-weight: 500;
+  font-size: 0.75rem; letter-spacing: 0.1em; color: var(--faint);
+}
+.proofbar__link.text-link { margin-top: 0; flex: 0 0 auto; }
+
+/* Stack early (980, not 767): between those widths the three parts wrap to a
+   ragged two lines with the link stranded alone. A tidy column beats that. */
+@media (max-width: 980px) {
+  .proofbar__inner { flex-direction: column; gap: 0.9rem; padding: 1.6rem 0; }
+  .proofbar__quote { flex: 0 1 auto; text-align: center; }
+  .proofbar__link.text-link { padding: 0.5rem 0.75rem; }  /* 28px text -> 44px tap target */
+}
+
+/* ==========================================================================
    FAQ
    ========================================================================== */
 
