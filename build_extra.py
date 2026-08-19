@@ -5124,6 +5124,25 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
           .sck__askbtns button{flex:1;min-width:150px;padding:.75rem 1rem;border-radius:12px;border:1px solid rgba(125,170,220,.35);
             background:#0b1020;color:#cfe0f5;font:700 .95rem/1 inherit;cursor:pointer}
           .sck__askbtns #sck-ask-yes{background:linear-gradient(135deg,#1d97e3,#3fb950);color:#061019;border:0}
+          /* Network chips. Replaces a native prompt() that fired mid-test:
+             iOS Safari suppresses prompts outside a user gesture, so most
+             readings arrived with no network at all, and to everyone else it
+             looked like a scam popup appearing during a measurement. */
+          .sck__net{margin:0 0 .9rem}
+          .sck__net>p{margin:0 0 .5rem;text-align:center;color:var(--muted,#9db3cf);font-size:.85rem}
+          .sck__chips{display:flex;flex-wrap:wrap;gap:.45rem;justify-content:center;margin:0;padding:0;list-style:none}
+          .sck__chips button{padding:.55rem .9rem;border-radius:999px;border:1px solid rgba(125,170,220,.3);
+            background:rgba(20,27,46,.55);color:#cfe0f5;font:600 .88rem/1 inherit;cursor:pointer;transition:border-color .2s,background .2s,color .2s}
+          .sck__chips button:hover{border-color:rgba(108,196,245,.6)}
+          .sck__chips button[aria-pressed="true"]{background:rgba(29,151,227,.9);border-color:transparent;color:#061019}
+          /* Two start buttons rather than one. The indoors/outdoors answer IS
+             the button, so the tap count is unchanged and the reading gains
+             the one piece of context that decides how to read it. */
+          .sck__gos{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin:0 0 .9rem}
+          @media (max-width:380px){.sck__gos{grid-template-columns:1fr}}
+          .sck__gos .sck__go{margin:0;padding:1.15rem .8rem;font-size:1.1rem}
+          .sck__gos .sck__go small{display:block;font:500 .72rem/1.25 inherit;opacity:.82;margin-top:.28rem}
+          .sck__go--in{background:linear-gradient(135deg,#2b4a72,#1d97e3);color:#eaf4ff}
           .sck__you{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin:0 0 .9rem}
           .sck__you div{background:rgba(20,27,46,.55);border:1px solid rgba(125,170,220,.18);border-radius:12px;padding:.8rem .6rem;text-align:center}
           .sck__you b{display:block;font-size:1.45rem;color:#e6edf3;font-variant-numeric:tabular-nums}
@@ -5155,7 +5174,23 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
           .sck__share-said{min-height:1.3em;text-align:center;font-size:.85rem;color:#3fb950;margin:.6rem 0 0}
         </style>
         <div class="sck">
-          <button type="button" class="sck__go" id="sck-go">Test my signal here</button>
+          <div class="sck__net">
+            <p>Which network is this phone on? <span style="opacity:.7">(optional &mdash; we remember it)</span></p>
+            <ul class="sck__chips" id="sck-nets">
+              <li><button type="button" aria-pressed="false" data-net="EE">EE</button></li>
+              <li><button type="button" aria-pressed="false" data-net="O2">O2</button></li>
+              <li><button type="button" aria-pressed="false" data-net="Three">Three</button></li>
+              <li><button type="button" aria-pressed="false" data-net="Vodafone">Vodafone</button></li>
+              <li><button type="button" aria-pressed="false" data-net="Sky">Sky</button></li>
+              <li><button type="button" aria-pressed="false" data-net="giffgaff">giffgaff</button></li>
+              <li><button type="button" aria-pressed="false" data-net="Tesco">Tesco</button></li>
+              <li><button type="button" aria-pressed="false" data-net="Other">Other</button></li>
+            </ul>
+          </div>
+          <div class="sck__gos">
+            <button type="button" class="sck__go" id="sck-go" data-place="out">I&rsquo;m outside<small>Test the network</small></button>
+            <button type="button" class="sck__go sck__go--in" id="sck-go-in" data-place="in">I&rsquo;m inside<small>Test through the walls</small></button>
+          </div>
           <p class="sck__st" id="sck-st" role="status" aria-live="polite">Mobile data only &mdash; turn WiFi off first. Takes about ten seconds.</p>
           <!-- Shown ONLY where the browser cannot tell us (iPhone/iPad Safari has
                no Network Information API). One tap, once per visit. -->
@@ -5368,9 +5403,29 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
           return one().then(one).then(one).then(function(){r.sort(function(a,b){return a-b;});return Math.round(r[1]);});}
         function dl(){var t=performance.now();return fetch(CF+'10000000&_='+Math.random(),{cache:'no-store'}).then(function(r){return r.arrayBuffer();})
           .then(function(b){var s=(performance.now()-t)/1000;return Math.round(b.byteLength*8/s/1e6*10)/10;});}
-        /* Network name: browsers do not expose the carrier. We ask the visitor
-           - it's their result and they know it. Optional; 'unknown' otherwise. */
-        function netName(){var n=(prompt('Which network is this phone on? (EE, O2, Three, Vodafone, giffgaff…)  Optional.')||'').trim();return n.slice(0,20);}
+        /* Network: browsers never expose the carrier, so we ask - it's their
+           result and they know it. This used to be a native prompt() fired in
+           the middle of the test, which was wrong twice over: iOS Safari
+           suppresses prompts raised outside a user gesture, so a lot of
+           readings arrived with no network at all, and to everyone else a
+           system dialog appearing mid-measurement looked like a scam popup.
+           Now it's chips, before the test, remembered between visits, and
+           entirely skippable. Still optional; still shown back to that user
+           only; still never a league table. */
+        var NET='';
+        try{NET=localStorage.getItem('sck_net')||'';}catch(e){}
+        function netName(){return NET.slice(0,20);}
+        (function(){
+          var box=$('sck-nets'); if(!box) return;
+          var bs=box.querySelectorAll('button');
+          function paint(){for(var i=0;i<bs.length;i++)bs[i].setAttribute('aria-pressed',bs[i].getAttribute('data-net')===NET?'true':'false');}
+          for(var i=0;i<bs.length;i++)bs[i].addEventListener('click',function(){
+            var v=this.getAttribute('data-net');
+            NET=(NET===v)?'':v;              /* tapping the chosen one clears it */
+            try{NET?localStorage.setItem('sck_net',NET):localStorage.removeItem('sck_net');}catch(e){}
+            paint();});
+          paint();
+        })();
         function word(d){return d>=25?['Great for working','#3fb950']:(d>=10?['Fine for calls and email','#d29922']:['Struggles','#f85149']);}
 
         /* ---- share layer ------------------------------------------------
@@ -5405,10 +5460,12 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
           var nat=$('sck-sh-native');if(navigator.share){nat.hidden=false;}
           $('sck-share').hidden=false;}
         $('sck-ask-yes').addEventListener('click',function(){
-          window.__sckConfirmedMobile=true; $('sck-ask').hidden=true; $('sck-go').click();});
+          /* resume with the indoors/outdoors answer they already gave, rather
+             than bouncing them back to the buttons to choose it twice */
+          window.__sckConfirmedMobile=true; $('sck-ask').hidden=true; window.__sckResume();});
         $('sck-ask-no').addEventListener('click',function(){
           $('sck-ask').hidden=true;
-          say('No problem — turn WiFi off in Settings, then tap Test my signal again.','warn');});
+          say('No problem — turn WiFi off in Settings, then tap the button again.','warn');});
         $('sck-sh-native').addEventListener('click',function(){if(!LAST)return;navigator.share({title:'My mobile signal',text:shareText(),url:shareUrl()})['catch'](function(){});});
         $('sck-sh-copy').addEventListener('click',function(){if(!LAST)return;copyText(shareText()+' '+shareUrl(),'Copied — paste it anywhere.');});
         /* "Save picture": draw the card to a canvas and hand over a PNG. Done
@@ -5456,10 +5513,21 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
              signal, or is it this building? Offering it after a fast result
              would just be an advert. */
           if(j.you.dl<10){b.innerHTML+='<p class="sck__small" style="margin-top:.9rem;padding-top:.8rem;border-top:1px solid rgba(125,170,220,.18)">'+
-            'Indoors, a slow reading is often the <em>building</em> rather than the network &mdash; thick walls, foil-backed insulation, a phone three rooms from anything. '+
-            'If this is your home or office, our free <a href="/wifi-signal-test/">room-by-room WiFi survey</a> tells you which it is.</p>';}
+            (PLACE==='in'
+              ? 'You told us you&rsquo;re indoors, and that matters: a slow reading through thick walls, foil-backed insulation or from three rooms away is the <em>building</em>, not the network. Worth stepping outside and testing again &mdash; if it jumps, you&rsquo;ve found your answer. If this is your home or office, our free <a href="/wifi-signal-test/">room-by-room WiFi survey</a> maps it properly.'
+              : 'A slow reading outdoors is more likely to be the network itself &mdash; which is exactly what this map is for. If you get this indoors too, our free <a href="/wifi-signal-test/">room-by-room WiFi survey</a> tells you whether it&rsquo;s the building.')+'</p>';}
           $('sck-cmp').hidden=false;}
-        go.addEventListener('click',function(){
+        /* PLACE holds the answer to indoors-or-outdoors, which the visitor gives
+           by choosing which start button to press - no extra tap, and the one
+           piece of context that decides whether a slow reading indicts the
+           network or the building. */
+        var goIn=$('sck-go-in'), PLACE='';
+        function busy(b){go.disabled=b;if(goIn)goIn.disabled=b;}
+        function start(place){
+          PLACE=place;
+          /* if the WiFi question interrupts us, this is how we come back in
+             without making them pick indoors/outdoors a second time */
+          window.__sckResume=function(){start(place);};
           var cs=connState();
           if(cs==='wifi'){say('You’re on WiFi — turn it off so we measure your mobile data, not a router.','bad');return;}
           if(cs==='unknown'&&!window.__sckConfirmedMobile){
@@ -5469,14 +5537,18 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
             $('sck-ask').scrollIntoView({block:'center',behavior:'smooth'});
             return;
           }
-          go.disabled=true;$('sck-you').hidden=true;$('sck-cmp').hidden=true;
+          busy(true);$('sck-you').hidden=true;$('sck-cmp').hidden=true;
           var c,ms,d;
           say('Finding where you are…');
           pos().then(function(x){c=x;say('Measuring ping…');return ping();})
           .then(function(m){ms=m;say('Downloading 10 MB — stay put…');return dl();})
           .then(function(x){d=x;var net=netName();say('Comparing with your area…');
+            /* accuracy travels with the fix: the server refuses the fine
+               coastal grid to a position too vague to deserve it. */
             return fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},
-              body:JSON.stringify({dl:d,latency:ms,lat:c.latitude,lon:c.longitude,net:net,conn:'cellular',conn_src:(connState()==='cellular'?'detected':'confirmed')})});})
+              body:JSON.stringify({dl:d,latency:ms,lat:c.latitude,lon:c.longitude,
+                acc:(c.accuracy!=null?Math.round(c.accuracy):null),net:net,place:PLACE,
+                conn:'cellular',conn_src:(connState()==='cellular'?'detected':'confirmed')})});})
           .then(function(r){return r.json();})
           .then(function(j){if(!j.ok){say(j.error||'Could not record that reading.','warn');
               if(d!=null){$('sck-dl').textContent=d;$('sck-ms').textContent=ms;$('sck-net').textContent='—';$('sck-you').hidden=false;}return;}
@@ -5501,8 +5573,10 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
               n.innerHTML='<b>Recorded — thank you.</b> The map on this page only shows Bournemouth, Christchurch and Poole, so you won&rsquo;t see your square there — but your reading counts, your comparison is against your own area, and you can still share it and challenge people wherever they are.';
               $('sck-cmp').parentNode.insertBefore(n,$('sck-share'));}})
           .catch(function(e){say(e.message||String(e),'bad');})
-          .then(function(){go.disabled=false;});
-        });
+          .then(function(){busy(false);});
+        }
+        go.addEventListener('click',function(){start('out');});
+        if(goIn)goIn.addEventListener('click',function(){start('in');});
       })();
       </script>
     </section>'''
@@ -5512,7 +5586,9 @@ def mobile_signal_check():
     desc = "Test your phone's real mobile data speed right where you're standing, then see how it compares with other readings from your part of Bournemouth, Christchurch and Poole. Free, ten seconds, no sign-up."
     faqs = [
       ("Why do I have to turn WiFi off?", "Because otherwise you&rsquo;d be measuring the router you&rsquo;re connected to, not your phone&rsquo;s mobile signal. The test refuses to run on WiFi for exactly that reason."),
-      ("Where does my reading go?", "It&rsquo;s kept as part of an area &mdash; never your exact spot &mdash; with the speed, the time of day and the network you told us. Inland that area is ~500&nbsp;m, so it can never point at a home. On the beaches, piers and promenade, where nobody lives, it&rsquo;s ~140&nbsp;m, because the signal there really does change from the end of the pier to the big wheel and we&rsquo;d rather the map showed it. Nothing that identifies you. It goes into a pool that only ever compares <em>you</em> against <em>your area</em>."),
+      ("Where does my reading go?", "It&rsquo;s kept as part of an area &mdash; never your exact spot &mdash; with the speed, the time of day, whether you were indoors or out, and the network you told us. Inland that area is ~500&nbsp;m, so it can never point at a home. On the beaches, piers and promenade, where nobody lives, it&rsquo;s ~140&nbsp;m, because the signal there really does change from the end of the pier to the big wheel and we&rsquo;d rather the map showed it. Nothing that identifies you. It goes into a pool that only ever compares <em>you</em> against <em>your area</em>."),
+      ("Do you record whether I&rsquo;m indoors, or what&rsquo;s blocking the signal?", "Indoors or outdoors, yes &mdash; you tell us with the button you press, and it&rsquo;s the single most useful thing you can add. A slow reading through thick walls or foil-backed insulation says more about the building than about the network, and without knowing which, the two look identical on a map. Whether something is <em>blocking the line of sight</em> to the mast, we genuinely can&rsquo;t tell &mdash; and neither can any other web page, because you&rsquo;d need to know where the mast is, and almost nobody does. The indoors/outdoors answer is the honest version of that question. We also record how good your phone says its GPS fix is, so a vague position isn&rsquo;t placed on the map more precisely than it deserves."),
+      ("Can you tell how many other people are using the same signal?", "No, and it&rsquo;s worth explaining why, because it&rsquo;s a fair question. On your home broadband, &lsquo;how many devices are sharing it&rsquo; is a real and often decisive question. On mobile it&rsquo;s different: your phone usually has that connection to itself, and the sharing happens up at the mast, between you and everyone around you. Nothing on the handset can see that. What we do record is the <em>time of day</em>, because that&rsquo;s what actually moves it &mdash; the same spot can be excellent at 9am and painful at 6pm on the seafront in August. For home and business lines, our <a href=\"/broadband-compare/\">broadband compare</a> does ask about the size of the household or team."),
       ("Do you rank the networks against each other?", "No, and we won&rsquo;t. We show you your own network because it&rsquo;s your result. We don&rsquo;t publish network league tables &mdash; every network has good and bad patches, and one phone on one day can&rsquo;t settle that fairly."),
       ("How is this different from the campervan map?", "The <a href=\"/van-signal-map/\">van map</a> is one instrument &mdash; a roof-mounted router on one network &mdash; measured the same way every time, which is what makes its ranked places citable. This page is everyone&rsquo;s phones. Different data, kept separate on purpose."),
       ("Why does it say &lsquo;not enough readings yet&rsquo;?", "Two people isn&rsquo;t &lsquo;typical for your area&rsquo; &mdash; it&rsquo;s two people. We only show a comparison once an area has eight or more readings, so early on you might be one of the first. That&rsquo;s the point of adding yours."),

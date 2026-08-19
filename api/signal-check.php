@@ -2,8 +2,8 @@
 /**
  * api/signal-check.php - store for the PUBLIC mobile signal check.
  *
- *   POST  {dl, latency, lat, lon, net, conn}   → record one reading
- *   GET   ?cell=<lat>,<lon>                    → "how does my area compare"
+ *   POST  {dl, latency, lat, lon, acc, net, place, conn}  → record one reading
+ *   GET   ?cell=<lat>,<lon>[&acc=<m>]                     → "how does my area compare"
  *
  * ⚠️ THIS IS NOT THE VAN DATASET AND MUST NEVER TOUCH IT.
  * The van map (signal-log.php) is one instrument, one method, one network -
@@ -18,8 +18,14 @@
  *    only; the phone's real coordinates are discarded on arrival. Cells are
  *    ~500 m inland and ~140 m in the coastal band (see TWO GRIDS below) - the
  *    fine grid applies only where nobody lives.
- *  - the network name the phone reported (shown back to THAT user - it is
- *    their result), an hour bucket, and download / latency.
+ *  - the network the visitor told us (shown back to THAT user - it is their
+ *    result), an hour bucket, and download / latency.
+ *  - whether they were indoors or outdoors, which they tell us by which start
+ *    button they press. Costs no extra tap and is the difference between "the
+ *    network is poor here" and "this building is poor here".
+ *  - the accuracy BAND of the position fix, never the metres. See the ACCURACY
+ *    GATE below: a fix too vague for a cell is refused the fine grid, or
+ *    refused outright.
  *  - NOT: IP address, user agent, any id, any name. Rate limiting uses a
  *    salted, truncated hash of the IP that is thrown away with the day.
  *
@@ -65,6 +71,25 @@ const KEEP_DAYS   = 400;      // a year of seasons, then roll off
 const COAST_CELL_LAT = 800;   // ~140 m
 const COAST_CELL_LON = 500;
 const COAST_MIN      = 5;     // still not one phone's opinion; reachable
+
+// ── LOCATION ACCURACY GATE (2026-08-19) ────────────────────────────────────
+// A phone reports how good its position fix is, and it varies enormously: a
+// clear outdoor GPS lock is 5-20 m, while an indoor fix computed from WiFi and
+// cell towers is routinely 40-150 m. Until now we binned both with equal
+// confidence - so a +/-200 m fix could be dropped into a 140 m coastal cell as
+// firmly as a +/-8 m one. On the fine grid that is not a rounding error, it is
+// the wrong square, and the fine grid is precisely where we invited people to
+// read a difference between one end of the pier and the other.
+// So precision now has to be earned:
+//   no fix better than COAST_MAX_ACC_M  -> the fine coastal grid is refused and
+//                                          the reading falls back to 500 m
+//   no fix better than MAX_ACC_M        -> the reading is refused outright; it
+//                                          cannot be attributed to any cell
+// Missing accuracy (an older cached client that does not send it) is treated
+// as unknown and denied the fine grid. Conservative on purpose: we would
+// rather under-claim precision than publish a square that is not where it says.
+const MAX_ACC_M       = 1000;
+const COAST_MAX_ACC_M = 50;
 const COAST_BAND = [          // [lat, lon] ring, seaward W->E then inland E->W
     [50.6770,-1.9460],[50.6830,-1.9440],[50.6900,-1.9380],[50.6960,-1.9250],[50.7020,-1.9120],
     [50.7080,-1.8980],[50.7120,-1.8870],[50.7155,-1.8770],[50.7170,-1.8660],[50.7190,-1.8520],
@@ -111,9 +136,11 @@ function jsave(string $f, array $d): void {
     if (file_put_contents($tmp, json_encode($d), LOCK_EX) !== false) @rename($tmp, $f);
 }
 /** Cell centre for a coordinate. Returns [lat, lon, grid] where grid is
- *  'c' (coastal, fine) or 'i' (inland, coarse). The two grids never mix. */
-function cell_of(float $lat, float $lon): array {
-    if (is_coastal($lat, $lon)) {
+ *  'c' (coastal, fine) or 'i' (inland, coarse). The two grids never mix.
+ *  $acc is the phone's reported accuracy in metres, or null if unknown; the
+ *  fine coastal grid is granted only to a fix good enough to deserve it. */
+function cell_of(float $lat, float $lon, ?float $acc = null): array {
+    if ($acc !== null && $acc <= COAST_MAX_ACC_M && is_coastal($lat, $lon)) {
         return [round(round($lat * COAST_CELL_LAT) / COAST_CELL_LAT, 4),
                 round(round($lon * COAST_CELL_LON) / COAST_CELL_LON, 4), 'c'];
     }
@@ -219,7 +246,10 @@ if ($method === 'GET') {
     [$la, $lo] = array_map('floatval', explode(',', $_GET['cell']) + [0, 0]);
     if (!$la || !$lo) { echo json_encode(['ok' => false, 'error' => 'bad cell']); exit; }
     $rows = jload(DATA_FILE);
-    echo json_encode(compare_for($rows, cell_of($la, $lo)));
+    // Resolve the same cell the POST would have, accuracy and all - otherwise a
+    // coastal visitor is compared against a square their reading never went in.
+    $ga = num($_GET['acc'] ?? null, 0.0, 100000.0);
+    echo json_encode(compare_for($rows, cell_of($la, $lo, $ga)));
     exit;
 }
 
@@ -238,6 +268,19 @@ if ($method === 'POST') {
     if ($dl === null || $lat === null || $lon === null) {
         echo json_encode(['ok' => false, 'error' => 'reading out of range']); exit;
     }
+    // How good the position fix is, in metres. Null when the client did not
+    // send it (an older cached build) - that is 'unknown', not 'perfect'.
+    $acc = num($in['acc'] ?? null, 0.0, 100000.0);
+    if ($acc !== null && $acc > MAX_ACC_M) {
+        echo json_encode(['ok' => false, 'error' => 'we could not pin down where you are well enough to use that reading - try again outside, or once your phone has a better fix']); exit;
+    }
+    // Indoors or outdoors. Asked as the start button itself, so it costs no
+    // extra tap. This is the single biggest confounder in the whole dataset:
+    // a slow reading through thick walls is the BUILDING, not the network, and
+    // without this the two are indistinguishable. Stored per reading so the
+    // headline figures can honestly say "outdoor readings only". '' = not asked
+    // (an older client), and must never be silently counted as either.
+    $place = in_array($in['place'] ?? '', ['in', 'out'], true) ? $in['place'] : '';
     // network name: short, printable, no markup. Shown back to the user only.
     $net = preg_replace('/[^A-Za-z0-9 +&\-]/', '', substr((string)($in['net'] ?? ''), 0, 20));
     if ($net === '') $net = 'unknown';
@@ -252,7 +295,7 @@ if ($method === 'POST') {
     if (isset($rate['ip'][$who]) && ($now - $rate['ip'][$who]) < RATE_S) {
         echo json_encode(['ok' => false, 'error' => 'one reading per 5 minutes']); exit;
     }
-    [$cla, $clo, $grid] = cell_of($lat, $lon);
+    [$cla, $clo, $grid] = cell_of($lat, $lon, $acc);
     $ck = "$grid:$cla,$clo";
     if (($rate['cell'][$ck] ?? 0) >= CELL_DAY_MAX) {
         echo json_encode(['ok' => false, 'error' => 'this area has enough readings for today']); exit;
@@ -268,9 +311,13 @@ if ($method === 'POST') {
     // Information API). Kept so a doubtful reading can be traced later, and so
     // we could weight or exclude confirmed-only rows if they ever look wrong.
     $csrc = (($in['conn_src'] ?? '') === 'detected') ? 'd' : 'c';
+    // 'ac' is the accuracy BAND, not the raw metres: a precise accuracy figure
+    // published alongside a cell centre would help narrow down where someone
+    // actually stood, which is the one thing the cell exists to prevent.
+    $accb = $acc === null ? null : ($acc <= 15 ? 'a' : ($acc <= 50 ? 'b' : ($acc <= 200 ? 'c' : 'd')));
     $rows[] = ['t' => $now, 'cla' => $cla, 'clo' => $clo, 'g' => $grid, 'cs' => $csrc, 'dl' => round($dl, 1),
                'ms' => $ms !== null ? (int)round($ms) : null,
-               'net' => $net, 'h' => (int)gmdate('G', $now)];
+               'net' => $net, 'p' => $place, 'ac' => $accb, 'h' => (int)gmdate('G', $now)];
     // roll off old rows, cap size
     $cut = $now - KEEP_DAYS * 86400;
     $rows = array_values(array_filter($rows, fn($r) => ($r['t'] ?? 0) > $cut));
