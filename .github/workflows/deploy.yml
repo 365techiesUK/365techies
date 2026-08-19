@@ -36,7 +36,11 @@ jobs:
     runs-on: ubuntu-latest
     # Three upload attempts plus backoff can outlast 20 minutes on a slow full
     # sync, and a timeout kill mid-upload is the worst outcome available.
-    timeout-minutes: 30
+    # 45, not 30: a CSSV bump rewrites every page, and that 707-file sync took
+    # ~28 minutes on 2026-08-19 - the runner then killed the job mid-install and
+    # the header smoke test never ran. A skipped guard is the bug it guards
+    # against, so the budget has to cover a full-site sync plus the smoke test.
+    timeout-minutes: 45
     # ONE copy of the exclude list. It was duplicated per attempt, and a third
     # copy would have made drift near-certain - a list that silently loses
     # "**/*.py" uploads our source to the live web root.
@@ -86,6 +90,27 @@ jobs:
       # live-site verify, leaving a bare red X and an unchanged live site.
       # continue-on-error keeps the job alive so the gate below is the ONE place
       # that decides pass/fail.
+      # Installed BEFORE the upload on purpose. It does not depend on the deploy,
+      # and when it sat after a slow full sync the job timed out mid-install and the
+      # smoke test below was skipped without anyone noticing.
+
+      - name: Install headless Chromium for the smoke test
+        if: ${{ !(inputs.dry_run || false) }}
+        id: chromium
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -x
+          # Install OUTSIDE the checkout (the repo's own package.json/npmrc would otherwise
+          # shape the install), and stay verbose: a tolerant step must still say WHY it fails.
+          d="$RUNNER_TEMP/smoke"; mkdir -p "$d" && cd "$d"
+          npm init -y
+          npm i --no-audit --no-fund playwright@1.47.2
+          # --with-deps needs root for apt on the runner
+          sudo -E npx playwright install --with-deps chromium
+          echo "SMOKE_DIR=$d" >> "$GITHUB_ENV"
+          echo "installed"
+
       - name: Deploy via FTPS (attempt 1)
         id: ftps1
         continue-on-error: true
@@ -238,22 +263,6 @@ jobs:
       # It also re-checks the SOS button stays on screen. Runs only when a deploy actually
       # happened (the FTPS gate above passed). Browser install is separate + tolerant so a
       # CDN hiccup reads as "smoke skipped", not "site broken".
-      - name: Install headless Chromium for the smoke test
-        if: ${{ !(inputs.dry_run || false) }}
-        id: chromium
-        continue-on-error: true
-        shell: bash
-        run: |
-          set -x
-          # Install OUTSIDE the checkout (the repo's own package.json/npmrc would otherwise
-          # shape the install), and stay verbose: a tolerant step must still say WHY it fails.
-          d="$RUNNER_TEMP/smoke"; mkdir -p "$d" && cd "$d"
-          npm init -y
-          npm i --no-audit --no-fund playwright@1.47.2
-          # --with-deps needs root for apt on the runner
-          sudo -E npx playwright install --with-deps chromium
-          echo "SMOKE_DIR=$d" >> "$GITHUB_ENV"
-          echo "installed"
 
       - name: Header smoke test (dropdowns open, SOS on screen)
         if: ${{ !(inputs.dry_run || false) && steps.chromium.outcome == 'success' }}
