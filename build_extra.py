@@ -5131,7 +5131,9 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
           .sck__net{margin:0 0 .9rem}
           .sck__net>p{margin:0 0 .5rem;text-align:center;color:var(--muted,#9db3cf);font-size:.85rem}
           .sck__chips{display:flex;flex-wrap:wrap;gap:.45rem;justify-content:center;margin:0;padding:0;list-style:none}
-          .sck__chips button{padding:.55rem .9rem;border-radius:999px;border:1px solid rgba(125,170,220,.3);
+          /* >=44px tall: these are thumb targets on a phone-first page, and at
+             .55rem padding they measured 35.7px on a 375px viewport. */
+          .sck__chips button{padding:.8rem .95rem;min-height:44px;border-radius:999px;border:1px solid rgba(125,170,220,.3);
             background:rgba(20,27,46,.55);color:#cfe0f5;font:600 .88rem/1 inherit;cursor:pointer;transition:border-color .2s,background .2s,color .2s}
           .sck__chips button:hover{border-color:rgba(108,196,245,.6)}
           .sck__chips button[aria-pressed="true"]{background:rgba(29,151,227,.9);border-color:transparent;color:#061019}
