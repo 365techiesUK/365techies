@@ -2995,8 +2995,12 @@ TOOLS = {
 }
 
 # 365 PC Manager launch state - the ONE switch. build_extra.py reads it for the landing
-# page; tool_cards() reads it for the hub cards. Flipped True 2026-08-18 when v18 shipped
-# code-signed ("365 Techies Ltd", Azure Artifact Signing) at downloads/pcm/pcm-v18.exe.
+# page; tool_cards() reads it for the hub cards. Flipped True 2026-08-18 when the first
+# code-signed build ("365 Techies Ltd", Azure Artifact Signing) shipped.
+# NOTE: which build the page offers is NOT set here - build_extra.py derives it from
+# downloads/pcm/version.json, the same manifest the app self-updates from. Do not
+# reintroduce a hardcoded version anywhere; that drift shipped v18 to new customers
+# while the existing fleet was already on v20 (2026-08-19).
 PCM_LIVE = True
 PCM_SOON = not PCM_LIVE
 def tool_cards(keys):

@@ -4,6 +4,9 @@ Imports shared chrome/helpers from build_pages and build_local, appends pages, w
 Run: python build_extra.py
 """
 import re
+import io
+import os as _os_pcm
+import json as _json_pcm
 import build_pages as bp
 import build_local  # registers the 12 local/customer pages on import
 from reviews_data import REVIEWS, BY_NAME, pick   # one source of truth - must
@@ -348,7 +351,23 @@ book_service()
 # ---- 365 PC Manager - free download landing page ----
 # Owner supplies the hosted (ideally code-signed) .exe URL. Until then the page
 # routes to "ask us to install it" rather than showing a dead download button.
-PCM_DOWNLOAD_URL = "https://365techies.co.uk/downloads/pcm/pcm-v18.exe"   # LIVE 2026-08-18: v18, code-signed "365 Techies Ltd" (Azure Artifact Signing). Same file the app's self-updater serves; version.json holds its sha256.
+# ⚠️ ONE source: downloads/pcm/version.json is the manifest the app's OWN
+# self-updater reads, so deriving from it guarantees the page offers exactly what
+# the fleet is being updated to. This was hardcoded to pcm-v18.exe and silently
+# drifted the moment v20 shipped - every existing machine auto-updated to v20
+# while this page kept handing NEW customers v18. Never retype the version here.
+_pcm_dir = _os_pcm.path.join(bp.BASE, "downloads", "pcm")
+with io.open(_os_pcm.path.join(_pcm_dir, "version.json"), encoding="utf-8") as _f:
+    _PCM_MANIFEST = _json_pcm.load(_f)
+PCM_DOWNLOAD_URL = _PCM_MANIFEST["url"]
+PCM_VERSION = _PCM_MANIFEST["version"]
+# A manifest pointing at a file we do not actually ship would put a 404 behind
+# the download button, which looks exactly like a broken/blocked installer.
+_pcm_exe = _os_pcm.path.join(_pcm_dir, PCM_DOWNLOAD_URL.rsplit("/", 1)[-1])
+if not _os_pcm.path.exists(_pcm_exe):
+    raise SystemExit(
+        "\n*** PC Manager: version.json points at %s but that file is not in\n"
+        "    downloads/pcm/. The download button would 404. ***\n" % PCM_DOWNLOAD_URL)
 PCM_LIVE = bp.PCM_LIVE and bool(PCM_DOWNLOAD_URL)   # the switch lives in build_pages.PCM_LIVE (one truth for cards + page); the URL must also be set. Everything "coming soon"/waitlist on this page keys off this.
 
 def pcm_landing():
