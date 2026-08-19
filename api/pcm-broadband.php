@@ -158,10 +158,15 @@ if ($action === 'save') {
     $machines = isset($c['machines']) && is_array($c['machines']) ? $c['machines'] : array();
     if (!isset($machines[$machine])) out(array('ok'=>false,'error'=>'activate_first'));
 
+    // null (or a missing key) means the app could not measure that leg - a real thing that
+    // happens on a stalling 5G link. Store it as null, NEVER as 0: a fabricated zero would
+    // poison both the customer's trend and the district medians, and reads as "it's broken".
     $down = isset($in['down']) ? floatval($in['down']) : -1;
-    $up   = isset($in['up'])   ? floatval($in['up'])   : -1;
-    $ping = isset($in['ping']) ? floatval($in['ping']) : -1;
-    if ($down < 0 || $down > 20000 || $up < 0 || $up > 20000 || $ping < 0 || $ping > 5000) out(array('ok'=>false,'error'=>'bad_reading'));
+    $up   = (isset($in['up'])   && $in['up']   !== null) ? floatval($in['up'])   : null;
+    $ping = (isset($in['ping']) && $in['ping'] !== null) ? floatval($in['ping']) : null;
+    if ($down < 0 || $down > 20000) out(array('ok'=>false,'error'=>'bad_reading'));
+    if ($up !== null && ($up < 0 || $up > 20000)) out(array('ok'=>false,'error'=>'bad_reading'));
+    if ($ping !== null && ($ping < 0 || $ping > 5000)) out(array('ok'=>false,'error'=>'bad_reading'));
     $wired = !empty($in['wired']) ? 1 : 0;
     $isp = norm_isp(isset($in['isp']) ? $in['isp'] : '');
     $ispAuto = norm_isp(isset($in['isp_auto']) ? $in['isp_auto'] : '');
@@ -178,11 +183,11 @@ if ($action === 'save') {
     // one reading per machine per 10 minutes: a re-run replaces, it doesn't pile up
     $last = count($rows) ? $rows[count($rows)-1] : null;
     if ($last && $last['m'] === substr($machine, 0, 8) && intval($last['ts']) > time() - 600) array_pop($rows);
-    $rows[] = array('t'=>gmdate('Y-m-d H:i'), 'ts'=>time(), 'm'=>substr($machine, 0, 8), 'down'=>round($down, 1), 'up'=>round($up, 1), 'ping'=>round($ping), 'wired'=>$wired, 'isp'=>$isp, 'isp_auto'=>$ispAuto, 'ipv'=>$ipv, 'ow'=>$ow, 'note'=>$note);
+    $rows[] = array('t'=>gmdate('Y-m-d H:i'), 'ts'=>time(), 'm'=>substr($machine, 0, 8), 'down'=>round($down, 1), 'up'=>($up === null ? null : round($up, 1)), 'ping'=>($ping === null ? null : round($ping)), 'wired'=>$wired, 'isp'=>$isp, 'isp_auto'=>$ispAuto, 'ipv'=>$ipv, 'ow'=>$ow, 'note'=>$note);
     while (count($rows) > $KEEP) array_shift($rows);
     bb_save($c['bb']['id'], $rows);
     // compact 'latest' in the hot record for the portal overview + the technician
-    $c['bb']['latest'] = array('t'=>gmdate('Y-m-d H:i'), 'down'=>round($down, 1), 'up'=>round($up, 1), 'ping'=>round($ping), 'wired'=>$wired, 'isp'=>$isp);
+    $c['bb']['latest'] = array('t'=>gmdate('Y-m-d H:i'), 'down'=>round($down, 1), 'up'=>($up === null ? null : round($up, 1)), 'ping'=>($ping === null ? null : round($ping)), 'wired'=>$wired, 'isp'=>$isp);
     $c['bb']['n'] = count($rows);
     save_db($DATA, $db);
     if ($db_lock) @flock($db_lock, LOCK_UN);
