@@ -1,7 +1,7 @@
 {
-  "ver": 18,
-  "version": "1.0.18",
-  "url": "https://365techies.co.uk/downloads/pcm/pcm-v18.exe",
-  "sha256": "63c91cce8850bb2dfc62e70f5a97cdc258d18e503e0277bf3664d8500b7026b9",
-  "notes": "Now digitally signed by 365 Techies Ltd, so Windows and antivirus recognise it as ours. Plus a leaner, faster app: fewer permission prompts, DNS refresh without a command window, and small fixes throughout."
+  "ver": 20,
+  "version": "1.0.20",
+  "url": "https://365techies.co.uk/downloads/pcm/pcm-v20.exe",
+  "sha256": "4ab775891e3f300fe96fe3ce84c4d5db228afbd2c0eef9ed8b7d8022088ea9cb",
+  "notes": "New: a broadband speed test in the Service tab, so we can see how your line is really performing and compare it with your last visit. Signed by 365 Techies Ltd. Plus a leaner, faster app with fewer permission prompts and small fixes throughout."
 }
