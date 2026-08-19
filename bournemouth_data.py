@@ -50,6 +50,28 @@ FRIDAYS = [
     ("2026-08-28", "Friday 28 August"),
 ]
 
+# Displays the ORGANISERS have called off. date -> short public reason.
+# ⚠️ This is the safety switch for the whole page: a date listed here is struck
+# from the table, skipped by the "is it on tonight?" panel, and can never be
+# announced as going ahead. Cancelling is BCP Council's call and ours only to
+# report - so add a date here the moment it is announced, and remove it only if
+# the organisers reinstate it. Getting this wrong in the ON direction sends
+# families to a dark beach with children at 10pm; wrong in the OFF direction
+# only costs a display someone could have seen. Bias to OFF.
+#   2026-08-14: cancelled after the Government's national wildfire emergency
+#   alert (14 Aug 2026), which asked landowners to stop "any activity with the
+#   potential to start a fire, including fireworks"; Christchurch Carnival's
+#   display went the same way. BCP: "whilst the fireworks are launched from sea,
+#   the safety of residents, visitors, and our open spaces must come first."
+#   2026-08-21 / 2026-08-28: the organisers have since called off the rest of
+#   the season (reported to us 19 Aug 2026; no reinstatement announced).
+CANCELLED = {
+    "2026-08-14": "cancelled &mdash; national wildfire emergency alert",
+    "2026-08-21": "cancelled &mdash; wildfire risk",
+    "2026-08-28": "cancelled &mdash; wildfire risk",
+}
+CANCELLED_UPDATED = "19 August 2026"
+
 _LAT, _LON = 50.7166, -1.8757   # Bournemouth Pier root, per the game's coast research
 
 
@@ -86,15 +108,16 @@ _SLUG = "bournemouth/fireworks"
 _URL = SITE + "/" + _SLUG + "/"
 
 # ---- the "is it on tonight?" panel (client-side date arithmetic only) --------
-_JS_DATES = ",".join('["%s","%s"]' % (d, lbl) for d, lbl in FRIDAYS)
+_JS_DATES = ",".join('["%s","%s",%s]' % (d, lbl, "1" if d in CANCELLED else "0") for d, lbl in FRIDAYS)
+_JS_ANY_ON = "1" if any(d not in CANCELLED for d, _ in FRIDAYS) else "0"
 
 _STATUS = f'''    <section class="section b365 b365--dusk" id="tonight" aria-label="Next fireworks display">
       <div class="wrap">
         <div class="tile-grid" data-stagger style="grid-template-columns:1fr">
           <div class="b365-tile b365-tile--dusk" id="bmfw-tile">
-            <p class="b365-state" id="bmfw-state">FRIDAY FIREWORKS &middot; 2026</p>
-            <h3 id="bmfw-head">Fireworks every Friday at 10pm until 28 August 2026</h3>
-            <p id="bmfw-sub">Free, from the seafront just east of Bournemouth Pier. This panel needs JavaScript to count down to the next display &mdash; the full date list is just below.</p>
+            <p class="b365-state off" id="bmfw-state">CANCELLED &middot; 2026 SEASON ENDED EARLY</p>
+            <h3 id="bmfw-head">The remaining Friday fireworks have been cancelled</h3>
+            <p id="bmfw-sub">The organisers called off the 14 August display after the Government&rsquo;s national wildfire emergency alert, and the rest of the season has since been cancelled too. Please don&rsquo;t travel down expecting a display &mdash; the dates below are struck through. Last checked {CANCELLED_UPDATED}.</p>
             <p class="b365-sub" id="bmfw-live"></p>
           </div>
         </div>
@@ -102,7 +125,7 @@ _STATUS = f'''    <section class="section b365 b365--dusk" id="tonight" aria-lab
       </div>
       <script>
       (function () {{
-        var F = [{_JS_DATES}];
+        var F = [{_JS_DATES}], ANY_ON = '{_JS_ANY_ON}', UPDATED = '{CANCELLED_UPDATED}';
         // This script sits ABOVE the dates table in the DOM, so it must wait
         // for the document - striking the past rows needs them to exist.
         function run() {{
@@ -110,14 +133,32 @@ _STATUS = f'''    <section class="section b365 b365--dusk" id="tonight" aria-lab
         if (!head || !sub) return;
         var now = new Date();
         var next = null;
+        var cancelledTonight = null;
         for (var i = 0; i < F.length; i++) {{
           var p = F[i][0].split('-');
+          if (F[i][2]) {{   // CANCELLED: never "next"; only noted if it is today
+            var cd = new Date(+p[0], +p[1] - 1, +p[2]);
+            var t0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            if (cd.getTime() === t0.getTime()) cancelledTonight = F[i][1];
+            var crow = document.querySelector('[data-fw="' + F[i][0] + '"]');
+            if (crow) crow.classList.add('bm-past');
+            continue;
+          }}
           // a display "ends" at 22:15 local; after that, point at the next one
           var end = new Date(+p[0], +p[1] - 1, +p[2], 22, 15);
           if (now < end) {{ next = {{ label: F[i][1], date: new Date(+p[0], +p[1] - 1, +p[2]) }}; break; }}
           // strike finished dates in the table as we pass them
           var row = document.querySelector('[data-fw="' + F[i][0] + '"]');
           if (row) row.classList.add('bm-past');
+        }}
+        if (!next && (ANY_ON === '0' || cancelledTonight)) {{
+          var sc = document.getElementById('bmfw-state');
+          if (sc) {{ sc.textContent = 'CANCELLED \\u2014 NO FURTHER DISPLAYS THIS SUMMER'; sc.classList.add('off'); }}
+          head.textContent = cancelledTonight
+            ? 'No fireworks tonight \\u2014 ' + cancelledTonight + ' is cancelled'
+            : 'The rest of the 2026 season has been cancelled';
+          sub.textContent = 'The 14 August display was called off after the Government\\u2019s national wildfire emergency alert, and the remaining dates have been cancelled too. Please don\\u2019t travel down for a display. We will update this page the moment the organisers announce anything different \\u2014 last checked ' + UPDATED + '.';
+          return;
         }}
         if (!next) {{
           var se = document.getElementById('bmfw-state');
@@ -161,7 +202,7 @@ _STATUS = f'''    <section class="section b365 b365--dusk" id="tonight" aria-lab
 
 # ---- dates table -------------------------------------------------------------
 _ROWS = "\n".join(
-    f'            <tr data-fw="{d}"><td>{lbl}</td><td>10pm</td><td>&asymp; {_sunset_bst(d)}</td></tr>'
+    f'            <tr data-fw="{d}"{" class=\"bm-cancelled\"" if d in CANCELLED else ""}><td>{lbl}</td><td>{"<s>10pm</s> <strong>CANCELLED</strong>" if d in CANCELLED else "10pm"}</td><td>&asymp; {_sunset_bst(d)}</td></tr>'
     for d, lbl in FRIDAYS)
 
 _DATES = f'''          <h2 id="dates">Every 2026 date</h2>
@@ -221,7 +262,7 @@ _B365 = '''    <section class="section" aria-label="About Bournemouth365">
 
 _FAQS = [
     ("What time do the Bournemouth Friday fireworks start?",
-     "10pm, every Friday until 28 August 2026. The display starts on time &mdash; be in position a little before."),
+     "They were 10pm every Friday &mdash; but the remaining 2026 displays have been cancelled. The 14 August display was called off after the Government&rsquo;s national wildfire emergency alert, and the rest of the season has gone the same way, so there is nothing to be in position for. We will update this page if the organisers announce otherwise."),
     ("Are the Friday fireworks free?",
      "Yes &mdash; completely free, no tickets, no wristbands. They are organised by BCP Council&rsquo;s events team. Just turn up."),
     ("Where are the fireworks set off?",
@@ -252,17 +293,24 @@ def _schema(s):
                 "name": f"Bournemouth Friday Fireworks \u2014 {lbl} 2026",
                 "startDate": f"{d}T22:00:00+01:00",
                 "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
-                "eventStatus": "https://schema.org/EventScheduled",
+                # A cancelled display MUST publish EventCancelled - Google surfaces
+                # event status in search, so leaving it "Scheduled" would advertise a
+                # display that is not happening. See CANCELLED at the top of this file.
+                "eventStatus": ("https://schema.org/EventCancelled" if d in CANCELLED
+                                else "https://schema.org/EventScheduled"),
                 "isAccessibleForFree": True,
                 "offers": {"@type": "Offer", "price": "0", "priceCurrency": "GBP",
-                           "availability": "https://schema.org/InStock", "url": _URL},
+                           "availability": ("https://schema.org/SoldOut" if d in CANCELLED
+                                            else "https://schema.org/InStock"), "url": _URL},
                 "location": {"@type": "Place",
                              "name": "Bournemouth seafront, east of Bournemouth Pier",
                              "address": {"@type": "PostalAddress", "addressLocality": "Bournemouth",
                                          "addressRegion": "Dorset", "addressCountry": "GB"},
                              "geo": {"@type": "GeoCoordinates", "latitude": 50.7154, "longitude": -1.8710}},
                 "organizer": {"@type": "Organization", "name": "BCP Council Events Team"},
-                "description": "Free fireworks display over the sea from the seafront just east of Bournemouth Pier, 10pm. Weather permitting.",
+                "description": ("CANCELLED. This display has been called off by the organisers following the national wildfire emergency alert."
+                                if d in CANCELLED else
+                                "Free fireworks display over the sea from the seafront just east of Bournemouth Pier, 10pm. Weather permitting."),
             })
     return graph(g)
 
@@ -270,8 +318,8 @@ def _schema(s):
 _CONTENT = "\n".join([
     hero(bc_sub("Bournemouth365", "/bournemouth/", "Friday Fireworks"),
          "// BOURNEMOUTH365",
-         'Bournemouth Friday <em class="grad grad--cyan">fireworks</em>',
-         "Free fireworks over the sea every Friday of the summer holidays &mdash; 10pm, fired just east of Bournemouth Pier, until 28 August 2026. Every date, the best places to stand, and whether it&rsquo;s on tonight.",
+         'Bournemouth Friday fireworks &mdash; <em class="grad grad--cyan">cancelled</em>',
+         "Cancelled. The 14 August display was called off after the Government&rsquo;s national wildfire emergency alert, and the rest of the 2026 season has been cancelled too &mdash; so please don&rsquo;t travel down for one. Here is the full picture: every date with the cancelled nights struck through, what happened, and the best places to stand when they return.",
          cta1=("Is it on tonight?", "#tonight"),
          cta2=("Where to stand", "#where"),
          chips=["Free &mdash; no tickets", "Fridays at 10pm", "East of Bournemouth Pier"]),
@@ -283,9 +331,9 @@ _CONTENT = "\n".join([
 
 add(
     slug=_SLUG,
-    title="Bournemouth Friday Fireworks 2026 \u2014 Dates, Times & Spots",
-    desc="Free fireworks every Friday at 10pm until 28 Aug 2026, just east of Bournemouth Pier. All the dates, the best places to stand \u2014 and is it on tonight?",
-    og_title="Bournemouth Friday Fireworks 2026 \u2014 every date, 10pm, free",
+    title="Bournemouth Fireworks CANCELLED 2026 \u2014 Dates & What Happened",
+    desc="Cancelled: Bournemouth's remaining 2026 Friday fireworks are off after the wildfire alert. What happened, every date, and where to stand when they return.",
+    og_title="Bournemouth Friday Fireworks \u2014 the rest of 2026 is cancelled",
     schema=_schema,
     content=_CONTENT,
     og_image="/bournemouth/media/og-fireworks.jpg",
@@ -1026,7 +1074,7 @@ _HUB_CARDS = [
     ("/bournemouth/sea-today/", "/bournemouth/media/og-sunrise-sunset.jpg",
      "The sea right now", "Sea temperature and waves measured by the bay&rsquo;s buoy, tide from the gauge on the pier, water quality for all seven beaches &mdash; live, timestamped, never modelled."),
     ("/bournemouth/fireworks/", "/bournemouth/media/og-fireworks.jpg",
-     "Friday fireworks", "Every 2026 date, the best places to stand, and whether it&rsquo;s on tonight &mdash; with our own frames of the display."),
+     "Friday fireworks", "CANCELLED for the rest of 2026 after the wildfire alert &mdash; what happened, every date, and the best places to stand when they return."),
     ("/bournemouth/sunrise-sunset/", "/bournemouth/media/beach-sunrise.jpg",
      "Sunrise &amp; sunset", "Today&rsquo;s times computed for the seafront, and every good spot to watch from &mdash; photographed by us, not stock."),
     ("/bournemouth/beach-parking/", "/bournemouth/media/durley-chine-sunset.jpg",

@@ -1441,6 +1441,11 @@ body.menu-open { overflow: hidden; }
 /* Bournemouth365 fireworks: JS marks finished dates as the season passes */
 .bm-past { opacity: 0.55; }
 .bm-past td:first-child { text-decoration: line-through; }
+/* A CANCELLED display (see CANCELLED in bournemouth_data.py). Struck AND coloured -
+   a family scanning this table at speed must not read it as "still on". */
+.bm-cancelled td:first-child { text-decoration: line-through; }
+.bm-cancelled td { color: #e8637e; }
+.bm-cancelled strong { color: #e8637e; letter-spacing: .06em; }
 .prose { max-width: 760px; }
 .prose p { color: var(--muted); font-size: 1.05rem; line-height: 1.75; margin: 0 0 1.15rem; }
 .prose p:last-child { margin-bottom: 0; }
