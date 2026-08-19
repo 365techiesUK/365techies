@@ -191,8 +191,18 @@ if ($action === 'save') {
     $c['bb']['n'] = count($rows);
     save_db($DATA, $db);
     if ($db_lock) @flock($db_lock, LOCK_UN);
-    // hand the trend straight back so the app can show "vs last visit" without a second call
-    $prev = count($rows) >= 2 ? $rows[count($rows)-2] : null;
+    // hand the trend straight back so the app can show "vs last visit" without a second call.
+    // ⚠ "Last visit" must mean the last VISIT, not the last button-press. This used to be
+    // $rows[count($rows)-2] - the immediately preceding reading at any age - so a technician
+    // running the test twice in one visit made the app compare today against today
+    // (owner's screenshot, 2026-08-19: baseline dated the same day, "-0.1 Mbps (-1%)").
+    // The 10-minute replace above only collapses rapid re-runs; anything older still counted.
+    // A reading only qualifies as a previous visit once it is a day old. If none is, hand back
+    // null and let the app say "next visit we'll compare" - which is the truth.
+    $prev = null;
+    for ($i = count($rows) - 2; $i >= 0; $i--) {
+        if (intval($rows[$i]['ts']) <= time() - 72000) { $prev = $rows[$i]; break; }  // 20h
+    }
     out(array('ok'=>true, 'n'=>count($rows), 'prev'=>$prev ? array('t'=>$prev['t'],'down'=>$prev['down'],'up'=>$prev['up'],'ping'=>$prev['ping'],'wired'=>$prev['wired'],'isp'=>$prev['isp']) : null, 'isp'=>$isp, 'district'=>$ow));
 }
 
