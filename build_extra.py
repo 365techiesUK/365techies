@@ -5196,9 +5196,37 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
         </div>
         <p class="sckm__count" id="sckm-count"></p>
       </div>
-      <script src="/vendor/leaflet/leaflet.js" defer></script>
-    <script src="/vendor/leaflet/touch-friendly.js?v=20260819c" defer></script>
-      <script src="/vendor/protomaps/protomaps-leaflet.js" defer></script>
+      <script>
+      /* LAZY-LOAD THE MAP LIBRARIES. Leaflet + Protomaps are 269 KB - about 90%
+         of all the JavaScript on this page - and the PRIMARY action needs none
+         of it: the visitor taps "Test my signal" at the top, and the map is far
+         below the fold. So the libraries are injected only when the map section
+         gets within 600 px of the viewport (or on first interaction with the
+         tester, since a result scrolls the map into view). Someone who tests
+         and leaves never downloads them at all.
+         The map's own boot() already polls for window.L / window.protomapsL,
+         so it simply starts a moment later once these land. */
+      (function(){
+        var SRC=['/vendor/leaflet/leaflet.js','/vendor/protomaps/protomaps-leaflet.js','/vendor/leaflet/touch-friendly.js?v=20260819c'];
+        var started=false;
+        function load(){
+          if(started)return; started=true;
+          SRC.forEach(function(u){var s=document.createElement('script');s.src=u;s.async=false;document.head.appendChild(s);});
+        }
+        window.sckLoadMap=load;
+        function watch(){
+          var el=document.getElementById('sckmap');
+          if(!el){setTimeout(watch,200);return;}
+          if('IntersectionObserver' in window){
+            new IntersectionObserver(function(es,o){es.forEach(function(e){if(e.isIntersecting){load();o.disconnect();}});},
+              {rootMargin:'600px'}).observe(el);
+          } else { load(); }
+        }
+        if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',watch); else watch();
+        /* tapping Test my signal means a result - and a result scrolls to the map */
+        document.addEventListener('click',function(e){var t=e.target&&e.target.closest&&e.target.closest('#sck-go');if(t)load();},true);
+      })();
+      </script>
       <script>
       (function(){
         var API='/api/signal-check.php?map=1', REFRESH=60000, CELL_LAT=200, CELL_LON=125;
@@ -5371,6 +5399,13 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
               '<div class="sck__row"><span>Typical (median)</span><b>'+j.median+' Mbps</b></div>'+
               '<div class="sck__row"><span>Middle half of readings</span><b>'+j.p25+' – '+j.p75+' Mbps</b></div>'+
               '<div class="sck__row"><span>Best seen here</span><b>'+j.best+' Mbps</b></div>';}
+          /* The honest bridge to the WiFi survey - shown only on a SLOW reading,
+             because that is the moment the real question appears: is it the
+             signal, or is it this building? Offering it after a fast result
+             would just be an advert. */
+          if(j.you.dl<10){b.innerHTML+='<p class="sck__small" style="margin-top:.9rem;padding-top:.8rem;border-top:1px solid rgba(125,170,220,.18)">'+
+            'Indoors, a slow reading is often the <em>building</em> rather than the network &mdash; thick walls, foil-backed insulation, a phone three rooms from anything. '+
+            'If this is your home or office, our free <a href="/wifi-signal-test/">room-by-room WiFi survey</a> tells you which it is.</p>';}
           $('sck-cmp').hidden=false;}
         go.addEventListener('click',function(){
           if(conn()==='wifi'){say('You’re on WiFi — turn it off so we measure your mobile data, not a router.','bad');return;}
@@ -5430,7 +5465,7 @@ def mobile_signal_check():
            chips=["Ten seconds", "No sign-up", "Compares with your area"]),
       SIGCHECK_WIDGET,
       faq_html(faqs),
-      tools_strip(["vanmap", "speed", "isitdown"], title="Working from anywhere in Bournemouth", alt=False),
+      tools_strip(["vanmap", "wifisig", "speed"], title="Working from anywhere in Bournemouth", alt=False),
       cta("Poor signal where you live or work?",
           "Often it&rsquo;s fixable &mdash; the right router, an external antenna, or a better home setup. Local, honest advice.",
           primary=("Book a Free Chat", "/book-service/"), secondary=("Wi-Fi Support", "/wifi-support/")),
