@@ -263,7 +263,12 @@ if ($method === 'POST') {
 
     // Store: cell centre only. Real coordinates end here.
     $rows = jload(DATA_FILE);
-    $rows[] = ['t' => $now, 'cla' => $cla, 'clo' => $clo, 'g' => $grid, 'dl' => round($dl, 1),
+    // How we knew this was mobile data: 'detected' (the browser told us) or
+    // 'confirmed' (the visitor did, because iPhone/iPad Safari has no Network
+    // Information API). Kept so a doubtful reading can be traced later, and so
+    // we could weight or exclude confirmed-only rows if they ever look wrong.
+    $csrc = (($in['conn_src'] ?? '') === 'detected') ? 'd' : 'c';
+    $rows[] = ['t' => $now, 'cla' => $cla, 'clo' => $clo, 'g' => $grid, 'cs' => $csrc, 'dl' => round($dl, 1),
                'ms' => $ms !== null ? (int)round($ms) : null,
                'net' => $net, 'h' => (int)gmdate('G', $now)];
     // roll off old rows, cap size

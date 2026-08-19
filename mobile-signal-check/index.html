@@ -768,6 +768,12 @@
           .sck__go:hover{transform:translateY(-1px)} .sck__go:disabled{opacity:.55;cursor:default;box-shadow:none;transform:none}
           .sck__st{min-height:1.5em;text-align:center;color:var(--muted,#9db3cf);font-size:.95rem;margin:0 0 .8rem}
           .sck__st.ok{color:#3fb950}.sck__st.bad{color:#f85149}.sck__st.warn{color:#d29922}
+          .sck__ask{background:rgba(20,27,46,.75);border:1px solid rgba(108,196,245,.45);border-radius:14px;padding:1rem 1.1rem;margin:0 0 .9rem;text-align:left}
+          .sck__ask p{margin:0 0 .5rem;color:#e6edf3;font-size:.95rem}
+          .sck__askbtns{display:flex;gap:.6rem;flex-wrap:wrap;margin:.7rem 0 0}
+          .sck__askbtns button{flex:1;min-width:150px;padding:.75rem 1rem;border-radius:12px;border:1px solid rgba(125,170,220,.35);
+            background:#0b1020;color:#cfe0f5;font:700 .95rem/1 inherit;cursor:pointer}
+          .sck__askbtns #sck-ask-yes{background:linear-gradient(135deg,#1d97e3,#3fb950);color:#061019;border:0}
           .sck__you{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin:0 0 .9rem}
           .sck__you div{background:rgba(20,27,46,.55);border:1px solid rgba(125,170,220,.18);border-radius:12px;padding:.8rem .6rem;text-align:center}
           .sck__you b{display:block;font-size:1.45rem;color:#e6edf3;font-variant-numeric:tabular-nums}
@@ -801,6 +807,16 @@
         <div class="sck">
           <button type="button" class="sck__go" id="sck-go">Test my signal here</button>
           <p class="sck__st" id="sck-st" role="status" aria-live="polite">Mobile data only &mdash; turn WiFi off first. Takes about ten seconds.</p>
+          <!-- Shown ONLY where the browser cannot tell us (iPhone/iPad Safari has
+               no Network Information API). One tap, once per visit. -->
+          <div class="sck__ask" id="sck-ask" hidden>
+            <p><strong>Quick check:</strong> is your WiFi off, so this measures your <em>mobile</em> signal?</p>
+            <p class="sck__small">Your phone won&rsquo;t tell us, and a reading taken on WiFi is your router, not the network &mdash; it would put someone&rsquo;s home broadband on a mobile signal map.</p>
+            <div class="sck__askbtns">
+              <button type="button" id="sck-ask-yes">Yes &mdash; WiFi is off</button>
+              <button type="button" id="sck-ask-no">No, I&rsquo;m on WiFi</button>
+            </div>
+          </div>
           <div class="sck__you" id="sck-you" hidden>
             <div><b id="sck-dl">&mdash;</b><span>Mbps down</span></div>
             <div><b id="sck-ms">&mdash;</b><span>ms ping</span></div>
@@ -983,7 +999,19 @@
         var $=function(i){return document.getElementById(i);};
         var go=$('sck-go'),st=$('sck-st');
         function say(m,c){st.textContent=m;st.className='sck__st '+(c||'');}
-        function conn(){var c=navigator.connection||navigator.mozConnection||navigator.webkitConnection;return c?c.type:null;}
+        /* Three states, not two. Safari on iPhone/iPad does not implement the
+           Network Information API AT ALL, so navigator.connection is undefined
+           and the old two-state check silently passed every iPhone straight
+           through - including people on WiFi, whose home broadband was landing
+           on a mobile-signal map. (Day 2 symptom: a 452 Mbps 'mobile' reading.)
+           'wifi' -> refuse. 'cellular' -> go. 'unknown' -> ASK, once. */
+        function connState(){
+          var c=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
+          if(!c||!c.type)return 'unknown';
+          if(c.type==='wifi')return 'wifi';
+          if(c.type==='cellular')return 'cellular';
+          return 'unknown';        /* ethernet/none/other - ask rather than guess */
+        }
         function pos(){return new Promise(function(ok,no){if(!navigator.geolocation)return no(new Error('This phone will not share its location.'));
           navigator.geolocation.getCurrentPosition(function(p){ok(p.coords);},function(e){no(new Error('Location: '+e.message));},{enableHighAccuracy:true,timeout:20000,maximumAge:0});});}
         function ping(){var r=[];function one(){var t=performance.now();return fetch(CF+'0&_='+Math.random(),{cache:'no-store'}).then(function(){r.push(performance.now()-t);});}
@@ -1026,6 +1054,11 @@
           $('sck-sh-fb').href='https://www.facebook.com/sharer/sharer.php?u='+u+'&quote='+t;
           var nat=$('sck-sh-native');if(navigator.share){nat.hidden=false;}
           $('sck-share').hidden=false;}
+        $('sck-ask-yes').addEventListener('click',function(){
+          window.__sckConfirmedMobile=true; $('sck-ask').hidden=true; $('sck-go').click();});
+        $('sck-ask-no').addEventListener('click',function(){
+          $('sck-ask').hidden=true;
+          say('No problem — turn WiFi off in Settings, then tap Test my signal again.','warn');});
         $('sck-sh-native').addEventListener('click',function(){if(!LAST)return;navigator.share({title:'My mobile signal',text:shareText(),url:shareUrl()})['catch'](function(){});});
         $('sck-sh-copy').addEventListener('click',function(){if(!LAST)return;copyText(shareText()+' '+shareUrl(),'Copied — paste it anywhere.');});
         /* "Save picture": draw the card to a canvas and hand over a PNG. Done
@@ -1077,7 +1110,15 @@
             'If this is your home or office, our free <a href="/wifi-signal-test/">room-by-room WiFi survey</a> tells you which it is.</p>';}
           $('sck-cmp').hidden=false;}
         go.addEventListener('click',function(){
-          if(conn()==='wifi'){say('You’re on WiFi — turn it off so we measure your mobile data, not a router.','bad');return;}
+          var cs=connState();
+          if(cs==='wifi'){say('You’re on WiFi — turn it off so we measure your mobile data, not a router.','bad');return;}
+          if(cs==='unknown'&&!window.__sckConfirmedMobile){
+            /* One tap, once per visit. Asked only where the browser genuinely
+               cannot tell us - never nagged at Android users, where it can. */
+            $('sck-ask').hidden=false;
+            $('sck-ask').scrollIntoView({block:'center',behavior:'smooth'});
+            return;
+          }
           go.disabled=true;$('sck-you').hidden=true;$('sck-cmp').hidden=true;
           var c,ms,d;
           say('Finding where you are…');
@@ -1085,7 +1126,7 @@
           .then(function(m){ms=m;say('Downloading 10 MB — stay put…');return dl();})
           .then(function(x){d=x;var net=netName();say('Comparing with your area…');
             return fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},
-              body:JSON.stringify({dl:d,latency:ms,lat:c.latitude,lon:c.longitude,net:net,conn:'cellular'})});})
+              body:JSON.stringify({dl:d,latency:ms,lat:c.latitude,lon:c.longitude,net:net,conn:'cellular',conn_src:(connState()==='cellular'?'detected':'confirmed')})});})
           .then(function(r){return r.json();})
           .then(function(j){if(!j.ok){say(j.error||'Could not record that reading.','warn');
               if(d!=null){$('sck-dl').textContent=d;$('sck-ms').textContent=ms;$('sck-net').textContent='—';$('sck-you').hidden=false;}return;}
