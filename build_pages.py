@@ -6071,7 +6071,7 @@ VAN_SIGNAL_MAP_MAP = r"""
       </div>
     </section>
     <script src="/vendor/leaflet/leaflet.js" defer></script>
-    <script src="/vendor/leaflet/touch-friendly.js?v=20260819a" defer></script>
+    <script src="/vendor/leaflet/touch-friendly.js?v=20260819b" defer></script>
     <script src="/vendor/protomaps/protomaps-leaflet.js" defer></script>
     <script>
     (function(){var ENDPOINT='/api/signal-log.php',REFRESH=15000,GOOD=-80,BAD=-110;

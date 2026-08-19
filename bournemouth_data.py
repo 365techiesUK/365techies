@@ -1032,7 +1032,11 @@ _HUB_CARDS = [
     ("/bournemouth/beach-parking/", "/bournemouth/media/durley-chine-sunset.jpg",
      "Beach parking, honestly", "What it really costs, where it is far cheaper, and the rules that catch people out &mdash; every price from BCP&rsquo;s own pages, dated."),
     ("/van-signal-map/", "/bournemouth/media/pier-golden-hour.jpg",
-     "Mobile signal, measured", "Real 4G/5G speeds our own van logs as it drives around Bournemouth and Poole &mdash; the spots that tested fastest, and the not-spots, on a map you can check before you rely on it."),
+     "Mobile signal, measured", "Real 4G/5G speeds our own van logs as it drives around Bournemouth and Poole &mdash; the places that tested fastest for working on the move, on a map you can check before you rely on it. One van, one network, measured not modelled."),
+    # The crowd counterpart. Kept as its own card, not folded into the van one:
+    # different instrument, different data, and the page it links to says so.
+    ("/mobile-signal-check/", "/og-mobile-signal-check.jpg",
+     "Test your own phone here", "Ten seconds, where you&rsquo;re standing: your phone&rsquo;s real mobile-data speed, how it compares with your part of town, and a live map everyone&rsquo;s readings build together. No sign-up, nothing that identifies you &mdash; and no network league tables."),
 ]
 
 _HUB_CARD_HTML = "\n".join(
