@@ -163,56 +163,90 @@
     exitBtn.className = 'lf-fs-exit';
     exitBtn.setAttribute('aria-label', 'Exit full screen');
     exitBtn.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg><span>Exit full screen</span>';
-    exitBtn.style.cssText = 'position:fixed;top:max(12px,env(safe-area-inset-top));right:12px;z-index:100000;display:none;' +
+    exitBtn.style.cssText = 'position:absolute;top:max(12px,env(safe-area-inset-top));right:12px;z-index:100000;display:none;' +
       'align-items:center;gap:.5rem;padding:.7rem 1rem;border-radius:999px;border:1px solid rgba(125,170,220,.45);' +
       'background:rgba(10,16,32,.92);color:#fff;font:700 .95rem/1 system-ui,sans-serif;cursor:pointer;box-shadow:0 8px 30px rgba(0,0,0,.5)';
-    document.body.appendChild(exitBtn);
+    /* The exit pill lives INSIDE the map wrapper, not on <body>. When the
+       wrapper itself is the fullscreen element, only its own descendants are
+       painted - a body-level button would be invisible in that mode. */
+    exitBtn.style.position = 'absolute';
+    wrap.appendChild(exitBtn);
 
-    var saved = null, isFs = false;
-    function enter() {
-      if (isFs) return;
-      isFs = true;
+    /* ⚠️ v1 fullscreened document.documentElement. On iPad that CALL SUCCEEDS
+       (unlike iPhone), so the whole page went full-screen and the viewport
+       stayed pinned to the top of the document - the owner saw the page
+       header, not the map. Correct design: the map WRAPPER is the fullscreen
+       element wherever the API exists (iPad, Android, desktop), so whatever
+       goes full-screen IS the map. Fixed-position takeover is only the
+       fallback for engines with no element fullscreen at all (iPhone Safari). */
+    var saved = null, isFs = false, usedApi = false;
+    var fsReq = wrap.requestFullscreen || wrap.webkitRequestFullscreen;
+    function takeover() {
       saved = { pos: wrap.style.position, top: wrap.style.top, left: wrap.style.left, w: wrap.style.width, h: wrap.style.height,
                 z: wrap.style.zIndex, r: wrap.style.borderRadius, mapH: el.style.height, scroll: window.scrollY };
-      /* Fixed takeover works everywhere, including iPhone Safari. */
       wrap.style.position = 'fixed'; wrap.style.top = '0'; wrap.style.left = '0';
       wrap.style.width = '100vw'; wrap.style.height = '100vh'; wrap.style.zIndex = '99999'; wrap.style.borderRadius = '0';
       el.style.height = '100vh';
-      document.body.classList.add('lf-fullscreen');
       document.body.style.overflow = 'hidden';
-      btn.style.display = 'none';
-      exitBtn.style.display = 'flex';
-      /* in full screen there is no page to scroll: one finger pans the map */
-      el.style.touchAction = 'none';
-      el.__fsMode = true;
-      if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen().catch(function () {});
-      }
-      /* the back button exits, rather than leaving the page */
-      try { history.pushState({ lfFs: true }, ''); } catch (e) {}
+    }
+    function untakeover() {
+      if (!saved) return;
+      wrap.style.position = saved.pos; wrap.style.top = saved.top; wrap.style.left = saved.left;
+      wrap.style.width = saved.w; wrap.style.height = saved.h; wrap.style.zIndex = saved.z; wrap.style.borderRadius = saved.r;
+      el.style.height = saved.mapH;
+      document.body.style.overflow = '';
+      var sc = saved.scroll; saved = null;
+      setTimeout(function () { window.scrollTo(0, sc); }, 60);
+    }
+    function common(on) {
+      document.body.classList.toggle('lf-fullscreen', on);
+      btn.style.display = on ? 'none' : 'flex';
+      exitBtn.style.display = on ? 'flex' : 'none';
+      el.style.touchAction = on ? 'none' : 'pan-y';   /* full screen: one finger pans */
+      el.__fsMode = on;
       setTimeout(function () { map.invalidateSize(); }, 80);
       setTimeout(function () { map.invalidateSize(); }, 400);
+    }
+    function enter() {
+      if (isFs) return;
+      isFs = true;
+      usedApi = false;
+      if (fsReq) {
+        try {
+          var p = fsReq.call(wrap);
+          usedApi = true;
+          if (p && p.catch) p.catch(function () { usedApi = false; takeover(); });
+        } catch (e) { usedApi = false; }
+      }
+      if (!usedApi) takeover();
+      /* the API path needs the map to fill the fullscreen element */
+      if (usedApi) { el.__fsMapH = el.style.height; el.style.height = '100vh'; wrap.style.height = '100vh'; }
+      common(true);
+      try { history.pushState({ lfFs: true }, ''); } catch (e) {}
     }
     function exit(fromPop) {
       if (!isFs) return;
       isFs = false;
-      wrap.style.position = saved.pos; wrap.style.top = saved.top; wrap.style.left = saved.left;
-      wrap.style.width = saved.w; wrap.style.height = saved.h; wrap.style.zIndex = saved.z; wrap.style.borderRadius = saved.r;
-      el.style.height = saved.mapH;
-      document.body.classList.remove('lf-fullscreen');
-      document.body.style.overflow = '';
-      btn.style.display = 'flex';
-      exitBtn.style.display = 'none';
-      el.style.touchAction = 'pan-y';
-      el.__fsMode = false;
-      if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(function () {});
+      var fsEl = document.fullscreenElement || document.webkitFullscreenElement;
+      if (fsEl === wrap) {
+        var ex = document.exitFullscreen || document.webkitExitFullscreen;
+        if (ex) { try { var q = ex.call(document); if (q && q.catch) q.catch(function () {}); } catch (e) {} }
+      }
+      if (usedApi) { el.style.height = el.__fsMapH || ''; wrap.style.height = ''; }
+      untakeover();
+      common(false);
       if (!fromPop && history.state && history.state.lfFs) { try { history.back(); } catch (e) {} }
-      setTimeout(function () { map.invalidateSize(); window.scrollTo(0, saved.scroll); }, 80);
     }
     btn.addEventListener('click', enter);
     exitBtn.addEventListener('click', function () { exit(false); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && isFs) exit(false); });
-    document.addEventListener('fullscreenchange', function () { if (!document.fullscreenElement && isFs) exit(false); });
+    /* user left fullscreen by the OS gesture / Esc handled by the browser */
+    function onFsChange() {
+      var fsEl = document.fullscreenElement || document.webkitFullscreenElement;
+      if (isFs && usedApi && !fsEl) exit(false);
+    }
+    document.addEventListener('fullscreenchange', onFsChange);
+    document.addEventListener('webkitfullscreenchange', onFsChange);
     window.addEventListener('popstate', function () { if (isFs) exit(true); });
   }
   window.makeTouchFriendly = makeTouchFriendly;

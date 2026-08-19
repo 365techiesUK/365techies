@@ -103,7 +103,7 @@ except Exception:
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://365techies.co.uk"
-CSSV = "92"   # bumped 2026-08-17 (status strip rebuild). Earlier the same day: v88 was poisoned in the SiteGround proxy by a pre-deploy probe (see deploy-hash-sync-blindspot); NEVER request a new ?v= URL before the deploy that ships it is confirmed complete
+CSSV = "93"   # bumped 2026-08-17 (status strip rebuild). Earlier the same day: v88 was poisoned in the SiteGround proxy by a pre-deploy probe (see deploy-hash-sync-blindspot); NEVER request a new ?v= URL before the deploy that ships it is confirmed complete
 HERITAGE_DIMS = {'heritage-01.jpg': (1400, 787), 'heritage-02.jpg': (787, 1400), 'heritage-03.jpg': (1400, 787), 'heritage-04.jpg': (1400, 787), 'heritage-05.jpg': (787, 1400), 'heritage-07.jpg': (1400, 787), 'heritage-kinson.jpg': (1200, 710), 'heritage-moordown.jpg': (1400, 788), 'heritage-stock.jpg': (1400, 788), 'heritage-storefront.jpg': (1024, 683)}
 try:
     from hero_scenes import SCENES as HERO_SCENES
@@ -6071,7 +6071,7 @@ VAN_SIGNAL_MAP_MAP = r"""
       </div>
     </section>
     <script src="/vendor/leaflet/leaflet.js" defer></script>
-    <script src="/vendor/leaflet/touch-friendly.js?v=20260819b" defer></script>
+    <script src="/vendor/leaflet/touch-friendly.js?v=20260819c" defer></script>
     <script src="/vendor/protomaps/protomaps-leaflet.js" defer></script>
     <script>
     (function(){var ENDPOINT='/api/signal-log.php',REFRESH=15000,GOOD=-80,BAD=-110;

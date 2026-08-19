@@ -1854,6 +1854,23 @@ body.menu-open { overflow: hidden; }
   body.map-in-view .a11y__togglelabel { display: none; }
   body.map-in-view .a11y__toggle { padding: 0 .45rem; }
 }
+/* Map full-screen (vendor/leaflet/touch-friendly.js). When the map WRAPPER is
+   the fullscreen element, its normal card styling - rounded corners, border,
+   min(60vh) height on the map inside - must not apply, or you get a rounded
+   card floating on black with the map at 60% height. Cover both the standard
+   and the -webkit pseudo-class (iPad). */
+.sigmap-wrap:fullscreen, .sckm:fullscreen,
+.sigmap-wrap:-webkit-full-screen, .sckm:-webkit-full-screen {
+  border-radius: 0 !important; border: 0 !important; box-shadow: none !important;
+  width: 100vw !important; height: 100vh !important; background: #0b1020;
+}
+.sigmap-wrap:fullscreen #sigmap, .sckm:fullscreen #sckmap,
+.sigmap-wrap:-webkit-full-screen #sigmap, .sckm:-webkit-full-screen #sckmap {
+  height: 100vh !important; max-height: none !important;
+}
+/* Fixed-takeover fallback (iPhone): same intent, driven by the body class. */
+body.lf-fullscreen .a11y, body.lf-fullscreen .mobile-cta-bar { display: none !important; }
+
 /* Landscape phone: the CTA bar is hidden (see above), so drop the pill to the
    real bottom instead of hovering where the bar used to be. */
 @media (max-width: 1024px) and (max-height: 500px) and (orientation: landscape) {
