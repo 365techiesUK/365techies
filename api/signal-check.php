@@ -13,9 +13,11 @@
  * here is ever pooled into signal-data.json, the ranked spots or the CSV.
  *
  * WHAT IS STORED, AND WHAT IS NOT
- *  - the reading, binned to a ~500 m CELL, never a precise point. A public
- *    "here's my exact reading" map is a "here's my house" map. We keep the
- *    cell centre only; the phone's real coordinates are discarded on arrival.
+ *  - the reading, binned to a CELL, never a precise point. A public "here's
+ *    my exact reading" map is a "here's my house" map. We keep the cell centre
+ *    only; the phone's real coordinates are discarded on arrival. Cells are
+ *    ~500 m inland and ~140 m in the coastal band (see TWO GRIDS below) - the
+ *    fine grid applies only where nobody lives.
  *  - the network name the phone reported (shown back to THAT user - it is
  *    their result), an hour bucket, and download / latency.
  *  - NOT: IP address, user agent, any id, any name. Rate limiting uses a
@@ -46,6 +48,55 @@ const CELL_LAT    = 200;      // ~550 m; a district, not a doorway
 const CELL_LON    = 125;
 const KEEP_DAYS   = 400;      // a year of seasons, then roll off
 
+// ── TWO GRIDS: fine on the coast, coarse inland (2026-08-19) ────────────────
+// The 500 m cell exists for ONE reason: a public reading must never be a
+// house pin. That reason is about HOMES. On the beach, the piers, the prom,
+// the chines and the Sandbanks spit nobody lives, and 500 m there swallowed
+// the whole of Bournemouth Pier plus the beach either side - so "end of the
+// pier: 5 Mbps" and "by the big wheel: 88 Mbps" were being averaged into one
+// square that told the truth about neither. So precision follows land use:
+//   inside the coastal band  -> ~140 m cells, solid at COAST_MIN readings
+//   everywhere else          -> 500 m cells, solid at MIN_FOR_COMPARE, as now
+// The band is a strip ~300 m inland from the water, Sandbanks to Hengistbury
+// Head, plus the piers. Drawn conservatively: easier to widen than to explain
+// why a residential street got fine cells. Homes stay exactly as protected.
+// The precise coordinate exists for one instant on arrival; this is the only
+// moment the decision can be made, and it is made per reading.
+const COAST_CELL_LAT = 800;   // ~140 m
+const COAST_CELL_LON = 500;
+const COAST_MIN      = 5;     // still not one phone's opinion; reachable
+const COAST_BAND = [          // [lat, lon] ring, seaward W->E then inland E->W
+    [50.6770,-1.9460],[50.6830,-1.9440],[50.6900,-1.9380],[50.6960,-1.9250],[50.7020,-1.9120],
+    [50.7080,-1.8980],[50.7120,-1.8870],[50.7155,-1.8770],[50.7170,-1.8660],[50.7190,-1.8520],
+    [50.7200,-1.8410],[50.7190,-1.8300],[50.7180,-1.8180],[50.7160,-1.8060],[50.7130,-1.7960],
+    [50.7170,-1.7880],
+    [50.7197,-1.7880],[50.7157,-1.7960],[50.7187,-1.8060],[50.7207,-1.8180],[50.7217,-1.8300],
+    [50.7227,-1.8410],[50.7217,-1.8520],[50.7197,-1.8660],[50.7182,-1.8770],[50.7147,-1.8870],
+    [50.7107,-1.8980],[50.7047,-1.9120],[50.6987,-1.9250],[50.6927,-1.9380],[50.6857,-1.9440],
+    [50.6797,-1.9460],
+];
+const COAST_SANDBANKS = [[50.6740,-1.9500],[50.6740,-1.9400],[50.6830,-1.9380],[50.6860,-1.9460],[50.6800,-1.9520]];
+const COAST_PIERS = [[50.7130,-1.8770],[50.7175,-1.8410]];   // centres; 260 m radius each
+
+function point_in_ring(float $lat, float $lon, array $ring): bool {
+    $in = false; $n = count($ring);
+    for ($i = 0, $j = $n - 1; $i < $n; $j = $i++) {
+        [$yi, $xi] = $ring[$i]; [$yj, $xj] = $ring[$j];
+        if ((($yi > $lat) !== ($yj > $lat)) &&
+            ($lon < ($xj - $xi) * ($lat - $yi) / (($yj - $yi) ?: 1e-12) + $xi)) $in = !$in;
+    }
+    return $in;
+}
+function is_coastal(float $lat, float $lon): bool {
+    if (point_in_ring($lat, $lon, COAST_BAND)) return true;
+    if (point_in_ring($lat, $lon, COAST_SANDBANKS)) return true;
+    foreach (COAST_PIERS as [$pla, $plo]) {
+        $d = hypot(($lat - $pla) * 111320, ($lon - $plo) * 111320 * cos(deg2rad($lat)));
+        if ($d < 260) return true;
+    }
+    return false;
+}
+
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
 header('X-Robots-Tag: noindex');
@@ -59,9 +110,16 @@ function jsave(string $f, array $d): void {
     $tmp = $f . '.tmp';
     if (file_put_contents($tmp, json_encode($d), LOCK_EX) !== false) @rename($tmp, $f);
 }
+/** Cell centre for a coordinate. Returns [lat, lon, grid] where grid is
+ *  'c' (coastal, fine) or 'i' (inland, coarse). The two grids never mix. */
 function cell_of(float $lat, float $lon): array {
-    return [round(round($lat * CELL_LAT) / CELL_LAT, 4), round(round($lon * CELL_LON) / CELL_LON, 4)];
+    if (is_coastal($lat, $lon)) {
+        return [round(round($lat * COAST_CELL_LAT) / COAST_CELL_LAT, 4),
+                round(round($lon * COAST_CELL_LON) / COAST_CELL_LON, 4), 'c'];
+    }
+    return [round(round($lat * CELL_LAT) / CELL_LAT, 4), round(round($lon * CELL_LON) / CELL_LON, 4), 'i'];
 }
+function min_for(string $grid): int { return $grid === 'c' ? COAST_MIN : MIN_FOR_COMPARE; }
 function num($v, float $lo, float $hi) {
     if (!is_numeric($v)) return null;
     $v = (float)$v;
@@ -73,10 +131,16 @@ function median(array $a) {
     return $n % 2 ? $a[$m] : ($a[$m - 1] + $a[$m]) / 2;
 }
 function compare_for(array $rows, array $cell): array {
-    $here = array_values(array_filter($rows, fn($r) => $r['cla'] == $cell[0] && $r['clo'] == $cell[1]));
+    // Match on cell centre AND grid: a coastal fine cell and an inland coarse
+    // cell can never share a key, and rows stored before the coastal grid
+    // existed carry no 'g' and are treated as inland ('i').
+    $g = $cell[2] ?? 'i';
+    $here = array_values(array_filter($rows, fn($r) =>
+        $r['cla'] == $cell[0] && $r['clo'] == $cell[1] && (($r['g'] ?? 'i') === $g)));
     $n = count($here);
-    if ($n < MIN_FOR_COMPARE) {
-        return ['ok' => true, 'enough' => false, 'n' => $n, 'need' => MIN_FOR_COMPARE];
+    $need = min_for($g);
+    if ($n < $need) {
+        return ['ok' => true, 'enough' => false, 'n' => $n, 'need' => $need, 'grid' => $g];
     }
     $dl = array_column($here, 'dl');
     sort($dl);
@@ -112,8 +176,9 @@ if ($method === 'GET') {
         $rows = jload(DATA_FILE);
         $cells = [];
         foreach ($rows as $r) {
-            $k = $r['cla'] . ',' . $r['clo'];
-            $cells[$k]['lat'] = $r['cla']; $cells[$k]['lon'] = $r['clo'];
+            $g = $r['g'] ?? 'i';
+            $k = $g . ':' . $r['cla'] . ',' . $r['clo'];      // grids never merge
+            $cells[$k]['lat'] = $r['cla']; $cells[$k]['lon'] = $r['clo']; $cells[$k]['g'] = $g;
             $cells[$k]['dl'][] = $r['dl'];
         }
         // ⚠️ CHANGED 2026-08-17. Every cell is emitted from its FIRST reading.
@@ -136,13 +201,18 @@ if ($method === 'GET') {
         $pending = 0;
         foreach ($cells as $c) {
             $n = count($c['dl']);
-            $ready = $n >= MIN_FOR_COMPARE;
+            $need = min_for($c['g']);
+            $ready = $n >= $need;
             if (!$ready) $pending++;
+            // 'g' tells the page which cell SIZE to draw; 'need' the floor for
+            // that grid, so the N/need badge is right on both.
             $out[] = ['lat' => $c['lat'], 'lon' => $c['lon'], 'n' => $n, 'ready' => $ready,
-                      'dl' => round(median($c['dl']), 1)];
+                      'g' => $c['g'], 'need' => $need, 'dl' => round(median($c['dl']), 1)];
         }
         echo json_encode(['ok' => true, 'cells' => $out, 'pending' => $pending,
-                          'total' => count($rows), 'need' => MIN_FOR_COMPARE]);
+                          'total' => count($rows), 'need' => MIN_FOR_COMPARE,
+                          'coast' => ['need' => COAST_MIN, 'cell_lat' => COAST_CELL_LAT, 'cell_lon' => COAST_CELL_LON],
+                          'inland' => ['need' => MIN_FOR_COMPARE, 'cell_lat' => CELL_LAT, 'cell_lon' => CELL_LON]]);
         exit;
     }
     if (empty($_GET['cell'])) { echo json_encode(['ok' => false, 'error' => 'cell required']); exit; }
@@ -182,8 +252,8 @@ if ($method === 'POST') {
     if (isset($rate['ip'][$who]) && ($now - $rate['ip'][$who]) < RATE_S) {
         echo json_encode(['ok' => false, 'error' => 'one reading per 5 minutes']); exit;
     }
-    [$cla, $clo] = cell_of($lat, $lon);
-    $ck = "$cla,$clo";
+    [$cla, $clo, $grid] = cell_of($lat, $lon);
+    $ck = "$grid:$cla,$clo";
     if (($rate['cell'][$ck] ?? 0) >= CELL_DAY_MAX) {
         echo json_encode(['ok' => false, 'error' => 'this area has enough readings for today']); exit;
     }
@@ -193,7 +263,7 @@ if ($method === 'POST') {
 
     // Store: cell centre only. Real coordinates end here.
     $rows = jload(DATA_FILE);
-    $rows[] = ['t' => $now, 'cla' => $cla, 'clo' => $clo, 'dl' => round($dl, 1),
+    $rows[] = ['t' => $now, 'cla' => $cla, 'clo' => $clo, 'g' => $grid, 'dl' => round($dl, 1),
                'ms' => $ms !== null ? (int)round($ms) : null,
                'net' => $net, 'h' => (int)gmdate('G', $now)];
     // roll off old rows, cap size
@@ -202,8 +272,11 @@ if ($method === 'POST') {
     if (count($rows) > MAX_ROWS) $rows = array_slice($rows, -MAX_ROWS);
     jsave(DATA_FILE, $rows);
 
-    $cmp = compare_for($rows, [$cla, $clo]);
+    $cmp = compare_for($rows, [$cla, $clo, $grid]);
     $cmp['you'] = ['dl' => round($dl, 1), 'ms' => $ms !== null ? (int)round($ms) : null, 'net' => $net];
+    // the cell this reading landed in - centre + grid - so the page can light
+    // up the RIGHT square (it must not re-derive the grid client-side)
+    $cmp['cell'] = ['lat' => $cla, 'lon' => $clo, 'g' => $grid];
     echo json_encode($cmp);
     exit;
 }

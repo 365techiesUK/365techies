@@ -5174,7 +5174,7 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>/ EVERYONE&rsquo;S READINGS</p>
           <h2 class="section-title section-title--center" data-title>The picture so far &mdash; Bournemouth, Christchurch &amp; Poole<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>Each square is a ~500&nbsp;m area, coloured by the typical (median) mobile-data speed people measured there &mdash; from the very first reading. Faint and dashed means early days (one or two phones); it firms up as more people add theirs. If your area&rsquo;s not on the map yet, you&rsquo;re the one who puts it there. The test works anywhere in the UK; this map shows the BCP area.</p>
+          <p class="lede lede--center" data-reveal>Each square is coloured by the typical (median) mobile-data speed people measured there &mdash; from the very first reading. Inland a square is ~500&nbsp;m, so no reading can point at anyone&rsquo;s home. On the beaches, piers and promenade &mdash; where nobody lives and the signal genuinely changes from one end of the pier to the other &mdash; squares are ~140&nbsp;m, so you can see it. Faint and dashed means early days (one or two phones); it firms up as more people add theirs. If your area&rsquo;s not on the map yet, you&rsquo;re the one who puts it there. The test works anywhere in the UK; this map shows the BCP area.</p>
         </div>
         <link rel="stylesheet" href="/vendor/leaflet/leaflet.css" />
         <style>
@@ -5223,20 +5223,23 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
                phone the default view leaves the squares as specks at the edge. */
             if(!fitted){fitted=true;/* BCP frame set at init; do not re-fit to data */}
             j.cells.forEach(function(c){
-              var h=0.5/CELL_LAT, w=0.5/CELL_LON;   /* half a cell each way */
+              /* two grids: coastal cells are ~140 m, inland ~500 m - the server
+                 says which each cell is ('g') and its own floor ('need') */
+              var isC=(c.g==='c'), gl=isC?(j.coast||{cell_lat:800,cell_lon:500}):(j.inland||{cell_lat:CELL_LAT,cell_lon:CELL_LON});
+              var need=c.need||j.need, h=0.5/gl.cell_lat, w=0.5/gl.cell_lon;
               /* Coloured from the FIRST reading - that's the moment people share.
                  But confidence is drawn too: opacity climbs with the count, and
                  under-floor squares stay dashed with an N/8 badge, so one indoor
                  phone can't look like a verdict on a whole area. */
-              var conf=Math.min(1,c.n/j.need);                 /* 0..1 */
+              var conf=Math.min(1,c.n/need);                   /* 0..1 */
               var fill=.16+.32*conf;                           /* .16 at 1 reading -> .48 at 8 */
               if(c.ready){ready++;
                 L.rectangle([[c.lat-h,c.lon-w],[c.lat+h,c.lon+w]],{color:col(c.dl),weight:1.5,fillColor:col(c.dl),fillOpacity:fill})
                   .bindPopup('<b>'+c.dl+' Mbps</b> typical here<br>'+c.n+' reading'+(c.n>1?'s':'')+' from people&rsquo;s phones').addTo(layer);}
               else{
                 L.rectangle([[c.lat-h,c.lon-w],[c.lat+h,c.lon+w]],{color:col(c.dl),weight:1.5,dashArray:'5 4',fillColor:col(c.dl),fillOpacity:fill})
-                  .bindPopup('<b>'+c.dl+' Mbps</b> so far &mdash; from '+c.n+' reading'+(c.n>1?'s':'')+'<br><span style="opacity:.8">Early days: firms up at '+j.need+'. Add yours!</span>').addTo(layer);
-                L.marker([c.lat,c.lon],{icon:L.divIcon({className:'',html:'<div style="background:#0b1020;color:#e6edf3;border:1px solid rgba(125,170,220,.5);border-radius:999px;font:700 11px/1 system-ui;padding:3px 6px;white-space:nowrap">'+c.n+'/'+j.need+'</div>',iconSize:[0,0],iconAnchor:[14,8]}),interactive:false}).addTo(layer);}
+                  .bindPopup('<b>'+c.dl+' Mbps</b> so far &mdash; from '+c.n+' reading'+(c.n>1?'s':'')+'<br><span style="opacity:.8">Early days: firms up at '+need+'. Add yours!</span>').addTo(layer);
+                L.marker([c.lat,c.lon],{icon:L.divIcon({className:'',html:'<div style="background:#0b1020;color:#e6edf3;border:1px solid rgba(125,170,220,.5);border-radius:999px;font:700 11px/1 system-ui;padding:3px 6px;white-space:nowrap">'+c.n+'/'+need+'</div>',iconSize:[0,0],iconAnchor:[14,8]}),interactive:false}).addTo(layer);}
             });
             document.getElementById('sckm-st').textContent=j.cells.length+' area'+(j.cells.length===1?'':'s')+' on the map';
             var pend=j.pending?(' &middot; '+j.pending+' area'+(j.pending===1?'':'s')+' still early days (under '+j.need+' readings)'):'';
@@ -5249,9 +5252,13 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
              long polygon along the front), which made the owner think readings
              were stuck when they were landing in different squares. Seeing
              the square light up is the proof the name can't give. */
-          window.sckMapShowMine=function(lat,lon){
-            var cla=Math.round(lat*CELL_LAT)/CELL_LAT, clo=Math.round(lon*CELL_LON)/CELL_LON;
-            var h=0.5/CELL_LAT, w=0.5/CELL_LON;
+          /* The SERVER decides the cell (coast = fine, inland = coarse) and hands
+             it back in the POST response as 'cell' - we never re-derive it here,
+             or a beach reading would pulse the wrong (500 m) square. */
+          window.sckMapShowMine=function(cell){
+            if(!cell)return;
+            var cla=cell.lat, clo=cell.lon, gl=(cell.g==='c')?{la:800,lo:500}:{la:CELL_LAT,lo:CELL_LON};
+            var h=0.5/gl.la, w=0.5/gl.lo;
             var ring=L.rectangle([[cla-h,clo-w],[cla+h,clo+w]],{color:'#ffffff',weight:3,fill:false,className:'sck-pulse'}).addTo(map);
             map.flyTo([cla,clo],Math.max(map.getZoom(),14),{duration:.9});
             var n=0,t=setInterval(function(){ring.setStyle({opacity:(n++%2)?1:.25});if(n>7){clearInterval(t);map.removeLayer(ring);}},350);
@@ -5380,7 +5387,7 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
               if(d!=null){$('sck-dl').textContent=d;$('sck-ms').textContent=ms;$('sck-net').textContent='—';$('sck-you').hidden=false;}return;}
             render(j);say('Recorded — thank you. Try again somewhere else later.','ok');
             if(window.sckMapReload)window.sckMapReload();   /* your square may just have appeared */
-            if(window.sckMapShowMine)setTimeout(function(){window.sckMapShowMine(c.latitude,c.longitude);},700);
+            if(window.sckMapShowMine)setTimeout(function(){window.sckMapShowMine(j.cell);},700);
             if(window.ttToolDone)window.ttToolDone('mobile-signal-check');
             /* challenge verdict, if they arrived via a shared link */
             if(window.SCK_VS){var vs=window.SCK_VS,mine=j.you.dl,el=$('sck-vs-txt');
@@ -5410,7 +5417,7 @@ def mobile_signal_check():
     desc = "Test your phone's real mobile data speed right where you're standing, then see how it compares with other readings from your part of Bournemouth, Christchurch and Poole. Free, ten seconds, no sign-up."
     faqs = [
       ("Why do I have to turn WiFi off?", "Because otherwise you&rsquo;d be measuring the router you&rsquo;re connected to, not your phone&rsquo;s mobile signal. The test refuses to run on WiFi for exactly that reason."),
-      ("Where does my reading go?", "It&rsquo;s kept as part of a ~500&nbsp;m area &mdash; never your exact spot &mdash; with the speed, the time of day and the network you told us. Nothing that identifies you. It goes into a pool that only ever compares <em>you</em> against <em>your area</em>."),
+      ("Where does my reading go?", "It&rsquo;s kept as part of an area &mdash; never your exact spot &mdash; with the speed, the time of day and the network you told us. Inland that area is ~500&nbsp;m, so it can never point at a home. On the beaches, piers and promenade, where nobody lives, it&rsquo;s ~140&nbsp;m, because the signal there really does change from the end of the pier to the big wheel and we&rsquo;d rather the map showed it. Nothing that identifies you. It goes into a pool that only ever compares <em>you</em> against <em>your area</em>."),
       ("Do you rank the networks against each other?", "No, and we won&rsquo;t. We show you your own network because it&rsquo;s your result. We don&rsquo;t publish network league tables &mdash; every network has good and bad patches, and one phone on one day can&rsquo;t settle that fairly."),
       ("How is this different from the campervan map?", "The <a href=\"/van-signal-map/\">van map</a> is one instrument &mdash; a roof-mounted router on one network &mdash; measured the same way every time, which is what makes its ranked places citable. This page is everyone&rsquo;s phones. Different data, kept separate on purpose."),
       ("Why does it say &lsquo;not enough readings yet&rsquo;?", "Two people isn&rsquo;t &lsquo;typical for your area&rsquo; &mdash; it&rsquo;s two people. We only show a comparison once an area has eight or more readings, so early on you might be one of the first. That&rsquo;s the point of adding yours."),
