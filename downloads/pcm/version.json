@@ -1,7 +1,7 @@
 {
-  "ver": 21,
-  "version": "1.0.21",
-  "url": "https://365techies.co.uk/downloads/pcm/pcm-v21.exe",
-  "sha256": "2294dd5bcf45a22d713f540bf2d7d6ea2db259bebc5e0b120184afe5ab1f4738",
-  "notes": "Clearer everywhere: fixed garbled characters some PCs showed in the weather, courses and health notes. New: turn a startup item back on if you change your mind, see what starts for every account, two current scams named in Scam check (and how to check a caller is really us), and battery health with charging tips on laptops. Signed by 365 Techies Ltd."
+  "ver": 22,
+  "version": "1.0.22",
+  "url": "https://365techies.co.uk/downloads/pcm/pcm-v22.exe",
+  "sha256": "ade299e7b298cf590f90efb0c90387aa98f6cd53e34b8dafd7390e3591ca593a",
+  "notes": "Broadband test results are now big and easy to read: three clear tiles for download, upload and response time, with a plain-English note on whether you were on Wi-Fi or plugged in, and your last visit comparison. Signed by 365 Techies Ltd."
 }
