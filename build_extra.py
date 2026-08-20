@@ -482,7 +482,7 @@ def pcm_landing():
           <p class="lede lede--center" data-reveal>This is the real 365 PC Manager dashboard, running live in your browser. Hover or tap a dial and the device turns to that part, with a plain-English verdict. <strong>Sample data, honestly</strong> &mdash; it&rsquo;ll be your own PC&rsquo;s numbers at launch.</p>
         </div>
         <div id="pcmdemo" data-reveal style="position:relative;margin:1.2rem auto 0;border-radius:18px;overflow:hidden;border:1px solid rgba(125,170,220,.3);box-shadow:0 34px 80px rgba(0,0,0,.55);aspect-ratio:16/10;background:#0a1226">
-          <img src="/images/pcm-laptop-health.webp" width="2080" height="1620" alt="365 PC Manager live 3D dashboard preview" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transition:opacity .3s" loading="lazy" decoding="async" />
+          <img src="/images/pcm-laptop-health-v21.webp" width="2080" height="1620" alt="365 PC Manager health tab (tap to launch the interactive 3D demo)" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transition:opacity .3s" loading="lazy" decoding="async" />
           <button type="button" id="pcmdemoload" aria-label="Launch the live 3D demo" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.7rem;background:rgba(7,13,34,.42);border:0;cursor:pointer;color:#fff">
             <span style="width:76px;height:76px;border-radius:50%;background:rgba(29,151,227,.94);display:flex;align-items:center;justify-content:center;font-size:1.9rem;padding-left:6px;box-shadow:0 12px 32px rgba(0,0,0,.45)">&#9654;</span>
             <span class="mono" style="font-size:.8rem;letter-spacing:.05em">Launch the live 3D demo</span>
@@ -536,8 +536,8 @@ def pcm_landing():
       <div aria-hidden="true" style="position:absolute;left:50%;top:6%;transform:translateX(-50%);width:78%;height:64%;background:radial-gradient(ellipse at center,rgba(29,151,227,.22),rgba(29,151,227,0) 70%);filter:blur(46px);pointer-events:none;z-index:0"></div>
       <div class="wrap" style="max-width:1000px;position:relative;z-index:1">
         <div data-reveal style="position:relative;border-radius:20px;overflow:hidden;border:1px solid rgba(125,170,220,.3);box-shadow:0 34px 80px rgba(0,0,0,.55)">
-          <video id="pcmreel" muted loop playsinline autoplay preload="metadata" poster="/images/pcm-reel-poster.jpg" width="1920" height="1080" aria-label="365 PC Manager in action: brand intro, the health score climbing to 88 percent, then one-tap boost" style="width:100%;height:auto;display:block;background:#0a1226">
-            <source src="/images/pcm-reel.mp4" type="video/mp4" />
+          <video id="pcmreel" muted loop playsinline autoplay preload="metadata" poster="/images/pcm-reel-poster-v21.jpg" width="1920" height="1080" aria-label="365 PC Manager in action: brand intro, the health score climbing to 88 percent, then one-tap boost" style="width:100%;height:auto;display:block;background:#0a1226">
+            <source src="/images/pcm-reel-v21.mp4" type="video/mp4" />
           </video>
           <button type="button" id="pcmreelplay" aria-label="Play the 365 PC Manager showcase" style="position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(7,13,34,.28);border:0;cursor:pointer">
             <span style="width:76px;height:76px;border-radius:50%;background:rgba(29,151,227,.94);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.9rem;padding-left:6px;box-shadow:0 12px 32px rgba(0,0,0,.45)">&#9654;</span>
@@ -597,14 +597,14 @@ def pcm_landing():
           <p>And after every service, a <strong>written report lands on your Desktop</strong>: what we did, how your PC scored, and honest advice and recommendations in plain English. Proof, not promises.</p>
         </div>
         <figure style="margin:0" data-reveal>
-          <img width="2080" height="1620" src="/images/pcm-laptop-booking.webp" alt="365 PC Manager booking tab on a laptop - a real appointment with Change and Cancel buttons, day and time slot picker, and the I'm-ready-to-connect banner" loading="lazy" decoding="async" style="width:100%;height:auto;display:block" />
+          <img width="2080" height="1620" src="/images/pcm-laptop-booking-v21.webp" alt="365 PC Manager booking tab on a laptop - a real appointment with Change and Cancel buttons, day and time slot picker, and the I'm-ready-to-connect banner" loading="lazy" decoding="async" style="width:100%;height:auto;display:block" />
         </figure>
       </div>
     </section>''',
       '''    <section class="section" aria-label="Power, solar and smart home">
       <div class="wrap split-2">
         <figure style="margin:0" data-reveal>
-          <img width="2080" height="1620" src="/images/pcm-laptop-energy.webp" alt="365 PC Manager power tab on a laptop - live wattage with yearly running cost, Victron VRM off-grid section and Home Assistant smart home section" loading="lazy" decoding="async" style="width:100%;height:auto;display:block" />
+          <img width="2080" height="1620" src="/images/pcm-laptop-energy-v21.webp" alt="365 PC Manager power tab on a laptop - live wattage with yearly running cost, Victron VRM off-grid section and Home Assistant smart home section" loading="lazy" decoding="async" style="width:100%;height:auto;display:block" />
         </figure>
         <div class="prose" data-reveal>
           <p class="eyebrow mono">// POWER, SOLAR &amp; SMART HOME</p>
@@ -644,11 +644,11 @@ def pcm_landing():
             <button type="button" role="tab" aria-selected="false" aria-controls="tour-panel" class="pcmtour__tab" data-i="4">Power</button>
           </div>
           <div id="tour-panel" role="tabpanel" style="position:relative;aspect-ratio:2080/1620;border-radius:14px;overflow:hidden;border:1px solid rgba(125,170,220,.25);box-shadow:0 24px 60px rgba(0,0,0,.45);background:#0a1226">
-            <img data-i="0" src="/images/pcm-laptop-health.webp" width="2080" height="1620" alt="365 PC Manager health tab - live health score ring, verdict and system glance" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:1;transition:opacity .28s ease" />
-            <img data-i="1" src="/images/pcm-laptop-boost.webp" width="2080" height="1620" alt="365 PC Manager boost tab - live memory graph and one-tap boost" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .28s ease" />
-            <img data-i="2" src="/images/pcm-laptop-report.webp" width="2080" height="1620" alt="365 PC Manager service tab - the free full health-check report" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .28s ease" />
-            <img data-i="3" src="/images/pcm-laptop-booking.webp" width="2080" height="1620" alt="365 PC Manager booking tab - book, change and cancel visits" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .28s ease" />
-            <img data-i="4" src="/images/pcm-laptop-energy.webp" width="2080" height="1620" alt="365 PC Manager power tab - live wattage and yearly running cost" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .28s ease" />
+            <img data-i="0" src="/images/pcm-laptop-health-v21.webp" width="2080" height="1620" alt="365 PC Manager health tab - live health score ring, verdict and system glance" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:1;transition:opacity .28s ease" />
+            <img data-i="1" src="/images/pcm-laptop-boost-v21.webp" width="2080" height="1620" alt="365 PC Manager boost tab - live memory graph and one-tap boost" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .28s ease" />
+            <img data-i="2" src="/images/pcm-laptop-report-v21.webp" width="2080" height="1620" alt="365 PC Manager service tab - the free full health-check report" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .28s ease" />
+            <img data-i="3" src="/images/pcm-laptop-booking-v21.webp" width="2080" height="1620" alt="365 PC Manager booking tab - book, change and cancel visits" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .28s ease" />
+            <img data-i="4" src="/images/pcm-laptop-energy-v21.webp" width="2080" height="1620" alt="365 PC Manager power tab - live wattage and yearly running cost" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .28s ease" />
           </div>
           <p class="mono" id="tour-cap" aria-live="polite" style="text-align:center;color:var(--muted);font-size:.75rem;margin:.75rem 0 0">Your health score, at a glance</p>
         </div>
@@ -798,7 +798,7 @@ def pcm_landing():
                "description": "Free PC health check app for Windows by 365 Techies (a real Bournemouth family IT firm): a plain-English health score, drive (SMART) health, one-tap boost, live performance graphs, backup and startup checks, and an honest report - no fake errors, no scare tactics. " + ("Free download, digitally signed by 365 Techies Ltd." if PCM_LIVE else "Launching soon; join the waitlist."),
                "offers": {"@type": "Offer", "price": "0", "priceCurrency": "GBP", "availability": ("https://schema.org/InStock" if PCM_LIVE else "https://schema.org/PreOrder")},
                **({"downloadUrl": PCM_DOWNLOAD_URL, "softwareVersion": PCM_VERSION, "fileSize": PCM_FILESIZE} if PCM_LIVE else {}),   # derived from version.json + the exe on disk - retyping these is how they came to advertise 1.0.18/326KB while v20 shipped
-               "screenshot": [SITE + "/images/pcm-laptop-health.webp", SITE + "/images/pcm-laptop-boost.webp", SITE + "/images/pcm-laptop-report.webp"],
+               "screenshot": [SITE + "/images/pcm-laptop-health-v21.webp", SITE + "/images/pcm-laptop-boost-v21.webp", SITE + "/images/pcm-laptop-report-v21.webp"],
                "provider": {"@id": SITE + "/#business"}, "url": f"{SITE}/{s}/"}
         return graph([crumb(s, "Free PC Health Check"),
                       webpage(s, "Free PC Health Check - 365 PC Manager", _desc),
@@ -806,7 +806,7 @@ def pcm_landing():
                       faqpage(s, _faqs)])
     add(slug=slug, title="Free PC Health Check for Windows | 365 PC Manager",
         desc=desc, og_title="Free PC Health Check - 365 PC Manager | 365 Techies", schema=schema, content=content,
-        og_image=bp.SITE + "/images/pcm-og.jpg")
+        og_image=bp.SITE + "/images/pcm-og-v21.jpg")
 pcm_landing()
 
 # ===================================================== 365 WIFI OPTIMIZER (live signal finder)
