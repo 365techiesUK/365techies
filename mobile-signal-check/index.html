@@ -811,6 +811,17 @@
           .sck__gos .sck__go{margin:0;padding:1.15rem .8rem;font-size:1.1rem}
           .sck__gos .sck__go small{display:block;font:500 .72rem/1.25 inherit;opacity:.82;margin-top:.28rem}
           .sck__go--in{background:linear-gradient(135deg,#2b4a72,#1d97e3);color:#eaf4ff}
+          /* "Next spot" panel: testing again should never mean scrolling back
+             up - the buttons come to where the visitor already is. */
+          .sck__next{background:rgba(20,27,46,.75);border:1px solid rgba(63,185,80,.4);border-radius:14px;padding:.9rem 1rem;margin:.9rem 0 0}
+          .sck__next p{margin:0 0 .6rem;text-align:center;color:#e6edf3;font-size:.92rem}
+          .sck__next p b{font-variant-numeric:tabular-nums}
+          .sck__nextbtns{display:grid;grid-template-columns:1fr 1fr;gap:.55rem}
+          @media (max-width:380px){.sck__nextbtns{grid-template-columns:1fr}}
+          .sck__nextbtns button{padding:.85rem .8rem;min-height:48px;border-radius:12px;border:0;cursor:pointer;
+            font:700 .98rem/1.15 inherit;background:linear-gradient(135deg,#1d97e3,#3fb950);color:#061019}
+          .sck__nextbtns button.sck__go--in{background:linear-gradient(135deg,#2b4a72,#1d97e3);color:#eaf4ff}
+          .sck__nextbtns button:disabled{opacity:.45;cursor:default}
           .sck__you{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin:0 0 .9rem}
           .sck__you div{background:rgba(20,27,46,.55);border:1px solid rgba(125,170,220,.18);border-radius:12px;padding:.8rem .6rem;text-align:center}
           .sck__you b{display:block;font-size:1.45rem;color:#e6edf3;font-variant-numeric:tabular-nums}
@@ -902,6 +913,13 @@
               <li><button type="button" id="sck-sh-copy"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.9 12a5 5 0 015-5h3v1.9h-3a3.1 3.1 0 000 6.2h3V17h-3a5 5 0 01-5-5zm5.1-1h6v2H9v-2zm4-4h3a5 5 0 010 10h-3v-1.9h3a3.1 3.1 0 000-6.2h-3V7z"/></svg>Copy link</button></li>
             </ul>
             <p class="sck__share-said" id="sck-share-said" role="status" aria-live="polite"></p>
+          </div>
+          <div class="sck__next" id="sck-next" hidden>
+            <p id="sck-next-st">Next spot unlocks in <b>5:00</b></p>
+            <div class="sck__nextbtns">
+              <button type="button" id="sck-next-out">Next spot &mdash; I&rsquo;m outside</button>
+              <button type="button" id="sck-next-in" class="sck__go--in">I&rsquo;m inside</button>
+            </div>
           </div>
           <p class="sck__small">We keep your reading as part of a ~500&nbsp;m area, never your exact spot, and nothing that identifies you. We show <em>you</em> your network because it&rsquo;s your result &mdash; we don&rsquo;t publish network league tables. <a href="/van-signal-map/">See the van map</a> for our own measured places.</p>
         </div>
@@ -1190,9 +1208,35 @@
            piece of context that decides whether a slow reading indicts the
            network or the building. */
         var goIn=$('sck-go-in'), PLACE='';
-        function busy(b){go.disabled=b;if(goIn)goIn.disabled=b;}
+        /* Cooldown: the server allows one reading per device per 5 minutes.
+           Without this the page happily ran the WHOLE test - location, ping,
+           a 10 MB download - and only then learned the server would refuse it.
+           Now the last success is remembered and the next test counts down,
+           so nobody burns mobile data on a reading that was never going to
+           land. The server stays the authority; this is just the courtesy. */
+        var COOL=300, coolTick=null;
+        try{COOL=parseInt(localStorage.getItem('sck_cool'))||300;}catch(e){}
+        function coolLeft(){try{var t=parseInt(localStorage.getItem('sck_last_t'))||0;
+          return Math.max(0,Math.ceil((t+COOL*1000-Date.now())/1000));}catch(e){return 0;}}
+        function fmt(sec){return Math.floor(sec/60)+':'+('0'+sec%60).slice(-2);}
+        function coolStart(){
+          var box=$('sck-next');if(!box)return;box.hidden=false;
+          if(coolTick)clearInterval(coolTick);
+          function paint(){var left=coolLeft(),st=$('sck-next-st'),
+              a=$('sck-next-out'),b=$('sck-next-in');
+            if(left>0){a.disabled=true;b.disabled=true;
+              st.innerHTML='Next spot unlocks in <b>'+fmt(left)+'</b> &mdash; time to walk somewhere the signal might differ.';}
+            else{a.disabled=false;b.disabled=false;
+              st.innerHTML='<b style="color:#3fb950">Ready.</b> Different spot, different square &mdash; that&rsquo;s how the map gets finished.';
+              clearInterval(coolTick);coolTick=null;}}
+          paint();coolTick=setInterval(paint,1000);}
+        function busy(b){go.disabled=b;if(goIn)goIn.disabled=b;
+          var a=$('sck-next-out'),c=$('sck-next-in');
+          if(a){a.disabled=b||coolLeft()>0;c.disabled=b||coolLeft()>0;}}
         function start(place){
           PLACE=place;
+          var left=coolLeft();
+          if(left>0){say('Next test unlocks in '+fmt(left)+' — the 5-minute gap keeps any one phone from flooding the map.','warn');coolStart();return;}
           /* if the WiFi question interrupts us, this is how we come back in
              without making them pick indoors/outdoors a second time */
           window.__sckResume=function(){start(place);};
@@ -1219,8 +1263,12 @@
                 conn:'cellular',conn_src:(connState()==='cellular'?'detected':'confirmed')})});})
           .then(function(r){return r.json();})
           .then(function(j){if(!j.ok){say(j.error||'Could not record that reading.','warn');
+              if(j.retry_s){try{localStorage.setItem('sck_last_t',String(Date.now()-(COOL-j.retry_s)*1000));}catch(e){}coolStart();}
               if(d!=null){$('sck-dl').textContent=d;$('sck-ms').textContent=ms;$('sck-net').textContent='—';$('sck-you').hidden=false;}return;}
-            render(j);say('Recorded — thank you. Try again somewhere else later.','ok');
+            render(j);say('Recorded — thank you.','ok');
+            try{localStorage.setItem('sck_last_t',String(Date.now()));
+              if(j.next_s){COOL=j.next_s;localStorage.setItem('sck_cool',String(j.next_s));}}catch(e){}
+            coolStart();
             if(window.sckMapReload)window.sckMapReload();   /* your square may just have appeared */
             if(window.sckMapShowMine)setTimeout(function(){window.sckMapShowMine(j.cell);},700);
             if(window.ttToolDone)window.ttToolDone('mobile-signal-check');
@@ -1237,7 +1285,7 @@
                Their reading still counts, their compare is still against
                their own area, and the share loop still works. */
             var inMap=c.latitude>50.55&&c.latitude<50.95&&c.longitude>-2.35&&c.longitude<-1.55;
-            if(!inMap){var n=document.createElement('p');n.className='sck__small';n.style.cssText='margin-top:.9rem;padding:.7rem .9rem;border:1px solid rgba(210,153,34,.45);border-radius:10px;color:#e6edf3';
+            if(!inMap&&!$('sck-faraway')){var n=document.createElement('p');n.id='sck-faraway';n.className='sck__small';n.style.cssText='margin-top:.9rem;padding:.7rem .9rem;border:1px solid rgba(210,153,34,.45);border-radius:10px;color:#e6edf3';
               n.innerHTML='<b>Recorded — thank you.</b> The map on this page only shows Bournemouth, Christchurch and Poole, so you won&rsquo;t see your square there — but your reading counts, your comparison is against your own area, and you can still share it and challenge people wherever they are.';
               $('sck-cmp').parentNode.insertBefore(n,$('sck-share'));}})
           .catch(function(e){say(e.message||String(e),'bad');})
@@ -1245,6 +1293,17 @@
         }
         go.addEventListener('click',function(){start('out');});
         if(goIn)goIn.addEventListener('click',function(){start('in');});
+        var nOut=$('sck-next-out'),nIn=$('sck-next-in');
+        function again(place){
+          /* clear the previous result so the new one can't be misread as it */
+          $('sck-share').hidden=true;
+          var old=$('sck-faraway');if(old)old.parentNode.removeChild(old);
+          $('sck-st').scrollIntoView({block:'center',behavior:'smooth'});
+          start(place);}
+        if(nOut)nOut.addEventListener('click',function(){again('out');});
+        if(nIn)nIn.addEventListener('click',function(){again('in');});
+        /* someone returning mid-cooldown sees the countdown straight away */
+        if(coolLeft()>0)coolStart();
       })();
       </script>
     </section>

@@ -293,7 +293,11 @@ if ($method === 'POST') {
     if (($rate['day'] ?? '') !== $day) $rate = ['day' => $day, 'ip' => [], 'cell' => []];
     $now = time();
     if (isset($rate['ip'][$who]) && ($now - $rate['ip'][$who]) < RATE_S) {
-        echo json_encode(['ok' => false, 'error' => 'one reading per 5 minutes']); exit;
+        // retry_s lets the page show a real countdown. NB this hash is per-IP,
+        // and mobile carriers put many phones behind one address - so the
+        // wording must never accuse; it may genuinely be their first test.
+        echo json_encode(['ok' => false, 'error' => 'this connection tested very recently - hang on a few minutes',
+                          'retry_s' => RATE_S - ($now - $rate['ip'][$who])]); exit;
     }
     [$cla, $clo, $grid] = cell_of($lat, $lon, $acc);
     $ck = "$grid:$cla,$clo";
@@ -329,6 +333,7 @@ if ($method === 'POST') {
     // the cell this reading landed in - centre + grid - so the page can light
     // up the RIGHT square (it must not re-derive the grid client-side)
     $cmp['cell'] = ['lat' => $cla, 'lon' => $clo, 'g' => $grid];
+    $cmp['next_s'] = RATE_S;     // when the next test unlocks - keeps the client's countdown in sync if RATE_S ever changes
     echo json_encode($cmp);
     exit;
 }
