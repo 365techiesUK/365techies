@@ -3003,6 +3003,34 @@ TOOLS = {
 # while the existing fleet was already on v20 (2026-08-19).
 PCM_LIVE = True
 PCM_SOON = not PCM_LIVE
+
+# The free app, sold from the plan pages. The audit (2026-08-20) found the app was
+# invisible on every plan and pricing page, despite its plan-only features being a
+# genuine reason to be ON a plan. PCM_LIVE gates it so it cannot reappear if the
+# app is ever pulled.
+PCM_BAND = '''    <section class="section section--alt" aria-label="365 PC Manager on your plan">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">// FREE WITH EVERY PLAN</p>
+          <h2 class="section-title" data-title>365 PC Manager, on your PC<span class="title-underline"></span></h2>
+          <p>Our own free Windows app &mdash; digitally signed in our name &mdash; shows your PC&rsquo;s health in plain English: drive condition, memory, protection, backup, and an honest verdict. Anyone can use it. <strong>On a plan it does more.</strong></p>
+          <p>At every service we run a real <a href="/free-pc-health-check/#broadband">broadband speed test</a> from your machine and keep it with your record, so next visit we can see whether your line has quietly got worse. No other local IT firm measures your broadband at all, let alone tracks it over time.</p>
+          <div class="hero__actions" style="margin-top:1.2rem">
+            <a class="button primary" href="/free-pc-health-check/">Get the free app &#8594;</a>
+            <a class="button secondary" href="/portal/">See your dashboard</a>
+          </div>
+        </div>
+        <ul class="checklist" data-stagger>
+          <li>Free forever, no sign-up, under 1&nbsp;MB</li>
+          <li>Broadband speed measured at every visit</li>
+          <li>Every written Service Report in one place</li>
+          <li>Your next visit &mdash; move or cancel it yourself</li>
+          <li>Optional: let us run safe maintenance remotely</li>
+          <li>No fake errors, no scare tactics, ever</li>
+        </ul>
+      </div>
+    </section>''' if PCM_LIVE else ""
+
 def tool_cards(keys):
     out = ""
     for k in keys:
@@ -4856,6 +4884,7 @@ add(
     </section>''',
    promise_strip(),
    _dash_band("both", alt=True),
+   PCM_BAND,
    faq_html([
      ("What is monthly IT support?", "Monthly IT support is a subscription that gives you ongoing help, regular maintenance, security checks and priority response for one predictable monthly cost — instead of paying per repair when something breaks."),
      ("How much does it cost?", "Home support is &pound;18.25/month per computer, and business support starts from &pound;24.38/month per computer. Microsoft 365 can be added for &pound;4.85/month per user. Every plan includes a full computer service every six weeks, finished with a written Service Report on your Desktop &mdash; what we did, how the computer scored, and anything worth planning."),
@@ -4926,6 +4955,7 @@ add(
     </section>''',
    reviews_block(pick("Alan Bevis", "Free Spirit", "Cordelia Cutler")),
    _dash_band("home", alt=True),
+   PCM_BAND,
    faq_html([
      ("Who is home IT support for?", "Home users, families, retired and disabled people, students and home workers who want patient, jargon-free help with their everyday technology. Supporting retired and disabled people is one of our specialisms."),
      ("What does it cover?", "Computers and laptops, printers, Wi-Fi, email, Microsoft 365, Windows updates, security checks, slow-computer fixes, backups, new device setup and scam-prevention advice."),
@@ -4998,6 +5028,7 @@ add(
     </section>''',
    reviews_block(pick("JAR Accountants", "Hardie", "Sarah Austin")),
    _dash_band("business", alt=True),
+   PCM_BAND,
    faq_html([
      ("Who is business IT support for?", "Sole traders, home offices and small businesses — estate agents, accountants, consultants, trades and retail — who need reliable IT without employing full-time staff."),
      ("What does it include?", "Remote support, staff support, Microsoft 365 administration, Outlook/Teams/OneDrive/SharePoint help, cybersecurity checks, Windows updates, backup checks, new PC setup, user onboarding and leaver checks."),
@@ -5099,6 +5130,7 @@ add(
    GC_NOTE,
    REMOTE_ACCESS_BAND,
    _dash_band("home", alt=True),
+   PCM_BAND,
    cta("Pick a home support plan", "Not sure which plan fits? Tell us a bit about your setup and we&rsquo;ll recommend the right one — no pressure.",
        primary=("Get Started", "/contact/"), secondary=("Call 01202 775566", "tel:+441202775566"), whats_next=True),
  ]),
@@ -5168,6 +5200,7 @@ add(
    GC_NOTE,
    REMOTE_ACCESS_BAND,
    _dash_band("business", alt=True),
+   PCM_BAND,
    cta("Choose a business plan", "Tell us how many people you need to cover and how you work — we&rsquo;ll put together the right plan and a clear quote.",
        primary=("Get a quote", "/contact/?topic=business-it-support"), secondary=("Call 01202 775566", "tel:+441202775566"), whats_next=True),
  ]),
