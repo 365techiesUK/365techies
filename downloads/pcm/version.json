@@ -1,7 +1,7 @@
 {
-  "ver": 20,
-  "version": "1.0.20",
-  "url": "https://365techies.co.uk/downloads/pcm/pcm-v20.exe",
-  "sha256": "4ab775891e3f300fe96fe3ce84c4d5db228afbd2c0eef9ed8b7d8022088ea9cb",
-  "notes": "New: a broadband speed test in the Service tab, so we can see how your line is really performing and compare it with your last visit. Signed by 365 Techies Ltd. Plus a leaner, faster app with fewer permission prompts and small fixes throughout."
+  "ver": 21,
+  "version": "1.0.21",
+  "url": "https://365techies.co.uk/downloads/pcm/pcm-v21.exe",
+  "sha256": "2294dd5bcf45a22d713f540bf2d7d6ea2db259bebc5e0b120184afe5ab1f4738",
+  "notes": "Clearer everywhere: fixed garbled characters some PCs showed in the weather, courses and health notes. New: turn a startup item back on if you change your mind, see what starts for every account, two current scams named in Scam check (and how to check a caller is really us), and battery health with charging tips on laptops. Signed by 365 Techies Ltd."
 }
