@@ -742,7 +742,7 @@ def pcm_landing():
       '''    <section class="section" aria-label="Broadband speed test" id="broadband">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// THE BIT NOBODY ELSE DOES</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>// THE BIT NOBODY ELSE SHOWS YOU</p>
           <h2 class="section-title section-title--center" data-title>It tests your broadband too<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>Most PC tools stop at the PC. 365 PC Manager also measures your <strong>actual broadband speed</strong> &mdash; download, upload and latency &mdash; and remembers it, so slow internet stops being an argument and starts being a number.</p>
         </div>
