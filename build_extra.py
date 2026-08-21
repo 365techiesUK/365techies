@@ -5175,6 +5175,11 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
             font:700 .98rem/1.15 inherit;background:linear-gradient(135deg,#1d97e3,#3fb950);color:#061019}
           .sck__nextbtns button.sck__go--in{background:linear-gradient(135deg,#2b4a72,#1d97e3);color:#eaf4ff}
           .sck__nextbtns button:disabled{opacity:.45;cursor:default}
+          .sck__keep{margin:.9rem 0 0;text-align:center}
+          .sck__keep button{display:inline-flex;align-items:center;gap:.45rem;padding:.65rem 1rem;border-radius:999px;
+            border:1px solid rgba(108,196,245,.45);background:rgba(20,27,46,.55);color:#cfe0f5;font:600 .88rem/1 inherit;cursor:pointer}
+          .sck__keep-how{margin:.55rem auto 0;max-width:34rem;font-size:.83rem;color:var(--muted,#9db3cf);text-align:left;
+            background:rgba(20,27,46,.75);border:1px solid rgba(125,170,220,.3);border-radius:10px;padding:.7rem .9rem}
           .sck__you{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin:0 0 .9rem}
           .sck__you div{background:rgba(20,27,46,.55);border:1px solid rgba(125,170,220,.18);border-radius:12px;padding:.8rem .6rem;text-align:center}
           .sck__you b{display:block;font-size:1.45rem;color:#e6edf3;font-variant-numeric:tabular-nums}
@@ -5269,9 +5274,18 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
           </div>
           <div class="sck__next" id="sck-next" hidden>
             <p id="sck-next-st">Next spot unlocks in <b>5:00</b></p>
+            <!-- Spatially-targeted nudges: a field experiment (Westerholt 2020)
+                 showed people measurably walk further and detour toward map
+                 cells flagged as valuable, often without noticing. These are
+                 the nearest squares that still need readings. -->
+            <p class="sck__small" id="sck-gaps" style="text-align:center;margin:0 0 .6rem"></p>
             <div class="sck__nextbtns">
               <button type="button" id="sck-next-out">Next spot &mdash; I&rsquo;m outside</button>
               <button type="button" id="sck-next-in" class="sck__go--in">I&rsquo;m inside</button>
+            </div>
+            <div class="sck__keep" id="sck-keep" hidden>
+              <button type="button" id="sck-keep-btn">&#128204; Keep this test on your home screen</button>
+              <div class="sck__keep-how" id="sck-keep-how" hidden></div>
             </div>
           </div>
           <p class="sck__small">We keep your reading as part of a ~500&nbsp;m area, never your exact spot, and nothing that identifies you. We show <em>you</em> your network because it&rsquo;s your result &mdash; we don&rsquo;t publish network league tables. <a href="/van-signal-map/">See the van map</a> for our own measured places.</p>
@@ -5304,6 +5318,12 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
           <div id="sckmap"></div>
         </div>
         <p class="sckm__count" id="sckm-count"></p>
+        <!-- Areas compete; networks never do. Rough town splits by longitude:
+             Poole west of -1.94, Christchurch east of -1.80, Bournemouth
+             between. A league of AREAS is the honest rivalry (iNaturalist's
+             city-vs-city is the proven local mechanic); a league of NETWORKS
+             is the scorecard this project refuses to build. -->
+        <p class="sckm__count" id="sckm-league" style="margin-top:.35rem"></p>
       </div>
       <script>
       /* LAZY-LOAD THE MAP LIBRARIES. Leaflet + Protomaps are 269 KB - about 90%
@@ -5380,7 +5400,21 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
             });
             document.getElementById('sckm-st').textContent=j.cells.length+' area'+(j.cells.length===1?'':'s')+' on the map';
             var pend=j.pending?(' &middot; '+j.pending+' area'+(j.pending===1?'':'s')+' still early days (under '+j.need+' readings)'):'';
-            document.getElementById('sckm-count').innerHTML='<b>'+j.total+'</b> reading'+(j.total===1?'':'s')+' from people so far'+pend+'. Add yours above.';}
+            document.getElementById('sckm-count').innerHTML='<b>'+j.total+'</b> reading'+(j.total===1?'':'s')+' from people so far'+pend+'. Add yours above.';
+            /* the towns' race + the nearly-there list, from the same payload */
+            var t={B:{n:0,r:0},P:{n:0,r:0},C:{n:0,r:0}},near=[];
+            j.cells.forEach(function(c){
+              var inBCP=c.lat>=50.66&&c.lat<=50.82&&c.lon>=-2.05&&c.lon<=-1.70;
+              if(inBCP){var k=c.lon<-1.94?'P':(c.lon>-1.80?'C':'B');t[k].n++;t[k].r+=c.n;}
+              var need=c.need||j.need;if(c.n<need&&c.n>=2)near.push({c:c,gap:need-c.n});});
+            near.sort(function(a,b){return a.gap-b.gap;});
+            var lg='The race so far: <b>Bournemouth</b> '+t.B.n+' areas · <b>Poole</b> '+t.P.n+' · <b>Christchurch</b> '+t.C.n+' <span style="opacity:.7">(rough splits)</span>';
+            if(near.length){lg+='<br>Nearly verified: '+near.slice(0,4).map(function(x){
+              return '<a href="#" class="sckm-near" data-lat="'+x.c.lat+'" data-lon="'+x.c.lon+'" data-g="'+(x.c.g||'i')+'" style="color:#6cc4f5;white-space:nowrap">'+x.c.n+'/'+(x.c.need||j.need)+' — '+x.gap+' to go</a>';}).join(' &middot; ');}
+            var lgEl=document.getElementById('sckm-league');lgEl.innerHTML=lg;
+            lgEl.querySelectorAll('.sckm-near').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();
+              window.sckEv&&window.sckEv('league_click',{});
+              window.sckMapShowMine&&window.sckMapShowMine({lat:parseFloat(this.getAttribute('data-lat')),lon:parseFloat(this.getAttribute('data-lon')),g:this.getAttribute('data-g')});});});}
           function load(){fetch(API+'&_='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){if(j&&j.ok){draw(j);map.invalidateSize();}}).catch(function(){});}
           load();setInterval(load,REFRESH);
           window.sckMapReload=load;
@@ -5475,24 +5509,38 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
            would build the operator league table for us one WhatsApp at a
            time, and that is the one thing this project does not publish. */
         var PAGE='https://365techies.co.uk/mobile-signal-check/';
-        var LAST=null;   /* {dl, where} of the reading just taken */
+        var LAST=null;   /* {dl, where, gap} of the reading just taken */
+        /* Analytics that actually answer questions. The gtag stub exists from
+           the head (consent snippet), so calls queue safely before the library
+           lazy-loads. Until these existed we could not tell "nobody shares"
+           from "the share UI fails" - every growth argument was a guess. */
+        var READS=0;
+        function ev(n,p){try{if(window.gtag)window.gtag('event',n,p||{});}catch(e){}}
+        window.sckEv=ev;   /* the map section's script lives in its own scope */
         function areaName(lat,lon){
           var u='https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=16&lat='+lat+'&lon='+lon;
           return fetch(u,{headers:{'Accept':'application/json'}}).then(function(r){return r.json();}).then(function(j){
             var a=(j&&j.address)||{};var ks=['neighbourhood','quarter','suburb','village','hamlet','town','city_district','city'];
             for(var i=0;i<ks.length;i++){if(a[ks[i]])return String(a[ks[i]]).slice(0,40);}return null;}).catch(function(){return null;});}
-        function shareText(){return 'I got '+LAST.dl+' Mbps on my phone'+(LAST.where?(' in '+LAST.where):' in Bournemouth')+' — what do you get where you are?';}
+        function shareText(){
+          var base='I got '+LAST.dl+' Mbps on my phone'+(LAST.where?(' in '+LAST.where):' in Bournemouth');
+          /* When the area is unfinished, what travels is a community goal, not
+             just a brag - "help finish our square" outperforms "beat me" for
+             local audiences, and both still land on the same challenge page. */
+          if(LAST.gap>0)return base+' — our area needs '+LAST.gap+' more test'+(LAST.gap===1?'':'s')+' to be verified on the map. Got ten seconds?';
+          return base+' — what do you get where you are?';}
         function shareUrl(){return PAGE+'?vs='+encodeURIComponent(LAST.dl)+(LAST.where?('&in='+encodeURIComponent(LAST.where)):'');}
         function said(m){var e=$('sck-share-said');e.textContent=m;setTimeout(function(){if(e.textContent===m)e.textContent='';},2600);}
         function copyText(t,m){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(function(){said(m);},function(){said('Press and hold to copy.');});}else{said('Press and hold to copy.');}}
-        function showShare(dl,where){LAST={dl:dl,where:where};var w=word(dl);
+        function showShare(dl,where,gap){LAST={dl:dl,where:where,gap:gap||0};var w=word(dl);
           $('sck-card-dl').textContent=dl;$('sck-card-where').textContent=where?('in '+where):'in Bournemouth';
           /* Same area name as your last test? Say so, so it doesn't read as stuck:
              the map square underneath is what actually moved. */
           try{var prev=sessionStorage.getItem('sck_last_where');
             $('sck-card-where').title=(prev&&prev===where)?'Same area name as your last test - it covers a big patch. Your square on the map below is the precise spot.':'';
             sessionStorage.setItem('sck_last_where',where||'');}catch(e){}
-          var v=$('sck-card-verdict');v.textContent=w[0];v.style.color=w[1];
+          var v=$('sck-card-verdict');v.style.color=w[1];
+          v.textContent=w[0]+(LAST.gap>0?(' · '+LAST.gap+' more test'+(LAST.gap===1?'':'s')+' verifies this area'):'');
           var t=encodeURIComponent(shareText()),u=encodeURIComponent(shareUrl());
           $('sck-sh-wa').href='https://wa.me/?text='+t+'%20'+u;
           $('sck-sh-fb').href='https://www.facebook.com/sharer/sharer.php?u='+u+'&quote='+t;
@@ -5505,11 +5553,13 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
         $('sck-ask-no').addEventListener('click',function(){
           $('sck-ask').hidden=true;
           say('No problem — turn WiFi off in Settings, then tap the button again.','warn');});
-        $('sck-sh-native').addEventListener('click',function(){if(!LAST)return;navigator.share({title:'My mobile signal',text:shareText(),url:shareUrl()})['catch'](function(){});});
-        $('sck-sh-copy').addEventListener('click',function(){if(!LAST)return;copyText(shareText()+' '+shareUrl(),'Copied — paste it anywhere.');});
+        $('sck-sh-native').addEventListener('click',function(){if(!LAST)return;ev('share_click',{method:'native'});navigator.share({title:'My mobile signal',text:shareText(),url:shareUrl()})['catch'](function(){});});
+        $('sck-sh-copy').addEventListener('click',function(){if(!LAST)return;ev('share_click',{method:'copy'});copyText(shareText()+' '+shareUrl(),'Copied — paste it anywhere.');});
+        $('sck-sh-wa').addEventListener('click',function(){ev('share_click',{method:'whatsapp'});});
+        $('sck-sh-fb').addEventListener('click',function(){ev('share_click',{method:'facebook'});});
         /* "Save picture": draw the card to a canvas and hand over a PNG. Done
            by hand rather than with a library so nothing external is loaded. */
-        $('sck-sh-img').addEventListener('click',function(){if(!LAST)return;
+        $('sck-sh-img').addEventListener('click',function(){if(!LAST)return;ev('share_click',{method:'image'});
           var W=1080,H=1080,c=document.createElement('canvas');c.width=W;c.height=H;var x=c.getContext('2d');
           var g=x.createLinearGradient(0,0,W,H);g.addColorStop(0,'#122040');g.addColorStop(1,'#0b1020');x.fillStyle=g;x.fillRect(0,0,W,H);
           x.fillStyle='#24456f';for(var gx=60;gx<W;gx+=60)for(var gy=60;gy<H;gy+=60){x.beginPath();x.arc(gx,gy,2.5,0,7);x.fill();}
@@ -5531,13 +5581,18 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
         (function(){var q=new URLSearchParams(location.search);var vs=parseFloat(q.get('vs'));if(!(vs>0))return;
           var where=(q.get('in')||'').replace(/[<>&"']/g,'').slice(0,40);
           $('sck-vs-txt').innerHTML='Someone got <b>'+vs+' Mbps</b>'+(where?(' in <b>'+where+'</b>'):'')+'. Can you beat it? Test yours below.';
-          $('sck-vs').hidden=false;window.SCK_VS=vs;})();
+          $('sck-vs').hidden=false;window.SCK_VS=vs;ev('challenge_arrival',{});})();
 
         function render(j){
           $('sck-dl').textContent=j.you.dl;$('sck-ms').textContent=j.you.ms==null?'—':j.you.ms;$('sck-net').textContent=j.you.net||'—';$('sck-you').hidden=false;
           var b=$('sck-cmp-body'),w=word(j.you.dl);
-          if(!j.enough){b.innerHTML='<p class="sck__verdict"><b style="color:'+w[1]+'">'+w[0]+'</b> — '+j.you.dl+' Mbps.</p>'+
-            '<p class="sck__small">Not enough readings from this area yet to compare — you’re one of the first (<b>'+j.n+'</b> so far, we show a comparison from '+j.need+'). Thanks for adding yours.</p>';}
+          if(!j.enough){var gap=Math.max(0,(j.need||8)-(j.n||0));
+            b.innerHTML='<p class="sck__verdict"><b style="color:'+w[1]+'">'+w[0]+'</b> — '+j.you.dl+' Mbps.</p>'+
+            /* The single most valuable sentence on the page (Old Weather, CHI
+               2014): instant, concrete value feedback with a finishable goal.
+               "3 more" is adoptable; "thanks for contributing" is not. */
+            '<p class="sck__verdict" style="font-size:1.02rem">This area needs <b style="color:#6cc4f5">'+gap+' more reading'+(gap===1?'':'s')+'</b> to be verified on the map'+(gap===1?' — the next test finishes it.':'.')+'</p>'+
+            '<p class="sck__small">You’re one of the first here (<b>'+j.n+'</b> so far; areas firm up at '+j.need+'). Know anyone nearby with a different network?</p>';}
           else{var lo=Math.min(j.p25,j.you.dl,1),hi=Math.max(j.best,j.you.dl,50);var pct=function(v){return Math.max(2,Math.min(98,(v-lo)/(hi-lo)*100));};
             var rel=j.you.dl>=j.p75?'faster than most readings here':(j.you.dl>=j.p25?'about typical for this area':'slower than most readings here');
             b.innerHTML='<p class="sck__verdict"><b style="color:'+w[1]+'">'+w[0]+'</b> — '+rel+'.</p>'+
@@ -5572,8 +5627,36 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
         function coolLeft(){try{var t=parseInt(localStorage.getItem('sck_last_t'))||0;
           return Math.max(0,Math.ceil((t+COOL*1000-Date.now())/1000));}catch(e){return 0;}}
         function fmt(sec){return Math.floor(sec/60)+':'+('0'+sec%60).slice(-2);}
+        /* Nearest under-threshold squares, from the same public map feed the
+           map itself draws. Distance + compass beats a place name here: "240 m
+           NE" is an instruction, "Winton" is a fact. */
+        function bearing(dLat,dLon){var dirs=['N','NE','E','SE','S','SW','W','NW'];
+          var a=Math.atan2(dLon,dLat)*180/Math.PI;return dirs[Math.round(((a+360)%360)/45)%8];}
+        function showGaps(lat,lon){
+          var el=$('sck-gaps');if(!el)return;
+          fetch('/api/signal-check.php?map=1&_='+Date.now(),{cache:'no-store'})
+            .then(function(r){return r.json();})
+            .then(function(j){if(!j||!j.ok)return;
+              var here={la:lat,lo:lon},cands=[];
+              j.cells.forEach(function(c){
+                var need=c.need||j.need;if(c.n>=need)return;
+                var dy=(c.lat-here.la)*111320,dx=(c.lon-here.lo)*111320*Math.cos(here.la*Math.PI/180);
+                var d=Math.sqrt(dx*dx+dy*dy);
+                if(d>120&&d<2500)cands.push({c:c,d:d,dir:bearing(dy,dx),need:need});});
+              cands.sort(function(a,b){return a.d-b.d;});
+              if(!cands.length){el.textContent='Everywhere near you is measured or brand new — wherever you test next starts a square.';return;}
+              el.innerHTML='Squares that need you: '+cands.slice(0,3).map(function(g){
+                return '<a href="#sigcheck-map" class="sck-gap" data-lat="'+g.c.lat+'" data-lon="'+g.c.lon+'" data-g="'+(g.c.g||'i')+'" style="color:#6cc4f5;white-space:nowrap">'+
+                  Math.round(g.d/10)*10+'&nbsp;m '+g.dir+' ('+g.c.n+'/'+g.need+')</a>';}).join(' &middot; ');
+              el.querySelectorAll('.sck-gap').forEach(function(a){a.addEventListener('click',function(){
+                ev('gap_click',{});
+                var c={lat:parseFloat(this.getAttribute('data-lat')),lon:parseFloat(this.getAttribute('data-lon')),g:this.getAttribute('data-g')};
+                if(window.sckLoadMap)window.sckLoadMap();
+                var tries=0,f=function(){if(window.sckMapShowMine){window.sckMapShowMine(c);}else if(tries++<20)setTimeout(f,300);};f();});});})
+            ['catch'](function(){});}
         function coolStart(){
           var box=$('sck-next');if(!box)return;box.hidden=false;
+          if(window.__sckOfferKeep)window.__sckOfferKeep();
           if(coolTick)clearInterval(coolTick);
           function paint(){var left=coolLeft(),st=$('sck-next-st'),
               a=$('sck-next-out'),b=$('sck-next-in');
@@ -5619,6 +5702,8 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
               if(j.retry_s){try{localStorage.setItem('sck_last_t',String(Date.now()-(COOL-j.retry_s)*1000));}catch(e){}coolStart();}
               if(d!=null){$('sck-dl').textContent=d;$('sck-ms').textContent=ms;$('sck-net').textContent='—';$('sck-you').hidden=false;}return;}
             render(j);say('Recorded — thank you.','ok');
+            READS++;ev('signal_reading',{repeat:READS,place:PLACE||'unknown'});
+            showGaps(c.latitude,c.longitude);
             try{localStorage.setItem('sck_last_t',String(Date.now()));
               if(j.next_s){COOL=j.next_s;localStorage.setItem('sck_cool',String(j.next_s));}}catch(e){}
             coolStart();
@@ -5631,7 +5716,8 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
                 :(mine<vs?('You got <b>'+mine+'</b> — they got '+vs+'. <b>They win this round.</b> Try again somewhere with better signal.')
                 :('Dead heat at <b>'+mine+' Mbps</b>. Rematch?'));}
             /* share card: area name first (one lookup), then show */
-            areaName(c.latitude,c.longitude).then(function(where){showShare(j.you.dl,where);});
+            areaName(c.latitude,c.longitude).then(function(where){
+              showShare(j.you.dl,where,j.enough?0:Math.max(0,(j.need||8)-(j.n||0)));});
             /* Outside the map's coverage? Say so honestly rather than let them
                scroll to a black void. The basemap is a self-hosted Dorset-only
                tile set - deliberately, so no external map service is loaded.
@@ -5644,6 +5730,38 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
           .catch(function(e){say(e.message||String(e),'bad');})
           .then(function(){busy(false);});
         }
+        /* KEEP-THIS-HANDY. "Bookmark it" on a phone means a home-screen icon
+           that launches straight back into the test. The SITE manifest says
+           display:"browser" on purpose (an installed brochure site is a trap -
+           see the portal's notes); this page swaps in its own scoped manifest
+           at runtime, so only the tool is installable. Same rule as the
+           portal: DELIBERATELY NO SERVICE WORKER - a cache layer would show
+           people last week's map. The pill appears after a successful reading
+           (the moment "I'll do this again" exists), never before, and stays
+           dismissed once used. */
+        (function(){
+          try{var m=document.querySelector('link[rel="manifest"]');
+            if(m)m.href='/mobile-signal-check/app.webmanifest';}catch(e){}
+          var deferred=null;
+          window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e;});
+          var IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+          var standalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
+          window.__sckOfferKeep=function(){
+            if(standalone)return;                       /* already installed */
+            try{if(localStorage.getItem('sck_kept'))return;}catch(e){}
+            $('sck-keep').hidden=false;};
+          $('sck-keep-btn').addEventListener('click',function(){
+            ev('keep_click',{platform:IOS?'ios':'other'});
+            if(deferred){deferred.prompt();
+              deferred.userChoice.then(function(r){
+                if(r&&r.outcome==='accepted'){try{localStorage.setItem('sck_kept','1');}catch(e){}$('sck-keep').hidden=true;}});
+              deferred=null;return;}
+            var how=$('sck-keep-how');
+            how.innerHTML=IOS
+              ?'On iPhone/iPad: tap the <b>Share</b> button (the square with the arrow), scroll down, and choose <b>&ldquo;Add to Home Screen&rdquo;</b>. You&rsquo;ll get a Signal Check icon that opens straight back here.'
+              :'In your browser&rsquo;s menu (&#8942;), choose <b>&ldquo;Add to home screen&rdquo;</b> (or &ldquo;Install app&rdquo;). You&rsquo;ll get a Signal Check icon that opens straight back here.';
+            how.hidden=!how.hidden;});
+        })();
         go.addEventListener('click',function(){start('out');});
         if(goIn)goIn.addEventListener('click',function(){start('in');});
         var nOut=$('sck-next-out'),nIn=$('sck-next-in');
