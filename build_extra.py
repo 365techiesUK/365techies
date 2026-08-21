@@ -5348,7 +5348,7 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
           var BCP_FRAME=[[50.68,-2.02],[50.80,-1.72]];
           map.fitBounds(BCP_FRAME,{padding:[10,10]});
         if(window.makeTouchFriendly)makeTouchFriendly(map);   /* one finger scrolls the page, two move the map */
-          protomapsL.leafletLayer({url:'/vendor/protomaps/dorset.pmtiles',flavor:'dark',maxDataZoom:14,attribution:'&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> &middot; <a href="https://protomaps.com">Protomaps</a>'}).addTo(map);
+          protomapsL.leafletLayer({url:'/vendor/protomaps/southcoast.pmtiles',flavor:'dark',maxDataZoom:14,attribution:'&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> &middot; <a href="https://protomaps.com">Protomaps</a>'}).addTo(map);
           var layer=L.layerGroup().addTo(map);
           var leg=L.control({position:'bottomright'});
           leg.onAdd=function(){var d=L.DomUtil.create('div','sckm__leg');d.innerHTML='<span class="bar"></span><br>slow &nbsp;&middot;&nbsp; fine for calls &nbsp;&middot;&nbsp; great for work<span class="sckm__leg-more"><br><span style="opacity:.75">median of everyone&rsquo;s readings in each ~500&nbsp;m square</span><br><span style="opacity:.75">dashed &amp; faint = early days &middot; solid = 8+ readings</span></span>';return d;};
