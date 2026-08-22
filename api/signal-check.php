@@ -47,7 +47,7 @@
 const DATA_FILE   = __DIR__ . '/signal-check-data.json';    // gitignored
 const RATE_FILE   = __DIR__ . '/signal-check-rate.json';    // gitignored
 const MAX_ROWS    = 50000;
-const RATE_S      = 300;      // one reading per device per 5 min (was 10)
+const RATE_S      = 60;       // one reading per device per MINUTE (was 5 min; was 10) - owner, 2026-08-22
 const CELL_DAY_MAX= 200;      // per cell per day - a busy town centre, not a bot
 const MIN_FOR_COMPARE = 8;    // below this we say "not enough readings yet"
 const CELL_LAT    = 200;      // ~550 m; a district, not a doorway

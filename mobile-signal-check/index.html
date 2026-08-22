@@ -889,7 +889,7 @@
             <button type="button" class="sck__go sck__go--in sck__place" id="sck-go-in" data-place="in" aria-pressed="false">I&rsquo;m inside<small>Test through the walls</small></button>
           </div>
           <button type="button" class="sck__run" id="sck-run" disabled>Choose outside or inside</button>
-          <p class="sck__cool" id="sck-cool" hidden>Next test in <b>5:00</b></p>
+          <p class="sck__cool" id="sck-cool" hidden>Next test in <b>1:00</b></p>
           <p class="sck__st" id="sck-st" role="status" aria-live="polite">Mobile data only &mdash; turn WiFi off first. Takes about ten seconds.</p>
           <!-- Shown ONLY where the browser cannot tell us (iPhone/iPad Safari has
                no Network Information API). One tap, once per visit. -->
@@ -1284,14 +1284,14 @@
            piece of context that decides whether a slow reading indicts the
            network or the building. */
         var goIn=$('sck-go-in'), PLACE='';
-        /* Cooldown: the server allows one reading per device per 5 minutes.
+        /* Cooldown: the server allows one reading per device per minute.
            Without this the page happily ran the WHOLE test - location, ping,
            a 10 MB download - and only then learned the server would refuse it.
            Now the last success is remembered and the next test counts down,
            so nobody burns mobile data on a reading that was never going to
            land. The server stays the authority; this is just the courtesy. */
-        var COOL=300, coolTick=null;
-        try{COOL=parseInt(localStorage.getItem('sck_cool'))||300;}catch(e){}
+        var COOL=60, coolTick=null;
+        try{COOL=parseInt(localStorage.getItem('sck_cool'))||60;}catch(e){}
         function coolLeft(){try{var t=parseInt(localStorage.getItem('sck_last_t'))||0;
           return Math.max(0,Math.ceil((t+COOL*1000-Date.now())/1000));}catch(e){return 0;}}
         function fmt(sec){return Math.floor(sec/60)+':'+('0'+sec%60).slice(-2);}
@@ -1345,7 +1345,7 @@
         function start(place){
           PLACE=place;
           var left=coolLeft();
-          if(left>0){say('Next test unlocks in '+fmt(left)+' — the 5-minute gap keeps any one phone from flooding the map.','warn');coolStart();return;}
+          if(left>0){say('Next test unlocks in '+fmt(left)+' — the one-minute gap keeps any one phone from flooding the map.','warn');coolStart();return;}
           /* if the WiFi question interrupts us, this is how we come back in
              without making them pick indoors/outdoors a second time */
           window.__sckResume=function(){start(place);};
