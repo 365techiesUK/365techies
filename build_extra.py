@@ -5163,6 +5163,11 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
           @media (max-width:380px){.sck__gos{grid-template-columns:1fr}}
           .sck__gos .sck__go{margin:0;padding:1.15rem .8rem;font-size:1.1rem}
           .sck__gos .sck__go small{display:block;font:500 .72rem/1.25 inherit;opacity:.82;margin-top:.28rem}
+          /* countdown right under the buttons - the "why did nothing happen"
+             answer, where the eye already is; the next-spot panel lower down
+             keeps its own copy for people who scrolled. */
+          .sck__cool{text-align:center;margin:-.25rem 0 .7rem;color:#6cc4f5;font-size:.95rem;font-variant-numeric:tabular-nums}
+          .sck__cool b{font-size:1.15rem}
           .sck__go--in{background:linear-gradient(135deg,#2b4a72,#1d97e3);color:#eaf4ff}
           /* "Next spot" panel: testing again should never mean scrolling back
              up - the buttons come to where the visitor already is. */
@@ -5228,6 +5233,7 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
             <button type="button" class="sck__go" id="sck-go" data-place="out">I&rsquo;m outside<small>Test the network</small></button>
             <button type="button" class="sck__go sck__go--in" id="sck-go-in" data-place="in">I&rsquo;m inside<small>Test through the walls</small></button>
           </div>
+          <p class="sck__cool" id="sck-cool" hidden>Next test in <b>5:00</b></p>
           <p class="sck__st" id="sck-st" role="status" aria-live="polite">Mobile data only &mdash; turn WiFi off first. Takes about ten seconds.</p>
           <!-- Shown ONLY where the browser cannot tell us (iPhone/iPad Safari has
                no Network Information API). One tap, once per visit. -->
@@ -5667,12 +5673,16 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
           function paint(){var left=coolLeft(),st=$('sck-next-st'),
               a=$('sck-next-out'),b=$('sck-next-in');
             if(left>0){a.disabled=true;b.disabled=true;
-              st.innerHTML='Next spot unlocks in <b>'+fmt(left)+'</b> &mdash; time to walk somewhere the signal might differ.';}
+              st.innerHTML='Next spot unlocks in <b>'+fmt(left)+'</b> &mdash; time to walk somewhere the signal might differ.';
+              var cl=$('sck-cool');if(cl){cl.hidden=false;cl.innerHTML='Next test in <b>'+fmt(left)+'</b>';}
+              go.disabled=true;if(goIn)goIn.disabled=true;}
             else{a.disabled=false;b.disabled=false;
               st.innerHTML='<b style="color:#3fb950">Ready.</b> Different spot, different square &mdash; that&rsquo;s how the map gets finished.';
+              var cl2=$('sck-cool');if(cl2){cl2.innerHTML='<b style="color:#3fb950">Ready</b> for your next test';setTimeout(function(){if(coolLeft()===0)cl2.hidden=true;},8000);}
+              go.disabled=false;if(goIn)goIn.disabled=false;
               clearInterval(coolTick);coolTick=null;}}
           paint();coolTick=setInterval(paint,1000);}
-        function busy(b){go.disabled=b;if(goIn)goIn.disabled=b;
+        function busy(b){var cool=coolLeft()>0;go.disabled=b||cool;if(goIn)goIn.disabled=b||cool;
           var a=$('sck-next-out'),c=$('sck-next-in');
           if(a){a.disabled=b||coolLeft()>0;c.disabled=b||coolLeft()>0;}}
         function start(place){
