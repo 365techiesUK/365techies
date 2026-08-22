@@ -2056,8 +2056,8 @@
  },
  "mobile-signal-check": {
   "first": "2026-08-17",
-  "h": "6f22d4ab7d516dfd",
-  "last": "2026-08-21"
+  "h": "3dd8a4e5d83a11d2",
+  "last": "2026-08-22"
  },
  "mobile-tablet-support": {
   "first": "2026-07-28",
@@ -3111,8 +3111,8 @@
  },
  "van-signal-map": {
   "first": "2026-08-10",
-  "h": "0849626eb80b29dd",
-  "last": "2026-08-21"
+  "h": "c218664d6146c79b",
+  "last": "2026-08-22"
  },
  "victron-boat-gps-tracking": {
   "first": "2026-07-28",
