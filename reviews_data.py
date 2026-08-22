@@ -250,6 +250,20 @@ REVIEWS = [
  # safe to carry because canonical_chars folds … and ... together.
  ("David Butcher", "Their service has been excellent. I use computers all the time but am useless in the way the things work. Steve at 365 built my latest laptop which has been faultless for several years now. The monthly maintenance call means it’s kept in great condition. When I have had problems... normally down to me, their response time to sort it again is excellent. I highly recommend this excellent company."),
  ("Marianne Gill", "I think that 365 is a first class service. They are always so competent and obliging."),
+ # NEW 2026-08-22 - four of the ten reviews that landed in the week to 22 Aug
+ # (the review-email system working). Captured VERBATIM from Google Search's
+ # own reviews dialog (#lrd=..., sorted Newest) - none of these four carried a
+ # "...More" cut, so every one is the complete review. A fifth that week,
+ # Martyn Davies, IS cut on Google and so is deliberately not here.
+ # Gate: tools_check_reviews.py against scratchpad gbp-paste-2026-08-22.txt.
+ ("Victoria", "Steve and David have been looking after our Tech for years and I would highly recommend their services as they really are exceptional. Knowing they are always available allows us to focus on running our business and not worrying about our computers. Thanks so much for always going that extra mile!"),
+ ("Stephanie Smith", "365 have looked after my computers for many years. They have always gone out of their way to be professional and helpful and I trust them completely."),
+ # Google shows him as "KEVIN FLIGHT"; published properly capitalised - the
+ # checker matches names case-insensitively (the Andy Carapiet precedent).
+ ("Kevin Flight", "Invaluable from 365 for years. David and Steve are 100% supportive. Always there to help in a timely manner, A giant thanks to the team at 365!"),
+ # No full stop at the end on Google either - rule 2 (their terminator, not
+ # ours) means it stays that way here.
+ ("Robina Craweford", "Have used 365 for years now. Always there if there is an issue, which is dealt with swiftly"),
 ]
 
 # Checked character-by-character against the live Google profile on 2026-08-01.
@@ -273,6 +287,10 @@ VERIFIED = {
     # 2026-08-13, and re-checked with tools_check_reviews.py
     "Peter Moody", "Mark Lemon", "Rosemary Allen", "David Young",
     "Andy Carapiet",
+    # verified 2026-08-22 against Google Search's own reviews dialog (Google's
+    # rendering of the review text, read programmatically - not a human paste)
+    # and gated through tools_check_reviews.py the same day
+    "Victoria", "Stephanie Smith", "Kevin Flight", "Robina Craweford",
 }
 
 # WITHDRAWN 2026-08-01 - deliberately NOT published, do not re-add without

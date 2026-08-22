@@ -96,7 +96,7 @@
            Vector tiles render natively dark, so the old CSS invert hack is gone. */
         /* NB: the option is `flavor`, NOT `theme` — protomaps-leaflet ignores an
            unknown key silently, which paints nothing and logs no error. */
-        protomapsL.leafletLayer({url:'/vendor/protomaps/dorset.pmtiles',flavor:'dark',maxDataZoom:14,
+        protomapsL.leafletLayer({url:'/vendor/protomaps/southcoast.pmtiles',flavor:'dark',maxDataZoom:14,
           attribution:'<a href="https://protomaps.com" target="_blank" rel="noopener">Protomaps</a> &copy; <a href="https://openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'}).addTo(map);
         var mode='rsrp';
         var lg=L.control({position:'bottomright'});var lgDiv=null;
