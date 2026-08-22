@@ -124,6 +124,89 @@ B365_LINKS = {
  "it-support-dorset": "<p>Alongside the day job we run <a href=\"/bournemouth/\">Bournemouth365</a> &mdash; free local pages with live measured sea conditions, the Friday fireworks and the coast photographed by us. No ads, no paywall.</p>",
 }
 
+# ---- Measured mobile signal, per town (2026-08-22) ---------------------------
+# The crowd map's squares, assigned to the nearest town, from a DATED SNAPSHOT
+# written by refresh_signal_areas.py (the build never touches the network).
+# Same rule as LOCAL_PROOF: absent unless there is something true and town-
+# specific to say. Research verdict (seo-research/mobile-signal-research-
+# 2026-08-22/VERDICT.md): blocks on these pages, never a per-town page series.
+#
+# QUALITY GATE - every clause must hold or the block degrades a state:
+#   - snapshot present, ok, and no older than SIGNAL_MAX_AGE_DAYS
+#   - a speed is printed ONLY for a verified square (n >= need, re-checked by
+#     the refresh script) that has a cached locality NAME
+#   - the pending line needs >= 8 readings town-wide ("1 reading" is worse
+#     than silence)
+#   - the rendered HTML contains NO network name and ranks no town against
+#     another - asserted at build, because that is the league table this
+#     project refuses to publish.
+SIGNAL_MAX_AGE_DAYS = 45
+try:
+    from signal_area_data import SIGNAL_AREAS as _SIG
+except ImportError:
+    _SIG = None
+_NETWORK_WORDS = ("Three", "EE", "O2", "Vodafone", "giffgaff", "Sky Mobile", "Tesco Mobile")
+
+
+def _signal_fresh():
+    if not _SIG or not _SIG.get("ok"):
+        return False
+    try:
+        from datetime import datetime, timezone
+        gen = datetime.fromisoformat(_SIG["generated"])
+        return (datetime.now(timezone.utc) - gen).days <= SIGNAL_MAX_AGE_DAYS
+    except (KeyError, ValueError):
+        return False
+
+
+def signal_block(slug, town):
+    if not _signal_fresh():
+        return ""
+    t = _SIG["towns"].get(slug)
+    if not t:
+        return ""                                   # state: none - nothing at all
+    verified = [v for v in t.get("verified", []) if v.get("name")]
+    readings, squares, nearest, van = t.get("readings", 0), t.get("squares", 0), t.get("nearest"), t.get("van", [])
+    if readings < 8 and not verified and not van:
+        return ""                                   # too little to say honestly
+    date = _SIG["generated"][:10]
+    parts = []
+    if verified:
+        items = "".join(
+            f"<li><strong>{v['name']}</strong>: {v['dl']:g}&nbsp;Mbps median download from {v['n']} readings"
+            f"{' (a ~140&nbsp;m seafront square)' if v.get('g') == 'c' else ''}</li>" for v in verified[:6])
+        parts.append(f"<p>Verified squares in {town} &mdash; each the median of at least 8 people&rsquo;s own phones, indoor and outdoor together, all networks pooled:</p><ul>{items}</ul>")
+        rest = squares - len(verified) - t.get("verified_unnamed", 0)
+        if rest > 0 and nearest:
+            parts.append(f"<p>Another {rest} square{'s' if rest != 1 else ''} {'are' if rest != 1 else 'is'} still filling in &mdash; the nearest to verified is at {nearest[0]} of {nearest[1]} readings.</p>")
+    elif readings >= 8:
+        near = f" The nearest to verified is at <strong>{nearest[0]} of {nearest[1]}</strong> readings." if nearest else ""
+        parts.append(f"<p><strong>{readings} readings</strong> across {squares} ~500&nbsp;m square{'s' if squares != 1 else ''} in {town} so far &mdash; none has reached the 8-reading floor yet, so no speed is shown.{near} The first verified square here will appear on this page automatically.</p>")
+    if van:
+        top = ", ".join(f"{v['name']} {v['dl']:g}&nbsp;Mbps ({v['tests']} tests)" for v in van[:3])
+        parts.append(f"<p>Our own campervan has measured {len(van)} place{'s' if len(van) != 1 else ''} in {town} &mdash; one instrument, one network, the same way every time: {top}. Ranked on the <a href=\"/van-signal-map/\">van signal map</a>.</p>")
+    if not parts:
+        return ""
+    html = f"""    <section class="section" aria-label="Mobile signal in {town}">
+      <div class="wrap">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">// MOBILE SIGNAL &middot; {town.upper()}</p>
+          <h2 class="section-title" data-title>What mobile signal people actually get in {town}<span class="title-underline"></span></h2>
+          <p>Ofcom&rsquo;s coverage checker is a prediction. These are measurements &mdash; taken on local people&rsquo;s phones in the street with our free <a href="/mobile-signal-check/">ten-second signal test</a>, kept as ~500&nbsp;m squares so nothing points at a home.</p>
+          {''.join(parts)}
+          <p>Strong outside but slow indoors? That is usually the building, not the mast &mdash; thick walls, foil-backed insulation, a phone three rooms from anything. Our free <a href="/wifi-signal-test/">room-by-room WiFi survey</a> shows which it is, and <a href="/wifi-keeps-dropping/">why WiFi keeps dropping</a> explains the usual fixes.</p>
+          <p class="mono" style="font-size:.78rem;color:var(--faint)">Snapshot {date} &middot; the <a href="/mobile-signal-check/#sigcheck-map">live map</a> is always current &middot; we never rank networks against each other.</p>
+        </div>
+      </div>
+    </section>"""
+    # Build assertion: the league table this project refuses to publish.
+    import re as _re
+    for w in _NETWORK_WORDS:
+        if _re.search(r"" + _re.escape(w) + r"", html):
+            raise SystemExit(f"signal_block({slug}): network name '{w}' reached the HTML - refusing to build")
+    return html
+
+
 def make_local(i, slug, town, region, lede, intro_para, nearby):
     crumb_name = f"IT Support {town}"
     repair_slug = ("computer-repair-" + slug[len("it-support-"):]) if slug.startswith("it-support-") else ""
@@ -222,6 +305,7 @@ def make_local(i, slug, town, region, lede, intro_para, nearby):
       </div>
     </section>''',
       proof_block,
+      signal_block(slug, town),
       f'''    <section class="section section--alt" aria-label="How we help">
       <div class="wrap">
         <div class="section-head">
