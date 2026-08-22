@@ -175,7 +175,7 @@ def signal_block(slug, town):
         items = "".join(
             f"<li><strong>{v['name']}</strong>: {v['dl']:g}&nbsp;Mbps median download from {v['n']} readings"
             f"{' (a ~140&nbsp;m seafront square)' if v.get('g') == 'c' else ''}</li>" for v in verified[:6])
-        parts.append(f"<p>Verified squares in {town} &mdash; each the median of at least 8 people&rsquo;s own phones, indoor and outdoor together, all networks pooled:</p><ul>{items}</ul>")
+        parts.append(f"<p>Verified squares in {town} &mdash; each the median of people&rsquo;s own phones (8 or more inland, 5 or more on the seafront&rsquo;s finer ~140&nbsp;m squares), indoor and outdoor together, all networks pooled:</p><ul>{items}</ul>")
         rest = squares - len(verified) - t.get("verified_unnamed", 0)
         if rest > 0 and nearest:
             parts.append(f"<p>Another {rest} square{'s' if rest != 1 else ''} {'are' if rest != 1 else 'is'} still filling in &mdash; the nearest to verified is at {nearest[0]} of {nearest[1]} readings.</p>")
