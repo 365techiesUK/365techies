@@ -816,6 +816,14 @@
           .sck__cool{text-align:center;margin:-.25rem 0 .7rem;color:#6cc4f5;font-size:.95rem;font-variant-numeric:tabular-nums}
           .sck__cool b{font-size:1.15rem}
           .sck__go--in{background:linear-gradient(135deg,#2b4a72,#1d97e3);color:#eaf4ff}
+          /* The two place buttons are a CHOICE now; Run test does the work.
+             Unchosen = quiet outline; chosen = full colour + ring. */
+          .sck__place{opacity:.55;box-shadow:none;outline:2px solid transparent;outline-offset:3px}
+          .sck__place[aria-pressed="true"]{opacity:1;outline-color:#6cc4f5;box-shadow:0 14px 40px -14px rgba(29,151,227,.7)}
+          .sck__run{display:block;width:100%;padding:1.2rem 1rem;margin:0 0 .6rem;border:0;border-radius:18px;
+            background:linear-gradient(135deg,#3fb950,#1d97e3);color:#061019;font:800 1.3rem/1.1 inherit;cursor:pointer;
+            box-shadow:0 14px 40px -14px rgba(63,185,80,.7);transition:transform .15s,opacity .2s}
+          .sck__run:hover{transform:translateY(-1px)} .sck__run:disabled{opacity:.5;cursor:default;box-shadow:none;transform:none}
           /* "Next spot" panel: testing again should never mean scrolling back
              up - the buttons come to where the visitor already is. */
           .sck__next{background:rgba(20,27,46,.75);border:1px solid rgba(63,185,80,.4);border-radius:14px;padding:.9rem 1rem;margin:.9rem 0 0}
@@ -876,10 +884,11 @@
               <li><button type="button" aria-pressed="false" data-net="Other">Other</button></li>
             </ul>
           </div>
-          <div class="sck__gos">
-            <button type="button" class="sck__go" id="sck-go" data-place="out">I&rsquo;m outside<small>Test the network</small></button>
-            <button type="button" class="sck__go sck__go--in" id="sck-go-in" data-place="in">I&rsquo;m inside<small>Test through the walls</small></button>
+          <div class="sck__gos" role="group" aria-label="Where are you?">
+            <button type="button" class="sck__go sck__place" id="sck-go" data-place="out" aria-pressed="false">I&rsquo;m outside<small>Test the network</small></button>
+            <button type="button" class="sck__go sck__go--in sck__place" id="sck-go-in" data-place="in" aria-pressed="false">I&rsquo;m inside<small>Test through the walls</small></button>
           </div>
+          <button type="button" class="sck__run" id="sck-run" disabled>Choose outside or inside</button>
           <p class="sck__cool" id="sck-cool" hidden>Next test in <b>5:00</b></p>
           <p class="sck__st" id="sck-st" role="status" aria-live="polite">Mobile data only &mdash; turn WiFi off first. Takes about ten seconds.</p>
           <!-- Shown ONLY where the browser cannot tell us (iPhone/iPad Safari has
@@ -1322,14 +1331,15 @@
             if(left>0){a.disabled=true;b.disabled=true;
               st.innerHTML='Next spot unlocks in <b>'+fmt(left)+'</b> &mdash; time to walk somewhere the signal might differ.';
               var cl=$('sck-cool');if(cl){cl.hidden=false;cl.innerHTML='Next test in <b>'+fmt(left)+'</b>';}
-              go.disabled=true;if(goIn)goIn.disabled=true;}
+              var rb1=$('sck-run');if(rb1){rb1.disabled=true;rb1.textContent='Test again';}}
             else{a.disabled=false;b.disabled=false;
               st.innerHTML='<b style="color:#3fb950">Ready.</b> Different spot, different square &mdash; that&rsquo;s how the map gets finished.';
               var cl2=$('sck-cool');if(cl2){cl2.innerHTML='<b style="color:#3fb950">Ready</b> for your next test';setTimeout(function(){if(coolLeft()===0)cl2.hidden=true;},8000);}
-              go.disabled=false;if(goIn)goIn.disabled=false;
+              var rb2=$('sck-run');if(rb2&&PLACE){rb2.disabled=false;rb2.textContent='Test again';}
               clearInterval(coolTick);coolTick=null;}}
           paint();coolTick=setInterval(paint,1000);}
-        function busy(b){var cool=coolLeft()>0;go.disabled=b||cool;if(goIn)goIn.disabled=b||cool;
+        function busy(b){var cool=coolLeft()>0;go.disabled=b;if(goIn)goIn.disabled=b;
+          var rb=$('sck-run');if(rb){rb.disabled=b||cool||!PLACE;}
           var a=$('sck-next-out'),c=$('sck-next-in');
           if(a){a.disabled=b||coolLeft()>0;c.disabled=b||coolLeft()>0;}}
         function start(place){
@@ -1348,7 +1358,7 @@
             $('sck-ask').scrollIntoView({block:'center',behavior:'smooth'});
             return;
           }
-          busy(true);$('sck-you').hidden=true;$('sck-cmp').hidden=true;
+          busy(true);run.textContent='Testing…';$('sck-you').hidden=true;$('sck-cmp').hidden=true;
           var c,ms,d;
           say('Finding where you are…');
           pos().then(function(x){c=x;say('Measuring ping…');return ping();})
@@ -1391,7 +1401,7 @@
               n.innerHTML='<b>Recorded — thank you.</b> The map on this page only shows Bournemouth, Christchurch and Poole, so you won&rsquo;t see your square there — but your reading counts, your comparison is against your own area, and you can still share it and challenge people wherever they are.';
               $('sck-cmp').parentNode.insertBefore(n,$('sck-share'));}})
           .catch(function(e){say(e.message||String(e),'bad');})
-          .then(function(){busy(false);});
+          .then(function(){busy(false);paintPlace();});
         }
         /* KEEP-THIS-HANDY. "Bookmark it" on a phone means a home-screen icon
            that launches straight back into the test. The SITE manifest says
@@ -1425,10 +1435,23 @@
               :'In your browser&rsquo;s menu (&#8942;), choose <b>&ldquo;Add to home screen&rdquo;</b> (or &ldquo;Install app&rdquo;). You&rsquo;ll get a Signal Check icon that opens straight back here.';
             how.hidden=!how.hidden;});
         })();
-        go.addEventListener('click',function(){start('out');});
-        if(goIn)goIn.addEventListener('click',function(){start('in');});
+        /* Choice first, then Run. The run button narrates its own state -
+           "Run test" -> "Testing..." -> "Test again" - so nobody has to guess
+           what a press did, and the countdown under it says when "again" is. */
+        var run=$('sck-run');
+        function paintPlace(){go.setAttribute('aria-pressed',PLACE==='out'?'true':'false');
+          if(goIn)goIn.setAttribute('aria-pressed',PLACE==='in'?'true':'false');
+          if(!PLACE){run.disabled=true;run.textContent='Choose outside or inside';}
+          else if(coolLeft()>0){run.disabled=true;run.textContent='Test again';}
+          else{run.disabled=false;run.textContent=READS>0?'Test again':'Run test';}}
+        function choose(place){PLACE=place;try{sessionStorage.setItem('sck_place',place);}catch(e){}paintPlace();}
+        go.addEventListener('click',function(){choose('out');});
+        if(goIn)goIn.addEventListener('click',function(){choose('in');});
+        run.addEventListener('click',function(){if(!PLACE){say('Tap I’m outside or I’m inside first.','warn');return;}start(PLACE);});
+        try{var sp=sessionStorage.getItem('sck_place');if(sp==='out'||sp==='in')PLACE=sp;}catch(e){}
+        paintPlace();
         var nOut=$('sck-next-out'),nIn=$('sck-next-in');
-        function again(place){
+        function again(place){choose(place);
           /* clear the previous result so the new one can't be misread as it */
           $('sck-share').hidden=true;
           var old=$('sck-faraway');if(old)old.parentNode.removeChild(old);
