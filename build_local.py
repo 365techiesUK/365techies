@@ -172,10 +172,16 @@ def signal_block(slug, town):
     date = _SIG["generated"][:10]
     parts = []
     if verified:
+        # >6 verified: show the 3 fastest AND the 3 slowest, and say so - a
+        # fastest-only list under a heading that implies completeness would
+        # quietly hide every not-spot, which is half of what the map is FOR.
+        shown = verified[:6] if len(verified) <= 6 else verified[:3] + verified[-3:]
         items = "".join(
             f"<li><strong>{v['name']}</strong>: {v['dl']:g}&nbsp;Mbps median download from {v['n']} readings"
-            f"{' (a ~140&nbsp;m seafront square)' if v.get('g') == 'c' else ''}</li>" for v in verified[:6])
-        parts.append(f"<p>Verified squares in {town} &mdash; each the median of people&rsquo;s own phones (8 or more inland, 5 or more on the seafront&rsquo;s finer ~140&nbsp;m squares), indoor and outdoor together, all networks pooled:</p><ul>{items}</ul>")
+            f"{' (a ~140&nbsp;m seafront square)' if v.get('g') == 'c' else ''}</li>" for v in shown)
+        label = (f"Verified squares in {town}" if len(verified) <= 6 else
+                 f"{town} has <strong>{len(verified)} verified squares</strong> &mdash; the three fastest and three slowest")
+        parts.append(f"<p>{label} &mdash; each the median of people&rsquo;s own phones (8 or more inland, 5 or more on the seafront&rsquo;s finer ~140&nbsp;m squares), indoor and outdoor together, all networks pooled:</p><ul>{items}</ul>")
         rest = squares - len(verified) - t.get("verified_unnamed", 0)
         if rest > 0 and nearest:
             parts.append(f"<p>Another {rest} square{'s' if rest != 1 else ''} {'are' if rest != 1 else 'is'} still filling in &mdash; the nearest to verified is at {nearest[0]} of {nearest[1]} readings.</p>")
