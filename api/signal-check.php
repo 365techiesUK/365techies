@@ -296,7 +296,7 @@ if ($method === 'POST') {
         // retry_s lets the page show a real countdown. NB this hash is per-IP,
         // and mobile carriers put many phones behind one address - so the
         // wording must never accuse; it may genuinely be their first test.
-        echo json_encode(['ok' => false, 'error' => 'this connection tested very recently - hang on a few minutes',
+        echo json_encode(['ok' => false, 'error' => 'this connection tested in the last minute - your number is still shown; try again shortly',
                           'retry_s' => RATE_S - ($now - $rate['ip'][$who])]); exit;
     }
     [$cla, $clo, $grid] = cell_of($lat, $lon, $acc);

@@ -201,8 +201,9 @@ def signal_block(slug, town):
     </section>"""
     # Build assertion: the league table this project refuses to publish.
     import re as _re
+    _scrub = html.replace("Three Legged Cross", "")        # a real village, not a network
     for w in _NETWORK_WORDS:
-        if _re.search(r"" + _re.escape(w) + r"", html):
+        if _re.search(r"" + _re.escape(w) + r"", _scrub):
             raise SystemExit(f"signal_block({slug}): network name '{w}' reached the HTML - refusing to build")
     return html
 
