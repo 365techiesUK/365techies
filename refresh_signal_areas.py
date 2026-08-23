@@ -64,6 +64,20 @@ VAN_LOCALITY_TOWN = {
     "Lilliput": "it-support-poole", "Longfleet": "it-support-poole",
     "Parkstone": "it-support-poole", "Sandbanks": "it-support-poole",
     "Parley Cross": "it-support-ferndown", "Ferndown Town": "it-support-ferndown",
+    # Borough truth for crowd squares too - centre distance put Canford Cliffs
+    # on the Bournemouth page and Canford Heath on Broadstone's. These are the
+    # localities we are CONFIDENT about; anything absent keeps the distance rule.
+    "Canford Cliffs": "it-support-poole", "Branksome": "it-support-poole",
+    "Branksome Park": "it-support-poole", "Upper Parkstone": "it-support-poole",
+    "Canford Heath": "it-support-poole", "Bearwood": "it-support-poole",
+    "Creekmoor": "it-support-poole", "Oakdale": "it-support-poole",
+    "Hamworthy": "it-support-poole", "Broadstone": "it-support-broadstone",
+    "West Howe": "it-support-bournemouth", "Bear Cross": "it-support-bournemouth",
+    "Kinson": "it-support-bournemouth", "Ensbury Park": "it-support-bournemouth",
+    "Charminster": "it-support-bournemouth", "Muscliff": "it-support-bournemouth",
+    "Throop": "it-support-bournemouth", "Littledown": "it-support-bournemouth",
+    "Pokesdown": "it-support-bournemouth", "Tuckton": "it-support-bournemouth",
+    "Wick": "it-support-bournemouth",
 }
 
 
@@ -119,17 +133,23 @@ def main():
     PLACES = {}
     for c in cells:
         slug = nearest_town(c["lat"], c["lon"], coords)
+        need = int(c.get("need") or j.get("need") or 8)
+        n = int(c.get("n") or 0)
+        ready = n >= need                                  # re-checked, never trusted
+        # A NAMED verified square lands on the town its locality actually
+        # belongs to - Canford Cliffs is Poole however close Bournemouth's
+        # centroid sits. Unverified/unnamed squares carry no name to correct
+        # by, so they keep the distance rule.
+        name = geocode(c["lat"], c["lon"], cache) if ready else None   # cached; paced; never a road
+        if name and name in VAN_LOCALITY_TOWN:
+            slug = VAN_LOCALITY_TOWN[name]
         if not slug:
             continue
         t = towns.setdefault(slug, {"readings": 0, "squares": 0, "verified": [],
                                     "nearest": None, "van": []})
-        need = int(c.get("need") or j.get("need") or 8)
-        n = int(c.get("n") or 0)
         t["readings"] += n
         t["squares"] += 1
-        ready = n >= need                                  # re-checked, never trusted
         if ready:
-            name = geocode(c["lat"], c["lon"], cache)       # cached; paced; never a road
             if name:
                 named += 1
                 PLACES["%.4f,%.4f" % (c["lat"], c["lon"])] = name
