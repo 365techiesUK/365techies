@@ -21,6 +21,7 @@ from build_pages import (add, graph, crumb, webpage, service, faqpage,
 from build_local import make_customer
 from new_pages_data import NEW_PAGES
 from booking_app import BOOKING_APP   # our own booking UI (replaces the SimplyBook widget)
+from signal_area_data import SIGNAL_AREAS as _SIGA  # dated counts for the Dataset schema on the signal page
 from at_a_glance_data import AT_A_GLANCE
 from projects_data import CCB_RELATIONSHIP, jt_html   # the journeys, one source of truth
 from latitude_pages_data import LATITUDE_PAGES, LATITUDE_COMPARE_TABLES
@@ -5371,6 +5372,7 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
           <h2 class="section-title section-title--center" data-title>The picture so far &mdash; Bournemouth, Christchurch &amp; Poole<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>Each square is the typical speed people measured there &mdash; ~500&nbsp;m inland, ~140&nbsp;m on the seafront, so nothing points at a home. Faint and dashed = early days.</p>
           <details class="sckm__how"><summary>How to read the map</summary><p>Squares are coloured by the median mobile-data speed of everyone&rsquo;s readings there, from the very first reading, and they firm up as readings arrive: dashed with an N/8 badge until verified (8 readings inland, 5 on the seafront, where squares are smaller because the signal really does change along the front). If your area isn&rsquo;t on the map yet, you&rsquo;re the one who puts it there. The test works anywhere in the UK.</p></details>
+          <p class="mono" style="text-align:center;font-size:.78rem;margin:.5rem auto 0;color:var(--faint)">Open data: <a href="/api/signal-export.php">every verified square as CSV</a> &middot; free to reuse with credit (<a href="https://creativecommons.org/licenses/by/4.0/" rel="license">CC&nbsp;BY&nbsp;4.0</a>)</p>
         </div>
         <link rel="stylesheet" href="/vendor/leaflet/leaflet.css" />
         <style>
@@ -5960,7 +5962,7 @@ def mobile_signal_check():
       ('I work from a campervan, a beach, or wherever the job takes me.', 'Then you already know the problem: the pitch with the view is the pitch with no signal. Our own campervan carries a roof-mounted router and logs what it gets around Bournemouth on the <a href="/van-signal-map/">van map</a>, but that&rsquo;s one instrument on one network. This page is the other half: everyone&rsquo;s phones, every network, so the square you&rsquo;re parked in reflects the phone in your pocket rather than our roof. The two sets of data are kept apart on purpose and never averaged together.'),
       ('Ofcom already has a coverage checker. Why measure it ourselves?', 'Because Ofcom&rsquo;s checker is a prediction, not a measurement. It&rsquo;s built from the operators&rsquo; own computer models on a 50&nbsp;m grid, and Ofcom itself says the models cannot guarantee coverage at a very local level. In 2025 Dorset Council put measuring kit on 32 bin lorries and drove 2,400 miles: the model said about 90% of Dorset had good coverage from all four networks, and the lorries measured under half. That survey stopped at the Dorset Council boundary, so Bournemouth, Christchurch and Poole were never driven. This page is how BCP gets measured, one phone at a time.'),
       ('Why can&rsquo;t I drop a pin exactly where I stood?', 'Because a map of exact pins is a map of where people live, and most readings are taken at home. So your phone&rsquo;s real position exists for one instant on our server and is then replaced by the centre of a ~500&nbsp;m square: enough to show a district, never enough to show a door. On the beaches, piers and promenade, where nobody lives, the squares are ~140&nbsp;m, because the signal really does change along the front. Your phone also tells us how good its fix was, and a vague fix is never placed on the fine grid.'),
-      ('What do you do with the data?', 'We publish it. The squares are already public &mdash; the same feed the map draws from &mdash; and we&rsquo;ll put them out as a plain CSV soon: square centre, grid, number of readings, typical speed, nothing finer. Verified squares appear on our town pages, and once an area has enough outdoor readings to stand behind, we&rsquo;ll take it to BCP Council, the operators and the local press, because a red square with numbers on it gets fixed faster than a complaint does. No reading ever carries a name, an address or anything that identifies a phone, and no network-by-network figures leave here.'),
+      ('What do you do with the data?', 'We publish it. The squares are already public &mdash; the same feed the map draws from &mdash; and every verified square is downloadable as a plain CSV &mdash; square centre, grid, number of readings, median speed, nothing finer &mdash; free for anyone to reuse with credit (CC&nbsp;BY&nbsp;4.0): <a href="/api/signal-export.php">download the data</a>. Verified squares appear on our town pages, and once an area has enough outdoor readings to stand behind, we&rsquo;ll take it to BCP Council, the operators and the local press, because a red square with numbers on it gets fixed faster than a complaint does. No reading ever carries a name, an address or anything that identifies a phone, and no network-by-network figures leave here.'),
     ]
     content = "\n".join([
       hero(bc("Mobile Signal Check"), "// YOUR PHONE &middot; RIGHT HERE &middot; FREE",
@@ -5983,7 +5985,26 @@ def mobile_signal_check():
     def schema(s, _d=desc, _f=faqs):
         return graph([crumb(s, "Mobile Signal Check"), webpage(s, "Mobile Signal Check", _d), faqpage(s, _f),
                       {"@type": "WebApplication", "name": "365 Techies Mobile Signal Check", "applicationCategory": "UtilitiesApplication",
-                       "operatingSystem": "Web", "url": SITE + "/mobile-signal-check/", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "GBP"}, "provider": {"@id": SITE + "/#business"}}])
+                       "operatingSystem": "Web", "url": SITE + "/mobile-signal-check/", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "GBP"}, "provider": {"@id": SITE + "/#business"}},
+                      {"@type": "Dataset", "name": "Measured UK mobile signal - verified squares",
+                       "description": ("Crowd-measured mobile-data download speeds from people's own phones: "
+                                       f"{_SIGA['total_readings']} readings in {_SIGA['total_squares']} squares as of {_SIGA['generated'][:10]}, "
+                                       "centred on Bournemouth, Christchurch and Poole and open to the whole UK. "
+                                       "Published as the median per ~500 m square (~140 m on the seafront) once a square has "
+                                       "8 readings inland or 5 on the seafront. Cell centres only - no reading carries a person, "
+                                       "an address or a phone, and no per-network figures are published."),
+                       "url": SITE + "/mobile-signal-check/", "creator": {"@id": SITE + "/#business"},
+                       "license": "https://creativecommons.org/licenses/by/4.0/", "isAccessibleForFree": True,
+                       "dateModified": _SIGA["generated"][:10], "temporalCoverage": "2026-08-17/..",
+                       "spatialCoverage": {"@type": "Place", "name": "United Kingdom",
+                                           "geo": {"@type": "GeoShape", "box": "49.85 -8.65 60.9 1.8"}},
+                       "keywords": ["mobile signal", "mobile coverage", "download speed", "Bournemouth", "Poole",
+                                    "Christchurch", "Dorset", "crowdsourced measurements"],
+                       "measurementTechnique": "Ten-second HTTPS download measured on visitors' own phones in the browser; GPS-accuracy gated; median per square",
+                       "variableMeasured": [{"@type": "PropertyValue", "name": "median download speed", "unitText": "Mbit/s"},
+                                            {"@type": "PropertyValue", "name": "readings per square"}],
+                       "distribution": [{"@type": "DataDownload", "encodingFormat": "text/csv",
+                                         "contentUrl": SITE + "/api/signal-export.php"}]}])
     add(slug=slug, title="Mobile Signal Check — Test Your Phone Where You Stand | 365 Techies",
         desc=desc, og_title="How good is your mobile signal where you're standing?", schema=schema, content=content,
         og_image=SITE + "/og-mobile-signal-check.jpg")
