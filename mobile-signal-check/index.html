@@ -285,7 +285,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-08-23"
+      "dateModified": "2026-08-24"
     },
     {
       "@type": "FAQPage",
@@ -978,6 +978,26 @@
           .sck__card-where{font-weight:700;font-size:1.1rem;line-height:1.2;color:var(--ink,#eaf4ff);margin:.4rem 0 .15rem}
           .sck__card-verdict{font-size:1.02rem;font-weight:700;margin:.35rem 0 0}
           .sck__card-sub{font-size:.85rem;color:var(--muted,#9fb5d3);margin:.1rem 0 0}
+          /* the stamp card: one slot per test a square needs - the "how many
+             to verify" question answered without a sentence */
+          .sck__stamp{margin:.9rem 0 0;padding-top:.8rem;border-top:1px solid rgba(125,170,220,.18)}
+          .sck__stamp-row{display:flex;gap:.45rem;flex-wrap:wrap}
+          .sck__stamp-s{width:34px;height:34px;border-radius:9px;border:2px dashed rgba(125,170,220,.4);display:grid;place-items:center;font-weight:800;font-size:.88rem;color:rgba(159,181,211,.55);font-variant-numeric:tabular-nums}
+          .sck__stamp-s:not(.is-f)::before{content:attr(data-n)}
+          .sck__stamp-s.is-f{border:2px solid rgba(0,206,27,.65);background:rgba(0,206,27,.16);color:#00ce1b}
+          .sck__stamp-s.is-f::before{content:'¹3'}
+          .sck__stamp.is-anim .sck__stamp-s.is-f{animation:sckTick .3s ease both}
+          .sck__stamp.is-anim .sck__stamp-s.is-you{box-shadow:0 0 0 3px rgba(108,196,245,.35);animation:sckPop .55s cubic-bezier(.5,1.6,.4,1) both}
+          .sck__stamp.is-ver .sck__stamp-s.is-f{border-color:rgba(224,179,65,.85);background:rgba(224,179,65,.2);color:#e0b341}
+          .sck__stamp.is-ver.is-anim .sck__stamp-s.is-f{animation:sckGold .6s ease both}
+          .sck__stamp-cap{font-size:.85rem;color:var(--muted,#9fb5d3);margin:.55rem 0 0}
+          .sck__stamp-cap b{color:var(--ink,#eaf4ff)}
+          .sck__stamp.is-ver .sck__stamp-cap{color:#e0b341}
+          .sck__card.is-ver{border-color:rgba(224,179,65,.6);box-shadow:0 20px 60px -20px rgba(224,179,65,.55)}
+          @keyframes sckTick{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}
+          @keyframes sckPop{0%{transform:scale(0) rotate(-14deg)}70%{transform:scale(1.22)}100%{transform:scale(1)}}
+          @keyframes sckGold{0%{transform:scale(1)}45%{transform:scale(1.16) rotate(4deg)}100%{transform:scale(1)}}
+          @media (prefers-reduced-motion: reduce){.sck__stamp-s{animation:none!important}}
           .sck__cmp{margin:.9rem 0 0;padding-top:.8rem;border-top:1px solid rgba(125,170,220,.18)}
           .sck__cmp h4{font-family:var(--font-mono,monospace);font-size:.7rem;margin:0 0 .5rem;color:var(--muted,#9fb5d3);text-transform:uppercase;letter-spacing:.1em;font-weight:600}
           .sck__bar{position:relative;height:12px;border-radius:6px;background:linear-gradient(90deg,var(--bad),var(--warn),var(--ok));margin:1.4rem 0 1.6rem}
@@ -1081,6 +1101,10 @@
               <div class="sck__card-where" id="sck-card-where">near you</div>
               <div class="sck__card-verdict" id="sck-card-verdict">&mdash;</div>
               <div class="sck__card-sub" id="sck-card-sub"></div>
+            </div>
+            <div class="sck__stamp" id="sck-stamp" hidden>
+              <div class="sck__stamp-row" id="sck-stamp-row"></div>
+              <p class="sck__stamp-cap" id="sck-stamp-cap"></p>
             </div>
             <div class="sck__cmp" id="sck-cmp"><h4>How your area compares</h4><div id="sck-cmp-body"></div></div>
             <div class="sck__h2h" id="sck-h2h" hidden></div>
@@ -1308,7 +1332,7 @@
             var cla=cell.lat, clo=cell.lon, gl=(cell.g==='c')?{la:800,lo:500}:{la:CELL_LAT,lo:CELL_LON};
             var h=0.5/gl.la, w=0.5/gl.lo;
             var ring=L.rectangle([[cla-h,clo-w],[cla+h,clo+w]],{color:'#6cc4f5',weight:3,fill:!!own,fillColor:own?col(own.dl):'#6cc4f5',fillOpacity:own?.35:0,className:'sck-pulse'}).addTo(map);
-            if(own){ring.bindPopup('<b>Your reading just joined this square</b><br>'+own.n+' of '+own.need+(own.n>=own.need?' &mdash; verified':'')).openPopup();}
+            if(own){ring.bindPopup('<b>Your reading just joined this square</b><br>'+(own.n>=own.need?own.n+' of '+own.need+' &mdash; VERIFIED ✓':own.n+' of '+own.need+' tests &mdash; '+(own.need-own.n)+' more '+((own.need-own.n)===1?'verifies':'verify')+' it')).openPopup();}
             map.flyTo([cla,clo],Math.max(map.getZoom(),14),{duration:.9});
             setTimeout(function(){map.removeLayer(ring);},own?6000:3500);
           };
@@ -1501,12 +1525,26 @@
           $('sck-card-where').textContent=where?('in '+where):'near you';
           var v=$('sck-card-verdict');v.textContent=w[0];v.style.color=w[1];
           $('sck-card-sub').textContent=w[3];
+          /* stamp card: N of NEED at a glance. Hidden on long-verified squares
+             (the compare table is the story there); gold on the reading that
+             tips a square over the line. */
+          var st=$('sck-stamp'),sN=j.n||1,sNeed=j.need||8,sTip=!!(j.enough&&sN===sNeed);
+          card.classList.remove('is-ver');
+          if(j.enough&&!sTip){st.hidden=true;}
+          else{st.hidden=false;st.className='sck__stamp'+(REDUCED?'':' is-anim')+(sTip?' is-ver':'');
+            var sh='',si,sd;
+            for(si=1;si<=sNeed;si++){var sf=si<=sN;sd=(si===sN?0.35+(sN-1)*0.09:(si-1)*0.09);
+              sh+='<span class="sck__stamp-s'+(sf?' is-f':'')+(si===sN?' is-you':'')+'" data-n="'+si+'"'+(sf&&!REDUCED?' style="animation-delay:'+sd.toFixed(2)+'s"':'')+'></span>';}
+            var srow=$('sck-stamp-row');srow.innerHTML=sh;srow.setAttribute('role','img');
+            srow.setAttribute('aria-label',sN+' of '+sNeed+' tests done in this square');
+            $('sck-stamp-cap').innerHTML=sTip?('<b>'+sN+' of '+sNeed+'</b> &mdash; this square is <b style="color:#e0b341">VERIFIED</b>. Your reading finished it.')
+              :('<b>'+sN+' of '+sNeed+'</b> tests in this square &mdash; <b>'+(sNeed-sN)+' more</b> '+((sNeed-sN)===1?'verifies':'verify')+' it.');
+            if(sTip)card.classList.add('is-ver');}
           $('sck-ms').textContent=j.you.ms==null?'—':j.you.ms;
           /* compare */
           var b=$('sck-cmp-body');
           if(!j.enough){var gap=Math.max(0,(j.need||8)-(j.n||0));
-            b.innerHTML='<p style="margin:.2rem 0">This area needs <b style="color:'+CYAN+'">'+gap+' more reading'+(gap===1?'':'s')+'</b> to be verified on the map'+(gap===1?' — the next test finishes it.':'.')+'</p>'+
-              '<p class="sck__small" style="margin:.3rem 0 0">You’re one of the first here (<b>'+j.n+'</b> so far; squares firm up at '+j.need+'). Three friends with phones would do it.</p>';}
+            b.innerHTML='<p class="sck__small" style="margin:.2rem 0">You’re one of the first here — the stamps above show how close this square is'+(gap===1?' (the next test finishes it!)':'')+'. Three friends with phones would do it.</p>';}
           else{var lo=Math.min(j.p25,dl,1),hi=Math.max(j.best,dl,50);var pct=function(v){return Math.max(2,Math.min(98,(v-lo)/(hi-lo)*100));};
             var rel=dl>=j.p75?'faster than most readings here':(dl>=j.p25?'about typical for this area':'slower than most readings here');
             b.innerHTML='<p style="margin:.2rem 0">Your reading is <b>'+rel+'</b>.</p>'+
@@ -2060,7 +2098,7 @@
   <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=10" defer></script>
   <script src="/js/forms.min.js?v=8" defer></script>
-  <script src="/js/search.min.js?v=2026-08-23" defer></script>
+  <script src="/js/search.min.js?v=2026-08-24" defer></script>
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
     <p>We use cookies to power our live chat and understand how the site is used. See our <a href="/cookie-policy/">cookie policy</a>.</p>
     <div class="cookie-banner__actions">
