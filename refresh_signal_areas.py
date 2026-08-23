@@ -36,6 +36,7 @@ from datetime import datetime, timezone
 from refresh_van_summary import fetch_json, geocode, load_cache, save_cache
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+PLACES = {}
 URL = "https://365techies.co.uk/api/signal-check.php?map=1"
 OUT = os.path.join(HERE, "signal_area_data.py")
 
@@ -114,6 +115,8 @@ def main():
     towns = {}
     cache = load_cache()
     named = 0
+    global PLACES
+    PLACES = {}
     for c in cells:
         slug = nearest_town(c["lat"], c["lon"], coords)
         if not slug:
@@ -129,6 +132,7 @@ def main():
             name = geocode(c["lat"], c["lon"], cache)       # cached; paced; never a road
             if name:
                 named += 1
+                PLACES["%.4f,%.4f" % (c["lat"], c["lon"])] = name
                 t["verified"].append({"name": name, "dl": round(float(c["dl"]), 1),
                                       "n": n, "g": c.get("g", "i")})
             else:
@@ -166,6 +170,24 @@ def main():
     with open(tmp, "w", encoding="utf-8") as f:
         f.write(body)
     os.replace(tmp, OUT)
+    # Static names for VERIFIED squares only, for the page's "best measured
+    # spots near you" block: keyed by the rounded cell centre the public feed
+    # serves, so the client can join without any coordinate finer than the
+    # cell. Unverified squares are deliberately absent - no name, no speed,
+    # until the floor is met. Served as /signal-places.json (cache-busted by
+    # the page with the snapshot time).
+    places = PLACES          # cell centre -> locality, collected while naming above
+    # Guard: a place NAME must never be a network name (the shared/best-spots
+    # UI prints these). "Three Legged Cross" is a real village - allowed.
+    import re as _re
+    for k, nm in places.items():
+        if _re.search(r"(Three|EE|O2|Vodafone|giffgaff|Sky|Tesco)", nm.replace("Three Legged Cross", "")):
+            raise SystemExit("refusing to write signal-places.json: place name looks like a network: %r" % nm)
+    pj = os.path.join(HERE, "signal-places.json")
+    with open(pj + ".tmp", "w", encoding="utf-8") as f:
+        json.dump({"generated": snap["generated"], "places": places}, f, ensure_ascii=False, separators=(",", ":"))
+    os.replace(pj + ".tmp", pj)
+    print("wrote signal-places.json: %d named verified squares" % len(places))
     print("wrote %s: %d towns with data, %d verified squares named, %d readings in %d squares"
           % (os.path.basename(OUT), len(towns), named, snap["total_readings"], snap["total_squares"]))
     for slug, t in sorted(towns.items(), key=lambda kv: -kv[1]["readings"]):
