@@ -285,7 +285,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-08-24"
+      "dateModified": "2026-08-25"
     },
     {
       "@type": "FAQPage",
@@ -1283,7 +1283,13 @@
               if(inBCP){var k=c.lon<-1.94?'P':(c.lon>-1.80?'C':'B');t[k].n++;t[k].r+=c.n;}
               var need=c.need||j.need;if(c.n<need&&c.n>=2)near.push({c:c,gap:need-c.n});});
             near.sort(function(a,b){return a.gap-b.gap;});
-            var lg='The race so far: <b>Bournemouth</b> '+t.B.n+' areas · <b>Poole</b> '+t.P.n+' · <b>Christchurch</b> '+t.C.n+' <span style="opacity:.7">(rough splits)</span>';
+            var tv={B:0,P:0,C:0};
+            j.cells.forEach(function(c){if(!c.ready)return;
+              if(c.lat>=50.66&&c.lat<=50.82&&c.lon>=-2.05&&c.lon<=-1.70){var k2=c.lon<-1.94?'P':(c.lon>-1.80?'C':'B');tv[k2]++;}});
+            var lead=tv.P>tv.B?(tv.P>tv.C?'Poole':'Christchurch'):(tv.B>tv.C?'Bournemouth':'Christchurch');
+            var lg='<b>Verified squares</b> — the race: <b>Poole</b> '+tv.P+' · <b>Bournemouth</b> '+tv.B+' · <b>Christchurch</b> '+tv.C+
+              ((tv.P+tv.B+tv.C)>0?(' — <b style="color:#00ce1b">'+lead+' leads</b>'):'')+
+              '<br><span style="opacity:.75">Areas touched: Bournemouth '+t.B.n+' · Poole '+t.P.n+' · Christchurch '+t.C.n+' (rough splits)</span>';
             if(near.length){lg+='<br>Nearly verified: '+near.slice(0,4).map(function(x){
               return '<a href="#" class="sckm-near" data-lat="'+x.c.lat+'" data-lon="'+x.c.lon+'" data-g="'+(x.c.g||'i')+'" style="color:#6cc4f5;white-space:nowrap">'+x.c.n+'/'+(x.c.need||j.need)+' — '+x.gap+' to go</a>';}).join(' &middot; ');}
             var lgEl=document.getElementById('sckm-league');lgEl.innerHTML=lg;
@@ -1495,6 +1501,8 @@
           else if(LAST.first)l2='This square had never been measured. Your street next? Ten seconds, no app:';
           else if(m==='help')l2=(LAST.where||'Our area')+' needs '+LAST.gap+' more test'+(LAST.gap===1?'':'s')+' to be verified. Beat '+LAST.dl+' and pass it on (10 s, no app):';
           else if(m==='worst')l2='Can anyone do worse? Lowest wins — pass it on (10 s, no app):';
+          else if(window.__sckGapInfo&&window.__sckGapInfo.kind==='empty')l2='The square '+window.__sckGapInfo.t+' of me has NEVER been tested — beat me to it (10 s, no app):';
+          else if(window.__sckGapInfo&&window.__sckGapInfo.kind==='started')l2='A square '+window.__sckGapInfo.t+' of me needs '+window.__sckGapInfo.go+' more test'+(window.__sckGapInfo.go===1?'':'s')+' — race you (10 s, no app):';
           else l2='Can you beat '+LAST.dl+'? Pass it on (10 s, no app):';
           return l1+'\n'+l2;}
         function shareUrl(u){var p='?vs='+encodeURIComponent(LAST.dl)+(LAST.where?('&in='+encodeURIComponent(LAST.where)):'')+'&h='+hop()+'&q='+chainQ()+'&g='+(LAST.gap||0);
@@ -1670,10 +1678,10 @@
                 if(!bestg||d2<bestg.d)bestg={la:la,lo:lo,d:d2,dir:bearing(dy2,dx2)};}
               if(st2.length){var s0=st2[0];kind='started';
                 gh='<h3>// your next square</h3><p><b>'+fmtD(s0.d)+' '+s0.dir+'</b> &mdash; a square at <b>'+s0.c.n+' of '+s0.need+'</b>. '+(s0.need-s0.c.n)+' more ten-second test'+((s0.need-s0.c.n)===1?'':'s')+' verif'+((s0.need-s0.c.n)===1?'ies':'y')+' it.</p><button type="button" data-lat="'+s0.c.lat+'" data-lon="'+s0.c.lon+'" data-g="'+(s0.c.g||'i')+'">Show me on the map</button>';
-                window.__sckGapHint=fmtD(s0.d)+' '+s0.dir;}
+                window.__sckGapHint=fmtD(s0.d)+' '+s0.dir;window.__sckGapInfo={kind:'started',t:fmtD(s0.d)+' '+s0.dir,go:s0.need-s0.c.n};}
               else if(bestg){kind='empty';
                 gh='<h3>// your next square</h3><p><b>'+fmtD(bestg.d)+' '+bestg.dir+'</b> &mdash; <b>never tested</b>. Your ten-second walk takes its first ever reading.</p><button type="button" data-lat="'+bestg.la+'" data-lon="'+bestg.lo+'" data-g="i">Show me on the map</button>';
-                window.__sckGapHint=fmtD(bestg.d)+' '+bestg.dir;}
+                window.__sckGapHint=fmtD(bestg.d)+' '+bestg.dir;window.__sckGapInfo={kind:'empty',t:fmtD(bestg.d)+' '+bestg.dir};}
               if(gh){g.innerHTML=gh;g.hidden=false;
                 g.querySelector('button').addEventListener('click',function(){ev('gap_click',{kind:kind});
                   var c={lat:parseFloat(this.getAttribute('data-lat')),lon:parseFloat(this.getAttribute('data-lon')),g:this.getAttribute('data-g')};
@@ -2172,7 +2180,7 @@
   <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=10" defer></script>
   <script src="/js/forms.min.js?v=8" defer></script>
-  <script src="/js/search.min.js?v=2026-08-24" defer></script>
+  <script src="/js/search.min.js?v=2026-08-25" defer></script>
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
     <p>We use cookies to power our live chat and understand how the site is used. See our <a href="/cookie-policy/">cookie policy</a>.</p>
     <div class="cookie-banner__actions">
