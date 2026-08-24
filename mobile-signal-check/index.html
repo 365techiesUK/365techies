@@ -922,6 +922,11 @@
           .sck__card-eyebrow{font-family:var(--font-mono,monospace);font-weight:600;font-size:.68rem;letter-spacing:.12em;color:var(--cyan-soft,#6cc4f5);margin:0 0 .6rem;display:flex;justify-content:space-between;align-items:center;gap:.5rem}
           .sck__pill{display:inline-block;padding:.25rem .55rem;border-radius:999px;font-size:.62rem;letter-spacing:.1em;background:rgba(108,196,245,.18);color:var(--cyan-soft,#6cc4f5);border:1px solid rgba(108,196,245,.4)}
           .sck__pill--ver{background:rgba(0,206,27,.16);color:var(--ok);border-color:rgba(0,206,27,.45)}
+          .sck__pill--first{background:rgba(224,179,65,.16);color:#e0b341;border-color:rgba(224,179,65,.5)}
+          .sck__gap{margin:.9rem 0 0;padding:.85rem 1rem;border:1px solid rgba(224,179,65,.5);border-radius:12px;background:rgba(224,179,65,.07)}
+          .sck__gap h3{font-family:var(--font-mono,monospace);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:#e0b341;margin:0 0 .35rem}
+          .sck__gap p{margin:0;font-size:.92rem;color:var(--ink,#eaf4ff)}
+          .sck__gap button{margin-top:.55rem;min-height:44px;padding:.5rem .9rem;border-radius:10px;border:1px solid rgba(224,179,65,.6);background:rgba(224,179,65,.14);color:var(--ink,#eaf4ff);font-weight:700;font-size:.9rem;cursor:pointer;font-family:var(--font-body)}
           .sck__card-big{font-weight:800;font-size:4rem;line-height:1;color:#fff;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
           @media (max-width:380px){.sck__card-big{font-size:3.4rem}}
           .sck__card-big small{font-size:1rem;font-weight:600;color:var(--muted,#9fb5d3);letter-spacing:0}
@@ -1086,6 +1091,10 @@
             </ul>
             <p class="sck__share-said" id="sck-share-said" role="status" aria-live="polite"></p>
           </div>
+          <!-- your next square: the tool picks the nearest gap (research
+               2026-08-24: every project that finished a map had this; best-spots
+               below is information, THIS is the action) -->
+          <div class="sck__gap" id="sck-gap" hidden></div>
           <!-- best measured spots near you: fed by the public map feed + the
                names file for VERIFIED squares only - never a provisional speed,
                never a network -->
@@ -1096,6 +1105,7 @@
               <button type="button" id="sck-next-out">Next spot &mdash; I&rsquo;m outside</button>
               <button type="button" id="sck-next-in" class="sck__go--in">I&rsquo;m inside</button>
             </div>
+            <p class="sck__small" id="sck-tally" style="margin:.2rem 0 0" hidden></p>
             <p class="sck__wait" id="sck-wait" hidden><a href="#" id="sck-wait-wa" class="sck__pill" style="font-size:.8rem;padding:.5rem .9rem">While you wait: challenge a friend on WhatsApp &rarr;</a></p>
             <div class="sck__keep" id="sck-keep" hidden>
               <button type="button" id="sck-keep-btn">&#128204; Keep this test on your home screen</button>
@@ -1115,6 +1125,7 @@
           <h2 class="section-title section-title--center" data-title>The picture so far &mdash; Bournemouth, Christchurch &amp; Poole<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>Each square is the typical speed people measured there &mdash; ~500&nbsp;m inland, ~140&nbsp;m on the seafront, so nothing points at a home. Faint and dashed = early days.</p>
           <details class="sckm__how"><summary>How to read the map</summary><p>Squares are coloured by the median mobile-data speed of everyone&rsquo;s readings there, from the very first reading, and they firm up as readings arrive: dashed with an N/8 badge until verified (8 readings inland, 5 on the seafront, where squares are smaller because the signal really does change along the front). If your area isn&rsquo;t on the map yet, you&rsquo;re the one who puts it there. The test works anywhere in the UK.</p></details>
+          <p style="text-align:center;margin:.7rem 0 0"><button type="button" id="sckm-gaps" class="sckm__gapbtn" aria-pressed="false">Show the gaps &mdash; squares nobody has tested</button></p>
         </div>
         <link rel="stylesheet" href="/vendor/leaflet/leaflet.css" />
         <style>
@@ -1130,6 +1141,17 @@
           .leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#141b2e;color:#e6edf3}
           .sckm__count{text-align:center;font-size:.86rem;color:var(--muted,#9db3cf);margin:.7rem 0 0}
           /* your square, just landed: an on-brand pulse instead of a white flicker */
+          .sckm__gapbtn{min-height:44px;padding:.5rem 1.1rem;border-radius:999px;border:1px solid rgba(224,179,65,.55);background:rgba(224,179,65,.1);color:#e0b341;font-weight:700;font-size:.88rem;cursor:pointer}
+          .sckm__gapbtn[aria-pressed="true"]{background:#e0b341;color:#0b1020}
+          .sckm__sub{max-width:34rem;margin:1rem auto 0;font-size:.88rem;color:var(--muted,#9db3cf)}
+          .sckm__sub h3{font-family:var(--font-mono,monospace);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--cyan-soft,#6cc4f5);margin:0 0 .3rem;text-align:center}
+          .sckm__sub table{width:100%;border-collapse:collapse}
+          .sckm__sub td{padding:.32rem .2rem;border-top:1px solid rgba(125,170,220,.12)}
+          .sckm__sub td:last-child{text-align:right;white-space:nowrap}
+          .sckm__sub .done{color:#00ce1b;font-weight:700}
+          .sck-gapcell{animation:sckGapPulse 2.4s ease-in-out infinite}
+          @keyframes sckGapPulse{0%,100%{stroke-opacity:.8}50%{stroke-opacity:.3}}
+          @media (prefers-reduced-motion:reduce){.sck-gapcell{animation:none}}
           .sck-pulse{animation:sckPulse 1.1s ease-out 3}
           @keyframes sckPulse{0%{stroke-width:8;stroke-opacity:1}100%{stroke-width:1.5;stroke-opacity:.25}}
           @media (prefers-reduced-motion:reduce){.sck-pulse{animation:none}}
@@ -1169,6 +1191,7 @@
              city-vs-city is the proven local mechanic); a league of NETWORKS
              is the scorecard this project refuses to build. -->
         <p class="sckm__count" id="sckm-league" style="margin-top:.35rem"></p>
+          <div class="sckm__sub" id="sckm-sub" hidden></div>
       </div>
       <script>
       /* LAZY-LOAD THE MAP LIBRARIES. Leaflet + Protomaps are 269 KB - about 90%
@@ -1221,11 +1244,12 @@
           protomapsL.leafletLayer({url:'/vendor/protomaps/uk.pmtiles',flavor:'dark',maxDataZoom:10,attribution:''}).addTo(map);
           protomapsL.leafletLayer({url:'/vendor/protomaps/southcoast.pmtiles',flavor:'dark',maxDataZoom:14,minZoom:11,bounds:[[50.45,-2.98],[51.15,-0.90]],attribution:'&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> &middot; <a href="https://protomaps.com">Protomaps</a>'}).addTo(map);
           var layer=L.layerGroup().addTo(map);
+          var LASTJ=null,gapLayer=L.layerGroup().addTo(map),gapsOn=false;
           var leg=L.control({position:'bottomright'});
           leg.onAdd=function(){var d=L.DomUtil.create('div','sckm__leg');d.innerHTML='<span class="bar"></span><br>slow &nbsp;&middot;&nbsp; fine for calls &nbsp;&middot;&nbsp; great for work<span class="sckm__leg-more"><br><span style="opacity:.75">median of everyone&rsquo;s readings in each ~500&nbsp;m square</span><br><span style="opacity:.75">dashed &amp; faint = early days &middot; solid = verified (8+, or 5 on the seafront)</span></span>';return d;};
           leg.addTo(map);
           var fitted=false;
-          function draw(j){layer.clearLayers();
+          function draw(j){layer.clearLayers();LASTJ=j;
             var ready=0;
             /* First load with data: frame the readings, not all of Dorset - on a
                phone the default view leaves the squares as specks at the edge. */
@@ -1265,10 +1289,59 @@
             var lgEl=document.getElementById('sckm-league');lgEl.innerHTML=lg;
             lgEl.querySelectorAll('.sckm-near').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();
               window.sckEv&&window.sckEv('league_click',{});
-              window.sckMapShowMine&&window.sckMapShowMine({lat:parseFloat(this.getAttribute('data-lat')),lon:parseFloat(this.getAttribute('data-lon')),g:this.getAttribute('data-g')});});});}
+              window.sckMapShowMine&&window.sckMapShowMine({lat:parseFloat(this.getAttribute('data-lat')),lon:parseFloat(this.getAttribute('data-lon')),g:this.getAttribute('data-g')});});});renderSub(j);}
           function load(){fetch(API+'&_='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){if(j&&j.ok){draw(j);map.invalidateSize();}}).catch(function(){});}
           load();setInterval(load,REFRESH);
           window.sckMapReload=load;
+          window.__sckMap=map;                     /* test hook */
+          /* ---- gap view: the frontier of never-tested squares -------------- */
+          function frontier(){var seen={},out={};if(!LASTJ)return [];
+            LASTJ.cells.forEach(function(c){seen[c.lat.toFixed(4)+','+c.lon.toFixed(4)]=1;});
+            LASTJ.cells.forEach(function(c){if(c.g==='c')return;
+              var bi=Math.round(c.lat*CELL_LAT),bj=Math.round(c.lon*CELL_LON);
+              for(var di=-2;di<=2;di++)for(var dj=-2;dj<=2;dj++){
+                var la=(bi+di)/CELL_LAT,lo=(bj+dj)/CELL_LON,k=la.toFixed(4)+','+lo.toFixed(4);
+                if(!seen[k])out[k]=[la,lo];}});
+            return Object.keys(out).map(function(k){return out[k];});}
+          function drawGaps(){gapLayer.clearLayers();window.__sckGapN=0;if(!gapsOn)return;
+            var st=document.getElementById('sckm-st');
+            if(map.getZoom()<12){st.textContent='Zoom in to see the gaps';return;}
+            var b=map.getBounds(),h=0.5/CELL_LAT,w=0.5/CELL_LON,n=0;
+            frontier().forEach(function(p){if(n>=600)return;
+              if(p[0]<b.getSouth()||p[0]>b.getNorth()||p[1]<b.getWest()||p[1]>b.getEast())return;n++;
+              L.rectangle([[p[0]-h,p[1]-w],[p[0]+h,p[1]+w]],{color:'#e0b341',weight:1.4,dashArray:'3 5',fillColor:'#e0b341',fillOpacity:.05,className:'sck-gapcell'})
+                .bindPopup('<b>Never tested.</b><br>Ten seconds when you&rsquo;re standing here puts it on the map — first reading takes the square.').addTo(gapLayer);});
+            window.__sckGapN=n;st.textContent=n?(n+' untested square'+(n===1?'':'s')+' in view — amber and dashed'):'No gaps in view — zoom or pan';}
+          var gapBtn=document.getElementById('sckm-gaps');
+          if(gapBtn)gapBtn.addEventListener('click',function(){gapsOn=!gapsOn;
+            this.setAttribute('aria-pressed',gapsOn?'true':'false');
+            window.sckEv&&window.sckEv('gap_toggle',{on:gapsOn?1:0});
+            if(gapsOn){if(map.getZoom()<12)map.setZoom(13);drawGaps();map.on('moveend',drawGaps);}
+            else{gapLayer.clearLayers();map.off('moveend',drawGaps);
+              document.getElementById('sckm-st').textContent=(LASTJ?LASTJ.cells.length:'')+' areas on the map';}});
+          /* ---- suburb board: X to go (quota ≈ half a suburb's squares) ------ */
+          var SUBURBS=[['Winton',50.735,-1.895,50.752,-1.868],['Moordown',50.752,-1.895,50.765,-1.868],
+            ['Charminster',50.735,-1.868,50.752,-1.845],['Boscombe',50.719,-1.856,50.735,-1.825],
+            ['Southbourne',50.717,-1.825,50.735,-1.783],['Westbourne',50.715,-1.905,50.729,-1.882],
+            ['Bournemouth centre',50.715,-1.882,50.735,-1.856],['West Howe &amp; Kinson',50.752,-1.930,50.775,-1.895],
+            ['Poole Old Town',50.706,-2.010,50.722,-1.982],['Parkstone',50.722,-1.982,50.745,-1.940],
+            ['Canford Heath',50.745,-1.982,50.765,-1.940],['Sandbanks &amp; Canford Cliffs',50.684,-1.960,50.706,-1.918],
+            ['Hamworthy',50.700,-2.040,50.720,-2.010],['Christchurch',50.730,-1.800,50.748,-1.770],
+            ['Highcliffe &amp; Mudeford',50.723,-1.770,50.742,-1.705]];
+          function renderSub(j){var el=document.getElementById('sckm-sub');if(!el)return;
+            var rows=SUBURBS.map(function(sb){
+              var cells=Math.max(1,Math.round((sb[3]-sb[1])*CELL_LAT))*Math.max(1,Math.round((sb[4]-sb[2])*CELL_LON));
+              var quota=Math.min(12,Math.max(3,Math.round(cells*0.5))),v=0;
+              j.cells.forEach(function(c){if(c.ready&&c.lat>=sb[1]&&c.lat<=sb[3]&&c.lon>=sb[2]&&c.lon<=sb[4])v++;});
+              return {name:sb[0],v:Math.min(v,quota),q:quota,go:Math.max(0,quota-v)};});
+            rows.sort(function(a,b){return (a.go===0)-(b.go===0)||a.go-b.go;});
+            var started=rows.filter(function(r){return r.v>0||r.go===0;});
+            if(!started.length){el.hidden=true;return;}
+            el.hidden=false;
+            el.innerHTML='<h3>// suburbs — verified squares to go</h3><table>'+rows.slice(0,12).map(function(r){
+              return '<tr><td>'+r.name+'</td><td>'+(r.go===0?'<span class="done">&#10003; complete</span>':('<b>'+r.v+' of '+r.q+'</b> — '+r.go+' to go'))+'</td></tr>';}).join('')+
+              '</table><p style="text-align:center;font-size:.76rem;opacity:.75;margin:.5rem 0 0">Approximate suburb areas · a suburb is complete at roughly half its ~500&nbsp;m squares verified · finish yours</p>';}
+
           /* After YOUR reading: fly to your square and pulse it. The area name
              on the card can legitimately repeat (OSM draws West Cliff as one
              long polygon along the front), which made the owner think readings
@@ -1416,8 +1489,10 @@
           var bar=chainQ().split('').map(function(d){return BLOCK[d];}).join('');
           var l1='📶 '+LAST.dl+' Mbps'+areaTxt()+' — '+bar+' Link #'+hop();
           if(LAST.verified)l1='✅ '+(LAST.where||'Our area')+' just got VERIFIED on the signal map — '+LAST.dl+' Mbps, '+bar+' Link #'+hop();
+          else if(LAST.first)l1='📍 FIRST reading ever taken in this square — '+LAST.dl+' Mbps'+areaTxt()+' — '+bar+' Link #'+hop();
           var m=mode(),l2;
           if(LAST.verified)l2='Your area next? Ten seconds, no app:';
+          else if(LAST.first)l2='This square had never been measured. Your street next? Ten seconds, no app:';
           else if(m==='help')l2=(LAST.where||'Our area')+' needs '+LAST.gap+' more test'+(LAST.gap===1?'':'s')+' to be verified. Beat '+LAST.dl+' and pass it on (10 s, no app):';
           else if(m==='worst')l2='Can anyone do worse? Lowest wins — pass it on (10 s, no app):';
           else l2='Can you beat '+LAST.dl+'? Pass it on (10 s, no app):';
@@ -1529,6 +1604,7 @@
           /* pills: NEW BEST / VERIFIED */
           var pill=$('sck-pill');pill.hidden=true;pill.className='sck__pill';
           if(LAST.verified){pill.textContent='VERIFIED ✓';pill.className='sck__pill sck__pill--ver';pill.hidden=false;}
+          else if(j.first){pill.textContent='FIRST ON THE MAP';pill.className='sck__pill sck__pill--first';pill.hidden=false;}
           else{try{var best=JSON.parse(localStorage.getItem('sck_best')||'null');
             if(!best||dl>best.dl){localStorage.setItem('sck_best',JSON.stringify({dl:dl,where:where||'',t:Date.now()}));if(best){pill.textContent='NEW BEST';pill.hidden=false;}}}catch(e){}}
           /* reveal in beats; number counts up */
@@ -1546,6 +1622,15 @@
         function bearing(dLat,dLon){var dirs=['N','NE','E','SE','S','SW','W','NW'];var a=Math.atan2(dLon,dLat)*180/Math.PI;return dirs[Math.round(((a+360)%360)/45)%8];}
         function fmtD(m){return m<1000?(Math.round(m/10)*10+' m'):((Math.round(m/100)/10)+' km');}
         function inMap(lat,lon){return lat>50.55&&lat<50.95&&lon>-2.35&&lon<-1.55;}
+        /* your map so far - device-local only, like everything personal here */
+        function tallyPaint(){try{
+          var sq=JSON.parse(localStorage.getItem('sck_sq')||'[]'),f=parseInt(localStorage.getItem('sck_first')||'0')||0,
+              vl=JSON.parse(localStorage.getItem('sck_verified')||'[]'),e=$('sck-tally');
+          if(!e)return;if(!sq.length){e.hidden=true;return;}
+          var bits=['Your map so far: <b>'+sq.length+'</b> square'+(sq.length===1?'':'s')];
+          if(vl.length)bits.push('<b>'+vl.length+'</b> verified by you');
+          if(f)bits.push('<b>'+f+'</b> first-ever');
+          e.hidden=false;e.innerHTML=bits.join(' · ');}catch(e2){}}
         function showBest(lat,lon,mine){
           var el=$('sck-best');if(!el)return;
           Promise.all([fetch('/api/signal-check.php?map=1&_='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}),placesP()])
@@ -1571,6 +1656,31 @@
             else if(state==='B'){h='<h3>Measured near you so far</h3><p>Only '+ver.length+' square'+(ver.length===1?' is':'s are')+' verified within 5 km, so there’s no “best” to call yet. Here’s what’s measured, and where a few more tests would finish the picture.</p><ul>'+ver.map(function(x){return row(x,false);}).join('')+fill.slice(0,3).map(function(x){return row(x,true);}).join('')+'</ul>';}
             else if(state==='C'){h='<h3>Squares still filling in near you</h3><p>Nothing within 5 km has reached the verified floor yet, so we won’t guess at a fastest spot. The closest squares that need a few more tests:</p><ul>'+fill.slice(0,3).map(function(x){return row(x,true);}).join('')+'</ul><p style="margin:.5rem 0 0">Different spot, different square — that’s how the map gets finished.</p>';}
             else{h='<h3>Your square is the only one measured within 5 km.</h3><p>Wherever you test next starts another.</p>';}
+            /* ---- your next square: the tool picks the gap ---------------- */
+            try{
+              var g=$('sck-gap'),kind='',gh='';
+              var st2=fill.filter(function(x){return x.d<=900;});
+              var ex={};j.cells.forEach(function(c){ex[c.lat.toFixed(4)+','+c.lon.toFixed(4)]=1;});
+              var bi=Math.round(lat*200),bj=Math.round(lon*125),bestg=null;
+              for(var di=-6;di<=6;di++)for(var dj=-6;dj<=6;dj++){
+                var la=(bi+di)/200,lo=(bj+dj)/125;
+                if(ex[la.toFixed(4)+','+lo.toFixed(4)])continue;
+                var dy2=(la-lat)*111320,dx2=(lo-lon)*111320*Math.cos(lat*Math.PI/180),d2=Math.sqrt(dx2*dx2+dy2*dy2);
+                if(d2<150)continue;
+                if(!bestg||d2<bestg.d)bestg={la:la,lo:lo,d:d2,dir:bearing(dy2,dx2)};}
+              if(st2.length){var s0=st2[0];kind='started';
+                gh='<h3>// your next square</h3><p><b>'+fmtD(s0.d)+' '+s0.dir+'</b> &mdash; a square at <b>'+s0.c.n+' of '+s0.need+'</b>. '+(s0.need-s0.c.n)+' more ten-second test'+((s0.need-s0.c.n)===1?'':'s')+' verif'+((s0.need-s0.c.n)===1?'ies':'y')+' it.</p><button type="button" data-lat="'+s0.c.lat+'" data-lon="'+s0.c.lon+'" data-g="'+(s0.c.g||'i')+'">Show me on the map</button>';
+                window.__sckGapHint=fmtD(s0.d)+' '+s0.dir;}
+              else if(bestg){kind='empty';
+                gh='<h3>// your next square</h3><p><b>'+fmtD(bestg.d)+' '+bestg.dir+'</b> &mdash; <b>never tested</b>. Your ten-second walk takes its first ever reading.</p><button type="button" data-lat="'+bestg.la+'" data-lon="'+bestg.lo+'" data-g="i">Show me on the map</button>';
+                window.__sckGapHint=fmtD(bestg.d)+' '+bestg.dir;}
+              if(gh){g.innerHTML=gh;g.hidden=false;
+                g.querySelector('button').addEventListener('click',function(){ev('gap_click',{kind:kind});
+                  var c={lat:parseFloat(this.getAttribute('data-lat')),lon:parseFloat(this.getAttribute('data-lon')),g:this.getAttribute('data-g')};
+                  if(window.sckLoadMap)window.sckLoadMap();
+                  var tries=0,f2=function(){if(window.sckMapShowMine){window.sckMapShowMine(c);var m2=$('sigcheck-map');if(m2)m2.scrollIntoView({behavior:'smooth',block:'start'});}else if(tries++<25)setTimeout(f2,300);};f2();});}
+              else g.hidden=true;
+            }catch(egap){}
             el.innerHTML=h;el.hidden=false;
             el.querySelectorAll('.sck-best').forEach(function(btn,i){btn.addEventListener('click',function(){
               ev('best_click',{state:state,rank:i+1,verified:this.getAttribute('data-v')==='1'});
@@ -1591,7 +1701,7 @@
           if(coolTick)clearInterval(coolTick);
           function paint(){var left=coolLeft(),nst=$('sck-next-st'),a=$('sck-next-out'),b=$('sck-next-in');
             if(left>0){a.disabled=true;b.disabled=true;
-              nst.innerHTML='Walk to a new square · <b>'+fmt(left)+'</b>';
+              nst.innerHTML=(window.__sckGapHint?('Next square: <b>'+window.__sckGapHint+'</b> · '):'Walk to a new square · ')+'<b>'+fmt(left)+'</b>';
               var cl=$('sck-cool');cl.hidden=false;cl.innerHTML='Next test in <b>'+fmt(left)+'</b> — one reading per square per minute';
               run.disabled=true;run.textContent='Test again';setProg(left/COOL,true);}
             else{a.disabled=false;b.disabled=false;
@@ -1645,8 +1755,13 @@
               return;}
             var gap=j.enough?0:Math.max(0,(j.need||8)-(j.n||0));
             var verified=!!(j.enough&&j.n===j.need);
-            LAST={dl:j.you.dl,where:null,gap:gap,verified:verified,cell:j.cell};
-            say(verified?'Recorded — and that reading VERIFIED this square.':'Recorded — thank you.','ok');lab('done');setProg(1,false);
+            LAST={dl:j.you.dl,where:null,gap:gap,verified:verified,cell:j.cell};LAST.first=!!j.first;
+            if(j.first)ev('first_reading',{});
+            try{var sq=JSON.parse(localStorage.getItem('sck_sq')||'[]');var ck2=j.cell?(j.cell.lat+','+j.cell.lon+','+(j.cell.g||'i')):null;
+              if(ck2&&sq.indexOf(ck2)<0){sq.push(ck2);localStorage.setItem('sck_sq',JSON.stringify(sq.slice(-500)));}
+              if(j.first)localStorage.setItem('sck_first',String((parseInt(localStorage.getItem('sck_first')||'0')||0)+1));}catch(e){}
+            tallyPaint();
+            say(verified?'Recorded — and that reading VERIFIED this square.':(j.first?'Recorded — the FIRST reading ever taken in this square.':'Recorded — thank you.'),'ok');lab('done');setProg(1,false);
             READS++;ev('signal_reading',{repeat:READS,place:PLACE||'unknown'});
             if(verified){ev('verified_tip',{});try{var vl=JSON.parse(localStorage.getItem('sck_verified')||'[]');vl.push(j.cell?j.cell.lat+','+j.cell.lon:'?');localStorage.setItem('sck_verified',JSON.stringify(vl.slice(-20)));}catch(e){}}
             renderCard(j,null);
@@ -1699,7 +1814,7 @@
         $('sck-wifi-no').addEventListener('click',function(e){e.preventDefault();wifiArmed=false;$('sck-wifi').hidden=true;paintPlace();say('Turn WiFi off in Settings, then tap Run test.','warn');});
         $('sck-seemap').addEventListener('click',function(e){e.preventDefault();if(window.sckLoadMap)window.sckLoadMap();var m=$('sigcheck-map');if(m)m.scrollIntoView({behavior:'smooth',block:'start'});});
         try{var sp=sessionStorage.getItem('sck_place');if(sp==='out'||sp==='in')PLACE=sp;}catch(e){}
-        paintPlace();
+        paintPlace();tallyPaint();
         function again(place){choose(place);$('sck-top').scrollIntoView({behavior:'smooth',block:'start'});start(place);}
         $('sck-next-out').addEventListener('click',function(){again('out');});
         $('sck-next-in').addEventListener('click',function(){again('in');});

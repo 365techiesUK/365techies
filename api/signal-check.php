@@ -319,6 +319,13 @@ if ($method === 'POST') {
     // published alongside a cell centre would help narrow down where someone
     // actually stood, which is the one thing the cell exists to prevent.
     $accb = $acc === null ? null : ($acc <= 15 ? 'a' : ($acc <= 50 ? 'b' : ($acc <= 200 ? 'c' : 'd')));
+    // Is this the square's FIRST EVER reading? Decided before the append,
+    // told to the page after - being first somewhere is a moment worth naming
+    // (and the page's share card uses it). Never stored against a person.
+    $first = true;
+    foreach ($rows as $r) {
+        if (($r['cla'] ?? null) == $cla && ($r['clo'] ?? null) == $clo && (($r['g'] ?? 'i')) === $grid) { $first = false; break; }
+    }
     $rows[] = ['t' => $now, 'cla' => $cla, 'clo' => $clo, 'g' => $grid, 'cs' => $csrc, 'dl' => round($dl, 1),
                'ms' => $ms !== null ? (int)round($ms) : null,
                'net' => $net, 'p' => $place, 'ac' => $accb, 'h' => (int)gmdate('G', $now)];
@@ -333,6 +340,7 @@ if ($method === 'POST') {
     // the cell this reading landed in - centre + grid - so the page can light
     // up the RIGHT square (it must not re-derive the grid client-side)
     $cmp['cell'] = ['lat' => $cla, 'lon' => $clo, 'g' => $grid];
+    $cmp['first'] = $first;
     $cmp['next_s'] = RATE_S;     // when the next test unlocks - keeps the client's countdown in sync if RATE_S ever changes
     echo json_encode($cmp);
     exit;
