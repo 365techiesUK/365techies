@@ -326,13 +326,17 @@
  },
  "case-studies": {
   "first": "2026-07-28",
-  "h": "db0a7ec016a683b0",
-  "last": "2026-08-18"
+  "h": "955d945d5d240435",
+  "last": "2026-08-24"
  },
  "case-study-colin-clark-builders": {
   "first": "2026-07-28",
   "h": "e5cf48095525c541",
   "last": "2026-08-18"
+ },
+ "case-study-signal-map": {
+  "first": "2026-08-24",
+  "h": "277cba925a02597c"
  },
  "cctv-in-detached-garage-connect-to-house": {
   "first": "2026-07-28",
@@ -2056,7 +2060,7 @@
  },
  "mobile-signal-check": {
   "first": "2026-08-17",
-  "h": "34a2641500baf6dc",
+  "h": "60ac9b00620d126f",
   "last": "2026-08-24"
  },
  "mobile-tablet-support": {

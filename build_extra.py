@@ -5217,7 +5217,7 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
           .sck__stamp-s{width:34px;height:34px;border-radius:9px;border:2px dashed rgba(125,170,220,.4);display:grid;place-items:center;font-weight:800;font-size:.88rem;color:rgba(159,181,211,.55);font-variant-numeric:tabular-nums}
           .sck__stamp-s:not(.is-f)::before{content:attr(data-n)}
           .sck__stamp-s.is-f{border:2px solid rgba(0,206,27,.65);background:rgba(0,206,27,.16);color:#00ce1b}
-          .sck__stamp-s.is-f::before{content:'¹3'}
+          .sck__stamp-s.is-f::before{content:'✓'}
           .sck__stamp.is-anim .sck__stamp-s.is-f{animation:sckTick .3s ease both}
           .sck__stamp.is-anim .sck__stamp-s.is-you{box-shadow:0 0 0 3px rgba(108,196,245,.35);animation:sckPop .55s cubic-bezier(.5,1.6,.4,1) both}
           .sck__stamp.is-ver .sck__stamp-s.is-f{border-color:rgba(224,179,65,.85);background:rgba(224,179,65,.2);color:#e0b341}
@@ -5386,6 +5386,7 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
           </div>
           <p class="sck__small sck__priv">Kept as a ~500&nbsp;m square, never your spot, nothing that identifies you.
             <details><summary>How we keep this private</summary><span class="sck__small" style="display:block">We store your reading as part of an area &mdash; ~500&nbsp;m inland, ~140&nbsp;m on the beaches and piers where nobody lives &mdash; with the speed, the time of day, whether you were indoors or out, and the network you told us. Your exact position exists for one instant on our server and is then replaced by the square&rsquo;s centre. We show <em>you</em> your network because it&rsquo;s your result; we never publish network league tables. <a href="/van-signal-map/">See the van map</a> for our own measured places.</span></details></p>
+          <p class="sck__small" style="margin-top:.9rem;opacity:.85">Designed &amp; built in Bournemouth by 365 Techies &mdash; we build tools, websites and AI systems like this for local businesses. <a href="/case-study-signal-map/">How we built it</a> &middot; <a href="/web-design-hosting/">Web design</a> &middot; <a href="/ai/">AI services</a></p>
         </div>
       </div>
     </section>
@@ -6290,6 +6291,13 @@ def case_studies():
            result="One team for hardware, hosting, email and the website &mdash; and a site that finally explains the craft. <a href=\"/case-study-colin-clark-builders/\">Read the full story</a>.",
            services=["Dell Latitude supply","Hosting &amp; email","Web design","Long-term support"],
            quote="", who=""),
+      dict(label="Our own build &middot; live platform", headline="The signal map: a live measurement platform we built ourselves",
+           outcome="950+ readings from local phones in its first weeks",
+           challenge="Coverage checkers are predictions. Nobody had street-level <em>measurements</em> of mobile signal across Bournemouth, Christchurch and Poole &mdash; so we decided to build the thing that gathers them.",
+           did="A ten-second browser speed test anyone can run, a live map on self-hosted UK map tiles, a privacy-first data store, share challenges, and an open CC&nbsp;BY dataset &mdash; designed, built and run by us, end to end.",
+           result="A growing public dataset, town pages that update themselves &mdash; and proof of what we can build. <a href=\"/case-study-signal-map/\">Read the build story</a>.",
+           services=["Product design","Web app","Maps &amp; data","Open data"],
+           quote="", who=""),
       dict(label="Long-standing client &middot; Dorset", headline="Trusted, hands-off IT for nearly 20 years",
            outcome="Nearly two decades of dependable support",
            challenge="A long-term customer wanted reliable, proactive IT they simply never had to think about &mdash; year after year.",
@@ -6625,6 +6633,132 @@ def ccb_case_study():
     add(slug=slug, title="Case Study: Colin Clark Builders | 365 Techies",
         desc=desc, og_title="Case Study: Colin Clark Builders | 365 Techies", schema=schema, content=content)
 ccb_case_study()
+
+
+def signal_map_case_study():
+    """Our-own-build case study. Honesty contract: every number is real and
+    dated; the live totals come from the same snapshot the town pages use, so
+    the refresh habit keeps them current. No press or council claims (none
+    have happened), no traffic promises, and NEVER a network name."""
+    slug = "case-study-signal-map"
+    _tot = _SIGA["total_readings"]; _sq = _SIGA["total_squares"]; _asof = _SIGA["generated"][:10]
+    desc = ("We designed and built a live mobile-signal measurement platform for Bournemouth, Christchurch and Poole - "
+            "a ten-second browser test, a live map on self-hosted tiles, and an open dataset. The build story, with real numbers.")
+    faqs = [
+      ("What is the signal map, in one sentence?",
+       "A free ten-second test that measures the real mobile-data speed on your phone where you stand, and adds it to a "
+       "public map as a ~500&nbsp;m square &mdash; <a href=\"/mobile-signal-check/\">try it here</a>."),
+      ("Did you really build all of this yourselves?",
+       "Yes &mdash; the browser test, the measurement store, the map (self-hosted map tiles, no Google Maps), the share "
+       "challenges, the open dataset and the town-page integration. It runs on our own infrastructure."),
+      ("Could you build something like this for my business?",
+       "That is why this page exists. The same skills &mdash; web apps, live data, maps, dashboards, automation and AI &mdash; "
+       "apply to booking systems, customer portals, monitoring dashboards and data tools. Start with <a href=\"/ai/\">our AI "
+       "services</a> or <a href=\"/web-design-hosting/\">web design &amp; hosting</a>, or just ring us."),
+      ("Why does a small IT firm give away the data?",
+       "Because measured, honest data is useful to everyone &mdash; residents, businesses, and anyone deciding where to work "
+       "from. The dataset is CC&nbsp;BY&nbsp;4.0: free to reuse with credit. We never publish network-vs-network league tables."),
+    ]
+    content = "\n".join([
+      hero(bc_sub("Case Studies", "/case-studies/", "The Signal Map"), "// OUR OWN BUILD",
+           'We built a <em class="grad grad--cyan">live measurement platform</em> &mdash; and gave it to the town',
+           f"Coverage checkers are predictions. So we built the thing that measures: a ten-second signal test that runs "
+           f"in any phone&rsquo;s browser and fills in a live public map, square by square. {_tot} readings across "
+           f"{_sq} squares so far (as of {_asof}) &mdash; designed, built and run by 365 Techies in Bournemouth.",
+           cta1=("Try the Signal Test", "/mobile-signal-check/"), cta2=("Talk to Us About a Build", "/contact/"),
+           chips=["Built end-to-end by us", "Self-hosted maps &amp; data", "Open CC&nbsp;BY dataset"]),
+
+      '''    <section class="section section--alt" aria-label="What we built">
+      <div class="wrap wrap--narrow">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// THE BUILD</p>
+          <h2 class="section-title section-title--center" data-title>What it took to make ten seconds feel simple<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>The rule was: no app, no sign-up, nothing to learn. Everything below exists so that a stranger on Facebook can tap once and be on the map ten seconds later.</p>
+        </div>
+        <ul class="cards cards--3">
+          <li data-reveal><h3>A real measurement, in the browser</h3><p>A streamed download test with a live gauge, GPS-accuracy gating (a vague fix can&rsquo;t buy street-level precision), and honest error messages. Works on any modern phone.</p></li>
+          <li data-reveal><h3>Privacy as architecture</h3><p>No accounts. Your exact position exists for one instant on the server and is replaced by the centre of a ~500&nbsp;m square (~140&nbsp;m on the seafront). Nothing stored can identify a phone or a home.</p></li>
+          <li data-reveal><h3>Our own maps, not Google&rsquo;s</h3><p>The whole UK, served from map tiles we host ourselves &mdash; no third-party map service, no per-view fees, no tracking scripts riding along.</p></li>
+          <li data-reveal><h3>Verification people can see</h3><p>A square is only <em>verified</em> at 8 readings (5 on the finer seafront grid). The result card shows it as a stamp strip &mdash; and the reading that tips a square over the line goes gold, with confetti.</p></li>
+          <li data-reveal><h3>Sharing that grows a chain</h3><p>Every shared result carries a challenge &mdash; &ldquo;beat 44 Mbps in Winton&rdquo; &mdash; and a visible chain that gets longer with every phone. Forged links are ignored; nothing shared ever names a network.</p></li>
+          <li data-reveal><h3>Open data, by design</h3><p>Every verified square is published as a CSV under CC&nbsp;BY&nbsp;4.0, with Dataset markup so search engines and AI assistants can find and cite it. The town pages on this site update themselves from the same data.</p></li>
+        </ul>
+      </div>
+    </section>''',
+
+      '''    <section class="section" aria-label="The day it took off">
+      <div class="wrap wrap--narrow">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// THE DAY IT TOOK OFF</p>
+          <h2 class="section-title section-title--center" data-title>23 August 2026: Poole, 0 to 24 verified squares<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>The day after we shipped share challenges and a one-minute retest gap, the map went from 316 readings to 958 in 24 hours. Poole went from 23 readings and nothing verified to 489 readings and 24 verified squares &mdash; people walked it, Sandbanks to Canford Heath. The contrast the data showed: Upper Parkstone medians 207&nbsp;Mbps while a Canford Cliffs seafront square manages 3.1 &mdash; a 67&times; gap inside one town that no prediction map shows.</p>
+        </div>
+        <figure class="sc__fig" data-reveal style="max-width:820px;margin:0 auto">
+          <img src="/images/signal-map-poole.webp" alt="The live signal map over Poole: dozens of green verified squares from Sandbanks to Canford Heath, with labels showing Upper Parkstone at 207 Mbps and the seafront at 3.1 Mbps" width="1080" height="900" loading="lazy" decoding="async">
+          <figcaption>Poole on the live map after the surge &mdash; solid squares verified, dashed still filling in.</figcaption>
+        </figure>
+      </div>
+    </section>''',
+
+      '''    <section class="section section--alt" aria-label="The experience">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// THE EXPERIENCE</p>
+          <h2 class="section-title section-title--center" data-title>Small details, deliberately<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>The stamp strip answers &ldquo;how many tests does a square need?&rdquo; without a sentence &mdash; and the reading that finishes a square gets a moment worth sharing.</p>
+        </div>
+        <div class="sc__grid">
+          <figure class="sc__fig">
+            <span class="sc__tag sc__tag--old">Mid-progress</span>
+            <img src="/images/signal-card-5of8.webp" alt="The result card mid-progress: 44.2 Mbps in Winton, with a stamp strip showing 5 of 8 tests done and the caption 3 more verify it" width="686" height="758" loading="lazy" decoding="async">
+            <figcaption>5 of 8 &mdash; the stamps show how close the square is.</figcaption>
+          </figure>
+          <figure class="sc__fig">
+            <span class="sc__tag sc__tag--new">The verifying reading</span>
+            <img src="/images/signal-card-verified.webp" alt="The result card on the reading that verified a square: the stamp strip and card glow gold with a VERIFIED pill" width="686" height="820" loading="lazy" decoding="async">
+            <figcaption>The 8th reading goes gold &mdash; VERIFIED, confetti and all.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>''',
+
+      '''    <section class="section" aria-label="Why this matters to your business">
+      <div class="wrap wrap--narrow">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// THE POINT</p>
+          <h2 class="section-title section-title--center" data-title>If we can build this for a town, we can build yours<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Everything on this page &mdash; the product thinking, the web app, the live data, the maps, the privacy design, the automation that keeps it all current &mdash; is the same work that goes into customer portals, booking systems, monitoring dashboards and AI tools for local businesses. The signal map is our proof, running in public, measurable by anyone. Most agencies show you mock-ups; we can show you a live platform the town actually uses.</p>
+        </div>
+      </div>
+    </section>''',
+
+      faq_html(faqs),
+
+      cta("Got a tool, portal or data idea for your business?",
+          "Tell us what you wish existed &mdash; a dashboard, a booking flow, a customer portal, an AI assistant. We will tell you honestly what it would take, and show you this map as our reference.",
+          primary=("AI &amp; Custom Builds", "/ai/"), secondary=("Talk to Us", "/contact/"), whats_next=True),
+    ])
+    def schema(s, _desc=desc, _faqs=faqs):
+        return graph([
+          crumb_sub(s, "Case Studies", "case-studies", "The Signal Map"),
+          webpage(s, "Case Study: The Signal Map", _desc, "WebPage"),
+          {"@type": "Article", "@id": f"{SITE}/{s}/#article",
+           "headline": "Case study: the live mobile-signal measurement platform we built for Bournemouth, Christchurch and Poole",
+           "description": _desc, "inLanguage": "en-GB",
+           "isPartOf": {"@id": f"{SITE}/{s}/#webpage"},
+           "mainEntityOfPage": {"@id": f"{SITE}/{s}/#webpage"},
+           "author": {"@id": SITE + "/#business"}, "publisher": {"@id": SITE + "/#business"},
+           "datePublished": "2026-08-24", "dateModified": bp.TODAY,
+           "about": {"@type": "SoftwareApplication", "name": "365 Techies Mobile Signal Check",
+                     "url": SITE + "/mobile-signal-check/", "applicationCategory": "UtilitiesApplication"},
+           "mentions": [{"@type": "Service", "name": "AI services", "url": SITE + "/ai/"},
+                        {"@type": "Service", "name": "Web design and hosting", "url": SITE + "/web-design-hosting/"}]},
+          faqpage(s, _faqs),
+        ])
+    add(slug=slug, title="Case Study: We Built a Live Signal-Mapping Platform | 365 Techies",
+        desc=desc, og_title="Case Study: We Built a Live Signal-Mapping Platform", schema=schema, content=content,
+        og_image=SITE + "/og-case-study-signal-map.jpg")
+signal_map_case_study()
 
 # ===================================================== OFF-GRID & VICTRON ENERGY
 def off_grid():
