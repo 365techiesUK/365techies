@@ -1531,7 +1531,16 @@
              tips a square over the line. */
           var st=$('sck-stamp'),sN=j.n||1,sNeed=j.need||8,sTip=!!(j.enough&&sN===sNeed);
           card.classList.remove('is-ver');
-          if(j.enough&&!sTip){st.hidden=true;}
+          if(j.enough&&!sTip){
+            /* long-verified square: a static full strip, so "is my square
+               verified?" is never a mystery - but no gold, no animation:
+               that celebration belongs to the reading that tipped it. */
+            st.hidden=false;st.className='sck__stamp';
+            var vh='';for(var vi=1;vi<=sNeed;vi++)vh+='<span class="sck__stamp-s is-f" data-n="'+vi+'"></span>';
+            var vrow=$('sck-stamp-row');vrow.innerHTML=vh;vrow.setAttribute('role','img');
+            vrow.setAttribute('aria-label','This square is verified with '+sN+' readings');
+            $('sck-stamp-cap').innerHTML='<b style="color:#00ce1b">✓ Verified</b> &mdash; this square has <b>'+sN+'</b> readings on the map; yours just joined them.';
+          }
           else{st.hidden=false;st.className='sck__stamp'+(REDUCED?'':' is-anim')+(sTip?' is-ver':'');
             var sh='',si,sd;
             for(si=1;si<=sNeed;si++){var sf=si<=sN;sd=(si===sN?0.35+(sN-1)*0.09:(si-1)*0.09);
