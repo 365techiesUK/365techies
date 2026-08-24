@@ -416,7 +416,7 @@
           "name": "What do you do with the data?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "We publish it. The squares are already public &mdash; the same feed the map draws from &mdash; and every verified square is downloadable as a plain CSV &mdash; square centre, grid, number of readings, median speed, nothing finer &mdash; free for anyone to reuse with credit (CC&nbsp;BY&nbsp;4.0): <a href=\"/api/signal-export.php\">download the data</a>. Verified squares appear on our town pages, and once an area has enough outdoor readings to stand behind, we&rsquo;ll take it to BCP Council, the operators and the local press, because a red square with numbers on it gets fixed faster than a complaint does. No reading ever carries a name, an address or anything that identifies a phone, and no network-by-network figures leave here."
+            "text": "We publish it. The squares are already public &mdash; the same feed the map draws from &mdash; as squares and medians &mdash; nothing finer, and the data stays ours. If a council, researcher or journalist needs the underlying figures, ask us and we&rsquo;ll share them case by case. Verified squares appear on our town pages, and once an area has enough outdoor readings to stand behind, we&rsquo;ll take it to BCP Council, the operators and the local press, because a red square with numbers on it gets fixed faster than a complaint does. No reading ever carries a name, an address or anything that identifies a phone, and no network-by-network figures leave here."
           }
         }
       ]
@@ -435,56 +435,6 @@
       "provider": {
         "@id": "https://365techies.co.uk/#business"
       }
-    },
-    {
-      "@type": "Dataset",
-      "name": "Measured UK mobile signal - verified squares",
-      "description": "Crowd-measured mobile-data download speeds from people's own phones: 958 readings in 319 squares as of 2026-08-23, centred on Bournemouth, Christchurch and Poole and open to the whole UK. Published as the median per ~500 m square (~140 m on the seafront) once a square has 8 readings inland or 5 on the seafront. Cell centres only - no reading carries a person, an address or a phone, and no per-network figures are published.",
-      "url": "https://365techies.co.uk/mobile-signal-check/",
-      "creator": {
-        "@id": "https://365techies.co.uk/#business"
-      },
-      "license": "https://creativecommons.org/licenses/by/4.0/",
-      "isAccessibleForFree": true,
-      "dateModified": "2026-08-23",
-      "temporalCoverage": "2026-08-17/..",
-      "spatialCoverage": {
-        "@type": "Place",
-        "name": "United Kingdom",
-        "geo": {
-          "@type": "GeoShape",
-          "box": "49.85 -8.65 60.9 1.8"
-        }
-      },
-      "keywords": [
-        "mobile signal",
-        "mobile coverage",
-        "download speed",
-        "Bournemouth",
-        "Poole",
-        "Christchurch",
-        "Dorset",
-        "crowdsourced measurements"
-      ],
-      "measurementTechnique": "Ten-second HTTPS download measured on visitors' own phones in the browser; GPS-accuracy gated; median per square",
-      "variableMeasured": [
-        {
-          "@type": "PropertyValue",
-          "name": "median download speed",
-          "unitText": "Mbit/s"
-        },
-        {
-          "@type": "PropertyValue",
-          "name": "readings per square"
-        }
-      ],
-      "distribution": [
-        {
-          "@type": "DataDownload",
-          "encodingFormat": "text/csv",
-          "contentUrl": "https://365techies.co.uk/api/signal-export.php"
-        }
-      ]
     }
   ]
 }
@@ -1165,7 +1115,6 @@
           <h2 class="section-title section-title--center" data-title>The picture so far &mdash; Bournemouth, Christchurch &amp; Poole<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>Each square is the typical speed people measured there &mdash; ~500&nbsp;m inland, ~140&nbsp;m on the seafront, so nothing points at a home. Faint and dashed = early days.</p>
           <details class="sckm__how"><summary>How to read the map</summary><p>Squares are coloured by the median mobile-data speed of everyone&rsquo;s readings there, from the very first reading, and they firm up as readings arrive: dashed with an N/8 badge until verified (8 readings inland, 5 on the seafront, where squares are smaller because the signal really does change along the front). If your area isn&rsquo;t on the map yet, you&rsquo;re the one who puts it there. The test works anywhere in the UK.</p></details>
-          <p class="mono" style="text-align:center;font-size:.78rem;margin:.5rem auto 0;color:var(--faint)">Open data: <a href="/api/signal-export.php">every verified square as CSV</a> &middot; free to reuse with credit (<a href="https://creativecommons.org/licenses/by/4.0/" rel="license">CC&nbsp;BY&nbsp;4.0</a>)</p>
         </div>
         <link rel="stylesheet" href="/vendor/leaflet/leaflet.css" />
         <style>
@@ -1825,7 +1774,7 @@
         </details>
         <details class="faq" data-reveal>
           <summary>What do you do with the data?<span class="faq__icon" aria-hidden="true"></span></summary>
-          <div class="faq__ans"><p>We publish it. The squares are already public &mdash; the same feed the map draws from &mdash; and every verified square is downloadable as a plain CSV &mdash; square centre, grid, number of readings, median speed, nothing finer &mdash; free for anyone to reuse with credit (CC&nbsp;BY&nbsp;4.0): <a href="/api/signal-export.php">download the data</a>. Verified squares appear on our town pages, and once an area has enough outdoor readings to stand behind, we&rsquo;ll take it to BCP Council, the operators and the local press, because a red square with numbers on it gets fixed faster than a complaint does. No reading ever carries a name, an address or anything that identifies a phone, and no network-by-network figures leave here.</p></div>
+          <div class="faq__ans"><p>We publish it. The squares are already public &mdash; the same feed the map draws from &mdash; as squares and medians &mdash; nothing finer, and the data stays ours. If a council, researcher or journalist needs the underlying figures, ask us and we&rsquo;ll share them case by case. Verified squares appear on our town pages, and once an area has enough outdoor readings to stand behind, we&rsquo;ll take it to BCP Council, the operators and the local press, because a red square with numbers on it gets fixed faster than a complaint does. No reading ever carries a name, an address or anything that identifies a phone, and no network-by-network figures leave here.</p></div>
         </details>
         </div>
       </div>

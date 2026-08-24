@@ -5397,7 +5397,6 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
           <h2 class="section-title section-title--center" data-title>The picture so far &mdash; Bournemouth, Christchurch &amp; Poole<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>Each square is the typical speed people measured there &mdash; ~500&nbsp;m inland, ~140&nbsp;m on the seafront, so nothing points at a home. Faint and dashed = early days.</p>
           <details class="sckm__how"><summary>How to read the map</summary><p>Squares are coloured by the median mobile-data speed of everyone&rsquo;s readings there, from the very first reading, and they firm up as readings arrive: dashed with an N/8 badge until verified (8 readings inland, 5 on the seafront, where squares are smaller because the signal really does change along the front). If your area isn&rsquo;t on the map yet, you&rsquo;re the one who puts it there. The test works anywhere in the UK.</p></details>
-          <p class="mono" style="text-align:center;font-size:.78rem;margin:.5rem auto 0;color:var(--faint)">Open data: <a href="/api/signal-export.php">every verified square as CSV</a> &middot; free to reuse with credit (<a href="https://creativecommons.org/licenses/by/4.0/" rel="license">CC&nbsp;BY&nbsp;4.0</a>)</p>
         </div>
         <link rel="stylesheet" href="/vendor/leaflet/leaflet.css" />
         <style>
@@ -6010,7 +6009,7 @@ def mobile_signal_check():
       ('I work from a campervan, a beach, or wherever the job takes me.', 'Then you already know the problem: the pitch with the view is the pitch with no signal. Our own campervan carries a roof-mounted router and logs what it gets around Bournemouth on the <a href="/van-signal-map/">van map</a>, but that&rsquo;s one instrument on one network. This page is the other half: everyone&rsquo;s phones, every network, so the square you&rsquo;re parked in reflects the phone in your pocket rather than our roof. The two sets of data are kept apart on purpose and never averaged together.'),
       ('Ofcom already has a coverage checker. Why measure it ourselves?', 'Because Ofcom&rsquo;s checker is a prediction, not a measurement. It&rsquo;s built from the operators&rsquo; own computer models on a 50&nbsp;m grid, and Ofcom itself says the models cannot guarantee coverage at a very local level. In 2025 Dorset Council put measuring kit on 32 bin lorries and drove 2,400 miles: the model said about 90% of Dorset had good coverage from all four networks, and the lorries measured under half. That survey stopped at the Dorset Council boundary, so Bournemouth, Christchurch and Poole were never driven. This page is how BCP gets measured, one phone at a time.'),
       ('Why can&rsquo;t I drop a pin exactly where I stood?', 'Because a map of exact pins is a map of where people live, and most readings are taken at home. So your phone&rsquo;s real position exists for one instant on our server and is then replaced by the centre of a ~500&nbsp;m square: enough to show a district, never enough to show a door. On the beaches, piers and promenade, where nobody lives, the squares are ~140&nbsp;m, because the signal really does change along the front. Your phone also tells us how good its fix was, and a vague fix is never placed on the fine grid.'),
-      ('What do you do with the data?', 'We publish it. The squares are already public &mdash; the same feed the map draws from &mdash; and every verified square is downloadable as a plain CSV &mdash; square centre, grid, number of readings, median speed, nothing finer &mdash; free for anyone to reuse with credit (CC&nbsp;BY&nbsp;4.0): <a href="/api/signal-export.php">download the data</a>. Verified squares appear on our town pages, and once an area has enough outdoor readings to stand behind, we&rsquo;ll take it to BCP Council, the operators and the local press, because a red square with numbers on it gets fixed faster than a complaint does. No reading ever carries a name, an address or anything that identifies a phone, and no network-by-network figures leave here.'),
+      ('What do you do with the data?', 'We publish it. The squares are already public &mdash; the same feed the map draws from &mdash; as squares and medians &mdash; nothing finer, and the data stays ours. If a council, researcher or journalist needs the underlying figures, ask us and we&rsquo;ll share them case by case. Verified squares appear on our town pages, and once an area has enough outdoor readings to stand behind, we&rsquo;ll take it to BCP Council, the operators and the local press, because a red square with numbers on it gets fixed faster than a complaint does. No reading ever carries a name, an address or anything that identifies a phone, and no network-by-network figures leave here.'),
     ]
     content = "\n".join([
       hero(bc("Mobile Signal Check"), "// YOUR PHONE &middot; RIGHT HERE &middot; FREE",
@@ -6033,26 +6032,7 @@ def mobile_signal_check():
     def schema(s, _d=desc, _f=faqs):
         return graph([crumb(s, "Mobile Signal Check"), webpage(s, "Mobile Signal Check", _d), faqpage(s, _f),
                       {"@type": "WebApplication", "name": "365 Techies Mobile Signal Check", "applicationCategory": "UtilitiesApplication",
-                       "operatingSystem": "Web", "url": SITE + "/mobile-signal-check/", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "GBP"}, "provider": {"@id": SITE + "/#business"}},
-                      {"@type": "Dataset", "name": "Measured UK mobile signal - verified squares",
-                       "description": ("Crowd-measured mobile-data download speeds from people's own phones: "
-                                       f"{_SIGA['total_readings']} readings in {_SIGA['total_squares']} squares as of {_SIGA['generated'][:10]}, "
-                                       "centred on Bournemouth, Christchurch and Poole and open to the whole UK. "
-                                       "Published as the median per ~500 m square (~140 m on the seafront) once a square has "
-                                       "8 readings inland or 5 on the seafront. Cell centres only - no reading carries a person, "
-                                       "an address or a phone, and no per-network figures are published."),
-                       "url": SITE + "/mobile-signal-check/", "creator": {"@id": SITE + "/#business"},
-                       "license": "https://creativecommons.org/licenses/by/4.0/", "isAccessibleForFree": True,
-                       "dateModified": _SIGA["generated"][:10], "temporalCoverage": "2026-08-17/..",
-                       "spatialCoverage": {"@type": "Place", "name": "United Kingdom",
-                                           "geo": {"@type": "GeoShape", "box": "49.85 -8.65 60.9 1.8"}},
-                       "keywords": ["mobile signal", "mobile coverage", "download speed", "Bournemouth", "Poole",
-                                    "Christchurch", "Dorset", "crowdsourced measurements"],
-                       "measurementTechnique": "Ten-second HTTPS download measured on visitors' own phones in the browser; GPS-accuracy gated; median per square",
-                       "variableMeasured": [{"@type": "PropertyValue", "name": "median download speed", "unitText": "Mbit/s"},
-                                            {"@type": "PropertyValue", "name": "readings per square"}],
-                       "distribution": [{"@type": "DataDownload", "encodingFormat": "text/csv",
-                                         "contentUrl": SITE + "/api/signal-export.php"}]}])
+                       "operatingSystem": "Web", "url": SITE + "/mobile-signal-check/", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "GBP"}, "provider": {"@id": SITE + "/#business"}}])
     add(slug=slug, title="Mobile Signal Check — Test Your Phone Where You Stand | 365 Techies",
         desc=desc, og_title="How good is your mobile signal where you're standing?", schema=schema, content=content,
         og_image=SITE + "/og-mobile-signal-check.jpg")
@@ -6303,7 +6283,7 @@ def case_studies():
       dict(label="Our own build &middot; live platform", headline="The signal map: a live measurement platform we built ourselves",
            outcome="950+ readings from local phones in its first weeks",
            challenge="Coverage checkers are predictions. Nobody had street-level <em>measurements</em> of mobile signal across Bournemouth, Christchurch and Poole &mdash; so we decided to build the thing that gathers them.",
-           did="A ten-second browser speed test anyone can run, a live map on self-hosted UK map tiles, a privacy-first data store, share challenges, and an open CC&nbsp;BY dataset &mdash; designed, built and run by us, end to end.",
+           did="A ten-second browser speed test anyone can run, a live map on self-hosted UK map tiles, a privacy-first data store, share challenges, and a growing measurement dataset &mdash; designed, built and run by us, end to end.",
            result="A growing public dataset, town pages that update themselves &mdash; and proof of what we can build. <a href=\"/case-study-signal-map/\">Read the build story</a>.",
            services=["Product design","Web app","Maps &amp; data","Open data"],
            quote="", who=""),
@@ -6659,14 +6639,15 @@ def signal_map_case_study():
        "public map as a ~500&nbsp;m square &mdash; <a href=\"/mobile-signal-check/\">try it here</a>."),
       ("Did you really build all of this yourselves?",
        "Yes &mdash; the browser test, the measurement store, the map (self-hosted map tiles, no Google Maps), the share "
-       "challenges, the open dataset and the town-page integration. It runs on our own infrastructure."),
+       "challenges, the dataset and the town-page integration. It runs on our own infrastructure."),
       ("Could you build something like this for my business?",
        "That is why this page exists. The same skills &mdash; web apps, live data, maps, dashboards, automation and AI &mdash; "
        "apply to booking systems, customer portals, monitoring dashboards and data tools. Start with <a href=\"/ai/\">our AI "
        "services</a> or <a href=\"/web-design-hosting/\">web design &amp; hosting</a>, or just ring us."),
-      ("Why does a small IT firm give away the data?",
-       "Because measured, honest data is useful to everyone &mdash; residents, businesses, and anyone deciding where to work "
-       "from. The dataset is CC&nbsp;BY&nbsp;4.0: free to reuse with credit. We never publish network-vs-network league tables."),
+      ("Who owns the data?",
+       "We do. Individual readings are anonymous by design and the published map shows squares and medians &mdash; "
+       "nothing finer. We share the underlying figures with councils, researchers and journalists case by case, "
+       "and we never publish network-vs-network league tables."),
     ]
     content = "\n".join([
       hero(bc_sub("Case Studies", "/case-studies/", "The Signal Map"), "// OUR OWN BUILD",
@@ -6675,7 +6656,7 @@ def signal_map_case_study():
            f"in any phone&rsquo;s browser and fills in a live public map, square by square. {_tot} readings across "
            f"{_sq} squares so far (as of {_asof}) &mdash; designed, built and run by 365 Techies in Bournemouth.",
            cta1=("Try the Signal Test", "/mobile-signal-check/"), cta2=("Talk to Us About a Build", "/contact/"),
-           chips=["Built end-to-end by us", "Self-hosted maps &amp; data", "Open CC&nbsp;BY dataset"]),
+           chips=["Built end-to-end by us", "Self-hosted maps &amp; data", "Privacy-first by design"]),
 
       '''    <section class="section section--alt" aria-label="What we built">
       <div class="wrap wrap--narrow">
@@ -6690,7 +6671,7 @@ def signal_map_case_study():
           <li data-reveal><h3>Our own maps, not Google&rsquo;s</h3><p>The whole UK, served from map tiles we host ourselves &mdash; no third-party map service, no per-view fees, no tracking scripts riding along.</p></li>
           <li data-reveal><h3>Verification people can see</h3><p>A square is only <em>verified</em> at 8 readings (5 on the finer seafront grid). The result card shows it as a stamp strip &mdash; and the reading that tips a square over the line goes gold, with confetti.</p></li>
           <li data-reveal><h3>Sharing that grows a chain</h3><p>Every shared result carries a challenge &mdash; &ldquo;beat 44 Mbps in Winton&rdquo; &mdash; and a visible chain that gets longer with every phone. Forged links are ignored; nothing shared ever names a network.</p></li>
-          <li data-reveal><h3>Open data, by design</h3><p>Every verified square is published as a CSV under CC&nbsp;BY&nbsp;4.0, with Dataset markup so search engines and AI assistants can find and cite it. The town pages on this site update themselves from the same data.</p></li>
+          <li data-reveal><h3>A dataset that stays ours</h3><p>Every verified square lives in one clean, dated dataset we own outright &mdash; the town pages on this site update themselves from it, and the underlying figures are ready to put in front of a council or a journalist when it counts.</p></li>
         </ul>
       </div>
     </section>''',
