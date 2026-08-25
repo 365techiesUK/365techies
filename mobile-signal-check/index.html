@@ -967,6 +967,8 @@
           .sck__pin{position:absolute;top:-6px;width:4px;height:24px;background:#fff;border-radius:2px;transform:translateX(-2px);box-shadow:0 0 0 2px #0b1020}
           .sck__pin::after{content:attr(data-l);position:absolute;top:26px;left:50%;transform:translateX(-50%);font-size:.7rem;color:var(--ink,#eaf4ff);white-space:nowrap}
           .sck__row{display:flex;justify-content:space-between;font-size:.88rem;padding:.28rem 0;border-top:1px solid rgba(125,170,220,.12)}
+          .sck__mini{height:172px;border-radius:12px;overflow:hidden;border:1px solid rgba(125,170,220,.25);margin:.9rem 0 0;position:relative;cursor:pointer;background:#0b1020}
+          .sck__mini::after{content:'Tap for the full map';position:absolute;right:8px;bottom:8px;z-index:500;background:rgba(10,16,32,.85);color:#cfe0f5;font-size:.7rem;padding:3px 8px;border-radius:8px;border:1px solid rgba(125,170,220,.25);pointer-events:none}
           .sck__meta{display:flex;gap:1rem;flex-wrap:wrap;font-size:.82rem;color:var(--muted,#9fb5d3);margin:.8rem 0 0}
           .sck__meta b{color:var(--ink,#eaf4ff);font-variant-numeric:tabular-nums}
           .sck__h2h{margin:.9rem 0 0;padding-top:.8rem;border-top:1px solid rgba(125,170,220,.18)}
@@ -1070,6 +1072,7 @@
               <p class="sck__stamp-cap" id="sck-stamp-cap"></p>
             </div>
             <div class="sck__cmp" id="sck-cmp"><h4>How your area compares</h4><div id="sck-cmp-body"></div></div>
+            <div class="sck__mini" id="sck-mini" hidden role="button" tabindex="0" aria-label="Your square on the map — tap for the full map"></div>
             <div class="sck__h2h" id="sck-h2h" hidden></div>
             <div class="sck__meta"><span>Ping <b id="sck-ms">&mdash;</b> ms</span><span>Your network <b id="sck-net">&mdash;</b></span><span><a href="#sigcheck-map" id="sck-seemap" style="color:var(--cyan-soft,#6cc4f5)">See your square on the map &darr;</a></span></div>
             <div class="sck__net">
@@ -1638,6 +1641,39 @@
         function bearing(dLat,dLon){var dirs=['N','NE','E','SE','S','SW','W','NW'];var a=Math.atan2(dLon,dLat)*180/Math.PI;return dirs[Math.round(((a+360)%360)/45)%8];}
         function fmtD(m){return m<1000?(Math.round(m/10)*10+' m'):((Math.round(m/100)/10)+' km');}
         function inMap(lat,lon){return lat>50.55&&lat<50.95&&lon>-2.35&&lon<-1.55;}
+        /* ---- the mini-map: your reading ON the map, in the card ----------- */
+        var MINI=null,MINIGRP=null,MINILAST=null;
+        function mcol(d){return d>=25?'#00ce1b':(d>=10?'#e0b341':'#e0563f');}
+        function miniShow(cell,own){try{
+          var el=$('sck-mini');if(!el||!cell)return;
+          if(!window.L||!window.protomapsL){var t2=0,w2=function(){if(window.L&&window.protomapsL)miniShow(cell,own);else if(t2++<30)setTimeout(w2,400);};w2();return;}
+          var inSC=cell.lat>50.45&&cell.lat<51.15&&cell.lon>-2.98&&cell.lon<-0.90;
+          el.hidden=false;MINILAST={cell:cell,own:own};
+          if(!MINI){
+            MINI=L.map('sck-mini',{zoomControl:false,attributionControl:false,dragging:false,touchZoom:false,scrollWheelZoom:false,doubleClickZoom:false,boxZoom:false,keyboard:false});
+            protomapsL.leafletLayer({url:'/vendor/protomaps/uk.pmtiles',flavor:'dark',maxDataZoom:10,attribution:''}).addTo(MINI);
+            protomapsL.leafletLayer({url:'/vendor/protomaps/southcoast.pmtiles',flavor:'dark',maxDataZoom:14,minZoom:11,bounds:[[50.45,-2.98],[51.15,-0.90]],attribution:''}).addTo(MINI);
+            MINIGRP=L.layerGroup().addTo(MINI);
+            var open=function(){ev('mini_click',{});if(window.sckLoadMap)window.sckLoadMap();
+              var m3=$('sigcheck-map');if(m3)m3.scrollIntoView({behavior:'smooth',block:'start'});
+              var tries=0,f3=function(){if(window.sckMapShowMine&&MINILAST)window.sckMapShowMine(MINILAST.cell,MINILAST.own);else if(tries++<25)setTimeout(f3,300);};f3();};
+            el.addEventListener('click',open);
+            el.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();open();}});
+          }
+          /* zoom so YOUR square is ~a third of the frame with streets around
+             it - z15 made a 500 m square swallow the whole mini-map */
+          MINI.setView([cell.lat,cell.lon],inSC?(cell.g==='c'?16:14):12);
+          MINIGRP.clearLayers();
+          var gl=(cell.g==='c')?{la:800,lo:500}:{la:200,lo:125},h=0.5/gl.la,w=0.5/gl.lo;
+          try{var fj=window.__sckFeed;if(fj)fj.cells.forEach(function(c){
+            if(Math.abs(c.lat-cell.lat)>0.012||Math.abs(c.lon-cell.lon)>0.02)return;
+            var g2=(c.g==='c')?{la:800,lo:500}:{la:200,lo:125};
+            MINIGRP.addLayer(L.rectangle([[c.lat-0.5/g2.la,c.lon-0.5/g2.lo],[c.lat+0.5/g2.la,c.lon+0.5/g2.lo]],
+              {color:mcol(c.dl),weight:1,dashArray:c.ready?null:'4 3',fillColor:mcol(c.dl),fillOpacity:.15,interactive:false}));});}catch(e3){}
+          MINIGRP.addLayer(L.rectangle([[cell.lat-h,cell.lon-w],[cell.lat+h,cell.lon+w]],
+            {color:'#6cc4f5',weight:3,fillColor:mcol(own&&own.dl||0),fillOpacity:.4,className:'sck-pulse',interactive:false}));
+          setTimeout(function(){MINI.invalidateSize();MINI.setView([cell.lat,cell.lon]);},300);
+        }catch(em){}}
         /* your map so far - device-local only, like everything personal here */
         function tallyPaint(){try{
           var sq=JSON.parse(localStorage.getItem('sck_sq')||'[]'),f=parseInt(localStorage.getItem('sck_first')||'0')||0,
@@ -1651,6 +1687,7 @@
           var el=$('sck-best');if(!el)return;
           Promise.all([fetch('/api/signal-check.php?map=1&_='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}),placesP()])
           .then(function(a){var j=a[0],P=a[1]||{};if(!j||!j.ok){el.hidden=true;return;}
+            window.__sckFeed=j;
             var ver=[],fill=[];
             j.cells.forEach(function(c){var need=c.need||j.need;
               var dy=(c.lat-lat)*111320,dx=(c.lon-lon)*111320*Math.cos(lat*Math.PI/180),d=Math.sqrt(dx*dx+dy*dy);
@@ -1785,6 +1822,7 @@
             coolStart();showBest(c.latitude,c.longitude,j.cell);
             if(window.sckMapReload)window.sckMapReload();
             if(window.sckMapShowMine)setTimeout(function(){window.sckMapShowMine(j.cell,{n:j.n,need:j.need,dl:j.you.dl});},900);
+            setTimeout(function(){miniShow(j.cell,{n:j.n,need:j.need,dl:j.you.dl});},400);
             if(window.ttToolDone)window.ttToolDone('mobile-signal-check');
             /* the area name arrives when it arrives - the card never waits for it */
             areaName(c.latitude,c.longitude).then(function(where){if(!where||!LAST)return;LAST.where=where;$('sck-card-where').textContent='in '+where;
