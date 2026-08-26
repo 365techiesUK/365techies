@@ -5409,7 +5409,7 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
           <p class="eyebrow eyebrow--center mono" data-reveal>/ EVERYONE&rsquo;S READINGS</p>
           <h2 class="section-title section-title--center" data-title>The picture so far &mdash; Bournemouth, Christchurch &amp; Poole<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>Each square is the typical speed people measured there &mdash; ~500&nbsp;m inland, ~140&nbsp;m on the seafront, so nothing points at a home. Faint and dashed = early days.</p>
-          <details class="sckm__how"><summary>How to read the map</summary><p>Squares are coloured by the median mobile-data speed of everyone&rsquo;s readings there, from the very first reading, and they firm up as readings arrive: dashed with an N/8 badge until verified (8 readings inland, 5 on the seafront, where squares are smaller because the signal really does change along the front). If your area isn&rsquo;t on the map yet, you&rsquo;re the one who puts it there. The test works anywhere in the UK.</p></details>
+          <details class="sckm__how"><summary>How to read the map</summary><p>Squares are coloured by the median mobile-data speed of everyone&rsquo;s readings there, from the very first reading, and they firm up as readings arrive: dashed with an N/8 badge until verified (8 readings inland, 5 on the seafront, where squares are smaller because the signal really does change along the front). If your area isn&rsquo;t on the map yet, you&rsquo;re the one who puts it there. The test works anywhere on Earth &mdash; street-level map detail covers the UK so far, and every reading counts wherever you are.</p></details>
           <p style="text-align:center;margin:.7rem 0 0"><button type="button" id="sckm-gaps" class="sckm__gapbtn" aria-pressed="false">Show the gaps &mdash; squares nobody has tested</button></p>
         </div>
         <link rel="stylesheet" href="/vendor/leaflet/leaflet.css" />
@@ -6102,7 +6102,7 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
             areaName(c.latitude,c.longitude).then(function(where){if(!where||!LAST)return;LAST.where=where;$('sck-card-where').textContent='in '+where;
               var hl=$('sck-h2h');if(!hl.hidden){var l=hl.querySelector('.sck__h2h-l');if(l)l.textContent='you · '+where;}wireShare();});
             if(!inMap(c.latitude,c.longitude)){var n=document.createElement('p');n.id='sck-faraway';n.className='sck__small';n.style.cssText='margin:0 0 .9rem;padding:.7rem .9rem;border:1px solid rgba(224,179,65,.45);border-radius:10px;color:#eaf4ff';
-              n.innerHTML='<b>Recorded — thank you.</b> The map’s street detail covers the south coast, but your square is on the UK map below and your comparison is against your own area. Share it and challenge people wherever they are.';
+              n.innerHTML='<b>Recorded — thank you.</b> Street-level map detail covers the UK so far, but your reading absolutely counts: your square is stored, and your comparison is against your own area wherever you are in the world. Share it and challenge your city.';
               $('sck-share').parentNode.insertBefore(n,$('sck-best'));}})
           .catch(function(e){clearTimeout(stallT);say(friendly(e),'bad');lab('stopped');setProg(0,false);})
           .then(function(){busy(false);paintPlace();});
