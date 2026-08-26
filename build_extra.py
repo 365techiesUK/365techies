@@ -5215,6 +5215,7 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
           .sck__card-where{font-weight:700;font-size:1.1rem;line-height:1.2;color:var(--ink,#eaf4ff);margin:.4rem 0 .15rem}
           .sck__card-verdict{font-size:1.02rem;font-weight:700;margin:.35rem 0 0}
           .sck__card-sub{font-size:.85rem;color:var(--muted,#9fb5d3);margin:.1rem 0 0}
+          .sck__sqnote{font-size:.8rem;margin:.3rem 0 0;color:var(--muted,#9fb5d3)}
           /* the stamp card: one slot per test a square needs - the "how many
              to verify" question answered without a sentence */
           .sck__stamp{margin:.9rem 0 0;padding-top:.8rem;border-top:1px solid rgba(125,170,220,.18)}
@@ -5340,6 +5341,7 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
               <div class="sck__card-where" id="sck-card-where">near you</div>
               <div class="sck__card-verdict" id="sck-card-verdict">&mdash;</div>
               <div class="sck__card-sub" id="sck-card-sub"></div>
+              <div class="sck__sqnote" id="sck-sq-note" hidden></div>
             </div>
             <div class="sck__stamp" id="sck-stamp" hidden>
               <div class="sck__stamp-row" id="sck-stamp-row"></div>
@@ -6085,8 +6087,15 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
             LAST={dl:j.you.dl,where:null,gap:gap,verified:verified,cell:j.cell};LAST.first=!!j.first;
             if(j.first)ev('first_reading',{});
             try{var sq=JSON.parse(localStorage.getItem('sck_sq')||'[]');var ck2=j.cell?(j.cell.lat+','+j.cell.lon+','+(j.cell.g||'i')):null;
-              if(ck2&&sq.indexOf(ck2)<0){sq.push(ck2);localStorage.setItem('sck_sq',JSON.stringify(sq.slice(-500)));}
-              if(j.first)localStorage.setItem('sck_first',String((parseInt(localStorage.getItem('sck_first')||'0')||0)+1));}catch(e){}
+              var newSq=!!(ck2&&sq.indexOf(ck2)<0);
+              if(newSq){sq.push(ck2);localStorage.setItem('sck_sq',JSON.stringify(sq.slice(-500)));}
+              if(j.first)localStorage.setItem('sck_first',String((parseInt(localStorage.getItem('sck_first')||'0')||0)+1));
+              /* the OSM area name repeats across whole districts (all of central
+                 Bournemouth reverse-geocodes to West Cliff) - this note is the
+                 truth from OUR grid, per reading, so progress is never in doubt */
+              var sqn=$('sck-sq-note');if(sqn){sqn.hidden=false;
+                if(newSq){sqn.innerHTML='&#10003; New square for you &mdash; even if the area name repeats';sqn.style.color='#6cc4f5';}
+                else{sqn.innerHTML='A square you&rsquo;ve tested before &mdash; a 200&nbsp;m walk starts a new one';sqn.style.color='';}}}catch(e){}
             tallyPaint();
             say(verified?'Recorded — and that reading VERIFIED this square.':(j.first?'Recorded — the FIRST reading ever taken in this square.':'Recorded — thank you.'),'ok');lab('done');setProg(1,false);
             READS++;ev('signal_reading',{repeat:READS,place:PLACE||'unknown'});
