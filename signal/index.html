@@ -5,9 +5,26 @@
   <title>Mobile Signal Check | 365 Techies</title>
   <!-- Short, sayable, printable: /signal goes on posts, the van QR sticker and
        word of mouth. Redirect page rather than .htaccess so it survives any
-       server config change and deploys like everything else. -->
+       server config change and deploys like everything else.
+       ⚠️ The og:* block below is NOT decoration. Facebook, WhatsApp, X and
+       LinkedIn crawlers do NOT follow meta-refresh or run the script, so a bare
+       stub renders as a blank grey card - and /signal is the URL that goes in
+       press coverage and on the van, i.e. exactly the link people share. The
+       tags mirror /mobile-signal-check/ and og:url points THERE, so shares
+       consolidate onto the real page instead of splitting across two URLs.
+       Keep them in step if that page's card ever changes. -->
   <meta name="robots" content="noindex, follow">
   <link rel="canonical" href="https://365techies.co.uk/mobile-signal-check/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="365 Techies">
+  <meta property="og:url" content="https://365techies.co.uk/mobile-signal-check/">
+  <meta property="og:title" content="How good is your mobile signal where you're standing?">
+  <meta property="og:description" content="Test your phone's real mobile data speed right where you're standing, then see how it compares with other readings from your part of Bournemouth, Christchurch and Poole.">
+  <meta property="og:image" content="https://365techies.co.uk/og-mobile-signal-check.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="How good is your mobile signal where you're standing?">
+  <meta name="twitter:description" content="Test your phone's real mobile data speed right where you're standing, then see how it compares with other readings from your part of Bournemouth, Christchurch and Poole.">
+  <meta name="twitter:image" content="https://365techies.co.uk/og-mobile-signal-check.jpg">
   <meta http-equiv="refresh" content="0; url=/mobile-signal-check/?src=short">
   <script>location.replace('/mobile-signal-check/?src=short');</script>
 </head>
