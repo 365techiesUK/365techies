@@ -68,7 +68,7 @@ function bb_save($id, $rows){
 }
 // Fixed ISP list. Anything else -> 'other' (kept honestly in the customer record as
 // note text if the tech typed it, but never as an aggregate row of its own).
-$ISPS = array('bt','sky','virgin','talktalk','ee','vodafone','plusnet','now','zen','shell','hyperoptic','gigaclear','wessex','starlink','three','o2','other');
+$ISPS = array('bt','sky','virgin','talktalk','ee','vodafone','plusnet','now','zen','shell','hyperoptic','gigaclear','wessex','starlink','three','o2','toob','other');
 function norm_isp($s){
     global $ISPS;
     $s = strtolower(trim((string)$s));
