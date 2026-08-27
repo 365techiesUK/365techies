@@ -125,13 +125,22 @@ a, button, .button, .quiz__opt, .hub-chip, summary, .nav-cta, .nav-sos, .nav-boo
   .button:active, .nav-cta:active, .nav-sos:active, .nav-book:active, .quiz__opt:active, .hub-chip:active, .mobile-cta-bar a:active, .post-card:active { transform: none; }
 }
 
+/* ⚠️ Hidden by a transform of its OWN height, never by a fixed negative offset.
+   It used to be top:-60px against a 52px-tall box - 8px of clearance - so the
+   moment the box grew past 60px it poked back into view as a cyan sliver pinned
+   over the status strip at z-index 200. The a11y A+ ladder does exactly that:
+   19px root is 58px tall (2px to spare), 21px is 64px and 23px is 70px, both
+   VISIBLE. Reported on the live site 2026-08-27. A browser minimum-font-size or
+   a default larger than 17px does the same. translateY(-150%) is measured
+   against the element, so it cannot be outgrown at any text size. */
 .skip-link {
-  position: fixed; top: -60px; left: 16px; z-index: 200;
+  position: fixed; top: 0; left: 16px; z-index: 200;
   padding: 0.7rem 1.2rem; border-radius: var(--r-sm);
   background: var(--cyan); color: var(--ink-inverse); font-weight: 700;
-  transition: top 0.25s ease;
+  transform: translateY(-150%);
+  transition: transform 0.25s ease;
 }
-.skip-link:focus { top: 12px; }
+.skip-link:focus { transform: translateY(12px); }
 
 .mono {
   font-family: var(--font-mono);
