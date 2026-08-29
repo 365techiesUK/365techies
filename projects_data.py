@@ -72,19 +72,25 @@ CCB_REBUILD = [
               "<a href=\"#numbers\">before column</a> that can never be retaken &mdash; then the "
               "swap, with every redirect already rehearsed. Launch day was deliberately boring.",
          chips=["TTFB 1,320 &rarr; 106 ms", "111 &rarr; 15 requests", "17/17 redirects live"]),
-    dict(state="live", when="31 July 2026 &middot; You are here", iso="2026-07-31",
+    dict(state="done", when="31 July 2026 &middot; Done", iso="2026-07-31",
          title="Day one &mdash; marked by our own public tool",
          body="We pointed our <a href=\"/website-checker/\">free website checker</a> &mdash; the "
               "same one anyone can use on any site &mdash; at the site we had just built, and "
               "published <a href=\"#checker\">what it returned</a>, including what it told us to "
               "improve.",
          chips=["Lighthouse 99 desktop &middot; 90 mobile", "SEO 100", "0 layout shift"]),
-    dict(state="wait", when="Due late August 2026 &middot; Reserved", iso="2026-08-29",
+    dict(state="live", when="29 August 2026 &middot; Measured &mdash; you are here", iso="2026-08-29",
          title="30-day re-measure",
-         body="Clicks, impressions and average position from Search Console, set against the "
-              "baseline taken the day before launch. This space is deliberately empty until the "
-              "data exists &mdash; it will be published here whatever it shows.",
-         chips=["Awaiting Search Console data"]),
+         body="The first 28 days of live Search Console data (30 July &ndash; 26 August), "
+              "published as promised: <strong>165 clicks</strong> from Google search, 156 of them "
+              "from the UK, landing on 44 different pages &mdash; and more than half of those "
+              "clicks went to pages that did not exist before the rebuild. The site also appeared "
+              "over 1,600 times in Google&rsquo;s AI answers, up from less than once a day on the "
+              "old site. We are deliberately not headlining impressions: SEO-tool bots inflate "
+              "them. Clicks are people. <a href=\"#honest\">The full 30-day update</a> explains "
+              "both numbers and their caveats.",
+         chips=["165 clicks &middot; 156 from the UK", "44 pages earned clicks",
+                "1,600+ AI-answer appearances"]),
     dict(state="wait", when="Due late October 2026 &middot; Reserved", iso="2026-10-28",
          title="90-day re-measure",
          body="Long enough for Google to have recrawled everything and for rankings to start "
@@ -122,15 +128,22 @@ CCB_RELATIONSHIP = [
               "engineering story, with every number, is the "
               "<a href=\"/website-rebuild-seo-case-study/\">measured case study</a>.",
          chips=["Server response 1,320 &rarr; 106 ms", "20 &rarr; 79 pages"]),
-    dict(state="live", when="Now", iso="2026-07-31",
+    dict(state="done", when="31 July 2026", iso="2026-07-31",
          title="Being measured in the open",
          body="The day after launch we scored the new site with our own "
               "<a href=\"/website-checker/\">free website checker</a> and published the result "
               "&mdash; including what it flagged for improvement.",
          chips=["Lighthouse 99 desktop &middot; 90 mobile", "SEO 100"]),
-    dict(state="wait", when="August 2026 &ndash; January 2027 &middot; Reserved", iso="2026-08-29",
-         title="The results, when they are real",
-         body="Search Console re-measures at 30, 90 and 180 days, published on the "
+    dict(state="live", when="29 August 2026 &middot; You are here", iso="2026-08-29",
+         title="The first month, measured",
+         body="The 30-day Search Console re-measure is published in full on the "
+              "<a href=\"/website-rebuild-seo-case-study/#journey\">measured case study</a>: "
+              "165 clicks from Google search in the first 28 days, most of them landing on pages "
+              "that did not exist before the rebuild.",
+         chips=["165 clicks in 28 days"]),
+    dict(state="wait", when="October 2026 &amp; January 2027 &middot; Reserved", iso="2026-10-28",
+         title="The results still to come",
+         body="Search Console re-measures at 90 and 180 days, published on the "
               "<a href=\"/website-rebuild-seo-case-study/#journey\">measured case study</a> "
               "whatever they say. No projections in the meantime.",
          chips=["Awaiting Search Console data"]),
