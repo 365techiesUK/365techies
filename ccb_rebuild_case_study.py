@@ -523,17 +523,22 @@ def build():
           build &mdash; server response 106&nbsp;ms, first paint 412&nbsp;ms, zero layout shift.
           Every old ranking address was re-tested live: all of them land on a real page, and the
           WordPress leftovers answer 410&nbsp;Gone. The 30/90/180-day clock starts now.</p>
-        <p class="rb__honest"><strong>Update, 30 days (29 August 2026):</strong> the first
-          re-measure is in, from Search Console&rsquo;s first 28 days of live data (30 July to
-          26 August). The site earned <strong>165 clicks</strong> from Google search &mdash; 156 of
-          them from the UK &mdash; landing on <strong>44 different pages</strong>, and more than
-          half of those clicks went to pages that did not exist before the rebuild. The guides did
-          the heaviest lifting: the page on restoring oak beams was clicked 17 times, and the
-          heritage building costs guide 15 times at an average position of 6. In
-          Google&rsquo;s AI answers &mdash; where the old site appeared less than once a day &mdash;
-          the new one appeared <strong>over 1,600 times</strong> in the same 28 days.</p>
+        <p class="rb__honest"><strong>Update, 30 days (measured 29&ndash;31 August 2026):</strong>
+          the first re-measure is in, and this time both columns come from the same place: Search
+          Console&rsquo;s three-month view still reaches back across the launch, so the old
+          site&rsquo;s last weeks and the new site&rsquo;s first weeks sit in one report, measured
+          identically. In its final 30 days the old site earned <strong>30 clicks</strong> from
+          Google search. In its first 30 days live (30 July to 28 August) the new site earned
+          <strong>184 clicks</strong> &mdash; six times as many, for the same business, in the
+          same season, spread across more than forty different pages. More than half of those
+          clicks went to pages that did not exist before the rebuild, and the guides did the
+          heaviest lifting: the page on restoring oak beams was clicked 17 times in the first
+          28 days, and the heritage building costs guide 15 times at an average position of 6. In
+          Google&rsquo;s AI answers &mdash; where the old site appeared less than once a day
+          &mdash; the new one appeared <strong>over 1,600 times</strong> in its first month.</p>
         <p class="rb__honest"><strong>What we are deliberately not quoting: impressions.</strong>
-          Search Console reports 10,507 of them, and we could headline that number &mdash; but a
+          Search Console reports 11,553 of them for the same 30 days, and we could headline that
+          number &mdash; but a
           large share is SEO software, not people: rank-tracking bots running other firms&rsquo;
           keyword lists, including searches for towns in Essex this Dorset builder will never work
           in. It is the same pollution that made the old timber page&rsquo;s ten and a half
