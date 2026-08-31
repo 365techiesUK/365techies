@@ -175,7 +175,30 @@ def signal_block(slug, town):
         # >6 verified: show the 3 fastest AND the 3 slowest, and say so - a
         # fastest-only list under a heading that implies completeness would
         # quietly hide every not-spot, which is half of what the map is FOR.
-        shown = verified[:6] if len(verified) <= 6 else verified[:3] + verified[-3:]
+        # ⚠️ DEDUPE BY LOCALITY NAME. Several ~500 m squares can reverse-geocode
+        # to the SAME locality, and as the survey grew this started rendering
+        # as "Canford Cliffs 5.7 / Canford Cliffs 3.8 / Canford Cliffs 3.1" —
+        # three real squares, but it reads as a broken list, and repeating one
+        # name three times implies the whole locality is that speed. Keep the
+        # most extreme square per name IN THE DIRECTION BEING SHOWN, so the
+        # "three fastest and three slowest" claim stays literally true.
+        def _pick(seq, want):
+            out, seen = [], set()
+            for v in seq:
+                if v["name"] in seen:
+                    continue
+                seen.add(v["name"])
+                out.append(v)
+                if len(out) == want:
+                    break
+            return out
+        if len(verified) <= 6:
+            shown = verified[:6]
+        else:
+            fastest = _pick(verified, 3)
+            taken = {v["name"] for v in fastest}
+            slowest = _pick([v for v in reversed(verified) if v["name"] not in taken], 3)
+            shown = fastest + list(reversed(slowest))
         items = "".join(
             f"<li><strong>{v['name']}</strong>: {v['dl']:g}&nbsp;Mbps median download from {v['n']} readings"
             f"{' (a ~140&nbsp;m seafront square)' if v.get('g') == 'c' else ''}</li>" for v in shown)

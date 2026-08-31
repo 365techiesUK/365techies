@@ -68,6 +68,12 @@ VAN_LOCALITY_TOWN = {
     # on the Bournemouth page and Canford Heath on Broadstone's. These are the
     # localities we are CONFIDENT about; anything absent keeps the distance rule.
     "Canford Cliffs": "it-support-poole", "Branksome": "it-support-poole",
+    # Added 2026-08-31: as the survey grew these crossed the 8-reading
+    # floor and started publishing. Penn Hill sits 3.22 km from the
+    # Bournemouth centroid and 4.29 km from Poole's, so distance alone
+    # put a POOLE locality under a Bournemouth heading.
+    "Penn Hill": "it-support-poole", "Alder Hills": "it-support-poole",
+    "Newtown": "it-support-poole",
     "Branksome Park": "it-support-poole", "Upper Parkstone": "it-support-poole",
     "Canford Heath": "it-support-poole", "Bearwood": "it-support-poole",
     "Creekmoor": "it-support-poole", "Oakdale": "it-support-poole",
