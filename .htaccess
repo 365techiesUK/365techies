@@ -35,6 +35,19 @@ RewriteRule ^shop/?$ /dell-hardware/ [R=301,L]
 # outranking the new hub. One URL per intent: the /ai/ estate wins.
 RewriteRule ^ai-voice-agents/?$ /ai/voice-agents/ [R=301,L]
 RewriteRule ^ai-training/?$ /ai/training/ [R=301,L]
+# 2026-08-31, post-freeze baseline review: the last true duplicate pair.
+# /agentic-ai-systems/ and /ai/agents/ were both live, both self-canonical and
+# both in the sitemap for the same intent; the legacy page held 292 impressions
+# at position 35.5 and ZERO clicks over 90 days while the newer page went
+# unindexed. One URL per intent — the /ai/ estate wins. Keep >= 1 year.
+#
+# ⚠️ The other manifest rows are NOT here on purpose. /365-ai-os/,
+# /ai-for-beginners-course/, /ai-roi-calculator/ and /using-ai-safely/ were to
+# be redirected to /ai/tools/... and /ai/learn/... children that WERE NEVER
+# BUILT — those URLs 404 today. Redirecting live pages into 404s would have
+# destroyed /ai-for-beginners-course/, the only legacy AI page earning clicks.
+# Build the targets first, or leave these alone.
+RewriteRule ^agentic-ai-systems/?$ /ai/agents/ [R=301,L]
 
 # Short, sayable URLs for the review ask - "just go to 365techies.co.uk/review".
 # The team says these on the phone and they are printed on the referral cards,

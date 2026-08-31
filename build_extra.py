@@ -8619,7 +8619,7 @@ def services_overview():
         ("Website Design &amp; Hosting", "/web-design-hosting/", "Premium websites, fast managed hosting and business email."),
         ("Website Rebuild &amp; Redesign", "/website-rebuild/", "Rebuild a tired website without losing your Google rankings &mdash; SEO-safe migration, done like our own."),
         ("365 Web Care", "/web-care/", "One simple monthly plan &mdash; we host, secure, back up and look after your website, so you never worry about it."),
-        ("Agentic AI Systems", "/agentic-ai-systems/", "Custom-built agentic AI operating systems that automate and streamline your business-specific processes."),
+        ("Agentic AI Systems", "/ai/agents/", "Custom-built agentic AI operating systems that automate and streamline your business-specific processes."),
         ("365 AI OS", "/365-ai-os/", "A real browser desktop with a built-in AI assistant that takes action &mdash; a working demo of the custom systems we build."),
         ("AI Voice Agents", "/ai/voice-agents/", f"An AI receptionist that answers calls 24/7, captures enquiries and books callbacks &mdash; from &pound;{AI_VOICE_FROM}/month."),
         ("AI Training &amp; Adoption", "/ai/training/", "Practical training to get safe, real value from Copilot, ChatGPT and AI tools."),
@@ -10206,7 +10206,10 @@ def agentic_systems():
                       faqpage(s, _faqs)])
     add(slug=slug, title="Agentic AI Systems &amp; AI Automation Agency Dorset | 365 Techies",
         desc=desc, og_title="Custom Agentic AI Systems | 365 Techies", schema=schema, content=content)
-agentic_systems()
+# RETIRED 2026-08-31 — consolidated into /ai/agents/ (301 in .htaccess).
+# The function is kept for reference only; re-enabling it would put a second
+# self-canonical page back on the same intent, which is what the 301 just fixed.
+# agentic_systems()
 
 # ===================================================== UNITREE ROBOTS
 def unitree_robots():
@@ -10216,7 +10219,7 @@ def unitree_robots():
       ("Can you really supply Unitree robots?", "Yes &mdash; we&rsquo;re a Scan partner, so we can supply the full Unitree range, from Go2 quadrupeds to G1 and H1 humanoids, with expert advice and ongoing support."),
       ("What&rsquo;s the difference between the quadruped and humanoid robots?", "Quadrupeds (&lsquo;robot dogs&rsquo; like Go2 and B2) excel at mobility, inspection and rugged terrain; humanoids (like G1 and H1) are built for research into human-like movement, manipulation and embodied AI."),
       ("Who are these robots for?", "Researchers, universities, educators, industrial and security operators, and developers &mdash; anyone exploring robotics and AI."),
-      ("Do you help set them up and develop on them?", "Yes &mdash; we set up the robot, prepare the SDK and development environment, and provide ongoing support. It pairs naturally with our <a href=\"/agentic-ai-systems/\">agentic AI</a> and <a href=\"/ai/training/\">AI training</a> services."),
+      ("Do you help set them up and develop on them?", "Yes &mdash; we set up the robot, prepare the SDK and development environment, and provide ongoing support. It pairs naturally with our <a href=\"/ai/agents/\">agentic AI</a> and <a href=\"/ai/training/\">AI training</a> services."),
       ("How do I get a price?", "Get in touch and we&rsquo;ll provide a quote through our Scan partnership for the model you need."),
     ]
     content = "\n".join([
@@ -11040,7 +11043,7 @@ def ai_os():
     desc = "The 365 AI OS is a real, browser-based desktop with a built-in agentic AI assistant — sign in to your own profile, take notes, manage tasks, and let the assistant do the work. Built in-house by 365 Techies in Bournemouth, Dorset."
     faqs = [
       ("What is the 365 AI OS?", "It&rsquo;s a desktop that runs in your web browser. You sign in to your own profile and get windows, apps, a taskbar and a built-in AI assistant &mdash; everything saved to your account and ready on any device."),
-      ("Is it a real product or just a concept?", "It&rsquo;s a real, working prototype we&rsquo;ve built in-house. It also demonstrates the kind of <a href=\"/agentic-ai-systems/\">custom agentic AI systems</a> we build for businesses. The systems we&rsquo;ve already shipped are documented, with dates, on our <a href=\"/ai/case-studies/\">AI case studies</a> page."),
+      ("Is it a real product or just a concept?", "It&rsquo;s a real, working prototype we&rsquo;ve built in-house. It also demonstrates the kind of <a href=\"/ai/agents/\">custom agentic AI systems</a> we build for businesses. The systems we&rsquo;ve already shipped are documented, with dates, on our <a href=\"/ai/case-studies/\">AI case studies</a> page."),
       ("Do I need to install anything?", "No &mdash; it runs in any modern web browser on a computer, tablet or phone. There&rsquo;s nothing to download."),
       ("What can the AI assistant actually do?", "It can take notes, add and complete to-do tasks, open apps and change your settings &mdash; not just answer questions. Every action is shown to you, and it only ever works on your own desktop."),
       ("Is my data private and secure?", "Yes. You sign in to your own private profile and your information stays yours. It&rsquo;s built with security first, in line with our <a href=\"/cybersecurity-support/\">cybersecurity</a> approach."),
@@ -11057,7 +11060,7 @@ def ai_os():
       hero(bc("365 AI OS"), "// 365 AI OS",
            'Your own <em class="grad grad--cyan">AI desktop</em>',
            "The 365 AI OS is a real desktop that lives in your browser &mdash; sign in to your own profile and meet a built-in AI assistant that doesn&rsquo;t just chat, but actually takes notes, manages your tasks and runs your desktop for you.",
-           cta1=("Book a Discovery Call", "/ai/start/"), cta2=("See Agentic AI", "/agentic-ai-systems/"),
+           cta1=("Book a Discovery Call", "/ai/start/"), cta2=("See Agentic AI", "/ai/agents/"),
            chips=["Runs in your browser","Powered by Claude","Built in Dorset"]),
       launch_band,
       f'''    <section class="section" aria-label="What it is">
@@ -11157,7 +11160,7 @@ def ai_os():
           <h2 class="section-title" data-title>A genuine product, not a mock-up<span class="title-underline"></span></h2>
           <p>The 365 AI OS is something we&rsquo;ve actually built &mdash; a working prototype that shows what a modern, AI-powered workspace can be: sign-in, your own saved profile, real apps, and an assistant that does the work rather than just talking about it.</p>
           <p>When others say &lsquo;AI OS&rsquo; they usually mean a chatbot or a rebranded web app. This is a <strong>genuine desktop you sign into</strong>, with a <strong>Claude-powered</strong> assistant that operates it &mdash; built and hosted in-house in Dorset, not aspirational branding.</p>
-          <p>It&rsquo;s also a living demonstration of the <a href="/agentic-ai-systems/">custom agentic AI systems</a> we design and build for businesses, and it pairs naturally with our <a href="/ai/training/">AI training &amp; adoption</a> service. As with everything we do, it&rsquo;s built with security first &mdash; in line with our <a href="/cybersecurity-support/">cybersecurity</a> approach &mdash; and explained in plain English.</p>
+          <p>It&rsquo;s also a living demonstration of the <a href="/ai/agents/">custom agentic AI systems</a> we design and build for businesses, and it pairs naturally with our <a href="/ai/training/">AI training &amp; adoption</a> service. As with everything we do, it&rsquo;s built with security first &mdash; in line with our <a href="/cybersecurity-support/">cybersecurity</a> approach &mdash; and explained in plain English.</p>
           <p>It even includes a live <a href="/off-grid-victron-energy/">off-grid power dashboard</a> &mdash; read your Victron solar and battery system (charge, solar, loads and tank levels) from any browser, ideal for off-grid homes, campervans, motorhomes and boats.</p>
           <p>Want a version shaped around your business &mdash; your apps, your data, your brand? <a href="/contact/">Get in touch</a> and we&rsquo;ll show you what&rsquo;s possible.</p>
         </div>
@@ -11180,7 +11183,7 @@ def ai_os():
       faq_html(faqs),
       cta("Want your own AI desktop?",
           "See the working prototype and let&rsquo;s talk about a version built around your business.",
-          primary=("Book a Discovery Call", "/ai/start/"), secondary=("Agentic AI Systems", "/agentic-ai-systems/")),
+          primary=("Book a Discovery Call", "/ai/start/"), secondary=("Agentic AI Systems", "/ai/agents/")),
     ] if p])
     def schema(s, _desc=desc, _faqs=faqs):
         return graph([crumb(s, "365 AI OS"), webpage(s, "365 AI OS — Your Own AI Desktop", _desc),
@@ -14494,7 +14497,7 @@ def ai_voice():
       faq_html(faqs),
       cta("Stop missing calls",
           "Let&rsquo;s set up an AI voice agent that answers every call, captures every enquiry and books the work &mdash; while you get on with the job.",
-          primary=("Talk to us about AI", "/ai/start/"), secondary=("See Agentic AI", "/agentic-ai-systems/")),
+          primary=("Talk to us about AI", "/ai/start/"), secondary=("See Agentic AI", "/ai/agents/")),
     ])
     def schema(s, _desc=desc, _faqs=faqs):
         return graph([crumb(s, "AI Voice Agents"), webpage(s, "AI Voice Agents & Phone Answering", _desc),
@@ -14516,7 +14519,7 @@ def ai_roi():
       ("How accurate is this estimate?", "It&rsquo;s a guide to show the scale of the opportunity, based on the numbers you put in. The real figure depends on your exact process &mdash; which is what a proper scoping conversation works out."),
       ("What counts as a repetitive task?", "Anything your team does over and over: answering similar enquiries, copying data between systems, chasing invoices, booking appointments, filing documents. These are exactly what an agent handles well."),
       ("Will AI replace my staff?", "No &mdash; the goal is to give your team their time back from repetitive work so they can focus on what genuinely needs a human. You stay in control, with a person approving anything that matters."),
-      ("What do I do with the result?", "Talk to us about the process behind your numbers and we&rsquo;ll confirm a realistic saving and show you exactly how an agent would do it &mdash; see <a href=\"/agentic-ai-systems/\">agentic AI systems</a>."),
+      ("What do I do with the result?", "Talk to us about the process behind your numbers and we&rsquo;ll confirm a realistic saving and show you exactly how an agent would do it &mdash; see <a href=\"/ai/agents/\">agentic AI systems</a>."),
     ]
     roi = r'''    <section class="section" aria-label="ROI calculator">
       <div class="wrap">
@@ -14585,13 +14588,13 @@ def ai_roi():
       hero(bc("AI ROI Calculator"), "// AI ROI CALCULATOR",
            'What could AI <em class="grad grad--cyan">save you?</em>',
            "Put rough numbers on a repetitive task your team does every week, and see the hours and money an AI agent could give you back. A free, no-obligation estimate &mdash; we confirm the real figure in a friendly review.",
-           cta1=("Talk to us about AI", "/ai/start/"), cta2=("See Agentic AI", "/agentic-ai-systems/"),
+           cta1=("Talk to us about AI", "/ai/start/"), cta2=("See Agentic AI", "/ai/agents/"),
            chips=["Free estimator","No obligation","Confirmed when we scope it"]),
       roi,
       faq_html(faqs),
       cta("See what AI could save you",
           "Tell us about your biggest time-drain &mdash; we&rsquo;ll map it and show you a realistic, honest saving.",
-          primary=("Talk to us about AI", "/ai/start/"), secondary=("Agentic AI Systems", "/agentic-ai-systems/")),
+          primary=("Talk to us about AI", "/ai/start/"), secondary=("Agentic AI Systems", "/ai/agents/")),
     ])
     def schema(s, _desc=desc, _faqs=faqs):
         return graph([crumb(s, "AI ROI Calculator"), webpage(s, "AI ROI Calculator", _desc), faqpage(s, _faqs)])
@@ -16257,7 +16260,7 @@ info_page(
             <li><strong>Avoid:</strong> pasting in anything private, confidential or regulated.</li>
           </ul>
           <h2>We&rsquo;ll help you use it well</h2>
-          <p>We help homes and businesses adopt AI confidently and safely &mdash; see our <a href="/ai/training/">AI training &amp; adoption</a> service, or our <a href="/agentic-ai-systems/">custom agentic AI systems</a> that automate real business tasks.</p>""",
+          <p>We help homes and businesses adopt AI confidently and safely &mdash; see our <a href="/ai/training/">AI training &amp; adoption</a> service, or our <a href="/ai/agents/">custom agentic AI systems</a> that automate real business tasks.</p>""",
   faqs=[
     ("Is ChatGPT safe to use?", "Yes for everyday drafting and learning &mdash; as long as you never paste in private, confidential or sensitive information and you check important answers. For business data, use a business-grade tool like Microsoft 365 Copilot."),
     ("What is an AI &ldquo;hallucination&rdquo;?", "It&rsquo;s when an AI gives a confident answer that&rsquo;s actually wrong or made up. Always verify anything that matters before relying on it."),
@@ -21212,7 +21215,7 @@ def custom_dashboards():
           <p class="eyebrow mono">/09 &mdash; BEYOND VICTRON</p>
           <h2 class="section-title" data-title>Not just Victron &mdash; if it has a feed, we can usually dash it<span class="title-underline"></span></h2>
           <p>Victron&rsquo;s VRM API is where we started (our own van runs on it), but the same approach works for <strong>most systems that expose an API, a data feed or an export</strong>: other solar and battery brands, weather stations, tank and level sensors, heating, EV chargers, network kit &mdash; even business numbers like bookings or sales alongside your energy data.</p>
-          <p>One screen, many sources &mdash; that&rsquo;s usually where dashboards earn their keep. Tell us what you run and we&rsquo;ll tell you honestly what&rsquo;s feasible before any money changes hands. This pairs naturally with the <a href="/agentic-ai-systems/">custom software and AI systems</a> we build.</p>
+          <p>One screen, many sources &mdash; that&rsquo;s usually where dashboards earn their keep. Tell us what you run and we&rsquo;ll tell you honestly what&rsquo;s feasible before any money changes hands. This pairs naturally with the <a href="/ai/agents/">custom software and AI systems</a> we build.</p>
         </div>
         <ul class="checklist" data-stagger>
 {checklist(["Other solar &amp; battery brands with APIs","Weather stations &amp; sensors","Tanks, pumps &amp; level monitors","Network &amp; connectivity status","Business data alongside energy","Honest feasibility check first"])}

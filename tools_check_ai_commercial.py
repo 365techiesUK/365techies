@@ -36,7 +36,6 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 # The AI estate. Future /ai/... routes are picked up by the glob below, so new
 # pillar pages are guarded the day they are first built.
 AI_SLUGS = [
-    "agentic-ai-systems",
     "ai/voice-agents",
     "365-ai-os",
     "ai/training",

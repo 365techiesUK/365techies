@@ -831,9 +831,6 @@ SNIPPETS = {
     "hard-drive-upgrade": {
         "title": "SSD &amp; Hard Drive Upgrade in Bournemouth &amp; Dorset",
     },
-    "agentic-ai-systems": {
-        "title": "Agentic AI Systems &amp; AI Automation Agency, Dorset",
-    },
     "wifi-controller-end-of-life": {
         "title": "Wi-Fi Controller End of Life: The Real Deadline",
     },
