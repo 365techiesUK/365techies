@@ -150,7 +150,11 @@ if ((int)$b['count'] >= $MONTHLY_BUDGET) {
 }
 
 $url = sprintf(
-    'https://api.tomtom.com/traffic/map/4/tile/flow/relative0/%d/%d/%d.pbf?key=%s',
+    // ⚠️ THE STYLE SEGMENT IS `relative`, NOT `relative0`.
+    // relative0 is a RASTER flow style; on the vector (.pbf) endpoint it is
+    // rejected, and the only symptom was a 503 with the budget counter never
+    // moving — which reads exactly like a missing key. Matches the dev proxy.
+    'https://api.tomtom.com/traffic/map/4/tile/flow/relative/%d/%d/%d.pbf?key=%s',
     $z, $x, $y, rawurlencode($keys['tomtom'])
 );
 
