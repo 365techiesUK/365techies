@@ -195,6 +195,38 @@ ErrorDocument 404 /404.html
 <FilesMatch "^(visitors-key\.php|visitors-cache\.json(\..*)?)$">
   Require all denied
 </FilesMatch>
+# Signal map + van telemetry stores. THESE WERE PUBLICLY READABLE UNTIL 2026-09-01
+# (signal-data.json alone was 797 KB) - the same class of miss as pcm-bkpoll-cache
+# above, and for the same reason: every one of these files is generated at RUNTIME
+# and gitignored, so it never appears in the repo and never prompts a rule.
+#
+# Why it mattered here rather than being merely untidy: signal-log.php applies the
+# one-hour privacy embargo (EMBARGO_S) and the retroactive geo-fence strip AT READ
+# TIME, as it serves. These files are the store BEHIND that filter, so fetching one
+# directly returned the unfiltered set - van positions inside the embargo window and
+# the location history the fence exists to hide. signal-check-data.json likewise
+# bypassed MIN_FOR_COMPARE, which is the guard that keeps per-operator readings from
+# becoming the league table we do not publish.
+#
+# The endpoints stay served - only the stores are denied. signal-token.php,
+# geo-fence.php and pcm-team-lib.php are @include-only, so denying them over HTTP
+# costs nothing: .htaccess gates requests, not include().
+<FilesMatch "^(signal-(data|geo)\.json(\..*)?|signal-check-(data|rate)\.json(\..*)?|signal-token\.php|geo-fence\.php|van-live-(data|geo)\.json(\..*)?|pcm-team-lib\.php)$">
+  Require all denied
+</FilesMatch>
+# Victron VRM caches, the Venus device CA, and the broadband comparison store.
+# Same 2026-09-01 sweep. vrm-live.php / vrm-history.php / broadband-compare.php
+# stay served - they are the public read side and hold no credential.
+<FilesMatch "^(vrm-(cache|history-cache|weather-cache)\.json(\..*)?|venus-ca\.crt|broadband-compare-(data|rate)\.json(\..*)?)$">
+  Require all denied
+</FilesMatch>
+# The Overpass road-geometry cache: files are sha1(query).json inside
+# api/dorset-overpass-cache/, so the dorset-*-cache rule above cannot match them.
+# A directory block is not available in .htaccess and the directory is created at
+# runtime, so match the filename shape instead.
+<FilesMatch "^[a-f0-9]{40}\.json$">
+  Require all denied
+</FilesMatch>
 # 365 PC Manager broadband speed test payload (downloads/speedtest/*.bin): random bytes,
 # so no compression, and NEVER cached - a cached payload measures the proxy, not the line.
 # Explicitly public: it must be fetchable by every customer PC. Added 2026-08-18.
