@@ -160,19 +160,66 @@ if (!defined('DORSET_LIB')) {
     }
 
     /**
+     * Read-modify-write a small JSON counter file ATOMICALLY.
+     *
+     * ⚠️ THIS EXISTS BECAUSE LOCK_EX ON THE WRITE ALONE IS NOT ENOUGH, AND THE
+     * FAILURE IS SILENT. The previous shape here — file_get_contents, decide,
+     * file_put_contents(LOCK_EX) — locks only the write. Two workers both read
+     * the old value, both compute the same next value, and one increment is
+     * lost. Worse, file_put_contents truncates before it writes, so a reader
+     * arriving inside that window gets '' and json_decode returns null, which
+     * the callers below read as "new minute" or "new month" and RESET the
+     * counter to zero. Measured on the traffic budget: 8 workers × 300 bumps
+     * ended at 11 instead of 2400.
+     *
+     * That matters because these counters are not statistics, they are the
+     * ceilings protecting a provider quota — National Highways cap at 10 calls
+     * a minute and treat overrunning as abuse, and the TomTom budget is the
+     * only thing between us and a bill. A ceiling that silently resets is not
+     * a ceiling.
+     *
+     * So: one handle, opened 'c+' (create, read-write, no truncate), held under
+     * a real LOCK_EX across the whole read-decide-write. $fn receives the
+     * decoded array (or null) and returns array($newState, $result).
+     */
+    function dorset_counter_update($file, $fn) {
+        $h = @fopen($file, 'c+');
+        if (!$h) {
+            // Cannot lock — fail CLOSED. An unprotected ceiling is worse than a
+            // refused request: the caller serves cache and nobody is billed.
+            return null;
+        }
+        if (!@flock($h, LOCK_EX)) { @fclose($h); return null; }
+        $raw = '';
+        while (!feof($h)) { $chunk = fread($h, 8192); if ($chunk === false) break; $raw .= $chunk; }
+        $cur = json_decode($raw, true);
+        list($next, $result) = $fn(is_array($cur) ? $cur : null);
+        if ($next !== null) {
+            @rewind($h);
+            @ftruncate($h, 0);
+            @fwrite($h, json_encode($next));
+            @fflush($h);
+        }
+        @flock($h, LOCK_UN);
+        @fclose($h);
+        return $result;
+    }
+
+    /**
      * Crude site-wide rate limit on the UPSTREAM call, not on the visitor.
-     * The thing being protected is our quota with the provider — National
-     * Highways cap at 10 calls a minute and treat overrunning as abuse — so
-     * this counts calls we make, and the caller serves cache when it trips.
+     * The thing being protected is our quota with the provider, so this counts
+     * calls we make, and the caller serves cache when it trips.
      */
     function dorset_rate_ok($file, $perMinute) {
         $min = (int)floor(time() / 60);
-        $r = json_decode((string)@file_get_contents($file), true);
-        if (!is_array($r) || !isset($r['min']) || $r['min'] !== $min) $r = array('min' => $min, 'n' => 0);
-        if ($r['n'] >= $perMinute) return false;
-        $r['n']++;
-        @file_put_contents($file, json_encode($r), LOCK_EX);
-        return true;
+        $ok = dorset_counter_update($file, function ($r) use ($min, $perMinute) {
+            if (!is_array($r) || !isset($r['min']) || $r['min'] !== $min) $r = array('min' => $min, 'n' => 0);
+            if ($r['n'] >= $perMinute) return array(null, false);   // no write; nothing changed
+            $r['n']++;
+            return array($r, true);
+        });
+        // null = could not take the lock. Fail closed (see above).
+        return $ok === true;
     }
 
     /** True when a point falls inside the conurbation box. */

@@ -39,6 +39,7 @@ require __DIR__ . '/dorset-lib.php';
 
 $TILE_DIR  = __DIR__ . '/dorset-traffic-tiles';
 $BUDGET    = __DIR__ . '/dorset-traffic-budget.json';
+$RATE      = __DIR__ . '/dorset-traffic-rate.json';
 
 /*
  * 200,000/month is the published allowance. Sitting at 180,000 leaves room for
@@ -68,11 +69,63 @@ function traffic_budget_read($file) {
     return $b;
 }
 
-function traffic_budget_bump($file) {
-    $b = traffic_budget_read($file);
-    $b['count']++;
-    @file_put_contents($file, json_encode($b), LOCK_EX);
-    return $b;
+/*
+ * ⚠️ RESERVE BEFORE FETCHING, NOT AFTER — AND UNDER A REAL LOCK.
+ * The old shape read the budget, fetched the tile, then bumped the counter with
+ * only the write locked. Two problems, both silent: concurrent workers lost
+ * increments (measured: 8 × 300 bumps ended at 11), and the check-then-fetch
+ * gap let any number of simultaneous requests all pass a check made against the
+ * same stale count. This takes the slot FIRST, atomically, and gives it back if
+ * the fetch fails — so the counter can only ever over-count, never under-count.
+ * Over-counting costs us a few tiles of headroom; under-counting costs money.
+ */
+function traffic_budget_reserve($file, $limit) {
+    $got = dorset_counter_update($file, function ($b) use ($limit) {
+        if (!is_array($b) || !isset($b['month']) || $b['month'] !== traffic_month()) {
+            $b = array('month' => traffic_month(), 'count' => 0);
+        }
+        if ((int)$b['count'] >= $limit) return array(null, false);
+        $b['count']++;
+        return array($b, true);
+    });
+    return $got === true;
+}
+
+/** Hand a reserved slot back when the upstream fetch did not happen. */
+function traffic_budget_release($file) {
+    dorset_counter_update($file, function ($b) {
+        if (!is_array($b) || !isset($b['month']) || $b['month'] !== traffic_month()) return array(null, null);
+        if ((int)$b['count'] > 0) $b['count']--;
+        return array($b, null);
+    });
+}
+
+/* ------------------------------------------------------- geographic guard */
+
+/*
+ * ⚠️ WITHOUT THIS, THIS ENDPOINT IS A GLOBAL TILE PROXY BILLED TO US.
+ * z/x/y were previously range-checked but never tested against Dorset, so
+ * Tokyo (z12/3637/1612) and New York (z12/1206/1539) were both served — 23.4
+ * trillion reachable tiles against the 59,540 the map actually needs, each
+ * miss writing a file to shared hosting and holding a PHP worker through a
+ * 15-second curl. The repo is public, so the path and its parameters are
+ * published; nothing about this was obscure.
+ */
+function traffic_tile_lon($x, $z) { return $x / pow(2, $z) * 360.0 - 180.0; }
+function traffic_tile_lat($y, $z) {
+    $n = M_PI - 2.0 * M_PI * $y / pow(2, $z);
+    return rad2deg(atan(0.5 * (exp($n) - exp(-$n))));
+}
+
+/** True when tile z/x/y overlaps the conurbation box at all. */
+function traffic_tile_in_dorset($z, $x, $y) {
+    $w = traffic_tile_lon($x, $z);
+    $e = traffic_tile_lon($x + 1, $z);
+    $n = traffic_tile_lat($y, $z);
+    $s = traffic_tile_lat($y + 1, $z);
+    // Standard AABB overlap. Touching edges count as inside: a viewport sitting
+    // exactly on the boundary must not lose its tiles.
+    return !($e < DORSET_W || $w > DORSET_E || $n < DORSET_S || $s > DORSET_N);
 }
 
 /* ------------------------------------------------------------------ status */
@@ -112,20 +165,38 @@ if ((string)(int)$z !== (string)$z || (string)(int)$x !== (string)$x || (string)
     dorset_send(array('ok' => false, 'reason' => 'bad-tile'), 400);
 }
 $z = (int)$z; $x = (int)$x; $y = (int)$y;
-// TomTom's flow tiles are meaningless outside this range and a wild z would
-// only burn budget.
-if ($z < 8 || $z > 22 || $x < 0 || $y < 0 || $x >= (1 << $z) || $y >= (1 << $z)) {
+/*
+ * The client asks for z12 and nothing else (flowTiles.js defaults to 12 and no
+ * caller overrides it), so 10-16 is already generous headroom. The old 8-22
+ * allowed 2^22 x 2^22 addressable tiles for no reason any caller needed.
+ */
+if ($z < 10 || $z > 16 || $x < 0 || $y < 0 || $x >= (1 << $z) || $y >= (1 << $z)) {
     dorset_send(array('ok' => false, 'reason' => 'tile-out-of-range'), 400);
+}
+if (!traffic_tile_in_dorset($z, $x, $y)) {
+    dorset_send(array('ok' => false, 'reason' => 'tile-outside-dorset'), 400);
 }
 
 $file = $TILE_DIR . '/' . $z . '_' . $x . '_' . $y . '.pbf';
 
 function traffic_send_tile($file, $status) {
+    /*
+     * ⚠️ CHECK THE READ. An unchecked readfile() that fails still leaves a
+     * 200 with the right Content-Type and an empty body, and a vector-tile
+     * decoder reads an empty tile as "no congestion anywhere" — a confident
+     * false statement about the roads rather than a visible failure.
+     */
+    $bytes = @file_get_contents($file);
+    if ($bytes === false || strlen($bytes) === 0) {
+        http_response_code(503);
+        exit;
+    }
     header('Content-Type: application/x-protobuf');
     header('Cache-Control: no-store');
     header('X-Tile-Cache: ' . $status);
     header('X-Source: Traffic flow data (c) TomTom');
-    readfile($file);
+    header('Content-Length: ' . strlen($bytes));
+    echo $bytes;
     exit;
 }
 
@@ -141,8 +212,19 @@ if (!$hasKey) {
     exit;
 }
 
-$b = traffic_budget_read($BUDGET);
-if ((int)$b['count'] >= $MONTHLY_BUDGET) {
+/*
+ * A per-minute ceiling on MISSES, matching every sibling endpoint. This was the
+ * only dorset-*.php with no rate limit at all. 120/min is far above what a map
+ * panning around one conurbation needs (a full z12 cover of the box is ~30
+ * tiles) and far below what an unattended script can spend.
+ */
+if (!dorset_rate_ok($RATE, 120)) {
+    if (is_file($file)) traffic_send_tile($file, 'STALE-RATE');
+    dorset_send(array('ok' => false, 'reason' => 'rate'), 429);
+}
+
+// Take the budget slot BEFORE the fetch — see traffic_budget_reserve.
+if (!traffic_budget_reserve($BUDGET, $MONTHLY_BUDGET)) {
     // Out of budget. A stale tile beats no tile; only an uncached one fails.
     if (is_file($file)) traffic_send_tile($file, 'STALE-BUDGET');
     http_response_code(503);
@@ -161,13 +243,13 @@ $url = sprintf(
 list($tile, $code) = dorset_http($url, 15, array('Accept: application/x-protobuf'));
 
 if ($tile === null || strlen($tile) === 0) {
+    // Nothing was delivered, so give the reserved slot back before degrading.
+    traffic_budget_release($BUDGET);
     // 403/429 or a wobble: serve stale if we have it. Never blank.
     if (is_file($file)) traffic_send_tile($file, 'STALE-UPSTREAM');
     http_response_code(503);
     exit;
 }
-
-traffic_budget_bump($BUDGET);
 
 if (!is_dir($TILE_DIR)) @mkdir($TILE_DIR, 0775, true);
 $tmp = $file . '.' . getmypid() . '.tmp';
