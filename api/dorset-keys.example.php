@@ -27,3 +27,4 @@ $BODS_API_KEY       = '';
 $NH_API_KEY         = '';
 $CDSE_CLIENT_ID     = '';
 $CDSE_CLIENT_SECRET = '';
+$TOMTOM_API_KEY     = '';

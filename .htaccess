@@ -175,7 +175,7 @@ ErrorDocument 404 /404.html
 # include-only and never a URL. The dorset-buses/-roads/-satellite/-floods/
 # -water endpoints themselves stay served - they are the public read side and
 # hold no key.
-<FilesMatch "^(dorset-keys\.php|dorset-(lib|datex-lib)\.php|dorset-[a-z-]+-(cache|rate|token|readings)\.json(\..*)?|dorset-[a-z-]+\.lock|dorset-satellite\.jpg)$">
+<FilesMatch "^(dorset-keys\.php|dorset-(lib|datex-lib)\.php|dorset-[a-z-]+-(cache|rate|token|readings|budget)\.json(\..*)?|dorset-[a-z-]+\.lock|dorset-satellite\.jpg|.*\.pbf)$">
   Require all denied
 </FilesMatch>
 # AI opportunity pipeline (blueprint doc 06): the store holds enquiry PII and

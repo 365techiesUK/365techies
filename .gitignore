@@ -150,5 +150,9 @@ api/dorset-floods-rate.json
 api/dorset-water-cache.json
 api/dorset-water-rate.json
 api/dorset-water-readings.json
+api/dorset-flights-cache.json
+api/dorset-flights-rate.json
+api/dorset-traffic-budget.json
+api/dorset-traffic-tiles/
 api/dorset-water-readings.lock
 api/dorset-*.tmp

@@ -179,12 +179,14 @@ if (!defined('DORSET_LIB')) {
         $f = __DIR__ . '/dorset-keys.php';
         if (is_file($f)) {
             $BODS_API_KEY = ''; $NH_API_KEY = ''; $CDSE_CLIENT_ID = ''; $CDSE_CLIENT_SECRET = '';
+            $TOMTOM_API_KEY = '';
             require $f;
             $k = array(
                 'bods' => $BODS_API_KEY,
                 'nh'   => $NH_API_KEY,
                 'cdse_id' => $CDSE_CLIENT_ID,
                 'cdse_secret' => $CDSE_CLIENT_SECRET,
+                'tomtom' => $TOMTOM_API_KEY,
             );
         }
         return $k;
