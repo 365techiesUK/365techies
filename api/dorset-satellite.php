@@ -46,6 +46,10 @@ $RATE  = __DIR__ . '/dorset-satellite-rate.json';
 $TTL = 6 * 3600;
 $WANT_META = isset($_GET['meta']);
 
+// Bump when the meta payload gains or loses a field, so a deploy is not
+// invisible behind a six-hour cache written by the previous version.
+$SHAPE = 2;
+
 /* ------------------------------------------------------------ serve cache */
 
 function sat_serve_image($file, $meta) {
@@ -59,7 +63,7 @@ function sat_serve_image($file, $meta) {
     exit;
 }
 
-$meta = dorset_cache_get($META, $TTL);
+$meta = dorset_cache_get($META, $TTL, $SHAPE);
 if ($meta !== null && is_file($IMG)) {
     if ($WANT_META) dorset_send($meta);
     sat_serve_image($IMG, $meta);
@@ -251,6 +255,7 @@ $tmp = $IMG . '.' . getmypid() . '.tmp';
 @rename($tmp, $IMG);
 
 $meta = array(
+    'v'          => $SHAPE,
     'ok'         => true,
     'generated'  => gmdate('c'),
     // ⚠️ May legitimately be null when the catalog lookup failed. The client

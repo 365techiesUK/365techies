@@ -107,12 +107,22 @@ if (!defined('DORSET_LIB')) {
     /**
      * Read a cache file if it is younger than $ttl seconds.
      * Returns null on miss, so `?: ` chains read naturally.
+     *
+     * ⚠️ PASS $version WHENEVER THE PAYLOAD SHAPE CAN CHANGE.
+     * A deploy that adds a field to a response cannot be observed while an old
+     * cache is still being served, and with a six-hour TTL that is six hours of
+     * looking at a fix that has in fact shipped — which is exactly what
+     * happened to the satellite endpoint's scene date. When $version is given
+     * it must match the `v` stored alongside the payload, so new code never
+     * serves a payload built by old code.
      */
-    function dorset_cache_get($file, $ttl) {
+    function dorset_cache_get($file, $ttl, $version = null) {
         if (!is_file($file)) return null;
         if ((time() - (int)@filemtime($file)) >= $ttl) return null;
         $j = json_decode((string)@file_get_contents($file), true);
-        return is_array($j) ? $j : null;
+        if (!is_array($j)) return null;
+        if ($version !== null && (!isset($j['v']) || $j['v'] !== $version)) return null;
+        return $j;
     }
 
     /** The last good payload regardless of age, for honest degradation. */
