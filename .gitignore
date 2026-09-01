@@ -125,3 +125,30 @@ api/broadband-compare-data.json
 api/broadband-compare-data.json.tmp
 api/broadband-compare-rate.json
 api/broadband-compare-rate.json.tmp
+
+# Street Manager: the Cloudflare Worker read token, the polled cache and
+# the rate counter. The Worker receives the SNS push; this side only reads.
+api/street-manager-key.php
+api/street-manager-cache.json
+api/street-manager-cache.json.tmp
+api/street-manager-rate.json
+
+# Bournemouth365 Portal endpoints: the provider keys, and every cache and
+# rate counter they maintain. dorset-lib/-datex-lib/-buses/-roads etc are
+# source and ARE committed; only the state and the secrets are ignored.
+api/dorset-keys.php
+api/dorset-buses-cache.json
+api/dorset-buses-rate.json
+api/dorset-roads-cache.json
+api/dorset-roads-rate.json
+api/dorset-satellite-cache.json
+api/dorset-satellite-rate.json
+api/dorset-satellite-token.json
+api/dorset-satellite.jpg
+api/dorset-floods-cache.json
+api/dorset-floods-rate.json
+api/dorset-water-cache.json
+api/dorset-water-rate.json
+api/dorset-water-readings.json
+api/dorset-water-readings.lock
+api/dorset-*.tmp

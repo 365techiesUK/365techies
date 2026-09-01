@@ -164,6 +164,20 @@ ErrorDocument 404 /404.html
 <FilesMatch "^(tools-rate|domain-cache|isitdown-cache|wifi-map-rate|wifi-map-pins)\.json(\.tmp|\.lock)?$">
   Require all denied
 </FilesMatch>
+# Street Manager roadworks: the Cloudflare Worker read token is a credential,
+# and the polled cache + rate counter are internal. street-manager.php itself
+# stays served - it is the public read endpoint the map calls, and holds no key.
+<FilesMatch "^(street-manager-key\.php|street-manager-(cache|rate)\.json(\.tmp|\.lock)?)$">
+  Require all denied
+</FilesMatch>
+# Bournemouth365 Portal: provider keys are a credential; the caches, rate
+# counters and the OAuth token file are internal state. The library files are
+# include-only and never a URL. The dorset-buses/-roads/-satellite/-floods/
+# -water endpoints themselves stay served - they are the public read side and
+# hold no key.
+<FilesMatch "^(dorset-keys\.php|dorset-(lib|datex-lib)\.php|dorset-[a-z-]+-(cache|rate|token|readings)\.json(\..*)?|dorset-[a-z-]+\.lock|dorset-satellite\.jpg)$">
+  Require all denied
+</FilesMatch>
 # AI opportunity pipeline (blueprint doc 06): the store holds enquiry PII and
 # must never be served; the lib is include-only; the rate counter is internal.
 # ai-lead.php itself stays served - it is the public intake endpoint.

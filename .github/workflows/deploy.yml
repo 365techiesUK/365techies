@@ -56,6 +56,9 @@ jobs:
         website-checker-proxy.js
         safe-browsing-proxy.js
         visitors-live-worker.js
+        street-manager-worker.js
+        **/*.test.mjs
+        **/*.test.php
         LICENSE*
         .gitignore
         src/**
@@ -76,7 +79,7 @@ jobs:
           n=$(printf '%s\n' "$FTP_EXCLUDE" | grep -c '[^[:space:]]' || true)
           echo "exclude patterns: $n"
           if [ "$n" -lt 10 ]; then
-            echo "::error title=Exclude list broken::env.FTP_EXCLUDE resolved to $n patterns (expected 17). Refusing to deploy rather than upload source to the live server."
+            echo "::error title=Exclude list broken::env.FTP_EXCLUDE resolved to $n patterns (expected 20). Refusing to deploy rather than upload source to the live server."
             exit 1
           fi
 
