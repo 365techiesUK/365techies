@@ -84,7 +84,16 @@ if (isset($_GET['status'])) {
         'monthCount' => (int)$b['count'],
         'budget'     => $MONTHLY_BUDGET,
         'month'      => $b['month'],
-        'source'     => 'Traffic flow data © TomTom',
+        /*
+         * ⚠️ THE COPYRIGHT SIGN IS BUILT AT RUNTIME, NOT TYPED.
+         * Written as a literal it reached the browser double-encoded
+         * ("Â© TomTom"). The file is correct UTF-8 on disk, so something in
+         * the deploy path re-encoded it. This is a legally required
+         * attribution string and must not depend on byte-level encoding
+         * surviving FTP, git autocrlf and a shared host, so PHP generates the
+         * bytes itself whatever the source file encoding turns out to be.
+         */
+        'source'     => "Traffic flow data \u{00A9} TomTom",
     ));
 }
 
