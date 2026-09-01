@@ -158,27 +158,46 @@ $to   = gmdate('Y-m-d\TH:i:s\Z');
  * least cloud cover across the window, so the answer is the least-cloudy scene
  * in the same window — asked for explicitly rather than assumed.
  */
-$captured = null; $cloud = null;
+$captured = null; $cloud = null; $catReason = null;
+
+/*
+ * ⚠️ NO CQL2 `filter` BLOCK HERE, DELIBERATELY.
+ * The first version sent a cql2-json filter on eo:cloud_cover. The catalog
+ * rejected it and, because a non-2xx is swallowed, the only symptom was
+ * `captured: null` — the layer served a picture it could not date, which is
+ * the exact failure this call exists to prevent. The filter was redundant
+ * anyway: the loop below already picks the least-cloudy scene, which is what
+ * the Process API mosaics to. Ask for less, and it works.
+ */
 $cat = sat_post('https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search', $token, array(
     'bbox'        => $BBOX,
     'datetime'    => $from . '/' . $to,
     'collections' => array('sentinel-2-l2a'),
-    'limit'       => 50,
-    'filter'      => array('op' => '<=', 'args' => array(array('property' => 'eo:cloud_cover'), 35)),
-    'filter-lang' => 'cql2-json',
+    'limit'       => 100,
 ), 'application/json', 30);
 
-if ($cat !== null) {
+if ($cat === null) {
+    $catReason = 'catalog-request-failed';
+} else {
     $j = json_decode($cat, true);
-    if (is_array($j) && !empty($j['features'])) {
+    if (!is_array($j) || !isset($j['features'])) {
+        $catReason = 'catalog-unexpected-shape';
+    } elseif (!count($j['features'])) {
+        $catReason = 'catalog-no-scenes';
+    } else {
         $best = null;
         foreach ($j['features'] as $f) {
             $cc = isset($f['properties']['eo:cloud_cover']) ? (float)$f['properties']['eo:cloud_cover'] : 100.0;
+            // Match the Process API's own mosaickingOrder=leastCC and its
+            // maxCloudCoverage=35, so the date we report is the date of the
+            // scene the pixels actually came from.
+            if ($cc > 35) continue;
             if ($best === null || $cc < $best['cc']) {
                 $best = array('cc' => $cc, 'dt' => isset($f['properties']['datetime']) ? $f['properties']['datetime'] : null);
             }
         }
-        if ($best !== null) { $captured = $best['dt']; $cloud = $best['cc']; }
+        if ($best === null) $catReason = 'catalog-all-cloudy';
+        else { $captured = $best['dt']; $cloud = $best['cc']; }
     }
 }
 
@@ -238,6 +257,11 @@ $meta = array(
     // must render "date unavailable", never today's date and never nothing.
     'captured'   => $captured,
     'cloudCover' => $cloud,
+    // Why there is no date, when there is no date. Without this a failed
+    // catalog lookup is indistinguishable from a working one over a region
+    // with no recent pass, and the first version failed silently for exactly
+    // that reason.
+    'capturedReason' => $catReason,
     'bytes'      => strlen($jpeg),
     'bbox'       => $BBOX,
     'source'     => 'Contains modified Copernicus Sentinel data 2026',
