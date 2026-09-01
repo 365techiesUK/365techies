@@ -48,7 +48,7 @@ $WANT_META = isset($_GET['meta']);
 
 // Bump when the meta payload gains or loses a field, so a deploy is not
 // invisible behind a six-hour cache written by the previous version.
-$SHAPE = 2;
+$SHAPE = 3;
 
 /* ------------------------------------------------------------ serve cache */
 
@@ -133,16 +133,16 @@ if ($token === null) {
 function sat_post($url, $token, $payload, $accept, $timeout = 60) {
     $ch = @curl_init($url);
     if (!$ch) return null;
+    // $token may be null: the STAC catalogue is public and rejects nothing,
+    // but sending an empty bearer would make it 401.
+    $hdr = array('Content-Type: application/json', 'Accept: ' . $accept);
+    if ($token !== null) $hdr[] = 'Authorization: Bearer ' . $token;
     @curl_setopt_array($ch, array(
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_POST           => true,
         CURLOPT_TIMEOUT        => $timeout,
         CURLOPT_POSTFIELDS     => json_encode($payload),
-        CURLOPT_HTTPHEADER     => array(
-            'Authorization: Bearer ' . $token,
-            'Content-Type: application/json',
-            'Accept: ' . $accept,
-        ),
+        CURLOPT_HTTPHEADER     => $hdr,
         CURLOPT_USERAGENT      => '365techies-bournemouth365/1.0 (+https://365techies.co.uk/)',
     ));
     $body = @curl_exec($ch);
@@ -165,15 +165,21 @@ $to   = gmdate('Y-m-d\TH:i:s\Z');
 $captured = null; $cloud = null; $catReason = null;
 
 /*
- * ⚠️ NO CQL2 `filter` BLOCK HERE, DELIBERATELY.
- * The first version sent a cql2-json filter on eo:cloud_cover. The catalog
- * rejected it and, because a non-2xx is swallowed, the only symptom was
- * `captured: null` — the layer served a picture it could not date, which is
- * the exact failure this call exists to prevent. The filter was redundant
- * anyway: the loop below already picks the least-cloudy scene, which is what
- * the Process API mosaics to. Ask for less, and it works.
+ * ⚠️ THE PUBLIC STAC CATALOGUE, NOT THE SENTINEL HUB ONE.
+ * Two wrong turns are recorded here because both failed silently as
+ * `captured: null`:
+ *   1. A cql2-json filter on eo:cloud_cover, which the service rejected.
+ *   2. sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search with a bearer
+ *      token, which returned nothing usable at all.
+ * The catalogue that answers is stac.dataspace.copernicus.eu/v1/search, it
+ * needs NO authentication, and the collection id is lowercase `sentinel-2-l2a`
+ * (`SENTINEL-2` is rejected as non-existent). Verified live: 36 scenes over
+ * this box in a 30-day window, cleanest at 0.0% cloud.
+ *
+ * No filter block: the loop below picks the least-cloudy scene, which is what
+ * the Process API mosaics to anyway. Ask for less, and it works.
  */
-$cat = sat_post('https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search', $token, array(
+$cat = sat_post('https://stac.dataspace.copernicus.eu/v1/search', null, array(
     'bbox'        => $BBOX,
     'datetime'    => $from . '/' . $to,
     'collections' => array('sentinel-2-l2a'),
