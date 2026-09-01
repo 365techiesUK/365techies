@@ -59,6 +59,22 @@ $RADIUS_NM = 60;
 
 $EMPTY = array('ok' => false, 'ac' => array(), 'count' => 0);
 
+/*
+ * ⚠️ THE ATTRIBUTION HAS TO BE A HEADER, NOT ONLY A BODY FIELD.
+ * The client reads `x-flight-source` to label the layer and to decide what the
+ * contacts legend says. This endpoint carried the credit in the JSON body
+ * only, which the client never reads for that purpose — so the layer fell back
+ * to its built-in default and told every visitor the flights came from
+ * "OpenSky Network". That is a source we deliberately never contact, because
+ * its terms are non-commercial with an operational-use ban, and it displaced
+ * adsb.lol's mandatory ODbL credit. Two wrongs from one missing header.
+ *
+ * Set here rather than at each exit: there are five ways out of this file
+ * (fresh cache, rate degrade, upstream degrade, shape degrade, success) and
+ * the credit is true on all of them, including the ones serving stale data.
+ */
+header('X-Flight-Source: adsb.lol (ODbL 1.0)');
+
 $fresh = dorset_cache_get($CACHE, $TTL);
 if ($fresh !== null) dorset_send($fresh);
 // Ceiling well under the cache's own cadence, so a cache-expiry stampede
