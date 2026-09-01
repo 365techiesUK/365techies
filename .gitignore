@@ -154,5 +154,7 @@ api/dorset-flights-cache.json
 api/dorset-flights-rate.json
 api/dorset-traffic-budget.json
 api/dorset-traffic-tiles/
+api/dorset-overpass-cache/
+api/dorset-overpass-rate.json
 api/dorset-water-readings.lock
 api/dorset-*.tmp
