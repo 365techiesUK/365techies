@@ -54,7 +54,22 @@ if (!defined('DORSET_LIB')) {
         header('Content-Type: application/json; charset=utf-8');
         header('Cache-Control: no-store');
         header('X-Robots-Tag: noindex, nofollow');
-        echo json_encode($body, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        /*
+         * ⚠️ NO JSON_UNESCAPED_UNICODE, AND THAT IS DELIBERATE.
+         * This host re-encodes response bytes: a correctly UTF-8 encoded "©"
+         * (C2 A9) arrived at the browser as "Â©" (C3 82 C2 A9), and it did so
+         * even when PHP generated the code point at runtime rather than
+         * reading it from the file. Something in the output layer is treating
+         * our bytes as Latin-1 — mb_output_handler or similar.
+         *
+         * Letting json_encode escape non-ASCII as \uXXXX makes every response
+         * pure ASCII, which no re-encoding can corrupt, and every JSON parser
+         * decodes back to the same characters. Slightly larger payloads; total
+         * immunity to a hosting layer we do not control. That matters most for
+         * the attribution strings, which are licence conditions rather than
+         * decoration.
+         */
+        echo json_encode($body, JSON_UNESCAPED_SLASHES);
         exit;
     }
 
