@@ -97,37 +97,6 @@ if (isset($_GET['status'])) {
     ));
 }
 
-/* ------------------------------------------------------------ diagnostic */
-
-/*
- * ⚠️ TEMPORARY — REMOVE ONCE FLOW TILES ARE CONFIRMED WORKING.
- * A failed upstream fetch surfaces only as a 503 with the budget counter
- * unmoved, which is indistinguishable from a missing key, a rejected key, a
- * bad URL and a rate limit. Guessing between those cost several deploys on the
- * satellite endpoint before a reason field settled it in one.
- *
- * Reports the upstream HTTP STATUS ONLY. Never the key, never the URL, never
- * the response body — a diagnostic that leaks a credential is worse than the
- * bug it is diagnosing.
- */
-if (isset($_GET['diag'])) {
-    if (!$hasKey) dorset_send(array('hasKey' => false, 'note' => 'no key on this server'));
-    $probe = sprintf(
-        'https://api.tomtom.com/traffic/map/4/tile/flow/relative/14/8093/5450.pbf?key=%s',
-        rawurlencode($keys['tomtom'])
-    );
-    list($body, $code) = dorset_http($probe, 15, array('Accept: application/x-protobuf'));
-    dorset_send(array(
-        'build'        => 'diag-1',
-        'hasKey'       => true,
-        'keyLength'    => strlen($keys['tomtom']),
-        'upstreamCode' => $code,
-        'bytes'        => $body === null ? 0 : strlen($body),
-        'curlPresent'  => function_exists('curl_init'),
-        'hint'         => '403 = key not enabled for this product; 400 = bad path; 429 = rate; 0 = no outbound HTTP',
-    ));
-}
-
 /* -------------------------------------------------------------------- tile */
 
 /*
