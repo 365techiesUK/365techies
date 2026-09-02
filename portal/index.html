@@ -689,9 +689,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">portal build 02 Sep 2026 &middot; c1e1cb6b50</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">portal build 02 Sep 2026 &middot; 316eb584f7</p><script>
 (function () {
-  var P365BUILD = 'c1e1cb6b50';
+  var P365BUILD = '316eb584f7';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -2077,7 +2077,7 @@
                       // so route to the honest phone screen
   }
   var SOS_DL = { win: 'https://download.splashtop.com/sos/SplashtopSOS.exe', mac: 'https://download.splashtop.com/sos/SplashtopSOS.dmg', android: 'https://play.google.com/store/apps/details?id=com.splashtop.sos', ios: 'https://apps.apple.com/app/id1230853703' };
-  var SOS_MOBILE = false;   // plan gate - see SOS_MOBILE in build_extra.py
+  var SOS_MOBILE = false, SOS_MAC = false;   // plan gates - see SOS_MOBILE / SOS_MAC in build_extra.py
   function ovSos() {
     ovShow('\ud83c\udd98&nbsp; Remote help', function (body) {
       var pad = document.createElement('div');
@@ -2120,13 +2120,14 @@
       }
       function s1() {   // the download - platform-aware, one giant button
         var isMob = plat === 'android' || plat === 'ios';
-        if (plat === 'other' || (isMob && !SOS_MOBILE)) {
+        var gated = (isMob && !SOS_MOBILE) || (plat === 'mac' && !SOS_MAC);
+        if (plat === 'other' || gated) {
           // no progress dots here: on these devices the flow honestly ends at the phone
           show('<div class="sos__step"><span class="sos__big" aria-hidden="true">\ud83d\udcde</span>'
             + '<h3 class="sos__h" id="sosH" tabindex="-1">Let\u2019s do this one by phone</h3>'
-            + (isMob
-                ? '<p class="sos__p">You\u2019re on a phone or tablet, and there\u2019s <b>nothing to download here</b> \u2014 we help you by phone. <b>Ring us and we\u2019ll talk you through it step by step.</b></p>'
-                : '<p class="sos__p">This doesn\u2019t look like a Windows computer, a Mac, or a phone or tablet we recognise, so rather than guess at a download, <b>ring us and we\u2019ll find the right way to help.</b></p>')
+            + (gated
+                ? '<p class="sos__p">We can\u2019t connect to this device remotely yet, so there\u2019s <b>nothing to download here</b> \u2014 but we can still help. <b>Ring us and we\u2019ll talk you through it step by step.</b></p>'
+                : '<p class="sos__p">This doesn\u2019t look like a device we recognise, so rather than guess at a download, <b>ring us and we\u2019ll find the right way to help.</b></p>')
             + '<a class="sos__go" href="tel:+441202775566">\ud83d\udcde Ring us \u2014 we\u2019ll help another way</a>'
             + '<p class="sos__p" style="font-size:.95rem">Is a <b>different device</b> the one with the problem? Open this on that one instead \u2014 or just ring, and we\u2019ll talk you through it there.</p>'
             + '<button type="button" class="sos__back" id="sosB1">\u2190 Back</button></div>');

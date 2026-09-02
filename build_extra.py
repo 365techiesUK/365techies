@@ -16718,6 +16718,10 @@ SOS_DL_IOS = "https://apps.apple.com/app/id1230853703"
 # have mobile device support". While False, phones/tablets are routed to the PHONE,
 # never to an app store. Flip to True only after a mobile session has actually worked.
 SOS_MOBILE = False
+# Owner 2026-09-02: the subscription only does WINDOWS today. Mac stays off until the
+# Splashtop plan is upgraded and a Mac session has actually worked. While False, Macs
+# are routed to the phone, same as mobiles.
+SOS_MAC = False
 
 # ---- Splashtop STREAMER (unattended access - support-plan customers) --------
 # ⚠️ OWNER ACTION: paste the team deployment link from the Splashtop console
@@ -16762,8 +16766,7 @@ def sos_page():
         </p>
         <p class="mono" id="sos-dl-status" style="color:var(--muted);font-size:0.8rem" aria-live="polite">// FOR WINDOWS COMPUTERS &amp; LAPTOPS &middot; ABOUT 20&nbsp;MB</p>
         <p style="color:var(--muted);margin-top:1.4rem;font-size:0.95rem" data-reveal id="sos-dl-others">Not the right one for your device? Pick yours:
-          <a href="{SOS_DL_WIN}">Windows</a> &middot;
-          <a href="{SOS_DL_MAC}">Mac</a>{(' &middot; <a href="' + SOS_DL_ANDROID + '" target="_blank" rel="noopener">Android</a> &middot; <a href="' + SOS_DL_IOS + '" target="_blank" rel="noopener">iPhone &amp; iPad</a>') if SOS_MOBILE else ' &middot; <strong>phone or tablet?</strong> <a href="tel:+441202775566">Ring us</a> and we&rsquo;ll help by phone'}</p>
+          <a href="{SOS_DL_WIN}">Windows</a>{(' &middot; <a href="' + SOS_DL_MAC + '">Mac</a>') if SOS_MAC else ''}{(' &middot; <a href="' + SOS_DL_ANDROID + '" target="_blank" rel="noopener">Android</a> &middot; <a href="' + SOS_DL_IOS + '" target="_blank" rel="noopener">iPhone &amp; iPad</a>') if SOS_MOBILE else ''}{'' if (SOS_MAC and SOS_MOBILE) else (' &middot; <strong>' + ('phone or tablet' if SOS_MAC else ('Mac' if SOS_MOBILE else 'Mac, phone or tablet')) + '?</strong> <a href="tel:+441202775566">Ring us</a> and we&rsquo;ll help by phone')}</p>
       </div>
     </section>''',
       f'''    <section class="section" aria-label="Step 2 — open it">
@@ -16787,8 +16790,8 @@ def sos_page():
           <p>After you&rsquo;ve read us the number, tap <strong>Start Broadcast</strong> and we can see your screen. <strong>On iPhone and iPad we can see, but not touch</strong> &mdash; Apple doesn&rsquo;t allow anyone to take control &mdash; so we&rsquo;ll guide you through each tap. It works well.</p>
         </div>
         <div class="prose sos-os" data-os="phone" hidden style="text-align:left;max-width:640px;margin:0 auto;{steps_css}">
-          <p><strong>Nothing to download on a phone or tablet.</strong> Just ring us on <a href="tel:+441202775566">01202 775566</a> and we&rsquo;ll sort it together, step by step, at your pace.</p>
-          <p>If the problem is actually on your <strong>Windows computer or Mac</strong>, open this page on that one instead and the right download will be waiting.</p>
+          <p><strong>Nothing to download on this device.</strong> Just ring us on <a href="tel:+441202775566">01202 775566</a> and we&rsquo;ll sort it together, step by step, at your pace.</p>
+          <p>If the problem is actually on your <strong>Windows computer{' or Mac' if SOS_MAC else ''}</strong>, open this page on that one instead and the right download will be waiting.</p>
         </div>
       </div>
     </section>''',
@@ -16810,8 +16813,10 @@ def sos_page():
           <div class="tile"><h3>&#129300; Nothing downloaded?</h3><p>Stay on the phone &mdash; we&rsquo;ll talk you through it. You can also try the <a href="https://sos.splashtop.com/en/sos-download" target="_blank" rel="noopener">direct download page</a>.</p></div>
           <div class="tile"><h3>&#127397; Which devices?</h3><p>''' + (
             "Windows computers, Apple Macs, and Android phones and tablets &mdash; we can see the screen and take control with your permission. On <strong>iPhones and iPads</strong> we can see your screen and guide you, but Apple doesn&rsquo;t let anyone take control."
-            if SOS_MOBILE else
+            if (SOS_MAC and SOS_MOBILE) else
             "Windows computers and Apple Macs &mdash; we can see the screen and take control with your permission. <strong>Phones and tablets</strong> we help by phone: ring us and we&rsquo;ll talk you through it step by step."
+            if SOS_MAC else
+            "Windows computers and laptops &mdash; we can see the screen and take control with your permission. <strong>Macs, phones and tablets</strong> we help by phone: ring us and we&rsquo;ll talk you through it step by step."
           ) + '''</p></div>
         </div>
       </div>
@@ -16839,12 +16844,13 @@ def sos_page():
        is what tells them apart. */
     (function () {
       try {
-        var MOBILE = __SOSMOBILE__;   /* plan gate - see SOS_MOBILE in build_extra.py */
+        var MOBILE = __SOSMOBILE__, MAC = __SOSMAC__;   /* plan gates - see SOS_MOBILE / SOS_MAC in build_extra.py */
         var ua = navigator.userAgent || "", os = "win";
         if (/Android/i.test(ua)) os = "android";
         else if (/iPhone|iPad|iPod/i.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) os = "ios";
         else if (/Macintosh/.test(ua)) os = "mac";
         if (!MOBILE && (os === "android" || os === "ios")) os = "phone";
+        if (!MAC && os === "mac") os = "phone";
         var a = document.getElementById("sos-dl");
         var st = document.getElementById("sos-dl-status");
         var lede = document.getElementById("sos-dl-lede");
@@ -16855,7 +16861,7 @@ def sos_page():
           mac:     ["\\u2b07\\ufe0f Download the Support Tool for Mac", "// FOR APPLE MACS \\u00b7 ABOUT 30\\u00a0MB", "Press the big green button. A small program downloads \\u2014 it doesn\\u2019t install anything permanent on your Mac."],
           android: ["\\u25b6 Get the app on Google Play", "// FOR ANDROID PHONES & TABLETS \\u00b7 FREE OFFICIAL APP", "Tap the big green button \\u2014 it opens the Splashtop SOS app on Google Play. Install it like any other app."],
           ios:     ["\\u25b6 Get the app on the App Store", "// FOR IPHONES & IPADS \\u00b7 FREE OFFICIAL APP", "Tap the big green button \\u2014 it opens the Splashtop SOS app on the App Store. Install it like any other app."],
-          phone:   ["\\ud83d\\udcde Ring us \\u2014 01202 775566", "// ON PHONES & TABLETS WE HELP YOU BY PHONE \\u00b7 NOTHING TO DOWNLOAD", "You\\u2019re on a phone or tablet, so there\\u2019s nothing to download here. Tap the big green button to ring us and we\\u2019ll talk you through it, step by step."]
+          phone:   ["\\ud83d\\udcde Ring us \\u2014 01202 775566", "// ON THIS DEVICE WE HELP YOU BY PHONE \\u00b7 NOTHING TO DOWNLOAD", "We can\\u2019t connect to this device remotely yet, so there\\u2019s nothing to download here \\u2014 but we can still help. Press the big green button to ring us and we\\u2019ll talk you through it, step by step."]
         }[os];
         if (os === "phone") url = "tel:+441202775566";
         a.href = url; a.textContent = L[0];
@@ -16875,7 +16881,7 @@ def sos_page():
         }, 1400);
       } catch (e) {}
     })();
-  </script>'''.replace("__SOSMOBILE__", "true" if SOS_MOBILE else "false"),
+  </script>'''.replace("__SOSMOBILE__", "true" if SOS_MOBILE else "false").replace("__SOSMAC__", "true" if SOS_MAC else "false"),
       cta("Rather we just talked you through it?", "That&rsquo;s what we&rsquo;re here for. Ring us and we&rsquo;ll do every step together, at your pace.",
           primary=("Call 01202 775566", "tel:+441202775566"), secondary=("Text us: 07520 615332", "sms:+447520615332")),
     ])
@@ -23139,7 +23145,7 @@ def write_portal_page():
                       // so route to the honest phone screen
   }
   var SOS_DL = { win: '__SOSDLWIN__', mac: '__SOSDLMAC__', android: '__SOSDLAND__', ios: '__SOSDLIOS__' };
-  var SOS_MOBILE = __SOSMOBILE__;   // plan gate - see SOS_MOBILE in build_extra.py
+  var SOS_MOBILE = __SOSMOBILE__, SOS_MAC = __SOSMAC__;   // plan gates - see SOS_MOBILE / SOS_MAC in build_extra.py
   function ovSos() {
     ovShow('\\ud83c\\udd98&nbsp; Remote help', function (body) {
       var pad = document.createElement('div');
@@ -23182,13 +23188,14 @@ def write_portal_page():
       }
       function s1() {   // the download - platform-aware, one giant button
         var isMob = plat === 'android' || plat === 'ios';
-        if (plat === 'other' || (isMob && !SOS_MOBILE)) {
+        var gated = (isMob && !SOS_MOBILE) || (plat === 'mac' && !SOS_MAC);
+        if (plat === 'other' || gated) {
           // no progress dots here: on these devices the flow honestly ends at the phone
           show('<div class="sos__step"><span class="sos__big" aria-hidden="true">\\ud83d\\udcde</span>'
             + '<h3 class="sos__h" id="sosH" tabindex="-1">Let\\u2019s do this one by phone</h3>'
-            + (isMob
-                ? '<p class="sos__p">You\\u2019re on a phone or tablet, and there\\u2019s <b>nothing to download here</b> \\u2014 we help you by phone. <b>Ring us and we\\u2019ll talk you through it step by step.</b></p>'
-                : '<p class="sos__p">This doesn\\u2019t look like a Windows computer, a Mac, or a phone or tablet we recognise, so rather than guess at a download, <b>ring us and we\\u2019ll find the right way to help.</b></p>')
+            + (gated
+                ? '<p class="sos__p">We can\\u2019t connect to this device remotely yet, so there\\u2019s <b>nothing to download here</b> \\u2014 but we can still help. <b>Ring us and we\\u2019ll talk you through it step by step.</b></p>'
+                : '<p class="sos__p">This doesn\\u2019t look like a device we recognise, so rather than guess at a download, <b>ring us and we\\u2019ll find the right way to help.</b></p>')
             + '<a class="sos__go" href="tel:+441202775566">\\ud83d\\udcde Ring us \\u2014 we\\u2019ll help another way</a>'
             + '<p class="sos__p" style="font-size:.95rem">Is a <b>different device</b> the one with the problem? Open this on that one instead \\u2014 or just ring, and we\\u2019ll talk you through it there.</p>'
             + '<button type="button" class="sos__back" id="sosB1">\\u2190 Back</button></div>');
@@ -27552,7 +27559,7 @@ def write_portal_page():
     # reloading every open tab daily for nothing (adversarial review finding F1).
     # real values first (they belong in the hash - a changed download URL must roll the
     # id); only the self-referential P365BUILD/P365DATE placeholders stay out of it
-    html = html.replace("__SOSDLWIN__", SOS_DL_WIN).replace("__SOSDLAND__", SOS_DL_ANDROID).replace("__SOSDLMAC__", SOS_DL_MAC).replace("__SOSDLIOS__", SOS_DL_IOS).replace("__SOSMOBILE__", "true" if SOS_MOBILE else "false")
+    html = html.replace("__SOSDLWIN__", SOS_DL_WIN).replace("__SOSDLAND__", SOS_DL_ANDROID).replace("__SOSDLMAC__", SOS_DL_MAC).replace("__SOSDLIOS__", SOS_DL_IOS).replace("__SOSMOBILE__", "true" if SOS_MOBILE else "false").replace("__SOSMAC__", "true" if SOS_MAC else "false")
     bid = _hl.sha1(_re.sub(r'"dateModified":\s*"[^"]*"', '"dateModified":"X"', html).encode("utf-8")).hexdigest()[:10]
     date_label = _dt.date.today().strftime("%d %b %Y")
     old_path = _os.path.join(d, "index.html")
