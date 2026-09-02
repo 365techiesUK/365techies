@@ -22587,7 +22587,7 @@ def write_portal_page():
 </style>'''
     js = '''<script>
 (function () {
-  var BK = '/api/pcm-booking.php', PCM = '/api/pcm.php', DASH = '/api/pcm-dash.php', TEAM = '/api/pcm-team.php', CONN = '/api/pcm-connect.php', FEEDS = '/api/pcm-feeds.php', WCHK = '/api/pcm-wcheck.php', MSG = '/api/pcm-msg.php', QBO = '/api/pcm-qbo.php', JOBS = '/api/pcm-jobs.php';
+  var BK = '/api/pcm-booking.php', PCM = '/api/pcm.php', DASH = '/api/pcm-dash.php', TEAM = '/api/pcm-team.php', CONN = '/api/pcm-connect.php', FEEDS = '/api/pcm-feeds.php', WCHK = '/api/pcm-wcheck.php', MSG = '/api/pcm-msg.php', QBO = '/api/pcm-qbo.php', JOBS = '/api/pcm-jobs.php', INVITE = '/api/pcm-invite.php';
   var el = document.getElementById('p365app');
   var S = {};
   try { S = JSON.parse(sessionStorage.getItem('p365s') || 'null') || JSON.parse(localStorage.getItem('p365') || '{}'); } catch (e) { S = {}; }
@@ -26716,8 +26716,55 @@ def write_portal_page():
       out += '<div class="qbowrap" data-em="' + esc(c.email) + '" data-nm="' + esc(c.name || '')
         + '" data-ph="' + esc(c.phone || '') + '" data-ad="' + esc(addr.join(', ')) + '" style="margin-top:.45rem">'
         + '<button class="sm ghost qbob" style="margin:0;padding:.3rem .65rem;font-size:.82rem">\\ud83d\\udcb7 Quote agreed / invoice</button></div>';
+      out += '<div class="invwrap" data-em="' + esc(c.email) + '" data-nm="' + esc(c.name || '') + '" style="margin-top:.4rem">'
+        + '<button class="sm ghost invb" style="margin:0;padding:.3rem .65rem;font-size:.82rem">\\ud83d\\udce8 Invite to a support plan</button></div>';
     }
     return out;
+  }
+  /* "Invite to a support plan": pick a GoCardless subscription and email the
+     customer the sign-up link. Two steps on purpose - the first click only opens
+     the form, so a stray tap can't fire an email at a customer. */
+  function bindInvite(panel) {
+    var w = panel.querySelector('.invwrap'); if (!w) return;
+    var b = w.querySelector('.invb'); if (!b) return;
+    b.onclick = function () {
+      b.disabled = true; b.textContent = 'Loading plans\\u2026';
+      post(INVITE, { action: 'plans', stoken: S.stoken, machine: mid() }).then(function (r) {
+        if (!r || !r.ok || !r.plans || !r.plans.length) {
+          w.innerHTML = '<span class="quiet">No support plans are set up to invite to yet. Add a GoCardless Billing Request Template link to pcm-invite.php.</span>';
+          return;
+        }
+        var opts = r.plans.map(function (p) {
+          var amt = p.amount ? ' \\u2014 \\u00a3' + esc(p.amount) + '/mo' : '';
+          return '<option value="' + esc(p.key) + '">' + esc(p.label) + amt + '</option>';
+        }).join('');
+        w.innerHTML = '<div style="margin:.2rem 0 .3rem"><select class="invsel" style="width:100%;max-width:340px;padding:.35rem">' + opts + '</select></div>'
+          + '<div style="margin:0 0 .3rem"><input class="invnote" type="text" maxlength="300" placeholder="A short note to add (optional)" style="width:100%;max-width:340px"></div>'
+          + '<button class="sm invgo" style="margin:0;padding:.3rem .7rem;font-size:.82rem">\\ud83d\\udce8 Send invite to ' + esc(w.getAttribute('data-em')) + '</button> '
+          + '<span class="quiet invmsg"></span>';
+        var msg = w.querySelector('.invmsg');
+        w.querySelector('.invgo').onclick = function () {
+          var go = this; go.disabled = true; msg.textContent = 'Sending\\u2026';
+          post(INVITE, { action: 'send', stoken: S.stoken, machine: mid(),
+                         plan: w.querySelector('.invsel').value, email: w.getAttribute('data-em'),
+                         name: w.getAttribute('data-nm'), note: (w.querySelector('.invnote').value || '') })
+            .then(function (j) {
+              go.disabled = false;
+              if (j && j.ok) { w.innerHTML = '<span style="color:#7ee0a2">\\u2713 Invite to <b>' + esc(j.plan) + '</b> emailed to ' + esc(j.email) + '. It\\u2019ll appear in GoCardless once they set up the Direct Debit.</span>'; return; }
+              msg.innerHTML = inviteErr(j);
+            })
+            .catch(function () { go.disabled = false; msg.textContent = 'Couldn\\u2019t reach the server.'; });
+        };
+      }).catch(function () { b.disabled = false; b.textContent = '\\ud83d\\udce8 Invite to a support plan'; });
+    };
+  }
+  function inviteErr(j) {
+    var e = j && j.error;
+    if (e === 'not_staff') return 'your staff sign-in expired \\u2014 sign in again.';
+    if (e === 'bad_email') return 'that email doesn\\u2019t look valid.';
+    if (e === 'bad_plan' || e === 'plan_link_bad') return 'that plan isn\\u2019t set up correctly.';
+    if (e === 'send_failed') return 'the email didn\\u2019t send \\u2014 try again, or send the GoCardless link by hand.';
+    return 'couldn\\u2019t send that' + (e ? ' (' + esc(e) + ')' : '') + '.';
   }
   /* Two steps on purpose: the first click only opens the form, so a stray tap on
      a contact card can never reach the accounts. */
@@ -26871,7 +26918,7 @@ def write_portal_page():
           .then(function (r) {
             if (!r || !r.ok || !r.client) { panel.innerHTML = '<span class="quiet">Couldn\\u2019t load contact details.</span>'; return; }
             panel.innerHTML = clientCard(r.client); panel.setAttribute('data-loaded', '1');
-            bindQbo(panel); bindAddrCopy(panel);
+            bindQbo(panel); bindAddrCopy(panel); bindInvite(panel);
           })
           .catch(function () { panel.innerHTML = '<span class="quiet">Couldn\\u2019t reach the server.</span>'; });
       };

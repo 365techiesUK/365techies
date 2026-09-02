@@ -154,6 +154,14 @@ ErrorDocument 404 /404.html
 <FilesMatch "^pcm-jobs\.(json(\..*)?|log)$">
   Require all denied
 </FilesMatch>
+# Plan-invite endpoint keeps a log (customer emails + which plan) and an optional
+# owner plan-override file. pcm-invite.php itself stays served.
+<FilesMatch "^pcm-invite\.log$">
+  Require all denied
+</FilesMatch>
+<FilesMatch "^pcm-invite-plans\.json$">
+  Require all denied
+</FilesMatch>
 <Files "slack-rate.json">
   Require all denied
 </Files>
