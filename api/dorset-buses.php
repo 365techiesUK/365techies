@@ -33,17 +33,21 @@ $RATE  = __DIR__ . '/dorset-buses-rate.json';
 // SIRI-VM refreshes at roughly 10 s upstream. Serving a 12-second cache keeps
 // the map live without turning every visitor into an upstream request.
 $TTL = 12;
+// 3 min: SIRI-VM is a ~10 s cadence. Beyond this a bus is 1-2 km from the drawn
+// dot and ok:false is the honest answer. Pairs with the client's 4-minute
+// retirement so the server stops re-serving before the client empties the map.
+$STALE_MAX = 180;
 $EMPTY = array('ok' => false, 'vehicles' => array(), 'count' => 0);
 
 $fresh = dorset_cache_get($CACHE, $TTL);
 if ($fresh !== null) dorset_send($fresh);
 
 $keys = dorset_keys();
-if (empty($keys['bods'])) dorset_degrade($CACHE, 'not-configured', $EMPTY);
+if (empty($keys['bods'])) dorset_degrade($CACHE, 'not-configured', $EMPTY, $STALE_MAX);
 
 // At most 12 upstream calls a minute site-wide: one per cache window. Beyond
 // that, whoever asks gets the cache — the data has not changed anyway.
-if (!dorset_rate_ok($RATE, 12)) dorset_degrade($CACHE, 'rate', $EMPTY);
+if (!dorset_rate_ok($RATE, 12)) dorset_degrade($CACHE, 'rate', $EMPTY, $STALE_MAX);
 
 $bbox = DORSET_W . ',' . DORSET_S . ',' . DORSET_E . ',' . DORSET_N;
 $url  = 'https://data.bus-data.dft.gov.uk/api/v1/datafeed/'
@@ -51,7 +55,7 @@ $url  = 'https://data.bus-data.dft.gov.uk/api/v1/datafeed/'
       . '&boundingBox=' . rawurlencode($bbox);
 
 list($xml, $code) = dorset_http($url, 15, array('Accept: text/xml'));
-if ($xml === null) dorset_degrade($CACHE, 'upstream-' . $code, $EMPTY);
+if ($xml === null) dorset_degrade($CACHE, 'upstream-' . $code, $EMPTY, $STALE_MAX);
 
 /* ---------------------------------------------------------------- parsing */
 
@@ -135,7 +139,7 @@ foreach ($blocks as $raw) {
  * the buses stopped — so serve the last good payload and flag it rather than
  * publishing an empty map that looks authoritative.
  */
-if (!count($vehicles)) dorset_degrade($CACHE, 'parsed-empty', $EMPTY);
+if (!count($vehicles)) dorset_degrade($CACHE, 'parsed-empty', $EMPTY, $STALE_MAX);
 
 $body = array(
     'ok'        => true,

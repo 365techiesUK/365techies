@@ -46,6 +46,9 @@ $CACHE = __DIR__ . '/dorset-roads-cache.json';
 $RATE  = __DIR__ . '/dorset-roads-rate.json';
 
 $TTL = 60;                       // a twentieth of the permitted call rate
+// 30 min: closures persist for hours and each carries its own start/end
+// (dorset-datex-lib.php), and the panel row prints the true age of the body.
+$STALE_MAX = 1800;
 $LOOKBACK = 6 * 3600;            // their own worked example
 $EMPTY = array('ok' => false, 'closures' => array(), 'count' => 0);
 
@@ -53,8 +56,8 @@ $fresh = dorset_cache_get($CACHE, $TTL);
 if ($fresh !== null) dorset_send($fresh);
 
 $keys = dorset_keys();
-if (empty($keys['nh'])) dorset_degrade($CACHE, 'not-configured', $EMPTY);
-if (!dorset_rate_ok($RATE, 2)) dorset_degrade($CACHE, 'rate', $EMPTY);
+if (empty($keys['nh'])) dorset_degrade($CACHE, 'not-configured', $EMPTY, $STALE_MAX);
+if (!dorset_rate_ok($RATE, 2)) dorset_degrade($CACHE, 'rate', $EMPTY, $STALE_MAX);
 
 $now = time();
 $url = 'https://api.data.nationalhighways.co.uk/roads/v2.0/closures'
@@ -69,7 +72,7 @@ $body = dorset_http_json($url, 20, array(
     // Default response is XML. Ask for JSON explicitly.
     'X-Response-MediaType: application/json',
 ));
-if ($body === null) dorset_degrade($CACHE, 'upstream', $EMPTY);
+if ($body === null) dorset_degrade($CACHE, 'upstream', $EMPTY, $STALE_MAX);
 
 /*
  * Parsing lives in dorset-datex-lib.php so it can be tested against National
@@ -82,7 +85,7 @@ $parsed = dorset_datex_parse($body, array(DORSET_W, DORSET_S, DORSET_E, DORSET_N
  * A 200 that yields no situations at all means the payload shape moved, not
  * that England has no closures. Serve the last good answer and say so.
  */
-if ($parsed['national'] === 0) dorset_degrade($CACHE, 'unexpected-shape', $EMPTY);
+if ($parsed['national'] === 0) dorset_degrade($CACHE, 'unexpected-shape', $EMPTY, $STALE_MAX);
 
 $out = array(
     'ok'        => true,

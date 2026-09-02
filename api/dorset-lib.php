@@ -259,9 +259,16 @@ if (!defined('DORSET_LIB')) {
      * with stale:true and a reason, or an explicit empty with the reason. The
      * client can then say "last seen 14:05" instead of implying the world
      * emptied out.
+     *
+     * ⚠️ $maxAge BOUNDS HOW OLD A RE-SERVED BODY MAY BE. PASS THE ENDPOINT'S OWN.
+     * The default is the six-hour dorset_cache_stale() window, which is right
+     * for river levels and wrong by three orders of magnitude for a bus feed
+     * with a 12-second cache: 21600 s is 1800 cache windows of positions served
+     * as ok:true. Beyond a feed's own honest window the EMPTY shape (ok:false)
+     * is the true answer, and the client keeps its last good timestamp anyway.
      */
-    function dorset_degrade($cacheFile, $reason, $emptyShape) {
-        $stale = dorset_cache_stale($cacheFile);
+    function dorset_degrade($cacheFile, $reason, $emptyShape, $maxAge = 21600) {
+        $stale = dorset_cache_stale($cacheFile, $maxAge);
         if (is_array($stale)) {
             $stale['stale'] = true;
             $stale['reason'] = $reason;
