@@ -21,6 +21,8 @@ api/pcm-jobs.log
 api/pcm-invite.log
 api/pcm-invite-plans.json
 api/pcm-invite-allow.json
+api/pcm-gc-live.json
+api/pcm-gc-live.json.*.tmp
 api/pcm-invite-allow.json.*.tmp
 api/pcm-gc-templates.json
 api/pcm-gc-templates.json.*.tmp

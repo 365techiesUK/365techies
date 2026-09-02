@@ -34,6 +34,7 @@ $LOGF   = $BASE . '/pcm-invite.log';
 $GCF    = $BASE . '/pcm-gocardless.php';            // server-only: <?php $GC_TOKEN = 'live_...';  (same file pcm.php uses)
 $GCACHE = $BASE . '/pcm-gc-templates.json';         // short cache of the template list (gitignored)
 $ALLOWF = $BASE . '/pcm-invite-allow.json';         // curated allowlist of template ids staff may invite to (gitignored)
+$LIVEF  = $BASE . '/pcm-gc-live.json';              // cache of which template links are still live (gitignored)
 
 // ---- the plans (server-side authority). Keep the links in step with the
 // ---- GOCARDLESS dict in build_pages.py. Each MUST be a reusable Billing Request
@@ -119,8 +120,9 @@ function allow_ids() {
 }
 
 // Plans on offer to invite to: GoCardless templates (authoritative links) that
-// are on the curated allowlist. Falls back to the static $PLANS only when there
-// is no GoCardless token at all.
+// are on the curated allowlist AND whose link is still live (GoCardless returns
+// archived templates too, and their links 410). Falls back to the static $PLANS
+// only when there is no GoCardless token at all.
 function invite_plans() {
     global $PLANS;
     $gc = gc_templates();                 // array(id => array(label,amount,link)) or null
@@ -129,6 +131,7 @@ function invite_plans() {
     $out = array();
     foreach ($gc as $id => $t) {
         if (is_array($allow) && !in_array((string)$id, $allow, true)) continue;   // curated: only allowlisted
+        if (!gc_link_live($t['link'])) continue;                                   // skip archived/dead links
         $out[$id] = array('label' => $t['label'], 'amount' => $t['amount'], 'note' => '', 'link' => $t['link']);
     }
     return $out;
@@ -156,7 +159,8 @@ if ($action === 'alltemplates') {
     $allow = allow_ids();
     $rows = array();
     foreach ($all as $id => $t) $rows[] = array('id' => (string)$id, 'name' => (string)$t['label'],
-        'on' => (is_array($allow) ? in_array((string)$id, $allow, true) : false));
+        'on' => (is_array($allow) ? in_array((string)$id, $allow, true) : false),
+        'active' => gc_link_live($t['link']));       // archived templates 410 - don't let them be picked
     // stable, readable order by name
     usort($rows, function ($a, $b) { return strcasecmp($a['name'], $b['name']); });
     out(array('ok' => true, 'templates' => $rows, 'curated' => (allow_ids() !== null)));
@@ -188,6 +192,8 @@ if ($action === 'send') {
     if (!isset($plans[$planKey])) fail('bad_plan');
     $plan = $plans[$planKey];
     if (empty($plan['link']) || !plan_link_ok($plan['link'])) fail('plan_link_bad');
+    // Hard guard: never email a dead link. Re-check liveness at the moment of sending.
+    if (!gc_link_live($plan['link'], true)) fail('plan_inactive');
 
     $first = trim((string)$name);
     if ($first !== '') { $parts = preg_split('/\s+/', $first); $first = $parts[0]; }
@@ -355,6 +361,28 @@ function gc_templates() {
     $tmp = $GCACHE . '.' . getmypid() . '.tmp';
     if (@file_put_contents($tmp, json_encode(array('at' => time(), 'plans' => $plans)), LOCK_EX) !== false) @rename($tmp, $GCACHE);
     return $plans;
+}
+
+// Is a GoCardless reusable link still live? Archived subscription templates 410.
+// Cached (30 min) so the dropdown/curate list don't re-probe every open.
+// $fresh forces a live check (used at send time - the hard guard).
+function gc_link_live($url, $fresh = false) {
+    global $LIVEF;
+    if (!plan_link_ok($url)) return false;
+    $key = substr(sha1((string)$url), 0, 16);
+    $c = @json_decode((string)@file_get_contents($LIVEF), true); if (!is_array($c)) $c = array();
+    if (!$fresh && isset($c[$key]['at']) && $c[$key]['at'] > time() - 1800) return !empty($c[$key]['live']);
+    $ch = curl_init($url);
+    curl_setopt_array($ch, array(CURLOPT_NOBODY => true, CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_CONNECTTIMEOUT => 4, CURLOPT_TIMEOUT => 6, CURLOPT_FOLLOWLOCATION => true, CURLOPT_MAXREDIRS => 3,
+        CURLOPT_USERAGENT => '365techies-invite/1.0'));
+    @curl_exec($ch); $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE); curl_close($ch);
+    // Some hosts refuse HEAD (405) - treat that as "can't tell, assume live"; 410/404 = dead.
+    $live = ($code === 405) || ($code >= 200 && $code < 400);
+    $c[$key] = array('live' => $live, 'at' => time());
+    $tmp = $LIVEF . '.' . getmypid() . '.tmp';
+    if (@file_put_contents($tmp, json_encode($c), LOCK_EX) !== false) @rename($tmp, $LIVEF);
+    return $live;
 }
 
 function jobs_hook_present() {

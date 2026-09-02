@@ -26776,6 +26776,9 @@ def write_portal_page():
         if (!r || !r.ok) { box.innerHTML = '<span class="quiet">Couldn\\u2019t load templates' + (r && r.error ? ' (' + esc(r.error) + ')' : '') + '.</span>'; return; }
         if (!r.templates || !r.templates.length) { box.innerHTML = '<span class="quiet">No GoCardless templates found on the account.</span>'; return; }
         var rows = r.templates.map(function (t) {
+          if (t.active === false) {
+            return '<label style="display:block;margin:.15rem 0;font-size:.9rem;color:#8a94a6"><input type="checkbox" disabled> ' + esc(t.name) + ' <span style="color:#e0a37e">(no longer active)</span></label>';
+          }
           return '<label style="display:block;margin:.15rem 0;font-size:.9rem"><input type="checkbox" class="invchk" value="' + esc(t.id) + '"' + (t.on ? ' checked' : '') + '> ' + esc(t.name) + '</label>';
         }).join('');
         box.innerHTML = '<p class="quiet" style="margin:.4rem 0 .2rem">Tick the standard plans new customers can join:</p>'
@@ -26798,6 +26801,7 @@ def write_portal_page():
     if (e === 'not_staff') return 'your staff sign-in expired \\u2014 sign in again.';
     if (e === 'bad_email') return 'that email doesn\\u2019t look valid.';
     if (e === 'bad_plan' || e === 'plan_link_bad') return 'that plan isn\\u2019t set up correctly.';
+    if (e === 'plan_inactive') return 'that plan is no longer active in GoCardless \\u2014 reactivate it, or pick a different plan.';
     if (e === 'send_failed') return 'the email didn\\u2019t send \\u2014 try again, or send the GoCardless link by hand.';
     return 'couldn\\u2019t send that' + (e ? ' (' + esc(e) + ')' : '') + '.';
   }
