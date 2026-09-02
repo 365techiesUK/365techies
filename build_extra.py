@@ -16706,6 +16706,18 @@ info_page(
 SOS_DL_WIN = "https://download.splashtop.com/sos/SplashtopSOS.exe"          # Global stack
 # SOS_DL_WIN = "https://download.splashtop.com/sos/eu/SplashtopSOS.exe"     # EU stack
 SOS_DL_ANDROID = "https://play.google.com/store/apps/details?id=com.splashtop.sos"
+# Mac: same permanent Splashtop CDN as the exe (both stacks verified 200 on 2026-09-02).
+# iPhone/iPad: the App Store listing - Apple allows VIEW-ONLY screen broadcast, never control.
+SOS_DL_MAC = "https://download.splashtop.com/sos/SplashtopSOS.dmg"          # Global stack
+# SOS_DL_MAC = "https://download.splashtop.com/sos/eu/SplashtopSOS.dmg"     # EU stack
+SOS_DL_IOS = "https://apps.apple.com/app/id1230853703"
+# ⚠️ PLAN GATE. Our Splashtop plan is Remote Support Plus with the bundled "SOS lite"
+# attended support: Windows + Mac only. iOS/Android viewing needs the SOS add-on
+# ($199/technician/yr, 7-day trial - console > Management > Subscriptions). Tested
+# 2026-09-02: an iPad SOS code is refused with "Your Splashtop subscription does not
+# have mobile device support". While False, phones/tablets are routed to the PHONE,
+# never to an app store. Flip to True only after a mobile session has actually worked.
+SOS_MOBILE = False
 
 # ---- Splashtop STREAMER (unattended access - support-plan customers) --------
 # ⚠️ OWNER ACTION: paste the team deployment link from the Splashtop console
@@ -16744,21 +16756,39 @@ def sos_page():
       <div class="wrap" style="max-width:820px;margin:0 auto;text-align:center">
         <p class="eyebrow eyebrow--center mono" data-reveal>STEP 1 OF 3</p>
         <h2 class="section-title section-title--center" data-title>Download the support tool<span class="title-underline title-underline--center"></span></h2>
-        <p class="lede lede--center" data-reveal style="{steps_css}">Click the big green button. A small program downloads &mdash; it doesn&rsquo;t install anything permanent on your computer.</p>
+        <p class="lede lede--center" data-reveal style="{steps_css}" id="sos-dl-lede">Press the big green button. A small program downloads &mdash; it doesn&rsquo;t install anything permanent on your computer.</p>
         <p style="margin:1.6rem 0 0.8rem" data-reveal>
-          <a class="button primary button--lg" id="sos-dl" href="{SOS_DL_WIN}" style="font-size:1.15rem;padding:1.1rem 2.4rem">&#11015;&#65039; Download the Support Tool</a>
+          <a class="button primary button--lg" id="sos-dl" href="{SOS_DL_WIN}" data-win="{SOS_DL_WIN}" data-mac="{SOS_DL_MAC}" data-android="{SOS_DL_ANDROID}" data-ios="{SOS_DL_IOS}" style="font-size:1.15rem;padding:1.1rem 2.4rem">&#11015;&#65039; Download the Support Tool</a>
         </p>
         <p class="mono" id="sos-dl-status" style="color:var(--muted);font-size:0.8rem" aria-live="polite">// FOR WINDOWS COMPUTERS &amp; LAPTOPS &middot; ABOUT 20&nbsp;MB</p>
-        <p style="color:var(--muted);margin-top:1.4rem;font-size:0.95rem" data-reveal>On an <strong>Android phone or tablet</strong>? <a href="{SOS_DL_ANDROID}" target="_blank" rel="noopener">Get the Splashtop SOS app from Google Play</a> instead, then jump to step 3.</p>
+        <p style="color:var(--muted);margin-top:1.4rem;font-size:0.95rem" data-reveal id="sos-dl-others">Not the right one for your device? Pick yours:
+          <a href="{SOS_DL_WIN}">Windows</a> &middot;
+          <a href="{SOS_DL_MAC}">Mac</a>{(' &middot; <a href="' + SOS_DL_ANDROID + '" target="_blank" rel="noopener">Android</a> &middot; <a href="' + SOS_DL_IOS + '" target="_blank" rel="noopener">iPhone &amp; iPad</a>') if SOS_MOBILE else ' &middot; <strong>phone or tablet?</strong> <a href="tel:+441202775566">Ring us</a> and we&rsquo;ll help by phone'}</p>
       </div>
     </section>''',
       f'''    <section class="section" aria-label="Step 2 — open it">
       <div class="wrap" style="max-width:820px;margin:0 auto;text-align:center">
         <p class="eyebrow eyebrow--center mono" data-reveal>STEP 2 OF 3</p>
-        <h2 class="section-title section-title--center" data-title>Open the file you just downloaded<span class="title-underline title-underline--center"></span></h2>
-        <div class="prose" data-reveal style="text-align:left;max-width:640px;margin:0 auto;{steps_css}">
+        <h2 class="section-title section-title--center" data-title>Open what you just downloaded<span class="title-underline title-underline--center"></span></h2>
+        <div class="prose sos-os" data-os="win" data-reveal style="text-align:left;max-width:640px;margin:0 auto;{steps_css}">
           <p>Look for <strong>SplashtopSOS</strong> &mdash; it usually appears at the <strong>bottom of your browser window</strong>, or in your <strong>Downloads</strong> folder. Click it once (or double-click in Downloads) to open it.</p>
           <p><strong>If Windows asks &ldquo;Do you want to allow this app to make changes?&rdquo;</strong> &mdash; don&rsquo;t worry, either answer is fine. The tool opens all the same.</p>
+        </div>
+        <div class="prose sos-os" data-os="mac" hidden style="text-align:left;max-width:640px;margin:0 auto;{steps_css}">
+          <p>Open <strong>SplashtopSOS.dmg</strong> from your <strong>Downloads</strong> folder, then open the <strong>Splashtop SOS</strong> app inside it. If your Mac says it&rsquo;s from the internet, choose <strong>Open</strong>.</p>
+          <p><strong>Your Mac will ask for two permissions</strong> so we can see and help &mdash; that&rsquo;s normal, and only you can grant them. In <strong>System Settings &rarr; Privacy &amp; Security</strong>, turn on <strong>Screen Recording</strong> and <strong>Accessibility</strong> for Splashtop SOS. We&rsquo;ll talk you through it &mdash; it takes about a minute.</p>
+        </div>
+        <div class="prose sos-os" data-os="android" hidden style="text-align:left;max-width:640px;margin:0 auto;{steps_css}">
+          <p>When it&rsquo;s installed, tap <strong>Open</strong>. The app shows your number straight away.</p>
+          <p>Your phone will ask if it&rsquo;s OK to <strong>share your screen</strong> &mdash; tap <strong>Start now</strong>. If we need to do something for you rather than just look, it&rsquo;ll ask once more for <strong>Accessibility</strong>; we&rsquo;ll say when.</p>
+        </div>
+        <div class="prose sos-os" data-os="ios" hidden style="text-align:left;max-width:640px;margin:0 auto;{steps_css}">
+          <p>When it&rsquo;s installed, tap <strong>Open</strong>. The app shows your number straight away.</p>
+          <p>After you&rsquo;ve read us the number, tap <strong>Start Broadcast</strong> and we can see your screen. <strong>On iPhone and iPad we can see, but not touch</strong> &mdash; Apple doesn&rsquo;t allow anyone to take control &mdash; so we&rsquo;ll guide you through each tap. It works well.</p>
+        </div>
+        <div class="prose sos-os" data-os="phone" hidden style="text-align:left;max-width:640px;margin:0 auto;{steps_css}">
+          <p><strong>Nothing to download on a phone or tablet.</strong> Just ring us on <a href="tel:+441202775566">01202 775566</a> and we&rsquo;ll sort it together, step by step, at your pace.</p>
+          <p>If the problem is actually on your <strong>Windows computer or Mac</strong>, open this page on that one instead and the right download will be waiting.</p>
         </div>
       </div>
     </section>''',
@@ -16778,7 +16808,11 @@ def sos_page():
         <div class="tile-grid" data-stagger style="max-width:900px;margin:0 auto">
           <div class="tile"><h3>&#128274; Is this safe?</h3><p>Yes. Sessions are encrypted, the one-time code is your permission, and we never connect out of the blue &mdash; a session only ever starts while we&rsquo;re talking to you, handled personally by a senior techie.</p></div>
           <div class="tile"><h3>&#129300; Nothing downloaded?</h3><p>Stay on the phone &mdash; we&rsquo;ll talk you through it. You can also try the <a href="https://sos.splashtop.com/en/sos-download" target="_blank" rel="noopener">direct download page</a>.</p></div>
-          <div class="tile"><h3>&#127397; Which devices?</h3><p>Windows computers and laptops, plus Android phones and tablets. We can&rsquo;t remotely connect to Apple Macs, iPhones or iPads.</p></div>
+          <div class="tile"><h3>&#127397; Which devices?</h3><p>''' + (
+            "Windows computers, Apple Macs, and Android phones and tablets &mdash; we can see the screen and take control with your permission. On <strong>iPhones and iPads</strong> we can see your screen and guide you, but Apple doesn&rsquo;t let anyone take control."
+            if SOS_MOBILE else
+            "Windows computers and Apple Macs &mdash; we can see the screen and take control with your permission. <strong>Phones and tablets</strong> we help by phone: ring us and we&rsquo;ll talk you through it step by step."
+          ) + '''</p></div>
         </div>
       </div>
     </section>''',
@@ -16798,24 +16832,50 @@ def sos_page():
       </div>
     </section>''' if STREAMER_DEPLOY_URL else ""),
       '''    <script>
-    /* Auto-start the download once per visit — belt for the button's braces.
-       Guarded so back-navigation doesn't re-trigger it. */
+    /* Point the big button at the right tool for THIS device, show the matching
+       step-2 instructions, and auto-start the download once per visit (Windows and
+       Mac only - store links are never auto-opened). Guarded so back-navigation
+       doesn't re-trigger it. iPadOS reports itself as a Mac: the touch-points check
+       is what tells them apart. */
     (function () {
       try {
+        var MOBILE = __SOSMOBILE__;   /* plan gate - see SOS_MOBILE in build_extra.py */
+        var ua = navigator.userAgent || "", os = "win";
+        if (/Android/i.test(ua)) os = "android";
+        else if (/iPhone|iPad|iPod/i.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) os = "ios";
+        else if (/Macintosh/.test(ua)) os = "mac";
+        if (!MOBILE && (os === "android" || os === "ios")) os = "phone";
+        var a = document.getElementById("sos-dl");
+        var st = document.getElementById("sos-dl-status");
+        var lede = document.getElementById("sos-dl-lede");
+        if (!a) return;
+        var url = a.getAttribute("data-" + os) || a.href;
+        var L = {
+          win:     ["\\u2b07\\ufe0f Download the Support Tool", "// FOR WINDOWS COMPUTERS & LAPTOPS \\u00b7 ABOUT 20\\u00a0MB", "Press the big green button. A small program downloads \\u2014 it doesn\\u2019t install anything permanent on your computer."],
+          mac:     ["\\u2b07\\ufe0f Download the Support Tool for Mac", "// FOR APPLE MACS \\u00b7 ABOUT 30\\u00a0MB", "Press the big green button. A small program downloads \\u2014 it doesn\\u2019t install anything permanent on your Mac."],
+          android: ["\\u25b6 Get the app on Google Play", "// FOR ANDROID PHONES & TABLETS \\u00b7 FREE OFFICIAL APP", "Tap the big green button \\u2014 it opens the Splashtop SOS app on Google Play. Install it like any other app."],
+          ios:     ["\\u25b6 Get the app on the App Store", "// FOR IPHONES & IPADS \\u00b7 FREE OFFICIAL APP", "Tap the big green button \\u2014 it opens the Splashtop SOS app on the App Store. Install it like any other app."],
+          phone:   ["\\ud83d\\udcde Ring us \\u2014 01202 775566", "// ON PHONES & TABLETS WE HELP YOU BY PHONE \\u00b7 NOTHING TO DOWNLOAD", "You\\u2019re on a phone or tablet, so there\\u2019s nothing to download here. Tap the big green button to ring us and we\\u2019ll talk you through it, step by step."]
+        }[os];
+        if (os === "phone") url = "tel:+441202775566";
+        a.href = url; a.textContent = L[0];
+        if (os === "android" || os === "ios") { a.target = "_blank"; a.rel = "noopener"; }
+        if (st) st.textContent = L[1];
+        if (lede) lede.textContent = L[2];
+        var blocks = document.querySelectorAll(".sos-os");
+        for (var i = 0; i < blocks.length; i++) blocks[i].hidden = blocks[i].getAttribute("data-os") !== os;
+        if (os !== "win" && os !== "mac") return;
         if (sessionStorage.getItem("tt_sos_dl")) return;
         setTimeout(function () {
-          var a = document.getElementById("sos-dl");
-          var st = document.getElementById("sos-dl-status");
-          if (!a) return;
           sessionStorage.setItem("tt_sos_dl", "1");
           var l = document.createElement("a");
-          l.href = a.href; l.download = "";
+          l.href = url; l.download = "";
           document.body.appendChild(l); l.click(); l.remove();
           if (st) st.textContent = "// YOUR DOWNLOAD HAS STARTED \\u2014 LOOK AT THE BOTTOM OF THIS WINDOW OR IN YOUR DOWNLOADS FOLDER";
         }, 1400);
       } catch (e) {}
     })();
-  </script>''',
+  </script>'''.replace("__SOSMOBILE__", "true" if SOS_MOBILE else "false"),
       cta("Rather we just talked you through it?", "That&rsquo;s what we&rsquo;re here for. Ring us and we&rsquo;ll do every step together, at your pace.",
           primary=("Call 01202 775566", "tel:+441202775566"), secondary=("Text us: 07520 615332", "sms:+447520615332")),
     ])
@@ -23071,12 +23131,15 @@ def write_portal_page():
   function sosPlat() {
     var ua = navigator.userAgent || '';
     if (/Android/i.test(ua)) return 'android';
-    if (/iPhone|iPad|iPod/i.test(ua)) return 'apple';
-    if (/Macintosh/.test(ua)) return 'apple';        // includes iPads pretending to be Macs
+    if (/iPhone|iPad|iPod/i.test(ua)) return 'ios';
+    // iPadOS Safari sends a desktop-Mac user agent; touch points are what give it away
+    if (/Macintosh/.test(ua)) return navigator.maxTouchPoints > 1 ? 'ios' : 'mac';
     if (/Windows/i.test(ua)) return 'win';
-    return 'other';   // Chromebooks, Linux, anything unusual: no download we can promise works -
-                      // /sos/ only claims Windows + Android, so route to the honest phone screen
+    return 'other';   // Chromebooks, Linux, anything unusual: no download we can promise works,
+                      // so route to the honest phone screen
   }
+  var SOS_DL = { win: '__SOSDLWIN__', mac: '__SOSDLMAC__', android: '__SOSDLAND__', ios: '__SOSDLIOS__' };
+  var SOS_MOBILE = __SOSMOBILE__;   // plan gate - see SOS_MOBILE in build_extra.py
   function ovSos() {
     ovShow('\\ud83c\\udd98&nbsp; Remote help', function (body) {
       var pad = document.createElement('div');
@@ -23118,43 +23181,56 @@ def write_portal_page():
         document.getElementById('sosGo1').onclick = s1;
       }
       function s1() {   // the download - platform-aware, one giant button
-        if (plat === 'apple' || plat === 'other') {
+        var isMob = plat === 'android' || plat === 'ios';
+        if (plat === 'other' || (isMob && !SOS_MOBILE)) {
           // no progress dots here: on these devices the flow honestly ends at the phone
-          show('<div class="sos__step"><span class="sos__big" aria-hidden="true">' + (plat === 'apple' ? '\\ud83c\\udf4e' : '\\ud83d\\udcde') + '</span>'
-            + '<h3 class="sos__h" id="sosH" tabindex="-1">' + (plat === 'apple' ? 'You\\u2019re on an Apple device' : 'Let\\u2019s do this one by phone') + '</h3>'
-            + (plat === 'apple'
-                ? '<p class="sos__p">We\\u2019re being honest: <b>we can\\u2019t remotely connect to Macs, iPhones or iPads.</b> But that doesn\\u2019t mean we can\\u2019t help.</p>'
-                : '<p class="sos__p">This doesn\\u2019t look like a Windows computer or an Android device, so rather than guess at a download, <b>ring us and we\\u2019ll find the right way to help.</b></p>')
+          show('<div class="sos__step"><span class="sos__big" aria-hidden="true">\\ud83d\\udcde</span>'
+            + '<h3 class="sos__h" id="sosH" tabindex="-1">Let\\u2019s do this one by phone</h3>'
+            + (isMob
+                ? '<p class="sos__p">You\\u2019re on a phone or tablet, and there\\u2019s <b>nothing to download here</b> \\u2014 we help you by phone. <b>Ring us and we\\u2019ll talk you through it step by step.</b></p>'
+                : '<p class="sos__p">This doesn\\u2019t look like a Windows computer, a Mac, or a phone or tablet we recognise, so rather than guess at a download, <b>ring us and we\\u2019ll find the right way to help.</b></p>')
             + '<a class="sos__go" href="tel:+441202775566">\\ud83d\\udcde Ring us \\u2014 we\\u2019ll help another way</a>'
-            + '<p class="sos__p" style="font-size:.95rem">Is your <b>Windows computer</b> the one with the problem? Open this on that computer instead \\u2014 or just ring, and we\\u2019ll talk you through it there.</p>'
+            + '<p class="sos__p" style="font-size:.95rem">Is a <b>different device</b> the one with the problem? Open this on that one instead \\u2014 or just ring, and we\\u2019ll talk you through it there.</p>'
             + '<button type="button" class="sos__back" id="sosB1">\\u2190 Back</button></div>');
           document.getElementById('sosB1').onclick = s0;
           return;
         }
-        var isAnd = plat === 'android';
+        var isApp = plat === 'android' || plat === 'ios';
+        var T = {
+          win:     ['Click the big button. A small program downloads \\u2014 it <b>doesn\\u2019t install anything permanent</b> on your computer.', '\\u2b07\\ufe0f Download the support tool', 'About 20 MB \\u00b7 official Splashtop tool'],
+          mac:     ['Click the big button. A small program downloads \\u2014 it <b>doesn\\u2019t install anything permanent</b> on your Mac.', '\\u2b07\\ufe0f Download the support tool for Mac', 'About 30 MB \\u00b7 official Splashtop tool'],
+          android: ['Tap the big button \\u2014 it opens the <b>Splashtop SOS</b> app on Google Play. Install it like any other app.', '\\u25b6 Get it on Google Play', 'Free \\u00b7 official app'],
+          ios:     ['Tap the big button \\u2014 it opens the <b>Splashtop SOS</b> app on the App Store. Install it like any other app.', '\\u25b6 Get it on the App Store', 'Free \\u00b7 official app']
+        }[plat];
         show(dots(1, 4)
           + '<div class="sos__step"><span class="sos__big" aria-hidden="true">\\u2b07\\ufe0f</span>'
           + '<h3 class="sos__h" id="sosH" tabindex="-1">' + sr(1, 4) + 'Get the support tool</h3>'
-          + '<p class="sos__p">' + (isAnd
-              ? 'Tap the big button \\u2014 it opens the <b>Splashtop SOS</b> app on Google Play. Install it like any other app.'
-              : 'Click the big button. A small program downloads \\u2014 it <b>doesn\\u2019t install anything permanent</b> on your computer.') + '</p>'
+          + '<p class="sos__p">' + T[0] + '</p>'
           + '<span class="sos__arrow" aria-hidden="true">\\u2b07</span>'
-          + '<button type="button" class="sos__go" id="sosDl">' + (isAnd ? '\\u25b6 Get it on Google Play' : '\\u2b07\\ufe0f Download the support tool') + '<small>' + (isAnd ? 'Free \\u00b7 official app' : 'About 20 MB \\u00b7 official Splashtop tool') + '</small></button>'
+          + '<button type="button" class="sos__go" id="sosDl">' + T[1] + '<small>' + T[2] + '</small></button>'
           + '<button type="button" class="sos__back" id="sosB1">\\u2190 Back</button></div>');
         document.getElementById('sosB1').onclick = s0;
         document.getElementById('sosDl').onclick = function () {
-          try { window.open(isAnd ? '__SOSDLAND__' : '__SOSDLWIN__', '_blank', 'noopener'); } catch (e) {}
-          s2(isAnd);
+          try { window.open(SOS_DL[plat], '_blank', 'noopener'); } catch (e) {}
+          s2();
         };
       }
-      function s2(isAnd) {   // open what you just got
+      function s2() {   // open what you just got - per device
+        var isApp = plat === 'android' || plat === 'ios';
+        var body = {
+          win: '<p class="sos__p">Look for <b>SplashtopSOS</b> at the <b>bottom of this window</b>, or in your <b>Downloads</b> folder. Click it once to open.</p>'
+             + '<div class="sos__note"><b>Windows asks \\u201cAllow this app to make changes?\\u201d</b> \\u2014 don\\u2019t worry, either answer is fine. The tool opens all the same.</div>',
+          mac: '<p class="sos__p">Open <b>SplashtopSOS.dmg</b> from your <b>Downloads</b> folder, then open the <b>Splashtop SOS</b> app inside it. If your Mac says it\\u2019s from the internet, choose <b>Open</b>.</p>'
+             + '<div class="sos__note"><b>Your Mac will ask for two permissions</b> so we can see and help \\u2014 that\\u2019s normal, and only you can grant them. In <b>System Settings \\u2192 Privacy &amp; Security</b>, turn on <b>Screen Recording</b> and <b>Accessibility</b> for Splashtop SOS. We\\u2019ll talk you through it.</div>',
+          android: '<p class="sos__p">When it\\u2019s installed, tap <b>Open</b>. The app shows your number straight away.</p>'
+             + '<div class="sos__note">Your phone will ask if it\\u2019s OK to <b>share your screen</b> \\u2014 tap <b>Start now</b>. If we need to do something for you rather than just look, it asks once more for <b>Accessibility</b>; we\\u2019ll say when.</div>',
+          ios: '<p class="sos__p">When it\\u2019s installed, tap <b>Open</b>. The app shows your number straight away.</p>'
+             + '<div class="sos__note">After you\\u2019ve read us the number, tap <b>Start Broadcast</b> and we can see your screen. <b>On iPhone and iPad we can see, but not touch</b> \\u2014 Apple doesn\\u2019t allow anyone to take control \\u2014 so we\\u2019ll guide you through each tap.</div>'
+        }[plat];
         show(dots(2, 4)
           + '<div class="sos__step"><span class="sos__tick" aria-hidden="true">\\u2705</span>'
-          + '<h3 class="sos__h" id="sosH" tabindex="-1">' + sr(2, 4) + (isAnd ? 'Open the app' : 'Now open it') + '</h3>'
-          + (isAnd
-              ? '<p class="sos__p">When it\\u2019s installed, tap <b>Open</b>. That\\u2019s it \\u2014 the app shows a number.</p>'
-              : '<p class="sos__p">Look for <b>SplashtopSOS</b> at the <b>bottom of this window</b>, or in your <b>Downloads</b> folder. Click it once to open.</p>'
-                + '<div class="sos__note"><b>Windows asks \\u201cAllow this app to make changes?\\u201d</b> \\u2014 don\\u2019t worry, either answer is fine. The tool opens all the same.</div>')
+          + '<h3 class="sos__h" id="sosH" tabindex="-1">' + sr(2, 4) + (isApp ? 'Open the app' : 'Now open it') + '</h3>'
+          + body
           + '<button type="button" class="sos__go blue" id="sosGo3">\\ud83d\\udc4d It\\u2019s open \\u2014 what now?</button>'
           + '<button type="button" class="sos__back" id="sosB2">\\u2190 It didn\\u2019t download \\u2014 try again</button></div>');
         document.getElementById('sosGo3').onclick = s3;
@@ -23178,7 +23254,7 @@ def write_portal_page():
             + '<p id="sosMsg" role="status" style="margin:.5rem 0 0;min-height:1.2em;font-size:.92rem;color:#9fb5d3"></p></div>')
           + '<a class="sos__alt" href="tel:+441202775566">\\ud83d\\udcde Not on the phone with us yet? Ring 01202 775566</a>'
           + '<button type="button" class="sos__back" id="sosB3">\\u2190 Back</button></div>');
-        document.getElementById('sosB3').onclick = function () { s2(plat === 'android'); };
+        document.getElementById('sosB3').onclick = s2;
         var sndBtn = document.getElementById('sosSend');
         if (sndBtn) sndBtn.onclick = function () {
           var inp = document.getElementById('sosCode'), msg = document.getElementById('sosMsg');
@@ -27476,7 +27552,7 @@ def write_portal_page():
     # reloading every open tab daily for nothing (adversarial review finding F1).
     # real values first (they belong in the hash - a changed download URL must roll the
     # id); only the self-referential P365BUILD/P365DATE placeholders stay out of it
-    html = html.replace("__SOSDLWIN__", SOS_DL_WIN).replace("__SOSDLAND__", SOS_DL_ANDROID)
+    html = html.replace("__SOSDLWIN__", SOS_DL_WIN).replace("__SOSDLAND__", SOS_DL_ANDROID).replace("__SOSDLMAC__", SOS_DL_MAC).replace("__SOSDLIOS__", SOS_DL_IOS).replace("__SOSMOBILE__", "true" if SOS_MOBILE else "false")
     bid = _hl.sha1(_re.sub(r'"dateModified":\s*"[^"]*"', '"dateModified":"X"', html).encode("utf-8")).hexdigest()[:10]
     date_label = _dt.date.today().strftime("%d %b %Y")
     old_path = _os.path.join(d, "index.html")
