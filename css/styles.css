@@ -694,7 +694,8 @@ body.menu-open { overflow: hidden; }
   position: absolute;
   right: var(--pad-x);
   bottom: 13%; /* sits beside the sub-copy — the headline needs the full width */
-  transform: rotate(1.2deg);
+  /* No tilt: it used to sit at rotate(1.2deg) as a pinned-card flourish, but a
+     precise live readout should sit level (owner, 2 Sep 2026). */
   width: 330px;
   padding: 1.3rem 1.4rem 1.1rem;
   border-radius: var(--r-lg);
