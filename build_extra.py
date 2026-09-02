@@ -27077,7 +27077,15 @@ def write_portal_page():
         var rows = list.filter(function (b) {
           return (b.who || '').toLowerCase().indexOf(q) >= 0 || (b.phone || '').replace(/\\s/g, '').indexOf(q.replace(/\\s/g, '')) >= 0;
         });
-        if (!rows.length) { v.innerHTML = '<p class="quiet">No upcoming bookings match \\u201c' + esc(q) + '\\u201d in the next 60 days. (Booked further out? Check SimplyBook admin.)</p>'; return; }
+        if (!rows.length) {
+          v.innerHTML = '<p class="quiet" style="margin:0 0 .5rem">No <em>upcoming booking</em> matches \\u201c' + esc(q) + '\\u201d in the next 60 days \\u2014 but they may still be a customer.</p>'
+            + '<button class="sm" id="allcust" style="margin:0">\\ud83d\\udd0e Search ALL customers for \\u201c' + esc(q) + '\\u201d</button>'
+            + '<p class="quiet" style="margin:.35rem 0 0;font-size:.82rem">Finds anyone in SimplyBook \\u2014 new members, past remote jobs, no booking needed \\u2014 so you can invoice or invite them.</p>'
+            + '<div id="allcustres" style="margin-top:.6rem"></div>';
+          var ab = document.getElementById('allcust');
+          if (ab) ab.onclick = function () { ab.disabled = true; searchAllCustomers(q); };
+          return;
+        }
         var hh = '<p class="quiet" style="margin:0 0 .3rem"><strong>' + rows.length + '</strong> upcoming booking' + (rows.length === 1 ? '' : 's') + ' matching \\u201c' + esc(q) + '\\u201d:</p>';
         var lastD = '';
         rows.forEach(function (b, i) {
@@ -27096,6 +27104,52 @@ def write_portal_page():
       if (d && d.ok) { AG60 = d.bookings || []; run(AG60); }
       else if (mySeq === searchSeq) v.innerHTML = '<p class="quiet">Couldn\\u2019t search just now - try again.</p>';
     }).catch(function () { if (mySeq === searchSeq) v.innerHTML = '<p class="quiet">Couldn\\u2019t reach the server.</p>'; });
+  }
+  /* Find ANY customer in SimplyBook (not just those with an upcoming booking) so
+     staff can reach the contact card - and its invoice / invite / quote buttons -
+     for a brand-new member or a past remote-support customer. Uses the same
+     staffclients search the "Book a new job" wizard uses. */
+  function searchAllCustomers(q) {
+    var res = document.getElementById('allcustres'); if (!res) return;
+    res.innerHTML = '<p class="quiet">Searching all customers\\u2026</p>';
+    post(BK, { action: 'staffclients', stoken: S.stoken, machine: mid(), q: q }).then(function (d) {
+      if (!d || !d.ok) { res.innerHTML = '<p class="quiet">Couldn\\u2019t search customers just now \\u2014 ' + esc((d && d.error) || 'try again') + '.</p>'; return; }
+      if (!d.clients || !d.clients.length) {
+        res.innerHTML = '<p class="quiet">No customer in SimplyBook matches \\u201c' + esc(q) + '\\u201d either. If they\\u2019re brand new, add them with \\u201cBook a new job\\u201d (you can close the wizard after \\u2014 it creates the SimplyBook record).</p>';
+        return;
+      }
+      var hh = '<p class="quiet" style="margin:0 0 .35rem"><strong>' + d.clients.length + '</strong> customer' + (d.clients.length === 1 ? '' : 's') + ' found (any status):</p>';
+      d.clients.forEach(function (c, i) {
+        hh += '<div class="tline"><div class="tblock"><strong>' + esc(c.name) + '</strong>'
+          + '<br />' + (c.phone ? '<a href="tel:' + esc((c.phone || '').replace(/\\s/g, '')) + '" class="tphone">\\ud83d\\udcde ' + esc(c.phone) + '</a>' : '<span class="quiet">no number</span>')
+          + (c.email ? ' <a href="mailto:' + esc(c.email) + '" class="tphone">\\u2709\\ufe0f ' + esc(c.email) + '</a>' : '')
+          + ' <button class="sm ghost cib" data-cid="' + esc(c.id) + '" data-p="ac' + i + '">\\ud83d\\udccd Invoice / invite</button>'
+          + '<div class="cipanel" id="cipac' + i + '" style="display:none;margin-top:.4rem"></div></div></div>';
+      });
+      res.innerHTML = hh;
+      bindContactCards(res);
+    }).catch(function () { res.innerHTML = '<p class="quiet">Couldn\\u2019t reach the server.</p>'; });
+  }
+  /* Open a contact card (with its QuickBooks + invite buttons) for any .cib button
+     in `container`. Same as the diary's Details buttons, reusable for search results. */
+  function bindContactCards(container) {
+    Array.prototype.forEach.call(container.querySelectorAll('.cib'), function (btn) {
+      btn.onclick = function (ev) {
+        ev.stopPropagation();
+        var p = btn.getAttribute('data-p'), cid = btn.getAttribute('data-cid');
+        var panel = document.getElementById('cip' + p); if (!panel) return;
+        if (panel.style.display !== 'none') { panel.style.display = 'none'; return; }
+        if (panel.getAttribute('data-loaded') === '1') { panel.style.display = ''; return; }
+        panel.style.display = ''; panel.innerHTML = '<span class="quiet">Loading contact\\u2026</span>';
+        post(BK, { action: 'clientinfo', stoken: S.stoken, machine: mid(), cid: cid })
+          .then(function (r) {
+            if (!r || !r.ok || !r.client) { panel.innerHTML = '<span class="quiet">Couldn\\u2019t load contact details.</span>'; return; }
+            panel.innerHTML = clientCard(r.client); panel.setAttribute('data-loaded', '1');
+            bindQbo(panel); bindAddrCopy(panel); bindInvite(panel);
+          })
+          .catch(function () { panel.innerHTML = '<span class="quiet">Couldn\\u2019t reach the server.</span>'; });
+      };
+    });
   }
 
   // ---------- book a new job: who -> what -> when, live against SimplyBook ----------
