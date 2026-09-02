@@ -9,7 +9,7 @@
  *
  * Licence: free, full and open, commercial use included. The attribution is
  * mandatory and exactly worded:
- *     Contains modified Copernicus Sentinel data 2026
+ *     Contains modified Copernicus Sentinel data [Year]   (year = capture year)
  *
  * ⚠️ THE SCENE DATE IS NOT OPTIONAL, IT IS THE POINT.
  * A layer called "latest satellite pass" that cannot say WHEN breaks the rule
@@ -52,13 +52,26 @@ $SHAPE = 3;
 
 /* ------------------------------------------------------------ serve cache */
 
+/**
+ * "Contains modified Copernicus Sentinel data [Year]" per the Sentinel Data
+ * Legal Notice. The year is the capture year; when the catalogue lookup failed
+ * and there is no capture date the image is still served, so the statement
+ * falls back to the current UTC year rather than vanishing.
+ */
+function sat_source_statement($captured) {
+    $year = (is_string($captured) && preg_match('/^(\d{4})-/', $captured, $m)) ? $m[1] : gmdate('Y');
+    return 'Contains modified Copernicus Sentinel data ' . $year;
+}
+
 function sat_serve_image($file, $meta) {
     header('Content-Type: image/jpeg');
     header('Cache-Control: public, max-age=3600');
     // Provenance travels with the bytes, so a caller that only fetches the
     // image can still label it honestly without a second request.
     if (!empty($meta['captured'])) header('X-Captured: ' . $meta['captured']);
-    header('X-Source: Contains modified Copernicus Sentinel data 2026');
+    // The year in the legal-notice wording is the year of the DATA (see the
+    // 'source' field below), never a literal.
+    header('X-Source: ' . (!empty($meta['source']) ? $meta['source'] : sat_source_statement($meta['captured'] ?? null)));
     readfile($file);
     exit;
 }
@@ -275,7 +288,7 @@ $meta = array(
     'capturedReason' => $catReason,
     'bytes'      => strlen($jpeg),
     'bbox'       => $BBOX,
-    'source'     => 'Contains modified Copernicus Sentinel data 2026',
+    'source'     => sat_source_statement($captured),
 );
 dorset_cache_put($META, $meta);
 
