@@ -25,7 +25,7 @@
        (@font-face in style.css). The third icon stylesheet that used to load here was referenced by no CSS rule. -->
   <link rel="preconnect" href="https://fonts.bunny.net" crossorigin />
   <link rel="stylesheet" href="https://fonts.bunny.net/css?family=inter:300,400,500,600|jetbrains-mono:300,400,500,600,700" />
-  <script type="module" crossorigin src="/bournemouth/live-map/app/assets/index-A9Y7z7m9.js"></script>
+  <script type="module" crossorigin src="/bournemouth/live-map/app/assets/index-DGvXKZHE.js"></script>
   <link rel="stylesheet" crossorigin href="/bournemouth/live-map/app/assets/index-CjRUiUds.css">
   <meta name="robots" content="noindex">
   <link rel="canonical" href="https://365techies.co.uk/bournemouth/live-map/">
@@ -634,20 +634,24 @@
          public → the data is real. Tile subcopy stays purely functional. -->
     <p id="first-run-description">It feels like a forbidden cockpit—then you realize the sources are public and the data is real.</p>
     <div class="first-run-choices">
-      
-      
-      <button type="button" data-first-run-choice="environmental">
-        <span class="material-symbols-outlined" aria-hidden="true">local_fire_department</span>
-        <!-- Title text is painted from ENVIRONMENTAL_LABEL_CHOICE at init. -->
-        <!-- Subcopy names BOTH feeds this tile turns on, because the launcher
-             optimizes for the fully configured experience (product decision,
-             2026-08-23) — see the mission table in src/firstRunExperience.js. -->
-        <span><strong data-first-run-environmental-title>ENVIRONMENTAL</strong><small>Live earthquakes and active fires, from USGS and NASA</small></span>
+      <button type="button" data-first-run-choice="bournemouth">
+        <span class="material-symbols-outlined" aria-hidden="true">my_location</span>
+        <span><strong>BOURNEMOUTH LIVE</strong><small>Buses, river levels, road closures and signal tests, right now</small></span>
         <span class="material-symbols-outlined first-run-arrow" aria-hidden="true">arrow_forward</span>
       </button>
+      <button type="button" data-first-run-choice="aircraft">
+        <span class="material-symbols-outlined" aria-hidden="true">flight</span>
+        <span><strong>AIRCRAFT OVERHEAD</strong><small>Everything flying within sixty miles, from adsb.lol</small></span>
+        <span class="material-symbols-outlined first-run-arrow" aria-hidden="true">arrow_forward</span>
+      </button>
+      
+      
+      <!-- Dev only: both feeds it enables (USGS quakes, NASA FIRMS) are stripped
+           from the public build, so the tile would enable nothing there. -->
+      
       <button type="button" class="first-run-explore" data-first-run-choice="explore">
         <span class="material-symbols-outlined" aria-hidden="true">public</span>
-        <span><strong>EXPLORE MANUALLY</strong><small>Begin with a clean globe</small></span>
+        <span><strong>EXPLORE MANUALLY</strong><small>Start on the flat map and pick your own layers</small></span>
         <span class="material-symbols-outlined first-run-arrow" aria-hidden="true">arrow_forward</span>
       </button>
     </div>
