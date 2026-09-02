@@ -162,6 +162,9 @@ ErrorDocument 404 /404.html
 <FilesMatch "^pcm-invite-plans\.json$">
   Require all denied
 </FilesMatch>
+<FilesMatch "^pcm-invite-allow\.json(\..*)?$">
+  Require all denied
+</FilesMatch>
 <FilesMatch "^pcm-gc-templates\.json(\..*)?$">
   Require all denied
 </FilesMatch>

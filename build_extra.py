@@ -26470,6 +26470,10 @@ def write_portal_page():
         + '<p style="margin:.5rem 0 0"><button class="sm ghost" id="qbocheck">Check setup</button> '
         + '<button class="sm ghost" id="qbolist">List QuickBooks items</button></p>'
         + '<div id="qboitems"></div></div>';
+      h += '<div class="card" id="inviteplans"><h2>\\ud83d\\udce8 Invite plans</h2>'
+        + '<div class="quiet">Choose which GoCardless plans staff can invite new customers to \\u2014 most of your templates are customer-specific and shouldn\\u2019t be offered.</div>'
+        + '<p style="margin:.5rem 0 0"><button class="sm ghost" id="invmanage">Choose plans</button></p>'
+        + '<div id="invmanagebox"></div></div>';
       h += '<div class="card"><h2>Quick links</h2><div class="row">'
         + '<a class="btn sm ghost" href="https://365techies.secure.simplybook.it/v2/management/" target="_blank" rel="noopener">SimplyBook admin</a>'
         + '<button class="sm ghost" id="pcmadm">Full PCM console</button>'
@@ -26516,6 +26520,7 @@ def write_portal_page():
       loadSosq();
       loadVis();
       qboSetup();
+      invitePlansSetup();
       var visiv = setInterval(function () {
         if (!document.getElementById('vislive')) { clearInterval(visiv); return; }
         loadVis();
@@ -26731,7 +26736,8 @@ def write_portal_page():
       b.disabled = true; b.textContent = 'Loading plans\\u2026';
       post(INVITE, { action: 'plans', stoken: S.stoken, machine: mid() }).then(function (r) {
         if (!r || !r.ok || !r.plans || !r.plans.length) {
-          w.innerHTML = '<span class="quiet">No support plans are set up to invite to yet. Add a GoCardless Billing Request Template link to pcm-invite.php.</span>';
+          if (r && r.needs_curate) { w.innerHTML = '<span class="quiet">No plans chosen for invites yet \\u2014 pick them under <b>\\ud83d\\udce8 Invite plans</b> in the staff console first.</span>'; }
+          else { w.innerHTML = '<span class="quiet">No support plans are set up to invite to yet.</span>'; }
           return;
         }
         var opts = r.plans.map(function (p) {
@@ -26756,6 +26762,35 @@ def write_portal_page():
             .catch(function () { go.disabled = false; msg.textContent = 'Couldn\\u2019t reach the server.'; });
         };
       }).catch(function () { b.disabled = false; b.textContent = '\\ud83d\\udce8 Invite to a support plan'; });
+    };
+  }
+  /* Manager control: tick which GoCardless templates staff may invite new
+     customers to (most are per-customer). Saved server-side; the invite dropdown
+     honours it. */
+  function invitePlansSetup() {
+    var btn = document.getElementById('invmanage'); if (!btn) return;
+    var box = document.getElementById('invmanagebox');
+    btn.onclick = function () {
+      box.innerHTML = '<span class="quiet">Loading your GoCardless templates\\u2026</span>';
+      post(INVITE, { action: 'alltemplates', stoken: S.stoken, machine: mid() }).then(function (r) {
+        if (!r || !r.ok) { box.innerHTML = '<span class="quiet">Couldn\\u2019t load templates' + (r && r.error ? ' (' + esc(r.error) + ')' : '') + '.</span>'; return; }
+        if (!r.templates || !r.templates.length) { box.innerHTML = '<span class="quiet">No GoCardless templates found on the account.</span>'; return; }
+        var rows = r.templates.map(function (t) {
+          return '<label style="display:block;margin:.15rem 0;font-size:.9rem"><input type="checkbox" class="invchk" value="' + esc(t.id) + '"' + (t.on ? ' checked' : '') + '> ' + esc(t.name) + '</label>';
+        }).join('');
+        box.innerHTML = '<p class="quiet" style="margin:.4rem 0 .2rem">Tick the standard plans new customers can join:</p>'
+          + '<div style="margin:.2rem 0;max-height:320px;overflow:auto;border:1px solid rgba(125,170,220,.25);border-radius:8px;padding:.5rem">' + rows + '</div>'
+          + '<button class="sm invsave" style="margin:.4rem 0 0">Save chosen plans</button> <span class="quiet invsavemsg"></span>';
+        box.querySelector('.invsave').onclick = function () {
+          var go = this; go.disabled = true;
+          var ids = Array.prototype.map.call(box.querySelectorAll('.invchk:checked'), function (c) { return c.value; });
+          var m = box.querySelector('.invsavemsg'); m.textContent = 'Saving\\u2026';
+          post(INVITE, { action: 'setallow', stoken: S.stoken, machine: mid(), ids: ids }).then(function (j) {
+            go.disabled = false;
+            m.innerHTML = (j && j.ok) ? '<span style="color:#7ee0a2">\\u2713 Saved \\u2014 ' + j.count + ' plan' + (j.count === 1 ? '' : 's') + ' will show when inviting a customer.</span>' : 'Save failed.';
+          }).catch(function () { go.disabled = false; m.textContent = 'Couldn\\u2019t reach the server.'; });
+        };
+      }).catch(function () { box.innerHTML = '<span class="quiet">Couldn\\u2019t reach the server.</span>'; });
     };
   }
   function inviteErr(j) {

@@ -33,6 +33,7 @@ $WEBF   = $BASE . '/slack-webhook-jobs.php';        // reuse the jobs webhook fo
 $LOGF   = $BASE . '/pcm-invite.log';
 $GCF    = $BASE . '/pcm-gocardless.php';            // server-only: <?php $GC_TOKEN = 'live_...';  (same file pcm.php uses)
 $GCACHE = $BASE . '/pcm-gc-templates.json';         // short cache of the template list (gitignored)
+$ALLOWF = $BASE . '/pcm-invite-allow.json';         // curated allowlist of template ids staff may invite to (gitignored)
 
 // ---- the plans (server-side authority). Keep the links in step with the
 // ---- GOCARDLESS dict in build_pages.py. Each MUST be a reusable Billing Request
@@ -108,30 +109,72 @@ function clean($v, $max) {
 }
 function esc_html($s) { return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
 
-// The plans on offer: LIVE from GoCardless (Billing Request Templates) when the
-// $GC_TOKEN is on the server, else the static $PLANS above. GoCardless is the
-// authority - it returns each template's own `authorisation_url`, so we never
-// reconstruct a link.  Returns key => array(label, amount, note, link).
+// The curated allowlist: template ids staff may invite new customers to. The
+// owner ticks these in the portal (most GoCardless templates are customer-
+// specific and must NOT be offered). Empty/absent file = not curated yet.
+function allow_ids() {
+    global $ALLOWF;
+    $a = @json_decode((string)@file_get_contents($ALLOWF), true);
+    return is_array($a) ? array_values(array_filter(array_map('strval', $a))) : null;   // null = never curated
+}
+
+// Plans on offer to invite to: GoCardless templates (authoritative links) that
+// are on the curated allowlist. Falls back to the static $PLANS only when there
+// is no GoCardless token at all.
 function invite_plans() {
     global $PLANS;
     $gc = gc_templates();                 // array(id => array(label,amount,link)) or null
-    if (is_array($gc) && count($gc)) {
-        $out = array();
-        foreach ($gc as $id => $t) $out[$id] = array('label' => $t['label'], 'amount' => $t['amount'], 'note' => '', 'link' => $t['link']);
-        return $out;
+    if (!is_array($gc)) return $PLANS;    // no token -> static seed / pcm-invite-plans.json
+    $allow = allow_ids();
+    $out = array();
+    foreach ($gc as $id => $t) {
+        if (is_array($allow) && !in_array((string)$id, $allow, true)) continue;   // curated: only allowlisted
+        $out[$id] = array('label' => $t['label'], 'amount' => $t['amount'], 'note' => '', 'link' => $t['link']);
     }
-    return $PLANS;                         // fallback: static seed / pcm-invite-plans.json
+    return $out;
 }
 
 // ===========================================================================
 if ($action === 'plans') {
+    $curated = (allow_ids() !== null);
     $list = array();
     foreach (invite_plans() as $k => $p) {
         if (empty($p['link']) || !plan_link_ok($p['link'])) continue;
         $list[] = array('key' => (string)$k, 'label' => (string)$p['label'],
                         'amount' => (string)$p['amount'], 'note' => (string)(isset($p['note']) ? $p['note'] : ''));
     }
-    out(array('ok' => true, 'plans' => $list, 'source' => (gc_available() ? 'gocardless' : 'config')));
+    // Not curated yet AND GoCardless has templates -> tell the UI to prompt a curate,
+    // rather than dump every customer-specific template into the picker.
+    $needs = (!$curated && gc_available() && count(gc_templates() ?: array()) > 0);
+    out(array('ok' => true, 'plans' => $list, 'needs_curate' => $needs, 'source' => (gc_available() ? 'gocardless' : 'config')));
+}
+
+// --- curate: list ALL templates, and read/save the allowlist ---------------
+if ($action === 'alltemplates') {
+    $all = gc_templates();
+    if (!is_array($all)) fail('no_gocardless');
+    $allow = allow_ids();
+    $rows = array();
+    foreach ($all as $id => $t) $rows[] = array('id' => (string)$id, 'name' => (string)$t['label'],
+        'on' => (is_array($allow) ? in_array((string)$id, $allow, true) : false));
+    // stable, readable order by name
+    usort($rows, function ($a, $b) { return strcasecmp($a['name'], $b['name']); });
+    out(array('ok' => true, 'templates' => $rows, 'curated' => (allow_ids() !== null)));
+}
+
+if ($action === 'setallow') {
+    $ids = isset($in['ids']) && is_array($in['ids']) ? $in['ids'] : array();
+    // Only accept ids that are real templates right now (no junk into the file).
+    $all = gc_templates();
+    if (!is_array($all)) fail('no_gocardless');
+    $keep = array();
+    foreach ($ids as $id) { $id = (string)$id; if (isset($all[$id])) $keep[$id] = true; }
+    $keep = array_keys($keep);
+    $tmp = $ALLOWF . '.' . getmypid() . '.tmp';
+    if (@file_put_contents($tmp, json_encode($keep, JSON_UNESCAPED_SLASHES), LOCK_EX) === false) fail('save_failed');
+    @rename($tmp, $ALLOWF);
+    lg('allowlist set to ' . count($keep) . ' plans by ' . $who);
+    out(array('ok' => true, 'count' => count($keep)));
 }
 
 if ($action === 'send') {

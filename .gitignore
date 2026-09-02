@@ -20,6 +20,8 @@ api/pcm-jobs.json.*.tmp
 api/pcm-jobs.log
 api/pcm-invite.log
 api/pcm-invite-plans.json
+api/pcm-invite-allow.json
+api/pcm-invite-allow.json.*.tmp
 api/pcm-gc-templates.json
 api/pcm-gc-templates.json.*.tmp
 # Portal messaging: bot token, per-install filename salt, conversations, cron state
