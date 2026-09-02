@@ -31,6 +31,8 @@ $DATA   = $BASE . '/pcm-data.json';
 $PLANF  = $BASE . '/pcm-invite-plans.json';        // optional owner override (gitignored)
 $WEBF   = $BASE . '/slack-webhook-jobs.php';        // reuse the jobs webhook for a record ping
 $LOGF   = $BASE . '/pcm-invite.log';
+$GCF    = $BASE . '/pcm-gocardless.php';            // server-only: <?php $GC_TOKEN = 'live_...';  (same file pcm.php uses)
+$GCACHE = $BASE . '/pcm-gc-templates.json';         // short cache of the template list (gitignored)
 
 // ---- the plans (server-side authority). Keep the links in step with the
 // ---- GOCARDLESS dict in build_pages.py. Each MUST be a reusable Billing Request
@@ -106,16 +108,30 @@ function clean($v, $max) {
 }
 function esc_html($s) { return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
 
+// The plans on offer: LIVE from GoCardless (Billing Request Templates) when the
+// $GC_TOKEN is on the server, else the static $PLANS above. GoCardless is the
+// authority - it returns each template's own `authorisation_url`, so we never
+// reconstruct a link.  Returns key => array(label, amount, note, link).
+function invite_plans() {
+    global $PLANS;
+    $gc = gc_templates();                 // array(id => array(label,amount,link)) or null
+    if (is_array($gc) && count($gc)) {
+        $out = array();
+        foreach ($gc as $id => $t) $out[$id] = array('label' => $t['label'], 'amount' => $t['amount'], 'note' => '', 'link' => $t['link']);
+        return $out;
+    }
+    return $PLANS;                         // fallback: static seed / pcm-invite-plans.json
+}
+
 // ===========================================================================
 if ($action === 'plans') {
-    // Only offer plans whose link is present and valid.
     $list = array();
-    foreach ($PLANS as $k => $p) {
+    foreach (invite_plans() as $k => $p) {
         if (empty($p['link']) || !plan_link_ok($p['link'])) continue;
         $list[] = array('key' => (string)$k, 'label' => (string)$p['label'],
-                        'amount' => (string)$p['amount'], 'note' => (string)$p['note']);
+                        'amount' => (string)$p['amount'], 'note' => (string)(isset($p['note']) ? $p['note'] : ''));
     }
-    out(array('ok' => true, 'plans' => $list));
+    out(array('ok' => true, 'plans' => $list, 'source' => (gc_available() ? 'gocardless' : 'config')));
 }
 
 if ($action === 'send') {
@@ -125,8 +141,9 @@ if ($action === 'send') {
     $note    = clean(isset($in['note']) ? $in['note'] : '', 400);
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) fail('bad_email');
-    if (!isset($PLANS[$planKey])) fail('bad_plan');
-    $plan = $PLANS[$planKey];
+    $plans = invite_plans();
+    if (!isset($plans[$planKey])) fail('bad_plan');
+    $plan = $plans[$planKey];
     if (empty($plan['link']) || !plan_link_ok($plan['link'])) fail('plan_link_bad');
 
     $first = trim((string)$name);
@@ -249,6 +266,52 @@ function inv_mail($to, $subject, $text, $html) {
     }
     $hdr = "From: 365 Techies <info@365techies.co.uk>\r\nReply-To: info@365techies.co.uk\r\nMIME-Version: 1.0\r\n" . $ctype;
     return @mail($to, $subject, $payload, $hdr, '-finfo@365techies.co.uk');
+}
+
+// ---- GoCardless (read-only): list Billing Request Templates as pickable plans.
+// Same token + API the subscription summary uses (pcm.php). We only READ; we
+// never create a billing request or move money here.
+function gc_available() {
+    global $GCF;
+    if (!is_readable($GCF)) return false;
+    include $GCF;                          // sets $GC_TOKEN
+    return !empty($GC_TOKEN);
+}
+function gc_templates() {
+    global $GCF, $GCACHE;
+    if (!is_readable($GCF)) return null;
+    include $GCF;
+    if (empty($GC_TOKEN)) return null;
+
+    // 10-minute cache so opening the dropdown doesn't hit the API every time.
+    $c = @json_decode((string)@file_get_contents($GCACHE), true);
+    if (is_array($c) && isset($c['at'], $c['plans']) && $c['at'] > time() - 600) return $c['plans'];
+
+    $ch = curl_init('https://api.gocardless.com/billing_request_templates?limit=200');
+    curl_setopt_array($ch, array(CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 12,
+        CURLOPT_HTTPHEADER => array('Authorization: Bearer ' . $GC_TOKEN, 'GoCardless-Version: 2015-07-06', 'Accept: application/json')));
+    $r = curl_exec($ch); $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE); curl_close($ch);
+    if ($code < 200 || $code >= 300) return (is_array($c) && isset($c['plans'])) ? $c['plans'] : null;   // serve stale on a blip
+    $j = json_decode((string)$r, true);
+    $tpls = (is_array($j) && isset($j['billing_request_templates'])) ? $j['billing_request_templates'] : array();
+
+    $plans = array();
+    foreach ((array)$tpls as $t) {
+        if (!is_array($t)) continue;
+        $id  = (string)(isset($t['id']) ? $t['id'] : '');
+        $url = (string)(isset($t['authorisation_url']) ? $t['authorisation_url'] : '');
+        if ($id === '' || !plan_link_ok($url)) continue;          // must be a usable reusable link
+        $name = trim((string)(isset($t['name']) ? $t['name'] : '')); if ($name === '') $name = $id;
+        // Amount: templates that carry a fixed payment expose payment_request_amount (in pence).
+        $amt = '';
+        if (isset($t['payment_request_amount']) && is_numeric($t['payment_request_amount']))
+            $amt = number_format(((float)$t['payment_request_amount']) / 100, 2, '.', '');
+        $plans[$id] = array('label' => $name, 'amount' => $amt, 'link' => $url);
+    }
+    // atomic cache write (ok to fail silently)
+    $tmp = $GCACHE . '.' . getmypid() . '.tmp';
+    if (@file_put_contents($tmp, json_encode(array('at' => time(), 'plans' => $plans)), LOCK_EX) !== false) @rename($tmp, $GCACHE);
+    return $plans;
 }
 
 function jobs_hook_present() {
