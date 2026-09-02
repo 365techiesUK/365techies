@@ -146,6 +146,14 @@ ErrorDocument 404 /404.html
 <Files "slack-webhook.php">
   Require all denied
 </Files>
+# Second webhook (the #daily-jobs-in-jobs-out "Quote agreed" cards) and the job
+# store behind it: names, numbers and amounts. pcm-jobs.php itself stays served.
+<Files "slack-webhook-jobs.php">
+  Require all denied
+</Files>
+<FilesMatch "^pcm-jobs\.(json(\..*)?|log)$">
+  Require all denied
+</FilesMatch>
 <Files "slack-rate.json">
   Require all denied
 </Files>

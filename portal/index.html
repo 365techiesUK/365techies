@@ -689,9 +689,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">portal build 02 Sep 2026 &middot; 316eb584f7</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">portal build 02 Sep 2026 &middot; 87ef2be771</p><script>
 (function () {
-  var P365BUILD = '316eb584f7';
+  var P365BUILD = '87ef2be771';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -1519,7 +1519,7 @@
   }
 </style><script>
 (function () {
-  var BK = '/api/pcm-booking.php', PCM = '/api/pcm.php', DASH = '/api/pcm-dash.php', TEAM = '/api/pcm-team.php', CONN = '/api/pcm-connect.php', FEEDS = '/api/pcm-feeds.php', WCHK = '/api/pcm-wcheck.php', MSG = '/api/pcm-msg.php', QBO = '/api/pcm-qbo.php';
+  var BK = '/api/pcm-booking.php', PCM = '/api/pcm.php', DASH = '/api/pcm-dash.php', TEAM = '/api/pcm-team.php', CONN = '/api/pcm-connect.php', FEEDS = '/api/pcm-feeds.php', WCHK = '/api/pcm-wcheck.php', MSG = '/api/pcm-msg.php', QBO = '/api/pcm-qbo.php', JOBS = '/api/pcm-jobs.php';
   var el = document.getElementById('p365app');
   var S = {};
   try { S = JSON.parse(sessionStorage.getItem('p365s') || 'null') || JSON.parse(localStorage.getItem('p365') || '{}'); } catch (e) { S = {}; }
@@ -5646,8 +5646,8 @@
        no button - guessing by name would merge two Smiths into one ledger. */
     if (c.email) {
       out += '<div class="qbowrap" data-em="' + esc(c.email) + '" data-nm="' + esc(c.name || '')
-        + '" data-ph="' + esc(c.phone || '') + '" style="margin-top:.45rem">'
-        + '<button class="sm ghost qbob" style="margin:0;padding:.3rem .65rem;font-size:.82rem">\ud83d\udcb7 Invoice in QuickBooks</button></div>';
+        + '" data-ph="' + esc(c.phone || '') + '" data-ad="' + esc(addr.join(', ')) + '" style="margin-top:.45rem">'
+        + '<button class="sm ghost qbob" style="margin:0;padding:.3rem .65rem;font-size:.82rem">\ud83d\udcb7 Quote agreed / invoice</button></div>';
     }
     return out;
   }
@@ -5668,35 +5668,70 @@
   function bindQbo(panel) {
     var w = panel.querySelector('.qbowrap'); if (!w) return;
     var b = w.querySelector('.qbob'); if (!b) return;
+    /* "Quote agreed" - used at the moment the price is agreed on the phone. It
+       (1) tries QuickBooks for a draft invoice (best effort - the portal may not
+       be connected yet), then (2) records the job and posts ONE card to
+       #daily-jobs-in-jobs-out with everything David needs, plus the draft link
+       if there was one. The Slack post is the deliverable; QuickBooks is a
+       bonus. The old "just add them to QuickBooks" use is still there: leave the
+       amount blank and untick Slack. */
     b.onclick = function () {
-      w.innerHTML = '<div style="margin:.2rem 0 .3rem"><input class="qdesc" type="text" maxlength="200" placeholder="What was the job? (goes on the invoice)" style="width:100%;max-width:320px"></div>'
-        + '<div style="margin:0 0 .35rem"><input class="qamt" type="text" inputmode="decimal" placeholder="Amount \u00a3 (leave blank to just add them)" style="width:100%;max-width:320px"></div>'
-        + '<button class="sm qgo" style="margin:0;padding:.3rem .7rem;font-size:.82rem">Create in QuickBooks</button> '
+      w.innerHTML = '<div style="margin:.2rem 0 .3rem"><input class="qdesc" type="text" maxlength="200" placeholder="What\u2019s the job? (goes on the invoice)" style="width:100%;max-width:320px"></div>'
+        + '<div style="margin:0 0 .3rem"><input class="qamt" type="text" inputmode="decimal" placeholder="Agreed amount \u00a3" style="width:100%;max-width:320px"></div>'
+        + '<div style="margin:0 0 .3rem"><input class="qnote" type="text" maxlength="300" placeholder="Anything David should know (optional)" style="width:100%;max-width:320px"></div>'
+        + '<label style="display:block;margin:0 0 .4rem;font-size:.85rem"><input type="checkbox" class="qslack" checked> Post to <strong>#daily-jobs-in-jobs-out</strong> for David</label>'
+        + '<button class="sm qgo" style="margin:0;padding:.3rem .7rem;font-size:.82rem">\u2705 Quote agreed</button> '
         + '<span class="quiet qmsg"></span>';
       var msg = w.querySelector('.qmsg');
       w.querySelector('.qgo').onclick = function () {
-        var go = this; go.disabled = true; msg.textContent = 'Working\u2026';
+        var go = this;
+        var desc = (w.querySelector('.qdesc').value || '').trim(), amt = (w.querySelector('.qamt').value || '').trim();
+        var note = (w.querySelector('.qnote').value || '').trim(), toSlack = w.querySelector('.qslack').checked;
+        if (toSlack && (!desc || !amt)) { msg.textContent = 'Put in the job and the agreed amount first.'; return; }
+        go.disabled = true; msg.textContent = 'Working\u2026';
+        var em = w.getAttribute('data-em'), nm = w.getAttribute('data-nm'), ph = w.getAttribute('data-ph');
+        var bits = [], qboState = '', invUrl = '', invNo = '';
+        // 1. QuickBooks, best effort. Any failure here must not stop the Slack post.
         post(QBO, { action: 'qbostart', stoken: S.stoken, machine: mid(), live: 1,
-                    email: w.getAttribute('data-em'), name: w.getAttribute('data-nm'), phone: w.getAttribute('data-ph'),
-                    desc: (w.querySelector('.qdesc').value || ''), amount: (w.querySelector('.qamt').value || '') })
+                    email: em, name: nm, phone: ph, desc: desc, amount: amt })
           .then(function (r) {
-            go.disabled = false;
-            if (!r || !r.ok) { msg.innerHTML = qboErr(r); return; }
-            if (r.mode === 'DRY-RUN' && r.would) {   // no 'would' = nothing needed writing
-              msg.innerHTML = '<strong>Nothing written.</strong> QuickBooks is in dry-run \u2014 it would '
-                + esc(r.would || 'create the record') + '. Switch QBO_LIVE_ENABLED on to go live.';
-              return;
-            }
-            var bits = [r.existed ? 'Customer already in QuickBooks.' : '\u2713 Customer added to QuickBooks.'];
-            if (r.plan && r.plan.address_added) bits.push('Address filled in.');
-            if (r.invoice_id) bits.push('\u2713 Draft invoice created \u2014 <a href="' + esc(r.invoice_url) + '" target="_blank" rel="noopener">open it</a> (#' + esc(r.invoice_id) + ').');
+            if (!r || !r.ok) { qboState = (r && r.error) || 'error'; bits.push(qboErr(r)); return; }
+            if (r.mode === 'DRY-RUN') { qboState = 'dry-run'; bits.push('QuickBooks is in dry-run \u2014 nothing written there.'); return; }
+            qboState = 'live';
+            bits.push(r.existed ? 'Customer already in QuickBooks.' : '\u2713 Customer added to QuickBooks.');
+            if (r.invoice_id) { invUrl = r.invoice_url || ''; invNo = '' + r.invoice_id;
+              bits.push('\u2713 Draft invoice created \u2014 <a href="' + esc(invUrl) + '" target="_blank" rel="noopener">open it</a> (#' + esc(invNo) + ').'); }
             else if (r.invoice_error) bits.push('Invoice didn\u2019t save: ' + esc(r.invoice_error));
-            else bits.push('<a href="' + esc(r.customer_url) + '" target="_blank" rel="noopener">Open them in QuickBooks</a>.');
-            msg.innerHTML = bits.join(' ');
+            else if (r.customer_url) bits.push('<a href="' + esc(r.customer_url) + '" target="_blank" rel="noopener">Open them in QuickBooks</a>.');
           })
-          .catch(function () { go.disabled = false; msg.textContent = 'Couldn\u2019t reach the server.'; });
+          .catch(function () { qboState = 'unreachable'; bits.push('QuickBooks step couldn\u2019t reach the server.'); })
+          .then(function () {
+            // 2. The record + the Slack card. This is the part that matters.
+            if (!toSlack) { go.disabled = false; msg.innerHTML = bits.join(' ') || 'Done.'; return; }
+            return post(JOBS, { action: 'quote', stoken: S.stoken, machine: mid(),
+                                name: nm, email: em, phone: ph, desc: desc, amount: amt, note: note,
+                                addr: (w.getAttribute('data-ad') || ''), invoice_url: invUrl, invoice_no: invNo, qbo: qboState })
+              .then(function (j) {
+                go.disabled = false;
+                if (!j || !j.ok) { bits.push('<strong>Not recorded:</strong> ' + esc(jobsErr(j))); msg.innerHTML = bits.join(' '); return; }
+                if (j.slack === 'sent') bits.unshift('\u2713 <strong>Posted to #daily-jobs-in-jobs-out</strong> for David (job ' + esc(j.id) + ').');
+                else if (j.slack === 'not-configured') bits.unshift('\u2713 Job recorded (' + esc(j.id) + ') \u2014 <strong>but the #daily-jobs-in-jobs-out webhook isn\u2019t set up on the server yet</strong>, so nothing went to Slack. Tell David by hand this time.');
+                else bits.unshift('\u2713 Job recorded (' + esc(j.id) + ') \u2014 Slack refused the post (' + esc('' + j.slack_code) + '). Tell David by hand this time.');
+                msg.innerHTML = bits.join(' ');
+              })
+              .catch(function () { go.disabled = false; bits.push('<strong>Not recorded</strong> \u2014 couldn\u2019t reach the server.'); msg.innerHTML = bits.join(' '); });
+          });
       };
     };
+  }
+  function jobsErr(j) {
+    var e = j && j.error;
+    if (e === 'not_staff') return 'your staff sign-in expired \u2014 sign in again.';
+    if (e === 'no_desc') return 'the job description is missing.';
+    if (e === 'bad_amount') return 'that amount doesn\u2019t look right.';
+    if (e === 'no_customer') return 'no customer name or email to record it against.';
+    if (e === 'busy') return 'the job store was busy \u2014 try again.';
+    return 'server said ' + esc(e || 'nothing');
   }
   function qboErr(r) {
     var e = r && r.error;

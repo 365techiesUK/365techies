@@ -13,6 +13,11 @@ out
 api/vrm-token.php
 api/vrm-cache.json
 api/slack-webhook.php
+api/slack-webhook-jobs.php
+api/pcm-jobs.json
+api/pcm-jobs.json.lock
+api/pcm-jobs.json.*.tmp
+api/pcm-jobs.log
 # Portal messaging: bot token, per-install filename salt, conversations, cron state
 api/pcm-slack-bot.php
 api/pcm-msg-salt.php

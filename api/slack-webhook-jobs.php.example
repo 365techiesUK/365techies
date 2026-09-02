@@ -1,0 +1,19 @@
+<?php
+/*
+ * Copy this file to  api/slack-webhook-jobs.php  ON THE SERVER ONLY and paste
+ * the Incoming Webhook URL for the #daily-jobs-in-jobs-out channel.
+ *
+ * How to get one (2 minutes, Slack admin):
+ *   https://api.slack.com/apps  ->  the "365 techies app"  ->  Incoming Webhooks
+ *   ->  Add New Webhook to Workspace  ->  pick  #daily-jobs-in-jobs-out  ->  Allow
+ *   ->  copy the URL that starts https://hooks.slack.com/services/...
+ *
+ * A webhook is bound to ONE channel. The existing slack-webhook.php posts the
+ * enquiry/SMS/booking firehose to #365-job-tracker; this one carries only the
+ * "Quote agreed" cards - one post per job - so David can reply in each thread.
+ *
+ * The real file is gitignored and .htaccess-denied. Never commit it: the repo
+ * is public. pcm-jobs.php pattern-extracts the URL, so surrounding quotes or
+ * whitespace do not matter.
+ */
+$SLACK_JOBS_WEBHOOK = 'https://hooks.slack.com/services/T000/B000/XXXXXXXXXXXXXXXXXXXXXXXX';
