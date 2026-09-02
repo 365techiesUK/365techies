@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Google tag (gtag.js) - Consent Mode v2: denied by default, granted on cookie-accept.
+       The library itself loads lazily (first interaction, or idle ~4s) so its ~90KB never
+       competes with LCP; calls below queue into dataLayer and replay when it arrives. -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', { ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'denied', wait_for_update: 500 });
+    try { if (localStorage.getItem('tt_consent') === 'accepted') gtag('consent', 'update', { ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted', analytics_storage: 'granted' }); } catch (e) {}
+    gtag('js', new Date());
+    gtag('config', 'G-EBLTJ9WJXZ');
+    (function () {
+      function loadGtagLib() {
+        if (window.__gtagLibLoaded) return; window.__gtagLibLoaded = true;
+        var g = document.createElement('script'); g.async = true;
+        g.src = 'https://www.googletagmanager.com/gtag/js?id=G-EBLTJ9WJXZ';
+        document.head.appendChild(g);
+      }
+      // Load on the first sign of a real person: mousemove/wheel cover desktop
+      // readers who never click, touch/scroll cover mobile. Lab runs (Lighthouse,
+      // PSI) never interact, so gtag stays out of TBT/TTI entirely. The 30s
+      // fallback outlives any lab trace window (a 9s timer landed INSIDE PSI's
+      // observation window and dragged TTI out — TBT 2.5s. Never shorten it).
+      ['pointerdown', 'keydown', 'touchstart', 'scroll', 'mousemove', 'wheel'].forEach(function (evt) {
+        window.addEventListener(evt, loadGtagLib, { once: true, passive: true });
+      });
+      window.addEventListener('load', function () { setTimeout(loadGtagLib, 30000); });
+    })();
+  </script>
+  <title>Bournemouth live map — buses, roads, rivers & flights, in 3D</title>
+  <meta name="description" content="Live buses, flights, road closures, river levels and flood warnings, bike bays and the latest satellite pass over Bournemouth, Christchurch and Poole — every&hellip;" />
+  <link rel="canonical" href="https://365techies.co.uk/bournemouth/live-map/" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <meta name="author" content="365 Techies Limited" />
+  <meta name="geo.region" content="GB-BCP" />
+  <meta name="geo.placename" content="Bournemouth, Dorset" />
+  <meta name="geo.position" content="50.7192;-1.8808" />
+  <meta name="ICBM" content="50.7192, -1.8808" />
+  <meta name="theme-color" content="#070d22" />
+  <meta name="color-scheme" content="dark" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="365 Techies" />
+  <meta property="og:locale" content="en_GB" />
+  <meta property="og:url" content="https://365techies.co.uk/bournemouth/live-map/" />
+  <meta property="og:title" content="Bournemouth, Christchurch & Poole — live, in 3D" />
+  <meta property="og:description" content="Live buses, flights, road closures, river levels and flood warnings, bike bays and the latest satellite pass over Bournemouth, Christchurch and Poole — every layer from a named public feed, free flat map first, 3D on request." />
+  <meta property="og:image" content="/bournemouth/media/og-live-map.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Bournemouth, Christchurch & Poole — live, in 3D" />
+  <meta name="twitter:description" content="Live buses, flights, road closures, river levels and flood warnings, bike bays and the latest satellite pass over Bournemouth, Christchurch and Poole — every layer from a named public feed, free flat map first, 3D on request." />
+  <meta name="twitter:image" content="/bournemouth/media/og-live-map.jpg" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <!-- ?v= bumps past SiteGround's proxy cache. Learned the hard way 2026-08-01:
+       the un-versioned URL was serving a month-old copy (proxy HIT, Last-Modified
+       28 June) because no Cache-Control applied to it. The .htaccess rule now makes
+       these revalidate, but a URL already stuck in the cache stays stuck until its
+       TTL - a new URL is the only immediate escape. BUMP THIS when the manifest changes. -->
+  <link rel="manifest" href="/site.webmanifest?v=2" />
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+  <link rel="preconnect" href="https://fonts.bunny.net" />
+  <link rel="preconnect" href="https://fonts.bunny.net" crossorigin />
+  <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
+  <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
+  <noscript>
+    <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
+  </noscript>
+  <link rel="stylesheet" href="/css/styles.min.css?v=97" />
+  <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
+    or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
+    failed page readable instead of raw giant-serif HTML. */
+  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+  html.css-sos body{max-width:44rem;margin:0 auto;padding:1rem 1.1rem 3rem}
+  html.css-sos a{color:#6cc4f5}
+  html.css-sos svg,html.css-sos img{max-width:100%;max-height:64px;height:auto}
+  html.css-sos .status-ticker,html.css-sos canvas{display:none!important}
+  html.css-sos h1{font-size:1.55rem;line-height:1.25}
+  html.css-sos h2{font-size:1.2rem}
+  html.css-sos nav a,html.css-sos .button{display:inline-block;padding:.4rem .55rem}
+  </style>
+  <script>
+  /* Stylesheet insurance (2026-08-11, owner reported customers seeing raw HTML).
+     A render-blocking <link> means a SLOW stylesheet only delays paint - it cannot
+     produce an unstyled page. Unstyled means the response was UNUSABLE: 404/403, a
+     bot-wall HTML body served for a .css request, a dropped connection, or a copy
+     truncated by a deploy overwriting the file mid-flight (FTPS writes in place).
+     And because .htaccess serves css/js as immutable for a year, one bad copy then
+     STICKS on that machine until the version string changes - which is how a single
+     bad second turned into customers repeatedly seeing an unstyled site.
+     Scripts wait for pending stylesheets, so by the time this runs the sheet has
+     applied or failed. Missing sentinel => make the page readable at once, then
+     re-request the stylesheet with a cache-busting parameter, which bypasses the
+     poisoned cache entry and usually repairs the page before anyone notices.
+     Bounded to 2 attempts per tab. Never reloads the page. */
+  (function () {
+    try {
+      var R = document.documentElement;
+      if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') return;
+      R.className += ' css-sos';
+      var n = 0;
+      try { n = parseInt(sessionStorage.getItem('tt_css_sos') || '0', 10) || 0; } catch (e) {}
+      if (n >= 2) return;
+      try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
+      var l = document.createElement('link');
+      l.rel = 'stylesheet';
+      l.href = '/css/styles.min.css?v=97&sos=' + Date.now();
+      l.onload = function () {
+        if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
+          R.className = R.className.replace(/\s*css-sos/, '');
+        }
+      };
+      document.head.appendChild(l);
+    } catch (e) {}
+  })();
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://365techies.co.uk/#website",
+      "url": "https://365techies.co.uk/",
+      "name": "365 Techies",
+      "alternateName": [
+        "365techies",
+        "365 Techies Ltd"
+      ],
+      "inLanguage": "en-GB",
+      "publisher": {
+        "@id": "https://365techies.co.uk/#business"
+      }
+    },
+    {
+      "@type": [
+        "LocalBusiness",
+        "ProfessionalService"
+      ],
+      "@id": "https://365techies.co.uk/#business",
+      "name": "365 Techies",
+      "legalName": "365 Techies Limited",
+      "url": "https://365techies.co.uk/",
+      "telephone": "+441202775566",
+      "email": "help@365techies.co.uk",
+      "foundingDate": "1995",
+      "image": "https://365techies.co.uk/og-image.jpg",
+      "logo": "https://365techies.co.uk/logo.jpg",
+      "priceRange": "££",
+      "alternateName": [
+        "365 Techies Ltd",
+        "365techies",
+        "365 Computers",
+        "365 Computers Limited"
+      ],
+      "slogan": "The IT support experts",
+      "description": "Family-run, leading Managed Service Provider (MSP) established in 1995 — Dell hardware specialists, Microsoft partners and certified Microsoft Office Specialists. Fully managed monthly IT support, cybersecurity, backups and cloud, plus one-off computer repairs and refurbished Dell hardware, for homes and small businesses across Bournemouth, Poole and Dorset.",
+      "currenciesAccepted": "GBP",
+      "paymentAccepted": "Direct Debit (GoCardless), Bank Transfer, Credit Card, Debit Card",
+      "identifier": {
+        "@type": "PropertyValue",
+        "name": "Company registration number",
+        "value": "11073501"
+      },
+      "memberOf": {
+        "@type": "Organization",
+        "name": "Sustainable Dorset",
+        "url": "https://www.sustainabledorset.org/"
+      },
+      "knowsAbout": [
+        "IT support",
+        "Computer repair",
+        "Laptop repair",
+        "Microsoft 365",
+        "Cybersecurity",
+        "Data backup",
+        "Network security",
+        "Wi-Fi",
+        "Remote support",
+        "Dell hardware",
+        "Dell Latitude laptops",
+        "Dell OptiPlex desktops",
+        "Refurbished computers",
+        "Malwarebytes Premium",
+        "VPN",
+        "Online safety",
+        "Accessible IT support",
+        "IT support for retired people",
+        "IT support for disabled people",
+        "Website design",
+        "Web hosting",
+        "Business email",
+        "Managed service provider",
+        "Managed IT services",
+        "MSP",
+        "New Forest IT support"
+      ],
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Kinson Community Centre, Millhams Road, Kinson",
+        "addressLocality": "Bournemouth",
+        "addressRegion": "Dorset",
+        "postalCode": "BH10 7LH",
+        "addressCountry": "GB"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 50.7192,
+        "longitude": -1.8808
+      },
+      "areaServed": [
+        {
+          "@type": "AdministrativeArea",
+          "name": "Dorset"
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "Bournemouth, Christchurch and Poole"
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "New Forest"
+        }
+      ],
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday"
+        ],
+        "opens": "09:00",
+        "closes": "17:00"
+      },
+      "hasMap": "https://www.google.com/maps/place/?q=place_id:ChIJlTb8YRuic0gRCRczduB8OFI",
+      "sameAs": [
+        "https://www.facebook.com/365computersuk",
+        "https://www.google.com/maps/place/?q=place_id:ChIJlTb8YRuic0gRCRczduB8OFI",
+        "https://find-and-update.company-information.service.gov.uk/company/11073501",
+        "https://www.helpandkindness.co.uk/service/7188/patient-computer-%26-tech-help-for-older-people-in-dorset"
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://365techies.co.uk/bournemouth/live-map/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://365techies.co.uk/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Bournemouth365",
+          "item": "https://365techies.co.uk/bournemouth/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Live map",
+          "item": "https://365techies.co.uk/bournemouth/live-map/"
+        }
+      ]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://365techies.co.uk/bournemouth/live-map/#webpage",
+      "url": "https://365techies.co.uk/bournemouth/live-map/",
+      "name": "Bournemouth live map",
+      "description": "Live buses, flights, road closures, river levels and flood warnings, bike bays and the latest satellite pass over Bournemouth, Christchurch and Poole — every layer from a named public feed, free flat map first, 3D on request.",
+      "inLanguage": "en-GB",
+      "isPartOf": {
+        "@id": "https://365techies.co.uk/#website"
+      },
+      "about": {
+        "@id": "https://365techies.co.uk/#business"
+      },
+      "breadcrumb": {
+        "@id": "https://365techies.co.uk/bournemouth/live-map/#breadcrumb"
+      },
+      "primaryImageOfPage": {
+        "@type": "ImageObject",
+        "url": "https://365techies.co.uk/og-image.jpg"
+      },
+      "dateModified": "2026-09-02"
+    },
+    {
+      "@type": "WebApplication",
+      "@id": "https://365techies.co.uk/bournemouth/live-map/#app",
+      "name": "Bournemouth365 live map",
+      "url": "https://365techies.co.uk/bournemouth/live-map/",
+      "applicationCategory": "MapApplication",
+      "operatingSystem": "Any (web browser)",
+      "isAccessibleForFree": true,
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "GBP"
+      },
+      "publisher": {
+        "@id": "https://365techies.co.uk/#business"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://365techies.co.uk/bournemouth/live-map/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Is the Bournemouth live map really live?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Every layer polls a named public feed while the map is open, and the counts at the top of this page are fetched from the same feeds when the page loads, each with the time its feed last answered. When a feed does not answer, its tile says feed offline and shows no number &mdash; an old value is never shown as a fresh one."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How often does each layer update?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Buses: the feed is re-read every 12 seconds and the map moves them every 15. Flights: every 25 seconds. Road closures: every minute. Flood warnings: every five minutes. River and tide gauges: on the Environment Agency&rsquo;s own cycle of roughly 15 minutes. Bike bays: every three minutes. The satellite scene changes only when Sentinel-2 passes over again, every few days, and we check for a new one every six hours."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why are there no traffic colours on some roads?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Because colouring a road needs measured flow data for that road, and ours comes from TomTom&rsquo;s traffic API. The road geometry itself is OpenStreetMap; where TomTom reports no flow for a road, it stays uncoloured rather than being coloured from a guess. The map&rsquo;s strapline is measured, not modelled, and that applies to traffic too."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why does the 3D city ask before it loads?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Google bills the 3D city per view, so the map opens on the free OpenStreetMap flat map with every live layer working and loads the 3D city only when someone presses the button. There are 30 3D views a day in total; when they are gone the button says so, and the count resets after midnight UTC."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does the map track me?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. There is no account, the map sets no cookies and runs no analytics of its own, and at the time of writing it never asks for your location. It remembers which layers you switched on in your own browser&rsquo;s storage and nowhere else. The live counts on this page come from our own server, which reads the public feeds on your behalf."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Will it work on my phone?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, on a modern phone, but it is a heavy download compared with the rest of Bournemouth365 &mdash; about 1.2 MB of application code plus the CesiumJS engine and then map tiles. Open it on Wi-Fi or good 4G. The flat map is the light version; the 3D city is the part that asks most of an older device."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>
+    /* Motion gate: GSAP + ScrollTrigger are DESKTOP-ONLY. Phones, tablets and
+       reduced-motion users skip the ~90KB download and all the ScrollTrigger
+       layout work (the main mobile TBT cost) — reveals just render visible.
+       main.js boots the animations on the motion-ready event. */
+    (function () {
+      var wantMotion = window.innerWidth >= 920
+        && window.matchMedia('(hover: hover)').matches
+        && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!wantMotion) { document.documentElement.classList.add('no-motion'); return; }
+      function inject(src, onload) {
+        var s = document.createElement('script');
+        s.src = src; s.async = true; s.onload = onload;
+        document.head.appendChild(s);
+      }
+      inject('/js/vendor/gsap-3.12.5-gsap.min.js?v=1', function () {
+        inject('/js/vendor/gsap-3.12.5-ScrollTrigger.min.js?v=1', function () {
+          window.dispatchEvent(new Event('motion-ready'));
+        });
+      });
+    })();
+  </script>
+</head>
+<body id="top">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="grid-overlay" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <header class="site-header">
+    <div class="status-ticker">
+      <div class="status-ticker__track" aria-hidden="true">
+        <span><b class="tk-live" data-tk-live hidden><i class="tk-dot" aria-hidden="true"></i>LIVE&ensp;<span data-tk-live-text></span>&ensp;<em class="tk-sep">//</em>&ensp;</b><a href="tel:+441202775566" tabindex="-1">CALL 01202 775566</a>&ensp;<em class="tk-sep">//</em>&ensp;MON&ndash;FRI 9&ndash;5 &middot; SAME-DAY, USUALLY MINUTES REMOTELY&ensp;<em class="tk-sep">//</em>&ensp;<a href="/pricing/" tabindex="-1">IT SUPPORT PLANS FROM &pound;18.25/MO</a>&ensp;<em class="tk-sep">//</em>&ensp;FAMILY BUSINESS SINCE 1995 &middot; VERIFIED MICROSOFT PARTNER &middot; BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;<em class="tk-sep">//</em>&ensp;<a href="/is-it-down/" tabindex="-1">IS IT DOWN, OR JUST YOU? CHECK LIVE</a>&ensp;<em class="tk-sep">//</em>&ensp;<a href="/sos/" tabindex="-1">SOS REMOTE SUPPORT &mdash; WE&rsquo;LL DO IT TOGETHER</a>&ensp;<em class="tk-sep">//</em>&ensp;<a href="/mobile-signal-check/" tabindex="-1"><b class="tk-new">NEW</b>&thinsp;BOURNEMOUTH MOBILE SIGNAL MAP</a>&ensp;<em class="tk-sep">//</em>&ensp;</span>
+        <span><b class="tk-live" data-tk-live hidden><i class="tk-dot" aria-hidden="true"></i>LIVE&ensp;<span data-tk-live-text></span>&ensp;<em class="tk-sep">//</em>&ensp;</b><a href="tel:+441202775566" tabindex="-1">CALL 01202 775566</a>&ensp;<em class="tk-sep">//</em>&ensp;MON&ndash;FRI 9&ndash;5 &middot; SAME-DAY, USUALLY MINUTES REMOTELY&ensp;<em class="tk-sep">//</em>&ensp;<a href="/pricing/" tabindex="-1">IT SUPPORT PLANS FROM &pound;18.25/MO</a>&ensp;<em class="tk-sep">//</em>&ensp;FAMILY BUSINESS SINCE 1995 &middot; VERIFIED MICROSOFT PARTNER &middot; BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;<em class="tk-sep">//</em>&ensp;<a href="/is-it-down/" tabindex="-1">IS IT DOWN, OR JUST YOU? CHECK LIVE</a>&ensp;<em class="tk-sep">//</em>&ensp;<a href="/sos/" tabindex="-1">SOS REMOTE SUPPORT &mdash; WE&rsquo;LL DO IT TOGETHER</a>&ensp;<em class="tk-sep">//</em>&ensp;<a href="/mobile-signal-check/" tabindex="-1"><b class="tk-new">NEW</b>&thinsp;BOURNEMOUTH MOBILE SIGNAL MAP</a>&ensp;<em class="tk-sep">//</em>&ensp;</span>
+      </div>
+      <button type="button" class="tk-pause" data-tk-pause aria-label="Pause the scrolling strip" aria-pressed="false" title="Pause / play"><svg viewBox="0 0 12 12" width="10" height="10" aria-hidden="true"><rect x="2" y="1.5" width="3" height="9" rx="0.6"/><rect x="7" y="1.5" width="3" height="9" rx="0.6"/></svg></button>
+    </div>
+    <div class="header-bar">
+      <a class="logo" href="/" aria-label="365techies — home">
+        <svg class="logo__mark" viewBox="0 0 32 32" aria-hidden="true">
+          <circle cx="16" cy="16" r="13.4" fill="none" stroke="#8fb3d9" stroke-width="2" stroke-linecap="round" stroke-dasharray="63 22" transform="rotate(-55 16 16)"/>
+          <circle cx="16" cy="16" r="9.4" fill="none" stroke="#1d97e3" stroke-width="2" stroke-linecap="round" stroke-dasharray="46 14" transform="rotate(115 16 16)"/>
+          <path d="M12.4 18.4l3.6-5.8 3.4 5.1z" fill="none" stroke="#8fb3d9" stroke-width="1.2"/>
+          <circle cx="12.4" cy="18.4" r="1.6" fill="#00ce1b"/>
+          <circle cx="16" cy="12.6" r="1.6" fill="#1d97e3"/>
+          <circle cx="19.4" cy="17.7" r="1.6" fill="#1d97e3"/>
+        </svg>
+        <span class="logo__text"><em>365</em>techies</span>
+      </a>
+      <nav class="desktop-nav" aria-label="Primary">
+        <a href="/dell-it-support-dorset/">Dell</a>
+        <div class="nav-item has-dropdown">
+          <a href="/home-it-support-subscriptions/" aria-haspopup="true">For Home
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/home-it-support-subscriptions/">Home IT Support</a>
+            <a href="/home-it-support-plans/">Home Support Plans</a>
+            <a href="/it-support-for-home-workers/">Home Workers</a>
+            <a href="/family-it-support/">Families</a>
+            <a href="/it-support-for-retired-users/">Retired Users</a>
+            <a href="/it-support-for-disabled-people/">Disabled People</a>
+            <a href="/computer-help-for-seniors/">Help for Seniors</a>
+            <a href="/free-courses/">Free Courses</a>
+            <a href="/parents-guide-online-safety/">Parents&rsquo; Online Safety Guide</a>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown">
+          <a href="/business-it-support-subscriptions/" aria-haspopup="true">For Business
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/business-it-support-subscriptions/">Business IT Support</a>
+            <a href="/business-it-support-plans/">Business Support Plans</a>
+            <a href="/small-business-it-support/">Small Businesses</a>
+            <a href="/it-support-for-sole-traders/">Sole Traders</a>
+            <a href="/it-support-for-education/">Schools &amp; Education</a>
+            <a href="/it-support-by-industry/">IT Support by Industry</a>
+            <a href="/business-wifi-installation/">Business WiFi</a>
+            <a href="/business-continuity-internet/">Broadband Emergency Plan</a>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown">
+          <a href="/services/" aria-haspopup="true">Services
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/services/">All Services &#8594;</a>
+            <span class="dropdown__label dropdown__label--sep">Everyday support</span>
+            <a href="/remote-it-support/">Remote IT Support</a>
+            <a href="/computer-repairs/">Computer Repairs</a>
+            <a href="/preventative-maintenance/">Preventative Maintenance</a>
+            <a href="/microsoft-365-support/">Microsoft 365</a>
+            <a href="/cybersecurity-support/">Cybersecurity</a>
+            <a href="/email-support/">Email Support</a>
+            <a href="/printer-support/">Printer Support</a>
+            <a href="/backup-support/">Backup Support</a>
+            <span class="dropdown__label dropdown__label--sep">WiFi &amp; internet</span>
+            <a href="/wifi-support/">Wi-Fi Support</a>
+            <a href="/starlink-internet/">Starlink Internet</a>
+            <a href="/emergency-internet/">365 Emergency Internet</a>
+            <span class="dropdown__label dropdown__label--sep">Computers &amp; hardware</span>
+            <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
+            <a href="/custom-pc-builds/">Custom-Built PCs</a>
+            <span class="dropdown__label dropdown__label--sep">Web, AI &amp; off-grid</span>
+            <a href="/ai/">AI &amp; Automation</a>
+            <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
+            <a href="/web-care/">365 Web Care</a>
+            <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
+            <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
+            <span class="dropdown__label dropdown__label--sep">By sector</span>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown">
+          <a href="/free-tools/" aria-haspopup="true">Free Tools
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/free-tools/">All Free Tools &#8594;</a>
+            <span class="dropdown__label dropdown__label--sep">Test your setup</span>
+            <a href="/broadband-speed-checker/">Broadband Speed Test</a>
+            <a href="/wifi-signal-test/">365 WiFi Optimizer</a>
+            <a href="/van-signal-map/">Bournemouth Signal Map</a>
+            <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
+            <a href="/pc-benchmark/">PC Benchmark</a>
+            <a href="/computer-spec-checker/">PC Hardware Checker</a>
+            <a href="/website-checker/">Website Checker</a>
+            <a href="/is-it-down/">Is It Down? Status Checker</a>
+            <span class="dropdown__label dropdown__label--sep">Stay safe</span>
+            <a href="/email-security-checker/">Email Security Checker</a>
+            <a href="/password-breach-checker/">Password Breach Checker</a>
+            <a href="/link-safety-checker/">Link Safety Checker</a>
+            <a href="/spot-the-scam/">Spot the Scam Quiz</a>
+            <a href="/online-safety-course/">Free Online Safety Course</a>
+            <span class="dropdown__label dropdown__label--sep">Apps &amp; builders</span>
+            <a href="/free-pc-health-check/">Free PC Health Check App</a>
+            <a href="/custom-pc-builder/">Custom PC Builder</a>
+            <a href="/victron-system-builder/">Victron System Builder</a>
+            <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown">
+          <a href="/book-service/" aria-haspopup="true">Get Help
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/contact/">Contact Us &#8594;</a>
+            <span class="dropdown__label dropdown__label--sep">Right now</span>
+            <a href="/remote-support/">Start Remote Support</a>
+            <a href="/emergency-it-help/">Emergency IT Help</a>
+            <a href="/scam-pop-up-help-poole/">Scam Pop-up Help</a>
+            <span class="dropdown__label dropdown__label--sep">Book &amp; pay</span>
+            <a href="/book-service/">Book a Service</a>
+            <a href="/book-a-collection/">Book a Collection</a>
+            <a href="/quick-quote/">Quick Quote</a>
+            <a href="/pay/">Pay Us</a>
+            <span class="dropdown__label dropdown__label--sep">Plans &amp; pricing</span>
+            <a href="/monthly-it-support/">Monthly IT Support</a>
+            <a href="/plan-finder/">Plan Finder</a>
+            <a href="/switching-it-provider/">Switching to Us</a>
+            <span class="dropdown__label dropdown__label--sep">Fix it yourself</span>
+            <a href="/wifi-troubleshooting/">WiFi Troubleshooting</a>
+            <a href="/broadband-down/">Broadband Down? Start Here</a>
+          </div>
+        </div>
+        <a href="/pricing/">Pricing</a>
+        <div class="nav-item has-dropdown">
+          <a href="/about/" aria-haspopup="true">About
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <span class="dropdown__label dropdown__label--sep">Who we are</span>
+            <a href="/about/">About 365 Techies</a>
+            <a href="/meet-the-team/">Meet the Team</a>
+            <a href="/why-choose-365-techies/">Why Choose Us</a>
+            <span class="dropdown__label dropdown__label--sep">Proof</span>
+            <a href="/reviews/">Reviews</a>
+            <a href="/case-studies/">Case Studies</a>
+            <a href="/our-guarantees/">Our Guarantees</a>
+            <a href="/accreditations/">Accreditations</a>
+            <span class="dropdown__label dropdown__label--sep">Where we work</span>
+            <a href="/areas-covered/">Areas Covered</a>
+          </div>
+        </div>
+        <a href="/contact/">Contact</a>
+      </nav>
+      <div class="header-actions">
+        <button type="button" class="nav-search" data-search-open aria-label="Search this website" aria-keyshortcuts="/ Control+K">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <span class="nav-search__label">Search</span>
+          <span class="nav-search__k" aria-hidden="true"><kbd>/</kbd></span>
+        </button>
+        <a href="tel:+441202775566" class="nav-phone" aria-label="Call 365 Techies on 01202 775566">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg><span class="nav-phone__num">01202 775566</span>
+        </a>
+        <a href="/portal/" class="nav-signin" aria-label="Sign in to your 365 customer portal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="nav-signin__t">Sign in</span>
+        </a>
+        <a href="/book-service/" class="nav-book" aria-label="Book a computer service">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v3M17 3v3M4 8h16M5 6h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z"/></svg>Book
+        </a>
+        <a href="/sos/" class="nav-sos" target="_blank" rel="noopener" aria-label="SOS emergency remote support — download Splashtop SOS">
+          <span class="sos-dot" aria-hidden="true"></span>SOS<span class="nav-sos__long">&nbsp;REMOTE SUPPORT</span>
+        </a>
+        <button class="mobile-menu-button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+  <script>
+  /* Header sign-in state. Telling a signed-in customer to "Sign in" reads as broken -
+     and telling a first-time visitor only "Sign in" reads as members-only, hiding the
+     free membership from the people we most want to join. So: signed OUT invites
+     joining (in the drawer, where there is room); signed IN says where the button
+     actually goes. Inline and tiny so it settles before anyone reads the header.
+     Session shapes match the portal: customer = localStorage p365 with a wtoken;
+     staff/view-as = sessionStorage p365s. Never render the person's name here - on a
+     shared computer that would announce who last used it. */
+  (function () {
+    var cust = false, staff = false;
+    try {
+      var a = JSON.parse(localStorage.getItem('p365') || '{}') || {};
+      var b = JSON.parse(sessionStorage.getItem('p365s') || '{}') || {};
+      staff = !!(a.staff || a.stoken || b.staff || b.stoken);
+      cust = !staff && !!a.wtoken;
+    } catch (e) { return; }
+    if (!cust && !staff) return;
+    var label = staff ? 'Staff area' : 'Your portal';
+    var aria = staff ? 'Open the 365 staff area' : 'Go to your 365 portal';
+    var t = document.querySelector('.nav-signin .nav-signin__t');
+    if (t) t.textContent = label;
+    var a2 = document.querySelector('.nav-signin');
+    if (a2) a2.setAttribute('aria-label', aria);
+    var m = document.querySelector('.mobile-menu .m-signin');
+    if (m) m.textContent = label;
+  })();
+  </script>
+
+  <div class="menu-backdrop" aria-hidden="true"></div>
+  <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
+    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <nav class="mobile-menu__nav" aria-label="Mobile">
+      <a href="/">Home</a>
+      <a href="/dell-it-support-dorset/">Dell</a>
+      <a href="/pricing/">Pricing</a>
+      <a href="/contact/">Contact</a>
+      <a href="/portal/" class="m-signin">Sign in or join free</a>
+      <details class="m-group">
+        <summary>For Home</summary>
+        <div class="m-group__links">
+          <a href="/home-it-support-subscriptions/">Home IT Support</a>
+          <a href="/home-it-support-plans/">Home Support Plans</a>
+          <a href="/it-support-for-home-workers/">Home Workers</a>
+          <a href="/family-it-support/">Families</a>
+          <a href="/it-support-for-retired-users/">Retired Users</a>
+          <a href="/it-support-for-disabled-people/">Disabled People</a>
+          <a href="/computer-help-for-seniors/">Help for Seniors</a>
+          <a href="/free-courses/">Free Courses</a>
+          <a href="/parents-guide-online-safety/">Parents&rsquo; Online Safety Guide</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>For Business</summary>
+        <div class="m-group__links">
+          <a href="/business-it-support-subscriptions/">Business IT Support</a>
+          <a href="/business-it-support-plans/">Business Support Plans</a>
+          <a href="/small-business-it-support/">Small Businesses</a>
+          <a href="/it-support-for-sole-traders/">Sole Traders</a>
+          <a href="/it-support-for-education/">Schools &amp; Education</a>
+          <a href="/it-support-by-industry/">IT Support by Industry</a>
+          <a href="/business-wifi-installation/">Business WiFi</a>
+          <a href="/business-continuity-internet/">Broadband Emergency Plan</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>Services</summary>
+        <div class="m-group__links">
+          <a href="/services/">All Services &#8594;</a>
+          <span class="dropdown__label dropdown__label--sep">Everyday support</span>
+          <a href="/remote-it-support/">Remote IT Support</a>
+          <a href="/computer-repairs/">Computer Repairs</a>
+          <a href="/preventative-maintenance/">Preventative Maintenance</a>
+          <a href="/microsoft-365-support/">Microsoft 365</a>
+          <a href="/cybersecurity-support/">Cybersecurity</a>
+          <a href="/email-support/">Email Support</a>
+          <a href="/printer-support/">Printer Support</a>
+          <a href="/backup-support/">Backup Support</a>
+          <span class="dropdown__label dropdown__label--sep">WiFi &amp; internet</span>
+          <a href="/wifi-support/">Wi-Fi Support</a>
+          <a href="/starlink-internet/">Starlink Internet</a>
+          <a href="/emergency-internet/">365 Emergency Internet</a>
+          <span class="dropdown__label dropdown__label--sep">Computers &amp; hardware</span>
+          <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
+          <a href="/custom-pc-builds/">Custom-Built PCs</a>
+          <span class="dropdown__label dropdown__label--sep">Web, AI &amp; off-grid</span>
+          <a href="/ai/">AI &amp; Automation</a>
+          <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
+          <a href="/web-care/">365 Web Care</a>
+          <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
+          <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
+          <span class="dropdown__label dropdown__label--sep">By sector</span>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>Free Tools</summary>
+        <div class="m-group__links">
+          <a href="/free-tools/">All Free Tools &#8594;</a>
+          <span class="dropdown__label dropdown__label--sep">Test your setup</span>
+          <a href="/broadband-speed-checker/">Broadband Speed Test</a>
+          <a href="/wifi-signal-test/">365 WiFi Optimizer</a>
+          <a href="/van-signal-map/">Bournemouth Signal Map</a>
+          <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
+          <a href="/pc-benchmark/">PC Benchmark</a>
+          <a href="/computer-spec-checker/">PC Hardware Checker</a>
+          <a href="/website-checker/">Website Checker</a>
+          <a href="/is-it-down/">Is It Down? Status Checker</a>
+          <span class="dropdown__label dropdown__label--sep">Stay safe</span>
+          <a href="/email-security-checker/">Email Security Checker</a>
+          <a href="/password-breach-checker/">Password Breach Checker</a>
+          <a href="/link-safety-checker/">Link Safety Checker</a>
+          <a href="/spot-the-scam/">Spot the Scam Quiz</a>
+          <a href="/online-safety-course/">Free Online Safety Course</a>
+          <span class="dropdown__label dropdown__label--sep">Apps &amp; builders</span>
+          <a href="/free-pc-health-check/">Free PC Health Check App</a>
+          <a href="/custom-pc-builder/">Custom PC Builder</a>
+          <a href="/victron-system-builder/">Victron System Builder</a>
+          <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>Get Help</summary>
+        <div class="m-group__links">
+          <a href="/contact/">Contact Us &#8594;</a>
+          <span class="dropdown__label dropdown__label--sep">Right now</span>
+          <a href="/remote-support/">Start Remote Support</a>
+          <a href="/emergency-it-help/">Emergency IT Help</a>
+          <a href="/scam-pop-up-help-poole/">Scam Pop-up Help</a>
+          <span class="dropdown__label dropdown__label--sep">Book &amp; pay</span>
+          <a href="/book-service/">Book a Service</a>
+          <a href="/book-a-collection/">Book a Collection</a>
+          <a href="/quick-quote/">Quick Quote</a>
+          <a href="/pay/">Pay Us</a>
+          <span class="dropdown__label dropdown__label--sep">Plans &amp; pricing</span>
+          <a href="/monthly-it-support/">Monthly IT Support</a>
+          <a href="/plan-finder/">Plan Finder</a>
+          <a href="/switching-it-provider/">Switching to Us</a>
+          <span class="dropdown__label dropdown__label--sep">Fix it yourself</span>
+          <a href="/wifi-troubleshooting/">WiFi Troubleshooting</a>
+          <a href="/broadband-down/">Broadband Down? Start Here</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>About &amp; Trust</summary>
+        <div class="m-group__links">
+          <span class="dropdown__label dropdown__label--sep">Who we are</span>
+          <a href="/about/">About 365 Techies</a>
+          <a href="/meet-the-team/">Meet the Team</a>
+          <a href="/why-choose-365-techies/">Why Choose Us</a>
+          <span class="dropdown__label dropdown__label--sep">Proof</span>
+          <a href="/reviews/">Reviews</a>
+          <a href="/case-studies/">Case Studies</a>
+          <a href="/our-guarantees/">Our Guarantees</a>
+          <a href="/accreditations/">Accreditations</a>
+          <span class="dropdown__label dropdown__label--sep">Where we work</span>
+          <a href="/areas-covered/">Areas Covered</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>Resources &amp; Info</summary>
+        <div class="m-group__links">
+          <a href="/resources/">Resources &amp; Guides</a>
+          <a href="/it-advice/">IT Advice</a>
+          <a href="/it-support-cost-guide/">IT Cost Guide</a>
+          <a href="/it-jargon-buster/">IT Jargon Buster</a>
+          <a href="/cybersecurity-checklist/">Cybersecurity Checklist</a>
+          <a href="/cyber-threats/">Cyber Threats Explained</a>
+          <a href="/faqs/">FAQs</a>
+          <a href="/system-status/">System Status</a>
+          <a href="/privacy-policy/">Privacy Policy</a>
+          <a href="/cookie-policy/">Cookie Policy</a>
+          <a href="/terms/">Terms of Service</a>
+          <a href="/accessibility-statement/">Accessibility</a>
+        </div>
+      </details>
+    </nav>
+    <div class="mobile-menu__plans">
+      <a class="button sos" href="/sos/" target="_blank" rel="noopener"><span class="sos-dot" aria-hidden="true"></span>SOS Remote Support</a>
+      <a class="button primary" href="/book-service/">Book a Service</a>
+      <a class="button secondary" href="/home-it-support-plans/">Home Plans</a>
+      <a class="button secondary" href="/business-it-support-plans/">Business Plans</a>
+    </div>
+    <p class="mobile-menu__foot mono"><a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a><br /><a href="tel:+441202775566">01202 775566</a><br /><a href="sms:+447520615332">Text only: 07520 615332</a></p>
+  </aside>
+
+  <main id="main">
+    <section class="page-hero" aria-label="Introduction">
+      <div class="page-hero__inner">
+        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <a href="/bournemouth/">Bournemouth365</a> <span>/</span> <span aria-current="page">Live map</span></nav>
+        <p class="eyebrow mono">// BOURNEMOUTH365</p>
+        <h1>Bournemouth, Christchurch &amp; Poole &mdash; <em class="grad grad--cyan">live, in 3D</em></h1>
+        <p class="lede">Buses, flights, road closures, river levels and flood warnings, bike bays and the latest satellite pass, each drawn from a named public feed onto one map &mdash; free on the flat map, with the 3D city loaded only when you ask for it.</p>
+        <div class="page-hero__cta">
+          <a href="#map" class="button primary button--lg">Open the live map</a>
+          <a href="#layers" class="button secondary button--lg">What you are seeing</a>
+        </div>
+        <ul class="page-hero__chips mono"><li>&#9679; Measured, not modelled</li><li>&#9679; Free flat map, 3D on request</li><li>&#9679; No ads, no paywall</li></ul>
+      </div>
+    </section>
+    <section class="section b365" id="live-now" aria-label="Live counts from the map's feeds">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// THE FEEDS, RIGHT NOW</p>
+          <h2 class="section-title section-title--center" data-title>What the map is reading at this moment<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <p class="b365-sub" data-reveal style="margin:0 0 1rem">These are the same feeds the map itself reads, fetched from our own server when you opened this page. Times are in your local time; hover a time for the exact UTC stamp. A feed that does not answer says so &mdash; nothing here is filled in from memory.</p>
+        <div class="b365-hero" data-stagger>
+          <div class="b365-tile" id="lm-tile-buses">
+            <span class="chip-m" id="lm-buses-chip">MEASURED &middot; DfT BUS OPEN DATA</span>
+            <div class="b365-num" id="lm-buses">&mdash;</div>
+            <p class="b365-sub" id="lm-buses-sub">Buses tracked now across Bournemouth, Christchurch and Poole. Waiting for the feed&hellip; if this stays, the feed is down and we would rather say so than guess.</p>
+            <p class="b365-foot" id="lm-buses-upd">updated &mdash;</p>
+          </div>
+          <div class="b365-tile" id="lm-tile-gauges">
+            <span class="chip-m" id="lm-gauges-chip">MEASURED &middot; ENVIRONMENT AGENCY GAUGES</span>
+            <div class="b365-num" id="lm-gauges">&mdash;</div>
+            <p class="b365-sub" id="lm-gauges-sub">River and tide gauges reporting a reading. Waiting for the feed&hellip;</p>
+            <p class="b365-foot" id="lm-gauges-upd">updated &mdash;</p>
+          </div>
+          <div class="b365-tile" id="lm-tile-warn">
+            <span class="chip-f" id="lm-warn-chip">OFFICIAL STATUS &middot; ENVIRONMENT AGENCY</span>
+            <div class="b365-num" id="lm-warn">&mdash;</div>
+            <p class="b365-sub" id="lm-warn-sub">Flood warnings and alerts in force for the area. <strong>No active warnings is not the same as no flood risk.</strong> Check the Environment Agency&rsquo;s own warnings page before you act on this.</p>
+            <p class="b365-foot" id="lm-warn-upd">updated &mdash;</p>
+          </div>
+          <div class="b365-tile" id="lm-tile-roads">
+            <span class="chip-f" id="lm-roads-chip">OFFICIAL STATUS &middot; NATIONAL HIGHWAYS</span>
+            <div class="b365-num" id="lm-roads">&mdash;</div>
+            <p class="b365-sub" id="lm-roads-sub">Road closures in force on the National Highways network around the conurbation. Waiting for the feed&hellip;</p>
+            <p class="b365-foot" id="lm-roads-upd">updated &mdash;</p>
+          </div>
+          <div class="b365-tile" id="lm-tile-air">
+            <span class="chip-m" id="lm-air-chip">MEASURED &middot; ADS-B VIA ADSB.LOL</span>
+            <div class="b365-num" id="lm-air">&mdash;</div>
+            <p class="b365-sub" id="lm-air-sub">Aircraft transmitting a position within range of the centre of the map. Waiting for the feed&hellip;</p>
+            <p class="b365-foot" id="lm-air-upd">updated &mdash;</p>
+          </div>
+          <div class="b365-tile" id="lm-tile-sat">
+            <span class="chip-f" id="lm-sat-chip">OFFICIAL &middot; COPERNICUS SENTINEL-2</span>
+            <div class="b365-num" id="lm-sat" style="font-size:clamp(1.5rem,4.2vw,2.5rem)">&mdash;</div>
+            <p class="b365-sub" id="lm-sat-sub">The most recent satellite pass over the area and how much of it was cloud. Waiting for the scene metadata&hellip;</p>
+            <p class="b365-foot" id="lm-sat-upd">updated &mdash;</p>
+          </div>
+          <div class="b365-tile b365-tile--dusk" id="lm-tile-tiles">
+            <span class="chip-f" id="lm-tiles-chip">COMPUTED &middot; OUR OWN COUNTER</span>
+            <div class="b365-num" id="lm-tiles">&mdash;<small>of 30</small></div>
+            <p class="b365-sub" id="lm-tiles-sub">3D city views left today. Google bills each one to us, so the 3D city loads only when someone asks for it.</p>
+            <p class="b365-foot" id="lm-tiles-upd">updated &mdash;</p>
+          </div>
+        </div>
+        <p class="b365-foot" data-reveal>Chips: MEASURED is an instrument or transponder reporting; OFFICIAL STATUS is a public body&rsquo;s own published state; COMPUTED is arithmetic we do ourselves. Test hooks for our own checks: <span class="mono">?b365test=stale</span> and <span class="mono">?b365test=down</span> force the stale and offline presentations of real data &mdash; nothing is invented.</p>
+      </div>
+    </section>
+    <section class="section b365" id="map" aria-label="Open the live map">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// THE MAP</p>
+          <h2 class="section-title section-title--center" data-title>Open the Bournemouth365 live map<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="b365-launch" data-reveal>
+          <img src="/bournemouth/media/og-live-map.jpg" width="1200" height="630" loading="lazy" alt="The Bournemouth365 live map on the flat map view, showing Bournemouth town centre and the seafront" />
+          <div>
+            <button type="button" id="b365-map-launch" class="button primary button--lg">Open the live map</button>
+            <p class="b365-launch-note">The map opens right here, on top of this page, and closes with the button at the top or the Escape key. It is a heavier download than the rest of Bournemouth365 &mdash; about 1.2 MB of application code plus the CesiumJS map engine (several MB more) plus the map tiles as you pan &mdash; which is exactly why it loads only when you open it, never on arrival. It opens on the free OpenStreetMap flat map with every live layer working; the 3D city is a separate button inside the map.</p>
+            <p class="b365-launch-note">No JavaScript? <a href="/bournemouth/live-map/app/">Open the map app directly</a> instead.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="wrap">
+        <div class="prose" data-reveal>
+          <h2 id="layers">What you are seeing</h2>
+          <p>Every layer on the Bournemouth365 live map is a named public feed drawn where it says it is. Nothing is modelled, interpolated or guessed; where a feed goes quiet the layer says so instead of holding its last value.</p>
+          <p><strong>Buses.</strong> Vehicle positions from the Department for Transport&rsquo;s Bus Open Data Service &mdash; the same feed the operators publish for their own apps. Our server re-reads it every 12 seconds and the map moves the buses every 15. A bus that stops reporting is dropped after four minutes rather than left parked on the map.</p>
+          <p><strong>Flights.</strong> Aircraft transmitting ADS-B, received by the adsb.lol community network and read every 25 seconds. It is what is being received, not the airport&rsquo;s schedule: an aircraft nobody is receiving is not on the map.</p>
+          <p><strong>Road closures and planned works.</strong> National Highways&rsquo; own feeds for its network, read every minute. This covers the trunk roads (the A31, A338 and A35 corridors), not every council-managed street; a closure BCP Council runs on a seafront road is not in this feed.</p>
+          <p><strong>Traffic.</strong> The road geometry is OpenStreetMap. Colouring a road with live congestion needs measured flow data &mdash; ours is TomTom&rsquo;s traffic flow, credited on the map whenever it is drawn &mdash; and a road we have no measured flow for is left uncoloured, never coloured from a guess.</p>
+          <p><strong>River levels and flood warnings.</strong> The Environment Agency&rsquo;s real-time data API: river and tide gauges on the Stour, Avon and the harbour report on roughly a 15-minute cycle, and flood alerts and warnings are re-read every five minutes. <strong>No active warnings is not the same as no flood risk.</strong></p>
+          <p><strong>Bike bays.</strong> The Beryl BCP scheme&rsquo;s public GBFS feed &mdash; bay locations and how many bikes are docked, read every three minutes.</p>
+          <p><strong>The latest satellite pass.</strong> The most recent Sentinel-2 scene over the area from the Copernicus Data Space Ecosystem, with its capture date and cloud cover. Sentinel-2 revisits every few days, and our server checks for a new scene every six hours &mdash; so this layer is days old by design, and its date says so.</p>
+          <p><strong>Mobile signal.</strong> 365 Techies&rsquo; own measured readings, logged by our van as it drives the conurbation &mdash; the dataset behind the <a href="/van-signal-map/">mobile signal map</a>. It is one van and one instrument, published under CC BY 4.0; it is not an operator coverage map and it compares no operators.</p>
+          <p><strong>The 3D city.</strong> Google&rsquo;s Photorealistic 3D Tiles, loaded only when you press the 3D button inside the map &mdash; see below for why.</p>
+
+          <h2 id="sources">Where the data comes from</h2>
+          <p>Each feed keeps its own licence, and several require particular wording. The wording below is copied exactly from the map&rsquo;s own credits.</p>
+          <table>
+            <thead><tr><th>Source</th><th>What it supplies</th><th>Licence</th><th>Attribution, as required</th></tr></thead>
+            <tbody>
+            <tr><td><a href="https://www.bus-data.dft.gov.uk/" target="_blank" rel="noopener">DfT Bus Open Data Service</a></td><td>Live bus positions</td><td><a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" target="_blank" rel="noopener">Open Government Licence v3.0</a></td><td>Contains public sector information licensed under the Open Government Licence v3.0</td></tr>
+            <tr><td><a href="https://environment.data.gov.uk/flood-monitoring/doc/reference" target="_blank" rel="noopener">Environment Agency real-time data API (Beta)</a></td><td>River levels, tide gauges, flood warnings</td><td><a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" target="_blank" rel="noopener">Open Government Licence v3.0</a></td><td>Dorset water &amp; flood data: uses Environment Agency flood and river level data from the real-time data API (Beta) &mdash; &copy; Environment Agency, Open Government Licence v3.0</td></tr>
+            <tr><td><a href="https://developer.data.nationalhighways.co.uk/" target="_blank" rel="noopener">National Highways Transport Data Feeds</a></td><td>Road closures (DATEX II) and planned works</td><td>National Highways developer-portal terms (OGL-based); the wording is a condition of use</td><td>Powered by National Highways&#39; Transport Data Feeds. Planned works: &copy; National Highways &mdash; Contains public sector information licensed under the Open Government Licence v3.0</td></tr>
+            <tr><td><a href="https://beryl.cc" target="_blank" rel="noopener">Beryl</a> BCP GBFS feed</td><td>Bike hire bays and availability</td><td><a href="https://cdla.dev/permissive-2-0/" target="_blank" rel="noopener">CDLA-Permissive-2.0</a></td><td>Beryl BCP scheme GBFS feed (CDLA-Permissive-2.0)</td></tr>
+            <tr><td><a href="https://adsb.lol" target="_blank" rel="noopener">adsb.lol</a></td><td>Flights and aircraft traces (ADS-B)</td><td>ODbL 1.0</td><td>adsb.lol (ODbL 1.0)</td></tr>
+            <tr><td><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a></td><td>The free flat basemap, and the road geometry the traffic layer draws on</td><td>ODbL 1.0 and the OSMF tile usage policy</td><td>&copy; OpenStreetMap contributors (ODbL 1.0) &mdash; shown on screen while the tiles show</td></tr>
+            <tr><td><a href="https://www.tomtom.com" target="_blank" rel="noopener">TomTom</a> Traffic API</td><td>Live congestion colouring, only on roads where flow is measured</td><td><a href="https://developer.tomtom.com/" target="_blank" rel="noopener">TomTom for Developers</a> terms (commercial use permitted)</td><td>Traffic flow data &copy; TomTom &mdash; in the map&rsquo;s credits whenever live flow is drawn</td></tr>
+            <tr><td><a href="https://dataspace.copernicus.eu/" target="_blank" rel="noopener">Copernicus Sentinel-2 L2A</a> via the Copernicus Data Space Ecosystem</td><td>The latest satellite pass</td><td><a href="https://sentinels.copernicus.eu/documents/247904/690755/Sentinel_Data_Legal_Notice" target="_blank" rel="noopener">Copernicus Sentinel Data Legal Notice</a></td><td>Contains modified Copernicus Sentinel data [Year] &mdash; [Year] is the year the scene was captured, filled in when the scene metadata arrives</td></tr>
+            <tr><td><a href="https://developers.google.com/maps/documentation/tile/policies" target="_blank" rel="noopener">Google Photorealistic 3D Tiles</a></td><td>The 3D city, only after you press the 3D button</td><td>Google Maps Platform terms</td><td>Google&rsquo;s own attribution, rendered on screen by the map&rsquo;s credit line while 3D is showing</td></tr>
+            <tr><td><a href="/van-signal-map/">365 Techies mobile-signal readings</a></td><td>Mobile signal &mdash; our own measured readings, logged by our van</td><td><a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a></td><td>365 Techies mobile-signal readings (CC BY 4.0) &mdash; our own measurements, not an operator&rsquo;s coverage map</td></tr>
+            <tr><td>Software</td><td>The map application and its engine</td><td>God&rsquo;s Eye View (MIT) on CesiumJS (Apache-2.0)</td><td>Software: built on God&#39;s Eye View &copy; 2026 Bilawal Sidhu (MIT); CesiumJS (Apache-2.0) and other open-source components &mdash; <a href="/bournemouth/live-map/app/THIRD-PARTY-NOTICES.txt" target="_blank" rel="noopener">third-party notices</a></td></tr>
+            </tbody>
+          </table>
+
+          <h2 id="why3d">Why 3D asks first</h2>
+          <p>Google bills the 3D city per view. The map therefore opens on the free OpenStreetMap flat map with every live layer already working, and the 3D city loads only when someone asks for it. There are 30 3D views a day across everyone who visits; the counter at the top of this page shows how many are left, and when they are gone the 3D button inside the map says so and comes back after midnight UTC. Nothing else on the map is metered.</p>
+
+          <h2 id="phone">Works on a phone, but</h2>
+          <p>The map is a heavier download than the rest of Bournemouth365: about 1.2 MB of application code, the CesiumJS engine at several MB more, and then map tiles as you move around. It runs on a modern phone, and the flat map is the light version &mdash; but open it on Wi-Fi or good 4G rather than on a thin signal on the beach, and expect the 3D city to be the part that asks most of an older device. The rest of this page, including the live counts at the top, is as light as every other Bournemouth365 page.</p>
+        </div>
+      </div>
+    </section>
+    <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
+      <div class="wrap">
+        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
+        <div class="faq-wrap">
+        <details class="faq" data-reveal>
+          <summary>Is the Bournemouth live map really live?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Yes. Every layer polls a named public feed while the map is open, and the counts at the top of this page are fetched from the same feeds when the page loads, each with the time its feed last answered. When a feed does not answer, its tile says feed offline and shows no number &mdash; an old value is never shown as a fresh one.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>How often does each layer update?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Buses: the feed is re-read every 12 seconds and the map moves them every 15. Flights: every 25 seconds. Road closures: every minute. Flood warnings: every five minutes. River and tide gauges: on the Environment Agency&rsquo;s own cycle of roughly 15 minutes. Bike bays: every three minutes. The satellite scene changes only when Sentinel-2 passes over again, every few days, and we check for a new one every six hours.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Why are there no traffic colours on some roads?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Because colouring a road needs measured flow data for that road, and ours comes from TomTom&rsquo;s traffic API. The road geometry itself is OpenStreetMap; where TomTom reports no flow for a road, it stays uncoloured rather than being coloured from a guess. The map&rsquo;s strapline is measured, not modelled, and that applies to traffic too.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Why does the 3D city ask before it loads?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Google bills the 3D city per view, so the map opens on the free OpenStreetMap flat map with every live layer working and loads the 3D city only when someone presses the button. There are 30 3D views a day in total; when they are gone the button says so, and the count resets after midnight UTC.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Does the map track me?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>No. There is no account, the map sets no cookies and runs no analytics of its own, and at the time of writing it never asks for your location. It remembers which layers you switched on in your own browser&rsquo;s storage and nowhere else. The live counts on this page come from our own server, which reads the public feeds on your behalf.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Will it work on my phone?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Yes, on a modern phone, but it is a heavy download compared with the rest of Bournemouth365 &mdash; about 1.2 MB of application code plus the CesiumJS engine and then map tiles. Open it on Wi-Fi or good 4G. The flat map is the light version; the 3D city is the part that asks most of an older device.</p></div>
+        </details>
+        </div>
+      </div>
+    </section>
+    <section class="section" aria-label="About Bournemouth365">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// BOURNEMOUTH365</p>
+          <h2 class="section-title section-title--center" data-title>Bournemouth, 365 days a year<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="prose" data-reveal>
+          <p>Bournemouth365 is the web home of our <a href="https://www.facebook.com/bournemouth365" target="_blank" rel="noopener">Bournemouth Live Facebook page</a>, where 39,000 of you watch the seafront with us every day. More pages are on the way: live sea conditions measured at the Boscombe wave buoy, an honest local guide to parking for the beach, and the best sunrise and sunset spots &mdash; photographed by us, not stock.</p>
+          <p class="mono" style="margin-bottom:.6rem"><a href="/bournemouth/">Bournemouth365 home</a> &middot; <a href="/bournemouth/live-map/">Live map</a> &middot; <a href="/bournemouth/sea-today/">The sea right now</a> &middot; <a href="/bournemouth/fireworks/">Friday fireworks</a> &middot; <a href="/bournemouth/sunrise-sunset/">Sunrise &amp; sunset</a> &middot; <a href="/bournemouth/beach-parking/">Beach parking</a> &middot; <a href="/van-signal-map/">Mobile signal map</a></p>
+          <p class="mono">Built in Bournemouth by <a href="/">365 Techies</a> &mdash; the family firm that has looked after the town&rsquo;s computers since 1995.</p>
+          <p class="b365-foot">No ads. No paywall. No consent wall. Built to load fast on beach 4G.</p>
+        </div>
+      </div>
+    </section>
+      <script>
+      (function () {
+        var Q = location.search;
+        var TEST_STALE = Q.indexOf('b365test=stale') > -1, TEST_DOWN = Q.indexOf('b365test=down') > -1;
+        function el(id) { return document.getElementById(id); }
+        function hhmm(iso) { var d = new Date(iso); return isNaN(d.getTime()) ? '' : d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
+        function dmy(iso) { var d = new Date(iso); return isNaN(d.getTime()) ? '' : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); }
+        function setChip(id, kind, txt) { var e = el(id); if (e) { e.className = kind; e.textContent = txt; } }
+        function state(id, cls) {
+          var e = el('lm-tile-' + id);
+          if (e) { e.classList.remove('b365-fresh', 'b365-stale', 'b365-down'); if (cls) e.classList.add(cls); }
+        }
+        function num(id, html) { var e = el('lm-' + id); if (e) e.innerHTML = html; }
+        function sub(id, txt) { var e = el('lm-' + id + '-sub'); if (e) e.textContent = txt; }
+        function upd(id, label, iso) {
+          var e = el('lm-' + id + '-upd'); if (!e) return;
+          if (iso && hhmm(iso)) { e.textContent = label + ' ' + hhmm(iso); e.title = iso; }
+          else { e.textContent = label; e.removeAttribute('title'); }
+        }
+        var NOW_ISO = new Date().toISOString();
+        function down(id, chipId, kind, label, d) {
+          // ok:false, a failed fetch or an unusable reply: the degraded state.
+          // No number, and never the last number dressed as a fresh one.
+          state(id, 'b365-down');
+          setChip(chipId, kind, label + ' \u00b7 FEED OFFLINE');
+          num(id, '&#8212;&#8212;');
+          if (d && d.generated) upd(id, 'feed offline since', d.generated);
+          else upd(id, 'feed offline \u2014 no reply at', NOW_ISO);
+          if (d && d.reason) sub(id, String(d.reason));
+        }
+        function paint(id, chipId, kind, label, d, freshMs, fn) {
+          if (TEST_DOWN) d = { ok: false, reason: 'TEST \u2014 forced offline presentation; nothing here is invented.' };
+          if (!d || !d.ok) { down(id, chipId, kind, label, d); return; }
+          if (TEST_STALE) { d.stale = true; d.reason = d.reason || 'TEST \u2014 forced stale presentation of real data.'; }
+          var age = d.generated ? Date.now() - new Date(d.generated).getTime() : Infinity;
+          if (d.stale) {
+            state(id, 'b365-stale');
+            setChip(chipId, kind, label + ' \u00b7 STALE');
+            upd(id, 'last heard', d.generated);
+          } else {
+            // the pulse only on data younger than its fresh window (house rule)
+            state(id, age <= freshMs ? 'b365-fresh' : '');
+            setChip(chipId, kind, label);
+            upd(id, 'updated', d.generated);
+          }
+          try { fn(d); } catch (e) { /* the baked copy stays */ }
+          if (d.stale && d.reason) sub(id, 'Stale: ' + d.reason);
+        }
+        function get(url) {
+          return fetch(url, { credentials: 'omit', cache: 'no-store' })
+            .then(function (r) { return r.json(); })
+            .catch(function () { return null; });
+        }
+        var urls = ['/api/dorset-buses.php', '/api/dorset-water.php', '/api/dorset-floods.php', '/api/dorset-roads.php',
+                    '/api/dorset-flights.php', '/api/dorset-satellite.php?meta=1', '/api/dorset-tiles.php?status=1'];
+        Promise.all(urls.map(get)).then(function (r) {
+          paint('buses', 'lm-buses-chip', 'chip-m', 'MEASURED \u00b7 DfT BUS OPEN DATA', r[0], 60000, function (d) {
+            num('buses', String(d.count));
+            sub('buses', 'Buses reporting a position across Bournemouth, Christchurch and Poole. Our server re-reads the feed every 12 seconds; the map moves them every 15.');
+          });
+          paint('gauges', 'lm-gauges-chip', 'chip-m', 'MEASURED \u00b7 ENVIRONMENT AGENCY GAUGES', r[1], 30 * 60000, function (d) {
+            num('gauges', String(d.withValues) + '<small>of ' + d.count + '</small>');
+            sub('gauges', 'River and tide gauges in the area with a reading; the Environment Agency publishes on roughly a 15-minute cycle.');
+          });
+          paint('warn', 'lm-warn-chip', 'chip-f', 'OFFICIAL STATUS \u00b7 ENVIRONMENT AGENCY', r[2], 10 * 60000, function (d) {
+            var n = (d.inForce !== undefined && d.inForce !== null) ? d.inForce : d.count;
+            num('warn', String(n));
+          });
+          paint('roads', 'lm-roads-chip', 'chip-f', 'OFFICIAL STATUS \u00b7 NATIONAL HIGHWAYS', r[3], 2 * 60000, function (d) {
+            num('roads', String(d.count));
+            sub('roads', 'Closures in force on the National Highways network around the conurbation, read every minute. Council-run street closures are not in this feed.');
+          });
+          paint('air', 'lm-air-chip', 'chip-m', 'MEASURED \u00b7 ADS-B VIA ADSB.LOL', r[4], 60000, function (d) {
+            num('air', String(d.count));
+            sub('air', 'Aircraft transmitting ADS-B within ' + d.radiusNm + ' nautical miles of the centre of the map \u2014 what is being received, not a schedule.');
+          });
+          paint('sat', 'lm-sat-chip', 'chip-f', 'OFFICIAL \u00b7 COPERNICUS SENTINEL-2', r[5], 12 * 3600000, function (d) {
+            if (d.captured) {
+              num('sat', dmy(d.captured));
+              var cc = (d.cloudCover !== undefined && d.cloudCover !== null) ? Math.round(d.cloudCover) + '% cloud cover' : 'cloud cover not reported';
+              sub('sat', 'Most recent Sentinel-2 scene over the area, captured ' + hhmm(d.captured) + ' on that date \u2014 ' + cc + '. Contains modified Copernicus Sentinel data ' + new Date(d.captured).getUTCFullYear() + '.');
+            } else {
+              num('sat', 'date unavailable');
+              sub('sat', d.capturedReason ? String(d.capturedReason) : 'The scene metadata carries no capture date.');
+            }
+          });
+          paint('tiles', 'lm-tiles-chip', 'chip-f', 'COMPUTED \u00b7 OUR OWN COUNTER', r[6], 60000, function (d) {
+            num('tiles', String(d.remaining) + '<small>of 30</small>');
+            sub('tiles', d.remaining > 0
+              ? '3D city views left today. Google bills each one to us, so the 3D city loads only when someone asks for it.'
+              : 'None left today. The 3D button inside the map says so, and the counter comes back after midnight UTC' + (d.resetsAt && hhmm(d.resetsAt) ? ' (' + hhmm(d.resetsAt) + ' your time)' : '') + '.');
+          });
+        });
+      })();
+      </script>
+      <script>
+      (function () {
+        // The launcher. The app frame is created here, on click, and removed
+        // on close - it is never part of the page as served, so the address
+        // bar stays on this URL and first paint costs nothing.
+        var btn = document.getElementById('b365-map-launch');
+        if (!btn) return;
+        var ov = null, lastFocus = null;
+        function onKey(e) { if (e.key === 'Escape') close(); }
+        function close() {
+          if (!ov) return;
+          ov.parentNode.removeChild(ov); ov = null;
+          document.body.classList.remove('b365-mapov-open');
+          document.removeEventListener('keydown', onKey);
+          if (location.hash === '#map') history.replaceState(null, '', location.pathname + location.search);
+          if (lastFocus && lastFocus.focus) lastFocus.focus();
+        }
+        function open() {
+          if (ov) return;
+          lastFocus = document.activeElement;
+          ov = document.createElement('div');
+          ov.className = 'b365-mapov';
+          ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-label', 'Bournemouth365 live map');
+          var bar = document.createElement('div'); bar.className = 'b365-mapov__bar';
+          var brand = document.createElement('span'); brand.textContent = 'Bournemouth365 live map';
+          var back = document.createElement('button'); back.type = 'button'; back.textContent = 'Back to the page'; back.title = 'Close the map (Esc)';
+          back.addEventListener('click', close);
+          bar.appendChild(brand); bar.appendChild(back);
+          var fr = document.createElement('iframe');
+          fr.className = 'b365-mapov__frame';
+          fr.src = '/bournemouth/live-map/app/';
+          fr.title = 'Bournemouth365 live map';
+          fr.setAttribute('allow', 'fullscreen');   // the map never asks for your location; the FAQ says so, so the frame cannot either
+          fr.setAttribute('loading', 'eager');
+          fr.style.cssText = 'width:100%;height:100%;border:0';
+          ov.appendChild(bar); ov.appendChild(fr);
+          document.body.appendChild(ov);
+          document.body.classList.add('b365-mapov-open');
+          document.addEventListener('keydown', onKey);
+          back.focus();
+        }
+        btn.addEventListener('click', open);
+        function auto() { if (location.hash === '#map' || /[?&]map=1(&|$)/.test(location.search)) open(); }
+        window.addEventListener('hashchange', function () { if (location.hash === '#map') open(); });
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', auto); else auto();
+      })();
+      </script>
+  </main>
+  <footer class="site-footer">
+    <div class="footer-areas">
+      <p class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</p>
+      <nav class="footer-areas__links" aria-label="Areas we cover">
+        <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
+        <a href="/it-support-bournemouth/">Bournemouth</a>
+        <a href="/it-support-poole/">Poole</a>
+        <a href="/it-support-christchurch/">Christchurch</a>
+        <a href="/it-support-ferndown/">Ferndown</a>
+        <a href="/it-support-wimborne/">Wimborne</a>
+        <a href="/it-support-broadstone/">Broadstone</a>
+        <a href="/it-support-verwood/">Verwood</a>
+        <a href="/it-support-ringwood/">Ringwood</a>
+        <a href="/it-support-wareham/">Wareham</a>
+        <a href="/it-support-swanage/">Swanage</a>
+        <a href="/it-support-weymouth/">Weymouth</a>
+        <a href="/it-support-dorchester/">Dorchester</a>
+        <a href="/it-support-blandford-forum/">Blandford Forum</a>
+        <a href="/it-support-shaftesbury/">Shaftesbury</a>
+        <a href="/it-support-gillingham/">Gillingham</a>
+        <a href="/it-support-sherborne/">Sherborne</a>
+        <a href="/it-support-new-forest/">New Forest</a>
+        <a href="/it-support-lymington/">Lymington</a>
+        <a href="/it-support-new-milton/">New Milton</a>
+        <a href="/it-support-brockenhurst/">Brockenhurst</a>
+        <a href="/it-support-southampton/">Southampton</a>
+        <a class="footer-areas__all" href="/areas-covered/">View all areas &#8594;</a>
+      </nav>
+    </div>
+    <div class="site-footer__grid">
+      <div class="site-footer__brand">
+        <a class="logo" href="/">
+          <svg class="logo__mark" viewBox="0 0 32 32" aria-hidden="true">
+            <circle cx="16" cy="16" r="13.4" fill="none" stroke="#8fb3d9" stroke-width="2" stroke-linecap="round" stroke-dasharray="63 22" transform="rotate(-55 16 16)"/>
+            <circle cx="16" cy="16" r="9.4" fill="none" stroke="#1d97e3" stroke-width="2" stroke-linecap="round" stroke-dasharray="46 14" transform="rotate(115 16 16)"/>
+            <path d="M12.4 18.4l3.6-5.8 3.4 5.1z" fill="none" stroke="#8fb3d9" stroke-width="1.2"/>
+            <circle cx="12.4" cy="18.4" r="1.6" fill="#00ce1b"/>
+            <circle cx="16" cy="12.6" r="1.6" fill="#1d97e3"/>
+            <circle cx="19.4" cy="17.7" r="1.6" fill="#1d97e3"/>
+          </svg>
+          <span class="logo__text"><em>365</em>techies</span>
+        </a>
+        <p>The IT support experts. A family-run business established in 1995 — Dell hardware specialists, Microsoft partners and certified Microsoft Office Specialists, providing monthly IT support for homes and businesses across Bournemouth, Poole and Dorset.</p>
+        <div class="partner-badges" aria-label="Accreditations">
+          <span class="partner-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="8" r="5"/><path d="M8.5 12.5 7 21l5-2.5L17 21l-1.5-8.5"/></svg>Family Business &middot; Est. 1995</span>
+          <span class="partner-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 18h18M9 22h6"/></svg>Dell Specialist</span>
+          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>Microsoft Partner</span>
+          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>Microsoft Office Specialist</span>
+          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>Malwarebytes Partner</span>
+          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/></svg>NVIDIA &amp; Scan Partner</span>
+          <a class="partner-badge partner-badge--gold" href="https://www.google.com/maps?cid=5924622613303465737" target="_blank" rel="noopener" title="See our 4.9-star reviews on Google"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.5 1.6 6.7L12 17l-6.2 3.6 1.6-6.7L2.2 8.9l6.9-.6z"/></svg>4.9 on Google</a>
+          <a class="partner-badge partner-badge--green" href="/sustainability/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 20c0-9 7-16 16-16 0 9-7 16-16 16z"/><path d="M4 20C9 15 13 11 18 9"/></svg>Sustainable Dorset Member</a>
+          <a class="partner-badge partner-badge--green" href="/help-in-dorset/" title="Patient computer &amp; tech help for older people — listed on Dorset's community help directory"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 21C8 17 3 13.5 3 8.8 3 6 5.2 4 7.8 4c1.7 0 3.2.9 4.2 2.4C13 4.9 14.5 4 16.2 4 18.8 4 21 6 21 8.8c0 4.7-5 8.2-9 12.2z"/></svg>Listed on #HelpAndKindness</a>
+        </div>
+      </div>
+      <nav aria-label="Support links">
+        <p class="site-footer__head mono">SUPPORT</p>
+        <a href="/join/">Join the 365 Club &mdash; Free</a>
+        <a href="/book-service/">Book a Service</a>
+        <a href="/book-a-collection/">Book a Collection</a>
+        <a href="/pay/">Pay Us</a>
+        <a href="/remote-support/">Start Remote Support</a>
+        <a href="/emergency-it-help/">Emergency IT Help</a>
+        <a href="/ive-been-scammed-what-to-do/">I&rsquo;ve Been Scammed</a>
+        <a href="/i-think-ive-been-hacked/">If You&rsquo;ve Been Hacked</a>
+        <a href="/scam-pop-up-help-poole/">Scam Pop-up Help (Poole)</a>
+        <a href="/virus-removal-christchurch/">Virus Removal (Christchurch)</a>
+        <a href="/outlook-problems/">Outlook Problems &amp; Fixes</a>
+        <a href="/is-it-down/">Is Something Down?</a>
+        <a href="/support-portal/">Support Portal</a>
+        <a href="/splashtop-business-guide/">Remote Access Guide</a>
+        <a href="/dell-latitude-3520-guide/">Dell Laptop Guide</a>
+            <a href="/dell-latitude-5000-guide/">Latitude 5000 Guide</a>
+            <a href="/dell-latitude-7000-guide/">Latitude 7000 Guide</a>
+        <a href="/dell-optiplex-guide/">Dell Desktop Guide</a>
+        <a href="/heatwave-tech-guide/">Heatwave Tech Guide</a>
+            <a href="/why-computer-prices-have-gone-up/">Why Prices Went Up</a>
+        <a href="/monthly-it-support/">Monthly IT Support</a>
+        <a href="/home-it-support-subscriptions/">Home IT Support</a>
+        <a href="/business-it-support-subscriptions/">Business IT Support</a>
+        <a href="/computer-repairs/">Computer Repairs</a>
+        <a href="/switching-it-provider/">Switching to Us</a>
+        <a href="/pricing/">Pricing</a>
+        <a href="/quick-quote/">Quick Quote</a>
+        <a href="/free-it-health-check/">Free IT Health Check</a>
+      </nav>
+      <nav aria-label="Free tools links">
+        <p class="site-footer__head mono">FREE TOOLS</p>
+        <a href="/free-courses/">Free Courses</a>
+        <a href="/free-tools/">All Free Tools &#8594;</a>
+        <a href="/free-pc-health-check/">Free PC Health Check App</a>
+        <a href="/online-safety-course/">Free Online Safety Course</a>
+        <a href="/broadband-speed-checker/">Broadband Speed Test</a>
+        <a href="/wifi-signal-test/">365 WiFi Optimizer</a>
+        <a href="/van-signal-map/">Bournemouth Signal Map</a>
+        <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
+        <a href="/pc-benchmark/">PC Benchmark</a>
+        <a href="/website-checker/">Website Checker</a>
+        <a href="/email-security-checker/">Email Security Checker</a>
+        <a href="/password-breach-checker/">Password Breach Checker</a>
+        <a href="/link-safety-checker/">Link Safety Checker</a>
+        <a href="/password-generator/">Password Generator</a>
+        <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
+        <a href="/custom-pc-builder/">Custom PC Builder</a>
+        <a href="/victron-system-builder/">Victron System Builder</a>
+        <a href="/solar-battery-calculator/">Battery &amp; Solar Calculator</a>
+        <a href="/cost-calculator/">Cost Calculator</a>
+        <a href="/plan-finder/">Plan Finder</a>
+        <a href="/spot-the-scam/">Spot the Scam Quiz</a>
+        <a href="/is-it-down/">Is It Down? Status Checker</a>
+        <a href="/computer-spec-checker/">PC Hardware Checker</a>
+      </nav>
+      <nav aria-label="Services links">
+        <p class="site-footer__head mono">SERVICES</p>
+        <a href="/services/">All Services</a>
+        <a href="/it-support-by-industry/">IT Support by Industry</a>
+        <p class="site-footer__subhead mono">Support &amp; security</p>
+        <a href="/preventative-maintenance/">Preventative Maintenance</a>
+        <a href="/remote-it-support/">Remote IT Support</a>
+        <a href="/microsoft-365-support/">Microsoft 365</a>
+        <a href="/cybersecurity-support/">Cybersecurity</a>
+        <a href="/malwarebytes-premium/">Malwarebytes Premium &amp; VPN</a>
+        <a href="/disaster-recovery/">Disaster Recovery</a>
+        <a href="/gdpr-it-compliance/">GDPR &amp; IT Compliance</a>
+        <a href="/windows-11-support/">Windows 11</a>
+        <a href="/windows-10-end-of-life/">Windows 10 End of Life</a>
+        <a href="/email-support/">Email Support</a>
+        <a href="/wifi-support/">Wi-Fi Support</a>
+        <a href="/printer-support/">Printer Support</a>
+        <a href="/backup-support/">Backup Support</a>
+        <p class="site-footer__subhead mono">Hardware &amp; setup</p>
+        <a href="/new-computer-setup/">New Computer Setup</a>
+        <a href="/new-laptop-set-up-bournemouth/">New Laptop Set Up for You</a>
+        <a href="/transfer-photos-to-a-new-computer-bournemouth/">Transfer Files to a New PC</a>
+        <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
+        <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
+            <a href="/refurbished-dell-latitude-3000/">Latitude 3000 Series</a>
+            <a href="/refurbished-dell-latitude-5000/">Latitude 5000 Series</a>
+            <a href="/refurbished-dell-latitude-7000/">Latitude 7000 Series</a>
+            <a href="/refurbished-dell-optiplex-3000/">OptiPlex 3000 Tier</a>
+            <a href="/refurbished-dell-optiplex-5000/">OptiPlex 5000 Tier</a>
+            <a href="/refurbished-dell-optiplex-7000/">OptiPlex 7000 Tier</a>
+        <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
+        <a href="/dell-support-bournemouth/">Dell Support Bournemouth</a>
+        <a href="/dell-support-poole/">Dell Support Poole</a>
+        <a href="/refurbished-dell-laptops-bournemouth/">Refurbished Dell Laptops</a>
+        <a href="/second-hand-office-computers-poole/">Refurbished Office Computers</a>
+        <a href="/custom-pc-builds/">Custom-Built PCs</a>
+        <a href="/threadripper-workstations/">Threadripper Workstations</a>
+        <a href="/gaming-pcs/">Gaming PCs</a>
+        <a href="/content-creator-pcs/">Content Creator PCs</a>
+        <a href="/home-cinema-entertainment/">Home Cinema &amp; AV</a>
+        <p class="site-footer__subhead mono">Connectivity &amp; energy</p>
+        <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
+        <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
+        <a href="/simplybook-integration/">Custom Booking Systems</a>
+        <a href="/lithium-battery-installs-dorset/">Leisure &amp; Marine Batteries</a>
+        <a href="/rural-and-farm-wifi-dorset/">Rural &amp; Farm Wi-Fi</a>
+        <a href="/broadband-to-a-boat-mooring/">Broadband to a Boat Mooring</a>
+        <a href="/wifi-for-a-shepherds-hut/">Wi-Fi for a Shepherd&rsquo;s Hut</a>
+        <a href="/starlink-internet/">Starlink Internet</a>
+        <p class="site-footer__subhead mono">Web, AI &amp; robotics</p>
+        <a href="/ai/">AI &amp; Automation</a>
+        <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
+        <a href="/ai/agents/">AI Agents</a>
+        <a href="/365-ai-os/">365 AI OS</a>
+        <a href="/ai/voice-agents/">AI Voice Agents</a>
+        <a href="/unitree-robots/">Unitree Robots</a>
+        <p class="site-footer__subhead mono">IT support by industry</p>
+        <a href="/it-support-for-hotels-holiday-lets/">Hotels &amp; Holiday Lets</a>
+        <a href="/it-support-for-vets/">Veterinary Practices</a>
+        <a href="/it-support-for-salons-beauty/">Salons &amp; Beauty</a>
+        <a href="/it-support-for-financial-advisers/">Financial Advisers</a>
+        <a href="/it-support-for-recruitment-agencies/">Recruitment Agencies</a>
+        <a href="/it-support-for-garages-automotive/">Garages &amp; Automotive</a>
+        <a href="/it-support-for-gyms-fitness/">Gyms &amp; Fitness</a>
+        <a href="/it-support-for-ecommerce/">E-commerce &amp; Online Retail</a>
+        <a href="/it-support-for-property-management/">Property Management</a>
+        <a href="/it-support-for-manufacturing/">Manufacturing &amp; Engineering</a>
+        <a href="/it-support-for-nurseries-dorset/">Nurseries &amp; Childcare</a>
+        <a href="/it-support-for-churches-faith/">Churches &amp; Faith Groups</a>
+      </nav>
+      <nav aria-label="Who we help links">
+        <p class="site-footer__head mono">WHO WE HELP</p>
+        <a href="/family-it-support/">Families</a>
+        <a href="/it-support-for-retired-users/">Retired Users</a>
+        <a href="/it-support-for-disabled-people/">Disabled People</a>
+        <a href="/computer-help-for-seniors/">Help for Seniors</a>
+        <a href="/it-support-for-home-workers/">Home Workers</a>
+        <a href="/it-support-for-digital-nomads/">Digital Nomads</a>
+        <a href="/it-support-for-sole-traders/">Sole Traders</a>
+        <a href="/small-business-it-support/">Small Businesses</a>
+      </nav>
+      <nav aria-label="Company links">
+        <p class="site-footer__head mono">COMPANY</p>
+        <a href="/about/">About</a>
+        <a href="/meet-the-team/">Meet the Team</a>
+        <a href="/why-choose-365-techies/">Why Choose Us</a>
+        <a href="/our-guarantees/">Our Guarantees</a>
+        <a href="/our-values/">Our Values &amp; Promises</a>
+        <a href="/how-we-price/">How We Price</a>
+        <a href="/case-studies/">Case Studies</a>
+        <a href="/reviews/">Reviews</a>
+        <a href="/areas-covered/">Areas Covered</a>
+        <a href="/plan-finder/">Plan Finder</a>
+        <a href="/refer-a-friend/">Refer a Friend</a>
+        <a href="/sustainability/">Sustainability</a>
+        <a href="/resources/">Resources &amp; Guides</a>
+        <a href="/it-advice/">IT Advice</a>
+        <a href="/bournemouth/">Bournemouth365</a>
+        <a href="/faqs/">FAQs</a>
+        <a href="/contact/">Contact</a>
+        <a href="/portal/">Customer portal</a>
+        <a href="tel:+441202775566">01202 775566</a>
+        <a href="sms:+447520615332">Text only: 07520 615332</a>
+        <a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a>
+      </nav>
+    </div>
+    <nav class="site-footer__legal-links mono" aria-label="Legal and policies">
+      <a href="/privacy-policy/">Privacy Policy</a>
+      <a href="/cookie-policy/">Cookie Policy</a>
+      <a href="/terms/">Terms of Service</a>
+      <a href="/service-level-agreement/">SLA</a>
+      <a href="/accessibility-statement/">Accessibility</a>
+      <a href="/accreditations/">Accreditations</a>
+      <a href="/system-status/">System Status</a>
+    </nav>
+    <p class="site-footer__legal mono">&copy; 2026 365 TECHIES LIMITED &middot; REGISTERED IN ENGLAND &amp; WALES 11073501 &middot; ALL SYSTEMS OPERATIONAL <span class="pulse-dot pulse-dot--green"></span></p>
+  </footer>
+
+  <nav class="mobile-cta-bar" aria-label="Quick contact">
+    <a href="tel:+441202775566"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>Call</a>
+    <a href="/book-service/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v3M17 3v3M4 8h16M5 6h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z"/></svg>Book</a>
+    <a href="#" data-open-chat><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.5 7.5L3 21l2-5.5A8.5 8.5 0 1 1 21 11.5z"/></svg>Chat</a>
+  </nav>
+  <div class="a11y" id="a11y">
+    <button type="button" class="a11y__toggle" id="a11y-toggle" aria-expanded="false" aria-controls="a11y-panel" aria-label="Text size and accessibility options" title="Text size and accessibility options">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="3.6" r="1.6"/><path d="M3.5 8h17M12 8v6m0 0-3.2 6.4M12 14l3.2 6.4"/></svg><span class="a11y__togglelabel">Text size</span>
+    </button>
+    <div class="a11y__panel" id="a11y-panel" role="region" aria-label="Accessibility options" hidden>
+      <p class="a11y__title mono">Accessibility</p>
+      <div class="a11y__rowsize"><span>Text size</span><span class="a11y__btns"><button type="button" data-a11y="text-down" aria-label="Decrease text size">A&minus;</button><button type="button" data-a11y="text-up" aria-label="Increase text size">A+</button></span></div>
+      <button type="button" class="a11y__opt" data-a11y="contrast" aria-pressed="false">High contrast</button>
+      <button type="button" class="a11y__opt" data-a11y="readable" aria-pressed="false">Readable font</button>
+      <button type="button" class="a11y__opt" data-a11y="reduce" aria-pressed="false">Reduce motion</button>
+      <button type="button" class="a11y__opt" data-a11y="read" aria-pressed="false">Read this page aloud</button>
+      <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
+    </div>
+  </div>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
+  <script src="/js/a11y.min.js?v=10" defer></script>
+  <script src="/js/forms.min.js?v=8" defer></script>
+  <script src="/js/search.min.js?v=2026-09-02" defer></script>
+  <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
+    <p>We use cookies to power our live chat and understand how the site is used. See our <a href="/cookie-policy/">cookie policy</a>.</p>
+    <div class="cookie-banner__actions">
+      <button type="button" class="button secondary" data-cookie="decline">Decline</button>
+      <button type="button" class="button primary" data-cookie="accept">Accept</button>
+    </div>
+  </div>
+  <!-- Consent-gated chat / analytics (HubSpot loads only after consent) -->
+  <script>
+  (function () {
+    var KEY = "tt_consent";
+    function loadConsented() {
+      if (!document.getElementById("hs-script-loader")) {
+        var s = document.createElement("script");
+        s.id = "hs-script-loader"; s.async = true; s.defer = true;
+        s.src = "//js-eu1.hs-scripts.com/148562638.js";
+        document.body.appendChild(s);
+      }
+      if (window.ANALYTICS_SRC && !window.__analyticsLoaded) {
+        window.__analyticsLoaded = true;
+        var a = document.createElement("script"); a.async = true; a.src = window.ANALYTICS_SRC;
+        document.head.appendChild(a);
+      }
+    }
+    var c = null;
+    try { c = localStorage.getItem(KEY); } catch (e) {}
+    if (c === "accepted") { loadConsented(); }
+    else if (c !== "declined") { var b = document.getElementById("cookie-banner"); if (b) b.hidden = false; }
+    document.addEventListener("click", function (e) {
+      var t = e.target.closest("[data-cookie]"); if (!t) return;
+      var v = t.getAttribute("data-cookie") === "accept" ? "accepted" : "declined";
+      try { localStorage.setItem(KEY, v); } catch (e) {}
+      var b = document.getElementById("cookie-banner"); if (b) b.hidden = true;
+      if (v === "accepted") { if (window.gtag) gtag('consent', 'update', { ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted', analytics_storage: 'granted' }); loadConsented(); }
+    });
+  })();
+  </script>
+</body>
+</html>

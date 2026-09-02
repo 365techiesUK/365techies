@@ -875,12 +875,19 @@ _BM_ALLOWED_HOSTS = {"365techies.co.uk", "www.googletagmanager.com",
                      # the site's font CDN - the privacy-first EU host chosen
                      # deliberately in the GDPR fix; not an ad or tracker host
                      "fonts.bunny.net"}
-for _fp in (_bmglob.glob(_osg.path.join(bp.BASE, "bournemouth", "*", "index.html"))
-             + [_osg.path.join(bp.BASE, "bournemouth", "index.html")]):
+# Recursive on purpose. The built live-map app lives two levels down at
+# bournemouth/live-map/app/index.html and the old one-level glob never saw
+# it - the app page was invisible to this guard by accident. Nothing under
+# bournemouth/ may hide from the caps, however deep it sits.
+_bm_paths = sorted(set(
+    _bmglob.glob(_osg.path.join(bp.BASE, "bournemouth", "**", "index.html"), recursive=True)
+    + [_osg.path.join(bp.BASE, "bournemouth", "index.html")]))
+for _fp in _bm_paths:
     if not _osg.path.exists(_fp):
         continue
     _html = open(_fp, encoding="utf-8").read()
     _rel = _osg.path.relpath(_fp, bp.BASE)
+    _relu = _rel.replace(_osg.sep, "/")
     if len(_html.encode("utf-8")) > 300 * 1024:
         _bm_bad.append("%s: %d KB of HTML (cap 300)" % (_rel, len(_html.encode("utf-8")) // 1024))
     # Count REAL fetches, not every href: canonical/sitemap/manifest links and
@@ -919,6 +926,24 @@ for _fp in (_bmglob.glob(_osg.path.join(bp.BASE, "bournemouth", "*", "index.html
         _m2 = _re.match(r"https?://([^/]+)/", _u)
         if _m2 and _m2.group(1) not in _BM_ALLOWED_HOSTS:
             _bm_bad.append("%s: third-party resource host %s" % (_rel, _m2.group(1)))
+    # An embedded app (bournemouth/<page>/app/index.html) is only ever opened
+    # inside its landing page, so it must not be indexed on its own and must
+    # point its canonical at that page. It gets no other exemption: the caps
+    # above apply to it unchanged.
+    if _re.fullmatch(r"bournemouth/[^/]+/app/index\.html", _relu):
+        if '<meta name="robots" content="noindex">' not in _html:
+            _bm_bad.append("%s: embedded app page must carry the noindex robots meta" % _rel)
+        _want = bp.SITE + "/" + _relu.rsplit("/", 2)[0] + "/"
+        _cm = _re.search(r'<link[^>]+rel="canonical"[^>]+href="([^"]+)"', _html)
+        if not _cm or _cm.group(1) != _want:
+            _bm_bad.append("%s: canonical must be %s (found %s)" % (_rel, _want, _cm.group(1) if _cm else "none"))
+    # The live-map landing page carries the launcher and NOT the frame: the
+    # app frame is inserted by script on click, never at first paint.
+    if _relu == "bournemouth/live-map/index.html":
+        if 'id="b365-map-launch"' not in _html:
+            _bm_bad.append("%s: launcher button id=\"b365-map-launch\" missing" % _rel)
+        if "<" + "iframe" in _html:
+            _bm_bad.append("%s: the app frame must be inserted on click, not baked into the page" % _rel)
 # provenance guard (G1/G3 from the approved plan): every data tile on
 # sea-today carries a chip, no official/computed chip may use the measured
 # class, the warning strip and test hooks exist, and the fireworks page

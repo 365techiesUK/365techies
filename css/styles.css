@@ -2567,6 +2567,28 @@ html.ss-open { overflow: hidden; }
 /* footer statement */
 .b365-foot { font-family: var(--mono, ui-monospace, monospace); font-size: .78rem;
   color: var(--b365-mute); letter-spacing: .04em; line-height: 1.7; }
+/* live-map launcher + the on-click overlay. The app frame is created by
+   script when the launcher is pressed - never at first paint (the build
+   guard forbids a baked frame) - so the page stays a light landing page.
+   Literal colours below: the overlay is appended to <body>, outside .b365. */
+.b365-launch { display: grid; gap: 1rem; align-items: center; margin: .6rem 0 1rem; }
+@media (min-width: 820px) { .b365-launch { grid-template-columns: 1.35fr 1fr; } }
+.b365-launch img { width: 100%; height: auto; display: block; border-radius: 12px;
+  border: 1px solid var(--b365-line); }
+.b365-launch .button { min-height: 48px; }
+.b365-launch-note { color: var(--b365-mute); font-size: .95rem; line-height: 1.55; margin: .6rem 0 0; }
+.b365-mapov { position: fixed; inset: 0; z-index: 5000; background: #06080e;
+  display: flex; flex-direction: column; }
+.b365-mapov__bar { flex: none; display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; min-height: 44px; padding: .3rem .8rem; background: #0a1420; color: #e8f1f2;
+  border-bottom: 1px solid #1d3346; font-family: var(--mono, ui-monospace, monospace);
+  font-size: .9rem; letter-spacing: .06em; text-transform: uppercase; }
+.b365-mapov__bar button { min-height: 44px; padding: 0 .9rem; border-radius: 8px;
+  border: 1px solid #4fd8c4; background: transparent; color: #4fd8c4; font: inherit;
+  cursor: pointer; }
+.b365-mapov__bar button:hover, .b365-mapov__bar button:focus-visible { background: rgba(79,216,196,.12); }
+.b365-mapov__frame { flex: 1 1 auto; min-height: 0; width: 100%; border: 0; display: block; }
+body.b365-mapov-open { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
   .b365-fresh .chip-m::before { animation: none; }
   .b365-draw path.l { animation: none; stroke-dashoffset: 0; }

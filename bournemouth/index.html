@@ -71,7 +71,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=96" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=97" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -109,7 +109,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=96&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=97&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -701,6 +701,11 @@
       <div class="wrap">
         <p class="mono" id="hub-live" data-reveal style="margin:0 0 1rem"></p>
         <div class="b365-hero" data-stagger>
+        <a class="b365-tile" href="/bournemouth/live-map/" data-reveal style="display:block;text-decoration:none;padding:0;overflow:hidden">
+          <img src="/bournemouth/media/og-live-map.jpg" alt="" loading="lazy" width="1200" height="630" style="width:100%;height:auto;display:block;aspect-ratio:1200/630;object-fit:cover" />
+          <div style="padding:1rem 1.1rem 1.1rem"><strong style="color:var(--b365-foam);font-size:1.1rem">The live map</strong>
+          <p class="b365-sub" style="margin:.3rem 0 0">Buses, flights, road closures, river levels, bike bays and the latest satellite pass over Bournemouth, Christchurch and Poole &mdash; every layer from a named public feed, on a free flat map, with the 3D city loaded only when you ask for it.</p></div>
+        </a>
         <a class="b365-tile" href="/bournemouth/sea-today/" data-reveal style="display:block;text-decoration:none;padding:0;overflow:hidden">
           <img src="/bournemouth/media/og-sunrise-sunset.jpg" alt="" loading="lazy" width="1200" height="630" style="width:100%;height:auto;display:block;aspect-ratio:1200/630;object-fit:cover" />
           <div style="padding:1rem 1.1rem 1.1rem"><strong style="color:var(--b365-foam);font-size:1.1rem">The sea right now</strong>

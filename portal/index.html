@@ -71,7 +71,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=96" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=97" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -109,7 +109,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=96&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=97&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -689,9 +689,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">portal build 02 Sep 2026 &middot; 2f2ec49c37</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">portal build 02 Sep 2026 &middot; 5acb1a9a84</p><script>
 (function () {
-  var P365BUILD = '2f2ec49c37';
+  var P365BUILD = '5acb1a9a84';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -5402,6 +5402,10 @@
         + '<p style="margin:.5rem 0 0"><button class="sm ghost" id="qbocheck">Check setup</button> '
         + '<button class="sm ghost" id="qbolist">List QuickBooks items</button></p>'
         + '<div id="qboitems"></div></div>';
+      h += '<div class="card" id="inviteplans"><h2>\ud83d\udce8 Invite plans</h2>'
+        + '<div class="quiet">Choose which GoCardless plans staff can invite new customers to \u2014 most of your templates are customer-specific and shouldn\u2019t be offered.</div>'
+        + '<p style="margin:.5rem 0 0"><button class="sm ghost" id="invmanage">Choose plans</button></p>'
+        + '<div id="invmanagebox"></div></div>';
       h += '<div class="card"><h2>Quick links</h2><div class="row">'
         + '<a class="btn sm ghost" href="https://365techies.secure.simplybook.it/v2/management/" target="_blank" rel="noopener">SimplyBook admin</a>'
         + '<button class="sm ghost" id="pcmadm">Full PCM console</button>'
@@ -5448,6 +5452,7 @@
       loadSosq();
       loadVis();
       qboSetup();
+      invitePlansSetup();
       var visiv = setInterval(function () {
         if (!document.getElementById('vislive')) { clearInterval(visiv); return; }
         loadVis();
@@ -5663,7 +5668,8 @@
       b.disabled = true; b.textContent = 'Loading plans\u2026';
       post(INVITE, { action: 'plans', stoken: S.stoken, machine: mid() }).then(function (r) {
         if (!r || !r.ok || !r.plans || !r.plans.length) {
-          w.innerHTML = '<span class="quiet">No support plans are set up to invite to yet. Add a GoCardless Billing Request Template link to pcm-invite.php.</span>';
+          if (r && r.needs_curate) { w.innerHTML = '<span class="quiet">No plans chosen for invites yet \u2014 pick them under <b>\ud83d\udce8 Invite plans</b> in the staff console first.</span>'; }
+          else { w.innerHTML = '<span class="quiet">No support plans are set up to invite to yet.</span>'; }
           return;
         }
         var opts = r.plans.map(function (p) {
@@ -5690,11 +5696,44 @@
       }).catch(function () { b.disabled = false; b.textContent = '\ud83d\udce8 Invite to a support plan'; });
     };
   }
+  /* Manager control: tick which GoCardless templates staff may invite new
+     customers to (most are per-customer). Saved server-side; the invite dropdown
+     honours it. */
+  function invitePlansSetup() {
+    var btn = document.getElementById('invmanage'); if (!btn) return;
+    var box = document.getElementById('invmanagebox');
+    btn.onclick = function () {
+      box.innerHTML = '<span class="quiet">Loading your GoCardless templates\u2026</span>';
+      post(INVITE, { action: 'alltemplates', stoken: S.stoken, machine: mid() }).then(function (r) {
+        if (!r || !r.ok) { box.innerHTML = '<span class="quiet">Couldn\u2019t load templates' + (r && r.error ? ' (' + esc(r.error) + ')' : '') + '.</span>'; return; }
+        if (!r.templates || !r.templates.length) { box.innerHTML = '<span class="quiet">No GoCardless templates found on the account.</span>'; return; }
+        var rows = r.templates.map(function (t) {
+          if (t.active === false) {
+            return '<label style="display:block;margin:.15rem 0;font-size:.9rem;color:#8a94a6"><input type="checkbox" disabled> ' + esc(t.name) + ' <span style="color:#e0a37e">(no longer active)</span></label>';
+          }
+          return '<label style="display:block;margin:.15rem 0;font-size:.9rem"><input type="checkbox" class="invchk" value="' + esc(t.id) + '"' + (t.on ? ' checked' : '') + '> ' + esc(t.name) + '</label>';
+        }).join('');
+        box.innerHTML = '<p class="quiet" style="margin:.4rem 0 .2rem">Tick the standard plans new customers can join:</p>'
+          + '<div style="margin:.2rem 0;max-height:320px;overflow:auto;border:1px solid rgba(125,170,220,.25);border-radius:8px;padding:.5rem">' + rows + '</div>'
+          + '<button class="sm invsave" style="margin:.4rem 0 0">Save chosen plans</button> <span class="quiet invsavemsg"></span>';
+        box.querySelector('.invsave').onclick = function () {
+          var go = this; go.disabled = true;
+          var ids = Array.prototype.map.call(box.querySelectorAll('.invchk:checked'), function (c) { return c.value; });
+          var m = box.querySelector('.invsavemsg'); m.textContent = 'Saving\u2026';
+          post(INVITE, { action: 'setallow', stoken: S.stoken, machine: mid(), ids: ids }).then(function (j) {
+            go.disabled = false;
+            m.innerHTML = (j && j.ok) ? '<span style="color:#7ee0a2">\u2713 Saved \u2014 ' + j.count + ' plan' + (j.count === 1 ? '' : 's') + ' will show when inviting a customer.</span>' : 'Save failed.';
+          }).catch(function () { go.disabled = false; m.textContent = 'Couldn\u2019t reach the server.'; });
+        };
+      }).catch(function () { box.innerHTML = '<span class="quiet">Couldn\u2019t reach the server.</span>'; });
+    };
+  }
   function inviteErr(j) {
     var e = j && j.error;
     if (e === 'not_staff') return 'your staff sign-in expired \u2014 sign in again.';
     if (e === 'bad_email') return 'that email doesn\u2019t look valid.';
     if (e === 'bad_plan' || e === 'plan_link_bad') return 'that plan isn\u2019t set up correctly.';
+    if (e === 'plan_inactive') return 'that plan is no longer active in GoCardless \u2014 reactivate it, or pick a different plan.';
     if (e === 'send_failed') return 'the email didn\u2019t send \u2014 try again, or send the GoCardless link by hand.';
     return 'couldn\u2019t send that' + (e ? ' (' + esc(e) + ')' : '') + '.';
   }

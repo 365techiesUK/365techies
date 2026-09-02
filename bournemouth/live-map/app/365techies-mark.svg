@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-labelledby="logo-title">
+  <!-- The 365techies mark, copied verbatim from the site header's inline SVG
+       (365techies.co.uk) — two dashed orbit rings and the node triangle. -->
+  <title id="logo-title">365techies</title>
+  <circle cx="16" cy="16" r="13.4" fill="none" stroke="#8fb3d9" stroke-width="2" stroke-linecap="round" stroke-dasharray="63 22" transform="rotate(-55 16 16)"/>
+  <circle cx="16" cy="16" r="9.4" fill="none" stroke="#1d97e3" stroke-width="2" stroke-linecap="round" stroke-dasharray="46 14" transform="rotate(115 16 16)"/>
+  <path d="M12.4 18.4l3.6-5.8 3.4 5.1z" fill="none" stroke="#8fb3d9" stroke-width="1.2"/>
+  <circle cx="12.4" cy="18.4" r="1.6" fill="#00ce1b"/>
+  <circle cx="16" cy="12.6" r="1.6" fill="#1d97e3"/>
+  <circle cx="19.4" cy="17.7" r="1.6" fill="#1d97e3"/>
+</svg>

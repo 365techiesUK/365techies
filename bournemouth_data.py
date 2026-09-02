@@ -253,7 +253,7 @@ _B365 = '''    <section class="section" aria-label="About Bournemouth365">
         </div>
         <div class="prose" data-reveal>
           <p>Bournemouth365 is the web home of our <a href="https://www.facebook.com/bournemouth365" target="_blank" rel="noopener">Bournemouth Live Facebook page</a>, where 39,000 of you watch the seafront with us every day. More pages are on the way: live sea conditions measured at the Boscombe wave buoy, an honest local guide to parking for the beach, and the best sunrise and sunset spots &mdash; photographed by us, not stock.</p>
-          <p class="mono" style="margin-bottom:.6rem"><a href="/bournemouth/">Bournemouth365 home</a> &middot; <a href="/bournemouth/sea-today/">The sea right now</a> &middot; <a href="/bournemouth/fireworks/">Friday fireworks</a> &middot; <a href="/bournemouth/sunrise-sunset/">Sunrise &amp; sunset</a> &middot; <a href="/bournemouth/beach-parking/">Beach parking</a> &middot; <a href="/van-signal-map/">Mobile signal map</a></p>
+          <p class="mono" style="margin-bottom:.6rem"><a href="/bournemouth/">Bournemouth365 home</a> &middot; <a href="/bournemouth/live-map/">Live map</a> &middot; <a href="/bournemouth/sea-today/">The sea right now</a> &middot; <a href="/bournemouth/fireworks/">Friday fireworks</a> &middot; <a href="/bournemouth/sunrise-sunset/">Sunrise &amp; sunset</a> &middot; <a href="/bournemouth/beach-parking/">Beach parking</a> &middot; <a href="/van-signal-map/">Mobile signal map</a></p>
           <p class="mono">Built in Bournemouth by <a href="/">365 Techies</a> &mdash; the family firm that has looked after the town&rsquo;s computers since 1995.</p>
           <p class="b365-foot">No ads. No paywall. No consent wall. Built to load fast on beach 4G.</p>
         </div>
@@ -276,7 +276,7 @@ _FAQS = [
 
 def _schema(s):
     g = [
-        crumb(s, "Bournemouth Friday Fireworks"),
+        crumb_sub(s, "Bournemouth365", "bournemouth", "Friday Fireworks"),
         webpage(s, "Bournemouth Friday Fireworks 2026",
                 "Every 2026 date for Bournemouth's free Friday night fireworks, the best places to stand, and whether the display is on tonight."),
         faqpage(s, _FAQS),
@@ -450,6 +450,7 @@ _ST_PANEL ='''    <section class="section b365" id="now" aria-label="Live sea co
         </details>
         <p class="mono" id="st-asof" style="margin-top:.8rem" data-reveal></p>
         <p class="mono" id="st-attrib" style="margin-top:.4rem" data-reveal>Sources: the bay&rsquo;s wave buoy, the Environment Agency tide gauge at Bournemouth Pier and bathing-water service, and Wessex Water&rsquo;s storm-overflow monitors &mdash; details at the foot of this page.</p>
+        <p class="mono" style="margin-top:.4rem" data-reveal>See the buses, flights, road closures and river gauges moving on the <a href="/bournemouth/live-map/">live map</a>.</p>
         <p class="b365-foot" data-reveal style="margin-top:1.2rem">No ads. No paywall. No consent wall. Every reading carries its instrument and its measurement time &mdash; built in Bournemouth to load fast on beach 4G.</p>
       </div>
     </section>'''
@@ -890,7 +891,7 @@ _ST_FAQS = [
 
 def _st_schema(s):
     return graph([
-        crumb(s, "Bournemouth Sea Conditions Today"),
+        crumb_sub(s, "Bournemouth365", "bournemouth", "Sea Conditions"),
         webpage(s, "Bournemouth Sea Conditions Today",
                 "Live measured sea temperature, waves, tide and water quality for Bournemouth beach - from the bay's wave buoy, the pier tide gauge, the Environment Agency and Wessex Water."),
         faqpage(s, _ST_FAQS),
@@ -1030,7 +1031,7 @@ _SS_FAQS = [
 
 def _ss_schema(s):
     return graph([
-        crumb(s, "Bournemouth Sunrise & Sunset"),
+        crumb_sub(s, "Bournemouth365", "bournemouth", "Sunrise & Sunset"),
         webpage(s, "Sunrise and Sunset in Bournemouth",
                 "Today's computed sunrise and sunset times for Bournemouth seafront, and the best spots to watch - photographed by us, not stock."),
         faqpage(s, _SS_FAQS),
@@ -1071,6 +1072,8 @@ add(
 _HUB_SLUG = "bournemouth"
 
 _HUB_CARDS = [
+    ("/bournemouth/live-map/", "/bournemouth/media/og-live-map.jpg",
+     "The live map", "Buses, flights, road closures, river levels, bike bays and the latest satellite pass over Bournemouth, Christchurch and Poole &mdash; every layer from a named public feed, on a free flat map, with the 3D city loaded only when you ask for it."),
     ("/bournemouth/sea-today/", "/bournemouth/media/og-sunrise-sunset.jpg",
      "The sea right now", "Sea temperature and waves measured by the bay&rsquo;s buoy, tide from the gauge on the pier, water quality for all seven beaches &mdash; live, timestamped, never modelled."),
     ("/bournemouth/fireworks/", "/bournemouth/media/og-fireworks.jpg",
@@ -1222,7 +1225,7 @@ _PK_PROSE = f'''          <h2 id="carparks">What the seafront car parks actually
           <h2 id="busy">When it fills up &mdash; and what the council does about it</h2>
           <p>BCP&rsquo;s own account of the hottest weekend of July 2025 is the clearest picture anyone has published: <em>&ldquo;Seafront car parks at Sandbanks and Boscombe were full by 10am on both days.&rdquo;</em> Across that Saturday and Sunday, 1,702 tickets were issued and 18 vehicles were towed.</p>
           <p>There is a published trigger, too: when Undercliff and Overstrand fill, <strong>Sea Road in Boscombe is closed at the junction with The Marina</strong>, and the signs on the A338 on the way in start showing which car parks still have spaces. Believe those signs &mdash; by the time you are on the seafront looking, the answer is usually no.</p>
-          <p>The practical version: before 9.30am or after 4pm on a hot day, or park inland and walk down.</p>
+          <p>The practical version: before 9.30am or after 4pm on a hot day, or park inland and walk down. The road closures in force and the buses moving right now are on the <a href="/bournemouth/live-map/">live map</a>.</p>
 
           <h2 id="access">Blue Badge, and getting onto the sand</h2>
           <p>Here is a gap we are not going to paper over. <strong>BCP does not publish whether a Blue Badge gives you free or extended parking in its own car parks.</strong> Both relevant council pages decline to say &mdash; one states only that &ldquo;the badge can only be used for on-street parking. Different rules apply to off-street car parks&rdquo;, and the other tells you that off-street rules &ldquo;vary between councils&rdquo; and that you should check the signs on display. So: read the sign at the machine before you pay, because that is literally the council&rsquo;s own instruction. The accessible bays themselves are marked on each car park&rsquo;s page &mdash; Boscombe Undercliff has 23, Durley Chine 7, Alum Chine 6.</p>
@@ -1283,4 +1286,378 @@ add(
     schema=_pk_schema,
     content=_PK_CONTENT,
     og_image="/bournemouth/media/og-sunrise-sunset.jpg",
+)
+
+
+# ============================================================================
+# PAGE 5: /bournemouth/live-map/ - the landing page for the live 3D map.
+# The built app sits at /bournemouth/live-map/app/ (owned by the map repo's
+# deploy script - never edited here). It is opened INSIDE this page, in a
+# frame created by script when the launcher is pressed, so the address bar
+# stays on this URL and first paint costs nothing: the app is ~1.2 MB of
+# code plus the CesiumJS engine (several MB) plus tiles. The frame must not
+# exist in the built HTML - the build guard checks. The tiles at the top read
+# the same same-origin JSON the map reads; a feed that does not answer shows
+# its degraded state, and a stale reply is marked stale, never shown fresh.
+# ============================================================================
+
+_LM_SLUG = "bournemouth/live-map"
+_LM_URL = f"{SITE}/{_LM_SLUG}/"
+_LM_TITLE = "Bournemouth live map — buses, roads, rivers & flights, in 3D"
+_LM_DESC = ("Live buses, flights, road closures, river levels and flood warnings, bike bays and the latest satellite pass over "
+            "Bournemouth, Christchurch and Poole — every layer from a named public feed, free flat map first, 3D on request.")
+
+_LM_TILES = '''    <section class="section b365" id="live-now" aria-label="Live counts from the map's feeds">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// THE FEEDS, RIGHT NOW</p>
+          <h2 class="section-title section-title--center" data-title>What the map is reading at this moment<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <p class="b365-sub" data-reveal style="margin:0 0 1rem">These are the same feeds the map itself reads, fetched from our own server when you opened this page. Times are in your local time; hover a time for the exact UTC stamp. A feed that does not answer says so &mdash; nothing here is filled in from memory.</p>
+        <div class="b365-hero" data-stagger>
+          <div class="b365-tile" id="lm-tile-buses">
+            <span class="chip-m" id="lm-buses-chip">MEASURED &middot; DfT BUS OPEN DATA</span>
+            <div class="b365-num" id="lm-buses">&mdash;</div>
+            <p class="b365-sub" id="lm-buses-sub">Buses tracked now across Bournemouth, Christchurch and Poole. Waiting for the feed&hellip; if this stays, the feed is down and we would rather say so than guess.</p>
+            <p class="b365-foot" id="lm-buses-upd">updated &mdash;</p>
+          </div>
+          <div class="b365-tile" id="lm-tile-gauges">
+            <span class="chip-m" id="lm-gauges-chip">MEASURED &middot; ENVIRONMENT AGENCY GAUGES</span>
+            <div class="b365-num" id="lm-gauges">&mdash;</div>
+            <p class="b365-sub" id="lm-gauges-sub">River and tide gauges reporting a reading. Waiting for the feed&hellip;</p>
+            <p class="b365-foot" id="lm-gauges-upd">updated &mdash;</p>
+          </div>
+          <div class="b365-tile" id="lm-tile-warn">
+            <span class="chip-f" id="lm-warn-chip">OFFICIAL STATUS &middot; ENVIRONMENT AGENCY</span>
+            <div class="b365-num" id="lm-warn">&mdash;</div>
+            <p class="b365-sub" id="lm-warn-sub">Flood warnings and alerts in force for the area. <strong>No active warnings is not the same as no flood risk.</strong> Check the Environment Agency&rsquo;s own warnings page before you act on this.</p>
+            <p class="b365-foot" id="lm-warn-upd">updated &mdash;</p>
+          </div>
+          <div class="b365-tile" id="lm-tile-roads">
+            <span class="chip-f" id="lm-roads-chip">OFFICIAL STATUS &middot; NATIONAL HIGHWAYS</span>
+            <div class="b365-num" id="lm-roads">&mdash;</div>
+            <p class="b365-sub" id="lm-roads-sub">Road closures in force on the National Highways network around the conurbation. Waiting for the feed&hellip;</p>
+            <p class="b365-foot" id="lm-roads-upd">updated &mdash;</p>
+          </div>
+          <div class="b365-tile" id="lm-tile-air">
+            <span class="chip-m" id="lm-air-chip">MEASURED &middot; ADS-B VIA ADSB.LOL</span>
+            <div class="b365-num" id="lm-air">&mdash;</div>
+            <p class="b365-sub" id="lm-air-sub">Aircraft transmitting a position within range of the centre of the map. Waiting for the feed&hellip;</p>
+            <p class="b365-foot" id="lm-air-upd">updated &mdash;</p>
+          </div>
+          <div class="b365-tile" id="lm-tile-sat">
+            <span class="chip-f" id="lm-sat-chip">OFFICIAL &middot; COPERNICUS SENTINEL-2</span>
+            <div class="b365-num" id="lm-sat" style="font-size:clamp(1.5rem,4.2vw,2.5rem)">&mdash;</div>
+            <p class="b365-sub" id="lm-sat-sub">The most recent satellite pass over the area and how much of it was cloud. Waiting for the scene metadata&hellip;</p>
+            <p class="b365-foot" id="lm-sat-upd">updated &mdash;</p>
+          </div>
+          <div class="b365-tile b365-tile--dusk" id="lm-tile-tiles">
+            <span class="chip-f" id="lm-tiles-chip">COMPUTED &middot; OUR OWN COUNTER</span>
+            <div class="b365-num" id="lm-tiles">&mdash;<small>of 30</small></div>
+            <p class="b365-sub" id="lm-tiles-sub">3D city views left today. Google bills each one to us, so the 3D city loads only when someone asks for it.</p>
+            <p class="b365-foot" id="lm-tiles-upd">updated &mdash;</p>
+          </div>
+        </div>
+        <p class="b365-foot" data-reveal>Chips: MEASURED is an instrument or transponder reporting; OFFICIAL STATUS is a public body&rsquo;s own published state; COMPUTED is arithmetic we do ourselves. Test hooks for our own checks: <span class="mono">?b365test=stale</span> and <span class="mono">?b365test=down</span> force the stale and offline presentations of real data &mdash; nothing is invented.</p>
+      </div>
+    </section>'''
+
+_LM_LAUNCH = '''    <section class="section b365" id="map" aria-label="Open the live map">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// THE MAP</p>
+          <h2 class="section-title section-title--center" data-title>Open the Bournemouth365 live map<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="b365-launch" data-reveal>
+          <img src="/bournemouth/media/og-live-map.jpg" width="1200" height="630" loading="lazy" alt="The Bournemouth365 live map on the flat map view, showing Bournemouth town centre and the seafront" />
+          <div>
+            <button type="button" id="b365-map-launch" class="button primary button--lg">Open the live map</button>
+            <p class="b365-launch-note">The map opens right here, on top of this page, and closes with the button at the top or the Escape key. It is a heavier download than the rest of Bournemouth365 &mdash; about 1.2 MB of application code plus the CesiumJS map engine (several MB more) plus the map tiles as you pan &mdash; which is exactly why it loads only when you open it, never on arrival. It opens on the free OpenStreetMap flat map with every live layer working; the 3D city is a separate button inside the map.</p>
+            <p class="b365-launch-note">No JavaScript? <a href="/bournemouth/live-map/app/">Open the map app directly</a> instead.</p>
+          </div>
+        </div>
+      </div>
+    </section>'''
+
+# Source / what / licence / attribution. Attribution strings are copied
+# verbatim from the app's DATA_SOURCES.md and dataCredits.js - several are a
+# condition of use. Change them there first, never here alone.
+_LM_SOURCES = [
+    ('<a href="https://www.bus-data.dft.gov.uk/" target="_blank" rel="noopener">DfT Bus Open Data Service</a>',
+     "Live bus positions",
+     '<a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" target="_blank" rel="noopener">Open Government Licence v3.0</a>',
+     "Contains public sector information licensed under the Open Government Licence v3.0"),
+    ('<a href="https://environment.data.gov.uk/flood-monitoring/doc/reference" target="_blank" rel="noopener">Environment Agency real-time data API (Beta)</a>',
+     "River levels, tide gauges, flood warnings",
+     '<a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" target="_blank" rel="noopener">Open Government Licence v3.0</a>',
+     "Dorset water &amp; flood data: uses Environment Agency flood and river level data from the real-time data API (Beta) &mdash; &copy; Environment Agency, Open Government Licence v3.0"),
+    ('<a href="https://developer.data.nationalhighways.co.uk/" target="_blank" rel="noopener">National Highways Transport Data Feeds</a>',
+     "Road closures (DATEX II) and planned works",
+     "National Highways developer-portal terms (OGL-based); the wording is a condition of use",
+     "Powered by National Highways&#39; Transport Data Feeds. Planned works: &copy; National Highways &mdash; Contains public sector information licensed under the Open Government Licence v3.0"),
+    ('<a href="https://beryl.cc" target="_blank" rel="noopener">Beryl</a> BCP GBFS feed',
+     "Bike hire bays and availability",
+     '<a href="https://cdla.dev/permissive-2-0/" target="_blank" rel="noopener">CDLA-Permissive-2.0</a>',
+     "Beryl BCP scheme GBFS feed (CDLA-Permissive-2.0)"),
+    ('<a href="https://adsb.lol" target="_blank" rel="noopener">adsb.lol</a>',
+     "Flights and aircraft traces (ADS-B)",
+     "ODbL 1.0",
+     "adsb.lol (ODbL 1.0)"),
+    ('<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>',
+     "The free flat basemap, and the road geometry the traffic layer draws on",
+     "ODbL 1.0 and the OSMF tile usage policy",
+     "&copy; OpenStreetMap contributors (ODbL 1.0) &mdash; shown on screen while the tiles show"),
+    ('<a href="https://www.tomtom.com" target="_blank" rel="noopener">TomTom</a> Traffic API',
+     "Live congestion colouring, only on roads where flow is measured",
+     '<a href="https://developer.tomtom.com/" target="_blank" rel="noopener">TomTom for Developers</a> terms (commercial use permitted)',
+     "Traffic flow data &copy; TomTom &mdash; in the map&rsquo;s credits whenever live flow is drawn"),
+    ('<a href="https://dataspace.copernicus.eu/" target="_blank" rel="noopener">Copernicus Sentinel-2 L2A</a> via the Copernicus Data Space Ecosystem',
+     "The latest satellite pass",
+     '<a href="https://sentinels.copernicus.eu/documents/247904/690755/Sentinel_Data_Legal_Notice" target="_blank" rel="noopener">Copernicus Sentinel Data Legal Notice</a>',
+     "Contains modified Copernicus Sentinel data [Year] &mdash; [Year] is the year the scene was captured, filled in when the scene metadata arrives"),
+    ('<a href="https://developers.google.com/maps/documentation/tile/policies" target="_blank" rel="noopener">Google Photorealistic 3D Tiles</a>',
+     "The 3D city, only after you press the 3D button",
+     "Google Maps Platform terms",
+     "Google&rsquo;s own attribution, rendered on screen by the map&rsquo;s credit line while 3D is showing"),
+    ('<a href="/van-signal-map/">365 Techies mobile-signal readings</a>',
+     "Mobile signal &mdash; our own measured readings, logged by our van",
+     '<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>',
+     "365 Techies mobile-signal readings (CC BY 4.0) &mdash; our own measurements, not an operator&rsquo;s coverage map"),
+    ("Software",
+     "The map application and its engine",
+     "God&rsquo;s Eye View (MIT) on CesiumJS (Apache-2.0)",
+     'Software: built on God&#39;s Eye View &copy; 2026 Bilawal Sidhu (MIT); CesiumJS (Apache-2.0) and other open-source components &mdash; <a href="/bournemouth/live-map/app/THIRD-PARTY-NOTICES.txt" target="_blank" rel="noopener">third-party notices</a>'),
+]
+
+_LM_SOURCE_ROWS = "\n".join(
+    f'            <tr><td>{src}</td><td>{what}</td><td>{lic}</td><td>{att}</td></tr>'
+    for src, what, lic, att in _LM_SOURCES)
+
+_LM_PROSE = f'''          <h2 id="layers">What you are seeing</h2>
+          <p>Every layer on the Bournemouth365 live map is a named public feed drawn where it says it is. Nothing is modelled, interpolated or guessed; where a feed goes quiet the layer says so instead of holding its last value.</p>
+          <p><strong>Buses.</strong> Vehicle positions from the Department for Transport&rsquo;s Bus Open Data Service &mdash; the same feed the operators publish for their own apps. Our server re-reads it every 12 seconds and the map moves the buses every 15. A bus that stops reporting is dropped after four minutes rather than left parked on the map.</p>
+          <p><strong>Flights.</strong> Aircraft transmitting ADS-B, received by the adsb.lol community network and read every 25 seconds. It is what is being received, not the airport&rsquo;s schedule: an aircraft nobody is receiving is not on the map.</p>
+          <p><strong>Road closures and planned works.</strong> National Highways&rsquo; own feeds for its network, read every minute. This covers the trunk roads (the A31, A338 and A35 corridors), not every council-managed street; a closure BCP Council runs on a seafront road is not in this feed.</p>
+          <p><strong>Traffic.</strong> The road geometry is OpenStreetMap. Colouring a road with live congestion needs measured flow data &mdash; ours is TomTom&rsquo;s traffic flow, credited on the map whenever it is drawn &mdash; and a road we have no measured flow for is left uncoloured, never coloured from a guess.</p>
+          <p><strong>River levels and flood warnings.</strong> The Environment Agency&rsquo;s real-time data API: river and tide gauges on the Stour, Avon and the harbour report on roughly a 15-minute cycle, and flood alerts and warnings are re-read every five minutes. <strong>No active warnings is not the same as no flood risk.</strong></p>
+          <p><strong>Bike bays.</strong> The Beryl BCP scheme&rsquo;s public GBFS feed &mdash; bay locations and how many bikes are docked, read every three minutes.</p>
+          <p><strong>The latest satellite pass.</strong> The most recent Sentinel-2 scene over the area from the Copernicus Data Space Ecosystem, with its capture date and cloud cover. Sentinel-2 revisits every few days, and our server checks for a new scene every six hours &mdash; so this layer is days old by design, and its date says so.</p>
+          <p><strong>Mobile signal.</strong> 365 Techies&rsquo; own measured readings, logged by our van as it drives the conurbation &mdash; the dataset behind the <a href="/van-signal-map/">mobile signal map</a>. It is one van and one instrument, published under CC BY 4.0; it is not an operator coverage map and it compares no operators.</p>
+          <p><strong>The 3D city.</strong> Google&rsquo;s Photorealistic 3D Tiles, loaded only when you press the 3D button inside the map &mdash; see below for why.</p>
+
+          <h2 id="sources">Where the data comes from</h2>
+          <p>Each feed keeps its own licence, and several require particular wording. The wording below is copied exactly from the map&rsquo;s own credits.</p>
+          <table>
+            <thead><tr><th>Source</th><th>What it supplies</th><th>Licence</th><th>Attribution, as required</th></tr></thead>
+            <tbody>
+{_LM_SOURCE_ROWS}
+            </tbody>
+          </table>
+
+          <h2 id="why3d">Why 3D asks first</h2>
+          <p>Google bills the 3D city per view. The map therefore opens on the free OpenStreetMap flat map with every live layer already working, and the 3D city loads only when someone asks for it. There are 30 3D views a day across everyone who visits; the counter at the top of this page shows how many are left, and when they are gone the 3D button inside the map says so and comes back after midnight UTC. Nothing else on the map is metered.</p>
+
+          <h2 id="phone">Works on a phone, but</h2>
+          <p>The map is a heavier download than the rest of Bournemouth365: about 1.2 MB of application code, the CesiumJS engine at several MB more, and then map tiles as you move around. It runs on a modern phone, and the flat map is the light version &mdash; but open it on Wi-Fi or good 4G rather than on a thin signal on the beach, and expect the 3D city to be the part that asks most of an older device. The rest of this page, including the live counts at the top, is as light as every other Bournemouth365 page.</p>'''
+
+_LM_FAQS = [
+    ("Is the Bournemouth live map really live?",
+     "Yes. Every layer polls a named public feed while the map is open, and the counts at the top of this page are fetched from the same feeds when the page loads, each with the time its feed last answered. When a feed does not answer, its tile says feed offline and shows no number &mdash; an old value is never shown as a fresh one."),
+    ("How often does each layer update?",
+     "Buses: the feed is re-read every 12 seconds and the map moves them every 15. Flights: every 25 seconds. Road closures: every minute. Flood warnings: every five minutes. River and tide gauges: on the Environment Agency&rsquo;s own cycle of roughly 15 minutes. Bike bays: every three minutes. The satellite scene changes only when Sentinel-2 passes over again, every few days, and we check for a new one every six hours."),
+    ("Why are there no traffic colours on some roads?",
+     "Because colouring a road needs measured flow data for that road, and ours comes from TomTom&rsquo;s traffic API. The road geometry itself is OpenStreetMap; where TomTom reports no flow for a road, it stays uncoloured rather than being coloured from a guess. The map&rsquo;s strapline is measured, not modelled, and that applies to traffic too."),
+    ("Why does the 3D city ask before it loads?",
+     "Google bills the 3D city per view, so the map opens on the free OpenStreetMap flat map with every live layer working and loads the 3D city only when someone presses the button. There are 30 3D views a day in total; when they are gone the button says so, and the count resets after midnight UTC."),
+    ("Does the map track me?",
+     "No. There is no account, the map sets no cookies and runs no analytics of its own, and at the time of writing it never asks for your location. It remembers which layers you switched on in your own browser&rsquo;s storage and nowhere else. The live counts on this page come from our own server, which reads the public feeds on your behalf."),
+    ("Will it work on my phone?",
+     "Yes, on a modern phone, but it is a heavy download compared with the rest of Bournemouth365 &mdash; about 1.2 MB of application code plus the CesiumJS engine and then map tiles. Open it on Wi-Fi or good 4G. The flat map is the light version; the 3D city is the part that asks most of an older device."),
+]
+
+# The live-counts painter. Plain string (no f-string) so the JS braces stay
+# sane. One script, seven parallel fetches, each with its own catch: the
+# page paints before any of them return, and a feed that fails degrades its
+# own tile only.
+_LM_JS = '''      <script>
+      (function () {
+        var Q = location.search;
+        var TEST_STALE = Q.indexOf('b365test=stale') > -1, TEST_DOWN = Q.indexOf('b365test=down') > -1;
+        function el(id) { return document.getElementById(id); }
+        function hhmm(iso) { var d = new Date(iso); return isNaN(d.getTime()) ? '' : d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
+        function dmy(iso) { var d = new Date(iso); return isNaN(d.getTime()) ? '' : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); }
+        function setChip(id, kind, txt) { var e = el(id); if (e) { e.className = kind; e.textContent = txt; } }
+        function state(id, cls) {
+          var e = el('lm-tile-' + id);
+          if (e) { e.classList.remove('b365-fresh', 'b365-stale', 'b365-down'); if (cls) e.classList.add(cls); }
+        }
+        function num(id, html) { var e = el('lm-' + id); if (e) e.innerHTML = html; }
+        function sub(id, txt) { var e = el('lm-' + id + '-sub'); if (e) e.textContent = txt; }
+        function upd(id, label, iso) {
+          var e = el('lm-' + id + '-upd'); if (!e) return;
+          if (iso && hhmm(iso)) { e.textContent = label + ' ' + hhmm(iso); e.title = iso; }
+          else { e.textContent = label; e.removeAttribute('title'); }
+        }
+        var NOW_ISO = new Date().toISOString();
+        function down(id, chipId, kind, label, d) {
+          // ok:false, a failed fetch or an unusable reply: the degraded state.
+          // No number, and never the last number dressed as a fresh one.
+          state(id, 'b365-down');
+          setChip(chipId, kind, label + ' \\u00b7 FEED OFFLINE');
+          num(id, '&#8212;&#8212;');
+          if (d && d.generated) upd(id, 'feed offline since', d.generated);
+          else upd(id, 'feed offline \\u2014 no reply at', NOW_ISO);
+          if (d && d.reason) sub(id, String(d.reason));
+        }
+        function paint(id, chipId, kind, label, d, freshMs, fn) {
+          if (TEST_DOWN) d = { ok: false, reason: 'TEST \\u2014 forced offline presentation; nothing here is invented.' };
+          if (!d || !d.ok) { down(id, chipId, kind, label, d); return; }
+          if (TEST_STALE) { d.stale = true; d.reason = d.reason || 'TEST \\u2014 forced stale presentation of real data.'; }
+          var age = d.generated ? Date.now() - new Date(d.generated).getTime() : Infinity;
+          if (d.stale) {
+            state(id, 'b365-stale');
+            setChip(chipId, kind, label + ' \\u00b7 STALE');
+            upd(id, 'last heard', d.generated);
+          } else {
+            // the pulse only on data younger than its fresh window (house rule)
+            state(id, age <= freshMs ? 'b365-fresh' : '');
+            setChip(chipId, kind, label);
+            upd(id, 'updated', d.generated);
+          }
+          try { fn(d); } catch (e) { /* the baked copy stays */ }
+          if (d.stale && d.reason) sub(id, 'Stale: ' + d.reason);
+        }
+        function get(url) {
+          return fetch(url, { credentials: 'omit', cache: 'no-store' })
+            .then(function (r) { return r.json(); })
+            .catch(function () { return null; });
+        }
+        var urls = ['/api/dorset-buses.php', '/api/dorset-water.php', '/api/dorset-floods.php', '/api/dorset-roads.php',
+                    '/api/dorset-flights.php', '/api/dorset-satellite.php?meta=1', '/api/dorset-tiles.php?status=1'];
+        Promise.all(urls.map(get)).then(function (r) {
+          paint('buses', 'lm-buses-chip', 'chip-m', 'MEASURED \\u00b7 DfT BUS OPEN DATA', r[0], 60000, function (d) {
+            num('buses', String(d.count));
+            sub('buses', 'Buses reporting a position across Bournemouth, Christchurch and Poole. Our server re-reads the feed every 12 seconds; the map moves them every 15.');
+          });
+          paint('gauges', 'lm-gauges-chip', 'chip-m', 'MEASURED \\u00b7 ENVIRONMENT AGENCY GAUGES', r[1], 30 * 60000, function (d) {
+            num('gauges', String(d.withValues) + '<small>of ' + d.count + '</small>');
+            sub('gauges', 'River and tide gauges in the area with a reading; the Environment Agency publishes on roughly a 15-minute cycle.');
+          });
+          paint('warn', 'lm-warn-chip', 'chip-f', 'OFFICIAL STATUS \\u00b7 ENVIRONMENT AGENCY', r[2], 10 * 60000, function (d) {
+            var n = (d.inForce !== undefined && d.inForce !== null) ? d.inForce : d.count;
+            num('warn', String(n));
+          });
+          paint('roads', 'lm-roads-chip', 'chip-f', 'OFFICIAL STATUS \\u00b7 NATIONAL HIGHWAYS', r[3], 2 * 60000, function (d) {
+            num('roads', String(d.count));
+            sub('roads', 'Closures in force on the National Highways network around the conurbation, read every minute. Council-run street closures are not in this feed.');
+          });
+          paint('air', 'lm-air-chip', 'chip-m', 'MEASURED \\u00b7 ADS-B VIA ADSB.LOL', r[4], 60000, function (d) {
+            num('air', String(d.count));
+            sub('air', 'Aircraft transmitting ADS-B within ' + d.radiusNm + ' nautical miles of the centre of the map \\u2014 what is being received, not a schedule.');
+          });
+          paint('sat', 'lm-sat-chip', 'chip-f', 'OFFICIAL \\u00b7 COPERNICUS SENTINEL-2', r[5], 12 * 3600000, function (d) {
+            if (d.captured) {
+              num('sat', dmy(d.captured));
+              var cc = (d.cloudCover !== undefined && d.cloudCover !== null) ? Math.round(d.cloudCover) + '% cloud cover' : 'cloud cover not reported';
+              sub('sat', 'Most recent Sentinel-2 scene over the area, captured ' + hhmm(d.captured) + ' on that date \\u2014 ' + cc + '. Contains modified Copernicus Sentinel data ' + new Date(d.captured).getUTCFullYear() + '.');
+            } else {
+              num('sat', 'date unavailable');
+              sub('sat', d.capturedReason ? String(d.capturedReason) : 'The scene metadata carries no capture date.');
+            }
+          });
+          paint('tiles', 'lm-tiles-chip', 'chip-f', 'COMPUTED \\u00b7 OUR OWN COUNTER', r[6], 60000, function (d) {
+            num('tiles', String(d.remaining) + '<small>of 30</small>');
+            sub('tiles', d.remaining > 0
+              ? '3D city views left today. Google bills each one to us, so the 3D city loads only when someone asks for it.'
+              : 'None left today. The 3D button inside the map says so, and the counter comes back after midnight UTC' + (d.resetsAt && hhmm(d.resetsAt) ? ' (' + hhmm(d.resetsAt) + ' your time)' : '') + '.');
+          });
+        });
+      })();
+      </script>
+      <script>
+      (function () {
+        // The launcher. The app frame is created here, on click, and removed
+        // on close - it is never part of the page as served, so the address
+        // bar stays on this URL and first paint costs nothing.
+        var btn = document.getElementById('b365-map-launch');
+        if (!btn) return;
+        var ov = null, lastFocus = null;
+        function onKey(e) { if (e.key === 'Escape') close(); }
+        function close() {
+          if (!ov) return;
+          ov.parentNode.removeChild(ov); ov = null;
+          document.body.classList.remove('b365-mapov-open');
+          document.removeEventListener('keydown', onKey);
+          if (location.hash === '#map') history.replaceState(null, '', location.pathname + location.search);
+          if (lastFocus && lastFocus.focus) lastFocus.focus();
+        }
+        function open() {
+          if (ov) return;
+          lastFocus = document.activeElement;
+          ov = document.createElement('div');
+          ov.className = 'b365-mapov';
+          ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-label', 'Bournemouth365 live map');
+          var bar = document.createElement('div'); bar.className = 'b365-mapov__bar';
+          var brand = document.createElement('span'); brand.textContent = 'Bournemouth365 live map';
+          var back = document.createElement('button'); back.type = 'button'; back.textContent = 'Back to the page'; back.title = 'Close the map (Esc)';
+          back.addEventListener('click', close);
+          bar.appendChild(brand); bar.appendChild(back);
+          var fr = document.createElement('iframe');
+          fr.className = 'b365-mapov__frame';
+          fr.src = '/bournemouth/live-map/app/';
+          fr.title = 'Bournemouth365 live map';
+          fr.setAttribute('allow', 'fullscreen');   // the map never asks for your location; the FAQ says so, so the frame cannot either
+          fr.setAttribute('loading', 'eager');
+          fr.style.cssText = 'width:100%;height:100%;border:0';
+          ov.appendChild(bar); ov.appendChild(fr);
+          document.body.appendChild(ov);
+          document.body.classList.add('b365-mapov-open');
+          document.addEventListener('keydown', onKey);
+          back.focus();
+        }
+        btn.addEventListener('click', open);
+        function auto() { if (location.hash === '#map' || /[?&]map=1(&|$)/.test(location.search)) open(); }
+        window.addEventListener('hashchange', function () { if (location.hash === '#map') open(); });
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', auto); else auto();
+      })();
+      </script>'''
+
+
+def _lm_schema(s):
+    return graph([
+        crumb_sub(s, "Bournemouth365", "bournemouth", "Live map"),
+        webpage(s, "Bournemouth live map", _LM_DESC),
+        {"@type": "WebApplication", "@id": _LM_URL + "#app", "name": "Bournemouth365 live map",
+         "url": _LM_URL, "applicationCategory": "MapApplication", "operatingSystem": "Any (web browser)",
+         "isAccessibleForFree": True,
+         "offers": {"@type": "Offer", "price": "0", "priceCurrency": "GBP"},
+         "publisher": {"@id": SITE + "/#business"}},
+        faqpage(s, _LM_FAQS),
+    ])
+
+
+_LM_CONTENT = "\n".join([
+    hero(bc_sub("Bournemouth365", "/bournemouth/", "Live map"),
+         "// BOURNEMOUTH365",
+         'Bournemouth, Christchurch &amp; Poole &mdash; <em class="grad grad--cyan">live, in 3D</em>',
+         "Buses, flights, road closures, river levels and flood warnings, bike bays and the latest satellite pass, each drawn from a named public feed onto one map &mdash; free on the flat map, with the 3D city loaded only when you ask for it.",
+         cta1=("Open the live map", "#map"),
+         cta2=("What you are seeing", "#layers"),
+         chips=["Measured, not modelled", "Free flat map, 3D on request", "No ads, no paywall"]),
+    _LM_TILES,
+    _LM_LAUNCH,
+    f'    <section class="section">\n      <div class="wrap">\n        <div class="prose" data-reveal>\n{_LM_PROSE}\n        </div>\n      </div>\n    </section>',
+    faq_html(_LM_FAQS),
+    _B365,
+    _LM_JS,
+])
+
+add(
+    slug=_LM_SLUG,
+    title=_LM_TITLE,
+    desc=_LM_DESC,
+    og_title="Bournemouth, Christchurch & Poole — live, in 3D",
+    schema=_lm_schema,
+    content=_LM_CONTENT,
+    og_image="/bournemouth/media/og-live-map.jpg",
 )
