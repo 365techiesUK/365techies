@@ -54,5 +54,46 @@ curl_setopt_array($ch, array(
 $r = curl_exec($ch); $code = curl_getinfo($ch, CURLINFO_HTTP_CODE); $cerr = curl_error($ch); curl_close($ch);
 echo "HTTP: " . $code . "\n";
 if ($cerr) echo "curl error: " . $cerr . "\n";
-echo "Intuit says: " . substr((string)$r, 0, 300) . "\n";
-echo "\n(invalid_client = wrong Client ID/Secret.  invalid_grant = wrong/stale/expired refresh token.)\n";
+$j = json_decode((string)$r, true);
+if ($code < 200 || $code >= 300 || empty($j['access_token'])) {
+    echo "Intuit says: " . substr((string)$r, 0, 300) . "\n";
+    echo "\n(invalid_client = wrong Client ID/Secret.  invalid_grant = wrong/stale/expired refresh token.)\n";
+    exit;
+}
+echo "refresh OK - token accepted.\n";
+
+$ACCESS = (string)$j['access_token'];
+$API = ((isset($QBO_ENV) && $QBO_ENV === 'sandbox') ? 'https://sandbox-quickbooks.api.intuit.com' : 'https://quickbooks.api.intuit.com')
+     . '/v3/company/' . rawurlencode((string)$QBO_REALM_ID);
+function qget($url, $access) {
+    $ch = curl_init($url);
+    curl_setopt_array($ch, array(CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 20,
+        CURLOPT_HTTPHEADER => array('Accept: application/json', 'Authorization: Bearer ' . $access)));
+    $r = curl_exec($ch); $c = curl_getinfo($ch, CURLINFO_HTTP_CODE); curl_close($ch);
+    return array($c, json_decode((string)$r, true), (string)$r);
+}
+
+echo "\n=== VAT / tax preferences ===\n";
+list($pc, $pj) = qget($API . '/preferences?minorversion=70', $ACCESS);
+if ($pc >= 200 && $pc < 300 && isset($pj['Preferences']['TaxPrefs'])) {
+    $vat = !empty($pj['Preferences']['TaxPrefs']['UsingSalesTax']);
+    echo "VAT enabled in this company: " . ($vat ? "YES" : "no") . "\n";
+} else { echo "preferences HTTP " . $pc . "\n"; }
+
+echo "\n=== active tax codes (for \$QBO_TAX_CODE_ID if VAT is on) ===\n";
+list($tc, $tj) = qget($API . "/query?minorversion=70&query=" . rawurlencode("select Id, Name, Active from TaxCode maxresults 50"), $ACCESS);
+if ($tc >= 200 && $tc < 300) {
+    foreach ((array)(isset($tj['QueryResponse']['TaxCode']) ? $tj['QueryResponse']['TaxCode'] : array()) as $t2) {
+        if (!is_array($t2)) continue;
+        echo "  Id " . (isset($t2['Id']) ? $t2['Id'] : '?') . "  |  " . (isset($t2['Name']) ? $t2['Name'] : '?') . (empty($t2['Active']) ? "  (inactive)" : "") . "\n";
+    }
+} else { echo "taxcode query HTTP " . $tc . "\n"; }
+
+echo "\n=== service items (for \$QBO_ITEM_ID - look for 'Remote support') ===\n";
+list($ic, $ij) = qget($API . "/query?minorversion=70&query=" . rawurlencode("select Id, Name, Type from Item maxresults 100"), $ACCESS);
+if ($ic >= 200 && $ic < 300) {
+    foreach ((array)(isset($ij['QueryResponse']['Item']) ? $ij['QueryResponse']['Item'] : array()) as $it) {
+        if (!is_array($it)) continue;
+        echo "  Id " . (isset($it['Id']) ? $it['Id'] : '?') . "  |  " . (isset($it['Name']) ? $it['Name'] : '?') . "  (" . (isset($it['Type']) ? $it['Type'] : '?') . ")\n";
+    }
+} else { echo "item query HTTP " . $ic . "\n"; }
