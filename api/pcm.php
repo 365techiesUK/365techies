@@ -192,11 +192,30 @@ if ($action === 'custaddr') {
         $db['customers'][$key]['addr'] = array('line1'=>$line1, 'line2'=>$line2, 'city'=>$city,
             'postcode'=>$pc, 'ts'=>time(), 'by'=>'customer');
     }
+    /* Phone numbers ride on the same save, under the same lock, WHEN the editor
+       sends them (the portal "Your details" card does; the booking step never
+       does, so a booking can never blank a number). Stored as customers[key]['tel']
+       and ['mobile'] - the names comms-lib already matches inbound texts and
+       voicemails against - in the tidy form pcm-phone-lib.php describes. Blank
+       clears that one number on purpose; never refused (see the lib). */
+    require_once __DIR__ . '/pcm-phone-lib.php';
+    $phones = null;
+    if (array_key_exists('landline', $in) || array_key_exists('mobile', $in)) {
+        $tel = pcm_phone_norm(isset($in['landline']) ? $in['landline'] : '');
+        $mob = pcm_phone_norm(isset($in['mobile']) ? $in['mobile'] : '');
+        if ($tel === '') unset($db['customers'][$key]['tel']); else $db['customers'][$key]['tel'] = $tel;
+        if ($mob === '') unset($db['customers'][$key]['mobile']); else $db['customers'][$key]['mobile'] = $mob;
+        $db['customers'][$key]['phones_ts'] = time();
+        $db['customers'][$key]['phones_by'] = 'customer';
+        $phones = array('tel'=>$tel, 'mobile'=>$mob,
+                        'tel_display'=>pcm_phone_display($tel), 'mobile_display'=>pcm_phone_display($mob));
+    }
     save($DATA,$db);
-    out(array('ok'=>true, 'addr'=>array('line1'=>$line1,'line2'=>$line2,'city'=>$city,'postcode'=>$pc)));
+    out(array('ok'=>true, 'addr'=>array('line1'=>$line1,'line2'=>$line2,'city'=>$city,'postcode'=>$pc), 'phones'=>$phones));
 }
 
 if ($action === 'overview') {
+    require_once __DIR__ . '/pcm-phone-lib.php';
     $wt = isset($in['wtoken']) ? preg_replace('/[^a-f0-9]/','', (string)$in['wtoken']) : '';
     $member = '';                     // set only for a company team member's session
     if ($wt !== '') {
@@ -280,6 +299,8 @@ if ($action === 'overview') {
         'addr'=>($member === '' && isset($c['addr']) && is_array($c['addr'])) ? array(
             'line1'=>(string)($c['addr']['line1'] ?? ''), 'line2'=>(string)($c['addr']['line2'] ?? ''),
             'city'=>(string)($c['addr']['city'] ?? ''), 'postcode'=>(string)($c['addr']['postcode'] ?? '')) : null,
+        // their landline and mobile, same ownership rule as the address (pcm-phone-lib.php)
+        'phones'=>($member === '') ? pcm_phones_payload($c) : null,
         'machines'=>$ms, 'fam'=>($member === '' ? $fam : ''), 'pending'=>$pend, 'appreq'=>(string)($c['app_req'] ?? ''),
         // billing is the account holder's business and nobody else's
         'gc'=>($ownerMade && $member === '') ? pcm_gc_summary((string)($c['email'] ?? '')) : null));

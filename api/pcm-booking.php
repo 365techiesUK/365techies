@@ -2327,11 +2327,16 @@ if ($action === 'clientinfo') {
        fall back to the address the customer gave us in their own portal - David needs
        AN address to invoice, not a particular system's copy of one. Ours is marked so
        the card can say where it came from. */
-    $ours = array('line1'=>'', 'line2'=>'', 'city'=>'', 'postcode'=>'', 'ts'=>0);
+    require_once __DIR__ . '/pcm-phone-lib.php';
+    $ours = array('line1'=>'', 'line2'=>'', 'city'=>'', 'postcode'=>'', 'ts'=>0, 'tel'=>'', 'mobile'=>'');
     if ($cid > 0) {
         list($lkA, $dbA) = db_open(); db_close($lkA);
         foreach ((array)(isset($dbA['customers']) ? $dbA['customers'] : array()) as $cRec) {
             if (!is_array($cRec) || (int)(isset($cRec['sb_client_id']) ? $cRec['sb_client_id'] : 0) !== $cid) continue;
+            /* The numbers they keep up to date themselves in the portal (pcm-phone-lib.php). */
+            $ph = pcm_phones_payload($cRec);
+            $ours['tel'] = $ph['tel_display'];
+            $ours['mobile'] = $ph['mobile_display'];
             if (!empty($cRec['addr']) && is_array($cRec['addr'])) {
                 $ours = array('line1'=>(string)($cRec['addr']['line1'] ?? ''), 'line2'=>(string)($cRec['addr']['line2'] ?? ''),
                               'city'=>(string)($cRec['addr']['city'] ?? ''), 'postcode'=>(string)($cRec['addr']['postcode'] ?? ''),
@@ -2342,8 +2347,16 @@ if ($action === 'clientinfo') {
     }
     $sbHas = ($g('address1') !== '' || $g('city') !== '' || $g('zip') !== '');
     $oursHas = ($ours['line1'] !== '' || $ours['city'] !== '' || $ours['postcode'] !== '');
+    /* SimplyBook's phone is whatever somebody typed at booking time; when it is
+       blank, fall back to the number the customer keeps in their portal (mobile
+       first - that is the one a text reaches). Both portal numbers are also sent
+       on their own so the card can show them beside SimplyBook's. */
+    $oursPhone = $ours['mobile'] !== '' ? $ours['mobile'] : $ours['tel'];
     out(array('ok' => true, 'client' => array(
-        'name' => $g('name'), 'email' => $g('email'), 'phone' => $g('phone'),
+        'name' => $g('name'), 'email' => $g('email'),
+        'phone' => ($g('phone') !== '' ? $g('phone') : $oursPhone),
+        'phone_src' => ($g('phone') !== '' ? 'simplybook' : ($oursPhone !== '' ? 'portal' : '')),
+        'mobile' => $ours['mobile'], 'tel' => $ours['tel'],
         'address1' => $sbHas ? $g('address1') : $ours['line1'],
         'address2' => $sbHas ? $g('address2') : $ours['line2'],
         'city' => $sbHas ? $g('city') : $ours['city'],

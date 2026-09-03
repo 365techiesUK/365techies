@@ -25344,21 +25344,27 @@ def write_portal_page():
   /* The address editor. Deliberately four plain fields rather than a postcode
      lookup: a lookup means a third-party script and a per-lookup cost, on a form
      most customers touch once. */
-  function bindAddr(cur) {
+  function bindAddr(cur, ph) {
+    ph = ph || {};
     var btn = document.getElementById('addred');
     if (!btn) return;
     btn.onclick = function () {
       var box = document.getElementById('myaddr');
       if (!box) return;
-      var f = function (id, label, val, max) {
+      var f = function (id, label, val, max, type, ac) {
         return '<label class="fld"><span>' + label + '</span>'
-             + '<input id="' + id + '" type="text" maxlength="' + max + '" value="' + esc(val || '') + '"></label>';
+             + '<input id="' + id + '" type="' + (type || 'text') + '" maxlength="' + max + '"'
+             + (ac ? ' autocomplete="' + ac + '"' : '') + ' value="' + esc(val || '') + '"></label>';
       };
       box.innerHTML = '<div class="addrform">'
-        + f('adr1', 'Address line 1', cur.line1, 90)
-        + f('adr2', 'Address line 2 (optional)', cur.line2, 90)
-        + f('adrc', 'Town or city', cur.city, 60)
-        + f('adrp', 'Postcode', cur.postcode, 12)
+        + f('adr1', 'Address line 1', cur.line1, 90, 'text', 'address-line1')
+        + f('adr2', 'Address line 2 (optional)', cur.line2, 90, 'text', 'address-line2')
+        + f('adrc', 'Town or city', cur.city, 60, 'text', 'address-level2')
+        + f('adrp', 'Postcode', cur.postcode, 12, 'text', 'postal-code')
+        /* Both optional, and the customer types them however they like - the
+           server tidies a UK number and keeps anything else as typed. */
+        + f('adrt', 'Landline (optional)', ph.tel_display || ph.tel, 24, 'tel', 'tel')
+        + f('adrm', 'Mobile (optional)', ph.mobile_display || ph.mobile, 24, 'tel', 'tel')
         + '</div>'
         + '<p><button class="btn sm" id="adrsave">Save</button> '
         + '<button class="btn sm ghost" id="adrcancel">Cancel</button> '
@@ -25370,14 +25376,16 @@ def write_portal_page():
                      line1: (document.getElementById('adr1').value || ''),
                      line2: (document.getElementById('adr2').value || ''),
                      city:  (document.getElementById('adrc').value || ''),
-                     postcode: (document.getElementById('adrp').value || '') };
+                     postcode: (document.getElementById('adrp').value || ''),
+                     landline: ((document.getElementById('adrt') || {}).value || ''),
+                     mobile: ((document.getElementById('adrm') || {}).value || '') };
         msg.textContent = 'Saving\u2026';
         post(PCM, body).then(function (r) {
           if (r && r.ok) { msg.textContent = 'Saved.'; showDash(); return; }
           msg.textContent = (r && r.error === 'expired')
             ? 'Your sign-in expired \u2014 please refresh the page and sign in again.'
             : (r && r.error === 'ask_your_manager')
-              ? 'Your account holder looks after the address.'
+              ? 'Your account holder looks after these details.'
               : 'Sorry \u2014 that didn\u2019t save. Please try again, or call 01202 775566.';
         }).catch(function () {
           msg.textContent = 'Sorry \u2014 that didn\u2019t save. Please try again, or call 01202 775566.';
@@ -25480,13 +25488,23 @@ def write_portal_page():
          would only be inviting a refusal. Never mandatory: plenty of our work is
          remote and needs no address at all. */
       if (!d.member) {
-        var A = d.addr || {};
+        var A = d.addr || {}, P = d.phones || {};
         var hasA = !!(A.line1 || A.city || A.postcode);
-        h += '<div class="card"><h2>\\ud83c\\udfe0 Your address</h2><div id="myaddr">'
+        var hasP = !!(P.tel || P.mobile);
+        h += '<div class="card"><h2>\\ud83c\\udfe0 Your details</h2><div id="myaddr">'
           + (hasA
              ? '<p class="addrshow">' + [A.line1, A.line2, A.city, A.postcode].filter(function (x) { return x && String(x).trim(); }).map(esc).join('<br>') + '</p>'
              : '<p class="quiet">We don\u2019t have your address yet. Adding it saves us asking when we come out to you \u2014 and saves you a phone call when we invoice.</p>')
-          + '<p><button class="btn sm ghost" id="addred">' + (hasA ? 'Change address' : 'Add your address') + '</button></p>'
+          /* Landline and mobile, kept by the customer. The mobile is the one a
+             "we\u2019re on our way" text reaches, so the nudge names that. */
+          + (hasP
+             ? '<p class="addrshow">'
+               + (P.tel ? '\\ud83d\\udcde ' + esc(P.tel_display || P.tel) : '')
+               + (P.tel && P.mobile ? '<br>' : '')
+               + (P.mobile ? '\\ud83d\\udcf1 ' + esc(P.mobile_display || P.mobile) : '')
+               + '</p>'
+             : '<p class="quiet">No phone numbers on file yet \u2014 a mobile lets us text you when we\u2019re on our way.</p>')
+          + '<p><button class="btn sm ghost" id="addred">' + ((hasA || hasP) ? 'Change your details' : 'Add your details') + '</button></p>'
           + '</div></div>';
       }
       // Saved site surveys belong to the account, not to an individual employee, and
@@ -25628,7 +25646,7 @@ def write_portal_page():
       loadBroadband();
       loadDash();
       tmLoad();
-      bindAddr(d.addr || {});
+      bindAddr(d.addr || {}, d.phones || {});
       Array.prototype.forEach.call(document.querySelectorAll('#p365app .repb'), function (btn) {
         btn.onclick = function () {
           btn.disabled = true;
@@ -26696,7 +26714,12 @@ def write_portal_page():
   function clientCard(c) {
     var rows = [];
     if (c.email) rows.push('\\u2709\\ufe0f <a href="mailto:' + esc(c.email) + '">' + esc(c.email) + '</a>');
-    if (c.phone) rows.push('\\ud83d\\udcde <a href="tel:' + esc((c.phone || '').replace(/\\s/g, '')) + '">' + esc(c.phone) + '</a>');
+    if (c.phone) rows.push('\\ud83d\\udcde <a href="tel:' + esc((c.phone || '').replace(/\\s/g, '')) + '">' + esc(c.phone) + '</a>'
+      + (c.phone_src === 'portal' ? ' <span class="quiet">(from their portal)</span>' : ''));
+    /* The numbers the customer keeps themselves. Shown beside SimplyBook's when
+       they differ - the portal one is the one they typed most recently. */
+    if (c.mobile && c.mobile !== c.phone) rows.push('\\ud83d\\udcf1 <a href="tel:' + esc(c.mobile.replace(/\\s/g, '')) + '">' + esc(c.mobile) + '</a> <span class="quiet">(mobile, portal)</span>');
+    if (c.tel && c.tel !== c.phone) rows.push('\\u260e\\ufe0f <a href="tel:' + esc(c.tel.replace(/\\s/g, '')) + '">' + esc(c.tel) + '</a> <span class="quiet">(landline, portal)</span>');
     var addr = [c.address1, c.address2, c.city, c.zip].filter(function (x) { return x && ('' + x).trim(); });
     var out = '';
     if (rows.length) out += '<div>' + rows.join(' &middot; ') + '</div>';
