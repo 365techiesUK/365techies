@@ -68,11 +68,50 @@ foreach (array('cccc3333', 'bbbb2222', 'deadbeef') as $t) {
        'a refusal for ' . $t . ' leaks no identity');
 }
 
+// --- the app's licence gate (the second way in) ------------------------------
+$APPDB = array('customers' => array(
+    'K-PRO'  => array('email' => 'jo@example.com', 'via' => 'staff', 'tier' => 'pro',
+                      'machines' => array('aa11bb22' => array('name' => 'Study PC'))),
+    'K-FREE' => array('email' => 'sam@example.com', 'via' => 'staff', 'tier' => 'free',
+                      'machines' => array('cc33dd44' => array('name' => 'Laptop'))),
+));
+$a = function ($k, $m, $pro = false) use ($APPDB) { return app_licence_check($APPDB, $k, $m, $pro); };
+
+ok($a('K-PRO', 'aa11bb22')['ok'] === true, 'a licensed machine passes');
+ok($a('K-PRO', 'aa11bb22')['key'] === 'K-PRO', 'and yields its customer key');
+ok($a('k-pro', 'aa11bb22')['ok'] === true, 'the key is upper-cased, as pcm.php does');
+ok($a('K-PRO', '')['error'] === 'missing', 'no machine, no answer');
+ok($a('', 'aa11bb22')['error'] === 'missing', 'no key, no answer');
+ok($a('K-NOPE', 'aa11bb22')['error'] === 'unknown_key', 'an unknown key is refused');
+/* THE ONE THAT MATTERS: a real licence key plus a machine that was never
+   activated against it must not read that customer's invoices. */
+ok($a('K-PRO', 'ffffffff')['error'] === 'activate_first', 'a key alone is not enough - the machine must be registered');
+ok($a('K-PRO', 'cc33dd44')['error'] === 'activate_first', 'another customer machine id does not unlock this key');
+ok($a('K-FREE', 'cc33dd44')['ok'] === true, 'a free-tier customer can still see their own invoices');
+ok($a('K-FREE', 'cc33dd44', true)['error'] === 'not_on_support', 'but a pro-only caller refuses them');
+ok(app_licence_check(null, 'K-PRO', 'aa11bb22')['error'] === 'db_unavailable', 'an unreadable store is refused');
+foreach (array($a('K-NOPE', 'aa11bb22'), $a('K-PRO', 'ffffffff')) as $r)
+    ok(!isset($r['key']), 'a refused licence carries no customer key');
+// the machine id is normalised the same way pcm.php stores it (hex, capped at 32)
+ok($a('K-PRO', 'AA11BB22')['error'] === 'activate_first', 'upper-case hex is not the same machine - matches pcm.php exactly');
+ok($a('K-PRO', 'aa11bb22-!@#')['ok'] === true, 'punctuation is stripped, as pcm.php strips it');
+
+// The endpoint accepts either credential, and the wtoken path wins when both are sent.
+$src2 = (string)file_get_contents(__DIR__ . '/pcm-myinvoices.php');
+ok(strpos($src2, 'app_licence_check(') !== false, 'the endpoint offers the licence path');
+ok(strpos($src2, "portal_session_check(\$db, \$in['wtoken'], \$machine)") !== false,
+   'a web session is preferred when one is presented');
+
 // --- the request cannot choose whose invoices these are ---------------------
 $src = (string)file_get_contents(__DIR__ . '/pcm-myinvoices.php');
 ok(strpos($src, "\$in['email']") === false, 'the endpoint never reads an email from the request');
-ok(strpos($src, "\$in['qboId']") === false && strpos($src, "\$in['key']") === false,
-   'it never reads a QuickBooks id or a customer key from the request');
+ok(strpos($src, "\$in['qboId']") === false, 'it never reads a QuickBooks id from the request');
+/* $in['key'] IS read now - it is the app's licence key - but it is a CREDENTIAL
+   checked against the store, not a choice of customer: app_licence_check only
+   ever returns the key it verified, and the invoice lookup uses the email on
+   that record. The customer key is never taken from the request as an identity. */
+ok(preg_match('/\$key = \(string\)\$gate\[\'key\'\];/', $src) === 1,
+   'the customer key always comes from the verified gate, never straight from the request');
 ok(preg_match('/\$email\s*=\s*strtolower\(trim\(\(string\)\(isset\(\$c\[\'email\'\]\)/', $src) === 1,
    'the email it uses comes from OUR customer record');
 ok(preg_match("/\\\$id = preg_replace\\('\\/\\[\\^0-9\\]\\/'/", $src) === 1,

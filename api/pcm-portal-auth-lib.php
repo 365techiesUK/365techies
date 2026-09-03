@@ -52,4 +52,31 @@ if (!function_exists('portal_session_check')) {
 
         return array('ok' => true, 'key' => $key, 'viewas' => !empty($ws['viewas']));
     }
+
+    /**
+     * The 365 PC Manager app's own gate: a licence key plus a machine that has
+     * actually been activated against it. The app has no web session, so this is
+     * the equivalent ladder for it, and it is deliberately STRICTER than a
+     * check-in: an unregistered machine is refused rather than quietly ignored,
+     * because this is used to hand back account data rather than to record
+     * telemetry.
+     *
+     * Same shape as portal_session_check(), so a caller can accept either.
+     * A refusal carries nothing but the reason.
+     */
+    function app_licence_check($db, $rawKey, $rawMachine, $needPro = false) {
+        if (!is_array($db)) return array('ok' => false, 'error' => 'db_unavailable');
+        // Normalised exactly as pcm.php does, or a key would match here and miss there.
+        $key = strtoupper(preg_replace('/[^A-Za-z0-9\-]/', '', (string)$rawKey));
+        $machine = preg_replace('/[^a-f0-9]/', '', substr((string)$rawMachine, 0, 32));
+        if ($key === '' || $machine === '') return array('ok' => false, 'error' => 'missing');
+        if (!isset($db['customers'][$key]) || !is_array($db['customers'][$key]))
+            return array('ok' => false, 'error' => 'unknown_key');
+        $c = $db['customers'][$key];
+        $machines = isset($c['machines']) && is_array($c['machines']) ? $c['machines'] : array();
+        if (!isset($machines[$machine])) return array('ok' => false, 'error' => 'activate_first');
+        if ($needPro && (string)(isset($c['tier']) ? $c['tier'] : 'free') !== 'pro')
+            return array('ok' => false, 'error' => 'not_on_support');
+        return array('ok' => true, 'key' => $key, 'viewas' => false, 'via' => 'app');
+    }
 }

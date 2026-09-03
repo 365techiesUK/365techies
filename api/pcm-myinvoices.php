@@ -64,7 +64,11 @@ $raw = file_get_contents('php://input');
 $in  = json_decode((string)$raw, true);
 if (!is_array($in)) $in = $_POST;
 $action  = isset($in['action']) ? preg_replace('/[^a-z]/', '', (string)$in['action']) : 'list';
-$machine = isset($in['machine']) ? preg_replace('/[^A-Za-z0-9._-]/', '', (string)$in['machine']) : '';
+/* ⚠ Sanitise the machine id EXACTLY as pcm.php and pcm-booking.php do - hex,
+   capped at 32 - because those are what wrote the web session this is compared
+   against. A looser filter here would not let anyone in, but it would refuse a
+   caller the portal itself accepts. */
+$machine = isset($in['machine']) ? preg_replace('/[^a-f0-9]/', '', substr((string)$in['machine'], 0, 32)) : '';
 if ($action === '') $action = 'list';
 if ($action !== 'list' && $action !== 'pdf') fail('bad_request');
 
@@ -77,7 +81,14 @@ require_once __DIR__ . '/pcm-portal-auth-lib.php';
 $db = @json_decode((string)@file_get_contents($DATA), true);
 if (!is_array($db)) { http_response_code(503); fail('db_unavailable'); }
 
-$gate = portal_session_check($db, isset($in['wtoken']) ? $in['wtoken'] : '', $machine);
+/* Two ways in, one identity chain after them: the portal's web session, or the
+   365 PC Manager app's licence key plus a machine activated against it. The app
+   has no web session, and giving it one would mean minting a portal credential
+   on a customer's PC - the licence gate it already uses everywhere else is the
+   honest equivalent. Everything past this point is identical for both. */
+$gate = (isset($in['wtoken']) && $in['wtoken'] !== '')
+      ? portal_session_check($db, $in['wtoken'], $machine)
+      : app_licence_check($db, isset($in['key']) ? $in['key'] : '', isset($in['machine']) ? $in['machine'] : '');
 if (empty($gate['ok'])) fail((string)$gate['error']);
 $key = (string)$gate['key'];
 $c = $db['customers'][$key];

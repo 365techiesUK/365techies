@@ -114,7 +114,21 @@ if ($action === 'checkin') {
     // family view state, so the app's "Shared with ..." card survives reinstalls
     $fam = isset($c['family']['name']) ? (string)$c['family']['name'] : '';
     $famUrl = isset($c['family']['token']) ? 'https://365techies.co.uk/family/?c='.$c['family']['token'] : '';
-    out(array('ok'=>true,'tier'=>$tier,'next'=>$c['next'] ?? '','next_ts'=>intval($c['next_ts'] ?? 0),'ready'=>$ready,'fam'=>$fam,'fam_url'=>$famUrl) + $upd);
+    /* The contact details we hold, so the app can show them back and ask "still
+       right?" - the commonest reason we cannot reach someone is a number that
+       changed years ago. Display form, and READ-ONLY here: the portal stays the
+       one place they are edited, so there is a single writer (pcm-phone-lib.php). */
+    require_once __DIR__ . '/pcm-phone-lib.php';
+    $ph = pcm_phones_payload($c);
+    $detail = array(
+        'tel' => $ph['tel_display'], 'mobile' => $ph['mobile_display'],
+        'addr' => (!empty($c['addr']) && is_array($c['addr']))
+            ? trim(preg_replace('/\s*,\s*,+/', ',', implode(', ', array_filter(array(
+                (string)($c['addr']['line1'] ?? ''), (string)($c['addr']['line2'] ?? ''),
+                (string)($c['addr']['city'] ?? ''), (string)($c['addr']['postcode'] ?? ''))))))
+            : '');
+    $detail['have'] = ($detail['tel'] !== '' || $detail['mobile'] !== '' || $detail['addr'] !== '');
+    out(array('ok'=>true,'tier'=>$tier,'next'=>$c['next'] ?? '','next_ts'=>intval($c['next_ts'] ?? 0),'ready'=>$ready,'fam'=>$fam,'fam_url'=>$famUrl,'detail'=>$detail) + $upd);
 }
 
 // latest published app build, from the git-deployed manifest (downloads/pcm/version.json).
