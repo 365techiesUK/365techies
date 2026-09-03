@@ -44,6 +44,11 @@ $CACHEF = $BASE . '/pcm-qbo-invcache.json';
 $MINORVERSION = '70';
 $CACHE_TTL    = 600;     // 10 minutes: invoices change monthly, not by the second
 $MAX_ROWS     = 24;      // two years of monthly invoices
+/* Hours an invoice sits in QuickBooks before the customer sees it, unless it
+   has already been emailed, printed or part paid. QuickBooks has no draft
+   flag (see qbo_lib_invoice_ready), so this window is what stops a
+   half-finished invoice appearing in a customer's portal. 0 disables it. */
+$INVOICE_SETTLE_HOURS = 24;
 $CACHE_MAX    = 300;     // entries kept in the cache file
 
 require_once __DIR__ . '/pcm-qbo-lib.php';
@@ -183,7 +188,7 @@ if (!qbo_lib_ok($res)) {
               'invoices' => ($hit && isset($hit['rows'])) ? $hit['rows'] : array(),
               'stale' => (bool)$hit));
 }
-$rows = array();
+$rows = array(); $held = 0;
 $list = isset($res['json']['QueryResponse']['Invoice']) && is_array($res['json']['QueryResponse']['Invoice'])
       ? $res['json']['QueryResponse']['Invoice'] : array();
 foreach ($list as $inv) {
@@ -191,8 +196,12 @@ foreach ($list as $inv) {
        customer are ever shaped for output. */
     $ref = (string)(isset($inv['CustomerRef']['value']) ? $inv['CustomerRef']['value'] : '');
     if ($ref !== $qboId) continue;
+    // A half-written invoice is not the customer's business until it is
+    // finished - see qbo_lib_invoice_ready() for why this is a settling window
+    // rather than a status check.
+    if (!qbo_lib_invoice_ready($inv, $INVOICE_SETTLE_HOURS)) { $held++; continue; }
     $pub = qbo_lib_invoice_public($inv);
     if ($pub !== null) $rows[] = $pub;
 }
 cache_put($rows, $qboId);
-out(array('ok' => true, 'connected' => true, 'invoices' => $rows));
+out(array('ok' => true, 'connected' => true, 'invoices' => $rows, 'held' => $held));

@@ -102,6 +102,43 @@ if (!function_exists('qbo_lib_custkey')) {
     }
 
     /**
+     * Is this invoice finished enough to show the customer?
+     *
+     * ⚠ QUICKBOOKS HAS NO DRAFT FLAG. The Invoice entity carries only
+     * EmailStatus (NotSet | NeedToSend | EmailSent) and PrintStatus
+     * (NotSet | NeedToPrint | PrintComplete); there is no TxnStatus and nothing
+     * that says "still being written". So this cannot be exact, and pretending
+     * otherwise would be worse than the problem it solves.
+     *
+     * Filtering on EmailStatus alone is the obvious idea and it is WRONG here:
+     * our own monthly per-PC run creates invoices through the API and
+     * deliberately never emails them (GoCardless collects), so they sit at
+     * NotSet for ever. That rule would permanently hide exactly the invoices
+     * customers most need to see.
+     *
+     * So: a settling window. An invoice is shown once it carries positive
+     * evidence of having been issued - emailed, printed, or with money already
+     * against it - or once it has simply been sitting in the books longer than
+     * $settleHours, which is the window in which a half-finished one gets
+     * finished or deleted.
+     */
+    function qbo_lib_invoice_ready($inv, $settleHours = 24, $nowTs = null) {
+        if (!is_array($inv)) return false;
+        $email = (string)(isset($inv['EmailStatus']) ? $inv['EmailStatus'] : '');
+        $print = (string)(isset($inv['PrintStatus']) ? $inv['PrintStatus'] : '');
+        if ($email === 'EmailSent' || $print === 'PrintComplete') return true;
+        $total   = (float)(isset($inv['TotalAmt']) ? $inv['TotalAmt'] : 0);
+        $balance = (float)(isset($inv['Balance']) ? $inv['Balance'] : 0);
+        if ($total > 0.005 && $balance < $total - 0.005) return true;   // money has moved against it
+        $created = (string)(isset($inv['MetaData']['CreateTime']) ? $inv['MetaData']['CreateTime'] : '');
+        if ($created === '') return true;   // no timestamp to judge by: show it rather than hide a real invoice
+        $ts = strtotime($created);
+        if ($ts === false) return true;
+        $now = $nowTs !== null ? $nowTs : time();
+        return $ts <= $now - ((int)$settleHours * 3600);
+    }
+
+    /**
      * One QuickBooks invoice -> the handful of fields a CUSTOMER may see.
      * Deliberately a whitelist: a QuickBooks invoice object carries private
      * notes, internal memos, item-level costs and our own bookkeeping, none of

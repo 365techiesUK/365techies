@@ -76,6 +76,35 @@ ok(qbo_lib_invoice_public($mk(0, 0, '2026-08-31'), '2026-09-03')['status'] === '
 ok(qbo_lib_invoice_public($mk(100, 0.004, '2026-09-30'), '2026-09-03')['status'] === 'paid', 'a rounding crumb is paid');
 ok(qbo_lib_invoice_public($mk(100, 0.02, '2026-09-30'), '2026-09-03')['status'] === 'due', 'two pence still owed is due');
 
+// --- draft vs finished (the settling window) ---------------------------------
+$NOW = 1788000000;                       // fixed clock
+$mkI = function ($opts) use ($NOW) {
+    return array_merge(array('Id' => '1', 'TotalAmt' => 100, 'Balance' => 100,
+        'MetaData' => array('CreateTime' => gmdate('c', $NOW - 3600))), $opts);   // an hour old
+};
+ok(qbo_lib_invoice_ready($mkI(array()), 24, $NOW) === false, 'a fresh unsent invoice is held back');
+ok(qbo_lib_invoice_ready($mkI(array('EmailStatus' => 'EmailSent')), 24, $NOW) === true, 'an emailed invoice shows at once');
+ok(qbo_lib_invoice_ready($mkI(array('PrintStatus' => 'PrintComplete')), 24, $NOW) === true, 'a printed invoice shows at once');
+ok(qbo_lib_invoice_ready($mkI(array('Balance' => 40)), 24, $NOW) === true, 'a part-paid invoice shows at once');
+ok(qbo_lib_invoice_ready($mkI(array('Balance' => 0)), 24, $NOW) === true, 'a paid invoice shows at once');
+ok(qbo_lib_invoice_ready($mkI(array('EmailStatus' => 'NeedToSend')), 24, $NOW) === false, 'queued-to-send is not sent');
+
+/* THE ONE THAT MATTERS: our monthly per-PC run creates invoices through the API
+   and never emails them, so they sit at NotSet for ever. The window must release
+   them, or the filter permanently hides the invoices customers most need. */
+$monthly = $mkI(array('MetaData' => array('CreateTime' => gmdate('c', $NOW - 30 * 86400))));
+ok(qbo_lib_invoice_ready($monthly, 24, $NOW) === true, 'a month-old never-emailed invoice is NOT hidden');
+ok(qbo_lib_invoice_ready($mkI(array('MetaData' => array('CreateTime' => gmdate('c', $NOW - 86401)))), 24, $NOW) === true,
+   'just past the window, it appears');
+ok(qbo_lib_invoice_ready($mkI(array('MetaData' => array('CreateTime' => gmdate('c', $NOW - 86399)))), 24, $NOW) === false,
+   'just inside the window, it does not');
+
+// Fail OPEN on anything we cannot judge: hiding a real invoice is the worse error.
+ok(qbo_lib_invoice_ready($mkI(array('MetaData' => array())), 24, $NOW) === true, 'no CreateTime: shown rather than hidden');
+ok(qbo_lib_invoice_ready($mkI(array('MetaData' => array('CreateTime' => 'not a date'))), 24, $NOW) === true, 'unparseable CreateTime: shown');
+ok(qbo_lib_invoice_ready($mkI(array()), 0, $NOW) === true, 'a zero window disables the hold entirely');
+ok(qbo_lib_invoice_ready(null, 24, $NOW) === false, 'a non-invoice is never ready');
+
 // --- refuses rubbish --------------------------------------------------------
 ok(qbo_lib_invoice_public(null) === null, 'null is not an invoice');
 ok(qbo_lib_invoice_public('nope') === null, 'a string is not an invoice');
