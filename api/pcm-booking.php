@@ -2371,6 +2371,26 @@ if ($action === 'agenda') {
     $rows = isset($r['result']) && is_array($r['result']) ? $r['result'] : array();
     list($lkA, $dbA) = db_open(); db_close($lkA);
     $bm = isset($dbA['bkmeta']) && is_array($dbA['bkmeta']) ? $dbA['bkmeta'] : array();
+    /* Numbers we already hold OURSELVES, keyed by email.
+       getBookings does not always carry the client's phone - the key is simply
+       absent on some rows - so the diary was printing "no number on file" for
+       customers whose number is sitting in our own customer file, and in some
+       cases was typed by the customer themselves in their portal. This indexes
+       the customer file we have ALREADY loaded above for bkmeta, so it costs no
+       extra I/O and no extra SimplyBook call.
+       Order matters: the customer's own typed mobile is the most current thing
+       we have, then their landline, then whatever SimplyBook gave us. */
+    $ourPhones = array();
+    if (isset($dbA['customers']) && is_array($dbA['customers'])) {
+        foreach ($dbA['customers'] as $cRow) {
+            if (!is_array($cRow)) continue;
+            $cem = strtolower(trim((string)(isset($cRow['email']) ? $cRow['email'] : '')));
+            if ($cem === '' || isset($ourPhones[$cem])) continue;
+            foreach (array('mobile', 'tel', 'sb_phone', 'phone') as $pf) {
+                if (!empty($cRow[$pf])) { $ourPhones[$cem] = (string)$cRow[$pf]; break; }
+            }
+        }
+    }
     $stMap = null;   // SB status-id -> confirmed/completed, built lazily if rows carry status_id
     $list = array();
     foreach ($rows as $b) {
@@ -2387,6 +2407,15 @@ if ($action === 'agenda') {
         $em = '';
         foreach (array('client_email', 'email') as $ek) if (!empty($b[$ek])) { $em = (string)$b[$ek]; break; }
         if ($em === '' && isset($b['client']) && is_array($b['client']) && !empty($b['client']['email'])) $em = (string)$b['client']['email'];
+        /* SimplyBook gave us nothing, so use the number we hold. EXACT email
+           only - the same rule the rest of the integration uses; never match on
+           name, because two Smiths must not be merged. psrc tells the portal
+           where it came from, so staff can see SimplyBook still needs it. */
+        $psrc = '';
+        if ($ph === '' && $em !== '') {
+            $lem = strtolower(trim($em));
+            if (isset($ourPhones[$lem]) && $ourPhones[$lem] !== '') { $ph = $ourPhones[$lem]; $psrc = 'ours'; }
+        }
         $cid = (int)(isset($b['client_id']) ? $b['client_id'] : (isset($b['client']) && is_array($b['client']) && isset($b['client']['id']) ? $b['client']['id'] : 0));
         $bid = (int)(isset($b['id']) ? $b['id'] : 0);
         // status: our staff marker first; else SimplyBook's own Status-feature id mapped by
@@ -2414,6 +2443,7 @@ if ($action === 'agenda') {
                         'tm' => $ts ? date('H:i', $ts) : '',
                         'who' => $cname,
                         'phone' => $ph,
+                        'psrc' => $psrc,
                         'email' => $em,
                         'cid' => $cid,
                         'st' => $st,

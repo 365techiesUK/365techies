@@ -27044,7 +27044,12 @@ def write_portal_page():
     var cls = stCls(b.st);
     return '<div class="tline' + cls + '" data-bid="' + esc(b.id) + '"><span class="ttime">' + fmtTime(b.tm) + '</span><div class="tblock">'
       + '<strong>' + esc(b.who) + '</strong> \u00b7 ' + esc(b.what) + ' ' + statusChip(b.st)
-      + '<br />' + (b.phone ? '<a href="tel:' + esc(b.phone.replace(/\\s/g, '')) + '" class="tphone">\\ud83d\\udcde ' + esc(b.phone) + '</a>' : '<span class="quiet">no number on file - check SimplyBook</span>')
+      + '<br />' + (b.phone ? '<a href="tel:' + esc(b.phone.replace(/\\s/g, '')) + '" class="tphone">\\ud83d\\udcde ' + esc(b.phone) + '</a>'
+          /* Say where it came from. b.psrc==="ours" means SimplyBook had no number
+             on the booking and this one is out of our own customer file - worth
+             knowing, because SimplyBook still needs it adding. */
+          + (b.psrc === 'ours' ? ' <span class="quiet">from our records \\u2014 not in SimplyBook</span>' : '')
+        : '<span class="quiet">no number on file - check SimplyBook</span>')
       + (b.email ? ' <a href="mailto:' + esc(b.email) + '" class="tphone">\\u2709\\ufe0f ' + esc(b.email) + '</a>' : '')
       + (b.cid ? ' <button class="sm ghost cib" data-cid="' + esc(b.cid) + '" data-p="' + prefix + i + '">\\ud83d\\udccd Details</button>' : '')
       + (b.st !== 'completed' ? ' <button class="sm ghost cdb" data-id="' + esc(b.id) + '" title="Mark this job completed">✓ Done</button>' : '')

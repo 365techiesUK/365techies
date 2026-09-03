@@ -689,9 +689,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">portal build 03 Sep 2026 &middot; e9a1017bf1</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">portal build 03 Sep 2026 &middot; b76c6af330</p><script>
 (function () {
-  var P365BUILD = 'e9a1017bf1';
+  var P365BUILD = 'b76c6af330';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -5976,7 +5976,12 @@
     var cls = stCls(b.st);
     return '<div class="tline' + cls + '" data-bid="' + esc(b.id) + '"><span class="ttime">' + fmtTime(b.tm) + '</span><div class="tblock">'
       + '<strong>' + esc(b.who) + '</strong> · ' + esc(b.what) + ' ' + statusChip(b.st)
-      + '<br />' + (b.phone ? '<a href="tel:' + esc(b.phone.replace(/\s/g, '')) + '" class="tphone">\ud83d\udcde ' + esc(b.phone) + '</a>' : '<span class="quiet">no number on file - check SimplyBook</span>')
+      + '<br />' + (b.phone ? '<a href="tel:' + esc(b.phone.replace(/\s/g, '')) + '" class="tphone">\ud83d\udcde ' + esc(b.phone) + '</a>'
+          /* Say where it came from. b.psrc==="ours" means SimplyBook had no number
+             on the booking and this one is out of our own customer file - worth
+             knowing, because SimplyBook still needs it adding. */
+          + (b.psrc === 'ours' ? ' <span class="quiet">from our records \u2014 not in SimplyBook</span>' : '')
+        : '<span class="quiet">no number on file - check SimplyBook</span>')
       + (b.email ? ' <a href="mailto:' + esc(b.email) + '" class="tphone">\u2709\ufe0f ' + esc(b.email) + '</a>' : '')
       + (b.cid ? ' <button class="sm ghost cib" data-cid="' + esc(b.cid) + '" data-p="' + prefix + i + '">\ud83d\udccd Details</button>' : '')
       + (b.st !== 'completed' ? ' <button class="sm ghost cdb" data-id="' + esc(b.id) + '" title="Mark this job completed">✓ Done</button>' : '')
