@@ -291,7 +291,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-09-02"
+      "dateModified": "2026-09-03"
     },
     {
       "@type": "WebApplication",
@@ -856,7 +856,7 @@
           <p><strong>River levels and flood warnings.</strong> The Environment Agency&rsquo;s real-time data API: river and tide gauges on the Stour, Avon and the harbour report on roughly a 15-minute cycle, and flood alerts and warnings are re-read every five minutes. <strong>No active warnings is not the same as no flood risk.</strong></p>
           <p><strong>Bike bays.</strong> The Beryl BCP scheme&rsquo;s public GBFS feed &mdash; bay locations and how many bikes are docked, read every three minutes.</p>
           <p><strong>The latest satellite pass.</strong> The most recent Sentinel-2 scene over the area from the Copernicus Data Space Ecosystem, with its capture date and cloud cover. Sentinel-2 revisits every few days, and our server checks for a new scene every six hours &mdash; so this layer is days old by design, and its date says so.</p>
-          <p><strong>Mobile signal.</strong> 365 Techies&rsquo; own measured readings, logged by our van as it drives the conurbation &mdash; the dataset behind the <a href="/van-signal-map/">mobile signal map</a>. It is one van and one instrument, published under CC BY 4.0; it is not an operator coverage map and it compares no operators.</p>
+          <p><strong>Mobile signal.</strong> The community speed tests from our own <a href="/signal/">signal checker</a> &mdash; real phone tests submitted by the public, drawn as grid cells holding the <strong>median download speed</strong> of the tests taken inside each one. These are phone speed tests, not radio measurements: there is no signal-strength reading behind them. A cell stays a quiet grey outline until enough tests have been taken in it &mdash; five on the coast, eight inland &mdash; and says how many more it needs, which is an invitation rather than a verdict. It aggregates across all networks by design and compares no operators. Our van&rsquo;s own drive-test readings are a separate dataset, published under CC BY 4.0 on the <a href="/van-signal-map/">mobile signal map</a>.</p>
           <p><strong>The 3D city.</strong> Google&rsquo;s Photorealistic 3D Tiles, loaded only when you press the 3D button inside the map &mdash; see below for why.</p>
 
           <h2 id="sources">Where the data comes from</h2>
@@ -873,7 +873,7 @@
             <tr><td><a href="https://www.tomtom.com" target="_blank" rel="noopener">TomTom</a> Traffic API</td><td>Live congestion colouring, only on roads where flow is measured</td><td><a href="https://developer.tomtom.com/" target="_blank" rel="noopener">TomTom for Developers</a> terms (commercial use permitted)</td><td>Traffic flow data &copy; TomTom &mdash; in the map&rsquo;s credits whenever live flow is drawn</td></tr>
             <tr><td><a href="https://dataspace.copernicus.eu/" target="_blank" rel="noopener">Copernicus Sentinel-2 L2A</a> via the Copernicus Data Space Ecosystem</td><td>The latest satellite pass</td><td><a href="https://sentinels.copernicus.eu/documents/247904/690755/Sentinel_Data_Legal_Notice" target="_blank" rel="noopener">Copernicus Sentinel Data Legal Notice</a></td><td>Contains modified Copernicus Sentinel data [Year] &mdash; [Year] is the year the scene was captured, filled in when the scene metadata arrives</td></tr>
             <tr><td><a href="https://developers.google.com/maps/documentation/tile/policies" target="_blank" rel="noopener">Google Photorealistic 3D Tiles</a></td><td>The 3D city, only after you press the 3D button</td><td>Google Maps Platform terms</td><td>Google&rsquo;s own attribution, rendered on screen by the map&rsquo;s credit line while 3D is showing</td></tr>
-            <tr><td><a href="/van-signal-map/">365 Techies mobile-signal readings</a></td><td>Mobile signal &mdash; our own measured readings, logged by our van</td><td><a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a></td><td>365 Techies mobile-signal readings (CC BY 4.0) &mdash; our own measurements, not an operator&rsquo;s coverage map</td></tr>
+            <tr><td><a href="/signal/">365 Techies community signal tests</a></td><td>Mobile signal &mdash; median download speed from community phone tests</td><td>365 Techies&rsquo; own data &mdash; aggregated cells only, not published for reuse</td><td>365 Techies community &middot; 365techies.co.uk/signal</td></tr>
             <tr><td>Software</td><td>The map application and its engine</td><td>God&rsquo;s Eye View (MIT) on CesiumJS (Apache-2.0)</td><td>Software: built on God&#39;s Eye View &copy; 2026 Bilawal Sidhu (MIT); CesiumJS (Apache-2.0) and other open-source components &mdash; <a href="/bournemouth/live-map/app/THIRD-PARTY-NOTICES.txt" target="_blank" rel="noopener">third-party notices</a></td></tr>
             </tbody>
           </table>
@@ -1327,7 +1327,7 @@
   <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=10" defer></script>
   <script src="/js/forms.min.js?v=8" defer></script>
-  <script src="/js/search.min.js?v=2026-09-02" defer></script>
+  <script src="/js/search.min.js?v=2026-09-03" defer></script>
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
     <p>We use cookies to power our live chat and understand how the site is used. See our <a href="/cookie-policy/">cookie policy</a>.</p>
     <div class="cookie-banner__actions">

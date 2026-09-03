@@ -1456,10 +1456,10 @@ _LM_SOURCES = [
      "The 3D city, only after you press the 3D button",
      "Google Maps Platform terms",
      "Google&rsquo;s own attribution, rendered on screen by the map&rsquo;s credit line while 3D is showing"),
-    ('<a href="/van-signal-map/">365 Techies mobile-signal readings</a>',
-     "Mobile signal &mdash; our own measured readings, logged by our van",
-     '<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>',
-     "365 Techies mobile-signal readings (CC BY 4.0) &mdash; our own measurements, not an operator&rsquo;s coverage map"),
+    ('<a href="/signal/">365 Techies community signal tests</a>',
+     "Mobile signal &mdash; median download speed from community phone tests",
+     "365 Techies&rsquo; own data &mdash; aggregated cells only, not published for reuse",
+     "365 Techies community &middot; 365techies.co.uk/signal"),
     ("Software",
      "The map application and its engine",
      "God&rsquo;s Eye View (MIT) on CesiumJS (Apache-2.0)",
@@ -1479,7 +1479,7 @@ _LM_PROSE = f'''          <h2 id="layers">What you are seeing</h2>
           <p><strong>River levels and flood warnings.</strong> The Environment Agency&rsquo;s real-time data API: river and tide gauges on the Stour, Avon and the harbour report on roughly a 15-minute cycle, and flood alerts and warnings are re-read every five minutes. <strong>No active warnings is not the same as no flood risk.</strong></p>
           <p><strong>Bike bays.</strong> The Beryl BCP scheme&rsquo;s public GBFS feed &mdash; bay locations and how many bikes are docked, read every three minutes.</p>
           <p><strong>The latest satellite pass.</strong> The most recent Sentinel-2 scene over the area from the Copernicus Data Space Ecosystem, with its capture date and cloud cover. Sentinel-2 revisits every few days, and our server checks for a new scene every six hours &mdash; so this layer is days old by design, and its date says so.</p>
-          <p><strong>Mobile signal.</strong> 365 Techies&rsquo; own measured readings, logged by our van as it drives the conurbation &mdash; the dataset behind the <a href="/van-signal-map/">mobile signal map</a>. It is one van and one instrument, published under CC BY 4.0; it is not an operator coverage map and it compares no operators.</p>
+          <p><strong>Mobile signal.</strong> The community speed tests from our own <a href="/signal/">signal checker</a> &mdash; real phone tests submitted by the public, drawn as grid cells holding the <strong>median download speed</strong> of the tests taken inside each one. These are phone speed tests, not radio measurements: there is no signal-strength reading behind them. A cell stays a quiet grey outline until enough tests have been taken in it &mdash; five on the coast, eight inland &mdash; and says how many more it needs, which is an invitation rather than a verdict. It aggregates across all networks by design and compares no operators. Our van&rsquo;s own drive-test readings are a separate dataset, published under CC BY 4.0 on the <a href="/van-signal-map/">mobile signal map</a>.</p>
           <p><strong>The 3D city.</strong> Google&rsquo;s Photorealistic 3D Tiles, loaded only when you press the 3D button inside the map &mdash; see below for why.</p>
 
           <h2 id="sources">Where the data comes from</h2>
