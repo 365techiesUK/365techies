@@ -40,7 +40,10 @@ import datetime as _dt
 
 from build_pages import add, graph, crumb, crumb_sub, webpage, faqpage, faq_html, hero, bc, bc_sub, SITE
 
-# The published 2026 season. (date, "Friday N Month" label)
+# The published 2026 season, plus the finale BCP added on 26 Aug 2026 after
+# the wildfire cancellations ("an additional display will take place next
+# week at no additional cost to the council ... at Bournemouth beach on
+# 4 September"; bcpcouncil.gov.uk news hub, 26 Aug 2026). (date, label)
 FRIDAYS = [
     ("2026-07-24", "Friday 24 July"),
     ("2026-07-31", "Friday 31 July"),
@@ -48,7 +51,18 @@ FRIDAYS = [
     ("2026-08-14", "Friday 14 August"),
     ("2026-08-21", "Friday 21 August"),
     ("2026-08-28", "Friday 28 August"),
+    ("2026-09-04", "Friday 4 September"),
 ]
+FINALE = "2026-09-04"
+# Build-time season switch: once the finale has passed, the static copy
+# (title, hero, hub card, no-JS panel) reads as "season over" - the JS panel
+# already does this live, but crawlers and no-JS readers see the static text.
+# Rebuild after 4 September to flip it (any site build does).
+SEASON_OVER = _dt.date.today() > _dt.date.fromisoformat(FINALE)
+# Beach-parking page: BCP's higher-PCN trial ran 4-31 Aug 2026. The page's
+# script flips itself after 31 Aug; this build-time twin keeps the STATIC
+# text honest for crawlers and no-JS readers once the trial has ended.
+PCN_TRIAL_OVER = _dt.date.today() > _dt.date(2026, 8, 31)
 
 # Displays the ORGANISERS have called off. date -> short public reason.
 # ⚠️ This is the safety switch for the whole page: a date listed here is struck
@@ -63,14 +77,23 @@ FRIDAYS = [
 #   potential to start a fire, including fireworks"; Christchurch Carnival's
 #   display went the same way. BCP: "whilst the fireworks are launched from sea,
 #   the safety of residents, visitors, and our open spaces must come first."
-#   2026-08-21 / 2026-08-28: the organisers have since called off the rest of
-#   the season (reported to us 19 Aug 2026; no reinstatement announced).
+#   2026-08-21: called off with the rest of the season while the wildfire
+#   risk stayed high (reported to us 19 Aug 2026).
+#   2026-08-26: BCP REINSTATED the displays "following discussions with
+#   partners, including emergency services" and a reduction in wildfire risk:
+#   Bournemouth beach 28 Aug, plus a "large finale" on 4 Sep at 10pm
+#   (bcpcouncil.gov.uk, "Fireworks return to Poole Quay and Bournemouth
+#   beach", 26 Aug 2026).
+#   2026-08-28: cancelled on the night - "high winds at sea meaning the
+#   fireworks simply cannot be safely launched from the barge" (Cllr Richard
+#   Herrett; bcpcouncil.gov.uk, "Fireworks cancelled due to unsafe conditions
+#   at sea", 28 Aug 2026). The same article confirms the 4 Sep finale stands.
 CANCELLED = {
     "2026-08-14": "cancelled &mdash; national wildfire emergency alert",
     "2026-08-21": "cancelled &mdash; wildfire risk",
-    "2026-08-28": "cancelled &mdash; wildfire risk",
+    "2026-08-28": "cancelled &mdash; high winds at sea, unsafe to launch from the barge",
 }
-CANCELLED_UPDATED = "19 August 2026"
+CANCELLED_UPDATED = "3 September 2026"
 
 _LAT, _LON = 50.7166, -1.8757   # Bournemouth Pier root, per the game's coast research
 
@@ -115,9 +138,9 @@ _STATUS = f'''    <section class="section b365 b365--dusk" id="tonight" aria-lab
       <div class="wrap">
         <div class="tile-grid" data-stagger style="grid-template-columns:1fr">
           <div class="b365-tile b365-tile--dusk" id="bmfw-tile">
-            <p class="b365-state off" id="bmfw-state">CANCELLED &middot; 2026 SEASON ENDED EARLY</p>
-            <h3 id="bmfw-head">The remaining Friday fireworks have been cancelled</h3>
-            <p id="bmfw-sub">The organisers called off the 14 August display after the Government&rsquo;s national wildfire emergency alert, and the rest of the season has since been cancelled too. Please don&rsquo;t travel down expecting a display &mdash; the dates below are struck through. Last checked {CANCELLED_UPDATED}.</p>
+            <p class="b365-state{" off" if SEASON_OVER else ""}" id="bmfw-state">{"SEASON FINISHED &middot; 2027 DATES WHEN BCP ANNOUNCES THEM" if SEASON_OVER else "FINALE &middot; FRIDAY 4 SEPTEMBER &middot; 10PM"}</p>
+            <h3 id="bmfw-head">{"That was the last one &mdash; the 2026 season has finished" if SEASON_OVER else "One more: the finale is Friday 4 September at 10pm"}</h3>
+            <p id="bmfw-sub">{"The finale on Friday 4 September closed a season that lost three Fridays: 14 and 21 August to the wildfire emergency, 28 August to high winds at sea. BCP Council announces the next season in the spring, and this page will be updated when they do. Last checked " if SEASON_OVER else "BCP Council reinstated the displays on 26 August after the wildfire risk eased, then had to cancel 28 August on the night for high winds at sea. The finale they added, Friday 4 September at 10pm from the seafront east of the pier, is still on as announced &mdash; weather permitting, as ever. Last checked "}{CANCELLED_UPDATED}.</p>
             <p class="b365-sub" id="bmfw-live"></p>
           </div>
         </div>
@@ -157,14 +180,14 @@ _STATUS = f'''    <section class="section b365 b365--dusk" id="tonight" aria-lab
           head.textContent = cancelledTonight
             ? 'No fireworks tonight \\u2014 ' + cancelledTonight + ' is cancelled'
             : 'The rest of the 2026 season has been cancelled';
-          sub.textContent = 'The 14 August display was called off after the Government\\u2019s national wildfire emergency alert, and the remaining dates have been cancelled too. Please don\\u2019t travel down for a display. We will update this page the moment the organisers announce anything different \\u2014 last checked ' + UPDATED + '.';
+          sub.textContent = 'The organisers have called tonight\\u2019s display off. Please don\\u2019t travel down for a display. We will update this page the moment they announce anything different \\u2014 last checked ' + UPDATED + '.';
           return;
         }}
         if (!next) {{
           var se = document.getElementById('bmfw-state');
-          if (se) {{ se.textContent = 'SEASON FINISHED \\u2014 BACK JULY 2027 (EXPECTED)'; se.classList.add('off'); }}
+          if (se) {{ se.textContent = 'SEASON FINISHED \\u2014 2027 DATES WHEN BCP ANNOUNCES THEM'; se.classList.add('off'); }}
           head.textContent = 'That was the last one \\u2014 the 2026 season has finished';
-          sub.textContent = 'The final display was Friday 28 August. The Friday Fireworks are expected back in July 2027 \\u2014 dates are announced by BCP Council in spring, and this page will be updated when they are.';
+          sub.textContent = 'The finale on Friday 4 September closed a season that lost three Fridays: 14 and 21 August to the wildfire emergency, 28 August to high winds at sea. BCP Council announces the next season in the spring, and this page will be updated when they do.';
           return;
         }}
         var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -206,14 +229,14 @@ _ROWS = "\n".join(
     for d, lbl in FRIDAYS)
 
 _DATES = f'''          <h2 id="dates">Every 2026 date</h2>
-          <p>Six Fridays across the summer holidays, all free, all starting at <strong>10pm</strong>. Sunset times are computed for the seafront &mdash; arrive for the last of the light and you get the bay at its best before the show.</p>
+          <p>The six published Fridays, plus the finale BCP Council added on Friday 4 September after the cancellations &mdash; all free, all starting at <strong>10pm</strong>. Three were lost: 14 and 21 August to the national wildfire emergency, 28 August to high winds at sea on the night. Sunset times are computed for the seafront &mdash; arrive for the last of the light and you get the bay at its best before the show.</p>
           <table>
             <thead><tr><th>Date</th><th>Fireworks</th><th>Sunset</th></tr></thead>
             <tbody>
 {_ROWS}
             </tbody>
           </table>
-          <p class="mono">Dates and the 10pm start are as published by the organisers, BCP Council&rsquo;s events team, for 2026. Last verified against the organisers&rsquo; listings: 6 August 2026.</p>'''
+          <p class="mono">Dates and the 10pm start are as published by the organisers, BCP Council&rsquo;s events team; the 4 September finale and the cancellations are from BCP Council&rsquo;s own announcements of 26 and 28 August 2026. Last verified: 3 September 2026.</p>'''
 
 # ---- where to stand ----------------------------------------------------------
 _WHERE = '''          <h2 id="where">Where to stand</h2>
@@ -262,7 +285,7 @@ _B365 = '''    <section class="section" aria-label="About Bournemouth365">
 
 _FAQS = [
     ("What time do the Bournemouth Friday fireworks start?",
-     "They were 10pm every Friday &mdash; but the remaining 2026 displays have been cancelled. The 14 August display was called off after the Government&rsquo;s national wildfire emergency alert, and the rest of the season has gone the same way, so there is nothing to be in position for. We will update this page if the organisers announce otherwise."),
+     "10pm, from the seafront just east of Bournemouth Pier. In 2026 the season ran on Fridays from 24 July, lost 14 and 21 August to the national wildfire emergency and 28 August to high winds at sea, and closed with a finale BCP Council added on Friday 4 September. Next year&rsquo;s dates come from BCP Council in the spring."),
     ("Are the Friday fireworks free?",
      "Yes &mdash; completely free, no tickets, no wristbands. They are organised by BCP Council&rsquo;s events team. Just turn up."),
     ("Where are the fireworks set off?",
@@ -270,7 +293,7 @@ _FAQS = [
     ("What happens if the weather is bad?",
      "Displays are weather-dependent and occasionally cancelled at short notice &mdash; strong wind is the usual culprit. Cancellations are announced on bournemouth.co.uk and the official Love Bournemouth social channels, so check there before you set off if it is wild out."),
     ("Is it on tonight?",
-     "If it is a Friday between 24 July and 28 August 2026 &mdash; yes, weather permitting. The panel at the top of this page counts down to the next display."),
+     "The panel at the top of this page works it out from today&rsquo;s date and the organisers&rsquo; announcements: the last 2026 display is the finale on Friday 4 September at 10pm, weather permitting. Cancellations are the organisers&rsquo; call, made on the day and posted on bournemouth.co.uk and the Love Bournemouth channels &mdash; check there if it is blowing a gale."),
 ]
 
 
@@ -318,8 +341,11 @@ def _schema(s):
 _CONTENT = "\n".join([
     hero(bc_sub("Bournemouth365", "/bournemouth/", "Friday Fireworks"),
          "// BOURNEMOUTH365",
-         'Bournemouth Friday fireworks &mdash; <em class="grad grad--cyan">cancelled</em>',
-         "Cancelled. The 14 August display was called off after the Government&rsquo;s national wildfire emergency alert, and the rest of the 2026 season has been cancelled too &mdash; so please don&rsquo;t travel down for one. Here is the full picture: every date with the cancelled nights struck through, what happened, and the best places to stand when they return.",
+         ('Bournemouth Friday fireworks &mdash; <em class="grad grad--cyan">the 2026 season</em>' if SEASON_OVER
+          else 'Bournemouth Friday fireworks &mdash; <em class="grad grad--cyan">finale Friday 4 September</em>'),
+         ("The 2026 season has finished. It lost three Fridays &mdash; 14 and 21 August to the national wildfire emergency, 28 August to high winds at sea &mdash; and closed with the finale BCP Council added on 4 September. Here is the full record: every date, what happened, and the best places to stand when the displays return."
+          if SEASON_OVER else
+          "One more display: BCP Council reinstated the fireworks on 26 August after the wildfire risk eased, lost 28 August to high winds at sea on the night, and added a finale for Friday 4 September at 10pm. Here is the full picture: every date with the cancelled nights struck through, what happened, and the best places to stand."),
          cta1=("Is it on tonight?", "#tonight"),
          cta2=("Where to stand", "#where"),
          chips=["Free &mdash; no tickets", "Fridays at 10pm", "East of Bournemouth Pier"]),
@@ -331,9 +357,13 @@ _CONTENT = "\n".join([
 
 add(
     slug=_SLUG,
-    title="Bournemouth Fireworks CANCELLED 2026 \u2014 Dates & What Happened",
-    desc="Cancelled: Bournemouth's remaining 2026 Friday fireworks are off after the wildfire alert. What happened, every date, and where to stand when they return.",
-    og_title="Bournemouth Friday Fireworks \u2014 the rest of 2026 is cancelled",
+    title=("Bournemouth Friday Fireworks 2026: Every Date, What Happened" if SEASON_OVER
+           else "Bournemouth Fireworks: Finale Friday 4 September, 10pm"),
+    desc=("The 2026 season is over: which Fridays ran, which were cancelled and why, the 4 September finale, and where to stand when the displays return."
+          if SEASON_OVER else
+          "One more: BCP Council added a finale for Friday 4 September at 10pm after the wildfire and high-wind cancellations. Every date, what happened, and where to stand."),
+    og_title=("Bournemouth Friday Fireworks \u2014 the 2026 season, every date and what happened" if SEASON_OVER
+              else "Bournemouth Friday Fireworks \u2014 finale Friday 4 September, 10pm"),
     schema=_schema,
     content=_CONTENT,
     og_image="/bournemouth/media/og-fireworks.jpg",
@@ -1077,7 +1107,9 @@ _HUB_CARDS = [
     ("/bournemouth/sea-today/", "/bournemouth/media/og-sunrise-sunset.jpg",
      "The sea right now", "Sea temperature and waves measured by the bay&rsquo;s buoy, tide from the gauge on the pier, water quality for all seven beaches &mdash; live, timestamped, never modelled."),
     ("/bournemouth/fireworks/", "/bournemouth/media/og-fireworks.jpg",
-     "Friday fireworks", "CANCELLED for the rest of 2026 after the wildfire alert &mdash; what happened, every date, and the best places to stand when they return."),
+     "Friday fireworks", ("The 2026 season, every date and what happened &mdash; three Fridays lost to the wildfire emergency and high winds, one finale added &mdash; and the best places to stand when the displays return."
+                          if SEASON_OVER else
+                          "One more: the finale is Friday 4 September at 10pm, added by BCP Council after the wildfire and high-wind cancellations &mdash; every date, what happened, and where to stand.")),
     ("/bournemouth/sunrise-sunset/", "/bournemouth/media/beach-sunrise.jpg",
      "Sunrise &amp; sunset", "Today&rsquo;s times computed for the seafront, and every good spot to watch from &mdash; photographed by us, not stock."),
     ("/bournemouth/beach-parking/", "/bournemouth/media/durley-chine-sunset.jpg",
@@ -1179,11 +1211,16 @@ _PK_BAND_ROWS = "\n".join(
     f'            <tr><td><strong>{n}</strong><br /><span class="mono">{w}</span></td><td>{s}</td><td>{win}</td></tr>'
     for n, w, s, win in _PK_BANDS)
 
-_PK_ALERT = '''    <section class="section b365 b365--dusk" id="fines" aria-label="Parking penalty trial">
+# f-string: the script's braces are doubled for that reason. It shipped as a
+# plain string from launch to 3 Sep 2026, so the browser received "{{" and the
+# 1 September flip never ran - the static text below now carries the switch too.
+_PK_ALERT = f'''    <section class="section b365 b365--dusk" id="fines" aria-label="Parking penalty trial">
       <div class="wrap">
         <div class="b365-tile b365-tile--dusk" data-reveal>
-          <p class="b365-state" id="pk-state">HIGHER PARKING FINES ON THE SEAFRONT</p>
-          <p class="b365-sub" id="pk-alert">BCP Council is running a trial of London-level penalty charges on every road from Sandbanks to Southbourne, from 4 to 31 August 2026. A ticket for parking somewhere you are not allowed at all &mdash; double yellows, a junction, a disabled bay without a badge &mdash; is <strong>&pound;160</strong>, or &pound;80 if you pay within 14 days. Overstaying or mis-parking in a legal bay is <strong>&pound;110</strong>, or &pound;55 within 14 days. Being towed costs &pound;280 to release, plus &pound;55 a day storage. Outside the trial the same tickets are &pound;70 and &pound;50.</p>
+          <p class="b365-state{" off" if PCN_TRIAL_OVER else ""}" id="pk-state">{"PARKING FINES ON THE SEAFRONT" if PCN_TRIAL_OVER else "HIGHER PARKING FINES ON THE SEAFRONT"}</p>
+          <p class="b365-sub" id="pk-alert">{"BCP ran a trial of London-level penalty charges along the seafront in August 2026 (and August 2025 before it), so check before you travel in high summer &mdash; it may well run again. Outside any trial, a ticket for parking somewhere you are not allowed at all is <strong>&pound;70</strong> (&pound;35 within 14 days) and overstaying in a legal bay is <strong>&pound;50</strong> (&pound;25 within 14 days)."
+           if PCN_TRIAL_OVER else
+           "BCP Council is running a trial of London-level penalty charges on every road from Sandbanks to Southbourne, from 4 to 31 August 2026. A ticket for parking somewhere you are not allowed at all &mdash; double yellows, a junction, a disabled bay without a badge &mdash; is <strong>&pound;160</strong>, or &pound;80 if you pay within 14 days. Overstaying or mis-parking in a legal bay is <strong>&pound;110</strong>, or &pound;55 within 14 days. Being towed costs &pound;280 to release, plus &pound;55 a day storage. Outside the trial the same tickets are &pound;70 and &pound;50."}</p>
           <p class="mono" style="margin-top:.6rem"><a href="https://www.bcpcouncil.gov.uk/parking/trial-for-increased-parking-fines-and-penalty-charge-notices-pcn" target="_blank" rel="noopener">BCP&rsquo;s own page on the trial, including the map of affected roads &rarr;</a></p>
         </div>
       </div>
