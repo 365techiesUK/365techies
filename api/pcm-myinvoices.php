@@ -129,7 +129,8 @@ $cached = cache_all();
 $hit = isset($cached[$CUSTKEY]) && is_array($cached[$CUSTKEY]) ? $cached[$CUSTKEY] : null;
 $fresh_cache = $hit && (time() - (int)(isset($hit['ts']) ? $hit['ts'] : 0)) < $CACHE_TTL;
 if ($action === 'list' && $fresh_cache)
-    out(array('ok' => true, 'connected' => true, 'invoices' => $hit['rows'], 'cached' => true));
+    out(array('ok' => true, 'connected' => true, 'invoices' => $hit['rows'], 'cached' => true,
+              'summary' => invoice_summary($hit['rows'])));
 
 // ---- token, under the monthly biller's own lock --------------------------
 /* ⚠ Refreshing rotates Intuit's refresh token and kills the old one, so this
@@ -141,6 +142,7 @@ $lock = @fopen($LOCKF, 'c');
 if (!$lock || !@flock($lock, LOCK_EX | LOCK_NB))
     out(array('ok' => true, 'connected' => true, 'busy' => true,
               'invoices' => ($hit && isset($hit['rows'])) ? $hit['rows'] : array(),
+              'summary' => invoice_summary(($hit && isset($hit['rows'])) ? $hit['rows'] : array()),
               'stale' => (bool)$hit));
 $tok = qbo_lib_token($TOKENF, $QBO_CLIENT_ID, $QBO_CLIENT_SECRET);
 @flock($lock, LOCK_UN); @fclose($lock);
@@ -197,6 +199,7 @@ if (!qbo_lib_ok($res)) {
     // invoices" is a statement of fact we cannot make when QuickBooks is down.
     out(array('ok' => true, 'connected' => true, 'degraded' => true,
               'invoices' => ($hit && isset($hit['rows'])) ? $hit['rows'] : array(),
+              'summary' => invoice_summary(($hit && isset($hit['rows'])) ? $hit['rows'] : array()),
               'stale' => (bool)$hit));
 }
 $rows = array(); $held = 0;
@@ -215,4 +218,34 @@ foreach ($list as $inv) {
     if ($pub !== null) $rows[] = $pub;
 }
 cache_put($rows, $qboId);
-out(array('ok' => true, 'connected' => true, 'invoices' => $rows, 'held' => $held));
+out(array('ok' => true, 'connected' => true, 'invoices' => $rows, 'held' => $held,
+          'summary' => invoice_summary($rows)));
+
+/* A flat summary alongside the list, on EVERY path that carries invoices -
+   including the cached, busy and degraded ones, or the app would be told
+   "no invoices" whenever the cache was warm.
+
+   It exists because 365 PC Manager has only a flat-field JSON reader: giving
+   it three scalars beats hand-rolling an array parser inside a tray app, and
+   "the headline in the app, the detail in your portal" is the right split
+   anyway. Declared after use on purpose - PHP hoists top-level functions. */
+function invoice_summary($rows) {
+    if (!is_array($rows)) $rows = array();
+    $owed = 0.0; $nOwed = 0;
+    $latest = null;
+    foreach ($rows as $r) {
+        if (!is_array($r)) continue;
+        $st = isset($r['status']) ? $r['status'] : '';
+        if ($st === 'due' || $st === 'overdue') { $owed += (float)$r['balance']; $nOwed++; }
+        if ($latest === null || (string)$r['date'] > (string)$latest['date']) $latest = $r;
+    }
+    return array(
+        'count' => count($rows),
+        'outstanding' => round($owed, 2),
+        'n_outstanding' => $nOwed,
+        'latest_number' => $latest ? (string)$latest['number'] : '',
+        'latest_date' => $latest ? (string)$latest['date'] : '',
+        'latest_total' => $latest ? (float)$latest['total'] : 0,
+        'latest_status' => $latest ? (string)$latest['status'] : '',
+    );
+}
