@@ -63,7 +63,16 @@ $ok = with_db($DATA, function($db) use ($now, &$due) {
     foreach ($db['customers'] as $key => $c) {
         $ts = intval(isset($c['next_ts']) ? $c['next_ts'] : 0);
         if ($ts <= $now || $ts > $now + 86400 * 14) continue;
-        $custPhone = uk_phone(isset($c['sb_phone']) ? $c['sb_phone'] : (isset($c['phone']) ? $c['phone'] : ''));
+        /* The customer's OWN mobile first, then whatever SimplyBook gave us.
+           ⚠ 'mobile' was missing here, and the failure was silent: a customer who
+           had opted in to reminders but whose only number is the one they typed
+           in their own portal resolved to no phone - and the claim below stamps
+           remind_sent regardless, so the reminder was not merely skipped, that
+           booking's slot was burned and never retried.
+           ⚠ 'tel' is deliberately NOT consulted: it is the LANDLINE field
+           (see pcm-phone-lib.php), and this sends an SMS. */
+        $custPhone = uk_phone(!empty($c['mobile']) ? $c['mobile']
+                   : (isset($c['sb_phone']) ? $c['sb_phone'] : (isset($c['phone']) ? $c['phone'] : '')));
 
         // Family View trusted contact: its OWN gate, independent of the customer's SMS prefs -
         // entering the mobile during famshare IS the opt-in, and the app promises "the day

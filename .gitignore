@@ -182,3 +182,15 @@ api/dorset-*.tmp
 api/pcm-sbwrite-ok.php
 api/pcm-sbwrite-log.php
 api/pcm-sbwrite-log.php.lock
+
+# Drafts are local-only: this repo is PUBLIC and master auto-deploys, so anything
+# committed here ships. Enforced here rather than left to the habit of never
+# running `git add -A`.
+#
+# `drafts/*` and not `drafts/` on purpose: git does not descend into a directory
+# it has excluded outright, which would make the two negations below dead lines.
+# Those two are already tracked, already deployed and answer HTTP 200 - they are
+# deliberate unguessable preview URLs, not leaks, so they stay shippable.
+drafts/*
+!drafts/r510-r550-guide-e7k2m9qw4z/
+!drafts/water-effects-x7q2m4vk/
