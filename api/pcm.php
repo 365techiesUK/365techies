@@ -298,9 +298,20 @@ if ($action === 'overview') {
         // the account holder's postal address - a team member never sees or edits it
         'addr'=>($member === '' && isset($c['addr']) && is_array($c['addr'])) ? array(
             'line1'=>(string)($c['addr']['line1'] ?? ''), 'line2'=>(string)($c['addr']['line2'] ?? ''),
-            'city'=>(string)($c['addr']['city'] ?? ''), 'postcode'=>(string)($c['addr']['postcode'] ?? '')) : null,
+            'city'=>(string)($c['addr']['city'] ?? ''), 'postcode'=>(string)($c['addr']['postcode'] ?? ''),
+            // who put it there: 'customer' (they typed it) or 'simplybook' (pulled
+            // from their booking record). The card says so, because an address
+            // they never typed appearing unexplained invites no correction.
+            'src'=>(string)($c['addr']['by'] ?? '')) : null,
         // their landline and mobile, same ownership rule as the address (pcm-phone-lib.php)
         'phones'=>($member === '') ? pcm_phones_payload($c) : null,
+        /* Is it worth asking SimplyBook to fill a gap? True only when this record
+           is linked to a SimplyBook client and we have not tried in the last week
+           (the same cool-down custpull enforces server-side). A plain field read:
+           overview never talks to SimplyBook, which is why the address that lived
+           only on the booking side was invisible here until now. */
+        'sbpull'=>($member === '' && !empty($c['sb_client_id'])
+                   && (empty($c['sb_pull_ts']) || (int)$c['sb_pull_ts'] < time() - 604800)),
         'machines'=>$ms, 'fam'=>($member === '' ? $fam : ''), 'pending'=>$pend, 'appreq'=>(string)($c['app_req'] ?? ''),
         // billing is the account holder's business and nobody else's
         'gc'=>($ownerMade && $member === '') ? pcm_gc_summary((string)($c['email'] ?? '')) : null));

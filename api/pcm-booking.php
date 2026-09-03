@@ -275,6 +275,40 @@ function addr_for_sb($a) {
     return $o;
 }
 
+/* One SimplyBook client record, for filling gaps in OUR copy of their details.
+   Same getClient/getClientInfo fallback as the staff contact card, because
+   editions differ on which one exists. Returns null when SimplyBook cannot be
+   reached or the client has gone: a failed pull must never be mistaken for
+   "they have no address", or we would cache emptiness over a real address. */
+function sb_client_fetch($cid) {
+    global $HAS_ADMIN;
+    $cid = (int)$cid;
+    if ($cid <= 0 || !$HAS_ADMIN) return null;
+    $r = sb_adm('getClient', array($cid));
+    if (sb_net($r) || (isset($r['error']) && empty($r['result']))) {
+        $r2 = sb_adm('getClientInfo', array($cid));
+        if (!sb_net($r2) && !empty($r2['result'])) $r = $r2;
+    }
+    if (sb_net($r) || empty($r['result']) || !is_array($r['result'])) return null;
+    return $r['result'];
+}
+
+/* SimplyBook's four address fields -> our shape. The mirror of addr_for_sb().
+   Returns null unless there is something worth storing: a record with only a
+   stray space in it must not count as an address and stop the customer being
+   asked for a real one. */
+function addr_from_sb($client) {
+    if (!is_array($client)) return null;
+    $g = function ($k) use ($client) {
+        $v = isset($client[$k]) ? (string)$client[$k] : '';
+        return trim(preg_replace('/\s{2,}/', ' ', preg_replace('/[\x00-\x1F\x7F]+/', ' ', $v)));
+    };
+    $a = array('line1' => substr($g('address1'), 0, 90), 'line2' => substr($g('address2'), 0, 90),
+               'city' => substr($g('city'), 0, 60), 'postcode' => strtoupper(substr($g('zip'), 0, 12)));
+    if ($a['line1'] === '' && $a['city'] === '' && $a['postcode'] === '') return null;
+    return $a;
+}
+
 function sb_adm($method, $params) {
     $r = sb_rpc('https://user-api.simplybook.me/admin/', $method, $params, sb_adm_headers());
     if (!sb_net($r) && !isset($r['result']) && isset($r['error'])) { sb_forget('adm'); $r = sb_rpc('https://user-api.simplybook.me/admin/', $method, $params, sb_adm_headers()); }
@@ -381,6 +415,9 @@ function customer_snapshot() {
         'name'  => (string)(isset($c['sb_name']) ? $c['sb_name'] : (isset($c['name']) ? $c['name'] : '')),
         'email' => (string)(isset($c['sb_email']) ? $c['sb_email'] : (isset($c['email']) ? $c['email'] : '')),
         'phone' => (string)(isset($c['sb_phone']) ? $c['sb_phone'] : (isset($c['phone']) ? $c['phone'] : '')),
+        // the two the customer maintains themselves in the portal (pcm-phone-lib.php)
+        'mobile' => (string)(isset($c['mobile']) ? $c['mobile'] : ''),
+        'tel'    => (string)(isset($c['tel']) ? $c['tel'] : ''),
         'addr'  => (!empty($c['addr']) && is_array($c['addr'])) ? $c['addr'] : null,
     );
 }
@@ -440,6 +477,8 @@ function web_snapshot() {
         'name' => (string)(isset($c['sb_name']) ? $c['sb_name'] : (isset($c['name']) ? $c['name'] : '')),
         'email' => (string)(isset($c['sb_email']) ? $c['sb_email'] : (isset($c['email']) ? $c['email'] : '')),
         'phone' => (string)(isset($c['sb_phone']) ? $c['sb_phone'] : (isset($c['phone']) ? $c['phone'] : '')),
+        'mobile' => (string)(isset($c['mobile']) ? $c['mobile'] : ''),
+        'tel' => (string)(isset($c['tel']) ? $c['tel'] : ''),
         'addr' => (!empty($c['addr']) && is_array($c['addr'])) ? $c['addr'] : null,
         // a company team member: bookings still run through the COMPANY's one
         // SimplyBook client above, but who is asking decides what they may do
@@ -555,7 +594,16 @@ function ensure_client_id($ckey, $snap) {
     $cd = array('name' => $snap['name'] !== '' ? $snap['name'] : $snap['email']);
     if ($cd['name'] === '') { $GLOBALS['nc_why'] = 'no_name'; return 0; }
     if ($snap['email'] !== '') $cd['email'] = $snap['email'];
-    if ($snap['phone'] !== '') $cd['phone'] = $snap['phone'];
+    /* The number SimplyBook gets: the mobile the customer keeps in their own
+       portal first (most recently typed by the person who owns it, and the one
+       a "we're on our way" text reaches), then their landline, then whatever we
+       already held. Display form, because a human reads it in the diary. */
+    require_once __DIR__ . '/pcm-phone-lib.php';
+    $sbPhone = '';
+    foreach (array('mobile', 'tel') as $pk)
+        if ($sbPhone === '' && !empty($snap[$pk])) $sbPhone = pcm_phone_display((string)$snap[$pk]);
+    if ($sbPhone === '') $sbPhone = (string)$snap['phone'];
+    if ($sbPhone !== '') $cd['phone'] = $sbPhone;
     // Give SimplyBook the address the customer gave US, so the diary card shows it
     // from SimplyBook's own record instead of relying on our fallback for ever.
     $sbAddr = addr_for_sb(isset($snap['addr']) ? $snap['addr'] : null);
@@ -1811,6 +1859,77 @@ if ($action === 'book') {
         . ($snap['phone'] !== '' ? "\n> tel: " . bk_clean($snap['phone']) : ''));
     out(array('ok' => true, 'id' => $bid, 'when' => $pretty, 'pending' => !$confirmed,
               'repeats' => $repeats, 'last' => $lastPretty));
+}
+
+/* Fill gaps in OUR copy of the customer's details from their SimplyBook client.
+   The portal calls this once, lazily, when its details card has nothing to show
+   and the record is linked to SimplyBook - so an address (or number) that only
+   ever existed on the booking side stops being invisible to the person it
+   belongs to.
+
+   Three rules make a second writer on this record safe:
+     1. FILL ONLY WHERE WE ARE EMPTY, re-checked under the lock. The customer's
+        own typing always wins - they know where they live - so this can never
+        overwrite an edit that landed while SimplyBook was answering.
+     2. The HTTP call to SimplyBook happens with NO lock held, the same rule
+        customer_snapshot() follows: a slow third party must never stall every
+        other write to the store.
+     3. A fruitless pull is cooled down for a week (sb_pull_ts), so a customer
+        with no address in SimplyBook either does not make us call the API on
+        every dashboard load for ever.
+   Writes here use this file's db_open/db_save idiom, which takes the SAME
+   exclusive lock file as pcm.php's db_lock() - the two cannot interleave. */
+if ($action === 'custpull') {
+    require_once __DIR__ . '/pcm-phone-lib.php';
+    $snap = web_snapshot();
+    // Account data belongs to the account holder, exactly as custaddr in pcm.php:
+    // a company team member never fills it, and a staff view-as never writes.
+    if ($snap['member'] !== '' || !empty($snap['viewas'])) out(array('ok' => true, 'filled' => false, 'why' => 'not_yours'));
+    if (!empty($snap['addr']) && ($snap['mobile'] !== '' || $snap['tel'] !== ''))
+        out(array('ok' => true, 'filled' => false, 'why' => 'nothing_missing'));
+    if ((int)$snap['cid'] <= 0) out(array('ok' => true, 'filled' => false, 'why' => 'no_link'));
+
+    $ckey2 = (string)$snap['key'];
+    list($lk0, $db0) = db_open(); db_close($lk0);
+    $rec0 = isset($db0['customers'][$ckey2]) ? $db0['customers'][$ckey2] : array();
+    if (!empty($rec0['sb_pull_ts']) && (int)$rec0['sb_pull_ts'] > time() - 604800)
+        out(array('ok' => true, 'filled' => false, 'why' => 'tried_recently'));
+
+    $client = sb_client_fetch((int)$snap['cid']);
+    // A pull that FAILED must not be cached as "they have nothing" - no stamp,
+    // so the next visit tries again.
+    if ($client === null) out(array('ok' => true, 'filled' => false, 'why' => 'sb_unavailable'));
+    $pulledAddr = addr_from_sb($client);
+    $pulledPhone = pcm_phone_norm(isset($client['phone']) ? $client['phone'] : '');
+
+    $filled = array();
+    list($lk, $db) = db_open();
+    if (isset($db['customers'][$ckey2])) {
+        $c =& $db['customers'][$ckey2];
+        if (empty($c['addr']) && $pulledAddr !== null) {
+            $c['addr'] = $pulledAddr + array('ts' => time(), 'by' => 'simplybook');
+            $filled[] = 'address';
+        }
+        if ($pulledPhone !== '' && empty($c['mobile']) && empty($c['tel'])) {
+            // SimplyBook holds ONE number; file it as the mobile when it is one.
+            if (preg_match('/^\+447\d{9}$/', $pulledPhone)) { $c['mobile'] = $pulledPhone; $filled[] = 'mobile'; }
+            else { $c['tel'] = $pulledPhone; $filled[] = 'landline'; }
+            $c['phones_ts'] = time(); $c['phones_by'] = 'simplybook';
+        }
+        $c['sb_pull_ts'] = time();
+        db_save($db);
+        unset($c);
+    }
+    db_close($lk);
+
+    $recN = isset($db['customers'][$ckey2]) ? $db['customers'][$ckey2] : array();
+    out(array('ok' => true, 'filled' => count($filled) > 0, 'what' => $filled,
+        'addr' => (!empty($recN['addr']) && is_array($recN['addr'])) ? array(
+            'line1' => (string)(isset($recN['addr']['line1']) ? $recN['addr']['line1'] : ''),
+            'line2' => (string)(isset($recN['addr']['line2']) ? $recN['addr']['line2'] : ''),
+            'city' => (string)(isset($recN['addr']['city']) ? $recN['addr']['city'] : ''),
+            'postcode' => (string)(isset($recN['addr']['postcode']) ? $recN['addr']['postcode'] : '')) : null,
+        'phones' => pcm_phones_payload($recN)));
 }
 
 if ($action === 'mybookings') {

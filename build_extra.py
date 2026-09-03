@@ -25495,6 +25495,10 @@ def write_portal_page():
           + (hasA
              ? '<p class="addrshow">' + [A.line1, A.line2, A.city, A.postcode].filter(function (x) { return x && String(x).trim(); }).map(esc).join('<br>') + '</p>'
              : '<p class="quiet">We don\u2019t have your address yet. Adding it saves us asking when we come out to you \u2014 and saves you a phone call when we invoice.</p>')
+          /* Where it came from, when it was not them: an address they never typed
+             appearing with no explanation invites no correction. */
+          + ((hasA && A.src === 'simplybook')
+             ? '<p class="quiet" style="margin-top:-.35rem">From your booking record \u2014 please change it if it\u2019s out of date.</p>' : '')
           /* Landline and mobile, kept by the customer. The mobile is the one a
              "we\u2019re on our way" text reaches, so the nudge names that. */
           + (hasP
@@ -25647,6 +25651,21 @@ def write_portal_page():
       loadDash();
       tmLoad();
       bindAddr(d.addr || {}, d.phones || {});
+      /* If the card has nothing to show but this account is linked to a
+         SimplyBook client, ask the server to fill the gap from there once - an
+         address typed at booking time, or by us, should not be invisible to the
+         person it belongs to. Fire-and-forget: the card is already drawn, so a
+         slow or unreachable SimplyBook costs the customer nothing, and the
+         server only re-renders us when it actually filled something. */
+      (function () {
+        if (!d.sbpull) return;
+        var P = d.phones || {}, A = d.addr || {};
+        var missing = !(A.line1 || A.city || A.postcode) || !(P.tel || P.mobile);
+        if (!missing) return;
+        post(BK, { action: 'custpull', wtoken: S.wtoken, machine: mid() })
+          .then(function (r) { if (r && r.ok && r.filled) showDash(); })
+          .catch(function () {});
+      })();
       Array.prototype.forEach.call(document.querySelectorAll('#p365app .repb'), function (btn) {
         btn.onclick = function () {
           btn.disabled = true;

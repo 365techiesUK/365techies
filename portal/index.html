@@ -689,9 +689,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">portal build 03 Sep 2026 &middot; 2665c2bcf2</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">portal build 03 Sep 2026 &middot; fe49f68ef2</p><script>
 (function () {
-  var P365BUILD = '2665c2bcf2';
+  var P365BUILD = 'fe49f68ef2';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -4427,6 +4427,10 @@
           + (hasA
              ? '<p class="addrshow">' + [A.line1, A.line2, A.city, A.postcode].filter(function (x) { return x && String(x).trim(); }).map(esc).join('<br>') + '</p>'
              : '<p class="quiet">We don’t have your address yet. Adding it saves us asking when we come out to you — and saves you a phone call when we invoice.</p>')
+          /* Where it came from, when it was not them: an address they never typed
+             appearing with no explanation invites no correction. */
+          + ((hasA && A.src === 'simplybook')
+             ? '<p class="quiet" style="margin-top:-.35rem">From your booking record — please change it if it’s out of date.</p>' : '')
           /* Landline and mobile, kept by the customer. The mobile is the one a
              "we’re on our way" text reaches, so the nudge names that. */
           + (hasP
@@ -4579,6 +4583,21 @@
       loadDash();
       tmLoad();
       bindAddr(d.addr || {}, d.phones || {});
+      /* If the card has nothing to show but this account is linked to a
+         SimplyBook client, ask the server to fill the gap from there once - an
+         address typed at booking time, or by us, should not be invisible to the
+         person it belongs to. Fire-and-forget: the card is already drawn, so a
+         slow or unreachable SimplyBook costs the customer nothing, and the
+         server only re-renders us when it actually filled something. */
+      (function () {
+        if (!d.sbpull) return;
+        var P = d.phones || {}, A = d.addr || {};
+        var missing = !(A.line1 || A.city || A.postcode) || !(P.tel || P.mobile);
+        if (!missing) return;
+        post(BK, { action: 'custpull', wtoken: S.wtoken, machine: mid() })
+          .then(function (r) { if (r && r.ok && r.filled) showDash(); })
+          .catch(function () {});
+      })();
       Array.prototype.forEach.call(document.querySelectorAll('#p365app .repb'), function (btn) {
         btn.onclick = function () {
           btn.disabled = true;
