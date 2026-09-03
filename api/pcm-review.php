@@ -336,16 +336,60 @@ function rv_body($first, $to = '', $salt = '') {
     . ")\r\n";
 }
 
+/** The review ask in the house style. Same wording rules as rv_body above:
+    unconditional, no steering, no incentive, recovery AFTER the ask. */
+function rv_body_html($first, $to = '', $salt = '') {
+    global $RV_REVIEW_URL;
+    $blocks = array(
+        rv_h_p('Hi ' . rv_h($first) . ','),
+        rv_h_p('Thanks for booking us in recently. We hope everything is running exactly as it should be.'),
+        rv_h_p('Would you leave us a quick Google review? Honest feedback takes about 30 seconds, every single one gets read by us, and it is how other local people find a firm they can trust.'),
+        rv_h_cta('Leave a Google review', $RV_REVIEW_URL),
+        rv_h_note('And if anything was not right, please just reply to this email or call '
+            . '<a href="tel:+441202775566" style="color:#1266a8;font-weight:600;text-decoration:none;">01202&nbsp;775566</a> '
+            . 'and we will sort it. We would always rather hear it from you first.'),
+        rv_h_panel('While you are here',
+            'We have rebuilt our website, and it is full of free tools you can use any time: test your WiFi room by room, '
+          . 'check any website&rsquo;s health, and see your bookings, reports and invoices in '
+          . '<a href="https://365techies.co.uk/portal/" style="color:#1266a8;font-weight:600;text-decoration:none;">your own customer portal</a>.'),
+    );
+    // The referral offer is deliberately ABSENT here: rewarding a recommendation
+    // is lawful, rewarding a REVIEW is not (UK DMCC Act), so it must never ride
+    // in the same email as the ask. See the note on rv_body.
+    $unsub = 'Prefer not to get the occasional follow-up like this? Just reply &ldquo;no thanks&rdquo; and we will switch them off'
+           . (($to !== '' && $salt !== '')
+              ? ', or <a href="' . rv_h(rv_unsub_url($to, $salt)) . '" style="color:#7c8aa5;text-decoration:underline;">click here</a>.'
+              : '.');
+    return rv_html_shell(array(
+        'title' => 'How did we do?',
+        'eyebrow' => 'How did we do?',
+        'heading' => 'How did we do?',
+        'preview' => 'Thirty seconds, genuinely - and if anything was not right, tell us first.',
+        'blocks' => $blocks,
+        'footnote' => $unsub,
+    ));
+}
+
 // ---- "job done" email: sent when the booking is marked Completed (portal staff
 // action or SimplyBook admin, mirrored into bkmeta by pcm-bkpoll.php), or 3h after
 // the visit ends as a fallback for jobs nobody marks. The customer's one-stop
 // record: portal link + make-it-right promise + soft referral seed (NO reward
 // mentioned - the formal referral scheme awaits the owner's reward decision).
 function dn_subject() { return 'All wrapped up - your visit record from 365 Techies'; }
-function dn_body($first) {
+function dn_body($first, $svc = '', $ts = 0) {
+    /* The visit itself, when we know it. This email calls itself a visit record,
+       so it had better contain the visit: without these two lines two records for
+       two different jobs are word-for-word identical, which is exactly how a
+       customer with two bookings reads them as us sending the same thing twice. */
+    $facts = '';
+    $when = rv_h_when($ts);
+    if ($svc !== '')  $facts .= '  What we did: ' . $svc . "\r\n";
+    if ($when !== '') $facts .= '  When: ' . $when . "\r\n";
+    if ($facts !== '') $facts = "Your visit:\r\n" . $facts . "\r\n";
     return 'Hi ' . $first . ",\r\n\r\n"
     . "Thanks for booking us in - this email keeps everything from your booking\r\n"
     . "in one place.\r\n\r\n"
+    . $facts
     . "Your customer portal has it all together - your bookings, any reports\r\n"
     . "we've written for you, and the quickest ways to reach us:\r\n\r\n"
     . "https://365techies.co.uk/portal/\r\n\r\n"
@@ -365,6 +409,32 @@ function dn_body($first) {
     . "  - You get a month free on your support plan\r\n\r\n"
     . "Just pass on our number and ask them to mention your name, so we know\r\n"
     . "who to thank. 01202 775566.\r\n";
+}
+
+/** The same message, in the house style. Sent alongside the text above. */
+function dn_body_html($first, $svc = '', $ts = 0) {
+    $facts = array();
+    if ($svc !== '') $facts['What we did'] = $svc;
+    $when = rv_h_when($ts);
+    if ($when !== '') $facts['When'] = $when;
+    $blocks = array(
+        rv_h_p('Hi ' . rv_h($first) . ','),
+        rv_h_p('Thanks for booking us in. This email keeps everything from your visit in one place.'),
+        rv_h_facts($facts),
+        rv_h_p('Your customer portal has the rest of it together: your bookings, any reports we have written for you, your invoices, and the quickest ways to reach us.'),
+        rv_h_cta('Open my 365 portal', 'https://365techies.co.uk/portal/'),
+        rv_h_note('And the bit that matters most: if anything is not behaving the way it should, just reply to this email or ring '
+            . '<a href="tel:+441202775566" style="color:#1266a8;font-weight:600;text-decoration:none;">01202&nbsp;775566</a> '
+            . 'and we will make it right. That is the point of using a family firm.'),
+    );
+    return rv_html_shell(array(
+        'title' => 'Your visit record',
+        'eyebrow' => 'Your visit record',
+        'heading' => 'All wrapped up',
+        'preview' => 'Everything from your visit in one place, and how to reach us if anything is not right.',
+        'blocks' => $blocks,
+        'after' => rv_h_referral(),
+    ));
 }
 
 // ---- day-before reminder. SimplyBook fires no webhook for reminders (they are purely
@@ -800,14 +870,23 @@ function bf_process($cap = 0) {
 
 // ---- transport: authenticated SMTP if api/pcm-smtp.php is configured, else mail().
 // Same minimal implicit-TLS client as the portal sign-in codes (port 465 only).
-function rv_send($to, $first, $kind = 'review') {
+/* $meta carries the facts about the visit itself (sv = service, bs = start) for
+   the 'done' record. Optional and trailing, so every existing caller is
+   unchanged; an email with no facts simply omits that block. */
+function rv_send($to, $first, $kind = 'review', $meta = array()) {
     $subject = ($kind === 'done') ? dn_subject() : rv_subject();
     if ($kind === 'backfill') {
         $sl = rv_salt();
         return rv_send_raw($to, bf_subject(), bf_body(rv_first($first), $to, $sl));
     }
-    $body = ($kind === 'done') ? dn_body(rv_first($first)) : rv_body(rv_first($first), $to, rv_salt());
-    return rv_send_raw($to, $subject, $body);
+    $f = rv_first($first);
+    if ($kind === 'done') {
+        $sv = isset($meta['sv']) ? (string)$meta['sv'] : '';
+        $ts = isset($meta['bs']) ? (int)$meta['bs'] : 0;
+        return rv_send_raw($to, $subject, dn_body($f, $sv, $ts), '', '', dn_body_html($f, $sv, $ts));
+    }
+    $salt = rv_salt();
+    return rv_send_raw($to, $subject, rv_body($f, $to, $salt), '', '', rv_body_html($f, $to, $salt));
 }
 // generic transport; optional .ics calendar attachment via multipart/mixed
 // $html is OPTIONAL and trailing, so every existing caller is byte-identical: they pass
@@ -1122,6 +1201,151 @@ function wl_body($first) {
     . "that keeps a quiet eye on your computer's health and reports it straight\r\n"
     . "into your portal. You will hear from us the moment it is ready.\r\n";
 }
+
+/* ---------------------------------------------------------------------------
+   THE SHARED HTML SHELL
+
+   Every customer email should look like it came from the same firm. Before this
+   existed, two of the seven had a hand-built HTML version and the rest went out
+   as raw typed text - which Outlook then mangles, because it strips what it
+   decides are surplus line breaks from a plain-text message and our text bodies
+   are hard-wrapped. Hence "All wrapped up" arriving looking like a telegram.
+
+   So: ONE shell (header bar, body, sign-off, footer) and a handful of block
+   helpers. An email supplies its words; the chrome is not its business. Change
+   a colour here and every email changes.
+
+   ⚠ EMAIL HTML IS NOT WEB HTML. Tables for layout, inline styles only (no
+   stylesheet, no class), bgcolor AND background-color together for Outlook, and
+   !important on text colours or a dark-mode client repaints them into
+   invisibility. Keep it that way, however wrong it looks.
+
+   ⚠ The plain-text body is NOT decoration and must never be dropped: it is the
+   first part of the multipart message, it is what text-only clients and some
+   screen readers read, and it is what lands if the HTML is stripped in transit.
+   Every email keeps both, saying the same thing.
+   ------------------------------------------------------------------------- */
+
+/** Escape a dynamic value for HTML. Prose in these emails is our own literal. */
+function rv_h($s) { return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
+
+/** A body paragraph. $html is our own copy, so inline <strong>/<a> are allowed. */
+function rv_h_p($html) {
+    return '<p style="margin:0 0 16px 0;font-size:17px;line-height:1.62;color:#243352 !important;">' . $html . '</p>';
+}
+/** The blue-edged callout, for the one line that matters most. */
+function rv_h_note($html) {
+    return '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:4px 0 18px 0;"><tr>'
+         . '<td bgcolor="#f2f8fd" style="background-color:#f2f8fd;border-left:4px solid #1d97e3;border-radius:0 8px 8px 0;padding:17px 21px;">'
+         . '<p style="margin:0;font-size:17px;line-height:1.55;color:#0b1226 !important;">' . $html . '</p>'
+         . '</td></tr></table>';
+}
+/** A soft grey panel, for an aside such as the referral offer. */
+function rv_h_panel($title, $html) {
+    return '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:4px 0 18px 0;"><tr>'
+         . '<td bgcolor="#f7f9fc" style="background-color:#f7f9fc;border:1px solid #e3eaf4;border-radius:10px;padding:19px 22px;">'
+         . ($title !== '' ? '<div style="font-size:17px;font-weight:700;color:#0b1226 !important;margin-bottom:7px;">' . $title . '</div>' : '')
+         . '<div style="font-size:16px;line-height:1.62;color:#3d4d6d !important;">' . $html . '</div>'
+         . '</td></tr></table>';
+}
+/** Label/value rows - what turns "your visit record" into an actual record. */
+function rv_h_facts($rows) {
+    if (!is_array($rows) || !$rows) return '';
+    $h = '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:4px 0 20px 0;">'
+       . '<tr><td bgcolor="#f7f9fc" style="background-color:#f7f9fc;border:1px solid #e3eaf4;border-radius:10px;padding:6px 22px 8px 22px;">'
+       . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">';
+    foreach ($rows as $label => $value) {
+        $h .= '<tr><td valign="top" style="padding:10px 14px 10px 0;font-size:13px;font-weight:700;letter-spacing:1.2px;'
+            . 'text-transform:uppercase;color:#7c8aa5 !important;white-space:nowrap;">' . rv_h($label) . '</td>'
+            . '<td valign="top" style="padding:10px 0;font-size:17px;line-height:1.5;color:#0b1226 !important;">' . rv_h($value) . '</td></tr>';
+    }
+    return $h . '</table></td></tr></table>';
+}
+/** The one big button. Never more than one per email. */
+function rv_h_cta($label, $url) {
+    return '<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:6px auto 4px auto;"><tr>'
+         . '<td align="center" bgcolor="#1d97e3" style="background-color:#1d97e3;border-radius:9px;">'
+         . '<a href="' . rv_h($url) . '" style="display:inline-block;padding:17px 38px;font-family:\'Segoe UI\',-apple-system,Helvetica,Arial,sans-serif;'
+         . 'font-size:18px;font-weight:700;color:#ffffff !important;text-decoration:none;border-radius:9px;">' . rv_h($label) . '</a>'
+         . '</td></tr></table>';
+}
+
+/**
+ * Wrap blocks in the 365 Techies chrome.
+ *   eyebrow  - the small caps line under the logo, naming what this email is
+ *   heading  - the h1
+ *   blocks   - array of HTML from the helpers above, in order
+ *   after    - optional HTML placed below the sign-off (the referral offer)
+ *   footnote - optional small print above the legal footer (the unsubscribe)
+ */
+function rv_html_shell($opts) {
+    $g = function ($k, $d = '') use ($opts) { return isset($opts[$k]) ? $opts[$k] : $d; };
+    $F = "'Segoe UI',-apple-system,Helvetica,Arial,sans-serif";
+    $body = '';
+    foreach ((array)$g('blocks', array()) as $b) $body .= $b;
+    $after = (string)$g('after', '');
+    $foot  = (string)$g('footnote', '');
+    return '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">' . "\n"
+    . '<html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head>'
+    . '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />'
+    . '<meta name="viewport" content="width=device-width, initial-scale=1" />'
+    . '<meta name="color-scheme" content="light" /><title>' . rv_h($g('title', '365 Techies')) . '</title></head>'
+    . '<body style="margin:0;padding:0;background-color:#eef3f9;">'
+    // Hidden preview line: without one, a phone shows the first words of the
+    // header markup instead of anything useful.
+    . '<div style="display:none;font-size:1px;color:#eef3f9;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">'
+    . rv_h($g('preview', '')) . '</div>'
+    . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#eef3f9;">'
+    . '<tr><td align="center" style="padding:22px 12px;">'
+    . '<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;background-color:#ffffff;border-radius:14px;overflow:hidden;">'
+    . '<tr><td bgcolor="#0b1226" style="background-color:#0b1226;padding:24px 32px;">'
+    . '<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>'
+    . '<td valign="middle" style="padding-right:13px;">'
+    . '<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>'
+    . '<td align="center" valign="middle" width="44" height="44" bgcolor="#1d97e3" style="width:44px;height:44px;background-color:#1d97e3;'
+    . 'border-radius:9px;font-family:' . $F . ';font-size:16px;font-weight:700;color:#ffffff;text-align:center;line-height:44px;mso-line-height-rule:exactly;">365</td>'
+    . '</tr></table></td>'
+    . '<td valign="middle">'
+    . '<div style="font-family:' . $F . ';font-size:18px;font-weight:700;color:#ffffff;line-height:1.2;">365&nbsp;Techies</div>'
+    . '<div style="font-family:' . $F . ';font-size:11px;font-weight:600;color:#7fb6e4;letter-spacing:1.6px;text-transform:uppercase;padding-top:3px;">'
+    . rv_h($g('eyebrow', 'Bournemouth')) . '</div>'
+    . '</td></tr></table></td></tr>'
+    . '<tr><td style="height:4px;background-color:#1d97e3;font-size:0;line-height:0;">&nbsp;</td></tr>'
+    . '<tr><td bgcolor="#ffffff" style="background-color:#ffffff;padding:32px 32px 4px 32px;font-family:' . $F . ';">'
+    . '<h1 style="margin:0 0 18px 0;font-size:27px;line-height:1.25;font-weight:700;color:#0b1226 !important;letter-spacing:-.3px;">'
+    . rv_h($g('heading', '')) . '</h1>'
+    . $body
+    . '</td></tr>'
+    . '<tr><td bgcolor="#ffffff" style="background-color:#ffffff;padding:8px 32px 30px 32px;font-family:' . $F . ';">'
+    . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="border-top:1px solid #e3eaf4;font-size:0;line-height:0;height:1px;">&nbsp;</td></tr></table>'
+    . '<p style="margin:22px 0 3px 0;font-size:17px;color:#0b1226 !important;"><strong>Steve and David</strong></p>'
+    . '<p style="margin:0 0 ' . ($after !== '' ? '20px' : '0') . ' 0;font-size:15px;line-height:1.6;color:#5b6b8a !important;">'
+    . '365 Techies &middot; family-run IT support in Bournemouth since 1995<br />'
+    . '<a href="tel:+441202775566" style="color:#1266a8;font-weight:600;text-decoration:none;">01202 775566</a> &middot; '
+    . '<a href="mailto:info@365techies.co.uk" style="color:#1266a8;text-decoration:none;">info@365techies.co.uk</a></p>'
+    . $after
+    . '</td></tr>'
+    . '<tr><td bgcolor="#f4f7fb" style="background-color:#f4f7fb;padding:18px 32px;border-top:1px solid #e3eaf4;font-family:' . $F . ';">'
+    . ($foot !== '' ? '<p style="margin:0 0 10px 0;font-size:13px;line-height:1.6;color:#7c8aa5 !important;">' . $foot . '</p>' : '')
+    . '<p style="margin:0;font-size:13px;line-height:1.6;color:#7c8aa5 !important;">'
+    . rv_h($g('legal', 'You are receiving this because you are a 365 Techies customer - it is about the service you pay for.'))
+    . ' 365 Techies Ltd, Bournemouth, Dorset &middot; '
+    . '<a href="https://365techies.co.uk/privacy-policy/" style="color:#7c8aa5;">Privacy</a></p>'
+    . '</td></tr></table></td></tr></table></body></html>';
+}
+
+/** The referral offer, in the same words as the plain-text version. */
+function rv_h_referral() {
+    return rv_h_panel('If someone you know is battling their computer',
+        'We would love an introduction, and there is something in it for both of you: '
+      . '<strong style="color:#0b1226;">they get their first Computer Service &amp; Health Check free</strong>, and '
+      . '<strong style="color:#0b1226;">you get a month free on your support plan</strong>. '
+      . 'Just pass on our number and ask them to mention your name, so we know who to thank. '
+      . '<a href="tel:+441202775566" style="color:#1266a8;font-weight:600;text-decoration:none;">01202&nbsp;775566</a>.');
+}
+
+/** "l j F" for a timestamp, or '' - the visit record needs a real date in it. */
+function rv_h_when($ts) { $ts = (int)$ts; return $ts > 0 ? date('l j F Y', $ts) : ''; }
 
 function wl_body_html($first) {
     $tpl = <<<'WLHTML'
@@ -1503,7 +1727,10 @@ function dn_process($cap = 5) {
             $q['q'][$bid]['dn'] = 'sending';
             $q['q'][$bid]['dn_snd'] = time();
             $q['q'][$bid]['dn_tries'] = (isset($e['dn_tries']) ? $e['dn_tries'] : 0) + 1;
-            $picked[$bid] = array('em' => $em, 'nm' => isset($e['nm']) ? $e['nm'] : '');
+            // carry the visit facts so the record can name the job and the day
+            $picked[$bid] = array('em' => $em, 'nm' => isset($e['nm']) ? $e['nm'] : '',
+                                  'sv' => isset($e['sv']) ? (string)$e['sv'] : '',
+                                  'bs' => (int)(isset($e['bs']) && $e['bs'] ? $e['bs'] : (isset($e['end']) ? $e['end'] : 0)));
             $batchEm[$eh] = true;
         }
     }
@@ -1514,7 +1741,7 @@ function dn_process($cap = 5) {
 
     $sent = 0; $failed = 0;
     foreach ($picked as $bid => $p) {
-        $ok = rv_send($p['em'], $p['nm'], 'done');
+        $ok = rv_send($p['em'], $p['nm'], 'done', $p);
         list($lk2, $q2) = rvq_open();
         if (!$lk2) continue;
         if (isset($q2['q'][$bid]) && (isset($q2['q'][$bid]['dn']) ? $q2['q'][$bid]['dn'] : '') === 'sending') {
