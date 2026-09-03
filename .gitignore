@@ -175,3 +175,10 @@ api/dorset-tiles-budget.json
 api/dorset-tiles-rate.json
 api/dorset-water-readings.lock
 api/dorset-*.tmp
+
+# SimplyBook client write-back (server-only): the probe verdict and the before-write
+# snapshots. Both are .php so a direct fetch executes exit() and serves nothing -
+# api/ has no .htaccess and this repo is PUBLIC.
+api/pcm-sbwrite-ok.php
+api/pcm-sbwrite-log.php
+api/pcm-sbwrite-log.php.lock
