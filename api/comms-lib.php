@@ -211,6 +211,25 @@ function comms_sms_poll() {
         $text = (string)(isset($r['text']) ? $r['text'] : '');
         $at   = (string)(isset($r['messageTime']) ? $r['messageTime'] : gmdate('c'));
         $match = comms_match_customer($from);
+        /* Last resort: the name Textmagic already knows. Their own notification
+           emails say "SMS from Maureen Drake", so when the sender is in the
+           Textmagic address book the name is there for the asking - and we were
+           throwing it away, reading only id/sender/text/messageTime.
+
+           ⚠ THIS IS NOT A CUSTOMER MATCH and must never be dressed as one. It
+           says who owns the handset per the SMS provider, not that we found them
+           in our records, so it is labelled differently in Slack. The house rule
+           stands: a wrong name is worse than no name, so this only ever fills a
+           gap - it can never override or soften a real MATCH or a MULTIPLE. */
+        if ($match['status'] !== 'MATCH' && $match['status'] !== 'MULTIPLE') {
+            $tmName = trim((string)(isset($r['firstName']) ? $r['firstName'] : '')
+                    . ' ' . (string)(isset($r['lastName']) ? $r['lastName'] : ''));
+            if ($tmName === '' && !empty($r['contact']) && is_array($r['contact']))
+                $tmName = trim((string)(isset($r['contact']['firstName']) ? $r['contact']['firstName'] : '')
+                        . ' ' . (string)(isset($r['contact']['lastName']) ? $r['contact']['lastName'] : ''));
+            $tmName = trim(preg_replace('/\s{2,}/', ' ', preg_replace('/[\x00-\x1F\x7F]+/', ' ', $tmName)));
+            if ($tmName !== '') $match['tm_name'] = mb_substr($tmName, 0, 60);
+        }
         list($ok, $res) = comms_add_item(array(
             'type' => 'sms_in', 'ext_id' => 'tm-' . $rid, 'at' => $at,
             'number' => $from !== '' ? $from : (string)(isset($r['sender']) ? $r['sender'] : 'unknown'),
@@ -229,6 +248,10 @@ function comms_sms_poll() {
                 $who = $from . ' - possibly ' . $match['name'];
             } elseif ($match['status'] === 'NOT_CHECKED') {
                 $who = $from . ' (not matched: ' . (isset($match['why']) ? $match['why'] : 'lookup unavailable') . ')';
+            } elseif (!empty($match['tm_name'])) {
+                // Named by the SMS provider's address book, NOT matched to a
+                // customer record - said plainly, so nobody reads it as a match.
+                $who = $match['tm_name'] . ' (' . $from . ') - from the Textmagic contact list, not matched to a customer record';
             } else {
                 $who = $from . ' (not a number we hold)';
             }

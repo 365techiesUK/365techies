@@ -91,6 +91,20 @@ foreach (array('client_name', 'client') as $k) {
 }
 $svcName = '';
 foreach (array('event_name', 'event') as $k) if (!empty($b[$k]) && is_string($b[$k])) { $svcName = (string)$b[$k]; break; }
+/* The client's phone, pulled the same defensive way as the email above (field
+   names vary by SimplyBook config).
+
+   ⚠ THIS IS WHY AN INBOUND TEXT USED TO READ "not a number we hold". Bookings
+   typed straight into SimplyBook - which the comment below rightly calls "most
+   of them" - never put a phone number anywhere the comms matcher can see it.
+   The number sat in SimplyBook, correct and complete, while our own customer
+   record had no phone field at all, so a text from that customer arrived
+   unnamed. Storing it here closes that for every future booking. */
+$cph = '';
+foreach (array('client_phone', 'phone', 'user_phone') as $k)
+    if (!empty($b[$k]) && is_scalar($b[$k])) { $cph = (string)$b[$k]; break; }
+if ($cph === '' && isset($b['client']) && is_array($b['client']) && !empty($b['client']['phone']))
+    $cph = (string)$b['client']['phone'];
 // peek BEFORE recording: a booking we took ourselves is already queued (and already
 // announced in Slack by the book action), so we must not announce it twice
 $seenTs = rv_seen($bid);
@@ -117,6 +131,14 @@ foreach ($db['customers'] as $key => &$c) {
         else {
             // set if sooner than what's stored, or if nothing/older is stored
             if (empty($c['next_ts']) || $ts <= $c['next_ts'] || $c['next_ts'] < time()) { $c['next'] = $pretty; $c['next_ts'] = $ts; }
+        }
+        /* Store SimplyBook's phone so the comms matcher can name this customer
+           when they text. FILL ONLY WHEN EMPTY: `mobile` and `tel` are the
+           customer's own, typed by them in the portal, and must always win. */
+        if ($cph !== '' && empty($c['sb_phone']) && empty($c['mobile']) && empty($c['tel'])) {
+            require_once __DIR__ . '/pcm-phone-lib.php';
+            $norm = pcm_phone_norm($cph);
+            if ($norm !== '') { $c['sb_phone'] = pcm_phone_display($norm); $c['sb_phone_ts'] = time(); }
         }
         $c['sb_last'] = gmdate('Y-m-d H:i') . ' (' . $type . ')';
         $hit = true;
