@@ -79,6 +79,7 @@ api/pcm-quickbooks.php
 # crash could actually leave behind - and this repo is PUBLIC.
 api/pcm-qbo-token.json*
 api/pcm-invoice-state.json*
+api/pcm-qbo-invcache.json*
 api/pcm-invoice.log
 api/pcm-invoice.lock
 # SimplyBook->portal status poll (cron): lock + admin-token cache

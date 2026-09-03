@@ -25519,6 +25519,13 @@ def write_portal_page():
       // premises, so team members see it too. Only shown once there is a reading.
       h += '<div class="card" id="mybb-card" hidden><h2>\\ud83c\\udf10 Your broadband</h2><div id="mybb"><p class="quiet">Loading…</p></div>'
         + '<p class="quiet">Measured on this connection at each service visit from <strong>365 PC Manager</strong> (Service tab \\u2192 Test my broadband), so we can tell a line that has slowed from a PC that has. Wired-to-router readings are the honest line figure; Wi-Fi readings measure your Wi-Fi.</p></div>';
+      /* Invoices, read from our accounts system. Account holder only - billing
+         is theirs, and the server refuses a team member outright. The card stays
+         hidden until the server confirms there is a billing account AND at least
+         one invoice, so a customer who has never been invoiced is not shown an
+         empty ledger. */
+      if (!d.member)
+        h += '<div class="card" id="myinv-card" hidden><h2>\\ud83e\\uddfe Your invoices</h2><div id="myinv"><p class="quiet">Loading…</p></div></div>';
       if (!(d.member && !tmIsBoss()))
       h += '<div class="card"><h2>📶 Your WiFi surveys</h2><div id="mywifi"><p class="quiet">Loading…</p></div>'
         + '<p class="quiet">Surveys you save from our free <a href="/wifi-signal-test/" target="_blank" rel="noopener">WiFi Optimizer</a> live here on your account — rooms, history and photos — so you can restore them on any device and our team can see them when they help you. '
@@ -25648,6 +25655,7 @@ def write_portal_page():
       loadMyBookings();
       loadWifi();
       loadBroadband();
+      if (!d.member) loadInvoices();
       loadDash();
       tmLoad();
       bindAddr(d.addr || {}, d.phones || {});
@@ -25897,6 +25905,95 @@ def write_portal_page():
       }
       box.innerHTML = h;
     }).catch(function () {});
+  }
+  /* Invoices, read from our accounts system. Read-only end to end: nothing on
+     this page can change a penny of it. The card stays hidden unless the server
+     confirms a billing account AND at least one invoice, so a customer who has
+     never been invoiced is never shown an empty ledger. */
+  var INV = '/api/pcm-myinvoices.php';
+  function invMoney(n) { return '\\u00a3' + (Number(n) || 0).toFixed(2); }
+  function invWhen(iso) {
+    if (!iso) return '';
+    var p = String(iso).slice(0, 10).split('-');
+    if (p.length !== 3) return String(iso).slice(0, 10);
+    var mo = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parseInt(p[1], 10) - 1] || p[1];
+    return parseInt(p[2], 10) + ' ' + mo + ' ' + p[0];
+  }
+  function loadInvoices() {
+    var card = document.getElementById('myinv-card'), box = document.getElementById('myinv');
+    if (!card || !box) return;
+    post(INV, { action: 'list', wtoken: S.wtoken, machine: mid() }).then(function (d) {
+      if (!d || !d.ok || !d.connected || !d.invoices || !d.invoices.length) return;   // stays hidden
+      card.hidden = false;
+      var owed = 0, nOwed = 0;
+      d.invoices.forEach(function (r) {
+        if (r.status === 'due' || r.status === 'overdue') { owed += Number(r.balance) || 0; nOwed++; }
+      });
+      /* Inline rather than a stylesheet class on purpose: a new rule in
+         styles.css means a CSSV bump, which rewrites every page on the site for
+         one chip. Colours carry a text label too, never colour alone. */
+      var LBL = { paid: 'Paid', due: 'Due', overdue: 'Overdue', 'void': 'Cancelled' };
+      var CHIP = { paid: '#1c6b45', due: '#7a5a12', overdue: '#9b2226', 'void': '#5b6b7c' };
+      var chipCss = function (s) {
+        return 'display:inline-block;padding:.05rem .45rem;border-radius:999px;font-size:.8rem;'
+             + 'font-weight:600;color:#fff;background:' + (CHIP[s] || '#5b6b7c');
+      };
+      var h = owed > 0.005
+        ? '<p style="font-size:1.05rem;margin:0 0 .6rem"><strong>' + invMoney(owed) + '</strong> outstanding'
+          + (nOwed > 1 ? ' across ' + nOwed + ' invoices' : '') + '.</p>'
+        : '<p style="margin:0 0 .6rem">Nothing outstanding \\u2014 thank you.</p>';
+      h += '<div style="overflow-x:auto"><table style="width:100%;font-size:.95rem;border-collapse:collapse">'
+        + '<thead><tr><th style="text-align:left;padding:.25rem .4rem .25rem 0">Date</th>'
+        + '<th style="text-align:left;padding:.25rem .4rem">Invoice</th>'
+        + '<th style="text-align:right;padding:.25rem .4rem">Amount</th>'
+        + '<th style="text-align:left;padding:.25rem .4rem">Status</th>'
+        + '<th style="padding:.25rem 0"></th></tr></thead><tbody>';
+      d.invoices.forEach(function (r) {
+        var st = LBL[r.status] || r.status;
+        h += '<tr><td style="padding:.3rem .4rem .3rem 0;white-space:nowrap">' + esc(invWhen(r.date)) + '</td>'
+          + '<td style="padding:.3rem .4rem">' + esc(r.number || '') + '</td>'
+          + '<td style="padding:.3rem .4rem;text-align:right;white-space:nowrap">' + invMoney(r.total) + '</td>'
+          + '<td style="padding:.3rem .4rem"><span style="' + chipCss(r.status) + '">' + esc(st) + '</span>'
+          + (r.status === 'overdue' && r.due ? ' <span class="quiet">since ' + esc(invWhen(r.due)) + '</span>' : '')
+          + (r.status === 'due' && r.due ? ' <span class="quiet">by ' + esc(invWhen(r.due)) + '</span>' : '')
+          + '</td>'
+          + '<td style="padding:.3rem 0;text-align:right"><button class="btn sm ghost invpdf" data-id="' + esc(r.id) + '" style="padding:.2rem .55rem;font-size:.82rem">PDF</button></td></tr>';
+      });
+      h += '</tbody></table></div>';
+      if (d.stale || d.degraded)
+        h += '<p class="quiet">Our accounts system did not answer just now, so this is the last list we loaded. It may be out of date.</p>';
+      h += '<p class="quiet">Paid by Direct Debit? Payment can take a few working days to show against an invoice. Anything here look wrong \\u2014 ring us on 01202 775566 and we will sort it.</p>';
+      box.innerHTML = h;
+      Array.prototype.forEach.call(box.querySelectorAll('.invpdf'), function (b) {
+        b.onclick = function () { invPdf(b.getAttribute('data-id'), b); };
+      });
+    }).catch(function () {});
+  }
+  /* The PDF comes back from a POST (the session token belongs in a body, never
+     in a URL that ends up in a server log), so it arrives as a blob rather than
+     a link. The tab is opened synchronously on the click and pointed at the blob
+     when it lands - opening it later gets it eaten by the popup blocker. */
+  function invPdf(id, btn) {
+    var lbl = btn.textContent, tab = window.open('', '_blank');
+    btn.disabled = true; btn.textContent = '\\u2026';
+    var done = function () { btn.disabled = false; btn.textContent = lbl; };
+    fetch(INV, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+                 body: JSON.stringify({ action: 'pdf', id: id, wtoken: S.wtoken, machine: mid() }) })
+      .then(function (r) {
+        if (!r.ok || (r.headers.get('content-type') || '').indexOf('application/pdf') < 0) throw new Error('nopdf');
+        return r.blob();
+      })
+      .then(function (blob) {
+        var u = URL.createObjectURL(blob);
+        if (tab) { tab.location = u; } else { location.href = u; }
+        setTimeout(function () { URL.revokeObjectURL(u); }, 60000);
+        done();
+      })
+      .catch(function () {
+        if (tab) { try { tab.close(); } catch (_e) {} }
+        done();
+        alert('Sorry - that invoice would not open just now. Please ring us on 01202 775566 and we will email it over.');
+      });
   }
   // WiFi surveys saved from the free optimizer tool: list, open-in-tool, delete, upload
   var WIFI = '/api/pcm-wifi.php';
