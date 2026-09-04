@@ -28,9 +28,14 @@ require __DIR__ . '/dorset-lib.php';
 $CACHE = __DIR__ . '/dorset-floods-cache.json';
 $RATE  = __DIR__ . '/dorset-floods-rate.json';
 
-// Warnings are issued and lifted on a scale of hours; five minutes is prompt
-// without leaning on a free public service.
-$TTL = 300;
+// The warming cron below forces a rebuild every five minutes, so that - not
+// this - is how often the Environment Agency is actually asked. The TTL only
+// decides when a VISITOR is allowed to trigger their own rebuild, and it must
+// sit comfortably above the cron interval: at 300s against a */5 cron the two
+// expire together, and every cycle left a few seconds in which a resident
+// arriving first wore the ~5s fetch. Fifteen minutes matches dorset-water.php
+// and means a visitor only ever rebuilds if the cron has genuinely stopped.
+$TTL = 900;
 $NOTE = 'No active warnings is not the same as no flood risk. Never imply safety from the absence of an alert.';
 $EMPTY = array('ok' => false, 'count' => 0, 'note' => $NOTE, 'items' => array());
 
