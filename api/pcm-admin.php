@@ -61,6 +61,70 @@ if (empty($_SESSION['pcm_ok'])) {
     exit;
 }
 
+/* ---- export: get the data OFF this machine ------------------------------
+   Everything the business runs on - the customer file, the comms log, the job
+   record, the review queue - exists in exactly one place: this server. There is
+   no second copy anywhere, so a host failure, a bad deploy or a mistaken write
+   is unrecoverable. This streams the lot as one zip.
+
+   Deliberately AFTER the session gate above, so an unauthenticated request can
+   never reach it, and it takes the same CSRF token as every other action.
+
+   Caches and rate-limit counters are excluded on purpose: they rebuild
+   themselves, they are the bulk of the bytes, and they contain nothing you
+   would miss. */
+if (($_GET['export'] ?? '') !== '') {
+    if (!hash_equals($CSRF, (string)($_GET['csrf'] ?? ''))) { http_response_code(403); exit('bad token'); }
+    $KEEP = array(
+        'pcm-data.json',        // the customer file - the crown jewel
+        'comms-data.json',      // inbound texts and voicemail
+        'pcm-jobs.json',        // job / quote record
+        'pcm-reviewq.json',     // the review-email queue
+        'tm-sched.json',        // scheduled texts
+        'ai-pipeline.json',
+        'pcm-invite-plans.json', 'pcm-invite-allow.json',
+        'pcm-gc-live.json', 'pcm-gc-templates.json',
+        'broadband-compare-data.json',
+    );
+    $found = array();
+    foreach ($KEEP as $f) {
+        $fp = __DIR__ . '/' . $f;
+        if (is_readable($fp)) $found[$f] = $fp;
+    }
+    // anything else holding customer data that the list above has not learned yet
+    foreach (glob(__DIR__ . '/pcm-msg-*.json') ?: array() as $fp) {
+        $b = basename($fp);
+        if (!isset($found[$b])) $found[$b] = $fp;
+    }
+    if (!$found) { http_response_code(500); exit('nothing to export'); }
+
+    $stamp = gmdate('Ymd-His');
+    if (class_exists('ZipArchive')) {
+        $tmp = tempnam(sys_get_temp_dir(), 'pcmx');
+        $zip = new ZipArchive();
+        if ($zip->open($tmp, ZipArchive::OVERWRITE) !== true) { http_response_code(500); exit('could not open zip'); }
+        foreach ($found as $name => $fp) $zip->addFile($fp, $name);
+        $zip->addFromString('EXPORTED.txt',
+            "365 Techies data export\ntaken: " . gmdate('c') . " UTC\nfiles: " . count($found)
+            . "\n\nThis is the only copy of this data that exists outside the server.\n"
+            . "Keep it somewhere encrypted, and test that it restores.\n");
+        $zip->close();
+        header('Content-Type: application/zip');
+        header('Content-Disposition: attachment; filename="365techies-data-' . $stamp . '.zip"');
+        header('Content-Length: ' . filesize($tmp));
+        readfile($tmp);
+        @unlink($tmp);
+        exit;
+    }
+    // no zip extension: one JSON envelope is still an off-site copy
+    header('Content-Type: application/json');
+    header('Content-Disposition: attachment; filename="365techies-data-' . $stamp . '.json"');
+    $out = array('taken' => gmdate('c'), 'files' => array());
+    foreach ($found as $name => $fp) $out['files'][$name] = json_decode((string)@file_get_contents($fp), true);
+    echo json_encode($out, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+    exit;
+}
+
 // hold the SAME lock pcm.php/pcm-booking use, so admin writes can't lost-update the app's check-ins
 $db_lock = @fopen($DATA . '.lock', 'c'); if ($db_lock) @flock($db_lock, LOCK_EX);
 $db = load($DATA);
@@ -465,7 +529,7 @@ th{color:#9fb5d3;font-weight:600;font-size:.75rem;text-transform:uppercase;lette
 .add label{display:block;font-size:.75rem;color:#9fb5d3;margin-bottom:.2rem}
 @media(max-width:720px){.add{grid-template-columns:1fr 1fr}}
 </style></head><body>
-<div class=top><h1>365 PC Manager — customers</h1><div style="display:flex;gap:1rem;align-items:center"><a href="tm-admin.php">&#9993; Text messages</a><a href="?logout=1">Sign out</a></div></div>
+<div class=top><h1>365 PC Manager — customers</h1><div style="display:flex;gap:1rem;align-items:center"><a href="tm-admin.php">&#9993; Text messages</a><a href="?export=1&amp;csrf=<?= htmlspecialchars($CSRF) ?>" title="Download every customer store as one zip - keep it somewhere off this server">&#8681; Export data</a><a href="?logout=1">Sign out</a></div></div>
 <div class=kpis>
  <div class=kpi><b><?=count($cust)?></b><span>customers</span></div>
  <div class=kpi><b><?=$pcs?></b><span>machines</span></div>

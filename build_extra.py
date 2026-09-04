@@ -15387,48 +15387,113 @@ def info_page(slug, crumb_name, h1, eyebrow, lede, desc, inner, title=None, chip
     add(slug=slug, title=title or f"{crumb_name} | 365 Techies", desc=desc,
         og_title=og_title or f"{crumb_name} | 365 Techies", schema=schema, content=content)
 
+# The label is derived from the policy text itself: it said "June 2026" on
+# wording edited on 18 August, because a hand-typed date only moves when someone
+# remembers to move it. policy-dates.json records the hash of the text that was
+# published under each date, so the date rolls exactly when the words change.
+# The other policy pages still carry a hand-typed date. Same weakness, smaller
+# blast radius - move them onto _policy_stamp when their wording next changes.
 UPDATED = "Last updated: June 2026"
 
+def _policy_stamp(key, text):
+    import json as _pj, hashlib as _ph, os as _po, datetime as _pd
+    f = _po.path.join(_po.path.dirname(_po.path.abspath(__file__)), "policy-dates.json")
+    try:
+        rec = _pj.load(open(f, encoding="utf-8"))
+    except Exception:
+        rec = {}
+    h = _ph.sha1(text.encode("utf-8")).hexdigest()[:12]
+    cur = rec.get(key)
+    if not cur or cur.get("h") != h:
+        cur = {"h": h, "date": _pd.date.today().strftime("%B %Y")}
+        rec[key] = cur
+        try:
+            with open(f, "w", encoding="utf-8") as _f:
+                _pj.dump(rec, _f, indent=1, sort_keys=True)
+        except Exception:
+            pass
+    return "Last updated: " + cur["date"]
+
+
 # ---- Privacy Policy
-info_page(
-  slug="privacy-policy", crumb_name="Privacy Policy", eyebrow="// PRIVACY",
-  h1='Privacy <em class="grad grad--cyan">policy</em>',
-  lede="How 365 Techies Limited collects, uses and protects your personal information, and the rights you have over your data.",
-  desc="Privacy policy for 365 Techies Limited — how we collect, use, store and protect your personal data, and your rights under UK data protection law.",
-  chips=["Your data, respected","UK GDPR","Plain English"],
-  inner="""          <p class="mono" style="color:var(--cyan)">%s</p>
+# Assigned first so the "last updated" stamp can hash the wording itself. The old
+# label was hand-typed and said "June 2026" on text edited on 18 August; a date
+# nobody has to remember to change is the only kind that stays true.
+_PRIVACY_BODY = """          <p class="mono" style="color:var(--cyan)">%s</p>
           <h2>Who we are</h2>
-          <p>365 Techies Limited (&ldquo;we&rdquo;, &ldquo;us&rdquo;) is an IT support company registered in England &amp; Wales (company number 11073501), based in Bournemouth, Dorset. Our registered office is 71-75 Shelton Street, London, Greater London, WC2H 9JQ, United Kingdom, and we operate this website, 365techies.co.uk. We are the data controller for the personal information described in this policy. You can reach us at <a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a> or on <a href="tel:+441202775566">01202 775566</a>.</p>
+          <p>365 Techies Limited (&ldquo;we&rdquo;, &ldquo;us&rdquo;) is an IT support company registered in England &amp; Wales (company number 11073501), based in Bournemouth, Dorset. Our registered office is 71-75 Shelton Street, London, Greater London, WC2H 9JQ, United Kingdom, and we operate this website, 365techies.co.uk. We are the data controller for the personal information described in this policy. You can reach us at <a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a>.</p>
+
           <h2>What information we collect</h2>
           <ul>
-            <li>Contact details you give us &mdash; such as your name, email address, phone number and address.</li>
-            <li>Details of your enquiry, your devices and your IT systems, so we can provide support.</li>
-            <li>On a support plan, the results of the broadband speed test we run at each service visit from 365 PC Manager (download, upload, response time, whether the test was wired or Wi-Fi, and your provider), kept on your service record so we can tell a slowing line from a slowing PC. We also use these readings <strong>anonymously</strong> in an aggregate local broadband map: only your postcode district (for example BH9, never the full postcode) is stored alongside a reading, and no figure is ever published for an area or provider with fewer than five readings, so no household can be identified.</li>
-            <li>Account and billing information needed to manage your plan.</li>
-            <li>Information collected automatically when you use our website, such as cookies and basic analytics.</li>
+            <li><strong>Contact details you give us</strong> &mdash; name, email address, phone number and address, when you enquire, book, or join a support plan.</li>
+            <li><strong>Details of your enquiry, your devices and your IT systems</strong>, so we can actually help you.</li>
+            <li><strong>Booking details</strong> when you book a visit &mdash; the service, the time, and the contact details you enter.</li>
+            <li><strong>Account and billing information</strong> needed to manage your plan and collect payment.</li>
+            <li><strong>From the 365 PC Manager app</strong>, if you install it: the machine&rsquo;s health check-in (a machine identifier, Windows version, disk and memory state), and &mdash; on a support plan &mdash; the result of the broadband speed test we run at each service visit (download, upload, response time, wired or Wi-Fi, and your provider), kept on your service record so we can tell a slowing line from a slowing PC. Screen captures are only ever sent if you choose to send one. If you use Family View, the mobile number you enter for your trusted contact is stored so we can text them the reminder you asked for.</li>
+            <li><strong>Website analytics</strong>, only after you accept analytics cookies. If you start a booking and do not finish it, we keep the phone number you entered for 24 hours so we can help you complete it, and your browser stores which page and campaign brought you here so an enquiry can be attributed correctly.</li>
           </ul>
+
           <h2>How we use your information</h2>
           <ul>
             <li>To provide, manage and improve our IT support and services.</li>
             <li>To respond to your enquiries and provide customer support.</li>
             <li>To manage your account, plan and payments.</li>
-            <li>To send you service-related messages.</li>
+            <li>To send you service-related messages, including appointment reminders by text if you have asked for them.</li>
             <li>To meet our legal and regulatory obligations.</li>
           </ul>
+          <p>We do not sell your data, and we do not use it to build advertising profiles.</p>
+
           <h2>Our legal basis</h2>
-          <p>We process your data to perform our contract with you, for our legitimate interests in running and improving our business, to comply with legal obligations, and &mdash; where required &mdash; with your consent.</p>
-          <h2>Sharing your information</h2>
-          <p>We never sell your data. We share it only with trusted service providers who help us deliver our services (for example Microsoft, our payment provider and our hosting provider), and only as far as needed &mdash; or where we are required to by law.</p>
+          <p>We process your data to perform our contract with you, for our legitimate interests in running and improving our business, to comply with legal obligations, and &mdash; for analytics cookies and marketing messages &mdash; with your consent, which you can withdraw at any time.</p>
+
+          <h2>Who we share it with</h2>
+          <p>We never sell your data. We share it only with the service providers who help us run the business, and only as far as each one needs:</p>
+          <ul>
+            <li><strong>SiteGround</strong> &mdash; website and email hosting, where this site and its data live.</li>
+            <li><strong>Microsoft</strong> &mdash; Microsoft 365 email and, where you buy licences through us, your account.</li>
+            <li><strong>SimplyBook.me</strong> &mdash; our booking system: your name, email, phone and appointment details.</li>
+            <li><strong>GoCardless</strong> &mdash; Direct Debit collection for support plans.</li>
+            <li><strong>Intuit (QuickBooks)</strong> &mdash; our accounts, for invoicing and tax records.</li>
+            <li><strong>TextMagic</strong> &mdash; sending and receiving the text messages we exchange with you.</li>
+            <li><strong>HubSpot</strong> &mdash; the enquiry forms on this site and the record of your enquiry.</li>
+            <li><strong>Slack</strong> &mdash; our own internal team channel, where new enquiries and messages are relayed so somebody picks them up.</li>
+            <li><strong>Google</strong> &mdash; Analytics (only with your consent), and the mapping data behind our free tools. Google&rsquo;s own attribution appears on any map we show.</li>
+            <li><strong>Partnerize</strong> &mdash; the affiliate network behind the small number of clearly-labelled sponsored links on this site.</li>
+          </ul>
+          <p>We may also share information where the law requires it. Some of these providers are based outside the UK, or process data outside it; where that happens we rely on the UK&rsquo;s approved transfer safeguards, and we will tell you more if you ask.</p>
+
+          <h2>How long we keep it</h2>
+          <ul>
+            <li><strong>Financial records</strong> (invoices, payments, plan history) &mdash; six years after the end of the relevant accounting period, which is what UK tax law requires of a limited company.</li>
+            <li><strong>Customer and service records</strong> &mdash; while you are a customer, and for a reasonable period afterwards so we can answer questions about work we did.</li>
+            <li><strong>Enquiries that do not become work</strong> &mdash; kept only as long as we may reasonably need to follow up.</li>
+            <li><strong>An unfinished booking</strong> &mdash; the phone number is deleted after 24 hours.</li>
+            <li><strong>Analytics</strong> &mdash; held by Google under their own retention settings.</li>
+          </ul>
+          <p>If you would like your data removed sooner, ask us and we will do it wherever we are not required to keep it.</p>
+
           <h2>Keeping your data safe</h2>
-          <p>We use appropriate technical and organisational measures to protect your personal information, and we only keep it for as long as necessary for the purposes above or to meet legal requirements.</p>
+          <p>We use appropriate technical and organisational measures to protect your personal information, and we only keep it for as long as necessary for the purposes above or to meet legal requirements. We never ask for your passwords, and we always phone you before connecting to your computer remotely.</p>
+
           <h2>Your rights</h2>
-          <p>You have the right to access, correct, erase, restrict or object to our use of your data, to data portability, and to withdraw consent where we rely on it. You also have the right to complain to the Information Commissioner&rsquo;s Office (ICO) at <a href="https://ico.org.uk/" target="_blank" rel="noopener">ico.org.uk</a>.</p>
+          <p>You have the right to access, correct, erase, restrict or object to our use of your data, to data portability, and to withdraw consent where we rely on it. You also have the right to complain to the Information Commissioner&rsquo;s Office (<a href="https://ico.org.uk/" target="_blank" rel="noopener">ico.org.uk</a>), though we would rather you told us first so we can put it right.</p>
+
           <h2>Cookies</h2>
           <p>Our website uses cookies. See our <a href="/cookie-policy/">cookie policy</a> for details.</p>
+
           <h2>Changes to this policy</h2>
-          <p>We may update this policy from time to time. The latest version will always be on this page.</p>
+          <p>We may update this policy from time to time. The date at the top changes automatically whenever the wording does, so it always tells you when this text last changed.</p>
+
           <h2>Contact us</h2>
-          <p>For any privacy question or to exercise your rights, contact <a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a> or call <a href="tel:+441202775566">01202 775566</a>.</p>""" % UPDATED,
+          <p>For any privacy question or to exercise your rights, contact <a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a> or call <a href="tel:+441202775566">01202 775566</a>.</p>"""
+
+info_page(
+  slug="privacy-policy", crumb_name="Privacy Policy", eyebrow="// PRIVACY",
+  h1='Privacy <em class="grad grad--cyan">policy</em>',
+  lede="How 365 Techies Limited collects, uses and protects your personal information, and the rights you have over your data.",
+  desc="Privacy policy for 365 Techies Limited &mdash; how we collect, use, store and protect your personal data, who we share it with, how long we keep it, and your rights under UK data protection law.",
+  chips=["Your data, respected","UK GDPR","Plain English"],
+  inner=_PRIVACY_BODY % _policy_stamp("privacy", _PRIVACY_BODY),
   cta_args=("Questions about your data?", "We&rsquo;re happy to help &mdash; get in touch any time.",
             ("Contact Us", "/contact/"), ("Cookie Policy", "/cookie-policy/")),
 )

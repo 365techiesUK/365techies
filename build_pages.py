@@ -11,6 +11,21 @@ from snippets_data import SNIPPETS
 from dashboard_promo import plan_band as _dash_band
 TODAY = datetime.date.today().isoformat()
 
+# Cache-bust for search.min.js, derived from the CONTENT of js/search.js.
+# It was "?v={TODAY}", which re-busted all 698 pages every midnight for a file
+# that changes a few times a year - and, worse, the hand-maintained homepage
+# hardcoded "?v=2", a URL SiteGround's proxy had cached against an OLD build.
+# Real browsers on the homepage were served a 6,580-byte copy with a
+# requestIdleCallback that eagerly downloads the 88 KB search index, while every
+# generated page got the current 6,941-byte copy without it. A content hash
+# changes exactly when the file does, and never otherwise.
+try:
+    import hashlib as _shl
+    with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "js", "search.js"), "rb") as _sf:
+        SEARCHV = _shl.sha1(_sf.read()).hexdigest()[:8]
+except Exception:
+    SEARCHV = TODAY
+
 # ---------------------------------------------------------------------------
 # HONEST LASTMOD
 #
@@ -1084,7 +1099,7 @@ def page(slug, title, desc, og_title, schema_json, content, og_image=None):
   <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=10" defer></script>
   <script src="/js/forms.min.js?v=8" defer></script>
-  <script src="/js/search.min.js?v={TODAY}" defer></script>
+  <script src="/js/search.min.js?v={SEARCHV}" defer></script>
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
     <p>We use cookies to power our live chat and understand how the site is used. See our <a href="/cookie-policy/">cookie policy</a>.</p>
     <div class="cookie-banner__actions">

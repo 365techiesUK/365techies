@@ -1102,6 +1102,25 @@ for _js, _is_module in (("main", True), ("interior", True), ("a11y", False), ("f
 # Owner model 2026-08-07: AI = monthly subscription + quoted build. From £95/month
 # (voice agent) is the ONLY approved AI price; £495/'AI Starter pilot' is retired;
 # free-review/free-demo CTAs await the owner's discovery-charging decision.
+import re as _bre
+# --------- keep the hand-maintained homepage's search.min.js in step ---------
+# index.html is NOT regenerated - it is hand-edited - and it hardcodes its own
+# ?v= values. That is how it ended up asking for "js/search.min.js?v=2", a URL
+# SiteGround's proxy had cached against an OLD build: real browsers on the
+# homepage were served a 6,580-byte copy carrying a requestIdleCallback that
+# eagerly downloads the 88 KB search index, while every generated page got the
+# current 6,941-byte copy without it. Only that one attribute is rewritten -
+# everything else in the file stays exactly as hand-written.
+_hp = os.path.join(bp.BASE, "index.html")
+if os.path.exists(_hp):
+    _src = open(_hp, encoding="utf-8").read()
+    _new = _bre.sub(r'(js/search\.min\.js\?v=)[0-9a-zA-Z.-]+', r'\g<1>' + bp.SEARCHV, _src)
+    if _new != _src:
+        open(_hp, "w", encoding="utf-8").write(_new)
+        print("  homepage: search.min.js cache-bust -> %s (was stale)" % bp.SEARCHV)
+    else:
+        print("  homepage: search.min.js cache-bust already %s" % bp.SEARCHV)
+
 # ---------------- guard: the portal beacon travels with the portal page -------
 # write_portal_page() writes portal/index.html and build-id.json together, so a
 # single build can never leave them disagreeing. They drift when a COMMIT takes
