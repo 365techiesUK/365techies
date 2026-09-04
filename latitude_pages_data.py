@@ -75,7 +75,7 @@ LATITUDE_PAGES = [
    },
    {
     "q": "Is setup included, or is that extra?",
-    "a": "Included, always. We set the laptop up with Windows 11 Home or Pro, professionally set up, move your files and data across from your old machine, and hand it over ready to use. There&rsquo;s no setup fee hiding at the till. Delivery is available UK-wide, or collect from us in Kinson, Bournemouth."
+    "a": "Included, always. We set the laptop up with Windows 11 Home or Pro, professionally set up, move your files and data across from your old machine, and hand it over ready to use. There&rsquo;s no setup fee hiding at the till. Delivery is available UK-wide, or we&rsquo;ll bring it to you locally and set it up."
    },
    {
     "q": "What guarantee do I get?",
@@ -161,7 +161,7 @@ LATITUDE_PAGES = [
    "5-yr guarantee (with a support plan) on a support plan"
   ],
   "ctaHead": "Want the right Latitude, not just any Latitude?",
-  "ctaSub": "Tell us what you do all day and we&rsquo;ll match you to the model, grade and spec that fits &mdash; no upsell, just an honest recommendation. Call <strong>01202 775566</strong>, text <strong>07520 615332</strong>, or drop into the shop in Kinson, Bournemouth (Mon&ndash;Fri 9&ndash;5).",
+  "ctaSub": "Tell us what you do all day and we&rsquo;ll match you to the model, grade and spec that fits &mdash; no upsell, just an honest recommendation. Call <strong>01202 775566</strong>, text <strong>07520 615332</strong>, Mon&ndash;Fri 9&ndash;5 &mdash; we&rsquo;ll bring one to you to try, or deliver UK-wide.",
   "sections": [
    {
     "eyebrow": "// WHY &middot; THE &middot; 5000",
@@ -371,7 +371,7 @@ LATITUDE_PAGES = [
    },
    {
     "q": "What&rsquo;s included in the price, and do you deliver?",
-    "a": "16GB RAM, a new 1TB Samsung 990 PRO, Windows 11 Home or Pro, professionally set up, full testing, setup and your data moved across &mdash; all included, no extras at checkout. Collect from us in Kinson, Bournemouth BH10 7LH (Mon&ndash;Fri 9&ndash;5) or we deliver UK-wide. See the whole range at our <a href=\"/dell-hardware/\">refurbished Dell shop</a>."
+    "a": "16GB RAM, a new 1TB Samsung 990 PRO, Windows 11 Home or Pro, professionally set up, full testing, setup and your data moved across &mdash; all included, no extras at checkout. We&rsquo;ll bring it to you locally and set it up, or deliver UK-wide. See the whole range at our <a href=\"/dell-hardware/\">refurbished Dell shop</a>."
    },
    {
     "q": "Why are refurbished laptops more expensive than they used to be?",
@@ -513,7 +513,7 @@ LATITUDE_PAGES = [
    },
    {
     "q": "Do you deliver, and can you help if I&rsquo;m not local?",
-    "a": "Yes &mdash; we deliver <strong>UK-wide</strong>, and most support is done remotely (we always call before we connect). Locally you&rsquo;re welcome to visit us in <strong>Kinson, Bournemouth BH10 7LH, Mon&ndash;Fri 9&ndash;5</strong>. Call 01202 775566 or text 07520 615332."
+    "a": "Yes &mdash; we deliver <strong>UK-wide</strong>, and most support is done remotely (we always call before we connect). Locally we come to you &mdash; or we can meet by appointment at <strong>Kinson Community Centre, Bournemouth BH10 7LH</strong>. Call 01202 775566 or text 07520 615332."
    },
    {
     "q": "What does a refurbished 5000 series cost from you?",

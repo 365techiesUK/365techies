@@ -27,7 +27,6 @@ Allow: /
 Disallow: /node_modules/
 Disallow: /src/
 Disallow: /out/
-Disallow: /index-classic.html
 Disallow: /open-in-edge.bat
 Crawl-delay: 1
 

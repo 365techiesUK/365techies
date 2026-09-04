@@ -63,7 +63,6 @@ jobs:
         .gitignore
         src/**
         *.bat
-        index-classic.html
         tools/**
         .smoke/**
     steps:

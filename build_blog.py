@@ -1102,6 +1102,44 @@ for _js, _is_module in (("main", True), ("interior", True), ("a11y", False), ("f
 # Owner model 2026-08-07: AI = monthly subscription + quoted build. From £95/month
 # (voice agent) is the ONLY approved AI price; £495/'AI Starter pilot' is retired;
 # free-review/free-demo CTAs await the owner's discovery-charging decision.
+# ---------------- guard: the portal beacon travels with the portal page -------
+# write_portal_page() writes portal/index.html and build-id.json together, so a
+# single build can never leave them disagreeing. They drift when a COMMIT takes
+# one and not the other - which is exactly what happened on 2026-09-03: a
+# tidy-up reverted build-id.json as "date noise" and kept the rebuilt page, so
+# the live beacon advertised 9f1b4698fd at a page stamped 5347efcbdd. It never
+# matched, so every portal visit refetched the whole 126 KB page, every two
+# minutes and on every window focus, for every customer.
+#
+# The CI step "Verify the live portal picked up this build" is blind to it: it
+# reads build-id.json, which was perfectly self-consistent. So this checks git
+# state, not file contents - comparing the two files after a build proves
+# nothing, because the build just wrote both.
+try:
+    import subprocess as _pbsp
+    _pbr = _pbsp.run(["git", "status", "--porcelain", "--", "build-id.json", "portal/index.html"],
+                     capture_output=True, text=True, cwd=bp.BASE)
+    _dirty = set()
+    for _ln in (_pbr.stdout or "").splitlines():
+        _f = _ln[3:].strip().strip('"')
+        if _f.endswith("build-id.json"):
+            _dirty.add("beacon")
+        elif _f.endswith("portal/index.html"):
+            _dirty.add("page")
+    if len(_dirty) == 1:
+        _has = "build-id.json" if "beacon" in _dirty else "portal/index.html"
+        _missing = "portal/index.html" if "beacon" in _dirty else "build-id.json"
+        print("\n*** PORTAL BEACON WARNING ***")
+        print("   %s has changed but %s has not." % (_has, _missing))
+        print("   These two are written together and must be COMMITTED together.")
+        print("   Committing one alone leaves the freshness beacon permanently")
+        print("   mismatched, and every portal load then refetches the whole page.")
+        print("   If you are staging by explicit path, stage BOTH.\n")
+    elif _dirty:
+        print("  portal beacon: page and build-id.json both changed - commit them together")
+except Exception as _pbe:
+    print("  portal beacon: could not check git state (%s)" % _pbe)
+
 # STRICT since launch (2026-08-08): any retired string or invented AI price stops
 # the build. Runs LAST deliberately - it judges built output (pages, llms.txt,
 # search index), so every generator above must have written before it looks.

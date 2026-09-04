@@ -299,7 +299,7 @@ OPTIPLEX_PAGES = [
    "New 1TB Samsung 990 PRO included"
   ],
   "ctaHead": "Tell us what you throw at a computer",
-  "ctaSub": "We&rsquo;ll match you to the right generation and form factor &mdash; and tell you honestly if a cheaper tier would do. Call <strong>01202 775566</strong>, text <strong>07520 615332</strong>, or drop in to Kinson, Bournemouth. Mon&ndash;Fri 9&ndash;5, UK-wide delivery.",
+  "ctaSub": "We&rsquo;ll match you to the right generation and form factor &mdash; and tell you honestly if a cheaper tier would do. Call <strong>01202 775566</strong>, text <strong>07520 615332</strong>, Mon&ndash;Fri 9&ndash;5 &mdash; we bring machines to you to try, or deliver UK-wide.",
   "sections": [
    {
     "eyebrow": "// TOP &middot; TIER",
@@ -359,7 +359,7 @@ OPTIPLEX_PAGES = [
    },
    {
     "q": "Do you deliver, or can I collect?",
-    "a": "Both. We deliver UK-wide, or you can collect from us in Kinson, Bournemouth (BH10 7LH), Monday to Friday 9&ndash;5. There&rsquo;s no call-out fee if you&rsquo;d like us to set the machine up at your home or business locally. Call 01202 775566 or text 07520 615332 to arrange either."
+    "a": "Both. We deliver UK-wide, or we&rsquo;ll bring it to you locally and set it up, Monday to Friday 9&ndash;5. There&rsquo;s no call-out fee if you&rsquo;d like us to set the machine up at your home or business locally. Call 01202 775566 or text 07520 615332 to arrange either."
    },
    {
     "q": "What guarantee comes with a refurbished 7000-tier desktop?",

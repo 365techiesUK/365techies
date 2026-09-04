@@ -29,6 +29,15 @@ RewriteRule ^(.*)$ /$1? [R=301,L]
 RewriteRule ^(members|members-2|activity|activity-2|groups|forums|register|register-2|profile|moderation|messages|notifications|videos|documents|photos|password-reset|password-recover|external-link|sidebar|gutenberg|remote-jobs|365live|my-account|my-account-2|cart|checkout|checkout-2|shop-2)/?$ - [G]
 RewriteRule ^shop/?$ /dell-hardware/ [R=301,L]
 
+# --- 410 Gone: the pre-rebuild homepage (2026-09-04) ---
+# index-classic.html is a leftover on the server from before it was added to the
+# deploy exclude list, so removing it from the repo does NOT remove it from the
+# host. It answered 200 with "2,300+ reviews" (the real figure is 49) and
+# "Apple-Savvy Mac Techs" (we are Windows-only), plus three testimonials that
+# are in no source file. robots.txt only hid it from Google; anyone with the URL
+# still saw it. This is what actually takes it down.
+RewriteRule ^index-classic\.html$ - [G]
+
 # --- AI estate consolidation (2026-08-10) ---
 # Two intents each had TWO live self-canonical pages (legacy top-level + the
 # /ai/ estate), splitting link equity — the audit found the legacy pages
