@@ -34,9 +34,24 @@ $TTL = 300;
 $NOTE = 'No active warnings is not the same as no flood risk. Never imply safety from the absence of an alert.';
 $EMPTY = array('ok' => false, 'count' => 0, 'note' => $NOTE, 'items' => array());
 
-$fresh = dorset_cache_get($CACHE, $TTL);
-if ($fresh !== null) dorset_send($fresh);
-if (!dorset_rate_ok($RATE, 12)) dorset_degrade($CACHE, 'rate', $EMPTY);
+/*
+ * A cron can force a rebuild, exactly as dorset-water.php does.
+ *
+ * Without this a warming cron is useless: arriving inside the TTL it would be
+ * served the cache and return without refreshing anything, so the cache would
+ * still expire on its own five-minute schedule and the next real visitor would
+ * wear the rebuild. Measured 2026-09-04 on production: 4.95s cold, 0.09s warm.
+ * Whoever arrives first should be a cron, not a resident.
+ *
+ *   php /home/customer/www/365techies.co.uk/public_html/api/dorset-floods.php refresh
+ */
+$FORCE = (PHP_SAPI === 'cli') && isset($argv[1]) && $argv[1] === 'refresh';
+
+if (!$FORCE) {
+    $fresh = dorset_cache_get($CACHE, $TTL);
+    if ($fresh !== null) dorset_send($fresh);
+    if (!dorset_rate_ok($RATE, 12)) dorset_degrade($CACHE, 'rate', $EMPTY);
+}
 
 /*
  * The EA API takes a centre and a radius in km, not a bounding box, so the box
