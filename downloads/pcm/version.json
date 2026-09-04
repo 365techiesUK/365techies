@@ -3,5 +3,9 @@
   "version": "1.0.23",
   "url": "https://365techies.co.uk/downloads/pcm/pcm-v23.exe",
   "sha256": "71add22878cbfb0f01c486e51be55387e9fe844faf6aabd9bd326174f78d0179",
-  "notes": "Your account, in the app: what is outstanding, your last invoice, and the phone numbers and address we hold, with a button through to your portal. Plus two of our local maps - the mobile signal map and the Bournemouth live 3D map. Signed by 365 Techies Ltd."
+  "notes": "Your account, in the app: what is outstanding, your last invoice, and the phone numbers and address we hold, with a button through to your portal. Plus two of our local maps - the mobile signal map and the Bournemouth live 3D map. Signed by 365 Techies Ltd.",
+  "installer": {
+    "url": "https://365techies.co.uk/downloads/pcm/365-pc-manager-setup.exe",
+    "sha256": "1f4b0eef9c1d0e2708fa7b782e8f46c4514473e6a7665bb8eb058f8c3f4361e0"
+  }
 }

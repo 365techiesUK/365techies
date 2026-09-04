@@ -2988,7 +2988,7 @@ TOOLS = {
   "dns":          ("DNS Lookup", "/dns-lookup/", "Check any domain&rsquo;s A, MX, NS &amp; TXT records &mdash; the settings behind your website and email."),
   "pcbench":      ("PC Benchmark", "/pc-benchmark/", "How fast is your computer, really? Six live tests &mdash; CPU, encryption, memory, graphics &amp; storage &mdash; with a score you can share."),
   "healthcheck":  ("IT Health Check Tool", "/it-health-check-tool/", "Get an instant IT &amp; security score out of 100, plus a plain-English action plan."),
-  "pcmapp":       ("Free PC Health Check App", "/free-pc-health-check/", "365 PC Manager &mdash; our free little Windows app. An honest PC health check &mdash; health score, one-tap boost, no fake errors &mdash; from real local techies. <strong>Digitally signed</strong>, under 1&nbsp;MB, nothing to install."),
+  "pcmapp":       ("Free PC Health Check App", "/free-pc-health-check/", "365 PC Manager &mdash; our free little Windows app. An honest PC health check &mdash; health score, one-tap boost, no fake errors &mdash; from real local techies. <strong>Digitally signed</strong>, it installs in a couple of clicks and uninstalls just as easily."),
   "faultcheck":   ("Computer Fault Checker", "/computer-fault-checker/", "Tell us what&rsquo;s playing up and get the likely cause and best next step."),
   "repairreplace":("Repair or Replace?", "/repair-or-replace-advisor/", "Answer four questions for an honest verdict on your ageing computer."),
   "w10":          ("Windows 10 End of Life", "/windows-10-end-of-life/", "Support has ended &mdash; find out in 30 seconds if you&rsquo;re affected, and your options."),
@@ -3036,7 +3036,7 @@ PCM_BAND = '''    <section class="section section--alt" aria-label="365 PC Manag
           </div>
         </div>
         <ul class="checklist" data-stagger>
-          <li>Free forever, no sign-up, under 1&nbsp;MB</li>
+          <li>Free forever, no sign-up, uninstall any time</li>
           <li>Broadband speed measured at every visit</li>
           <li>Every written Service Report in one place</li>
           <li>Your next visit &mdash; move or cancel it yourself</li>

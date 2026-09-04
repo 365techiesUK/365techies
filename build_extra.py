@@ -352,25 +352,29 @@ book_service()
 # ---- 365 PC Manager - free download landing page ----
 # Owner supplies the hosted (ideally code-signed) .exe URL. Until then the page
 # routes to "ask us to install it" rather than showing a dead download button.
-# ⚠️ ONE source: downloads/pcm/version.json is the manifest the app's OWN
-# self-updater reads, so deriving from it guarantees the page offers exactly what
-# the fleet is being updated to. This was hardcoded to pcm-v18.exe and silently
-# drifted the moment v20 shipped - every existing machine auto-updated to v20
-# while this page kept handing NEW customers v18. Never retype the version here.
+# ⚠️ TWO URLS, AND THEY MUST NOT BE SWAPPED.
+#   "url"       - the bare app exe. The app's OWN self-updater downloads this, via
+#                 pcm_update_info() in api/pcm.php. Point it at the installer and every
+#                 machine in the fleet tries to update itself into a setup wizard.
+#   "installer" - the signed setup.exe a human downloads from the website.
+# The page offers the installer; the fleet keeps updating from the app exe. Both are
+# still derived, never retyped: hardcoding pcm-v18.exe here once shipped v18 to new
+# customers while the existing fleet had already auto-updated to v20 (2026-08-19).
 _pcm_dir = _os_pcm.path.join(bp.BASE, "downloads", "pcm")
 with io.open(_os_pcm.path.join(_pcm_dir, "version.json"), encoding="utf-8") as _f:
     _PCM_MANIFEST = _json_pcm.load(_f)
-PCM_DOWNLOAD_URL = _PCM_MANIFEST["url"]
+_PCM_INSTALLER = _PCM_MANIFEST.get("installer") or {}
+PCM_DOWNLOAD_URL = _PCM_INSTALLER.get("url") or ""
 PCM_VERSION = _PCM_MANIFEST["version"]
-PCM_FILESIZE = "%dKB" % round(
-    _os_pcm.path.getsize(_os_pcm.path.join(_pcm_dir, _PCM_MANIFEST["url"].rsplit("/", 1)[-1])) / 1024.0)
 # A manifest pointing at a file we do not actually ship would put a 404 behind
 # the download button, which looks exactly like a broken/blocked installer.
-_pcm_exe = _os_pcm.path.join(_pcm_dir, PCM_DOWNLOAD_URL.rsplit("/", 1)[-1])
-if not _os_pcm.path.exists(_pcm_exe):
+_pcm_exe = _os_pcm.path.join(_pcm_dir, PCM_DOWNLOAD_URL.rsplit("/", 1)[-1]) if PCM_DOWNLOAD_URL else ""
+if not PCM_DOWNLOAD_URL or not _os_pcm.path.exists(_pcm_exe):
     raise SystemExit(
-        "\n*** PC Manager: version.json points at %s but that file is not in\n"
-        "    downloads/pcm/. The download button would 404. ***\n" % PCM_DOWNLOAD_URL)
+        "\n*** PC Manager: version.json has no usable 'installer' block, or it points at\n"
+        "    %s which is not in downloads/pcm/. The download button would 404.\n"
+        "    Build it with 365-pc-manager/installer/build-installer.ps1 -Sign ***\n" % (PCM_DOWNLOAD_URL or "(nothing)"))
+PCM_FILESIZE = "%.1fMB" % (_os_pcm.path.getsize(_pcm_exe) / 1048576.0)
 PCM_LIVE = bp.PCM_LIVE and bool(PCM_DOWNLOAD_URL)   # the switch lives in build_pages.PCM_LIVE (one truth for cards + page); the URL must also be set. Everything "coming soon"/waitlist on this page keys off this.
 
 def pcm_landing():
@@ -382,13 +386,13 @@ def pcm_landing():
       ("Is it safe to install?", "Yes. It reads your PC&rsquo;s health (memory, disk, antivirus, backup) and changes nothing unless you tap a button. The one exception is entirely your choice: support-plan customers can switch on &ldquo;let 365 run safe maintenance&rdquo;, which lets us run a short fixed list of harmless tidy-up jobs &mdash; clearing temporary files, flushing the network cache, collecting a diagnostics summary &mdash; without ringing you first. It&rsquo;s off unless you turn it on, and you can turn it off again any time. We&rsquo;re 365 Techies, a family-run Dorset IT firm here since 1995, rated 4.9 on Google."),
       ("Does it send my information anywhere?", "Yes, a little &mdash; here&rsquo;s exactly what. Once an hour it contacts us with your PC&rsquo;s health score and the basics behind it (whether antivirus and backup are on, how full the disk is, battery health, the PC name you chose and an anonymous ID for the machine). That is how every copy stays up to date, and how we spot a problem on a customer&rsquo;s machine before it bites. It never sends your files, photos, emails, browsing or passwords. If you&rsquo;re on a plan we tie it to your account so we can help proactively; if you&rsquo;re not, it isn&rsquo;t linked to a customer record. ""Run the broadband test and your connection is checked against an outside service to name your provider &mdash; see our <a href=\"/privacy-policy/\">privacy policy</a>."),
       ("What does &lsquo;Boost&rsquo; actually do?", "It safely clears the temporary-file clutter Windows leaves behind and refreshes memory &mdash; a quick pick-me-up when your PC feels sluggish. It never touches your documents, photos or programs."),
-      (("How do I get it, and is the download safe?", "It&rsquo;s live: tap <a href=\"#download\">Download free for Windows</a>, open the file, and it runs &mdash; nothing to install, under 1&nbsp;MB. The download is <strong>digitally signed by 365 Techies Ltd</strong> (a Microsoft-issued certificate), so Windows shows our name as the publisher rather than &ldquo;unknown&rdquo;. If you&rsquo;d rather we set it up for you, ring 01202 775566 and we&rsquo;ll do it free, by hand.") if PCM_LIVE else ("When does it launch, and how do I get it?", "It&rsquo;s in final testing now. Join the <a href=\"#waitlist\">waitlist</a> and we&rsquo;ll email you the download the moment it&rsquo;s ready &mdash; and if you&rsquo;d rather not install it yourself, we&rsquo;ll happily set it up for you free, by hand, when it&rsquo;s ready. We won&rsquo;t promise a date until it&rsquo;s genuinely ready; we&rsquo;d rather ship it right than rush it.")),
+      (("How do I get it, and is the download safe?", "It&rsquo;s live: tap <a href=\"#download\">Download free for Windows</a>, open it, and it installs in a couple of clicks &mdash; then it lives in your Start menu like any other program, and you can remove it any time from Settings &gt; Apps. The download is <strong>digitally signed by 365 Techies Ltd</strong> (a Microsoft-issued certificate), so Windows shows our name as the publisher rather than &ldquo;unknown&rdquo;. If you&rsquo;d rather we set it up for you, ring 01202 775566 and we&rsquo;ll do it free, by hand.") if PCM_LIVE else ("When does it launch, and how do I get it?", "It&rsquo;s in final testing now. Join the <a href=\"#waitlist\">waitlist</a> and we&rsquo;ll email you the download the moment it&rsquo;s ready &mdash; and if you&rsquo;d rather not install it yourself, we&rsquo;ll happily set it up for you free, by hand, when it&rsquo;s ready. We won&rsquo;t promise a date until it&rsquo;s genuinely ready; we&rsquo;d rather ship it right than rush it.")),
       ("Why can&rsquo;t I download Microsoft&rsquo;s PC Manager in the UK?", "Microsoft hasn&rsquo;t made its &ldquo;PC Manager&rdquo; utility officially available in the UK Microsoft Store &mdash; it has been region-limited for years (still, as of mid-2026). If what you actually wanted was a friendly Windows health check and tidy-up from someone you can phone, that&rsquo;s exactly what our free 365 PC Manager is: made in Dorset, works right here, and your data stays on your PC."),
     ]
     dl = (f'<a class="button primary button--lg" href="{PCM_DOWNLOAD_URL}" download data-pcm-cta="download">Download free for Windows &#8595;</a>'
           if PCM_DOWNLOAD_URL else
           '<a class="button primary button--lg" href="/contact/?topic=365-pc-manager" data-pcm-cta="ask">Ask us to set it up for you &#8594;</a>')
-    dlnote = ("Free for Windows 10 &amp; 11 &middot; no sign-up &middot; under 1&nbsp;MB &middot; digitally signed by 365 Techies Ltd" if PCM_DOWNLOAD_URL
+    dlnote = ("Free for Windows 10 &amp; 11 &middot; no sign-up &middot; " + PCM_FILESIZE + " &middot; digitally signed by 365 Techies Ltd" if PCM_DOWNLOAD_URL
               else "We&rsquo;ll install it for you on any visit or remote session &mdash; and we can pop it on any refurbished Dell we supply, just say the word.")
     # Honest first-release note. A signed app from a NEW publisher can still get a
     # "Windows protected your PC" (SmartScreen) prompt until download reputation accrues
@@ -771,7 +775,7 @@ def pcm_landing():
           primary=("View support plans", "/monthly-it-support/"), secondary=("Call 01202 775566", "tel:+441202775566")),
       ('''    <div id="pcmbar" role="region" aria-label="''' + ("Get the app" if PCM_LIVE else "Join the waitlist") + '''" style="position:fixed;left:0;right:0;bottom:0;z-index:60;transform:translateY(130%);transition:transform .3s ease;background:rgba(10,18,38,.9);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid rgba(125,170,220,.3);box-shadow:0 -10px 30px rgba(0,0,0,.35)">
       <div class="wrap" style="display:flex;align-items:center;gap:.7rem;padding:.65rem 1rem">
-        <span style="flex:1;min-width:0;font-size:.88rem;line-height:1.3">''' + ("<strong>Free &amp; signed</strong> &mdash; 365 PC Manager is ready to download, under 1&nbsp;MB, nothing to install." if PCM_LIVE else "<strong>Coming soon</strong> &mdash; be first when 365 PC Manager launches, and we&rsquo;ll set it up for you free.") + '''</span>
+        <span style="flex:1;min-width:0;font-size:.88rem;line-height:1.3">''' + ("<strong>Free &amp; signed</strong> &mdash; 365 PC Manager is ready to download, and installs in a couple of clicks." if PCM_LIVE else "<strong>Coming soon</strong> &mdash; be first when 365 PC Manager launches, and we&rsquo;ll set it up for you free.") + '''</span>
         <a href="#download" class="button primary" id="pcmbarcta" style="white-space:nowrap;padding:.5rem 1rem;flex:0 0 auto">''' + ("Download free &#8595;" if PCM_LIVE else "Join free &#8594;") + '''
         <button type="button" id="pcmbarx" aria-label="Dismiss this bar" style="background:none;border:0;color:var(--muted);font-size:1.3rem;line-height:1;cursor:pointer;padding:.1rem .35rem;flex:0 0 auto">&times;</button>
       </div>
@@ -14383,7 +14387,7 @@ def free_tools_hub():
             pos += 1
     faqs = [
       ("Are these tools really free?", "Yes &mdash; every tool here is completely free to use, with no sign-up, no account and no catch. They&rsquo;re our way of being genuinely useful; when you&rsquo;d rather a friendly techie just sorted the problem for you, that&rsquo;s what our monthly plans are for."),
-      ("Do I need to download or install anything?", "No &mdash; every tool on this page runs entirely in your web browser, so there&rsquo;s nothing to update and nothing that can slow your computer down. The one exception is our free <a href=\"/free-pc-health-check/\">365 PC Manager app</a>, a small optional Windows app that&rsquo;s <strong>free and digitally signed</strong> &mdash; <a href=\"/free-pc-health-check/#waitlist\">download it free</a>, under 1&nbsp;MB, nothing to install."),
+      ("Do I need to download or install anything?", "No &mdash; every tool on this page runs entirely in your web browser, so there&rsquo;s nothing to update and nothing that can slow your computer down. The one exception is our free <a href=\"/free-pc-health-check/\">365 PC Manager app</a>, a small optional Windows app that&rsquo;s <strong>free and digitally signed</strong> &mdash; <a href=\"/free-pc-health-check/#waitlist\">download it free</a> &mdash; it installs in a couple of clicks and uninstalls just as easily."),
       ("Do my passwords, files or data leave my browser?", "No. The privacy-sensitive tools &mdash; the password checks, the hardware and spec checkers and the benchmarks &mdash; run on your own device and don&rsquo;t send your data to us. Where a tool needs a live lookup (like the website or broadband checks) it only sends the address or URL you type, never personal data."),
       ("What can I check with these free tools?", "Plenty: test your website&rsquo;s speed and security, run a live broadband speed test, see if your password has leaked, benchmark your PC and graphics card, check what&rsquo;s inside your computer, make a Wi-Fi QR code, check whether a link is a scam, look up DNS and SSL records, and more &mdash; all free, all in your browser."),
       ("Do the tools work on phones and Macs?", "Yes &mdash; anything with a modern browser. A few are tuned with Windows PCs in mind (we&rsquo;re Windows and Android specialists), but they run on phones, tablets and Macs too."),
@@ -15818,7 +15822,7 @@ info_page(
           </ul>
           <h2>What you get</h2>
           <p>A clear, jargon-free report on where you stand and what (if anything) we&rsquo;d recommend &mdash; with <strong>absolutely no pressure to sign up</strong>. It&rsquo;s the easiest way to see how we can help.</p>
-          <p>Prefer to start yourself? Try our free <a href="/it-health-check-tool/">instant IT Health Check tool</a> &mdash; answer a few quick questions and get a score out of 100 and a personalised action plan on the spot. Or our free <a href="/free-pc-health-check/">365 PC Manager app</a> (free, digitally signed) will read a Windows PC&rsquo;s real health &mdash; drive condition, backup, protection and age &mdash; and put a plain-English report on your Desktop. <a href="/free-pc-health-check/#download">Download it free</a> &mdash; under 1&nbsp;MB, nothing to install.</p>
+          <p>Prefer to start yourself? Try our free <a href="/it-health-check-tool/">instant IT Health Check tool</a> &mdash; answer a few quick questions and get a score out of 100 and a personalised action plan on the spot. Or our free <a href="/free-pc-health-check/">365 PC Manager app</a> (free, digitally signed) will read a Windows PC&rsquo;s real health &mdash; drive condition, backup, protection and age &mdash; and put a plain-English report on your Desktop. <a href="/free-pc-health-check/#download">Download it free</a> &mdash; it installs in a couple of clicks and uninstalls just as easily.</p>
           <h2>Who it&rsquo;s for</h2>
           <p>Home users and businesses alike &mdash; whether you&rsquo;re worried about security, frustrated by slow tech, or just want peace of mind.</p>""",
   cta_args=("Book your free health check", "No cost, no obligation &mdash; just a clear picture of your IT.",
