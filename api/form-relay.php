@@ -44,6 +44,12 @@ foreach ($_POST as $k => $v) {
 $page = isset($_SERVER['HTTP_REFERER']) ? $clean($_SERVER['HTTP_REFERER']) : '(unknown page)';
 $body = "Website enquiry (no-JS fallback)\n" . implode("\n", $lines) . "\nPage: " . $page . "\nTime: " . date('Y-m-d H:i');
 
+/* Slack + email are the ONLY two paths an enquiry can take, and until now the
+   result of both was thrown away: curl_exec()'s return was discarded and mail()
+   was called with @, so a customer could be shown "message sent" while nothing
+   reached anybody. Both outcomes are now recorded. */
+$slackCode = 0; $slackErr = 'not attempted';
+
 /* Slack (fire-and-forget; same server-only webhook file as slack-lead.php) */
 $WEBF = __DIR__ . '/slack-webhook.php';
 if (is_readable($WEBF)) {
@@ -56,16 +62,31 @@ if (is_readable($WEBF)) {
       CURLOPT_POSTFIELDS => json_encode(array('text' => $body)),
       CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 5,
     ));
-    curl_exec($ch); curl_close($ch);
+    curl_exec($ch);
+    $slackCode = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $slackErr  = curl_error($ch);
+    curl_close($ch);
   }
 }
 
 /* email copy — best effort; the redirect happens regardless */
 $replyTo = (!empty($_POST['email']) && filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) ? $_POST['email'] : 'help@365techies.co.uk';
-@mail('help@365techies.co.uk',
+$mailOk = @mail('help@365techies.co.uk',
       'Website enquiry' . (!empty($_POST['topic']) ? ' - ' . $clean($_POST['topic']) : ''),
       $body,
       'From: website@365techies.co.uk' . "\r\n" . 'Reply-To: ' . $clean($replyTo));
+
+/* One line per enquiry, so a lost one leaves a trace. Denied in .htaccess and
+   gitignored: it carries the enquirer's email address.
+   ⚠️ If a line here reads slack=0 and mail=0, that enquiry reached NOBODY and
+   the customer was still shown the success page. */
+$logLine = sprintf("%s slack=%d mail=%d%s email=%s topic=%s page=%s\n",
+    gmdate('c'), $slackCode, $mailOk ? 1 : 0,
+    ($slackErr !== '' && $slackErr !== 'not attempted') ? ' slackerr=' . str_replace("\n", ' ', $slackErr) : '',
+    isset($_POST['email']) ? substr(preg_replace('/[^A-Za-z0-9@._+-]/', '', (string)$_POST['email']), 0, 80) : '-',
+    isset($_POST['topic']) ? substr(preg_replace('/[^A-Za-z0-9 _-]/', '', (string)$_POST['topic']), 0, 40) : '-',
+    substr($page, 0, 120));
+@file_put_contents(__DIR__ . '/form-relay.log', $logLine, FILE_APPEND | LOCK_EX);
 
 header('Location: /contact/#message-sent', true, 303);
 exit;

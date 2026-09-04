@@ -266,6 +266,18 @@ jobs:
       # happened (the FTPS gate above passed). Browser install is separate + tolerant so a
       # CDN hiccup reads as "smoke skipped", not "site broken".
 
+      # ---- 5. is any api/ runtime store being SERVED? ----------------------------
+      # This has gone wrong twice. The stores are gitignored, which stops them being
+      # committed and does nothing about whether Apache hands them to anyone who asks -
+      # and "gitignored" has twice been mistaken for "unserved". Nothing in the deploy
+      # checked, so both leaks were found by hand, late. The path list is derived from
+      # api/*.php, so a store added tomorrow is swept tomorrow without anyone
+      # remembering. A 200 fails the deploy loudly.
+      - name: api store-exposure sweep
+        if: ${{ !(inputs.dry_run || false) }}
+        shell: bash
+        run: bash tools/sweep-store-exposure.sh
+
       - name: Header smoke test (dropdowns open, SOS on screen)
         if: ${{ !(inputs.dry_run || false) && steps.chromium.outcome == 'success' }}
         shell: bash
