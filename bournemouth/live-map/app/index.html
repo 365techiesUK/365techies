@@ -4,7 +4,6 @@
   <script>try{var c=navigator.hardwareConcurrency;if(c>6){Object.defineProperty(navigator,"hardwareConcurrency",{value:6,configurable:true})}}catch(e){}</script>
 
   <link rel="stylesheet" href="/bournemouth/live-map/app/cesium/Widgets/widgets.css">
-  <script src="/bournemouth/live-map/app/cesium/Cesium.js"></script>
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -21,14 +20,13 @@
   <meta name="twitter:card" content="summary" />
   <!-- og:url / og:image / canonical / noindex are injected at build time by the
        publicAppMeta plugin when PUBLIC_BASE is set (see scripts/deploy-site.mjs). -->
-
+
   <!-- Fonts: the site's build guard allows no third-party host but fonts.bunny.net, so Inter and
        JetBrains Mono come from there and the Material Symbols glyphs are a self-hosted subset
        (@font-face in style.css). The third icon stylesheet that used to load here was referenced by no CSS rule. -->
   <link rel="preconnect" href="https://fonts.bunny.net" crossorigin />
   <link rel="stylesheet" href="https://fonts.bunny.net/css?family=inter:300,400,500,600|jetbrains-mono:300,400,500,600,700" />
-  <script type="module" crossorigin src="/bournemouth/live-map/app/assets/index-De91ayxq.js"></script>
-  <link rel="stylesheet" crossorigin href="/bournemouth/live-map/app/assets/index-CjRUiUds.css">
+  <link rel="stylesheet" crossorigin href="/bournemouth/live-map/app/assets/index-t_Ds-Ree.css">
   <meta name="robots" content="noindex">
   <link rel="canonical" href="https://365techies.co.uk/bournemouth/live-map/">
   <meta property="og:url" content="https://365techies.co.uk/bournemouth/live-map/">
@@ -677,9 +675,77 @@
     <div class="loader-content">
       <span class="loader-logo brand-logo" aria-hidden="true"><img src="/bournemouth/live-map/app/365techies-mark.svg" alt="" /></span>
       <h2><span class="title-accent">365</span>TECHIES</h2>
-      <p class="loader-status">Initializing photorealistic world...</p>
+      <p class="loader-status">Starting the map</p>
+      <div class="loader-bar" role="progressbar" aria-label="Loading the live map" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <span class="loader-bar__fill"></span>
+        <span class="loader-bar__sheen" aria-hidden="true"></span>
+      </div>
+      <p class="loader-meter"><span id="loader-pct">0</span>%<span class="loader-detail" id="loader-detail"></span></p>
+      <p class="loader-hint">First visit downloads the map engine (about 1.5 MB). Your browser keeps it for next time.</p>
     </div>
   </div>
-
+
+  <script data-engine="/bournemouth/live-map/app/cesium/Cesium.js" data-app="/bournemouth/live-map/app/assets/index-DdXk_jd5.js" data-engine-bytes="5726887" data-app-bytes="1214471">(function () {
+  var d = document, me = d.currentScript, cfg = me ? me.dataset : {};
+  var engine = cfg.engine, app = cfg.app;
+  var engineBytes = Number(cfg.engineBytes) || 0, appBytes = Number(cfg.appBytes) || 0;
+  var el = { status: d.querySelector('.loader-status'), pct: d.getElementById('loader-pct'), fill: d.querySelector('.loader-bar__fill'), bar: d.querySelector('.loader-bar'), detail: d.getElementById('loader-detail') };
+  var W = { engine: 0.50, app: 0.08, viewer: 0.10, basemap: 0.22, feeds: 0.04, frame: 0.06 };
+  var F = { engine: 0, app: 0, viewer: 0, basemap: 0, feeds: 0, frame: 0 };
+  var shown = 0;
+  function paint(label, detail) {
+    var p = 0, k;
+    for (k in W) p += W[k] * Math.max(0, Math.min(1, F[k] || 0));
+    var pct = Math.round(p * 100);
+    if (pct < shown) pct = shown;
+    shown = pct;
+    if (el.pct) el.pct.textContent = String(pct);
+    if (el.fill) el.fill.style.transform = 'scaleX(' + (pct / 100) + ')';
+    if (el.bar) el.bar.setAttribute('aria-valuenow', String(pct));
+    if (label && el.status) el.status.textContent = label;
+    if (el.detail) el.detail.textContent = detail || '';
+  }
+  window.__boot = { set: function (stage, frac, label, detail) { if (stage in F) F[stage] = frac; paint(label, detail); } };
+  function mb(n) { return (n / 1048576).toFixed(1) + ' MB'; }
+  function stream(url, key, total, label) {
+    if (!window.fetch || !window.ReadableStream || !total) { F[key] = 1; return Promise.resolve(); }
+    return fetch(url, { credentials: 'same-origin' }).then(function (r) {
+      if (!r.ok || !r.body) throw new Error('HTTP ' + r.status);
+      var reader = r.body.getReader(), got = 0;
+      return new Promise(function (resolve, reject) {
+        function pump() {
+          reader.read().then(function (x) {
+            if (x.done) { F[key] = 1; paint(label, ''); resolve(); return; }
+            got += x.value.length;
+            F[key] = Math.min(0.995, got / total);
+            paint(label, mb(Math.min(got, total)) + ' of ' + mb(total));
+            pump();
+          }).catch(reject);
+        }
+        pump();
+      });
+    }).catch(function () { F[key] = 1; paint(label, ''); });
+  }
+  function attach() {
+    var s = d.createElement('script');
+    s.src = engine;
+    s.onload = function () {
+      paint('Starting the map engine', '');
+      var m = d.createElement('script');
+      m.type = 'module';
+      m.crossOrigin = 'anonymous';
+      m.src = app;
+      d.body.appendChild(m);
+    };
+    s.onerror = function () { paint('The map engine could not be downloaded. Check the connection and reload.', ''); };
+    d.body.appendChild(s);
+  }
+  if (!engine || !app) return;
+  paint('Downloading the map engine', '');
+  Promise.all([
+    stream(engine, 'engine', engineBytes, 'Downloading the map engine'),
+    stream(app, 'app', appBytes, 'Downloading the map engine'),
+  ]).then(attach, attach);
+})();</script>
 </body>
 </html>
