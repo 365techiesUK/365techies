@@ -20562,6 +20562,9 @@ def _sec_block(s, i=0):
 TRUST_LINE = ('    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; '
               '<span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; '
               '<span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>')
+# The same strip for the rare page whose fix is not ours to make (Microsoft 365 lockout:
+# a paid investigation, Microsoft flips the switch) - set 'noFixNoFee': False on the entry.
+TRUST_LINE_PAID = TRUST_LINE.replace('<span>NO FIX, NO FEE</span> &middot; ', '')
 
 def _toc_chips(sections):
     """On-page TOC chip row for long guides: labels come from the numbered eyebrows."""
@@ -20997,7 +21000,7 @@ def build_new_page(d):
     sections = "\n".join(_blocks)
     _is_course = ('-course' in d['slug']) or d['slug'].startswith('computer-lessons')
     toc = _toc_chips(d['sections']) if (not _is_course and len(d['sections']) >= 4) else ""
-    trust = "" if _is_course else TRUST_LINE
+    trust = "" if _is_course else (TRUST_LINE_PAID if d.get("noFixNoFee") is False else TRUST_LINE)
     cross = ""
     if d.get('crossLinksHtml'):
         cross = _related_block(d['crossLinksHtml']) or f'''    <section class="section" aria-label="Related">
