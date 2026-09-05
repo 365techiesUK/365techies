@@ -6801,7 +6801,7 @@ def ccb_case_study():
            "isPartOf": {"@id": f"{SITE}/{s}/#webpage"},
            "mainEntityOfPage": {"@id": f"{SITE}/{s}/#webpage"},
            "author": {"@id": SITE + "/#business"}, "publisher": {"@id": SITE + "/#business"},
-           "datePublished": "2026-07-28", "dateModified": bp.TODAY,
+           "datePublished": "2026-07-28", "dateModified": "__LASTMOD__",
            "about": {"@type": "Organization", "name": "Colin Clark Builders Ltd",
                      "url": "https://colinclarkbuilders.co.uk/",
                      "description": "Heritage and traditional builder in Edmondsham, East Dorset, established 1978.",
@@ -6929,7 +6929,7 @@ def signal_map_case_study():
            "isPartOf": {"@id": f"{SITE}/{s}/#webpage"},
            "mainEntityOfPage": {"@id": f"{SITE}/{s}/#webpage"},
            "author": {"@id": SITE + "/#business"}, "publisher": {"@id": SITE + "/#business"},
-           "datePublished": "2026-08-24", "dateModified": bp.TODAY,
+           "datePublished": "2026-08-24", "dateModified": "__LASTMOD__",
            "about": {"@type": "SoftwareApplication", "name": "365 Techies Mobile Signal Check",
                      "url": SITE + "/mobile-signal-check/", "applicationCategory": "UtilitiesApplication"},
            "mentions": [{"@type": "Service", "name": "AI services", "url": SITE + "/ai/"},
@@ -27934,6 +27934,10 @@ def write_portal_page():
         m = _re.search(r"portal build ([0-9]{2} \w{3} [0-9]{4}) &middot; ([0-9a-f]{10})<", old)
         if m and m.group(2) == bid:
             date_label = m.group(1)
+    # The portal bypasses write_all(), so it must stamp its own content date - it was the
+    # one page left carrying the literal __LASTMOD__ placeholder. After bid: the id hash
+    # already normalises dateModified out, so the stamp cannot roll the build id.
+    html = bp.stamp_lastmod("portal", html)
     html = html.replace("__P365BUILD__", bid).replace("__P365DATE__", date_label)
     with open(old_path, "w", encoding="utf-8") as f:
         f.write(html)

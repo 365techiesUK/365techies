@@ -1213,7 +1213,11 @@ def webpage(slug, title, desc, wtype="WebPage"):
             "isPartOf": {"@id": SITE + "/#website"}, "about": {"@id": SITE + "/#business"},
             "breadcrumb": {"@id": f"{SITE}/{slug}/#breadcrumb"},
             "primaryImageOfPage": {"@type": "ImageObject", "url": SITE + "/og-image.jpg"},
-            "dateModified": TODAY}
+            # A PLACEHOLDER, substituted at write time by write_all() from content_dates.json.
+            # This used to be TODAY, so every page claimed it changed on whatever day the site
+            # was last built - lastmod_for() existed to stop that and was never called. The
+            # hash normaliser strips any dateModified value, this token included.
+            "dateModified": "__LASTMOD__"}
 
 def service(slug, name, desc, stype=None, area=None):
     n = {"@type": "Service", "@id": f"{SITE}/{slug}/#service", "name": name, "description": desc,
@@ -6937,18 +6941,40 @@ def write_press_page():
     return "van-signal-map/data/index.html"
 
 
+_LASTMOD_RE = _cdre.compile(r'"dateModified":\s*"__LASTMOD__"')
+
+def stamp_lastmod(slug, html):
+    """Decide whether this page changed, then stamp the date it genuinely last changed.
+
+    EVERY writer must call this - write_all() and the hand-rolled writers in build_extra
+    (portal) alike. webpage() emits a placeholder so that nothing can stamp the BUILD date
+    by accident; lastmod_for() had existed for weeks with no caller while every page said
+    it changed on whatever day the site was last built.
+    Fallback order: last (a change we observed) -> first (the day we first saw the page,
+    stable across builds) -> TODAY only for a page never recorded at all. Falling back
+    straight to TODAY would re-create the bug for every new page, every day, until it
+    changed once.
+    """
+    note_content(slug, html)
+    rec = CONTENT_DATES.get(slug) or {}
+    when = rec.get("last") or rec.get("first") or TODAY
+    return _LASTMOD_RE.sub('"dateModified": "%s"' % when, html)
+
 def write_all():
     written = []
     for p in PAGES:
         slug = p["slug"]
         schema_json = p["schema"](slug)
         html = page(slug, p["title"], p["desc"], p["og_title"], schema_json, p["content"], og_image=p.get("og_image"))
+        # Decide whether the page changed BEFORE stamping the date, then stamp the date
+        # it genuinely last changed. The hash ignores the dateModified value, so this
+        # ordering is safe; the old order wrote TODAY into every page on every build.
+        html = stamp_lastmod(slug, html)
         d = os.path.join(BASE, slug)
         os.makedirs(d, exist_ok=True)
         fp = os.path.join(d, "index.html")
         with open(fp, "w", encoding="utf-8") as f:
             f.write(html)
-        note_content(slug, html)
         written.append(slug + "/index.html")
     written.append(write_embed_page())
     written.append(write_press_page())
