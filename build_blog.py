@@ -1131,6 +1131,47 @@ if os.path.exists(_hp):
     else:
         print("  homepage: search.min.js cache-bust already %s" % bp.SEARCHV)
 
+# ---------------- homepage chrome follows the template ----------------
+# index.html is hand-maintained for its CONTENT, but its header nav, mobile menu and
+# footer are the template's (build_pages.HEADER / FOOTER) and have been meant to be
+# byte-identical to every generated page since the 13 Aug 2026 nav cut. They drifted
+# twice in three weeks anyway (db196456 updated the template only, f679604a the
+# homepage only) and the 5 Sep nav audit found three differing blocks and a footer
+# link to a retired URL. So the build now copies those three blocks, plus the
+# stylesheet cache-buster it hand-carries twice, from the freshly written 404.html -
+# the cleanest rendering of the template. Nothing else in index.html is touched.
+if os.path.exists(_hp):
+    _ref = open(os.path.join(bp.BASE, "404.html"), encoding="utf-8").read()
+    _hsrc = open(_hp, encoding="utf-8").read()
+    def _chrome_block(html, tag, cls):
+        # first <tag class="cls"...> to its first </tag>: none of the three nests its own tag
+        i = html.find("<" + tag + ' class="' + cls + '"')
+        j = html.find("</" + tag + ">", i) if i >= 0 else -1
+        return html[i:j + len(tag) + 3] if j >= 0 else None
+    _hout = _hsrc; _hchanged = []
+    for _tag, _cls in (("nav", "desktop-nav"), ("aside", "mobile-menu"), ("footer", "site-footer")):
+        _want = _chrome_block(_ref, _tag, _cls); _have = _chrome_block(_hout, _tag, _cls)
+        if _want is None or _have is None:
+            raise SystemExit("*** HOMEPAGE CHROME SYNC: <%s class=%s> not found in %s ***"
+                             % (_tag, _cls, "404.html" if _want is None else "index.html"))
+        if _have != _want:
+            _hout = _hout.replace(_have, _want, 1); _hchanged.append(_cls)
+    _cpos = 0; _cn = 0; _ckey = "styles.min.css?v="
+    while True:
+        i = _hout.find(_ckey, _cpos)
+        if i < 0: break
+        j = i + len(_ckey); k = j
+        while k < len(_hout) and (_hout[k].isalnum() or _hout[k] in ".-"): k += 1
+        if _hout[j:k] != bp.CSSV:
+            _hout = _hout[:j] + bp.CSSV + _hout[k:]; _cn += 1
+        _cpos = j
+    if _cn: _hchanged.append("styles.min.css?v=%s x%d" % (bp.CSSV, _cn))
+    if _hout != _hsrc:
+        open(_hp, "w", encoding="utf-8").write(_hout)
+        print("  homepage: synced from the template -> " + ", ".join(_hchanged))
+    else:
+        print("  homepage: header, mobile menu, footer and CSS version already match the template")
+
 # ---------------- guard: the portal beacon travels with the portal page -------
 # write_portal_page() writes portal/index.html and build-id.json together, so a
 # single build can never leave them disagreeing. They drift when a COMMIT takes

@@ -1417,6 +1417,33 @@ body.menu-open { overflow: hidden; }
   .desktop-nav { display: none; }
   .mobile-menu-button { display: flex; }
 }
+/* The A- / A+ widget (html.a11y-text-1/2/3 = 19/21/23px root) grows this row without
+   moving the viewport, so the px breakpoints above never see it and the safety net on
+   .desktop-nav clips the TAIL of the nav instead. Measured live 5 Sep 2026 (nav audit):
+   at 1560px the A+++ step lost Free Tools, Get Help, Pricing, About and Contact; even
+   A+ lost About and Contact at 1560 and Contact at 1680. So each step hands the nav to
+   the hamburger below the width where it was measured to fit again (A+ clean at 1800,
+   A++ clean at 1920, A+++ clipped even at 2560). The menu panel is not width-gated,
+   so the hamburger works at any width. */
+@media (max-width: 1799px) {
+  html.a11y-text-1 .desktop-nav { display: none; }
+  html.a11y-text-1 .mobile-menu-button { display: flex; }
+}
+@media (max-width: 1919px) {
+  html.a11y-text-2 .desktop-nav { display: none; }
+  html.a11y-text-2 .mobile-menu-button { display: flex; }
+}
+html.a11y-text-3 .desktop-nav { display: none; }
+html.a11y-text-3 .mobile-menu-button { display: flex; }
+/* And while ANY step is on, keep the >=1960px expand treatment off (wider nav padding
+   and font, the long SOS label, the search label + kbd): at 2200px it re-clipped
+   Contact at A+ and three items at A++. Same values as the <=1959px tight block. */
+html[class*="a11y-text-"] .desktop-nav > a, html[class*="a11y-text-"] .nav-item > a { padding: 0.55rem 0.45rem; font-size: 0.9rem; }
+html[class*="a11y-text-"] .nav-cta { padding: 0.55rem 1.1rem !important; margin-left: 0.4rem; }
+html[class*="a11y-text-"] .nav-sos { padding: 0.55rem 0.8rem; }
+html[class*="a11y-text-"] .header-actions { gap: 0.5rem; }
+html[class*="a11y-text-"] .header-bar { padding: 0 clamp(1.1rem, 3vw, 2.6rem); }
+html[class*="a11y-text-"] .nav-sos__long, html[class*="a11y-text-"] .nav-search__label, html[class*="a11y-text-"] .nav-search__k { display: none; }
 
 @media (max-width: 920px) {
   .split-section { grid-template-columns: 1fr; gap: 2.5rem; padding-top: 5.5rem; padding-bottom: 5.5rem; }
