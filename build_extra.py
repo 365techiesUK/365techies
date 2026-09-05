@@ -41,6 +41,7 @@ from seo_wave6_data import SEO_WAVE6_PAGES
 from seo_wave7_data import SEO_WAVE7_PAGES
 from seo_wave8_data import SEO_WAVE8_PAGES
 from seo_wave9_data import SEO_WAVE9_PAGES
+from seo_wave10_data import SEO_WAVE10_PAGES
 try:
     from new_pages_data import DELL_COMPARE_TABLES
 except ImportError:
@@ -17606,6 +17607,7 @@ info_page(
             <li>Forward scam texts to <strong>7726</strong> and scam emails to <strong>report@phishing.gov.uk</strong>.</li>
           </ul>
           <h2>How we help afterwards</h2>
+          <p><strong>If your bank has asked for evidence that the computer has been checked</strong> &mdash; many do, after a remote-access or malware scam, before they restore online banking or settle a claim &mdash; that is a service we offer: a remote check, a clean-up, and a plain-English written report you can send them. See <a href="/scam-recovery/">scam recovery: clean-up and a report for your bank</a>.</p>
           <p>If a scammer had access to your computer, follow our dedicated step-by-step guide: <a href="/gave-a-scammer-remote-access/">I gave a scammer remote access &mdash; what to do now</a>. We&rsquo;ll check the computer over on a secure remote session &mdash; remove anything they left, secure your accounts and set up <a href="/how-to-set-up-two-factor-authentication/">two-factor authentication</a> so it can&rsquo;t happen again. Remember: <strong>we always phone you before we connect, and a genuine technician never cold-calls demanding access.</strong> Test yourself anytime with our <a href="/spot-the-scam/">Spot the Scam</a> quiz &mdash; and if you&rsquo;re reading this because you&rsquo;re <a href="/worried-about-a-parent-being-scammed/">worried about a parent</a>, we have a guide for that too.</p>""",
   faqs=[
     ("Should I keep talking to the scammer?","No &mdash; stop all contact. Don&rsquo;t reply, don&rsquo;t click anything, and never pay a &lsquo;fee&rsquo; to get your money back, as that&rsquo;s a second scam. Keep any messages as evidence, then report them."),
@@ -18238,6 +18240,7 @@ def online_safety():
       ("Identity","Identity theft","How your identity gets stolen, and how to protect it.","/identity-theft/"),
     ]
     actions=[
+      ("Been scammed","Scam recovery &amp; a report for your bank","We clean the computer remotely and write up what we found, in plain English, for the bank.","/scam-recovery/","See the service"),
       ("Quiz","Spot the Scam","Can you tell a scam from the real thing? Take the 6-round quiz.","/spot-the-scam/","Take the quiz"),
       ("Tool","Password checker","Test your password and get a strong, memorable one &mdash; privately.","/password-strength-checker/","Check it"),
       ("Guide","Set up 2FA","Turn on two-factor authentication, in plain English.","/how-to-set-up-two-factor-authentication/","How to"),
@@ -21563,6 +21566,8 @@ for _np in SEO_WAVE7_PAGES:
 for _np in SEO_WAVE8_PAGES:
     build_new_page(_np)
 for _np in SEO_WAVE9_PAGES:
+    build_new_page(_np)
+for _np in SEO_WAVE10_PAGES:
     build_new_page(_np)
 
 # The gated 2-page Home Assistant x Victron test (own module per the wave rule;

@@ -192,7 +192,7 @@
  },
  "bournemouth/sea-today": {
   "first": "2026-08-02",
-  "h": "d9af6c551a0d2229",
+  "h": "2bf080b161e992dd",
   "last": "2026-09-05"
  },
  "bournemouth/sunrise-sunset": {
@@ -1112,8 +1112,8 @@
  },
  "gave-a-scammer-remote-access": {
   "first": "2026-07-28",
-  "h": "0533498814c88d39",
-  "last": "2026-08-31"
+  "h": "e3e68c39ea5416d0",
+  "last": "2026-09-05"
  },
  "gdpr-it-compliance": {
   "first": "2026-07-28",
@@ -1886,8 +1886,8 @@
  },
  "ive-been-scammed-what-to-do": {
   "first": "2026-07-28",
-  "h": "44ed3aea399dcef4",
-  "last": "2026-08-31"
+  "h": "1a39f6e6c7e99bf5",
+  "last": "2026-09-05"
  },
  "join": {
   "first": "2026-07-28",
@@ -2261,8 +2261,8 @@
  },
  "online-safety": {
   "first": "2026-07-28",
-  "h": "d8744ca06e7fede7",
-  "last": "2026-08-31"
+  "h": "3c9087c1b37cedef",
+  "last": "2026-09-05"
  },
  "online-safety-course": {
   "first": "2026-07-28",
@@ -2893,6 +2893,10 @@
   "first": "2026-07-28",
   "h": "34ffe8b25ea502b9",
   "last": "2026-08-31"
+ },
+ "scam-recovery": {
+  "first": "2026-09-05",
+  "h": "27cccf5884d879db"
  },
  "scan-to-folder-stopped-working-after-windows-update": {
   "first": "2026-08-01",
@@ -3576,5 +3580,9 @@
   "first": "2026-08-18",
   "h": "a62e5c7830cffd16",
   "last": "2026-09-05"
+ },
+ "youve-been-hacked-email-bitcoin-scam": {
+  "first": "2026-09-05",
+  "h": "c6d4160be3f0ad41"
  }
 }
