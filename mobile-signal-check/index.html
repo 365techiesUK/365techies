@@ -285,7 +285,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-09-04"
+      "dateModified": "2026-09-05"
     },
     {
       "@type": "FAQPage",
@@ -297,6 +297,14 @@
           "acceptedAnswer": {
             "@type": "Answer",
             "text": "Because otherwise you&rsquo;d be measuring the router you&rsquo;re connected to, not your phone&rsquo;s mobile signal. The test refuses to run on WiFi for exactly that reason."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is this measuring my signal, or my speed?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Speed, honestly &mdash; and it&rsquo;s worth being clear about the difference. Your phone knows its real radio figures (RSRP, SINR, the numbers behind the bars), but no browser will hand them to a web page, and it won&rsquo;t say which network you&rsquo;re on either. So we measure what a browser can: a 10&nbsp;MB download from a Cloudflare server close to you, timed over the whole file, and the round-trip delay, taken three times with the middle one kept. That&rsquo;s the number you actually feel &mdash; whether the call holds and the page loads &mdash; which is why the bands say &lsquo;great for working&rsquo;, &lsquo;fine for calls and email&rsquo; and &lsquo;struggles&rsquo; rather than dBm. If it&rsquo;s the radio figures you&rsquo;re after, our <a href=\"/van-signal-map/\">campervan map</a> logs RSRP, SINR and band from a roof-mounted router every 30 seconds &mdash; one instrument, one network, kept separate from this page on purpose."
           }
         },
         {
@@ -329,6 +337,14 @@
           "acceptedAnswer": {
             "@type": "Answer",
             "text": "No, and we won&rsquo;t. We show you your own network because it&rsquo;s your result. We don&rsquo;t publish network league tables &mdash; every network has good and bad patches, and one phone on one day can&rsquo;t settle that fairly. Areas compete, and so can you: the towns race each other on the map and a shared result is a challenge to beat. That&rsquo;s fair because it&rsquo;s the same phones on both sides. A network table built from whichever phones happened to test wouldn&rsquo;t be."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "One number for a whole square, on every network &mdash; what does it actually tell me?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "That a phone works there, or doesn&rsquo;t. The square&rsquo;s figure is the median of everyone&rsquo;s readings on whatever network they carry, so it isn&rsquo;t a forecast of what <em>your</em> operator will give you on that corner &mdash; it&rsquo;s the district-level answer to &lsquo;can I take a video call from this car park?&rsquo;, across the phones people actually have. Next to it you see how many readings that is and the middle half of them, so a wide spread shows as a wide spread rather than vanishing into an average, and a square only counts as verified at eight readings (five on the seafront). Where it earns its keep is the other way round: a square that stays red after eight outdoor readings is a gap no coverage model would admit to, and that is the kind of thing we can take to BCP Council and the operators."
           }
         },
         {
@@ -1903,6 +1919,10 @@
           <div class="faq__ans"><p>Because otherwise you&rsquo;d be measuring the router you&rsquo;re connected to, not your phone&rsquo;s mobile signal. The test refuses to run on WiFi for exactly that reason.</p></div>
         </details>
         <details class="faq" data-reveal>
+          <summary>Is this measuring my signal, or my speed?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Speed, honestly &mdash; and it&rsquo;s worth being clear about the difference. Your phone knows its real radio figures (RSRP, SINR, the numbers behind the bars), but no browser will hand them to a web page, and it won&rsquo;t say which network you&rsquo;re on either. So we measure what a browser can: a 10&nbsp;MB download from a Cloudflare server close to you, timed over the whole file, and the round-trip delay, taken three times with the middle one kept. That&rsquo;s the number you actually feel &mdash; whether the call holds and the page loads &mdash; which is why the bands say &lsquo;great for working&rsquo;, &lsquo;fine for calls and email&rsquo; and &lsquo;struggles&rsquo; rather than dBm. If it&rsquo;s the radio figures you&rsquo;re after, our <a href="/van-signal-map/">campervan map</a> logs RSRP, SINR and band from a roof-mounted router every 30 seconds &mdash; one instrument, one network, kept separate from this page on purpose.</p></div>
+        </details>
+        <details class="faq" data-reveal>
           <summary>Where does my reading go?<span class="faq__icon" aria-hidden="true"></span></summary>
           <div class="faq__ans"><p>It&rsquo;s kept as part of an area &mdash; never your exact spot &mdash; with the speed, the time of day, whether you were indoors or out, and the network you told us. Inland that area is ~500&nbsp;m, so it can never point at a home. On the beaches, piers and promenade, where nobody lives, it&rsquo;s ~140&nbsp;m, because the signal there really does change from the end of the pier to the big wheel and we&rsquo;d rather the map showed it. Nothing that identifies you. It goes into a pool that only ever compares <em>you</em> against <em>your area</em>.</p></div>
         </details>
@@ -1917,6 +1937,10 @@
         <details class="faq" data-reveal>
           <summary>Do you rank the networks against each other?<span class="faq__icon" aria-hidden="true"></span></summary>
           <div class="faq__ans"><p>No, and we won&rsquo;t. We show you your own network because it&rsquo;s your result. We don&rsquo;t publish network league tables &mdash; every network has good and bad patches, and one phone on one day can&rsquo;t settle that fairly. Areas compete, and so can you: the towns race each other on the map and a shared result is a challenge to beat. That&rsquo;s fair because it&rsquo;s the same phones on both sides. A network table built from whichever phones happened to test wouldn&rsquo;t be.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>One number for a whole square, on every network &mdash; what does it actually tell me?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>That a phone works there, or doesn&rsquo;t. The square&rsquo;s figure is the median of everyone&rsquo;s readings on whatever network they carry, so it isn&rsquo;t a forecast of what <em>your</em> operator will give you on that corner &mdash; it&rsquo;s the district-level answer to &lsquo;can I take a video call from this car park?&rsquo;, across the phones people actually have. Next to it you see how many readings that is and the middle half of them, so a wide spread shows as a wide spread rather than vanishing into an average, and a square only counts as verified at eight readings (five on the seafront). Where it earns its keep is the other way round: a square that stays red after eight outdoor readings is a gap no coverage model would admit to, and that is the kind of thing we can take to BCP Council and the operators.</p></div>
         </details>
         <details class="faq" data-reveal>
           <summary>How is this different from the campervan map?<span class="faq__icon" aria-hidden="true"></span></summary>
