@@ -701,9 +701,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">portal build 05 Sep 2026 &middot; 76746bcf11</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">portal build 05 Sep 2026 &middot; 1c1ec28c59</p><script>
 (function () {
-  var P365BUILD = '76746bcf11';
+  var P365BUILD = '1c1ec28c59';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -1876,7 +1876,7 @@
     var pro = d.tier === 'pro', m = d.machines || [];
     return [
       { ic: '\ud83c\udfe0', t: 'Your own portal', s: 'Everything about your computers in one place', st: 'have' },
-      { ic: '\ud83c\udf93', t: '11 free courses', s: 'Online safety, video calls, getting more from your tech', st: 'have', go: 'courses' },
+      { ic: '\ud83c\udf93', t: 'Free courses', s: 'Online safety, Word, video calls, getting more from your tech', st: 'have', go: 'courses' },
       { ic: '\ud83d\udcf6', t: 'WiFi Optimizer', s: 'Score every room, saved to your account', st: JW.wifi > 0 ? 'have' : 'add', go: 'wifi' },
       { ic: '\ud83e\uddf0', t: 'Free online tools', s: 'Speed test, spec checker, is-it-down and more', st: 'have', go: 'tools' },
       // On a plan this is a real included feature reading real data, so it says so.
@@ -4481,7 +4481,7 @@
         + '<p class="quiet">One screen for the things you would otherwise open five apps to check. Tiles marked <strong>live</strong> read your own account; '
         + 'the rest are samples of what we could connect &mdash; and making one of those real is a build we quote for, after checking it can actually be read.</p></div>';
       // the learning card renders for EVERY member from day one - /join/ promises the
-      // 11 courses, so a brand-new member's dashboard must visibly deliver them
+      // every free course, so a brand-new member's dashboard must visibly deliver them
       var crsAll = null;
       d.machines.forEach(function (m) { if (m.crs && (!crsAll || parseInt(m.crs, 10) > parseInt(crsAll.crs, 10))) crsAll = m; });
       if (crsAll && crsAll.crs) {
@@ -4493,8 +4493,8 @@
           + '<p class="quiet">Carry on inside 365 PC Manager (Learn tab) or <a href="/free-tools/" target="_blank" rel="noopener">our free courses online</a>.</p></div>';
       } else {
         h += '<div class="card"><h2>\ud83c\udf93 Your 365 learning</h2>'
-          + '<p class="quiet" style="margin:0 0 .3rem">All <strong style="color:var(--pwhite)">11 free courses</strong> are yours - stay safe online, master video calls, get more from your tech. At your own pace, with a printable certificate at the end of each.</p>'
-          + '<p class="quiet"><a href="/online-safety-course/" target="_blank" rel="noopener">Start with online safety</a> \u00b7 <a href="/free-tools/" target="_blank" rel="noopener">see all 11 courses</a></p></div>';
+          + '<p class="quiet" style="margin:0 0 .3rem">Every one of our <strong style="color:var(--pwhite)">free courses</strong> is yours - stay safe online, master video calls, get more from your tech. At your own pace, with a printable certificate at the end of each.</p>'
+          + '<p class="quiet"><a href="/online-safety-course/" target="_blank" rel="noopener">Start with online safety</a> \u00b7 <a href="/free-tools/" target="_blank" rel="noopener">see all the courses</a></p></div>';
       }
       if (d.fam) h += '<div class="card"><h2>Family view</h2><p class="quiet">\u2713 Shared with ' + esc(d.fam) + ' - manage it from the app on your PC.</p></div>';
       // WEBSITE PROJECTS - now a single slim strip, per the 2026-08-01 audit

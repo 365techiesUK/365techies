@@ -20055,11 +20055,15 @@ NEXT_MAP = {
     "computer-basics-course": [
         ("email-basics-course", "Now the mouse behaves, email is the natural next step."),
         ("online-safety-course", "Learn the scammers&rsquo; tricks before they try them on you."),
-        ("digital-photos-course", "Put your new confidence to work on your photos.")],
+        ("word-basics-course", "Write the letter, set the margins, print it and send it.")],
     "email-basics-course": [
         ("online-safety-course", "Most scams arrive by email &mdash; learn to spot every one."),
         ("whatsapp-course-for-beginners", "Faster than email for family chat &mdash; and free."),
-        ("video-calling-course-for-beginners", "From written words to seeing their faces.")],
+        ("word-basics-course", "Write a proper letter in Word, then attach it to an email.")],
+    "word-basics-course": [
+        ("email-basics-course", "Now you can write it &mdash; get comfortable with the inbox you&rsquo;ll send it from."),
+        ("computer-basics-course", "Folders, printing and the drawers where your letters live."),
+        ("online-safety-course", "Keep the letters you write &mdash; and the details in them &mdash; safe from scammers.")],
     "online-safety-course": [
         ("online-banking-safely-course", "Use your new scam-spotting skills where they matter most."),
         ("online-shopping-safely-course", "Buy online with the same care and confidence."),
@@ -20295,7 +20299,7 @@ def free_courses_hub():
     content = "\n".join([
         hero(bc("Free Courses"), "// FREE COURSES &middot; NO SIGN-UP &middot; CERTIFICATES",
              'Learn something new, <em class="grad grad--green">free</em>',
-             "Short, friendly online courses for beginners and anyone who&rsquo;d like a bit more confidence &mdash; computer basics, email, WhatsApp, AI, your Android phone, the NHS App, photos, and shopping and banking safely. Plain English, no time pressure, a certificate at the end, and never a sign-up form.",
+             "Short, friendly online courses for beginners and anyone who&rsquo;d like a bit more confidence &mdash; computer basics, email, Microsoft Word, WhatsApp, AI, your Android phone, the NHS App, photos, and shopping and banking safely. Plain English, no time pressure, a certificate at the end, and never a sign-up form.",
              cta1=("Pick a Course Below", "#courses"), cta2=("Ask About In-Person Lessons", "/contact/?topic=computer-lessons"),
              chips=["100% free, always", "Learn at your own pace", "Certificate for every course"]),
         ('    <section class="blog-section" id="courses" aria-label="All free courses">\n'
@@ -21590,7 +21594,7 @@ _join_value = ('''<section class="section" aria-label="What you get free">
     ("gift", "Free membership, no card", "Sign in with a 6-digit code we email you &mdash; no password, no card details, ever. You get your own 365 portal for everything below."),
     ("heart", "A free eye on your PC&rsquo;s health", "Our free 365 PC Manager app quietly watches your Windows PC and shows its health score, backup, disk space and battery right in your portal. We&rsquo;ll even pop it on for you."),
     ("monitor", "Reports &amp; a fresh check any time", "View and download your PC&rsquo;s honest health reports, see the trend over time, and tap &lsquo;Check now&rsquo; for a fresh once-over whenever you like."),
-    ("gift", "11 free courses", "Learn to stay safe online and get more from your tech, at your own pace &mdash; all eleven 365 courses, linked in one place from your portal."),
+    ("gift", "%d free courses" % bp._CRS_COUNT, "Learn to stay safe online and get more from your tech, at your own pace &mdash; all %d 365 courses, linked in one place from your portal." % bp._CRS_COUNT),
     ("clock", "Book &amp; manage online", "Book a service, or move or cancel a visit, straight from your portal &mdash; no phone tag."),
     ("phone", "Help is one tap away", "The SOS remote-help button, free tools and a real local team on 01202 775566 are always a tap away. One-off help is priced up front; it&rsquo;s unlimited on a support plan."),
 ]) + '''
@@ -21613,7 +21617,7 @@ _join_compare = '''<section class="section section--alt" id="included" aria-labe
           <tr><th scope="row">365 Club membership &amp; your own portal</th>''' + _YES + _YES + '''</tr>
           <tr><th scope="row">365 PC Manager health monitoring</th>''' + _YES + _YES + '''</tr>
           <tr><th scope="row">Your app&rsquo;s health reports &amp; trend</th>''' + _YES + _YES + '''</tr>
-          <tr><th scope="row">All 11 free courses</th>''' + _YES + _YES + '''</tr>
+          <tr><th scope="row">All ''' + str(bp._CRS_COUNT) + ''' free courses</th>''' + _YES + _YES + '''</tr>
           <tr><th scope="row">Book, move &amp; cancel online</th>''' + _YES + _YES + '''</tr>
           <tr><th scope="row">Full service every 6 weeks + written report</th>''' + _NO + _YES + '''</tr>
           <tr><th scope="row">Remote help</th><td>One-off, price agreed first</td><td class="yes">Unlimited, included</td></tr>
@@ -21656,7 +21660,7 @@ info_page(
   eyebrow="// FREE MEMBERSHIP",
   h1='Join the <em class="grad grad--cyan">365 Club</em> &mdash; free',
   lede="We keep a friendly eye on your PC&rsquo;s health, you get free courses and one-tap help, and there&rsquo;s no card and no catch. Sign up in about a minute.",
-  desc="Join the 365 Club free — your own portal, free PC health monitoring from the 365 PC Manager app, honest reports, all 11 free courses and one-tap help. No card, no catch. From 365 Techies in Bournemouth, Dorset.",
+  desc="Join the 365 Club free — your own portal, free PC health monitoring from the 365 PC Manager app, honest reports, all our free courses and one-tap help. No card, no catch. From 365 Techies in Bournemouth, Dorset.",
   og_title="Join the 365 Club — free",
   chips=["No card", "No catch", "One minute"],
   hero_cta1=("Join free", "/portal/"),
@@ -23022,7 +23026,7 @@ def write_portal_page():
     var pro = d.tier === 'pro', m = d.machines || [];
     return [
       { ic: '\\ud83c\\udfe0', t: 'Your own portal', s: 'Everything about your computers in one place', st: 'have' },
-      { ic: '\\ud83c\\udf93', t: '11 free courses', s: 'Online safety, video calls, getting more from your tech', st: 'have', go: 'courses' },
+      { ic: '\\ud83c\\udf93', t: 'Free courses', s: 'Online safety, Word, video calls, getting more from your tech', st: 'have', go: 'courses' },
       { ic: '\\ud83d\\udcf6', t: 'WiFi Optimizer', s: 'Score every room, saved to your account', st: JW.wifi > 0 ? 'have' : 'add', go: 'wifi' },
       { ic: '\\ud83e\\uddf0', t: 'Free online tools', s: 'Speed test, spec checker, is-it-down and more', st: 'have', go: 'tools' },
       // On a plan this is a real included feature reading real data, so it says so.
@@ -25627,7 +25631,7 @@ def write_portal_page():
         + '<p class="quiet">One screen for the things you would otherwise open five apps to check. Tiles marked <strong>live</strong> read your own account; '
         + 'the rest are samples of what we could connect &mdash; and making one of those real is a build we quote for, after checking it can actually be read.</p></div>';
       // the learning card renders for EVERY member from day one - /join/ promises the
-      // 11 courses, so a brand-new member's dashboard must visibly deliver them
+      // every free course, so a brand-new member's dashboard must visibly deliver them
       var crsAll = null;
       d.machines.forEach(function (m) { if (m.crs && (!crsAll || parseInt(m.crs, 10) > parseInt(crsAll.crs, 10))) crsAll = m; });
       if (crsAll && crsAll.crs) {
@@ -25639,8 +25643,8 @@ def write_portal_page():
           + '<p class="quiet">Carry on inside 365 PC Manager (Learn tab) or <a href="/free-tools/" target="_blank" rel="noopener">our free courses online</a>.</p></div>';
       } else {
         h += '<div class="card"><h2>\\ud83c\\udf93 Your 365 learning</h2>'
-          + '<p class="quiet" style="margin:0 0 .3rem">All <strong style="color:var(--pwhite)">11 free courses</strong> are yours - stay safe online, master video calls, get more from your tech. At your own pace, with a printable certificate at the end of each.</p>'
-          + '<p class="quiet"><a href="/online-safety-course/" target="_blank" rel="noopener">Start with online safety</a> \\u00b7 <a href="/free-tools/" target="_blank" rel="noopener">see all 11 courses</a></p></div>';
+          + '<p class="quiet" style="margin:0 0 .3rem">Every one of our <strong style="color:var(--pwhite)">free courses</strong> is yours - stay safe online, master video calls, get more from your tech. At your own pace, with a printable certificate at the end of each.</p>'
+          + '<p class="quiet"><a href="/online-safety-course/" target="_blank" rel="noopener">Start with online safety</a> \\u00b7 <a href="/free-tools/" target="_blank" rel="noopener">see all the courses</a></p></div>';
       }
       if (d.fam) h += '<div class="card"><h2>Family view</h2><p class="quiet">\\u2713 Shared with ' + esc(d.fam) + ' - manage it from the app on your PC.</p></div>';
       // WEBSITE PROJECTS - now a single slim strip, per the 2026-08-01 audit
