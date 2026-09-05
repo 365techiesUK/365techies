@@ -192,7 +192,7 @@
  },
  "bournemouth/sea-today": {
   "first": "2026-08-02",
-  "h": "c320a1ecdd060b2a",
+  "h": "669de44a60d918b3",
   "last": "2026-09-05"
  },
  "bournemouth/sunrise-sunset": {
@@ -409,6 +409,10 @@
   "first": "2026-07-28",
   "h": "412cf1e74f76da59",
   "last": "2026-08-31"
+ },
+ "cnc-machine-needs-windows-xp": {
+  "first": "2026-09-05",
+  "h": "3c3cf31b006a8960"
  },
  "common-outlook-problems-and-fixes": {
   "first": "2026-06-16",
@@ -1062,7 +1066,7 @@
  },
  "ferrari-sd2-laptop-windows-xp": {
   "first": "2026-09-05",
-  "h": "03a145e708086a18",
+  "h": "b92085961f477137",
   "last": "2026-09-05"
  },
  "file-transfer": {
@@ -1716,7 +1720,7 @@
  },
  "it-support-for-manufacturing": {
   "first": "2026-07-28",
-  "h": "7834d8b0414080d3",
+  "h": "4bab42c6b61cf2d9",
   "last": "2026-09-05"
  },
  "it-support-for-nurseries-dorset": {
@@ -2221,7 +2225,7 @@
  },
  "old-program-wont-open-on-windows-11": {
   "first": "2026-09-05",
-  "h": "09036b3d8ae563b5",
+  "h": "05e523c3b344ed1d",
   "last": "2026-09-05"
  },
  "onedrive-couldnt-merge-changes": {

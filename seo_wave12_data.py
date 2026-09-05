@@ -117,5 +117,101 @@ SEO_WAVE12_PAGES = [
   'secondaryCta': ['IT support for garages', '/it-support-for-garages-automotive/'],
   'schemaKind': 'service',
   'noFixNoFee': False,
-  'crossLinksHtml': '<p><strong>Related:</strong> <a href="/old-program-wont-open-on-windows-11/">Old program won&rsquo;t open on a new Windows 11 computer</a> &middot; <a href="/it-support-for-garages-automotive/">IT support for garages &amp; automotive</a> &middot; <a href="/computer-repairs/">Computer repairs &amp; free collection</a> &middot; <a href="/business-it-support-plans/">Business IT support plans</a></p>'},
+  'crossLinksHtml': '<p><strong>Related:</strong> <a href="/old-program-wont-open-on-windows-11/">Old program won&rsquo;t open on a new Windows 11 computer</a> &middot; <a href="/it-support-for-garages-automotive/">IT support for garages &amp; automotive</a> &middot; <a href="/computer-repairs/">Computer repairs &amp; free collection</a> &middot; <a href="/business-it-support-plans/">Business IT support plans</a> &middot; <a href="/cnc-machine-needs-windows-xp/">CNC machine needs Windows XP</a></p>'},
+
+ # ---- Page 2 (5 Sep 2026): the lathe/mill side of the same service line. ----
+ # Trigger: a real job - XP rebuilt on the PC that runs a customer's lathe. Facts from
+ # seo-research/windows-xp-legacy-service-2026-09-05.md (§1, §6): only ProtoTRAK SLX/SMX
+ # (XPe, Southwestern Industries) and Siemens Sinumerik PCU 50 (XP ProEmbSys; Siemens'
+ # own forum: the PCU 50.5-C replacement "with XP", "a ghost image will not work") are
+ # stated from the makers' documents; Okuma P200 / Mazak Matrix / Hurco WinMax / early
+ # Heidenhain iTNC 530 are forum-level and worded as "widely reported ... check your
+ # manual". Haas and Fanuc-controlled lathes (Colchester/Harrison Alpha) do NOT need XP.
+ # Mach3's parallel-port driver = 32-bit desktop Windows with a real port, not a VM.
+ # Denford VR Turning runs up to Windows 11 - never listed as XP-only. UK dealers named
+ # (XYZ Machine Tools, Emco UK, Colchester MTS, NCMT for Okuma - verified) without
+ # phone numbers; no retrofit brand recommended; nothing on the control's own OS,
+ # parameters, safety or electrics is ours.
+ {'slug': 'cnc-machine-needs-windows-xp',
+  'title': 'CNC Machine Needs Windows XP? What to Do When the PC Dies',
+  'metaDesc': 'Old lathes and mills need a Windows XP PC beside them. We rebuild, image and isolate that PC, keep a spare, and say when to call the machine maker.',
+  'ogTitle': 'CNC Machine Needs Windows XP? Keep the PC Alive',
+  'crumbName': 'CNC Machines on Windows XP',
+  'eyebrow': '// WORKSHOP PCS THAT MUST STAY ON XP',
+  'h1': 'Your CNC machine still needs Windows XP &mdash; what to do when the PC dies',
+  'lede': 'Plenty of lathes and mills in Dorset workshops run through a PC that has to stay on Windows XP &mdash; or through a control with XP built into it. The machine is fine; the computer is twenty years old. Here is which is which, what can be rebuilt or virtualised, what cannot, and what we do about it. We do not touch the control itself.',
+  'ctaHead': 'Tell us the control and what the PC runs, and we&rsquo;ll say what&rsquo;s possible',
+  'ctaSub': 'Call 01202 775566 (Mon&ndash;Fri, 9am&ndash;5pm) or text 07520 615332. A photo of the control screen and of the software on the PC is enough for us to say, within a working day, whether it is a rebuild, a clone or a virtual machine &mdash; or the machine maker&rsquo;s job. We quote before any chargeable work. If the PC has already died, do not reinstall anything: the disk can often still be imaged.',
+  'serviceName': 'Legacy CNC PC Support (Windows XP)',
+  'sections': [
+   {'eyebrow': '/01 &mdash; TWO DIFFERENT PROBLEMS',
+    'h2': 'Windows XP inside the control, or Windows XP beside the machine &mdash; which do you have?',
+    'html': '<p>&ldquo;My lathe needs Windows XP&rdquo; describes two quite different situations, and the first job is to tell them apart, because one is ours and one is not.</p>'
+            '<p><strong>XP built into the control.</strong> On many machines of the 2000s the control itself is a small industrial PC running Windows XP Embedded, and the maker&rsquo;s software sits on top. Two we can state from the makers&rsquo; own documents: the <strong>ProtoTRAK SLX and SMX</strong> controls (Windows XP Embedded), and <strong>Siemens Sinumerik with the PCU 50</strong> (XP Embedded &mdash; and when Siemens replaced that unit for those machines, the replacement still ran XP, because the hardware drivers only exist for it). Others of the same era &mdash; the <strong>Okuma OSP-P200</strong>, <strong>Mazak Matrix</strong>, <strong>Hurco WinMax</strong> and the earlier <strong>Heidenhain iTNC 530</strong> &mdash; are widely reported by the people who run them to be embedded XP too; your control&rsquo;s manual will say. <em>Not</em> on this list: <strong>Haas</strong> controls run their own system, and <strong>Fanuc</strong> controls are not Windows at all, so a Colchester or Harrison Alpha lathe does not need XP anywhere.</p>'
+            '<p><strong>XP on a PC beside the machine.</strong> The other pattern is an ordinary desktop or laptop running the software that drives or feeds the machine: <strong>Mach3</strong> on a retrofitted or hobby-grade lathe or mill, <strong>EMCO WinNC</strong> on the training lathes found in colleges, older <strong>Boxford</strong> packages, the maker&rsquo;s offline programming software, or a PC that just sends programs down a serial cable. That PC is standard hardware, it is the thing that dies, and it is squarely our job. (One correction worth making: <strong>Denford&rsquo;s VR CNC Turning</strong> runs on everything up to Windows 11, so a Denford machine is usually an upgrade, not a keep-alive.)</p>'},
+   {'eyebrow': '/02 &mdash; WHY IT HAS TO BE XP',
+    'h2': 'Why it has to be XP, and why that is not the same reason twice',
+    'html': '<p>For the <strong>embedded control</strong>, the operating system is part of the machine. The drivers for its graphics, its network card and its storage were written for XP Embedded and nothing else, and even the maker&rsquo;s own upgrade path for some of these controls meant rebuilding the software from scratch rather than copying it across &mdash; Siemens&rsquo; engineers say plainly that a disk image will not carry from one generation of control to the next. That is the maker&rsquo;s territory, and we stay out of it.</p>'
+            '<p>For the <strong>PC beside the machine</strong>, the reason is usually a port. <strong>Mach3</strong> with its standard driver talks to the machine through a <em>parallel port</em>, in real time, and that driver only works on 32-bit desktop Windows &mdash; XP, or 32-bit Windows 7 at a push &mdash; with a real port on the motherboard or a PCI card. No 64-bit Windows, no laptop, no virtual machine. Other software of the same age is bound by something softer: a 32-bit installer, a serial cable, a driver nobody updated. Those can often be moved. The port decides.</p>'},
+   {'eyebrow': '/03 &mdash; REAL HARDWARE OR A VIRTUAL MACHINE',
+    'h2': 'Real hardware or a virtual machine? The port decides',
+    'html': '<ul><li><strong>Parallel port, real-time control (Mach3 with the standard driver).</strong> Real hardware only: a 32-bit XP machine with a genuine parallel port. The right move is to keep that PC healthy, image it, and keep a second one on the shelf. Owners who want a modern PC do it with an external motion controller in place of the parallel port &mdash; that is a decision for you and your machine supplier, not something we sell or advise on.</li>'
+            '<li><strong>Serial, USB or network interface (WinNC, program transfer, offline programming, most maker software).</strong> Windows XP running inside a modern PC, with the serial or USB port passed through to it, is a sound answer here &mdash; it is Microsoft&rsquo;s own answer to &ldquo;my old CNC machine needs XP&rdquo;, using Hyper-V on Windows Pro or a free tool on Home, with a dedicated USB-to-serial adapter. We prove it on the bench with your machine&rsquo;s software before you rely on it.</li>'
+            '<li><strong>XP inside the control.</strong> Neither. The control is not upgraded, virtualised or reinstalled by us. What we can do around it is narrow and useful: a verified image of the control&rsquo;s drive where the maker&rsquo;s maintenance manual describes that procedure (several do, because drive failure on these controls is a when, not an if), a spare drive on the shelf, and keeping the control off the network. Anything beyond that is the maker&rsquo;s.</li></ul>'},
+   {'eyebrow': '/04 &mdash; WHAT ACTUALLY BREAKS',
+    'h2': 'What actually breaks, and what it costs you when it does',
+    'html': '<p>These PCs were built between about 2002 and 2010 and have spent their lives next to a machine tool. What goes wrong is mundane and predictable:</p>'
+            '<ul><li><strong>The hard drive.</strong> An IDE drive of that age fails without warning, and it takes the software, the settings and every program on it.</li>'
+            '<li><strong>Power supplies, fans and capacitors</strong> &mdash; swollen caps and a dust-choked fan are the commonest reasons an old workshop PC will not start.</li>'
+            '<li><strong>A well-meant upgrade.</strong> Somebody puts Windows 10 on it, or moves the software to a new laptop with no parallel or serial port, and the machine cannot be reached. The software did not break; it lost the only host it can run on.</li>'
+            '<li><strong>Missing discs and licences.</strong> The installer, the licence file, the dongle, the maker&rsquo;s post-processor: scarce, sometimes gone. Without an image of the working PC, a fresh install may not be possible at all.</li>'
+            '<li><strong>No spare.</strong> Most of these machines have one PC and nothing behind it. The day it fails, the machine stops earning.</li></ul>'
+            '<p>The shape of the problem is the same as it is for any other one-job legacy PC: the machine and its control are the expensive, irreplaceable part; the PC beside it is the part you can image, clone and keep on a shelf.</p>'},
+   {'eyebrow': '/05 &mdash; WHAT WE DO',
+    'h2': 'What we do &mdash; keep the PC alive, honestly scoped',
+    'html': '<ul><li><strong>A full image of the working PC</strong> &mdash; a sector-level copy of the whole disk, verified to boot. Not a copy of a folder. This comes first, before anything else is touched.</li>'
+            '<li><strong>A cloned spare.</strong> The image restored onto a second machine of the same or a compatible vintage &mdash; with the parallel port, serial port or PCI slot the software needs &mdash; and bench-tested to boot and launch the software. Testing against the machine itself is yours.</li>'
+            '<li><strong>A genuine Windows XP licence</strong> on any rebuilt or spare PC. No pirated media, ever. XP can still be activated with a genuine key at the time of writing, online or by the automated telephone route, and we handle that.</li>'
+            '<li><strong>Isolation, written down.</strong> An XP PC has had no security updates for years, so it never joins the workshop network or the internet: an air gap where the software allows, or a firewall rule that lets it speak to one machine and nothing else; programs move on a USB stick you control; Windows Update off by design. We document it so it stays that way when we have gone.</li>'
+            '<li><strong>A hardware refresh.</strong> A solid-state drive on an IDE-to-SATA adapter where the board needs it, a new power supply, fans, a fresh battery for the clock; and data recovery from a disk that has already started to fail.</li>'
+            '<li><strong>A virtual machine where the port allows it</strong> &mdash; serial and USB interfaces, not real-time parallel-port control &mdash; bench-proven with your software first, or we do not sell it to you.</li>'
+            '<li><strong>Your programs, backed up.</strong> The G-code library that lives only on that PC is often worth more than the PC. It goes into the image and into a normal, verified backup.</li>'
+            '<li><strong>Re-imaging after any change</strong> you make, so the spare is never behind the live PC.</li></ul>'
+            '<p>If your business holds a security certification such as Cyber Essentials, an unsupported machine has to be kept segregated from the network you certify. Isolation as above is exactly that, and we document it for you; the certification and its scope remain yours.</p>'},
+   {'eyebrow': '/06 &mdash; WHAT WE DON&rsquo;T DO',
+    'h2': 'What we don&rsquo;t do, and who does',
+    'html': '<ul><li>We do not upgrade, reinstall, reflash or reconfigure a machine control&rsquo;s own operating system or parameters, and we do not supply or license control software.</li>'
+            '<li>We do not touch the machine&rsquo;s electrics, drives, motion hardware or anything with a safety implication.</li>'
+            '<li>We do not recommend a retrofit or motion-controller brand; that is a machine decision for you and your supplier.</li>'
+            '<li>We do not claim any software works on Windows 10 or 11, or in a virtual machine, until we have bench-tested it with your copy.</li>'
+            '<li>We do not use pirated Windows, ever.</li></ul>'
+            '<p><strong>For the control side, the UK route is the maker or its UK distributor:</strong> ProtoTRAK controls through <a href="https://xyzmachinetools.com/" rel="noopener">XYZ Machine Tools</a>; EMCO machines through <a href="https://emco.co.uk/" rel="noopener">Emco UK</a>; Colchester and Harrison lathes through <a href="https://www.colchester.co.uk/" rel="noopener">Colchester Machine Tool Solutions</a>; Okuma through its sole UK supplier, NCMT; Siemens Sinumerik through Siemens UK; Mazak, Hurco and Heidenhain through their own UK operations. None of them is connected to us, and none approves or endorses this page.</p>'},
+   {'eyebrow': '/07 &mdash; HOW IT WORKS',
+    'h2': 'A photo, a call, a plan',
+    'html': '<p>Send us a photo of the control screen and one of the software running on the PC, and tell us what the machine is. Within a working day we will say which of the three situations you are in, what we would do, and what it would cost; we quote before any chargeable work. Because the PC is offline by design, this is hands-on rather than remote: we collect free across Bournemouth, Poole, Christchurch and Dorset, and further afield we will work out the simplest way with you. The machine keeps running on the spare while the original is on the bench.</p>'
+            '<p>If the PC has already died, the most useful thing you can do is nothing: do not reinstall Windows, do not let anyone &ldquo;try a repair&rdquo;. A failed disk can very often still be imaged, and the software, settings and programs recovered with it, right up until somebody writes over it.</p>'
+            '<p>The rest of the workshop&rsquo;s IT &mdash; the office PCs, the CAD workstation, the network the isolated PC must stay off, backups and email &mdash; is what our <a href="/it-support-for-manufacturing/">IT support for manufacturing and engineering</a> covers, and the machine PC simply becomes one more thing we keep an eye on.</p>'}],
+  'faqs': [
+   {'q': 'Can I run my CNC software on a new Windows 11 PC?',
+    'a': 'It depends on how it talks to the machine. Software that drives the machine through a parallel port in real time &mdash; Mach3 with its standard driver &mdash; needs 32-bit Windows and a real port, so no. Software that uses a serial cable, USB or the network can often run in a Windows XP virtual machine on the new PC, or has a current version. A control with XP built in is the maker&rsquo;s to upgrade, not ours.'},
+   {'q': 'Does Mach3 work in a virtual machine?',
+    'a': 'Not with the parallel-port driver: it needs direct, real-time access to a physical port, which a virtual machine cannot give it. Keep the XP PC, image it, and keep a spare. Owners who want a modern PC do it with an external motion controller instead of the parallel port &mdash; a machine decision for you and your supplier, not something we sell.'},
+   {'q': 'My control has Windows XP built in &mdash; can you put Windows 10 on it?',
+    'a': 'No, and neither can anyone outside the maker. The operating system is part of the control; its hardware drivers exist only for XP Embedded, and even the maker&rsquo;s own upgrade paths for these controls meant new hardware or a rebuilt installation. What we do is around the control: an image of its drive where the maintenance manual allows, a spare drive, and keeping it off the network. Upgrades and retrofits are a conversation with the maker or its UK distributor.'},
+   {'q': 'Is it safe to keep a Windows XP PC in the workshop?',
+    'a': 'Off the network, yes. It has no security updates and no mainstream antivirus still supports it, so the rule is that it never joins the workshop Wi-Fi or the internet, only ever sees a USB stick you control, and does one job. Set up that way it can run for years. If you hold Cyber Essentials, that segregation is exactly what the scheme asks of an unsupported machine, and we document it.'},
+   {'q': 'Can Windows XP still be activated?',
+    'a': 'Yes, at the time of writing: a genuine key still activates online, and the automated telephone route remains as a fallback. We only ever use a genuine licence, and we handle the activation.'},
+   {'q': 'The PC has died &mdash; is the machine finished?',
+    'a': 'Almost never. The machine and its control are fine; what has failed is a twenty-year-old computer beside it. A dead disk can usually still be imaged, and the software, settings and programs recovered from it, provided nobody reinstalls Windows over it first. Call before anyone tries.'},
+   {'q': 'Can you back up the control&rsquo;s own hard drive?',
+    'a': 'Where the maker&rsquo;s maintenance manual describes a drive backup procedure &mdash; several do, because drive failure on these controls is routine &mdash; we can carry it out with your say-so and put a spare drive on the shelf. We do not touch the control&rsquo;s parameters or software beyond that, and for anything else the maker or its UK distributor is the right call.'},
+   {'q': 'Do you look after the Denford, Boxford and EMCO machines in schools and colleges?',
+    'a': 'Yes. Those PC-side packages are often less stuck than people assume &mdash; Denford&rsquo;s VR CNC Turning runs on everything up to Windows 11, and EMCO&rsquo;s WinNC has run on XP through to Windows 10 &mdash; so the job is sometimes a careful upgrade rather than a keep-alive. We check what the installed version needs before deciding which.'}],
+  'chips': ['Trading since 1995', 'Rated 4.9 on Google', 'Genuine licences only'],
+  'primaryCta': ['Ask about your CNC PC', '/contact/'],
+  'secondaryCta': ['IT support for manufacturing', '/it-support-for-manufacturing/'],
+  'schemaKind': 'service',
+  'noFixNoFee': False,
+  'crossLinksHtml': '<p><strong>Related:</strong> <a href="/ferrari-sd2-laptop-windows-xp/">Keeping a Ferrari SD2 / SD3 laptop alive</a> &middot; <a href="/old-program-wont-open-on-windows-11/">Old program won&rsquo;t open on a new Windows 11 computer</a> &middot; <a href="/it-support-for-manufacturing/">IT support for manufacturing &amp; engineering</a> &middot; <a href="/computer-repairs/">Computer repairs &amp; free collection</a> &middot; <a href="/business-it-support-plans/">Business IT support plans</a></p>'},
 ]
