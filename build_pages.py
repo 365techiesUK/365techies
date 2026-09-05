@@ -59,6 +59,10 @@ _VOLATILE = [
     # site turned out to be feeding a property nobody could open) must not tell Google that
     # ~700 pages changed today.
     (_cdre.compile(r'G-[A-Z0-9]{8,12}'), 'G-X'),
+    # A menu item added to the shared header (5 Sep 2026: the live map under Free Tools)
+    # is navigation, not content. Without this line every page on the site would carry
+    # today's date for it, which is the same false signal as the analytics swap above.
+    (_cdre.compile(r'\s*<a href="/bournemouth/live-map/">Bournemouth Live Map</a>'), ''),
     # Cache-busters are numeric (?v=22) AND date-style (?v=2026-07-30 on search.js).
     # \d+ only ate the "2026", leaving "?v=X-07-30" to change every single day - which
     # made all 649 pages claim they changed on every build and quietly destroyed the
@@ -351,6 +355,7 @@ HEADER = '''  <header class="site-header">
             <a href="/wifi-signal-test/">365 WiFi Optimizer</a>
             <a href="/van-signal-map/">Bournemouth Signal Map</a>
             <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
+            <a href="/bournemouth/live-map/">Bournemouth Live Map</a>
             <a href="/pc-benchmark/">PC Benchmark</a>
             <a href="/computer-spec-checker/">PC Hardware Checker</a>
             <a href="/website-checker/">Website Checker</a>
@@ -542,6 +547,7 @@ HEADER = '''  <header class="site-header">
           <a href="/wifi-signal-test/">365 WiFi Optimizer</a>
           <a href="/van-signal-map/">Bournemouth Signal Map</a>
           <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
+          <a href="/bournemouth/live-map/">Bournemouth Live Map</a>
           <a href="/pc-benchmark/">PC Benchmark</a>
           <a href="/computer-spec-checker/">PC Hardware Checker</a>
           <a href="/website-checker/">Website Checker</a>
@@ -738,6 +744,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/wifi-signal-test/">365 WiFi Optimizer</a>
         <a href="/van-signal-map/">Bournemouth Signal Map</a>
         <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
+        <a href="/bournemouth/live-map/">Bournemouth Live Map</a>
         <a href="/pc-benchmark/">PC Benchmark</a>
         <a href="/website-checker/">Website Checker</a>
         <a href="/email-security-checker/">Email Security Checker</a>
@@ -3027,6 +3034,7 @@ TOOLS = {
   "speed":        ("Live Broadband Speed Test", "/broadband-speed-checker/", "Measure your real download, upload and ping right now on a live animated gauge."),
   "wifisig":      ("365 WiFi Optimizer", "/wifi-signal-test/", "Walk around your home and watch the signal get stronger or weaker live &mdash; find your best spot, then get honest advice."),
   "vanmap":       ("Campervan Signal Map", "/van-signal-map/", "Real 4G/5G speeds our own campervan measured around Bournemouth &mdash; and the spots that tested fastest for working on the road."),
+  "livemap":      ("Bournemouth Live Map", "/bournemouth/live-map/", "Live buses, traffic and road closures, flood warnings and today&rsquo;s sea water status for every beach, on one free map of Bournemouth, Christchurch and Poole &mdash; the 3D city loads on request."),
   "sigcheck":     ("Mobile Signal Check", "/mobile-signal-check/", "Test your phone&rsquo;s mobile data right where you&rsquo;re standing and see how it compares with other readings from your area."),
   "wifiqr":       ("Wi-Fi QR Code Generator", "/wifi-qr-code-generator/", "Make a QR code guests scan to join your Wi-Fi &mdash; no typing the password."),
   "qrgen":        ("QR Code Generator", "/qr-code-generator/", "Turn any link, text, email or phone number into a scannable QR code &mdash; download &amp; print."),

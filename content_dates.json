@@ -177,28 +177,28 @@
  },
  "bournemouth/beach-parking": {
   "first": "2026-08-03",
-  "h": "c86a85b6182add58",
+  "h": "11dc14c686797ee2",
   "last": "2026-09-05"
  },
  "bournemouth/fireworks": {
   "first": "2026-08-02",
-  "h": "cf1036e5192a272e",
+  "h": "3eba670d8d538c9e",
   "last": "2026-09-05"
  },
  "bournemouth/live-map": {
   "first": "2026-09-02",
-  "h": "38b816313de04982",
+  "h": "02b3dcbbd65ecb08",
   "last": "2026-09-05"
  },
  "bournemouth/sea-today": {
   "first": "2026-08-02",
-  "h": "84b13f5f639f33fd",
-  "last": "2026-09-02"
+  "h": "57e9aaba425a1955",
+  "last": "2026-09-05"
  },
  "bournemouth/sunrise-sunset": {
   "first": "2026-08-03",
-  "h": "01632078a5f70d4c",
-  "last": "2026-09-02"
+  "h": "fadbfaf0a2694686",
+  "last": "2026-09-05"
  },
  "break-fix-vs-managed-it": {
   "first": "2026-07-28",
@@ -1102,7 +1102,7 @@
  },
  "free-tools": {
   "first": "2026-07-28",
-  "h": "8fed9f56a50f47f1",
+  "h": "8eaf4cb230c0a082",
   "last": "2026-09-05"
  },
  "gaming-pcs": {

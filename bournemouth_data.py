@@ -276,7 +276,7 @@ _B365 = '''    <section class="section" aria-label="About Bournemouth365">
         </div>
         <div class="prose" data-reveal>
           <p>Bournemouth365 is the web home of our <a href="https://www.facebook.com/bournemouth365" target="_blank" rel="noopener">Bournemouth Live Facebook page</a>, where 39,000 of you watch the seafront with us every day. More pages are on the way: live sea conditions measured at the Boscombe wave buoy, an honest local guide to parking for the beach, and the best sunrise and sunset spots &mdash; photographed by us, not stock.</p>
-          <p class="mono" style="margin-bottom:.6rem"><a href="/bournemouth/">Bournemouth365 home</a> &middot; <a href="/bournemouth/live-map/">Live map</a> &middot; <a href="/bournemouth/sea-today/">The sea right now</a> &middot; <a href="/bournemouth/fireworks/">Friday fireworks</a> &middot; <a href="/bournemouth/sunrise-sunset/">Sunrise &amp; sunset</a> &middot; <a href="/bournemouth/beach-parking/">Beach parking</a> &middot; <a href="/van-signal-map/">Mobile signal map</a></p>
+          <p class="mono" style="margin-bottom:.6rem"><a href="/bournemouth/">Bournemouth365 home</a> &middot; <a href="/bournemouth/live-map/">Live map: traffic, buses, sea</a> &middot; <a href="/bournemouth/sea-today/">The sea right now</a> &middot; <a href="/bournemouth/fireworks/">Friday fireworks</a> &middot; <a href="/bournemouth/sunrise-sunset/">Sunrise &amp; sunset</a> &middot; <a href="/bournemouth/beach-parking/">Beach parking</a> &middot; <a href="/van-signal-map/">Mobile signal map</a></p>
           <p class="mono">Built in Bournemouth by <a href="/">365 Techies</a> &mdash; the family firm that has looked after the town&rsquo;s computers since 1995.</p>
           <p class="b365-foot">No ads. No paywall. No consent wall. Built to load fast on beach 4G.</p>
         </div>
@@ -667,7 +667,7 @@ _ST_JS = '''      <script>
             if (d.overflow && d.overflow.ok && d.overflow.monitors) {
               for (var mi = 0; mi < d.overflow.monitors.length; mi++) {
                 var mm = d.overflow.monitors[mi];
-                var isSea = String(mm.water || '').toUpperCase().indexOf('POOLE BAY') > -1;
+                var isSea = String(mm.water || '').toUpperCase().search(/POOLE BAY|ENGLISH CHANNEL/) > -1;
                 (isSea ? seaM : rivM).push(mm);
                 if (mm.status === 1) { if (isSea) { seaDis++; } else { rivDis++; } }
               }
@@ -809,6 +809,14 @@ _ST_JS = '''      <script>
                    srow.heavyRain ? 'yes' : 'no', ovTxt].forEach(function (cell) {
                     var td = document.createElement('td'); td.textContent = cell; tr.appendChild(td);
                   });
+                  var mtd = document.createElement('td');
+                  if (srow.lat != null && srow.lng != null) {
+                    var ma = document.createElement('a');
+                    ma.href = '/bournemouth/live-map/app/#lat=' + Number(srow.lat).toFixed(4) + '&lon=' + Number(srow.lng).toFixed(4) + '&alt=2500&v=2&l=v';
+                    ma.textContent = 'Show on map';
+                    mtd.appendChild(ma);
+                  } else { mtd.textContent = '\u2014'; }
+                  tr.appendChild(mtd);
                   tbody.appendChild(tr);
                 }
               }
@@ -834,6 +842,26 @@ _ST_JS = '''      <script>
               el('st-overflow-sub').textContent = 'The storm-overflow monitor feed is not responding right now.';
               setChip('st-overflow-chip', 'chip-f', 'MONITOR FEED DOWN');
             }
+
+            // The question people actually type, answered from the same monitors
+            // as the tile above - one line, dated, never the word safe.
+            (function () {
+              var sw = el('st-sewage'); if (!sw) return;
+              var note = el('st-baked-note');
+              if (!(d.overflow && d.overflow.ok)) {
+                sw.textContent = 'The storm-overflow monitor feed is not responding right now, so this page cannot say. Check Wessex Water\u2019s own map before you go in.';
+                return;
+              }
+              var when = ago(d.overflow.read_at);
+              if (seaDis > 0) {
+                sw.textContent = 'Yes \u2014 ' + seaDis + ' seafront outfall' + (seaDis > 1 ? 's are' : ' is') + ' reporting a discharge into the sea (Wessex Water monitors, checked ' + when + ').';
+              } else if (rivDis > 0) {
+                sw.textContent = 'Not into the sea at these beaches \u2014 no seafront outfall is discharging; ' + rivDis + ' monitor' + (rivDis > 1 ? 's' : '') + ' upstream on the Stour or Avon ' + (rivDis > 1 ? 'are' : 'is') + ' (Wessex Water, checked ' + when + ').';
+              } else {
+                sw.textContent = 'No \u2014 none of the ' + d.overflow.total + ' monitored storm overflows around Bournemouth is reporting a discharge (Wessex Water monitors, checked ' + when + ').';
+              }
+              if (note) note.textContent = 'Live \u2014 monitors checked ' + when + '; Environment Agency forecast ' + ((d.bathing && d.bathing.ok) ? 'read ' + ago(d.bathing.read_at) : 'not responding') + '.';
+            })();
 
             // Rule #7: official warnings outrank every derived element.
             // prfLevel is var-scoped from the bathing block above (guarded).
@@ -864,6 +892,12 @@ _ST_JS = '''      <script>
       })();
       </script>'''
 
+from bournemouth_sea_bake import st_bake as _st_bake
+_ST_BAKE = _st_bake()
+_ST_BAKED_ROWS = _ST_BAKE["rows"] if _ST_BAKE else "<tr><td colspan=6>Waiting for the Environment Agency feed&hellip;</td></tr>"
+_ST_BAKED_SEWAGE = _ST_BAKE["sewage"] if _ST_BAKE else "Read live from the Wessex Water monitors when this page opens."
+_ST_BAKED_NOTE = _ST_BAKE["note"] if _ST_BAKE else ""
+
 _ST_PROSE = f'''          <h2 id="swim">Can you swim today?</h2>
           <p>Put the live temperature above against the scale open-water swimmers actually use. The <a href="https://www.outdoorswimmingsociety.com/cold-water-feels-temperature-guide/" target="_blank" rel="noopener">Outdoor Swimming Society&rsquo;s guide</a> &mdash; anecdotal rather than scientific, as the OSS itself says &mdash; runs: 0&ndash;6&deg;C &ldquo;Baltic&rdquo;, 6&ndash;11&deg;C &ldquo;Freezing&rdquo;, 12&ndash;16&deg;C &ldquo;Fresh&rdquo;, 17&ndash;20&deg;C &ldquo;summer swimming&rdquo;, 21&deg;C+ &ldquo;Warm&rdquo;.</p>
           <p>Two harder numbers sit alongside that. The <a href="https://rnli.org/water-safety/know-the-risks/cold-water-shock" target="_blank" rel="noopener">RNLI defines anything below 15&deg;C as cold water</a>, capable of seriously affecting your breathing and movement &mdash; and their advice if you get into trouble is Float to Live: lean back, spread your arms and legs, and let the first minute of cold-water shock pass before you try to swim. And British Triathlon&rsquo;s 2026 competition rules make wetsuits <em>mandatory</em> below 15.9&deg;C and stop open-water racing entirely below 11&deg;C &mdash; a fair guide to where &ldquo;bracing&rdquo; ends and &ldquo;equipment required&rdquo; begins.</p>
@@ -882,11 +916,16 @@ _ST_PROSE = f'''          <h2 id="swim">Can you swim today?</h2>
           <h2 id="tide">Bournemouth&rsquo;s odd tide, live from the pier</h2>
           <p>The tide curve above often shows something tide tables flatten out: a long <em>stand</em> around high water, sometimes a visible double hump. It is not a faulty gauge &mdash; it is the English Channel&rsquo;s geometry. The Channel behaves as a standing-wave system with a node near this coast, and in shallow water the tide&rsquo;s harmonics distort the simple twice-a-day curve: Christchurch Harbour gets a true double high water on each tide, and Poole shows double highs at springs and a long stand at neaps (Humphreys, <em>Salinity and Tides in Poole Harbour</em>, Proceedings in Marine Science, 2005). Bournemouth sits between the two. Practical upshot: high water hangs around for hours &mdash; generous for swimmers, and the reason the beach can feel narrow all afternoon.</p>
 
-          <h2 id="quality">Water quality, beach by beach</h2>
+          <h2 id="sewage">Is sewage being discharged into the sea at Bournemouth today?</h2>
+          <p class="b365-verdict" id="st-sewage">{_ST_BAKED_SEWAGE}</p>
+          <p class="mono" id="st-baked-note">{_ST_BAKED_NOTE}</p>
+          <p>How that is known: Wessex Water fits every storm overflow around the bay with a monitor that reports a discharge starting or stopping within the hour, and this page reads those monitors every twenty minutes. &ldquo;No discharge&rdquo; means exactly that &mdash; the monitor has not recorded one &mdash; and is not a statement that the water is clean. The Environment Agency&rsquo;s daily pollution-risk forecast, beach by beach below, is the other half of the answer; after heavy rain it is worth checking both before you go in. Every monitored outfall in Bournemouth, Christchurch and Poole is drawn on the <a href="/bournemouth/live-map/">live map</a>, with the beaches and their forecasts alongside.</p>
+
+          <h2 id="quality">Is the water at Bournemouth beach clean? Beach by beach</h2>
           <p>The Environment Agency classifies seven bathing waters along this seafront &mdash; Alum Chine, Durley Chine, Bournemouth Pier, Boscombe Pier, Manor Steps, Fisherman&rsquo;s Walk and Southbourne &mdash; and samples each through the May&ndash;September season. In season it also issues a daily pollution-risk forecast. The live panel above summarises; this table is per beach:</p>
           <table>
-            <thead><tr><th>Beach</th><th>Classification</th><th>Today&rsquo;s risk forecast</th><th>Affected by heavy rain?</th><th>Nearest outfall monitor</th></tr></thead>
-            <tbody id="st-sites"><tr><td colspan="5">Waiting for the Environment Agency feed&hellip;</td></tr></tbody>
+            <thead><tr><th>Beach</th><th>Classification</th><th>Today&rsquo;s risk forecast</th><th>Affected by heavy rain?</th><th>Nearest outfall monitor</th><th>On the map</th></tr></thead>
+            <tbody id="st-sites">{_ST_BAKED_ROWS}</tbody>
           </table>
           <p>&ldquo;Affected by heavy rain&rdquo; is the Environment Agency&rsquo;s own flag: at those beaches, water quality can dip temporarily after a downpour. That is also what the storm-overflow tile above watches &mdash; Wessex Water&rsquo;s live monitors on this stretch of coast, the same feed behind the national Storm Overflow Hub, updated every few minutes. Our honest advice matches the EA&rsquo;s: after heavy rain, give it a day.</p>
 
@@ -914,6 +953,8 @@ _ST_FAQS = [
      "The long-term August average is 18.4&deg;C &mdash; the year&rsquo;s peak &mdash; and warm spells push individual readings past 21&deg;C, which is &ldquo;Warm&rdquo; on the Outdoor Swimming Society&rsquo;s scale. The sea lags the air by about two months, so early summer is much colder than it looks."),
     ("Do I need a wetsuit to swim at Bournemouth?",
      "Depends on the month and on you. British Triathlon&rsquo;s 2026 rules make wetsuits mandatory in competition below 15.9&deg;C &mdash; Bournemouth&rsquo;s sea is typically below that from November to mid-June. The RNLI defines anything under 15&deg;C as cold water. In high summer most swimmers go without; the rest of the year, a wetsuit is the sensible default unless you are acclimatised."),
+    ("Is sewage being discharged into the sea at Bournemouth right now?",
+     "This page reads Wessex Water&rsquo;s storm-overflow monitors and answers that in one line above, under the heading of the same name, with the time the monitors were checked. Each monitor reports a discharge starting or stopping within the hour. &lsquo;No discharge&rsquo; is not a statement that the water is clean &mdash; the Environment Agency&rsquo;s daily pollution-risk forecast, shown beach by beach, is the other half &mdash; and after heavy rain it is worth checking both before you go in. The <a href='/bournemouth/live-map/'>live map</a> draws every monitored outfall in Bournemouth, Christchurch and Poole, with the beaches and their forecasts alongside."),
     ("Where does this page&rsquo;s data actually come from?",
      "Physical instruments: the bay&rsquo;s wave buoy (temperature and waves), the Environment Agency&rsquo;s tide gauge mounted on Bournemouth Pier, the EA&rsquo;s bathing-water sampling and daily risk forecasts, and Wessex Water&rsquo;s storm-overflow monitors. Every reading is shown with the time it was measured &mdash; and when a feed is down, the page says so instead of guessing."),
 ]
@@ -1340,7 +1381,7 @@ add(
 
 _LM_SLUG = "bournemouth/live-map"
 _LM_URL = f"{SITE}/{_LM_SLUG}/"
-_LM_TITLE = "Bournemouth live map — buses, roads, rivers & flights, in 3D"
+_LM_TITLE = "Bournemouth live map — traffic, buses, flood warnings and sea water quality"
 _LM_DESC = ("Live buses, flights, road closures, river levels and flood warnings, bathing-water and storm-overflow status, bike bays and the latest satellite pass over "
             "Bournemouth, Christchurch and Poole — every layer from a named public feed, free flat map first, 3D on request.")
 
@@ -1698,7 +1739,7 @@ def _lm_schema(s):
 _LM_CONTENT = "\n".join([
     hero(bc_sub("Bournemouth365", "/bournemouth/", "Live map"),
          "// BOURNEMOUTH365",
-         'Bournemouth, Christchurch &amp; Poole &mdash; <em class="grad grad--cyan">live, in 3D</em>',
+         'Bournemouth, Christchurch &amp; Poole &mdash; <em class="grad grad--cyan">live, right now</em>',
          "Buses, flights, road closures, river levels and flood warnings, sea water quality, bike bays and the latest satellite pass, each drawn from a named public feed onto one map &mdash; free on the flat map, with the 3D city loaded only when you ask for it.",
          cta1=("Open the live map", "#map"),
          cta2=("What you are seeing", "#layers"),
@@ -1715,7 +1756,7 @@ add(
     slug=_LM_SLUG,
     title=_LM_TITLE,
     desc=_LM_DESC,
-    og_title="Bournemouth, Christchurch & Poole — live, in 3D",
+    og_title="Bournemouth live map — traffic, buses, flood warnings and sea water quality",
     schema=_lm_schema,
     content=_LM_CONTENT,
     og_image="/bournemouth/media/og-live-map.jpg",
