@@ -433,7 +433,7 @@ SEO_WAVE8_PAGES = [
                     'life</a> &middot; <a href="/dell-this-pc-cant-run-windows-11/">This PC '
                     'can&rsquo;t run Windows 11</a> &middot; <a '
                     'href="/will-i-lose-files-upgrading-to-windows-11/">Will I lose files '
-                    'upgrading to Windows 11?</a> &middot; <a href="/cost-to-upgrade-office-to-windows-11/">What it costs to upgrade an office to Windows 11</a></p>'},
+                    'upgrading to Windows 11?</a> &middot; <a href="/cost-to-upgrade-office-to-windows-11/">What it costs to upgrade an office to Windows 11</a> &middot; <a href="/ferrari-sd2-laptop-windows-xp/">Keeping a Windows XP diagnostic laptop alive</a></p>'},
 
  {'slug': 'sharepoint-not-syncing-file-explorer',
   'title': 'SharePoint Files Not Syncing to File Explorer | 365 Techies',

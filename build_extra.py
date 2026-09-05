@@ -43,6 +43,7 @@ from seo_wave8_data import SEO_WAVE8_PAGES
 from seo_wave9_data import SEO_WAVE9_PAGES
 from seo_wave10_data import SEO_WAVE10_PAGES
 from seo_wave11_data import SEO_WAVE11_PAGES
+from seo_wave12_data import SEO_WAVE12_PAGES
 try:
     from new_pages_data import DELL_COMPARE_TABLES
 except ImportError:
@@ -21575,6 +21576,8 @@ for _np in SEO_WAVE9_PAGES:
 for _np in SEO_WAVE10_PAGES:
     build_new_page(_np)
 for _np in SEO_WAVE11_PAGES:
+    build_new_page(_np)
+for _np in SEO_WAVE12_PAGES:
     build_new_page(_np)
 
 # The gated 2-page Home Assistant x Victron test (own module per the wave rule;

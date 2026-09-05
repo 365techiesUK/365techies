@@ -1060,6 +1060,11 @@
   "h": "ad0ab315a321648f",
   "last": "2026-08-31"
  },
+ "ferrari-sd2-laptop-windows-xp": {
+  "first": "2026-09-05",
+  "h": "4ab8648ec3a05e0b",
+  "last": "2026-09-05"
+ },
  "file-transfer": {
   "first": "2026-07-28",
   "h": "7709bc3f7f90fbf1",
@@ -1691,7 +1696,7 @@
  },
  "it-support-for-garages-automotive": {
   "first": "2026-07-28",
-  "h": "ee2d25ad26302750",
+  "h": "21d9bf917584278d",
   "last": "2026-09-05"
  },
  "it-support-for-gyms-fitness": {
@@ -2216,7 +2221,7 @@
  },
  "old-program-wont-open-on-windows-11": {
   "first": "2026-09-05",
-  "h": "185c193e37a1e51a",
+  "h": "09036b3d8ae563b5",
   "last": "2026-09-05"
  },
  "onedrive-couldnt-merge-changes": {
