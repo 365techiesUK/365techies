@@ -32,6 +32,7 @@
  */
 error_reporting(0);
 require __DIR__ . '/dorset-lib.php';
+require __DIR__ . '/dorset-tiles-fn.php';   // per-day history helpers (pure, tested)
 
 $BUDGET = __DIR__ . '/dorset-tiles-budget.json';
 $RATE   = __DIR__ . '/dorset-tiles-rate.json';
@@ -43,6 +44,11 @@ $RATE   = __DIR__ . '/dorset-tiles-rate.json';
  * setting.
  */
 $DAILY = 30;
+
+/* Per-day counts kept in the store beside the live counter (added 5 Sep 2026 so
+ * "how many 3D opens a day" has a server-side answer). ?status=1 shows the last
+ * 30 days, zeros filled in; the store keeps this many. */
+$HISTORY_DAYS = 90;
 
 /* Site-wide guard on the counter file itself: a storm of ticket requests must
  * not be able to hold the lock in a loop. 120/min is far above any honest
@@ -88,7 +94,10 @@ if ($wantStatus) {
     // "cannot lock" (fail closed: zero remaining, button disabled).
     $read = dorset_counter_update($BUDGET, function ($cur) { return array(null, array('state' => $cur)); });
     if ($read === null) dorset_send(array('ok' => false, 'reason' => 'lock', 'remaining' => 0, 'resetsAt' => tiles_resets_at()), 503);
-    dorset_send(tiles_shape($read['state'], $DAILY));
+    dorset_send(tiles_shape($read['state'], $DAILY, array(
+        'history'         => tiles_history_view($read['state'], tiles_day(), 30),
+        'historyKeptDays' => $HISTORY_DAYS,
+    )));
 }
 
 // ?ticket=1 : POST only.
@@ -97,13 +106,17 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $daily = $DAILY;
-$result = dorset_counter_update($BUDGET, function ($cur) use ($daily) {
+$keep  = $HISTORY_DAYS;
+$result = dorset_counter_update($BUDGET, function ($cur) use ($daily, $keep) {
     $day = tiles_day();
-    if (!is_array($cur) || !isset($cur['day']) || $cur['day'] !== $day) $cur = array('day' => $day, 'used' => 0);
+    $rolled = !is_array($cur) || !isset($cur['day']) || $cur['day'] !== $day;
+    $cur = tiles_fold_history($cur, $day, $keep);   // finished day -> history; today reset; old days pruned
     if ((int)$cur['used'] >= $daily) {
-        return array(null, array('granted' => false, 'state' => $cur));   // no write
+        // No ticket. Write only when the day rolled, so the finished day's count is kept.
+        return array($rolled ? $cur : null, array('granted' => false, 'state' => $cur));
     }
     $cur['used'] = (int)$cur['used'] + 1;
+    $cur = tiles_note_history($cur);
     return array($cur, array('granted' => true, 'state' => $cur));
 });
 
