@@ -18621,7 +18621,7 @@ def computer_help_for_seniors():
       ("Can my son or daughter arrange help on my behalf?","Yes &mdash; families often set up and pay for support for a parent, from anywhere in the country. Our <a href=\"/computer-help-for-elderly-parents/\">computer help for elderly parents</a> page is written just for them."),
       ("I've forgotten my email password &mdash; can you help?","Yes, this is one of the most common things we sort out. We&rsquo;ll recover or reset your email safely, get it working on your devices again, and help you keep a sensible record so it&rsquo;s less stressful next time."),
       ("How do I know a computer helper isn't a scammer?","A fair and important question. We <strong>always phone you first</strong> &mdash; we never cold-call, never use pop-ups, you watch everything we do on screen, and our access ends when the session ends. If anyone else rings out of the blue about your computer, put the phone down and call us on 01202 775566."),
-      ("Do you run computer lessons for older people?","Yes &mdash; friendly group classes at the Kinson Community Centre in Bournemouth, plus patient one-to-one lessons online, and 12 free courses you can do at your own pace. See our <a href=\"/computer-lessons-for-seniors-bournemouth/\">computer lessons for seniors</a> page, or call for the current timetable."),
+      ("Do you run computer lessons for older people?","Yes &mdash; friendly group classes at the Kinson Community Centre in Bournemouth, plus patient one-to-one lessons online, and free courses you can do at your own pace. See our <a href=\"/computer-lessons-for-seniors-bournemouth/\">computer lessons for seniors</a> page, or call for the current timetable."),
       ("What does ongoing help cost?","Our home support plan is &pound;18.25 a month per computer &mdash; rolling monthly, cancel anytime. It covers help as often as you need it, with updates, security and backups quietly looked after for you."),
     ]
     guides=[
@@ -18632,7 +18632,7 @@ def computer_help_for_seniors():
       ("Stay safe","Spot the Scam quiz","Practise telling scams from the real thing &mdash; no sign-up.","/spot-the-scam/"),
       ("No jargon","Tech in plain English","The terms and services people ask about most, explained simply.","/plain-english/"),
       ("Big change","Landline switch-off help","Your phone is moving to digital by January 2027 &mdash; what to do, calmly.","/landline-switch-off-help/"),
-      ("Learn","12 free online courses","Computer basics, Microsoft Word, email, WhatsApp, scams and more &mdash; at your own pace, no sign-up.","/free-courses/"),
+      ("Learn","Free online courses","Computer basics, Windows 11, Microsoft Word, email, WhatsApp, scams and more &mdash; at your own pace, no sign-up.","/free-courses/"),
       ("Learn","Computer lessons for seniors","Friendly group classes at the Kinson Community Centre, plus one-to-one online.","/computer-lessons-for-seniors-bournemouth/"),
       ("Learn","Smartphone lessons","Get confident with your Android phone &mdash; calls, photos, WhatsApp and more.","/smartphone-lessons-for-seniors/"),
     ]
@@ -20054,6 +20054,7 @@ _SAFETY_COURSE = {"slug": "online-safety-course", "icon": "&#128737;&#65039;",
                   "courseTitle": "Staying Safe Online"}
 NEXT_MAP = {
     "computer-basics-course": [
+        ("windows-11-course-for-beginners", "Now get comfortable with Windows 11 itself &mdash; the button that moved, and the rest."),
         ("email-basics-course", "Now the mouse behaves, email is the natural next step."),
         ("online-safety-course", "Learn the scammers&rsquo; tricks before they try them on you."),
         ("word-basics-course", "Write the letter, set the margins, print it and send it.")],
@@ -20061,6 +20062,10 @@ NEXT_MAP = {
         ("online-safety-course", "Most scams arrive by email &mdash; learn to spot every one."),
         ("whatsapp-course-for-beginners", "Faster than email for family chat &mdash; and free."),
         ("word-basics-course", "Write a proper letter in Word, then attach it to an email.")],
+    "windows-11-course-for-beginners": [
+        ("computer-basics-course", "The gentle foundations, if Windows still feels like someone else&rsquo;s house."),
+        ("online-safety-course", "Fake updates were one scam &mdash; learn to spot all of them."),
+        ("word-basics-course", "Put the tidy computer to work: write a letter and print it.")],
     "word-basics-course": [
         ("email-basics-course", "Now you can write it &mdash; get comfortable with the inbox you&rsquo;ll send it from."),
         ("computer-basics-course", "Folders, printing and the drawers where your letters live."),
@@ -20300,7 +20305,7 @@ def free_courses_hub():
     content = "\n".join([
         hero(bc("Free Courses"), "// FREE COURSES &middot; NO SIGN-UP &middot; CERTIFICATES",
              'Learn something new, <em class="grad grad--green">free</em>',
-             "Short, friendly online courses for beginners and anyone who&rsquo;d like a bit more confidence &mdash; computer basics, email, Microsoft Word, WhatsApp, AI, your Android phone, the NHS App, photos, and shopping and banking safely. Plain English, no time pressure, a certificate at the end, and never a sign-up form.",
+             "Short, friendly online courses for beginners and anyone who&rsquo;d like a bit more confidence &mdash; computer basics, Windows 11, email, Microsoft Word, WhatsApp, AI, your Android phone, the NHS App, photos, and shopping and banking safely. Plain English, no time pressure, a certificate at the end, and never a sign-up form.",
              cta1=("Pick a Course Below", "#courses"), cta2=("Ask About In-Person Lessons", "/contact/?topic=computer-lessons"),
              chips=["100% free, always", "Learn at your own pace", "Certificate for every course"]),
         ('    <section class="blog-section" id="courses" aria-label="All free courses">\n'

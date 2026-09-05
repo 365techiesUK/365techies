@@ -7012,7 +7012,7 @@ NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
                     'our free <a href="/spot-the-scam/">spot-the-scam quiz</a> together.</p>'},
  {'slug': 'computer-lessons-for-seniors-bournemouth',
   'title': 'Computer Lessons for Seniors in Bournemouth | 365 Techies',
-  'metaDesc': 'Friendly computer lessons for older people in Bournemouth. Kinson Community Centre classes, patient one-to-one lessons online, and 12 free courses.',
+  'metaDesc': 'Friendly computer lessons for older people in Bournemouth. Kinson Community Centre classes, patient one-to-one lessons online, and free courses.',
   'ogTitle': 'Friendly Computer Lessons for Seniors in Bournemouth & Dorset',
   'crumbName': 'Computer Lessons',
   'eyebrow': 'Patient lessons · Bournemouth & Dorset',
@@ -7044,7 +7044,7 @@ NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
                         'worry</li><li><strong>Spotting scams</strong> — dodgy emails, fake texts and suspicious phone calls</li><li>Getting comfortable with your <strong>smartphone or '
                         "tablet</strong></li></ul><p>One honest note: we're specialists in <strong>Windows computers and Android phones and tablets</strong>. If you use an Apple iPad or iPhone we'll "
                         "gladly point you towards help, but we won't pretend Apple is our strength — you deserve a teacher who genuinely knows your device inside out.</p><p>Between lessons, our "
-                        '<a href="/free-courses/">12 free online courses</a> — from <a href="/computer-basics-course/">computer basics</a> and <a href="/word-basics-course/">Microsoft Word</a> to <a href="/online-safety-course/">staying safe online</a> — let you keep learning at home at your own pace — and our <a href="/spot-the-scam/">spot-the-scam quiz</a> is a '
+                        '<a href="/free-courses/">free online courses</a> — from <a href="/computer-basics-course/">computer basics</a>, <a href="/windows-11-course-for-beginners/">Windows 11</a> and <a href="/word-basics-course/">Microsoft Word</a> to <a href="/online-safety-course/">staying safe online</a> — let you keep learning at home at your own pace — and our <a href="/spot-the-scam/">spot-the-scam quiz</a> is a '
                         'gentle way to practise spotting the fakes. And if reading a screen is a strain, this website has an accessibility toolbar with bigger text, higher contrast and read-aloud '
                         'built in.</p>'},
                {'eyebrow': 'Honest advice · Getting started',
@@ -7204,6 +7204,9 @@ NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
                         'between lessons</strong> are welcome too. We always phone you — never cold calls or pop-ups — so you always know exactly who you are '
                         'talking to.</p><p>Whichever you choose, you will see the same familiar faces every time. We are a family firm, not a call centre, and we have been helping people across '
                         'Dorset since 1995.</p>'},
+               {'eyebrow': 'Free · At your own pace',
+                'h2': 'Learn your phone free, online, whenever suits you',
+                'html': '<p>Not everyone wants a lesson booked in. If you would rather learn at your own pace, our free online courses are written for exactly the people we teach in the room: plain English, short lessons, a gentle question at the end of each, and a certificate to print at the end. No sign-up, nothing to buy.</p><ul><li><a href="/android-phone-course-for-beginners/"><strong>Android phone course for beginners</strong></a> — the home screen, apps, photos and keeping the phone healthy, seven short lessons.</li><li><a href="/whatsapp-course-for-beginners/"><strong>WhatsApp, step by step</strong></a> — messages, photos, voice notes, video calls and the family group.</li><li><a href="/video-calling-course-for-beginners/"><strong>Video calling for beginners</strong></a> — seeing their faces, on whatever you have.</li><li><a href="/online-safety-course/"><strong>Staying safe online</strong></a> — scam texts and calls, and what to do about them.</li></ul><p>They pair well with the lessons: many people do a course first, then bring their questions to us. And if there is something you would like a course on that we have not written yet, tell us — we build them around what people ask.</p>'},
                {'eyebrow': 'Try this today',
                 'h2': 'A quick win: make the text bigger right now',
                 'html': '<p>Here is a small taste of a lesson. Menus vary a little between phone makes, but on most Android phones the pattern is the same:</p><ol><li>Open <strong>Settings</strong> '
