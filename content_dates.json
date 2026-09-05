@@ -643,6 +643,10 @@
   "h": "c76d322fcc474383",
   "last": "2026-08-31"
  },
+ "cost-to-upgrade-office-to-windows-11": {
+  "first": "2026-09-05",
+  "h": "f7debafb16158daa"
+ },
  "coverage-checker": {
   "first": "2026-07-28",
   "h": "fd59710b403839ed",
@@ -1040,8 +1044,8 @@
  },
  "excel-onedrive-sync-conflicts": {
   "first": "2026-07-28",
-  "h": "b423660f54783372",
-  "last": "2026-08-31"
+  "h": "c6b394025851bfc1",
+  "last": "2026-09-05"
  },
  "excel-spreadsheet-rescue": {
   "first": "2026-07-28",
@@ -1975,8 +1979,8 @@
  },
  "locked-out-microsoft-365-admin-account": {
   "first": "2026-07-28",
-  "h": "97d2fbe3a93f08e4",
-  "last": "2026-08-31"
+  "h": "c7b536ae49860c15",
+  "last": "2026-09-05"
  },
  "lost-or-stolen-laptop-what-to-do": {
   "first": "2026-07-28",
@@ -2095,8 +2099,8 @@
  },
  "move-virgin-media-email-to-gmail": {
   "first": "2026-07-28",
-  "h": "ad544db04e2ea3f8",
-  "last": "2026-08-31"
+  "h": "452798a8ffc3d23f",
+  "last": "2026-09-05"
  },
  "nas-drive-not-showing-after-windows-11-update": {
   "first": "2026-09-05",
@@ -2204,7 +2208,16 @@
  },
  "old-program-wont-open-on-windows-11": {
   "first": "2026-09-05",
-  "h": "4b9aeb8a30e4e83a"
+  "h": "8d015db482d6cf8d",
+  "last": "2026-09-05"
+ },
+ "onedrive-couldnt-merge-changes": {
+  "first": "2026-09-05",
+  "h": "6cc78a11194140c2"
+ },
+ "onedrive-file-locked-by-another-user": {
+  "first": "2026-09-05",
+  "h": "40710f830bfaeef6"
  },
  "onedrive-files-disappeared": {
   "first": "2026-07-28",
@@ -2223,12 +2236,16 @@
  },
  "onedrive-moved-my-desktop-and-documents": {
   "first": "2026-07-28",
-  "h": "96ebe095eeb61fbb",
-  "last": "2026-08-31"
+  "h": "f5f0f4183821adea",
+  "last": "2026-09-05"
+ },
+ "onedrive-not-syncing-between-two-computers": {
+  "first": "2026-09-05",
+  "h": "d2d1c6f373777cbd"
  },
  "onedrive-problems": {
   "first": "2026-07-28",
-  "h": "71d3238cf54a865c",
+  "h": "790ea8bd7b1f2618",
   "last": "2026-09-05"
  },
  "onedrive-sharepoint-teams-explained": {
@@ -3103,10 +3120,14 @@
   "first": "2026-09-05",
   "h": "3daa83327f593c19"
  },
+ "teams-chat-files-disappeared": {
+  "first": "2026-09-05",
+  "h": "d802c7555bbb8cd3"
+ },
  "teams-keeps-opening-wrong-account": {
   "first": "2026-07-28",
-  "h": "cb19ae91684156d2",
-  "last": "2026-08-31"
+  "h": "782d32d4a598d5a0",
+  "last": "2026-09-05"
  },
  "terms": {
   "first": "2026-07-28",
@@ -3123,10 +3144,18 @@
   "h": "5991c3b9eea54f23",
   "last": "2026-08-31"
  },
+ "transfer-microsoft-365-when-owner-leaves": {
+  "first": "2026-09-05",
+  "h": "93a2acad037ee831"
+ },
  "transfer-photos-to-a-new-computer-bournemouth": {
   "first": "2026-07-28",
   "h": "47904dfe4dba3cf0",
   "last": "2026-08-31"
+ },
+ "two-onedrive-accounts-personal-and-work": {
+  "first": "2026-09-05",
+  "h": "9519490c0a1576f8"
  },
  "unitree-robots": {
   "first": "2026-07-28",
@@ -3192,6 +3221,10 @@
   "first": "2026-07-28",
   "h": "385977c3f7d580ce",
   "last": "2026-08-31"
+ },
+ "virgin-media-email-wont-add-to-new-outlook": {
+  "first": "2026-09-05",
+  "h": "89aa18aa7865ce60"
  },
  "virus-removal": {
   "first": "2026-07-28",
@@ -3320,8 +3353,8 @@
  },
  "who-has-a-file-open-on-shared-drive": {
   "first": "2026-07-28",
-  "h": "a9196d7f6a0ae3c5",
-  "last": "2026-08-31"
+  "h": "27cfbc425e11b839",
+  "last": "2026-09-05"
  },
  "why-backups-are-essential-for-small-businesses": {
   "first": "2026-06-16",

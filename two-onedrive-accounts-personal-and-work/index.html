@@ -31,9 +31,9 @@
       window.addEventListener('load', function () { setTimeout(loadGtagLib, 30000); });
     })();
   </script>
-  <title>See Who Has a File Open on a Shared Drive | 365 Techies</title>
-  <meta name="description" content="Blocked by a locked file on your shared drive? Here is how to see who has a file open on a shared network drive in Windows and unlock it safely." />
-  <link rel="canonical" href="https://365techies.co.uk/who-has-a-file-open-on-shared-drive/" />
+  <title>Two OneDrive Accounts: Files in the Wrong One | 365 Techies</title>
+  <meta name="description" content="A personal OneDrive and a work OneDrive on one PC, and files keep landing in the wrong one. Tell them apart, move files safely, and set which owns what." />
+  <link rel="canonical" href="https://365techies.co.uk/two-onedrive-accounts-personal-and-work/" />
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
   <meta name="author" content="365 Techies Limited" />
   <meta name="geo.region" content="GB-BCP" />
@@ -45,15 +45,15 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="365 Techies" />
   <meta property="og:locale" content="en_GB" />
-  <meta property="og:url" content="https://365techies.co.uk/who-has-a-file-open-on-shared-drive/" />
-  <meta property="og:title" content="How to See Who Has a File Open on a Shared Network Drive" />
-  <meta property="og:description" content="Blocked by a locked file on your shared drive? Here is how to see who has a file open on a shared network drive in Windows and unlock it safely." />
+  <meta property="og:url" content="https://365techies.co.uk/two-onedrive-accounts-personal-and-work/" />
+  <meta property="og:title" content="Two OneDrive Accounts on One PC and Files in the Wrong One" />
+  <meta property="og:description" content="A personal OneDrive and a work OneDrive on one PC, and files keep landing in the wrong one. Tell them apart, move files safely, and set which owns what." />
   <meta property="og:image" content="https://365techies.co.uk/og-image.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="How to See Who Has a File Open on a Shared Network Drive" />
-  <meta name="twitter:description" content="Blocked by a locked file on your shared drive? Here is how to see who has a file open on a shared network drive in Windows and unlock it safely." />
+  <meta name="twitter:title" content="Two OneDrive Accounts on One PC and Files in the Wrong One" />
+  <meta name="twitter:description" content="A personal OneDrive and a work OneDrive on one PC, and files keep landing in the wrong one. Tell them apart, move files safely, and set which owns what." />
   <meta name="twitter:image" content="https://365techies.co.uk/og-image.jpg" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -249,7 +249,7 @@
     },
     {
       "@type": "BreadcrumbList",
-      "@id": "https://365techies.co.uk/who-has-a-file-open-on-shared-drive/#breadcrumb",
+      "@id": "https://365techies.co.uk/two-onedrive-accounts-personal-and-work/#breadcrumb",
       "itemListElement": [
         {
           "@type": "ListItem",
@@ -260,17 +260,23 @@
         {
           "@type": "ListItem",
           "position": 2,
-          "name": "Who has a file open?",
-          "item": "https://365techies.co.uk/who-has-a-file-open-on-shared-drive/"
+          "name": "OneDrive Problems",
+          "item": "https://365techies.co.uk/onedrive-problems/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Two OneDrive Accounts",
+          "item": "https://365techies.co.uk/two-onedrive-accounts-personal-and-work/"
         }
       ]
     },
     {
       "@type": "WebPage",
-      "@id": "https://365techies.co.uk/who-has-a-file-open-on-shared-drive/#webpage",
-      "url": "https://365techies.co.uk/who-has-a-file-open-on-shared-drive/",
-      "name": "Who has a file open?",
-      "description": "Blocked by a locked file on your shared drive? Here is how to see who has a file open on a shared network drive in Windows and unlock it safely.",
+      "@id": "https://365techies.co.uk/two-onedrive-accounts-personal-and-work/#webpage",
+      "url": "https://365techies.co.uk/two-onedrive-accounts-personal-and-work/",
+      "name": "Two OneDrive Accounts",
+      "description": "A personal OneDrive and a work OneDrive on one PC, and files keep landing in the wrong one. Tell them apart, move files safely, and set which owns what.",
       "inLanguage": "en-GB",
       "isPartOf": {
         "@id": "https://365techies.co.uk/#website"
@@ -279,7 +285,7 @@
         "@id": "https://365techies.co.uk/#business"
       },
       "breadcrumb": {
-        "@id": "https://365techies.co.uk/who-has-a-file-open-on-shared-drive/#breadcrumb"
+        "@id": "https://365techies.co.uk/two-onedrive-accounts-personal-and-work/#breadcrumb"
       },
       "primaryImageOfPage": {
         "@type": "ImageObject",
@@ -288,114 +294,62 @@
       "dateModified": "2026-09-05"
     },
     {
-      "@type": "HowTo",
-      "@id": "https://365techies.co.uk/who-has-a-file-open-on-shared-drive/#howto",
-      "name": "See who has a file open on a shared network drive",
-      "step": [
-        {
-          "@type": "HowToStep",
-          "position": 1,
-          "name": "Go to the host PC",
-          "text": "Sit at (or remotely connect into) the computer that actually shares the folder out, not your own machine mapped to the drive. Only the host can show the list of open files, and you will need administrator rights on it."
-        },
-        {
-          "@type": "HowToStep",
-          "position": 2,
-          "name": "Open Computer Management",
-          "text": "Right-click the Start button and choose Computer Management. Or press Windows key + R, type compmgmt.msc and press Enter."
-        },
-        {
-          "@type": "HowToStep",
-          "position": 3,
-          "name": "Expand Shared Folders",
-          "text": "In the left-hand pane, expand System Tools, then expand Shared Folders, then click Open Files."
-        },
-        {
-          "@type": "HowToStep",
-          "position": 4,
-          "name": "Find the file and the user",
-          "text": "Look down the Open File column for your document. The Accessed By column shows the Windows account that currently has it open."
-        },
-        {
-          "@type": "HowToStep",
-          "position": 5,
-          "name": "Check how it is open",
-          "text": "The Number of Locks and Open Mode columns tell you whether the file is open Read only or Write, so you know whether the person is genuinely editing it."
-        },
-        {
-          "@type": "HowToStep",
-          "position": 6,
-          "name": "Close it only if you must",
-          "text": "If the person is unreachable and you have to free the file, right-click the entry and choose Close Open File. Treat this as a last resort, as any unsaved changes they made are lost and force-closing a live database file can corrupt it."
-        }
-      ]
+      "@type": "Service",
+      "@id": "https://365techies.co.uk/two-onedrive-accounts-personal-and-work/#service",
+      "name": "OneDrive Account Support",
+      "description": "A personal OneDrive and a work OneDrive on one PC, and files keep landing in the wrong one. Tell them apart, move files safely, and set which owns what.",
+      "serviceType": "OneDrive Account Support",
+      "areaServed": {
+        "@type": "AdministrativeArea",
+        "name": "Dorset, UK"
+      },
+      "provider": {
+        "@id": "https://365techies.co.uk/#business"
+      },
+      "url": "https://365techies.co.uk/two-onedrive-accounts-personal-and-work/"
     },
     {
       "@type": "FAQPage",
-      "@id": "https://365techies.co.uk/who-has-a-file-open-on-shared-drive/#faq",
+      "@id": "https://365techies.co.uk/two-onedrive-accounts-personal-and-work/#faq",
       "mainEntity": [
         {
           "@type": "Question",
-          "name": "Where exactly do I look to see who has a file open?",
+          "name": "Can I merge the two OneDrives into one?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "<p>On the computer that shares the folder, open <strong>Computer Management</strong>, then expand <strong>System Tools</strong> and <strong>Shared Folders</strong> and click <strong>Open Files</strong>. The <strong>Accessed By</strong> column names the Windows account holding each file. You must do this from the host machine, with administrator rights &mdash; you can&rsquo;t see the list from your own PC mapped to the drive.</p>"
+            "text": "No &mdash; they are separate services from separate accounts and cannot be joined. What you can do is move the files between them in File Explorer until each holds what it should, then set the defaults so new files go to the right place. That is what this page walks through."
           }
         },
         {
           "@type": "Question",
-          "name": "Can I check this from my own computer?",
+          "name": "Which OneDrive is backing up my Desktop?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "<p>Not usually. The <strong>Open Files</strong> list lives on the machine that actually shares the folder, so you need to be sat at that PC or remoted into it with admin rights. If your &lsquo;server&rsquo; is a desktop under a colleague&rsquo;s desk, that&rsquo;s where you look. There&rsquo;s no reliable built-in way to see the full lock list from a client PC across the network.</p>"
+            "text": "Only one can. Click each cloud icon by the clock, open its settings, and look under Sync and backup, Manage backup: the account with the Desktop, Documents and Pictures switches on is the one that owns them. Everything saved to the Desktop goes there, whichever account you meant."
           }
         },
         {
           "@type": "Question",
-          "name": "The message just says &lsquo;another user&rsquo; &mdash; how do I get the name?",
+          "name": "My phone photos have gone into the work OneDrive",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "<p>Office only shows a name if that person filled one into <strong>File, Options, General</strong>. If it&rsquo;s blank, or everyone shares one login, you&rsquo;ll always see &lsquo;another user&rsquo;. Ignore the pop-up and check <strong>Open Files</strong> on the host instead &mdash; it shows the real Windows account, which is far more reliable than whatever name Excel or Word has on record.</p>"
+            "text": "Then the OneDrive app on the phone is signed in to the work account, or its camera upload is set to it. In the app, check which account is active and where camera upload points, and switch it to the personal one. The photos already uploaded can be moved in File Explorer on the PC."
           }
         },
         {
           "@type": "Question",
-          "name": "Is it safe to delete the ~$ lock file?",
+          "name": "If I leave my job, do I lose the files in the work OneDrive?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "<p>Yes &mdash; but only after you&rsquo;ve confirmed on the host that nobody genuinely has the file open. The hidden ~$ file (for example <strong>~$Budget.xlsx</strong>) holds no data, so deleting a <em>stale</em> one just clears the phantom lock and you lose nothing. Deleting it while someone really is editing can cause conflicts, and it won&rsquo;t recover work lost in a crash.</p>"
+            "text": "The work OneDrive belongs to the employer and is closed when your account is. Anything personal in it should be moved to your personal OneDrive before you go, and anything that is the business&rsquo;s should stay. If in doubt about a file, ask; it is easier before the account closes than after."
           }
         },
         {
           "@type": "Question",
-          "name": "What happens if I force-close someone&rsquo;s open file?",
+          "name": "Can I have both on one PC at all?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "<p>Any changes they hadn&rsquo;t saved are lost the instant you close the lock. For ordinary documents that&rsquo;s annoying; for a live database like Sage or QuickBooks it can corrupt the file. Only force-close as a genuine last resort, ideally after checking nobody is mid-edit. The safer route is always to get the person to close the file properly first.</p>"
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Why do we get &lsquo;file in use&rsquo; errors almost every day?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "<p>Usually because your folders are shared from an ordinary desktop that sleeps, reboots for updates or gets switched off &mdash; each time, open locks are stranded. It&rsquo;s the tell-tale sign of a <a href=\"/desktop-pc-used-as-office-server/\">desktop being used as an office server</a>. A tidy-up, or a move to a proper server or cloud, usually stops it for good. We can advise on which is right for you.</p>"
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Can you just sort this out for us?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "<p>Happily. We&rsquo;ll connect remotely &mdash; usually the same day &mdash; find who&rsquo;s really holding the file, clear stranded locks safely and check why it keeps happening. We&rsquo;re a family-run Bournemouth firm offering <a href=\"/small-business-it-support/\">small-business IT support</a> with no-fix-no-fee, so if we can&rsquo;t help there&rsquo;s nothing to pay. Call <strong>01202 775566</strong> or text <strong>07520 615332</strong>.</p>"
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Does moving to OneDrive or SharePoint fix file-locking?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "<p>It changes the game: OneDrive and SharePoint allow real-time co-authoring, so two people can edit the same Office file at once instead of one locking the other out. It&rsquo;s not a magic fix for every setup, and it needs planning to move your files across without disruption. As Windows and Microsoft 365 specialists we can talk you through whether it suits how your team actually works.</p>"
+            "text": "Yes: one personal account and one or more work accounts can run side by side, each with its own folder and icon. What you cannot have is two personal accounts at once, or both accounts owning the Desktop and Documents folders."
           }
         }
       ]
@@ -799,65 +753,58 @@
   <main id="main">
     <section class="page-hero" aria-label="Introduction">
       <div class="page-hero__inner">
-        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">Who has a file open?</span></nav>
-        <p class="eyebrow mono">// SHARED DRIVE FILE LOCKS</p>
-        <h1>How to see <em class="grad grad--cyan">who has it open</em> on a shared network drive</h1>
-        <p class="lede">&lsquo;The file is in use by another user&rsquo; and nobody will admit it&rsquo;s them? Here&rsquo;s how to see exactly who has a file open on a shared network drive, clear a stale lock safely, and stop it happening again. Rated 4.9 on Google.</p>
+        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <a href="/onedrive-problems/">OneDrive Problems</a> <span>/</span> <span aria-current="page">Two OneDrive Accounts</span></nav>
+        <p class="eyebrow mono">// ONEDRIVE SUPPORT</p>
+        <h1>Two OneDrive accounts on one PC, and files keep going to the wrong one</h1>
+        <p class="lede">There is a personal OneDrive and a work one on the same computer, two cloud icons by the clock, two folders in File Explorer with nearly the same name, and the documents keep ending up in whichever one you did not mean. Holiday photos in the company&rsquo;s cloud; the quarterly figures in your personal one. It is not carelessness &mdash; Office and Windows make the choice for you, quietly, based on rules nobody explained. Here is how to tell the two apart, how to move files between them without losing anything, and how to make each one own what it should. Rated 4.9 on Google.</p>
         <div class="page-hero__cta">
-          <a href="tel:+441202775566" class="button primary button--lg">Call 01202 775566</a>
-          <a href="/small-business-it-support/" class="button secondary button--lg">Business IT support</a>
+          <a href="/contact/" class="button primary button--lg">Get it looked at</a>
+          <a href="tel:+441202775566" class="button secondary button--lg">Call 01202 775566</a>
         </div>
-        <ul class="page-hero__chips mono"><li>&#9679; Same-day remote help</li><li>&#9679; No fix, no fee</li><li>&#9679; Family-run since 1995</li></ul>
+        <ul class="page-hero__chips mono"><li>&#9679; No fix, no fee</li><li>&#9679; Rated 4.9 on Google</li><li>&#9679; Trading since 1995</li></ul>
       </div>
     </section>
-    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; QUICK ANSWER</a><a href="#s2">02 &mdash; OPEN FILES, STEP BY STEP</a><a href="#s3">03 &mdash; WHAT THE MESSAGE MEANS</a><a href="#s4">04 &mdash; THE HIDDEN ~$ LOCK FILE</a><a href="#s5">05 &mdash; CLEAR A STUCK LOCK SAFELY</a><a href="#s6">06 &mdash; WHY IT KEEPS HAPPENING</a></nav>
-    <section id="s1" class="section" aria-label="See who has the file open in about 30 seconds">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; TWO CLOUDS</a><a href="#s2">02 &mdash; WHY FILES GO ASTRAY</a><a href="#s3">03 &mdash; MOVING FILES SAFELY</a><a href="#s4">04 &mdash; SET WHO OWNS WHAT</a><a href="#s5">05 &mdash; LEAVING ONE BEHIND</a></nav>
+    <section id="s1" class="section" aria-label="Two separate services that happen to share a name">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/01 &mdash; QUICK ANSWER</p>
-        <h2 class="section-title" data-title>See who has the file open in about 30 seconds<span class="title-underline"></span></h2>
-<p>To see who has a file open on a shared network drive, sit at the computer that actually shares the folder and open <strong>Computer Management</strong>. Under <strong>System Tools</strong>, expand <strong>Shared Folders</strong> and click <strong>Open Files</strong> &mdash; the list shows every file currently open across your network and the Windows username holding each one, so whoever triggered &lsquo;file in use by another user&rsquo; is right there in the <strong>Accessed By</strong> column.</p><p>The catch most guides skip: this only works from the <strong>host</strong> &mdash; the PC or server that shares the folder out. You can&rsquo;t see the list from your own machine mapped to the drive, and you&rsquo;ll need administrator rights on the host to read it. If your &lsquo;server&rsquo; is really just an ordinary desktop under someone&rsquo;s desk, that&rsquo;s where you go (or where you remote in). We cover that setup, and its wobbles, in our guide to a <a href="/desktop-pc-used-as-office-server/">desktop PC used as an office server</a>. The full click-by-click steps are below.</p>
+        <p class="eyebrow mono">/01 &mdash; TWO CLOUDS</p>
+        <h2 class="section-title" data-title>Two separate services that happen to share a name<span class="title-underline"></span></h2>
+<p>The personal OneDrive comes with a Microsoft account &mdash; the one used for Windows itself, Xbox, or an outlook.com address. The work one comes with Microsoft 365 through an employer or your own business. They share a name, an icon and a look, and nothing else: different servers, different logins, different owners. In File Explorer the personal one is called simply <em>OneDrive</em>, or <em>OneDrive - Personal</em>; the work one carries the organisation&rsquo;s name, <em>OneDrive - Company Name</em>. By the clock, two cloud icons: hover over each and it says which is which.</p><p>The difference that matters most is ownership. The work OneDrive belongs to the business. Its administrators can see what is in it, and when you leave, it is theirs to close &mdash; the files in it go with the account. The personal one is yours, with the free allowance Microsoft gives it, which is small. Keeping personal things out of the work one and work things out of the personal one is not tidiness; it is knowing who can reach what, and what survives a change of job.</p>
       </div>
     </section>
-    <section id="s2" class="section section--alt" aria-label="Using Computer Management &rsaquo; Open Files">
+    <section id="s2" class="section section--alt" aria-label="The three rules that pick a OneDrive for you">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/02 &mdash; OPEN FILES, STEP BY STEP</p>
-        <h2 class="section-title" data-title>Using Computer Management &rsaquo; Open Files<span class="title-underline"></span></h2>
-<p>Here&rsquo;s the reliable way to check, on the host PC that shares the folder:</p><ul><li>Right-click the <strong>Start</strong> button and choose <strong>Computer Management</strong> (or press <strong>Windows + R</strong>, type <strong>compmgmt.msc</strong> and press Enter).</li><li>In the left pane, expand <strong>System Tools</strong>, then <strong>Shared Folders</strong>, then click <strong>Open Files</strong>.</li><li>Read across the columns: <strong>Open File</strong> is the path, <strong>Accessed By</strong> is the Windows account that has it open, <strong>#Locks</strong> shows how many locks are held, and <strong>Open Mode</strong> tells you whether it&rsquo;s open Read or Write+Read.</li><li>Click <strong>Sessions</strong> (just above Open Files) to see which users, and which computers, are connected to the share right now.</li></ul><p>If you genuinely need to free the file and the person is unreachable, right-click the entry and choose <strong>Close Open File</strong>. Treat this as a last resort: any unsaved changes that person made are lost the moment you do it, and force-closing a live database file (Sage or QuickBooks, say) can corrupt it. You&rsquo;ll need administrator rights on the host both to see the list and to close anything on it.</p>
+        <p class="eyebrow mono">/02 &mdash; WHY FILES GO ASTRAY</p>
+        <h2 class="section-title" data-title>The three rules that pick a OneDrive for you<span class="title-underline"></span></h2>
+<ul><li><strong>Office saves to whichever account it is signed in to.</strong> Word and Excel are signed in to one Microsoft account at a time &mdash; the name at the top-right &mdash; and their default save location follows it. Signed in as the personal account, every new document offers the personal OneDrive first. Many people never look at the location line and press Save.</li><li><strong>Only one OneDrive can own the Desktop.</strong> OneDrive can take over the Desktop, Documents and Pictures folders so they live in the cloud. Only one of the two accounts can do that on a given PC. Whichever claimed them &mdash; often the personal one, because it was set up first when Windows was installed &mdash; receives everything ever saved to the Desktop or Documents, work included.</li><li><strong>Apps have their own ideas.</strong> The phone&rsquo;s camera upload goes to the personal OneDrive. Files shared in Teams go to the work one. A scanner app, a screenshot tool, a download folder that was moved years ago &mdash; each has a destination baked in.</li></ul><p>So a file is rarely put in the wrong OneDrive by a person. It is put there by a default, and the fix is to change the default rather than to keep moving files afterwards.</p>
       </div>
     </section>
-    <section id="s3" class="section" aria-label="Why Excel just says &lsquo;another user&rsquo;">
+    <section id="s3" class="section" aria-label="Getting things into the right OneDrive without losing them">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/03 &mdash; WHAT THE MESSAGE MEANS</p>
-        <h2 class="section-title" data-title>Why Excel just says &lsquo;another user&rsquo;<span class="title-underline"></span></h2>
-<p>When Excel or Word says a file is &lsquo;locked for editing&rsquo;, it sometimes names the culprit &mdash; &lsquo;locked for editing by John Smith&rsquo; &mdash; and sometimes just shrugs with &lsquo;another user&rsquo;. That isn&rsquo;t Windows being coy. Office only shows a name if that person once typed one into <strong>File, Options, General, User name</strong>. On many small-office PCs that box was never filled in, or everyone signs in as the same generic account, so you get the unhelpful &lsquo;another user&rsquo; every time.</p><p>That&rsquo;s exactly why the <strong>Open Files</strong> list on the host beats the pop-up: it shows the real <strong>Windows account</strong> holding the file, not whatever name Office happens to have on record. If two people swear blind they don&rsquo;t have it open and the message still nags, don&rsquo;t trust the message &mdash; go to the host and read the truth from Open Files. More often than not, the &lsquo;phantom&rsquo; user is a session someone left open on a machine they walked away from, or a laptop that dropped off the wifi mid-save.</p>
+        <p class="eyebrow mono">/03 &mdash; MOVING FILES SAFELY</p>
+        <h2 class="section-title" data-title>Getting things into the right OneDrive without losing them<span class="title-underline"></span></h2>
+<p>Moving between the two is done in File Explorer, and it is safe if you do it the boring way.</p><ul><li><strong>Cut and paste, or drag, between the two OneDrive folders in File Explorer.</strong> Not from a web browser, and not by downloading and re-uploading. Explorer knows both folders are OneDrive and handles the change properly.</li><li><strong>Let both finish.</strong> After a move, the source OneDrive has to record the removal and the destination has to upload the arrival. Watch both icons return to a plain cloud before shutting the PC down. A large move on a slow connection can take an hour; that is normal.</li><li><strong>Expect sharing to break.</strong> A file that was shared from the personal OneDrive by link is a different file once it lives in the work one. Anyone who had the old link needs a new one.</li><li><strong>Expect version history to reset.</strong> The moved file starts fresh; the old versions stay with the old location until it is emptied. If a file has a history you care about, keep it where it is or accept the loss knowingly.</li><li><strong>Never move by deleting.</strong> Deleting from one and re-creating in the other loses history, sharing and, if anything goes wrong halfway, the file.</li></ul>
       </div>
     </section>
-    <section id="s4" class="section section--alt" aria-label="Phantom locks and the hidden ~$ file">
+    <section id="s4" class="section section--alt" aria-label="Making each OneDrive own what it should, so it stops happening">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/04 &mdash; THE HIDDEN ~$ LOCK FILE</p>
-        <h2 class="section-title" data-title>Phantom locks and the hidden ~$ file<span class="title-underline"></span></h2>
-<p>Alongside every open Office document sits a tiny hidden companion &mdash; the <strong>owner file</strong>. Open <strong>Budget.xlsx</strong> and Excel quietly creates <strong>~$Budget.xlsx</strong> in the same folder; it&rsquo;s the flag that tells everyone else &lsquo;someone has this&rsquo;. Word does the same, though its owner file drops the first couple of letters of the name. Close the document properly and Office deletes the owner file automatically.</p><p>The trouble starts when Office <em>doesn&rsquo;t</em> close properly &mdash; a crash, a frozen laptop, or a network drop mid-save. The ~$ file is orphaned, and the document stays &lsquo;locked&rsquo; even though nobody is actually in it. That&rsquo;s a <strong>phantom lock</strong>.</p><p>To find it, open the folder on the drive, click <strong>View</strong>, then <strong>Show</strong>, then tick <strong>Hidden items</strong>. You&rsquo;ll see the ~$ file sitting next to your document. Once you&rsquo;ve <em>confirmed on the host that nobody genuinely has the file open</em> (check Open Files first), it&rsquo;s safe to delete the stale ~$ file &mdash; it holds no data of its own, so you lose nothing. Deleting it frees the lock; it won&rsquo;t, however, recover any work that was lost in the crash.</p>
+        <p class="eyebrow mono">/04 &mdash; SET WHO OWNS WHAT</p>
+        <h2 class="section-title" data-title>Making each OneDrive own what it should, so it stops happening<span class="title-underline"></span></h2>
+<p>Decide first, then set it. For most people the sensible split is: personal OneDrive for photos, family and anything you would want to keep after leaving a job; work OneDrive for work, and nothing else.</p><ul><li><strong>Give the Desktop and Documents to the right account.</strong> In the OneDrive settings of the account that should own them, under Sync and backup, <em>Manage backup</em>, switch them on. If the other account already holds them, switch them off there first; OneDrive will not let both claim them. For a work PC that is usually the work account; for a family PC that does some work, it is a genuine choice.</li><li><strong>Sign Office in to the account you work in.</strong> The name at the top-right of Word. If you use both, the account switcher there is the habit to build, and the location line on the Save screen is the thing to glance at.</li><li><strong>Set where Office saves by default.</strong> In Word or Excel, under File, Options, Save, you can choose to save to this PC by default and pick the folder, which takes the guesswork out entirely.</li><li><strong>On a PC that two people share</strong>, or that mixes a household and a business, separate Windows user accounts is the clean answer: each person&rsquo;s OneDrives, each person&rsquo;s defaults, no crossing.</li></ul>
       </div>
     </section>
-    <section id="s5" class="section" aria-label="Closing a stuck session without breaking anything">
+    <section id="s5" class="section" aria-label="Unlinking a OneDrive without losing the files in it">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/05 &mdash; CLEAR A STUCK LOCK SAFELY</p>
-        <h2 class="section-title" data-title>Closing a stuck session without breaking anything<span class="title-underline"></span></h2>
-<p>Prefer the keyboard? From the host PC you can list and clear locks without opening Computer Management. Open <strong>Command Prompt as administrator</strong> and type <strong>net file</strong> &mdash; you&rsquo;ll get a numbered list of every open file with the user holding it. Note the ID, then run <strong>net file [id] /close</strong> to release that one lock.</p><p>PowerShell gives you more detail. <strong>Get-SmbOpenFile | Select ClientUserName, ClientComputerName, Path</strong> lists open files with the exact account <em>and</em> the computer they&rsquo;re on &mdash; handy for pinning down which machine stranded the lock. <strong>Close-SmbOpenFile</strong> then closes it. Both need an elevated window, and both must be run on the machine that shares the folder.</p><p>Whichever route you take, the same caution applies: closing a lock from underneath a live document throws away that person&rsquo;s unsaved changes, and force-closing an open accounts or database file risks corrupting it. If the &lsquo;stuck&rsquo; file is a shared Sage company or another multi-user database, stop and read our note on <a href="/sage-50-multi-user-cannot-connect/">Sage 50 multi-user connection problems</a> before you pull the plug &mdash; the right fix is usually to get everyone out cleanly, not to sever the lock.</p>
-      </div>
-    </section>
-    <section id="s6" class="section section--alt" aria-label="Why this keeps happening &mdash; and when to call us">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/06 &mdash; WHY IT KEEPS HAPPENING</p>
-        <h2 class="section-title" data-title>Why this keeps happening &mdash; and when to call us<span class="title-underline"></span></h2>
-<p>If you&rsquo;re hunting down locked files every few days, the deeper problem usually isn&rsquo;t the file &mdash; it&rsquo;s the setup. Most small offices share their folders from one ordinary desktop that everyone maps a drive to. The moment that machine sleeps, reboots for an update, drops off the wifi, or simply gets switched off at the wall on a Friday, every open lock is stranded and Monday starts with &lsquo;file in use&rsquo; errors. It&rsquo;s the classic sign of a <a href="/desktop-pc-used-as-office-server/">desktop PC being used as an office server</a> that has quietly outgrown the job.</p><p>Windows updates can make it worse: the Windows 11 24H2 update broke shared-folder access for a lot of small networks, which we walk through in our guide to <a href="/shared-folders-not-working-after-windows-11-24h2-update/">shared folders not working after 24H2</a>. If drives also keep vanishing, our note on a <a href="/mapped-network-drive-keeps-disconnecting/">mapped network drive that keeps disconnecting</a> is worth a read.</p><p><strong>When to call us:</strong> if this is eating your team&rsquo;s time, we&rsquo;ll log in remotely &mdash; usually the same day &mdash; find who&rsquo;s really holding the file, clear stranded locks safely, and tell you honestly whether your sharing setup just needs tidying or a proper move to a server or cloud. We&rsquo;re a family-run Bournemouth firm offering <a href="/small-business-it-support/">small-business IT support</a> with no-fix-no-fee. Call <strong>01202 775566</strong> and we&rsquo;ll take a look.</p>
+        <p class="eyebrow mono">/05 &mdash; LEAVING ONE BEHIND</p>
+        <h2 class="section-title" data-title>Unlinking a OneDrive without losing the files in it<span class="title-underline"></span></h2>
+<p>When you leave a job, or simply stop using one of the two, unlink it rather than leaving a dead account on the PC. But do one thing first, because Files On-Demand makes this the step where people lose things.</p><p>Many of the files in a OneDrive folder are placeholders &mdash; the blue-cloud icon &mdash; that live in the cloud and download only when opened. Unlink the account and those placeholders vanish with it; only files actually stored on the PC remain. So before unlinking, right-click the OneDrive folder and choose <em>Always keep on this device</em>, wait for every icon to turn to a green tick, and only then unlink, from the account&rsquo;s settings under Account, <em>Unlink this PC</em>. The folder and its files stay on the disk as ordinary files.</p><p>For a work account you are leaving, remember the files belong to the employer: take what is yours to take, and ask if unsure. For a personal account being retired, check its size against the free allowance first &mdash; if it is over, Microsoft may have frozen it, and files in a frozen account should be downloaded before anything else is changed.</p>
       </div>
     </section>
     <section class="section" aria-label="Related">
       <div class="wrap">
         <div class="related" data-reveal>
           <p class="related__head">// KEEP GOING</p>
-          <div class="related__links"><a href="/desktop-pc-used-as-office-server/">desktop PC used as an office server</a><a href="/shared-folders-not-working-after-windows-11-24h2-update/">shared folders not working after Windows 11 24H2</a><a href="/mapped-network-drive-keeps-disconnecting/">mapped network drive keeps disconnecting</a><a href="/restrict-staff-access-to-shared-folders-windows-11/">restrict staff access to shared folders</a><a href="/sage-50-multi-user-cannot-connect/">Sage 50 multi-user cannot connect</a><a href="/small-business-it-support/">small-business IT support</a><a href="/onedrive-file-locked-by-another-user/">OneDrive file locked by another user</a></div>
+          <div class="related__links"><a href="/onedrive-moved-my-desktop-and-documents/">OneDrive moved my Desktop and Documents</a><a href="/stop-using-onedrive-without-losing-files/">Stop using OneDrive without losing files</a><a href="/files-missing-from-onedrive/">Files missing from OneDrive</a><a href="/onedrive-not-syncing-between-two-computers/">OneDrive not syncing between two computers</a><a href="/teams-keeps-opening-wrong-account/">Teams keeps opening the wrong account</a></div>
         </div>
       </div>
     </section>
@@ -868,47 +815,35 @@
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
-          <summary>Where exactly do I look to see who has a file open?<span class="faq__icon" aria-hidden="true"></span></summary>
-          <div class="faq__ans"><p><p>On the computer that shares the folder, open <strong>Computer Management</strong>, then expand <strong>System Tools</strong> and <strong>Shared Folders</strong> and click <strong>Open Files</strong>. The <strong>Accessed By</strong> column names the Windows account holding each file. You must do this from the host machine, with administrator rights &mdash; you can&rsquo;t see the list from your own PC mapped to the drive.</p></p></div>
+          <summary>Can I merge the two OneDrives into one?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>No &mdash; they are separate services from separate accounts and cannot be joined. What you can do is move the files between them in File Explorer until each holds what it should, then set the defaults so new files go to the right place. That is what this page walks through.</p></div>
         </details>
         <details class="faq" data-reveal>
-          <summary>Can I check this from my own computer?<span class="faq__icon" aria-hidden="true"></span></summary>
-          <div class="faq__ans"><p><p>Not usually. The <strong>Open Files</strong> list lives on the machine that actually shares the folder, so you need to be sat at that PC or remoted into it with admin rights. If your &lsquo;server&rsquo; is a desktop under a colleague&rsquo;s desk, that&rsquo;s where you look. There&rsquo;s no reliable built-in way to see the full lock list from a client PC across the network.</p></p></div>
+          <summary>Which OneDrive is backing up my Desktop?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Only one can. Click each cloud icon by the clock, open its settings, and look under Sync and backup, Manage backup: the account with the Desktop, Documents and Pictures switches on is the one that owns them. Everything saved to the Desktop goes there, whichever account you meant.</p></div>
         </details>
         <details class="faq" data-reveal>
-          <summary>The message just says &lsquo;another user&rsquo; &mdash; how do I get the name?<span class="faq__icon" aria-hidden="true"></span></summary>
-          <div class="faq__ans"><p><p>Office only shows a name if that person filled one into <strong>File, Options, General</strong>. If it&rsquo;s blank, or everyone shares one login, you&rsquo;ll always see &lsquo;another user&rsquo;. Ignore the pop-up and check <strong>Open Files</strong> on the host instead &mdash; it shows the real Windows account, which is far more reliable than whatever name Excel or Word has on record.</p></p></div>
+          <summary>My phone photos have gone into the work OneDrive<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Then the OneDrive app on the phone is signed in to the work account, or its camera upload is set to it. In the app, check which account is active and where camera upload points, and switch it to the personal one. The photos already uploaded can be moved in File Explorer on the PC.</p></div>
         </details>
         <details class="faq" data-reveal>
-          <summary>Is it safe to delete the ~$ lock file?<span class="faq__icon" aria-hidden="true"></span></summary>
-          <div class="faq__ans"><p><p>Yes &mdash; but only after you&rsquo;ve confirmed on the host that nobody genuinely has the file open. The hidden ~$ file (for example <strong>~$Budget.xlsx</strong>) holds no data, so deleting a <em>stale</em> one just clears the phantom lock and you lose nothing. Deleting it while someone really is editing can cause conflicts, and it won&rsquo;t recover work lost in a crash.</p></p></div>
+          <summary>If I leave my job, do I lose the files in the work OneDrive?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>The work OneDrive belongs to the employer and is closed when your account is. Anything personal in it should be moved to your personal OneDrive before you go, and anything that is the business&rsquo;s should stay. If in doubt about a file, ask; it is easier before the account closes than after.</p></div>
         </details>
         <details class="faq" data-reveal>
-          <summary>What happens if I force-close someone&rsquo;s open file?<span class="faq__icon" aria-hidden="true"></span></summary>
-          <div class="faq__ans"><p><p>Any changes they hadn&rsquo;t saved are lost the instant you close the lock. For ordinary documents that&rsquo;s annoying; for a live database like Sage or QuickBooks it can corrupt the file. Only force-close as a genuine last resort, ideally after checking nobody is mid-edit. The safer route is always to get the person to close the file properly first.</p></p></div>
-        </details>
-        <details class="faq" data-reveal>
-          <summary>Why do we get &lsquo;file in use&rsquo; errors almost every day?<span class="faq__icon" aria-hidden="true"></span></summary>
-          <div class="faq__ans"><p><p>Usually because your folders are shared from an ordinary desktop that sleeps, reboots for updates or gets switched off &mdash; each time, open locks are stranded. It&rsquo;s the tell-tale sign of a <a href="/desktop-pc-used-as-office-server/">desktop being used as an office server</a>. A tidy-up, or a move to a proper server or cloud, usually stops it for good. We can advise on which is right for you.</p></p></div>
-        </details>
-        <details class="faq" data-reveal>
-          <summary>Can you just sort this out for us?<span class="faq__icon" aria-hidden="true"></span></summary>
-          <div class="faq__ans"><p><p>Happily. We&rsquo;ll connect remotely &mdash; usually the same day &mdash; find who&rsquo;s really holding the file, clear stranded locks safely and check why it keeps happening. We&rsquo;re a family-run Bournemouth firm offering <a href="/small-business-it-support/">small-business IT support</a> with no-fix-no-fee, so if we can&rsquo;t help there&rsquo;s nothing to pay. Call <strong>01202 775566</strong> or text <strong>07520 615332</strong>.</p></p></div>
-        </details>
-        <details class="faq" data-reveal>
-          <summary>Does moving to OneDrive or SharePoint fix file-locking?<span class="faq__icon" aria-hidden="true"></span></summary>
-          <div class="faq__ans"><p><p>It changes the game: OneDrive and SharePoint allow real-time co-authoring, so two people can edit the same Office file at once instead of one locking the other out. It&rsquo;s not a magic fix for every setup, and it needs planning to move your files across without disruption. As Windows and Microsoft 365 specialists we can talk you through whether it suits how your team actually works.</p></p></div>
+          <summary>Can I have both on one PC at all?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Yes: one personal account and one or more work accounts can run side by side, each with its own folder and icon. What you cannot have is two personal accounts at once, or both accounts owning the Desktop and Documents folders.</p></div>
         </details>
         </div>
       </div>
     </section>
     <section class="cta-band" aria-label="Get started">
       <div class="cta-band__inner">
-        <h2 data-title>Stuck on &lsquo;file in use by another user&rsquo;?<span class="title-underline title-underline--center"></span></h2>
-        <p class="lede lede--center" data-reveal>We&rsquo;ll find who&rsquo;s really holding the file and clear stranded locks safely &mdash; usually the same day, remotely, with no-fix-no-fee. Call 01202 775566 or text 07520 615332.</p>
+        <h2 data-title>Two OneDrives still tangled?<span class="title-underline title-underline--center"></span></h2>
+        <p class="lede lede--center" data-reveal>We set OneDrive up properly for homes and businesses across Bournemouth, Poole and Dorset &mdash; usually remotely, while you watch. Call 01202 775566.</p>
         <div class="hero-buttons hero-buttons--center" data-reveal>
-          <a href="tel:+441202775566" class="button primary button--lg">Call 01202 775566</a>
-          <a href="/small-business-it-support/" class="button secondary button--lg">Business IT support</a>
+          <a href="/contact/" class="button primary button--lg">Get it looked at</a>
+          <a href="tel:+441202775566" class="button secondary button--lg">Call 01202 775566</a>
         </div>
         <p class="cta__contact mono" data-reveal>01202 775566 &middot; help@365techies.co.uk &middot; MON&ndash;FRI 9AM&ndash;5PM</p>
       </div>

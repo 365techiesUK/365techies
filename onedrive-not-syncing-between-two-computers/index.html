@@ -31,9 +31,9 @@
       window.addEventListener('load', function () { setTimeout(loadGtagLib, 30000); });
     })();
   </script>
-  <title>See Who Has a File Open on a Shared Drive | 365 Techies</title>
-  <meta name="description" content="Blocked by a locked file on your shared drive? Here is how to see who has a file open on a shared network drive in Windows and unlock it safely." />
-  <link rel="canonical" href="https://365techies.co.uk/who-has-a-file-open-on-shared-drive/" />
+  <title>OneDrive Not Syncing Between Two Computers | 365 Techies</title>
+  <meta name="description" content="The same OneDrive on a desktop and a laptop, and a file saved on one never appears on the other. Which PC is at fault, how to tell fast, and the fix." />
+  <link rel="canonical" href="https://365techies.co.uk/onedrive-not-syncing-between-two-computers/" />
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
   <meta name="author" content="365 Techies Limited" />
   <meta name="geo.region" content="GB-BCP" />
@@ -45,15 +45,15 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="365 Techies" />
   <meta property="og:locale" content="en_GB" />
-  <meta property="og:url" content="https://365techies.co.uk/who-has-a-file-open-on-shared-drive/" />
-  <meta property="og:title" content="How to See Who Has a File Open on a Shared Network Drive" />
-  <meta property="og:description" content="Blocked by a locked file on your shared drive? Here is how to see who has a file open on a shared network drive in Windows and unlock it safely." />
+  <meta property="og:url" content="https://365techies.co.uk/onedrive-not-syncing-between-two-computers/" />
+  <meta property="og:title" content="OneDrive Not Syncing Between Two Computers on the Same Account" />
+  <meta property="og:description" content="The same OneDrive on a desktop and a laptop, and a file saved on one never appears on the other. Which PC is at fault, how to tell fast, and the fix." />
   <meta property="og:image" content="https://365techies.co.uk/og-image.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="How to See Who Has a File Open on a Shared Network Drive" />
-  <meta name="twitter:description" content="Blocked by a locked file on your shared drive? Here is how to see who has a file open on a shared network drive in Windows and unlock it safely." />
+  <meta name="twitter:title" content="OneDrive Not Syncing Between Two Computers on the Same Account" />
+  <meta name="twitter:description" content="The same OneDrive on a desktop and a laptop, and a file saved on one never appears on the other. Which PC is at fault, how to tell fast, and the fix." />
   <meta name="twitter:image" content="https://365techies.co.uk/og-image.jpg" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -249,7 +249,7 @@
     },
     {
       "@type": "BreadcrumbList",
-      "@id": "https://365techies.co.uk/who-has-a-file-open-on-shared-drive/#breadcrumb",
+      "@id": "https://365techies.co.uk/onedrive-not-syncing-between-two-computers/#breadcrumb",
       "itemListElement": [
         {
           "@type": "ListItem",
@@ -260,17 +260,23 @@
         {
           "@type": "ListItem",
           "position": 2,
-          "name": "Who has a file open?",
-          "item": "https://365techies.co.uk/who-has-a-file-open-on-shared-drive/"
+          "name": "OneDrive Problems",
+          "item": "https://365techies.co.uk/onedrive-problems/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "OneDrive Two Computers",
+          "item": "https://365techies.co.uk/onedrive-not-syncing-between-two-computers/"
         }
       ]
     },
     {
       "@type": "WebPage",
-      "@id": "https://365techies.co.uk/who-has-a-file-open-on-shared-drive/#webpage",
-      "url": "https://365techies.co.uk/who-has-a-file-open-on-shared-drive/",
-      "name": "Who has a file open?",
-      "description": "Blocked by a locked file on your shared drive? Here is how to see who has a file open on a shared network drive in Windows and unlock it safely.",
+      "@id": "https://365techies.co.uk/onedrive-not-syncing-between-two-computers/#webpage",
+      "url": "https://365techies.co.uk/onedrive-not-syncing-between-two-computers/",
+      "name": "OneDrive Two Computers",
+      "description": "The same OneDrive on a desktop and a laptop, and a file saved on one never appears on the other. Which PC is at fault, how to tell fast, and the fix.",
       "inLanguage": "en-GB",
       "isPartOf": {
         "@id": "https://365techies.co.uk/#website"
@@ -279,7 +285,7 @@
         "@id": "https://365techies.co.uk/#business"
       },
       "breadcrumb": {
-        "@id": "https://365techies.co.uk/who-has-a-file-open-on-shared-drive/#breadcrumb"
+        "@id": "https://365techies.co.uk/onedrive-not-syncing-between-two-computers/#breadcrumb"
       },
       "primaryImageOfPage": {
         "@type": "ImageObject",
@@ -288,114 +294,62 @@
       "dateModified": "2026-09-05"
     },
     {
-      "@type": "HowTo",
-      "@id": "https://365techies.co.uk/who-has-a-file-open-on-shared-drive/#howto",
-      "name": "See who has a file open on a shared network drive",
-      "step": [
-        {
-          "@type": "HowToStep",
-          "position": 1,
-          "name": "Go to the host PC",
-          "text": "Sit at (or remotely connect into) the computer that actually shares the folder out, not your own machine mapped to the drive. Only the host can show the list of open files, and you will need administrator rights on it."
-        },
-        {
-          "@type": "HowToStep",
-          "position": 2,
-          "name": "Open Computer Management",
-          "text": "Right-click the Start button and choose Computer Management. Or press Windows key + R, type compmgmt.msc and press Enter."
-        },
-        {
-          "@type": "HowToStep",
-          "position": 3,
-          "name": "Expand Shared Folders",
-          "text": "In the left-hand pane, expand System Tools, then expand Shared Folders, then click Open Files."
-        },
-        {
-          "@type": "HowToStep",
-          "position": 4,
-          "name": "Find the file and the user",
-          "text": "Look down the Open File column for your document. The Accessed By column shows the Windows account that currently has it open."
-        },
-        {
-          "@type": "HowToStep",
-          "position": 5,
-          "name": "Check how it is open",
-          "text": "The Number of Locks and Open Mode columns tell you whether the file is open Read only or Write, so you know whether the person is genuinely editing it."
-        },
-        {
-          "@type": "HowToStep",
-          "position": 6,
-          "name": "Close it only if you must",
-          "text": "If the person is unreachable and you have to free the file, right-click the entry and choose Close Open File. Treat this as a last resort, as any unsaved changes they made are lost and force-closing a live database file can corrupt it."
-        }
-      ]
+      "@type": "Service",
+      "@id": "https://365techies.co.uk/onedrive-not-syncing-between-two-computers/#service",
+      "name": "OneDrive Sync Support",
+      "description": "The same OneDrive on a desktop and a laptop, and a file saved on one never appears on the other. Which PC is at fault, how to tell fast, and the fix.",
+      "serviceType": "OneDrive Sync Support",
+      "areaServed": {
+        "@type": "AdministrativeArea",
+        "name": "Dorset, UK"
+      },
+      "provider": {
+        "@id": "https://365techies.co.uk/#business"
+      },
+      "url": "https://365techies.co.uk/onedrive-not-syncing-between-two-computers/"
     },
     {
       "@type": "FAQPage",
-      "@id": "https://365techies.co.uk/who-has-a-file-open-on-shared-drive/#faq",
+      "@id": "https://365techies.co.uk/onedrive-not-syncing-between-two-computers/#faq",
       "mainEntity": [
         {
           "@type": "Question",
-          "name": "Where exactly do I look to see who has a file open?",
+          "name": "Do both computers need to be on at the same time?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "<p>On the computer that shares the folder, open <strong>Computer Management</strong>, then expand <strong>System Tools</strong> and <strong>Shared Folders</strong> and click <strong>Open Files</strong>. The <strong>Accessed By</strong> column names the Windows account holding each file. You must do this from the host machine, with administrator rights &mdash; you can&rsquo;t see the list from your own PC mapped to the drive.</p>"
+            "text": "No. Each computer talks only to the cloud, never to the other. The desktop sends its changes up whenever it is on; the laptop fetches them down whenever it is on. They can be a week apart and still end up with the same files."
           }
         },
         {
           "@type": "Question",
-          "name": "Can I check this from my own computer?",
+          "name": "The file is in OneDrive in the browser but not on my laptop",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "<p>Not usually. The <strong>Open Files</strong> list lives on the machine that actually shares the folder, so you need to be sat at that PC or remoted into it with admin rights. If your &lsquo;server&rsquo; is a desktop under a colleague&rsquo;s desk, that&rsquo;s where you look. There&rsquo;s no reliable built-in way to see the full lock list from a client PC across the network.</p>"
+            "text": "Then the sender is fine and the laptop is the one to look at. Check it is signed in to the same OneDrive, that the folder is ticked under Choose folders, and whether the file is actually there as a blue-cloud placeholder waiting to be downloaded. If all three check out, sign out of OneDrive on the laptop and back in."
           }
         },
         {
           "@type": "Question",
-          "name": "The message just says &lsquo;another user&rsquo; &mdash; how do I get the name?",
+          "name": "The file has a blue cloud icon &mdash; is it synced or not?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "<p>Office only shows a name if that person filled one into <strong>File, Options, General</strong>. If it&rsquo;s blank, or everyone shares one login, you&rsquo;ll always see &lsquo;another user&rsquo;. Ignore the pop-up and check <strong>Open Files</strong> on the host instead &mdash; it shows the real Windows account, which is far more reliable than whatever name Excel or Word has on record.</p>"
+            "text": "It is synced. A blue cloud means the file lives in the cloud and will download the moment you open it; a green tick means it is also stored on this computer. Both are healthy. Right-click a folder and choose Always keep on this device if you want it downloaded in advance for use offline."
           }
         },
         {
           "@type": "Question",
-          "name": "Is it safe to delete the ~$ lock file?",
+          "name": "One computer has my Desktop in OneDrive and the other does not",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "<p>Yes &mdash; but only after you&rsquo;ve confirmed on the host that nobody genuinely has the file open. The hidden ~$ file (for example <strong>~$Budget.xlsx</strong>) holds no data, so deleting a <em>stale</em> one just clears the phantom lock and you lose nothing. Deleting it while someone really is editing can cause conflicts, and it won&rsquo;t recover work lost in a crash.</p>"
+            "text": "That is the Desktop and Documents backup switched on for one machine only. Under OneDrive&rsquo;s settings, Sync and backup, Manage backup, set it the same way on both. Until then, anything saved to the Desktop on the machine without it stays local and never reaches the other."
           }
         },
         {
           "@type": "Question",
-          "name": "What happens if I force-close someone&rsquo;s open file?",
+          "name": "How long should syncing take?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "<p>Any changes they hadn&rsquo;t saved are lost the instant you close the lock. For ordinary documents that&rsquo;s annoying; for a live database like Sage or QuickBooks it can corrupt the file. Only force-close as a genuine last resort, ideally after checking nobody is mid-edit. The safer route is always to get the person to close the file properly first.</p>"
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Why do we get &lsquo;file in use&rsquo; errors almost every day?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "<p>Usually because your folders are shared from an ordinary desktop that sleeps, reboots for updates or gets switched off &mdash; each time, open locks are stranded. It&rsquo;s the tell-tale sign of a <a href=\"/desktop-pc-used-as-office-server/\">desktop being used as an office server</a>. A tidy-up, or a move to a proper server or cloud, usually stops it for good. We can advise on which is right for you.</p>"
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Can you just sort this out for us?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "<p>Happily. We&rsquo;ll connect remotely &mdash; usually the same day &mdash; find who&rsquo;s really holding the file, clear stranded locks safely and check why it keeps happening. We&rsquo;re a family-run Bournemouth firm offering <a href=\"/small-business-it-support/\">small-business IT support</a> with no-fix-no-fee, so if we can&rsquo;t help there&rsquo;s nothing to pay. Call <strong>01202 775566</strong> or text <strong>07520 615332</strong>.</p>"
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Does moving to OneDrive or SharePoint fix file-locking?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "<p>It changes the game: OneDrive and SharePoint allow real-time co-authoring, so two people can edit the same Office file at once instead of one locking the other out. It&rsquo;s not a magic fix for every setup, and it needs planning to move your files across without disruption. As Windows and Microsoft 365 specialists we can talk you through whether it suits how your team actually works.</p>"
+            "text": "Seconds for a document, a few minutes for something large, and longer on a slow connection or when OneDrive is re-checking a big library after a reset. If a small file has not crossed in five minutes, something is wrong rather than slow, and the one-minute test at the top tells you on which side."
           }
         }
       ]
@@ -799,65 +753,70 @@
   <main id="main">
     <section class="page-hero" aria-label="Introduction">
       <div class="page-hero__inner">
-        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">Who has a file open?</span></nav>
-        <p class="eyebrow mono">// SHARED DRIVE FILE LOCKS</p>
-        <h1>How to see <em class="grad grad--cyan">who has it open</em> on a shared network drive</h1>
-        <p class="lede">&lsquo;The file is in use by another user&rsquo; and nobody will admit it&rsquo;s them? Here&rsquo;s how to see exactly who has a file open on a shared network drive, clear a stale lock safely, and stop it happening again. Rated 4.9 on Google.</p>
+        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <a href="/onedrive-problems/">OneDrive Problems</a> <span>/</span> <span aria-current="page">OneDrive Two Computers</span></nav>
+        <p class="eyebrow mono">// ONEDRIVE SUPPORT</p>
+        <h1>OneDrive not syncing between two computers on the same account</h1>
+        <p class="lede">You save a file on the desktop, walk to the laptop, and it is not there. Or it arrives an hour later. Or the Desktop folder on one machine is full of things the other has never seen. Both computers are signed in to the same OneDrive, so it feels like they should simply agree. The thing to understand is that they never talk to each other at all &mdash; each one talks only to the cloud &mdash; and that turns a baffling problem into a quick one, because it means exactly one of the two machines is not doing its half. Here is how to tell which in a minute. Rated 4.9 on Google.</p>
         <div class="page-hero__cta">
-          <a href="tel:+441202775566" class="button primary button--lg">Call 01202 775566</a>
-          <a href="/small-business-it-support/" class="button secondary button--lg">Business IT support</a>
+          <a href="/contact/" class="button primary button--lg">Get it looked at</a>
+          <a href="tel:+441202775566" class="button secondary button--lg">Call 01202 775566</a>
         </div>
-        <ul class="page-hero__chips mono"><li>&#9679; Same-day remote help</li><li>&#9679; No fix, no fee</li><li>&#9679; Family-run since 1995</li></ul>
+        <ul class="page-hero__chips mono"><li>&#9679; No fix, no fee</li><li>&#9679; Rated 4.9 on Google</li><li>&#9679; Trading since 1995</li></ul>
       </div>
     </section>
-    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; QUICK ANSWER</a><a href="#s2">02 &mdash; OPEN FILES, STEP BY STEP</a><a href="#s3">03 &mdash; WHAT THE MESSAGE MEANS</a><a href="#s4">04 &mdash; THE HIDDEN ~$ LOCK FILE</a><a href="#s5">05 &mdash; CLEAR A STUCK LOCK SAFELY</a><a href="#s6">06 &mdash; WHY IT KEEPS HAPPENING</a></nav>
-    <section id="s1" class="section" aria-label="See who has the file open in about 30 seconds">
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; THE ONE-MINUTE TEST</a><a href="#s2">02 &mdash; THE SENDER</a><a href="#s3">03 &mdash; THE RECEIVER</a><a href="#s4">04 &mdash; THE TRAPS</a><a href="#s5">05 &mdash; RESET AND PROVE IT</a></nav>
+    <section id="s1" class="section" aria-label="Look at the cloud first, and it tells you which computer is at fault">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/01 &mdash; QUICK ANSWER</p>
-        <h2 class="section-title" data-title>See who has the file open in about 30 seconds<span class="title-underline"></span></h2>
-<p>To see who has a file open on a shared network drive, sit at the computer that actually shares the folder and open <strong>Computer Management</strong>. Under <strong>System Tools</strong>, expand <strong>Shared Folders</strong> and click <strong>Open Files</strong> &mdash; the list shows every file currently open across your network and the Windows username holding each one, so whoever triggered &lsquo;file in use by another user&rsquo; is right there in the <strong>Accessed By</strong> column.</p><p>The catch most guides skip: this only works from the <strong>host</strong> &mdash; the PC or server that shares the folder out. You can&rsquo;t see the list from your own machine mapped to the drive, and you&rsquo;ll need administrator rights on the host to read it. If your &lsquo;server&rsquo; is really just an ordinary desktop under someone&rsquo;s desk, that&rsquo;s where you go (or where you remote in). We cover that setup, and its wobbles, in our guide to a <a href="/desktop-pc-used-as-office-server/">desktop PC used as an office server</a>. The full click-by-click steps are below.</p>
+        <p class="eyebrow mono">/01 &mdash; THE ONE-MINUTE TEST</p>
+        <h2 class="section-title" data-title>Look at the cloud first, and it tells you which computer is at fault<span class="title-underline"></span></h2>
+<p>Nothing goes from one PC to the other. The desktop sends its changes up to OneDrive; the laptop fetches them down. So when a file is missing, one of two legs has failed, and the cloud itself is the referee.</p><p>Open OneDrive in a web browser &mdash; the personal one at OneDrive&rsquo;s own site, or your work one through the Microsoft 365 portal &mdash; and look for the file.</p><ul><li><strong>It is there in the browser.</strong> Then the sending computer did its job. The problem is on the computer that is not receiving it: section 03.</li><li><strong>It is not there.</strong> Then it never left the computer it was saved on. The problem is on the sender: section 02.</li></ul><p>That is the whole diagnosis, and it is worth doing before touching a setting on either machine, because the two fixes are different and doing the wrong one wastes an hour. While you are in the browser, note the time the file was last modified there: it tells you how far behind the slow computer is.</p>
       </div>
     </section>
-    <section id="s2" class="section section--alt" aria-label="Using Computer Management &rsaquo; Open Files">
-      <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/02 &mdash; OPEN FILES, STEP BY STEP</p>
-        <h2 class="section-title" data-title>Using Computer Management &rsaquo; Open Files<span class="title-underline"></span></h2>
-<p>Here&rsquo;s the reliable way to check, on the host PC that shares the folder:</p><ul><li>Right-click the <strong>Start</strong> button and choose <strong>Computer Management</strong> (or press <strong>Windows + R</strong>, type <strong>compmgmt.msc</strong> and press Enter).</li><li>In the left pane, expand <strong>System Tools</strong>, then <strong>Shared Folders</strong>, then click <strong>Open Files</strong>.</li><li>Read across the columns: <strong>Open File</strong> is the path, <strong>Accessed By</strong> is the Windows account that has it open, <strong>#Locks</strong> shows how many locks are held, and <strong>Open Mode</strong> tells you whether it&rsquo;s open Read or Write+Read.</li><li>Click <strong>Sessions</strong> (just above Open Files) to see which users, and which computers, are connected to the share right now.</li></ul><p>If you genuinely need to free the file and the person is unreachable, right-click the entry and choose <strong>Close Open File</strong>. Treat this as a last resort: any unsaved changes that person made are lost the moment you do it, and force-closing a live database file (Sage or QuickBooks, say) can corrupt it. You&rsquo;ll need administrator rights on the host both to see the list and to close anything on it.</p>
+    <section class="section" aria-label="Fix this now with remote support">
+      <div class="wrap" style="max-width:860px;margin:0 auto">
+        <div class="callout callout--good callout--center" data-reveal>
+          <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// NEED THIS FIXED RIGHT NOW?</p>
+          <p class="callout__lede">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
+          <p class="callout__row">
+            <a class="button primary" href="/sos/">Start SOS Remote Support</a>
+            <a class="button secondary" href="tel:+441202775566">Call 01202 775566</a>
+          </p>
+        </div>
       </div>
     </section>
-    <section id="s3" class="section" aria-label="Why Excel just says &lsquo;another user&rsquo;">
+    <section id="s2" class="section section--alt" aria-label="When the file never left the computer it was saved on">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/03 &mdash; WHAT THE MESSAGE MEANS</p>
-        <h2 class="section-title" data-title>Why Excel just says &lsquo;another user&rsquo;<span class="title-underline"></span></h2>
-<p>When Excel or Word says a file is &lsquo;locked for editing&rsquo;, it sometimes names the culprit &mdash; &lsquo;locked for editing by John Smith&rsquo; &mdash; and sometimes just shrugs with &lsquo;another user&rsquo;. That isn&rsquo;t Windows being coy. Office only shows a name if that person once typed one into <strong>File, Options, General, User name</strong>. On many small-office PCs that box was never filled in, or everyone signs in as the same generic account, so you get the unhelpful &lsquo;another user&rsquo; every time.</p><p>That&rsquo;s exactly why the <strong>Open Files</strong> list on the host beats the pop-up: it shows the real <strong>Windows account</strong> holding the file, not whatever name Office happens to have on record. If two people swear blind they don&rsquo;t have it open and the message still nags, don&rsquo;t trust the message &mdash; go to the host and read the truth from Open Files. More often than not, the &lsquo;phantom&rsquo; user is a session someone left open on a machine they walked away from, or a laptop that dropped off the wifi mid-save.</p>
+        <p class="eyebrow mono">/02 &mdash; THE SENDER</p>
+        <h2 class="section-title" data-title>When the file never left the computer it was saved on<span class="title-underline"></span></h2>
+<p>Go to the computer you saved the file on and look at the OneDrive cloud icon by the clock. Its state is the answer.</p><ul><li><strong>Not signed in, or signed in to a different account.</strong> A grey icon, or a personal OneDrive where the work one should be. Sign in to the right one.</li><li><strong>Paused.</strong> OneDrive pauses itself on a metered connection &mdash; a phone hotspot, some broadband that reports itself that way &mdash; and when a laptop drops into battery saver. Both are switches in its settings under Sync and backup.</li><li><strong>A red cross.</strong> Some files have problems. Click the icon and choose <em>View sync problems</em>: a name that is too long, a character Windows accepts but OneDrive does not, a file that is open and locked, or a file too large. Fix the named file and the queue moves.</li><li><strong>Saved outside OneDrive.</strong> The file is in a folder that looks like OneDrive but is not &mdash; a local Documents folder on a PC where Documents is not backed up. Section 04 is about that trap.</li></ul><p>Once the icon is a plain cloud with a tick, watch the browser: the file should appear within seconds for a document and within minutes for something large.</p>
       </div>
     </section>
-    <section id="s4" class="section section--alt" aria-label="Phantom locks and the hidden ~$ file">
+    <section id="s3" class="section" aria-label="When the cloud has it and the other computer does not">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/04 &mdash; THE HIDDEN ~$ LOCK FILE</p>
-        <h2 class="section-title" data-title>Phantom locks and the hidden ~$ file<span class="title-underline"></span></h2>
-<p>Alongside every open Office document sits a tiny hidden companion &mdash; the <strong>owner file</strong>. Open <strong>Budget.xlsx</strong> and Excel quietly creates <strong>~$Budget.xlsx</strong> in the same folder; it&rsquo;s the flag that tells everyone else &lsquo;someone has this&rsquo;. Word does the same, though its owner file drops the first couple of letters of the name. Close the document properly and Office deletes the owner file automatically.</p><p>The trouble starts when Office <em>doesn&rsquo;t</em> close properly &mdash; a crash, a frozen laptop, or a network drop mid-save. The ~$ file is orphaned, and the document stays &lsquo;locked&rsquo; even though nobody is actually in it. That&rsquo;s a <strong>phantom lock</strong>.</p><p>To find it, open the folder on the drive, click <strong>View</strong>, then <strong>Show</strong>, then tick <strong>Hidden items</strong>. You&rsquo;ll see the ~$ file sitting next to your document. Once you&rsquo;ve <em>confirmed on the host that nobody genuinely has the file open</em> (check Open Files first), it&rsquo;s safe to delete the stale ~$ file &mdash; it holds no data of its own, so you lose nothing. Deleting it frees the lock; it won&rsquo;t, however, recover any work that was lost in the crash.</p>
+        <p class="eyebrow mono">/03 &mdash; THE RECEIVER</p>
+        <h2 class="section-title" data-title>When the cloud has it and the other computer does not<span class="title-underline"></span></h2>
+<p>The cloud copy exists, so the sending side is fine. On the computer that cannot see the file, these are the usual reasons, in order.</p><ul><li><strong>It is signed in to a different OneDrive.</strong> Personal on one PC, work on the other, and they are separate services with separate files. Click the cloud icon and check the account name.</li><li><strong>The folder is not selected on this PC.</strong> OneDrive lets each computer choose which folders to sync. In its settings under Account, <em>Choose folders</em> shows what this machine takes; a folder unticked here simply never arrives.</li><li><strong>The file is there, as a placeholder.</strong> Files On-Demand shows files that live in the cloud with a blue cloud icon in File Explorer, and downloads them when opened. Look for the icon before deciding it is missing.</li><li><strong>The PC has not been awake.</strong> A laptop that was shut since yesterday has not fetched anything since yesterday. Give it a minute after waking.</li><li><strong>OneDrive is not running.</strong> Closed by hand, or stopped starting with Windows. Start it from the Start menu and check it is set to start at sign-in.</li></ul>
       </div>
     </section>
-    <section id="s5" class="section" aria-label="Closing a stuck session without breaking anything">
+    <section id="s4" class="section section--alt" aria-label="The places two computers on one account quietly diverge">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/05 &mdash; CLEAR A STUCK LOCK SAFELY</p>
-        <h2 class="section-title" data-title>Closing a stuck session without breaking anything<span class="title-underline"></span></h2>
-<p>Prefer the keyboard? From the host PC you can list and clear locks without opening Computer Management. Open <strong>Command Prompt as administrator</strong> and type <strong>net file</strong> &mdash; you&rsquo;ll get a numbered list of every open file with the user holding it. Note the ID, then run <strong>net file [id] /close</strong> to release that one lock.</p><p>PowerShell gives you more detail. <strong>Get-SmbOpenFile | Select ClientUserName, ClientComputerName, Path</strong> lists open files with the exact account <em>and</em> the computer they&rsquo;re on &mdash; handy for pinning down which machine stranded the lock. <strong>Close-SmbOpenFile</strong> then closes it. Both need an elevated window, and both must be run on the machine that shares the folder.</p><p>Whichever route you take, the same caution applies: closing a lock from underneath a live document throws away that person&rsquo;s unsaved changes, and force-closing an open accounts or database file risks corrupting it. If the &lsquo;stuck&rsquo; file is a shared Sage company or another multi-user database, stop and read our note on <a href="/sage-50-multi-user-cannot-connect/">Sage 50 multi-user connection problems</a> before you pull the plug &mdash; the right fix is usually to get everyone out cleanly, not to sever the lock.</p>
+        <p class="eyebrow mono">/04 &mdash; THE TRAPS</p>
+        <h2 class="section-title" data-title>The places two computers on one account quietly diverge<span class="title-underline"></span></h2>
+<p>Two machines can be perfectly healthy and still disagree, because of a setting that was made on one and not the other.</p><ul><li><strong>Desktop and Documents backup on one PC only.</strong> OneDrive can take over the Desktop, Documents and Pictures folders so they live in the cloud. If that was switched on for the desktop and never for the laptop, the desktop&rsquo;s Desktop is in OneDrive and the laptop&rsquo;s Desktop is just a local folder. Files saved to &ldquo;the Desktop&rdquo; on the laptop go nowhere. The setting is under Sync and backup, <em>Manage backup</em>, and it should match on both machines.</li><li><strong>Two OneDrives, one folder each.</strong> A personal OneDrive on the home PC and a work one on the office PC will never share a file. We have a separate guide to sorting that out.</li><li><strong>Conflict copies.</strong> If both machines edited the same file while one was offline, OneDrive keeps both and names one after the computer. Neither is lost; you just have to pick.</li><li><strong>A renamed computer.</strong> After a rename or a reset, OneDrive may treat the machine as new and start a fresh setup with default folder choices.</li></ul>
       </div>
     </section>
-    <section id="s6" class="section section--alt" aria-label="Why this keeps happening &mdash; and when to call us">
+    <section id="s5" class="section" aria-label="Resetting OneDrive, then testing with one file">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/06 &mdash; WHY IT KEEPS HAPPENING</p>
-        <h2 class="section-title" data-title>Why this keeps happening &mdash; and when to call us<span class="title-underline"></span></h2>
-<p>If you&rsquo;re hunting down locked files every few days, the deeper problem usually isn&rsquo;t the file &mdash; it&rsquo;s the setup. Most small offices share their folders from one ordinary desktop that everyone maps a drive to. The moment that machine sleeps, reboots for an update, drops off the wifi, or simply gets switched off at the wall on a Friday, every open lock is stranded and Monday starts with &lsquo;file in use&rsquo; errors. It&rsquo;s the classic sign of a <a href="/desktop-pc-used-as-office-server/">desktop PC being used as an office server</a> that has quietly outgrown the job.</p><p>Windows updates can make it worse: the Windows 11 24H2 update broke shared-folder access for a lot of small networks, which we walk through in our guide to <a href="/shared-folders-not-working-after-windows-11-24h2-update/">shared folders not working after 24H2</a>. If drives also keep vanishing, our note on a <a href="/mapped-network-drive-keeps-disconnecting/">mapped network drive that keeps disconnecting</a> is worth a read.</p><p><strong>When to call us:</strong> if this is eating your team&rsquo;s time, we&rsquo;ll log in remotely &mdash; usually the same day &mdash; find who&rsquo;s really holding the file, clear stranded locks safely, and tell you honestly whether your sharing setup just needs tidying or a proper move to a server or cloud. We&rsquo;re a family-run Bournemouth firm offering <a href="/small-business-it-support/">small-business IT support</a> with no-fix-no-fee. Call <strong>01202 775566</strong> and we&rsquo;ll take a look.</p>
+        <p class="eyebrow mono">/05 &mdash; RESET AND PROVE IT</p>
+        <h2 class="section-title" data-title>Resetting OneDrive, then testing with one file<span class="title-underline"></span></h2>
+<p>If both sides look healthy and a file still will not cross, reset OneDrive on the computer that is misbehaving. It is safe: it clears the app&rsquo;s own records and makes it re-check every file against the cloud, and it deletes nothing. Check <em>View sync problems</em> first so that anything waiting to upload is not left behind. Sign out and back in first; if that is not enough, the reset. Press the Windows key and R together and run <code>%localappdata%\Microsoft\OneDrive\onedrive.exe /reset</code>. On some PCs the app lives under Program Files instead, in which case the same command with <code>C:\Program Files\Microsoft OneDrive\onedrive.exe</code> is the one that works; use whichever is present. The icon disappears and returns within a couple of minutes. On a large OneDrive it then spends a while re-checking, and files show as syncing without much data moving.</p><p>Then prove it rather than assume it. Create a small text file on computer A, in a folder both machines sync. Watch it appear in the browser. Watch it appear on computer B. Edit it on B; watch the edit come back to A. Thirty seconds, and you know both legs work. If one leg fails, you know exactly which computer to look at, and the sections above tell you where.</p>
       </div>
     </section>
     <section class="section" aria-label="Related">
       <div class="wrap">
         <div class="related" data-reveal>
           <p class="related__head">// KEEP GOING</p>
-          <div class="related__links"><a href="/desktop-pc-used-as-office-server/">desktop PC used as an office server</a><a href="/shared-folders-not-working-after-windows-11-24h2-update/">shared folders not working after Windows 11 24H2</a><a href="/mapped-network-drive-keeps-disconnecting/">mapped network drive keeps disconnecting</a><a href="/restrict-staff-access-to-shared-folders-windows-11/">restrict staff access to shared folders</a><a href="/sage-50-multi-user-cannot-connect/">Sage 50 multi-user cannot connect</a><a href="/small-business-it-support/">small-business IT support</a><a href="/onedrive-file-locked-by-another-user/">OneDrive file locked by another user</a></div>
+          <div class="related__links"><a href="/onedrive-problems/">OneDrive problems</a><a href="/files-missing-from-onedrive/">Files missing from OneDrive</a><a href="/onedrive-moved-my-desktop-and-documents/">OneDrive moved my Desktop and Documents</a><a href="/two-onedrive-accounts-personal-and-work/">Two OneDrive accounts on one PC</a><a href="/onedrive-couldnt-merge-changes/">OneDrive couldn&rsquo;t merge the changes</a></div>
         </div>
       </div>
     </section>
@@ -868,47 +827,35 @@
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
-          <summary>Where exactly do I look to see who has a file open?<span class="faq__icon" aria-hidden="true"></span></summary>
-          <div class="faq__ans"><p><p>On the computer that shares the folder, open <strong>Computer Management</strong>, then expand <strong>System Tools</strong> and <strong>Shared Folders</strong> and click <strong>Open Files</strong>. The <strong>Accessed By</strong> column names the Windows account holding each file. You must do this from the host machine, with administrator rights &mdash; you can&rsquo;t see the list from your own PC mapped to the drive.</p></p></div>
+          <summary>Do both computers need to be on at the same time?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>No. Each computer talks only to the cloud, never to the other. The desktop sends its changes up whenever it is on; the laptop fetches them down whenever it is on. They can be a week apart and still end up with the same files.</p></div>
         </details>
         <details class="faq" data-reveal>
-          <summary>Can I check this from my own computer?<span class="faq__icon" aria-hidden="true"></span></summary>
-          <div class="faq__ans"><p><p>Not usually. The <strong>Open Files</strong> list lives on the machine that actually shares the folder, so you need to be sat at that PC or remoted into it with admin rights. If your &lsquo;server&rsquo; is a desktop under a colleague&rsquo;s desk, that&rsquo;s where you look. There&rsquo;s no reliable built-in way to see the full lock list from a client PC across the network.</p></p></div>
+          <summary>The file is in OneDrive in the browser but not on my laptop<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Then the sender is fine and the laptop is the one to look at. Check it is signed in to the same OneDrive, that the folder is ticked under Choose folders, and whether the file is actually there as a blue-cloud placeholder waiting to be downloaded. If all three check out, sign out of OneDrive on the laptop and back in.</p></div>
         </details>
         <details class="faq" data-reveal>
-          <summary>The message just says &lsquo;another user&rsquo; &mdash; how do I get the name?<span class="faq__icon" aria-hidden="true"></span></summary>
-          <div class="faq__ans"><p><p>Office only shows a name if that person filled one into <strong>File, Options, General</strong>. If it&rsquo;s blank, or everyone shares one login, you&rsquo;ll always see &lsquo;another user&rsquo;. Ignore the pop-up and check <strong>Open Files</strong> on the host instead &mdash; it shows the real Windows account, which is far more reliable than whatever name Excel or Word has on record.</p></p></div>
+          <summary>The file has a blue cloud icon &mdash; is it synced or not?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>It is synced. A blue cloud means the file lives in the cloud and will download the moment you open it; a green tick means it is also stored on this computer. Both are healthy. Right-click a folder and choose Always keep on this device if you want it downloaded in advance for use offline.</p></div>
         </details>
         <details class="faq" data-reveal>
-          <summary>Is it safe to delete the ~$ lock file?<span class="faq__icon" aria-hidden="true"></span></summary>
-          <div class="faq__ans"><p><p>Yes &mdash; but only after you&rsquo;ve confirmed on the host that nobody genuinely has the file open. The hidden ~$ file (for example <strong>~$Budget.xlsx</strong>) holds no data, so deleting a <em>stale</em> one just clears the phantom lock and you lose nothing. Deleting it while someone really is editing can cause conflicts, and it won&rsquo;t recover work lost in a crash.</p></p></div>
+          <summary>One computer has my Desktop in OneDrive and the other does not<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>That is the Desktop and Documents backup switched on for one machine only. Under OneDrive&rsquo;s settings, Sync and backup, Manage backup, set it the same way on both. Until then, anything saved to the Desktop on the machine without it stays local and never reaches the other.</p></div>
         </details>
         <details class="faq" data-reveal>
-          <summary>What happens if I force-close someone&rsquo;s open file?<span class="faq__icon" aria-hidden="true"></span></summary>
-          <div class="faq__ans"><p><p>Any changes they hadn&rsquo;t saved are lost the instant you close the lock. For ordinary documents that&rsquo;s annoying; for a live database like Sage or QuickBooks it can corrupt the file. Only force-close as a genuine last resort, ideally after checking nobody is mid-edit. The safer route is always to get the person to close the file properly first.</p></p></div>
-        </details>
-        <details class="faq" data-reveal>
-          <summary>Why do we get &lsquo;file in use&rsquo; errors almost every day?<span class="faq__icon" aria-hidden="true"></span></summary>
-          <div class="faq__ans"><p><p>Usually because your folders are shared from an ordinary desktop that sleeps, reboots for updates or gets switched off &mdash; each time, open locks are stranded. It&rsquo;s the tell-tale sign of a <a href="/desktop-pc-used-as-office-server/">desktop being used as an office server</a>. A tidy-up, or a move to a proper server or cloud, usually stops it for good. We can advise on which is right for you.</p></p></div>
-        </details>
-        <details class="faq" data-reveal>
-          <summary>Can you just sort this out for us?<span class="faq__icon" aria-hidden="true"></span></summary>
-          <div class="faq__ans"><p><p>Happily. We&rsquo;ll connect remotely &mdash; usually the same day &mdash; find who&rsquo;s really holding the file, clear stranded locks safely and check why it keeps happening. We&rsquo;re a family-run Bournemouth firm offering <a href="/small-business-it-support/">small-business IT support</a> with no-fix-no-fee, so if we can&rsquo;t help there&rsquo;s nothing to pay. Call <strong>01202 775566</strong> or text <strong>07520 615332</strong>.</p></p></div>
-        </details>
-        <details class="faq" data-reveal>
-          <summary>Does moving to OneDrive or SharePoint fix file-locking?<span class="faq__icon" aria-hidden="true"></span></summary>
-          <div class="faq__ans"><p><p>It changes the game: OneDrive and SharePoint allow real-time co-authoring, so two people can edit the same Office file at once instead of one locking the other out. It&rsquo;s not a magic fix for every setup, and it needs planning to move your files across without disruption. As Windows and Microsoft 365 specialists we can talk you through whether it suits how your team actually works.</p></p></div>
+          <summary>How long should syncing take?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Seconds for a document, a few minutes for something large, and longer on a slow connection or when OneDrive is re-checking a big library after a reset. If a small file has not crossed in five minutes, something is wrong rather than slow, and the one-minute test at the top tells you on which side.</p></div>
         </details>
         </div>
       </div>
     </section>
     <section class="cta-band" aria-label="Get started">
       <div class="cta-band__inner">
-        <h2 data-title>Stuck on &lsquo;file in use by another user&rsquo;?<span class="title-underline title-underline--center"></span></h2>
-        <p class="lede lede--center" data-reveal>We&rsquo;ll find who&rsquo;s really holding the file and clear stranded locks safely &mdash; usually the same day, remotely, with no-fix-no-fee. Call 01202 775566 or text 07520 615332.</p>
+        <h2 data-title>Two computers still disagreeing?<span class="title-underline title-underline--center"></span></h2>
+        <p class="lede lede--center" data-reveal>We sort OneDrive for homes and businesses across Bournemouth, Poole and Dorset &mdash; usually remotely, in one short session. Call 01202 775566.</p>
         <div class="hero-buttons hero-buttons--center" data-reveal>
-          <a href="tel:+441202775566" class="button primary button--lg">Call 01202 775566</a>
-          <a href="/small-business-it-support/" class="button secondary button--lg">Business IT support</a>
+          <a href="/contact/" class="button primary button--lg">Get it looked at</a>
+          <a href="tel:+441202775566" class="button secondary button--lg">Call 01202 775566</a>
         </div>
         <p class="cta__contact mono" data-reveal>01202 775566 &middot; help@365techies.co.uk &middot; MON&ndash;FRI 9AM&ndash;5PM</p>
       </div>
