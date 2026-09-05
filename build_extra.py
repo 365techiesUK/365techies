@@ -42,6 +42,7 @@ from seo_wave7_data import SEO_WAVE7_PAGES
 from seo_wave8_data import SEO_WAVE8_PAGES
 from seo_wave9_data import SEO_WAVE9_PAGES
 from seo_wave10_data import SEO_WAVE10_PAGES
+from seo_wave11_data import SEO_WAVE11_PAGES
 try:
     from new_pages_data import DELL_COMPARE_TABLES
 except ImportError:
@@ -10630,6 +10631,7 @@ def gaming_pcs():
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>/04 — HOW IT WORKS</p>
         <h2 class="section-title section-title--center" data-title>From wishlist to first game<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Already own a gaming PC that has slowed down or stopped loading games? Most need a <a href="/gaming-pc-tune-up/">remote tune-up</a>, not a replacement.</p>
         <ol class="how__steps">
 {steps([("We spec it","Tell us your games, monitor and budget &mdash; we design the ideal rig."),("We build it","Custom-built by Scan 3XS from quality components and stress-tested."),("We set up &amp; support","Delivered ready to play, optimised, with ongoing local support.")])}
         </ol>
@@ -21568,6 +21570,8 @@ for _np in SEO_WAVE8_PAGES:
 for _np in SEO_WAVE9_PAGES:
     build_new_page(_np)
 for _np in SEO_WAVE10_PAGES:
+    build_new_page(_np)
+for _np in SEO_WAVE11_PAGES:
     build_new_page(_np)
 
 # The gated 2-page Home Assistant x Victron test (own module per the wave rule;

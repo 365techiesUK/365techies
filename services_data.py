@@ -865,7 +865,7 @@ SERVICE_PAGES = [
    "Fan cleaning and re-pasting to cure heat-related slowdowns",
    "A full Windows tune-up, with your files safely backed up first"
   ],
-  "faqs": [
+  "faqs": [{"q": "My child&rsquo;s gaming PC has gone slow &mdash; is that the same job?", "a": "Mostly, with a few gaming-specific extras: the graphics driver, the game launchers and overlays that start with Windows, and the adware that arrives with cracked games and &ldquo;free skins&rdquo; tools. We do it remotely while you watch, with nothing wiped and your files kept. See our <a href=\"/gaming-pc-tune-up/\">remote gaming PC tune-up</a>."}, 
    {
     "q": "Why is my computer suddenly so slow?",
     "a": "A sudden slowdown usually points to one of a few things: a Windows update that stalled, malware that has crept in, a hard drive starting to fail, or a fan clogged with dust making Windows throttle the processor to stay cool. We diagnose which it is &mdash; often remotely the same day &mdash; rather than guessing, then quote clearly before any chargeable work."
@@ -1551,7 +1551,7 @@ SERVICE_PAGES = [
    "Advise on SSD or memory upgrades (quoted first)",
    "Spot-check security and backup while we're in there"
   ],
-  "faqs": [
+  "faqs": [{"q": "Can you tune up a gaming PC?", "a": "Yes &mdash; and it is one of the tune-ups we do most. A gaming PC that has gone slow or will not load games usually needs the drive freed, the graphics driver reinstalled cleanly, the start-up crowd cut and any adware from &ldquo;free&rdquo; downloads removed &mdash; all done remotely while you watch, with nothing wiped. See our <a href=\"/gaming-pc-tune-up/\">remote gaming PC tune-up</a>."}, 
    {
     "q": "What's the difference between a tune-up and a repair?",
     "a": "A tune-up is for a computer that works but feels slow or sluggish &mdash; we optimise it to run quickly again. A repair is for something actually broken, like a machine that won't start, a cracked screen or a virus. If a tune-up uncovers a real fault, we'll explain it and point you to our computer repairs service &mdash; no surprises."
