@@ -566,6 +566,11 @@ html.no-motion body.menu-open .menu-backdrop { transition-delay: 0s, 0s; }
 .mobile-menu__plans .button.secondary { animation: none; box-shadow: 0 0 22px rgba(29, 151, 227, 0.12); }
 .mobile-menu__plans .button.sos { animation: sosPulse 1.9s ease-in-out infinite; }
 .mobile-menu__foot { margin-top: auto; padding-top: 2rem; line-height: 1.9; }
+/* The three contact lines (email, phone, text) measured 19px tall against the 44px
+   tap floor everything else in this menu clears - and the phone number is the one that
+   converts. Inline-block with vertical padding lifts each to ~46px without changing
+   the stacked look (5 Sep 2026 nav audit, finding 6). */
+.mobile-menu__foot a { display: inline-block; padding: 0.5rem 0; }
 
 body.menu-open { overflow: hidden; }
 

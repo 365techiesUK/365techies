@@ -131,7 +131,7 @@ except Exception:
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://365techies.co.uk"
-CSSV = "101"   # bumped 2026-09-05 (2nd): the >=1960 header expand moved to 2040 so "Contact" is never clipped. Earlier the same day: v100 = the A+ text steps hand the nav to the hamburger instead of clipping it (nav audit). Earlier: v99 2026-09-02: hero console card no longer tilted. Earlier: v98   # bumped 2026-09-02 again: v97 was poisoned in the SiteGround proxy by a pre-completion page load (old CSS cached under the new URL for browsers; curl variants showed MISS). NEVER load a page carrying a new ?v= until the deploy run is completed+success. v97 = 2026-09-02 (live-map launcher + overlay).   # bumped 2026-09-02 (Bournemouth365 live-map launcher + overlay). Earlier: v96 2026-08-27 (skip-link could not be outgrown by the a11y ladder). Earlier: v95 2026-08-19 (proof bar replaces the duplicate reviews teaser). Earlier: v94 2026-08-17 (status strip rebuild). Earlier the same day: v88 was poisoned in the SiteGround proxy by a pre-deploy probe (see deploy-hash-sync-blindspot); NEVER request a new ?v= URL before the deploy that ships it is confirmed complete
+CSSV = "102"   # bumped 2026-09-05 (3rd): mobile-menu contact links lifted to a 44px tap target. Earlier the same day: v101 = the >=1960 header expand moved to 2040 so "Contact" is never clipped. Earlier the same day: v100 = the A+ text steps hand the nav to the hamburger instead of clipping it (nav audit). Earlier: v99 2026-09-02: hero console card no longer tilted. Earlier: v98   # bumped 2026-09-02 again: v97 was poisoned in the SiteGround proxy by a pre-completion page load (old CSS cached under the new URL for browsers; curl variants showed MISS). NEVER load a page carrying a new ?v= until the deploy run is completed+success. v97 = 2026-09-02 (live-map launcher + overlay).   # bumped 2026-09-02 (Bournemouth365 live-map launcher + overlay). Earlier: v96 2026-08-27 (skip-link could not be outgrown by the a11y ladder). Earlier: v95 2026-08-19 (proof bar replaces the duplicate reviews teaser). Earlier: v94 2026-08-17 (status strip rebuild). Earlier the same day: v88 was poisoned in the SiteGround proxy by a pre-deploy probe (see deploy-hash-sync-blindspot); NEVER request a new ?v= URL before the deploy that ships it is confirmed complete
 HERITAGE_DIMS = {'heritage-01.jpg': (1400, 787), 'heritage-02.jpg': (787, 1400), 'heritage-03.jpg': (1400, 787), 'heritage-04.jpg': (1400, 787), 'heritage-05.jpg': (787, 1400), 'heritage-07.jpg': (1400, 787), 'heritage-kinson.jpg': (1200, 710), 'heritage-moordown.jpg': (1400, 788), 'heritage-stock.jpg': (1400, 788), 'heritage-storefront.jpg': (1024, 683)}
 try:
     from hero_scenes import SCENES as HERO_SCENES
@@ -5790,6 +5790,20 @@ add(
      ("Which areas do you cover?", "All of Dorset — we're based in Bournemouth and collect free locally, with remote help available anywhere. See <a href=\"/it-support-dorset/\">IT support across Dorset</a> for every town we cover."),
      ("Can you recover my files?", "In most cases, yes. Bring it to us before doing anything else and we&rsquo;ll give you the best chance of recovering your data."),
    ]),
+   # Laptop-fault guides were four clicks from the homepage, reached only from each
+   # other (5 Sep 2026 nav audit, finding 7). The repairs hub is where a reader with a
+   # dead laptop lands, so it names them - same component the service hubs use.
+   f'''    <section class="section section--alt" aria-label="Fix guides">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow mono" data-reveal>// FIX IT YOURSELF FIRST</p>
+          <h2 class="section-title" data-title>Laptop faults, each with its own guide<span class="title-underline"></span></h2>
+        </div>
+        <div class="related" data-reveal>
+          <div class="related__links"><a href="/laptop-stuck-on-logo-wont-boot/">Laptop stuck on the manufacturer logo</a><a href="/laptop-screen-flickers-then-goes-black/">Laptop screen flickers, then goes black</a><a href="/laptop-shuts-off-when-moved/">Laptop shuts off when you move it</a><a href="/laptop-wont-turn-on-no-lights/">Laptop won&rsquo;t turn on and shows no lights</a><a href="/laptop-clicking-noise-wont-turn-on/">Laptop clicks and won&rsquo;t turn on</a></div>
+        </div>
+      </div>
+    </section>''',
    tools_strip(["pcbench", "faultcheck", "repairreplace"], title="Check your computer &mdash; free tools", lede_text="Benchmark it, diagnose it, or get an honest repair-or-replace verdict.", alt=False),
    cta("Book a computer repair", "Tell us what&rsquo;s wrong and we&rsquo;ll get you booked in — remote or on-site, across Bournemouth, Poole and Dorset.",
        primary=("Book a Collection", "/book-a-collection/"), secondary=("Call 01202 775566", "tel:+441202775566")),

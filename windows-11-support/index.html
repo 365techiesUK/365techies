@@ -79,7 +79,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=101" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=102" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -117,7 +117,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=101&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=102&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -849,6 +849,17 @@
           <p>We keep Windows 11 updated, fast and secure on your support plan.</p>
         </li>
         </ol>
+      </div>
+    </section>
+    <section class="section" aria-label="Fix guides">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow mono" data-reveal>// FIX IT YOURSELF FIRST</p>
+          <h2 class="section-title" data-title>Windows 11 problems we get asked about most<span class="title-underline"></span></h2>
+        </div>
+        <div class="related" data-reveal>
+          <div class="related__links"><a href="/windows-11-network-credentials-shared-folder/">Windows 11 keeps asking for network credentials</a><a href="/windows-11-cant-access-windows-10-shared-folder/">Windows 11 cannot open a shared folder on a Windows 10 PC</a><a href="/shared-folder-read-only-cant-save-windows-11/">Shared folder read-only: staff can open but cannot save</a><a href="/fix-shared-folder-error-0x80004005/">Cannot access shared folder, error 0x80004005</a><a href="/share-files-small-office-without-server/">Sharing files in a small office without a server</a><a href="/onedrive-file-locked-by-another-user/">OneDrive file locked by another user, but nobody has it open</a><a href="/sage-instant-accounts-windows-11/">Sage Instant Accounts won&rsquo;t work on Windows 11</a><a href="/sage-50-wont-print-to-pdf-windows-11/">Sage 50 won&rsquo;t print to PDF on Windows 11</a><a href="/cost-to-upgrade-office-to-windows-11/">What it costs to upgrade an office to Windows 11</a></div>
+        </div>
       </div>
     </section>
     <section class="reviews" aria-label="Customer reviews">

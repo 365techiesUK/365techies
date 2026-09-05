@@ -79,7 +79,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=101" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=102" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -117,7 +117,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=101&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=102&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -293,7 +293,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-08-31"
+      "dateModified": "2026-09-05"
     },
     {
       "@type": "Service",
@@ -924,6 +924,17 @@
           <summary>Can you recover my files?<span class="faq__icon" aria-hidden="true"></span></summary>
           <div class="faq__ans"><p>In most cases, yes. Bring it to us before doing anything else and we&rsquo;ll give you the best chance of recovering your data.</p></div>
         </details>
+        </div>
+      </div>
+    </section>
+    <section class="section section--alt" aria-label="Fix guides">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow mono" data-reveal>// FIX IT YOURSELF FIRST</p>
+          <h2 class="section-title" data-title>Laptop faults, each with its own guide<span class="title-underline"></span></h2>
+        </div>
+        <div class="related" data-reveal>
+          <div class="related__links"><a href="/laptop-stuck-on-logo-wont-boot/">Laptop stuck on the manufacturer logo</a><a href="/laptop-screen-flickers-then-goes-black/">Laptop screen flickers, then goes black</a><a href="/laptop-shuts-off-when-moved/">Laptop shuts off when you move it</a><a href="/laptop-wont-turn-on-no-lights/">Laptop won&rsquo;t turn on and shows no lights</a><a href="/laptop-clicking-noise-wont-turn-on/">Laptop clicks and won&rsquo;t turn on</a></div>
         </div>
       </div>
     </section>

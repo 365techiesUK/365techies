@@ -79,7 +79,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=101" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=102" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -117,7 +117,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=101&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=102&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -867,6 +867,17 @@
           <p>We filter spam, block phishing and stay on call to check anything suspicious.</p>
         </li>
         </ol>
+      </div>
+    </section>
+    <section class="section" aria-label="Fix guides">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow mono" data-reveal>// FIX IT YOURSELF FIRST</p>
+          <h2 class="section-title" data-title>Email problems with their own guide<span class="title-underline"></span></h2>
+        </div>
+        <div class="related" data-reveal>
+          <div class="related__links"><a href="/virgin-media-email-wont-add-to-new-outlook/">Virgin Media email won&rsquo;t add to the new Outlook</a><a href="/move-virgin-media-email-to-gmail/">Moving your Virgin Media email to Gmail</a><a href="/transfer-microsoft-365-when-owner-leaves/">Transferring Microsoft 365 when the owner leaves</a><a href="/take-over-email-domain-after-buying-business/">Taking over the email and domain after buying a business</a><a href="/business-email-when-closing-your-company/">What happens to business email when you close the company</a></div>
+        </div>
       </div>
     </section>
     <section class="reviews" aria-label="Customer reviews">

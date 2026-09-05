@@ -601,8 +601,8 @@
  },
  "computer-repairs": {
   "first": "2026-07-28",
-  "h": "6a617d2ea284a10d",
-  "last": "2026-08-31"
+  "h": "68330b8bb199a571",
+  "last": "2026-09-05"
  },
  "computer-spec-checker": {
   "first": "2026-07-28",
@@ -1006,7 +1006,7 @@
  },
  "email-support": {
   "first": "2026-07-28",
-  "h": "c5dfc3fc33be2e6f",
+  "h": "7c59533df9758f90",
   "last": "2026-09-05"
  },
  "emails-on-computer-but-not-phone": {
@@ -3543,7 +3543,7 @@
  },
  "windows-11-support": {
   "first": "2026-07-28",
-  "h": "499527e671aa5dc4",
+  "h": "ea06b6b863457bf4",
   "last": "2026-09-05"
  },
  "windows-11-upgrade-service": {
