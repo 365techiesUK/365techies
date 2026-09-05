@@ -7012,18 +7012,18 @@ NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
                     'our free <a href="/spot-the-scam/">spot-the-scam quiz</a> together.</p>'},
  {'slug': 'computer-lessons-for-seniors-bournemouth',
   'title': 'Computer Lessons for Seniors in Bournemouth | 365 Techies',
-  'metaDesc': 'Friendly computer lessons for older people in Bournemouth. Group classes at Kinson Community Centre plus patient 1-to-1 tuition at home. Call 01202 775566.',
+  'metaDesc': 'Friendly computer lessons for older people in Bournemouth. Kinson Community Centre classes, patient one-to-one lessons online, and 12 free courses.',
   'ogTitle': 'Friendly Computer Lessons for Seniors in Bournemouth & Dorset',
   'crumbName': 'Computer Lessons',
   'eyebrow': 'Patient lessons · Bournemouth & Dorset',
   'h1': 'Friendly <em class="grad grad--cyan">computer lessons for seniors</em> in Bournemouth',
   'lede': 'Learn email, photos, video calls and staying safe online — at your own pace, with the same patient faces every time. Group classes at our base, the Kinson Community Centre, or one-to-one '
-          'tuition wherever suits you.',
-  'chips': ['Group classes at Kinson Community Centre', 'Patient 1-to-1 tuition on request', 'Family-run since 1995, rated 4.9 on Google'],
+          'lessons online, with us guiding you on your own screen.',
+  'chips': ['Group classes at Kinson Community Centre', 'Patient one-to-one lessons online', 'Family-run since 1995, rated 4.9 on Google'],
   'primaryCta': ['Call 01202 775566', 'tel:+441202775566'],
   'secondaryCta': ['Text 07520 615332', 'sms:07520615332'],
   'ctaHead': 'Ready to feel at home with your computer?',
-  'ctaSub': "Call 01202 775566 for the current class timetable, or to arrange patient one-to-one tuition. Mon–Fri, 9am–5pm — you'll always speak to the same friendly faces, never a call centre.",
+  'ctaSub': "Call 01202 775566 for the current class timetable, or to arrange patient one-to-one lessons online. Mon–Fri, 9am–5pm — you'll always speak to the same friendly faces, never a call centre.",
   'sections': [{'eyebrow': 'Group classes · Kinson',
                 'h2': 'Real classes at the Kinson Community Centre',
                 'html': "<p>Our home is the Kinson Community Centre in Bournemouth — it's where we've offered community IT support for years, and it's where our group computer classes take place. "
@@ -7031,10 +7031,10 @@ NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
                         'practise the everyday things you actually want to do, and you can ask the same question as many times as you need. <strong>Call 01202 775566 for the current '
                         "timetable</strong> — we'll happily talk you through what's coming up and help you pick a good starting point.</p>"},
                {'eyebrow': 'One-to-one · Your pace',
-                'h2': 'Patient 1-to-1 tuition — at the centre, at home or over the internet',
+                'h2': 'Patient one-to-one lessons — at the centre, or online on your own screen',
                 'html': "<p>If a group isn't your thing, or you'd like extra help with something specific, we offer patient one-to-one tuition — arranged on request, around what suits "
-                        'you:</p><ul><li><strong>At the Kinson Community Centre</strong> — quiet, familiar and easy to get to.</li><li><strong>In your own home</strong> — across Bournemouth, Poole, '
-                        'Christchurch and Dorset, on your own computer at your own kitchen table. We always call with an ETA before we set off.</li><li><strong>Over the internet</strong> — we phone '
+                        'you:</p><ul><li><strong>At the Kinson Community Centre</strong> — quiet, familiar and easy to get to.</li><li><strong>Online, on your own computer</strong> — across Bournemouth, Poole, '
+                        'Christchurch, Dorset and anywhere else: no call-out, no travelling, and you learn on the machine you actually use.</li><li><strong>How an online lesson works</strong> — we phone '
                         "you first, you watch everything happening on your screen, and our access ends the moment the session does. Never a cold pop-up, ever.</li></ul><p>You'll see the same "
                         "familiar faces every time — we're a family-run firm, not a call centre — so your tutor remembers you, your machine and exactly where you left off.</p>"},
                {'eyebrow': "What you'll learn",
@@ -7043,8 +7043,8 @@ NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
                         'and sharing your <strong>photos</strong></li><li><strong>Video calls</strong> with the grandchildren</li><li><strong>Shopping and banking online safely</strong>, without the '
                         'worry</li><li><strong>Spotting scams</strong> — dodgy emails, fake texts and suspicious phone calls</li><li>Getting comfortable with your <strong>smartphone or '
                         "tablet</strong></li></ul><p>One honest note: we're specialists in <strong>Windows computers and Android phones and tablets</strong>. If you use an Apple iPad or iPhone we'll "
-                        "gladly point you towards help, but we won't pretend Apple is our strength — you deserve a teacher who genuinely knows your device inside out.</p><p>Between lessons, our free "
-                        '<a href="/online-safety-course/">online safety course</a> lets you keep learning at home at your own pace — and our <a href="/spot-the-scam/">spot-the-scam quiz</a> is a '
+                        "gladly point you towards help, but we won't pretend Apple is our strength — you deserve a teacher who genuinely knows your device inside out.</p><p>Between lessons, our "
+                        '<a href="/free-courses/">12 free online courses</a> — from <a href="/computer-basics-course/">computer basics</a> and <a href="/word-basics-course/">Microsoft Word</a> to <a href="/online-safety-course/">staying safe online</a> — let you keep learning at home at your own pace — and our <a href="/spot-the-scam/">spot-the-scam quiz</a> is a '
                         'gentle way to practise spotting the fakes. And if reading a screen is a strain, this website has an accessibility toolbar with bigger text, higher contrast and read-aloud '
                         'built in.</p>'},
                {'eyebrow': 'Honest advice · Getting started',
@@ -7053,9 +7053,9 @@ NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
                         "the right fit when you want <strong>patient, unhurried, expert help</strong> — a family firm that's been looking after computers since 1995, the same faces who stick with "
                         'you week after week, and somewhere to ask the "silly" questions. (There are none.)</p><ol><li><strong>Call 01202 775566</strong> (or text 07520 615332) and ask for the '
                         "current class timetable — or just tell us what you'd like help with.</li><li><strong>Choose what suits you</strong>: join a group class at the Kinson Community Centre, or "
-                        'arrange one-to-one tuition at the centre, in your home or over the internet.</li><li><strong>Bring your questions</strong> — and your own laptop, tablet or phone if you have '
+                        'arrange one-to-one lessons at the centre, or online on your own screen.</li><li><strong>Bring your questions</strong> — and your own laptop, tablet or phone if you have '
                         "one, so you learn on the machine you'll actually use at home.</li><li><strong>Keep going between lessons</strong> with our free online safety course — and if you'd like "
-                        'someone on hand all year round, our home support plan is £18.25 a month per computer, rolling monthly, cancel anytime.</li></ol>'}],
+                        'someone on hand all year round, our home support plan is £18.25 a month per computer, rolling monthly, cancel anytime — about what many local tutors charge for a single hour, and it includes unlimited help by phone and on screen.</li></ol>'}],
   'faqs': [{'q': "I've never used a computer before. Will I be able to keep up?",
             'a': "Yes — complete beginners are exactly who our lessons are for. We go at your pace, not anyone else's, and you can ask the same question as many times as you like. There's no such "
                  'thing as a silly question here — honestly.'},
@@ -7172,18 +7172,18 @@ NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
                     'plans</a> for ongoing peace of mind. Running a business? See <a href="/pstn-switch-off-business/">the PSTN switch-off for businesses</a> &mdash; the lines that catch businesses out are often not the phones.</p>'},
  {'slug': 'smartphone-lessons-for-seniors',
   'title': 'Smartphone Lessons for Seniors in Bournemouth | 365 Techies',
-  'metaDesc': 'Patient smartphone lessons for older people in Bournemouth, Poole and Dorset. Android specialists. Group sessions, 1-to-1 at home or remote. Call 01202 775566.',
+  'metaDesc': 'Patient smartphone lessons for older people in Bournemouth, Poole and Dorset. Android specialists. Group sessions, or one-to-one over the phone.',
   'ogTitle': 'Smartphone Lessons for Seniors - Bournemouth, Poole & Dorset',
   'crumbName': 'Smartphone lessons',
   'eyebrow': 'Patient lessons · Bournemouth & Dorset',
   'h1': 'Patient <em class="grad grad--cyan">smartphone lessons for seniors</em> in Bournemouth, Poole & Dorset',
-  'lede': 'Learn to use your phone at your own pace, with patient local techies who never rush and never talk down to you. Friendly group sessions in Kinson, 1-to-1 lessons in your own home, or help '
-          'over the phone — whatever suits you best.',
-  'chips': ['Android specialists', 'Same friendly faces every time', 'Group, 1-to-1 at home or remote'],
+  'lede': 'Learn to use your phone at your own pace, with patient local techies who never rush and never talk down to you. Friendly group sessions in Kinson, or one-to-one lessons over the phone or a video call '
+          '— whatever suits you best.',
+  'chips': ['Android specialists', 'Same friendly faces every time', 'Group, or one-to-one by phone'],
   'primaryCta': ['Call 01202 775566', 'tel:+441202775566'],
   'secondaryCta': ['Text 07520 615332', 'sms:07520615332'],
   'ctaHead': 'Ready to feel at home with your phone?',
-  'ctaSub': 'Call 01202 775566 for the current group timetable at the Kinson Community Centre, or to arrange 1-to-1 lessons at home. Mon–Fri, 9am–5pm. Prefer to text? 07520 615332.',
+  'ctaSub': 'Call 01202 775566 for the current group timetable at the Kinson Community Centre, or to arrange one-to-one lessons over the phone. Mon–Fri, 9am–5pm. Prefer to text? 07520 615332.',
   'sections': [{'eyebrow': "What you'll learn",
                 'h2': 'Lessons built around what you actually want to do',
                 'html': '<p>We are Android specialists — Samsung, Google Pixel, Motorola and the rest — so if that is what is in your pocket, you are in exactly the right place. If you have an '
@@ -7196,13 +7196,13 @@ NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
                         'install.</li><li><strong>Bigger text and louder sounds</strong> — the accessibility settings that make any phone far easier on the eyes and ears.</li><li><strong>Spotting '
                         'scam texts and calls</strong> — what the tricks look like, and how to forward scam texts free to 7726 so the networks can block them.</li></ul><p>No jargon, no rushing, and '
                         'no question is too small. Most people worry they will ask something silly — and honestly, in over thirty years we have never heard one.</p>'},
-               {'eyebrow': 'Three ways to learn',
-                'h2': 'Group sessions, 1-to-1 at home, or remote',
+               {'eyebrow': 'Two ways to learn',
+                'h2': 'Group sessions, or one-to-one over the phone',
                 'html': '<p><strong>Friendly group sessions</strong> run at the Kinson Community Centre in Bournemouth, where we are based. They are relaxed, sociable and taken at the pace of the '
-                        'room. Call 01202 775566 for the current timetable.</p><p><strong>1-to-1 lessons at home</strong> across Bournemouth, Poole, Christchurch and wider Dorset. You learn on your '
-                        'own phone, on your own sofa, at your own speed — and we always call with an ETA before we set off, so you know exactly who is coming and when.</p><p><strong>Remote '
-                        'help</strong> for quick questions between lessons. We always phone first — never cold pop-ups — you watch everything happening on screen, and our access ends the moment the '
-                        'session does.</p><p>Whichever you choose, you will see the same familiar faces every time. We are a family firm, not a call centre, and we have been helping people across '
+                        'room. Call 01202 775566 for the current timetable.</p><p><strong>One-to-one lessons over the phone or a video call</strong>, wherever you are in Bournemouth, Poole, Christchurch or wider Dorset. You learn on your '
+                        'own phone, on your own sofa, at your own speed, with a patient voice talking you through each tap — no call-out, no travelling.</p><p><strong>Quick questions '
+                        'between lessons</strong> are welcome too. We always phone you — never cold calls or pop-ups — so you always know exactly who you are '
+                        'talking to.</p><p>Whichever you choose, you will see the same familiar faces every time. We are a family firm, not a call centre, and we have been helping people across '
                         'Dorset since 1995.</p>'},
                {'eyebrow': 'Try this today',
                 'h2': 'A quick win: make the text bigger right now',
@@ -7218,7 +7218,7 @@ NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
                 'html': '<p>We would rather you found the right help than simply chose us. Age UK runs sessions covering central Bournemouth postcodes, and many local libraries offer free digital '
                         'help too — both are genuinely worth a look if you live nearby and a set session suits you.</p><p>Where we fit in:</p><ul><li><strong>We take our time.</strong> Lessons move '
                         'at your pace, cover the same ground as often as you like, and nobody is watching the clock.</li><li><strong>We cover more of Dorset.</strong> Poole, Christchurch and the '
-                        'wider county, not just central Bournemouth — including 1-to-1 lessons in your own home.</li><li><strong>Same faces every time.</strong> You will never have to explain '
+                        'wider county, not just central Bournemouth — because a phone lesson works wherever you are.</li><li><strong>Same faces every time.</strong> You will never have to explain '
                         'yourself afresh to a stranger at every session.</li><li><strong>Help between lessons.</strong> Many people add our home IT support plan — £18.25 a month per computer, '
                         'rolling monthly, cancel anytime — so there is always a familiar voice to ring when something odd pops up.</li></ul><p>Adult children often arrange lessons for a parent from '
                         'a distance and pay on their behalf — we are always happy to set that up with a single phone call.</p>'}],

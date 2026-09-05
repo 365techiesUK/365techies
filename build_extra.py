@@ -18621,7 +18621,7 @@ def computer_help_for_seniors():
       ("Can my son or daughter arrange help on my behalf?","Yes &mdash; families often set up and pay for support for a parent, from anywhere in the country. Our <a href=\"/computer-help-for-elderly-parents/\">computer help for elderly parents</a> page is written just for them."),
       ("I've forgotten my email password &mdash; can you help?","Yes, this is one of the most common things we sort out. We&rsquo;ll recover or reset your email safely, get it working on your devices again, and help you keep a sensible record so it&rsquo;s less stressful next time."),
       ("How do I know a computer helper isn't a scammer?","A fair and important question. We <strong>always phone you first</strong> &mdash; we never cold-call, never use pop-ups, you watch everything we do on screen, and our access ends when the session ends. If anyone else rings out of the blue about your computer, put the phone down and call us on 01202 775566."),
-      ("Do you run computer lessons for older people?","Yes &mdash; friendly group classes at the Kinson Community Centre in Bournemouth, plus patient 1-to-1 tuition at home or remotely. See our <a href=\"/computer-lessons-for-seniors-bournemouth/\">computer lessons for seniors</a> page, or call for the current timetable."),
+      ("Do you run computer lessons for older people?","Yes &mdash; friendly group classes at the Kinson Community Centre in Bournemouth, plus patient one-to-one lessons online, and 12 free courses you can do at your own pace. See our <a href=\"/computer-lessons-for-seniors-bournemouth/\">computer lessons for seniors</a> page, or call for the current timetable."),
       ("What does ongoing help cost?","Our home support plan is &pound;18.25 a month per computer &mdash; rolling monthly, cancel anytime. It covers help as often as you need it, with updates, security and backups quietly looked after for you."),
     ]
     guides=[
@@ -18632,7 +18632,8 @@ def computer_help_for_seniors():
       ("Stay safe","Spot the Scam quiz","Practise telling scams from the real thing &mdash; no sign-up.","/spot-the-scam/"),
       ("No jargon","Tech in plain English","The terms and services people ask about most, explained simply.","/plain-english/"),
       ("Big change","Landline switch-off help","Your phone is moving to digital by January 2027 &mdash; what to do, calmly.","/landline-switch-off-help/"),
-      ("Learn","Computer lessons for seniors","Friendly group classes at the Kinson Community Centre, plus 1-to-1.","/computer-lessons-for-seniors-bournemouth/"),
+      ("Learn","12 free online courses","Computer basics, Microsoft Word, email, WhatsApp, scams and more &mdash; at your own pace, no sign-up.","/free-courses/"),
+      ("Learn","Computer lessons for seniors","Friendly group classes at the Kinson Community Centre, plus one-to-one online.","/computer-lessons-for-seniors-bournemouth/"),
       ("Learn","Smartphone lessons","Get confident with your Android phone &mdash; calls, photos, WhatsApp and more.","/smartphone-lessons-for-seniors/"),
     ]
     support=[
@@ -18650,7 +18651,7 @@ def computer_help_for_seniors():
            'Friendly computer help <em class="grad grad--cyan">for older people</em>',
            "Helping older and less-confident people enjoy their technology has been a specialism of ours since 1995. Here&rsquo;s a calm, friendly place to start &mdash; patient guides, and a real person whenever you&rsquo;d like one.",
            cta1=("Call 01202 775566","tel:+441202775566"), cta2=("Support for Retired Users","/it-support-for-retired-users/"),
-           chips=["Patient &amp; unhurried","No silly questions","Help at home or remotely"]),
+           chips=["Patient &amp; unhurried","No silly questions","Help online, on your own screen"]),
       f'''    <section class="section section--alt" aria-label="Friendly guides">
       <div class="wrap">
         <div class="section-head">
@@ -18682,12 +18683,12 @@ def computer_help_for_seniors():
           <p>And we always phone before we connect &mdash; so you&rsquo;re never surprised, and you can always tell us apart from a scammer.</p>
         </div>
         <ul class="checklist" data-stagger>
-{checklist(["Patient, unhurried help at your pace","The same friendly faces each time","Plain English, never jargon","We come to you, or help remotely","We always call before we connect","A real person to ask &lsquo;is this safe?&rsquo;"])}
+{checklist(["Patient, unhurried help at your pace","The same friendly faces each time","Plain English, never jargon","Help on your own screen, no call-out","We always call before we connect","A real person to ask &lsquo;is this safe?&rsquo;"])}
         </ul>
       </div>
     </section>''',
       faq_html(SENIOR_FAQS),
-      cta("Help that treats you like family","Friendly, patient IT support for older people across Dorset and beyond &mdash; at home or remotely, always at your pace.",
+      cta("Help that treats you like family","Friendly, patient IT support for older people across Dorset and beyond &mdash; online, on your own screen, always at your pace.",
           primary=("Talk to a Techie","/contact/"), secondary=("View Monthly Plans","/monthly-it-support/")),
     ])
     allitems=guides+support
