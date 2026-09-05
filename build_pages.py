@@ -6432,10 +6432,6 @@ VAN_MAP_REUSE = r"""
         We send it on request rather than as a download, so we know where it&rsquo;s going and can flag what it
         does and doesn&rsquo;t show. The only condition is that you credit us and link back, so readers can check
         the source for themselves.</p>
-        <!-- 2026-09-05: the CSV download button is gone by owner decision (no self-serve
-             data - share case by case). The ?format=csv endpoint itself still exists because
-             dorset-live/app/scripts/import-van-signal.mjs reads it; it is simply no longer
-             linked from anywhere public. Do not re-add the button. -->
         <div class="vmf-reuse">
           <a class="button primary" href="/contact/">Contact us for a copy</a>
           <a class="button secondary" href="/api/signal-log.php?summary=1" target="_blank" rel="noopener">Summary as JSON</a>
