@@ -63,6 +63,7 @@ _VOLATILE = [
     # is navigation, not content. Without this line every page on the site would carry
     # today's date for it, which is the same false signal as the analytics swap above.
     (_cdre.compile(r'\s*<a href="/bournemouth/live-map/">Bournemouth Live Map</a>'), ''),
+    (_cdre.compile(r'\s*<a href="/bournemouth/live-map/app/">Bournemouth in 3D</a>'), ''),
     # The dangling "By sector" separator removed from the Services menu (5 Sep 2026 nav audit)
     # is navigation too. A REMOVAL cannot be made invisible by a rule alone - the stored hashes
     # were taken with the label present - so the hashes were re-based once from the built pages
@@ -360,6 +361,7 @@ HEADER = '''  <header class="site-header">
             <a href="/van-signal-map/">Bournemouth Signal Map</a>
             <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
             <a href="/bournemouth/live-map/">Bournemouth Live Map</a>
+            <a href="/bournemouth/live-map/app/">Bournemouth in 3D</a>
             <a href="/pc-benchmark/">PC Benchmark</a>
             <a href="/computer-spec-checker/">PC Hardware Checker</a>
             <a href="/website-checker/">Website Checker</a>
@@ -551,6 +553,7 @@ HEADER = '''  <header class="site-header">
           <a href="/van-signal-map/">Bournemouth Signal Map</a>
           <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
           <a href="/bournemouth/live-map/">Bournemouth Live Map</a>
+          <a href="/bournemouth/live-map/app/">Bournemouth in 3D</a>
           <a href="/pc-benchmark/">PC Benchmark</a>
           <a href="/computer-spec-checker/">PC Hardware Checker</a>
           <a href="/website-checker/">Website Checker</a>
@@ -748,6 +751,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/van-signal-map/">Bournemouth Signal Map</a>
         <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
         <a href="/bournemouth/live-map/">Bournemouth Live Map</a>
+        <a href="/bournemouth/live-map/app/">Bournemouth in 3D</a>
         <a href="/pc-benchmark/">PC Benchmark</a>
         <a href="/website-checker/">Website Checker</a>
         <a href="/email-security-checker/">Email Security Checker</a>
