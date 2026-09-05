@@ -940,6 +940,14 @@ def page(slug, title, desc, og_title, schema_json, content, og_image=None):
     try {{ if (localStorage.getItem('tt_consent') === 'accepted') gtag('consent', 'update', {{ ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted', analytics_storage: 'granted' }}); }} catch (e) {{}}
     gtag('js', new Date());
     gtag('config', 'G-EBLTJ9WJXZ');
+    // phone_click: a tap on any tel: link. Twelve phone leads a window were invisible to
+    // every source; this counts the ones that start from the site. It queues into
+    // dataLayer like every other call here - same consent gate, no extra Google contact.
+    document.addEventListener('click', function (e) {{
+      var a = e.target && e.target.closest && e.target.closest('a[href^="tel:"]');
+      if (!a) return;
+      gtag('event', 'phone_click', {{ phone_number: (a.getAttribute('href') || '').replace('tel:', ''), link_text: (a.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 40) }});
+    }}, true);
     (function () {{
       function loadGtagLib() {{
         if (window.__gtagLibLoaded) return; window.__gtagLibLoaded = true;
