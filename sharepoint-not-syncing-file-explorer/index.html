@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Google tag (gtag.js) - Consent Mode v2: denied by default, granted on cookie-accept.
+       The library itself loads lazily (first interaction, or idle ~4s) so its ~90KB never
+       competes with LCP; calls below queue into dataLayer and replay when it arrives. -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', { ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'denied', wait_for_update: 500 });
+    try { if (localStorage.getItem('tt_consent') === 'accepted') gtag('consent', 'update', { ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted', analytics_storage: 'granted' }); } catch (e) {}
+    gtag('js', new Date());
+    gtag('config', 'G-EBLTJ9WJXZ');
+    (function () {
+      function loadGtagLib() {
+        if (window.__gtagLibLoaded) return; window.__gtagLibLoaded = true;
+        var g = document.createElement('script'); g.async = true;
+        g.src = 'https://www.googletagmanager.com/gtag/js?id=G-EBLTJ9WJXZ';
+        document.head.appendChild(g);
+      }
+      // Load on the first sign of a real person: mousemove/wheel cover desktop
+      // readers who never click, touch/scroll cover mobile. Lab runs (Lighthouse,
+      // PSI) never interact, so gtag stays out of TBT/TTI entirely. The 30s
+      // fallback outlives any lab trace window (a 9s timer landed INSIDE PSI's
+      // observation window and dragged TTI out — TBT 2.5s. Never shorten it).
+      ['pointerdown', 'keydown', 'touchstart', 'scroll', 'mousemove', 'wheel'].forEach(function (evt) {
+        window.addEventListener(evt, loadGtagLib, { once: true, passive: true });
+      });
+      window.addEventListener('load', function () { setTimeout(loadGtagLib, 30000); });
+    })();
+  </script>
+  <title>SharePoint Files Not Syncing to File Explorer | 365 Techies</title>
+  <meta name="description" content="SharePoint library fine on the web but missing or stuck in File Explorer? Sync or shortcut, what the cloud icon means, and a reset that loses nothing." />
+  <link rel="canonical" href="https://365techies.co.uk/sharepoint-not-syncing-file-explorer/" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <meta name="author" content="365 Techies Limited" />
+  <meta name="geo.region" content="GB-BCP" />
+  <meta name="geo.placename" content="Bournemouth, Dorset" />
+  <meta name="geo.position" content="50.7192;-1.8808" />
+  <meta name="ICBM" content="50.7192, -1.8808" />
+  <meta name="theme-color" content="#070d22" />
+  <meta name="color-scheme" content="dark" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="365 Techies" />
+  <meta property="og:locale" content="en_GB" />
+  <meta property="og:url" content="https://365techies.co.uk/sharepoint-not-syncing-file-explorer/" />
+  <meta property="og:title" content="SharePoint Files Not Syncing to File Explorer" />
+  <meta property="og:description" content="SharePoint library fine on the web but missing or stuck in File Explorer? Sync or shortcut, what the cloud icon means, and a reset that loses nothing." />
+  <meta property="og:image" content="https://365techies.co.uk/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="SharePoint Files Not Syncing to File Explorer" />
+  <meta name="twitter:description" content="SharePoint library fine on the web but missing or stuck in File Explorer? Sync or shortcut, what the cloud icon means, and a reset that loses nothing." />
+  <meta name="twitter:image" content="https://365techies.co.uk/og-image.jpg" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <!-- ?v= bumps past SiteGround's proxy cache. Learned the hard way 2026-08-01:
+       the un-versioned URL was serving a month-old copy (proxy HIT, Last-Modified
+       28 June) because no Cache-Control applied to it. The .htaccess rule now makes
+       these revalidate, but a URL already stuck in the cache stays stuck until its
+       TTL - a new URL is the only immediate escape. BUMP THIS when the manifest changes. -->
+  <link rel="manifest" href="/site.webmanifest?v=2" />
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+  <link rel="preconnect" href="https://fonts.bunny.net" />
+  <link rel="preconnect" href="https://fonts.bunny.net" crossorigin />
+  <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
+  <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
+  <noscript>
+    <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
+  </noscript>
+  <link rel="stylesheet" href="/css/styles.min.css?v=99" />
+  <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
+    or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
+    failed page readable instead of raw giant-serif HTML. */
+  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+  html.css-sos body{max-width:44rem;margin:0 auto;padding:1rem 1.1rem 3rem}
+  html.css-sos a{color:#6cc4f5}
+  html.css-sos svg,html.css-sos img{max-width:100%;max-height:64px;height:auto}
+  html.css-sos .status-ticker,html.css-sos canvas{display:none!important}
+  html.css-sos h1{font-size:1.55rem;line-height:1.25}
+  html.css-sos h2{font-size:1.2rem}
+  html.css-sos nav a,html.css-sos .button{display:inline-block;padding:.4rem .55rem}
+  </style>
+  <script>
+  /* Stylesheet insurance (2026-08-11, owner reported customers seeing raw HTML).
+     A render-blocking <link> means a SLOW stylesheet only delays paint - it cannot
+     produce an unstyled page. Unstyled means the response was UNUSABLE: 404/403, a
+     bot-wall HTML body served for a .css request, a dropped connection, or a copy
+     truncated by a deploy overwriting the file mid-flight (FTPS writes in place).
+     And because .htaccess serves css/js as immutable for a year, one bad copy then
+     STICKS on that machine until the version string changes - which is how a single
+     bad second turned into customers repeatedly seeing an unstyled site.
+     Scripts wait for pending stylesheets, so by the time this runs the sheet has
+     applied or failed. Missing sentinel => make the page readable at once, then
+     re-request the stylesheet with a cache-busting parameter, which bypasses the
+     poisoned cache entry and usually repairs the page before anyone notices.
+     Bounded to 2 attempts per tab. Never reloads the page. */
+  (function () {
+    try {
+      var R = document.documentElement;
+      if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') return;
+      R.className += ' css-sos';
+      var n = 0;
+      try { n = parseInt(sessionStorage.getItem('tt_css_sos') || '0', 10) || 0; } catch (e) {}
+      if (n >= 2) return;
+      try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
+      var l = document.createElement('link');
+      l.rel = 'stylesheet';
+      l.href = '/css/styles.min.css?v=99&sos=' + Date.now();
+      l.onload = function () {
+        if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
+          R.className = R.className.replace(/\s*css-sos/, '');
+        }
+      };
+      document.head.appendChild(l);
+    } catch (e) {}
+  })();
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://365techies.co.uk/#website",
+      "url": "https://365techies.co.uk/",
+      "name": "365 Techies",
+      "alternateName": [
+        "365techies",
+        "365 Techies Ltd"
+      ],
+      "inLanguage": "en-GB",
+      "publisher": {
+        "@id": "https://365techies.co.uk/#business"
+      }
+    },
+    {
+      "@type": [
+        "LocalBusiness",
+        "ProfessionalService"
+      ],
+      "@id": "https://365techies.co.uk/#business",
+      "name": "365 Techies",
+      "legalName": "365 Techies Limited",
+      "url": "https://365techies.co.uk/",
+      "telephone": "+441202775566",
+      "email": "help@365techies.co.uk",
+      "foundingDate": "1995",
+      "image": "https://365techies.co.uk/og-image.jpg",
+      "logo": "https://365techies.co.uk/logo.jpg",
+      "priceRange": "££",
+      "alternateName": [
+        "365 Techies Ltd",
+        "365techies",
+        "365 Computers",
+        "365 Computers Limited"
+      ],
+      "slogan": "The IT support experts",
+      "description": "Family-run, leading Managed Service Provider (MSP) established in 1995 — Dell hardware specialists, Microsoft partners and certified Microsoft Office Specialists. Fully managed monthly IT support, cybersecurity, backups and cloud, plus one-off computer repairs and refurbished Dell hardware, for homes and small businesses across Bournemouth, Poole and Dorset.",
+      "currenciesAccepted": "GBP",
+      "paymentAccepted": "Direct Debit (GoCardless), Bank Transfer, Credit Card, Debit Card",
+      "identifier": {
+        "@type": "PropertyValue",
+        "name": "Company registration number",
+        "value": "11073501"
+      },
+      "memberOf": {
+        "@type": "Organization",
+        "name": "Sustainable Dorset",
+        "url": "https://www.sustainabledorset.org/"
+      },
+      "knowsAbout": [
+        "IT support",
+        "Computer repair",
+        "Laptop repair",
+        "Microsoft 365",
+        "Cybersecurity",
+        "Data backup",
+        "Network security",
+        "Wi-Fi",
+        "Remote support",
+        "Dell hardware",
+        "Dell Latitude laptops",
+        "Dell OptiPlex desktops",
+        "Refurbished computers",
+        "Malwarebytes Premium",
+        "VPN",
+        "Online safety",
+        "Accessible IT support",
+        "IT support for retired people",
+        "IT support for disabled people",
+        "Website design",
+        "Web hosting",
+        "Business email",
+        "Managed service provider",
+        "Managed IT services",
+        "MSP",
+        "New Forest IT support"
+      ],
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Kinson Community Centre, Millhams Road, Kinson",
+        "addressLocality": "Bournemouth",
+        "addressRegion": "Dorset",
+        "postalCode": "BH10 7LH",
+        "addressCountry": "GB"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 50.7192,
+        "longitude": -1.8808
+      },
+      "areaServed": [
+        {
+          "@type": "AdministrativeArea",
+          "name": "Dorset"
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "Bournemouth, Christchurch and Poole"
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "New Forest"
+        }
+      ],
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday"
+        ],
+        "opens": "09:00",
+        "closes": "17:00"
+      },
+      "hasMap": "https://www.google.com/maps/place/?q=place_id:ChIJlTb8YRuic0gRCRczduB8OFI",
+      "sameAs": [
+        "https://www.facebook.com/365computersuk",
+        "https://www.google.com/maps/place/?q=place_id:ChIJlTb8YRuic0gRCRczduB8OFI",
+        "https://find-and-update.company-information.service.gov.uk/company/11073501",
+        "https://www.helpandkindness.co.uk/service/7188/patient-computer-%26-tech-help-for-older-people-in-dorset"
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://365techies.co.uk/sharepoint-not-syncing-file-explorer/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://365techies.co.uk/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "SharePoint Not Syncing",
+          "item": "https://365techies.co.uk/sharepoint-not-syncing-file-explorer/"
+        }
+      ]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://365techies.co.uk/sharepoint-not-syncing-file-explorer/#webpage",
+      "url": "https://365techies.co.uk/sharepoint-not-syncing-file-explorer/",
+      "name": "SharePoint Not Syncing",
+      "description": "SharePoint library fine on the web but missing or stuck in File Explorer? Sync or shortcut, what the cloud icon means, and a reset that loses nothing.",
+      "inLanguage": "en-GB",
+      "isPartOf": {
+        "@id": "https://365techies.co.uk/#website"
+      },
+      "about": {
+        "@id": "https://365techies.co.uk/#business"
+      },
+      "breadcrumb": {
+        "@id": "https://365techies.co.uk/sharepoint-not-syncing-file-explorer/#breadcrumb"
+      },
+      "primaryImageOfPage": {
+        "@type": "ImageObject",
+        "url": "https://365techies.co.uk/og-image.jpg"
+      },
+      "dateModified": "2026-09-05"
+    },
+    {
+      "@type": "Service",
+      "@id": "https://365techies.co.uk/sharepoint-not-syncing-file-explorer/#service",
+      "name": "SharePoint and OneDrive Sync Support",
+      "description": "SharePoint library fine on the web but missing or stuck in File Explorer? Sync or shortcut, what the cloud icon means, and a reset that loses nothing.",
+      "serviceType": "SharePoint and OneDrive Sync Support",
+      "areaServed": {
+        "@type": "AdministrativeArea",
+        "name": "Dorset, UK"
+      },
+      "provider": {
+        "@id": "https://365techies.co.uk/#business"
+      },
+      "url": "https://365techies.co.uk/sharepoint-not-syncing-file-explorer/"
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://365techies.co.uk/sharepoint-not-syncing-file-explorer/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Should we use Sync or Add shortcut to OneDrive?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Microsoft now leads with Add shortcut to OneDrive, and for most people it is the better choice: it follows you to every PC you sign in on and copes better with large libraries. Sync still makes sense when a whole library genuinely needs to be available offline on one machine. The one firm rule is never both on the same library &mdash; that is the collision that produces the symptoms on this page."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Files show a blue cloud icon &mdash; are they missing?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. A blue cloud means the file is online-only: OneDrive keeps a placeholder on the PC and downloads the real file the moment you open it. It is how Files On-Demand saves space. Right-click a file or folder and choose Always keep on this device if you want it downloaded for use offline."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Will resetting OneDrive delete our files?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. A reset clears the app&rsquo;s own records and makes it re-check every file against Microsoft 365; nothing in the cloud is touched and nothing already uploaded is lost. The one thing to check first is View sync problems, so that a file which only ever existed on this PC and never uploaded is not left behind."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "It works on one PC but not on another",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Then it is that PC. The usual differences are the account signed into OneDrive &mdash; a personal one rather than the work one &mdash; an older version of the app, a paused state from battery saver or a metered connection, or a longer local path because of a longer user name. Section 02 and 03 cover all four, and they are quick to check."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Everyone in the office lost the library on the same day",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "That is never the PCs; something changed in Microsoft 365. A library setting was switched off, sync was restricted to managed computers, permissions changed, or a security policy tightened. It is fixed by whoever administers your tenant, in the admin centres rather than on any laptop, and we can look at both sides in one remote session."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>
+    /* Motion gate: GSAP + ScrollTrigger are DESKTOP-ONLY. Phones, tablets and
+       reduced-motion users skip the ~90KB download and all the ScrollTrigger
+       layout work (the main mobile TBT cost) — reveals just render visible.
+       main.js boots the animations on the motion-ready event. */
+    (function () {
+      var wantMotion = window.innerWidth >= 920
+        && window.matchMedia('(hover: hover)').matches
+        && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!wantMotion) { document.documentElement.classList.add('no-motion'); return; }
+      function inject(src, onload) {
+        var s = document.createElement('script');
+        s.src = src; s.async = true; s.onload = onload;
+        document.head.appendChild(s);
+      }
+      inject('/js/vendor/gsap-3.12.5-gsap.min.js?v=1', function () {
+        inject('/js/vendor/gsap-3.12.5-ScrollTrigger.min.js?v=1', function () {
+          window.dispatchEvent(new Event('motion-ready'));
+        });
+      });
+    })();
+  </script>
+</head>
+<body id="top">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="grid-overlay" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <header class="site-header">
+    <div class="status-ticker">
+      <div class="status-ticker__track" aria-hidden="true">
+        <span><b class="tk-live" data-tk-live hidden><i class="tk-dot" aria-hidden="true"></i>LIVE&ensp;<span data-tk-live-text></span>&ensp;<em class="tk-sep">//</em>&ensp;</b><a href="tel:+441202775566" tabindex="-1">CALL 01202 775566</a>&ensp;<em class="tk-sep">//</em>&ensp;MON&ndash;FRI 9&ndash;5 &middot; SAME-DAY, USUALLY MINUTES REMOTELY&ensp;<em class="tk-sep">//</em>&ensp;<a href="/pricing/" tabindex="-1">IT SUPPORT PLANS FROM &pound;18.25/MO</a>&ensp;<em class="tk-sep">//</em>&ensp;FAMILY BUSINESS SINCE 1995 &middot; VERIFIED MICROSOFT PARTNER &middot; BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;<em class="tk-sep">//</em>&ensp;<a href="/is-it-down/" tabindex="-1">IS IT DOWN, OR JUST YOU? CHECK LIVE</a>&ensp;<em class="tk-sep">//</em>&ensp;<a href="/sos/" tabindex="-1">SOS REMOTE SUPPORT &mdash; WE&rsquo;LL DO IT TOGETHER</a>&ensp;<em class="tk-sep">//</em>&ensp;<a href="/mobile-signal-check/" tabindex="-1"><b class="tk-new">NEW</b>&thinsp;BOURNEMOUTH MOBILE SIGNAL MAP</a>&ensp;<em class="tk-sep">//</em>&ensp;</span>
+        <span><b class="tk-live" data-tk-live hidden><i class="tk-dot" aria-hidden="true"></i>LIVE&ensp;<span data-tk-live-text></span>&ensp;<em class="tk-sep">//</em>&ensp;</b><a href="tel:+441202775566" tabindex="-1">CALL 01202 775566</a>&ensp;<em class="tk-sep">//</em>&ensp;MON&ndash;FRI 9&ndash;5 &middot; SAME-DAY, USUALLY MINUTES REMOTELY&ensp;<em class="tk-sep">//</em>&ensp;<a href="/pricing/" tabindex="-1">IT SUPPORT PLANS FROM &pound;18.25/MO</a>&ensp;<em class="tk-sep">//</em>&ensp;FAMILY BUSINESS SINCE 1995 &middot; VERIFIED MICROSOFT PARTNER &middot; BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;<em class="tk-sep">//</em>&ensp;<a href="/is-it-down/" tabindex="-1">IS IT DOWN, OR JUST YOU? CHECK LIVE</a>&ensp;<em class="tk-sep">//</em>&ensp;<a href="/sos/" tabindex="-1">SOS REMOTE SUPPORT &mdash; WE&rsquo;LL DO IT TOGETHER</a>&ensp;<em class="tk-sep">//</em>&ensp;<a href="/mobile-signal-check/" tabindex="-1"><b class="tk-new">NEW</b>&thinsp;BOURNEMOUTH MOBILE SIGNAL MAP</a>&ensp;<em class="tk-sep">//</em>&ensp;</span>
+      </div>
+      <button type="button" class="tk-pause" data-tk-pause aria-label="Pause the scrolling strip" aria-pressed="false" title="Pause / play"><svg viewBox="0 0 12 12" width="10" height="10" aria-hidden="true"><rect x="2" y="1.5" width="3" height="9" rx="0.6"/><rect x="7" y="1.5" width="3" height="9" rx="0.6"/></svg></button>
+    </div>
+    <div class="header-bar">
+      <a class="logo" href="/" aria-label="365techies — home">
+        <svg class="logo__mark" viewBox="0 0 32 32" aria-hidden="true">
+          <circle cx="16" cy="16" r="13.4" fill="none" stroke="#8fb3d9" stroke-width="2" stroke-linecap="round" stroke-dasharray="63 22" transform="rotate(-55 16 16)"/>
+          <circle cx="16" cy="16" r="9.4" fill="none" stroke="#1d97e3" stroke-width="2" stroke-linecap="round" stroke-dasharray="46 14" transform="rotate(115 16 16)"/>
+          <path d="M12.4 18.4l3.6-5.8 3.4 5.1z" fill="none" stroke="#8fb3d9" stroke-width="1.2"/>
+          <circle cx="12.4" cy="18.4" r="1.6" fill="#00ce1b"/>
+          <circle cx="16" cy="12.6" r="1.6" fill="#1d97e3"/>
+          <circle cx="19.4" cy="17.7" r="1.6" fill="#1d97e3"/>
+        </svg>
+        <span class="logo__text"><em>365</em>techies</span>
+      </a>
+      <nav class="desktop-nav" aria-label="Primary">
+        <a href="/dell-it-support-dorset/">Dell</a>
+        <div class="nav-item has-dropdown">
+          <a href="/home-it-support-subscriptions/" aria-haspopup="true">For Home
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/home-it-support-subscriptions/">Home IT Support</a>
+            <a href="/home-it-support-plans/">Home Support Plans</a>
+            <a href="/it-support-for-home-workers/">Home Workers</a>
+            <a href="/family-it-support/">Families</a>
+            <a href="/it-support-for-retired-users/">Retired Users</a>
+            <a href="/it-support-for-disabled-people/">Disabled People</a>
+            <a href="/computer-help-for-seniors/">Help for Seniors</a>
+            <a href="/free-courses/">Free Courses</a>
+            <a href="/parents-guide-online-safety/">Parents&rsquo; Online Safety Guide</a>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown">
+          <a href="/business-it-support-subscriptions/" aria-haspopup="true">For Business
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/business-it-support-subscriptions/">Business IT Support</a>
+            <a href="/business-it-support-plans/">Business Support Plans</a>
+            <a href="/small-business-it-support/">Small Businesses</a>
+            <a href="/it-support-for-sole-traders/">Sole Traders</a>
+            <a href="/it-support-for-education/">Schools &amp; Education</a>
+            <a href="/it-support-by-industry/">IT Support by Industry</a>
+            <a href="/business-wifi-installation/">Business WiFi</a>
+            <a href="/business-continuity-internet/">Broadband Emergency Plan</a>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown">
+          <a href="/services/" aria-haspopup="true">Services
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/services/">All Services &#8594;</a>
+            <span class="dropdown__label dropdown__label--sep">Everyday support</span>
+            <a href="/remote-it-support/">Remote IT Support</a>
+            <a href="/computer-repairs/">Computer Repairs</a>
+            <a href="/preventative-maintenance/">Preventative Maintenance</a>
+            <a href="/microsoft-365-support/">Microsoft 365</a>
+            <a href="/cybersecurity-support/">Cybersecurity</a>
+            <a href="/email-support/">Email Support</a>
+            <a href="/printer-support/">Printer Support</a>
+            <a href="/backup-support/">Backup Support</a>
+            <span class="dropdown__label dropdown__label--sep">WiFi &amp; internet</span>
+            <a href="/wifi-support/">Wi-Fi Support</a>
+            <a href="/starlink-internet/">Starlink Internet</a>
+            <a href="/emergency-internet/">365 Emergency Internet</a>
+            <span class="dropdown__label dropdown__label--sep">Computers &amp; hardware</span>
+            <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
+            <a href="/custom-pc-builds/">Custom-Built PCs</a>
+            <span class="dropdown__label dropdown__label--sep">Web, AI &amp; off-grid</span>
+            <a href="/ai/">AI &amp; Automation</a>
+            <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
+            <a href="/web-care/">365 Web Care</a>
+            <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
+            <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
+            <span class="dropdown__label dropdown__label--sep">By sector</span>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown">
+          <a href="/free-tools/" aria-haspopup="true">Free Tools
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/free-tools/">All Free Tools &#8594;</a>
+            <span class="dropdown__label dropdown__label--sep">Test your setup</span>
+            <a href="/broadband-speed-checker/">Broadband Speed Test</a>
+            <a href="/wifi-signal-test/">365 WiFi Optimizer</a>
+            <a href="/van-signal-map/">Bournemouth Signal Map</a>
+            <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
+            <a href="/pc-benchmark/">PC Benchmark</a>
+            <a href="/computer-spec-checker/">PC Hardware Checker</a>
+            <a href="/website-checker/">Website Checker</a>
+            <a href="/is-it-down/">Is It Down? Status Checker</a>
+            <span class="dropdown__label dropdown__label--sep">Stay safe</span>
+            <a href="/email-security-checker/">Email Security Checker</a>
+            <a href="/password-breach-checker/">Password Breach Checker</a>
+            <a href="/link-safety-checker/">Link Safety Checker</a>
+            <a href="/spot-the-scam/">Spot the Scam Quiz</a>
+            <a href="/online-safety-course/">Free Online Safety Course</a>
+            <span class="dropdown__label dropdown__label--sep">Apps &amp; builders</span>
+            <a href="/free-pc-health-check/">Free PC Health Check App</a>
+            <a href="/custom-pc-builder/">Custom PC Builder</a>
+            <a href="/victron-system-builder/">Victron System Builder</a>
+            <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown">
+          <a href="/book-service/" aria-haspopup="true">Get Help
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/contact/">Contact Us &#8594;</a>
+            <span class="dropdown__label dropdown__label--sep">Right now</span>
+            <a href="/remote-support/">Start Remote Support</a>
+            <a href="/emergency-it-help/">Emergency IT Help</a>
+            <a href="/scam-pop-up-help-poole/">Scam Pop-up Help</a>
+            <span class="dropdown__label dropdown__label--sep">Book &amp; pay</span>
+            <a href="/book-service/">Book a Service</a>
+            <a href="/book-a-collection/">Book a Collection</a>
+            <a href="/quick-quote/">Quick Quote</a>
+            <a href="/pay/">Pay Us</a>
+            <span class="dropdown__label dropdown__label--sep">Plans &amp; pricing</span>
+            <a href="/monthly-it-support/">Monthly IT Support</a>
+            <a href="/plan-finder/">Plan Finder</a>
+            <a href="/switching-it-provider/">Switching to Us</a>
+            <span class="dropdown__label dropdown__label--sep">Fix it yourself</span>
+            <a href="/wifi-troubleshooting/">WiFi Troubleshooting</a>
+            <a href="/broadband-down/">Broadband Down? Start Here</a>
+          </div>
+        </div>
+        <a href="/pricing/">Pricing</a>
+        <div class="nav-item has-dropdown">
+          <a href="/about/" aria-haspopup="true">About
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <span class="dropdown__label dropdown__label--sep">Who we are</span>
+            <a href="/about/">About 365 Techies</a>
+            <a href="/meet-the-team/">Meet the Team</a>
+            <a href="/why-choose-365-techies/">Why Choose Us</a>
+            <span class="dropdown__label dropdown__label--sep">Proof</span>
+            <a href="/reviews/">Reviews</a>
+            <a href="/case-studies/">Case Studies</a>
+            <a href="/our-guarantees/">Our Guarantees</a>
+            <a href="/accreditations/">Accreditations</a>
+            <span class="dropdown__label dropdown__label--sep">Where we work</span>
+            <a href="/areas-covered/">Areas Covered</a>
+          </div>
+        </div>
+        <a href="/contact/">Contact</a>
+      </nav>
+      <div class="header-actions">
+        <button type="button" class="nav-search" data-search-open aria-label="Search this website" aria-keyshortcuts="/ Control+K">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <span class="nav-search__label">Search</span>
+          <span class="nav-search__k" aria-hidden="true"><kbd>/</kbd></span>
+        </button>
+        <a href="tel:+441202775566" class="nav-phone" aria-label="Call 365 Techies on 01202 775566">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg><span class="nav-phone__num">01202 775566</span>
+        </a>
+        <a href="/portal/" class="nav-signin" aria-label="Sign in to your 365 customer portal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="nav-signin__t">Sign in</span>
+        </a>
+        <a href="/book-service/" class="nav-book" aria-label="Book a computer service">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v3M17 3v3M4 8h16M5 6h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z"/></svg>Book
+        </a>
+        <a href="/sos/" class="nav-sos" target="_blank" rel="noopener" aria-label="SOS emergency remote support — download Splashtop SOS">
+          <span class="sos-dot" aria-hidden="true"></span>SOS<span class="nav-sos__long">&nbsp;REMOTE SUPPORT</span>
+        </a>
+        <button class="mobile-menu-button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+  <script>
+  /* Header sign-in state. Telling a signed-in customer to "Sign in" reads as broken -
+     and telling a first-time visitor only "Sign in" reads as members-only, hiding the
+     free membership from the people we most want to join. So: signed OUT invites
+     joining (in the drawer, where there is room); signed IN says where the button
+     actually goes. Inline and tiny so it settles before anyone reads the header.
+     Session shapes match the portal: customer = localStorage p365 with a wtoken;
+     staff/view-as = sessionStorage p365s. Never render the person's name here - on a
+     shared computer that would announce who last used it. */
+  (function () {
+    var cust = false, staff = false;
+    try {
+      var a = JSON.parse(localStorage.getItem('p365') || '{}') || {};
+      var b = JSON.parse(sessionStorage.getItem('p365s') || '{}') || {};
+      staff = !!(a.staff || a.stoken || b.staff || b.stoken);
+      cust = !staff && !!a.wtoken;
+    } catch (e) { return; }
+    if (!cust && !staff) return;
+    var label = staff ? 'Staff area' : 'Your portal';
+    var aria = staff ? 'Open the 365 staff area' : 'Go to your 365 portal';
+    var t = document.querySelector('.nav-signin .nav-signin__t');
+    if (t) t.textContent = label;
+    var a2 = document.querySelector('.nav-signin');
+    if (a2) a2.setAttribute('aria-label', aria);
+    var m = document.querySelector('.mobile-menu .m-signin');
+    if (m) m.textContent = label;
+  })();
+  </script>
+
+  <div class="menu-backdrop" aria-hidden="true"></div>
+  <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
+    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <nav class="mobile-menu__nav" aria-label="Mobile">
+      <a href="/">Home</a>
+      <a href="/dell-it-support-dorset/">Dell</a>
+      <a href="/pricing/">Pricing</a>
+      <a href="/contact/">Contact</a>
+      <a href="/portal/" class="m-signin">Sign in or join free</a>
+      <details class="m-group">
+        <summary>For Home</summary>
+        <div class="m-group__links">
+          <a href="/home-it-support-subscriptions/">Home IT Support</a>
+          <a href="/home-it-support-plans/">Home Support Plans</a>
+          <a href="/it-support-for-home-workers/">Home Workers</a>
+          <a href="/family-it-support/">Families</a>
+          <a href="/it-support-for-retired-users/">Retired Users</a>
+          <a href="/it-support-for-disabled-people/">Disabled People</a>
+          <a href="/computer-help-for-seniors/">Help for Seniors</a>
+          <a href="/free-courses/">Free Courses</a>
+          <a href="/parents-guide-online-safety/">Parents&rsquo; Online Safety Guide</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>For Business</summary>
+        <div class="m-group__links">
+          <a href="/business-it-support-subscriptions/">Business IT Support</a>
+          <a href="/business-it-support-plans/">Business Support Plans</a>
+          <a href="/small-business-it-support/">Small Businesses</a>
+          <a href="/it-support-for-sole-traders/">Sole Traders</a>
+          <a href="/it-support-for-education/">Schools &amp; Education</a>
+          <a href="/it-support-by-industry/">IT Support by Industry</a>
+          <a href="/business-wifi-installation/">Business WiFi</a>
+          <a href="/business-continuity-internet/">Broadband Emergency Plan</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>Services</summary>
+        <div class="m-group__links">
+          <a href="/services/">All Services &#8594;</a>
+          <span class="dropdown__label dropdown__label--sep">Everyday support</span>
+          <a href="/remote-it-support/">Remote IT Support</a>
+          <a href="/computer-repairs/">Computer Repairs</a>
+          <a href="/preventative-maintenance/">Preventative Maintenance</a>
+          <a href="/microsoft-365-support/">Microsoft 365</a>
+          <a href="/cybersecurity-support/">Cybersecurity</a>
+          <a href="/email-support/">Email Support</a>
+          <a href="/printer-support/">Printer Support</a>
+          <a href="/backup-support/">Backup Support</a>
+          <span class="dropdown__label dropdown__label--sep">WiFi &amp; internet</span>
+          <a href="/wifi-support/">Wi-Fi Support</a>
+          <a href="/starlink-internet/">Starlink Internet</a>
+          <a href="/emergency-internet/">365 Emergency Internet</a>
+          <span class="dropdown__label dropdown__label--sep">Computers &amp; hardware</span>
+          <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
+          <a href="/custom-pc-builds/">Custom-Built PCs</a>
+          <span class="dropdown__label dropdown__label--sep">Web, AI &amp; off-grid</span>
+          <a href="/ai/">AI &amp; Automation</a>
+          <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
+          <a href="/web-care/">365 Web Care</a>
+          <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
+          <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
+          <span class="dropdown__label dropdown__label--sep">By sector</span>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>Free Tools</summary>
+        <div class="m-group__links">
+          <a href="/free-tools/">All Free Tools &#8594;</a>
+          <span class="dropdown__label dropdown__label--sep">Test your setup</span>
+          <a href="/broadband-speed-checker/">Broadband Speed Test</a>
+          <a href="/wifi-signal-test/">365 WiFi Optimizer</a>
+          <a href="/van-signal-map/">Bournemouth Signal Map</a>
+          <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
+          <a href="/pc-benchmark/">PC Benchmark</a>
+          <a href="/computer-spec-checker/">PC Hardware Checker</a>
+          <a href="/website-checker/">Website Checker</a>
+          <a href="/is-it-down/">Is It Down? Status Checker</a>
+          <span class="dropdown__label dropdown__label--sep">Stay safe</span>
+          <a href="/email-security-checker/">Email Security Checker</a>
+          <a href="/password-breach-checker/">Password Breach Checker</a>
+          <a href="/link-safety-checker/">Link Safety Checker</a>
+          <a href="/spot-the-scam/">Spot the Scam Quiz</a>
+          <a href="/online-safety-course/">Free Online Safety Course</a>
+          <span class="dropdown__label dropdown__label--sep">Apps &amp; builders</span>
+          <a href="/free-pc-health-check/">Free PC Health Check App</a>
+          <a href="/custom-pc-builder/">Custom PC Builder</a>
+          <a href="/victron-system-builder/">Victron System Builder</a>
+          <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>Get Help</summary>
+        <div class="m-group__links">
+          <a href="/contact/">Contact Us &#8594;</a>
+          <span class="dropdown__label dropdown__label--sep">Right now</span>
+          <a href="/remote-support/">Start Remote Support</a>
+          <a href="/emergency-it-help/">Emergency IT Help</a>
+          <a href="/scam-pop-up-help-poole/">Scam Pop-up Help</a>
+          <span class="dropdown__label dropdown__label--sep">Book &amp; pay</span>
+          <a href="/book-service/">Book a Service</a>
+          <a href="/book-a-collection/">Book a Collection</a>
+          <a href="/quick-quote/">Quick Quote</a>
+          <a href="/pay/">Pay Us</a>
+          <span class="dropdown__label dropdown__label--sep">Plans &amp; pricing</span>
+          <a href="/monthly-it-support/">Monthly IT Support</a>
+          <a href="/plan-finder/">Plan Finder</a>
+          <a href="/switching-it-provider/">Switching to Us</a>
+          <span class="dropdown__label dropdown__label--sep">Fix it yourself</span>
+          <a href="/wifi-troubleshooting/">WiFi Troubleshooting</a>
+          <a href="/broadband-down/">Broadband Down? Start Here</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>About &amp; Trust</summary>
+        <div class="m-group__links">
+          <span class="dropdown__label dropdown__label--sep">Who we are</span>
+          <a href="/about/">About 365 Techies</a>
+          <a href="/meet-the-team/">Meet the Team</a>
+          <a href="/why-choose-365-techies/">Why Choose Us</a>
+          <span class="dropdown__label dropdown__label--sep">Proof</span>
+          <a href="/reviews/">Reviews</a>
+          <a href="/case-studies/">Case Studies</a>
+          <a href="/our-guarantees/">Our Guarantees</a>
+          <a href="/accreditations/">Accreditations</a>
+          <span class="dropdown__label dropdown__label--sep">Where we work</span>
+          <a href="/areas-covered/">Areas Covered</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>Resources &amp; Info</summary>
+        <div class="m-group__links">
+          <a href="/resources/">Resources &amp; Guides</a>
+          <a href="/it-advice/">IT Advice</a>
+          <a href="/it-support-cost-guide/">IT Cost Guide</a>
+          <a href="/it-jargon-buster/">IT Jargon Buster</a>
+          <a href="/cybersecurity-checklist/">Cybersecurity Checklist</a>
+          <a href="/cyber-threats/">Cyber Threats Explained</a>
+          <a href="/faqs/">FAQs</a>
+          <a href="/system-status/">System Status</a>
+          <a href="/privacy-policy/">Privacy Policy</a>
+          <a href="/cookie-policy/">Cookie Policy</a>
+          <a href="/terms/">Terms of Service</a>
+          <a href="/accessibility-statement/">Accessibility</a>
+        </div>
+      </details>
+    </nav>
+    <div class="mobile-menu__plans">
+      <a class="button sos" href="/sos/" target="_blank" rel="noopener"><span class="sos-dot" aria-hidden="true"></span>SOS Remote Support</a>
+      <a class="button primary" href="/book-service/">Book a Service</a>
+      <a class="button secondary" href="/home-it-support-plans/">Home Plans</a>
+      <a class="button secondary" href="/business-it-support-plans/">Business Plans</a>
+    </div>
+    <p class="mobile-menu__foot mono"><a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a><br /><a href="tel:+441202775566">01202 775566</a><br /><a href="sms:+447520615332">Text only: 07520 615332</a></p>
+  </aside>
+
+  <main id="main">
+    <section class="page-hero" aria-label="Introduction">
+      <div class="page-hero__inner">
+        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">SharePoint Not Syncing</span></nav>
+        <p class="eyebrow mono">// MICROSOFT 365 SUPPORT</p>
+        <h1>SharePoint files not syncing to File Explorer</h1>
+        <p class="lede">The team&rsquo;s document library has always lived in File Explorer under the company name, and now it is missing, or stuck on &ldquo;sync pending&rdquo;, or wearing a red cross. Open the same library in a web browser and everything is there. That last detail is the reassuring one: the files are safe in Microsoft 365, and what has stopped is the copy on this PC. There are two quite different ways a SharePoint library gets into File Explorer, and the fix depends on which one you used, so that is where to start. Rated 4.9 on Google.</p>
+        <div class="page-hero__cta">
+          <a href="/contact/" class="button primary button--lg">Get it looked at</a>
+          <a href="tel:+441202775566" class="button secondary button--lg">Call 01202 775566</a>
+        </div>
+        <ul class="page-hero__chips mono"><li>&#9679; No fix, no fee</li><li>&#9679; Rated 4.9 on Google</li><li>&#9679; Trading since 1995</li></ul>
+      </div>
+    </section>
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; TWO ROUTES, NOT ONE</a><a href="#s2">02 &mdash; READ THE ICON</a><a href="#s3">03 &mdash; THE FILES THAT JAM IT</a><a href="#s4">04 &mdash; THE RESET</a><a href="#s5">05 &mdash; WHEN IT IS NOT YOUR PC</a></nav>
+    <section id="s1" class="section" aria-label="Sync and &ldquo;Add shortcut to OneDrive&rdquo; are different things">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">/01 &mdash; TWO ROUTES, NOT ONE</p>
+        <h2 class="section-title" data-title>Sync and &ldquo;Add shortcut to OneDrive&rdquo; are different things<span class="title-underline"></span></h2>
+<p>Both routes use the same OneDrive app &mdash; the cloud icon by the clock &mdash; signed in with your <em>work</em> account, and both end with the library&rsquo;s files in File Explorer. But they put them in different places, they fail differently, and Microsoft will not let you use both on the same library.</p><ul><li><strong>Sync</strong> is the older route. Press the Sync button on a library in the browser and the whole library appears in File Explorer under a heading with your organisation&rsquo;s name, alongside your OneDrive. It is the route most offices set up years ago.</li><li><strong>Add shortcut to OneDrive</strong> is the newer one, and the one Microsoft now leads with. The library appears as a folder <em>inside</em> your OneDrive, follows you to any PC you sign in on, and behaves better with large libraries.</li></ul><p>The two collide. If a library is already synced, trying to add a shortcut to it fails, and the other way round; you will see a message that the folder is already being synced, or that a shortcut already exists. So when a library has vanished from File Explorer, the first question is which route it used, because that tells you where to look for it and how to put it back. A library under the company name was synced; one inside your OneDrive folder was a shortcut.</p>
+      </div>
+    </section>
+    <section class="section" aria-label="Fix this now with remote support">
+      <div class="wrap" style="max-width:860px;margin:0 auto">
+        <div class="callout callout--good callout--center" data-reveal>
+          <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// NEED THIS FIXED RIGHT NOW?</p>
+          <p class="callout__lede">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
+          <p class="callout__row">
+            <a class="button primary" href="/sos/">Start SOS Remote Support</a>
+            <a class="button secondary" href="tel:+441202775566">Call 01202 775566</a>
+          </p>
+        </div>
+      </div>
+    </section>
+    <section id="s2" class="section section--alt" aria-label="What the cloud by the clock is telling you">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">/02 &mdash; READ THE ICON</p>
+        <h2 class="section-title" data-title>What the cloud by the clock is telling you<span class="title-underline"></span></h2>
+<p>Before changing anything, look at the OneDrive icon in the bottom-right corner of the screen &mdash; you may need to click the small arrow to see it. Its state is the diagnosis.</p><ul><li><strong>A grey cloud with a line through it</strong> means OneDrive is not signed in. Click it and sign in with your work address. Check the account list in its settings too: a personal OneDrive can be signed in while the work account has dropped off, and the library belongs to the work one.</li><li><strong>&ldquo;Paused&rdquo;</strong> is the commonest surprise. OneDrive pauses itself on a metered connection &mdash; a phone hotspot, some business broadband that reports itself that way &mdash; and when the laptop goes into battery saver. Both are switches in its settings, under Sync and backup.</li><li><strong>A red cross</strong> means particular files have errors. Click the icon and choose <em>View sync problems</em>: it names the files, and section 03 is about them.</li><li><strong>&ldquo;Sync pending&rdquo; that never ends</strong> usually means one of the problem files is blocking the queue, or the library is too large to sync in full. Same section.</li><li><strong>A blue cloud on a file</strong> is not a fault at all. It means the file is online-only &mdash; Files On-Demand keeps a placeholder and downloads it when you open it. The file is there; it is just not taking up space yet.</li></ul><p>If the icon is healthy and the library is simply absent, it may have been unlinked or the PC may never have had it: go back to the library in the browser and choose Sync or Add shortcut &mdash; one of them, not both.</p>
+      </div>
+    </section>
+    <section id="s3" class="section" aria-label="The handful of files that stop the whole library">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">/03 &mdash; THE FILES THAT JAM IT</p>
+        <h2 class="section-title" data-title>The handful of files that stop the whole library<span class="title-underline"></span></h2>
+<p>One awkward file can hold up thousands of good ones. <em>View sync problems</em> names them; these are the reasons they are on the list.</p><ul><li><strong>The path is too long.</strong> SharePoint on the web tolerates deep folder trees and long names that Windows cannot: the full local path, from the drive letter to the end of the file name, has a limit of around 260 characters. A library that is fine in the browser jams the moment it is synced to <code>C:\Users\YourName\Company Name\...</code>. Shortening a folder name or two near the top usually clears a whole run of errors.</li><li><strong>Characters Windows will not accept.</strong> Names containing <code>" * : &lt; &gt; ? / \ |</code>, or ending in a full stop or a space, cannot exist as Windows files. Rename them in the browser.</li><li><strong>A file that is open.</strong> A spreadsheet someone has had open for a week, or a file another program has locked, cannot be updated until it is closed.</li><li><strong>Too many items.</strong> Microsoft&rsquo;s own guidance is to keep the total across everything you sync under about 300,000 files; beyond that the app slows to a crawl and looks stuck. A whole-company library synced in full on every laptop gets there sooner than you would think. The remedy is not to sync the whole library: use Add shortcut to OneDrive for the folders each person actually works in, or choose folders in the app&rsquo;s settings.</li></ul>
+      </div>
+    </section>
+    <section id="s4" class="section section--alt" aria-label="Resetting OneDrive without losing anything">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">/04 &mdash; THE RESET</p>
+        <h2 class="section-title" data-title>Resetting OneDrive without losing anything<span class="title-underline"></span></h2>
+<p>When the icon looks healthy, the problem list is empty, and it still will not move, reset the app. This is safe: it clears the app&rsquo;s own bookkeeping and makes it look again, and it does not delete anything from Microsoft 365 or anything already uploaded. One check first &mdash; open <em>View sync problems</em> and make sure nothing is waiting to upload, because a file that only exists on this PC and has never made it to the cloud is the one thing a reset can leave behind.</p><p>Sign out of OneDrive and back in first; that alone clears a surprising number of stalls. If not, press the Windows key and R together, and run <code>%localappdata%\Microsoft\OneDrive\onedrive.exe /reset</code>. On some PCs the app lives under Program Files instead, in which case the same command with <code>C:\Program Files\Microsoft OneDrive\onedrive.exe</code> is the one that works; use whichever is present. The icon disappears and returns within a couple of minutes, and the app re-checks every file against the cloud. On a large library that takes a while, and files show as syncing without any data actually moving.</p><p>Afterwards, if the library is still absent, put it back <strong>once</strong>, by one route. If it had been synced, sync it again; if it had been a shortcut, add the shortcut again. Doing both is the collision from section 01, and it produces exactly the symptoms you started with.</p>
+      </div>
+    </section>
+    <section id="s5" class="section" aria-label="When everyone lost it at once, the cause is on the admin side">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">/05 &mdash; WHEN IT IS NOT YOUR PC</p>
+        <h2 class="section-title" data-title>When everyone lost it at once, the cause is on the admin side<span class="title-underline"></span></h2>
+<p>If one PC has the problem, it is the PC. If the whole office lost the library on the same morning, nothing on any of the PCs caused it &mdash; something changed in Microsoft 365, and no amount of resetting will bring it back. The usual suspects, in rough order of how often we meet them.</p><ul><li><strong>The library was set not to allow offline copies.</strong> There is a setting on each library, in its advanced settings, that controls whether it can be synced at all. A site owner tidying up can switch it off without realising what it does, and every synced copy stops.</li><li><strong>Sync was restricted to managed PCs.</strong> An administrator can allow syncing only from computers joined to the organisation, or only from particular devices. Home PCs and personal laptops drop off overnight.</li><li><strong>Permissions changed.</strong> A reorganised site, a group membership removed, or a guest account expiring. The library is still there; you no longer have the right to it.</li><li><strong>The organisation&rsquo;s own security rules.</strong> Conditional access policies can block sync from outside the office, or from a device that has not met a requirement.</li></ul><p>All of these are fixed in the Microsoft 365 admin centres, not on the PC, and they need whoever administers your tenant. If that is a previous IT provider who has gone quiet, that is a problem we have written about separately and one we deal with often. If it is us, or you would like it to be, this is a short remote session: we look at the PC side and the admin side together and put the library back where it was.</p>
+      </div>
+    </section>
+    <section class="section" aria-label="Related">
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">// KEEP GOING</p>
+          <div class="related__links"><a href="/onedrive-problems/">OneDrive problems</a><a href="/files-missing-from-onedrive/">Files missing from OneDrive</a><a href="/onedrive-keeps-asking-to-sign-in/">OneDrive keeps asking to sign in</a><a href="/excel-onedrive-sync-conflicts/">Excel sync conflicts</a><a href="/former-it-provider-controls-microsoft-365/">Former IT provider still controls Microsoft 365</a><a href="/microsoft-365-support/">Microsoft 365 support</a></div>
+        </div>
+      </div>
+    </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
+    <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
+      <div class="wrap">
+        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
+        <div class="faq-wrap">
+        <details class="faq" data-reveal>
+          <summary>Should we use Sync or Add shortcut to OneDrive?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Microsoft now leads with Add shortcut to OneDrive, and for most people it is the better choice: it follows you to every PC you sign in on and copes better with large libraries. Sync still makes sense when a whole library genuinely needs to be available offline on one machine. The one firm rule is never both on the same library &mdash; that is the collision that produces the symptoms on this page.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Files show a blue cloud icon &mdash; are they missing?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>No. A blue cloud means the file is online-only: OneDrive keeps a placeholder on the PC and downloads the real file the moment you open it. It is how Files On-Demand saves space. Right-click a file or folder and choose Always keep on this device if you want it downloaded for use offline.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Will resetting OneDrive delete our files?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>No. A reset clears the app&rsquo;s own records and makes it re-check every file against Microsoft 365; nothing in the cloud is touched and nothing already uploaded is lost. The one thing to check first is View sync problems, so that a file which only ever existed on this PC and never uploaded is not left behind.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>It works on one PC but not on another<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Then it is that PC. The usual differences are the account signed into OneDrive &mdash; a personal one rather than the work one &mdash; an older version of the app, a paused state from battery saver or a metered connection, or a longer local path because of a longer user name. Section 02 and 03 cover all four, and they are quick to check.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Everyone in the office lost the library on the same day<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>That is never the PCs; something changed in Microsoft 365. A library setting was switched off, sync was restricted to managed computers, permissions changed, or a security policy tightened. It is fixed by whoever administers your tenant, in the admin centres rather than on any laptop, and we can look at both sides in one remote session.</p></div>
+        </details>
+        </div>
+      </div>
+    </section>
+    <section class="cta-band" aria-label="Get started">
+      <div class="cta-band__inner">
+        <h2 data-title>Library still not syncing?<span class="title-underline title-underline--center"></span></h2>
+        <p class="lede lede--center" data-reveal>We support Microsoft 365, SharePoint and OneDrive for businesses across Bournemouth, Poole and Dorset &mdash; usually remotely, in one short session. Call 01202 775566.</p>
+        <div class="hero-buttons hero-buttons--center" data-reveal>
+          <a href="/contact/" class="button primary button--lg">Get it looked at</a>
+          <a href="tel:+441202775566" class="button secondary button--lg">Call 01202 775566</a>
+        </div>
+        <p class="cta__contact mono" data-reveal>01202 775566 &middot; help@365techies.co.uk &middot; MON&ndash;FRI 9AM&ndash;5PM</p>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <div class="footer-areas">
+      <p class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</p>
+      <nav class="footer-areas__links" aria-label="Areas we cover">
+        <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
+        <a href="/it-support-bournemouth/">Bournemouth</a>
+        <a href="/it-support-poole/">Poole</a>
+        <a href="/it-support-christchurch/">Christchurch</a>
+        <a href="/it-support-ferndown/">Ferndown</a>
+        <a href="/it-support-wimborne/">Wimborne</a>
+        <a href="/it-support-broadstone/">Broadstone</a>
+        <a href="/it-support-verwood/">Verwood</a>
+        <a href="/it-support-ringwood/">Ringwood</a>
+        <a href="/it-support-wareham/">Wareham</a>
+        <a href="/it-support-swanage/">Swanage</a>
+        <a href="/it-support-weymouth/">Weymouth</a>
+        <a href="/it-support-dorchester/">Dorchester</a>
+        <a href="/it-support-blandford-forum/">Blandford Forum</a>
+        <a href="/it-support-shaftesbury/">Shaftesbury</a>
+        <a href="/it-support-gillingham/">Gillingham</a>
+        <a href="/it-support-sherborne/">Sherborne</a>
+        <a href="/it-support-new-forest/">New Forest</a>
+        <a href="/it-support-lymington/">Lymington</a>
+        <a href="/it-support-new-milton/">New Milton</a>
+        <a href="/it-support-brockenhurst/">Brockenhurst</a>
+        <a href="/it-support-southampton/">Southampton</a>
+        <a class="footer-areas__all" href="/areas-covered/">View all areas &#8594;</a>
+      </nav>
+    </div>
+    <div class="site-footer__grid">
+      <div class="site-footer__brand">
+        <a class="logo" href="/">
+          <svg class="logo__mark" viewBox="0 0 32 32" aria-hidden="true">
+            <circle cx="16" cy="16" r="13.4" fill="none" stroke="#8fb3d9" stroke-width="2" stroke-linecap="round" stroke-dasharray="63 22" transform="rotate(-55 16 16)"/>
+            <circle cx="16" cy="16" r="9.4" fill="none" stroke="#1d97e3" stroke-width="2" stroke-linecap="round" stroke-dasharray="46 14" transform="rotate(115 16 16)"/>
+            <path d="M12.4 18.4l3.6-5.8 3.4 5.1z" fill="none" stroke="#8fb3d9" stroke-width="1.2"/>
+            <circle cx="12.4" cy="18.4" r="1.6" fill="#00ce1b"/>
+            <circle cx="16" cy="12.6" r="1.6" fill="#1d97e3"/>
+            <circle cx="19.4" cy="17.7" r="1.6" fill="#1d97e3"/>
+          </svg>
+          <span class="logo__text"><em>365</em>techies</span>
+        </a>
+        <p>The IT support experts. A family-run business established in 1995 — Dell hardware specialists, Microsoft partners and certified Microsoft Office Specialists, providing monthly IT support for homes and businesses across Bournemouth, Poole and Dorset.</p>
+        <div class="partner-badges" aria-label="Accreditations">
+          <span class="partner-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="8" r="5"/><path d="M8.5 12.5 7 21l5-2.5L17 21l-1.5-8.5"/></svg>Family Business &middot; Est. 1995</span>
+          <span class="partner-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 18h18M9 22h6"/></svg>Dell Specialist</span>
+          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>Microsoft Partner</span>
+          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>Microsoft Office Specialist</span>
+          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>Malwarebytes Partner</span>
+          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/></svg>NVIDIA &amp; Scan Partner</span>
+          <a class="partner-badge partner-badge--gold" href="https://www.google.com/maps?cid=5924622613303465737" target="_blank" rel="noopener" title="See our 4.9-star reviews on Google"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.5 1.6 6.7L12 17l-6.2 3.6 1.6-6.7L2.2 8.9l6.9-.6z"/></svg>4.9 on Google</a>
+          <a class="partner-badge partner-badge--green" href="/sustainability/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 20c0-9 7-16 16-16 0 9-7 16-16 16z"/><path d="M4 20C9 15 13 11 18 9"/></svg>Sustainable Dorset Member</a>
+          <a class="partner-badge partner-badge--green" href="/help-in-dorset/" title="Patient computer &amp; tech help for older people — listed on Dorset's community help directory"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 21C8 17 3 13.5 3 8.8 3 6 5.2 4 7.8 4c1.7 0 3.2.9 4.2 2.4C13 4.9 14.5 4 16.2 4 18.8 4 21 6 21 8.8c0 4.7-5 8.2-9 12.2z"/></svg>Listed on #HelpAndKindness</a>
+        </div>
+      </div>
+      <nav aria-label="Support links">
+        <p class="site-footer__head mono">SUPPORT</p>
+        <a href="/join/">Join the 365 Club &mdash; Free</a>
+        <a href="/book-service/">Book a Service</a>
+        <a href="/book-a-collection/">Book a Collection</a>
+        <a href="/pay/">Pay Us</a>
+        <a href="/remote-support/">Start Remote Support</a>
+        <a href="/emergency-it-help/">Emergency IT Help</a>
+        <a href="/ive-been-scammed-what-to-do/">I&rsquo;ve Been Scammed</a>
+        <a href="/i-think-ive-been-hacked/">If You&rsquo;ve Been Hacked</a>
+        <a href="/scam-pop-up-help-poole/">Scam Pop-up Help (Poole)</a>
+        <a href="/virus-removal-christchurch/">Virus Removal (Christchurch)</a>
+        <a href="/outlook-problems/">Outlook Problems &amp; Fixes</a>
+        <a href="/is-it-down/">Is Something Down?</a>
+        <a href="/support-portal/">Support Portal</a>
+        <a href="/splashtop-business-guide/">Remote Access Guide</a>
+        <a href="/dell-latitude-3520-guide/">Dell Laptop Guide</a>
+            <a href="/dell-latitude-5000-guide/">Latitude 5000 Guide</a>
+            <a href="/dell-latitude-7000-guide/">Latitude 7000 Guide</a>
+        <a href="/dell-optiplex-guide/">Dell Desktop Guide</a>
+        <a href="/heatwave-tech-guide/">Heatwave Tech Guide</a>
+            <a href="/why-computer-prices-have-gone-up/">Why Prices Went Up</a>
+        <a href="/monthly-it-support/">Monthly IT Support</a>
+        <a href="/home-it-support-subscriptions/">Home IT Support</a>
+        <a href="/business-it-support-subscriptions/">Business IT Support</a>
+        <a href="/computer-repairs/">Computer Repairs</a>
+        <a href="/switching-it-provider/">Switching to Us</a>
+        <a href="/pricing/">Pricing</a>
+        <a href="/quick-quote/">Quick Quote</a>
+        <a href="/free-it-health-check/">Free IT Health Check</a>
+      </nav>
+      <nav aria-label="Free tools links">
+        <p class="site-footer__head mono">FREE TOOLS</p>
+        <a href="/free-courses/">Free Courses</a>
+        <a href="/free-tools/">All Free Tools &#8594;</a>
+        <a href="/free-pc-health-check/">Free PC Health Check App</a>
+        <a href="/online-safety-course/">Free Online Safety Course</a>
+        <a href="/broadband-speed-checker/">Broadband Speed Test</a>
+        <a href="/wifi-signal-test/">365 WiFi Optimizer</a>
+        <a href="/van-signal-map/">Bournemouth Signal Map</a>
+        <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
+        <a href="/pc-benchmark/">PC Benchmark</a>
+        <a href="/website-checker/">Website Checker</a>
+        <a href="/email-security-checker/">Email Security Checker</a>
+        <a href="/password-breach-checker/">Password Breach Checker</a>
+        <a href="/link-safety-checker/">Link Safety Checker</a>
+        <a href="/password-generator/">Password Generator</a>
+        <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
+        <a href="/custom-pc-builder/">Custom PC Builder</a>
+        <a href="/victron-system-builder/">Victron System Builder</a>
+        <a href="/solar-battery-calculator/">Battery &amp; Solar Calculator</a>
+        <a href="/cost-calculator/">Cost Calculator</a>
+        <a href="/plan-finder/">Plan Finder</a>
+        <a href="/spot-the-scam/">Spot the Scam Quiz</a>
+        <a href="/is-it-down/">Is It Down? Status Checker</a>
+        <a href="/computer-spec-checker/">PC Hardware Checker</a>
+      </nav>
+      <nav aria-label="Services links">
+        <p class="site-footer__head mono">SERVICES</p>
+        <a href="/services/">All Services</a>
+        <a href="/it-support-by-industry/">IT Support by Industry</a>
+        <p class="site-footer__subhead mono">Support &amp; security</p>
+        <a href="/preventative-maintenance/">Preventative Maintenance</a>
+        <a href="/remote-it-support/">Remote IT Support</a>
+        <a href="/microsoft-365-support/">Microsoft 365</a>
+        <a href="/cybersecurity-support/">Cybersecurity</a>
+        <a href="/malwarebytes-premium/">Malwarebytes Premium &amp; VPN</a>
+        <a href="/disaster-recovery/">Disaster Recovery</a>
+        <a href="/gdpr-it-compliance/">GDPR &amp; IT Compliance</a>
+        <a href="/windows-11-support/">Windows 11</a>
+        <a href="/windows-10-end-of-life/">Windows 10 End of Life</a>
+        <a href="/email-support/">Email Support</a>
+        <a href="/wifi-support/">Wi-Fi Support</a>
+        <a href="/printer-support/">Printer Support</a>
+        <a href="/backup-support/">Backup Support</a>
+        <p class="site-footer__subhead mono">Hardware &amp; setup</p>
+        <a href="/new-computer-setup/">New Computer Setup</a>
+        <a href="/new-laptop-set-up-bournemouth/">New Laptop Set Up for You</a>
+        <a href="/transfer-photos-to-a-new-computer-bournemouth/">Transfer Files to a New PC</a>
+        <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
+        <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
+            <a href="/refurbished-dell-latitude-3000/">Latitude 3000 Series</a>
+            <a href="/refurbished-dell-latitude-5000/">Latitude 5000 Series</a>
+            <a href="/refurbished-dell-latitude-7000/">Latitude 7000 Series</a>
+            <a href="/refurbished-dell-optiplex-3000/">OptiPlex 3000 Tier</a>
+            <a href="/refurbished-dell-optiplex-5000/">OptiPlex 5000 Tier</a>
+            <a href="/refurbished-dell-optiplex-7000/">OptiPlex 7000 Tier</a>
+        <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
+        <a href="/dell-support-bournemouth/">Dell Support Bournemouth</a>
+        <a href="/dell-support-poole/">Dell Support Poole</a>
+        <a href="/refurbished-dell-laptops-bournemouth/">Refurbished Dell Laptops</a>
+        <a href="/second-hand-office-computers-poole/">Refurbished Office Computers</a>
+        <a href="/custom-pc-builds/">Custom-Built PCs</a>
+        <a href="/threadripper-workstations/">Threadripper Workstations</a>
+        <a href="/gaming-pcs/">Gaming PCs</a>
+        <a href="/content-creator-pcs/">Content Creator PCs</a>
+        <a href="/home-cinema-entertainment/">Home Cinema &amp; AV</a>
+        <p class="site-footer__subhead mono">Connectivity &amp; energy</p>
+        <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
+        <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
+        <a href="/simplybook-integration/">Custom Booking Systems</a>
+        <a href="/lithium-battery-installs-dorset/">Leisure &amp; Marine Batteries</a>
+        <a href="/rural-and-farm-wifi-dorset/">Rural &amp; Farm Wi-Fi</a>
+        <a href="/broadband-to-a-boat-mooring/">Broadband to a Boat Mooring</a>
+        <a href="/wifi-for-a-shepherds-hut/">Wi-Fi for a Shepherd&rsquo;s Hut</a>
+        <a href="/starlink-internet/">Starlink Internet</a>
+        <p class="site-footer__subhead mono">Web, AI &amp; robotics</p>
+        <a href="/ai/">AI &amp; Automation</a>
+        <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
+        <a href="/ai/agents/">AI Agents</a>
+        <a href="/365-ai-os/">365 AI OS</a>
+        <a href="/ai/voice-agents/">AI Voice Agents</a>
+        <a href="/unitree-robots/">Unitree Robots</a>
+        <p class="site-footer__subhead mono">IT support by industry</p>
+        <a href="/it-support-for-hotels-holiday-lets/">Hotels &amp; Holiday Lets</a>
+        <a href="/it-support-for-vets/">Veterinary Practices</a>
+        <a href="/it-support-for-salons-beauty/">Salons &amp; Beauty</a>
+        <a href="/it-support-for-financial-advisers/">Financial Advisers</a>
+        <a href="/it-support-for-recruitment-agencies/">Recruitment Agencies</a>
+        <a href="/it-support-for-garages-automotive/">Garages &amp; Automotive</a>
+        <a href="/it-support-for-gyms-fitness/">Gyms &amp; Fitness</a>
+        <a href="/it-support-for-ecommerce/">E-commerce &amp; Online Retail</a>
+        <a href="/it-support-for-property-management/">Property Management</a>
+        <a href="/it-support-for-manufacturing/">Manufacturing &amp; Engineering</a>
+        <a href="/it-support-for-nurseries-dorset/">Nurseries &amp; Childcare</a>
+        <a href="/it-support-for-churches-faith/">Churches &amp; Faith Groups</a>
+      </nav>
+      <nav aria-label="Who we help links">
+        <p class="site-footer__head mono">WHO WE HELP</p>
+        <a href="/family-it-support/">Families</a>
+        <a href="/it-support-for-retired-users/">Retired Users</a>
+        <a href="/it-support-for-disabled-people/">Disabled People</a>
+        <a href="/computer-help-for-seniors/">Help for Seniors</a>
+        <a href="/it-support-for-home-workers/">Home Workers</a>
+        <a href="/it-support-for-digital-nomads/">Digital Nomads</a>
+        <a href="/it-support-for-sole-traders/">Sole Traders</a>
+        <a href="/small-business-it-support/">Small Businesses</a>
+      </nav>
+      <nav aria-label="Company links">
+        <p class="site-footer__head mono">COMPANY</p>
+        <a href="/about/">About</a>
+        <a href="/meet-the-team/">Meet the Team</a>
+        <a href="/why-choose-365-techies/">Why Choose Us</a>
+        <a href="/our-guarantees/">Our Guarantees</a>
+        <a href="/our-values/">Our Values &amp; Promises</a>
+        <a href="/how-we-price/">How We Price</a>
+        <a href="/case-studies/">Case Studies</a>
+        <a href="/reviews/">Reviews</a>
+        <a href="/areas-covered/">Areas Covered</a>
+        <a href="/plan-finder/">Plan Finder</a>
+        <a href="/refer-a-friend/">Refer a Friend</a>
+        <a href="/sustainability/">Sustainability</a>
+        <a href="/resources/">Resources &amp; Guides</a>
+        <a href="/it-advice/">IT Advice</a>
+        <a href="/bournemouth/">Bournemouth365</a>
+        <a href="/faqs/">FAQs</a>
+        <a href="/contact/">Contact</a>
+        <a href="/portal/">Customer portal</a>
+        <a href="tel:+441202775566">01202 775566</a>
+        <a href="sms:+447520615332">Text only: 07520 615332</a>
+        <a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a>
+      </nav>
+    </div>
+    <nav class="site-footer__legal-links mono" aria-label="Legal and policies">
+      <a href="/privacy-policy/">Privacy Policy</a>
+      <a href="/cookie-policy/">Cookie Policy</a>
+      <a href="/terms/">Terms of Service</a>
+      <a href="/service-level-agreement/">SLA</a>
+      <a href="/accessibility-statement/">Accessibility</a>
+      <a href="/accreditations/">Accreditations</a>
+      <a href="/system-status/">System Status</a>
+    </nav>
+    <p class="site-footer__legal mono">&copy; 2026 365 TECHIES LIMITED &middot; REGISTERED IN ENGLAND &amp; WALES 11073501 &middot; ALL SYSTEMS OPERATIONAL <span class="pulse-dot pulse-dot--green"></span></p>
+  </footer>
+
+  <nav class="mobile-cta-bar" aria-label="Quick contact">
+    <a href="tel:+441202775566"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>Call</a>
+    <a href="/book-service/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v3M17 3v3M4 8h16M5 6h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z"/></svg>Book</a>
+    <a href="#" data-open-chat><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.5 7.5L3 21l2-5.5A8.5 8.5 0 1 1 21 11.5z"/></svg>Chat</a>
+  </nav>
+  <div class="a11y" id="a11y">
+    <button type="button" class="a11y__toggle" id="a11y-toggle" aria-expanded="false" aria-controls="a11y-panel" aria-label="Text size and accessibility options" title="Text size and accessibility options">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="3.6" r="1.6"/><path d="M3.5 8h17M12 8v6m0 0-3.2 6.4M12 14l3.2 6.4"/></svg><span class="a11y__togglelabel">Text size</span>
+    </button>
+    <div class="a11y__panel" id="a11y-panel" role="region" aria-label="Accessibility options" hidden>
+      <p class="a11y__title mono">Accessibility</p>
+      <div class="a11y__rowsize"><span>Text size</span><span class="a11y__btns"><button type="button" data-a11y="text-down" aria-label="Decrease text size">A&minus;</button><button type="button" data-a11y="text-up" aria-label="Increase text size">A+</button></span></div>
+      <button type="button" class="a11y__opt" data-a11y="contrast" aria-pressed="false">High contrast</button>
+      <button type="button" class="a11y__opt" data-a11y="readable" aria-pressed="false">Readable font</button>
+      <button type="button" class="a11y__opt" data-a11y="reduce" aria-pressed="false">Reduce motion</button>
+      <button type="button" class="a11y__opt" data-a11y="read" aria-pressed="false">Read this page aloud</button>
+      <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
+    </div>
+  </div>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
+  <script src="/js/a11y.min.js?v=10" defer></script>
+  <script src="/js/forms.min.js?v=8" defer></script>
+  <script src="/js/search.min.js?v=654de821" defer></script>
+  <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
+    <p>We use cookies to power our live chat and understand how the site is used. See our <a href="/cookie-policy/">cookie policy</a>.</p>
+    <div class="cookie-banner__actions">
+      <button type="button" class="button secondary" data-cookie="decline">Decline</button>
+      <button type="button" class="button primary" data-cookie="accept">Accept</button>
+    </div>
+  </div>
+  <!-- Consent-gated chat / analytics (HubSpot loads only after consent) -->
+  <script>
+  (function () {
+    var KEY = "tt_consent";
+    function loadConsented() {
+      if (!document.getElementById("hs-script-loader")) {
+        var s = document.createElement("script");
+        s.id = "hs-script-loader"; s.async = true; s.defer = true;
+        s.src = "//js-eu1.hs-scripts.com/148562638.js";
+        document.body.appendChild(s);
+      }
+      if (window.ANALYTICS_SRC && !window.__analyticsLoaded) {
+        window.__analyticsLoaded = true;
+        var a = document.createElement("script"); a.async = true; a.src = window.ANALYTICS_SRC;
+        document.head.appendChild(a);
+      }
+    }
+    var c = null;
+    try { c = localStorage.getItem(KEY); } catch (e) {}
+    if (c === "accepted") { loadConsented(); }
+    else if (c !== "declined") { var b = document.getElementById("cookie-banner"); if (b) b.hidden = false; }
+    document.addEventListener("click", function (e) {
+      var t = e.target.closest("[data-cookie]"); if (!t) return;
+      var v = t.getAttribute("data-cookie") === "accept" ? "accepted" : "declined";
+      try { localStorage.setItem(KEY, v); } catch (e) {}
+      var b = document.getElementById("cookie-banner"); if (b) b.hidden = true;
+      if (v === "accepted") { if (window.gtag) gtag('consent', 'update', { ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted', analytics_storage: 'granted' }); loadConsented(); }
+    });
+  })();
+  </script>
+</body>
+</html>

@@ -209,7 +209,7 @@ SEO_WAVE7_PAGES = [{'slug': 'sage-instant-accounts-windows-11',
                     'recovery</a> &middot; <a '
                     'href="/how-to-prepare-business-for-windows-11/">Preparing a business for '
                     'Windows 11</a> &middot; <a href="/windows-11-support/">Windows 11 support</a> '
-                    '&middot; <a href="/business-it-consultancy/">Business IT consultancy</a></p>'},
+                    '&middot; <a href="/business-it-consultancy/">Business IT consultancy</a> &middot; <a href="/old-program-wont-open-on-windows-11/">Old program won&rsquo;t open on Windows 11</a></p>'},
  {'slug': 'business-email-when-closing-your-company',
   'title': 'Business Email When Closing Your Company | 365 Techies',
   'metaDesc': 'Closing your company? Here is what happens to your business email and domain, and '

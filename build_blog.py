@@ -32,7 +32,11 @@ def post_crumb(slug, title):
 def blogposting(slug, title, desc, cat, dt="2026-06-15"):
     return {"@type": "BlogPosting", "@id": f"{SITE}/{slug}/#article",
             "headline": title, "description": desc, "articleSection": cat, "inLanguage": "en-GB",
-            "datePublished": dt, "dateModified": bp.TODAY,
+            "datePublished": dt,
+            # A placeholder, stamped at write time from content_dates.json by bp.stamp_lastmod().
+            # This was bp.TODAY, so every post claimed it changed on the day the site was built -
+            # the same defect fixed in build_pages.webpage() on 5 Sep 2026, in its third home.
+            "dateModified": "__LASTMOD__",
             "author": {"@type": "Organization", "name": "365 Techies", "url": SITE + "/"},
             "publisher": {"@id": SITE + "/#business"}, "image": SITE + "/og-image.jpg",
             "mainEntityOfPage": {"@id": f"{SITE}/{slug}/#webpage"}, "url": f"{SITE}/{slug}/"}
@@ -1023,6 +1027,12 @@ html_404 = bp.page("404", "Page Not Found | 365 Techies",
                    "Page Not Found | 365 Techies",
                    graph([webpage("404", "Page Not Found", "Sorry, that page could not be found.")]),
                    content_404).replace("index, follow", "noindex, follow")
+# The 404 is written by hand below rather than by bp.write_all(), so it must stamp its own
+# content date - it was the one page left carrying the literal __LASTMOD__ placeholder.
+html_404 = bp.stamp_lastmod("404", html_404)
+# The blog step saved content_dates.json earlier in this file; persist the 404 entry too, or
+# the page has no recorded date and is re-stamped with the build date every day.
+bp.save_content_dates()
 with open(os.path.join(bp.BASE, "404.html"), "w", encoding="utf-8") as f:
     f.write(html_404)
 print("Wrote 404.html")
