@@ -152,8 +152,11 @@ function sw_refresh_ea($file, $lock, $force) {
     @fclose($fh);
 }
 
-if ($FORCE || dorset_cache_get($EA, $EA_TTL) === null) {
-    sw_refresh_ea($EA, $LOCK, $FORCE);
+// The cron's `refresh` forces the OVERFLOW feeds (they move every 5 minutes) but
+// never the EA listing: that is 1.7 MB that changes once a day, so it keeps its
+// own 15-minute clock however often the cron runs.
+if (dorset_cache_get($EA, $EA_TTL) === null) {
+    sw_refresh_ea($EA, $LOCK, false);
 }
 $ea = dorset_cache_stale($EA, $EA_STALE_MAX);
 $beaches   = (is_array($ea) && isset($ea['beaches']) && is_array($ea['beaches'])) ? $ea['beaches'] : array();
