@@ -1759,5 +1759,5 @@ add(
     og_title="Bournemouth live map — traffic, buses, flood warnings and sea water quality",
     schema=_lm_schema,
     content=_LM_CONTENT,
-    og_image="/bournemouth/media/og-live-map.jpg",
+    og_image=SITE + "/bournemouth/media/og-live-map.jpg",
 )
