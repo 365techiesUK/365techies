@@ -18683,12 +18683,12 @@ def computer_help_for_seniors():
           <p>And we always phone before we connect &mdash; so you&rsquo;re never surprised, and you can always tell us apart from a scammer.</p>
         </div>
         <ul class="checklist" data-stagger>
-{checklist(["Patient, unhurried help at your pace","The same friendly faces each time","Plain English, never jargon","Help on your own screen, no call-out","We always call before we connect","A real person to ask &lsquo;is this safe?&rsquo;"])}
+{checklist(["Patient, unhurried help at your pace","The same friendly faces each time","Plain English, never jargon","Most help on your own screen, in minutes","We always call before we connect","A real person to ask &lsquo;is this safe?&rsquo;"])}
         </ul>
       </div>
     </section>''',
       faq_html(SENIOR_FAQS),
-      cta("Help that treats you like family","Friendly, patient IT support for older people across Dorset and beyond &mdash; online, on your own screen, always at your pace.",
+      cta("Help that treats you like family","Friendly, patient IT support for older people across Dorset and beyond &mdash; mostly on your own screen, always at your pace.",
           primary=("Talk to a Techie","/contact/"), secondary=("View Monthly Plans","/monthly-it-support/")),
     ])
     allitems=guides+support
