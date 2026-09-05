@@ -346,6 +346,12 @@ SNIPPETS = {
         "desc": "Do we cover your area? Enter your postcode and instantly see whether 365 Techies offers on-site IT support near you across Dorset and the New Forest.",
     },
     "is-it-down": {
+        # 5 Sep 2026: the page is a SERVICE status checker (WhatsApp, M365, Gmail, PlayStation) and its H1 says
+        # "Is it down, or is it just you?" - but the title said "Is My Broadband Down", mis-describing the page and
+        # colliding with /broadband-down/. The queries that click are "is it down or just me" (162 imps @ 8.5) and
+        # "down or just me" (50 @ 6.6). Align the title with the H1 and the queries. Not a head-term fix: those
+        # were falsified 5 Sep (password generator 835 imps @ 4.1 = 0 clicks); this page already converts.
+        "title": "Is It Down or Just Me? Live Status for 30+ Services",
         "desc": "Is it down, or is it just you? Live status for 30+ big services including WhatsApp, Microsoft 365, Gmail and PlayStation, plus a check of your own line.",
     },
     "custom-pc-builder": {
@@ -861,6 +867,11 @@ SNIPPETS = {
         "desc": "365 Techies is a family-run Bournemouth IT support company established in 1995. Dell specialists, Microsoft partners, and the same two faces every visit.",
     },
     "computer-spec-checker": {
+        # 5 Sep 2026: every clicking query says PC - "pc specs checker" 7 clicks @ 9.1, "pc spec checker",
+        # "pc checker", "check my pc specs online" (~730 imps of PC-phrased intent) - and the page said
+        # "computer" everywhere. Keeps "what are my specs" (clicks @ 9.4) and "check ... online" (53 imps).
+        # Already the best-clicking tool on the site (80 clicks); rank is the constraint, not CTR.
+        "title": "PC Spec Checker: What Are My Specs? Check Free Online",
         "desc": "Free PC hardware checker. See what is inside your computer instantly: operating system, graphics card, cores, screen, memory and battery, read live.",
     },
     "outlook-wont-open-in-safe-mode": {
