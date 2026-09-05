@@ -14873,6 +14873,7 @@ def repair_pages():
     </section>''',
           nearby_section,
           reviews_block(pick("Emmanuel O", "Eve Day", "Frederick Woods")),
+          bp.PCM_BAND,
           faq_html(faqs),
           cta(f"Need a computer repair in {town}?",
               "Tell us what&rsquo;s wrong and we&rsquo;ll get you sorted &mdash; remotely, at home or by collection, with no call-out fee and a clear price first.",
@@ -19231,6 +19232,7 @@ def industry_page(d):
         <p class="mono" style="text-align:center;max-width:66ch;margin:1.6rem auto 0;color:var(--muted)" data-reveal>We support <a href="/it-support-by-industry/">businesses of every kind across Dorset</a> &mdash; see our <a href="/business-it-support-plans/">business support plans</a>.</p>
       </div>
     </section>''',
+      bp.PCM_BAND,
       faq_html(faqs),
       cta(d["ctaHead"], d["ctaSub"],
           primary=("Get a Recommendation", "/contact/"), secondary=("Business Support Plans", "/business-it-support-plans/")),

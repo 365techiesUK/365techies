@@ -283,6 +283,7 @@ HEADER = '''  <header class="site-header">
           <div class="dropdown">
             <a href="/home-it-support-subscriptions/">Home IT Support</a>
             <a href="/home-it-support-plans/">Home Support Plans</a>
+            <a href="/free-pc-health-check/">365 PC Manager app &mdash; free</a>
             <a href="/it-support-for-home-workers/">Home Workers</a>
             <a href="/family-it-support/">Families</a>
             <a href="/it-support-for-retired-users/">Retired Users</a>
@@ -299,6 +300,7 @@ HEADER = '''  <header class="site-header">
           <div class="dropdown">
             <a href="/business-it-support-subscriptions/">Business IT Support</a>
             <a href="/business-it-support-plans/">Business Support Plans</a>
+            <a href="/free-pc-health-check/">365 PC Manager app &mdash; free</a>
             <a href="/small-business-it-support/">Small Businesses</a>
             <a href="/it-support-for-sole-traders/">Sole Traders</a>
             <a href="/it-support-for-education/">Schools &amp; Education</a>
@@ -360,7 +362,7 @@ HEADER = '''  <header class="site-header">
             <a href="/spot-the-scam/">Spot the Scam Quiz</a>
             <a href="/online-safety-course/">Free Online Safety Course</a>
             <span class="dropdown__label dropdown__label--sep">Apps &amp; builders</span>
-            <a href="/free-pc-health-check/">Free PC Health Check App</a>
+            <a href="/free-pc-health-check/">365 PC Manager app</a>
             <a href="/custom-pc-builder/">Custom PC Builder</a>
             <a href="/victron-system-builder/">Victron System Builder</a>
             <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
@@ -478,6 +480,7 @@ HEADER = '''  <header class="site-header">
         <div class="m-group__links">
           <a href="/home-it-support-subscriptions/">Home IT Support</a>
           <a href="/home-it-support-plans/">Home Support Plans</a>
+          <a href="/free-pc-health-check/">365 PC Manager app &mdash; free</a>
           <a href="/it-support-for-home-workers/">Home Workers</a>
           <a href="/family-it-support/">Families</a>
           <a href="/it-support-for-retired-users/">Retired Users</a>
@@ -492,6 +495,7 @@ HEADER = '''  <header class="site-header">
         <div class="m-group__links">
           <a href="/business-it-support-subscriptions/">Business IT Support</a>
           <a href="/business-it-support-plans/">Business Support Plans</a>
+          <a href="/free-pc-health-check/">365 PC Manager app &mdash; free</a>
           <a href="/small-business-it-support/">Small Businesses</a>
           <a href="/it-support-for-sole-traders/">Sole Traders</a>
           <a href="/it-support-for-education/">Schools &amp; Education</a>
@@ -549,7 +553,7 @@ HEADER = '''  <header class="site-header">
           <a href="/spot-the-scam/">Spot the Scam Quiz</a>
           <a href="/online-safety-course/">Free Online Safety Course</a>
           <span class="dropdown__label dropdown__label--sep">Apps &amp; builders</span>
-          <a href="/free-pc-health-check/">Free PC Health Check App</a>
+          <a href="/free-pc-health-check/">365 PC Manager app</a>
           <a href="/custom-pc-builder/">Custom PC Builder</a>
           <a href="/victron-system-builder/">Victron System Builder</a>
           <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
@@ -728,7 +732,7 @@ FOOTER = '''  <footer class="site-footer">
         <p class="site-footer__head mono">FREE TOOLS</p>
         <a href="/free-courses/">Free Courses</a>
         <a href="/free-tools/">All Free Tools &#8594;</a>
-        <a href="/free-pc-health-check/">Free PC Health Check App</a>
+        <a href="/free-pc-health-check/">365 PC Manager app</a>
         <a href="/online-safety-course/">Free Online Safety Course</a>
         <a href="/broadband-speed-checker/">Broadband Speed Test</a>
         <a href="/wifi-signal-test/">365 WiFi Optimizer</a>
@@ -3036,7 +3040,7 @@ TOOLS = {
   "dns":          ("DNS Lookup", "/dns-lookup/", "Check any domain&rsquo;s A, MX, NS &amp; TXT records &mdash; the settings behind your website and email."),
   "pcbench":      ("PC Benchmark", "/pc-benchmark/", "How fast is your computer, really? Six live tests &mdash; CPU, encryption, memory, graphics &amp; storage &mdash; with a score you can share."),
   "healthcheck":  ("IT Health Check Tool", "/it-health-check-tool/", "Get an instant IT &amp; security score out of 100, plus a plain-English action plan."),
-  "pcmapp":       ("Free PC Health Check App", "/free-pc-health-check/", "365 PC Manager &mdash; our free little Windows app. An honest PC health check &mdash; health score, one-tap boost, no fake errors &mdash; from real local techies. <strong>Digitally signed</strong>, it installs in a couple of clicks and uninstalls just as easily."),
+  "pcmapp":       ("365 PC Manager app", "/free-pc-health-check/", "365 PC Manager &mdash; our free little Windows app. An honest PC health check &mdash; health score, one-tap boost, no fake errors &mdash; from real local techies. <strong>Digitally signed</strong>, it installs in a couple of clicks and uninstalls just as easily."),
   "faultcheck":   ("Computer Fault Checker", "/computer-fault-checker/", "Tell us what&rsquo;s playing up and get the likely cause and best next step."),
   "repairreplace":("Repair or Replace?", "/repair-or-replace-advisor/", "Answer four questions for an honest verdict on your ageing computer."),
   "w10":          ("Windows 10 End of Life", "/windows-10-end-of-life/", "Support has ended &mdash; find out in 30 seconds if you&rsquo;re affected, and your options."),
@@ -3078,11 +3082,14 @@ PCM_BAND = '''    <section class="section section--alt" aria-label="365 PC Manag
           <h2 class="section-title" data-title>365 PC Manager, on your PC<span class="title-underline"></span></h2>
           <p>Our own free Windows app &mdash; digitally signed in our name &mdash; shows your PC&rsquo;s health in plain English: drive condition, memory, protection, backup, and an honest verdict. Anyone can use it. <strong>On a plan it does more.</strong></p>
           <p>At every service we run a real <a href="/free-pc-health-check/#broadband">broadband speed test</a> from your machine and keep it with your record, so next visit we can see whether your line has quietly got worse. No other local IT firm we can find will even show you your broadband speed &mdash; let alone track it visit to visit.</p>
+          <p>On a plan, every six-weekly service ends with a written <a href="/your-first-6-weekly-service/">Service Report</a> on your Desktop &mdash; what we did, how the machine scored, and anything worth planning &mdash; and we keep an eye on the machines we look after between visits, so problems get caught before they bite. We can&rsquo;t find another IT support company in Dorset that gives its customers an app of its own.</p>
           <div class="hero__actions" style="margin-top:1.2rem">
             <a class="button primary" href="/free-pc-health-check/">Get the free app &#8594;</a>
             <a class="button secondary" href="/portal/">See your dashboard</a>
           </div>
         </div>
+        <div data-reveal>
+          <img src="/images/pcm-laptop-report-v21.webp" alt="A 365 Techies Service Report open on a laptop, with the app&rsquo;s health score" width="1040" height="810" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:14px;margin-bottom:1rem">
         <ul class="checklist" data-stagger>
           <li>Free forever, no sign-up, uninstall any time</li>
           <li>Broadband speed measured at every visit</li>
@@ -3091,6 +3098,7 @@ PCM_BAND = '''    <section class="section section--alt" aria-label="365 PC Manag
           <li>Optional: let us run safe maintenance remotely</li>
           <li>No fake errors, no scare tactics, ever</li>
         </ul>
+        </div>
       </div>
     </section>''' if PCM_LIVE else ""
 
@@ -6031,6 +6039,7 @@ add(
         </div>
       </div>
     </section>''',
+   PCM_BAND,
    cta("Prefer to just pick a plan?", "Browse monthly support for homes and businesses — clear pricing, no contracts, cancel anytime.",
        primary=("View Monthly Plans", "/monthly-it-support/"), secondary=("Home Plans", "/home-it-support-plans/")),
  ]),

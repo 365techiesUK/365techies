@@ -392,6 +392,7 @@ def make_local(i, slug, town, region, lede, intro_para, nearby):
         </ul>
       </div>
     </section>''',
+      bp.PCM_BAND,
       faq_html([(q, a) for q, a in faqs]),
       cta(f"IT support in {town}, sorted",
           f"Join the {town} homes and businesses who never worry about IT. Pick a plan or say hello.",
@@ -714,7 +715,7 @@ def make_customer(i, slug, crumb_name, eyebrow, h1, lede, intro_head, intro_para
         </ol>
       </div>
     </section>''')
-    sections += [reviews_block(revs), faq_html(faqs)]
+    sections += [reviews_block(revs), bp.PCM_BAND, faq_html(faqs)]
     if tools:
         sections.append(bp.tools_strip(tools, alt=False))
     sections.append(cta(cta_title, cta_text))
