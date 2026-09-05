@@ -224,7 +224,10 @@ SEO_WAVE8_PAGES = [
          '&mdash; copy it off and retire it.'}],
   'chips': ['No fix, no fee', 'Rated 4.9 on Google', 'Trading since 1995'],
   'primaryCta': ['Get it looked at', '/contact/'],
-  'secondaryCta': ['Call 01202 775566', 'tel:+441202775566'],
+  # 5 Sep 2026: the hand-off is to the SERVICE this visit is about, not a second phone link -
+  # every symptom page pointed only at /contact/, and the service pages earned 43 clicks of 888.
+  # The number is still in ctaSub and the header.
+  'secondaryCta': ['Network &amp; server support', '/server-network-support/'],
   'schemaKind': 'service',
   'crossLinksHtml': '<p><strong>Related guides:</strong> <a '
                     'href="/shared-folders-not-working-after-windows-11-24h2-update/">Shared '
@@ -419,7 +422,10 @@ SEO_WAVE8_PAGES = [
          'ring us before you click.'}],
   'chips': ['No fix, no fee', 'Rated 4.9 on Google', 'Trading since 1995'],
   'primaryCta': ['Get it looked at', '/contact/'],
-  'secondaryCta': ['Call 01202 775566', 'tel:+441202775566'],
+  # 5 Sep 2026: the hand-off is to the SERVICE this visit is about, not a second phone link -
+  # every symptom page pointed only at /contact/, and the service pages earned 43 clicks of 888.
+  # The number is still in ctaSub and the header.
+  'secondaryCta': ['Windows 11 upgrade service', '/windows-11-upgrade-service/'],
   'schemaKind': 'service',
   'crossLinksHtml': '<p><strong>Related guides:</strong> <a '
                     'href="/sage-instant-accounts-windows-11/">Sage Instant Accounts on Windows '
@@ -586,7 +592,10 @@ SEO_WAVE8_PAGES = [
          'remote session.'}],
   'chips': ['No fix, no fee', 'Rated 4.9 on Google', 'Trading since 1995'],
   'primaryCta': ['Get it looked at', '/contact/'],
-  'secondaryCta': ['Call 01202 775566', 'tel:+441202775566'],
+  # 5 Sep 2026: the hand-off is to the SERVICE this visit is about, not a second phone link -
+  # every symptom page pointed only at /contact/, and the service pages earned 43 clicks of 888.
+  # The number is still in ctaSub and the header.
+  'secondaryCta': ['Microsoft 365 support', '/microsoft-365-support/'],
   'schemaKind': 'service',
   'crossLinksHtml': '<p><strong>Related guides:</strong> <a '
                     'href="/onedrive-problems/">OneDrive problems</a> &middot; <a '
@@ -767,7 +776,10 @@ SEO_WAVE8_PAGES = [
          'nothing lost.'}],
   'chips': ['No fix, no fee', 'Rated 4.9 on Google', 'Trading since 1995'],
   'primaryCta': ['Get it looked at', '/contact/'],
-  'secondaryCta': ['Call 01202 775566', 'tel:+441202775566'],
+  # 5 Sep 2026: the hand-off is to the SERVICE this visit is about, not a second phone link -
+  # every symptom page pointed only at /contact/, and the service pages earned 43 clicks of 888.
+  # The number is still in ctaSub and the header.
+  'secondaryCta': ['Email support', '/email-support/'],
   'schemaKind': 'service',
   'crossLinksHtml': '<p><strong>Related guides:</strong> <a '
                     'href="/outlook-not-syncing-android/">Outlook not syncing on Android</a> '

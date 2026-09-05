@@ -199,7 +199,10 @@ SEO_WAVE9_PAGES = [
          'what can be made to run, what cannot, and what to do about each.'}],
   'chips': ['Quoted per machine', 'Rated 4.9 on Google', 'Trading since 1995'],
   'primaryCta': ['Get the office counted', '/contact/'],
-  'secondaryCta': ['Call 01202 775566', 'tel:+441202775566'],
+  # 5 Sep 2026: the hand-off is to the SERVICE this visit is about, not a second phone link -
+  # every symptom page pointed only at /contact/, and the service pages earned 43 clicks of 888.
+  # The number is still in ctaSub and the header.
+  'secondaryCta': ['Windows 11 upgrade service', '/windows-11-upgrade-service/'],
   'schemaKind': 'service',
   'crossLinksHtml': '<p><strong>Related guides:</strong> <a '
                     'href="/old-program-wont-open-on-windows-11/">Old program won&rsquo;t open '
@@ -366,7 +369,10 @@ SEO_WAVE9_PAGES = [
          'retire the old one properly.'}],
   'chips': ['Remote in most cases', 'Rated 4.9 on Google', 'Trading since 1995'],
   'primaryCta': ['Get it handed over properly', '/contact/'],
-  'secondaryCta': ['Call 01202 775566', 'tel:+441202775566'],
+  # 5 Sep 2026: the hand-off is to the SERVICE this visit is about, not a second phone link -
+  # every symptom page pointed only at /contact/, and the service pages earned 43 clicks of 888.
+  # The number is still in ctaSub and the header.
+  'secondaryCta': ['Microsoft 365 support', '/microsoft-365-support/'],
   'schemaKind': 'service',
   'crossLinksHtml': '<p><strong>Related guides:</strong> <a '
                     'href="/locked-out-microsoft-365-admin-account/">Locked out of the Microsoft '
@@ -516,7 +522,10 @@ SEO_WAVE9_PAGES = [
          'it with you.'}],
   'chips': ['No fix, no fee', 'Rated 4.9 on Google', 'Trading since 1995'],
   'primaryCta': ['Get it looked at', '/contact/'],
-  'secondaryCta': ['Call 01202 775566', 'tel:+441202775566'],
+  # 5 Sep 2026: the hand-off is to the SERVICE this visit is about, not a second phone link -
+  # every symptom page pointed only at /contact/, and the service pages earned 43 clicks of 888.
+  # The number is still in ctaSub and the header.
+  'secondaryCta': ['Microsoft 365 support', '/microsoft-365-support/'],
   'schemaKind': 'service',
   'crossLinksHtml': '<p><strong>Related guides:</strong> <a '
                     'href="/excel-onedrive-sync-conflicts/">Excel sync conflicts</a> &middot; '
@@ -660,7 +669,10 @@ SEO_WAVE9_PAGES = [
          'the list of things to do whenever someone leaves.'}],
   'chips': ['No fix, no fee', 'Rated 4.9 on Google', 'Trading since 1995'],
   'primaryCta': ['Get it looked at', '/contact/'],
-  'secondaryCta': ['Call 01202 775566', 'tel:+441202775566'],
+  # 5 Sep 2026: the hand-off is to the SERVICE this visit is about, not a second phone link -
+  # every symptom page pointed only at /contact/, and the service pages earned 43 clicks of 888.
+  # The number is still in ctaSub and the header.
+  'secondaryCta': ['Microsoft 365 support', '/microsoft-365-support/'],
   'schemaKind': 'service',
   'crossLinksHtml': '<p><strong>Related guides:</strong> <a '
                     'href="/who-has-a-file-open-on-shared-drive/">Who has a file open on the '
@@ -801,7 +813,10 @@ SEO_WAVE9_PAGES = [
          'and the one-minute test at the top tells you on which side.'}],
   'chips': ['No fix, no fee', 'Rated 4.9 on Google', 'Trading since 1995'],
   'primaryCta': ['Get it looked at', '/contact/'],
-  'secondaryCta': ['Call 01202 775566', 'tel:+441202775566'],
+  # 5 Sep 2026: the hand-off is to the SERVICE this visit is about, not a second phone link -
+  # every symptom page pointed only at /contact/, and the service pages earned 43 clicks of 888.
+  # The number is still in ctaSub and the header.
+  'secondaryCta': ['Microsoft 365 support', '/microsoft-365-support/'],
   'schemaKind': 'service',
   'crossLinksHtml': '<p><strong>Related guides:</strong> <a href="/onedrive-problems/">OneDrive '
                     'problems</a> &middot; <a href="/files-missing-from-onedrive/">Files missing '
@@ -951,7 +966,10 @@ SEO_WAVE9_PAGES = [
          'at once, or both accounts owning the Desktop and Documents folders.'}],
   'chips': ['No fix, no fee', 'Rated 4.9 on Google', 'Trading since 1995'],
   'primaryCta': ['Get it looked at', '/contact/'],
-  'secondaryCta': ['Call 01202 775566', 'tel:+441202775566'],
+  # 5 Sep 2026: the hand-off is to the SERVICE this visit is about, not a second phone link -
+  # every symptom page pointed only at /contact/, and the service pages earned 43 clicks of 888.
+  # The number is still in ctaSub and the header.
+  'secondaryCta': ['Microsoft 365 support', '/microsoft-365-support/'],
   'schemaKind': 'service',
   'crossLinksHtml': '<p><strong>Related guides:</strong> <a '
                     'href="/onedrive-moved-my-desktop-and-documents/">OneDrive moved my Desktop '
@@ -1090,7 +1108,10 @@ SEO_WAVE9_PAGES = [
          'anyone leaving.'}],
   'chips': ['Remote in most cases', 'Rated 4.9 on Google', 'Trading since 1995'],
   'primaryCta': ['Get it looked at', '/contact/'],
-  'secondaryCta': ['Call 01202 775566', 'tel:+441202775566'],
+  # 5 Sep 2026: the hand-off is to the SERVICE this visit is about, not a second phone link -
+  # every symptom page pointed only at /contact/, and the service pages earned 43 clicks of 888.
+  # The number is still in ctaSub and the header.
+  'secondaryCta': ['Microsoft 365 support', '/microsoft-365-support/'],
   'schemaKind': 'service',
   'crossLinksHtml': '<p><strong>Related guides:</strong> <a '
                     'href="/onedrive-sharepoint-teams-explained/">OneDrive, SharePoint and Teams '
@@ -1238,7 +1259,10 @@ SEO_WAVE9_PAGES = [
          'and we have written up the steps and do it for people remotely.'}],
   'chips': ['No fix, no fee', 'Rated 4.9 on Google', 'Trading since 1995'],
   'primaryCta': ['Get it looked at', '/contact/'],
-  'secondaryCta': ['Call 01202 775566', 'tel:+441202775566'],
+  # 5 Sep 2026: the hand-off is to the SERVICE this visit is about, not a second phone link -
+  # every symptom page pointed only at /contact/, and the service pages earned 43 clicks of 888.
+  # The number is still in ctaSub and the header.
+  'secondaryCta': ['Email support', '/email-support/'],
   'schemaKind': 'service',
   'crossLinksHtml': '<p><strong>Related guides:</strong> <a '
                     'href="/move-virgin-media-email-to-gmail/">Moving Virgin Media email to '

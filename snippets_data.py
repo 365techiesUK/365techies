@@ -38,6 +38,12 @@ from html import unescape as _unescape
 
 # slug -> {"title": ..., "desc": ...}  (either key optional)
 SNIPPETS = {
+    "wifi-support": {
+        # 5 Sep 2026: this page had ZERO search impressions in 28 days despite ~709 inbound
+        # links - Google associated it with nothing. Not a CTR play (head-term title fixes
+        # were falsified the same day); a RELEVANCE title naming what the page covers.
+        "title": "Wi-Fi &amp; Network Support for Homes and Businesses, Dorset",
+    },
 
     # ---- top of the funnel: Dell buying advice (the biggest impression block)
     "are-dell-latitude-laptops-good": {
@@ -565,6 +571,10 @@ SNIPPETS = {
         "desc": "Alienware and Dell G15/G16 repair with free collection across Bournemouth, Poole and Dorset. Overheating, screens, batteries and upgrades, done honestly.",
     },
     "backup-support": {
+        # 5 Sep 2026: this page had ZERO search impressions in 28 days despite ~709 inbound
+        # links - Google associated it with nothing. Not a CTR play (head-term title fixes
+        # were falsified the same day); a RELEVANCE title naming what the page covers.
+        "title": "Backup Support: OneDrive, Cloud &amp; Local Backups Set Up",
         "desc": "Automatic, verified backup and rapid data recovery for homes and businesses across Dorset. Photos, documents, whole computers and Microsoft 365 protected.",
     },
     "book-a-collection": {
@@ -610,6 +620,10 @@ SNIPPETS = {
         "desc": "What could IT downtime be costing your business? Answer four quick questions for a friendly estimate based on your own numbers, not an industry average.",
     },
     "email-support": {
+        # 5 Sep 2026: this page had ZERO search impressions in 28 days despite ~709 inbound
+        # links - Google associated it with nothing. Not a CTR play (head-term title fixes
+        # were falsified the same day); a RELEVANCE title naming what the page covers.
+        "title": "Email Support: Outlook, BT, Sky, TalkTalk &amp; Virgin Media",
         "desc": "Outlook, Microsoft 365 and business email help. Fix email that will not send or receive, sort passwords, set up new accounts and stop the spam.",
     },
     "event-wifi-dorset": {
@@ -657,6 +671,9 @@ SNIPPETS = {
         "desc": "Paying 365 Techies is simple and safe. The price is always agreed before work starts, and you never need an account or an app to settle up.",
     },
     "pricing": {
+        # 5 Sep 2026: position 57.8 on 393 impressions, titled just "Pricing". The real
+        # price in the title is the honest signal for a pricing page; the body already states it.
+        "title": "IT Support Pricing: From &pound;18.25 a Month Per Computer",
         "desc": "Transparent monthly IT support: homes £18.25 per computer, business from £24.38 per computer, Microsoft 365 £4.85 per user. No call-out fee, ever.",
     },
     "pstn-switch-off-business": {

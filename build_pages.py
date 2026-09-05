@@ -1219,11 +1219,43 @@ def webpage(slug, title, desc, wtype="WebPage"):
             # hash normaliser strips any dateModified value, this token included.
             "dateModified": "__LASTMOD__"}
 
+# ⚠️ PRICES IN SCHEMA MUST MATCH THE PAGE BODY, AND ONLY THESE PAGES CARRY ONE.
+# Every figure below is the price the page itself prints (checked 2026-09-05 against the
+# built HTML) - the same real prices as pricing-truth: home 18.25 / 23.10 per computer per
+# month, business from 24.38, Microsoft 365 4.85 per user per month, remote fixes from 20.
+# An Offer in the schema is how AI answers and rich results read a price; without it the
+# plan pages had Service + FAQ nodes and no machine-readable price at all. If a page's
+# price changes, change it HERE THE SAME DAY or the schema lies. No web-care entry on
+# purpose: those monthly prices were still owed by the owner when this was written.
+def _offer(price, unit, url):
+    return {"@type": "Offer", "price": price, "priceCurrency": "GBP",
+            "priceSpecification": {"@type": "UnitPriceSpecification", "price": price, "priceCurrency": "GBP", "unitText": unit},
+            "availability": "https://schema.org/InStock", "url": url,
+            "seller": {"@type": "Organization", "name": "365 Techies"}}
+def _from(low, unit, url, high=None):
+    a = {"@type": "AggregateOffer", "lowPrice": low, "priceCurrency": "GBP",
+         "priceSpecification": {"@type": "UnitPriceSpecification", "price": low, "priceCurrency": "GBP", "unitText": unit},
+         "availability": "https://schema.org/InStock", "url": url,
+         "seller": {"@type": "Organization", "name": "365 Techies"}}
+    if high: a["highPrice"] = high
+    return a
+SERVICE_OFFERS = {
+    "home-it-support-plans":            lambda u: _from("18.25", "per computer per month", u, high="23.10"),
+    "home-it-support-subscriptions":    lambda u: _offer("18.25", "per computer per month", u),
+    "business-it-support-plans":        lambda u: _from("24.38", "per computer per month", u),
+    "business-it-support-subscriptions": lambda u: _from("24.38", "per computer per month", u),
+    "monthly-it-support":               lambda u: _from("18.25", "per computer per month", u),
+    "small-business-it-support":        lambda u: _from("24.38", "per computer per month", u),
+    "remote-it-support":                lambda u: _from("20", "per remote fix", u),
+    "microsoft-365-support":            lambda u: _offer("4.85", "per user per month", u),
+}
 def service(slug, name, desc, stype=None, area=None):
     n = {"@type": "Service", "@id": f"{SITE}/{slug}/#service", "name": name, "description": desc,
          "serviceType": stype or name,
          "areaServed": area or {"@type": "AdministrativeArea", "name": "Dorset, UK"},
          "provider": {"@id": SITE + "/#business"}, "url": f"{SITE}/{slug}/"}
+    if slug in SERVICE_OFFERS:
+        n["offers"] = SERVICE_OFFERS[slug](f"{SITE}/{slug}/")
     return n
 
 # Remote-by-design services (Victron dashboards, GPS trackers) genuinely serve worldwide.
@@ -5335,6 +5367,7 @@ M365_FAQS = [
   ("Are you a local Office 365 installer in Bournemouth and Poole?", "Yes &mdash; we&rsquo;re a hands-on Office 365 and Microsoft 365 installer for Bournemouth, Poole and across Dorset: we install and set up Office 365 on your PCs and laptops, migrate your email, and get Outlook, Teams and OneDrive working &mdash; remotely or on-site."),
   ("Do you provide Microsoft 365 support in Bournemouth and Poole?", "Yes &mdash; Microsoft 365 support for Bournemouth and Poole homes and businesses: setup, migration, licensing, security and everyday help, with fast remote support and on-site visits when you need them."),
   ("We&rsquo;re locked out of our Microsoft 365 admin account &mdash; can you help?", "Yes &mdash; orphaned tenants are more common than you&rsquo;d think: the one admin leaves, or the password dies with an old phone. Our guide to <a href=\"/locked-out-microsoft-365-admin-account/\">recovering a locked-out Microsoft 365 admin account</a> covers the real routes back in &mdash; and we&rsquo;ll drive the whole recovery for you."),
+  ("How much does Microsoft 365 support cost?", "Microsoft 365 is &pound;4.85 per user per month with us, set up and supported &mdash; the same figure that appears on our plan pages. That covers the licence and our support for it; if you already have licences elsewhere, we can support those on a plan instead. Every price on this site is the real one, and we are not VAT registered, so there is nothing to add."),
 ]
 add(
  slug="microsoft-365-support",
@@ -6391,14 +6424,20 @@ VAN_MAP_REUSE = r"""
     <section class="section section--alt" aria-label="Use this data">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>/ USE IT YOURSELF</p>
-          <h2 class="section-title section-title--center" data-title>Take the data &mdash; it&rsquo;s free<span class="title-underline title-underline--center"></span></h2>
+          <p class="eyebrow eyebrow--center mono" data-reveal>/ WANT THE DATA?</p>
+          <h2 class="section-title section-title--center" data-title>Ask us for a copy &mdash; it&rsquo;s free<span class="title-underline title-underline--center"></span></h2>
         </div>
-        <p class="vmf-lede" data-reveal>Every reading is published under <strong>Creative Commons BY&nbsp;4.0</strong>.
+        <p class="vmf-lede" data-reveal>Every reading is available under <strong>Creative Commons BY&nbsp;4.0</strong>.
         Use it in an article, a study, an app or a dissertation &mdash; commercially or not &mdash; for free.
-        The only condition is that you credit us and link back, so readers can check the source for themselves.</p>
+        We send it on request rather than as a download, so we know where it&rsquo;s going and can flag what it
+        does and doesn&rsquo;t show. The only condition is that you credit us and link back, so readers can check
+        the source for themselves.</p>
+        <!-- 2026-09-05: the CSV download button is gone by owner decision (no self-serve
+             data - share case by case). The ?format=csv endpoint itself still exists because
+             dorset-live/app/scripts/import-van-signal.mjs reads it; it is simply no longer
+             linked from anywhere public. Do not re-add the button. -->
         <div class="vmf-reuse">
-          <a class="button primary" href="/api/signal-log.php?format=csv">Download the readings (CSV)</a>
+          <a class="button primary" href="/contact/">Contact us for a copy</a>
           <a class="button secondary" href="/api/signal-log.php?summary=1" target="_blank" rel="noopener">Summary as JSON</a>
         </div>
         <p class="vmf-lede" style="margin-top:1.4rem"><strong>Journalists and researchers:</strong> the methodology and
@@ -6905,11 +6944,12 @@ def write_press_page():
 
   <h2>Take the data</h2>
   <div class="dl">
-    <a href="/api/signal-log.php?format=csv">Every reading (CSV)</a>
+    <a href="/contact/">Contact us for a copy of every reading</a>
     <a href="/api/signal-log.php?summary=1">Ranked summary (JSON)</a>
   </div>
-  <p>Published under <a href="https://creativecommons.org/licenses/by/4.0/" rel="license">Creative
-  Commons BY 4.0</a>. Use it commercially or not, in an article, a study or an app. The only
+  <p>Available on request under <a href="https://creativecommons.org/licenses/by/4.0/" rel="license">Creative
+  Commons BY 4.0</a> &mdash; we send the full set rather than publish a download, so we can say what it does
+  and doesn&rsquo;t show. Use it commercially or not, in an article, a study or an app. The only
   condition is a credit and a link, so your readers can check the source:</p>
   <p><code>Data: &lt;a href="https://365techies.co.uk/van-signal-map/"&gt;365 Techies campervan
   signal measurements&lt;/a&gt; (CC BY 4.0)</code></p>

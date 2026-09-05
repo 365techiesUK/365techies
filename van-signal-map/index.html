@@ -285,7 +285,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-08-31"
+      "dateModified": "2026-09-05"
     }
   ]
 }
@@ -1155,14 +1155,20 @@
     <section class="section section--alt" aria-label="Use this data">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>/ USE IT YOURSELF</p>
-          <h2 class="section-title section-title--center" data-title>Take the data &mdash; it&rsquo;s free<span class="title-underline title-underline--center"></span></h2>
+          <p class="eyebrow eyebrow--center mono" data-reveal>/ WANT THE DATA?</p>
+          <h2 class="section-title section-title--center" data-title>Ask us for a copy &mdash; it&rsquo;s free<span class="title-underline title-underline--center"></span></h2>
         </div>
-        <p class="vmf-lede" data-reveal>Every reading is published under <strong>Creative Commons BY&nbsp;4.0</strong>.
+        <p class="vmf-lede" data-reveal>Every reading is available under <strong>Creative Commons BY&nbsp;4.0</strong>.
         Use it in an article, a study, an app or a dissertation &mdash; commercially or not &mdash; for free.
-        The only condition is that you credit us and link back, so readers can check the source for themselves.</p>
+        We send it on request rather than as a download, so we know where it&rsquo;s going and can flag what it
+        does and doesn&rsquo;t show. The only condition is that you credit us and link back, so readers can check
+        the source for themselves.</p>
+        <!-- 2026-09-05: the CSV download button is gone by owner decision (no self-serve
+             data - share case by case). The ?format=csv endpoint itself still exists because
+             dorset-live/app/scripts/import-van-signal.mjs reads it; it is simply no longer
+             linked from anywhere public. Do not re-add the button. -->
         <div class="vmf-reuse">
-          <a class="button primary" href="/api/signal-log.php?format=csv">Download the readings (CSV)</a>
+          <a class="button primary" href="/contact/">Contact us for a copy</a>
           <a class="button secondary" href="/api/signal-log.php?summary=1" target="_blank" rel="noopener">Summary as JSON</a>
         </div>
         <p class="vmf-lede" style="margin-top:1.4rem"><strong>Journalists and researchers:</strong> the methodology and
