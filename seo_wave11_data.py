@@ -20,8 +20,8 @@ SEO_WAVE11_PAGES = [
   'eyebrow': '// FOR THE PARENT WHO BOUGHT IT',
   'h1': 'Gaming PC gone slow? We tune it up remotely &mdash; nothing wiped',
   'lede': 'You bought the gaming computer a year or two ago, it flew, and now it crawls, stutters, or refuses to load the games it was bought for. We connect to it, with you watching, find what has piled up, and put it right &mdash; without wiping a machine that has your files and your accounts on it too.',
-  'ctaHead': 'Tell us what it is doing and we will tell you what it will cost',
-  'ctaSub': 'Call 01202 775566 (Mon&ndash;Fri, 9am&ndash;5pm) or text 07520 615332. A quick look first, a price before we start, and most tune-ups done in one remote session while you or your son or daughter watch.',
+  'ctaHead': 'From &pound;65, remote, nothing wiped &mdash; tell us what it is doing',
+  'ctaSub': 'Call 01202 775566 (Mon&ndash;Fri, 9am&ndash;5pm) or text 07520 615332. A remote tune-up is from &pound;65 &mdash; we confirm the price before we start and it does not change. Most are done in one session while you or your son or daughter watch; parts and physical cleaning are quoted separately.',
   'serviceName': 'Gaming PC Tune-Up (Remote)',
   'sections': [
    {'eyebrow': '// WHY IT SLOWED DOWN',
@@ -44,7 +44,8 @@ SEO_WAVE11_PAGES = [
             '<li><strong>Repair the games that will not launch</strong> &mdash; verify game files in Steam or Epic, fix the launcher, sort the anti-cheat driver that so often breaks after an update.</li>'
             '<li><strong>Set Windows up for gaming</strong>: Game Mode on, the right power plan, hardware-accelerated GPU scheduling where it helps, updates finished.</li>'
             '<li><strong>Check temperatures and drive health</strong>, so we can tell you whether the machine needs a physical clean or has a part on the way out &mdash; which is honest news you want before, not after.</li></ul>'
-            '<p>Then we test: the game that would not load, loaded. You see it happen.</p>'},
+            '<p>Then we test: the game that would not load, loaded. You see it happen.</p>'
+            '<p><strong>From &pound;65</strong>, confirmed before we start, and most often done in a single session.</p>'},
    {'eyebrow': '// NOTHING WIPED',
     'h2': 'Your files, their games: both stay',
     'html': '<p>The reason parents put this off is the fear of losing things. A shared family PC often has the business accounts, the photos and the school work on it as well as the games, and &ldquo;just reinstall Windows&rdquo; is the advice that costs a weekend and a lot of passwords.</p>'
@@ -63,12 +64,12 @@ SEO_WAVE11_PAGES = [
     'html': '<p>Before we sign off we leave the machine with the habits that keep it fast: Storage Sense tidying temporary files on a schedule, drivers set to update through the maker&rsquo;s own app, and a short list &mdash; in plain English, for whoever uses it &mdash; of what not to download. If you would rather someone kept an eye on it, our <a href="/home-it-support-plans/">home support plan</a> is &pound;18.25 a month per computer with unlimited remote help, and our free <a href="/free-pc-health-check/">365 PC Manager app</a> shows the drive, memory and protection at a glance so the next slowdown is caught early.</p>'
             '<p>Thinking about a bigger step? Our <a href="/custom-pc-builder/">PC build budget tool</a> shows where the money goes in a new machine, and our <a href="/gaming-pcs/">custom gaming PCs</a> are built locally and supported by the same people who tune them. Most of the time, though, the machine you have is fine &mdash; it just needs the clutter out.</p>'}],
   'faqs': [
-   {'q': 'How much does a gaming PC tune-up cost?', 'a': 'We quote before we start, once we have had a quick look at what the machine is doing &mdash; a few minutes on the phone or a short remote session &mdash; and the price does not change. Most tune-ups are a single remote session. If it turns out to need a part or a physical clean, that is a separate, straight quote.'},
+   {'q': 'How much does a gaming PC tune-up cost?', 'a': 'From &pound;65 for a remote tune-up. We confirm the exact price before we start &mdash; after a few minutes on the phone or a quick look at what the machine is doing &mdash; and it does not change. Most tune-ups are a single remote session. If it turns out to need a part, more memory or a physical clean, that is a separate, straight quote.'},
    {'q': 'Will my files and my child&rsquo;s games be safe?', 'a': 'Yes. A tune-up works on the machine as it is: files, programs, game saves and signed-in accounts all stay. Nothing is deleted without asking, and if a fresh installation ever became the honest answer we would say so first and back everything up before anything happened.'},
    {'q': 'Does my son or daughter need to be there?', 'a': 'It helps, for two reasons: they know which games matter and which launchers they use, and they see what we do and why, which is how the machine stays fast afterwards. But a parent can sit in just as well &mdash; we explain everything in plain English either way.'},
    {'q': 'Can you do it if we are not in Dorset?', 'a': 'Yes. The tune-up is remote, so we do it anywhere in the UK. Only the physical jobs &mdash; dust, parts, memory upgrades &mdash; need the machine to come to our workshop, with free collection across Bournemouth, Poole, Christchurch and Dorset.'},
    {'q': 'Is it worth tuning up rather than buying a new gaming PC?', 'a': 'Usually, yes. A two- or three-year-old gaming PC that has slowed down is almost always suffering from clutter, old drivers, heat or a full drive, not age. If the graphics card genuinely cannot run what they want to play, we will tell you, and our free benchmarks put a number on it &mdash; but we would rather fix the machine you have than sell you one you do not need.'}],
-  'chips': ['Remote, while you watch', 'Nothing wiped, files kept', 'Price agreed before we start'],
+  'chips': ['From &pound;65, confirmed first', 'Remote, while you watch', 'Nothing wiped, files kept'],
   'primaryCta': ['Call 01202 775566', 'tel:+441202775566'],
   'secondaryCta': ['Text 07520 615332', 'sms:07520615332'],
   'schemaKind': 'service',
@@ -83,7 +84,7 @@ SEO_WAVE11_PAGES = [
   'h1': 'Gaming PC suddenly slow, or won&rsquo;t load games? Check these, in order',
   'lede': 'It ran everything when it was new. Now it takes an age to start, games stutter or crash on the loading screen, and the one it was bought for will not open at all. Nine times out of ten it is one of seven things, and they are worth checking in this order &mdash; most take five minutes and none needs a wipe.',
   'ctaHead': 'Rather someone did the checking?',
-  'ctaSub': 'We tune up gaming PCs remotely while you watch &mdash; drive, drivers, start-up, malware, heat &mdash; with nothing wiped and a price agreed first. Call 01202 775566 or text 07520 615332.',
+  'ctaSub': 'We tune up gaming PCs remotely while you watch &mdash; drive, drivers, start-up, malware, heat &mdash; with nothing wiped, from &pound;65, confirmed before we start. Call 01202 775566 or text 07520 615332.',
   'serviceName': 'Gaming PC Diagnosis and Tune-Up',
   'sections': [
    {'eyebrow': '// 1 AND 2',
@@ -104,7 +105,7 @@ SEO_WAVE11_PAGES = [
             '<p><strong>And then there is the one that is not a fault at all.</strong> A gaming PC bought two years ago with 8 GB of memory and a modest graphics card was fine for the games of two years ago. If the problem is only with one brand-new release, check its published minimum requirements against the machine; our free <a href="/pc-benchmark/">PC speed test</a> and <a href="/graphics-card-benchmark/">graphics card benchmark</a> put a number on where it stands. The honest fix there is a memory upgrade, a card, or lower settings &mdash; not a clean-up.</p>'},
    {'eyebrow': '// WHEN TO GET HELP',
     'h2': 'If you would rather someone else did the checking',
-    'html': '<p>All seven checks are safe for a parent or a teenager to do, and most of the time they find it. When they do not &mdash; or when the malware scan lit up, or the machine has the family&rsquo;s business accounts on it and nobody wants to risk a wrong click &mdash; that is what our <a href="/gaming-pc-tune-up/">remote gaming PC tune-up</a> is: we connect while you watch, go through everything above and the things behind it, repair the games that will not launch, and leave the machine fast, with nothing wiped and a price agreed first.</p>'
+    'html': '<p>All seven checks are safe for a parent or a teenager to do, and most of the time they find it. When they do not &mdash; or when the malware scan lit up, or the machine has the family&rsquo;s business accounts on it and nobody wants to risk a wrong click &mdash; that is what our <a href="/gaming-pc-tune-up/">remote gaming PC tune-up</a> is: we connect while you watch, go through everything above and the things behind it, repair the games that will not launch, and leave the machine fast, with nothing wiped and the price &mdash; from &pound;65 &mdash; confirmed before we start.</p>'
             '<p>If it turns out to be dust or a part, we say so straight, and the physical work happens at our workshop with free collection across Bournemouth, Poole, Christchurch and Dorset. Either way, you find out what it actually is before you spend anything.</p>'}],
   'faqs': [
    {'q': 'Do I need to reinstall Windows to fix a slow gaming PC?', 'a': 'Almost never. A full drive, an old graphics driver, too much starting at boot, adware from a &ldquo;free&rdquo; download, dust, or a half-finished update explain nearly all of them, and every one is fixed without a wipe. A fresh installation is the last resort after serious malware, not the first step.'},
