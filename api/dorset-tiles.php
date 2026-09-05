@@ -96,6 +96,7 @@ if ($wantStatus) {
     if ($read === null) dorset_send(array('ok' => false, 'reason' => 'lock', 'remaining' => 0, 'resetsAt' => tiles_resets_at()), 503);
     dorset_send(tiles_shape($read['state'], $DAILY, array(
         'history'         => tiles_history_view($read['state'], tiles_day(), 30),
+        'historySince'    => tiles_history_since($read['state'], tiles_day()),   // zeros before this date mean 'not recorded'
         'historyKeptDays' => $HISTORY_DAYS,
     )));
 }

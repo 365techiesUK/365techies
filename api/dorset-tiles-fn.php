@@ -58,3 +58,13 @@ function tiles_history_view($state, $today, $days) {
     }
     return $out;
 }
+
+/** The first day the history covers: the earliest stored day, else the live day.
+ *  Zeros in the view before this date mean "not recorded", not "nobody came". */
+function tiles_history_since($state, $today) {
+    $days = array();
+    if (is_array($state) && isset($state['history']) && is_array($state['history'])) $days = array_keys($state['history']);
+    if (is_array($state) && isset($state['day']) && is_string($state['day'])) $days[] = $state['day'];
+    $days = array_filter($days, function ($d) { return is_string($d) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $d); });
+    return $days ? min($days) : $today;
+}
