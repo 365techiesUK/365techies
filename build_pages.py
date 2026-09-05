@@ -55,6 +55,10 @@ _CD_DIRTY = [False]
 # Strip what legitimately changes on every build, so a rebuild with no edits is a no-op.
 _VOLATILE = [
     (_cdre.compile(r'"dateModified":\s*"[^"]*"'), '"dateModified":"X"'),
+    # The analytics measurement ID is plumbing, not content. Swapping it (5 Sep 2026, when the
+    # site turned out to be feeding a property nobody could open) must not tell Google that
+    # ~700 pages changed today.
+    (_cdre.compile(r'G-[A-Z0-9]{8,12}'), 'G-X'),
     # Cache-busters are numeric (?v=22) AND date-style (?v=2026-07-30 on search.js).
     # \d+ only ate the "2026", leaving "?v=X-07-30" to change every single day - which
     # made all 649 pages claim they changed on every build and quietly destroyed the
@@ -935,12 +939,12 @@ def page(slug, title, desc, og_title, schema_json, content, og_image=None):
     gtag('consent', 'default', {{ ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'denied', wait_for_update: 500 }});
     try {{ if (localStorage.getItem('tt_consent') === 'accepted') gtag('consent', 'update', {{ ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted', analytics_storage: 'granted' }}); }} catch (e) {{}}
     gtag('js', new Date());
-    gtag('config', 'G-EBLTJ9WJXZ');
+    gtag('config', 'G-W0CV6RSL3T');
     (function () {{
       function loadGtagLib() {{
         if (window.__gtagLibLoaded) return; window.__gtagLibLoaded = true;
         var g = document.createElement('script'); g.async = true;
-        g.src = 'https://www.googletagmanager.com/gtag/js?id=G-EBLTJ9WJXZ';
+        g.src = 'https://www.googletagmanager.com/gtag/js?id=G-W0CV6RSL3T';
         document.head.appendChild(g);
       }}
       // Load on the first sign of a real person: mousemove/wheel cover desktop
