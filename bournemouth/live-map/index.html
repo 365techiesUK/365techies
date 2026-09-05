@@ -32,7 +32,7 @@
     })();
   </script>
   <title>Bournemouth live map — buses, roads, rivers & flights, in 3D</title>
-  <meta name="description" content="Live buses, flights, road closures, river levels and flood warnings, bike bays and the latest satellite pass over Bournemouth, Christchurch and Poole — every&hellip;" />
+  <meta name="description" content="Live buses, flights, road closures, river levels and flood warnings, bathing-water and storm-overflow status, bike bays and the latest satellite pass over&hellip;" />
   <link rel="canonical" href="https://365techies.co.uk/bournemouth/live-map/" />
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
   <meta name="author" content="365 Techies Limited" />
@@ -47,13 +47,13 @@
   <meta property="og:locale" content="en_GB" />
   <meta property="og:url" content="https://365techies.co.uk/bournemouth/live-map/" />
   <meta property="og:title" content="Bournemouth, Christchurch & Poole — live, in 3D" />
-  <meta property="og:description" content="Live buses, flights, road closures, river levels and flood warnings, bike bays and the latest satellite pass over Bournemouth, Christchurch and Poole — every layer from a named public feed, free flat map first, 3D on request." />
+  <meta property="og:description" content="Live buses, flights, road closures, river levels and flood warnings, bathing-water and storm-overflow status, bike bays and the latest satellite pass over Bournemouth, Christchurch and Poole — every layer from a named public feed, free flat map first, 3D on request." />
   <meta property="og:image" content="/bournemouth/media/og-live-map.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Bournemouth, Christchurch & Poole — live, in 3D" />
-  <meta name="twitter:description" content="Live buses, flights, road closures, river levels and flood warnings, bike bays and the latest satellite pass over Bournemouth, Christchurch and Poole — every layer from a named public feed, free flat map first, 3D on request." />
+  <meta name="twitter:description" content="Live buses, flights, road closures, river levels and flood warnings, bathing-water and storm-overflow status, bike bays and the latest satellite pass over Bournemouth, Christchurch and Poole — every layer from a named public feed, free flat map first, 3D on request." />
   <meta name="twitter:image" content="/bournemouth/media/og-live-map.jpg" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -276,7 +276,7 @@
       "@id": "https://365techies.co.uk/bournemouth/live-map/#webpage",
       "url": "https://365techies.co.uk/bournemouth/live-map/",
       "name": "Bournemouth live map",
-      "description": "Live buses, flights, road closures, river levels and flood warnings, bike bays and the latest satellite pass over Bournemouth, Christchurch and Poole — every layer from a named public feed, free flat map first, 3D on request.",
+      "description": "Live buses, flights, road closures, river levels and flood warnings, bathing-water and storm-overflow status, bike bays and the latest satellite pass over Bournemouth, Christchurch and Poole — every layer from a named public feed, free flat map first, 3D on request.",
       "inLanguage": "en-GB",
       "isPartOf": {
         "@id": "https://365techies.co.uk/#website"
@@ -360,6 +360,14 @@
           "acceptedAnswer": {
             "@type": "Answer",
             "text": "Yes, on a modern phone, but it is a heavy download compared with the rest of Bournemouth365 &mdash; about 1.2 MB of application code plus the CesiumJS engine and then map tiles. Open it on Wi-Fi or good 4G. The flat map is the light version; the 3D city is the part that asks most of an older device."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does the map tell me whether it&rsquo;s safe to swim?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No &mdash; and nothing honest can, from a desk. What the sea water layer shows is two published facts, each named for who published it: the Environment Agency&rsquo;s daily pollution-risk forecast for every designated beach from Poole Harbour round to Christchurch Bay (normal or increased, with the time it expires, plus the beach&rsquo;s annual classification), and the water companies&rsquo; own near-real-time reports of which storm overflows are discharging and which discharged in the last two days. A forecast leaves the map the moment it expires, and an overflow report its company has not updated for three hours is marked unconfirmed rather than left looking current. After heavy rain, check the Environment Agency&rsquo;s Swimfo page for the beach before you go in &mdash; the map links to it."
           }
         }
       ]
@@ -766,7 +774,7 @@
         <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <a href="/bournemouth/">Bournemouth365</a> <span>/</span> <span aria-current="page">Live map</span></nav>
         <p class="eyebrow mono">// BOURNEMOUTH365</p>
         <h1>Bournemouth, Christchurch &amp; Poole &mdash; <em class="grad grad--cyan">live, in 3D</em></h1>
-        <p class="lede">Buses, flights, road closures, river levels and flood warnings, bike bays and the latest satellite pass, each drawn from a named public feed onto one map &mdash; free on the flat map, with the 3D city loaded only when you ask for it.</p>
+        <p class="lede">Buses, flights, road closures, river levels and flood warnings, sea water quality, bike bays and the latest satellite pass, each drawn from a named public feed onto one map &mdash; free on the flat map, with the 3D city loaded only when you ask for it.</p>
         <div class="page-hero__cta">
           <a href="#map" class="button primary button--lg">Open the live map</a>
           <a href="#layers" class="button secondary button--lg">What you are seeing</a>
@@ -799,6 +807,12 @@
             <div class="b365-num" id="lm-warn">&mdash;</div>
             <p class="b365-sub" id="lm-warn-sub">Flood warnings and alerts in force for the area. <strong>No active warnings is not the same as no flood risk.</strong> Check the Environment Agency&rsquo;s own warnings page before you act on this.</p>
             <p class="b365-foot" id="lm-warn-upd">updated &mdash;</p>
+          </div>
+          <div class="b365-tile" id="lm-tile-sea">
+            <span class="chip-f" id="lm-sea-chip">OFFICIAL STATUS &middot; EA + WATER COMPANIES</span>
+            <div class="b365-num" id="lm-sea">&mdash;</div>
+            <p class="b365-sub" id="lm-sea-sub">Storm overflows their water company reports as discharging right now, and the Environment Agency&rsquo;s bathing-water forecast for the area&rsquo;s beaches. <strong>Their published status, not a verdict on swimming.</strong> Waiting for the feed&hellip;</p>
+            <p class="b365-foot" id="lm-sea-upd">updated &mdash;</p>
           </div>
           <div class="b365-tile" id="lm-tile-roads">
             <span class="chip-f" id="lm-roads-chip">OFFICIAL STATUS &middot; NATIONAL HIGHWAYS</span>
@@ -866,6 +880,8 @@
             <tbody>
             <tr><td><a href="https://www.bus-data.dft.gov.uk/" target="_blank" rel="noopener">DfT Bus Open Data Service</a></td><td>Live bus positions</td><td><a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" target="_blank" rel="noopener">Open Government Licence v3.0</a></td><td>Contains public sector information licensed under the Open Government Licence v3.0</td></tr>
             <tr><td><a href="https://environment.data.gov.uk/flood-monitoring/doc/reference" target="_blank" rel="noopener">Environment Agency real-time data API (Beta)</a></td><td>River levels, tide gauges, flood warnings</td><td><a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" target="_blank" rel="noopener">Open Government Licence v3.0</a></td><td>Dorset water &amp; flood data: uses Environment Agency flood and river level data from the real-time data API (Beta) &mdash; &copy; Environment Agency, Open Government Licence v3.0</td></tr>
+            <tr><td><a href="https://environment.data.gov.uk/bwq/profiles/" target="_blank" rel="noopener">Environment Agency bathing water quality (Swimfo)</a></td><td>Today&rsquo;s pollution-risk forecast, annual classification and heavy-rain flag for every designated beach in the area</td><td><a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" target="_blank" rel="noopener">Open Government Licence v3.0</a></td><td>Bathing water status: Environment Agency bathing water quality data &mdash; &copy; Environment Agency, Open Government Licence v3.0</td></tr>
+            <tr><td><a href="https://www.streamwaterdata.co.uk/" target="_blank" rel="noopener">Wessex Water and Southern Water Storm Overflow Activity</a> via Stream</td><td>Near-real-time storm overflow status for monitored outfalls: discharging, not discharging, monitor offline, and the last event times</td><td><a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a></td><td>Storm overflow activity: &copy; Wessex Water and &copy; Southern Water, CC BY 4.0, via Stream &mdash; relayed as published, never our verdict</td></tr>
             <tr><td><a href="https://developer.data.nationalhighways.co.uk/" target="_blank" rel="noopener">National Highways Transport Data Feeds</a></td><td>Road closures (DATEX II) and planned works</td><td>National Highways developer-portal terms (OGL-based); the wording is a condition of use</td><td>Powered by National Highways&#39; Transport Data Feeds. Planned works: &copy; National Highways &mdash; Contains public sector information licensed under the Open Government Licence v3.0</td></tr>
             <tr><td><a href="https://beryl.cc" target="_blank" rel="noopener">Beryl</a> BCP GBFS feed</td><td>Bike hire bays and availability</td><td><a href="https://cdla.dev/permissive-2-0/" target="_blank" rel="noopener">CDLA-Permissive-2.0</a></td><td>Beryl BCP scheme GBFS feed (CDLA-Permissive-2.0)</td></tr>
             <tr><td><a href="https://adsb.lol" target="_blank" rel="noopener">adsb.lol</a></td><td>Flights and aircraft traces (ADS-B)</td><td>ODbL 1.0</td><td>adsb.lol (ODbL 1.0)</td></tr>
@@ -914,6 +930,10 @@
         <details class="faq" data-reveal>
           <summary>Will it work on my phone?<span class="faq__icon" aria-hidden="true"></span></summary>
           <div class="faq__ans"><p>Yes, on a modern phone, but it is a heavy download compared with the rest of Bournemouth365 &mdash; about 1.2 MB of application code plus the CesiumJS engine and then map tiles. Open it on Wi-Fi or good 4G. The flat map is the light version; the 3D city is the part that asks most of an older device.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Does the map tell me whether it&rsquo;s safe to swim?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>No &mdash; and nothing honest can, from a desk. What the sea water layer shows is two published facts, each named for who published it: the Environment Agency&rsquo;s daily pollution-risk forecast for every designated beach from Poole Harbour round to Christchurch Bay (normal or increased, with the time it expires, plus the beach&rsquo;s annual classification), and the water companies&rsquo; own near-real-time reports of which storm overflows are discharging and which discharged in the last two days. A forecast leaves the map the moment it expires, and an overflow report its company has not updated for three hours is marked unconfirmed rather than left looking current. After heavy rain, check the Environment Agency&rsquo;s Swimfo page for the beach before you go in &mdash; the map links to it.</p></div>
         </details>
         </div>
       </div>
@@ -986,7 +1006,8 @@
             .catch(function () { return null; });
         }
         var urls = ['/api/dorset-buses.php', '/api/dorset-water.php', '/api/dorset-floods.php', '/api/dorset-roads.php',
-                    '/api/dorset-flights.php', '/api/dorset-satellite.php?meta=1', '/api/dorset-tiles.php?status=1'];
+                    '/api/dorset-flights.php', '/api/dorset-satellite.php?meta=1', '/api/dorset-tiles.php?status=1',
+                    '/api/dorset-seawater.php'];
         Promise.all(urls.map(get)).then(function (r) {
           paint('buses', 'lm-buses-chip', 'chip-m', 'MEASURED \u00b7 DfT BUS OPEN DATA', r[0], 60000, function (d) {
             num('buses', String(d.count));
@@ -999,6 +1020,11 @@
           paint('warn', 'lm-warn-chip', 'chip-f', 'OFFICIAL STATUS \u00b7 ENVIRONMENT AGENCY', r[2], 10 * 60000, function (d) {
             var n = (d.inForce !== undefined && d.inForce !== null) ? d.inForce : d.count;
             num('warn', String(n));
+          });
+          paint('sea', 'lm-sea-chip', 'chip-f', 'OFFICIAL STATUS · EA + WATER COMPANIES', r[7], 15 * 60000, function (d) {
+            num('sea', String(d.discharging) + '<small>of ' + d.overflows + ' monitored overflows discharging</small>');
+            var inc = d.increasedRisk || 0;
+            sub('sea', d.beaches + ' designated beaches from Poole Harbour to Christchurch Bay: ' + (inc ? inc + ' with an increased pollution-risk forecast from the Environment Agency today, ' + (d.beaches - inc) + ' normal' : 'all on a normal pollution-risk forecast from the Environment Agency today') + '. ' + d.recentDischarges48h + ' overflow' + (d.recentDischarges48h === 1 ? '' : 's') + ' discharged in the last 48 hours. <strong>Their published status, not a verdict on swimming</strong> — the map links each beach to its Swimfo page.');
           });
           paint('roads', 'lm-roads-chip', 'chip-f', 'OFFICIAL STATUS \u00b7 NATIONAL HIGHWAYS', r[3], 2 * 60000, function (d) {
             num('roads', String(d.count));

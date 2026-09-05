@@ -157,6 +157,10 @@ api/dorset-roads-cache.json
 api/dorset-roads-rate.json
 api/dorset-satellite-cache.json
 api/dorset-satellite-rate.json
+api/dorset-seawater-cache.json
+api/dorset-seawater-ea-cache.json
+api/dorset-seawater-rate.json
+api/dorset-seawater-ea.lock
 api/dorset-satellite-token.json
 api/dorset-satellite.jpg
 api/dorset-floods-cache.json

@@ -1341,7 +1341,7 @@ add(
 _LM_SLUG = "bournemouth/live-map"
 _LM_URL = f"{SITE}/{_LM_SLUG}/"
 _LM_TITLE = "Bournemouth live map — buses, roads, rivers & flights, in 3D"
-_LM_DESC = ("Live buses, flights, road closures, river levels and flood warnings, bike bays and the latest satellite pass over "
+_LM_DESC = ("Live buses, flights, road closures, river levels and flood warnings, bathing-water and storm-overflow status, bike bays and the latest satellite pass over "
             "Bournemouth, Christchurch and Poole — every layer from a named public feed, free flat map first, 3D on request.")
 
 _LM_TILES = '''    <section class="section b365" id="live-now" aria-label="Live counts from the map's feeds">
@@ -1369,6 +1369,12 @@ _LM_TILES = '''    <section class="section b365" id="live-now" aria-label="Live 
             <div class="b365-num" id="lm-warn">&mdash;</div>
             <p class="b365-sub" id="lm-warn-sub">Flood warnings and alerts in force for the area. <strong>No active warnings is not the same as no flood risk.</strong> Check the Environment Agency&rsquo;s own warnings page before you act on this.</p>
             <p class="b365-foot" id="lm-warn-upd">updated &mdash;</p>
+          </div>
+          <div class="b365-tile" id="lm-tile-sea">
+            <span class="chip-f" id="lm-sea-chip">OFFICIAL STATUS &middot; EA + WATER COMPANIES</span>
+            <div class="b365-num" id="lm-sea">&mdash;</div>
+            <p class="b365-sub" id="lm-sea-sub">Storm overflows their water company reports as discharging right now, and the Environment Agency&rsquo;s bathing-water forecast for the area&rsquo;s beaches. <strong>Their published status, not a verdict on swimming.</strong> Waiting for the feed&hellip;</p>
+            <p class="b365-foot" id="lm-sea-upd">updated &mdash;</p>
           </div>
           <div class="b365-tile" id="lm-tile-roads">
             <span class="chip-f" id="lm-roads-chip">OFFICIAL STATUS &middot; NATIONAL HIGHWAYS</span>
@@ -1428,6 +1434,14 @@ _LM_SOURCES = [
      "River levels, tide gauges, flood warnings",
      '<a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" target="_blank" rel="noopener">Open Government Licence v3.0</a>',
      "Dorset water &amp; flood data: uses Environment Agency flood and river level data from the real-time data API (Beta) &mdash; &copy; Environment Agency, Open Government Licence v3.0"),
+    ('<a href="https://environment.data.gov.uk/bwq/profiles/" target="_blank" rel="noopener">Environment Agency bathing water quality (Swimfo)</a>',
+     "Today&rsquo;s pollution-risk forecast, annual classification and heavy-rain flag for every designated beach in the area",
+     '<a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" target="_blank" rel="noopener">Open Government Licence v3.0</a>',
+     "Bathing water status: Environment Agency bathing water quality data &mdash; &copy; Environment Agency, Open Government Licence v3.0"),
+    ('<a href="https://www.streamwaterdata.co.uk/" target="_blank" rel="noopener">Wessex Water and Southern Water Storm Overflow Activity</a> via Stream',
+     "Near-real-time storm overflow status for monitored outfalls: discharging, not discharging, monitor offline, and the last event times",
+     '<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>',
+     "Storm overflow activity: &copy; Wessex Water and &copy; Southern Water, CC BY 4.0, via Stream &mdash; relayed as published, never our verdict"),
     ('<a href="https://developer.data.nationalhighways.co.uk/" target="_blank" rel="noopener">National Highways Transport Data Feeds</a>',
      "Road closures (DATEX II) and planned works",
      "National Highways developer-portal terms (OGL-based); the wording is a condition of use",
@@ -1510,6 +1524,8 @@ _LM_FAQS = [
      "No. There is no account, the map sets no cookies and runs no analytics of its own, and at the time of writing it never asks for your location. It remembers which layers you switched on in your own browser&rsquo;s storage and nowhere else. The live counts on this page come from our own server, which reads the public feeds on your behalf."),
     ("Will it work on my phone?",
      "Yes, on a modern phone, but it is a heavy download compared with the rest of Bournemouth365 &mdash; about 1.2 MB of application code plus the CesiumJS engine and then map tiles. Open it on Wi-Fi or good 4G. The flat map is the light version; the 3D city is the part that asks most of an older device."),
+    ("Does the map tell me whether it&rsquo;s safe to swim?",
+     "No &mdash; and nothing honest can, from a desk. What the sea water layer shows is two published facts, each named for who published it: the Environment Agency&rsquo;s daily pollution-risk forecast for every designated beach from Poole Harbour round to Christchurch Bay (normal or increased, with the time it expires, plus the beach&rsquo;s annual classification), and the water companies&rsquo; own near-real-time reports of which storm overflows are discharging and which discharged in the last two days. A forecast leaves the map the moment it expires, and an overflow report its company has not updated for three hours is marked unconfirmed rather than left looking current. After heavy rain, check the Environment Agency&rsquo;s Swimfo page for the beach before you go in &mdash; the map links to it."),
 ]
 
 # The live-counts painter. Plain string (no f-string) so the JS braces stay
@@ -1570,7 +1586,8 @@ _LM_JS = '''      <script>
             .catch(function () { return null; });
         }
         var urls = ['/api/dorset-buses.php', '/api/dorset-water.php', '/api/dorset-floods.php', '/api/dorset-roads.php',
-                    '/api/dorset-flights.php', '/api/dorset-satellite.php?meta=1', '/api/dorset-tiles.php?status=1'];
+                    '/api/dorset-flights.php', '/api/dorset-satellite.php?meta=1', '/api/dorset-tiles.php?status=1',
+                    '/api/dorset-seawater.php'];
         Promise.all(urls.map(get)).then(function (r) {
           paint('buses', 'lm-buses-chip', 'chip-m', 'MEASURED \\u00b7 DfT BUS OPEN DATA', r[0], 60000, function (d) {
             num('buses', String(d.count));
@@ -1583,6 +1600,11 @@ _LM_JS = '''      <script>
           paint('warn', 'lm-warn-chip', 'chip-f', 'OFFICIAL STATUS \\u00b7 ENVIRONMENT AGENCY', r[2], 10 * 60000, function (d) {
             var n = (d.inForce !== undefined && d.inForce !== null) ? d.inForce : d.count;
             num('warn', String(n));
+          });
+          paint('sea', 'lm-sea-chip', 'chip-f', 'OFFICIAL STATUS \u00b7 EA + WATER COMPANIES', r[7], 15 * 60000, function (d) {
+            num('sea', String(d.discharging) + '<small>of ' + d.overflows + ' monitored overflows discharging</small>');
+            var inc = d.increasedRisk || 0;
+            sub('sea', d.beaches + ' designated beaches from Poole Harbour to Christchurch Bay: ' + (inc ? inc + ' with an increased pollution-risk forecast from the Environment Agency today, ' + (d.beaches - inc) + ' normal' : 'all on a normal pollution-risk forecast from the Environment Agency today') + '. ' + d.recentDischarges48h + ' overflow' + (d.recentDischarges48h === 1 ? '' : 's') + ' discharged in the last 48 hours. <strong>Their published status, not a verdict on swimming</strong> \u2014 the map links each beach to its Swimfo page.');
           });
           paint('roads', 'lm-roads-chip', 'chip-f', 'OFFICIAL STATUS \\u00b7 NATIONAL HIGHWAYS', r[3], 2 * 60000, function (d) {
             num('roads', String(d.count));
@@ -1677,7 +1699,7 @@ _LM_CONTENT = "\n".join([
     hero(bc_sub("Bournemouth365", "/bournemouth/", "Live map"),
          "// BOURNEMOUTH365",
          'Bournemouth, Christchurch &amp; Poole &mdash; <em class="grad grad--cyan">live, in 3D</em>',
-         "Buses, flights, road closures, river levels and flood warnings, bike bays and the latest satellite pass, each drawn from a named public feed onto one map &mdash; free on the flat map, with the 3D city loaded only when you ask for it.",
+         "Buses, flights, road closures, river levels and flood warnings, sea water quality, bike bays and the latest satellite pass, each drawn from a named public feed onto one map &mdash; free on the flat map, with the 3D city loaded only when you ask for it.",
          cta1=("Open the live map", "#map"),
          cta2=("What you are seeing", "#layers"),
          chips=["Measured, not modelled", "Free flat map, 3D on request", "No ads, no paywall"]),
